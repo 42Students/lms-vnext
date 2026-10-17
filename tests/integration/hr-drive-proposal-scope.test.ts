@@ -13,7 +13,7 @@ const actor:RequestContext={user:{id,identityUid:"no-recruiter-grant",platformSt
 describe.skipIf(!enabled)("Employer proposal college grant requirement",()=>{
  afterAll(async()=>{await closeDatabaseConnection();});
  it("cannot persist a proposal for a college without a registered ACTIVE grant",async()=>{
-  const draft={...emptyHrDriveDraft(),title:"Analyst",location:"Hyderabad",description:"Describe a genuine full-time job."};
+  const draft={...emptyHrDriveDraft(),title:"Analyst",location:"Hyderabad",description:"Describe a genuine full-time job.",ctcLpa:"8"};
   await expect(sendRecruiterDriveProposal(actor,{
    collegeId:randomUUID(),submissionId:randomUUID(),draft,
   })).rejects.toBeInstanceOf(TpoMessagingError);

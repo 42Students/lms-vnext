@@ -53,6 +53,8 @@ export async function seedLearnerLearningFixture(pool: Pool, fixture: LearnerLea
 export async function cleanupLearnerLearningFixture(pool: Pool, fixture: LearnerLearningFixture) {
   const { learner, ids } = fixture;
   try {
+    await pool.query("DELETE FROM in_app_notifications WHERE event_id IN (SELECT id FROM activity_events WHERE actor_user_id=$1 AND event_type='courses.assignment.submitted' AND subject_id=$2)",
+      [learner.ids.user,ids.assignment]);
     await pool.query("DELETE FROM activity_events WHERE actor_user_id=$1 AND event_type='courses.assignment.submitted' AND subject_id=$2",
       [learner.ids.user,ids.assignment]);
     await pool.query("DELETE FROM assignment_submissions WHERE assignment_id=$1",[ids.assignment]);

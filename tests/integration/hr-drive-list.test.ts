@@ -1,3 +1,4 @@
+import { publishableJobTerms } from "../support/publishable-job-terms";
 import { randomUUID } from "node:crypto";
 import { afterAll, describe, expect, it } from "vitest";
 import type { RequestContext } from "@/modules/identity/context";
@@ -19,7 +20,7 @@ describe.skipIf(!enabled)("HR drive list scope (isolated PG)", () => {
    const own=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"HR Drive Own "+nonce,primaryDomain:"own-"+nonce+".example"});
    const another=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"HR Drive Foreign "+nonce,primaryDomain:"other-"+nonce+".example"});
    const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:own.relationship.id,
-     title:"Recruiter Job "+nonce,description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL"});
+     title:"Recruiter Job "+nonce,description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL",...publishableJobTerms});
    await publishPlacementJob(tpo,job.id);
    const userId=randomUUID();
    const context=(companyId:string,relationshipId:string,collegeId:string):RequestContext=>({

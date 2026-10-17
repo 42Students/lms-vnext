@@ -1,3 +1,4 @@
+import { publishableJobTerms } from "../support/publishable-job-terms";
 import {randomUUID} from "node:crypto";
 import {afterAll,describe,expect,it} from "vitest";
 import {closeDatabaseConnection} from "@/db/client";
@@ -18,9 +19,9 @@ describe.skipIf(!enabled)("HR forged cross-company grant is non-leaking",()=>{
   const own=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"HR Boundary Own "+nonce,primaryDomain:"guardown-"+nonce+".example"});
   const other=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"HR Boundary Other "+nonce,primaryDomain:"guardother-"+nonce+".example"});
   const first=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:own.relationship.id,
-    title:"Allowed "+nonce,description:"Fixture",employmentType:"FULL_TIME",workMode:"REMOTE",applicationMode:"INTERNAL"});
+    title:"Allowed "+nonce,description:"Fixture",employmentType:"FULL_TIME",workMode:"REMOTE",applicationMode:"INTERNAL",...publishableJobTerms});
   const second=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:other.relationship.id,
-    title:"Private "+nonce,description:"Fixture",employmentType:"FULL_TIME",workMode:"REMOTE",applicationMode:"INTERNAL"});
+    title:"Private "+nonce,description:"Fixture",employmentType:"FULL_TIME",workMode:"REMOTE",applicationMode:"INTERNAL",...publishableJobTerms});
   await publishPlacementJob(tpo,first.id);await publishPlacementJob(tpo,second.id);
   const uid=randomUUID();
   const grants=[own.relationship,other.relationship].map((rel,i)=>({id:randomUUID(),collegeId:SEED_IDS.collegeA,

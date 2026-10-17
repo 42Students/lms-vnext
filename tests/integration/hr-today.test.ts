@@ -1,3 +1,4 @@
+import { publishableJobTerms } from "../support/publishable-job-terms";
 import {randomUUID} from "node:crypto";
 import {afterAll,describe,expect,it} from "vitest";
 import {closeDatabaseConnection} from "@/db/client";
@@ -19,7 +20,7 @@ describe.skipIf(!enabled)("HR Today PG scope",()=>{
   const company=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"HR Today "+nonce,primaryDomain:nonce+".example"});
   const foreign=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"HR Other "+nonce,primaryDomain:"other-"+nonce+".example"});
   const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:company.relationship.id,
-    title:"Today QA "+nonce,description:"Test job",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL"});
+    title:"Today QA "+nonce,description:"Test job",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL",...publishableJobTerms});
   await publishPlacementJob(tpo,job.id);
   const userId=randomUUID();
   const ctx=(companyId:string,rel:string,collegeId:string):RequestContext=>({

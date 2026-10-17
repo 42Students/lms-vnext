@@ -1,3 +1,4 @@
+import { publishableJobTerms } from "../support/publishable-job-terms";
 import {randomUUID} from "node:crypto";
 import {afterAll,describe,expect,it} from "vitest";
 import {closeDatabaseConnection} from "@/db/client";
@@ -20,7 +21,7 @@ describe.skipIf(!enabled)("HR round table non-enumeration PG",()=>{
   const own=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"HR Rounds "+nonce,primaryDomain:nonce+".example"});
   const foreign=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"HR Rounds Foreign "+nonce,primaryDomain:"foreign-"+nonce+".example"});
   const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:own.relationship.id,
-   title:"Round Review "+nonce,description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL"});
+   title:"Round Review "+nonce,description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL",...publishableJobTerms});
   const round=await createPlacementRound(tpo,job.id,{kind:"TEST",name:"Aptitude"});
   await publishPlacementJob(tpo,job.id);
   const uid=randomUUID();

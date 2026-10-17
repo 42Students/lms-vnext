@@ -1,3 +1,4 @@
+import { publishableJobTerms } from "../support/publishable-job-terms";
 import { randomUUID } from "node:crypto";
 import { afterAll, describe, expect, it } from "vitest";
 import { closeDatabaseConnection } from "@/db/client";
@@ -34,7 +35,7 @@ describe.skipIf(!enabled)("Recruiter authorized Hire Again preview", () => {
     const job = await createPlacementJob(tpo, {
       collegeId: SEED_IDS.collegeA, companyRelationshipId: a.relationship.id,
       title: "Recruiter Draft " + nonce, description: "Hiring engineer test fixture",
-      employmentType: "FULL_TIME", workMode: "HYBRID", applicationMode: "INTERNAL",
+      employmentType: "FULL_TIME", workMode: "HYBRID", applicationMode: "INTERNAL", ...publishableJobTerms,
     });
     await publishPlacementJob(tpo, job.id);
     const userId = randomUUID();

@@ -1,3 +1,4 @@
+import { publishableJobTerms } from "../support/publishable-job-terms";
 import {randomUUID} from "node:crypto";
 import {afterAll,describe,expect,it} from "vitest";
 import {and,eq} from "drizzle-orm";
@@ -24,7 +25,7 @@ describe.skipIf(!enabled)("HR notification acknowledgement PG",()=>{
   const grant=await grantPlacementRecruiter(tpo,{companyRelationshipId:own.relationship.id,email,title:"HR"});
   async function publish(relationshipId:string){
    const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:relationshipId,
-    title:"Ack Job "+randomUUID(),description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL"});
+    title:"Ack Job "+randomUUID(),description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL",...publishableJobTerms});
    await publishPlacementJob(tpo,job.id);
    const [event]=await getDb().select({id:activityEvents.id}).from(activityEvents)
     .where(and(eq(activityEvents.subjectId,job.id),eq(activityEvents.eventType,"placements.job.published"))).limit(1);

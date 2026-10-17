@@ -1,3 +1,4 @@
+import { publishableJobTerms } from "../support/publishable-job-terms";
 import {randomUUID} from "node:crypto";
 import {afterAll,describe,expect,it} from "vitest";
 import {closeDatabaseConnection} from "@/db/client";
@@ -19,7 +20,7 @@ describe.skipIf(!enabled)("HR offer read scope PG",()=>{
   const own=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"Offer HR Own "+nonce,primaryDomain:"offer-"+nonce+".example"});
   const other=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"Offer HR Other "+nonce,primaryDomain:"other-offer-"+nonce+".example"});
   const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:own.relationship.id,title:"Offer HR "+nonce,
-    description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL"});
+    description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL",...publishableJobTerms});
   await publishPlacementJob(tpo,job.id);
   const uid=randomUUID();
   const hr=(companyId:string,rel:string,collegeId:string):RequestContext=>({

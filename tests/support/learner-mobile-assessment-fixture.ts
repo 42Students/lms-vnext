@@ -12,11 +12,11 @@ export type LearnerMobileAssessmentFixture=ReturnType<typeof newLearnerMobileAss
 export async function seedLearnerMobileAssessmentFixture(pool:Pool,f:LearnerMobileAssessmentFixture){
   await seedLearnerCourseWriteFixture(pool,f.course,{content:true});
   await pool.query(
-    "INSERT INTO course_assignments(id,lesson_id,title,description,max_points,sequence,status,created_by_user_id) VALUES($1,$2,$3,'Owned instructions',10,1,'PUBLISHED',$4)",
+    "INSERT INTO course_assignments(id,lesson_id,title,description,max_points,sequence,status,created_by_user_id,due_at) VALUES($1,$2,$3,'Owned instructions',10,1,'PUBLISHED',$4,'2099-01-01T00:00:00Z')",
     [f.assignmentId,f.course.ids.lesson,"Mobile assignment "+f.assignmentId,SEED_IDS.collegeAdminUser],
   );
   await pool.query(
-    "INSERT INTO course_quizzes(id,lesson_id,title,total_points,sequence,max_attempts,status,created_by_user_id) VALUES($1,$2,$3,10,2,2,'PUBLISHED',$4)",
+    "INSERT INTO course_quizzes(id,lesson_id,title,total_points,sequence,max_attempts,status,created_by_user_id,due_at) VALUES($1,$2,$3,10,2,2,'PUBLISHED',$4,'2099-01-01T00:00:00Z')",
     [f.quizId,f.course.ids.lesson,"Mobile quiz "+f.quizId,SEED_IDS.collegeAdminUser],
   );
 }
