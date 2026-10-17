@@ -13,6 +13,11 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
  const eligibleSnapshot=eligible.map(row=>row.id).sort().join("|");
  async function createLinks(target:readonly TpoBulkInviteCandidate[],retryOnly=false){
   if(busy||target.length===0||target.length>100)return;
+  if(!retryOnly&&reviewSnapshot!==eligibleSnapshot){
+    setReviewSnapshot(eligibleSnapshot);
+    setNotice("Review the recipients and confirm. Existing invitation links for these recruiters will be replaced.");
+    return;
+  }
   setBusy(true);if(!retryOnly)setResults([]);setNotice("");
   const outcome:Entry[]=[];
   for(const lead of target){
