@@ -16,6 +16,7 @@ import { learnerCourseAttendanceIstMonth,learnerCourseAttendanceIstWindow } from
 import { getLearnerAttendanceWorkspace } from "@/modules/attendance/learner-service";
 import { learnerDiscussionScopeKey } from "@/modules/courses/learner-discussion-scope-key-model";
 import { listCourseDiscussionMessages } from "@/modules/courses/discussion-service";
+import {readLearnerPlaybackSettings,LEARNER_PLAYBACK_DEFAULTS} from "@/modules/courses/learner-playback-settings";
 import { loadCourseDisplayContentIfReady } from "@/modules/courses/course-display-service";
 import {
   getLearnerCourseWorkspace,
@@ -159,7 +160,10 @@ export default async function LearnerCourseTabPage({
       />
     );
   } else {
-    content = <LearnerCourseDiscussion key={learnerDiscussionScopeKey(deliveryId)} deliveryId={deliveryId} />;
+    const chatSettings=await readLearnerPlaybackSettings(context.membership?.collegeId)
+      .catch(()=>({...LEARNER_PLAYBACK_DEFAULTS}));
+    content = <LearnerCourseDiscussion key={learnerDiscussionScopeKey(deliveryId)}
+      deliveryId={deliveryId} pollIntervalMs={chatSettings.chatPollIntervalMs} />;
   }
 
   return (
