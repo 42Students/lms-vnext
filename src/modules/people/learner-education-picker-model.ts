@@ -15,7 +15,7 @@ export const LEARNER_QUALIFYING_EXAMS=[
  * and impossible year order both in UI and server Zod writes. */
 export function learnerEducationValidationProblem(input:{
  educationType?:string;institution?:string;gradingType?:string;gradeObtained?:string;
- maxGrade?:string;startYear?:string;endYear?:string;
+ maxGrade?:string;startYear?:string;endYear?:string;isCurrentlyPursuing?:boolean;
  examDetails?:Record<string,string|number|boolean>;
 }):{field:string;message:string}|null{
  const educationType=input.educationType?.trim()??"";
@@ -29,6 +29,8 @@ export function learnerEducationValidationProblem(input:{
  const examYear=String(input.examDetails?.passingYear??"").trim();
  if(examYear && !/^\d{4}$/.test(examYear))
   return {field:"examDetails.passingYear",message:"Enter a 4-digit qualifying exam passing year"};
+ if(input.isCurrentlyPursuing && input.endYear?.trim())
+  return {field:"endYear",message:"End year must be empty when currently pursuing"};
  const start=input.startYear?.trim(),end=input.endYear?.trim();
  if(start&&end&&/^\d{4}$/.test(start)&&/^\d{4}$/.test(end)&&Number(end)<Number(start))
   return {field:"endYear",message:"End year cannot be before start year"};
