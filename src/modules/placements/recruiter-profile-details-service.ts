@@ -40,7 +40,7 @@ export async function updateOwnRecruiterProfileDetails(context:RequestContext,ra
  const contactReady=await placementTableExists("placement_recruiter_public_contacts");
  // Empty phone is a valid clear operation only when the contact table exists;
  // never accidentally overwrite identity provider phone_e164 login credentials.
- if(!contactReady)throw new PlacementsServiceError("PLACEMENT_RECRUITER_PROFILE_STALE");
+ if(!contactReady&&phone)throw new PlacementsServiceError("PLACEMENT_RECRUITER_PROFILE_STALE");
  return getDb().transaction(async tx=>{
   const [person]=await tx.select({
    id:users.id,displayName:users.displayName,userUpdatedAt:users.updatedAt,
@@ -54,9 +54,9 @@ export async function updateOwnRecruiterProfileDetails(context:RequestContext,ra
   if(Date.parse(input.expectedUserUpdatedAt)!==person.userUpdatedAt.getTime()||
    !sameRecruiterProfileVersion(person.profileUpdatedAt,input.expectedProfileUpdatedAt))
    throw new PlacementsServiceError("PLACEMENT_RECRUITER_PROFILE_STALE");
-  const [existing]=await tx.select({phone:placementRecruiterPublicContacts.phoneDigits})
+  const [existing]=contactReady?await tx.select({phone:placementRecruiterPublicContacts.phoneDigits})
     .from(placementRecruiterPublicContacts).where(
-     eq(placementRecruiterPublicContacts.recruiterUserId,context.user.id)).for("update").limit(1);
+     eq(placementRecruiterPublicContacts.recruiterUserId,context.user.id)).for("update").limit(1):[];
   const phoneChanged=(existing?.phone??"")!==phone;
   const nameChanged=(person.displayName??"")!==name;
   const titleChanged=person.title!==title;
@@ -80,7 +80,7 @@ export async function updateOwnRecruiterProfileDetails(context:RequestContext,ra
     .returning({userId:placementRecruiterProfiles.userId});
    if(!updated)throw new PlacementsServiceError("PLACEMENT_RECRUITER_PROFILE_STALE");
   }
-  if(phoneChanged){
+  if(phoneChanged&&contactReady){
    if(phone)await tx.insert(placementRecruiterPublicContacts).values({
     recruiterUserId:context.user.id,phoneDigits:phone,
    }).onConflictDoUpdate({target:placementRecruiterPublicContacts.recruiterUserId,

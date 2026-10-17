@@ -36,6 +36,7 @@ export default async function HrProfilePage() {
           </div>
 
         </dl>
+        <p className="mt-2 text-xs text-muted-foreground">Only for the placement cell to call you. You never sign in with it.</p>
         <p className="mt-4 text-xs text-muted-foreground">
           Edit your name, designation and optional mobile together, then choose Save changes. Your work email remains your sign-in identity.
         </p>
