@@ -537,7 +537,7 @@ export default async function HrPlacementJobPage({
           </section>
           <nav aria-label="Offer status" className="flex flex-wrap gap-2">
             {HR_OFFER_STATES.map((status) => (
-              <Link key={status} href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+status}
+              <Link key={status} href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+status+returnQuery}
                 aria-current={status===filters.offerState ? "page" : undefined}
                 className={status===filters.offerState ?
                   "rounded-full bg-primary px-3 py-2 text-xs font-semibold text-on-primary" :
@@ -564,12 +564,12 @@ export default async function HrPlacementJobPage({
             </span>
             <div className="flex gap-2">
               {filters.offerPage > 1 ? <Link
-                href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(filters.offerPage-1)}
+                href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(filters.offerPage-1)+returnQuery}
                 className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm text-primary-text">
                 Previous
               </Link> : null}
               {filters.offerPage < offersPage.pages ? <Link
-                href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(filters.offerPage+1)}
+                href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(filters.offerPage+1)+returnQuery}
                 className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm text-primary-text">
                 Next
               </Link> : null}
