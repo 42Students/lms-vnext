@@ -18,7 +18,7 @@ export const roundImportActionSchema=z.object({
   ctx.addIssue({code:"custom",path:["skippedLines"],message:"A source row cannot be both matched and skipped"});
 });
 export type ImportRow={line:number;identity:string;applicationId:string;email:string;roll:string;companyId:string;name:string;
- outcome:"PASS"|"FAIL"|"HOLD"|"ABSENT"|null;rank:number|null;message:string|null};
+ outcome:"PASS"|"FAIL"|"HOLD"|"ABSENT"|null;rank:number|null;invalidRank:boolean;message:string|null};
 function outcome(value:string):ImportRow["outcome"]{
  const token=value.toUpperCase().replace(/[^A-Z]/g,"");
  if(["PASS","PASSED","CLEAR","CLEARED","SELECTED","SHORTLISTED"].includes(token))return "PASS";
@@ -47,7 +47,8 @@ export function parseTpoRoundImport(bytes:Buffer,filename:string){
   const result=outcome(value(status));
   return {line:i+2,identity:value(app)||value(company)||value(email)||value(roll),
    applicationId:value(app),email:value(email),roll:value(roll),companyId:value(company),name:value(name),
-   outcome:result,rank:rankValue===null||Number.isInteger(rankValue)&&rankValue>0&&rankValue<=100000?rankValue:null,
+   outcome:result,invalidRank:rankValue!==null&&(!Number.isInteger(rankValue)||rankValue<1||rankValue>100000),
+   rank:rankValue===null||Number.isInteger(rankValue)&&rankValue>0&&rankValue<=100000?rankValue:null,
    message:value(message)||null};
  });
  return rows;
