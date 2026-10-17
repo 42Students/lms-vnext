@@ -1,5 +1,5 @@
 "use client";
-import {useRef,useState,type FormEvent} from "react";
+import {useEffect,useRef,useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 
 type InterviewRound={id:string;name:string;sequence:number};
@@ -19,6 +19,12 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
  const [end,setEnd]=useState("");
  const [error,setError]=useState<string|null>(null);
  const today=nowInIst();
+ useEffect(()=>{
+  if((!start&&!end)||submitting)return;
+  const onExit=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
+  window.addEventListener("beforeunload",onExit);
+  return ()=>window.removeEventListener("beforeunload",onExit);
+ },[start,end,submitting]);
  async function submit(event:FormEvent<HTMLFormElement>){
   const form=event.currentTarget;
   const current=nowInIst();
