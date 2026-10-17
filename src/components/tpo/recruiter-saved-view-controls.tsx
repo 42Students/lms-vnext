@@ -49,7 +49,8 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
     body:JSON.stringify(payload),
    });
    const data=await response.json() as {error?:string};
-   if(!response.ok)throw new Error(data.error==="PIN_LIMIT"?"You can pin up to 5 views.":
+   if(!response.ok)throw new Error(data.error==="VIEW_LIMIT"?"You can save up to 100 views.":
+    data.error==="PIN_LIMIT"?"You can pin up to 5 views.":
     data.error==="DUPLICATE_NAME"?"A view with that name already exists.":
     data.error==="STORAGE_PENDING"?"Saved view storage is not registered.":"Couldn't save.");
    setNotice(action==="CREATE"?"View saved":action==="DELETE"?"View deleted":"Saved");
