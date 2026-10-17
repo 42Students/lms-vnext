@@ -41,7 +41,7 @@ const journeys=[
  {value:"APPLYING",label:"Applying"},
  {value:"PLACED",label:"Placed"},
 ];
-export function TpoStudentsSpreadsheet({rows,branches,afterCollege,afterCollegeAvailable}:{rows:readonly TpoStudentRow[];branches:readonly {branchId:string;branchName:string}[];
+export function TpoStudentsSpreadsheet({rows,branches,programs,afterCollege,afterCollegeAvailable}:{rows:readonly TpoStudentRow[];branches:readonly {branchId:string;branchName:string}[];programs:readonly {id:string;name:string}[];
  afterCollege:Record<string,{outcome:AfterCollegeOutcome;expectedVersion:string}>;afterCollegeAvailable:boolean}){
  const router=useRouter(),pathname=usePathname(),params=useSearchParams();
  const selected=params.get("student");
@@ -63,6 +63,7 @@ export function TpoStudentsSpreadsheet({rows,branches,afterCollege,afterCollegeA
  const filters:TpoFilterField[]=[
   {key:"journeyState",urlKey:"journeyState",label:"Student journey",options:journeys},
   {key:"branchId",urlKey:"branchId",label:"Academic branch",options:branches.map(b=>({value:b.branchId,label:b.branchName}))},
+  {key:"programId",urlKey:"programId",label:"Program",options:programs.map(p=>({value:p.id,label:p.name}))},
  ];
  return <div className="space-y-3" role="region" aria-label="Students spreadsheet keyboard actions" tabIndex={0}
   onKeyDown={event=>{
