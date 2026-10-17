@@ -42,7 +42,7 @@ export async function getTpoDriveOfferRegister(context:RequestContext,raw:unknow
   batch:academics.get(row.candidate.membershipId)?.batch??null,
   branch:academics.get(row.candidate.membershipId)?.branch??null,
  }}));
- return {job,status:input.status,...projectOfferRegister(enriched,input.status,input.page,input.q,input.joining,new Date(),input.kind)};
+ return {job,status:input.status,...projectOfferRegister(enriched,input.status,input.page,input.q,input.joining,new Date(),input.kind,input.expiry)};
 }
 
 /** Read-only, scoped export. Does not mark a letter delivered or contact a learner. */
