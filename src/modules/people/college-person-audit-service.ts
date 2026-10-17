@@ -1,5 +1,5 @@
 import "server-only";
-import {and,desc,eq} from "drizzle-orm";
+import {and,desc,eq,inArray} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents} from "@/db/schema";
@@ -14,7 +14,7 @@ export async function getCollegePersonAudit(ctx:RequestContext,rawId:unknown,raw
   kind:activityEvents.eventType,at:activityEvents.occurredAt,
   authorId:activityEvents.actorUserId,importance:activityEvents.importance})
   .from(activityEvents).where(and(eq(activityEvents.collegeId,collegeId),
-   eq(activityEvents.subjectType,"college_membership"),eq(activityEvents.subjectId,id)))
+   inArray(activityEvents.subjectType,["college_membership","COLLEGE_MEMBERSHIP"]),eq(activityEvents.subjectId,id)))
   .orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id)).limit(100);
  return{person:{id,name:profile.name,kind},events,
   truncated:events.length===100};
