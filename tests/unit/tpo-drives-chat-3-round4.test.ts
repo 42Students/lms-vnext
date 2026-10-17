@@ -75,6 +75,16 @@ describe("chat-3 Drives round 4",()=>{
   expect(body).not.toContain("Company relationship was not returned");
   expect(body).toContain("Check your drafts before trying again.");
  });
+ it("TPO-drives-43 confirmed partial draft survives reload without duplicate POST",()=>{
+  const form=source("src/components/placements/placement-job-create-form.tsx");
+  expect(form).toContain("partialDraft:createdJobRef.current");
+  expect(form).toContain("const resume=saved.partialDraft");
+  expect(form).toContain("createdJobRef.current=resume");
+  expect(form).toContain("setPartialJobId(resume.jobId)");
+  expect(form).toContain("if(formRef.current)saveBrowserDraft(formRef.current)");
+  expect(form).toContain('if(createdJobRef.current&&createdJobRef.current.fingerprint!==fingerprint)');
+  expect(form).toContain('createdJobRef.current?{id:createdJobRef.current.jobId}');
+ });
  it("TPO-drives-25 Company Memory uses scoped historical drive facts",()=>{
   const workspace=source("src/components/placements/placement-job-create-workspace.tsx");
   const form=source("src/components/placements/placement-job-create-form.tsx");
