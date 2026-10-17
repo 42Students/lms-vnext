@@ -226,6 +226,11 @@ export function RecruiterBulkStageControls({
               onClick={()=>void copyFailed()}>Copy failed</button>
           ):null}
           {copyNotice?<p role="status" className="text-xs text-body">{copyNotice}</p>:null}
+          {retryable.length>0?<button type="button" disabled={busy} className={fieldClass+" mt-2"}
+            onClick={()=>{setChosenIds(retryable.slice(0,100).map(item=>item.leadId));setReviewOpen(false);setError("");
+              setCopyNotice("Failed rows selected for review. Check their current stage after refreshing before retrying.");}}>
+            Select failed for review ({retryable.length})
+          </button>:null}
           <p className="text-sm text-body">
             Updated: {results.filter((item) => item.status === "updated").length};
             unchanged: {results.filter((item) => item.status === "unchanged").length};
