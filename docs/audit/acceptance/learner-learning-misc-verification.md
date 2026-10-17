@@ -36,3 +36,7 @@ Each of these gaps also has an ID-named test in `tests/unit/learner-learning-mis
 
 | LEARNER-learning-misc-13 | DONE (authored; not run) | `tests/unit/chat15-assessment-legacy-copy.test.ts` case `LEARNER-learning-misc-13`, assignment Due/Created legacy labels. |
 | LEARNER-learning-misc-29 | DONE (authored; not run) | `tests/unit/chat15-assessment-legacy-copy.test.ts` case `LEARNER-learning-misc-29`, quiz pills and submitted list. |
+
+| LEARNER-learning-misc-24 | DONE (authored, not executed) | `tests/unit/chat15-missed-quiz-release.test.ts` case `LEARNER-learning-misc-24`; quiz service/interactions and read-only review. |
+| LEARNER-learning-misc-27 | DONE (authored, not executed) | `tests/unit/chat15-missed-quiz-release.test.ts` case `LEARNER-learning-misc-27`; quiz service/interactions and read-only review. |
+| LEARNER-learning-misc-28 | DONE (authored, not executed) | `tests/unit/chat15-missed-quiz-release.test.ts` case `LEARNER-learning-misc-28`; quiz service/interactions and read-only review. |
