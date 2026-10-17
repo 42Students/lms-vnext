@@ -434,7 +434,8 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
                     <td className="px-4 py-4">
                       <div className="flex flex-wrap items-start gap-2">
                         {electiveOptions && item.status === "ACTIVE" ? <>
-                          <CollegeSlotManager options={electiveOptions} row={item} />
+                          <Link href={"/college/electives/"+encodeURIComponent(item.id)} className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">Open</Link>
+                           <CollegeSlotManager options={electiveOptions} row={item} />
                           <CollegeElectiveOfferingManager slotId={item.id}/>
                           <Link href={"/college/electives/" + encodeURIComponent(item.id) + "/allocate"}
                             className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">
