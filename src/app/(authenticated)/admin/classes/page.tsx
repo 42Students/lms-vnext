@@ -56,6 +56,7 @@ export default async function SuperAdminClassesPage({ searchParams }: {
             </select>
           </label>
           <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
+          <button type="submit" className="min-h-11 rounded-md border border-border px-4 font-semibold text-primary-text">Refresh</button>
           <Link href="/admin/classes" className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear filters</Link>
         </form>
       </section>
