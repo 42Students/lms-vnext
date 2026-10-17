@@ -155,3 +155,14 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 - SA-placements-projects-37 — DONE in reviewed source: Recruiter create handles canonical free-text company and college relationships.
 - SA-placements-projects-39 — DONE in reviewed source: Recruiter lifecycle records audited events.
 - Acceptance uses source-only verification. No migration registration or database execution is claimed.
+
+## 2026-10-18 chat-13 register sweep B — 9 Projects records
+- SA-placements-projects-55 — DONE (source): 10/20/50/100 and canonical search/page size
+- SA-placements-projects-56 — PARTIAL (source): Individual creation preflight exists; per-learner failure detail and standalone team fields incomplete
+- SA-placements-projects-58 — DONE (source): Mentor workload average-based overload and mentor filter
+- SA-placements-projects-66 — DONE (source): Releases readiness and selected-workspace picker
+- SA-placements-projects-67 — DONE (source): Override warnings and guarded confirmation
+- SA-placements-projects-68 — DONE (source): Readiness section route retained through shared workspace component
+- SA-placements-projects-77 — OPEN (source): Full template, mentor, submission, release and review mutation audit coverage not yet proven end-to-end
+- SA-placements-projects-87 — DONE (source): Template-college assignment/removal selection and retry
+- SA-placements-projects-93 — DONE (source): Student roster replacement with scoped selection and confirm
