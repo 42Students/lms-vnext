@@ -24,7 +24,7 @@ describe("TPO drive discussion parity",()=>{
  });
  it("GR-71 shows a plain unavailable state without hiding the rest of the drive",()=>{
   const page=code("src/app/(authenticated)/tpo/placements/jobs/[jobId]/discussion/page.tsx");
-  expect(page).toContain("other drive work is still available");
+  expect(page).toContain("Other drive work is still available");
   expect(page).toContain("No recruiter conversation is attached");
  });
  it("GR-90 and GR-91 keep the Discussion list navigable without a fragile modal",()=>{
