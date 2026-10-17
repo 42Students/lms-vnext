@@ -40,6 +40,9 @@ type SearchParams = {
   branchId?: string | string[];
   programId?: string | string[];
   afterCollege?:string|string[];
+  legacyStage?:string|string[];minRoundReached?:string|string[];needsAttention?:string|string[];
+  minTenthPct?:string|string[];minTwelfthPct?:string|string[];minDiplomaPct?:string|string[];minUgPct?:string|string[];
+  passingYear?:string|string[];maxGapYears?:string|string[];marksVerified?:string|string[];isLateralEntry?:string|string[];
   profileStatus?:string|string[];
   minApplications?:string|string[];maxApplications?:string|string[];
   minOffers?:string|string[];maxOffers?:string|string[];
