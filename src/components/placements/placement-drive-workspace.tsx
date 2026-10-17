@@ -17,6 +17,7 @@ import { projectTpoDriveScheduleWarnings } from "@/modules/placements/tpo-drive-
 import { getTpoDriveShortlist } from "@/modules/placements/tpo-shortlist-service";
 import { projectTpoDriveNextStep } from "@/modules/placements/tpo-drive-next-step-model";
 import {projectTpoDriveHeader} from "@/modules/placements/tpo-drive-header-model";
+import {getTpoDriveJourney} from "@/modules/placements/tpo-drive-journey-service";
 import { listPlacementJobRequests } from "@/modules/placements/request-service";
 import { listPlacementRoleOptions } from "@/modules/placements/role-option-service";
 import { PlacementDraftEditForm } from "./placement-draft-edit-form";
@@ -226,6 +227,8 @@ export async function PlacementDriveWorkspace({
     maximumAnnualCtcInr:job.maximumAnnualCtcInr,
     applicationDeadline:job.applicationDeadline,
   });
+
+  const journey=isTpo?await getTpoDriveJourney(context,jobId):null;
 
   const nextStep = isTpo && lifecycleReadiness
     ? projectTpoDriveNextStep({
