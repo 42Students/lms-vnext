@@ -183,15 +183,15 @@ Audit: `docs/audit/pages/tpo/students.md` (and `students-review.md` if present; 
 | TPO-students-32 | S2 | STATE | DONE |
 | TPO-students-34 | S2 | SIDE-EFFECT | OPEN |
 | TPO-students-35 | S2 | MISSING-ACTION | DONE |
-| TPO-students-36 | S2 | MISSING-EXPORT | OPEN |
+| TPO-students-36 | S2 | MISSING-EXPORT | DONE |
 | TPO-students-54 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| TPO-students-13 | S3 | MISSING-ACTION | OPEN |
+| TPO-students-13 | S3 | MISSING-ACTION | DONE |
 | TPO-students-24 | S3 | MISSING-FILTER | DONE |
 | TPO-students-25 | S3 | MISSING-FILTER | DONE |
 | TPO-students-27 | S3 | MISSING-COLUMN | DONE |
 | TPO-students-37 | S3 | MISSING-ACTION | DONE |
 | TPO-students-38 | S3 | MISSING-ACTION | DONE |
-| TPO-students-39 | S3 | MISSING-ACTION | OPEN |
+| TPO-students-39 | S3 | MISSING-ACTION | DONE |
 | TPO-students-40 | S3 | MISSING-ACTION | DONE |
 | TPO-students-41 | S3 | A11Y | DONE |
 | TPO-students-42 | S3 | MISSING-TAB | DONE |
@@ -202,7 +202,7 @@ Audit: `docs/audit/pages/tpo/students.md` (and `students-review.md` if present; 
 | TPO-students-47 | S3 | COPY | DONE |
 | TPO-students-49 | S3 | PERMISSION | OPEN |
 | TPO-students-50 | S3 | STATE | NOT-A-GAP |
-| TPO-students-51 | S3 | RESPONSIVE | OPEN |
+| TPO-students-51 | S3 | RESPONSIVE | DONE |
 | TPO-students-52 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-students-R02 | S3 | STATE | DONE |
 | TPO-students-R03 | S3 | STATE | OPEN |
@@ -212,7 +212,7 @@ Audit: `docs/audit/pages/tpo/students.md` (and `students-review.md` if present; 
 | TPO-students-R07 | S3 | STATE | DONE |
 | TPO-students-R08 | S3 | A11Y | DONE |
 | TPO-students-48 | S4 | STATE | DONE |
-| TPO-students-53 | S4 | MISSING-FIELD | OPEN |
+| TPO-students-53 | S4 | MISSING-FIELD | DONE |
 
 ## tpo/requests-verification (34: OPEN 15, FIXED-ON-MAIN 18, UNCONFIRMED 1)
 
@@ -344,3 +344,5 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - [chat-5] round-2 verified on main: TPO-students-24, TPO-students-25, TPO-students-43, TPO-students-46, TPO-students-47: earlier named chat12 behavioral tests and acceptance evidence exist; rechecked source boundary in `tests/unit/chat5-verified-queue-round2.test.ts`. DONE is code review status only; CI and database tests still pending.
 
 - [chat-5] round-2 verified on main: TPO-students-R04, TPO-students-R05, TPO-students-R06, TPO-students-R07, TPO-students-48: earlier named chat12 behavioral tests and acceptance evidence exist; rechecked source boundary in `tests/unit/chat5-verified-queue-round2.test.ts`. DONE is code review status only; CI and database tests still pending.
+
+- [chat-5] round-2 verified on main: TPO-students-53, TPO-students-36, TPO-students-39, TPO-students-51, TPO-students-13: earlier named chat12 behavioral tests and acceptance evidence exist; rechecked source boundary in `tests/unit/chat5-verified-queue-round2.test.ts`. DONE is code review status only; CI and database tests still pending.
