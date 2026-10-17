@@ -420,7 +420,7 @@ async function main() {
       await guard(
         "college admin",
         "drives (listCollegeDrives)",
-        () => listCollegeDrives(ctx, {}),
+        () => listCollegeDrives(ctx, { status: "ALL" }),
         (r) => ({ status: r.total === Number(want.jobs) ? "OK" : "MISMATCH", detail: `${r.total} drives (database ${want.jobs})` }),
       );
       if (want.topJob) {
