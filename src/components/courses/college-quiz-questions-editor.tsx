@@ -33,7 +33,8 @@ export function CollegeQuizQuestionsEditor({quizId}:{quizId:string}){
     labels.length<2||labels.length>20||labels.some(x=>!x)||
     new Set(labels.map(x=>x.toLowerCase())).size!==labels.length||
     !q.options.some(x=>x.correct)||
-    q.type==="SINGLE_CHOICE"&&q.options.filter(x=>x.correct).length!==1){
+    (q.type==="SINGLE_CHOICE"&&q.options.filter(x=>x.correct).length!==1)||
+    (q.type==="MULTIPLE_CHOICE"&&q.options.every(x=>x.correct))){
     setError("Complete every question, unique option and correct answer.");return;
    }
   }
