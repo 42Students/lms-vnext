@@ -536,6 +536,8 @@ export async function updateCourseQuiz(
         const [lockedQuiz]=await tx.select().from(courseQuizzes).where(eq(courseQuizzes.id,quizId))
           .for("update").limit(1);
         if(!lockedQuiz||lockedQuiz.status==="ARCHIVED")throw new CoursesServiceError("QUIZ_NOT_FOUND");
+        if(input.expectedUpdatedAt&&new Date(input.expectedUpdatedAt).getTime()!==lockedQuiz.updatedAt.getTime())
+          throw new CoursesServiceError("FACULTY_QUIZ_STALE_VERSION");
         if(input.dueAt!==undefined && (
           (lockedQuiz.dueAt?.getTime()??null)!==
            (input.dueAt?new Date(input.dueAt).getTime():null))) {
