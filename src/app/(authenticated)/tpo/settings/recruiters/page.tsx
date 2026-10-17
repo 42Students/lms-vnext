@@ -314,7 +314,7 @@ export default async function TpoRecruiterAccessPage({
                       </StatusBadge>
                       {item.status === "ACTIVE" && item.grantId && item.expectedUpdatedAt ? (
                         <><TpoRecruiterExtend grantId={item.grantId}
-                           expectedUpdatedAt={item.expectedUpdatedAt} displayName={item.displayName}/>
+                           expectedUpdatedAt={item.expectedUpdatedAt} displayName={item.displayName} ended={item.ended}/>
                         <TpoRecruiterRevoke
                           grantId={item.grantId}
                           expectedUpdatedAt={item.expectedUpdatedAt}
