@@ -668,6 +668,11 @@ export async function createSuperAdminHrAccount(
   }
 
   const db = getDb();
+  let reusedExisting = false;
+  const grantTime = new Date();
+  // Explicit expiry for newly created and reused recruiter grants.
+  const grantExpiry = new Date(Date.UTC(grantTime.getUTCFullYear(),
+    grantTime.getUTCMonth() + 3, grantTime.getUTCDate(), grantTime.getUTCHours()));
 
   try {
     await db.transaction(async (tx) => {
@@ -754,27 +759,56 @@ export async function createSuperAdminHrAccount(
         });
 
       if (!profile) {
-        throw new PlacementsServiceError(
-          "PLACEMENT_RECRUITER_COMPANY_CONFLICT",
-        );
+        const [existing] = await tx.select({
+          companyId: placementRecruiterProfiles.companyId,
+          status: placementRecruiterProfiles.status,
+        }).from(placementRecruiterProfiles)
+          .where(eq(placementRecruiterProfiles.userId, identity.userId))
+          .for("update").limit(1);
+        if (!existing || existing.companyId !== relationship.companyId ||
+          existing.status !== "ACTIVE") {
+          throw new PlacementsServiceError("PLACEMENT_RECRUITER_COMPANY_CONFLICT");
+        }
+        reusedExisting = true;
       }
 
-      await tx
-        .insert(placementRecruiterCollegeGrants)
+      const [newGrant] = await tx.insert(placementRecruiterCollegeGrants)
         .values({
           recruiterUserId: identity.userId,
-          companyRelationshipId:
-            relationship.relationshipId,
+          companyRelationshipId: relationship.relationshipId,
           grantedByUserId: context.user.id,
+          validUntil: grantExpiry,
+        }).onConflictDoNothing().returning({id: placementRecruiterCollegeGrants.id});
+      if (!newGrant) {
+        const [existingGrant] = await tx.select({
+          id: placementRecruiterCollegeGrants.id,
+          validUntil: placementRecruiterCollegeGrants.validUntil,
+        }).from(placementRecruiterCollegeGrants)
+          .where(and(eq(placementRecruiterCollegeGrants.recruiterUserId, identity.userId),
+            eq(placementRecruiterCollegeGrants.companyRelationshipId, relationship.relationshipId),
+            eq(placementRecruiterCollegeGrants.status, "ACTIVE")))
+          .for("update").limit(1);
+        if (!existingGrant) {
+          throw new PlacementsServiceError("PLACEMENT_RECRUITER_COMPANY_CONFLICT");
+        }
+        if (!existingGrant.validUntil || existingGrant.validUntil <= grantTime) {
+          await tx.update(placementRecruiterCollegeGrants)
+            .set({validUntil: grantExpiry, updatedAt: grantTime})
+            .where(eq(placementRecruiterCollegeGrants.id, existingGrant.id));
+        }
+      }
+      if (profile || newGrant) {
+        await recordActivityEventInTransaction(tx, context, {
+          eventType: profile ? ACTIVITY_EVENT_TYPES.PLACEMENTS_RECRUITER_CREATED
+            : ACTIVITY_EVENT_TYPES.PLACEMENTS_RECRUITER_COLLEGE_GRANTED,
+          collegeId: relationship.collegeId,
+          organizationId: relationship.organizationId,
+          subjectType: "recruiter", subjectId: identity.userId,
+          summary: profile ? "Recruiter account created" : "Existing recruiter granted college access",
+          metadata: {companyRelationshipId: relationship.relationshipId,
+            validUntil: grantExpiry.toISOString()},
         });
-      await recordActivityEventInTransaction(tx, context, {
-        eventType: ACTIVITY_EVENT_TYPES.PLACEMENTS_RECRUITER_CREATED,
-        collegeId: relationship.collegeId,
-        organizationId: relationship.organizationId,
-        subjectType: "recruiter", subjectId: identity.userId,
-        summary: "Recruiter account created",
-        metadata: {companyRelationshipId: relationship.relationshipId},
-      });
+      }
     });
   } catch (error) {
     if (isUniqueViolation(error)) {
@@ -785,10 +819,8 @@ export async function createSuperAdminHrAccount(
     throw error;
   }
 
-  return getSuperAdminHrAccount(
-    context,
-    identity.userId,
-  );
+  const account = await getSuperAdminHrAccount(context, identity.userId);
+  return {...account, reusedExisting};
 }
 
 export async function updateSuperAdminHrAccount(

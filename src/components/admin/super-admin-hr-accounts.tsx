@@ -312,7 +312,9 @@ export function SuperAdminHrAccounts({
 
     try {
       if (dialog.kind === "create") {
-        await requestJson(
+        const created = await requestJson<{
+          account: HrAccount & {reusedExisting?: boolean};
+        }>(
           "/api/admin/hr",
           "POST",
           {
@@ -330,12 +332,21 @@ export function SuperAdminHrAccounts({
           },
         );
 
-        showToast({
-          tone: "success",
-          title: "Recruiter account created",
-          description:
-            "The recruiter account and first college grant were created.",
-        });
+        if (created.account.reusedExisting) {
+          openDetail(created.account);
+          showToast({
+            tone: "success",
+            title: "Recruiter account found",
+            description: "A recruiter with this mobile already exists. Opening it so you can add colleges.",
+          });
+        } else {
+          showToast({
+            tone: "success",
+            title: "Recruiter account created",
+            description:
+              "The recruiter account and first college grant were created.",
+          });
+        }
       } else {
         const existing = dialog.account;
         const changes: Record<string, unknown> =
