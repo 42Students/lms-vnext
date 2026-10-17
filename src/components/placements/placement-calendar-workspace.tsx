@@ -1,3 +1,4 @@
+import {TpoWeekHourCalendar} from "@/components/placements/tpo-week-hour-calendar";
 import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
 import Link from "next/link";
 
@@ -900,7 +901,14 @@ export async function PlacementCalendarWorkspace({
         </div>
       </section>
 
-      {state.view !== "agenda" ? (
+      {isTpo&&state.view==="week"?<TpoWeekHourCalendar days={window.days}
+       nowIso={now.toISOString()} leads={displayedLeads} canCreate={calendarFollowupsWritable}
+       events={events.map(item=>({
+        id:item.id,title:item.title,companyName:item.companyName,kind:item.kind,
+        roundKind:item.roundKind,status:item.status,jobId:item.jobId,roundId:item.roundId,
+        startsAt:item.startsAt.toISOString(),endsAt:item.endsAt?.toISOString()??null,
+        href:eventHref(item,audience),
+       }))}/>:state.view !== "agenda" ? (
         <section
           aria-label={`${state.view} placement calendar`}
           className="overflow-x-auto rounded-xl border border-border bg-surface p-3"
