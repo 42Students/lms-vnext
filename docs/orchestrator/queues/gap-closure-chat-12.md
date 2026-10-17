@@ -18,8 +18,8 @@ Audit: `docs/audit/pages/tpo/students.md` (and `students-review.md` if present; 
 | TPO-students-12 | S2 | MISSING-ACTION | OPEN |
 | TPO-students-14 | S2 | MISSING-FIELD | OPEN |
 | TPO-students-15 | S2 | SIDE-EFFECT | UNCONFIRMED |
-| TPO-students-16 | S2 | MISSING-ACTION | OPEN |
-| TPO-students-17 | S2 | MISSING-ACTION | OPEN |
+| TPO-students-16 | S2 | MISSING-ACTION | DONE |
+| TPO-students-17 | S2 | MISSING-ACTION | DONE |
 | TPO-students-18 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | TPO-students-19 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | TPO-students-20 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
@@ -34,10 +34,10 @@ Audit: `docs/audit/pages/tpo/students.md` (and `students-review.md` if present; 
 | TPO-students-32 | S2 | STATE | DONE |
 | TPO-students-34 | S2 | SIDE-EFFECT | OPEN |
 | TPO-students-35 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| TPO-students-36 | S2 | MISSING-EXPORT | OPEN |
+| TPO-students-36 | S2 | MISSING-EXPORT | DONE |
 | TPO-students-54 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| TPO-students-13 | S3 | MISSING-ACTION | OPEN |
-| TPO-students-24 | S3 | MISSING-FILTER | OPEN |
+| TPO-students-13 | S3 | MISSING-ACTION | DONE |
+| TPO-students-24 | S3 | MISSING-FILTER | DONE |
 | TPO-students-25 | S3 | MISSING-FILTER | DONE |
 | TPO-students-27 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | TPO-students-37 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
@@ -96,7 +96,7 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 | TPO-requests-verification-17 | S3 | COPY | DONE |
 | TPO-requests-verification-25 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-requests-verification-27 | S3 | COPY | DONE |
-| TPO-requests-verification-28 | S3 | COPY | OPEN |
+| TPO-requests-verification-28 | S3 | COPY | DONE |
 | TPO-requests-verification-29 | S3 | MISSING-FIELD | DONE |
 | TPO-requests-verification-30 | S3 | SIDE-EFFECT | FIXED-ON-MAIN |
 | TPO-requests-verification-32 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
@@ -169,3 +169,11 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 
 - Round 30–32: `TPO-students-22` DONE after adding independent skill-name filter, retaining name/count filters and safe server-only matching in scoped export and journey links. `TPO-students-50` NOT-A-GAP: active application already implies registration with no explicit registration row; exact rule verified by test.
 - `TPO-requests-verification-R02` remains OPEN: last-resubmission audit snapshot diff + recruiter contact/access card implemented, agency status and deadline comparison not yet proven.
+
+## Round 34–42 checkpoint (chat-12)
+
+- Merged origin/main first by fast-forward. Source-backed DONE: TPO-students-13, TPO-students-16, TPO-students-17, TPO-students-24, TPO-students-36, TPO-requests-verification-28. Tests are authored but not executed.
+- Extended masked academic/profile and per-learner readiness details; -29/-31 remain OPEN until official PG/proof/assessment parity.
+- Existing first-publication `countPublishedDriveDebarments` already advances N-drive bans transactionally (`src/modules/placements/tpo-drive-publish-effects.ts`) but -06/-07 remain OPEN for the learner dispute path.
+- The signed XLSX route is read-only, TPO-scoped, protects chosen row membership and limits 5,000 rows; package dependencies unchanged.
+- All shell-only rows remain with chat-9; do not claim these gaps DONE from this lane.
