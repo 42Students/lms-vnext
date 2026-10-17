@@ -154,6 +154,10 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     {matching.length} matching {matching.length===1?"task":"tasks"} · {tasks.length} total in this project's full history.
     {!sprint&&!release&&scope==="current"?" Showing the current sprint and backlog. Switch “Sprint scope” to see everything.":""}
   </p>
+  {matching.length===0?<p role="status" className="rounded-lg border border-border p-4 text-sm text-body">
+    {tasks.length===0?"No tasks on this board yet. Create the first one to give the team somewhere to start.":
+      "No tasks match these filters. Clear all to see the board."}
+  </p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {undo?<button type="button" disabled={busy} className="text-sm font-semibold text-primary-text underline"
     onClick={()=>{const prior=undo;setUndo(null);void move(prior.id,prior.status);}}>Undo last move</button>:null}
