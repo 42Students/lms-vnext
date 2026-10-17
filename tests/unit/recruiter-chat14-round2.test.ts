@@ -47,9 +47,10 @@ describe("chat-14 recruiter reassignment batch 2",()=>{
   expect(hrApplicantFilterSchema.parse({offerState:"EXPIRED"}).offerState).toBe("EXPIRED");
   const service=read("src/modules/placements/hr-job-read-service.ts");
   expect(service).toContain("where ${placementOffers.status}='EXPIRED'");
-  expect(service).toContain('filters.offerState === "EXPIRED"');
-  // Legacy pre-issue/revoked states are represented in the filter,
-  // but the persisted placement_offers reader still needs a separate source.
+  expect(service).toContain('eq(placementOffers.status,filters.offerState)');
+  expect(service).toContain('placementDriveSelections.status');
+  expect(service).toContain('inArray(placementDriveSelections.status,["SELECTED","VERIFIED","CANCELLED"])');
+  // Selection history is read from the separate registered placement_drive_selections table.
   expect(HR_OFFER_STATES).toContain("SELECTED");
   expect(HR_OFFER_STATES).toContain("PENDING_VERIFICATION");
   expect(HR_OFFER_STATES).toContain("REVOKED");
