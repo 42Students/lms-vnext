@@ -67,6 +67,9 @@ export default async function RecruiterConversationDetail({params,searchParams}:
           </span>
           <span className="ml-2 rounded border border-border px-2 py-0.5 text-xs">{request.status}</span>
           <p className="mt-1 break-words text-body">{request.reason}</p>
+          {request.decisionNote?<p className="mt-2 break-words text-body">
+            <strong>Placement-cell response:</strong> {request.decisionNote}
+          </p>:null}
           <p className="mt-1 text-xs text-muted-foreground">
             {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(request.createdAt))}
           </p>
