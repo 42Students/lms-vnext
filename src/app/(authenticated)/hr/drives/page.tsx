@@ -183,8 +183,10 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
             Hire again with changes
           </Link>:null}
           {req.status==="REJECTED"&&req.decisionNote?<p className="mt-2 text-sm text-body">Declined: “{req.decisionNote}”</p>:null}
-          {req.approvedJobId?<Link href={"/recruiter/drives/"+encodeURIComponent(req.approvedJobId)+"?tab=overview&returnTo="+encodeURIComponent(returnTo)}
-            className="mt-2 block text-sm text-primary-text underline">Open approved drive</Link>:null}
+          {req.approvedJobId && req.status==="DRAFT"?
+            <p role="status" className="mt-2 text-sm text-body">Approved · draft. The placement cell will publish this drive before students can apply.</p>:null}
+          {req.approvedJobId && req.status!=="DRAFT"?<Link href={"/recruiter/drives/"+encodeURIComponent(req.approvedJobId)+"?tab=overview&returnTo="+encodeURIComponent(returnTo)}
+            className="mt-2 block text-sm text-primary-text underline">Open published drive</Link>:null}
         </li>;
       })}</ul>
     </section>:null}
