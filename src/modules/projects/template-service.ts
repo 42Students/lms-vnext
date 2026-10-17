@@ -626,28 +626,32 @@ export async function archiveProjectTemplate(
   context: RequestContext,
   templateIdInput: string,
 ) {
-  requirePermission(context, "project-template.manage");
+  requirePermission(context,"project-template.manage");
   const templateId=projectTemplateIdSchema.parse(templateIdInput);
   return getDb().transaction(async tx=>{
-    const [locked]=await tx.select().from(projectTemplates)
+    const [template]=await tx.select().from(projectTemplates)
       .where(eq(projectTemplates.id,templateId)).for("update").limit(1);
-    if(!locked)throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_FOUND");
-    if(locked.status==="ARCHIVED")return locked;
+    if(!template)throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_FOUND");
+    if(template.status==="ARCHIVED")return template;
+    // Lock before dependency check: a competing college assignment must not
+    // silently slip into the archive transaction.
     const [activeAssignment]=await tx.select({id:projectTemplateCollegeAssignments.id})
       .from(projectTemplateCollegeAssignments)
       .where(and(eq(projectTemplateCollegeAssignments.templateId,templateId),
         isNull(projectTemplateCollegeAssignments.revokedAt))).limit(1);
     if(activeAssignment)throw new ProjectsServiceError("PROJECT_TEMPLATE_HAS_ACTIVE_ASSIGNMENTS");
     const now=new Date();
-    const [archived]=await tx.update(projectTemplates).set({
-      status:"ARCHIVED",archivedAt:now,updatedAt:now,
-    }).where(eq(projectTemplates.id,templateId)).returning();
-    if(!archived)throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_FOUND");
+    const [archived]=await tx.update(projectTemplates)
+      .set({status:"ARCHIVED",archivedAt:now,updatedAt:now})
+      .where(and(eq(projectTemplates.id,templateId),
+        eq(projectTemplates.status,template.status))).returning();
+    if(!archived)throw new ProjectsServiceError("PROJECT_TEMPLATE_STALE_VERSION");
     await recordActivityEventInTransaction(tx,context,{
       eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_ARCHIVED,
-      subjectType:"project_template",subjectId:templateId,subjectLabel:archived.title,
-      summary:"Super Admin archived project template",
-      importance:"HIGH",metadata:{version:archived.currentVersion},
+      subjectType:"project_template",subjectId:templateId,subjectLabel:template.title,
+      summary:"Project template archived",
+      metadata:{previousStatus:template.status,previousPublishedVersion:template.publishedVersion,
+        activeCollegeAssignments:0},groupKey:"template:"+templateId,
     });
     return archived;
   });
