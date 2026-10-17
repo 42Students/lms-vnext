@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { LearnerPlacementJobs, type LearnerPlacementJobItem } from "./learner-placement-jobs";
+import {LearnerSaveDriveButton} from "./learner-save-drive-button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
   learnerJobDetailSummary,
@@ -23,10 +24,11 @@ function statusTone(status: "PASS" | "FAIL" | "MISSING") {
 }
 
 export function LearnerPlacementJobDetail({
-  items,returnHref="/learn/my-placements/jobs",
+  items,returnHref="/learn/my-placements/jobs",initialSaved=false,
 }: {
   items: readonly LearnerPlacementJobItem[];
   returnHref?:string;
+  initialSaved?:boolean;
 }) {
   const summary = learnerJobDetailSummary(items);
   if (!summary) return null; // route has already returned notFound()
@@ -92,6 +94,7 @@ export function LearnerPlacementJobDetail({
           </div>
         </dl>
         <div className="mt-5 flex flex-wrap gap-3">
+          <LearnerSaveDriveButton jobId={item.job.id} initialSaved={initialSaved}/>
           <a href="#job-role-options" className="inline-flex min-h-11 items-center rounded-lg bg-primary px-5 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
             {summary.appliedCount ? "View my application" : "See roles & application"} ↓
           </a>
@@ -267,7 +270,7 @@ export function LearnerPlacementJobDetail({
             My applications →
           </Link>
         </div>
-        <LearnerPlacementJobs items={items} />
+        <LearnerPlacementJobs items={items} savedJobIds={initialSaved?[item.job.id]:[]} />
       </section>
     </main>
   );
