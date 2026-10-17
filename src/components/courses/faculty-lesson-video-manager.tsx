@@ -134,6 +134,7 @@ export function FacultyLessonVideoManager({
     if(video.processingStatus!=="READY"){setError("Video must be ready before linking to a lesson.");return;}
     if(!video.durationSeconds){setError("Set a valid duration before adding video lesson content.");return;}
     const points=Number(contentPoints);
+    if(!contentPoints.trim()){setError("Points are required.");return;}
     if(!Number.isInteger(points)||points<0||points>1000){setError("Enter Points from 0 to 1000.");return;}
     run(async signal=>{
       const key=`video-asset/${video.id}`;
