@@ -102,7 +102,7 @@ export async function bulkChangeTpoLeadStages(
       module:"PLACEMENTS",eventType:"PLACEMENTS_RECRUITER_BULK_STAGE",
       subjectType:"placement_tpo_lead",subjectId:results[0].leadId,
       summary:"Bulk recruiter lead stage update",
-      metadata:{action:input.action,leadIds:results.map(r=>r.leadId),counts},
+      metadata:{action:input.action,leadIds:results.map(r=>r.leadId),counts,undoVersion:1,changed},
     }).returning({id:activityEvents.id});
     if(!runAudit)throw new Error("TPO_RECRUITER_BULK_AUDIT_MISSING");
     return { results, counts, runAuditId:runAudit.id };
