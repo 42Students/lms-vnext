@@ -487,6 +487,7 @@ export default async function TpoStudentsPage({
 
         </div>
 
+        <p className="mt-3 text-sm text-body" aria-live="polite">Journey of the {summary.activeLearners} students in {query.batchId?"this batch":query.programId?"this program":query.branchId?"this branch":"placements"}.</p>
         <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Student placement journey">
          {tpoStudentJourneySteps(summary).map(step=><div key={step.label} className="rounded-lg border border-border bg-surface p-4">
           <h3 className="text-sm font-semibold">{step.label}</h3>
@@ -657,7 +658,7 @@ export default async function TpoStudentsPage({
             <h2 className="text-lg font-semibold text-foreground">
               Students roster
             </h2>
-            <p className="mt-1 text-sm text-body">
+            <p className="mt-1 text-sm text-body" aria-live="polite">
               {roster.total} students in this view · showing {firstItem}–{lastItem}
             </p>
           </div>
