@@ -94,10 +94,16 @@ export default async function TpoHome(){
  ]):[null,null];
  const shownEligible=shownEligibility?.summary.complete?shownEligibility.summary.eligible:null;
  const shownRegistered=shownRegistrations?.available?shownRegistrations.registered:null;
+ // TPO-home-04: use the actual persisted placed-learner summary scoped to
+ // the visible batch. Never substitute the all-college placed count.
+ const shownPlaced=firstBatch
+  ?(await getTpoStudentsIntelligence(ctx,{collegeId,batchId:firstBatch.id,
+      page:1,pageSize:1})).summary.placed
+  :null;
  const rows=buildTpoLegacyHomeRows({
   batch:firstBatch?{name:firstBatch.name,invited:!!firstBatch.invitedAt,
    eligible:shownEligible,
-   registered:shownRegistered,placed:null}:null,
+   registered:shownRegistered,placed:shownPlaced}:null,
   hasUninvitedBatch:batches.batches.some(batch=>!batch.invitedAt),
   moreBatches:Math.max(0,batches.batches.length-1),
   liveDrives:operations.summary.publishedJobs,driveAttention:operations.summary.jobsNeedingAttention,
