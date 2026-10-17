@@ -83,7 +83,9 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
      setPendingAction(null);
      throw Error("The request changed since it was opened. Reload the current details before deciding again.");
     }
-    throw Error(payload.error??"Decision failed");
+    throw Error(apiBase==="/api/tpo/verification"
+     ?(action==="VERIFY"?"Could not verify":"Could not send it back")
+     :(payload.error??"Decision failed"));
    }
    setPendingAction(null);onSaved(action);
   }catch(e){setError(e instanceof Error?e.message:"Decision failed");}
