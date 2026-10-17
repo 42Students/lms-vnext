@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, count, desc, eq, gte, lte, type SQL } from "drizzle-orm";
+import { and, count, desc, asc, eq, gte, lte, type SQL } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { activityEvents,users } from "@/db/schema";
 import { parseActivityDateBoundary } from "@/modules/activity/date-boundary";
@@ -60,7 +60,8 @@ export async function getTpoActorAudit(
       .from(activityEvents)
       .leftJoin(users,eq(users.id,activityEvents.actorUserId))
       .where(scope)
-      .orderBy(desc(activityEvents.occurredAt), desc(activityEvents.id))
+      .orderBy(query.sort==="OLDEST"?asc(activityEvents.occurredAt):desc(activityEvents.occurredAt),
+       query.sort==="OLDEST"?asc(activityEvents.id):desc(activityEvents.id))
       .limit(options.exportLimit ?? query.pageSize)
       .offset(options.exportLimit ? 0 : (query.page - 1) * query.pageSize),
   ]);
