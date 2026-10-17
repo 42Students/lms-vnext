@@ -41,7 +41,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
    });
    if(!response.ok)throw Error(response.status===409?"Task changed. Refresh the Board.":"Task could not be moved.");
    const data=await response.json() as {task:Task};
-   setUndo({taskId,status:task.status as EditableStatus,blockerReason:task.blockerReason});
+   setUndo(isUndo?null:{taskId,status:task.status as EditableStatus,blockerReason:task.blockerReason});
    setTasks(rows=>rows.map(row=>row.id===taskId?{...row,...data.task,updatedAt:new Date(data.task.updatedAt)}:row));
    router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Task update failed.");}
