@@ -9,7 +9,7 @@ export const adminCompaniesQuerySchema = z.strictObject({
   collegeId: z.uuid().optional(),
   companyId: z.uuid().optional(),
   sort: z.enum(["NAME","RECENT"]).default("NAME"),
-  searchField: z.enum(["NAME","DOMAIN"]).default("NAME"),
+  searchField: z.enum(["ALL","NAME","DOMAIN"]).default("ALL"),
   owner: z.enum(["ALL","ASSIGNED","UNASSIGNED"]).default("ALL"),
   website: z.enum(["ALL","HAS_WEBSITE","MISSING_WEBSITE"]).default("ALL"),
   changedWithin: z.enum(["ALL","7","30","90"]).default("ALL"),
