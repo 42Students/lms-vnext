@@ -92,6 +92,7 @@ export const tpoStudentsQuerySchema = z
     profileStatus:z.enum(["VERIFIED","WAITING","SENT_BACK","NOT_VERIFIED"]).optional(),
     legacyStage:z.enum(["ELIGIBLE","INVITED","REGISTERED","VERIFIED","PLACED"]).optional(),
     minRoundReached:z.coerce.number().int().min(0).max(10000).optional(),
+    interviewedWith:z.string().trim().max(100).optional(),
     needsAttention:z.enum(["YES","NO"]).transform(x=>x==="YES").optional(),
     debarred:z.enum(["YES","NO"]).transform(x=>x==="YES").optional(),
     gender:z.enum(["Male","Female","Other"]).optional(),

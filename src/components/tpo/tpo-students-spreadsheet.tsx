@@ -45,7 +45,8 @@ const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"furthest",label:"Furthest round",read:row=>row.maximumAppliedRoundSequence??"Not recorded"},
  {key:"registration",label:"Placement registration",read:row=>row.registrationChoice??"Not registered"},
  {key:"participation",label:"Participation",read:row=>tpoStudentDisplayLabel(row.participationStatus)},
- {key:"best",label:"Best so far",read:row=>row.bestCompany?row.bestCompany+": "+tpoStudentDisplayLabel(row.bestSoFar):tpoStudentDisplayLabel(row.bestSoFar)},
+ {key:"best",label:"Best so far",read:row=>(row.bestCompany?row.bestCompany+": ":"")+tpoStudentDisplayLabel(row.bestSoFar)+
+  ((row.interviewedCompanies?.length??0)>1?" · +"+((row.interviewedCompanies?.length??1)-1)+" more":"")},
  {key:"applications",label:"Applications",read:row=>row.applicationCount},
  {key:"offers",label:"Offers",read:row=>row.offerCount},
  {key:"offersAwaiting",label:"Offers waiting on their answer",read:row=>row.offersAwaitingAnswer},
