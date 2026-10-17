@@ -210,6 +210,7 @@ export function summarizePlacementCalendar(
     next:
       sorted.find(
         (event) =>
+          event.kind !== "BLOCKED" &&
           event.startsAt.getTime() >=
             now.getTime() &&
           !(
