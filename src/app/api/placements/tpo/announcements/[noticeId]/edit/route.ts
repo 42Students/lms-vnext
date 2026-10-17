@@ -22,6 +22,11 @@ export async function POST(request: Request, {params}: {params: Promise<{noticeI
     buttonUrl:String(form?.get("buttonUrl")??"").trim()||undefined,
     pinned: form?.get("pinned") === "on",
     notifyChanged:form?.get("notifyChanged")==="on",
+    audienceChange:form?.get("changeAudience")==="on"?{
+     audience:form?.get("audience"),
+     targetId:String(form?.get("targetId")??"").trim()||undefined,
+     targetIds:form?.getAll("targetIds").map(String).filter(Boolean),
+    }:undefined,
     sendAt:form?.has("sendAt")?String(form.get("sendAt")??""):undefined,
     showUntil:form?.has("showUntil")?String(form.get("showUntil")??""):undefined,
   });
@@ -38,6 +43,12 @@ export async function POST(request: Request, {params}: {params: Promise<{noticeI
       return noticePostError(request,"INVALID_BODY",400);
     if (error instanceof Error && error.message === "ANNOUNCEMENTS_NOT_REGISTERED")
       return noticePostError(request,"ANNOUNCEMENTS_NOT_REGISTERED",503);
+    if(error instanceof Error && error.message==="TPO_NOTICE_AUDIENCE_LOCKED")
+      return noticePostError(request,"AUDIENCE_LOCKED",409);
+    if(error instanceof Error && error.message==="TPO_NOTICE_NO_RECIPIENTS")
+      return noticePostError(request,"NO_RECIPIENTS",400);
+    if(error instanceof Error && error.message==="TARGETED_NOTICES_NOT_REGISTERED")
+      return noticePostError(request,"TARGETED_NOTICES_NOT_REGISTERED",503);
     if(error instanceof Error && error.message==="TPO_NOTICE_INVALID_TIME")
       return noticePostError(request,"INVALID_TIME",400);
     if (error instanceof Error && error.message === "ANNOUNCEMENT_NOT_FOUND")

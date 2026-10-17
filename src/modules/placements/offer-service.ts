@@ -14,6 +14,7 @@ import {placementWaitlistPromotions} from "@/db/schema/placement-waitlist-promot
 type PlacementDb = ReturnType<typeof getDb>;
 type PlacementTx = Parameters<Parameters<PlacementDb["transaction"]>[0]>[0];
 import { deliverInAppNotificationInTransaction } from "@/modules/activity/notification-service";
+import {deliverRecordedLearnerPlacementEvent} from "./learner-placement-event-delivery";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
@@ -829,7 +830,7 @@ export async function actOnPlacementOffer(
         );
       }
 
-      await recordActivityEventInTransaction(
+      const acceptedNoticeEvent=await recordActivityEventInTransaction(
         tx,
         context,
         {
@@ -856,6 +857,11 @@ export async function actOnPlacementOffer(
             `placement-offer:${updated.id}:accepted`,
         },
       );
+      await deliverRecordedLearnerPlacementEvent(tx,{
+        eventId:acceptedNoticeEvent.id,collegeId:current.job.collegeId,
+        membershipId:current.application.membershipId,
+        kind:"APPLICATION_STATUS_CHANGED",subject:"Offer accepted for "+current.job.title,
+      });
 
       return { ...updated, cascadeId };
     }
@@ -913,7 +919,7 @@ export async function actOnPlacementOffer(
             input.reason ?? null,
         });
 
-      await recordActivityEventInTransaction(
+      const declinedNoticeEvent=await recordActivityEventInTransaction(
         tx,
         context,
         {
@@ -937,6 +943,11 @@ export async function actOnPlacementOffer(
             `placement-offer:${updated.id}:declined`,
         },
       );
+      await deliverRecordedLearnerPlacementEvent(tx,{
+        eventId:declinedNoticeEvent.id,collegeId:current.job.collegeId,
+        membershipId:current.application.membershipId,
+        kind:"APPLICATION_STATUS_CHANGED",subject:"Offer declined for "+current.job.title,
+      });
 
       return updated;
     }

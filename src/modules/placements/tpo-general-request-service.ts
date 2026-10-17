@@ -11,6 +11,7 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy";
 import {requirePlacementManageScope} from "./scope";
 import {placementTableExists} from "./staged-tables";
+import {deliverRecordedLearnerPlacementEvent} from "./learner-placement-event-delivery";
 import {tpoGeneralRequestInputSchema,tpoGeneralRequestDecisionSchema,tpoGeneralRequestTarget,
  tpoGeneralRequestPayload} from "./tpo-general-request-model";
 export class TpoGeneralRequestError extends Error{
@@ -260,12 +261,11 @@ export async function decideTpoGeneralRequest(ctx:RequestContext,rawId:unknown,r
   const [member]=await tx.select({userId:collegeMemberships.userId}).from(collegeMemberships)
    .where(and(eq(collegeMemberships.id,row.membershipId),eq(collegeMemberships.collegeId,college.id))).limit(1);
   if(!member||!event)throw new TpoGeneralRequestError("SCOPE");
-  await tx.insert(inAppNotifications).values({
-   userId:member.userId,eventId:event.id,
-   title:nextStatus==="APPROVED"?"Placement request approved":"Placement request declined",
-   body:decision.note||"The placement cell reviewed your request.",
-   actionHref:"/learn/my-placements",
-  }).onConflictDoNothing();
+  await deliverRecordedLearnerPlacementEvent(tx,{
+   eventId:event.id,collegeId:college.id,membershipId:row.membershipId,
+   kind:"REQUEST_DECIDED",
+   subject:(nextStatus==="APPROVED"?"Approved: ":"Declined: ")+(decision.note||row.kind.replaceAll("_"," ").toLowerCase()),
+  });
   return {id:row.id,status:nextStatus,effect};
  });
 }

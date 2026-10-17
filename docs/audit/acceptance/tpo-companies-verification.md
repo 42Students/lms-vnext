@@ -55,3 +55,11 @@ Builder did not run tests, lint, typecheck, or PostgreSQL integration.
 | ID | Decision | Evidence |
 | --- | --- | --- |
 | TPO-companies-20 | NOT-A-GAP (intentional complementary identity views) | Default Companies landing redirects to the legacy Engage Companies tab; explicit `name` maintains grouped Company Memory, and `directory=1` with advanced filters preserves relationship-ID directory deep links. Removing either would break valid bookmarks or conflate similarly named company relationships across college-scoped identities. `src/app/(authenticated)/tpo/companies/page.tsx`; `tests/unit/chat2-campaign-open-increments.test.ts` **TPO-companies-20 routes the default list…**. Counts remain based on real offers per college, not cross-tenant merging. |
+
+
+## Chat-2 gap-closure continuation (2026-10-18)
+| ID | Evidence and status |
+| --- | --- |
+| TPO-companies-05 | **OPEN.** The canonical Company page and grouped Company Memory remain college-scoped, but an embedded persisted object Team conversation, company mentions/asks and Open in Team affordance cannot be considered complete until the Team kind model exists. No faux messages are displayed. |
+| TPO-companies-04 / 25 / R03 | **Prior delegated decisions remain.** Trusted badge never auto-approves a recruiter drive request; CRM API gate checks actual schema readiness; company writes require verified scoped placement access. Tests `chat2-unconfirmed-recruiter-company-decisions.test.ts`. |
+| TPO-companies-20 / 21 | **Prior source evidence retained.** Default Companies lands in Engage, explicit directory or grouped Company Memory deep links remain, friendly separate not-found/retry and policy-warning behavior is preserved. |

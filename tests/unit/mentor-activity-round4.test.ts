@@ -7,7 +7,10 @@ describe("chat-11 mentor activity and resource parity",()=>{
  it("MEN-projects-meetings-54 offers mentor-only visibility and row tag",()=>{
   const form=source("src/components/projects/project-resource-controls.tsx");
   expect(form).toContain('value="MENTOR_ONLY"');
-  expect(source("src/components/projects/project-workspace.tsx")).toContain('resource.visibility === "MENTOR_ONLY"');
+  const resourceList=source("src/components/projects/project-resource-list.tsx");
+  expect(resourceList).toContain('resource.visibility==="MENTOR_ONLY"&&mode!=="LEARNER"');
+  expect(resourceList).toContain("Mentors only");
+  expect(source("src/components/projects/project-workspace.tsx")).toContain("<ProjectResourceList");
  });
  it("MEN-projects-meetings-59 supports activity source and bounded date range filters",()=>{
   const ui=source("src/components/projects/project-activity-filtered-list.tsx");
@@ -24,6 +27,6 @@ describe("chat-11 mentor activity and resource parity",()=>{
   expect(mentorActivityRelativeTime("2099-01-01T00:00:00Z","2099-01-01T01:00:00Z")).toBe("1h ago");
   expect(mentorActivityRelativeTime("2099-01-01T00:00:00Z","2099-01-03T00:00:00Z")).toBe("2d ago");
   expect(source("src/components/projects/project-activity-filtered-list.tsx")).toContain("title={new Date(event.occurredAt).toLocaleString");
-  expect(source("src/components/projects/project-workspace.tsx")).toContain("now={renderTime.toISOString()}");
+  expect(source("src/components/projects/project-workspace.tsx")).toContain("now={new Date().toISOString()}");
  });
 });
