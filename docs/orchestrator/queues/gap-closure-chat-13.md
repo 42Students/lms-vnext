@@ -50,7 +50,7 @@ Audit: `docs/audit/pages/superadmin/placements-projects-a-placements.md` (and `p
 | SA-placements-projects-35 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-placements-projects-36 | S3 | COPY | FIXED-ON-MAIN |
 | SA-placements-projects-37 | S3 | VALIDATION | UNCONFIRMED |
-| SA-placements-projects-39 | S3 | SIDE-EFFECT | UNCONFIRMED |
+| SA-placements-projects-39 | S3 | SIDE-EFFECT | FIXED-ON-MAIN |
 | SA-placements-projects-43 | S3 | COPY | FIXED-ON-MAIN |
 | SA-placements-projects-44 | S3 | COPY | FIXED-ON-MAIN |
 | SA-placements-projects-46 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
@@ -72,7 +72,7 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 | SA-academics-people-20 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-academics-people-22 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-academics-people-29 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| SA-academics-people-31 | S2 | MISSING-ACTION | UNCONFIRMED |
+| SA-academics-people-31 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-academics-people-38 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-academics-people-R02 | S2 | PERMISSION | FIXED-ON-MAIN |
 | SA-academics-people-01 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
@@ -103,7 +103,7 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 | SA-academics-people-35 | S4 | PERFORMANCE | FIXED-ON-MAIN |
 | SA-academics-people-36 | S4 | COPY | FIXED-ON-MAIN |
 | SA-academics-people-37 | S4 | COPY | FIXED-ON-MAIN |
-| SA-academics-people-39 | S4 | RESPONSIVE | UNCONFIRMED |
+| SA-academics-people-39 | S4 | RESPONSIVE | FIXED-ON-MAIN |
 | SA-academics-people-40 | S4 | A11Y | FIXED-ON-MAIN |
 | SA-academics-people-42 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-academics-people-43 | S4 | VALIDATION | FIXED-ON-MAIN |
