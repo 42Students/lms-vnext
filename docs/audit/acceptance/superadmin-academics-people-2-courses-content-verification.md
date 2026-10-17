@@ -50,3 +50,9 @@ Remaining: course field/policy parity, lesson-level operations, class-by-course 
 | SA-academics-people-75 | DONE (source) | Responsive course workspace uses DataTable; mobile browser signoff pending; decision evidence: `docs/audit/acceptance/chat-6-unconfirmed-decisions.md`; test: `tests/unit/chat6-unconfirmed-decisions-round13.test.ts` → `SA-academics-people-75` |
 
 | SA-academics-people-54 | OPEN (page-size and Refresh now authored; image and short title pending -50) | `src/modules/courses/college-course-catalogue-model.ts`, `src/app/(authenticated)/admin/courses/page.tsx`, `src/components/courses/admin-course-overview.tsx`; `tests/unit/chat6-superadmin-course-pagination-54.test.ts` → `SA-academics-people-54 supports stable search sort and 25/50/100-page URL persistence`, `SA-academics-people-54 wires bounded UI page size and Refresh into the Super Admin page`. No claim of full parity before the course short title / image fields. |
+
+### Chat-6 legacy course field wording — SA-academics-people-55
+
+| ID | Status | Evidence and remaining acceptance |
+|---|---|---|
+| SA-academics-people-55 | OPEN (edit label now aligned; full field/archive copy parity remains) | `src/components/courses/admin-course-actions.tsx` uses the canonical `COLLEGE_COURSES_COPY.nameLabel` ('Course Name') in the edit form and retains immutable department + unsaved-edit confirmation. `tests/unit/chat6-superadmin-course-edit-copy-55.test.ts` documents the legacy headings and messages. Short-title semantics still need a data model decision, not a mislabeled course code. |
