@@ -172,6 +172,14 @@ export default async function TpoPlacementSummaryPage({
              </select>
             </label>
             <button type="submit" className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary">Apply</button>
+            {(companyId||workMode||payCategory)?<a href={"/tpo/reports/placement-summary?"+
+             new URLSearchParams({
+              ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
+              ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{}),
+             }).toString()} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+              Clear drive dimensions
+             </a>:null}
+
           </form>
           {!validFilters?<p role="alert" className="rounded-md border border-border p-3 text-sm text-warning-text">
            One or more selected drive dimensions are invalid for this college. Clear the filters.
