@@ -49,3 +49,6 @@ docs/orchestrator/unit-failures-r1.md lists the unit tests that fail on main and
 
 ## Typecheck errors (added 2026-10-17 23:15)
 docs/orchestrator/typecheck-errors.md lists tsc errors on main that block the deploy. Fix the ones in your area FIRST in your next round (restore missing schema exports, state variables, props that merge conflicts dropped), then continue your queue.
+
+## UNCONFIRMED gaps are yours to decide (added 2026-10-17)
+docs/orchestrator/queues/unconfirmed-decisions.md lists gaps that could not be confirmed from code. The owner said: decide the best behaviour yourself, do not follow the old LMS where it is wrong. Take the section for your lane, decide, implement if needed, document the decision in the acceptance file with the gap ID, add a test named with the ID. Do this after your typecheck and test fixes.
