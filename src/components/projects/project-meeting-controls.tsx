@@ -48,6 +48,7 @@ function toIso(value: string) {
 
 function MeetingFields({
   isRequest=false,
+  minStart,
   title,
   agenda,
   startsAt,
@@ -60,6 +61,7 @@ function MeetingFields({
   onTimeZone,
 }: {
   isRequest?:boolean;
+  minStart?:string;
   title: string;
   agenda: string;
   startsAt: string;
@@ -106,6 +108,7 @@ function MeetingFields({
           <Input
             type="datetime-local"
             required
+            min={isRequest?minStart:undefined}
             value={startsAt}
             onChange={(event) =>
               onStartsAt(event.target.value)
@@ -157,12 +160,14 @@ export function RequestProjectMeetingControl({
   const [endsAt, setEndsAt] = useState("");
   const [timeZone, setTimeZone] =
     useState("UTC");
+  const [minStart,setMinStart]=useState("");
   const [pending, setPending] =
     useState(false);
   const [error, setError] =
     useState<string | null>(null);
 
   function openDialog() {
+    setMinStart(toLocalInput(new Date()));
     setTimeZone(
       Intl.DateTimeFormat()
         .resolvedOptions().timeZone || "UTC",
@@ -176,6 +181,10 @@ export function RequestProjectMeetingControl({
   ) {
     event.preventDefault();
     setError(null);
+    if(startsAt && new Date(startsAt).getTime()<Date.now()){
+      setError("Preferred date cannot be in the past.");
+      return;
+    }
     if (
       !startsAt ||
       !endsAt ||
@@ -239,6 +248,7 @@ export function RequestProjectMeetingControl({
         >
           <MeetingFields
             isRequest
+            minStart={minStart}
             title={title}
             agenda={agenda}
             startsAt={startsAt}
