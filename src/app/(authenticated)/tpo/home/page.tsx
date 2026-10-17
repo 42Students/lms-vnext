@@ -44,11 +44,11 @@ export default async function TpoHome(){
    getTpoPlacementTeam(ctx,collegeId),
    listMyTpoInternalThreads(ctx),
    listPlacementCalendarEvents(ctx,{collegeId,from:placementCalendarDayKey(calendarNow),
-    to:placementCalendarDayKey(weekEnd),includeDraftDeadlines:true}),
+    to:placementCalendarDayKey(weekEnd),includeDraftDeadlines:true}).catch(()=>null),
  ]);
  const pendingRequests=pendingTpoRequestsAction(pendingRequestCount);
- const crmCounts=crmReady?await getTpoHomeCrmCounts(ctx,collegeId):null;
- const weekNext=weekEvents.events.filter(event=>event.startsAt>=calendarNow&&
+ const crmCounts=crmReady?await getTpoHomeCrmCounts(ctx,collegeId).catch(()=>null):null;
+ const weekNext=(weekEvents?.events??[]).filter(event=>event.startsAt>=calendarNow&&
   (event.kind==="ROUND"||event.kind==="APPLICATION_DEADLINE"))
    .sort((a,b)=>a.startsAt.getTime()-b.startsAt.getTime())
    .map(event=>({startsAt:event.startsAt,title:event.companyName+" · "+event.title}));
@@ -98,7 +98,7 @@ export default async function TpoHome(){
   pendingRequests:pendingRequestCount,
   messages:unreadMessages,teamAsks:null,teamMentions:null,
   teamUnread:teamThreads.status==="READY"?teamThreads.items.reduce((sum,item)=>sum+item.unreadCount,0):null,
-  upcoming:weekNext,
+  upcoming:weekNext,calendarAvailable:weekEvents!==null,
  });
  const next=buildTpoLegacyNextUp({
   needsYou:[
