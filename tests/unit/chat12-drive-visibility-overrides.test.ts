@@ -12,7 +12,8 @@ describe("TPO drive visibility overrides",()=>{
  it("TPO-students-12 requires a reason to include or exclude, but permits explicit clear",()=>{
   expect(tpoDriveVisibilityValid({jobId:"a",decision:"INCLUDE",reason:"",count:1})).toBe(false);
   expect(tpoDriveVisibilityValid({jobId:"a",decision:"EXCLUDE",reason:"Valid reason",count:1})).toBe(true);
-  expect(tpoDriveVisibilityValid({jobId:"a",decision:"CLEAR",reason:"",count:1})).toBe(true);
+  expect(tpoDriveVisibilityValid({jobId:"a",decision:"CLEAR",reason:"",count:1})).toBe(false);
+  expect(tpoDriveVisibilityValid({jobId:"a",decision:"CLEAR",reason:"Clear override",count:1})).toBe(true);
  });
  it("TPO-students-12 uses scoped PUT/DELETE eligibility APIs and a guarded confirmation",()=>{
   const page=src("src/app/(authenticated)/tpo/students/page.tsx");
