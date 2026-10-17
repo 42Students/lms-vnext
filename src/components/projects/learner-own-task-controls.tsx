@@ -30,7 +30,9 @@ export function LearnerAddOwnTask({projectId,sprints}:{projectId:string;sprints:
     taskType:type||null,
     expectedSprintUpdatedAt:sprint?new Date(sprint.updatedAt).toISOString():null,
    });
-   setOpen(false);setTitle("");setDescription("");setAcceptance("");router.refresh();
+   setOpen(false);setTitle("");setDescription("");setApproach("");
+   setAcceptance("");setBlockerReason("");setStatus("TODO");setPriority("MEDIUM");
+   setEstimate("");setDue("");setType("");router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not create task");}
   finally{setBusy(false);}
  }
