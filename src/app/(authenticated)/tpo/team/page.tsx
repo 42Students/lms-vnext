@@ -67,7 +67,7 @@ export default async function TpoTeamPage({searchParams}:{
  const conversationPage=parsed.success?(parsed.data.page??1):1;
  const conversations=tab==="conversations"?await listMyTpoInternalThreads(context,search,conversationPage)
   .catch(()=>({status:"FAILED" as const,items:[]})):null;
- const filter=parsed.success?(parsed.data.filter??"ALL"):"ALL";
+ const filter=parsed.success?(parsed.data.filter??"FOLLOWING"):"FOLLOWING";
  const conversationCounts=conversations?.status==="READY"?tpoTeamConversationCounts(conversations.items):null;
  const visibleConversations=conversations?.status==="READY"?filterTpoTeamConversations(conversations.items,filter):[];
  return <div className="space-y-6">
