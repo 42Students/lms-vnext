@@ -66,3 +66,6 @@ Remaining TPO Home gaps continue in `docs/orchestrator/queues/gap-closure-chat-4
 | TPO-home-R05 | DONE (source) | `src/app/(authenticated)/tpo/home/page.tsx` fetches the next 7 days of authorized calendar events, filters ROUND / APPLICATION_DEADLINE, creates Company · event labels, and passes availability separately; `tpo-home-legacy-rows.ts` renders IST Today/Tomorrow labels. `tests/unit/chat4-tpo-home-secondary-revalidation.test.ts` test `TPO-home-R05`. No executed acceptance. |
 
 | TPO-home-R04 | PARTIAL | `src/app/(authenticated)/tpo/home/page.tsx` now ranks persisted team messages at priority 1 alongside requests/closing deadlines rather than priority 4; `src/modules/placements/tpo-home-deadline-signals.ts` preserves IST deadline priority 0/1; `tests/unit/chat4-tpo-next-up-priority-r04.test.ts` test `TPO-home-R04`. Exact historical subtypes TEAM_ASKS and all tie-breaking rules are not fully represented in vNext. |
+
+## chat-13 final sprint
+| TPO-home-R08 | DONE (source) | `src/app/(authenticated)/tpo/home/page.tsx` independently schedules all Home reads with `Promise.all`; full-operation and batch errors are isolated and yield explicit unavailable signals without fabricated zero counts. `tests/unit/chat13-final-sprint-tpo-home-r08.test.ts` test `TPO-home-R08`. Live timing and failure-injection verification pending orchestrator. |
