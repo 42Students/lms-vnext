@@ -3,6 +3,7 @@ import Link from "next/link";
 import {TpoSafeCsvDownload} from "@/components/tpo/tpo-safe-csv-download";
 import {Suspense} from "react";
 import {TpoStudentsSpreadsheet} from "@/components/tpo/tpo-students-spreadsheet";
+import {TpoStudentsSelectionProvider} from "@/components/tpo/tpo-students-selection";
 import {TpoStudentSavedViews} from "@/components/tpo/tpo-student-saved-views";
 import { TpoAcademicImportWorkspace } from "@/components/tpo/tpo-academic-import-workspace";
 import {TpoStudentNudgePanel} from "@/components/tpo/tpo-student-nudge-panel";
@@ -931,6 +932,7 @@ export default async function TpoStudentsPage({
             </div>
           </div>
         ) : null}
+        <TpoStudentsSelectionProvider key={"selection:"+query.batchId+":"+query.branchId+":"+roster.page+":"+query.pageSize+":"+query.search+":"+query.journeyState+":"+JSON.stringify(currentFilters)}>
         <Suspense fallback={<p role="status">Loading spreadsheet grid…</p>}>
           <TpoStudentsSpreadsheet rows={roster.items} programs={programChoices.map(([id,name])=>({id,name}))} classes={data.classChoices}
             afterCollege={afterCollege.entries} afterCollegeAvailable={afterCollege.available && manageAllowed}/>
@@ -967,6 +969,7 @@ export default async function TpoStudentsPage({
           />
         ) : null}
 
+        </TpoStudentsSelectionProvider>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-sm text-body">
             Page {roster.page} of {Math.max(1, roster.totalPages)}

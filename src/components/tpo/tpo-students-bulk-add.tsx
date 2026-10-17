@@ -5,6 +5,7 @@ import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 
 import { useState } from "react";
+import {useTpoStudentsSelection} from "./tpo-students-selection";
 import { useRouter } from "next/navigation";
 import type { BulkDriveResult } from "@/modules/placements/bulk-drive-model";
 import {
@@ -29,7 +30,10 @@ export function TpoStudentsBulkAdd({
   drives: readonly Drive[];
 }) {
   const router = useRouter();
-  const [selected, setSelected] = useState<string[]>([]);
+  const [localSelection, setLocalSelection] = useState<string[]>([]);
+  const shared=useTpoStudentsSelection();
+  const selected=shared?.selected??localSelection;
+  const setSelected=shared?.setSelected??setLocalSelection;
   const [driveId, setDriveId] = useState("");
   const [roles, setRoles] = useState<Role[]>([]);
   const [roleOptionId, setRoleOptionId] = useState("");
@@ -40,6 +44,7 @@ export function TpoStudentsBulkAdd({
   const [error, setError] = useState("");
   const [results, setResults] = useState<BulkDriveResult[]>([]);
   const names = new Map(learners.map((learner) => [learner.membershipId, learner.displayName]));
+  const pageSelected=selected.filter(id=>names.has(id));
 
   async function loadRoles(jobId: string) {
     setDriveId(jobId);
@@ -73,8 +78,8 @@ export function TpoStudentsBulkAdd({
   }
 
   async function submit() {
-    if (busy || !driveId || !roleOptionId || selected.length === 0) return;
-    const candidates = selected.flatMap((id) => {
+    if (busy || !driveId || !roleOptionId || pageSelected.length === 0 || pageSelected.length>100) return;
+    const candidates = pageSelected.flatMap((id) => {
       const learner = learners.find((item) => item.membershipId === id);
       return learner ? [{
         membershipId: learner.membershipId,
@@ -84,7 +89,7 @@ export function TpoStudentsBulkAdd({
     let payload: ReturnType<typeof buildTpoStudentsBulkPayload>;
     try {
       payload = buildTpoStudentsBulkPayload(roleOptionId, candidates);
-      if (payload.membershipIds.length !== selected.length) throw new Error("Selection changed");
+      if (payload.membershipIds.length !== pageSelected.length) throw new Error("Selection changed");
     } catch {
       setError("The current-page selection or role is invalid. Review the roster.");
       return;
@@ -182,8 +187,8 @@ export function TpoStudentsBulkAdd({
             ))}
           </div>
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <span className="text-sm text-body">{selected.length} learner(s) selected</span>
-            <button type="button" disabled={busy || !roleOptionId || selected.length === 0}
+            <span className="text-sm text-body">{pageSelected.length} learner(s) selected</span>
+            <button type="button" disabled={busy || !roleOptionId || pageSelected.length === 0 || pageSelected.length>100}
               onClick={() => setConfirmOpen(true)}
               className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
               {busy ? "Checking learners…" : "Review and add selected"}
@@ -191,13 +196,14 @@ export function TpoStudentsBulkAdd({
           </div>
         </>
       )}
+      {pageSelected.length>100?<p role="alert">Select at most 100 students for this drive. The same selection remains available for other actions.</p>:null}
       <Dialog open={confirmOpen} onOpenChange={value=>{if(!busy)setConfirmOpen(value);}}
         title="Add selected students to a drive"
-        description={"Add "+selected.length+" selected learner(s) to "+
+        description={"Add "+pageSelected.length+" selected learner(s) to "+
           (drives.find(drive=>drive.id===driveId)?.title??"this drive")+
           "? Eligibility and participation are checked individually by the server. Ineligible learners will not be added and existing applications are preserved."}
         footer={<><Button variant="secondary" disabled={busy} onClick={()=>setConfirmOpen(false)}>Cancel</Button>
-          <Button disabled={busy||guardedPending||!selected.length||!roleOptionId} onClick={()=>void runGuarded(submit)}>
+          <Button disabled={busy||guardedPending||!pageSelected.length||pageSelected.length>100||!roleOptionId} onClick={()=>void runGuarded(submit)}>
             {busy?"Checking learners…":"Confirm add selected"}
           </Button></>}>
         <p className="text-sm">Each eligible learner will be told about the new application. Existing applications remain unchanged.</p>
