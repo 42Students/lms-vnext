@@ -38,7 +38,7 @@ export async function notifyTpoOfRecruiterMessage(tx:Tx,input:{
  await tx.insert(inAppNotifications).values(recipients.map(userId=>({
   userId,eventId:event.id,title:RECRUITER_MESSAGE_TPO_TITLE,
   body:"A recruiter sent a message to the placement cell.",
-  actionHref:recruiterMessageTpoHref(),createdAt:input.at,
+  actionHref:recruiterMessageTpoHref(input.threadId),createdAt:input.at,
  })));
  return {notified:recipients.length};
 }
