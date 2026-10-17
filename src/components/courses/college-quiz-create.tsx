@@ -73,7 +73,9 @@ export function CollegeQuizCreate({lessons,deliveries}:{
    const body=await result.json().catch(()=>null);
    if(!result.ok||!body?.quiz?.id)throw new Error(body?.error??"Could not create quiz.");
    setNextOverride(old=>({...old,[lesson!.id]:(old[lesson!.id]??lesson!.nextSequence)+1}));
-   setOpened(false);setTitle("");setDescription("");setDueAt("");setQuestions([empty()]);
+   if(!keepOpen)setOpened(false);
+   setTitle("");setDescription("");setDueAt("");setMaxAttempts("1");
+   setShuffleQuestions(false);setShuffleOptions(false);setQuestions([empty()]);
    setNotice("Quiz draft created. Publish it when the questions are ready.");router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not create quiz.");}
   finally{lock.current=false;setBusy(false);}
