@@ -46,6 +46,15 @@ describe("chat-16 reassigned mentor legacy parity",()=>{
     }],new Date("2099-07-01T02:00:00Z"));
     expect(alerts.some(a=>a.title==="Project Pine — submission waiting for your review")).toBe(true);
   });
+  it("MEN-projects-meetings-69 keeps meeting load failure inline with a Retry action",()=>{
+    const page=read("src/app/(authenticated)/mentor/calendar/page.tsx");
+    const fallback=read("src/components/projects/mentor-calendar-load-failure.tsx");
+    expect(page).toContain("listMyMentorCalendarMeetings(context).catch(()=>null)");
+    expect(page).toContain("<MentorCalendarLoadFailure/>");
+    expect(fallback).toContain("We couldn&apos;t load your meetings.");
+    expect(fallback).toContain("router.refresh()");
+    expect(fallback).toContain("Retry");
+  });
   it("MEN-projects-meetings-74 preserves redirect-only legacy Mentor URLs",()=>{
     const redirects=[
       ["profile/page.tsx","/mentor/projects"],
