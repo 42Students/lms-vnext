@@ -302,7 +302,8 @@ export function HrDriveDraftForm({
             <input className={inputClass} list="recruiter-eligible-branches"
               value={branchInput} placeholder="e.g. CSE, ECE, Mechanical"
               onChange={event=>{setBranchInput(event.target.value);setDraft(current=>({...current,
-                branches:event.target.value.split(",").map(value=>value.trim()).filter(Boolean)}));}}/>
+                branches:[...new Map(event.target.value.split(",").map(value=>value.trim()).filter(Boolean)
+                  .map(value=>[value.toLocaleLowerCase("en"),value] as const)).values()]}));}}/>
             <datalist id="recruiter-eligible-branches">
               {branchSuggestions.map(name=><option key={name} value={name}/>)}
             </datalist>
