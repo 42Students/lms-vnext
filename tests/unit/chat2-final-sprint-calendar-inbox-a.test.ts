@@ -14,7 +14,8 @@ describe("Final sprint recruiter calendar and inbox parity — group A",()=>{
   expect(calendar).toContain("Rounds, interview slots, deadlines and results due, for your drives at this college.");
   expect(calendar).toContain('"Previous week"');
   expect(calendar).toContain('"Next week"');
-  expect(calendar).toContain("Nothing scheduled in this period");
+  expect(calendar).toContain("Nothing scheduled this week");
+  expect(calendar).toContain("Rounds, slots and deadlines appear here as soon as they are dated.");
  });
  it("REC-calendar-messages-profile-06 shows per-event college identity in multi-college calendar",()=>{
   const calendar=read("src/app/(authenticated)/hr/calendar/page.tsx");
