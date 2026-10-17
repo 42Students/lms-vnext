@@ -36,7 +36,7 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
     href={tpoCompanyAuditHref(jobId,option)}
     aria-current={kind===option?"page":undefined}
     className="rounded border border-border px-3 py-2 text-sm font-semibold text-primary-text">
-    {option==="ALL"?"All events":option==="VIEW"?"Page views":"CSV downloads"}
+    {option==="ALL"?"All events":option==="VIEW"?"Page views":option==="LOCKED"?"Locked shares":"CSV downloads"}
    </Link>)}
   </nav>
   {result.ready?<a href={tpoCompanyAuditExportHref(jobId,kind)}
