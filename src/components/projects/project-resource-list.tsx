@@ -196,7 +196,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
          className="min-h-9 rounded border border-border px-3 text-xs font-semibold disabled:opacity-50"
          onClick={()=>moveRelative(resource.id,1)}>Move down</button>
      </div>:null}
-     {mode!=="LEARNER"&&!readOnly&&resource.status==="ACTIVE"?<ProjectResourceActions
+     {mode!=="LEARNER"&&!readOnly&&resource.status!=="ARCHIVED"?<ProjectResourceActions
         projectId={projectId} resource={{id:resource.id,title:resource.title,
          description:resource.description,url:resource.url,required:resource.required,
          visibility:resource.visibility==="MENTOR_ONLY"?"MENTOR_ONLY":"TEAM",
