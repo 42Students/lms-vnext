@@ -36,7 +36,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
   for(let i=0;i<questions.length;i++){
    const q=questions[i],texts=q.options.map(x=>x.text.trim());
    if(!q.prompt.trim()||q.prompt.length>5000||!Number.isInteger(q.points)||q.points<1||q.points>1000||
-      texts.some(x=>!x)||new Set(texts.map(x=>x.toLowerCase())).size!==texts.length||
+      texts.some(x=>!x||x.length>2000)||new Set(texts.map(x=>x.toLocaleLowerCase())).size!==texts.length||
       texts.length<2||texts.length>20)return "Complete all question prompts, points and unique options.";
    const correct=q.options.filter(x=>x.correct).length;
    if(!correct||(q.type==="SINGLE_CHOICE"&&correct!==1)||
