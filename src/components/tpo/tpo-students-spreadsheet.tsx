@@ -67,6 +67,8 @@ export function TpoStudentsSpreadsheet({rows,branches,programs,classes,afterColl
   {key:"programId",urlKey:"programId",label:"Program",options:programs.map(p=>({value:p.id,label:p.name}))},
   {key:"classId",urlKey:"classId",label:"Class",options:classes.map(c=>({value:c.id,label:c.name}))},
   {key:"afterCollege",urlKey:"afterCollege",label:"After college",options:AFTER_COLLEGE_OUTCOMES.map(value=>({value,label:AFTER_COLLEGE_LABELS[value]}))},
+  {key:"maxActiveBacklogs",urlKey:"maxActiveBacklogs",label:"Max active backlogs",options:[0,1,2,3,5,10].map(value=>({value:String(value),label:String(value)}))},
+  {key:"maxPastBacklogs",urlKey:"maxPastBacklogs",label:"Max past backlogs",options:[0,1,2,3,5,10].map(value=>({value:String(value),label:String(value)}))},
   {key:"minCgpa",urlKey:"minCgpa",label:"Minimum CGPA",options:[0,6,7,7.5,8,8.5,9].map(value=>({value:String(value),label:String(value)}))},
   {key:"maxCgpa",urlKey:"maxCgpa",label:"Maximum CGPA",options:[5,6,7,8,9,10].map(value=>({value:String(value),label:String(value)}))},
   {key:"minApplications",urlKey:"minApplications",label:"At least applications",options:[0,1,2,3,5,10,20,50].map(value=>({value:String(value),label:String(value)}))},
