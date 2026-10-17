@@ -14,3 +14,11 @@ Shell note: `src/components/shell` belongs to chat-9. Where a GR item needs a sh
 ## Notes (blockers, one line each)
 
 - GR-51: provider-side automatic resend awaits verified delivery idempotency guarantees and real provider acceptance; existing receipts persist QUEUED/FAILED but unacknowledged sends must not be retried blindly.
+
+## Unit failures r1 follow-up (2026-10-17)
+
+- GR-11 / GR-53 (`graceful-merge-syntax`): browser-report schema test now accepts valid `kind` and rejects unknown fields; login sanitizes the server-returned destination in addition to `returnTo`. Exact OTP legacy copy retained.
+- GR-35 (`graceful-ui-primitives`): removed a native confirm example only present in a source comment; real accessible dialog remains.
+- GR-19 / GR-20 (`graceful-route-coverage`): four new route segments (admin student lookup, TPO drive discussion, placements overview, team everyone) now contain both bounded loading and retry boundaries.
+- GR-09 / GR-31 (`graceful-raw-error-scan`): test now distinguishes local Zod `result.error.issues` and noninteractive `/api/client-errors` telemetry from customer-facing raw errors/business writes. **Global scan not yet cleared** because multiple other lanes modified components with raw-error sinks or unguarded writes: examples `academics/college-section-management.tsx` (GR-09), `academics/college-cohort-management.tsx`, `activity/learner-notifications-inbox.tsx`, `admin/department-actions.tsx` (GR-31). Owning lanes must adopt safe message mapping and `useGuardedAction`, respectively; do not silently refresh their immutable SHA baseline.
+- The chat-14 core queue has no additional explicitly OPEN items; GR-51 remains provider-blocked as recorded above. No fabricated 25-item completion count. Tests are authored but not executed by this lane.
