@@ -36,3 +36,7 @@
 | TPO-recruiters-40 | PARTIAL — OPEN | Detail edit dialog uses legacy **Edit contact details** and **Save** wording without changing server validation; `src/components/tpo/recruiter-lead-detail-workspace.tsx`; `tests/unit/chat2-tpo-recruiter-leads-copy.test.ts` **TPO-recruiters-40 restores edit-action heading and legacy Save label**. Broader detail action wording remains to verify. |
 
 Tests were authored but not run in this builder session.
+
+## Chat-2 continuation — exact detail wording
+
+| TPO-recruiters-40 | DONE (source; tests not run) | `src/components/tpo/recruiter-lead-detail-workspace.tsx` uses **← Recruiter leads**, **Edit contact details**, **Save**, **Not now**, and **Log activity**; `tests/unit/chat2-tpo-recruiter-leads-copy.test.ts` **TPO-recruiters-40 restores edit-action heading and legacy Save label** (also asserts the modal/section wording). |
