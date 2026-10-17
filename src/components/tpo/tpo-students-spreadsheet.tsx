@@ -3,6 +3,7 @@ import Link from "next/link";
 import {useState} from "react";
 import {TpoStudentNoteEditor} from "./tpo-student-note-editor";
 import {TpoStudentOutcomePill} from "./tpo-student-outcome-pill";
+import {TpoStudentClipboardActions} from "./tpo-student-clipboard-actions";
 import {usePathname,useRouter,useSearchParams} from "next/navigation";
 import {TpoStudentQuickPanel} from "./tpo-student-quick-panel";
 import type {TpoStudentRow} from "@/modules/placements/tpo-students-model";
@@ -57,6 +58,8 @@ export function TpoStudentsSpreadsheet({rows,branches,afterCollege,afterCollegeA
  ];
  return <div className="space-y-3">
   <TpoAfterCollegeBulkEditor rows={rows} current={afterCollege} available={afterCollegeAvailable} />
+  <TpoStudentClipboardActions rows={rows} selected={noteSelection} onSelect={setNoteSelection}/>
+  <p className="text-xs text-muted-foreground">{noteSelection.filter(id=>rows.some(row=>row.membershipId===id)).length} selected on this visible page.</p>
   <details className="rounded-xl border border-border p-4">
    <summary className="cursor-pointer font-semibold">Bulk Add a note</summary>
    <p className="mt-2 text-xs text-muted-foreground">Choose up to 100 students on this visible roster page; no student is added outside your current filtered page.</p>
