@@ -9,6 +9,8 @@ export default async function MentorDeliveryVersionPage({params}:{
   const raw=await params;
   const data=await getMentorDeliveryVersion(await getCurrentRequestContext(),raw);
   const v=data.version;
+  const attachments=v.attachments.filter((item):item is Record<string,unknown>=>
+    Boolean(item)&&typeof item==="object"&&!Array.isArray(item));
   const format=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
     dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
   }).format(date)+" IST";
