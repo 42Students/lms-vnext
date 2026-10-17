@@ -24,7 +24,7 @@ export async function getSuperAdminBroadcastReceiptCounts(context:RequestContext
   cellRead:sql<number>`count(distinct ${placementCellAnnouncementReads.collegeId})::integer`.mapWith(Number),
  }).from(activityEvents)
  .leftJoin(inAppNotifications,eq(inAppNotifications.eventId,activityEvents.id))
- .leftJoin(placementCellAnnouncementReads,eq(placementCellAnnouncementReads.announcementId,activityEvents.subjectId))
+ .leftJoin(placementCellAnnouncementReads,sql`${placementCellAnnouncementReads.announcementId}::text = ${activityEvents.subjectId}`)
  .where(and(eq(activityEvents.subjectType,"announcement"),inArray(activityEvents.subjectId,ids),
   eq(activityEvents.module,"PLATFORM"),
   context.adminScope?.collegeId?eq(activityEvents.collegeId,context.adminScope.collegeId):undefined,
