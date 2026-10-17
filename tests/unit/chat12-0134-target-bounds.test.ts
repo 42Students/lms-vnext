@@ -10,7 +10,7 @@ describe("General learner requests against registered 0134",()=>{
   expect(tpoGeneralRequestTarget(value)).toHaveLength(150);
  });
  it("TPO-requests-verification-01 bounds corrected record field keys and does not truncate identities",()=>{
-  const base={kind:"CORRECTION_WITH_PROOF",reason:"Please review",section:"EDUCATION",proposedValue:"7.2",proofUrl:""};
+  const base={kind:"CORRECTION_WITH_PROOF",reason:"Please review",section:"EDUCATION",proposedValue:"7.2",proofUrl:"https://example.org/proof"};
   expect(tpoGeneralRequestInputSchema.safeParse({...base,field:"x".repeat(141)}).success).toBe(false);
   const valid=tpoGeneralRequestInputSchema.parse({...base,field:"x".repeat(140)});
   expect(tpoGeneralRequestTarget(valid)).toHaveLength(150);

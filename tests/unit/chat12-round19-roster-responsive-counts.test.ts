@@ -14,9 +14,12 @@ describe("TPO Students phone presentation and scoped selection summary",()=>{
   const page=src("src/app/(authenticated)/tpo/students/page.tsx");
   const grid=src("src/components/tpo/tpo-spreadsheet-grid.tsx");
   expect(page).toContain('className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4" aria-label="Student placement journey"');
-  expect(grid).toContain("mobileActionsCollapsible?display.slice(0,5):display");
+  expect(grid).toContain("const mobilePrimary = mobilePrimaryKeys?.length");
+  expect(grid).toContain("mobilePrimaryKeys.includes(column.key)");
+  expect(grid).toContain(": display.slice(0,5)");
   expect(grid).toContain("More student details");
-  expect(grid).toContain("mobileActionsCollapsible?<details");
+  expect(grid).toContain("mobileActionsCollapsible&&mobileExtra.length>0?<details");
+  expect(grid).toContain('<summary className="min-h-11 cursor-pointer font-semibold">Row actions</summary>');
   expect(src("src/components/tpo/tpo-grid-filter-panel.tsx")).toContain("open:fixed open:inset-x-0 open:bottom-0");
  });
  it("TPO-students-R03 screen readers can distinguish mobile checkboxes by student",()=>{
