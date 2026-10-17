@@ -68,4 +68,18 @@ describe("chat-6 cross-page gap source verification", () => {
     expect(actions).toContain("Resource updated.");
     expect(actions).toContain("Resource deleted.");
   });
+
+  it("SA-academics-people-79 renders selected-college faculty and student overview metrics from scoped directory counts", () => {
+    const page=source("src/components/admin/admin-scoped-read-page.tsx");
+    const faculty=source("src/app/(authenticated)/admin/faculty/page.tsx");
+    const students=source("src/app/(authenticated)/admin/students/page.tsx");
+    expect(page).toContain('peopleFilters?await Promise.all([');
+    expect(page).toContain('status:"ALL"');
+    expect(page).toContain('status:"ACTIVE"');
+    expect(page).toContain('status:"SUSPENDED"');
+    expect(page).toContain('label:"Visible now"');
+    expect(page).toContain('eyebrow={peopleFilters?"People"');
+    expect(faculty).toContain('kind:"FACULTY"');
+    expect(students).toContain('kind:"LEARNER"');
+  });
 });
