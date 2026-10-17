@@ -66,6 +66,22 @@ export default async function MentorDeliveryVersionPage({params}:{
           <p className="text-sm text-muted-foreground">No valid source or demo URL.</p>:null}
       </div>
     </section>
+    <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
+      <h2 className="font-semibold">Additional submission files and links ({attachments.length})</h2>
+      {!attachments.length?<p className="mt-2 text-sm text-muted-foreground">No extra attachments recorded.</p>:null}
+      <ul className="mt-3 space-y-2">{attachments.map((entry,index)=>{
+        const name=typeof entry.name==="string"?entry.name:"Attachment "+(index+1);
+        const kind=entry.kind==="FILE"?"File":entry.kind==="LINK"?"Link":"Attachment";
+        const href=typeof entry.url==="string"?safeProjectExternalHref(entry.url):null;
+        return <li key={index} className="rounded-lg border border-border p-3 text-sm">
+          <span className="font-semibold">{name}</span> · {kind}
+          {href?<a href={href} target="_blank" rel="noopener noreferrer"
+            className="ml-2 text-primary-text underline">Open link ↗</a>:null}
+          {kind==="File"&&typeof entry.fileId==="string"?
+            <span className="ml-2 text-muted-foreground">Uploaded file recorded</span>:null}
+        </li>;
+      })}</ul>
+    </section>
     <p className="text-xs text-muted-foreground">
       This view is scoped to an active Mentor assignment and displays only the
       selected registered review decision and text. Learner contact, private
