@@ -13,7 +13,7 @@ export const hrApplicantFilterSchema = z.strictObject({
   applicant: z.string().uuid().optional(),
   page: z.coerce.number().int().min(1).max(10000).default(1),
   offerPage: z.coerce.number().int().min(1).max(10000).default(1),
-  offerState: z.enum(["ALL", "ISSUED", "ACCEPTED", "DECLINED", "EXPIRED", "WITHDRAWN"]).default("ALL"),
+  offerState: z.enum(["ALL", "ISSUED", "ACCEPTED", "DECLINED", "EXPIRED", "WITHDRAWN", "SELECTED", "PENDING_VERIFICATION", "REVOKED"]).default("ALL"),
   roundId: z.string().uuid().optional(),
   outcome: z.enum(["ALL","RECORDED","UNRECORDED","PASS","FAIL","HOLD","ABSENT"]).default("ALL"),
 });
