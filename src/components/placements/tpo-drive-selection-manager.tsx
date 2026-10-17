@@ -25,6 +25,13 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
   if(mode==="RECORD"&&(!role.trim()||lpa!==""&&(!Number.isFinite(Number(lpa))||Number(lpa)<0||Number(lpa)>1000))){
    setError("Provide a role and a package between 0 and 1000 LPA, or leave package blank.");return;
   }
+  if(mode==="VERIFY_AND_RELEASE"){
+    const selected=selections.filter(item=>chosen.includes(item.id));
+    const ineligible=selected.filter(item=>!item.offerReady);
+    if(!window.confirm("Verify and release "+chosen.length+" selection(s)? "+
+      ineligible.length+" currently need eligibility review and may be skipped. "+
+      "Official offers and learner notifications are issued immediately for successful rows. This cannot be undone from this dialog."))return;
+  }
   const body=mode==="RECORD"?{action:"RECORD",entries:chosen.map(applicationId=>({
    applicationId,roleTitle:role.trim(),annualCtcInr:lpa===""?null:Math.round(Number(lpa)*100000),
   }))}:{action:"VERIFY_AND_RELEASE",confirmed:true,selectionIds:chosen,
