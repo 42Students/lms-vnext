@@ -11,7 +11,8 @@ describe("TPO drive discussion handoff",()=>{
   expect(service).toContain("eq(placementTpoMessageThreads.collegeId,collegeId)");
   expect(service).toContain("eq(placementTpoMessageThreads.jobId,jobId)");
   expect(discussion).toContain("thread.lastPreview");
-  expect(discussion).toContain(">Discuss</Link>");
+  expect(job).toContain("Discuss →</Link>");
+  expect(discussion).toContain("Open conversation</Link>");
   expect(discussion).toContain('"/tpo/messages/"+encodeURIComponent(thread.id)');
  });
 });

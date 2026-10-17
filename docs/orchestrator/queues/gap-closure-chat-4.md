@@ -28,15 +28,15 @@ Audit: `docs/audit/pages/superadmin/placements-projects-b-projects.md` (and `pla
 | SA-placements-projects-53 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | SA-placements-projects-54 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
 | SA-placements-projects-57 | S3 | COPY | DONE |
-| SA-placements-projects-58 | S3 | MISSING-FIELD | UNCONFIRMED |
+| SA-placements-projects-58 | S3 | MISSING-FIELD | DONE |
 | SA-placements-projects-59 | S3 | MISSING-FILTER | DONE |
 | SA-placements-projects-61 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | SA-placements-projects-63 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
 | SA-placements-projects-66 | S3 | MISSING-COLUMN | DONE |
 | SA-placements-projects-67 | S3 | STATE | DONE |
-| SA-placements-projects-68 | S3 | STATE | UNCONFIRMED |
+| SA-placements-projects-68 | S3 | STATE | DONE |
 | SA-placements-projects-71 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
-| SA-placements-projects-72 | S3 | MISSING-ACTION | UNCONFIRMED |
+| SA-placements-projects-72 | S3 | MISSING-ACTION | DONE |
 | SA-placements-projects-73 | S3 | COPY | DONE |
 | SA-placements-projects-74 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | SA-placements-projects-75 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
@@ -48,7 +48,7 @@ Audit: `docs/audit/pages/superadmin/placements-projects-b-projects.md` (and `pla
 | SA-placements-projects-87 | S3 | MISSING-ACTION | DONE |
 | SA-placements-projects-92 | S3 | STATE | DONE |
 | SA-placements-projects-55 | S4 | MISSING-FILTER | DONE |
-| SA-placements-projects-93 | S4 | MISSING-ACTION | OPEN |
+| SA-placements-projects-93 | S4 | MISSING-ACTION | DONE |
 
 ## tpo/home (39: OPEN 18, FIXED-ON-MAIN 18, UNCONFIRMED 3)
 
@@ -64,7 +64,7 @@ Audit: `docs/audit/pages/tpo/home.md` (and `home-review.md` if present; any ID: 
 | TPO-home-08 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-home-09 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-home-13 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| TPO-home-26 | S2 | STATE | UNCONFIRMED |
+| TPO-home-26 | S2 | STATE | DONE |
 | TPO-home-27 | S2 | PERMISSION | UNCONFIRMED |
 | TPO-home-28 | S2 | MISSING-MODAL | DONE |
 | TPO-home-42 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
@@ -127,7 +127,7 @@ Audit: `docs/audit/pages/superadmin/tenants-modules-3.md` (and `tenants-modules-
 | SA-tenants-modules-68 | S3 | MISSING-FIELD | UNCONFIRMED |
 | SA-tenants-modules-45 | S4 | STATE | DONE |
 | SA-tenants-modules-49 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
-| SA-tenants-modules-50 | S4 | MISSING-FILTER | OPEN |
+| SA-tenants-modules-50 | S4 | MISSING-FILTER | DONE |
 | SA-tenants-modules-56 | S4 | MISSING-FILTER | FIXED-ON-MAIN |
 | SA-tenants-modules-61 | S4 | VALIDATION | DONE |
 
@@ -296,3 +296,21 @@ Audit: `docs/audit/pages/college/operations.md` (and `operations-review.md` if p
 - Next queue: finish the still-open Projects template, readiness and team flows, TPO full palette/team/recruiter inputs, learner semester/setup/performance, College content materials and Section ordering, verification saved views, then later academic/operations pages. No package, migration, shared shell, auth or security edits by this lane.
 - Blocked `COL-course-tabs-03/16` full private file materials and per-Section ordering: private object storage, scanner and registered DB05/runtime owner dependency; metadata and scoped filters remain usable. Continue unrelated open gaps without delay.
 
+
+## Chat-4 next-round recovery — 2026-10-17
+
+- Main fast-forwarded into `chatgpt/chat-4-b` before writes (main was 675 commits ahead; branch had no private commits).
+- Corrected failing `SA-placements-projects-58` and `SA-placements-projects-63` expectations by restoring the specified project page descriptions and implementing explicit retryable mentor reassignment failure dialog; corrected stale Faculty zero-point assignment fixture (`FAC-assessments-R08`).
+- Repaired missing `points` values in `courses-ui2a-faculty` and `faculty-section-authoring` TypeScript integration fixtures. Other owners' schema and course fixture errors are not claimed as resolved.
+- `SA-placements-projects-58`: DONE (workload overload, deep links, success, partial-failure dialog and failed-only retry).
+- `SA-placements-projects-56`: still OPEN/PARTIAL; scoped learner preflight now lists individual to-create/covered/duplicate decisions; remaining standalone team create fields and per-student failure details are not yet closed.
+- Tests authored or repaired but **not run**; orchestrator must verify TypeScript, lint, unit and PostgreSQL.
+
+## Chat-4 recovery continuation — verified UI closure (2026-10-17)
+
+- `SA-placements-projects-93` DONE: existing transactional Manage students and Reassign mentor dialogs are both reachable from Team; replaced native confirm with accessible exact removal-count `ConfirmDialog` / `Replace roster`, retaining selections on conflict.
+- `SA-tenants-modules-50` DONE: saved URL view/search/area/status/severity/kind/page filters under the legacy local-storage key; restoring only bounded allowlisted board-relative params, Clear resets saved view to default.
+- SA-tenants-modules-46/47/48 and other unfinished filters/actions remain OPEN; no importer or drawer action is misrepresented as implemented.
+- Tests were written but NOT RUN by chat-4; orchestrator is responsible for integrated verification.
+
+- Source-reverified existing `SA-placements-projects-68` ten-section readiness navigation, `SA-placements-projects-72` confirmed submission review dialog, and `TPO-home-26` placements-disabled state; each had an ID-named existing test and existing code on synced main. Statuses moved from UNCONFIRMED to DONE; tests remain unrun.

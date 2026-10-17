@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Dialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
 
@@ -50,6 +51,7 @@ export function ProjectMentorReassignment({
     useState(false);
   const sendingRef=useRef(false);
   const [confirmOpen,setConfirmOpen]=useState(false);
+  const [failureOpen,setFailureOpen]=useState(false);
   const [result, setResult] = useState<{
     reassignedCount: number;
     skippedCount: number;
@@ -138,6 +140,7 @@ export function ProjectMentorReassignment({
         }
       }
       setResult(response);
+      setFailureOpen(response.failures.length > 0);
       if (response.reassignedCount > 0) {
         showToast({
           tone: "success",
@@ -352,6 +355,23 @@ export function ProjectMentorReassignment({
         description="The previous primary mentor is removed from the selected workspaces; existing co-mentors stay. Confirm the new mentor before updating projects."
         confirmLabel="Reassign workspaces" pending={pending}
         onConfirm={()=>void executeReassignment()}/>
+      <Dialog open={failureOpen} onOpenChange={setFailureOpen}
+        title="Some workspaces were not reassigned"
+        description="The successful workspaces were saved. Review the failed workspaces and retry only those that failed.">
+        <div className="space-y-4">
+          <p role="status" className="text-sm text-body">{result?.reassignedCount ?? 0} reassigned · {result?.failures.length ?? 0} failed</p>
+          <ul className="max-h-64 overflow-y-auto list-disc space-y-2 pl-5 text-sm text-body">
+            {result?.failures.map(failure=><li key={failure.projectId}>
+              {workspaces.find(row=>row.id===failure.projectId)?.title ?? "Unavailable workspace"} — could not reassign. Review access or refresh before retrying.
+            </li>)}
+          </ul>
+          <div className="flex justify-end gap-2">
+            <Button variant="secondary" onClick={()=>setFailureOpen(false)}>Close</Button>
+            <Button disabled={pending || !result?.failures.length}
+              onClick={()=>{setFailureOpen(false);setConfirmOpen(true);}}>Retry failed workspaces</Button>
+          </div>
+        </div>
+      </Dialog>
     </div>
   );
 }

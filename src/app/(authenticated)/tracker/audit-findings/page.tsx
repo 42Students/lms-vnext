@@ -6,6 +6,7 @@ import {redirect} from "next/navigation";
 import {PageHeader} from "@/components/ui/page-header";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {TrackerAdminNav} from "@/components/tracker/tracker-admin-nav";
+import {AuditFindingFilterMemory} from "@/components/tracker/audit-finding-filter-memory";
 import {FINDING_STATUSES,FINDING_SEVERITIES,FINDING_KINDS,parseIndependentFindingFilters,independentFindingHref} from "@/modules/bug-tracker/independent-audit-findings-model";
 import {independentAuditFindingsReady,listIndependentAuditFindings} from "@/modules/bug-tracker/independent-audit-findings-service";
 export const dynamic="force-dynamic";
@@ -18,10 +19,10 @@ export default async function IndependentFindingsPage({searchParams}:{
  if(ctx.adminScope?.collegeId||ctx.adminScope?.organizationId)redirect("/dashboard");
  requirePermission(ctx,"admin-scope.select");
  const parsed=parseIndependentFindingFilters(await searchParams);
- const header=<><PageHeader eyebrow="42 Tracker · Super Admin" title="Audit findings"
+ const header=<><AuditFindingFilterMemory/><PageHeader eyebrow="42 Tracker · Super Admin" title="Audit findings"
   description="Independent findings imported from the audit repository, not user bug reports."/><TrackerAdminNav/></>;
  if(!parsed)return <div className="space-y-5">{header}<p role="alert">Invalid audit findings filters.</p>
-  <Link href="/tracker/audit-findings" className="font-semibold text-primary-text">Reset filters</Link></div>;
+  <Link href="/tracker/audit-findings?view=OPEN" className="font-semibold text-primary-text">Reset filters</Link></div>;
  if(!independentAuditFindingsReady())return <div className="space-y-5">{header}
   <p role="status" className="rounded-xl border border-border bg-surface p-5">
    Audit findings are unavailable until registered migration 0133 is verified and DB10_AUDIT_FINDINGS_READY=DB10_VERIFIED.
@@ -57,7 +58,7 @@ export default async function IndependentFindingsPage({searchParams}:{
     </select></label>
    <div className="flex items-end gap-3">
     <button type="submit" className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary">Apply filters</button>
-    <Link href="/tracker/audit-findings" className="min-h-11 inline-flex items-center font-semibold text-primary-text">Clear</Link>
+    <Link href="/tracker/audit-findings?view=OPEN" className="min-h-11 inline-flex items-center font-semibold text-primary-text">Clear</Link>
    </div>
   </form>
   <p role="status" className="text-sm text-body">
