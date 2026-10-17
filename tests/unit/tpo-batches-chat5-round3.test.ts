@@ -3,6 +3,7 @@ import {describe,it,expect} from "vitest";
 import {registrationDeadlineAtEndOfDay} from "@/modules/placements/tpo-batch-invitation-model";
 import {parseTpoEligibilitySheetCsv,previewTpoEligibilitySheet} from "@/modules/placements/tpo-eligibility-sheet-model";
 import {tpoBatchPlacementState} from "@/modules/placements/tpo-batch-state-label-model";
+import {tpoBatchCardDeadlineLabel} from "@/modules/placements/tpo-batch-deadline-label-model";
 import {tpoBatchNextAction,tpoBatchNextActionLink} from "@/modules/placements/tpo-batch-next-action-model";
 import {studentJourneyForBatch} from "@/modules/placements/tpo-batch-student-journey-model";
 import {actionableBatchHistory} from "@/modules/placements/tpo-batch-history-undo-model";
@@ -35,4 +36,15 @@ describe("TPO batches chat-5 verified source and behavior",()=>{
  it("TPO-batches-48: verifies persisted batch workflow contract",()=>{ const ui=source("src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx");expect(ui).toContain("const finished=Boolean(batchScope.lifecycle?.finishedAt)");expect(ui).toContain("Eligibility decisions and import actions are read-only.");expect(ui).toContain("!finished&&!s.ambiguous"); });
  it("TPO-batches-58: verifies persisted batch workflow contract",()=>{ const page=source("src/app/(authenticated)/tpo/batches/[batchId]/history/page.tsx");expect(page).toContain("actorName");expect(page).toContain("afterReason");expect(page).toContain("scopeType"); });
  it("TPO-batches-59: verifies persisted batch workflow contract",()=>{ const reader=source("src/modules/placements/tpo-batch-workspace-read-service.ts");const page=source("src/app/(authenticated)/tpo/batches/[batchId]/history/page.tsx");for(const type of ["COHORT","SECTION","MEMBERSHIP"])expect(reader).toContain('scopeType,"'+type+'"');expect(page).toContain("batch, class and learner"); });
+ it("TPO-batches-13: shows register-by date only while a batch is not finished",()=>{
+  const deadline=new Date("2099-10-22T18:29:59.999Z");
+  expect(tpoBatchCardDeadlineLabel(deadline,true,false)).toBe("Register by 22 Oct");
+  expect(tpoBatchCardDeadlineLabel(deadline,true,true)).toBeNull();
+  expect(tpoBatchCardDeadlineLabel(null,true,false)).toBeNull();
+ });
+ it("TPO-batches-14: uses the exact legacy placement-eligibility subtitle",()=>{
+  const ui=source("src/app/(authenticated)/tpo/batches/page.tsx");
+  expect(ui).toContain("Decide who is in placements, one passing-out batch at a time. New students follow their class.");
+ });
+
 });
