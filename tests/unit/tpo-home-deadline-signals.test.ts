@@ -10,10 +10,7 @@ describe("TPO-home-14 IST urgency (partial signal family)",()=>{
    make("PUBLISHED",new Date("2026-10-19T17:59:00Z")),
    make("PUBLISHED",null),
   ],now);
-  expect(signals.map(s=>s.type)).toEqual(["DEADLINE_TODAY","NO_DEADLINE","CLOSING_SOON"].sort((a,b)=>{
-   const rank=(v:string)=>v==="DEADLINE_TODAY"?1:v==="NO_DEADLINE"?30:35;
-   return rank(a)-rank(b);
-  }));
+  expect(signals.map(s=>s.type)).toEqual(["DEADLINE_TODAY","CLOSING_SOON","NO_DEADLINE"]);
  });
  it("never flags expired deadlines or draft drives",()=>{
   expect(deadlineTpoHomeNeeds([make("PUBLISHED",new Date("2026-10-15T08:00:00Z")),

@@ -1,7 +1,9 @@
 import {expect,it} from "vitest";
-import {tpoDriveTabs} from "@/modules/placements/tpo-drive-tab-model";
-it("navigates all nine TPO drive workspaces using encoded job identifiers",()=>{
+import {tpoDriveMoreTabs,tpoDriveTabs} from "@/modules/placements/tpo-drive-tab-model";
+it("navigates all TPO drive workspaces (six primary, seven secondary) using encoded job identifiers",()=>{
  const tabs=tpoDriveTabs("job /&");
- expect(tabs.map(t=>t.label)).toEqual(["Overview","Applicants","Pipeline","Candidate schedule","Drive day","Rounds","Offers","Joining","Company sharing"]);
- expect(tabs.filter(t=>t.label!=="Drive day").every(t=>t.href.startsWith("/tpo/placements/jobs/job%20%2F%26"))).toBe(true);
+ expect(tabs.map(t=>t.label)).toEqual(["Overview","Applicants","Rounds","Offers","Drive day","About this drive"]);
+ const more=tpoDriveMoreTabs("job /&");
+ expect(more.map(t=>t.label)).toEqual(["Activity","Candidate schedule","Selections","Waitlist","Joining","Change requests","Company sharing"]);
+ expect([...tabs,...more].every(t=>t.href.startsWith("/tpo/placements/jobs/job%20%2F%26"))).toBe(true);
 });

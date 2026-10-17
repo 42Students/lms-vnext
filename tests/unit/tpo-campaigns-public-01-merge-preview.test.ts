@@ -7,8 +7,8 @@ describe("TPO-campaigns-public-01 merge placeholder composer",()=>{
   expect(previewTpoCampaignText(base.body,{name:"Ravi",company:"ACME"})).toBe("Hello Ravi from ACME");
   expect(previewTpoCampaignText("{unknown}",{name:"Ravi",company:"ACME"})).toBe("{unknown}");
  });
- it("bounds the draft body at 4000 characters",()=>{
-  expect(tpoCampaignDraftSchema.safeParse({...base,body:"x".repeat(4000)}).success).toBe(true);
-  expect(tpoCampaignDraftSchema.safeParse({...base,body:"x".repeat(4001)}).success).toBe(false);
+ it("bounds the draft body at 10000 characters",()=>{
+  expect(tpoCampaignDraftSchema.safeParse({...base,body:"x".repeat(10000)}).success).toBe(true);
+  expect(tpoCampaignDraftSchema.safeParse({...base,body:"x".repeat(10001)}).success).toBe(false);
  });
 });

@@ -9,12 +9,14 @@ describe("TPO-home-31 quick-create follow-up modal",()=>{
  it("uses the pre-existing scoped leads and calendar follow-up routes",()=>{
   const ui=readFileSync("src/components/tpo/tpo-new-followup-modal.tsx","utf8");
   const layout=readFileSync("src/app/(authenticated)/tpo/layout.tsx","utf8");
+  const menu=readFileSync("src/components/tpo/tpo-topbar-new-menu.tsx","utf8");
   expect(ui).toContain('"/api/placements/tpo/leads?collegeId="+encodeURIComponent(collegeId)');
   expect(ui).toContain('"/api/placements/tpo/calendar/follow-ups"');
   expect(ui).toContain("Choose a recruiter");
   expect(ui).toContain("Pick a date and time");
   expect(ui).toContain("Follow-up added. It shows on the calendar.");
   expect(ui).toContain("Could not save the follow-up");
-  expect(layout).toContain('<TpoNewFollowupModal key={item.href} collegeId={context.membership!.collegeId}/>');
+  expect(layout).toContain("<TpoTopbarNewMenu collegeId={context.membership!.collegeId}/>");
+  expect(menu).toContain("<TpoNewFollowupModal collegeId={collegeId}/>");
  });
 });

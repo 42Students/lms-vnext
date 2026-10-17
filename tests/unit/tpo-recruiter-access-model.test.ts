@@ -29,6 +29,12 @@ describe("TPO recruiter grant read model", () => {
       status: "ACTIVE",
       grantedDate: "14 Oct 2026",
       revokedDate: null,
+      // A grant without a recorded validity end fails closed, never silently perpetual.
+      validUntilDate: null,
+      ended: true,
+      designation: null,
+      capabilities: [],
+      verificationStatus: "UNKNOWN",
     });
   });
 
@@ -51,6 +57,11 @@ describe("TPO recruiter grant read model", () => {
       status: "REVOKED",
       grantedDate: expect.stringMatching(/^10 Sept? 2026$/),
       revokedDate: "15 Oct 2026",
+      validUntilDate: null,
+      ended: true,
+      designation: null,
+      capabilities: [],
+      verificationStatus: "UNKNOWN",
     });
   });
 
@@ -86,11 +97,16 @@ describe("TPO recruiter grant read model", () => {
     expect(
       Object.keys(result).sort(),
     ).toEqual([
+      "capabilities",
       "companyName",
+      "designation",
       "displayName",
+      "ended",
       "grantedDate",
       "revokedDate",
       "status",
+      "validUntilDate",
+      "verificationStatus",
     ]);
   });
 

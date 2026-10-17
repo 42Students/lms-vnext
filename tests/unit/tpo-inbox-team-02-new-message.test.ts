@@ -6,12 +6,12 @@ describe("TPO-inbox-team-02 New message sends first message",()=>{
   expect(source).toContain("message.trim()");
   expect(source).toContain('"/messages"');
   expect(source).toContain("if(!sent.ok)");
-  expect(source).toContain("Open the conversation to retry");
+  expect(source).toContain("Retry or open the conversation.");
  });
  it("matches legacy form text and guards unsent drafts",()=>{
   const source=readFileSync("src/components/tpo/tpo-new-recruiter-conversation.tsx","utf8");
   expect(source).toContain("New message to a recruiter");
   expect(source).toContain("This starts their General thread.");
-  expect(source).toContain("Discard draft?");
+  expect(source).toContain("Discard draft");
  });
 });

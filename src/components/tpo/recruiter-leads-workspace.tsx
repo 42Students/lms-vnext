@@ -991,6 +991,7 @@ export function RecruiterLeadsWorkspace({
                         {!lead.recruiterUserId?(
                           <button type="button" className={buttonStyle}
                             disabled={Boolean(invitingId)||!lead.emailNorm||!lead.companyRelationshipId||Boolean(lead.unsubscribedAt)}
+                            title={!lead.emailNorm||!lead.companyRelationshipId?"Add a work email and link a company before inviting.":undefined}
                             onClick={()=>void createInviteLink(lead)}>
                             {lead.inviteSentAt?"Resend invite":"Invite"}
                           </button>

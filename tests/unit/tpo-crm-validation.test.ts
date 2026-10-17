@@ -75,13 +75,13 @@ describe("DB09 recruiter CRM input contracts", () => {
 
   it("prevents callers from manufacturing SYSTEM audit activity", () => {
     expect(logTpoLeadActivitySchema.parse({
-      collegeId, type: "CALL", note: "Spoke to recruiter",
+      collegeId, type: "CALL", outcome: "Connected", note: "Spoke to recruiter",
     }).type).toBe("CALL");
     expect(() => logTpoLeadActivitySchema.parse({
       collegeId, type: "SYSTEM", note: "forged",
     })).toThrow();
     expect(() => logTpoLeadActivitySchema.parse({
-      collegeId, type: "CALL", isSystem: true,
+      collegeId, type: "CALL", outcome: "Connected", isSystem: true,
     })).toThrow();
   });
 

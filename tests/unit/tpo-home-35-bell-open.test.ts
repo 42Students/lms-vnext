@@ -16,6 +16,6 @@ describe("TPO-home-35 / TPO-inbox-team-61 bell open and acknowledge",()=>{
   expect(panel).toContain('onClick={()=>void openItem(item)}');
   expect(panel.indexOf("if(!response.ok)throw new Error")).toBeGreaterThan(-1);
   expect(panel).toContain("if(href)router.push(href)");
-  expect(panel).toContain("setUnread(n=>Math.max(0,n-1))");
+  expect(panel).toContain("setReadIds(ids=>ids.includes(item.id)?ids:[...ids,item.id])");
  });
 });
