@@ -17,6 +17,7 @@ export * from "./assessments";
 export * from "./quizzes";
 export * from "./projects";
 export * from "./placements";
+export * from "./placement-company-identities";
 export * from "./activity";
 
 export * from "./attendance";

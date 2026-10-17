@@ -3,6 +3,7 @@ import { SuperAdminCompanyMerge } from "@/components/admin/super-admin-company-m
 import {SuperAdminCompanyRestore} from "@/components/admin/super-admin-company-restore";
 import {SuperAdminCompanyVerification} from "@/components/admin/super-admin-company-verification";
 import {SuperAdminCompanyEdit} from "@/components/admin/super-admin-company-edit";
+import {SuperAdminCompanyIdentities} from "@/components/admin/super-admin-company-identities";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
@@ -65,7 +66,7 @@ export default async function SuperAdminCompaniesPage({
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Search in
         <select name="searchField" defaultValue={data.query.searchField} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
-          <option value="ALL">Name or domain</option><option value="NAME">Company name</option><option value="DOMAIN">Primary domain</option>
+          <option value="ALL">Name, other name or domain</option><option value="NAME">Name or other name</option><option value="DOMAIN">Any company domain</option>
         </select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Relationship
@@ -177,6 +178,11 @@ export default async function SuperAdminCompaniesPage({
           ? <SuperAdminCompanyVerification companyId={row.companyId} name={row.name}
               verified={Boolean(row.verifiedAt)} />:null}
         {row.website ? <p className="mt-2 break-all text-sm text-body">Website: {row.website}</p> : null}
+        <p className="mt-1 break-all text-xs text-body">Domains: {row.domains?.length?row.domains.join(", "):"Not registered"}</p>
+        <p className="mt-1 text-xs text-body">Other names: {row.aliases?.length?row.aliases.join(", "):"Not registered"}</p>
+        {!context.adminScope?.collegeId&&!context.adminScope?.organizationId&&row.companyStatus==="ACTIVE"
+          ? <SuperAdminCompanyIdentities companyId={row.companyId} name={row.name}
+              domains={row.domains??[]} aliases={row.aliases??[]} />:null}
         {row.industry?<p className="mt-1 text-sm text-body">Industry: {row.industry}</p>:null}
         {row.about?<p className="mt-1 text-sm text-body">{row.about}</p>:null}
         {!context.adminScope?.collegeId&&!context.adminScope?.organizationId&&row.companyStatus==="ACTIVE"

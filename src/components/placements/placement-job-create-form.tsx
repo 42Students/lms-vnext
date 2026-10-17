@@ -42,6 +42,7 @@ export type PlacementCompanyChoice = {
   relationshipId: string;
   name: string;
   primaryDomain: string | null;
+  otherNames?: readonly string[];
   isTrusted: boolean;
 };
 
@@ -109,13 +110,13 @@ export function PlacementJobCreateForm({
     companyRelationshipId,
     setCompanyRelationshipId,
   ] = useState(
-    companies.find(company=>company.name.toLowerCase()===initialCompanyName.toLowerCase())?.relationshipId ?? companies[0]?.relationshipId ?? "",
+    companies.find(company=>company.name.toLowerCase()===initialCompanyName.toLowerCase() || company.otherNames?.some(alias=>alias.toLowerCase()===initialCompanyName.toLowerCase()))?.relationshipId ?? companies[0]?.relationshipId ?? "",
   );
   const [companySearch,setCompanySearch]=useState("");
   const [eligibilityPreset,setEligibilityPreset]=useState<DriveEligibilityPreset>("OPEN");
   const [newEmployerName,setNewEmployerName]=useState("");
   const [newEmployerDomain,setNewEmployerDomain]=useState("");
-  const matchingEmployer=companies.find(company=>company.name.toLowerCase()===newEmployerName.trim().toLowerCase()&&Boolean(newEmployerName.trim())||
+  const matchingEmployer=companies.find(company=>Boolean(newEmployerName.trim()) && (company.name.toLowerCase()===newEmployerName.trim().toLowerCase() || company.otherNames?.some(alias=>alias.toLowerCase()===newEmployerName.trim().toLowerCase())) ||
     Boolean(newEmployerDomain.trim())&&company.primaryDomain?.toLowerCase().replace(/^www\./,"")===newEmployerDomain.trim().toLowerCase().replace(/^www\./,""));
   const {pending,run}=useGuardedAction({timeoutMs:45000});
   const [
