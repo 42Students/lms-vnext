@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {TpoHomeReturnRefresh} from "@/components/tpo/tpo-home-return-refresh";
 import {eq} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {users} from "@/db/schema";
@@ -132,6 +133,7 @@ export default async function TpoHome(){
   ],
  });
  return <main data-testid="tpo.home" className="min-w-0 space-y-5">
+ <TpoHomeReturnRefresh/>
  <p className="text-sm font-semibold text-muted-foreground">{greeting.date}</p>
  <PageHeader eyebrow="TPO" title={greeting.title}/>
  <p aria-live="polite" className="text-sm font-semibold text-body">{tpoHomeNeedsLine(rows)}</p>

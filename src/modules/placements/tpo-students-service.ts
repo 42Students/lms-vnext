@@ -44,6 +44,9 @@ import {
 import { placementEligibilityDecisions } from "@/db/schema/placement-access";
 import { placementBatchRegistrations } from "@/db/schema/placement-registration";
 import {placementBatchLifecycles} from "@/db/schema/placement-batches";
+import {placementDebarments} from "@/db/schema/placement-debarments";
+import {isDebarmentActive} from "./batch-registration-policy";
+import {placementCollegeDateInIndia} from "./placement-debarment-gate";
 import { placementExternalOffers } from "@/db/schema/placement-external";
 
 import { sortTpoRequestRows,tpoRequestUrgent } from "@/modules/placements/tpo-global-requests-model";
@@ -70,6 +73,10 @@ import {
 } from "./tpo-students-model";
 
 const uuid = z.string().uuid();
+/** Route filter strings are re-parsed by the service after URL validation. */
+const yesNo=z.union([z.boolean(),z.enum(["YES","NO"])]).transform(
+ value=>typeof value==="boolean"?value:value==="YES",
+);
 
 const paginationFields = {
   page: z.coerce.number().int().min(1).max(100000).default(1),
@@ -89,7 +96,16 @@ export const tpoStudentsQuerySchema = z
     profileStatus:z.enum(["VERIFIED","WAITING","SENT_BACK","NOT_VERIFIED"]).optional(),
     legacyStage:z.enum(["ELIGIBLE","INVITED","REGISTERED","VERIFIED","PLACED"]).optional(),
     minRoundReached:z.coerce.number().int().min(0).max(10000).optional(),
-    needsAttention:z.enum(["YES","NO"]).transform(x=>x==="YES").optional(),
+    interviewedWith:z.string().trim().max(100).optional(),
+    needsAttention:yesNo.optional(),
+    debarred:yesNo.optional(),
+    gender:z.enum(["Male","Female","Other"]).optional(),
+    birthYear:z.coerce.number().int().min(1900).max(2100).optional(),
+    minSkills:z.coerce.number().int().min(0).max(100).optional(),
+    minProjects:z.coerce.number().int().min(0).max(50).optional(),
+    minCertifications:z.coerce.number().int().min(0).max(50).optional(),
+    minExperiences:z.coerce.number().int().min(0).max(30).optional(),
+    hasProfileLinks:yesNo.optional(),
     minApplications:z.coerce.number().int().min(0).max(10000).optional(),
     maxApplications:z.coerce.number().int().min(0).max(10000).optional(),
     minOffers:z.coerce.number().int().min(0).max(10000).optional(),
@@ -102,8 +118,8 @@ export const tpoStudentsQuerySchema = z
     minUgPct:z.coerce.number().min(0).max(100).optional(),
     passingYear:z.coerce.number().int().min(1950).max(2100).optional(),
     maxGapYears:z.coerce.number().int().min(0).max(100).optional(),
-    marksVerified:z.enum(["YES","NO"]).transform(x=>x==="YES").optional(),
-    isLateralEntry:z.enum(["YES","NO"]).transform(x=>x==="YES").optional(),
+    marksVerified:yesNo.optional(),
+    isLateralEntry:yesNo.optional(),
     maxCgpa:z.coerce.number().min(0).max(10).optional(),
     maxActiveBacklogs:z.coerce.number().int().min(0).max(100).optional(),
     maxPastBacklogs:z.coerce.number().int().min(0).max(100).optional(),
@@ -134,7 +150,7 @@ export const tpoStudentRequestsQuerySchema = z
       ])
       .optional(),
     requestType: z.enum(["APPLICATION_WITHDRAWAL","ROUND_RESCHEDULE","OFFER_EXTENSION"]).optional(),
-    sort: z.enum(["URGENCY_FIRST","NEWEST_FIRST","OLDEST_FIRST"]).optional(),
+    sort: z.enum(["URGENCY_FIRST","NEWEST_FIRST","OLDEST_FIRST","DECIDED_NEWEST","DECIDED_OLDEST"]).optional(),
     requestedBefore:z.date().optional(),
     requestedAfter:z.date().optional(),
     urgentOnly:z.boolean().default(false),
@@ -246,6 +262,7 @@ export async function getTpoStudentsIntelligence(
       displayName: users.displayName,
       email: users.email,
       rollNumber: learnerProfiles.rollNumber,
+      profileDocument:learnerProfiles.profileDocument,
       registrationNumber:
         learnerProfiles.registrationNumber,
       enrollmentId: learnerProgramEnrollments.id,
@@ -859,6 +876,7 @@ export async function getTpoStudentsIntelligence(
       classIds:sectionIds,
       fromFinishedBatch:learner.enrollmentStatus==="COMPLETED",
       registrationOpen:learner.batchInvitedAt!==null,
+      profileDocument:learner.profileDocument,
       registrationChoice:
         registrationChoiceByLearner.get(
           `${learner.membershipId}:${learner.cohortId}`,
@@ -903,7 +921,20 @@ export async function getTpoStudentsIntelligence(
 
   // Legacy working set: placement-eligible learners only; a completed
   // academic enrollment reappears only when its finished cohort is selected.
-  const workingRows=selectTpoStudentWorkingSet(studentRows,Boolean(input.batchId));
+  const debarmentAvailable=await placementTableExists("placement_debarments");
+  const debarmentRecords=debarmentAvailable?await db.select({
+    membershipId:placementDebarments.membershipId,
+    untilDate:placementDebarments.untilDate,
+    untilDrives:placementDebarments.untilDrives,
+    drivesCounted:placementDebarments.drivesCounted,
+    liftedAt:placementDebarments.liftedAt,
+  }).from(placementDebarments).where(eq(placementDebarments.collegeId,college.id)):[];
+  const debarredIds=new Set(debarmentRecords.filter(record=>
+    isDebarmentActive(record,placementCollegeDateInIndia(now))).map(record=>record.membershipId));
+  const rowsWithDebarment=studentRows.map(row=>({...row,
+    debarred:debarmentAvailable?debarredIds.has(row.membershipId):null,
+  }));
+  const workingRows=selectTpoStudentWorkingSet(rowsWithDebarment,Boolean(input.batchId));
   const outcomeMatches=input.afterCollege?await readTpoAfterCollegeMatches(college.id,input.afterCollege):null;
   const filteredRows=!outcomeMatches?workingRows:!outcomeMatches.available?[]:
     workingRows.filter(row=>outcomeMatches.matched.has(row.membershipId)||
@@ -917,6 +948,8 @@ export async function getTpoStudentsIntelligence(
     collegeId: college.id,
     season: activeSeason ?? null,
     summary: summarizeTpoStudents(scopedRows),
+    debarmentAvailable,
+    debarredCount:debarmentAvailable?scopedRows.filter(row=>row.debarred===true).length:null,
     uninvitedCount:scopedRows.filter(row=>row.registrationOpen===false&&!row.registeredForPlacements&&!row.fromFinishedBatch).length,
     branches: summarizeTpoStudentBranches(workingRows),
     classChoices:[...new Map(activeSections.filter(section=>

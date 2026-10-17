@@ -194,7 +194,7 @@ export function DepartmentActions({
         />
       </Dialog>
       <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen}
-        title="Discard department changes?" description="Discard the unsaved department name?"
+        title="Discard department changes?" description={`Your edits to “${name}” will be lost.`}
         confirmLabel="Discard changes" pending={pending}
         onConfirm={() => { setDiscardOpen(false); setOpen(false); setNextName(name); }} />
       <Dialog

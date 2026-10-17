@@ -93,3 +93,43 @@ No tests were executed by chat-2; orchestrator owns execution and migration regi
 | TPO-inbox-team-54 | PARTIAL — remains OPEN | From 42 tab shows accurately qualified per-page unread count on registered read state, not a falsely global number. `src/app/(authenticated)/tpo/announcements/page.tsx`; named source test **TPO-inbox-team-54** in `tests/unit/tpo-notice-round4-verification.test.ts`. Bell and sidebar count parity remain open (shell belongs to chat-9). |
 
 The additional unit test `tests/unit/tpo-notice-round4-verification.test.ts` contains named cases for `TPO-inbox-team-48/49/50/51/52/53/55/56/58/R03/R04` to protect existing source behavior. Those cases are **not** independent verification of complete legacy parity. No tests were executed by chat-2; the orchestrator runs them and registers proposed migrations.
+
+## Builder chat-2 continuation — college permission parity
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-inbox-team-17 | PARTIAL — OPEN | Create-topic limit now 200 in UI, Zod and Drizzle with proposed migration `docs/proposed-migrations/tpo-inbox-team-topic-limit.sql`. Named tests `tests/unit/tpo-team-topic-length-chat2.test.ts` (**TPO-inbox-team-17**). Multi-person/topic context, renaming, visibility and leave still missing. PostgreSQL registration and execution by orchestrator. |
+| TPO-inbox-team-57 | DONE (source; integration pending) | Same-college, persisted `placements.manage` authority can edit, delete, undo or restore colleagues' TPO notices, still guarded by organization/college/sender type, row lock and version. UI includes colleague notices in To your students and Recently removed; named tests **TPO-inbox-team-57** in `tests/unit/tpo-team-notice-colleague-access-chat2.test.ts`. Database authorization test to be run by orchestrator. |
+
+## Builder chat-2 continuation — notification acknowledgement
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-inbox-team-64 | DONE (source; unrun) | `src/components/activity/notification-list.tsx` now uses 12 s guarded `apiFetch` and shows friendly Retry-able toast without navigation on failed read acknowledgement; whole-row TPO cards, unread dot, New and arrow remain. Named **TPO-inbox-team-64** in `tests/unit/tpo-bell-notification-ack-chat2.test.ts`. |
+| TPO-inbox-team-61 | DONE (source; unrun) | Reviewed existing `src/components/tpo/tpo-bell-panel.tsx`: 20-row drawer with click-then-read-then-route, errors and mark-all guard; named **TPO-inbox-team-61** in the same test. |
+
+## Builder chat-2 continuation — visible announcement links and counters
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-inbox-team-49 | PARTIAL — OPEN | `src/modules/announcements/tpo-notice-safe-links.ts` and announcement cards linkify verified HTTPS URLs, preserve other text, and retain the existing author/date/audience/state/CTA. Named test **TPO-inbox-team-49** in `tests/unit/tpo-notice-safe-links-chat2.test.ts`. Full email-delivery labels depend on additional delivery work. |
+| TPO-inbox-team-62 | DONE (source; unrun) | Reviewed `src/components/tpo/tpo-header-indicators.tsx` and `src/app/(authenticated)/tpo/layout.tsx`: 30-second + focus-visible refresh of scoped recruiter-message and TPO bell unread counts. Named test **TPO-inbox-team-62** in `tests/unit/tpo-notice-safe-links-chat2.test.ts`. |
+
+## Builder chat-2 continuation — People roster labeling
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-inbox-team-37 | PARTIAL — OPEN | `src/app/(authenticated)/tpo/team/page.tsx` no longer advertises legacy faculty/student coordinator duties as standing Team roles and restores the exact TPO-admin membership note. Named test **TPO-inbox-team-37** in `tests/unit/tpo-team-legacy-people-chat2.test.ts`. College-admin inclusion and membership policy still require R02/38 work. |
+| TPO-inbox-team-32 | PARTIAL — OPEN | People count now matches shown permanent members; existing Work and Name sort preserved. Named test **TPO-inbox-team-32** in the same suite. Overdue-first cannot be truthful until ask workload is persisted. |
+
+### PostgreSQL evidence for TPO-inbox-team-57
+
+`tests/integration/tpo-inbox-team-colleague-notices-chat2.test.ts` named test **TPO-inbox-team-57 permits a different authorized same-college TPO to edit then delete without losing optimistic concurrency** creates a notice under one actor, edits/deletes under a distinct persisted TPO actor and checks stale-version rejection and persisted state. It runs only on the orchestrator's approved disposable DB10 target. **Not executed by builder.**
+
+## Builder chat-2 continuation — Notifications history and refresh
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-inbox-team-65 | DONE (source; unrun) | TPO-only optional `allLabel` in shared `NotificationToolbar`: Latest n/All (n), exact subtitle and empty strings on `src/app/(authenticated)/tpo/notifications/page.tsx`; named **TPO-inbox-team-65** in `tests/unit/tpo-notifications-history-chat2.test.ts`. |
+| TPO-inbox-team-67 | DONE (source; unrun) | `tpo-notifications-service.ts` applies 30-day cutoff to unread count and view. First page now explains older unread items, with cursor history replacing legacy 200 ceiling as a documented enhancement. Named **TPO-inbox-team-67** same unit suite. |
+| TPO-inbox-team-68 | DONE (source; unrun) | `src/components/tpo/tpo-notification-refresh.tsx` probes bounded same-origin data before refreshing cards, keeps stale cards on transient failure and exposes exact legacy stale and refresh messages with Retry; existing loading skeleton and route Retry remain. Named **TPO-inbox-team-68** same unit suite. |

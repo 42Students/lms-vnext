@@ -17,7 +17,7 @@ describe("TPO needs doing shortcuts",()=>{
   expect(result.blockedRounds.map(x=>x.id)).toEqual(["r1"]);
  });
  it("TPO-calendar-reports-10 busy days mean at least three actual scheduled items, not exam blocks",()=>{
-  const a=["a","b","c"].map((id,i)=>baseline(id,"ROUND",`2099-02-04T0${9+i}:00:00+05:30`));
+  const a=["a","b","c"].map((id,i)=>baseline(id,"ROUND",`2099-02-04T${String(9+i).padStart(2,"0")}:00:00+05:30`));
   const blocks=toTpoBlockedCalendarEvents([{day:"2099-02-04",reason:null}],"2099-02-04","2099-02-04");
   const result=summarizeTpoCalendarNeeds([...a,...blocks],new Set(["2099-02-04"]),new Date("2099-02-01T00:00:00Z"));
   expect(result.busyDays).toEqual([["2099-02-04",3]]);

@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
-import { collegePromotionQuerySchema } from "@/modules/academics/college-batch-promotion-model";
+import { collegePromotionQuerySchema, formatPromotionAcademicYear } from "@/modules/academics/college-batch-promotion-model";
 import { BATCH_PROMOTION_COPY, promotionImpactMessage } from "@/modules/academics/college-batch-promotion-copy";
 import { getPromotionFacultyReadiness } from "@/modules/academics/college-promotion-faculty-readiness";
 import {
@@ -76,10 +76,10 @@ export default async function CollegeBatchPromotionPage({
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
-          Academic year override (start year)
-          <input name="yearStart" type="number" min={1900} max={9998} step={1}
-            defaultValue={parsed.data.yearStart ?? ""}
-            placeholder="Use recorded year"
+          Academic year override (optional)
+          <input name="yearStart" type="text" inputMode="numeric" pattern="[0-9]{4}-[0-9]{2}"
+            defaultValue={parsed.data.yearStart === undefined ? "" : formatPromotionAcademicYear(parsed.data.yearStart)}
+            placeholder="e.g., 2099-00"
             className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
         </label>
         <div className="flex items-end">

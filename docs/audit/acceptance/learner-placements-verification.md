@@ -46,3 +46,18 @@ Round-2 new tests: `tests/unit/learner-placements-round2-source-contracts.test.t
 
 ## Round 5 — batched review, not runtime-certified
 Grouped source test: `tests/unit/learner-placements-chat7-round5-contracts.test.ts`. Each `it` name includes its LEARNER-placements ID. Reviewed model/UI claims: `LEARNER-placements-04`, `LEARNER-placements-08`, `LEARNER-placements-13`, `LEARNER-placements-37`, `LEARNER-placements-46`, `LEARNER-placements-49`, `LEARNER-placements-54`, `LEARNER-placements-55`, `LEARNER-placements-R05`, `LEARNER-placements-R06`, `LEARNER-placements-R07`. `-04/-08/-37/-49` remain partially verified because source strings cannot certify all actionable state, visibility and notification delivery. `-20` remains BLOCKED on private scanned storage. `-24/-28/-35/-51/-52/-R03/-R04` still require feature work; do not call them DONE. This page received the new shared apiFetch/friendly-error handling for saved drives, with failed writes retaining the current saved state. Tests were authored, not run.
+
+## Chat-7 follow-up: learner requests and notice-state review
+- `LEARNER-placements-54`: the request form now uses legacy-facing "New request", "What do you need?" and "Tell the placement cell why", and submits with a friendly, guarded JSON transport. The legacy multi-type modal and full request taxonomy are **not** yet present, so this gap remains OPEN rather than falsely being marked DONE. `tests/unit/learner-placements-chat7-followup.test.ts` — `LEARNER-placements-54 request error safety and legacy-facing labels`.
+- `LEARNER-placements-04`: the waiting-on-you panel is already present, but still lacks some evidence-based CTAs (for example sent-back profile fixes); retain OPEN until they are added. `tests/unit/learner-placements-chat7-followup.test.ts` — `LEARNER-placements-04 never masks missing actionable tasks`.
+- `LEARNER-placements-33`: intentional vNext counts are preserved under owner decision OD-38 rather than removed merely to mimic legacy. `tests/unit/learner-placements-chat7-followup.test.ts` — `LEARNER-placements-33 retains vNext application summary as intentional design`.
+
+## Chat-7 notice delivery and intentional differences
+| ID | Status | Evidence (source and gap-named test) |
+|---|---|---|
+| LEARNER-placements-33 | NOT-A-GAP | Owner OD-38 approves the enhanced application summary, retained in src/app/(authenticated)/learn/my-placements/applications/page.tsx; tests/unit/learner-placements-chat7-followup.test.ts test LEARNER-placements-33 retains vNext application summary as intentional design. |
+| LEARNER-placements-R08 | NOT-A-GAP | Cohort and section targeting stays private (avoid disclosing out-of-audience drives); src/modules/placements/learner-job-service.ts; tests/unit/learner-placements-chat7-notice-actions.test.ts test LEARNER-placements-R08 prevents discovery outside assigned cohort or section. |
+
+LEARNER-placements-47 is PARTIAL (still OPEN): stored TPO HTTPS action links now appear on learner notice cards, with a safe URL allowlist and named test LEARNER-placements-47 renders only safe persisted TPO action links (tests/unit/learner-placements-chat7-notice-actions.test.ts). Notice read tracking is not implemented.
+
+LEARNER-placements-49 is PARTIAL (still OPEN): removed outdated disclaimer; TPO publisher and targeted reader code connect, covered by named test LEARNER-placements-49 preserves scoped TPO producer to learner reader wiring (tests/unit/learner-placements-chat7-notice-actions.test.ts). Real database producer-to-consumer test not executed or certified.

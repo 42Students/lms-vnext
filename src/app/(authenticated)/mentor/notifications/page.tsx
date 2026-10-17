@@ -48,34 +48,55 @@ export default async function MentorNotificationsPage({
   </section>;
 
   const context = await getCurrentRequestContext();
-  const inbox = await getMentorPersonalInbox(context,parsed.data);
+  const failedSources: string[] = [];
+  const inbox = await getMentorPersonalInbox(context,parsed.data).catch(() => {
+    failedSources.push("Personal notifications");
+    return null;
+  });
   // Personal messages remain accessible even when the optional Projects module
   // is disabled. Never treat a missing project policy as a successful empty feed.
   const announcementsEnabled = announcementsRuntimeEnabled();
-  const [projectAccess,announcements] = await Promise.all([
+  const [accessResult, announcementResult] = await Promise.allSettled([
     resolveOptionalModuleAccess(context),
     announcementsEnabled
       ? listVisibleAnnouncementsForMembership(context) : Promise.resolve([]),
   ]);
-  const alerts = projectAccess.projects.enabled
-    ? await listMyMentorProjectAttention(context) : [];
-  const assigned=projectAccess.projects.enabled
-    ? (await listMyProjectInstances(context)).filter(row=>row.memberRole==="MENTOR") : [];
+  const projectAccess = accessResult.status === "fulfilled" ? accessResult.value : null;
+  if (accessResult.status === "rejected") failedSources.push("Project access");
+  const announcements = announcementResult.status === "fulfilled" ? announcementResult.value : [];
+  if (announcementResult.status === "rejected") failedSources.push("Announcements");
+  const alerts = projectAccess?.projects.enabled
+    ? await listMyMentorProjectAttention(context).catch(() => {
+      failedSources.push("Project attention");
+      return [];
+    }) : [];
+  const assigned = projectAccess?.projects.enabled
+    ? await listMyProjectInstances(context).then(rows=>rows.filter(row=>row.memberRole==="MENTOR"))
+      .catch(() => { failedSources.push("Assigned projects"); return []; })
+    : [];
   const projectOptions=mentorAttentionProjectOptions(alerts,
     assigned.map(row=>({id:row.project.id,title:row.project.title})));
   const visibleAlerts=selectMentorAttention(alerts,kind.data,projectId.data,attentionOrder.data);
-  const items:NotificationListItem[] = inbox.page.items.map(({notification,event})=>({
+  const items:NotificationListItem[] = (inbox?.page.items ?? []).map(({notification,event})=>({
     id:notification.id,title:notification.title,body:notification.body,
     actionHref:notification.actionHref,
     readAt:notification.readAt?.toISOString()??null,
     createdAt:notification.createdAt.toISOString(),
     module:event.module,importance:event.importance,
   }));
-  const nextHref = inbox.page.nextCursor
+  const nextHref = inbox?.page.nextCursor
     ? mentorInboxPageHref(inbox.query.view,inbox.page.nextCursor) : null;
   return <div className="space-y-8">
-    <PageHeader eyebrow="Mentor" title="Notifications"
-      description="Personal notices, college announcements and registered project attention." />
+    <PageHeader title="Notifications"
+      description="Announcements, submissions waiting for review, stalled projects, and meetings coming up soon." />
+    {failedSources.length ? <div role="alert" className="rounded-xl border border-border bg-surface p-4">
+      <h2 className="font-semibold text-foreground">Some notification sources are unavailable</h2>
+      <p className="mt-1 text-sm text-body">
+        Could not load: {failedSources.join(", ")}. Everything else below is current, but this page may be incomplete.
+      </p>
+      <Link href={MENTOR_INBOX}
+        className="mt-3 inline-flex min-h-10 items-center font-semibold text-primary-text underline">Retry sources</Link>
+    </div> : null}
     <AnnouncementFeed enabled={announcementsEnabled}
       items={announcements.map(item=>({
         id:item.id,title:item.title,message:item.message,
@@ -116,13 +137,13 @@ export default async function MentorNotificationsPage({
         </button>
         <Link href={MENTOR_INBOX} className="text-sm text-primary-text underline">Clear</Link>
       </form>
-      {!projectAccess.projects.enabled
+      {!projectAccess?.projects.enabled
         ? <p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
             Projects access is disabled; project attention is unavailable.
           </p>
         : visibleAlerts.length === 0
           ? <p className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
-              No project-attention signal matches this filter.
+              {failedSources.length ? "No project alerts are visible, but some notification sources could not be checked." : "Nothing needs your attention right now."}
             </p>
           : <div className="grid gap-3">{visibleAlerts.map(alert=>
               <Link key={alert.key} href={alert.href}
@@ -132,7 +153,8 @@ export default async function MentorNotificationsPage({
                   <StatusBadge tone={alert.kind === "STALLED" ? "error" :
                     alert.kind === "REVIEW" || alert.kind === "REQUESTED" ? "warning" : "info"}>
                     {alert.kind === "MEETING_SOON" ? "Upcoming meeting" :
-                      alert.kind === "REQUESTED" ? "Requested" : alert.kind}
+                      alert.kind === "REQUESTED" ? "Meeting requested" :
+                      alert.kind === "REVIEW" ? "Needs review" : "Stalled"}
                   </StatusBadge>
                 </div>
                 <p className="mt-2 text-sm text-body">{alert.description}</p>
@@ -142,20 +164,20 @@ export default async function MentorNotificationsPage({
       <h2 id="mentor-personal-notifications" className="text-lg font-semibold text-foreground">
         Personal notifications
       </h2>
-      <NotificationToolbar view={inbox.query.view} unreadCount={inbox.unreadCount}
+      {inbox ? <NotificationToolbar view={inbox.query.view} unreadCount={inbox.unreadCount}
         baseHref={MENTOR_INBOX} markAllEndpoint="/api/mentor/notifications/read-all"
-        confirmMarkAll />
-      {inbox.cursor.invalid
+        confirmMarkAll /> : null}
+      {inbox?.cursor.invalid
         ? <div role="alert" className="rounded-xl border border-border bg-surface p-4 text-sm text-foreground">
             The notification page link is invalid.{" "}
-            <Link href={mentorInboxPageHref(inbox.query.view)}
+            <Link href={mentorInboxPageHref(inbox?.query.view ?? parsed.data.view)}
               className="font-semibold text-primary-text underline">
               Return to newest notifications
             </Link>
           </div>
         : <>
             <NotificationList items={items} readEndpoint="/api/mentor/notifications"
-              emptyText={inbox.query.view === "unread" ? "No unread notifications." : "No personal notifications yet."} />
+              emptyText={!inbox ? "Personal notifications are temporarily unavailable." : inbox.query.view === "unread" ? "No unread notifications." : "No personal notifications yet."} />
             {nextHref ? <div className="flex justify-center">
               <Link href={nextHref}
                 className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle">

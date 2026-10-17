@@ -9,6 +9,7 @@ import { useToast } from "@/components/ui/toast";
 export function NotificationToolbar({
   view,
   unreadCount,
+  allLabel = "All",
   baseHref = "/notifications",
   markAllEndpoint = "/api/notifications/read-all",
   confirmMarkAll = false,
@@ -16,6 +17,7 @@ export function NotificationToolbar({
 }: {
   view: "all" | "unread";
   unreadCount: number;
+  allLabel?: string;
   baseHref?: string;
   markAllEndpoint?: string;
   confirmMarkAll?: boolean;
@@ -55,7 +57,7 @@ export function NotificationToolbar({
           aria-current={view === "all" ? "page" : undefined}
           className={`inline-flex min-h-10 items-center rounded-md border px-4 text-sm font-semibold transition ${view === "all" ? "border-primary bg-primary-subtle text-primary-text" : "border-border text-foreground hover:border-primary"}`}
         >
-          All
+          {allLabel}
         </Link>
         <Link
           href={baseHref + "?view=unread"}

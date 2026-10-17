@@ -162,4 +162,24 @@ describe("chat-4 verified TPO Home gap coverage",()=>{
   expect(s).toContain("Mark all read");
   expect(s).not.toContain("window.confirm");
  });
+ it("TPO-home-19 refreshes Home on return without refetch storms",()=>{
+  const s=source("src/components/tpo/tpo-home-return-refresh.tsx");
+  expect(s).toContain('document.addEventListener("visibilitychange",handle)');
+  expect(s).toContain("router.refresh()");
+  expect(s).toContain("now-lastRefresh.current<15000");
+  expect(source("src/app/(authenticated)/tpo/home/page.tsx")).toContain("<TpoHomeReturnRefresh/>");
+ });
+ it("TPO-home-37 refreshes scoped bell items on open and gives retry feedback",()=>{
+  const s=source("src/components/tpo/tpo-bell-panel.tsx");
+  expect(s).toContain('apiFetch<unknown>("/api/tpo/header-snapshot"');
+  expect(s).toContain("tpoHeaderSnapshotSchema.safeParse(payload)");
+  expect(s).toContain('if(next)void refresh()');
+  expect(s).toContain("Couldn\\u0027t refresh notifications. Showing the last messages we loaded.");
+  expect(s).toContain("Refreshing notifications…");
+ });
+ it("TPO-home-R07 opens a student record using the scoped finder query and membership identifier",()=>{
+  const s=source("src/app/(authenticated)/tpo/find/page.tsx");
+  expect(s).toContain('"/tpo/students?q="+encodeURIComponent(s.name??"")+"&student="+encodeURIComponent(s.id)');
+  expect(s).toContain("named.students.slice(0,5)");
+ });
 });

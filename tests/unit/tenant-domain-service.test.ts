@@ -27,6 +27,12 @@ const adminContext: RequestContext = {
   },
 };
 
+
+const superAdminContext: RequestContext = {
+  user: { id: "super-admin", identityUid: "identity-super-admin", platformStatus: "ACTIVE", systemRoles: ["SUPER_ADMIN"] },
+  membership: null,
+};
+
 function createRepository(): TenantDomainRepository {
   const domains = new Map<string, TenantDomainView>();
   let counter = 0;
@@ -173,7 +179,7 @@ describe("tenant-domain service", () => {
     const repository = createRepository();
 
     const first = await createTenantDomain(
-      adminContext,
+      superAdminContext,
       {
         collegeId: "11111111-1111-4111-8111-111111111111",
         host: "Portal.Example.edu.",
@@ -182,7 +188,7 @@ describe("tenant-domain service", () => {
       () => "token-one",
     );
     const second = await createTenantDomain(
-      adminContext,
+      superAdminContext,
       {
         collegeId: "11111111-1111-4111-8111-111111111111",
         host: "portal.example.edu",
@@ -219,7 +225,7 @@ describe("tenant-domain service", () => {
 
     await expect(
       createTenantDomain(
-        adminContext,
+        superAdminContext,
         {
           collegeId: "11111111-1111-4111-8111-111111111111",
           host: "SHARED.EXAMPLE.EDU",
@@ -249,7 +255,7 @@ describe("tenant-domain service", () => {
   it("verifies ownership and promotes the first verified host to primary", async () => {
     const repository = createRepository();
     const domain = await createTenantDomain(
-      adminContext,
+      superAdminContext,
       {
         collegeId: "11111111-1111-4111-8111-111111111111",
         host: "portal.example.edu",
@@ -259,7 +265,7 @@ describe("tenant-domain service", () => {
     );
 
     const verified = await verifyTenantDomain(
-      adminContext,
+      superAdminContext,
       domain.id,
       repository,
       {
@@ -288,7 +294,7 @@ describe("tenant-domain service", () => {
   it("switches the primary flag between verified domains", async () => {
     const repository = createRepository();
     const first = await createTenantDomain(
-      adminContext,
+      superAdminContext,
       {
         collegeId: "11111111-1111-4111-8111-111111111111",
         host: "first.example.edu",
@@ -297,7 +303,7 @@ describe("tenant-domain service", () => {
       () => "first-token",
     );
     const second = await createTenantDomain(
-      adminContext,
+      superAdminContext,
       {
         collegeId: "11111111-1111-4111-8111-111111111111",
         host: "second.example.edu",
@@ -306,19 +312,19 @@ describe("tenant-domain service", () => {
       () => "second-token",
     );
 
-    await verifyTenantDomain(adminContext, first.id, repository, {
+    await verifyTenantDomain(superAdminContext, first.id, repository, {
       async verify() {
         return { verified: true, result: "VERIFIED" };
       },
     });
-    await verifyTenantDomain(adminContext, second.id, repository, {
+    await verifyTenantDomain(superAdminContext, second.id, repository, {
       async verify() {
         return { verified: true, result: "VERIFIED" };
       },
     });
 
     const promoted = await setPrimaryTenantDomain(
-      adminContext,
+      superAdminContext,
       second.id,
       repository,
     );
@@ -330,7 +336,7 @@ describe("tenant-domain service", () => {
   it("requires verification before a domain can become primary", async () => {
     const repository = createRepository();
     const domain = await createTenantDomain(
-      adminContext,
+      superAdminContext,
       {
         collegeId: "11111111-1111-4111-8111-111111111111",
         host: "secondary.example.edu",
@@ -341,7 +347,7 @@ describe("tenant-domain service", () => {
 
     await expect(
       setPrimaryTenantDomain(
-        adminContext,
+        superAdminContext,
         domain.id,
         repository,
       ),

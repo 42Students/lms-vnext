@@ -7,5 +7,5 @@ export function logAlertsRuntimeEnabled() {
 export function cloudLogPollConfigured(): boolean {
   return process.env.LOG_ALERT_CLOUD_POLL_ENABLED === "true" &&
     Boolean(process.env.GOOGLE_CLOUD_PROJECT) &&
-    Boolean(process.env.LOG_ALERT_K8S_NAMESPACE || process.env.APP_ENV !== "production");
+    Boolean(process.env.LOG_ALERT_K8S_NAMESPACE || !process.env.APP_ENV || process.env.APP_ENV === "development");
 }

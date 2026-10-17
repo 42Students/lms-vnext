@@ -1,5 +1,5 @@
+import {CollegeCourseMissingScope} from "@/components/courses/college-course-missing-scope";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeContentAggregate } from "@/components/courses/college-content-aggregate";
 import {CollegeContentAuthoringControl} from "@/components/courses/college-content-authoring-control";
@@ -16,7 +16,7 @@ export default async function CollegeVideosPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership) redirect("/dashboard");
+  if(!context.membership)return <CollegeCourseMissingScope area="college"/>;
   const raw = collegeContentSearchParams(await searchParams);
   const parsed = collegeContentQuerySchema.safeParse(raw);
   if (!parsed.success) {

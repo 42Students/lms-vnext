@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {TpoNotificationRefresh} from "@/components/tpo/tpo-notification-refresh";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
@@ -67,8 +68,11 @@ export default async function TpoNotificationsPage({
   const nextHref = inbox.page.nextCursor
     ? tpoInboxPageHref(inbox.query.view, inbox.page.nextCursor)
     : null;
+  const olderUnread=Math.max(0,inbox.unreadCount-items.filter(item=>!item.readAt).length);
+  const firstPage=!inbox.query.beforeCreatedAt&&!inbox.query.beforeId;
   return (
     <div className="space-y-6">
+      <TpoNotificationRefresh/>
       <PageHeader
         eyebrow="TPO"
         title="Notifications"
@@ -77,6 +81,7 @@ export default async function TpoNotificationsPage({
       <NotificationToolbar
         view={inbox.query.view}
         unreadCount={inbox.unreadCount}
+        allLabel={nextHref?"Latest "+items.length:"All ("+items.length+")"}
         baseHref={TPO_NOTIFICATIONS_PATH}
         markAllEndpoint="/api/tpo/notifications/read-all"
       />
@@ -93,8 +98,11 @@ export default async function TpoNotificationsPage({
             variant="tpo"
             items={items}
             readEndpoint="/api/tpo/notifications"
-            emptyText={inbox.query.view === "unread" ? "No unread notifications." : "No notifications yet."}
+            emptyText={inbox.query.view === "unread" ? "No unread notifications" : "Nothing yet"}
           />
+          {firstPage&&olderUnread>0?<p role="status" className="text-sm text-muted-foreground">
+            {olderUnread} unread {olderUnread===1?"is":"are"} older than what is shown. Show older to view the history; Mark all as read clears older ones too.
+          </p>:null}
           {emptyNavigation?<p role="status" className="rounded-xl border border-border bg-surface p-4">
             Your unread inbox is clear. <Link href={emptyNavigation.href} className="font-semibold text-primary-text underline">{emptyNavigation.label}</Link>
           </p>:null}
