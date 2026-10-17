@@ -53,7 +53,7 @@ export function RecruiterDisplayNameEditor({initialName,updatedAt}:{
    <input id="hr-last-name" value={lastName} maxLength={100}
     onChange={event=>setLastName(event.target.value)}
     className="min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground"/>
-   <button type="submit" disabled={saving||!hrRecruiterNameFieldsSchema.safeParse({firstName,lastName}).success}
+   <button type="submit" disabled={saving||(firstName===savedName.firstName&&lastName===savedName.lastName)||!hrRecruiterNameFieldsSchema.safeParse({firstName,lastName}).success}
     className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-60">
     {saving?"Saving…":"Save name"}
    </button>
