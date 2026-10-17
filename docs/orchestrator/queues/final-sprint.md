@@ -181,17 +181,19 @@ Chat-9 source closure: all 11 gap IDs have dedicated `tests/unit/chat9-final-<GA
 
 ## chat-13 (11)
 
-- PUB-auth-public-50 [OPEN] public/auth-public-2-links-marketing
-- PUB-auth-public-52 [OPEN] public/auth-public-2-links-marketing
-- PUB-auth-public-53 [OPEN] public/auth-public-2-links-marketing
-- PUB-auth-public-55 [OPEN] public/auth-public-2-links-marketing
-- PUB-auth-public-57 [OPEN] public/auth-public-2-links-marketing
-- LEARNER-placements-19 [WRONG] learner/placements
-- LEARNER-placements-24 [FIXED-ON-MAIN] learner/placements
-- LEARNER-placements-35 [FIXED-ON-MAIN] learner/placements
-- SA-academics-people-92 [OPEN] superadmin/academics-people-3-people-recruiters
-- SA-academics-people-94 [FIXED-ON-MAIN] superadmin/academics-people-3-people-recruiters
-- TPO-home-R08 [FIXED-ON-MAIN] tpo/home
+- PUB-auth-public-50 [DONE] public/auth-public-2-links-marketing
+- PUB-auth-public-52 [DONE] public/auth-public-2-links-marketing
+- PUB-auth-public-53 [DONE] public/auth-public-2-links-marketing
+- PUB-auth-public-55 [DONE] public/auth-public-2-links-marketing
+- PUB-auth-public-57 [DONE] public/auth-public-2-links-marketing
+- LEARNER-placements-19 [NOT-A-GAP] learner/placements
+- LEARNER-placements-24 [DONE] learner/placements
+- LEARNER-placements-35 [DONE] learner/placements
+- SA-academics-people-92 [DONE] superadmin/academics-people-3-people-recruiters
+- SA-academics-people-94 [DONE] superadmin/academics-people-3-people-recruiters
+- TPO-home-R08 [DONE] tpo/home
+
+> chat-13 recheck (2026-10-18): 10 DONE and 1 NOT-A-GAP in source; every listed ID has gap-named unit and acceptance evidence under `docs/audit/acceptance/`. `SA-academics-people-92` now additionally checks Super Admin registration reachability. No browser, DB or Vitest run was performed by this lane; orchestrator execution remains the verification gate.
 
 ## chat-14 (11)
 

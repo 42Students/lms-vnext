@@ -10,4 +10,8 @@ it("SA-academics-people-92 maintains legacy First Name Last Name and 10-digit in
  const editor=readFileSync("src/modules/people/college-directory-person-editor-service.ts","utf8");
  expect(editor).toContain("personalDetails");
  expect(editor).toContain("profileDocument");
+ // The legacy-shaped registration form must be reachable in Super Admin acting-college scope.
+ const superAdmin=readFileSync("src/app/(authenticated)/admin/students/page.tsx","utf8");
+ expect(superAdmin).toContain("context.adminScope?.collegeId?");
+ expect(superAdmin).toContain("<CollegeStudentRegisterForm choices={choices}/>");
 });

@@ -1,4 +1,4 @@
-import { eq, and, inArray, or } from "drizzle-orm";
+import { eq, and, inArray } from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {platformSettingOverrides} from "@/db/schema";
 
@@ -13,20 +13,17 @@ export function learnerPlaybackSettingValue(key:string,value:unknown):number|nul
  if(key==="ui.chatPollIntervalMs")return n>=5000&&n<=120000?n:null;
  return null;
 }
-export async function readLearnerPlaybackSettings(collegeId:string|undefined){
+export async function readLearnerPlaybackSettings(_collegeId:string|undefined){
  const defaults={...LEARNER_PLAYBACK_DEFAULTS};
  const keys=["ui.progressSaveIntervalMs","course.watchedThresholdPercent","course.minInProgressPercent","ui.chatPollIntervalMs"];
  const rows=await getDb().select({scopeType:platformSettingOverrides.scopeType,key:platformSettingOverrides.key,
   value:platformSettingOverrides.value}).from(platformSettingOverrides)
   .where(and(inArray(platformSettingOverrides.key,keys),
-    or(and(eq(platformSettingOverrides.scopeType,"GLOBAL"),
-      eq(platformSettingOverrides.scopeId,"GLOBAL")),
-     collegeId&&/^[a-f\d-]{36}$/i.test(collegeId)?
-      and(eq(platformSettingOverrides.scopeType,"COLLEGE"),
-        eq(platformSettingOverrides.scopeId,collegeId)):undefined)));
- const chosen=new Map(rows.filter(row=>row.scopeType==="GLOBAL").map(row=>[row.key,row.value] as const));
- // A verified college-specific override takes precedence over a global default.
- if(collegeId)for(const row of rows.filter(row=>row.scopeType==="COLLEGE"))chosen.set(row.key,row.value);
+    eq(platformSettingOverrides.scopeType,"GLOBAL"),
+    eq(platformSettingOverrides.scopeId,"GLOBAL")));
+ // These course UI keys are GLOBAL in LEGACY_TENANT_SETTING_SPECS.
+ // Never let a stale or malformed college-scoped row override platform policy.
+ const chosen=new Map(rows.map(row=>[row.key,row.value] as const));
  return {
   saveIntervalMs:learnerPlaybackSettingValue(keys[0]!,chosen.get(keys[0]))??defaults.saveIntervalMs,
   watchedThresholdPercent:learnerPlaybackSettingValue(keys[1]!,chosen.get(keys[1]))??defaults.watchedThresholdPercent,

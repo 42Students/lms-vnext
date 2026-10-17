@@ -40,7 +40,7 @@ describe("learner Course page parity contract", () => {
       "Lectures",
       "Resources",
       "Assessments",
-      "Live Sessions",
+      "Live sessions",
     ]) {
       expect(content).toContain(label);
     }

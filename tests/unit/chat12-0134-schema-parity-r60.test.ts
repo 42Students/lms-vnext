@@ -24,10 +24,18 @@ describe("chat-12 migration 0134 effective schema fidelity",()=>{
   expect(effectiveRequestSql).toContain("target_key varchar(150) not null");
   expect(general).toContain('targetKey:varchar("target_key",{length:150})');
  });
- it("TPO-requests-verification-01 uses five registered kinds and guards the sixth separately",()=>{
+ it("TPO-requests-verification-01 keeps the five original 0134 kinds and verifies the registered 0135 sixth-kind correction",()=>{
+  // 0134 is immutable: its first CREATE TABLE enforces exactly five kinds.
   expect(effectiveRequestSql).not.toContain("'OFFER_ACCEPTANCE_DISPUTE'");
-  expect(general).toContain("('OFF_CAMPUS_OFFER','REGISTRATION_CHANGE','ABSENCE_DISPUTE','CORRECTION_WITH_PROOF','PLACEMENT_AFTER_PLACEMENT')");
-  expect(general).not.toContain("'PLACEMENT_AFTER_PLACEMENT','OFFER_ACCEPTANCE_DISPUTE'");
+  expect(effectiveRequestSql).toContain("'CORRECTION_WITH_PROOF','PLACEMENT_AFTER_PLACEMENT'");
+  // 0135 is journal-registered and explicitly upgrades the same CHECK.
+  const correction=read("drizzle/0135_lanes_round_3.sql");
+  const journal=JSON.parse(read("drizzle/meta/_journal.json")) as {entries:{tag:string}[]};
+  expect(journal.entries.some(entry=>entry.tag==="0135_lanes_round_3")).toBe(true);
+  expect(correction).toContain("-- from chat-12-0134-general-requests-correction.sql");
+  expect(correction).toContain("'PLACEMENT_AFTER_PLACEMENT','OFFER_ACCEPTANCE_DISPUTE'");
+  expect(general).toContain("'PLACEMENT_AFTER_PLACEMENT','OFFER_ACCEPTANCE_DISPUTE'");
+  // The admission guard remains important for databases not yet migrated.
   expect(read("src/modules/placements/tpo-general-request-service.ts")).toContain('await requireRegisteredKind(tx,input.kind)');
  });
  it("TPO-requests-verification-01 retains two-column tenant-bound membership foreign key",()=>{

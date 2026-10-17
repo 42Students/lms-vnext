@@ -8,9 +8,14 @@ import {
 const impact = { submittedApplications: 4, openRounds: 2, issuedOffers: 1, acceptedOffers: 0 };
 
 describe("TPO drive cancellation", () => {
-  it("TPO-drives-16 allows only published active-season drives against an unchanged impact", () => {
+  it("TPO-drives-16 requires active seasons for published cancellations and a versioned preview for reviewed drafts", () => {
     expect(evaluateTpoDriveCancellation("PUBLISHED", "ACTIVE", impact, impact)).toBe("ALLOW");
-    expect(evaluateTpoDriveCancellation("DRAFT", "ACTIVE", impact, impact)).toBe("READ_ONLY");
+    // The cancellation preview and write service explicitly permit unpublished
+    // drafts (including a draft whose season closed). Do not regress that flow.
+    const emptyDraft = { submittedApplications: 0, openRounds: 0, issuedOffers: 0, acceptedOffers: 0 };
+    expect(evaluateTpoDriveCancellation("DRAFT", "ACTIVE", emptyDraft, emptyDraft)).toBe("ALLOW");
+    expect(evaluateTpoDriveCancellation("DRAFT", "CLOSED", emptyDraft, emptyDraft)).toBe("ALLOW");
+    expect(evaluateTpoDriveCancellation("DRAFT", "ACTIVE", emptyDraft, { ...emptyDraft, openRounds: 1 })).toBe("PREVIEW_STALE");
     expect(evaluateTpoDriveCancellation("CLOSED", "ACTIVE", impact, impact)).toBe("READ_ONLY");
     expect(evaluateTpoDriveCancellation("PUBLISHED", "CLOSED", impact, impact)).toBe("READ_ONLY");
     expect(evaluateTpoDriveCancellation("PUBLISHED", "ACTIVE", impact, { ...impact, openRounds: 1 })).toBe("PREVIEW_STALE");

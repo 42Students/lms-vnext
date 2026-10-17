@@ -10,7 +10,11 @@ describe("Faculty zero-point participation assignments",()=>{
   const base={lessonId:id,deliveryId:id,title:"Participation",description:"Review",dueAt:null,maxPoints:0,sequence:0};
   expect(createCourseAssignmentInputSchema.safeParse(base).success).toBe(true);
   expect(updateCourseAssignmentInputSchema.safeParse({maxPoints:0}).success).toBe(true);
-  expect(facultyAssignmentCommandSchema.safeParse({...base,action:"CREATE",confirmed:true}).success).toBe(true);
+  // deliveryId is a route parameter; the strict Faculty command body must not duplicate it.
+  const {deliveryId,...facultyBody}=base;
+  expect(deliveryId).toBe(id);
+  expect(facultyAssignmentCommandSchema.safeParse({...facultyBody,action:"CREATE",confirmed:true}).success).toBe(true);
+  expect(facultyAssignmentCommandSchema.safeParse({...base,action:"CREATE",confirmed:true}).success).toBe(false);
   expect(facultyAssignmentDraftIssue({title:"Participation",description:"Review",maxPoints:0})).toBeNull();
   for(const value of [-1,0.5,1001])expect(facultyAssignmentDraftIssue({title:"Participation",description:"Review",maxPoints:value})).not.toBeNull();
   expect(src("src/db/schema/assessments.ts")).toContain("between 0 and 10000");

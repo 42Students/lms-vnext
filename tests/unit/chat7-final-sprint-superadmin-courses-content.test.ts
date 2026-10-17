@@ -22,7 +22,7 @@ describe("chat-7 final sprint Super Admin courses and content",()=>{
    expect(ui).toContain(text);expect(edit).toContain(text);
   }
   expect(service).toContain("shortTitle:input.shortTitle??input.name.slice(0,120)");
-  expect(read("docs/proposed-migrations/chat7-sa-course-catalogue-metadata.sql"))
+  expect(read("docs/proposed-migrations/registered-0135/chat7-sa-course-catalogue-metadata.sql"))
    .toContain("ADD COLUMN IF NOT EXISTS short_title");
  });
  it("SA-academics-people-52 offers guarded selected-course bulk show hide and per-record failures",()=>{
