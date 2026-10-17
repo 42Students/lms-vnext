@@ -267,8 +267,16 @@ Audit: `docs/audit/pages/college/projects.md` (and `projects-review.md` if prese
 - BLOCKED TPO-calendar-reports-43: Resume uploaded/verified state requires the private object-storage bucket and scanner integration owned by the storage service.
 - OPEN TPO-calendar-reports-31: Batch/branch/company/mode/pay category aggregation parity across all report APIs remains to implement; the verified company and summary table filters do not cover them all.
 - OPEN TPO-calendar-reports-38: Legacy gallery subtitle and main report titles align, but remaining individual page descriptions need evidence review.
-- OPEN TPO-calendar-reports-R01: Released/accepted rule now flows into accreditation student list; SELECTED needs a persisted selection outcome join before source closure.
+- DONE TPO-calendar-reports-R01: Selected outcomes now read persisted placement_drive_selections alongside released/accepted offers; model tests cover selection-only records (orchestrator to execute).
 
 
 ## Needs shell (chat-9 only)
 
+
+## Round 2 handoff (2026-10-17)
+- TPO Calendar/Reports verified-closure source pass: add and preserve gap-ID tests for prior-implemented S3/S4 calendar/report controls; fix blocked URL filter, future follow-up time, exact calendar copy, legacy report group and accreditation labels, remove internal unplaced IDs, remove warning pseudo-row, derive selection-only placed and employer contact, restore branch LPA columns. Exact IDs/evidence are in `docs/audit/acceptance/tpo-calendar-reports-verification.md`.
+- OPEN TPO-calendar-reports-31/38/52/57: complete report-wide dimension filtering, remaining per-page copy, all-row export parity and seasonless reporting; no source-only claim of closure.
+- BLOCKED TPO-calendar-reports-23: production round reminder delivery needs live provider credentials to verify end-to-end sends.
+- BLOCKED TPO-calendar-reports-43: resume availability/verification requires private object-storage and malware-scanner integration.
+- Shared graceful helpers `src/lib/friendly-error.ts` and `src/lib/api-fetch.ts` were absent from main when this round began; adopt when chat-14 merges them. `docs/orchestrator/queues/graceful-needs-shell.md` was absent; reviewed other available lane "Needs shell" sections and found no populated requests.
+- Reassigned Super Admin placements and academic setup belong to chat-13: no edits by chat-9.
