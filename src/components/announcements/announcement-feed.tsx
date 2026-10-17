@@ -7,6 +7,8 @@ export type AnnouncementFeedItem = {
   senderType: string;
   receiverType: string;
   isPinned: boolean;
+  buttonLabel?:string|null;
+  buttonUrl?:string|null;
   createdAt: Date;
 };
 
