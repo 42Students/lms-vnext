@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {useToast} from "@/components/ui/toast";
 import { Input } from "@/components/ui/input";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {createdOrganizationStepHref} from "@/modules/colleges/admin-tenant-organization-step";
 
 export function OrganizationCreateForm({ advanceToCollege = false }: { advanceToCollege?: boolean } = {}) {
@@ -21,33 +22,28 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
     const cleanName=name.trim().replace(/\s+/g," ");
     if(!cleanName){setError("Please enter organization name");return;}
     startTransition(async () => {
-      const response = await fetch("/api/organizations", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ name:cleanName }),
-      });
-
-      if (!response.ok) {
-        const payload = await response.json().catch(() => null);
-        setError(payload?.error==="ORGANIZATION_NAME_CONFLICT"?"Organization name already exists":payload?.error ?? "Could not create organization");
-        return;
-      }
-
-      showToast({title:"Created organization “"+cleanName+"”.",tone:"success"});
-      if (advanceToCollege) {
-        const payload:unknown=await response.json().catch(()=>null);
-        const href=createdOrganizationStepHref(payload);
-        if (!href) {
-          setError("Organization created, but the college step could not be selected. Refresh to choose the organization.");
-          router.refresh();
-          return;
+      try {
+        const payload=await apiFetch<unknown>("/api/organizations",{
+          method:"POST",
+          headers:{"content-type":"application/json"},
+          body:JSON.stringify({name:cleanName}),
+        });
+        showToast({title:"Created organization “"+cleanName+"”.",tone:"success"});
+        if(advanceToCollege){
+          const href=createdOrganizationStepHref(payload);
+          if(!href){
+            setError("Organization created, but the college step could not be selected. Refresh to choose the organization.");
+            router.refresh();return;
+          }
+          router.push(href);router.refresh();return;
         }
-        router.push(href);
-        router.refresh();
-        return;
+        setName("");router.refresh();
+      } catch(cause) {
+        setError(cause instanceof FriendlyFetchError && cause.status===409
+          ? "Organization name already exists"
+          :cause instanceof Error ? cause.message
+          : "Could not create organization. Please try again.");
       }
-      setName("");
-      router.refresh();
     });
   }
 
