@@ -45,7 +45,7 @@ describe("chat-4 final sprint TPO recruiter gaps A",()=>{
   const owner=source("src/components/tpo/recruiter-bulk-owner-controls.tsx");
   const stage=source("src/components/tpo/recruiter-bulk-stage-controls.tsx");
   expect(owner).toContain("tpoBulkFailedLines");
-  expect(owner).toContain("result.reason");
+  expect(owner).toContain("item.reason");
   expect(stage).toContain("tpoBulkFailedSummary");
   expect(roster).toContain("Send an email to selected");
   expect(owner).toContain('item.reason ? " — " + item.reason');
