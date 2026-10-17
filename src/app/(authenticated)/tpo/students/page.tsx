@@ -350,6 +350,13 @@ export default async function TpoStudentsPage({
             <option value="NOT_VERIFIED">Not verified</option>
           </select>
         </label>
+        <label className="text-sm font-semibold">Offer waiting on answer
+          <select name="offerWaiting" defaultValue={query.offerWaiting===undefined?"":query.offerWaiting?"YES":"NO"}
+            className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
+            <option value="">Any</option>
+            <option value="YES">Yes</option><option value="NO">No</option>
+          </select>
+        </label>
         <label className="text-sm font-semibold">After college
           <select name="afterCollege" defaultValue={query.afterCollege??""}
             className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
