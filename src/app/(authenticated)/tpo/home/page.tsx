@@ -158,10 +158,15 @@ export default async function TpoHome(){
  <p className="text-sm font-semibold text-muted-foreground">{greeting.date}</p>
  <PageHeader eyebrow="TPO" title={greeting.title}/>
  <div aria-label="Placement overview" className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-  <StatTile label="Live drives" value={operations.summary.publishedJobs} href="/tpo/placements"/>
-  <StatTile label="Placed" value={studentStats.summary.placed} href="/tpo/students"/>
-  <StatTile label="Pending requests" value={pendingRequestCount} href="/tpo/requests"/>
-  <StatTile label="Recruiter messages" value={unreadMessages} href="/tpo/messages"/>
+  <StatTile label={rows[1]?.title ?? "Drives"} value={operations.summary.publishedJobs}
+    detail={rows[1]?.status} href={rows[1]?.href}/>
+  <StatTile label={rows[2]?.title ?? "Students"} value={studentStats.summary.placementPool}
+    detail={rows[2]?.status} href={rows[2]?.href}/>
+  <StatTile label={rows[4]?.title ?? "Inbox"} value={pendingRequestCount + unreadMessages}
+    detail={rows[4]?.status} href={rows[4]?.href}/>
+  <StatTile label={rows[5]?.title ?? "Team"} value={teamThreads.status === "READY"
+      ? teamThreads.items.reduce((total, item) => total + item.unreadCount, 0) : "—"}
+    detail={rows[5]?.status} href={rows[5]?.href}/>
  </div>
  <p aria-live="polite" className="text-sm font-semibold text-body">{tpoHomeNeedsLine(rows)}</p>
  <div className="grid min-w-0 gap-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-start">
