@@ -75,6 +75,7 @@ export async function ProjectAdminReadinessPage({
   ]);
   const chosenId=z.string().uuid().safeParse(one(searchParams.projectId) ?? one(searchParams.workspaceId)).data;
   const selected=chosenId && workspaceChoices.some(item=>item.id===chosenId)?chosenId:null;
+  const outsideScope=Boolean(chosenId&&!selected);
   const releaseContext=selected?await listCollegeReadinessReleases(context,collegeId,selected):[];
   const readinessPath =
     basePath + "/readiness";
@@ -127,6 +128,7 @@ export async function ProjectAdminReadinessPage({
       </section>
       <section className="space-y-3 rounded-xl border border-border bg-surface p-5">
         <h2 className="text-base font-semibold">Select workspace</h2>
+        {outsideScope ? <p role="alert" className="rounded-md border border-border p-3 text-sm text-warning-text">This workspace belongs to a different college — switch colleges in the header and try again.</p> : null}
         <AdminReadinessWorkspacePicker items={workspaceChoices} selected={selected} action={readinessPath}/>
         {selected ? <>
           <Link href={basePath+"/"+selected+"/readiness"} className="text-sm font-semibold text-primary-text underline">
