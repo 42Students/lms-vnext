@@ -29,6 +29,8 @@ export const placementCompanies = pgTable(
       length: 255,
     }),
     logoObjectPath: text("logo_object_path"),
+    verifiedAt: timestamp("verified_at", { withTimezone: true }),
+    verifiedByUserId: uuid("verified_by_user_id").references(() => users.id, {onDelete: "restrict"}),
     status: varchar("status", { length: 32 })
       .notNull()
       .default("ACTIVE"),
@@ -57,6 +59,8 @@ export const placementCompanies = pgTable(
       .on(sql`lower(${table.primaryDomain})`)
       .where(sql`${table.primaryDomain} is not null`),
     index("placement_companies_status_idx").on(table.status),
+    index("placement_companies_verified_idx").on(table.verifiedAt),
+    check("placement_companies_verifier_ck", sql`(${table.verifiedAt} is null) = (${table.verifiedByUserId} is null)`),
     check(
       "placement_companies_status_ck",
       sql`${table.status} in ('ACTIVE', 'ARCHIVED')`,
