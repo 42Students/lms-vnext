@@ -324,6 +324,8 @@ export async function updateCourseAssignment(
       const [submission]=await tx.select({id:assignmentSubmissions.id})
         .from(assignmentSubmissions).where(eq(assignmentSubmissions.assignmentId,assignmentId)).limit(1);
       if(submission)throw new CoursesServiceError("ASSIGNMENT_HAS_SUBMISSIONS");
+      if(input.expectedUpdatedAt!==undefined&&new Date(input.expectedUpdatedAt).getTime()!==locked.updatedAt.getTime())
+        throw new CoursesServiceError("FACULTY_ASSIGNMENT_STALE_VERSION");
       return tx.update(courseAssignments)
       .set({
         ...(input.title !== undefined
