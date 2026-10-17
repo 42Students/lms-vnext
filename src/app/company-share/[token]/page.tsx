@@ -3,6 +3,7 @@ import {cookies} from "next/headers";
 import {getPublicCompanyApplicantShare} from "@/modules/placements/company-share/public-service";
 import {companyShareApplicantHref} from "@/modules/placements/company-share/public-filter-model";
 import {publicApplicantExportHref} from "@/modules/placements/company-share/export-href-model";
+import {COMPANY_SHARE_COLUMNS,safeCompanyShareColumns} from "@/modules/placements/company-share/column-model";
 
 export const dynamic="force-dynamic";
 export const metadata={robots:{index:false,follow:false},title:"Shared applicants · 42Students",other:{referrer:"no-referrer"}};
@@ -39,6 +40,7 @@ export default async function CompanySharePage({
    <Link href="/" className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">Home</Link>
   </section>
  </main>;
+ const columns=safeCompanyShareColumns(result.selectedColumns);
  const href=(p:number)=>companyShareApplicantHref(token,p,result.search);
  return <main className="relative isolate mx-auto max-w-5xl space-y-5 px-4 py-8">
   <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-40 grid select-none grid-cols-2 place-items-center overflow-hidden text-center text-lg font-semibold uppercase tracking-widest text-muted-foreground opacity-20 sm:grid-cols-3">
@@ -78,25 +80,27 @@ export default async function CompanySharePage({
   {result.rows.length===0?<p>No current shortlist records on this page.</p>:
    <>
     <ul aria-label="Shared applicants" className="space-y-3 sm:hidden">
-     {result.rows.map(row=><li key={row.applicationId}
+     {result.rows.map((row,index)=><li key={row.applicationId}
       className="min-w-0 rounded-xl border border-border bg-surface p-4">
-      <p className="break-words text-sm font-semibold text-foreground">{row.displayName}</p>
+      <h3 className="break-words font-semibold">{columns.includes("NAME")?
+        row.cells.NAME??"Unnamed learner":"Applicant "+(index+1)}</h3>
       <dl className="mt-3 space-y-2 text-xs text-body">
-       <div><dt className="font-semibold">Application</dt><dd className="break-all font-mono">{row.applicationId}</dd></div>
-       <div><dt className="font-semibold">Email</dt><dd className="break-all">{row.email??"Not recorded"}</dd></div>
+       {columns.map(key=><div key={key}>
+        <dt className="font-semibold">{COMPANY_SHARE_COLUMNS[key]}</dt>
+        <dd className="break-all">{row.cells[key]??"Not recorded"}</dd>
+       </div>)}
       </dl>
      </li>)}
     </ul>
     <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface sm:block">
-    <table className="w-full min-w-[30rem] text-left text-sm">
-     <thead><tr>{["Application ID","Learner","Email"].map(x=><th key={x}
-      className="px-4 py-3" scope="col">{x}</th>)}</tr></thead>
-     <tbody>{result.rows.map(row=><tr key={row.applicationId} className="border-t border-border">
-      <td className="break-all px-4 py-3">{row.applicationId}</td>
-      <td className="px-4 py-3">{row.displayName}</td>
-      <td className="break-all px-4 py-3">{row.email??"Not recorded"}</td>
-     </tr>)}</tbody>
-    </table>
+     <table className="w-full min-w-[30rem] text-left text-sm">
+      <thead><tr>{columns.map(key=><th key={key} className="px-4 py-3" scope="col">
+       {COMPANY_SHARE_COLUMNS[key]}</th>)}</tr></thead>
+      <tbody>{result.rows.map(row=><tr key={row.applicationId} className="border-t border-border">
+       {columns.map(key=><td key={key} className="break-all px-4 py-3">
+        {row.cells[key]??"Not recorded"}</td>)}
+      </tr>)}</tbody>
+     </table>
     </div>
    </>}
   <nav className="flex flex-wrap gap-5 text-sm" aria-label="Share pages">
