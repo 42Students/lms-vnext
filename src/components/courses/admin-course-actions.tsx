@@ -74,6 +74,7 @@ export function CourseActions({
     shortTitle?:string|null;
     officialCode?:string|null;
     cardColor?:string|null;
+    takeaways?:string|null;
     description: string | null;
   };
 }) {
@@ -90,12 +91,13 @@ export function CourseActions({
   const [shortTitle,setShortTitle]=useState(course.shortTitle??course.name.slice(0,120));
   const [officialCode,setOfficialCode]=useState(course.officialCode??"");
   const [cardColor,setCardColor]=useState(course.cardColor??"#1677FF");
+  const [takeaways,setTakeaways]=useState(course.takeaways??"");
   const { pending, run } =
     useCourseMutation();
   const dirty = name!==course.name || code!==course.code ||
     description!==(course.description??"")||(allowMetadata&&(
       shortTitle!==(course.shortTitle??course.name.slice(0,120))||
-      officialCode!==(course.officialCode??"")||cardColor!==(course.cardColor??"#1677FF")));
+      officialCode!==(course.officialCode??"")||cardColor!==(course.cardColor??"#1677FF")||takeaways!==(course.takeaways??"")));
   function closeEdit(next:boolean) {
     if(!next && pending)return;
     if(!next && dirty && !window.confirm("Discard unsaved course changes?"))return;
@@ -108,6 +110,7 @@ export function CourseActions({
     setShortTitle(course.shortTitle??course.name.slice(0,120));
     setOfficialCode(course.officialCode??"");
     setCardColor(course.cardColor??"#1677FF");
+    setTakeaways(course.takeaways??"");
     setDescription(
       course.description ?? "",
     );
@@ -167,7 +170,7 @@ export function CourseActions({
                         name,
                         code,
                         ...(allowMetadata?{shortTitle:shortTitle.trim(),
-                          officialCode:officialCode.trim()||null,cardColor}:{}),
+                          officialCode:officialCode.trim()||null,cardColor,takeaways:takeaways.trim()||null}:{}),
                         description:
                           description.trim() ||
                           null,
@@ -204,6 +207,9 @@ export function CourseActions({
             </label>
             <label className="grid gap-1 text-xs font-semibold text-body">Official course code (optional)
               <Input value={officialCode} onChange={event=>setOfficialCode(event.target.value)} maxLength={64}/>
+            </label>
+            <label className="grid gap-1 text-xs font-semibold text-body">Course takeaways (optional)
+              <Textarea value={takeaways} onChange={event=>setTakeaways(event.target.value)} maxLength={2000}/>
             </label>
             <label className="grid gap-1 text-xs font-semibold text-body">Card colour
               <Input value={cardColor} onChange={event=>setCardColor(event.target.value)}
