@@ -42,7 +42,10 @@ function readDetails(entry: MetadataEntry): LearnerShowcaseDetails {
       title: typeof fields.title === "string" ? fields.title : "",
       organization: typeof fields.organization === "string" ? fields.organization : "",
       date: typeof fields.date === "string" ? fields.date : "",
-      url: typeof fields.url === "string" ? fields.url : "",
+      url: typeof fields.url === "string" && (()=>{try{
+        const u=new URL(fields.url);
+        return u.protocol==="https:"||u.protocol==="http:";
+      }catch{return false;}})() ? fields.url : "",
       description: typeof fields.description === "string" ? fields.description : "",
     };
   } catch {
