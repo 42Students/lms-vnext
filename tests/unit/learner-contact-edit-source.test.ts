@@ -13,7 +13,7 @@ describe("Learner contacts persisted write and UI route contracts", () => {
     expect(ui).toContain("Keep current details");
     expect(ui).toContain("learnerContactEditSchema.safeParse");
     expect(ui).toContain('apiFetch<{contacts:LearnerProfileDocument["contacts"]}>("/api/profile/me/contacts"');
-    expect(ui).toContain('method: "PATCH"');
+    expect(ui).toMatch(/method:\\s*["\x27]PATCH["\x27]/);
     expect(ui).toContain("sm:grid-cols-2");
     expect(ui).toContain('role="alert"');
     expect(ui).toContain("Your login phone and account email will not change");
