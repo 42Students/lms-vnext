@@ -527,6 +527,10 @@ export const placementJobs = pgTable(
     publishedAt: timestamp("published_at", { withTimezone: true }),
     closedAt: timestamp("closed_at", { withTimezone: true }),
     archivedAt: timestamp("archived_at", { withTimezone: true }),
+    /** TPO-inbox-team-33: explicitly assigned placement team owner, never inferred from the creator. */
+    ownerMembershipId: uuid("owner_membership_id").references(
+      () => collegeMemberships.id, { onDelete: "restrict" },
+    ),
     createdByUserId: uuid("created_by_user_id")
       .notNull()
       .references(() => users.id, { onDelete: "restrict" }),
