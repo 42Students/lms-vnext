@@ -13,8 +13,8 @@ import {parseTpoNoticeSchedule} from "./tpo-notice-schedule-model";
 
 export const editTpoNoticeSchema=z.object({
  noticeId:z.string().uuid(),expectedVersion:z.number().int().nonnegative(),
- title:z.string().trim().min(1).max(255),
- message:z.string().trim().min(1).max(10000),
+ title:z.string().trim().min(1).max(200),
+ message:z.string().trim().min(1).max(8000),
  pinned:z.boolean(),
  sendAt:z.string().max(16).optional(),showUntil:z.string().max(16).optional(),
 }).strict();
