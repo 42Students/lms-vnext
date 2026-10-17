@@ -1,5 +1,6 @@
 "use client";
 import {apiFetch} from "@/lib/api-fetch";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 
@@ -33,6 +34,7 @@ export function TpoStudentsBulkAdd({
   const [roles, setRoles] = useState<Role[]>([]);
   const [roleOptionId, setRoleOptionId] = useState("");
   const [busy, setBusy] = useState(false);
+  const {run:runGuarded,pending:guardedPending}=useGuardedAction();
   const [confirmOpen,setConfirmOpen]=useState(false);
   const [roleError, setRoleError] = useState("");
   const [error, setError] = useState("");
@@ -195,7 +197,7 @@ export function TpoStudentsBulkAdd({
           (drives.find(drive=>drive.id===driveId)?.title??"this drive")+
           "? Eligibility and participation are checked individually by the server. Ineligible learners will not be added and existing applications are preserved."}
         footer={<><Button variant="secondary" disabled={busy} onClick={()=>setConfirmOpen(false)}>Cancel</Button>
-          <Button disabled={busy||!selected.length||!roleOptionId} onClick={()=>void submit()}>
+          <Button disabled={busy||guardedPending||!selected.length||!roleOptionId} onClick={()=>void runGuarded(submit)}>
             {busy?"Checking learners…":"Confirm add selected"}
           </Button></>}>
         <p className="text-sm">Each eligible learner will be told about the new application. Existing applications remain unchanged.</p>

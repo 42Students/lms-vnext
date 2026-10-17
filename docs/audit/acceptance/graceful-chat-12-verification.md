@@ -24,3 +24,6 @@ Still required: shared `apiFetch` and `useGuardedAction` adoption after chat-14 
 
 | GR-04 | DONE (TPO debar forms) | Tagged participation and timed debar forms use shared apiFetch with safe 409/no-JSON paths; `tests/unit/chat12-debar-error-round3.test.ts` named `GR-04` |
 | GR-32 | DONE (TPO debar forms) | Stale decision retains reason and offers retry; `tests/unit/chat12-debar-error-round3.test.ts` named `GR-32` |
+
+| GR-30 | DONE (four chat-12 mutation controls) | `src/hooks/use-guarded-action.ts` invoked on Notes, Nudges, Bulk Verify and Add-to-Drive; `tests/unit/chat12-round3-guarded-actions.test.ts`, named `GR-30` |
+| GR-31 | OPEN (partial) | Four covered controls use synchronous in-flight locking; other TPO actions still require adoption; `tests/unit/chat12-round3-guarded-actions.test.ts`, named `GR-31` |
