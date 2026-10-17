@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {TpoEveryoneControls} from "@/components/tpo/tpo-everyone-controls";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
@@ -23,16 +24,7 @@ export default async function TpoEveryonePage({searchParams}:{
    Everyone is not available until its database migration is registered. No team messages were loaded.
   </p>:<>
    <section className="space-y-3 rounded-xl border border-border bg-surface p-4">
-    <div className="flex items-center justify-between gap-2">
-     <h2 className="font-semibold">Everyone conversation</h2>
-     <form method="post" action="/api/placements/tpo/team/everyone/mute">
-      <input type="hidden" name="muted" value={result.muted?"false":"true"}/>
-      <button type="submit" className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold">
-       {result.muted?"Unmute":"Mute"}
-      </button>
-     </form>
-    </div>
-    <p className="text-xs text-muted-foreground">{result.muted?"Muted: no unread count, no noise":"Everyone in the team can read and reply."}</p>
+    <h2 className="font-semibold">Everyone conversation</h2>
     {result.rows.length?<ol aria-label="Everyone messages" className="space-y-3">
       {result.rows.map(row=><li key={row.id} className="rounded-md border border-border p-3">
        <p className="text-xs font-medium text-muted-foreground">{row.authorMembershipId===context.membership?.id?"You":row.authorName} ·
@@ -45,16 +37,7 @@ export default async function TpoEveryonePage({searchParams}:{
      {result.page<result.pages?<Link href={"/tpo/team/everyone?page="+(result.page+1)} className="text-primary-text underline">Older messages</Link>:null}
     </nav>
    </section>
-   <form method="post" action="/api/placements/tpo/team/everyone/messages"
-    className="space-y-3 rounded-xl border border-border bg-surface p-4">
-    <h2 className="font-semibold">Write to Everyone</h2>
-    <label className="block text-sm">Message
-     <textarea name="body" required maxLength={4000} rows={4}
-      className="mt-2 block w-full rounded-md border border-border bg-surface p-3"
-      placeholder="Share an update with the placement team"/>
-    </label>
-    <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Send to Everyone</button>
-   </form>
+   <TpoEveryoneControls muted={result.muted} actorUserId={context.user.id}/>
   </>}
  </main>;
 }
