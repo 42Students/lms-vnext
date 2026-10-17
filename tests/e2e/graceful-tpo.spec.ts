@@ -20,7 +20,7 @@ test.describe("GR-80 TPO client-side roster and company directory failures", () 
       test(`GR-80 TPO ${journey.title} ${kind} shows a recoverable failure`, async ({ page, context }) => {
         test.setTimeout(35_000);
         await authenticateGracefulRole(context, "tpo");
-        const failure = await failApi(page, journey.endpoint, kind);
+        const failure = await failApi(page, kind === "backend-down" ? "**/api/**" : journey.endpoint, kind);
         try {
           await page.goto(journey.route);
           const errors = captureUncaughtErrors(page);

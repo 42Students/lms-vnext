@@ -20,7 +20,7 @@ test.describe("GR-80 Mentor notifications and calendar failure behaviour", () =>
       // The seed does not promise an unread notification; never claim the
       // API path was exercised when the product deliberately disables it.
       test.skip(await markAll.isDisabled(), "Seed needs an unread Mentor notification for this mutation");
-      const failure = await failApi(page, "**/api/mentor/notifications/read-all", kind);
+      const failure = await failApi(page, kind === "backend-down" ? "**/api/**" : "**/api/mentor/notifications/read-all", kind);
       page.once("dialog", (dialog) => dialog.accept());
       try {
         await markAll.click();

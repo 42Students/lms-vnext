@@ -15,7 +15,7 @@ test.describe("GR-80 public sign-in failure matrix", () => {
       await page.getByRole("tab", { name: "Email" }).click();
       const email = page.getByRole("textbox", { name: "Email address" });
       await email.fill("learner.a@vnext.test");
-      const failure = await failApi(page, "**/api/auth/login/start", kind);
+      const failure = await failApi(page, kind === "backend-down" ? "**/api/**" : "**/api/auth/login/start", kind);
       try {
         await page.getByRole("button", { name: "Send code" }).click();
         await expect.poll(failure.hits).toBeGreaterThan(0);
