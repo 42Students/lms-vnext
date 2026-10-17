@@ -57,6 +57,7 @@ export async function setTpoJobTypeActive(context:RequestContext,raw:unknown){
   const [current]=await tx.select().from(placementTpoJobTypes).where(and(
    eq(placementTpoJobTypes.id,input.jobTypeId),eq(placementTpoJobTypes.collegeId,collegeId))).limit(1);
   if(!current)throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
+  if(current.isBuiltin||isTpoBuiltinJobType(current.label))throw new TpoConfigError("TPO_JOB_TYPE_BUILTIN");
   if(current.updatedAt.toISOString()!==input.expectedVersion)throw new TpoConfigError("TPO_SETTINGS_STALE");
   if(current.active===input.active)return {changed:false,updatedAt:current.updatedAt.toISOString()};
   if(!input.active){
