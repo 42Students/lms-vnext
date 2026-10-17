@@ -4,6 +4,7 @@ import {
   useState,
   useRef,
   useEffect,
+  useCallback,
   type FormEvent,
 } from "react";
 import { useRouter } from "next/navigation";
@@ -144,7 +145,7 @@ export function PlacementJobCreateForm({
 
   // TPO-drives-41: per-user/college browser-only recovery for long-form drafts.
   // No passwords, tokens, email invitations or learner records are present here.
-  function saveBrowserDraft(form:HTMLFormElement){
+  const saveBrowserDraft=useCallback((form:HTMLFormElement)=>{
     if(clearedBackup.current)return;
     try{
       const values:Record<string,string>={};
@@ -157,7 +158,7 @@ export function PlacementJobCreateForm({
       localStorage.setItem(backupKey,JSON.stringify({values,checked,
         companyMode,companyRelationshipId,selectedProgramIds,selectedCohortIds,eligibilityPreset}));
     }catch{/* Storage may be unavailable in private mode; form still works. */}
-  }
+  },[backupKey,companyMode,companyRelationshipId,selectedProgramIds,selectedCohortIds,eligibilityPreset]);
   useEffect(()=>{
     // Defer restoration until the uncontrolled form fields have mounted.
     const task=window.setTimeout(()=>{
@@ -189,15 +190,13 @@ export function PlacementJobCreateForm({
     },0);
     return ()=>window.clearTimeout(task);
     // One-time restore scoped to this actor and college only.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[backupKey]);
+  },[backupKey,companies,academicOptions.programs,academicOptions.cohorts,markDirty]);
   useEffect(()=>{
     if(!dirty||!formRef.current||clearedBackup.current)return;
     const task=window.setTimeout(()=>{if(formRef.current)saveBrowserDraft(formRef.current);},400);
     return ()=>window.clearTimeout(task);
-    // Form state changes require refreshed snapshots; uncontrolled fields save in onChange.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[dirty,companyMode,companyRelationshipId,selectedProgramIds,selectedCohortIds,eligibilityPreset,enteredDriveTitle,newEmployerName,newEmployerDomain]);
+    // Form state changes refresh the backup; uncontrolled fields also save onChange.
+  },[dirty,saveBrowserDraft,enteredDriveTitle,newEmployerName,newEmployerDomain]);
 
   function toggleId(
     value: string,

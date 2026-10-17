@@ -161,4 +161,11 @@ describe("chat-3 Drives round 4",()=>{
   expect(body).toContain("Discard saved browser backup");
   expect(body).toContain("useGuardedAction");
  });
+ it("GR-60 TPO-drives-41 autosave restoration uses stable guards without lint suppression",()=>{
+  const body=source("src/components/placements/placement-job-create-form.tsx");
+  const guard=source("src/components/placements/use-unsaved-drive-guard.ts");
+  expect(body).not.toContain("eslint-disable");
+  expect(body).toContain("const saveBrowserDraft=useCallback");
+  expect(guard).toContain("const markDirty=useCallback");
+ });
 });
