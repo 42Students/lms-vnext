@@ -32,7 +32,7 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
  return <div className="mt-2 space-y-2">
   {options.length>1?<label className="grid gap-1 text-xs font-semibold">Section
    <select value={chosen.deliveryId} disabled={loading} onChange={e=>{
-    setDeliveryId(e.target.value);setOpened(false);setAttempts([]);}}
+    setDeliveryId(e.target.value);setOpened(false);setAttempts([]);setLearnerSearch("");}}
     className="min-h-10 rounded border border-border px-2">
     {options.map(x=><option key={x.deliveryId} value={x.deliveryId}>{x.sectionName} ({x.sectionCode})</option>)}
    </select></label>:null}
