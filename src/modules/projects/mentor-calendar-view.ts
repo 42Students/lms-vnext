@@ -54,21 +54,7 @@ export function mentorMeetingDisplayStatus(
   // Evaluate the scheduled end instant, including meetings ending earlier today.
   const end = Date.parse(item.endsAt);
   if (!Number.isFinite(end) || !Number.isFinite(now.getTime())) return item.status;
-  // Product decision: use IST calendar dates for all colleges.
-  try {
-    const formatter = new Intl.DateTimeFormat("en-CA", {
-      timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit",
-    });
-    const dateKey = (date: Date) => {
-      const parts = formatter.formatToParts(date);
-      const get = (type: string) => parts.find(part => part.type === type)?.value ?? "";
-      return get("year") + get("month") + get("day");
-    };
-    return dateKey(new Date(start)) < dateKey(now) ? "MISSED" : item.status;
-  } catch {
-    // Invalid stored timezone must not turn a scheduled meeting into MISSED.
-    return item.status;
-  }
+  return end < now.getTime() ? "MISSED" : item.status;
 }
 
 export function safeMentorMeetingJoinUrl(item: MentorMeetingCalendarItem): string | null {
