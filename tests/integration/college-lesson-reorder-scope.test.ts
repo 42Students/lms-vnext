@@ -6,6 +6,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import {
   createCourseLesson, moveCollegeCourseLesson, updateCourseLesson,
+  archiveCourseLesson, restoreCourseLesson,
 } from "@/modules/courses/lesson-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
@@ -71,4 +72,20 @@ describe.skipIf(!enabled)("College Admin lesson create/edit/move PostgreSQL",()=
       "courses.lesson.created","courses.lesson.updated","courses.lesson.reordered",
     ]));
   });
+  it("COL-course-tabs-15 restores archived lessons while keeping historical records",async()=>{
+    const created=await createCourseLesson(admin,{
+      learningPathId:ids.path,name:prefix+" recovered",sequence:7,
+    });
+    lessonIds.push(created.id);
+    const archived=await archiveCourseLesson(admin,created.id);
+    expect(archived.status).toBe("ARCHIVED");
+    await expect(restoreCourseLesson(foreign,created.id)).rejects.toBeInstanceOf(AuthorizationError);
+    const restored=await restoreCourseLesson(admin,created.id);
+    expect(restored.status).toBe("ACTIVE");
+    const [persisted]= (await pool!.query("SELECT status FROM course_lessons WHERE id=$1",[created.id])).rows;
+    expect(persisted?.status).toBe("ACTIVE");
+    const events=await pool!.query("SELECT summary FROM activity_events WHERE subject_type='course_lesson' AND subject_id=$1",[created.id]);
+    expect(events.rows.map(row=>row.summary)).toContain("Restored lesson");
+  });
+
 });
