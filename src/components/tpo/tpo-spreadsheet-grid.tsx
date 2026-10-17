@@ -140,7 +140,12 @@ export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrim
     {mobileActionsCollapsible&&mobileExtra.length>0?<details className="rounded-md border border-border p-2 text-sm"><summary className="min-h-11 cursor-pointer font-semibold">More student details</summary>
       <dl className="mt-2 space-y-2">{mobileExtra.map(col=><div key={col.key} className="flex flex-wrap justify-between gap-2"><dt className="font-semibold">{col.label}</dt><dd className="min-w-0 break-words [overflow-wrap:anywhere]" title={col.tooltip?.(row)}>{displayTpoGridCell(col.read(row))}</dd></div>)}</dl>
     </details>:null}
-    {rowActions ? <div aria-label="Row actions" className="border-t border-border pt-3">{rowActions(row)}</div> : null}
+    {rowActions ? mobileActionsCollapsible ?
+      <details className="group rounded border border-border p-2 md:contents" aria-label="Row actions">
+       <summary className="min-h-11 cursor-pointer font-semibold md:hidden">Actions</summary>
+       <div role="group" aria-label="Row actions" className="hidden border-t border-border pt-3 group-open:block md:block md:border-0 md:pt-0">{rowActions(row)}</div>
+      </details> :
+      <div aria-label="Row actions" className="border-t border-border pt-3">{rowActions(row)}</div> : null}
    </li>)}</ul>
   </>}
  </section>;
