@@ -104,7 +104,11 @@ export async function offerToNextWaitlisted(context:RequestContext,rawJobId:unkn
   const [prior]=await tx.select().from(placementWaitlistPromotions).where(and(
    eq(placementWaitlistPromotions.jobId,preview.job.id),
    eq(placementWaitlistPromotions.applicationId,next.applicationId))).limit(1);
-  if(prior)return prior;
+  if(prior){
+   if(prior.roundId!==preview.lastRoundId||prior.waitlistRank!==next.rank)
+    throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
+   return prior;
+  }
   const used=await tx.select({number:placementWaitlistPromotions.seatNumber})
    .from(placementWaitlistPromotions).where(eq(placementWaitlistPromotions.jobId,preview.job.id));
   const active=await tx.select({id:placementOffers.id}).from(placementOffers)
