@@ -408,11 +408,11 @@ export function ProjectWorkspace({
                 const latest=workspace.finalDelivery.submissions.at(-1);
                 if(!latest)return null;
                 const edited=workspace.activity.filter(event=>event.subjectId===latest.id&&
-                  (event.eventType.includes("DELIVERY_DRAFT_UPDATED")||
-                   event.eventType.includes("DELIVERY_DRAFT_CREATED")))
+                  (event.eventType==="projects.delivery.draft_updated"||
+                   event.eventType==="projects.delivery.draft_created"))
                   .sort((a,b)=>new Date(b.occurredAt).getTime()-new Date(a.occurredAt).getTime())[0];
-                return edited?.actorDisplayName??
-                  workspace.members.find(member=>member.membershipId===latest.createdByMembershipId)?.displayName??null;
+                return edited?.actorDisplayName??(edited?null:
+                  workspace.members.find(member=>member.membershipId===latest.createdByMembershipId)?.displayName??null);
               })()}
 
               readinessDetail={{
