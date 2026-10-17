@@ -6,13 +6,15 @@ import {bookingConflicts,calendarMode,superAdminInterviewCsv,type SuperAdminCale
  from "@/modules/admin-ui/super-admin-interview-operations-model";
 export function SuperAdminInterviewOperations({events,today,truncated=false}:{events:SuperAdminCalendarRound[];today:string;truncated?:boolean}){
  const [kind,setKind]=useState("ALL"),[status,setStatus]=useState("ALL");
- const [mode,setMode]=useState("ALL"),[conflictsOnly,setConflictsOnly]=useState(false);
+ const [mode,setMode]=useState("ALL"),[department,setDepartment]=useState("ALL"),[conflictsOnly,setConflictsOnly]=useState(false);
  const [sort,setSort]=useState("DATE"),[exportError,setExportError]=useState("");
  const conflicts=useMemo(()=>bookingConflicts(events),[events]);
  const filtered=useMemo(()=>events.filter(e=>
   (kind==="ALL"||e.kind===kind)&&(status==="ALL"||e.status===status)&&
-  (mode==="ALL"||calendarMode(e)===mode)&&(!conflictsOnly||conflicts.has(e.id))
- ).sort((a,b)=>sort==="COMPANY"?a.companyName.localeCompare(b.companyName):a.startsAt.localeCompare(b.startsAt)),[events,kind,status,mode,conflictsOnly,sort,conflicts]);
+  (mode==="ALL"||calendarMode(e)===mode)&&
+  (department==="ALL"||(e.departmentName??"Not recorded")===department)&&
+  (!conflictsOnly||conflicts.has(e.id))
+ ).sort((a,b)=>sort==="COMPANY"?a.companyName.localeCompare(b.companyName):a.startsAt.localeCompare(b.startsAt)),[events,kind,status,mode,department,conflictsOnly,sort,conflicts]);
  const exported=useMemo(()=>filtered.slice(0,500),[filtered]);
  const csv=useMemo(()=>superAdminInterviewCsv(exported),[exported]);
  const unique=(values:string[])=>[...new Set(values)].sort();
@@ -38,16 +40,17 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
    {choices("Type",unique(events.map(x=>x.kind)),kind,setKind)}
    {choices("Status",unique(events.map(x=>x.status)),status,setStatus)}
    {choices("Mode",unique(events.map(calendarMode)),mode,setMode)}
+   {choices("Department",unique(events.map(x=>x.departmentName??"Not recorded")),department,setDepartment)}
    {choices("Sort",["DATE","COMPANY"],sort,setSort)}
    <label className="flex min-h-11 items-center gap-2 text-sm">
     <input type="checkbox" checked={conflictsOnly} onChange={e=>setConflictsOnly(e.target.checked)}/>
     Possible conflicts only
    </label>
    <button type="button" className="min-h-11 rounded border border-border px-4 font-semibold" onClick={()=>{
-     setKind("ALL");setStatus("ALL");setMode("ALL");setConflictsOnly(false);setSort("DATE");
+     setKind("ALL");setStatus("ALL");setMode("ALL");setDepartment("ALL");setConflictsOnly(false);setSort("DATE");
    }}>Clear filters</button>
   </div>
-  <p role="status" aria-live="polite">{filtered.length} matching candidate interview bookings. Department filters require linked program evidence.{truncated?" First 2,000 bookings shown; narrow the date range.":""}</p>
+  <p role="status" aria-live="polite">{filtered.length} matching candidate interview bookings. Department filter uses the applicant’s currently active academic program; historical departments may be unrecorded.{truncated?" First 2,000 bookings shown; narrow the date range.":""}</p>
   <a download="interviews.csv" href={filtered.length?"data:text/csv;charset=utf-8,"+encodeURIComponent("\ufeff"+csv):undefined}
    onClick={e=>{if(!filtered.length){e.preventDefault();setExportError("No interviews match the selected filters. Clear filters to export.");}else setExportError("");}}
    className="inline-flex min-h-11 items-center rounded border border-border px-4 font-semibold text-primary-text focus-visible:ring-2 focus-visible:ring-primary">Export interviews.csv</a>
@@ -55,9 +58,9 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
   {exportError?<p role="alert">{exportError}</p>:null}
   {!filtered.length?<p className="rounded border border-border p-4">No interviews match these filters. Clear filters to see all rounds.</p>:
    <div className="overflow-x-auto"><table className="w-full min-w-[55rem] text-left text-sm">
-    <thead><tr className="border-b border-border"><th className="p-2">Candidate</th><th className="p-2">Round</th><th className="p-2">Company</th><th className="p-2">Date (IST)</th><th className="p-2">Type</th><th className="p-2">Mode</th><th className="p-2">Interviewer</th><th className="p-2">Status</th><th className="p-2">Venue</th><th className="p-2">Actions</th></tr></thead>
+    <thead><tr className="border-b border-border"><th className="p-2">Candidate</th><th className="p-2">Department</th><th className="p-2">Round</th><th className="p-2">Company</th><th className="p-2">Date (IST)</th><th className="p-2">Type</th><th className="p-2">Mode</th><th className="p-2">Interviewer</th><th className="p-2">Status</th><th className="p-2">Venue</th><th className="p-2">Actions</th></tr></thead>
     <tbody>{filtered.map(row=><tr key={row.id} className="border-b border-border">
-     <td className="p-2">{row.candidateName??"Not recorded"}</td><td className="p-2">{row.title}</td><td className="p-2">{row.companyName}</td>
+     <td className="p-2">{row.candidateName??"Not recorded"}</td><td className="p-2">{row.departmentName??"Not recorded"}</td><td className="p-2">{row.title}</td><td className="p-2">{row.companyName}</td>
      <td className="p-2">{inIst(row.startsAt)}</td><td className="p-2">{row.kind}</td>
      <td className="p-2">{calendarMode(row)}</td><td className="p-2">{row.interviewer??"Not recorded"}</td>
      <td className="p-2">{row.status}{conflicts.has(row.id)?<strong className="block text-warning">{conflicts.get(row.id)?.join("; ")}</strong>:null}</td>

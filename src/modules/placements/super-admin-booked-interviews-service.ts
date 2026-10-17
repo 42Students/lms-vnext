@@ -1,8 +1,8 @@
 import "server-only";
-import {and,eq,gte,lt,asc} from "drizzle-orm";
+import {and,eq,gt,lt,asc} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,placementApplications,placementCompanies,placementCompanyRelationships,
- placementJobRounds,placementJobs,users} from "@/db/schema";
+ placementJobRounds,placementJobs,learnerProgramEnrollments,programs,departments,users} from "@/db/schema";
 import {placementRoundCandidateSlots} from "@/db/schema/placement-round-candidate-slots";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
@@ -22,6 +22,7 @@ export async function listSuperAdminBookedInterviews(
   id:s.id,roundId:s.roundId,jobId:s.jobId,applicationId:s.applicationId,
   startsAt:s.startsAt,endsAt:s.endsAt,room:s.room,panel:s.panel,status:s.status,
   candidateMembershipId:collegeMemberships.id,candidateName:users.displayName,
+  departmentId:departments.id,departmentName:departments.name,
   jobTitle:placementJobs.title,roundTitle:placementJobRounds.name,
   roundKind:placementJobRounds.kind,companyName:placementCompanies.name,
  }).from(s)
@@ -32,7 +33,10 @@ export async function listSuperAdminBookedInterviews(
  .leftJoin(placementApplications,eq(placementApplications.id,s.applicationId))
  .leftJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),eq(collegeMemberships.collegeId,scope.collegeId)))
  .leftJoin(users,eq(users.id,collegeMemberships.userId))
- .where(and(eq(s.status,"BOOKED"),gte(s.startsAt,fromDate),lt(s.startsAt,toDate)))
+ .leftJoin(learnerProgramEnrollments,and(eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),eq(learnerProgramEnrollments.status,"ACTIVE")))
+ .leftJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
+ .leftJoin(departments,eq(departments.id,programs.departmentId))
+ .where(and(eq(s.status,"BOOKED"),gt(s.endsAt,fromDate),lt(s.startsAt,toDate)))
  .orderBy(asc(s.startsAt),asc(s.id)).limit(2001);
  const events:SuperAdminCalendarRound[]=rows.slice(0,2000).map(row=>({
   id:row.id,roundId:row.roundId,jobId:row.jobId,jobTitle:row.jobTitle,
@@ -41,6 +45,7 @@ export async function listSuperAdminBookedInterviews(
   venue:row.room.startsWith("https://")?null:row.room,
   mode:row.room.startsWith("https://")?"Virtual":"On campus",
   candidateMembershipId:row.candidateMembershipId,candidateName:row.candidateName,
+  departmentId:row.departmentId,departmentName:row.departmentName,
   interviewer:row.panel,
  }));
  return {events,truncated:rows.length>2000};
