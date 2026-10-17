@@ -20,6 +20,24 @@ describe("TPO drive form errors", () => {
     }
   });
 
+  it("TPO-drives-R05 surfaces recognized offending fields, never raw Zod messages", () => {
+    const result = tpoDriveFormErrorMessage(new FriendlyFetchError(
+      "Please check the highlighted fields and try again.", 400, "INVALID_REQUEST", null,
+      { minCgpa: "PRIVATE_DB_QUERY_INTERNAL_ERROR" },
+    ));
+    expect(result).toBe("Check minimum CGPA and try again.");
+    expect(result).not.toContain("PRIVATE_DB_QUERY_INTERNAL_ERROR");
+    expect(tpoDriveFormErrorMessage(new FriendlyFetchError(
+      "Please check the highlighted fields and try again.", 400, "INVALID_REQUEST", null,
+      { userPassword: "SECRET_UNTRUSTED_TEXT" },
+    ))).not.toContain("SECRET_UNTRUSTED_TEXT");
+  });
+
+  it("TPO-drives-44 unknown short machine codes are never displayed from typed API errors", () => {
+    expect(tpoDriveFormErrorMessage(new FriendlyFetchError("DATABASE_CONSTRAINT_FAILED", 500, "UNKNOWN_CODE")))
+      .toBe("We could not save this drive. Check your drafts and try again.");
+  });
+
   it("TPO-drives-44 never exposes an unknown machine code or lengthy untrusted message", () => {
     expect(tpoDriveFormErrorMessage(new Error("INTERNAL_SQL_FAILED"))).toBe(
       "We could not save this drive. Check your drafts and try again.",

@@ -54,3 +54,17 @@ Canonical `users` login email/phone/name cannot be mutated by a College Admin me
 | COL-people-27 | DONE (source verified) | Mobile card list at widths below md, bounded desktop overflow and responsive advanced filter grid remain; `college-role-directory-workspace.tsx`; named COL-people-27 test. Browser viewport measurement unexecuted. |
 | COL-people-12 | NOT-A-GAP | vNext OTP lockout is per short-lived sign-in attempt (`ATTEMPT_LIFETIME_SECONDS = 300`, `verificationAttempts`), not a persistent user-account lock. No unsafe account-unlock mutation is introduced. `src/modules/auth/login-service.ts`; named COL-people-12 test. |
 | COL-people-13 | OPEN | Headings now use person-facing language; legacy Mobile, Gender, and live presence metrics require authorized source data and are not fabricated. |
+
+## Chat-3 round 12: independently checked source sub-contracts (tests authored, not run)
+
+These named regression tests check *existing pieces* of the legacy audit only. An `OPEN`, `FIXED-ON-MAIN`, or partial gap does **not** become DONE merely because one piece is rendered; missing semantics listed in the audit remain pending. No page restyling performed following the owner UX freeze. The orchestrator must execute tests and verify integration before marking full closure.
+
+| Gap | Queue disposition maintained | New named source regression |
+| --- | --- | --- |
+| COL-people-01 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-college-round12-parity-contracts.test.ts` / `COL-people-01` |
+| COL-people-02 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-college-round12-parity-contracts.test.ts` / `COL-people-02` |
+| COL-people-07 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-college-round12-parity-contracts.test.ts` / `COL-people-07` |
+| COL-people-16 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-college-round12-parity-contracts.test.ts` / `COL-people-16` |
+| COL-people-20 | DONE — sub-contract only | `tests/unit/chat3-college-round12-parity-contracts.test.ts` / `COL-people-20` |
+| COL-people-25 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-college-round12-parity-contracts.test.ts` / `COL-people-25` |
+| COL-people-26 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-college-round12-parity-contracts.test.ts` / `COL-people-26` |

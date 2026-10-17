@@ -129,3 +129,53 @@ No new schema or proposed migrations in this round. Shell was not edited. `TPO-d
 | TPO-drives-28 | OPEN | Decision: Retain canonical FULL_TIME/INTERNSHIP/CONTRACT contract status, but link college-defined job-type labels and counts-as-placed policy separately; never infer placement from a free-text label. Test: `tests/unit/chat5-delegated-policy-decisions.test.ts` — named test `TPO-drives-28` (source/policy regression; executable CI pending). |
 | TPO-drives-34 | NOT-A-GAP | Decision: Explicit, college-scoped cohort IDs are safer than unqualified batch names for eligibility targeting; maintain cohort selectors and effective eligibility checks, excluding finished/inactive scopes. Test: `tests/unit/chat5-delegated-policy-decisions.test.ts` — named test `TPO-drives-34` (source/policy regression; executable CI pending). |
 | TPO-drives-51 | OPEN | Decision: Enable College Admin entry into scoped drive lifecycle using placements.manage and persisted actor checks, including TPO drive list and job overview; remaining TPO-specific subpages must be checked before full parity. Test: `tests/unit/chat5-unconfirmed-permission-decisions.test.ts` — named test `TPO-drives-51` (source/policy regression; executable CI pending). |
+
+## Round 11 — API error translation (not yet full legacy parity)
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-drives-44 | OPEN (improved) | `src/modules/placements/tpo-drive-form-error-copy.ts` now maps common company, season, draft/edit, deadline, compensation, role, round and eligibility server codes to actionable sentences. `tests/unit/tpo-drives-44-error-copy.test.ts` names TPO-drives-44 in both cases and checks unmapped codes do not appear. Exact messaging for every legacy backend error remains to be verified; tests are written, not executed. |
+
+## Round 11 — automatic IST application deadline default
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-drives-45 | DONE (source-level; test not run) | `tpo-drive-deadline-ist.ts` validates full IST wall-clock date and time, rejects impossible days, and converts to UTC without browser timezone assumptions. `placement-job-create-form.tsx` automatically sets a first selected valid date to `23:59` IST, respects an existing restored value and later user changes, retains manual end-of-day action and checks future publication deadline. Named `TPO-drives-45 automatically applies 11:59 PM IST once, then preserves user edits and restored drafts` plus existing tests in `tests/unit/tpo-drives-chat-3-round4.test.ts`. Browser validation still unexecuted. |
+
+## Round 11 — confirmed partial draft recovery
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-drives-43 | OPEN (improved) | `placement-job-create-form.tsx` preserves a scoped browser backup of a server-confirmed job ID, employer relationship ID and exact form fingerprint. On reload it restores the partial job; repeated submissions resume eligibility/round writes instead of creating a duplicate draft, and modified form fields are refused until the existing drive is opened. Named test `TPO-drives-43 confirmed partial draft survives reload without duplicate POST` in `tests/unit/tpo-drives-chat-3-round4.test.ts`. Still OPEN until create requests are idempotent if the first server POST commits but its response is lost; browser/test acceptance not run. |
+
+## Chat-3 round 12: independently checked source sub-contracts (tests authored, not run)
+
+These named regression tests check *existing pieces* of the legacy audit only. An `OPEN`, `FIXED-ON-MAIN`, or partial gap does **not** become DONE merely because one piece is rendered; missing semantics listed in the audit remain pending. No page restyling performed following the owner UX freeze. The orchestrator must execute tests and verify integration before marking full closure.
+
+| Gap | Queue disposition maintained | New named source regression |
+| --- | --- | --- |
+| TPO-drives-05 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-05` |
+| TPO-drives-06 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-06` |
+| TPO-drives-07 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-07` |
+| TPO-drives-08 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-08` |
+| TPO-drives-10 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-10` |
+| TPO-drives-15 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-15` |
+| TPO-drives-17 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-17` |
+| TPO-drives-18 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-18` |
+| TPO-drives-19 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-19` |
+| TPO-drives-23 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-23` |
+| TPO-drives-24 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-24` |
+| TPO-drives-32 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-32` |
+| TPO-drives-33 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-33` |
+| TPO-drives-40 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-40` |
+| TPO-drives-R05 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-R05` |
+| TPO-drives-25 | DONE — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-25` |
+| TPO-drives-43 | OPEN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-43` |
+| TPO-drives-44 | OPEN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-44` |
+
+## Chat-3 round 12 — safe field validation responses
+
+| ID | Disposition | Implementation and test |
+| --- | --- | --- |
+| TPO-drives-R05 | OPEN — safer partial implementation | `src/modules/placements/tpo-drive-form-error-copy.ts` maps recognized `FriendlyFetchError.fieldErrors` keys to predefined, readable field labels without echoing untrusted server text; `tests/unit/tpo-drives-44-error-copy.test.ts` `TPO-drives-R05 surfaces recognized offending fields, never raw Zod messages`. Inline per-field errors and the remaining exact legacy field rules are not yet complete. |
+| TPO-drives-44 | OPEN — safer partial implementation | Unknown machine-code messages are replaced by bounded friendly fallback, and known season/role/deadline failures are mapped to sentences; `tests/unit/tpo-drives-44-error-copy.test.ts` `TPO-drives-44 unknown short machine codes are never displayed from typed API errors`. Full legacy message inventory is not yet exhaustively mapped. |
