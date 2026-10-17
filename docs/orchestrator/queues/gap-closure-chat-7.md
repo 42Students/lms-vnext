@@ -74,7 +74,7 @@ Audit: `docs/audit/pages/learner/placements.md` (and `placements-review.md` if p
 | LEARNER-placements-58 | S4 | MISSING-PAGE | FIXED-ON-MAIN |
 | LEARNER-placements-R08 | S4 | STATE | FIXED-ON-MAIN |
 
-## mentor/projects-meetings (58: FIXED-ON-MAIN 28, OPEN 30)
+## mentor/projects-meetings (58: FIXED-ON-MAIN 49, DONE 4, OPEN 5)
 
 Audit: `docs/audit/pages/mentor/projects-meetings.md` (and `projects-meetings-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/mentor-projects-meetings-verification.md`.
 
@@ -204,7 +204,7 @@ Audit: `docs/audit/pages/recruiter/home-drives.md` (and `home-drives-review.md` 
 | REC-home-drives-R07 | S4 | COPY | FIXED-ON-MAIN |
 | REC-home-drives-R08 | S4 | PERFORMANCE | FIXED-ON-MAIN |
 
-## faculty/courses (43: FIXED-ON-MAIN 33, OPEN 8, WRONG 2)
+## faculty/courses (43: FIXED-ON-MAIN 38, DONE 2, OPEN 1, WRONG 2)
 
 Audit: `docs/audit/pages/faculty/courses.md` (and `courses-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/faculty-courses-verification.md`.
 
