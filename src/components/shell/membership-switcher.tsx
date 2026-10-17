@@ -22,13 +22,15 @@ export function MembershipSwitcher({
   );
 
   function switchMembership(membershipId: string) {
+    // PUB-auth-public-23: the placeholder is not a destructive leave-workspace action.
+    if (!membershipId || membershipId === activeMembershipId) return;
     setError(null);
 
     startTransition(async () => {
       try{
-        await apiFetch("/api/auth/memberships",membershipId?{
+        await apiFetch("/api/auth/memberships",{
           method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({membershipId}),
-        }:{method:"DELETE"});
+        });
         router.refresh();
       }catch{
         setError("Could not switch college. Refresh and try again.");
@@ -45,6 +47,11 @@ export function MembershipSwitcher({
     );
   }
 
+  // PUB-auth-public-22: no interactive chooser is needed for a single college.
+  if (activeChoices.length === 1 && activeMembershipId === activeChoices[0].id) {
+    return <p className="max-w-60 truncate text-sm font-semibold text-body">{activeChoices[0].collegeName}</p>;
+  }
+
   return (
     <div className="w-44 min-w-0 sm:w-60">
       <label className="sr-only" htmlFor="membership-switcher">
@@ -57,7 +64,7 @@ export function MembershipSwitcher({
         onChange={(event) => switchMembership(event.target.value)}
         className="min-h-10 py-0"
       >
-        <option value="">Switch workspace</option>
+        <option value="" disabled>Switch workspace</option>
         {activeChoices.map((membership) => (
           <option key={membership.id} value={membership.id}>
             {membership.collegeName} · {membership.roles.join(", ")}

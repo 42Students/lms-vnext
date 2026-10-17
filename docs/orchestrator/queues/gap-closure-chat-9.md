@@ -27,7 +27,7 @@ Audit: `docs/audit/pages/tpo/calendar-reports.md` (and `calendar-reports-review.
 | TPO-calendar-reports-04 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-calendar-reports-08 | S3 | VALIDATION | DONE-BRANCH |
 | TPO-calendar-reports-09 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
-| TPO-calendar-reports-11 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
+| TPO-calendar-reports-11 | S3 | MISSING-FILTER | DONE-BRANCH |
 | TPO-calendar-reports-14 | S3 | RESPONSIVE | DONE-BRANCH |
 | TPO-calendar-reports-15 | S3 | STATE | DONE-BRANCH |
 | TPO-calendar-reports-16 | S3 | COPY | DONE-BRANCH |
@@ -73,11 +73,11 @@ Audit: `docs/audit/pages/tpo/settings-audit.md` (and `settings-audit-review.md` 
 |---|---|---|---|
 | TPO-settings-audit-53 | S1 | STATE | FIXED-ON-MAIN |
 | TPO-settings-audit-03 | S2 | COPY | DONE-BRANCH |
-| TPO-settings-audit-05 | S2 | PERMISSION | UNCONFIRMED |
-| TPO-settings-audit-12 | S2 | MISSING-FIELD | UNCONFIRMED |
-| TPO-settings-audit-20 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| TPO-settings-audit-21 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| TPO-settings-audit-22 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
+| TPO-settings-audit-05 | S2 | PERMISSION | NOT-A-GAP |
+| TPO-settings-audit-12 | S2 | MISSING-FIELD | NOT-A-GAP |
+| TPO-settings-audit-20 | S2 | MISSING-FIELD | DONE-BRANCH |
+| TPO-settings-audit-21 | S2 | MISSING-FIELD | DONE-BRANCH |
+| TPO-settings-audit-22 | S2 | MISSING-COLUMN | DONE-BRANCH |
 | TPO-settings-audit-23 | S2 | SIDE-EFFECT | FIXED-ON-MAIN |
 | TPO-settings-audit-30 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-settings-audit-31 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
@@ -87,8 +87,8 @@ Audit: `docs/audit/pages/tpo/settings-audit.md` (and `settings-audit-review.md` 
 | TPO-settings-audit-41 | S2 | SIDE-EFFECT | OPEN |
 | TPO-settings-audit-43 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-settings-audit-44 | S2 | SIDE-EFFECT | FIXED-ON-MAIN |
-| TPO-settings-audit-50 | S2 | MISSING-FIELD | OPEN |
-| TPO-settings-audit-51 | S2 | MISSING-FIELD | OPEN |
+| TPO-settings-audit-50 | S2 | MISSING-FIELD | NOT-A-GAP |
+| TPO-settings-audit-51 | S2 | MISSING-FIELD | NOT-A-GAP |
 | TPO-settings-audit-52 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-settings-audit-54 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-settings-audit-56 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
@@ -106,7 +106,7 @@ Audit: `docs/audit/pages/tpo/settings-audit.md` (and `settings-audit-review.md` 
 | TPO-settings-audit-11 | S3 | VALIDATION | DONE-BRANCH |
 | TPO-settings-audit-13 | S3 | COPY | DONE-BRANCH |
 | TPO-settings-audit-14 | S3 | SIDE-EFFECT | FIXED-ON-MAIN |
-| TPO-settings-audit-24 | S3 | VALIDATION | FIXED-ON-MAIN |
+| TPO-settings-audit-24 | S3 | VALIDATION | DONE-BRANCH |
 | TPO-settings-audit-25 | S3 | COPY | FIXED-ON-MAIN |
 | TPO-settings-audit-42 | S3 | COPY | DONE-BRANCH |
 | TPO-settings-audit-45 | S3 | COPY | FIXED-ON-MAIN |
@@ -120,7 +120,7 @@ Audit: `docs/audit/pages/tpo/settings-audit.md` (and `settings-audit-review.md` 
 | TPO-settings-audit-94 | S3 | COPY | DONE-BRANCH |
 | TPO-settings-audit-95 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-settings-audit-97 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
-| TPO-settings-audit-98 | S3 | STATE | OPEN |
+| TPO-settings-audit-98 | S3 | STATE | DONE-BRANCH |
 | TPO-settings-audit-99 | S3 | SIDE-EFFECT | DONE-BRANCH |
 | TPO-settings-audit-R02 | S3 | VALIDATION | DONE-BRANCH |
 | TPO-settings-audit-07 | S4 | RESPONSIVE | DONE-BRANCH |
@@ -244,11 +244,11 @@ Audit: `docs/audit/pages/college/projects.md` (and `projects-review.md` if prese
 | ID | Sev | Type | Status now |
 |---|---|---|---|
 | COL-projects-03 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| COL-projects-06 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| COL-projects-07 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| COL-projects-12 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| COL-projects-13 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
-| COL-projects-04 | S3 | MISSING-ACTION | OPEN |
+| COL-projects-06 | S2 | MISSING-ACTION | DONE-BRANCH |
+| COL-projects-07 | S2 | MISSING-FIELD | DONE-BRANCH |
+| COL-projects-12 | S2 | MISSING-FIELD | DONE-BRANCH |
+| COL-projects-13 | S2 | MISSING-COLUMN | DONE-BRANCH |
+| COL-projects-04 | S3 | MISSING-ACTION | NOT-A-GAP |
 | COL-projects-05 | S3 | MISSING-PAGE | NOT-A-GAP |
 | COL-projects-08 | S3 | MISSING-EXPORT | DONE-BRANCH |
 | COL-projects-15 | S3 | MISSING-MODAL | DONE-BRANCH |
@@ -370,3 +370,11 @@ Merged latest origin/main before editing; no test, lint, typecheck or build runs
 - TPO-calendar-reports-53 remains OPEN: placement summary keeps successfully loaded totals during a drive-dimension query failure, withholds drive rows and shows Batch filter unavailable + Retry preserving filters; other report stale-recovery parity remains missing. Test: tests/unit/chat9-report-dimension-recovery.test.ts; acceptance row updated.
 - Unit-failures-r1 api-origin-guard scan still requires a full-route rerun to identify a presently unguarded mutating route, if any; no unsupported allowlist exception was added. The remaining TPO-settings-audit-41/50/51/98 and COL-projects-04 require real service semantics and are not claimed DONE.
 - No numbered migrations, auth/security/storage edits, or pushes to main. Tests, typecheck, lint and browser acceptance not executed by this builder.
+
+## Chat-9 round 8 handoff (2026-10-18; branch-only source verification)
+- Synced origin/main twice, latest incorporated main `3301383743682881ccb9e0af4991c6b3c01ce623`; no pushes to main. No page restyling.
+- 31 distinct gap IDs addressed, with test cases named by ID: PUB-auth-public-22/23/26/30/35/36, PUB-auth-public-45/46/48/49/60, TPO-settings-audit-05/12/20/21/22/24/50/51/98, TPO-calendar-reports-11/14/15/24/25, COL-projects-04/06/07/12/13/15. Some were DONE source on main; those are independently source-reverified here, not 31 newly built features.
+- UNCONFIRMED queue chat-9 decisions all made: PUB-auth-public-23/26/30/35/36/49/60; safe rationale and test in public-auth verification documents. Extra deliberate decisions TPO-settings-audit-05/12/50/51 and COL-projects-04.
+- New implementation: blank membership selector no longer DELETEs; one-membership UI static; disabled Projects reports legacy text before querying private data; explicit not-hiring and unsubscribe POSTs atomically persist one tenant-scoped activity event and TPO bell; TPO audit counts honestly identified as source records.
+- Test files: tests/unit/chat9-unconfirmed-public-auth-round7.test.ts, chat9-public-invite-share-decisions.test.ts, chat9-safe-policy-decisions-round7.test.ts, chat9-tpo-job-type-policy-round8.test.ts, chat9-calendar-contracts-round8.test.ts, chat9-college-projects-contracts-round8.test.ts. Written, NOT executed (CI/orchestrator owns tests, typecheck, lint, browser/PG acceptance). Source fixes for the previous chat9-* and api-origin-guard failure inventory are present on main; no separate chat-9 typecheck errors listed in the current frozen report.
+- Remain OPEN: TPO-calendar-reports-22 full last-good private snapshot recovery; TPO-calendar-reports-53 stale report and remaining full report-state parity; TPO-settings-audit-41 learner readiness derivation from course completions. BLOCKED on external integration: TPO-calendar-reports-23 delivery-provider verification and -43 private storage/scanner. No fabricated production success, no migration proposals this round.
