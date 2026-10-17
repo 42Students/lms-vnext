@@ -9,6 +9,8 @@ export function LearnerSkillCatalogInput({value,onChange}:{value:string;onChange
  const [status,setStatus]=useState<"loading"|"ready"|"unavailable">("loading");
  useEffect(()=>{
   const controller=new AbortController();
+  setStatus("loading");
+  setItems([]);
   const timer=window.setTimeout(async()=>{
    try{
     const params=new URLSearchParams({mode:value.trim()?"search":"popular",query:value.trim().slice(0,80),limit:"15"});
