@@ -90,7 +90,7 @@ export default async function TpoTeamPage({searchParams}:{
         </div>
         <p className="mt-1 text-xs text-muted-foreground">Internal thread · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(row.createdAt)}</p>
        </li>)}</ul>:
-       <p role="status" className="mt-2 text-sm text-body">No private team conversations are available to your active membership.</p>}
+       <p role="status" className="mt-2 text-sm text-body">No private team conversations yet. Everyone is always available.</p>}
     <Link href="/tpo/messages" className="mt-3 inline-flex min-h-11 items-center text-primary-text">
       Open existing recruiter communications
     </Link>
