@@ -3,6 +3,7 @@ import {afterAll,describe,expect,it} from "vitest";
 import {Pool} from "pg";
 import {closeDatabaseConnection} from "@/db/client";
 import type {RequestContext} from "@/modules/identity/context";
+import {AuthorizationError} from "@/modules/permissions/policy";
 import {
  archivePlacementCompanyRelationship,createPlacementCompany,
  restorePlacementCompanyRelationship,
@@ -39,6 +40,20 @@ describe.skipIf(!enabled)("College archived company recovery PostgreSQL",()=>{
   expect(archived.relationship.status).toBe("ARCHIVED");
   const archivedPage=await listCollegeCompanyDirectory(collegeAdmin,{q:suffix,page:1,showDeleted:"1"});
   expect(archivedPage.items.map(x=>x.relationshipId)).toContain(created.relationship.id);
+  const learner:RequestContext={
+   user:{id:SEED_IDS.learnerUser,identityUid:"chat11-learner",platformStatus:"ACTIVE",systemRoles:[]},
+   membership:{id:SEED_IDS.learnerCollegeAMembership,collegeId:SEED_IDS.collegeA,
+    organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["LEARNER"]},
+  };
+  await expect(restorePlacementCompanyRelationship(learner,created.relationship.id))
+   .rejects.toBeInstanceOf(AuthorizationError);
+  const foreignScopedAdmin:RequestContext={
+   user:{...collegeAdmin.user,id:SEED_IDS.superAdminUser,systemRoles:["SUPER_ADMIN"]},
+   membership:null,
+   adminScope:{organizationId:SEED_IDS.organization,collegeId:SEED_IDS.collegeB},
+  };
+  await expect(restorePlacementCompanyRelationship(foreignScopedAdmin,created.relationship.id))
+   .rejects.toBeInstanceOf(AuthorizationError);
   const restored=await restorePlacementCompanyRelationship(collegeAdmin,created.relationship.id);
   expect(restored.relationship.status).toBe("ACTIVE");
   expect(restored.relationship.archivedAt).toBeNull();
