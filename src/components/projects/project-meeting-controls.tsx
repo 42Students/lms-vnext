@@ -805,11 +805,11 @@ export function ProjectMeetingTransitionActions({
           </>
         }
       >
-        <label>
+        {!withdrawing?<label>
           <span className="mb-1.5 block text-xs font-semibold text-body">
             {open === "COMPLETE"
               ? "Outcome"
-              : "Cancellation note"}
+              : "Cancellation note"
           </span>
           <Textarea
             value={note}
@@ -822,7 +822,7 @@ export function ProjectMeetingTransitionActions({
               setNote(event.target.value)
             }
           />
-        </label>
+        </label>:null}
       </Dialog>
     </>
   );
