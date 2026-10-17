@@ -215,8 +215,10 @@ export function RecruiterLeadsWorkspace({
   const [checking, setChecking] = useState(false);
   const contactCheckSeq=useRef(0);
 
+  const leadsSnapshotReady=useRef(false);
+  const companiesSnapshotReady=useRef(false);
   const load = useCallback(async (signal?: AbortSignal) => {
-    setPhase("loading");
+    if(!leadsSnapshotReady.current)setPhase("loading");
     setError("");
     try {
       const response = await fetch(
@@ -226,17 +228,18 @@ export function RecruiterLeadsWorkspace({
       const data = await response.json() as { leads?: Lead[]; error?: string };
       if (!response.ok) {
         if (signal?.aborted) return;
-        setPhase(response.status === 503 && data.error === "DB09_MIGRATIONS_PENDING"
+        setPhase(leadsSnapshotReady.current?"ready":response.status === 503 && data.error === "DB09_MIGRATIONS_PENDING"
           ? "migration-pending" : "error");
         setError(friendlyError(response.status, data));
         return;
       }
       if (signal?.aborted) return;
       setRows(Array.isArray(data.leads) ? data.leads : []);
+      leadsSnapshotReady.current=true;
       setPhase("ready");
     } catch {
       if (signal?.aborted) return;
-      setPhase("error");
+      setPhase(leadsSnapshotReady.current?"ready":"error");
       setError("Recruiter leads could not be loaded. Try again.");
     }
   }, [collegeId]);
@@ -251,7 +254,7 @@ export function RecruiterLeadsWorkspace({
   }, [load]);
 
   const loadCompanies = useCallback(async (signal?: AbortSignal) => {
-    setCompaniesPhase("loading");
+    if(!companiesSnapshotReady.current)setCompaniesPhase("loading");
     setCompaniesError("");
     try {
       const response = await fetch(
@@ -266,7 +269,7 @@ export function RecruiterLeadsWorkspace({
       if (!response.ok) {
         if (signal?.aborted) return;
         setCompaniesPhase(
-          response.status === 503 && data.error === "DB09_MIGRATIONS_PENDING"
+          companiesSnapshotReady.current?"ready":response.status === 503 && data.error === "DB09_MIGRATIONS_PENDING"
             ? "migration-pending"
             : "error",
         );
@@ -285,10 +288,11 @@ export function RecruiterLeadsWorkspace({
         setCommunication(Object.fromEntries((snapshot.items??[]).map(x=>[x.company_key,x.status])));
        }else setCommunicationReady(false);
       }catch{if(!signal?.aborted)setCommunicationReady(false);}
+      companiesSnapshotReady.current=true;
       setCompaniesPhase("ready");
     } catch {
       if (signal?.aborted) return;
-      setCompaniesPhase("error");
+      setCompaniesPhase(companiesSnapshotReady.current?"ready":"error");
       setCompaniesError("Companies could not be loaded. Try again.");
     }
   }, [collegeId]);
@@ -611,6 +615,14 @@ export function RecruiterLeadsWorkspace({
         </div>
       </div>
 
+      {phase==="ready"&&error?<div role="alert" className="rounded-lg border border-border bg-surface p-3 text-sm">
+        {error} Showing the last recruiter list we loaded.
+        <button type="button" className={buttonStyle+" ml-2"} onClick={()=>void load()}>Retry</button>
+      </div>:null}
+      {companiesPhase==="ready"&&companiesError?<div role="alert" className="rounded-lg border border-border bg-surface p-3 text-sm">
+        {companiesError} Showing the last company list we loaded.
+        <button type="button" className={buttonStyle+" ml-2"} onClick={()=>void loadCompanies()}>Retry companies</button>
+      </div>:null}
       {actionToast?<p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm">{actionToast}</p>:null}
       {phase !== "ready" && view!=="companies" ? (
         <div role={phase === "loading" ? "status" : "alert"}
@@ -626,28 +638,29 @@ export function RecruiterLeadsWorkspace({
             <h2 className="text-sm font-semibold text-foreground">Needs doing</h2>
             <div className="flex flex-wrap gap-2">
               {([
-                ["ALL","All contacts",needCounts.all],
-                ["UNASSIGNED","Unassigned",needCounts.unassigned],
-                ["NOT_CONTACTED","Not contacted",needCounts.notContacted],
-              ] as const).map(([key,label,count])=><button key={key} type="button"
-                aria-pressed={need===key} onClick={()=>updateFilter("need",key)}
-                className={need===key?"min-h-10 rounded-md bg-primary px-3 text-sm text-on-primary":"min-h-10 rounded-md border border-border px-3 text-sm text-body"}>
-                  {label} ({count})
-                </button>)}
-              {(Object.keys(RECRUITER_ATTENTION_LABELS) as RecruiterAttentionChip[]).map(key => (
-                <button key={key} type="button" aria-pressed={attention === key}
-                  className={attention === key
-                    ? "min-h-10 rounded-md bg-primary px-3 text-sm text-on-primary"
-                    : "min-h-10 rounded-md border border-border px-3 text-sm text-body"}
-                  onClick={() => updateFilter("attention",attention===key?"ALL":key)}>
-                  {RECRUITER_ATTENTION_LABELS[key]} ({rows.filter(row => row.chips?.includes(key)).length})
-                </button>
-              ))}
-              <Link href="/tpo/follow-ups" className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm text-primary-text">
-                Follow-ups due
-              </Link>
+                ["OVERDUE","Follow-ups due",rows.filter(row=>row.chips?.includes("OVERDUE")).length],
+                ["NO_NEXT_STEP","No next step",rows.filter(row=>row.chips?.includes("NO_NEXT_STEP")).length],
+                ["QUIET","Gone quiet",rows.filter(row=>row.chips?.includes("QUIET")).length],
+              ] as const).filter(([, ,count])=>count>0).map(([key,label,count])=>
+                <button key={key} type="button" aria-pressed={attention===key}
+                  className={attention===key
+                   ?"min-h-10 rounded-md bg-primary px-3 text-sm text-on-primary"
+                   :"min-h-10 rounded-md border border-border px-3 text-sm text-body"}
+                  onClick={()=>updateFilter("attention",attention===key?"ALL":key)}>{label} ({count})</button>)}
+              {needCounts.unassigned>0?<button type="button"
+                aria-pressed={need==="UNASSIGNED"}
+                className={need==="UNASSIGNED"
+                  ?"min-h-10 rounded-md bg-primary px-3 text-sm text-on-primary"
+                  :"min-h-10 rounded-md border border-border px-3 text-sm text-body"}
+                onClick={()=>updateFilter("need",need==="UNASSIGNED"?"ALL":"UNASSIGNED")}>
+                Unassigned ({needCounts.unassigned})</button>:null}
             </div>
-            <p className="text-xs text-muted-foreground">Needs attention</p>
+            {!rows.some(row=>row.chips?.some(chip=>["OVERDUE","NO_NEXT_STEP","QUIET"].includes(chip)))&&
+             needCounts.unassigned===0?<p role="status" className="text-sm">Nothing right now.</p>:null}
+            <Link className="inline-flex min-h-10 items-center text-sm text-primary-text underline"
+              href="/tpo/settings/recruiters">
+              {rows.filter(row=>Boolean(row.recruiterUserId)).length} recruiters with access
+            </Link>
           </section>
           <div className="flex flex-wrap gap-3 rounded-lg border border-border bg-surface p-4">
             <label className="min-w-48 flex-1 text-sm">
@@ -839,7 +852,7 @@ export function RecruiterLeadsWorkspace({
           ) : null}
           {view !== "companies" && visible.length === 0 ? (
             <div className="rounded-lg border border-border bg-surface p-8 text-center text-muted-foreground">
-              {rows.length ? "No leads match your filters." : "No recruiter leads yet. Add your first contact."}
+              {rows.length ? "No leads match your filters." : "No recruiters yet. Add a company contact to start tracking outreach."}
             </div>
           ) : view === "companies" ? (
             <section className="space-y-3" aria-label="Company filters">

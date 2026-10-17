@@ -113,7 +113,7 @@ export function PublicRecruiterJoinForm({
           </div>
         ) : joined ? (
           <>
-            <h1 className="text-2xl font-semibold text-foreground">{alreadyJoined?"One more step":"You now have access to "+college}</h1>
+            <h1 className="text-2xl font-semibold text-foreground">{alreadyJoined?"You already have access to "+college:"You now have access to "+college}</h1>
             <p className="mt-3 text-sm text-body">
               {alreadyJoined
                 ? "You already have an account. Sign in on "+college+"'s placement address with "+signInEmail+"."
@@ -127,9 +127,7 @@ export function PublicRecruiterJoinForm({
               {scope === "COLLEGE" ? "Hire from " + college : college + " would like " + companyLabel + " to hire from their students"}
             </h1>
             <p className="mt-3 text-sm text-body">
-              {scope === "COLLEGE"
-                ? "Join with your company email. You can then request placement drives and review the students who apply."
-                : "Join with your company email. You can then request placement drives and review the students who apply."}
+              Join with your company email. You can then request placement drives and review the students who apply.
             </p>
             <form className="mt-5 space-y-4" onSubmit={event=>{
              event.preventDefault(); if(sentTo)void join();else void sendCode();

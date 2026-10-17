@@ -60,7 +60,9 @@ export async function bulkChangeTpoLeadStages(
               notNowUntil: null,
               updatedAt: new Date(),
             }
-          : {
+          : input.action === "NEW" ? {
+              manualStage:"NEW",notNowReason:null,notNowUntil:null,updatedAt:new Date(),
+            } : {
               manualStage: "NOT_NOW",
               notNowReason: input.reason,
               notNowUntil: input.revisitDate,
@@ -84,7 +86,8 @@ export async function bulkChangeTpoLeadStages(
         isSystem: false,
         note: input.action === "CONTACTED"
           ? "Bulk manual stage changed to Contacted"
-          : "Bulk manual stage changed to Not Now",
+          : input.action === "NEW"?"Bulk manual stage restored to New":
+           "Bulk manual stage changed to Not Now",
         createdByUserId: context.user.id,
       });
       resultById.set(selected.id, {
