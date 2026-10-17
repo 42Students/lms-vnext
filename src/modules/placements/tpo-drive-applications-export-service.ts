@@ -39,6 +39,35 @@ export async function getTpoDriveApplicationsExport(context:RequestContext,raw:u
   eligibilityStatus:placementApplications.eligibilityStatus,
   channel:placementApplications.channel,submittedAt:placementApplications.submittedAt,
   rollNumber:learnerProfiles.rollNumber,email:users.email,phone:users.phoneE164,
+  // TPO-drive-workspace-33: project the active college-owned academic roster,
+  // without multiplying applications for learners with historical enrollments.
+  batchName:sql<string|null>`(select c.name from learner_program_enrollments lpe
+    join cohorts c on c.id=lpe.cohort_id join programs p on p.id=c.program_id
+    join departments d on d.id=p.department_id
+    where lpe.membership_id=${collegeMemberships.id} and lpe.status='ACTIVE'
+      and d.college_id=${collegeId} order by lpe.admitted_at desc,lpe.id desc limit 1)`,
+  branchName:sql<string|null>`(select d.name from learner_program_enrollments lpe
+    join cohorts c on c.id=lpe.cohort_id join programs p on p.id=c.program_id
+    join departments d on d.id=p.department_id
+    where lpe.membership_id=${collegeMemberships.id} and lpe.status='ACTIVE'
+      and d.college_id=${collegeId} order by lpe.admitted_at desc,lpe.id desc limit 1)`,
+  academicYear:sql<string|null>`(select c.academic_year from learner_program_enrollments lpe
+    join cohorts c on c.id=lpe.cohort_id join programs p on p.id=c.program_id
+    join departments d on d.id=p.department_id
+    where lpe.membership_id=${collegeMemberships.id} and lpe.status='ACTIVE'
+      and d.college_id=${collegeId} order by lpe.admitted_at desc,lpe.id desc limit 1)`,
+  submittedByUserId:placementApplications.submittedByUserId,
+  learnerUserId:collegeMemberships.userId,
+  pendingWithdrawal:sql<boolean>`exists(select 1 from placement_learner_requests w
+    where w.application_id=${placementApplications.id}
+      and w.request_type='APPLICATION_WITHDRAWAL' and w.status='PENDING')`,
+  noShow:sql<boolean>`exists(select 1 from placement_round_results r
+    where r.application_id=${placementApplications.id}
+      and r.status='APPLIED' and r.outcome='ABSENT')`,
+  placedElsewhere:sql<boolean>`exists(select 1 from placement_offers o
+    join placement_applications other on other.id=o.application_id
+    where other.membership_id=${placementApplications.membershipId}
+      and other.job_id<>${job.id} and o.status='ACCEPTED')`,
  }).from(placementApplications)
   .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
    eq(collegeMemberships.collegeId,collegeId)))
@@ -70,6 +99,7 @@ export async function getTpoDriveApplicationsExport(context:RequestContext,raw:u
   : await readPage(0,TPO_DRIVE_APPLICATION_EXPORT_LIMIT+1);
  },{isolationLevel:"repeatable read",accessMode:"read only"});
  return {job,stage,search,channel,eligibility,sort,submittedWithin,...projectTpoDriveApplicationsExport(records.map(r=>({
-  ...r,submittedAt:r.submittedAt.toISOString(),screeningUpdatedAt:r.screeningUpdatedAt?.toISOString()??null,
+  ...r,addedByCollege:r.submittedByUserId!==r.learnerUserId,
+  submittedAt:r.submittedAt.toISOString(),screeningUpdatedAt:r.screeningUpdatedAt?.toISOString()??null,
  })),job.title,options)};
 }
