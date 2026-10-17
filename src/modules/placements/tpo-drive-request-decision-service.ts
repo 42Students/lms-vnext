@@ -93,8 +93,10 @@ export async function decideTpoRecruiterDriveRequest(
         jobId:job.id,title:draft.title,
         employmentType:draft.employmentType,workMode,
         locations:[draft.location],isPrimary:true,
-        minimumAnnualCtcInr:inr(draft.minimumAnnualCtcInr),
-        maximumAnnualCtcInr:inr(draft.maximumAnnualCtcInr),
+        minimumAnnualCtcInr:inr(draft.minimumAnnualCtcInr) ??
+          (draft.ctcLpa?Math.round(Number(draft.ctcLpa)*100000):null),
+        maximumAnnualCtcInr:inr(draft.maximumAnnualCtcInr) ??
+          (draft.ctcLpa?Math.round(Number(draft.ctcLpa)*100000):null),
         fixedLpa:draft.fixedLpa|| (draft.fixedAnnualCtcInr?(Number(draft.fixedAnnualCtcInr)/100000).toFixed(2):null),
         variableLpa:draft.variableLpa|| (draft.variableAnnualCtcInr?(Number(draft.variableAnnualCtcInr)/100000).toFixed(2):null),
         bondMonths:inr(draft.bondMonths),
