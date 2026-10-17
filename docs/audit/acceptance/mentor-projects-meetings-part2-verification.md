@@ -17,5 +17,8 @@ DONE means source implemented and ID-named tests authored, not executed or certi
 
 | MEN-projects-meetings-71 | DONE | src/app/(authenticated)/mentor/notifications/page.tsx; tests/unit/mentor-meetings-round4-source-failure.test.ts — `it("MEN-projects-meetings-71 preserves other sources and shows Retry sources when a feed fails")` |
 
+| MEN-projects-meetings-57 | PARTIAL | src/components/projects/project-resource-open-link.tsx, project-workspace.tsx and project-resource-controls.tsx; tests/unit/college-mentor-round7-gap-verification.test.ts — `it("MEN-projects-meetings-57 shows Open link and guards invalid or blocked resource windows")`. File/updated-time/type/status tags remain. |
+| MEN-projects-meetings-65 | PARTIAL | src/components/projects/project-final-delivery-controls.tsx; tests/unit/college-mentor-round7-gap-verification.test.ts — `it("MEN-projects-meetings-65 uses submission decision wording and exact feedback")`. Separate legacy dialogs and stale snapshot UI still need reconciliation. |
+
 ## Remaining
 MEN-projects-meetings-53/55/56/57/58/60/63/64/65/66/72/74/75/76/77. The notifications page still uses separate personal and project sections; unified priority order needs a follow-up audit. No tests executed here.
