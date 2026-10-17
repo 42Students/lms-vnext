@@ -457,11 +457,11 @@ export function FacultyCourseWorkspace({
       </section>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-        <Metric
-          label="Lessons"
-          value={summary.lessons}
-          detail="Active lessons in the current learning path."
-        />
+        <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")}
+          className="rounded-lg focus-visible:outline-2 focus-visible:outline-primary">
+          <Metric label="Lessons" value={summary.lessons}
+            detail="Open your Blueprint lessons →"/>
+        </Link>
         <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")+"?filter=LECTURES"}
           className="rounded-lg focus-visible:outline-2 focus-visible:outline-primary">
           <Metric label="Content" value={summary.contents}
