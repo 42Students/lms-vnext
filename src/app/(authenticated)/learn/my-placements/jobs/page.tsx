@@ -6,6 +6,7 @@ import { Suspense } from "react";
 import { PageHeader } from "@/components/ui/page-header";
 import { getOwnLearnerDriveBrowse } from "@/modules/placements/learner-closing-drives-service";
 import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
+import {listOwnPlacementSavedJobs} from "@/modules/placements/saved-job-service";
 
 function toItem(row: Awaited<ReturnType<typeof listLearnerPlacementJobs>>[number]): LearnerPlacementJobItem {
   return {
@@ -23,6 +24,7 @@ function toItem(row: Awaited<ReturnType<typeof listLearnerPlacementJobs>>[number
       externalApplicationUrl: row.job.externalApplicationUrl,
       applicationDeadline: row.job.applicationDeadline?.toISOString() ?? null,
       publishedAt: row.job.publishedAt?.toISOString() ?? null,
+      stipendPerMonthInr:row.job.stipendPerMonthInr,
     },
     roleOption: {
       id: row.roleOption.id,
@@ -34,6 +36,9 @@ function toItem(row: Awaited<ReturnType<typeof listLearnerPlacementJobs>>[number
       minimumAnnualCtcInr: row.roleOption.minimumAnnualCtcInr,
       maximumAnnualCtcInr: row.roleOption.maximumAnnualCtcInr,
       isPrimary: row.roleOption.isPrimary,
+      fixedLpa:row.roleOption.fixedLpa,
+      variableLpa:row.roleOption.variableLpa,
+      joiningBonusLpa:row.roleOption.joiningBonusLpa,
     },
     company: row.company,
     application: row.application
@@ -51,7 +56,9 @@ function toItem(row: Awaited<ReturnType<typeof listLearnerPlacementJobs>>[number
 
 export default async function LearnerPlacementJobsPage() {
   const context = await getCurrentRequestContext();
-  const { rows, snapshotNowIso } = await getOwnLearnerDriveBrowse(context);
+  const [{ rows, snapshotNowIso },savedJobs] = await Promise.all([
+    getOwnLearnerDriveBrowse(context),listOwnPlacementSavedJobs(context),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -65,7 +72,8 @@ export default async function LearnerPlacementJobsPage() {
         Review placement rules and preparation →
       </Link>
       <Suspense fallback={<p className="text-sm text-body">Loading drive filters…</p>}>
-        <LearnerJobsBrowse items={rows.map(toItem)} snapshotNowIso={snapshotNowIso} />
+        <LearnerJobsBrowse items={rows.map(toItem)} snapshotNowIso={snapshotNowIso}
+          savedJobIds={savedJobs.map(job=>job.jobId)} />
       </Suspense>
     </div>
   );

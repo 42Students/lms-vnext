@@ -293,11 +293,11 @@ export function LearnerPlacementsDashboard({
         <section className="space-y-3 rounded-xl border border-border bg-surface p-5" aria-labelledby="placement-week-heading">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h3 id="placement-week-heading" className="m-0 text-base font-semibold text-foreground">
-              Your next seven days
+              Next 7 days
             </h3>
             <StatusBadge>{display.fullWeekEventCount===null ? "Unknown" : `${display.fullWeekEventCount} events`}</StatusBadge>
           </div>
-          {display.weekEvents===null ? (
+          {display.fullWeekEventCount===0 ? <p role="status" className="text-sm text-body">No tests or interviews in the next 7 days. When the placement cell books you, it shows here and you get a notice.</p> : display.weekEvents===null ? (
             <p role="status" className="text-sm text-body">Schedule data unavailable; please retry.</p>
           ) : display.weekDays ? (
             <ol className="divide-y divide-border">
@@ -326,7 +326,7 @@ export function LearnerPlacementsDashboard({
             </p>
           ) : null}
           <Link href="/learn/my-placements/calendar" className="inline-block min-h-10 pt-3 text-sm font-semibold text-primary-text hover:underline">
-            View full schedule →
+            Full schedule →
           </Link>
         </section>
       </div>

@@ -23,7 +23,7 @@ export type LearnerApplicationBrowseFilters = {
 const companyNameCollator=new Intl.Collator("en-IN",{numeric:true,sensitivity:"base"});
 
 export const DEFAULT_LEARNER_APPLICATION_FILTERS: LearnerApplicationBrowseFilters = {
-  search: "", view: "all", stage: "all", sort: "activity",
+  search: "", view: "progress", stage: "all", sort: "activity",
 };
 
 export function learnerApplicationStage(item: LearnerApplicationBrowseItem): string {
