@@ -550,8 +550,9 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
           </p>
         ) : (<>
           <div className="space-y-3 p-3 md:hidden" aria-label={title+" mobile records"}>
-           {data.kind==="LESSONS"?
-            data.items.map(item=><article key={item.id} className="space-y-2 rounded-lg border border-border p-3">
+           {data.kind==="LESSONS" ? (
+            <>
+            {data.items.map(item=><article key={item.id} className="space-y-2 rounded-lg border border-border p-3">
              <h3 className="break-words font-semibold">{item.name}</h3>
              <Link className="block break-words text-sm font-semibold text-primary-text underline"
               href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}>
@@ -562,8 +563,11 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
              <CollegeLessonVisibilityControl lesson={{id:item.id,name:item.name,
               visibleToStudents:item.visibleToStudents,updatedAt:item.updatedAt.toISOString()}}/>
              <Link href={collegeOfferingProgressHref(item.offeringId)} className="inline-flex min-h-10 items-center text-xs font-semibold text-primary-text underline">View recorded course activity</Link>
-            </article>):
-            data.items.map(item=><article key={item.offeringId} className="space-y-2 rounded-lg border border-border p-3">
+            </article>)}
+            </>
+           ) : (
+            <>
+            {data.items.map(item=><article key={item.offeringId} className="space-y-2 rounded-lg border border-border p-3">
              <Link className="block break-words font-semibold text-primary-text underline"
               href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}>
               {item.courseName} ({item.courseCode})
@@ -574,6 +578,8 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
              <Link href={collegeOfferingLessonsHref(item.offeringId)}
               className="inline-flex min-h-10 items-center text-xs font-semibold text-primary-text underline">View authored lessons</Link>
             </article>)}
+            </>
+           )}
           </div>
           <div className="hidden overflow-x-auto md:block">
           <table className="w-full min-w-[48rem] text-left text-sm">
