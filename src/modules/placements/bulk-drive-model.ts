@@ -8,6 +8,12 @@ export const bulkDriveAddSchema = z.object({
   includeIneligible:z.object({reason:z.string().trim().min(3).max(500)}).strict().optional(),
 }).strict();
 
+export const bulkDrivePreflightSchema=z.strictObject({
+ roleOptionId:z.string().uuid(),
+ membershipIds:z.array(z.string().uuid()).min(1).max(200)
+  .refine(ids=>new Set(ids).size===ids.length,"Duplicate learners are not allowed"),
+});
+
 export const bulkDriveCandidatesQuerySchema = z.object({
   page: z.coerce.number().int().min(1).max(10000).default(1),
   search: z.string().trim().max(80).default(""),

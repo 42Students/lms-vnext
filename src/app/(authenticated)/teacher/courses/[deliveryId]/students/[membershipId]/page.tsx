@@ -21,7 +21,7 @@ export default async function FacultyStudentDetailPage({
   const root = "/teacher/courses/" + encodeURIComponent(data.course.deliveryId);
   return <div className="space-y-6">
     <Link href={root + "/students"}
-      className="text-sm font-semibold text-primary-text hover:underline">← Students</Link>
+      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">← Students</Link>
     <PageHeader eyebrow="Faculty · Course Students" title={name}
       description={[data.course.courseName, data.course.sectionName,
         data.course.academicPeriodName].join(" · ")} />
@@ -102,7 +102,7 @@ export default async function FacultyStudentDetailPage({
           </ol>
         </div>}
       <Link href={root + "/attendanceDetail"}
-        className="inline-flex text-sm font-semibold text-primary-text hover:underline">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
         View monthly class attendance →
       </Link>
     </section>

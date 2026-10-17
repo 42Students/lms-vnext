@@ -23,7 +23,7 @@ export default async function CollegeCorrectionReadPage({searchParams}:{searchPa
       action={<Link href="/college/attendance/corrections" className="font-semibold text-primary-text">Reset filters</Link>}/>
   </div>;
   const data=await getCollegeCorrectionRead(await getCurrentRequestContext(),query.data);
-  return <div className="space-y-6">
+  return <div className="min-w-0 space-y-6">
     <PageHeader eyebrow="College Admin · Attendance" title="Attendance correction windows"
       description={"Persisted scheduled sessions and the current college policy for "+data.collegeName+"."}
       actions={<Link href="/college/attendance/settings" className="text-sm font-semibold text-primary-text">Policy settings</Link>}/>
@@ -58,7 +58,7 @@ export default async function CollegeCorrectionReadPage({searchParams}:{searchPa
         No persisted scheduled sessions overlap this date range. This does not mean no attendance corrections occurred.
       </p>:<div className="overflow-x-auto rounded-xl border border-border bg-surface">
         <table className="w-full min-w-[45rem] text-left text-sm">
-          <thead><tr><th className="p-3" scope="col">Session / class</th>
+          <thead className="sticky top-0 z-10 bg-surface"><tr><th className="p-3" scope="col">Session / class</th>
             <th className="p-3" scope="col">Time (IST)</th>
             <th className="p-3" scope="col">Attendance</th>
             <th className="p-3" scope="col">Faculty window</th></tr></thead>

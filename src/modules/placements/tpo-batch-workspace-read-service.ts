@@ -16,7 +16,7 @@ export async function requireTpoBatchActor(ctx:RequestContext) {
  if(!m||m.status!=="ACTIVE"||ctx.user.platformStatus!=="ACTIVE")throw new AuthorizationError("placements.manage");
  const [persisted]=await getDb().select({id:collegeMemberships.id}).from(collegeMemberships)
   .innerJoin(users,eq(users.id,collegeMemberships.userId))
-  .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"TPO")))
+  .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"])))
   .where(and(eq(collegeMemberships.id,m.id),eq(collegeMemberships.collegeId,m.collegeId),
    eq(collegeMemberships.userId,ctx.user.id),eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"))).limit(1);
  if(!persisted)throw new AuthorizationError("placements.manage");

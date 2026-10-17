@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
+import { FriendlyFetchError } from "@/lib/api-fetch";
+import { friendlyApiError } from "@/lib/friendly-error";
 import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 
 type Props={
@@ -84,7 +86,7 @@ export function MentorTaskDetailsEdit(props:Props) {
       showToast({tone:"success",title:"Task updated."});
       router.refresh();
     } catch(caught) {
-      const message=caught instanceof Error?caught.message:"Task update failed";
+      const message=caught instanceof FriendlyFetchError?caught.message:friendlyApiError({});
       setError(message);
       showToast({tone:"error",title:"Task update failed",description:message});
     } finally {setPending(false);}

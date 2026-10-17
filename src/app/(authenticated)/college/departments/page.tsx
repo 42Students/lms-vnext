@@ -35,7 +35,7 @@ export default async function CollegeDepartmentsPage() {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         eyebrow="College Admin"
         title="Departments"

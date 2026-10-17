@@ -38,7 +38,7 @@ export default async function CollegeBatchesPage({
   const periodChoices = periods.filter(period => period.status !== "CLOSED").map(period => ({
     id: period.id, name: period.name, code: period.code,
   }));
-  return <div className="space-y-6">
+  return <div className="min-w-0 space-y-6">
     <CollegeCohortCreateForm programs={directory.programs.filter(p => p.status === "ACTIVE")} periods={periodChoices} />
     <div className="flex flex-wrap items-center gap-3">
     <Link prefetch={false} download href={academicExportHref("BATCHES",directory.query)}
