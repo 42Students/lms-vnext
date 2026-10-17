@@ -80,9 +80,9 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
     onClick={()=>downloadRoundCsv(roundApplyReportCsv(report.results),"round-"+roundId+"-apply-results.csv")}>
     Export results (CSV)
    </button>
-   <button type="button" className="min-h-11 rounded border border-border px-4" onClick={()=>navigator.clipboard?.writeText(
+   <button type="button" className="min-h-11 rounded border border-border px-4" onClick={()=>{if(!navigator.clipboard){setError("Clipboard is unavailable. Use Export results (CSV).");return;}void navigator.clipboard.writeText(
     ["Learner\tResult state\tOutcome\tReason",...report.results.map(x=>[x.student,x.status,x.outcome,x.reason??""].map(value=>value.replaceAll("\t"," ").replaceAll("\n"," ")).join("\t"))].join("\n")
-   )}>Copy results</button>
+   ).catch(()=>setError("Copy failed. Use Export results (CSV)."));}}>Copy results</button>
   </div>:null}
   {error?<p role="alert" className="text-sm text-error">{error} Refresh the preview before retrying.</p>:null}
  </section>;
