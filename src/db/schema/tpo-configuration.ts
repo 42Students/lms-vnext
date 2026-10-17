@@ -28,6 +28,8 @@ export const placementTpoJobTypes = pgTable(
       .references(() => colleges.id, { onDelete: "restrict" }),
     label: varchar("label", { length: 100 }).notNull(),
     active: boolean("active").notNull().default(true),
+    countsAsPlaced: boolean("counts_as_placed"),
+    isBuiltin: boolean("is_builtin").notNull().default(false),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
