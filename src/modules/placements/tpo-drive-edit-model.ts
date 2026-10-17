@@ -1,6 +1,10 @@
 import {z} from "zod";
 export const tpoDriveEditSchema=z.object({
- confirmed:z.literal(true),expectedUpdatedAt:z.iso.datetime({offset:true})
+ confirmed:z.literal(true),
+ notifyApplicants:z.boolean().default(false),
+ applicationDeadline:z.iso.datetime({offset:true}).nullable().optional(),
+ minCgpaHundredths:z.number().int().min(0).max(1000).nullable().optional(),
+ expectedUpdatedAt:z.iso.datetime({offset:true})
   .transform(value=>new Date(value).toISOString()),
  reason:z.string().trim().min(10).max(1000),
  title:z.string().trim().min(2).max(200),description:z.string().trim().min(1).max(20000),
@@ -15,7 +19,8 @@ export const tpoDriveEditSchema=z.object({
 }).strict();
 export type TpoDriveEditInput=z.infer<typeof tpoDriveEditSchema>;
 export function evaluateTpoDriveEdit(status:string,seasonStatus:string|null,input:TpoDriveEditInput){
- if(status!=="DRAFT"||seasonStatus!=="ACTIVE")return "READ_ONLY" as const;
+ if(!["DRAFT","PUBLISHED"].includes(status)||seasonStatus!=="ACTIVE")return "READ_ONLY" as const;
+ if(status==="PUBLISHED"&&input.applicationDeadline===null)return "INVALID_DEADLINE" as const;
  if(input.minimumAnnualCtcInr!==null&&input.maximumAnnualCtcInr!==null&&
    input.maximumAnnualCtcInr<input.minimumAnnualCtcInr)return "INVALID_CTC" as const;
  if(input.maximumAnnualCtcInr!==null&&
