@@ -127,7 +127,7 @@ Seven reported failures reviewed against merged source:
 - chat16-reassigned-mentor-parity / MEN-projects-meetings-57: restored blocked-tab wording and kept secure fallback link.
 - chat16-tracker-known-error-link / SA-placements-projects-114: fixed UUID versus opaque-value scrubbing order, added signature-idempotency regression.
 - hr-drive-round-presets: reinstated four named FULL_PROCESS rounds, including initial company TALK.
-- rec-notification-bell / REC-calendar-messages-profile-21: current source already retains 30-second polling and scoped mark-read; no edit.
+- rec-notification-bell / REC-calendar-messages-profile-21: 30-second polling and scoped mark-read were already present. Corrected the obsolete test to assert the required `listOwnRecruiterPlacementJobs(ctx,feed.collegeId)` call and caller company/college filters, rather than the old unscoped single-argument call.
 - recruiter-drive-request-model / REC-home-drives-21: corrected old DRAFT label test; approved draft awaits publication rather than another review.
 
 Source and tests reviewed, but not executed in this GitHub connector session.
