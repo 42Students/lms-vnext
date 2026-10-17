@@ -26,6 +26,7 @@ import {
   leadNotNowAuditNote,
 } from "./tpo-crm-confirmed-write-model";
 import { requirePlacementManageScope } from "./scope";
+import {notifyActiveTposOfRecruiterEvent} from "./tpo-recruiter-bell-service";
 import { inferLegacyRecruiterCompanyName,deriveTpoRecruiterInviteStatus } from "./tpo-recruiter-lead-policy";
 import { recruiterAttentionFromPersistedFacts } from "./tpo-recruiter-attention-model";
 import { getTpoRecruiterLeadStages } from "./tpo-company-memory-service";
@@ -230,12 +231,16 @@ export async function createTpoLead(
         ownerMembershipId:ownerMembership(context,input.collegeId),
       });
     }
-    await tx.insert(activityEvents).values({
+    const [event]=await tx.insert(activityEvents).values({
       organizationId:college.organizationId,collegeId:input.collegeId,
       actorUserId:context.user.id,actorMembershipId:context.membership?.id??null,
       module:"PLACEMENTS",eventType:"RECRUITER_LEADS_CREATED",
       subjectType:"placement_tpo_lead",subjectId:created.id,
       summary:"Recruiter lead added",metadata:{source:created.source,hasFollowup:Boolean(input.followup)},
+    }).returning({id:activityEvents.id});
+    if(event)await notifyActiveTposOfRecruiterEvent(tx,{
+     collegeId:college.id,eventId:event.id,leadId:created.id,
+     title:"Recruiter lead added",body:"A recruiter contact was added to Engage.",
     });
     return created;
   });
