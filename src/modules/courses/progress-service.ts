@@ -231,12 +231,7 @@ async function atomicProgressUpdate(
   const db = getDb();
   const now = new Date();
   const updateValues = {
-    lastPositionSeconds: sql<number>`
-      greatest(
-        ${learnerContentProgress.lastPositionSeconds},
-        ${positionSeconds}
-      )
-    `,
+    lastPositionSeconds: positionSeconds,
     updatedAt: now,
     ...(shouldComplete
       ? {

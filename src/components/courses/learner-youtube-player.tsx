@@ -208,7 +208,7 @@ export function LearnerYouTubePlayer({
                   const resumeAt = Math.min(
                     Math.max(
                       0,
-                      initialPositionSeconds,
+                      completed ? 0 : initialPositionSeconds,
                     ),
                     duration > 1
                       ? duration - 1
