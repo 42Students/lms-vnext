@@ -92,12 +92,16 @@ export const tpoStudentsQuerySchema = z
     minOffers:z.coerce.number().int().min(0).max(10000).optional(),
     maxOffers:z.coerce.number().int().min(0).max(10000).optional(),
     offerWaiting:z.enum(["YES","NO"]).transform(value=>value==="YES").optional(),
+    minCgpa:z.coerce.number().min(0).max(10).optional(),
+    maxCgpa:z.coerce.number().min(0).max(10).optional(),
     batchId: uuid.optional(),
     search: z.string().trim().max(150).optional(),
     ...paginationFields,
   })
   .strict()
   .superRefine((value,ctx)=>{
+    if(value.minCgpa!==undefined&&value.maxCgpa!==undefined&&value.minCgpa>value.maxCgpa)
+     ctx.addIssue({code:"custom",path:["maxCgpa"],message:"CGPA upper bound must be at least the lower bound"});
     if(value.minApplications!==undefined&&value.maxApplications!==undefined&&value.minApplications>value.maxApplications)
      ctx.addIssue({code:"custom",path:["maxApplications"],message:"Maximum applications must be at least the minimum"});
     if(value.minOffers!==undefined&&value.maxOffers!==undefined&&value.minOffers>value.maxOffers)
