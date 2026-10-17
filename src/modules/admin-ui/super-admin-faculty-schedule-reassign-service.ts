@@ -1,6 +1,5 @@
 import "server-only";
 import {and,asc,eq,gt,inArray} from "drizzle-orm";
-import {z} from "zod";
 import {getDb} from "@/db/client";
 import {collegeMemberships,departments,membershipRoles,programs,cohorts,sections,
   sectionScheduleEvents,users} from "@/db/schema";
@@ -9,15 +8,7 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {requirePermission,AuthorizationError} from "@/modules/permissions/policy";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
-import {planFacultyScheduleReassignment} from "./super-admin-faculty-schedule-reassign-model";
-
-export const superAdminFacultyScheduleReassignSchema=z.object({
-  sourceMembershipId:z.string().uuid(),
-  replacementMembershipId:z.string().uuid(),
-  confirmed:z.literal(true),
-}).strict().refine(value=>value.sourceMembershipId!==value.replacementMembershipId,{
-  message:"Choose a different replacement faculty member",
-});
+import {planFacultyScheduleReassignment,superAdminFacultyScheduleReassignSchema} from "./super-admin-faculty-schedule-reassign-model";
 
 export class SuperAdminFacultyScheduleReassignError extends Error {
   constructor(public readonly code:"FACULTY_UNAVAILABLE"|"FACULTY_SCHEDULE_LIMIT"|"SCHEDULE_CHANGED"){
