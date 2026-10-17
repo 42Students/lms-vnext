@@ -2,6 +2,7 @@
 
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
+import {parseCollegeIstLocal} from "@/modules/courses/college-ist-datetime-model";
 type Lesson={id:string;name:string;course:string;courseCode:string;offeringId:string;nextSequence:number};
 type Delivery={offeringId:string;deliveryId:string;sectionName:string;sectionCode:string};
 type Option={text:string;correct:boolean};
@@ -42,8 +43,8 @@ export function CollegeQuizCreate({lessons,deliveries}:{
       (q.type==="MULTIPLE_CHOICE"&&correct>=q.options.length))return "Select at least one correct and one incorrect answer for each multiple-choice question.";
   }
   if(questions.reduce((sum,q)=>sum+q.points,0)>10000)return "Quiz total points may not exceed 10000.";
-  if(dueAt&&Number.isNaN(new Date(dueAt+":00+05:30").getTime()))return "Use a valid deadline.";
-  if(dueAt&&new Date(dueAt+":00+05:30").getTime()<=Date.now())return "Quiz deadline must be in the future.";
+  if(dueAt&&!parseCollegeIstLocal(dueAt))return "Use a valid deadline.";
+  if(dueAt&&Date.parse(parseCollegeIstLocal(dueAt)!)<=Date.now())return "Quiz deadline must be in the future.";
   return null;
  }
  async function create(){
@@ -55,7 +56,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
    const result=await fetch("/api/courses/quizzes",{method:"POST",
     headers:{"content-type":"application/json"},
     body:JSON.stringify({lessonId:lesson!.id,deliveryId:deliveryId||null,title:title.trim(),
-     description:description.trim()||null,dueAt:dueAt?new Date(dueAt+":00+05:30").toISOString():null,
+     description:description.trim()||null,dueAt:dueAt?parseCollegeIstLocal(dueAt):null,
      maxAttempts:Number(maxAttempts),shuffleQuestions,shuffleOptions,sequence:nextOverride[lesson!.id]??lesson!.nextSequence,
      questions:questions.map((q,index)=>({...q,sequence:index,
       prompt:q.prompt.trim(),options:q.options.map((o,j)=>({...o,text:o.text.trim(),sequence:j}))}))})});
