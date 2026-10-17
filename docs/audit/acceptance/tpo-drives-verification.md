@@ -49,3 +49,5 @@ The following gaps each have their own named assertion in `tests/unit/tpo-drives
 | TPO-drives-R03 | DONE | Revised warning suppresses false unrestricted-audience copy when an explicit eligibility preset is selected; second test TPO-drives-R03 in `tests/unit/tpo-drives-chat-3-round4.test.ts`. |
 
 | TPO-drives-43 | OPEN | Client keeps server-returned draft ID and relationship in a ref; a failed eligibility write can retry without a second job/company create, and changing fields after partial save redirects to existing draft instead. Missing true atomic server transaction / idempotency key and persistence across browser restarts. Named test TPO-drives-43, `tests/unit/tpo-drives-chat-3-round4.test.ts`. |
+
+| TPO-drives-15 | OPEN | First published-drive deadline already supported by DB service; now form validates strict IST date and uses accessible confirmation, guarded `apiFetch`, preserving draft on failure. Multi-drive deadline bulk action remains open. Tests TPO-drives-15 and TPO-drives-45 in round-4. |
