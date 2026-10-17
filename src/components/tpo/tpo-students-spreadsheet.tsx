@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import {tpoStudentDisplayLabel} from "@/modules/placements/tpo-student-display-label";
 import {useState} from "react";
 import {TpoStudentNoteEditor} from "./tpo-student-note-editor";
 import {TpoStudentOutcomePill} from "./tpo-student-outcome-pill";
@@ -13,7 +14,7 @@ import {TpoSpreadsheetGrid} from "./tpo-spreadsheet-grid";
 import {TpoGridFilterPanel,type TpoFilterField} from "./tpo-grid-filter-panel";
 import {TpoAfterCollegeEditor} from "./tpo-after-college-editor";
 import { TpoAfterCollegeBulkEditor } from "./tpo-after-college-bulk-editor";
-import {AFTER_COLLEGE_OUTCOMES,AFTER_COLLEGE_LABELS,type AfterCollegeOutcome} from "@/modules/placements/tpo-after-college-model";
+import {AFTER_COLLEGE_OUTCOMES,AFTER_COLLEGE_LABELS,afterCollegeDisplay,type AfterCollegeOutcome} from "@/modules/placements/tpo-after-college-model";
 
 const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"student",label:"Student",read:row=>row.fromFinishedBatch?
@@ -21,28 +22,21 @@ const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"number",label:"Student number",read:row=>row.rollNumber??row.registrationNumber},
  {key:"branch",label:"Branch",read:row=>row.branchName},
  {key:"batch",label:"Batch",read:row=>row.programName+" · "+row.cohortName+(row.fromFinishedBatch?" · From "+row.cohortName:"")},
- {key:"stage",label:"Stage",read:row=>row.journeyState.replaceAll("_"," ")},
+ {key:"stage",label:"Stage",read:row=>tpoStudentDisplayLabel(row.journeyState)},
  {key:"profile",label:"Profile",read:row=>row.verification.status==="UNKNOWN"?"Verification unavailable":row.verification.status==="WAITING"? "Waiting: "+row.verification.waitingSections.join(" / "):row.verification.status==="SENT_BACK"?"Sent back":row.verification.status==="VERIFIED"?"Verified Education and Identity":"Not verified"},
  {key:"cgpa",label:"CGPA",read:row=>row.cgpa},
  {key:"backlogs",label:"Active backlogs",read:row=>row.activeBacklogs},
- {key:"readiness",label:"Readiness evidence",read:row=>row.readinessSignal.replaceAll("_"," ")},
+ {key:"readiness",label:"Readiness evidence",read:row=>tpoStudentDisplayLabel(row.readinessSignal)},
  {key:"registration",label:"Placement registration",read:row=>row.registrationChoice??"Not registered"},
- {key:"participation",label:"Participation",read:row=>row.participationStatus.replaceAll("_"," ")},
- {key:"best",label:"Best so far",read:row=>row.bestSoFar},
+ {key:"participation",label:"Participation",read:row=>tpoStudentDisplayLabel(row.participationStatus)},
+ {key:"best",label:"Best so far",read:row=>tpoStudentDisplayLabel(row.bestSoFar)},
  {key:"applications",label:"Applications",read:row=>row.applicationCount},
  {key:"offers",label:"Offers",read:row=>row.offerCount},
- {key:"offersAwaiting",label:"Offers awaiting answer",read:row=>row.offersAwaitingAnswer},
- {key:"journey",label:"Journey",read:row=>row.journeyState.replaceAll("_"," ")},
+ {key:"offersAwaiting",label:"Offers waiting on their answer",read:row=>row.offersAwaitingAnswer},
+ {key:"journey",label:"Journey",read:row=>tpoStudentDisplayLabel(row.journeyState)},
  {key:"email",label:"Email (export only)",read:row=>row.email,exportOnly:true},
 ];
-const journeys=[
- {value:"NOT_REGISTERED",label:"Not registered"},
- {value:"NEEDS_READINESS_SUPPORT",label:"Needs readiness support"},
- {value:"READY_NOT_APPLYING",label:"Ready to apply"},
- {value:"APPLYING",label:"Applying"},
- {value:"PLACED",label:"Placed"},
-];
-export function TpoStudentsSpreadsheet({rows,branches,programs,classes,afterCollege,afterCollegeAvailable}:{rows:readonly TpoStudentRow[];branches:readonly {branchId:string;branchName:string}[];programs:readonly {id:string;name:string}[];classes:readonly {id:string;name:string}[];
+export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,afterCollegeAvailable}:{rows:readonly TpoStudentRow[];programs:readonly {id:string;name:string}[];classes:readonly {id:string;name:string}[];
  afterCollege:Record<string,{outcome:AfterCollegeOutcome;expectedVersion:string}>;afterCollegeAvailable:boolean}){
  const router=useRouter(),pathname=usePathname(),params=useSearchParams();
  const selected=params.get("student");
@@ -58,12 +52,10 @@ export function TpoStudentsSpreadsheet({rows,branches,programs,classes,afterColl
  const open=(id:string|null)=>{const q=new URLSearchParams(params.toString());if(id)q.set("student",id);else q.delete("student");router.replace(pathname+(q.size?"?"+q.toString():""),{scroll:false});};
  const displayColumns:readonly TpoGridColumn<TpoStudentRow>[]=[
   ...columns.slice(0,5),
-  {key:"afterCollege",label:"After college",read:row=>afterCollege[row.membershipId]?.outcome?.replaceAll("_"," ")??"Not decided"},
+  {key:"afterCollege",label:"After college",read:row=>afterCollegeDisplay(afterCollege[row.membershipId]?.outcome)??"Not decided"},
   ...columns.slice(5),
  ];
  const filters:TpoFilterField[]=[
-  {key:"journeyState",urlKey:"journeyState",label:"Student journey",options:journeys},
-  {key:"branchId",urlKey:"branchId",label:"Academic branch",options:branches.map(b=>({value:b.branchId,label:b.branchName}))},
   {key:"programId",urlKey:"programId",label:"Program",options:programs.map(p=>({value:p.id,label:p.name}))},
   {key:"classId",urlKey:"classId",label:"Class",options:classes.map(c=>({value:c.id,label:c.name}))},
   {key:"afterCollege",urlKey:"afterCollege",label:"After college",options:AFTER_COLLEGE_OUTCOMES.map(value=>({value,label:AFTER_COLLEGE_LABELS[value]}))},
@@ -98,7 +90,7 @@ export function TpoStudentsSpreadsheet({rows,branches,programs,classes,afterColl
   }}>
   <TpoAfterCollegeBulkEditor rows={rows} current={afterCollege} available={afterCollegeAvailable} />
   <TpoStudentClipboardActions rows={rows} selected={noteSelection} onSelect={setNoteSelection}/>
-  <p className="text-xs text-muted-foreground">{noteSelection.filter(id=>rows.some(row=>row.membershipId===id)).length} selected on this visible page.</p>
+  <p role="status" aria-live="polite" className="text-xs text-muted-foreground">{noteSelection.filter(id=>rows.some(row=>row.membershipId===id)).length} selected of {rows.length} on this visible page.</p>
   <details className="rounded-xl border border-border p-4">
    <summary className="cursor-pointer font-semibold">Bulk Add a note</summary>
    <p className="mt-2 text-xs text-muted-foreground">Choose up to 100 students on this visible roster page; no student is added outside your current filtered page.</p>
