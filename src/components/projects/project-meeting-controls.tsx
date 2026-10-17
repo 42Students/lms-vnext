@@ -350,13 +350,18 @@ export function ScheduleProjectMeetingControl({
     useState(false);
   const [error, setError] =
     useState<string | null>(null);
+  const initialFacilitation=mentorMeetingFacilitationSchema.parse(meeting?.facilitation??emptyMentorMeetingFacilitation);
   const dirty=title!==(meeting?.title??"")||agenda!==(meeting?.agenda??"")||
     startsAt!==(meeting?toLocalInput(meeting.startsAt):"")||
     endsAt!==(meeting?toLocalInput(meeting.endsAt):"")||
     meetingUrl!==(meeting?.meetingUrl??"")||
     meetingType!==(meeting?.meetingType??"GENERAL")||
     linkedSprintId!==(meeting?.linkedSprintId??"")||
-    linkedTaskId!==(meeting?.linkedTaskId??"");
+    linkedTaskId!==(meeting?.linkedTaskId??"")||
+    outcome!==(meeting?.outcome??"")||
+    JSON.stringify(facilitation)!==JSON.stringify(initialFacilitation)||
+    followUpAt!==(initialFacilitation.followUpAt?toLocalInput(new Date(initialFacilitation.followUpAt)):"")||
+    meetingStatus!==(meeting?.status==="DRAFT"?"DRAFT":meeting?.status==="RESCHEDULED"?"RESCHEDULED":"SCHEDULED");
   function discardDraft(){setOpen(false);setError(null);}
   const guard=useProjectEditorDiscardGuard(open,dirty,pending,discardDraft);
   function openDialog() {
@@ -633,6 +638,38 @@ export function ScheduleProjectMeetingControl({
               </Select>
             </label>
           </div>
+          <fieldset className="grid gap-3 rounded-lg border border-border p-3">
+            <legend className="px-1 text-sm font-semibold">Meeting notes and follow-up</legend>
+            {([
+              ["notes","Notes"],["actionItems","Action items"],
+              ["wentWell","What went well?"],["improve","What could improve?"],
+              ["nextTime","What to try next?"],["followUpNotes","Follow-up notes"],
+            ] as const).map(([field,label])=>
+              <label key={field} className="grid gap-1 text-xs font-semibold text-body">
+                {label}
+                <Textarea value={facilitation[field]} maxLength={4000}
+                  onChange={event=>setFacilitation(prev=>({...prev,[field]:event.target.value}))}/>
+              </label>)}
+            <label className="grid gap-1 text-xs font-semibold text-body">
+              Outcome
+              <Textarea value={outcome} maxLength={4000} onChange={event=>setOutcome(event.target.value)}/>
+            </label>
+            <label className="grid gap-1 text-xs font-semibold text-body">
+              Follow-up at (IST)
+              <Input type="datetime-local" value={followUpAt}
+                onChange={event=>setFollowUpAt(event.target.value)}/>
+            </label>
+            <label className="grid gap-1 text-xs font-semibold text-body">
+              Follow-up status
+              <Select value={facilitation.followUpStatus}
+                onChange={event=>setFacilitation(prev=>({...prev,
+                  followUpStatus:event.target.value as "NOT_PLANNED"|"OPEN"|"DONE"}))}>
+                <option value="NOT_PLANNED">Not planned</option>
+                <option value="OPEN">Open</option>
+                <option value="DONE">Done</option>
+              </Select>
+            </label>
+          </fieldset>
           {error ? (
             <p
               role="alert"

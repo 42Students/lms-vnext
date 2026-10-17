@@ -3,7 +3,7 @@ type SettingsKey="season"|"rules"|"job-types"|"after-college"|"prep-readiness"|"
 export const TPO_SETTINGS_NAV_GROUPS=[
  {title:"Placement policy",items:[
   {id:"season",label:"Placement seasons",href:"/tpo/settings/season"},
-  {id:"rules",label:"Placement Rules",href:"/tpo/settings/rules"},
+  {id:"rules",label:"Placement rules",href:"/tpo/settings/rules"},
   {id:"job-types",label:"Job types",href:"/tpo/settings/job-types"},
   {id:"after-college",label:"After college",href:"/tpo/settings/after-college"},
   {id:"prep-readiness",label:"Prep readiness",href:"/tpo/settings/prep-readiness"},
@@ -11,7 +11,7 @@ export const TPO_SETTINGS_NAV_GROUPS=[
  ]},
  {title:"People",items:[
   {id:"trusted",label:"Trusted domains",href:"/tpo/settings/trusted"},
-  {id:"recruiters",label:"Recruiter access",href:"/tpo/settings/recruiters"},
+  {id:"recruiters",label:"Recruiters",href:"/tpo/settings/recruiters"},
   {id:"team",label:"Placement Team",href:"/tpo/settings/team"},
   {id:"public-link",label:"Public recruiter link",href:"/tpo/settings/public-link"},
  ]},
@@ -19,9 +19,9 @@ export const TPO_SETTINGS_NAV_GROUPS=[
   {id:"notices",label:"Student Notices & Preparation",href:"/tpo/settings/notices"},
   {id:"notifications",label:"My Notifications",href:"/tpo/settings/notifications"},
   {id:"templates",label:"Email templates",href:"/tpo/settings/templates"},
-  {id:"see",label:"What Companies See",href:"/tpo/settings/see"},
-  {id:"public-page",label:"Public placements",href:"/tpo/settings/public-page"},
-  {id:"branding",label:"Placement Branding",href:"/tpo/settings/branding"},
+  {id:"see",label:"What companies see",href:"/tpo/settings/see"},
+  {id:"public-page",label:"Placements page",href:"/tpo/settings/public-page"},
+  {id:"branding",label:"Branding",href:"/tpo/settings/branding"},
  ]},
 ] as const;
 export function TpoSettingsNav({active}:{active:SettingsKey}){

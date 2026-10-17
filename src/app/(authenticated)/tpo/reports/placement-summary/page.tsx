@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
@@ -52,15 +53,15 @@ export default async function TpoPlacementSummaryPage({
 
   const { metrics, byDrive, byCompany } = workspace.report;
   const dimensions=await getTpoReportDriveDimensions(context,{collegeId:context.membership.collegeId,
-   seasonId:workspace.selectedSeasonId,jobId:workspace.selectedJobId});
+   seasonId:workspace.selectedSeasonId,jobId:workspace.selectedJobId}).catch(()=>null);
   const companyId=first(query.companyId)??"";
   const workMode=first(query.workMode)??"";
   const payCategory=first(query.payCategory)??"";
   const validFilters=(!companyId||byCompany.some(item=>item.companyId===companyId))&&
    (!workMode||["ONSITE","HYBRID","REMOTE"].includes(workMode))&&
    (!payCategory||["CTC_RECORDED","STIPEND_RECORDED","NOT_RECORDED"].includes(payCategory));
-  const shownDrives=validFilters?byDrive.filter(row=>{
-   const dim=dimensions.get(row.jobId);
+  const shownDrives=dimensions&&validFilters?byDrive.filter(row=>{
+   const dim=dimensions?.get(row.jobId);
    return dim&&(!companyId||dim.companyId===companyId)&&(!workMode||dim.workMode===workMode)&&
     (!payCategory||dim.payCategory===payCategory);
   }):[];
@@ -185,13 +186,21 @@ export default async function TpoPlacementSummaryPage({
           {!validFilters?<p role="alert" className="rounded-md border border-border p-3 text-sm text-warning-text">
            One or more selected drive dimensions are invalid for this college. Clear the filters.
           </p>:null}
-          <p role="status" className="text-xs text-muted-foreground">
+          {!dimensions?<section role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-warning-border bg-warning-subtle p-4 text-sm">
+            <p className="text-warning-text">Batch filter unavailable. Drive dimension details could not be loaded; the season report remains available, but no drive-row totals are inferred.</p>
+            <Link href={"/tpo/reports/placement-summary?"+new URLSearchParams({
+              ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
+              ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{}),
+              ...(companyId?{companyId}:{}),...(workMode?{workMode}:{}),...(payCategory?{payCategory}:{}),
+            }).toString()} className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 py-2 font-semibold text-primary-text">Retry</Link>
+          </section>:null}
+          {dimensions?<p role="status" className="text-xs text-muted-foreground">
            Showing {shownDrives.length} of {byDrive.length} drive rows. This filters the drive table only.
            Summary figures, charts, company table and standard report CSV keep the selected season/drive scope.
            CTC recorded means a declared annual package; stipend recorded means a declared stipend without CTC.
            Missing pay figures are not assumed to mean an unpaid role.
-          </p>
-          <ReportTable
+          </p>:null}
+          {dimensions?<ReportTable
             title="Drive performance"
             headings={[
               "Drive",
@@ -218,7 +227,7 @@ export default async function TpoPlacementSummaryPage({
               row.placed,
             ])}
             emptyDescription="No reportable drives match the selected season and drive filters."
-          />
+          />:null}
 
           <ReportTable
             title="Company performance"

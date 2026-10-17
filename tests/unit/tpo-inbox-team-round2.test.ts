@@ -132,7 +132,7 @@ describe("Chat-2 TPO Inbox + Team legacy verification round 2",()=>{
   expect(ack).toContain("tx.insert(placementTpoInternalReads)");
   expect(ack).toContain("onConflictDoUpdate");
   expect(schema).toContain("placementTpoInternalReads=pgTable");
-  expect(src("docs/proposed-migrations/tpo-inbox-team-read-receipts.sql")).toContain("tpo_internal_reads_pk");
+  expect(src("drizzle/0133_lanes_round_1.sql")).toContain("tpo_internal_reads_pk");
  });
  it("TPO-inbox-team-49 displays a scoped notice CTA only when it is a safe HTTPS link",()=>{
   expect(announcements()).toContain('row.buttonUrl?.startsWith("https://")');
