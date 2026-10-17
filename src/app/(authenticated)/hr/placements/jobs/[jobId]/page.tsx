@@ -19,6 +19,7 @@ import { hrInlineRoundResultsHref, hrInlineRoundResultFilters } from "@/modules/
 import { buildHrApplicantDrawer } from "@/modules/placements/hr-applicant-drawer-model";
 import {recruiterDriveProgressSteps,recruiterDriveNextAction} from "@/modules/placements/recruiter-drive-progress-model";
 import { listRecruiterApplicantNotes } from "@/modules/placements/applicant-notes-service";
+import {RecruiterPrivateRatingEditor} from "@/components/hr/recruiter-private-rating-editor";
 import { ApplicantNotesPanel } from "@/components/placements/applicant-notes-panel";
 import {RecruiterPrivateRatingEditor} from "@/components/hr/recruiter-private-rating-editor";
 import {getOwnRecruiterCandidateRating} from "@/modules/placements/recruiter-private-rating-service";
