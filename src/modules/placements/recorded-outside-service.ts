@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq} from "drizzle-orm";
+import {and,desc,eq} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {colleges,placementCompanyRelationships,placementCompanies,
  placementRecruiterCollegeGrants,placementRecruiterProfiles,
@@ -96,6 +96,36 @@ export async function recordOutsideDrive(context:RequestContext,raw:unknown){
   });
   return {id:saved.id,collegeId:actor.relationship.collegeId,recordedOutside:true as const,role:actor.role};
  });
+}
+/** TPO-drives-31: a distinct historical register, never merged with publishable jobs. */
+export async function listTpoRecordedOutsideDrives(context:RequestContext,rawCollegeId:unknown){
+ const collegeId=z.string().uuid().parse(rawCollegeId);
+ if(!context.membership||context.membership.collegeId!==collegeId||
+   !hasMembershipRole(context,"TPO")||context.membership.status!=="ACTIVE"||
+   context.user.platformStatus!=="ACTIVE")
+   throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
+ // Read permission is persisted and college-scoped, not inferred from the URL.
+ const [actor]=await getDb().select({id:collegeMemberships.id}).from(collegeMemberships)
+   .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"TPO")))
+   .where(and(eq(collegeMemberships.id,context.membership.id),
+    eq(collegeMemberships.collegeId,collegeId),eq(collegeMemberships.status,"ACTIVE"))).limit(1);
+ if(!actor||!can(context,"placements.manage",{collegeId}))
+   throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
+ const rows=await getDb().select({
+  id:placementOutsideDriveRecords.id,title:placementOutsideDriveRecords.title,
+  occurredAt:placementOutsideDriveRecords.occurredAt,
+  externalReferenceUrl:placementOutsideDriveRecords.externalReferenceUrl,
+  notes:placementOutsideDriveRecords.notes,recordedByRole:placementOutsideDriveRecords.recordedByRole,
+  companyName:placementCompanies.name,
+ }).from(placementOutsideDriveRecords)
+ .innerJoin(placementCompanyRelationships,and(
+  eq(placementCompanyRelationships.id,placementOutsideDriveRecords.companyRelationshipId),
+  eq(placementCompanyRelationships.collegeId,collegeId)))
+ .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
+ .where(eq(placementOutsideDriveRecords.collegeId,collegeId))
+ .orderBy(desc(placementOutsideDriveRecords.occurredAt),desc(placementOutsideDriveRecords.id))
+ .limit(101);
+ return {rows:rows.slice(0,100),truncated:rows.length>100};
 }
 export async function recordedOutsideChoices(context:RequestContext,rawCollegeId:unknown){
  const collegeId=z.string().uuid().parse(rawCollegeId);
