@@ -9,6 +9,7 @@ export const publicRecruiterWorkEmailSchema = z.string().trim().toLowerCase().em
       "gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "icloud.com",
       "proton.me", "protonmail.com", "aol.com", "live.com",
       "msn.com", "me.com", "mac.com", "ymail.com", "rocketmail.com",
+      "rediffmail.com", "mail.com", "gmx.com", "yandex.com", "yandex.ru",
     ].includes(domain));
   }, "Enter a company work email address.");
 export const publicCollegeJoinCodeSchema = z.string().regex(/^[0-9]{6}$/);
