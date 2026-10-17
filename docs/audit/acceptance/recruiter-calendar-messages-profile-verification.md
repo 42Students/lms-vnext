@@ -117,3 +117,12 @@ These 22 IDs were explicitly assigned to chat-2 in `docs/orchestrator/queues/fin
 | REC-calendar-messages-profile-41 | PARTIAL — OPEN | Same file — work email is readonly and student contact-sharing boundary is explicit; reviewer-drive invite paragraph needs real linked drive data and cannot be invented |
 
 Source checks and pure-model tests were written, not run. No recruiter company trust secrets, foreign-college threads or invented offer counts are exposed.
+
+### Final sprint chat-2 — calendar and inbox (IDs 03/05/06/07/09)
+| Gap ID | Verdict | Source, gap-ID test and behavior |
+| --- | --- | --- |
+| REC-calendar-messages-profile-03 | DONE — source verified; CI pending | `src/modules/placements/recruiter-calendar-service.ts` reads persisted round duration; `src/app/(authenticated)/hr/calendar/page.tsx` renders start/end in IST, without inventing missing end. Test `tests/unit/chat2-final-sprint-calendar-inbox-a.test.ts` — `REC-calendar-messages-profile-03 shows scheduled start and end in IST when available`. |
+| REC-calendar-messages-profile-05 | DONE — source verified; CI pending | Calendar retains legacy subtitle, accessible Previous/Next week and empty-week wording; source `hr/calendar/page.tsx`; named `REC-calendar-messages-profile-05` test in `chat2-final-sprint-recruiter-calendar.test.ts`. |
+| REC-calendar-messages-profile-06 | DONE — source verified; CI pending | Calendar events include the exact employer-college identity, not merged anonymous cards; `recruiter-calendar-service.ts` and calendar event card; `REC-calendar-messages-profile-06` test in `chat2-final-sprint-calendar-inbox-a.test.ts`. |
+| REC-calendar-messages-profile-07 | DONE — source verified; CI pending | Drive Overview for deadlines; scoped drive Rounds tab for rounds and slots. `hr/calendar/page.tsx`; named `REC-calendar-messages-profile-07` test in `chat2-final-sprint-calendar-inbox-a.test.ts`. |
+| REC-calendar-messages-profile-09 | DONE — source verified; CI pending | Scoped conversations show unread summary, toolbar counts, general conversation description and body-matching search; `hr/conversations/page.tsx`, `hr-conversation-inbox-service.ts`; named `REC-calendar-messages-profile-09` test in `chat2-final-sprint-recruiter-messages.test.ts`. |
