@@ -108,6 +108,9 @@ async function requireLearnerProgressScope(
   const content =
     await loadLessonContentScope(contentId);
 
+  if (!content.lessonVisibleToStudents) {
+    throw new CoursesServiceError("LESSON_CONTENT_NOT_PUBLISHED");
+  }
   if (content.status !== "PUBLISHED") {
     throw new CoursesServiceError(
       "LESSON_CONTENT_NOT_PUBLISHED",

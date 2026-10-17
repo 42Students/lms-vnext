@@ -102,7 +102,7 @@ async function requireLearnerScope(
   deliveryId: string,
 ) {
   const assignment = await loadCourseAssignmentScope(assignmentId);
-  if (assignment.status !== "PUBLISHED" || assignment.learningPathStatus !== "PUBLISHED") {
+  if (assignment.status !== "PUBLISHED" || assignment.learningPathStatus !== "PUBLISHED" || !assignment.lessonVisibleToStudents) {
     throw new StorageFileError("STORAGE_PARENT_NOT_AVAILABLE");
   }
   if (assignment.deliveryId && assignment.deliveryId !== deliveryId) {

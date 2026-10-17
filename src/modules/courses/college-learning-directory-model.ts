@@ -164,6 +164,8 @@ export type CollegeLessonRecord = {
   name: string;
   sequence: number;
   status: "ACTIVE" | "ARCHIVED";
+  visibleToStudents: boolean;
+  updatedAt: Date;
   pathStatus: string;
   offeringId: string;
   offeringStatus: string;
