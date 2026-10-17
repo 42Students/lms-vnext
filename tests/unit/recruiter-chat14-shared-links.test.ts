@@ -49,7 +49,10 @@ describe("REC-home-drives-38 recruiter applicant disclosures",()=>{
   expect(reader).toContain("projectRecruiterProfileLinks(profileDocument");
   expect(reader).toContain("applications.map(({membershipId,profileDocument,...row})");
   const page=readFileSync("src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx","utf8");
-  expect(page).toContain('rel="noopener noreferrer"');
+  // UX playbook uses same-view navigation; the validated HTTPS URL is the security gate.
+  expect(page).toContain("selectedApplicant.githubUrl");
+  expect(page).toContain("selectedApplicant.portfolioUrl");
+  expect(page).not.toContain('target="_blank"');
   expect(page).toContain("Skills provided by applicant");
   expect(page).not.toContain("profilePrivateDocumentReceipts.privateObjectKey");
  });

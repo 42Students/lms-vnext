@@ -20,6 +20,12 @@ import type { AssignedProjectTemplateChoice } from "./project-create-control";
 type ClassChoice = { id:string;name:string;code:string };
 type Learner = {membershipId:string;rollNumber:string;displayName:string};
 type Roster = {classId:string;className:string;revision:string;members:Learner[]};
+type CohortCreationOutcome={
+ created:{projectId:string;title:string;learnerMembershipId:string}[];
+ alreadyCovered:number;requested:number;
+ individualResults:{membershipId:string;status:"CREATED"|"ALREADY_COVERED";projectId:string|null;title:string|null}[];
+};
+
 
 export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialTemplateId}:{
  collegeId:string;basePath:string;templates:readonly AssignedProjectTemplateChoice[];initialTemplateId?:string|null;
@@ -44,8 +50,8 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
   const [error,setError]=useState("");
   const [notice,setNotice]=useState("");
   const [preflight,setPreflight]=useState<{toCreate:number;alreadyCovered:number;eligible:number;duplicates:number;
-  items:{membershipId:string;status:"TO_CREATE"|"ALREADY_COVERED"|"DUPLICATE"}[]}|null>(null);
-  const [outcome,setOutcome]=useState<{created:{projectId:string;title:string;learnerMembershipId:string}[];alreadyCovered:number;requested:number}|null>(null);
+  items:{membershipId:string;status:"TO_CREATE"|"ALREADY_COVERED"|"DUPLICATE"}[];scopeKey:string}|null>(null);
+  const [outcome,setOutcome]=useState<CohortCreationOutcome|null>(null);
   const [prevCollegeId,setPrevCollegeId]=useState(collegeId);
   if(prevCollegeId!==collegeId){setPrevCollegeId(collegeId);setLoading(true);}
   useEffect(()=>{
@@ -92,6 +98,8 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
       }
     }
   }
+  const preflightScopeKey=collegeId+":"+classId+":"+templateId+":"+(roster?.revision??"");
+  const currentPreflight=preflight?.scopeKey===preflightScopeKey?preflight:null;
   const preflightActive=mode==="INDIVIDUAL"&&Boolean(classId)&&Boolean(templateId);
   const [prevPreflightActive,setPrevPreflightActive]=useState(preflightActive);
   if(prevPreflightActive!==preflightActive){setPrevPreflightActive(preflightActive);if(!preflightActive)setPreflight(null);}
@@ -102,10 +110,10 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
       "&classId="+encodeURIComponent(classId)+"&templateId="+encodeURIComponent(templateId),
       {signal:ctl.signal}).then(r=>r.ok?r.json():Promise.reject(Error("Preflight failed")))
       .then((data:{toCreate:number;alreadyCovered:number;eligible:number;duplicates:number;items:{membershipId:string;status:"TO_CREATE"|"ALREADY_COVERED"|"DUPLICATE"}[]})=>{
-        if(!ctl.signal.aborted)setPreflight(data);
+        if(!ctl.signal.aborted)setPreflight({...data,scopeKey:preflightScopeKey});
       }).catch(()=>{if(!ctl.signal.aborted)setPreflight(null)});
     return ()=>ctl.abort();
-  },[mode,collegeId,classId,templateId,roster]);
+  },[mode,collegeId,classId,templateId,roster,preflightScopeKey]);
   const names=new Map(roster?.members.map(m=>[m.membershipId,m] as const)??[]);
   const plannerEditable=canEditClassTeamPlanner(pending,rosterLoading);
   const balanced=groups.length>0&&Math.max(...groups.map(g=>g.membershipIds.length))-Math.min(...groups.map(g=>g.membershipIds.length))<=1;
@@ -114,9 +122,9 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
     if(!mayBeginClassTeamCreation(createInFlight.current,Boolean(roster&&groups.length&&balanced&&!rosterLoading)))return;
     if(!roster)return;
     if(mode==="INDIVIDUAL"){
-      if(!preflight)return;
-      if(!window.confirm("Create "+preflight.toCreate+
-        " workspaces? "+preflight.alreadyCovered+" already covered."))return;
+      if(!currentPreflight)return;
+      if(!window.confirm("Create "+currentPreflight.toCreate+
+        " workspaces? "+currentPreflight.alreadyCovered+" already covered."))return;
     }
     createInFlight.current=true;
     let created=false;
@@ -125,7 +133,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
       const result=await projectMutation("/api/projects/class-team-workspaces","POST",{
         collegeId,classId:roster.classId,templateId,rosterRevision:roster.revision,
         baseTitle:title.trim(),baseSlug:slug.trim(),teams:groups,cohortMode:mode==="INDIVIDUAL",expectedPreviewVersion:previewVersion(groups),
-      }) as {created:{projectId:string;title:string;learnerMembershipId:string}[];alreadyCovered:number;requested:number};
+      }) as CohortCreationOutcome;
       setOutcome(result);
       created=true;
       setNotice(result.created.length+" Project workspaces created.");
@@ -198,13 +206,13 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
     </div>:null}
     {rosterLoading?<p role="status">Loading current class roster…</p>:null}
     {roster?<p className="text-sm text-muted-foreground">{roster.className} · {roster.members.length} active learners · {groups.length} {mode==="TEAMS"?"teams":"group"}</p>:null}
-    {mode==="INDIVIDUAL"&&preflight?<section aria-label="Before creating: one workspace per student" className="rounded-lg border border-border p-3 text-sm">
+    {mode==="INDIVIDUAL"&&currentPreflight?<section aria-label="Before creating: one workspace per student" className="rounded-lg border border-border p-3 text-sm">
       <h2 className="font-semibold">Before creating: one workspace per student</h2>
-      <p>{preflight.toCreate} to create · {preflight.alreadyCovered} already covered · {preflight.duplicates} duplicates · {preflight.eligible} eligible</p>
+      <p>{currentPreflight.toCreate} to create · {currentPreflight.alreadyCovered} already covered · {currentPreflight.duplicates} duplicates · {currentPreflight.eligible} eligible</p>
       <div className="max-h-72 overflow-y-auto rounded-md border" role="region" aria-label="Learner creation preflight details" tabIndex={0}>
         <table className="w-full text-left text-xs">
           <thead><tr><th scope="col" className="p-2">Learner</th><th scope="col" className="p-2">Decision</th></tr></thead>
-          <tbody>{preflight.items.map((row,index)=>{
+          <tbody>{currentPreflight.items.map((row,index)=>{
             const learner=names.get(row.membershipId);
             const decision=row.status==="TO_CREATE"?"To create":row.status==="ALREADY_COVERED"?"Already covered":"Duplicate";
             return <tr key={row.membershipId+"-"+index} className="border-t">
@@ -257,11 +265,22 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
         : outcome.created.length<outcome.requested-outcome.alreadyCovered
           ? outcome.created.length+" workspace(s) created; "+(outcome.requested-outcome.alreadyCovered-outcome.created.length)+" student(s) failed. Review or export the report below before retrying."
           : "Created "+outcome.created.length+" workspace(s) for the class roster."}</p>
+      <div className="max-h-72 overflow-auto" role="region" aria-label="Per-learner creation results" tabIndex={0}>
+        <table className="w-full text-left text-sm"><thead><tr><th scope="col">Learner</th><th scope="col">Result</th><th scope="col">Workspace</th></tr></thead>
+         <tbody>{outcome.individualResults.map(row=><tr key={row.membershipId}>
+          <td>{names.get(row.membershipId)?.displayName??row.membershipId}</td>
+          <td>{row.status==="CREATED"?"Created":"Already covered"}</td>
+          <td>{row.title??"Existing workspace"}</td>
+         </tr>)}</tbody>
+        </table>
+      </div>
       <button type="button" className="text-sm font-semibold text-primary-text underline"
         onClick={()=>{
-          const rows=["Workspace,Student membership,Project ID",
-            ...outcome.created.map(item=>[item.title,item.learnerMembershipId,item.projectId]
-             .map(value=>'"'+value.replaceAll('"','""')+'"').join(","))];
+          const rows=["Learner,Student membership,Result,Workspace,Project ID",
+            ...outcome.individualResults.map(item=>[
+             names.get(item.membershipId)?.displayName??"",item.membershipId,
+             item.status,item.title??"",item.projectId??"",
+            ].map(value=>'"'+value.replaceAll('"','""')+'"').join(","))];
           const blob=new Blob(["\uFEFF"+rows.join("\r\n")],{type:"text/csv;charset=utf-8"});
           const url=URL.createObjectURL(blob),link=document.createElement("a");
           link.href=url;link.download="cohort-creation-outcome.csv";link.click();URL.revokeObjectURL(url);
@@ -270,7 +289,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
     <div className="flex flex-wrap justify-end gap-3">
       <Button variant="secondary" disabled={pending} onClick={()=>router.push(basePath)}>Cancel</Button>
       <Button disabled={pending||!balanced||!title.trim()||!isValidClassTeamBaseSlug(slug)||!templateId||!roster||rosterLoading} onClick={()=>void create()}>
-        {pending?"Creating workspaces…":mode==="TEAMS"?"Create team workspaces":mode==="INDIVIDUAL"?"Create "+(preflight?.toCreate??0)+" workspaces":"Create whole-class workspace"}
+        {pending?"Creating workspaces…":mode==="TEAMS"?"Create team workspaces":mode==="INDIVIDUAL"?"Create "+(currentPreflight?.toCreate??0)+" workspaces":"Create whole-class workspace"}
       </Button>
     </div>
   </div>;

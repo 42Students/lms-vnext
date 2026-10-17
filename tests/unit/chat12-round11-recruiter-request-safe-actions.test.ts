@@ -22,8 +22,14 @@ describe("chat-12 recruiter drive request safe review",()=>{
   const service=src("src/modules/placements/recruiter-drive-request-service.ts");
   expect(service).toContain("recruiterGrantEffectiveAt");
   expect(service).toContain("requireOwnGrant(context,collegeId)");
-  expect(service).toContain('status:approvedJobId?"DRAFT":"REQUEST"');
-  expect(service).toContain('verificationPending:scope.grant.verificationStatus!=="VERIFIED"');
+  // The policy derives verified status from a persisted grant and only then
+  // attempts a trusted-domain or college-setting auto-approval.
+  expect(service).toContain('grantVerified:scope.grant.verificationStatus==="VERIFIED"');
+  expect(service).toContain('recruiterDriveApprovalPolicy({');
+  expect(service).toContain('if(policy.autoApprove){');
+  expect(service).toContain('createRecruiterApprovedDraftJob(tx,created,context.user.id)');
+  expect(service).toContain('return {request:finalRequest,replayed:false}');
+  expect(service).not.toContain('verificationPending:scope.grant.verificationStatus!=="VERIFIED"');
  });
  it("TPO-requests-verification-01 recognizes the registered 0133 request kinds but refuses unsupported approval effects",()=>{
   const sql=src("drizzle/0134_lanes_round_2.sql");

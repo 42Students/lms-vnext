@@ -27,6 +27,7 @@ import {
 import { AnnouncementError } from "./errors";
 import {requirePlatformPublishConsent} from "./super-admin-publish-consent-model";
 import { canAccessAnnouncements } from "./actor-status-model";
+import {readGlobalRuntimeNumber} from "@/modules/platform-settings/runtime-numeric-service";
 import { requireCurrentAnnouncementVersion } from "./announcement-version-guard";
 
 type ReceiverType = (typeof ANNOUNCEMENT_RECEIVER_TYPES)[number];
@@ -192,6 +193,10 @@ export async function createAnnouncement(context: RequestContext, raw: unknown) 
 export async function listAnnouncementsForAdmin(context: RequestContext, raw: unknown = {}) {
   const input = announcementAdminListSchema.parse(raw);
   const scope = adminListScope(context);
+  // SA-tenants-modules-39: overrides may tighten the bound but never bypass
+  // the announcement service hard safety ceiling of 100 rows.
+  const configuredMax=await readGlobalRuntimeNumber("ops.announcementMaxPageSize",100,100);
+  const effectiveLimit=Math.min(input.limit,configuredMax);
   const conditions: SQL[] = [];
   if (scope.collegeId) conditions.push(eq(db10Announcements.collegeId, scope.collegeId));
   if (scope.organizationId) conditions.push(eq(db10Announcements.organizationId, scope.organizationId));
@@ -235,9 +240,9 @@ export async function listAnnouncementsForAdmin(context: RequestContext, raw: un
     .from(db10Announcements)
     .where(conditions.length ? and(...conditions) : undefined)
     .orderBy(desc(db10Announcements.createdAt), desc(db10Announcements.id))
-    .limit(input.limit + 1);
-  const hasMore = rows.length > input.limit;
-  const items = rows.slice(0, input.limit);
+    .limit(effectiveLimit + 1);
+  const hasMore = rows.length > effectiveLimit;
+  const items = rows.slice(0, effectiveLimit);
   const last = items[items.length - 1];
   return {
     items,

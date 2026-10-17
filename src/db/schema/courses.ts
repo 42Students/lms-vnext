@@ -42,6 +42,10 @@ export const courses = pgTable(
       }),
     name: text("name").notNull(),
     code: varchar("code", { length: 64 }).notNull(),
+    // SA-academics-people-50: distinct legacy catalogue presentation metadata.
+    shortTitle: varchar("short_title", { length: 120 }),
+    officialCode: varchar("official_code", { length: 64 }),
+    cardColor: varchar("card_color", { length: 7 }),
     description: text("description"),
     status: courseStatusEnum("status")
       .notNull()

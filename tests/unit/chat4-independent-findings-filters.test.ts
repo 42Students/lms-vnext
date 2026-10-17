@@ -18,6 +18,10 @@ describe("SA-tenants-modules-48 persisted board filter states",()=>{
  it("SA-tenants-modules-48 calculates counts from SQL-scoped full matches, not one displayed page",()=>{
   const service=source("src/modules/bug-tracker/independent-audit-findings-service.ts");
   const page=source("src/app/(authenticated)/tracker/audit-findings/page.tsx");
+  expect(service).toContain("db10AuditFindings.sourcePath");
+  expect(service).toContain("db10AuditFindings.paths}::text");
+  expect(service).toContain("const facetsWhere=and(searchPredicate,areaPredicate");
+  expect(service).not.toContain("\\ if(query.view");
   expect(service).toContain("statusCounts");
   expect(service).toContain("criticalOpen");
   expect(service).toContain(".groupBy(db10AuditFindings.status,db10AuditFindings.severity)");

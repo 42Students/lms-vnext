@@ -1,0 +1,96 @@
+import "server-only";
+import {sql} from "drizzle-orm";
+import {z} from "zod";
+import {getDb} from "@/db/client";
+import type {RequestContext} from "@/modules/identity/context";
+import {isSuperAdmin} from "@/modules/identity/context";
+import {requirePermission,AuthorizationError} from "@/modules/permissions/policy";
+
+export const superAdminStudentProgressQuery=z.strictObject({offeringId:z.uuid()});
+export type StudentCourseProgressRow={
+ membershipId:string;studentName:string;videos:number;assignments:number;quizzes:number;
+};
+export type StudentCourseProgressTotals={videos:number;assignments:number;quizzes:number};
+
+/** SA-academics-people-67: authorized scoped roster and factual persisted completions,
+ * not an aggregate offering content count mislabelled as student progress. */
+export async function getSuperAdminStudentCourseProgress(context:RequestContext,raw:unknown){
+ const {offeringId}=superAdminStudentProgressQuery.parse(raw);
+ if(!isSuperAdmin(context)||!context.adminScope?.collegeId)
+  throw new AuthorizationError("courses.read");
+ const collegeId=context.adminScope.collegeId;
+ requirePermission(context,"courses.read",{
+  collegeId,organizationId:context.adminScope.organizationId,
+ });
+ const found=await getDb().execute(sql`
+  with selected as (
+   select o.id from course_offerings o
+   join courses c on c.id=o.course_id
+   join departments d on d.id=c.department_id
+   where o.id=${offeringId}::uuid and d.college_id=${collegeId}::uuid
+  )
+  select count(*)::int as total from selected
+ `);
+ const count=Number((found.rows[0] as {total:number}|undefined)?.total??0);
+ if(count!==1)throw new AuthorizationError("courses.read");
+ const result=await getDb().execute(sql`
+ with roster as (
+  select distinct m.id as membership_id,
+   coalesce(nullif(btrim(u.display_name),''),'Student') as student_name
+  from course_section_deliveries d
+   join section_enrollments se on se.section_id=d.section_id
+    and se.academic_period_id=(select academic_period_id from course_offerings where id=d.offering_id)
+    and se.status='ACTIVE'
+   join learner_program_enrollments e on e.id=se.learner_enrollment_id and e.status='ACTIVE'
+   join college_memberships m on m.id=e.membership_id and m.status='ACTIVE'
+   join users u on u.id=m.user_id and u.platform_status='ACTIVE'
+   where d.offering_id=${offeringId}::uuid and m.college_id=${collegeId}::uuid
+ ), published_items as (
+  select lc.id,lc.content_type from lesson_contents lc
+  join course_lessons l on l.id=lc.lesson_id and l.status='ACTIVE'
+  join course_learning_paths p on p.id=l.learning_path_id
+  where p.offering_id=${offeringId}::uuid
+   and lc.status='PUBLISHED' and lc.visible_to_students=true
+   and lc.content_type in ('VIDEO','YOUTUBE')
+ ), published_assignments as (
+  select a.id from course_assignments a
+  join course_lessons l on l.id=a.lesson_id
+  join course_learning_paths p on p.id=l.learning_path_id
+  where p.offering_id=${offeringId}::uuid and a.status='PUBLISHED'
+ ), published_quizzes as (
+  select q.id from course_quizzes q
+  join course_lessons l on l.id=q.lesson_id
+  join course_learning_paths p on p.id=l.learning_path_id
+  where p.offering_id=${offeringId}::uuid and q.status in ('PUBLISHED','CLOSED')
+ )
+ select r.membership_id as "membershipId",r.student_name as "studentName",
+ (select count(distinct pr.lesson_content_id)::int
+  from learner_content_progress pr
+  join published_items pi on pi.id=pr.lesson_content_id
+  where pr.membership_id=r.membership_id and pr.completed_at is not null) as videos,
+ (select count(distinct sub.assignment_id)::int from assignment_submissions sub
+  join published_assignments pa on pa.id=sub.assignment_id
+  where sub.membership_id=r.membership_id) as assignments,
+ (select count(distinct attempt.quiz_id)::int from quiz_attempts attempt
+  join published_quizzes pq on pq.id=attempt.quiz_id
+  where attempt.membership_id=r.membership_id) as quizzes,
+ (select count(*)::int from published_items) as "totalVideos",
+ (select count(*)::int from published_assignments) as "totalAssignments",
+ (select count(*)::int from published_quizzes) as "totalQuizzes"
+ from roster r order by r.student_name,r.membership_id
+ limit 500
+ `);
+ type DbRow={membershipId:string;studentName:string;videos:number;assignments:number;quizzes:number;
+  totalVideos:number;totalAssignments:number;totalQuizzes:number};
+ const rows=(result.rows as unknown as DbRow[]).map(row=>({
+  membershipId:row.membershipId,studentName:row.studentName,
+  videos:Number(row.videos),assignments:Number(row.assignments),quizzes:Number(row.quizzes),
+ }));
+ const first=result.rows[0] as DbRow|undefined;
+ const totals={
+  videos:Number(first?.totalVideos??0),
+  assignments:Number(first?.totalAssignments??0),
+  quizzes:Number(first?.totalQuizzes??0),
+ };
+ return {offeringId,collegeId,rows,totals,truncated:rows.length===500};
+}

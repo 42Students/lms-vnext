@@ -8,6 +8,7 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy";
 import {requirePlacementManageScope} from "./scope";
 import {PlacementsServiceError} from "./errors";
+import {sameTpoBulkRequestRun} from "./tpo-request-bulk-run-model";
 
 const uuid=z.string().uuid();
 const schema=z.strictObject({
@@ -26,9 +27,15 @@ export async function recordTpoBulkRequestRun(ctx:RequestContext,raw:unknown){
  const college=await requirePlacementManageScope(ctx,actor.collegeId);
  return getDb().transaction(async tx=>{
   const dedupeKey="tpo-requests-bulk:"+college.id+":"+input.runId;
-  const [prior]=await tx.select({id:activityEvents.id}).from(activityEvents)
+  const [prior]=await tx.select({id:activityEvents.id,metadata:activityEvents.metadata}).from(activityEvents)
    .where(and(eq(activityEvents.collegeId,college.id),eq(activityEvents.dedupeKey,dedupeKey))).limit(1);
-  if(prior)return {eventId:prior.id,replayed:true};
+  if(prior){
+   // A caller must not reuse a run ID to mask a different action or set of
+   // learners under an existing audit event.
+   if(!sameTpoBulkRequestRun(prior.metadata,input))
+    throw new PlacementsServiceError("PLACEMENT_REQUEST_CONFLICT");
+   return {eventId:prior.id,replayed:true};
+  }
   const rows=await tx.select({id:placementLearnerRequests.id,status:placementLearnerRequests.status})
    .from(placementLearnerRequests)
    .innerJoin(placementApplications,eq(placementApplications.id,placementLearnerRequests.applicationId))
@@ -49,6 +56,19 @@ export async function recordTpoBulkRequestRun(ctx:RequestContext,raw:unknown){
     notInDesiredState:rows.filter(row=>row.status!==desired).map(row=>row.id)},
    dedupeKey,
   }).onConflictDoNothing().returning({id:activityEvents.id});
-  return {eventId:event?.id??null,replayed:!event,verifiedCount:count};
+  if(!event){
+   // Concurrent requests may both miss the initial read. The unique audit
+   // key chooses one winner; inspect it before calling the retry successful.
+   const [winner]=await tx.select({id:activityEvents.id,metadata:activityEvents.metadata})
+    .from(activityEvents)
+    .where(and(eq(activityEvents.collegeId,college.id),eq(activityEvents.dedupeKey,dedupeKey)))
+    .limit(1);
+   if(!winner||!sameTpoBulkRequestRun(winner.metadata,input))
+    throw new PlacementsServiceError("PLACEMENT_REQUEST_CONFLICT");
+   const evidence=winner.metadata&&typeof winner.metadata==="object"&&!Array.isArray(winner.metadata)?
+    (winner.metadata as Record<string,unknown>).verifiedCount:null;
+   return {eventId:winner.id,replayed:true,verifiedCount:typeof evidence==="number"?evidence:count};
+  }
+  return {eventId:event.id,replayed:false,verifiedCount:count};
  });
 }

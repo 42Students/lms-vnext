@@ -123,6 +123,21 @@ export async function CollegeRoleDirectoryWorkspace({
         }
       />
 
+      <section aria-label={title+" directory summary"} className="grid gap-3 sm:grid-cols-4">
+        {[
+          [title,result.metrics.registered],
+          ["Active",result.metrics.active],
+          ["Suspended",result.metrics.suspended],
+        ].map(([label,value])=><div key={label} className="rounded-xl border border-border bg-surface p-4">
+          <p className="text-xs font-semibold text-body">{label}</p>
+          <p className="mt-1 text-xl font-bold tabular-nums">{value}</p>
+        </div>)}
+        <div className="rounded-xl border border-border bg-surface p-4">
+          <p className="text-xs font-semibold text-body">Visible now</p>
+          <p className="mt-1 text-sm font-semibold text-body">Not tracked</p>
+          <p className="mt-1 text-xs text-muted-foreground">Do not infer presence from login or membership status.</p>
+        </div>
+      </section>
       <section className="rounded-xl border border-border bg-surface p-4 sm:p-5" aria-label={title + " directory filters"}>
         <form method="get" action={path} className="flex flex-wrap items-end gap-3">
           <label className="grid min-w-48 flex-1 gap-2 text-sm font-semibold text-body">

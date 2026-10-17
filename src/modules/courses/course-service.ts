@@ -183,6 +183,7 @@ export async function listCourses(
       departmentName: departments.name,
       name: courses.name,
       code: courses.code,
+      shortTitle:courses.shortTitle,officialCode:courses.officialCode,cardColor:courses.cardColor,
       description: courses.description,
       status: courses.status,
       createdAt: courses.createdAt,
@@ -261,6 +262,9 @@ export async function createCourse(
           departmentId: input.departmentId,
           name: input.name,
           code: input.code,
+          shortTitle:input.shortTitle??input.name.slice(0,120),
+          officialCode:input.officialCode??null,
+          cardColor:input.cardColor??null,
           description: input.description ?? null,
         })
         .returning();

@@ -1,11 +1,46 @@
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {isRecruiterUnreadReminderDue,safeRecruiterDigestMessages,makeRecruiterReplyAddress,
- recruiterMailBridgeSignature,verifyRecruiterMailBridgeSignature,extractRecruiterEmailReply,recruiterReplyTokenForThread}
+ recruiterMailBridgeSignature,verifyRecruiterMailBridgeSignature,extractRecruiterEmailReply,recruiterReplyTokenForThread,safeRecruiterEmailMergeText,isRecruiterReplyAddress}
  from "@/modules/placements/recruiter-message-email-model";
 const T=Date.parse("2099-01-01T00:00:00Z");
 const at=(m:number)=>new Date(T+m*60_000);
 describe("REC-calendar-messages-profile-R01 unread recruiter mail policy",()=>{
+ it("REC-calendar-messages-profile-R01 never truncates half of a markup entity",()=>{
+  expect(safeRecruiterEmailMergeText("Test <tag>",6)).toBe("Test ");
+  expect(safeRecruiterEmailMergeText("Test & Me",7)).toBe("Test ");
+ });
+ it("REC-calendar-messages-profile-R01 bounds expanded escaped text and weird limits",()=>{
+  expect(safeRecruiterEmailMergeText("<".repeat(3000),120).length).toBeLessThanOrEqual(120);
+  expect(safeRecruiterEmailMergeText("ABC",-5)).toBe("");
+  expect(safeRecruiterEmailMergeText("ABC",Number.NaN)).toBe("ABC");
+ });
+
+ it("REC-calendar-messages-profile-R01 authorizes exact dedicated Reply-To domain",()=>{
+  const addr="r-"+("a".repeat(32))+"@reply.example.com";
+  expect(isRecruiterReplyAddress(addr,"reply.example.com")).toBe(true);
+  expect(isRecruiterReplyAddress(addr.toUpperCase(),"reply.example.com")).toBe(true);
+ });
+ it("REC-calendar-messages-profile-R01 refuses forged Reply-To lookalike and subdomains",()=>{
+  const addr="r-"+("b".repeat(32))+"@reply.example.com";
+  expect(isRecruiterReplyAddress(addr,"example.com")).toBe(false);
+  expect(isRecruiterReplyAddress(addr+".evil.test","reply.example.com")).toBe(false);
+  expect(isRecruiterReplyAddress("victim@reply.example.com","reply.example.com")).toBe(false);
+  expect(isRecruiterReplyAddress("r-a@reply.example.com","reply.example.com")).toBe(false);
+  expect(isRecruiterReplyAddress("r-"+("a".repeat(32))+"@reply.example.com\\nBcc:evil@example.com","reply.example.com")).toBe(false);
+ });
+
+ it("REC-calendar-messages-profile-R01 HTML-escapes all email template fields",()=>{
+  expect(safeRecruiterEmailMergeText('<b>College & "Company" \'Hiring\'</b>'))
+   .toBe('&lt;b&gt;College &amp; &quot;Company&quot; &#39;Hiring&#39;&lt;/b&gt;');
+ });
+ it("REC-calendar-messages-profile-R01 strips control characters from digest titles",()=>{
+  expect(safeRecruiterEmailMergeText("Hi\nWorld\r",100)).toBe("Hi World");
+ });
+ it("REC-calendar-messages-profile-R01 bounds untrusted recruiter college names",()=>{
+  expect(safeRecruiterEmailMergeText("x".repeat(300),160)).toHaveLength(160);
+ });
+
  it("REC-calendar-messages-profile-R01 preserves Reply-To aliases across digest deliveries",()=>{
   const secret="unit-test-dedicated-opaque-token-secret-more-than-32";
   const id="11111111-2222-4333-8444-555555555555";

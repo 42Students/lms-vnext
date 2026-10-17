@@ -207,3 +207,19 @@ Remaining queue entries are OPEN until the behavior described in the legacy audi
 
 Implementation decision: private draft cancellation retains an internal history record rather than pretending a learner-visible meeting was cancelled. Requested/cancelled learner meetings remain visible to their enrolled project readers. Facilitator notes and follow-up text are mentor/admin-only; public meeting outcome remains readable. No page restyling was performed.
 
+
+## Chat-7 round 5 — MEN-projects-meetings-27 organizer and migration correctness
+
+| Gap ID | Status | Verification and evidence |
+|---|---|---|
+| MEN-projects-meetings-27 | OPEN — registration and executable DB verification outstanding | `src/modules/projects/meeting-service.ts` retains the original scheduled organizer and their membership on notes-only editing; locks the original organizer to prevent cross-project double booking; preserves existing linked sprint/task and ceremony when omitted from PATCH-like inputs; suppresses duplicate public scheduling notifications for facilitator-only changes. `src/modules/projects/mentor-meeting-decision-service.ts` retains the previously recorded outcome when a mentor completes a meeting without replacing it. Source guard tests: `tests/unit/chat7-mentor-meeting-draft-lifecycle.test.ts` and `tests/unit/mentor-meetings-chat7-organizer-conflict.test.ts`. PostgreSQL integration: `tests/integration/chat7-mentor-meeting-facilitation.test.ts` verifies original-organizer identity, linked work, no duplicate activity events, learner redaction, private DRAFT/CANCELLED states and preserved outcome. `src/db/schema/projects.ts` now declares `project_meetings_facilitation_object_ck` consistently with `docs/proposed-migrations/chat7-mentor-meeting-facilitation.sql`. `tests/unit/chat7-meeting-migration-contract.test.ts` verifies Drizzle/SQL invariant parity and strict notes schema. All new tests are authored, **not executed**. The orchestrator must register the SQL under `drizzle/`, replay against a disposable PostgreSQL DB, then rerun the integration test without skips before marking DONE. |
+| MEN-projects-meetings-R06 | Unit-failure remediation — CI pending | `tests/unit/mentor-projects-chat7-round6-workflows.test.ts` no longer expects the stale zero-release copy; it asserts the source's existing supported empty-state wording. |
+| LEARNER-placements-33 | Test-only remediation; actual page owned by chat-15 — CI pending | `tests/unit/learner-placements-chat7-queue-review.test.ts` now asserts the approved `LearnerApplicationsBrowse` summary and source model rather than an obsolete inline summary removed by the owning lane. No learner page or component modified. |
+
+
+## Chat-7 round 5 — additional transaction and notes-state safeguards
+
+| Gap ID | Status | Evidence |
+|---|---|---|
+| MEN-projects-meetings-27 | OPEN — proposed migration still unregistered | Meeting links are prevalidated outside the transaction to avoid nested pool lookups, then preserved when a partial edit omits them. The combined task/sprint relationship is rechecked using the active transaction. Previously RESCHEDULED meetings can receive notes-only updates without a false "must change meeting time" rejection. `src/modules/projects/meeting-service.ts`; `tests/unit/chat7-mentor-meeting-draft-lifecycle.test.ts` with gap-named assertions. This does not replace an unskipped PostgreSQL run. |
+
