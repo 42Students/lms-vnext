@@ -19,6 +19,7 @@ import {AssignmentSubmissionLinks} from "./assignment-submission-links";
 import { AssignmentSubmissionControl } from "./assignment-submission-control";
 import { QuizAttemptControl } from "./quiz-attempt-control";
 import { ResourceProgressControl } from "./resource-progress-control";
+import {LearnerLiveSessionStatus} from "./learner-live-session-status";
 import {LessonResourceMaterialsControl} from "./lesson-resource-materials-control";
 import {resourceMaterialsRuntimeEnabled} from "@/modules/courses/resource-material-readiness";
 import { LearnerYouTubePlayer } from "./learner-youtube-player";
@@ -241,6 +242,17 @@ function ContentCard({
         </div>
       ) : null}
 
+      {(content.type==="VIDEO"||content.type==="YOUTUBE") && content.progress.durationSeconds>0
+        ? <p className="mt-2 text-xs font-semibold text-body">
+            {content.progress.percentComplete}% watched
+          </p>:null}
+      {content.type==="LIVE_CLASS"&&content.startsAt&&content.endsAt
+        ? <LearnerLiveSessionStatus startsAt={new Date(content.startsAt).toISOString()}
+            endsAt={new Date(content.endsAt).toISOString()}/>:null}
+      {content.type==="LIVE_CLASS"&&!learnerSafeExternalContentHref(content.externalUrl)
+        ? <p role="status" className="mt-2 text-xs text-muted-foreground">
+            No meeting link available yet. Check back before the session starts.
+          </p>:null}
       {start || end ? (
         <p className="mt-3 text-xs text-muted-foreground">
           {start ? `Starts ${start}` : ""}
@@ -706,6 +718,15 @@ export function LearnerCourseWorkspace({
   return (
     <div className="space-y-5">
       {filterNotice ? <p role="status" className="rounded-lg border border-warning p-3 text-sm text-body">{filterNotice}</p> : null}
+      {focusLessonId && !workspace.lessons.some(lesson=>lesson.id===focusLessonId)
+        ? <p role="alert" className="rounded-lg border border-border p-3 text-sm text-body">
+            Lesson not found. This lesson is unavailable in your current learning path.
+          </p>
+        : focusLessonId && focusContentId && !workspace.lessons.some(lesson=>lesson.id===focusLessonId &&
+            lesson.items.some(item=>item.id===focusContentId))
+          ? <p role="alert" className="rounded-lg border border-border p-3 text-sm text-body">
+              Content unavailable. This item is not published in the selected lesson.
+            </p>:null}
       <div>
         <h2 className="sr-only">Learning Path</h2>
         <p className="m-0 text-sm text-body">
@@ -925,11 +946,11 @@ export function LearnerCourseWorkspace({
                    className="mb-4 flex flex-wrap items-center gap-3 text-sm">
                   <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?filter="+activeFilter}
                     className="font-semibold text-primary-text underline">Back to Learning Path</Link>
-                  {lessonIndex>0?<Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+
-                    "/roadmap?lesson="+encodeURIComponent(workspace.lessons[lessonIndex-1].id)}
+                  {workspace.lessons[lessonIndex-1]?<Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+
+                    "/roadmap?lesson="+encodeURIComponent(workspace.lessons[lessonIndex-1]!.id)}
                     className="font-semibold text-primary-text underline">Previous lesson</Link>:null}
-                  {lessonIndex+1<workspace.lessons.length?<Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+
-                    "/roadmap?lesson="+encodeURIComponent(workspace.lessons[lessonIndex+1].id)}
+                  {workspace.lessons[lessonIndex+1]?<Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+
+                    "/roadmap?lesson="+encodeURIComponent(workspace.lessons[lessonIndex+1]!.id)}
                     className="font-semibold text-primary-text underline">Next lesson</Link>:null}
                   <span>{lessonProgress.completed} of {lessonProgress.total} complete</span>
                 </nav>:null}
