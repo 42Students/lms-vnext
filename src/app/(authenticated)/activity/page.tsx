@@ -6,6 +6,7 @@ import {
   type ActivityCenterGroup,
 } from "@/components/activity/activity-center";
 import { PageHeader } from "@/components/ui/page-header";
+import {sanitizeActivityMetadata} from "@/modules/activity/metadata-sanitizer";
 import {
   hasMembershipRole,
   isSuperAdmin,
@@ -151,6 +152,7 @@ export default async function ActivityPage({
               .subjectLabel,
           summary:
             group.latest.event.summary,
+          metadata:sanitizeActivityMetadata(group.latest.event.metadata),
           occurredAt:
             group.latest.event.occurredAt.toISOString(),
         },
@@ -392,6 +394,7 @@ export default async function ActivityPage({
       </form>
 
       <ActivityCenter
+        nextRemaining={result.remainingCount}
         groups={groups}
         todayKey={today}
         yesterdayKey={ago(1)}

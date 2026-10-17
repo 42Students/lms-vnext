@@ -111,7 +111,7 @@ Audit: `docs/audit/pages/superadmin/tenants-modules-3.md` (and `tenants-modules-
 | SA-tenants-modules-65 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-tenants-modules-41 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | SA-tenants-modules-42 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
-| SA-tenants-modules-43 | S3 | COPY | OPEN |
+| SA-tenants-modules-43 | S3 | COPY | DONE |
 | SA-tenants-modules-44 | S3 | STATE | DONE |
 | SA-tenants-modules-48 | S3 | MISSING-FILTER | OPEN |
 | SA-tenants-modules-52 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
@@ -125,7 +125,7 @@ Audit: `docs/audit/pages/superadmin/tenants-modules-3.md` (and `tenants-modules-
 | SA-tenants-modules-66 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-tenants-modules-67 | S3 | COPY | DONE |
 | SA-tenants-modules-68 | S3 | MISSING-FIELD | UNCONFIRMED |
-| SA-tenants-modules-45 | S4 | STATE | OPEN |
+| SA-tenants-modules-45 | S4 | STATE | DONE |
 | SA-tenants-modules-49 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-tenants-modules-50 | S4 | MISSING-FILTER | OPEN |
 | SA-tenants-modules-56 | S4 | MISSING-FILTER | FIXED-ON-MAIN |
