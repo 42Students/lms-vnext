@@ -28,6 +28,7 @@ Owner requirement (2026-10-17): errors in vNext must reach Telegram exactly like
 15. Tests (GR-125): fake HTTP server for Telegram (assert body, no `parse_mode`, truncation, tag, no button outside production, failure returns false and never throws, token never appears in logs), signature and redaction suites, policy suite (new once, known silent, cap of 5, delivery-gated persistence, regression, spike), client-error endpoint (origin, size, rate limit), integration tests on PostgreSQL for the counters and states.
 
 ## Notes (blockers, one line each)
+- RUNBOOK GR-111..GR-125: `docs/operations/vnext-telegram-alerting.md` documents safe configuration, production-only webhook registration, DB10 promotion, smoke evidence and recovery.
 - BLOCKED GR-115/GR-118/GR-119/GR-125: orchestrator/W01 must register and replay `docs/proposed-migrations/graceful-telegram-alerting.sql` including the daily table before setting `DB10_LOG_ALERTS_READY=DB10_VERIFIED`.
 - RESOLVED GR-117: chat-14 root boundary sends `{ requestId, kind }`; this endpoint accepts 8-character references and the two approved crash kinds (one route only).
 - BLOCKED GR-118/GR-120/GR-122: provision external `INTERNAL_ALERT_TICK_SECRET`, production `TELEGRAM_ALERT_WEBHOOK_SECRET`, and independently reachable `DATABASE_URL` for health-watch; verify the cluster service DNS and webhook registration.
