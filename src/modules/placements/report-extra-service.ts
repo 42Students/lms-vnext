@@ -35,6 +35,7 @@ import {
   type PlacementReportQuery,
 } from "./report-service";
 import { listTpoLeads } from "./tpo-crm-service";
+import {buildTpoCompanyEngagement} from "./tpo-company-engagement-model";
 import { summarizeTpoLeadHealth } from "./tpo-lead-health-model";
 
 /**
@@ -394,6 +395,7 @@ export async function getPlacementLeadsReport(
   return {
     health,
     collegeId,
+    companyEngagement:buildTpoCompanyEngagement(leads,contacts.map(row=>({leadId:row.leadId}))),
     leads: summarizePlacementLeads(
       leads.map((lead) => ({
         id: lead.id,
