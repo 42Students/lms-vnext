@@ -17,7 +17,9 @@ export function isRecruiterUnreadReminderDue(value:RecruiterReminderWindow){
   (now-last>=RECRUITER_MAIL_QUIET_MS||now-first>=RECRUITER_MAIL_MAX_WAIT_MS);
 }
 export function safeRecruiterDigestMessages(messages:readonly {body:string}[]){
- return messages.slice(-3).map(row=>row.body.replace(/[\u0000-\u001f\u007f]/g," ").trim().slice(0,4000));
+ return messages.slice(-3).map(row=>row.body.replace(/[\u0000-\u001f\u007f]/g," ").trim().slice(0,4000)
+  .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+  .replace(/"/g,"&quot;").replace(/'/g,"&#39;"));
 }
 /** Stable, opaque per-thread address: older unread digest emails remain replyable.
  * The secret lives only in worker config; we persist only the derived token hash.
