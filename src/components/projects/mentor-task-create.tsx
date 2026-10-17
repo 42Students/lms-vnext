@@ -134,7 +134,7 @@ export function MentorTaskCreate({
         <label className="grid gap-1 text-sm font-semibold text-body">Due date
           <Input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}/>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Blocker reason
+        <label className="grid gap-1 text-sm font-semibold text-body">What's blocking this task?
           <Textarea value={blockerReason} maxLength={4000}
             onChange={e=>setBlockerReason(e.target.value)}/>
         </label>
