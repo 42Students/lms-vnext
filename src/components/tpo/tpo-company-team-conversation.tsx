@@ -6,7 +6,7 @@ import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist
 
 type TeamMessage={
  id:string;body:string;decision:boolean;authorMembershipId:string;authorName:string|null;
- createdLabel:string;dueLabel:string|null;editedAt:string|null;deletedAt:string|null;
+ createdLabel:string;dayLabel:string;dayKey:string;askOverdue:boolean;dueLabel:string|null;editedAt:string|null;deletedAt:string|null;
  askAssigneeMembershipId:string|null;askStatus:string|null;
 };
 type TeamPayload={
@@ -128,7 +128,8 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
    <ol role="log" aria-live="polite" aria-label="Company Team messages" className="max-h-[35rem] space-y-3 overflow-y-auto">
     {data.messages.length===0?<li className="text-sm text-muted-foreground">
       Nothing here yet. Write the first message. @ someone to bring them in, or Ask someone to give a task a name and a date.
-    </li>:data.messages.map(m=><li key={m.id} id={"company-team-"+m.id} className="rounded-md border border-border p-3">
+    </li>:data.messages.map((m,index)=><li key={m.id} id={"company-team-"+m.id} className="rounded-md border border-border p-3">
+      {(index===0||data.messages[index-1].dayKey!==m.dayKey)?<p className="mb-2 text-center text-xs font-semibold text-body">{m.dayLabel}</p>:null}
       <p className="text-xs text-muted-foreground">
         {m.authorMembershipId===actorMembershipId?"You":m.authorName??"Team member"} · {m.createdLabel}
         {m.editedAt?" · edited":""}
@@ -138,7 +139,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
        {m.deletedAt?"Message removed":formatTokens(m.body,data.members)}
       </p>
       {m.askAssigneeMembershipId?<div className="mt-2 rounded border border-border p-2 text-xs">
-        Ask · {data.members.find(person=>person.membershipId===m.askAssigneeMembershipId)?.name??"Team member"}
+        {m.askOverdue?"Overdue ask":"Open ask"} · {data.members.find(person=>person.membershipId===m.askAssigneeMembershipId)?.name??"Team member"}
         {m.dueLabel?" · by "+m.dueLabel:""} · {m.askStatus??"OPEN"}
         {m.askStatus==="OPEN"&&m.askAssigneeMembershipId===actorMembershipId?
          <button className="ml-2 font-semibold text-primary-text underline" type="button" disabled={busy}
