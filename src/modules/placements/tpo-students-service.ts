@@ -80,6 +80,7 @@ export const tpoStudentsQuerySchema = z
       .enum(TPO_STUDENT_JOURNEY_STATES)
       .optional(),
     branchId: uuid.optional(),
+    programId:uuid.optional(),
     batchId: uuid.optional(),
     search: z.string().trim().max(150).optional(),
     ...paginationFields,
@@ -216,6 +217,7 @@ export async function getTpoStudentsIntelligence(
       enrollmentStatus: learnerProgramEnrollments.status,
       cohortId: cohorts.id,
       cohortName: cohorts.name,
+      programId: programs.id,
       programName: programs.name,
       branchId: departments.id,
       branchName: departments.name,
@@ -793,6 +795,7 @@ export async function getTpoStudentsIntelligence(
         learner.registrationNumber,
       branchId: learner.branchId,
       branchName: learner.branchName,
+      programId:learner.programId,
       programName: learner.programName,
       cohortId: learner.cohortId,
       cohortName: learner.cohortName,
