@@ -11,6 +11,7 @@ import {placementCollegeApplicationStages,placementCollegeApplicationStageHistor
  from "@/db/schema/placement-college-application-stages";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
+import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {collegeDriveIdSchema} from "./college-drive-read-model";
 
 const uuid=z.string().uuid();
@@ -94,6 +95,7 @@ export async function getCollegeApplicationDetail(ctx:RequestContext,job:unknown
 export async function appendCollegeApplicationNote(ctx:RequestContext,job:unknown,id:unknown,raw:unknown){
  const input=z.strictObject({body:z.string().trim().min(1).max(2000)}).parse(raw);
  const {collegeId,application}=await scoped(ctx,job,id);
+ const acting=await resolveActingCollege(ctx,"placements.manage");
  return getDb().transaction(async tx=>{
   const [parent]=await tx.select({id:placementApplications.id}).from(placementApplications)
    .where(and(eq(placementApplications.id,application.id),
@@ -104,8 +106,8 @@ export async function appendCollegeApplicationNote(ctx:RequestContext,job:unknow
    authorUserId:ctx.user.id,body:input.body,
   }).returning({id:placementApplicationNotes.id,createdAt:placementApplicationNotes.createdAt});
   await tx.insert(activityEvents).values({
-   organizationId:ctx.membership!.organizationId,collegeId,
-   actorUserId:ctx.user.id,actorMembershipId:ctx.membership!.id,
+   organizationId:acting.organizationId,collegeId,
+   actorUserId:ctx.user.id,actorMembershipId:ctx.membership?.id??null,
    module:"PLACEMENTS",eventType:"PLACEMENTS_COLLEGE_APPLICATION_NOTE_ADDED",
    subjectType:"placement_application",subjectId:application.id,
    summary:"Internal placement application note added",
