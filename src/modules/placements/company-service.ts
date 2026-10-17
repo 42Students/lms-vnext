@@ -481,3 +481,32 @@ export async function archivePlacementCompanyRelationship(
 
   return { company: current.company, relationship };
 }
+
+/** COL-placements-15: recovery revives only the selected college's archived
+ * relationship, never an archived global company or another tenant's link. */
+export async function restorePlacementCompanyRelationship(
+ context: RequestContext, relationshipIdInput: string,
+){
+ const relationshipId=placementCompanyRelationshipIdSchema.parse(relationshipIdInput);
+ const current=await loadRelationship(relationshipId);
+ await requirePlacementManageScope(context,current.relationship.collegeId);
+ if(current.company.status!=="ACTIVE")
+  throw new PlacementsServiceError("PLACEMENT_COMPANY_RELATIONSHIP_NOT_FOUND");
+ if(current.relationship.status==="ACTIVE")return current;
+ return getDb().transaction(async tx=>{
+  const [restored]=await tx.update(placementCompanyRelationships).set({
+   status:"ACTIVE",archivedAt:null,updatedAt:new Date(),
+  }).where(and(eq(placementCompanyRelationships.id,relationshipId),
+   eq(placementCompanyRelationships.collegeId,current.relationship.collegeId),
+   eq(placementCompanyRelationships.status,"ARCHIVED"))).returning();
+  if(!restored)throw new PlacementsServiceError("PLACEMENT_COMPANY_RELATIONSHIP_NOT_FOUND");
+  await recordActivityEventInTransaction(tx,context,{
+   eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_COMPANY_LINKED,
+   collegeId:current.relationship.collegeId,
+   subjectType:"placement_company_relationship",subjectId:restored.id,
+   subjectLabel:current.company.name,summary:"Placement employer restored",
+   metadata:{companyId:current.company.id,relationshipId:restored.id,action:"RESTORE"},
+  });
+  return {company:current.company,relationship:restored};
+ });
+}
