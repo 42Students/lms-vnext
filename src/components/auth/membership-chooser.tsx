@@ -49,7 +49,7 @@ export function MembershipChooser({
         ?stored:memberships.find(m=>m.status==="ACTIVE")?.id??null);
     });
     return ()=>{live=false;};
-  },[]);
+  },[memberships]);
   const active = memberships.filter(membership=>membership.status==="ACTIVE");
   const sorted=[...memberships].sort((left,right)=>{
     const status=Number(right.status==="ACTIVE")-Number(left.status==="ACTIVE");
@@ -58,6 +58,7 @@ export function MembershipChooser({
   });
 
   function choose(membershipId: string) {
+    if(pending)return;
     setError(null);
     setPendingId(membershipId);
 
@@ -85,6 +86,8 @@ export function MembershipChooser({
         catch{/* The selection still succeeds in private browsing. */}
         router.push("/dashboard");
         router.refresh();
+      } catch {
+        setError("We couldn't open this college right now. Try again.");
       } finally {
         setPendingId(null);
       }
@@ -160,7 +163,7 @@ export function MembershipChooser({
         ))}
       </div>
       <Button disabled={pending||!selectedId} onClick={()=>{if(selectedId)choose(selectedId);}}>
-        {pending?"Opening…":"Continue with this college"}
+        {pendingId?"Opening…":"Continue with this college"}
       </Button>
     </div>
   );
