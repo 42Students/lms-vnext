@@ -40,3 +40,18 @@ Browser tests with failure injection (Playwright: abort a request, return 500, r
 1. chat-9: A helpers + B1 + C1 shared helpers (first, small, on main fast).
 2. All lanes: adopt A, B1, B2 on the pages they touch; add E1 for dashboard cards.
 3. Orchestrator: F1 to F3 and G (browser tests) in parallel.
+
+## H. The edges outside the page code (what else can show an ugly screen)
+Found by audit on 2026-10-17; each item has an owner.
+1. **Load balancer error pages** (orchestrator): when the app is down, restarting, or too slow, the Google load balancer shows its own plain "502 Server Error" / "503" / "504" page. Add a branded static fallback served by a tiny default backend (or a Cloud Armor/LB custom error response) with the same calm wording: "We are making a quick update. Please try again in a minute." plus the support contact. No custom error pages exist today.
+2. **Deploys without a gap** (orchestrator): rolling update with `maxUnavailable: 0`, readiness probe on `/ready`, at least 2 replicas for the college hosts before go-live, so a deploy or a crashed pod never reaches users. (Today dev runs 1 replica; the new image crashing at start would have been a full outage.)
+3. **Database or provider down** (chat-9 shared + orchestrator): `/ready` already reports the database; add a calm "Temporarily unavailable, please retry in a minute" page when the database is unreachable instead of a crash, and make login degrade (message, resend, email fallback).
+4. **HTML where JSON was expected** (chat-9 helper, all lanes): 160 `response.json()` calls have no guard; when a proxy returns an HTML 502 the user sees "Unexpected token '<'". `apiFetch` must treat non-JSON as a 5xx and return the friendly text; replace the bare calls.
+5. **Stale code after a deploy** (chat-9): users with an open tab hit ChunkLoadError / "client-side exception" when files change. Handle it once in a root client boundary: on ChunkLoadError or a failed dynamic import, reload the page once automatically (guard against loops), with "A new version is available, reloading..." Only one file mentions chunk errors today.
+6. **Blank or half pages** (lanes): every route segment has `loading.tsx` (302 exist) and `error.tsx` (297); a route that lacks either must get one; cards inside get their own boundary (part E).
+7. **404 and unknown links** (chat-9): only 4 `not-found.tsx` files; add one per area (learner, college, tpo, recruiter, admin, public) with a calm message and a link back to that role's home. Deleted or unknown ids render this, never "Application error".
+8. **Downloads and exports** (lanes): a failed CSV/PDF/ZIP must not download a file containing JSON error text; the button shows the friendly message instead.
+9. **Rate limits and lockouts** (lanes): 429 and OTP lockout messages are plain and say how long to wait.
+10. **Hydration and rendering exceptions in the browser** (chat-9): root client error boundary reports to our log endpoint with the reference id and shows the friendly screen, never a Next.js overlay (production builds already hide stack traces; verify with a production build in the browser tests).
+11. **Source maps and headers** (orchestrator): confirm production serves no source maps and no framework error details (`poweredByHeader: false` is set); add to the security check.
+12. **Browser tests proving all of the above** (orchestrator, part G): kill the backend, return HTML 502, return 500 JSON, delete a record then open its link, stale chunk, offline, slow network, and assert the user sees the calm text with no code or stack.
