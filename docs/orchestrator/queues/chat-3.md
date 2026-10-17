@@ -1,3 +1,14 @@
+## FAST v2 S1/S2 build round — 17 Oct 2026
+
+- **Synced main** `2e69a866` before source changes; all new commits [chat-3] on `chatgpt/chat-3-b` only.
+- **TPO-students-08/09 — source implemented:** visible-roster bulk profile Verify / Send back for correction, max 20 learner sections, local preview with missing-document skips and acknowledgement, server same-origin endpoint, persisted TPO-role/grant and locked optimistic record/document decisions, per-student receipts and learner notifications. Handles both sections for every visible learner; no unscoped cross-page selection. Acceptance remains unverified.
+- **TPO-students-18 — source implemented:** Program and Class active enrollment filters using persisted UUIDs with labels from authorized college academic rows, URL guard, page and spreadsheet selectors, consistent roster pagination/export context. Existing Branch/Batch filters retained.
+- **TPO-students-20 — partial:** After college now has all nine recorded outcomes as server-side roster and export filters, including Not decided for absent saved choices. Missing outcome table reports unavailable rather than silently inventing records. Profile verified and finer Stage filters remain outstanding.
+- **Blocked — TPO-inbox-team-15:** Everyone multi-member channel cannot safely reuse two-participant private-thread access; requires scoped participant/mute schema and policy proposal.
+- **Blocked — TPO-requests-verification-01/33–36:** institutional request kinds and recruiter REQUEST lifecycle still require schema/policy; do not spoof them.
+- **Blocked — COL-people-02/07 and COL-placements-02/03/10:** verified account identity changes and secure private document services required; no unsafe mutation/URLs.
+- WP-chat-3-02/03/04 and reassigned WP-chat-5-02/09/10/14/15 remain IN-PROGRESS; no tests, lint, typecheck, build, or CI waits under FAST v2.
+
 ## FAST v2 chat-3 continuation — post-0132 merged lane batch
 
 - Synced lane branch to merged origin/main `d845a7a` at start (no unmerged chat-3 changes remained). All subsequent commits start `[chat-3]`, cite gap IDs and land only on `chatgpt/chat-3-b`.
