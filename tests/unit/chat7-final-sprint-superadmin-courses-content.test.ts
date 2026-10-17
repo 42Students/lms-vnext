@@ -43,6 +43,11 @@ describe("chat-7 final sprint Super Admin courses and content",()=>{
  });
  it("SA-academics-people-56 can edit archive reorder and open offering creation from the lesson directory",()=>{
   const page=read("src/app/(authenticated)/admin/lessons/page.tsx");
+  expect(page).toContain("<SuperAdminLessonCreate");
+  const create=read("src/components/courses/super-admin-lesson-create.tsx");
+  expect(create).toContain('"Course / Offering"'.replaceAll('"','')); 
+  expect(create).toContain('"/api/courses/lessons"');
+  expect(create).toContain('name:name.trim()');
   expect(page).toContain("<LessonActions");
   expect(page).toContain("<CollegeLessonReorderActions");
   expect(page).toContain("Open offering to add lessons");
