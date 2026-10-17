@@ -1498,6 +1498,10 @@ export const placementOffers = pgTable(
       .notNull()
       .default("ISSUED"),
     roleTitle: text("role_title").notNull(),
+    offerLetterUrl: text("offer_letter_url"),
+    offerLetterAttachedAt: timestamp("offer_letter_attached_at", {withTimezone:true}),
+    offerLetterAttachedByUserId: uuid("offer_letter_attached_by_user_id")
+      .references(()=>users.id,{onDelete:"restrict"}),
     annualCtcInr: integer("annual_ctc_inr"),
     // Pay breakdown (migration 0096). All nullable: annual_ctc_inr stays the
     // single headline figure; these keep legacy fixed/variable/bonus/bond detail.

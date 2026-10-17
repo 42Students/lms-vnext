@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SuperAdminDriveQuickSearch } from "@/components/placements/super-admin-drive-quick-search";
+import {SuperAdminNeedsAttention} from "@/components/placements/super-admin-needs-attention";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import type { getPlacementTpoOperations } from "@/modules/placements/tpo-operations-service";
@@ -68,6 +69,7 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
         <FunnelMetric label="Joined" value={operations.analytics.funnel.joined} previous={operations.analytics.funnel.accepted} />
       </div>
     </section>
+    {showDriveSearch?<SuperAdminNeedsAttention items={operations.workQueue} basePath={basePath}/>:
     <section className="rounded-xl border border-border bg-surface">
       <div className="border-b border-border px-5 py-4">
         <h2 className="m-0 text-base font-semibold text-foreground">Needs attention</h2>
@@ -90,7 +92,7 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
             </div>
             <Link href={basePath + "/jobs/" + item.jobId + (item.code==="STALE_APPLICATIONS" || item.code==="INTERVIEW_UNSCHEDULED" ? "/applications" : "")} className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text">Review {item.code==="STALE_APPLICATIONS"?"stale applicants":"drive"}</Link>
           </div>)}</div>}
-    </section>
+    </section>}
     <section className="rounded-xl border border-border bg-surface">
       <div className="border-b border-border px-5 py-4"><h2 className="m-0 text-base font-semibold text-foreground">Upcoming rounds</h2><p className="mt-1 text-sm text-body">Scheduled rounds across the active college.</p></div>
       {operations.upcomingRounds.length === 0 ? <p className="m-0 px-5 py-6 text-sm text-muted-foreground">No future rounds are scheduled.</p> :
