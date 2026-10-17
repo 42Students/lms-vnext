@@ -9,7 +9,7 @@ export function buildRecruiterActionQueue(input:{
  resultsDue?:readonly Due[];unreadConversations?:readonly UnreadThread[];
  returnedRequests?:readonly {id:string;status:string;draft:unknown}[];
  changeRequests?:readonly {id:string;jobId:string;jobTitle:string;field:string;createdAt:Date}[];
- roundsNeedingSlots?:readonly {id:string;jobId:string;jobTitle:string;name:string;scheduledAt:Date|null}[];
+ roundsNeedingSlots?:readonly {id:string;jobId:string;jobTitle:string;name:string;scheduledAt:Date|null;needsOffer:boolean}[];
 }) {
  const authorized=new Set(input.jobs.filter(row=>row.collegeId===input.collegeId&&
   row.companyId===input.companyId&&row.job.archivedAt===null&&
@@ -23,8 +23,9 @@ export function buildRecruiterActionQueue(input:{
  const slots=(input.roundsNeedingSlots??[])
   .filter(row=>authorized.has(row.jobId)&&row.scheduledAt!==null)
   .slice(0,8).map(row=>({key:"slots:"+row.id,tone:"SOON" as const,at:row.scheduledAt,
-   label:"Add slots · "+row.name,
-   description:"Propose an interviewer time for "+row.jobTitle+"; the placement cell confirms the schedule.",
+   label:(row.needsOffer?"Offer time to college · ":"Add slots · ")+row.name,
+   description:row.needsOffer?"You have an unsent time block for "+row.jobTitle+". Offer it to the placement cell.":
+    "Propose an interviewer time for "+row.jobTitle+"; the placement cell confirms the schedule.",
    href:"/recruiter/drives/"+encodeURIComponent(row.jobId)+"/interview-slots"}));
  const conversations=(input.unreadConversations??[]).filter(item=>item.unread>0)
   .slice(0,5).map(item=>({key:"thread:"+item.id, tone:"SOON" as const, at:null as Date|null,
