@@ -122,7 +122,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
     className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm font-semibold text-primary-text">
     {next.button} →
    </Link>
-   {registrations.available&&registrations.registered>0?<Link href={"/tpo/batches/"+batchId+"/students"}
+   {registrations.available&&(registrations.registered??0)>0?<Link href={"/tpo/batches/"+batchId+"/students"}
     className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">
     {registrations.registered} students registered: continue on Students →
    </Link>:null}
