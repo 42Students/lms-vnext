@@ -56,6 +56,11 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
         </select>
       </label>;
     })}
+    <label className="grid gap-1 text-sm font-semibold text-body">Source
+      <select name="source" defaultValue={data.query.source} className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground">
+        <option value="ALL">All sources</option><option value="INTERNAL">Internal</option><option value="EXTERNAL">External</option>
+      </select>
+    </label>
     <label className="grid gap-1 text-sm font-semibold text-body">Hiring stage
      <select name="pipelineStage" defaultValue={data.query.pipelineStage} className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground">
        {["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED"].map(stage=><option value={stage} key={stage}>{stage==="ALL"?"All hiring stages":stage}</option>)}
@@ -102,6 +107,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     <input type="hidden" name="status" value={data.query.status} />
     {data.query.jobId ? <input type="hidden" name="jobId" value={data.query.jobId} /> : null}
     {data.query.pipelineStage!=="ALL"?<input type="hidden" name="pipelineStage" value={data.query.pipelineStage}/>:null}
+    {data.query.source!=="ALL"?<input type="hidden" name="source" value={data.query.source}/>:null}
     {(["departmentId","programId","cohortId","sectionId","employmentType"] as const).map(key=>data.query[key]?<input key={key} type="hidden" name={key} value={data.query[key]}/>:null)}
     <input type="hidden" name="page" value={String(data.query.page)} />
     <input type="hidden" name="pageSize" value={String(data.query.pageSize)} />
