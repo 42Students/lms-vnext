@@ -7,12 +7,11 @@ import {
 import { PageHeader } from "@/components/ui/page-header";
 import { getLearnerAssessmentOverview } from "@/modules/courses/learner-assessment-service";
 
-export default async function LearnerAssignmentsPage() {
-  const context =
-    await getCurrentRequestContext();
+export default async function LearnerAssignmentsPage({searchParams}:{searchParams:Promise<{course?:string|string[]}>}) {
+  const [context,query] = await Promise.all([getCurrentRequestContext(),searchParams]);
   const overview =
     await getLearnerAssessmentOverview(
-      context,
+      context,{courseId:query.course},
     );
 
   const items: LearnerAssignmentOverviewItem[] =
@@ -66,6 +65,8 @@ export default async function LearnerAssignmentsPage() {
         title="All Assignments"
       />
       <LearnerAssessmentOverview
+        key={overview.selectedCourseId??"all"}
+        initialCourseId={overview.selectedCourseId??""}
         fileUploadsEnabled={assignmentFilesRuntimeEnabled()}
         courses={overview.courses}
         classScope={overview.classScope}

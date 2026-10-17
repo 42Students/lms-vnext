@@ -46,3 +46,17 @@ A verified implementation is a source-level closure awaiting orchestrator execut
 | PUB-auth-public-45 | NOT-A-GAP | No fabricated PENDING_HR state: successful, latest email OTP plus scoped company check creates verified grant atomically; failures do not grant access. `public-recruiter-invite-accept-service.ts` and `tests/unit/chat9-public-invite-share-decisions.test.ts` PUB-auth-public-45. |
 | PUB-auth-public-46 | DONE source | `recruiter-invite-landing.tsx` separates invalid link from retryable transport failure and records first-open via POST only. Test PUB-auth-public-46 above. |
 | PUB-auth-public-48 | DONE source | `recruiter-invite-landing.tsx` retains exact declined subtitle. Test PUB-auth-public-48 above. |
+
+## Chat-3 round 13 — approved recruiter invite and share side effects
+
+| ID | Status | Decision / existing named regression |
+| --- | --- | --- |
+| PUB-auth-public-45 | NOT-A-GAP | OTP acceptance atomically grants verified recruiter access; do not fabricate a pending HR approval queue when no such stage exists. `tests/unit/chat9-public-invite-share-decisions.test.ts` named test. |
+| PUB-auth-public-49 | DONE (source) | The explicit Not hiring and Unsubscribe POST actions produce college-scoped activity and one TPO notification; joining uses transactional TPO notification. GET preview remains read-only. `tests/unit/chat9-public-invite-share-decisions.test.ts` named test. |
+| PUB-auth-public-60 | NOT-A-GAP | GET link opens can be prefetched by email scanners; count authorized share views in the scoped audit but do not notify the TPO bell on GET. `tests/unit/chat9-public-invite-share-decisions.test.ts` plus `tests/unit/chat3-tenant-public-verified-round13.test.ts`. |
+
+## Chat-3 round 13 — canonical learner course destination
+
+| ID | Disposition | Reason |
+| --- | --- | --- |
+| PUB-auth-public-61 | NOT-A-GAP | Old course slug/resume routes have no safe resolver or migration; new student links use authorized delivery IDs and navigate only within verified course membership. Do not map an arbitrary legacy slug to a possibly different college's delivery. `tests/unit/chat3-tenant-public-verified-round13.test.ts` PUB-auth-public-61. |

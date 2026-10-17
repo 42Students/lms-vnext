@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import {useRouter} from "next/navigation";
+import {learnerAssessmentCourseHref} from "@/modules/courses/learner-assessment-course-query-model";
 import {learnerAssessmentDrawerSelectionAllowed} from "@/modules/courses/learner-assessment-drawer-scope-model";
 import {learnerAssessmentEmptyMessage} from "@/modules/courses/learner-assessment-empty-model";
 import { learnerAssessmentCourseScopeCount } from "@/modules/courses/learner-assessment-course-scope-count-model";
@@ -118,7 +120,7 @@ export function LearnerAssessmentOverview({
   kind,
   snapshotNowMs,
   fileUploadsEnabled = false,
-  classScope="PRESENT",
+  classScope="PRESENT",initialCourseId="",
 }: {
   courses: readonly CourseChoice[];
   items: readonly Item[];
@@ -126,7 +128,9 @@ export function LearnerAssessmentOverview({
   snapshotNowMs: number;
   fileUploadsEnabled?: boolean;
   classScope?:"NONE"|"PRESENT"|"UNAVAILABLE";
+  initialCourseId?:string;
 }) {
+  const router=useRouter();
   const [clock, setClock] = useState({ snapshotNowMs, elapsedMs: 0 });
   const currentNowMs = learnerAssessmentClock(snapshotNowMs,
     clock.snapshotNowMs === snapshotNowMs ? clock.elapsedMs : 0);
@@ -143,7 +147,7 @@ export function LearnerAssessmentOverview({
   }, [snapshotNowMs]);
 
   const [courseId, setCourseId] =
-    useState("");
+    useState(initialCourseId);
   const activeCourseId = learnerAssessmentActiveCourse(courseId,courses);
   const [search, setSearch] = useState("");
   const [stateFilter, setStateFilter] = useState<LearnerAssessmentStateFilter>("ALL");
@@ -293,6 +297,7 @@ export function LearnerAssessmentOverview({
             onChange={(event) => {
               setCourseId(event.target.value);
               setPage(1);
+              router.push(learnerAssessmentCourseHref(kind,event.target.value||null));
             }}
           >
             <option value="">
@@ -303,7 +308,7 @@ export function LearnerAssessmentOverview({
                 key={course.id}
                 value={course.id}
               >
-                {course.name} · {course.code} ({countsByCourse.get(course.id)??0})
+                {course.name} · {course.code}{initialCourseId&&initialCourseId!==course.id?"":` (${countsByCourse.get(course.id)??0})`}
               </option>
             ))}
           </Select>
@@ -335,6 +340,7 @@ export function LearnerAssessmentOverview({
       {learnerAssessmentFiltersActive({courseId:activeCourseId,search,stateFilter,sort}) ? (
         <button type="button" onClick={() => {
           setCourseId("");setSearch("");setStateFilter("ALL");setSort("DUE");setPage(1);
+          if(initialCourseId)router.push(learnerAssessmentCourseHref(kind,null));
         }} className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
           Clear assessment filters
         </button>

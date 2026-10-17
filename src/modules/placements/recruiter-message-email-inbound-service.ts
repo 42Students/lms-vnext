@@ -5,12 +5,12 @@ import {z} from "zod";
 import {getDb} from "@/db/client";
 import {placementRecruiterInboundEmailEvents,placementRecruiterMessageMailState} from "@/db/schema";
 import {notifyTpoOfRecruiterMessage} from "./recruiter-message-tpo-notification-service";
-import {verifyRecruiterMailBridgeSignature} from "./recruiter-message-email-model";
+import {verifyRecruiterMailBridgeSignature,extractRecruiterEmailReply} from "./recruiter-message-email-model";
 
 const inboundSchema=z.strictObject({
  from:z.email().max(320).transform(x=>x.trim().toLowerCase()),
  to:z.email().max(320).transform(x=>x.trim().toLowerCase()),
- text:z.string().trim().min(1).max(4000),
+ text:z.string().min(1).max(20000),
  providerMessageId:z.string().trim().min(8).max(255),
 });
 export type RecruiterEmailInboundResult={accepted:boolean;replayed:boolean};
@@ -30,6 +30,8 @@ export async function acceptAuthenticatedRecruiterEmailReply(
  const parsed=inboundSchema.safeParse(json);
  if(!parsed.success)return {accepted:false,replayed:false};
  const input=parsed.data,domain=(env.RECRUITER_MESSAGE_REPLY_DOMAIN??"").toLowerCase();
+ const replyBody=extractRecruiterEmailReply(input.text);
+ if(!replyBody)return {accepted:false,replayed:false};
  const match=/^r-([a-f0-9]{32})@(.+)$/.exec(input.to);
  if(!match||match[2]!==domain)return {accepted:false,replayed:false};
  const tokenHash=createHash("sha256").update(match[1]).digest("hex");
@@ -77,7 +79,7 @@ export async function acceptAuthenticatedRecruiterEmailReply(
   if(duplicate)return {accepted:duplicate.threadId===state.threadId,replayed:true};
   const inserted=await tx.execute<{id:string}>(sql`
     insert into placement_tpo_messages(thread_id,sender_type,sender_user_id,body,delivery_channel)
-    values(${state.threadId}::uuid,'RECRUITER',${state.recruiterUserId}::uuid,${input.text},'EMAIL')
+    values(${state.threadId}::uuid,'RECRUITER',${state.recruiterUserId}::uuid,${replyBody},'EMAIL')
     returning id
   `);
   const id=inserted.rows[0]?.id;
