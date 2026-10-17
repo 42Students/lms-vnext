@@ -15,7 +15,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
  const raw=await searchParams;
  const query=adminUsersQuerySchema.safeParse({tab:raw.tab,q:raw.q,role:raw.role,
   membershipStatus:raw.membershipStatus,platformStatus:raw.platformStatus,page:raw.page});
- if(!query.success) return <div className="space-y-4"><PageHeader eyebrow="Super Admin" title="Users & Roles"/>
+ if(!query.success) return <div className="space-y-4"><PageHeader eyebrow="Super Admin" title="People Directory"/>
   <ErrorState title="Invalid directory filters" description="Review search, roles, statuses, or page."
    action={<Link href="/admin/people/directory" className="font-semibold text-primary-text">Clear filters</Link>}/>
  </div>;
@@ -27,7 +27,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
  const platformOptions = ["ALL", ...USER_PLATFORM_STATUSES] as const;
  const tabForm=adminPeopleSearchState(data.query);
  return <div className="space-y-5">
-  <PageHeader eyebrow="Super Admin · People" title="Users & Roles"
+  <PageHeader eyebrow="Super Admin · People" title="People Directory"
    description="Read-only membership directory within the active organization/college scope. Global mode lists membership records, not unrelated personal data."
    actions={<SuperAdminPeopleCsvControl href={superAdminPeopleExportHref(data.query)} />}/>
   {!context.adminScope?.organizationId && !context.adminScope?.collegeId ?
