@@ -1,3 +1,6 @@
+import {studentJourneyForBatch} from "@/modules/placements/tpo-batch-student-journey-model";
+import {getTpoBatchEligibilitySummary} from "@/modules/placements/tpo-batch-eligibility-summary-service";
+import {getTpoBatchRegistrationSummary} from "@/modules/placements/tpo-batch-registration-summary-service";
 import {batchStudentViewExportHref} from "@/modules/placements/tpo-batch-student-filtered-export-model";
 import {selectTpoBatchStudentView} from "@/modules/placements/tpo-batch-student-selection-model";
 import {summarizeBatchStudentEvidence} from "@/modules/placements/tpo-batch-student-evidence-summary-model";
@@ -22,8 +25,15 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  const view=parseBatchStudentSearchParams(raw);
  if(!view.success)return <p role="alert">Invalid student search. <Link href={"/tpo/batches/"+batchId+"/students"}>Reset filters</Link></p>;
  const ctx=await getCurrentRequestContext();
- const [result,batchScope]=await Promise.all([getTpoBatchStudentRegistrations(ctx,batchId,parsed.data,view.data.q),getTpoBatch(ctx,batchId)]);
+ const [result,batchScope,eligibility,registrationCounts]=await Promise.all([
+  getTpoBatchStudentRegistrations(ctx,batchId,parsed.data,view.data.q),getTpoBatch(ctx,batchId),
+  getTpoBatchEligibilitySummary(ctx,batchId),getTpoBatchRegistrationSummary(ctx,batchId),
+ ]);
  const finished=Boolean(batchScope.lifecycle?.finishedAt);
+ const journey=studentJourneyForBatch({total:registrationCounts.activeLearners,eligible:eligibility.summary.eligible,
+  undecided:eligibility.summary.undecided,assessed:eligibility.summary.assessed,
+  complete:eligibility.summary.complete,registered:registrationCounts.registered,
+  registrationAvailable:registrationCounts.available});
  const visible=selectTpoBatchStudentView(result.students,view.data,result.registrationAvailable);
  const pageSummary=summarizeBatchStudentEvidence(result.students);
  const href=(page:number)=>batchStudentPageHref(batchId,page,view.data);
