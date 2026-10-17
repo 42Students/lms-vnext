@@ -5,7 +5,7 @@ Branch: `chatgpt/chat-16-b`. Operational prerequisites: `docs/operations/vnext-t
 | ID | Status | Evidence (implementation; test with ID in name) |
 | --- | --- | --- |
 | GR-111 | DONE | `src/modules/log-alerts/telegram-notifier.ts`; `tests/unit/graceful-telegram-foundations.test.ts` GR-111 |
-| GR-112 | DONE | `src/modules/log-alerts/signature.ts`; `tests/unit/graceful-telegram-foundations.test.ts` GR-112 |
+| GR-112 | DONE | `src/modules/log-alerts/signature.ts`; `tests/unit/graceful-telegram-foundations.test.ts` GR-112 (date/PII canonicalization; cloud CI failure follow-up) |
 | GR-113 | DONE | `src/modules/log-alerts/redaction.ts`; `tests/unit/graceful-telegram-foundations.test.ts` GR-113; `tests/unit/graceful-client-error.test.ts` GR-113 (browser PII) |
 | GR-114 | DONE (authored; untested) | `src/observability/logger.ts`, `src/lib/api-error.ts`, `src/modules/log-alerts/cloud-log-reader.ts`; reporter `src/modules/log-alerts/reporter.ts`; strictly validated eight-character request ID covered by `tests/unit/graceful-alert-correlation.test.ts` and `tests/unit/graceful-telegram-foundations.test.ts` GR-114 |
 | GR-115 | BLOCKED (migration) | `src/db/schema/db10-log-alerts.draft.ts`; `docs/proposed-migrations/graceful-telegram-alerting.sql` including deduplicated observed events (30-day retention) and disposable PostgreSQL acceptance; `tests/unit/graceful-alert-policy.test.ts` GR-115 and `tests/integration/graceful-telegram-persistence.test.ts` GR-114 GR-115 GR-125 (duplicate request fingerprint); `tests/unit/graceful-alert-correlation.test.ts` GR-115 (privacy-preserving hash) |
