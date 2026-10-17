@@ -40,3 +40,5 @@ Each of these gaps also has an ID-named test in `tests/unit/learner-learning-mis
 | LEARNER-learning-misc-24 | DONE (authored, not executed) | `tests/unit/chat15-missed-quiz-release.test.ts` case `LEARNER-learning-misc-24`; quiz service/interactions and read-only review. |
 | LEARNER-learning-misc-27 | DONE (authored, not executed) | `tests/unit/chat15-missed-quiz-release.test.ts` case `LEARNER-learning-misc-27`; quiz service/interactions and read-only review. |
 | LEARNER-learning-misc-28 | DONE (authored, not executed) | `tests/unit/chat15-missed-quiz-release.test.ts` case `LEARNER-learning-misc-28`; quiz service/interactions and read-only review. |
+
+| LEARNER-learning-misc-16 | DONE (source authored; test unexecuted) | `tests/unit/chat15-quiz-table-legacy.test.ts`, seven legacy table columns, safe released/not-released grade and mobile cards. |
