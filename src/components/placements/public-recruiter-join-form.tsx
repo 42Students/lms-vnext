@@ -113,9 +113,11 @@ export function PublicRecruiterJoinForm({
           </div>
         ) : joined ? (
           <>
-            <h1 className="text-2xl font-semibold text-foreground">{alreadyJoined?"You already have access to ":"You now have access to "}{college}</h1>
+            <h1 className="text-2xl font-semibold text-foreground">{alreadyJoined?"One more step":"You now have access to "+college}</h1>
             <p className="mt-3 text-sm text-body">
-              Sign in with your work email, {signInEmail}, on the college&apos;s placement address. We&apos;ll email you a code each time.
+              {alreadyJoined
+                ? "You already have an account. Sign in on "+college+"'s placement address with "+signInEmail+"."
+                : "Sign in with your work email, "+signInEmail+". We'll email you a code each time."}
             </p>
             <Link href="/login" className="mt-4 inline-flex min-h-11 items-center text-primary-text underline">Sign in</Link>
           </>
