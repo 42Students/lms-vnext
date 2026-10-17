@@ -193,9 +193,15 @@ export async function getCourseAssignmentForAdmin(context:RequestContext,assignm
   title:courseAssignments.title,
   description:courseAssignments.description,
   allowedMethods:courseAssignments.allowedSubmissionMethods,
+  status:courseAssignments.status,
+  dueAt:courseAssignments.dueAt,
+  maxPoints:courseAssignments.maxPoints,
+  updatedAt:courseAssignments.updatedAt,
  }).from(courseAssignments).where(eq(courseAssignments.id,assignmentId)).limit(1);
  if(!row)throw new CoursesServiceError("ASSIGNMENT_NOT_FOUND");
- return row;
+ const [submitted]=await getDb().select({id:assignmentSubmissions.id})
+  .from(assignmentSubmissions).where(eq(assignmentSubmissions.assignmentId,assignmentId)).limit(1);
+ return {...row,hasSubmissions:Boolean(submitted)};
 }
 
 export async function createCourseAssignment(
@@ -294,31 +300,17 @@ export async function updateCourseAssignment(
       facultyAssignmentLegacyEdit(current, input));
   }
 
-  if (
-    input.allowedMethods !== undefined ||
-    (input.maxPoints !== undefined && input.maxPoints !== current.maxPoints)
-  ) {
-    const [submission] = await getDb()
-      .select({ id: assignmentSubmissions.id })
-      .from(assignmentSubmissions)
-      .where(
-        eq(
-          assignmentSubmissions.assignmentId,
-          assignmentId,
-        ),
-      )
-      .limit(1);
-
-    if (submission) {
-      throw new CoursesServiceError(
-        "ASSIGNMENT_HAS_SUBMISSIONS",
-      );
-    }
-  }
-
   try {
-    const [updated] = await getDb()
-      .update(courseAssignments)
+    const [updated] = await getDb().transaction(async tx => {
+      const [locked] = await tx.select().from(courseAssignments)
+        .where(eq(courseAssignments.id,assignmentId)).for("update").limit(1);
+      if(!locked||locked.status==="ARCHIVED")throw new CoursesServiceError("ASSIGNMENT_NOT_FOUND");
+      const [submission]=await tx.select({id:assignmentSubmissions.id})
+        .from(assignmentSubmissions).where(eq(assignmentSubmissions.assignmentId,assignmentId)).limit(1);
+      if(submission)throw new CoursesServiceError("ASSIGNMENT_HAS_SUBMISSIONS");
+      if(input.expectedUpdatedAt!==undefined&&new Date(input.expectedUpdatedAt).getTime()!==locked.updatedAt.getTime())
+        throw new CoursesServiceError("FACULTY_ASSIGNMENT_STALE_VERSION");
+      return tx.update(courseAssignments)
       .set({
         ...(input.title !== undefined
           ? { title: input.title }
@@ -346,7 +338,7 @@ export async function updateCourseAssignment(
         ...(input.sequence !== undefined
           ? { sequence: input.sequence }
           : {}),
-        updatedAt: new Date(),
+        updatedAt: new Date(Math.max(Date.now(),locked.updatedAt.getTime()+1)),
       })
       .where(
         and(
@@ -361,6 +353,7 @@ export async function updateCourseAssignment(
         ),
       )
       .returning();
+    });
 
     if (!updated) {
       throw new CoursesServiceError(
