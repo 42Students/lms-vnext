@@ -21,7 +21,7 @@ async function scope(context:RequestContext){
  return {member,college};
 }
 /** Owner is not the creator; no ownership can be inferred before registration. */
-async function hasDriveOwnerColumn(){
+export async function hasDriveOwnerColumn(){
  try{
   const rows=await getDb().execute<{ready:boolean}>(sql`
    select exists(select 1 from information_schema.columns
