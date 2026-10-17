@@ -23,7 +23,9 @@ describe("TPO bulk add side effects",()=>{
  it("TPO-students-15 requires a staff-origin id and enforces opt-out with an application row lock",()=>{
   const service=src("src/modules/placements/application-service.ts");
   expect(service).toContain("learnerStaffApplicationOptOut({");
-  expect(service).toContain('eq(placementApplications.status,"WITHDRAWN")');
+  expect(service).toContain('eq(placementApplications.membershipId,membership.id)');
+  expect(service).toContain('.for("update").limit(1)');
+  expect(service).toContain('liveApplication.status!=="SUBMITTED"');
   expect(service).toContain("if(optOut.staffApplied&&!optOut.canOptOut)");
  });
 });
