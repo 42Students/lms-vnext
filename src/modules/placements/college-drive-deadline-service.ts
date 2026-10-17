@@ -5,6 +5,7 @@ import {getDb} from "@/db/client";
 import {activityEvents,placementJobs} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
+import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {collegeDriveIdSchema} from "./college-drive-read-model";
 const input=z.strictObject({
@@ -14,11 +15,12 @@ const input=z.strictObject({
 export async function extendCollegeDriveDeadline(ctx:RequestContext,rawId:unknown,raw:unknown){
  const id=collegeDriveIdSchema.parse(rawId),value=input.parse(raw);
  const collegeId=await requireCollegePlacementAdmin(ctx);
+ const acting=await resolveActingCollege(ctx,"placements.manage");
  const deadline=new Date(value.deadline);
  if(deadline<=new Date())throw Error("Choose a future deadline.");
  return getDb().transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,ctx,"placements.manage",{
-   collegeId,organizationId:ctx.membership!.organizationId,
+   collegeId,organizationId:acting.organizationId,
   });
   const [job]=await tx.select({id:placementJobs.id,title:placementJobs.title,
    status:placementJobs.status,deadline:placementJobs.applicationDeadline})
@@ -32,8 +34,8 @@ export async function extendCollegeDriveDeadline(ctx:RequestContext,rawId:unknow
   .returning({id:placementJobs.id,deadline:placementJobs.applicationDeadline});
   if(!saved)throw Error("Drive changed; refresh and retry.");
   await tx.insert(activityEvents).values({
-   organizationId:ctx.membership!.organizationId,collegeId,
-   actorUserId:ctx.user.id,actorMembershipId:ctx.membership!.id,
+   organizationId:acting.organizationId,collegeId,
+   actorUserId:ctx.user.id,...(ctx.membership?{actorMembershipId:ctx.membership.id}:{}),
    module:"PLACEMENTS",eventType:"PLACEMENTS_COLLEGE_DRIVE_DEADLINE_EXTENDED",
    subjectType:"placement_job",subjectId:id,summary:"Extended application deadline for "+job.title,
    metadata:{oldDeadline:job.deadline?.toISOString()??null,
