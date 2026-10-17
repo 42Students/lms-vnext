@@ -42,6 +42,7 @@ describe("SA-academics-people-85 Super Admin faculty schedule reassignment",()=>
   expect(service).toContain('for("update",{of:sectionScheduleEvents})');
   expect(service).toContain('isolationLevel:"serializable"');
   expect(service).toContain("recordActivityEventInTransaction");
+  expect(service).toContain("ACTIVITY_EVENT_TYPES.COURSES_FACULTY_SCHEDULE_REASSIGNED");
   expect(src("src/app/api/admin/faculty/schedules/reassign/route.ts")).toContain("isSameOriginRequest(request)");
   expect(src("src/app/(authenticated)/admin/faculty/page.tsx")).toContain("SuperAdminFacultyScheduleReassignAction");
   const client=src("src/components/admin/super-admin-faculty-schedule-reassign-action.tsx");
