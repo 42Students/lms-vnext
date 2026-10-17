@@ -90,4 +90,11 @@ describe("Final sprint recruiter profile/company verification",()=>{
   expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-30 |");
  });
 
+ it("REC-calendar-messages-profile-32 independent final-sprint acceptance regression",()=>{
+  expect(src("src/app/(authenticated)/hr/company/page.tsx")).toContain("result.company.name.trim().charAt(0).toUpperCase()");
+  expect(src("src/app/(authenticated)/hr/company/page.tsx")).toContain("rel=\"noopener noreferrer\"");
+  expect(src("src/app/(authenticated)/hr/company/page.tsx")).toContain("Industry not set");
+  expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-32 |");
+ });
+
 });
