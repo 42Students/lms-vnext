@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS placement_learner_general_requests (
  decided_at timestamptz,
  decision_note text,
  CONSTRAINT placement_learner_general_kind_ck CHECK
- (kind IN ('OFF_CAMPUS_OFFER','REGISTRATION_CHANGE','ABSENCE_DISPUTE','CORRECTION_WITH_PROOF','PLACEMENT_AFTER_PLACEMENT')),
+ (kind IN ('OFF_CAMPUS_OFFER','REGISTRATION_CHANGE','ABSENCE_DISPUTE','CORRECTION_WITH_PROOF','PLACEMENT_AFTER_PLACEMENT','OFFER_ACCEPTANCE_DISPUTE')),
  CONSTRAINT placement_learner_general_status_ck CHECK (status IN ('PENDING','APPROVED','REJECTED','CANCELLED')),
  CONSTRAINT placement_learner_general_reason_ck CHECK (length(trim(reason)) BETWEEN 3 AND 2000)
 );
