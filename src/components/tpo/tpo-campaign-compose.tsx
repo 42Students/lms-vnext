@@ -38,7 +38,7 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
   }).then(value=>{if(!controller.signal.aborted){setAudience(value);setAudienceStatus("ready");}})
     .catch(()=>{if(!controller.signal.aborted)setAudienceStatus("error");});
   return ()=>controller.abort();
- },[selectionKey]);
+ },[selectionKey,audienceRetry]);
  async function save(){
   const parsed=tpoCampaignDraftSchema.safeParse({title,subject,body,segment:selectedLeadIds.length?"ALL_ELIGIBLE":segment,templateKey,selectedLeadIds:selectedLeadIds.length?selectedLeadIds:undefined});
   if(!parsed.success){
