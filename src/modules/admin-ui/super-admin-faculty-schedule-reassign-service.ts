@@ -66,7 +66,7 @@ export async function reassignSuperAdminFacultySchedules(context:RequestContext,
       .limit(4001)
       .for("update",{of:sectionScheduleEvents});
     if(scheduled.length>4000)throw new SuperAdminFacultyScheduleReassignError("FACULTY_SCHEDULE_LIMIT");
-    const original=scheduled.filter(item=>item.facultyMembershipId===input.sourceMembershipId);
+    const original=scheduled.filter(item=>item.facultyMembershipId===input.sourceMembershipId && item.startsAt>now);
     const occupied=scheduled.filter(item=>item.facultyMembershipId===input.replacementMembershipId);
     const plan=planFacultyScheduleReassignment(original,occupied);
     for(const event of plan.movable){
@@ -75,7 +75,7 @@ export async function reassignSuperAdminFacultySchedules(context:RequestContext,
       }).where(and(eq(sectionScheduleEvents.id,event.id),
         eq(sectionScheduleEvents.facultyMembershipId,input.sourceMembershipId),
         eq(sectionScheduleEvents.status,"SCHEDULED"),
-        gt(sectionScheduleEvents.endsAt,now))).returning({id:sectionScheduleEvents.id});
+        gt(sectionScheduleEvents.startsAt,now))).returning({id:sectionScheduleEvents.id});
       if(changed.length!==1)throw new SuperAdminFacultyScheduleReassignError("SCHEDULE_CHANGED");
     }
     await recordActivityEventInTransaction(tx,context,{
