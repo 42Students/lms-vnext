@@ -9,7 +9,8 @@ describe("Chat-12 TPO Requests gap closure",()=>{
   expect(tpoRequestNeedsConfirmation("ROUND_RESCHEDULE")).toBe(false);
   expect(tpoRequestNeedsConfirmation("OFFER_EXTENSION")).toBe(false);
   const source=read("src/components/placements/tpo-request-decision-control.tsx");
-  expect(source).toContain('void decideWith("APPROVE","")');
+  expect(source).toContain('void runGuarded(()=>decideWith("APPROVE",""))');
+  expect(source).toContain("useGuardedAction()");
   expect(source).toContain("Approved. The student has been told.");
   expect(source).toContain("useToast()");
   expect(source).toContain('role="alert"');

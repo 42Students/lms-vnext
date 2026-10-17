@@ -87,7 +87,7 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
    if(e instanceof FriendlyFetchError&&e.status===409){
      setDetail(null);setPendingAction(null);
      setError("This changed while you were working. Refresh the details and re-apply your decision.");
-   }else setError(e instanceof Error?e.message:"Could not save the decision. Please try again.");
+   }else setError((action==="VERIFY"?"Could not verify":"Could not send it back")+". Please try again.");
   }
   finally{setSaving(false);}
  }
