@@ -9,7 +9,7 @@ import {TpoRosterVerificationBulk} from "@/components/tpo/tpo-roster-verificatio
 import {filterTpoVerificationRows,defaultTpoVerificationFilters,type TpoVerificationLocalFilters} from "@/modules/verification/tpo-queue-local-filters";
 
 /** Same locked review, private receipt and stale-version path as College Admin. */
-export function TpoVerificationPanel({rows,serverTab,serverKind}:{rows:VerificationQueueCard[];serverTab:VerificationTab;serverKind:"ALL"|"EDUCATION"|"IDENTITY"}){
+export function TpoVerificationPanel({rows,counts,serverTab,serverKind}:{rows:VerificationQueueCard[];counts?:Record<VerificationTab,number>;serverTab:VerificationTab;serverKind:"ALL"|"EDUCATION"|"IDENTITY"}){
  const router=useRouter(),params=useSearchParams();
  const {showToast}=useToast();
  function navigate(patch:Record<string,string>){
@@ -45,6 +45,8 @@ export function TpoVerificationPanel({rows,serverTab,serverKind}:{rows:Verificat
    {serverTab==="WAITING"&&waiting.length>0?<button type="button" className="rounded border border-border px-3 py-2 text-sm font-semibold text-primary-text"
     onClick={()=>{setSelected(null);setSequenceRows(waiting);setSequenceIndex(0);}}>Review one by one ({waiting.length})</button>:null}
   </div>
+  {serverTab==="WAITING"?<button type="button" className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text"
+   onClick={()=>navigate({tab:"WAITING",waitingState:"UPDATE_PENDING",page:"1"})}>Updates to verified details</button>:null}
   <section aria-label="Verification filters" className="grid gap-3 rounded-xl border border-border p-3 sm:grid-cols-2">
    <label className="text-sm font-semibold">Marksheets
     <select value={filters.marksheets} onChange={e=>update("marksheets",e.target.value as TpoVerificationLocalFilters["marksheets"])}
@@ -64,8 +66,8 @@ export function TpoVerificationPanel({rows,serverTab,serverKind}:{rows:Verificat
   {serverTab==="WAITING"&&visible.length>0?
    <TpoRosterVerificationBulk key={"queue:"+JSON.stringify(filters)+serverTab+serverKind} rows={visible} scope="verification"/>:null}
   <VerificationWorkspace key={JSON.stringify(filters)+serverTab+serverKind} rows={visible}
-   legacyTpoCopy initialTab={serverTab} initialKind={serverKind}
-   disableLocalSearch preserveServerOrder showTabCounts={false}
+   legacyTpoCopy initialTab={serverTab} initialKind={serverKind} counts={counts}
+   disableLocalSearch preserveServerOrder showTabCounts={true}
    onTabChange={tab=>navigate({tab,page:"1",waitingState:tab==="WAITING"?(params.get("waitingState")??"ALL"):"ALL",waitingSince:tab==="WAITING"?(params.get("waitingSince")??"ALL"):"ALL"})}
    onKindChange={kind=>navigate({kind,page:"1"})}
    onReview={row=>{setSequenceIndex(null);setSelected(row);}} />

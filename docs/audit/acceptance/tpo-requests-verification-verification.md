@@ -17,3 +17,11 @@ Base source `main` at `a56fd84fdbe4e2c9bc11758b290d1f1845cac991`. These are auth
 
 TPO-requests-verification-25: sequential review uses an immutable page snapshot so refetching after each decision never skips the next student; same named test covers the edge case.
 TPO-requests-verification-28: result toast now includes the verified section (Education or Identity).
+
+| TPO-requests-verification-22 | DONE | Student roll, per-section marksheet counts, attention and decided actor/reason on authorized queue; `tests/unit/chat12-verification-round2.test.ts` test `TPO-requests-verification-22` |
+| TPO-requests-verification-23 | DONE | College-wide grouped counts independent of page size, oldest Waiting first, counts rendered in tab; `tests/unit/chat12-verification-round2.test.ts` test `TPO-requests-verification-23` |
+| TPO-requests-verification-24 | DONE | Server scoped filters and updates-to-verified-details shortcut; `tests/unit/chat12-verification-round2.test.ts` test `TPO-requests-verification-24` |
+| TPO-requests-verification-26 | DONE | Tenant-checked bulk verify/send-back with proof and reason guard (intentional 20-row safety cap); `tests/unit/chat12-verification-round2.test.ts` test `TPO-requests-verification-26` |
+| TPO-requests-verification-29 | DONE | Drawer history, education table, private document links, roll, and masked-number explanation; `tests/unit/chat12-verification-round2.test.ts` test `TPO-requests-verification-29` |
+| TPO-requests-verification-30 | DONE | Existing notification-copy used by profile-verification transaction writer; exact legacy learner text; `tests/unit/chat12-verification-round2.test.ts` test `TPO-requests-verification-30` |
+| TPO-requests-verification-32 | DONE | Registered TPO export route covers Waiting/Sent back/Verified with authorized page iteration; `tests/unit/chat12-verification-round2.test.ts` test `TPO-requests-verification-32` |
