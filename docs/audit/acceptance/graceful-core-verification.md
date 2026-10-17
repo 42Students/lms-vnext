@@ -20,3 +20,12 @@ Tests below are authored but not executed in this lane. DONE on a helper means i
 | GR-50 | DONE | `src/lib/outbound.ts`; `tests/unit/graceful-action-helpers.test.ts` — GR-50 (provider adapters adoption pending) |
 | GR-52 | DONE | `src/lib/transaction-retry.ts`; `tests/unit/graceful-action-helpers.test.ts` — GR-52 |
 | GR-60 | DONE | `src/hooks/use-form-draft.ts`; `tests/unit/graceful-action-helpers.test.ts` — GR-60 |
+| GR-11 | DONE | `src/app/global-error.tsx`, `src/app/error.tsx`, `src/app/api/client-errors/route.ts`; `tests/unit/graceful-root-screens.test.ts` — GR-11 |
+| GR-12 | DONE | `src/components/public/graceful-error-boundary.tsx`; `tests/unit/graceful-root-screens.test.ts` — GR-12 |
+| GR-13 | DONE | `src/app/(authenticated)/*/not-found.tsx` and root; `tests/unit/graceful-root-screens.test.ts` — GR-13 |
+| GR-14 | DONE | `src/app/forbidden/page.tsx`; `tests/unit/graceful-root-screens.test.ts` — GR-14 |
+| GR-15 | DONE | `src/lib/return-to.ts`; `tests/unit/graceful-root-screens.test.ts` — GR-15 (end-to-end sign-in wiring follows) |
+| GR-16 | DONE | `src/components/public/offline-banner.tsx`; `tests/unit/graceful-root-screens.test.ts` — GR-16 |
+| GR-17 | DONE | `src/proxy.ts`, `docs/operations/maintenance.md`; `tests/unit/graceful-root-screens.test.ts` — GR-17 |
+| GR-22 | DONE | `src/app/layout.tsx`; `tests/unit/graceful-root-screens.test.ts` — GR-22 |
+| GR-23 | DONE | `src/components/public/browser-support-notice.tsx`; `tests/unit/graceful-root-screens.test.ts` — GR-23 |
