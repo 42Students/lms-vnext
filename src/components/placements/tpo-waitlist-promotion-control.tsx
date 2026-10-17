@@ -9,6 +9,7 @@ export function TpoWaitlistPromotionControl({jobId,preview}:{jobId:string;previe
  const [busy,setBusy]=useState(false);const [error,setError]=useState("");const [success,setSuccess]=useState("");
  async function promote(){
   if(!preview.next||busy||reason.trim().length<3)return;
+  if(!window.confirm("Verify and release one offer to "+preview.next.name+" (waitlist rank "+preview.next.rank+")? This issues a real offer and records the seat."))return;
   setBusy(true);setError("");setSuccess("");
   try{const res=await fetch("/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/waitlist-promote",{
    method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
@@ -28,6 +29,7 @@ export function TpoWaitlistPromotionControl({jobId,preview}:{jobId:string;previe
   </p>
   {!preview.storageReady?<p role="status" className="rounded border border-border p-4 text-sm">
    Waitlist promotion storage is not registered yet. No promotion can be released.</p>:null}
+  <p className="text-sm text-body">{preview.rows.filter(row=>row.canPromote).length} waitlisted learner(s) currently pass preliminary checks; {preview.rows.filter(row=>!row.canPromote).length} have a blocking reason. The next eligible rank is shown below.</p>
   <div className="overflow-x-auto rounded border border-border bg-surface"><table className="min-w-full text-left text-sm">
    <thead><tr><th className="p-3">Rank</th><th className="p-3">Student</th><th className="p-3">Role / package</th><th className="p-3">Rules check</th></tr></thead>
    <tbody>{preview.rows.length?preview.rows.map(r=><tr key={r.applicationId} className="border-t border-border">
@@ -48,6 +50,8 @@ export function TpoWaitlistPromotionControl({jobId,preview}:{jobId:string;previe
     {busy?"Verifying…":"Verify and release next offer"}</button>
   </div>:null}
   {success?<p role="status">{success}</p>:null}
+  <button type="button" disabled={busy} onClick={()=>router.refresh()}
+    className="min-h-10 rounded border border-border px-3 text-sm font-semibold">Refresh waitlist and seats</button>
   {error?<p role="alert" className="text-error">{error} Refresh the preview before retrying.</p>:null}
  </section>;
 }

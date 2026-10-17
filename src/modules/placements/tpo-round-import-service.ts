@@ -70,7 +70,10 @@ function previewData(rows:ImportRow[],roster:Roster[]){
    const exact=matchSource(row,roster);
    if(exact.length===1)used.add(exact[0]!.applicationId);
    unmatched.push({line:row.line,identity:row.identity,reason:"Waitlist rank must be a positive whole number",suggestions:[]});continue;}
-  if(!row.outcome){unmatched.push({line:row.line,identity:row.identity,reason:"Unrecognized outcome",suggestions:[]});continue;}
+  if(!row.outcome){
+   const exact=matchSource(row,roster);
+   if(exact.length===1)used.add(exact[0]!.applicationId);
+   unmatched.push({line:row.line,identity:row.identity,reason:"Unrecognized outcome",suggestions:[]});continue;}
   const candidates=matchSource(row,roster);
   if(candidates.length!==1){
    unmatched.push({line:row.line,identity:row.identity,
@@ -82,6 +85,7 @@ function previewData(rows:ImportRow[],roster:Roster[]){
    unmatched.push({line:row.line,identity:row.identity,reason:"Duplicate applicant in file",suggestions:[]});continue;
   }
   if(candidate.currentStatus==="APPLIED"){
+   used.add(candidate.applicationId);
    unmatched.push({line:row.line,identity:row.identity,reason:"Already applied; locked from import",suggestions:[]});continue;
   }
   used.add(candidate.applicationId);
@@ -96,7 +100,7 @@ export async function previewTpoRoundImport(context:RequestContext,jobId:unknown
  const scoped=await readRoster(context,jobId,roundId);
  const source=parseTpoRoundImport(bytes,filename);
  const projection=previewData(source,scoped.roster);
- const rosterFingerprint=scoped.roster.map(r=>[r.applicationId,r.currentResultId,r.currentStatus]).sort((a,b)=>String(a[0]).localeCompare(String(b[0])));
+ const rosterFingerprint=scoped.roster.map(r=>[r.applicationId,r.currentResultId,r.currentStatus,r.email,r.roll,r.name]).sort((a,b)=>String(a[0]).localeCompare(String(b[0])));
  const token=createHash("sha256").update(JSON.stringify([scoped.roundId,
    createHash("sha256").update(bytes).digest("hex"),rosterFingerprint])).digest("hex");
  return {round:scoped.round,jobId:scoped.jobId,roundId:scoped.roundId,previewToken:token,
@@ -179,6 +183,7 @@ export async function stageTpoRoundImport(
  const occupied=new Set(existingRanks.filter(r=>r.rank!==null&&!importing.has(r.applicationId)).map(r=>r.rank!));
  let nextWaitlistRank=1;
  for(const entry of entries){
+  let addedRank:number|null=null;
   try{
    const candidate=candidates.get(entry.applicationId)!;
    let waitlistRank:number|null=null;
@@ -194,6 +199,7 @@ export async function stageTpoRoundImport(
      continue;
     }
     occupied.add(waitlistRank);
+    addedRank=waitlistRank;
    }
    const candidateMessage=entry.outcome==="PASS"?null:entry.message??
     (entry.outcome==="HOLD"?"You are waitlisted for this round.":
@@ -205,8 +211,10 @@ export async function stageTpoRoundImport(
      waitlistRank,candidateMessage},
    });
    results.push({applicationId:entry.applicationId,line:entry.line,status:"staged"});
-  }catch(e){results.push({applicationId:entry.applicationId,line:entry.line,status:"skipped",
-   reason:e instanceof Error?e.message:"Could not stage this result"});}
+  }catch(e){
+   if(addedRank!==null)occupied.delete(addedRank);
+   results.push({applicationId:entry.applicationId,line:entry.line,status:"skipped",
+    reason:e instanceof Error?e.message:"Could not stage this result"});}
  }
  return {staged:results.filter(r=>r.status==="staged").length,
   skipped:results.filter(r=>r.status==="skipped").length,
