@@ -880,7 +880,9 @@ export async function getTpoStudentsIntelligence(
       fromFinishedBatch:learner.enrollmentStatus==="COMPLETED",
       registrationOpen:learner.batchInvitedAt!==null,
       profileDocument:learner.profileDocument,
-      hiddenSearchMatched:tpoHiddenProfileMatchesSearch(learner.profileDocument,input.search??""),
+      hiddenSearchMatched:tpoHiddenProfileMatchesSearch(learner.profileDocument,input.search??"")||
+       Boolean(input.search&&sectionIds.some(id=>activeSections.find(section=>section.sectionId===id)?.sectionName
+        .toLocaleLowerCase("en-IN").includes(input.search!.toLocaleLowerCase("en-IN")))),
       registrationChoice:
         registrationChoiceByLearner.get(
           `${learner.membershipId}:${learner.cohortId}`,
