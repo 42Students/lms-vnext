@@ -13,6 +13,7 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
  const [busy,setBusy]=useState(false),[notice,setNotice]=useState("");
  const [selected,setSelected]=useState("");
  const [editingName,setEditingName]=useState(""),[editingNote,setEditingNote]=useState("");
+ const [deleteReview,setDeleteReview]=useState<string|null>(null);
  async function refresh(){
   try{
    const res=await fetch("/api/placements/tpo/leads/views",{credentials:"same-origin",cache:"no-store"});
