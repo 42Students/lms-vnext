@@ -1,3 +1,4 @@
+import {ENGAGE_COLUMNS,type EngageColumn} from "./tpo-recruiter-table-view-model";
 /** Formula-neutralized CSV for TPO Engage exports. Never include invite tokens. */
 export type RecruiterExportRow={
  name:string;companyName:string|null;stage:string;ownerName:string|null;
