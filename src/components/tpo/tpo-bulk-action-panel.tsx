@@ -10,7 +10,7 @@ import {suggestTpoBulkAction,type TpoBulkActionCount} from "@/modules/placements
 import {tpoReviewOneByOneHref} from "@/modules/placements/tpo-bulk-follow-up-model";
 import type {BulkOutcome,BulkPreviewRow} from "@/modules/placements/tpo-bulk-action-model";
 import {selectTpoBulkPage,toggleTpoBulkRow,canSelectTpoBulkRow,isTpoBulkPageSelected,isTpoBulkPreviewCurrent,canActOnEntireTpoView,TPO_BULK_UI_LIMIT,TPO_BULK_VIEW_LIMIT,
-  type TpoBulkUiRow} from "@/modules/placements/tpo-bulk-ui-model";
+  type TpoBulkUiRow,matchTpoBulkRollNumbers} from "@/modules/placements/tpo-bulk-ui-model";
 
 type Action="ELIGIBLE"|"INELIGIBLE"|"CLEAR_OVERRIDE"|"SHORTLISTED"|"REJECTED"|"ADD_NOTE"|"SEND_MESSAGE"|"MOVE_TEST"|"MOVE_INTERVIEW";
 type PreviewPlan={
@@ -23,6 +23,9 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
  const [selected,setSelected]=useState<string[]>([]);
  const [action,setAction]=useState<Action>(target==="STUDENTS"?"ELIGIBLE":"SHORTLISTED");
  const [note,setNote]=useState("");
+ const [pastedRolls,setPastedRolls]=useState("");
+ const [rollFeedback,setRollFeedback]=useState("");
+ const [copyFeedback,setCopyFeedback]=useState("");
  const [preview,setPreview]=useState<PreviewResponse|null>(null);
  const [plan,setPlan]=useState<PreviewPlan|null>(null);
  const [outcomes,setOutcomes]=useState<BulkOutcome[]>([]);
@@ -157,6 +160,21 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
     {safeSelected.length} selected. Preview and confirm the next {Math.min(200,safeSelected.length)} rows;
     remaining rows stay selected for the following batch. Each batch must be reviewed and confirmed separately.
    </p>:null}
+  {target==="STUDENTS"?<div className="space-y-2 rounded-lg border border-border p-3">
+   <label className="grid gap-1 text-sm font-semibold text-body">Paste roll numbers (comma, whitespace or line separated)
+     <textarea value={pastedRolls} onChange={event=>setPastedRolls(event.target.value)}
+      rows={2} maxLength={40000} placeholder="23CS001, 23CS002" className="w-full rounded border border-border bg-surface p-2"/>
+   </label>
+   <button type="button" disabled={busy||!pastedRolls.trim()} className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50"
+     onClick={()=>{
+      const matched=matchTpoBulkRollNumbers(availableRows,pastedRolls);
+      setSelected(current=>selectTpoBulkPage([...current,...matched.ids]));
+      setRollFeedback(matched.ids.length+" roll numbers matched in the currently authorized selection view; "+matched.unmatched.length+" not found here.");
+      invalidate();
+     }}>Select matching rolls</button>
+   {rollFeedback?<p role="status" className="text-xs text-muted-foreground">{rollFeedback}</p>:null}
+   <p className="text-xs text-muted-foreground">Rolls outside these loaded rows cannot be selected by pasting. Use whole-batch search to locate them first.</p>
+  </div>:null}
   <div className="max-h-64 space-y-1 overflow-y-auto rounded-md border border-border p-2">
    <label className="flex min-h-11 items-center gap-2 p-2 text-sm">
     <input type="checkbox" disabled={busy} checked={isTpoBulkPageSelected(rows.map(row=>row.id),safeSelected)}
@@ -177,11 +195,20 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
      className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text disabled:opacity-50">
      Clear selection
    </button>
+   {target==="STUDENTS"?<button type="button" disabled={busy||safeSelected.length===0}
+    onClick={async()=>{
+      try{
+       await navigator.clipboard.writeText(safeSelected.map(id=>labelsById.get(id)??id).join("\n"));
+       setCopyFeedback(safeSelected.length+" selected student rows copied.");
+      }catch{setCopyFeedback("Could not copy selected student rows. Check browser clipboard permission.");}
+    }}
+    className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text disabled:opacity-50">Copy selected rows</button>:null}
    {preview&&!busy?<button type="button" onClick={invalidate}
      className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
      Cancel preview
    </button>:null}
   </div>
+  {copyFeedback?<p role="status" className="text-xs text-muted-foreground">{copyFeedback}</p>:null}
   <div className="grid gap-3 sm:grid-cols-2">
    <label className="text-sm font-semibold text-body">Action
     <select value={action} disabled={busy}
