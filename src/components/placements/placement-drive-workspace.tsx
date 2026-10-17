@@ -472,6 +472,10 @@ export async function PlacementDriveWorkspace({
                     <div><dt className="font-semibold">Duration</dt><dd>{round.durationMinutes ? round.durationMinutes+" minutes" : "Not specified"}</dd></div>
                   </dl>
                   {round.platform ? <p className="mt-2 text-sm text-body">Platform: {round.platform}</p> : null}
+                  {round.testUrl&&/^https:\/\//i.test(round.testUrl)?<a href={round.testUrl}
+                    target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline">
+                    Open test instructions →
+                  </a>:null}
                   {round.whatToBring ? <p className="mt-1 text-sm text-body">Bring: {round.whatToBring}</p> : null}
                   <div className="mt-3 flex flex-wrap gap-4 text-sm">
                     <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/candidate-schedule?roundId="+encodeURIComponent(round.id)}
