@@ -49,6 +49,9 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
    <label className="min-w-0 flex-1 basis-52 text-sm">Name or email
     <input type="search" name="q" maxLength={100} defaultValue={filter.q} placeholder="Search contacts" className="mt-1 block min-h-10 w-full min-w-0 rounded-md border bg-background px-3"/>
    </label>
+   <details className="min-w-0 flex-auto basis-full rounded-md border border-border bg-surface p-3" open={activeCollegeContactFilterCount(filter)>0}>
+    <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-foreground">Advanced filters</summary>
+    <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
    <label className="min-w-0 flex-1 basis-32 text-sm">Name begins with
     <select name="initial" defaultValue={filter.initial??""} className="mt-1 block min-h-10 w-full min-w-0 rounded-md border bg-background px-3">
      <option value="">Any letter</option>{initials.map(letter=><option key={letter} value={letter}>{letter}</option>)}
@@ -169,7 +172,9 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
      <option value="10">10</option><option value="20">20</option><option value="50">50</option>{filter.pageSize===25?<option value="25">25 (saved view)</option>:null}
     </select>
    </label>
-   <button type="submit" className="min-h-10 rounded-md border px-4 text-sm font-semibold">Apply</button>
+    </div>
+   </details>
+   <button type="submit" className="min-h-10 rounded-md border px-4 text-sm font-semibold">Search contacts</button>
    <Link href={clearedCollegeContactsHref(filter.tab)}
     className="inline-flex min-h-10 items-center rounded-md border px-3 text-sm">Clear filters</Link>
   </form>
