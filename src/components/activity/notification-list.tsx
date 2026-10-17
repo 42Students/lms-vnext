@@ -38,10 +38,12 @@ export function NotificationList({
   emptyText = "You are all caught up.",
   onSelect,
   readEndpoint = "/api/notifications",
+  variant = "default",
 }: {
   items: readonly NotificationListItem[];
   emptyText?: string;
   onSelect?: (item: NotificationListItem) => void;
+  variant?: "default" | "tpo";
   readEndpoint?: "/api/notifications" | "/api/learn/notifications" | "/api/mentor/notifications" | "/api/tpo/notifications" | "/api/notifications/faculty";
 }) {
   const router = useRouter();
