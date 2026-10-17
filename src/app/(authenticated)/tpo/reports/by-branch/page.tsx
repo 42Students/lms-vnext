@@ -1,3 +1,5 @@
+import {Suspense} from "react";
+import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import {ReportBarChart} from "@/components/placements/report-bar-chart";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -61,6 +63,7 @@ export default async function TpoByBranchReportPage({
       >
         View applicant and accepted-offer evidence by season →
       </Link>
+      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/by-branch" collegeId={context.membership.collegeId}/></Suspense>
       <ReportNavigation workspace={workspace} />
       <ReportFilters
         workspace={workspace}
