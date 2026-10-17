@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,eq,ne} from "drizzle-orm";
+import {and,asc,eq,ne,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,inAppNotifications,placementApplications,
  placementApplicationScreenings,placementJobRounds,placementJobs,placementLearnerRequests,users} from "@/db/schema";
@@ -78,6 +78,20 @@ export async function mutateCollegeInterview(context:RequestContext,rawJobId:unk
      eq(placementApplications.jobId,job.id),eq(placementApplications.status,"SUBMITTED"),
      eq(placementApplicationScreenings.status,"SHORTLISTED"))).limit(1);
    if(!application)throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
+   const start=new Date(proposed.scheduledAt);
+   const end=new Date(start.getTime()+proposed.durationMinutes*60000);
+   const collision=await tx.select({id:placementCollegeInterviews.id})
+    .from(placementCollegeInterviews).where(and(
+     eq(placementCollegeInterviews.jobId,job.id),
+     eq(placementCollegeInterviews.status,"SCHEDULED"),
+     input.action==="EDIT"?ne(placementCollegeInterviews.id,input.interviewId):undefined,
+     sql`${placementCollegeInterviews.scheduledAt} < ${end}`,
+     sql`${placementCollegeInterviews.scheduledAt} + ${placementCollegeInterviews.durationMinutes} * interval '1 minute' > ${start}`,
+     proposed.mode==="ON_CAMPUS"&&proposed.venue?
+      sql`lower(${placementCollegeInterviews.venue})=lower(${proposed.venue})`:undefined,
+     proposed.interviewer?sql`lower(${placementCollegeInterviews.interviewer})=lower(${proposed.interviewer})`:undefined,
+    )).limit(1);
+   if(collision.length)throw Error("An interview already occupies this interviewer or venue at the chosen time.");
    const values={
     roundId:proposed.roundId,applicationId:proposed.applicationId,
     scheduledAt:new Date(proposed.scheduledAt),durationMinutes:proposed.durationMinutes,
