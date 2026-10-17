@@ -160,6 +160,31 @@ export function LearnerFinalDeliveryControl({
     }
   }
 
+  useEffect(()=>{
+    if(!open||!draft||pending||!summary.trim())return;
+    const payload=currentPayload();
+    const snapshot=JSON.stringify(payload);
+    if(snapshot===lastSavedSnapshot.current)return;
+    let cancelled=false;
+    const timer=window.setTimeout(async()=>{
+      if(cancelled)return;
+      setAutosaveStatus("saving");setPending(true);
+      try{
+        await projectMutation(
+          `/api/projects/${projectId}/submissions/${draft.id}`,
+          "PATCH",payload,
+        );
+        lastSavedSnapshot.current=snapshot;
+        if(!cancelled)setAutosaveStatus("saved");
+      }catch{
+        if(!cancelled)setAutosaveStatus("failed");
+      }finally{
+        if(!cancelled)setPending(false);
+      }
+    },1800);
+    return ()=>{cancelled=true;window.clearTimeout(timer);};
+  },[open,draft,projectId,summary,sourceUrl,demoUrl,notes,attachments,pending]);
+
   async function submitDraft() {
     if (!draft) return;
     setPending(true);
