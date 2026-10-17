@@ -2,6 +2,7 @@
 
 import {
   type FormEvent,
+  useEffect,
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
@@ -54,6 +55,15 @@ export function FacultyAssessmentEditor({
   const [error, setError] =
     useState<string | null>(null);
 
+  const dirty = title !== assessment.title || description !== (assessment.description ?? "") ||
+    dueAt !== authoringLocalDateTime(assessment.dueAt) ||
+    points !== String(assessment.kind === "ASSIGNMENT" ? (assessment.maxPoints ?? 10) : (assessment.maxAttempts ?? 1));
+  useEffect(() => {
+    if (!open || !dirty) return;
+    const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = ""; };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [open, dirty]);
   const itemPath =
     assessment.kind === "ASSIGNMENT"
       ? `/api/courses/assignments/${assessment.id}`
@@ -209,7 +219,11 @@ export function FacultyAssessmentEditor({
 
       <Drawer
         open={open}
-        onOpenChange={setOpen}
+        onOpenChange={(next) => {
+          if (!next && (saving || deleting)) return;
+          if (!next && dirty && !window.confirm(assessment.kind==="QUIZ"?"Discard quiz changes?":"Discard this assignment draft?")) return;
+          setOpen(next);
+        }}
         title={`Edit ${assessment.kind === "QUIZ" ? "Quiz" : "Assignment"}`}
         description={
           assessment.kind === "QUIZ" &&
