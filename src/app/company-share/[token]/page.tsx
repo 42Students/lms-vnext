@@ -13,13 +13,6 @@ export default async function CompanySharePage({
  const {page,q,access}=await searchParams;
  const proof=(await cookies()).get("company_share_access")?.value??null;
  const result=await getPublicCompanyApplicantShare(token,page??1,"VIEW",q??"",proof);
- if(result.kind!=="READY")return <main className="mx-auto flex min-h-screen max-w-xl flex-col justify-center px-4 py-10">
-  <section role="alert" className="space-y-4 rounded-xl border border-border bg-surface p-6">
-   <h1 className="text-xl font-semibold">This link is not valid any more.</h1>
-   <p className="text-sm text-body">It may have expired or been withdrawn. Please ask the placement cell for a new one.</p>
-   <Link href="/" className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">Home</Link>
-  </section>
- </main>;
  if(result.kind==="CODE_REQUIRED")return <main className="mx-auto flex min-h-screen max-w-xl flex-col justify-center px-4 py-10">
   <section className="space-y-4 rounded-xl border border-border bg-surface p-6">
    <h1 className="text-xl font-semibold">Enter the 6-digit share code</h1>
@@ -37,6 +30,13 @@ export default async function CompanySharePage({
     </button>
    </form>
    <p className="text-xs text-muted-foreground">After ten wrong codes within an hour the share is locked and the placement cell is notified.</p>
+  </section>
+ </main>;
+ if(result.kind!=="READY")return <main className="mx-auto flex min-h-screen max-w-xl flex-col justify-center px-4 py-10">
+  <section role="alert" className="space-y-4 rounded-xl border border-border bg-surface p-6">
+   <h1 className="text-xl font-semibold">This link is not valid any more.</h1>
+   <p className="text-sm text-body">It may have expired or been withdrawn. Please ask the placement cell for a new one.</p>
+   <Link href="/" className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">Home</Link>
   </section>
  </main>;
  const href=(p:number)=>companyShareApplicantHref(token,p,result.search);
