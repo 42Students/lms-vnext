@@ -10,6 +10,7 @@ import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {placementJobIdSchema} from "./validation";
 import {superAdminPublishedDriveEditSchema} from "./super-admin-published-drive-edit-model";
+import {isLegacyAssessmentDeadlineAfterApplication} from "./placement-legacy-posting-model";
 
 /** A published edit changes only public descriptive terms and future application deadline.
  * It does not rewrite historical eligibility snapshots, submitted applications or prior offers.
@@ -31,6 +32,8 @@ export async function editSuperAdminPublishedDrive(context:RequestContext,rawJob
    throw new Error("Drive changed. Reload the current details before saving.");
   const deadline=new Date(cmd.applicationDeadline);
   if(deadline.getTime()<=Date.now())throw new Error("Application deadline must be in the future.");
+  if(!isLegacyAssessmentDeadlineAfterApplication(job.legacyPostingDetails?.assessmentDeadline,deadline))
+   throw new Error("Assessment deadline must be after application deadline.");
   const [season]=await tx.select({status:placementSeasons.status}).from(placementSeasons)
    .where(and(eq(placementSeasons.id,job.seasonId),
     eq(placementSeasons.collegeId,acting.collegeId))).limit(1);

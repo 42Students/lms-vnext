@@ -43,3 +43,13 @@ export function parseLegacyPairs(raw:string,kind:"date"|"rule"){
   return {label,value};
  });
 }
+
+/** Preserve persisted assessment chronology during partial job edits. */
+export function isLegacyAssessmentDeadlineAfterApplication(
+ assessmentDeadline:string|null|undefined, applicationDeadline:Date|null|undefined,
+):boolean {
+ if(!assessmentDeadline)return true;
+ if(!applicationDeadline)return false;
+ const value=Date.parse(assessmentDeadline);
+ return Number.isFinite(value)&&value>applicationDeadline.getTime();
+}
