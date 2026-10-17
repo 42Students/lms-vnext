@@ -41,6 +41,7 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
         <div><dt className="font-semibold">Submission status</dt>
           <dd>{readiness.finalSubmission.latest?.status??"Not submitted"}</dd></div>
       </dl>
+      {readiness.readinessOverride.overriddenBy ? <p className="mt-3 text-xs text-muted-foreground">Overridden by {readiness.readinessOverride.overriddenBy}</p> : null}
       {readiness.readinessOverride.occurredAt?<p className="mt-3 text-xs text-muted-foreground">
         Override recorded {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"})
           .format(readiness.readinessOverride.occurredAt)}
