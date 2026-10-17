@@ -63,7 +63,7 @@ export default async function TpoAccreditationReportPage({
       <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/accreditation" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <PageHeader
         eyebrow="TPO · Reports"
-        title="Accreditation evidence export"
+        title="Accreditation export"
         description="Download a college-scoped working CSV of recorded placement outcomes. This is not a NAAC/NIRF-approved submission template."
         actions={selectedBatch&&studentReport&&studentReport.rows.length>0?
           <a href={"/api/placements/reports?"+query.toString()}
