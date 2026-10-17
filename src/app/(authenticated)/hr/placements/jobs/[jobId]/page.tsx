@@ -411,7 +411,7 @@ export default async function HrPlacementJobPage({
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="m-0 text-lg font-semibold text-foreground">Shared applicants</h2>
             {applicants.rows.some(row=>row.status==="SUBMITTED") ? <Link
-              href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page+"&review=1"}
+              href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page+"&review=1"+returnQuery}
               className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
               Focused review
             </Link> : null}
@@ -449,11 +449,11 @@ export default async function HrPlacementJobPage({
             >
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <h3 id="hr-applicant-drawer-title" className="text-lg font-semibold text-foreground">{focused ? "Focused review" : "Applicant review"}</h3>
-                <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page}
+                <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page+returnQuery}
                   className="rounded-md border border-border px-3 py-2 text-sm text-foreground">Close</Link>
               </div>
               {<RecruiterFocusedReviewShortcuts
-                closeHref={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page}
+                closeHref={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page+returnQuery}
                 previousHref={focusedNavigation?.previous?focusedHref(focusedNavigation.previous):null}
                 nextHref={focusedNavigation?.next?focusedHref(focusedNavigation.next):null}/>}
               {focusedNavigation ? <nav aria-label="Step through shortlisted applicants" className="mt-4 flex flex-wrap items-center gap-3 text-sm">
