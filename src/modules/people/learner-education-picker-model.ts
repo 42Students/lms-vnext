@@ -16,6 +16,7 @@ export const LEARNER_QUALIFYING_EXAMS=[
 export function learnerEducationValidationProblem(input:{
  educationType?:string;institution?:string;gradingType?:string;gradeObtained?:string;
  maxGrade?:string;startYear?:string;endYear?:string;
+ examDetails?:Record<string,string|number|boolean>;
 }):{field:string;message:string}|null{
  const educationType=input.educationType?.trim()??"";
  if(!educationType)return {field:"educationType",message:"Education type is required"};
@@ -25,6 +26,9 @@ export function learnerEducationValidationProblem(input:{
  if(!input.gradingType?.trim())return {field:"gradingType",message:"Grading type is required"};
  if(!input.gradeObtained?.trim())return {field:"gradeObtained",message:"Grade obtained is required"};
  if(!input.maxGrade?.trim())return {field:"maxGrade",message:"Max grade is required for job screening"};
+ const examYear=String(input.examDetails?.passingYear??"").trim();
+ if(examYear && !/^\\d{4}$/.test(examYear))
+  return {field:"examDetails.passingYear",message:"Enter a 4-digit qualifying exam passing year"};
  const start=input.startYear?.trim(),end=input.endYear?.trim();
  if(start&&end&&/^\d{4}$/.test(start)&&/^\d{4}$/.test(end)&&Number(end)<Number(start))
   return {field:"endYear",message:"End year cannot be before start year"};

@@ -458,6 +458,8 @@ export function LearnerProfileWorkspace(props: {
         maxGrade:String(itemDraft.maxGrade??""),
         startYear:String(itemDraft.startYear??""),
         endYear:String(itemDraft.endYear??""),
+        examDetails:(itemDraft.examDetails && typeof itemDraft.examDetails==="object" && !Array.isArray(itemDraft.examDetails))
+          ?itemDraft.examDetails as Record<string,string|number|boolean>:undefined,
       });
       if(issue){setEducationError(issue.message);return;}
       setEducationError(null);
