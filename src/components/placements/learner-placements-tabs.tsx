@@ -15,7 +15,7 @@ export const learnerPlacementsLegacyTabs = [
   { label: "Placement cell", href: "/learn/my-placements/placement" },
 ] as const;
 
-export function LearnerPlacementsTabs() {
+export function LearnerPlacementsTabs({unreadPersonalAlerts=null}:{unreadPersonalAlerts?:number|null}) {
   const pathname = usePathname();
   const router=useRouter();
   const touchStart=useRef<{x:number;y:number}|null>(null);
@@ -53,6 +53,12 @@ export function LearnerPlacementsTabs() {
               }
             >
               {tab.label}
+              {tab.label==="Notices" && unreadPersonalAlerts!==null && unreadPersonalAlerts>0 ? (
+                <span className="ml-1 inline-flex min-w-5 items-center justify-center rounded-full bg-primary-subtle px-1 text-xs tabular-nums text-primary-text"
+                  title="Unread personal placement alerts" aria-label={unreadPersonalAlerts+" unread personal placement alerts"}>
+                  {unreadPersonalAlerts}
+                </span>
+              ) : null}
             </Link>
           );
         })}

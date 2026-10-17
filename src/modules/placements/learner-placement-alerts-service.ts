@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, desc, eq, isNull } from "drizzle-orm";
+import { and, desc, eq, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import { activityEvents, inAppNotifications } from "@/db/schema";
@@ -39,4 +39,20 @@ export async function getOwnLearnerPlacementAlerts(context: RequestContext,raw:u
     .orderBy(desc(inAppNotifications.createdAt), desc(inAppNotifications.id))
     .limit(input.limit);
   return presentOwnLearnerPlacementAlerts(rows);
+}
+
+/** Personal PLACEMENTS notifications only; never conflate with official college notices. */
+export async function getUnreadOwnLearnerPlacementAlertCount(context:RequestContext):Promise<number>{
+ const membership=await requireLearnerPlacementAccess(context);
+ requirePermission(context,"placements.read",{collegeId:membership.collegeId,organizationId:membership.organizationId});
+ const [result]=await getDb().select({count:sql<number>`count(*)::int`})
+  .from(inAppNotifications)
+  .innerJoin(activityEvents,eq(activityEvents.id,inAppNotifications.eventId))
+  .where(and(
+   eq(inAppNotifications.userId,context.user.id),
+   eq(activityEvents.collegeId,membership.collegeId),
+   eq(activityEvents.module,"PLACEMENTS"),
+   isNull(inAppNotifications.readAt),
+  ));
+ return result?.count??0;
 }
