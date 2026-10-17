@@ -50,10 +50,12 @@ export function AdminCourseOverview({
   workspace,
   offeringBasePath,
   allowOfferingLifecycle = false,
+  duplicateCourseId,
 }: {
   workspace: Workspace;
   offeringBasePath: string;
   allowOfferingLifecycle?: boolean;
+  duplicateCourseId?:string;
 }) {
   const deliveryCountByOffering = new Map<
     string,
@@ -135,6 +137,7 @@ export function AdminCourseOverview({
       className: "text-right",
       cell: (course) => (
         <CourseActions
+          duplicateHref={"/college/courses?duplicate="+encodeURIComponent(course.id)}
           course={{
             id: course.id,
             name: course.name,
@@ -427,6 +430,7 @@ export function AdminCourseOverview({
       </div>
 
       <AdminCourseCreatePanel
+        duplicateCourseId={duplicateCourseId}
         departments={workspace.departments}
         periods={workspace.periods}
         cohorts={workspace.cohorts}
