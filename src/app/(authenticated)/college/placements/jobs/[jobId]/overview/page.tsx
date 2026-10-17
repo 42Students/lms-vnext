@@ -23,7 +23,9 @@ export default async function CollegeDriveOverviewPage({ params }: {
   return <div className="space-y-6">
     <PageHeader eyebrow="College Admin · Placements" title={drive.title}
       description={drive.companyName + " · " + drive.seasonName}
-      actions={<div className="flex flex-wrap items-center gap-3"><Link href="/college/placements/drives" className="text-primary-text underline">All drives</Link><CollegeDriveDuplicateAction jobId={jobId}/></div>} />
+      actions={<div className="flex flex-wrap items-center gap-3"><Link href="/college/placements/drives" className="text-primary-text underline">All drives</Link><Link href={`/college/placements/jobs/${jobId}/applications`} className="min-h-10 rounded border border-border px-3 py-2 font-semibold text-primary-text">Applications</Link>
+        <Link href={`/college/placements/jobs/${jobId}/settings`} className="min-h-10 rounded border border-border px-3 py-2 font-semibold text-primary-text">Edit</Link>
+        <CollegeDriveDuplicateAction jobId={jobId}/></div>} />
     <div className="flex flex-wrap gap-3 text-sm text-body">
       <span>Status: {drive.status}</span><span>Type: {drive.employmentType}</span>
       <span>Mode: {drive.workMode}</span><span>Openings: {drive.openings ?? "Not recorded"}</span>

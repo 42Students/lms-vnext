@@ -16,7 +16,7 @@ export function CollegeStudentLifecycleAction({ membershipId, name, status }: {
     if (suspend && reason.trim().length < 3) {
       setError("Suspension reason must be at least 3 characters."); return;
     }
-    if (!window.confirm((suspend ? "Suspend " : "Reactivate ") + name + "?")) return;
+
     start(async () => {
       try {
         const response = await fetch("/api/people/" + encodeURIComponent(membershipId) + "/lifecycle", {
@@ -36,6 +36,7 @@ export function CollegeStudentLifecycleAction({ membershipId, name, status }: {
       {suspend ? "Suspend" : "Reactivate"}
     </button>
     {open && <div className="space-y-2 rounded border border-border bg-surface p-3">
+      <p className="text-xs font-semibold">{suspend?"Suspend ":"Reactivate "}{name}?</p>
       {suspend && <label className="grid gap-1 text-xs">Reason
         <input maxLength={500} value={reason} onChange={event => setReason(event.target.value)}
           className="min-h-9 rounded border border-border px-2" />

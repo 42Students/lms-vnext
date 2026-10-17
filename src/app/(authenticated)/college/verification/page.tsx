@@ -14,7 +14,8 @@ export default async function CollegeVerificationPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }){
  const context=await getCurrentRequestContext();
- if(!context.membership||!hasMembershipRole(context,"COLLEGE_ADMIN"))redirect("/dashboard");
+ if(!context.membership)return <main className="space-y-3 p-6"><h1 className="text-xl font-semibold">Profile verification</h1><p role="alert">Admin not assigned to a college. Ask a Super Admin to assign a college before reviewing students.</p></main>;
+ if(!hasMembershipRole(context,"COLLEGE_ADMIN"))redirect("/dashboard");
  const raw=await searchParams;
  const parsed=parseCollegeVerificationPageQuery(raw);
  if(!parsed.success)return <section className="space-y-3 p-4">

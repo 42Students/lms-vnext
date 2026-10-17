@@ -20,7 +20,7 @@ export function CollegeFacultyLifecycleAction({ membershipId, name, status }: {
       setError("A reason of at least 3 characters is required.");
       return;
     }
-    if (!window.confirm(facultyLifecycleConfirmation(name, action))) return;
+
     setError("");
     start(async () => {
       try {
@@ -51,6 +51,7 @@ export function CollegeFacultyLifecycleAction({ membershipId, name, status }: {
       {action === "DEACTIVATE" ? "Suspend Faculty" : "Reactivate Faculty"}
     </button>
     {editing ? <div className="mt-2 space-y-2 rounded-md border border-border bg-surface p-3">
+      <p className="text-xs font-semibold">{facultyLifecycleConfirmation(name,action)}</p>
       {action === "DEACTIVATE" ? <label className="block text-xs text-body">
         Reason
         <input maxLength={500} value={reason} onChange={e => setReason(e.target.value)}

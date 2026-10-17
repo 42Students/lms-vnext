@@ -53,8 +53,9 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
     <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
       <h2 className="text-lg font-semibold text-foreground">Upload or paste CSV</h2>
       <p className="mt-2 text-sm text-body">
-        Maximum 100 learner rows and 100 KB. Use the exact header order below.
-        Every row must include an E.164 phone number and the registered program/batch UUIDs.
+        Maximum 500 learner rows and 1 MB. Use the exact header order below.
+        Choose a program and batch from the selectors; you do not need to copy their IDs into legacy CSV rows.
+        Indian 10-digit mobile numbers are normalized to +91 for the legacy template.
         The dry run validates format and college ownership; existing identity conflicts are checked during import.
       </p>
       <p className="mt-2 break-all font-mono text-xs text-muted-foreground">{TEMPLATE}</p>
@@ -98,7 +99,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
             const file = event.currentTarget.files?.[0];
             if (!file) return;
             if (file.size > 1000000) { setError("File exceeds 1 MB"); return; }
-            setCsv(await file.text()); setReport(null); setConfirm(false);
+            setCsv(await file.text()); setReport(null); setConfirm(false); setError(null);
           }} />
       </label>
       <label className="mt-4 grid gap-2 text-sm font-semibold text-body">

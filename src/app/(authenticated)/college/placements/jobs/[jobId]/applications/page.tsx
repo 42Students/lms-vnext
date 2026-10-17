@@ -93,11 +93,14 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
       </p>
       <div className="overflow-x-auto rounded-xl border border-border bg-surface">
        <table className="min-w-full text-left text-sm">
-        <thead><tr className="border-b border-border bg-muted"><th className="p-3">Student</th><th className="p-3">Roll</th><th className="p-3">Role</th><th className="p-3">Application</th><th className="p-3">Screening</th></tr></thead>
+        <thead><tr className="border-b border-border bg-muted"><th className="p-3">Student</th><th className="p-3">Email</th><th className="p-3">Roll</th><th className="p-3">Role</th><th className="p-3">Source</th><th className="p-3">Applied (IST)</th><th className="p-3">Application</th><th className="p-3">Screening</th></tr></thead>
         <tbody>{data.items.map(row=><tr key={row.id} className="border-b border-border">
          <td className="p-3">{row.name??"Unnamed learner"}</td>
+         <td className="p-3">{row.email??"Not provided"}</td>
          <td className="p-3">{row.rollNumber??"Not recorded"}</td>
          <td className="p-3">{row.roleTitle}</td>
+         <td className="p-3">{row.source}</td>
+         <td className="p-3">{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(row.submittedAt))}</td>
          <td className="p-3">{row.status}</td>
          <td className="p-3">{row.screening??"Not recorded"}</td>
         </tr>)}</tbody>
