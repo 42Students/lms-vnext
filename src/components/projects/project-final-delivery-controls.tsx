@@ -188,6 +188,8 @@ export function LearnerFinalDeliveryControl({
     return ()=>window.clearTimeout(timer);
   },[open,draft,projectId,summary,sourceUrl,demoUrl,notes,attachments,pending]);
 
+  const unsaved=JSON.stringify(currentPayload())!==lastSavedSnapshot.current;
+
   async function submitDraft() {
     if (!draft) return;
     setPending(true);
