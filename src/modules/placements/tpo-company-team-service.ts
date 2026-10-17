@@ -77,8 +77,14 @@ export async function readTpoCompanyTeam(context:RequestContext,rawCompanyId:unk
  ]);
  const formatter=new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
   dateStyle:"medium",timeStyle:"short"});
+ const dayFormatter=new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
+  weekday:"long",day:"numeric",month:"short"});
+ const dayKeyFormatter=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",
+  year:"numeric",month:"2-digit",day:"2-digit"});
  return {status:"READY" as const,companyName:company.name,messages:latest.slice(0,100).reverse()
    .map(row=>({...row,createdLabel:formatter.format(row.createdAt)+" IST",
+    dayLabel:dayFormatter.format(row.createdAt),dayKey:dayKeyFormatter.format(row.createdAt),
+    askOverdue:row.askStatus==="OPEN"&&Boolean(row.askDueAt&&row.askDueAt.getTime()<Date.now()),
     dueLabel:row.askDueAt?formatter.format(row.askDueAt)+" IST":null})),
   members:team,following:followers.length>0,truncated:latest.length>100};
 }
