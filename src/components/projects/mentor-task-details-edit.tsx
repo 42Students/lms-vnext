@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
+import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 
 type Props={
   projectId:string;taskId:string;title:string;description:string|null;
@@ -41,6 +42,8 @@ export function MentorTaskDetailsEdit(props:Props) {
     priority!==props.priority || taskType!==(props.taskType??"") ||
     estimate!==(props.estimatePoints?.toString()??"") || dueDate!==(props.dueDate??"") ||
     blockerReason.trim()!==(props.blockerReason??"");
+  function discardDraft(){setOpen(false);setConfirmOpen(false);setError(null);}
+  const guard=useProjectEditorDiscardGuard(open||confirmOpen,changed,pending,discardDraft);
   function begin() {
     setTitle(props.title);
     setDescription(props.description??"");
@@ -88,7 +91,7 @@ export function MentorTaskDetailsEdit(props:Props) {
   }
   return <>
     <Button size="sm" variant="secondary" onClick={begin}>Edit task</Button>
-    <Dialog open={open} onOpenChange={setOpen} title="Edit task details"
+    <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}} title="Edit task details"
       description="Change registered task details. Status, assignee and sprint remain unchanged.">
       <form onSubmit={review} className="grid gap-4">
         <label className="grid gap-1 text-xs font-semibold text-body">Title
@@ -138,14 +141,14 @@ export function MentorTaskDetailsEdit(props:Props) {
         </label>
         {error?<p role="alert" className="text-sm font-semibold text-error">{error}</p>:null}
         <div className="flex justify-end gap-2">
-          <Button type="button" variant="secondary" onClick={()=>setOpen(false)}>Cancel</Button>
+          <Button type="button" variant="secondary" onClick={guard.requestClose}>Cancel</Button>
           <Button type="submit" disabled={!changed||!title.trim()||!estimateValid}>
             Review changes
           </Button>
         </div>
       </form>
     </Dialog>
-    <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
+    <ConfirmDialog open={confirmOpen} onOpenChange={next=>{setConfirmOpen(next);if(!next&&!pending)setOpen(true);}}
       title="Confirm task changes?"
       description="Updated details will be visible to the assigned project team."
       confirmLabel="Save changes" confirmVariant="primary"
@@ -162,5 +165,9 @@ export function MentorTaskDetailsEdit(props:Props) {
       </dl>
       {error?<p role="alert" className="mt-3 text-sm text-error">{error}</p>:null}
     </ConfirmDialog>
+    <ConfirmDialog open={guard.discardOpen} onOpenChange={guard.setDiscardOpen}
+      title="Discard task changes?"
+      description="You have unsaved project changes. Leave this page and discard them?"
+      confirmLabel="Discard changes" pending={pending} onConfirm={guard.confirmDiscard}/>
   </>;
 }
