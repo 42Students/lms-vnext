@@ -434,7 +434,7 @@ export default async function TpoMessagesPage({
                     <td className="px-4 py-4 text-body">
                       {isRecruiterInbox ? <Link className="font-semibold text-primary-text hover:underline"
                         href={"/tpo/messages/" + encodeURIComponent(item.id)}>{item.subject} →</Link> : item.subject}
-                       {item.lastPreview?<p className="mt-1 max-w-sm truncate text-xs text-muted-foreground">{item.lastPreview}</p>:null}
+                       {(query.q.trim()?item.searchSnippet??item.lastPreview:item.lastPreview)?<p className="mt-1 max-w-sm truncate text-xs text-muted-foreground">{query.q.trim()?item.searchSnippet??item.lastPreview:item.lastPreview}</p>:null}
                     </td>
 
                     <td className="px-4 py-4">
