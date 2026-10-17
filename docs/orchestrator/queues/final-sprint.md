@@ -69,23 +69,41 @@ Each lane owns a non-overlapping list. For every ID: if OPEN, implement it (exac
 - TPO-recruiters-33 [FIXED-ON-MAIN] tpo/recruiters
 - TPO-recruiters-37 [FIXED-ON-MAIN] tpo/recruiters
 
+
+### chat-4 source closeout (18/18; branch chatgpt/chat-4-b)
+
+All 18 `TPO-recruiters` IDs above have ID-named cases in
+`tests/unit/chat4-final-sprint-tpo-recruiters-a.test.ts` (9) and
+`tests/unit/chat4-final-sprint-tpo-recruiters-b.test.ts` (9), plus individual
+`DONE` records and owner decisions in
+`docs/audit/acceptance/tpo-recruiters-verification.md`.
+The final sprint commits cite each five-item batch. The deliberate safer
+differences are recorded for manual-only board changes, explicit actions
+instead of a hidden More menu, direct non-mutating duplicate navigation,
+and refusal to infer verification from invitation history.
+Functional draft navigation and keyboard Escape/focus gaps were also repaired.
+Source contracts were checked against the branch (107 literal source assertions);
+the test suite, typecheck, database integrations, and browser accessibility
+were **not run**. Acceptance therefore means source-verified, not CI-green.
+No page UI/UX restyling was introduced.
+
 ## chat-5 (15)
 
-- FAC-courses-02 [FIXED-ON-MAIN] faculty/courses
-- FAC-courses-07 [FIXED-ON-MAIN] faculty/courses
-- FAC-courses-10 [FIXED-ON-MAIN] faculty/courses
-- FAC-courses-17 [WRONG] faculty/courses
-- FAC-courses-28 [WRONG] faculty/courses
-- FAC-courses-30 [FIXED-ON-MAIN] faculty/courses
-- FAC-courses-32 [FIXED-ON-MAIN] faculty/courses
-- FAC-courses-33 [FIXED-ON-MAIN] faculty/courses
-- FAC-courses-35 [FIXED-ON-MAIN] faculty/courses
-- FAC-courses-R03 [FIXED-ON-MAIN] faculty/courses
-- FAC-courses-R04 [FIXED-ON-MAIN] faculty/courses
-- FAC-courses-R05 [OPEN] faculty/courses
-- FAC-courses-R06 [OPEN] faculty/courses
-- FAC-courses-R07 [FIXED-ON-MAIN] faculty/courses
-- FAC-courses-R08 [FIXED-ON-MAIN] faculty/courses
+- FAC-courses-02 [OPEN] faculty/courses
+- FAC-courses-07 [OPEN] faculty/courses
+- FAC-courses-10 [DONE] faculty/courses
+- FAC-courses-17 [NOT-A-GAP] faculty/courses
+- FAC-courses-28 [NOT-A-GAP] faculty/courses
+- FAC-courses-30 [DONE] faculty/courses
+- FAC-courses-32 [DONE] faculty/courses
+- FAC-courses-33 [DONE] faculty/courses
+- FAC-courses-35 [DONE] faculty/courses
+- FAC-courses-R03 [DONE] faculty/courses
+- FAC-courses-R04 [DONE] faculty/courses
+- FAC-courses-R05 [DONE] faculty/courses
+- FAC-courses-R06 [DONE] faculty/courses
+- FAC-courses-R07 [DONE] faculty/courses
+- FAC-courses-R08 [DONE] faculty/courses
 
 ## chat-6 (11)
 
@@ -145,17 +163,19 @@ Each lane owns a non-overlapping list. For every ID: if OPEN, implement it (exac
 
 ## chat-12 (11)
 
-- LEARNER-home-courses-01 [UNCONFIRMED] learner/home-courses
-- LEARNER-home-courses-02 [OPEN] learner/home-courses
-- LEARNER-home-courses-14 [UNCONFIRMED] learner/home-courses
-- LEARNER-course-detail-R02 [FIXED-ON-MAIN] learner/home-courses
-- LEARNER-course-detail-R03 [OPEN] learner/home-courses
-- FAC-attendance-grades-18 [OPEN] faculty/attendance-grades
-- FAC-attendance-grades-19 [OPEN] faculty/attendance-grades
-- FAC-attendance-grades-22 [OPEN] faculty/attendance-grades
-- MEN-projects-meetings-20 [FIXED-ON-MAIN] mentor/projects-meetings
-- MEN-projects-meetings-48 [FIXED-ON-MAIN] mentor/projects-meetings
-- TPO-drive-workspace-66 [OPEN] tpo/drive-workspace
+- LEARNER-home-courses-01 [NOT-A-GAP] learner/home-courses
+- LEARNER-home-courses-02 [DONE] learner/home-courses
+- LEARNER-home-courses-14 [DONE] learner/home-courses
+- LEARNER-course-detail-R02 [DONE] learner/home-courses
+- LEARNER-course-detail-R03 [DONE] learner/home-courses
+- FAC-attendance-grades-18 [NOT-A-GAP] faculty/attendance-grades
+- FAC-attendance-grades-19 [DONE] faculty/attendance-grades
+- FAC-attendance-grades-22 [DONE] faculty/attendance-grades
+- MEN-projects-meetings-20 [DONE] mentor/projects-meetings
+- MEN-projects-meetings-48 [DONE] mentor/projects-meetings
+- TPO-drive-workspace-66 [DONE] tpo/drive-workspace
+
+> chat-12 verified-closure evidence: named final-sprint tests under `tests/unit/chat12-final-*` and per-page acceptance documents for learner/home-courses, faculty/attendance-grades, mentor/projects-meetings and tpo/drive-workspace. Tests authored, not executed; orchestrator runtime verification pending.
 
 ## chat-13 (11)
 
@@ -211,7 +231,3 @@ Each lane owns a non-overlapping list. For every ID: if OPEN, implement it (exac
 - SA-tenants-modules-29 [FIXED-ON-MAIN] superadmin/tenants-modules-2
 - SA-tenants-modules-35 [FIXED-ON-MAIN] superadmin/tenants-modules-2
 
-
-### chat-14 final sprint acceptance (2026-10-18)
-
-All eleven IDs above have a `[chat-14]` gap-ID-tagged commit, named unit test under `tests/unit/chat14-final-*.test.ts` and a claim-specific acceptance note under `docs/audit/acceptance/`. TPO-drives-31 requires registration of `docs/proposed-migrations/tpo-outside-drive-participants.sql` to enable participant writes. Tests and the migration have not been executed by this lane. The chat-14 final statuses are code and audit decisions, not a claim that production migrations/providers are running.

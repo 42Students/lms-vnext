@@ -14,7 +14,7 @@ import { trackerReportSchema } from "@/modules/bug-tracker/report-input-model";
 const field = "mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground";
 const label = "block text-sm font-semibold text-body";
 
-export function TrackerReportForm({contextPrefill="",canSearchSimilar=true}:{contextPrefill?:string;canSearchSimilar?:boolean}={}) {
+export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,knownErrorId}:{contextPrefill?:string;canSearchSimilar?:boolean;knownErrorId?:string}={}) {
   const initial={reporterName:"",accountRole:"",environment:"",page:"",screen:"",section:"",issueType:"",severity:"NOT_SURE",description:contextPrefill?"\n\nCaptured context:\n"+contextPrefill:"",evidenceLink:""};
   const {draft,setDraft,restored,dirty,clearDraft}=useFormDraft("tracker-issue-report",initial);
   const {page,screen}=draft;
@@ -22,6 +22,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true}:{con
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
   const [created, setCreated] = useState("");
+  const [linkIssueError,setLinkIssueError]=useState("");
   const [similarQuery,setSimilarQuery]=useState("");
   const [similarResults,setSimilarResults]=useState<{publicId:string;description:string;status:string}[]>([]);
   const [similarLoading,setSimilarLoading]=useState(false);
@@ -29,6 +30,22 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true}:{con
   const [similarSearched,setSimilarSearched]=useState(false);
   const selectedPage = LOCATION_OPTIONS.find(item => item.value === page);
   const selectedScreen = selectedPage?.children?.find(item => item.value === screen);
+
+  /** A linked issue is never lost if the second authorized write fails. */
+  async function linkCreatedIssue(publicId:string){
+    if(!knownErrorId)return true;
+    try{
+      await apiFetch("/api/tracker/logs/known-errors/"+encodeURIComponent(knownErrorId),{
+        method:"PATCH",headers:{"content-type":"application/json"},
+        body:JSON.stringify({action:"LINK_ISSUE",issuePublicId:publicId}),
+      });
+      setLinkIssueError("");
+      return true;
+    }catch{
+      setLinkIssueError("Issue created, but its Known Error link was not saved. Use Retry linking to reconnect it.");
+      return false;
+    }
+  }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -60,6 +77,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true}:{con
       });
       clearDraft();
       setCreated(payload.issue.publicId);
+      await linkCreatedIssue(payload.issue.publicId);
     } catch (caught) {
       setError(caught instanceof FriendlyFetchError ? caught.message : friendlyApiError({}));
     } finally {
@@ -93,6 +111,11 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true}:{con
       <p className="text-sm font-semibold text-success">Issue reported</p>
       <h2 className="text-xl font-semibold">{created}</h2>
       <p className="text-sm text-body">The issue is saved. You can continue testing immediately.</p>
+      {linkIssueError?<p role="alert" className="text-sm text-body">{linkIssueError}</p>:null}
+      {knownErrorId&&linkIssueError?<button type="button"
+        className="min-h-10 rounded border border-border px-4 text-sm font-semibold"
+        onClick={()=>void linkCreatedIssue(created)}>Retry linking Known Error</button>:null}
+
       <div className="flex flex-wrap gap-3">
         <Link className="rounded-md border border-border px-4 py-2 text-sm font-semibold" href={(canSearchSimilar?"/tracker/issues/":"/tracker/mine/") + encodeURIComponent(created)}>View issue</Link>
         <button className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"

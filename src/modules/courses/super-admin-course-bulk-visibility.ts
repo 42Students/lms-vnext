@@ -1,0 +1,57 @@
+import "server-only";
+import {and,eq,inArray} from "drizzle-orm";
+import {z} from "zod";
+import {getDb} from "@/db/client";
+import {courseLessons,courseLearningPaths,courseOfferings,courses,departments} from "@/db/schema";
+import type {RequestContext} from "@/modules/identity/context";
+import {resolveActingCollege} from "@/modules/permissions/acting-college";
+import {bulkSuperAdminLessonVisibility} from "./super-admin-lesson-bulk-visibility";
+
+export const superAdminCourseBulkSchema=z.strictObject({
+ courseIds:z.array(z.uuid()).min(1).max(25).refine(ids=>new Set(ids).size===ids.length),
+ visibleToStudents:z.boolean(),
+ confirmed:z.literal(true),
+});
+
+/** SA-academics-people-52, SA-academics-people-53: fan out to the already audited
+ * tenant-scoped lesson content visibility CAS path, never archive courses to hide them.
+ * Unpublished and archived items keep their own status. */
+export async function bulkSuperAdminCourseVisibility(context:RequestContext,raw:unknown){
+ const input=superAdminCourseBulkSchema.parse(raw);
+ const acting=await resolveActingCollege(context,"courses.manage");
+ const selected=await getDb().select({id:courses.id}).from(courses)
+  .innerJoin(departments,eq(departments.id,courses.departmentId))
+  .where(and(inArray(courses.id,input.courseIds),eq(departments.collegeId,acting.collegeId),
+   eq(courses.status,"ACTIVE")));
+ if(selected.length!==input.courseIds.length)throw new Error("COURSE_SCOPE_OR_STATE_INVALID");
+ const lessons=await getDb().select({id:courseLessons.id,courseId:courses.id})
+  .from(courseLessons)
+  .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+  .innerJoin(courseOfferings,eq(courseOfferings.id,courseLearningPaths.offeringId))
+  .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
+  .innerJoin(departments,eq(departments.id,courses.departmentId))
+  .where(and(inArray(courses.id,input.courseIds),eq(departments.collegeId,acting.collegeId),
+   eq(courses.status,"ACTIVE"),eq(courseOfferings.status,"ACTIVE"),
+   eq(courseLessons.status,"ACTIVE")))
+  .limit(501);
+ if(lessons.length>500)throw new Error("COURSE_VISIBILITY_BULK_TOO_LARGE");
+ const ids=[...new Set(lessons.map(row=>row.id))];
+ const failures:{id:string;reason:string}[]=[];
+ let matchedContents=0,changed=0,unchanged=0;
+ for(let i=0;i<ids.length;i+=25){
+  const slice=ids.slice(i,i+25);
+  try{
+   const report=await bulkSuperAdminLessonVisibility(context,{
+    lessonIds:slice,visibleToStudents:input.visibleToStudents,confirmed:true,
+   });
+   matchedContents+=report.matchedContents;
+   changed+=report.changed;unchanged+=report.unchanged;
+   failures.push(...report.failures);
+  }catch(error){
+   const reason=error instanceof Error?error.message:"BULK_VISIBILITY_FAILED";
+   for(const id of slice)failures.push({id,reason});
+  }
+ }
+ return {selectedCourses:selected.length,matchedLessons:ids.length,
+  matchedContents,changed,unchanged,failures};
+}

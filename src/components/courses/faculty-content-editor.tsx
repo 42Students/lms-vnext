@@ -30,7 +30,7 @@ export function FacultyContentEditor({ item }: { item: Item }) {
   const [title, setTitle] = useState(item.title);
   const [notes, setNotes] = useState(item.notes ?? "");
   const [url, setUrl] = useState(item.externalUrl ?? "");
-  const [duration, setDuration] = useState(String(item.durationSeconds ?? 300));
+  const [duration, setDuration] = useState(String(item.durationSeconds ?? ""));
   const [points,setPoints]=useState(String(item.points));
   const [starts, setStarts] = useState(authoringLocalDateTime(item.startsAt));
   const [ends, setEnds] = useState(authoringLocalDateTime(item.endsAt));
@@ -49,7 +49,7 @@ export function FacultyContentEditor({ item }: { item: Item }) {
     setTitle(item.title);
     setNotes(item.notes ?? "");
     setUrl(item.externalUrl ?? "");
-    setDuration(String(item.durationSeconds ?? 300));
+    setDuration(String(item.durationSeconds ?? ""));
     setPoints(String(item.points));
     setStarts(authoringLocalDateTime(item.startsAt));
     setEnds(authoringLocalDateTime(item.endsAt));
@@ -137,7 +137,7 @@ export function FacultyContentEditor({ item }: { item: Item }) {
           </label>:null}
           {item.contentType === "YOUTUBE" ? (
             <label className="block text-sm font-semibold text-body">
-              Duration (seconds)
+              Actual video duration (seconds)
               <Input className="mt-1.5" type="number" min={1} max={86400} value={duration}
                 onChange={(event) => setDuration(event.target.value)} required />
             </label>

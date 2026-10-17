@@ -43,3 +43,9 @@ These named regression tests check *existing pieces* of the legacy audit only. A
 | ID | Status | Evidence |
 | --- | --- | --- |
 | COL-attendance-09 | PARTIAL (data fix committed; runtime unverified) | `src/modules/attendance/admin-service.ts` now includes ended course deliveries and projects `isPast` from actual endedAt, ordered current first; `src/components/attendance/admin-attendance-workspace.tsx` appends `· past` only for ended deliveries and continues to pass the exact deliveryId. `tests/unit/college-attendance-gap-closure.test.ts` named `COL-attendance-09 past-term options use persisted ended-at facts, active first and delivery-specific selection`. Archived courses/sections still excluded by existing ACTIVE predicates; full historic roster parity is not claimed. |
+
+## Chat-3 round 14 — COL-attendance-09 decided as persisted-term behavior
+
+| ID | Disposition | Evidence |
+| --- | --- | --- |
+| COL-attendance-09 | DONE (source; runtime pending) | Authoritative academic-period `endDate` and delivery `endedAt` determine `isPast` in IST, current first. The dropdown includes `academicPeriodName` and appends `· past`, keeping repeated offerings unambiguous while preserving exact delivery-ID selection; no guessed semester is manufactured. `tests/unit/college-attendance-gap-closure.test.ts`. Archived offerings without a currently accessible historical delivery remain separate report parity work. |

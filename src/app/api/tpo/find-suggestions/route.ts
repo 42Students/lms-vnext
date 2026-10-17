@@ -28,8 +28,8 @@ export async function GET(request:NextRequest){
   const matches=(...parts:(string|null|undefined)[])=>parts.some(value=>value?.toLocaleLowerCase().includes(term));
   const results=[
    ...people.students.slice(0,5).map(person=>({
-    group:"Students",label:person.name??"Student",
-    href:"/tpo/students?q="+encodeURIComponent(person.name??"")+"&student="+encodeURIComponent(person.id),
+    group:"Students",label:[person.name??"Student",person.rollNumber,person.branch].filter(Boolean).join(" · "),
+    href:"/tpo/students?q="+encodeURIComponent(person.rollNumber??person.name??"")+"&student="+encodeURIComponent(person.id),
    })),
    ...people.recruiters.slice(0,5).map(person=>({
     group:"Recruiter Leads",label:person.name,href:"/tpo/recruiters/"+encodeURIComponent(person.id),

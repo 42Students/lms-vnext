@@ -226,3 +226,12 @@ These 24 formerly `FIXED-ON-MAIN` rows already have named ID regression tests an
 | TPO-drive-workspace-26 | OPEN (additional delegated decision) | If users need a short Undo window before notification, use a durable delayed outbox and exact-version reversal. Never claim a 30-second hold while a learner can already receive the notice. `tests/unit/chat5-queue-unconfirmed-decisions.test.ts` — `TPO-drive-workspace-26`. Tests authored, CI pending. |
 
 | TPO-drive-workspace-38 | OPEN (additional delegated decision) | Combine mandatory schedule fields with persisted round plan, warn from the server on blocked dates, and refuse editing kind after attendance/results exist; do not assume client calendars are authoritative. `tests/unit/chat5-queue-unconfirmed-decisions.test.ts` — `TPO-drive-workspace-38`. Tests authored, CI pending. |
+
+
+## Final sprint — chat-12
+
+| ID | Status | Evidence |
+|---|---|---|
+| TPO-drive-workspace-66 | DONE (code authored; browser acceptance pending) | Company-sharing expiry (one to seven days) is remembered across visits per persisted college/company relationship. Only this bounded preference enters browser storage, never applicant details, recipients, share tokens or URLs. Uses `useSyncExternalStore` with safe SSR default and storage-failure fallback; no storage mutation during render. Files: `src/modules/placements/company-share/remembered-settings-model.ts`, `tpo-shareable-shortlist-service.ts` (authorized company scope), `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/{page,company-share-controls}.tsx`. `tests/unit/chat12-final-company-share-66.test.ts`: six `TPO-drive-workspace-66` tests for scope isolation, lifetime validation, hydration and secret exclusion. |
+
+Tests authored, not executed; browser/TypeScript/integration acceptance remains required.

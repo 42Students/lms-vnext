@@ -13,6 +13,9 @@ const MESSAGES:Record<string,string>={
  ANNOUNCEMENTS_NOT_REGISTERED:"Announcements are temporarily unavailable until their storage is ready.",
  TARGETED_NOTICES_NOT_REGISTERED:"Targeted announcements are not ready. Choose the whole college instead.",
  TPO_NOTICE_NO_RECIPIENTS:"Nobody currently matches this audience. Choose another audience.",
+ NO_RECIPIENTS:"Nobody currently matches this audience. Choose another audience.",
+ AUDIENCE_LOCKED:"Only future scheduled announcements can change their audience before delivery. Your other edits were not saved.",
+
 };
 export function tpoNoticeFormErrorMessage(value:string|undefined|null):string|null{
  return value&&Object.prototype.hasOwnProperty.call(MESSAGES,value)?MESSAGES[value]:null;

@@ -24,6 +24,7 @@ export * from "./placement-company-identities";
 export * from "./activity";
 
 export * from "./attendance";
+export * from "./attendance-parent-sms";
 
 export * from "./discussions";
 
