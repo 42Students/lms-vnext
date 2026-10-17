@@ -54,7 +54,12 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
   try{
    const response=await fetch(path,{method,headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
    const data=await response.json().catch(()=>null);
-   if(!response.ok)throw new Error(typeof data?.error==="string"?data.error:"Could not update assignment.");
+   if(!response.ok)throw new Error(
+     data?.error==="ASSIGNMENT_HAS_SUBMISSIONS"?
+      "Students have submitted this assignment. Refresh; editing is no longer allowed.":
+     data?.error==="FACULTY_ASSIGNMENT_STALE_VERSION"?
+      "Another author edited the assignment. Close this form and reopen it before saving.":
+     typeof data?.error==="string"?data.error:"Could not update assignment.");
    setEditing(false);setNotice(action==="SAVE"?"Assignment updated.":action==="ARCHIVE"?
     "Assignment deleted.":"Assignment published.");
    router.refresh();
