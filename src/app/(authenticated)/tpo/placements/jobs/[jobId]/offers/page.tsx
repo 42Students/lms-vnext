@@ -49,7 +49,7 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
      <option value="ALL">All kinds</option><option value="OFFER">Offer</option><option value="LOI">Letter of intent</option>
     </select>
    </label>
-   <label className="grid flex-1 gap-1 text-sm font-semibold text-body">Search learner or role
+   <label className="grid flex-1 gap-1 text-sm font-semibold text-body">Search learner, roll, batch, branch or role
     <input type="search" name="q" maxLength={100} defaultValue={searchQuery} placeholder="Name or offer role" className="min-h-11 w-full min-w-0 rounded-md border border-border bg-surface px-3 text-foreground"/>
    </label><button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Search</button>
    {searchQuery||parsed.data.joining!=="ALL"||parsed.data.kind!=="ALL"?<Link href={root+"/offers?status="+data.status} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Clear filters</Link>:null}
@@ -57,7 +57,7 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
   <p role="status" className="text-sm text-body">Showing {data.totalMatching===0?0:(data.page-1)*data.pageSize+1}–{Math.min(data.totalMatching,data.page*data.pageSize)} of {data.totalMatching} matching offer versions. Page {data.page} of {data.totalPages}.</p>
   {data.rows.length===0?<p role="status" className="rounded border border-border p-5 text-sm">No offers match this filter.</p>:
    <section aria-label="Recorded offers" className="grid gap-3">{data.rows.map(row=><article key={row.id} className="rounded-xl border border-border bg-surface p-4">
-    <div className="flex flex-wrap justify-between gap-3"><div><h2 className="font-semibold text-foreground">{row.name}</h2><p className="text-sm text-body">{row.role} · {row.kind==="LOI"?"Letter of intent":"Offer"} · {row.annualCtcInr==null?"Pay not recorded":"₹"+(row.annualCtcInr/100000).toLocaleString("en-IN")+" LPA"}</p></div><strong className="text-sm">{row.status}</strong></div>
+    <div className="flex flex-wrap justify-between gap-3"><div><h2 className="font-semibold text-foreground">{row.name}</h2><p className="text-sm text-body">{row.role} · {row.kind==="LOI"?"Letter of intent":"Offer"} · {row.annualCtcInr==null?"Pay not recorded":"₹"+(row.annualCtcInr/100000).toLocaleString("en-IN")+" LPA"}</p><p className="mt-1 text-xs text-body">Roll: {row.rollNumber??"Not recorded"} · Batch: {row.batch??"Not recorded"} · Branch: {row.branch??"Not recorded"}</p></div><strong className="text-sm">{row.status}</strong></div>
     <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-3"><div><dt>Issued</dt><dd><time dateTime={row.issued}>{formatIst(row.issued)}</time></dd></div><div><dt>Responded</dt><dd>{row.responded?<time dateTime={row.responded}>{formatIst(row.responded)}</time>:"Not recorded"}</dd></div><div><dt>Joining</dt><dd>{row.joining??"Not applicable"}</dd></div>
     <div><dt>Offer expiry</dt><dd>{row.expires?<time dateTime={row.expires}>{formatIst(row.expires)}</time>:"Not recorded"}</dd></div><div><dt>Respond by</dt><dd>{row.respondByHours===null?"Not applicable":row.respondByHours===0?"Time is up":row.respondByHours+" h left"}</dd></div>
     <div><dt>Email</dt><dd>{row.email??"Not recorded"}</dd></div>
