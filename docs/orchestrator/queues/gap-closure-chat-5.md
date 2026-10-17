@@ -109,7 +109,7 @@ Audit: `docs/audit/pages/tpo/batches.md` (and `batches-review.md` if present; an
 | TPO-batches-42 | S2 | SIDE-EFFECT | DONE |
 | TPO-batches-44 | S2 | MISSING-ACTION | OPEN |
 | TPO-batches-45 | S2 | MISSING-EXPORT | OPEN |
-| TPO-batches-53 | S2 | MISSING-TAB | OPEN |
+| TPO-batches-53 | S2 | MISSING-TAB | DONE |
 | TPO-batches-54 | S2 | SIDE-EFFECT | OPEN |
 | TPO-batches-58 | S2 | MISSING-FIELD | DONE |
 | TPO-batches-59 | S2 | MISSING-FIELD | DONE |
