@@ -52,6 +52,8 @@ export function MentorBoardTaskDetailDialog({projectId,task,sprintTitle,members,
   </dl>
   <section className="mt-4"><h3 className="font-semibold">Description / Approach</h3>
     <p className="mt-1 whitespace-pre-wrap text-sm">{task.description||"No description recorded"}</p></section>
+  <section className="mt-4"><h3 className="font-semibold">Approach</h3>
+    <p className="mt-1 whitespace-pre-wrap text-sm">{task.approach||"No approach recorded"}</p></section>
   <section className="mt-4"><h3 className="font-semibold">Done when</h3>
     <p className="mt-1 whitespace-pre-wrap text-sm">{task.acceptanceCriteria||"No criteria recorded"}</p></section>
   {task.blockerReason||task.status==="BLOCKED"?
