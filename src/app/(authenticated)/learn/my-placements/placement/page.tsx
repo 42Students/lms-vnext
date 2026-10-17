@@ -3,6 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerPlacementOffers } from "@/components/placements/learner-placement-offers";
 import { LearnerPlacementAlerts } from "@/components/placements/learner-placement-alerts";
 import { LearnerPlacementRequests } from "@/components/placements/learner-placement-requests";
+import {LearnerGeneralRequests} from "@/components/placements/learner-general-requests";
 import { LearnerPlacementRegistration } from "@/components/placements/learner-placement-registration";
 import { getOwnLearnerRegistration } from "@/modules/placements/learner-registration-read-service";
 import { listOwnPlacementOffers } from "@/modules/placements/offer-service";
@@ -29,7 +30,7 @@ export default async function LearnerPlacementCellPage() {
       </section>
       <section className="rounded-xl border border-border bg-surface p-5">
         <h2 className="m-0 text-base font-semibold text-foreground">Need help with a placement decision?</h2>
-        <p className="mt-2 text-sm leading-6 text-body">Use the request actions below for application withdrawal, round rescheduling or offer-extension requests. Your placement team owns the final decision.</p>
+        <p className="mt-2 text-sm leading-6 text-body">Use the request actions below for application withdrawal, round rescheduling, offer extensions, registration changes, off-campus offers, corrections, absence disputes or placement after placement. Your placement team owns the final decision.</p>
         <Link href="/learn/my-placements/support" className="mt-3 mr-4 inline-flex text-sm font-semibold text-primary-text">My support-request history →</Link>
         <Link href="/learn/my-placements/rules?from=cell" className="mt-3 inline-flex text-sm font-semibold text-primary-text">Read placement rules →</Link>
       </section>
@@ -69,6 +70,7 @@ export default async function LearnerPlacementCellPage() {
         rounds={requestWorkspace.rounds.map((row) => ({ applicationId: row.applicationId, roundId: row.roundId, roundName: row.roundName, sequence: row.sequence, roleTitle: row.roleTitle, companyName: row.companyName, scheduledAt: row.scheduledAt?.toISOString() ?? null, timezone: row.timezone, mode: row.mode, venue: row.venue, meetingUrl: row.meetingUrl, exception: row.exception ? { scheduledAt: row.exception.scheduledAt.toISOString(), timezone: row.exception.timezone, mode: row.exception.mode, venue: row.exception.venue, meetingUrl: row.exception.meetingUrl } : null }))}
         offers={requestWorkspace.offers.map((row) => ({ ...row, expiresAt: row.expiresAt?.toISOString() ?? null }))}
       /> : null}
+        <LearnerGeneralRequests />
       </section>
       <section id="rules" className="scroll-mt-24 rounded-xl border border-border bg-surface p-5">
         <h2 className="font-semibold text-foreground">Placement rules</h2>
