@@ -60,10 +60,10 @@ export const TPO_DRIVE_OFFERS_CSV_LIMIT=5000;
 /** Same persisted fact selector as the TPO register; all untrusted cells formula-neutralized. */
 export function tpoDriveOfferRegisterCsv(
  facts:readonly OfferRegisterFact[],
- filters:Pick<z.infer<typeof offerRegisterQuery>,"status"|"q"|"joining"|"kind"|"expiry">,
+ filters:Pick<z.infer<typeof offerRegisterQuery>,"status"|"q"|"joining"|"kind"|"expiry"|"minCtcLpa"|"maxCtcLpa">,
 ){
  const asOf=new Date();
- const matches=selectOfferRegisterFacts(facts,filters.status,filters.q,filters.joining,filters.kind,filters.expiry,asOf);
+ const matches=selectOfferRegisterFacts(facts,filters.status,filters.q,filters.joining,filters.kind,filters.expiry,asOf,filters.minCtcLpa,filters.maxCtcLpa);
  const csvDate=(date:Date|null|undefined)=>date?
   new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(date)+" IST":"Not recorded";
  const rows:(string|number|null)[][]=matches.slice(0,TPO_DRIVE_OFFERS_CSV_LIMIT).map(f=>[
