@@ -4,6 +4,9 @@ export const mentorDeliveryVersionParamsSchema=z.object({
 }).strict();
 export type MentorDeliveryVersion={
   id:string;version:number;status:string;submittedAt:Date|null;
+  createdAt?:Date;submittedByMembershipId?:string|null;createdByMembershipId?:string;
+  summary?:string;notes?:string|null;sourceUrl?:string|null;demoUrl?:string|null;
+  attachments?:unknown[];lockedAt?:Date|null;reopenedAt?:Date|null;
   decision:string|null;reviewedAt:Date|null;feedback:string|null;
 };
 export function mentorDeliveryVersionDisplay(record:MentorDeliveryVersion){
