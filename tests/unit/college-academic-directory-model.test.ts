@@ -8,6 +8,9 @@ import {
   collegeSemesterDirectorySchema,
 } from "@/modules/academics/college-academic-directory-model";
 
+
+const sem = (query: Record<string, unknown>) => collegeSemesterDirectorySchema.parse(query);
+const batch = (query: Record<string, unknown>) => collegeBatchDirectorySchema.parse(query);
 describe("College Admin semester and batch read models", () => {
   it("accepts only bounded, college-independent semester queries", () => {
     expect(collegeSemesterDirectorySchema.parse({})).toEqual({
@@ -64,28 +67,28 @@ describe("College Admin semester and batch read models", () => {
   });
 
   it("constructs fixed paths with percent-encoded filters and bounded pages", () => {
-    const semesters = new URL(academicDirectoryHref("SEMESTERS", {
+    const semesters = new URL(academicDirectoryHref("SEMESTERS", sem({
       q: "a & b", status: "ACTIVE", page: 2,
-    }), "https://example.test");
+    })), "https://example.test");
     expect(semesters.pathname).toBe("/college/semesters");
     expect(semesters.searchParams.get("q")).toBe("a & b");
-    const term = new URL(academicDirectoryHref("SEMESTERS", {
+    const term = new URL(academicDirectoryHref("SEMESTERS", sem({
       q: "", status: "ALL", page: 1, termNumber: 6,
-    }), "https://example.test");
+    })), "https://example.test");
     expect(term.searchParams.get("termNumber")).toBe("6");
-    expect(academicDirectoryHref("SEMESTERS",{q:"",status:"ALL",page:1,minimumCredits:18}))
+    expect(academicDirectoryHref("SEMESTERS", sem({q:"",status:"ALL",page:1,minimumCredits:18})))
       .toContain("minimumCredits=18");
     expect(academicDirectorySearchParams({minimumCredits:""})).toEqual({});
-    expect(academicDirectoryHref("SEMESTERS",{q:"",status:"ALL",page:1,maximumCredits:20})).toContain("maximumCredits=20");
+    expect(academicDirectoryHref("SEMESTERS", sem({q:"",status:"ALL",page:1,maximumCredits:20}))).toContain("maximumCredits=20");
     expect(academicDirectorySearchParams({maximumCredits:""})).toEqual({});
     expect(semesters.searchParams.has("collegeId")).toBe(false);
-    expect(academicDirectoryHref("BATCHES", {
+    expect(academicDirectoryHref("BATCHES", batch({
       q: "", status: "ALL", page: 1,
-    })).toBe("/college/batches");
-    expect(academicDirectoryHref("BATCHES", {
+    }))).toBe("/college/batches");
+    expect(academicDirectoryHref("BATCHES", batch({
       q: "", status: "ALL", page: 2, yearStart: 2026,
-    })).toContain("yearStart=2026");
-    expect(academicDirectoryHref("BATCHES",{q:"",status:"ALL",page:1,currentTerm:3}))
+    }))).toContain("yearStart=2026");
+    expect(academicDirectoryHref("BATCHES", batch({q:"",status:"ALL",page:1,currentTerm:3})))
       .toContain("currentTerm=3");
     expect(academicDirectorySearchParams({currentTerm:""})).toEqual({});
     expect(academicDirectoryPageCount(0)).toBe(1);

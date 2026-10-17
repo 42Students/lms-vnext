@@ -12,7 +12,7 @@ describe("College drive applicant filters and CSV protection", () => {
   });
   it("builds distinct page and export URLs without page leakage", () => {
     const jobId="11111111-1111-4111-8111-111111111111";
-    const q={q:"a & b",status:"SUBMITTED" as const,screening:"ALL" as const,page:3};
+    const q=driveApplicationsQuerySchema.parse({q:"a & b",status:"SUBMITTED",screening:"ALL",page:3});
     expect(driveApplicationsHref(jobId,q,true)).not.toContain("page=");
     expect(new URL(driveApplicationsHref(jobId,q),"https://example.test").searchParams.get("q")).toBe("a & b");
   });

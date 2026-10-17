@@ -23,8 +23,8 @@ describe("learner profile awards and publications from persisted private documen
  it("reads only the active learner own authored entries",async()=>{
   const read=await getOwnLearnerProfileWithRuntime(f.context);
   const records=learnerProfilePublicationsAwards(read.profile.profileDocument);
-  expect(records.achievements[0]?.title).toBe("Self-reported honor");
-  expect(records.publications[0]?.value).toBe("Self-reported paper");
+  expect(records.awards[0]?.title).toBe("Self-reported honor");
+  expect(records.publications[0]?.title).toBe("Self-reported paper");
  },30000);
  it("rejects forged college, suspended membership and wrong-role read",async()=>{
   const ctx=f.context;

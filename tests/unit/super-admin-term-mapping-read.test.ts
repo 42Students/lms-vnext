@@ -1,4 +1,5 @@
 import {describe,expect,it} from "vitest";
+import {superAdminReadQuerySchema} from "@/modules/admin-ui/super-admin-read-directory-model";
 import {readAdminQuery,superAdminReadHref,superAdminReadPages} from "@/modules/admin-ui/super-admin-read-directory-model";
 describe("Super Admin term course mapping filters",()=>{
  it("enforces single-valued validated search/status/page fields",()=>{
@@ -7,7 +8,7 @@ describe("Super Admin term course mapping filters",()=>{
   expect(superAdminReadPages(51)).toBe(3);
  });
  it("preserves selected term status and search through pagination",()=>{
-  expect(superAdminReadHref("/admin/semester-courses",{q:"CS-101",status:"ACTIVE",page:2}))
+  expect(superAdminReadHref("/admin/semester-courses",superAdminReadQuerySchema.parse({q:"CS-101",status:"ACTIVE",page:2})))
    .toBe("/admin/semester-courses?q=CS-101&status=ACTIVE&page=2");
  });
 });

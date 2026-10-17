@@ -123,8 +123,8 @@ describe("COL-course-tabs-20/21 course tab wording", () => {
       .toEqual(["Lesson Name", "Course", "Order", "Students see it"]);
   });
   it("replaces internal vocabulary with legacy values", () => {
-    expect(collegeLessonVisibilityLabel({ pathStatus: "PUBLISHED", status: "PUBLISHED" })).toBe("Visible");
-    expect(collegeLessonVisibilityLabel({ pathStatus: "PUBLISHED", status: "DRAFT" })).toBe("Hidden");
+    expect(collegeLessonVisibilityLabel({ pathStatus: "PUBLISHED", status: "ACTIVE", visibleToStudents: true })).toBe("Visible");
+    expect(collegeLessonVisibilityLabel({ pathStatus: "PUBLISHED", status: "DRAFT", visibleToStudents: true })).toBe("Hidden");
     expect(collegeAudienceLabel(false)).toBe("All sections taking this course");
     expect(collegeAudienceLabel(true)).toBe("One section");
     expect(collegeResultsLabel(true)).toBe("Released");

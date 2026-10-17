@@ -2,7 +2,8 @@ import {describe,expect,it} from "vitest";
 import {evaluateTpoDriveEdit,tpoDriveEditSchema} from "@/modules/placements/tpo-drive-edit-model";
 const input={confirmed:true as const,expectedUpdatedAt:"2026-10-14T14:00:00.123Z",
  reason:"Revise opening details",title:"Engineer",description:"Updated draft",locations:["Hyderabad"],
- openings:2,minimumAnnualCtcInr:500000,maximumAnnualCtcInr:1000000};
+ openings:2,minimumAnnualCtcInr:500000,maximumAnnualCtcInr:1000000,
+ fixedCtcLpa:null,variableCtcLpa:null,stipendPerMonthInr:null,isDream:false};
 describe("TPO draft edit policy",()=>{
  it("normalizes equivalent IST version tokens without weakening validation",()=>{
   expect(tpoDriveEditSchema.parse({...input,expectedUpdatedAt:"2026-10-14T19:30:00.123+05:30"})

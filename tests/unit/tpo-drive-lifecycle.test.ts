@@ -9,6 +9,9 @@ const base = {
   evaluativeRoundCount: 1,
   policyPersisted: true,
   deadlineValid: true,
+  deadlinePresent: true,
+  payPresent: true,
+  externalUrlPresent: true,
   appliedResultCount: 0,
   acceptedOfferCount: 0,
 };

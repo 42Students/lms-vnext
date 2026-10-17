@@ -481,7 +481,7 @@ async function createStructure() {
       lessonId: lesson.id,
       deliveryId: deliveryA.id,
       title: "FUI2A Section Quiz",
-      maxAttempts: 2,
+      maxAttempts: 2, shuffleQuestions: false, shuffleOptions: false,
       sequence: 3,
       questions: [
         {

@@ -1,4 +1,5 @@
 import {describe,expect,it} from "vitest";
+import {superAdminReadQuerySchema} from "@/modules/admin-ui/super-admin-read-directory-model";
 import {readAdminQuery,superAdminReadHref} from "@/modules/admin-ui/super-admin-read-directory-model";
 describe("Super Admin Batch directory model",()=>{
  it("rejects malformed pagination without silently choosing array input",()=>{
@@ -6,7 +7,7 @@ describe("Super Admin Batch directory model",()=>{
   expect(readAdminQuery({page:"0"}).success).toBe(false);
  });
  it("preserves filters safely in navigation",()=>{
-  expect(superAdminReadHref("/admin/batches",{q:"Batch A",status:"COMPLETED",page:3}))
+  expect(superAdminReadHref("/admin/batches",superAdminReadQuerySchema.parse({q:"Batch A",status:"COMPLETED",page:3})))
    .toBe("/admin/batches?q=Batch+A&status=COMPLETED&page=3");
  });
 });

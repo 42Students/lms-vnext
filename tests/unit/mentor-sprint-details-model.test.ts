@@ -6,7 +6,7 @@ import {
 import { safeMentorProjectEventLabel } from "@/modules/projects/mentor-portfolio-model";
 const projectId="00000000-0000-4000-8000-000000000001";
 const sprintId="00000000-0000-4000-8000-000000000002";
-const before={title:"Sprint 1",description:null};
+const before={title:"Sprint 1",description:null,goal:null,definitionOfDone:null,startDate:null,endDate:null,dueDate:null};
 const valid={title:"Sprint 2",description:"Deliver tests",
   expectedUpdatedAt:"2026-10-14T04:30:00.000Z"};
 
@@ -23,9 +23,9 @@ describe("Mentor sprint details mutation",()=>{
     expect(mentorSprintDetailsParamsSchema.safeParse({projectId,sprintId,collegeId:projectId}).success).toBe(false);
   });
   it("allows persisted title/description changes without phantom fields",()=>{
-    expect(sprintDetailsChanged(before,{title:"Sprint 2",description:"Deliver tests"})).toBe(true);
-    expect(sprintDetailsChanged(before,{title:"Sprint 1",description:null})).toBe(false);
-    expect(sprintDetailsChanged(before,{title:"Sprint 1",description:"New goals"})).toBe(true);
+    expect(sprintDetailsChanged(before,{title:"Sprint 2",description:"Deliver tests",goal:null,definitionOfDone:null,startDate:null,endDate:null,dueDate:null})).toBe(true);
+    expect(sprintDetailsChanged(before,{title:"Sprint 1",description:null,goal:null,definitionOfDone:null,startDate:null,endDate:null,dueDate:null})).toBe(false);
+    expect(sprintDetailsChanged(before,{title:"Sprint 1",description:"New goals",goal:null,definitionOfDone:null,startDate:null,endDate:null,dueDate:null})).toBe(true);
   });
   it("maps the new audited event to a fixed, non-personal activity label",()=>{
     expect(safeMentorProjectEventLabel("projects.sprint.updated"))

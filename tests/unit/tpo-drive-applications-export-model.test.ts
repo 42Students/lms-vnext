@@ -15,14 +15,14 @@ describe("TPO applicant CSV cap and injection safety",()=>{
   expect(tpoDriveApplicationsExportQuerySchema.safeParse({jobId:id,stage:"SELECTED"}).success).toBe(false);
   expect(tpoApplicantExportSearchPattern("50%_\\")).toBe("%50\\%\\_\\\\%");
   const csv=projectTpoDriveApplicationsExport([{applicationId:"a",studentName:"Candidate",roleTitle:"Role",
-   status:"SUBMITTED",screeningStatus:null,channel:"INTERNAL",submittedAt:"2026-10-14T20:00:00Z"}],"Drive").csv;
+   status:"SUBMITTED",screeningStatus:null,channel:"INTERNAL",screeningUpdatedAt:null,eligibilityStatus:"ELIGIBLE",submittedAt:"2026-10-14T20:00:00Z"}],"Drive").csv;
   expect(csv).toContain("Submitted (IST)");
   expect(csv).toContain("15/10/2026");
  });
  it("neutralizes malicious student and role spreadsheet prefixes",()=>{
   const report=projectTpoDriveApplicationsExport([{
    applicationId:"a",studentName:"=HYPERLINK(1)",roleTitle:"+ROLE",
-   status:"SUBMITTED",screeningStatus:"PENDING",channel:"INTERNAL",
+   status:"SUBMITTED",screeningStatus:"PENDING",channel:"INTERNAL",screeningUpdatedAt:null,eligibilityStatus:"ELIGIBLE",
    submittedAt:"2026-10-14T14:00:00Z",
   }],"Employer");
   expect(report.csv).toContain("'=HYPERLINK(1)");
@@ -33,7 +33,7 @@ describe("TPO applicant CSV cap and injection safety",()=>{
  it("caps rows and places an honest visible truncation notice",()=>{
   const rows=Array.from({length:TPO_DRIVE_APPLICATION_EXPORT_LIMIT+1},(_,i)=>({
    applicationId:String(i),studentName:"Candidate "+i,roleTitle:"Engineer",
-   status:"SUBMITTED",screeningStatus:null,channel:"INTERNAL",
+   status:"SUBMITTED",screeningStatus:null,channel:"INTERNAL",screeningUpdatedAt:null,eligibilityStatus:"ELIGIBLE",
    submittedAt:"2026-10-14T14:00:00Z",
   }));
   const report=projectTpoDriveApplicationsExport(rows,"Employer");
@@ -48,7 +48,7 @@ describe("TPO-drive-workspace-33 complete export",()=>{
  it("exports more than 500 matching rows and formula-neutralizes contact columns",()=>{
   const rows=Array.from({length:503},(_,i)=>({
    applicationId:String(i),studentName:"Candidate "+i,roleTitle:"Engineer",
-   status:"SUBMITTED",screeningStatus:null,channel:"INTERNAL",
+   status:"SUBMITTED",screeningStatus:null,channel:"INTERNAL",screeningUpdatedAt:null,eligibilityStatus:"ELIGIBLE",
    submittedAt:"2026-10-14T14:00:00Z",rollNumber:"CS"+i,email:"c"+i+"@example.test",phone:"+910000000000",
   }));
   const report=projectTpoDriveApplicationsExport(rows,"Drive",{exportAll:true});

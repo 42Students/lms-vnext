@@ -12,7 +12,7 @@ describe("Super Admin Semesters CSV export",()=>{
  });
  it("keeps search and status but rejects page controls",()=>{
   const query=parseSuperAdminScopedCsvParams(new URLSearchParams("status=INACTIVE&q=First%20year"));
-  expect(superAdminScopedCsvHref("/api/admin/semesters/export",query))
+  expect(superAdminScopedCsvHref("/api/admin/semesters/export",{...query,page:1}))
    .toBe("/api/admin/semesters/export?q=First+year&status=INACTIVE");
   expect(()=>parseSuperAdminScopedCsvParams(new URLSearchParams("page=999"))).toThrow();
  });

@@ -1,4 +1,5 @@
 import {describe,expect,it} from "vitest";
+import {superAdminReadQuerySchema} from "@/modules/admin-ui/super-admin-read-directory-model";
 import {readAdminQuery,superAdminReadPages,superAdminReadHref} from "@/modules/admin-ui/super-admin-read-directory-model";
 describe("Super Admin Hiring dashboard query",()=>{
  it("permits draft/published/closed search but rejects repeated status",()=>{
@@ -7,7 +8,7 @@ describe("Super Admin Hiring dashboard query",()=>{
  });
  it("paginates bounded persisted-job metrics",()=>{
   expect(superAdminReadPages(50)).toBe(2);
-  expect(superAdminReadHref("/admin/placements/hiring",{q:"Acme",status:"PUBLISHED",page:2}))
+  expect(superAdminReadHref("/admin/placements/hiring",superAdminReadQuerySchema.parse({q:"Acme",status:"PUBLISHED",page:2})))
   .toBe("/admin/placements/hiring?q=Acme&status=PUBLISHED&page=2");
  });
 });

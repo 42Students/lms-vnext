@@ -7,6 +7,8 @@ describe("REC-calendar-messages-profile-17 TPO bell receipt",()=>{
  });
  it("uses the registered notification inbox with exact legacy title",()=>{
   expect(RECRUITER_MESSAGE_TPO_TITLE).toBe("New message from a recruiter");
-  expect(recruiterMessageTpoHref()).toBe("/tpo/messages/notifications");
+  const threadId="00000000-0000-4000-8000-000000000001";
+  expect(recruiterMessageTpoHref(threadId)).toBe("/tpo/messages/"+threadId);
+  expect(recruiterMessageTpoHref("not-a-thread")).toBe("/tpo/messages");
  });
 });

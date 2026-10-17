@@ -1,4 +1,5 @@
 import {describe,expect,it} from "vitest";
+import {superAdminReadQuerySchema} from "@/modules/admin-ui/super-admin-read-directory-model";
 import {readAdminQuery,superAdminReadHref,superAdminReadPages} from "@/modules/admin-ui/super-admin-read-directory-model";
 describe("Super Admin placement seasons URL",()=>{
  it("accepts closed and active, rejects duplicate or invalid status",()=>{
@@ -8,7 +9,7 @@ describe("Super Admin placement seasons URL",()=>{
   expect(superAdminReadPages(0)).toBe(1);
  });
  it("maintains season search pagination",()=>{
-  expect(superAdminReadHref("/admin/placements/seasons",{q:"2026 & 27",status:"ACTIVE",page:2}))
+  expect(superAdminReadHref("/admin/placements/seasons",superAdminReadQuerySchema.parse({q:"2026 & 27",status:"ACTIVE",page:2})))
   .toBe("/admin/placements/seasons?q=2026+%26+27&status=ACTIVE&page=2");
  });
 });

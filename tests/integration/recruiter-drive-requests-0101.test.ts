@@ -16,7 +16,7 @@ const enabled=process.env.DB12_ISOLATED_TEST_DATABASE==="1" &&
 if(enabled)assertDb018DisposableTarget(process.env,{serviceBound:true});
 const pool=enabled?new Pool({connectionString:process.env.TEST_DATABASE_URL,max:2}):null;
 const id={user:randomUUID(),company:randomUUID(),relationship:randomUUID(),
- grant:randomUUID(),request:randomUUID(),nonce:randomUUID()};
+ grant:randomUUID(),request:randomUUID().toString(),nonce:randomUUID()};
 let addedTpoRole=false;
 const recruiter:RequestContext={
  user:{id:id.user,identityUid:"test-recruiter-0101",platformStatus:"ACTIVE",systemRoles:[]},
