@@ -19,17 +19,17 @@ export function CollegeContentAuthoringControl({kind,lessons,existing}:{
 }){
  const router=useRouter(),[editing,setEditing]=useState<string|null>(null),[open,setOpen]=useState(false);
  const [lessonId,setLessonId]=useState(lessons[0]?.id??""),[title,setTitle]=useState(""),
-  [url,setUrl]=useState(""),[notes,setNotes]=useState(""),[duration,setDuration]=useState("60"),
+  [url,setUrl]=useState(""),[notes,setNotes]=useState(""),[duration,setDuration]=useState(""),
   [start,setStart]=useState(""),[end,setEnd]=useState(""),
   [busy,setBusy]=useState(false),[error,setError]=useState(""),[message,setMessage]=useState("");
  const text=kind==="YOUTUBE"?"Import from link":kind==="RESOURCE"?"Add Resource":"Schedule live class";
  function select(item:Existing){
   setEditing(item.id);setOpen(true);setLessonId(item.lessonId);setTitle(item.title);
-  setUrl(item.externalUrl??"");setNotes(item.notes??"");setDuration(String(item.durationSeconds??60));
+  setUrl(item.externalUrl??"");setNotes(item.notes??"");setDuration(item.durationSeconds===null?"":String(item.durationSeconds));
   setStart(dateInput(item.startsAt));setEnd(dateInput(item.endsAt));setError("");setMessage("");
  }
  function fresh(){
-  setEditing(null);setOpen(true);setTitle("");setUrl("");setNotes("");setDuration("60");setStart("");setEnd("");
+  setEditing(null);setOpen(true);setTitle("");setUrl("");setNotes("");setDuration("");setStart("");setEnd("");
   setError("");setMessage("");
  }
  async function save(){
@@ -45,7 +45,7 @@ export function CollegeContentAuthoringControl({kind,lessons,existing}:{
       !target.hostname.toLowerCase().endsWith(".youtube.com"))throw Error("Enter a YouTube URL.");
    }
    const extra=kind==="YOUTUBE"?{durationSeconds:Number(duration)}:kind==="RESOURCE"?{notes:notes.trim()||null}:{startsAt:isoIst(start),endsAt:isoIst(end)};
-   if(kind==="YOUTUBE"&&(!Number.isInteger(Number(duration))||Number(duration)<1||
+   if(kind==="YOUTUBE"&&(!duration.trim()||!Number.isInteger(Number(duration))||Number(duration)<1||
     Number(duration)>86400))throw Error("Video length must be 1–86400 seconds.");
    if(kind==="LIVE_CLASS"&&new Date(isoIst(end)).getTime()<=new Date(isoIst(start)).getTime())
     throw Error("End time must be after start time");
@@ -106,7 +106,7 @@ export function CollegeContentAuthoringControl({kind,lessons,existing}:{
      <textarea rows={3} maxLength={10000} value={notes} onChange={e=>setNotes(e.target.value)}
        className="mt-1 w-full rounded border bg-background p-2"/>
     </label>:kind==="YOUTUBE"?<label className="text-sm">Video length (seconds)
-    <input type="number" min={1} max={86400} value={duration} onChange={e=>setDuration(e.target.value)}
+    <input type="number" required placeholder="Actual video duration" min={1} max={86400} value={duration} onChange={e=>setDuration(e.target.value)}
      className="mt-1 w-full rounded border bg-background p-2"/></label>:<>
     <label className="text-sm">Start date and time (IST)
      <input type="datetime-local" required value={start} onChange={e=>setStart(e.target.value)}
