@@ -21,7 +21,7 @@ const stageSnapshot=z.strictObject({
 });
 const ownerSnapshot=z.strictObject({
  leadId:z.string().uuid(),beforeOwnerId:z.string().uuid().nullable(),
- afterOwnerId:z.string().uuid(),
+ afterOwnerId:z.string().uuid(),afterUpdatedAt:z.iso.datetime({offset:true}),
 });
 const undoWindowMs=5*60*1000;
 
