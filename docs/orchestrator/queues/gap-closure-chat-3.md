@@ -265,6 +265,8 @@ Merged current `origin/main` into `chatgpt/chat-3-b` before work and checked aga
 
 ## Notes (blockers, one line each)
 
+- COL-courses-content-02 (Course Image upload only): needs a private upload bucket, scanner and verified storage workflow; non-storage display fields remain OPEN for feature parity.
+
 - PUB-auth-public-55: All-resume ZIP download remains blocked by production private document receipt/bucket and scanner readiness; do not fabricate PDFs or public signed links.
 
 - LEARNER-learning-misc-01: Assignment file-upload acceptance needs real private bucket and scanner readiness; do not fake signed receipts.
