@@ -650,6 +650,17 @@ export async function createSuperAdminHrAccount(
     relationship.organizationId,
     relationship.collegeId,
   );
+  const selectedIds=[...new Set([
+    input.companyRelationshipId,...(input.companyRelationshipIds??[]),
+  ])];
+  if(selectedIds.length>20)throw new PlacementsServiceError("PLACEMENT_RECRUITER_OUTSIDE_ADMIN_SCOPE");
+  const additionalRelationships=await Promise.all(selectedIds.slice(1).map(loadActiveRelationship));
+  for(const candidate of additionalRelationships){
+    if(candidate.companyId!==relationship.companyId)
+      throw new PlacementsServiceError("PLACEMENT_RECRUITER_COMPANY_CONFLICT");
+    requireHrCollege(context,candidate.organizationId,candidate.collegeId);
+  }
+  const selectedRelationships=[relationship,...additionalRelationships];
 
   // Resolve and persist the canonical platform user
   // through the established first-party people path.
@@ -682,6 +693,8 @@ export async function createSuperAdminHrAccount(
         "admin-scope.select",
       );
 
+      // Lock and recheck every selected relationship before creating any grant.
+      for(const candidate of selectedRelationships){
       const [lockedRelationship] = await tx
         .select({
           id: placementCompanyRelationships.id,
@@ -696,7 +709,7 @@ export async function createSuperAdminHrAccount(
         .where(
           eq(
             placementCompanyRelationships.id,
-            relationship.relationshipId,
+            candidate.relationshipId,
           ),
         )
         .for("share")
@@ -706,9 +719,9 @@ export async function createSuperAdminHrAccount(
         !lockedRelationship ||
         lockedRelationship.status !== "ACTIVE" ||
         lockedRelationship.companyId !==
-          relationship.companyId ||
+          candidate.companyId ||
         lockedRelationship.collegeId !==
-          relationship.collegeId
+          candidate.collegeId
       ) {
         throw new PlacementsServiceError(
           "PLACEMENT_RECRUITER_RELATIONSHIP_INACTIVE",
@@ -717,10 +730,11 @@ export async function createSuperAdminHrAccount(
 
       requireHrCollege(
         context,
-        relationship.organizationId,
-        relationship.collegeId,
+        candidate.organizationId,
+        candidate.collegeId,
       );
 
+      }
       const [currentUser] = await tx
         .select({
           id: users.id,
@@ -772,10 +786,11 @@ export async function createSuperAdminHrAccount(
         reusedExisting = true;
       }
 
+      for(const candidate of selectedRelationships){
       const [newGrant] = await tx.insert(placementRecruiterCollegeGrants)
         .values({
           recruiterUserId: identity.userId,
-          companyRelationshipId: relationship.relationshipId,
+          companyRelationshipId: candidate.relationshipId,
           grantedByUserId: context.user.id,
           validUntil: grantExpiry,
         }).onConflictDoNothing().returning({id: placementRecruiterCollegeGrants.id});
@@ -785,7 +800,7 @@ export async function createSuperAdminHrAccount(
           validUntil: placementRecruiterCollegeGrants.validUntil,
         }).from(placementRecruiterCollegeGrants)
           .where(and(eq(placementRecruiterCollegeGrants.recruiterUserId, identity.userId),
-            eq(placementRecruiterCollegeGrants.companyRelationshipId, relationship.relationshipId),
+            eq(placementRecruiterCollegeGrants.companyRelationshipId, candidate.relationshipId),
             eq(placementRecruiterCollegeGrants.status, "ACTIVE")))
           .for("update").limit(1);
         if (!existingGrant) {
@@ -801,13 +816,15 @@ export async function createSuperAdminHrAccount(
         await recordActivityEventInTransaction(tx, context, {
           eventType: profile ? ACTIVITY_EVENT_TYPES.PLACEMENTS_RECRUITER_CREATED
             : ACTIVITY_EVENT_TYPES.PLACEMENTS_RECRUITER_COLLEGE_GRANTED,
-          collegeId: relationship.collegeId,
-          organizationId: relationship.organizationId,
+          collegeId: candidate.collegeId,
+          organizationId: candidate.organizationId,
           subjectType: "recruiter", subjectId: identity.userId,
           summary: profile ? "Recruiter account created" : "Existing recruiter granted college access",
-          metadata: {companyRelationshipId: relationship.relationshipId,
+          metadata: {companyRelationshipId: candidate.relationshipId,
             validUntil: grantExpiry.toISOString()},
         });
+      }
+
       }
     });
   } catch (error) {

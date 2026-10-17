@@ -38,6 +38,7 @@ export function SuperAdminHrAccountDialog({
 
   const [companyRelationshipId, setRelationshipId] =
     useState("");
+  const [additionalRelationshipIds,setAdditionalRelationshipIds]=useState<string[]>([]);
   const [displayName, setDisplayName] = useState(
     account?.displayName ?? "",
   );
@@ -74,6 +75,7 @@ export function SuperAdminHrAccountDialog({
 
     onSubmit({
       companyRelationshipId,
+      companyRelationshipIds:[companyRelationshipId,...additionalRelationshipIds],
       displayName,
       phoneE164,
       email,
@@ -142,9 +144,10 @@ export function SuperAdminHrAccountDialog({
               value={companyRelationshipId}
               required
               disabled={pending || optionsLoading}
-              onChange={(event) =>
-                setRelationshipId(event.target.value)
-              }
+              onChange={(event) => {
+                setRelationshipId(event.target.value);
+                setAdditionalRelationshipIds([]);
+              }}
             >
               <option value="">
                 Select an active relationship
@@ -160,6 +163,24 @@ export function SuperAdminHrAccountDialog({
               ))}
             </Select>
 
+            {companyRelationshipId ? (
+              <fieldset className="mt-3 space-y-2 rounded border border-border p-3">
+                <legend className="text-xs font-semibold">Colleges · optional additional access</legend>
+                <p className="text-xs text-muted-foreground">
+                  You can add or remove colleges later. Only colleges connected to this same company are shown.
+                </p>
+                {relationships.filter(option =>
+                  option.companyRelationshipId!==companyRelationshipId &&
+                  option.companyId===relationships.find(item=>item.companyRelationshipId===companyRelationshipId)?.companyId
+                ).map(option=><label key={option.companyRelationshipId} className="flex min-h-10 items-center gap-2 text-sm">
+                  <input type="checkbox" disabled={pending}
+                    checked={additionalRelationshipIds.includes(option.companyRelationshipId)}
+                    onChange={event=>setAdditionalRelationshipIds(old=>
+                      event.target.checked?[...old,option.companyRelationshipId]:old.filter(x=>x!==option.companyRelationshipId))}
+                  />{option.collegeName}
+                </label>)}
+              </fieldset>
+            ):null}
             {optionsLoading ? (
               <p
                 role="status"

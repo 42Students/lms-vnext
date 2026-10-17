@@ -55,6 +55,7 @@ export type HrRelationshipOption = {
 
 export type HrAccountFormValues = {
   companyRelationshipId: string;
+  companyRelationshipIds?: string[];
   displayName: string;
   phoneE164: string;
   email: string;
