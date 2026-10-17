@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 type Row = {
   applicationId: string;
   displayName: string;
+  rollNumber?:string|null;
   resultStatus: string | null;
 };
 type Result = {
@@ -47,7 +48,7 @@ export function TpoBulkRoundResultRecorder({
   const available = rows.filter((row) => row.resultStatus === null);
   const unselected=available.filter(row=>!selected.includes(row.applicationId));
   const pendingTotal=selected.length+(failUnselected?unselected.length:0);
-  const visible=available.filter(row=>!search.trim()||row.displayName.toLocaleLowerCase("en-IN").includes(search.trim().toLocaleLowerCase("en-IN"))||row.applicationId.includes(search.trim()));
+  const visible=available.filter(row=>!search.trim()||row.displayName.toLocaleLowerCase("en-IN").includes(search.trim().toLocaleLowerCase("en-IN"))||row.applicationId.includes(search.trim())||row.rollNumber?.toLocaleLowerCase("en-IN").includes(search.trim().toLocaleLowerCase("en-IN")));
 
   function toggle(id: string, checked: boolean) {
     setSelected((current) =>
