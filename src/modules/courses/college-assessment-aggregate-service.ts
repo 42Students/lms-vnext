@@ -287,6 +287,7 @@ export async function listCollegeAssessmentAggregate(
         .innerJoin(learnerProgramEnrollments,and(
           eq(learnerProgramEnrollments.id,sectionEnrollments.learnerEnrollmentId),
           eq(learnerProgramEnrollments.membershipId,assignmentSubmissions.membershipId),
+          eq(learnerProgramEnrollments.cohortId,courseOfferings.cohortId),
           eq(learnerProgramEnrollments.status,"ACTIVE"),
         ))
         .innerJoin(collegeMemberships,and(
