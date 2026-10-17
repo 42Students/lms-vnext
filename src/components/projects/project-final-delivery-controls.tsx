@@ -444,7 +444,6 @@ export function FinalReviewControl({
     useState("");
   const [pending, setPending] =
     useState(false);
-  const [staleReview, setStaleReview] = useState(false);
 
   async function review() {
     if (

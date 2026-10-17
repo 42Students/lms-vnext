@@ -23,7 +23,7 @@ export default async function BatchRules({params}:{params:Promise<{batchId:strin
  <div><dt className="font-semibold">Finished</dt><dd>{lifecycle?.finishedAt?batchRuleDate(lifecycle.finishedAt):"Still accepting placements"}</dd></div></dl>
  <p className="mt-3 text-sm text-muted-foreground">The college placement rules apply unless this batch has approved changes.</p></section>}
  {stored.success?<TpoBatchRuleEditor batchId={batchId} batchName={batch.name}
-  college={{countsAsPlacedAt:college.countsAsPlacedAt,maxHeldOffers:college.maxHeldOffers,
+  college={{countsAsPlacedAt:college.countsAsPlacedAt as "OFFER_RELEASED"|"OFFER_ACCEPTED",maxHeldOffers:college.maxHeldOffers,
     upliftPct:college.upliftPct,minResponseHours:college.minResponseHours}}
   initialOverride={stored.data} expectedVersion={lifecycle?.updatedAt.toISOString()??"none"}
   readOnly={!ready||Boolean(lifecycle?.finishedAt)}/>:<p role="alert">Batch rules could not be read safely. Refresh before editing.</p>}
