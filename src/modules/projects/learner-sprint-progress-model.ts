@@ -3,7 +3,7 @@ type Task={sprintId:string|null;status:string};
 export function learnerSprintRollup(sprints:readonly Sprint[],tasks:readonly Task[],todayIst:string){
  const completed=sprints.filter(s=>s.status==="COMPLETED").length;
  const overdue=sprints.filter(s=>s.status!=="COMPLETED"&&
-   Boolean(s.dueDate)&&s.dueDate!<todayIst).length;
+   s.dueDate!==null&&s.dueDate<todayIst).length;
  return {total:sprints.length,completed,overdue};
 }
 export function learnerSprintProgress(sprint:Sprint,tasks:readonly Task[]){
