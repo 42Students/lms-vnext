@@ -53,11 +53,12 @@ export async function listAdminPlacementApplications(context:RequestContext,raw:
  ]);
  const total=counts[0]?.total??0;
  const fmt=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"});
+ const now=Date.now();
  return {query,total,totalPages:superAdminReadPages(total,query.pageSize),items:rows.map(row=>({
   id:row.id,title:row.learnerName||"Unnamed applicant",
   subtitle:row.jobTitle+" · "+row.roleTitle,
   status:row.status,details:["Channel: "+row.channel,"Eligibility: "+row.eligibilityStatus,
-   "Submitted: "+fmt.format(row.submittedAt)+" IST","Stage: "+row.pipelineStage],
+   "Submitted: "+fmt.format(row.submittedAt)+" IST","Age: "+Math.max(0,Math.floor((now-row.submittedAt.getTime())/86400000))+" day(s)","Stage: "+row.pipelineStage],
   href:`/admin/placements/applications/${encodeURIComponent(row.id)}`,
  }))};
 }
