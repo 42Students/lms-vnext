@@ -249,9 +249,9 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 | TPO-requests-verification-29 | S3 | MISSING-FIELD | DONE |
 | TPO-requests-verification-30 | S3 | SIDE-EFFECT | FIXED-ON-MAIN |
 | TPO-requests-verification-32 | S3 | MISSING-EXPORT | DONE |
-| TPO-requests-verification-R01 | S3 | SIDE-EFFECT | OPEN |
+| TPO-requests-verification-R01 | S3 | SIDE-EFFECT | DONE |
 | TPO-requests-verification-R03 | S3 | SIDE-EFFECT | OPEN |
-| TPO-requests-verification-16 | S4 | PERFORMANCE | OPEN |
+| TPO-requests-verification-16 | S4 | PERFORMANCE | DONE |
 | TPO-requests-verification-18 | S4 | STATE | OPEN |
 | TPO-requests-verification-21 | S4 | PERMISSION | OPEN |
 
@@ -348,3 +348,5 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - [chat-5] round-2 verified on main: TPO-students-53, TPO-students-36, TPO-students-39, TPO-students-51, TPO-students-13: earlier named chat12 behavioral tests and acceptance evidence exist; rechecked source boundary in `tests/unit/chat5-verified-queue-round2.test.ts`. DONE is code review status only; CI and database tests still pending.
 
 - [chat-5] round-2 verified on main: TPO-requests-verification-23, TPO-requests-verification-17, TPO-requests-verification-27, TPO-requests-verification-28, TPO-requests-verification-29: earlier named chat12 behavioral tests and acceptance evidence exist; rechecked source boundary in `tests/unit/chat5-verified-queue-round2.test.ts`. DONE is code review status only; CI and database tests still pending.
+
+- [chat-5] round-2 verified on main: TPO-requests-verification-R01, TPO-requests-verification-16: earlier named chat12 behavioral tests and acceptance evidence exist; rechecked source boundary in `tests/unit/chat5-verified-queue-round2.test.ts`. DONE is code review status only; CI and database tests still pending.
