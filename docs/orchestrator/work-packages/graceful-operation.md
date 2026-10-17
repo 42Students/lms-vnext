@@ -29,7 +29,7 @@ Shared helper + `apiFetch`; no raw codes, stack traces or database text anywhere
 
 ## F. Know first, recover fast (owner: orchestrator, not lanes)
 1. Request id on every response and log line; support can search it.
-2. Cloud Logging alert: `api.unhandled_error` rate and any `severity=ERROR` burst emails the owner; uptime check on `/ready` and the login page from outside the cluster.
+2. Telegram alerts (no email: owner decision): new error signatures, spikes, a daily digest and a health watch, built by chat-16 (queue alerting-chat-16.md, GR-111 to GR-125).
 3. Maintenance page and a one-command switch; deploys gated on `/ready`; migrations stay backward compatible for one release so a rollback is safe; written rollback runbook in `docs/operations/`.
 4. Weekly review of the top 10 error references.
 
@@ -37,7 +37,7 @@ Shared helper + `apiFetch`; no raw codes, stack traces or database text anywhere
 Browser tests with failure injection (Playwright: abort a request, return 500, return 403, slow network) for the main journeys of each role, asserting the friendly text appears, no raw code appears, and the form keeps its input. Unit test per helper. A unit test that fails if any component renders a string matching `^[A-Z0-9_]{6,}$` from an API error.
 
 ## Order
-1. chat-9: A helpers + B1 + C1 shared helpers (first, small, on main fast).
+1. chat-14: A helpers + B1 + C1 shared helpers (first, small, on main fast); chat-15 writes the browser failure tests (checklist docs/audit/graceful/CHECKLIST.md, GR-80..83).
 2. All lanes: adopt A, B1, B2 on the pages they touch; add E1 for dashboard cards.
 3. Orchestrator: F1 to F3 and G (browser tests) in parallel.
 
@@ -55,3 +55,6 @@ Found by audit on 2026-10-17; each item has an owner.
 10. **Hydration and rendering exceptions in the browser** (chat-9): root client error boundary reports to our log endpoint with the reference id and shows the friendly screen, never a Next.js overlay (production builds already hide stack traces; verify with a production build in the browser tests).
 11. **Source maps and headers** (orchestrator): confirm production serves no source maps and no framework error details (`poweredByHeader: false` is set); add to the security check.
 12. **Browser tests proving all of the above** (orchestrator, part G): kill the backend, return HTML 502, return 500 JSON, delete a record then open its link, stale chunk, offline, slow network, and assert the user sees the calm text with no code or stack.
+
+## Checklist
+The exhaustive numbered list (GR-01 to GR-110) is `docs/audit/graceful/CHECKLIST.md`; it supersedes the summaries above where they differ.
