@@ -77,3 +77,5 @@ Tests have not been run.
 | TPO-campaigns-public-37 | **Intentional privacy restriction.** Public aggregate counts remain opt-in and hidden for small cohorts; tests assert five-person minimum and missing SELECTED evidence. |
 
 | TPO-campaigns-public-03 | DONE (source verified): email campaign drafts show subject, sender and created-at with separate receipt totals; do not confuse delivery-batch receipts with inbox delivery. Test: `tests/unit/chat9-final-TPO-campaigns-public-03.test.ts` (`TPO-campaigns-public-03 verifies the implemented contract`). Test authored; execution pending orchestrator. |
+
+| TPO-campaigns-public-05 | DONE (source verified, actual provider delivery conditional): dispatch claims draft once, checks recipient opt-outs, sends signed per-recipient links, records successful lead EMAIL timeline and company outreach; provider credentials intentionally fail closed. Test: `tests/unit/chat9-final-TPO-campaigns-public-05.test.ts` (`TPO-campaigns-public-05 verifies the implemented contract`). Test authored; execution pending orchestrator. |
