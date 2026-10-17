@@ -135,5 +135,38 @@ describe("chat-4 College Verification and Misc verification",()=>{
   expect(read("src/app/(authenticated)/college/branding/page.tsx")).toContain("Sign-in branding, domains and logo changes are controlled by a Super Admin.");
   expect(read("src/app/(authenticated)/college/college-profile/page.tsx")).toContain("College profile manages operational contact details.");
  });
-
+ it("COL-verification-misc-10 reviews the first 1000 rather than failing an oversized queue",()=>{
+  const service=read("src/modules/verification/staff-queue-service.ts");
+  expect(service).toContain(".limit(1001)");
+  expect(service).toContain("const truncated=candidateRows.length>1000");
+  expect(service).toContain("candidateRows.slice(0,1000)");
+  expect(service).not.toContain("if(rows.length>5000)throw new VerificationQueueLimitError()");
+  const view=read("src/components/verification/CollegeVerificationPanel.tsx");
+  expect(view).toContain("Showing the first 1,000 students in this view.");
+  expect(view).toContain("narrow the filters to review other students.");
+ });
+ it("COL-verification-misc-09 covers current College admin verification and activity behavior",()=>{
+   const s=read("src/components/verification/TpoVerificationSwitch.tsx");
+   expect(s).toContain("The placement cell can verify profiles");
+   expect(s).toContain("Verification setting saved.");
+   expect(s).toContain("apiFetch<");
+ });
+ it("COL-verification-misc-04 covers current College admin verification and activity behavior",()=>{
+   const s=read("src/components/verification/CollegeVerificationPanel.tsx");
+   expect(s).toContain("acknowledged");
+   expect(s).toContain("bulkAction");
+   expect(s).toContain("selected");
+ });
+ it("COL-verification-misc-08 covers current College admin verification and activity behavior",()=>{
+   const s=read("src/components/verification/VerificationWorkspace.tsx");
+   expect(s).toContain("Reason sent back");
+   expect(s).toContain("Marksheets");
+   expect(s).toContain("By");
+ });
+ it("COL-verification-misc-11 covers current College admin verification and activity behavior",()=>{
+   const s=read("src/app/(authenticated)/college/activity/page.tsx");
+   expect(s).toContain("Important");
+   expect(s).toContain("Academic setup");
+   expect(s).toContain("People & access");
+ });
 });
