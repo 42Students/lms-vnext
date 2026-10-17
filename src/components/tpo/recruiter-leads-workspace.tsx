@@ -1082,7 +1082,7 @@ export function RecruiterLeadsWorkspace({
               </select>
             </label>
             <label className="block text-sm">First follow-up (optional, IST)
-              <input type="date" className={inputStyle+" mt-1"} value={form.followupDate}
+              <input type="date" className={inputStyle+" mt-1"} min={new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date())} value={form.followupDate}
                 onChange={e=>field("followupDate",e.target.value)}/>
             </label>
             <label className="block text-sm">Follow-up note (optional)
