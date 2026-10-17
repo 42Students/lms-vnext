@@ -99,9 +99,9 @@ export function TpoCompanyMemoryWorkspace({
       if (signal?.aborted) return null;
       if (!response.ok) {
         if (response.status === 503 && payload.error === "DB09_MIGRATIONS_PENDING")
-          return { company: null, phase: "migration-pending", error: "Company Memory is awaiting DB09 database verification." };
+          return { company: null, phase: "migration-pending", error: "Company details are unavailable right now. Try again." };
         if (response.status === 404)
-          return { company: null, phase: "not-found", error: "Company not found in this college." };
+          return { company: null, phase: "not-found", error: "Company not found" };
         return { company: null, phase: "error", error: "Company Memory could not be loaded." };
       }
       return payload.company
@@ -157,6 +157,7 @@ export function TpoCompanyMemoryWorkspace({
   }
 
   const latest = company.timeline[0] ?? null;
+  const statusLabel=(status:string)=>({PUBLISHED:"Live",CLOSED:"Completed",DRAFT:"Draft",REQUEST:"Sent for review",CANCELLED:"Cancelled"} as Record<string,string>)[status]??status;
   const visibleDrives=company.drives.filter(drive=>
     [drive.jobTitle,drive.status,String(new Date(drive.createdAt).getFullYear())]
       .join(" ").toLowerCase().includes(driveSearch.trim().toLowerCase()));
@@ -205,13 +206,13 @@ export function TpoCompanyMemoryWorkspace({
         </div>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+      <div aria-label="Company numbers" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         {[
           ["Contacts", company.people.length + " · " + activeContacts + " active"],
           ["Drives that ran", String(company.drivesRan)],
           ["Accepted-offer drives", String(company.acceptedOfferDrives)],
-          ["Students placed", company.studentsHired == null ? "Verification pending" : String(company.studentsHired)],
-          ["Last activity", latest ? dateLabel(latest.createdAt) : "None"],
+          ["students placed", company.studentsHired == null ? "Verification pending" : String(company.studentsHired)],
+          ["Last activity", latest ? latest.type.toLowerCase()+" / "+dateLabel(latest.createdAt) : "no activity yet"],
         ].map(([label, value]) => (
           <div key={label} className="rounded-lg border border-border bg-surface p-4">
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</p>
@@ -315,7 +316,7 @@ export function TpoCompanyMemoryWorkspace({
                             {drive.jobTitle}
                           </Link>
                         </td>
-                        <td>{drive.status}</td>
+                        <td>{statusLabel(drive.status)}</td>
                         <td>{new Intl.DateTimeFormat("en-IN",{year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(drive.createdAt))}</td>
                         <td>{drive.applied} · {drive.offers} offers</td>
                         <td>{dateLabel(drive.createdAt)}</td>
@@ -335,8 +336,7 @@ export function TpoCompanyMemoryWorkspace({
               <ol className="mt-3 space-y-3">
                 {company.timeline.map(item => (
                   <li className="border-l-2 border-border pl-3" key={item.id}>
-                    <p className="text-sm"><strong>{item.person}</strong> · {item.type.toLowerCase()}</p>
-                    {item.note ? <p className="text-sm text-muted-foreground">{item.note}</p> : null}
+                    <p className="text-sm"><strong>{item.person}</strong> · {item.type.toLowerCase()}{item.note?": "+item.note:""}</p>
                     <p className="text-xs text-muted-foreground">{dateLabel(item.createdAt)}</p>
                   </li>
                 ))}
