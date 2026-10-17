@@ -254,5 +254,16 @@ Audit: `docs/audit/pages/learner/profile-learning.md` (and `profile-learning-rev
 
 ## Notes (blockers, one line each)
 
+- LEARNER-learning-misc-01: Assignment file-upload acceptance needs real private bucket and scanner readiness; do not fake signed receipts.
+- TPO-drives-27: JD file upload needs real private bucket and scanner readiness; no public storage URLs.
+- COL-people-02/07: Canonical login identity edits stay restricted pending the approved identity verification workflow.
+
+## Verified acceptance progress (source claims, tests not run)
+
+- tpo/drives: 6 DONE + 1 NOT-A-GAP with gap-ID-named tests in `tests/unit/tpo-drives-gap-closure.test.ts` and page record in `docs/audit/acceptance/tpo-drives-verification.md`; the other gaps remain open/partial.
+- learner/learning-misc: 11 DONE with gap-ID-named tests in `tests/unit/learner-learning-misc-gap-closure.test.ts` and page record in `docs/audit/acceptance/learner-learning-misc-verification.md`.
+- college/people: 9 DONE with unit and disposable-PostgreSQL integration gap tests in `tests/unit/college-people-gap-closure.test.ts`, `tests/integration/college-people-gap-closure.test.ts`, and page record `docs/audit/acceptance/college-people-verification.md`.
+- Current round: 26 DONE and 1 NOT-A-GAP dispositions, subject to orchestrator acceptance; do not inflate closure from partially implemented gap-ID source checks.
+
 ## Needs shell (chat-9 only)
 
