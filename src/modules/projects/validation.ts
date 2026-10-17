@@ -792,17 +792,24 @@ function withValidMeetingWindow<
     );
 }
 
-const projectMeetingHttpsUrlSchema = z
+// MEN-projects-meetings-29: legacy meeting links accept both HTTP and HTTPS.
+// Reject non-web schemes and credential-bearing URLs at the API boundary.
+const projectMeetingWebUrlSchema = z
   .string()
   .trim()
   .url()
   .max(2048)
   .refine(
-    (value) => value.startsWith("https://"),
-    {
-      message:
-        "Project meeting URL must use https",
+    (value) => {
+      try {
+        const url = new URL(value);
+        return (url.protocol === "https:" || url.protocol === "http:") &&
+          Boolean(url.hostname) && !url.username && !url.password;
+      } catch {
+        return false;
+      }
     },
+    { message: "Enter a valid meeting link." },
   );
 
 export const requestProjectMeetingInputSchema =
@@ -816,7 +823,7 @@ export const scheduleProjectMeetingInputSchema =
     meetingType: z
       .enum(PROJECT_MEETING_TYPES)
       .optional(),
-    meetingUrl: projectMeetingHttpsUrlSchema,
+    meetingUrl: projectMeetingWebUrlSchema,
     linkedSprintId:
       projectSprintIdSchema.nullable().optional(),
     linkedTaskId:
