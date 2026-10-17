@@ -10,6 +10,7 @@ export const tpoGridQuerySchema = z.object({
 export type TpoGridColumn<Row> = {
   key: string; label: string; read: (row: Row) => string | number | null | undefined;
   exportOnly?: boolean; editable?: boolean;
+  tooltip?: (row: Row) => string | undefined;
 };
 export function chosenTpoGridColumns<Row>(columns: readonly TpoGridColumn<Row>[], selected: readonly string[]) {
   const chosen = new Set(selected);
