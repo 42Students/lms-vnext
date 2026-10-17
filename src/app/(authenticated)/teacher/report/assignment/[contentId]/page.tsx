@@ -41,7 +41,7 @@ export default async function FacultyAssignmentReportPage({
   } = report;
   return (
     <div className="space-y-6">
-      <Link href="/teacher/allAssignments" className="text-sm font-semibold text-primary-text">
+      <Link href="/teacher/allAssignments" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
         ← My Assignments
       </Link>
       <PageHeader title={assignment.title} />
@@ -56,7 +56,7 @@ export default async function FacultyAssignmentReportPage({
             assignmentId:assignment.id,deliveryId:assignment.deliveryId,
             filter:"ALL",page:1,
           })}
-          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline">
+          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline">
           Filter submissions and export
         </Link>
       </div>
@@ -114,7 +114,7 @@ export default async function FacultyAssignmentReportPage({
             const width = Math.round((bucket.count / total) * 100);
             return (
               <details key={bucket.label} className="rounded-md border border-border p-2 text-sm">
-                <summary className="grid cursor-pointer grid-cols-[6rem_1fr_2rem] items-center gap-3">
+                <summary className="grid min-h-11 cursor-pointer grid-cols-[6rem_1fr_2rem] items-center gap-3 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
                 <span className="text-body">{bucket.label}</span>
                 <span className="h-2 overflow-hidden rounded-full bg-muted">
                   <span

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { placementTableExists } from "@/modules/placements/staged-tables";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { tpoCrmApiErrorResponse } from "@/lib/tpo-crm-api-error";
 import { getTpoCompanyMemory } from "@/modules/placements/tpo-company-memory-service";

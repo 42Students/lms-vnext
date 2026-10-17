@@ -38,7 +38,7 @@ export default async function FacultyQuizAttemptPage({
     <PageHeader eyebrow="Faculty · Quiz Report" title="Individual Quiz attempts"
       description={data.quiz.title+" · "+data.quiz.sectionName}
       actions={<Link href={back}
-        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
         Full Quiz report
       </Link>} />
     <section className="rounded-xl border border-border bg-surface p-4">
@@ -67,15 +67,15 @@ export default async function FacultyQuizAttemptPage({
     </section>
     <nav aria-label="Quiz attempt view" className="flex flex-wrap gap-3">
       <Link href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,1,data.query.order,data.query.q,"ALL")}
-        aria-current={data.query.view==="ALL"?"page":undefined} className="inline-flex min-h-10 items-center rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">All attempts</Link>
+        aria-current={data.query.view==="ALL"?"page":undefined} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">All attempts</Link>
       <Link href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,1,data.query.order,data.query.q,"LATEST")}
-        aria-current={data.query.view==="LATEST"?"page":undefined} className="inline-flex min-h-10 items-center rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">Latest per learner</Link>
+        aria-current={data.query.view==="LATEST"?"page":undefined} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">Latest per learner</Link>
     </nav>
     <nav aria-label="Quiz attempt order" className="flex flex-wrap gap-3">
       <Link href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,1,"NEWEST",data.query.q,data.query.view)}
-        aria-current={data.query.order==="NEWEST"?"page":undefined} className="min-h-10 rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">Newest first</Link>
+        aria-current={data.query.order==="NEWEST"?"page":undefined} className="min-h-11 rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">Newest first</Link>
       <Link href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,1,"OLDEST",data.query.q,data.query.view)}
-        aria-current={data.query.order==="OLDEST"?"page":undefined} className="min-h-10 rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">Oldest first</Link>
+        aria-current={data.query.order==="OLDEST"?"page":undefined} className="min-h-11 rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">Oldest first</Link>
     </nav>
     <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
       <input type="hidden" name="deliveryId" value={data.query.deliveryId} />
@@ -119,9 +119,9 @@ export default async function FacultyQuizAttemptPage({
       <span className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</span>
       <div className="flex gap-3">
         {data.page>1?<Link href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,data.page-1,data.query.order,data.query.q,data.query.view)}
-          className="text-sm font-semibold text-primary-text">Previous</Link>:null}
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Previous</Link>:null}
         {data.page<data.totalPages?<Link href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,data.page+1,data.query.order,data.query.q,data.query.view)}
-          className="text-sm font-semibold text-primary-text">Next</Link>:null}
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Next</Link>:null}
       </div>
     </nav>
     <p className="text-xs text-muted-foreground">

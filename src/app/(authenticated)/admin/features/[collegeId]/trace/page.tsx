@@ -400,6 +400,28 @@ export default async function SuperAdminLearnerAccessTracePage({
             </p>
           </div>
 
+          <section aria-label="Placement cell decision" className="rounded-xl border border-border bg-surface p-5">
+            <h3 className="font-semibold">Placement cell decision</h3>
+            <p className="mt-2 text-sm text-body">{
+              selected.placementParticipation.status==="NOT_DECIDED"?"Not decided yet":
+              selected.placementParticipation.status==="ELIGIBLE"?"Eligible":
+              "Ineligible"+(selected.placementParticipation.reason?": "+selected.placementParticipation.reason:"")
+            }</p>
+            {selected.placementParticipation.level?<p className="mt-1 text-xs text-body">
+              {selected.placementParticipation.level==="MEMBERSHIP"?"Student":
+                selected.placementParticipation.level==="SECTION"?"Class":"Batch"} decision
+            </p>:null}
+            {selected.placementParticipation.decidedAt?<p className="mt-1 text-xs text-body">
+              Decided by {selected.placementParticipation.actorName||"Unknown actor"} on {
+                selected.placementParticipation.decidedAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})
+              }
+            </p>:null}
+            <p className="mt-2 text-xs text-muted-foreground">
+              This is the persisted placement-cell decision, not the optional-module setting.
+              Placements access requires both an enabled module and an eligible participation decision.
+            </p>
+          </section>
+
           <CopyFindingForClaude finding={[
            "College: "+college.name,
            ...selected.modules.map(module=>[
