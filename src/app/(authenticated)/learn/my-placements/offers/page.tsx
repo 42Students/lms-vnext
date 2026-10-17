@@ -15,6 +15,7 @@ import { ownOffersDueWithinWeek } from "@/modules/placements/learner-offers-due-
 import { learnerOffersExpiringSoon } from "@/modules/placements/learner-offers-expiring-soon-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerPlacementOffers } from "@/components/placements/learner-placement-offers";
+import {learnerOfferCountsAsPlaced,safeLearnerOfferLetterHref} from "@/modules/placements/learner-offer-letter-model";
 import { getOwnLearnerOfferBrowse } from "@/modules/placements/learner-offers-browse-service";
 import {listOwnPlacementRequests} from "@/modules/placements/request-service";
 import {readOptionalLearnerAlertSource} from "@/modules/placements/learner-optional-alert-source-model";
@@ -253,6 +254,9 @@ export default async function LearnerOffersPage({
             kind: row.offer.kind === "LOI" ? "LOI" as const : "OFFER" as const,
             status: row.offer.status as "ISSUED" | "ACCEPTED" | "DECLINED" | "WITHDRAWN",
             annualCtcInr: row.offer.annualCtcInr,
+            letterHref: safeLearnerOfferLetterHref(row.offer.offerLetterUrl),
+            countsAsPlaced: learnerOfferCountsAsPlaced({kind:row.offer.kind==="LOI"?"LOI":"OFFER",
+              jobEmploymentType:row.job.employmentType,roleEmploymentType:row.role.employmentType}),
             joiningDate: row.offer.joiningDate,
             expiresAt: row.offer.expiresAt?.toISOString() ?? null,
             issuedAt: row.offer.issuedAt.toISOString(),

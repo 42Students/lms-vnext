@@ -658,7 +658,7 @@ export function LearnerCourseWorkspace({
     { key: "lectures", label: "Lectures" },
     { key: "resources", label: "Resources" },
     { key: "assessments", label: "Assessments" },
-    { key: "live-sessions", label: "Live sessions" },
+    { key: "live-sessions", label: "Live Sessions" },
   ] as const;
 
   const matchesFilter = (

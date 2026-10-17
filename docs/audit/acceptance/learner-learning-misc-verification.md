@@ -61,20 +61,9 @@ Each of these gaps also has an ID-named test in `tests/unit/learner-learning-mis
 | LEARNER-learning-misc-07 | OPEN (needs storage owner) | Legacy code/notebook/archive types are rejected by `src/modules/storage/file-policy.ts`, which belongs to the storage subsystem and is excluded from this lane by `gap-closure-lane.md`. Course-only upload validation cannot bypass signed storage grants safely. |
 | LEARNER-learning-misc-12 | BLOCKED by provider configuration | Google Drive file picker/import requires provider OAuth configuration and a scoped import flow with scanning. An arbitrary Drive link is not equivalent to an imported verified private file; no fake completion. |
 
-## Chat-3 round 12: independently checked source sub-contracts (tests authored, not run)
+## chat-15 UNCONFIRMED decisions (2026-10-18)
 
-These named regression tests check *existing pieces* of the legacy audit only. An `OPEN`, `FIXED-ON-MAIN`, or partial gap does **not** become DONE merely because one piece is rendered; missing semantics listed in the audit remain pending. No page restyling performed following the owner UX freeze. The orchestrator must execute tests and verify integration before marking full closure.
-
-| Gap | Queue disposition maintained | New named source regression |
-| --- | --- | --- |
-| LEARNER-learning-misc-03 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-learner-round12-parity-contracts.test.ts` / `LEARNER-learning-misc-03` |
-| LEARNER-learning-misc-09 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-learner-round12-parity-contracts.test.ts` / `LEARNER-learning-misc-09` |
-| LEARNER-learning-misc-20 | DONE — sub-contract only | `tests/unit/chat3-learner-round12-parity-contracts.test.ts` / `LEARNER-learning-misc-20` |
-| LEARNER-learning-misc-30 | DONE — sub-contract only | `tests/unit/chat3-learner-round12-parity-contracts.test.ts` / `LEARNER-learning-misc-30` |
-| LEARNER-learning-misc-32 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-learner-round12-parity-contracts.test.ts` / `LEARNER-learning-misc-32` |
-| LEARNER-learning-misc-33 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-learner-round12-parity-contracts.test.ts` / `LEARNER-learning-misc-33` |
-| LEARNER-learning-misc-35 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-learner-round12-parity-contracts.test.ts` / `LEARNER-learning-misc-35` |
-| LEARNER-learning-misc-36 | DONE — sub-contract only | `tests/unit/chat3-learner-round12-parity-contracts.test.ts` / `LEARNER-learning-misc-36` |
-| LEARNER-learning-misc-38 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-learner-round12-parity-contracts.test.ts` / `LEARNER-learning-misc-38` |
-| LEARNER-learning-misc-39 | DONE — sub-contract only | `tests/unit/chat3-learner-round12-parity-contracts.test.ts` / `LEARNER-learning-misc-39` |
-| LEARNER-learning-misc-40 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-learner-round12-parity-contracts.test.ts` / `LEARNER-learning-misc-40` |
+| ID | Disposition | Evidence / rationale |
+|---|---|---|
+| LEARNER-learning-misc-25 | NOT-A-GAP for arbitrary legacy HTML and unsupported short-answer grading | vNext's authored schema supports validated single/multiple-choice answers, and learner prompts are rendered as escaped text. Rendering untrusted HTML or guessing short-answer grading would be less safe; richer authored questions require separate vetted schema, sanitizer and grading design. `quiz-validation.ts`, `learner-quiz-attempt.tsx`; `tests/unit/chat15-unconfirmed-decisions.test.ts` test `LEARNER-learning-misc-25 does not execute arbitrary learner-visible question HTML`. |
+| LEARNER-learning-misc-41 | NOT-A-GAP (canonical route policy) | No legacy slug migration is planned for vNext. New calendar and attendance links use authorized delivery IDs, and the course route checks delivery membership before rendering. Do not translate arbitrary slug strings to another student's course. `learner-class-schedule.tsx`, `[deliveryId]/[...courseTab]/page.tsx`; `tests/unit/chat15-unconfirmed-decisions.test.ts` test `LEARNER-learning-misc-41 keeps authorized delivery IDs as canonical learner course links`. |
