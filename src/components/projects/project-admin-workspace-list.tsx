@@ -10,6 +10,7 @@ export type ProjectAdminWorkspaceListItem = {
   status: string;
   updatedAt: Date;
   mentorName: string | null;
+  templateTitle?: string | null;
   memberCount: number;
   progressPercent: number;
 };
@@ -69,7 +70,11 @@ export function ProjectAdminWorkspaceList({
         <th scope="col" className="p-3">Members</th><th scope="col" className="p-3">Action</th>
       </tr></thead>
       <tbody>{items.map(item=><tr key={item.id} className="border-t border-border">
-        <td className="p-3 font-semibold">{item.title}</td>
+        <td className="p-3 font-semibold">{item.title}
+          <span className="mt-1 block text-xs font-normal text-muted-foreground">
+            {item.templateTitle ?? "No template — attach one"}
+          </span>
+        </td>
         <td className="p-3">{item.mentorName??"Unassigned"}</td>
         <td className="p-3"><StatusBadge tone={tone(item.status)}>{label(item.status)}</StatusBadge></td>
         <td className="min-w-32 p-3"><div className="flex items-center gap-2">
@@ -98,7 +103,7 @@ export function ProjectAdminWorkspaceList({
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text">
-                Project
+                {item.templateTitle ? "Template: " + item.templateTitle : "No template — attach one"}
               </p>
               <h2 className="mt-2 line-clamp-2 text-lg font-semibold text-foreground">
                 {item.title}
