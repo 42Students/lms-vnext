@@ -105,7 +105,7 @@ export function CollegeCohortCreateForm({ programs, periods }: {
             className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Expected end period (optional)
-          <select disabled={endDateLocked} value={expectedEndPeriodId} onChange={e => setExpectedEndPeriodId(e.target.value)}
+          <select disabled={pending} value={expectedEndPeriodId} onChange={e => setExpectedEndPeriodId(e.target.value)}
             className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
             <option value="">Not specified</option>
             {periods.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
