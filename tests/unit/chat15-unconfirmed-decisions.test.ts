@@ -48,7 +48,7 @@ describe("chat-15 evidence-based UNCONFIRMED decisions",()=>{
  it("LEARNER-learning-misc-41 keeps authorized delivery IDs as canonical learner course links",()=>{
   const schedule=source("src/components/academics/learner-class-schedule.tsx");
   expect(schedule).toContain('courseBasePath = "/learn/courses"');
-  expect(schedule).toContain('href={\`${courseBasePath}/${event.deliveryId}');
+  expect(schedule).toContain('href={`${courseBasePath}/${event.deliveryId}');
   const route=source("src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx");
   expect(route).toContain("getLearnerCourseWorkspace(context, deliveryId)");
   expect(route).toContain("if (!courseMeta)");
