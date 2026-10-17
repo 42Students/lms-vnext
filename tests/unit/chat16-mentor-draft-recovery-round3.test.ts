@@ -5,6 +5,23 @@ const read=(path:string)=>readFileSync(path,"utf8");
 const draftWarning="You have unsaved project changes. Leave this page and discard them?";
 
 describe("chat-16 mentor editor draft recovery",()=>{
+  it("MEN-projects-meetings-75 has exactly one sprint and meeting draft guard after upstream reconciliation",()=>{
+    const sprint=read("src/components/projects/mentor-sprint-write.tsx");
+    const sprintCreate=sprint.slice(0,sprint.indexOf("export function MentorSprintTransition("));
+    expect(sprintCreate.split("const dirty=").length-1).toBe(1);
+    expect(sprintCreate).not.toContain("resetForm()");
+    expect(sprintCreate).toContain("guard.confirmDiscard");
+    const task=read("src/components/projects/mentor-task-create.tsx");
+    expect(task).not.toContain("resetForm()");
+    expect(task).toContain("discardDraft();");
+    const meeting=read("src/components/projects/project-meeting-controls.tsx");
+    const schedule=meeting.slice(meeting.indexOf("export function ScheduleProjectMeetingControl("),
+      meeting.indexOf("export function ProjectMeetingTransitionActions("));
+    expect(schedule.split("const dirty=").length-1).toBe(1);
+    expect(schedule).not.toContain("setConfirmDiscard(true)");
+    expect(schedule).toContain("guard.requestClose()");
+  });
+
   it("MEN-projects-meetings-72 delivers project brief update notices transactionally to active project members",()=>{
     const service=read("src/modules/projects/workspace-brief-service.ts");
     expect(service).toContain('import {notifyActiveProjectMembers} from "./project-notification-service"');
