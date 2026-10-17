@@ -242,7 +242,16 @@ export async function listSuperAdminFeatureControls(
         college.id,
         college.organizationId,
         rules,
-      ),
+      ).map(decision=>{
+        const own=rules.find(rule=>rule.scopeType==="COLLEGE"&&
+          rule.scopeId===college.id&&rule.module===decision.module);
+        const ancestorLocked=rules.some(rule=>rule.module===decision.module&&rule.locked&&(
+          (rule.scopeType==="ORGANIZATION"&&rule.scopeId===college.organizationId)||
+          (rule.scopeType==="GLOBAL"&&rule.scopeId===null)));
+        return {...decision,
+          stored:own?{enabled:own.enabled,locked:own.locked}:null,
+          ancestorLocked};
+      }),
     })),
     q: query.q,
     sort: query.sort,
