@@ -139,10 +139,11 @@ export default async function TpoLeadsReportPage({
        <a href={"/api/placements/tpo/reports/engagement?"+new URLSearchParams({
         ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
         ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{}),
+        ...(selectedCompanyId?{companyId:selectedCompanyId}:{}),
        }).toString()} className="inline-flex min-h-10 items-center rounded border border-border px-4 text-sm font-semibold text-primary-text">Export company engagement CSV</a>
        <ReportTable title="Engage and placement outcomes by company"
         headings={["Company","Contacts","Invited","Joined","Drives that ran","Students placed"]}
-        rows={companyEngagement.map(row=>{
+        rows={companyFilter.rows.map(row=>{
          return [row.companyName,row.contacts,row.invited,row.joined,row.ranDrives,row.placed];
         })}
         emptyDescription="No college-linked recruiter leads are recorded. Contact, invitation and placement counts are not inferred."/>
