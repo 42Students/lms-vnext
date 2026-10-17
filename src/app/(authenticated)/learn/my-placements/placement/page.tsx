@@ -13,7 +13,12 @@ import {readOptionalLearnerPlacementSource} from "@/modules/placements/learner-o
 import { getLearnerPlacementRequestWorkspace } from "@/modules/placements/request-service";
 import {learnerPlacementCellOfferEmptyMessage} from "@/modules/placements/learner-placement-cell-offer-empty-model";
 
-export default async function LearnerPlacementCellPage() {
+export default async function LearnerPlacementCellPage({
+ searchParams,
+}:{searchParams:Promise<{request?:string;applicationId?:string;roundId?:string}>}) {
+  const query=await searchParams;
+  const validUuid=(s:string|undefined)=>s&&/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(s)?s:"";
+  const prefillAbsence=query.request==="absence-dispute";
   const context = await getCurrentRequestContext();
   const [offerRows, requestRead, alertRead, registration] = await Promise.all([
     listOwnPlacementOffers(context),
@@ -70,7 +75,11 @@ export default async function LearnerPlacementCellPage() {
         rounds={requestWorkspace.rounds.map((row) => ({ applicationId: row.applicationId, roundId: row.roundId, roundName: row.roundName, sequence: row.sequence, roleTitle: row.roleTitle, companyName: row.companyName, scheduledAt: row.scheduledAt?.toISOString() ?? null, timezone: row.timezone, mode: row.mode, venue: row.venue, meetingUrl: row.meetingUrl, exception: row.exception ? { scheduledAt: row.exception.scheduledAt.toISOString(), timezone: row.exception.timezone, mode: row.exception.mode, venue: row.exception.venue, meetingUrl: row.exception.meetingUrl } : null }))}
         offers={requestWorkspace.offers.map((row) => ({ ...row, expiresAt: row.expiresAt?.toISOString() ?? null }))}
       /> : null}
-        <LearnerGeneralRequests />
+        <LearnerGeneralRequests
+          initialKind={prefillAbsence?"ABSENCE_DISPUTE":"OFF_CAMPUS_OFFER"}
+          initialApplicationId={prefillAbsence?validUuid(query.applicationId):""}
+          initialRoundId={prefillAbsence?validUuid(query.roundId):""}
+        />
       </section>
       <section id="rules" className="scroll-mt-24 rounded-xl border border-border bg-surface p-5">
         <h2 className="font-semibold text-foreground">Placement rules</h2>
