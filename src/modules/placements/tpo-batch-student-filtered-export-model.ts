@@ -3,9 +3,9 @@ function csvCell(value:string):string {
  const escaped=/^[\s\uFEFF]*[=+@\-\t\r]/u.test(value)?"'"+value:value;
  return '"'+escaped.replaceAll('"','""')+'"';
 }
-export function serializeTpoBatchStudentViewCsv(rows:readonly {membershipId:string;name:string;decision:string;ambiguous:boolean;source:string;registration:{choice:string|null}|null;className?:string|null;branch?:string;program?:string}[]):string {
- const all=[["Learner membership ID","Name","Class","Branch","Program","Effective decision","Needs review","Decision source","Recorded registration choice"],
-  ...rows.map(row=>[row.membershipId,row.name,row.className??"",row.branch??"",row.program??"",row.decision,row.ambiguous?"YES":"NO",row.source,row.registration?.choice??""])];
+export function serializeTpoBatchStudentViewCsv(rows:readonly {membershipId:string;name:string;rollNumber?:string|null;decision:string;ambiguous:boolean;source:string;registration:{choice:string|null}|null;className?:string|null;branch?:string;program?:string}[]):string {
+ const all=[["Learner membership ID","Name","Roll number","Class","Branch","Program","Effective decision","Needs review","Decision source","Recorded registration choice"],
+  ...rows.map(row=>[row.membershipId,row.name,row.rollNumber??"",row.className??"",row.branch??"",row.program??"",row.decision,row.ambiguous?"YES":"NO",row.source,row.registration?.choice??""])];
  return all.map(row=>row.map(csvCell).join(",")).join("\r\n")+"\r\n";
 }
 export function batchStudentViewExportHref(batchId:string,page:number,view:TpoBatchStudentViewOptions){
