@@ -180,7 +180,12 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
       className="w-72 shrink-0 rounded-xl border border-border bg-surface-subtle p-3"
       onDragOver={e=>e.preventDefault()} onDrop={e=>drop(e,group.membershipId)}>
      <h2 className="flex justify-between text-sm font-semibold">
-      <span>{group.displayName}</span><span>{cards.length}</span></h2>
+      <span>{group.displayName??"Learner"}</span><span>{cards.length}</span></h2>
+     <p className="mt-1 text-xs text-muted-foreground">
+      {cards.filter(task=>task.status==="DONE").length} done ·
+      {" "}{cards.filter(task=>task.status==="BLOCKED").length} blocked ·
+      {" "}{cards.reduce((sum,task)=>sum+(task.estimatePoints??0),0)} pts
+     </p>
      <ul className="mt-3 space-y-3">{cards.map(task=><li key={task.id}
        draggable={!readOnly&&!busy&&!["DONE","IN_REVIEW"].includes(task.status)}
        onDragStart={event=>event.dataTransfer.setData("text/plain",task.id)}
