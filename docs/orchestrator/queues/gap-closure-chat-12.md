@@ -177,3 +177,5 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - Existing first-publication `countPublishedDriveDebarments` already advances N-drive bans transactionally (`src/modules/placements/tpo-drive-publish-effects.ts`) but -06/-07 remain OPEN for the learner dispute path.
 - The signed XLSX route is read-only, TPO-scoped, protects chosen row membership and limits 5,000 rows; package dependencies unchanged.
 - All shell-only rows remain with chat-9; do not claim these gaps DONE from this lane.
+
+- Round 43: TPO-requests-verification-01 remains OPEN (partial): TPO panel now shows kind-specific submitted details and safe proof links with missing-proof warning; three kinds still prohibit approve until real transactional effects are implemented. Tests authored, not run.
