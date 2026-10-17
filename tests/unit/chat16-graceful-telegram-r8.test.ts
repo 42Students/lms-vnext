@@ -51,7 +51,7 @@ describe("chat-16 SA-placements-projects-116 GR-111 graceful Telegram delivery",
     process.env.TELEGRAM_ALERT_BOT_TOKEN="fixture-do-not-log";
     process.env.TELEGRAM_ALERT_CHAT_ID="fixture-chat";
     const transport=vi.fn(async()=>new Response(payload,{status}));
-    expect(await sendTelegramAlert("Failure",{transport:transport as typeof fetch})).toBe(false);
+    expect(await sendTelegramAlert("Failure",{transport:transport as unknown as typeof fetch})).toBe(false);
     expect(transport).toHaveBeenCalledTimes(1);
   });
   it("SA-placements-projects-116 hides transport exception contents",async()=>{
