@@ -22,7 +22,8 @@ export default async function TpoAnnouncements({searchParams}:Props){
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const raw=await searchParams;
  const t=Array.isArray(raw.tab)?raw.tab[0]:raw.tab;
- const tab=tpoAnnouncementTabSchema.safeParse(t??"yours");
+ const legacyTab=t==="from42"?"from-42":t==="students"?"yours":t;
+ const tab=tpoAnnouncementTabSchema.safeParse(legacyTab??"yours");
  if(!tab.success)return <main role="alert" className="p-5">Invalid tab. <Link href="/tpo/announcements">Return to announcements</Link></main>;
  const result=await listTpoPlacementAnnouncements(context,tab.data);
  const targetedReady=await placementTableExists("placement_tpo_notice_audiences")&&
