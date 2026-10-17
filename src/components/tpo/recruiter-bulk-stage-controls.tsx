@@ -38,6 +38,7 @@ export function RecruiterBulkStageControls({
   const [copyNotice,setCopyNotice]=useState("");
   const [runAuditId,setRunAuditId]=useState("");
   const [reviewOpen,setReviewOpen]=useState(false);
+  const [reviewSignature,setReviewSignature]=useState("");
 
   const available = rows.filter((row) =>
     ["NEW", "CONTACTED", "NOT_NOW"].includes(row.manualStage),
