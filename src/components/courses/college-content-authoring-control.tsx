@@ -27,11 +27,14 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
  const [nextOverride,setNextOverride]=useState<Record<string,number>>({});
  const [orderDraft,setOrderDraft]=useState<Record<string,string>>({});
  const [listLessonId,setListLessonId]=useState("");
+ const [listSectionId,setListSectionId]=useState("");
  const [removeLink,setRemoveLink]=useState(false);
  const [deliveryId,setDeliveryId]=useState("");
  const [timeZone,setTimeZone]=useState<MeetingZone>("Asia/Kolkata");
  const selectedLesson=lessons.find(row=>row.id===lessonId);
  const allowedDeliveries=deliveries.filter(row=>row.offeringId===selectedLesson?.offeringId);
+ const listSections=deliveries.filter(row=>!listLessonId||
+  lessons.find(lesson=>lesson.id===listLessonId)?.offeringId===row.offeringId);
  const text=kind==="YOUTUBE"?"Import from link":kind==="RESOURCE"?"Add Resource":"Schedule live class";
  function select(item:Existing){
   setEditing(item.id);setOpen(true);setLessonId(item.lessonId);setTitle(item.title);
@@ -192,13 +195,25 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
     Showing the first 250 saved items. Use the filtered catalogue to find additional content; the list below is not complete.
    </p>:null}
    <label className="grid gap-1 text-sm font-semibold">Lesson
-    <select value={listLessonId} onChange={event=>setListLessonId(event.target.value)}
+    <select value={listLessonId} onChange={event=>{setListLessonId(event.target.value);setListSectionId("");}}
      className="min-h-10 max-w-2xl rounded border border-border bg-background p-2">
      <option value="">All Lessons</option>
      {lessons.map(row=><option key={row.id} value={row.id}>{row.courseCode} · {row.name}</option>)}
     </select>
    </label>
-   <ul className="space-y-1">{existing.filter(item=>!listLessonId||item.lessonId===listLessonId).map(item=><li key={item.id} className="flex flex-wrap items-center justify-between gap-2 border-b p-2 text-sm">
+   <label className="grid gap-1 text-sm font-semibold">Section
+    <select value={listSectionId} onChange={e=>setListSectionId(e.target.value)}
+     className="min-h-10 max-w-2xl rounded border border-border bg-background p-2">
+     <option value="">Showing every section&apos;s content together</option>
+     {listSections.map(row=><option key={row.deliveryId} value={row.deliveryId}>
+      {row.sectionName} ({row.sectionCode})</option>)}
+    </select>
+   </label>
+   <ul className="space-y-1">{existing.filter(item=>(!listLessonId||item.lessonId===listLessonId)&&
+    (!listSectionId||!item.deliveryId||item.deliveryId===listSectionId)&&
+    (!listSectionId||lessons.some(lesson=>lesson.id===item.lessonId&&
+      lesson.offeringId===deliveries.find(row=>row.deliveryId===listSectionId)?.offeringId)))
+    .map(item=><li key={item.id} className="flex flex-wrap items-center justify-between gap-2 border-b p-2 text-sm">
     <span className="break-words">{item.title} <span className="text-xs text-muted-foreground">({item.status} · {item.deliveryId?deliveries.find(row=>row.deliveryId===item.deliveryId)?.sectionName??"One section":"All sections taking this course"})</span></span>
     <div className="flex gap-2">
      {item.externalUrl&&<a className="underline" target="_blank" rel="noopener noreferrer" href={item.externalUrl}>
