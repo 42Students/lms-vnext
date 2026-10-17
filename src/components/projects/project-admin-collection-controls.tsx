@@ -3,6 +3,7 @@ import Link from "next/link";
 export type ProjectAdminCollectionQuery = {
   fromMentorId?: string;
   riskBucket?: "STALLED" | "BLOCKER" | "REVIEW";
+  riskSort?: "INACTIVE" | "WORKSPACE" | "SEVERITY";
   q?: string;
   status?:
     | "PLANNED"
