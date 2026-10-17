@@ -15,7 +15,8 @@ describe("Final sprint recruiter calendar verification",()=>{
   expect(page).toContain("Rounds, interview slots, deadlines and results due, for your drives at this college.");
   expect(page).toContain('"Previous week"');
   expect(page).toContain('"Next week"');
-  expect(page).toContain("Nothing scheduled in this period");
+  expect(page).toContain("Nothing scheduled this week");
+  expect(page).toContain("Rounds, slots and deadlines appear here as soon as they are dated.");
  });
  it("REC-calendar-messages-profile-06 identifies the college for every multi-college calendar event",()=>{
   const page=src("src/app/(authenticated)/hr/calendar/page.tsx");
