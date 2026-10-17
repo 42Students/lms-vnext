@@ -185,7 +185,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
        draggable={!readOnly&&!busy&&!["DONE","IN_REVIEW"].includes(task.status)}
        onDragStart={event=>event.dataTransfer.setData("text/plain",task.id)}
        className="rounded-lg border border-border bg-surface p-3 text-sm">
-       <p className="font-semibold">{task.title}</p>
+       <p className="break-words font-semibold">{task.title}</p>
        <p className="mt-1 text-xs text-body">{task.priority} · {task.status}</p>
        <p className="mt-1 text-xs text-body">
          {task.estimatePoints===null?"Unsized":task.estimatePoints+" points"}
