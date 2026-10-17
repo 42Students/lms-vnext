@@ -1,3 +1,6 @@
+import {studentJourneyForBatch} from "@/modules/placements/tpo-batch-student-journey-model";
+import {getTpoBatchEligibilitySummary} from "@/modules/placements/tpo-batch-eligibility-summary-service";
+import {getTpoBatchRegistrationSummary} from "@/modules/placements/tpo-batch-registration-summary-service";
 import {batchStudentViewExportHref} from "@/modules/placements/tpo-batch-student-filtered-export-model";
 import {selectTpoBatchStudentView} from "@/modules/placements/tpo-batch-student-selection-model";
 import {summarizeBatchStudentEvidence} from "@/modules/placements/tpo-batch-student-evidence-summary-model";
@@ -22,13 +25,39 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  const view=parseBatchStudentSearchParams(raw);
  if(!view.success)return <p role="alert">Invalid student search. <Link href={"/tpo/batches/"+batchId+"/students"}>Reset filters</Link></p>;
  const ctx=await getCurrentRequestContext();
- const [result,batchScope]=await Promise.all([getTpoBatchStudentRegistrations(ctx,batchId,parsed.data,view.data.q),getTpoBatch(ctx,batchId)]);
+ const [result,batchScope,eligibility,registrationCounts]=await Promise.all([
+  getTpoBatchStudentRegistrations(ctx,batchId,parsed.data,view.data.q),getTpoBatch(ctx,batchId),
+  getTpoBatchEligibilitySummary(ctx,batchId),getTpoBatchRegistrationSummary(ctx,batchId),
+ ]);
  const finished=Boolean(batchScope.lifecycle?.finishedAt);
+ const journey=studentJourneyForBatch({total:registrationCounts.activeLearners,eligible:eligibility.summary.eligible,
+  undecided:eligibility.summary.undecided,assessed:eligibility.summary.assessed,
+  complete:eligibility.summary.complete,registered:registrationCounts.registered,
+  registrationAvailable:registrationCounts.available});
  const visible=selectTpoBatchStudentView(result.students,view.data,result.registrationAvailable);
  const pageSummary=summarizeBatchStudentEvidence(result.students);
  const href=(page:number)=>batchStudentPageHref(batchId,page,view.data);
  return <main className="min-w-0 space-y-4"><h1 className="text-xl font-semibold">{result.batch.name} — Students</h1>
  <TpoBatchWorkspaceTabs batchId={batchId} active="students" />
+ <section aria-label="Placement journey" className="space-y-3 rounded-lg border border-border bg-surface p-4">
+  <h2 className="font-semibold">Placement journey</h2>
+  <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+   {([["Students",journey.total],["Eligible",journey.eligible],
+      ["Invitation sent",batchScope.lifecycle?.invitedAt?"Yes":"Not yet"],
+      ["Registered",journey.registered]] as const).map(([label,value])=>
+      <div key={label} className="rounded-md border border-border p-3">
+       <dt className="text-xs text-muted-foreground">{label}</dt>
+       <dd className="text-xl font-semibold tabular-nums">{value===null?"—":value}</dd>
+      </div>)}
+  </dl>
+  <div className="flex flex-wrap gap-2 text-xs">
+   {journey.undecided!==null?<span className="rounded-md bg-muted px-2 py-1">Not decided: {journey.undecided}</span>:null}
+   {journey.registrationGap!==null?<span className="rounded-md bg-muted px-2 py-1">No choice recorded: {journey.registrationGap}</span>:null}
+  </div>
+  {journey.sampled?<p className="text-xs text-muted-foreground">Eligibility covers a sample of {journey.sampleCount} learners; full-cohort eligibility and invited counts are not inferred.</p>:null}
+  {!registrationCounts.available?<p className="text-xs text-muted-foreground">Registration choice totals are unavailable.</p>:null}
+  <p className="text-xs text-muted-foreground">Invited is a lifecycle event, not a trustworthy per-student delivery count. Registered means a student recorded a placement registration choice, not merely that they were eligible or invited.</p>
+ </section>
  <div className="flex flex-wrap items-center justify-between gap-2">
   <p className="text-xs text-muted-foreground">CSV includes only this page (up to 25 students), with decision source and review flags.</p>
   <a href={"/api/placements/tpo/batches/"+batchId+"/students/export?page="+result.page}

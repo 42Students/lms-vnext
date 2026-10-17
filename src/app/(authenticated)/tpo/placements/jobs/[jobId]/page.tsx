@@ -1,4 +1,5 @@
 import { notFound, redirect } from "next/navigation";
+import Link from "next/link";
 import { ZodError } from "zod";
 import { getPlacementJob } from "@/modules/placements/job-service";
 import { PlacementsServiceError } from "@/modules/placements/errors";
@@ -41,6 +42,10 @@ export default async function TpoPlacementDrivePage({
   }
   return (
     <div className="min-w-0 space-y-4">
+      <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/interview-slots"}
+        className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
+        Employer interview slot proposals →
+      </Link>
       <PlacementDriveWorkspace context={context} jobId={jobId} eyebrow="TPO" openPublish={openPublish}/>
     </div>
   );

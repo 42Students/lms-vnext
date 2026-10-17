@@ -3,6 +3,7 @@ import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import {ReportBarChart} from "@/components/placements/report-bar-chart";
 import { redirect } from "next/navigation";
+import {getTpoReportDriveDimensions} from "@/modules/placements/tpo-report-drive-dimensions-service";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -22,6 +23,9 @@ import { getPlacementReportDetails } from "@/modules/placements/report-service";
 type SearchParams = {
   seasonId?: string | string[];
   jobId?: string | string[];
+  companyId?:string|string[];
+  workMode?:string|string[];
+  payCategory?:string|string[];
 };
 
 function first(value: string | string[] | undefined) {
@@ -47,6 +51,19 @@ export default async function TpoPlacementSummaryPage({
   });
 
   const { metrics, byDrive, byCompany } = workspace.report;
+  const dimensions=await getTpoReportDriveDimensions(context,{collegeId:context.membership.collegeId,
+   seasonId:workspace.selectedSeasonId,jobId:workspace.selectedJobId});
+  const companyId=first(query.companyId)??"";
+  const workMode=first(query.workMode)??"";
+  const payCategory=first(query.payCategory)??"";
+  const validFilters=(!companyId||byCompany.some(item=>item.companyId===companyId))&&
+   (!workMode||["ONSITE","HYBRID","REMOTE"].includes(workMode))&&
+   (!payCategory||["CTC_RECORDED","STIPEND_RECORDED","NOT_RECORDED"].includes(payCategory));
+  const shownDrives=validFilters?byDrive.filter(row=>{
+   const dim=dimensions.get(row.jobId);
+   return dim&&(!companyId||dim.companyId===companyId)&&(!workMode||dim.workMode===workMode)&&
+    (!payCategory||dim.payCategory===payCategory);
+  }):[];
 
   return (
     <div data-tpo-presentation-report className="space-y-6">

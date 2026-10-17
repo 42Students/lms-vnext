@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-17T04:28:12.924Z",
+ "generatedAt": "2026-10-17T04:43:04.628Z",
  "since": "2026-10-15",
  "mainRef": "origin/main",
  "statuses": [
@@ -13,21 +13,21 @@
  ],
  "total": 1843,
  "byStatus": {
-  "OPEN": 745,
+  "OPEN": 739,
   "IN-BRANCH": 2,
-  "FIXED-ON-MAIN": 779,
+  "FIXED-ON-MAIN": 785,
   "VERIFIED": 195,
   "UNCONFIRMED": 103,
   "WRONG": 9,
   "CLOSED-SINCE": 10,
   "total": 1843
  },
- "closedPercent": "53.7%",
+ "closedPercent": "54.0%",
  "byAccount": {
   "tpo": {
-   "OPEN": 288,
+   "OPEN": 284,
    "IN-BRANCH": 0,
-   "FIXED-ON-MAIN": 270,
+   "FIXED-ON-MAIN": 274,
    "VERIFIED": 97,
    "UNCONFIRMED": 32,
    "WRONG": 1,
@@ -75,9 +75,9 @@
    "total": 232
   },
   "superadmin": {
-   "OPEN": 144,
+   "OPEN": 142,
    "IN-BRANCH": 0,
-   "FIXED-ON-MAIN": 121,
+   "FIXED-ON-MAIN": 123,
    "VERIFIED": 20,
    "UNCONFIRMED": 24,
    "WRONG": 0,
@@ -117,9 +117,9 @@
    "total": 113
   },
   "S2": {
-   "OPEN": 178,
+   "OPEN": 174,
    "IN-BRANCH": 0,
-   "FIXED-ON-MAIN": 321,
+   "FIXED-ON-MAIN": 325,
    "VERIFIED": 86,
    "UNCONFIRMED": 34,
    "WRONG": 2,
@@ -127,9 +127,9 @@
    "total": 624
   },
   "S3": {
-   "OPEN": 390,
+   "OPEN": 388,
    "IN-BRANCH": 2,
-   "FIXED-ON-MAIN": 338,
+   "FIXED-ON-MAIN": 340,
    "VERIFIED": 31,
    "UNCONFIRMED": 43,
    "WRONG": 0,
@@ -159,9 +159,9 @@
    "total": 206
   },
   "chat-5": {
-   "OPEN": 140,
+   "OPEN": 137,
    "IN-BRANCH": 0,
-   "FIXED-ON-MAIN": 123,
+   "FIXED-ON-MAIN": 126,
    "VERIFIED": 33,
    "UNCONFIRMED": 14,
    "WRONG": 1,
@@ -179,9 +179,9 @@
    "total": 608
   },
   "chat-9": {
-   "OPEN": 287,
+   "OPEN": 284,
    "IN-BRANCH": 0,
-   "FIXED-ON-MAIN": 305,
+   "FIXED-ON-MAIN": 308,
    "VERIFIED": 70,
    "UNCONFIRMED": 50,
    "WRONG": 1,
@@ -191,9 +191,9 @@
  },
  "fixedLast24h": {
   "chat-2": 107,
-  "chat-5": 156,
+  "chat-5": 159,
   "chat-7": 338,
-  "chat-9": 375
+  "chat-9": 378
  },
  "parseProblems": 0
 }

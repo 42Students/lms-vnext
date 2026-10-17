@@ -2,6 +2,7 @@
 
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
+import {parseCollegeIstLocal} from "@/modules/courses/college-ist-datetime-model";
 type Lesson={id:string;name:string;course:string;courseCode:string;offeringId:string;nextSequence:number};
 type Delivery={offeringId:string;deliveryId:string;sectionName:string;sectionCode:string};
 type Option={text:string;correct:boolean};
@@ -12,7 +13,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
  lessons:readonly Lesson[];deliveries:readonly Delivery[];
 }){
  const router=useRouter();
- const [opened,setOpened]=useState(false),[lessonId,setLessonId]=useState(lessons[0]?.id??"");
+ const [opened,setOpened]=useState(false),[keepOpen,setKeepOpen]=useState(false),[lessonId,setLessonId]=useState(lessons[0]?.id??"");
  const [deliveryId,setDeliveryId]=useState("");
  const [title,setTitle]=useState(""),[description,setDescription]=useState("");
  const [dueAt,setDueAt]=useState(""),[maxAttempts,setMaxAttempts]=useState("1");
@@ -22,6 +23,15 @@ export function CollegeQuizCreate({lessons,deliveries}:{
  const lock=useRef(false),lesson=lessons.find(x=>x.id===lessonId);
  const [nextOverride,setNextOverride]=useState<Record<string,number>>({});
  const sections=deliveries.filter(x=>x.offeringId===lesson?.offeringId);
+ function moveQuestion(index:number,delta:-1|1){
+  setQuestions(rows=>{
+   const next=index+delta;
+   if(next<0||next>=rows.length)return rows;
+   const copy=[...rows];
+   [copy[index],copy[next]]=[copy[next],copy[index]];
+   return copy;
+  });
+ }
  function replaceQuestion(i:number,updated:Question){
   setQuestions(rows=>rows.map((row,index)=>index===i?updated:row));
  }
@@ -34,16 +44,17 @@ export function CollegeQuizCreate({lessons,deliveries}:{
   if(questions.length<1||questions.length>100)return "Add 1–100 questions.";
   for(let i=0;i<questions.length;i++){
    const q=questions[i],texts=q.options.map(x=>x.text.trim());
-   if(!q.prompt.trim()||!Number.isInteger(q.points)||q.points<1||q.points>1000||
-      texts.some(x=>!x)||new Set(texts.map(x=>x.toLowerCase())).size!==texts.length||
+   if(!q.prompt.trim()||q.prompt.length>5000||!Number.isInteger(q.points)||q.points<1||q.points>1000||
+      texts.some(x=>!x||x.length>2000)||new Set(texts.map(x=>x.toLocaleLowerCase())).size!==texts.length||
       texts.length<2||texts.length>20)return "Complete all question prompts, points and unique options.";
    const correct=q.options.filter(x=>x.correct).length;
-   if(!correct||(q.type==="SINGLE_CHOICE"&&correct!==1)||
-      (q.type==="MULTIPLE_CHOICE"&&correct>=q.options.length))return "Select at least one correct and one incorrect answer for each multiple-choice question.";
+   if(q.type==="SINGLE_CHOICE"&&correct!==1)return "Choose exactly one correct answer for each single-choice question.";
+   if(q.type==="MULTIPLE_CHOICE"&&(correct<1||correct>=q.options.length))
+    return "Choose at least one correct and one incorrect answer for each multiple-choice question.";
   }
   if(questions.reduce((sum,q)=>sum+q.points,0)>10000)return "Quiz total points may not exceed 10000.";
-  if(dueAt&&Number.isNaN(new Date(dueAt+":00+05:30").getTime()))return "Use a valid deadline.";
-  if(dueAt&&new Date(dueAt+":00+05:30").getTime()<=Date.now())return "Quiz deadline must be in the future.";
+  if(dueAt&&!parseCollegeIstLocal(dueAt))return "Use a valid deadline.";
+  if(dueAt&&Date.parse(parseCollegeIstLocal(dueAt)!)<=Date.now())return "Quiz deadline must be in the future.";
   return null;
  }
  async function create(){
@@ -55,14 +66,16 @@ export function CollegeQuizCreate({lessons,deliveries}:{
    const result=await fetch("/api/courses/quizzes",{method:"POST",
     headers:{"content-type":"application/json"},
     body:JSON.stringify({lessonId:lesson!.id,deliveryId:deliveryId||null,title:title.trim(),
-     description:description.trim()||null,dueAt:dueAt?new Date(dueAt+":00+05:30").toISOString():null,
+     description:description.trim()||null,dueAt:dueAt?parseCollegeIstLocal(dueAt):null,
      maxAttempts:Number(maxAttempts),shuffleQuestions,shuffleOptions,sequence:nextOverride[lesson!.id]??lesson!.nextSequence,
      questions:questions.map((q,index)=>({...q,sequence:index,
       prompt:q.prompt.trim(),options:q.options.map((o,j)=>({...o,text:o.text.trim(),sequence:j}))}))})});
    const body=await result.json().catch(()=>null);
    if(!result.ok||!body?.quiz?.id)throw new Error(body?.error??"Could not create quiz.");
    setNextOverride(old=>({...old,[lesson!.id]:(old[lesson!.id]??lesson!.nextSequence)+1}));
-   setOpened(false);setTitle("");setDescription("");setDueAt("");setQuestions([empty()]);
+   if(!keepOpen)setOpened(false);
+   setTitle("");setDescription("");setDueAt("");setMaxAttempts("1");
+   setShuffleQuestions(false);setShuffleOptions(false);setQuestions([empty()]);
    setNotice("Quiz draft created. Publish it when the questions are ready.");router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not create quiz.");}
   finally{lock.current=false;setBusy(false);}
@@ -71,7 +84,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
   <div className="flex flex-wrap items-center justify-between gap-2">
    <div><h2 className="font-semibold">Quizzes</h2>
     <p className="text-xs text-muted-foreground">Author questions for all eligible Sections or a specific Section.</p></div>
-   <button type="button" disabled={!lessons.length||busy} onClick={()=>setOpened(true)}
+   <button type="button" disabled={!lessons.length||busy} onClick={()=>{setError("");setNotice("");setOpened(true);}}
     className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text">
     Create New Quiz</button>
   </div>
@@ -93,7 +106,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
     <label className="grid gap-1 text-sm font-semibold">Title
      <input maxLength={255} required value={title} disabled={busy}
       onChange={e=>setTitle(e.target.value)} className="min-h-10 rounded border border-border px-2"/></label>
-    <label className="grid gap-1 text-sm font-semibold">Deadline (IST)
+    <label className="grid gap-1 text-sm font-semibold">Deadline (IST, required before publishing)
      <input type="datetime-local" value={dueAt} disabled={busy} onChange={e=>setDueAt(e.target.value)}
       className="min-h-10 rounded border border-border px-2"/></label>
     <label className="grid gap-1 text-sm font-semibold">Maximum attempts
@@ -103,12 +116,17 @@ export function CollegeQuizCreate({lessons,deliveries}:{
      <textarea rows={2} maxLength={10000} value={description} disabled={busy}
       onChange={e=>setDescription(e.target.value)} className="rounded border border-border p-2"/></label>
    </div>
+   <p role="status" className="text-xs text-muted-foreground">Audience: {deliveryId?
+    sections.find(section=>section.deliveryId===deliveryId)?.sectionName??"Invalid Section":
+    "All currently eligible Sections in the Course Offering"} · Draft quiz is hidden until published.</p>
    <div className="flex flex-wrap gap-4 text-sm">
     <label className="flex items-center gap-2"><input type="checkbox" checked={shuffleQuestions}
       onChange={e=>setShuffleQuestions(e.target.checked)}/>Shuffle question order per learner</label>
     <label className="flex items-center gap-2"><input type="checkbox" checked={shuffleOptions}
       onChange={e=>setShuffleOptions(e.target.checked)}/>Shuffle answer options per learner</label>
    </div>
+   <p role="status" className="text-sm text-muted-foreground">{questions.length} question(s) ·
+    {questions.reduce((sum,question)=>sum+question.points,0)} total points · Max 100 questions and 10,000 points.</p>
    {questions.map((question,i)=><fieldset key={i} className="space-y-2 rounded border border-border p-3">
     <legend className="text-sm font-semibold">Question {i+1}</legend>
     <div className="flex flex-wrap gap-2">
@@ -140,6 +158,10 @@ export function CollegeQuizCreate({lessons,deliveries}:{
       className="text-xs font-semibold text-error">Remove</button>:null}
     </label>)}
     <div className="flex flex-wrap gap-3">
+     <button type="button" disabled={busy||i===0} onClick={()=>moveQuestion(i,-1)}
+      className="text-sm font-semibold text-primary-text disabled:opacity-40">Move question up</button>
+     <button type="button" disabled={busy||i===questions.length-1} onClick={()=>moveQuestion(i,1)}
+      className="text-sm font-semibold text-primary-text disabled:opacity-40">Move question down</button>
      <button type="button" disabled={busy||question.options.length>=20}
       onClick={()=>replaceQuestion(i,{...question,options:[...question.options,{text:"",correct:false}]})}
       className="text-sm font-semibold text-primary-text">+ Add option</button>
@@ -152,13 +174,23 @@ export function CollegeQuizCreate({lessons,deliveries}:{
     onClick={()=>setQuestions(rows=>[...rows,empty()])}
     className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text">
     + Add question</button>
+   <label className="flex items-center gap-2 text-sm">
+    <input type="checkbox" disabled={busy} checked={keepOpen} onChange={event=>setKeepOpen(event.target.checked)}/>
+    Create another quiz after saving
+   </label>
    <div className="flex flex-wrap gap-2">
     <button type="button" disabled={busy} onClick={()=>void create()}
      className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary">
      {busy?"Saving…":"Create quiz draft"}</button>
     <button type="button" disabled={busy} onClick={()=>{
-      if((title.trim()||questions.some(q=>q.prompt.trim()))&&!window.confirm("Discard unsaved quiz changes?"))return;
-      setOpened(false);
+      const dirty=Boolean(title.trim()||description.trim()||dueAt||deliveryId||
+       maxAttempts!=="1"||shuffleQuestions||shuffleOptions||questions.length!==1||
+       questions.some(q=>q.prompt.trim()||q.type!=="SINGLE_CHOICE"||q.points!==1||
+        q.options.length!==2||q.options.some(option=>option.text.trim())));
+      if(dirty&&!window.confirm("Discard unsaved quiz changes?"))return;
+      setOpened(false);setTitle("");setDescription("");setDueAt("");setDeliveryId("");
+      setMaxAttempts("1");setShuffleQuestions(false);setShuffleOptions(false);
+      setQuestions([empty()]);setError("");
     }} className="min-h-10 rounded border border-border px-4 text-sm">Cancel</button>
    </div>
   </div>:null}
