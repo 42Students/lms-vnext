@@ -50,7 +50,7 @@ Audit: `docs/audit/pages/tpo/inbox-team.md` (and `inbox-team-review.md` if prese
 | TPO-inbox-team-30 | S3 | STATE | OPEN |
 | TPO-inbox-team-32 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | TPO-inbox-team-34 | S3 | MISSING-ACTION | IN-BRANCH |
-| TPO-inbox-team-37 | S3 | COPY | OPEN |
+| TPO-inbox-team-37 | S3 | COPY | IN-BRANCH |
 | TPO-inbox-team-38 | S3 | PERMISSION | IN-BRANCH |
 | TPO-inbox-team-40 | S3 | COPY | IN-BRANCH |
 | TPO-inbox-team-49 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
