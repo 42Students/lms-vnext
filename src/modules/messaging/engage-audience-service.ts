@@ -32,3 +32,34 @@ export async function previewEngageCampaignAudience(context:RequestContext,raw:u
   return summarizeEngageAudience(contacts,query.segment);
  });
 }
+
+/** Count-only, tenant-scoped projection of the exact Engage selection.
+ * Preview is advisory; the draft save and any future send recheck suppression.
+ */
+export async function previewSelectedTpoCampaignAudience(context:RequestContext,raw:unknown){
+ const query=selectedCampaignPreviewSchema.parse(raw);
+ const collegeId=context.membership?.collegeId;
+ if(!collegeId||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
+ const college=await requirePlacementManageScope(context,collegeId);
+ return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+   organizationId:college.organizationId,collegeId:college.id,
+  });
+  const selected=new Set(query.selectedLeadIds);
+  const contacts=await tx.select({
+   id:placementTpoLeads.id,emailNorm:placementTpoLeads.emailNorm,
+   manualStage:placementTpoLeads.manualStage,ownerMembershipId:placementTpoLeads.ownerMembershipId,
+   unsubscribedAt:placementTpoLeads.unsubscribedAt,inviteBouncedAt:placementTpoLeads.inviteBouncedAt,
+  }).from(placementTpoLeads).where(eq(placementTpoLeads.collegeId,college.id));
+  const subset=contacts.filter(row=>selected.has(row.id));
+  const plan=planTpoCampaignRecipients(subset);
+  const unavailable=query.selectedLeadIds.length-subset.length;
+  return {
+   selected:query.selectedLeadIds.length,
+   eligible:plan.recipientIds.length,
+   leftOut:query.selectedLeadIds.length-plan.recipientIds.length,
+   suppressed:plan.suppressed,
+   unavailable,
+  };
+ });
+}
