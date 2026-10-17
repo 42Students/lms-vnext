@@ -172,9 +172,14 @@ export function FacultyCourseHomeSignals({
                   <summary className="cursor-pointer font-semibold text-body">
                     {learner.severity>=3?"Critical":"Moderate"} · View snapshot
                   </summary>
-                  <ul className="mt-2 space-y-1 text-muted-foreground">
-                    {learner.reasons.map(reason=><li key={reason}>{reason}</li>)}
-                  </ul>
+                  <div className="mt-2 space-y-2 text-xs text-muted-foreground">
+                    <p>Attendance: {learner.attendancePercent===null?"Not enough marked sessions":learner.attendancePercent+"%"}</p>
+                    {learner.attendancePercent!==null?<div role="img" aria-label={"Attendance "+learner.attendancePercent+" percent"} className="h-2 overflow-hidden rounded-full bg-muted">
+                      <span className="block h-full bg-primary" style={{width:learner.attendancePercent+"%"}}/>
+                    </div>:null}
+                    <p>Submissions missing: {learner.missingSubmissionCount}</p>
+                    <p>Average grade: {learner.averageGradePercent===null?"No graded work":learner.averageGradePercent+"%"}</p>
+                  </div>
                   <Link href={`/teacher/courses/${encodeURIComponent(deliveryId)}/students`}
                     className="mt-2 inline-block text-primary-text underline">View students</Link>
                 </details>
