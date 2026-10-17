@@ -4,6 +4,7 @@ import {useEffect,useState} from "react";
 import type {TpoStudentRow} from "@/modules/placements/tpo-students-model";
 import {TpoStudentNudgePanel} from "./tpo-student-nudge-panel";
 import {TpoStudentNoteEditor} from "./tpo-student-note-editor";
+import {afterCollegeDisplay,type AfterCollegeOutcome} from "@/modules/placements/tpo-after-college-model";
 import {TpoRequestDecisionControl} from "@/components/placements/tpo-request-decision-control";
 
 type Tab="Profile"|"Placement"|"Requests"|"Notes"|"History";
@@ -13,9 +14,9 @@ type PanelDetail={requests:{id:string;status:string;type:string;reason:string;no
  studentNotes:{id:string;note:string;createdAt:string;authorUserId:string}[];
  teamHistory:{id:string;eventType:string;summary:string;occurredAt:string;subjectType:string;actorUserId:string|null}[];
  truncated:boolean};
-export function TpoStudentQuickPanel({student,rows,onNavigate,onClose}:{
+export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOutcome}:{
  student:TpoStudentRow;rows:readonly TpoStudentRow[];
- onNavigate:(membershipId:string)=>void;onClose:()=>void;
+ onNavigate:(membershipId:string)=>void;onClose:()=>void;recordedOutcome?:AfterCollegeOutcome|null;
 }){
  const [tab,setTab]=useState<Tab>("Profile");
  const [detail,setDetail]=useState<PanelDetail|null>(null);
@@ -60,6 +61,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose}:{
       <h2 className="text-xl font-bold">{student.displayName}</h2>
       <p className="text-sm text-body">{student.rollNumber??student.registrationNumber??"No roll number"} · {student.branchName}</p>
       <p className="text-xs text-muted-foreground">{student.cohortName} · {student.journeyState.replaceAll("_"," ")}</p>
+      <p className="mt-2 text-sm font-semibold">After college: {afterCollegeDisplay(recordedOutcome)}</p>
     </div>
     <button type="button" autoFocus className="min-h-10 rounded border border-border px-3" onClick={onClose}>
       Close panel
@@ -82,6 +84,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose}:{
         ["Batch",student.cohortName],["Roll number",student.rollNumber??"Not recorded"],
         ["CGPA",student.cgpa??"Not recorded"],["Active backlogs",student.activeBacklogs??"Not recorded"],
         ["Past backlogs",student.pastBacklogs??"Not recorded"],
+        ["After college",afterCollegeDisplay(recordedOutcome)],
         ["Registration",student.registrationChoice??"Not recorded"],
        ].map(([label,value])=><div key={String(label)} className="rounded border border-border p-3">
         <dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold">{value}</dd>
