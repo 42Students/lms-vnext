@@ -70,22 +70,22 @@ export default async function CollegeBatchStudentsPage({
     <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
       <label className="grid flex-1 gap-1 text-sm font-semibold">Name, roll or email
         <input type="search" name="q" defaultValue={q} maxLength={100}
-          className="min-h-10 rounded-md border border-border bg-surface px-3" />
+          className="min-h-11 rounded-md border border-border bg-surface px-3" />
       </label>
       <label className="grid gap-1 text-sm font-semibold">Class/Section
         <select name="sectionId" defaultValue={sectionId ?? ""}
-          className="min-h-10 rounded-md border border-border bg-surface px-3">
+          className="min-h-11 rounded-md border border-border bg-surface px-3">
           <option value="">All classes</option>
           {classes.map(item => <option key={item.id} value={item.id}>
             {item.name} ({item.capacity ?? "No cap"} seats)</option>)}
         </select>
       </label>
-      <button className="min-h-10 rounded bg-primary px-4 font-semibold text-on-primary">Search</button>
+      <button className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary">Search</button>
     </form>
     <div className="overflow-x-auto rounded-xl border border-border bg-surface">
       <p className="p-3 text-xs text-muted-foreground">Showing up to 500 matching students in this batch.</p>
       <table className="w-full min-w-[700px] text-left text-sm">
-        <thead><tr className="border-y border-border">
+        <thead className="sticky top-0 z-10 bg-surface"><tr className="border-y border-border">
           {["Name", "Roll Number", "Email", "Current class", "Action"].map(label =>
             <th key={label} className="p-3 font-semibold">{label}</th>)}
         </tr></thead>
