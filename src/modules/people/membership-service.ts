@@ -85,6 +85,11 @@ export async function addMembershipRole(
   repository: MembershipManagementRepository,
 ) {
   const input = membershipRoleMutationInputSchema.parse(rawInput);
+  // COL-people-20 / OD-22: ordinary College Admins may manage other
+  // scoped membership roles, but only Super Admins may change COLLEGE_ADMIN.
+  if (input.role === "COLLEGE_ADMIN") {
+    requirePermission(context, "admin-scope.select");
+  }
   const person = await loadAuthorizedMembership(
     context,
     membershipIdInput,
@@ -107,6 +112,11 @@ export async function removeMembershipRole(
   repository: MembershipManagementRepository,
 ) {
   const input = membershipRoleMutationInputSchema.parse(rawInput);
+  // COL-people-20 / OD-22: ordinary College Admins may manage other
+  // scoped membership roles, but only Super Admins may change COLLEGE_ADMIN.
+  if (input.role === "COLLEGE_ADMIN") {
+    requirePermission(context, "admin-scope.select");
+  }
   const person = await loadAuthorizedMembership(
     context,
     membershipIdInput,
