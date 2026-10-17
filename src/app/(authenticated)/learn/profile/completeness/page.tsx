@@ -5,6 +5,8 @@ import { PageHeader } from "@/components/ui/page-header";
 import { getOwnLearnerAcademicSummary } from "@/modules/people/learner-academic-summary-service";
 import { getOwnLearnerProfileWithRuntime } from "@/modules/people/runtime";
 import { ownLearnerProfileReadiness } from "@/modules/people/learner-profile-readiness-model";
+import {learnerProfileChecklist} from "@/modules/people/learner-profile-checklist";
+import {learnerProfileCareerCoverage,learnerCareerCompletionMessage} from "@/modules/people/learner-profile-career-coverage-model";
 
 export default async function ProfileCompleteness({searchParams}:{
   searchParams:Promise<{show?:string|string[]}>;
@@ -16,6 +18,7 @@ export default async function ProfileCompleteness({searchParams}:{
   const academic=await getOwnLearnerAcademicSummary(context);
   const data=await getOwnLearnerProfileWithRuntime(context);
   const readiness=ownLearnerProfileReadiness(data.profile.profileDocument,query);
+  const career=learnerProfileCareerCoverage(learnerProfileChecklist(data.profile.profileDocument));
   if(!readiness) notFound();
   const options=[
     {value:"all",label:"All sections"},
@@ -30,6 +33,7 @@ export default async function ProfileCompleteness({searchParams}:{
       description="Read-only coverage of the fields saved to your learner profile." />
     <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
       <h2 className="text-lg font-semibold text-foreground">{readiness.filled} of {readiness.total} sections filled</h2>
+      <p className="mt-2 text-sm font-semibold text-foreground">{career.percentage??0}% career profile complete · {learnerCareerCompletionMessage(career.percentage??0)}</p>
       <p className="mt-2 text-sm text-body">
         {readiness.missing} sections have no saved entries. This is not a verification, placement eligibility or application readiness score.
       </p>
