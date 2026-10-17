@@ -47,6 +47,8 @@ export async function dispatchRecruiterUnreadMessageDigests(
     and g.valid_until > ${now} and 'DRIVES'=any(g.capabilities)
   join placement_company_relationships r on r.id=g.company_relationship_id
     and r.company_id=p.company_id and r.college_id=t.college_id and r.status='ACTIVE'
+  and (t.job_id is null or exists(select 1 from placement_jobs j
+    where j.id=t.job_id and j.college_id=t.college_id and j.company_relationship_id=r.id))
   join placement_companies company on company.id=p.company_id and company.status='ACTIVE'
   join colleges c on c.id=t.college_id and c.status='ACTIVE'
   where u.email is not null
