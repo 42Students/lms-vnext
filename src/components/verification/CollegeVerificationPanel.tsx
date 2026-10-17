@@ -65,7 +65,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
  const selectedRows=selectable.filter(row=>selection.has(verificationSelectionKey(row)));
  const preview=bulkAction?verificationBulkPreviewRows(
   bulkAction==="VERIFY"?selectedRows.filter(row=>!row.missingMarksheet&&!row.missingIdentityProof):selectedRows,bulkAction):null;
- const missingProof=bulkAction==="VERIFY"?selectedRows.filter(row=>row.missingMarksheet):[];
+ const missingProof=bulkAction==="VERIFY"?selectedRows.filter(row=>row.missingMarksheet||row.missingIdentityProof):[];
  function resetBulkFeedback(){setAcknowledged(false);const state=emptyVerificationBulkFeedback();
   setBulkAction(state.pendingAction);setBulkReason(state.reason);setBulkError(state.error);setBulkResult(state.result);
  }
@@ -81,7 +81,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
  async function executeBulk(action:"VERIFY"|"SEND_BACK",reason?:string){
   if(bulkBusy||selectedRows.length===0||selectedRows.length>20||
     (action==="VERIFY"&&!acknowledged))return;
-  const body=collegeBulkReviewPayload(action==="VERIFY" ? selectedRows.filter(row=>!row.missingMarksheet) : selectedRows,action,reason);
+  const body=collegeBulkReviewPayload(action==="VERIFY" ? selectedRows.filter(row=>!row.missingMarksheet&&!row.missingIdentityProof) : selectedRows,action,reason);
   if(body.items.length===0){setBulkError("Every one picked has a document missing. Open them to send back with a reason.");return;}
   setBulkBusy(true);setBulkError("");setBulkResult(null);
   try{
@@ -153,7 +153,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
     <ul className="max-h-48 space-y-1 overflow-y-auto text-sm" aria-label="Selected review candidates">
      {preview?.eligible.map(item=><li key={item.key} className="break-words">{item.name} · {item.section} · version {item.version}</li>)}
      {preview?.skipped.map(item=><li key={item.key} className="break-words">{item.name} · {item.section}: skipped ({item.reason})</li>)}
-     {missingProof.map(item=><li key={verificationSelectionKey(item)} className="break-words">{item.learnerName} · {item.section}: left out: a document is missing</li>)}
+     {missingProof.map(item=><li key={verificationSelectionKey(item)} className="break-words">{item.learnerName} · {item.section}: left out: {item.missingIdentityProof?"identity document is missing":"a marksheet is missing"}</li>)}
     </ul>
     {bulkAction==="SEND_BACK"&&<div className="flex flex-wrap gap-2">
       {(selectedRows.every(row=>row.section==="IDENTITY")
