@@ -16,6 +16,10 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
    [release,setRelease]=useState(searchParams.get("release")??""),
    [sprint,setSprint]=useState(searchParams.get("sprint")??"");
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
+ const [filtersOpen,setFiltersOpen]=useState(false);
+ const [assignmentScope,setAssignmentScope]=useState(searchParams.get("assignment")??"");
+ const [priority,setPriority]=useState(searchParams.get("priority")??"");
+ const [status,setStatus]=useState(searchParams.get("status")??"");
  useEffect(()=>{setTasks(initialTasks)},[initialTasks]);
  const learners=members.filter(member=>member.role==="LEARNER");
  const filtered=useMemo(()=>tasks.filter(task=>{
