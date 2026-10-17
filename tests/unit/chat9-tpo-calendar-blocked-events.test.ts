@@ -14,7 +14,7 @@ describe("College-blocked calendar dates",()=>{
  it("TPO-calendar-reports-01 blocked dates do not inflate recruiter round or follow-up counts",()=>{
   const result=toTpoBlockedCalendarEvents([{day:"2099-10-15",reason:"Exam"}],"2099-10-15","2099-10-15");
   expect(summarizePlacementCalendar(result,new Date("2099-10-01T00:00:00Z"))).toMatchObject({
-   total:1,rounds:0,deadlines:0,followups:0,
+   total:1,rounds:0,deadlines:0,followups:0,next:null,
   });
  });
 });
