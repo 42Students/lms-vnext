@@ -121,7 +121,7 @@ describe("MEN-projects-meetings-27 persisted facilitator lifecycle",()=>{
   if(!(await migrationReady()))skip();
   const project=await fixture();
   const meeting=await scheduleProjectMeeting(mentor,project.id,null,{
-   ...window,status:"SCHEDULED",meetingUrl:"https://meet.example.edu/room",
+   ...window,status:"SCHEDULED",outcome:"Work reviewed",meetingUrl:"https://meet.example.edu/room",
    expectedProjectUpdatedAt:await projectToken(project.id),
    facilitation:{...emptyMentorMeetingFacilitation,notes:"Private reviewer preparation",
     actionItems:"Follow up after review",followUpStatus:"OPEN"},
@@ -138,7 +138,6 @@ describe("MEN-projects-meetings-27 persisted facilitator lifecycle",()=>{
   })).rejects.toBeDefined();
   const completed=await decideMentorProjectMeeting(mentor,project.id,meeting.id,{
    action:"COMPLETE",confirmed:true,expectedUpdatedAt:meeting.updatedAt.toISOString(),
-   outcome:"Work reviewed",
   });
   expect(completed.status).toBe("COMPLETED");
   expect((await listProjectMeetings(learner,project.id)).find(row=>row.id===meeting.id))
