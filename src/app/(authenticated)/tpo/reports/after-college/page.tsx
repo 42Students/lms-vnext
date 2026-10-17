@@ -29,7 +29,7 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
       <TpoReportPresentation />
   <PageHeader eyebrow="TPO · Reports" title="After college"
    description="Student-reported destinations after graduation, including higher studies, entrepreneurship, competitive exams and job searching."/>
-      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/after-college" collegeId={ctx.membership.collegeId}/></Suspense>
+      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/after-college" collegeId={ctx.membership.collegeId} userId={ctx.user.id}/></Suspense>
   {!data.available?<p role="status" className="rounded border border-border p-4">
     After-college outcomes storage is unavailable. This page does not infer destinations.
    </p>:<>
