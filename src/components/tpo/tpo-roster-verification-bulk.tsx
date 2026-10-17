@@ -106,6 +106,7 @@ export function TpoRosterVerificationBulk({rows}:{rows:readonly VerificationQueu
   </div>:null}
   {outcomes.length>0?<div role="status" className="space-y-2 rounded border border-border p-3">
    <h3 className="font-semibold">Bulk review results</h3>
+   <p>{outcomes.filter(item=>item.result==="VERIFIED"||item.result==="SENT_BACK").length} saved; {outcomes.filter(item=>item.result!=="VERIFIED"&&item.result!=="SENT_BACK").length} need review.</p>
    <ul className="space-y-1 text-sm">{described.map(item=><li key={item.key}>{item.label} · {item.section}: {item.message}</li>)}</ul>
   </div>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
