@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {TpoLiveRefresh} from "@/components/tpo/tpo-live-refresh";
 import { redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -140,6 +141,7 @@ export default async function TpoMessagesPage({
 
   return (
     <div className="space-y-6">
+      <TpoLiveRefresh intervalMs={4000}/>
       <PageHeader
         eyebrow="TPO · Communication"
         title="Messages"
