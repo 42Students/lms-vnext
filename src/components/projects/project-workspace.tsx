@@ -166,6 +166,8 @@ function formatDateTime(value: Date | null) {
   return new Intl.DateTimeFormat("en-IN", {
     dateStyle: "medium",
     timeStyle: "short",
+    timeZone: "Asia/Kolkata",
+    timeZoneName: "short",
   }).format(value);
 }
 
