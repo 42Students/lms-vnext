@@ -37,7 +37,7 @@ export function LearnerSkillCatalogInput({value,onChange}:{value:string;onChange
      else if(event.key==="Enter"&&activeIndex>=0&&items[activeIndex]){
        event.preventDefault();selectedSkill.current=items[activeIndex]!.displayName;onChange(items[activeIndex]!.displayName);setItems([]);setActiveIndex(-1);
      }else if(event.key==="Escape"){setItems([]);setActiveIndex(-1);}
-   }
+   }}
    placeholder="Search and select skills..."
    role="combobox" aria-autocomplete="list" aria-expanded={status==="ready"&&items.length>0}
    aria-controls={id+"-choices"}

@@ -13,8 +13,8 @@ export async function listSuperAdminTemplateDirectory(context:RequestContext,raw
  const conditions=and(
   query.status==="ALL"?undefined:eq(projectTemplates.status,query.status),
   query.q?or(
-   ilike(projectTemplates.title,"%"+query.q.replace(/[\\%_]/g,"\\query.q?ilike(projectTemplates.title,"%"+query.q.replace(/[\\%_]/g,"\\$&")+"%"):undefined,")+"%"),
-   ilike(projectTemplates.slug,"%"+query.q.replace(/[\\%_]/g,"\\query.q?ilike(projectTemplates.title,"%"+query.q.replace(/[\\%_]/g,"\\$&")+"%"):undefined,")+"%")):undefined,
+   ilike(projectTemplates.title,"%"+query.q.replace(/[\\%_]/g,"\\$&")+"%"),
+   ilike(projectTemplates.slug,"%"+query.q.replace(/[\\%_]/g,"\\$&")+"%")):undefined,
  );
  const db=getDb();
  const [totals,items]=await Promise.all([
