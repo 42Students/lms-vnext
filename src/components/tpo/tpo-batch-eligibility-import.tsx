@@ -17,9 +17,10 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
  const [skippedByUser,setSkippedByUser]=useState<number[]>([]);
  const [previewTab,setPreviewTab]=useState<"ALL"|"MATCHED"|"UNUSABLE">("ALL");
  const [chosenName,setChosenName]=useState("");
+ const [previewPage,setPreviewPage]=useState(1);
  async function chooseFile(file:File|null){
   if(!file)return;
-  setError("");setPreview(null);setNotice("");
+  setError("");setPreview(null);setNotice("");setLastActionId(null);setPreviewPage(1);
   if(!file.name.toLowerCase().endsWith(".csv")) {
     setError("Choose a CSV export of the spreadsheet (.csv).");return;
   }
@@ -36,7 +37,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
    });
    const value=await response.json() as Preview&{error?:string};
    if(!response.ok)throw Error(value.error??"Import preview failed.");
-   setPreview(value);
+   setPreview(value);setPreviewPage(1);
   }catch(e){setError(e instanceof Error?e.message:"Preview unavailable.");}finally{setBusy(false);}
  }
  async function copyPreview(){
@@ -90,18 +91,24 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
    <p role="status" className="text-sm font-semibold">{preview.ready} matched; {preview.skipped} cannot use.</p>
    <div role="tablist" aria-label="Import preview filters" className="flex flex-wrap gap-2">
     {(["ALL","MATCHED","UNUSABLE"] as const).map(tab=><button key={tab} type="button" role="tab"
-     aria-selected={previewTab===tab} onClick={()=>setPreviewTab(tab)}
+     aria-selected={previewTab===tab} onClick={()=>{setPreviewTab(tab);setPreviewPage(1);}}
      className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-primary-text">
      {tab==="ALL"?"All":tab==="MATCHED"?"Matched":"Can't use"}</button>)}
    </div>
-   <ul className="max-h-64 space-y-1 overflow-y-auto text-xs">{preview.preview.map((row,i)=>({row,i}))
+   <ul className="max-h-96 space-y-1 overflow-y-auto text-xs">{preview.preview.map((row,i)=>({row,i}))
     .filter(({row})=>previewTab==="ALL"||row.status===(previewTab==="MATCHED"?"matched":"unusable"))
+    .slice((previewPage-1)*8,previewPage*8)
     .map(({row,i})=><li className="min-w-0 break-all rounded border border-border p-2" key={i}>
     <label className="mr-2 inline-flex items-center gap-1"><input type="checkbox" checked={!skippedByUser.includes(i)} onChange={event=>setSkippedByUser(current=>event.target.checked?current.filter(x=>x!==i):[...current,i])} disabled={busy||row.status!=="matched"}/>Include</label>
     <strong>Row {i+1}: {row.studentName??preview.rows[i]?.studentCode}</strong>
     <p>Roll: {row.rollNumber??preview.rows[i]?.studentCode} · Current: {row.currentStatus??"—"} · Becomes: {row.proposedStatus??"—"}</p>
     <p>{row.status==="matched"?"Matched":"Can't use"}{row.reason?" — "+row.reason:""}</p>
    </li>)}</ul>
+   <nav aria-label="Import preview pages" className="flex flex-wrap items-center gap-3 text-xs">
+    <button type="button" disabled={busy||previewPage===1} onClick={()=>setPreviewPage(p=>Math.max(1,p-1))} className="min-h-10 rounded border border-border px-3 disabled:opacity-50">Previous</button>
+    <span>Page {previewPage} of {Math.max(1,Math.ceil(preview.preview.filter(row=>previewTab==="ALL"||row.status===(previewTab==="MATCHED"?"matched":"unusable")).length/8))}</span>
+    <button type="button" disabled={busy||previewPage*8>=preview.preview.filter(row=>previewTab==="ALL"||row.status===(previewTab==="MATCHED"?"matched":"unusable")).length} onClick={()=>setPreviewPage(p=>p+1)} className="min-h-10 rounded border border-border px-3 disabled:opacity-50">Next</button>
+   </nav>
    <button type="button" disabled={busy} onClick={()=>void copyPreview()} className="min-h-11 rounded border border-border px-4 text-sm">Copy preview outcomes CSV</button>
    <button type="button" disabled={busy||preview.ready===0} onClick={()=>void commit()}
     className="min-h-11 rounded bg-primary px-4 text-sm text-on-primary disabled:opacity-50">Confirm matched decisions</button>
