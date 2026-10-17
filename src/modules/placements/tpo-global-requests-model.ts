@@ -3,7 +3,7 @@ export const GLOBAL_TPO_REQUEST_TYPES=["ALL","APPLICATION_WITHDRAWAL","ROUND_RES
 export const globalTpoRequestsQuerySchema = z.object({
   status: z.enum(["PENDING","APPROVED","REJECTED","CANCELLED"]).default("PENDING"),
   requestType: z.enum(GLOBAL_TPO_REQUEST_TYPES).default("ALL"),
-  age: z.enum(["ALL","OLDER_THAN_1_DAY","OLDER_THAN_7_DAYS","OLDER_THAN_30_DAYS"]).default("ALL"),
+  age: z.enum(["ALL","OLDER_THAN_1_DAY","OLDER_THAN_2_DAYS","OLDER_THAN_7_DAYS","OLDER_THAN_30_DAYS"]).default("ALL"),
   sort: z.enum(["URGENCY_FIRST","NEWEST_FIRST","OLDEST_FIRST"]).default("URGENCY_FIRST"),
   search: z.string().trim().max(150).default(""),
   page: z.coerce.number().int().min(1).max(100000).default(1),
@@ -103,9 +103,9 @@ export function globalTpoRequestFirstPageHref(query:{
 }
 
 /** Fixed clock injection makes the age cutoff reproducible in tests. */
-export function tpoRequestAgeCutoff(age:"ALL"|"OLDER_THAN_1_DAY"|"OLDER_THAN_7_DAYS"|"OLDER_THAN_30_DAYS",asOf:Date){
+export function tpoRequestAgeCutoff(age:"ALL"|"OLDER_THAN_1_DAY"|"OLDER_THAN_2_DAYS"|"OLDER_THAN_7_DAYS"|"OLDER_THAN_30_DAYS",asOf:Date){
  if(age==="ALL")return undefined;
- return new Date(asOf.getTime()-(age==="OLDER_THAN_1_DAY"?1:age==="OLDER_THAN_7_DAYS"?7:30)*86400000);
+ return new Date(asOf.getTime()-(age==="OLDER_THAN_1_DAY"?1:age==="OLDER_THAN_2_DAYS"?2:age==="OLDER_THAN_7_DAYS"?7:30)*86400000);
 }
 
 /** A cleared request search keeps the selected decision queue, without carrying stale pagination. */
