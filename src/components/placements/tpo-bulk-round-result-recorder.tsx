@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import {resolveBulkRoundLearnerTokens} from "@/modules/placements/tpo-bulk-round-result-model";
 
 type Row = {
   applicationId: string;
@@ -154,7 +155,7 @@ export function TpoBulkRoundResultRecorder({
             </legend>
             <label className="block text-sm font-semibold text-body">Find unmarked learner
               <input type="search" maxLength={100} value={search} onChange={event=>setSearch(event.target.value)}
-               placeholder="Search name or application ID"
+               placeholder="Search name, roll or application ID"
                className="mt-1 block min-h-10 w-full rounded border border-border bg-surface px-3 text-foreground"/>
             </label>
             <div className="flex flex-wrap gap-3 text-sm">
@@ -165,17 +166,14 @@ export function TpoBulkRoundResultRecorder({
             </div>
             <details className="rounded border border-border p-3">
               <summary className="cursor-pointer text-sm font-semibold">Paste application IDs from a spreadsheet</summary>
-              <p className="mt-2 text-xs text-body">Use exact application IDs, one per line or comma-separated. Unknown IDs are rejected. Roll-number matching belongs in the CSV/XLSX import workflow.</p>
+              <p className="mt-2 text-xs text-body">Paste exact application IDs or roll numbers, one per line or comma-separated. Unknown, repeated or ambiguous roll numbers are rejected.</p>
               <textarea rows={3} value={pastedIds} onChange={e=>setPastedIds(e.target.value)} maxLength={2500}
                 className="mt-2 block w-full rounded border border-border bg-surface p-2 text-sm"/>
               <button type="button" disabled={busy} className="mt-2 min-h-9 rounded border border-border px-3 text-sm"
                 onClick={()=>{
-                  const ids=[...new Set(pastedIds.split(/[\s,;]+/).filter(Boolean))];
-                  if(ids.length===0||ids.length>25||ids.some(id=>!available.some(row=>row.applicationId===id))){
-                    setError("Paste 1–25 distinct application IDs belonging to unmarked learners in this round.");
-                    return;
-                  }
-                  setError(null);setSelected(ids);
+                  const resolved=resolveBulkRoundLearnerTokens(pastedIds,available);
+                  if(resolved.error){setError(resolved.error);return;}
+                  setError(null);setSelected(resolved.ids);
                 }}>Select matching learners</button>
             </details>
             <div className="max-h-52 overflow-auto rounded-md border border-border p-2">
