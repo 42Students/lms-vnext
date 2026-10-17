@@ -200,6 +200,7 @@ export default async function TpoStudentsPage({
     title: item.job.title,
     companyName: item.company.name,
   }));
+  const programChoices=[...new Map(batchDirectory.batches.map(item=>[item.programId,item.program] as const))];
   const summary = data.summary;
   const roster = data.roster;
   const afterCollege = await getTpoAfterCollegeForRoster(context, roster.items.map(row=>row.membershipId));
@@ -283,6 +284,13 @@ export default async function TpoStudentsPage({
 
       <form action="/tpo/students" method="get"
         className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-surface p-4">
+        <label className="text-sm font-semibold">Program
+          <select name="programId" defaultValue={query.programId??""}
+            className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
+            <option value="">All programs</option>
+            {programChoices.map(([id,name])=><option key={id} value={id}>{name}</option>)}
+          </select>
+        </label>
         <label className="text-sm font-semibold">Batch
           <select name="batchId" defaultValue={query.batchId??""}
             className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
@@ -640,7 +648,7 @@ export default async function TpoStudentsPage({
           </div>
         ) : null}
         <Suspense fallback={<p role="status">Loading spreadsheet grid…</p>}>
-          <TpoStudentsSpreadsheet rows={roster.items} branches={data.branches}
+          <TpoStudentsSpreadsheet rows={roster.items} branches={data.branches} programs={programChoices.map(([id,name])=>({id,name}))}
             afterCollege={afterCollege.entries} afterCollegeAvailable={afterCollege.available && manageAllowed}/>
         </Suspense>
 
