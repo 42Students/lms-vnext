@@ -10,7 +10,7 @@ if (!baseURL || !/^https?:\/\//.test(baseURL)) {
 }
 export default defineConfig({
   testDir: ".",
-  testMatch: ["graceful-production.spec.ts", "graceful-production-roles.spec.ts", "graceful-production-faults.spec.ts"],
+  testMatch: ["graceful-production.spec.ts", "graceful-production-roles.spec.ts", "graceful-production-faults.spec.ts", "graceful-production-saves.spec.ts"],
   fullyParallel: false,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
