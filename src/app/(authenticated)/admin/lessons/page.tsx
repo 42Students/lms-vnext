@@ -1,4 +1,6 @@
 import Link from "next/link";
+import {getSuperAdminLearningFilterOptions} from "@/modules/admin-ui/super-admin-learning-filter-options-service";
+import {SuperAdminLearningFilterFields} from "@/components/admin/super-admin-learning-filter-fields";
 import {SuperAdminLessonBulkVisibility} from "@/components/courses/super-admin-lesson-bulk-visibility";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -12,7 +14,7 @@ export default async function SuperAdminLessonsPage({
   searchParams,
 }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const raw = await searchParams;
-  const parsed = adminLearningQuerySchema.safeParse({ q: raw.q, status: raw.status, page: raw.page });
+  const parsed = adminLearningQuerySchema.safeParse({ q: raw.q, status: raw.status, page: raw.page,courseCode:raw.courseCode||undefined,cohortCode:raw.cohortCode||undefined });
   if (!parsed.success) return <div className="space-y-5">
     <PageHeader eyebrow="Super Admin · Courses" title="Lessons" />
     <ErrorState title="Invalid lesson filters" description="Check the search, status and page values."
@@ -23,14 +25,14 @@ export default async function SuperAdminLessonsPage({
     <PageHeader eyebrow="Super Admin · Courses" title="Lessons" />
     <EmptyState title="Select a college to continue" description="Choose a college in the header above to see its lessons." />
   </div>;
-  const data = await listCollegeLessons(context, parsed.data);
+  const [data,filters] = await Promise.all([listCollegeLessons(context, parsed.data),getSuperAdminLearningFilterOptions(context)]);
   const summary = adminLessonStats(data.items);
   return <div className="space-y-5">
     <PageHeader eyebrow="Super Admin · Courses" title="Lessons"
       description="Read-only authored lesson catalogue in your selected college. Counts reflect registered content records, not learner completion." />
-    <a href={"/api/admin/lessons/export?"+new URLSearchParams({q:data.query.q,status:data.query.status}).toString()}
+    <a href={"/api/admin/lessons/export?"+new URLSearchParams({q:data.query.q,status:data.query.status,...(data.query.courseCode?{courseCode:data.query.courseCode}:{}),...(data.query.cohortCode?{cohortCode:data.query.cohortCode}:{})}).toString()}
      className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export lessons.csv</a>
-    <form className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[1fr_auto_auto]">
+    <form className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-5">
       <label className="grid gap-1 text-sm font-semibold text-body">Search
         <input name="q" type="search" maxLength={100} defaultValue={data.query.q} placeholder="Lesson or course"
           className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
@@ -40,8 +42,10 @@ export default async function SuperAdminLessonsPage({
           <option value="ACTIVE">Active</option><option value="ARCHIVED">Archived</option><option value="ALL">All</option>
         </select>
       </label>
+      <SuperAdminLearningFilterFields courses={filters.courses} cohorts={filters.cohorts} selectedCourse={data.query.courseCode} selectedCohort={data.query.cohortCode}/>
       <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
     </form>
+    <Link className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text" href="/admin/lessons">Clear filters</Link>
     <p className="text-sm text-muted-foreground">{data.total} matching lessons · on this page: {summary.authored} content records, {summary.published} published</p>
     {data.items.length?<SuperAdminLessonBulkVisibility lessons={data.items}/>:null}
     {data.items.length ? <div className="grid gap-3 md:grid-cols-2">

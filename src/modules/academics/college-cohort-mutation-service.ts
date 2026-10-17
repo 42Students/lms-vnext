@@ -24,7 +24,7 @@ import {
   collegeCohortIdSchema,
   createCollegeCohortSchema,
   updateCollegeCohortSchema,
-  validCohortPeriodRange,
+  validCohortPeriodRange,batchAcademicYearFromDates,
 } from "./college-cohort-mutation-model";
 
 export type CollegeCohortMutationCode =
@@ -137,7 +137,10 @@ export async function createCollegeCohort(context: RequestContext, raw: unknown)
       }
       if(input.startDate&&input.endDate&&input.endDate<input.startDate)throw new CollegeCohortMutationError("BATCH_PERIOD_INVALID");
       await ensureUnique(tx, input.programId, input.name, input.code);
-      const [created] = await tx.insert(cohorts).values(input).returning();
+      const [created] = await tx.insert(cohorts).values({...input,
+       startDate:start.startDate,endDate:expected?.endDate??null,
+       academicYear:batchAcademicYearFromDates(start.startDate,expected?.endDate??null),
+      }).returning();
       // Registered DB-0051 trigger initializes the cohort progression row.
       await recordActivityEventInTransaction(tx, context, {
         eventType: ACTIVITY_EVENT_TYPES.ACADEMICS_BATCH_CREATED,
@@ -217,9 +220,11 @@ export async function updateCollegeCohort(
       const [updated] = await tx.update(cohorts).set({
         name: input.name, code: input.code,
         expectedEndPeriodId: input.expectedEndPeriodId,
-        academicYear:input.academicYear===undefined?current.academicYear:input.academicYear,
-        startDate:input.startDate===undefined?current.startDate:input.startDate,
-        endDate:input.endDate===undefined?current.endDate:input.endDate,
+        startDate:input.startDate===undefined?(current.startDate??start.startDate):input.startDate,
+        endDate:input.endDate===undefined?(expected?.endDate??current.endDate??null):input.endDate,
+        academicYear:input.academicYear===undefined
+          ?batchAcademicYearFromDates(input.startDate??current.startDate??start.startDate,input.endDate??expected?.endDate??current.endDate??null)
+          :input.academicYear,
         updatedAt: new Date(),
       }).where(and(eq(cohorts.id, cohortId), eq(cohorts.programId, current.programId),
         eq(cohorts.status, current.status))).returning();
