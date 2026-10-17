@@ -263,7 +263,8 @@ export async function listCollegeAssessmentAggregate(
     eligibleByOfferingMembers.set(entry.offeringId,audience);
     eligibleByDelivery.set(entry.deliveryId,entry.eligible);
   }
-  const eligibleByOffering=new Map([...eligibleByOfferingMembers].map(([id,ids])=>[id,ids.size]));
+  const eligibleByOffering=new Map<string,number>(
+    [...eligibleByOfferingMembers].map(([id,ids])=>[id,ids.size] as const));
 
   // Count only submissions from currently active learners in the actual
   // section delivery; resubmissions and repeat quiz attempts count once.
