@@ -1,9 +1,13 @@
 "use client";
 import Link from "next/link";
-import {useState} from "react";
+import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
 import {CAMPAIGN_DELIVERY_UNAVAILABLE,CAMPAIGN_DRAFT_UNAVAILABLE,
   tpoCampaignDraftSchema,previewTpoCampaignText} from "@/modules/messaging/tpo-campaign-draft-model";
+type SelectedAudiencePreview={
+ selected:number;eligible:number;leftOut:number;unavailable:number;
+ suppressed:{NO_EMAIL:number;UNSUBSCRIBED:number;BOUNCED:number;NOT_NOW:number;DUPLICATE:number};
+};
 const field="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground";
 const SEGMENTS=[
  {value:"ALL_ELIGIBLE",label:"All eligible contacts"},
@@ -16,7 +20,29 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
  const [body,setBody]=useState(""),[segment,setSegment]=useState<(typeof SEGMENTS)[number]["value"]>("ALL_ELIGIBLE");
  const [templateKey,setTemplateKey]=useState(""),[busy,setBusy]=useState(false);
  const [error,setError]=useState(""),[done,setDone]=useState("");
+ const [audience,setAudience]=useState<SelectedAudiencePreview|null>(null);
+ const [audienceStatus,setAudienceStatus]=useState<"idle"|"loading"|"ready"|"error">("idle");
+ const [audienceRetry,setAudienceRetry]=useState(0);
+ const selectionKey=selectedLeadIds.join(",");
+ useEffect(()=>{
+  if(!selectionKey){setAudience(null);setAudienceStatus("idle");return;}
+  const controller=new AbortController();
+  setAudience(null);setAudienceStatus("loading");
+  void fetch("/api/placements/tpo/campaigns/preview-selected",{
+   method:"POST",credentials:"same-origin",signal:controller.signal,
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({selectedLeadIds:selectionKey.split(",")}),
+  }).then(async response=>{
+   if(!response.ok)throw new Error("Audience preview is unavailable");
+   return response.json() as Promise<SelectedAudiencePreview>;
+  }).then(value=>{if(!controller.signal.aborted){setAudience(value);setAudienceStatus("ready");}})
+    .catch(()=>{if(!controller.signal.aborted)setAudienceStatus("error");});
+  return ()=>controller.abort();
+ },[selectionKey,audienceRetry]);
  async function save(){
+  if(selectedLeadIds.length&&(!audience||audienceStatus!=="ready"||audience.unavailable>0||audience.eligible===0)){
+   setError("Selected recruiters could not be confirmed as eligible. Review the audience before saving.");return;
+  }
   const parsed=tpoCampaignDraftSchema.safeParse({title,subject,body,segment:selectedLeadIds.length?"ALL_ELIGIBLE":segment,templateKey,selectedLeadIds:selectedLeadIds.length?selectedLeadIds:undefined});
   if(!parsed.success){
    setError(parsed.error.issues[0]?.message??"Check your campaign fields.");return;
@@ -32,7 +58,7 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
     data.error==="NO_RECIPIENTS"?"No eligible email recipients match this audience.":
     data.error==="INVALID_SELECTION"?"Some selected recruiters are no longer available in your college. Return to Engage and select again.":
     "Couldn't save your campaign draft. Please try again.");
-   setDone("Draft saved for "+data.recipients+" eligible recruiter contacts.");
+   setDone("Draft saved for "+data.recipients+" eligible recruiter contacts. No email was sent.");
    router.refresh();
   }catch(e){setError(e instanceof Error?e.message:CAMPAIGN_DRAFT_UNAVAILABLE);}
   finally{setBusy(false);}
@@ -46,6 +72,21 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
      onChange={e=>setTitle(e.target.value)}/>
    </label>
    {selectedLeadIds.length?<p role="status" className="text-sm font-semibold">Draft for {selectedLeadIds.length} specifically selected recruiter contacts. Eligibility and suppression rules still apply; no email will be sent when saving.</p>:null}
+   {selectedLeadIds.length?<section aria-label="Selected recruiter audience review" className="rounded-md border border-border p-3 text-sm">
+    <h3 className="font-semibold">Selected recruiter audience</h3>
+    {audienceStatus==="loading"?<p role="status">Checking selected contacts and suppression rules…</p>:null}
+    {audienceStatus==="error"?<div role="alert"><p>Could not check selected contacts. No emails have been sent.</p>
+      <button type="button" className="mt-2 underline" onClick={()=>setAudienceRetry(value=>value+1)}>Retry audience check</button>
+    </div>:null}
+    {audienceStatus==="ready"&&audience?<div role="status" className="mt-2 space-y-1">
+      <p><strong>{audience.eligible} potential recipients</strong> out of {audience.selected} selected · {audience.leftOut} left out.</p>
+      <p>No email: {audience.suppressed.NO_EMAIL} · Opted out: {audience.suppressed.UNSUBSCRIBED} · Bounced: {audience.suppressed.BOUNCED}</p>
+      <p>Not now: {audience.suppressed.NOT_NOW} · Duplicate email: {audience.suppressed.DUPLICATE} · No longer available: {audience.unavailable}</p>
+      {audience.unavailable>0?<p role="alert" className="text-warning">Some selected recruiters changed or are no longer in this college. Return to Engage to select again.</p>:null}
+      {audience.eligible===0?<p role="alert" className="text-warning">None of the selected recruiters are eligible for this draft.</p>:null}
+    </div>:null}
+    <p className="mt-2 text-xs text-muted-foreground">This is a preview, not a send. Recipient eligibility is checked again when saving the draft.</p>
+   </section>:null}
    <label className="block text-sm font-semibold">To
     <select className={field} value={selectedLeadIds.length?"ALL_ELIGIBLE":segment} disabled={selectedLeadIds.length>0} onChange={e=>setSegment(e.target.value as typeof segment)}>
      {SEGMENTS.map(item=><option key={item.value} value={item.value}>{item.label}</option>)}
@@ -86,7 +127,7 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
     Change selected recruiters in Engage
    </Link>}
    {!deliveryReady?<p role="alert" className="rounded-md border border-border p-3 text-sm text-body"><strong>Campaign email is not set up yet, so nothing can be sent. Ask 42 to switch it on.</strong> {CAMPAIGN_DELIVERY_UNAVAILABLE}</p>:<p role="status" className="text-sm text-body">Save a draft, then review eligible recipients before sending.</p>}
-   <button type="submit" disabled={busy} className="block min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+   <button type="submit" disabled={busy||(selectedLeadIds.length>0&&(audienceStatus!=="ready"||!audience||audience.unavailable>0||audience.eligible===0))} className="block min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
     {busy?"Saving…":"Save draft"}
    </button>
   </form>

@@ -14,17 +14,19 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
  const [opened,setOpened]=useState(false),[loading,setLoading]=useState(false);
  const [attempts,setAttempts]=useState<Attempt[]>([]),[error,setError]=useState("");
  const [learnerSearch,setLearnerSearch]=useState("");
+ const [page,setPage]=useState(1),[hasMore,setHasMore]=useState(false);
  const chosen=options.find(x=>x.deliveryId===deliveryId)??options[0];
- async function open(){
+ async function open(requestedPage=1){
   if(!chosen||loading)return;
-  setOpened(true);setLoading(true);setError("");setAttempts([]);
+  setOpened(true);setLoading(true);setError("");setAttempts([]);setPage(requestedPage);setHasMore(false);
   try{
    const response=await fetch("/api/courses/quiz-attempts?quizId="+encodeURIComponent(quizId)+
-    "&deliveryId="+encodeURIComponent(chosen.deliveryId),{cache:"no-store"});
+    "&deliveryId="+encodeURIComponent(chosen.deliveryId)+
+    "&page="+requestedPage,{cache:"no-store"});
    const data=await response.json().catch(()=>null);
    if(!response.ok||!Array.isArray(data?.attempts))
     throw Error(typeof data?.error==="string"?data.error:"Could not load quiz attempts.");
-   setAttempts(data.attempts);
+   setAttempts(data.attempts);setPage(requestedPage);setHasMore(Boolean(data.hasMore));
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not load quiz attempts.");}
   finally{setLoading(false);}
  }
@@ -32,7 +34,7 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
  return <div className="mt-2 space-y-2">
   {options.length>1?<label className="grid gap-1 text-xs font-semibold">Section
    <select value={chosen.deliveryId} disabled={loading} onChange={e=>{
-    setDeliveryId(e.target.value);setOpened(false);setAttempts([]);setLearnerSearch("");}}
+    setDeliveryId(e.target.value);setOpened(false);setAttempts([]);setLearnerSearch("");setPage(1);setHasMore(false);}}
     className="min-h-10 rounded border border-border px-2">
     {options.map(x=><option key={x.deliveryId} value={x.deliveryId}>{x.sectionName} ({x.sectionCode})</option>)}
    </select></label>:null}
@@ -42,12 +44,12 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
   </button>
   {opened?<div className="max-h-80 overflow-auto rounded border border-border bg-surface p-2">
    {error?<div role="alert" className="flex flex-wrap items-center gap-2 text-xs text-error">{error}
-    <button type="button" className="underline" disabled={loading} onClick={()=>void open()}>Retry</button>
+    <button type="button" className="underline" disabled={loading} onClick={()=>void open(page)}>Retry</button>
    </div>:null}
    {!loading&&!error&&attempts.length===0?<p className="text-xs text-muted-foreground">
-    No quiz submissions yet for this Section.</p>:null}
+    {page===1?"No quiz submissions yet for this Section.":"No further quiz submissions on this page."}</p>:null}
    {!loading&&attempts.length>0?<><p className="mb-2 text-xs font-semibold">{attempts.length} attempts</p>
-    <label className="mb-2 grid gap-1 text-xs font-semibold">Search Student
+    <label className="mb-2 grid gap-1 text-xs font-semibold">Search Student on this page
      <input type="search" value={learnerSearch} onChange={event=>setLearnerSearch(event.target.value)}
       className="min-h-10 rounded border border-border bg-background p-2" placeholder="Student name or email"/>
     </label>
@@ -77,6 +79,18 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
      </details>
     </li>)}</ul>
    </>:null}
+    {loading?<p role="status" className="mt-3 text-xs text-muted-foreground">Loading quiz submissions, page {page}…</p>:null}
+    {!loading&&!error?<nav aria-label="Quiz submission pages" className="mt-3 flex items-center justify-between gap-3 border-t border-border pt-3 text-xs">
+      <span>Page {page} · up to 25 attempts per page</span>
+      <div className="flex items-center gap-3">
+       <button type="button" disabled={loading||page<=1}
+        onClick={()=>{setLearnerSearch("");void open(page-1);}}
+        className="min-h-10 rounded border border-border px-3 font-semibold text-primary-text disabled:opacity-50">Previous</button>
+       <button type="button" disabled={loading||!hasMore}
+        onClick={()=>{setLearnerSearch("");void open(page+1);}}
+        className="min-h-10 rounded border border-border px-3 font-semibold text-primary-text disabled:opacity-50">Next</button>
+      </div>
+     </nav>:null}
   </div>:null}
  </div>;
 }

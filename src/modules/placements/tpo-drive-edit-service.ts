@@ -15,6 +15,8 @@ export async function getTpoDriveEditState(context:RequestContext,rawJobId:unkno
   locations:placementJobs.locations,openings:placementJobs.openings,
   minimumAnnualCtcInr:placementJobs.minimumAnnualCtcInr,
   maximumAnnualCtcInr:placementJobs.maximumAnnualCtcInr,
+  fixedCtcLpa:placementJobs.fixedCtcLpa,variableCtcLpa:placementJobs.variableCtcLpa,
+  stipendPerMonthInr:placementJobs.stipendPerMonthInr,isDream:placementJobs.isDream,
  }).from(placementJobs).where(and(eq(placementJobs.id,jobId),
   eq(placementJobs.collegeId,collegeId))).limit(1);
  if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
@@ -50,6 +52,9 @@ export async function editTpoDrive(context:RequestContext,rawJobId:unknown,raw:u
   const [updated]=await tx.update(placementJobs).set({
    title:input.title,description:input.description,locations:input.locations,openings:input.openings,
    minimumAnnualCtcInr:input.minimumAnnualCtcInr,maximumAnnualCtcInr:input.maximumAnnualCtcInr,
+   fixedCtcLpa:input.fixedCtcLpa===null?null:input.fixedCtcLpa.toFixed(2),
+   variableCtcLpa:input.variableCtcLpa===null?null:input.variableCtcLpa.toFixed(2),
+   stipendPerMonthInr:input.stipendPerMonthInr,isDream:input.isDream,
    updatedAt:sql`greatest(clock_timestamp(), date_trunc('milliseconds', ${placementJobs.updatedAt}) + interval '1 millisecond')`,
   }).where(and(eq(placementJobs.id,jobId),eq(placementJobs.collegeId,collegeId),
    eq(placementJobs.status,"DRAFT"),
@@ -68,7 +73,7 @@ export async function editTpoDrive(context:RequestContext,rawJobId:unknown,raw:u
   await auditTpoJobChange(tx,context,updated,"PLACEMENTS_TPO_DRIVE_EDITED","edited",{
    reason:input.reason,fromTitle:job.title,toTitle:updated.title,
    fromUpdatedAt:job.updatedAt.toISOString(),toUpdatedAt:updated.updatedAt.toISOString(),
-   changedFields:["title","description","locations","openings","minimumAnnualCtcInr","maximumAnnualCtcInr"],
+   changedFields:["title","description","locations","openings","minimumAnnualCtcInr","maximumAnnualCtcInr","fixedCtcLpa","variableCtcLpa","stipendPerMonthInr","isDream"],
   });
   return {id:updated.id,status:updated.status,updatedAt:updated.updatedAt.toISOString()};
  });

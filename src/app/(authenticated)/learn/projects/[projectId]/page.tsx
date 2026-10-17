@@ -125,7 +125,8 @@ export default async function LearnerProjectPage({
       {activeSection === "tasks" ? (
         <LearnerBoardInteractive projectId={projectId} initialTasks={boardTasks}
           filters={boardFilters} sprints={workspace.sprints}
-          membershipId={context.membership?.id??null}/>
+          membershipId={context.membership?.id??null}
+          readOnly={workspace.project.status!=="ACTIVE"}/>
       ) : null}
       {selectionNotice ? (
         <div role="status" className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface-subtle p-4 text-sm text-body">

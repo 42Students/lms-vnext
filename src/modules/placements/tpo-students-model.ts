@@ -3,6 +3,7 @@ import {
   type ResolvedPlacementParticipation,
 } from "./batch-eligibility-policy";
 import { learnerPlacementDashboard } from "./learner-dashboard-model";
+import type {TpoStudentVerificationFact} from "./tpo-student-verification-facts";
 
 export const TPO_STUDENT_JOURNEY_STATES = [
   "NOT_REGISTERED",
@@ -55,6 +56,7 @@ export type TpoStudentSource = {
     pastBacklogs: number | null;
   };
   preferencesPresent: boolean;
+  verification:TpoStudentVerificationFact;
   applications: readonly TpoStudentApplicationSignal[];
   offers: readonly TpoStudentOfferSignal[];
   appliedResults: readonly TpoStudentRoundSignal[];
@@ -86,6 +88,7 @@ export type TpoStudentRow = {
   participationStatus: ResolvedPlacementParticipation["status"];
   readinessSignal: TpoStudentReadinessSignal;
   preferencesPresent: boolean;
+  verification:TpoStudentVerificationFact;
   cgpa: number | null;
   activeBacklogs: number | null;
   pastBacklogs: number | null;
@@ -124,6 +127,9 @@ export type TpoStudentRosterFilter = {
   journeyState?: TpoStudentJourneyState;
   branchId?: string;
   programId?: string;
+  profileStatus?:Exclude<TpoStudentVerificationFact["status"],"UNKNOWN">;
+  minApplications?:number;maxApplications?:number;
+  minOffers?:number;maxOffers?:number;
   classId?:string;
   search?: string;
   page: number;
@@ -283,6 +289,7 @@ export function deriveTpoStudent(
     participationStatus: source.participation.status,
     readinessSignal,
     preferencesPresent: source.preferencesPresent,
+    verification:source.verification,
     cgpa:
       source.academicEvidence.cgpaHundredths === null
         ? null
@@ -416,6 +423,11 @@ export function filterTpoStudentRoster(
     )
     .filter(row=>!filter.programId||row.programId===filter.programId)
     .filter(row=>!filter.classId||row.classIds.includes(filter.classId))
+    .filter(row=>!filter.profileStatus||row.verification.status===filter.profileStatus)
+    .filter(row=>filter.minApplications===undefined||row.applicationCount>=filter.minApplications)
+    .filter(row=>filter.maxApplications===undefined||row.applicationCount<=filter.maxApplications)
+    .filter(row=>filter.minOffers===undefined||row.offerCount>=filter.minOffers)
+    .filter(row=>filter.maxOffers===undefined||row.offerCount<=filter.maxOffers)
     .filter((row) => {
       if (!search) return true;
 

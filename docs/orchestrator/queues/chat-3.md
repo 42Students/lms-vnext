@@ -1,3 +1,17 @@
+## FAST v2 S1/S2 continuation — 17 Oct 2026, post-merged main
+
+- Fast-forwarded `chatgpt/chat-3-b` to merged main `9c4cdf54` before editing. All new commits tagged `[chat-3]` and pushed only to the lane branch; no PR, tests, build, typecheck, lint or CI wait.
+- **TPO-requests-verification-26**: Reused the guarded 20-section TPO bulk Verify / Send back workflow directly on the server-filtered verification Waiting queue, with current-page-only selection, decision previews, per-row outcomes and queue-specific wording. This is source-implemented, pending runtime acceptance.
+- **TPO-requests-verification-24**: Added India-calendar Waiting since Today / This week / Over a week query, SQL-bound before the page cap; route picker, URL persistence, reset on non-Waiting tabs, and removed misleading whole-queue counts derived from a single server page.
+- **TPO-students-20/30**: Scoped verified Education and Identity facts (Waiting sections, Verified, Sent back, Not verified, Unknown when source unavailable) now populate the roster and exported CSV; Profile verified filter matches before pagination, and unavailable data is explicitly surfaced instead of guessed.
+- **TPO-students-23**: Min/max Applications and Offers count filters implemented in typed roster query, validation, pre-pagination filtering, header inputs and spreadsheet quick thresholds; pagination, drilldowns and CSV retain the range.
+- **TPO-students-08/09**: Existing TPO roster bulk reviewer now narrows waiting-state payload to validated section/status variants; queue selector no longer shadows supplied membership IDs.
+- **Blocked — TPO-drives-02 / TPO-requests-verification-33–35**: Recruiter drive-request status lifecycle and write-authority still need registered schema/transition policy.
+- **Blocked — TPO-inbox-team-15**: Everyone group conversation needs persisted multi-participant access/mute model; cannot repurpose two-party threads.
+- **Blocked — TPO-requests-verification-01/36**: New institutional request kinds and company request negotiations need registered domain schema/decision permissions.
+- **Blocked — COL-people-02/07; COL-placements-02/03/10**: Canonical identity modifications and private resume/offer evidence remain protected until verified identity/file services.
+- WP-chat-3-02/03/04 and reassigned WP-chat-5-02/09/10/14/15 remain IN-PROGRESS: new source changes do not close all S1/S2 gaps. No runtime verification performed per FAST v2.
+
 ## FAST v2 S1/S2 build round — 17 Oct 2026
 
 - **Synced main** `2e69a866` before source changes; all new commits [chat-3] on `chatgpt/chat-3-b` only.

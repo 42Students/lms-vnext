@@ -238,7 +238,7 @@ export async function listCollegeAssessmentAggregate(
     .groupBy(courseSectionDeliveries.offeringId,courseSectionDeliveries.id):[];
   // Section selector for College Admin's authorized assignment review drawer.
   // A shared assignment may be submitted in several active course Sections.
-  const reviewDeliveries=kind==="ASSIGNMENT"&&offeringIds.length?
+  const reviewDeliveries=offeringIds.length?
     await db.select({
       offeringId:courseSectionDeliveries.offeringId,
       deliveryId:courseSectionDeliveries.id,
@@ -252,6 +252,7 @@ export async function listCollegeAssessmentAggregate(
         eq(sections.academicPeriodId,courseOfferings.academicPeriodId),
       ))
       .where(and(inArray(courseSectionDeliveries.offeringId,offeringIds),
+        eq(courseOfferings.status,"ACTIVE"),
         isNull(courseSectionDeliveries.endedAt),
         eq(sections.status,"ACTIVE")))
       .orderBy(asc(sections.name),asc(sections.code)):[];

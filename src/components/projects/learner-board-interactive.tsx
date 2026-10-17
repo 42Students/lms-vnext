@@ -11,18 +11,24 @@ type Sprint={id:string;status:string;title:string};
 const statuses=["TODO","IN_PROGRESS","BLOCKED"] as const;
 type EditableStatus=typeof statuses[number];
 
-export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,membershipId}:{
+export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,membershipId,readOnly=false}:{
  projectId:string;initialTasks:Task[];filters:LearnerTaskBoardUrlFilters;
- sprints:Sprint[];membershipId:string|null;
+ sprints:Sprint[];membershipId:string|null;readOnly?:boolean;
 }){
  const router=useRouter();
  const [tasks,setTasks]=useState(initialTasks),[busy,setBusy]=useState(false),[error,setError]=useState("");
  const [undo,setUndo]=useState<{taskId:string;status:EditableStatus;blockerReason:string|null}|null>(null);
  useEffect(()=>{setTasks(initialTasks)},[initialTasks]);
+ useEffect(()=>{
+  if(!undo)return;
+  const timeout=setTimeout(()=>setUndo(null),6000);
+  return ()=>clearTimeout(timeout);
+ },[undo]);
+ const sprintState=new Map(sprints.map(sprint=>[sprint.id,sprint.status]));
  const lanes=groupLearnerBoardLanes(tasks,sprints);
- async function move(taskId:string,next:EditableStatus,restoreNote?:string|null){
+ async function move(taskId:string,next:EditableStatus,restoreNote?:string|null,isUndo=false){
   const task=tasks.find(row=>row.id===taskId);
-  if(!task||busy||!membershipId||task.assigneeMembershipId!==membershipId||
+  if(!task||busy||readOnly||!membershipId||task.assigneeMembershipId!==membershipId||
     !task.sprintId||sprintState.get(task.sprintId)!=="ACTIVE"||
     !statuses.includes(task.status as EditableStatus)||task.status===next)return;
   let note=restoreNote??null;
@@ -40,14 +46,14 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
    });
    if(!response.ok)throw Error(response.status===409?"Task changed. Refresh the Board.":"Task could not be moved.");
    const data=await response.json() as {task:Task};
-   setUndo({taskId,status:task.status as EditableStatus,blockerReason:task.blockerReason});
+   setUndo(isUndo?null:{taskId,status:task.status as EditableStatus,blockerReason:task.blockerReason});
    setTasks(rows=>rows.map(row=>row.id===taskId?{...row,...data.task,updatedAt:new Date(data.task.updatedAt)}:row));
    router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Task update failed.");}
   finally{setBusy(false);}
  }
  async function pull(task:Task,sprintId:string){
-  if(busy||!membershipId||task.assigneeMembershipId!==membershipId||task.sprintId!==null||
+  if(busy||readOnly||!membershipId||task.assigneeMembershipId!==membershipId||task.sprintId!==null||
     !window.confirm('Pull "'+task.title+'" into the active sprint?'))return;
   setBusy(true);setError("");
   try{
@@ -71,10 +77,12 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
   if(statuses.includes(lane as EditableStatus))void move(id,lane as EditableStatus);
  }
  return <section aria-label="Project Board lanes" className="space-y-3">
-  <p className="text-sm text-body">Drag your own task into a lane, or use the move control for touch and keyboard.</p>
+  <p className="text-sm text-body">{readOnly
+    ?"This workspace is read-only. Task moves and backlog pulls are disabled."
+    :"Drag your own task into a lane, or use the move control for touch and keyboard."}</p>
   {error?<p role="alert" className="rounded border border-error p-3 text-sm text-error">{error}</p>:null}
   {undo?<button type="button" disabled={busy} className="min-h-10 text-sm font-semibold text-primary-text underline"
-    onClick={()=>{const last=undo;setUndo(null);void move(last.taskId,last.status,last.blockerReason)}}>
+    onClick={()=>{const last=undo;void move(last.taskId,last.status,last.blockerReason,true)}}>
     Undo last task move
   </button>:null}
   <div className="overflow-x-auto pb-3">
@@ -88,17 +96,17 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
      </h2>
      <ul className="mt-3 space-y-2">{lane.tasks.map(task=>{
       const own=membershipId!==null&&task.assigneeMembershipId===membershipId;
-      const editable=own&&Boolean(task.sprintId)&&sprintState.get(task.sprintId!)==="ACTIVE"&&statuses.includes(task.status as EditableStatus);
+      const editable=!readOnly&&own&&Boolean(task.sprintId)&&sprintState.get(task.sprintId!)==="ACTIVE"&&statuses.includes(task.status as EditableStatus);
       return <li key={task.id} draggable={editable&&!busy}
        onDragStart={event=>{if(editable)event.dataTransfer.setData("text/plain",task.id)}}
        className="rounded-lg border border-border bg-surface p-3 text-sm">
         <Link href={learnerBoardTaskHref(projectId,filters,task.id)}
          className="block break-words font-semibold text-primary-text">{task.title}</Link>
         <p className="mt-2 text-xs text-muted-foreground">{task.priority}</p>
-        {editable && task.status==="TODO" &&
+        {!readOnly && own && (task.sprintId===null||editable) && task.status==="TODO" &&
           task.templateKey.startsWith("learner-"+membershipId!.replaceAll("-","")+"-") ?
           <LearnerDeleteOwnTask projectId={projectId} taskId={task.id}/>:null}
-        {task.sprintId===null && own ?
+        {task.sprintId===null && own && !readOnly ?
           <label className="mt-2 block text-xs font-semibold text-body">
             Pull into sprint
             <select defaultValue="" disabled={busy||!sprints.some(s=>s.status==="ACTIVE")}

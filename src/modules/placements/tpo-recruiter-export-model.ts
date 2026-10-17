@@ -1,3 +1,4 @@
+import {ENGAGE_COLUMNS,type EngageColumn} from "./tpo-recruiter-table-view-model";
 /** Formula-neutralized CSV for TPO Engage exports. Never include invite tokens. */
 export type RecruiterExportRow={
  name:string;companyName:string|null;stage:string;ownerName:string|null;
@@ -43,8 +44,8 @@ const stageLabels:Record<string,string>={
  NEW:"New",CONTACTED:"Contacted",INVITED:"Invited",JOINED:"Joined",
  DRIVE_PLANNED:"Drive planned",RECRUITED:"Recruited",NOT_NOW:"Not now",
 };
-export function recruiterTableExportGrid(rows:readonly RecruiterTableExportRow[]){
- return {
+export function recruiterTableExportGrid(rows:readonly RecruiterTableExportRow[], columns?:readonly EngageColumn[]){
+ const grid={
   headers:[...RECRUITER_TABLE_HEADERS],
   values:rows.map(row=>[
    row.name,row.companyName??"",
@@ -56,14 +57,19 @@ export function recruiterTableExportGrid(rows:readonly RecruiterTableExportRow[]
    row.source??"Manual",row.emailNorm??"",row.phoneNorm??"",
   ]),
  };
+ if(!columns)return grid;
+ const selected=new Set(columns.filter(column=>ENGAGE_COLUMNS.includes(column)));
+ const indices=RECRUITER_TABLE_HEADERS.flatMap((column,index)=>selected.has(column)?[index]:[]);
+ return {headers:indices.map(index=>grid.headers[index]),
+  values:grid.values.map(row=>indices.map(index=>row[index]))};
 }
-export function recruiterTableExportCsv(rows:readonly RecruiterTableExportRow[]){
- const grid=recruiterTableExportGrid(rows);
+export function recruiterTableExportCsv(rows:readonly RecruiterTableExportRow[], columns?:readonly EngageColumn[]){
+ const grid=recruiterTableExportGrid(rows,columns);
  return "\uFEFF"+[grid.headers,...grid.values].map(row=>
   row.map(recruiterCsvCell).join(",")).join("\r\n")+"\r\n";
 }
-export function recruiterTableExportTsv(rows:readonly RecruiterTableExportRow[]){
- const grid=recruiterTableExportGrid(rows);
+export function recruiterTableExportTsv(rows:readonly RecruiterTableExportRow[], columns?:readonly EngageColumn[]){
+ const grid=recruiterTableExportGrid(rows,columns);
  // Literal text clipboard, not formulas: sanitize spreadsheet trigger characters.
  return [grid.headers,...grid.values].map(row=>row.map(value=>{
   const safe=/^[\s]*[=+\-@]/.test(value)?"'"+value:value;

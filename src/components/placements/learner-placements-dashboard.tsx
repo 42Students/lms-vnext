@@ -42,12 +42,13 @@ function Metric({
 }
 
 export function LearnerPlacementsDashboard({
-  snapshot,availability,learnerName=null,applicationFunnel=null,
+  snapshot,availability,learnerName=null,applicationFunnel=null,registration=null,
 }: {
   snapshot: Snapshot;
   availability:PlacementDashboardAvailability;
   learnerName?:string|null;
   applicationFunnel?:ReturnType<typeof learnerPlacementApplicationFunnel>|null;
+  registration?:{stage:string;choice:string|null}|null;
 }) {
   const display=learnerDashboardPartialState(availability,snapshot);
   const next = display.nextAction;
@@ -60,6 +61,9 @@ export function LearnerPlacementsDashboard({
     urgentAssessment:display.urgentAssessment,
     urgentInterview:display.urgentInterview,
     nextAction:next,
+    registration,
+    eligibleToApply:display.eligibleJobs,
+    applications:display.applications,
   });
   return (
     <section className="space-y-5" aria-label="Placement dashboard">
