@@ -81,3 +81,43 @@ export const placementTpoInternalMessages = pgTable(
     ),
   ],
 );
+
+/** The permanent Everyone channel has no invite roster: membership is derived
+ * from active college TPO roles on every read and write. */
+export const placementTpoTeamEveryoneMessages=pgTable(
+ "placement_tpo_team_everyone_messages",
+ {
+  id:uuid("id").defaultRandom().primaryKey(),
+  collegeId:uuid("college_id").notNull().references(()=>colleges.id,{onDelete:"restrict"}),
+  authorMembershipId:uuid("author_membership_id").notNull(),
+  body:text("body").notNull(),
+  createdAt:timestamp("created_at",{withTimezone:true}).notNull().defaultNow(),
+ },
+ t=>[
+  index("tpo_team_everyone_messages_college_time_idx").on(t.collegeId,t.createdAt),
+  foreignKey({
+   name:"tpo_team_everyone_messages_author_college_fk",
+   columns:[t.authorMembershipId,t.collegeId],
+   foreignColumns:[collegeMemberships.id,collegeMemberships.collegeId],
+  }).onDelete("restrict"),
+  check("tpo_team_everyone_message_body_ck",sql`length(btrim(${t.body})) between 1 and 4000`),
+ ],
+);
+
+/** Muting suppresses unread alerts but never revokes access to Everyone. */
+export const placementTpoTeamEveryoneMutes=pgTable(
+ "placement_tpo_team_everyone_mutes",
+ {
+  collegeId:uuid("college_id").notNull().references(()=>colleges.id,{onDelete:"restrict"}),
+  membershipId:uuid("membership_id").notNull(),
+  mutedAt:timestamp("muted_at",{withTimezone:true}).notNull().defaultNow(),
+ },
+ t=>[
+  primaryKey({name:"tpo_team_everyone_mutes_pk",columns:[t.collegeId,t.membershipId]}),
+  foreignKey({
+   name:"tpo_team_everyone_mutes_member_college_fk",
+   columns:[t.membershipId,t.collegeId],
+   foreignColumns:[collegeMemberships.id,collegeMemberships.collegeId],
+  }).onDelete("restrict"),
+ ],
+);
