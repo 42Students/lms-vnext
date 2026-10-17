@@ -132,3 +132,13 @@ Remaining queue entries are OPEN until the behavior described in the legacy audi
 | MEN-projects-meetings-37 | DONE (source checked; CI pending) | `src/components/projects/project-lifecycle-actions.tsx`; `tests/unit/chat7-round2-mentor-05.test.ts` — `MEN-projects-meetings-37 release shipment and reversal confirmations`. |
 | MEN-projects-meetings-39 | DONE (source checked; CI pending) | `src/components/projects/mentor-lane-board.tsx`; `tests/unit/chat7-round2-mentor-05.test.ts` — `MEN-projects-meetings-39 task board includes backlog and status lanes`. |
 | MEN-projects-meetings-40 | DONE (source checked; CI pending) | `src/components/projects/mentor-lane-board.tsx`; `tests/unit/chat7-round2-mentor-05.test.ts` — `MEN-projects-meetings-40 board filters expose clear-all and priority/member state`. |
+
+## Chat-7 round 2 — task details source verification (tests authored, not executed)
+
+| Gap ID | Status | Verified source and gap-named test |
+|---|---|---|
+| MEN-projects-meetings-42 | DONE (source checked; CI pending) | `src/components/projects/mentor-board-task-detail-dialog.tsx`; `tests/unit/chat7-round2-mentor-06.test.ts` — `MEN-projects-meetings-42 mentor detail dialog retains edits, attribution, and submission`. |
+| MEN-projects-meetings-43 | DONE (source checked; CI pending) | `src/components/projects/project-task-comments.tsx`; `tests/unit/chat7-round2-mentor-06.test.ts` — `MEN-projects-meetings-43 typed and timestamped comments with filtering`. |
+| MEN-projects-meetings-44 | DONE (source checked; CI pending) | `src/components/projects/mentor-task-create.tsx`; `tests/unit/chat7-round2-mentor-06.test.ts` — `MEN-projects-meetings-44 task builder supports backlog, assignee and approach`. |
+| MEN-projects-meetings-45 | DONE (source checked; CI pending) | `src/components/projects/mentor-task-details-edit.tsx`; `tests/unit/chat7-round2-mentor-06.test.ts` — `MEN-projects-meetings-45 task editor supports approach and acceptance criteria`. |
+| MEN-projects-meetings-47 | DONE (source checked; CI pending) | `src/components/projects/mentor-task-status-transition.tsx`; `tests/unit/chat7-round2-mentor-06.test.ts` — `MEN-projects-meetings-47 blocker reason is collected when blocking a task`. |
