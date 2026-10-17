@@ -356,7 +356,7 @@ export default async function TpoAuditPage({
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
               {summary.total === 0
-                ? "No matching persisted records"
+                ? "Nothing logged yet"
                 : firstItem > summary.total
                   ? `Page ${page} is beyond the available records`
                   : `Showing ${firstItem}–${lastItem} of ${summary.total} records`}
@@ -371,12 +371,12 @@ export default async function TpoAuditPage({
           <EmptyState
             title={
               summary.total === 0
-                ? "No matching audit records"
+                ? "Nothing logged yet"
                 : "No records on this page"
             }
             description={
               summary.total === 0
-                ? "No persisted audit events match this college, date range, category and search. Try other filters. This does not certify that every legacy action has an audit writer."
+                ? "Every drive, decision and setting change your team makes shows up here."
                 : "This page number is outside the available result range. Return to the first page or adjust the filters."
             }
           />

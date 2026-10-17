@@ -38,8 +38,8 @@ export default async function TpoWhatCompaniesSeePage() {
 
   const sourceLabel =
     settings.source === "PERSISTED"
-      ? "Persisted"
-      : "Source default";
+      ? "Saved for your college"
+      : "Standard college settings";
 
   return (
     <div className="space-y-6">
@@ -73,8 +73,8 @@ export default async function TpoWhatCompaniesSeePage() {
             </h3>
             <p className="mt-1 text-sm leading-6 text-body">
               {settings.source === "PERSISTED"
-                ? "The five values below come from your college's saved visibility settings."
-                : "Your college has no saved visibility-settings row. The five values below are the effective defaults defined by the existing placement policy service."}
+                ? "These choices are saved for your college."
+                : "These are the standard college settings until your team saves its own choices."}
             </p>
           </div>
 
