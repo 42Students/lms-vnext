@@ -53,6 +53,8 @@ export const db10LogAlertSignatures = pgTable(
     lastSpikeAlertAt: timestamp("last_spike_alert_at", { withTimezone: true }),
     recentWindowAt: timestamp("recent_window_at", { withTimezone: true }),
     recentWindowCount: bigint("recent_window_count", { mode: "number" }).notNull().default(1),
+    dayKey: varchar("day_key", { length: 10 }),
+    dayOccurrences: bigint("day_occurrences", { mode: "number" }).notNull().default(1),
   },
   (t) => [
     uniqueIndex("db10_log_alert_signature_env_hash_uq")
