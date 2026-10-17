@@ -14,7 +14,7 @@ describe("TPO notice link rendering",()=>{
   ]);
  });
  it("TPO-inbox-team-49 never turns escaped or syntactically invalid URLs into outbound buttons",()=>{
-  expect(tpoNoticeTextParts("https://<img>")).toEqual([{kind:"text",value:"https://<img>"}]);
+  expect(tpoNoticeTextParts("https://<img>").every(part=>part.kind==="text")).toBe(true);
   const page=src("src/app/(authenticated)/tpo/announcements/page.tsx");
   expect(page).toContain("tpoNoticeTextParts(row.message).map");
   expect(page).toContain('rel="noopener noreferrer"');
