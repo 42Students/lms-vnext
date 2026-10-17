@@ -8,9 +8,9 @@ export const mentorSprintDetailsSchema = z.object({
   definitionOfDone:z.string().trim().max(4000).nullable(),
   startDate:z.iso.date().nullable(),endDate:z.iso.date().nullable(),dueDate:z.iso.date().nullable(),
   expectedUpdatedAt: z.iso.datetime({ offset: true }),
-}).superRefine((v,ctx)=>{
+}).strict().superRefine((v,ctx)=>{
  if(v.startDate&&v.endDate&&v.endDate<v.startDate)ctx.addIssue({code:"custom",path:["endDate"],message:"End date must follow start date"});
-}).strict();
+});
 
 export const mentorSprintDetailsParamsSchema = z.object({
   projectId: z.string().uuid(),
