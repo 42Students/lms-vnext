@@ -80,7 +80,7 @@ describe("College Projects gap closure round 4",()=>{
  it("COL-projects-22 is an improvement, not a missing legacy mentor/class/template filter",()=>{
   const page=source("src/components/projects/project-admin-collection-controls.tsx");
   expect(page).toContain('name="status"');
-  expect(page).toContain('name="q"');
+  expect(page).toContain('name={legacyWorkspaces ? "search" : "q"}');
  });
  it("COL-projects-23 uses responsive wrappers but retains browser width acceptance as open",()=>{
   const cards=source("src/components/projects/project-admin-workspace-list.tsx");
