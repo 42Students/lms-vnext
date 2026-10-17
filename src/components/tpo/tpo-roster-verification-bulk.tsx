@@ -31,7 +31,10 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
  async function save(){
   if(busy||!preview||eligible.length===0||action==="VERIFY"&&!ack||
     action==="SEND_BACK"&&reason.trim().length<3)return;
-  const payload=collegeBulkReviewPayload(eligible,action,reason);
+  const payload=collegeBulkReviewPayload(eligible.map(row=>({
+   learnerMembershipId:row.learnerMembershipId,section:row.section,version:row.version,
+   status:row.status==="SUBMITTED"?"SUBMITTED" as const:"UPDATE_PENDING" as const,
+  })),action,reason);
   if(payload.items.length===0)return;
   setBusy(true);setError("");
   try{
