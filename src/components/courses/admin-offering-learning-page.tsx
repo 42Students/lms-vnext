@@ -75,6 +75,13 @@ export async function AdminOfferingLearningPage({
           </Link>
         }
       />
+      <nav aria-label="Course detail tabs" className="flex flex-wrap gap-2 text-sm">
+       <a href="#course-home" className="inline-flex min-h-10 items-center rounded border border-border px-3 font-semibold text-primary-text">Home</a>
+       <a href="#course-syllabus" className="inline-flex min-h-10 items-center rounded border border-border px-3 font-semibold text-primary-text">Syllabus</a>
+       <a href="#who-teaches-it" className="inline-flex min-h-10 items-center rounded border border-border px-3 font-semibold text-primary-text">Who teaches it</a>
+      </nav>
+      <section id="course-home" aria-label="Course Home" className="space-y-2">
+      <h2 className="text-lg font-semibold">Home</h2>
       <AdminCourseDisplayEditor
         courseId={workspace.offering.courseId}
         enabled={displayEnabled}
@@ -94,6 +101,7 @@ export async function AdminOfferingLearningPage({
             : null
         }
       />
+      </section>
       <AdminOfferingTeachersPanel roster={roster} academicPeriodName={workspace.offering.academicPeriodName}/>
       <AdminOfferingLearningOverview
         workspace={workspace}
