@@ -1,6 +1,5 @@
-import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
+import { PageLoading } from "@/components/ui/page-loading";
 
-/** GR-19: loading is bounded by a visible recovery action. */
-export default function Loading() {
-  return <GracefulPageLoading />;
+export default function LoadingMentorProject() {
+  return <PageLoading label="Loading project…" variant="card" count={3} />;
 }
