@@ -124,3 +124,10 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 
 ## Needs shell (chat-9 only)
 
+
+## Moved in: unassigned Super Admin gaps (2026-10-17)
+- SA-tenants-modules-40 — DONE in source: free-form stored setting add/remove with CAS, audit and wrong-scope warning; orchestrator DB/browser checks pending.
+
+- SA-tenants-modules-32 — DONE in source: college, descendant, learner and bulk access history in one 50-row actor/scope list with stable cursor; orchestrator DB/browser checks pending.
+
+- SA-tenants-modules-30 — NOT-A-GAP: descendant locks already writable for the four academic scope levels; a lock without enabled value is impossible under the persisted NOT NULL schema.
