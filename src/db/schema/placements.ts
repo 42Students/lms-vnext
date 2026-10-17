@@ -1228,6 +1228,8 @@ export const placementJobRounds = pgTable(
     whatToBring: text("what_to_bring"),
     platform: text("platform"),
     testUrl: text("test_url"),
+    /** LEARNER-placements-41: assessment submission cutoff, not results due. */
+    assessmentDueAt: timestamp("assessment_due_at", { withTimezone: true }),
     durationMinutes: integer("duration_minutes"),
     resultsDueAt: timestamp("results_due_at", {
       withTimezone: true,
