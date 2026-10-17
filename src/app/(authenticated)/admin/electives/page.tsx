@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { legacyAcademicStatus } from "@/modules/academics/legacy-academic-status";
 import { CollegeSlotManager } from "@/components/electives/college-slot-manager";
 import { CollegeElectiveOfferingManager } from "@/components/electives/college-elective-offering-manager";
 import { CollegeElectiveLifecycleAction } from "@/components/electives/college-elective-lifecycle-action";
@@ -73,7 +74,7 @@ export default async function SuperAdminElectivesPage({
         {data.items.map(row => { const item = row as typeof row & { description?: string | null; version: number }; return <article key={item.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <h2 className="m-0 break-words text-base font-semibold text-foreground">{item.name}</h2>
-            <StatusBadge tone={item.status === "ACTIVE" ? "success" : "neutral"}>{item.status}</StatusBadge>
+            <StatusBadge tone={item.status === "ACTIVE" ? "success" : "neutral"}>{legacyAcademicStatus(item.status)}</StatusBadge>
           </div>
           <p className="mt-1 text-sm text-body">{item.programName} · Semester {item.semesterNumber}</p>
           <dl className="mt-3 grid grid-cols-2 gap-3 text-sm text-body">

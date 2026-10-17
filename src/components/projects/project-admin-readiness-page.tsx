@@ -100,7 +100,7 @@ export async function ProjectAdminReadinessPage({
           </a>
         </div>
         {!activeOverrides.length ? <p className="mt-3 text-sm text-muted-foreground">
-          No active readiness overrides.
+          No workspace currently has a manual override — every gate is running on its own completion state.
         </p> : <div className="mt-3 overflow-x-auto">
           <table className="min-w-full text-left text-sm">
             <thead><tr className="border-b border-border text-xs text-muted-foreground">

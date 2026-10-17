@@ -18,7 +18,8 @@ import {
   adminAttendancePercent,
   attendanceCsvCell,
   attendanceIndiaDay,
-  groupAttendanceDays,
+  attendanceMonthDays,
+  attendanceMonthLabel,
   shiftAttendanceMonth,
 } from "@/modules/attendance/admin-grid-model";
 
@@ -135,6 +136,7 @@ export function AdminAttendanceWorkspace({
     useState(false);
   const [error, setError] =
     useState<string | null>(null);
+  const [notice,setNotice]=useState<string|null>(null);
   const [sectionId, setSectionId] = useState(data.selectedSectionId ?? "");
   const [courseId, setCourseId] = useState(data.selectedCourseId ?? "");
   const [showAllCourses, setShowAllCourses] = useState(data.showAllCourses);
@@ -173,8 +175,8 @@ export function AdminAttendanceWorkspace({
   }, [data.courses, data.deliveries, sectionId]);
   const visibleCourses = showAllCourses ? data.courses : offeredCourses;
   const sessionDays = useMemo(() =>
-    groupAttendanceDays(data.grid?.sessions ?? []),
-    [data.grid?.sessions],
+    attendanceMonthDays(data.month,data.grid?.sessions ?? []),
+    [data.grid?.sessions,data.month],
   );
 
   function navigate(month = data.month) {
@@ -208,6 +210,16 @@ export function AdminAttendanceWorkspace({
     [data.grid?.sessions, loadedAt],
   );
 
+  const markedSessions=heldSessions.filter(session=>session.attendanceStatus==="MARKED");
+  const markedIds=new Set(markedSessions.map(session=>session.id));
+  const absentMarks=(data.grid?.records??[]).filter(record=>
+    markedIds.has(record.scheduleEventId)&&record.status!=="PRESENT").length;
+  const totalMarks=markedSessions.length*(data.grid?.roster.length??0);
+  const presentMarks=Math.max(0,totalMarks-absentMarks);
+  const monthPercent=totalMarks>0?Math.round(100*presentMarks/totalMarks):null;
+  const activeDays=new Set(heldSessions.map(session=>attendanceIndiaDay(session.startsAt))).size;
+  const notMarkedCount=heldSessions.length-markedSessions.length;
+
   function learnerPercent(learner: Learner) {
     return adminAttendancePercent(
       learner.membershipId, data.grid?.sessions ?? [], data.grid?.records ?? [],
@@ -229,10 +241,6 @@ export function AdminAttendanceWorkspace({
     ) {
       return;
     }
-    if (!window.confirm(
-      "Mark " + learnerName(target.learner) + " " + status.toLowerCase() +
-      " for " + target.session.title + "? This change is recorded."
-    )) return;
     setError(null);
     setCorrecting(true);
     try {
@@ -257,16 +265,19 @@ export function AdminAttendanceWorkspace({
         },
       );
       if (!response.ok) {
-        const body = await response
-          .json()
-          .catch(() => null);
+        // Do not echo provider, SQL or framework messages from the API body.
         setError(
-          body?.message ||
-            body?.error ||
-            "Attendance correction failed.",
+          response.status===409
+            ? "This changed while you were working. Refresh the attendance grid and re-apply the correction."
+            :response.status===403
+            ? "You do not have access to correct this attendance. Ask a college administrator."
+            :response.status===429
+            ? "Too many changes were requested. Try again shortly."
+            : "Attendance could not be corrected. Check the record and retry.",
         );
         return;
       }
+      setNotice("Attendance corrected for "+learnerName(target.learner)+" — "+target.session.title+".");
       setTarget(null);
       router.refresh();
     } catch {
@@ -280,36 +291,22 @@ export function AdminAttendanceWorkspace({
 
   function exportCsv() {
     if (!data.grid) return;
-    const header = [
-      "Learner",
-      "Roll",
-      ...data.grid.sessions.map(
-        (session) =>
-          attendanceIndiaDay(session.startsAt) + " " +
-            new Intl.DateTimeFormat("en-IN", {
-              timeZone: "Asia/Kolkata",
-              hour: "2-digit",
-              minute: "2-digit",
-            }).format(new Date(session.startsAt)),
-      ),
-      "Attendance %",
-    ];
-    const rows = data.grid.roster.map(
-      (learner) => [
-        learnerName(learner),
-        learner.rollNumber ?? "",
-        ...data.grid!.sessions.map(
-          (session) =>
-            codeFor(
-              session,
-              recordMap.get(
-                `${session.id}:${learner.membershipId}`,
-              ),
-            ).label,
-        ),
-        learnerPercent(learner) ?? "",
-      ],
-    );
+    // One column per IST calendar day, so the file remains usable in the
+    // legacy monthly grid. Multiple sessions on a date are slash-delimited.
+    const header = ["Learner","Roll",...sessionDays.map(row=>row.day),"Attendance %"];
+    const rows = data.grid.roster.map(learner=>[
+      learnerName(learner),learner.rollNumber??"",
+      ...sessionDays.map(({sessions})=>{
+        if(sessions.length===0)return "✖";
+        return sessions.map(session=>{
+          const state=codeFor(session,recordMap.get(session.id+":"+learner.membershipId));
+          if(state.code==="P")return "P";
+          if(["A","E","M","L"].includes(state.code))return "A";
+          return "N";
+        }).join("/");
+      }),
+      learnerPercent(learner)??"",
+    ]);
     const csv = [header, ...rows]
       .map((row) => row.map(attendanceCsvCell).join(","))
       .join("\r\n");
@@ -326,6 +323,7 @@ export function AdminAttendanceWorkspace({
 
   return (
     <div className="space-y-5">
+      {notice?<p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm font-semibold text-body">{notice}</p>:null}
       <section className="grid gap-3 sm:grid-cols-2">
         <div className="rounded-xl border border-border bg-surface p-4">
           <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
@@ -410,6 +408,7 @@ export function AdminAttendanceWorkspace({
             onClick={() => navigate(shiftAttendanceMonth(data.month, -1))}>
             Previous
           </Button>
+          <span className="min-w-32 text-center text-sm font-semibold text-body" aria-live="polite">{attendanceMonthLabel(data.month)}</span>
           <Input className="max-w-40" type="month" aria-label="Attendance month"
             value={data.month}
             onChange={(event) => {
@@ -467,6 +466,15 @@ export function AdminAttendanceWorkspace({
                   }{" "}
                   of {heldSessions.length} held sessions marked
                 </p>
+                <dl className="mt-3 grid gap-2 text-xs text-body sm:grid-cols-3 lg:grid-cols-5">
+                  <div><dt>Monthly attendance</dt><dd className="font-semibold">{monthPercent===null?"—":monthPercent+"%"}</dd></div>
+                  <div><dt>Students</dt><dd className="font-semibold">{data.grid.roster.length}</dd></div>
+                  <div><dt>Sessions held</dt><dd className="font-semibold">{heldSessions.length}</dd></div>
+                  <div><dt>Absences</dt><dd className="font-semibold">{absentMarks}</dd></div>
+                  <div><dt>Active days</dt><dd className="font-semibold">{activeDays}</dd></div>
+                  <div><dt>Not marked</dt><dd className="font-semibold">{notMarkedCount}</dd></div>
+                </dl>
+                <p className="mt-2 text-xs text-body">{presentMarks} present marks across {markedSessions.length} marked sessions</p>
               </div>
               <Button
                 variant="secondary"
@@ -479,17 +487,16 @@ export function AdminAttendanceWorkspace({
 
           <section className="overflow-x-auto rounded-xl border border-border bg-surface">
             <table className="w-full min-w-[56rem] border-collapse text-left text-sm">
+              <caption className="sr-only">College attendance for every calendar day of the selected month. Cross means no scheduled class.</caption>
               <thead className="bg-surface-subtle text-xs uppercase tracking-[0.06em] text-muted-foreground">
                 <tr>
                   <th className="sticky left-0 z-20 bg-surface-subtle px-4 py-3">
                     Learner
                   </th>
-                  {sessionDays.map(({ day, sessions }) => (
-                    <th key={day} className="min-w-24 px-3 py-3 text-center"
-                      title={String(sessions.length) + " session(s)"}>
-                      {new Intl.DateTimeFormat("en-IN", {
-                        timeZone: "Asia/Kolkata", day: "2-digit", month: "short",
-                      }).format(new Date(sessions[0]!.startsAt))}
+                  {sessionDays.map(({ day, sessions, weekday, isSunday }) => (
+                    <th key={day} scope="col" className={"min-w-16 px-2 py-3 text-center "+(isSunday?"bg-surface-subtle":"")}
+                      title={sessions.length?String(sessions.length) + " session(s)":"No class scheduled"}>
+                      <span className="block">{day.slice(8)}</span><span className="block text-xs font-normal">{weekday}</span>
                       {sessions.length > 1 ? (
                         <span className="block text-[11px] normal-case">
                           {sessions.length} sessions
@@ -528,7 +535,8 @@ export function AdminAttendanceWorkspace({
                                 "Roll unavailable"}
                           </p>
                         </td>
-                        {sessionDays.map(({ day, sessions }) => {
+                        {sessionDays.map(({ day, sessions, isSunday }) => {
+                          if(!sessions.length)return <td key={day} className={"px-2 py-3 text-center "+(isSunday?"bg-surface-subtle":"")}><span aria-label="No class scheduled" className="text-muted-foreground">✖</span></td>;
                           const first = sessions[0]!;
                           const record = recordMap.get(first.id + ":" + learner.membershipId);
                           const state = codeFor(first, record);
@@ -537,7 +545,7 @@ export function AdminAttendanceWorkspace({
                             <td key={day} className="px-3 py-3 text-center">
                               <button
                                 type="button"
-                                disabled={!multiple && new Date(first.startsAt).getTime() > Date.now()}
+                                disabled={!multiple && new Date(first.startsAt).getTime() > loadedAt}
                                 aria-label={multiple
                                   ? String(sessions.length) + " sessions on " + day + " for " + learnerName(learner)
                                   : state.label + " — " + learnerName(learner) + " — " + formatDateTime(first.startsAt)}
@@ -545,7 +553,8 @@ export function AdminAttendanceWorkspace({
                                   if (multiple) setChooser({ learner, sessions });
                                   else setTarget({ learner, session: first, record });
                                 }}
-                                className="disabled:cursor-default"
+                                title={!multiple && new Date(first.startsAt).getTime()>loadedAt ? "This class has not started. Attendance can be corrected after it begins." : undefined}
+                                className="disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-primary"
                               >
                                 <StatusBadge tone={multiple ? "neutral" : state.tone}>
                                   {multiple ? String(sessions.length) + " sessions" : state.code}
@@ -670,7 +679,7 @@ export function AdminAttendanceWorkspace({
               </p>
             </div>
             <p className="text-xs text-muted-foreground">
-              The Faculty correction window is {data.policy.correctionWindowHours} hours. College Admin corrections are not limited by it. Present corrections remove the absence exception.
+              The Faculty correction window is {data.policy.correctionWindowHours} hours. College Admin corrections are not limited by it. Present corrections remove the absence exception. This change is recorded.
             </p>
             {target.record?.note ? (
               <p className="text-sm text-body">Note: {target.record.note}</p>

@@ -3,11 +3,13 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import {useToast} from "@/components/ui/toast";
 import { Input } from "@/components/ui/input";
 import {createdOrganizationStepHref} from "@/modules/colleges/admin-tenant-organization-step";
 
 export function OrganizationCreateForm({ advanceToCollege = false }: { advanceToCollege?: boolean } = {}) {
   const router = useRouter();
+  const {showToast}=useToast();
   const [name, setName] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -16,19 +18,22 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
     event.preventDefault();
     setError(null);
 
+    const cleanName=name.trim().replace(/\s+/g," ");
+    if(!cleanName){setError("Please enter organization name");return;}
     startTransition(async () => {
       const response = await fetch("/api/organizations", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify({ name:cleanName }),
       });
 
       if (!response.ok) {
         const payload = await response.json().catch(() => null);
-        setError(payload?.error ?? "Could not create organization");
+        setError(payload?.error==="ORGANIZATION_NAME_CONFLICT"?"Organization name already exists":payload?.error ?? "Could not create organization");
         return;
       }
 
+      showToast({title:"Created organization “"+cleanName+"”.",tone:"success"});
       if (advanceToCollege) {
         const payload:unknown=await response.json().catch(()=>null);
         const href=createdOrganizationStepHref(payload);

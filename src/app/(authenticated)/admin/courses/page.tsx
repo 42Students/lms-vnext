@@ -5,7 +5,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { getAdminCourseWorkspace } from "@/modules/courses/admin-course-workspace";
 
-export default async function SuperAdminCoursesPage() {
+export default async function SuperAdminCoursesPage({searchParams}:{searchParams:Promise<{duplicate?:string|string[]}>}) {
   const context =
     await getCurrentRequestContext();
   const collegeId =
@@ -34,6 +34,9 @@ export default async function SuperAdminCoursesPage() {
     );
   }
 
+  const query=await searchParams;
+  const duplicateCourseId=typeof query.duplicate==="string"&&/^[a-f0-9-]{36}$/i.test(query.duplicate)
+    ?query.duplicate:undefined;
   const workspace =
     await getAdminCourseWorkspace(
       context,
@@ -56,6 +59,8 @@ export default async function SuperAdminCoursesPage() {
       <Link href="/admin/quizzes" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Quizzes →</Link>
       <AdminCourseOverview
         workspace={workspace}
+        courseBasePath="/admin/courses"
+        duplicateCourseId={duplicateCourseId}
         offeringBasePath="/admin/courses/offerings"
       />
     </div>

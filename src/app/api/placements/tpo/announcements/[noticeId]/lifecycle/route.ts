@@ -20,7 +20,9 @@ export async function POST(request:Request,{params}:{params:Promise<{noticeId:st
  try{
   await mutateTpoNotice(await getCurrentRequestContext(),parsed.data);
   const tab=parsed.data.action==="RESTORE"?"deleted":"yours";
-  return NextResponse.redirect(new URL("/tpo/announcements?tab="+tab,request.url),303);
+  const destination=new URL("/tpo/announcements?tab="+tab,request.url);
+  if(parsed.data.action==="DELETE")destination.searchParams.set("noticeSuccess","DELETED");
+  return NextResponse.redirect(destination,303);
  }catch(error){
   if(error instanceof AuthorizationError)return noticePostError(request,"FORBIDDEN",403);
   if(error instanceof z.ZodError)return noticePostError(request,"INVALID_BODY",400);

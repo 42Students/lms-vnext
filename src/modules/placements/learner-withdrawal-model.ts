@@ -5,8 +5,8 @@ import { z } from "zod";
 export const learnerWithdrawalReasonSchema = z
   .string()
   .trim()
-  .min(5, "Enter a reason of at least five characters.")
-  .max(500, "Keep the reason within 500 characters.");
+  .min(3, "Enter a reason of at least three characters.")
+  .max(900, "Keep the reason within 900 characters.");
 
 export const learnerApplicationWithdrawalSchema = z.object({
   action: z.literal("WITHDRAW"),

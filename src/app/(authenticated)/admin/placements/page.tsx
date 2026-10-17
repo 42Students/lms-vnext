@@ -17,7 +17,7 @@ export default async function AdminPlacementsPage() {
       <div className="space-y-6">
         <PageHeader
           eyebrow="Super Admin"
-          title="Placements"
+          title="Placement Drives"
           description="Placement administration requires a college safety scope."
         />
         <SuperAdminPlacementOversightNav />
@@ -25,8 +25,8 @@ export default async function AdminPlacementsPage() {
         <Link href="/admin/placements/drives" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Open All drives table →</Link>
       <Link href="/admin/companies" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Browse companies across your current scope →</Link>
         <EmptyState
-          title="Select a college scope"
-          description="Choose a college in the Super Admin scope selector before opening Placement operations."
+          title="Select a college to continue"
+          description="Drives is college-scoped. Pick an Organization + College in the header above."
         />
       </div>
     );
@@ -35,14 +35,14 @@ export default async function AdminPlacementsPage() {
     <div className="space-y-6">
       <PageHeader
         eyebrow="Super Admin"
-        title="Placements"
-        description="Placement operations inside the selected college safety scope."
+        title="Placement Drives"
+        description="Run active hiring drives from one operational view. Attention items surface decisions that need action; closed and draft drives remain available in the full archive."
         actions={
           <Link
             href="/admin/placements/new"
             className="inline-flex min-h-9 items-center justify-center rounded-md border border-primary bg-primary px-3 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover"
           >
-            New opportunity
+            New drive
           </Link>
         }
       />
