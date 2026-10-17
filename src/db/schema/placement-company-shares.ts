@@ -2,6 +2,8 @@
 import { sql } from "drizzle-orm";
 import {
   check,
+  integer,
+  jsonb,
   foreignKey,
   index,
   pgTable,
@@ -28,6 +30,14 @@ export const placementCompanyApplicantShares = pgTable(
       .notNull()
       .references(() => collegeMemberships.id, { onDelete: "restrict" }),
     tokenHash: varchar("token_hash", { length: 64 }).notNull(),
+    codeHash: varchar("code_hash", { length: 64 }).notNull(),
+    codeSalt: varchar("code_salt", { length: 32 }).notNull(),
+    wrongCodeCount: integer("wrong_code_count").notNull().default(0),
+    wrongCodeWindowStart: timestamp("wrong_code_window_start", { withTimezone: true }),
+    lockedUntil: timestamp("locked_until", { withTimezone: true }),
+    selectedColumns: jsonb("selected_columns").$type<string[]>().notNull()
+      .default(sql`\x27["APPLICATION_ID","NAME","EMAIL"]\x27::jsonb`),
+    shortlistBy: timestamp("shortlist_by", { withTimezone: true }),
     expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
     revokedAt: timestamp("revoked_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
