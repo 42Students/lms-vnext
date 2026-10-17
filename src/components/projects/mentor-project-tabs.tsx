@@ -19,7 +19,7 @@ export function MentorProjectTabs({ projectId }: { projectId: string }) {
   const active = requested === "tasks" ? "board" : requested === "meetings" ? "team" :
     tabs.some(item => item.key === requested) ? requested ?? "overview" : "overview";
   const base = "/mentor/projects/" + encodeURIComponent(projectId);
-  return <Tabs ariaLabel="Project sections" value={active} onValueChange={() => {}}
+  return <Tabs ariaLabel="Project sections" value={active} 
     items={tabs.map(tab => ({ value: tab.key, label: tab.label, href: base + "?tab=" + tab.key }))}
     renderPanel={false}/>;
 }
