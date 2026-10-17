@@ -42,6 +42,7 @@ export async function GET(request:Request){
    learnerName:row.learnerName,
    section:row.section,status:row.status,
    submittedAt:stamp(row.submittedAt),reviewedAt:row.decidedAt?stamp(row.decidedAt):"",
+   reviewedBy:row.decidedByName?.trim()??"",
    missingDocumentCount:row.section==="IDENTITY"?(row.missingIdentityProof?1:0):(row.marksheets?.missing??0),
    attentionFlags:row.attention.join("; "),
   })));
