@@ -84,7 +84,7 @@ export default async function HrPlacementJobPage({
   }
   const { workspace, filters, applicants, applicantsPage, offers, offersPage, offerSummary, offersTotal } = hiring;
   if(query.tab==="messages")redirect(hrDriveMessagesHref(workspace.job.id));
-  if(query.tab==="requests")redirect("/recruiter/drives/"+encodeURIComponent(workspace.job.id)+"/change-requests");
+  const requestsTab=query.tab==="requests";
   if(query.tab==="interviews"||query.tab==="results"||query.tab==="selections"){
     const destination=query.tab==="selections"?"offers":"rounds";
     const search=new URLSearchParams({tab:destination,returnTo});
@@ -222,7 +222,7 @@ export default async function HrPlacementJobPage({
         </div>
       </section>
 
-      {filters.tab === "overview" ? (
+      {filters.tab === "overview" && !requestsTab ? (
         <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div><h2 className="text-lg font-semibold text-foreground">Drive overview</h2>
@@ -343,7 +343,8 @@ export default async function HrPlacementJobPage({
           className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
           Messages
         </Link>
-        <Link href={"/recruiter/drives/"+workspace.job.id+"/change-requests"}
+        <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=requests"+returnQuery}
+          aria-current={requestsTab?"page":undefined}
           className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
           Change requests
         </Link>
