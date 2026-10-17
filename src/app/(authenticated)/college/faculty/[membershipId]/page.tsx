@@ -4,6 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { getCollegeFacultyDetail } from "@/modules/people/college-faculty-detail-service";
 import { CollegePersonNotFoundError } from "@/modules/people/college-person-detail-model";
+import {CollegeFacultyScheduleReassign} from "@/components/college/college-faculty-schedule-reassign";
 
 export default async function CollegeFacultyDetailPage({ params, searchParams }: {
   params: Promise<{ membershipId: string }>;
@@ -25,6 +26,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
       actions={<div className="flex flex-wrap gap-3">
         <Link href={`/college/activity?subjectType=college_membership&subjectId=${encodeURIComponent(membershipId)}`}
           className="text-sm font-semibold text-primary-text">Lifecycle audit</Link>
+        <CollegeFacultyScheduleReassign membershipId={membershipId} name={data.person.name}/>
         <Link href="/college/faculty" className="text-sm font-semibold text-primary-text">Back to faculty</Link>
       </div>} />
     <section className="rounded-xl border border-border bg-surface p-5">
