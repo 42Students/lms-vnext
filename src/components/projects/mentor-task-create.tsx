@@ -31,7 +31,7 @@ export function MentorTaskCreate({
   const [status,setStatus]=useState<"TODO"|"IN_PROGRESS"|"BLOCKED">("TODO");
   const [assigneeMembershipId,setAssigneeMembershipId]=useState("");
   const choices=sprints.length?sprints.filter(item=>item.status!=="COMPLETED"):
-    [{id:sprintId,title:"Current sprint",status:"PLANNED",updatedAt}];
+    sprintId?[{id:sprintId,title:"Current sprint",status:"PLANNED",updatedAt}]:[];
   const chosenSprint=choices.find(item=>item.id===selectedSprintId);
   const canSetStatus=status==="TODO"||chosenSprint?.status==="ACTIVE";
   const valid=title.trim().length>0&&title.trim().length<=200&&
