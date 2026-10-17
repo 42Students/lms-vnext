@@ -735,7 +735,7 @@ export default async function HrPlacementJobPage({
                 Next
               </Link> : null}
             </div>
-          </nav>
+          </nav>:null}
         </section>
       ) : null}
       {filters.tab === "rounds" || filters.tab === "overview" ? <section>
