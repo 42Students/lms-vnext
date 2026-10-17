@@ -54,3 +54,9 @@ Tests were authored but not run in this builder session.
 | TPO-recruiters-07 | DONE (source, tests unrun) | The Engage Needs doing strip uses derived Follow-ups due, No next step, Gone quiet, Unassigned counts; zero chips hide, toggle works and the recruiter-access link is factual. `src/components/tpo/recruiter-leads-workspace.tsx`, named **TPO-recruiters-07 provides the actual counted Needs doing chips and zero state** in `tests/unit/chat2-engage-open-gap-decisions.test.ts`. |
 | TPO-recruiters-30 | DONE (source, tests unrun) | Validated duplicate-contact conflict now attempts the scoped same-college contact lookup and links to the existing named lead, while preserving draft fields, legacy labels and friendly errors. `src/components/tpo/recruiter-lead-detail-workspace.tsx`, named **TPO-recruiters-30 links a scoped detected duplicate and preserves contact form details** in same test. |
 | TPO-recruiters-36 | PARTIAL — OPEN | Board is horizontally scrollable, edit modal traps keyboard focus, stage cards expose a native Move/Actions menu; accessible table selection on narrow phones is still incomplete. Named **TPO-recruiters-36 has horizontally reachable stages…** in same test, not full closure. |
+
+
+## Chat-2 remaining Engage audit event baseline
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-recruiters-R05 | PARTIAL — OPEN | A college-scoped immutable `PLACEMENTS_RECRUITER_BULK_STAGE` event records changed rows, action and undo metadata; `tests/unit/chat2-inbox-notification-partials.test.ts` named **TPO-recruiters-R05**. Full legacy per-action audit nomenclature/actor reasons and invites/import events still pending. |
