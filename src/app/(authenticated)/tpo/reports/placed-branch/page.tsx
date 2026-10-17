@@ -1,3 +1,6 @@
+import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
+import {Suspense} from "react";
+import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -20,7 +23,9 @@ export default async function TpoPlacedByBranchPage({ searchParams }: { searchPa
   if (report.season) csvParams.set("seasonId", report.season.id);
   if (report.selectedJobId) csvParams.set("jobId", report.selectedJobId);
   return (
-    <div className="space-y-6">
+    <div data-tpo-presentation-report className="space-y-6">
+      <TpoReportPresentation />
+      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/placed-branch" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <PageHeader eyebrow="TPO · Reports" title="Placed students by branch"
         description="Unique learners with accepted offers and confirmed joins by current branch and season."
         actions={report.season ? <a

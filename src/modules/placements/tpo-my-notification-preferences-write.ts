@@ -41,7 +41,8 @@ export async function saveMyTpoNotificationPreferences(context:RequestContext,ra
   const prior=current??TPO_NOTIFICATION_PREFERENCE_DEFAULTS;
   const changed=Object.entries(values).some(([key,value])=>
    prior[key as keyof typeof TPO_NOTIFICATION_PREFERENCE_DEFAULTS]!==value);
-  if(!changed)return {saved:true,version:current?.updatedAt.toISOString()??null};
+  if(!changed&&current)return {saved:true,version:current.updatedAt.toISOString()};
+  // Source defaults are not a persisted preference: the first explicit Save must record a row.
   const updatedAt=new Date();
   await tx.insert(placementTpoUserPreferences).values({
    collegeId,userId,...values,updatedAt,
