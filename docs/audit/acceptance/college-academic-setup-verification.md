@@ -59,3 +59,9 @@ Unit checks are source witnesses; the orchestrator must inspect PostgreSQL integ
 
 
 | COL-academic-setup-41 | DONE (decision confirmed; browser pending) | Keep the mobile stacked forms and horizontal-scroll tables with visible swipe hint instead of shrinking dense academic data into unreadable columns. `tests/unit/chat11-college-unconfirmed-decisions-round10.test.ts` — `COL-academic-setup-41 supports long cards and keyboard-scrollable tables at 375px`; no new styling changes in this round. |
+
+## Chat-11 academic prerequisite and mutation guards (2026-10-18)
+- COL-academic-setup-06/07/08/10: `tests/unit/chat11-college-setup-integrity-round11.test.ts` provides named tests for bounded credits, no foreign tenant IDs, legal row ordering, completeness of the 15-step setup and a single additional prerequisite. Tests are authored but not executed.
+
+
+- COL-academic-setup-29/33: `src/components/academics/college-cohort-management.tsx` now uses the guarded `apiFetch` for archive (including expectedUpdatedAt) and graduation, instead of parsing and rethrowing untrusted backend error codes. `tests/unit/chat11-academic-register-regressions-round11.test.ts` has named lifecycle regression cases; tests have not been run.

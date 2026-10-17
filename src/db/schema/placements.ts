@@ -481,6 +481,9 @@ export const placementJobs = pgTable(
     /** Supplemental display-only legacy terms; eligibility remains in the enforced policy. */
     legacyPostingDetails:jsonb("legacy_posting_details").$type<{
       responsibilities:string;
+      campusPool?:{hostCollege:string;reportingTime:string|null;travelNote:string};
+      portal?:{studentsRegisterSeparately:boolean;name:string;url:string};
+      skillsWanted?:string[];
       assessmentUrl:string|null;
       assessmentDeadline:string|null;
       importantDates:Array<{label:string;at:string}>;

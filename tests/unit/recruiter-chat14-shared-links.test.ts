@@ -10,6 +10,16 @@ const doc={
  githubUrl:"https://github.com/learner/project",projectUrl:"",description:"",skills:[]}],
 };
 describe("REC-home-drives-38 recruiter applicant disclosures",()=>{
+ it("REC-home-drives-38 rejects private-network portfolio destinations in mobile web views",()=>{
+  for(const host of ["10.0.0.1","192.168.1.1","172.16.0.1",
+   "172.31.255.255","169.254.169.254","0.0.0.0","127.2.3.4",
+   "device.local","localhost","[::1]","[fc00::1]","[fd00::1]","[fe80::1]","[::ffff:127.0.0.1]"]){
+   expect(safeRecruiterExternalLink("https://"+host+"/hidden"),host).toBe(null);
+  }
+  expect(safeRecruiterExternalLink("https://portfolio.example/projects"))
+   .toBe("https://portfolio.example/projects");
+ });
+
  it("REC-home-drives-38 refuses javascript/insecure/private-network links and credential URLs",()=>{
   for(const value of ["javascript:alert(1)","http://github.com/u","https://user:pass@github.com/u",
    "https://localhost/private","https://127.0.0.1/private"]){
