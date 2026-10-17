@@ -10,3 +10,5 @@
 
 | TPO-recruiters-07 | PARTIAL — OPEN | Engage Needs doing now uses persisted Follow-ups due, No next step, Gone quiet and Unassigned counts, hides zero chips, shows Nothing right now, and links to active recruiter access; named `tests/unit/chat2-tpo-recruiter-needs.test.ts`. Toggle persistence and other legacy counts remain. |
 | TPO-recruiters-39 | DONE (source) | Legacy first-run empty message and count/add action; named `tests/unit/chat2-tpo-recruiter-needs.test.ts`. |
+
+| TPO-recruiters-41 | DONE (source, tests not run) | `tpo-bulk-lead-stage-model.ts` accepts confirmed NEW and keeps derived recruiter stages separate. `tpo-bulk-lead-stage-service.ts` clears Not Now fields, records row audit and retains existing five-minute undo. UI exposes Restore to New. Named `tests/unit/chat2-tpo-recruiter-bulk-new.test.ts`. |
