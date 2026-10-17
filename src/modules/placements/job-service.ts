@@ -347,6 +347,10 @@ export async function updatePlacementJob(
       .update(placementJobs)
       .set({
         ...input,
+        fixedCtcLpa:input.fixedCtcLpa===undefined?undefined:
+          input.fixedCtcLpa===null?null:input.fixedCtcLpa.toFixed(2),
+        variableCtcLpa:input.variableCtcLpa===undefined?undefined:
+          input.variableCtcLpa===null?null:input.variableCtcLpa.toFixed(2),
         updatedAt: new Date(),
       })
       .where(eq(placementJobs.id, jobId))
