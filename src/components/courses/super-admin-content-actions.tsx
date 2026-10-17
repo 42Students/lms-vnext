@@ -2,7 +2,7 @@
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 
-type Content={id:string;title:string;contentType:string;status:string;sequence:number;
+type Content={id:string;title:string;contentType:string;status:string;sequence:number;notes?:string|null;
  durationSeconds:number|null;startsAt:Date|null;endsAt:Date|null};
 function localDate(value:Date|null){
  if(!value)return "";
@@ -23,6 +23,7 @@ export function SuperAdminContentActions({item}:{item:Content}){
  const [error,setError]=useState(""),[notice,setNotice]=useState("");
  const [title,setTitle]=useState(item.title),[order,setOrder]=useState(String(item.sequence+1));
  const [duration,setDuration]=useState(item.durationSeconds===null?"":String(item.durationSeconds));
+ const [notes,setNotes]=useState(item.notes??"");
  const [startsAt,setStartsAt]=useState(localDate(item.startsAt)),[endsAt,setEndsAt]=useState(localDate(item.endsAt));
  async function save(){
   if(busy)return;
@@ -31,6 +32,7 @@ export function SuperAdminContentActions({item}:{item:Content}){
    setError("Enter a title and valid Order.");return;
   }
   let changes:Record<string,unknown>={title:title.trim(),sequence:index-1};
+  if(item.contentType==="RESOURCE")changes={...changes,notes:notes.trim()||null};
   if(item.contentType==="YOUTUBE"){
    const seconds=Number(duration);
    if(!duration||!Number.isInteger(seconds)||seconds<1||seconds>86400){
@@ -96,6 +98,10 @@ export function SuperAdminContentActions({item}:{item:Content}){
    <label className="grid gap-1 text-xs font-semibold">Order
     <input type="number" min={1} max={10001} value={order} onChange={e=>setOrder(e.target.value)}
      className="min-h-10 rounded border border-border bg-background p-2"/></label>
+   {item.contentType==="RESOURCE"?<label className="grid gap-1 text-xs font-semibold">Notes
+    <textarea rows={3} maxLength={5000} value={notes} onChange={e=>setNotes(e.target.value)}
+     className="rounded border border-border bg-background p-2"/>
+   </label>:null}
    {item.contentType==="YOUTUBE"?<label className="grid gap-1 text-xs font-semibold">Video length (seconds)
     <input type="number" min={1} max={86400} value={duration} onChange={e=>setDuration(e.target.value)}
      className="min-h-10 rounded border border-border bg-background p-2"/></label>:null}
