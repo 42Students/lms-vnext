@@ -1,6 +1,7 @@
 "use client";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
+import {apiFetch} from "@/lib/api-fetch";
 import {facultyContentExternalHref} from "@/modules/courses/faculty-content-preview-model";
 
 type Content={id:string;title:string;contentType:string;status:string;sequence:number;notes?:string|null;
@@ -83,34 +84,44 @@ export function SuperAdminContentActions({item}:{item:Content}){
   if(!window.confirm("Save changes?"))return;
   setBusy(true);setError("");setNotice("");
   try{
-   const response=await fetch("/api/courses/lesson-contents/"+encodeURIComponent(item.id),{
+   await apiFetch("/api/courses/lesson-contents/"+encodeURIComponent(item.id),{
     method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify(changes),
    });
-   const data=await response.json().catch(()=>null);
-   if(!response.ok)throw Error(data?.error??"Unable to update content.");
-   setEditing(false);setReplacementUrl("");setNotice("Content updated.");router.refresh();
+   setEditing(false);setReplacementUrl("");setNotice(item.contentType==="RESOURCE"?"Resource updated.":"Content updated.");router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to update content.");}
   finally{setBusy(false);}
  }
  async function transition(action:"PUBLISH"|"ARCHIVE"){
   if(busy)return;
   if(!window.confirm(action==="PUBLISH"?"Publish this content to enrolled students?":
-    "Delete this content from student access? The record will be archived."))return;
+    item.contentType==="RESOURCE"?"Delete this resource? Students will no longer see it.":"Delete this content from student access? The record will be archived."))return;
   setBusy(true);setError("");setNotice("");
   try{
-   const response=await fetch("/api/courses/lesson-contents/"+encodeURIComponent(item.id)+"/transition",{
+   await apiFetch("/api/courses/lesson-contents/"+encodeURIComponent(item.id)+"/transition",{
     method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action}),
    });
-   const data=await response.json().catch(()=>null);
-   if(!response.ok)throw Error(data?.error??"Unable to update content.");
-   setEditing(false);setNotice(action==="PUBLISH"?"Content published.":"Content archived.");router.refresh();
+   setEditing(false);setNotice(action==="PUBLISH"?"Content published.":item.contentType==="RESOURCE"?"Resource deleted.":"Content archived.");router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to update content.");}
   finally{setBusy(false);}
+ }
+ function toggleEditor(){
+  if(editing){
+   const dirty=title!==item.title||order!==String(item.sequence+1)||
+    duration!==(item.durationSeconds===null?"":String(item.durationSeconds))||
+    notes!==(item.notes??"")||replacementUrl.trim().length>0||
+    startsAt!==localDate(item.startsAt,timeZone)||endsAt!==localDate(item.endsAt,timeZone);
+   if(dirty&&!window.confirm(item.contentType==="RESOURCE"?"Discard resource changes?":"Discard content changes?"))return;
+   setTitle(item.title);setOrder(String(item.sequence+1));
+   setDuration(item.durationSeconds===null?"":String(item.durationSeconds));
+   setNotes(item.notes??"");setReplacementUrl("");setTimeZone("Asia/Kolkata");
+   setStartsAt(localDate(item.startsAt));setEndsAt(localDate(item.endsAt));
+  }
+  setEditing(!editing);
  }
  if(item.status==="ARCHIVED")return <p className="text-xs text-muted-foreground">Archived content is read-only.</p>;
  return <div className="space-y-2">
   <div className="flex flex-wrap gap-2">
-   <button type="button" disabled={busy} onClick={()=>setEditing(v=>!v)}
+   <button type="button" disabled={busy} onClick={toggleEditor}
     className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-primary-text">Edit</button>
    {item.status==="DRAFT"?<button type="button" disabled={busy} onClick={()=>void transition("PUBLISH")}
     className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-primary-text">Publish</button>:null}
