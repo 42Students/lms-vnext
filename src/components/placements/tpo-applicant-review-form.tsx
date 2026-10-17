@@ -1,5 +1,5 @@
 "use client";
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, type KeyboardEvent } from "react";
 import { useRouter } from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
@@ -36,7 +36,22 @@ export function TpoApplicantReviewForm({jobId, applicationId, expectedUpdatedAt}
     } finally { setPending(false); }
     });
   }
-  return <form onSubmit={event => void submit(event)}
+  function shortcuts(event:KeyboardEvent<HTMLFormElement>){
+   if(pending||saved||event.altKey||event.metaKey)return;
+   if(event.ctrlKey&&event.key==="Enter"){
+    event.preventDefault();
+    event.currentTarget.requestSubmit();
+    return;
+   }
+   const target=event.target as HTMLElement;
+   if(target.closest("input,textarea,select,button,[contenteditable]"))return;
+   if(event.key.toLowerCase()==="s"||event.key.toLowerCase()==="r"){
+    event.preventDefault();
+    setDecision(event.key.toLowerCase()==="s"?"SHORTLISTED":"REJECTED");
+    setReviewed(false);
+   }
+  }
+  return <form onKeyDown={shortcuts} onSubmit={event => void submit(event)}
     className="space-y-4 rounded-xl border border-border bg-surface p-5">
     <h2 className="font-semibold text-foreground">Review application</h2>
     <label className="block text-sm text-body">Decision
@@ -64,6 +79,7 @@ export function TpoApplicantReviewForm({jobId, applicationId, expectedUpdatedAt}
         onChange={event=>setReviewed(event.target.checked)} className="mt-1 h-4 w-4 accent-primary"/>
       I reviewed the applicant and the learner-visible reason. This screening decision is audited.
     </label>
+    <p className="text-xs text-body">Shortcuts: S to shortlist, R to reject (outside form fields). Ctrl+Enter submits only after you review the decision.</p>
     <p className="text-xs text-body">Only pending or held submitted applicants can be reviewed. Refresh if another TPO made a decision.</p>
     {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
     {saved ? <p role="status" className="text-sm text-body">Decision saved. Refresh the applicant list to see its current stage.</p> : null}
