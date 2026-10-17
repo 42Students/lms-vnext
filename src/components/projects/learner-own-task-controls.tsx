@@ -16,7 +16,10 @@ export function LearnerAddOwnTask({projectId,sprints}:{projectId:string;sprints:
  const [type,setType]=useState("");
  async function save(e:FormEvent){
   e.preventDefault();const sprint=available.find(row=>row.id===sprintId);
-  if(!sprint||!title.trim()||busy)return;
+  const estimateValid=estimate===""||
+    (Number.isInteger(Number(estimate))&&Number(estimate)>=0&&Number(estimate)<=1000);
+  if((sprintId!==""&&!sprint)||!title.trim()||busy||!estimateValid||
+    (status==="BLOCKED"&&!blockerReason.trim())||(!sprintId&&status!=="TODO"))return;
   setBusy(true);setError("");
   try{
    await projectMutation("/api/projects/"+encodeURIComponent(projectId)+"/tasks","POST",{
