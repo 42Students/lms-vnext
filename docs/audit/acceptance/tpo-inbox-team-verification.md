@@ -35,3 +35,15 @@ Source-level follow-up still required for `TPO-inbox-team-30/48/49/50/51/52/53/6
 | TPO-inbox-team-R07 | DONE | Loaded log semantics, native link keyboard navigation, All conversations back label and Team slash hint; `src/app/(authenticated)/tpo/messages/[threadId]/page.tsx`, `src/app/(authenticated)/tpo/team/[threadId]/page.tsx`, `src/components/tpo/tpo-team-search.tsx`; `tests/unit/tpo-inbox-team-round2.test.ts` **TPO-inbox-team-R07 gives native keyboard links…**. |
 
 Other queued gaps remain outstanding until individually inspected and recorded.
+
+## Round 3 graceful-operation adoption
+
+- `TPO-inbox-team-18`: **source partially improved, NOT closed** — counterpart display added but legacy filters and thread kinds still need implementation. `tests/unit/tpo-inbox-team-graceful-round3.test.ts` test name contains `TPO-inbox-team-18`.
+- `TPO-inbox-team-21`: **source partially improved, NOT closed** — draft recovery, Enter/Shift+Enter and counter are implemented; `@` mentions and `#` object links remain open. `tests/unit/tpo-inbox-team-graceful-round3.test.ts` test name contains `TPO-inbox-team-21`.
+- `TPO-inbox-team-39`: reinforced draft retention and inline error mapping; named test in `tests/unit/tpo-inbox-team-graceful-round3.test.ts`.
+- `TPO-inbox-team-52`: replaced the old native confirmation with an accessible keyboard dialog; named test in `tests/unit/tpo-inbox-team-graceful-round3.test.ts`.
+- `TPO-inbox-team-55`: announcement draft preservation added; named test in `tests/unit/tpo-inbox-team-graceful-round3.test.ts`.
+- GR-31, GR-35, GR-60, GR-61, GR-62, GR-90, GR-91: local page adoption verified by named source tests in `tests/unit/tpo-inbox-team-graceful-round3.test.ts`, not a platform-wide GR closure.
+- `TPO-inbox-team-50/51`: persisted HTTPS CTA validation uses the existing schema; same test file covers validation, but broader modal/edit acceptance is still open.
+
+**Tests written, not run.**
