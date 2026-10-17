@@ -131,7 +131,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:true,q:queryText,sort:sortKey,alertQ,source})} aria-current={recentOnly?"page":undefined}
           className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text">Last 30 days</Link>
       </nav>
-      <p className="text-xs text-muted-foreground">These are college-targeted notices from the registered announcement service. Some may be general college notices; a dedicated placement-only publisher is not yet registered.</p>
+      <p className="text-xs text-muted-foreground">These college-targeted announcements may include notices published by your placement cell. Only notices addressed to your membership are displayed.</p>
       {pageClamped && collegeNoticesRead.available ? (
         <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
           The requested notice page no longer exists in the current filtered results. Showing page {pages.page} instead.
@@ -183,6 +183,12 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
                 {notice.audienceLabel ? " · For "+notice.audienceLabel : ""}
               </p>
               <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{notice.message}</p>
+               {notice.buttonUrl && notice.buttonLabel ? (
+                 <a href={notice.buttonUrl} target="_blank" rel="noopener noreferrer"
+                    className="mt-3 inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+                   {notice.buttonLabel} ↗
+                 </a>
+               ) : null}
               {notice.senderLabel==="Placement cell"?<TpoNoticeAcknowledge id={notice.id}/>:null}
               {learnerNoticeHref(notice.id) ? (
                 <Link href={learnerNoticeHref(notice.id)!}
