@@ -336,3 +336,20 @@ Still **OPEN** despite useful code: `TPO-drives-39` round mode/row editor (pendi
 - Source review: 39 distinct queued gap IDs have additive, ID-named **sub-contract** tests in `tests/unit/chat3-{tpo,learner,college}-round12-parity-contracts.test.ts`; 18 TPO, 11 learner, 10 college. Full gaps still OPEN/FIXED-ON-MAIN where the legacy workflow is incomplete. The page acceptance files record each ID without inflating DONE counts.
 - Functional code progressed: `TPO-drives-R05`/`TPO-drives-44` validate known field keys using predefined safe text; `COL-attendance-09` now includes tenant-scoped ended deliveries and orders active first, with persisted `past` labels, but archived-term coverage remains incomplete. Added or strengthened ID-named tests. No migrations and no edits to the shared shell, auth or UX playbook.
 - Delegated UNCONFIRMED `MEN-projects-meetings-71` decision is documented in `docs/audit/acceptance/mentor-projects-meetings-part2-verification.md` with an ID-named partial-source failure test; intentional fail-soft delivery is retained.
+
+## Chat-3 round 13 — 30 gap dispositions, no page UX changes (2026-10-18)
+
+After fast-forwarding `origin/main`, **30 distinct queued IDs** changed disposition following source inspection and named regression coverage. **20 moved to DONE (source-level), 10 to NOT-A-GAP (safer vNext contract)**. None is claimed end-to-end verified; browser, disposable PostgreSQL, Vitest and `tsc` execution remain with the orchestrator.
+
+- TPO Drives (7 IDs): TPO-drives-03 NOT-A-GAP, -34 NOT-A-GAP, -36 DONE, -42 DONE (core publish validation), -50 NOT-A-GAP, -05 DONE, -08 DONE, -17 DONE (8 IDs including all displayed).
+- Learner learning (10 IDs): LEARNER-learning-misc-03 DONE, -04 DONE, -22 NOT-A-GAP, -25 NOT-A-GAP, -34 DONE, -41 NOT-A-GAP, -09 DONE, -33 DONE, -38 DONE (9 IDs). Other learner source copy remains tracked separately.
+- Public (4 IDs): PUB-auth-public-45 NOT-A-GAP, -49 DONE, -60 NOT-A-GAP, -61 NOT-A-GAP.
+- Super Admin Tenant Setup (9 IDs): SA-tenants-modules-05 DONE, -08 DONE, -13 DONE, -16 DONE, -06 DONE, -17 DONE, -18 DONE, -19 NOT-A-GAP (8 IDs).
+- College People (1 ID): COL-people-26 DONE.
+- The *canonical count is the actual queue status diff*: DONE 89→109 (+20), NOT-A-GAP 9→19 (+10). The group descriptions above are explanatory; the individual table rows are authoritative.
+
+Changed code (functional, not styling): TPO-drives-42 enforces actual policy and non-TALK rounds transactionally in direct publish and rejects insecure external application URLs in both publication paths; LEARNER-learning-misc-33/-38 restore distinct safe legacy empty and failed copy. Named tests: `tests/unit/chat3-tpo-publish-readiness-round13.test.ts`, `tests/unit/chat3-tenant-public-verified-round13.test.ts`, `tests/unit/chat3-closure-round13-six.test.ts`, existing ID-named tests for other dispositions. Acceptance evidence and intentional differences are appended to per-page verification files.
+
+**UNCONFIRMED delegation:** `MEN-projects-meetings-71` already has the approved partial-source/fail-soft decision with an ID-named test in `docs/audit/acceptance/mentor-projects-meetings-part2-verification.md`. Other queue UNCONFIRMEDs have separate owner-lane dispositions (chat-5/chat-15); do not overwrite them.
+
+The old `unit-failures-r1.md` chat-3 lines describe source assertions that presently match on the branch (COL-people-20, TPO-drives-47, TPO-drives-51). Latest `typecheck-errors.md` no longer lists a chat-3 owned error; the four `courses-c3-progress` fixture missing-points regressions were fixed in the previous integrated round. **No tests were run here.** Keep UI/UX restyling frozen until the playbook is signed off after three audits.
