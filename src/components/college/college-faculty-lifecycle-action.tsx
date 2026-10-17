@@ -12,6 +12,7 @@ export function CollegeFacultyLifecycleAction({ membershipId, name, status }: {
   const [reason, setReason] = useState("");
   const [editing, setEditing] = useState(false);
   const [error, setError] = useState("");
+  const [success,setSuccess]=useState("");
   const [busy, start] = useTransition();
   if (status === "ENDED") return null;
   const action = status === "ACTIVE" ? "DEACTIVATE" : "REACTIVATE";
@@ -21,7 +22,7 @@ export function CollegeFacultyLifecycleAction({ membershipId, name, status }: {
       return;
     }
 
-    setError("");
+    setError("");setSuccess("");
     start(async () => {
       try {
         const response = await fetch(
@@ -37,6 +38,7 @@ export function CollegeFacultyLifecycleAction({ membershipId, name, status }: {
         );
         setEditing(false);
         setReason("");
+        setSuccess(action==="DEACTIVATE"?"Faculty suspended.":"Faculty reactivated.");
         router.refresh();
       } catch (reasonError) {
         setError(reasonError instanceof Error ? reasonError.message : "Action failed");
@@ -50,6 +52,7 @@ export function CollegeFacultyLifecycleAction({ membershipId, name, status }: {
       className="rounded-md border border-border px-3 py-2 text-xs font-semibold text-primary-text">
       {action === "DEACTIVATE" ? "Suspend Faculty" : "Reactivate Faculty"}
     </button>
+    {success?<p role="status" className="mt-2 text-xs text-body">{success}</p>:null}
     {editing ? <div className="mt-2 space-y-2 rounded-md border border-border bg-surface p-3">
       <p className="text-xs font-semibold">{facultyLifecycleConfirmation(name,action)}</p>
       {action === "DEACTIVATE" ? <label className="block text-xs text-body">
