@@ -244,10 +244,10 @@ Audit: `docs/audit/pages/college/projects.md` (and `projects-review.md` if prese
 | ID | Sev | Type | Status now |
 |---|---|---|---|
 | COL-projects-03 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| COL-projects-06 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| COL-projects-07 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| COL-projects-12 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| COL-projects-13 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
+| COL-projects-06 | S2 | MISSING-ACTION | DONE-BRANCH |
+| COL-projects-07 | S2 | MISSING-FIELD | DONE-BRANCH |
+| COL-projects-12 | S2 | MISSING-FIELD | DONE-BRANCH |
+| COL-projects-13 | S2 | MISSING-COLUMN | DONE-BRANCH |
 | COL-projects-04 | S3 | MISSING-ACTION | NOT-A-GAP |
 | COL-projects-05 | S3 | MISSING-PAGE | NOT-A-GAP |
 | COL-projects-08 | S3 | MISSING-EXPORT | DONE-BRANCH |
