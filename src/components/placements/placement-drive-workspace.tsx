@@ -435,6 +435,9 @@ export async function PlacementDriveWorkspace({
             {driveDay.rounds.map(round => {
               const staged = round.participants.filter(p => p.result?.status === "STAGED").length;
               const applied = round.participants.filter(p => p.result?.status === "APPLIED").length;
+              const rescheduleRequests=placementRequests.filter(row=>
+                row.request.status==="PENDING"&&row.request.requestType==="ROUND_RESCHEDULE"&&
+                row.request.roundId===round.id).length;
               return (
                 <article key={round.id} className="rounded-lg border border-border bg-surface-subtle p-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
@@ -448,6 +451,10 @@ export async function PlacementDriveWorkspace({
                     <div><dt className="font-semibold">Mode and place</dt><dd>{round.mode} · {round.venue ?? (round.meetingUrl ? "Online" : "Venue to be told")}</dd></div>
                     <div><dt className="font-semibold">Students in round</dt><dd>{round.participants.length}</dd></div>
                     <div><dt className="font-semibold">Results</dt><dd>{applied} applied · {staged} awaiting apply</dd></div>
+                    <div><dt className="font-semibold">Reschedule requests</dt><dd>{rescheduleRequests}
+                      {rescheduleRequests>0?<Link href="#drive-request-actions"
+                        className="ml-2 font-semibold text-primary-text underline">Review pending →</Link>:null}
+                    </dd></div>
                     <div><dt className="font-semibold">Results expected</dt><dd>{round.resultsDueAt
                       ? new Intl.DateTimeFormat("en-IN", {timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(round.resultsDueAt)+" IST"
                       : "Not set"}</dd></div>
