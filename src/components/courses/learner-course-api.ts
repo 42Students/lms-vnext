@@ -136,14 +136,8 @@ export async function courseApiError(
     return friendlyApiError({status:response.status});
   }
 
-  const issue = body.issues?.find(
-    (candidate) =>
-      typeof candidate.message === "string" &&
-      candidate.message.length > 0,
-  )?.message;
-
-  if (issue && response.status===400 && issue.length<=150 && !/[<>]/.test(issue)) return issue;
-
+  // Provider-authored issues and validation payloads can contain internal text.
+  // Keep known course-domain labels, otherwise use the central safe catalog.
   if (body.error && errorLabels[body.error]) {
     return errorLabels[body.error];
   }
