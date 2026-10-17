@@ -1,7 +1,7 @@
 import "server-only";
 import { and, count, desc, eq, gte, ilike, inArray, isNull, lt, lte, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { placementCompanies, placementCompanyRelationships, placementJobs, placementSeasons, placementRecruiterDriveRequests } from "@/db/schema";
+import { placementCompanies, placementCompanyRelationships, placementJobs, placementSeasons, placementRecruiterDriveRequests, users } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
@@ -137,6 +137,9 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     minimumAnnualCtcInr: placementJobs.minimumAnnualCtcInr,
     maximumAnnualCtcInr: placementJobs.maximumAnnualCtcInr,
     isDream: placementJobs.isDream,
+    createdBy:users.displayName,
+    createdByUserId:placementJobs.createdByUserId,
+    stipendPerMonthInr:placementJobs.stipendPerMonthInr,
     appliedCount: sql<number>`(select count(*)::int from placement_applications a
       where a.job_id = ${placementJobs.id} and a.status <> 'WITHDRAWN')`,
     offersMade:sql<number>`(select count(*)::int from placement_offers o
@@ -155,6 +158,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
       eq(placementCompanyRelationships.collegeId, collegeId)))
     .innerJoin(placementCompanies,
       eq(placementCompanies.id, placementCompanyRelationships.companyId))
+    .innerJoin(users,eq(users.id,placementJobs.createdByUserId))
     .where(and(scope,filters.view==="CLOSED"?
       inArray(placementJobs.status,["CLOSED","CANCELLED"]):
       target?eq(placementJobs.status,target):undefined))
