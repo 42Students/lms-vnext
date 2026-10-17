@@ -72,3 +72,33 @@ test.describe("GR-80 Recruiter messaging preserves unsent replies", () => {
     }
   });
 });
+
+test("GR-80 GR-34 Recruiter slow message reply never submits twice", async ({ page, context }) => {
+  test.skip(!process.env.E2E_AUTH_SECRET || process.env.E2E_AUTH_ENABLED !== "true",
+    "Needs seeded Recruiter and an active college conversation");
+  test.setTimeout(40_000);
+  await authenticateGracefulRole(context, "recruiter");
+  await openReply(page);
+  const form = page.locator("form").filter({
+    has: page.getByRole("button", { name: "Send reply" }),
+  }).first();
+  const message = form.getByRole("textbox", { name: "Message" });
+  await message.fill("Unsent employer message must be delivered at most once");
+  const fault = await failApi(page, /\\/api\\/placements\\/recruiter\\/conversations\\/[^/]+\\/reply$/, "slow");
+  try {
+    await form.getByRole("button", { name: "Send reply" }).click();
+    await expect.poll(() => fault.requests().filter(request =>
+      /^POST \\/api\\/placements\\/recruiter\\/conversations\\/[^/]+\\/reply$/.test(request)).length)
+      .toBe(1);
+    await expect(form.getByRole("button", { name: "Sending…" })).toBeDisabled();
+    await message.press("ControlOrMeta+Enter");
+    expect(fault.hits()).toBe(1);
+    await expect(form.getByRole("button", { name: "Send reply" }))
+      .toBeEnabled({ timeout: 15_000 });
+    await expect(message).toHaveValue("Unsent employer message must be delivered at most once");
+    expect(fault.hits()).toBe(1);
+    await expectNoRawErrors(page);
+  } finally {
+    await fault.dispose();
+  }
+});

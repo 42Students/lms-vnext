@@ -82,3 +82,36 @@ test.describe("GR-80 TPO recruiter creation drafts", () => {
     }
   });
 });
+
+test("GR-80 GR-34 TPO slow confirmed recruiter creation does not duplicate POST", async ({ page, context }) => {
+  test.skip(!process.env.E2E_AUTH_SECRET || process.env.E2E_AUTH_ENABLED !== "true",
+    "Needs disposable TPO with DB09 CRM tables ready");
+  test.setTimeout(40_000);
+  await authenticateGracefulRole(context, "tpo");
+  await page.goto("/tpo/recruiters");
+  await page.getByRole("button", { name: "Add recruiter lead" }).click();
+  const dialog = page.getByRole("dialog", { name: "Add recruiter lead" });
+  await dialog.getByRole("textbox", { name: "Name *" }).fill("Only One Recruiter");
+  await dialog.getByRole("textbox", { name: "Company *" }).fill("Single Save Company");
+  await dialog.getByRole("textbox", { name: "Email" }).fill("once@example.invalid");
+  await page.route("**/api/placements/tpo/leads/check?*", route =>
+    route.fulfill({ status: 204, body: "" }));
+  await dialog.getByRole("button", { name: "Review and create recruiter" }).click();
+  await expect(dialog.getByText(/Confirm: Create recruiter lead/)).toBeVisible();
+  const fault = await failApi(page, "**/api/placements/tpo/leads", "slow");
+  try {
+    await dialog.getByRole("button", { name: "Confirm and create recruiter" }).click();
+    await expect.poll(() => fault.requests().filter(request =>
+      request === "POST /api/placements/tpo/leads").length).toBe(1);
+    await expect(dialog.getByRole("button", { name: "Creating…" })).toBeDisabled();
+    await dialog.getByRole("textbox", { name: "Name *" }).press("Enter");
+    expect(fault.hits()).toBe(1);
+    await expect(dialog.getByRole("button", { name: "Confirm and create recruiter" }))
+      .toBeEnabled({ timeout: 15_000 });
+    await expect(dialog.getByRole("textbox", { name: "Name *" })).toHaveValue("Only One Recruiter");
+    expect(fault.hits()).toBe(1);
+    await expectNoRawErrors(page);
+  } finally {
+    await fault.dispose();
+  }
+});
