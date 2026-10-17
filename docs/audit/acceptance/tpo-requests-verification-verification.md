@@ -101,3 +101,10 @@ The following DONE statuses are limited to the named source/model behavior. Thei
 - The pending-target uniqueness check now reports an idempotent replay only when both the reason and the entire JSONB payload match the persisted pending row; changed details produce the safe `TARGET_CHANGED` conflict instead of silently treating a different request as submitted.
 - Evidence: `src/modules/placements/tpo-general-request-service.ts`, `tests/unit/chat12-general-request-scope-r61.test.ts` (12 `TPO-requests-verification-01` source checks); `tests/unit/chat12-general-requests-validation-r60.test.ts` (33 boundary tests); `tests/unit/chat12-0134-schema-parity-r60.test.ts` (11 schema checks).
 - **Verification limitation:** tests authored, not executed. Postgres transaction and browser tests, plus transactional effects for absence/correction/post-placement and corrective sixth-kind migration, remain OPEN. All other OPEN queue entries are unchanged.
+
+
+## Round 62 — TPO-requests-verification-13 bulk run audit replay
+
+| ID | Status | Evidence |
+|---|---|---|
+| TPO-requests-verification-13 | OPEN — idempotency subtask implemented, broader workflow incomplete | `src/modules/placements/tpo-request-bulk-run-model.ts` compares decision plus a duplicate-free set of request IDs, ignoring ordering but rejecting changed sets, missing metadata and changed decisions. `src/modules/placements/tpo-request-bulk-audit-service.ts` fails closed on reused keys with mismatched metadata and re-reads a concurrent winning event before accepting a replay, returning the persisted result count. `tests/unit/chat12-bulk-run-replay-r62.test.ts` contains 17 named regression cases (authored, **not executed**). The proof-aware bulk skip workflow, all-filtered selection and real PostgreSQL acceptance remain OPEN. |
