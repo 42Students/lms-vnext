@@ -86,7 +86,7 @@ export function FacultyLessonAuthoring({
   const [notes, setNotes] = useState("");
   const [url, setUrl] = useState("");
   const [durationSeconds, setDurationSeconds] =
-    useState("300");
+    useState("");
   const [startsAt, setStartsAt] =
     useState("");
   const [endsAt, setEndsAt] = useState("");
@@ -121,7 +121,7 @@ export function FacultyLessonAuthoring({
   }
 
   const draftDirty=Boolean(title.trim()||notes.trim()||url.trim()||startsAt||
-    endsAt||dueAt||durationSeconds!=="300"||maxPoints!=="10"||maxAttempts!=="1"||
+    endsAt||dueAt||durationSeconds!==""||maxPoints!=="10"||maxAttempts!=="1"||
     questions.some(question=>question.prompt.trim()||question.options.some(option=>option.text.trim())));
 
   useEffect(()=>{
