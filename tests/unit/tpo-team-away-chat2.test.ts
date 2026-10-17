@@ -1,6 +1,7 @@
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {tpoTeamAwaySchema} from "@/modules/placements/tpo-team-away-service";
+import {tpoEffectiveAwayUntil} from "@/modules/placements/tpo-team-away-model";
 const src=(p:string)=>readFileSync(p,"utf8");
 describe("TPO Team away until",()=>{
  it("TPO-inbox-team-34 validates time and uses only the active scoped member for writes",()=>{
@@ -12,6 +13,13 @@ describe("TPO Team away until",()=>{
   expect(service).toContain("365*86400000");
   expect(service).toContain("TEAM_AWAY_STALE");
   expect(src("docs/proposed-migrations/tpo-inbox-team-away-until.sql")).toContain("tpo_team_away_membership_college_fk");
+ });
+ it("TPO-inbox-team-34 permits a new away entry after the previous one expires",()=>{
+  const now=new Date("2099-06-01T12:00:00.000Z");
+  expect(tpoEffectiveAwayUntil(new Date("2099-05-31T12:00:00.000Z"),now)).toBeNull();
+  expect(tpoEffectiveAwayUntil(new Date("2099-06-02T12:00:00.000Z"),now))
+   .toBe("2099-06-02T12:00:00.000Z");
+  expect(src("src/modules/placements/tpo-team-away-service.ts")).toContain("tpoEffectiveAwayUntil(current?.awayUntil??null,now)");
  });
  it("TPO-inbox-team-31 displays verified away intervals and a Back now action only for the member",()=>{
   const page=src("src/app/(authenticated)/tpo/team/page.tsx");
