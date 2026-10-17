@@ -72,4 +72,16 @@ describe("College Academic Setup open-register functional checks",()=>{
   expect(loading).toContain('aria-busy="true"');
   expect(loading).not.toContain("No departments found");
  });
+ it.each(["=SUM(1,2)","+CMD","-1+2","@HYPERLINK","\t=CMD"])(
+  "COL-academic-setup-39 neutralizes formula text in exported semester rows: %s",name=>{
+   const csv=renderSemesterCsv([{name,termNumber:1,programName:"B.Tech",
+    programCode:"CSE",totalCredits:null,isActive:true,mappedCourses:0}],false);
+   expect(csv).toContain('"\''+name.replaceAll('"','""')+'"');
+ });
+ it("COL-academic-setup-39 visibly marks a truncated export instead of claiming completeness",()=>{
+  const result=renderSemesterCsv([],true);
+  expect(result).toContain("EXPORT TRUNCATED");
+  expect(result).toContain("Narrow your filters.");
+ });
+
 });
