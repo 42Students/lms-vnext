@@ -393,9 +393,7 @@ export default async function TpoStudentsPage({
     <div className="space-y-6">
       <PageHeader
         title={TPO_OWNER_PAGE_COPY.students}
-        description={query.batchId?
-          "Batch student journeys, including completed learners from a finished batch.":
-          "Everyone in placements, from the batches you made eligible."}
+        description="Everyone in placements, from the batches you made eligible."
         actions={manageAllowed?<TpoAcademicImportWorkspace />:undefined}
       />
       <details className="rounded-xl border border-border bg-surface p-3">
