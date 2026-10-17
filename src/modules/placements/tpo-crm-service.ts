@@ -297,7 +297,7 @@ export async function logTpoLeadActivity(
 ) {
   const leadId = tpoCrmLeadIdSchema.parse(rawLeadId);
   const input = logTpoLeadActivitySchema.parse(raw);
-  await requirePlacementManageScope(context, input.collegeId);
+  const college=await requirePlacementManageScope(context, input.collegeId);
 
   return getDb().transaction(async (tx) => {
     const [lead] = await tx
@@ -365,6 +365,18 @@ export async function logTpoLeadActivity(
           ownerMembershipId:ownerMembership(context,input.collegeId),
         });
       }
+    }
+    const nextStage=input.type==="CALL"&&input.outcome==="Not interested"?
+      "NOT_NOW":lead.manualStage==="NEW"?"CONTACTED":lead.manualStage;
+    if(nextStage!==lead.manualStage){
+      await tx.insert(activityEvents).values({
+        organizationId:college.organizationId,collegeId:input.collegeId,
+        actorUserId:context.user.id,actorMembershipId:context.membership?.id??null,
+        module:"PLACEMENTS",eventType:"RECRUITER_LEADS_STAGE_SET",
+        subjectType:"placement_tpo_lead",subjectId:leadId,
+        summary:"Recruiter stage changed after contact",
+        metadata:{beforeStage:lead.manualStage,afterStage:nextStage,activityType:input.type},
+      });
     }
     return activity;
   });
