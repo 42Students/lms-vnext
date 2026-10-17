@@ -43,18 +43,12 @@ export default async function CollegeCompaniesPage({
         <input name="q" type="search" maxLength={100} defaultValue={query.q}
           className="min-h-11 rounded-md border border-border px-3" />
       </label>
-      <label className="grid gap-1 text-sm">Sort by
-        <select name="sort" defaultValue={query.sort} className="min-h-11 rounded-md border border-border px-3">
-          <option value="LAST_ACTIVE">Last active</option><option value="COMPANY">Company</option><option value="DRIVES">Drives</option>
+      <label className="grid gap-1 text-sm">Status
+        <select name="status" defaultValue={query.status} className="min-h-10 rounded-md border border-border px-3">
+          <option value="ACTIVE">Active companies</option><option value="ARCHIVED">Archived companies</option>
         </select>
       </label>
-      <label className="grid gap-1 text-sm">Rows per page
-        <select name="pageSize" defaultValue={query.pageSize} className="min-h-11 rounded-md border border-border px-3">
-          {[10,20,50,100].map(size=><option key={size} value={size}>{size}</option>)}
-        </select>
-      </label>
-      <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="showDeleted" value="1" defaultChecked={query.showDeleted==="1"}/>Show deleted</label>
-      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
+      <button type="submit" className="min-h-10 rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
     </form>
     <p role="status" className="text-sm text-body">Showing {data.items.length} of {data.total} companies {query.showDeleted==="1"?"(including deleted)":""}, searching name &amp; industry only.</p>
     <PlacementEmployerRelationships key={[query.q,query.page,query.pageSize,query.sort,query.showDeleted].join(":")}
