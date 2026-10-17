@@ -29,3 +29,9 @@ Remaining unclosed work includes SA-tenants-modules-43/45/46/47/48/49/50/53/54/5
 | SA-tenants-modules-45 | DONE | `activity/service.ts` counts older scoped events for 50-row pages and activity center renders remaining count; `tests/unit/chat4-super-admin-tenants-modules-gap-closure.test.ts` test `SA-tenants-modules-45`. |
 
 | SA-tenants-modules-50 | DONE | `src/components/tracker/audit-finding-filter-memory.tsx`, `src/app/(authenticated)/tracker/audit-findings/page.tsx`; `tests/unit/chat4-super-admin-tenants-modules-gap-closure.test.ts` test `SA-tenants-modules-50`: remembered allowlisted filters, harmless board-local restoration, explicit default reset |
+
+## Chat-6 UNCONFIRMED decisions, 2026-10-18
+
+| SA-tenants-modules-54 | BLOCKED (provider credentials) | Inbound receiver may only run with verified signed provider and safe tenant threading; decision evidence: `docs/audit/acceptance/chat-6-unconfirmed-decisions.md`; test: `tests/unit/chat6-unconfirmed-decisions-round13.test.ts` → `SA-tenants-modules-54` |
+| SA-tenants-modules-60 | NOT-A-GAP (row granularity) | Per-college broadcast notices preserve independent retries and audit; decision evidence: `docs/audit/acceptance/chat-6-unconfirmed-decisions.md`; test: `tests/unit/chat6-unconfirmed-decisions-round13.test.ts` → `SA-tenants-modules-60` |
+| SA-tenants-modules-68 | DONE (source) | VerificationReviewDrawer has 50-event history and masked identity-number guidance; decision evidence: `docs/audit/acceptance/chat-6-unconfirmed-decisions.md`; test: `tests/unit/chat6-unconfirmed-decisions-round13.test.ts` → `SA-tenants-modules-68` |
