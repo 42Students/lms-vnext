@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
+import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 
 export function MentorSprintCreate({
   projectId, releaseId,releases=[],
@@ -23,6 +24,12 @@ export function MentorSprintCreate({
   const [startDate,setStartDate]=useState(""),[endDate,setEndDate]=useState(""),[dueDate,setDueDate]=useState("");
   const [chosenReleaseId,setChosenReleaseId]=useState(releaseId);
   const chosenRelease=releases.find(item=>item.id===chosenReleaseId);
+  const dirty=Boolean(title||description||goal||done||startDate||endDate||dueDate||chosenReleaseId!==releaseId);
+  function discardDraft(){
+    setOpen(false);setTitle("");setDescription("");setGoal("");setDone("");
+    setStartDate("");setEndDate("");setDueDate("");setChosenReleaseId(releaseId);
+  }
+  const guard=useProjectEditorDiscardGuard(open,dirty,busy,discardDraft);
   const datesValid=(!startDate||!endDate||endDate>=startDate)&&
     (!dueDate||!startDate||dueDate>=startDate);
 
@@ -51,10 +58,10 @@ export function MentorSprintCreate({
     <Button size="sm" variant="secondary" onClick={()=>setOpen(true)}>
       Add sprint
     </Button>
-    <Dialog open={open} onOpenChange={setOpen} title="Create sprint"
+    <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}} title="Create sprint"
       description="Create a planned sprint with goal, dates and definition of done in this release."
       footer={<>
-        <Button variant="secondary" disabled={busy} onClick={()=>setOpen(false)}>Cancel</Button>
+        <Button variant="secondary" disabled={busy} onClick={guard.requestClose}>Cancel</Button>
         <Button disabled={busy||!title.trim()||title.trim().length>200||
           description.length>4000||!datesValid||!chosenReleaseId||
           chosenRelease?.status==="SHIPPED"} onClick={()=>void create()}>
@@ -97,6 +104,11 @@ export function MentorSprintCreate({
         </p>:null}
       </div>
     </Dialog>
+    <ConfirmDialog open={guard.discardOpen} onOpenChange={guard.setDiscardOpen}
+      title="Discard sprint changes?"
+      description="You have unsaved project changes. Leave this page and discard them?"
+      confirmLabel="Discard changes" pending={busy}
+      onConfirm={guard.confirmDiscard}/>
   </>;
 }
 
