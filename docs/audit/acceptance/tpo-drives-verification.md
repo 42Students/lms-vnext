@@ -121,3 +121,11 @@ No new schema or proposed migrations in this round. Shell was not edited. `TPO-d
 | ID | Status | Evidence |
 | --- | --- | --- |
 | TPO-drives-25 | DONE (source-level; tests not run) | `placement-job-create-workspace.tsx` aggregates **all** non-archived college-scoped prior drive titles/status/IDs for the selected employer, independently of three recent-role highlights; `placement-job-create-form.tsx` warns of an existing drive with its status and a direct drive link; ID-named `tests/unit/tpo-drives-chat-3-round4.test.ts` test `TPO-drives-25 Company Memory uses scoped historical drive facts`. |
+
+## [chat-5] Owner-delegated UNCONFIRMED decisions (2026-10-17)
+
+| ID | Result | Decision and evidence |
+|---|---|---|
+| TPO-drives-28 | OPEN | Decision: Retain canonical FULL_TIME/INTERNSHIP/CONTRACT contract status, but link college-defined job-type labels and counts-as-placed policy separately; never infer placement from a free-text label. Test: `tests/unit/chat5-delegated-policy-decisions.test.ts` — named test `TPO-drives-28` (source/policy regression; executable CI pending). |
+| TPO-drives-34 | NOT-A-GAP | Decision: Explicit, college-scoped cohort IDs are safer than unqualified batch names for eligibility targeting; maintain cohort selectors and effective eligibility checks, excluding finished/inactive scopes. Test: `tests/unit/chat5-delegated-policy-decisions.test.ts` — named test `TPO-drives-34` (source/policy regression; executable CI pending). |
+| TPO-drives-51 | OPEN | Decision: Enable College Admin entry into scoped drive lifecycle using placements.manage and persisted actor checks, including TPO drive list and job overview; remaining TPO-specific subpages must be checked before full parity. Test: `tests/unit/chat5-unconfirmed-permission-decisions.test.ts` — named test `TPO-drives-51` (source/policy regression; executable CI pending). |
