@@ -25,6 +25,7 @@ const defaultMetadata:ResourceMetadata={
 type RelatedOption={id:string;label:string};
 type Resource = {
   id: string;
+  updatedAt: Date | string;
   title: string;
   description: string | null;
   url: string | null;
@@ -224,6 +225,7 @@ export function CreateProjectResourceControl({
         `/api/projects/${projectId}/resources`,
         "POST",
         {
+          expectedUpdatedAt:new Date(resource.updatedAt).toISOString(),
           title: title.trim(),
           description:
             description.trim() || undefined,
@@ -436,6 +438,7 @@ export function ProjectResourceActions({
       await projectMutation(
         `/api/projects/${projectId}/resources/${resource.id}`,
         "DELETE",
+        {expectedUpdatedAt:new Date(resource.updatedAt).toISOString()},
       );
       setArchiveOpen(false);
       showToast({
