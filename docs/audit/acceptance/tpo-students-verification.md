@@ -87,3 +87,13 @@ All tests are authored but not executed by chat-12. The orchestrator must run te
 - TPO-students-35: `tests/unit/chat12-fixed-main-students-audit-r1.test.ts` named `TPO-students-35 preserves its audited source contract`; source evidence only, no PostgreSQL/browser confirmation.
 - TPO-students-54: `tests/unit/chat12-fixed-main-students-audit-r1.test.ts` named `TPO-students-54 preserves its audited source contract`; source evidence only, no PostgreSQL/browser confirmation.
 - TPO-students-27: `tests/unit/chat12-fixed-main-students-audit-r1.test.ts` named `TPO-students-27 preserves its audited source contract`; source evidence only, no PostgreSQL/browser confirmation.
+
+## Round 57 FIXED-ON-MAIN source verification (runtime not certified)
+- TPO-students-37: named test `tests/unit/chat12-fixed-main-students-requests-audit-r2.test.ts` verifies cited source literals; browser/DB evidence pending.
+- TPO-students-38: named test `tests/unit/chat12-fixed-main-students-requests-audit-r2.test.ts` verifies cited source literals; browser/DB evidence pending.
+- TPO-students-40: named test `tests/unit/chat12-fixed-main-students-requests-audit-r2.test.ts` verifies cited source literals; browser/DB evidence pending.
+- TPO-students-41: named test `tests/unit/chat12-fixed-main-students-requests-audit-r2.test.ts` verifies cited source literals; browser/DB evidence pending.
+- TPO-students-42: named test `tests/unit/chat12-fixed-main-students-requests-audit-r2.test.ts` verifies cited source literals; browser/DB evidence pending.
+- TPO-students-44: named test `tests/unit/chat12-fixed-main-students-requests-audit-r2.test.ts` verifies cited source literals; browser/DB evidence pending.
+- TPO-students-45: named test `tests/unit/chat12-fixed-main-students-requests-audit-r2.test.ts` verifies cited source literals; browser/DB evidence pending.
+- TPO-students-52: named test `tests/unit/chat12-fixed-main-students-requests-audit-r2.test.ts` verifies cited source literals; browser/DB evidence pending.
