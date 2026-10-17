@@ -96,6 +96,14 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
      <option value="">All sprints</option>{sprints.filter(s=>!release||s.releaseId===release)
       .map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
     </select></label>
+   <label className="text-sm font-semibold">Sprint scope
+    <select value={scope} aria-label="Board sprint scope"
+      onChange={e=>{setScope(e.target.value==="all"?"all":"current");remember("scope",e.target.value);}}
+      className="ml-2 min-h-10 rounded border border-border bg-background p-2">
+      <option value="current">Current sprint + backlog</option>
+      <option value="all">All sprints (full history)</option>
+    </select>
+   </label>
    <label className="text-sm font-semibold">Priority
     <select value={priority} onChange={e=>{setPriority(e.target.value);remember("priority",e.target.value);}}
      className="ml-2 min-h-10 rounded border border-border bg-background p-2">
