@@ -42,6 +42,7 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
    pinned:action==="PIN"?!view?.pinned:action==="CREATE"?false:undefined,
   };
   if(action==="CREATE"&&!payload.name){setNotice("Name this view first.");setBusy(false);return;}
+  if(action==="CREATE"&&views.length>=100){setNotice("You can save up to 100 views.");setBusy(false);return;}
   try{
    const response=await fetch("/api/placements/tpo/leads/views",{
     method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
