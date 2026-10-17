@@ -39,7 +39,7 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
    }) as {comment:{updatedTaskAt?:string|Date}};
    const nextToken=result.comment.updatedTaskAt;
    if(nextToken)setLastPosted({taskId,updatedAt:new Date(nextToken).toISOString()});
-   setBody("");await show();router.refresh();
+   setBody("");setKind("NOTE");await show();router.refresh();
   }catch(caught){setError(caught instanceof Error?caught.message:"Could not add comment");}
   finally{setBusy(false);}
  }
