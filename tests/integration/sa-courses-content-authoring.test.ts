@@ -29,14 +29,14 @@ describe.skipIf(!enabled)("Super Admin Video, Resources and Live Classes authori
     expect(picker.map((row) => row.id)).toContain(fx.ids.lesson);
 
     const youtube = await createLessonContent(admin, {
-      lessonId: fx.ids.lesson, contentType: "YOUTUBE", title: "Intro video " + fx.tag, sequence: 0,
+      lessonId: fx.ids.lesson, contentType: "YOUTUBE", title: "Intro video " + fx.tag, points: 0, sequence: 0,
       externalUrl: "https://www.youtube.com/watch?v=abc123", durationSeconds: 300,
     });
     const resource = await createLessonContent(admin, {
-      lessonId: fx.ids.lesson, contentType: "RESOURCE", title: "Reading " + fx.tag, sequence: 1, notes: "Read chapter one",
+      lessonId: fx.ids.lesson, contentType: "RESOURCE", title: "Reading " + fx.tag, points: 0, sequence: 1, notes: "Read chapter one",
     });
     const live = await createLessonContent(admin, {
-      lessonId: fx.ids.lesson, contentType: "LIVE_CLASS", title: "Doubt session " + fx.tag, sequence: 2,
+      lessonId: fx.ids.lesson, contentType: "LIVE_CLASS", title: "Doubt session " + fx.tag, points: 0, sequence: 2,
       externalUrl: "https://meet.example.org/room-1",
       startsAt: "2026-11-01T10:00:00+05:30", endsAt: "2026-11-01T11:00:00+05:30",
     });
@@ -74,11 +74,11 @@ describe.skipIf(!enabled)("Super Admin Video, Resources and Live Classes authori
   it("SA-academics-people-58: authoring is fenced to the selected college and to Super Admin", async () => {
     const otherCollege = superAdminContext(SEED_IDS.collegeB);
     await expect(createLessonContent(otherCollege, {
-      lessonId: fx.ids.lesson, contentType: "RESOURCE", title: "Cross college", sequence: 9, notes: "x",
+      lessonId: fx.ids.lesson, contentType: "RESOURCE", title: "Cross college", points: 0, sequence: 9, notes: "x",
     })).rejects.toBeInstanceOf(AuthorizationError);
     const notAdmin = { ...admin, user: { ...admin.user, systemRoles: [] } };
     await expect(createLessonContent(notAdmin, {
-      lessonId: fx.ids.lesson, contentType: "RESOURCE", title: "Not admin", sequence: 9, notes: "x",
+      lessonId: fx.ids.lesson, contentType: "RESOURCE", title: "Not admin", points: 0, sequence: 9, notes: "x",
     })).rejects.toBeInstanceOf(AuthorizationError);
   });
 
