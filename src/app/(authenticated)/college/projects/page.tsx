@@ -35,7 +35,7 @@ export default async function CollegeProjectsPage({
   const context = await getCurrentRequestContext();
   const membership = context.membership;
   if (!membership) {
-    return <main className="space-y-4"><PageHeader title="Project workspaces"
+    return <main className="space-y-4"><PageHeader title="Workspaces"
      description="Select a college to continue."/>
      <p role="alert" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
       Project workspaces are college-scoped. Choose an active college from the account switcher before opening this page.
@@ -86,7 +86,7 @@ export default async function CollegeProjectsPage({
         active="workspaces"
       />
       <PageHeader
-        title="Project workspaces"
+        title="Workspaces"
         description="Live projects, each run by a mentor with a team of students."
         actions={
           <CreateProjectControl
