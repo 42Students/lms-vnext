@@ -30,6 +30,10 @@ describe("Telegram alert fundamentals", () => {
     expect(normaliseErrorForSignature(first)).toEqual(normaliseErrorForSignature(second));
     expect(normaliseErrorForSignature(first)).not.toContain("abc@example.com");
     expect(normaliseErrorForSignature(first)).not.toContain("2099-10-17");
+    // The legacy notifier groups the same exception across UTC and offset stamps.
+    const withIst = "Job 123 failed at 2099-10-17T01:00:00.432+05:30 for jane@example.com";
+    const withUtc = "Job 987 failed at 2099-10-18T23:42:11.432Z for john@example.com";
+    expect(normaliseErrorForSignature(withIst)).toEqual(normaliseErrorForSignature(withUtc));
   });
 
   it("GR-113 removes credentials, personal data, SQL parameters, stack frames and route identifiers", () => {
