@@ -73,6 +73,9 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
       <label className="text-sm font-semibold">Description<textarea maxLength={4000}
         value={description} onChange={e=>setDescription(e.target.value)}
         className="mt-1 w-full rounded-md border border-border bg-background p-2"/></label>
+      <label className="text-sm font-semibold">Approach (optional)<textarea maxLength={4000}
+        value={approach} onChange={event=>setApproach(event.target.value)}
+        className="mt-1 w-full rounded-md border border-border bg-background p-2"/></label>
       <label className="text-sm font-semibold">Done when<textarea maxLength={4000}
         value={criteria} onChange={e=>setCriteria(e.target.value)}
         className="mt-1 w-full rounded-md border border-border bg-background p-2"/></label>
