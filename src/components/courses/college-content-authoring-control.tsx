@@ -48,7 +48,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
  const text=kind==="YOUTUBE"?"Import from link":kind==="RESOURCE"?"Add Resource":"Schedule live class";
  function select(item:Existing){
   setEditing(item.id);setOpen(true);setLessonId(item.lessonId);setTitle(item.title);
-  setUrl(item.externalUrl??"");setNotes(item.notes??"");setDuration(item.durationSeconds===null?"":String(item.durationSeconds));
+  setUrl("");setNotes(item.notes??"");setDuration(item.durationSeconds===null?"":String(item.durationSeconds));
   setTimeZone("Asia/Kolkata");setStart(dateInput(item.startsAt));setEnd(dateInput(item.endsAt));setDeliveryId(item.deliveryId??"");setRemoveLink(false);setError("");setMessage("");
  }
  function fresh(){
