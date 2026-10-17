@@ -14,7 +14,8 @@ export function TpoMobileFooter(){
  return <nav aria-label="Placement cell mobile navigation"
   className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-border bg-surface pb-[env(safe-area-inset-bottom)] shadow-lg md:hidden">
   {destinations.map(item=>{
-   const active=pathname===item.href||pathname.startsWith(item.href+"/");
+   const active=pathname===item.href||pathname.startsWith(item.href+"/")||
+    (item.href==="/tpo/recruiters"&&(pathname==="/tpo/companies"||pathname.startsWith("/tpo/companies/")));
    return <Link key={item.href} href={item.href} aria-current={active?"page":undefined}
     className={"flex min-h-14 flex-col items-center justify-center gap-0.5 px-1 text-xs font-semibold "+
      (active?"text-primary-text":"text-body")}>

@@ -2,7 +2,9 @@
 
 import {
   type FormEvent,
+  useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -81,6 +83,24 @@ export function LearnerFinalDeliveryControl({
     useState(false);
   const [error, setError] =
     useState<string | null>(null);
+  const [autosaveStatus,setAutosaveStatus]=useState<"idle"|"saving"|"saved"|"failed">("idle");
+  const failedSnapshot=useRef<string|null>(null);
+  const lastSavedSnapshot=useRef(JSON.stringify({
+    summary:(draft?.summary??"").trim(),
+    sourceUrl:draft?.sourceUrl?.trim()||undefined,
+    demoUrl:draft?.demoUrl?.trim()||undefined,
+    notes:draft?.notes?.trim()||undefined,
+    attachments:safeDraftAttachments(draft?.attachments),
+  }));
+  function currentPayload(){
+    return {
+      summary:summary.trim(),
+      sourceUrl:sourceUrl.trim()||undefined,
+      demoUrl:demoUrl.trim()||undefined,
+      notes:notes.trim()||undefined,
+      attachments,
+    };
+  }
 
   function resetFromDraft() {
     setSummary(draft?.summary ?? "");
@@ -88,7 +108,15 @@ export function LearnerFinalDeliveryControl({
     setDemoUrl(draft?.demoUrl ?? "");
     setNotes(draft?.notes ?? "");
     setAttachments(safeDraftAttachments(draft?.attachments));
-    setLinkName("");setLinkUrl("");
+    setLinkName("");setLinkUrl("");setAutosaveStatus("idle");
+    failedSnapshot.current=null;
+    lastSavedSnapshot.current=JSON.stringify({
+      summary:(draft?.summary??"").trim(),
+      sourceUrl:draft?.sourceUrl?.trim()||undefined,
+      demoUrl:draft?.demoUrl?.trim()||undefined,
+      notes:draft?.notes?.trim()||undefined,
+      attachments:safeDraftAttachments(draft?.attachments),
+    });
   }
 
   async function save(
@@ -113,6 +141,9 @@ export function LearnerFinalDeliveryControl({
           attachments,
         },
       );
+      lastSavedSnapshot.current=JSON.stringify(currentPayload());
+      failedSnapshot.current=null;
+      setAutosaveStatus("saved");
       setOpen(false);
       showToast({
         tone: "success",
@@ -131,6 +162,33 @@ export function LearnerFinalDeliveryControl({
       setPending(false);
     }
   }
+
+  useEffect(()=>{
+    if(!open||!draft||pending||!summary.trim())return;
+    const payload=currentPayload();
+    const snapshot=JSON.stringify(payload);
+    if(snapshot===lastSavedSnapshot.current||snapshot===failedSnapshot.current)return;
+    const timer=window.setTimeout(async()=>{
+      setAutosaveStatus("saving");setPending(true);
+      try{
+        await projectMutation(
+          `/api/projects/${projectId}/submissions/${draft.id}`,
+          "PATCH",payload,
+        );
+        lastSavedSnapshot.current=snapshot;
+        failedSnapshot.current=null;
+        setAutosaveStatus("saved");
+      }catch{
+        failedSnapshot.current=snapshot;
+        setAutosaveStatus("failed");
+      }finally{
+        setPending(false);
+      }
+    },1800);
+    return ()=>window.clearTimeout(timer);
+  },[open,draft,projectId,summary,sourceUrl,demoUrl,notes,attachments,pending]);
+
+  const unsaved=JSON.stringify(currentPayload())!==lastSavedSnapshot.current;
 
   async function submitDraft() {
     if (!draft) return;
@@ -229,6 +287,12 @@ export function LearnerFinalDeliveryControl({
           </ul>}
         </section>
         {review?.feedback?<p className="mb-3 text-sm text-body">Mentor review: {review.status}. {review.feedback}</p>:null}
+        <p className="mb-3 text-xs text-body" role="status" aria-live="polite">
+          {!draft?"Save draft":
+            autosaveStatus==="saving"?"Saving…":
+            autosaveStatus==="failed"?"Couldn't autosave — use Save draft":
+            unsaved?"Unsaved changes…":"Draft saved"}
+        </p>
         <form
           onSubmit={save}
           className="grid gap-4"

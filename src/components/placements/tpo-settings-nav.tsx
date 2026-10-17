@@ -12,9 +12,13 @@ export const TPO_SETTINGS_NAV_GROUPS=[
  {title:"People",items:[
   {id:"trusted",label:"Trusted domains",href:"/tpo/settings/trusted"},
   {id:"recruiters",label:"Recruiters",href:"/tpo/settings/recruiters"},
+  {id:"team",label:"Placement Team",href:"/tpo/settings/team"},
+  {id:"public-link",label:"Public recruiter link",href:"/tpo/settings/public-link"},
  ]},
  {title:"Students and companies",items:[
-  {id:"notices",label:"Student notices",href:"/tpo/settings/notices"},
+  {id:"notices",label:"Student Notices & Preparation",href:"/tpo/settings/notices"},
+  {id:"notifications",label:"My Notifications",href:"/tpo/settings/notifications"},
+  {id:"templates",label:"Email templates",href:"/tpo/settings/templates"},
   {id:"see",label:"What companies see",href:"/tpo/settings/see"},
   {id:"public-page",label:"Placements page",href:"/tpo/settings/public-page"},
   {id:"branding",label:"Branding",href:"/tpo/settings/branding"},

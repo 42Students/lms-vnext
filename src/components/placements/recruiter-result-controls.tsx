@@ -272,7 +272,22 @@ export function RecruiterResultControls({
         return;
       }
     }
-    if(!window.confirm("Send "+participants.length+" results? These candidate outcomes will be staged for the placement cell to verify."))return;
+    const summary=participants.slice(0,12).map((person,index)=>{
+      const decision=drafts[round.id+":"+person.applicationId]!;
+      return (index+1)+". "+(person.displayName||"Applicant")+" — "+
+        decision.outcome+(decision.outcome==="HOLD"?" (rank "+decision.waitlistRank+")":"");
+    }).join("\n");
+    for(const participant of participants){
+      const draft=drafts[round.id+":"+participant.applicationId]!;
+      const raw=draft.scorePercent.trim();
+      if(raw && (!Number.isFinite(Number(raw))||Number(raw)<0||Number(raw)>100)){
+        showToast({tone:"error",title:"Invalid score",description:"Every selected score must be between 0 and 100."});
+        return;
+      }
+    }
+    if(!window.confirm("Send "+participants.length+" results to the placement cell?\n\n"+
+      summary+(participants.length>12?"\n…and "+(participants.length-12)+" more":"")+
+      "\n\nNo result is final until the placement cell applies it."))return;
     setBulkPending(round.id);
     const succeeded:string[]=[];
     let failures=0;
@@ -304,7 +319,7 @@ export function RecruiterResultControls({
   }
 
   return (
-    <div className="space-y-5" tabIndex={0} role="region" aria-label="Recruiter results editor"
+    <div className="space-y-5" tabIndex={0} role="region" aria-label="Recruiter results editor" aria-keyshortcuts="S W H R A Z"
       onKeyDown={event=>{
         if(event.defaultPrevented||event.ctrlKey||event.altKey||event.metaKey)return;
         const target=event.target as HTMLElement;
@@ -358,11 +373,19 @@ export function RecruiterResultControls({
                   </StatusBadge>
                 </div>
                 {canStage?<div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-body">
-                  <span>{(selected[round.id]??[]).length} selected for results</span>
+                  <span aria-live="polite" aria-atomic="true">{(selected[round.id]??[]).length} selected for results</span>
                   <span className="text-muted-foreground">S Pass · W/H Hold · R Fail · A Absent · Z Undo (draft only)</span>
-                  <button type="button" onClick={()=>{setActiveRoundId(round.id);draftSelectedOutcome(round.id,"PASS");}}
-                    disabled={!(selected[round.id]??[]).length} className="rounded-md border border-border px-2 py-1 text-primary-text disabled:opacity-40">
-                    Set selected to Pass
+                  {([
+                    ["PASS","Pass"],["HOLD","Waitlist"],["FAIL","Not selected"],["ABSENT","Absent"],
+                  ] as const).map(([outcome,label])=><button key={outcome} type="button"
+                    onClick={()=>{setActiveRoundId(round.id);draftSelectedOutcome(round.id,outcome);}}
+                    disabled={bulkPending!==null||!(selected[round.id]??[]).length}
+                    className="rounded-md border border-border px-2 py-1 text-primary-text disabled:opacity-40">
+                    {label}
+                  </button>)}
+                  <button type="button" disabled={bulkPending!==null||undoHistory.length===0}
+                    onClick={undoDraftOutcome} className="rounded-md border border-border px-2 py-1 text-primary-text disabled:opacity-40">
+                    Undo draft
                   </button>
                   <button type="button" disabled={bulkPending!==null||(selected[round.id]??[]).length===0}
                     className="rounded-md bg-primary px-3 py-2 font-semibold text-on-primary disabled:opacity-50"

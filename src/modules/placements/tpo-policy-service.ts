@@ -3,6 +3,7 @@ import { getDb } from "@/db/client";
 import {
   placementCollegeRules,
   placementCompanyVisibilitySettings,
+  activityEvents,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePlacementManageScope } from "./scope";
@@ -62,7 +63,7 @@ export async function saveCollegePlacementRules(
   raw: PlacementCollegeRulesPatch,
 ) {
   const input = placementCollegeRulesPatchSchema.parse(raw);
-  await requirePlacementManageScope(context, input.collegeId);
+  const college = await requirePlacementManageScope(context, input.collegeId);
 
   return getDb().transaction(async (tx) => {
     if (input.expectedVersion === 0) {
@@ -90,6 +91,15 @@ export async function saveCollegePlacementRules(
       ))
       .returning();
 
+    if(rules) await tx.insert(activityEvents).values({
+      organizationId:college.organizationId,collegeId:input.collegeId,
+      actorUserId:context.user.id,actorMembershipId:context.membership?.id??null,
+      module:"PLACEMENTS",eventType:"placements.tpo_college_rules.changed",
+      subjectType:"COLLEGE_PLACEMENT_RULES",subjectId:input.collegeId,
+      summary:"Placement cell changed college placement rules",
+      metadata:{countsAsPlacedAt:input.countsAsPlacedAt,maxHeldOffers:input.maxHeldOffers,
+        upliftPct:input.upliftPct,minResponseHours:input.minResponseHours},
+    });
     return rules
       ? { ok: true as const, rules }
       : {
@@ -129,7 +139,7 @@ export async function saveCompanyVisibilitySettings(
   raw: PlacementCompanyVisibilityPatch,
 ) {
   const input = placementCompanyVisibilityPatchSchema.parse(raw);
-  await requirePlacementManageScope(context, input.collegeId);
+  const college = await requirePlacementManageScope(context, input.collegeId);
 
   return getDb().transaction(async (tx) => {
     if (input.expectedVersion === 0) {
@@ -164,6 +174,16 @@ export async function saveCompanyVisibilitySettings(
       ))
       .returning();
 
+    if(visibility) await tx.insert(activityEvents).values({
+      organizationId:college.organizationId,collegeId:input.collegeId,
+      actorUserId:context.user.id,actorMembershipId:context.membership?.id??null,
+      module:"PLACEMENTS",eventType:"placements.tpo_company_visibility.changed",
+      subjectType:"COLLEGE_VISIBILITY_POLICY",subjectId:input.collegeId,
+      summary:"Placement cell changed recruiter visibility settings",
+      metadata:{showCgpaExact:input.showCgpaExact,showTenthTwelfth:input.showTenthTwelfth,
+        showProjectLinks:input.showProjectLinks,showAssessmentScores:input.showAssessmentScores,
+        showAttendance:input.showAttendance},
+    });
     return visibility
       ? { ok: true as const, visibility }
       : {
