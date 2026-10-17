@@ -27,7 +27,8 @@ export function LearnerAddOwnTask({projectId,sprints}:{projectId:string;sprints:
     approach:approach.trim()||null,status,blockerReason:blockerReason.trim()||null,
     acceptanceCriteria:acceptance.trim()||null,priority,
     dueDate:due||null,estimatePoints:estimate?Number(estimate):null,
-    taskType:type||null,expectedSprintUpdatedAt:new Date(sprint.updatedAt).toISOString(),
+    taskType:type||null,
+    expectedSprintUpdatedAt:sprint?new Date(sprint.updatedAt).toISOString():null,
    });
    setOpen(false);setTitle("");setDescription("");setAcceptance("");router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not create task");}
