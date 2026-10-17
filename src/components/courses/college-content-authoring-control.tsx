@@ -45,6 +45,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
  async function save(){
   if(busy||!title.trim()||!lessonId||(kind!=="RESOURCE"&&!editing&&!url.trim()))return;
   if(kind==="RESOURCE"&&!editing&&!url.trim()&&!notes.trim()){setError("Add resource notes or an HTTPS link.");return;}
+  if(kind==="RESOURCE"&&editing&&removeLink&&!notes.trim()){setError("Add resource notes before removing the last link.");return;}
   setBusy(true);setError("");setMessage("");
   try{
    if(url.trim()){
