@@ -7,7 +7,7 @@ const a:SuperAdminCalendarRound={id:"A",roundId:"round",jobId:"job",jobTitle:"Jo
  startsAt:"2099-01-01T09:00:00Z",endsAt:"2099-01-01T10:00:00Z",venue:"Hall A",
  candidateMembershipId:"learner-one",candidateName:"Candidate A",interviewer:"Panel",mode:"On campus"};
 describe("Super Admin candidate-level interview conflicts",()=>{
- it("SA-placements-projects-45 flags candidate and venue double-bookings across different drives",()=>{
+ it("SA-placements-projects-45 candidate and venue collision detection from scoped persisted interview slots",()=>{
   const b={...a,id:"B",jobId:"other-job",venue:"Hall B",startsAt:"2099-01-01T09:30:00Z"};
   const conflicts=bookingConflicts([a,b]);
   expect(conflicts.get("A")).toContain("Candidate double-booked");
@@ -16,12 +16,13 @@ describe("Super Admin candidate-level interview conflicts",()=>{
   expect(room.get("A")).toContain("Venue double-booked");
   expect(bookingConflicts([a,{...b,startsAt:"2099-01-01T10:00:00Z"}]).size).toBe(0);
  });
- it("SA-placements-projects-46 exposes candidate, interviewer, mode, status and type filters",()=>{
+ it("SA-placements-projects-46 candidate-level Type Status Mode Department and sort filters",()=>{
   const ui=source("src/components/admin/super-admin-interview-operations.tsx");
   for(const key of ["Candidate","Interviewer","Mode","Status","Type","Sort"])expect(ui).toContain(key);
-  expect(ui).toContain("Department filters require linked program evidence.");
+  expect(ui).toContain("Department filter uses the applicant");
+  expect(ui).toContain('choices("Department"');
  });
- it("SA-placements-projects-47 exports candidate-level bookings to CSV and correct-duration .ics",()=>{
+ it("SA-placements-projects-47 bounded candidate interview CSV, per-row .ics and four headline metrics",()=>{
   const ui=source("src/components/admin/super-admin-interview-operations.tsx");
   expect(ui).toContain('download="interviews.csv"');
   expect(ui).toContain("Date.parse(row.endsAt)-Date.parse(row.startsAt)");
@@ -31,6 +32,7 @@ describe("Super Admin candidate-level interview conflicts",()=>{
   const service=source("src/modules/placements/super-admin-booked-interviews-service.ts");
   expect(service).toContain("requireSuperAdminSelectedCollege");
   expect(service).toContain("eq(placementJobs.collegeId,scope.collegeId)");
+  expect(service).toContain("learnerProgramEnrollments.status");
   expect(service).toContain(".limit(2001)");
   expect(source("src/components/admin/super-admin-interview-operations.tsx")).toContain("First 2,000 bookings shown");
  });
