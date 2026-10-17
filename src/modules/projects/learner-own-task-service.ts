@@ -60,7 +60,7 @@ export async function createLearnerOwnTask(context:RequestContext,rawParams:unkn
      sprint?eq(projectTasks.sprintId,sprint.id):isNull(projectTasks.sprintId)))
    .orderBy(desc(projectTasks.sequence)).limit(1);
   const [task]=await tx.insert(projectTasks).values({
-   projectId,sprintId:sprint.id,templateKey:keyFor(membership.id),
+   projectId,sprintId:sprint?.id??null,templateKey:keyFor(membership.id),
    sequence:(last?.sequence??-1)+1,title:input.title,description:input.description,
    acceptanceCriteria:input.acceptanceCriteria,priority:input.priority,dueDate:input.dueDate,
    estimatePoints:input.estimatePoints,taskType:input.taskType,assigneeMembershipId:membership.id,
