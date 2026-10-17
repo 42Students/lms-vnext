@@ -85,3 +85,5 @@ Record each item in `docs/audit/acceptance/graceful-e2e-verification.md` (`| GR-
 - GR-80/81: [big-round email/known-code] `tests/e2e/graceful-known-auth-email.spec.ts` adds 10 real customer-copy scenarios; asserts exact legacy wording, preserved form and intercepted start POST (not executed).
 
 - GR-80/81: [big-round phone/known-code] `tests/e2e/graceful-known-auth-phone.spec.ts` adds 10 real customer-copy scenarios; asserts exact legacy wording, preserved form and intercepted start POST (not executed).
+
+- GR-80/81: [big-round one-factor] `tests/e2e/graceful-verify-one-factor-domain-failures.spec.ts` adds 10 intercepted real OTP-verification domain outcomes (correct human copy, input preserved or intentionally reset, no provider send); authored, not run.

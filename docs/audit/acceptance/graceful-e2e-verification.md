@@ -127,3 +127,5 @@ These **32 authored test cases** do not represent 32 new GR IDs. The source was 
 | GR-80 GR-81 / big-round email/known-code | BLOCKED | `tests/e2e/graceful-known-auth-email.spec.ts`: 10 precise legacy-safe sign-in copy/browser tests; orchestrator run required. |
 
 | GR-80 GR-81 / big-round phone/known-code | BLOCKED | `tests/e2e/graceful-known-auth-phone.spec.ts`: 10 precise legacy-safe sign-in copy/browser tests; orchestrator run required. |
+
+| GR-80 GR-81 / big-round one-factor | BLOCKED | `tests/e2e/graceful-verify-one-factor-domain-failures.spec.ts`: 10 verification known-domain outcome browser tests, including stale code restart; not executed. |
