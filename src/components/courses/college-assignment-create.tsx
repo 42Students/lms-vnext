@@ -109,7 +109,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
     <input type="number" min={1} max={10000} value={points} disabled={pending}
      onChange={e=>setPoints(e.target.value)}
      className="min-h-10 rounded border border-border bg-surface px-2"/></label>
-   <label className="grid gap-1 text-sm font-semibold">Deadline (IST)
+   <label className="grid gap-1 text-sm font-semibold">Deadline (IST, optional until publishing)
     <input type="datetime-local" value={dueAt} disabled={pending}
      onChange={e=>setDueAt(e.target.value)}
      className="min-h-10 rounded border border-border bg-surface px-2"/></label>
