@@ -25,6 +25,7 @@ type SearchParams = {
   from?: string | string[];
   to?: string | string[];
   q?: string | string[];
+  who?:string|string[];
   page?: string | string[];
   pageSize?: string | string[];
 };
@@ -70,6 +71,7 @@ export default async function TpoAuditPage({
       from: first(params.from) || undefined,
       to: first(params.to) || undefined,
       q: first(params.q) || undefined,
+      who:first(params.who)||undefined,
       page: first(params.page) || undefined,
       pageSize:
         first(params.pageSize) || undefined,
@@ -128,6 +130,7 @@ export default async function TpoAuditPage({
     from: query.from,
     to: query.to,
     q: query.q,
+    who:query.who,
     pageSize,
   };
 
@@ -142,7 +145,7 @@ export default async function TpoAuditPage({
   ];
   const quickHref=(from:string,to:string)=>{
    const params=new URLSearchParams({
-    ...(query.kind!=="ALL"?{kind:query.kind}:{}),...(query.q?{q:query.q}:{}),
+    ...(query.kind!=="ALL"?{kind:query.kind}:{}),...(query.q?{q:query.q}:{}),...(query.who?{who:query.who}:{}),
     ...(from?{from}:{}),...(to?{to}:{}),
    });
    return "/tpo/audit?"+params.toString();
@@ -157,7 +160,7 @@ export default async function TpoAuditPage({
           <a href={"/api/placements/tpo/audit/export?"+new URLSearchParams({
             ...(query.kind!=="ALL"?{kind:query.kind}:{}),
             ...(query.from?{from:query.from}:{}),...(query.to?{to:query.to}:{}),
-            ...(query.q?{q:query.q}:{}),
+            ...(query.q?{q:query.q}:{}),...(query.who?{who:query.who}:{}),
            }).toString()}
            className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
            Export audit-log CSV
@@ -295,6 +298,10 @@ export default async function TpoAuditPage({
             />
           </label>
 
+          <label className="grid gap-1 text-sm font-semibold text-body">Who
+            <input type="search" name="who" maxLength={100} defaultValue={query.who}
+              placeholder="Actor name contains…" className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground"/>
+          </label>
           <label className="grid gap-1 text-sm font-semibold text-body">
             Rows per page
             <select
