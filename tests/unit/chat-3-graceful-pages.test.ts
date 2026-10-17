@@ -18,6 +18,10 @@ describe("Chat-3 graceful-operation coverage for touched pages",()=>{
    "src/components/profile/learner-profile-workspace.tsx",
    "src/components/tpo/recruiter-invite-landing.tsx",
    "src/components/placements/placement-job-create-form.tsx",
+   "src/components/college/college-student-register-form.tsx",
+   "src/components/college/college-student-csv-import.tsx",
+   "src/components/college/college-faculty-csv-import.tsx",
+   "src/components/admin/college-signin-method-form.tsx",
   ])expect(load(path)).toContain("apiFetch");
  });
  it("GR-30 attendance correction uses the shared ref-locked guarded action",()=>{
