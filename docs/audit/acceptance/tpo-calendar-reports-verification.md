@@ -55,3 +55,7 @@ Status reflects committed source and authored test evidence. Tests are **not run
 
 ## Round 5 calendar filter implementation
 | TPO-calendar-reports-11 | DONE | `src/modules/placements/tpo-calendar-kind-chips.ts` and calendar workspace; `tests/unit/chat9-tpo-calendar-multi-chip.test.ts` — `TPO-calendar-reports-11 combines filter chips without collapsing Talks into Rounds`. Source-level only; orchestrator must execute. |
+
+## Round 5 unsaved edits and mobile layout
+| TPO-calendar-reports-21 | DONE source | Both the new follow-up modal and time-grid draft protect cancel, Escape, unload and internal route clicks. `tests/unit/chat9-tpo-calendar-draft-and-mobile.test.ts` — `TPO-calendar-reports-21 guards in-progress follow-ups against cancel Escape reload and internal route navigation`. Orchestrator must run. |
+| TPO-calendar-reports-14 | DONE source | `tpo-calendar-url-model.ts` chooses Week on desktop and Agenda on phones; wide calendar grid is `hidden md:block` with mobile agenda. Test `TPO-calendar-reports-14 defaults desktop to Week and mobile to Agenda without displaying the wide grid on phones`. Browser acceptance still for orchestrator. |
