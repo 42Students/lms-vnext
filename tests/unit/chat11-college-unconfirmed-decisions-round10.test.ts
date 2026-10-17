@@ -82,7 +82,7 @@ describe("chat-11 delegated College Admin decisions",()=>{
   expect(service).toContain('eq(placementCompanyRelationships.collegeId,current.relationship.collegeId)');
   expect(service).toContain('eq(placementCompanyRelationships.status,"ARCHIVED")');
   expect(service).toContain('current.company.status!=="ACTIVE"');
-  expect(directory).toContain("query.status");
+  expect(directory).toContain("query.showDeleted");
   expect(restore).toContain("isSameOriginRequest(request)");
   expect(ui).toContain('title="Restore this company?"');
  });
