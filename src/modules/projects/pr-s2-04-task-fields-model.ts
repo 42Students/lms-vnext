@@ -8,6 +8,7 @@ export const projectTaskExpandedFieldsSchema=z.object({
 }).strict();
 export const projectTaskCommentInputSchema=z.object({
   body:z.string().trim().min(1).max(4000),
+  commentKind:z.enum(["NOTE","PROGRESS_UPDATE","FLAG_FOR_MENTOR"]).default("NOTE"),
   expectedTaskUpdatedAt:z.iso.datetime({offset:true}),
 }).strict();
 export function projectTaskBlockerValid(status:string,reason:string|null){

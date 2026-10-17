@@ -21,6 +21,9 @@ const backlogCreateSchema = z.strictObject({
   acceptanceCriteria: z.string().trim().max(4000).nullable().default(null),
   priority: z.enum(["LOW","MEDIUM","HIGH","CRITICAL"]).default("MEDIUM"),
   estimatePoints: z.number().int().min(0).max(1000).nullable().default(null),
+  taskType: z.enum(["STORY","BUG","CHORE","SPIKE"]).nullable().default(null),
+  dueDate: z.iso.date().nullable().default(null),
+  blockerReason: z.string().trim().max(4000).nullable().default(null),
 });
 /** MEN-projects-meetings-36: migration 0110 is registered and the ORM is authoritative. */
 export async function moveMentorBacklogTask(context: RequestContext, projectIdInput: string, raw: unknown) {
@@ -89,6 +92,7 @@ export async function createMentorBacklogTask(context: RequestContext, projectId
       sequence:(last?.sequence??-1)+1,title:input.title,description:input.description,
       acceptanceCriteria:input.acceptanceCriteria,priority:input.priority,status:"TODO",
       estimatePoints:input.estimatePoints,
+      taskType:input.taskType,dueDate:input.dueDate,blockerReason:input.blockerReason,
     }).returning();
     if(!task)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
     await recordActivityEventInTransaction(tx,context,{
@@ -96,7 +100,8 @@ export async function createMentorBacklogTask(context: RequestContext, projectId
       collegeId:scope.collegeId,organizationId:scope.organizationId,
       subjectType:"project_task",subjectId:task.id,subjectLabel:task.title,
       summary:"Product backlog task created",
-      metadata:{projectId:scope.project.id,taskId:task.id,backlog:true},
+      metadata:{projectId:scope.project.id,taskId:task.id,backlog:true,
+        taskType:task.taskType,dueDate:task.dueDate},
       groupKey:"project:"+scope.project.id,
     });
     return task;
