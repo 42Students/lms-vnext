@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,sql} from "drizzle-orm";
+import {and,eq,gt,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {collegeMemberships,placementApplications,placementApplicationScreenings,
@@ -67,7 +67,10 @@ export async function writeRecruiterPrivateReview(ctx:RequestContext,rawJobId:st
    .innerJoin(placementRecruiterCollegeGrants,
     and(eq(placementRecruiterCollegeGrants.recruiterUserId,ctx.user.id),
      eq(placementRecruiterCollegeGrants.companyRelationshipId,scope.job.companyRelationshipId),
-     eq(placementRecruiterCollegeGrants.status,"ACTIVE")))
+     eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
+     eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
+     gt(placementRecruiterCollegeGrants.validUntil,new Date()),
+     sql`'DRIVES' = any(${placementRecruiterCollegeGrants.capabilities})`))
    .where(and(eq(placementApplications.id,applicationId),
     eq(placementApplications.jobId,jobId),recruiterOwnJobPredicate(ctx.user.id),
     eq(placementApplicationScreenings.status,"SHORTLISTED")))
