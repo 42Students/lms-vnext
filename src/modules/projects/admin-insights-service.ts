@@ -7,6 +7,7 @@ import {
   ilike,
   inArray,
   isNull,
+  isNotNull,
   ne,
   or,
   sql,
@@ -685,6 +686,9 @@ const projectSubmissionQueueQuerySchema =
         "SUBMITTED",
         "CHANGES_REQUESTED",
         "APPROVED",
+        "UNDER_REVIEW",
+        "LOCKED",
+        "DRAFT_REVISING",
       ])
       .optional(),
   });
@@ -750,12 +754,12 @@ export async function listProjectAdminSubmissionQueue(
     query.status
       ? eq(projectInstances.status, query.status)
       : undefined,
-    query.submissionStatus
-      ? eq(
-          projectSubmissions.status,
-          query.submissionStatus,
-        )
-      : undefined,
+    query.submissionStatus==="UNDER_REVIEW"?and(
+      eq(projectSubmissions.status,"SUBMITTED"),isNull(projectSubmissions.lockedAt)):
+    query.submissionStatus==="LOCKED"?isNotNull(projectSubmissions.lockedAt):
+    query.submissionStatus==="DRAFT_REVISING"?and(
+      eq(projectSubmissions.status,"APPROVED"),isNotNull(projectSubmissions.reopenedAt)):
+    query.submissionStatus?eq(projectSubmissions.status,query.submissionStatus):undefined,
     search,
   );
   const db = getDb();
