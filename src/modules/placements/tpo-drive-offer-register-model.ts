@@ -54,7 +54,8 @@ export function tpoDriveOfferRegisterCsv(
  facts:readonly OfferRegisterFact[],
  filters:Pick<z.infer<typeof offerRegisterQuery>,"status"|"q"|"joining"|"kind"|"expiry">,
 ){
- const matches=selectOfferRegisterFacts(facts,filters.status,filters.q,filters.joining,filters.kind,filters.expiry);
+ const asOf=new Date();
+ const matches=selectOfferRegisterFacts(facts,filters.status,filters.q,filters.joining,filters.kind,filters.expiry,asOf);
  const csvDate=(date:Date|null|undefined)=>date?
   new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(date)+" IST":"Not recorded";
  const rows:(string|number|null)[][]=matches.slice(0,TPO_DRIVE_OFFERS_CSV_LIMIT).map(f=>[
@@ -64,9 +65,9 @@ export function tpoDriveOfferRegisterCsv(
   f.offer.status,f.offer.status==="ACCEPTED"?(f.joining?.status??"PENDING"):"Not applicable",
   csvDate(f.offer.issuedAt),csvDate(f.offer.respondedAt),csvDate(f.offer.expiresAt),
   offerRulesCheck(f.offer.status,f.offer.kind),
-  offerExpiryIndicator(f.offer.status,f.offer.expiresAt,new Date()),
+  offerExpiryIndicator(f.offer.status,f.offer.expiresAt,asOf),
   f.offer.status==="ISSUED"&&f.offer.expiresAt
-    ? Math.max(0,Math.ceil((f.offer.expiresAt.getTime()-Date.now())/3600000)) : null,
+    ? Math.max(0,Math.ceil((f.offer.expiresAt.getTime()-asOf.getTime())/3600000)) : null,
  ]);
  rows.push(["Methodology","Every row is a persisted offer version; no final selection or joining evidence inferred.",...Array(16).fill("")]);
  const truncated=matches.length>TPO_DRIVE_OFFERS_CSV_LIMIT;
