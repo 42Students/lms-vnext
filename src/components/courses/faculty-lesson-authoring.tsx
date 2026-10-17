@@ -14,6 +14,8 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { authoringDueInstant } from "@/modules/courses/faculty-authoring-datetime-model";
+import {FacultyIstQuarterHourPicker} from "@/components/courses/faculty-ist-quarter-hour-picker";
+import {FACULTY_IST_NOTE,facultyIstQuarterHourIssue} from "@/modules/courses/faculty-ist-quarter-hour-model";
 import { facultyYouTubeLinkIssue,facultyLiveClassIssue } from "@/modules/courses/faculty-content-input-model";
 
 
@@ -798,45 +800,21 @@ export function FacultyLessonAuthoring({
                 Publish now — make this learning item visible to eligible students
               </label>:null}
             {mode === "LIVE_CLASS" ? (
-              <div className="mt-4 grid gap-4 lg:grid-cols-2">
-                <label className="block">
-                  <FieldLabel>
-                    Starts (IST)
-                  </FieldLabel>
-                  <Input
-                    type="datetime-local"
-                    step={900}
-                    value={startsAt}
-                    onChange={(event) =>
-                      setStartsAt(
-                        event.target.value,
-                      )
-                    }
-                    required
-                  />
-                </label>
-                <label className="block">
-                  <FieldLabel>
-                    Ends (IST)
-                  </FieldLabel>
-                  <Input
-                    type="datetime-local"
-                    step={900}
-                    value={endsAt}
-                    onChange={(event) =>
-                      setEndsAt(
-                        event.target.value,
-                      )
-                    }
-                    required
-                  />
-                </label>
+              <div className="mt-4 space-y-2">
+                <div className="grid gap-4 lg:grid-cols-2">
+                  <FacultyIstQuarterHourPicker label="Starts" value={startsAt} onChange={setStartsAt}/>
+                  <FacultyIstQuarterHourPicker label="Ends" value={endsAt} onChange={setEndsAt}/>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {FACULTY_IST_NOTE} Times use a 12-hour clock and 15-minute steps.
+                </p>
+                {(startsAt&&facultyIstQuarterHourIssue(startsAt)||
+                  endsAt&&facultyIstQuarterHourIssue(endsAt))?
+                  <p role="alert" className="text-xs text-warning">
+                    Choose 15-minute start and end times before publishing.
+                  </p>:null}
               </div>
             ) : null}
-
-            {mode==="LIVE_CLASS"?<p className="mt-2 text-xs text-muted-foreground">
-              Times are in India Standard Time (IST). Use 15-minute intervals.
-            </p>:null}
 
             {mode === "ASSIGNMENT" ||
             mode === "QUIZ" ? (

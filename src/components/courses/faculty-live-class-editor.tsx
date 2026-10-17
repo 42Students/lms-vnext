@@ -8,6 +8,8 @@ import {facultyLiveEditorDraft,emptyFacultyLiveDraft} from "@/modules/courses/fa
 import {facultyLiveSessionOption} from "@/modules/courses/faculty-live-session-option";
 import {facultyLiveConfirmText} from "@/modules/courses/faculty-live-confirmation";
 import {facultyLiveMutationSuccess} from "@/modules/courses/faculty-live-success";
+import {FacultyIstQuarterHourPicker} from "@/components/courses/faculty-ist-quarter-hour-picker";
+import {FACULTY_IST_NOTE,facultyIstQuarterHourIssue} from "@/modules/courses/faculty-ist-quarter-hour-model";
 
 type Choice={id:string;title:string;deliveryId:string};
 type Session={
@@ -63,6 +65,10 @@ export function FacultyLiveClassEditor({
       action,lessonId,selected:chosen,title,meetingUrl,startsAt,endsAt,
     });}catch(caught){
       setError(caught instanceof Error?caught.message:"Invalid live-class details.");return;
+    }
+    if(action!=="CANCEL"){
+      const timeIssue=facultyIstQuarterHourIssue(startsAt)||facultyIstQuarterHourIssue(endsAt);
+      if(timeIssue){setError(timeIssue);return;}
     }
     if(!window.confirm(facultyLiveConfirmText(action,chosen,choice?.title??"selected lesson")))return;
     setPending(true);setError(null);setSuccess(null);
@@ -125,16 +131,18 @@ export function FacultyLiveClassEditor({
             placeholder="https://..." required
             className="min-h-10 rounded border border-border bg-background p-2" />
         </label>
-        <label className="grid gap-1 text-sm">Start
-          <input type="datetime-local" value={startsAt} onChange={e=>setStartsAt(e.target.value)}
-            required className="min-h-10 rounded border border-border bg-background p-2" />
-        </label>
-        <label className="grid gap-1 text-sm">End
-          <input type="datetime-local" value={endsAt} onChange={e=>setEndsAt(e.target.value)}
-            required className="min-h-10 rounded border border-border bg-background p-2" />
-        </label>
+        <FacultyIstQuarterHourPicker label="Start" value={startsAt} onChange={setStartsAt}/>
+        <FacultyIstQuarterHourPicker label="End" value={endsAt} onChange={setEndsAt}/>
       </>}
     </div>
+    {action!=="CANCEL"?<p className="text-xs text-body">
+      {FACULTY_IST_NOTE} Choose 15-minute steps using the 12-hour AM/PM clock.
+    </p>:null}
+    {action!=="CANCEL"&&(startsAt&&facultyIstQuarterHourIssue(startsAt)||
+      endsAt&&facultyIstQuarterHourIssue(endsAt))?
+      <p role="alert" className="text-xs text-warning">
+        Select quarter-hour start and end times before saving.
+      </p>:null}
     {!ready?<p className="text-sm text-muted-foreground">
       {action==="CREATE"?"No registered lessons are available to schedule.":"No editable published session is available on this page."}
     </p>:null}
