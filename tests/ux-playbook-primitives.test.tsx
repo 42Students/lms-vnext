@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { Pagination, paginationWindow } from "@/components/ui/pagination";
 import { Tabs, tabNextEnabled } from "@/components/ui/tabs";
@@ -55,6 +55,13 @@ describe("UX playbook shared behaviour", () => {
   it("UX-PLAYBOOK-09 formats KPI counts using en-IN grouping", () => {
     const markup = renderToStaticMarkup(<StatTile label="Students" value={123456}/>);
     expect(markup).toContain("1,23,456");
+  });
+  it("UX-PLAYBOOK-19 evaluates each DataTable cell only once despite two semantic layouts", () => {
+    const formatter=vi.fn((row:{label:string})=>row.label);
+    renderToStaticMarkup(<DataTable rows={[{label:"A"},{label:"B"}]}
+      columns={[{key:"label",header:"Label",cell:formatter}]}
+      getRowKey={row=>row.label}/>);
+    expect(formatter).toHaveBeenCalledTimes(2);
   });
   it("UX-PLAYBOOK-07 pagination announces current page", () => {
     const markup = renderToStaticMarkup(<Pagination page={2} pageCount={3} hrefForPage={page => "/directory?page=" + page}/>);
