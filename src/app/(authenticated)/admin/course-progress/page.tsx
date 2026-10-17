@@ -27,6 +27,9 @@ export default async function SuperAdminCourseProgressPage({
   return <div className="space-y-5">
     <PageHeader eyebrow="Super Admin · Courses" title="Course Progress"
       description="Read-only recorded learner content activity by offering. This is not a completion rate, attendance summary, or count of eligible learners." />
+    <p className="rounded-md border border-border bg-surface p-3 text-sm text-body">
+      Progress counts videos watched to the end, assignments submitted and quizzes attempted. Resources are not counted toward completion. Recorded progress is not a substitute for attendance or assessed achievement.
+    </p>
     <form className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[1fr_auto_auto]">
       <label className="grid gap-1 text-sm font-semibold text-body">Course or cohort
         <input name="q" type="search" maxLength={100} defaultValue={data.query.q}
