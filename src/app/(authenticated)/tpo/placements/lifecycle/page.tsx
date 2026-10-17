@@ -88,7 +88,10 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
       </label>
       <label className="min-w-36 flex-1 text-sm font-semibold text-body">Deadline state
         <select name="deadline" defaultValue={data.deadline} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
-          <option value="ALL">All deadlines</option><option value="DUE_SOON">Live · next 7 days</option>
+          <option value="ALL">All deadlines</option>
+          <option value="TODAY">Today (IST)</option>
+          <option value="DUE_SOON">Live · next 7 days</option>
+          <option value="LATER">Later than 7 days</option>
           <option value="OVERDUE">Live · passed</option><option value="UNSET">No recorded deadline</option>
         </select>
       </label>
