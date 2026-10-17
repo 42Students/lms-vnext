@@ -15,10 +15,12 @@ export async function PlacementOperationsWorkspace({
   context,
   collegeId,
   basePath,
+  staleDays = 7,
 }: {
   context: RequestContext;
   collegeId: string;
   basePath: string;
+  staleDays?: number;
 }) {
   const [
     operations,
@@ -30,6 +32,8 @@ export async function PlacementOperationsWorkspace({
     getPlacementTpoOperations(
       context,
       collegeId,
+      undefined,
+      staleDays,
     ),
     listPlacementCompanies(
       context,
@@ -55,6 +59,7 @@ export async function PlacementOperationsWorkspace({
         operations={operations}
         basePath={basePath}
         showDriveSearch={basePath.startsWith("/admin/")}
+        staleDays={staleDays}
       />
       <PlacementSeasonManager
         collegeId={collegeId}
