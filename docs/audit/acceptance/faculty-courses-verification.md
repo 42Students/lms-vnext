@@ -89,3 +89,13 @@ The 15-item final-sprint assignment belongs to faculty/courses in `docs/orchestr
 | FAC-courses-R06 | DONE for stale refresh recovery; deliberate full-page authoritative poll | `src/components/courses/learner-course-discussion.tsx` shows `Discussion refresh failed. Could not refresh the discussion. Showing the last messages we loaded.` and Retry **outside the `canPost` gate**, preserving earlier messages through failures and disabling unsafe writes. `reconcileLatestDiscussionPage` updates/deletes latest-window messages while retaining older history. Server has **no deletion tombstone protocol**, so using a pretend `since` delta cursor risks resurrecting deleted messages; the bounded latest-page authoritative fetch is safer. `tests/unit/chat5-final-faculty-discussion.test.ts` — two `FAC-courses-R06` cases. |
 | FAC-courses-R07 | DONE (source/model verified) | `facultyLiveEditorCommand` now exposes the first specific Zod issue; `facultyLiveMutationSchema` validates provider HTTPS, title, end-after-start and twelve-hour limit. `tests/unit/chat5-final-faculty-courses-c.test.ts` — `FAC-courses-R07 returns specific invalid meeting URL...`. |
 | FAC-courses-R08 | DONE (intentional policy) | `facultyLiveWindow` treats college academic periods as metadata, not a scheduling restriction; invalid/reversed time still fails. This is the deliberate safe choice relative to legacy and is already implemented. `tests/unit/chat5-final-faculty-courses-c.test.ts` — `FAC-courses-R08 retains a future/safe meeting time...`. |
+
+## [chat-5] Gap register FIXED-ON-MAIN citation reconciliation (2026-10-18)
+
+The generated tracker still labels eleven faculty/course gaps FIXED-ON-MAIN, but all eleven already have gap-named unit tests and existing acceptance records. `tests/unit/chat5-gap-register-citation-recheck.test.ts` independently verifies the test/acceptance file pairing; tests not executed. **Do not edit `docs/audit/gap-register.md` by hand; regenerate via the tracked script when orchestration permits.**
+
+| Gap IDs | Existing named tests | Acceptance scope |
+|---|---|---|
+| FAC-courses-02 / FAC-courses-07 / FAC-courses-10 | `tests/unit/chat5-final-faculty-courses-a.test.ts` | `02` thumbnail and `07` full in-place filter parity remain OPEN; `10` lesson accordion verified in source. |
+| FAC-courses-30 / FAC-courses-32 / FAC-courses-33 / FAC-courses-35 / FAC-courses-R03 | `tests/unit/chat5-final-faculty-courses-b.test.ts` | Discussion copy, retired notices, authorized class navigation, lesson semantics and course facts source-backed. |
+| FAC-courses-R04 / FAC-courses-R07 / FAC-courses-R08 | `tests/unit/chat5-final-faculty-courses-c.test.ts` | Faculty-facing copy and safe live-session validation and policy source-backed. |
