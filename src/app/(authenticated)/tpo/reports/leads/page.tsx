@@ -2,6 +2,7 @@ import {TpoReportPresentation} from "@/components/placements/tpo-report-presenta
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import Link from "next/link";
+import {filterCompanyEngagement,companyEngagementHref} from "@/modules/placements/tpo-company-engagement-filter-model";
 import {getTpoRecordedRanDrives} from "@/modules/placements/tpo-engagement-ran-drives-service";
 import {joinTpoCompanyEngagementWithPlacement} from "@/modules/placements/tpo-company-engagement-model";
 import {ReportBarChart} from "@/components/placements/report-bar-chart";
@@ -22,6 +23,7 @@ import { getPlacementReportWorkspace } from "@/modules/placements/report-service
 type SearchParams = {
   seasonId?: string | string[];
   jobId?: string | string[];
+  companyId?:string|string[];
 };
 
 function first(
@@ -62,6 +64,8 @@ export default async function TpoLeadsReportPage({
   const ranDrives=await getTpoRecordedRanDrives(context,{collegeId,
    seasonId:workspace.selectedSeasonId,jobId:workspace.selectedJobId});
   const companyEngagement=joinTpoCompanyEngagementWithPlacement(result.companyEngagement,workspace.report.byCompany,ranDrives);
+  const selectedCompanyId=first(query.companyId)??null;
+  const companyFilter=filterCompanyEngagement(companyEngagement,selectedCompanyId);
 
   const metrics = [
     ["Recruiter leads", leads.totals.leads],
