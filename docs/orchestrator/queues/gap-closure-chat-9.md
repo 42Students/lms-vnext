@@ -100,7 +100,7 @@ Audit: `docs/audit/pages/tpo/settings-audit.md` (and `settings-audit-review.md` 
 | TPO-settings-audit-92 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | TPO-settings-audit-93 | S2 | MISSING-EXPORT | FIXED-ON-MAIN |
 | TPO-settings-audit-96 | S2 | COPY | OPEN |
-| TPO-settings-audit-R03 | S2 | STATE | UNCONFIRMED |
+| TPO-settings-audit-R03 | S2 | STATE | NOT-A-GAP |
 | TPO-settings-audit-04 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-settings-audit-06 | S3 | STATE | DONE-BRANCH |
 | TPO-settings-audit-11 | S3 | VALIDATION | DONE-BRANCH |
@@ -122,10 +122,10 @@ Audit: `docs/audit/pages/tpo/settings-audit.md` (and `settings-audit-review.md` 
 | TPO-settings-audit-97 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-settings-audit-98 | S3 | STATE | OPEN |
 | TPO-settings-audit-99 | S3 | SIDE-EFFECT | OPEN |
-| TPO-settings-audit-R02 | S3 | VALIDATION | OPEN |
+| TPO-settings-audit-R02 | S3 | VALIDATION | DONE-BRANCH |
 | TPO-settings-audit-07 | S4 | RESPONSIVE | DONE-BRANCH |
 | TPO-settings-audit-80 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
-| TPO-settings-audit-81 | S4 | MISSING-ACTION | UNCONFIRMED |
+| TPO-settings-audit-81 | S4 | MISSING-ACTION | NOT-A-GAP |
 | TPO-settings-audit-R04 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
 
 ## superadmin/placements-projects-a-placements (50: FIXED-ON-MAIN 27, OPEN 20, UNCONFIRMED 3)
@@ -253,10 +253,10 @@ Audit: `docs/audit/pages/college/projects.md` (and `projects-review.md` if prese
 | COL-projects-08 | S3 | MISSING-EXPORT | OPEN |
 | COL-projects-15 | S3 | MISSING-MODAL | OPEN |
 | COL-projects-16 | S3 | MISSING-COLUMN | DONE-BRANCH |
-| COL-projects-17 | S3 | MISSING-FILTER | UNCONFIRMED |
+| COL-projects-17 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | COL-projects-19 | S3 | COPY | DONE-BRANCH |
 | COL-projects-20 | S3 | STATE | DONE-BRANCH |
-| COL-projects-09 | S4 | STATE | UNCONFIRMED |
+| COL-projects-09 | S4 | STATE | FIXED-ON-MAIN |
 | COL-projects-18 | S4 | MISSING-FILTER | DONE-BRANCH |
 | COL-projects-21 | S4 | COPY | OPEN |
 | COL-projects-22 | S4 | MISSING-FILTER | NOT-A-GAP |
@@ -356,3 +356,5 @@ Merged latest origin/main before editing; no test, lint, typecheck or build runs
 - Round 6: TPO-settings-audit-42/-07 DONE-BRANCH; no 200-course truncation and responsive grouped navigation; tests written not run.
 
 - COL-projects-10/-11 VERIFIED-ON-MAIN, -18/-23 DONE-BRANCH. Tests authored, not run; browser narrow-width acceptance outstanding.
+
+- Round 6 evidence: R02 DONE-BRANCH, R03/81 NOT-A-GAP, COL-projects-09/17 FIXED-ON-MAIN verified. Test file chat9-round6-reviewed-not-a-gaps.test.ts, not run.
