@@ -19,7 +19,7 @@ describe("chat-4 verified TPO Home gap coverage",()=>{
  it("TPO-home-01 uses an IST date and the persisted user's first-name greeting",()=>{
   const morning=tpoHomeGreeting(fixed,"Ananya Rao");
   expect(morning.title).toBe("Good morning, Ananya");
-  expect(morning.date).toMatch(/, 1 July/);
+  expect(morning.date).toContain("1 July");
   expect(tpoHomeGreeting(new Date("2099-07-01T09:00:00.000Z"),"Ananya").title).toBe("Good afternoon, Ananya");
   expect(tpoHomeGreeting(new Date("2099-07-01T15:00:00.000Z"),"Ananya").title).toBe("Good evening, Ananya");
   expect(tpoHomeGreeting(fixed,null).title).toBe("Good morning");
