@@ -6,10 +6,8 @@ import { getDb } from "@/db/client";
 import { projectInstances, projectReleases, projectSprints, projectTasks } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
-import { can } from "@/modules/permissions/policy";
 import type { RequestContext } from "@/modules/identity/context";
-import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
-import { requireProjectLifecycleAccess } from "./access";
+import { requireProjectLifecycleMutationAccess } from "./access";
 import { ProjectsServiceError } from "./errors";
 import {
   mentorTaskDetailsParamsSchema,mentorTaskDetailsInputSchema,taskDetailsChangedFields,
@@ -21,12 +19,7 @@ export async function updateMentorTaskDetails(
 ) {
   const params=mentorTaskDetailsParamsSchema.parse(rawParams);
   const input=mentorTaskDetailsInputSchema.parse(rawInput);
-  const scope=await requireProjectLifecycleAccess(context,params.projectId);
-  if(!can(context,"projects.read",{
-    collegeId:scope.collegeId,organizationId:scope.organizationId,
-  })) throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
-  const modules=await resolveOptionalModuleAccess(context);
-  if(!modules.projects.enabled) throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  const scope=await requireProjectLifecycleMutationAccess(context,params.projectId);
   const expected=new Date(input.expectedUpdatedAt);
   return getDb().transaction(async tx=>{
     const [project]=await tx.select({status:projectInstances.status})
@@ -45,21 +38,23 @@ export async function updateMentorTaskDetails(
     if(task.status==="IN_REVIEW"||task.status==="DONE")
       throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
 
-    const [sprint]=await tx.select({
+    const [sprint]=task.sprintId?await tx.select({
       status:projectSprints.status,releaseId:projectSprints.releaseId,
     }).from(projectSprints)
       .where(and(eq(projectSprints.id,task.sprintId),
         eq(projectSprints.projectId,scope.project.id)))
-      .limit(1);
-    if(!sprint||sprint.status==="COMPLETED")
+      .limit(1):[null];
+    if(task.sprintId&&(!sprint||sprint.status==="COMPLETED"))
       throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
-    const [release]=await tx.select({status:projectReleases.status})
-      .from(projectReleases)
-      .where(and(eq(projectReleases.id,sprint.releaseId),
-        eq(projectReleases.projectId,scope.project.id)))
-      .limit(1);
-    if(!release||release.status==="SHIPPED")
-      throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+    if(sprint){
+      const [release]=await tx.select({status:projectReleases.status})
+        .from(projectReleases)
+        .where(and(eq(projectReleases.id,sprint.releaseId),
+          eq(projectReleases.projectId,scope.project.id)))
+        .limit(1);
+      if(!release||release.status==="SHIPPED")
+        throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+    }
 
     // PostgreSQL stores microseconds but JS Date tokens carry milliseconds.
     // The locked row and millisecond comparison are the concurrency boundary.
