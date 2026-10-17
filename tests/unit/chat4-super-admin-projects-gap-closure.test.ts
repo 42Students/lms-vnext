@@ -116,5 +116,71 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
   expect(file).toContain("completionConditions");
   expect(file).toContain("personas");
   expect(file).toContain("expectedUpdatedAt");
+ }); it("SA-placements-projects-53 preserves its implemented foundation while legacy parity remains open",()=>{
+  const s=source("src/components/projects/project-admin-workspace-list.tsx");
+  expect(s).toContain("view===\"table\"");
+  expect(s).toContain("role=\"progressbar\"");
+  expect(s).toContain("Members");
+ });
+ it("SA-placements-projects-55 preserves its implemented foundation while legacy parity remains open",()=>{
+  const s=source("src/components/projects/project-admin-collection-controls.tsx");
+  expect(s).toContain("{[10, 20, 25, 50, 100]");
+  expect(s).toContain("name=\"pageSize\"");
+  expect(s).toContain("query.q");
+ });
+ it("SA-placements-projects-58 preserves its implemented foundation while legacy parity remains open",()=>{
+  const s=source("src/components/projects/project-admin-at-risk-page.tsx");
+  expect(s).toContain("Reassign mentor");
+  expect(s).toContain("fromMentorId");
+ });
+ it("SA-placements-projects-65 preserves its implemented foundation while legacy parity remains open",()=>{
+  const s=source("src/components/projects/project-workspace-readiness.tsx");
+  expect(s).toContain("Current readiness");
+  expect(s).toContain("Submission status");
+  expect(s).toContain("role=\"progressbar\"");
+ });
+ it("SA-placements-projects-66 preserves its implemented foundation while legacy parity remains open",()=>{
+  const s=source("src/components/projects/project-admin-readiness-page.tsx");
+  expect(s).toContain("Select workspace");
+  expect(s).toContain("Releases");
+  expect(s).toContain("Target date");
+ });
+ it("SA-placements-projects-71 preserves its implemented foundation while legacy parity remains open",()=>{
+  const s=source("src/components/projects/project-admin-submissions-page.tsx");
+  expect(s).toContain("Revisions");
+  expect(s).toContain("Reviewed by");
+ });
+ it("SA-placements-projects-75 preserves its implemented foundation while legacy parity remains open",()=>{
+  const s=source("src/components/projects/project-admin-audit-page.tsx");
+  expect(s).toContain("People who made changes");
+  expect(s).toContain("Destructive actions");
+ });
+ it("SA-placements-projects-81 preserves its implemented foundation while legacy parity remains open",()=>{
+  const s=source("src/components/projects/super-admin-template-create-form.tsx");
+  expect(s).toContain("Deliverables");
+  expect(s).toContain("Definition of done");
+  expect(s).toContain("Personas");
+ });
+ it("SA-placements-projects-82 preserves its implemented foundation while legacy parity remains open",()=>{
+  const s=source("src/components/projects/super-admin-template-overview-editor.tsx");
+  expect(s).toContain("Course label");
+  expect(s).toContain("Phase");
+  expect(s).toContain("Submission instructions");
+ });
+ it("SA-placements-projects-86 preserves its implemented foundation while legacy parity remains open",()=>{
+  const s=source("src/components/projects/project-template-controls.tsx");
+  expect(s).toContain("Duplicate");
+  expect(s).toContain("templateId");
+ });
+ it("SA-placements-projects-88 preserves its implemented foundation while legacy parity remains open",()=>{
+  const s=source("src/components/projects/super-admin-template-rollback-control.tsx");
+  expect(s).toContain("Roll back");
+  expect(s).toContain("expectedTemplateVersion");
+ });
+ it("SA-placements-projects-89 preserves its implemented foundation while legacy parity remains open",()=>{
+  const s=source("src/components/projects/college-project-summary-editor-full.tsx");
+  expect(s).toContain("Sprint length (weeks)");
+  expect(s).toContain("Blocker");
+  expect(s).toContain("Next action");
  });
 });

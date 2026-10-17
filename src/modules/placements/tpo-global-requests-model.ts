@@ -5,7 +5,7 @@ export const globalTpoRequestsQuerySchema = z.object({
   status: z.enum(["PENDING","APPROVED","REJECTED","CANCELLED","ALL"]).default("PENDING"),
   requestType: z.enum(GLOBAL_TPO_REQUEST_TYPES).default("ALL"),
   age: z.enum(["ALL","TODAY","ONE_TO_TWO_DAYS","OLDER_THAN_1_DAY","OLDER_THAN_2_DAYS","OLDER_THAN_7_DAYS","OLDER_THAN_30_DAYS","LAST_30_DAYS"]).default("ALL"),
-  sort: z.enum(["URGENCY_FIRST","NEWEST_FIRST","OLDEST_FIRST"]).default("URGENCY_FIRST"),
+  sort: z.enum(["URGENCY_FIRST","NEWEST_FIRST","OLDEST_FIRST","DECIDED_NEWEST","DECIDED_OLDEST"]).default("URGENCY_FIRST"),
   search: z.string().trim().max(150).default(""),
   urgentOnly: z.union([z.literal("true"),z.literal(true)]).transform(()=>true).optional(),
   jobId: z.string().uuid().optional(),
@@ -36,8 +36,8 @@ export function tpoNextRoundCue(row:{nextRoundAt?:Date|null;nextRoundName?:strin
  const time=new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",hour12:true}).format(next);
  return (row.nextRoundName||"Next round")+" "+dayLabel+" "+time+" IST";
 }
-export function sortTpoRequestRows<T extends {id:string;requestedAt:Date;status?:string;requestType?:string;nextRoundAt?:Date|null}>(
- rows:readonly T[],sort:"URGENCY_FIRST"|"NEWEST_FIRST"|"OLDEST_FIRST",now:Date=new Date(),
+export function sortTpoRequestRows<T extends {id:string;requestedAt:Date;status?:string;requestType?:string;nextRoundAt?:Date|null;decidedAt?:Date|null}>(
+ rows:readonly T[],sort:"URGENCY_FIRST"|"NEWEST_FIRST"|"OLDEST_FIRST"|"DECIDED_NEWEST"|"DECIDED_OLDEST",now:Date=new Date(),
 ):T[]{
  if(sort==="URGENCY_FIRST"){
   const rank=(r:T)=>{
@@ -54,6 +54,16 @@ export function sortTpoRequestRows<T extends {id:string;requestedAt:Date;status?
     if(left===undefined&&right!==undefined)return 1;
    }
    return a.requestedAt.getTime()-b.requestedAt.getTime()||a.id.localeCompare(b.id);
+  });
+ }
+ if(sort==="DECIDED_NEWEST"||sort==="DECIDED_OLDEST"){
+  const descending=sort==="DECIDED_NEWEST";
+  return [...rows].sort((a,b)=>{
+   const left=a.decidedAt?.getTime()??null,right=b.decidedAt?.getTime()??null;
+   if(left===null&&right!==null)return 1;
+   if(right===null&&left!==null)return -1;
+   if(left!==null&&right!==null&&left!==right)return descending?right-left:left-right;
+   return a.id.localeCompare(b.id);
   });
  }
  const direction=sort==="OLDEST_FIRST"?1:-1;

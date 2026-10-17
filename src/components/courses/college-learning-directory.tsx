@@ -548,7 +548,34 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
                 : "No course offerings match these filters. No completion or learner activity is inferred."
               : "No records exist on this page. Return to an earlier page."}
           </p>
-        ) : (
+        ) : (<>
+          <div className="space-y-3 p-3 md:hidden" aria-label={title+" mobile records"}>
+           {data.kind==="LESSONS"?
+            data.items.map(item=><article key={item.id} className="space-y-2 rounded-lg border border-border p-3">
+             <h3 className="break-words font-semibold">{item.name}</h3>
+             <Link className="block break-words text-sm font-semibold text-primary-text underline"
+              href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}>
+              {item.courseName} ({item.courseCode})
+             </Link>
+             <p className="text-xs text-body">{item.cohortName} · {item.periodName} · Lesson #{item.sequence+1}</p>
+             <p className="text-xs">{collegeLessonVisibilityLabel(item)}</p>
+             <CollegeLessonVisibilityControl lesson={{id:item.id,name:item.name,
+              visibleToStudents:item.visibleToStudents,updatedAt:item.updatedAt.toISOString()}}/>
+             <Link href={collegeOfferingProgressHref(item.offeringId)} className="inline-flex min-h-10 items-center text-xs font-semibold text-primary-text underline">View recorded course activity</Link>
+            </article>):
+            data.items.map(item=><article key={item.offeringId} className="space-y-2 rounded-lg border border-border p-3">
+             <Link className="block break-words font-semibold text-primary-text underline"
+              href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}>
+              {item.courseName} ({item.courseCode})
+             </Link>
+             <p className="text-xs text-body">{item.cohortName} · {item.periodName}</p>
+             <p className="text-xs text-body">Offering state: {item.offeringStatus}</p>
+             <p className="text-xs text-body">{collegeProgressDescription(item)}</p>
+             <Link href={collegeOfferingLessonsHref(item.offeringId)}
+              className="inline-flex min-h-10 items-center text-xs font-semibold text-primary-text underline">View authored lessons</Link>
+            </article>)}
+          </div>
+          <div className="hidden overflow-x-auto md:block">
           <table className="w-full min-w-[48rem] text-left text-sm">
             <thead className="bg-muted text-muted-foreground">
               {lessons ? <tr>
@@ -602,7 +629,8 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
                 ))}
             </tbody>
           </table>
-        )}
+          </div>
+        </>)}
       </section>
       <nav aria-label={title + " pagination"} className="flex flex-wrap items-center justify-between gap-3 text-sm">
         <span className="text-muted-foreground">{data.total===0?0:Math.min(data.total,(data.query.page-1)*data.query.pageSize+1)}–{Math.min(data.total,data.query.page*data.query.pageSize)} of {data.total} · Page {data.query.page} of {data.totalPages}</span>

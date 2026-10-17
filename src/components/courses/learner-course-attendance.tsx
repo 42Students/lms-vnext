@@ -345,69 +345,17 @@ export function LearnerCourseAttendance({
         </div>
       </section>
 
-      <section aria-label="Attendance this month" className="space-y-2">
-        <h3 className="text-base font-semibold">Attendance this month</h3>
-        <p className="text-sm text-body">{summary.heldSessions===0?"No classes held yet in this period.":thresholdDetail}</p>
+      <section aria-label="Attendance this month" className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+        <h3 className="text-sm font-semibold text-foreground">Attendance this month</h3>
+        <p className="mt-2 text-3xl font-semibold text-foreground">{summary.percentage===null?"—":summary.percentage+"%"}</p>
+        <p className="mt-2 text-sm text-body">{summary.heldSessions===0?"No classes held yet in this period.":thresholdDetail}</p>
+        <dl className="mt-4 grid grid-cols-3 gap-3 border-t border-border pt-3 text-sm">
+          <div><dt className="text-muted-foreground">Present</dt><dd className="font-semibold">{summary.present}</dd></div>
+          <div><dt className="text-muted-foreground">Absent</dt><dd className="font-semibold">{summary.absent}</dd></div>
+          <div><dt className="text-muted-foreground">Held</dt><dd className="font-semibold">{summary.heldSessions}</dd></div>
+        </dl>
+        {summary.unmarkedSessions>0?<p className="mt-3 text-xs text-muted-foreground">{summary.unmarkedSessions} held class(es) are not marked yet and do not affect this percentage.</p>:null}
       </section>
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <Metric
-          label="Classes held"
-          value={summary.heldSessions}
-          detail="Classes that have already started this month."
-        />
-        <Metric
-          label="Present"
-          value={summary.present}
-          detail="Marked sessions where you are present."
-        />
-        <Metric
-          label="Absent"
-          value={summary.absent}
-          detail={`${summary.otherMarked} other marked session(s) are late, excused or medical, not explicitly absent.`}
-        />
-        <Metric
-          label="Attendance"
-          value={
-            summary.percentage === null
-              ? "—"
-              : `${summary.percentage}%`
-          }
-          detail={
-            summary.unmarkedSessions > 0
-              ? `${summary.unmarkedSessions} held session(s) are still unmarked and do not affect the percentage.`
-              : "Only marked held sessions affect the percentage."
-          }
-        />
-      </div>
-
-      <section className="rounded-xl border border-border bg-surface p-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h3 className="m-0 text-sm font-semibold text-foreground">
-              Attendance threshold
-            </h3>
-            <p className="mt-1 max-w-3xl text-xs leading-5 text-body">
-              {thresholdDetail}
-            </p>
-          </div>
-          <StatusBadge
-            tone={
-              summary.percentage === null
-                ? "neutral"
-                : learnerCourseAttendanceThresholdReached(summary.present,summary.markedSessions,threshold)
-                  ? "success"
-                  : "error"
-            }
-          >
-            {summary.percentage === null
-              ? "No marked attendance"
-              : learnerCourseAttendanceThresholdReached(summary.present,summary.markedSessions,threshold)
-                ? "At or above threshold"
-                : "Below threshold"}
-          </StatusBadge>
-        </div>
-      </section>
-
       <section aria-label="Attendance History" className="space-y-1">
         <h3 className="font-semibold">Attendance History</h3>
         <p className="text-sm text-muted-foreground">Review each scheduled class and your status for it.</p>

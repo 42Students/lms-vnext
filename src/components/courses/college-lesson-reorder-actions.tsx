@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
+import {apiFetch} from "@/lib/api-fetch";
+import {friendlyApiError} from "@/lib/friendly-error";
 
 export function CollegeLessonReorderActions({
   learningPathId, lessonId, expectedSequence, canMoveUp, canMoveDown,
@@ -21,21 +23,21 @@ export function CollegeLessonReorderActions({
   const { showToast } = useToast();
 
   function confirm() {
-    if (!direction) return;
+    if (!direction || pending) return;
     const requested = direction;
     startTransition(async () => {
       try {
-        const response = await fetch("/api/courses/lessons/reorder", {
-          method: "POST", headers: { "content-type": "application/json" },
+        await apiFetch<unknown>("/api/courses/lessons/reorder", {
+          method: "POST", credentials:"same-origin",timeoutMs:12000,
+          headers: { "content-type": "application/json" },
           body: JSON.stringify({ learningPathId, lessonId, expectedSequence, direction: requested }),
         });
-        if (!response.ok) throw new Error("Lesson order changed or access was denied. Refresh the page.");
         setDirection(null);
         showToast({ tone: "success", title: "Lesson order updated" });
         router.refresh();
       } catch (error) {
         showToast({ tone: "error", title: "Reorder failed",
-          description: error instanceof Error ? error.message : "Try again." });
+          description: error instanceof Error ? error.message : friendlyApiError({network:true}) });
       }
     });
   }

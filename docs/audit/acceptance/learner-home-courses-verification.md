@@ -26,3 +26,6 @@ LEARNER-home-courses-01/02/03/05/08/10/12/14/16(partial)/18/22 remain open until
 | LEARNER-home-courses-12 | DONE | `src/modules/courses/learner-course-tab-context-model.ts`, `src/components/courses/learner-course-document-title.tsx`, `src/components/courses/learner-course-tabs.tsx`; `tests/unit/chat4-learner-home-courses-gap-closure.test.ts`, `LEARNER-home-courses-12` |
 | LEARNER-home-courses-19 | DONE | `src/components/courses/learner-course-discussion.tsx`; `tests/unit/chat4-learner-home-courses-gap-closure.test.ts`, `LEARNER-home-courses-19` |
 | LEARNER-home-courses-21 | DONE | `src/components/courses/learner-course-discussion.tsx`; `tests/unit/chat4-learner-home-courses-gap-closure.test.ts`, `LEARNER-home-courses-21` |
+
+| LEARNER-home-courses-16 | DONE | `src/components/courses/learner-course-attendance.tsx`; `tests/unit/chat4-learner-home-courses-gap-closure.test.ts`, `LEARNER-home-courses-16` — legacy summary card / percentages; extra safety note for unmarked classes. |
+| LEARNER-home-courses-20 | DONE | `src/components/courses/learner-course-discussion.tsx`; `tests/unit/chat4-learner-home-courses-gap-closure.test.ts`, `LEARNER-home-courses-20` — pinned author/count and own pinned deletion. |

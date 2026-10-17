@@ -43,7 +43,7 @@ describe("Exotel SMS provider", () => {
       "https://api.exotel.com/v1/Accounts/42students1/Sms/send.json",
     );
     expect(
-      (init.headers as Record<string, string>).Authorization,
+      new Headers(init.headers).get("Authorization"),
     ).toBe(`Basic ${Buffer.from("key-123:token-456").toString("base64")}`);
     const form = new URLSearchParams(init.body as URLSearchParams);
     expect(form.get("To")).toBe("+919100060001");
@@ -140,7 +140,7 @@ describe("ZeptoMail provider", () => {
       RequestInit,
     ];
     expect(url).toBe("https://api.zeptomail.in/v1.1/email/template");
-    expect((init.headers as Record<string, string>).Authorization).toBe(
+    expect(new Headers(init.headers).get("Authorization")).toBe(
       "Zoho-enczapikey abc",
     );
     const body = JSON.parse(init.body as string);

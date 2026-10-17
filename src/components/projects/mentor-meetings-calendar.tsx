@@ -54,7 +54,7 @@ function MeetingRow({
       ) : null}
       <div className="mt-3 flex flex-wrap items-center gap-4 text-sm">
         {href ? <a className="font-medium text-primary-text underline" href={href}
-          target="_blank" rel="noopener noreferrer">Join meeting</a> : null}
+          target="_blank" rel="noopener noreferrer">Join link</a> : null}
         <Link className="font-medium text-primary-text underline"
           href={"/mentor/projects/" + encodeURIComponent(meeting.projectId) + "?tab=team"}>
           Open project
