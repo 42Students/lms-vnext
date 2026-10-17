@@ -20,7 +20,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
  const raw=await searchParams;
  let filter:ReturnType<typeof parseCollegeContactsSearchParams>;
  try{filter=parseCollegeContactsSearchParams(raw);}
- catch(error){return <div className="space-y-4"><PageHeader eyebrow="College Admin · People" title="Contacts"/>
+ catch(error){return <div className="min-w-0 space-y-4"><PageHeader eyebrow="College Admin · People" title="Contacts"/>
   <ErrorState title="Invalid contact filters" description={collegeContactFilterMessage(error)}
    action={<Link href="/college/contacts" className="underline">Reset contact filters</Link>}/></div>;}
  const [results,choices]=await Promise.all([listCollegeContacts(context,filter),listCollegeContactFilterOptions(context)]);
