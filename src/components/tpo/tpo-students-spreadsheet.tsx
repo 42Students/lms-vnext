@@ -32,7 +32,7 @@ const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"best",label:"Best so far",read:row=>tpoStudentDisplayLabel(row.bestSoFar)},
  {key:"applications",label:"Applications",read:row=>row.applicationCount},
  {key:"offers",label:"Offers",read:row=>row.offerCount},
- {key:"offersAwaiting",label:"Offers awaiting answer",read:row=>row.offersAwaitingAnswer},
+ {key:"offersAwaiting",label:"Offers waiting on their answer",read:row=>row.offersAwaitingAnswer},
  {key:"journey",label:"Journey",read:row=>tpoStudentDisplayLabel(row.journeyState)},
  {key:"email",label:"Email (export only)",read:row=>row.email,exportOnly:true},
 ];
@@ -90,7 +90,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
   }}>
   <TpoAfterCollegeBulkEditor rows={rows} current={afterCollege} available={afterCollegeAvailable} />
   <TpoStudentClipboardActions rows={rows} selected={noteSelection} onSelect={setNoteSelection}/>
-  <p className="text-xs text-muted-foreground">{noteSelection.filter(id=>rows.some(row=>row.membershipId===id)).length} selected on this visible page.</p>
+  <p role="status" aria-live="polite" className="text-xs text-muted-foreground">{noteSelection.filter(id=>rows.some(row=>row.membershipId===id)).length} selected of {rows.length} on this visible page.</p>
   <details className="rounded-xl border border-border p-4">
    <summary className="cursor-pointer font-semibold">Bulk Add a note</summary>
    <p className="mt-2 text-xs text-muted-foreground">Choose up to 100 students on this visible roster page; no student is added outside your current filtered page.</p>

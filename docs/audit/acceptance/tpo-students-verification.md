@@ -29,3 +29,8 @@ Source reviewed on `main` at `a56fd84fdbe4e2c9bc11758b290d1f1845cac991`. Tests w
 | TPO-students-R04 | DONE | Single Journey and Branch controls retained in roster form; duplicate selects removed from spreadsheet filters; `tests/unit/chat12-students-round2.test.ts` test `TPO-students-R04` |
 | TPO-students-43 | DONE | Student panel needs-attention for ineligible, pending verification and waiting offers, with Team and Placement eligibility links; `tests/unit/chat12-students-round2.test.ts` test `TPO-students-43` |
 | TPO-students-54 | DONE | Roster outcome pill shows final after-college choice and hover detail; `tests/unit/chat12-students-round2.test.ts` test `TPO-students-54` |
+
+| TPO-students-19 | DONE | Journey steps distinguish eligible working-set population from registration and expose contextual caption; `tests/unit/chat12-tpo-journey-export.test.ts` test `TPO-students-19` |
+| TPO-students-48 | DONE | Announced in-view count and visible selected count; `tests/unit/chat12-tpo-journey-export.test.ts` test `TPO-students-48` |
+| TPO-students-52 | DONE | Student panel shows profile check, stage, outcome, placement decision, offers and explicit unavailable prep metric; `tests/unit/chat12-tpo-journey-export.test.ts` test `TPO-students-52` |
+| TPO-students-53 | DONE | Issued offers map to legacy released/waiting-on-answer, with exact display wording; `tests/unit/chat12-tpo-journey-export.test.ts` test `TPO-students-53` |

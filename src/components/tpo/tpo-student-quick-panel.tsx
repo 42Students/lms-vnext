@@ -97,6 +97,11 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
         ["CGPA",student.cgpa??"Not recorded"],["Active backlogs",student.activeBacklogs??"Not recorded"],
         ["Past backlogs",student.pastBacklogs??"Not recorded"],
         ["After college",afterCollegeDisplay(recordedOutcome)],
+        ["Stage",tpoStudentDisplayLabel(student.journeyState)],
+        ["Profile check",student.verification.status==="UNKNOWN"?"Verification unavailable":tpoStudentDisplayLabel(student.verification.status)],
+        ["Placements decision",tpoStudentDisplayLabel(student.participationStatus)],
+        ["Offers waiting on their answer",student.offersAwaitingAnswer],
+        ["Prep %","Not recorded"],
         ["Registration",student.registrationChoice??"Not recorded"],
        ].map(([label,value])=><div key={String(label)} className="rounded border border-border p-3">
         <dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold">{value}</dd>
