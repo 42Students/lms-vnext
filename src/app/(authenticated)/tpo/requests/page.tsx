@@ -9,6 +9,8 @@ import {tpoRequestsExportHref} from "@/modules/placements/tpo-requests-page-csv-
 import {GLOBAL_TPO_REQUEST_TYPES,TPO_REQUEST_STATUSES,tpoRequestStatusCounts,tpoRequestAgeLabel,tpoRequestContextLink,tpoNextRoundCue,parseGlobalTpoRequestFilters,globalTpoRequestFirstPageHref,tpoRequestClearAdvancedHref} from "@/modules/placements/tpo-global-requests-model";
 import { getTpoGlobalRequestsInbox } from "@/modules/placements/tpo-global-requests-service";
 import {listPlacementJobs} from "@/modules/placements/job-service";
+import {getTpoAfterCollegeForRoster} from "@/modules/placements/tpo-after-college-roster-service";
+import {afterCollegeDisplay} from "@/modules/placements/tpo-after-college-model";
 import {tpoRequestAttentionOnPage} from "@/modules/placements/tpo-request-attention-model";
 
 export const dynamic = "force-dynamic";
@@ -47,6 +49,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
     getTpoGlobalRequestsInbox(context, parsed.data),
     listPlacementJobs(context,context.membership.collegeId),
   ]);
+  const outcomeResult=await getTpoAfterCollegeForRoster(context,data.requests.map(row=>row.membershipId));
   const statusCounts=tpoRequestStatusCounts(data.summary);
   const asOf=new Date();
   const attention=tpoRequestAttentionOnPage(data.requests,asOf);
@@ -112,6 +115,11 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
             <h2 className="font-semibold">{request.studentName} · {request.requestType.replaceAll("_"," ")}</h2>
             <p className="mt-1 text-sm text-body">{request.companyName} · {request.jobTitle}</p>
             <p className="mt-1 text-xs text-muted-foreground">Student number: {request.rollNumber??"Not recorded"} · Branch: {request.branchName??"Not assigned"}</p>
+            {outcomeResult.available?<p className="mt-1 text-xs text-body">
+              After college: {afterCollegeDisplay(outcomeResult.entries[request.membershipId]?.outcome)}
+              {["PLACED_ON_CAMPUS","PLACED_OFF_CAMPUS"].includes(outcomeResult.entries[request.membershipId]?.outcome??"")?
+                <span className="ml-2 rounded border border-border px-2 py-1 text-xs font-semibold">Already placed</span>:null}
+            </p>:null}
             {request.nextRoundAt?<p className="mt-1 text-sm text-body">{tpoNextRoundCue(request,asOf)}</p>:null}
             {request.urgent?<strong className="mt-2 inline-flex rounded border border-danger px-2 py-1 text-xs text-error">Urgent</strong>:null}
             <p className="mt-1 text-xs text-muted-foreground"><time dateTime={request.requestedAt.toISOString()}>{request.requestedAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST</time> · {tpoRequestAgeLabel(request.requestedAt,asOf)}</p>
