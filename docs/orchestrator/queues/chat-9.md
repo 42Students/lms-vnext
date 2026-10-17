@@ -158,3 +158,22 @@ Fast-forwarded `chatgpt/chat-9-b` to the latest `origin/main@2e69a866811cd85e49f
 - BLOCKED `TPO-calendar-reports-48/49`: round-by-branch failures and true 'drives that ran' require independent authoritative participant and completed-drive producers.
 - BLOCKED Browser/mobile acceptance, service credentials, dependent migrations and background-delivery tests remain outside FAST mode; none were run.
 
+
+
+## FAST v2 continuation 8 — S1/S2 high-priority source pass (2026-10-17)
+
+Fast-forward merged latest `origin/main@9c4cdf54d56cb725493d4cdabbbed97b1220af3b` into `chatgpt/chat-9-b` before changes. All commits tagged `[chat-9]` plus their gap ID, pushed only to this branch per file group. **No tests, typecheck, lint, builds, or CI waits; source pass is not runtime acceptance.**
+
+- WP-04 / `TPO-settings-audit-44`: round scheduler accepts explicit blocked-day acknowledgement; server consults same-college persisted blocked-date ledger and rejects unacknowledged blocked days, failing closed when the calendar blocking table is unavailable; round UI passes acknowledgement only after explicit confirmation.
+- WP-02 / `TPO-calendar-reports-48`: added current-active-branch grouping for actual APPLIED round outcomes with recorded decision denominators and explicit unknown branch; CSV endpoint uses college+season+drive authority and safe capped export. Does not imply historical branch attribution.
+- WP-02 / `TPO-calendar-reports-49`: `Drives that ran` in company recruiter engagement now means unique scoped drives with a persisted COMPLETED round, replacing mere registered drive count in page and CSV. Zero is lack of recorded completed-round evidence, not proof of nonparticipation.
+- WP-02 / `TPO-calendar-reports-43`: read source-of-truth placement-candidate academic evidence for report and export; lowest *recorded* among tenth/twelfth/diploma/UG marks, actual UG percentage and VERIFIED flag; missing fields remain `Not recorded`. No CGPA conversion or invented resume verification.
+- WP-01 / `SA-tenants-modules-17`: added college-scoped administrator identity/platform audit history linked from admins and device screens, paginated by 100 with lookahead, and formula-safe page export. Does not claim active mentor-project suspension guard or permanent delete.
+- BLOCKED `TPO-settings-audit-44`: alternative round writers outside the TPO calendar endpoint must independently enforce blocked dates; race-free multi-writer locking and live browser acceptance require separate cross-lane review.
+- BLOCKED `TPO-calendar-reports-48`: the recorded decision denominator does not include unrecorded interview attendance; historical branch snapshots do not exist.
+- BLOCKED `TPO-calendar-reports-49`: a completed round proves a recorded round ran, but offline drives without recorded rounds cannot be counted authoritatively.
+- BLOCKED `TPO-calendar-reports-43`: resume document availability/verification requires the document authorization storage owner; no inferred values are exported.
+- BLOCKED `SA-tenants-modules-17`: active-project mentor suspension guard, deletion safety and legacy exact lifecycle semantics require people/projects owner policy; history only reflects existing persisted audit events.
+- BLOCKED `SA-tenants-modules-20/33/35`: live TLS/domain/cookie/network activation remains a security/deployment owner decision; do not replace with unchecked settings.
+- BLOCKED Browser/mobile acceptance, integration/runtime checks and deployment dependencies remain unrun under FAST v2.
+
