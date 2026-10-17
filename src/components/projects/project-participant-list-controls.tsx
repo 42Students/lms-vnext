@@ -7,7 +7,7 @@ export type ProjectParticipantListQuery = {
     | "PLANNED"
     | "ACTIVE"
     | "COMPLETED"
-    | "ARCHIVED";
+    | "ARCHIVED" | "IN_PROGRESS" | "READY" | "BLOCKED";
   assignment?: "PRIMARY" | "SUPPORTING";
   attention?:
     | "MENTOR_REVIEW"
@@ -74,10 +74,13 @@ export function ProjectParticipantListControls({
                 key={value}
                 value={value}
               >
-                {learner?(value==="ACTIVE"?"In progress":value==="COMPLETED"?"Ready":label):label}
+                {label}
               </option>
             ),
           )}
+          {learner?<><option value="IN_PROGRESS">In progress</option>
+            <option value="READY">Ready</option>
+            <option value="BLOCKED">Blocked</option></>:null}
         </select>
       </label>
 
