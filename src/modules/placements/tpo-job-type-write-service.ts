@@ -77,3 +77,37 @@ export async function setTpoJobTypeActive(context:RequestContext,raw:unknown){
   return {changed:true,updatedAt:updated.updatedAt.toISOString()};
  });
 }
+
+const renameSchema=z.object({jobTypeId:z.string().uuid(),label:tpoJobTypeNameSchema,
+ expectedVersion:z.iso.datetime({offset:true})}).strict();
+export async function renameTpoJobType(ctx:RequestContext,raw:unknown){
+ const input=renameSchema.parse(raw),collegeId=await requireTpoBatchActor(ctx);
+ if(isTpoBuiltinJobType(input.label))throw new TpoConfigError("TPO_JOB_TYPE_BUILTIN");
+ if(!await placementTableExists("placement_tpo_job_types"))throw new TpoConfigError("TPO_SETTINGS_PENDING");
+ return getDb().transaction(async tx=>{
+  const [college]=await tx.select({organizationId:colleges.organizationId}).from(colleges)
+   .where(eq(colleges.id,collegeId)).for("update").limit(1);
+  if(!college)throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
+  const [current]=await tx.select().from(placementTpoJobTypes).where(and(
+   eq(placementTpoJobTypes.collegeId,collegeId),eq(placementTpoJobTypes.id,input.jobTypeId)))
+   .for("update").limit(1);
+  if(!current)throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
+  if(current.updatedAt.toISOString()!==input.expectedVersion)throw new TpoConfigError("TPO_SETTINGS_STALE");
+  const [existing]=await tx.select({id:placementTpoJobTypes.id}).from(placementTpoJobTypes)
+   .where(and(eq(placementTpoJobTypes.collegeId,collegeId),
+    sql`lower(${placementTpoJobTypes.label}) = lower(${input.label}::text)`)).limit(1);
+  if(existing&&existing.id!==current.id)throw new TpoConfigError("TPO_JOB_TYPE_EXISTS");
+  if(current.label===input.label)return {changed:false,updatedAt:current.updatedAt.toISOString()};
+  const [updated]=await tx.update(placementTpoJobTypes).set({label:input.label,updatedAt:new Date()})
+   .where(and(eq(placementTpoJobTypes.id,current.id),eq(placementTpoJobTypes.collegeId,collegeId),
+    eq(placementTpoJobTypes.updatedAt,current.updatedAt))).returning();
+  if(!updated)throw new TpoConfigError("TPO_SETTINGS_STALE");
+  await tx.insert(activityEvents).values({
+   organizationId:college.organizationId,collegeId,actorUserId:ctx.user.id,
+   actorMembershipId:ctx.membership!.id,module:"PLACEMENTS",eventType:"placements.tpo_job_type.renamed",
+   subjectType:"JOB_TYPE",subjectId:current.id,summary:"TPO renamed a custom job type",
+   metadata:{from:current.label,to:updated.label},
+  });
+  return {changed:true,updatedAt:updated.updatedAt.toISOString()};
+ });
+}
