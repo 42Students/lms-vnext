@@ -46,7 +46,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   <RecruiterConversationLiveRefresh/>
   <PageHeader eyebrow="Recruiter · Conversations" title={conversationSubject}
    description={"Placement cell discussion · "+(result.thread.jobId?"Hiring drive":"General")}/>
-  {matchingDrive?<Link href={"/hr/placements/jobs/"+encodeURIComponent(matchingDrive.job.id)+"?tab=overview"}
+  {matchingDrive?<Link href={"/recruiter/drives/"+encodeURIComponent(matchingDrive.job.id)+"?tab=overview"}
    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
    Open drive: {matchingDrive.job.title}
   </Link>:null}
