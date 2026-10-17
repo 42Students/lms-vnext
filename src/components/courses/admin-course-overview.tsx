@@ -62,7 +62,7 @@ export function AdminCourseOverview({
   catalogueQuery?:CollegeCourseCatalogueQuery;
   catalogueData?:Awaited<ReturnType<typeof listCollegeCourseCatalogue>>;
 }) {
-  const catalogue=catalogueQuery?paginateCollegeCourses(workspace.courses,catalogueQuery):null;
+  const catalogue=catalogueData??(catalogueQuery?paginateCollegeCourses(workspace.courses,catalogueQuery):null);
   const deliveryCountByOffering = new Map<
     string,
     number
