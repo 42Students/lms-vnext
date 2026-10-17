@@ -2,6 +2,8 @@ import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
 import {readTpoTeamAskWorkload} from "@/modules/placements/tpo-team-workload-service";
 import {listTpoTeamAway} from "@/modules/placements/tpo-team-away-service";
 import {TpoTeamAwayForm} from "@/components/tpo/tpo-team-away-form";
+import {TpoTeamAssignUnowned} from "@/components/tpo/tpo-team-assign-unowned";
+import {readTpoUnownedWork} from "@/modules/placements/tpo-team-unowned-service";
 import {TpoTeamSearch} from "@/components/tpo/tpo-team-search";
 import {TpoTeamThreadCreate} from "@/components/tpo/tpo-team-forms";
 import Link from "next/link";
@@ -45,6 +47,7 @@ export default async function TpoTeamPage({searchParams}:{
  const activeTeam=team.members.filter(member=>member.roles.includes("TPO")||
   member.roles.includes("TPO_ADMIN")||member.roles.includes("COLLEGE_ADMIN"));
  const workload=tab==="people"?await readTpoTeamAskWorkload(context).catch(()=>({ready:false as const,items:[]})):null;
+ const unowned=tab==="people"?await readTpoUnownedWork(context).catch(()=>({ready:false as const,drives:0,companies:0})):null;
  const workloadByMember=new Map((workload?.items??[]).map(row=>[row.membershipId,row] as const));
  const people=sortTpoPeople(activeTeam.map(member=>({
   ...member,openAsks:workloadByMember.get(member.membershipId)?.openAsks??0,
@@ -72,6 +75,9 @@ export default async function TpoTeamPage({searchParams}:{
   </nav>
   {tab==="people"?<section className="space-y-4">
     <p role="status" className="text-sm text-body">{people.length} people</p>
+    {unowned?.ready?<TpoTeamAssignUnowned drives={unowned.drives} companies={unowned.companies}
+      members={activeTeam.filter(member=>member.roles.includes("TPO")||member.roles.includes("COLLEGE_ADMIN"))
+       .map(member=>({membershipId:member.membershipId,displayName:member.displayName}))}/>:null}
     <p className="text-xs text-muted-foreground">The college&apos;s TPO and college-admin accounts are always in the team. Everyone in it can do everything in placements.</p>
     <nav aria-label="Sort team people" className="flex flex-wrap items-center gap-2 text-sm">
       <span className="font-semibold">Sort:</span>
