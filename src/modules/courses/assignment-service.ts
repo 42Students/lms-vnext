@@ -317,8 +317,11 @@ export async function updateCourseAssignment(
   }
 
   try {
-    const [updated] = await getDb()
-      .update(courseAssignments)
+    const [updated] = await getDb().transaction(async tx => {
+      const [locked] = await tx.select().from(courseAssignments)
+        .where(eq(courseAssignments.id,assignmentId)).for("update").limit(1);
+      if(!locked||locked.status==="ARCHIVED")throw new CoursesServiceError("ASSIGNMENT_NOT_FOUND");
+      return tx.update(courseAssignments)
       .set({
         ...(input.title !== undefined
           ? { title: input.title }
@@ -360,7 +363,8 @@ export async function updateCourseAssignment(
           ),
         ),
       )
-      .returning();
+      .returning().then(rows=>rows);
+    });
 
     if (!updated) {
       throw new CoursesServiceError(
