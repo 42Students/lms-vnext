@@ -45,7 +45,7 @@ Audit: `docs/audit/pages/faculty/assessments.md` (and `assessments-review.md` if
 | FAC-assessments-R05 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
 | FAC-assessments-R06 | S4 | COPY | DONE |
 | FAC-assessments-R07 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
-| FAC-assessments-R08 | S4 | VALIDATION | OPEN |
+| FAC-assessments-R08 | S4 | VALIDATION | DONE |
 | FAC-attendance-grades-R01 | S4 | VALIDATION | NOT-A-GAP |
 | FAC-attendance-grades-R02 | S4 | VALIDATION | FIXED-ON-MAIN |
 
