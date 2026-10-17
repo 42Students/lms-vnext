@@ -45,9 +45,9 @@ Audit: `docs/audit/pages/superadmin/placements-projects-b-projects.md` (and `pla
 | SA-placements-projects-79 | S3 | COPY | DONE |
 | SA-placements-projects-80 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-placements-projects-86 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
-| SA-placements-projects-87 | S3 | MISSING-ACTION | OPEN |
-| SA-placements-projects-92 | S3 | STATE | OPEN |
-| SA-placements-projects-55 | S4 | MISSING-FILTER | OPEN |
+| SA-placements-projects-87 | S3 | MISSING-ACTION | DONE |
+| SA-placements-projects-92 | S3 | STATE | DONE |
+| SA-placements-projects-55 | S4 | MISSING-FILTER | DONE |
 | SA-placements-projects-93 | S4 | MISSING-ACTION | OPEN |
 
 ## tpo/home (39: OPEN 18, FIXED-ON-MAIN 18, UNCONFIRMED 3)
@@ -56,7 +56,7 @@ Audit: `docs/audit/pages/tpo/home.md` (and `home-review.md` if present; any ID: 
 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
-| TPO-home-01 | S2 | COPY | OPEN |
+| TPO-home-01 | S2 | COPY | DONE |
 | TPO-home-04 | S2 | MISSING-FIELD | OPEN |
 | TPO-home-05 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-home-06 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
@@ -66,16 +66,16 @@ Audit: `docs/audit/pages/tpo/home.md` (and `home-review.md` if present; any ID: 
 | TPO-home-13 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-home-26 | S2 | STATE | UNCONFIRMED |
 | TPO-home-27 | S2 | PERMISSION | UNCONFIRMED |
-| TPO-home-28 | S2 | MISSING-MODAL | OPEN |
+| TPO-home-28 | S2 | MISSING-MODAL | DONE |
 | TPO-home-42 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-home-43 | S2 | RESPONSIVE | FIXED-ON-MAIN |
 | TPO-home-10 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-home-17 | S3 | A11Y | FIXED-ON-MAIN |
-| TPO-home-18 | S3 | RESPONSIVE | OPEN |
-| TPO-home-19 | S3 | STATE | OPEN |
-| TPO-home-20 | S3 | STATE | OPEN |
-| TPO-home-21 | S3 | COPY | OPEN |
-| TPO-home-23 | S3 | COPY | OPEN |
+| TPO-home-18 | S3 | RESPONSIVE | DONE |
+| TPO-home-19 | S3 | STATE | DONE |
+| TPO-home-20 | S3 | STATE | DONE |
+| TPO-home-21 | S3 | COPY | DONE |
+| TPO-home-23 | S3 | COPY | DONE |
 | TPO-home-25 | S3 | PERMISSION | UNCONFIRMED |
 | TPO-home-29 | S3 | COPY | OPEN |
 | TPO-home-30 | S3 | COPY | OPEN |
