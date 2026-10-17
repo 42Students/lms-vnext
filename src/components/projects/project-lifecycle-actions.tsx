@@ -182,8 +182,8 @@ export function TaskLifecycleActions({
 }
 
 export function ReleaseLifecycleActions({
-  projectId,releaseId,status,
-}:{projectId:string;releaseId:string;status:string;}){
+  projectId,releaseId,status,expectedUpdatedAt,
+}:{projectId:string;releaseId:string;status:string;expectedUpdatedAt:string;}){
  const {pending,run}=useProjectAction();
  const [confirmOpen,setConfirmOpen]=useState(false);
  const shipped=status==="SHIPPED";
@@ -197,7 +197,7 @@ export function ReleaseLifecycleActions({
    description={shipped?"This removes the shipped marker; linked sprints and tasks remain unchanged.":"This marks the release as delivered. Complete every linked sprint before shipping."}
    confirmLabel={label} pending={pending}
    onConfirm={()=>void run(
-    ()=>projectMutation("/api/projects/"+projectId+"/releases/"+releaseId+"/"+action,"POST"),
+    ()=>projectMutation("/api/projects/"+projectId+"/releases/"+releaseId+"/"+action,"POST",{expectedUpdatedAt}),
     shipped?"Release un-shipped.":"Release shipped.",
     ()=>setConfirmOpen(false),
    )}/>
