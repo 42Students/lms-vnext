@@ -9,7 +9,7 @@ import {AuthorizationError,requirePermission} from "@/modules/permissions/policy
  * Never return private storage keys to the catalog or the editor. */
 export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:"YOUTUBE"|"LIVE_CLASS"|"RESOURCE"){
  const membership=ctx.membership;
- if(!membership||!hasMembershipRole(ctx,"COLLEGE_ADMIN"))
+ if(!membership||membership.status!=="ACTIVE"||ctx.user.platformStatus!=="ACTIVE"||!hasMembershipRole(ctx,"COLLEGE_ADMIN"))
   throw new AuthorizationError("courses.manage");
  requirePermission(ctx,"courses.manage",{collegeId:membership.collegeId,
   organizationId:membership.organizationId});
@@ -33,10 +33,12 @@ export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:
   .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
   .innerJoin(departments,and(eq(departments.id,courses.departmentId),eq(departments.collegeId,collegeId)))
   .innerJoin(sections,and(eq(sections.id,courseSectionDeliveries.sectionId),eq(sections.cohortId,courseOfferings.cohortId),eq(sections.academicPeriodId,courseOfferings.academicPeriodId)))
-  .where(and(eq(sections.status,"ACTIVE"),eq(courseOfferings.status,"ACTIVE"),isNull(courseSectionDeliveries.endedAt)))
+  .where(and(eq(sections.status,"ACTIVE"),eq(courseOfferings.status,"ACTIVE"),
+   eq(courses.status,"ACTIVE"),isNull(courseSectionDeliveries.endedAt)))
   .orderBy(asc(sections.name)).limit(2000);
  const existing=await db.select({
   id:lessonContents.id,lessonId:lessonContents.lessonId,title:lessonContents.title,
+  offeringId:courseOfferings.id,lessonName:courseLessons.name,courseCode:courses.code,
   deliveryId:lessonContents.deliveryId,
   notes:lessonContents.notes,
   externalUrl:lessonContents.externalUrl,durationSeconds:lessonContents.durationSeconds,
@@ -50,8 +52,10 @@ export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:
  .innerJoin(departments,and(eq(departments.id,courses.departmentId),
   eq(departments.collegeId,collegeId)))
  .where(and(eq(lessonContents.contentType,kind),
-  ne(lessonContents.status,"ARCHIVED")))
- .orderBy(asc(courseLessons.name),asc(lessonContents.sequence),asc(lessonContents.title)).limit(251);
+  ne(lessonContents.status,"ARCHIVED"),
+  ne(courseLearningPaths.status,"ARCHIVED"),eq(courseOfferings.status,"ACTIVE"),
+  eq(courses.status,"ACTIVE"))
+ .orderBy(asc(courseLessons.name),asc(lessonContents.sequence),asc(lessonContents.title),asc(lessonContents.id)).limit(251);
  const positions=lessons.length?await db.select({lessonId:lessonContents.lessonId,highest:max(lessonContents.sequence)})
   .from(lessonContents).where(inArray(lessonContents.lessonId,lessons.map(row=>row.id)))
   .groupBy(lessonContents.lessonId):[];
