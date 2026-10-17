@@ -22,7 +22,9 @@ export function parseSelectionCsv(text:string):string[][] {
 export type SelectionImportCandidate={applicationId:string;name:string;email?:string|null;roleTitle:string;offerReady:boolean;alreadyOffered:boolean};
 export type SelectionImportEntry={line:number;applicationId:string;name:string;roleTitle:string;annualCtcInr:number|null};
 export function prepareSelectionImport(text:string,candidates:readonly SelectionImportCandidate[],roleFallback:string){
- const rows=parseSelectionCsv(text);const columns=rows.shift()?.map(s=>s.replace(/^\uFEFF/,"").toLowerCase().replace(/[\s_-]+/g,""))??[];
+ const rows=parseSelectionCsv(text);
+ if(rows.length<2)throw Error("The company selection file needs a header and at least one learner row.");
+ const columns=rows.shift()?.map(s=>s.replace(/^\uFEFF/,"").toLowerCase().replace(/[\s_-]+/g,""))??[];
  const groups=[["applicationid","applicantid"],["email","studentemail"],
   ["student","studentname","name"],["role","roletitle","jobtitle"],
   ["package","packagelpa","ctclpa","annualctc","ctc"]];
