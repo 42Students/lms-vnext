@@ -10,6 +10,7 @@ export function buildRecruiterActionQueue(input:{
  returnedRequests?:readonly {id:string;status:string;draft:unknown}[];
  changeRequests?:readonly {id:string;jobId:string;jobTitle:string;field:string;createdAt:Date}[];
  roundsNeedingSlots?:readonly {id:string;jobId:string;jobTitle:string;name:string;scheduledAt:Date|null;needsOffer:boolean}[];
+ offerActions?:readonly {jobId:string;jobTitle:string;status:string;count:number}[];
 }) {
  const authorized=new Set(input.jobs.filter(row=>row.collegeId===input.collegeId&&
   row.companyId===input.companyId&&row.job.archivedAt===null&&
@@ -27,6 +28,15 @@ export function buildRecruiterActionQueue(input:{
    description:row.needsOffer?"You have an unsent time block for "+row.jobTitle+". Offer it to the placement cell.":
     "Propose an interviewer time for "+row.jobTitle+"; the placement cell confirms the schedule.",
    href:"/recruiter/drives/"+encodeURIComponent(row.jobId)+"/interview-slots"}));
+ const offers=(input.offerActions??[]).filter(row=>authorized.has(row.jobId)&&row.count>0)
+  .slice(0,8).map(row=>({key:"offers:"+row.jobId+":"+row.status,
+    tone:(row.status==="ISSUED"?"SOON":"FINE") as "URGENT"|"SOON"|"FINE",
+    at:null as Date|null,
+    label:row.status==="ACCEPTED"?"Follow up joining · "+row.jobTitle:
+      row.status==="DECLINED"?"Review declined offers · "+row.jobTitle:
+      "Review offers · "+row.jobTitle,
+    description:row.count+" "+row.status.toLowerCase()+" offers recorded for college-shared applicants.",
+    href:"/recruiter/drives/"+encodeURIComponent(row.jobId)+"?tab=offers"}));
  const conversations=(input.unreadConversations??[]).filter(item=>item.unread>0)
   .slice(0,5).map(item=>({key:"thread:"+item.id, tone:"SOON" as const, at:null as Date|null,
     label:"Open messages · "+item.label,
@@ -70,7 +80,7 @@ export function buildRecruiterActionQueue(input:{
    label:"Read "+input.unread+" unread notifications",
    description:"Open your college-scoped drive notification inbox.",
    href:recruiterTodayHref({kind:"MESSAGES"})+"?collegeId="+encodeURIComponent(input.collegeId)+"&unreadOnly=true"}]:[];
- const actions=[...changeRequests,...returned,...slots,...conversations,...due,...deadlines,...reviews,...notices];
+ const actions=[...changeRequests,...returned,...slots,...offers,...conversations,...due,...deadlines,...reviews,...notices];
  const priority={URGENT:0,SOON:1,FINE:2};
  return actions.sort((a,b)=>{
   const rank=priority[a.tone]-priority[b.tone];
