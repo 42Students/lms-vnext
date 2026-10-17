@@ -201,6 +201,9 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
                 <p className="text-sm text-body">{tpoDriveStatusLabel(job.status)} · {job.employmentType} · {job.workMode}</p>
                 <dl className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-sm text-body">
                   <div className="flex gap-1"><dt>Applied:</dt><dd className="font-semibold tabular-nums">{job.appliedCount}</dd></div>
+                  <div className="flex gap-1"><dt>Created by:</dt><dd>{job.createdBy??"College staff"}</dd></div>
+                  <div className="flex gap-1"><dt>Job type:</dt><dd>{job.employmentType.replaceAll("_"," ")}</dd></div>
+                  <div className="flex gap-1"><dt>Mode:</dt><dd>{job.workMode}</dd></div>
                   <div className="flex gap-1"><dt>Pay:</dt><dd className="font-semibold">
                     {job.minimumAnnualCtcInr == null && job.maximumAnnualCtcInr == null
                       ? "Not recorded"
@@ -208,7 +211,8 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
                         ? (job.minimumAnnualCtcInr / 100000).toLocaleString("en-IN") : "—") +
                         (job.maximumAnnualCtcInr != null
                           ? "–" + (job.maximumAnnualCtcInr / 100000).toLocaleString("en-IN") : "") + " LPA"}
-                    {job.isDream ? " · Dream" : ""}
+                    {job.isDream ? " · Dream" : " · Regular"}
+                    {job.stipendPerMonthInr!=null?" · Stipend ₹"+job.stipendPerMonthInr.toLocaleString("en-IN")+"/month":""}
                   </dd></div>
                 </dl>
                 <p className="mt-2 text-sm font-semibold text-foreground">
