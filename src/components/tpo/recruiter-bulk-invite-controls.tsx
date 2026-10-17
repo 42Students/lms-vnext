@@ -35,6 +35,7 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
    }catch(e){outcome.push({id:lead.id,name:lead.name,email:lead.emailNorm??"",
     url:null,reason:e instanceof Error?e.message:"Could not create link",emailed:false});}
   }
+  if(!retryOnly)setReviewSnapshot(null);
   setResults(previous=>retryOnly?[
     ...previous.filter(item=>!target.some(lead=>lead.id===item.id)),
     ...outcome,
