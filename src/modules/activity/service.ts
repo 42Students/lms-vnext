@@ -1,5 +1,6 @@
 import {
   and,
+  count,
   desc,
   eq,
   gte,
@@ -664,7 +665,11 @@ export async function listActivityEvents(
   const last =
     items[items.length - 1];
 
+  const [remainingRow]=hasMore?await getDb().select({n:count()})
+    .from(activityEvents).leftJoin(users,eq(users.id,activityEvents.actorUserId))
+    .where(conditions.length?and(...conditions):undefined):[{n:items.length}];
   return {
+    remainingCount:hasMore?Math.max(0,(remainingRow?.n??0)-items.length):0,
     items,
     groups:
       groupActivityEvents(items),

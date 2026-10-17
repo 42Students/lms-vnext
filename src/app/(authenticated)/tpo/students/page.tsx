@@ -3,6 +3,8 @@ import Link from "next/link";
 import {TpoSafeCsvDownload} from "@/components/tpo/tpo-safe-csv-download";
 import {Suspense} from "react";
 import {TpoStudentsSpreadsheet} from "@/components/tpo/tpo-students-spreadsheet";
+import {TpoStudentsAssignPrep} from "@/components/tpo/tpo-students-assign-prep";
+import {placementTableExists} from "@/modules/placements/staged-tables";
 import {TpoDebouncedStudentSearch} from "@/components/tpo/tpo-debounced-student-search";
 import {TpoStudentsBulkDebar} from "@/components/tpo/tpo-students-bulk-debar";
 import {TpoStudentsSelectionProvider,TpoStudentsSelectionSummary} from "@/components/tpo/tpo-students-selection";
@@ -954,6 +956,7 @@ export default async function TpoStudentsPage({
             id:student.membershipId,label:student.displayName+" · "+student.branchName
           }))??undefined:undefined}/>
 
+        {manageAllowed&&(await placementTableExists("placement_tpo_prep_assignments"))?<TpoStudentsAssignPrep/>:null}
         {manageAllowed?<TpoStudentsBulkDebar learners={roster.items.map(student=>({
           id:student.membershipId,name:student.displayName,debarred:student.debarred===true
         }))}/>:null}

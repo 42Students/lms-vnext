@@ -15,6 +15,7 @@ export type ActivityCenterGroup = {
       subjectId: string;
       subjectLabel: string | null;
       summary: string;
+      metadata: Record<string,unknown>;
       occurredAt: string;
     };
     actor: {
@@ -39,6 +40,17 @@ function humanize(value: string) {
     .join(" ");
 }
 
+export function activityEventSentence(
+ event:{eventType:string;subjectType:string;subjectLabel:string|null},
+ actor:{displayName:string|null;email:string|null}|null,
+){
+ const who=actor?.displayName?.trim()||actor?.email?.trim()||"System";
+ const action=event.eventType.split(".").at(-1)?.replaceAll("_"," ").toLowerCase()||"updated";
+ const thing=humanize(event.subjectType);
+ const label=event.subjectLabel?.trim();
+ return [who,action,thing,label&&label.toLowerCase()!==thing.toLowerCase()?label:null]
+  .filter(Boolean).join(" ");
+}
 function activityDay(value:string){
  return new Intl.DateTimeFormat("en-CA",{year:"numeric",month:"2-digit",day:"2-digit",timeZone:"Asia/Kolkata"}).format(new Date(value));
 }
@@ -76,11 +88,13 @@ function tone(
 export function ActivityCenter({
   groups,
   nextHref,
+  nextRemaining,
   todayKey,
   yesterdayKey,
 }: {
   groups: readonly ActivityCenterGroup[];
   nextHref: string | null;
+  nextRemaining:number;
   todayKey?: string;
   yesterdayKey?: string;
 }) {
@@ -141,8 +155,9 @@ export function ActivityCenter({
                     ) : null}
                   </div>
                   <h2 className="mt-3 text-base font-semibold text-foreground">
-                    {item.event.summary}
+                    {activityEventSentence(item.event,item.actor)}
                   </h2>
+                  <p className="mt-1 text-sm text-body">{item.event.summary}</p>
                   <p className="mt-1 text-sm text-body">
                     {item.event.subjectLabel ??
                       humanize(
@@ -189,6 +204,9 @@ export function ActivityCenter({
                   <div><dt>Entity</dt><dd className="break-all">{item.event.subjectType}: {item.event.subjectId}</dd></div>
                   <div><dt>Exact time (IST)</dt><dd>{formatWhen(item.event.occurredAt)}</dd></div>
                   <div><dt>Events grouped</dt><dd>{group.count>1?"several at once ("+group.count+")":"1"}</dd></div>
+                  {Object.entries(item.event.metadata).map(([name,value])=><div key={name}>
+                    <dt>{humanize(name)}</dt><dd className="break-all">{typeof value==="string"?value:JSON.stringify(value)}</dd>
+                  </div>)}
                 </dl>
               </details>
             </article>
@@ -203,7 +221,7 @@ export function ActivityCenter({
             href={nextHref}
             className="inline-flex min-h-10 items-center justify-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
           >
-            Load more activity
+            Load more ({nextRemaining} older)
           </Link>
         </div>
       ) : null}

@@ -4,6 +4,8 @@ import {
   eq,
   inArray,
   ne,
+  or,
+  sql,
   gt,
   lt,
 } from "drizzle-orm";
@@ -256,9 +258,16 @@ export async function scheduleProjectMeeting(
     if (existing && !["REQUESTED","SCHEDULED"].includes(existing.status)) {
       throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
     }
+    // MEN-projects-meetings-R02: prevent the organiser being double-booked
+    // across multiple Project workspaces. The transaction-scoped lock makes
+    // the check safe even when two different projects schedule concurrently.
+    await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(${context.user.id}, 17))`);
     const [conflict] = await tx.select({id:projectMeetings.id}).from(projectMeetings)
-      .where(and(eq(projectMeetings.projectId,scope.project.id),
-        inArray(projectMeetings.status,["SCHEDULED"]),
+      .where(and(or(
+          eq(projectMeetings.projectId,scope.project.id),
+          eq(projectMeetings.scheduledByUserId,context.user.id),
+        ),
+        eq(projectMeetings.status,"SCHEDULED"),
         lt(projectMeetings.startsAt,endsAt),gt(projectMeetings.endsAt,startsAt),
         ...(existing ? [ne(projectMeetings.id,existing.id)] : [])))
       .limit(1);

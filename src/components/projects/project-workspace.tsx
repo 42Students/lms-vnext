@@ -17,6 +17,8 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { MentorSprintDetailsEdit } from "./mentor-sprint-details-edit";
 import {MentorSprintDeleteControl} from "./mentor-sprint-delete-control";
 import {ProjectActivityFilteredList} from "./project-activity-filtered-list";
+import {CollegeProjectMentorDialog} from "./college-project-mentor-dialog";
+import {CollegeProjectStudentRosterDialog} from "./college-project-student-roster-dialog";
 import {ProjectResourceList} from "./project-resource-list";
 import {MentorDeliveryLockControl} from "./mentor-delivery-lock-control";
 import { MentorSprintCreate, MentorSprintTransition } from "./mentor-sprint-write";
@@ -673,13 +675,14 @@ export function ProjectWorkspace({
             </p>:null}
           </div>
           {mode === "ADMIN" && !readOnly ? (
-            <Link href={"/college/projects/reassign-mentor?projectId=" + encodeURIComponent(workspace.project.id)}
-              className="inline-flex min-h-9 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Reassign mentor</Link>
+            <CollegeProjectMentorDialog projectId={workspace.project.id} collegeId={workspace.project.collegeId}/>
           ) : null}
           {mode === "ADMIN" && !readOnly && !workspace.project.teamGroupId ? (
-            <AddProjectMemberControl
-              projectId={workspace.project.id}
-            />
+            <>
+              <CollegeProjectStudentRosterDialog projectId={workspace.project.id}
+                expectedUpdatedAt={workspace.project.updatedAt.toISOString()}/>
+              <AddProjectMemberControl projectId={workspace.project.id}/>
+            </>
           ) : null}
         </div>
         {mode==="MENTOR" && mentorWorkspaceMissingPrimaryMentor(workspace.project.status,workspace.members) ? (
@@ -759,8 +762,19 @@ export function ProjectWorkspace({
             Review submission
           </Link> : null}
           {mode==="ADMIN"?<p className="mt-1 text-sm text-body">Release and sprint execution records.</p>:null}
-          {mode!=="LEARNER"&&!readOnly?<MentorReleaseEditor projectId={workspace.project.id}/>:null}
-          {mode==="MENTOR"&&workspace.releases.length===0?<p role="status" className="mt-2 rounded-md border border-border p-4 text-sm text-body">No sprints yet. Add a release to organise the first sprint, then choose the tasks this project should be measured against.</p>:null}
+          {mode!=="LEARNER"&&!readOnly?
+            <div id="mentor-project-add-release" className="scroll-mt-24">
+              <MentorReleaseEditor projectId={workspace.project.id}/>
+            </div>:null}
+          {mode==="MENTOR"&&workspace.releases.length===0?
+            <div role="status" className="mt-2 rounded-md border border-border p-4 text-sm text-body">
+              <p>No sprints yet. Add the sprints this project should be measured against.</p>
+              {readOnly?
+                <p className="mt-2">This workspace is read-only, so sprints cannot be added.</p>:
+                <p className="mt-2">First <a href="#mentor-project-add-release"
+                  className="font-semibold text-primary-text underline">add a release</a>,
+                  then use Add sprint inside that release. The Board and Task Allocation will appear here.</p>}
+            </div>:null}
         </div>
         {mode==="LEARNER"?<div role="status" className="rounded-lg border border-border p-3 text-sm text-body">
           {(()=>{
@@ -1587,7 +1601,7 @@ export function ProjectWorkspace({
             </p>
           </div>
 
-          <ProjectActivityFilteredList projectId={workspace.project.id} events={workspace.activity} now={renderTime.toISOString()}/>
+          <ProjectActivityFilteredList projectId={workspace.project.id} events={workspace.activity} now={renderTime.toISOString()} resourceAudit={mode==="ADMIN"}/>
 
 
         </section>

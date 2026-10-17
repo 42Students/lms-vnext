@@ -48,6 +48,10 @@ export default async function CollegeCompaniesPage({
         name: item.name,
         websiteUrl: item.websiteUrl,
         primaryDomain: item.primaryDomain,
+        verifiedAt:item.verifiedAt,
+        companyStatus:item.companyStatus,
+        relationshipStatus:item.relationshipStatus,
+        industry:item.industry,
         isTrusted: item.isTrusted,
         ownerMembershipId: item.ownerMembershipId,
       }))}

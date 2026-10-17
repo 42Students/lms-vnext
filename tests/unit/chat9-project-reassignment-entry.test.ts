@@ -7,7 +7,7 @@ describe("college Projects reassignment workflow entry",()=>{
   const root=join(process.cwd(),"src/app/(authenticated)/college/projects");
   const src=readFileSync(join(root,"page.tsx"),"utf8");
   expect(src).toContain('href="/college/projects/reassign-mentor"');
-  expect(src).toContain("Bulk mentor reassignment");
+  expect(src).toContain("Bulk reassign mentor");
   expect(existsSync(join(root,"reassign-mentor/page.tsx"))).toBe(true);
   expect(existsSync(join(root,"[projectId]/[section]/page.tsx"))).toBe(true);
   expect(collegeLegacyGroupForPath("/college/projects/reassign-mentor")?.title).toBe("Projects");
