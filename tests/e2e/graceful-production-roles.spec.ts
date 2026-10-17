@@ -26,10 +26,9 @@ for (const { role, route } of roles) {
   test(`GR-80 GR-82 ${role} production stale chunk reload stays branded and usable`,
     async ({ browser }) => {
       test.setTimeout(45_000);
-      test.skip(!base || !sessions,
-        "Needs externally signed-in isolated production build and role storage-state files");
-      const state = path.join(sessions!, role + ".json");
-      test.skip(!existsSync(state), "GR-80: missing externally authenticated " + role + " storage state");
+      const state = sessions ? path.join(sessions, role + ".json") : "";
+      test.skip(!base || !sessions || !existsSync(state),
+        "GR-80 GR-82 requires externally authenticated production state for " + role);
       const context = await browser.newContext({ storageState: state, baseURL: base! });
       try {
         const page = await context.newPage();
