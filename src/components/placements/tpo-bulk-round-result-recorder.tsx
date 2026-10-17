@@ -204,7 +204,18 @@ export function TpoBulkRoundResultRecorder({
               <option value="ABSENT">Marked absent (ABSENT)</option>
             </select>
           </label>
-          {outcome !== "PASS" ? (
+          <fieldset className="space-y-2 rounded-md border border-warning p-3">
+            <legend className="text-sm font-semibold text-foreground">Everyone I did not mark</legend>
+            <label className="flex items-start gap-2 text-sm text-body">
+              <input type="checkbox" disabled={busy||available.length>25}
+                checked={failUnselected}
+                onChange={e=>setFailUnselected(e.target.checked)}
+                className="mt-1 h-4 w-4 accent-primary"/>
+              Stage Not cleared for every other unmarked applicant ({unselected.length})
+            </label>
+            <p className="text-xs text-body">Opt in explicitly. All affected learners receive an audited staged result, but nothing is published until Apply results. This bulk action is limited to 25 total applicants; for larger rosters use the reviewed import.</p>
+          </fieldset>
+          {(outcome !== "PASS" || failUnselected) ? (
             <label className="block text-sm font-semibold text-foreground">
               Learner-facing message (required)
               <textarea
