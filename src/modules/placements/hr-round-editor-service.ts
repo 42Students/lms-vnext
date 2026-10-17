@@ -95,13 +95,9 @@ export async function editHrJobRound(context:RequestContext,rawJobId:unknown,raw
     ...(input.action==="UPDATE"?{kind:input.kind,name:input.name,mode:input.mode}:{}),
    },
   });
-  await tx.insert(activityEvents).values({
-   organizationId:job.organizationId,collegeId:job.collegeId,
-   actorUserId:context.user.id,module:"PLACEMENTS",
-   eventType:input.action==="REMOVE"?"placements.hr_round.removed":"placements.hr_round.updated",
-   subjectType:"placement_round",subjectId:target.id,
-   summary:input.action==="REMOVE"?"Recruiter removed unused hiring round":"Recruiter edited unused hiring round",
-   metadata:{jobId:job.id},
+  await notifyTpoOfRecruiterAction(tx,context,{
+   collegeId:job.collegeId,jobId:job.id,roundId:target.id,subjectId:target.id,
+   action:input.action==="REMOVE"?"ROUND_REMOVED":"ROUND_UPDATED",
   });
   return {id:updated.id,action:input.action==="REMOVE"?"REMOVED" as const:"UPDATED" as const};
  });
