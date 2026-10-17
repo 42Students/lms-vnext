@@ -64,6 +64,13 @@ async function postJson(path: string, body: unknown) {
   return response.json();
 }
 
+function createdRecordId(result:unknown,kind:"course"|"offering"|"delivery"){
+ if(!result||typeof result!=="object")return null;
+ const value=(result as Record<string,unknown>)[kind];
+ if(!value||typeof value!=="object")return null;
+ const id=(value as Record<string,unknown>).id;
+ return typeof id==="string"&&/^[a-f0-9-]{36}$/i.test(id)?id:null;
+}
 function FieldLabel({ htmlFor, children }: { htmlFor: string; children: React.ReactNode }) {
   return <label htmlFor={htmlFor} className="mb-1.5 block text-xs font-semibold text-body">{children}</label>;
 }
@@ -93,6 +100,7 @@ export function AdminCourseCreatePanel({
   const { showToast } = useToast();
   const [pending, startTransition] = useTransition();
   const [offeringConfirmOpen, setOfferingConfirmOpen] = useState(false);
+  const [nextSetupStep,setNextSetupStep]=useState<"COURSE"|"OFFERING"|"DELIVERY"|"FACULTY"|"DONE">("COURSE");
 
   const copy=collegeCourseDuplicatePrefill(courses,duplicateCourseId);
   const [courseDepartmentId, setCourseDepartmentId] = useState(copy?.departmentId??"");
@@ -155,11 +163,11 @@ export function AdminCourseCreatePanel({
     );
   }, [sections, selectedDeliveryOffering]);
 
-  function run(task: () => Promise<unknown>, successTitle: string, reset: () => void, failureTitle = "Course update failed") {
+  function run(task: () => Promise<unknown>, successTitle: string, reset: (result:unknown) => void, failureTitle = "Course update failed") {
     startTransition(async () => {
       try {
-        await task();
-        reset();
+        const result=await task();
+        reset(result);
         showToast({ tone: "success", title: successTitle });
         router.refresh();
       } catch (error) {
@@ -182,7 +190,8 @@ export function AdminCourseCreatePanel({
         description: courseDescription.trim() || null,
       }),
       COLLEGE_COURSES_COPY.createdMessage(courseName.trim()),
-      () => { setCourseName(""); setCourseCode(""); setCourseDescription(""); if(copy)router.replace("/college/courses"); },
+      (result) => { const id=createdRecordId(result,"course");if(id){setOfferingCourseId(id);setNextSetupStep("OFFERING");}
+        setCourseName("");setCourseCode("");setCourseDescription("");if(copy)router.replace("/college/courses"); },
       COLLEGE_COURSES_COPY.createFailed,
     );
   }
@@ -204,7 +213,10 @@ export function AdminCourseCreatePanel({
         displayOrder: Number(offeringDisplayOrder),
       }),
       "Course Offering created",
-      () => {
+      (result) => {
+        const id=createdRecordId(result,"offering");
+        if(id){setDeliveryOfferingId(id);setNextSetupStep("DELIVERY");}
+        setDeliverySectionId("");
         setOfferingConfirmOpen(false);
         setOfferingCourseId("");
         setOfferingCohortId("");
@@ -223,7 +235,8 @@ export function AdminCourseCreatePanel({
         sectionId: deliverySectionId,
       }),
       "Section delivery created",
-      () => { setDeliveryOfferingId(""); setDeliverySectionId(""); },
+      (result) => {const id=createdRecordId(result,"delivery");if(id){setTeacherDeliveryId(id);setNextSetupStep("FACULTY");}
+        setDeliverySectionId("");},
     );
   }
 
@@ -236,13 +249,26 @@ export function AdminCourseCreatePanel({
         role: teacherRole,
       }),
       "Teaching assignment created",
-      () => { setTeacherMembershipId(""); setTeacherRole("PRIMARY"); },
+      () => {setTeacherMembershipId("");setTeacherRole("PRIMARY");setNextSetupStep("DONE");},
     );
   }
 
   return (
-    <section className="grid gap-4 xl:grid-cols-2">
-      <form onSubmit={createCourse} className="rounded-xl border border-border bg-surface p-5">
+    <section aria-label="Course setup workflow" className="grid gap-4 xl:grid-cols-2">
+      <nav aria-label="Course setup steps" className="flex flex-wrap gap-3 rounded-xl border border-border bg-surface p-3 text-sm xl:col-span-2">
+       <a href="#setup-course" className="font-semibold text-primary-text underline">1. Create Course</a>
+       <a href="#setup-offering" className="font-semibold text-primary-text underline">2. Course Offering</a>
+       <a href="#setup-delivery" className="font-semibold text-primary-text underline">3. Section Delivery</a>
+       <a href="#setup-faculty" className="font-semibold text-primary-text underline">4. Assign Course Faculty</a>
+      </nav>
+      <p role="status" className="rounded border border-border bg-surface p-3 text-sm text-body xl:col-span-2">
+       {nextSetupStep==="COURSE"?"Start by creating or choosing a Course.":
+        nextSetupStep==="OFFERING"?"Course created. Choose a Cohort and Academic Period for its Offering.":
+        nextSetupStep==="DELIVERY"?"Offering created. Choose the compatible Section for the Delivery.":
+        nextSetupStep==="FACULTY"?"Section Delivery created. Assign Faculty to that Section.":
+        "Teaching assignment saved. The Course setup flow is complete."}
+      </p>
+      <form id="setup-course" onSubmit={createCourse} className="rounded-xl border border-border bg-surface p-5">
         <h2 className="m-0 text-base font-semibold text-foreground">{COLLEGE_COURSES_COPY.createTitle}</h2>
         {copy?<div className="mt-3 flex flex-wrap items-center gap-3 rounded border border-border bg-surface-subtle p-3">
           <strong>Duplicating “{copy.name}”</strong>
@@ -275,7 +301,7 @@ export function AdminCourseCreatePanel({
         </div>
       </form>
 
-      <form onSubmit={createOffering} className="rounded-xl border border-border bg-surface p-5">
+      <form id="setup-offering" onSubmit={createOffering} className="rounded-xl border border-border bg-surface p-5">
         <h2 className="m-0 text-base font-semibold text-foreground">New Course Offering</h2>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">Place a Course into one Cohort and Academic Period.</p>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -321,7 +347,7 @@ export function AdminCourseCreatePanel({
         </div>
       </form>
 
-      <form onSubmit={createDelivery} className="rounded-xl border border-border bg-surface p-5">
+      <form id="setup-delivery" onSubmit={createDelivery} className="rounded-xl border border-border bg-surface p-5">
         <h2 className="m-0 text-base font-semibold text-foreground">Add Section Delivery</h2>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">Connect an Offering to an exact Section. Only structurally compatible Sections are shown.</p>
         <div className="mt-4 grid gap-3">
@@ -345,7 +371,7 @@ export function AdminCourseCreatePanel({
         </div>
       </form>
 
-      <form onSubmit={assignTeacher} className="rounded-xl border border-border bg-surface p-5">
+      <form id="setup-faculty" onSubmit={assignTeacher} className="rounded-xl border border-border bg-surface p-5">
         <h2 className="m-0 text-base font-semibold text-foreground">Assign Course Faculty</h2>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">Assign an active Faculty Membership to one exact Section Delivery.</p>
         <div className="mt-4 grid gap-3">
