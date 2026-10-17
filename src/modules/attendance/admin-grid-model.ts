@@ -55,6 +55,15 @@ export function groupAttendanceDays<T extends { id: string; startsAt: string }>(
 /** One column per calendar day, including days with no class. IST date keys
  * are computed from session timestamps; UTC arithmetic creates day labels
  * without depending on the server's locale or daylight-saving settings. */
+export function attendanceMonthLabel(month:string){
+ if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(month))return "Choose a month";
+ const [year,value]=month.split("-"),names=[
+  "January","February","March","April","May","June","July",
+  "August","September","October","November","December",
+ ];
+ return names[Number(value)-1]+" "+year;
+}
+
 export function attendanceMonthDays<T extends {id:string;startsAt:string}>(
  month:string,sessions:readonly T[],
 ){
