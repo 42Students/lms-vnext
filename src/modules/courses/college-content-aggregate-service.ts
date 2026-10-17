@@ -171,7 +171,7 @@ export async function listCollegeContentAggregate(
     ...item,materialsCount:materialsReady?materialById.get(item.id)??0:null,
   }));
   return {
-    kind, query, sectionOptions, view:live?.view??"ALL", from:live?.from, to:live?.to, items:annotated, total,
+    kind, query, sectionOptions, materialCountsReady:materialsReady, view:live?.view??"ALL", from:live?.from, to:live?.to, items:annotated, total,
     totalPages: collegeContentPageCount(total),
   };
 }
