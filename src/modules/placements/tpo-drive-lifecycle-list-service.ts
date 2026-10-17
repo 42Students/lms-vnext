@@ -6,7 +6,7 @@ import {tpoDriveRequestDifferences,type TpoDriveRequestDifference} from "./tpo-d
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
-import { defaultTpoDriveView, tpoDriveLifecyclePage, tpoDriveLifecycleQuerySchema } from "./tpo-drive-lifecycle-list-model";
+import { defaultTpoDriveView, tpoDriveLifecyclePage, tpoDriveLifecycleQuerySchema, TPO_CLOSED_JOB_STATUSES } from "./tpo-drive-lifecycle-list-model";
 import {tpoApplicantExportSearchPattern} from "./tpo-drive-applications-export-model";
 import { PlacementsServiceError } from "./errors";
 import { requireTpoJobActor } from "./tpo-job-write-base";
@@ -80,7 +80,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     all:sql<number>`count(*)::int`,
     drafts:sql<number>`count(*) filter(where ${placementJobs.status}='DRAFT')::int`,
     live:sql<number>`count(*) filter(where ${placementJobs.status}='PUBLISHED')::int`,
-    closed:sql<number>`count(*) filter(where ${placementJobs.status} in ('CLOSED','CANCELLED'))::int`,
+    closed:sql<number>`count(*) filter(where ${inArray(placementJobs.status,[...TPO_CLOSED_JOB_STATUSES])})::int`,
   }).from(placementJobs).where(and(eq(placementJobs.collegeId,collegeId),
     isNull(placementJobs.archivedAt),season?eq(placementJobs.seasonId,season.id):undefined));
   const statusCounts=aggregate??{all:0,drafts:0,live:0,closed:0};
@@ -229,7 +229,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     filters.journey==="OFFERS_ISSUED"?sql`exists(
       select 1 from placement_offers po join placement_applications pa on pa.id=po.application_id
       where pa.job_id=${placementJobs.id} and po.status in ('ISSUED','ACCEPTED'))`:
-    filters.journey==="COMPLETE"?inArray(placementJobs.status,["CLOSED","CANCELLED"]):
+    filters.journey==="COMPLETE"?inArray(placementJobs.status,[...TPO_CLOSED_JOB_STATUSES]):
     undefined,
     filters.payCategory==="DREAM"?eq(placementJobs.isDream,true):
       filters.payCategory==="REGULAR"?eq(placementJobs.isDream,false):undefined,
@@ -246,7 +246,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
    const [counts]=await tx.select({total:sql<number>`count(*)::int`,
     drafts:sql<number>`count(*) filter(where ${placementJobs.status} = 'DRAFT')::int`,
     live:sql<number>`count(*) filter(where ${placementJobs.status} = 'PUBLISHED')::int`,
-    closed:sql<number>`count(*) filter(where ${placementJobs.status} in ('CLOSED','CANCELLED'))::int`,
+    closed:sql<number>`count(*) filter(where ${inArray(placementJobs.status,[...TPO_CLOSED_JOB_STATUSES])})::int`,
     deadlinesNextSevenDays:sql<number>`count(*) filter(where ${placementJobs.status} = 'PUBLISHED'
      and ${placementJobs.applicationDeadline} >= ${now.toISOString()}::timestamptz
      and ${placementJobs.applicationDeadline} <= ${now.toISOString()}::timestamptz + interval '7 days')::int`,
@@ -289,7 +289,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
       eq(placementCompanies.id, placementCompanyRelationships.companyId))
     .innerJoin(users,eq(users.id,placementJobs.createdByUserId))
     .where(and(scope,selectedView==="CLOSED"?
-      inArray(placementJobs.status,["CLOSED","CANCELLED"]):
+      inArray(placementJobs.status,[...TPO_CLOSED_JOB_STATUSES]):
       target?eq(placementJobs.status,target):undefined))
     .orderBy(filters.sort==="DEADLINE_ASC"?sql`${placementJobs.applicationDeadline} asc nulls last`:
       filters.sort==="DEADLINE_DESC"?sql`${placementJobs.applicationDeadline} desc nulls last`:placementCompanies.name,
