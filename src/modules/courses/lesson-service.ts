@@ -295,6 +295,45 @@ export async function archiveCourseLesson(
   });
 }
 
+
+/** COL-course-tabs-15: restore preserves historical progress and never revives
+ * an archived parent path. The active lesson-name/sequence constraints still
+ * apply; report conflicts rather than clobbering another lesson. */
+export async function restoreCourseLesson(context: RequestContext, lessonIdInput: string) {
+  const lessonId = courseLessonIdSchema.parse(lessonIdInput);
+  const current = await loadCourseLessonScope(lessonId, true);
+  const path = await loadLearningPathScope(current.learningPathId);
+  if (path.offeringId !== current.offeringId || path.collegeId !== current.collegeId ||
+      path.organizationId !== current.organizationId) {
+    throw new CoursesServiceError("LESSON_NOT_FOUND");
+  }
+  requirePermission(context, "courses.manage", {
+    collegeId: path.collegeId, organizationId: path.organizationId,
+  });
+  try {
+    return await getDb().transaction(async tx => {
+      await lockLiveLessonWriteAncestry(tx, path);
+      const [restored] = await tx.update(courseLessons)
+        .set({ status: "ACTIVE", updatedAt: new Date() })
+        .where(and(eq(courseLessons.id, lessonId),
+          eq(courseLessons.learningPathId, path.id), eq(courseLessons.status, "ARCHIVED")))
+        .returning();
+      if (!restored) throw new CoursesServiceError("LESSON_NOT_FOUND");
+      await recordActivityEventInTransaction(tx, context, {
+        eventType: ACTIVITY_EVENT_TYPES.COURSES_LESSON_UPDATED,
+        organizationId: path.organizationId, collegeId: path.collegeId,
+        subjectType: "course_lesson", subjectId: restored.id,
+        subjectLabel: restored.name, summary: "Restored lesson",
+        metadata: {learningPathId: path.id, restoredFrom: "ARCHIVED"},
+      });
+      return restored;
+    });
+  } catch (error) {
+    if (error instanceof CoursesServiceError) throw error;
+    throw mapLessonConstraint(error);
+  }
+}
+
 /** Move one active lesson one position in its own path with a stale-order fence.
  * Uses a temporary unoccupied sequence to respect the immediate unique index.
  */
