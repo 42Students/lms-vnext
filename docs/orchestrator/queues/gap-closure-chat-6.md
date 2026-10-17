@@ -29,7 +29,7 @@ Audit: `docs/audit/pages/faculty/assessments.md` (and `assessments-review.md` if
 | FAC-assessments-23 | S3 | COPY | FIXED-ON-MAIN |
 | FAC-assessments-27 | S3 | STATE | FIXED-ON-MAIN |
 | FAC-assessments-29 | S3 | RESPONSIVE | FIXED-ON-MAIN |
-| FAC-assessments-R03 | S3 | STATE | OPEN |
+| FAC-assessments-R03 | S3 | STATE | DONE |
 | FAC-assessments-R04 | S3 | PERFORMANCE | OPEN |
 | FAC-assessments-14 | S4 | STATE | DONE |
 | FAC-assessments-18 | S4 | VALIDATION | FIXED-ON-MAIN |
@@ -130,7 +130,7 @@ Audit: `docs/audit/pages/superadmin/academics-people-2-courses-content.md` (and 
 | SA-academics-people-70 | S4 | STATE | NOT-A-GAP |
 | SA-academics-people-71 | S4 | COPY | DONE |
 | SA-academics-people-75 | S4 | RESPONSIVE | UNCONFIRMED |
-| SA-academics-people-76 | S4 | A11Y | NOT-A-GAP$3
+| SA-academics-people-76 | S4 | A11Y | NOT-A-GAP |
 
 ## college/placements (26: FIXED-ON-MAIN 16, UNCONFIRMED 3, OPEN 7)
 
@@ -193,7 +193,7 @@ Audit: `docs/audit/pages/superadmin/placements-projects-c-tracker.md` (and `plac
 | SA-placements-projects-108 | S4 | MISSING-ACTION | DONE |
 | SA-placements-projects-111 | S4 | MISSING-ACTION | DONE |
 | SA-placements-projects-118 | S4 | PERMISSION | NOT-A-GAP |
-| SA-placements-projects-123 | S4 | COPY | DONE$3
+| SA-placements-projects-123 | S4 | COPY | DONE |
 
 ## learner/profile-misc (19: OPEN 6, FIXED-ON-MAIN 13)
 
