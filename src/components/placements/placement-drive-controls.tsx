@@ -7,6 +7,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 import { PlacementCandidateEvidenceEditor } from "./placement-candidate-evidence-editor";
@@ -233,6 +234,7 @@ export function PlacementDriveControls({
   const { showToast } = useToast();
   const [pendingKey, setPendingKey] =
     useState<string | null>(null);
+  const [presetToReplace,setPresetToReplace] = useState<{label:string;rounds:Array<[RoundKind,string]>}|null>(null);
   const [evaluationRounds, setEvaluationRounds] =
     useState<EvaluationDraft[]>(
       data.evaluation.rounds.map((round) => ({
@@ -799,7 +801,16 @@ export function PlacementDriveControls({
     }
   }
 
+  function applyRoundPreset(rounds:Array<[RoundKind,string]>){
+    setEvaluationRounds(rounds.map(([kind,name])=>({
+      id:crypto.randomUUID(),kind,name,whatToBring:null,
+      platform:null,testUrl:null,
+      durationMinutes:kind==="INTERVIEW"?45:60,
+    })));
+  }
+
   return (
+    <>
     <div className="space-y-6">
       <section className="rounded-xl border border-border bg-surface">
         <div className="border-b border-border px-5 py-4">
@@ -1382,15 +1393,11 @@ export function PlacementDriveControls({
                   variant="secondary"
                   disabled={pendingKey !== null}
                   onClick={() => {
-                    if (evaluationRounds.length > 0 && !window.confirm(
-                      "Replace your current draft round plan with " + label + "? Unsaved changes will be lost."
-                    )) return;
-                    setEvaluationRounds(rounds.map(([kind, name]) => ({
-                      id: crypto.randomUUID(),
-                      kind, name, whatToBring: null,
-                      platform: null, testUrl: null,
-                      durationMinutes: kind === "INTERVIEW" ? 45 : 60,
-                    })));
+                    if(evaluationRounds.length>0){
+                      setPresetToReplace({label,rounds});
+                      return;
+                    }
+                    applyRoundPreset(rounds);
                   }}
                 >
                   Start with: {label}
@@ -2111,5 +2118,13 @@ export function PlacementDriveControls({
         })}
       </section>
     </div>
+    <ConfirmDialog open={presetToReplace!==null} onOpenChange={open=>{if(!open)setPresetToReplace(null);}}
+      title={"Replace current round plan with "+(presetToReplace?.label??"preset")+"?"}
+      description="The current draft round plan, including unsaved edits, will be replaced. Nothing is saved to the drive until you review and save the new plan."
+      confirmLabel="Replace draft rounds" pending={pendingKey!==null} onConfirm={()=>{
+        if(!presetToReplace||pendingKey!==null)return;
+        applyRoundPreset(presetToReplace.rounds);setPresetToReplace(null);
+      }}/>
+    </>
   );
 }
