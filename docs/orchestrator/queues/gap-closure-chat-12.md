@@ -189,3 +189,5 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - Round 46: TPO-students-34 OPEN (runtime acceptance): implemented transactionally scoped academic-import application recheck and NOW_INELIGIBLE notifications; real-Postgres before/after, concurrency and notifications tests must still execute.
 
 - Round 47: TPO-students-12 now has expected override CAS undo of last successful bulk action and audit on SET/CLEAR in the shared service; remain OPEN pending live DB concurrency proof and true legacy visibility semantics.
+
+- Round 48: TPO-students-14 OPEN (partial): explicit ineligible Add to Drive with audited reason and scoped transactional eligibility override; hard guards cannot be bypassed, application conflict rolls back override; 48-hour opt-out and user-visible release still need verified work.

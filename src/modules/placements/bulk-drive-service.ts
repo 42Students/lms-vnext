@@ -1,14 +1,14 @@
 import "server-only";
 
-import { and, asc, eq, ilike } from "drizzle-orm";
+import { and, asc, eq, ilike, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
-  collegeMemberships, membershipRoles, placementApplications,
+  activityEvents, collegeMemberships, membershipRoles, placementApplications,
   placementApplicationScreenings, placementApplicationStatusHistory,
   placementDriveDayCoordinatorAssignments, placementJobRoleOptions,
-  placementJobs, placementSeasons, placementDebarments, inAppNotifications, users,
+  placementJobs, placementSeasons, placementDebarments, placementEligibilityOverrides, inAppNotifications, users,
 } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
@@ -113,11 +113,14 @@ async function loadLearner(tx: Tx, collegeId: string, membershipId: string) {
   return row ?? null;
 }
 
+class UnsafeForceInclude extends Error {}
+
 async function addOne(
   context: RequestContext,
   job: Awaited<ReturnType<typeof loadManagedDrive>>,
   roleOptionId: string,
   membershipId: string,
+  includeIneligibleReason?:string,
 ): Promise<BulkDriveResult> {
   // Run the existing learner participation and job eligibility readers
   // BEFORE opening a write transaction: those readers use getDb() and
@@ -176,14 +179,14 @@ async function addOne(
     });
   }
   const eligibility = await evaluatePlacementEligibility(context, job.id, membershipId);
-  if (eligibility.status === "INELIGIBLE" || eligibility.status === "NEEDS_DATA") {
+  if (!includeIneligibleReason && (eligibility.status === "INELIGIBLE" || eligibility.status === "NEEDS_DATA")) {
     return bulkDriveOutcome(membershipId, {
       eligible: false, reason: eligibility.status === "NEEDS_DATA"
         ? "Required evidence is missing" : "Drive eligibility requirements not met",
     });
   }
 
-  return getDb().transaction(async (tx) => {
+  try{return await getDb().transaction(async (tx) => {
     // Match the self-apply job/role lock order to prevent mid-flight closures.
     const [live] = await tx.select({
       status: placementJobs.status,
@@ -253,27 +256,46 @@ async function addOne(
       eligible: false, reason: "Drive-day coordinators cannot be applicants",
     });
 
-    // Preflight ran outside the transaction; this lock-held path has
-    // rechecked the live job, role, learner, coordinator and existing row.
-    // Concurrency-sensitive policy/evidence parity remains PARTIAL.
+    // Re-evaluate the same college-scoped evidence under the job lock. A
+    // reasoned INCLUDE may override ordinary scoring, never hard tenant,
+    // cohort, debarment, or verified-proof requirements.
+    let finalEligibility=await evaluatePlacementEligibility(context,job.id,membershipId,tx);
+    if(finalEligibility.status==="INELIGIBLE"||finalEligibility.status==="NEEDS_DATA"){
+      if(!includeIneligibleReason)return bulkDriveOutcome(membershipId,{
+        eligible:false,reason:"Drive eligibility requirements not met",
+      });
+      await tx.update(placementEligibilityOverrides).set({revokedAt:new Date()}).where(and(
+        eq(placementEligibilityOverrides.jobId,job.id),
+        eq(placementEligibilityOverrides.membershipId,membershipId),
+        isNull(placementEligibilityOverrides.revokedAt)));
+      const [included]=await tx.insert(placementEligibilityOverrides).values({
+       jobId:job.id,membershipId,decision:"INCLUDE",
+       reason:includeIneligibleReason,createdByUserId:context.user.id,
+      }).returning({id:placementEligibilityOverrides.id});
+      finalEligibility=await evaluatePlacementEligibility(context,job.id,membershipId,tx);
+      if(!["ELIGIBLE","ELIGIBLE_WITH_MISSING_EVIDENCE"].includes(finalEligibility.status)){
+       // Rollback restores any previous override and never creates an application.
+       throw new UnsafeForceInclude();
+      }
+      await tx.insert(activityEvents).values({
+       organizationId:context.membership!.organizationId,collegeId:job.collegeId,
+       actorUserId:context.user.id,actorMembershipId:context.membership!.id,
+       module:"PLACEMENTS",eventType:"STUDENTS_ADDED_TO_DRIVE_OVERRIDE",
+       subjectType:"placement_eligibility_override",subjectId:included.id,
+       summary:"Placement cell included an otherwise ineligible student",
+       metadata:{jobId:job.id,membershipId,reason:includeIneligibleReason},
+      });
+    }
     const [created] = await tx.insert(placementApplications).values({
       jobId: job.id, roleOptionId, membershipId,
-      channel: "INTERNAL", eligibilityStatus: eligibility.status,
+      channel: "INTERNAL", eligibilityStatus: finalEligibility.status,
       eligibilitySnapshot: {
-        ...eligibility, source: "TPO_BULK_ADD", addedByUserId: context.user.id,
+        ...finalEligibility, source: "TPO_BULK_ADD", addedByUserId: context.user.id,
+        addedByCollege: Boolean(includeIneligibleReason),
       },
       submittedByUserId: context.user.id,
     }).onConflictDoNothing().returning({ id: placementApplications.id });
-    if (!created) {
-      const [conflict] = await tx.select({ status: placementApplications.status })
-        .from(placementApplications).where(and(
-          eq(placementApplications.roleOptionId, roleOptionId),
-          eq(placementApplications.membershipId, membershipId),
-        )).limit(1);
-      return bulkDriveOutcome(membershipId, {
-        existingStatus: conflict?.status ?? "CONFLICT", eligible: false,
-      });
-    }
+    if (!created) throw new UnsafeForceInclude();
 
     await tx.insert(placementApplicationStatusHistory).values({
       applicationId: created.id, fromStatus: null,
@@ -302,7 +324,14 @@ async function addOne(
       actionHref:"/learn/my-placements",
     }).onConflictDoNothing();
     return bulkDriveOutcome(membershipId, { eligible: true });
-  });
+  });}catch(error){
+   if(error instanceof UnsafeForceInclude){
+    return bulkDriveOutcome(membershipId,{
+     eligible:false,reason:"Cannot override this student's college, cohort or other hard placement restriction",
+    });
+   }
+   throw error;
+  }
 }
 
 export async function bulkAddLearnersToDrive(
@@ -313,7 +342,7 @@ export async function bulkAddLearnersToDrive(
   const job = await loadManagedDrive(context, placementJobIdSchema.parse(rawJobId));
   const results: BulkDriveResult[] = [];
   for (const id of input.membershipIds) {
-    results.push(await addOne(context, job, input.roleOptionId, id));
+    results.push(await addOne(context, job, input.roleOptionId, id,input.includeIneligible?.reason));
   }
   return { results, counts: bulkDriveCounts(results) };
 }
