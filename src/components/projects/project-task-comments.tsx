@@ -61,7 +61,7 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
      {rows.length===0?<p role="status" className="text-sm text-muted-foreground">No comments yet.</p>:null}
      {rows.length>0&&!rows.some(row=>filter==="ALL"||row.commentKind===filter)?
        <p role="status" className="text-sm text-muted-foreground">No comments match this filter.</p>:null}
-     {rows.map(row=><article key={row.id} className="rounded-lg border border-border p-3 text-sm text-body">
+     {rows.filter(row=>filter==="ALL"||row.commentKind===filter).map(row=><article key={row.id} className="rounded-lg border border-border p-3 text-sm text-body">
       <p className="mb-1 text-xs font-semibold text-muted-foreground">
         {row.authorName || "Project member"} · {new Intl.DateTimeFormat("en-IN", {
           dateStyle: "medium",timeStyle: "short",timeZone: "Asia/Kolkata",
