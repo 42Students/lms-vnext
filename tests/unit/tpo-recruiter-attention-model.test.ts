@@ -17,9 +17,10 @@ describe("T-S2-01 recruiter needs-attention chips", () => {
     expect(derive({ ...base, nextFollowupAt: yesterday }, now).chips).toEqual(["OVERDUE", "QUIET"]);
     expect(derive({ ...base, nextFollowupAt: new Date("2026-10-16T00:00:00Z") }, now).chips).toEqual(["QUIET"]);
   });
-  it("avoids chips on ended or joined leads and reflects an invite bounce", () => {
+  it("avoids chips on ended leads, keeps actionable chips on joined leads and reflects an invite bounce", () => {
     expect(derive({ ...base, inviteBouncedAt: now, inviteSentAt: now }, now).chips).toContain("BOUNCED");
-    expect(derive({ ...base, recruiterUserId: "joined" }, now).chips).toEqual([]);
+    expect(derive({ ...base, recruiterUserId: "joined" }, now).chips).toEqual(["NO_NEXT_STEP", "QUIET"]);
+    expect(derive({ ...base, manualStage: "NOT_NOW" }, now).chips).toEqual([]);
     expect(derive({ ...base, unsubscribedAt: now }, now).chips).toEqual([]);
   });
 });

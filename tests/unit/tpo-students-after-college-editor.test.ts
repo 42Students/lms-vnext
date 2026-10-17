@@ -3,9 +3,9 @@ import { readFileSync } from "node:fs";
 import { afterCollegeOutcomeSchema, afterCollegeOptions } from "@/modules/placements/tpo-after-college-model";
 
 describe("TPO-students-05 after-college roster editing", () => {
-  it("offers the five verified, fixed outcomes", () => {
+  it("offers the six manual outcomes (placed and debarred need evidence)", () => {
     const options = afterCollegeOptions();
-    expect(options).toHaveLength(5);
+    expect(options).toHaveLength(6);
     expect(options.every(option => afterCollegeOutcomeSchema.safeParse(option.value).success)).toBe(true);
   });
   it("mounts a scoped editor with original-row version and undo path", () => {

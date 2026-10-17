@@ -33,7 +33,7 @@ describe("DB09 TPO recruiter CSV import", () => {
     expect(preview.valid).toBe(2);
     expect(preview.invalid).toBe(2);
     expect(preview.rows[1]?.lead).toBeNull();
-    expect(preview.rows[3]?.error).toContain("six columns");
+    expect(preview.rows[3]?.error).toContain("different number of columns");
     expect(normalizeTpoLeadImportPhone("+91 98765 43210")).toBe("9876543210");
   });
 
@@ -65,6 +65,6 @@ describe("DB09 TPO recruiter CSV import", () => {
       { row: 2, status: "created", reason: null, leadId: "one" },
       { row: 3, status: "duplicate", reason: "Existing", leadId: null },
       { row: 4, status: "invalid", reason: "Invalid", leadId: null },
-    ])).toEqual({ total: 3, created: 1, duplicate: 1, invalid: 1 });
+    ])).toEqual({ total: 3, created: 1, duplicate: 1, invalid: 1, skipped: 0 });
   });
 });

@@ -4,7 +4,7 @@ import {tpoHeaderSnapshotSchema} from "@/modules/activity/tpo-header-snapshot-mo
 
 describe("TPO-home-33 and TPO-inbox-team-62 live topbar counts",()=>{
  const valid={messages:2,unread:3,items:[{id:"11111111-1111-4111-8111-111111111111",
-  title:"A recruiter replied",body:null,actionHref:"/tpo/messages",readAt:null}]};
+  title:"A recruiter replied",body:null,actionHref:"/tpo/messages",readAt:null,createdAt:"2026-10-16T05:30:00.000Z"}]};
  it("accepts only non-negative integer counts and a bounded bell snapshot",()=>{
   expect(tpoHeaderSnapshotSchema.safeParse(valid).success).toBe(true);
   expect(tpoHeaderSnapshotSchema.safeParse({...valid,messages:-1}).success).toBe(false);

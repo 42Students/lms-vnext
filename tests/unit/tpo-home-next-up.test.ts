@@ -24,7 +24,7 @@ describe("TPO-home-11 priority and exact legacy action copy",()=>{
  it("maps actual operational results without fabricated urgency classes",()=>{
   const signals=operationalHomeNeeds([{code:"RESULTS_AWAITING_APPLY",priority:"HIGH",
    jobId:"j",jobTitle:"Engineer",companyName:"Acme",count:2}]);
-  expect(signals[0]).toMatchObject({type:"RESULTS_READY",priority:10});
+  expect(signals[0]).toMatchObject({type:"RESULTS_READY",priority:1});
   expect(buildTpoLegacyNextUp({needsYou:signals,batches:[],checklist:[]})?.action).toBe("Apply results");
  });
 });

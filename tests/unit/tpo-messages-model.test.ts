@@ -89,6 +89,7 @@ describe("TPO Messages read model", () => {
       unread: 1,
       read: 1,
       empty: 1,
+      reply: 0,
     });
   });
 

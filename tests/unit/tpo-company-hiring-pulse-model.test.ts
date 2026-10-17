@@ -13,6 +13,7 @@ describe("company hiring pulse",()=>{
   expect(projectTpoCompanyHiringPulse(input)).toEqual({
    activeDrives:1,seasonsWithDrives:2,distinctAcceptedLearners:1,
    distinctConfirmedJoinedLearners:1,latestRecordedEventIso:"2026-10-02T00:00:00.000Z",
+   confirmedJoinsWithoutYear:1,hiredPerYear:[],yearsHiring:0,
   });
  });
  it("does not fabricate recency without an event",()=>{

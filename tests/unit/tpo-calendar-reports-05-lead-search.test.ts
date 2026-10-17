@@ -16,8 +16,9 @@ describe("TPO-calendar-reports-05 searchable picker across all leads",()=>{
   const page=readFileSync("src/components/placements/placement-calendar-workspace.tsx","utf8");
   const client=readFileSync("src/components/placements/tpo-calendar-followup-actions.tsx","utf8");
   expect(page).not.toContain("recruiterLeads.slice(0, 100)");
-  expect(page).toContain("emailNorm: lead.emailNorm");
-  expect(client).toContain("searchTpoCalendarLeads(leads,query,30)");
-  expect(client).toContain("leadId: selectedLeadId");
+  expect(page).toContain("<TpoNewFollowupModal");
+  expect(client).toContain("lead.email");
+  expect(client).toContain(".slice(0, 50)");
+  expect(client).toContain('leadId: String(data.get("leadId")');
  });
 });

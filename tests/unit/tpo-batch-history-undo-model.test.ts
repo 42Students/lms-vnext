@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { actionableBatchHistory } from "@/modules/placements/tpo-batch-history-undo-model";
 describe("cohort undo candidates",()=>{
- const a={actionId:"a",kind:"DECIDE",reversesActionId:null,scopeType:"COHORT"};
+ const a={actionId:"a",kind:"DECIDE",reversesActionId:null,scopeType:"COHORT",scopeId:"cohort-1"};
  it("only offers newest unreversed cohort action",()=>{
   const data=actionableBatchHistory([{...a,actionId:"b"},a]);
   expect(data.map(x=>x.canRequestUndo)).toEqual([true,false]);

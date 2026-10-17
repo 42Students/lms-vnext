@@ -53,11 +53,11 @@ describe("offer register",()=>{
   expect(report.totalMatching).toBe(1);
   expect(report.csv).toContain("\"\u0027=HYPERLINK(1)\"");
   expect(report.csv).toContain("Issued (IST)");
-  const many=tpoDriveOfferRegisterCsv(Array.from({length:501},(_,i)=>row(String(i),"ISSUED")),{status:"ALL",q:"",joining:"ALL",kind:"ALL",expiry:"ALL"});
+  const many=tpoDriveOfferRegisterCsv(Array.from({length:5001},(_,i)=>row(String(i),"ISSUED")),{status:"ALL",q:"",joining:"ALL",kind:"ALL",expiry:"ALL"});
   expect(many.truncated).toBe(true);
   expect(many.csv).toContain("TRUNCATED");
-  expect(many.csv).toContain("First 500 of 501");
-  expect(many.csv.split(/\r?\n/).filter(line=>line.includes("\"ISSUED\"")).length).toBe(500);
+  expect(many.csv).toContain("First 5000 of 5001");
+  expect(many.csv.split(/\r?\n/).filter(line=>line.includes("\"ISSUED\"")).length).toBe(5000);
  });
  it("rejects unknown statuses and extra keys",()=>{
   const jobId="aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
