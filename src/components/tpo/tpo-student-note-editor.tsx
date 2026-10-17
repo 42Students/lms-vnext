@@ -1,4 +1,5 @@
 "use client";
+import {apiFetch} from "@/lib/api-fetch";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 export function TpoStudentNoteEditor({membershipIds,afterSave}:{
@@ -13,12 +14,10 @@ export function TpoStudentNoteEditor({membershipIds,afterSave}:{
   if(!membershipIds.length||!note.trim()||busy)return;
   setBusy(true);setError("");setMessage("");
   try{
-   const res=await fetch("/api/placements/tpo/students/notes",{
+   const data=await apiFetch<{added:number;skipped:number}>("/api/placements/tpo/students/notes",{
     method:"POST",headers:{"Content-Type":"application/json"},
     credentials:"same-origin",body:JSON.stringify({membershipIds,note:note.trim()}),
    });
-   const data=await res.json().catch(()=>null);
-   if(!res.ok)throw Error(data?.error??"Could not save note.");
    setMessage(data.added+" note(s) saved; "+data.skipped+" skipped.");
    setNote("");afterSave?.();router.refresh();
   }catch(error){setError(error instanceof Error?error.message:"Could not save note.");}

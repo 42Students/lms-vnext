@@ -1,4 +1,5 @@
 "use client";
+import {apiFetch} from "@/lib/api-fetch";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 import type {VerificationQueueCard} from "@/components/verification/VerificationWorkspace";
@@ -38,16 +39,11 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
   if(payload.items.length===0)return;
   setBusy(true);setError("");
   try{
-   const response=await fetch("/api/tpo/verification/bulk-review",{
+   const result=await apiFetch<{outcomes:BulkReviewOutcome[];summary?:{attempted:number;succeeded:number;failed:number}}>("/api/tpo/verification/bulk-review",{
     method:"POST",credentials:"same-origin",cache:"no-store",
     headers:{"Content-Type":"application/json"},body:JSON.stringify(payload),
    });
-   const result=await response.json().catch(()=>null) as {
-    error?:string;outcomes?:BulkReviewOutcome[];summary?:{attempted:number;succeeded:number;failed:number}
-   }|null;
-   if(!response.ok||!Array.isArray(result?.outcomes))throw Error(response.status===409
-    ?"This changed while you were working. Refresh the student list and review again."
-    :"Could not save the selected verification decisions. Please try again.");
+   if(!Array.isArray(result?.outcomes))throw Error("Could not read the verification result. Refresh and try again.");
    setReceiptRows(eligible);
    setOutcomes(result.outcomes);
    setPreview(false);setAck(false);

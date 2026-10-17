@@ -1,4 +1,5 @@
 "use client";
+import {apiFetch} from "@/lib/api-fetch";
 import { useState } from "react";
 import {
  tpoStudentNudgeTemplates,tpoStudentNudgeLabels,
@@ -27,16 +28,11 @@ export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
   if(!window.confirm("Send an in-app message to "+validSelected.length+" learner(s)? The message will be audited."))return;
   setPending(true);setError("");setNotice("");
   try{
-   const response=await fetch("/api/placements/tpo/students/nudges",{
+   const data=await apiFetch<{sent?:number;skipped?:number}>("/api/placements/tpo/students/nudges",{
     method:"POST",credentials:"same-origin",cache:"no-store",
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify(parsed.data),
    });
-   const data=await response.json().catch(()=>null) as {sent?:number;skipped?:number}|null;
-   if(!response.ok)throw new Error(
-    response.status===403?"Your TPO access is no longer active.":
-    response.status===409?"This changed while you were working. Your message is kept below. Review the recipients and try again.":
-    "Could not send the message. Review the recipients and try again.");
    setNotice(String(data?.sent??0)+" sent; "+String(data?.skipped??0)+" already delivered today.");
    setSelected([]);
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not send follow-up.");}

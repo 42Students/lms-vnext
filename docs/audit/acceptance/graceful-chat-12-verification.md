@@ -15,3 +15,6 @@ Tests were authored but not executed by this lane. These entries describe touche
 | GR-91 | DONE (touched retry and export) | Keyboard-visible focus and Retry; `tests/unit/chat12-tpo-safe-export.test.ts`, `GR-91` |
 
 Still required: shared `apiFetch` and `useGuardedAction` adoption after chat-14 helpers land; independent orchestrator browser failures for final acceptance.
+
+| GR-04 | DONE (chat-12 Students controls) | eight client components use `apiFetch`; `tests/unit/chat12-round3-api-fetch.test.ts` named test `GR-04` |
+| GR-09 | DONE (chat-12 Students controls) | no raw `body.error` or `result.error` used in touched TPO students controls; `tests/unit/chat12-round3-api-fetch.test.ts` named test `GR-09` |

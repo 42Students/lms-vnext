@@ -1,4 +1,5 @@
 "use client";
+import {apiFetch} from "@/lib/api-fetch";
 import {useState} from "react";
 import {useRouter,useSearchParams} from "next/navigation";
 type Selection={journeyState?:string;branchId?:string;batchId?:string;search?:string;
@@ -33,21 +34,17 @@ export function TpoStudentSavedViews(){
  const [notice,setNotice]=useState("");
  async function load(){
   setBusy(true);setError("");
-  try{const res=await fetch(api,{cache:"no-store"}),body=await res.json().catch(()=>null);
-   if(!res.ok||!Array.isArray(body))throw Error("Could not load saved views. Try again.");
-   setRows(body as View[]);
+  try{const body=await apiFetch<View[]>(api,{cache:"no-store"});
+   if(!Array.isArray(body))throw Error("Could not load saved views. Try again.");
+   setRows(body);
   }catch(e){setError(e instanceof Error?e.message:"Could not load saved views");}
   finally{setBusy(false);}
  }
  async function send(input:Record<string,unknown>){
   setBusy(true);setError("");setNotice("");
   try{
-   const res=await fetch(api,{method:"POST",credentials:"same-origin",
+   const body=await apiFetch<{id?:string}>(api,{method:"POST",credentials:"same-origin",
     headers:{"content-type":"application/json"},body:JSON.stringify(input)});
-   const body=await res.json().catch(()=>null);
-   if(!res.ok)throw Error(res.status===409
-    ?"This changed while you were working. Your view name is kept below. Refresh and try again."
-    :"Could not save this view. Your edits are kept below. Try again.");
    setNotice("Saved views updated.");await load();router.refresh();return body;
   }catch(e){setError(e instanceof Error?e.message:"View action failed");return null;}
   finally{setBusy(false);}

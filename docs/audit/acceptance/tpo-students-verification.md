@@ -38,3 +38,12 @@ Source reviewed on `main` at `a56fd84fdbe4e2c9bc11758b290d1f1845cac991`. Tests w
 TPO-students-36: the authorized filtered CSV is now downloaded through a guarded client control; selection-only export and XLSX parity remain open. `tests/unit/chat12-tpo-safe-export.test.ts` test `TPO-students-36`.
 
 **Source-only partials remain OPEN:** TPO-students-19 (missing attention extras and not-placed filter), 43 (debarments and eligibility decision provenance), 48 (selection not yet unified across bulk tools), 52 (real prep percentage and decider provenance), 54 (outcome detail beyond recorded choice). They do not qualify as complete legacy closure.
+
+| TPO-students-33 | DONE (friendly-error adoption; prior scope unchanged) | academic import preview and apply handle network/HTML/409 with apiFetch; `tests/unit/chat12-round3-api-fetch.test.ts` named test `TPO-students-33` |
+| TPO-students-07 | DONE (friendly-error adoption; prior scope unchanged) | student nudge call is protected by apiFetch; `tests/unit/chat12-round3-api-fetch.test.ts` named test `TPO-students-07` |
+| TPO-students-08 | DONE (friendly-error adoption; prior scope unchanged) | bulk verify retries safely without exposing error codes; `tests/unit/chat12-round3-api-fetch.test.ts` named test `TPO-students-08` |
+| TPO-students-09 | DONE (friendly-error adoption; prior scope unchanged) | bulk send-back protects private review result; `tests/unit/chat12-round3-api-fetch.test.ts` named test `TPO-students-09` |
+| TPO-students-11 | DONE (friendly-error adoption; prior scope unchanged) | private notes post never displays server error body; `tests/unit/chat12-round3-api-fetch.test.ts` named test `TPO-students-11` |
+| TPO-students-35 | DONE (friendly-error adoption; prior scope unchanged) | saved views GET/POST use apiFetch and keep edits on failure; `tests/unit/chat12-round3-api-fetch.test.ts` named test `TPO-students-35` |
+| TPO-students-42 | DONE (friendly-error adoption; prior scope unchanged) | student Requests quick panel protects failed lookups; `tests/unit/chat12-round3-api-fetch.test.ts` named test `TPO-students-42` |
+| TPO-students-54 | DONE (friendly-error adoption; prior scope unchanged) | single and bulk outcome editors keep drafts on failure; `tests/unit/chat12-round3-api-fetch.test.ts` named test `TPO-students-54` |
