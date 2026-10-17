@@ -47,7 +47,8 @@ export async function acceptAuthenticatedRecruiterEmailReply(
  `).then(result=>result.rows);
  if(!ready?.ok)return {accepted:false,replayed:false};
  return db.transaction(async tx=>{
-  await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${input.providerMessageId}), 140117)`);
+  // The indexed reply-token row lock serializes writes for this thread.
+  // Never use a provider-global message id as a cross-tenant advisory lock.
   const [state]=await tx.select().from(placementRecruiterMessageMailState)
    .where(eq(placementRecruiterMessageMailState.replyTokenHash,tokenHash))
    .for("update").limit(1);
