@@ -32,6 +32,37 @@ test.describe("GR-80 public sign-in failure matrix", () => {
     });
   }
 
+
+  test.describe("GR-80 public phone sign-in failure matrix", () => {
+    for (const kind of cases) {
+      test(\`GR-80 public phone sign-in \${kind} retains the number\`, async ({ page }) => {
+        test.setTimeout(30_000);
+        await page.goto("/");
+        const errors = captureUncaughtErrors(page);
+        await page.getByRole("tab", { name: "Phone" }).click();
+        const contact = page.getByRole("textbox", { name: "Mobile number" });
+        await contact.fill("9876543210");
+        const failure = await failApi(
+          page, kind === "backend-down" ? "**/api/**" : "**/api/auth/login/start", kind,
+        );
+        try {
+          await page.getByRole("button", { name: "Send code" }).click();
+          await expect.poll(failure.hits).toBeGreaterThan(0);
+          await expect(page.getByRole("alert")).toContainText(
+            /try again|wait|sign in|check|connection|offline/i,
+            { timeout: 15_000 },
+          );
+          await expect(contact).toHaveValue("9876543210");
+          await expect(page.getByRole("button", { name: "Send code" })).toBeEnabled();
+          await expectNoRawErrors(page);
+          expect(errors).toEqual([]);
+        } finally {
+          await failure.dispose();
+        }
+      });
+    }
+  });
+
   test("GR-80 sign-in offline retains contact and can retry after reconnect", async ({ page, context }) => {
     await page.goto("/");
     const errors = captureUncaughtErrors(page);

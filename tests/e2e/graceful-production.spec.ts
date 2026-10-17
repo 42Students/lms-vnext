@@ -48,7 +48,7 @@ test.describe("GR-82 production failure smoke", () => {
     }
   });
 
-  test("GR-82 stale chunk recovers without an overlay or a permanently blank page", async ({ page }) => {
+  test("GR-80 GR-82 stale chunk recovers without an overlay or a permanently blank page", async ({ page }) => {
     test.setTimeout(35_000);
     const errors = captureUncaughtErrors(page);
     let failures = 0;
