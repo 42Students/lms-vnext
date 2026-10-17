@@ -6,6 +6,7 @@ import {
 
 export const PLACEMENT_CALENDAR_KINDS = [
   "ROUND",
+  "BLOCKED",
   "INTERVIEW_SLOT",
   "APPLICATION_DEADLINE",
   "FOLLOW_UP",
