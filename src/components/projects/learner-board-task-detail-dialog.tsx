@@ -4,6 +4,7 @@ import Link from "next/link";
 import { LearnerTaskStatusActions } from "./learner-task-status-actions";
 import { ProjectTaskComments } from "./project-task-comments";
 import { projectTaskVisibleFacts } from "@/modules/projects/project-task-visible-facts-model";
+import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evidence-model";
 import { learnerBoardTaskWorkspaceHref } from "@/modules/projects/learner-board-task-workflow-model";
 import { learnerBoardTaskStatusLabel, learnerBoardTaskPriorityLabel } from "@/modules/projects/learner-board-task-status-label-model";
 import { learnerBoardTaskStatusTone, learnerBoardTaskPriorityTone } from "@/modules/projects/learner-board-task-attention-tone-model";
@@ -73,10 +74,11 @@ export function LearnerBoardTaskDetailDialog({
           <dd className="whitespace-pre-wrap break-words">{facts.blockerReason}</dd>
         </div> : null}
       </dl>
+      <h3 className="mt-5 text-sm font-semibold">Submission</h3>
       <div className="mt-3 flex flex-wrap gap-3 text-xs font-semibold text-body">
         <span>{commentCount} comment{commentCount===1?"":"s"}</span>
-        {submissionUrl&&/^https?:\/\//i.test(submissionUrl)?
-          <a href={submissionUrl} target="_blank" rel="noopener noreferrer"
+        {safeProjectExternalHref(submissionUrl)?
+          <a href={safeProjectExternalHref(submissionUrl)??undefined} target="_blank" rel="noopener noreferrer"
             className="text-primary-text underline">Submission link attached ↗</a>:null}
       </div>
       {task.approach?<section className="mt-5" aria-label="Task approach">
