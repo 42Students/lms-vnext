@@ -4,7 +4,7 @@ import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {PageHeader} from "@/components/ui/page-header";
-import {RecruiterInterviewSlotForm} from "@/components/placements/recruiter-interview-slot-form";
+import {RecruiterInterviewSlotForm,RecruiterInterviewSlotActions} from "@/components/placements/recruiter-interview-slot-form";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {listHrInterviewSlots} from "@/modules/placements/hr-interview-slot-service";
 import {getRecruiterPlacementWorkspace} from "@/modules/placements/recruiter-workspace-service";
@@ -61,16 +61,9 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
      {slot.panelLabel?<p className="text-sm text-body">Panel: {slot.panelLabel}</p>:null}
      {slot.meetingLocation?<p className="text-sm text-body">Venue: {slot.meetingLocation}</p>:
        <p className="text-xs text-muted-foreground">Room or joining details not recorded yet.</p>}
-     {slot.canEdit?<form action={action} method="post" className="flex flex-wrap gap-2">
-      <input type="hidden" name="slotId" value={slot.id}/>
-      <input type="hidden" name="expectedVersion" value={slot.version}/>
-      {slot.status==="PROPOSED"?<button type="submit" name="action" value="OFFER"
-        className="min-h-11 rounded-md border border-border px-4 text-primary-text">Offer time to college</button>:null}
-      {(slot.status==="OFFERED"||slot.status==="BOOKED")&&slot.bookedCount<slot.capacity?<button type="submit" name="action" value="BOOK"
-        className="min-h-11 rounded-md border border-border px-4 text-primary-text">Reserve one internal slot</button>:null}
-      {(slot.status==="PROPOSED"||slot.status==="OFFERED")?<button type="submit" name="action" value="CANCEL"
-        className="min-h-11 rounded-md border border-border px-4 text-primary-text">Cancel time block</button>:null}
-     </form>:<p className="text-sm text-muted-foreground">
+     {slot.canEdit?<RecruiterInterviewSlotActions action={action}
+      slot={{id:slot.id,version:slot.version,status:slot.status,
+        bookedCount:slot.bookedCount,capacity:slot.capacity}}/>:<p className="text-sm text-muted-foreground">
       {slot.isOwn?"This time block has started or passed; further changes are disabled.":
        "This time block was created by another recruiter and is read-only for your account."}
      </p>}
