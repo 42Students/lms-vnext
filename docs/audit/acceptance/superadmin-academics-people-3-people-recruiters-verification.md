@@ -35,3 +35,5 @@ Unresolved: faculty register optional profile fields; platform-wide account bloc
 
 | SA-academics-people-90 | DONE (source authored; tenant PostgreSQL pending) | `src/modules/admin-ui/super-admin-scoped-people-service.ts`; `tests/unit/chat6-superadmin-people-columns-round3.test.ts` → `SA-academics-people-90 faculty roster has gender department type and private college scoped contact columns` |
 | SA-academics-people-99 | DONE (source authored; tenant PostgreSQL pending) | `src/modules/admin-ui/super-admin-scoped-people-service.ts`; `tests/unit/chat6-superadmin-people-columns-round3.test.ts` → `SA-academics-people-99 student roster has gender roll class and college scoped contact columns` |
+
+| SA-academics-people-115 | DONE (source authored; PostgreSQL scope test pending) | `src/modules/admin-ui/super-admin-scoped-people-service.ts`, `src/components/admin/admin-scoped-read-page.tsx`; `tests/unit/chat6-superadmin-mentor-role-round3.test.ts` → `SA-academics-people-115 recognizes real mentor memberships and filters faculty by mentor role` |

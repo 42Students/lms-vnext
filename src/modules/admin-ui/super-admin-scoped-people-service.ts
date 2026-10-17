@@ -35,6 +35,7 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
   departmentName:departments.name,
   employmentType:facultyProfiles.employmentType,
   academicTitle:facultyProfiles.academicTitle,
+  mentorRole:sql<boolean>`exists(select 1 from membership_roles mentor_role where mentor_role.membership_id=${collegeMemberships.id} and mentor_role.role='MENTOR')`.as("admin_role_mentor"),
   gender:sql<string|null>`coalesce(
     ${facultyProfiles.profileDocument}->'personalDetails'->>'gender',
     ${learnerProfiles.profileDocument}->'personalDetails'->>'gender'
@@ -54,7 +55,10 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
  .where(and(
   query.status==="ALL"?undefined:eq(collegeMemberships.status,query.status as "ACTIVE"|"SUSPENDED"|"ENDED"),
   role==="FACULTY"&&query.departmentId?eq(departments.id,query.departmentId):undefined,
-  role==="FACULTY"&&query.employmentType?eq(facultyProfiles.employmentType,query.employmentType):undefined,
+  role==="FACULTY"&&query.employmentType?
+    query.employmentType.toLowerCase()==="mentor"
+      ?sql`exists(select 1 from membership_roles mentor_filter where mentor_filter.membership_id=${collegeMemberships.id} and mentor_filter.role='MENTOR')`
+      :eq(facultyProfiles.employmentType,query.employmentType):undefined,
   enrollmentFilter,
   query.q?or(ilike(users.displayName,scopedSearchLike(query.q)),
    ilike(users.email,scopedSearchLike(query.q)),
@@ -74,7 +78,8 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
   details:[
    ...(role==="FACULTY"?[
     "Department: "+(row.departmentName??"Not assigned"),
-    "Type: "+(row.employmentType??"Not set"),
+    "Type: "+(row.mentorRole?"Mentor":row.employmentType??"Not set"),
+    "Mentor membership: "+(row.mentorRole?"Active":"Not assigned"),
     "Academic title: "+(row.academicTitle??"Not set"),
     "Gender: "+(row.gender||"Not recorded"),
     "Email: "+(row.email??"Not recorded"),"Mobile: "+(row.phone??"Not recorded"),
