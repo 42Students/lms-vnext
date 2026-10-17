@@ -67,8 +67,6 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
       employmentType:filters.employmentType,sort:filters.sort,display:filters.display,
       minApplied:filters.minApplied,minOffers:filters.minOffers,payCategory:filters.payCategory,attention:filters.attention,journey:filters.journey,
       attentionCounts,asOf:now.toISOString()};
-    if (!available) return {...tpoDriveLifecyclePage(0,filters.page),counts,
-      rows:[],requestRows:[],requestsAvailable:false as const,...common};
     const pattern=tpoApplicantExportSearchPattern(filters.search);
     const requestScope=and(
       eq(placementRecruiterDriveRequests.collegeId,collegeId),
