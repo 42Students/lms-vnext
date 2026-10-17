@@ -13,7 +13,8 @@ export function ProjectResourceOpenLink({url}:{url:string|null}){
   This resource has an invalid address. Ask your mentor to update it.
  </p>;
  function open(){
-  const popup=window.open(safe??"","_blank","noopener,noreferrer");
+  const popup=window.open(safe??"","_blank");
+  if(popup)popup.opener=null;
   if(!popup){
    setNotice("Your browser blocked the resource window. Copy the link to open it manually.");
   }else setNotice("");
