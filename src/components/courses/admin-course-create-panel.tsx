@@ -249,7 +249,7 @@ export function AdminCourseCreatePanel({
         role: teacherRole,
       }),
       "Teaching assignment created",
-      () => { setTeacherMembershipId(""); setTeacherRole("PRIMARY"); },
+      () => {setTeacherMembershipId("");setTeacherRole("PRIMARY");setNextSetupStep("DONE");},
     );
   }
 
