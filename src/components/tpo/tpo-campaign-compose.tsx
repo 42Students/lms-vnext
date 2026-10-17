@@ -4,6 +4,10 @@ import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
 import {CAMPAIGN_DELIVERY_UNAVAILABLE,CAMPAIGN_DRAFT_UNAVAILABLE,
   tpoCampaignDraftSchema,previewTpoCampaignText} from "@/modules/messaging/tpo-campaign-draft-model";
+type SelectedAudiencePreview={
+ selected:number;eligible:number;leftOut:number;unavailable:number;
+ suppressed:{NO_EMAIL:number;UNSUBSCRIBED:number;BOUNCED:number;NOT_NOW:number;DUPLICATE:number};
+};
 const field="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground";
 const SEGMENTS=[
  {value:"ALL_ELIGIBLE",label:"All eligible contacts"},
