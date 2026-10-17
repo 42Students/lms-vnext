@@ -1,3 +1,12 @@
+import {z} from "zod";
+export const superAdminFacultyScheduleReassignSchema=z.object({
+  sourceMembershipId:z.string().uuid(),
+  replacementMembershipId:z.string().uuid(),
+  confirmed:z.literal(true),
+}).strict().refine(value=>value.sourceMembershipId!==value.replacementMembershipId,{
+  message:"Choose a different replacement faculty member",
+});
+
 export type FacultyScheduleInterval = {
   id:string; startsAt:Date; endsAt:Date;
 };
