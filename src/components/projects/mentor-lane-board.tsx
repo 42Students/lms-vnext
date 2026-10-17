@@ -13,7 +13,7 @@ import {MentorTaskDeleteControl} from "./mentor-task-delete-control";
 type Task={id:string;title:string;status:string;priority:string;sprintId:string|null;carriedFromSprintId?:string|null;createdAt:Date;updatedAt:Date;
  description:string|null;acceptanceCriteria:string|null;blockerReason:string|null;
  assigneeMembershipId:string|null;dueDate:string|null;estimatePoints:number|null;taskType:string|null};
-type Sprint={id:string;title:string;status:string;releaseId:string};
+type Sprint={id:string;title:string;status:string;releaseId:string;updatedAt:Date};
 type Release={id:string;title:string};
 type Person={membershipId:string;displayName:string|null;role:string};
 type TaskSubmission={id:string;taskId:string;status:string;submissionUrl:string;version:number;createdAt:Date;submittedByMembershipId?:string|null};
