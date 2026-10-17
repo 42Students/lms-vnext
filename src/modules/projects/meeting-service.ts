@@ -256,6 +256,7 @@ export async function scheduleProjectMeeting(
   if (!isFutureProjectMeetingWindow(startsAt, endsAt, Date.now())) {
     throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
   }
+  const links=await validateMeetingLinks(scope.project.id,input.linkedSprintId,input.linkedTaskId);
   return getDb().transaction(async (tx) => {
     const [project] = await tx.select({status:projectInstances.status,updatedAt:projectInstances.updatedAt})
       .from(projectInstances).where(eq(projectInstances.id,scope.project.id))
@@ -294,9 +295,17 @@ export async function scheduleProjectMeeting(
     // MEN-projects-meetings-R02: prevent the organiser being double-booked
     // across multiple Project workspaces. The transaction-scoped lock makes
     // the check safe even when two different projects schedule concurrently.
-    const links=await validateMeetingLinks(scope.project.id,
-      input.linkedSprintId===undefined?existing?.linkedSprintId:input.linkedSprintId,
-      input.linkedTaskId===undefined?existing?.linkedTaskId:input.linkedTaskId);
+    const effectiveSprintId=input.linkedSprintId===undefined
+      ? existing?.linkedSprintId??null : links.linkedSprintId;
+    const effectiveTaskId=input.linkedTaskId===undefined
+      ? existing?.linkedTaskId??null : links.linkedTaskId;
+    if(effectiveSprintId && effectiveTaskId){
+      const [linkedTask]=await tx.select({sprintId:projectTasks.sprintId})
+        .from(projectTasks).where(and(eq(projectTasks.id,effectiveTaskId),
+          eq(projectTasks.projectId,scope.project.id))).limit(1);
+      if(!linkedTask || linkedTask.sprintId!==effectiveSprintId)
+        throw new ProjectsServiceError("PROJECT_MEETING_LINK_INVALID");
+    }
     const organiserId=existing?.scheduledByUserId??context.user.id;
     await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(${organiserId}, 17))`);
     const [conflict] = await tx.select({id:projectMeetings.id}).from(projectMeetings)
@@ -317,7 +326,7 @@ export async function scheduleProjectMeeting(
       meetingUrl: targetStatus==="DRAFT"?null:input.meetingUrl,
       scheduledByUserId: targetStatus==="DRAFT"?null:organiserId,
       scheduledByMembershipId:targetStatus==="DRAFT"?null:(existing?.scheduledByMembershipId??context.membership?.id??null),
-      linkedSprintId: links.linkedSprintId, linkedTaskId: links.linkedTaskId,
+      linkedSprintId: effectiveSprintId, linkedTaskId: effectiveTaskId,
       outcome: input.outcome===undefined?existing?.outcome??null:input.outcome,
       facilitation:mentorMeetingFacilitationSchema.parse(input.facilitation??existing?.facilitation??{}),
       cancellationNote: null, updatedAt: new Date(),
