@@ -71,3 +71,19 @@ All tests are authored but not executed by chat-12. The orchestrator must run te
 
 
 | TPO-students-R03 | DONE (code authored; acceptance pending) | Confirmed two separate selection models; shared grid-to-Act selection remains OPEN; `tests/unit/chat12-round9-students-resilience.test.ts` named `TPO-students-R03` (authored, not run) ; Round-12–17: Current-page selection now shared across grid, bulk action and drive add; selection from table header and cross-page remain; `tests/unit/chat12-round14-unified-selection.test.ts` test `TPO-students-R03` (authored, not run) ; Round-18 table and mobile row/header checkboxes share one provider with notes, bulk actions and Add to Drive; `tests/unit/chat12-round18-grid-checkboxes.test.ts` named `TPO-students-R03` (authored, not run) |
+## Round 56: current FIXED-ON-MAIN source checks (runtime unverified)
+
+- TPO-students-33: `tests/unit/chat12-fixed-main-students-audit-r1.test.ts` named `TPO-students-33 preserves its audited source contract`; source evidence only, no PostgreSQL/browser confirmation.
+- TPO-students-08: `tests/unit/chat12-fixed-main-students-audit-r1.test.ts` named `TPO-students-08 preserves its audited source contract`; source evidence only, no PostgreSQL/browser confirmation.
+- TPO-students-09: `tests/unit/chat12-fixed-main-students-audit-r1.test.ts` named `TPO-students-09 preserves its audited source contract`; source evidence only, no PostgreSQL/browser confirmation.
+- TPO-students-11: `tests/unit/chat12-fixed-main-students-audit-r1.test.ts` named `TPO-students-11 preserves its audited source contract`; source evidence only, no PostgreSQL/browser confirmation.
+- TPO-students-18: `tests/unit/chat12-fixed-main-students-audit-r1.test.ts` named `TPO-students-18 preserves its audited source contract`; source evidence only, no PostgreSQL/browser confirmation.
+- TPO-students-19: `tests/unit/chat12-fixed-main-students-audit-r1.test.ts` named `TPO-students-19 preserves its audited source contract`; source evidence only, no PostgreSQL/browser confirmation.
+- TPO-students-20: `tests/unit/chat12-fixed-main-students-audit-r1.test.ts` named `TPO-students-20 preserves its audited source contract`; source evidence only, no PostgreSQL/browser confirmation.
+- TPO-students-21: `tests/unit/chat12-fixed-main-students-audit-r1.test.ts` named `TPO-students-21 preserves its audited source contract`; source evidence only, no PostgreSQL/browser confirmation.
+- TPO-students-23: `tests/unit/chat12-fixed-main-students-audit-r1.test.ts` named `TPO-students-23 preserves its audited source contract`; source evidence only, no PostgreSQL/browser confirmation.
+- TPO-students-26: `tests/unit/chat12-fixed-main-students-audit-r1.test.ts` named `TPO-students-26 preserves its audited source contract`; source evidence only, no PostgreSQL/browser confirmation.
+- TPO-students-30: `tests/unit/chat12-fixed-main-students-audit-r1.test.ts` named `TPO-students-30 preserves its audited source contract`; source evidence only, no PostgreSQL/browser confirmation.
+- TPO-students-35: `tests/unit/chat12-fixed-main-students-audit-r1.test.ts` named `TPO-students-35 preserves its audited source contract`; source evidence only, no PostgreSQL/browser confirmation.
+- TPO-students-54: `tests/unit/chat12-fixed-main-students-audit-r1.test.ts` named `TPO-students-54 preserves its audited source contract`; source evidence only, no PostgreSQL/browser confirmation.
+- TPO-students-27: `tests/unit/chat12-fixed-main-students-audit-r1.test.ts` named `TPO-students-27 preserves its audited source contract`; source evidence only, no PostgreSQL/browser confirmation.
