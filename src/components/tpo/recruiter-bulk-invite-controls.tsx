@@ -49,6 +49,7 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
   catch{setNotice("Could not copy. Select the text and copy it manually.");}
  }
  const failed=results.filter(row=>!row.url&&!row.emailed);
+ const retryableFailed=failed.filter(item=>rows.some(row=>row.id===item.id&&!bulkInviteDisposition(row)));
  const linkLines=results.filter(row=>row.url).map(row=>row.name+" ("+row.email+")\t"+row.url).join("\n");
  return <section className="rounded-lg border border-border bg-surface p-4" aria-label="Invite selected recruiters">
   <button type="button" className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold"
