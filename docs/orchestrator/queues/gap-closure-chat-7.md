@@ -74,7 +74,7 @@ Audit: `docs/audit/pages/learner/placements.md` (and `placements-review.md` if p
 | LEARNER-placements-58 | S4 | MISSING-PAGE | FIXED-ON-MAIN |
 | LEARNER-placements-R08 | S4 | STATE | FIXED-ON-MAIN |
 
-## mentor/projects-meetings (58: FIXED-ON-MAIN 49, DONE 4, OPEN 5)
+## mentor/projects-meetings (58: FIXED-ON-MAIN 49, DONE 5, OPEN 4)
 
 Audit: `docs/audit/pages/mentor/projects-meetings.md` (and `projects-meetings-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/mentor-projects-meetings-verification.md`.
 
@@ -133,7 +133,7 @@ Audit: `docs/audit/pages/mentor/projects-meetings.md` (and `projects-meetings-re
 | MEN-projects-meetings-10 | S4 | PERFORMANCE | OPEN |
 | MEN-projects-meetings-13 | S4 | STATE | FIXED-ON-MAIN |
 | MEN-projects-meetings-24 | S4 | COPY | FIXED-ON-MAIN |
-| MEN-projects-meetings-25 | S4 | MISSING-FIELD | OPEN |
+| MEN-projects-meetings-25 | S4 | MISSING-FIELD | DONE |
 | MEN-projects-meetings-29 | S4 | VALIDATION | DONE |
 | MEN-projects-meetings-R09 | S4 | MISSING-FIELD | OPEN |
 | MEN-projects-meetings-R10 | S4 | STATE | FIXED-ON-MAIN |
@@ -204,7 +204,7 @@ Audit: `docs/audit/pages/recruiter/home-drives.md` (and `home-drives-review.md` 
 | REC-home-drives-R07 | S4 | COPY | FIXED-ON-MAIN |
 | REC-home-drives-R08 | S4 | PERFORMANCE | FIXED-ON-MAIN |
 
-## faculty/courses (43: FIXED-ON-MAIN 38, DONE 2, OPEN 1, WRONG 2)
+## faculty/courses (43: FIXED-ON-MAIN 38, DONE 3, OPEN 0, WRONG 2)
 
 Audit: `docs/audit/pages/faculty/courses.md` (and `courses-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/faculty-courses-verification.md`.
 
@@ -243,7 +243,7 @@ Audit: `docs/audit/pages/faculty/courses.md` (and `courses-review.md` if present
 | FAC-courses-06 | S4 | MISSING-FILTER | FIXED-ON-MAIN |
 | FAC-courses-07 | S4 | COPY | FIXED-ON-MAIN |
 | FAC-courses-17 | S4 | COPY | WRONG |
-| FAC-courses-19 | S4 | MISSING-FIELD | OPEN |
+| FAC-courses-19 | S4 | MISSING-FIELD | DONE |
 | FAC-courses-21 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
 | FAC-courses-28 | S4 | MISSING-FIELD | WRONG |
 | FAC-courses-29 | S4 | COPY | FIXED-ON-MAIN |
