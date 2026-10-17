@@ -174,3 +174,16 @@ These 24 formerly `FIXED-ON-MAIN` rows already have named ID regression tests an
 - `TPO-drive-workspace-58` — existing named verification in `tests/unit/tpo-drive-workspace-s1-gap-closure.test.ts`, `tests/unit/tpo-drive-workspace-s2-round2.test.ts`, `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts`, or the existing per-gap acceptance row.
 - `TPO-drive-workspace-R04` — existing named verification in `tests/unit/tpo-drive-workspace-s1-gap-closure.test.ts`, `tests/unit/tpo-drive-workspace-s2-round2.test.ts`, `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts`, or the existing per-gap acceptance row.
 - `TPO-drive-workspace-R05` — existing named verification in `tests/unit/tpo-drive-workspace-s1-gap-closure.test.ts`, `tests/unit/tpo-drive-workspace-s2-round2.test.ts`, `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts`, or the existing per-gap acceptance row.
+
+## Chat-5 additional verified existing drive-workspace closures (2026-10-17)
+
+| TPO-drive-workspace-18 | DONE (source-verified; tests not run by lane) | Versioned cancellation preview, accepted-offer preservation and audit are implemented; model/regression already present. | 
+| TPO-drive-workspace-28 | DONE (source-verified; tests not run by lane) | Same-day deduplicated non-applicant reminder preview tokens and confirmed send gate already tested. | 
+| TPO-drive-workspace-40 | DONE (source-verified; tests not run by lane) | 1000-result CSV import strict review, missing outcome and duplicate protection already tested. | 
+| TPO-drive-workspace-01 | DONE (source-verified; tests not run by lane) | Shared TPO tab model and route navigation to Applicants, Rounds, Offers, Drive day, About already tested. | 
+| TPO-drive-workspace-04 | DONE (source-verified; tests not run by lane) | The reviewed More menu supports applicant export, company share and run-again actions; existing test checks menu copy. | 
+| TPO-drive-workspace-45 | DONE (source-verified; tests not run by lane) | Round facts project staged/applied counts with venue fallback; existing test checks status and outcome. | 
+| TPO-drive-workspace-52 | DONE (source-verified; tests not run by lane) | Persisted cascade undo uses a transaction and is routed from offer lifecycle; existing regression test. | 
+| TPO-drive-workspace-71 | DONE (source-verified; tests not run by lane) | Focused applicant modal already implements S/R decision keys, arrows between applicants, Ctrl+Enter reviewed submit; TPO keyboard Drawer (?) lists these shortcuts. | 
+
+`TPO-drive-workspace-71` named regression: `tests/unit/tpo-drive-workspace-71-chat5.test.ts`. Other named tests predate this reconciliation in `tests/unit/tpo-drive-workspace-s1-gap-closure.test.ts`, `tests/unit/tpo-drive-workspace-s2-round2.test.ts`, and `tests/unit/tpo-drive-workspace-s2-evidence-contracts.test.ts`.
