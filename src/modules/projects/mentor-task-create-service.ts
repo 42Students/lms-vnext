@@ -81,7 +81,8 @@ export async function createMentorProjectTask(context:RequestContext,rawParams:u
         collegeId:scope.collegeId,organizationId:scope.organizationId,
         subjectType:"project_task",subjectId:created.id,
         subjectLabel:created.title,summary:"Project task created",
-        metadata:{projectId:scope.project.id,sprintId:sprint.id,taskId:created.id},
+        metadata:{projectId:scope.project.id,sprintId:sprint?.id??null,taskId:created.id,
+          status:created.status,assigneeMembershipId:created.assigneeMembershipId},
         groupKey:"project:"+scope.project.id,
         dedupeKey:"project-task:"+created.id+":created",
       });
