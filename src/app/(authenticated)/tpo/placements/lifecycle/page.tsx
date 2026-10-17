@@ -129,19 +129,19 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
     <nav aria-label="Needs doing" className="flex flex-wrap gap-2 rounded-xl border border-border bg-surface p-3">
       <span className="mr-2 self-center text-sm font-semibold">Needs doing:</span>
       {([
-       ["NO_APPLICANTS","Nobody has applied"],
-       ["NO_DEADLINE","Live with no deadline"],
-       ["DUE_SOON","Close in the next 7 days"],
-       ["OVERDUE","Deadline passed, still open"],
-       ["ALL","All drives"],
-      ] as const).map(([attention,label])=><Link key={attention} href={{
+       ["NO_APPLICANTS","Nobody has applied",data.attentionCounts.noApplicants],
+       ["NO_DEADLINE","Live with no deadline",data.attentionCounts.noDeadline],
+       ["DUE_SOON","Close in the next 7 days",data.attentionCounts.dueSoon],
+       ["OVERDUE","Deadline passed, still open",data.attentionCounts.overdue],
+       ["ALL","All drives",data.counts.total],
+      ] as const).map(([attention,label,n])=><Link key={attention} href={{
         pathname:"/tpo/placements/lifecycle",query:{
           ...(data.season?{seasonId:data.season.id}:{}),
           attention,view:"ALL",page:1,
         },
        }} className={"inline-flex min-h-10 items-center rounded-md border px-3 text-sm "+
        (data.attention===attention?"border-primary bg-primary-subtle font-semibold":"border-border")}>
-       {label}
+       {label} · {n}
       </Link>)}
       <Link className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm"
        href="/tpo/placements/lifecycle?view=REQUESTS">Waiting for your review</Link>
