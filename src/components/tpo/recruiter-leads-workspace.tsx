@@ -653,7 +653,7 @@ export function RecruiterLeadsWorkspace({
               <label className="text-sm">Invite
                 <select className={inputStyle+" mt-1"} value={inviteFilter}
                   onChange={e=>updateFilter("invite",e.target.value)}>
-                  {["ALL","NOT_SENT","SENT","CLICKED","BOUNCED","JOINED"].map(item=>
+                  {["ALL","NOT_INVITED","SENT","OPENED","BOUNCED","JOINED"].map(item=>
                    <option key={item} value={item}>{item==="ALL"?"All invites":item.replaceAll("_"," ")}</option>)}
                 </select>
               </label>
