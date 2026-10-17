@@ -1,7 +1,7 @@
 "use client";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
-type Lesson={id:string;name:string;course:string;courseCode:string};
+type Lesson={id:string;name:string;course:string;courseCode:string;offeringId:string;nextSequence:number};
 type Existing={id:string;lessonId:string;title:string;externalUrl:string|null;notes:string|null;
  durationSeconds:number|null;startsAt:string|null;endsAt:string|null;status:string;sequence:number};
 type Kind="YOUTUBE"|"LIVE_CLASS"|"RESOURCE";
@@ -22,6 +22,7 @@ export function CollegeContentAuthoringControl({kind,lessons,existing}:{
   [url,setUrl]=useState(""),[notes,setNotes]=useState(""),[duration,setDuration]=useState(""),
   [start,setStart]=useState(""),[end,setEnd]=useState(""),
   [busy,setBusy]=useState(false),[error,setError]=useState(""),[message,setMessage]=useState("");
+ const [nextOverride,setNextOverride]=useState<Record<string,number>>({});
  const text=kind==="YOUTUBE"?"Import from link":kind==="RESOURCE"?"Add Resource":"Schedule live class";
  function select(item:Existing){
   setEditing(item.id);setOpen(true);setLessonId(item.lessonId);setTitle(item.title);
@@ -62,9 +63,10 @@ export function CollegeContentAuthoringControl({kind,lessons,existing}:{
      headers:{"Content-Type":"application/json"},body:JSON.stringify(editing?
       {title:title.trim(),...(kind==="RESOURCE"?{externalUrl:url.trim()||null}:(url.trim()?{externalUrl:url.trim()}:{})),...extra}:
       {lessonId,title:title.trim(),contentType:kind,externalUrl:url.trim()||null,
-       sequence:0,...extra})});
+       sequence:nextOverride[lessonId]??lessons.find(row=>row.id===lessonId)?.nextSequence??0,...extra})});
    if(!res.ok){const problem=await res.json().catch(()=>({error:"Unable to save content"}));
     throw Error(problem.error??"Unable to save content");}
+   if(!editing)setNextOverride(old=>({...old,[lessonId]:(nextOverride[lessonId]??lessons.find(row=>row.id===lessonId)?.nextSequence??0)+1}));
    setMessage(editing?"Content updated.":"Content created.");setOpen(false);router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to save content");}
   finally{setBusy(false);}
