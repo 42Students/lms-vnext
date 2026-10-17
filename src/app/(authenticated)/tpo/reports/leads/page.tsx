@@ -121,6 +121,21 @@ export default async function TpoLeadsReportPage({
       <section aria-label="Recruiter engagement by company" className="space-y-3">
        <h2 className="text-lg font-semibold">Recruiter engagement by company</h2>
        <p className="text-sm text-body">Contacts, invitations and joined recruiter accounts use college-wide Engage records. Recorded drives and students placed use the selected placement season or drive. A drive counts as run only when it has a completed round in the selected season/drive. Zero means no completed round is recorded, not proof that nothing occurred.</p>
+       <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+        {workspace.selectedSeasonId?<input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
+        {workspace.selectedJobId?<input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
+        <label className="grid min-w-60 flex-1 gap-1 text-sm font-semibold">Company
+         <select name="companyId" defaultValue={selectedCompanyId??""} className="min-h-11 rounded border border-border bg-surface px-3">
+          <option value="">All companies</option>
+          {companyEngagement.filter(row=>row.companyId).map(row=>
+           <option key={row.companyId!} value={row.companyId!}>{row.companyName}</option>)}
+         </select>
+        </label>
+        <button type="submit" className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
+        {selectedCompanyId?<Link href={companyEngagementHref({seasonId:workspace.selectedSeasonId,jobId:workspace.selectedJobId})}
+         className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Clear company</Link>:null}
+       </form>
+       {!companyFilter.valid?<p role="alert" className="text-sm text-warning-text">This company is not in the authorized college report. Clear the company filter.</p>:null}
        <a href={"/api/placements/tpo/reports/engagement?"+new URLSearchParams({
         ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
         ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{}),
