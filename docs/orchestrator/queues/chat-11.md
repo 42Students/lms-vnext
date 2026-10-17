@@ -24,7 +24,7 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 2. WP-chat-11-02-projects-meetings-projects-s2 | IN-PROGRESS | 22 S2 gaps. LEARNER-projects-38 last-editor attribution and MEN-projects-meetings-41 card facts enhanced; other unblocked task/review/meeting gaps remain. MEN-projects-meetings-31 external calendar sync BLOCKED pending provider config.
 3. WP-chat-11-03-projects-tracker-s2 | IN-PROGRESS | 24 S2 gaps. SA-placements-projects-88 rollback source added; workspace/table/export and template improvements implemented across neighboring WPs. This round added SA-placements-projects-60 blocker accuracy, SA-placements-projects-61 Watch/Risk severity and SQL sorting, SA-placements-projects-63 scoped CSV and title/ID search. Remaining creation, tracker and historical audit gaps still open; reporter auth, storage and external logs marked SKIP by owner/config.
 4. WP-chat-11-04-projects-tenants-modules-s2 | IN-PROGRESS | 18 gaps: S2 2, S3 16 (FAST: LEARNER-projects-02/03/15/27/28/R03 advanced; LEARNER-projects-37 existing-draft autosave added; remaining parity open)
-5. WP-chat-11-05-projects-meetings-s3 | IN-PROGRESS | 19 gaps: S3 19 (MEN-03/04/19/21/33/40/51/52 source advanced; other mentor S3 gaps still open)
+5. WP-chat-11-05-projects-meetings-s3 | IN-PROGRESS | 19 gaps: S3 19 (MEN-03/04/19/21/33/40/51/52 source advanced; MEN-26 meeting history/notes and MEN-68 exact missed status advanced; other mentor S3 gaps still open)
 6. WP-chat-11-06-projects-projects-meetings-part-s3 | IN-PROGRESS | 24 S3 gaps. SA-placements-projects-53/54/71/74/75/76/80 row export/facts/filtering advanced; broader audit, resources and permissions parity remains.
 7. WP-chat-11-07-tracker-projects-s3 | TODO | 16 gaps: S3 9, S4 7
 8. WP-chat-11-08-projects-projects-meetings-part-s4 | IN-PROGRESS | 15 S4 gaps. Existing LEARNER-projects-11/30 prior progress retained; remaining legacy and accessibility parity pending.
@@ -202,3 +202,18 @@ WP-01 and WP-02 must remain IN-PROGRESS; unaddressed gaps include College projec
 - BLOCKED `SA-placements-projects-113`: live GCP logging requires runtime IAM.
 - BLOCKED `SA-placements-projects-120`: external findings import requires GitHub credential access.
 - WP-02 and WP-05 remain IN-PROGRESS for other gaps. No checks/tests/typecheck/build/lint or CI waits per FAST v2; pushed only to this branch.
+
+## [chat-11] FAST v2 continuation — 2026-10-17 ~08:00 IST
+
+- Safely fast-forwarded `chatgpt/chat-11-b` from `185d23bb` to latest `origin/main` `09d59ab0` (branch was ancestor); preserved orchestrator merges; never pushed main or opened a PR.
+- `MEN-projects-meetings-68` derived MISSED from scheduled meeting end instant rather than next IST day; highlighted missed workspace badge. Calendar and project workspace remain read-only derivations; database status unchanged.
+- `MEN-projects-meetings-42` mentor Board now accepts persisted task `createdAt` and nonoptional activity `eventType` from the workspace data, enabling created-by/last-edited attribution in the existing modal.
+- `MEN-projects-meetings-34` sprint create now allows valid unshipped release choice, rejects invalid date ranges/ship-state and resets goal, completion notes and dates after save; source wired in workspace. Status edits and other legacy sprint parity are still OPEN.
+- `MEN-projects-meetings-26` meeting list uses consistent IST instants, organiser and type facts, requested state, counted history, bounded six-item preview, and explicit View all/Show fewer; joining external meetings uses safe rel.
+- `MEN-projects-meetings-30` mentor meeting cards link to the existing meeting notes editor, with Add notes/View notes depending on outcome; other notes form parity remains OPEN.
+- BLOCKED `MEN-projects-meetings-31`: external calendar sync requires provider configuration/secrets; in-app meeting notices are separate.
+- BLOCKED `SA-placements-projects-101`: unauthenticated reporter model needs OD-27 owner security decision.
+- BLOCKED `SA-placements-projects-103`: screenshot storage needs private bucket and consent configuration.
+- BLOCKED `SA-placements-projects-113`: Cloud Logging needs GCP runtime IAM.
+- BLOCKED `SA-placements-projects-120`: findings importer needs GitHub credential access.
+- WP-02 and WP-05 remain IN-PROGRESS, no complete-WP claim. No tests/typecheck/lint/build/CI waits under FAST v2.
