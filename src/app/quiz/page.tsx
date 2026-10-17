@@ -14,7 +14,7 @@ export default function LearnerQuizAttemptPage() {
           ← All Quizzes
         </Link>
         <div className="mt-5">
-          <Suspense fallback={<div className="rounded-xl border border-border bg-surface p-8 text-sm text-body">Loading quiz…</div>}>
+          <Suspense fallback={<PageLoading label="Loading quiz…" variant="form" count={4}/>}>
             <LearnerQuizAttempt />
           </Suspense>
         </div>
