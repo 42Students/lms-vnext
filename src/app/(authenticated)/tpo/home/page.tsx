@@ -15,6 +15,7 @@ import {getTpoBatchRegistrationSummary} from "@/modules/placements/tpo-batch-reg
 import {getPendingTpoRequestsCount} from "@/modules/placements/tpo-pending-requests-count-service";
 import {pendingTpoRequestsAction} from "@/modules/placements/tpo-home-request-action-model";
 import { PageHeader } from "@/components/ui/page-header";
+import { StatTile } from "@/components/ui/stat-tile";
 import { hasTpoTooling } from "@/modules/placements/tpo-workspace-access-model";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {getTpoStudentsIntelligence} from "@/modules/placements/tpo-students-service";
@@ -29,17 +30,17 @@ import {listMyTpoInternalThreads} from "@/modules/placements/tpo-team-internal-r
 export const dynamic="force-dynamic";
 export default async function TpoHome(){
  const ctx=await getCurrentRequestContext();
- if(!hasTpoTooling(ctx)) return <main className="min-w-0 space-y-5">
+ if(!hasTpoTooling(ctx)) return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Placement cell" title="Home" description="Your college has no TPO account on this sign-in, so placement work is run from the college placements area."/>
   <ul className="divide-y divide-border rounded-xl border border-border bg-surface">
-   {[["Drives","/college/placements/drives"],["Calendar","/college/placements/calendar"],["Placements","/college/placements"]].map(([label,href])=><li key={href} className="p-4"><Link href={href} className="min-h-10 inline-flex items-center text-sm text-primary-text underline">{label}</Link></li>)}
+   {[["Drives","/college/placements/drives"],["Calendar","/college/placements/calendar"],["Placements","/college/placements"]].map(([label,href])=><li key={href} className="p-4"><Link href={href} className="min-h-11 inline-flex items-center text-sm text-primary-text underline">{label}</Link></li>)}
   </ul>
- </main>;
+ </div>;
  const moduleAccess=await resolveOptionalModuleAccess(ctx);
- if(!moduleAccess.placements.enabled)return <main role="status" className="min-w-0 rounded-xl border border-border bg-surface p-6">
+ if(!moduleAccess.placements.enabled)return <div role="status" className="min-w-0 rounded-xl border border-border bg-surface p-6">
   <h1 className="text-lg font-semibold">Placements is switched off for this college</h1>
   <p className="mt-2 text-sm text-body">Placement work is not available until your college enables the Placements module.</p>
- </main>;
+ </div>;
  const collegeId=ctx.membership!.collegeId;
  const calendarNow=new Date();
  const weekEnd=new Date(calendarNow.getTime()+7*86400000);
@@ -152,10 +153,16 @@ export default async function TpoHome(){
    {label:"Pick your team",done:placementTeam.summary.total>1,link:"/tpo/settings/team"},
   ],
  });
- return <main data-testid="tpo.home" className="min-w-0 space-y-5">
+ return <div data-testid="tpo.home" className="min-w-0 space-y-5">
  <TpoHomeReturnRefresh/>
  <p className="text-sm font-semibold text-muted-foreground">{greeting.date}</p>
  <PageHeader eyebrow="TPO" title={greeting.title}/>
+ <div aria-label="Placement overview" className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+  <StatTile label="Live drives" value={operations.summary.publishedJobs} href="/tpo/placements"/>
+  <StatTile label="Placed" value={studentStats.summary.placed} href="/tpo/students"/>
+  <StatTile label="Pending requests" value={pendingRequestCount} href="/tpo/requests"/>
+  <StatTile label="Recruiter messages" value={unreadMessages} href="/tpo/messages"/>
+ </div>
  <p aria-live="polite" className="text-sm font-semibold text-body">{tpoHomeNeedsLine(rows)}</p>
  <div className="grid min-w-0 gap-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-start">
  <section aria-label="Next up" data-testid="home.next-up" className="min-w-0 rounded-xl border border-border bg-surface p-5">
@@ -163,23 +170,23 @@ export default async function TpoHome(){
   {next?<div className="mt-2 space-y-2">
    <p className="break-words font-semibold">{next.title}</p>
    <p className="text-sm text-muted-foreground">{next.text}</p>
-   <Link href={next.href} className="inline-flex min-h-11 items-center rounded bg-primary px-4 text-sm text-on-primary">{next.action}</Link>
+   <Link href={next.href} className="inline-flex min-h-11 items-center rounded bg-primary px-4 text-sm text-foreground">{next.action}</Link>
   </div>:rows.find(row=>row.needsAttention)?<div className="mt-2 space-y-2"><p className="text-sm">{rows.find(row=>row.needsAttention)?.status}</p>
-   <Link href={rows.find(row=>row.needsAttention)!.href} className="inline-flex min-h-11 items-center rounded bg-primary px-4 text-sm text-on-primary">Open</Link>
+   <Link href={rows.find(row=>row.needsAttention)!.href} className="inline-flex min-h-11 items-center rounded bg-primary px-4 text-sm text-foreground">Open</Link>
   </div>:<div className="mt-2 space-y-1"><p className="font-semibold">Nothing is waiting on you.</p><p className="text-sm text-muted-foreground">New requests, results and replies show up here first.</p></div>}
  </section>
  <section className="min-w-0 space-y-2" aria-label="Your placement work">
   <ul className="divide-y divide-border rounded-xl border border-border bg-surface">{rows.map(row=><li key={row.key}>
     <Link href={row.href} data-testid={"home.row."+row.key}
      className="flex min-h-16 min-w-0 items-center gap-3 p-4 text-body hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
-     <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-surface-subtle text-sm font-semibold">{row.title.slice(0,1)}</span>
+     <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-primary-subtle text-sm font-semibold">{row.title.slice(0,1)}</span>
      <span className="min-w-0 flex-1"><strong className="block text-sm text-foreground">{row.title}</strong>
       <span className="block break-words text-xs text-muted-foreground">{row.status}</span></span>
-     {row.needsAttention?<span aria-label="Needs you" className="shrink-0 rounded-full bg-warning-subtle px-2 py-1 text-xs font-semibold text-warning-text">Needs you</span>:null}
+     {row.needsAttention?<span aria-label="Needs you" className="shrink-0 rounded-full bg-warning-subtle px-2 py-1 text-xs font-semibold text-foreground">Needs you</span>:null}
      <span aria-hidden="true" className="shrink-0 text-primary-text">›</span>
     </Link>
    </li>)}</ul>
  </section>
  </div>
- </main>;
+ </div>;
 }
