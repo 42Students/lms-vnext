@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useSyncExternalStore } from "react";
+import { useGuardedAction } from "@/hooks/use-guarded-action";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -21,7 +22,7 @@ export function ResourceProgressControl({
     () => true,
     () => false,
   );
-  const [saving, setSaving] = useState(false);
+  const { pending: saving, run } = useGuardedAction();
   const [confirmOpen,setConfirmOpen]=useState(false);
   const [error, setError] =
     useState<string | null>(null);
@@ -33,9 +34,8 @@ export function ResourceProgressControl({
     if (saving || complete) return;
     setConfirmOpen(false);
     setError(null);
-    setSaving(true);
-
     try {
+      await run(async () => {
       const response = await fetch(
         `/api/courses/progress/${contentId}`,
         {
@@ -59,10 +59,9 @@ export function ResourceProgressControl({
 
       setComplete(true);
       router.refresh();
+      });
     } catch {
       setError("Could not mark this as complete. Please try again.");
-    } finally {
-      setSaving(false);
     }
   }
 
