@@ -37,7 +37,7 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
    const payload=await response.json().catch(()=>null) as {error?:string;issues?:Array<{message:string}>;results?:Result[]}|null;
    if(!response.ok)throw Error(payload?.issues?.[0]?.message??payload?.error??"Selection action failed");
    setReport(payload?.results??[]);setChosen([]);
-   if(mode==="RECORD")setMode(null);
+   if(mode==="RECORD"){setLastRecorded(chosen.length);setMode(null);}
    router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Unable to save");}finally{setPending(false);}
  }
