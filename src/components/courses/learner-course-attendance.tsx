@@ -324,6 +324,7 @@ export function LearnerCourseAttendance({
       <section aria-label="Attendance this month" className="rounded-xl border border-border bg-surface p-4 sm:p-5">
         <h3 className="text-sm font-semibold text-foreground">Attendance this month</h3>
         <p className="mt-2 text-3xl font-semibold text-foreground">{summary.percentage===null?"—":summary.percentage+"%"}</p>
+        <p className="mt-2 text-xs font-semibold text-muted-foreground">Attendance threshold</p>
         <p className="mt-2 text-sm text-body">{summary.heldSessions===0?"No classes held yet in this period.":thresholdDetail}</p>
         <dl className="mt-4 grid grid-cols-3 gap-3 border-t border-border pt-3 text-sm">
           <div><dt className="text-muted-foreground">Present</dt><dd className="font-semibold">{summary.present}</dd></div>

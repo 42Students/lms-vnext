@@ -163,3 +163,32 @@ export const placementTpoTeamAway=pgTable("placement_tpo_team_away",{
   foreignColumns:[collegeMemberships.id,collegeMemberships.collegeId]}).onDelete("restrict"),
  index("tpo_team_away_until_idx").on(t.collegeId,t.awayUntil),
 ]);
+
+/** TPO-inbox-team-22: one member may ask another participant, with lifecycle audit. */
+export const placementTpoTeamAsks=pgTable("placement_tpo_team_asks",{
+ id:uuid("id").defaultRandom().primaryKey(),
+ threadId:uuid("thread_id").notNull(),
+ collegeId:uuid("college_id").notNull(),
+ askerMembershipId:uuid("asker_membership_id").notNull(),
+ assigneeMembershipId:uuid("assignee_membership_id").notNull(),
+ requestKey:uuid("request_key").notNull(),
+ title:varchar("title",{length:200}).notNull(),
+ dueAt:timestamp("due_at",{withTimezone:true}),
+ status:varchar("status",{length:12}).notNull().default("OPEN"),
+ doneNote:text("done_note"),
+ createdAt:timestamp("created_at",{withTimezone:true}).notNull().defaultNow(),
+ updatedAt:timestamp("updated_at",{withTimezone:true}).notNull().defaultNow(),
+},t=>[
+ foreignKey({name:"tpo_team_asks_thread_college_fk",columns:[t.threadId,t.collegeId],
+  foreignColumns:[placementTpoInternalThreads.id,placementTpoInternalThreads.collegeId]}).onDelete("restrict"),
+ foreignKey({name:"tpo_team_asks_asker_college_fk",columns:[t.askerMembershipId,t.collegeId],
+  foreignColumns:[collegeMemberships.id,collegeMemberships.collegeId]}).onDelete("restrict"),
+ foreignKey({name:"tpo_team_asks_assignee_college_fk",columns:[t.assigneeMembershipId,t.collegeId],
+  foreignColumns:[collegeMemberships.id,collegeMemberships.collegeId]}).onDelete("restrict"),
+ uniqueIndex("tpo_team_asks_dedupe_uq").on(t.threadId,t.askerMembershipId,t.requestKey),
+ index("tpo_team_asks_assignee_due_idx").on(t.collegeId,t.assigneeMembershipId,t.status,t.dueAt),
+ check("tpo_team_asks_distinct_people_ck",sql`${t.askerMembershipId} <> ${t.assigneeMembershipId}`),
+ check("tpo_team_asks_status_ck",sql`${t.status} in ('OPEN','DONE','CANCELLED')`),
+ check("tpo_team_asks_title_ck",sql`length(btrim(${t.title})) between 1 and 200`),
+ check("tpo_team_asks_note_ck",sql`${t.doneNote} is null or length(${t.doneNote}) <= 2000`),
+]);

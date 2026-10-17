@@ -6,7 +6,7 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getTpoDriveApplicationsExport} from "@/modules/placements/tpo-drive-applications-export-service";
 export default async function TpoApplicationsExportPage({params,searchParams}:{
- params:Promise<{jobId:string}>;searchParams:Promise<{stage?:string|string[];search?:string|string[];channel?:string|string[];eligibility?:string|string[];sort?:string|string[];submittedWithin?:string|string[]}>;
+ params:Promise<{jobId:string}>;searchParams:Promise<{stage?:string|string[];search?:string|string[];channel?:string|string[];eligibility?:string|string[];flag?:string|string[];sort?:string|string[];submittedWithin?:string|string[]}>;
 }){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
@@ -15,7 +15,7 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
  let result:Awaited<ReturnType<typeof getTpoDriveApplicationsExport>>;
  try{result=await getTpoDriveApplicationsExport(context,{...filters,jobId});}
  catch(error){if(error instanceof PlacementsServiceError&&error.code==="PLACEMENT_JOB_NOT_FOUND")notFound();throw error;}
- const query=new URLSearchParams({stage:result.stage,search:result.search,channel:result.channel,eligibility:result.eligibility,sort:result.sort,submittedWithin:result.submittedWithin}).toString();
+ const query=new URLSearchParams({stage:result.stage,search:result.search,channel:result.channel,eligibility:result.eligibility,flag:result.flag,sort:result.sort,submittedWithin:result.submittedWithin}).toString();
  const stages=["ALL","SUBMITTED","PENDING","HOLD","SHORTLISTED","REJECTED","WITHDRAWN"] as const;
  return <div className="space-y-6">
   <Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline?"+query} className="text-sm font-semibold text-primary-text hover:underline">← Applicants</Link>
@@ -28,6 +28,12 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
    <label className="min-w-40 flex-1 text-sm text-body">Stage
     <select name="stage" defaultValue={result.stage} className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface p-2">
      {stages.map(stage=><option key={stage} value={stage}>{stage}</option>)}
+    </select></label>
+   <label className="min-w-40 flex-1 text-sm text-body">Applicant flags
+    <select name="flag" defaultValue={result.flag} className="mt-1 min-h-11 w-full rounded border border-border bg-surface p-2">
+     <option value="ALL">Any flag</option><option value="WITHDRAWAL_REQUESTED">Withdrawal requested</option>
+     <option value="NO_SHOW">No-show</option><option value="PLACED_ELSEWHERE">Accepted another offer</option>
+     <option value="ADDED_BY_COLLEGE">Added by college</option>
     </select></label>
    <label className="min-w-40 flex-1 text-sm text-body">Name, roll, branch, batch, email, phone or role
     <input name="search" defaultValue={result.search} maxLength={100} className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface p-2"/>

@@ -333,7 +333,7 @@ export function LearnerPlacementRequests({
         </div>
       </div>
 
-      <div className="grid gap-5 p-5 xl:grid-cols-2">
+      <div role="group" aria-label="What do you need?" className="grid gap-5 p-5 xl:grid-cols-2">
         <div id="round-reschedule" className="scroll-mt-24 rounded-lg border border-border bg-muted p-4">
           <h3 className="m-0 text-sm font-semibold text-foreground">
             Round reschedule
