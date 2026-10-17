@@ -2,6 +2,7 @@
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {filterTpoBlockedDates,tpoBlockedDatesEmptyMessage} from "@/modules/placements/tpo-blocked-date-filter-model";
+import {groupTpoBlockedDays} from "@/modules/placements/tpo-blocked-range-display";
 import {tpoIndiaCalendarDay} from "@/modules/placements/tpo-local-date-model";
 type BlockedDay={id:string;day:string;reason:string;updatedAt:string};
 export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
@@ -15,6 +16,7 @@ export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
  const filtered=filterTpoBlockedDates(items,search,month);
  const pastCount=filtered.filter(item=>item.day<today).length;
  const visible=showPast?filtered:filtered.filter(item=>item.day>=today);
+ const ranges=groupTpoBlockedDays(visible);
  async function request(url:string,method:"POST"|"DELETE",body:Record<string,unknown>){
   setBusy(true);setError("");setNotice("");
   try{
@@ -58,17 +60,26 @@ export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
         className="min-h-11 w-full rounded border border-border bg-surface px-3"/>
     </label>
   </div>
-  <p role="status" className="text-xs text-muted-foreground">Showing {visible.length} of {items.length} blocked dates · Maximum 90 days per range</p>
+  <p role="status" className="text-xs text-muted-foreground">Showing {visible.length} of {items.length} blocked days across {ranges.length} displayed ranges · Maximum 90 days per range</p>
   {pastCount>0?<button type="button" onClick={()=>setShowPast(value=>!value)}
    className="min-h-10 rounded border border-border px-3 text-sm">{showPast?"Hide past blocked dates":`Show past blocked dates (${pastCount})`}</button>:null}
   {visible.length===0?<p role="status" className="text-sm text-muted-foreground">{!showPast&&pastCount>0?"No upcoming blocked dates.":tpoBlockedDatesEmptyMessage(items.length)}</p>:
-   <ul className="grid min-w-0 gap-2 sm:grid-cols-2">{visible.map(item=><li key={item.id}
+   <ul className="grid min-w-0 gap-2 sm:grid-cols-2">{ranges.map(range=><li key={range.items[0].id}
     className="flex min-w-0 flex-wrap justify-between gap-3 rounded-lg border border-border bg-surface p-3">
-    <div className="min-w-0"><strong>{item.day}</strong><p className="break-words text-sm">{item.reason}</p></div>
-    <button type="button" disabled={busy} onClick={()=>{
-     if(!window.confirm("Remove this blocked date?"))return;
+    <div className="min-w-0"><strong>{range.startDay===range.endDay?range.startDay:range.startDay+" – "+range.endDay}</strong><p className="break-words text-sm">{range.reason}</p><p className="text-xs text-muted-foreground">{range.items.length} day(s) · Individual day removal below</p></div>
+    {range.items.length>1?<button type="button" disabled={busy} onClick={()=>{
+     if(!window.confirm("Remove all "+range.items.length+" blocked days in this range?"))return;
+     void request("/api/placements/tpo/settings/blocked-dates/range","DELETE",{
+      startDay:range.startDay,endDay:range.endDay,
+      versions:range.items.map(item=>({id:item.id,expectedVersion:item.updatedAt})),
+     });
+    }} className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text">Remove whole range</button>:null}
+    <details className="min-w-0">
+     <summary className="cursor-pointer text-sm font-semibold text-primary-text">Manage individual days ({range.items.length})</summary>
+     <div className="mt-2 flex max-h-48 flex-wrap gap-1 overflow-y-auto">{range.items.map(item=><button key={item.id} type="button" disabled={busy} onClick={()=>{
+     if(!window.confirm("Remove "+item.day+" from blocked dates?"))return;
      void request("/api/placements/tpo/settings/blocked-dates/"+item.id,"DELETE",{expectedVersion:item.updatedAt});
-    }} className="min-h-10 rounded border border-border px-3 text-sm disabled:opacity-50">Remove</button></li>)}</ul>}
+    }} className="min-h-9 rounded border border-border px-2 text-xs disabled:opacity-50">Remove {item.day}</button>)}</div></details></li>)}</ul>}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
  </section>;

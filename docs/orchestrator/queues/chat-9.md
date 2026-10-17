@@ -70,3 +70,22 @@ Merge parent: `origin/main@e324194c5805e124cbbfcc3b650569e03ea713c9`. Preserved 
 - BLOCKED TPO-settings-audit-31: historic student display/rename propagation cannot be inferred from the raw stored JSON; existing student outcome codes are intentionally untouched.
 - BLOCKED All remaining security-sensitive decisions, unregistered schema, mail provider delivery, production/live browser checks remain open under FAST v2.
 
+
+
+## FAST v2 continuation 3 — 2026-10-17 / chatgpt/chat-9-b
+
+Started by fast-forwarding this builder branch to the latest merged main. Every source change was committed with `[chat-9]` and pushed only to this branch. **No tests, typecheck, lint, build or CI wait**. Existing nine WPs retain DONE/source-pass status, **not runtime acceptance**.
+
+- WP-04 / WP-07 TPO-settings-audit-20/21: show all five immutable built-in job types and their legacy placed-count semantics; reject built-in names in custom-type creation.
+- WP-04 TPO-settings-audit-22: college-scoped, optimistic-locking custom type rename API, per-type UI confirmation and audit trail, with historical-drive rewrite explicitly not claimed.
+- WP-04 TPO-settings-audit-20/21/22/23: stage canonical job-type migration proposal in `docs/proposed-migrations/chat-9-job-types-canonical.sql`; no automatic Flyway activation.
+- WP-04 TPO-settings-audit-43: display consecutive blocked days as ranges, date-guarded transactional whole-range deletion, expandable single-day controls, activity audit.
+- WP-04 / WP-07 TPO-settings-audit-57: safely source recruiter designation, show it with a missing-data fallback, and search granted recruiters by designation.
+- WP-02 / WP-09 TPO-calendar-reports-31: preserve/reject unauthorized branch choices in After college, validate batch/branch CSV selection, add correctly scoped Unplaced CSV and enforce accurate filters; cap both exported results with an explicit truncation header.
+- BLOCKED TPO-settings-audit-20/21/23: college-hidden builtins/custom counts-as-placed and downstream drives/reports require the orchestrator to register canonical migration plus chat-5 consumer integration.
+- BLOCKED TPO-settings-audit-22: historical drive usage totals, cascading historical rename and safe delete require new per-drive foreign-key data; this round does not assert them implemented.
+- BLOCKED TPO-settings-audit-43: explicit persisted exam-week range identity needs the orchestrator's reviewed schema; display groups are derived from daily rows.
+- BLOCKED TPO-settings-audit-57: recruiter phone, joined-through provenance and verified identity details require a privacy-reviewed producer.
+- BLOCKED TPO-calendar-reports-31: remaining report-specific Company/Mode/Pay category dimensions require scoped source integrations across other report producers.
+- BLOCKED Security-sensitive owner decisions, provider secrets, production DNS/TLS, browser/live acceptance and correctness tests remain excluded under FAST mode.
+
