@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import {apiFetch} from "@/lib/api-fetch";
+import {friendlyApiError} from "@/lib/friendly-error";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
@@ -27,18 +29,6 @@ type Draft = {
   isTrusted: boolean;
   ownerMembershipId: string;
 };
-
-function humanize(value: string) {
-  return value
-    .toLowerCase()
-    .split("_")
-    .map(
-      (part) =>
-        part.charAt(0).toUpperCase() +
-        part.slice(1),
-    )
-    .join(" ");
-}
 
 export function PlacementEmployerRelationships({
   relationships,
@@ -73,36 +63,14 @@ export function PlacementEmployerRelationships({
     method: "PATCH" | "DELETE",
     body?: unknown,
   ) {
-    const response = await fetch(
+    await apiFetch(
       `/api/placements/companies/${relationshipId}`,
       {
         method,
-        headers:
-          body === undefined
-            ? undefined
-            : {
-                "content-type":
-                  "application/json",
-              },
-        body:
-          body === undefined
-            ? undefined
-            : JSON.stringify(body),
+        headers: body===undefined ? undefined : {"content-type":"application/json"},
+        body: body===undefined ? undefined : JSON.stringify(body),
       },
     );
-    const payload = (await response
-      .json()
-      .catch(() => null)) as
-      | { error?: string }
-      | null;
-    if (!response.ok) {
-      throw new Error(
-        humanize(
-          payload?.error ??
-            "PLACEMENT_RELATIONSHIP_UPDATE_FAILED",
-        ),
-      );
-    }
   }
 
   async function save(
@@ -133,9 +101,7 @@ export function PlacementEmployerRelationships({
         tone: "error",
         title: "Could not update employer",
         description:
-          error instanceof Error
-            ? error.message
-            : "Please try again.",
+          error instanceof Error ? error.message : friendlyApiError({}),
       });
     } finally {
       setPendingId(null);
@@ -164,9 +130,7 @@ export function PlacementEmployerRelationships({
         tone: "error",
         title: "Could not archive employer",
         description:
-          error instanceof Error
-            ? error.message
-            : "Please try again.",
+          error instanceof Error ? error.message : friendlyApiError({}),
       });
     } finally {
       setPendingId(null);
