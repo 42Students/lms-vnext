@@ -186,9 +186,7 @@ export default async function TpoMessagesPage({
 
         {isRecruiterInbox ? (
           <p className="mt-2 text-sm leading-6 text-body">
-            Recruiter conversation threads are persisted in
-            the current database. This overview shows authorized college recruiter threads.
-            Open a conversation to read its messages and reply.
+            Open a recruiter conversation to read messages, reply, and keep the discussion with its placement drive.
           </p>
         ) : (
           <p className="mt-2 text-sm leading-6 text-body">
