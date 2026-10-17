@@ -7,8 +7,9 @@ export const runtime="nodejs";
 export async function PATCH(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
+  const context=await getCurrentRequestContext();
   const raw:unknown=await request.json();
-  const profile=await updateOwnRecruiterProfileDetails(await getCurrentRequestContext(),raw);
+  const profile=await updateOwnRecruiterProfileDetails(context,raw);
   return NextResponse.json({profile});
  }catch(error){return apiErrorResponse(error);}
 }

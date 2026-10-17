@@ -1,84 +1,100 @@
 import "server-only";
 import {and,eq,sql} from "drizzle-orm";
+import {z} from "zod";
 import {getDb} from "@/db/client";
-import {users,placementRecruiterProfiles,placementRecruiterPublicContacts} from "@/db/schema";
-import {type RequestContext,hasActiveRecruiter} from "@/modules/identity/context";
-import {requirePermission,AuthorizationError} from "@/modules/permissions/policy";
-import {PlacementsServiceError} from "./errors";
-import {joinHrRecruiterName} from "./hr-recruiter-name-fields-model";
-import {sameRecruiterProfileVersion,normalizeRecruiterDesignation} from "./recruiter-designation-model";
-import {recruiterProfileDetailsPatchSchema} from "./recruiter-profile-details-model";
-import {placementTableExists} from "./staged-tables";
+import {users,placementRecruiterProfiles} from "@/db/schema";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
+import {hasActiveRecruiter,type RequestContext} from "@/modules/identity/context";
+import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
+import {PlacementsServiceError} from "./errors";
+import {joinHrRecruiterName} from "./hr-recruiter-name-fields-model";
+import {sameHrNameVersion} from "./hr-display-name-model";
+import {sameRecruiterProfileVersion} from "./recruiter-designation-model";
+
+/** REC-calendar-messages-profile-25/-27: one atomic form for recruiter
+ * identity, designation and optional contact-only mobile. Never edits email. */
+export const recruiterProfileDetailsPatchSchema=z.strictObject({
+ firstName:z.string().trim().min(1,"First name is required").max(100),
+ lastName:z.string().trim().max(100),
+ designation:z.string().trim().max(160),
+ mobile:z.string().trim().max(30),
+ expectedUserUpdatedAt:z.string().datetime({offset:true}),
+ expectedProfileUpdatedAt:z.string().datetime({offset:true}),
+}).superRefine((input,ctx)=>{
+ const name=[input.firstName,input.lastName].filter(Boolean).join(" ");
+ if(name.length<2||name.length>160)ctx.addIssue({code:"custom",path:["firstName"],
+  message:"Full name must be between 2 and 160 characters"});
+ if(!recruiterMobileNumberValid(input.mobile))ctx.addIssue({code:"custom",path:["mobile"],
+  message:"Enter a valid 10-digit mobile number, or leave it blank"});
+});
+export function recruiterMobileNumberValid(input:string):boolean {
+ if(!input.trim())return true;
+ const normal=input.trim().replace(/[\s()-]/g,"");
+ const national=normal.startsWith("+91")?normal.slice(3):normal.startsWith("91")?normal.slice(2):normal;
+ return /^\d{10}$/.test(national);
+}
+export function normalizeRecruiterMobile(input:string):string|null {
+ if(!input.trim())return null;
+ const normal=input.trim().replace(/[\s()-]/g,"");
+ const national=normal.startsWith("+91")?normal.slice(3):normal.startsWith("91")?normal.slice(2):normal;
+ return "+91"+national;
+}
 
 export async function updateOwnRecruiterProfileDetails(context:RequestContext,raw:unknown){
  const input=recruiterProfileDetailsPatchSchema.parse(raw);
  requirePermission(context,"identity.self.manage");
- if(!hasActiveRecruiter(context)||context.recruiter?.userId!==context.user.id)
+ if(!hasActiveRecruiter(context)||!context.recruiter||context.recruiter.userId!==context.user.id)
   throw new AuthorizationError("identity.self.manage");
- const name=joinHrRecruiterName(input.firstName,input.lastName);
- const title=normalizeRecruiterDesignation(input.title);
- const phone=input.phone.replace(/\D/g,"").slice(-10);
- const contactReady=await placementTableExists("placement_recruiter_public_contacts");
- // Empty phone is a valid clear operation only when the contact table exists;
- // never accidentally overwrite identity provider phone_e164 login credentials.
- if(!contactReady&&phone)throw new PlacementsServiceError("PLACEMENT_RECRUITER_PROFILE_STALE");
+ const displayName=joinHrRecruiterName(input.firstName,input.lastName);
+ const phoneE164=normalizeRecruiterMobile(input.mobile);
+ const title=input.designation||null;
  return getDb().transaction(async tx=>{
-  const [person]=await tx.select({
-   id:users.id,displayName:users.displayName,userUpdatedAt:users.updatedAt,
+  const [current]=await tx.select({
+   displayName:users.displayName,phoneE164:users.phoneE164,userUpdatedAt:users.updatedAt,
    title:placementRecruiterProfiles.title,profileUpdatedAt:placementRecruiterProfiles.updatedAt,
   }).from(users).innerJoin(placementRecruiterProfiles,eq(placementRecruiterProfiles.userId,users.id))
    .where(and(eq(users.id,context.user.id),eq(users.platformStatus,"ACTIVE"),
-    eq(placementRecruiterProfiles.status,"ACTIVE"),
-    eq(placementRecruiterProfiles.companyId,context.recruiter!.companyId)))
-   .for("update").limit(1);
-  if(!person)throw new AuthorizationError("identity.self.manage");
-  if(Date.parse(input.expectedUserUpdatedAt)!==person.userUpdatedAt.getTime()||
-   !sameRecruiterProfileVersion(person.profileUpdatedAt,input.expectedProfileUpdatedAt))
-   throw new PlacementsServiceError("PLACEMENT_RECRUITER_PROFILE_STALE");
-  const [existing]=contactReady?await tx.select({phone:placementRecruiterPublicContacts.phoneDigits})
-    .from(placementRecruiterPublicContacts).where(
-     eq(placementRecruiterPublicContacts.recruiterUserId,context.user.id)).for("update").limit(1):[];
-  const phoneChanged=(existing?.phone??"")!==phone;
-  const nameChanged=(person.displayName??"")!==name;
-  const titleChanged=person.title!==title;
-  if(!phoneChanged&&!nameChanged&&!titleChanged)
-   return {displayName:name,title,phone,changed:false,
-    userUpdatedAt:person.userUpdatedAt.toISOString(),
-    profileUpdatedAt:person.profileUpdatedAt.toISOString()};
-  const now=new Date(Math.max(Date.now(),person.userUpdatedAt.getTime()+1,person.profileUpdatedAt.getTime()+1));
-  if(nameChanged){
-   const [updated]=await tx.update(users).set({displayName:name,updatedAt:now})
-    .where(and(eq(users.id,person.id),
+    eq(placementRecruiterProfiles.companyId,context.recruiter!.companyId),
+    eq(placementRecruiterProfiles.status,"ACTIVE"))).for("update").limit(1);
+  if(!current)throw new AuthorizationError("identity.self.manage");
+  if(!sameHrNameVersion(current.userUpdatedAt,input.expectedUserUpdatedAt)||
+     !sameRecruiterProfileVersion(current.profileUpdatedAt,input.expectedProfileUpdatedAt))
+    throw new PlacementsServiceError("PLACEMENT_RECRUITER_PROFILE_STALE");
+  const userChanged=current.displayName!==displayName||current.phoneE164!==phoneE164;
+  const titleChanged=current.title!==title;
+  let nextUserAt=current.userUpdatedAt,nextProfileAt=current.profileUpdatedAt;
+  if(userChanged){
+   const next=new Date(Math.max(Date.now(),current.userUpdatedAt.getTime()+1));
+   const [updated]=await tx.update(users).set({displayName,phoneE164,updatedAt:next})
+    .where(and(eq(users.id,context.user.id),eq(users.platformStatus,"ACTIVE"),
      sql`date_trunc('milliseconds', ${users.updatedAt})=${input.expectedUserUpdatedAt}::timestamptz`))
-    .returning({id:users.id});
+    .returning({updatedAt:users.updatedAt});
    if(!updated)throw new PlacementsServiceError("PLACEMENT_RECRUITER_PROFILE_STALE");
+   nextUserAt=updated.updatedAt;
   }
   if(titleChanged){
-   const [updated]=await tx.update(placementRecruiterProfiles).set({title,updatedAt:now})
+   const next=new Date(Math.max(Date.now(),current.profileUpdatedAt.getTime()+1));
+   const [updated]=await tx.update(placementRecruiterProfiles).set({title,updatedAt:next})
     .where(and(eq(placementRecruiterProfiles.userId,context.user.id),
      eq(placementRecruiterProfiles.companyId,context.recruiter!.companyId),
+     eq(placementRecruiterProfiles.status,"ACTIVE"),
      sql`date_trunc('milliseconds', ${placementRecruiterProfiles.updatedAt})=${input.expectedProfileUpdatedAt}::timestamptz`))
-    .returning({userId:placementRecruiterProfiles.userId});
+    .returning({updatedAt:placementRecruiterProfiles.updatedAt});
    if(!updated)throw new PlacementsServiceError("PLACEMENT_RECRUITER_PROFILE_STALE");
+   nextProfileAt=updated.updatedAt;
   }
-  if(phoneChanged&&contactReady){
-   if(phone)await tx.insert(placementRecruiterPublicContacts).values({
-    recruiterUserId:context.user.id,phoneDigits:phone,
-   }).onConflictDoUpdate({target:placementRecruiterPublicContacts.recruiterUserId,
-    set:{phoneDigits:phone,updatedAt:now}});
-   else await tx.delete(placementRecruiterPublicContacts).where(
-    eq(placementRecruiterPublicContacts.recruiterUserId,context.user.id));
-  }
-  await recordActivityEventInTransaction(tx,context,{
+  if(userChanged||titleChanged)await recordActivityEventInTransaction(tx,context,{
    eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_RECRUITER_PROFILE_UPDATED,
    subjectType:"recruiter_profile",subjectId:context.user.id,
-   summary:"Recruiter profile details updated",
-   metadata:{nameChanged,titleChanged,phoneChanged},
+   summary:"Recruiter profile details updated",metadata:{fields:[
+    ...(current.displayName!==displayName?["displayName"]:[]),
+    ...(current.phoneE164!==phoneE164?["phone"]:[]),
+    ...(titleChanged?["title"]:[]),
+   ]},
   });
-  return {displayName:name,title,phone,changed:true,
-   userUpdatedAt:(nameChanged?now:person.userUpdatedAt).toISOString(),
-   profileUpdatedAt:(titleChanged?now:person.profileUpdatedAt).toISOString()};
+  return {displayName,phoneE164,title,
+   userUpdatedAt:nextUserAt.toISOString(),profileUpdatedAt:nextProfileAt.toISOString(),
+   changed:userChanged||titleChanged};
  });
 }
