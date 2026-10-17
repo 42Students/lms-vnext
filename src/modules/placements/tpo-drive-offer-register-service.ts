@@ -30,5 +30,6 @@ export async function getTpoDriveOfferRegisterCsv(context:RequestContext,raw:unk
  const input=offerRegisterQuery.omit({page:true}).parse(raw);
  const scoped=await getTpoDriveOfferRegister(context,{...input,page:1});
  const facts=await listPlacementJobOffers(context,scoped.job.id);
- return tpoDriveOfferRegisterCsv(facts,input);
+ const enriched=await enrichTpoOfferFacts(facts,context.membership!.collegeId);
+ return tpoDriveOfferRegisterCsv(enriched,input);
 }
