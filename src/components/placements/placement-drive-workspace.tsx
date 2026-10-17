@@ -395,6 +395,39 @@ export async function PlacementDriveWorkspace({
           <span>Applications close: {headerFacts.deadline}</span>
         </div>
       </section>
+      {job.legacyPostingDetails&&(job.legacyPostingDetails.portal?.studentsRegisterSeparately||
+        job.legacyPostingDetails.campusPool?.hostCollege||
+        job.legacyPostingDetails.campusPool?.reportingTime||
+        job.legacyPostingDetails.campusPool?.travelNote||
+        job.legacyPostingDetails.skillsWanted?.length)?(
+        <section aria-label="Supplementary employer details" className="rounded-xl border border-border bg-surface p-4">
+          <h2 className="font-semibold text-foreground">Employer information</h2>
+          {job.legacyPostingDetails.portal?.studentsRegisterSeparately?(
+            <p className="mt-2 text-sm text-body">
+              Students also register on {job.legacyPostingDetails.portal.name}.
+              {/^https:\/\/[^/]+/i.test(job.legacyPostingDetails.portal.url)?(
+                <>{" "}<a href={job.legacyPostingDetails.portal.url}
+                  target="_blank" rel="noopener noreferrer" className="text-primary-text underline">Open employer portal</a></>
+              ):null}
+            </p>
+          ):null}
+          {job.legacyPostingDetails.campusPool?.hostCollege?(
+            <p className="mt-2 text-sm text-body">Pool host: {job.legacyPostingDetails.campusPool.hostCollege}</p>
+          ):null}
+          {job.legacyPostingDetails.campusPool?.reportingTime?(
+            <p className="mt-2 text-sm text-body">Pool reporting time (IST): {new Intl.DateTimeFormat("en-IN",
+              {dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(
+                new Date(job.legacyPostingDetails.campusPool.reportingTime))}</p>
+          ):null}
+          {job.legacyPostingDetails.campusPool?.travelNote?(
+            <p className="mt-2 whitespace-pre-wrap text-sm text-body">Travel: {job.legacyPostingDetails.campusPool.travelNote}</p>
+          ):null}
+          {job.legacyPostingDetails.skillsWanted?.length?(
+            <p className="mt-2 text-sm text-body">Requested skills: {job.legacyPostingDetails.skillsWanted.join(", ")}</p>
+          ):null}
+          <p className="mt-2 text-xs text-muted-foreground">Supplementary details do not automatically create a venue, travel booking or eligibility rule.</p>
+        </section>
+      ):null}
       {deadlineState?.extendable?(
         <section id="drive-deadline-actions" aria-label="Set or extend deadline"
           className="rounded-xl border border-border bg-surface p-4">
