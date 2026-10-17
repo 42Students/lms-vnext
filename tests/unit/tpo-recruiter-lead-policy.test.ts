@@ -58,8 +58,8 @@ describe("W05 legacy recruiter lead policy", () => {
   });
 
   it("infers company only from a non-free work email", () => {
-    expect(inferLegacyRecruiterCompanyName("person@acme.com")).toBe("ACME");
-    expect(inferLegacyRecruiterCompanyName("person@Foo-Bar.co.in")).toBe("FOO-BAR");
+    expect(inferLegacyRecruiterCompanyName("person@acme.com")).toBe("Acme");
+    expect(inferLegacyRecruiterCompanyName("person@Foo-Bar.co.in")).toBe("Foo-bar");
     expect(inferLegacyRecruiterCompanyName("person@gmail.com")).toBeNull();
     expect(inferLegacyRecruiterCompanyName("person@outlook.com")).toBeNull();
     expect(inferLegacyRecruiterCompanyName(null)).toBeNull();

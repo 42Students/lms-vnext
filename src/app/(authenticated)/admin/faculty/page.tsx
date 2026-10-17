@@ -23,6 +23,6 @@ export default async function SuperAdminFacultyPage({searchParams}:{
   {context.adminScope?.collegeId?<SuperAdminFacultyBulkImport collegeId={context.adminScope.collegeId}/>:null}
   <AdminScopedReadPage peopleFilters={peopleFilters?{...peopleFilters,kind:"FACULTY"}:undefined} title="Registered Faculty" path="/admin/faculty" statuses={statuses}
   exportPath="/api/admin/faculty/export" exportFilename="super-admin-faculty-ist.csv"
-  description="Manage your registered faculty. The mobile number is used for OTP login. Contact fields are visible only to authorized administrators."
+  description="Manage registered faculty, their teaching departments and account status. Used for OTP login. Contact fields are visible only to authorized administrators."
   searchParams={searchParams} renderRowActions={row=><div className="flex flex-wrap items-start gap-3"><ScopedMembershipLifecycleActions membershipId={row.id} displayName={row.title} status={row.status}/>{peopleFilters?<CollegePersonEditAction membershipId={row.id} kind="FACULTY" departments={peopleFilters.departments}/>:null}</div>} loader={query=>listAdminScopedPeople(context,"FACULTY",query)}/></div>;
 }

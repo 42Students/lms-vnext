@@ -121,7 +121,7 @@ export const courseAssignments = pgTable(
     ).on(table.deliveryId, table.status),
     check(
       "course_assignments_points_ck",
-      sql`${table.maxPoints} between 1 and 10000`,
+      sql`${table.maxPoints} between 0 and 10000`,
     ),
     check(
       "course_assignments_sequence_ck",

@@ -75,6 +75,7 @@ export * from "./storage-files";
 export * from "./placement-drive-requests";
 export * from "./tpo-campaign-drafts";
 export * from "./placement-recruiter-public-contacts";
+export * from "./placement-recruiter-candidate-ratings";
 export * from "./placement-tpo-application-stages";
 export * from "./placement-tpo-recruiter-saved-views";
 export * from "./assignment-submission-links";
@@ -88,5 +89,5 @@ export * from "./platform-setting-overrides";
 export * from "./placement-tpo-company-communication";
 export * from "./placement-company-share-selection";
 export * from "./lesson-content-materials";
-
-export * from "./placement-public-page-content";
+export * from "./placement-learner-general-requests";
+export * from "./placement-tpo-prep-assignments";

@@ -8,8 +8,8 @@ describe("chat-16 mentor editor draft recovery",()=>{
   it("MEN-projects-meetings-55 displays independent Files, Links, Other resource counts",()=>{
     const list=read("src/components/projects/project-resource-list.tsx");
     expect(list).toContain('row.resourceType==="FILE"');
-    expect(list).toContain("const others=rows.length-links-files;");
-    for(const label of ['["Files",files]','["Links",links]','["Other",others]']){
+    expect(list).toContain("const other=rows.length-files-links;");
+    for(const label of ['["Files",files]','["Links",links]','["Other",other]']){
       expect(list).toContain(label);
     }
     expect(list).not.toContain('"Files/other"');

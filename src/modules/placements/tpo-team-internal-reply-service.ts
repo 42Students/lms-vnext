@@ -100,7 +100,7 @@ export async function postTpoInternalMessage(context:RequestContext,raw:unknown)
   const actorName=actor?.displayName?.trim()||"TPO colleague";
   await tx.insert(inAppNotifications).values({
    eventId:event.id,userId:other.userId,
-   title:"New message from "+actorName,
+   title:input.markDecision?"Decision from "+actorName:"New message from "+actorName,
    body:input.body.slice(0,120)+(input.body.length>120?"…":""),
    actionHref:"/tpo/team/"+thread.id+"?m="+message.id,
   });

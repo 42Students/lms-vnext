@@ -16,6 +16,12 @@ DONE means source implemented and ID-named tests authored, not executed or certi
 | MEN-projects-meetings-71 | DONE | src/app/(authenticated)/mentor/notifications/page.tsx; tests/unit/mentor-meetings-round4-source-failure.test.ts — `it("MEN-projects-meetings-71 preserves other sources and shows Retry sources when a feed fails")` |
 
 
+| MEN-projects-meetings-53 | DONE | Resource form and persisted optional metadata/sprint-task associations: src/components/projects/project-resource-controls.tsx; src/modules/projects/resource-service.ts; tests/unit/chat11-mentor-resources-round8-verification.test.ts — `it("MEN-projects-meetings-53 persists resource metadata and associated sprint/task IDs")` |
+| MEN-projects-meetings-55 | DONE | Mentor resource directory with type/status/sprint/task filters: src/components/projects/project-resource-list.tsx; tests/unit/chat11-mentor-resources-round8-verification.test.ts — `it("MEN-projects-meetings-55 defaults to active and exposes all legacy resource filters")` |
+| MEN-projects-meetings-56 | DONE | Active resource drag/keyboard reorder and scoped server mutation: src/components/projects/project-resource-list.tsx; src/modules/projects/resource-service.ts; tests/unit/chat11-mentor-resources-round8-verification.test.ts — `it("MEN-projects-meetings-56 reorders active resources and keeps a safe error fallback")` |
+| MEN-projects-meetings-63 | DONE | Mentor lock action, origin-guarded route and atomic delivery history/notice: src/components/projects/mentor-delivery-lock-control.tsx; src/app/api/projects/[projectId]/submissions/[submissionId]/mentor-lock/route.ts; src/modules/projects/mentor-delivery-lock-service.ts; tests/unit/chat11-mentor-resources-round8-verification.test.ts — `it("MEN-projects-meetings-63 protects mentor delivery locking and persists history")` |
+| MEN-projects-meetings-77 | DONE | Task scoped select and blocker controls: src/components/projects/mentor-task-status-transition.tsx; tests/unit/mentor-navigation-confirmations-round5.test.ts — `it("MEN-projects-meetings-77 exposes task-scoped state and blocker field labels")` |
+
 ## Partial (still open)
 
 - MEN-projects-meetings-57: The safe link and legacy action labels are implemented, but file metadata, resource statuses and updated-time tags still differ. Test: `it("MEN-projects-meetings-57 shows Open link and guards invalid or blocked resource windows")` in `tests/unit/college-mentor-round7-gap-verification.test.ts`.
@@ -37,35 +43,24 @@ DONE means source implemented and ID-named tests authored, not executed or certi
 - MEN-projects-meetings-75: Resource create/edit dialogs now confirm dirty discards and protect page unload; task, sprint, meeting, and delivery editors still need matching recovery. Test: `it("MEN-projects-meetings-75 keeps dirty project resource drafts on close or unload")` in `tests/unit/mentor-resource-dirty-round5.test.ts`.
 
 ## Remaining
-MEN-projects-meetings-53/56/58/63/64/65/66/75. The notifications page still uses separate personal and project sections; unified priority order needs a follow-up audit. No tests executed here.
+MEN-projects-meetings-58/75 and partial editor/document integration (57/72/76). The notifications page still uses separate personal and project sections; unified priority order needs a follow-up audit. No tests executed here.
 
+## Chat-16 reassignment verification (source-inspected; tests NOT executed)
 
-## Chat-11 mentor decision closure
+| ID | Status | Evidence |
+| --- | --- | --- |
+| MEN-projects-meetings-60 | DONE (authored; unrun) | `src/components/projects/project-activity-filtered-list.tsx` cursor/duplicate-safe Load more; `tests/unit/chat16-reassigned-mentor-parity.test.ts` `MEN-projects-meetings-60 pages beyond 100 without dropping or duplicating activity` |
+| MEN-projects-meetings-61 | DONE (authored; unrun) | `src/modules/projects/mentor-activity-display-model.ts` labels/category and `project-activity-filtered-list.tsx` empty states; `tests/unit/chat16-reassigned-mentor-parity.test.ts` `MEN-projects-meetings-61 shows human-readable labels, category, and legacy empty states` |
+| MEN-projects-meetings-67 | DONE (authored; unrun) | `mentor/calendar/page.tsx`, `mentor-meetings-calendar.tsx` legacy heading, action and removal of nonlegacy requested-meeting helper; `tests/unit/chat16-reassigned-mentor-parity.test.ts` `MEN-projects-meetings-67 retains legacy Meetings text and action wording` |
+| MEN-projects-meetings-70 | DONE (authored; unrun) | `src/modules/projects/mentor-attention.ts`, `mentor/notifications/page.tsx`; `tests/unit/chat16-reassigned-mentor-parity.test.ts` `MEN-projects-meetings-70 renders legacy notification heading and persisted attention labels` |
+| MEN-projects-meetings-74 | DONE (authored; unrun) | Legacy redirect-only routes under `src/app/(authenticated)/mentor/{profile,allQuizzes,fileExplorer,contacts,courses}/`; `tests/unit/chat16-reassigned-mentor-parity.test.ts` `MEN-projects-meetings-74 preserves redirect-only legacy Mentor URLs` |
+| MEN-projects-meetings-69 | PARTIAL | `mentor-calendar-load-failure.tsx` inline retry + `mentor/calendar/page.tsx`; `tests/unit/chat16-reassigned-mentor-parity.test.ts` `MEN-projects-meetings-69 keeps meeting load failure inline with a Retry action`. No persisted RESCHEDULED/DRAFT statuses in vNext; do not misreport full parity. |
 
-| MEN-projects-meetings-65 | DONE | src/components/projects/project-final-delivery-controls.tsx, project-delivery-reopen-control.tsx; tests/unit/chat11-mentor-delivery-decision-round3.test.ts and tests/unit/chat11-attendance-delivery-recovery.test.ts — `it("MEN-projects-meetings-65 has separate accept, request-change, and revision-reopen confirmations")` |
-| MEN-projects-meetings-66 | DONE | src/modules/projects/mentor-final-delivery-decision-service.ts and submission-service.ts; tests/unit/chat11-attendance-delivery-recovery.test.ts — `it("MEN-projects-meetings-66 persists mentor decisions and same-transaction learner notices")` |
+Remaining reassigned mentor OPEN items require data-model or full UI workflows: MEN-53,55,56,57,58,65,69(status),72,73,75,76. These have not been relabeled DONE merely for partial code. Tests are authored, not run by this lane.
 
-| MEN-projects-meetings-64 | DONE | src/components/projects/project-workspace.tsx, project-delivery-evidence-download.tsx; tests/unit/chat11-mentor-final-evidence.test.ts — `it("MEN-projects-meetings-64 shows author, submitted time, learner notes, typed links, and all recorded version events")` and `it("MEN-projects-meetings-64 opens verified evidence through a same-origin short-lived grant")` |
+## Chat-16 follow-on mentor editor recovery — source and ID tests authored, not executed
 
-## Chat-16 reassignment checkpoint — 2026-10-17 (source/test authored, tests not run)
-
-The entries below supersede earlier PARTIAL/DONE claims for this 32-gap reassignment when their disposition differs. A test name is source-level evidence only until CI and browser/database acceptance execute.
-
-| ID | Disposition | Evidence / remaining work |
-|---|---|---|
-| MEN-projects-meetings-53 | DONE (source authored) | `src/components/projects/project-resource-controls.tsx`, `src/modules/projects/resource-service.ts`, registered 0133 resource metadata; `tests/unit/chat16-reassigned-mentor-parity.test.ts` and `tests/unit/chat16-mentor-tracker-contract-round2.test.ts` — MEN-projects-meetings-53. Verify registered SQL on disposable PostgreSQL. |
-| MEN-projects-meetings-55 | PARTIAL | Resource search, metadata/status/sprint/task filters and reset exist in `project-resource-list.tsx`; source test MEN-projects-meetings-55 in `chat16-mentor-tracker-contract-round2.test.ts`. Files tile and unified uploaded-file rows still differ from legacy. |
-| MEN-projects-meetings-56 | DONE (source authored) | `resource-service.ts` validates owned active set and collision-safe sequence reorder, `project-resource-list.tsx` supports drag and accessible move; source tests MEN-projects-meetings-56 in `chat16-reassigned-mentor-parity.test.ts` and round2. |
-| MEN-projects-meetings-57 | PARTIAL | Draft now labels Draft rather than Active; type, pinned, link and updated metadata displayed in `project-resource-list.tsx`; source test MEN-projects-meetings-57 in round2. File metadata and unified open-file row remain open. |
-| MEN-projects-meetings-58 | OPEN | Attached files remain separate from resource records and their delete/archive semantics differ; do not claim unified file records. |
-| MEN-projects-meetings-60 | DONE (source authored) | Cursor pagination and deduplication in `project-activity-filtered-list.tsx`; ID-named tests in `mentor-activity-pagination-round5.test.ts`. |
-| MEN-projects-meetings-61 | DONE (source authored) | Humanized activities in `mentor-activity-display-model.ts`; ID-named tests in `mentor-activity-round4.test.ts`. |
-| MEN-projects-meetings-65 | DONE (source authored) | Separate final-delivery decision confirms and stale-review guidance, `project-final-delivery-controls.tsx`, ID-named `chat11-mentor-delivery-decision-round3.test.ts`. |
-| MEN-projects-meetings-67 | DONE (source authored) | Calendar copy and links, `mentor-meetings-round4.test.ts` and `chat16-reassigned-mentor-parity.test.ts`. |
-| MEN-projects-meetings-69 | PARTIAL | Inline calendar Retry is implemented and ID-tested in `chat16-reassigned-mentor-parity.test.ts`, but RESCHEDULED and DRAFT meeting states are not fully represented. |
-| MEN-projects-meetings-70 | DONE (source authored) | Legacy attention copy and notification labels in `mentor-meetings-round4.test.ts` and reassigned tests. |
-| MEN-projects-meetings-72 | PARTIAL | Transactional mentor notices exist in `project-notification-service.ts`, meeting/comment/task/member/resource decision services, ID-named `mentor-notifications-round5.test.ts` and round2. Verify project-updated, member-removed and end-to-end recipient coverage on database. |
-| MEN-projects-meetings-73 | PARTIAL | PLANNED idle project rule source-tested by MEN-projects-meetings-73 in round2, but the page still splits priority-ordered notice types into separate sections. |
-| MEN-projects-meetings-74 | DONE (source authored) | Legacy mentor bookmark redirects in `next.config.ts` and redirect page shims; `mentor-navigation-confirmations-round5.test.ts`. |
-| MEN-projects-meetings-75 | PARTIAL | Resources warn before discarding drafts, `mentor-resource-dirty-round5.test.ts`; analogous task/sprint/meeting/delivery leave protections remain incomplete. |
-| MEN-projects-meetings-76 | PARTIAL | Closeout and sprint `ConfirmDialog` controls, closeout now displays customer-safe retry guidance (no internal exception text), `chat16-mentor-tracker-contract-round2.test.ts` — MEN-projects-meetings-76. Confirmations and recovery across the remaining mentor actions are incomplete. |
+| MEN-projects-meetings-55 | DONE (source authored) | `project-resource-list.tsx` has legacy separate Files / Links / Other counters and required status, type, sprint and task facets; `tests/unit/chat16-mentor-draft-recovery-round3.test.ts` — MEN-projects-meetings-55 separate tile test. |
+| MEN-projects-meetings-57 | PARTIAL | Draft resources display Draft rather than Active; file metadata and uploaded-file row parity still missing; `tests/unit/chat16-mentor-tracker-contract-round2.test.ts` — MEN-projects-meetings-57. |
+| MEN-projects-meetings-75 | PARTIAL | `mentor-task-create.tsx`, `mentor-sprint-write.tsx`, `project-meeting-controls.tsx`, `project-delivery-reopen-control.tsx` warn about unsaved draft / feedback before dismissal or unload. Additional mentor editor variants remain to audit. `chat16-mentor-draft-recovery-round3.test.ts` — MEN-projects-meetings-75. |
+| MEN-projects-meetings-76 | PARTIAL | Consistent confirmations for sprint/closeout, safe static failure copy for task, sprint, meeting scheduling, reopen feedback and closeout. Not all mentor mutations covered. `chat16-mentor-draft-recovery-round3.test.ts` — MEN-projects-meetings-76. |

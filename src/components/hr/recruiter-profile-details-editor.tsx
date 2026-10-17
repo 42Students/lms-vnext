@@ -1,6 +1,7 @@
 "use client";
 import {useEffect,useRef,useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
+import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
 import {splitHrRecruiterName} from "@/modules/placements/hr-recruiter-name-fields-model";
 export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialPhone,
  userUpdatedAt,profileUpdatedAt,contactReady}:{
@@ -14,6 +15,7 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
  const [form,setForm]=useState(saved),[versions,setVersions]=useState({userUpdatedAt,profileUpdatedAt});
  const [busy,setBusy]=useState(false),busyRef=useRef(false);
  const [feedback,setFeedback]=useState("");
+ const [leaveHref,setLeaveHref]=useState<string|null>(null);
  const dirty=Object.keys(saved).some(key=>{
   const field=key as keyof typeof saved;
   return saved[field]!==form[field];
@@ -21,8 +23,21 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
  useEffect(()=>{
   if(!dirty)return;
   const warn=(e:BeforeUnloadEvent)=>{e.preventDefault();e.returnValue="";};
+  const intercept=(event:MouseEvent)=>{
+   const target=event.target;
+   if(!(target instanceof Element))return;
+   const anchor=target.closest("a[href]");
+   if(!(anchor instanceof HTMLAnchorElement))return;
+   if(event.defaultPrevented||event.ctrlKey||event.metaKey||event.altKey||event.shiftKey)return;
+   const url=new URL(anchor.href,window.location.href);
+   if(url.origin!==window.location.origin||url.pathname===window.location.pathname)return;
+   event.preventDefault();event.stopPropagation();
+   setLeaveHref(url.pathname+url.search+url.hash);
+  };
   window.addEventListener("beforeunload",warn);
-  return ()=>window.removeEventListener("beforeunload",warn);
+  document.addEventListener("click",intercept,true);
+  return ()=>{window.removeEventListener("beforeunload",warn);
+   document.removeEventListener("click",intercept,true);};
  },[dirty]);
  function update(key:keyof typeof form,value:string){setForm(s=>({...s,[key]:value}));setFeedback("");}
  async function save(e:FormEvent<HTMLFormElement>){
@@ -69,5 +84,11 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
    className="min-h-11 rounded bg-primary px-5 font-semibold text-on-primary disabled:opacity-50">
    {busy?"Saving…":"Save changes"}</button>
   {feedback?<p role={feedback==="Profile saved"?"status":"alert"} className="text-sm">{feedback}</p>:null}
+  <ConfirmActionDialog open={leaveHref!==null} title="Discard your unsaved profile changes?"
+   consequence="Your changes have not been saved." confirmLabel="Discard"
+   onCancel={()=>setLeaveHref(null)} onConfirm={()=>{
+    const href=leaveHref;setLeaveHref(null);setSaved(form);
+    if(href)router.push(href);
+   }}/>
  </form>;
 }

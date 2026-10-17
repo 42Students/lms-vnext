@@ -138,7 +138,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
             </label>
           ) : null}
           {data.kind === "SEMESTERS" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Semester parent program lifecycle
+            <label className="grid gap-1 text-sm font-semibold text-body">Program status
               <select name="programStatus" defaultValue={data.query.programStatus ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All programs</option>
                 <option value="ACTIVE">Active programs</option>
@@ -147,7 +147,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
             </label>
           ) : null}
           {data.kind === "SEMESTERS" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Semester curriculum mapping presence
+            <label className="grid gap-1 text-sm font-semibold text-body">Course mapping
               <select name="mappingState" defaultValue={data.query.mappingState ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All terms</option>
                 <option value="MAPPED">Has mapped courses</option>
@@ -156,7 +156,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
             </label>
           ) : null}
           {data.kind === "BATCHES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Batch planned end period evidence
+            <label className="grid gap-1 text-sm font-semibold text-body">Expected end period
               <select name="expectedEndState" defaultValue={data.query.expectedEndState ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All batches</option>
                 <option value="SET">End period recorded</option>
@@ -165,7 +165,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
             </label>
           ) : null}
           {data.kind === "BATCHES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Batch recorded academic year evidence
+            <label className="grid gap-1 text-sm font-semibold text-body">Academic year
               <select name="academicYearState" defaultValue={data.query.academicYearState ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All batches</option>
                 <option value="RECORDED">Year recorded</option>
@@ -174,7 +174,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
             </label>
           ) : null}
           {data.kind === "BATCHES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Parent program lifecycle
+            <label className="grid gap-1 text-sm font-semibold text-body">Program status
               <select name="programStatus" defaultValue={data.query.programStatus ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All parent programs</option>
                 <option value="ACTIVE">Active</option>
@@ -195,7 +195,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
             </label>
           ) : null}
           {data.kind === "BATCHES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Batch active class evidence
+            <label className="grid gap-1 text-sm font-semibold text-body">Classes
               <select name="activeClassState" defaultValue={data.query.activeClassState ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All batches</option>
                 <option value="HAS_ACTIVE">Has active classes</option>
@@ -204,7 +204,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
             </label>
           ) : null}
           {data.kind === "BATCHES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Batch active learner evidence
+            <label className="grid gap-1 text-sm font-semibold text-body">Students
               <select name="activeLearnerState" defaultValue={data.query.activeLearnerState ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All batches</option>
                 <option value="HAS_ACTIVE">Has active learner enrollments</option>

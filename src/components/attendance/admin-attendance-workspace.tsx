@@ -35,6 +35,7 @@ type DeliveryOption = {
   courseCode: string;
   academicPeriodId: string;
   academicPeriodName: string;
+  offeringType:"CORE"|"ELECTIVE";
 };
 
 type CourseOption = { id: string; name: string; code: string };
@@ -372,6 +373,8 @@ export function AdminAttendanceWorkspace({
             {visibleCourses.map((course) => (
               <option key={course.id} value={course.id}>
                 {course.code} · {course.name}
+                {data.deliveries.some(row=>row.sectionId===sectionId&&row.courseId===course.id&&row.offeringType==="ELECTIVE")
+                  ?" (elective)":""}
                 {!offeredCourses.some((item) => item.id === course.id)
                   ? " (not taught to this class)" : ""}
               </option>
@@ -383,7 +386,7 @@ export function AdminAttendanceWorkspace({
           <Select className="mt-1.5" value={deliveryId||termDeliveries[0]?.deliveryId||""}
             onChange={event=>setDeliveryId(event.target.value)}>
             {termDeliveries.map(item=><option key={item.deliveryId} value={item.deliveryId}>
-              {item.academicPeriodName} · {item.sectionName}
+              {item.academicPeriodName} · {item.sectionName}{item.offeringType==="ELECTIVE"?" (elective)":""}
             </option>)}
           </Select>
         </label>:null}
