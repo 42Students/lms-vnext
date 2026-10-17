@@ -8,5 +8,5 @@ it("offers an explicit bulk selection reset even before preview",()=>{
   target:"STUDENTS",rows:[{id:"11111111-1111-4111-8111-111111111111",label:"Member 1"}],
  }));
  expect(html).toContain("Clear selection");
- expect(html).toContain("Selected 0 of 25");
+ expect(html).toContain("Selected 0 of 1 matching records");
 });

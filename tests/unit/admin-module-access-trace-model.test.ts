@@ -232,7 +232,7 @@ describe("Super Admin learner module access trace", () => {
     ).toEqual(["GLOBAL"]);
   });
 
-  it("shows ignored lower-level placement rules even when locked", () => {
+  it("lets a locked lower-level placement rule win like any other module", () => {
     const placements = explainLearnerModuleAccess(
       chain,
       [
@@ -255,8 +255,8 @@ describe("Super Admin learner module access trace", () => {
     )!;
 
     expect(placements).toMatchObject({
-      enabled: true,
-      winnerLevel: "COLLEGE",
+      enabled: false,
+      winnerLevel: "MEMBERSHIP",
     });
 
     expect(
@@ -265,8 +265,8 @@ describe("Super Admin learner module access trace", () => {
       ),
     ).toMatchObject({
       source: "PERSISTED",
-      ignored: true,
-      winner: false,
+      ignored: false,
+      winner: true,
       locked: true,
     });
   });

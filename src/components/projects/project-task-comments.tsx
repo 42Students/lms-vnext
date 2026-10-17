@@ -72,7 +72,7 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
       </p>
       <p className="whitespace-pre-wrap">{row.body}</p>
    </article>)}
-     {canPost?<label className="grid gap-1 text-sm font-semibold text-body">Comment type
+     {canPost?<label className="grid gap-1 text-sm font-semibold text-body">Type
        <select value={kind} disabled={busy}
          onChange={event=>setKind(event.target.value as ProjectTaskCommentKind)}
          className="min-h-10 rounded border border-border bg-background px-2">
@@ -81,7 +81,7 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
          </option>)}
        </select>
      </label>:null}
-     {canPost?<label className="grid gap-1 text-sm text-body">Add a note before posting
+     {canPost?<label className="grid gap-1 text-sm text-body">Message
        <Textarea maxLength={4000} value={body} disabled={busy}
          placeholder="Share a progress update or note..."
          onChange={e=>setBody(e.target.value)}/>

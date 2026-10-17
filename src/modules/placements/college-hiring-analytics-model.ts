@@ -13,6 +13,11 @@ export const collegeHiringAnalyticsSchema = z.strictObject({
 });
 export function collegeHiringAnalyticsQuery(raw: Record<string,string|string[]|undefined>) {
   const input:Record<string,string>={};
+  // Any other query parameter (for example a caller-supplied collegeId) is refused.
+  const known:readonly string[]=["seasonId","jobId","departmentId","programId","cohortId","from","to"];
+  for (const [key,value] of Object.entries(raw)){
+    if(!known.includes(key)&&value!==undefined)return collegeHiringAnalyticsSchema.safeParse({[key]:value});
+  }
   for (const key of ["seasonId","jobId","departmentId","programId","cohortId","from","to"] as const){
     const value=raw[key];
     if (Array.isArray(value))return collegeHiringAnalyticsSchema.safeParse({...input,[key]:value});

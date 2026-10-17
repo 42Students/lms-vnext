@@ -2,6 +2,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listLessonResourceMaterials,commandLessonResourceMaterial} from "@/modules/courses/lesson-resource-materials-service";
 import {z} from "zod";
+import {isSameOriginRequest} from "@/auth/origin";
 
 export const runtime="nodejs";
 type Route={params:Promise<{contentId:string}>};
@@ -18,6 +19,7 @@ export async function GET(request:Request,{params}:Route){
  }catch(error){return apiErrorResponse(error);}
 }
 export async function POST(request:Request,{params}:Route){
+ if(!isSameOriginRequest(request))return Response.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const {contentId}=await params;
   const input=await request.json();

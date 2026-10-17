@@ -14,11 +14,11 @@ import {
 describe("College Admin classes/electives read-only filters", () => {
   it("parses bounded filters and refuses a caller-controlled college", () => {
     expect(collegeStructureQuerySchema.parse({})).toEqual({
-      q: "", status: "ACTIVE", page: 1,
+      q: "", status: "ACTIVE", page: 1, pageSize: 10,
     });
     expect(collegeStructureQuerySchema.parse({
       q: "  Science  ", status: "ARCHIVED", page: "3",
-    })).toEqual({ q: "Science", status: "ARCHIVED", page: 3 });
+    })).toEqual({ q: "Science", status: "ARCHIVED", page: 3, pageSize: 10 });
     for (const invalid of [
       { collegeId: "00000000-0000-4000-8000-000000000001" },
       { page: "0" },
@@ -63,8 +63,8 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(collegeElectiveQuerySchema.safeParse({ minimumCredits: 501 }).success).toBe(false);
     expect(readCollegeStructureParams({minimumCapacity:"",semesterNumber:"",minimumCredits:""})).toEqual({});
     expect(collegeClassQuerySchema.safeParse({ semesterNumber: 1 }).success).toBe(false);
-    expect(collegeStructureHref("ELECTIVES", collegeElectiveQuerySchema.parse({ ...query, semesterNumber: 1 }))).toContain("semesterNumber=1");
-    expect(collegeStructureHref("ELECTIVES", collegeElectiveQuerySchema.parse({ ...query, minimumCredits: 3 }))).toContain("minimumCredits=3");
+    expect(collegeStructureHref("ELECTIVES", collegeElectiveQuerySchema.parse({ q: "x & y", status: "ALL", page: 2, semesterNumber: 1 }))).toContain("semesterNumber=1");
+    expect(collegeStructureHref("ELECTIVES", collegeElectiveQuerySchema.parse({ q: "x & y", status: "ALL", page: 2, minimumCredits: 3 }))).toContain("minimumCredits=3");
     expect(collegeStructureTotalPages(26)).toBe(2);
   });
 
