@@ -36,7 +36,7 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
   </label>
   <label className="grid gap-1 text-sm text-body">Start (IST)
    <input name="startAt" type="datetime-local" min={today} required value={start}
-    onChange={event=>{setStart(event.target.value);setError(null);}}
+    onChange={event=>{const next=event.target.value;setStart(next);if(end&&end<=next)setEnd("");setError(null);}}
     className="min-h-11 rounded-md border border-border bg-surface px-3"/>
   </label>
   <label className="grid gap-1 text-sm text-body">End (IST)
