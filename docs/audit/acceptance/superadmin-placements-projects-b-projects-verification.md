@@ -55,3 +55,11 @@ Remaining gaps are tracked in `docs/orchestrator/queues/gap-closure-chat-4.md`. 
 | SA-placements-projects-67 | DONE | `src/components/projects/project-readiness-override-form.tsx`, `src/components/projects/project-admin-readiness-page.tsx`; `tests/unit/chat4-super-admin-projects-gap-closure.test.ts` test `SA-placements-projects-67`: accessible confirmation, safe apiFetch, note reset/draft retention, existing-submission warning, projectId deep link |
 | SA-placements-projects-68 | DONE | `src/components/projects/project-workspace-readiness.tsx`; `tests/unit/chat4-super-admin-projects-gap-closure.test.ts` test `SA-placements-projects-68`: ten section tabs remain reachable on the static readiness route |
 | SA-placements-projects-92 | DONE | `src/app/(authenticated)/admin/projects/[projectId]/[section]/page.tsx`, `src/components/projects/admin-project-section-page.tsx`, `src/components/projects/project-workspace.tsx`; `tests/unit/chat4-super-admin-projects-gap-closure.test.ts` test `SA-placements-projects-92`: sanitized origin/reason, contextual back link, workspace breadcrumb, readiness and full-audit shortcuts |
+
+### Round 4: creator and multi-college actions
+
+| ID | Status | Evidence |
+|---|---|---|
+| SA-placements-projects-56 | PARTIAL | `src/components/projects/class-team-workspace-creator.tsx`; `tests/unit/chat4-super-admin-projects-gap-closure.test.ts` test `SA-placements-projects-56`: server cohort preflight counts, eligibility skip, partial outcome/export. Per-learner preflight decision table and all legacy individual creation fields still open |
+| SA-placements-projects-57 | DONE | `src/app/(authenticated)/admin/projects/workspaces/new/page.tsx`, `src/components/projects/class-team-workspace-creator.tsx`; `tests/unit/chat4-super-admin-projects-gap-closure.test.ts` test `SA-placements-projects-57`: legacy heading, mode names, team help text |
+| SA-placements-projects-87 | DONE | `src/app/(authenticated)/admin/projects/templates/[templateId]/colleges/page.tsx`, `src/components/projects/super-admin-template-college-bulk.tsx`; `tests/unit/chat4-super-admin-projects-gap-closure.test.ts` test `SA-placements-projects-87`: per-college authorization, bulk page selection, confirm, partial-failure retry |
