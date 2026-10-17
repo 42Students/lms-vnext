@@ -36,6 +36,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
   if(next!=="Requests"&&next!=="Notes"&&next!=="History"&&next!=="Placement"||detail)return;
   await fetchDetail();
  }
+ useEffect(()=>{void fetchDetail();},[student.membershipId]);
  const when=(value:string)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(value));
  const index=rows.findIndex(row=>row.membershipId===student.membershipId);
  const attention=[
