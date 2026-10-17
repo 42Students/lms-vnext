@@ -22,6 +22,7 @@ import {RecruiterSavedViewControls} from "./recruiter-saved-view-controls";
 import {RecruiterInlineStage} from "./recruiter-inline-stage";
 import {RecruiterInlineOwner} from "./recruiter-inline-owner";
 import {tpoCompanyDirectoryCsv} from "@/modules/placements/tpo-company-directory-export-model";
+import {deriveLegacyCompanyCommunication} from "@/modules/placements/tpo-company-communication-legacy-model";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 type Lead = {
@@ -929,12 +930,13 @@ export function RecruiterLeadsWorkspace({
                       <tr key={company.key} className="border-b border-border last:border-0">
                         <td className="px-4 py-3">
                           <Link className="text-primary-text underline" href={"/tpo/companies?name="+encodeURIComponent(company.name)}>{company.name}</Link>
-                          {company.aliases.length?<p className="text-xs text-muted-foreground">Also typed as {company.aliases.join(", ")}</p>:null}
+                          {company.aliases.length?<p className="text-xs text-muted-foreground"><span title={company.aliases.join(", ")}>Also {company.aliases.length} other spellings</span></p>:null}
                         </td>
                         <td className="px-4 py-3">
                           <select aria-label={"Communication for "+company.name}
                             className="min-h-10 rounded-md border border-border bg-surface px-2 text-sm"
-                            value={communication[company.key]??"NOT_CONTACTED"}
+                            value={communication[company.key]??deriveLegacyCompanyCommunication(company.drivesRan,
+                              rows.filter(row=>company.people.some(p=>p.id===row.id)))}
                             disabled={!communicationReady}
                             onChange={e=>void changeCompanyCommunication(company.key,e.target.value)}>
                             <option value="NOT_CONTACTED">Not contacted</option>
