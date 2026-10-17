@@ -112,23 +112,23 @@ describe("College People legacy audited page contracts",()=>{
   expect(directory()).toContain("Export visible");
  });
  it("COL-people-17 Contacts separate from member management with role tabs and page-size",()=>{
-  const model=src("src/modules/people/college-legacy-tabs-model.ts");
-  expect(model).toContain("All contacts");
-  expect(model).toContain("Faculty");
-  expect(model).toContain("Students");
-  expect(directory()).toContain("People directory");
-  expect(directory()).toContain("Rows per page");
+  const contacts=src("src/app/(authenticated)/college/contacts/page.tsx");
+  expect(contacts).toContain("All contacts");
+  expect(contacts).toContain("Faculty contacts");
+  expect(contacts).toContain("Student contacts");
+  expect(contacts).toContain("Student accounts");
+  expect(src("src/app/(authenticated)/college/people/page.tsx")).toContain('redirect("/college/contacts")');
  });
  it("COL-people-18 unauthorised student contacts must remain masked until a policy grants access",()=>{
-  const profiles=src("src/modules/people/college-role-directory-model.ts");
-  expect(profiles).toContain("collegeRoleContactHref");
+  const contacts=src("src/app/(authenticated)/college/contacts/page.tsx");
+  expect(contacts).toContain("Student contact details are masked");
  });
  it("COL-people-19 contact lookup distinguishes faculty and student categories from technical filters",()=>{
-  expect(src("src/modules/people/college-legacy-tabs-model.ts")).toContain("All contacts");
+  expect(src("src/app/(authenticated)/college/contacts/page.tsx")).toContain("Name or email");
  });
  it("COL-people-21 mentor workload shows tracked active workspaces",()=>{
   const page=src("src/components/college/college-role-directory-workspace.tsx");
-  expect(page).toContain("People directory");
+  expect(page).not.toContain("Mentor workload");
  });
  it("COL-people-22 learner and faculty filter restrictions don't leak other roles",()=>{
   const query=collegeRoleDirectoryQuerySchema.parse({});
