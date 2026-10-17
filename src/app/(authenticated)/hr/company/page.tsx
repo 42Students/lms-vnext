@@ -59,7 +59,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
     return (
       <div className="space-y-6">
         <PageHeader
-          eyebrow="Employer Recruiter"
+          eyebrow="Recruiter"
           title="Company & Team"
           description="Choose the college whose recruiter relationship you want to view. We never guess a college when more than one access grant is active."
         />
@@ -108,7 +108,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           href="/hr/profile"
           className="rounded-md border border-border bg-surface px-3 py-2 text-sm font-medium text-foreground hover:bg-surface-secondary"
         >
-          Profile
+          Your profile
         </Link>
       </div>
 
