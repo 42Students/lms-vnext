@@ -17,7 +17,7 @@ export class TpoDriveRequestDecisionError extends Error {
   constructor(public readonly code:
     "REQUEST_NOT_FOUND" | "REQUEST_STALE" | "NO_ACTIVE_SEASON" |
     "AMBIGUOUS_ACTIVE_SEASONS" | "COMPANY_INACTIVE" |
-    "WORK_MODE_REVIEW_REQUIRED" | "REQUEST_ALREADY_DECIDED") {
+    "WORK_MODE_REVIEW_REQUIRED" | "EXTERNAL_APPLICATION_URL_REQUIRED" | "REQUEST_ALREADY_DECIDED") {
     super(code);this.name="TpoDriveRequestDecisionError";
   }
 }
@@ -64,6 +64,10 @@ export async function decideTpoRecruiterDriveRequest(
       if(draft.workMode==="NO_PREFERENCE")
         throw new TpoDriveRequestDecisionError("WORK_MODE_REVIEW_REQUIRED");
       const workMode=draft.workMode;
+      // REC-home-drives-26: off-campus applications must not be silently
+      // converted into an internal LMS apply flow on TPO approval.
+      if(draft.driveMode==="OFF_CAMPUS"&&!draft.externalApplicationUrl)
+        throw new TpoDriveRequestDecisionError("EXTERNAL_APPLICATION_URL_REQUIRED");
       const [job]=await tx.insert(placementJobs).values({
         collegeId,seasonId:seasons[0].id,
         companyRelationshipId:request.companyRelationshipId,
@@ -78,7 +82,8 @@ export async function decideTpoRecruiterDriveRequest(
         minimumAnnualCtcInr:inr(draft.minimumAnnualCtcInr),
         maximumAnnualCtcInr:inr(draft.maximumAnnualCtcInr),
         createdByUserId:context.user.id,
-        status:"DRAFT",applicationMode:"INTERNAL",
+        status:"DRAFT",applicationMode:draft.driveMode==="OFF_CAMPUS"?"EXTERNAL_ONLY":"INTERNAL",
+        externalApplicationUrl:draft.driveMode==="OFF_CAMPUS"?draft.externalApplicationUrl:null,
       }).returning({id:placementJobs.id});
       if(!job)throw new TpoDriveRequestDecisionError("REQUEST_STALE");
       approvedJobId=job.id;
