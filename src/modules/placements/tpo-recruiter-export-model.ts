@@ -45,7 +45,7 @@ const stageLabels:Record<string,string>={
  DRIVE_PLANNED:"Drive planned",RECRUITED:"Recruited",NOT_NOW:"Not now",
 };
 export function recruiterTableExportGrid(rows:readonly RecruiterTableExportRow[], columns?:readonly EngageColumn[]){
- return {
+ const grid={
   headers:[...RECRUITER_TABLE_HEADERS],
   values:rows.map(row=>[
    row.name,row.companyName??"",
