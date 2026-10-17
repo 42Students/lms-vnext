@@ -352,7 +352,7 @@ export async function updateCourseAssignment(
           ),
         ),
       )
-      .returning().then(rows=>rows);
+      .returning();
     });
 
     if (!updated) {
