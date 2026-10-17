@@ -1,7 +1,7 @@
 "use client";
 import {useEffect,useState} from "react";
-export function TpoTeamThreadDetails({threadId,topic,counterpart,createdDate,decisions}:{
- threadId:string;topic:string;counterpart:string;createdDate:string;decisions:number;
+export function TpoTeamThreadDetails({threadId,topic,counterpart,createdDate,decisions,openAsks,awayLabel}:{
+ threadId:string;topic:string;counterpart:string;createdDate:string;decisions:number;openAsks:number;awayLabel:string|null;
 }){
  const storageKey="tpo-team-details:"+threadId;
  const [open,setOpen]=useState(false);
@@ -35,6 +35,8 @@ export function TpoTeamThreadDetails({threadId,topic,counterpart,createdDate,dec
     <dt className="text-muted-foreground">Started</dt>
     <dd>{createdDate} IST</dd>
     <dt className="text-muted-foreground">Decisions here</dt><dd>{decisions}</dd>
+    <dt className="text-muted-foreground">Open asks</dt><dd>{openAsks}</dd>
+    <dt className="text-muted-foreground">People</dt><dd className="break-words">You · {counterpart}{awayLabel?" · away until "+awayLabel:""}</dd>
    </dl>
    <p className="mt-3 text-xs text-muted-foreground">Only this conversation&apos;s participants can see its messages.</p>
   </aside>:null}
