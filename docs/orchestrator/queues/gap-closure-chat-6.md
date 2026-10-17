@@ -180,13 +180,13 @@ Audit: `docs/audit/pages/superadmin/placements-projects-c-tracker.md` (and `plac
 | SA-placements-projects-104 | S3 | STATE | DONE |
 | SA-placements-projects-105 | S3 | COPY | DONE |
 | SA-placements-projects-106 | S3 | MISSING-ACTION | DONE |
-| SA-placements-projects-109 | S3 | MISSING-FIELD | OPEN |
+| SA-placements-projects-109 | S3 | MISSING-FIELD | DONE |
 | SA-placements-projects-110 | S3 | COPY | DONE |
 | SA-placements-projects-112 | S3 | COPY | DONE |
-| SA-placements-projects-114 | S3 | MISSING-ACTION | OPEN |
+| SA-placements-projects-114 | S3 | MISSING-ACTION | DONE |
 | SA-placements-projects-115 | S3 | MISSING-ACTION | OPEN |
 | SA-placements-projects-116 | S3 | MISSING-ACTION | OPEN |
-| SA-placements-projects-117 | S3 | MISSING-EXPORT | OPEN |
+| SA-placements-projects-117 | S3 | MISSING-EXPORT | DONE |
 | SA-placements-projects-121 | S3 | MISSING-ACTION | DONE |
 | SA-placements-projects-122 | S3 | MISSING-FILTER | DONE |
 | SA-placements-projects-107 | S4 | MISSING-ACTION | DONE |
