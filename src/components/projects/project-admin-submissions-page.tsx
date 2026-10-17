@@ -181,8 +181,8 @@ export async function ProjectAdminSubmissionsPage({
                 <StatusBadge
                   tone={tone(submission.status)}
                 >
-                  {submission.lockedAt?"Locked":
-                    submission.reopenedAt?"Draft (revising)":
+                  {submission.reopenedAt?"Draft (revising)":
+                    submission.lockedAt?"Locked":
                     submission.status==="SUBMITTED"?"Under Review":submission.status}
                 </StatusBadge>
               </div>
