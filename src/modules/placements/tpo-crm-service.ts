@@ -162,6 +162,8 @@ export async function listTpoLeads(
     ...tpoLeadView(row, recruiterAttentionFromPersistedFacts({
     createdAt: row.createdAt,
     lastContactAt: contactByLead.get(row.id) ? new Date(contactByLead.get(row.id)!) : null,
+    lastActivityAt:activityByLead.get(row.id)??null,
+    stage:stages.get(row.id),
     nextFollowupAt: nextByLead.get(row.id) ? new Date(nextByLead.get(row.id)!) : null,
     inviteBouncedAt: row.inviteBouncedAt,
     inviteSentAt: row.inviteSentAt,
