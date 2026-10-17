@@ -123,7 +123,7 @@ describe("TPO drive workspace S2 verification round 2",()=>{
  });
  it("TPO-drive-workspace-52 retains the audited cascade-undo service",()=>{
   const code=source("src/modules/placements/offer-cascade-undo-service.ts");
-  expect(code).toContain("server-only");
+  expect(code).toContain("undoPlacementOfferCascade");
   expect(code).toContain("transaction(");
  });
  it("TPO-drive-workspace-01 navigates the existing scoped drive subpages",()=>{
