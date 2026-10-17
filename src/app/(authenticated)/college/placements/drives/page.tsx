@@ -111,10 +111,11 @@ export default async function CollegeDrivesPage({ searchParams }: {
             <td className="p-3 tabular-nums">{item.applicants}</td>
             <td className="p-3">{item.status}</td>
             <td className="p-3">
-              <Link href={`/college/placements/jobs/${item.id}/overview`}
+              <Link href={`/college/placements/jobs/${item.id}/applications`}
                 className="font-semibold text-primary-text underline">View applications</Link>
               <Link href={`/college/placements/jobs/${item.id}/settings`}
                 className="ml-3 font-semibold text-primary-text underline">Edit</Link>
+              <CollegeDriveRowLifecycleAction jobId={item.id} title={item.title} status={item.status}/>
               {item.status==="PUBLISHED"?<CollegeDriveDeadlineAction jobId={item.id}
                title={item.title} currentDeadline={item.applicationDeadline?.toISOString()??null}/>:null}
             </td>
