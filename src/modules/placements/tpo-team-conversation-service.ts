@@ -2,6 +2,7 @@ import "server-only";
 import { and, desc, eq, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
+import {collegeMemberships,users} from "@/db/schema";
 import { placementTpoInternalThreads, placementTpoInternalMessages } from "@/db/schema/tpo-internal";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
@@ -50,9 +51,15 @@ export async function readTpoInternalConversation(context: RequestContext, rawId
     const newestFirst = await tx.select({
       id: placementTpoInternalMessages.id,
       authorMembershipId: placementTpoInternalMessages.authorMembershipId,
+      authorName:users.displayName,
       body: placementTpoInternalMessages.body,
       createdAt: placementTpoInternalMessages.createdAt,
-    }).from(placementTpoInternalMessages).where(and(
+    }).from(placementTpoInternalMessages)
+      .innerJoin(collegeMemberships,and(
+       eq(collegeMemberships.id,placementTpoInternalMessages.authorMembershipId),
+       eq(collegeMemberships.collegeId,placementTpoInternalMessages.collegeId)))
+      .innerJoin(users,eq(users.id,collegeMemberships.userId))
+      .where(and(
       eq(placementTpoInternalMessages.threadId, thread.id),
       eq(placementTpoInternalMessages.collegeId, college.id),
     )).orderBy(desc(placementTpoInternalMessages.createdAt), desc(placementTpoInternalMessages.id))
