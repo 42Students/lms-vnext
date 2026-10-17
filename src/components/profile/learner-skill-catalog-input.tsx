@@ -9,8 +9,6 @@ export function LearnerSkillCatalogInput({value,onChange}:{value:string;onChange
  const [status,setStatus]=useState<"loading"|"ready"|"unavailable">("loading");
  useEffect(()=>{
   const controller=new AbortController();
-  setStatus("loading");
-  setItems([]);
   const timer=window.setTimeout(async()=>{
    try{
     const params=new URLSearchParams({mode:value.trim()?"search":"popular",query:value.trim().slice(0,80),limit:"15"});
@@ -29,7 +27,7 @@ export function LearnerSkillCatalogInput({value,onChange}:{value:string;onChange
  return <div className="sm:col-span-2">
   <label htmlFor={id} className="text-xs font-semibold text-body">Skill</label>
   <input id={id} value={value} maxLength={160} autoComplete="off"
-   onChange={event=>onChange(event.target.value)}
+   onChange={event=>{setStatus("loading");setItems([]);setActiveIndex(-1);onChange(event.target.value);}}
    onKeyDown={event=>{
      if(status!=="ready"||items.length===0)return;
      if(event.key==="ArrowDown"){event.preventDefault();setActiveIndex(index=>(index+1)%items.length);}
