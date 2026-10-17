@@ -1,0 +1,28 @@
+# vNext Telegram alerting — operational runbook (GR-111–GR-125)
+
+This is an **implementation/operations guide**, not evidence of successful rollout. Never print bot tokens, webhook secrets, HMAC keys or database passwords. Do not commit secret files. The bot's webhook belongs to **production only**.
+
+## 1. Prerequisites
+
+- Register and replay `docs/proposed-migrations/graceful-telegram-alerting.sql` through the single-writer DB10 migration process. It proposes `log_alert_signatures`, `log_alert_signature_accounts`, `log_alert_states`, `log_alert_daily_counts` and `scheduled_job_leases` plus additive columns.
+- Confirm the registered migration, constraints, and clean replay on disposable PostgreSQL; only then set `DB10_LOG_ALERTS_READY=DB10_VERIFIED`. Do not enable based on schema drafts or unit tests alone.
+- Configure `TELEGRAM_ALERT_BOT_TOKEN` and `TELEGRAM_ALERT_CHAT_ID` in an external secret store. For production, also set `TELEGRAM_ALERT_WEBHOOK_SECRET` and register exactly one Telegram webhook to `/api/webhooks/telegram` with the matching secret-token header. **Never configure the Telegram production webhook against dev/UAT.**
+- Set `LOG_ALERT_ACCOUNT_HASH_KEY` from the secret store to enable privacy-preserving per-account blast-radius counting. Without it, alerts work but affected-account counts may be zero.
+- Provision a strong `INTERNAL_ALERT_TICK_SECRET` accessible to the in-cluster tick CronJob and web service, not to browsers or public clients.
+- Independent health-watch requires an accessible PostgreSQL `DATABASE_URL` supplied securely to its pod, which may differ from the web pod's Cloud SQL Unix-socket configuration. Restrict database privileges to the necessary lease table. Never put the URL into Kubernetes YAML. For a full cluster/DB outage, arrange an **external** Telegram-connected uptime monitor; this CronJob cannot persist state when its database is inaccessible.
+
+## 2. Deploy and check
+
+Apply the new manifests under `deploy/k8s/dev/alerting/` to the **dev namespace only**, after the secrets, service DNS and migration are ready. The two-minute tick calls `POST /api/internal/alerts/tick` with the internal secret; the separate one-minute health watch checks the service's `/ready` and `/` independently of web pods. Two consecutive failed checks should send a Telegram outage alert; the next good check sends a recovery alert. Test both without affecting shared/production traffic.
+
+The orchestrator runs `scripts/ops/deploy-health-check.sh` after each rollout with `READY_URL` set to the deployed `/ready` address. It fails the deploy-health step on rollout failure, restarts, zero ready replicas or failed readiness. Telegram status posts are best-effort and never make a previously failed rollout look healthy. Do not paste environment variables into issue comments or CI logs.
+
+At or after **09:00 IST**, the first successful tick sends the digest for the completed prior IST day. It includes new/recurring counts, top-five signatures, muted counts, spikes, deploy commit when provided, and current health-watch state. The global state row limits error bursts to five posts per minute and preserves suppressed counts for a later tick. A scheduled regression sweep handles fixed errors with eligible, previously undelivered recurrences.
+
+## 3. Acceptance / escalation
+
+The orchestrator must run typecheck, lint, unit tests (including the fake Telegram HTTP server), disposable PostgreSQL integration tests and in-cluster smoke checks; then verify actual production-only Acknowledge callbacks. Validate that sensitive strings never enter alerts and that test messages from development begin with `[vnext dev]`. Review `docs/audit/acceptance/graceful-alerting-verification.md` for GR-by-GR source and test evidence; none of these tests were executed by builder chat-16.
+
+To investigate an alert: use its short request ID in structured application logs; open **42 Tracker → Known Errors** for the signature, counts, affected-account estimate and triage actions. Mute known noise, mark a fixed regression only after deploying the fix, and use Acknowledge in production. Never copy raw provider responses, secrets or account identities into Telegram or support tickets.
+
+When alerts seem silent, inspect, in order: environment configuration status on Logs, migration readiness flag, tick CronJob status, health-watch pod/reachability, Telegram Bot API connectivity, and whether the signature is already known/muted or burst-capped. Known signatures are intentionally silent except volume spikes and fixed regressions. If Telegram is temporarily unavailable, new signatures are **not** marked delivered; retry occurs on a later occurrence and eligible regressions are swept by the tick.
