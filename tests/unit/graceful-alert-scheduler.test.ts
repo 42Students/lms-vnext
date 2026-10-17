@@ -51,6 +51,14 @@ describe("scheduled Telegram alerts", () => {
     expect(healthWatchStatus({ lockedBy: "FAILING", updatedAt: now }, now)).toBe("degraded");
     expect(healthWatchStatus({ lockedBy: "HEALTHY", updatedAt: new Date("2099-07-01T03:00:00Z") }, now)).toBe("watcher stale");
   });
+  it("GR-119 aggregates all error signatures while limiting only displayed top entries", async () => {
+    const { readFileSync } = await import("node:fs");
+    const source = readFileSync("src/modules/log-alerts/scheduler.ts", "utf8");
+    expect(source).toContain("coalesce(sum(");
+    expect(source).toContain("count(*) filter");
+    expect(source).toContain(".limit(5)");
+    expect(source).not.toContain(".limit(1000)");
+  });
   it("GR-119 digest uses 09:00 IST rather than UTC and lists top recurring", () => {
     expect(istDayAndHour(new Date("2099-07-01T03:30:00Z")))
       .toEqual({ day: "2099-07-01", hour: 9 });
