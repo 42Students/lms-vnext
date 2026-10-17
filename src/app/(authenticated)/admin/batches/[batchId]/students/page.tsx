@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {SuperAdminBatchRosterManager} from "@/components/admin/super-admin-batch-roster-manager";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {getSuperAdminBatchRosterOverview} from "@/modules/admin-ui/super-admin-batch-roster-service";
@@ -26,6 +27,7 @@ export default async function SuperAdminBatchStudentsPage({params}:{
       <td className="p-3"><Link className="font-semibold text-primary-text underline" href={"/admin/academics/sections/"+encodeURIComponent(section.id)}>Manage roster and schedule →</Link></td>
     </tr>)}</tbody></table>
   </section>
+  <SuperAdminBatchRosterManager classes={data.classes} students={data.roster}/>
   {!data.classes.length?<p role="status">No classes exist for this batch. Create a class before managing its roster.</p>:null}
   <Link href={"/admin/classes?cohortCode="+encodeURIComponent(data.batch.code)} className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">Manage batch classes →</Link>
  </main>;
