@@ -49,7 +49,7 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
    {!loading&&!error&&attempts.length===0?<p className="text-xs text-muted-foreground">
     No quiz submissions yet for this Section.</p>:null}
    {!loading&&attempts.length>0?<><p className="mb-2 text-xs font-semibold">{attempts.length} attempts</p>
-    <label className="mb-2 grid gap-1 text-xs font-semibold">Search Student
+    <label className="mb-2 grid gap-1 text-xs font-semibold">Search Student on this page
      <input type="search" value={learnerSearch} onChange={event=>setLearnerSearch(event.target.value)}
       className="min-h-10 rounded border border-border bg-background p-2" placeholder="Student name or email"/>
     </label>
