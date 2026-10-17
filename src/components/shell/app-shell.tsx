@@ -21,6 +21,7 @@ import {ShellConnectivityNotice} from "./shell-connectivity-notice";
 import {hasTpoTooling} from "@/modules/placements/tpo-workspace-access-model";
 import {canOpenTpoWorkspace} from "@/modules/placements/tpo-workspace-access-model";
 import { LearnerTopbarTools } from "./learner-topbar-tools";
+import {TpoTopbarMessages} from "./tpo-topbar-messages";
 import {HrRecruiterBell} from "@/components/hr/hr-recruiter-bell";
 import { ToastProvider } from "@/components/ui/toast";
 import { getLearnerShellAccess } from "@/modules/module-access/learner-shell-access";
@@ -127,6 +128,7 @@ export async function AppShell({
             </div>
             <div className="flex min-w-0 max-w-full flex-wrap items-center justify-end gap-2 sm:gap-3">
               {learner ? <ShellWidgetBoundary name="Learner tools" fallbackHref="/learn/notifications"><LearnerTopbarTools /></ShellWidgetBoundary> : null}
+              {hasTpoTooling(context)?<ShellWidgetBoundary name="TPO unread messages" fallbackHref="/tpo/messages"><TpoTopbarMessages/></ShellWidgetBoundary>:null}
               {superAdmin && adminScopeChoices ? (
                 <AdminScopeSwitcher
                   choices={adminScopeChoices}
