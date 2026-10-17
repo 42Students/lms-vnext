@@ -76,7 +76,8 @@ export async function AppShell({
   return (
     <ToastProvider>
       <PageTitle superAdmin={superAdmin} />
-      <div className="min-h-dvh bg-background text-foreground">\n        <a href="#lms-main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-surface focus:p-3 focus:text-[var(--lms-link-text)] focus:outline-2 focus:outline-[var(--lms-teal-deep)]">Skip to content</a>
+      <div className="min-h-dvh bg-background text-foreground">
+        <a href="#lms-main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-surface focus:p-3 focus:text-[var(--lms-link-text)] focus:outline-2 focus:outline-[var(--lms-teal-deep)]">Skip to content</a>
       <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 flex-col border-r border-[var(--lms-sidebar-border)] bg-surface lg:flex">
         <div className="flex min-h-20 items-center border-b border-[var(--lms-sidebar-border)] px-5">
           <div>
