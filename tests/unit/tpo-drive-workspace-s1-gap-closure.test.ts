@@ -49,4 +49,15 @@ describe("TPO drive workspace verified S1 gaps",()=>{
   expect(roundApplyInputSchema.safeParse({confirmed:true,expectedPreviewToken:token}).success).toBe(true);
   expect(roundApplyInputSchema.safeParse({confirmed:false,expectedPreviewToken:token}).success).toBe(false);
  });
+ it("TPO-drive-workspace-44 generates separate rooms and refuses interviews spilling into the next IST day",()=>{
+  const slots=planInterviewDay({startsAt:"2099-05-03T09:00:00+05:30",
+   durationMinutes:30,gapMinutes:10,slotsPerRoom:2,rooms:["Room A","Room B"]});
+  expect(slots).toHaveLength(4);
+  expect(slots.map(row=>row.room)).toEqual(["Room A","Room A","Room B","Room B"]);
+  expect(slots[0]!.startsAt.toISOString()).toBe("2099-05-03T03:30:00.000Z");
+  expect(()=>planInterviewDay({startsAt:"2099-05-03T23:45:00+05:30",
+    durationMinutes:30,gapMinutes:0,slotsPerRoom:1,rooms:["A"]})).toThrow(/midnight/);
+  expect(tpoInterviewSlotActionSchema.safeParse({action:"CLEAR_AVAILABLE",confirmed:true}).success).toBe(true);
+  expect(tpoInterviewSlotActionSchema.safeParse({action:"CLEAR_AVAILABLE",confirmed:false}).success).toBe(false);
+ });
 });
