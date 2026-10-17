@@ -72,7 +72,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
       companyId:filters.companyId,view:filters.view,search:filters.search,
       deadline:filters.deadline,workMode:filters.workMode,
       employmentType:filters.employmentType,sort:filters.sort,display:filters.display,
-      minApplied:filters.minApplied,minOffers:filters.minOffers,payCategory:filters.payCategory,attention:filters.attention,journey:filters.journey,
+      minApplied:filters.minApplied,maxApplied:filters.maxApplied,minOffers:filters.minOffers,maxOffers:filters.maxOffers,payCategory:filters.payCategory,attention:filters.attention,journey:filters.journey,
       attentionCounts,asOf:now.toISOString()};
     const pattern=tpoApplicantExportSearchPattern(filters.search);
     const requestScope=and(
@@ -244,7 +244,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
   return {
     ...projection, seasons, season,companies,batches,cohortId:filters.cohortId,owners,ownerUserId:filters.ownerUserId,
     companyId:filters.companyId, view: filters.view,search:filters.search,deadline:filters.deadline,workMode:filters.workMode,employmentType:filters.employmentType,sort:filters.sort,display:filters.display,
-    minApplied:filters.minApplied,minOffers:filters.minOffers,payCategory:filters.payCategory,attention:filters.attention,journey:filters.journey,
+    minApplied:filters.minApplied,maxApplied:filters.maxApplied,minOffers:filters.minOffers,maxOffers:filters.maxOffers,payCategory:filters.payCategory,attention:filters.attention,journey:filters.journey,
     attentionCounts,asOf: now.toISOString(),
     requestsAvailable: false as const,
     requestRows: [] as {id:string;status:string;title:string;company:string;createdAt:string;approvedJobId:string|null}[],
