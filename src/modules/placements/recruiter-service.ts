@@ -386,7 +386,7 @@ export async function revokePlacementRecruiterGrant(
 export async function listOwnRecruiterPlacementJobs(
   context: RequestContext,
   collegeId?: string,
-  options: {limit?:number} = {},
+  options: {limit?:number;jobIds?:readonly string[]} = {},
 ) {
   if (!hasActiveRecruiter(context)) {
     throw new AuthorizationError(
@@ -445,6 +445,7 @@ export async function listOwnRecruiterPlacementJobs(
           relationshipIds,
         ),
         ...(collegeId ? [eq(placementJobs.collegeId, collegeId)] : []),
+        ...(options.jobIds ? [inArray(placementJobs.id,[...new Set(options.jobIds)])] : []),
         eq(
           placementCompanyRelationships.collegeId,
           placementJobs.collegeId,
