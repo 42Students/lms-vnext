@@ -17,6 +17,8 @@ describe("scheduled Telegram alerts", () => {
       top: [{ hash: "123456789abcdef", count: 90 }],
     });
     expect(msg).toContain("New signatures: 3");
+    expect(msg).toContain("Recurring occurrences: 97");
+    expect(msg).toContain("Deploy: not recorded");
     expect(msg).toContain("123456789abc: 90");
   });
 });
