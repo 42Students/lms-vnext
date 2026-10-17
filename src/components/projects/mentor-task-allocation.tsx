@@ -187,6 +187,9 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
        className="rounded-lg border border-border bg-surface p-3 text-sm">
        <p className="font-semibold">{task.title}</p>
        <p className="mt-1 text-xs text-body">{task.priority} · {task.status}</p>
+       <p className="mt-1 text-xs text-body">
+         {task.estimatePoints===null?"Unsized":task.estimatePoints+" points"}
+       </p>
        {task.sprintId===null?<p className="mt-1 text-xs font-semibold text-warning-text">Product backlog{task.carriedFromSprintId?" · Carried over":""}</p>:null}
        {group.membershipId===null&&task.status!=="DONE"&&task.status!=="IN_REVIEW"?
          <p className="mt-1 text-xs font-semibold text-warning-text">Needs assigning</p>:null}
