@@ -73,8 +73,10 @@ export async function postProjectTaskComment(context:RequestContext,projectId:st
       projectId:scope.project.id,collegeId:scope.collegeId,
       roles:[recipient],
       exceptUserId:context.user.id,
-      title:"New comment on "+task.title,
-      body:"A team member commented on a project task.",
+      title:input.commentKind==="FLAG_FOR_MENTOR"&&recipient==="MENTOR"
+        ?"Flag for mentor: "+task.title:"New comment on "+task.title,
+      body:input.commentKind==="FLAG_FOR_MENTOR"
+        ?"A project task needs mentor attention.":"A team member commented on a project task.",
       actionHref:recipient==="MENTOR" ? "/mentor/projects/"+scope.project.id+"?tab=board"
         : "/learn/projects/"+scope.project.id+"?tab=board",
     });
