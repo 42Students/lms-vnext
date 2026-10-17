@@ -46,7 +46,7 @@ function mapResourceConstraint(error: unknown) {
 function ensureMutableProject(
   status: string,
 ) {
-  if (status === "ARCHIVED") {
+  if (status === "ARCHIVED" || status === "COMPLETED") {
     throw new ProjectsServiceError(
       "PROJECT_RESOURCE_INVALID_STATE",
     );

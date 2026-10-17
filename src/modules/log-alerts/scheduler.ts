@@ -270,14 +270,28 @@ export async function pollCloudLoggingErrors(now = new Date()): Promise<number> 
   return handled;
 }
 
+/**
+ * Best-effort alert maintenance: one failed independent check cannot prevent
+ * digest delivery or backup polling. Failed DB changes stay pending for the
+ * next tick; never forward raw provider/database details to the operator.
+ */
+export async function runOptionalAlertTask(task: () => Promise<unknown>): Promise<boolean> {
+  try {
+    await task();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 /** Tick may run every 1-2 minutes; exactly one daily message after 09:00 IST. */
 export async function runAlertTick(now = new Date()): Promise<{ acquired: boolean; digest: boolean }> {
   if (!logAlertsRuntimeEnabled() || !telegramAlertsConfigured()) return { acquired: false, digest: false };
   const { day, hour } = istDayAndHour(now);
   // Burst overflow is not lost even if no subsequent error arrives to trigger a send.
   // The locked state row preserves the five-per-minute ceiling across web replicas.
-  await flushOverflow(now);
-  await sweepUndeliveredRegressions(now);
+  await runOptionalAlertTask(() => flushOverflow(now));
+  await runOptionalAlertTask(() => sweepUndeliveredRegressions(now));
   try {
     await pollCloudLoggingErrors(now);
   } catch {

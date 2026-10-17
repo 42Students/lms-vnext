@@ -18,6 +18,7 @@ import { LearnerPlacementOffers } from "@/components/placements/learner-placemen
 import { LearnerPlacementsDashboard } from "@/components/placements/learner-placements-dashboard";
 import { LearnerPlacementPartialAlert } from "@/components/placements/learner-placement-partial-alert";
 import { getOwnLearnerRecentCollegeNotices } from "@/modules/placements/learner-dashboard-college-notices-service";
+import {learnerNoticeRelativeDay} from "@/modules/placements/learner-dashboard-college-notices-model";
 import { getOwnLearnerPlacementAlerts } from "@/modules/placements/learner-placement-alerts-service";
 import {learnerNoticeHref} from "@/modules/placements/learner-notice-deep-link-model";
 import { learnerDashboardPartialState, type PlacementDashboardAvailability }
@@ -307,7 +308,8 @@ export default async function LearnerPlacementsPage({
                   {notice.title} →
                 </Link>
               ) : <p className="break-words text-sm font-semibold text-foreground">{notice.title}</p>}
-              <time dateTime={notice.createdAt} className="text-xs text-muted-foreground">{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(notice.createdAt))}</time>
+              <time dateTime={notice.createdAt} className="text-xs text-muted-foreground">{learnerNoticeRelativeDay(notice.createdAt,new Date())}</time>
+               {notice.message?<p className="mt-1 line-clamp-2 text-sm text-body">{notice.message}</p>:null}
             </li>)}</ul>}
         <div className="mt-4 border-t border-border pt-4">
           <h3 className="text-sm font-semibold text-foreground">Latest personal updates</h3>
@@ -320,6 +322,7 @@ export default async function LearnerPlacementsPage({
               <li key={alert.id} className="rounded-md border border-border px-3 py-2 text-sm text-body">
                 <p className="font-semibold text-foreground">{alert.title}{alert.unread?" · Unread":""}</p>
                 <p className="mt-1 line-clamp-2">{alert.body}</p>
+                 <time className="mt-1 block text-xs text-muted-foreground" dateTime={alert.createdAt.toISOString()}>{learnerNoticeRelativeDay(alert.createdAt,new Date())}</time>
                 {alert.actionHref?<Link href={alert.actionHref} className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">Open update →</Link>:null}
               </li>
             ))}

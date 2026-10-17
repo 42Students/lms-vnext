@@ -89,7 +89,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
       </label>
       <label className="text-sm">Page size
         <select name="pageSize" defaultValue={String(data.query.pageSize)} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
-          <option value="25">25</option><option value="50">50</option><option value="100">100</option>
+          <option value="25">25</option><option value="50">50</option><option value="100">100</option><option value="500">500</option>
         </select>
       </label>
       <label className="text-sm">Age<select name="age" defaultValue={data.query.age} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">Any age</option><option value="TODAY">Asked today</option><option value="ONE_TO_TWO_DAYS">1–2 days</option><option value="OLDER_THAN_1_DAY">Older than 24 hours</option><option value="OLDER_THAN_2_DAYS">Older than 2 days</option><option value="OLDER_THAN_7_DAYS">Older than 7 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option><option value="LAST_30_DAYS">Last 30 days</option></select></label>

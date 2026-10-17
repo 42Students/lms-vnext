@@ -8,6 +8,7 @@ export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
  const [body,setBody]=useState("");
  const [sending,setSending]=useState(false);
  const [notice,setNotice]=useState("");
+ const [confirmDiscard,setConfirmDiscard]=useState(false);
  useEffect(()=>{
   if(!body.trim()&&!sending)return;
   const warn=(event:BeforeUnloadEvent)=>{
@@ -76,9 +77,27 @@ export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
    <span className={body.trim().length>4000?"font-semibold text-error":undefined}>{body.trim().length}/4000 characters</span> · Press Ctrl or Cmd+Enter to send. Replies stay in this employer-college thread and are reauthorized when sent.
   </p>
   {notice?<p role="status" className="text-sm text-body">{notice}</p>:null}
+  <div className="flex flex-wrap items-center gap-3">
   <button type="submit" disabled={sending}
    className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-60">
    {sending?"Sending…":"Send reply"}
   </button>
+  <button type="button" className="min-h-11 rounded border border-border px-4 text-sm"
+   disabled={sending} onClick={()=>{
+    if(!body.trim()){router.push("/hr/messages");return;}
+    setConfirmDiscard(true);
+   }}>Close</button>
+  </div>
+  {confirmDiscard?<div role="alertdialog" aria-modal="true" aria-label="Discard this unsent message?"
+   className="rounded-lg border border-border bg-surface-secondary p-4">
+   <h3 className="font-semibold">Discard this unsent message?</h3>
+   <p className="mt-1 text-sm">Your draft reply will be lost.</p>
+   <div className="mt-3 flex flex-wrap gap-3">
+    <button type="button" className="min-h-11 rounded bg-primary px-4 text-on-primary"
+     onClick={()=>{setBody("");setConfirmDiscard(false);router.push("/hr/messages");}}>Discard</button>
+    <button type="button" className="min-h-11 rounded border border-border px-4"
+     onClick={()=>setConfirmDiscard(false)}>Keep writing</button>
+   </div>
+  </div>:null}
  </form>;
 }

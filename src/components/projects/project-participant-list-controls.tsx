@@ -1,3 +1,5 @@
+"use client";
+import {useEffect,useRef} from "react";
 import Link from "next/link";
 
 export type ProjectParticipantListQuery = {
@@ -46,8 +48,22 @@ export function ProjectParticipantListControls({
   mentor?: boolean;
   learner?: boolean;
 }) {
+  const liveForm = useRef<HTMLFormElement | null>(null);
+  const liveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(()=>()=>{if(liveTimer.current)clearTimeout(liveTimer.current);},[]);
+  function liveRefresh(){
+    if(!mentor)return;
+    if(liveTimer.current)clearTimeout(liveTimer.current);
+    liveTimer.current=setTimeout(()=>liveForm.current?.requestSubmit(),350);
+  }
+  const hasFilters = Boolean(query.search || query.status || query.attention || query.assignment ||
+    query.work || (query.sort && query.sort !== "RECENT") ||
+    (query.page && query.page>1) || (query.pageSize && query.pageSize!==25));
   return (
     <form
+      ref={liveForm}
+      onInput={mentor?liveRefresh:undefined}
+      onChange={mentor?liveRefresh:undefined}
       method="get"
       action={basePath}
       className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4"
@@ -193,12 +209,12 @@ export function ProjectParticipantListControls({
       >
         Apply
       </button>
-      <Link
+      {!mentor || hasFilters ? <Link
         href={basePath}
         className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-body hover:bg-muted"
       >
         Clear filters
-      </Link>
+      </Link> : null}
     </form>
   );
 }
