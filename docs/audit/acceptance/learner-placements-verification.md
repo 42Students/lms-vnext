@@ -4,6 +4,7 @@ Source evidence and gap-named tests below have been **authored but not executed*
 
 | ID | Status | Evidence (source, test path and test name) |
 |---|---|---|
+| LEARNER-placements-02 | DONE | `src/modules/placements/learner-placements-swipe-model.ts` and `src/components/placements/learner-placements-tabs.tsx`; `tests/unit/learner-placements-02-swipe.test.ts` — `LEARNER-placements-02 moves between adjacent tabs without skipping`, plus touch safety, nested route and boundary cases. |
 | LEARNER-placements-06 | DONE | Debarment state, duration and correction CTA; staff-only internal reason remains private by design; source evidence src/app/(authenticated)/learn/my-placements/page.tsx; tests/unit/learner-placements-round2-source-contracts.test.ts — `LEARNER-placements-06 source behavior or reviewed disposition` (tests authored, not run). |
 | LEARNER-placements-07 | DONE | Per-application standing and outcome track in learner journey; source evidence src/components/placements/learner-placement-journey.tsx; tests/unit/learner-placements-round2-source-contracts.test.ts — `LEARNER-placements-07 source behavior or reviewed disposition` (tests authored, not run). |
 | LEARNER-placements-10 | NOT-A-GAP | vNext count tiles and funnel are approved intentional dashboard improvements; no critical legacy behavior removed; tests/unit/learner-placements-round2-source-contracts.test.ts — `LEARNER-placements-10 source behavior or reviewed disposition`. |
@@ -38,6 +39,6 @@ Source evidence and gap-named tests below have been **authored but not executed*
 
 Partial coverage and source checks exist for `LEARNER-placements-04/-08/-22/-31/-37/-46/-47/-54/-R05`; assertions for these IDs do not cover their entire legacy contract. Continue implementation before marking DONE.
 
-Still open or not fully built: `LEARNER-placements-01/-02/-03/-05/-09/-15/-16/-18?/-20/-24/-25/-26/-28/-30/-33/-35/-39/-40/-41/-43/-45/-49/-50/-51/-52/-53/-R01/-R03/-R04/-R08`. This list includes items that may have source improvements but require fuller acceptance evidence. `-20` is BLOCKED on private storage and malware scanning.
+Still open or not fully built: `LEARNER-placements-01/-03/-05/-09/-15/-16/-18?/-20/-24/-25/-26/-28/-30/-33/-35/-39/-40/-41/-43/-45/-49/-50/-51/-52/-53/-R01/-R03/-R04/-R08`. This list includes items that may have source improvements but require fuller acceptance evidence. `-20` is BLOCKED on private storage and malware scanning.
 
 Round-2 new tests: `tests/unit/learner-placements-round2-source-contracts.test.ts`, `tests/unit/learner-placements-round2-behavior.test.ts`, `tests/unit/learner-placements-round2-legacy-navigation.test.ts`. Existing round-1 tests remain. No tests were run by this lane.
