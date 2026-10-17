@@ -28,7 +28,7 @@ export function CollegeCreateForm({
   const initialForm={organizationId:initialOrganizationId,name:"",code:"",
     city:"",state:"",addressLine1:"",addressLine2:"",landmark:"",
     postalCode:"",country:"India"};
-  const {draft,setDraft,restored,clearDraft}=useFormDraft("admin-create-college",initialForm);
+  const {draft,setDraft,restored,clearDraft}=useFormDraft("admin-create-college:"+initialOrganizationId,initialForm);
   const {organizationId,name,code,city,state,addressLine1,addressLine2,
     landmark,postalCode,country}=draft;
   const setOrganizationId=(value:string)=>setDraft(current=>({...current,organizationId:value}));
