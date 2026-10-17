@@ -6,6 +6,7 @@ import { hasMembershipRole, type RequestContext } from "@/modules/identity/conte
 import { listBulkDriveCandidates } from "@/modules/placements/bulk-drive-service";
 import { PlacementBulkAddApplicants } from "./placement-bulk-add-applicants";
 import { TpoRemindNonApplicants } from "./tpo-remind-non-applicants";
+import { TpoDriveCloneAction } from "./tpo-drive-clone-action";
 import { getPlacementDriveDay } from "@/modules/placements/drive-day-service";
 import { getJobEligibilityPolicy } from "@/modules/placements/eligibility-service";
 import { getPlacementEvaluationConfig } from "@/modules/placements/evaluation-config-service";
@@ -288,6 +289,8 @@ export async function PlacementDriveWorkspace({
                 Extend deadline
               </Link>
             ) : null}
+            {isTpo && ["CLOSED","CANCELLED"].includes(job.status) ?
+              <TpoDriveCloneAction jobId={jobId} label="Run it again as a draft"/>:null}
             {isTpo && job.status === "DRAFT" ? (
               <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/edit"}
                 className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground">
