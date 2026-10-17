@@ -110,8 +110,20 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
       internalReason:input.reason,candidateMessage:null,actorUserId:context.user.id,
      });
      screeningStatus="PENDING";
+     if(next==="SHORTLISTED"){
+      await tx.update(placementApplicationScreenings).set({
+       status:"SHORTLISTED",candidateMessage:null,internalReason:input.reason,
+       decidedByUserId:context.user.id,decidedAt:new Date(),updatedAt:new Date(),
+      }).where(and(eq(placementApplicationScreenings.applicationId,applicationId),
+       eq(placementApplicationScreenings.status,"PENDING")));
+      await tx.insert(placementApplicationScreeningHistory).values({
+       applicationId,fromStatus:"PENDING",toStatus:"SHORTLISTED",
+       internalReason:input.reason,candidateMessage:null,actorUserId:context.user.id,
+      });
+      screeningStatus="SHORTLISTED";
+     }
     }
-    // Reinstate is recorded in 0112; immutable legacy screening may stay REJECTED.
+    // 0125 registers REJECTED → PENDING and optional PENDING → SHORTLISTED history.
     const target=input.action==="REINSTATE"?null:
      next==="SHORTLISTED"?"SHORTLISTED":next==="REJECTED"?"REJECTED":null;
     if(target&&screeningStatus!==target){
