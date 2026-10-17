@@ -2,8 +2,12 @@
 export function singleValueMentorFilters(
   params: Record<string, string | string[] | undefined>,
 ): Record<string, string | undefined> | null {
+  // Legacy bookmarks can contain unrelated selector keys: do not pass them
+  // to the strict query schema or let them influence tenant scope.
+  const allowed = new Set(["search","status","attention","assignment","work","sort","page","pageSize"]);
   const entries: [string, string | undefined][] = [];
   for (const [key, value] of Object.entries(params)) {
+    if (!allowed.has(key)) continue;
     if (Array.isArray(value)) {
       if (value.length !== 1) return null;
       entries.push([key, value[0]]);
