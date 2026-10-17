@@ -129,3 +129,8 @@ LEARNER-placements-08 PARTIAL (still OPEN): the Next 7 days cards link to the ex
 | LEARNER-placements-03 | DONE | `src/app/(authenticated)/learn/my-placements/{applications,jobs,schedule,offers,placement}/page.tsx`; `tests/unit/learner-placements-chat7-legacy-headings-r7.test.ts` — named test LEARNER-placements-03. New source-level tests authored but not run. |
 
 | LEARNER-placements-05 | DONE | `src/modules/placements/learner-dashboard-hero-priority-model.ts`; `tests/unit/learner-placements-chat7-legacy-headings-r7.test.ts` — named test LEARNER-placements-05. New source-level tests authored but not run. |
+
+## Chat-15 group A — tests authored, not executed
+
+| LEARNER-placements-03 | DONE (source authored; execution pending) | `tests/unit/chat15-reassigned-learner-parity.test.ts` — `LEARNER-placements-03` test; existing implementation reviewed. |
+| LEARNER-placements-05 | DONE (source authored; execution pending) | `tests/unit/chat15-reassigned-learner-parity.test.ts` — `LEARNER-placements-05` test; existing implementation reviewed. |
