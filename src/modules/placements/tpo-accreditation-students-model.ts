@@ -5,6 +5,7 @@ export type AccreditationStudentOffer={
  membershipId:string;offerId:string;name:string|null;rollNumber:string|null;
  programme:string;branch:string;batch:string;company:string;
  status:string;annualCtcInr:number|null;joining:string|null;kind?:string;
+ selectedOutcome?:boolean;
 };
 export type AccreditationStudentRow={
  membershipId:string;name:string|null;rollNumber:string|null;
@@ -32,7 +33,7 @@ export function buildAccreditationStudentRows(offers:readonly AccreditationStude
  for(const [membershipId,group] of members){
   const accepted=group.filter(x=>countsAsPlacedByCollegeRule({
    employmentType:"FULL_TIME",offerStatus:x.status,offerKind:x.kind,
-   countsAsPlacedAt,
+   countsAsPlacedAt,selectedOutcome:x.selectedOutcome,
   }));
   if(accepted.length===0)continue;
   // Deterministic ordering: known best CTC first; never turn unknown pay into zero.
@@ -48,7 +49,7 @@ export function buildAccreditationStudentRows(offers:readonly AccreditationStude
   (a.rollNumber??"").localeCompare(b.rollNumber??"")||a.membershipId.localeCompare(b.membershipId));
 }
 export function accreditationOfferStatusLabel(status:string):string{
- return ({ISSUED:"Released",ACCEPTED:"Accepted",DECLINED:"Declined",
+ return ({SELECTED:"Selected (not released yet)",ISSUED:"Released",ACCEPTED:"Accepted",DECLINED:"Declined",
   WITHDRAWN:"Withdrawn",EXPIRED:"Expired"} as Record<string,string>)[status]??"Not recorded";
 }
 export function accreditationJoiningLabel(joining:string|null):string{

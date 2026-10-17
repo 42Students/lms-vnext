@@ -4,7 +4,7 @@ import {z} from "zod";
 import {getDb} from "@/db/client";
 import {cohorts,collegeMemberships,departments,learnerProfiles,learnerProgramEnrollments,
  placementApplications,placementCompanies,placementCompanyRelationships,placementJobs,
- placementJoiningOutcomes,placementOffers,placementCollegeRules,programs,users} from "@/db/schema";
+ placementJoiningOutcomes,placementOffers,placementCollegeRules,placementDriveSelections,programs,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requirePermission} from "@/modules/permissions/policy";
 import {getPlacementAccreditationReport} from "./report-accreditation-service";
@@ -58,6 +58,36 @@ export async function getTpoAccreditationStudentExport(context:RequestContext,ra
    eq(placementJobs.seasonId,report.selectedSeasonId),
    eq(placementJobs.employmentType,"FULL_TIME"),isNull(placementJobs.archivedAt),
    query.jobId?eq(placementJobs.id,query.jobId):undefined));
- const rows=buildAccreditationStudentRows(offers,countsAsPlacedAt);
+ const selectionRows=countsAsPlacedAt==="SELECTED"?await getDb().select({
+  membershipId:collegeMemberships.id,selectionId:placementDriveSelections.id,name:users.displayName,
+  rollNumber:learnerProfiles.rollNumber,programme:programs.name,branch:departments.name,
+  batch:cohorts.name,company:placementCompanies.name,annualCtcInr:placementDriveSelections.annualCtcInr,
+ }).from(placementDriveSelections)
+  .innerJoin(placementApplications,eq(placementApplications.id,placementDriveSelections.applicationId))
+  .innerJoin(placementJobs,and(eq(placementJobs.id,placementDriveSelections.jobId),
+   eq(placementJobs.id,placementApplications.jobId)))
+  .innerJoin(placementCompanyRelationships,and(
+   eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
+   eq(placementCompanyRelationships.collegeId,collegeId)))
+  .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
+  .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
+   eq(collegeMemberships.collegeId,collegeId)))
+  .innerJoin(users,eq(users.id,collegeMemberships.userId))
+  .innerJoin(learnerProgramEnrollments,and(
+   eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),
+   eq(learnerProgramEnrollments.cohortId,query.batchId)))
+  .innerJoin(cohorts,eq(cohorts.id,learnerProgramEnrollments.cohortId))
+  .innerJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
+  .innerJoin(departments,and(eq(departments.id,programs.departmentId),
+   eq(departments.collegeId,collegeId)))
+  .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
+  .where(and(eq(placementJobs.collegeId,collegeId),
+   eq(placementJobs.seasonId,report.selectedSeasonId),
+   eq(placementJobs.employmentType,"FULL_TIME"),isNull(placementJobs.archivedAt),
+   query.jobId?eq(placementJobs.id,query.jobId):undefined)):[];
+
+ const students=[...offers,...selectionRows.map(row=>({...row,offerId:"selection:"+row.selectionId,
+  status:"SELECTED",kind:"OFFER",joining:null,selectedOutcome:true}))];
+ const rows=buildAccreditationStudentRows(students,countsAsPlacedAt);
  return {rows,csv:accreditationStudentCsv(rows),batch,warning:ACCREDITATION_STUDENT_WARNING};
 }
