@@ -1,3 +1,6 @@
+import {afterCollegeOutcomeSchema} from "./tpo-after-college-model";
+import {readTpoAfterCollegeMatches} from "./tpo-after-college-filter-service";
+import {readTpoStudentVerificationFacts,studentVerificationFact} from "./tpo-student-verification-facts";
 import {
   and,
   asc,
@@ -83,11 +86,22 @@ export const tpoStudentsQuerySchema = z
     programId:uuid.optional(),
     classId:uuid.optional(),
     afterCollege:afterCollegeOutcomeSchema.optional(),
+    profileStatus:z.enum(["VERIFIED","WAITING","SENT_BACK","NOT_VERIFIED"]).optional(),
+    minApplications:z.coerce.number().int().min(0).max(10000).optional(),
+    maxApplications:z.coerce.number().int().min(0).max(10000).optional(),
+    minOffers:z.coerce.number().int().min(0).max(10000).optional(),
+    maxOffers:z.coerce.number().int().min(0).max(10000).optional(),
     batchId: uuid.optional(),
     search: z.string().trim().max(150).optional(),
     ...paginationFields,
   })
-  .strict();
+  .strict()
+  .superRefine((value,ctx)=>{
+    if(value.minApplications!==undefined&&value.maxApplications!==undefined&&value.minApplications>value.maxApplications)
+     ctx.addIssue({code:"custom",path:["maxApplications"],message:"Maximum applications must be at least the minimum"});
+    if(value.minOffers!==undefined&&value.maxOffers!==undefined&&value.minOffers>value.maxOffers)
+     ctx.addIssue({code:"custom",path:["maxOffers"],message:"Maximum offers must be at least the minimum"});
+  });
 
 export const tpoStudentRequestsQuerySchema = z
   .object({
@@ -375,6 +389,7 @@ export async function getTpoStudentsIntelligence(
       exportRows: options.includeExportRows ? [] : null,
       definitions: {
         afterCollegeAvailable:input.afterCollege?await placementTableExists("placement_tpo_after_college"):true,
+        verificationAvailable:await placementTableExists("profile_verifications"),
         registrationsAvailable,
         externalOffersAvailable,
         registrationScope: "ACTIVE_COHORT",
@@ -742,6 +757,7 @@ export async function getTpoStudentsIntelligence(
   }
 
   const now = new Date();
+  const verificationFacts=await readTpoStudentVerificationFacts(college.id);
 
   const studentRows = learners.map((learner) => {
     const sectionIds =
@@ -818,6 +834,7 @@ export async function getTpoStudentsIntelligence(
       },
       preferencesPresent:
         learner.preferencesMembershipId !== null,
+      verification:studentVerificationFact(verificationFacts,learner.membershipId),
       applications:
         applicationsByMember.get(
           learner.membershipId,
@@ -869,6 +886,7 @@ export async function getTpoStudentsIntelligence(
       : null,
     definitions: {
       afterCollegeAvailable:outcomeMatches?.available??true,
+      verificationAvailable:verificationFacts.available,
       registrationsAvailable,
       externalOffersAvailable,
       registrationScope: "ACTIVE_COHORT",

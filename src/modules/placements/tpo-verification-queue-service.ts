@@ -1,5 +1,5 @@
 import "server-only";
-import { and, desc, eq, ilike, inArray, or } from "drizzle-orm";
+import { and, desc, eq, gte, lte, ilike, inArray, or } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import { collegeMemberships, membershipRoles, users, learnerProfiles, learnerProgramEnrollments, cohorts, programs, departments } from "@/db/schema";
@@ -14,7 +14,7 @@ import type { VerificationQueueCard } from "@/components/verification/Verificati
 import {submittedMarksheets} from "@/modules/verification/queue-mark-sheets";
 import {verificationDocumentManifest} from "@/modules/verification/document-manifest";
 import {verificationAttentionFlags} from "@/modules/verification/attention-flags";
-import {tpoVerificationStatuses,type TpoVerificationQuery} from "@/modules/verification/tpo-queue-server-model";
+import {tpoVerificationStatuses,tpoVerificationWaitingDateRange,type TpoVerificationQuery} from "@/modules/verification/tpo-queue-server-model";
 const statusSchema=z.enum(["SUBMITTED","UPDATE_PENDING","VERIFIED","SENT_BACK"]);
 const sectionSchema=z.enum(["EDUCATION","IDENTITY"]);
 export async function getTpoVerificationQueue(ctx:RequestContext,query?:TpoVerificationQuery,memberIds?:readonly string[]):Promise<{
@@ -38,6 +38,7 @@ export async function getTpoVerificationQueue(ctx:RequestContext,query?:TpoVerif
   collegeId,organizationId:college.organizationId,
   tpoVerificationAdministrator:true,tpoVerificationEnabled:true,
  });
+ const dateRange=query&&query.tab==="WAITING"?tpoVerificationWaitingDateRange(query.waitingSince):{};
  const academicMembers=query&&(query.batchId||query.branchId)?getDb()
   .select({membershipId:learnerProgramEnrollments.membershipId})
   .from(learnerProgramEnrollments)
@@ -66,6 +67,8 @@ export async function getTpoVerificationQueue(ctx:RequestContext,query?:TpoVerif
    eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"),
    ...(query?[
     inArray(profileVerifications.status,tpoVerificationStatuses(query)),
+    ...(dateRange.after?[gte(profileVerifications.submittedAt,dateRange.after)]:[]),
+    ...(dateRange.before?[lte(profileVerifications.submittedAt,dateRange.before)]:[]),
     ...(query.kind!=="ALL"?[eq(profileVerifications.section,query.kind)]:[]),
     ...(query.search?[or(ilike(users.displayName,"%"+query.search+"%"),ilike(learnerProfiles.rollNumber,"%"+query.search+"%"))]:[]),
     ...(academicMembers?[inArray(profileVerifications.learnerMembershipId,academicMembers)]:[]),
@@ -74,15 +77,15 @@ export async function getTpoVerificationQueue(ctx:RequestContext,query?:TpoVerif
   .orderBy(desc(profileVerifications.submittedAt),desc(profileVerifications.id))
   .limit(query?query.pageSize+1:100).offset(query?(query.page-1)*query.pageSize:0);
  const selected=query?records.slice(0,query.pageSize):records;
- const memberIds=[...new Set(selected.map(row=>row.id))];
- const enrollments=memberIds.length?await getDb().select({
+ const selectedMemberIds=[...new Set(selected.map(row=>row.id))];
+ const enrollments=selectedMemberIds.length?await getDb().select({
   membershipId:learnerProgramEnrollments.membershipId,
   batchName:cohorts.name,branchName:departments.name,
  }).from(learnerProgramEnrollments)
   .innerJoin(cohorts,eq(cohorts.id,learnerProgramEnrollments.cohortId))
   .innerJoin(programs,and(eq(programs.id,learnerProgramEnrollments.programId),eq(programs.id,cohorts.programId)))
   .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
-  .where(and(inArray(learnerProgramEnrollments.membershipId,memberIds),
+  .where(and(inArray(learnerProgramEnrollments.membershipId,selectedMemberIds),
    eq(learnerProgramEnrollments.status,"ACTIVE"))):[];
  const byMember=new Map(enrollments.map(row=>[row.membershipId,row]));
  const evaluatedAt=new Date();

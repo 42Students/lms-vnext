@@ -9,7 +9,7 @@ export async function readTpoVerificationExport(context:RequestContext,filters:P
  const rows:VerificationQueueCard[]=[];
  for(let page=1;page<=11;page++){
   const queue=await getTpoVerificationQueue(context,{
-   ...filters,waitingState:"ALL",page,pageSize:100,
+   ...filters,waitingState:"ALL",waitingSince:"ALL",page,pageSize:100,
   });
   if(!queue.available||!queue.enabled||!queue.permitted)return {...queue,rows:[],hasMore:false};
   rows.push(...queue.rows);

@@ -28,7 +28,7 @@ export async function GET(request:Request){
     (kind&&!["EDUCATION","IDENTITY"].includes(kind)))
     return new Response("Invalid queue export filters",{status:400,headers:{"Cache-Control":"private, no-store"}});
   const parsed=tpoVerificationQuerySchema.safeParse({
-    tab:tab??"WAITING",kind:kind??"ALL",waitingState:"ALL",
+    tab:tab??"WAITING",kind:kind??"ALL",waitingState:"ALL",waitingSince:"ALL",
     search,batchId,branchId,page:1,pageSize:100,
   });
   if(!parsed.success)return new Response("Invalid queue export filters",{
