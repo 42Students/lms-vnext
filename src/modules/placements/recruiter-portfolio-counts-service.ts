@@ -1,9 +1,10 @@
 import "server-only";
 import {and,eq,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {collegeMemberships,placementApplications,placementApplicationScreenings,placementOffers,users} from "@/db/schema";
+import {collegeMemberships,placementApplications,placementApplicationScreenings,placementOffers,placementJobs,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {hasActiveRecruiter} from "@/modules/identity/context";
+import {recruiterOwnJobPredicate} from "./recruiter-job-ownership";
 import {requirePermission,AuthorizationError} from "@/modules/permissions/policy";
 
 /** Only counts records which have already been shared by a TPO shortlist.
@@ -18,6 +19,7 @@ export async function recruiterVisiblePortfolioCounts(context:RequestContext,
  if(ids.length===0)return {} as Record<string,{sharedApplicants:number;offers:number}>;
  const db=getDb();
  const scope=and(inArray(placementApplications.jobId,ids),
+  recruiterOwnJobPredicate(context.user.id),
   eq(collegeMemberships.collegeId,collegeId),
   eq(collegeMemberships.status,"ACTIVE"),
   eq(users.platformStatus,"ACTIVE"),
@@ -29,12 +31,14 @@ export async function recruiterVisiblePortfolioCounts(context:RequestContext,
  const [shared,offers]=await Promise.all([
   db.select({jobId:placementApplications.jobId,n:sql<number>`count(distinct ${placementApplications.id})::integer`})
    .from(placementApplications)
+   .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
    .innerJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
    .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
    .innerJoin(users,eq(users.id,collegeMemberships.userId))
    .where(scope).groupBy(placementApplications.jobId),
   db.select({jobId:placementApplications.jobId,n:sql<number>`count(distinct ${placementOffers.applicationId})::integer`})
    .from(placementOffers).innerJoin(placementApplications,eq(placementApplications.id,placementOffers.applicationId))
+   .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
    .innerJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
    .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
    .innerJoin(users,eq(users.id,collegeMemberships.userId))
