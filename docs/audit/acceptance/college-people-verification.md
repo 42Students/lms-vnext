@@ -24,7 +24,7 @@ Tests authored, **not executed**, for every source-checked gap below: `tests/uni
 | COL-people-16 | OPEN | Visible CSV is implemented; learner mobile is intentionally blank under privacy policy; exact legacy export parity incomplete |
 | COL-people-17 | DONE | People Directory redirects to read-only Contacts categories All/Faculty/Students with account links and pagination; unit and PG tests COL-people-17 |
 | COL-people-18 | OPEN | Student contact unmasking is a privacy-sensitive owner rule; currently masked |
-| COL-people-19 | OPEN | Contact labels / filter structure differ from legacy; read-only categories do exist |
+| COL-people-19 | DONE (source verified; tests not run) | `college/contacts/page.tsx` now shows a single primary Name or email search with Search contacts action and existing All/Faculty/Student tabs, while the full advanced filters remain available in an accessible disclosure (opened for active filters). Masked student contact policy is preserved. `tests/unit/college-people-gap-closure.test.ts` — `COL-people-19 contact directory presents legacy search and tabs before advanced filters`. |
 | COL-people-20 | OPEN | College Admin authorization permits privileged role changes; owner legacy role boundaries need verified policy |
 | COL-people-21 | OPEN | Mentor workload and risk band UI not yet demonstrated on this page |
 | COL-people-22 | OPEN | Reassign mentor filter / already-this-mentor count and preview need inspection |
