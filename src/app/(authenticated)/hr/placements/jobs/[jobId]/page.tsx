@@ -67,8 +67,13 @@ export default async function HrPlacementJobPage({
   try {
     // Parse only the known params: extra ones (for example ?collegeId=) are ignored.
     const { tab, stage, applicant, page, offerPage, offerState, roundId, outcome } = query;
+    // Legacy links use historical tab keys. Authorize the job with the
+    // canonical read first, then redirect only within this recruiter job.
+    const safeTab=tab==="interviews"||tab==="results"?"rounds":
+      tab==="selections"?"offers":
+      tab==="messages"||tab==="requests"?"overview":tab;
     hiring = await getHrJobRead(context, jobId, {
-      tab, stage, applicant, page, offerPage, offerState, roundId, outcome,
+      tab:safeTab, stage, applicant, page, offerPage, offerState, roundId, outcome,
     });
   } catch (error) {
     if ((error instanceof PlacementsServiceError && error.code === "PLACEMENT_JOB_NOT_FOUND") ||
@@ -79,6 +84,13 @@ export default async function HrPlacementJobPage({
   }
   const { workspace, filters, applicants, applicantsPage, offers, offersPage, offerSummary, offersTotal } = hiring;
   if(query.tab==="messages")redirect(hrDriveMessagesHref(workspace.job.id));
+  if(query.tab==="requests")redirect("/recruiter/drives/"+encodeURIComponent(workspace.job.id)+"/change-requests");
+  if(query.tab==="interviews"||query.tab==="results"||query.tab==="selections"){
+    const destination=query.tab==="selections"?"offers":"rounds";
+    const search=new URLSearchParams({tab:destination,returnTo});
+    if(query.roundId&&z.string().uuid().safeParse(query.roundId).success)search.set("roundId",query.roundId);
+    redirect("/recruiter/drives/"+encodeURIComponent(workspace.job.id)+"?"+search.toString());
+  }
   const reviewMode = z.enum(["1"]).optional().safeParse(query.review);
   if (!reviewMode.success) notFound();
   const focused = reviewMode.data === "1" && filters.tab === "applicants";
