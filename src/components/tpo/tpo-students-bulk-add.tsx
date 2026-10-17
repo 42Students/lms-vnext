@@ -40,6 +40,8 @@ export function TpoStudentsBulkAdd({
   const [busy, setBusy] = useState(false);
   const {run:runGuarded,pending:guardedPending}=useGuardedAction();
   const [confirmOpen,setConfirmOpen]=useState(false);
+  const [includeIneligible,setIncludeIneligible]=useState(false);
+  const [overrideReason,setOverrideReason]=useState("");
   const [roleError, setRoleError] = useState("");
   const [error, setError] = useState("");
   const [results, setResults] = useState<BulkDriveResult[]>([]);
@@ -78,7 +80,8 @@ export function TpoStudentsBulkAdd({
   }
 
   async function submit() {
-    if (busy || !driveId || !roleOptionId || pageSelected.length === 0 || pageSelected.length>100) return;
+    if (busy || !driveId || !roleOptionId || pageSelected.length === 0 || pageSelected.length>100 ||
+        includeIneligible && overrideReason.trim().length<3) return;
     const candidates = pageSelected.flatMap((id) => {
       const learner = learners.find((item) => item.membershipId === id);
       return learner ? [{
@@ -104,7 +107,9 @@ export function TpoStudentsBulkAdd({
       const body=await apiFetch<{results:BulkDriveResult[]}>(
         "/api/placements/jobs/"+encodeURIComponent(driveId)+"/bulk-add",{
           method:"POST",credentials:"same-origin",
-          headers:{"Content-Type":"application/json"},body:JSON.stringify(payload),
+          headers:{"Content-Type":"application/json"},body:JSON.stringify({
+           ...payload,...(includeIneligible?{includeIneligible:{reason:overrideReason.trim()}}:{}),
+          }),
         });
       if(!Array.isArray(body?.results))throw Error("Could not confirm the selected additions. Refresh applications and try again.");
       setResults(body.results);
@@ -186,9 +191,20 @@ export function TpoStudentsBulkAdd({
               </label>
             ))}
           </div>
+          <label className="flex items-start gap-2 text-sm">
+            <input type="checkbox" checked={includeIneligible} disabled={busy}
+              onChange={event=>{setIncludeIneligible(event.target.checked);setError("");}}/>
+            Add students who are not eligible anyway, with a recorded inclusion reason
+          </label>
+          {includeIneligible?<label className="grid gap-1 text-sm">Required reason for inclusion
+            <textarea value={overrideReason} disabled={busy} maxLength={500}
+             onChange={event=>setOverrideReason(event.target.value)}
+             className="min-h-20 w-full rounded border border-border bg-surface p-2"/>
+          </label>:null}
           <div className="flex flex-wrap items-center justify-between gap-3">
             <span className="text-sm text-body">{pageSelected.length} learner(s) selected</span>
-            <button type="button" disabled={busy || !roleOptionId || pageSelected.length === 0 || pageSelected.length>100}
+            <button type="button" disabled={busy || !roleOptionId || pageSelected.length === 0 || pageSelected.length>100 ||
+                includeIneligible&&overrideReason.trim().length<3}
               onClick={() => setConfirmOpen(true)}
               className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
               {busy ? "Checking learners…" : "Review and add selected"}
@@ -201,9 +217,12 @@ export function TpoStudentsBulkAdd({
         title="Add selected students to a drive"
         description={"Add "+pageSelected.length+" selected learner(s) to "+
           (drives.find(drive=>drive.id===driveId)?.title??"this drive")+
-          "? Eligibility and participation are checked individually by the server. Ineligible learners will not be added and existing applications are preserved."}
+          "? Eligibility and participation are checked individually by the server. "+
+          (includeIneligible?"The inclusion reason will be audited; college, cohort, debarment and proof guards still apply.":
+          "Ineligible learners will not be added.")+" Existing applications are preserved."}
         footer={<><Button variant="secondary" disabled={busy} onClick={()=>setConfirmOpen(false)}>Cancel</Button>
-          <Button disabled={busy||guardedPending||!pageSelected.length||pageSelected.length>100||!roleOptionId} onClick={()=>void runGuarded(submit)}>
+          <Button disabled={busy||guardedPending||!pageSelected.length||pageSelected.length>100||!roleOptionId||
+            includeIneligible&&overrideReason.trim().length<3} onClick={()=>void runGuarded(submit)}>
             {busy?"Checking learners…":"Confirm add selected"}
           </Button></>}>
         <p className="text-sm">Each eligible learner will be told about the new application. Existing applications remain unchanged.</p>

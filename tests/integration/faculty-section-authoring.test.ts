@@ -118,7 +118,7 @@ describe("Faculty own-delivery assessment command successful DB writes and denia
   const {delivery,lesson}=await fixture();
   const live=await createLessonContent(faculty,{
    lessonId:lesson.id,deliveryId:delivery.id,title:"Live FIFO Session "+tag,
-   contentType:"LIVE_CLASS",sequence:0,
+   contentType:"LIVE_CLASS",points:0,sequence:0,
    externalUrl:"https://meet.example.invalid/course/"+tag.toLowerCase(),
    startsAt:"2026-10-20T10:00:00.000Z",endsAt:"2026-10-20T11:00:00.000Z",
   });

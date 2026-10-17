@@ -446,6 +446,7 @@ async function createStructure() {
     {
       lessonId: lesson.id,
       contentType: "RESOURCE",
+      points: 0,
       title: "FUI2A Shared Notes",
       externalUrl:
         "https://example.com/shared",
@@ -458,6 +459,7 @@ async function createStructure() {
       lessonId: lesson.id,
       deliveryId: deliveryA.id,
       contentType: "RESOURCE",
+      points: 0,
       title: "FUI2A Section Notes",
       externalUrl:
         "https://example.com/section-a",
