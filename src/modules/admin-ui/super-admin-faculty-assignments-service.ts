@@ -60,3 +60,13 @@ export async function listAdminFacultyAssignments(context:RequestContext,raw:unk
    "Teaching role: "+row.role,"Active: "+(row.teachingEnded||row.deliveryEnded?"No":"Yes"),"Started: "+format(row.startedAt)],
  }))};
 }
+
+/** Only selected-college classes can become assignment search facets. */
+export async function getSuperAdminFacultyAssignmentClasses(context:RequestContext){
+ const selected=requireSuperAdminSelectedCollege(context,"courses.read"),db=getDb();
+ return db.select({id:sections.id,name:sections.name}).from(sections)
+  .innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
+  .innerJoin(programs,eq(programs.id,cohorts.programId))
+  .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,selected.collegeId)))
+  .orderBy(asc(sections.name),asc(sections.id)).limit(2000);
+}
