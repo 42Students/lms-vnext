@@ -36,8 +36,8 @@ Remaining gaps are tracked in `docs/orchestrator/queues/gap-closure-chat-4.md`. 
 | Gap | Status | Verified foundation | Remaining |
 |---|---|---|---|
 | SA-placements-projects-53 | PARTIAL | `src/components/projects/project-admin-workspace-list.tsx`; `tests/unit/chat4-super-admin-projects-gap-closure.test.ts` test `SA-placements-projects-53` | Missing-template action/cue still absent |
-| SA-placements-projects-55 | PARTIAL | `src/components/projects/project-admin-collection-controls.tsx`; `tests/unit/chat4-super-admin-projects-gap-closure.test.ts` test `SA-placements-projects-55` | Legacy default 20 and search URL semantics still differ |
-| SA-placements-projects-58 | PARTIAL | `src/components/projects/project-admin-at-risk-page.tsx`; `tests/unit/chat4-super-admin-projects-gap-closure.test.ts` test `SA-placements-projects-58` | Mentor workload and overload calculation still unverified |
+| SA-placements-projects-55 | DONE | `src/app/(authenticated)/admin/projects/page.tsx`, `src/components/projects/project-admin-collection-controls.tsx`; `tests/unit/chat4-super-admin-projects-gap-closure.test.ts` test `SA-placements-projects-55` | 10/20/50/100 selector, default 20, canonical `search` URL and preserved pagination |
+| SA-placements-projects-58 | PARTIAL | `src/components/projects/project-admin-reassign-mentor-page.tsx`, `src/modules/projects/mentor-overload-model.ts`; `tests/unit/chat4-super-admin-projects-gap-closure.test.ts` test `SA-placements-projects-58` | Dynamic >150% of mentor average and deep link now implemented; full failure-modal result UX still to compare to legacy |
 | SA-placements-projects-65 | PARTIAL | `src/components/projects/project-workspace-readiness.tsx`; `tests/unit/chat4-super-admin-projects-gap-closure.test.ts` test `SA-placements-projects-65` | Override actor attribution not yet shown in readiness card |
 | SA-placements-projects-66 | PARTIAL | `src/components/projects/project-admin-readiness-page.tsx`; `tests/unit/chat4-super-admin-projects-gap-closure.test.ts` test `SA-placements-projects-66` | Different-college 403 hint and picker paging still incomplete |
 | SA-placements-projects-71 | PARTIAL | `src/components/projects/project-admin-submissions-page.tsx`; `tests/unit/chat4-super-admin-projects-gap-closure.test.ts` test `SA-placements-projects-71` | Full pending-age/export/action columns still incomplete |
@@ -47,3 +47,11 @@ Remaining gaps are tracked in `docs/orchestrator/queues/gap-closure-chat-4.md`. 
 | SA-placements-projects-86 | PARTIAL | `src/components/projects/project-template-controls.tsx`; `tests/unit/chat4-super-admin-projects-gap-closure.test.ts` test `SA-placements-projects-86` | Full preview and duplicate metadata modal remain incomplete |
 | SA-placements-projects-88 | PARTIAL | `src/components/projects/super-admin-template-rollback-control.tsx`; `tests/unit/chat4-super-admin-projects-gap-closure.test.ts` test `SA-placements-projects-88` | Compare-before-rollback approval and impact details still require acceptance |
 | SA-placements-projects-89 | PARTIAL | `src/components/projects/college-project-summary-editor-full.tsx`; `tests/unit/chat4-super-admin-projects-gap-closure.test.ts` test `SA-placements-projects-89` | Change-template and deletion flows still missing |
+
+### Round 4: concrete open-gap fixes (tests written, NOT run)
+
+| ID | Status | Evidence |
+|---|---|---|
+| SA-placements-projects-67 | DONE | `src/components/projects/project-readiness-override-form.tsx`, `src/components/projects/project-admin-readiness-page.tsx`; `tests/unit/chat4-super-admin-projects-gap-closure.test.ts` test `SA-placements-projects-67`: accessible confirmation, safe apiFetch, note reset/draft retention, existing-submission warning, projectId deep link |
+| SA-placements-projects-68 | DONE | `src/components/projects/project-workspace-readiness.tsx`; `tests/unit/chat4-super-admin-projects-gap-closure.test.ts` test `SA-placements-projects-68`: ten section tabs remain reachable on the static readiness route |
+| SA-placements-projects-92 | DONE | `src/app/(authenticated)/admin/projects/[projectId]/[section]/page.tsx`, `src/components/projects/admin-project-section-page.tsx`, `src/components/projects/project-workspace.tsx`; `tests/unit/chat4-super-admin-projects-gap-closure.test.ts` test `SA-placements-projects-92`: sanitized origin/reason, contextual back link, workspace breadcrumb, readiness and full-audit shortcuts |
