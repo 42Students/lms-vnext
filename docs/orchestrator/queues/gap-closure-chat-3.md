@@ -164,7 +164,7 @@ Audit: `docs/audit/pages/public/auth-public-2-links-marketing.md` (and `auth-pub
 | PUB-auth-public-57 | S3 | MISSING-FIELD | OPEN |
 | PUB-auth-public-60 | S3 | SIDE-EFFECT | NOT-A-GAP |
 | PUB-auth-public-58 | S4 | MISSING-FIELD | DONE |
-| PUB-auth-public-61 | S4 | MISSING-PAGE | OPEN |
+| PUB-auth-public-61 | S4 | MISSING-PAGE | NOT-A-GAP |
 | PUB-auth-public-62 | S4 | MISSING-PAGE | DONE |
 | PUB-auth-public-63 | S4 | MISSING-PAGE | DONE |
 | PUB-auth-public-64 | S4 | MISSING-PAGE | DONE |
@@ -179,19 +179,19 @@ Audit: `docs/audit/pages/superadmin/tenants-modules.md` (and `tenants-modules-re
 |---|---|---|---|
 | SA-tenants-modules-10 | S2 | VALIDATION | DONE |
 | SA-tenants-modules-12 | S2 | VALIDATION | DONE |
-| SA-tenants-modules-18 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| SA-tenants-modules-18 | S2 | MISSING-ACTION | DONE |
 | SA-tenants-modules-21 | S2 | MISSING-ACTION | DONE |
 | SA-tenants-modules-03 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-tenants-modules-04 | S3 | COPY | DONE |
-| SA-tenants-modules-06 | S3 | MISSING-TAB | OPEN |
+| SA-tenants-modules-06 | S3 | MISSING-TAB | DONE |
 | SA-tenants-modules-07 | S3 | COPY | NOT-A-GAP |
 | SA-tenants-modules-08 | S3 | MISSING-FILTER | DONE |
 | SA-tenants-modules-11 | S3 | MISSING-FIELD | DONE |
 | SA-tenants-modules-13 | S3 | MISSING-FILTER | DONE |
 | SA-tenants-modules-14 | S3 | COPY | NOT-A-GAP |
 | SA-tenants-modules-16 | S3 | MISSING-FIELD | DONE |
-| SA-tenants-modules-17 | S3 | MISSING-TAB | FIXED-ON-MAIN |
-| SA-tenants-modules-19 | S3 | MISSING-TAB | OPEN |
+| SA-tenants-modules-17 | S3 | MISSING-TAB | DONE |
+| SA-tenants-modules-19 | S3 | MISSING-TAB | NOT-A-GAP |
 | SA-tenants-modules-23 | S3 | STATE | OPEN |
 | SA-tenants-modules-R02 | S3 | MISSING-ACTION | DONE |
 | SA-tenants-modules-05 | S4 | A11Y | DONE |
