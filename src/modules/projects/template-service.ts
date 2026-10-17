@@ -18,8 +18,6 @@ import {
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
-import {recordActivityEventInTransaction} from "@/modules/activity/service";
-import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import { collegeIdSchema } from "@/modules/academics/validation";
 import { loadProjectCollegeScope } from "./scope";
 import {
