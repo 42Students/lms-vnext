@@ -46,6 +46,7 @@ export const courses = pgTable(
     shortTitle: varchar("short_title", { length: 120 }),
     officialCode: varchar("official_code", { length: 64 }),
     cardColor: varchar("card_color", { length: 7 }),
+    takeaways: text("takeaways"),
     description: text("description"),
     status: courseStatusEnum("status")
       .notNull()
