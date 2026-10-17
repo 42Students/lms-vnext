@@ -39,3 +39,5 @@ New mutation tests check real typed request validation and current source contra
 | SA-tenants-modules-07 | NOT-A-GAP | Approved archive-not-delete safety model; named SA-tenants-modules-07 test. |
 | SA-tenants-modules-14 | NOT-A-GAP | Approved archive-not-delete dependency-preserving model; named SA-tenants-modules-14 test. |
 | SA-tenants-modules-R03 | NOT-A-GAP | Deliberately restricted Audit Findings to active Super Admin with scoped permission; named SA-tenants-modules-R03 test. |
+
+| SA-tenants-modules-R02 | DONE (source verified; PG/browser unexecuted) | Scoped archived organization/college restore is implemented, validated and audited through `src/modules/{organizations,colleges}/service.ts`, same-origin restore POST routes, `tenant-restore-action.tsx`, archived Organization list and College detail. Parent must be ACTIVE before restoring college, no child state auto-recovery. Unit test named SA-tenants-modules-R02 in `tests/unit/superadmin-tenants-gap-closure.test.ts`; browser and PostgreSQL remain unexecuted. |
