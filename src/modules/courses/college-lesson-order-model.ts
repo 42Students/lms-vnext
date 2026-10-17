@@ -45,7 +45,10 @@ export const collegeLessonBulkOrderSchema=z.strictObject({
 });
 export function rearrangeLessonIds(ids:readonly string[],sourceId:string,targetId:string){
  if(!ids.includes(sourceId)||!ids.includes(targetId)||sourceId===targetId)return [...ids];
+ const originalIndex=ids.indexOf(sourceId);
+ const targetIndex=ids.indexOf(targetId);
  const next=ids.filter(id=>id!==sourceId);
- next.splice(next.indexOf(targetId),0,sourceId);
+ const insertion=next.indexOf(targetId)+(originalIndex<targetIndex?1:0);
+ next.splice(insertion,0,sourceId);
  return next;
 }
