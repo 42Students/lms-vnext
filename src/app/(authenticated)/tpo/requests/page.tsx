@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { TpoRequestDecisionControl } from "@/components/placements/tpo-request-decision-control";
+import {TpoRequestBulkDecision} from "@/components/placements/tpo-request-bulk-decision";
 import {TpoSequentialRequestReview} from "@/components/placements/tpo-sequential-request-review";
 import {TpoRequestPageClipboard} from "@/components/placements/tpo-request-page-clipboard";
 import {TpoStudentNudgePanel} from "@/components/tpo/tpo-student-nudge-panel";
@@ -38,7 +39,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
     page:first(raw.page),pageSize:first(raw.pageSize),
   });
   if(!parsed.success)return <main className="space-y-5">
-    <PageHeader eyebrow="TPO · Operations" title="Requests"
+    <PageHeader title="Requests"
       description="What students have asked you to decide: withdrawals, off-campus offers, registration changes and disputes. Urgent ones come first."/>
     <section role="alert" className="rounded-xl border border-border bg-surface p-6">
       <h2 className="font-semibold text-foreground">Invalid request filters</h2>
@@ -57,7 +58,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
   const asOf=new Date();
   const attention=tpoRequestAttentionOnPage(data.requests,asOf);
   return <main className="min-w-0 space-y-5">
-    <PageHeader eyebrow="TPO · Operations" title="Requests" description="What students have asked you to decide: withdrawals, off-campus offers, registration changes and disputes. Urgent ones come first." />
+    <PageHeader title="Requests" description="What students have asked you to decide: withdrawals, off-campus offers, registration changes and disputes. Urgent ones come first." />
     <nav aria-label="Request history views" className="flex flex-wrap gap-2">
       <Link href={href({...data.query,status:"PENDING",age:"ALL",page:1})}
         aria-current={data.query.status==="PENDING"&&data.query.age==="ALL"?"page":undefined}
@@ -108,6 +109,10 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
      </div>
      <p className="text-xs text-muted-foreground">Attention category numbers cover this visible request page only. Proof hints are text-based and are not verified attachment counts.</p>
     </section>
+    {data.query.status==="PENDING"?<TpoRequestBulkDecision rows={data.requests.filter(row=>row.status==="PENDING").map(row=>({
+      id:row.id,studentName:row.studentName,requestType:row.requestType,
+      expectedUpdatedAt:row.updatedAt.toISOString(),
+    }))}/>:null}
     {data.query.status==="PENDING"?<TpoSequentialRequestReview
       requests={data.requests.filter(row=>row.status==="PENDING").map(row=>({
         id:row.id,studentName:row.studentName,requestType:row.requestType,
