@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
-import {useEffect,useRef,useState} from "react";
+import {useEffect,useRef,useState,type KeyboardEvent} from "react";
 import {Dialog} from "@/components/ui/dialog";
 import {apiFetch} from "@/lib/api-fetch";
 import {isTpoFindShortcut} from "@/modules/placements/tpo-find-shortcut-model";
@@ -65,7 +65,7 @@ export function TpoFindShortcut(){
   setRecent(list=>[row,...list.filter(item=>item.href!==row.href)].slice(0,5));
   setOpen(false);router.push(row.href);
  }
- function handleKeyDown(event:React.KeyboardEvent<HTMLInputElement>){
+ function handleKeyDown(event:KeyboardEvent<HTMLInputElement>){
   if(event.key==="ArrowDown"){event.preventDefault();setActive(current=>showing.length?(current+1)%showing.length:0);}
   if(event.key==="ArrowUp"){event.preventDefault();setActive(current=>showing.length?(current-1+showing.length)%showing.length:0);}
   if(event.key==="Enter"&&showing[active]){event.preventDefault();select(showing[active]);}
