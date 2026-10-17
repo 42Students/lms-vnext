@@ -93,7 +93,17 @@ function previewData(rows:ImportRow[],roster:Roster[]){
    name:candidate.name??"Learner",outcome:row.outcome,status:candidate.currentStatus,
    rank:row.rank,message:row.message});
  }
- return {matched,unmatched,notInFile:roster.filter(c=>!used.has(c.applicationId)&&c.currentStatus!=="APPLIED")
+ const rankCounts=new Map<number,number>();
+ for(const entry of matched)if(entry.outcome==="HOLD"&&entry.rank!==null)
+  rankCounts.set(entry.rank,(rankCounts.get(entry.rank)??0)+1);
+ const duplicateRanks=new Set([...rankCounts].filter(([,n])=>n>1).map(([rank])=>rank));
+ const safeMatches=matched.filter(entry=>{
+  if(entry.outcome!=="HOLD"||entry.rank===null||!duplicateRanks.has(entry.rank))return true;
+  unmatched.push({line:entry.line,identity:entry.identity,
+   reason:"Two or more learners have the same waitlist rank",suggestions:[]});
+  return false;
+ });
+ return {matched:safeMatches,unmatched,notInFile:roster.filter(c=>!used.has(c.applicationId)&&c.currentStatus!=="APPLIED")
    .map(c=>({applicationId:c.applicationId,name:c.name??"Learner"}))};
 }
 export async function previewTpoRoundImport(context:RequestContext,jobId:unknown,roundId:unknown,bytes:Buffer,filename:string){
