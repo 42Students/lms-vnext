@@ -7,6 +7,7 @@ import {AuthorizationError,requirePermission} from "@/modules/permissions/policy
 import {loadAcademicCollegeScope} from "@/modules/academics/scope";
 import {collegeCourseCatalogueQuerySchema,COLLEGE_COURSE_CATALOGUE_PAGE_SIZE,
  type CollegeCourseCatalogueQuery} from "./college-course-catalogue-model";
+import {collegeCourseCatalogueExportQuerySchema,COLLEGE_COURSE_EXPORT_CAP} from "./college-course-catalogue-export-model";
 
 async function authorizedCollege(context:RequestContext){
  const membership=context.membership;
