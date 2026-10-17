@@ -50,10 +50,16 @@ export function parseResultXlsx(bytes:Buffer):string[][]{
  }
  const sheet=files.get("xl/worksheets/sheet1.xml")!;
  const rows:string[][]=[];
- for(const rowMatch of sheet.matchAll(/<row\b[^>]*>([\s\S]*?)<\/row>/g)){
+ let expectedSheetRow=1;
+ for(const rowMatch of sheet.matchAll(/<row\b([^>]*)>([\s\S]*?)<\/row>/g)){
+  const observed=/\br="([0-9]+)"/.exec(rowMatch[1]??"");
+  const rowNumber=observed?Number(observed[1]):expectedSheetRow;
+  if(!Number.isSafeInteger(rowNumber)||rowNumber!==expectedSheetRow)
+   throw Error("Worksheet contains skipped, reordered or duplicate row numbers. Keep a continuous header and student list.");
+  expectedSheetRow++;
   if(rows.length>=1001)throw Error("Import at most 1,000 worksheet rows.");
   const values:string[]=[];
-  for(const c of rowMatch[1]!.matchAll(/<c\b([^>]*)>([\s\S]*?)<\/c>/g)){
+  for(const c of rowMatch[2]!.matchAll(/<c\b([^>]*)>([\s\S]*?)<\/c>/g)){
    const attr=c[1]??"",body=c[2]??"";
    const ref=/\br="([^"]+)"/.exec(attr)?.[1]??"";
    const position=cellIndex(ref);
