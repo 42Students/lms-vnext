@@ -114,6 +114,12 @@ export default async function TpoAnnouncements({searchParams}:Props){
   </section>:result.items.length?<ol className="grid gap-3 md:grid-cols-2">
    {result.items.map(row=><li key={row.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
     <h2 className="break-words font-semibold text-foreground">{row.title}{row.isPinned?" · Pinned":""}</h2>
+    <p className="mt-1 text-xs text-muted-foreground">
+      By {row.senderName?.trim()||"Placement team"} ·
+      {" "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit"}).format(row.createdAt)} IST
+      {row.updatedAt.getTime()>row.createdAt.getTime()+1000?" · Updated":""}
+      {row.expiresAt?" · Shows until "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(row.expiresAt):""}
+    </p>
     {tab.data==="yours" && row.scheduledAt && new Date(row.scheduledAt)>new Date()?
       <p role="status" className="mt-2 text-sm font-semibold text-amber-700">Scheduled for {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(row.scheduledAt))} IST</p>:
       tab.data==="yours"&&row.expiresAt&&new Date(row.expiresAt)<=new Date()?
