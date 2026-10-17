@@ -8,6 +8,7 @@ import {
   ilike,
   inArray,
   or,
+  ne,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
@@ -133,6 +134,27 @@ function visibilityClause(context: RequestContext) {
     );
 
   return exists(scopedGrants);
+}
+
+function outsideHrScopeCondition(context:RequestContext){
+ const selected=context.adminScope;
+ if(selected?.collegeId)return ne(colleges.id,selected.collegeId);
+ if(selected?.organizationId)return ne(colleges.organizationId,selected.organizationId);
+ return undefined;
+}
+/** Account-wide identity changes must never spill outside a selected college/org. */
+export async function hrAccountManageability(context:RequestContext,userIds:readonly string[]){
+ requireHrAdmin(context);
+ const outside=outsideHrScopeCondition(context);
+ if(!outside||!userIds.length)return new Map(userIds.map(id=>[id,true]));
+ const grants=await getDb().select({recruiterUserId:placementRecruiterCollegeGrants.recruiterUserId})
+  .from(placementRecruiterCollegeGrants)
+  .innerJoin(placementCompanyRelationships,eq(placementCompanyRelationships.id,placementRecruiterCollegeGrants.companyRelationshipId))
+  .innerJoin(colleges,eq(colleges.id,placementCompanyRelationships.collegeId))
+  .where(and(inArray(placementRecruiterCollegeGrants.recruiterUserId,[...userIds]),
+   eq(placementRecruiterCollegeGrants.status,"ACTIVE"),outside));
+ const outsideIds=new Set(grants.map(row=>row.recruiterUserId));
+ return new Map(userIds.map(id=>[id,!outsideIds.has(id)]));
 }
 
 function grantScopeClause(context: RequestContext) {
