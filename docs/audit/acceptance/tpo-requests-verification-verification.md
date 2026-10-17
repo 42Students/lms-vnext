@@ -82,3 +82,14 @@ The following DONE statuses are limited to the named source/model behavior. Thei
 - TPO-requests-verification-25: tests/unit/chat12-fixed-main-requests-audit-r3.test.ts named case `TPO-requests-verification-25`; source assertions only.
 - TPO-requests-verification-30: tests/unit/chat12-fixed-main-requests-audit-r3.test.ts named case `TPO-requests-verification-30`; source assertions only.
 - TPO-requests-verification-32: tests/unit/chat12-fixed-main-requests-audit-r3.test.ts named case `TPO-requests-verification-32`; source assertions only.
+
+
+## Round 60 — registered 0134 parity and request admission guards
+
+| ID | Decision/status | Evidence |
+|---|---|---|
+| TPO-requests-verification-01 | OPEN — partial, not complete approval parity | Corrected `src/db/schema/placement-general-requests.ts` to model only the **five** kinds in 0134's first effective CHECK. A sixth kind remains parsed but rejected through `requireRegisteredKind` until the corrective migration is registered. Hardened positive CTC, maximum proof-link length, mandatory correction proof, rejection-reason validation, absence application+round ownership and post-placement job college scope in `tpo-general-request-model.ts` and `tpo-general-request-service.ts`. `tests/unit/chat12-general-requests-validation-r60.test.ts` contains 33 named `TPO-requests-verification-01` validations; `tests/unit/chat12-0134-schema-parity-r60.test.ts` includes registered-schema assertions. Tests authored and **not run**. Approvals for absence/correction/post-placement remain unsupported rather than status-only. |
+| TPO-requests-verification-R03 | OPEN — workflow verification pending | Replaced a stale source-test demand for nonexistent `verificationPending` and speculative pre-insert approved-job state with checks for persisted grant verification, trusted-company policy and transaction-bound draft conversion in `tests/unit/chat12-round11-recruiter-request-safe-actions.test.ts`. Runtime acceptance remains pending, and the recruiter request service typecheck repair belongs to chat-14. |
+| TPO-students-10 | OPEN — due-date decision remains | Verified the registered 0134 prep assignment table is exported with required due date, tenant-composite membership FK and per-offering dedupe; named `TPO-students-10` tests in `tests/unit/chat12-0134-schema-parity-r60.test.ts`. No migration or runtime behavior claim. |
+
+**UNCONFIRMED decision TPO-requests-verification-01:** Reject silent status-only approvals and out-of-tenant references; preserve a recorded PENDING request when its effect is unsupported. This is the safe vNext behavior until the effect can be completed transactionally. This is not a NOT-A-GAP closure.
