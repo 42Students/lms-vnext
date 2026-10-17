@@ -211,7 +211,7 @@ Audit: `docs/audit/pages/learner/profile-misc.md` (and `profile-misc-review.md` 
 | LEARNER-profile-misc-14 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | LEARNER-profile-misc-21 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | LEARNER-profile-misc-22 | S3 | SIDE-EFFECT | FIXED-ON-MAIN |
-| LEARNER-profile-misc-08 | S4 | COPY | OPEN |
+| LEARNER-profile-misc-08 | S4 | COPY | NOT-A-GAP |
 | LEARNER-profile-misc-10 | S4 | VALIDATION | FIXED-ON-MAIN |
 | LEARNER-profile-misc-11 | S4 | STATE | FIXED-ON-MAIN |
 | LEARNER-profile-misc-12 | S4 | STATE | FIXED-ON-MAIN |
@@ -304,3 +304,5 @@ Audit: `docs/audit/pages/college/dashboard.md` (and `dashboard-review.md` if pre
 - SA-academics-people-78: existing named test `chat6-superadmin-people-verified-closure.test.ts` and people acceptance match the no-college wording.
 - SA-placements-projects-112: real Light/Dark tracker mode, exact nav and keyboard skip control, named test `chat6-tracker-theme-nav-verification.test.ts`, acceptance updated. -118 is OD-27 Super Admin-only logs (new named policy test).
 - Provider-only blockers: SA-academics-people-60/-72 and LEARNER-profile-misc-01/-02/-03/-04 need private scanned object storage; SA-placements-projects-103 needs same for screenshots; -113 needs Cloud Logging provider integration; -120 needs GitHub findings-import credentials. All have acceptance notes; do not fake uploads or provider responses.
+
+- LEARNER-profile-misc-08: OD-38 retains safety-enhancing academic/verification separation and the privacy-aware career checklist. Named test `chat6-learner-safe-profile-enhancements.test.ts`; acceptance updated, not run.
