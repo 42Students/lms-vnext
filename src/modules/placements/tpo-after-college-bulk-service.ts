@@ -10,12 +10,12 @@ import type { RequestContext } from "@/modules/identity/context";
 import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import { requireTpoBatchActor } from "./tpo-batch-workspace-read-service";
 import { placementTableExists } from "./staged-tables";
-import { afterCollegeOutcomeSchema } from "./tpo-after-college-model";
+import { afterCollegeManualSchema } from "./tpo-after-college-model";
 const version = z.union([z.literal("none"), z.string().datetime({ offset: true })]);
 const inputSchema = z.object({
   changes: z.array(z.object({
     membershipId: z.string().uuid(),
-    outcome: afterCollegeOutcomeSchema,
+    outcome: afterCollegeManualSchema,
     expectedVersion: version,
   }).strict()).min(1).max(200),
 }).strict();

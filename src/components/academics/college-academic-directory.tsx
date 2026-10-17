@@ -300,9 +300,9 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
                       <p className="mt-1 text-xs text-muted-foreground">{item.startPeriodName}</p>
                     </td>
                     <td className="px-4 py-4 text-body">
-                      {item.currentAcademicYearStart !== null
+                      {item.academicYear??(item.currentAcademicYearStart !== null
                         ? `${item.currentAcademicYearStart}-${String((item.currentAcademicYearStart + 1) % 100).padStart(2, "0")}`
-                        : "Not recorded"}
+                        : "Not recorded")}
                     </td>
                     <td className="px-4 py-4 text-body">
                       {batchProgressLabel(item.currentTermNumber === null ? null : {
@@ -313,7 +313,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
                     <td className="px-4 py-4 text-body">
                       {item.activeSections} classes / {item.activeEnrolledLearners} learners
                     </td>
-                    <td className="px-4 py-4 text-body">{item.status}</td>
+                    <td className="px-4 py-4 text-body">{item.inactiveAt?"Inactive":item.status}</td>
                     <td className="px-4 py-4">
                       <div className="flex flex-wrap gap-2">
                         <Link href={"/college/batches/" + encodeURIComponent(item.id) + "/students"}
