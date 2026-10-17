@@ -10,10 +10,10 @@ export async function getCollegeApplicationRetentionReport(ctx:RequestContext){
  const db=getDb(),cutoff=new Date(Date.now()-180*86400000);
  const predicate=and(eq(placementJobs.collegeId,collegeId),
   eq(collegeMemberships.collegeId,collegeId),
-  or(and(eq(placementApplications.status,"WITHDRAWN"),
-   lt(placementApplications.updatedAt,cutoff)),
-   and(eq(placementApplicationScreenings.status,"REJECTED"),
-    lt(placementApplicationScreenings.updatedAt,cutoff))));
+  or(eq(placementApplications.status,"WITHDRAWN"),
+     eq(placementApplicationScreenings.status,"REJECTED")),
+  lt(placementApplications.updatedAt,cutoff),
+  lt(sql<Date>`coalesce(${placementApplicationScreenings.updatedAt},${placementApplications.updatedAt})`,cutoff));
  const from=db.select({id:placementApplications.id,jobTitle:placementJobs.title,
   learner:users.displayName,status:placementApplications.status,
   screening:placementApplicationScreenings.status,
