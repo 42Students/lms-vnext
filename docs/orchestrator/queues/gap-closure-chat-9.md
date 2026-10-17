@@ -117,7 +117,7 @@ Audit: `docs/audit/pages/tpo/settings-audit.md` (and `settings-audit-review.md` 
 | TPO-settings-audit-73 | S3 | COPY | DONE-BRANCH |
 | TPO-settings-audit-75 | S3 | COPY | DONE-BRANCH |
 | TPO-settings-audit-82 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
-| TPO-settings-audit-94 | S3 | COPY | OPEN |
+| TPO-settings-audit-94 | S3 | COPY | DONE-BRANCH |
 | TPO-settings-audit-95 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-settings-audit-97 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-settings-audit-98 | S3 | STATE | OPEN |
