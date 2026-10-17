@@ -5,6 +5,8 @@ import { CoursesServiceError } from "@/modules/courses/errors";
 import type { RequestContext } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
 import { AdminCourseDisplayEditor } from "./admin-course-display-editor";
+import {AdminOfferingTeachersPanel} from "./admin-offering-teachers-panel";
+import {listOfferingTeachingOverview} from "@/modules/courses/college-course-teachers-service";
 import { courseDisplayRuntimeEnabled } from "@/modules/courses/course-display-readiness";
 import { getAdminCourseDisplayContent } from "@/modules/courses/course-display-service";
 import {
@@ -39,6 +41,7 @@ export async function AdminOfferingLearningPage({
       }
       throw error;
     });
+  const roster=await listOfferingTeachingOverview(context,offeringId);
   const displayEnabled =
     courseDisplayRuntimeEnabled();
   const display = displayEnabled
@@ -72,6 +75,13 @@ export async function AdminOfferingLearningPage({
           </Link>
         }
       />
+      <nav aria-label="Course detail tabs" className="flex flex-wrap gap-2 text-sm">
+       <a href="#course-home" className="inline-flex min-h-10 items-center rounded border border-border px-3 font-semibold text-primary-text">Home</a>
+       <a href="#course-syllabus" className="inline-flex min-h-10 items-center rounded border border-border px-3 font-semibold text-primary-text">Syllabus</a>
+       <a href="#who-teaches-it" className="inline-flex min-h-10 items-center rounded border border-border px-3 font-semibold text-primary-text">Who teaches it</a>
+      </nav>
+      <section id="course-home" aria-label="Course Home" className="space-y-2">
+      <h2 className="text-lg font-semibold">Home</h2>
       <AdminCourseDisplayEditor
         courseId={workspace.offering.courseId}
         enabled={displayEnabled}
@@ -91,9 +101,12 @@ export async function AdminOfferingLearningPage({
             : null
         }
       />
-      <AdminOfferingLearningOverview
-        workspace={workspace}
-      />
+      </section>
+      <AdminOfferingTeachersPanel roster={roster} academicPeriodName={workspace.offering.academicPeriodName}/>
+      <section id="course-syllabus" aria-label="Course Syllabus" className="space-y-2">
+       <h2 className="text-lg font-semibold">Syllabus</h2>
+       <AdminOfferingLearningOverview workspace={workspace}/>
+      </section>
     </div>
   );
 }

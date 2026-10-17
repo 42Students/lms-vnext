@@ -76,7 +76,7 @@ export function AdminCourseCreatePanel({
   courses,
   offerings,
   deliveries,
-  faculty,duplicateCourseId,
+  faculty,facultyTruncated=false,duplicateCourseId,
 }: {
   departments: readonly Option[];
   periods: readonly PeriodOption[];
@@ -86,6 +86,7 @@ export function AdminCourseCreatePanel({
   offerings: readonly OfferingOption[];
   deliveries: readonly DeliveryOption[];
   faculty: readonly FacultyOption[];
+  facultyTruncated?:boolean;
   duplicateCourseId?:string;
 }) {
   const router = useRouter();
@@ -361,6 +362,9 @@ export function AdminCourseCreatePanel({
               <option value="">Select Faculty</option>
               {faculty.map((person) => <option key={person.membershipId} value={person.membershipId}>{person.displayName}{person.email ? " · " + person.email : ""}</option>)}
             </Select>
+            {facultyTruncated?<p role="status" className="mt-1 text-xs text-muted-foreground">
+             Showing only the first 500 active Faculty accounts. Faculty beyond this list cannot be selected in this picker.
+            </p>:null}
           </div>
           <div>
             <FieldLabel htmlFor="teacher-role">Teaching role</FieldLabel>

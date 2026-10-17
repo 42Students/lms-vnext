@@ -2,9 +2,7 @@ import "server-only";
 
 import type { RequestContext } from "@/modules/identity/context";
 import { getAcademicsWorkspace } from "@/modules/academics/workspace";
-import {
-  listCollegePeopleWithRuntime,
-} from "@/modules/people/runtime";
+import {listCollegeFacultyPicker} from "./college-faculty-picker-service";
 import { listCourses } from "./course-service";
 import { listCourseOfferings } from "./offering-service";
 import {
@@ -14,58 +12,19 @@ import {
   listCourseTeachingAssignments,
 } from "./teaching-assignment-service";
 
-async function listAllCollegePeople(
-  context: RequestContext,
-  collegeId: string,
-) {
-  const items: Awaited<
-    ReturnType<
-      typeof listCollegePeopleWithRuntime
-    >
-  >["items"] = [];
-  let offset = 0;
-
-  while (true) {
-    const page =
-      await listCollegePeopleWithRuntime(
-        context,
-        {
-          collegeId,
-          limit: 100,
-          offset,
-        },
-      );
-
-    items.push(...page.items);
-    offset += page.items.length;
-
-    if (
-      page.items.length === 0 ||
-      offset >= page.pagination.total
-    ) {
-      break;
-    }
-  }
-
-  return items;
-}
-
 export async function getAdminCourseWorkspace(
   context: RequestContext,
   collegeId: string,
   includeArchivedOfferings = false,
 ) {
-  const [academics, courses, people] =
+  const [academics, courses, facultyChoices] =
     await Promise.all([
       getAcademicsWorkspace(
         context,
         collegeId,
       ),
       listCourses(context, collegeId),
-      listAllCollegePeople(
-        context,
-        collegeId,
-      ),
+      listCollegeFacultyPicker(context,collegeId),
     ]);
 
   const activeCohorts =
@@ -189,30 +148,7 @@ export async function getAdminCourseWorkspace(
         })),
     );
 
-  const faculty = people
-    .filter(
-      (person) =>
-        person.membership.status ===
-          "ACTIVE" &&
-        person.membership.roles.includes(
-          "FACULTY",
-        ),
-    )
-    .map((person) => ({
-      membershipId:
-        person.membership.id,
-      displayName:
-        person.user.displayName ??
-        person.user.email ??
-        "Unnamed Faculty",
-      email: person.user.email,
-    }))
-    .sort((a, b) =>
-      a.displayName.localeCompare(
-        b.displayName,
-      ),
-    );
-
+  const faculty=facultyChoices.faculty;
   return {
     collegeId,
     departments: academics.departments,
@@ -221,6 +157,7 @@ export async function getAdminCourseWorkspace(
     cohorts: academics.cohorts,
     sections: academics.sections,
     faculty,
+    facultyTruncated:facultyChoices.truncated,
     courses,
     offerings,
     deliveries,
