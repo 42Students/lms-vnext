@@ -322,6 +322,9 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
    await tx.update(placementRoundCandidateSlots).set({
     applicationId:null,status:"CANCELLED",updatedAt:new Date(),version:slot.version+1,
    }).where(eq(placementRoundCandidateSlots.id,id));
+   if(slot.applicationId)await tx.delete(placementApplicationRoundExceptions).where(and(
+    eq(placementApplicationRoundExceptions.applicationId,slot.applicationId),
+    eq(placementApplicationRoundExceptions.roundId,info.round.id)));
    if(slot.applicationId)await notice(tx,context,job,slot.applicationId,"PLACEMENTS_TPO_INTERVIEW_CANCELLED",
     "Your interview slot was cancelled. Reason: "+input.reason);
    return {cancelled:1};
