@@ -288,12 +288,14 @@ function EventCard({
 function Metric({
   label,
   value,
+  tooltip,
 }: {
   label: string;
   value: string;
+  tooltip?: string;
 }) {
   return (
-    <div className="rounded-xl border border-border bg-surface p-4">
+    <div title={tooltip} className="rounded-xl border border-border bg-surface p-4">
       <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
         {label}
       </p>
@@ -412,10 +414,13 @@ export function LearnerClassSchedule({
       <div className="grid gap-3 sm:grid-cols-2">
         <Metric
           label="Today"
-          value={`${todayEvents.length} ${todayEvents.length === 1 ? "class" : "classes"}`}
+          value={courseBasePath==="/learn/courses"?todayEvents.length+" today":
+            todayEvents.length+" "+(todayEvents.length===1?"class":"classes")}
+          tooltip={courseBasePath==="/learn/courses"?todayEvents.map(e=>scheduleEventTooltip(e)).join("\n\n"):undefined}
         />
         <Metric
           label="Next"
+          tooltip={nextEvent?scheduleEventTooltip(nextEvent):undefined}
           value={
             nextEvent
               ? `${new Intl.DateTimeFormat("en-IN", {
