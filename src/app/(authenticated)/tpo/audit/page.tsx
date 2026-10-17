@@ -213,7 +213,7 @@ export default async function TpoAuditPage({
       </section>
 
       <TpoAuditSavedViews collegeId={context.membership.collegeId}
-       filters={{kind:query.kind,from:query.from,to:query.to,q:query.q}}/>
+       filters={{kind:query.kind,from:query.from,to:query.to,q:query.q,who:query.who}}/>
       <nav aria-label="Quick looks" className="flex flex-wrap gap-2">
        <span className="self-center text-sm font-semibold">Quick looks</span>
        {quickLooks.map(look=><Link key={look.label} href={quickHref(look.from,look.to)}
