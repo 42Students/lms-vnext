@@ -533,11 +533,16 @@ export async function updateCourseQuiz(
     return await getDb().transaction(
       async (tx) => {
         // Serialize deadline checks with quiz attempt inserts and lifecycle writes.
-        const [lockedQuiz]=await tx.select({
-          status:courseQuizzes.status,dueAt:courseQuizzes.dueAt,
-        }).from(courseQuizzes).where(eq(courseQuizzes.id,quizId))
+        const [lockedQuiz]=await tx.select().from(courseQuizzes).where(eq(courseQuizzes.id,quizId))
           .for("update").limit(1);
-        if(!lockedQuiz)throw new CoursesServiceError("QUIZ_NOT_FOUND");
+        if(!lockedQuiz||lockedQuiz.status==="ARCHIVED")throw new CoursesServiceError("QUIZ_NOT_FOUND");
+        if(input.expectedUpdatedAt&&new Date(input.expectedUpdatedAt).getTime()!==lockedQuiz.updatedAt.getTime())
+          throw new CoursesServiceError("FACULTY_QUIZ_STALE_VERSION");
+        const [liveAttemptStats]=await tx.select({
+          count:sql<number>`count(*)::int`,
+          maxAttempt:sql<number>`coalesce(max(${quizAttempts.attemptNumber}),0)::int`,
+        }).from(quizAttempts).where(eq(quizAttempts.quizId,quizId));
+        const liveAttempts=liveAttemptStats?.count??0;
         if(input.dueAt!==undefined && (
           (lockedQuiz.dueAt?.getTime()??null)!==
            (input.dueAt?new Date(input.dueAt).getTime():null))) {
@@ -546,6 +551,16 @@ export async function updateCourseQuiz(
           if(attempt || lockedQuiz.status==="CLOSED")
             throw new CoursesServiceError("QUIZ_HAS_ATTEMPTS");
         }
+        if(input.questions&&(lockedQuiz.status!=="DRAFT"||liveAttempts>0))
+          throw new CoursesServiceError("QUIZ_HAS_ATTEMPTS");
+        if(lockedQuiz.status!=="DRAFT"&&(
+          (input.shuffleQuestions!==undefined&&input.shuffleQuestions!==lockedQuiz.shuffleQuestions)||
+          (input.shuffleOptions!==undefined&&input.shuffleOptions!==lockedQuiz.shuffleOptions)
+        ))throw new CoursesServiceError("QUIZ_HAS_ATTEMPTS");
+        if(input.maxAttempts!==undefined&&liveAttempts>0&&input.maxAttempts!==lockedQuiz.maxAttempts)
+          throw new CoursesServiceError("QUIZ_HAS_ATTEMPTS");
+        if(input.maxAttempts!==undefined&&input.maxAttempts<(liveAttemptStats?.maxAttempt??0))
+          throw new CoursesServiceError("QUIZ_MAX_ATTEMPTS_REACHED");
         if (input.questions) {
           const questionRows = await tx
             .select({ id: quizQuestions.id })
@@ -619,7 +634,7 @@ export async function updateCourseQuiz(
                   ),
                 }
               : {}),
-            updatedAt: new Date(),
+            updatedAt: new Date(Math.max(Date.now(),lockedQuiz.updatedAt.getTime()+1)),
           })
           .where(
             and(

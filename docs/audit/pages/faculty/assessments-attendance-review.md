@@ -100,3 +100,9 @@ Reviewed: 2026-10-16 by Round R agent (Sonnet 5.5). Independent audit done first
 6. Attendance PDF: columns and file name versus legacy `attendance-<course>-<month>.pdf` (`Student`, `Present`, `Absent`, `Not marked`, `Attendance %`, `Below 75%` card) after FAC-attendance-grades-17 is built.
 7. Scheduling a past session in legacy dev (R02): try yesterday's date in the Schedule Class drawer and record the server message.
 8. Whether any scheduled job closes quizzes at their deadline (FAC-assessments-05); a quick DB check of `course_quizzes` rows with `status='PUBLISHED'` and `due_at < now()` on dev answers it.
+
+## FAST v2 chat-4-b latest main sync (2026-10-17)
+
+- `FAC-assessments-R01` source hardening: Faculty's existing published-before-submission edit workflow remains; College Admin assignment PATCH now serializes updates behind an assignment row lock and denies any edit after a learner submission, not merely points/method changes. Admin GET returns fresh title, due date, points, revision and a scoped has-submissions indicator; editor reloads these, rejects submitted assignments and sends the persisted optimistic revision. Stale edits and submission conflicts display actionable messages.
+- `FAC-assessments-R02` source hardening: College quiz PATCH locks the complete quiz row, rejects stale revision tokens and archived quizzes, rechecks attempted questions/shuffle/max-attempts and deadline/closure under that lock, and advances the persisted revision monotonically. Admin quiz editor gives specific attempt, stale-version and deadline messages; an unchanged published deadline is no longer included unnecessarily in metadata-only updates.
+- These are source-only implementation advances, not runtime parity certification. No tests, lint, typecheck, build or CI per FAST v2. Attempt creation and grading flows need their own later end-to-end acceptance pass.
