@@ -4,6 +4,10 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { displayDriveMetric, describeDriveMetric } from "@/modules/placements/college-drive-overview-model";
 import { getCollegeDriveOverview } from "@/modules/placements/college-drive-overview-service";
+import {getCollegeHiringFunnel} from "@/modules/placements/college-hiring-funnel-service";
+import {getCollegeDriveAttention} from "@/modules/placements/college-drive-attention-service";
+import {CollegeDrivePipelineOverview} from "@/components/placements/college-drive-pipeline-overview";
+import {CollegeDriveDuplicateAction} from "@/components/placements/college-drive-duplicate-action";
 
 export default async function CollegeDriveOverviewPage({ params }: {
   params: Promise<{ jobId: string }>;
@@ -11,11 +15,15 @@ export default async function CollegeDriveOverviewPage({ params }: {
   const context = await getCurrentRequestContext();
   if (!context.membership) redirect("/dashboard");
   const { jobId } = await params;
-  const { drive, counts } = await getCollegeDriveOverview(context, jobId);
+  const [{drive,counts},funnel,attention]=await Promise.all([
+    getCollegeDriveOverview(context,jobId),
+    getCollegeHiringFunnel(context,{jobId}),
+    getCollegeDriveAttention(context),
+  ]);
   return <div className="space-y-6">
     <PageHeader eyebrow="College Admin · Placements" title={drive.title}
       description={drive.companyName + " · " + drive.seasonName}
-      actions={<Link href="/college/placements/drives" className="text-primary-text underline">All drives</Link>} />
+      actions={<div className="flex flex-wrap items-center gap-3"><Link href="/college/placements/drives" className="text-primary-text underline">All drives</Link><CollegeDriveDuplicateAction jobId={jobId}/></div>} />
     <div className="flex flex-wrap gap-3 text-sm text-body">
       <span>Status: {drive.status}</span><span>Type: {drive.employmentType}</span>
       <span>Mode: {drive.workMode}</span><span>Openings: {drive.openings ?? "Not recorded"}</span>
@@ -29,6 +37,7 @@ export default async function CollegeDriveOverviewPage({ params }: {
           <p className="mt-2 text-xs text-muted-foreground">{describeDriveMetric(name)}</p>
         </article>)}
     </section>
+    <CollegeDrivePipelineOverview jobId={jobId} data={funnel} attention={attention}/>
     <Link href={`/college/placements/jobs/${drive.id}/shortlisted`} className="text-sm font-semibold text-primary-text underline">Shortlisted</Link>
     <p className="text-xs text-muted-foreground">These are persisted operational counts, not a sequential funnel. No missing selection data is inferred.</p>
   </div>;

@@ -4,6 +4,8 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeEditDialog } from "@/components/admin/college-edit-dialog";
 import { CollegeSetupChecklist } from "@/components/admin/college-setup-checklist";
 import { CollegeDashboardCards } from "@/components/admin/college-dashboard-cards";
+import {CollegeClosingQuizzesCard} from "@/components/admin/college-closing-quizzes-card";
+import {getCollegeClosingQuizzes} from "@/modules/admin-ui/college-dashboard-quizzes-service";
 import { CollegeAdminQuickActions } from "@/components/admin/admin-dashboard-actions";
 import { getCollegeDashboardCards } from "@/modules/admin-ui/college-dashboard-cards-service";
 import { getCollegeDashboardAttendance } from "@/modules/admin-ui/college-dashboard-attendance-service";
@@ -40,13 +42,14 @@ export default async function CollegeOverviewPage() {
     );
   }
 
-  const [dashboard, attendance, lowAttendance, unstaffed, pendingGrades, setupGaps] = await Promise.all([
+  const [dashboard, attendance, lowAttendance, unstaffed, pendingGrades, setupGaps,closingQuizzes] = await Promise.all([
     getCollegeDashboardCards(context, {}),
     getCollegeDashboardAttendance(context),
     getCollegeDashboardLowAttendance(context),
     getCollegeDashboardUnstaffedCourses(context),
     getCollegeDashboardPendingGrades(context),
     getCollegeDashboardSetupGaps(context),
+    getCollegeClosingQuizzes(context),
   ]);
 
   return (
@@ -116,6 +119,7 @@ export default async function CollegeOverviewPage() {
         </div>
       </section>
       <CollegeDashboardCards cards={dashboard.cards} />
+      <CollegeClosingQuizzesCard data={closingQuizzes}/>
       <section aria-label="Today" className="space-y-3">
         <h2 className="text-xl font-semibold text-foreground">Today</h2>
         <div className="grid gap-3 sm:grid-cols-3">
