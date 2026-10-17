@@ -6,6 +6,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import {SuperAdminTemplatePageExport} from "@/components/projects/super-admin-template-page-export";
+import {SuperAdminTemplateArchiveControl} from "@/components/projects/super-admin-template-archive-control";
 
 import { can } from "@/modules/permissions/policy";
 import { templateDirectoryHref, templateDirectoryQuerySchema } from "@/modules/projects/super-admin-template-directory-model";
@@ -60,8 +61,12 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
       <span className="rounded border border-border px-2 py-1">Resources {item.sectionCounts.resources}</span>
     </div>:null}
     <p className="mt-3 text-sm text-body">Version {item.currentVersion} · published {item.publishedVersion??"Not yet"} · {item.activeAssignments} active assignments in scope</p>
-    <Link href={`/admin/projects/templates/${encodeURIComponent(item.id)}`}
-     className="mt-3 inline-flex min-h-10 items-center font-semibold text-primary-text">Inspect template →</Link>
+    <div className="mt-3 flex flex-wrap items-center gap-3">
+      <Link href={`/admin/projects/templates/${encodeURIComponent(item.id)}`}
+       className="inline-flex min-h-10 items-center font-semibold text-primary-text">Inspect template →</Link>
+      {can(context,"project-template.manage")?<SuperAdminTemplateArchiveControl
+        templateId={item.id} title={item.title} status={item.status}/>:null}
+    </div>
    </article>)}
   </div>:<EmptyState title="No matching templates" description="No global template metadata matches these filters."/>}
   <nav aria-label="Template pages" className="flex flex-wrap gap-3 text-sm">
