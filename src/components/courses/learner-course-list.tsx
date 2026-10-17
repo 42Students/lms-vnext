@@ -301,6 +301,32 @@ export function LearnerCourseList({
             <span className="rounded-full bg-muted px-3 py-1.5">Credits not recorded</span>
           ) : null}
         </div>
+        <div className="mt-3 flex flex-wrap gap-2 text-xs">
+          <details className="rounded-lg border border-border bg-surface px-3 py-2">
+            <summary className="cursor-pointer font-semibold">Semester Details</summary>
+            <dl className="mt-2 space-y-1 text-body">
+              <div>Program: {periodRows[0]?.course.programName??"Not recorded"}</div>
+              <div>Batch: {periodRows[0]?.course.cohortName??"Not recorded"}</div>
+              <div>Academic Year: {selectedPeriod?.startDate?.slice(0,4)??"Not recorded"}</div>
+              <div>Semester: {selectedPeriod?.name??"Not recorded"}</div>
+            </dl>
+          </details>
+          <details className="rounded-lg border border-border bg-surface px-3 py-2">
+            <summary className="cursor-pointer font-semibold">All Courses</summary>
+            <ul className="mt-2 max-h-64 space-y-1 overflow-auto text-body">{periodRows.slice(0,100).map((row,i)=>
+              <li key={row.course.deliveryId+"-"+i}>{row.course.courseName}</li>)}</ul>
+            {periodRows.length>100?<p>Showing first 100; search the full list below.</p>:null}
+          </details>
+          {creditSummary.recordedCount>0?<details className="rounded-lg border border-border bg-surface px-3 py-2">
+            <summary className="cursor-pointer font-semibold">Credits Breakdown</summary>
+            <ul className="mt-2 max-h-64 space-y-1 overflow-auto text-body">
+              {periodRows.map((row,i)=><li key={row.course.deliveryId+"-"+i}>
+                {row.course.courseName} · {row.course.credits===null?"Credits unavailable":row.course.credits+" cr"}
+              </li>)}
+            </ul>
+            <p className="mt-2 font-semibold">Total {creditSummary.credits} Credits</p>
+          </details>:null}
+        </div>
       </section>
 
       {rows.some(row => row.unavailable) ? (
