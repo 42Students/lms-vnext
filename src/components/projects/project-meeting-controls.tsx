@@ -32,18 +32,15 @@ type LinkChoice = {
 };
 
 function toLocalInput(value: Date | null) {
-  if (!value) return "";
-  const date = new Date(value);
-  const offset = date.getTimezoneOffset();
-  return new Date(
-    date.getTime() - offset * 60_000,
-  )
-    .toISOString()
-    .slice(0, 16);
+  if (!value || !Number.isFinite(new Date(value).getTime())) return "";
+  // datetime-local fields always show college IST, regardless of browser zone.
+  return new Date(new Date(value).getTime()+330*60_000).toISOString().slice(0,16);
 }
 
 function toIso(value: string) {
-  return new Date(value).toISOString();
+  // HTML datetime-local values have no zone; interpret them as IST.
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value)) throw Error("Enter a valid IST meeting date and time.");
+  return new Date(value+":00+05:30").toISOString();
 }
 
 function MeetingFields({
@@ -53,12 +50,10 @@ function MeetingFields({
   agenda,
   startsAt,
   endsAt,
-  timeZone,
   onTitle,
   onAgenda,
   onStartsAt,
   onEndsAt,
-  onTimeZone,
 }: {
   isRequest?:boolean;
   minStart?:string;
@@ -129,19 +124,7 @@ function MeetingFields({
           />
         </label>
       </div>
-      <label>
-        <span className="mb-1.5 block text-xs font-semibold text-body">
-          Time zone
-        </span>
-        <Input
-          required
-          maxLength={80}
-          value={timeZone}
-          onChange={(event) =>
-            onTimeZone(event.target.value)
-          }
-        />
-      </label>
+      <p className="text-xs font-semibold text-body">Times are in Asia/Kolkata (IST).</p>
     </div>
   );
 }
@@ -159,7 +142,7 @@ export function RequestProjectMeetingControl({
   const [startsAt, setStartsAt] = useState("");
   const [endsAt, setEndsAt] = useState("");
   const [timeZone, setTimeZone] =
-    useState("UTC");
+    useState("Asia/Kolkata");
   const [minStart,setMinStart]=useState("");
   const [pending, setPending] =
     useState(false);
@@ -331,7 +314,7 @@ export function ScheduleProjectMeetingControl({
       : "",
   );
   const [timeZone, setTimeZone] =
-    useState(meeting?.timeZone ?? "UTC");
+    useState("Asia/Kolkata");
   const [meetingUrl, setMeetingUrl] =
     useState(meeting?.meetingUrl ?? "");
   const [meetingType, setMeetingType] =
@@ -358,12 +341,7 @@ export function ScheduleProjectMeetingControl({
         ? toLocalInput(meeting.endsAt)
         : "",
     );
-    setTimeZone(
-      meeting?.timeZone ??
-        Intl.DateTimeFormat()
-          .resolvedOptions().timeZone ??
-        "UTC",
-    );
+    setTimeZone("Asia/Kolkata");
     setMeetingUrl(
       meeting?.meetingUrl ?? "",
     );

@@ -124,7 +124,7 @@ export function MentorSprintTransition({
     try {
       await projectMutation("/api/projects/"+projectId+"/sprints/"+sprintId+
         "/mentor-transition","POST",{action,expectedUpdatedAt:updatedAt});
-      showToast({tone:"success",title:"Sprint status updated"});
+      showToast({tone:"success",title:action==="COMPLETE"?"Sprint completed. Anything not done went back to the backlog.":action==="START"?"Sprint started.":"Sprint reopened."});
       router.refresh();
     } catch(error) {
       showToast({tone:"error",title:"Sprint status was not changed",
