@@ -74,6 +74,9 @@ describe("Super Admin Tenants/Modules legacy gap contracts",()=>{
   expect(client).toContain('action==="SUSPEND"');
   expect(client).toContain('status==="ACTIVE"?"SUSPEND":"REACTIVATE"');
   expect(client).toContain("apiFetch");
+  expect(client).toContain("useGuardedAction");
+  expect(client).toContain("<ConfirmDialog");
+  expect(client).not.toContain("window.confirm");
   expect(client).not.toContain("result.error");
   expect(route).toContain("isSameOriginRequest(request)");
   expect(route).toContain("updateMembershipLifecycleWithRuntime");
