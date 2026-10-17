@@ -125,6 +125,43 @@ This table is normative. Native inputs and Next.js links remain valid; prefer th
 | Stat/KPI tile → `stat-tile.tsx` | label/value/detail?/href? | value tabular-nums, text equivalent always; clickable tile full 44px and keyboard link |
 | Utility notice → `inline-notice.tsx` | existing tone props and children | partial/read-only/stale reason visible; never raw stack text |
 
+### 5.1. State implementation matrix (per shared component)
+
+Read each column as a required **visual plus semantic** rule, not optional mood. `N/A` means the component is passive and its interactive child owns that state. `D` default; `H` hover; `F` focus; `A` pressed/selected; `X` disabled; `L` loading; `E` error.
+
+| Control | D / H / F / A | X | L | E |
+|---|---|---|---|---|
+| Button | canonical fill / 120ms darker fill / 2px deep-teal outline / pressed style | native disabled, 50% opacity; reason adjacent | `loading` disables + `aria-busy`; parent announces outcome | form summary near fields, never silently fail |
+| Input | white with border / contrast outline / deep-teal 2px outline / caret | native disabled + muted | enclosing form preserves text | `error` or `aria-invalid` and connected error paragraph |
+| Select | native white / border / 2px outline / native option selected | native disabled | dependent options show separate status | native invalid + connected text |
+| Textarea | white / border / 2px outline / caret+resize | native disabled | never discard draft | `aria-invalid`, own error description |
+| Checkbox | unchecked / pointer cursor / deep-teal outline / native checked | native disabled | parent pending disables | external invalid reason |
+| Radio | unchecked / pointer cursor / deep-teal outline / radio-group checked | native disabled | parent pending disables | fieldset error with association |
+| Switch | muted track / cursor / 2px outline / checked teal+knob | native disabled | parent pending disables | persistent notice on mutation rejection, revert server state |
+| DatePicker (Input) | native picker / border / deep-teal outline / chosen date | native disabled | inherited form loading | date range and timezone error below control |
+| Dialog | white panel / N/A / focus trapped in native modal / action button | nondismissible if pending | pending footer buttons disabled | alert inside sheet, preserve content |
+| Drawer | white panel / N/A / focus trapped / selected item | nondismissible if pending | child skeleton | child ErrorState |
+| BottomSheet | white panel / N/A / focus trapped / Apply link/button | nondismissible if pending | retain original filter draft | no data loss on failed apply |
+| ConfirmDialog | Cancel/Confirm / button hover / Cancel autoFocus / confirm pressed | `confirmDisabled` and reason | `pending` prevents close/duplicate | parent ErrorState retains confirmation context |
+| Toast | white anchored panel / dismiss hover / focus dismiss / dismiss clicked | N/A | N/A | `role=alert` for error, `role=status` otherwise |
+| Tabs | line-tabs or links / tinted on hover / 2px outline / aria-selected or aria-current | `disabled` in tablist mode | selected panel skeleton | selected panel ErrorState |
+| DataTable | row border / optional row tint / link focus outline / selected row action | disabled child explains why | `Skeleton variant=row` | ErrorState above remaining rows |
+| Card | white static surface / N/A / focus owned by child / N/A | child disabled | `Skeleton variant=card` | ErrorState in place |
+| Badge/StatusBadge | explicit semantic text / N/A / N/A / N/A | N/A | unknown state is text, never false green | error tone text on tint |
+| EmptyState | title + guidance / action hover / action focus / action clicked | action disabled with reason | N/A | use ErrorState instead of empty when read failed |
+| ErrorState | alert + recovery / action hover / action focus / Retry clicked | retry disabled while pending | retry Button busy | persistent reason; never raw code |
+| Skeleton/Loading | quiet placeholder / N/A / N/A / N/A | N/A | shape matches final page; 12s recovery | timed fallback to visible Retry |
+| Pagination | links + current page / tint / 2px outline / aria-current | first/last disabled as noninteractive text | route skeleton, maintain selected params | list-level ErrorState; preserve URL |
+| FilterBar | inline desktop, sheet phone / action hover / button focus / sheet open | Apply disabled while pending | keep filter draft | inline filter validation; don't reset on server failure |
+| PageHeader | semantic h1 / action hover / action focus / action pressed | action disabled with reason | title remains while body loads | independent error region below |
+| Breadcrumbs | links + terminal text / underline / link outline / aria-current | N/A | keep known parent links | unavailable child link omitted, never broken link |
+| Tooltip/InfoPopover | labelled disclosure / cursor / outline / open panel | omit trigger only with reason | N/A | always visible reason in accessible content |
+| FileUpload | native chooser / native pointer / deep-teal outline / selected file | native disabled | server upload pending outside chooser | size/type error next to control |
+| Avatar | image / N/A / N/A / N/A | N/A | initials fallback while image loads | failed image must fall back to initials (verify in browser) |
+| StatTile | label/value/optional link / border tint / link outline / link activated | no href for denied KPI | skeleton kpi | value `—`, visible explanation, not `0` |
+
+**Contrast spot checks by WCAG algorithm:** foreground `--lms-neutral-900` on `--lms-primary` = 7.19:1; on `--lms-primary-hover` = 5.03:1; on `--lms-error` = **4.49:1 (fails 4.5)**. Thus `Button variant="danger"` uses the exact existing `--lms-error-subtle` tint with dark text and `border-error`, not a red solid fill. Body on white 7.83:1; supporting text on white 4.83:1; deep-teal on white 4.94:1. Exclude placeholder/disabled labels from required information; never rely solely on low-contrast `--lms-border` to identify controls.
+
 **Compatibility:** Never rename or remove pre-existing props. Add optional props; existing call sites must render unchanged unless specified above for accessibility. “Loading” isn't a substitute for `disabled` or `aria-busy`. No catalogue component may fetch tenant data by itself.
 
 ## 6. Mobile + native-app WebView
