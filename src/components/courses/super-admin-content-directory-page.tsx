@@ -31,7 +31,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
  const context=await getCurrentRequestContext();
  if(!context.adminScope?.collegeId)return <div className="space-y-5">
   <PageHeader eyebrow="Super Admin · Courses" title={title}/>
-  <EmptyState title="Choose a college scope" description="Select a college before browsing persisted course content."/>
+  <EmptyState title="Select a college to continue" description={"Choose a college in the header above to see its "+title.toLowerCase()+"."}/>
  </div>;
  const [data, lessons]=await Promise.all([listSuperAdminContentDirectory(context,kind,parsed.data),listSuperAdminContentAuthoringLessons(context)]);
  const statuses=["ALL","DRAFT","PUBLISHED","ARCHIVED"] as const;
