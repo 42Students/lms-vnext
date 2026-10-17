@@ -44,7 +44,7 @@ export async function sendTelegramAlert(
   // Never send a raw stack or untrusted text. Lines are individually redacted.
   const safe = text.split(/\r?\n/).map((line) => {
     // These metadata fields are generated and format-validated by our server.
-    if (/^Request ID: [0-9a-f-]{36}$/i.test(line)) return line;
+    if (/^Request ID: (?:[0-9a-f]{8}|[0-9a-f-]{36})$/i.test(line)) return line;
     if (/^Time: \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(line)) return line;
     return redactAlertText(line);
   }).filter(Boolean).join("\n");
