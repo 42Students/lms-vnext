@@ -82,15 +82,15 @@ Audit: `docs/audit/pages/public/auth-public-1-login-session.md` (and `auth-publi
 | PUB-auth-public-31 | S3 | STATE | OPEN |
 | PUB-auth-public-33 | S3 | MISSING-ACTION | DONE |
 | PUB-auth-public-35 | S3 | STATE | NOT-A-GAP |
-| PUB-auth-public-14 | S4 | STATE | OPEN |
-| PUB-auth-public-15 | S4 | COPY | OPEN |
-| PUB-auth-public-16 | S4 | MISSING-FIELD | FIXED-ON-MAIN |
+| PUB-auth-public-14 | S4 | STATE | DONE |
+| PUB-auth-public-15 | S4 | COPY | NOT-A-GAP |
+| PUB-auth-public-16 | S4 | MISSING-FIELD | DONE |
 | PUB-auth-public-23 | S4 | STATE | UNCONFIRMED |
 | PUB-auth-public-24 | S4 | STATE | OPEN |
-| PUB-auth-public-32 | S4 | STATE | OPEN |
-| PUB-auth-public-34 | S4 | A11Y | FIXED-ON-MAIN |
-| PUB-auth-public-36 | S4 | COPY | UNCONFIRMED |
-| PUB-auth-public-37 | S4 | MISSING-PAGE | FIXED-ON-MAIN |
+| PUB-auth-public-32 | S4 | STATE | DONE |
+| PUB-auth-public-34 | S4 | A11Y | DONE |
+| PUB-auth-public-36 | S4 | COPY | DONE |
+| PUB-auth-public-37 | S4 | MISSING-PAGE | DONE |
 | PUB-auth-public-38 | S4 | PERMISSION | OPEN |
 | PUB-auth-public-39 | S4 | MISSING-PAGE | OPEN |
 
@@ -100,9 +100,9 @@ Audit: `docs/audit/pages/college/academic-setup.md` (and `academic-setup-review.
 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
-| COL-academic-setup-02 | S1 | MISSING-ACTION | FIXED-ON-MAIN |
-| COL-academic-setup-03 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| COL-academic-setup-04 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| COL-academic-setup-02 | S1 | MISSING-ACTION | DONE |
+| COL-academic-setup-03 | S2 | MISSING-ACTION | DONE |
+| COL-academic-setup-04 | S2 | MISSING-ACTION | DONE |
 | COL-academic-setup-06 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | COL-academic-setup-07 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | COL-academic-setup-08 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
