@@ -8,3 +8,5 @@
 | SA-placements-projects-111 | DONE (source authored; runtime pending) | `src/components/tracker/tracker-workflow-panel.tsx`; `tests/unit/chat6-tracker-round3.test.ts` → `SA-placements-projects-111 commit hashes open correct GitHub repositories only when valid` |
 
 | SA-placements-projects-105 | DONE (source authored; integration pending) | `src/modules/bug-tracker/admin-validation.ts`, `issues-query-model.ts`, `admin-service.ts`, `src/app/(authenticated)/tracker/issues/page.tsx`; `tests/unit/chat6-tracker-list-round3.test.ts` → `SA-placements-projects-105 filters reporter by literal substring with pagination and legacy labels` |
+
+| SA-placements-projects-123 | DONE (source authored; browser document.title pending) | `src/app/(authenticated)/tracker/{page,issues/page,issues/[publicId]/page,audit-findings/page,audit-findings/[publicId]/page}.tsx`; `tests/unit/chat6-tracker-titles-round3.test.ts` → `SA-placements-projects-123 restores audit findings heading and all legacy tracker document titles`. Intentional deviation: vNext records persisted findings, not legacy GitHub sync runs, so no invented "last synced" time. |

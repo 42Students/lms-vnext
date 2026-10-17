@@ -15,6 +15,7 @@ import { trackerAdminRuntimeEnabled } from "@/modules/bug-tracker/readiness";
 import { parseTrackerIssuesPageParams } from "@/modules/bug-tracker/issues-query-model";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
+export const metadata={title:"Issues · 42 Tracker"};
 export default async function TrackerIssuesPage({
   searchParams,
 }: {
