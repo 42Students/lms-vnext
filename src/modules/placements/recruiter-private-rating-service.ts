@@ -5,6 +5,7 @@ import {getDb} from "@/db/client";
 import {collegeMemberships,placementApplications,placementApplicationScreenings,
  placementRecruiterCollegeGrants,placementRecruiterProfiles,placementRecruiterPrivateReviews,users} from "@/db/schema";
 import {getRecruiterPlacementWorkspace} from "./recruiter-workspace-service";
+import {placementTableExists} from "./staged-tables";
 import {hasActiveRecruiter,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {PlacementsServiceError} from "./errors";
@@ -43,6 +44,8 @@ async function requirePrivateRatingScope(context:RequestContext,jobInput:string,
 }
 export async function getOwnRecruiterCandidateRating(ctx:RequestContext,jobId:string,applicationId:string){
  const scope=await requirePrivateRatingScope(ctx,jobId,applicationId);
+ if(!await placementTableExists("placement_recruiter_private_reviews"))
+  throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
  const [row]=await getDb().select({rating:placementRecruiterPrivateReviews.rating,
   note:placementRecruiterPrivateReviews.note})
  .from(placementRecruiterPrivateReviews)
@@ -52,6 +55,8 @@ export async function getOwnRecruiterCandidateRating(ctx:RequestContext,jobId:st
 }
 export async function saveOwnRecruiterCandidateRating(ctx:RequestContext,jobId:string,applicationId:string,raw:unknown){
  const scope=await requirePrivateRatingScope(ctx,jobId,applicationId);
+ if(!await placementTableExists("placement_recruiter_private_reviews"))
+  throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
  const input=recruiterPrivateRatingSchema.parse(raw);
  return getDb().transaction(async tx=>{
   // Re-check live actor and company grant while holding write transaction.
