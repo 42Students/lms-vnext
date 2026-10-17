@@ -16,12 +16,6 @@ Further live provider/permission/integration acceptance is owned by the orchestr
 | TPO-home-36 | DONE | `src/components/tpo/tpo-bell-panel.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-36` |
 | TPO-home-39 | DONE | `src/components/tpo/tpo-bell-panel.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-39` |
 | TPO-home-41 | DONE | `src/components/tpo/tpo-keyboard-shortcuts.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-41` |
-
-Remaining TPO Home gaps continue in `docs/orchestrator/queues/gap-closure-chat-4.md`.
-Live numbers in legacy row fields remain conditional on available persisted data;
-tests prove presentation policy rather than claiming unavailable provider data exists.
-
-TPO-home-07 and TPO-home-09 remain OPEN: their display models exist, but the live recruiter-access and team-ask/overdue inputs are not wired; presentation-only tests are not accepted as full closure.
 | TPO-home-10 | DONE | `src/app/(authenticated)/tpo/home/page.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-10` |
 | TPO-home-18 | DONE | `src/app/(authenticated)/tpo/home/page.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-18` |
 | TPO-home-20 | DONE | `src/app/(authenticated)/tpo/home/loading.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-20` |
@@ -34,3 +28,5 @@ TPO-home-07 and TPO-home-09 remain OPEN: their display models exist, but the liv
 | TPO-home-34 | DONE | `src/components/tpo/tpo-header-indicators.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-34` |
 | TPO-home-35 | DONE | `src/components/tpo/tpo-bell-panel.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-35` |
 | TPO-home-38 | DONE | `src/components/tpo/tpo-bell-panel.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-38` |
+ 
+Remaining TPO Home gaps continue in `docs/orchestrator/queues/gap-closure-chat-4.md`. Live numbers remain conditional on persisted data. TPO-home-07 and TPO-home-09 remain OPEN because the recruiter-access and team-ask/overdue signals are not yet wired. Tests are source-backed and have not been executed.
