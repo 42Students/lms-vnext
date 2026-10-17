@@ -35,3 +35,12 @@ Tests below are authored but not executed in this lane. DONE on a helper means i
 | GR-20 | DONE | ${missingError.length} new error boundaries; `tests/unit/graceful-route-coverage.test.ts` — GR-20 |
 | GR-09 | DONE | `tests/unit/graceful-raw-error-scan.test.ts` — GR-09; immutable existing-file SHA allowlist in `docs/audit/graceful/raw-error-allowlist.json` |
 | GR-31 | DONE | `tests/unit/graceful-raw-error-scan.test.ts` — GR-31 (new violations gate; existing component adoption remains with account lanes) |
+| GR-35 | DONE | `src/components/ui/confirm-action-dialog.tsx`; `tests/unit/graceful-ui-primitives.test.ts` — GR-35 (shared primitive; per-page adoption pending) |
+| GR-36 | DONE | `src/components/ui/disabled-reason.tsx`; `tests/unit/graceful-ui-primitives.test.ts` — GR-36 (shared primitive; per-page adoption pending) |
+| GR-37 | DONE | `src/lib/safe-format.ts`; `tests/unit/graceful-ui-primitives.test.ts` — GR-37 (shared primitive; per-page adoption pending) |
+| GR-38 | DONE | `src/lib/safe-format.ts`; `tests/unit/graceful-ui-primitives.test.ts` — GR-38 (shared primitive; per-page adoption pending) |
+| GR-39 | DONE | `src/components/ui/long-text.tsx`; `tests/unit/graceful-ui-primitives.test.ts` — GR-39 (shared primitive; per-page adoption pending) |
+| GR-40 | DONE | `src/lib/upload-validation.ts + src/lib/upload-progress.ts`; `tests/unit/graceful-ui-primitives.test.ts` — GR-40 (shared primitive; per-page adoption pending) |
+| GR-56 | DONE | `src/components/ui/third-party-link.tsx`; `tests/unit/graceful-ui-primitives.test.ts` — GR-56 (shared primitive; per-page adoption pending) |
+| GR-62 | DONE | `src/hooks/use-form-draft.ts`; `tests/unit/graceful-ui-primitives.test.ts` — GR-62 (shared primitive; per-page adoption pending) |
+| GR-64 | DONE | `src/lib/safe-download.ts`; `tests/unit/graceful-ui-primitives.test.ts` — GR-64 (shared primitive; per-page adoption pending) |
