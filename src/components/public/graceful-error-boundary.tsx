@@ -14,10 +14,11 @@ export function isStaleChunkError(error: Error): boolean {
     .test(error.message);
 }
 
-export function GracefulErrorBoundary({ error, reset, homeHref = "/dashboard" }: {
+export function GracefulErrorBoundary({ error, reset, homeHref = "/dashboard", legacyWorkspaceCopy = false }: {
   error: Error & { digest?: string };
   reset: () => void;
   homeHref?: string;
+  legacyWorkspaceCopy?: boolean;
 }) {
   const [requestId, setRequestId] = useState<string | null>(null);
   const stale = isStaleChunkError(error);
@@ -55,8 +56,9 @@ export function GracefulErrorBoundary({ error, reset, homeHref = "/dashboard" }:
   }, [error, stale]);
 
   return <GracefulScreen
-    title={stale ? "Updating your page" : "This page is temporarily unavailable"}
+    title={stale ? "Updating your page" : legacyWorkspaceCopy ? "Something went wrong." : "This page is temporarily unavailable"}
     message={stale ? "A new version is available, reloading..." :
+      legacyWorkspaceCopy ? "Please refresh the page or contact support if the problem persists." :
       "Something went wrong on our side. Please try again in a moment."}
     retry={reset}
     homeHref={homeHref}

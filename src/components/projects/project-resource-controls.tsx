@@ -2,6 +2,7 @@
 
 import {
   type FormEvent,
+  useEffect,
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
@@ -121,6 +122,7 @@ export function CreateProjectResourceControl({
   const router = useRouter();
   const { showToast } = useToast();
   const [open, setOpen] = useState(false);
+  const [discardOpen,setDiscardOpen]=useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] =
     useState("");
@@ -132,6 +134,18 @@ export function CreateProjectResourceControl({
     useState(false);
   const [error, setError] =
     useState<string | null>(null);
+  const dirty=Boolean(title.trim()||description.trim()||url.trim()||required||visibility!=="TEAM");
+  useEffect(()=>{
+    if(!open||!dirty)return;
+    const guard=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
+    window.addEventListener("beforeunload",guard);
+    return ()=>window.removeEventListener("beforeunload",guard);
+  },[open,dirty]);
+  function requestClose(){
+    if(pending)return;
+    if(dirty)setDiscardOpen(true);
+    else setOpen(false);
+  }
 
   async function submit(
     event: FormEvent<HTMLFormElement>,
@@ -192,7 +206,7 @@ export function CreateProjectResourceControl({
       </Button>
       <Dialog
         open={open}
-        onOpenChange={setOpen}
+        onOpenChange={next=>{if(next)setOpen(true);else requestClose();}}
         title={isLearner ? "Share a resource" : "Add resource"}
         description="Share a safe HTTP(S) link or an internal text resource with the Project team."
       >
@@ -226,7 +240,7 @@ export function CreateProjectResourceControl({
               type="button"
               variant="secondary"
               disabled={pending}
-              onClick={() => setOpen(false)}
+              onClick={requestClose}
             >
               Cancel
             </Button>
@@ -244,6 +258,12 @@ export function CreateProjectResourceControl({
           </div>
         </form>
       </Dialog>
+      <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen}
+        title="Discard this resource?"
+        description="You have unsaved project changes. Leave this page and discard them?"
+        confirmLabel="Discard changes" pending={pending}
+        onConfirm={()=>{setDiscardOpen(false);setOpen(false);
+          setTitle("");setDescription("");setUrl("");setRequired(false);setVisibility("TEAM");}}/>
     </>
   );
 }
@@ -259,6 +279,7 @@ export function ProjectResourceActions({
   const { showToast } = useToast();
   const [editOpen, setEditOpen] =
     useState(false);
+  const [editDiscardOpen,setEditDiscardOpen]=useState(false);
   const [archiveOpen, setArchiveOpen] =
     useState(false);
   const [title, setTitle] = useState(
@@ -276,6 +297,19 @@ export function ProjectResourceActions({
     useState(false);
   const [error, setError] =
     useState<string | null>(null);
+  const dirty=title!==resource.title||description!==(resource.description??"")||
+    url!==(resource.url??"")||required!==resource.required||visibility!==resource.visibility;
+  useEffect(()=>{
+    if(!editOpen||!dirty)return;
+    const guard=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
+    window.addEventListener("beforeunload",guard);
+    return ()=>window.removeEventListener("beforeunload",guard);
+  },[editOpen,dirty]);
+  function requestEditClose(){
+    if(pending)return;
+    if(dirty)setEditDiscardOpen(true);
+    else setEditOpen(false);
+  }
 
   async function save(
     event: FormEvent<HTMLFormElement>,
@@ -378,7 +412,7 @@ export function ProjectResourceActions({
 
       <Dialog
         open={editOpen}
-        onOpenChange={setEditOpen}
+        onOpenChange={next=>{if(next)setEditOpen(true);else requestEditClose();}}
         title="Edit resource"
       >
         <form
@@ -410,9 +444,7 @@ export function ProjectResourceActions({
               type="button"
               variant="secondary"
               disabled={pending}
-              onClick={() =>
-                setEditOpen(false)
-              }
+              onClick={requestEditClose}
             >
               Cancel
             </Button>
@@ -431,6 +463,11 @@ export function ProjectResourceActions({
         </form>
       </Dialog>
 
+      <ConfirmDialog open={editDiscardOpen} onOpenChange={setEditDiscardOpen}
+        title="Discard resource changes?"
+        description="You have unsaved project changes. Leave this page and discard them?"
+        confirmLabel="Discard changes" pending={pending}
+        onConfirm={()=>{setEditDiscardOpen(false);setEditOpen(false);}}/>
       <ConfirmDialog
         open={archiveOpen}
         onOpenChange={setArchiveOpen}

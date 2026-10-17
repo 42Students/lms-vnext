@@ -780,9 +780,15 @@ export async function updateProjectMember(
         eq(projectMembers.projectId,scope.project.id),isNull(projectMembers.endedAt)))
         .returning();
       if(!changed)throw new ProjectsServiceError("PROJECT_MEMBER_NOT_FOUND");
-      await recordActivityEventInTransaction(tx,context,projectTeamAuditInput("UPDATED",{
+      const event=await recordActivityEventInTransaction(tx,context,projectTeamAuditInput("UPDATED",{
         projectId:scope.project.id,collegeId:scope.collegeId,organizationId:scope.organizationId,
       },changed,randomUUID()));
+      await notifyProjectMemberships(tx,event.id,{
+        projectId:scope.project.id,collegeId:scope.collegeId,
+        membershipIds:[changed.membershipId],exceptUserId:context.user.id,
+        title:"Project role updated",body:"Your project role or permissions have changed.",
+        actionHref:"/learn/projects/"+scope.project.id+"?tab=team",
+      });
       return [changed];
     });
     return updated;

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
@@ -108,6 +109,7 @@ export function MentorSprintTransition({
   const router=useRouter();
   const {showToast}=useToast();
   const [busy,setBusy]=useState(false);
+  const [confirming,setConfirming]=useState(false);
   const action=status==="PLANNED"?"START":
     status==="ACTIVE"?"COMPLETE":
     status==="COMPLETED"&&releaseStatus!=="SHIPPED"?"REOPEN":null;
@@ -116,7 +118,8 @@ export function MentorSprintTransition({
   const label=action==="START"?"Start sprint":
     action==="COMPLETE"?"Complete sprint":"Reopen sprint";
   async function transition() {
-    if(!action || !window.confirm(label+"? The sprint status and project activity will change.")) return;
+    if(!action) return;
+    setConfirming(false);
     setBusy(true);
     try {
       await projectMutation("/api/projects/"+projectId+"/sprints/"+sprintId+
@@ -128,8 +131,13 @@ export function MentorSprintTransition({
         description:error instanceof Error?error.message:"Reload to retry."});
     } finally {setBusy(false);}
   }
-  return <Button size="sm" variant="secondary" disabled={busy}
-    onClick={()=>void transition()}>
-    {busy?"Saving…":label}
-  </Button>;
+  return <>
+    <Button size="sm" variant="secondary" disabled={busy} onClick={()=>setConfirming(true)}>
+      {busy?"Saving…":label}
+    </Button>
+    <ConfirmDialog open={confirming} onOpenChange={setConfirming}
+      title={label+"?"}
+      description="The sprint status and project activity will change."
+      confirmLabel={label} pending={busy} onConfirm={transition}/>
+  </>;
 }

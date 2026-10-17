@@ -30,13 +30,19 @@ describe("College Admin program write contracts", () => {
       .toBe(false);
   });
 
-  it("requires strict complete edit fields and blocks department relocation", () => {
+  it("requires strict complete edit fields and permits scoped department relocation", () => {
     expect(updateCollegeProgramSchema.parse({
       name: "Data Science", code: "DS", durationTerms: 6,
     })).toEqual({ name: "Data Science", code: "DS", durationTerms: 6 });
     expect(updateCollegeProgramSchema.safeParse({ name: "Renamed" }).success).toBe(false);
-    expect(updateCollegeProgramSchema.safeParse({
+    expect(updateCollegeProgramSchema.parse({
       name: "Data Science", code: "DS", durationTerms: 6, departmentId,
+    })).toEqual({ name: "Data Science", code: "DS", durationTerms: 6, departmentId });
+    expect(updateCollegeProgramSchema.safeParse({
+      name: "Data Science", code: "DS", durationTerms: 6, departmentId: "not-a-uuid",
+    }).success).toBe(false);
+    expect(updateCollegeProgramSchema.safeParse({
+      name: "Data Science", code: "DS", durationTerms: 6, departmentId, collegeId: departmentId,
     }).success).toBe(false);
   });
 
