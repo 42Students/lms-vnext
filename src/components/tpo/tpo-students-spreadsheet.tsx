@@ -123,6 +123,7 @@ export function TpoStudentsSpreadsheet({rows,branches,afterCollege,afterCollegeA
       aria-label={"Change participation for "+row.displayName} className="min-h-10 text-primary-text underline">Change participation</Link>
    </div>}/>
   {active?<TpoStudentQuickPanel key={active.membershipId} student={active} rows={sortedRows}
+    recordedOutcome={afterCollege[active.membershipId]?.outcome??null}
     onNavigate={open} onClose={()=>open(null)} />:null}
   {selected&&!active?<p role="status" className="text-sm">
     Selected student is not on this roster page. Clear the student panel selection or change filters.
