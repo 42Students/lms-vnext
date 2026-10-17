@@ -100,7 +100,8 @@ export async function createMentorBacklogTask(context: RequestContext, projectId
       collegeId:scope.collegeId,organizationId:scope.organizationId,
       subjectType:"project_task",subjectId:task.id,subjectLabel:task.title,
       summary:"Product backlog task created",
-      metadata:{projectId:scope.project.id,taskId:task.id,backlog:true},
+      metadata:{projectId:scope.project.id,taskId:task.id,backlog:true,
+        taskType:task.taskType,dueDate:task.dueDate},
       groupKey:"project:"+scope.project.id,
     });
     return task;
