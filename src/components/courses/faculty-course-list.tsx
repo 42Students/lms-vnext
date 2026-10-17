@@ -3,10 +3,8 @@ import { facultyCourseListHref, type FacultyCourseListQuery } from "@/modules/co
 import { COURSE_TEACHING_ROLES } from "@/modules/courses/constants";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
-import type {
-  getFacultyCourseWorkspace,
-  listFacultyCourseDeliveries,
-} from "@/modules/courses/faculty-course-service";
+import type { listFacultyCourseDeliveries } from "@/modules/courses/faculty-course-service";
+import type { FacultyCourseCardSummary } from "@/modules/courses/faculty-course-card-summary-service";
 
 type Course = Awaited<
   ReturnType<
@@ -14,11 +12,7 @@ type Course = Awaited<
   >
 >[number];
 
-type Workspace = Awaited<
-  ReturnType<
-    typeof getFacultyCourseWorkspace
-  >
->;
+type Workspace = FacultyCourseCardSummary;
 
 export type FacultyCourseListRow = {
   course: Course;
