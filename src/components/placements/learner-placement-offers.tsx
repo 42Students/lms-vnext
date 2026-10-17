@@ -117,6 +117,29 @@ export function LearnerPlacementOffers({
       },new Date(snapshotNowIso))
     : null;
 
+  async function reviewAccept(item:LearnerPlacementOfferItem){
+    const request=++impactRequest.current;
+    setConfirmOffer(item);setAcceptImpact(null);setAcceptImpactError(null);
+    setAcceptImpactBusy(true);
+    try{
+      const response=await fetch("/api/placements/offers/"+encodeURIComponent(item.offerId)+"/accept-preview",
+        {method:"GET",credentials:"same-origin",cache:"no-store"});
+      const payload=await response.json().catch(()=>null) as (OfferAcceptImpact&{error?:string})|null;
+      if(!response.ok||!payload||payload.offerId!==item.offerId)
+        throw Error(payload?.error??"Could not load the acceptance impact. Please retry.");
+      if(request===impactRequest.current)setAcceptImpact(payload);
+    }catch(error){
+      if(request===impactRequest.current)setAcceptImpactError(error instanceof Error?error.message:"Impact preview is unavailable.");
+    }finally{
+      if(request===impactRequest.current)setAcceptImpactBusy(false);
+    }
+  }
+  function dismissAccept(){
+    impactRequest.current++;
+    setConfirmOffer(null);setAcceptImpact(null);setAcceptImpactError(null);
+    setAcceptImpactBusy(false);
+  }
+
   async function respond(
     offerId: string,
     action: "ACCEPT" | "DECLINE",
