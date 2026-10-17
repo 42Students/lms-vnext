@@ -1,0 +1,30 @@
+import "server-only";
+import {and,asc,count,eq} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {cohorts,departments,programs,sections,sectionEnrollments} from "@/db/schema";
+import {resolveActingCollege} from "@/modules/permissions/acting-college";
+import type {RequestContext} from "@/modules/identity/context";
+import {z} from "zod";
+
+/** One selected academic cohort, with per-class occupancy from persisted active enrollment. */
+export async function getSuperAdminBatchRosterOverview(context:RequestContext,rawId:unknown){
+ const batchId=z.uuid().parse(rawId);
+ const scope=await resolveActingCollege(context,"academics.read");
+ const db=getDb();
+ const [batch]=await db.select({
+  id:cohorts.id,name:cohorts.name,code:cohorts.code,programName:programs.name,
+ }).from(cohorts)
+  .innerJoin(programs,eq(programs.id,cohorts.programId))
+  .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,scope.collegeId)))
+  .where(eq(cohorts.id,batchId)).limit(1);
+ if(!batch)return null;
+ const classes=await db.select({
+  id:sections.id,name:sections.name,code:sections.code,capacity:sections.capacity,status:sections.status,
+  learnerCount:count(sectionEnrollments.id),
+ }).from(sections)
+  .leftJoin(sectionEnrollments,and(eq(sectionEnrollments.sectionId,sections.id),eq(sectionEnrollments.status,"ACTIVE")))
+  .where(eq(sections.cohortId,batchId))
+  .groupBy(sections.id,sections.name,sections.code,sections.capacity,sections.status)
+  .orderBy(asc(sections.name),asc(sections.id));
+ return {batch,classes};
+}

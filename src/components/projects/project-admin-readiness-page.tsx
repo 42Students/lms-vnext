@@ -1,3 +1,4 @@
+import {AdminReadinessWorkspacePicker} from "./admin-readiness-workspace-picker";
 import Link from "next/link";
 import { listCollegeActiveReadinessOverrides } from "@/modules/projects/admin-readiness-overrides-service";
 import {listCollegeReadinessWorkspaceChoices,listCollegeReadinessReleases} from "@/modules/projects/college-readiness-releases-service";
@@ -126,17 +127,7 @@ export async function ProjectAdminReadinessPage({
       </section>
       <section className="space-y-3 rounded-xl border border-border bg-surface p-5">
         <h2 className="text-base font-semibold">Select workspace</h2>
-        <form method="get" action={readinessPath} className="flex flex-wrap items-end gap-3">
-          <label className="min-w-64 flex-1 text-sm font-semibold">
-            Workspace
-            <select name="workspaceId" defaultValue={selected??""}
-              className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-3">
-              <option value="">Choose a workspace</option>
-              {workspaceChoices.map(item=><option key={item.id} value={item.id}>{item.title}</option>)}
-            </select>
-          </label>
-          <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground">View readiness</button>
-        </form>
+        <AdminReadinessWorkspacePicker items={workspaceChoices} selected={selected} action={readinessPath}/>
         {selected ? <>
           <Link href={basePath+"/"+selected+"/readiness"} className="text-sm font-semibold text-primary-text underline">
             Manage override

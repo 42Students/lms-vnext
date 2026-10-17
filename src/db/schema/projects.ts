@@ -205,6 +205,7 @@ export const projectInstances = pgTable(
     endDate: date("end_date"),
     sprintLengthWeeks: integer("sprint_length_weeks"),
     estimationUnit: varchar("estimation_unit", { length: 32 }).default("POINTS"),
+    authoredBrief: jsonb("authored_brief").notNull().default(sql`'{"goal":"","description":"","deliverables":[],"completionConditions":[],"personas":[]}'::jsonb`),
     createdByUserId: uuid("created_by_user_id")
       .notNull()
       .references(() => users.id, {
@@ -255,6 +256,10 @@ export const projectInstances = pgTable(
     check(
       "project_instances_sprint_length_weeks_ck",
       sql`${table.sprintLengthWeeks} is null or ${table.sprintLengthWeeks} between 1 and 104`,
+    ),
+    check(
+      "project_instances_authored_brief_shape_ck",
+      sql`jsonb_typeof(${table.authoredBrief}) = 'object'`,
     ),
     check(
       "project_instances_dates_ck",
@@ -338,6 +343,11 @@ export const projectSprints = pgTable(
     }).notNull(),
     title: text("title").notNull(),
     description: text("description"),
+    goal: text("goal"),
+    definitionOfDone: text("definition_of_done"),
+    startDate: date("start_date"),
+    endDate: date("end_date"),
+    dueDate: date("due_date"),
     sequence: integer("sequence").notNull(),
     status: varchar("status", { length: 32 })
       .notNull()
@@ -367,6 +377,10 @@ export const projectSprints = pgTable(
     index("project_sprints_project_status_idx").on(
       table.projectId,
       table.status,
+    ),
+    check(
+      "project_sprints_dates_ck",
+      sql`${table.startDate} is null or ${table.endDate} is null or ${table.endDate} >= ${table.startDate}`,
     ),
     check(
       "project_sprints_sequence_ck",
