@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {TpoTeamOpenRead} from "@/components/tpo/tpo-team-open-read";
+import {TpoTeamRename} from "@/components/tpo/tpo-team-rename";
 import {TpoLiveRefresh} from "@/components/tpo/tpo-live-refresh";
 import {TpoTeamReplyComposer} from "@/components/tpo/tpo-team-forms";
 import {TpoTeamFollowControls} from "@/components/tpo/tpo-team-follow-controls";
@@ -36,6 +37,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
    description={"With "+result.thread.counterpartName+" · Private placement-team conversation."}/>
   <Link href="/tpo/team?tab=conversations" className="inline-flex min-h-11 items-center text-primary-text">All conversations</Link>
   <TpoTeamOpenRead threadId={result.thread.id}/>
+  <TpoTeamRename threadId={result.thread.id} currentTopic={result.thread.topic}/>
   <TpoTeamFollowControls threadId={result.thread.id} following={preferences.following}
    muted={preferences.muted} ready={preferences.status==="READY"}/>
   <form method="post" action={"/api/placements/tpo/team/threads/"+result.thread.id+"/acknowledge"}>
