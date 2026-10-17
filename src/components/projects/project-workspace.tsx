@@ -1417,7 +1417,8 @@ export function ProjectWorkspace({
               {upcoming.length>1?<details className="mt-2 text-sm">
                 <summary className="cursor-pointer font-semibold text-primary-text">Also scheduled ({upcoming.length-1})</summary>
                 <ul className="mt-2 space-y-1">{upcoming.slice(1).map(m=>
-                  <li key={m.id}>{m.title} · {formatDateTime(m.startsAt)}</li>)}</ul>
+                  <li key={m.id}>{m.title} · {formatDateTime(m.startsAt)}
+                    {m.meetingType?" · "+label(m.meetingType):""}</li>)}</ul>
               </details>:null}
               <details className="mt-3 text-sm">
                 <summary className="cursor-pointer font-semibold text-primary-text">
