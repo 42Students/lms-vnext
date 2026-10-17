@@ -8,6 +8,7 @@ import {
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -107,6 +108,7 @@ export function FacultyLessonAuthoring({
   const [success, setSuccess] =
     useState<string | null>(null);
   const [publishNow,setPublishNow]=useState(true);
+  const [discardConfirm,setDiscardConfirm]=useState(false);
 
   function reset() {
     setTitle("");
@@ -132,12 +134,13 @@ export function FacultyLessonAuthoring({
     return ()=>window.removeEventListener("beforeunload",warn);
   },[mode,draftDirty]);
 
-  function close() {
-    if(draftDirty&&!window.confirm("Discard this content draft?"))return;
-    setMode(null);
-    setError(null);
-    setSuccess(null);
-    reset();
+  function discardDraft(){
+    setMode(null);setError(null);setSuccess(null);reset();
+    setDiscardConfirm(false);
+  }
+  function close(){
+    if(draftDirty){setDiscardConfirm(true);return;}
+    discardDraft();
   }
 
   async function post(
@@ -1157,6 +1160,12 @@ export function FacultyLessonAuthoring({
           are available.
         </p>
       ) : null}
+      <ConfirmDialog open={discardConfirm} onOpenChange={setDiscardConfirm}
+        title="Discard this content draft?" confirmLabel="Discard draft"
+        description="Any unsaved changes in this content form will be lost."
+        onConfirm={discardDraft}>
+        <p className="text-sm text-body">Keep editing to preserve the details you entered.</p>
+      </ConfirmDialog>
     </div>
   );
 }
