@@ -67,6 +67,13 @@ export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
    <ul className="grid min-w-0 gap-2 sm:grid-cols-2">{ranges.map(range=><li key={range.items[0].id}
     className="flex min-w-0 flex-wrap justify-between gap-3 rounded-lg border border-border bg-surface p-3">
     <div className="min-w-0"><strong>{range.startDay===range.endDay?range.startDay:range.startDay+" – "+range.endDay}</strong><p className="break-words text-sm">{range.reason}</p><p className="text-xs text-muted-foreground">{range.items.length} day(s) · Individual day removal below</p></div>
+    {range.items.length>1?<button type="button" disabled={busy} onClick={()=>{
+     if(!window.confirm("Remove all "+range.items.length+" blocked days in this range?"))return;
+     void request("/api/placements/tpo/settings/blocked-dates/range","DELETE",{
+      startDay:range.startDay,endDay:range.endDay,
+      versions:range.items.map(item=>({id:item.id,expectedVersion:item.updatedAt})),
+     });
+    }} className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text">Remove whole range</button>:null}
     <div className="flex flex-wrap gap-1">{range.items.map(item=><button key={item.id} type="button" disabled={busy} onClick={()=>{
      if(!window.confirm("Remove "+item.day+" from blocked dates?"))return;
      void request("/api/placements/tpo/settings/blocked-dates/"+item.id,"DELETE",{expectedVersion:item.updatedAt});
