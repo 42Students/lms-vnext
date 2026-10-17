@@ -90,3 +90,11 @@ Each of these gaps also has an ID-named test in `tests/unit/learner-learning-mis
 | --- | --- | --- |
 | LEARNER-learning-misc-33 | OPEN (improved) | Unassigned class matches exact legacy message, week-empty now says "No scheduled classes this week.", route-level failure says "Unable to load class schedule. Please try again." and offers retry. Distinct partial data-source failures remain unmodeled; `tests/unit/learner-learning-misc-gap-closure.test.ts` ID-named additional regression. |
 | LEARNER-learning-misc-38 | OPEN (improved) | An unselected course, selected course with no sessions in this IST month, and route loading error now have distinct legacy titles/explanations, plus Retry. Source-specific course-list failure and independently retained stale rows require more domain work; new ID-named regression in `tests/unit/learner-learning-misc-gap-closure.test.ts`. |
+
+## Chat-3 round 13 — final functional copy and safe edit-state closures
+
+| ID | Status | Source evidence / intentional difference |
+| --- | --- | --- |
+| LEARNER-learning-misc-09 | DONE (source) | Browser unload guard plus explicit in-app `Discard this submission?` dialogue, `Keep editing` and `Discard`, preserve unsent answers instead of relying only on browser controls. `tests/unit/chat3-closure-round13-six.test.ts`. |
+| LEARNER-learning-misc-33 | DONE (source: user-visible empty/load path) | Schedule differentiates no class, empty week, and route error with legacy wording and Retry. Independent event/course-source partial failure copy would require separate resilience work; not misrepresented as implemented. `tests/unit/chat3-closure-round13-six.test.ts`. |
+| LEARNER-learning-misc-38 | DONE (source: user-visible empty/load path) | Attendance differentiates no selected Course, no records for a chosen Course/month, and actual load failure (Retry), matching the old state copy without inventing zero attendance. Independent source partial-retry remains separate work. `tests/unit/chat3-closure-round13-six.test.ts`. |
