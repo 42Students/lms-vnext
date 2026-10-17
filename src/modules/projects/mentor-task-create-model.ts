@@ -7,6 +7,7 @@ export const mentorTaskCreateSchema=z.object({
   sprintId:z.string().uuid().nullable(),
   title:z.string().trim().min(1).max(200),
   description:z.string().trim().max(4000).nullable(),
+  approach:z.string().trim().max(4000).nullable().default(null),
   acceptanceCriteria:z.string().trim().max(4000).nullable(),
   priority:z.enum(["LOW","MEDIUM","HIGH","CRITICAL"]),
   status:z.enum(["TODO","IN_PROGRESS","BLOCKED"]).default("TODO"),
