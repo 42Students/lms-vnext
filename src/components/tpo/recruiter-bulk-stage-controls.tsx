@@ -250,6 +250,15 @@ export function RecruiterBulkStageControls({
         <section aria-live="polite">
           <h3 className="font-semibold text-foreground">Per-lead results</h3>
           {runAuditId?<p className="mt-1 text-xs text-muted-foreground">Audited batch: <code>{runAuditId}</code></p>:null}
+          {undoRunId?<div className="mt-3 rounded-lg border border-border p-3 text-sm">
+           <p>Undo this audited batch within five minutes. Undo is rejected if any changed lead has since been edited.</p>
+           {undoReview?<p role="status" className="mt-2">Restore the previous manual stage, reason and revisit date for each changed recruiter?</p>:null}
+           <div className="mt-2 flex gap-2">
+            <button type="button" disabled={undoBusy} className={fieldClass} onClick={()=>void restore()}>
+             {undoBusy?"Restoring…":undoReview?"Confirm undo":"Undo stage batch"}</button>
+            {undoReview?<button type="button" className={fieldClass} onClick={()=>setUndoReview(false)}>Cancel</button>:null}
+           </div>
+          </div>:null}
           {tpoBulkFailedLines(results).length>0?(
             <button type="button" className={fieldClass+" mt-2"}
               onClick={()=>void copyFailed()}>Copy failed</button>
