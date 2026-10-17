@@ -49,6 +49,7 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
       minContentCount:first(params.minContentCount)||undefined,
       maxContentCount:first(params.maxContentCount)!==undefined && first(params.maxContentCount)!==""?first(params.maxContentCount):undefined,
       page: first(params.page),
+      pageSize:first(params.pageSize),
     }).filter(([, value]) => value !== undefined)),
   );
   if (!parsed.success) return (
