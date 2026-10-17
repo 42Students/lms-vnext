@@ -663,7 +663,7 @@ export function FacultyCourseWorkspace({
 
                       {itemCount === 0 ? (
                         <div className="mt-3 rounded-lg border border-dashed border-border bg-surface p-5 text-sm text-muted-foreground">
-                          {contentFilter==="ALL"?"No active content or assessments in this lesson.":"No lesson content matches this filter."}
+                          {selectedLessonId&&contentFilter==="ALL"?"No lesson content yet":contentFilter==="ALL"?"No active content or assessments in this lesson.":"No lesson content matches this filter."}
                         </div>
                       ) : (
                         <div className="mt-3 space-y-3">
