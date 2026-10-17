@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TrackerAdminNav } from "@/components/tracker/tracker-admin-nav";
+import { TrackerIssueSavedViews } from "@/components/tracker/tracker-issue-saved-views";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { isSuperAdmin } from "@/modules/identity/context";
@@ -85,6 +86,14 @@ export default async function TrackerIssuesPage({
         description="Private Super Admin triage. Engineering notes and attachment metadata are never exposed through a public list."
       />
       <TrackerAdminNav />
+      <TrackerIssueSavedViews filters={new URLSearchParams({
+        ...(current.q?{q:current.q}:{}),
+        ...(current.reporter?{reporter:current.reporter}:{}),
+        ...(current.status?{status:current.status}:{}),
+        ...(current.severity?{severity:current.severity}:{}),
+        ...(current.environment?{environment:current.environment}:{}),
+        sort:current.sort,
+      }).toString()} />
 
       <form className="grid gap-3 rounded-xl border border-border bg-surface p-5 sm:grid-cols-2 xl:grid-cols-5">
         <label className="text-xs font-semibold text-body">
