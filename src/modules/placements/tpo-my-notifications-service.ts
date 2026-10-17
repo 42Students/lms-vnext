@@ -174,10 +174,12 @@ export async function getTpoMyNotifications(
   );
 
   let persistedPreferences = null;
+  let preferencesVersion:string|null=null;
 
   if (preferenceTableAvailable) {
     const [preference] = await db
       .select({
+        updatedAt:placementTpoUserPreferences.updatedAt,
         morningDigest:
           placementTpoUserPreferences.morningDigest,
         recruiterMessages:
@@ -198,7 +200,11 @@ export async function getTpoMyNotifications(
       )
       .limit(1);
 
-    persistedPreferences = preference ?? null;
+    if(preference)preferencesVersion=preference.updatedAt.toISOString();
+    persistedPreferences = preference?{
+      morningDigest:preference.morningDigest,recruiterMessages:preference.recruiterMessages,
+      requests:preference.requests,resultsReady:preference.resultsReady,followUps:preference.followUps,
+    }:null;
   }
 
   return {
@@ -224,6 +230,7 @@ export async function getTpoMyNotifications(
       createdAt: record.createdAt,
       readAt: record.readAt,
     })),
+    preferencesVersion,
     preferences: resolveTpoNotificationPreferences(
       preferenceTableAvailable,
       persistedPreferences,
