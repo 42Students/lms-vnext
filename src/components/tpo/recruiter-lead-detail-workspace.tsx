@@ -615,9 +615,9 @@ export function RecruiterLeadDetailWorkspace({
           {editing ? (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" role="presentation">
               <form className="max-h-[90vh] w-full max-w-lg space-y-3 overflow-y-auto rounded-xl bg-surface p-6 shadow-xl"
-                role="dialog" aria-modal="true" aria-label="Edit recruiter lead"
+                role="dialog" aria-modal="true" aria-label="Edit contact details"
                 onSubmit={e => void saveEdit(e)}>
-                <h2 className="text-lg font-semibold">Edit recruiter lead</h2>
+                <h2 className="text-lg font-semibold">Edit contact details</h2>
                 {(["name", "email", "phone", "designation", "companyName"] as const).map(name => (
                   <label key={name} className="block text-sm">
                     {name === "companyName" ? "Company name" : name[0].toUpperCase() + name.slice(1)}

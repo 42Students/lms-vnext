@@ -4,6 +4,23 @@ import { friendlyApiError, FRIENDLY_MESSAGES } from "@/lib/friendly-error";
 
 const login = readFileSync("src/components/auth/login-form.tsx", "utf8");
 
+describe("resilient account membership selection", () => {
+  it("GR-31 uses the synchronous guard rather than unguarded membership POSTs", () => {
+    const chooser = readFileSync("src/components/auth/membership-chooser.tsx", "utf8");
+    expect(chooser).toContain("useGuardedAction(");
+    expect(chooser).toContain('await run(async () => {');
+    expect(chooser).toContain('await apiFetch("/api/auth/memberships"');
+    expect(chooser).not.toContain('await fetch(\n          "/api/auth/memberships"');
+  });
+  it("GR-04 GR-30 keeps membership chooser errors friendly and preserves selection", () => {
+    const chooser = readFileSync("src/components/auth/membership-chooser.tsx", "utf8");
+    expect(chooser).toContain("reason instanceof FriendlyFetchError");
+    expect(chooser).toContain("FRIENDLY_MESSAGES.unexpected");
+    expect(chooser).toContain('setPendingId(null)');
+    expect(chooser).toContain('disabled={pending||!selectedId}');
+  });
+});
+
 describe("resilient one-time-code sign in", () => {
   it("GR-53 keeps legacy plain OTP errors and guarded transport", () => {
     expect(login).toContain("INCORRECT_OTP:");

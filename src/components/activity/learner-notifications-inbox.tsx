@@ -10,6 +10,9 @@ import {learnerInboxEmptyLabel} from "@/modules/activity/learner-inbox-empty-lab
 import {learnerNotificationPendingCount,learnerNotificationReadAllSchema}
   from "@/modules/activity/learner-notification-read-all-model";
 import { useMemo, useState } from "react";
+import { apiFetch } from "@/lib/api-fetch";
+import { useGuardedAction } from "@/hooks/use-guarded-action";
+import { FRIENDLY_MESSAGES } from "@/lib/friendly-error";
 import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import type { AnnouncementFeedItem } from "@/components/announcements/announcement-feed";
@@ -46,7 +49,7 @@ export function LearnerNotificationsInbox({
   const [search,setSearch] = useState(defaults.q);
   const [selected, setSelected] = useState<NotificationListItem | null>(null);
   const [confirmReadAll,setConfirmReadAll]=useState(false);
-  const [markingAll,setMarkingAll]=useState(false);
+  const { pending: markingAll, run: runMarkAll } = useGuardedAction();
   const [markAllError,setMarkAllError]=useState<string|null>(null);
 
   const combined = useMemo(() => {
@@ -82,14 +85,17 @@ export function LearnerNotificationsInbox({
   const unreadPersonalCount=learnerNotificationPendingCount(personal);
   const mobileSummary=learnerNotificationMobileFilterSummary({category:active,unread,q:search},visible.length);
   async function markAllRead(){
-    if(markingAll || !learnerNotificationReadAllSchema.safeParse({confirmed:true}).success)return;
-    setMarkingAll(true);setMarkAllError(null);
+    if(!learnerNotificationReadAllSchema.safeParse({confirmed:true}).success)return;
+    setMarkAllError(null);
     try{
-      const response=await fetch("/api/notifications/read-all",{method:"POST"});
-      if(!response.ok)throw new Error("Unable to mark notifications read. Your inbox has not been changed.");
-      setConfirmReadAll(false);router.refresh();
-    }catch(error){setMarkAllError(error instanceof Error?error.message:"Unable to update inbox.");}
-    finally{setMarkingAll(false);}
+      await runMarkAll(async () => {
+        await apiFetch("/api/notifications/read-all", { method: "POST", timeoutMs: 25_000 });
+        setConfirmReadAll(false);
+        router.refresh();
+      });
+    }catch(error){
+      setMarkAllError(error instanceof Error ? error.message : FRIENDLY_MESSAGES.unexpected);
+    }
   }
   const filtered=active!=="all" || unread!=="all" || search.trim()!=="";
   function applySearch(){

@@ -4,6 +4,8 @@ import { getDb } from "@/db/client";
 import {
   collegeMemberships,
   colleges,
+  activityEvents,
+  inAppNotifications,
   membershipRoles,
   placementApplications,
   placementJobs,
@@ -90,15 +92,17 @@ export async function isPlacementLearnerDebarred(
 }
 
 async function lockCollege(tx: Tx, collegeId: string) {
-  const [row] = await tx.select({ id: colleges.id })
+  const [row] = await tx.select({ id: colleges.id, organizationId:colleges.organizationId })
     .from(colleges).where(eq(colleges.id, collegeId))
     .for("update").limit(1);
   if (!row) throw new PlacementDebarmentError("DB08_DEBARMENT_MEMBER_INVALID");
+  return row;
 }
 
 async function requireLearner(tx: Tx, collegeId: string, membershipId: string) {
   const [member] = await tx.select({
     id: collegeMemberships.id,
+    userId:collegeMemberships.userId,
     status: collegeMemberships.status,
     collegeId: collegeMemberships.collegeId,
   }).from(collegeMemberships).innerJoin(membershipRoles,
@@ -109,6 +113,28 @@ async function requireLearner(tx: Tx, collegeId: string, membershipId: string) {
       member.status !== "ACTIVE") {
     throw new PlacementDebarmentError("DB08_DEBARMENT_MEMBER_INVALID");
   }
+  return member;
+}
+
+/** Learner notice and staff action are committed with the restriction, never
+ * as best-effort follow-up work. No private staff reason is sent to learners. */
+async function recordDebarmentNotice(tx:Tx,scope:{id:string;organizationId:string},
+  userId:string,actorId:string,debarmentId:string,action:"DEBARRED"|"DEBARMENT_LIFTED"){
+ const [event]=await tx.insert(activityEvents).values({
+  organizationId:scope.organizationId,collegeId:scope.id,actorUserId:actorId,
+  module:"PLACEMENTS",eventType:action,subjectType:"placement_debarment",
+  subjectId:debarmentId,subjectLabel:"Placement eligibility",
+  summary:action==="DEBARRED"?"Learner placement restriction started":"Learner placement restriction lifted",
+  metadata:{debarmentId,action},
+ }).returning({id:activityEvents.id});
+ if(!event)throw new PlacementDebarmentError("DB08_DEBARMENT_NOT_FOUND");
+ await tx.insert(inAppNotifications).values({
+  userId,eventId:event.id,title:action==="DEBARRED"?"Placement participation restricted":"Placement restriction lifted",
+  body:action==="DEBARRED"
+    ?"A placement restriction is active. Open your placement eligibility page to see its duration or ask the placement cell to review it."
+    :"Your placement restriction was lifted. You may check current placement opportunities.",
+  actionHref:"/learn/my-placements",
+ }).onConflictDoNothing();
 }
 
 export async function createPlacementDebarment(
@@ -123,8 +149,8 @@ export async function createPlacementDebarment(
     throw new PlacementDebarmentError("DB08_DEBARMENT_INVALID_DURATION");
   }
   return getDb().transaction(async tx => {
-    await lockCollege(tx, input.collegeId);
-    await requireLearner(tx, input.collegeId, input.membershipId);
+    const college=await lockCollege(tx, input.collegeId);
+    const learner=await requireLearner(tx, input.collegeId, input.membershipId);
     const existing=await tx.select({
       liftedAt:placementDebarments.liftedAt,untilDate:placementDebarments.untilDate,
       untilDrives:placementDebarments.untilDrives,drivesCounted:placementDebarments.drivesCounted,
@@ -142,8 +168,8 @@ export async function createPlacementDebarment(
       untilDrives: input.untilDrives ?? null,
       createdByUserId: context.user.id,
     }).returning();
-    // The DB08 SQL AFTER INSERT trigger creates CREATED history, including
-    // for new DB writers. Do NOT also insert it here.
+    // The DB08 trigger independently preserves immutable CREATED history.
+    await recordDebarmentNotice(tx,college,learner.userId,context.user.id,row.id,"DEBARRED");
     return row;
   });
 }
@@ -166,7 +192,7 @@ export async function liftPlacementDebarment(
   const input = liftInput.parse(raw);
   const current = await loadManagedDebarment(context, input.debarmentId);
   return getDb().transaction(async tx => {
-    await lockCollege(tx, current.collegeId);
+    const college=await lockCollege(tx, current.collegeId);
     const [locked] = await tx.select().from(placementDebarments)
       .where(and(
         eq(placementDebarments.id, input.debarmentId),
@@ -179,7 +205,14 @@ export async function liftPlacementDebarment(
       liftedByUserId: context.user.id,
       liftedReason: input.reason,
     }).where(eq(placementDebarments.id, locked.id)).returning();
-    // The DB trigger creates an immutable LIFTED action.
+    // The DB trigger creates immutable LIFTED history. A repeated lift is a no-op.
+    const [learner]=await tx.select({userId:collegeMemberships.userId})
+      .from(collegeMemberships).where(and(
+        eq(collegeMemberships.id,locked.membershipId),
+        eq(collegeMemberships.collegeId,locked.collegeId),
+      )).limit(1);
+    if(!learner)throw new PlacementDebarmentError("DB08_DEBARMENT_MEMBER_INVALID");
+    await recordDebarmentNotice(tx,college,learner.userId,context.user.id,updated.id,"DEBARMENT_LIFTED");
     return updated;
   });
 }

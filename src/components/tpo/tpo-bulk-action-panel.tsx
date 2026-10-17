@@ -1,6 +1,7 @@
 "use client";
 
 import {useState} from "react";
+import {useTpoStudentsSelection} from "./tpo-students-selection";
 import {apiFetch} from "@/lib/api-fetch";
 import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
@@ -25,7 +26,10 @@ type PreviewResponse={rows:BulkPreviewRow[];previewToken:string;counts:{ready:nu
 export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.length}:{target:"STUDENTS"|"APPLICATIONS";
  jobId?:string;rows:readonly TpoBulkUiRow[];allRows?:readonly TpoBulkUiRow[];viewCount?:number}){
  const router=useRouter();
- const [selected,setSelected]=useState<string[]>([]);
+ const [localSelection,setLocalSelection]=useState<string[]>([]);
+ const shared=useTpoStudentsSelection();
+ const selected=shared?.selected??localSelection;
+ const setSelected=shared?.setSelected??setLocalSelection;
  const [action,setAction]=useState<Action>(target==="STUDENTS"?"ELIGIBLE":"SHORTLISTED");
  const [note,setNote]=useState("");
  const [pastedRolls,setPastedRolls]=useState("");

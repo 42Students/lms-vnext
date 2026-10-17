@@ -47,3 +47,19 @@ Remaining queue entries are OPEN until the behavior described in the legacy audi
 | MEN-projects-meetings-R11 | DONE | `src/components/projects/project-workspace.tsx`, `tests/unit/mentor-projects-chat7-round6-workflows.test.ts` — `MEN-projects-meetings-R11 uses MISSED meeting status and locks past meeting controls`. Source verified; authored test not run. |
 
 | MEN-projects-meetings-R10 | DONE (source, tests not run) | `src/modules/projects/mentor-project-list-query.ts`, `src/modules/projects/mentor-filter-query.ts`; `tests/unit/mentor-projects-chat7-legacy-urls.test.ts` — `MEN-projects-meetings-R10 accepts legacy page-zero and ignores unrelated URL selectors without weakening the strict write and query validation`. Legacy `page=0` resolves to the first page; only allowed query keys are selected before strict Zod; duplicated accepted keys still reject. |
+
+| MEN-projects-meetings-01 | DONE (source; tests not run) | `src/components/projects/mentor-projects-unavailable.tsx`; `tests/unit/mentor-projects-chat7-round7.test.ts` — `MEN-projects-meetings-01 retains the reviewed mentor legacy and resilience contract`. |
+
+| MEN-projects-meetings-02 | DONE (source; tests not run) | `src/app/(authenticated)/mentor/loading.tsx`; `tests/unit/mentor-projects-chat7-round7.test.ts` — `MEN-projects-meetings-02 retains the reviewed mentor legacy and resilience contract`. |
+
+| MEN-projects-meetings-08 | DONE (source; tests not run) | `src/app/(authenticated)/mentor/projects/error.tsx`; `tests/unit/mentor-projects-chat7-round7.test.ts` — `MEN-projects-meetings-08 retains the reviewed mentor legacy and resilience contract`. |
+
+| MEN-projects-meetings-18 | DONE (source; tests not run) | `src/components/projects/project-workspace.tsx`; `tests/unit/mentor-projects-chat7-round7.test.ts` — `MEN-projects-meetings-18 retains the reviewed mentor legacy and resilience contract`. |
+
+| MEN-projects-meetings-23 | DONE (source; tests not run) | `src/components/projects/project-workspace.tsx`; `tests/unit/mentor-projects-chat7-round7.test.ts` — `MEN-projects-meetings-23 retains the reviewed mentor legacy and resilience contract`. |
+
+| MEN-projects-meetings-37 | DONE (source; tests not run) | `src/components/projects/project-lifecycle-actions.tsx`; `tests/unit/mentor-projects-chat7-round7.test.ts` — `MEN-projects-meetings-37 retains the reviewed mentor legacy and resilience contract`. |
+
+| MEN-projects-meetings-38 | DONE (source; tests not run) | `src/components/projects/project-workspace.tsx`; `tests/unit/mentor-projects-chat7-round7.test.ts` — `MEN-projects-meetings-38 retains the reviewed mentor legacy and resilience contract`. |
+
+| MEN-projects-meetings-R03 | DONE (source; tests not run) | `src/modules/projects/validation.ts`; `tests/unit/mentor-projects-chat7-round7.test.ts` — `MEN-projects-meetings-R03 retains the reviewed mentor legacy and resilience contract`. |
