@@ -226,6 +226,11 @@ export function PlacementJobCreateForm({
         companyRelationshipId;
 
       if (companyMode === "NEW") {
+        const newName=String(data.get("companyName")??"").trim().toLowerCase();
+        const newDomain=String(data.get("companyDomain")??"").trim().toLowerCase().replace(/^www\./,"");
+        const existing=companies.find(company=>company.name.trim().toLowerCase()===newName||
+          Boolean(newDomain)&&company.primaryDomain?.trim().toLowerCase().replace(/^www\./,"")===newDomain);
+        if(existing)throw Error("This employer may already be in your companies as "+existing.name+". Choose Existing employer to avoid a duplicate.");
         const companyResult =
           await requestJson(
             "/api/placements/companies",
