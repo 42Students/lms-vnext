@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useState, type FormEvent, type KeyboardEvent } from "react";
+import { useFormDraft } from "@/hooks/use-form-draft";
+import { apiFetch } from "@/lib/api-fetch";
 import {
   ACCOUNT_OPTIONS, ENVIRONMENT_OPTIONS, ISSUE_TYPE_OPTIONS,
   LOCATION_OPTIONS, REPORTER_OPTIONS, SEVERITY_OPTIONS,
@@ -12,8 +14,10 @@ const field = "mt-1 min-h-10 w-full rounded-md border border-border bg-backgroun
 const label = "block text-sm font-semibold text-body";
 
 export function TrackerReportForm({contextPrefill=""}:{contextPrefill?:string}={}) {
-  const [page, setPage] = useState("");
-  const [screen, setScreen] = useState("");
+  const initial={reporterName:"",accountRole:"",environment:"",page:"",screen:"",section:"",issueType:"",severity:"NOT_SURE",description:contextPrefill?"\n\nCaptured context:\n"+contextPrefill:"",evidenceLink:""};
+  const {draft,setDraft,restored,dirty,clearDraft}=useFormDraft("tracker-issue-report",initial);
+  const {page,screen}=draft;
+  const patch=(key:keyof typeof initial,value:string)=>setDraft(current=>({...current,[key]:value}));
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
   const [created, setCreated] = useState("");
@@ -44,19 +48,11 @@ export function TrackerReportForm({contextPrefill=""}:{contextPrefill?:string}={
     }
     setPending(true); setError("");
     try {
-      const response = await fetch("/api/tracker/issues", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const payload=await apiFetch<{issue:{publicId:string}}>("/api/tracker/issues", {
+        method: "POST",headers: { "Content-Type": "application/json" },
         body: JSON.stringify(parsed.data),
       });
-      if (!response.ok) {
-        const details: { error?: string } = await response.json().catch(() => ({}));
-        if (details.error === "DB10_TRACKER_MIGRATIONS_PENDING") {
-          throw new Error("Tracker database is not enabled. Ask an administrator to verify migration 0076.");
-        }
-        throw new Error("The issue could not be reported. Your text is still here — please try again.");
-      }
-      const payload: { issue: { publicId: string } } = await response.json();
+      clearDraft();
       setCreated(payload.issue.publicId);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "The issue could not be reported. Please try again.");
@@ -80,7 +76,7 @@ export function TrackerReportForm({contextPrefill=""}:{contextPrefill?:string}={
       <div className="flex flex-wrap gap-3">
         <Link className="rounded-md border border-border px-4 py-2 text-sm font-semibold" href={"/tracker/issues/" + encodeURIComponent(created)}>View issue</Link>
         <button className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
-          onClick={() => {setCreated("");setPage("");setScreen("");setError("");}}
+          onClick={() => {setCreated("");setDraft(initial);clearDraft();setError("");}}
           type="button">Report another</button>
       </div>
     </section>
@@ -89,21 +85,25 @@ export function TrackerReportForm({contextPrefill=""}:{contextPrefill?:string}={
   return (
     <form onSubmit={submit} onKeyDown={onFormKeyDown}
       className="space-y-5 rounded-xl border border-border bg-surface p-5">
+      {restored?<div role="status" className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-border p-3 text-sm">
+        <span>Unsaved report restored.</span><button type="button" onClick={()=>{setDraft(initial);clearDraft();}} className="min-h-10 rounded border border-border px-3 font-semibold">Discard draft</button>
+      </div>:null}
+      {dirty?<p className="text-xs text-muted-foreground">Unsaved changes are kept on this device until your report is submitted.</p>:null}
       <div className="grid gap-4 md:grid-cols-3">
         <label className={label}>Reporter
-          <select className={field} name="reporterName" required defaultValue="">
+          <select className={field} name="reporterName" required value={draft.reporterName} onChange={event=>patch("reporterName",event.target.value)}>
             <option value="" disabled>Select reporter</option>
             {REPORTER_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
           </select>
         </label>
         <label className={label}>Account used
-          <select className={field} name="accountRole" required defaultValue="">
+          <select className={field} name="accountRole" required value={draft.accountRole} onChange={event=>patch("accountRole",event.target.value)}>
             <option value="" disabled>Select account</option>
             {ACCOUNT_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
           </select>
         </label>
         <label className={label}>Environment
-          <select className={field} name="environment" required defaultValue="">
+          <select className={field} name="environment" required value={draft.environment} onChange={event=>patch("environment",event.target.value)}>
             <option value="" disabled>Select environment</option>
             {ENVIRONMENT_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
           </select>
@@ -114,7 +114,7 @@ export function TrackerReportForm({contextPrefill=""}:{contextPrefill?:string}={
         <div className="grid gap-3 md:grid-cols-3">
           <label className={label}>Page
             <select className={field} required value={page} onChange={event => {
-              setPage(event.target.value); setScreen("");
+              setDraft(current=>({...current,page:event.target.value,screen:"",section:""}));
             }}>
               <option value="" disabled>Search or select page → screen → section</option>
               {LOCATION_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
@@ -123,14 +123,15 @@ export function TrackerReportForm({contextPrefill=""}:{contextPrefill?:string}={
           <label className={label}>Screen
             <select className={field} required={Boolean(selectedPage?.children?.length)}
               disabled={!selectedPage?.children?.length}
-              value={screen} onChange={event => setScreen(event.target.value)}>
+              value={screen} onChange={event => setDraft(current=>({...current,screen:event.target.value,section:""}))}>
               <option value="">Select screen</option>
               {selectedPage?.children?.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
             </select>
           </label>
           <label className={label}>Section
             <select className={field} name="section" key={page + ":" + screen}
-              required={Boolean(selectedScreen?.children?.length)} disabled={!selectedScreen?.children?.length} defaultValue="">
+              required={Boolean(selectedScreen?.children?.length)} disabled={!selectedScreen?.children?.length} value={draft.section}
+              onChange={event=>patch("section",event.target.value)}>
               <option value="">Select section</option>
               {selectedScreen?.children?.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
             </select>
@@ -139,25 +140,25 @@ export function TrackerReportForm({contextPrefill=""}:{contextPrefill?:string}={
       </fieldset>
       <div className="grid gap-4 md:grid-cols-3">
         <label className={label + " md:col-span-2"}>What kind of issue?
-          <select className={field} name="issueType" required defaultValue="">
+          <select className={field} name="issueType" required value={draft.issueType} onChange={event=>patch("issueType",event.target.value)}>
             <option value="" disabled>Search issue type</option>
             {ISSUE_TYPE_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
           </select>
         </label>
         <label className={label}>Severity
-          <select className={field} name="severity" defaultValue="NOT_SURE" required>
+          <select className={field} name="severity" value={draft.severity} onChange={event=>patch("severity",event.target.value)} required>
             {SEVERITY_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
           </select>
         </label>
       </div>
       <label className={label}>What went wrong?
         <textarea className={field + " min-h-36"} name="description" required maxLength={4000} rows={6}
-          defaultValue={contextPrefill?"\n\nCaptured context:\n"+contextPrefill:""}
+          value={draft.description} onChange={event=>patch("description",event.target.value)}
           placeholder="Example: I opened Lesson 3 and the lesson content kept loading without showing anything." />
         <span className="mt-1 block text-xs font-normal text-muted-foreground">Up to 4000 characters</span>
       </label>
       <label className={label}>Evidence link
-        <input className={field} name="evidenceLink" type="url" maxLength={1000} placeholder="https://…" />
+        <input className={field} name="evidenceLink" type="url" maxLength={1000} placeholder="https://…" value={draft.evidenceLink} onChange={event=>patch("evidenceLink",event.target.value)}/>
         <span className="mt-1 block text-xs font-normal text-muted-foreground">
           Optional — use this for a screen recording, Drive file, or other useful http/https link.
         </span>
