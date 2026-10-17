@@ -3,7 +3,7 @@ export const tpoRoundResultTableQuerySchema=z.object({
   jobId:z.string().uuid(),roundId:z.string().uuid(),
 }).strict();
 export type RoundResultEntry={
- applicationId:string;student:string|null;role:string;
+ applicationId:string;student:string|null;role:string;rollNumber?:string|null;
  applicationStatus:string;screeningStatus:string|null;
  resultId:string|null;resultStatus:string|null;outcome:string|null;
 };
