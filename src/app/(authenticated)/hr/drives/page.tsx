@@ -14,6 +14,7 @@ import {hrSentProposalsHref} from "@/modules/placements/hr-drive-proposal-links-
 import {listOwnRecruiterDriveRequests} from "@/modules/placements/recruiter-drive-request-service";
 import {filterOwnRecruiterRequests,requestStageLabel} from "@/modules/placements/recruiter-request-list-model";
 import {HrUnsentDriveAlert} from "@/components/hr/hr-unsent-drive-alert";
+import {RecruiterRequestCancelButton} from "@/components/hr/recruiter-request-cancel-button";
 import {hrDriveSessionStorageKey} from "@/modules/placements/hr-unsent-draft-storage-model";
 
 type Params = { collegeId?: string | string[]; view?: string | string[]; tab?:string|string[]; q?: string | string[];
@@ -175,6 +176,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
             className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
             {req.status==="SENT_BACK"?"Fix and Resend":"Edit your request"}
           </Link>:null}
+          {editable?<RecruiterRequestCancelButton requestId={req.id} collegeId={selectedCollege} updatedAt={req.updatedAt.toISOString()}/>:null}
           {["REJECTED","CANCELLED"].includes(req.status)?<Link
             href={"/hr/drives/new?collegeId="+encodeURIComponent(selectedCollege)+"&copy="+encodeURIComponent(req.id)}
             className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
