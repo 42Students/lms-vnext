@@ -76,6 +76,7 @@ export type PlacementReportMetrics = {
   deferred: number;
   didNotJoin: number;
   placementRatePercent: number | null;
+  studentsWithPackage?: number;
   averagePackageInr: number | null;
   medianPackageInr: number | null;
   highestPackageInr: number | null;
@@ -322,6 +323,7 @@ export function summarizePlacementReports(
       studentsPlaced.length,
       registrations.length,
     ),
+    studentsWithPackage: packages.length,
     averagePackageInr: roundAverage(packages),
     medianPackageInr: median(packages),
     highestPackageInr:
