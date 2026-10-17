@@ -16,6 +16,13 @@ describe("chat-7 graceful operation on touched pages",()=>{
   expect(text).toContain("No result is final until the placement cell applies it.");
   expect(text).not.toContain("window.confirm");
  });
+ it("GR-35 FAC-courses-24 uses a real draft-discard dialog and keeps unsaved input until confirmation",()=>{
+  const text=src("src/components/courses/faculty-lesson-authoring.tsx");
+  expect(text).toContain("ConfirmDialog");
+  expect(text).toContain("Discard this content draft?");
+  expect(text).toContain("setDiscardConfirm(true)");
+  expect(text).not.toContain("window.confirm");
+ });
  it("GR-90 mentor delete failures keep a spoken error and never show provider text",()=>{
   const text=src("src/components/projects/mentor-task-delete-control.tsx");
   expect(text).toContain('role="alert"');
