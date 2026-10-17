@@ -40,4 +40,20 @@ describe("chat-6 Super Admin selected-college course directory parity",()=>{
     expect(table).toContain("/api/admin/courses/catalogue/export");
     expect(collegeCourseCatalogueQuerySchema.safeParse({page:"0"}).success).toBe(false);
   });
+
+  it("SA-academics-people-74 counts lesson dependencies only in the selected college and preflights archive",()=>{
+    const service=read("src/modules/admin-ui/super-admin-course-dependencies-service.ts");
+    const page=read("src/app/(authenticated)/admin/courses/page.tsx");
+    const overview=read("src/components/courses/admin-course-overview.tsx");
+    const actions=read("src/components/courses/admin-course-actions.tsx");
+    const backend=read("src/modules/courses/course-service.ts");
+    expect(service).toContain('requireSuperAdminSelectedCollege(context,"courses.read")');
+    expect(service).toContain("countDistinct(courseLessons.id)");
+    expect(service).toContain("eq(departments.collegeId,selected.collegeId)");
+    expect(page).toContain("lessonCountByCourse={lessonCountByCourse}");
+    expect(overview).toContain("lessonCountByCourse?.[course.id]");
+    expect(actions).toContain("confirmDisabled={activeOfferingCount>0}");
+    expect(actions).toContain("active Course Offering(s) must be archived");
+    expect(backend).toContain('COURSE_HAS_ACTIVE_OFFERINGS');
+  });
 });
