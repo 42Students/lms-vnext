@@ -187,14 +187,14 @@ Audit: `docs/audit/pages/faculty/attendance-grades.md` (and `attendance-grades-r
 | FAC-attendance-grades-09 | S4 | COPY | DONE |
 | FAC-attendance-grades-10 | S4 | MISSING-ACTION | DONE |
 | FAC-attendance-grades-11 | S4 | COPY | DONE |
-| FAC-attendance-grades-12 | S4 | COPY | FIXED-ON-MAIN |
-| FAC-attendance-grades-13 | S4 | COPY | FIXED-ON-MAIN |
-| FAC-attendance-grades-15 | S4 | VALIDATION | OPEN |
-| FAC-attendance-grades-16 | S4 | MISSING-PAGE | FIXED-ON-MAIN |
-| FAC-attendance-grades-17 | S4 | COPY | FIXED-ON-MAIN |
-| FAC-attendance-grades-18 | S4 | VALIDATION | OPEN |
-| FAC-attendance-grades-19 | S4 | COPY | OPEN |
-| FAC-attendance-grades-21 | S4 | MISSING-PAGE | OPEN |
+| FAC-attendance-grades-12 | S4 | COPY | DONE |
+| FAC-attendance-grades-13 | S4 | COPY | DONE |
+| FAC-attendance-grades-15 | S4 | VALIDATION | NOT-A-GAP |
+| FAC-attendance-grades-16 | S4 | MISSING-PAGE | DONE |
+| FAC-attendance-grades-17 | S4 | COPY | DONE |
+| FAC-attendance-grades-18 | S4 | VALIDATION | NOT-A-GAP |
+| FAC-attendance-grades-19 | S4 | COPY | DONE |
+| FAC-attendance-grades-21 | S4 | MISSING-PAGE | NOT-A-GAP |
 
 ## learner/course-detail (18: FIXED-ON-MAIN 4, OPEN 12, UNCONFIRMED 2)
 
@@ -209,8 +209,8 @@ Audit: `docs/audit/pages/learner/course-detail.md` (and `course-detail-review.md
 | LEARNER-course-detail-07 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | LEARNER-course-detail-10 | S2 | MISSING-ACTION / STATE | UNCONFIRMED |
 | LEARNER-course-detail-05 | S3 | MISSING-FIELD / COPY | OPEN |
-| LEARNER-course-detail-08 | S3 | VALIDATION / COPY | OPEN |
-| LEARNER-course-detail-09 | S3 | MISSING-FIELD | OPEN |
+| LEARNER-course-detail-08 | S3 | VALIDATION / COPY | DONE |
+| LEARNER-course-detail-09 | S3 | MISSING-FIELD | DONE |
 | LEARNER-course-detail-14 | S3 | MISSING-FIELD / COPY | OPEN |
 | LEARNER-course-detail-15 | S3 | COPY | OPEN |
 | LEARNER-course-detail-16 | S3 | MISSING-PAGE | OPEN |
