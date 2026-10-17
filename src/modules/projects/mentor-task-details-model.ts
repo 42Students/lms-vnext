@@ -21,6 +21,6 @@ export function taskDetailsChangedFields(
   old:{title:string;description:string|null;approach?:string|null;acceptanceCriteria:string|null;priority:string;blockerReason?:string|null;dueDate?:string|null;estimatePoints?:number|null;taskType?:string|null},
   next:MentorTaskDetailsFields,
 ) {
-  return (["title","description","acceptanceCriteria","priority","blockerReason","dueDate","estimatePoints","taskType"] as const)
+  return (["title","description","approach","acceptanceCriteria","priority","blockerReason","dueDate","estimatePoints","taskType"] as const)
     .filter(key=>(old[key]??null)!==(next[key]??null));
 }
