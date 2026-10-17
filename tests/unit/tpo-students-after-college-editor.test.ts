@@ -14,8 +14,8 @@ describe("TPO-students-05 after-college roster editing", () => {
     const editor = readFileSync("src/components/tpo/tpo-after-college-editor.tsx","utf8");
     expect(page).toContain("getTpoAfterCollegeForRoster(context");
     expect(grid).toContain("<TpoAfterCollegeEditor");
-    expect(editor).toContain('method: "PUT"');
-    expect(editor).toContain("expectedVersion: version");
+    expect(editor).toContain('method:"PUT"');
+    expect(editor).toContain("expectedVersion:version");
     expect(editor).toContain("Undo");
     expect(editor).toContain("cause instanceof FriendlyFetchError && cause.status===409");
     expect(editor).toContain("Your outcome selection is kept below");

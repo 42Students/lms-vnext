@@ -8,6 +8,6 @@ describe("TPO Students empty roster spreadsheet recovery",()=>{
   expect(page).toContain("First matching page");
   expect(page).toContain("<TpoStudentsSpreadsheet rows={roster.items}");
   expect(page).not.toMatch(/\)\s*:\s*\(\s*<Suspense fallback=\{<p role="status">Loading spreadsheet grid/);
-  expect(grid).toContain("<TpoGridFilterPanel fields={filters}/>");
+  expect(grid).toContain("<TpoGridFilterPanel fields={filters} mobileSheet/>");
  });
 });
