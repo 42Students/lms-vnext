@@ -11,5 +11,5 @@ export const mentorMeetingDecisionSchema=z.object({
 });
 export function mentorMeetingDecisionStatus(action:"COMPLETE"|"CANCEL",current:string){
  return action==="COMPLETE"?["SCHEDULED","RESCHEDULED"].includes(current):
-   ["REQUESTED","SCHEDULED","RESCHEDULED"].includes(current);
+   ["DRAFT","REQUESTED","SCHEDULED","RESCHEDULED"].includes(current);
 }
