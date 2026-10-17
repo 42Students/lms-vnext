@@ -38,7 +38,11 @@ export function verifyTpoCampaignRecipientToken(
     const expected=signature(body,secret);
     if(macBytes.length!==expected.length||!timingSafeEqual(macBytes,expected))return null;
     const claim=payload.parse(JSON.parse(raw.toString("utf8")));
-    return claim.expiresAt>nowMs?claim:null;
+    // An unsubscribe link must keep working for a verified recipient even
+    // after the associated campaign is old. The purpose-specific HMAC and
+    // locked college/campaign/recipient check still guard the mutation.
+    // expiresAt remains in v1 claims for backwards-compatible parsing.
+    return claim;
   }catch{return null;}
 }
 

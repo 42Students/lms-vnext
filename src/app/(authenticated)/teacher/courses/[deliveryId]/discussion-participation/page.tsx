@@ -12,7 +12,7 @@ export default async function FacultyDiscussionParticipationPage({
   const data=await getFacultyDiscussionParticipation(context,{deliveryId});
   const base="/teacher/courses/"+encodeURIComponent(deliveryId);
   return <div className="space-y-5">
-    <Link href={base+"/discussions"} className="text-sm font-semibold text-primary-text underline">
+    <Link href={base+"/discussions"} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
       ← Discussions
     </Link>
     <PageHeader eyebrow="Faculty · Section" title="Discussion participation"
@@ -26,7 +26,7 @@ export default async function FacultyDiscussionParticipationPage({
           <p className="mt-2 text-xl font-semibold tabular-nums">{count}</p>
         </div>)}
     </section>
-    <section aria-label="Recent discussion activity" className="space-y-3">
+    <section aria-label="Recent discussion activity" aria-live="polite" className="space-y-3">
       <h2 className="text-lg font-semibold text-foreground">12 most recent recorded messages</h2>
       {data.recent.length===0?<EmptyState title="No recorded discussions"
         description="This Section has no stored messages. Replies and deleted text cannot be reconstructed."/>:

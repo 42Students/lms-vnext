@@ -156,3 +156,31 @@ The following 17 `FIXED-ON-MAIN` queue rows have existing named regression tests
 | ID | Result | Evidence |
 |---|---|---|
 | TPO-batches-20 | BLOCKED (outbound only) | Real reminder service selects eligible unchosen recipients, writes IST-day deduped audited in-app notifications and guards origin. The reminder shortcut now links to the working batch reminder; `tests/unit/tpo-chat5-open-gap-partial-evidence.test.ts` — `TPO-batches-20 partial baseline — further implementation required` now verifies service/route/link contracts, in addition to `tests/unit/tpo-batches-20-chat5.test.ts`. Outbound SMS/email requires real provider credentials under OD-11/12. |
+
+## Chat-5 reported test repairs
+
+| ID | Result | Evidence |
+|---|---|---|
+| TPO-batches-40 | DONE (copy regression repair) | `src/components/tpo/tpo-batch-eligibility-import.tsx`: modal title `Import eligibility`, action `Confirm import`, and preserved draft/recovery. `tests/unit/tpo-batches-chat5-next-round.test.ts` — `TPO-batches-40 uses the expected legacy import heading and confirm button`. |
+| TPO-batches-43 | DONE (test evidence corrected) | `src/components/tpo/tpo-batch-inline-decision.tsx` retains reviewed save, 3-character validation, six legacy reason chips and friendly errors. `tests/unit/tpo-batches-bulk-legacy-chat5.test.ts` — `TPO-batches-43 offers reason presets and enforces a three-character ineligibility reason` checks the six legacy strings, not invented alternatives; `tests/unit/tpo-batches-chat5-next-round.test.ts` verifies review gating and guarded save. |
+
+## [chat-5] Owner-delegated UNCONFIRMED decisions (2026-10-17)
+
+| ID | Result | Decision and evidence |
+|---|---|---|
+| TPO-batches-64 | DONE | Decision: Use college-scoped placements.manage for active TPO or College Admin with persisted role and active account checks; a Faculty role alone never grants batch management. Source: tpo-batch-workspace-read-service.ts. Test: `tests/unit/chat5-unconfirmed-permission-decisions.test.ts` — named test `TPO-batches-64` (source/policy regression; executable CI pending). |
+
+## [chat-5] Reverified FIXED-ON-MAIN source contracts
+
+The following DONE statuses are limited to the named source/model behavior. Their existing integration contracts must still pass orchestrator CI; no database test was run in this builder.
+
+| ID | Status | Named regression evidence |
+|---|---|---|
+| TPO-batches-29 | DONE (source verified; CI pending) | `tests/unit/chat5-fixed-on-main-verified.test.ts` — named `TPO-batches-29` contract; see earlier code evidence in this file. |
+
+## [chat-5] Remaining batch state improvements
+
+| Gap ID | Status | Evidence |
+|---|---|---|
+| TPO-batches-17 | OPEN (partial) | `src/app/(authenticated)/tpo/batches/loading.tsx` and `error.tsx` now provide accessible animated card skeleton, friendly failed-refresh copy, and keyboard-safe Retry. `tests/unit/chat5-next-batch-states.test.ts` — `TPO-batches-17 renders accessible batch card skeleton and retry without falsely reporting changed decisions`. A retained stale-data cache is still missing. |
+| TPO-batches-49 | OPEN (partial) | `src/app/(authenticated)/tpo/batches/[batchId]/page.tsx` now surfaces the reminder prompt only when `projectTpoBatchNextStep` proves the window open and learners still need to register, with a reviewed `#batch-reminder` link; `tests/unit/chat5-next-batch-states.test.ts` — `TPO-batches-49 suggests a reminder only while eligible learner choices remain and registration is open`. Other suggestion chips not complete. |

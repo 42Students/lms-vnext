@@ -40,3 +40,9 @@ Tests were authored but not run in this builder session.
 ## Chat-2 continuation — exact detail wording
 
 | TPO-recruiters-40 | DONE (source; tests not run) | `src/components/tpo/recruiter-lead-detail-workspace.tsx` uses **← Recruiter leads**, **Edit contact details**, **Save**, **Not now**, and **Log activity**; `tests/unit/chat2-tpo-recruiter-leads-copy.test.ts` **TPO-recruiters-40 restores edit-action heading and legacy Save label** (also asserts the modal/section wording). |
+
+## [chat-5] Owner-delegated UNCONFIRMED decisions (2026-10-17)
+
+| ID | Result | Decision and evidence |
+|---|---|---|
+| TPO-recruiters-34 | OPEN | Decision: Apply central placements.manage and active membership checks to college-scoped recruiter pages and mutations; list page and bulk stage path updated, remaining TPO-only recruiter services need inspection. Test: `tests/unit/chat5-unconfirmed-permission-decisions.test.ts` — named test `TPO-recruiters-34` (source/policy regression; executable CI pending). |

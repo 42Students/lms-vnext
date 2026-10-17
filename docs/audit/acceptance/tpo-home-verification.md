@@ -53,3 +53,11 @@ Remaining TPO Home gaps continue in `docs/orchestrator/queues/gap-closure-chat-4
 | TPO-home-R06 | DONE | `src/modules/placements/tpo-home-legacy-rows.ts` eliminates fabricated placeholder copy; displays known counts with exact legacy wording and leaves unknown count status blank; `tests/unit/chat4-tpo-home-gap-closure.test.ts` test `TPO-home-R06`. |
 
 | TPO-home-22 | DONE | Client `tpo-home-return-refresh.tsx` preflights the dynamic Home route on return, keeps previous snapshot if GET fails, announces Refreshing placement home… and exact failure alert with Retry. `tests/unit/chat4-tpo-home-gap-closure.test.ts` test `TPO-home-22`. |
+
+## [chat-5] Owner-delegated UNCONFIRMED decisions (2026-10-17)
+
+| ID | Result | Decision and evidence |
+|---|---|---|
+| TPO-home-25 | NOT-A-GAP | Decision: Keep a college-wide operations queue for a shared placement cell; per-officer ownership can be an optional filter, not a default that hides unowned work. Existing tpo-operations-service is tenant scoped. Test: `tests/unit/chat5-delegated-policy-decisions.test.ts` — named test `TPO-home-25` (source/policy regression; executable CI pending). |
+| TPO-home-26 | DONE | Decision: Use resolved module access to show an explicit Placements switched-off state before loading placement operations. Implemented in tpo/home/page.tsx. Test: `tests/unit/chat5-delegated-policy-decisions.test.ts` — named test `TPO-home-26` (source/policy regression; executable CI pending). |
+| TPO-home-27 | NOT-A-GAP | Decision: Do not silently promote faculty to placements.manage. Faculty must be explicitly assigned the TPO role to access TPO-only tooling; College Admin retains scoped workspace entry. Test: `tests/unit/chat5-delegated-policy-decisions.test.ts` — named test `TPO-home-27` (source/policy regression; executable CI pending). |

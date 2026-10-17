@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import { hasMembershipRole } from "@/modules/identity/context";
+import { can } from "@/modules/permissions/policy";
 import { RecruiterLeadsWorkspace } from "@/components/tpo/recruiter-leads-workspace";
 import CampaignHistory from "./campaigns/page";
 
@@ -35,7 +35,7 @@ function first(value: string | string[] | undefined) {
 
 export default async function TpoRecruiterLeadsPage({ searchParams }: PageProps) {
   const context = await getCurrentRequestContext();
-  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+  if (!context.membership || !can(context,"placements.manage",{collegeId:context.membership.collegeId})) {
     redirect("/dashboard");
   }
   const query = await searchParams;
