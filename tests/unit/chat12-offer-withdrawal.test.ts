@@ -18,5 +18,7 @@ describe("TPO-requests-verification-R01 outstanding issued offer on withdrawal",
  it("TPO-requests-verification-R01 refuses an accepted offer instead of silently reversing it",()=>{
   expect(source).toContain('offers.some(offer=>offer.status==="ACCEPTED")');
   expect(source).toContain('throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID")');
+  const control=readFileSync(new URL("../../src/components/placements/tpo-request-decision-control.tsx",import.meta.url),"utf8");
+  expect(control).toContain("This student is placed: reverse the acceptance on the Offers tab first, then approve.");
  });
 });

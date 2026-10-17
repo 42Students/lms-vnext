@@ -50,7 +50,13 @@ export function TpoRequestDecisionControl({requestId,expectedUpdatedAt,requestTy
         body:JSON.stringify({confirmed:true,action,note:decisionText||null,expectedUpdatedAt}),
       });
       if(!response.ok){
-        if(response.status===409)throw Error("This request changed. Refresh the page before deciding it.");
+        if(response.status===409){
+          // Map a known domain refusal to the old LMS sentence; never show the raw API code.
+          const refusal=await response.json().catch(()=>null) as {error?:string}|null;
+          if(requestType==="APPLICATION_WITHDRAWAL"&&refusal?.error==="PLACEMENT_REQUEST_EFFECT_INVALID")
+            throw Error("This student is placed: reverse the acceptance on the Offers tab first, then approve.");
+          throw Error("This changed while you were working. Your decision is kept below. Refresh and try again.");
+        }
         throw Error(action==="APPROVE"?"Couldn't approve this request. Check the current state and try again.":
           "Couldn't reject this request. Your reason is preserved; retry after reviewing the request.");
       }
