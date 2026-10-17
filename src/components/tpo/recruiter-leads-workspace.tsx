@@ -706,6 +706,16 @@ export function RecruiterLeadsWorkspace({
                     .sort().map(name=><option key={name} value={name}>{name}</option>)}
                 </select>
               </label>
+              <label className="text-sm">Drives that ran
+                <select className={inputStyle+" mt-1"} value={driveFilter}
+                  onChange={e=>updateFilter("drives",e.target.value)}>
+                  <option value="ALL">Any drive count</option>
+                  <option value="NONE">No drives</option>
+                  <option value="ONE_TWO">1–2 drives</option>
+                  <option value="THREE_FIVE">3–5 drives</option>
+                  <option value="SIX_PLUS">6 or more drives</option>
+                </select>
+              </label>
               <label className="text-sm">Designation
                 <input className={inputStyle+" mt-1"} value={designationFilter}
                   placeholder="Search designation" maxLength={100}
