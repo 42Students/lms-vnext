@@ -250,6 +250,7 @@ export async function ProjectAdminSubmissionsPage({
               </div>
               <ProjectAdminSubmissionReview
                 projectId={submission.projectId} submissionId={submission.id}
+                workspaceTitle={submission.projectTitle}
                 status={submission.status} locked={!!submission.lockedAt}
                 projectStatus={submission.projectStatus} />
               <div className="mt-3 flex flex-wrap gap-4 text-sm font-semibold">
