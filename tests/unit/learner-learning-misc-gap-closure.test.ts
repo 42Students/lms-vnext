@@ -37,6 +37,15 @@ describe("Learner Learning Misc legacy gap evidence",()=>{
  it("LEARNER-learning-misc-18 empty quiz subtitle matches legacy copy exactly",()=>{
   expect(overview()).toContain("Quizzes assigned to you by your teachers will appear here.");
  });
+ it("LEARNER-learning-misc-22 safely allows unanswered quiz questions with explicit confirmation and zero credit",()=>{
+  const quizCode=quiz();
+  const service=source("src/modules/courses/quiz-attempt-service.ts");
+  expect(quizCode).toContain("Your quiz will still be submitted");
+  expect(quizCode).toContain("Go to first unanswered");
+  expect(quizCode).toContain("Answer this question or use the question numbers to skip.");
+  expect(service).toContain("selectedOptionIds");
+  expect(service).toContain("pointsAwarded");
+ });
  it("LEARNER-learning-misc-20 leaving an attempt asks for confirmation",()=>{
   expect(quiz()).toContain("Are you sure you want to cancel this quiz?");
   expect(quiz()).toContain("window.confirm");
