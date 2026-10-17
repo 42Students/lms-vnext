@@ -19,6 +19,7 @@ import {
   attendanceCsvCell,
   attendanceIndiaDay,
   attendanceMonthDays,
+  attendanceMonthLabel,
   shiftAttendanceMonth,
 } from "@/modules/attendance/admin-grid-model";
 
@@ -409,6 +410,7 @@ export function AdminAttendanceWorkspace({
             onClick={() => navigate(shiftAttendanceMonth(data.month, -1))}>
             Previous
           </Button>
+          <span className="min-w-32 text-center text-sm font-semibold text-body" aria-live="polite">{attendanceMonthLabel(data.month)}</span>
           <Input className="max-w-40" type="month" aria-label="Attendance month"
             value={data.month}
             onChange={(event) => {
