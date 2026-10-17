@@ -31,13 +31,13 @@ import {getDriveChangeRequests} from "@/modules/placements/tpo-drive-change-requ
 import {TpoDriveChangeRequests} from "@/components/placements/tpo-drive-change-requests";
 
 function safeDriveReturnTo(raw:string|undefined){
- if(!raw)return "/hr/drives";
+ if(!raw)return "/recruiter/drives";
  try{
   const url=new URL(raw,"https://internal.invalid");
   if(url.origin!=="https://internal.invalid" ||
-      !["/hr/drives","/recruiter/drives"].includes(url.pathname))return "/hr/drives";
+      !["/hr/drives","/recruiter/drives"].includes(url.pathname))return "/recruiter/drives";
   return url.pathname+url.search;
- }catch{return "/hr/drives";}
+ }catch{return "/recruiter/drives";}
 }
 function formatCtc(
   value: number | null,
@@ -115,7 +115,7 @@ export default async function HrPlacementJobPage({
     ? focusedReviewNavigation({candidateIds: focusedIds, currentId: selectedId})
     : null;
   const focusedHref = (id:string) => "/recruiter/drives/"+workspace.job.id+
-    "?tab=applicants&stage="+filters.stage+"&page="+filters.page+"&review=1&applicant="+id;
+    "?tab=applicants&stage="+filters.stage+"&page="+filters.page+"&review=1&applicant="+id+returnQuery;
   // eslint-disable-next-line react-hooks/purity -- current server request time is needed for offer expiry display.
   const now = new Date();
 
@@ -307,7 +307,7 @@ export default async function HrPlacementJobPage({
             <h3 className="font-semibold text-foreground">Next</h3>
             <p className="mt-1 text-sm text-body">{recruiterDriveNextAction(driveOverview).detail}</p>
             <Link href={recruiterDriveNextAction(driveOverview).tab
-               ? "/recruiter/drives/"+workspace.job.id+"?tab="+recruiterDriveNextAction(driveOverview).tab
+               ? "/recruiter/drives/"+workspace.job.id+"?tab="+recruiterDriveNextAction(driveOverview).tab+returnQuery
                : recruiterDriveDraftHref({collegeId:workspace.college.id,fromJobId:workspace.job.id})}
               className="mt-3 inline-flex min-h-10 items-center rounded-md border border-border px-3 font-semibold text-primary-text">
               {recruiterDriveNextAction(driveOverview).label}
@@ -411,7 +411,7 @@ export default async function HrPlacementJobPage({
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="m-0 text-lg font-semibold text-foreground">Shared applicants</h2>
             {applicants.rows.some(row=>row.status==="SUBMITTED") ? <Link
-              href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page+"&review=1"}
+              href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page+"&review=1"+returnQuery}
               className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
               Focused review
             </Link> : null}
@@ -424,7 +424,7 @@ export default async function HrPlacementJobPage({
           <nav aria-label="Applicant stage" className="flex flex-wrap gap-2">
             {([["ALL", "All shared", applicants.counts.all], ["SHORTLISTED", "Active shortlist", applicants.counts.shortlisted],
               ["WITHDRAWN", "Withdrawn", applicants.counts.withdrawn]] as const).map(([stage, label, count]) => (
-              <Link key={stage} href={`/recruiter/drives/${workspace.job.id}?tab=applicants&stage=${stage}`}
+              <Link key={stage} href={`/recruiter/drives/${workspace.job.id}?tab=applicants&stage=${stage}${returnQuery}`}
                 aria-current={filters.stage === stage ? "page" : undefined}
                 className={`inline-flex min-h-10 items-center rounded-md border px-3 text-sm ${filters.stage === stage ? "border-primary bg-primary-subtle text-primary-text" : "border-border text-body"}`}>
                 {label} ({count})
@@ -438,24 +438,25 @@ export default async function HrPlacementJobPage({
                 <p className="mt-1 break-words text-sm text-body">{applicant.role}</p>
                 <div className="mt-2 flex flex-wrap gap-2"><StatusBadge>{applicant.status}</StatusBadge><StatusBadge>{applicant.screening}</StatusBadge></div>
                 <p className="mt-2 text-xs text-muted-foreground">Applied {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(applicant.submittedAt)}</p>
-                <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page+"&applicant="+applicant.id}
+                <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page+"&applicant="+applicant.id+returnQuery}
                   className="mt-3 inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Review applicant</Link>
               </article>
             ))}
           </div> : <p className="text-sm text-muted-foreground">No shared applicants match this stage.</p>}
-          {selectedApplicant ? (
-            <section id="recruiter-focused-review-dialog" role="dialog" aria-modal={focused ? "true" : "false"} aria-labelledby="hr-applicant-drawer-title"
+          {selectedApplicant ? (<>
+            <div aria-hidden="true" className="fixed inset-0 z-20 bg-black/40"/>
+            <section id="recruiter-focused-review-dialog" role="dialog" aria-modal="true" aria-labelledby="hr-applicant-drawer-title"
               className="fixed inset-x-0 bottom-0 z-30 max-h-[85vh] overflow-y-auto rounded-t-2xl border border-border bg-surface p-5 shadow-xl sm:inset-x-auto sm:right-0 sm:top-0 sm:h-screen sm:max-h-screen sm:w-full sm:max-w-lg sm:rounded-none"
             >
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <h3 id="hr-applicant-drawer-title" className="text-lg font-semibold text-foreground">{focused ? "Focused review" : "Applicant review"}</h3>
-                <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page}
+                <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page+returnQuery}
                   className="rounded-md border border-border px-3 py-2 text-sm text-foreground">Close</Link>
               </div>
-              {focusedNavigation ? <RecruiterFocusedReviewShortcuts
-                closeHref={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page}
-                previousHref={focusedNavigation.previous?focusedHref(focusedNavigation.previous):null}
-                nextHref={focusedNavigation.next?focusedHref(focusedNavigation.next):null}/> : null}
+              {<RecruiterFocusedReviewShortcuts
+                closeHref={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page+returnQuery}
+                previousHref={focusedNavigation?.previous?focusedHref(focusedNavigation.previous):null}
+                nextHref={focusedNavigation?.next?focusedHref(focusedNavigation.next):null}/>}
               {focusedNavigation ? <nav aria-label="Step through shortlisted applicants" className="mt-4 flex flex-wrap items-center gap-3 text-sm">
                 <span className="text-body">{focusedNavigation.index+1} of {focusedNavigation.total} shared applicants on this page</span>
                 {focusedNavigation.previous ? <Link className="rounded-md border border-border px-3 py-2 text-primary-text" href={focusedHref(focusedNavigation.previous)}>Previous applicant</Link> : null}
@@ -482,7 +483,7 @@ export default async function HrPlacementJobPage({
               <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=rounds"+returnQuery}
                 className="mt-4 inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Review rounds</Link>
             </section>
-          ) : null}
+          </>) : null}
           <nav aria-label="Applicant pages" className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
             <span className="text-xs text-muted-foreground">
               {applicantsPage.first === 0 ? "No rows on this page" :
@@ -492,11 +493,11 @@ export default async function HrPlacementJobPage({
             </span>
             <div className="flex gap-2">
               {filters.page > 1 ? (
-                <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+(filters.page-1)}
+                <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+(filters.page-1)+returnQuery}
                   className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm text-primary-text">Previous</Link>
               ) : null}
               {filters.page < applicantsPage.pages ? (
-                <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+(filters.page+1)}
+                <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+(filters.page+1)+returnQuery}
                   className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm text-primary-text">Next</Link>
               ) : null}
             </div>
@@ -537,7 +538,7 @@ export default async function HrPlacementJobPage({
           </section>
           <nav aria-label="Offer status" className="flex flex-wrap gap-2">
             {HR_OFFER_STATES.map((status) => (
-              <Link key={status} href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+status}
+              <Link key={status} href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+status+returnQuery}
                 aria-current={status===filters.offerState ? "page" : undefined}
                 className={status===filters.offerState ?
                   "rounded-full bg-primary px-3 py-2 text-xs font-semibold text-on-primary" :
@@ -564,12 +565,12 @@ export default async function HrPlacementJobPage({
             </span>
             <div className="flex gap-2">
               {filters.offerPage > 1 ? <Link
-                href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(filters.offerPage-1)}
+                href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(filters.offerPage-1)+returnQuery}
                 className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm text-primary-text">
                 Previous
               </Link> : null}
               {filters.offerPage < offersPage.pages ? <Link
-                href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(filters.offerPage+1)}
+                href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(filters.offerPage+1)+returnQuery}
                 className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm text-primary-text">
                 Next
               </Link> : null}

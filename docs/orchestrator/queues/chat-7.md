@@ -236,3 +236,14 @@ round. Shared shell paths remain owned by chat-9 and were not edited during this
 - **BLOCKED REC-calendar-messages-profile-25/-46 and REC-home-drives-09:** login phone and invite acceptance require verified identity workflow; skipped.
 - **BLOCKED LEARNER-profile-misc-18:** per-viewer data-access audit is not available from an authoritative feed; skipped.
 - **Acceptance:** WP-chat-7-01 through WP-chat-7-05 remain IN-PROGRESS, not DONE. All patches were source-only; per FAST v2 no tests, build, typecheck, lint or CI performed.
+
+
+## FAST v2 chat-7 recruiter continuation — 2026-10-17 (post-0132 main sync)
+
+- **Branch sync:** fast-forwarded `chatgpt/chat-7-b` to `origin/main` before editing; later orchestrator merges moved main concurrently. All writes were independent `[chat-7]` commits to this builder branch only, never to main.
+- **WP-02 / REC-home-drives-49:** recruiter result staging now validates single and selected-batch whole-number scores (0–100), whole-number positive waitlist ranks (up to registered 100000 maximum), learner-safe message length, and synchronous duplicate-submit locks. The batch confirmation and successful sent-to-cell label use legacy wording. The TPO still applies official results.
+- **WP-04/05 / REC-home-drives-20, REC-home-drives-56:** applicant/offer filters, pagination, focused review navigation and Next actions preserve the authorized Drives `returnTo` context and canonical `/recruiter/drives` namespace.
+- **WP-04 / REC-home-drives-R05:** regular and focused applicant dialogs have Escape/focus-restoration/Tab handling, a backdrop and modal semantics. No outcome write is inferred from a private note.
+- **WP-05 / REC-home-drives-R08:** recruiter Drives listing now applies employer/college grant scope, search, lifecycle, work-mode, employment, deadline, ordering and 20-row paging in PostgreSQL; deadline previews are separately scoped and bounded; the CSV endpoint queries only its 201-row export cap instead of reading unbounded jobs. Manual/browser verification and data-volume acceptance still outstanding.
+- **BLOCKED (move on):** LEARNER-profile-misc-01/-02/-03/-04, REC-home-drives-23/-43 (private scanned storage); REC-home-drives-38 (consent-based applicant disclosure); REC-home-drives-51 (registered selection-list verification lifecycle not confirmed); REC-home-drives-21/-33/-R03 (security/product approval and ownership policy); REC-calendar-messages-profile-25/-46 and REC-home-drives-09 (identity/invitation authorization); LEARNER-profile-misc-18 (no authoritative per-viewer data-access disclosure feed).
+- **WP states:** 01–05 remain **IN-PROGRESS**, not DONE; nonblocked parity items remain. As explicitly required by FAST v2, no tests, typecheck, lint, build or CI were run, and none of these changes constitutes verified audit closure.

@@ -320,7 +320,7 @@ export function RecruiterResultControls({
         return;
       }
     }
-    if(!window.confirm("Send "+participants.length+" results to the placement cell?\n\n"+
+    if(!window.confirm("Send "+participants.length+" results?\n\n"+
       summary+(participants.length>12?"\n…and "+(participants.length-12)+" more":"")+
       "\n\nNo result is final until the placement cell applies it."))return;
     bulkSubmissionLock.current=true;
@@ -346,7 +346,7 @@ export function RecruiterResultControls({
     setSelected(current=>({...current,
       [round.id]:(current[round.id]??[]).filter(id=>!succeeded.includes(id))}));
     showToast({tone:failures?"warning":"success",
-      title:failures?"Some results could not be sent":"Results staged",
+      title:failures?"Some results could not be sent":"Sent to the placement cell to verify",
       description:succeeded.length+" sent to the placement cell to verify. "+failures+
         " failed; failed selections remain checked for retry.",
     });
