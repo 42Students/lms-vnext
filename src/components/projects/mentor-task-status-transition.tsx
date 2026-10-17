@@ -6,6 +6,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
 import { allowedMentorTaskTransition } from "@/modules/projects/mentor-task-transition-model";
+import {mentorTaskQuickActionLabel} from "@/modules/projects/mentor-task-quick-action-copy";
 const options=["TODO","IN_PROGRESS","BLOCKED"] as const;
 export function MentorTaskStatusTransition(props:{
   projectId:string;taskId:string;status:string;sprintStatus:string;updatedAt:string;
@@ -35,7 +36,7 @@ export function MentorTaskStatusTransition(props:{
           ...(blockerReason?{blockerReason}:{}),
         });
       setConfirm(false);
-      showToast({tone:"success",title:"Task status recorded"});
+      showToast({tone:"success",title:"Task updated."});
       router.refresh();
     }catch{
       const message="The task state could not be changed. Reload the latest status and retry.";
@@ -62,7 +63,7 @@ export function MentorTaskStatusTransition(props:{
         </label>:null}
       <Button variant="secondary" size="sm" disabled={!valid||pending||
         (selected==="BLOCKED"&&!props.blockerReason?.trim()&&!newBlockerReason.trim())}
-        onClick={()=>{setError(null);setConfirm(true);}}>Review status change</Button>
+        onClick={()=>{setError(null);setConfirm(true);}}>{mentorTaskQuickActionLabel(selected)}</Button>
     </div>
     <ConfirmDialog open={confirm} onOpenChange={setConfirm}
       title="Change this task state?" confirmLabel="Confirm status change"
