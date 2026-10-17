@@ -40,7 +40,10 @@ export function evaluateTpoDriveCancellation(
   current: TpoDriveCancelImpact,
   expected: TpoDriveCancelImpact,
 ): TpoDriveCancelDecision {
-  if (status !== "PUBLISHED" || seasonStatus !== "ACTIVE") return "READ_ONLY";
+  // A never-published draft can be cancelled through the same reviewed, audited
+  // preview path even when its season has since closed. Published drives still
+  // require the active season before the cancellation can change applicants.
+  if (status !== "DRAFT" && (status !== "PUBLISHED" || seasonStatus !== "ACTIVE")) return "READ_ONLY";
   if (
     current.submittedApplications !== expected.submittedApplications ||
     current.openRounds !== expected.openRounds ||
