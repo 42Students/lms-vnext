@@ -589,6 +589,8 @@ export function SuperAdminHrAccounts({
           <Button
             variant="ghost"
             size="sm"
+            disabled={!account.accountManageable}
+            title={!account.accountManageable?"This recruiter has grants outside the selected administrative scope":undefined}
             onClick={() => openEdit(account)}
           >
             Edit
@@ -751,7 +753,9 @@ export function SuperAdminHrAccounts({
                     </dl>
                     <div className="mt-4 flex flex-wrap justify-end gap-2">
                       <Button variant="secondary" size="sm" onClick={() => openDetail(account)}>View</Button>
-                      <Button variant="ghost" size="sm" onClick={() => openEdit(account)}>Edit</Button>
+                      <Button variant="ghost" size="sm" disabled={!account.accountManageable}
+           title={!account.accountManageable?"Active grants exist outside the selected administrative scope":undefined}
+           onClick={() => openEdit(account)}>Edit</Button>
                     </div>
                   </article>
                 ))}
