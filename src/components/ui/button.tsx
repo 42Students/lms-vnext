@@ -11,7 +11,7 @@ const variantClasses = {
   primary: "border-primary bg-primary text-foreground hover:border-primary-hover hover:bg-primary-hover",
   secondary: "border-border bg-surface text-foreground hover:border-[var(--lms-teal-deep)] hover:bg-primary-subtle",
   ghost: "border-transparent bg-transparent text-foreground hover:bg-primary-subtle",
-  danger: "border-error bg-error text-foreground hover:brightness-95",
+  danger: "border-error bg-[var(--lms-error-subtle)] text-foreground hover:brightness-95",
 } as const;
 const sizeClasses = { sm: "min-h-11 px-3 text-sm", md: "min-h-11 px-4 text-sm" } as const;
 
