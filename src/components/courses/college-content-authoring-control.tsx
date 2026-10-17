@@ -29,6 +29,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
  const [nextOverride,setNextOverride]=useState<Record<string,number>>({});
  const [orderDraft,setOrderDraft]=useState<Record<string,string>>({});
  const [listLessonId,setListLessonId]=useState("");
+ const [listQuery,setListQuery]=useState("");
  const [listSectionId,setListSectionId]=useState("");
  const [removeLink,setRemoveLink]=useState(false);
  const [openMaterialsId,setOpenMaterialsId]=useState<string|null>(null);
@@ -39,7 +40,9 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
  const listOfferingId=lessons.find(lesson=>lesson.id===listLessonId)?.offeringId??
    existing.find(item=>item.lessonId===listLessonId)?.offeringId;
  const listSections=deliveries.filter(row=>!listLessonId||listOfferingId===row.offeringId);
- const matching=existing.filter(item=>(!listLessonId||item.lessonId===listLessonId)&&
+ const matching=existing.filter(item=>(!listQuery||[item.title,item.lessonName,item.courseCode].some(value=>
+  value.toLocaleLowerCase().includes(listQuery.trim().toLocaleLowerCase())))&&
+  (!listLessonId||item.lessonId===listLessonId)&&
   (!listSectionId||!item.deliveryId||item.deliveryId===listSectionId)&&
   (!listSectionId||item.offeringId===deliveries.find(row=>row.deliveryId===listSectionId)?.offeringId));
  const text=kind==="YOUTUBE"?"Import from link":kind==="RESOURCE"?"Add Resource":"Schedule live class";
@@ -205,6 +208,11 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    {existingTruncated?<p role="status" className="text-xs text-muted-foreground">
     Showing the first 250 saved items. Use the filtered catalogue to find additional content; the list below is not complete.
    </p>:null}
+   <label className="grid gap-1 text-sm font-semibold">Search Existing Content
+    <input type="search" maxLength={100} value={listQuery} onChange={event=>setListQuery(event.target.value)}
+     placeholder="Content title, Lesson or Course code"
+     className="min-h-10 max-w-2xl rounded border border-border bg-background p-2"/>
+   </label>
    <label className="grid gap-1 text-sm font-semibold">Lesson
     <select value={listLessonId} onChange={event=>{setListLessonId(event.target.value);setListSectionId("");}}
      className="min-h-10 max-w-2xl rounded border border-border bg-background p-2">
