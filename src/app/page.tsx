@@ -1,11 +1,19 @@
 import { headers } from "next/headers";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { safeReturnTo } from "@/lib/return-to";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LoginForm } from "@/components/auth/login-form";
 import { resolveRequestTenant } from "@/modules/auth/request-tenant";
 import { brandStyleVariables } from "@/modules/colleges/branding";
 import { getPublicCollegeBranding } from "@/modules/colleges/branding-service";
 import {effectiveCollegeSignInCapabilities} from "@/modules/colleges/public-signin-policy-service";
+
+export async function generateMetadata():Promise<Metadata> {
+ const tenant=await resolveRequestTenant((await headers()).get("host"));
+ const brand=tenant.kind==="college"?await getPublicCollegeBranding(tenant.collegeId):null;
+ return {title:"Sign in · "+(brand?.collegeName??"42LMS")};
+}
 
 async function isSignedIn() {
   try {
@@ -29,9 +37,9 @@ const messages: Record<string, AuthMessage> = {
     tone: "warning",
   },
   expired: {
-    title: "Your session expired",
+    title: "Your session expired. Please log in again.",
     description:
-      "Sign in again to continue. Your college memberships and data are unchanged.",
+      "Your session has expired. Please log in again.",
     tone: "warning",
   },
   revoked: {
@@ -65,9 +73,12 @@ export default async function HomePage({
 }: {
   searchParams: Promise<{
     auth?: string | string[];
+    recruiter?: string | string[];
+    returnTo?: string | string[];
   }>;
 }) {
   const params = await searchParams;
+  const recruiterValue=Array.isArray(params.recruiter)?params.recruiter[0]:params.recruiter;
   const authValue = Array.isArray(params.auth)
     ? params.auth[0]
     : params.auth;
@@ -75,7 +86,8 @@ export default async function HomePage({
     ? messages[authValue] ?? null
     : null;
 
-  if (await isSignedIn()) redirect("/dashboard");
+  const requested = Array.isArray(params.returnTo) ? params.returnTo[0] : params.returnTo;
+  if (await isSignedIn()) redirect(safeReturnTo(requested) ?? "/dashboard");
 
   const tenant = await resolveRequestTenant(
     (await headers()).get("host"),
@@ -134,11 +146,11 @@ export default async function HomePage({
           </div>
         ) : (
           <p className="text-sm font-medium text-muted-foreground">
-            42Students
+            42LMS
           </p>
         )}
         <h1 className="mt-2 text-4xl font-semibold tracking-tight text-foreground">
-          {branding?.collegeName ?? "LMS vNext"}
+          {branding?.collegeName ?? "42LMS"}
         </h1>
         <p className="mt-4 max-w-2xl text-base leading-7 text-body">
           Sign in with the phone number or email registered with your
@@ -172,16 +184,22 @@ export default async function HomePage({
         <div className="mt-8">
           {tenant.kind === "unknown" ? (
             <div className="rounded-xl bg-primary-subtle p-4 text-sm text-body">
-              This address is not set up for sign-in. Use your
-              college&apos;s LMS address.
+              <h2 className="font-semibold">This address isn&apos;t set up yet</h2>
+              <p className="mt-2">Ask your administrator to add this college&apos;s address in 42LMS, or use the main sign-in page.</p>
+              <a href="https://42lms.com/" className="mt-3 inline-block font-semibold text-primary-text underline">
+                Use the main sign-in page (42lms.com)
+              </a>
             </div>
           ) : (
-            <LoginForm collegeName={branding?.collegeName ?? null} defaultChannel={signin.primary}
+            <LoginForm collegeName={branding?.collegeName ?? null}
+             defaultChannel={recruiterValue==="email"&&signin.email?"EMAIL":signin.primary}
              allowedChannels={signin.email&&signin.phone?["EMAIL","PHONE"]:signin.email?["EMAIL"]:["PHONE"]}/>
           )}
         </div>
 
         <footer className="mt-8 flex flex-wrap gap-x-5 gap-y-1 border-t border-border pt-4 text-xs text-muted-foreground">
+          <span>{tenant.kind==="college"?"Powered by 42LMS":
+            "© "+new Date().getFullYear()+" 42LMS · JRSPF Technologies Pvt. Ltd."}</span>
             {branding?.supportEmail ? (
               <a
                 className="hover:text-primary-text"

@@ -6,6 +6,7 @@ import {
 
 export const PLACEMENT_CALENDAR_KINDS = [
   "ROUND",
+  "BLOCKED",
   "INTERVIEW_SLOT",
   "APPLICATION_DEADLINE",
   "FOLLOW_UP",
@@ -209,6 +210,7 @@ export function summarizePlacementCalendar(
     next:
       sorted.find(
         (event) =>
+          event.kind !== "BLOCKED" &&
           event.startsAt.getTime() >=
             now.getTime() &&
           !(

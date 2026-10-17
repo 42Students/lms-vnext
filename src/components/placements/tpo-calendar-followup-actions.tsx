@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
+import {tpoCalendarFollowupSuccess,tpoCalendarFollowupError,type TpoFollowupAction} from "@/modules/placements/tpo-calendar-followup-messages";
 import { calendarLocalIstToOffset } from "@/modules/placements/tpo-calendar-followup-model";
 
 export type TpoCalendarLeadOption = {
@@ -15,6 +16,7 @@ async function submitFollowup(
   url: string,
   method: "POST" | "PATCH",
   body: Record<string, unknown>,
+  action:TpoFollowupAction,
 ) {
   const response = await fetch(url, {
     method,
@@ -31,7 +33,7 @@ async function submitFollowup(
       typeof result.error === "string"
         ? result.error
         : null;
-    throw new Error(code ? `Request failed: ${code}` : "The follow-up could not be saved.");
+    throw new Error(tpoCalendarFollowupError(action,code));
   }
 }
 
@@ -68,11 +70,11 @@ export function TpoCalendarCreateFollowup({
         leadId: String(data.get("leadId") ?? ""),
         dueAt: calendarLocalIstToOffset(String(data.get("dueAt") ?? "")),
         note: String(data.get("note") ?? "").trim() || null,
-      });
+      },"ADD");
       form.reset();
       setLeadQuery("");
       setLeadId("");
-      setMessage("Follow-up created. The calendar is refreshing.");
+      setMessage(tpoCalendarFollowupSuccess("ADD"));
       router.refresh();
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not create follow-up.");
@@ -158,8 +160,9 @@ export function TpoCalendarMoveFollowup({
         `/api/placements/tpo/calendar/follow-ups/${encodeURIComponent(followupId)}`,
         "PATCH",
         { dueAt: calendarLocalIstToOffset(String(data.get("dueAt") ?? "")) },
+        "MOVE",
       );
-      setMessage("Follow-up rescheduled. The calendar is refreshing.");
+      setMessage(tpoCalendarFollowupSuccess("MOVE"));
       router.refresh();
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not reschedule follow-up.");
@@ -177,8 +180,9 @@ export function TpoCalendarMoveFollowup({
         `/api/placements/tpo/calendar/follow-ups/${encodeURIComponent(followupId)}/complete`,
         "POST",
         {},
+        "DONE",
       );
-      setMessage("Follow-up marked done. The calendar is refreshing.");
+      setMessage(tpoCalendarFollowupSuccess("DONE"));
       router.refresh();
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not mark follow-up done.");

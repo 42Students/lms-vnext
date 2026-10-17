@@ -11,7 +11,7 @@ import { placementTableExists } from "./staged-tables";
 
 export const tpoThreadIdSchema = z.string().uuid();
 export const tpoMessagePageSchema = z.coerce.number().int().min(1).max(10000).default(1);
-const PAGE_SIZE = 40;
+const PAGE_SIZE = 500;
 
 /** A recruiter grant is never a credential for private TPO conversations. */
 export async function readTpoInternalConversation(context: RequestContext, rawId: unknown, rawPage: unknown = 1) {

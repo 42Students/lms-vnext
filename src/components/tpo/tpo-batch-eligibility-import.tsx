@@ -36,8 +36,8 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
    const response=await fetch("/api/placements/tpo/batches/"+batchId+"/import-preview",{
     method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({rows}),
    });
-   const value=await response.json() as Preview&{error?:string};
-   if(!response.ok)throw Error(value.error??"Import preview failed.");
+   const value=await response.json().catch(()=>null) as Preview|null;
+   if(!response.ok||!value)throw Error(response.status===409?"This changed while you were working. Your import is still here; preview it again.":"We could not prepare your import. Please check the file and try again.");
    setPreview(value);setPreviewPage(1);
   }catch(e){setError(e instanceof Error?e.message:"Preview unavailable.");}finally{setBusy(false);}
  }
@@ -63,10 +63,10 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
     method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({rows:selections.map(item=>preview.rows[item.index]),expectedVersions:versions,previewMemberIds:selections.map(item=>item.row.membershipId),confirmed:true}),
    });
-   const data=await response.json() as {changedCount?:number;skipped?:number;actionId?:string|null;error?:string};
-   if(!response.ok)throw Error(response.status===409?"Preview became stale. Review the latest eligibility decisions and preview again.":data.error??"Import failed.");
+   const data=await response.json().catch(()=>null) as {changedCount?:number;skipped?:number;actionId?:string|null}|null;
+   if(!response.ok||!data)throw Error(response.status===409?"This changed while you were working. Your import is still here; preview it again.":"We could not save the import. Your file and choices are kept; please try again.");
    setLastActionId(data.actionId??null);
-   setNotice((data.changedCount??0)+" changes saved; "+(data.skipped??0)+" skipped."+(data.actionId?" Action ID: "+data.actionId:""));
+   setNotice((data.changedCount??0)+" changes saved; "+(data.skipped??0)+" skipped.");
    setPreview(null);router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Import could not be confirmed.");}
   finally{setBusy(false);}

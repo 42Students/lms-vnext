@@ -22,6 +22,7 @@ export function knownErrorTriagePatch(
   now: Date,
 ): Partial<KnownErrorTriageState> {
   if (!Number.isFinite(now.getTime())) throw new Error("INVALID_CLOCK");
+  if (mutation.action === "ACKNOWLEDGE") return {};
   if (mutation.action === "MUTE") {
     return {
       muted: mutation.muted,

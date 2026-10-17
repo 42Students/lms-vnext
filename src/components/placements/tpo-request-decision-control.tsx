@@ -5,6 +5,8 @@ import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {useToast} from "@/components/ui/toast";
 
+import {tpoRequestNeedsConfirmation} from "@/modules/placements/tpo-request-decision-copy";
+
 const rejectionReasons=[
   "Not eligible","Proof missing or unclear","Deadline has passed",
   "Policy does not allow it","Duplicate request","Other",
@@ -31,29 +33,41 @@ export function TpoRequestDecisionControl({requestId,expectedUpdatedAt,requestTy
   const [error,setError]=useState<string|null>(null);
   function open(next:"APPROVE"|"REJECT"){
     if(pending)return;
+    if(next==="APPROVE"&&!tpoRequestNeedsConfirmation(requestType)){
+      void decideWith("APPROVE","");
+      return;
+    }
     setMode(next);setReason("");setNote("");setError(null);
   }
   const decisionNote=mode==="REJECT"?(reason==="Other"?note.trim():reason):note.trim();
   const valid=mode==="APPROVE" || (mode==="REJECT"&&decisionNote.length>=3&&decisionNote.length<=2000);
-  async function decide(){
-    if(!mode||pending||!valid)return;
+  async function decideWith(action:"APPROVE"|"REJECT",decisionText:string){
+    if(pending)return;
     setPending(true);setError(null);
     try{
       const response=await fetch("/api/placements/tpo/requests/"+encodeURIComponent(requestId)+"/decision",{
         method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
-        body:JSON.stringify({confirmed:true,action:mode,note:decisionNote||null,expectedUpdatedAt}),
+        body:JSON.stringify({confirmed:true,action,note:decisionText||null,expectedUpdatedAt}),
       });
       if(!response.ok){
-        if(response.status===409)throw Error("This request changed. Refresh the page before deciding it.");
-        throw Error(mode==="APPROVE"?"Couldn't approve this request. Check the current state and try again.":
+        if(response.status===409){
+          // Map a known domain refusal to the old LMS sentence; never show the raw API code.
+          const refusal=await response.json().catch(()=>null) as {error?:string}|null;
+          if(requestType==="APPLICATION_WITHDRAWAL"&&refusal?.error==="PLACEMENT_REQUEST_EFFECT_INVALID")
+            throw Error("This student is placed: reverse the acceptance on the Offers tab first, then approve.");
+          throw Error("This changed while you were working. Your decision is kept below. Refresh and try again.");
+        }
+        throw Error(action==="APPROVE"?"Couldn't approve this request. Check the current state and try again.":
           "Couldn't reject this request. Your reason is preserved; retry after reviewing the request.");
       }
-      showToast({tone:"success",title:mode==="APPROVE"?"Approved":"Rejected",
-        description:"The decision is recorded in the learner's placement request history."});
+      showToast({tone:"success",title:action==="APPROVE"
+        ?"Approved. The student has been told."
+        :"Rejected. The student has been told, with your reason."});
       setMode(null);setReason("");setNote("");onSuccess?.();router.refresh();
     }catch(e){setError(e instanceof Error?e.message:"Could not record the decision.");}
     finally{setPending(false);}
   }
+  function decide(){if(!mode||!valid)return;void decideWith(mode,decisionNote);}
   return <div className="flex flex-col gap-2 text-sm">
     <div className="flex flex-wrap gap-2">
       <button type="button" disabled={pending} onClick={()=>open("APPROVE")}
@@ -61,13 +75,14 @@ export function TpoRequestDecisionControl({requestId,expectedUpdatedAt,requestTy
       <button type="button" disabled={pending} onClick={()=>open("REJECT")}
         className="min-h-10 rounded-md border border-border px-3 font-semibold text-foreground disabled:opacity-50">Reject</button>
     </div>
+    {!mode&&error?<p role="alert" className="text-error">{error}</p>:null}
     <Dialog open={mode!==null} onOpenChange={value=>{if(!value&&!pending)setMode(null);}}
       title={mode==="APPROVE"?"Approve this request?":"Reject this request"}
       description={mode==="APPROVE"?impact(requestType):
         "The learner's current application, round or offer remains unchanged when this request is rejected."}
       footer={<>
         <Button variant="secondary" disabled={pending} onClick={()=>setMode(null)}>Cancel</Button>
-        <Button disabled={pending||!valid} onClick={()=>void decide()}>
+        <Button disabled={pending||!valid} onClick={decide}>
           {pending?"Saving…":mode==="APPROVE"?"Approve request":"Reject request"}
         </Button>
       </>}>

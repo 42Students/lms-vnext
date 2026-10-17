@@ -7,6 +7,6 @@ export const tpoCalendarUrlSchema=z.object({
  date:day.optional(),
  view:z.enum(["week","month","agenda"]).optional(),
  company:z.string().trim().max(150).optional(),
- kind:z.enum(["","ROUND","APPLICATION_DEADLINE","FOLLOW_UP"]).optional(),
+ kind:z.enum(["","ROUND","APPLICATION_DEADLINE","FOLLOW_UP","BLOCKED"]).optional(),
 }).strict();
 export function parseTpoCalendarUrl(raw:unknown){return tpoCalendarUrlSchema.safeParse(raw);}

@@ -144,6 +144,11 @@ export async function verifyAndReleaseTpoSelections(context:RequestContext,rawJo
     const [selection]=await getDb().select().from(placementDriveSelections)
       .where(and(eq(placementDriveSelections.id,id),eq(placementDriveSelections.jobId,job.id))).limit(1);
     if(!selection){results.push({selectionId:id,applicationId:"",status:"skipped",reason:"Selection is no longer available"});continue;}
+    if(selection.status==="CANCELLED"){
+      results.push({selectionId:id,applicationId:selection.applicationId,
+        status:"skipped",reason:"This selection was cancelled with the drive and cannot be released."});
+      continue;
+    }
     if(selection.status==="RELEASED"&&selection.releasedOfferId){
       results.push({selectionId:id,applicationId:selection.applicationId,status:"released",offerId:selection.releasedOfferId});continue;
     }

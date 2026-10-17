@@ -8,6 +8,12 @@ describe("TPO drive close preview",()=>{
   expect(evaluateTpoDriveClosure("PUBLISHED","CLOSED",before,before)).toBe("READ_ONLY");
   expect(evaluateTpoDriveClosure("PUBLISHED","ACTIVE",before,{...before,offers:0})).toBe("PREVIEW_STALE");
  });
+ it("TPO-drive-workspace-17 refuses closure while any employer selection is not released",()=>{
+  const before={applications:3,rounds:2,offers:1};
+  expect(evaluateTpoDriveClosure("PUBLISHED","ACTIVE",before,before,2)).toBe("UNRELEASED_SELECTIONS");
+  expect(evaluateTpoDriveClosure("PUBLISHED","ACTIVE",before,before,0)).toBe("ALLOW");
+  expect(evaluateTpoDriveClosure("CLOSED","ACTIVE",before,before,2)).toBe("READ_ONLY");
+ });
  it("refuses arbitrary status, forged college and missing confirmation",()=>{
   const valid={action:"CLOSE",confirmed:true,expectedUpdatedAt:"2026-10-14T14:00:00.123Z",
    expectedCounts:before,reason:"Closing after hiring round"};
