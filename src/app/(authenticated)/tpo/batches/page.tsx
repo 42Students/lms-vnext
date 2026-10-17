@@ -11,7 +11,7 @@ import { batchEligibilityShare } from "@/modules/placements/tpo-batch-eligibilit
 import { PageHeader } from "@/components/ui/page-header";
 import { summarizeTpoBatchStates } from "@/modules/placements/tpo-batch-kpi-model";
 import { tpoBatchNextAction, tpoBatchNextActionLink } from "@/modules/placements/tpo-batch-next-action-model";
-import { tpoBatchDeadlineLabel } from "@/modules/placements/tpo-batch-deadline-label-model";
+import { tpoBatchCardDeadlineLabel } from "@/modules/placements/tpo-batch-deadline-label-model";
 import { tpoBatchPageSchema, paginateTpoBatches, tpoBatchPageHref,tpoBatchClearFiltersHref,tpoBatchEmptyReason } from "@/modules/placements/tpo-batch-directory-pagination-model";
 import { tpoBatchDeadlineFilterSchema, filterTpoBatchDeadline } from "@/modules/placements/tpo-batch-deadline-filter-model";
 import { tpoBatchDepartmentSchema, filterTpoBatchDepartment, listTpoBatchDepartments } from "@/modules/placements/tpo-batch-department-model";
@@ -54,7 +54,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
  const pendingCount=working.reduce((sum,batch)=>sum+(eligibility.get(batch.id)?.undecided??0),0);
  const placedCount=working.reduce((sum,batch)=>sum+(journey.get(batch.id)?.placed??0),0);
  return <main className="min-w-0 space-y-5">
-  <PageHeader eyebrow="TPO · Batches" title={TPO_OWNER_PAGE_COPY.placementEligibility} description="Make placement eligibility decisions cohort by cohort. This list does not guess inherited learner eligibility."/>
+  <PageHeader eyebrow="TPO · Batches" title={TPO_OWNER_PAGE_COPY.placementEligibility} description="Decide who is in placements, one passing-out batch at a time. New students follow their class."/>
   <form className="flex flex-wrap gap-2" action="/tpo/batches" method="get">
    <label className="min-w-0 flex-1 text-sm">Search batches<input type="search" name="q" defaultValue={parsed.data.q??""} maxLength={100} className="mt-1 block min-h-11 w-full rounded border border-border bg-surface px-3"/></label>
    <label className="text-sm">State<select name="state" defaultValue={parsed.data.state} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">All</option><option value="PLANNING">Not started</option><option value="INVITED">Invited / registration open</option><option value="FINISHED">Finished</option></select></label>
@@ -91,7 +91,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
     <h2 className="break-words font-semibold"><Link href={"/tpo/batches/"+b.id} className="text-primary-text underline">{b.name}</Link></h2>
     <p className="text-sm">{b.department===b.program?b.program:b.department+" · "+b.program}{b.startYear?" · "+b.startYear+(b.endYear?"–"+b.endYear:""):""}</p>
     <p className="text-xs text-muted-foreground">{data.ready?tpoBatchPlacementState({finishedAt:b.finishedAt,eligible:eligibility.get(b.id)?.eligible??null}):"Status unavailable"}</p>
-    <p className="text-xs text-muted-foreground">{tpoBatchDeadlineLabel(b.deadline,data.ready)}</p>
+    {tpoBatchCardDeadlineLabel(b.deadline,data.ready,Boolean(b.finishedAt))?<p className="text-xs text-muted-foreground">{tpoBatchCardDeadlineLabel(b.deadline,data.ready,Boolean(b.finishedAt))}</p>:null}
     {(() => {
       const summary = eligibility.get(b.id);
       if (!summary) return <p role="status" className="text-sm">Eligibility counts unavailable.</p>;
