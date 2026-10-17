@@ -34,9 +34,9 @@ Audit: `docs/audit/pages/superadmin/placements-projects-b-projects.md` (and `pla
 | SA-placements-projects-63 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
 | SA-placements-projects-66 | S3 | MISSING-COLUMN | DONE |
 | SA-placements-projects-67 | S3 | STATE | DONE |
-| SA-placements-projects-68 | S3 | STATE | UNCONFIRMED |
+| SA-placements-projects-68 | S3 | STATE | DONE |
 | SA-placements-projects-71 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
-| SA-placements-projects-72 | S3 | MISSING-ACTION | UNCONFIRMED |
+| SA-placements-projects-72 | S3 | MISSING-ACTION | DONE |
 | SA-placements-projects-73 | S3 | COPY | DONE |
 | SA-placements-projects-74 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | SA-placements-projects-75 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
@@ -64,7 +64,7 @@ Audit: `docs/audit/pages/tpo/home.md` (and `home-review.md` if present; any ID: 
 | TPO-home-08 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-home-09 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-home-13 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| TPO-home-26 | S2 | STATE | UNCONFIRMED |
+| TPO-home-26 | S2 | STATE | DONE |
 | TPO-home-27 | S2 | PERMISSION | UNCONFIRMED |
 | TPO-home-28 | S2 | MISSING-MODAL | DONE |
 | TPO-home-42 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
@@ -312,3 +312,5 @@ Audit: `docs/audit/pages/college/operations.md` (and `operations-review.md` if p
 - `SA-tenants-modules-50` DONE: saved URL view/search/area/status/severity/kind/page filters under the legacy local-storage key; restoring only bounded allowlisted board-relative params, Clear resets saved view to default.
 - SA-tenants-modules-46/47/48 and other unfinished filters/actions remain OPEN; no importer or drawer action is misrepresented as implemented.
 - Tests were written but NOT RUN by chat-4; orchestrator is responsible for integrated verification.
+
+- Source-reverified existing `SA-placements-projects-68` ten-section readiness navigation, `SA-placements-projects-72` confirmed submission review dialog, and `TPO-home-26` placements-disabled state; each had an ID-named existing test and existing code on synced main. Statuses moved from UNCONFIRMED to DONE; tests remain unrun.
