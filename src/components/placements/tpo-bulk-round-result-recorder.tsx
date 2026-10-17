@@ -39,6 +39,7 @@ export function TpoBulkRoundResultRecorder({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<Result[]>([]);
+  const [reportedOutcomeByApplicant,setReportedOutcomeByApplicant]=useState<Record<string,string>>({});
 
   if (round.kind === "TALK" ||
     (round.status !== "SCHEDULED" && round.status !== "COMPLETED")) return null;
