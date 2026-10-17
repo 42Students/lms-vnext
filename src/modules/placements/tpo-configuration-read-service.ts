@@ -39,5 +39,5 @@ export async function listTpoPrepCourses(ctx:RequestContext){
  return getDb().select({id:courses.id,name:courses.name,code:courses.code}).from(courses)
   .innerJoin(departments,eq(departments.id,courses.departmentId))
   .where(and(eq(departments.collegeId,collegeId),eq(courses.status,"ACTIVE")))
-  .orderBy(asc(courses.name),asc(courses.id)).limit(200);
+  .orderBy(asc(courses.name),asc(courses.id));
 }

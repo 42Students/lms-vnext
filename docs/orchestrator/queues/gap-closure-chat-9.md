@@ -108,7 +108,7 @@ Audit: `docs/audit/pages/tpo/settings-audit.md` (and `settings-audit-review.md` 
 | TPO-settings-audit-14 | S3 | SIDE-EFFECT | FIXED-ON-MAIN |
 | TPO-settings-audit-24 | S3 | VALIDATION | FIXED-ON-MAIN |
 | TPO-settings-audit-25 | S3 | COPY | FIXED-ON-MAIN |
-| TPO-settings-audit-42 | S3 | COPY | OPEN |
+| TPO-settings-audit-42 | S3 | COPY | DONE-BRANCH |
 | TPO-settings-audit-45 | S3 | COPY | FIXED-ON-MAIN |
 | TPO-settings-audit-58 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | TPO-settings-audit-59 | S3 | COPY | FIXED-ON-MAIN |
@@ -123,7 +123,7 @@ Audit: `docs/audit/pages/tpo/settings-audit.md` (and `settings-audit-review.md` 
 | TPO-settings-audit-98 | S3 | STATE | OPEN |
 | TPO-settings-audit-99 | S3 | SIDE-EFFECT | OPEN |
 | TPO-settings-audit-R02 | S3 | VALIDATION | OPEN |
-| TPO-settings-audit-07 | S4 | RESPONSIVE | OPEN |
+| TPO-settings-audit-07 | S4 | RESPONSIVE | DONE-BRANCH |
 | TPO-settings-audit-80 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-settings-audit-81 | S4 | MISSING-ACTION | UNCONFIRMED |
 | TPO-settings-audit-R04 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
@@ -352,3 +352,5 @@ Merged latest origin/main before editing; no test, lint, typecheck or build runs
 - TPO-settings-audit-03/-13 DONE source, -42 improved but OPEN (course list cap 200). Tests authored; orchestrator runs.
 
 - COL-projects-16/-19/-20 DONE source and COL-projects-22 NOT-A-GAP; tests/unit/chat9-round6-college-projects-parity.test.ts authored, tests NOT run.
+
+- Round 6: TPO-settings-audit-42/-07 DONE-BRANCH; no 200-course truncation and responsive grouped navigation; tests written not run.
