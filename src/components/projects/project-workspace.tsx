@@ -1095,10 +1095,11 @@ export function ProjectWorkspace({
                       </StatusBadge>
                     </div>
 
-                    {mode === "ADMIN" ? (
+                    {mode !== "LEARNER" ? (
                       <dl className="mt-3 grid gap-2 text-xs text-body sm:grid-cols-2">
                         <div><dt className="font-semibold">Submission type</dt>
-                          <dd>{submission.sourceUrl && submission.demoUrl ? "File + link" :
+                          <dd>{submission.attachments.some(item=>item?.kind==="FILE") ? "File upload" :
+                            submission.sourceUrl && submission.demoUrl ? "Source + demo" :
                             submission.sourceUrl || submission.demoUrl ? "Link" : "Text"}</dd></div>
                         <div><dt className="font-semibold">Submitted by</dt>
                           <dd>{workspace.members.find(member =>
@@ -1110,12 +1111,12 @@ export function ProjectWorkspace({
                           <dd>{Math.max(0, submission.version - 1)}</dd></div>
                       </dl>
                     ) : null}
-                    {mode === "ADMIN" && submission.notes ? (
+                    {mode !== "LEARNER" && submission.notes ? (
                       <p className="mt-2 whitespace-pre-wrap text-sm text-body">
                         {submission.notes}
                       </p>
                     ) : null}
-                    {mode === "ADMIN" && submission.attachments.length ? (
+                    {mode !== "LEARNER" && submission.attachments.length ? (
                       <section aria-label="Additional evidence" className="mt-3 space-y-2">
                         <h3 className="text-sm font-semibold text-foreground">Additional evidence</h3>
                         {submission.attachments.map((item, index) => {
@@ -1171,6 +1172,20 @@ export function ProjectWorkspace({
                       </div>
                     ) : null}
 
+                    {mode!=="LEARNER"?<details className="mt-3 rounded-lg border border-border p-3">
+                      <summary className="cursor-pointer text-sm font-semibold text-primary-text">
+                        Submission history
+                      </summary>
+                      <ul className="mt-2 space-y-2 text-xs text-body">
+                        {workspace.activity.filter(event=>event.subjectId===submission.id&&
+                          event.eventType.includes("delivery")).map(event=>
+                            <li key={event.id} className="border-l-2 border-border pl-2">
+                              {event.summary} · {event.actorDisplayName??"System"} · {formatDateTime(event.occurredAt)}
+                            </li>)}
+                        {submission.reopenedAt?<li>Reopened · {formatDateTime(submission.reopenedAt)}</li>:null}
+                        {submission.lockedAt?<li>Locked · {formatDateTime(submission.lockedAt)}</li>:null}
+                      </ul>
+                    </details>:null}
                     {mode === "ADMIN" && !readOnly &&
                       (submission.status === "SUBMITTED" || submission.status === "APPROVED") ? (
                       <ProjectAdminSubmissionReview projectId={workspace.project.id}
