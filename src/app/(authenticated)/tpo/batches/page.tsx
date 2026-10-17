@@ -9,7 +9,6 @@ import { listTpoBatchCardEligibility } from "@/modules/placements/tpo-batch-dire
 import { listTpoBatchJourneyCounts } from "@/modules/placements/tpo-batch-journey-service";
 import { batchEligibilityShare } from "@/modules/placements/tpo-batch-eligibility-summary-model";
 import { PageHeader } from "@/components/ui/page-header";
-import { summarizeTpoBatchStates } from "@/modules/placements/tpo-batch-kpi-model";
 import { tpoBatchNextAction, tpoBatchNextActionLink } from "@/modules/placements/tpo-batch-next-action-model";
 import { tpoBatchCardDeadlineLabel } from "@/modules/placements/tpo-batch-deadline-label-model";
 import { tpoBatchPageSchema, paginateTpoBatches, tpoBatchPageHref,tpoBatchClearFiltersHref,tpoBatchEmptyReason } from "@/modules/placements/tpo-batch-directory-pagination-model";
@@ -58,12 +57,11 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
  const pageFilters={q:parsed.data.q,state:parsed.data.state,program:programParsed.data,department:departmentParsed.data,deadline:deadlineParsed.data,sort:sortParsed.data,...(showOlder?{showOlder:"1"}:{})};
  const programs=listTpoBatchPrograms(data.batches);
  const departments=listTpoBatchDepartments(data.batches);
- const summary=summarizeTpoBatchStates(data.batches);
  const working=data.batches.filter(batch=>!batch.finishedAt);
- const activeCount=data.batches.filter(batch=>tpoBatchPlacementState({finishedAt:batch.finishedAt,eligible:eligibility?.get(batch.id)?.eligible??null})==="In placements").length;
- const eligibleCount=working.reduce((sum,batch)=>sum+(eligibility?.get(batch.id)?.eligible??0),0);
- const pendingCount=working.reduce((sum,batch)=>sum+(eligibility?.get(batch.id)?.undecided??0),0);
- const placedCount=working.reduce((sum,batch)=>sum+(journey?.get(batch.id)?.placed??0),0);
+ const activeCount=eligibility===null?null:data.batches.filter(batch=>tpoBatchPlacementState({finishedAt:batch.finishedAt,eligible:eligibility.get(batch.id)?.eligible??null})==="In placements").length;
+ const eligibleCount=eligibility===null?null:working.reduce((sum,batch)=>sum+(eligibility.get(batch.id)?.eligible??0),0);
+ const pendingCount=eligibility===null?null:working.reduce((sum,batch)=>sum+(eligibility.get(batch.id)?.undecided??0),0);
+ const placedCount=journey===null?null:working.reduce((sum,batch)=>sum+(journey.get(batch.id)?.placed??0),0);
  return <main className="min-w-0 space-y-5">
   <PageHeader eyebrow="TPO · Batches" title={TPO_OWNER_PAGE_COPY.placementEligibility} description="Decide who is in placements, one passing-out batch at a time. New students follow their class."/>
   <form className="flex flex-wrap gap-2" action="/tpo/batches" method="get">
@@ -88,7 +86,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
   {!data.ready?<p role="status" className="rounded border border-border p-3">Some batch details are temporarily unavailable. Academic batches remain visible; try again later.</p>:null}
   <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">{[
   ["Open for placements",activeCount],["Students eligible",eligibleCount],["Not decided yet",pendingCount],["Placed (offer evidence)",placedCount],
-  ].map(([label,value])=><div key={label} className="rounded-lg border border-border p-3"><dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold">{data.ready?value:"—"}</dd></div>)}</dl>
+  ].map(([label,value])=><div key={label} className="rounded-lg border border-border p-3"><dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold">{data.ready&&value!==null?value:"—"}</dd></div>)}</dl>
   {workingSet.hidden>0?<p role="status" className="flex flex-wrap items-center gap-2 rounded-md border border-border p-3 text-sm">
     {workingSet.hidden} older {workingSet.hidden===1?"batch is":"batches are"} hidden from your working set.
     <Link href={tpoBatchPageHref({...pageFilters,showOlder:"1"},1,pageParsed.data.pageSize)}
@@ -126,9 +124,9 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
         <p className="text-xs text-muted-foreground">{summary.assessed} {summary.assessed===1?"student":"students"} in batch</p>
         <dl className="grid grid-cols-2 gap-1 text-xs">
          <div><dt className="text-muted-foreground">Invited</dt><dd className="font-semibold">{b.invitedAt?"Yes":"Not yet"}</dd></div>
-         <div><dt className="text-muted-foreground">Registered</dt><dd className="font-semibold">{journey?.get(b.id)?.registered??0}</dd></div>
-         <div><dt className="text-muted-foreground">Verified profiles</dt><dd className="font-semibold">{journey?.get(b.id)?.verified??0}</dd></div>
-         <div><dt className="text-muted-foreground">Placed (offer evidence)</dt><dd className="font-semibold">{journey?.get(b.id)?.placed??0}</dd></div>
+         <div><dt className="text-muted-foreground">Registered</dt><dd className="font-semibold">{journey===null?"—":journey.get(b.id)?.registered??0}</dd></div>
+         <div><dt className="text-muted-foreground">Verified profiles</dt><dd className="font-semibold">{journey===null?"—":journey.get(b.id)?.verified??0}</dd></div>
+         <div><dt className="text-muted-foreground">Placed (offer evidence)</dt><dd className="font-semibold">{journey===null?"—":journey.get(b.id)?.placed??0}</dd></div>
         </dl>
         <dl className="grid grid-cols-2 gap-1 text-xs">
           {split.map(part=><div key={part.key}>
