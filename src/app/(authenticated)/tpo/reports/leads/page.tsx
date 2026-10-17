@@ -109,6 +109,18 @@ export default async function TpoLeadsReportPage({
       </nav>
 
 
+      <section aria-label="Recruiter engagement by company" className="space-y-3">
+       <h2 className="text-lg font-semibold">Recruiter engagement by company</h2>
+       <p className="text-sm text-body">Contacts, invitations and joined recruiter accounts use college-wide Engage records. Drives that ran and students placed use the selected placement season or drive. A company without matching recorded drives shows zero for that selected scope.</p>
+       <ReportTable title="Engage and placement outcomes by company"
+        headings={["Company","Contacts","Invited","Joined","Drives that ran","Students placed"]}
+        rows={result.companyEngagement.map(row=>{
+         const placement=row.companyId?workspace.report.byCompany.find(company=>company.companyId===row.companyId):null;
+         return [row.companyName,row.contacts,row.invited,row.joined,placement?.drives??0,placement?.placed??0];
+        })}
+        emptyDescription="No college-linked recruiter leads are recorded. Contact, invitation and placement counts are not inferred."/>
+      </section>
+
       <section
         aria-label="Lead reporting scope"
         className="rounded-xl border border-border bg-surface-subtle p-4 text-sm leading-6 text-body"
