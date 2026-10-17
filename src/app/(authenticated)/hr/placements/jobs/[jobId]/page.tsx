@@ -443,7 +443,8 @@ export default async function HrPlacementJobPage({
               </article>
             ))}
           </div> : <p className="text-sm text-muted-foreground">No shared applicants match this stage.</p>}
-          {selectedApplicant ? (
+          {selectedApplicant ? (<>
+            <div aria-hidden="true" className="fixed inset-0 z-20 bg-black/40"/>
             <section id="recruiter-focused-review-dialog" role="dialog" aria-modal="true" aria-labelledby="hr-applicant-drawer-title"
               className="fixed inset-x-0 bottom-0 z-30 max-h-[85vh] overflow-y-auto rounded-t-2xl border border-border bg-surface p-5 shadow-xl sm:inset-x-auto sm:right-0 sm:top-0 sm:h-screen sm:max-h-screen sm:w-full sm:max-w-lg sm:rounded-none"
             >
@@ -482,7 +483,7 @@ export default async function HrPlacementJobPage({
               <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=rounds"+returnQuery}
                 className="mt-4 inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Review rounds</Link>
             </section>
-          ) : null}
+          </>) : null}
           <nav aria-label="Applicant pages" className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
             <span className="text-xs text-muted-foreground">
               {applicantsPage.first === 0 ? "No rows on this page" :
