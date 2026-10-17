@@ -80,6 +80,9 @@ export const tpoStudentsQuerySchema = z
       .enum(TPO_STUDENT_JOURNEY_STATES)
       .optional(),
     branchId: uuid.optional(),
+    programId:uuid.optional(),
+    classId:uuid.optional(),
+    afterCollege:afterCollegeOutcomeSchema.optional(),
     batchId: uuid.optional(),
     search: z.string().trim().max(150).optional(),
     ...paginationFields,
@@ -216,6 +219,7 @@ export async function getTpoStudentsIntelligence(
       enrollmentStatus: learnerProgramEnrollments.status,
       cohortId: cohorts.id,
       cohortName: cohorts.name,
+      programId: programs.id,
       programName: programs.name,
       branchId: departments.id,
       branchName: departments.name,
@@ -361,6 +365,7 @@ export async function getTpoStudentsIntelligence(
       season: activeSeason ?? null,
       summary: emptySummary,
       branches: [],
+      classChoices:[],
       roster: filterTpoStudentRoster(
         [],
         input,
@@ -369,6 +374,7 @@ export async function getTpoStudentsIntelligence(
       // for each CSV page. Never serialize this field into client props.
       exportRows: options.includeExportRows ? [] : null,
       definitions: {
+        afterCollegeAvailable:input.afterCollege?await placementTableExists("placement_tpo_after_college"):true,
         registrationsAvailable,
         externalOffersAvailable,
         registrationScope: "ACTIVE_COHORT",
@@ -396,6 +402,7 @@ export async function getTpoStudentsIntelligence(
         enrollmentId:
           sectionEnrollments.learnerEnrollmentId,
         sectionId: sections.id,
+        sectionName:sections.name,
         cohortId: sections.cohortId,
       })
       .from(sectionEnrollments)
@@ -793,9 +800,11 @@ export async function getTpoStudentsIntelligence(
         learner.registrationNumber,
       branchId: learner.branchId,
       branchName: learner.branchName,
+      programId:learner.programId,
       programName: learner.programName,
       cohortId: learner.cohortId,
       cohortName: learner.cohortName,
+      classIds:sectionIds,
       fromFinishedBatch:learner.enrollmentStatus==="COMPLETED",
       registrationChoice:
         registrationChoiceByLearner.get(
@@ -834,23 +843,32 @@ export async function getTpoStudentsIntelligence(
   // Legacy working set: placement-eligible learners only; a completed
   // academic enrollment reappears only when its finished cohort is selected.
   const workingRows=selectTpoStudentWorkingSet(studentRows,Boolean(input.batchId));
+  const outcomeMatches=input.afterCollege?await readTpoAfterCollegeMatches(college.id,input.afterCollege):null;
+  const filteredRows=!outcomeMatches?workingRows:!outcomeMatches.available?[]:
+    workingRows.filter(row=>outcomeMatches.matched.has(row.membershipId)||
+      input.afterCollege==="NOT_DECIDED"&&!outcomeMatches.assigned.has(row.membershipId));
   return {
     collegeId: college.id,
     season: activeSeason ?? null,
     summary: summarizeTpoStudents(workingRows),
     branches: summarizeTpoStudentBranches(workingRows),
-    roster: filterTpoStudentRoster(workingRows,input),
+    classChoices:[...new Map(activeSections.filter(section=>
+      cohortByEnrollment.get(section.enrollmentId)===section.cohortId)
+      .map(section=>[section.sectionId,section.sectionName] as const))]
+      .map(([id,name])=>({id,name})),
+    roster: filterTpoStudentRoster(filteredRows,input),
     // Filtering here uses the same pure derivation as the visible roster.
     // Page size is deliberately unrestricted only inside this trusted,
     // authorized service operation; public input remains Zod-bounded.
     exportRows: options.includeExportRows
-      ? filterTpoStudentRoster(workingRows, {
+      ? filterTpoStudentRoster(filteredRows, {
           ...input,
           page: 1,
           pageSize: Math.max(1, workingRows.length),
         }).items
       : null,
     definitions: {
+      afterCollegeAvailable:outcomeMatches?.available??true,
       registrationsAvailable,
       externalOffersAvailable,
       registrationScope: "ACTIVE_COHORT",
