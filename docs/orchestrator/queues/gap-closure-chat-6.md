@@ -187,7 +187,7 @@ Audit: `docs/audit/pages/superadmin/placements-projects-c-tracker.md` (and `plac
 | SA-placements-projects-115 | S3 | MISSING-ACTION | UNCONFIRMED |
 | SA-placements-projects-116 | S3 | MISSING-ACTION | OPEN |
 | SA-placements-projects-117 | S3 | MISSING-EXPORT | OPEN |
-| SA-placements-projects-121 | S3 | MISSING-ACTION | OPEN |
+| SA-placements-projects-121 | S3 | MISSING-ACTION | DONE |
 | SA-placements-projects-122 | S3 | MISSING-FILTER | DONE |
 | SA-placements-projects-107 | S4 | MISSING-ACTION | DONE |
 | SA-placements-projects-108 | S4 | MISSING-ACTION | DONE |
