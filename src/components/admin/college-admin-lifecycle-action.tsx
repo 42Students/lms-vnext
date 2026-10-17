@@ -11,7 +11,7 @@ export function CollegeAdminLifecycleAction({membershipId,status,hasMentorRole}:
  const [error,setError]=useState("");
  const action=status==="ACTIVE"?"SUSPEND":"REACTIVATE";
  async function submit(){
-  if(busy||hasMentorRole||(action==="SUSPEND"&&reason.trim().length<3))return;
+  if(busy||(action==="SUSPEND"&&hasMentorRole)||(action==="SUSPEND"&&reason.trim().length<3))return;
   if(!window.confirm(action==="SUSPEND"?
    "Suspend this administrator's college access and end their device sessions?":
    "Reactivate this administrator's college access?"))return;
@@ -30,7 +30,7 @@ export function CollegeAdminLifecycleAction({membershipId,status,hasMentorRole}:
   finally{setBusy(false);}
  }
  if(status!=="ACTIVE"&&status!=="SUSPENDED")return null;
- if(hasMentorRole)return <p className="text-xs text-warning-text">Also assigned to mentoring. Review active project assignments before changing access.</p>;
+ if(hasMentorRole&&action==="SUSPEND")return <p className="text-xs text-warning-text">Also assigned to mentoring. Review active project assignments before changing access.</p>;
  return <div className="min-w-44 space-y-2">
   {action==="SUSPEND"?<label className="grid gap-1 text-xs font-medium text-body">Suspension reason
    <input value={reason} maxLength={1000} onChange={event=>setReason(event.target.value)}
