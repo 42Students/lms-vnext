@@ -19,7 +19,7 @@ Audit: `docs/audit/pages/tpo/drive-workspace.md` (and `drive-workspace-review.md
 | TPO-drive-workspace-53 | S1 | MISSING-ACTION | DONE |
 | TPO-drive-workspace-60 | S1 | MISSING-TAB | DONE |
 | TPO-drive-workspace-62 | S1 | MISSING-TAB | DONE |
-| TPO-drive-workspace-65 | S1 | MISSING-FIELD | OPEN |
+| TPO-drive-workspace-65 | S1 | MISSING-FIELD | BLOCKED |
 | TPO-drive-workspace-R01 | S1 | PERMISSION | DONE |
 | TPO-drive-workspace-01 | S2 | MISSING-TAB | DONE |
 | TPO-drive-workspace-04 | S2 | MISSING-ACTION | DONE |
@@ -50,7 +50,7 @@ Audit: `docs/audit/pages/tpo/drive-workspace.md` (and `drive-workspace-review.md
 | TPO-drive-workspace-63 | S2 | MISSING-MODAL | OPEN |
 | TPO-drive-workspace-67 | S2 | MISSING-MODAL | OPEN |
 | TPO-drive-workspace-68 | S2 | MISSING-FIELD | DONE |
-| TPO-drive-workspace-69 | S2 | MISSING-ACTION | OPEN |
+| TPO-drive-workspace-69 | S2 | MISSING-ACTION | DONE |
 | TPO-drive-workspace-R02 | S2 | MISSING-FILTER | DONE |
 | TPO-drive-workspace-R03 | S2 | MISSING-ACTION | DONE |
 | TPO-drive-workspace-06 | S3 | MISSING-ACTION | DONE |
@@ -94,7 +94,7 @@ Audit: `docs/audit/pages/tpo/batches.md` (and `batches-review.md` if present; an
 | TPO-batches-05 | S2 | MISSING-ACTION | DONE |
 | TPO-batches-07 | S2 | STATE | DONE |
 | TPO-batches-08 | S2 | MISSING-ACTION | DONE |
-| TPO-batches-20 | S2 | MISSING-ACTION | OPEN |
+| TPO-batches-20 | S2 | MISSING-ACTION | BLOCKED |
 | TPO-batches-21 | S2 | MISSING-FIELD | DONE |
 | TPO-batches-22 | S2 | MISSING-ACTION | DONE |
 | TPO-batches-26 | S2 | VALIDATION | DONE |
@@ -324,3 +324,7 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - BLOCKED TPO-drive-workspace-54: private offer-letter storage requires object bucket and malware scanning. BLOCKED TPO-drive-workspace-65: secure resume ZIP requires private storage/scanner; emailed one-time code requires provider credentials. Do not fake delivery.
 - TPO-drive-workspace-11 OPEN: College Admin permissions require coordinated guard changes across all protected TPO services; never bypass tenancy. TPO-drive-workspace-26 OPEN: 30-second notification hold requires durable delayed-outbox semantics.
 - Shared friendly-error, apiFetch and guarded action helpers adopted on modified forms. No tests, typecheck, lint or build executed; orchestrator owns CI and PostgreSQL acceptance.
+
+- Round follow-up (chat-5): TPO-drive-workspace-65 BLOCKED — private resume ZIP needs an object-storage scanner; emailed company codes need provider credentials.
+- Round follow-up (chat-5): TPO-batches-20 BLOCKED — in-app daily reminders are audited, but OD-11/12 outbound messaging needs provider credentials; no email/SMS delivery is claimed.
+- Round follow-up (chat-5): TPO-drive-workspace-39 still OPEN — round reorder guards page unload; app navigation protection across round edits remains.

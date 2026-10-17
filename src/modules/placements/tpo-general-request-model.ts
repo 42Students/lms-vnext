@@ -15,14 +15,14 @@ const proofUrl=z.union([
 
 export const tpoGeneralRequestInputSchema=z.discriminatedUnion("kind",[
  z.object({kind:z.literal("OFF_CAMPUS_OFFER"),reason,
-  companyName:z.string().trim().min(1).max(200),ctcLpa:z.string().regex(/^\d{1,8}(?:\.\d{1,2})?$/),
+  companyName:z.string().trim().min(1).max(150),ctcLpa:z.string().regex(/^\d{1,8}(?:\.\d{1,2})?$/),
   proofUrl}),
  z.object({kind:z.literal("REGISTRATION_CHANGE"),reason,cohortId:uuid,
   choice:z.enum(["PLACEMENTS","HIGHER_STUDIES","NOT_INTERESTED","ENTREPRENEURSHIP","COMPETITIVE_EXAMS"]),
   consentConfirmed:z.boolean()}),
  z.object({kind:z.literal("ABSENCE_DISPUTE"),reason,applicationId:uuid,roundId:uuid,proofUrl}),
  z.object({kind:z.literal("CORRECTION_WITH_PROOF"),reason,section:z.enum(["EDUCATION"]),
-  field:nonempty,proposedValue:nonempty,proofUrl}),
+  field:z.string().trim().min(1).max(140),proposedValue:nonempty,proofUrl}),
  z.object({kind:z.literal("OFFER_ACCEPTANCE_DISPUTE"),reason,offerId:uuid}),
  z.object({kind:z.literal("PLACEMENT_AFTER_PLACEMENT"),reason,
   requestedJobId:uuid,justification:nonempty}),

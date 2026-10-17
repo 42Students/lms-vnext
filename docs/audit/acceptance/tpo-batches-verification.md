@@ -150,3 +150,9 @@ The following 17 `FIXED-ON-MAIN` queue rows have existing named regression tests
 | TPO-batches-49 | OPEN (suggested entry points implemented; full legacy cohort bulk automation pending) | `src/app/(authenticated)/tpo/batches/[batchId]/page.tsx` now shows Suggested/Do it for eligible decision review and Show me for invitation, with anchored, flashing next-step section; no unreviewed bulk mutation. `tests/unit/tpo-batches-21-chat5.test.ts` — `TPO-batches-49 points suggestions at real reviewed actions without silent writes`. Other resume and inherited-decision bulk suggestions remain outstanding. |
 
 | TPO-batches-24 | DONE (source-verified) | `src/modules/placements/tpo-batch-own-decision-service.ts` summarizes actual direct decisions for the full active cohort against class/batch inheritance (ambiguous class memberships separated), `src/modules/placements/tpo-batch-workspace-read-service.ts` pushes the direct-only source predicate before pagination, and Overview links to `students?source=LEARNER`. `tests/unit/tpo-batches-24-chat5.test.ts` — `TPO-batches-24 counts direct learner overrides against inherited decisions and filters the entire cohort`. |
+
+## Chat-5 follow-up: reminder regression and provider boundary
+
+| ID | Result | Evidence |
+|---|---|---|
+| TPO-batches-20 | BLOCKED (outbound only) | Real reminder service selects eligible unchosen recipients, writes IST-day deduped audited in-app notifications and guards origin. The reminder shortcut now links to the working batch reminder; `tests/unit/tpo-chat5-open-gap-partial-evidence.test.ts` — `TPO-batches-20 partial baseline — further implementation required` now verifies service/route/link contracts, in addition to `tests/unit/tpo-batches-20-chat5.test.ts`. Outbound SMS/email requires real provider credentials under OD-11/12. |

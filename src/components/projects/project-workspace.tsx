@@ -312,8 +312,8 @@ export function ProjectWorkspace({
       ) : null}
 
       <PageHeader
-        title={mode==="LEARNER"?"Projects":workspace.project.title}
-        description={mode==="LEARNER"?workspace.project.title:mode==="MENTOR"
+        title={workspace.project.title}
+        description={mode==="MENTOR"
           ? [workspace.project.courseLabel??"Course not linked",
              "Mentor: "+(workspace.members.find(member=>member.role==="MENTOR"&&member.isPrimary)?.displayName
                ?? workspace.members.find(member=>member.role==="MENTOR")?.displayName??"Not assigned")].join(" · ")

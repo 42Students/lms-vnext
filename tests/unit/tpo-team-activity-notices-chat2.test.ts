@@ -14,7 +14,7 @@ describe("Team inbox activity and participant notices",()=>{
  it("TPO-inbox-team-29 sends a person-named bell and safe preview with a message deep link",()=>{
   const reply=src("src/modules/placements/tpo-team-internal-reply-service.ts");
   const create=src("src/modules/placements/tpo-team-internal-create-service.ts");
-  expect(reply).toContain('title:"New message from "+actorName');
+  expect(reply).toContain('input.markDecision?"Decision from "+actorName:"New message from "+actorName');
   expect(reply).toContain("input.body.slice(0,120)");
   expect(reply).toContain('+"?m="+message.id');
   expect(create).toContain('" added you to a conversation"');

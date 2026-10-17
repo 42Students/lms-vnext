@@ -43,7 +43,8 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
   const createInFlight=useRef(false);
   const [error,setError]=useState("");
   const [notice,setNotice]=useState("");
-  const [preflight,setPreflight]=useState<{toCreate:number;alreadyCovered:number;eligible:number}|null>(null);
+  const [preflight,setPreflight]=useState<{toCreate:number;alreadyCovered:number;eligible:number;duplicates:number;
+  items:{membershipId:string;status:"TO_CREATE"|"ALREADY_COVERED"|"DUPLICATE"}[]}|null>(null);
   const [outcome,setOutcome]=useState<{created:{projectId:string;title:string;learnerMembershipId:string}[];alreadyCovered:number;requested:number}|null>(null);
   const [prevCollegeId,setPrevCollegeId]=useState(collegeId);
   if(prevCollegeId!==collegeId){setPrevCollegeId(collegeId);setLoading(true);}
@@ -100,7 +101,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
     void fetch("/api/projects/cohort-preflight?collegeId="+encodeURIComponent(collegeId)+
       "&classId="+encodeURIComponent(classId)+"&templateId="+encodeURIComponent(templateId),
       {signal:ctl.signal}).then(r=>r.ok?r.json():Promise.reject(Error("Preflight failed")))
-      .then((data:{toCreate:number;alreadyCovered:number;eligible:number})=>{
+      .then((data:{toCreate:number;alreadyCovered:number;eligible:number;duplicates:number;items:{membershipId:string;status:"TO_CREATE"|"ALREADY_COVERED"|"DUPLICATE"}[]})=>{
         if(!ctl.signal.aborted)setPreflight(data);
       }).catch(()=>{if(!ctl.signal.aborted)setPreflight(null)});
     return ()=>ctl.abort();
@@ -199,7 +200,20 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
     {roster?<p className="text-sm text-muted-foreground">{roster.className} · {roster.members.length} active learners · {groups.length} {mode==="TEAMS"?"teams":"group"}</p>:null}
     {mode==="INDIVIDUAL"&&preflight?<section aria-label="Before creating: one workspace per student" className="rounded-lg border border-border p-3 text-sm">
       <h2 className="font-semibold">Before creating: one workspace per student</h2>
-      <p>{preflight.toCreate} to create · {preflight.alreadyCovered} already covered · {preflight.eligible} eligible</p>
+      <p>{preflight.toCreate} to create · {preflight.alreadyCovered} already covered · {preflight.duplicates} duplicates · {preflight.eligible} eligible</p>
+      <div className="max-h-72 overflow-y-auto rounded-md border" role="region" aria-label="Learner creation preflight details" tabIndex={0}>
+        <table className="w-full text-left text-xs">
+          <thead><tr><th scope="col" className="p-2">Learner</th><th scope="col" className="p-2">Decision</th></tr></thead>
+          <tbody>{preflight.items.map((row,index)=>{
+            const learner=names.get(row.membershipId);
+            const decision=row.status==="TO_CREATE"?"To create":row.status==="ALREADY_COVERED"?"Already covered":"Duplicate";
+            return <tr key={row.membershipId+"-"+index} className="border-t">
+              <td className="p-2">{learner?.displayName??learner?.rollNumber??"Learner"}{learner?.rollNumber?" · "+learner.rollNumber:""}</td>
+              <td className="p-2">{decision}</td>
+            </tr>;
+          })}</tbody>
+        </table>
+      </div>
       <p className="text-xs text-muted-foreground">The server will recheck class enrollment, duplicates and existing workspaces before it creates anything. Already covered learners are skipped.</p>
     </section>:null}
     {groups.length>0?<div className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2" aria-label="Adjustable team preview">
