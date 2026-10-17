@@ -35,7 +35,7 @@ describe("Super Admin legacy people roster verified gaps",()=>{
  });
  it("SA-academics-people-105 membership directory has contact search page sizing filters and CSV",()=>{
   const page=source("src/app/(authenticated)/admin/people/page.tsx");
-  for(const name of ['"Search contacts"','"pageSize"','"role"','"status"','"Search contacts..."','"Clear filters"'])expect(page).toContain(name);
+  for(const name of ["Search contacts",'"pageSize"','"role"','"status"','"Search contacts..."','"Clear filters"'])expect(page).toContain(name);
   expect(page).toContain("SuperAdminPeopleCsvControl");
  });
  it("SA-academics-people-107 People membership page exports selected college contacts",()=>{
