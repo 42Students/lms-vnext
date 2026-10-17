@@ -44,3 +44,6 @@ The following gaps each have their own named assertion in `tests/unit/tpo-drives
 | TPO-drives-R03 | DONE | Preflight now shows warning for absent rounds and warns when all targeting/evidence fields are empty, nonblocking; named TPO-drives-R03 test. |
 | TPO-drives-R05 | OPEN | Create fields enforce annual CTC upper bounds and numeric/percentage caps; complete Zod field error mapping, description parity and role creation remain. Named TPO-drives-R05 test. |
 | TPO-drives-44 | OPEN | Internal create response failures now tell the operator to inspect saved drafts/employers instead of echoing implementation detail; exact legacy copy per error remains unverified; named TPO-drives-44 test. |
+
+| TPO-drives-25 | OPEN | `placement-job-create-workspace.tsx` now computes college-scoped company memory (past drives, joined hires, latest date, recent roles); create form shows recent-title duplicate warning; full employer-level duplicate detection beyond recent three titles remains. Test TPO-drives-25 in `tests/unit/tpo-drives-chat-3-round4.test.ts`. |
+| TPO-drives-R03 | DONE | Revised warning suppresses false unrestricted-audience copy when an explicit eligibility preset is selected; second test TPO-drives-R03 in `tests/unit/tpo-drives-chat-3-round4.test.ts`. |

@@ -43,6 +43,7 @@ export type PlacementCompanyChoice = {
   name: string;
   primaryDomain: string | null;
   isTrusted: boolean;
+  memory:{pastDrives:number;joinedLearners:number;lastDriveAt:Date;recentRoles:string[]} | null;
 };
 
 const inputClass =
@@ -112,6 +113,8 @@ export function PlacementJobCreateForm({
     companies.find(company=>company.name.toLowerCase()===initialCompanyName.toLowerCase())?.relationshipId ?? companies[0]?.relationshipId ?? "",
   );
   const [companySearch,setCompanySearch]=useState("");
+  const [enteredDriveTitle,setEnteredDriveTitle]=useState("");
+  const selectedEmployer=companies.find(company=>company.relationshipId===companyRelationshipId);
   const [eligibilityPreset,setEligibilityPreset]=useState<DriveEligibilityPreset>("OPEN");
   const [hasEnteredEligibilityRule,setHasEnteredEligibilityRule]=useState(false);
   const [newEmployerName,setNewEmployerName]=useState("");
@@ -467,7 +470,7 @@ export function PlacementJobCreateForm({
         <p className="mt-3 text-xs text-body">Eligibility reach is checked from current learner records after the draft is saved. No students are notified until you confirm publication.</p>
         <div aria-label="Publish preflight warnings" className="mt-3 space-y-1 text-xs text-body">
           <p role="status">No interview rounds added yet</p>
-          {!hasEnteredEligibilityRule&&selectedProgramIds.length===0&&selectedCohortIds.length===0?
+          {!hasEnteredEligibilityRule&&eligibilityPreset==="OPEN"&&selectedProgramIds.length===0&&selectedCohortIds.length===0?
             <p role="status">No eligibility rules set - every registered student will see this drive</p>:null}
           <p>These are warnings, not publication blockers. Review the drive and invite the recruiter before confirming publication.</p>
         </div>
@@ -595,6 +598,16 @@ export function PlacementJobCreateForm({
             {companySearch.trim()&&!companies.some(company=>
               (company.name+" "+(company.primaryDomain??"")).toLowerCase().includes(companySearch.trim().toLowerCase()))?
               <p role="status" className="text-xs text-body">No matching college employer. Check spelling or choose New employer.</p>:null}
+              {selectedEmployer?.memory?<section aria-label="Company Memory" className="rounded-lg border border-border bg-muted p-4 text-sm">
+                <h3 className="font-semibold text-foreground">Company Memory</h3>
+                <p>{selectedEmployer.memory.pastDrives} past drives · {selectedEmployer.memory.joinedLearners} confirmed hires</p>
+                <p>Last drive: {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(selectedEmployer.memory.lastDriveAt))} IST</p>
+                <p>Recent roles: {selectedEmployer.memory.recentRoles.join(", ")}</p>
+                {enteredDriveTitle.trim()&&selectedEmployer.memory.recentRoles.some(role=>role.toLowerCase()===enteredDriveTitle.trim().toLowerCase())?
+                  <p role="alert" className="mt-2 font-semibold text-amber-900">
+                    A drive for {selectedEmployer.name} · {enteredDriveTitle.trim()} already exists. Check the previous drive before creating another.
+                  </p>:null}
+              </section>:null}
             </div>
           ) : (
             <div className="grid gap-4 lg:grid-cols-2">
@@ -671,6 +684,8 @@ export function PlacementJobCreateForm({
             <input
               className={inputClass}
               name="title"
+              value={enteredDriveTitle}
+              onChange={event=>setEnteredDriveTitle(event.target.value)}
               required
               minLength={3}
               maxLength={100}

@@ -73,4 +73,17 @@ describe("chat-3 Drives round 4",()=>{
   expect(body).not.toContain("Company relationship was not returned");
   expect(body).toContain("Check your drafts before trying again.");
  });
+ it("TPO-drives-25 Company Memory uses scoped historical drive facts",()=>{
+  const workspace=source("src/components/placements/placement-job-create-workspace.tsx");
+  const form=source("src/components/placements/placement-job-create-form.tsx");
+  expect(workspace).toContain("eq(placementJobs.collegeId,collegeId)");
+  expect(workspace).toContain("joined.status='JOINED'");
+  expect(workspace).toContain("memoryByRelationship.get(company.relationshipId)");
+  expect(form).toContain('aria-label="Company Memory"');
+  expect(form).toContain("A drive for {selectedEmployer.name}");
+ });
+ it("TPO-drives-R03 selected eligibility preset suppresses false unrestricted warning",()=>{
+  const form=source("src/components/placements/placement-job-create-form.tsx");
+  expect(form).toContain('!hasEnteredEligibilityRule&&eligibilityPreset==="OPEN"');
+ });
 });
