@@ -197,6 +197,13 @@ export async function ProjectAdminAuditPage({
         description="Who changed what, and when — check daily for anything unexpected."
       />
 
+      <div className="flex flex-wrap gap-2">
+        <a href={basePath + "/audit"} className="inline-flex min-h-10 items-center rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">Refresh</a>
+        {basePath === "/admin/projects" ? <a href="/admin/audit"
+          className="inline-flex min-h-10 items-center rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+          View activity log
+        </a> : null}
+      </div>
       <nav aria-label="Audit time range" className="flex flex-wrap gap-2 text-sm">
         {([{label:"Today",days:0},{label:"7 days",days:6},
            {label:"30 days",days:29},{label:"All time",days:null}]).map(item=>{
