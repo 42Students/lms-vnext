@@ -12,7 +12,7 @@ import type {listOwnRecruiterPlacementJobs} from "./recruiter-service";
 /** REC-home-drives-R08: page and filter the authorized job set in PostgreSQL. */
 export async function searchOwnRecruiterDrives(
  context:RequestContext,collegeId:string,query:RecruiterDriveListQuery,now:Date,
- options:{pageSize?:number}={},
+ options:{pageSize?:number;descendingDeadline?:boolean}={},
 ){
  if(!hasActiveRecruiter(context)||!context.recruiter)
   throw new AuthorizationError("placements.recruiter.read");
@@ -94,7 +94,9 @@ export async function searchOwnRecruiterDrives(
  const order=query.sort==="TITLE"
   ? [asc(placementJobs.title),asc(placementJobs.id)]
   : query.sort==="DEADLINE"
-  ? [sql`${placementJobs.applicationDeadline} asc nulls last`,asc(placementJobs.id)]
+  ? [options.descendingDeadline
+     ? sql`${placementJobs.applicationDeadline} desc nulls last`
+     : sql`${placementJobs.applicationDeadline} asc nulls last`,asc(placementJobs.id)]
   : [desc(placementJobs.createdAt),asc(placementJobs.id)];
  const rows=await base().where(criteria).orderBy(...order)
   .limit(pageSize).offset((page-1)*pageSize);
