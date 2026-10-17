@@ -79,10 +79,7 @@ describe("chat-4 learner Home and Courses gap closure",()=>{
   for(const title of ["Semester Details","All Courses","Credits Breakdown","Total "])expect(s).toContain(title);
   expect(s).toContain("Showing first 100; search the full list below.");
  });
- it("LEARNER-home-courses-16 shows month summary and Day in Attendance History",()=>{
-  const s=source("src/components/courses/learner-course-attendance.tsx");
-  for(const title of ["Attendance this month","Attendance History","weekdayLabel(row.startsAt)","No classes held yet in this period."])expect(s).toContain(title);
- });
+
  it("LEARNER-home-courses-23 omits empty course About content",()=>{
   const s=source("src/components/courses/learner-course-overview.tsx");
   expect(s).toContain("aboutSource.hasDescription||meta.credits!==null||meta.instructors.length>0");
@@ -124,6 +121,7 @@ describe("chat-4 learner Home and Courses gap closure",()=>{
    const s=source("src/components/courses/learner-course-attendance.tsx");
    expect(s).toContain('aria-label="Attendance this month"');
    expect(s).toContain('summary.percentage===null?"—":summary.percentage+"%"');
+   expect(s).toContain("weekdayLabel(row.startsAt)");
    for(const label of ["Present","Absent","Held","Attendance History"])
      expect(s).toContain(label);
    expect(s).not.toContain('label="Attendance threshold"');

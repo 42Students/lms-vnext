@@ -18,6 +18,7 @@ import {
 import type { RequestContext } from "@/modules/identity/context";
 import { PlacementsServiceError } from "./errors";
 import { isDebarmentActive } from "./batch-registration-policy";
+import {notifyEligiblePublishedDrive} from "./tpo-drive-publish-effects";
 import {
   requirePlacementJobSeasonActive,
 } from "./season-service";
@@ -488,30 +489,7 @@ export async function publishPlacementJob(
     // publication, whether or not the excluded learner ever applies.
     // The registered DB08 trigger increments drives_counted and appends
     // immutable history only for a newly inserted (debarment, job) pair.
-    const localDateParts = new Intl.DateTimeFormat("en-US", {
-      timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit",
-    }).formatToParts(now);
-    const datePart = (type: string) =>
-      localDateParts.find((part) => part.type === type)?.value ?? "";
-    const collegeToday = `${datePart("year")}-${datePart("month")}-${datePart("day")}`;
-    const countableDebarments = await tx.select().from(placementDebarments)
-      .where(and(
-        eq(placementDebarments.collegeId, published.collegeId),
-        isNull(placementDebarments.liftedAt),
-      ))
-      .for("update");
-    for (const debarment of countableDebarments) {
-      // Date-based bans are governed by calendar date, not drive count.
-      if (debarment.untilDate !== null || debarment.untilDrives === null ||
-          !isDebarmentActive(debarment, collegeToday)) continue;
-      await tx.insert(placementDebarmentDriveEvents).values({
-        debarmentId: debarment.id,
-        jobId: published.id,
-        recordedByUserId: context.user.id,
-      }).onConflictDoNothing();
-    }
-
-    await recordActivityEventInTransaction(
+    const publishedEvent = await recordActivityEventInTransaction(
       tx,
       context,
       {
@@ -534,6 +512,32 @@ export async function publishPlacementJob(
           `placement-job:${published.id}:published`,
       },
     );
+
+    // TPO-drives-46: deliver to the eligible audience before a newly published
+    // drive advances drive-count debarments. Use the immutable activity event ID.
+    await notifyEligiblePublishedDrive(tx,context,published,publishedEvent.id);
+    const localDateParts = new Intl.DateTimeFormat("en-US", {
+      timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit",
+    }).formatToParts(now);
+    const datePart = (type: string) =>
+      localDateParts.find((part) => part.type === type)?.value ?? "";
+    const collegeToday = `${datePart("year")}-${datePart("month")}-${datePart("day")}`;
+    const countableDebarments = await tx.select().from(placementDebarments)
+      .where(and(
+        eq(placementDebarments.collegeId, published.collegeId),
+        isNull(placementDebarments.liftedAt),
+      ))
+      .for("update");
+    for (const debarment of countableDebarments) {
+      // Date-based bans are governed by calendar date, not drive count.
+      if (debarment.untilDate !== null || debarment.untilDrives === null ||
+          !isDebarmentActive(debarment, collegeToday)) continue;
+      await tx.insert(placementDebarmentDriveEvents).values({
+        debarmentId: debarment.id,
+        jobId: published.id,
+        recordedByUserId: context.user.id,
+      }).onConflictDoNothing();
+    }
 
     return published;
   });

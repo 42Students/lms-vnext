@@ -1,5 +1,5 @@
 "use client";
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 
 /** Protects draft drive details from page reload/back navigation until a save succeeds. */
 export function useUnsavedDriveGuard() {
@@ -13,5 +13,7 @@ export function useUnsavedDriveGuard() {
     window.addEventListener("beforeunload", beforeUnload);
     return () => window.removeEventListener("beforeunload", beforeUnload);
   }, [dirty]);
-  return {dirty, markDirty: () => setDirty(true), clearDirty: () => setDirty(false)};
+  const markDirty=useCallback(()=>setDirty(true),[]);
+  const clearDirty=useCallback(()=>setDirty(false),[]);
+  return {dirty, markDirty, clearDirty};
 }

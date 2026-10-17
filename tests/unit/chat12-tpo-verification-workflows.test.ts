@@ -15,5 +15,5 @@ it("TPO-requests-verification-28 reports TPO review success and failure in plain
  expect(panel).toContain('active?.section==="EDUCATION"?"Education":"Identity"');
  expect(panel).toContain("Sent back. The student sees your reason.");
  expect(panel).toContain('showToast({tone:"success"');
- expect(drawer).toContain('?"Could not verify":"Could not send it back"');
+ expect(drawer).toContain('action==="VERIFY"?"Could not verify":"Could not send it back"');
 });

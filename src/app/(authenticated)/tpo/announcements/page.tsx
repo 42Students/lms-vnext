@@ -17,7 +17,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {placementTableExists} from "@/modules/placements/staged-tables";
-import {listTpoPlacementAnnouncements} from "@/modules/announcements/tpo-placement-read-service";
+import {listTpoPlacementAnnouncements,countUnreadTpo42Announcements} from "@/modules/announcements/tpo-placement-read-service";
 import {previewTpoCollegeAnnouncementVisibility,previewTpoPlacementAudience} from "@/modules/announcements/tpo-audience-preview-service";
 import {announcementPreviewScope,tpoAudiencePreviewQuery} from "@/modules/announcements/tpo-audience-preview-query";
 import {tpoAnnouncementTabSchema} from "@/modules/announcements/tpo-placement-read-model";
@@ -33,6 +33,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
  const pageValue=Array.isArray(raw.page)?raw.page[0]:raw.page;
  const page=pageValue&&/^[1-9][0-9]{0,3}$/.test(pageValue)?Math.min(1000,Number(pageValue)):1;
  const result=await listTpoPlacementAnnouncements(context,tab.data,new Date(),page);
+ const from42Unread=await countUnreadTpo42Announcements(context).catch(()=>null);
  const targetedReady=await placementTableExists("placement_tpo_notice_audiences")&&
   await placementTableExists("placement_tpo_notice_recipients");
  const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
@@ -132,7 +133,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
    {([["yours","To your students"],["from-42","From 42"],["deleted","Recently removed"]] as const).map(([value,label])=><Link
     key={value} href={"/tpo/announcements?tab="+value} aria-current={value===tab.data?"page":undefined}
     className={value===tab.data?"inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm text-on-primary":
-    "inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm text-body"}>{label}{value==="from-42"&&tab.data==="from-42"&&result.status==="READY"&&result.readStateReady?` · ${result.items.filter(row=>!row.readAt).length} new on this page`:""}</Link>)}
+    "inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm text-body"}>{label}{value==="from-42"&&from42Unread!==null?` (${from42Unread})`:""}</Link>)}
   </nav>
   {result.status==="NOT_REGISTERED"?<section role="status" className="rounded-xl border border-border bg-surface p-5">
    <h2 className="font-semibold text-foreground">Announcement storage pending</h2>

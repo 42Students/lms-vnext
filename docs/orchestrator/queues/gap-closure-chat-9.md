@@ -17,7 +17,7 @@ Audit: `docs/audit/pages/tpo/calendar-reports.md` (and `calendar-reports-review.
 | TPO-calendar-reports-32 | S2 | MISSING-PAGE | FIXED-ON-MAIN |
 | TPO-calendar-reports-35 | S2 | VALIDATION | FIXED-ON-MAIN |
 | TPO-calendar-reports-36 | S2 | COPY | DONE-BRANCH |
-| TPO-calendar-reports-38 | S2 | COPY | OPEN |
+| TPO-calendar-reports-38 | S2 | COPY | DONE-BRANCH |
 | TPO-calendar-reports-43 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
 | TPO-calendar-reports-44 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-calendar-reports-48 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
@@ -56,7 +56,7 @@ Audit: `docs/audit/pages/tpo/calendar-reports.md` (and `calendar-reports-review.
 | TPO-calendar-reports-21 | S4 | STATE | DONE-BRANCH |
 | TPO-calendar-reports-22 | S4 | STATE | OPEN |
 | TPO-calendar-reports-24 | S4 | SIDE-EFFECT | DONE-BRANCH |
-| TPO-calendar-reports-25 | S4 | A11Y | OPEN |
+| TPO-calendar-reports-25 | S4 | A11Y | DONE-BRANCH |
 | TPO-calendar-reports-50 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-calendar-reports-51 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-calendar-reports-53 | S4 | STATE | OPEN |
@@ -72,7 +72,7 @@ Audit: `docs/audit/pages/tpo/settings-audit.md` (and `settings-audit-review.md` 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
 | TPO-settings-audit-53 | S1 | STATE | FIXED-ON-MAIN |
-| TPO-settings-audit-03 | S2 | COPY | OPEN |
+| TPO-settings-audit-03 | S2 | COPY | DONE-BRANCH |
 | TPO-settings-audit-05 | S2 | PERMISSION | UNCONFIRMED |
 | TPO-settings-audit-12 | S2 | MISSING-FIELD | UNCONFIRMED |
 | TPO-settings-audit-20 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
@@ -82,7 +82,7 @@ Audit: `docs/audit/pages/tpo/settings-audit.md` (and `settings-audit-review.md` 
 | TPO-settings-audit-30 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-settings-audit-31 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-settings-audit-32 | S2 | COPY | FIXED-ON-MAIN |
-| TPO-settings-audit-33 | S2 | SIDE-EFFECT | OPEN |
+| TPO-settings-audit-33 | S2 | SIDE-EFFECT | DONE-BRANCH |
 | TPO-settings-audit-40 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-settings-audit-41 | S2 | SIDE-EFFECT | OPEN |
 | TPO-settings-audit-43 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
@@ -102,9 +102,9 @@ Audit: `docs/audit/pages/tpo/settings-audit.md` (and `settings-audit-review.md` 
 | TPO-settings-audit-96 | S2 | COPY | OPEN |
 | TPO-settings-audit-R03 | S2 | STATE | UNCONFIRMED |
 | TPO-settings-audit-04 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
-| TPO-settings-audit-06 | S3 | STATE | OPEN |
-| TPO-settings-audit-11 | S3 | VALIDATION | OPEN |
-| TPO-settings-audit-13 | S3 | COPY | OPEN |
+| TPO-settings-audit-06 | S3 | STATE | DONE-BRANCH |
+| TPO-settings-audit-11 | S3 | VALIDATION | DONE-BRANCH |
+| TPO-settings-audit-13 | S3 | COPY | DONE-BRANCH |
 | TPO-settings-audit-14 | S3 | SIDE-EFFECT | FIXED-ON-MAIN |
 | TPO-settings-audit-24 | S3 | VALIDATION | FIXED-ON-MAIN |
 | TPO-settings-audit-25 | S3 | COPY | FIXED-ON-MAIN |
@@ -114,8 +114,8 @@ Audit: `docs/audit/pages/tpo/settings-audit.md` (and `settings-audit-review.md` 
 | TPO-settings-audit-59 | S3 | COPY | FIXED-ON-MAIN |
 | TPO-settings-audit-60 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
 | TPO-settings-audit-71 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
-| TPO-settings-audit-73 | S3 | COPY | OPEN |
-| TPO-settings-audit-75 | S3 | COPY | OPEN |
+| TPO-settings-audit-73 | S3 | COPY | DONE-BRANCH |
+| TPO-settings-audit-75 | S3 | COPY | DONE-BRANCH |
 | TPO-settings-audit-82 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-settings-audit-94 | S3 | COPY | OPEN |
 | TPO-settings-audit-95 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
@@ -340,3 +340,13 @@ Merged latest origin/main before editing; no test, lint, typecheck or build runs
 - Remaining OPEN after this 25-gap group: TPO-calendar-reports-38, TPO-calendar-reports-57, TPO-calendar-reports-22, TPO-calendar-reports-25, TPO-calendar-reports-53.
 - TPO-calendar-reports-38: remaining report-page subtitle parity; -57: seasonless report totals; -22: last-good cached calendar data/partial banner; -25: Enter on existing follow-up should open Move; -53: full-width report states and unknown slug recovery. All still OPEN; no unverified closure claim.
 - Source tests are written but never run by builder; the orchestrator performs tests, typecheck, lint and UI acceptance.
+
+## Round 6 CI failure triage
+- `public-auth-login-gap-verification.test.ts` PUB-auth-public-04 and PUB-auth-public-12: assertions updated to the retained legacy-approved OTP expired phrase and the `sessionExpiredHref` safe redirect helper; guard still requires 401/session revoked/expired checks. Tests written, not executed by builder.
+- Other chat-9 test fixture fixes from previous merged round retained; scanner and provider checks continue to be audited.
+
+- Round 6 source close TPO-calendar-reports-25/-38 and TPO-settings-audit-06/-11; proof in tests/unit/chat9-round6-calendar-settings.test.ts; tests NOT RUN.
+
+- TPO-settings-audit-33/-73/-75 DONE source-level; -03/-94/-96 still OPEN with partial improvements. `tests/unit/chat9-round6-tpo-settings-and-audit.test.ts` written; not run.
+
+- TPO-settings-audit-03/-13 DONE source, -42 improved but OPEN (course list cap 200). Tests authored; orchestrator runs.

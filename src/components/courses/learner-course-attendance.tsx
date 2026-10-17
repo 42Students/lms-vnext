@@ -132,30 +132,6 @@ function attendanceHeadroom(
   };
 }
 
-function Metric({
-  label: metricLabel,
-  value,
-  detail,
-}: {
-  label: string;
-  value: string | number;
-  detail: string;
-}) {
-  return (
-    <section className="rounded-xl border border-border bg-surface p-4">
-      <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-        {metricLabel}
-      </p>
-      <p className="mt-2 text-2xl font-semibold text-foreground">
-        {value}
-      </p>
-      <p className="mt-1 text-xs leading-5 text-body">
-        {detail}
-      </p>
-    </section>
-  );
-}
-
 export function LearnerCourseAttendance({
   deliveryId,
   workspace,

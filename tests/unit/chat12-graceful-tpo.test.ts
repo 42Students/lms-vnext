@@ -29,6 +29,8 @@ describe("chat-12 touched TPO pages degrade gracefully",()=>{
   const source=read("src/components/tpo/tpo-academic-import-workspace.tsx");
   expect(source).toContain("This changed while you were working.");
   expect(source).toContain("Your academic import choices are kept below");
+  expect(source).toContain("cause instanceof FriendlyFetchError && cause.status===409");
+  expect(source).not.toContain("window.confirm(");
   expect(source).not.toContain("body?.error");
  });
  it("GR-31 blocks duplicate sends and hides backend error codes from TPO messages",()=>{

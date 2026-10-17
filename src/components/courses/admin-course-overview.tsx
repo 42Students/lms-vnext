@@ -53,7 +53,7 @@ export function AdminCourseOverview({
   workspace,
   offeringBasePath,
   allowOfferingLifecycle = false,
-  duplicateCourseId,catalogueQuery,catalogueData,courseBasePath="/college/courses",
+  duplicateCourseId,catalogueQuery,catalogueData,courseBasePath="/college/courses",lessonCountByCourse,
 }: {
   workspace: Workspace;
   offeringBasePath: string;
@@ -62,6 +62,7 @@ export function AdminCourseOverview({
   courseBasePath?:string;
   catalogueQuery?:CollegeCourseCatalogueQuery;
   catalogueData?:Awaited<ReturnType<typeof listCollegeCourseCatalogue>>;
+  lessonCountByCourse?:Readonly<Record<string,number>>;
 }) {
   const catalogue=catalogueData??(catalogueQuery?paginateCollegeCourses(workspace.courses,catalogueQuery):null);
   const deliveryCountByOffering = new Map<
@@ -131,8 +132,9 @@ export function AdminCourseOverview({
       header: "Dependencies",
       cell: course=>{
         const count=activeOfferingCountByCourse.get(course.id)??0;
-        return <span title="Active Course Offerings to archive before this Course can be archived">
-          {count} active offering{count===1?"":"s"}
+        const lessons=lessonCountByCourse?.[course.id];
+        return <span title="Course lesson dependencies and active Offerings to archive before this Course can be archived">
+          {lessons===undefined?"":lessons+" lesson"+(lessons===1?"":"s")+" · "}{count} active offering{count===1?"":"s"}
         </span>;
       },
     },
@@ -475,7 +477,7 @@ export function AdminCourseOverview({
             {COLLEGE_COURSES_COPY.existingTitle}
           </h2>
         </div>
-        {catalogue&&catalogueQuery?<form method="get" action="/college/courses"
+        {catalogue&&catalogueQuery?<form method="get" action={courseBasePath}
          className="flex flex-wrap items-end gap-3 rounded border border-border bg-surface p-3">
          <label className="grid min-w-56 flex-1 gap-1 text-sm font-semibold">Search courses
           <input type="search" name="q" maxLength={100} defaultValue={catalogueQuery.q}
@@ -489,11 +491,11 @@ export function AdminCourseOverview({
           </select>
          </label>
          <button type="submit" className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
-         <a href={collegeCourseCatalogueExportHref(catalogueQuery)} download
+         <a href={courseBasePath.startsWith("/admin/")?"/api/admin/courses/catalogue/export"+collegeCourseCatalogueExportHref(catalogueQuery).replace("/api/academics/college-course-export",""):collegeCourseCatalogueExportHref(catalogueQuery)} download
           className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">
           Export CSV
          </a>
-         <Link className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm" href="/college/courses">Clear</Link>
+         <Link className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm" href={courseBasePath}>Clear</Link>
         </form>:null}
         {catalogue&&catalogue.total>1000?<p className="text-xs text-muted-foreground">
          Export CSV includes up to the first 1,000 matching courses. Narrow filters to export a smaller set.
@@ -511,9 +513,9 @@ export function AdminCourseOverview({
           <p className="text-muted-foreground">{catalogue.total} matching courses · page {catalogue.page} of {catalogue.pages} · 25 per page</p>
           <div className="flex gap-3">
            {catalogue.page>1?<Link className="font-semibold text-primary-text"
-            href={collegeCourseCatalogueHref({...catalogueQuery,page:catalogue.page-1})}>Previous</Link>:null}
+            href={collegeCourseCatalogueHref({...catalogueQuery,page:catalogue.page-1}).replace("/college/courses",courseBasePath)}>Previous</Link>:null}
            {catalogue.page<catalogue.pages?<Link className="font-semibold text-primary-text"
-            href={collegeCourseCatalogueHref({...catalogueQuery,page:catalogue.page+1})}>Next</Link>:null}
+            href={collegeCourseCatalogueHref({...catalogueQuery,page:catalogue.page+1}).replace("/college/courses",courseBasePath)}>Next</Link>:null}
           </div>
          </nav>:null}
       </section>

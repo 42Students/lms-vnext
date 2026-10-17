@@ -472,10 +472,9 @@ export function FacultyAttendanceWorkspace({
               {workspace.course.courseCode} ·{" "}
               {workspace.course.sectionName}
             </p>
-            <h1 className="mt-2 text-xl font-semibold text-foreground">
-              Attendance
-            </h1>
-            <p className="mt-1 text-sm text-body">
+            <h1 className="sr-only">Attendance</h1>
+            <p className="mt-2 text-sm text-body">See attendance history and monthly trends in one place.</p>
+            <p className="mt-1 text-xs text-muted-foreground">
               {workspace.course.courseName} ·{" "}
               {workspace.course.academicPeriodName}
             </p>
