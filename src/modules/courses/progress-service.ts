@@ -4,6 +4,7 @@ import {
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {readLearnerPlaybackSettings} from "./learner-playback-settings";
 import {
   learnerContentProgress, collegeMemberships, membershipRoles, users,
 } from "@/db/schema";
@@ -347,6 +348,7 @@ export async function saveLearnerContentProgress(
       input.deliveryId,
     );
 
+  const settings=await readLearnerPlaybackSettings(context.membership?.collegeId);
   const isTimed = TIMED_TYPES.has(
     content.contentType,
   );
@@ -372,7 +374,7 @@ export async function saveLearnerContentProgress(
     positionSeconds = duration>0
       ? Math.min(input.positionSeconds,duration):input.positionSeconds;
     shouldComplete = duration>0 && positionSeconds*100 >=
-      duration*TIMED_CONTENT_COMPLETION_THRESHOLD_PERCENT;
+      duration*settings.watchedThresholdPercent;
   } else {
     if (
       input.positionSeconds !== undefined &&

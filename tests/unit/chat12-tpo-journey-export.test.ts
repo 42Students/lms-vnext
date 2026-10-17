@@ -17,7 +17,8 @@ describe("chat-12 TPO placement metrics and exporting",()=>{
   const spreadsheet=read("src/components/tpo/tpo-students-spreadsheet.tsx");
   expect(page).toContain('{roster.total} students in this view');
   expect(page).toContain('aria-live="polite"');
-  expect(spreadsheet).toContain('selected of {rows.length} on this visible page');
+  expect(spreadsheet).toContain("selected of {shared?.totalCount??rows.length} in the authorized view");
+  expect(read("src/components/tpo/tpo-students-selection.tsx")).toContain("selectedCount} selected of {totalCount}");
  });
  it("TPO-students-52 displays the student profile check, placement stage, outcome, readiness and offer facts",()=>{
   const panel=read("src/components/tpo/tpo-student-quick-panel.tsx");

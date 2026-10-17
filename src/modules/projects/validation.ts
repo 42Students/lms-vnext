@@ -830,7 +830,8 @@ export const scheduleProjectMeetingInputSchema =
     meetingType: z
       .enum(PROJECT_MEETING_TYPES)
       .optional(),
-    meetingUrl: projectMeetingWebUrlSchema,
+    status:z.enum(["DRAFT","SCHEDULED","RESCHEDULED"]).optional(),
+    meetingUrl: projectMeetingWebUrlSchema.nullable().optional(),
     outcome:z.string().trim().max(4000).nullable().optional(),
     facilitation:mentorMeetingFacilitationSchema.optional(),
     expectedUpdatedAt: z.iso.datetime({offset:true}).optional(),
@@ -839,6 +840,9 @@ export const scheduleProjectMeetingInputSchema =
       projectSprintIdSchema.nullable().optional(),
     linkedTaskId:
       projectTaskIdSchema.nullable().optional(),
+  }).superRefine((value,ctx)=>{
+    if(value.status!=="DRAFT" && !value.meetingUrl)
+      ctx.addIssue({code:"custom",path:["meetingUrl"],message:"Meeting link is required."});
   });
 
 export const projectMeetingTransitionInputSchema =

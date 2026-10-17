@@ -29,3 +29,9 @@ LEARNER-course-detail-03/04/05/10/11/12/17/18 and other audit entries are not cl
 | LEARNER-course-detail-20 | DONE (source authored; execution pending) | `tests/unit/chat15-reassigned-learner-parity.test.ts` — `LEARNER-course-detail-20` test; existing implementation reviewed, corrected roadmap copy. |
 
 | LEARNER-course-detail-12 | PARTIAL | `tests/unit/chat15-player-and-placement-copy.test.ts`, playback-rate selector present; server tunables for progress cadence and threshold remain. |
+
+## Chat-15 follow-on from registered 0134 (source authored; not tested)
+
+| LEARNER-course-detail-12 | SOURCE-DONE (unverified) | `src/modules/courses/learner-playback-settings.ts` validates GLOBAL/current-college overrides `ui.progressSaveIntervalMs` (1000–60000) and `course.watchedThresholdPercent` (1–100); `progress-service.ts` enforces authoritative threshold; native/YouTube players receive interval from learner workspace; YouTube embed uses `youtube-nocookie.com` host. `tests/unit/chat15-learner-playback-settings.test.ts` names the ID. No focused test run. |
+| LEARNER-course-detail-19 | SOURCE-DONE (unverified) | `src/modules/courses/learner-course-service.ts` catches optional assignments, quizzes and quiz-attempt state reads separately while keeping lessons; `learner-course-workspace.tsx` presents `Some course state could not be loaded` and `Retry state`; segment fallback says `Could not load course lessons` / `Retry`. `tests/unit/chat15-course-state-and-staff-optout.test.ts` names the ID. No focused test run. |
+| LEARNER-course-detail-05 | PARTIAL | `src/components/courses/assignment-submission-control.tsx` includes the `Discard this submission?` / `Keep editing` / `Discard` modal and unload/anchor-navigation guards; a safer formatted text editor now handles bold/italic/lists but is not a legacy HTML WYSIWYG editor, and Google Drive import/teacher attachment read path remain unresolved. `tests/unit/chat15-learner-rich-response.test.ts`. |

@@ -195,7 +195,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
      {row.displayName}</label>)}
    </div>
    <p className="text-sm">{noteSelection.length} selected</p>
-   <TpoStudentNoteEditor membershipIds={[...noteSelection]} afterSave={()=>setNoteSelection([])}/>
+   <TpoStudentNoteEditor membershipIds={noteSelection} afterSave={()=>setNoteSelection([])}/>
   </details>
   <label className="inline-flex items-center gap-3 text-sm font-semibold">Sort visible roster page
    <select value={pageSort} onChange={e=>setPageSort(e.target.value as typeof pageSort)}

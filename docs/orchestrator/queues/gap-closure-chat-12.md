@@ -50,7 +50,7 @@ Audit: `docs/audit/pages/tpo/students.md` (and `students-review.md` if present; 
 | TPO-students-44 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-students-45 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-students-46 | S3 | COPY | DONE |
-| TPO-students-47 | S3 | COPY | OPEN |
+| TPO-students-47 | S3 | COPY | DONE |
 | TPO-students-49 | S3 | PERMISSION | UNCONFIRMED |
 | TPO-students-50 | S3 | STATE | NOT-A-GAP |
 | TPO-students-51 | S3 | RESPONSIVE | DONE |
@@ -120,7 +120,7 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - GR-30/GR-31 partial: shared `apiFetch` and `useGuardedAction` are now adopted in chat-12 Students and Requests/Verification mutation controls; other mutating flows still require the guard.
 
 
-- TPO-students-10 OPEN: course Assign prep (course picker, due date, skip duplicate, learner notification) is still missing.
+- TPO-students-10 remains OPEN (partial): real 0134 course Assign prep picker, due date, duplicate skip and learner notice now exist, but the legacy optional due-date behavior is not supported by the NOT NULL schema. The due date entered as IST is now converted without browser timezone drift.
 - TPO-students-12 OPEN: scoped drive INCLUDE/EXCLUDE visibility overrides, reason and undo are still missing.
 - TPO-students-34 OPEN: academic import updates need application re-evaluation, learner notice and placement-team bell.
 - TPO-students-49 OPEN: do not widen roster/export authorization without proving College Admin, SA and placement-team faculty role parity.
@@ -177,3 +177,7 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - Existing first-publication `countPublishedDriveDebarments` already advances N-drive bans transactionally (`src/modules/placements/tpo-drive-publish-effects.ts`) but -06/-07 remain OPEN for the learner dispute path.
 - The signed XLSX route is read-only, TPO-scoped, protects chosen row membership and limits 5,000 rows; package dependencies unchanged.
 - All shell-only rows remain with chat-9; do not claim these gaps DONE from this lane.
+
+- Round 43: TPO-requests-verification-01 remains OPEN (partial): TPO panel now shows kind-specific submitted details and safe proof links with missing-proof warning; three kinds still prohibit approve until real transactional effects are implemented. Tests authored, not run.
+
+- Round 44 (source-only): TPO-students-47 DONE for current exact header/search, filtered empty state, counts and recoverable route error (browser stale-success fallback still requires acceptance); TPO-requests-verification-13 OPEN (partial): failed-row copying now formula-safe; bulk-run audit and proof-aware skips remain. `tests/unit/chat12-requests-bulk-copy-failed.test.ts` named `TPO-requests-verification-13` (authored, unrun). Round 44 reconciled existing selection tests to filtered cross-page behavior.

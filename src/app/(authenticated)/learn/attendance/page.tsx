@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { learnerAttendanceIstMonth } from "@/modules/attendance/learner-attendance-filter-model";
+import {learnerAttendanceIstMonth,learnerAttendanceMonthSchema} from "@/modules/attendance/learner-attendance-filter-model";
+import {learnerAttendanceMonthWindow} from "@/modules/attendance/learner-attendance-calendar-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   LearnerAttendanceWorkspace,
@@ -9,12 +10,18 @@ import {
   getLearnerAttendanceWorkspace,
 } from "@/modules/attendance/learner-service";
 
-export default async function LearnerAttendancePage() {
+export default async function LearnerAttendancePage({searchParams}:{
+  searchParams:Promise<{month?:string|string[]}>;
+}) {
+  const raw=await searchParams;
+  const defaultMonth=learnerAttendanceIstMonth(new Date());
+  const selected=learnerAttendanceMonthSchema.safeParse(raw.month).data??defaultMonth;
   const context =
     await getCurrentRequestContext();
   const workspace =
     await getLearnerAttendanceWorkspace(
       context,
+      {window:learnerAttendanceMonthWindow(selected)},
     );
 
   return (
@@ -29,7 +36,7 @@ export default async function LearnerAttendancePage() {
         </Link>
       </div>
       <LearnerAttendanceWorkspace
-        defaultMonth={learnerAttendanceIstMonth(new Date())}
+        defaultMonth={defaultMonth}
         courses={workspace.courses}
         summaries={workspace.summaries}
         threshold={
