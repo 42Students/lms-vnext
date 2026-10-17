@@ -65,7 +65,7 @@ export function CollegeAssignmentReview({
  return <div className="space-y-2">
   {options.length>1?<label className="grid gap-1 text-xs font-semibold text-body">
    Section
-   <select value={selected.deliveryId} disabled={bulkBusy} onChange={event=>{setDeliveryId(event.target.value);setBulkStatus("");}}
+   <select value={selected.deliveryId} disabled={bulkBusy} onChange={event=>{setDeliveryId(event.target.value);setBulkStatus("");setRetryAllowed(false);}}
     className="min-h-10 rounded-md border border-border bg-surface px-2 text-sm text-foreground">
     {options.map(item=><option key={item.deliveryId} value={item.deliveryId}>
      {item.sectionName} ({item.sectionCode})
