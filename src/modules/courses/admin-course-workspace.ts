@@ -17,17 +17,14 @@ export async function getAdminCourseWorkspace(
   collegeId: string,
   includeArchivedOfferings = false,
 ) {
-  const [academics, courses, people] =
+  const [academics, courses, facultyChoices] =
     await Promise.all([
       getAcademicsWorkspace(
         context,
         collegeId,
       ),
       listCourses(context, collegeId),
-      listAllCollegePeople(
-        context,
-        collegeId,
-      ),
+      listCollegeFacultyPicker(context,collegeId),
     ]);
 
   const activeCohorts =
