@@ -38,14 +38,17 @@ export function RecruiterBulkStageControls({
   const [copyNotice,setCopyNotice]=useState("");
   const [runAuditId,setRunAuditId]=useState("");
   const [reviewOpen,setReviewOpen]=useState(false);
+  const [reviewSignature,setReviewSignature]=useState("");
 
   const available = rows.filter((row) =>
     ["NEW", "CONTACTED", "NOT_NOW"].includes(row.manualStage),
   );
   const selected = available.filter((row) => chosenIds.includes(row.id));
+  const currentSignature=[action,reason.trim(),revisitDate,...selected.map(row=>row.id+":"+row.manualStage).sort()].join("|");
   const retryable=results.filter(item=>item.status==="ineligible"&&available.some(row=>row.id===item.leadId));
+  const todayIst=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
   const isValid = selected.length > 0 && selected.length <= 100 &&
-    (action !== "NOT_NOW" || (reason.trim().length > 0 && reason.trim().length <= 255));
+    (action !== "NOT_NOW" || (reason.trim().length > 0 && reason.trim().length <= 255 && (!revisitDate||revisitDate>=todayIst)));
 
   function choose(id: string, value: boolean) {
     setError("");
@@ -75,7 +78,7 @@ export function RecruiterBulkStageControls({
       id: row.id,
       expectedStage: row.manualStage as "NEW" | "CONTACTED" | "NOT_NOW",
     }));
-    if(!reviewOpen){setReviewOpen(true);return;}
+    if(!reviewOpen||reviewSignature!==currentSignature){setReviewSignature(currentSignature);setReviewOpen(true);return;}
 
     setBusy(true);
     setError("");
@@ -106,7 +109,7 @@ export function RecruiterBulkStageControls({
       setResults(data.results);
       setRunAuditId(data.runAuditId??"");
       setChosenIds([]);
-      setReviewOpen(false);
+      setReviewOpen(false);setReviewSignature("");
       setReason("");
       setRevisitDate("");
       onUpdated();
@@ -188,7 +191,7 @@ export function RecruiterBulkStageControls({
                   Revisit date (optional)
                   <input
                     type="date"
-                    min={new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date())}
+                    min={todayIst}
                     value={revisitDate}
                     onChange={(event) => {setRevisitDate(event.target.value);setReviewOpen(false);}}
                     disabled={busy}
@@ -203,10 +206,10 @@ export function RecruiterBulkStageControls({
               onClick={() => void apply()}
               className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50"
             >
-              {busy ? "Applying…" : reviewOpen ? "Confirm stage changes" : "Review and confirm"}
+              {busy ? "Applying…" : reviewOpen&&reviewSignature===currentSignature ? "Confirm stage changes" : "Review and confirm"}
             </button>
           </div>
-          {reviewOpen?<div role="status" className="rounded-md border border-border bg-surface-secondary p-3 text-sm">
+          {reviewOpen&&reviewSignature===currentSignature?<div role="status" className="rounded-md border border-border bg-surface-secondary p-3 text-sm">
             Confirm {selected.length} recruiter lead stage changes to {action==="CONTACTED"?"Contacted":"Not now"}.
             {action==="NOT_NOW"?<p>Reason: {reason.trim()}{revisitDate?" · Revisit "+revisitDate:""}</p>:null}
             <button type="button" className="mt-2 text-primary-text underline" onClick={()=>setReviewOpen(false)}>Edit selection</button>
