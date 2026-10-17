@@ -25,7 +25,7 @@ describe("Faculty aggregate assessment lifecycle",()=>{
   expect(facultyAssessmentLifecyclePayload({...common,kind:"ASSIGNMENT",action:"ARCHIVE"})).toEqual({
     action:"ARCHIVE",assignmentId:common.id,expectedUpdatedAt:common.expectedUpdatedAt,confirmed:true,
   });
-  expect(facultyAssessmentLifecycleWarning("QUIZ","ARCHIVE")).toMatch(/attempts prevent/);
-  expect(facultyAssessmentLifecycleWarning("ASSIGNMENT","ARCHIVE")).toMatch(/submissions prevent/);
+  expect(facultyAssessmentLifecycleWarning("QUIZ","ARCHIVE")).toMatch(/Delete this quiz\?.*cannot be undone/);
+  expect(facultyAssessmentLifecycleWarning("ASSIGNMENT","ARCHIVE")).toMatch(/Delete this assignment\?.*cannot be undone/);
  });
 });

@@ -6,7 +6,7 @@ describe("faculty submitted files review", () => {
   const drawer = readFileSync(path+"faculty-assignment-review.tsx","utf8");
   it("is reachable from the existing faculty grade drawer for FILE submissions", () => {
     expect(drawer).toContain('submission.submissionType === "FILE" && filesEnabled');
-    expect(drawer).toContain("<FacultySubmissionFileReview submissionId={submission.id} />");
+    expect(drawer).toMatch(/<FacultySubmissionFileReview submissionId=\{submission\.id\}\s*\/>/);
   });
   it("gets server-scoped submission files and checks their persisted submission ID", () => {
     expect(reviewer).toContain("/api/courses/assignment-submissions/");

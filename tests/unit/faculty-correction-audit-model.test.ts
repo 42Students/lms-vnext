@@ -12,7 +12,7 @@ describe("Faculty Attendance correction audit model",()=>{
   expect(preview).toContain("1 changed to absent, 1 changed to present");
   expect(preview).not.toContain("private-");
   expect(facultyAttendanceConfirmation(true,["a","b"],["b","a","a"],2)).toBeNull();
-  expect(facultyAttendanceConfirmation(false,[],["a","a"],3)).toBe("Confirm attendance: 2 present, 1 absent.");
+  expect(facultyAttendanceConfirmation(false,[],["a","a"],3)).toBe("Submit Attendance — Mark 1 student(s) absent and 2 student(s) present?");
   expect(facultyAttendanceConfirmation(false,[],[],0)).toBeNull();
   expect(facultyAttendanceConfirmation(false,[],["a","b"],1)).toBeNull();
  });

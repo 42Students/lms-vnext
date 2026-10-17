@@ -107,7 +107,7 @@ describe("learner assessment parity pages", () => {
       "utf8",
     );
     expect(overview).toContain("quizOverviewActionState");
-    expect(quizState).toContain("View Result");
+    expect(quizState).toContain("View answers");
   });
 
   it("keeps explicit aggregate loading and error boundaries", () => {

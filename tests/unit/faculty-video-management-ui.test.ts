@@ -4,7 +4,7 @@ describe("faculty lesson management storage API wiring",()=>{
  const ui=readFileSync("src/components/courses/faculty-lesson-video-manager.tsx","utf8");
  const preview=readFileSync("src/components/courses/faculty-video-preview.tsx","utf8");
  it("exposes upload thumbnail replacement, publish, ordering, delete and content linking",()=>{
-  for(const phrase of ["/videos?deliveryId=","uploadFacultyLessonVideo","uploadFacultyLessonThumbnail",
+  for(const phrase of ["/videos${deliveryId?`?deliveryId=","uploadFacultyLessonVideo","uploadFacultyLessonThumbnail",
    "replaceVideoId","publishStatus:facultyVideoPublishAction","visibleToStudents:!video.visibleToStudents",
    "facultyVideoReorderPlan","/lesson-contents","video-asset/","lessonContentId:contentId",'"DELETE",undefined']){
     expect(ui).toContain(phrase);

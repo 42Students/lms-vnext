@@ -4,7 +4,7 @@ import {applyHrRoundPreset,HR_DRIVE_ROUND_PRESETS} from "@/modules/placements/hr
 describe("HR Request Drive local round presets",()=>{
  it("replaces only draft rounds with supported legacy kinds",()=>{
   const draft={...emptyHrDriveDraft(),title:"Engineer",description:"Test this hiring process.",
-   location:"Hyderabad"};
+   location:"Hyderabad",ctcLpa:"10"};
   const next=applyHrRoundPreset(draft,"FULL_PROCESS");
   expect(next.rounds).toHaveLength(4);
   expect(next.title).toBe("Engineer");

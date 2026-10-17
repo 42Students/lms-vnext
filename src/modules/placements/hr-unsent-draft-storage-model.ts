@@ -1,5 +1,6 @@
 import {z} from "zod";
 import {hrDriveDraftSchema,emptyHrDriveDraft,type HrDriveDraft} from "./hr-drive-draft-model";
+import {hrDraftContainsWork} from "./hr-draft-reset-model";
 const lifetime=24*60*60*1000;
 export function hrDriveSessionStorageKey(userId:string,collegeId:string,fromJobId?:string|null){
  const id=z.string().uuid();
@@ -30,7 +31,7 @@ function isEditableHrDraft(value:unknown):value is HrDriveDraft{
  return true;
 }
 export function saveHrUnsentDraft(draft:HrDriveDraft,now:number):string|null{
- if(!Number.isFinite(now)||now<0||!isEditableHrDraft(draft))return null;
+ if(!Number.isFinite(now)||now<0||!isEditableHrDraft(draft)||!hrDraftContainsWork(draft))return null;
  const raw=JSON.stringify({version:2,savedAt:now,draft});
  return raw.length<=20000?raw:null;
 }

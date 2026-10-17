@@ -38,7 +38,7 @@ describe("HR recruiter Request Drive draft preview", () => {
     }).success).toBe(false);
     expect(hrDriveDraftSchema.safeParse({
       ...draft, title: "Engineer", description: "Enough detail to validate this role.",
-      location: "Hyderabad", bondMonths: "24", maximumActiveBacklogs: "2",
+      location: "Hyderabad", ctcLpa: "10", bondMonths: "24", maximumActiveBacklogs: "2",
       fixedAnnualCtcInr: "500000", variableAnnualCtcInr: "100000",
     }).success).toBe(true);
   });
@@ -57,7 +57,7 @@ describe("HR recruiter Request Drive draft preview", () => {
   it("rejects confusing duplicate hiring-round names after spacing/case normalization",()=>{
     const draft={...emptyHrDriveDraft(),title:"Engineer",
       description:"A full role description for the college placement cell.",
-      location:"Hyderabad",rounds:[
+      location:"Hyderabad",ctcLpa:"10",rounds:[
         {kind:"TEST" as const,name:"Technical assessment"},
         {kind:"INTERVIEW" as const,name:"  technical   ASSESSMENT  "},
       ]};

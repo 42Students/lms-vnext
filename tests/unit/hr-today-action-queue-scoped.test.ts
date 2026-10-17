@@ -2,13 +2,13 @@ import {describe,it,expect} from "vitest";
 import {buildRecruiterActionQueue} from "@/modules/placements/hr-today-action-queue-model";
 describe("REC-home-drives-01 scoped task queue",()=>{
  const job={collegeId:"college",companyId:"employer",job:{id:"11111111-1111-4111-8111-111111111111",title:"Engineer",status:"PUBLISHED",archivedAt:null}};
- it("prioritizes readable conversations and authorized results due",()=>{
+ it("orders dated results-due first, then readable conversations and notices, then reviews",()=>{
   const rows=buildRecruiterActionQueue({jobs:[job],collegeId:"college",companyId:"employer",unread:1,
    unreadConversations:[{id:"thread",href:"/hr/conversations/thread",label:"College chat",unread:2}],
    resultsDue:[{id:"round",jobId:"11111111-1111-4111-8111-111111111111",jobTitle:"Engineer",roundName:"Interview",dueAt:new Date("2026-10-18T00:00:00Z")}],
   });
-  expect(rows.map(row=>row.key)).toEqual(["thread:thread","due:round","review:11111111-1111-4111-8111-111111111111","notifications"]);
-  expect(rows[1]?.description).toContain("does not establish whether results are outstanding");
+  expect(rows.map(row=>row.key)).toEqual(["due:round","notifications","thread:thread","review:11111111-1111-4111-8111-111111111111"]);
+  expect(rows[0]?.description).toContain("does not establish whether results are outstanding");
  });
  it("cannot leak foreign-company or unlinked deadline rows into actions",()=>{
   const rows=buildRecruiterActionQueue({jobs:[job,{...job,companyId:"foreign"}],

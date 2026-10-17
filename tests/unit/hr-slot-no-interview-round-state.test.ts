@@ -5,5 +5,6 @@ it("offers a safe recruiter round route when no interview rounds can host slots"
  expect(page).toMatch(/rounds\.length===0\s*\?/);
  expect(page).toContain("No pending or scheduled interview round");
  expect(page).toContain('+"/rounds/editor"');
- expect(page).toContain("disabled={!rounds.length}");
+ const form=readFileSync("src/components/placements/recruiter-interview-slot-form.tsx","utf8");
+ expect(form).toContain("disabled={!rounds.length||submitting}");
 });

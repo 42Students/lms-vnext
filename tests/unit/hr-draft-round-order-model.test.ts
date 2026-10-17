@@ -12,6 +12,6 @@ describe("HR local hiring round order",()=>{
   expect(reorderHrDraftRound(moved,0,-1)).toBe(moved);
   expect(reorderHrDraftRound(moved,4,1)).toBe(moved);
   expect(hrDriveDraftSchema.safeParse({...moved,title:"Engineer",
-   description:"A role with clear duties and requirements.",location:"Hyderabad"}).success).toBe(true);
+   description:"A role with clear duties and requirements.",location:"Hyderabad",ctcLpa:"10"}).success).toBe(true);
  });
 });
