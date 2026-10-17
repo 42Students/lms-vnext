@@ -48,7 +48,8 @@ export async function undoTpoRecruiterBulkRun(context:RequestContext,raw:unknown
  return getDb().transaction(async tx=>{
   const [event]=await tx.select().from(activityEvents).where(and(
    eq(activityEvents.id,input.runAuditId),eq(activityEvents.collegeId,college.id),
-   eq(activityEvents.actorUserId,context.user.id),eq(activityEvents.module,"PLACEMENTS"),
+   eq(activityEvents.actorUserId,context.user.id),
+   eq(activityEvents.actorMembershipId,membership.id),eq(activityEvents.module,"PLACEMENTS"),
   )).for("update").limit(1);
   if(!event||!["PLACEMENTS_RECRUITER_BULK_STAGE","PLACEMENTS_RECRUITER_BULK_OWNER"].includes(event.eventType))
    throw new TpoBulkUndoError("NOT_FOUND");
