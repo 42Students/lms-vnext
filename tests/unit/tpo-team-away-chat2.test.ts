@@ -21,6 +21,14 @@ describe("TPO Team away until",()=>{
    .toBe("2099-06-02T12:00:00.000Z");
   expect(src("src/modules/placements/tpo-team-away-service.ts")).toContain("tpoEffectiveAwayUntil(current?.awayUntil??null,now)");
  });
+ it("TPO-inbox-team-34 warns before asking a teammate whose away-until is persisted",()=>{
+  const page=src("src/app/(authenticated)/tpo/team/[threadId]/page.tsx");
+  const ui=src("src/components/tpo/tpo-team-ask-panel.tsx");
+  expect(page).toContain("listTpoTeamAway(context)");
+  expect(page).toContain("recipientAwayLabel={awayLabel}");
+  expect(ui).toContain("is away until");
+  expect(ui).toContain('role="status"');
+ });
  it("TPO-inbox-team-31 displays verified away intervals and a Back now action only for the member",()=>{
   const page=src("src/app/(authenticated)/tpo/team/page.tsx");
   const form=src("src/components/tpo/tpo-team-away-form.tsx");

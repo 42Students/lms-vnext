@@ -49,8 +49,8 @@ function AskActions({threadId,ask,ownId}:{threadId:string;ask:Ask;ownId:string})
   </div>:null}
  </div>;
 }
-export function TpoTeamAskPanel({threadId,actorId,recipientId,recipientName,items,serverNowMs,highlightAskId}:{
- threadId:string;actorId:string;recipientId:string;recipientName:string;items:Ask[];serverNowMs:number;highlightAskId?:string;
+export function TpoTeamAskPanel({threadId,actorId,recipientId,recipientName,recipientAwayLabel,items,serverNowMs,highlightAskId}:{
+ threadId:string;actorId:string;recipientId:string;recipientName:string;recipientAwayLabel:string|null;items:Ask[];serverNowMs:number;highlightAskId?:string;
 }){
  const router=useRouter(),pending=useRef(false),key=useRef<string|null>(null);
  const [title,setTitle]=useState(""),[due,setDue]=useState("");
@@ -83,6 +83,7 @@ export function TpoTeamAskPanel({threadId,actorId,recipientId,recipientName,item
   <p className="text-xs text-muted-foreground">Ask one teammate to do something, with an optional due date.</p>
   <form onSubmit={event=>void create(event)} className="grid gap-3">
    <p className="text-sm">Ask {recipientName}</p>
+   {recipientAwayLabel?<p role="status" className="text-xs text-warning-text">{recipientName.split(" ")[0]} is away until {recipientAwayLabel}.</p>:null}
    <label className="grid gap-1 text-sm">What needs doing?
     <input required maxLength={200} disabled={busy} value={title}
      onChange={event=>{setTitle(event.target.value);key.current=null;}}
