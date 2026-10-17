@@ -6,9 +6,9 @@ import {placementTpoAfterCollege} from "@/db/schema/tpo-configuration";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 import {placementTableExists} from "./staged-tables";
-import {afterCollegeOutcomeSchema} from "./tpo-after-college-model";
+import {afterCollegeManualSchema} from "./tpo-after-college-model";
 import {z} from "zod";
-const inputSchema=z.object({learnerMembershipId:z.string().uuid(),outcome:afterCollegeOutcomeSchema,
+const inputSchema=z.object({learnerMembershipId:z.string().uuid(),outcome:afterCollegeManualSchema,
  expectedVersion:z.union([z.literal("none"),z.iso.datetime({offset:true})])}).strict();
 export class AfterCollegeError extends Error{
  constructor(public readonly code:"AFTER_COLLEGE_STALE"|"AFTER_COLLEGE_NOT_FOUND"|"AFTER_COLLEGE_PENDING"){

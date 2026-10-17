@@ -16,6 +16,7 @@ type Batch = {
   code: string;
   status: "PLANNED" | "ACTIVE" | "COMPLETED" | "ARCHIVED";
   expectedEndPeriodId: string | null;
+  academicYear:string|null;startDate:string|null;endDate:string|null;
   updatedAt: Date;
   activeSections: number;
   activeEnrolledLearners: number;
@@ -47,10 +48,14 @@ export function CollegeCohortCreateForm({ programs, periods }: {
   const [expectedEndPeriodId, setExpectedEndPeriodId] = useState("");
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
+  const [academicYear,setAcademicYear]=useState("");
+  const [startDate,setStartDate]=useState("");
+  const [endDate,setEndDate]=useState("");
   const [notice, setNotice] = useState("");
   const start=periods.find(period=>period.id===startPeriodId);
   const end=periods.find(period=>period.id===expectedEndPeriodId);
-  const dateInvalid=Boolean(start&&end&&end.endDate&&start.startDate&&end.endDate<start.startDate);
+  const dateInvalid=Boolean((startDate||start?.startDate)&&(endDate||end?.endDate)&&
+    (endDate||end?.endDate||"")<(startDate||start?.startDate||""));
   const year=start?.startDate?Number(start.startDate.slice(0,4)):null;
 
   function submit(event: FormEvent<HTMLFormElement>) {
@@ -59,7 +64,7 @@ export function CollegeCohortCreateForm({ programs, periods }: {
     if(dateInvalid){setNotice("End date cannot be before start date.");return;}
     const parsed = createCollegeCohortSchema.safeParse({
       programId, startPeriodId, expectedEndPeriodId: expectedEndPeriodId || null,
-      name, code,
+      name, code,academicYear:academicYear||null,startDate:startDate||null,endDate:endDate||null,
     });
     if (!parsed.success) {
       setNotice(parsed.error.issues[0]?.message ?? "Enter valid batch details.");
@@ -70,6 +75,7 @@ export function CollegeCohortCreateForm({ programs, periods }: {
         await send("POST", "/api/college/batches", parsed.data);
         setName("");
         setCode("");
+        setAcademicYear("");setStartDate("");setEndDate("");
         setExpectedEndPeriodId("");
         setNotice("Batch created.");
         router.refresh();
@@ -115,6 +121,18 @@ export function CollegeCohortCreateForm({ programs, periods }: {
             {periods.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
           </select>
         </label>
+        <label className="grid gap-1 text-sm font-medium text-body">Academic Year
+          <input maxLength={16} value={academicYear} onChange={e=>setAcademicYear(e.target.value)}
+            placeholder="2026–2027" className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+        </label>
+        <label className="grid gap-1 text-sm font-medium text-body">Start Date
+          <input type="date" value={startDate} onChange={e=>setStartDate(e.target.value)}
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+        </label>
+        <label className="grid gap-1 text-sm font-medium text-body">End Date
+          <input type="date" value={endDate} min={startDate||undefined} onChange={e=>setEndDate(e.target.value)}
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+        </label>
         <div className="sm:col-span-2 lg:col-span-5 text-sm text-body">
           <p>Start Date: {start?.startDate??"Choose start period"} · End Date: {end?.endDate??"Not specified"}</p>
           <p>Academic Year: {year?`${year}–${year+1}`:"Select a start period to see the academic year."}</p>
@@ -140,12 +158,17 @@ export function CollegeCohortRowActions({ row, periods }: {
   const [name, setName] = useState(row.name);
   const [code, setCode] = useState(row.code);
   const [expectedEndPeriodId, setExpectedEndPeriodId] = useState(row.expectedEndPeriodId ?? "");
+  const [academicYear,setAcademicYear]=useState(row.academicYear??"");
+  const [startDate,setStartDate]=useState(row.startDate??"");
+  const [endDate,setEndDate]=useState(row.endDate??"");
   const [notice, setNotice] = useState("");
   const original = {
     name: row.name, code: row.code,
     expectedEndPeriodId: row.expectedEndPeriodId,
+    academicYear:row.academicYear,startDate:row.startDate,endDate:row.endDate,
   };
-  const draft = { name, code, expectedEndPeriodId: expectedEndPeriodId || null };
+  const draft = { name, code, expectedEndPeriodId: expectedEndPeriodId || null,
+    academicYear:academicYear||null,startDate:startDate||null,endDate:endDate||null };
   const blocked = row.status === "ARCHIVED";
   const endDateLocked = row.activeSections > 0 || row.activeEnrolledLearners > 0;
 
@@ -256,6 +279,15 @@ export function CollegeCohortRowActions({ row, periods }: {
               <option value={row.expectedEndPeriodId}>Previously recorded period (unavailable)</option> : null}
             {periods.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
           </select>
+        </label>
+        <label className="grid gap-1 text-sm">Academic Year
+          <input maxLength={16} value={academicYear} onChange={e=>setAcademicYear(e.target.value)} className="min-h-10 rounded border border-border bg-surface px-3"/>
+        </label>
+        <label className="grid gap-1 text-sm">Start Date
+          <input type="date" disabled={endDateLocked} value={startDate} onChange={e=>setStartDate(e.target.value)} className="min-h-10 rounded border border-border bg-surface px-3"/>
+        </label>
+        <label className="grid gap-1 text-sm">End Date
+          <input type="date" disabled={endDateLocked} value={endDate} min={startDate||undefined} onChange={e=>setEndDate(e.target.value)} className="min-h-10 rounded border border-border bg-surface px-3"/>
         </label>
         {endDateLocked && <p className="text-xs text-muted-foreground">
           End period is locked because the batch has enrolled learners or classes. Name and code remain editable.

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-17T01:19:05.433Z",
+ "generatedAt": "2026-10-17T01:47:13.760Z",
  "since": "2026-10-15",
  "mainRef": "origin/main",
  "statuses": [
@@ -13,21 +13,21 @@
  ],
  "total": 1843,
  "byStatus": {
-  "OPEN": 853,
+  "OPEN": 828,
   "IN-BRANCH": 2,
-  "FIXED-ON-MAIN": 666,
+  "FIXED-ON-MAIN": 694,
   "VERIFIED": 195,
-  "UNCONFIRMED": 108,
+  "UNCONFIRMED": 105,
   "WRONG": 9,
   "CLOSED-SINCE": 10,
   "total": 1843
  },
- "closedPercent": "47.5%",
+ "closedPercent": "49.0%",
  "byAccount": {
   "tpo": {
-   "OPEN": 361,
+   "OPEN": 343,
    "IN-BRANCH": 0,
-   "FIXED-ON-MAIN": 196,
+   "FIXED-ON-MAIN": 214,
    "VERIFIED": 97,
    "UNCONFIRMED": 33,
    "WRONG": 1,
@@ -45,11 +45,11 @@
    "total": 116
   },
   "learner": {
-   "OPEN": 95,
+   "OPEN": 94,
    "IN-BRANCH": 0,
-   "FIXED-ON-MAIN": 95,
+   "FIXED-ON-MAIN": 98,
    "VERIFIED": 21,
-   "UNCONFIRMED": 18,
+   "UNCONFIRMED": 16,
    "WRONG": 1,
    "CLOSED-SINCE": 1,
    "total": 231
@@ -65,9 +65,9 @@
    "total": 105
   },
   "college": {
-   "OPEN": 99,
+   "OPEN": 96,
    "IN-BRANCH": 0,
-   "FIXED-ON-MAIN": 84,
+   "FIXED-ON-MAIN": 87,
    "VERIFIED": 28,
    "UNCONFIRMED": 19,
    "WRONG": 1,
@@ -75,19 +75,19 @@
    "total": 232
   },
   "superadmin": {
-   "OPEN": 153,
+   "OPEN": 151,
    "IN-BRANCH": 0,
-   "FIXED-ON-MAIN": 111,
+   "FIXED-ON-MAIN": 114,
    "VERIFIED": 20,
-   "UNCONFIRMED": 25,
+   "UNCONFIRMED": 24,
    "WRONG": 0,
    "CLOSED-SINCE": 0,
    "total": 309
   },
   "mentor": {
-   "OPEN": 51,
+   "OPEN": 50,
    "IN-BRANCH": 0,
-   "FIXED-ON-MAIN": 31,
+   "FIXED-ON-MAIN": 32,
    "VERIFIED": 5,
    "UNCONFIRMED": 1,
    "WRONG": 0,
@@ -117,21 +117,21 @@
    "total": 113
   },
   "S2": {
-   "OPEN": 234,
+   "OPEN": 225,
    "IN-BRANCH": 0,
-   "FIXED-ON-MAIN": 262,
+   "FIXED-ON-MAIN": 272,
    "VERIFIED": 86,
-   "UNCONFIRMED": 37,
+   "UNCONFIRMED": 36,
    "WRONG": 2,
    "CLOSED-SINCE": 3,
    "total": 624
   },
   "S3": {
-   "OPEN": 436,
+   "OPEN": 420,
    "IN-BRANCH": 2,
-   "FIXED-ON-MAIN": 291,
+   "FIXED-ON-MAIN": 308,
    "VERIFIED": 31,
-   "UNCONFIRMED": 44,
+   "UNCONFIRMED": 43,
    "WRONG": 0,
    "CLOSED-SINCE": 3,
    "total": 807
@@ -139,9 +139,9 @@
   "S4": {
    "OPEN": 176,
    "IN-BRANCH": 0,
-   "FIXED-ON-MAIN": 84,
+   "FIXED-ON-MAIN": 85,
    "VERIFIED": 2,
-   "UNCONFIRMED": 27,
+   "UNCONFIRMED": 26,
    "WRONG": 7,
    "CLOSED-SINCE": 3,
    "total": 299
@@ -159,9 +159,9 @@
    "total": 206
   },
   "chat-5": {
-   "OPEN": 181,
+   "OPEN": 171,
    "IN-BRANCH": 0,
-   "FIXED-ON-MAIN": 81,
+   "FIXED-ON-MAIN": 91,
    "VERIFIED": 33,
    "UNCONFIRMED": 15,
    "WRONG": 1,
@@ -169,21 +169,21 @@
    "total": 312
   },
   "chat-7": {
-   "OPEN": 240,
+   "OPEN": 238,
    "IN-BRANCH": 2,
-   "FIXED-ON-MAIN": 275,
+   "FIXED-ON-MAIN": 279,
    "VERIFIED": 50,
-   "UNCONFIRMED": 31,
+   "UNCONFIRMED": 29,
    "WRONG": 7,
    "CLOSED-SINCE": 3,
    "total": 608
   },
   "chat-9": {
-   "OPEN": 338,
+   "OPEN": 325,
    "IN-BRANCH": 0,
-   "FIXED-ON-MAIN": 252,
+   "FIXED-ON-MAIN": 266,
    "VERIFIED": 70,
-   "UNCONFIRMED": 52,
+   "UNCONFIRMED": 51,
    "WRONG": 1,
    "CLOSED-SINCE": 4,
    "total": 717
@@ -191,9 +191,9 @@
  },
  "fixedLast24h": {
   "chat-2": 100,
-  "chat-5": 114,
-  "chat-7": 327,
-  "chat-9": 322
+  "chat-5": 124,
+  "chat-7": 331,
+  "chat-9": 336
  },
  "parseProblems": 0
 }

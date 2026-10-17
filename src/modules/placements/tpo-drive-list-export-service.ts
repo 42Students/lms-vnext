@@ -1,7 +1,7 @@
 import "server-only";
 import type {RequestContext} from "@/modules/identity/context";
 import {getTpoDriveLifecycleList} from "./tpo-drive-lifecycle-list-service";
-import {tpoDriveLifecycleQuerySchema} from "./tpo-drive-lifecycle-list-model";
+import {tpoDriveLifecycleQuerySchema,tpoDriveWhereItIs} from "./tpo-drive-lifecycle-list-model";
 import {placementReportCsv} from "./report-model";
 
 const MAX_PAGES=1000; // 25,000 matching drives, far beyond the page preview.
@@ -37,8 +37,13 @@ export async function exportTpoDriveLifecycle(context:RequestContext,raw:unknown
  if(scope==="SELECTED"&&rows.length!==selectedIds.length)throw Error("Selection is stale or outside your permitted filter. Refresh the list.");
  return {fileName:"drives-"+query.view.toLowerCase()+(scope==="SELECTED"?"-selected":"")+".csv",
   csv:placementReportCsv(["Drive ID","Company","Role","Status","Job type","Mode",
-   "Applications","Pay minimum (INR)","Pay maximum (INR)","Stipend/month (INR)","Dream drive","Created by","Deadline (UTC)"],
+   "Applications","Active offers","Rounds completed","Rounds total","Where it is","Pay minimum (INR)","Pay maximum (INR)","Stipend/month (INR)","Dream drive","Created by","Deadline (UTC)"],
    rows.map(r=>[r.id,r.company,r.title,r.status,r.employmentType,r.workMode,r.appliedCount,
+    r.offersMade,r.roundsCompleted,r.roundCount,tpoDriveWhereItIs({
+     status:r.status,applicationDeadline:r.applicationDeadline,
+     roundCount:r.roundCount,roundsCompleted:r.roundsCompleted,
+     nextRoundAt:r.nextRoundAt,offersMade:r.offersMade,
+    },first.asOf),
     r.minimumAnnualCtcInr,r.maximumAnnualCtcInr,r.stipendPerMonthInr,
     r.isDream?"Yes":"No",r.createdBy,r.applicationDeadline]))};
 }

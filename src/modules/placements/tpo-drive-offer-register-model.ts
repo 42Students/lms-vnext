@@ -1,7 +1,7 @@
 import {z} from "zod";
 import {placementReportCsv} from "./report-model";
-export const offerRegisterQuery=z.object({jobId:z.string().uuid(),status:z.enum(["ALL","ISSUED","ACCEPTED","DECLINED","WITHDRAWN"]).default("ALL"),page:z.coerce.number().int().min(1).max(10000).default(1),q:z.string().trim().max(100).default(""),joining:z.enum(["ALL","PENDING","JOINED","DEFERRED","DID_NOT_JOIN"]).default("ALL"),kind:z.enum(["ALL","OFFER","LOI"]).default("ALL")}).strict();
-export type OfferRegisterFact={offer:{id:string;status:string;roleTitle:string;kind:string;annualCtcInr:number|null;issuedAt:Date;respondedAt:Date|null;expiresAt?:Date|null},joining:{status:string}|null,candidate:{membershipId:string;displayName:string|null;email?:string|null}};
+export const offerRegisterQuery=z.object({jobId:z.string().uuid(),status:z.enum(["ALL","ISSUED","ACCEPTED","DECLINED","WITHDRAWN"]).default("ALL"),page:z.coerce.number().int().min(1).max(10000).default(1),q:z.string().trim().max(100).default(""),joining:z.enum(["ALL","PENDING","JOINED","DEFERRED","DID_NOT_JOIN"]).default("ALL"),kind:z.enum(["ALL","OFFER","LOI"]).default("ALL"),expiry:z.enum(["ALL","EXPIRED","DUE_SOON","OPEN","UNKNOWN"]).default("ALL")}).strict();
+export type OfferRegisterFact={offer:{id:string;status:string;roleTitle:string;kind:string;annualCtcInr:number|null;issuedAt:Date;respondedAt:Date|null;expiresAt?:Date|null},joining:{status:string}|null,candidate:{membershipId:string;displayName:string|null;email?:string|null;rollNumber?:string|null;batch?:string|null;branch?:string|null}};
 export const OFFER_REGISTER_PAGE_SIZE=25;
 export function offerExpiryIndicator(status:string,expiresAt:Date|null|undefined,asOf:Date):"EXPIRED"|"DUE_SOON"|"OPEN"|"UNKNOWN"|"NOT_APPLICABLE"{
  if(status!=="ISSUED")return "NOT_APPLICABLE";
@@ -9,13 +9,17 @@ export function offerExpiryIndicator(status:string,expiresAt:Date|null|undefined
  if(expiresAt.getTime()<=asOf.getTime())return "EXPIRED";
  return expiresAt.getTime()-asOf.getTime()<=7*86400000?"DUE_SOON":"OPEN";
 }
-export function selectOfferRegisterFacts(facts:readonly OfferRegisterFact[],status:z.infer<typeof offerRegisterQuery>["status"],search="",joiningState:z.infer<typeof offerRegisterQuery>["joining"]="ALL",kind:z.infer<typeof offerRegisterQuery>["kind"]="ALL"){
+export function selectOfferRegisterFacts(facts:readonly OfferRegisterFact[],status:z.infer<typeof offerRegisterQuery>["status"],search="",joiningState:z.infer<typeof offerRegisterQuery>["joining"]="ALL",kind:z.infer<typeof offerRegisterQuery>["kind"]="ALL",
+ expiry:z.infer<typeof offerRegisterQuery>["expiry"]="ALL",asOf=new Date()){
  const term=search.trim().toLocaleLowerCase("en-IN");
- return facts.filter(f=>(status==="ALL"||f.offer.status===status)&&(kind==="ALL"||f.offer.kind===kind)&&(!term||
+ return facts.filter(f=>(status==="ALL"||f.offer.status===status)&&
+  (kind==="ALL"||f.offer.kind===kind)&&
+  (expiry==="ALL"||offerExpiryIndicator(f.offer.status,f.offer.expiresAt,asOf)===expiry)&&(!term||
   [f.candidate.displayName,f.candidate.rollNumber,f.candidate.batch,f.candidate.branch,f.offer.roleTitle].some(value=>value?.toLocaleLowerCase("en-IN").includes(term)))&&
   (joiningState==="ALL"||(f.offer.status==="ACCEPTED"&&(f.joining?.status??"PENDING")===joiningState))).sort((a,b)=>b.offer.issuedAt.getTime()-a.offer.issuedAt.getTime()||a.offer.id.localeCompare(b.offer.id));
 }
-export function projectOfferRegister(facts:readonly OfferRegisterFact[],status:z.infer<typeof offerRegisterQuery>["status"],requestedPage=1,search="",joiningState:"ALL"|"PENDING"|"JOINED"|"DEFERRED"|"DID_NOT_JOIN"="ALL",asOf=new Date(),kind:"ALL"|"OFFER"|"LOI"="ALL"){
+export function projectOfferRegister(facts:readonly OfferRegisterFact[],status:z.infer<typeof offerRegisterQuery>["status"],requestedPage=1,search="",joiningState:"ALL"|"PENDING"|"JOINED"|"DEFERRED"|"DID_NOT_JOIN"="ALL",asOf=new Date(),kind:"ALL"|"OFFER"|"LOI"="ALL",
+ expiry:"ALL"|"EXPIRED"|"DUE_SOON"|"OPEN"|"UNKNOWN"="ALL"){
  const counts={all:facts.length,issued:0,accepted:0,declined:0,withdrawn:0};
  for(const f of facts){
   if(f.offer.status==="ISSUED")counts.issued++;
@@ -23,7 +27,7 @@ export function projectOfferRegister(facts:readonly OfferRegisterFact[],status:z
   if(f.offer.status==="DECLINED")counts.declined++;
   if(f.offer.status==="WITHDRAWN")counts.withdrawn++;
  }
- const match=selectOfferRegisterFacts(facts,status,search,joiningState,kind);
+ const match=selectOfferRegisterFacts(facts,status,search,joiningState,kind,expiry,asOf);
  const totalPages=Math.max(1,Math.ceil(match.length/OFFER_REGISTER_PAGE_SIZE));
  const page=Math.max(1,Math.min(requestedPage,totalPages));
  const start=(page-1)*OFFER_REGISTER_PAGE_SIZE;
@@ -39,9 +43,9 @@ export const TPO_DRIVE_OFFERS_CSV_LIMIT=500;
 /** Same persisted fact selector as the TPO register; all untrusted cells formula-neutralized. */
 export function tpoDriveOfferRegisterCsv(
  facts:readonly OfferRegisterFact[],
- filters:Pick<z.infer<typeof offerRegisterQuery>,"status"|"q"|"joining"|"kind">,
+ filters:Pick<z.infer<typeof offerRegisterQuery>,"status"|"q"|"joining"|"kind"|"expiry">,
 ){
- const matches=selectOfferRegisterFacts(facts,filters.status,filters.q,filters.joining,filters.kind);
+ const matches=selectOfferRegisterFacts(facts,filters.status,filters.q,filters.joining,filters.kind,filters.expiry);
  const csvDate=(date:Date|null|undefined)=>date?
   new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(date)+" IST":"Not recorded";
  const rows:(string|number|null)[][]=matches.slice(0,TPO_DRIVE_OFFERS_CSV_LIMIT).map(f=>[

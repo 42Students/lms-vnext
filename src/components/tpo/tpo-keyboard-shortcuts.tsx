@@ -4,6 +4,7 @@ import {useRouter} from "next/navigation";
 import {Drawer} from "@/components/ui/drawer";
 const go:Record<string,string>={h:"/tpo/home",b:"/tpo/batches",d:"/tpo/placements",s:"/tpo/students",e:"/tpo/recruiters",c:"/tpo/calendar",r:"/tpo/requests",m:"/tpo/messages",p:"/tpo/reports",t:"/tpo/settings"};
 const make:Record<string,string>={l:"/tpo/recruiters?add=1",d:"/tpo/placements/new"};
+const goLabels:Record<string,string>={h:"Home",b:"Batches",d:"Drives",s:"Students",e:"Engage",c:"Calendar",r:"Requests",m:"Messages",p:"Reports",t:"Settings"};
 export function TpoKeyboardShortcuts(){
  const router=useRouter(),[open,setOpen]=useState(false);
  const prefix=useRef<"g"|"n"|null>(null);
@@ -29,11 +30,14 @@ export function TpoKeyboardShortcuts(){
   <Drawer title="Keyboard shortcuts" open={open} onOpenChange={setOpen}
    description="Press a key, then the next one. They do nothing while you are typing in a box.">
    <h3 className="font-semibold">Go to</h3>
-   <ul className="mt-2 grid grid-cols-2 gap-2 text-sm">{Object.entries(go).map(([key,href])=>
-    <li key={key}><kbd>G then {key.toUpperCase()}</kbd> · {href.split("/").pop()}</li>)}</ul>
+   <ul className="mt-2 grid grid-cols-2 gap-2 text-sm">{Object.entries(go).map(([key])=>
+    <li key={key}><kbd>G</kbd> <kbd>{key.toUpperCase()}</kbd> · {goLabels[key]}</li>)}</ul>
    <h3 className="mt-4 font-semibold">Create</h3>
    <p>N then L · New recruiter lead</p><p>N then D · New drive</p>
    <h3 className="mt-4 font-semibold">Anywhere</h3>
-   <p>Ctrl K · Search and jump</p><p>? · Show this list</p>
+   <p><kbd>Ctrl</kbd> <kbd>K</kbd> · Search and jump</p><p><kbd>?</kbd> · Show this list</p>
+   <h3 className="mt-4 font-semibold">Reviewing applicants</h3>
+   <p><kbd>S</kbd> · Shortlist</p><p><kbd>R</kbd> · Not selected</p>
+   <p><kbd>←</kbd> <kbd>→</kbd> · Previous, next student</p>
   </Drawer></>;
 }

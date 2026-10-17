@@ -7,6 +7,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import {tpoRequestsExportHref} from "@/modules/placements/tpo-requests-page-csv-model";
 import {GLOBAL_TPO_REQUEST_TYPES,TPO_REQUEST_STATUSES,tpoRequestStatusCounts,tpoRequestAgeLabel,tpoRequestContextLink,tpoNextRoundCue,parseGlobalTpoRequestFilters,globalTpoRequestFirstPageHref,tpoRequestClearAdvancedHref} from "@/modules/placements/tpo-global-requests-model";
 import { getTpoGlobalRequestsInbox } from "@/modules/placements/tpo-global-requests-service";
+import {tpoRequestAttentionOnPage} from "@/modules/placements/tpo-request-attention-model";
 
 export const dynamic = "force-dynamic";
 type Params = { age?:string|string[]; sort?:string|string[]; requestType?:string|string[]; status?: string | string[]; search?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
@@ -42,6 +43,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
   const data = await getTpoGlobalRequestsInbox(context, parsed.data);
   const statusCounts=tpoRequestStatusCounts(data.summary);
   const asOf=new Date();
+  const attention=tpoRequestAttentionOnPage(data.requests,asOf);
   return <main className="min-w-0 space-y-5">
     <PageHeader eyebrow="TPO · Operations" title="Requests" description="College-wide learner placement requests. Decisions update recorded applications, rounds or offers only through the existing verified action." />
     <nav aria-label="Request statuses" className="flex flex-wrap gap-2">
@@ -65,6 +67,16 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
       <button type="submit" className="min-h-11 rounded bg-primary px-4 text-on-primary">Apply</button>
       <Link href={tpoRequestClearAdvancedHref(data.query.status)} className="inline-flex min-h-11 items-center text-primary-text underline">Clear search and age filters</Link>
     </form>
+    <section aria-label="Needs doing first" className="space-y-3 rounded-xl border border-border bg-surface p-4">
+     <h2 className="font-semibold">Needs doing first</h2>
+     <p className="text-sm">{data.summary.pending?data.summary.pending+" waiting for you.":"Nothing is waiting for you."}</p>
+     <div className="flex flex-wrap gap-3 text-sm">
+      <span className="rounded border border-border px-3 py-2">Urgent · {attention.urgent}</span>
+      <span className="rounded border border-border px-3 py-2">Waiting more than 2 days · {attention.waitingOverTwoDays}</span>
+      <span className="rounded border border-border px-3 py-2">May need proof review · {attention.proofUnconfirmed}</span>
+     </div>
+     <p className="text-xs text-muted-foreground">Attention category numbers cover this visible request page only. Proof hints are text-based and are not verified attachment counts.</p>
+    </section>
     <Link href={tpoRequestsExportHref(data.query)} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-primary-text">Export current page CSV</Link>
     <p className="text-sm text-body">Showing {data.requests.length} of {data.total} matching {data.query.status.toLowerCase()} requests. {data.summary.pending} pending across this college.</p>
     {data.requests.length===0?<section role="status" className="rounded-lg border border-border p-5">
@@ -83,7 +95,11 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
             {request.urgent?<strong className="mt-2 inline-flex rounded border border-danger px-2 py-1 text-xs text-error">Urgent</strong>:null}
             <p className="mt-1 text-xs text-muted-foreground"><time dateTime={request.requestedAt.toISOString()}>{request.requestedAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST</time> · {tpoRequestAgeLabel(request.requestedAt,asOf)}</p>
             <p className="mt-2 whitespace-pre-wrap break-words text-sm">{request.reason}</p>
-            {request.decisionNote?<p className="mt-2 whitespace-pre-wrap break-words text-sm">Decision note: {request.decisionNote}</p>:null}
+            {request.decidedAt?<dl className="mt-2 grid gap-1 text-sm">
+             <div><dt className="inline font-semibold">Decided by: </dt><dd className="inline">{request.decidedBy??"Authorized placement team"}</dd></div>
+             <div><dt className="inline font-semibold">Decided on: </dt><dd className="inline">{request.decidedAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST</dd></div>
+             <div><dt className="inline font-semibold">Why: </dt><dd className="inline">{request.decisionNote||"No additional decision note recorded"}</dd></div>
+            </dl>:null}
             <Link href={tpoRequestContextLink(request).href} className="mt-2 inline-flex min-h-10 items-center text-primary-text underline">{tpoRequestContextLink(request).label}</Link>
           </div>
           {request.status==="PENDING"?<TpoRequestDecisionControl requestId={request.id} expectedUpdatedAt={request.updatedAt.toISOString()} requestType={request.requestType}/>:<span className="text-sm text-body">{request.status}</span>}

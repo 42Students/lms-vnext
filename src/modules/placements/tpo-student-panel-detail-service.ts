@@ -2,7 +2,7 @@ import "server-only";
 import {and,desc,eq,inArray} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {collegeMemberships,membershipRoles,placementApplications,
+import {activityEvents,collegeMemberships,membershipRoles,placementApplications,
  placementJobs,placementLearnerRequests,users} from "@/db/schema";
 import {placementApplicationNotes} from "@/db/schema/placement-application-notes";
 import {listTpoStudentNotes} from "./tpo-student-notes-service";
@@ -30,7 +30,13 @@ export async function getTpoStudentPanelDetail(ctx:RequestContext,raw:unknown){
     eq(placementJobs.collegeId,college.id)))
   .where(eq(placementApplications.membershipId,id)).limit(1000);
  const applicationIds=applications.map(x=>x.id);
- if(!applicationIds.length)return {student,requests:[],notes:[],studentNotes:await listTpoStudentNotes(ctx,id),truncated:false};
+ const teamHistory=await db.select({id:activityEvents.id,eventType:activityEvents.eventType,
+  summary:activityEvents.summary,occurredAt:activityEvents.occurredAt,
+  subjectType:activityEvents.subjectType,actorUserId:activityEvents.actorUserId})
+  .from(activityEvents).where(and(eq(activityEvents.collegeId,college.id),
+   eq(activityEvents.subjectId,id),inArray(activityEvents.module,["PLACEMENTS","IDENTITY","ACADEMICS"])))
+  .orderBy(desc(activityEvents.occurredAt)).limit(100);
+ if(!applicationIds.length)return {student,requests:[],notes:[],studentNotes:await listTpoStudentNotes(ctx,id),teamHistory,truncated:teamHistory.length===100};
  const [requests,notes,studentNotes]=await Promise.all([
   db.select({id:placementLearnerRequests.id,applicationId:placementLearnerRequests.applicationId,
    status:placementLearnerRequests.status,type:placementLearnerRequests.requestType,
@@ -50,6 +56,6 @@ export async function getTpoStudentPanelDetail(ctx:RequestContext,raw:unknown){
  const jobs=new Map(applications.map(x=>[x.id,x.title]));
  return {student,requests:requests.map(x=>({...x,job:jobs.get(x.applicationId)??"Drive"})),
   notes:notes.map(x=>({...x,job:jobs.get(x.applicationId)??"Drive"})),
-  studentNotes:studentNotes??[],
-  truncated:applications.length===1000||requests.length===100||notes.length===100};
+  studentNotes:studentNotes??[],teamHistory,
+  truncated:applications.length===1000||requests.length===100||notes.length===100||teamHistory.length===100};
 }

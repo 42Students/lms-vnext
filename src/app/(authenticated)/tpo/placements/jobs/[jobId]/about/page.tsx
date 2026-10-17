@@ -84,7 +84,18 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
    <h3 className="mt-4 font-semibold">Recruiter contacts</h3>
    {data.recruiterContacts.length?<ul className="mt-2 list-disc pl-5 text-sm">{data.recruiterContacts.map(email=><li key={email}>{email}</li>)}</ul>:
     <p className="mt-2 text-sm text-body">No current recruiter email is recorded for this company relationship.</p>}
-   <p className="mt-2 text-xs text-body">Previous recruiter request comparison is {data.previousRequestAvailable?"available in recruiter request history":"not available until the request tables are registered"}.</p>
+   <div className="mt-4">
+    <h3 className="font-semibold">Related company requests</h3>
+    {data.previousRequests.length?<ul className="mt-2 divide-y divide-border text-sm">
+      {data.previousRequests.map(request=><li key={request.id} className="py-3">
+       <Link className="font-semibold text-primary-text underline"
+         href={"/tpo/placements/requests?requestId="+encodeURIComponent(request.id)}>
+         {request.proposedTitle??"Recruiter drive request"}</Link>
+       <span className="ml-2 text-body">{request.status} · {when(request.createdAt)}</span>
+       {request.decisionNote?<p className="text-body">Decision: {request.decisionNote}</p>:null}
+      </li>)}
+    </ul>:<p className="mt-2 text-sm text-body">No recruiter request is linked to this drive.</p>}
+   </div>
   </section>
   <section className="rounded-xl border border-border bg-surface p-5">
    <h2 className="font-semibold">Role packages</h2>

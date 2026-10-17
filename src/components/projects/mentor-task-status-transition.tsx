@@ -9,6 +9,7 @@ import { allowedMentorTaskTransition } from "@/modules/projects/mentor-task-tran
 const options=["TODO","IN_PROGRESS","BLOCKED"] as const;
 export function MentorTaskStatusTransition(props:{
   projectId:string;taskId:string;status:string;sprintStatus:string;updatedAt:string;
+  blockerReason?:string|null;
 }){
   const router=useRouter();
   const {showToast}=useToast();
@@ -19,11 +20,15 @@ export function MentorTaskStatusTransition(props:{
   const valid=allowedMentorTaskTransition(props.status,selected);
   if(props.sprintStatus!=="ACTIVE"||!options.some(x=>x===props.status))return null;
   async function submit(){
+    const blockerReason=selected==="BLOCKED"&&!props.blockerReason?.trim()
+      ? window.prompt("What's blocking this task?")?.trim() : undefined;
+    if(selected==="BLOCKED"&&!props.blockerReason?.trim()&&!blockerReason)return;
     setPending(true);setError(null);
     try{
       await projectMutation("/api/projects/"+encodeURIComponent(props.projectId)+
         "/tasks/"+encodeURIComponent(props.taskId)+"/mentor-transition","PATCH",{
           status:selected,expectedUpdatedAt:props.updatedAt,confirmed:true,
+          ...(blockerReason?{blockerReason}:{}),
         });
       setConfirm(false);
       showToast({tone:"success",title:"Task status recorded"});

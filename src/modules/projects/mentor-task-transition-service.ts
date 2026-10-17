@@ -44,11 +44,12 @@ export async function transitionMentorProjectTask(
       )).limit(1);
     if (!release || release.status === "SHIPPED")
       throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
-    if(input.status==="BLOCKED" && !task.blockerReason?.trim())
+    if(input.status==="BLOCKED" && !(input.blockerReason?.trim()||task.blockerReason?.trim()))
       throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
     const now = new Date(Math.max(Date.now(),task.updatedAt.getTime()+1));
     const [updated] = await tx.update(projectTasks).set({
       status:input.status,updatedAt:now,
+      ...(input.status==="BLOCKED"&&input.blockerReason?{blockerReason:input.blockerReason}:{}),
     }).where(and(
       eq(projectTasks.id,task.id),eq(projectTasks.projectId,scope.project.id),
       eq(projectTasks.status,task.status),

@@ -11,7 +11,7 @@ export async function POST(request:Request){
   return NextResponse.json(result,{status:201,headers:{"Cache-Control":"private, no-store"}});
  }catch(error){
   if(error instanceof TpoConfigError)return NextResponse.json({error:error.code},{
-   status:error.code==="TPO_JOB_TYPE_EXISTS"?409:error.code==="TPO_SETTINGS_PENDING"?503:404});
+   status:error.code==="TPO_JOB_TYPE_EXISTS"||error.code==="TPO_JOB_TYPE_LAST_ACTIVE"?409:error.code==="TPO_JOB_TYPE_LIMIT"?422:error.code==="TPO_SETTINGS_PENDING"?503:404});
   return apiErrorResponse(error);
  }
 }

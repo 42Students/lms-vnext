@@ -1,4 +1,6 @@
 import Link from "next/link";
+import {TpoSmsCapEditor} from "@/components/tpo/tpo-communication-settings-editors";
+import {getTpoCommunicationSettings} from "@/modules/placements/tpo-communication-settings-service";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {TpoSettingsNav} from "@/components/placements/tpo-settings-nav";
 import {listTpoPlacementAnnouncements} from "@/modules/announcements/tpo-placement-read-service";
@@ -10,8 +12,8 @@ export const dynamic="force-dynamic";
 export default async function TpoStudentNoticesSettings(){
  const ctx=await getCurrentRequestContext();
  await requireTpoBatchActor(ctx);
- const [announcements,prep]=await Promise.all([
-  listTpoPlacementAnnouncements(ctx,"yours"),getTpoPrepReadiness(ctx),
+ const [announcements,prep,communication]=await Promise.all([
+  listTpoPlacementAnnouncements(ctx,"yours"),getTpoPrepReadiness(ctx),getTpoCommunicationSettings(ctx),
  ]);
  const destinations=tpoStudentNoticeNavigation();
  const view=tpoStudentNoticesOverview({announcementsReady:announcements.status==="READY",noticeCount:announcements.items.length,prepReady:prep.ready});
@@ -29,6 +31,13 @@ export default async function TpoStudentNoticesSettings(){
    <h2 className="font-semibold">Preparation &amp; readiness</h2>
    <p role="status" className="text-sm">{view.prepSummary}</p>
    <Link href={view.prepHref} className="inline-flex min-h-11 items-center text-primary-text underline">Configure available preparation courses</Link>
+  </section>
+  {communication.ready?<TpoSmsCapEditor initial={communication.smsMonthlyCap} version={communication.version}/>:
+   <p role="status" className="rounded-lg border border-border p-4 text-sm">Communication settings are not available in this database.</p>}
+  <section className="space-y-2 rounded-xl border border-border bg-surface p-5">
+   <h2 className="text-lg font-semibold">Optional emails</h2>
+   <p className="text-sm">Switch off what your students do not need. The in-app notice always shows; these control only the email.</p>
+   <p className="text-sm text-muted-foreground">Email template delivery status cannot be verified here until the configured mail provider is connected.</p>
   </section>
   <nav aria-label="Notice and notification destinations" className="flex flex-wrap gap-4 text-sm">
     <Link href={destinations.inbox} className="inline-flex min-h-11 items-center text-primary-text underline">Open personal notifications inbox</Link>

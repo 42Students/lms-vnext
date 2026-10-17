@@ -172,8 +172,8 @@ export async function listTpoLeads(
     ownerName:row.ownerMembershipId?ownerByMembership.get(row.ownerMembershipId)??null:null,
     lastActivityAt:activityByLead.get(row.id)?.toISOString()??null,
     nextFollowupAt:nextByLead.get(row.id)?.toISOString()??null,
-    inviteStatus:row.recruiterUserId?"JOINED":row.inviteClickedAt?"OPENED":
-      row.inviteSentAt?"SENT":"NOT_INVITED",
+    inviteStatus:row.recruiterUserId?"JOINED":row.inviteBouncedAt?"BOUNCED":
+      row.inviteClickedAt?"OPENED":row.inviteSentAt?"SENT":"NOT_INVITED",
   }));
 }
 
