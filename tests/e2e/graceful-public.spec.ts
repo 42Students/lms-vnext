@@ -35,7 +35,7 @@ test.describe("GR-80 public sign-in failure matrix", () => {
 
   test.describe("GR-80 public phone sign-in failure matrix", () => {
     for (const kind of cases) {
-      test(\`GR-80 public phone sign-in \${kind} retains the number\`, async ({ page }) => {
+      test(`GR-80 public phone sign-in ${kind} retains the number`, async ({ page }) => {
         test.setTimeout(30_000);
         await page.goto("/");
         const errors = captureUncaughtErrors(page);
