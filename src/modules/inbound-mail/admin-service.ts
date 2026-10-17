@@ -12,7 +12,7 @@ export type InboundMailItem={
  subject:string;bodyPlain:string;status:string;version:number;
 };
 export type InboundMailPage={
- available:boolean;items:readonly InboundMailItem[];page:number;hasMore:boolean;total:number|null;
+ available:boolean;items:readonly InboundMailItem[];page:number;hasMore:boolean;total:number|null;toReadCount:number|null;
 };
 type InboundMailFilters={status:"ALL"|"NEW"|"TRIAGED"|"RESOLVED";q:string;page:number;recipient?:string};
 export interface InboundMailAdminRepository {
@@ -60,9 +60,9 @@ export async function listInboundMailForAdmin(
  if(!isSuperAdmin(context))throw new AuthorizationError("admin-scope.select");
  const input=inboundMailListQuerySchema.parse(raw);
  if(!await repository.tableExists())
-  return {available:false,items:[],page:input.page,hasMore:false,total:null};
- const [items,total]=await Promise.all([repository.list(input),repository.count?repository.count(input):Promise.resolve(null)]);
- return {available:true,items:items.slice(0,50),page:input.page,hasMore:items.length>50,total};
+  return {available:false,items:[],page:input.page,hasMore:false,total:null,toReadCount:null};
+ const [items,total,toReadCount]=await Promise.all([repository.list(input),repository.count?repository.count(input):Promise.resolve(null),repository.count?repository.count({...input,status:"NEW",q:"",page:1,recipient:undefined}):Promise.resolve(null)]);
+ return {available:true,items:items.slice(0,50),page:input.page,hasMore:items.length>50,total,toReadCount};
 }
 
 /** Version-checked inbound triage mutation. Global Super Admin only: incoming
