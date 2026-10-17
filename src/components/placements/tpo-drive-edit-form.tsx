@@ -42,7 +42,18 @@ export function TpoDriveEditForm({job}:{job:Draft}){
    <label className="block text-sm font-semibold text-body">Openings<input type="number" min={1} max={100000} name="openings" defaultValue={job.openings??""} className={cls}/></label>
    <label className="block text-sm font-semibold text-body">Minimum annual CTC (INR)<input type="number" min={0} max={100000000} name="minimumAnnualCtcInr" defaultValue={job.minimumAnnualCtcInr??""} className={cls}/></label>
    <label className="block text-sm font-semibold text-body">Maximum annual CTC (INR)<input type="number" min={0} max={100000000} name="maximumAnnualCtcInr" defaultValue={job.maximumAnnualCtcInr??""} className={cls}/></label>
+   <label className="block text-sm font-semibold text-body">Fixed CTC (LPA)
+    <input name="fixedCtcLpa" type="number" min={0} max={1000} step="0.01" defaultValue={job.fixedCtcLpa??""} className={cls}/></label>
+   <label className="block text-sm font-semibold text-body">Variable CTC (LPA)
+    <input name="variableCtcLpa" type="number" min={0} max={1000} step="0.01" defaultValue={job.variableCtcLpa??""} className={cls}/></label>
+   <label className="block text-sm font-semibold text-body">Stipend per month (INR)
+    <input name="stipendPerMonthInr" type="number" min={0} max={10000000} step={1}
+      defaultValue={job.stipendPerMonthInr??""} className={cls}/></label>
   </div>
+  <label className="flex items-center gap-3 text-sm font-semibold text-body">
+    <input type="checkbox" name="isDream" defaultChecked={job.isDream} className="h-4 w-4 accent-primary"/>
+    Dream drive — held-offer limit exception
+  </label>
   <label className="block text-sm font-semibold text-body">Reason for edit (audited)<textarea required name="reason" minLength={10} maxLength={1000} rows={2} className={cls}/></label>
   <p className="text-xs text-body">Only active-season draft drives can be edited. A changed version must be refreshed before another save.</p>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
