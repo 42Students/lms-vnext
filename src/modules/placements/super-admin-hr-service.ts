@@ -394,6 +394,7 @@ export async function listSuperAdminHrAccounts(
     rows.map((row) => row.userId),
   );
 
+  const manageable=await hrAccountManageability(context,rows.map(item=>item.userId));
   const total = Number(
     totalRows[0]?.value ?? 0,
   );
@@ -401,6 +402,7 @@ export async function listSuperAdminHrAccounts(
   return {
     items: rows.map((row) => ({
       ...toAccount(row),
+      accountManageable:manageable.get(row.userId)??false,
       grants: grants.filter(
         (grant) =>
           grant.recruiterUserId === row.userId &&
@@ -467,6 +469,7 @@ export async function getSuperAdminHrAccount(
 
   return {
     ...toAccount(row),
+    accountManageable:(await hrAccountManageability(context,[userId])).get(userId)??false,
     grants: grants.filter(
       (grant) =>
         grant.companyId === row.companyId,
