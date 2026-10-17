@@ -85,9 +85,9 @@ const resourceSchema = z
         },
       )
       .optional(),
-    type: z.enum(["LINK","PDF","DOCUMENT","SLIDES","VIDEO","FILE"]).default("LINK"),
-    status: z.enum(["ACTIVE","DRAFT","ARCHIVED"]).default("ACTIVE"),
-    pinned: z.boolean().default(false),
+    type: z.enum(["LINK","PDF","DOCUMENT","SLIDES","VIDEO","FILE"]).optional(),
+    status: z.enum(["ACTIVE","DRAFT","ARCHIVED"]).optional(),
+    pinned: z.boolean().optional(),
     accessNotes: z.string().trim().max(2000).optional(),
     required: z.boolean().default(false),
     sequence: sequenceSchema,
