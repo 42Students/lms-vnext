@@ -424,12 +424,45 @@ export function RecruiterLeadsWorkspace({
     }
   }
 
+  function closeAddDialog() {
+    if(saving)return;
+    const dirty=Object.values(form).some(value=>value.trim());
+    if(dirty&&!window.confirm("Discard this recruiter draft?"))return;
+    setAdding(false);setDuplicate(null);setSaveError("");
+  }
+
   async function create(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!form.name.trim() || !(form.email.trim() || form.phone.trim())) {
       setSaveError("Enter a name and at least one contact method.");
       return;
     }
+    if (form.companyName.trim().length < 2) {
+      setSaveError("Company is required.");
+      return;
+    }
+    // Preflight every contact on submit. Database uniqueness remains authoritative.
+    setChecking(true);setSaveError("");setDuplicate(null);
+    try {
+      const contacts=[...new Set([form.email.trim(),form.phone.trim()].filter(Boolean))];
+      for(const contact of contacts){
+        const result=await fetch("/api/placements/tpo/leads/check?collegeId="+
+          encodeURIComponent(collegeId)+"&contact="+encodeURIComponent(contact),{
+          credentials:"same-origin",cache:"no-store",
+        });
+        if(result.status===204)continue;
+        const data=await result.json() as {lead?:Lead;error?:string};
+        if(!result.ok)throw new Error(friendlyError(result.status,data));
+        if(data.lead){
+          setDuplicate(data.lead);
+          setSaveError("This contact is already a recruiter. Open the existing recruiter instead.");
+          return;
+        }
+      }
+    }catch(cause){
+      setSaveError(cause instanceof Error?cause.message:"Could not check this contact.");
+      return;
+    }finally{setChecking(false);}
     if (!window.confirm(
       "Create recruiter lead for " + form.name.trim() +
       (form.companyName.trim() ? " at " + form.companyName.trim() : "") +
@@ -880,6 +913,12 @@ export function RecruiterLeadsWorkspace({
             <div className="flex gap-3 overflow-x-auto pb-3" role="region" aria-label="Recruiter stage board">
               {(["NEW", "CONTACTED", "INVITED", "JOINED", "DRIVE_PLANNED", "RECRUITED", "NOT_NOW"] as const).map(column => (
                 <section key={column} className="w-64 min-w-64 shrink-0 rounded-lg border border-border bg-surface p-4">
+                  <p className="mb-2 text-xs text-muted-foreground">
+                    {column==="NEW"?"New contacts are moved when outreach is recorded":
+                     column==="CONTACTED"?"Manually move or log a follow-up":
+                     column==="NOT_NOW"?"Requires a recorded reason":
+                     "Automatically set by invitation and placement activity"}
+                  </p>
                   <h2 className="mb-3 font-semibold">{RECRUITER_STAGE_LEGACY_LABELS[column]} · {visible.filter(x => x.stage === column).length}</h2>
                   <div className="space-y-2">
                     {visible.filter(x => x.stage === column).slice(0, column==="RECRUITED"||column==="NOT_NOW"?5:50).map(lead => (
@@ -889,7 +928,26 @@ export function RecruiterLeadsWorkspace({
                         <span className="block font-medium">{lead.name}</span>
                         <span className="block text-sm text-muted-foreground">{lead.companyName || lead.emailNorm || lead.phoneNorm}</span>
                         </Link>
-                        {!lead.recruiterUserId&&!lead.unsubscribedAt&&lead.manualStage!=="NOT_NOW"?
+                        <div className="mt-2 flex flex-wrap items-center gap-2">
+                           {lead.nextFollowupAt?<span className="text-xs text-muted-foreground">
+                             Follow-up {new Date(lead.nextFollowupAt).toLocaleDateString("en-IN")}
+                           </span>:null}
+                           {lead.ownerName?<span className="text-xs text-muted-foreground">Owner: {lead.ownerName}</span>:null}
+                         </div>
+                         <details className="mt-2 rounded-md border border-border p-2 text-xs">
+                           <summary className="cursor-pointer text-primary-text">Move to… / Actions</summary>
+                           <p className="mt-1 text-muted-foreground">
+                             Invited, Joined, Drive planned and Recruited update automatically.
+                             Not now requires a reason.
+                           </p>
+                           <div className="mt-2 space-y-2">
+                             <RecruiterInlineStage lead={lead} onUpdated={()=>void load()} />
+                             <RecruiterInlineOwner lead={lead} onUpdated={()=>void load()} />
+                             <Link className="inline-block text-primary-text underline"
+                               href={"/tpo/recruiters/"+encodeURIComponent(lead.id)}>Open recruiter</Link>
+                           </div>
+                         </details>
+                         {!lead.recruiterUserId&&!lead.unsubscribedAt&&lead.manualStage!=="NOT_NOW"?
                          <button type="button" className={buttonStyle+" mt-2"}
                           disabled={Boolean(invitingId)||!lead.emailNorm||!lead.companyRelationshipId} onClick={()=>void createInviteLink(lead)}>Create invite link</button>:null}
                       </div>
@@ -906,10 +964,11 @@ export function RecruiterLeadsWorkspace({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" role="presentation">
           <form role="dialog" aria-modal="true" aria-label="Add recruiter lead"
             onSubmit={e => void create(e)}
+            onKeyDown={e=>{if(e.key==="Escape"){e.preventDefault();closeAddDialog();}}}
             className="max-h-[90vh] w-full max-w-lg space-y-4 overflow-y-auto rounded-xl border border-border bg-surface p-6 shadow-xl">
             <div className="flex items-center justify-between gap-4">
               <h2 className="text-xl font-semibold">Add recruiter lead</h2>
-              <button type="button" className={buttonStyle} onClick={() => setAdding(false)} disabled={saving}>Close</button>
+              <button type="button" className={buttonStyle} onClick={closeAddDialog} disabled={saving}>Close</button>
             </div>
             <label className="block text-sm">Name *<input className={inputStyle + " mt-1"} required maxLength={150}
               value={form.name} onChange={e => field("name", e.target.value)} /></label>

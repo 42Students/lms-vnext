@@ -13,6 +13,7 @@ export function TpoCompanyLifecycleEditor({ company }: { company: Company }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [reviewAction,setReviewAction]=useState<"ARCHIVE"|"RESTORE"|"EDIT_TRUST"|null>(null);
 
   async function submit(action: "ARCHIVE" | "RESTORE" | "EDIT_TRUST") {
     if (busy) return;
@@ -20,11 +21,7 @@ export function TpoCompanyLifecycleEditor({ company }: { company: Company }) {
       setError("Enter an explanation of at least 8 characters.");
       return;
     }
-    const verb = action === "EDIT_TRUST"
-      ? (company.isTrusted ? "remove trust from" : "mark trusted")
-      : action === "ARCHIVE" ? "archive" : "restore";
-    if (!window.confirm("Confirm: " + verb + " " + company.name +
-      "? This changes only this college's relationship and is audited.")) return;
+    if(reviewAction!==action){setReviewAction(action);setError(null);return;}
     setBusy(true); setError(null); setMessage(null);
     try {
       const response = await fetch("/api/placements/tpo/companies/lifecycle", {
@@ -43,7 +40,7 @@ export function TpoCompanyLifecycleEditor({ company }: { company: Company }) {
         throw new Error(payload?.error ?? "Company relationship was not updated");
       }
       setMessage("Saved. Reloading current relationship details.");
-      setReason("");
+      setReason("");setReviewAction(null);
       router.refresh();
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Update failed. Refresh to verify the current state.");
@@ -66,7 +63,7 @@ export function TpoCompanyLifecycleEditor({ company }: { company: Company }) {
       <label className="block text-sm font-semibold text-foreground">
         Reason for change
         <textarea
-          value={reason} onChange={(event) => setReason(event.target.value)}
+          value={reason} onChange={(event) => {setReviewAction(null);setReason(event.target.value);}}
           disabled={busy} maxLength={500} rows={3}
           className="mt-2 block w-full rounded-md border border-border bg-surface p-3 text-sm font-normal"
         />
@@ -93,6 +90,17 @@ export function TpoCompanyLifecycleEditor({ company }: { company: Company }) {
           </button>
         )}
       </div>
+      {reviewAction?<div role="group" aria-label="Confirm company change" className="rounded-lg border border-border bg-surface-secondary p-3 text-sm">
+        <p className="text-body">Confirm: {reviewAction==="EDIT_TRUST"
+          ?company.isTrusted?"remove trust from ":"mark trusted ":""+(reviewAction==="ARCHIVE"?"archive ":"restore ")}{company.name}?
+          This changes only this college&apos;s relationship and is audited.</p>
+        <div className="mt-2 flex gap-2">
+          <button type="button" disabled={busy} onClick={()=>void submit(reviewAction)}
+            className="min-h-10 rounded-md bg-primary px-4 font-semibold text-on-primary">Confirm change</button>
+          <button type="button" disabled={busy} onClick={()=>setReviewAction(null)}
+            className="min-h-10 rounded-md border border-border px-4">Cancel</button>
+        </div>
+      </div>:null}
       {busy ? <p role="status" className="text-sm text-body">Saving change…</p> : null}
       {message ? <p role="status" className="text-sm text-body">{message}</p> : null}
       {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
