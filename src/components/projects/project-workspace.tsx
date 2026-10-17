@@ -695,7 +695,14 @@ export function ProjectWorkspace({
             </p>:null}
           </div>
           {mode === "ADMIN" && !readOnly ? (
-            <CollegeProjectMentorDialog projectId={workspace.project.id} collegeId={workspace.project.collegeId}/>
+            <>
+              <Link href={(backHref.startsWith("/college/") ? "/college/projects" : "/admin/projects") +
+                "/reassign-mentor?projectId=" + encodeURIComponent(workspace.project.id)}
+                className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+                Reassign mentor
+              </Link>
+              <CollegeProjectMentorDialog projectId={workspace.project.id} collegeId={workspace.project.collegeId}/>
+            </>
           ) : null}
           {mode === "ADMIN" && !readOnly && !workspace.project.teamGroupId ? (
             <>
@@ -1672,7 +1679,7 @@ export function ProjectWorkspace({
 
           {mode === "ADMIN" ? <Link href={"/admin/projects/audit?projectId=" + encodeURIComponent(workspace.project.id)}
             className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">View full project audit</Link> : null}
-          <ProjectActivityFilteredList projectId={workspace.project.id} events={workspace.activity} now={new Date().toISOString()}/>
+          <ProjectActivityFilteredList projectId={workspace.project.id} events={workspace.activity} now={new Date().toISOString()} resourceAudit={mode==="ADMIN"}/>
 
 
         </section>
