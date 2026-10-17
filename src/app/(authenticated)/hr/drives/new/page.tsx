@@ -116,6 +116,7 @@ export default async function RecruiterRequestDrivePage({
     </Link>
     <HrDriveDraftForm initial={initial} branchSuggestions={branchSuggestions} sourceJobTitle={fromJob?.job.title ?? null}
       storageKey={hrDriveSessionStorageKey(context.user.id,collegeId,fromJob?.job.id)}
+      feedbackKey={hrDriveSessionStorageKey(context.user.id,collegeId,null)+":feedback"}
       collegeId={collegeId} sourceJobId={fromJob?.job.id??null}
       fixRequestId={query.copy?null:request?.id??null} fixUpdatedAt={query.copy?null:request?.updatedAt.toISOString()??null}
       editMode={query.edit?"EDIT":"RESUBMIT"} />
