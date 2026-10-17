@@ -145,6 +145,29 @@ describe("College People legacy audited page contracts",()=>{
   expect(component).toContain("Faculty reactivated.");
   expect(component).not.toContain("window.confirm");
  });
+ it("COL-people-03 import preview/import use the guarded request helper without echoing API codes",()=>{
+  const sourceText=src("src/components/college/college-faculty-csv-import.tsx");
+  expect(sourceText).toContain("apiFetch<{report:Report}>");
+  expect(sourceText).toContain("useGuardedAction");
+  expect(sourceText).not.toContain("payload?.error");
+ });
+ it("COL-people-04 student register uses guarded network calls and keeps the form after failed submit",()=>{
+  const sourceText=src("src/components/college/college-student-register-form.tsx");
+  expect(sourceText).toContain("apiFetch<{");
+  expect(sourceText).toContain("useGuardedAction");
+  expect(sourceText).not.toContain("body?.error");
+ });
+ it("COL-people-05 learner CSV preview and import use safe JSON, with per-row report retained",()=>{
+  const sourceText=src("src/components/college/college-student-csv-import.tsx");
+  expect(sourceText).toContain("apiFetch<{report:Report}>");
+  expect(sourceText).toContain("studentImportReportCsv");
+  expect(sourceText).toContain("useGuardedAction");
+ });
+ it("COL-people-25 untrusted partial registration failures are never shown verbatim to learners",()=>{
+  const sourceText=src("src/components/college/college-student-register-form.tsx");
+  expect(sourceText).toContain("Some enrollment steps need attention.");
+  expect(sourceText).not.toContain('(body?.failures??[]).join');
+ });
  it("COL-people-27 Faculty and Learner rows render cards before desktop table",()=>{
   expect(directory()).toContain("md:hidden");
   expect(directory()).toContain("md:table");
