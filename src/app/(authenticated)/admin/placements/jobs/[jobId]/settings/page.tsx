@@ -1,5 +1,6 @@
 import {SuperAdminDriveTabs} from "@/components/placements/super-admin-drive-tabs";
 import {SuperAdminDriveDeadline} from "@/components/placements/super-admin-drive-deadline";
+import {SuperAdminDriveDuplicate} from "@/components/placements/super-admin-drive-duplicate";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { getPlacementJob } from "@/modules/placements/job-service";
@@ -19,6 +20,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
    <p className="text-sm text-muted-foreground">The existing drive workspace enforces deadline, eligibility and publication state transitions.</p>
    <Link href={base} className="inline-flex min-h-10 items-center font-semibold text-primary-text">Open drive controls →</Link>
   </section>
+  <SuperAdminDriveDuplicate jobId={jobId} title={job.title}/>
   {job.status==="PUBLISHED"?<SuperAdminDriveDeadline jobId={jobId} deadline={job.applicationDeadline?.toISOString()??null}/>:null}
   <Link href="/admin/placements" className="inline-flex min-h-10 items-center font-semibold text-primary-text">Platform placement policy →</Link>
  </div>;
