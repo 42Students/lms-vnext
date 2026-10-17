@@ -4,7 +4,6 @@ import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
 import {MentorTaskDetailsEdit} from "./mentor-task-details-edit";
 type Task={id:string;title:string;status:string;sprintId:string|null;carriedFromSprintId?:string|null;updatedAt:Date;
- approach:string|null;
  priority:string;estimatePoints:number|null;
  description:string|null;approach:string|null;acceptanceCriteria:string|null;
  dueDate:string|null;blockerReason:string|null;taskType:string|null;};
