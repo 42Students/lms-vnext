@@ -591,7 +591,9 @@ export function FacultyCourseWorkspace({
                       open={selectedLessonId?true:lessonIndex===0?true:undefined}
                       className="group rounded-xl border border-border bg-[var(--lms-neutral-50)] p-4 sm:p-5"
                     >
-                      <summary className="mb-4 flex cursor-pointer list-none flex-wrap items-start justify-between gap-3 focus-visible:outline-2 focus-visible:outline-primary">
+                      <summary aria-label={"Lesson "+(lessonIndex+1)+": "+lesson.name+
+                        ", "+itemCount+" items. Expand or collapse lesson"}
+                        className="mb-4 flex min-h-11 cursor-pointer list-none flex-wrap items-start justify-between gap-3 rounded-md focus-visible:outline-2 focus-visible:outline-primary">
                         <div>
                           <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
                             Lesson{" "}
