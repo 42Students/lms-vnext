@@ -10,7 +10,7 @@ describe("REC-calendar-messages-profile-R01 unread recruiter mail policy",()=>{
    .toBe('&lt;b&gt;College &amp; &quot;Company&quot; &#39;Hiring&#39;&lt;/b&gt;');
  });
  it("REC-calendar-messages-profile-R01 strips control characters from digest titles",()=>{
-  expect(safeRecruiterEmailMergeText("Hi\\nWorld\\r",100)).toBe("Hi\\nWorld\\r".replace(/[\\u0000-\\u001f\\u007f]/g," ").trim());
+  expect(safeRecruiterEmailMergeText("Hi\\nWorld\\r".replace(/\\\\n/g,"\\n").replace(/\\\\r/g,"\\r"),100)).toBe("Hi World");
  });
  it("REC-calendar-messages-profile-R01 bounds untrusted recruiter college names",()=>{
   expect(safeRecruiterEmailMergeText("x".repeat(300),160)).toHaveLength(160);
