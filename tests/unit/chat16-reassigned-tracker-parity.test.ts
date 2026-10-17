@@ -3,6 +3,23 @@ import {readFileSync} from "node:fs";
 
 const source=(path:string)=>readFileSync(path,"utf8");
 describe("chat-16 reassigned tracker issue workflows",()=>{
+  it("SA-placements-projects-101 binds reports to authenticated user and returns only that user's list/detail",()=>{
+    const report=source("src/modules/bug-tracker/report-service.ts");
+    const own=source("src/modules/bug-tracker/reporter-service.ts");
+    const page=source("src/app/(authenticated)/tracker/page.tsx");
+    const detail=source("src/app/(authenticated)/tracker/mine/[publicId]/page.tsx");
+    const admin=source("src/modules/bug-tracker/admin-service.ts");
+    expect(report).toContain("reporterUserId: context.user.id");
+    expect(own).toContain("eq(db10BugReports.reporterUserId,context.user.id)");
+    expect(own).not.toContain("reporterName");
+    expect(own).not.toContain("rootCause");
+    expect(page).toContain('context.user.platformStatus !== "ACTIVE"');
+    expect(page).toContain("canSearchSimilar={isSuperAdmin(context)}");
+    expect(detail).toContain("getMyTrackerReport(context,publicId)");
+    expect(admin).toContain("requireTrackerAdmin(context)");
+    expect(source("docs/proposed-migrations/tracker-authenticated-reporter-owner.sql"))
+      .toContain("reporter_user_id");
+  });
   it("SA-placements-projects-104 keeps report draft, Ctrl or Cmd Enter, similar issues and a success card",()=>{
     const form=source("src/components/tracker/tracker-report-form.tsx");
     expect(form).toContain('useFormDraft("tracker-issue-report"');
