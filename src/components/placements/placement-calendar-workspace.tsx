@@ -3,10 +3,8 @@ import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
 import Link from "next/link";
 
 import { PageHeader } from "@/components/ui/page-header";
-import {
-  TpoCalendarCreateFollowup,
-  TpoCalendarMoveFollowup,
-} from "@/components/placements/tpo-calendar-followup-actions";
+import {TpoCalendarMoveFollowup} from "@/components/placements/tpo-calendar-followup-actions";
+import {TpoNewFollowupModal} from "@/components/tpo/tpo-new-followup-modal";
 import { StatusBadge } from "@/components/ui/status-badge";
 
 import { parseActivityDateBoundary } from "@/modules/activity/date-boundary";
@@ -28,7 +26,6 @@ import {
 } from "@/modules/placements/placement-calendar-model";
 
 import { listPlacementCalendarEvents } from "@/modules/placements/placement-calendar-service";
-import { listTpoLeads } from "@/modules/placements/tpo-crm-service";
 import {getTpoBlockedDates} from "@/modules/placements/tpo-configuration-read-service";
 import { calendarDueAtToIstLocal } from "@/modules/placements/tpo-calendar-followup-model";
 import { placementRoundKinds } from "@/modules/placements/validation";
@@ -534,16 +531,6 @@ export async function PlacementCalendarWorkspace({
   const isTpo = audience === "TPO";
   const calendarFollowupsWritable =
     isTpo && process.env.DB09_TPO_API_READY === "DB09_VERIFIED";
-  const recruiterLeads = calendarFollowupsWritable
-    ? await listTpoLeads(context, collegeId)
-    : [];
-  const displayedLeads = recruiterLeads.map((lead) => ({
-    id: lead.id,
-    name: lead.name,
-    companyName: lead.companyName,
-    email: lead.emailNorm,
-  }));
-
   return (
     <div className="space-y-6">
       <PageHeader
@@ -583,10 +570,9 @@ export async function PlacementCalendarWorkspace({
       />
 
       {calendarFollowupsWritable ? (
-        <TpoCalendarCreateFollowup
-          leads={displayedLeads}
-          totalLeads={recruiterLeads.length}
-        />
+        <div className="inline-flex rounded-lg border border-border bg-surface p-2">
+         <TpoNewFollowupModal collegeId={collegeId}/>
+        </div>
       ) : isTpo ? (
         <p role="status" className="text-sm text-muted-foreground">
           Calendar follow-up editing is unavailable until the DB09 CRM
@@ -902,7 +888,7 @@ export async function PlacementCalendarWorkspace({
       </section>
 
       {isTpo&&state.view==="week"?<TpoWeekHourCalendar days={window.days}
-       nowIso={now.toISOString()} leads={displayedLeads} canCreate={calendarFollowupsWritable}
+       nowIso={now.toISOString()} collegeId={collegeId} canCreate={calendarFollowupsWritable}
        events={events.map(item=>({
         id:item.id,title:item.title,companyName:item.companyName,kind:item.kind,
         roundKind:item.roundKind,status:item.status,jobId:item.jobId,roundId:item.roundId,
