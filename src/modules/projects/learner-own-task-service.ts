@@ -23,7 +23,16 @@ const create=z.strictObject({
  dueDate:z.iso.date().nullable().default(null),
  estimatePoints:z.number().int().min(0).max(1000).nullable().default(null),
  taskType:z.enum(["STORY","BUG","CHORE","SPIKE"]).nullable().default(null),
- expectedSprintUpdatedAt:z.iso.datetime({offset:true}),
+ expectedSprintUpdatedAt:z.iso.datetime({offset:true}).nullable(),
+}).superRefine((input,ctx)=>{
+ if(input.sprintId!==null&&!input.expectedSprintUpdatedAt)
+  ctx.addIssue({code:"custom",path:["expectedSprintUpdatedAt"],message:"Choose an active sprint."});
+ if(input.sprintId===null&&input.expectedSprintUpdatedAt!==null)
+  ctx.addIssue({code:"custom",path:["expectedSprintUpdatedAt"],message:"Backlog tasks have no sprint version."});
+ if(input.sprintId===null&&input.status!=="TODO")
+  ctx.addIssue({code:"custom",path:["status"],message:"Backlog tasks must start To Do."});
+ if(input.status==="BLOCKED"&&!input.blockerReason?.trim())
+  ctx.addIssue({code:"custom",path:["blockerReason"],message:"What's blocking this task?"});
 });
 function keyFor(membershipId:string){return "learner-"+membershipId.replaceAll("-","")+"-"+randomUUID().slice(0,8);}
 export async function createLearnerOwnTask(context:RequestContext,rawParams:unknown,raw:unknown){
