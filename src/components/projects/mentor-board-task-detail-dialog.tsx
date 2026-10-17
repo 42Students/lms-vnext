@@ -5,10 +5,10 @@ import {ProjectTaskComments} from "./project-task-comments";
 import {projectTaskDueState} from "@/modules/projects/project-task-visible-facts-model";
 type Task={
  id:string;title:string;status:string;description:string|null;acceptanceCriteria:string|null;
- priority:string;updatedAt:Date;assigneeMembershipId:string|null;blockerReason:string|null;
+ priority:string;createdAt?:Date;updatedAt:Date;assigneeMembershipId:string|null;blockerReason:string|null;
  sprintId:string|null;dueDate:string|null;estimatePoints:number|null;taskType:string|null;
 };
-type Submission={id:string;taskId:string;status:string;submissionUrl:string;version:number;createdAt:Date};
+type Submission={id:string;taskId:string;status:string;submissionUrl:string;version:number;createdAt:Date;submittedByMembershipId?:string|null};
 type Event={id:string;subjectId:string;summary:string;occurredAt:Date;actorDisplayName:string|null};
 type Member={membershipId:string;displayName:string|null;role:string};
 export function MentorBoardTaskDetailDialog({projectId,task,sprintTitle,members,submissions,activity,onClose,readOnly}:{
@@ -41,6 +41,10 @@ export function MentorBoardTaskDetailDialog({projectId,task,sprintTitle,members,
       {label:"Task type",value:task.taskType??"Not set"}]).map(f=>
       <div key={f.label}><dt className="font-semibold text-body">{f.label}</dt><dd className="mt-1">{f.value}</dd></div>)}
   </dl>
+  <dl className="mt-4 grid gap-3 text-xs text-body sm:grid-cols-2">
+    {task.createdAt ? <div><dt className="font-semibold">Created</dt><dd>{new Date(task.createdAt).toLocaleString("en-IN")}</dd></div> : null}
+    <div><dt className="font-semibold">Last edited</dt><dd>{new Date(task.updatedAt).toLocaleString("en-IN")}</dd></div>
+  </dl>
   <section className="mt-4"><h3 className="font-semibold">Description / Approach</h3>
     <p className="mt-1 whitespace-pre-wrap text-sm">{task.description||"No description recorded"}</p></section>
   <section className="mt-4"><h3 className="font-semibold">Done when</h3>
@@ -55,6 +59,7 @@ export function MentorBoardTaskDetailDialog({projectId,task,sprintTitle,members,
    {attempts.length?<ul className="mt-2 space-y-2">{attempts.map(row=>
     <li key={row.id} className="rounded border border-border p-2 text-xs">
      Version {row.version} · {row.status} · {new Date(row.createdAt).toLocaleDateString("en-IN")}
+     {row.submittedByMembershipId ? " · Submitted by "+(members.find(member=>member.membershipId===row.submittedByMembershipId)?.displayName??"Project member") : ""}
      {/^(https?:)\/\//i.test(row.submissionUrl)?
       <a href={row.submissionUrl} target="_blank" rel="noopener noreferrer"
        className="ml-2 text-primary-text underline">Open submitted evidence</a>:null}
