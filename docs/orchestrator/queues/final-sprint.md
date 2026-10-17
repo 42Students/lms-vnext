@@ -89,21 +89,21 @@ No page UI/UX restyling was introduced.
 
 ## chat-5 (15)
 
-- FAC-courses-02 [FIXED-ON-MAIN] faculty/courses
-- FAC-courses-07 [FIXED-ON-MAIN] faculty/courses
-- FAC-courses-10 [FIXED-ON-MAIN] faculty/courses
-- FAC-courses-17 [WRONG] faculty/courses
-- FAC-courses-28 [WRONG] faculty/courses
-- FAC-courses-30 [FIXED-ON-MAIN] faculty/courses
-- FAC-courses-32 [FIXED-ON-MAIN] faculty/courses
-- FAC-courses-33 [FIXED-ON-MAIN] faculty/courses
-- FAC-courses-35 [FIXED-ON-MAIN] faculty/courses
-- FAC-courses-R03 [FIXED-ON-MAIN] faculty/courses
-- FAC-courses-R04 [FIXED-ON-MAIN] faculty/courses
-- FAC-courses-R05 [OPEN] faculty/courses
-- FAC-courses-R06 [OPEN] faculty/courses
-- FAC-courses-R07 [FIXED-ON-MAIN] faculty/courses
-- FAC-courses-R08 [FIXED-ON-MAIN] faculty/courses
+- FAC-courses-02 [OPEN] faculty/courses
+- FAC-courses-07 [OPEN] faculty/courses
+- FAC-courses-10 [DONE] faculty/courses
+- FAC-courses-17 [NOT-A-GAP] faculty/courses
+- FAC-courses-28 [NOT-A-GAP] faculty/courses
+- FAC-courses-30 [DONE] faculty/courses
+- FAC-courses-32 [DONE] faculty/courses
+- FAC-courses-33 [DONE] faculty/courses
+- FAC-courses-35 [DONE] faculty/courses
+- FAC-courses-R03 [DONE] faculty/courses
+- FAC-courses-R04 [DONE] faculty/courses
+- FAC-courses-R05 [DONE] faculty/courses
+- FAC-courses-R06 [DONE] faculty/courses
+- FAC-courses-R07 [DONE] faculty/courses
+- FAC-courses-R08 [DONE] faculty/courses
 
 ## chat-6 (11)
 
