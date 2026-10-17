@@ -13,4 +13,11 @@ describe("chat-11 repaired college CSV audit insert",()=>{
   expect(schema).toContain('actorMembershipId: uuid(');
   expect(csv).toContain('module:"IDENTITY",eventType:"IDENTITY_COLLEGE_STUDENT_CSV_IMPORT"');
  });
+ it("COL-people-25 does not leak database error messages in partial CSV row receipts",()=>{
+  const csv=code("src/modules/people/college-student-csv-service.ts");
+  expect(csv).not.toContain('partial.push(reason instanceof Error');
+  expect(csv).not.toContain('"Class placement failed: " + reason.message');
+  expect(csv).toContain("Class placement failed; review section capacity and learner eligibility");
+
+ });
 });
