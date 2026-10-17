@@ -152,7 +152,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
       validUntil:placementRecruiterCollegeGrants.validUntil,
       status:placementRecruiterCollegeGrants.status,
     }).from(placementRecruiterCollegeGrants).where(and(
-      eq(placementRecruiterCollegeGrants.collegeId,collegeId),
+      inArray(placementRecruiterCollegeGrants.companyRelationshipId,db.select({id:placementCompanyRelationships.id}).from(placementCompanyRelationships).where(eq(placementCompanyRelationships.collegeId,collegeId))),
       inArray(placementRecruiterCollegeGrants.recruiterUserId,[...new Set(requestRecords.map(row=>row.recruiterUserId))]),
     )):[];
     const grantByRequest=new Map(requestRecords.map(row=>[row.id,
