@@ -56,7 +56,7 @@ async function lockedRelationship(tx:Tx,context:RequestContext,collegeId:string)
    throw new RecruiterDriveRequestError("FORBIDDEN");
  return row;
 }
-async function informPlacementCell(tx:Tx,context:RequestContext,scope:{collegeId:string;organizationId:string},id:string,title:string,action:"NEW"|"UPDATED"|"CANCELLED"|"AUTO_APPROVED"="NEW",previousDraft?:unknown,currentDraft?:unknown){
+async function informPlacementCell(tx:Tx,context:RequestContext,scope:{collegeId:string;organizationId:string},id:string,title:string,action:"NEW"|"UPDATED"|"CANCELLED"|"AUTO_APPROVED"="NEW",previousDraft?:unknown,currentDraft?:unknown,autoApproval?:{reason:string;jobId:string}){
  const headline=action==="AUTO_APPROVED"?"Recruiter drive request automatically approved":
   action==="NEW"?"New drive request from "+context.recruiter!.companyName:
   action==="UPDATED"?"Recruiter updated a drive request":"Recruiter cancelled a drive request";
@@ -66,7 +66,7 @@ async function informPlacementCell(tx:Tx,context:RequestContext,scope:{collegeId
    action==="NEW"?"placements.recruiter.drive.requested":
     action==="UPDATED"?"placements.recruiter.drive.updated":"placements.recruiter.drive.cancelled",
   subjectType:"placement_recruiter_drive_request",subjectId:id,subjectLabel:title,
-  summary:headline,metadata:{requestId:id,action,autoReason:autoReason??null,approvedJobId:approvedJobId??null,
+  summary:headline,metadata:{requestId:id,action,autoReason:autoApproval?.reason??null,approvedJobId:autoApproval?.jobId??null,
    ...(previousDraft&&currentDraft?{previousDraft:tpoComparableDriveSnapshot(previousDraft),
     currentDraft:tpoComparableDriveSnapshot(currentDraft)}:{})},
  }).returning({id:activityEvents.id});
@@ -137,8 +137,7 @@ export async function createOwnRecruiterDriveRequest(context:RequestContext,raw:
   const [created]=await tx.insert(placementRecruiterDriveRequests).values({
    collegeId:input.collegeId,companyRelationshipId:scope.relationshipId,
    recruiterUserId:context.user.id,submissionId:input.submissionId,
-   sourceJobId:input.sourceJobId??null,status:approvedJobId?"DRAFT":"REQUEST",draft:input.draft,
-   approvedJobId,decisionNote:autoReason??null,
+   sourceJobId:input.sourceJobId??null,status:"REQUEST",draft:input.draft,
   }).onConflictDoNothing().returning();
   if(!created)throw new RecruiterDriveRequestError("IDEMPOTENCY_CONFLICT");
   let finalRequest=created;
@@ -159,7 +158,8 @@ export async function createOwnRecruiterDriveRequest(context:RequestContext,raw:
    }
   }
   await informPlacementCell(tx,context,{collegeId:input.collegeId,organizationId:scope.organizationId},
-   created.id,input.draft.title,approvedJobId?"AUTO_APPROVED":"NEW");
+   created.id,input.draft.title,approvedJobId?"AUTO_APPROVED":"NEW",undefined,undefined,
+   approvedJobId?{reason:policy.reason,jobId:approvedJobId}:undefined);
   return {request:finalRequest,replayed:false};
  });
 }

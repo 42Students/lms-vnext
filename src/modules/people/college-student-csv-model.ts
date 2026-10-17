@@ -87,6 +87,7 @@ export function parseStudentCsv(raw: string, defaults: {programId?: string;cohor
   }
   const seenPhones = new Set<string>();
   const seenEmails = new Set<string>();
+  const seenRollNumbers = new Set<string>();
   const entries = rows.slice(1).map((cells, index) => {
     const row = index + 2;
     if (cells.length !== (picker ? 4 : 5)) return { row, errors: ["COLUMN_COUNT_MISMATCH"] };
@@ -114,6 +115,13 @@ export function parseStudentCsv(raw: string, defaults: {programId?: string;cohor
     const errors: string[] = [];
     if (seenPhones.has(data.phoneE164)) errors.push("DUPLICATE_PHONE_IN_FILE");
     seenPhones.add(data.phoneE164);
+    // Roll numbers are unique per uploaded cohort, including case/whitespace variants.
+    // Rejecting duplicates before identity provisioning prevents duplicate roster rows.
+    if (data.rollNumber?.trim()) {
+      const rollKey = [data.cohortId, data.rollNumber.trim().toLocaleLowerCase("en-IN")].join(":");
+      if (seenRollNumbers.has(rollKey)) errors.push("DUPLICATE_ROLL_NUMBER_IN_FILE");
+      seenRollNumbers.add(rollKey);
+    }
     if (data.email) {
       // Email identity matching is case-insensitive; rejecting case variants in
       // the same upload avoids a partial import across separate identity calls.

@@ -29,6 +29,7 @@ describe("COL-placements-R01 college directory and export behavior",()=>{
    venue:null,mode:"VIRTUAL"}]);
   expect(interview).toContain("scheduled date (IST)");
   expect(interview).toContain("interviewer");
+  expect(collegeInterviewCsv([{id:"missing-name",job:"Engineer",student:null,kind:"INTERVIEW",status:"SCHEDULED",start:new Date("2099-01-01T05:00:00Z"),venue:null,mode:"VIRTUAL"}])).toContain('"missing-name"');
  });
  it("COL-placements-R01 scopes company listing and both CSV routes to college admin",()=>{
   const service=source("src/modules/placements/college-company-directory-service.ts");

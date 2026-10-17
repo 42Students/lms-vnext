@@ -46,13 +46,16 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
   </div>}
   <p role="status" className="text-xs text-muted-foreground">{activeCollegeContactFilterCount(filter)} applied directory filters. Pagination, sort and selected tab are not counted.</p>
   <p className="text-xs text-muted-foreground">Join-date range uses Asia/Kolkata calendar days. The start must not be after the end.</p>
-  <FilterBar title="Filters" activeCount={activeCollegeContactFilterCount(filter)}>
-  <form action="/college/contacts" method="get" className="flex flex-wrap items-end gap-3 rounded-lg border bg-surface p-4">
+  <FilterBar title="Filters" activeCount={activeCollegeContactFilterCount(filter)}
+    search={<label className="flex min-w-0 flex-col gap-1 text-sm font-semibold text-body">Name or email
+      <input type="search" name="q" form="college-contacts-filters" maxLength={100}
+        defaultValue={filter.q} placeholder="Search contacts"
+        className="min-h-11 w-full min-w-0 rounded-md border border-border bg-surface px-3 text-base text-foreground focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]"/>
+    </label>}>
+  <form id="college-contacts-filters" action="/college/contacts" method="get" className="flex flex-wrap items-end gap-3 rounded-lg border bg-surface p-4">
    <input type="hidden" name="tab" value={filter.tab}/>
    {filter.membershipId&&<input type="hidden" name="membershipId" value={filter.membershipId}/>}
-   <label className="min-w-0 flex-1 basis-52 text-sm">Name or email
-    <input type="search" name="q" maxLength={100} defaultValue={filter.q} placeholder="Search contacts" className="mt-1 block min-h-11 w-full min-w-0 rounded-md border bg-background px-3"/>
-   </label>
+
    <details className="min-w-0 flex-auto basis-full rounded-md border border-border bg-surface p-3" open={activeCollegeContactFilterCount(filter)>0}>
     <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-foreground">Advanced filters</summary>
     <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

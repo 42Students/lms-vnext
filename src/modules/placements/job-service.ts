@@ -2,6 +2,7 @@ import { and, asc, eq, isNull, ne } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { can, requirePermission, AuthorizationError } from "@/modules/permissions/policy";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import {deliverRecordedJobApplicantsPlacementEvent} from "./learner-placement-event-delivery";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   placementCompanyRelationships,
@@ -655,7 +656,7 @@ export async function closePlacementJob(
     }
 
     await withdrawJobIssuedOffers(tx, closed.id, context.user.id, now);
-    await recordActivityEventInTransaction(
+    const closedEvent=await recordActivityEventInTransaction(
       tx,
       context,
       {
@@ -675,6 +676,10 @@ export async function closePlacementJob(
           `placement-job:${closed.id}:closed`,
       },
     );
+    await deliverRecordedJobApplicantsPlacementEvent(tx,{
+      eventId:closedEvent.id,collegeId:closed.collegeId,jobId:closed.id,
+      kind:"DRIVE_CLOSED",subject:closed.title,
+    });
 
     return closed;
   });
@@ -700,6 +705,19 @@ export async function cancelPlacementJob(context: RequestContext, jobIdInput: st
       eq(placementJobs.status,"PUBLISHED"))).returning();
     if (!cancelled) throw new PlacementsServiceError("PLACEMENT_JOB_NOT_CLOSABLE");
     await withdrawJobIssuedOffers(tx,jobId,context.user.id,now);
+    const event=await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_JOB_CANCELLED,
+      collegeId:cancelled.collegeId,subjectType:"placement_job",
+      subjectId:cancelled.id,subjectLabel:cancelled.title,
+      summary:cancelled.title+" cancelled",
+      metadata:{jobId:cancelled.id},
+      groupKey:"placement-job:"+cancelled.id,
+      dedupeKey:"placement-job:"+cancelled.id+":cancelled",
+    });
+    await deliverRecordedJobApplicantsPlacementEvent(tx,{
+      eventId:event.id,collegeId:cancelled.collegeId,jobId:cancelled.id,
+      kind:"DRIVE_CANCELLED",subject:cancelled.title,
+    });
     return cancelled;
   });
 }
