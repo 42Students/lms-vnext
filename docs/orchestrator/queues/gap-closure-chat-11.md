@@ -240,6 +240,15 @@ Audit: `docs/audit/pages/superadmin/tenants-modules-2.md` (and `tenants-modules-
 | SA-tenants-modules-32 | S4 | MISSING-FIELD | OPEN |
 | SA-tenants-modules-40 | S4 | MISSING-ACTION | OPEN |
 
+
+## Builder chat-11 checkpoint — learner/projects first verified-closure batch (2026-10-17)
+
+- Synced `chatgpt/chat-11-b` to `origin/main` `0233e08b` before starting the page; pushed only to this branch, never main.
+- Source-complete with named tests and page verification entries: `LEARNER-projects-01/02/03/05/07/08/10/11/12/13/16/17/18/19/22/23/26/27/28/29/30/31/32/33/36/37/39/40/R03` (29 queued gaps); `LEARNER-projects-38` additional non-queue witness.
+- Named tests in `tests/unit/learner-projects-gap-verification.test.ts`, DB-permission tests for `LEARNER-projects-26/33` in `tests/integration/projects-p5-lifecycle.test.ts`; updated `tests/unit/chat7-learner-project-goals.test.ts`. No tests run, no correctness certification implied.
+- Remaining learner/projects gaps needing additional implementation/legacy verification: `LEARNER-projects-04/06/09/14/15/20/21/34/35/R04`. These are **OPEN**, not blocked or marked NOT-A-GAP; their partial witnesses do not count as closure.
+- `docs/audit/acceptance/learner-projects-verification.md` records implementation paths and exact named tests for the 29 queued source-complete items; orchestrator validates them before closing the official tracker.
+
 ## Notes (blockers, one line each)
 
 ## Needs shell (chat-9 only)
