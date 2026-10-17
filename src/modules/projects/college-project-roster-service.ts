@@ -1,6 +1,6 @@
 import "server-only";
 import {and,eq,inArray,isNull} from "drizzle-orm";
-import {z} from "zod";
+import {replaceCollegeProjectRosterSchema} from "./college-project-roster-model";
 import {getDb} from "@/db/client";
 import {collegeMemberships,membershipRoles,projectInstances,projectMembers,users} from "@/db/schema";
 import {ProjectsServiceError} from "./errors";
@@ -9,13 +9,6 @@ import {projectTeamAuditInput} from "./mentor-team-audit-model";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {notifyProjectMemberships} from "./project-notification-service";
 import type {RequestContext} from "@/modules/identity/context";
-
-export const replaceCollegeProjectRosterSchema=z.object({
- learnerMembershipIds:z.array(z.string().uuid()).max(100).refine(values=>new Set(values).size===values.length,
-  "Each learner must be selected once."),
- roleLabel:z.string().trim().max(120).optional(),
- expectedUpdatedAt:z.iso.datetime({offset:true}),
-}).strict();
 
 /** COL-projects-15: one all-or-nothing learner-roster replacement. Class teams stay managed by their own workflow. */
 export async function replaceCollegeProjectLearners(context:RequestContext,projectId:string,raw:unknown){
