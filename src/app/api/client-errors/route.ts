@@ -73,7 +73,11 @@ export async function POST(request: Request) {
     // Anonymous failures are valid; never trust a client-supplied account ID.
   }
   const report = parsed.data;
-  logError("client.error", new Error(redactAlertText(report.message)), {
+  // Root error boundaries intentionally send only the category and reference.
+  const safeMessage = report.message ??
+    (report.kind === "stale_chunk" ? "Browser failed to load updated application code" :
+      "Browser rendering failed");
+  logError("client.error", new Error(redactAlertText(safeMessage)), {
     ...identity, component: safeAlertLabel(report.component ?? report.name),
     path: safeAlertPath(report.path), requestId: report.requestId,
     errorName: safeAlertLabel(report.name), status: 500,
