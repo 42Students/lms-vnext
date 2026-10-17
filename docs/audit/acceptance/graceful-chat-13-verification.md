@@ -14,3 +14,7 @@ These are scoped implementation contracts for the Super Admin placements intervi
 | GR-37 | DONE | Scoped to Super Admin drive forms; `tests/unit/chat13-drive-friendly-guarded.test.ts` → `GR-37 user-facing interview/calendar dates identify IST` (not run) |
 | GR-62 | DONE | Scoped to Super Admin drive forms; `tests/unit/chat13-drive-friendly-guarded.test.ts` → `GR-62 long drive forms warn before losing unsaved changes and clear after confirmed save` (not run) |
 | GR-90 | DONE | Scoped to Super Admin drive forms; `tests/unit/chat13-drive-friendly-guarded.test.ts` → `GR-90 drive forms use shared toast feedback on failure and never print an API error code` (not run) |
+| GR-70 | DONE | Super Admin interview card; `tests/unit/chat13-superadmin-interview-graceful.test.ts` → `GR-70 isolates the Super Admin interview card in a retryable client error boundary` (page-scoped; not run) |
+| GR-64 | DONE | Super Admin interview card; `tests/unit/chat13-superadmin-interview-graceful.test.ts` → `GR-64 prevents an empty error export and caps long downloads with a plain notice` (page-scoped; not run) |
+| GR-91 | DONE | Super Admin interview card; `tests/unit/chat13-superadmin-interview-graceful.test.ts` → `GR-91 provides a keyboard-reachable retry button with a visible focus ring` (page-scoped; not run) |
+| GR-92 | DONE | Super Admin interview card; `tests/unit/chat13-superadmin-interview-graceful.test.ts` → `GR-92 explains failures with text rather than color alone` (page-scoped; not run) |

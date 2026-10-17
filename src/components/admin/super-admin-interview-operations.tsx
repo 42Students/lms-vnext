@@ -13,7 +13,8 @@ export function SuperAdminInterviewOperations({events,today}:{events:SuperAdminC
   (kind==="ALL"||e.kind===kind)&&(status==="ALL"||e.status===status)&&
   (mode==="ALL"||calendarMode(e)===mode)&&(!conflictsOnly||conflicts.has(e.id))
  ).sort((a,b)=>sort==="COMPANY"?a.companyName.localeCompare(b.companyName):a.startsAt.localeCompare(b.startsAt)),[events,kind,status,mode,conflictsOnly,sort,conflicts]);
- const csv=useMemo(()=>superAdminInterviewCsv(filtered),[filtered]);
+ const exported=filtered.slice(0,500);
+ const csv=useMemo(()=>superAdminInterviewCsv(exported),[exported]);
  const unique=(values:string[])=>[...new Set(values)].sort();
  const choices=(label:string,items:string[],value:string,change:(v:string)=>void)=>
   <label className="grid min-w-36 gap-1 text-sm font-semibold">{label}
@@ -47,8 +48,10 @@ export function SuperAdminInterviewOperations({events,today}:{events:SuperAdminC
    }}>Clear filters</button>
   </div>
   <p role="status" aria-live="polite">{filtered.length} matching scheduled-round records. Candidate-level collisions and department filters require candidate appointment data.</p>
-  <a download="interviews.csv" href={"data:text/csv;charset=utf-8,"+encodeURIComponent("\ufeff"+csv)}
-   onClick={()=>setExportError("")} className="inline-flex min-h-11 items-center rounded border border-border px-4 font-semibold text-primary-text">Export interviews.csv</a>
+  <a download="interviews.csv" href={filtered.length?"data:text/csv;charset=utf-8,"+encodeURIComponent("\ufeff"+csv):undefined}
+   onClick={e=>{if(!filtered.length){e.preventDefault();setExportError("No interviews match the selected filters. Clear filters to export.");}else setExportError("");}}
+   className="inline-flex min-h-11 items-center rounded border border-border px-4 font-semibold text-primary-text focus-visible:ring-2 focus-visible:ring-primary">Export interviews.csv</a>
+  {filtered.length>500?<p role="status" className="text-sm text-muted-foreground">Export includes the first 500 visible rounds. Narrow filters for the remaining records.</p>:null}
   {exportError?<p role="alert">{exportError}</p>:null}
   {!filtered.length?<p className="rounded border border-border p-4">No interviews match these filters. Clear filters to see all rounds.</p>:
    <div className="overflow-x-auto"><table className="w-full min-w-[55rem] text-left text-sm">

@@ -7,6 +7,7 @@ import {TpoCalendarMoveFollowup} from "@/components/placements/tpo-calendar-foll
 import {TpoNewFollowupModal} from "@/components/tpo/tpo-new-followup-modal";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { SuperAdminInterviewOperations } from "@/components/admin/super-admin-interview-operations";
+import { PlacementPanelErrorBoundary } from "@/components/admin/placement-panel-error-boundary";
 
 import { parseActivityDateBoundary } from "@/modules/activity/date-boundary";
 import type { RequestContext } from "@/modules/identity/context";
@@ -1026,13 +1027,13 @@ export async function PlacementCalendarWorkspace({
         </section>
       ) : null}
 
-      {audience==="SUPER_ADMIN" ? <SuperAdminInterviewOperations today={today}
+      {audience==="SUPER_ADMIN" ? <PlacementPanelErrorBoundary><SuperAdminInterviewOperations today={today}
         events={visibleEvents.filter(event=>event.kind==="ROUND").map(event=>({
          id:event.id,roundId:event.roundId,jobId:event.jobId,jobTitle:event.jobTitle,
          title:event.title,companyName:event.companyName,status:event.status,
          kind:event.roundKind??"OTHER",startsAt:event.startsAt.toISOString(),
          endsAt:event.endsAt?.toISOString()??null,venue:event.venue??null,
-        }))} /> : null}
+        }))} /></PlacementPanelErrorBoundary> : null}
       <section
         aria-label="Calendar agenda"
         className="space-y-4"
