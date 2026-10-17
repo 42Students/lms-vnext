@@ -111,7 +111,8 @@ describe("chat-3 final sprint TPO Companies",()=>{
  it("TPO-companies-R02 failed join link creation explains missing domain and permits Retry",()=>{
   const card=source("src/components/tpo/tpo-public-join-link-card.tsx");
   expect(card).toContain("Add the company's email domain first, so only its people can join.");
-  expect(card).toContain("router.refresh()");
+  expect(card).toContain("retryStatus");
+  expect(card).toContain('/api/placements/tpo/public-join-links/status?');
   expect(card).toContain("companyName??status.domain");
   expect(card).toContain("Retry");
  });
