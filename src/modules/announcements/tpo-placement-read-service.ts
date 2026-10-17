@@ -13,13 +13,14 @@ import {senderTypeForTpoTab,tpoAnnouncementTabSchema,projectTpoAnnouncementRows}
 
 /** Read only explicitly college-targeted TPO/42 announcements; no learner targeting guesses. */
 export async function listTpoPlacementAnnouncements(
- context:RequestContext,rawTab:unknown="yours",now:Date=new Date(),
+ context:RequestContext,rawTab:unknown="yours",now:Date=new Date(),page=1,
 ){
  const membership=context.membership;
  if(!membership||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,membership.collegeId);
  const tab=tpoAnnouncementTabSchema.parse(rawTab);
  const targetedReady=await placementTableExists("placement_tpo_notice_audiences");
+ const safePage=Number.isFinite(page)?Math.max(1,Math.min(1000,Math.trunc(page))):1;
  if(!await placementTableExists("announcements"))return {status:"NOT_REGISTERED" as const,items:[]};
  return getDb().transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{
