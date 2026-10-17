@@ -25,7 +25,7 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 3. WP-chat-11-03-projects-tracker-s2 | IN-PROGRESS | 24 gaps: S2 24 (SA-placements-projects-81/82/85 template authoring advanced; tracker and other superadmin gaps still open).
 4. WP-chat-11-04-projects-tenants-modules-s2 | IN-PROGRESS | 18 gaps: S2 2, S3 16 (FAST: LEARNER-projects-02/03/15/27/28/R03 source advanced, partial parity remains)
 5. WP-chat-11-05-projects-meetings-s3 | IN-PROGRESS | 19 gaps: S3 19 (MEN-03/04/19/21/33/40/51/52 source advanced; other mentor S3 gaps still open)
-6. WP-chat-11-06-projects-projects-meetings-part-s3 | IN-PROGRESS | 24 gaps: S3 24 (FAST: MEN-projects-meetings-54 resource visibility source implemented; MEN-projects-meetings-68 immediate MISSED badge source implemented; others remain)
+6. WP-chat-11-06-projects-projects-meetings-part-s3 | IN-PROGRESS | 24 gaps: S3 24 (MEN-projects-meetings-54/59/62/63/68 advanced; other resources, audit and superadmin S3 parity pending).
 7. WP-chat-11-07-tracker-projects-s3 | TODO | 16 gaps: S3 9, S4 7
 8. WP-chat-11-08-projects-projects-meetings-part-s4 | IN-PROGRESS | 15 gaps: S4 15 (FAST: LEARNER-projects-11 tab aliases and delivery modal; LEARNER-projects-30 comment copy partial)
 
@@ -123,3 +123,9 @@ WP-01 and WP-02 must remain IN-PROGRESS; unaddressed gaps include College projec
 - WP-03: `SA-placements-projects-81` template creation supports deliverables, definition of done, personas, course/phase and submission setup; `SA-placements-projects-82` versioned Overview editor (submission type/instructions, metadata and text arrays); `SA-placements-projects-85` full versioned template Resources editor (type/status/pinned/required/access notes, reorder, add, remove) uses existing JSON blueprint version endpoint. Other WP-03 items including tracker remain pending; `SA-placements-projects-101` permission / reporter session model SKIP owner decision, `SA-placements-projects-103` screenshots SKIP private storage configuration, `SA-placements-projects-120` findings importer SKIP external credentials.
 - WP-05/06: `MEN-projects-meetings-26` Next meeting / Also scheduled / history grouping; `MEN-projects-meetings-46` task deletion for unsubmitted tasks with assignee notification; `MEN-projects-meetings-59/62` date/type-filtered Activity and device timezone display. More S3 gaps remain.
 - No tests, typecheck, lint, build, CI waiting or PR per FAST v2. Package DONE denotes its non-blocked scope only; migration/owner-dependent skipped item(s) are explicitly tracked above.
+
+### [chat-11] FAST v2 follow-on — template and delivery round
+- `SA-placements-projects-65` and `COL-projects-12`: readiness detail now has persisted verdict context, reasons, state, submission status, progress bars, and override timestamp; exact override actor detail still pending.
+- `SA-placements-projects-81`: Create Template form and input model now accept initial deliverables, personas, definition-of-done, course/phase and submission requirements.
+- `MEN-projects-meetings-63`: mentor-only Lock submission action with confirmation/reason, transactionally persisted `lockedAt`, delivery event, audit event, and learner notification; final-delivery workspace control wired.
+- Continued blocker ledger: `MEN-projects-meetings-34` requires registration of sprint goal/date/done SQL proposal; `COL-projects-03` authored brief requires registration of workspace brief proposal; `SA-placements-projects-103` private screenshot storage; `SA-placements-projects-101` reporter auth owner decision; `SA-placements-projects-120` external findings GitHub credentials. Their protected portions were not presented as live.
