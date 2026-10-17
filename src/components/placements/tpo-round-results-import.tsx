@@ -12,6 +12,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
  const [overrides,setOverrides]=useState<Record<number,string>>({});
  const [skips,setSkips]=useState<number[]>([]);
  const [missingPolicy,setMissingPolicy]=useState<"LEAVE_PENDING"|"MARK_NOT_CLEARED">("LEAVE_PENDING");
+ const [confirmMissingFailure,setConfirmMissingFailure]=useState(false);
  const [busy,setBusy]=useState(false);const [error,setError]=useState("");
  const url="/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(roundId)+"/import-results";
  async function send(action:"PREVIEW"|"STAGE_IMPORT"){
@@ -31,7 +32,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
    const response=await fetch(url,{method:"POST",credentials:"same-origin",body:payload});
    const result=await response.json() as (Preview&Report&{error?:string;issues?:Array<{message:string}>});
    if(!response.ok)throw Error(result.issues?.[0]?.message??result.error??"Import failed");
-   if(action==="PREVIEW"){setPreview(result);setReport(null);setOverrides({});setSkips([]);}
+   if(action==="PREVIEW"){setPreview(result);setReport(null);setOverrides({});setSkips([]);setConfirmMissingFailure(false);}
    else {setReport(result);setPreview(null);router.refresh();}
   }catch(e){setError(e instanceof Error?e.message:"Import failed");}
   finally{setBusy(false);}
@@ -43,7 +44,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
   <a href={url} download className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Download CSV template</a>
   <label className="block text-sm font-semibold text-body">Company results file
    <input type="file" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    disabled={busy} onChange={e=>{setFile(e.target.files?.[0]??null);setPreview(null);setReport(null);setOverrides({});setSkips([]);setMissingPolicy("LEAVE_PENDING");}}
+    disabled={busy} onChange={e=>{setFile(e.target.files?.[0]??null);setPreview(null);setReport(null);setOverrides({});setSkips([]);setMissingPolicy("LEAVE_PENDING");setConfirmMissingFailure(false);}}
     className="mt-2 block w-full rounded-md border border-border p-3 text-foreground"/>
   </label>
   <button type="button" disabled={busy||!file} onClick={()=>void send("PREVIEW")}
@@ -76,13 +77,19 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
    <fieldset className="space-y-2 rounded border border-border bg-surface p-3 text-sm">
     <legend className="font-semibold">Students not in the file</legend>
     <label className="flex gap-2"><input type="radio" checked={missingPolicy==="LEAVE_PENDING"}
-     onChange={()=>setMissingPolicy("LEAVE_PENDING")}/> Leave pending (do not change their result)</label>
+     onChange={()=>{setMissingPolicy("LEAVE_PENDING");setConfirmMissingFailure(false);}}/> Leave pending (do not change their result)</label>
     <label className="flex gap-2"><input type="radio" checked={missingPolicy==="MARK_NOT_CLEARED"}
      onChange={()=>setMissingPolicy("MARK_NOT_CLEARED")}/> Mark everyone missing as Not cleared</label>
-    {missingPolicy==="MARK_NOT_CLEARED"?<p className="text-error">This also stages Not cleared for all currently eligible applicants missing from the file. All unmatched rows must be matched or unambiguously skipped before this can proceed.</p>:null}
+    {missingPolicy==="MARK_NOT_CLEARED"?<div className="space-y-2 text-error">
+     <p>This also stages Not cleared for {preview.notInFile.length} currently eligible applicants missing from the file. Unmatched source rows must be resolved. Students are not told until results are applied.</p>
+     <label className="flex items-center gap-2 text-sm font-semibold">
+      <input type="checkbox" checked={confirmMissingFailure} onChange={e=>setConfirmMissingFailure(e.target.checked)}/>
+      I reviewed the missing students and choose to stage Not cleared.
+     </label>
+    </div>:null}
    </fieldset>
-   <button type="button" disabled={busy||!preview.matched.length&&missingPolicy==="LEAVE_PENDING"&&
-    !Object.values(overrides).some(Boolean)} onClick={()=>{if(window.confirm("Stage this reviewed result import? "+(missingPolicy==="MARK_NOT_CLEARED"?"Applicants not in the file will be marked Not cleared. ":"")+"Results are not published until the separate Apply step."))void send("STAGE_IMPORT");}}
+   <button type="button" disabled={busy||(missingPolicy==="MARK_NOT_CLEARED"&&!confirmMissingFailure)||
+    (!preview.matched.length&&missingPolicy==="LEAVE_PENDING"&&!Object.values(overrides).some(Boolean))} onClick={()=>{if(window.confirm("Stage this reviewed result import? "+(missingPolicy==="MARK_NOT_CLEARED"?"Applicants not in the file will be marked Not cleared. ":"")+"Results are not published until the separate Apply step."))void send("STAGE_IMPORT");}}
     className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
     {busy?"Staging…":"Confirm and stage results"}</button>
   </div>:null}
