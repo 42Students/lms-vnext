@@ -151,7 +151,7 @@ export default async function MentorProjectsPage({
       }
       if (query.status === "BLOCKED") {
         return Boolean(row.project.blocker?.trim()) ||
-          (workCounts.get(row.project.id)?.blocked ?? 0) > 0;
+          Boolean(kinds.get(row.project.id)?.has("STALLED"));
       }
       if (query.status === "IN_PROGRESS") {
         const facts = workCounts.get(row.project.id);
@@ -160,7 +160,7 @@ export default async function MentorProjectsPage({
       if (query.status === "READY") {
         const facts = workCounts.get(row.project.id);
         return row.project.status === "COMPLETED" ||
-          Boolean(facts && facts.total > 0 && facts.done === facts.total);
+          Boolean(facts && facts.total > 0 && facts.open === 0);
       }
       if (
         query.status === "CURRENT"
