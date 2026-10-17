@@ -1,9 +1,10 @@
+import {parseActivityDateBoundary} from "@/modules/activity/date-boundary";
 import {z} from "zod";
 export const GLOBAL_TPO_REQUEST_TYPES=["ALL","APPLICATION_WITHDRAWAL","ROUND_RESCHEDULE","OFFER_EXTENSION"] as const;
 export const globalTpoRequestsQuerySchema = z.object({
   status: z.enum(["PENDING","APPROVED","REJECTED","CANCELLED"]).default("PENDING"),
   requestType: z.enum(GLOBAL_TPO_REQUEST_TYPES).default("ALL"),
-  age: z.enum(["ALL","OLDER_THAN_1_DAY","OLDER_THAN_2_DAYS","OLDER_THAN_7_DAYS","OLDER_THAN_30_DAYS"]).default("ALL"),
+  age: z.enum(["ALL","TODAY","ONE_TO_TWO_DAYS","OLDER_THAN_1_DAY","OLDER_THAN_2_DAYS","OLDER_THAN_7_DAYS","OLDER_THAN_30_DAYS"]).default("ALL"),
   sort: z.enum(["URGENCY_FIRST","NEWEST_FIRST","OLDEST_FIRST"]).default("URGENCY_FIRST"),
   search: z.string().trim().max(150).default(""),
   urgentOnly: z.coerce.boolean().optional(),
@@ -107,12 +108,22 @@ export function globalTpoRequestFirstPageHref(query:{
 }
 
 /** Fixed clock injection makes the age cutoff reproducible in tests. */
-export function tpoRequestAgeCutoff(age:"ALL"|"OLDER_THAN_1_DAY"|"OLDER_THAN_2_DAYS"|"OLDER_THAN_7_DAYS"|"OLDER_THAN_30_DAYS",asOf:Date){
- if(age==="ALL")return undefined;
+export function tpoRequestAgeCutoff(age:"ALL"|"TODAY"|"ONE_TO_TWO_DAYS"|"OLDER_THAN_1_DAY"|"OLDER_THAN_2_DAYS"|"OLDER_THAN_7_DAYS"|"OLDER_THAN_30_DAYS",asOf:Date){
+ if(age==="ALL"||age==="TODAY"||age==="ONE_TO_TWO_DAYS")return undefined;
  return new Date(asOf.getTime()-(age==="OLDER_THAN_1_DAY"?1:age==="OLDER_THAN_2_DAYS"?2:age==="OLDER_THAN_7_DAYS"?7:30)*86400000);
 }
 
 /** A cleared request search keeps the selected decision queue, without carrying stale pagination. */
 export function tpoRequestClearAdvancedHref(status:z.infer<typeof globalTpoRequestsQuerySchema>["status"]){
  return "/tpo/requests?"+new URLSearchParams({status,page:"1"}).toString();
+}
+
+/** Date-only today is a Kolkata calendar day; "1–2 days" uses elapsed 24–48h. */
+export function tpoRequestDateBounds(age:z.infer<typeof globalTpoRequestsQuerySchema>["age"],asOf:Date){
+ if(age==="TODAY"){
+  const day=new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(asOf);
+  return {after:parseActivityDateBoundary(day,"from"),before:new Date(parseActivityDateBoundary(day,"to").getTime()+1)};
+ }
+ if(age==="ONE_TO_TWO_DAYS")return {after:new Date(asOf.getTime()-2*86400000),before:new Date(asOf.getTime()-86400000)};
+ return {after:undefined,before:tpoRequestAgeCutoff(age,asOf)};
 }
