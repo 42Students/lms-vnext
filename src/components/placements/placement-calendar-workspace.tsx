@@ -449,9 +449,9 @@ export async function PlacementCalendarWorkspace({
       },
     );
 
-  const eventTypeCountsSource=audience==="TPO"&&state.kind
+  const eventTypeCountsSource=audience==="TPO"&&(state.kind||state.company)
    ?await listPlacementCalendarEvents(context,{
-    collegeId,from:window.from,to:window.to,company:state.company||undefined,
+    collegeId,from:window.from,to:window.to,
    })
    :response;
   const eventTypeCounts=new Map<string,number>();
@@ -757,6 +757,7 @@ export async function PlacementCalendarWorkspace({
             Company
             <input
               type="search"
+              list="tpo-calendar-company-choices"
               name="company"
               maxLength={150}
               defaultValue={state.company}
@@ -765,6 +766,10 @@ export async function PlacementCalendarWorkspace({
             />
           </label>
 
+          {isTpo?<datalist id="tpo-calendar-company-choices">
+           {[...new Set(eventTypeCountsSource.events.map(event=>event.companyName).filter(Boolean))]
+             .sort((a,b)=>a.localeCompare(b,"en-IN")).slice(0,200).map(name=><option key={name} value={name}/>)}
+          </datalist>:null}
           {isTpo ? (
             <label className="flex flex-col gap-1 text-sm font-semibold text-body">
               Event type
