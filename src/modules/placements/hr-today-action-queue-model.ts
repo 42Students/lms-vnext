@@ -21,7 +21,7 @@ export function buildRecruiterActionQueue(input:{
  const returned=(input.returnedRequests??[])
   .filter(row=>row.status==="SENT_BACK").slice(0,5)
   .map(row=>({key:"fix:"+row.id,tone:"URGENT" as const,at:null as Date|null,
-    label:"Fix and resend your drive request",
+    label:"Fix and resend · "+(row.draft&&typeof row.draft==="object"&&"title" in row.draft&&typeof row.draft.title==="string"?row.draft.title:"Drive request"),
     description:"The placement cell sent this request back for changes.",
     href:"/recruiter/drives/new?collegeId="+encodeURIComponent(input.collegeId)+
       "&fix="+encodeURIComponent(row.id)}));
