@@ -1,10 +1,11 @@
+import {hasPlacementTeamMembership} from "./placement-team-access-model";
 import "server-only";
 import {and,eq,or} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents} from "@/db/schema";
 import {placementTpoInternalThreads} from "@/db/schema/tpo-internal";
-import {type RequestContext,hasMembershipRole} from "@/modules/identity/context";
+import {type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {requirePlacementManageScope} from "./scope";
@@ -19,7 +20,7 @@ export const tpoTeamRenameSchema=z.strictObject({
 export async function renameTpoTeamThread(context:RequestContext,raw:unknown){
  const input=tpoTeamRenameSchema.parse(raw);
  const membership=context.membership;
- if(!membership||!hasMembershipRole(context,"TPO")||membership.status!=="ACTIVE")
+ if(!membership||!hasPlacementTeamMembership(context)||membership.status!=="ACTIVE")
   throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,membership.collegeId);
  if(!await placementTableExists("placement_tpo_internal_threads"))throw new Error("TEAM_TABLES_PENDING");

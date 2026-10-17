@@ -38,6 +38,8 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
  const [preview,setPreview]=useState<PreviewResponse|null>(null);
  const [plan,setPlan]=useState<PreviewPlan|null>(null);
  const [outcomes,setOutcomes]=useState<BulkOutcome[]>([]);
+ const [runAuditId,setRunAuditId]=useState<string|null>(null);
+ const [undoNotice,setUndoNotice]=useState("");
  const [actionCounts,setActionCounts]=useState<TpoBulkActionCount[]>([]);
  const [busy,setBusy]=useState(false);
  const {run:runGuarded,pending:guardedPending}=useGuardedAction();
@@ -53,7 +55,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
  }))??[];
  const permitted=new Set(availableRows.map(row=>row.id));
  const safeSelected=selected.filter(id=>permitted.has(id));
- function invalidate(){setAcknowledged(false);setPreview(null);setPlan(null);setOutcomes([]);setActionCounts([]);setError("");}
+ function invalidate(){setAcknowledged(false);setPreview(null);setPlan(null);setOutcomes([]);setActionCounts([]);setError("");setRunAuditId(null);setUndoNotice("");}
  async function post(path:string,payload:unknown):Promise<unknown>{
   return apiFetch("/api/placements/tpo/bulk-actions/"+path,{
     method:"POST",credentials:"same-origin",cache:"no-store",
@@ -123,9 +125,10 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
    const response=await post("confirm",{
      ...plan,selections:preview.rows.map(row=>({id:row.id,version:row.version})),
      previewToken:preview.previewToken,confirmed:true,acknowledged,
-   }) as {outcomes:BulkOutcome[]};
+   }) as {outcomes:BulkOutcome[];runAuditId?:string|null};
    if(!Array.isArray(response.outcomes))throw new Error("Could not confirm the outcomes. Please refresh and try again.");
    setOutcomes(response.outcomes);
+   setRunAuditId(response.runAuditId??null);
    setSelected(current=>current.filter(id=>!plan.ids.includes(id)));
    router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Confirmation failed. Preview again before retrying.");setPreview(null);setPlan(null);}
@@ -135,6 +138,20 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
   ?([{value:"ELIGIBLE",label:"Mark eligible"},{value:"INELIGIBLE",label:"Make ineligible"},{value:"CLEAR_OVERRIDE",label:"Clear direct override"}] as const)
   :([{value:"SHORTLISTED",label:"Shortlist for review"},{value:"REJECTED",label:"Reject with candidate message"},{value:"ADD_NOTE",label:"Add a note"},{value:"SEND_MESSAGE",label:"Send a message"},{value:"MOVE_TEST",label:"Move to test"},{value:"MOVE_INTERVIEW",label:"Move to interview"}] as const);
  const suggested=suggestTpoBulkAction(actionCounts);
+ async function undoLastRun(){
+  if(!runAuditId||busy)return;
+  setBusy(true);setUndoNotice("");setError("");
+  try{
+   const result=await apiFetch<{restored:number}>("/api/placements/tpo/bulk-actions/undo",{
+    method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({confirmed:true,runAuditId}),
+   });
+   setUndoNotice("Undid "+result.restored+" student decision(s).");
+   setRunAuditId(null);router.refresh();
+  }catch{
+   setError("This batch cannot be undone. A decision may have changed or the undo window expired.");
+  }finally{setBusy(false);}
+ }
  if(rows.length===0)return null;
  return <section aria-label={target==="STUDENTS"?"Bulk student actions":"Bulk application actions"}
    className="space-y-4 rounded-xl border border-border bg-surface p-4">
@@ -205,6 +222,10 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
    </button>:null}
   </div>
   {copyFeedback?<p role="status" className="text-xs text-muted-foreground">{copyFeedback}</p>:null}
+  {runAuditId&&target==="STUDENTS"?<button type="button" disabled={busy||guardedPending}
+   className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text"
+   onClick={()=>void runGuarded(undoLastRun)}>Undo last student batch (five minutes)</button>:null}
+  {undoNotice?<p role="status" aria-live="polite" className="text-sm">{undoNotice}</p>:null}
   <div className="grid gap-3 sm:grid-cols-2">
    <label className="text-sm font-semibold text-body">Action
     <select value={action} disabled={busy}

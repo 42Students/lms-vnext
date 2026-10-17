@@ -118,7 +118,15 @@ export default async function CollegeBatchPromotionPage({
             <div role="alert" className="space-y-2">
               <h3 className="font-semibold text-foreground">Batch blockers</h3>
               <ul className="list-inside list-disc text-sm text-body">
-                {preview.blockers.map(blocker => <li key={blocker}>{blocker.replaceAll("_", " ")}</li>)}
+                {preview.blockers.map(blocker => <li key={blocker}>
+                  {blocker==="NEXT_TERM_NO_MAPPED_COURSES"?<>
+                    Cannot promote: Semester {preview.plan.targetTermNumber} has no mapped courses.
+                    Configure the semester curriculum first.{" "}
+                    <Link href="/college/semester-courses" className="font-semibold text-primary-text underline">
+                      Map semester courses
+                    </Link>
+                  </>:blocker.replaceAll("_"," ")}
+                </li>)}
               </ul>
             </div>
           ) : <p className="text-sm text-body">

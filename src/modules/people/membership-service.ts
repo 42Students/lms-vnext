@@ -2,6 +2,7 @@ import type { MembershipRole } from "@/modules/identity/constants";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import { PeopleServiceError } from "./errors";
+import {assertMutableMembershipTarget} from "./membership-protection";
 import type { PersonMembershipView } from "./service";
 import {
   membershipLifecycleInputSchema,
@@ -92,6 +93,7 @@ export async function addMembershipRole(
     repository,
   );
   requireMutableRoleMembership(person);
+  assertMutableMembershipTarget(context,{userId:person.user.id,roles:person.membership.roles},"ROLE_ADD",input.role);
 
   return repository.addMembershipRole(
     person.membership.id,
@@ -114,6 +116,7 @@ export async function removeMembershipRole(
     repository,
   );
   requireMutableRoleMembership(person);
+  assertMutableMembershipTarget(context,{userId:person.user.id,roles:person.membership.roles},"ROLE_REMOVE",input.role);
 
   return repository.removeMembershipRole(
     person.membership.id,
@@ -135,6 +138,8 @@ export async function updateMembershipLifecycle(
     "membership.lifecycle.manage",
     repository,
   );
+
+  assertMutableMembershipTarget(context,{userId:person.user.id,roles:person.membership.roles},input.action);
 
   return repository.transitionMembershipLifecycle(
     person.membership.id,

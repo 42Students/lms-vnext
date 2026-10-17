@@ -1,6 +1,9 @@
 import "server-only";
 import {and,asc,desc,eq} from "drizzle-orm";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
+import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
+import {evaluatePlacementEligibility} from "./eligibility-service";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,learnerProfiles,placementApplications,
@@ -10,7 +13,9 @@ import {activityEvents,collegeMemberships,learnerProfiles,placementApplications,
 import {placementApplicationNotes} from "@/db/schema/placement-application-notes";
 import {placementCollegeApplicationStages,placementCollegeApplicationStageHistory}
  from "@/db/schema/placement-college-application-stages";
-import type {RequestContext} from "@/modules/identity/context";
+import {hasMembershipRole,isSuperAdmin,type RequestContext} from "@/modules/identity/context";
+import {profileVerifications} from "@/db/schema/profile-verification";
+import {verificationDocumentManifest} from "@/modules/verification/document-manifest";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {collegeDriveIdSchema} from "./college-drive-read-model";
@@ -72,6 +77,21 @@ export async function getCollegeApplicationDetail(ctx:RequestContext,job:unknown
     .from(placementOffers).where(eq(placementOffers.applicationId,application.id))
     .orderBy(asc(placementOffers.issuedAt)).limit(50),
  ]);
+ const [receiptRecord]=await db.select({snapshot:profileVerifications.submittedSnapshot})
+   .from(profileVerifications).where(and(
+    eq(profileVerifications.learnerMembershipId,application.membershipId),
+    eq(profileVerifications.section,"EDUCATION"))).limit(1);
+ const resumeReceipt=receiptRecord?verificationDocumentManifest(receiptRecord.snapshot)
+   .find(doc=>doc.purpose==="RESUME"):null;
+ // Do not expose an object key or signed URL. The linked receipt API performs
+ // a separate authorization check and validates the CLEAN private object.
+ const prefix=isSuperAdmin(ctx)?"/api/admin/verification":
+   hasMembershipRole(ctx,"TPO")?"/api/tpo/verification":"/api/college/verification";
+ const resumeUrl=resumeReceipt?
+   prefix+"/"+encodeURIComponent(application.membershipId)+"/EDUCATION/documents/"+
+   encodeURIComponent(resumeReceipt.receiptId)+
+   (isSuperAdmin(ctx)?"?collegeId="+encodeURIComponent(await requireCollegePlacementAdmin(ctx)):"")
+   :null;
  const [stageHistory,screeningHistory]=await Promise.all([
   stage[0]?db.select({from:placementCollegeApplicationStageHistory.fromStage,
     to:placementCollegeApplicationStageHistory.toStage,
@@ -92,7 +112,9 @@ export async function getCollegeApplicationDetail(ctx:RequestContext,job:unknown
   stage:stage[0]?.stage??null,stageHistory,screeningHistory,history,
   notes,rounds,offers,
   scoring:{available:false,reason:"No persisted screening score is available for this application."},
-  resume:{available:false,reason:"A private resume receipt was not supplied by the application record."}};
+  resume:{available:Boolean(resumeUrl),url:resumeUrl,
+   reason:resumeUrl?"Open the verified resume through the authorized document route.":
+    "A submitted verified private resume receipt is not available."}};
 }
 export async function appendCollegeApplicationNote(ctx:RequestContext,job:unknown,id:unknown,raw:unknown){
  const input=z.strictObject({body:z.string().trim().min(1).max(2000),
@@ -100,6 +122,9 @@ export async function appendCollegeApplicationNote(ctx:RequestContext,job:unknow
  const {collegeId,application}=await scoped(ctx,job,id);
  const acting=await resolveActingCollege(ctx,"placements.manage");
  return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,ctx,"placements.manage",{
+   collegeId:acting.collegeId,organizationId:acting.organizationId,
+  });
   const [parent]=await tx.select({id:placementApplications.id}).from(placementApplications)
    .where(and(eq(placementApplications.id,application.id),
     eq(placementApplications.jobId,application.jobId))).for("update").limit(1);
@@ -161,5 +186,36 @@ export async function attachCollegeApplicationOfferLetter(ctx:RequestContext,job
    summary:"Offer letter attached to application",metadata:{jobId:application.jobId,applicationId:parent.id},
   });
   return {offerId:offer.id,attachedAt:now.toISOString()};
+ });
+}
+
+/** Re-evaluate real persisted policy/evidence. This is not a fabricated
+ * resume or skills score; historical decisions are never overwritten. */
+export async function rescreenCollegeApplication(ctx:RequestContext,job:unknown,id:unknown,raw:unknown){
+ z.strictObject({confirmed:z.literal(true)}).parse(raw);
+ const {collegeId,jobId,application}=await scoped(ctx,job,id);
+ const acting=await resolveActingCollege(ctx,"placements.manage");
+ return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,ctx,"placements.manage",{
+   collegeId:acting.collegeId,organizationId:acting.organizationId,
+  });
+  const [parent]=await tx.select({id:placementApplications.id,status:placementApplications.status})
+   .from(placementApplications).where(and(eq(placementApplications.id,application.id),
+    eq(placementApplications.jobId,jobId))).for("share").limit(1);
+  if(!parent||parent.status!=="SUBMITTED")
+   throw Error("Only submitted applications can be re-screened.");
+  const result=await evaluatePlacementEligibility(ctx,jobId,application.membershipId,tx);
+  await recordActivityEventInTransaction(tx,ctx,{
+   eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_APPLICATION_RESCREENED,
+   organizationId:acting.organizationId,collegeId,
+   subjectType:"placement_application",subjectId:application.id,
+   summary:"Application re-screened using current eligibility evidence",
+   metadata:{jobId,eligibilityStatus:result.status,
+    checks:result.checks.map(check=>({criterion:check.criterion,status:check.status,
+      actual:check.actual,required:check.required,detail:check.detail})),
+    priorSubmissionUnchanged:true,screeningDecisionUnchanged:true},
+  });
+  return {status:result.status,checks:result.checks,
+   override:result.override,reviewedAt:new Date().toISOString()};
  });
 }

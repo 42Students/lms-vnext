@@ -4,6 +4,7 @@ import {describe,expect,it} from "vitest";
 import {adminAttendanceCellState,attendanceMonthDays,attendanceMonthLabel,
  attendanceIndiaDay,attendanceCsvCell,adminAttendancePercent} from "@/modules/attendance/admin-grid-model";
 import {ADMIN_ATTENDANCE_COPY} from "@/modules/attendance/admin-attendance-copy";
+import {DEFAULT_ATTENDANCE_POLICY} from "@/modules/attendance/policy-validation";
 const source=(path:string)=>readFileSync(join(process.cwd(),path),"utf8");
 const workspace=()=>source("src/components/attendance/admin-attendance-workspace.tsx");
 const page=()=>source("src/app/(authenticated)/college/attendance/page.tsx");
@@ -85,9 +86,20 @@ describe("College Attendance legacy and graceful-state gaps",()=>{
  it("COL-attendance-15 semester/department advanced filtering cannot bypass assigned college context",()=>{
   expect(page()).toContain("getAdminAttendanceOptions(context, collegeId)");
  });
- it("COL-attendance-16 only College Admin admin-correction policy exists with permission-checked server",()=>{
+ it("COL-attendance-16 reset persists defaults with explicit existing-session warning and audited policy write",()=>{
   expect(workspace()).toContain("College Admin corrections are not limited");
-  expect(workspace()).toContain("correctionWindowHours");
+  expect(DEFAULT_ATTENDANCE_POLICY).toEqual({eligibilityThresholdPercent:75,correctionWindowHours:24});
+  const form=source("src/components/attendance/college-attendance-policy-form.tsx");
+  const service=source("src/modules/attendance/policy-service.ts");
+  expect(form).toContain("Reset to default");
+  expect(form).toContain("await persistPolicy(DEFAULT_ATTENDANCE_POLICY");
+  expect(form).toContain("which past sessions may be corrected");
+  expect(form).toContain("<ConfirmDialog");
+  expect(form).toContain("await apiFetch<");
+  expect(form).toContain("useGuardedAction");
+  expect(service).toContain('eventType: "ATTENDANCE_POLICY_UPDATED"');
+  expect(service).toContain("return getDb().transaction");
+  expect(service).toContain("fromCorrectionWindowHours: before.correctionWindowHours");
  });
  it("COL-attendance-17 grid has accessible caption, per-cell button labels and explanation for future disability",()=>{
   const w=workspace();

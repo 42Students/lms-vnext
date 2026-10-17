@@ -1,7 +1,7 @@
 import Link from "next/link";
 import {and,desc,eq,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {placementJobs} from "@/db/schema";
+import {placementJobs,sections,cohorts,programs,departments} from "@/db/schema";
 import { PlacementJobCreateForm } from "./placement-job-create-form";
 import {TpoDriveCloneAction} from "./tpo-drive-clone-action";
 import { PageHeader } from "@/components/ui/page-header";
@@ -77,6 +77,18 @@ export async function PlacementJobCreateWorkspace({
     })),
   );
 
+  // One scoped query for active classes, never one request per cohort.
+  const sectionRows=await getDb().select({
+    id:sections.id,name:sections.name,code:sections.code,
+    cohortId:cohorts.id,cohortName:cohorts.name,programId:programs.id,
+    departmentName:departments.name,
+  }).from(sections).innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
+    .innerJoin(programs,eq(programs.id,cohorts.programId))
+    .innerJoin(departments,eq(departments.id,programs.departmentId))
+    .where(and(eq(departments.collegeId,collegeId),isNull(departments.archivedAt),
+      eq(sections.status,"ACTIVE"),eq(programs.status,"ACTIVE")))
+    .limit(1000);
+
   return (
     <div className="space-y-6">
       <Link href="/tpo/placements/lifecycle" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Back to drives</Link>
@@ -108,6 +120,7 @@ export async function PlacementJobCreateWorkspace({
         basePath={basePath}
         initialCompanyName={initialCompanyName}
         academicOptions={{
+          sections:sectionRows,
           programs: programs.map(
             (program) => ({
               id: program.id,

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { resolveOwnLearnerCalendarFilters } from "@/modules/academics/learner-calendar-filter-model";
+import {learnerCalendarQuerySchema} from "@/modules/academics/learner-calendar-filter-model";
+import {learnerCalendarVisibleWindow} from "@/modules/academics/learner-calendar-window-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   LearnerClassSchedule,
@@ -12,11 +14,14 @@ import { getLearnerClassSchedule } from "@/modules/academics/learner-schedule-se
 export default async function LearnerCalendarPage({searchParams}:{
   searchParams:Promise<{view?:string|string[];month?:string|string[];deliveryId?:string|string[]}>;
 }) {
+  const rawQuery=await searchParams;
+  const validated=learnerCalendarQuerySchema.safeParse(rawQuery);
+  if(!validated.success)notFound();
+  const window=learnerCalendarVisibleWindow(validated.data.month,new Date());
   const context =
     await getCurrentRequestContext();
   const schedule =
-    await getLearnerClassSchedule(context);
-  const rawQuery = await searchParams;
+    await getLearnerClassSchedule(context,window);
   const filters = resolveOwnLearnerCalendarFilters(rawQuery, schedule.courses, new Date());
   if (!filters) notFound();
 

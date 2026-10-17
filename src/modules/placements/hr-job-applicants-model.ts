@@ -13,13 +13,14 @@ export const hrApplicantFilterSchema = z.strictObject({
   applicant: z.string().uuid().optional(),
   page: z.coerce.number().int().min(1).max(10000).default(1),
   offerPage: z.coerce.number().int().min(1).max(10000).default(1),
-  offerState: z.enum(["ALL", "ISSUED", "ACCEPTED", "DECLINED", "WITHDRAWN"]).default("ALL"),
+  offerState: z.enum(["ALL", "ISSUED", "ACCEPTED", "DECLINED", "EXPIRED", "WITHDRAWN"]).default("ALL"),
   roundId: z.string().uuid().optional(),
   outcome: z.enum(["ALL","RECORDED","UNRECORDED","PASS","FAIL","HOLD","ABSENT"]).default("ALL"),
 });
 export type SharedApplicant = {
   id: string; name: string | null; role: string; status: string;
   screening: string; submittedAt: Date; email: string | null;
+  rollNumber?: string | null;
 };
 export function projectSharedApplicants(rows: readonly SharedApplicant[], stage: "ALL" | "SHORTLISTED" | "WITHDRAWN") {
   const counts = {
@@ -43,8 +44,8 @@ export function hrApplicantPageBounds(page: number, total: number) {
   };
 }
 
-export const HR_OFFER_STATES = ["ALL", "ISSUED", "ACCEPTED", "DECLINED", "WITHDRAWN"] as const;
-export const HR_OFFER_PAGE_SIZE = 25;
+export const HR_OFFER_STATES = ["ALL", "SELECTED", "PENDING_VERIFICATION", "ISSUED", "ACCEPTED", "DECLINED", "EXPIRED", "WITHDRAWN", "REVOKED"] as const;
+export const HR_OFFER_PAGE_SIZE = 15;
 export function hrOfferPageBounds(page: number, total: number) {
   return {
     page, pageSize: HR_OFFER_PAGE_SIZE, total,

@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { getOwnLearnerPlacementAlerts } from "@/modules/placements/learner-placement-alerts-service";
 import {learnerAlertsHistoryHref} from "@/modules/placements/learner-alerts-history-navigation-model";
 import {learnerAlertSafeDate} from "@/modules/placements/learner-alert-safe-date-model";
+import {LearnerPlacementAlertAction} from "./learner-placement-alert-action";
 
 type Alerts = Awaited<ReturnType<typeof getOwnLearnerPlacementAlerts>>;
 
@@ -35,19 +36,14 @@ export function LearnerPlacementAlerts({ alerts, filtered=false, unreadOnly=fals
                 <div className="min-w-0">
                   <p className="text-sm font-semibold text-foreground">
                     {alert.title}
-                    {alert.unread ? <span className="ml-2 text-xs font-semibold text-primary-text">(Unread)</span> : null}
+
                   </p>
                   <p className="mt-1 whitespace-pre-wrap break-words text-sm text-body">{alert.body}</p>
                 </div>
                 <time dateTime={learnerAlertSafeDate(alert.createdAt).iso??undefined}
                   className="shrink-0 text-xs text-muted-foreground">{learnerAlertSafeDate(alert.createdAt).label}</time>
               </div>
-              {alert.actionHref ? (
-                <Link href={alert.actionHref}
-                  className="mt-2 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
-                  Open related page →
-                </Link>
-              ) : null}
+              <LearnerPlacementAlertAction id={alert.id} href={alert.actionHref} unread={alert.unread}/>
             </li>
           ))}
         </ol>
