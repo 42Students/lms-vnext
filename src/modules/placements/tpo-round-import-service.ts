@@ -69,7 +69,7 @@ function previewData(rows:ImportRow[],roster:Roster[]){
   if(row.invalidRank){
    const exact=matchSource(row,roster);
    if(exact.length===1)used.add(exact[0]!.applicationId);
-   unmatched.push({line:row.line,identity:row.identity,reason:"Waitlist rank must be a positive whole number",suggestions:[]});continue;}
+   unmatched.push({line:row.line,identity:row.identity,reason:"Rank must be 1–100000 and is only allowed for Waitlisted results",suggestions:[]});continue;}
   if(!row.outcome){
    const exact=matchSource(row,roster);
    if(exact.length===1)used.add(exact[0]!.applicationId);
