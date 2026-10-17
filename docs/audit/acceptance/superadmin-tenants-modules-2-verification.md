@@ -13,3 +13,9 @@ Source evidence only; unit, database and browser execution remain with the orche
 | SA-tenants-modules-32 | DONE | src/modules/module-access/admin-college-rule-history-service.ts; src/modules/module-access/admin-college-rule-history-model.ts; src/app/(authenticated)/admin/features/[collegeId]/history/page.tsx; tests/unit/chat13-module-access-history-gap32.test.ts — SA-tenants-modules-32 all-scope paginated activity (source tests authored, not run) |
 
 | SA-tenants-modules-30 | NOT-A-GAP | src/components/admin/descendant-feature-rule-editor.tsx; src/modules/module-access/admin-descendant-rule-model.ts; src/db/schema/module-access.ts; tests/unit/chat13-module-access-lock-gap30.test.ts — descendant lock toggle exists and schema requires an explicit enabled value, so value-less legacy lock rows cannot be created (source test not run) |
+
+## Chat-6 UNCONFIRMED decisions, 2026-10-18
+
+| SA-tenants-modules-30 | NOT-A-GAP | module_access_rules.enabled is NOT NULL; no orphan-lock clear permitted; decision evidence: `docs/audit/acceptance/chat-6-unconfirmed-decisions.md`; test: `tests/unit/chat6-unconfirmed-decisions-round13.test.ts` → `SA-tenants-modules-30` |
+| SA-tenants-modules-31 | NOT-A-GAP (layout only) | Deep-linkable Super Admin trace replaces unscoped drawer; placement provenance still to test; decision evidence: `docs/audit/acceptance/chat-6-unconfirmed-decisions.md`; test: `tests/unit/chat6-unconfirmed-decisions-round13.test.ts` → `SA-tenants-modules-31` |
+| SA-tenants-modules-38 | OPEN | Enforce runtime policy bounds before offering tenant-editable knobs; decision evidence: `docs/audit/acceptance/chat-6-unconfirmed-decisions.md`; test: `tests/unit/chat6-unconfirmed-decisions-round13.test.ts` → `SA-tenants-modules-38` |
