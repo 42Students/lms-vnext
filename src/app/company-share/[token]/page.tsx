@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {cookies} from "next/headers";
 import {getPublicCompanyApplicantShare} from "@/modules/placements/company-share/public-service";
 import {companyShareApplicantHref} from "@/modules/placements/company-share/public-filter-model";
 import {publicApplicantExportHref} from "@/modules/placements/company-share/export-href-model";
@@ -7,15 +8,35 @@ export const dynamic="force-dynamic";
 export const metadata={robots:{index:false,follow:false},title:"Shared applicants · 42Students",other:{referrer:"no-referrer"}};
 export default async function CompanySharePage({
  params,searchParams,
-}:{params:Promise<{token:string}>;searchParams:Promise<{page?:string;q?:string}>}){
+}:{params:Promise<{token:string}>;searchParams:Promise<{page?:string;q?:string;access?:string}>}){
  const {token}=await params;
- const {page,q}=await searchParams;
- const result=await getPublicCompanyApplicantShare(token,page??1,"VIEW",q??"");
+ const {page,q,access}=await searchParams;
+ const proof=(await cookies()).get("company_share_access")?.value??null;
+ const result=await getPublicCompanyApplicantShare(token,page??1,"VIEW",q??"",proof);
  if(result.kind!=="READY")return <main className="mx-auto flex min-h-screen max-w-xl flex-col justify-center px-4 py-10">
   <section role="alert" className="space-y-4 rounded-xl border border-border bg-surface p-6">
    <h1 className="text-xl font-semibold">This link is not valid any more.</h1>
    <p className="text-sm text-body">It may have expired or been withdrawn. Please ask the placement cell for a new one.</p>
    <Link href="/" className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">Home</Link>
+  </section>
+ </main>;
+ if(result.kind==="CODE_REQUIRED")return <main className="mx-auto flex min-h-screen max-w-xl flex-col justify-center px-4 py-10">
+  <section className="space-y-4 rounded-xl border border-border bg-surface p-6">
+   <h1 className="text-xl font-semibold">Enter the 6-digit share code</h1>
+   <p className="text-sm text-body">Ask the placement cell for the code sent separately with this company share link.</p>
+   {access==="invalid"?<p role="alert" className="text-sm text-error">
+    That code did not work, or this share is no longer available.</p>:null}
+   <form method="post" action={"/company-share/"+encodeURIComponent(token)+"/access"} className="space-y-4">
+    <label className="grid gap-2 text-sm font-semibold">6-digit code
+     <input name="code" required inputMode="numeric" autoComplete="one-time-code"
+      pattern="[0-9]{6}" minLength={6} maxLength={6}
+      className="min-h-11 rounded border border-border bg-surface px-3" />
+    </label>
+    <button type="submit" className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary">
+     Open shared applicants
+    </button>
+   </form>
+   <p className="text-xs text-muted-foreground">After ten wrong codes within an hour the share is locked and the placement cell is notified.</p>
   </section>
  </main>;
  const href=(p:number)=>companyShareApplicantHref(token,p,result.search);
@@ -35,8 +56,9 @@ export default async function CompanySharePage({
     The link works until {new Intl.DateTimeFormat("en-GB",{day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.expiresAt))}. Everything you open is logged.
    </p>
    <p className="mt-2 text-sm text-muted-foreground">
-    Current shortlisted applicants only. Access can be revoked. Phone numbers, resumes, private notes and scores are not included in this restricted share.
+    Current shortlisted applicants only. Access can be revoked. Only the placement cell\u0027s chosen columns are disclosed; private notes are never shared.
    </p>
+   {result.shortlistBy?<p role="status" className="mt-2 rounded border border-border bg-surface-subtle p-3 text-sm font-semibold">Please shortlist by {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(result.shortlistBy))}.</p>:null}
   </header>
   <form action={"/company-share/"+encodeURIComponent(token)} method="get"
     className="flex flex-wrap items-end gap-3">
