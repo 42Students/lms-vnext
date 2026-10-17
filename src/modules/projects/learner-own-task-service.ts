@@ -76,7 +76,8 @@ export async function createLearnerOwnTask(context:RequestContext,rawParams:unkn
     eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TASK_CREATED,collegeId:scope.collegeId,
     organizationId:scope.organizationId,subjectType:"project_task",subjectId:task.id,subjectLabel:task.title,
     summary:"Learner added own project task",
-    metadata:{projectId,taskId:task.id,sprintId:sprint.id,createdByMembershipId:membership.id},
+    metadata:{projectId,taskId:task.id,sprintId:sprint?.id??null,
+      initialStatus:task.status,createdByMembershipId:membership.id},
     groupKey:"project:"+projectId,
   });
   await notifyActiveProjectMembers(tx,event.id,{projectId,collegeId:scope.collegeId,
