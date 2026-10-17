@@ -41,13 +41,17 @@ async function readRoster(context:RequestContext,rawJobId:unknown,rawRoundId:unk
  return {round,roster,jobId,roundId};
 }
 function matchSource(row:ImportRow,roster:readonly Roster[]){
+ // Every supplied known identity must agree. A correct application ID paired
+ // with another learner's email/roll must never silently assign their outcome.
  const methods=[
-  row.applicationId?roster.filter(r=>r.applicationId.toLowerCase()===row.applicationId.toLowerCase()):[],
-  // Company portal IDs are not yet recorded on learner applications. Never mistake them for internal IDs.
-  row.email?roster.filter(r=>r.email?.toLowerCase()===row.email.toLowerCase()):[],
-  row.roll?roster.filter(r=>r.roll?.toLowerCase()===row.roll.toLowerCase()):[],
- ];
- return methods.find(candidates=>candidates.length>0)??[];
+  row.applicationId?roster.filter(r=>r.applicationId.toLowerCase()===row.applicationId.toLowerCase()):null,
+  // Company portal IDs are not persisted and are not trusted for auto-match.
+  row.email?roster.filter(r=>r.email?.toLowerCase()===row.email.toLowerCase()):null,
+  row.roll?roster.filter(r=>r.roll?.toLowerCase()===row.roll.toLowerCase()):null,
+ ].filter((rows):rows is Roster[]=>rows!==null);
+ if(!methods.length)return [];
+ return methods[0]!.filter(candidate=>methods.every(list=>list.some(
+  row=>row.applicationId===candidate.applicationId)));
 }
 function suggested(row:ImportRow,roster:readonly Roster[]){
  const token=(row.name||row.email||row.roll||row.identity).toLowerCase();
