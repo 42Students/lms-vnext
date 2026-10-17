@@ -71,7 +71,7 @@ export function PublicRecruiterJoinForm({
     const validation=validatePublicJoinClient({email,name,phone,companyName,companyDomain:company,scope});
     const parsed = publicJoinFormSchema.safeParse({ email, name, designation, phone, companyName });
     if (validation||!parsed.success||!/^[0-9]{6}$/.test(code)) {
-      setError(validation??"Enter the 6-digit code");
+      setError(validation??(!code.trim()?"Enter the 6-digit code":"The code has 6 digits"));
       return;
     }
     setPending(true);
