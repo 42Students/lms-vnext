@@ -43,7 +43,9 @@ export function MentorTaskCreate({
     setBusy(true);
     try{
       await projectMutation("/api/projects/"+projectId+"/tasks","POST",{
-        sprintId,title:title.trim(),description:description.trim()||null,
+        sprintId:selectedSprintId||null,
+        expectedSprintUpdatedAt:chosenSprint?.updatedAt??null,
+        title:title.trim(),description:description.trim()||null,
         acceptanceCriteria:criteria.trim()||null,
         priority,expectedSprintUpdatedAt:updatedAt,
         estimatePoints:estimate!==""?Number(estimate):null,
