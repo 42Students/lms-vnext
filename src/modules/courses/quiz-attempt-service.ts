@@ -661,7 +661,9 @@ export async function listQuizAttempts(
     .orderBy(
       asc(quizAttempts.submittedAt),
       asc(quizAttempts.id),
-    );
+    )
+    .limit(26)
+    .offset((page-1)*25);
 
   const answerRows =
     attempts.length > 0
