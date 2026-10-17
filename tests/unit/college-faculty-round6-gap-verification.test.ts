@@ -1,6 +1,7 @@
 import {readFileSync} from "node:fs";
 import {join} from "node:path";
 import {describe,expect,it} from "vitest";
+import {facultyCorrectionReasonValid,facultyAttendanceConfirmation} from "@/modules/attendance/faculty-correction-audit-model";
 const src=(p:string)=>readFileSync(join(process.cwd(),p),"utf8");
 
 describe("chat-11 College roster and Faculty attendance source parity",()=>{
@@ -21,6 +22,15 @@ describe("chat-11 College roster and Faculty attendance source parity",()=>{
   expect(ui).toContain('<h1 className="sr-only">Attendance</h1>');
   expect(ui).toContain("See attendance history and monthly trends in one place.");
   expect(src("src/app/(authenticated)/teacher/courses/[deliveryId]/attendanceDetail/page.tsx")).toContain("Review session coverage");
+ });
+ it("FAC-attendance-grades-15 keeps audited correction reason and optimistic version checks",()=>{
+  expect(facultyCorrectionReasonValid("short")).toBe(false);
+  expect(facultyCorrectionReasonValid("Correcting the roster")).toBe(true);
+  expect(facultyAttendanceConfirmation(true,["a"],["a"],2)).toBeNull();
+  expect(facultyAttendanceConfirmation(true,["a"],[],2)).toContain("explanation will be retained");
+  const ui=src("src/components/attendance/faculty-attendance-workspace.tsx");
+  expect(ui).toContain("expectedMarkedAt");
+  expect(ui).toContain("facultyCorrectionReasonValid(correctionReason)");
  });
  it("FAC-attendance-grades-18 verifies explicit membership lists and disjoint attendance marks",()=>{
   const code=src("src/modules/attendance/faculty-service.ts");
