@@ -66,8 +66,18 @@ describe("Super Admin Tenants/Modules legacy gap contracts",()=>{
   expect(edit).toContain("postalCode");
   expect(edit).toContain("country");
  });
- it("SA-tenants-modules-17 tenant-scoped admin manager exposes guarded lifecycle actions",()=>{
-  expect(source("src/components/admin/college-admin-lifecycle-action.tsx")).toContain("collegeId");
+ it("SA-tenants-modules-17 tenant-scoped admin manager derives college access from a membership and enforces same-origin writes",()=>{
+  const client=source("src/components/admin/college-admin-lifecycle-action.tsx");
+  const route=source("src/app/api/people/[membershipId]/lifecycle/route.ts");
+  const people=source("src/modules/people/service.ts");
+  expect(client).toContain("encodeURIComponent(membershipId)");
+  expect(client).toContain('action==="SUSPEND"');
+  expect(client).toContain('action==="REACTIVATE"');
+  expect(client).toContain("apiFetch");
+  expect(client).not.toContain("result.error");
+  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toContain("updateMembershipLifecycleWithRuntime");
+  expect(people).toContain("collegeId: person.membership.collegeId");
  });
  it("SA-tenants-modules-18 Super Admin can inspect and revoke user sessions",()=>{
   const revoke=source("src/components/admin/admin-revoke-sessions.tsx");
