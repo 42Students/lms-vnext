@@ -21,7 +21,7 @@ Follow docs/orchestrator/briefs/gap-closure-lane.md exactly. These OPEN gaps are
 - REC-home-drives-30 (S3) — DONE
 - REC-home-drives-31 (S3) — DONE
 - REC-home-drives-32 (S4) — DONE
-- REC-home-drives-33 (S2) — OPEN
+- REC-home-drives-33 (S2) — DONE
 - REC-home-drives-34 (S3) — DONE
 - REC-home-drives-38 (S1) — OPEN
 - REC-home-drives-41 (S3) — DONE
@@ -38,7 +38,7 @@ Follow docs/orchestrator/briefs/gap-closure-lane.md exactly. These OPEN gaps are
 ## Outstanding dependencies and unfinished work
 - Needs shell: REC-calendar-messages-profile-24 — college logo/name header and mobile recruiter footer belong to chat-9's shared shell; do not edit `src/components/shell` in this lane.
 - REC-calendar-messages-profile-R01 — provider-backed unread-mail digest and Reply-To inbound routing still need full delivery and authorized token ingestion; preserve allowlist-only sending outside production.
-- REC-home-drives-33 — trusted-domain / approval-off formal-request auto-approval, company listing and audit policy are not yet wired; requests persist as pending and notify TPO.
+- REC-home-drives-33 — DONE: policy is persisted in registered placement_tpo_college_settings and placement_tpo_trusted_domains; verified matching domains or approval-off create a DRAFT using the same atomic TPO job writer, with TPO/recruiter audit notices. Unsafe or unconfigurable requests remain in the TPO review queue.
 - REC-home-drives-38 — scoped roll/email/phone/active college branch and verified 10th/12th/UG academic percentages now honor college share defaults. Skill match, resume/GitHub/portfolio, per-share snapshots and signed-document access remain incomplete (S1).
 - REC-home-drives-45 — DONE: legacy stage filters and counts derive from authoritative APPLIED rounds, offers and joining history while preserving placement-cell shortlist visibility.
 - REC-home-drives-46 — DONE: inline editor and legacy toasts were present; now adds staged/applied counts and TPO-confirmed slot totals from 0116.
