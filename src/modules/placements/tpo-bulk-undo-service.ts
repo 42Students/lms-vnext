@@ -58,7 +58,7 @@ export async function undoTpoRecruiterBulkRun(context:RequestContext,raw:unknown
   const model=z.strictObject({
    undoVersion:z.literal(1),
    changed:z.array(stageRun?stageSnapshot:ownerSnapshot).min(1).max(100),
-  });
+  }).passthrough();
   const snapshot=model.safeParse(event.metadata);
   if(!snapshot.success)throw new TpoBulkUndoError("INVALID_SNAPSHOT");
   const changed=snapshot.data.changed as Array<{
