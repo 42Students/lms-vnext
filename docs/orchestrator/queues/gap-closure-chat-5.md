@@ -26,17 +26,17 @@ Audit: `docs/audit/pages/tpo/drive-workspace.md` (and `drive-workspace-review.md
 | TPO-drive-workspace-05 | S2 | MISSING-ACTION | DONE |
 | TPO-drive-workspace-10 | S2 | VALIDATION | NOT-A-GAP |
 | TPO-drive-workspace-11 | S2 | PERMISSION | OPEN |
-| TPO-drive-workspace-12 | S2 | MISSING-ACTION | UNCONFIRMED |
+| TPO-drive-workspace-12 | S2 | MISSING-ACTION | OPEN |
 | TPO-drive-workspace-14 | S2 | VALIDATION | DONE |
 | TPO-drive-workspace-16 | S2 | MISSING-ACTION | DONE |
 | TPO-drive-workspace-20 | S2 | MISSING-FILTER | DONE |
 | TPO-drive-workspace-21 | S2 | MISSING-ACTION | OPEN |
 | TPO-drive-workspace-22 | S2 | MISSING-COLUMN | OPEN |
 | TPO-drive-workspace-23 | S2 | MISSING-FILTER | OPEN |
-| TPO-drive-workspace-26 | S2 | SIDE-EFFECT | UNCONFIRMED |
+| TPO-drive-workspace-26 | S2 | SIDE-EFFECT | OPEN |
 | TPO-drive-workspace-27 | S2 | MISSING-MODAL | OPEN |
 | TPO-drive-workspace-29 | S2 | MISSING-COLUMN | DONE |
-| TPO-drive-workspace-38 | S2 | MISSING-FIELD | UNCONFIRMED |
+| TPO-drive-workspace-38 | S2 | MISSING-FIELD | OPEN |
 | TPO-drive-workspace-41 | S2 | MISSING-ACTION | DONE |
 | TPO-drive-workspace-45 | S2 | MISSING-FIELD | DONE |
 | TPO-drive-workspace-49 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
@@ -166,7 +166,7 @@ Audit: `docs/audit/pages/tpo/students.md` (and `students-review.md` if present; 
 | TPO-students-11 | S2 | MISSING-ACTION | DONE |
 | TPO-students-12 | S2 | MISSING-ACTION | OPEN |
 | TPO-students-14 | S2 | MISSING-FIELD | OPEN |
-| TPO-students-15 | S2 | SIDE-EFFECT | UNCONFIRMED |
+| TPO-students-15 | S2 | SIDE-EFFECT | OPEN |
 | TPO-students-16 | S2 | MISSING-ACTION | OPEN |
 | TPO-students-17 | S2 | MISSING-ACTION | OPEN |
 | TPO-students-18 | S2 | MISSING-FILTER | DONE |
@@ -200,8 +200,8 @@ Audit: `docs/audit/pages/tpo/students.md` (and `students-review.md` if present; 
 | TPO-students-45 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-students-46 | S3 | COPY | OPEN |
 | TPO-students-47 | S3 | COPY | OPEN |
-| TPO-students-49 | S3 | PERMISSION | UNCONFIRMED |
-| TPO-students-50 | S3 | STATE | UNCONFIRMED |
+| TPO-students-49 | S3 | PERMISSION | OPEN |
+| TPO-students-50 | S3 | STATE | NOT-A-GAP |
 | TPO-students-51 | S3 | RESPONSIVE | OPEN |
 | TPO-students-52 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-students-R02 | S3 | STATE | DONE |
@@ -246,7 +246,7 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 | TPO-requests-verification-25 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-requests-verification-27 | S3 | COPY | OPEN |
 | TPO-requests-verification-28 | S3 | COPY | OPEN |
-| TPO-requests-verification-29 | S3 | MISSING-FIELD | UNCONFIRMED |
+| TPO-requests-verification-29 | S3 | MISSING-FIELD | OPEN |
 | TPO-requests-verification-30 | S3 | SIDE-EFFECT | FIXED-ON-MAIN |
 | TPO-requests-verification-32 | S3 | MISSING-EXPORT | DONE |
 | TPO-requests-verification-R01 | S3 | SIDE-EFFECT | OPEN |
@@ -336,3 +336,5 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - [chat-5] TPO-batches-17 OPEN: accessible loading skeleton/retry is now present; retained last-good roster cache still missing (`tests/unit/chat5-next-batch-states.test.ts`).
 - [chat-5] TPO-batches-49 OPEN: suggested Remind link now follows verified next-step state, but all legacy suggestion chips/resume filters are not implemented (`tests/unit/chat5-next-batch-states.test.ts`).
 - [chat-5] TPO-drive-workspace-51 DECIDED/OPEN: external reported acceptance requires evidence and 48-hour dispute, no implicit learner acceptance. See the page acceptance decision.
+
+- [chat-5] Remaining queue UNCONFIRMED decisions resolved: TPO-drive-workspace-12 → OPEN; TPO-drive-workspace-26 → OPEN; TPO-drive-workspace-38 → OPEN; TPO-students-15 → OPEN; TPO-students-49 → OPEN; TPO-students-50 → NOT-A-GAP; TPO-requests-verification-29 → OPEN. See the per-page acceptance decision and `tests/unit/chat5-queue-unconfirmed-decisions.test.ts`; unresolved behavior remains OPEN until built, provider-bound features remain BLOCKED.
