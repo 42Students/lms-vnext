@@ -72,4 +72,18 @@ describe("chat-6 Super Admin selected-college course directory parity",()=>{
     expect(overview).toContain("COLLEGE_COURSES_COPY.existingTitle");
     expect(actions).toContain('Updated course “"+name.trim()+"”.');
   });
+
+  it("SA-academics-people-62 shows scoped student visibility and lesson ordering with safe external links",()=>{
+    const service=read("src/modules/courses/super-admin-content-directory-service.ts");
+    const page=read("src/components/courses/super-admin-content-directory-page.tsx");
+    expect(service).toContain("visibleToStudents:lessonContents.visibleToStudents");
+    expect(service).toContain("externalUrl:lessonContents.externalUrl");
+    expect(service).toContain("eq(departments.collegeId,collegeId)");
+    expect(page).toContain("studentContentVisible(item)");
+    expect(page).toContain("Students {studentContentVisible(item)?");
+    expect(page).toContain("Order within lesson:");
+    expect(page).toContain("Linked materials:");
+    expect(page).toContain('return url.protocol==="https:"?url.toString():null');
+    expect(page).toContain('rel="noopener noreferrer"');
+  });
 });
