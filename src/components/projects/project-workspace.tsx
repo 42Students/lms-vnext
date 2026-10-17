@@ -15,6 +15,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { MentorSprintDetailsEdit } from "./mentor-sprint-details-edit";
 import {MentorSprintDeleteControl} from "./mentor-sprint-delete-control";
 import {ProjectActivityFilteredList} from "./project-activity-filtered-list";
+import {ProjectResourceOpenLink} from "./project-resource-open-link";
 import {MentorDeliveryLockControl} from "./mentor-delivery-lock-control";
 import { MentorSprintCreate, MentorSprintTransition } from "./mentor-sprint-write";
 import {MentorReleaseEditor} from "./mentor-release-editor";
@@ -1350,6 +1351,14 @@ export function ProjectWorkspace({
               />
             ) : null}
           </div>
+          {mode==="LEARNER"?<div aria-label="Resource counts" className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+            <div className="rounded-lg border border-border p-3 text-sm"><strong>Total</strong>
+              <p className="mt-1 tabular-nums">{workspace.resources.length}</p></div>
+            <div className="rounded-lg border border-border p-3 text-sm"><strong>Showing</strong>
+              <p className="mt-1 tabular-nums">{workspace.resources.length}</p></div>
+            <div className="rounded-lg border border-border p-3 text-sm"><strong>Links</strong>
+              <p className="mt-1 tabular-nums">{workspace.resources.filter(resource=>Boolean(safeHttpHref(resource.url))).length}</p></div>
+          </div>:null}
           <div className="space-y-3">
             {workspace.resources.length === 0 ? (
               <div className="rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">
@@ -1399,16 +1408,11 @@ export function ProjectWorkspace({
                         Required resource has no usable external link or description.
                       </p>
                     ) : null}
-                    {href ? (
-                      <a
-                        href={href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-3 inline-flex text-sm font-semibold text-primary-text hover:text-primary-hover"
-                      >
+                    {mode==="LEARNER"?<ProjectResourceOpenLink url={resource.url}/>:
+                      href?<a href={href} target="_blank" rel="noopener noreferrer"
+                      className="mt-3 inline-flex text-sm font-semibold text-primary-text hover:text-primary-hover">
                         Open resource ↗
-                      </a>
-                    ) : null}
+                      </a>:null}
                     {mode !== "LEARNER" && !readOnly ? (
                       <ProjectResourceActions
                         projectId={workspace.project.id}
