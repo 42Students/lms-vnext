@@ -4,7 +4,7 @@ import Link from "next/link";
 import {collegeInterviewIcs} from "@/modules/placements/college-interview-calendar-model";
 import {calendarMode,potentialRoomConflicts,superAdminInterviewCsv,type SuperAdminCalendarRound}
  from "@/modules/admin-ui/super-admin-interview-operations-model";
-export function SuperAdminInterviewOperations({events}:{events:SuperAdminCalendarRound[]}){
+export function SuperAdminInterviewOperations({events,today}:{events:SuperAdminCalendarRound[];today:string}){
  const [kind,setKind]=useState("ALL"),[status,setStatus]=useState("ALL");
  const [mode,setMode]=useState("ALL"),[conflictsOnly,setConflictsOnly]=useState(false);
  const [sort,setSort]=useState("DATE"),[exportError,setExportError]=useState("");
@@ -22,12 +22,12 @@ export function SuperAdminInterviewOperations({events}:{events:SuperAdminCalenda
     <option value="ALL">All</option>{items.map(i=><option key={i} value={i}>{i}</option>)}
    </select>
   </label>;
- const today=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
+ const dateInIst=(iso:string)=>new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date(iso));
  const inIst=(iso:string)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(iso));
  return <section aria-label="Interview operations" className="space-y-4 rounded-xl border border-border bg-surface p-4">
   <h2 className="font-semibold">Interview operations</h2>
   <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-   {([["Scheduled",events.filter(x=>x.status==="SCHEDULED").length],["Today",events.filter(x=>inIst(x.startsAt).includes(today)).length],
+   {([["Scheduled",events.filter(x=>x.status==="SCHEDULED").length],["Today",events.filter(x=>dateInIst(x.startsAt)===today).length],
     ["Companies",new Set(events.map(x=>x.companyName)).size],["Possible venue conflicts",conflicts.size]] as const)
     .map(([label,value])=><div key={label} className="min-w-0 rounded border border-border p-3">
      <dt className="text-xs text-muted-foreground">{label}</dt><dd className="text-xl font-semibold tabular-nums">{value}</dd>
