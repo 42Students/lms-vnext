@@ -156,14 +156,14 @@ Audit: `docs/audit/pages/college/placements.md` (and `placements-review.md` if p
 | COL-placements-07 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | COL-placements-11 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | COL-placements-15 | S3 | MISSING-ACTION | UNCONFIRMED |
-| COL-placements-16 | S3 | COPY | OPEN |
+| COL-placements-16 | S3 | COPY | DONE |
 | COL-placements-18 | S3 | PERMISSION | FIXED-ON-MAIN |
 | COL-placements-21 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | COL-placements-22 | S3 | STATE | OPEN |
-| COL-placements-23 | S3 | PERMISSION | UNCONFIRMED |
-| COL-placements-24 | S3 | COPY | OPEN |
-| COL-placements-26 | S3 | MISSING-FIELD | OPEN |
-| COL-placements-25 | S4 | RESPONSIVE | OPEN |
+| COL-placements-23 | S3 | PERMISSION | NOT-A-GAP |
+| COL-placements-24 | S3 | COPY | DONE |
+| COL-placements-26 | S3 | MISSING-FIELD | DONE |
+| COL-placements-25 | S4 | RESPONSIVE | DONE |
 
 ## superadmin/placements-projects-c-tracker (23: OPEN 20, FIXED-ON-MAIN 1, UNCONFIRMED 2)
 
@@ -177,11 +177,11 @@ Audit: `docs/audit/pages/superadmin/placements-projects-c-tracker.md` (and `plac
 | SA-placements-projects-113 | S2 | MISSING-PAGE | OPEN |
 | SA-placements-projects-119 | S2 | MISSING-PAGE | OPEN |
 | SA-placements-projects-120 | S2 | MISSING-ACTION | OPEN |
-| SA-placements-projects-104 | S3 | STATE | OPEN |
-| SA-placements-projects-105 | S3 | COPY | OPEN |
-| SA-placements-projects-106 | S3 | MISSING-ACTION | OPEN |
+| SA-placements-projects-104 | S3 | STATE | DONE |
+| SA-placements-projects-105 | S3 | COPY | DONE |
+| SA-placements-projects-106 | S3 | MISSING-ACTION | DONE |
 | SA-placements-projects-109 | S3 | MISSING-FIELD | OPEN |
-| SA-placements-projects-110 | S3 | COPY | OPEN |
+| SA-placements-projects-110 | S3 | COPY | DONE |
 | SA-placements-projects-112 | S3 | COPY | OPEN |
 | SA-placements-projects-114 | S3 | MISSING-ACTION | OPEN |
 | SA-placements-projects-115 | S3 | MISSING-ACTION | UNCONFIRMED |
@@ -189,9 +189,9 @@ Audit: `docs/audit/pages/superadmin/placements-projects-c-tracker.md` (and `plac
 | SA-placements-projects-117 | S3 | MISSING-EXPORT | OPEN |
 | SA-placements-projects-121 | S3 | MISSING-ACTION | OPEN |
 | SA-placements-projects-122 | S3 | MISSING-FILTER | OPEN |
-| SA-placements-projects-107 | S4 | MISSING-ACTION | OPEN |
-| SA-placements-projects-108 | S4 | MISSING-ACTION | OPEN |
-| SA-placements-projects-111 | S4 | MISSING-ACTION | OPEN |
+| SA-placements-projects-107 | S4 | MISSING-ACTION | DONE |
+| SA-placements-projects-108 | S4 | MISSING-ACTION | DONE |
+| SA-placements-projects-111 | S4 | MISSING-ACTION | DONE |
 | SA-placements-projects-118 | S4 | PERMISSION | OPEN |
 | SA-placements-projects-123 | S4 | COPY | UNCONFIRMED |
 
@@ -295,3 +295,6 @@ Audit: `docs/audit/pages/college/dashboard.md` (and `dashboard-review.md` if pre
 - These are prior source-authored tests being reconciled, not claimed as newly run. Cloud test failures in SA-academics-people-58 and SA-academics-people-63 fixed in this batch.
 
 - Super Admin Courses/Content: SA-academics-people-48, SA-academics-people-51, SA-academics-people-63, SA-academics-people-70, SA-academics-people-71, SA-academics-people-74, SA-academics-people-77, SA-academics-people-73 matched existing ID-named tests and recorded dispositions in `docs/audit/acceptance/superadmin-academics-people-2-courses-content-verification.md`; -70 is OD-38 authoritative-scope intentional difference. Tests not executed by lane.
+
+- College Placements -16/-23/-24/-25/-26: prior source contracts, responsive cards, Hired stage and intentional placement-policy boundary verified against `docs/audit/acceptance/college-placements-verification.md` and named tests. Browser/DB tests pending.
+- Super Admin Tracker -104/-105/-108/-110/-111: prior named tests and acceptance verified; -106/-107: new named source-contract tests in `tests/unit/chat6-tracker-bulk-saved-views-verification.test.ts`, acceptance appended. No tests executed by lane; browser/DB workflows await orchestrator.
