@@ -73,6 +73,7 @@ export default async function CollegeProjectsPage({
    updatedAt:project.updatedAt,mentorName:project.mentorName,memberCount:project.memberCount,
    templateTitle:templates.find(template=>template.templateId===project.templateId)?.title??null,
    progressPercent:project.progressPercent,
+   riskReasons:project.riskReasons,
   }));
   const viewHref=(view:"cards"|"table")=>"/college/projects?"+new URLSearchParams({
    ...(query.q?{q:query.q}:{}),...(query.status?{status:query.status}:{}),
