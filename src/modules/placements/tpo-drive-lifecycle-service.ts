@@ -107,7 +107,7 @@ async function loadFacts(
     roleCount: roles.length,
     evaluativeRoundCount: rounds[0]?.count ?? 0,
     policyPersisted: policy.length > 0,
-    deadlineValid: job.applicationDeadline !== null && job.applicationDeadline > now,
+    deadlineValid: job.applicationDeadline === null || job.applicationDeadline > now,
     deadlinePresent: job.applicationDeadline !== null,
     payPresent: job.minimumAnnualCtcInr !== null || job.maximumAnnualCtcInr !== null ||
       job.stipendPerMonthInr !== null ||
