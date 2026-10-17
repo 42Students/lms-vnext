@@ -22,4 +22,11 @@ describe("chat-15 learner rich responses",()=>{
   expect(form).toContain('window.addEventListener("beforeunload",guard)');
   expect(src("src/components/courses/learner-course-workspace.tsx")).toContain("<LearnerFormattedResponse");
  });
+ it("LEARNER-course-detail-05 prompts before dropping an unsent submission",()=>{
+   const form=src("src/components/courses/assignment-submission-control.tsx");
+   expect(form).toContain('title="Discard this submission?"');
+   expect(form).toContain("Keep editing");
+   expect(form).toContain("Wait for the upload to finish before closing this submission.");
+   expect(form).toContain('document.addEventListener("click",onLink,true)');
+ });
 });
