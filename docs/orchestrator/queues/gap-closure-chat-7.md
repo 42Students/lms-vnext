@@ -256,5 +256,7 @@ Audit: `docs/audit/pages/faculty/courses.md` (and `courses-review.md` if present
 
 ## Notes (blockers, one line each)
 
+- LEARNER-placements-20 BLOCKED: profile resume attachment and preview require an authenticated private object-storage bucket and malware-scanning service.
+
 ## Needs shell (chat-9 only)
 
