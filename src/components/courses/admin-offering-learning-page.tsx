@@ -47,7 +47,8 @@ export async function AdminOfferingLearningPage({
     });
   const [roster,sectionPreview]=await Promise.all([
    listOfferingTeachingOverview(context,offeringId),
-   listOfferingSectionPreview(context,offeringId,deliveryId,workspace.lessons),
+   listOfferingSectionPreview(context,offeringId,deliveryId,workspace.lessons,
+    workspace.learningPath?.status==="PUBLISHED"),
   ]);
   const displayEnabled =
     courseDisplayRuntimeEnabled();
