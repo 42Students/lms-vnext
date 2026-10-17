@@ -39,35 +39,33 @@ export async function listPagedMentorProjects(context:RequestContext,query:Mento
  if(query.status==="CURRENT") conditions.push(ne(projectInstances.status,"ARCHIVED"));
  else if(query.status && ["PLANNED","ACTIVE","COMPLETED","ARCHIVED"].includes(query.status))
    conditions.push(eq(projectInstances.status,query.status as "PLANNED"|"ACTIVE"|"COMPLETED"|"ARCHIVED"));
- const joined=()=>{
-   return getDb().select({
-     memberId:projectMembers.id,
-     memberRole:projectMembers.role,
-     isPrimaryMentor:projectMembers.isPrimary,
-     project:projectInstances,
-   })
-     .from(projectMembers)
-     .innerJoin(projectInstances,eq(projectInstances.id,projectMembers.projectId))
-     .innerJoin(collegeMemberships,eq(collegeMemberships.id,projectMembers.membershipId))
-     .innerJoin(users,eq(users.id,collegeMemberships.userId))
-     .innerJoin(membershipRoles,eq(membershipRoles.membershipId,collegeMemberships.id))
-     .where(and(...conditions));
- };
- // Read the count from the same fully scoped joined relation; never accept
- // a client supplied project-id list for the page boundary.
- const scoped=joined().as("mentor_project_scope");
- const [countRow]=await getDb().select({total:sql<number>`count(*)::int`}).from(scoped);
+ const [countRow]=await getDb().select({total:sql<number>`count(*)::int`})
+   .from(projectMembers)
+   .innerJoin(projectInstances,eq(projectInstances.id,projectMembers.projectId))
+   .innerJoin(collegeMemberships,eq(collegeMemberships.id,projectMembers.membershipId))
+   .innerJoin(users,eq(users.id,collegeMemberships.userId))
+   .innerJoin(membershipRoles,eq(membershipRoles.membershipId,collegeMemberships.id))
+   .where(and(...conditions));
  const total=Number(countRow?.total??0);
  const pageSize=query.pageSize;
  const totalPages=Math.max(1,Math.ceil(total/pageSize));
  const page=Math.min(query.page,totalPages);
- const naturalTitle=sql`regexp_replace(lower(${scoped.project.title}), '[0-9]+',
-     coalesce(lpad(substring(${scoped.project.title} from '[0-9]+'), 12, '0'), ''))`;
- const rows=await getDb().select().from(scoped).orderBy(
-   sql`case when ${scoped.project.status} = 'ARCHIVED' then 1 else 0 end`,
-   ...(query.sort==="TITLE"?
-     [naturalTitle,asc(scoped.project.id)]:
-     [desc(scoped.project.updatedAt),naturalTitle,asc(scoped.project.id)]),
- ).limit(pageSize).offset((page-1)*pageSize);
- return {items:rows.map(row=>row.mentor_project_scope),total,page,totalPages};
+ const naturalTitle=sql`regexp_replace(lower(${projectInstances.title}), '[0-9]+',
+     coalesce(lpad(substring(${projectInstances.title} from '[0-9]+'), 12, '0'), ''))`;
+ const items=await getDb().select({
+   memberId:projectMembers.id,memberRole:projectMembers.role,
+   isPrimaryMentor:projectMembers.isPrimary,project:projectInstances,
+ }).from(projectMembers)
+   .innerJoin(projectInstances,eq(projectInstances.id,projectMembers.projectId))
+   .innerJoin(collegeMemberships,eq(collegeMemberships.id,projectMembers.membershipId))
+   .innerJoin(users,eq(users.id,collegeMemberships.userId))
+   .innerJoin(membershipRoles,eq(membershipRoles.membershipId,collegeMemberships.id))
+   .where(and(...conditions))
+   .orderBy(
+      sql`case when ${projectInstances.status} = 'ARCHIVED' then 1 else 0 end`,
+      ...(query.sort==="TITLE"?
+        [naturalTitle,asc(projectInstances.id)]:
+        [desc(projectInstances.updatedAt),naturalTitle,asc(projectInstances.id)]),
+   ).limit(pageSize).offset((page-1)*pageSize);
+ return {items,total,page,totalPages};
 }
