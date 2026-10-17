@@ -43,18 +43,16 @@ describe("chat-16 SA-placements-projects-116 GR-111 graceful Telegram delivery",
     expect(transport).not.toHaveBeenCalled();
   });
   it.each([
-    [401,'{"ok":false}'],
-    [500,'{"ok":false}'],
-    [200,'{"ok":false}'],
-    [200,'not valid json'],
-  ])("SA-placements-projects-116 fails closed on provider HTTP %s",(status,payload)=>{ 
-    return (async()=>{
-      process.env.TELEGRAM_ALERT_BOT_TOKEN="fixture-do-not-log";
-      process.env.TELEGRAM_ALERT_CHAT_ID="fixture-chat";
-      const transport=vi.fn(async()=>new Response(payload,{status}));
-      expect(await sendTelegramAlert("Failure",{transport:transport as typeof fetch})).toBe(false);
-      expect(transport).toHaveBeenCalledTimes(1);
-    })();
+    {status:401,payload:'{"ok":false}'},
+    {status:500,payload:'{"ok":false}'},
+    {status:200,payload:'{"ok":false}'},
+    {status:200,payload:"not valid json"},
+  ])("SA-placements-projects-116 fails closed on provider HTTP $status",async({status,payload})=>{
+    process.env.TELEGRAM_ALERT_BOT_TOKEN="fixture-do-not-log";
+    process.env.TELEGRAM_ALERT_CHAT_ID="fixture-chat";
+    const transport=vi.fn(async()=>new Response(payload,{status}));
+    expect(await sendTelegramAlert("Failure",{transport:transport as typeof fetch})).toBe(false);
+    expect(transport).toHaveBeenCalledTimes(1);
   });
   it("SA-placements-projects-116 hides transport exception contents",async()=>{
     process.env.TELEGRAM_ALERT_BOT_TOKEN="fixture-do-not-log";
