@@ -383,6 +383,10 @@ export function RecruiterResultControls({
                     className="rounded-md border border-border px-2 py-1 text-primary-text disabled:opacity-40">
                     {label}
                   </button>)}
+                  <button type="button" disabled={bulkPending!==null||undoHistory.length===0}
+                    onClick={undoDraftOutcome} className="rounded-md border border-border px-2 py-1 text-primary-text disabled:opacity-40">
+                    Undo draft
+                  </button>
                   <button type="button" disabled={bulkPending!==null||(selected[round.id]??[]).length===0}
                     className="rounded-md bg-primary px-3 py-2 font-semibold text-on-primary disabled:opacity-50"
                     onClick={()=>void stageSelected(round)}>
