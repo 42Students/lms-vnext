@@ -209,6 +209,10 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
       {row.sectionName} ({row.sectionCode})</option>)}
     </select>
    </label>
+   {listSectionId?<p className="text-xs text-muted-foreground">
+    Showing shared offering items and content specific to the selected Section.
+    The Order field below is the authored default order, not a Section-specific override.
+   </p>:null}
    <ul className="space-y-1">{existing.filter(item=>(!listLessonId||item.lessonId===listLessonId)&&
     (!listSectionId||!item.deliveryId||item.deliveryId===listSectionId)&&
     (!listSectionId||lessons.some(lesson=>lesson.id===item.lessonId&&
