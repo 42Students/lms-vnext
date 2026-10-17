@@ -55,7 +55,7 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
             {shown.map(column => <div key={column.key} className="min-w-0"><dt className="font-medium text-body">{column.mobileLabel ?? column.header}</dt>
               <dd className="mt-0.5 min-w-0 break-words text-foreground">{cell(item,column)}</dd></div>)}
           </dl> : null}
-          {extra.length ? <details className="mt-3 border-t border-border pt-2"><summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-[var(--lms-teal-deep)]">More details</summary><dl className="grid gap-2 text-sm">{extra.map(column => <div key={column.key} className="min-w-0"><dt className="text-body">{column.mobileLabel ?? column.header}</dt><dd className="min-w-0 break-words text-foreground">{column.cell(row)}</dd></div>)}</dl></details> : null}
+          {extra.length ? <details className="mt-3 border-t border-border pt-2"><summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-[var(--lms-teal-deep)]">More details</summary><dl className="grid gap-2 text-sm">{extra.map(column => <div key={column.key} className="min-w-0"><dt className="text-body">{column.mobileLabel ?? column.header}</dt><dd className="min-w-0 break-words text-foreground">{cell(item,column)}</dd></div>)}</dl></details> : null}
           {actions.length ? <div className="mt-3 flex min-w-0 flex-wrap gap-2 border-t border-border pt-3" aria-label="Row actions">
             {actions.map(column => <div key={column.key} className="min-w-0">{cell(item,column)}</div>)}
           </div> : null}
