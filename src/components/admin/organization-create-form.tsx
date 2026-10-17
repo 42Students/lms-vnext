@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useFormDraft} from "@/hooks/use-form-draft";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -16,7 +17,7 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
   const name=draft.name;
   const setName=(value:string)=>setDraft({...draft,name:value});
   const [error, setError] = useState<string | null>(null);
-  const [pending, startTransition] = useTransition();
+  const {pending,run:guardedRun}=useGuardedAction({busyLabel:"Creating..."});
 
   function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -24,7 +25,7 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
 
     const cleanName=name.trim().replace(/\s+/g," ");
     if(!cleanName){setError("Please enter organization name");return;}
-    startTransition(async () => {
+    void guardedRun(async () => {
       try {
         const payload=await apiFetch<unknown>("/api/organizations",{
           method:"POST",
