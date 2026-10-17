@@ -139,3 +139,28 @@ No new schema or proposed migrations in this round. Shell was not edited. `TPO-d
 | ID | Status | Evidence |
 | --- | --- | --- |
 | TPO-drives-43 | OPEN (improved) | `placement-job-create-form.tsx` preserves a scoped browser backup of a server-confirmed job ID, employer relationship ID and exact form fingerprint. On reload it restores the partial job; repeated submissions resume eligibility/round writes instead of creating a duplicate draft, and modified form fields are refused until the existing drive is opened. Named test `TPO-drives-43 confirmed partial draft survives reload without duplicate POST` in `tests/unit/tpo-drives-chat-3-round4.test.ts`. Still OPEN until create requests are idempotent if the first server POST commits but its response is lost; browser/test acceptance not run. |
+
+## Chat-3 round 12: independently checked source sub-contracts (tests authored, not run)
+
+These named regression tests check *existing pieces* of the legacy audit only. An `OPEN`, `FIXED-ON-MAIN`, or partial gap does **not** become DONE merely because one piece is rendered; missing semantics listed in the audit remain pending. No page restyling performed following the owner UX freeze. The orchestrator must execute tests and verify integration before marking full closure.
+
+| Gap | Queue disposition maintained | New named source regression |
+| --- | --- | --- |
+| TPO-drives-05 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-05` |
+| TPO-drives-06 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-06` |
+| TPO-drives-07 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-07` |
+| TPO-drives-08 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-08` |
+| TPO-drives-10 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-10` |
+| TPO-drives-15 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-15` |
+| TPO-drives-17 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-17` |
+| TPO-drives-18 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-18` |
+| TPO-drives-19 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-19` |
+| TPO-drives-23 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-23` |
+| TPO-drives-24 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-24` |
+| TPO-drives-32 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-32` |
+| TPO-drives-33 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-33` |
+| TPO-drives-40 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-40` |
+| TPO-drives-R05 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-R05` |
+| TPO-drives-25 | DONE — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-25` |
+| TPO-drives-43 | OPEN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-43` |
+| TPO-drives-44 | OPEN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-44` |
