@@ -1,3 +1,5 @@
+import {Suspense} from "react";
+import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import Link from "next/link";
 import {ReportBarChart} from "@/components/placements/report-bar-chart";
 import { redirect } from "next/navigation";
@@ -96,6 +98,7 @@ export default async function TpoLeadsReportPage({
         }
       />
 
+      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/leads" collegeId={context.membership.collegeId}/></Suspense>
       <ReportNavigation workspace={workspace} />
       <nav aria-label="Recruiter engagement cross-check" className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-surface p-4">
        <p className="min-w-0 flex-1 text-sm text-body">This report uses recorded Engage recruiter leads and their invitation/account-linkage history. Compare the same lead records in Engage; an unrecorded contact is not counted as engagement.</p>
