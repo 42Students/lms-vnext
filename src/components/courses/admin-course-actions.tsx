@@ -15,6 +15,7 @@ import { useToast } from "@/components/ui/toast";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { apiFetch } from "@/lib/api-fetch";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
+import {COLLEGE_COURSES_COPY} from "@/modules/courses/college-courses-copy";
 
 async function mutate(
   path: string,
@@ -174,7 +175,7 @@ export function CourseActions({
         <div className="grid gap-4">
           <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
-              Name
+              {COLLEGE_COURSES_COPY.nameLabel}
             </span>
             <Input
               value={name}
