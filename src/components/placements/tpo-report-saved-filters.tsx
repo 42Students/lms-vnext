@@ -16,7 +16,7 @@ export function TpoReportSavedFilters({path,collegeId}:{path:string;collegeId:st
   try{const stored=localStorage.getItem(keyFor(path,collegeId));if(stored)setViews(clean(JSON.parse(stored)));}catch{/* Private browsing can disable storage. */}
  },[path,collegeId]);
  function persist(next:SavedView[]){
-  try{localStorage.setItem(keyFor(path),JSON.stringify(next));setViews(next);return true;}
+  try{localStorage.setItem(keyFor(path,collegeId),JSON.stringify(next));setViews(next);return true;}
   catch{setMessage("Browser storage is unavailable; saved views cannot be kept.");return false;}
  }
  function save(){
