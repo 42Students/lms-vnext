@@ -136,7 +136,9 @@ export function MentorTaskDetailsEdit(props:Props) {
         {error?<p role="alert" className="text-sm font-semibold text-error">{error}</p>:null}
         <div className="flex justify-end gap-2">
           <Button type="button" variant="secondary" onClick={()=>setOpen(false)}>Cancel</Button>
-          <Button type="submit" disabled={!changed||!title.trim()}>Review changes</Button>
+          <Button type="submit" disabled={!changed||!title.trim()||!estimateValid}>
+            Review changes
+          </Button>
         </div>
       </form>
     </Dialog>
