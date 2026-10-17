@@ -765,7 +765,7 @@ export function RecruiterLeadsWorkspace({
               </label>
               <button type="button" className={buttonStyle} onClick={()=>{
                 for(const key of ["owner","invite","status","source","query","company","designation",
-                  "reach","nextFollowup","lastActivity","added"] as const)updateFilter(key,"ALL");
+                  "reach","nextFollowup","lastActivity","added","drives"] as const)updateFilter(key,"ALL");
                 updateFilter("stage","ALL");updateFilter("attention","ALL");updateFilter("need","ALL");
               }}>Clear filters</button>
             </div>:null}
