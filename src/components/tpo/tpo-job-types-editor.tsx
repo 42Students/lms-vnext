@@ -20,6 +20,7 @@ export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
     data.error==="TPO_JOB_TYPE_LAST_ACTIVE"?"Keep at least one job type visible.":
     data.error==="TPO_JOB_TYPE_LIMIT"?"You can add up to 30 custom job types.":
     data.error==="TPO_JOB_TYPE_EXISTS"?"This job type already exists.":
+    data.error==="TPO_JOB_TYPE_BUILTIN"?"This is a fixed job type.":
     data.error==="TPO_SETTINGS_STALE"?"Settings changed. Refresh before retrying.":
     data.error??"Job types were not saved."
    );
@@ -40,6 +41,7 @@ export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
    </label>
    <button type="submit" disabled={label.trim().length<2||atLimit||busy} className="min-h-11 rounded bg-primary px-4 text-sm text-on-primary disabled:opacity-50">Add job type</button>
   </form>
+  <p className="text-sm text-muted-foreground">Custom job types are college-local configuration only; drive forms and reports use their own registered employment types until the integration is completed.</p>
   <p className="text-sm text-muted-foreground">2-40 letters, digits or simple punctuation · {types.length} of 30 custom types</p>
   <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
     <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Find job type
