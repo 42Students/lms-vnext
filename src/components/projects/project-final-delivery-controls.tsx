@@ -288,11 +288,10 @@ export function LearnerFinalDeliveryControl({
         </section>
         {review?.feedback?<p className="mb-3 text-sm text-body">Mentor review: {review.status}. {review.feedback}</p>:null}
         <p className="mb-3 text-xs text-body" role="status" aria-live="polite">
-          {!draft?"Save draft to enable autosave.":
+          {!draft?"Save draft":
             autosaveStatus==="saving"?"Saving…":
-            autosaveStatus==="saved"?"Draft saved.":
-            autosaveStatus==="failed"?"Autosave failed. Save draft to retry.":
-            "Changes autosave after you stop typing."}
+            autosaveStatus==="failed"?"Couldn't autosave — use Save draft":
+            unsaved?"Unsaved changes…":"Draft saved"}
         </p>
         <form
           onSubmit={save}
