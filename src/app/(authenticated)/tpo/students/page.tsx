@@ -358,6 +358,17 @@ export default async function TpoStudentsPage({
             {batchDirectory.batches.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
           </select>
         </label>
+        {([
+          ["minApplications","Applications from",query.minApplications],
+          ["maxApplications","Applications to",query.maxApplications],
+          ["minOffers","Offers from",query.minOffers],
+          ["maxOffers","Offers to",query.maxOffers],
+        ] as const).map(([name,label,value])=>
+         <label key={name} className="grid gap-1 text-sm font-semibold">{label}
+          <input type="number" name={name} min={0} max={10000} step={1}
+           defaultValue={value??""} placeholder="Any"
+           className="min-h-11 w-28 rounded border border-border bg-surface px-3"/>
+         </label>)}
         <button className="min-h-11 rounded border border-border px-4">Show students</button>
       </form>
       {query.batchId?<p className="text-sm text-muted-foreground">
