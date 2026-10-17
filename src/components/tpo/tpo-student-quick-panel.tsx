@@ -9,7 +9,7 @@ import {TpoRequestDecisionControl} from "@/components/placements/tpo-request-dec
 
 type Tab="Profile"|"Placement"|"Requests"|"Notes"|"History";
 const tabs:readonly Tab[]=["Profile","Placement","Requests","Notes","History"];
-type PanelDetail={requests:{id:string;status:string;type:string;reason:string;note:string|null;requestedAt:string;updatedAt:string;job:string}[];
+type PanelDetail={applications:{id:string;jobId:string;title:string;status:string}[];requests:{id:string;status:string;type:string;reason:string;note:string|null;requestedAt:string;updatedAt:string;job:string}[];
  notes:{id:string;body:string;createdAt:string;job:string}[];
  studentNotes:{id:string;note:string;createdAt:string;authorUserId:string}[];
  teamHistory:{id:string;eventType:string;summary:string;occurredAt:string;subjectType:string;actorUserId:string|null}[];
@@ -33,7 +33,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
  }
  async function chooseTab(next:Tab){
   setTab(next);setError("");
-  if(next!=="Requests"&&next!=="Notes"&&next!=="History"||detail)return;
+  if(next!=="Requests"&&next!=="Notes"&&next!=="History"&&next!=="Placement"||detail)return;
   await fetchDetail();
  }
  const when=(value:string)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(value));
@@ -105,11 +105,17 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
         <dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold">{value}</dd>
        </div>)}
       </dl>
+      <h3 className="font-semibold">Applications</h3>
+      {detail&&!detail.applications?.length?<p>No recorded placement applications.</p>:null}
+      {detail?.applications?.map(row=><div key={row.id} className="flex flex-wrap items-center justify-between gap-2 rounded border border-border p-3">
+        <span>{row.title} · {row.status.replaceAll("_"," ")}</span>
+        <Link href={"/tpo/placements/jobs/"+encodeURIComponent(row.jobId)} className="min-h-10 text-primary-text underline">Open drive</Link>
+      </div>)}
       <Link href={participation} className="inline-flex min-h-10 items-center text-primary-text underline">Manage placement participation</Link>
       <TpoStudentNudgePanel rows={[{id:student.membershipId,label:student.displayName,
        registered:student.registeredForPlacements}]}/>
     </>:null}
-    {loading&&(tab==="Requests"||tab==="Notes"||tab==="History")?<p role="status">Loading student records…</p>:null}
+    {loading&&(tab==="Requests"||tab==="Notes"||tab==="History"||tab==="Placement")?<p role="status">Loading student records…</p>:null}
     {error?<p role="alert" className="text-error">{error}</p>:null}
     {tab==="Requests"?<>
       <h3 className="font-semibold">Requests</h3>
