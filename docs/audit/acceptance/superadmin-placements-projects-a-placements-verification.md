@@ -1,5 +1,8 @@
 # Super Admin placements/projects A verification (chat-13)
 
+The source-verification completion gate is `tests/unit/chat13-complete-source-coverage.test.ts` (95 independently named cases plus 0133 migration registration checks). These tests are authored but require orchestrator execution; source evidence is not a claim of browser or database certification.
+
+
 Status DONE below indicates the implementation is present on main and a named source regression test is authored, **not executed**. Database and browser certification remains with the orchestrator.
 
 | ID | Status | Evidence |
