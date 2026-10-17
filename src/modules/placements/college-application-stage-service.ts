@@ -101,8 +101,8 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
      // REJECTED -> PENDING is permitted only after the proposed history
      // constraint migration is registered. Otherwise SQL rolls back.
      await tx.update(placementApplicationScreenings).set({
-      status:"PENDING",candidateMessage:null,internalReason:input.reason,
-      decidedByUserId:context.user.id,decidedAt:new Date(),updatedAt:new Date(),
+      status:"PENDING",candidateMessage:null,internalReason:null,
+      decidedByUserId:null,decidedAt:null,updatedAt:new Date(),
      }).where(and(eq(placementApplicationScreenings.applicationId,applicationId),
       eq(placementApplicationScreenings.status,"REJECTED")));
      await tx.insert(placementApplicationScreeningHistory).values({
