@@ -15,16 +15,17 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
  const submitLock=useRef(false);
  const [submitting,setSubmitting]=useState(false);
  const [notice,setNotice]=useState<string|null>(null);
+ const [dirty,setDirty]=useState(false);
  const [start,setStart]=useState("");
  const [end,setEnd]=useState("");
  const [error,setError]=useState<string|null>(null);
  const today=nowInIst();
  useEffect(()=>{
-  if((!start&&!end)||submitting)return;
+  if(!dirty||submitting)return;
   const onExit=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
   window.addEventListener("beforeunload",onExit);
   return ()=>window.removeEventListener("beforeunload",onExit);
- },[start,end,submitting]);
+ },[dirty,submitting]);
  async function submit(event:FormEvent<HTMLFormElement>){
   const form=event.currentTarget;
   const current=nowInIst();
@@ -51,14 +52,14 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
       "Could not propose this slot. Check the details and retry.");
     return;
    }
-   setStart("");setEnd("");form.reset();
+   setStart("");setEnd("");setDirty(false);form.reset();
    setNotice("Interview time block proposed. Waiting for placement-cell coordination.");
    router.refresh();
   }catch{
    setError("Could not reach the server. Your entered times are still here.");
   }finally{submitLock.current=false;setSubmitting(false);}
  }
- return <form method="post" action={action} onSubmit={event=>void submit(event)} className="grid gap-3 sm:grid-cols-2">
+ return <form method="post" action={action} onSubmit={event=>void submit(event)} onChange={()=>setDirty(true)} className="grid gap-3 sm:grid-cols-2">
   <input type="hidden" name="action" value="CREATE"/>
   <label className="grid gap-1 text-sm text-body">Interview round
    <select name="roundId" required defaultValue="" className="min-h-11 rounded-md border border-border bg-surface px-3">
