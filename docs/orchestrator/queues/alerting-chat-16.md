@@ -34,6 +34,11 @@ Owner requirement (2026-10-17): errors in vNext must reach Telegram exactly like
 - GR-119 / GR-125: digest date, signature and commit fields survive redaction only under strict metadata shape checks; fake Telegram server covers production reply_markup and failed provider responses.
 - Tests in this lane remain **written, not run**; `docs/orchestrator/unit-failures-r1.md` is a historical CI report pending the orchestrator's new targeted run.
 
+## Round follow-up — source checks after the historical CI report
+- GR-112 / GR-125: restored grouping across volatile eight-hex GR-05 request references; extra named assertions keep different error names separate. Historical `graceful-telegram-foundations` failure was already reconciled on main, but the post-fix test has NOT been run.
+- GR-123 / GR-125: Logs mutations preserve guarded `apiFetch` and only show whitelisted timeout guidance or friendly API errors; new regression assertions cover both mutation entry points and preserved mute confirmation. Historical `graceful-logs-ui-contract` failure was already reconciled on main, but the post-fix test has NOT been run.
+- There are no additional OPEN GR-111..GR-125 items in this lane queue; the remaining BLOCKED statuses require migration registration, IAM, credentials or cluster smoke evidence and are not source-code closures.
+
 ## Notes (blockers, one line each)
 - RUNBOOK GR-111..GR-125: `docs/operations/vnext-telegram-alerting.md` documents safe configuration, production-only webhook registration, DB10 promotion, smoke evidence and recovery.
 - BLOCKED GR-115/GR-118/GR-119/GR-125: orchestrator/W01 must register and replay `docs/proposed-migrations/graceful-telegram-alerting.sql` including daily counts, observed-event deduplication, and resumable Cloud Logging page-window columns before setting `DB10_LOG_ALERTS_READY=DB10_VERIFIED`.
