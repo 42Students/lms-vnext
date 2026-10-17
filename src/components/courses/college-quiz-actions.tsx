@@ -39,10 +39,13 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
   let url="/api/courses/quizzes/"+encodeURIComponent(quiz.id);
   let method="PATCH",body:unknown;
   if(action==="EDIT"){
+   if(!expectedUpdatedAt){setError("Reload the Quiz before editing.");return;}
    if(!title.trim()||title.trim().length>255){setError("Enter a quiz title.");return;}
    const deadline=due?new Date(due+":00+05:30"):null;
    if(deadline&&Number.isNaN(deadline.getTime())){setError("Enter a valid deadline.");return;}
-   body={title:title.trim(),dueAt:deadline?.toISOString()??null};
+   body={title:title.trim(),dueAt:deadline?.toISOString()??null,description:description.trim()||null,
+    expectedUpdatedAt,
+    ...(quiz.status==="DRAFT"?{maxAttempts,shuffleQuestions,shuffleOptions}:{})};
   }else{
    if(!window.confirm("Delete this quiz? Quizzes with learner attempts cannot be archived."))return;
    url+="/transition";method="POST";body={action:"ARCHIVE"};
