@@ -10,6 +10,7 @@ import type {TpoJobTx} from "./tpo-job-write-base";
 import {hrInterviewSlots} from "@/db/schema/placement-hr-interview-slots";
 import {hrInterviewSlotCreateSchema,hrInterviewSlotActionSchema,slotsOverlap,slotTransitionAllowed,canRecruiterMutateOwnSlot} from "./hr-interview-slot-model";
 import {PlacementsServiceError} from "./errors";
+import {recruiterOwnJobPredicate} from "./recruiter-job-ownership";
 import {notifyTpoOfRecruiterAction} from "./hr-tpo-notification-service";
 
 type JobScope={id:string;collegeId:string;organizationId:string;companyRelationshipId:string};
@@ -33,7 +34,8 @@ async function verifyRecruiterSlotJob(tx:TpoJobTx,context:RequestContext,jobId:s
    eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
    eq(placementRecruiterCollegeGrants.companyRelationshipId,placementCompanyRelationships.id),
    eq(placementRecruiterCollegeGrants.status,"ACTIVE")))
-  .where(and(eq(placementJobs.id,jobId),eq(placementJobs.status,"PUBLISHED")))
+  .where(and(eq(placementJobs.id,jobId),eq(placementJobs.status,"PUBLISHED"),
+    recruiterOwnJobPredicate(context.user.id)))
   .for("update").limit(1);
  if(!job||!can(context,"placements.recruiter.read",{
   collegeId:job.collegeId,placementCompanyRelationshipId:job.companyRelationshipId,
