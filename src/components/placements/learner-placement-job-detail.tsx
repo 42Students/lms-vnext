@@ -122,6 +122,12 @@ export function LearnerPlacementJobDetail({
                 className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">
                 Review my profile →
               </Link>
+              {(availability.kind==="NOT_OPEN" || availability.kind==="EVIDENCE") ? (
+                <Link href="/learn/my-placements#registration"
+                  className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">
+                  Register for placements →
+                </Link>
+              ) : null}
             </div>
           ) : null}
         </aside>
