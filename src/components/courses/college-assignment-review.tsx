@@ -54,7 +54,7 @@ export function CollegeAssignmentReview({
     (published?" "+published+" grade(s) were published; retry after refreshing.":""));
   }finally{setBulkBusy(false);}
  }
- if(status!=="PUBLISHED")return null;
+ if(!["PUBLISHED","DRAFT"].includes(status))return null;
  if(!options.length)return <p className="text-xs text-muted-foreground">
   No active class delivery is available for reviewing submissions.
  </p>;
@@ -62,7 +62,7 @@ export function CollegeAssignmentReview({
  return <div className="space-y-2">
   {options.length>1?<label className="grid gap-1 text-xs font-semibold text-body">
    Section
-   <select value={selected.deliveryId} onChange={event=>setDeliveryId(event.target.value)}
+   <select value={selected.deliveryId} disabled={bulkBusy} onChange={event=>{setDeliveryId(event.target.value);setBulkStatus("");}}
     className="min-h-10 rounded-md border border-border bg-surface px-2 text-sm text-foreground">
     {options.map(item=><option key={item.deliveryId} value={item.deliveryId}>
      {item.sectionName} ({item.sectionCode})
@@ -72,12 +72,13 @@ export function CollegeAssignmentReview({
   <div className="flex flex-wrap items-center gap-2">
    <FacultyAssignmentReview key={selected.deliveryId} reviewScope="COLLEGE"
     assignmentId={assignmentId} deliveryId={selected.deliveryId}
-    maxPoints={maxPoints} status="PUBLISHED" filesEnabled={filesEnabled}/>
-   <button type="button" disabled={bulkBusy} onClick={()=>void publishAllGrades(selected.deliveryId)}
+    maxPoints={maxPoints} status={status as "DRAFT"|"PUBLISHED"} filesEnabled={filesEnabled}/>
+   {status==="PUBLISHED"?<button type="button" disabled={bulkBusy} onClick={()=>void publishAllGrades(selected.deliveryId)}
     className="min-h-10 rounded-md border border-border px-3 text-xs font-semibold text-primary-text disabled:opacity-60">
     {bulkBusy?"Publishing…":"Publish grades"}
-   </button>
+   </button>:null}
   </div>
+  {bulkBusy?<p role="status" className="text-xs text-muted-foreground">Publishing graded submissions for this Section. Do not close this page.</p>:null}
   {bulkStatus?<p role="status" className="text-xs text-muted-foreground">{bulkStatus}</p>:null}
  </div>;
 }

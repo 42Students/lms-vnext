@@ -3,7 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import {
-  updateCourseAssignment,
+  updateCourseAssignment,getCourseAssignmentForAdmin,
 } from "@/modules/courses/assignment-service";
 
 export const runtime = "nodejs";
@@ -13,6 +13,15 @@ type RouteContext = {
     assignmentId: string;
   }>;
 };
+
+export async function GET(_:Request,{params}:RouteContext){
+ try{
+  const context=await getCurrentRequestContext();
+  const {assignmentId}=await params;
+  const assignment=await getCourseAssignmentForAdmin(context,assignmentId);
+  return NextResponse.json({assignment},{headers:{"Cache-Control":"private, no-store"}});
+ }catch(error){return apiErrorResponse(error);}
+}
 
 export async function PATCH(
   request: Request,

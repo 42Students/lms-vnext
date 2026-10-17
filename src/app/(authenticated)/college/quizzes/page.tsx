@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeAssessmentAggregate } from "@/components/courses/college-assessment-aggregate";
+import {CollegeQuizCreate} from "@/components/courses/college-quiz-create";
+import {getCollegeQuizAuthoringOptions} from "@/modules/courses/college-quiz-authoring-options";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { collegeAssessmentListQuerySchema } from "@/modules/courses/college-assessment-aggregate-model";
@@ -31,5 +33,9 @@ export default async function CollegeQuizzesPage({
     );
   }
   const data = await listCollegeAssessmentAggregate(context, "QUIZ", validation.data);
-  return <CollegeAssessmentAggregate data={data} />;
+  const lessons=await getCollegeQuizAuthoringOptions(context);
+  return <div className="space-y-4">
+    <CollegeQuizCreate lessons={lessons} deliveries={data.reviewDeliveries}/>
+    <CollegeAssessmentAggregate data={data}/>
+  </div>;
 }

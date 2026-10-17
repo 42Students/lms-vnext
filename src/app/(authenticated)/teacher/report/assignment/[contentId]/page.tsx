@@ -101,19 +101,20 @@ export default async function FacultyAssignmentReportPage({
         <h2 className="text-lg font-semibold text-foreground">
           Score distribution
         </h2>
+        {metrics.graded===0?<p role="status" className="mt-3 text-sm text-muted-foreground">
+          No grades yet. Grade a submission to populate this score distribution.
+        </p>:null}
         <div
           className="mt-4 space-y-3"
-          role="img"
+          role="group"
           aria-label={`Score distribution across ${metrics.graded} graded submissions`}
         >
           {distribution.map((bucket) => {
             const total = Math.max(metrics.graded, 1);
             const width = Math.round((bucket.count / total) * 100);
             return (
-              <div
-                key={bucket.label}
-                className="grid grid-cols-[6rem_1fr_2rem] items-center gap-3 text-sm"
-              >
+              <details key={bucket.label} className="rounded-md border border-border p-2 text-sm">
+                <summary className="grid cursor-pointer grid-cols-[6rem_1fr_2rem] items-center gap-3">
                 <span className="text-body">{bucket.label}</span>
                 <span className="h-2 overflow-hidden rounded-full bg-muted">
                   <span
@@ -121,10 +122,19 @@ export default async function FacultyAssignmentReportPage({
                     style={{ width: `${width}%` }}
                   />
                 </span>
-                <strong className="text-right text-foreground">
-                  {bucket.count}
-                </strong>
-              </div>
+                <strong className="text-right text-foreground">{bucket.count}</strong>
+                </summary>
+                <ul className="mt-2 space-y-1 border-t border-border pt-2">
+                  {submissions.filter(row=>{
+                    if(row.gradingStatus!=="GRADED"||row.pointsAwarded===null||assignment.maxPoints<=0)return false;
+                    const percent=Math.round(100*row.pointsAwarded/assignment.maxPoints);
+                    return percent>=bucket.min&&percent<=bucket.max;
+                  }).map(row=><li key={row.id} className="flex justify-between gap-3 text-body">
+                    <span>{facultyReportLearnerName(row.learnerDisplayName)}</span>
+                    <span>{row.pointsAwarded}/{assignment.maxPoints}</span>
+                  </li>)}
+                </ul>
+              </details>
             );
           })}
         </div>

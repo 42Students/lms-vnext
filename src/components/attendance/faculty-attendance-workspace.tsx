@@ -829,9 +829,8 @@ export function FacultyAttendanceWorkspace({
                           value={session.id}
                         >
                           {session.title} ·{" "}
-                          {dateTime(
-                            session.startsAt,
-                          )}
+                          {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",timeStyle:"short"})
+                            .format(new Date(session.startsAt))} IST
                         </option>
                       ),
                     )}
