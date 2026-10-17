@@ -36,13 +36,13 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
  if(!sortParsed.success)return <div role="alert">Invalid batch sorting. <Link href="/tpo/batches">Clear filters</Link></div>;
  if(!parsed.success)return <div role="alert">Invalid search. <Link href="/tpo/batches">Clear search</Link></div>;
  const context=await getCurrentRequestContext();
- const [data,unassigned]=await Promise.all([listTpoBatches(context),countTpoLearnersWithoutClass(context)]);
- const eligibility=await listTpoBatchCardEligibility(context,data.batches.map(batch=>batch.id));
+ const [data,unassigned]=await Promise.all([listTpoBatches(context),countTpoLearnersWithoutClass(context).catch(()=>null)]);
+ const eligibility=await listTpoBatchCardEligibility(context,data.batches.map(batch=>batch.id)).catch(()=>null);
  const selected=filterTpoBatchDepartment(filterTpoBatchProgram(
   filterTpoBatchDirectory(data.batches,{...parsed.data,state:"ALL"}),
   programParsed.data),departmentParsed.data);
- const stateFiltered=selected.filter(batch=>!data.ready||tpoBatchMatchesPlacementState({
-  finishedAt:batch.finishedAt,eligible:eligibility.get(batch.id)?.eligible??null,
+ const stateFiltered=selected.filter(batch=>!data.ready||eligibility===null||tpoBatchMatchesPlacementState({
+  finishedAt:batch.finishedAt,eligible:eligibility?.get(batch.id)?.eligible??null,
  },parsed.data.state));
  const sorted=sortTpoBatchNames(data.ready?filterTpoBatchDeadline(stateFiltered,deadlineParsed.data,new Date()):stateFiltered,sortParsed.data);
  const showOlder=(Array.isArray(raw.showOlder)?raw.showOlder[0]:raw.showOlder)==="1";
@@ -52,18 +52,18 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
  const batches=workingSet.visible;
  const batchPage=paginateTpoBatches(batches,pageParsed.data.page,pageParsed.data.pageSize);
  const [journey,recent]=await Promise.all([
-  listTpoBatchJourneyCounts(context,data.batches.map(batch=>batch.id)),
-  listTpoBatchRecentCohortActions(context,batchPage.items.map(batch=>batch.id)),
+  listTpoBatchJourneyCounts(context,data.batches.map(batch=>batch.id)).catch(()=>null),
+  listTpoBatchRecentCohortActions(context,batchPage.items.map(batch=>batch.id)).catch(()=>null),
  ]);
  const pageFilters={q:parsed.data.q,state:parsed.data.state,program:programParsed.data,department:departmentParsed.data,deadline:deadlineParsed.data,sort:sortParsed.data,...(showOlder?{showOlder:"1"}:{})};
  const programs=listTpoBatchPrograms(data.batches);
  const departments=listTpoBatchDepartments(data.batches);
  const summary=summarizeTpoBatchStates(data.batches);
  const working=data.batches.filter(batch=>!batch.finishedAt);
- const activeCount=data.batches.filter(batch=>tpoBatchPlacementState({finishedAt:batch.finishedAt,eligible:eligibility.get(batch.id)?.eligible??null})==="In placements").length;
- const eligibleCount=working.reduce((sum,batch)=>sum+(eligibility.get(batch.id)?.eligible??0),0);
- const pendingCount=working.reduce((sum,batch)=>sum+(eligibility.get(batch.id)?.undecided??0),0);
- const placedCount=working.reduce((sum,batch)=>sum+(journey.get(batch.id)?.placed??0),0);
+ const activeCount=data.batches.filter(batch=>tpoBatchPlacementState({finishedAt:batch.finishedAt,eligible:eligibility?.get(batch.id)?.eligible??null})==="In placements").length;
+ const eligibleCount=working.reduce((sum,batch)=>sum+(eligibility?.get(batch.id)?.eligible??0),0);
+ const pendingCount=working.reduce((sum,batch)=>sum+(eligibility?.get(batch.id)?.undecided??0),0);
+ const placedCount=working.reduce((sum,batch)=>sum+(journey?.get(batch.id)?.placed??0),0);
  return <main className="min-w-0 space-y-5">
   <PageHeader eyebrow="TPO · Batches" title={TPO_OWNER_PAGE_COPY.placementEligibility} description="Decide who is in placements, one passing-out batch at a time. New students follow their class."/>
   <form className="flex flex-wrap gap-2" action="/tpo/batches" method="get">
@@ -79,9 +79,13 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
   {unassigned>0?<p role="status" className="rounded-md border border-warning bg-surface p-3 text-sm text-warning">
     {unassigned} {unassigned===1?"student is":"students are"} not in any active class. Assign their academic classes before deciding placement eligibility.
   </p>:null}
-  {!data.ready&&deadlineParsed.data!=="ALL"?<p role="status" className="text-sm">Deadline filtering is unavailable until lifecycle storage is registered. Showing all matching batch names.</p>:null}
-  {!data.ready&&parsed.data.state!=="ALL"?<p role="status" className="text-sm">State filtering is unavailable until batch lifecycle storage is registered. Showing all matching batch names.</p>:null}
-  {!data.ready?<p role="status" className="rounded border border-border p-3">Placement batch lifecycle migration is pending. Academic cohorts remain visible; invitation and completion status is unavailable.</p>:null}
+  {unassigned===null?<p role="status" className="text-sm">Class assignment counts could not load. The batch list is still available. Try again later.</p>:null}
+  {eligibility===null?<p role="status" className="text-sm">Eligibility counts could not load. The batch list is still available. Try again later.</p>:null}
+  {journey===null?<p role="status" className="text-sm">Placement journey counts could not load. Other batch details are still available.</p>:null}
+  {recent===null?<p role="status" className="text-sm">Recent decisions could not load. Open a batch to view its history.</p>:null}
+  {!data.ready&&deadlineParsed.data!=="ALL"?<p role="status" className="text-sm">Deadline details are temporarily unavailable. All matching batches are still shown.</p>:null}
+  {!data.ready&&parsed.data.state!=="ALL"?<p role="status" className="text-sm">Batch state details are temporarily unavailable. All matching batches are still shown.</p>:null}
+  {!data.ready?<p role="status" className="rounded border border-border p-3">Some batch details are temporarily unavailable. Academic batches remain visible; try again later.</p>:null}
   <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">{[
   ["Open for placements",activeCount],["Students eligible",eligibleCount],["Not decided yet",pendingCount],["Placed (offer evidence)",placedCount],
   ].map(([label,value])=><div key={label} className="rounded-lg border border-border p-3"><dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold">{data.ready?value:"—"}</dd></div>)}</dl>
@@ -107,10 +111,10 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
   </section>:<ul className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">{batchPage.items.map(b=><li key={b.id} className="min-w-0 space-y-2 rounded-xl border border-border bg-surface p-4">
     <h2 className="break-words font-semibold"><Link href={"/tpo/batches/"+b.id} className="text-primary-text underline">{b.name}</Link></h2>
     <p className="text-sm">{b.department===b.program?b.program:b.department+" · "+b.program}{b.startYear?" · "+b.startYear+(b.endYear?"–"+b.endYear:""):""}</p>
-    <p className="text-xs text-muted-foreground">{data.ready?tpoBatchPlacementState({finishedAt:b.finishedAt,eligible:eligibility.get(b.id)?.eligible??null}):"Status unavailable"}</p>
+    <p className="text-xs text-muted-foreground">{data.ready?tpoBatchPlacementState({finishedAt:b.finishedAt,eligible:eligibility?.get(b.id)?.eligible??null}):"Status unavailable"}</p>
     {tpoBatchCardDeadlineLabel(b.deadline,data.ready,Boolean(b.finishedAt))?<p className="text-xs text-muted-foreground">{tpoBatchCardDeadlineLabel(b.deadline,data.ready,Boolean(b.finishedAt))}</p>:null}
     {(() => {
-      const summary = eligibility.get(b.id);
+      const summary = eligibility?.get(b.id);
       if (!summary) return <p role="status" className="text-sm">Eligibility counts unavailable.</p>;
       const split = [
         { key: "eligible", label: "Eligible", count: summary.eligible, color: "bg-success" },
@@ -122,9 +126,9 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
         <p className="text-xs text-muted-foreground">{summary.assessed} {summary.assessed===1?"student":"students"} in batch</p>
         <dl className="grid grid-cols-2 gap-1 text-xs">
          <div><dt className="text-muted-foreground">Invited</dt><dd className="font-semibold">{b.invitedAt?"Yes":"Not yet"}</dd></div>
-         <div><dt className="text-muted-foreground">Registered</dt><dd className="font-semibold">{journey.get(b.id)?.registered??0}</dd></div>
-         <div><dt className="text-muted-foreground">Verified profiles</dt><dd className="font-semibold">{journey.get(b.id)?.verified??0}</dd></div>
-         <div><dt className="text-muted-foreground">Placed (offer evidence)</dt><dd className="font-semibold">{journey.get(b.id)?.placed??0}</dd></div>
+         <div><dt className="text-muted-foreground">Registered</dt><dd className="font-semibold">{journey?.get(b.id)?.registered??0}</dd></div>
+         <div><dt className="text-muted-foreground">Verified profiles</dt><dd className="font-semibold">{journey?.get(b.id)?.verified??0}</dd></div>
+         <div><dt className="text-muted-foreground">Placed (offer evidence)</dt><dd className="font-semibold">{journey?.get(b.id)?.placed??0}</dd></div>
         </dl>
         <dl className="grid grid-cols-2 gap-1 text-xs">
           {split.map(part=><div key={part.key}>
@@ -140,12 +144,12 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
         {summary.needsReview>0?<p className="text-xs text-warning">Ambiguous class membership requires review.</p>:null}
       </div>;
     })()}
-    {recent.get(b.id)?<section className="rounded-md border border-border p-3 text-xs">
+    {recent?.get(b.id)?<section className="rounded-md border border-border p-3 text-xs">
      <p className="font-semibold">Last batch decision</p>
-     <p className="text-muted-foreground">By {recent.get(b.id)!.actor} · {new Date(recent.get(b.id)!.occurredAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>
-     {recent.get(b.id)!.canUndo&&!b.finishedAt?<TpoBatchUndoControl batchId={b.id} actionId={recent.get(b.id)!.actionId}/>:null}
+     <p className="text-muted-foreground">By {recent?.get(b.id)!.actor} · {new Date(recent?.get(b.id)!.occurredAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>
+     {recent?.get(b.id)!.canUndo&&!b.finishedAt?<TpoBatchUndoControl batchId={b.id} actionId={recent?.get(b.id)!.actionId}/>:null}
     </section>:null}
-    <Link href={"/tpo/batches/"+b.id+tpoBatchNextActionLink(b,data.ready,eligibility.get(b.id),journey.get(b.id))} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold">{tpoBatchNextAction(b,data.ready,eligibility.get(b.id),journey.get(b.id))}</Link>
+    <Link href={"/tpo/batches/"+b.id+tpoBatchNextActionLink(b,data.ready,eligibility?.get(b.id),journey?.get(b.id))} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold">{tpoBatchNextAction(b,data.ready,eligibility?.get(b.id),journey?.get(b.id))}</Link>
    </li>)}</ul>}
  </main>;
 }
