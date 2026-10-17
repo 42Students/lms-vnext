@@ -184,3 +184,14 @@ No tests, lint, typecheck, build or CI waiting were run under FAST v2. No direct
 - Blocked `TPO-recruiters-13/14/17`: provider receipts, durable bulk undo and worker delivery require verified provider/worker setup.
 - Blocked `PUB-auth-public-50/52/53/54/55`: OD-09 company share OTP/PII/storage consent still owner-gated.
 - No tests, typecheck, lint, build or CI waits under FAST v2; only `chatgpt/chat-2-b` received these commits.
+
+## FAST v2 chat-2-b continuation — 2026-10-17 (Messages)
+
+- `TPO-inbox-team-05`: added legacy All / Reply / Unread counts and links; 200 ms live search now searches all authorized thread message bodies, not just the latest.
+- `TPO-inbox-team-06`: thread rows show recruiter company (from same-college lead evidence), last-message preview, Waiting for you, Access ended derived from current verified recruiter access, and legacy-style IST today / Yesterday / D MMM.
+- `TPO-inbox-team-19`: 2+-character full-conversation search shows a 160-character matching-message excerpt and supports the / keyboard shortcut.
+- `TPO-inbox-team-R01`: bell opens the actual recruiter conversation; bell body now contains the first 120 visible characters of the persisted, same-thread message, read under the existing transaction. Full email reply variant and shared-shell topbar count remain out of this lane.
+- Already resolved upstream, so not rebuilt: `TPO-campaigns-public-R01` (mobile storage on public join), `TPO-campaigns-public-R06` (HTML forms / Enter), `TPO-recruiters-R02` (companies tab visible with zero leads), `TPO-recruiters-18` saved views already persist column settings.
+- Blocked `TPO-inbox-team-R01` remainder: email-inbound title variant requires verified inbound email pipeline; Messages topbar badge belongs to chat-9 shared shell, do not edit here.
+- WP-04 and WP-08 remain IN-PROGRESS because their other S2/S3 gaps (Team object conversations, announcements, staff workload) are not closed; do not mark them DONE.
+- No tests, typecheck, lint, build or CI waits under FAST v2. All new commits exclusively on `chatgpt/chat-2-b`.
