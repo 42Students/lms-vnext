@@ -62,7 +62,7 @@ export function MentorTaskCreate({
     }finally{setBusy(false);}
   }
   return <>
-    <Button size="sm" variant="secondary" onClick={()=>setOpen(true)}>Add task</Button>
+    <Button size="sm" variant="secondary" onClick={()=>setOpen(true)}>Create task</Button>
     <Dialog open={open} onOpenChange={setOpen} title="Confirm new task"
       description="Create a task in a sprint or product backlog. Status, assignee and details are recorded."
       footer={<>
