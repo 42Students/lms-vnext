@@ -15,7 +15,7 @@ import {sortTpoPeople,type TpoPeopleSort} from "@/modules/placements/tpo-team-pe
 
 const tabSchema=z.object({tab:z.enum(["conversations","people"]).optional(),sort:z.enum(["WORK","NAME"]).optional(),q:z.string().max(120).optional()}).strict();
 export default async function TpoTeamPage({searchParams}:{
- searchParams:Promise<{tab?:string|string[];sort?:string|string[]}>}) {
+ searchParams:Promise<{tab?:string|string[];sort?:string|string[];q?:string|string[]}>}) {
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const raw=await searchParams;
