@@ -22,6 +22,22 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
  const [error,setError]=useState(""),[done,setDone]=useState("");
  const [audience,setAudience]=useState<SelectedAudiencePreview|null>(null);
  const [audienceStatus,setAudienceStatus]=useState<"idle"|"loading"|"ready"|"error">("idle");
+ const selectionKey=selectedLeadIds.join(",");
+ useEffect(()=>{
+  if(!selectionKey){setAudience(null);setAudienceStatus("idle");return;}
+  const controller=new AbortController();
+  setAudience(null);setAudienceStatus("loading");
+  void fetch("/api/placements/tpo/campaigns/preview-selected",{
+   method:"POST",credentials:"same-origin",signal:controller.signal,
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({selectedLeadIds:selectionKey.split(",")}),
+  }).then(async response=>{
+   if(!response.ok)throw new Error("Audience preview is unavailable");
+   return response.json() as Promise<SelectedAudiencePreview>;
+  }).then(value=>{if(!controller.signal.aborted){setAudience(value);setAudienceStatus("ready");}})
+    .catch(()=>{if(!controller.signal.aborted)setAudienceStatus("error");});
+  return ()=>controller.abort();
+ },[selectionKey]);
  async function save(){
   const parsed=tpoCampaignDraftSchema.safeParse({title,subject,body,segment:selectedLeadIds.length?"ALL_ELIGIBLE":segment,templateKey,selectedLeadIds:selectedLeadIds.length?selectedLeadIds:undefined});
   if(!parsed.success){
