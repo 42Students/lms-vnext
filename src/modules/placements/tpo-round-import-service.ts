@@ -85,6 +85,7 @@ function previewData(rows:ImportRow[],roster:Roster[]){
    unmatched.push({line:row.line,identity:row.identity,reason:"Duplicate applicant in file",suggestions:[]});continue;
   }
   if(candidate.currentStatus==="APPLIED"){
+   used.add(candidate.applicationId);
    unmatched.push({line:row.line,identity:row.identity,reason:"Already applied; locked from import",suggestions:[]});continue;
   }
   used.add(candidate.applicationId);
