@@ -1,10 +1,24 @@
 import {describe,expect,it} from "vitest";
 import {isRecruiterUnreadReminderDue,safeRecruiterDigestMessages,makeRecruiterReplyAddress,
- recruiterMailBridgeSignature,verifyRecruiterMailBridgeSignature,extractRecruiterEmailReply,recruiterReplyTokenForThread,safeRecruiterEmailMergeText}
+ recruiterMailBridgeSignature,verifyRecruiterMailBridgeSignature,extractRecruiterEmailReply,recruiterReplyTokenForThread,safeRecruiterEmailMergeText,isRecruiterReplyAddress}
  from "@/modules/placements/recruiter-message-email-model";
 const T=Date.parse("2099-01-01T00:00:00Z");
 const at=(m:number)=>new Date(T+m*60_000);
 describe("REC-calendar-messages-profile-R01 unread recruiter mail policy",()=>{
+ it("REC-calendar-messages-profile-R01 authorizes exact dedicated Reply-To domain",()=>{
+  const addr="r-"+("a".repeat(32))+"@reply.example.com";
+  expect(isRecruiterReplyAddress(addr,"reply.example.com")).toBe(true);
+  expect(isRecruiterReplyAddress(addr.toUpperCase(),"reply.example.com")).toBe(true);
+ });
+ it("REC-calendar-messages-profile-R01 refuses forged Reply-To lookalike and subdomains",()=>{
+  const addr="r-"+("b".repeat(32))+"@reply.example.com";
+  expect(isRecruiterReplyAddress(addr,"example.com")).toBe(false);
+  expect(isRecruiterReplyAddress(addr+".evil.test","reply.example.com")).toBe(false);
+  expect(isRecruiterReplyAddress("victim@reply.example.com","reply.example.com")).toBe(false);
+  expect(isRecruiterReplyAddress("r-a@reply.example.com","reply.example.com")).toBe(false);
+  expect(isRecruiterReplyAddress("r-"+("a".repeat(32))+"@reply.example.com\\nBcc:evil@example.com","reply.example.com")).toBe(false);
+ });
+
  it("REC-calendar-messages-profile-R01 HTML-escapes all email template fields",()=>{
   expect(safeRecruiterEmailMergeText('<b>College & "Company" \'Hiring\'</b>'))
    .toBe('&lt;b&gt;College &amp; &quot;Company&quot; &#39;Hiring&#39;&lt;/b&gt;');
