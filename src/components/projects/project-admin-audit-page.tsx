@@ -84,6 +84,7 @@ export async function ProjectAdminAuditPage({
     one(searchParams.importance);
   const subjectType =
     one(searchParams.subjectType);
+  const subjectId=one(searchParams.subjectId);
   const from = one(searchParams.from);
   const to = one(searchParams.to);
 
@@ -98,6 +99,7 @@ export async function ProjectAdminAuditPage({
             | undefined,
         eventType,
         subjectType,
+        subjectId,
         from,
         to,
         beforeOccurredAt:
@@ -161,6 +163,7 @@ export async function ProjectAdminAuditPage({
       subjectType,
     );
   }
+  if(subjectId)nextParams.set("subjectId",subjectId);
   if (from) {
     nextParams.set("from", from);
   }
@@ -197,6 +200,7 @@ export async function ProjectAdminAuditPage({
           if(eventType)params.set("action",eventType);
           if(importance)params.set("importance",importance);
           if(subjectType)params.set("subjectType",subjectType);
+          if(subjectId)params.set("subjectId",subjectId);
           if(item.days!==null)params.set("from",istDate(new Date(Date.now()-item.days*86400000)));
           return <a key={item.label} href={basePath+"/audit?"+params.toString()}
            className="inline-flex min-h-10 items-center rounded-md border border-border px-3 font-semibold text-primary-text">
@@ -254,6 +258,11 @@ export async function ProjectAdminAuditPage({
             defaultValue={subjectType}
             placeholder="project"
           />
+        </label>
+        <label>
+          <span className="mb-1 block text-xs font-semibold text-body">Entity ID</span>
+          <input className={inputClass} name="subjectId" defaultValue={subjectId??""}
+            placeholder="Exact project or task UUID"/>
         </label>
         <label>
           <span className="mb-1 block text-xs font-semibold text-body">
