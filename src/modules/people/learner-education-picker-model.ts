@@ -27,7 +27,7 @@ export function learnerEducationValidationProblem(input:{
  if(!input.gradeObtained?.trim())return {field:"gradeObtained",message:"Grade obtained is required"};
  if(!input.maxGrade?.trim())return {field:"maxGrade",message:"Max grade is required for job screening"};
  const examYear=String(input.examDetails?.passingYear??"").trim();
- if(examYear && !/^\\d{4}$/.test(examYear))
+ if(examYear && !/^\d{4}$/.test(examYear))
   return {field:"examDetails.passingYear",message:"Enter a 4-digit qualifying exam passing year"};
  const start=input.startYear?.trim(),end=input.endYear?.trim();
  if(start&&end&&/^\d{4}$/.test(start)&&/^\d{4}$/.test(end)&&Number(end)<Number(start))
