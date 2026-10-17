@@ -53,6 +53,7 @@ export async function getTpoVerificationQueue(ctx:RequestContext,query?:TpoVerif
   id:profileVerifications.learnerMembershipId,status:profileVerifications.status,
   section:profileVerifications.section,submittedAt:profileVerifications.submittedAt,
   version:profileVerifications.rowVersion,name:users.displayName,
+  decidedAt:profileVerifications.decidedAt,decidedByName:profileVerifications.decidedByName,
   submittedSnapshot:profileVerifications.submittedSnapshot,
  }).from(profileVerifications)
   .innerJoin(collegeMemberships,eq(collegeMemberships.id,profileVerifications.learnerMembershipId))
@@ -97,6 +98,7 @@ export async function getTpoVerificationQueue(ctx:RequestContext,query?:TpoVerif
    batchName:byMember.get(row.id)?.batchName??null,branchName:byMember.get(row.id)?.branchName??null,
    status:status.data,section:section.data,
    submittedAt:row.submittedAt,version:row.version,missingMarksheet,missingIdentityProof,
+   decidedAt:row.decidedAt,decidedByName:row.decidedByName,
    marksheets:{uploaded:marks.count-marks.missing,expected:marks.count,missing:marks.missing},attention}];
  });
  return {available:true,enabled:true,permitted:true,rows,hasMore:Boolean(query&&records.length>query.pageSize)};
