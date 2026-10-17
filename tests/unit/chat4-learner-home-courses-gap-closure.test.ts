@@ -88,4 +88,22 @@ describe("chat-4 learner Home and Courses gap closure",()=>{
   expect(s).toContain("aboutSource.hasDescription||meta.credits!==null||meta.instructors.length>0");
  });
 
+ it("LEARNER-home-courses-10 gives Course unavailable navigation instead of a raw 404",()=>{
+  const s=source("src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/not-found.tsx");
+  expect(s).toContain("Course unavailable");
+  expect(s).toContain("This course may not exist or you may not have access.");
+  expect(s).toContain("Back to Courses");
+ });
+ it("LEARNER-home-courses-12 retains tab context without stale lesson and content",async()=>{
+  const {learnerCourseTabPersistentQuery}=await import("@/modules/courses/learner-course-tab-context-model");
+  const q=new URLSearchParams(learnerCourseTabPersistentQuery({semester:"3",lesson:"id",content:"id",filter:"lectures",view:"list"}));
+  expect(q.get("semester")).toBe("3");
+  expect(q.get("view")).toBe("list");
+  expect(q.has("lesson")).toBe(false);
+  expect(q.has("content")).toBe(false);
+  expect(q.has("filter")).toBe(false);
+  expect(source("src/components/courses/learner-course-document-title.tsx")).toContain('courseName+" · "+tabName');
+  expect(source("src/components/courses/learner-course-tabs.tsx")).toContain("persistentQuery");
+ });
+
 });
