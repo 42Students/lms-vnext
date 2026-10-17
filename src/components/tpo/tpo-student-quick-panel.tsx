@@ -46,6 +46,8 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
  const index=rows.findIndex(row=>row.membershipId===student.membershipId);
  const attention=[
   !student.registeredForPlacements?"Placement registration not recorded":null,
+   student.debarred===true?"Debarred from new placement applications":null,
+   student.profileFacts?.resume===false?"No resume recorded":null,
    student.participationStatus==="INELIGIBLE"?"Not eligible for placements":null,
    student.verification.status==="WAITING"?"Profile verification waiting: "+student.verification.waitingSections.join(", "):null,
    student.verification.status==="SENT_BACK"?"Profile correction needed":null,
@@ -108,6 +110,14 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
       <h3 className="font-semibold">Needs attention</h3>
       {attention.length?<ul className="list-disc space-y-1 pl-5">{attention.map(item=><li key={item}>{item}</li>)}</ul>
        :<p>No attention flags derived from the current roster evidence.</p>}
+      {detail?.requests.filter(row=>row.status==="PENDING").length?
+       <p role="status" className="text-sm font-semibold">{detail.requests.filter(row=>row.status==="PENDING").length} student request(s) waiting for a decision.</p>:null}
+      {student.participationReason?<div className="space-y-1 rounded border border-border p-3">
+       <p className="font-semibold">Placement eligibility decision</p>
+       <p>{student.participationReason}</p>
+       <p className="text-xs text-muted-foreground">Set at {student.participationLevel??"placement"} level
+        {student.participationDecidedAt?" · "+when(student.participationDecidedAt.toString()):""}</p>
+      </div>:null}
       <Link href={participation} className="inline-flex min-h-10 items-center text-primary-text underline">Placement eligibility</Link>
       <Link href={"/tpo/team?about="+encodeURIComponent("STUDENT:"+student.membershipId)}
         className="ml-3 inline-flex min-h-10 items-center text-primary-text underline">Discuss with team</Link>

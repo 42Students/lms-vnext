@@ -4,7 +4,7 @@ export function tpoStudentUrlError(raw:Record<string,string|string[]|undefined>)
   if(Object.values(raw).some(value=>Array.isArray(value))) return "Repeated Students filters are not allowed. No student data was loaded.";
   const supported = new Set(["journeyState","branchId","programId","classId","afterCollege","profileStatus","minApplications","maxApplications","minOffers","maxOffers","offerWaiting","minCgpa","maxCgpa","maxActiveBacklogs","maxPastBacklogs","cgpaRecorded","batchId","search","q","page","pageSize","columns","student",
     "legacyStage","minRoundReached","needsAttention","interviewedWith","debarred","gender","birthYear","minSkills","minProjects","minCertifications","minExperiences","hasProfileLinks",
-    "minTenthPct","minTwelfthPct","minDiplomaPct","minUgPct","passingYear","maxGapYears","marksVerified","isLateralEntry","hasResume","hasCodingProfiles"]);
+    "minTenthPct","minTwelfthPct","minDiplomaPct","minUgPct","passingYear","maxGapYears","marksVerified","isLateralEntry","hasResume","hasCodingProfiles","skillName"]);
   if(typeof raw.q==="string"&&raw.search!==undefined) return "Use one Students search field at a time.";
   if(Object.keys(raw).some(key=>!supported.has(key))) return "Unsupported Students filter. No student data was loaded.";
   if(typeof raw.student==="string"&&!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(raw.student))

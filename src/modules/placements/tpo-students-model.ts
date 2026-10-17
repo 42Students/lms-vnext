@@ -53,6 +53,8 @@ export type TpoStudentSource = {
   registrationOpen?:boolean|null;
   registrationChoice: string | null;
   profileDocument?:unknown;
+  hiddenSearchMatched?:boolean;
+  skillNameMatched?:boolean;
   participation: ResolvedPlacementParticipation;
   academicEvidence: {
     cgpaHundredths: number | null;
@@ -96,7 +98,12 @@ export type TpoStudentRow = {
   registeredForPlacements: boolean;
   debarred?:boolean|null;
   profileFacts?:TpoStudentProfileFacts;
+  hiddenSearchMatched?:boolean;
+  skillNameMatched?:boolean;
   participationStatus: ResolvedPlacementParticipation["status"];
+  participationLevel?:ResolvedPlacementParticipation["level"];
+  participationReason?:string|null;
+  participationDecidedAt?:Date|null;
   readinessSignal: TpoStudentReadinessSignal;
   preferencesPresent: boolean;
   verification:TpoStudentVerificationFact;
@@ -115,6 +122,7 @@ export type TpoStudentRow = {
   journeyState: TpoStudentJourneyState;
   bestSoFar: string;
   bestCompany?:string|null;
+  bestDriveResults?:readonly string[];
   interviewedCompanies?:readonly string[];
   maximumAppliedRoundSequence: number | null;
   ambiguousSection: boolean;
@@ -145,7 +153,7 @@ export type TpoStudentRosterFilter = {
   minRoundReached?:number;needsAttention?:boolean;
   interviewedWith?:string;
   debarred?:boolean;
-  gender?:string;birthYear?:number;minSkills?:number;minProjects?:number;
+  gender?:string;birthYear?:number;skillName?:string;minSkills?:number;minProjects?:number;
   minCertifications?:number;minExperiences?:number;hasProfileLinks?:boolean;hasResume?:boolean;hasCodingProfiles?:boolean;
   branchId?: string;
   programId?: string;
@@ -319,6 +327,9 @@ export function deriveTpoStudent(
     registrationOpen:source.registrationOpen??null,
     registeredForPlacements,
     participationStatus: source.participation.status,
+    participationLevel:source.participation.level,
+    participationReason:source.participation.reason,
+    participationDecidedAt:source.participation.decidedAt,
     readinessSignal,
     preferencesPresent: source.preferencesPresent,
     verification:source.verification,
@@ -347,6 +358,19 @@ export function deriveTpoStudent(
     journeyState,
     bestSoFar,
     profileFacts:tpoStudentProfileFacts(source.profileDocument),
+    hiddenSearchMatched:source.hiddenSearchMatched??false,
+    skillNameMatched:source.skillNameMatched??false,
+    bestDriveResults:[...source.applications].sort((a,b)=>{
+      const depth=(id:string)=>Math.max(0,...source.appliedResults.filter(result=>result.applicationId===id).map(result=>result.sequence));
+      return depth(b.id)-depth(a.id)||a.id.localeCompare(b.id);
+    }).slice(0,20).map(application=>{
+      const latest=[...source.appliedResults].filter(result=>result.applicationId===application.id)
+        .sort((a,b)=>b.sequence-a.sequence)[0];
+      const progress=latest?
+       latest.outcome.toLowerCase().replaceAll("_"," ")+" at "+latest.kind.toLowerCase().replaceAll("_"," ")+" (round "+latest.sequence+")":
+       (application.screeningStatus??application.status).toLowerCase().replaceAll("_"," ");
+      return (application.companyName??"Company not recorded")+": "+progress;
+    }),
     bestCompany:latestDepth&&!placed&&offerCount===0
       ?source.applications.find(application=>application.id===latestDepth.applicationId)?.companyName??null:null,
     interviewedCompanies:[...new Set(source.appliedResults.flatMap(result=>{
@@ -474,6 +498,7 @@ export function filterTpoStudentRoster(
     .filter(row=>!filter.gender||row.profileFacts?.gender===filter.gender)
     .filter(row=>filter.birthYear===undefined||row.profileFacts?.birthYear===filter.birthYear)
     .filter(row=>filter.minSkills===undefined||(row.profileFacts?.skills??0)>=filter.minSkills)
+    .filter(row=>!filter.skillName||row.skillNameMatched===true)
     .filter(row=>filter.minProjects===undefined||(row.profileFacts?.projects??0)>=filter.minProjects)
     .filter(row=>filter.minCertifications===undefined||(row.profileFacts?.certifications??0)>=filter.minCertifications)
     .filter(row=>filter.minExperiences===undefined||(row.profileFacts?.experiences??0)>=filter.minExperiences)
@@ -509,6 +534,7 @@ export function filterTpoStudentRoster(
     .filter((row) => {
       if (!search) return true;
 
+      if(row.hiddenSearchMatched)return true;
       return [
         row.displayName,
         row.email,
@@ -516,6 +542,17 @@ export function filterTpoStudentRoster(
         row.registrationNumber,
         row.branchName,
         row.cohortName,
+        row.programName,
+        row.bestCompany,
+        row.bestSoFar,
+        row.journeyState,
+        row.participationStatus,
+        row.profileFacts?.gender,
+        row.cgpa?.toString(),
+        row.activeBacklogs?.toString(),
+        row.pastBacklogs?.toString(),
+        row.offersAwaitingAnswer.toString(),
+        row.applicationCount.toString(),
       ].some((value) =>
         value
           ?.toLocaleLowerCase("en-IN")
