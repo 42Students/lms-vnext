@@ -27,6 +27,8 @@ const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"gender",label:"Gender",read:row=>row.profileFacts?.gender??"Not recorded"},
  {key:"skills",label:"Skills",read:row=>row.profileFacts?.skills??0},
  {key:"projects",label:"Projects",read:row=>row.profileFacts?.projects??0},
+ {key:"resume",label:"Resume",read:row=>row.profileFacts?.resume?"Provided":"Not provided"},
+ {key:"codingProfiles",label:"Coding profiles",read:row=>row.profileFacts?.codingProfiles?"Provided":"Not provided"},
  {key:"certifications",label:"Certifications",read:row=>row.profileFacts?.certifications??0},
  {key:"profile",label:"Profile",read:row=>row.verification.status==="UNKNOWN"?"Verification unavailable":row.verification.status==="WAITING"? "Waiting: "+row.verification.waitingSections.join(" / "):row.verification.status==="SENT_BACK"?"Sent back":row.verification.status==="VERIFIED"?"Verified Education and Identity":"Not verified"},
  {key:"cgpa",label:"CGPA",read:row=>row.cgpa},
@@ -107,6 +109,8 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
   {key:"offerWaiting",urlKey:"offerWaiting",label:"Offer waiting on answer",options:[
    {value:"YES",label:"Yes"},{value:"NO",label:"No"},
   ]},
+  {key:"hasResume",urlKey:"hasResume",label:"Resume",options:[{value:"YES",label:"Provided"},{value:"NO",label:"Not provided"}]},
+  {key:"hasCodingProfiles",urlKey:"hasCodingProfiles",label:"Coding profiles",options:[{value:"YES",label:"Provided"},{value:"NO",label:"Not provided"}]},
   {key:"profileStatus",urlKey:"profileStatus",label:"Profile verified",options:[
    {value:"VERIFIED",label:"Verified"},{value:"WAITING",label:"Waiting to verify"},
    {value:"SENT_BACK",label:"Sent back"},{value:"NOT_VERIFIED",label:"Not verified"},
