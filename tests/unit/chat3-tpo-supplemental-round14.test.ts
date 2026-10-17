@@ -73,4 +73,19 @@ describe("TPO supplemental job metadata",()=>{
   expect(form).toContain('createDriveWithKnownResponse({');
  });
 
+ it("TPO-drives-31 lists only the current college's outside records without publishing them as jobs",()=>{
+  const service=source("src/modules/placements/recorded-outside-service.ts");
+  const page=source("src/app/(authenticated)/tpo/placements/recorded-outside/page.tsx");
+  const drives=source("src/app/(authenticated)/tpo/placements/lifecycle/page.tsx");
+  expect(service).toContain("listTpoRecordedOutsideDrives");
+  expect(service).toContain('eq(placementOutsideDriveRecords.collegeId,collegeId)');
+  expect(service).toContain('eq(placementCompanyRelationships.collegeId,collegeId)');
+  expect(service).toContain('eq(membershipRoles.role,"TPO")');
+  expect(service).toContain(".limit(101)");
+  expect(page).toContain("Recorded: happened outside");
+  expect(page).toContain("These are historical records, not live jobs.");
+  expect(page).toContain("No outside-platform drives recorded for this college.");
+  expect(drives).toContain('href="/tpo/placements/recorded-outside"');
+ });
+
 });
