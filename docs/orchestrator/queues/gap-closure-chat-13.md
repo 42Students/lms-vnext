@@ -124,3 +124,6 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 
 ## Needs shell (chat-9 only)
 
+
+## Moved in: unassigned Super Admin gaps (2026-10-17)
+- SA-tenants-modules-40 — DONE in source: free-form stored setting add/remove with CAS, audit and wrong-scope warning; orchestrator DB/browser checks pending.
