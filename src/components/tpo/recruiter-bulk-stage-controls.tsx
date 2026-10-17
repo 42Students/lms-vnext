@@ -191,7 +191,7 @@ export function RecruiterBulkStageControls({
                   Revisit date (optional)
                   <input
                     type="date"
-                    min={new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date())}
+                    min={todayIst}
                     value={revisitDate}
                     onChange={(event) => {setRevisitDate(event.target.value);setReviewOpen(false);}}
                     disabled={busy}
