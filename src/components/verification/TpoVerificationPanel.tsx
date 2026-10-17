@@ -4,6 +4,7 @@ import type {VerificationTab} from "@/modules/verification/queue-tabs";
 import {useState} from "react";
 import {VerificationWorkspace,type VerificationQueueCard} from "./VerificationWorkspace";
 import {VerificationReviewDrawer} from "./VerificationReviewDrawer";
+import {TpoRosterVerificationBulk} from "@/components/tpo/tpo-roster-verification-bulk";
 import {filterTpoVerificationRows,defaultTpoVerificationFilters,type TpoVerificationLocalFilters} from "@/modules/verification/tpo-queue-local-filters";
 
 /** Same locked review, private receipt and stale-version path as College Admin. */
@@ -40,10 +41,12 @@ export function TpoVerificationPanel({rows,serverTab,serverKind}:{rows:Verificat
    </label>
    <p className="text-xs text-muted-foreground sm:col-span-3">Showing {visible.length} of {rows.length} records from the server-filtered authorized page. Status, section, batch and branch filters apply before pagination.</p>
   </section>
+  {serverTab==="WAITING"&&visible.length>0?
+   <TpoRosterVerificationBulk key={"queue:"+JSON.stringify(filters)+serverTab+serverKind} rows={visible} scope="verification"/>:null}
   <VerificationWorkspace key={JSON.stringify(filters)+serverTab+serverKind} rows={visible}
    legacyTpoCopy initialTab={serverTab} initialKind={serverKind}
-   disableLocalSearch preserveServerOrder
-   onTabChange={tab=>navigate({tab,page:"1",waitingState:tab==="WAITING"?(params.get("waitingState")??"ALL"):"ALL"})}
+   disableLocalSearch preserveServerOrder showTabCounts={false}
+   onTabChange={tab=>navigate({tab,page:"1",waitingState:tab==="WAITING"?(params.get("waitingState")??"ALL"):"ALL",waitingSince:tab==="WAITING"?(params.get("waitingSince")??"ALL"):"ALL"})}
    onKindChange={kind=>navigate({kind,page:"1"})}
    onReview={row=>setSelected(row)} />
   {selected&&<VerificationReviewDrawer

@@ -22,7 +22,7 @@ const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"branch",label:"Branch",read:row=>row.branchName},
  {key:"batch",label:"Batch",read:row=>row.programName+" · "+row.cohortName+(row.fromFinishedBatch?" · From "+row.cohortName:"")},
  {key:"stage",label:"Stage",read:row=>row.journeyState.replaceAll("_"," ")},
- {key:"profile",label:"Profile",read:row=>row.readinessSignal==="ACADEMIC_EVIDENCE_MISSING"?"Academic evidence missing":row.readinessSignal==="PARTICIPATION_NOT_ELIGIBLE"?"Participation not eligible":"Academic evidence present"},
+ {key:"profile",label:"Profile",read:row=>row.verification.status==="UNKNOWN"?"Verification unavailable":row.verification.status==="WAITING"? "Waiting: "+row.verification.waitingSections.join(" / "):row.verification.status==="SENT_BACK"?"Sent back":row.verification.status==="VERIFIED"?"Verified Education and Identity":"Not verified"},
  {key:"cgpa",label:"CGPA",read:row=>row.cgpa},
  {key:"backlogs",label:"Active backlogs",read:row=>row.activeBacklogs},
  {key:"readiness",label:"Readiness evidence",read:row=>row.readinessSignal.replaceAll("_"," ")},
@@ -66,6 +66,12 @@ export function TpoStudentsSpreadsheet({rows,branches,programs,classes,afterColl
   {key:"programId",urlKey:"programId",label:"Program",options:programs.map(p=>({value:p.id,label:p.name}))},
   {key:"classId",urlKey:"classId",label:"Class",options:classes.map(c=>({value:c.id,label:c.name}))},
   {key:"afterCollege",urlKey:"afterCollege",label:"After college",options:AFTER_COLLEGE_OUTCOMES.map(value=>({value,label:AFTER_COLLEGE_LABELS[value]}))},
+  {key:"minApplications",urlKey:"minApplications",label:"At least applications",options:[0,1,2,3,5,10,20,50].map(value=>({value:String(value),label:String(value)}))},
+  {key:"minOffers",urlKey:"minOffers",label:"At least offers",options:[0,1,2,3,5,10].map(value=>({value:String(value),label:String(value)}))},
+  {key:"profileStatus",urlKey:"profileStatus",label:"Profile verified",options:[
+   {value:"VERIFIED",label:"Verified"},{value:"WAITING",label:"Waiting to verify"},
+   {value:"SENT_BACK",label:"Sent back"},{value:"NOT_VERIFIED",label:"Not verified"},
+  ]},
  ];
  return <div className="space-y-3" role="region" aria-label="Students spreadsheet keyboard actions" tabIndex={0}
   onKeyDown={event=>{

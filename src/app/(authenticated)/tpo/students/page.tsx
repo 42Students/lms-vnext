@@ -39,6 +39,9 @@ type SearchParams = {
   branchId?: string | string[];
   programId?: string | string[];
   afterCollege?:string|string[];
+  profileStatus?:string|string[];
+  minApplications?:string|string[];maxApplications?:string|string[];
+  minOffers?:string|string[];maxOffers?:string|string[];
   classId?:string|string[];
   batchId?: string | string[];
   search?: string | string[];
@@ -66,6 +69,8 @@ function studentsHref(
     branchId?: string;
     programId?:string;
     afterCollege?:string;
+    profileStatus?:string;
+    minApplications?:number;maxApplications?:number;minOffers?:number;maxOffers?:number;
     classId?:string;
     batchId?: string;
     search?: string;
@@ -86,6 +91,10 @@ function studentsHref(
   }
   if(filters.programId)params.set("programId",filters.programId);
   if(filters.afterCollege)params.set("afterCollege",filters.afterCollege);
+  if(filters.profileStatus)params.set("profileStatus",filters.profileStatus);
+  for(const key of ["minApplications","maxApplications","minOffers","maxOffers"] as const){
+   if(filters[key]!==undefined)params.set(key,String(filters[key]));
+  }
   if(filters.classId)params.set("classId",filters.classId);
   if(filters.batchId)params.set("batchId",filters.batchId);
 
@@ -152,6 +161,11 @@ export default async function TpoStudentsPage({
     branchId: first(raw.branchId) || undefined,
     programId:first(raw.programId)||undefined,
     afterCollege:first(raw.afterCollege)||undefined,
+    profileStatus:first(raw.profileStatus)||undefined,
+    minApplications:first(raw.minApplications)||undefined,
+    maxApplications:first(raw.maxApplications)||undefined,
+    minOffers:first(raw.minOffers)||undefined,
+    maxOffers:first(raw.maxOffers)||undefined,
     classId:first(raw.classId)||undefined,
     batchId: first(raw.batchId) || undefined,
     search: first(raw.search) || undefined,
@@ -215,10 +229,10 @@ export default async function TpoStudentsPage({
   const afterCollege = await getTpoAfterCollegeForRoster(context, roster.items.map(row=>row.membershipId));
   const rosterIds=roster.items.map(row=>row.membershipId);
   const rosterVerifications=manageAllowed&&rosterIds.length?await getTpoVerificationQueue(context,{
-    tab:"WAITING",kind:"ALL",waitingState:"ALL",search:"",page:1,pageSize:100,
+    tab:"WAITING",kind:"ALL",waitingState:"ALL",waitingSince:"ALL",search:"",page:1,pageSize:100,
   },rosterIds):null;
   const nextRosterReviews=rosterVerifications?.hasMore?await getTpoVerificationQueue(context,{
-    tab:"WAITING",kind:"ALL",waitingState:"ALL",search:"",page:2,pageSize:100,
+    tab:"WAITING",kind:"ALL",waitingState:"ALL",waitingSince:"ALL",search:"",page:2,pageSize:100,
   },rosterIds):null;
   const waitingRosterRows=[...(rosterVerifications?.rows??[]),...(nextRosterReviews?.rows??[])];
 
@@ -231,13 +245,18 @@ export default async function TpoStudentsPage({
   };
 
   const scopedHref=(filters:Parameters<typeof studentsHref>[0],exportCsv=false)=>
-    studentsHref({...filters,programId:filters.programId??query.programId,afterCollege:filters.afterCollege??query.afterCollege,classId:filters.classId??query.classId,batchId:query.batchId},exportCsv);
+    studentsHref({...filters,programId:filters.programId??query.programId,afterCollege:filters.afterCollege??query.afterCollege,profileStatus:filters.profileStatus??query.profileStatus,
+      minApplications:filters.minApplications??query.minApplications,maxApplications:filters.maxApplications??query.maxApplications,
+      minOffers:filters.minOffers??query.minOffers,maxOffers:filters.maxOffers??query.maxOffers,classId:filters.classId??query.classId,batchId:query.batchId},exportCsv);
   const exportHref = scopedHref(
     {
       journeyState: query.journeyState,
       branchId: query.branchId,
       programId:query.programId,
       afterCollege:query.afterCollege,
+      profileStatus:query.profileStatus,
+      minApplications:query.minApplications,maxApplications:query.maxApplications,
+      minOffers:query.minOffers,maxOffers:query.maxOffers,
       classId:query.classId,
       search: query.search,
     },
@@ -250,6 +269,9 @@ export default async function TpoStudentsPage({
     branchId: query.branchId,
     programId:query.programId,
     afterCollege:query.afterCollege,
+    profileStatus:query.profileStatus,
+    minApplications:query.minApplications,maxApplications:query.maxApplications,
+    minOffers:query.minOffers,maxOffers:query.maxOffers,
     classId:query.classId,
     batchId: query.batchId,
     search: query.search,
@@ -311,6 +333,16 @@ export default async function TpoStudentsPage({
             {data.classChoices.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
           </select>
         </label>
+        <label className="text-sm font-semibold">Profile verified
+          <select name="profileStatus" defaultValue={query.profileStatus??""}
+            className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
+            <option value="">All verification states</option>
+            <option value="VERIFIED">Verified</option>
+            <option value="WAITING">Waiting to verify</option>
+            <option value="SENT_BACK">Sent back</option>
+            <option value="NOT_VERIFIED">Not verified</option>
+          </select>
+        </label>
         <label className="text-sm font-semibold">After college
           <select name="afterCollege" defaultValue={query.afterCollege??""}
             className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
@@ -326,6 +358,17 @@ export default async function TpoStudentsPage({
             {batchDirectory.batches.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
           </select>
         </label>
+        {([
+          ["minApplications","Applications from",query.minApplications],
+          ["maxApplications","Applications to",query.maxApplications],
+          ["minOffers","Offers from",query.minOffers],
+          ["maxOffers","Offers to",query.maxOffers],
+        ] as const).map(([name,label,value])=>
+         <label key={name} className="grid gap-1 text-sm font-semibold">{label}
+          <input type="number" name={name} min={0} max={10000} step={1}
+           defaultValue={value??""} placeholder="Any"
+           className="min-h-11 w-28 rounded border border-border bg-surface px-3"/>
+         </label>)}
         <button className="min-h-11 rounded border border-border px-4">Show students</button>
       </form>
       {query.batchId?<p className="text-sm text-muted-foreground">
@@ -370,6 +413,11 @@ export default async function TpoStudentsPage({
         </section>
       ) : null}
 
+      {query.profileStatus&&!data.definitions.verificationAvailable?<section role="status"
+        className="rounded-xl border border-border bg-surface p-4 text-sm text-warning-text">
+        Profile-verification records are unavailable. A missing source must not be mistaken for Not verified.
+        <Link href="/tpo/students" className="ml-2 text-primary-text underline">Clear profile filter</Link>
+      </section>:null}
       {query.afterCollege&&!data.definitions.afterCollegeAvailable?<section role="status"
         className="rounded-xl border border-border bg-surface p-4 text-sm text-warning-text">
         Saved after-college outcome records are unavailable. The selected outcome cannot be filtered until its registered table is available.
