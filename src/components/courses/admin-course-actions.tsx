@@ -219,9 +219,10 @@ export function CourseActions({
         title={"Archive " + course.name + "?"}
         description={activeOfferingCount>0
           ?activeOfferingCount+" active Course Offering(s) must be archived before you can archive this Course. Historical records remain preserved."
-          :"A Course with active Offerings cannot be archived. Historical records remain preserved."}
+          :"This course can be archived. Historical records remain preserved."}
         confirmLabel="Archive Course"
         pending={pending}
+        confirmDisabled={activeOfferingCount>0}
         onConfirm={() =>
           run(
             () =>
