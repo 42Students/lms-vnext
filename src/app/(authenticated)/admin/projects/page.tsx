@@ -56,6 +56,7 @@ export default async function SuperAdminProjectsPage({
   }
 
   const params = await searchParams;
+  const view=one(params.view)==="cards"?"cards":"table";
   const query: ProjectAdminCollectionQuery = {
     q: one(params.q),
     status: one(
@@ -107,7 +108,16 @@ export default async function SuperAdminProjectsPage({
 
       <ProjectAdminFilters query={query} />
 
+      <nav className="flex gap-2 text-sm font-semibold" aria-label="Workspace display mode">
+        <Link href={"/admin/projects?view=table"+(query.q?"&q="+encodeURIComponent(query.q):"")+
+          (query.status?"&status="+query.status:"")} aria-current={view==="table"?"page":undefined}
+          className="min-h-10 rounded border border-border px-3 py-2 text-primary-text">Table</Link>
+        <Link href={"/admin/projects?view=cards"+(query.q?"&q="+encodeURIComponent(query.q):"")+
+          (query.status?"&status="+query.status:"")} aria-current={view==="cards"?"page":undefined}
+          className="min-h-10 rounded border border-border px-3 py-2 text-primary-text">Cards</Link>
+      </nav>
       <ProjectAdminWorkspaceList
+        view={view}
         items={result.items.map((project) => ({
           id: project.id,
           title: project.title,
