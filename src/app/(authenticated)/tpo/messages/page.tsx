@@ -37,14 +37,6 @@ function first(
     : value;
 }
 
-function dateTime(value: Date) {
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Kolkata",
-  }).format(value);
-}
-
 function labelStatus(status: string) {
   if (status === "EMPTY") return "No messages";
 
@@ -66,6 +58,7 @@ export default async function TpoMessagesPage({
     redirect("/dashboard");
   }
 
+  const now = new Date();
   const raw = await searchParams;
 
   const parsed = tpoMessagesQuerySchema.safeParse({
@@ -464,7 +457,7 @@ export default async function TpoMessagesPage({
 
                     <td className="px-4 py-4 text-body">
                       <time dateTime={item.occurredAt.toISOString()}>
-                        {formatTpoInboxTime(item.occurredAt, new Date())}
+                        {formatTpoInboxTime(item.occurredAt, now)}
                       </time>
                     </td>
 
