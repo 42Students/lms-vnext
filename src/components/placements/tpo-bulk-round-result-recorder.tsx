@@ -82,7 +82,9 @@ export function TpoBulkRoundResultRecorder({
         },
       }];
     });
-    if (entries.length !== selected.length) {
+    if(failUnselected)for(const row of unselected)entries.push({expectedCurrentResultId:null,
+      result:{applicationId:row.applicationId,outcome:"FAIL",candidateMessage:message.trim()}});
+    if (entries.length !== pendingTotal) {
       setError("The selected rows changed; refresh before staging.");
       return;
     }
