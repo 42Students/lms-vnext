@@ -4,6 +4,7 @@ import {getDb} from "@/db/client";
 import {db10AuditFindings,db10AuditFindingEvents,db10AuditFindingSyncs} from "@/db/schema/db10-audit-findings.draft";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {independentFindingActionSchema} from "./independent-finding-actions-model";
+import {canTransitionIndependentFinding,type IndependentFindingStatus} from "./independent-finding-transition-model";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {ACTIVE_FINDING_STATUSES,INDEPENDENT_AUDIT_PAGE_SIZE,type FindingFilters} from "./independent-audit-findings-model";
@@ -61,6 +62,9 @@ export async function mutateIndependentAuditFinding(context:RequestContext,exter
    .for("update").limit(1);
   if(!row)return {ok:false as const,reason:"NOT_FOUND"};
   if(row.version!==input.expectedVersion)return {ok:false as const,reason:"STALE_VERSION"};
+  if(input.action==="STATUS"&&!canTransitionIndependentFinding(
+    row.status as IndependentFindingStatus,input.status,input.note,
+  ))return {ok:false as const,reason:"INVALID_STATUS_TRANSITION"};
   const patch:Partial<typeof db10AuditFindings.$inferInsert>={version:row.version+1,updatedAt:new Date()};
   let note:string|null=null;
   if(input.action==="STATUS"){patch.status=input.status;note=input.note??null;}
