@@ -188,7 +188,9 @@ export function CollegeQuizCreate({lessons,deliveries}:{
        questions.some(q=>q.prompt.trim()||q.type!=="SINGLE_CHOICE"||q.points!==1||
         q.options.length!==2||q.options.some(option=>option.text.trim())));
       if(dirty&&!window.confirm("Discard unsaved quiz changes?"))return;
-      setOpened(false);
+      setOpened(false);setTitle("");setDescription("");setDueAt("");setDeliveryId("");
+      setMaxAttempts("1");setShuffleQuestions(false);setShuffleOptions(false);
+      setQuestions([empty()]);setError("");
     }} className="min-h-10 rounded border border-border px-4 text-sm">Cancel</button>
    </div>
   </div>:null}
