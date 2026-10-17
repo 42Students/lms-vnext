@@ -17,6 +17,7 @@ import { listPlacementScreeningQueue } from "@/modules/placements/screening-serv
 import { getTpoScheduleConflicts } from "@/modules/placements/tpo-schedule-conflicts-service";
 import { projectTpoDriveScheduleWarnings } from "@/modules/placements/tpo-drive-schedule-warnings-model";
 import { getTpoDriveShortlist } from "@/modules/placements/tpo-shortlist-service";
+import {countUnreleasedTpoSelections} from "@/modules/placements/tpo-drive-selection-service";
 import { projectTpoDriveNextStep } from "@/modules/placements/tpo-drive-next-step-model";
 import {projectTpoDriveHeader} from "@/modules/placements/tpo-drive-header-model";
 import {getTpoDriveJourney} from "@/modules/placements/tpo-drive-journey-service";
@@ -231,6 +232,8 @@ export async function PlacementDriveWorkspace({
   });
 
   const journey=isTpo?await getTpoDriveJourney(context,jobId):null;
+  const pendingSelections=isTpo&&job.status==="PUBLISHED"
+    ? await countUnreleasedTpoSelections(context,jobId) : 0;
   const reminderPreview=isTpo&&job.status==="PUBLISHED"
     ? await getTpoNonApplicantReminderPreview(context,jobId).catch(()=>null)
     : null;
@@ -242,6 +245,7 @@ export async function PlacementDriveWorkspace({
         publishAllowed: lifecycleReadiness.publish.allowed,
         closeAllowed: lifecycleReadiness.close.allowed,
         shortlistCount: shortlist?.total ?? null,
+        pendingSelections,
         pendingRequests: placementRequests.filter(row => row.request.status === "PENDING").length,
         nonApplicantCount: reminderPreview?.count ?? 0,
         canRemindNonApplicants: Boolean(reminderPreview?.allowed && !reminderPreview.alreadySent),
