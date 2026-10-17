@@ -214,6 +214,17 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                   {preview.ignoredHeaders.length? " Ignored columns: "+preview.ignoredHeaders.join(", ")+".":""}
                 </p>
                 <p className="text-sm text-body">New: {newRows} to import · Already recruiters: {existing.length} · To fix: {preview.invalid}. Uncheck any valid row to Skip row.</p>
+                <div className="flex flex-wrap gap-2">
+                  <button type="button" className={buttonClass} disabled={busy||Boolean(result)}
+                    onClick={()=>{setReviewReady(false);
+                      setSkipRows(preview.rows.filter(row=>row.lead&&!existingNumbers.has(row.row)).map(row=>row.row));}}>
+                    Skip all new rows
+                  </button>
+                  <button type="button" className={buttonClass} disabled={busy||Boolean(result)}
+                    onClick={()=>{setReviewReady(false);setSkipRows([]);}}>
+                    Include all new rows
+                  </button>
+                </div>
                 <nav aria-label="Import preview groups" className="flex flex-wrap gap-2">
                   {([["ALL","All"],["NEW","New"],["EXISTING","Already recruiters"],
                     ["INVALID","To fix"],["SKIPPED","Skipped"]] as const).map(([value,label])=>
