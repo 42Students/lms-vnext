@@ -86,6 +86,14 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
    <label className="grid gap-1 text-xs font-semibold">Deadline (IST)
     <input type="datetime-local" value={due} disabled={busy} onChange={e=>setDue(e.target.value)}
      className="min-h-10 rounded border border-border px-2"/></label>
+   {quiz.status==="DRAFT"?<div className="grid gap-2 text-xs font-semibold">
+    <label className="flex items-center gap-2"><input type="checkbox" checked={shuffleQuestions}
+     disabled={busy} onChange={e=>setShuffleQuestions(e.target.checked)}/>
+     Shuffle question order per learner</label>
+    <label className="flex items-center gap-2"><input type="checkbox" checked={shuffleOptions}
+     disabled={busy} onChange={e=>setShuffleOptions(e.target.checked)}/>
+     Shuffle answer options per learner</label>
+   </div>:null}
    {quiz.status!=="DRAFT"?<p className="text-xs text-muted-foreground">
     Learner attempts lock the deadline; other immutable quiz fields stay unchanged.
    </p>:null}
