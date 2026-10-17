@@ -5,6 +5,8 @@ export function parseSelectionCsv(text:string,strictBlankRows=false):string[][] 
   const char=text[i];
   if(strictBlankRows&&quoted&&(char==="\n"||char==="\r"))
    throw Error("Multiline CSV fields are not supported for round results; keep one learner per line.");
+  if(closedQuote && char!=='"'&&char!==","&&char!=="\r"&&char!=="\n"&&char!==" "&&char!=="\t")
+   throw Error("Unexpected text after a closing CSV quote.");
   if(char==='"'){
    if(quoted&&text[i+1]==='"'){field+='"';i++;}
    else if(quoted){quoted=false;closedQuote=true;}
