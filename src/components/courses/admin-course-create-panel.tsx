@@ -32,7 +32,7 @@ type PeriodOption = Option & {
   endDate: string;
 };
 type SectionOption = Option & { cohortId: string; academicPeriodId: string };
-type CourseOption = Option & { code:string; departmentName: string; departmentId:string;description:string|null };
+type CourseOption = Option & { code:string; departmentName:string; departmentId:string;description:string|null;shortTitle?:string|null;officialCode?:string|null;cardColor?:string|null };
 type OfferingOption = {
   id: string;
   courseName: string;
@@ -106,6 +106,12 @@ export function AdminCourseCreatePanel({
   const [courseDepartmentId, setCourseDepartmentId] = useState(copy?.departmentId??"");
   const [courseName, setCourseName] = useState(copy?.name??"");
   const [courseCode, setCourseCode] = useState(copy?.code??"");
+  const duplicated=courses.find(course=>course.id===duplicateCourseId);
+  const [shortTitle,setShortTitle]=useState(duplicated?.shortTitle??copy?.name?.slice(0,120)??"");
+  const [officialCode,setOfficialCode]=useState(duplicated?.officialCode??"");
+  const [cardColor,setCardColor]=useState(duplicated?.cardColor??"#1677FF");
+  const superAdmin=courseBasePath.startsWith("/admin/");
+
   const [courseDescription, setCourseDescription] = useState(copy?.description??"");
 
   const [offeringCourseId, setOfferingCourseId] = useState("");
@@ -186,12 +192,15 @@ export function AdminCourseCreatePanel({
       () => postJson("/api/courses", {
         departmentId: courseDepartmentId,
         name: courseName,
-        code: courseCode,
+        code:superAdmin?"SA-"+crypto.randomUUID().replaceAll("-","").slice(0,16):courseCode,
+        shortTitle:superAdmin?shortTitle.trim():undefined,
+        officialCode:superAdmin?officialCode.trim()||null:undefined,
+        cardColor:superAdmin?cardColor:null,
         description: courseDescription.trim() || null,
       }),
       COLLEGE_COURSES_COPY.createdMessage(courseName.trim()),
       (result) => { const id=createdRecordId(result,"course");if(id){setOfferingCourseId(id);setNextSetupStep("OFFERING");}
-        setCourseName("");setCourseCode("");setCourseDescription("");if(copy)router.replace(courseBasePath); },
+        setCourseName("");setCourseCode("");setCourseDescription("");setShortTitle("");setOfficialCode("");if(copy)router.replace(courseBasePath); },
       COLLEGE_COURSES_COPY.createFailed,
     );
   }
