@@ -73,3 +73,7 @@ These source and API-wiring contracts record earlier implementation claims; **te
 | SA-academics-people-41 | DONE | `tests/unit/chat9-super-admin-academic-existing-gap-closure.test.ts` — named test `SA-academics-people-41`; confirmed existing academic form/mutation flows. Source-level only; CI to execute. |
 | SA-academics-people-43 | DONE | `tests/unit/chat9-super-admin-academic-existing-gap-closure.test.ts` — named test `SA-academics-people-43`; confirmed existing academic form/mutation flows. Source-level only; CI to execute. |
 | SA-academics-people-44 | DONE | `tests/unit/chat9-super-admin-academic-existing-gap-closure.test.ts` — named test `SA-academics-people-44`; confirmed existing academic form/mutation flows. Source-level only; CI to execute. |
+
+## Chat-6 UNCONFIRMED decisions, 2026-10-18
+
+| SA-academics-people-R04 | OPEN | Audit coverage for all Super Admin academic mutations requires integration verification; decision evidence: `docs/audit/acceptance/chat-6-unconfirmed-decisions.md`; test: `tests/unit/chat6-unconfirmed-decisions-round13.test.ts` → `SA-academics-people-R04` |
