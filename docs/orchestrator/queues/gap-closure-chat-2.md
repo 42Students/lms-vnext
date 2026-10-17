@@ -64,18 +64,18 @@ Audit: `docs/audit/pages/tpo/inbox-team.md` (and `inbox-team-review.md` if prese
 | TPO-inbox-team-64 | S3 | COPY | IN-BRANCH |
 | TPO-inbox-team-65 | S3 | COPY | IN-BRANCH |
 | TPO-inbox-team-R01 | S3 | SIDE-EFFECT | FIXED-ON-MAIN |
-| TPO-inbox-team-R02 | S3 | PERMISSION | OPEN |
+| TPO-inbox-team-R02 | S3 | PERMISSION | NOT-A-GAP |
 | TPO-inbox-team-R03 | S3 | STATE | IN-BRANCH |
 | TPO-inbox-team-R05 | S3 | STATE | IN-BRANCH |
 | TPO-inbox-team-12 | S4 | PERFORMANCE | FIXED-ON-MAIN |
 | TPO-inbox-team-41 | S4 | STATE | IN-BRANCH |
-| TPO-inbox-team-42 | S4 | RESPONSIVE | OPEN |
+| TPO-inbox-team-42 | S4 | RESPONSIVE | NOT-A-GAP |
 | TPO-inbox-team-58 | S4 | VALIDATION | IN-BRANCH |
 | TPO-inbox-team-66 | S4 | A11Y | FIXED-ON-MAIN |
 | TPO-inbox-team-67 | S4 | STATE | IN-BRANCH |
 | TPO-inbox-team-68 | S4 | STATE | IN-BRANCH |
 | TPO-inbox-team-R04 | S4 | STATE | IN-BRANCH |
-| TPO-inbox-team-R06 | S4 | STATE | OPEN |
+| TPO-inbox-team-R06 | S4 | STATE | NOT-A-GAP |
 | TPO-inbox-team-R07 | S4 | A11Y | FIXED-ON-MAIN |
 
 ## recruiter/calendar-messages-profile (36: OPEN 13, UNCONFIRMED 1, FIXED-ON-MAIN 20, IN-BRANCH 2)
@@ -129,7 +129,7 @@ Audit: `docs/audit/pages/tpo/recruiters.md` (and `recruiters-review.md` if prese
 |---|---|---|---|
 | TPO-recruiters-05 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-recruiters-06 | S2 | MISSING-TAB | FIXED-ON-MAIN |
-| TPO-recruiters-07 | S2 | COPY | OPEN |
+| TPO-recruiters-07 | S2 | COPY | IN-BRANCH |
 | TPO-recruiters-10 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-recruiters-11 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-recruiters-15 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
@@ -147,7 +147,7 @@ Audit: `docs/audit/pages/tpo/recruiters.md` (and `recruiters-review.md` if prese
 | TPO-recruiters-27 | S3 | COPY | FIXED-ON-MAIN |
 | TPO-recruiters-28 | S3 | COPY | FIXED-ON-MAIN |
 | TPO-recruiters-29 | S3 | STATE | FIXED-ON-MAIN |
-| TPO-recruiters-30 | S3 | VALIDATION | OPEN |
+| TPO-recruiters-30 | S3 | VALIDATION | IN-BRANCH |
 | TPO-recruiters-31 | S3 | VALIDATION | FIXED-ON-MAIN |
 | TPO-recruiters-32 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | TPO-recruiters-34 | S3 | PERMISSION | NOT-A-GAP |
@@ -186,7 +186,7 @@ Audit: `docs/audit/pages/tpo/companies.md` (and `companies-review.md` if present
 | TPO-companies-09 | S3 | COPY | IN-BRANCH |
 | TPO-companies-18 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
 | TPO-companies-20 | S3 | STATE | OPEN |
-| TPO-companies-21 | S3 | COPY | OPEN |
+| TPO-companies-21 | S3 | COPY | IN-BRANCH |
 | TPO-companies-22 | S3 | COPY | IN-BRANCH |
 | TPO-companies-24 | S3 | A11Y | FIXED-ON-MAIN |
 | TPO-companies-26 | S3 | A11Y | FIXED-ON-MAIN |
@@ -228,7 +228,7 @@ Audit: `docs/audit/pages/tpo/campaigns-public.md` (and `campaigns-public-review.
 | TPO-campaigns-public-28 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-campaigns-public-30 | S3 | COPY | IN-BRANCH |
 | TPO-campaigns-public-36 | S3 | COPY | IN-BRANCH |
-| TPO-campaigns-public-37 | S3 | STATE | OPEN |
+| TPO-campaigns-public-37 | S3 | STATE | NOT-A-GAP |
 | TPO-campaigns-public-R04 | S3 | MISSING-FIELD | IN-BRANCH |
 | TPO-campaigns-public-R09 | S3 | STATE | IN-BRANCH |
 | TPO-campaigns-public-11 | S4 | MISSING-FILTER | FIXED-ON-MAIN |
@@ -306,3 +306,12 @@ Audit: `docs/audit/pages/tpo/campaigns-public.md` (and `campaigns-public-review.
 - TPO-campaigns-public-R08: record verified public/company-link provenance in immutable join event, never assume approval or broaden grants.
 - REC-calendar-messages-profile-46 is reassigned to chat-14 in `docs/orchestrator/queues/reassignments.md`; do not edit recruiter-area code.
 - Decision evidence and one named test per ID in the corresponding acceptance docs. No tests executed by this GitHub-only builder.
+
+## Chat-2 OPEN backlog source decisions (current round)
+- TPO-inbox-team-42: alternative deep-linked, accessible single-page-mobile conversations intentionally replace legacy 3-pane micro-layout.
+- TPO-inbox-team-R02/R06: never expand private TPO recruiter access from generic college-admin membership, or retroactively leak historic personal notifications to newly joined staff. These are intentional stricter permissions.
+- TPO-recruiters-07: legacy counted Needs doing strip and nonzero filters verified; named test.
+- TPO-recruiters-30: contact-conflict feedback names existing same-college lead and preserves editing draft; named test.
+- TPO-companies-21: separate placed-policy warning and friendly not-found/unavailable Retry supported for dynamically checked tables; named test.
+- TPO-campaigns-public-37: intentional opt-in, fresh, small-cohort suppression protects public student data and is verified by a pure model test.
+- TPO-recruiters-36: phone board and dialog improved, but table selection still incomplete; keep OPEN.
