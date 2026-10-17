@@ -7,6 +7,17 @@ import type {RequestContext} from "@/modules/identity/context";
 const source=(path:string)=>readFileSync(join(process.cwd(),path),"utf8");
 
 describe("chat-4 College academic and people gap closure",()=>{
+ it("COL-academic-setup-R02 archives offerings and blocks their access without deleting selection history",async()=>{
+  const {electiveLifecyclePrompt}=await import("@/modules/electives/college-elective-lifecycle-model");
+  expect(electiveLifecyclePrompt("Slot A","ARCHIVE")).toContain("All its offerings are archived; enrolled students lose access, history is kept.");
+  const service=source("src/modules/electives/college-elective-lifecycle-service.ts");
+  expect(service).toContain('eq(electiveOfferings.status,"ACTIVE")');
+  expect(service).toContain('status:"ARCHIVED"');
+  expect(service).toContain('eq(lmsGroups.kind,"ELECTIVE")');
+  expect(service).toContain("archivedOfferings=archived.length");
+  expect(service).not.toContain('throw new ElectiveLifecycleError("ELECTIVE_ACTIVE_OFFERINGS")');
+  expect(service).not.toContain('throw new ElectiveLifecycleError("ELECTIVE_SELECTION_LOCKED")');
+ });
  it("COL-academic-setup-R01 hides elective CRUD while the module is switched off",async()=>{
   const {resolveModuleAccessFromRules}=await import("@/modules/module-access/service");
   const chain=[{scopeType:"COLLEGE" as const,scopeId:"tenant"},
