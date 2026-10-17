@@ -4,6 +4,7 @@ import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {FINDING_STATUSES,FINDING_SEVERITIES} from "@/modules/bug-tracker/independent-audit-findings-model";
+import {canTransitionIndependentFinding,type IndependentFindingStatus} from "@/modules/bug-tracker/independent-finding-transition-model";
 type Action="STATUS"|"SEVERITY"|"ASSIGNEE"|"DUPLICATE"|"FIX_COMMIT"|"COMMENT";
 export function IndependentFindingActions({externalId,version,status,severity}:{externalId:string;version:number;status:string;severity:string}){
  const router=useRouter(),lock=useRef(false);
@@ -54,7 +55,9 @@ export function IndependentFindingActions({externalId,version,status,severity}:{
   </label>
   {action==="STATUS"?<label className="grid gap-1 text-sm">Status
    <select value={nextStatus} disabled={pending} onChange={e=>setNextStatus(e.target.value)} className="min-h-10 rounded border border-border bg-surface p-2">
-    {FINDING_STATUSES.map(value=><option key={value} value={value}>{value.replaceAll("_"," ")}</option>)}
+    {FINDING_STATUSES.map(value=><option key={value} value={value}
+      disabled={!canTransitionIndependentFinding(status as IndependentFindingStatus,value,"Reason supplied")}>
+      {value.replaceAll("_"," ")}</option>)}
    </select></label>:null}
   {action==="SEVERITY"?<label className="grid gap-1 text-sm">Severity
    <select value={nextSeverity} disabled={pending} onChange={e=>setNextSeverity(e.target.value)} className="min-h-10 rounded border border-border bg-surface p-2">
