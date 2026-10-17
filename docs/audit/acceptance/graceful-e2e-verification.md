@@ -113,3 +113,5 @@ These **32 authored test cases** do not represent 32 new GR IDs. The source was 
 **34 test cases authored, none executed**. The queue contains only four GR IDs, not 30 separately closable items. No Playwright, unit, lint, typecheck, or integration checks were run by chat-15.
 
 | GR-80 GR-81 / big-round email/error | BLOCKED | `tests/e2e/graceful-unexpected-email-error.spec.ts`: 10 source-authored real-form 500/retry cases; external runtime certification required. |
+
+| GR-80 GR-81 / big-round email/code | BLOCKED | `tests/e2e/graceful-unexpected-email-code.spec.ts`: 10 source-authored real-form 500/retry cases; external runtime certification required. |

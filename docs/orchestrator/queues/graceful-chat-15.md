@@ -71,3 +71,5 @@ Record each item in `docs/audit/acceptance/graceful-e2e-verification.md` (`| GR-
 - GR-83: The isolated fake-provider persisted outbox witness, real PostgreSQL tests, and complete helper execution remain orchestrator-owned; no acceptance item has been marked DONE.
 
 - GR-80/81: [big-round email/error] `tests/e2e/graceful-unexpected-email-error.spec.ts` adds 10 real login failure/retry cases, with two intercepted POSTs per test, nonleaking diagnostics, preserved contact and reenabled control (authored; not run).
+
+- GR-80/81: [big-round email/code] `tests/e2e/graceful-unexpected-email-code.spec.ts` adds 10 real login failure/retry cases, with two intercepted POSTs per test, nonleaking diagnostics, preserved contact and reenabled control (authored; not run).
