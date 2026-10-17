@@ -68,7 +68,7 @@ export async function changeTpoRecruiterSavedView(context:RequestContext,raw:unk
   }
   if(input.action==="CREATE"&&!input.name)throw new TpoSavedViewError("BAD_ACTION");
   if(input.action!=="CREATE"&&!input.id)throw new TpoSavedViewError("BAD_ACTION");
-  const pinned=input.action==="PIN"?input.pinned??false:input.pinned??false;
+  const pinned=input.pinned??false;
   if(pinned){
    const existing=await tx.execute<{count:number}>(sql`SELECT count(*)::integer as count
     FROM placement_tpo_recruiter_saved_views WHERE ${owner} AND pinned=true
