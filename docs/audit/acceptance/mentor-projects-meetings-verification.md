@@ -178,3 +178,13 @@ Remaining queue entries are OPEN until the behavior described in the legacy audi
 | MEN-projects-meetings-41 | SOURCE VERIFIED; CI pending | `src/components/projects/mentor-lane-board.tsx`; `tests/unit/chat7-round3-mentor-execution.test.ts` — `MEN-projects-meetings-41 board task evidence includes owner blocker estimate and due`. |
 | MEN-projects-meetings-46 | SOURCE VERIFIED; CI pending | `src/components/projects/mentor-task-delete-control.tsx`; `tests/unit/chat7-round3-mentor-execution.test.ts` — `MEN-projects-meetings-46 task deletion prompts and requires a version token`. |
 | MEN-projects-meetings-49 | SOURCE VERIFIED; CI pending | `src/modules/projects/project-notification-service.ts`; `tests/unit/chat7-round3-mentor-execution.test.ts` — `MEN-projects-meetings-49 project-scoped member notifications`. |
+
+## Chat-7 round 3 — allocation and role-safe meeting policy
+
+| Gap ID | Review | Regression evidence |
+|---|---|---|
+| MEN-projects-meetings-51 | SOURCE VERIFIED; CI pending | `src/components/projects/mentor-task-allocation.tsx`; `tests/unit/chat7-round3-mentor-policy.test.ts` — `MEN-projects-meetings-51 auto-assignment acts on all eligible project tasks`. |
+| MEN-projects-meetings-52 | SOURCE VERIFIED; CI pending | `src/components/projects/mentor-task-allocation.tsx`; `tests/unit/chat7-round3-mentor-policy.test.ts` — `MEN-projects-meetings-52 per-member workload uses done blocked and point counts`. |
+| MEN-projects-meetings-R03 | SOURCE VERIFIED; CI pending | `src/components/projects/project-meeting-controls.tsx`; `tests/unit/chat7-round3-mentor-policy.test.ts` — `MEN-projects-meetings-R03 meeting form fixes the user-visible wall-time zone to IST`. |
+| MEN-projects-meetings-R04 | SOURCE VERIFIED; CI pending | `src/components/projects/project-workspace.tsx`; `tests/unit/chat7-round3-mentor-policy.test.ts` — `MEN-projects-meetings-R04 join action does not appear on cancelled, completed or missed meetings`. |
+| MEN-projects-meetings-R05 | SOURCE VERIFIED; CI pending | `src/modules/projects/meeting-service.ts`; `tests/unit/chat7-round3-mentor-policy.test.ts` — `MEN-projects-meetings-R05 completed and archived workspaces reject meeting writes`. |
