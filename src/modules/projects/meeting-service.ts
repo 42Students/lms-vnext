@@ -159,7 +159,7 @@ export async function listProjectMeetings(
     .from(projectMeetings)
     .where(
       and(eq(projectMeetings.projectId,scope.project.id),
-        ...(scope.access==="LEARNER" ? [ne(projectMeetings.status,"DRAFT")] : [])),
+        ...(scope.access!=="MENTOR" && scope.access!=="ADMIN" ? [ne(projectMeetings.status,"DRAFT")] : [])),
     )
     .orderBy(
       asc(projectMeetings.startsAt),
