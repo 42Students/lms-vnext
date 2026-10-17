@@ -25,6 +25,9 @@ export function SessionResponseGuard() {
       let reason: string | undefined;
       try { reason = (await response.clone().json() as {error?: string}).error; }
       catch { /* Original response body stays available for the caller. */ }
+      if(response.status===403){
+        window.dispatchEvent(new Event("lms:access-denied"));
+      }
       if (response.status === 401 || reason === "SESSION_EXPIRED" || reason === "SESSION_REVOKED") {
         redirected = true;
         window.location.assign(sessionExpiredHref(

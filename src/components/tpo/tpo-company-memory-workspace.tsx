@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import {TpoCompanyTeamConversation} from "./tpo-company-team-conversation";
 import {companyDriveCsv} from "@/modules/placements/tpo-company-drive-export-model";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -88,9 +89,11 @@ function legacyActivityDay(value:string){
 export function TpoCompanyMemoryWorkspace({
   collegeId,
   companyName,
+  actorMembershipId,
 }: {
   collegeId: string;
   companyName: string;
+  actorMembershipId: string;
 }) {
   const [company, setCompany] = useState<CompanyMemory | null>(null);
   const [phase, setPhase] = useState<Phase>("loading");
@@ -186,7 +189,7 @@ export function TpoCompanyMemoryWorkspace({
           </Link>
           <h1 className="mt-1 text-2xl font-semibold text-foreground">{company.name}</h1>
           <p className="text-sm text-muted-foreground">
-            Recruiter contacts, drives and hiring history
+            {company.drivesRan>1||company.hiredPerYear.length>1?"Repeat hiring relationship":"Recruiter contacts, drives and hiring history"}
           </p>
           {company.alsoTypedAs.length ? (
             <p className="mt-1 text-xs text-muted-foreground">
@@ -211,6 +214,10 @@ export function TpoCompanyMemoryWorkspace({
           {company.canonicalCompanyId?<Link className={buttonStyle}
             href={"/tpo/companies/"+encodeURIComponent(company.canonicalCompanyId)}>
             Company link and trusted settings
+          </Link>:null}
+          {company.canonicalCompanyId?<Link className={buttonStyle}
+            href={"/tpo/companies/"+encodeURIComponent(company.canonicalCompanyId)+"/team"}>
+            Open in Team
           </Link>:null}
           <Link className={buttonStyle} href={"/tpo/recruiters?add=1&company=" + encodeURIComponent(company.name)}>
             Add contact
@@ -242,6 +249,28 @@ export function TpoCompanyMemoryWorkspace({
         </div>
       ) : null}
 
+      {company.hiredPerYear.length>0?(
+        <section aria-label="Students placed, by year" className="rounded-lg border border-border bg-surface p-4">
+          <h2 className="font-semibold text-foreground">Students placed, by year</h2>
+          <p className="mt-1 text-xs text-muted-foreground">Years hiring: {company.hiredPerYear.length}. Counts are distinct confirmed JOINED learners with a recorded joining year, not estimated offers.</p>
+          <ul className="mt-3 space-y-3">
+            {company.hiredPerYear.map(item=>(
+              <li key={item.year} className="grid grid-cols-[4rem_1fr_3rem] items-center gap-3 text-sm">
+                <span>{item.year}</span>
+                <div className="h-3 overflow-hidden rounded-full bg-surface-secondary" role="img" aria-label={item.hired+" joined learners in "+item.year}>
+                  <div className="h-full rounded-full bg-primary" style={{width:(100*item.hired/Math.max(1,...company.hiredPerYear.map(row=>row.hired)))+"%"}}/>
+                </div>
+                <strong className="text-right tabular-nums">{item.hired}</strong>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ):null}
+      {company.canonicalCompanyId?<TpoCompanyTeamConversation
+        companyId={company.canonicalCompanyId} companyName={company.name}
+        actorMembershipId={actorMembershipId}/>:<p role="status" className="text-sm text-body">
+        Link this company to an authorized college employer before starting a private Team conversation.
+      </p>}
       <div className="grid gap-5 xl:grid-cols-2">
         <div className="space-y-5">
           <section className="rounded-lg border border-border bg-surface p-4">

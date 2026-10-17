@@ -50,18 +50,18 @@ const columns: DataTableColumn<CollegeRow>[] = [
     cell: (college) => (
       <div className="flex justify-end gap-2">
         <Link href={`/admin/colleges/${encodeURIComponent(college.id)}`}
-          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-primary-subtle">
           Tenant setup
         </Link>
         <Link
           href={`/admin/colleges/${encodeURIComponent(college.id)}/readiness`}
-          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-primary-subtle"
         >
           Readiness
         </Link>
         <Link
           href={`/admin/colleges/${encodeURIComponent(college.id)}/branding`}
-          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-primary-subtle"
         >
           Branding
         </Link>
@@ -131,7 +131,7 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
         />
       ) : null}
       {creatableOrganizations.length>0?<CollegeBulkImport organizations={creatableOrganizations.map(x=>({id:x.id,name:x.name}))}/>:null}
-      <Link href="/admin/tenants" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+      <Link href="/admin/tenants" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)]">
         Search tenant directory →
       </Link>
       <form className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4" method="get">
@@ -144,8 +144,8 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
         </select>
        </label>
        <button type="submit" className="min-h-11 rounded bg-primary px-4 text-on-primary">Search</button>
-       <Link href="/admin/colleges" className="min-h-11 inline-flex items-center text-primary-text underline">Clear search</Link>
-       <Link href={href(page)} className="min-h-11 inline-flex items-center text-primary-text underline">Refresh</Link>
+       <Link href="/admin/colleges" className="min-h-11 inline-flex items-center text-[var(--lms-link-text)] underline">Clear search</Link>
+       <Link href={href(page)} className="min-h-11 inline-flex items-center text-[var(--lms-link-text)] underline">Refresh</Link>
       </form>
       <p role="status" className="text-sm text-body">{q?matches.length+" of "+rows.length:rows.length} colleges · Page {page} of {pages}</p>
       {rows.length === 0 ? (
@@ -160,11 +160,11 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
             <p className="mt-2 break-words text-sm text-body">{[college.city,college.state,college.country].filter(Boolean).join(", ")||"Location not recorded"}</p>
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <Link href={`/admin/colleges/${encodeURIComponent(college.id)}`}
-                className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Tenant setup</Link>
+                className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)]">Tenant setup</Link>
               <Link href={`/admin/colleges/${encodeURIComponent(college.id)}/branding`}
-                className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Branding</Link>
+                className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)]">Branding</Link>
               <Link href={`/admin/colleges/${encodeURIComponent(college.id)}/readiness`}
-                className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Readiness</Link>
+                className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)]">Readiness</Link>
               {college.canManage ? <>
                 <CollegeEditDialog college={college}/>
                 <CollegeArchiveButton collegeId={college.id} name={college.name}/>
@@ -177,8 +177,8 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
         <DataTable columns={columns} rows={visible} getRowKey={(college)=>college.id}/>
       </div>
       <nav aria-label="College directory pages" className="flex flex-wrap gap-3 text-sm">
-       {page>1?<Link href={href(page-1)} className="min-h-10 rounded border border-border px-3 py-2">Previous</Link>:null}
-       {page<pages?<Link href={href(page+1)} className="min-h-10 rounded border border-border px-3 py-2">Next</Link>:null}
+       {page>1?<Link href={href(page-1)} className="min-h-11 rounded border border-border px-3 py-2">Previous</Link>:null}
+       {page<pages?<Link href={href(page+1)} className="min-h-11 rounded border border-border px-3 py-2">Next</Link>:null}
       </nav>
     </div>
   );

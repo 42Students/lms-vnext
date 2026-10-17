@@ -5,7 +5,8 @@ describe("mentor meeting organiser collision protection", () => {
   it("MEN-projects-meetings-R02 guards normal meeting scheduling across all the organiser's projects", () => {
     const source = read("src/modules/projects/meeting-service.ts");
     expect(source).toContain("pg_advisory_xact_lock");
-    expect(source).toContain("eq(projectMeetings.scheduledByUserId,context.user.id)");
+    expect(source).toContain("const organiserId=existing?.scheduledByUserId??context.user.id;");
+    expect(source).toContain("eq(projectMeetings.scheduledByUserId,organiserId)");
     expect(source).toContain("eq(projectMeetings.projectId,scope.project.id)");
     expect(source).toContain('inArray(projectMeetings.status,["SCHEDULED","RESCHEDULED"])');
     expect(source).toContain("lt(projectMeetings.startsAt,endsAt)");

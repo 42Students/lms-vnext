@@ -4,8 +4,7 @@ import {
   eq,
   inArray,
   ne,
-  not,
-  isNull,
+  isNotNull,
   or,
   sql,
   gt,
@@ -165,9 +164,9 @@ export async function listProjectMeetings(
           ne(projectMeetings.status,"DRAFT"),
           // MEN-projects-meetings-27: cancelled private drafts were never announced.
           // A cancelled learner request still has a requester and remains visible.
-          not(and(eq(projectMeetings.status,"CANCELLED"),
-            isNull(projectMeetings.requestedByMembershipId),
-            isNull(projectMeetings.scheduledByUserId))!),
+          or(ne(projectMeetings.status,"CANCELLED"),
+            isNotNull(projectMeetings.requestedByMembershipId),
+            isNotNull(projectMeetings.scheduledByUserId))!,
         ] : [])),
     )
     .orderBy(

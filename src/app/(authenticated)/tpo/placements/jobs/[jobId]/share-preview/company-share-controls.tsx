@@ -1,5 +1,6 @@
 "use client";
-import {useState} from "react";
+import {useCallback,useState,useSyncExternalStore} from "react";
+import {parseCompanyShareExpiry} from "@/modules/placements/company-share/remembered-settings-model";
 import {companyShareEmptyMessage,shouldDisplayNewCompanyShare,companyShareLifecycleStatus,companyShareLifecycleLabel,type CompanyShareStatus} from "@/modules/placements/company-share/status-model";
 import {afterCompanyShareRevocation} from "@/modules/placements/company-share/revoke-ui-model";
 import {prependCompanyShareLink} from "@/modules/placements/company-share/link-page-model";
@@ -78,7 +79,7 @@ export function CompanyShareControls({jobId,ready,initialLinks,status,linkPage}:
   </p>:<>
    <div className="flex flex-wrap items-end gap-3">
     <label className="text-sm text-body">Expires in days
-     <select value={days} onChange={event=>setDays(Number(event.target.value))}
+     <select value={days} onChange={event=>changeExpiry(event.target.value)}
       className="ml-2 rounded border border-border bg-surface px-2 py-2">
       {[1,2,3,4,5,6,7,14,30,60,90].map(day=><option key={day} value={day}>{day}</option>)}
      </select>

@@ -29,10 +29,18 @@ const courseCodeSchema = z
     "Code may contain letters, numbers, dots, underscores and hyphens",
   );
 
+const courseShortTitleSchema=z.string().trim().min(1).max(120);
+const courseOfficialCodeSchema=z.string().trim().max(64).nullable();
+const courseCardColorSchema=z.string().regex(/^#[0-9A-Fa-f]{6}$/).nullable();
+
 export const createCourseInputSchema = z.object({
   departmentId: z.string().uuid(),
   name: courseNameSchema,
   code: courseCodeSchema,
+  shortTitle:courseShortTitleSchema.optional(),
+  officialCode:courseOfficialCodeSchema.optional(),
+  cardColor:courseCardColorSchema.optional(),
+  takeaways:z.string().trim().max(2000).nullable().optional(),
   description: z
     .string()
     .trim()
@@ -45,6 +53,10 @@ export const updateCourseInputSchema = z
   .object({
     name: courseNameSchema.optional(),
     code: courseCodeSchema.optional(),
+    shortTitle:courseShortTitleSchema.optional(),
+    officialCode:courseOfficialCodeSchema.optional(),
+    cardColor:courseCardColorSchema.optional(),
+    takeaways:z.string().trim().max(2000).nullable().optional(),
     description: z
       .string()
       .trim()

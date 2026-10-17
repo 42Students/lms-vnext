@@ -421,3 +421,5 @@ The following entries supersede earlier PARTIAL/OPEN rows for these IDs. **Sourc
 | TPO-inbox-team-51 / 54 / 59 / 60 | **PARTIAL / OPEN.** Audience edits, shell-side From 42 badge, learner-facing source labels, and additional event producers still missing; existing versioned edits/read tracking/bell history are not full parity. |
 
 No local TypeScript, Vitest or database suite execution was possible in this GitHub-only round. Do not promote PARTIAL to DONE solely for source assertions.
+
+| TPO-inbox-team-12 (chat-14 final sprint) | PARTIAL — SQL performance outstanding | The page has validated `pageSize <= 100` and deterministic authorized-record pagination, but `getTpoMessagesInbox` currently materializes all records before paging, so the SQL LIMIT/OFFSET performance concern remains. `src/modules/placements/tpo-messages-service.ts`; `tests/unit/chat14-final-tpo-inbox-team-12.test.ts`. This item requires database-side pagination before DONE. |

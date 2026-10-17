@@ -4,7 +4,7 @@ import { and, asc, eq, inArray, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
-  activityEvents, collegeMemberships, membershipRoles, placementCompanies,
+  activityEvents, inAppNotifications, collegeMemberships, membershipRoles, placementCompanies,
   placementCompanyRelationships, placementJobs, users,
 } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
@@ -112,7 +112,7 @@ export async function saveTpoCompanyLifecycle(
     });
     if (!saved) throw new TpoCompanyLifecycleError("STALE");
 
-    await tx.insert(activityEvents).values({
+    const [event]=await tx.insert(activityEvents).values({
       organizationId: scope.organizationId, collegeId: scope.collegeId,
       actorUserId: scope.actorUserId, actorMembershipId: scope.actorMembershipId,
       module: "PLACEMENTS", eventType: "PLACEMENTS_COMPANY_LIFECYCLE_CHANGED",
@@ -122,7 +122,29 @@ export async function saveTpoCompanyLifecycle(
         fromStatus: current.status, toStatus: saved.status,
         fromTrusted: current.isTrusted, toTrusted: saved.isTrusted },
       occurredAt: now,
-    });
+    }).returning({id:activityEvents.id});
+    // Bell history is informative; it never grants company access or changes
+    // another college's relationship. Delivery is scoped to current TPOs.
+    if(event){
+     const officers=await tx.selectDistinct({userId:collegeMemberships.userId})
+      .from(collegeMemberships)
+      .innerJoin(users,eq(users.id,collegeMemberships.userId))
+      .innerJoin(membershipRoles,and(
+       eq(membershipRoles.membershipId,collegeMemberships.id),
+       eq(membershipRoles.role,"TPO")))
+      .where(and(eq(collegeMemberships.collegeId,scope.collegeId),
+       eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")))
+      .limit(501);
+     if(officers.length>500)throw new Error("TPO_NOTIFICATION_RECIPIENT_LIMIT");
+     if(officers.length)await tx.insert(inAppNotifications).values(
+      officers.map(({userId})=>({
+       userId,eventId:event.id,title:"Company relationship changed",
+       body:input.action==="ARCHIVE"?"A company relationship was archived":
+        input.action==="RESTORE"?"A company relationship was restored":
+        "A company trust setting was updated",
+       actionHref:"/tpo/companies/"+encodeURIComponent(input.companyId),
+      }))).onConflictDoNothing();
+    }
     return { ...saved, updatedAt: saved.updatedAt.toISOString() };
   });
 }

@@ -11,7 +11,13 @@ import {
  reorderTermCourseIds,nextTermCourseOrder,
 } from "@/modules/academics/college-term-mapping-model";
 
-const steps=(COLLEGE_ADMIN_SETUP_PHASES as unknown as readonly {steps:readonly {key:string;href?:string;label?:string;[k:string]:unknown}[]}[]).flatMap(phase=>[...phase.steps]);
+type SetupStep = {key:string;href:string|null;label:string};
+const steps:SetupStep[]=[];
+for(const phase of COLLEGE_ADMIN_SETUP_PHASES){
+ for(const step of phase.steps){
+  steps.push({key:step.key,href:step.href,label:step.label});
+ }
+}
 const evidence=Object.fromEntries(steps.map(step=>[step.key,0]));
 
 describe("College academic setup prerequisites and mutation validation",()=>{

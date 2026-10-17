@@ -220,6 +220,21 @@ export default async function TpoAnnouncements({searchParams}:Props){
          <span className="block text-xs text-muted-foreground">Notify only people who received the original announcement. Leave unchecked to edit without another notification.</span>
         </span>
        </label>
+       {targetedReady&&targetOptions&&row.scheduledAt&&
+        new Date(row.scheduledAt).getTime()>Date.now()?<fieldset
+         className="grid gap-2 rounded-md border border-border p-3">
+         <legend className="text-sm font-semibold">Change audience (before sending)</legend>
+         <label className="flex items-center gap-2 text-sm">
+          <input name="changeAudience" type="checkbox"/> Change audience for this scheduled notice
+         </label>
+         <p className="text-xs text-muted-foreground">
+          Select the box only to replace the saved audience. Choose the new audience below;
+          the new recipients are selected when you save. The old audience is retained if
+          the box is unchecked.
+         </p>
+         <TpoNoticeAudiencePicker initialAudience="COLLEGE" initialTarget=""
+          initialTargets={[]} options={targetOptions}/>
+        </fieldset>:null}
        <p className="text-xs text-muted-foreground">Save fails if the notice changed since this page was loaded.</p>
        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Save notice edits</button>
       </form>
