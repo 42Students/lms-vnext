@@ -173,7 +173,7 @@ export default async function TpoCompanyMemoryPage({
         <form
           action="/tpo/companies"
           method="get"
-          className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[minmax(0,1fr)_auto_auto]"
+          className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[minmax(0,1fr)_auto_auto_auto]"
         >
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
             Search companies
@@ -187,6 +187,16 @@ export default async function TpoCompanyMemoryPage({
             />
           </label>
 
+          <label className="flex flex-col gap-1 text-sm font-semibold text-body">
+            Sort by
+            <select name="sort" defaultValue={query.sort}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground">
+              <option value="NAME">Company name</option>
+              <option value="CONTACTS">Most contacts</option>
+              <option value="DRIVES">Most drives</option>
+              <option value="JOINS">Most confirmed joins</option>
+            </select>
+          </label>
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
             Page size
             <select
