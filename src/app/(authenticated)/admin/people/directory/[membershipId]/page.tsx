@@ -1,4 +1,6 @@
 import Link from "next/link";
+import {isSuperAdmin} from "@/modules/identity/context";
+import {SuperAdminPlatformBlockAction} from "@/components/admin/super-admin-platform-block-action";
 import {notFound} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -6,7 +8,8 @@ import {StatusBadge} from "@/components/ui/status-badge";
 import {getSuperAdminMembershipDetail} from "@/modules/people/admin-membership-detail-service";
 export default async function MembershipDetail({params}:{params:Promise<{membershipId:string}>}){
  const {membershipId}=await params;
- const detail=await getSuperAdminMembershipDetail(await getCurrentRequestContext(),membershipId);
+ const context=await getCurrentRequestContext();
+ const detail=await getSuperAdminMembershipDetail(context,membershipId);
  if(!detail)notFound();
  const fmt=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"});
  const fields=[
@@ -24,6 +27,8 @@ export default async function MembershipDetail({params}:{params:Promise<{members
    <StatusBadge tone={detail.membershipStatus==="ACTIVE"?"success":"neutral"}>Membership {detail.membershipStatus}</StatusBadge>
    {detail.roles.map(role=><StatusBadge key={role}>{role}</StatusBadge>)}
   </div>
+  {isSuperAdmin(context)&&!context.adminScope?.collegeId&&!context.adminScope?.organizationId?
+    <SuperAdminPlatformBlockAction userId={detail.userId} status={detail.platformStatus}/>:null}
   <dl className="grid gap-4 rounded-xl border border-border bg-surface p-5 sm:grid-cols-2">
    {fields.map(field=><div key={field.label}>
     <dt className="text-xs font-semibold text-muted-foreground">{field.label}</dt>

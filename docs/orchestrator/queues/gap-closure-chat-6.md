@@ -56,7 +56,7 @@ Audit: `docs/audit/pages/superadmin/academics-people-3-people-recruiters.md` (an
 | ID | Sev | Type | Status now |
 |---|---|---|---|
 | SA-academics-people-101 | S2 | MISSING-ACTION | OPEN |
-| SA-academics-people-106 | S2 | PERMISSION | OPEN |
+| SA-academics-people-106 | S2 | PERMISSION | DONE |
 | SA-academics-people-108 | S2 | MISSING-FIELD | DONE |
 | SA-academics-people-109 | S2 | MISSING-ACTION | DONE |
 | SA-academics-people-110 | S2 | MISSING-FIELD | DONE |
