@@ -424,12 +424,45 @@ export function RecruiterLeadsWorkspace({
     }
   }
 
+  function closeAddDialog() {
+    if(saving)return;
+    const dirty=Object.values(form).some(value=>value.trim());
+    if(dirty&&!window.confirm("Discard this recruiter draft?"))return;
+    setAdding(false);setDuplicate(null);setSaveError("");
+  }
+
   async function create(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!form.name.trim() || !(form.email.trim() || form.phone.trim())) {
       setSaveError("Enter a name and at least one contact method.");
       return;
     }
+    if (form.companyName.trim().length < 2) {
+      setSaveError("Company is required.");
+      return;
+    }
+    // Preflight every contact on submit. Database uniqueness remains authoritative.
+    setChecking(true);setSaveError("");setDuplicate(null);
+    try {
+      const contacts=[...new Set([form.email.trim(),form.phone.trim()].filter(Boolean))];
+      for(const contact of contacts){
+        const result=await fetch("/api/placements/tpo/leads/check?collegeId="+
+          encodeURIComponent(collegeId)+"&contact="+encodeURIComponent(contact),{
+          credentials:"same-origin",cache:"no-store",
+        });
+        if(result.status===204)continue;
+        const data=await result.json() as {lead?:Lead;error?:string};
+        if(!result.ok)throw new Error(friendlyError(result.status,data));
+        if(data.lead){
+          setDuplicate(data.lead);
+          setSaveError("This contact is already a recruiter. Open the existing recruiter instead.");
+          return;
+        }
+      }
+    }catch(cause){
+      setSaveError(cause instanceof Error?cause.message:"Could not check this contact.");
+      return;
+    }finally{setChecking(false);}
     if (!window.confirm(
       "Create recruiter lead for " + form.name.trim() +
       (form.companyName.trim() ? " at " + form.companyName.trim() : "") +
@@ -906,10 +939,11 @@ export function RecruiterLeadsWorkspace({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" role="presentation">
           <form role="dialog" aria-modal="true" aria-label="Add recruiter lead"
             onSubmit={e => void create(e)}
+            onKeyDown={e=>{if(e.key==="Escape"){e.preventDefault();closeAddDialog();}}}
             className="max-h-[90vh] w-full max-w-lg space-y-4 overflow-y-auto rounded-xl border border-border bg-surface p-6 shadow-xl">
             <div className="flex items-center justify-between gap-4">
               <h2 className="text-xl font-semibold">Add recruiter lead</h2>
-              <button type="button" className={buttonStyle} onClick={() => setAdding(false)} disabled={saving}>Close</button>
+              <button type="button" className={buttonStyle} onClick={closeAddDialog} disabled={saving}>Close</button>
             </div>
             <label className="block text-sm">Name *<input className={inputStyle + " mt-1"} required maxLength={150}
               value={form.name} onChange={e => field("name", e.target.value)} /></label>
