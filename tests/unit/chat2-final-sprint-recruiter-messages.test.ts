@@ -102,4 +102,11 @@ describe("Final sprint recruiter conversations verification",()=>{
   expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-13 |");
  });
 
+ it("REC-calendar-messages-profile-14 independent final-sprint acceptance regression",()=>{
+  expect(src("src/components/hr/recruiter-conversation-read-control.tsx")).toContain("acknowledgedOnOpen.current=true");
+  expect(src("src/components/hr/recruiter-conversation-read-control.tsx")).toContain("method:\"POST\",credentials:\"same-origin\"");
+  expect(src("src/app/(authenticated)/hr/conversations/[threadId]/page.tsx")).toContain("<RecruiterConversationReadControl threadId={result.thread.id}");
+  expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-14 |");
+ });
+
 });
