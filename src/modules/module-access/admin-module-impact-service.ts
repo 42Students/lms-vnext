@@ -30,7 +30,7 @@ export async function readModuleDisableImpact(ctx:RequestContext,collegeRaw:stri
    .where(and(eq(projectInstances.collegeId,collegeId),eq(projectInstances.status,"ACTIVE"),
      eq(projectMembers.role,"MENTOR"),eq(projectMembers.isPrimary,true),isNull(projectMembers.endedAt)));
   const counts=[row?.total??0];
-  return {module:moduleName,counts,summary:moduleDisableImpactSummary(moduleName,counts)};
+  return {module:moduleName,students,counts,summary:moduleDisableImpactSummary(moduleName,counts)};
  }
  if(moduleName==="placements"){
   const [drives,applications,offers]=await Promise.all([
@@ -47,5 +47,5 @@ export async function readModuleDisableImpact(ctx:RequestContext,collegeRaw:stri
   const counts=[drives[0]?.total??0,applications[0]?.total??0,offers[0]?.total??0];
   return {module:moduleName,counts,summary:moduleDisableImpactSummary(moduleName,counts)};
  }
- return {module:moduleName,counts:[],summary:moduleDisableImpactSummary(moduleName,[])};
+ return {module:moduleName,students,counts:[],summary:moduleDisableImpactSummary(moduleName,[])};
 }
