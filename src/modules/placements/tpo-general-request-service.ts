@@ -138,17 +138,24 @@ export async function createOwnTpoGeneralRequest(ctx:RequestContext,raw:unknown)
     throw new TpoGeneralRequestError("TARGET_CHANGED");
   }
   const scope=tpoGeneralRequestTarget(input);
-  const [existing]=await tx.select({id:placementLearnerGeneralRequests.id})
+  const payload=tpoGeneralRequestPayload(input);
+  const [existing]=await tx.select({id:placementLearnerGeneralRequests.id,
+   reason:placementLearnerGeneralRequests.reason,
+   payloadMatches:sql<boolean>`${placementLearnerGeneralRequests.payload} = ${JSON.stringify(payload)}::jsonb`})
    .from(placementLearnerGeneralRequests).where(and(
     eq(placementLearnerGeneralRequests.collegeId,member.collegeId),
     eq(placementLearnerGeneralRequests.membershipId,member.id),
     eq(placementLearnerGeneralRequests.kind,input.kind),
     eq(placementLearnerGeneralRequests.targetKey,scope),
     eq(placementLearnerGeneralRequests.status,"PENDING"))).limit(1);
-  if(existing)return {id:existing.id,replayed:true};
+  if(existing){
+   if(existing.reason!==input.reason||!existing.payloadMatches)
+    throw new TpoGeneralRequestError("TARGET_CHANGED");
+   return {id:existing.id,replayed:true};
+  }
   const [request]=await tx.insert(placementLearnerGeneralRequests).values({
    collegeId:member.collegeId,membershipId:member.id,kind:input.kind,
-   targetKey:scope,reason:input.reason,payload:tpoGeneralRequestPayload(input),
+   targetKey:scope,reason:input.reason,payload,
    requestedByUserId:ctx.user.id,
   }).onConflictDoNothing().returning({id:placementLearnerGeneralRequests.id});
   if(!request)throw new TpoGeneralRequestError("TARGET_CHANGED");
