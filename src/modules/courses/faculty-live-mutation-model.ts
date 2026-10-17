@@ -36,6 +36,11 @@ export const facultyLiveMutationSchema=z.discriminatedUnion("action",[
 ]).superRefine((data,ctx)=>{
   if(data.action==="CANCEL")return;
   const starts=new Date(data.startsAt),ends=new Date(data.endsAt);
+  // IST is UTC+05:30; the 30-minute offset preserves quarter-hour boundaries.
+  for(const [key,instant] of [["startsAt",starts],["endsAt",ends]] as const){
+    if(instant.getUTCMinutes()%15!==0||instant.getUTCSeconds()!==0)
+      ctx.addIssue({code:"custom",path:[key],message:"Use 15-minute intervals in IST."});
+  }
   if(ends<=starts)ctx.addIssue({code:"custom",path:["endsAt"],message:"End time must be after start time"});
   if(ends.getTime()-starts.getTime()>12*60*60*1000)
     ctx.addIssue({code:"custom",path:["endsAt"],message:"A live class can be at most 12 hours. Check the end date and AM/PM."});

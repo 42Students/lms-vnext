@@ -17,7 +17,6 @@ params:Promise<{deliveryId:string}>;searchParams:Promise<Search>}){
  const root="/teacher/courses/"+encodeURIComponent(deliveryId);
  return <div className="space-y-6">
  <PageHeader title="Section reports"
- description={data.delivery.courseName+" · "+data.delivery.sectionName}
  actions={<Link href={root+"/home"} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Section workspace</Link>}/>
  <p className="text-sm text-body">{data.rosterSize} current eligible learners.</p>
  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
