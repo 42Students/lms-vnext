@@ -2,7 +2,7 @@ import "server-only";
 import {outboundFetch} from "@/lib/outbound";
 import {canContactRecipientAtRuntime} from "@/modules/messaging/runtime-safety";
 import {readZeptoMailConfig} from "@/modules/notifications/zeptomail-email";
-import {safeRecruiterDigestMessages,safeRecruiterEmailMergeText} from "./recruiter-message-email-model";
+import {safeRecruiterDigestMessages,safeRecruiterEmailMergeText,isRecruiterReplyAddress} from "./recruiter-message-email-model";
 
 export type RecruiterMailDigest={
  recipient:string;recipientName:string;companyName:string;collegeName:string;
@@ -21,7 +21,8 @@ export async function sendRecruiterMessageDigest(
  const config=readZeptoMailConfig(env);
  const key=(env.RECRUITER_MESSAGE_DIGEST_TEMPLATE_KEY??"").trim();
  if(!config.token||!key||key===config.otpTemplateKey ||
-    !digest.replyTo.includes("@")||digest.messages.length===0)return false;
+    !isRecruiterReplyAddress(digest.replyTo,env.RECRUITER_MESSAGE_REPLY_DOMAIN??"")||
+    digest.messages.length===0)return false;
  try{
   const excerpts=safeRecruiterDigestMessages(digest.messages);
   const response=await outboundFetch(config.apiUrl,{
