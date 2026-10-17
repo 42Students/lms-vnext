@@ -40,6 +40,8 @@ export default async function LearnerPlacementApplicationsPage() {
     applicationStatus: row.applicationStatus,
     offerStatus: row.offerStatus,
     channel: row.channel,
+    staffOptOutUntil:row.staffOptOutUntil,
+    mayStaffOptOut:row.mayStaffOptOut,
     submittedAt: row.submittedAt,
     withdrawnAt: row.withdrawnAt,
     screening: row.screening,

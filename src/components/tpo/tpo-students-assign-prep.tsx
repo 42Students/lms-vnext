@@ -2,6 +2,7 @@
 import {useEffect,useState} from "react";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {apiFetch} from "@/lib/api-fetch";
+import {tpoPrepDueAtUtc} from "@/modules/placements/tpo-prep-due-date";
 import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {useTpoStudentsSelection} from "./tpo-students-selection";
@@ -21,14 +22,15 @@ export function TpoStudentsAssignPrep(){
  });},[]);
  const picked=selection?.selected??[];
  async function submit(){
-  if(!selection||pending||!offeringId||!dueAt||picked.length<1)return;
+  const deadline=tpoPrepDueAtUtc(dueAt);
+  if(!selection||pending||!offeringId||!deadline||picked.length<1)return;
   setError("");setNotice("");
   try{
    await run(async()=>{
     const rows=await apiFetch<{results:Result[];counts:{assigned:number;duplicate:number;skipped:number}}>(
      "/api/placements/tpo/students/prep",{
       method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
-      body:JSON.stringify({offeringId,dueAt:new Date(dueAt).toISOString(),membershipIds:picked.slice(0,100)}),
+      body:JSON.stringify({offeringId,dueAt:deadline,membershipIds:picked.slice(0,100)}),
      });
     setResults(rows.results);setConfirm(false);
     selection.setSelected(ids=>ids.filter(id=>!rows.results.some(row=>row.id===id&&row.status!=="skipped")));
@@ -52,7 +54,8 @@ export function TpoStudentsAssignPrep(){
     <input type="datetime-local" value={dueAt} onChange={e=>setDueAt(e.target.value)} className="min-h-11 rounded border border-border p-2"/>
    </label>
   </div>
-  <button type="button" disabled={pending||!picked.length||!offeringId||!dueAt} onClick={()=>setConfirm(true)}
+  {dueAt&&!tpoPrepDueAtUtc(dueAt)?<p role="alert" className="text-error">Choose a valid IST due date.</p>:null}
+  <button type="button" disabled={pending||!picked.length||!offeringId||!tpoPrepDueAtUtc(dueAt)} onClick={()=>setConfirm(true)}
    className="min-h-11 rounded border border-border px-4 font-semibold text-primary-text disabled:opacity-50">Review prep assignments</button>
   <Dialog open={confirm} onOpenChange={v=>{if(!pending)setConfirm(v);}}
    title="Assign preparation course?"

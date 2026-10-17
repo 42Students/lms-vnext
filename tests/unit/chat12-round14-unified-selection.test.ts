@@ -10,16 +10,21 @@ describe("chat-12 unified page selection",()=>{
    expect(src(path)).toContain("shared?.setSelected??setLocalSelection");
   }
  });
- it("TPO-students-17 resets shared selection on page/filter navigation without mutating hidden records",()=>{
+ it("TPO-students-17 preserves page navigation selection and invalidates changed filter scopes",()=>{
   const page=src("src/app/(authenticated)/tpo/students/page.tsx");
-  expect(page).toContain('key={"selection:"+query.batchId');
+  expect(page).toContain('scopeKey={context.membership.id+":"+JSON.stringify(');
+  expect(page).toContain("page:undefined,pageSize:undefined,columns:undefined");
+  const provider=src("src/components/tpo/tpo-students-selection.tsx");
+  expect(provider).toContain('window.sessionStorage.setItem(key');
+  expect(provider).toContain("Selected students hidden by these filters were unticked.");
   const add=src("src/components/tpo/tpo-students-bulk-add.tsx");
   expect(add).toContain("pageSelected=selected.filter(id=>names.has(id))");
   expect(add).toContain("pageSelected.length>100");
  });
  it("TPO-students-48 announces visible selection and filter count without including hidden students",()=>{
   const grid=src("src/components/tpo/tpo-students-spreadsheet.tsx");
-  expect(grid).toContain("selected of {rows.length} on this visible page.");
+  expect(grid).toContain("selected of {shared?.totalCount??rows.length} in the authorized view.");
+  expect(src("src/components/tpo/tpo-students-selection.tsx")).toContain("selectedCount} selected of {totalCount}");
   expect(grid).toContain('aria-live="polite"');
  });
 });

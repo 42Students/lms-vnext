@@ -248,9 +248,8 @@ export default async function TpoStudentsPage({
     return (
       <div className="space-y-6">
         <PageHeader
-          eyebrow="TPO · Students"
           title={TPO_OWNER_PAGE_COPY.students}
-          description="College-wide placement participation and journey oversight."
+          description="Everyone in placements, from the batches you made eligible."
         />
         <section
           role="alert"

@@ -63,7 +63,7 @@ export function deriveMentorProjectAttention(
           description:"A team member requested this meeting — review and confirm the time.",
           href:href+"?tab=team",occurredAt:meeting.startsAt.toISOString(),
         });
-      } else if (meeting.status==="SCHEDULED") {
+      } else if ((meeting.status==="SCHEDULED"||meeting.status==="RESCHEDULED")) {
         const delta=meeting.startsAt.getTime()-timestamp;
         if (delta>=0 && delta<=48*60*60*1000) alerts.push({
           projectId:project.projectId,
