@@ -505,7 +505,7 @@ export function RecruiterLeadDetailWorkspace({
                 </div>
                 <label className="block text-sm">Type
                   <select className={input + " mt-1"} value={logType}
-                    onChange={e => setLogType(e.target.value as typeof logType)}>
+                    onChange={e => {setLogType(e.target.value as typeof logType);setLogOutcome("");}}>
                     {ACTIVITY_TYPES.map(type => <option value={type} key={type}>{type}</option>)}
                   </select>
                 </label>
