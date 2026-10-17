@@ -43,7 +43,7 @@ export default async function FacultyAssignmentSubmissionsPage({
       actions={<Link href={"/teacher/report/assignment/"+
         encodeURIComponent(report.assignment.id)+"?deliveryId="+
         encodeURIComponent(report.assignment.deliveryId)}
-        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
         Full Section report
       </Link>} />
     <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
@@ -74,17 +74,17 @@ export default async function FacultyAssignmentSubmissionsPage({
       {(["ALL","PUBLISHED","PRIVATE"] as const).map(mode=>
         <Link key={mode} href={facultySubmissionListHref({...query,publication:mode,page:1})}
           aria-current={query.publication===mode?"page":undefined}
-          className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
           {mode==="ALL"?"All grades":mode==="PUBLISHED"?"Published grades":"Private grades"}
         </Link>)}
     </nav>
     <nav aria-label="Submission date order" className="flex flex-wrap gap-2">
       <Link href={facultySubmissionListHref({...query,order:"NEWEST",page:1})}
         aria-current={query.order==="NEWEST"?"page":undefined}
-        className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Newest first</Link>
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Newest first</Link>
       <Link href={facultySubmissionListHref({...query,order:"OLDEST",page:1})}
         aria-current={query.order==="OLDEST"?"page":undefined}
-        className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Oldest first</Link>
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Oldest first</Link>
     </nav>
     <div className="flex flex-wrap items-center justify-between gap-3">
       <p className="text-sm text-body">
