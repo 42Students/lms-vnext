@@ -7,6 +7,7 @@ import {recordSelectionsSchema,releaseSelectionsSchema,summarizeSelectionRelease
 import {tpoWaitlistPromotionSchema,waitlistPreviewToken} from "@/modules/placements/tpo-waitlist-promotion-model";
 import {driveChangeCommandSchema} from "@/modules/placements/tpo-drive-change-request-model";
 import {projectTpoDriveHeader} from "@/modules/placements/tpo-drive-header-model";
+import {DEFAULT_TPO_SHARE_VISIBILITY,projectTpoShareApplicant,type TpoShareApplicant} from "@/modules/placements/tpo-share-projection";
 import {placementReminderDay,placementReminderPreviewToken,tpoRemindNotAppliedSchema} from "@/modules/placements/tpo-remind-not-applied-model";
 import {evaluateTpoDriveCancellation,isIssuedOfferCancelable} from "@/modules/placements/tpo-drive-cancel-model";
 
@@ -117,6 +118,25 @@ describe("TPO drive workspace verified S1 gaps",()=>{
   expect(()=>parseSelectionCsv('Application ID,Result\n"a\nb",PASS',true,1000)).toThrow(/Multiline/);
   expect(()=>parseSelectionCsv('Application ID,Result\na,PASS\n\n',true,1000)).toThrow(/blank/);
   expect(()=>parseSelectionCsv('Application ID,Result\n"a"junk,PASS',true,1000)).toThrow(/closing/);
+ });
+
+ it("TPO-drive-workspace-65 redacts nonhired learner contacts and documents after ninety days",()=>{
+  const applicant:TpoShareApplicant={applicantId:"a",stage:"SHORTLISTED",firstName:"Student",lastName:"One",
+   roll:"123",branch:"CSE",email:"learner@example.edu",phone:"+919999999999",
+   resumeUrl:"https://private.example/resume",githubUrl:"https://github.com/learner",portfolioUrl:null,
+   skillMatchScore:null,marks:{},hiredOnDrive:false};
+  const columns=["name","email","phone","resume","projects","stage"];
+  const old=projectTpoShareApplicant({applicant,requestedColumns:columns,
+   visibility:DEFAULT_TPO_SHARE_VISIBILITY,driveClosedAt:new Date("2099-01-01T00:00:00Z"),
+   now:new Date("2099-05-01T00:00:00Z")});
+  expect(old).toMatchObject({applicantId:"a",name:"Student One",stage:"SHORTLISTED"});
+  expect(old).not.toHaveProperty("email");
+  expect(old).not.toHaveProperty("resume");
+  const hired=projectTpoShareApplicant({applicant:{...applicant,hiredOnDrive:true},
+   requestedColumns:columns,visibility:DEFAULT_TPO_SHARE_VISIBILITY,
+   driveClosedAt:new Date("2099-01-01T00:00:00Z"),now:new Date("2099-05-01T00:00:00Z")});
+  expect(hired?.email).toBe("learner@example.edu");
+  expect(hired?.phone).toBe("+919999999999");
  });
 
 });
