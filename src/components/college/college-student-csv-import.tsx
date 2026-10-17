@@ -143,7 +143,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
           </tr>)}</tbody>
         </table> : <p className="text-sm text-body">No row-level results are available.</p>}
       </div>
-      {report.preview && report.valid > 0 && report.structuralErrors.length === 0 ? <div className="space-y-3">
+      {report.preview && report.valid > 0 && report.invalid === 0 && report.structuralErrors.length === 0 ? <div className="space-y-3">
         <label className="flex items-start gap-2 text-sm text-body">
           <input type="checkbox" checked={confirm} onChange={event => setConfirm(event.target.checked)}
             className="mt-1" />
