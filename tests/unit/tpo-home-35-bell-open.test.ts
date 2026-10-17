@@ -14,7 +14,10 @@ describe("TPO-home-35 / TPO-inbox-team-61 bell open and acknowledge",()=>{
   const panel=readFileSync("src/components/tpo/tpo-bell-panel.tsx","utf8");
   expect(panel).toContain('"/api/tpo/notifications/"+encodeURIComponent(item.id)+"/read"');
   expect(panel).toContain('onClick={()=>void openItem(item)}');
-  expect(panel.indexOf("if(!response.ok)throw new Error")).toBeGreaterThan(-1);
+  expect(panel).toContain("await apiFetch(");
+  expect(panel).toContain('method:"POST",credentials:"same-origin",timeoutMs:12000');
+  expect(panel).toContain("}catch(reason){");
+  expect(panel).toContain("return;");
   expect(panel).toContain("if(href)router.push(href)");
   expect(panel).toContain("setReadIds(ids=>ids.includes(item.id)?ids:[...ids,item.id])");
  });
