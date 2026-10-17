@@ -462,11 +462,11 @@ export function FacultyCourseWorkspace({
           value={summary.lessons}
           detail="Active lessons in the current learning path."
         />
-        <Metric
-          label="Content"
-          value={summary.contents}
-          detail="Shared and Section-specific lesson content."
-        />
+        <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")+"?filter=LECTURES"}
+          className="rounded-lg focus-visible:outline-2 focus-visible:outline-primary">
+          <Metric label="Content" value={summary.contents}
+            detail="Browse lectures and section materials →"/>
+        </Link>
         <Metric
           label="Assignments"
           value={summary.assignments}
