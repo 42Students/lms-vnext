@@ -56,7 +56,7 @@ export function CollegeAssignmentReview({
      setProgress(published+" published, "+failed+" failed");
     }
    }
-   setRetryAllowed(failed>0);
+   setFailedIds([...failedRows]);setRetryAllowed(failed>0);
    setBulkStatus(published+" grade(s) published"+
     (failed?"; "+failed+" failed. Review and retry the remaining grades.":"."));
    router.refresh();
