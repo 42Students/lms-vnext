@@ -8,13 +8,15 @@ export function toTpoRequestsPageCsv(rows:readonly TpoExportRequestRow[]):string
  return [columns,...rows.map(r=>[r.id,r.studentName,r.rollNumber??"",r.branchName??"",r.requestType,r.status,r.jobTitle,r.companyName,r.requestedAt.toISOString(),r.reason??"",r.decisionNote??"",r.decidedBy??"",r.decidedAt?.toISOString()??""])]
   .map(row=>row.map(v=>csvCell(v)).join(",")).join("\r\n")+"\r\n";
 }
-export function tpoRequestsExportHref(query:{status:string;requestType:string;sort:string;age:string;search:string;page:number;pageSize:number}):string{
+export function tpoRequestsExportHref(query:{status:string;requestType:string;sort:string;age:string;search:string;page:number;pageSize:number;urgentOnly?:boolean;jobId?:string}):string{
  const p=new URLSearchParams();
  p.set("status",query.status);
  p.set("requestType",query.requestType);
  p.set("sort",query.sort);
  p.set("age",query.age);
  if(query.search)p.set("search",query.search);
+ if(query.urgentOnly)p.set("urgentOnly","true");
+ if(query.jobId)p.set("jobId",query.jobId);
  p.set("page",String(query.page));p.set("pageSize",String(query.pageSize));
  return "/api/placements/tpo/requests/export?"+p.toString();
 }
