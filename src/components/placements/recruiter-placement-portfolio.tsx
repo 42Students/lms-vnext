@@ -8,10 +8,11 @@ type RecruiterJobs = Awaited<
 >;
 
 export function RecruiterPlacementPortfolio({
-  jobs, returnTo,
+  jobs, returnTo, counts,
 }: {
   jobs: RecruiterJobs;
   returnTo?: string;
+  counts?:Record<string,{sharedApplicants:number;offers:number}>;
 }) {
   if (jobs.length === 0) {
     return (
@@ -72,6 +73,10 @@ export function RecruiterPlacementPortfolio({
               </p>
               <p className="mt-3 line-clamp-2 text-sm leading-6 text-body">
                 {item.job.description}
+              </p>
+              <p className="mt-2 flex flex-wrap gap-3 text-sm text-foreground">
+                <span>{counts?.[item.job.id]?.sharedApplicants??0} shared applicants</span>
+                <span>{counts?.[item.job.id]?.offers??0} offers</span>
               </p>
               <p className="mt-2 text-sm text-body">
                 Next: {item.job.status==="CLOSED"

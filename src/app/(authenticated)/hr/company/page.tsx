@@ -8,6 +8,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasActiveRecruiter } from "@/modules/identity/context";
 import { getRecruiterCompanyTeam } from "@/modules/placements/recruiter-company-team-service";
+import { recruiterTeamAttributedDriveCounts } from "@/modules/placements/recruiter-team-drive-count-service";
 import { hrTeamSearchSchema, searchHrTeam } from "@/modules/placements/hr-team-search-model";
 import {hrTeamRosterMessage} from "@/modules/placements/hr-team-roster-message-model";
 import {hrTeamPageSchema,hrTeamPage} from "@/modules/placements/hr-team-pagination-model";
@@ -91,6 +92,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
 
   const jobs = await listOwnRecruiterPlacementJobs(context);
   const overview = buildRecruiterCompanyOverview(jobs, result.grant.collegeId, result.company.relationshipId);
+  const attributedDriveCounts=await recruiterTeamAttributedDriveCounts(context,result.grant.collegeId,result.company.relationshipId,jobs);
   const matchingTeam = searchHrTeam(result.team,teamQuery.data);
   const teamPageResult = hrTeamPage(matchingTeam,teamPage.data);
   const base = "/hr/company?collegeId=" + encodeURIComponent(result.grant.collegeId);
@@ -244,6 +246,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
                       {member.isYou ? <span className="ml-2 text-xs text-primary">You</span> : null}
                     </div>
                       <div className="mt-1 text-sm text-muted-foreground">{member.email ?? "Email not available"}</div>
+                      <p className="mt-1 text-xs text-muted-foreground">{attributedDriveCounts[member.userId]??0} drive(s) here</p>
                     </div>
                   </div>
                   <div className="text-sm text-muted-foreground">{member.title ?? "Recruiter"}</div>
