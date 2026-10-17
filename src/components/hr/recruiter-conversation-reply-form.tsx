@@ -1,10 +1,12 @@
 "use client";
 import {useEffect,useRef,useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
 import {hrReplySuccess,hrReplyErrorMessage} from "@/modules/placements/hr-conversation-send-feedback-model";
 export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
  const router=useRouter();
+ const {run:runGuarded}=useGuardedAction({timeoutMs:15000});
  const formRef=useRef<HTMLFormElement>(null);
  const [body,setBody]=useState("");
  const [sending,setSending]=useState(false);
@@ -56,9 +58,10 @@ export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
   try{
    const form=new FormData();
    form.set("body",message);
-   const response=await fetch("/api/placements/recruiter/conversations/"+threadId+"/reply",{
+   const response=await runGuarded(()=>fetch("/api/placements/recruiter/conversations/"+threadId+"/reply",{
     method:"POST",body:form,credentials:"same-origin",
-   });
+   }));
+   if(!response)throw new Error("REPLY_UNCONFIRMED");
    const redirectPath=new URL(response.url).pathname;
    confirmed=hrReplySuccess({status:response.status,redirected:response.redirected,
     redirectPath,threadId});
