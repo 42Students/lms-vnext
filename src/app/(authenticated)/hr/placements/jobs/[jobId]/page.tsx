@@ -589,7 +589,9 @@ export default async function HrPlacementJobPage({
           </Link>
 </div>}
           <p className="mt-1 text-sm text-body">
-            Stage employer outcomes here. The college placement team retains final apply authority.
+            {driveOverview.readOnly
+              ? "Historical hiring rounds and applied outcomes remain readable. New results and interview slots are disabled."
+              : "Stage employer outcomes here. The college placement team retains final apply authority."}
           </p>
         </div>
         {filters.tab==="rounds"?<section className="mb-5 space-y-3 rounded-xl border border-border bg-surface p-4 sm:p-5">
