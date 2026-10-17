@@ -40,6 +40,7 @@ export function RecruiterBulkOwnerControls({
   const [reviewOpen,setReviewOpen]=useState(false);
 
   const assignable = rows;
+  const retryable=results.filter(item=>item.status==="ineligible"&&assignable.some(row=>row.id===item.leadId));
   const selections = assignable
     .filter((lead) => chosen.includes(lead.id))
     .map((lead) => ({
@@ -164,7 +165,7 @@ export function RecruiterBulkOwnerControls({
                 disabled={busy}
               >
                 <option value="">Choose an active placement staff member</option>
-                {owners.map((item) => (
+                {[...owners].sort((a,b)=>(a.displayName??"").localeCompare(b.displayName??"")||a.membershipId.localeCompare(b.membershipId)).map((item) => (
                   <option key={item.membershipId} value={item.membershipId}>
                     {item.displayName ?? "Unnamed staff member"}
                   </option>
@@ -224,6 +225,11 @@ export function RecruiterBulkOwnerControls({
           {tpoBulkFailedLines(results).length>0?<button type="button"
             className={fieldClass+" mt-2"} onClick={()=>void copyFailed()}>Copy failed</button>:null}
           {copyNotice?<p role="status" className="text-xs text-body">{copyNotice}</p>:null}
+          {retryable.length>0?<button type="button" disabled={busy} className={fieldClass+" mt-2"}
+            onClick={()=>{setChosen(retryable.slice(0,100).map(item=>item.leadId));setReviewOpen(false);setError("");
+              setCopyNotice("Failed rows selected for review. Refresh owners and leads before retrying.");}}>
+            Select failed for review ({retryable.length})
+          </button>:null}
           <ul className="mt-2 max-h-36 overflow-auto text-xs text-body">
             {results.map((item) => (
               <li key={item.leadId}>

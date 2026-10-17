@@ -52,6 +52,8 @@ export function filterEngageRoster<T extends EngageRosterRow>(
     .includes(filters.designation.toLowerCase()))return false;
   if(filters.reach==="EMAIL"&&!row.emailNorm)return false;
   if(filters.reach==="PHONE"&&!row.phoneNorm)return false;
+  if(filters.reach==="BOTH"&&!(row.emailNorm&&row.phoneNorm))return false;
+  if(filters.reach==="EITHER"&&!(row.emailNorm||row.phoneNorm))return false;
   if(filters.reach==="NEITHER"&&(row.emailNorm||row.phoneNorm))return false;
   if(filters.nextFollowup&&filters.nextFollowup!=="ALL"&&
     !isInRange(row.nextFollowupAt,filters.nextFollowup,now))return false;

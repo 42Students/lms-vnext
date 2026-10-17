@@ -193,10 +193,9 @@ export function PublicRecruiterJoinForm({
                       className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
                       Join {college} placements
                     </button>
-                    <button type="button" disabled={pending} onClick={() => {
-                      setSentTo("");
-                      setCode("");
-                    }} className="min-h-11 rounded-md border border-border px-4 font-semibold text-foreground">
+                    <button type="button" disabled={pending}
+                      onClick={()=>void sendCode()}
+                      className="min-h-11 rounded-md border border-border px-4 font-semibold text-foreground">
                       Send a new code
                     </button>
                   </div>

@@ -324,7 +324,8 @@ export async function getTpoCompanyMemory(
       : await getDb()
           .select()
           .from(placementTpoLeadActivities)
-          .where(inArray(placementTpoLeadActivities.leadId, leadIds))
+          .where(and(eq(placementTpoLeadActivities.collegeId,rows.collegeId),
+            inArray(placementTpoLeadActivities.leadId, leadIds)))
           .orderBy(
             desc(placementTpoLeadActivities.createdAt),
             desc(placementTpoLeadActivities.id),

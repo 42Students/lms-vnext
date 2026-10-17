@@ -43,6 +43,7 @@ export function RecruiterBulkStageControls({
     ["NEW", "CONTACTED", "NOT_NOW"].includes(row.manualStage),
   );
   const selected = available.filter((row) => chosenIds.includes(row.id));
+  const retryable=results.filter(item=>item.status==="ineligible"&&available.some(row=>row.id===item.leadId));
   const isValid = selected.length > 0 && selected.length <= 100 &&
     (action !== "NOT_NOW" || (reason.trim().length > 0 && reason.trim().length <= 255));
 
@@ -225,6 +226,11 @@ export function RecruiterBulkStageControls({
               onClick={()=>void copyFailed()}>Copy failed</button>
           ):null}
           {copyNotice?<p role="status" className="text-xs text-body">{copyNotice}</p>:null}
+          {retryable.length>0?<button type="button" disabled={busy} className={fieldClass+" mt-2"}
+            onClick={()=>{setChosenIds(retryable.slice(0,100).map(item=>item.leadId));setReviewOpen(false);setError("");
+              setCopyNotice("Failed rows selected for review. Check their current stage after refreshing before retrying.");}}>
+            Select failed for review ({retryable.length})
+          </button>:null}
           <p className="text-sm text-body">
             Updated: {results.filter((item) => item.status === "updated").length};
             unchanged: {results.filter((item) => item.status === "unchanged").length};

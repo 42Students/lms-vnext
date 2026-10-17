@@ -16,6 +16,7 @@ export function sortEngageRows<T extends {id:string;name:string;createdAt:string
  return [...rows].sort((a,b)=>{
   if(by==="NAME")return (ascending?1:-1)*a.name.localeCompare(b.name)||a.id.localeCompare(b.id);
   const x=dateValue(a),y=dateValue(b);
+  if(!x&&!y)return a.id.localeCompare(b.id);
   if(!x)return 1;
   if(!y)return -1;
   const difference=new Date(x).getTime()-new Date(y).getTime();
