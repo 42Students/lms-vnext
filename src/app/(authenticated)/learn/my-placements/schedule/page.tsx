@@ -87,8 +87,11 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
         </Link>)}
       </nav>
       {view==="coming"?<section className="space-y-3" aria-label="Coming up">
-        <h2 className="text-lg font-semibold text-foreground">Coming up ({ahead.length})</h2>
-        {ahead.length === 0 ? <p className="text-body">Nothing coming up. When a company&apos;s round is planned and the placement cell books you, it shows here.</p> : null}
+        <h2 className="text-lg font-semibold text-foreground">Coming up ({ahead.length} dated)</h2>
+        {ahead.length === 0 && undated.length === 0 ? <p className="text-body">Nothing coming up. When a company&apos;s round is planned, it shows here.</p> : null}
+        {ahead.length === 0 && undated.length > 0 ? <p role="status" className="text-sm text-body">
+          {undated.length} upcoming round(s) have no confirmed time yet. Check the details below.
+        </p> : null}
         {ahead.map(row => <article key={row.roundId+":"+row.applicationId} className="rounded-xl border border-border bg-surface p-4">
           <p className="mb-1 text-xs font-semibold uppercase text-primary-text">{dayLabel(row.exception?.scheduledAt??row.scheduledAt)}</p>
           <h3 className="font-semibold text-foreground">{row.roundName} · {row.companyName}</h3>
