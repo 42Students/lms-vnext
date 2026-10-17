@@ -96,7 +96,9 @@ export function LearnerAddOwnTask({projectId,sprints}:{projectId:string;sprints:
        Explain what's blocking this task before saving.</p>:null}
    {error?<p role="alert" className="text-sm text-error sm:col-span-2">{error}</p>:null}
    <div className="flex flex-wrap gap-2 sm:col-span-2">
-    <button type="submit" disabled={busy||!title.trim()}
+    <button type="submit" disabled={busy||!title.trim()||
+      (status==="BLOCKED"&&!blockerReason.trim())||
+      (estimate!==""&&(!Number.isInteger(Number(estimate))||Number(estimate)<0||Number(estimate)>1000))}
      className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">
      {busy?"Saving…":"Add task"}</button>
     <button type="button" disabled={busy} onClick={()=>setOpen(false)}
