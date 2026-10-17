@@ -83,6 +83,32 @@ export function HrDriveDraftForm({
     }catch{/* Browser storage unavailable */ }
   },[storageKey,fixRequestId,sourceJobId]);
 
+  // REC-home-drives-32: the browser cannot quietly throw away an active
+  // edit or Hire Again draft. Unsubmitted data stays on this device.
+  useEffect(()=>{
+    if((!fixRequestId&&!sourceJobId)||submittedRef.current||
+       !hrDraftContainsWork(draft)||JSON.stringify(draft)===JSON.stringify(initial))return;
+    const beforeUnload=(event:BeforeUnloadEvent)=>{
+      event.preventDefault();
+      event.returnValue="";
+    };
+    const linkGuard=(event:MouseEvent)=>{
+      const target=event.target instanceof Element?event.target.closest("a[href]"):null;
+      if(!target||event.defaultPrevented||event.ctrlKey||event.metaKey||event.altKey||event.shiftKey)return;
+      const href=target.getAttribute("href");
+      if(!href||href.startsWith("#"))return;
+      try{
+        const destination=new URL(href,window.location.href);
+        if(destination.origin!==window.location.origin)return;
+        if(destination.pathname===window.location.pathname&&destination.search===window.location.search)return;
+        if(!window.confirm("Leave without these changes?"))event.preventDefault();
+      }catch{/* Malformed navigation is handled by the browser. */}
+    };
+    window.addEventListener("beforeunload",beforeUnload);
+    document.addEventListener("click",linkGuard,true);
+    return ()=>{window.removeEventListener("beforeunload",beforeUnload);document.removeEventListener("click",linkGuard,true);};
+  },[draft,initial,fixRequestId,sourceJobId]);
+
   // REC-home-drives-29: scope the draft to this signed-in user and college.
   useEffect(()=>{
     if(fixRequestId)return;
