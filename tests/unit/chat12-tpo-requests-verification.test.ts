@@ -24,9 +24,19 @@ describe("Chat-12 TPO Requests gap closure",()=>{
  });
  it("TPO-requests-verification-04 sends learner decision notifications inside the recorded transaction",()=>{
   const source=read("src/modules/placements/request-service.ts");
-  expect(source).toContain('title: "Your request was answered"');
-  expect(source).toContain('actionHref: "/learn/my-placements/support"');
+  // The recorded decision event is delivered inside the same transaction;
+  // only active scoped learners who allow application updates receive it.
   expect(source).toContain('if (nextStatus !== "CANCELLED")');
+  expect(source).toContain("deliverRecordedLearnerPlacementEvent(tx,{");
+  expect(source).toContain("eventId:decisionEvent.id");
+  expect(source).toContain('kind:request.requestType==="ROUND_RESCHEDULE"?"RESCHEDULE_DECIDED":"REQUEST_DECIDED"');
+  const dispatch=read("src/modules/placements/learner-placement-event-delivery.ts");
+  expect(dispatch).toContain("deliverInAppNotificationInTransaction(tx,input.eventId,[row.userId],message)");
+  expect(dispatch).toContain("eq(collegeMemberships.collegeId,input.collegeId)");
+  expect(dispatch).toContain("row.applications!==false");
+  const copy=read("src/modules/placements/learner-placement-event-copy.ts");
+  expect(copy).toContain('REQUEST_DECIDED:"Placement request reviewed"');
+  expect(copy).toContain('REQUEST_DECIDED:"/learn/my-placements/placement#requests"');
  });
  it("TPO-requests-verification-09 shows roll, branch, after-college choice and placed state",()=>{
   const source=read("src/app/(authenticated)/tpo/requests/page.tsx");
