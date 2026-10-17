@@ -17,6 +17,8 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
 }){
  const router=useRouter();
  const [selected,setSelected]=useState<VerificationQueueCard|null>(null);
+ const [sequence,setSequence]=useState<VerificationQueueCard[]>([]);
+ const [sequenceIndex,setSequenceIndex]=useState(0);
  const [selectedKeys,setSelectedKeys]=useState<string[]>([]);
  const [bulkAction,setBulkAction]=useState<"VERIFY"|"SEND_BACK"|null>(null);
  const [reason,setReason]=useState("");
@@ -24,6 +26,13 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
  const [bulkBusy,setBulkBusy]=useState(false);
  const [bulkMessage,setBulkMessage]=useState("");
  const candidates=rows.filter(row=>row.status==="SUBMITTED"||row.status==="UPDATE_PENDING");
+ const inSequence=selected&&sequence.length>0&&sequence[sequenceIndex]&&
+  verificationSelectionKey(selected)===verificationSelectionKey(sequence[sequenceIndex]);
+ const nextInSequence=()=>{
+  if(sequenceIndex+1<sequence.length){setSequenceIndex(i=>i+1);setSelected(sequence[sequenceIndex+1]);}
+  else{setSequence([]);setSequenceIndex(0);setSelected(null);}
+ };
+ const stopSequence=()=>{setSequence([]);setSequenceIndex(0);setSelected(null);};
  const chosen=candidates.filter(row=>selectedKeys.includes(verificationSelectionKey(row)));
  const skipped=bulkAction==="VERIFY"?chosen.filter(row=>row.missingMarksheet):[];
  const applicable=bulkAction==="VERIFY"?chosen.filter(row=>!row.missingMarksheet):chosen;
@@ -54,6 +63,14 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
    <VerificationExportControl url="/api/admin/verification/export" filename="super-admin-profile-verification.csv" query={{...query,collegeId}}/>
    <button type="button" onClick={()=>router.refresh()} className="min-h-10 rounded-md border px-3 text-sm">Refresh</button>
   </div>
+  {activeTab==="WAITING"&&candidates.length>0?<div className="flex flex-wrap gap-3">
+   <button type="button" onClick={()=>{
+    const picks=candidates.slice(0,20);setSequence(picks);setSequenceIndex(0);setSelected(picks[0]??null);
+   }} className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold">
+    Review one by one ({Math.min(20,candidates.length)})
+   </button>
+   <p className="self-center text-xs text-muted-foreground">Review up to 20 waiting requests on this page. Each decision keeps its own audit history.</p>
+  </div>:null}
   {activeTab==="WAITING"&&candidates.length>0?<section aria-label="Super Admin bulk verification" className="space-y-3 rounded-xl border border-border p-4">
    <h2 className="font-semibold">Act on selected verification requests</h2>
    <p role="status" className="text-sm">{chosen.length} of 20 requests selected on this page.</p>
@@ -99,7 +116,7 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
    initialTab={activeTab} initialKind={initialKind}
    onTabChange={tab=>navigate({tab,page:"1"})}
    onKindChange={kind=>navigate({kind:kind==="ALL"?"":kind,page:"1"})}
-   onReview={row=>setSelected(row)}/>
+   onReview={row=>{setSequence([]);setSequenceIndex(0);setSelected(row);}}/>
   <nav aria-label="Verification pages" className="flex flex-wrap gap-3 text-sm">
    <span>Showing {rows.length} of {total} in this status</span>
    {page>1?<button type="button" onClick={()=>navigate({page:String(page-1)})} className="underline">Previous</button>:null}
@@ -107,7 +124,13 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
   </nav>
   {selected?<VerificationReviewDrawer key={selected.learnerMembershipId+selected.section}
    row={selected} apiBase="/api/admin/verification"
-   collegeId={collegeId} onClose={()=>setSelected(null)}
-   onSaved={()=>{setSelected(null);router.refresh();}}/>:null}
+   collegeId={collegeId} onClose={stopSequence}
+   sequenceProgress={inSequence?(sequenceIndex+1)+" of "+sequence.length:undefined}
+   onNext={inSequence?nextInSequence:undefined}
+   onFinish={inSequence?stopSequence:undefined}
+   onSaved={()=>{
+    if(inSequence)nextInSequence();else setSelected(null);
+    router.refresh();
+   }}/>:null}
  </div>;
 }
