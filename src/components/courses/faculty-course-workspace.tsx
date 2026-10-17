@@ -151,7 +151,7 @@ function ContentItem({
         contentId={item.id} deliveryId={item.deliveryId} editable={Boolean(item.deliveryId)}/>:null}
       {item.deliveryId ? (
         <div className="mt-3 flex flex-wrap items-start gap-2">
-          {item.contentType !== "VIDEO" ? (
+          {(
             <FacultyContentEditor
               item={{
                 id: item.id,
