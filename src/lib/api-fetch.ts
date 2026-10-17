@@ -16,6 +16,7 @@ export class FriendlyFetchError extends Error {
     public readonly code: string | null = null,
     public readonly requestId: string | null = null,
     public readonly fieldErrors: Record<string, string> = {},
+    public readonly retryAfterSeconds: number | null = null,
   ) {
     super(message);
     this.name = "FriendlyFetchError";
@@ -74,9 +75,13 @@ export async function apiFetch<T = unknown>(
         : typeof body.code === "string" ? body.code : null;
       const requestId = isRequestId(body.requestId) ? body.requestId
         : isRequestId(headerId) ? headerId : null;
+      const rawRetry = typeof body.retryAfterSeconds === "number"
+        ? body.retryAfterSeconds : Number(response.headers.get("Retry-After"));
+      const retryAfterSeconds = Number.isInteger(rawRetry) && rawRetry >= 1 && rawRetry <= 3600
+        ? rawRetry : null;
       throw new FriendlyFetchError(
         friendlyApiError({ status: response.status, code }), response.status,
-        code, requestId, safeFields(body.fieldErrors),
+        code, requestId, safeFields(body.fieldErrors), retryAfterSeconds,
       );
     }
     return payload as T;
