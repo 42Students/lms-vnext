@@ -265,16 +265,14 @@ export function AdminAttendanceWorkspace({
         },
       );
       if (!response.ok) {
-        const body = await response
-          .json()
-          .catch(() => null);
+        // Do not echo provider, SQL or framework messages from the API body.
         setError(
           response.status===409
             ? "This changed while you were working. Refresh the attendance grid and re-apply the correction."
             :response.status===403
             ? "You do not have access to correct this attendance. Ask a college administrator."
-            :typeof body?.message==="string" && !/^[A-Z0-9_]{6,}$/.test(body.message)
-            ? body.message
+            :response.status===429
+            ? "Too many changes were requested. Try again shortly."
             : "Attendance could not be corrected. Check the record and retry.",
         );
         return;
