@@ -1,5 +1,5 @@
 "use client";
-import {useEffect,useState} from "react";
+import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Dialog} from "@/components/ui/dialog";
@@ -15,7 +15,6 @@ export function ProjectDeliveryReopenControl({projectId,submissionId,expectedUpd
   const router=useRouter();
   const {showToast}=useToast();
   const [open,setOpen]=useState(false);
-  const [confirmDiscard,setConfirmDiscard]=useState(false);
   const [reason,setReason]=useState("");
   const [pending,setPending]=useState(false);
   const [error,setError]=useState<string|null>(null);
