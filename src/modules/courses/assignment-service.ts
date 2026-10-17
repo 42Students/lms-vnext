@@ -290,8 +290,8 @@ export async function updateCourseAssignment(
   }
 
   if (
-    input.maxPoints !== undefined &&
-    input.maxPoints !== current.maxPoints
+    input.allowedMethods !== undefined ||
+    (input.maxPoints !== undefined && input.maxPoints !== current.maxPoints)
   ) {
     const [submission] = await getDb()
       .select({ id: assignmentSubmissions.id })
@@ -336,6 +336,8 @@ export async function updateCourseAssignment(
               maxPoints: input.maxPoints,
             }
           : {}),
+        ...(input.allowedMethods!==undefined?
+          {allowedSubmissionMethods:input.allowedMethods}:{}),
         ...(input.sequence !== undefined
           ? { sequence: input.sequence }
           : {}),
