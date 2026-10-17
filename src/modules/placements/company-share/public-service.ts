@@ -11,15 +11,17 @@ import {companyShareTablesReady} from "./readiness";
 import {placementTableExists} from "../staged-tables";
 import {placementCompanyShareSelections as selectedShares} from "@/db/schema/placement-company-share-selection";
 import {placementCompanyApplicantShares as shares,placementCompanyApplicantShareViews as views} from "@/db/schema/placement-company-shares";
-import {companyShareTokenSchema,hashCompanyShareToken} from "./token-model";
+import {companyShareTokenSchema,hashCompanyShareToken,companyShareAccessProof,validCompanyShareAccessProof} from "./token-model";
 import {publicApplicantSearchSchema,escapeLiteralApplicantSearch,clampCompanySharePage} from "./public-filter-model";
 
 const pageSchema=z.coerce.number().int().min(1).max(10000);
 export type PublicCompanyApplicantShare =
  | {kind:"UNAVAILABLE"}
+ | {kind:"CODE_REQUIRED"}
  | {kind:"READY";title:string;companyName:string;collegeName:string;
     sharedAt:string;expiresAt:string;rows:ReturnType<typeof projectRecruiterVisibleShortlist>;
-    total:number;page:number;totalPages:number;truncated:boolean;search:string};
+    total:number;page:number;totalPages:number;truncated:boolean;search:string;
+    selectedColumns:string[];shortlistBy:string|null};
 
 /**
  * No authenticated user context: the 256-bit opaque token is the sole capability.
@@ -28,7 +30,7 @@ export type PublicCompanyApplicantShare =
  * this response's audited read finishes. Evaluate expiry on the DB clock after\n * acquiring the row lock, never against a clock sampled before lock waiting.\n * Audit failures deny the response.
  */
 export async function getPublicCompanyApplicantShare(
- token:unknown,rawPage:unknown=1,eventKind:"VIEW"|"CSV"="VIEW",rawSearch:unknown="",
+ token:unknown,rawPage:unknown=1,eventKind:"VIEW"|"CSV"="VIEW",rawSearch:unknown="",rawProof:unknown=null,
 ):Promise<PublicCompanyApplicantShare>{
  const valid=companyShareTokenSchema.safeParse(token);
  const page=pageSchema.safeParse(rawPage);
@@ -40,6 +42,8 @@ export async function getPublicCompanyApplicantShare(
    shareId:shares.id,collegeId:shares.collegeId,jobId:shares.jobId,
    title:placementJobs.title,companyName:placementCompanies.name,collegeName:colleges.name,
    sharedAt:shares.createdAt,expiresAt:shares.expiresAt,
+   tokenHash:shares.tokenHash,codeHash:shares.codeHash,lockedUntil:shares.lockedUntil,
+   selectedColumns:shares.selectedColumns,shortlistBy:shares.shortlistBy,
   }).from(shares)
    .innerJoin(placementJobs,and(eq(placementJobs.id,shares.jobId),
      eq(placementJobs.collegeId,shares.collegeId)))
@@ -57,6 +61,11 @@ export async function getPublicCompanyApplicantShare(
       inArray(placementJobs.status,["PUBLISHED","CLOSED"])))
    .limit(1).for("share",{of:shares});
   if(!grant)return {kind:"UNAVAILABLE" as const};
+  // No applicant, column or audit query before BOTH challenges are satisfied.
+  const signed=companyShareAccessProof(grant.shareId,grant.tokenHash,grant.codeHash);
+  if(grant.lockedUntil&&grant.lockedUntil.getTime()>Date.now()||
+    !validCompanyShareAccessProof(rawProof,signed))
+    return {kind:"CODE_REQUIRED" as const};
   const selectionReady=await placementTableExists("placement_company_share_selections");
   const selected=selectionReady?await tx.select({applicationId:selectedShares.applicationId})
     .from(selectedShares).where(eq(selectedShares.shareId,grant.shareId)):[];
@@ -100,6 +109,7 @@ export async function getPublicCompanyApplicantShare(
    rows:projectRecruiterVisibleShortlist(records),
    total,page:isCsv?1:pagination.page,totalPages:pagination.totalPages,
    truncated:isCsv&&total>500,search:search.data,
+   selectedColumns:grant.selectedColumns,shortlistBy:grant.shortlistBy?.toISOString()??null,
   };
  });
 }
