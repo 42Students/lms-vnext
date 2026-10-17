@@ -187,3 +187,11 @@ These 24 formerly `FIXED-ON-MAIN` rows already have named ID regression tests an
 | TPO-drive-workspace-71 | DONE (source-verified; tests not run by lane) | Focused applicant modal already implements S/R decision keys, arrows between applicants, Ctrl+Enter reviewed submit; TPO keyboard Drawer (?) lists these shortcuts. | 
 
 `TPO-drive-workspace-71` named regression: `tests/unit/tpo-drive-workspace-71-chat5.test.ts`. Other named tests predate this reconciliation in `tests/unit/tpo-drive-workspace-s1-gap-closure.test.ts`, `tests/unit/tpo-drive-workspace-s2-round2.test.ts`, and `tests/unit/tpo-drive-workspace-s2-evidence-contracts.test.ts`.
+
+## Chat-5 applicant spreadsheet resiliency (2026-10-17)
+
+| ID | Status | Evidence |
+|---|---|---|
+| TPO-drive-workspace-22 | OPEN (runtime join fixed) | `src/modules/placements/tpo-applicant-pipeline-service.ts` now joins the academic evidence table used by the selected marks and backlog columns, avoiding an invalid unbound SQL table. `tests/unit/tpo-drive-applicant-partials-chat5.test.ts` — `TPO-drive-workspace-22 joins candidate academic evidence before selecting marks`. Class, gender, resumes and company IDs remain incomplete. |
+| TPO-drive-workspace-23 | OPEN (additional URL filters) | Spreadsheet filters now expose server-backed flag and rolling application-window filters and remember selected column layouts locally. `tests/unit/tpo-drive-applicant-partials-chat5.test.ts` — `TPO-drive-workspace-23 exposes server validated flag and applied window filters`. Full saved views and legacy specialist filters remain open. |
+| TPO-drive-workspace-72 | OPEN (mobile improvements) | Small-screen spreadsheet now uses the existing bottom-sheet filter treatment and collapsible row actions/detail cards. `tests/unit/tpo-drive-applicant-partials-chat5.test.ts` — `TPO-drive-workspace-72 collapses mobile actions and filters`. Entire drive actions window remains open. |
