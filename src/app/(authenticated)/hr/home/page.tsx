@@ -21,6 +21,7 @@ import { hrTodayConversationSignals } from "@/modules/placements/hr-today-conver
 import { hrConversationsHref } from "@/modules/placements/hr-conversation-urls-model";
 import { hrTodayUnreadAction } from "@/modules/placements/hr-today-unread-model";
 import { buildRecruiterActionQueue } from "@/modules/placements/hr-today-action-queue-model";
+import {listRecruiterTodayChangeRequests} from "@/modules/placements/hr-today-change-request-service";
 import {getRecruiterSelfGrantOverview} from "@/modules/placements/recruiter-self-grants-service";
 import {listOwnRecruiterDriveRequests} from "@/modules/placements/recruiter-drive-request-service";
 import {getRecruiterSelfProfile} from "@/modules/placements/recruiter-profile-service";
@@ -95,10 +96,11 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     ? hrTodayConversationSignals(conversations.items,conversations.total)
     : null;
   const requests = await listOwnRecruiterDriveRequests(context,selectedId);
+  const changeRequests=await listRecruiterTodayChangeRequests(selectedId,collegeJobs.map(row=>row.job.id));
   const actionQueue=buildRecruiterActionQueue({jobs,collegeId:selectedId,companyId:recruiter.companyId,now,
     unread:unreadAction?.value??0,resultsDue:dueResults,
     unreadConversations:conversationSignals?.unread??[],
-    returnedRequests:requests,
+    returnedRequests:requests,changeRequests,
   });
   // Pending formal requests count as drives, even before publication.
   const requestCount=requests.length;
