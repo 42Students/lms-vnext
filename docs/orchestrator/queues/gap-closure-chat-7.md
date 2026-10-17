@@ -120,7 +120,7 @@ Audit: `docs/audit/pages/mentor/projects-meetings.md` (and `projects-meetings-re
 | MEN-projects-meetings-49 | S3 | SIDE-EFFECT | FIXED-ON-MAIN |
 | MEN-projects-meetings-51 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | MEN-projects-meetings-52 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
-| MEN-projects-meetings-R02 | S3 | VALIDATION | OPEN |
+| MEN-projects-meetings-R02 | S3 | VALIDATION | DONE |
 | MEN-projects-meetings-R03 | S3 | VALIDATION | FIXED-ON-MAIN |
 | MEN-projects-meetings-R04 | S3 | STATE | FIXED-ON-MAIN |
 | MEN-projects-meetings-R05 | S3 | STATE | FIXED-ON-MAIN |
