@@ -155,11 +155,11 @@ export function AdminCourseCreatePanel({
     );
   }, [sections, selectedDeliveryOffering]);
 
-  function run(task: () => Promise<unknown>, successTitle: string, reset: () => void, failureTitle = "Course update failed") {
+  function run(task: () => Promise<unknown>, successTitle: string, reset: (result:unknown) => void, failureTitle = "Course update failed") {
     startTransition(async () => {
       try {
-        await task();
-        reset();
+        const result=await task();
+        reset(result);
         showToast({ tone: "success", title: successTitle });
         router.refresh();
       } catch (error) {
