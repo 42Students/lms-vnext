@@ -4,6 +4,7 @@ import {getDb} from "@/db/client";
 import {projectDeliveryEvents,projectEvaluations,projectInstances,projectSubmissions} from "@/db/schema";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {notifyActiveProjectMembers} from "./project-notification-service";
+import {learnerProjectDeliveryReopenedNotice} from "./learner-project-review-notification-model";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireProjectLifecycleMutationAccess} from "./access";
@@ -57,12 +58,11 @@ export async function reopenApprovedProjectDelivery(context:RequestContext,proje
     groupKey:"project:"+scope.project.id+":deliveries",
     dedupeKey:"project-delivery:"+updated.id+":reopened",
   });
+  const notice=learnerProjectDeliveryReopenedNotice(scope.project.id);
   await notifyActiveProjectMembers(tx,event.id,{
     projectId:scope.project.id,collegeId:scope.collegeId,
     roles:["LEARNER"],exceptUserId:context.user.id,
-    title:"Delivery reopened for revision",
-    body:"Final delivery was reopened. Review the feedback and prepare a new version.",
-    actionHref:"/learn/projects/"+scope.project.id+"?tab=delivery",
+    title:notice.title,body:notice.body,actionHref:notice.actionHref,
   });
   return {submissionId:updated.id,projectId:scope.project.id,reopened:true};
  });
