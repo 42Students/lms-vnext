@@ -127,7 +127,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       <option value="IN_REVIEW">In review</option><option value="DONE">Completed</option>
     </select>
    </label>
-   <button type="button" onClick={()=>{setPriority("");setAssignee("");setSprint("");setRelease("");setStatusFilter("");["priority","assignee","sprint","release","lane"].forEach(k=>remember(k,""));}}
+   <button type="button" onClick={()=>{setPriority("");setAssignee("");setSprint("");setRelease("");setStatusFilter("");setScope("current");["priority","assignee","sprint","release","lane","scope"].forEach(k=>remember(k,""));}}
     className="min-h-10 text-sm font-semibold text-primary-text underline">Clear all</button>
   </div>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
