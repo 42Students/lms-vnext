@@ -234,6 +234,7 @@ export async function updateProjectResource(
         "PROJECT_RESOURCE_NOT_FOUND",
       );
     }
+    if(resource.status==="ARCHIVED")throw new ProjectsServiceError("PROJECT_RESOURCE_INVALID_STATE");
 
     const merged =
       createProjectResourceInputSchema.parse({
@@ -291,7 +292,7 @@ export async function updateProjectResource(
         and(
           eq(projectResources.id, resource.id),
           eq(projectResources.projectId, scope.project.id),
-          eq(projectResources.status, "ACTIVE"),
+          eq(projectResources.status, resource.status),
         ),
       )
       .returning();
