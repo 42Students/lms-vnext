@@ -36,7 +36,7 @@ export function recruiterAttentionFromPersistedFacts(input: {
   const chips: RecruiterAttentionChip[] = [];
   if (input.nextFollowupAt && days(input.nextFollowupAt) > 0) chips.push("OVERDUE");
   if (!input.nextFollowupAt && input.stage !== "RECRUITED") chips.push("NO_NEXT_STEP");
-  const quietDays = days(input.lastContactAt ?? input.createdAt);
+  const quietDays = days(input.lastActivityAt ?? input.lastContactAt ?? input.createdAt);
   if (quietDays >= 14) chips.push("QUIET");
   if (input.inviteBouncedAt) chips.push("BOUNCED");
   // Invitation sent to a contact who has not joined remains unverified.
