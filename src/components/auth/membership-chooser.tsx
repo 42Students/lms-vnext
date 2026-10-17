@@ -36,12 +36,17 @@ export function MembershipChooser({
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const [lastUsed,setLastUsed]=useState<string|null>(null);
+  const [selectedId,setSelectedId]=useState<string|null>(null);
   useEffect(()=>{
     let live=true;
     void Promise.resolve().then(()=>{
       if(!live)return;
-      try{setLastUsed(window.sessionStorage.getItem("lms_last_membership_key"));}
+      let stored:string|null=null;
+      try{stored=window.sessionStorage.getItem("lms_last_membership_key");}
       catch{/* Storage may be disabled. */}
+      setLastUsed(stored);
+      setSelectedId(memberships.some(m=>m.id===stored&&m.status==="ACTIVE")
+        ?stored:memberships.find(m=>m.status==="ACTIVE")?.id??null);
     });
     return ()=>{live=false;};
   },[]);
@@ -114,13 +119,21 @@ export function MembershipChooser({
       {active.length===0?<p role="status" className="text-sm text-body">
         No active college memberships. Suspended memberships cannot be selected.
       </p>:null}
-      <div className="grid gap-3 lg:grid-cols-2">
+      <div role="radiogroup" aria-label="Choose where to sign in"
+        className="grid gap-3 lg:grid-cols-2">
         {sorted.map((membership) => (
           <section
             key={membership.id}
-            className="flex flex-col justify-between gap-5 rounded-xl border border-border bg-surface p-5"
+            className={"flex flex-col justify-between gap-5 rounded-xl border bg-surface p-5 "+
+              (membership.id===selectedId?"border-primary":"border-border")}
           >
             <div>
+              <label className="mb-3 flex min-h-11 items-center gap-2 text-sm font-semibold">
+                <input type="radio" name="membership" checked={selectedId===membership.id}
+                  disabled={pending||membership.status!=="ACTIVE"}
+                  onChange={()=>setSelectedId(membership.id)} />
+                Select {membership.collegeName}
+              </label>
               <p className="m-0 text-base font-semibold text-foreground">
                 {membership.collegeName}
               </p>
@@ -140,17 +153,15 @@ export function MembershipChooser({
                 {roleLabel(membership.roles)}
               </p>
             </div>
-            <Button
-              disabled={pending||membership.status!=="ACTIVE"}
-              onClick={() => choose(membership.id)}
-            >
-              {pendingId === membership.id
-                ? "Opening…"
-                : "Continue with this college"}
-            </Button>
+            {membership.status!=="ACTIVE"?<p className="text-xs text-muted-foreground">
+              Contact your college administrator to reactivate this membership.
+            </p>:null}
           </section>
         ))}
       </div>
+      <Button disabled={pending||!selectedId} onClick={()=>{if(selectedId)choose(selectedId);}}>
+        {pending?"Opening…":"Continue with this college"}
+      </Button>
     </div>
   );
 }
