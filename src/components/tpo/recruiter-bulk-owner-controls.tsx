@@ -166,7 +166,7 @@ export function RecruiterBulkOwnerControls({
                 <option value="">Choose an active placement staff member</option>
                 {owners.map((item) => (
                   <option key={item.membershipId} value={item.membershipId}>
-                    {item.displayName ?? "Unnamed staff member"} · {item.membershipId.slice(0, 8)}
+                    {item.displayName ?? "Unnamed staff member"}
                   </option>
                 ))}
               </select>
