@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import {tpoStudentDisplayLabel} from "@/modules/placements/tpo-student-display-label";
 import {useState} from "react";
 import {TpoStudentNoteEditor} from "./tpo-student-note-editor";
 import {TpoStudentOutcomePill} from "./tpo-student-outcome-pill";
@@ -21,18 +22,18 @@ const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"number",label:"Student number",read:row=>row.rollNumber??row.registrationNumber},
  {key:"branch",label:"Branch",read:row=>row.branchName},
  {key:"batch",label:"Batch",read:row=>row.programName+" · "+row.cohortName+(row.fromFinishedBatch?" · From "+row.cohortName:"")},
- {key:"stage",label:"Stage",read:row=>row.journeyState.replaceAll("_"," ")},
+ {key:"stage",label:"Stage",read:row=>tpoStudentDisplayLabel(row.journeyState)},
  {key:"profile",label:"Profile",read:row=>row.verification.status==="UNKNOWN"?"Verification unavailable":row.verification.status==="WAITING"? "Waiting: "+row.verification.waitingSections.join(" / "):row.verification.status==="SENT_BACK"?"Sent back":row.verification.status==="VERIFIED"?"Verified Education and Identity":"Not verified"},
  {key:"cgpa",label:"CGPA",read:row=>row.cgpa},
  {key:"backlogs",label:"Active backlogs",read:row=>row.activeBacklogs},
- {key:"readiness",label:"Readiness evidence",read:row=>row.readinessSignal.replaceAll("_"," ")},
+ {key:"readiness",label:"Readiness evidence",read:row=>tpoStudentDisplayLabel(row.readinessSignal)},
  {key:"registration",label:"Placement registration",read:row=>row.registrationChoice??"Not registered"},
- {key:"participation",label:"Participation",read:row=>row.participationStatus.replaceAll("_"," ")},
- {key:"best",label:"Best so far",read:row=>row.bestSoFar},
+ {key:"participation",label:"Participation",read:row=>tpoStudentDisplayLabel(row.participationStatus)},
+ {key:"best",label:"Best so far",read:row=>tpoStudentDisplayLabel(row.bestSoFar)},
  {key:"applications",label:"Applications",read:row=>row.applicationCount},
  {key:"offers",label:"Offers",read:row=>row.offerCount},
  {key:"offersAwaiting",label:"Offers awaiting answer",read:row=>row.offersAwaitingAnswer},
- {key:"journey",label:"Journey",read:row=>row.journeyState.replaceAll("_"," ")},
+ {key:"journey",label:"Journey",read:row=>tpoStudentDisplayLabel(row.journeyState)},
  {key:"email",label:"Email (export only)",read:row=>row.email,exportOnly:true},
 ];
 const journeys=[
@@ -58,7 +59,7 @@ export function TpoStudentsSpreadsheet({rows,branches,programs,classes,afterColl
  const open=(id:string|null)=>{const q=new URLSearchParams(params.toString());if(id)q.set("student",id);else q.delete("student");router.replace(pathname+(q.size?"?"+q.toString():""),{scroll:false});};
  const displayColumns:readonly TpoGridColumn<TpoStudentRow>[]=[
   ...columns.slice(0,5),
-  {key:"afterCollege",label:"After college",read:row=>afterCollege[row.membershipId]?.outcome?.replaceAll("_"," ")??"Not decided"},
+  {key:"afterCollege",label:"After college",read:row=>afterCollege[row.membershipId]?.outcome?AFTER_COLLEGE_LABELS[afterCollege[row.membershipId].outcome]??"Not decided"},
   ...columns.slice(5),
  ];
  const filters:TpoFilterField[]=[

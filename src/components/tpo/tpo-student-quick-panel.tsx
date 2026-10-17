@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import {tpoStudentDisplayLabel} from "@/modules/placements/tpo-student-display-label";
 import {useEffect,useState} from "react";
 import type {TpoStudentRow} from "@/modules/placements/tpo-students-model";
 import {TpoStudentNudgePanel} from "./tpo-student-nudge-panel";
@@ -65,7 +66,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
     <div><p className="text-xs text-muted-foreground">TPO · Student</p>
       <h2 className="text-xl font-bold">{student.displayName}</h2>
       <p className="text-sm text-body">{student.rollNumber??student.registrationNumber??"No roll number"} · {student.branchName}</p>
-      <p className="text-xs text-muted-foreground">{student.cohortName} · {student.journeyState.replaceAll("_"," ")}</p>
+      <p className="text-xs text-muted-foreground">{student.cohortName} · {tpoStudentDisplayLabel(student.journeyState)}</p>
       <p className="mt-2 text-sm font-semibold">After college: {afterCollegeDisplay(recordedOutcome)}</p>
     </div>
     <button type="button" autoFocus className="min-h-10 rounded border border-border px-3" onClick={onClose}>
@@ -103,9 +104,9 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
       <h3 className="font-semibold">Placement journey</h3>
       <dl className="grid grid-cols-2 gap-3">
        {[
-        ["Participation",student.participationStatus],["Applications",student.applicationCount],
+        ["Participation",tpoStudentDisplayLabel(student.participationStatus)],["Applications",student.applicationCount],
         ["Active applications",student.activeApplicationCount],["Offers",student.offerCount],
-        ["Accepted offers",student.acceptedOfferCount],["Best so far",student.bestSoFar],
+        ["Accepted offers",student.acceptedOfferCount],["Best so far",tpoStudentDisplayLabel(student.bestSoFar)],
        ].map(([label,value])=><div key={String(label)} className="rounded border border-border p-3">
         <dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold">{value}</dd>
        </div>)}
