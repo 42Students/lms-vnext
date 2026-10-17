@@ -110,7 +110,8 @@ describe("Chat-2 graceful messaging and TPO action acceptance",()=>{
  it("TPO-inbox-team-54 and GR-90 never surface a read-cell API error code",()=>{
   const view=source("src/components/tpo/tpo-placement-cell-read-action.tsx");
   expect(view).toContain('role="alert"');
-  expect(view).toContain("pending.current");
+  expect(view).toContain("useGuardedAction({timeoutMs:30000})");
+  expect(view).toContain("disabled={busy}");
   expect(view).toContain("30000");
   expect(view).not.toContain("body?.error");
   expect(view).not.toContain("setError(data.error)");
