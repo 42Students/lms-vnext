@@ -16,6 +16,7 @@ describe("chat12 mobile filters and chips",()=>{
  });
  it("TPO-students-48 announces both filtered counts and visible-page selection",()=>{
   expect(s("src/components/tpo/tpo-grid-filter-panel.tsx")).toContain('role="status"');
-  expect(s("src/components/tpo/tpo-students-spreadsheet.tsx")).toContain("selected of {rows.length} on this visible page.");
+  expect(s("src/components/tpo/tpo-students-selection.tsx")).toContain("{visibleIds.length} shown of {totalCount} in this view");
+  expect(s("src/components/tpo/tpo-students-spreadsheet.tsx")).toContain("selected of {shared?.totalCount??rows.length} in the authorized view.");
  });
 });
