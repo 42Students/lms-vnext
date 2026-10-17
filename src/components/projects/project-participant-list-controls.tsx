@@ -7,7 +7,7 @@ export type ProjectParticipantListQuery = {
     | "PLANNED"
     | "ACTIVE"
     | "COMPLETED"
-    | "ARCHIVED";
+    | "ARCHIVED" | "IN_PROGRESS" | "READY" | "BLOCKED";
   assignment?: "PRIMARY" | "SUPPORTING";
   attention?:
     | "MENTOR_REVIEW"
@@ -16,7 +16,7 @@ export type ProjectParticipantListQuery = {
     | "MENTOR_MEETING_SOON"
     | "MENTOR_ANY_ATTENTION"
     | "MENTOR_NO_ATTENTION"
-    | "LEARNER_ACTION";
+    | "LEARNER_ACTION" | "BLOCKED";
   work?: "BLOCKED" | "NO_TASKS" | "HAS_OPEN_TASKS" | "ALL_DONE" | "HAS_DONE_TASKS";
   sort?: "RECENT" | "TITLE" | "PROGRESS" | "PROGRESS_DESC" | "OPEN_TASKS" | "TEAM_SIZE_DESC" | "TEAM_SIZE_ASC";
   page?: number;
@@ -78,6 +78,9 @@ export function ProjectParticipantListControls({
               </option>
             ),
           )}
+          {learner?<><option value="IN_PROGRESS">In progress</option>
+            <option value="READY">Ready</option>
+            <option value="BLOCKED">Blocked</option></>:null}
         </select>
       </label>
 
@@ -105,9 +108,10 @@ export function ProjectParticipantListControls({
               </>
             ) : null}
             {learner ? (
-              <option value="LEARNER_ACTION">
-                Needs my action
-              </option>
+              <>
+                <option value="LEARNER_ACTION">Needs my action</option>
+                <option value="BLOCKED">Blocked</option>
+              </>
             ) : null}
           </select>
         </label>
@@ -168,7 +172,7 @@ export function ProjectParticipantListControls({
           )}
           className="rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground"
         >
-          {[25, 50, 100].map((size) => (
+          {(learner?[10,25,50]:[25,50,100]).map((size) => (
             <option
               key={size}
               value={size}
@@ -246,9 +250,10 @@ export function ProjectParticipantPagination({
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-body">
       <p className="m-0">
-        {total} result
-        {total === 1 ? "" : "s"} · Page{" "}
-        {page} of {totalPages}
+        {basePath==="/learn/projects"
+          ? ((total===0?0:(page-1)*(query.pageSize??25)+1)+"–"+
+             Math.min(total,page*(query.pageSize??25))+" of "+total+" projects")
+          : <>{total} result{total===1?"":"s"} · Page {page} of {totalPages}</>}
       </p>
       <div className="flex gap-2">
         <Link
