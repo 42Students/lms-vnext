@@ -221,7 +221,7 @@ Audit: `docs/audit/pages/learner/course-detail.md` (and `course-detail-review.md
 | LEARNER-course-detail-18 | S4 | STATE | UNCONFIRMED |
 | LEARNER-course-detail-20 | S4 | COPY | DONE |
 
-## superadmin/tenants-modules-2 (12: DONE 5, OPEN 2, FIXED-ON-MAIN 3, UNCONFIRMED 2)
+## superadmin/tenants-modules-2 (12: DONE 1, OPEN 5, FIXED-ON-MAIN 3, UNCONFIRMED 3)
 
 Audit: `docs/audit/pages/superadmin/tenants-modules-2.md` (and `tenants-modules-2-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/superadmin-tenants-modules-2-verification.md`.
 
@@ -231,10 +231,10 @@ Audit: `docs/audit/pages/superadmin/tenants-modules-2.md` (and `tenants-modules-
 | SA-tenants-modules-35 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | SA-tenants-modules-25 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-tenants-modules-29 | S3 | MISSING-MODAL | FIXED-ON-MAIN |
-| SA-tenants-modules-36 | S3 | MISSING-FIELD | DONE |
-| SA-tenants-modules-37 | S3 | MISSING-FIELD | DONE |
-| SA-tenants-modules-38 | S3 | MISSING-FIELD | DONE |
-| SA-tenants-modules-39 | S3 | MISSING-FIELD | DONE |
+| SA-tenants-modules-36 | S3 | MISSING-FIELD | OPEN |
+| SA-tenants-modules-37 | S3 | MISSING-FIELD | OPEN |
+| SA-tenants-modules-38 | S3 | MISSING-FIELD | UNCONFIRMED |
+| SA-tenants-modules-39 | S3 | MISSING-FIELD | OPEN |
 | SA-tenants-modules-30 | S4 | MISSING-ACTION | UNCONFIRMED |
 | SA-tenants-modules-31 | S4 | MISSING-FIELD | UNCONFIRMED |
 | SA-tenants-modules-32 | S4 | MISSING-FIELD | OPEN |
@@ -294,3 +294,6 @@ Audit: `docs/audit/pages/superadmin/tenants-modules-2.md` (and `tenants-modules-
 - MEN-projects-meetings-75: final delivery decision feedback and evaluation rubric now get styled discard + beforeunload guard; still OPEN for other mentor form audit and client router navigation.
 
 - COL-academic-setup-16: batch/class edits now use native focus-managed Dialog and ConfirmDialog with unsaved-change checks; semester row controls still need parity.
+
+## 2026-10-17 chat-11 validation checkpoint
+- SA-tenants-modules-36/37/38/39: legacy keys, bounds and audited editor were verified with four named tests in tests/unit/chat11-tenant-legacy-settings-round9.test.ts. Remain OPEN/UNCONFIRMED because saved overrides are not yet consumed by SMS, course, placement and operational services; tests were not run.
