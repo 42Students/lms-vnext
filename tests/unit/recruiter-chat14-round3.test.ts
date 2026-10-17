@@ -62,4 +62,28 @@ describe("chat-14 recruiter reassigned batch 3",()=>{
   expect(read("docs/proposed-migrations/recruiter-private-candidate-ratings.sql"))
    .toContain("CREATE TABLE IF NOT EXISTS placement_recruiter_private_reviews");
  });
+ it("REC-home-drives-38 discloses recruiter roll number only under explicit college relationship share defaults",()=>{
+  const readService=read("src/modules/placements/hr-job-read-service.ts");
+  const drawer=read("src/modules/placements/hr-applicant-drawer-model.ts");
+  expect(readService).toContain("shareColumnDefaults");
+  expect(readService).toContain('share?.columns?.includes("roll")');
+  expect(readService).toContain("shareRoll?row.rollNumber:null");
+  expect(readService).toContain('eq(placementCompanyRelationships.collegeId,workspace.college.id)');
+  expect(readService).toContain('eq(placementCompanyRelationships.status,"ACTIVE")');
+  expect(drawer).toContain("rollNumber:selected.rollNumber??null");
+  expect(job()).toContain("Roll no.");
+ });
+ it("REC-home-drives-45 gives an honest empty state when the placement cell has not shared applicants",()=>{
+  const code=job();
+  expect(code).toContain("The placement cell has not shared the applicants yet");
+  expect(code).toContain("No shared applicants match this stage.");
+ });
+ it("REC-calendar-messages-profile-23 never acknowledges all colleges when the bell shows one college",()=>{
+  const service=read("src/modules/placements/hr-recruiter-bell-service.ts");
+  expect(service).toContain('if(feed.status!=="READY")return {marked:0}');
+  expect(service).toContain("ctx,feed.collegeId");
+  expect(service).toContain("x.collegeId===feed.collegeId");
+  expect(service).toContain("eq(inAppNotifications.userId,ctx.user.id)");
+ });
+
 });
