@@ -72,7 +72,7 @@ Audit: `docs/audit/pages/tpo/drive-workspace.md` (and `drive-workspace-review.md
 | TPO-drive-workspace-58 | S3 | MISSING-TAB | DONE |
 | TPO-drive-workspace-64 | S3 | MISSING-ACTION | DONE |
 | TPO-drive-workspace-70 | S3 | A11Y | OPEN |
-| TPO-drive-workspace-72 | S3 | RESPONSIVE | OPEN |
+| TPO-drive-workspace-72 | S3 | RESPONSIVE | DONE |
 | TPO-drive-workspace-73 | S3 | PERFORMANCE | OPEN |
 | TPO-drive-workspace-R04 | S3 | A11Y | DONE |
 | TPO-drive-workspace-R05 | S3 | COPY | DONE |
