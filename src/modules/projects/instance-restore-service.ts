@@ -9,6 +9,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {requireProjectManageAccess} from "./access";
 import {ProjectsServiceError} from "./errors";
 import {restoreProjectInstanceInputSchema,restoredProjectStatus} from "./instance-restore-model";
+import {notifyActiveProjectMembers} from "./project-notification-service";
 
 export async function restoreProjectInstance(context:RequestContext,projectIdInput:string,raw:unknown){
   const scope=await requireProjectManageAccess(context,projectIdInput);
