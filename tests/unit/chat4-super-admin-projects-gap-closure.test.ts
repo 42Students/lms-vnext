@@ -340,7 +340,8 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
    expect(service).toContain('"ALREADY_COVERED" as const');
    expect(service).toContain('"TO_CREATE" as const');
    expect(creator).toContain("Learner creation preflight details");
-   expect(creator).toContain("preflight.items.map");
+   expect(creator).toContain("currentPreflight.items.map");
+   expect(creator).toContain("currentPreflight.duplicates");
    expect(creator).toContain("Already covered");
    expect(creator).toContain("Duplicate");
  });
