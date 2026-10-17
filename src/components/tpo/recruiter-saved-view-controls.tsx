@@ -89,6 +89,13 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
      onClick={()=>void apply("CREATE")}>Save current view</button>
    </div>
    {views.length?<div className="space-y-2">
+    <p role="status" className="text-xs text-muted-foreground">{views.length} saved views · {views.filter(view=>view.pinned).length} of 5 pinned</p>
+    {views.some(view=>view.pinned)?<nav aria-label="Pinned recruiter views" className="flex flex-wrap gap-2">
+      {views.filter(view=>view.pinned).map(view=><button key={view.id} type="button"
+        className={button} onClick={()=>open(view)} title={view.note??undefined}>
+        ★ {view.name}
+      </button>)}
+    </nav>:null}
     <label className="block text-sm">Open saved view
      <select className="mt-1 min-h-10 w-full max-w-sm rounded border border-border px-3"
       value={selected} onChange={e=>{
