@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { placementTableExists } from "@/modules/placements/staged-tables";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
@@ -12,8 +13,8 @@ export async function POST(request: Request, { params }: Context) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
-  if (process.env.DB09_TPO_API_READY !== "DB09_VERIFIED") {
-    return NextResponse.json({ error: "DB09_MIGRATIONS_PENDING" }, { status: 503 });
+  if (!await placementTableExists("placement_tpo_leads") || !await placementTableExists("placement_tpo_lead_activities")) {
+    return NextResponse.json({ error: "DATABASE_NOT_READY" }, { status: 503 });
   }
   try {
     const { companyId } = await params;
