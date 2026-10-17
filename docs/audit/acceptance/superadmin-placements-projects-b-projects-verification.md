@@ -69,3 +69,5 @@ Remaining gaps are tracked in `docs/orchestrator/queues/gap-closure-chat-4.md`. 
 | ID | Status | Evidence |
 |---|---|---|
 | SA-placements-projects-93 | DONE | `src/components/projects/college-project-student-roster-dialog.tsx`, `src/components/projects/college-project-mentor-dialog.tsx`, `src/components/projects/project-workspace.tsx`; `tests/unit/chat4-super-admin-projects-gap-closure.test.ts` test `SA-placements-projects-93`: searchable multi-select roster with role label; expected version and single transactional API mutation; removal-count confirmation with exact Replace roster label; in-tab mentor reassignment dialog |
+
+| SA-placements-projects-72 | DONE | `src/components/projects/project-admin-submission-review.tsx`, `src/components/projects/project-admin-submissions-page.tsx`; `tests/unit/chat4-super-admin-projects-gap-closure.test.ts` test `SA-placements-projects-72`: scoped review dialog, feedback, request changes, accept and confirmed lock, draft-safe API mutation |
