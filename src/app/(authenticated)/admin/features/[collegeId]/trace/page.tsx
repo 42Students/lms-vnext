@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { z } from "zod";
+import {CopyFindingForClaude} from "@/components/admin/copy-finding-for-claude";
 import {strictTraceRouteParams} from "@/modules/module-access/admin-trace-route-params";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -399,6 +400,18 @@ export default async function SuperAdminLearnerAccessTracePage({
             </p>
           </div>
 
+          <CopyFindingForClaude finding={[
+           "College: "+college.name,
+           ...selected.modules.map(module=>[
+            "Module: "+module.label,
+            "Effective: "+(module.enabled?"On":"Off"),
+            "Explanation: "+module.explanation,
+            ...module.steps.filter(step=>step.winner||step.locked||step.ignored)
+              .map(step=>"Scope "+scopeLabel(step.level)+": "+(step.value?"On":"Off")+
+               (step.locked?" (locked)":"")+(step.ignored?" (ignored)":"")+
+               (step.winner?" (winning)":"")),
+           ].join("\\n")),
+          ].join("\\n\\n")}/>
           <Link href={"/admin/features/"+encodeURIComponent(college.id)+"/students/"+encodeURIComponent(selected.membershipId)}
             className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
             Inspect membership overrides and locks →
