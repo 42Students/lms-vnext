@@ -56,5 +56,5 @@ export default async function CollegeVerificationPage({searchParams}:{
  return <CollegeVerificationPanel rows={data.rows} counts={data.counts}
   tpoCanVerify={data.tpoCanVerify} batchChoices={batchChoices} branchChoices={branchChoices} classChoices={classChoices} programChoices={programChoices}
   activeTab={data.filter.tab} initialKind={data.filter.kind??"ALL"}
-  page={data.page} total={data.total} hasMore={data.hasMore} pageSize={data.filter.pageSize} query={query}/>;
+  page={data.page} total={data.total} hasMore={data.hasMore} pageSize={data.filter.pageSize} query={query} truncated={data.truncated}/>;
 }
