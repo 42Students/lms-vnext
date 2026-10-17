@@ -46,4 +46,11 @@ describe("Final sprint recruiter calendar verification",()=>{
   expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-05 |");
  });
 
+ it("REC-calendar-messages-profile-06 independent final-sprint acceptance regression",()=>{
+  expect(src("src/modules/placements/recruiter-calendar-model.ts")).toContain("collegeName: job.collegeName ?? null");
+  expect(src("src/app/(authenticated)/hr/calendar/page.tsx")).toContain("College: {event.collegeName}");
+  expect(src("src/modules/placements/recruiter-calendar-service.ts")).toContain("collegeName: row.collegeName");
+  expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-06 |");
+ });
+
 });
