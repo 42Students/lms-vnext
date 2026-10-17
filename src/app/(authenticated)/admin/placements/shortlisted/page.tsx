@@ -6,5 +6,6 @@ export default async function SuperAdminShortlistedPage({searchParams}:{searchPa
  const context=await getCurrentRequestContext();
  return <AdminScopedReadPage title="Shortlisted Applicants" path="/admin/placements/shortlisted"
   description="Read-only, persisted SHORTLISTED screening outcomes in your selected college. Status filters refer to application submission/withdrawal; recruiter-only notes are never displayed."
-  statuses={statuses} searchParams={searchParams} loader={q=>listSuperAdminShortlisted(context,q)}/>;
+  statuses={statuses} searchParams={searchParams}
+  exportPath="/api/admin/placements/shortlisted/export" exportFilename="shortlisted.csv" loader={q=>listSuperAdminShortlisted(context,q)}/>;
 }
