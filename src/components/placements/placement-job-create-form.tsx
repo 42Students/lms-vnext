@@ -12,7 +12,9 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { useUnsavedDriveGuard } from "./use-unsaved-drive-guard";
 import {apiFetch} from "@/lib/api-fetch";
-import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
+import {driveDeadlineIstToIso,driveDeadlineIstEndOfDay} from "@/modules/placements/tpo-drive-deadline-ist";
+import {tpoDriveFormErrorMessage} from "@/modules/placements/tpo-drive-form-error-copy";
+import {TPO_DRIVE_ROUND_PRESETS,isTpoRoundPresetKey,plannedTpoRoundRows,type TpoRoundPresetKey} from "@/modules/placements/tpo-drive-round-presets";
 import {parseLegacyPairs} from "@/modules/placements/placement-legacy-posting-model";
 import {driveEligibilityPresetValue,type DriveEligibilityPreset} from "@/modules/placements/tpo-drive-eligibility-presets";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
@@ -127,6 +129,7 @@ export function PlacementJobCreateForm({
     companies.find(company=>company.name.toLowerCase()===initialCompanyName.toLowerCase()||company.otherNames?.some(alias=>alias.toLowerCase()===initialCompanyName.toLowerCase()))?.relationshipId ?? companies[0]?.relationshipId ?? "",
   );
   const [companySearch,setCompanySearch]=useState("");
+  const [roundPreset,setRoundPreset]=useState<TpoRoundPresetKey>("NONE");
   const [enteredDriveTitle,setEnteredDriveTitle]=useState("");
   const selectedEmployer=companies.find(company=>company.relationshipId===companyRelationshipId);
   const [eligibilityPreset,setEligibilityPreset]=useState<DriveEligibilityPreset>("OPEN");
@@ -207,6 +210,7 @@ export function PlacementJobCreateForm({
           setDepartmentFilter(saved.departmentFilter??"ALL");
         if(["OPEN","CGPA_6","CGPA_7","PCT_60","PCT_70"].includes(saved.eligibilityPreset??""))
           setEligibilityPreset(saved.eligibilityPreset!);
+        if(isTpoRoundPresetKey(saved.values.roundPreset))setRoundPreset(saved.values.roundPreset);
         setEnteredDriveTitle(String(saved.values.title??""));
         setNewEmployerName(String(saved.values.companyName??""));
         setNewEmployerDomain(String(saved.values.companyDomain??""));
@@ -339,7 +343,7 @@ export function PlacementJobCreateForm({
         selectedProgramIds:[...effectiveProgramIds].sort(),
         selectedCohortIds:[...effectiveCohortIds].sort(),
         selectedSectionIds:[...effectiveSectionIds].sort(),
-        companyMode,companyRelationshipId,
+        companyMode,companyRelationshipId,roundPreset,
       });
       if(createdJobRef.current&&createdJobRef.current.fingerprint!==fingerprint)
         throw new Error("A draft has already been created. Open the existing draft to edit your latest changes.");
@@ -555,11 +559,28 @@ export function PlacementJobCreateForm({
         },
       );
 
+      // TPO-drives-39 / TPO-drives-43: read server rounds before retrying
+      // individual creates; a lost POST response must not duplicate a round.
+      const planned=plannedTpoRoundRows(roundPreset);
+      if(planned.length){
+        const saved=await apiFetch<{rounds:Array<{kind:string;name:string}>}>(
+          `/api/placements/jobs/${encodeURIComponent(jobId)}/rounds`,
+          {credentials:"same-origin",timeoutMs:30000},
+        );
+        if(saved.rounds.length>planned.length||saved.rounds.some((row,index)=>
+          row.kind!==planned[index]?.kind||row.name!==planned[index]?.name))
+          throw new Error("Saved rounds have changed. Open the draft to review rounds before trying again.");
+        for(const round of planned.slice(saved.rounds.length)){
+          await requestJson(`/api/placements/jobs/${encodeURIComponent(jobId)}/rounds`,
+            "POST",{kind:round.kind,name:round.name});
+        }
+      }
       showToast({
         tone: "success",
         title: "Draft opportunity created",
-        description:
-          "Continue in the drive workspace to configure rounds and run the hiring process.",
+        description:planned.length
+          ? `Saved ${planned.length} planned round(s). Choose each round's mode and schedule in the drive workspace.`
+          : "Continue in the drive workspace to configure rounds and run the hiring process.",
       });
       router.push(
         `${basePath}/jobs/${jobId}${reviewPublish ? "?publish=1#drive-lifecycle-publish" : ""}`,
@@ -1289,6 +1310,27 @@ export function PlacementJobCreateForm({
         </div>
       </section>
 
+      <section aria-label="Planned rounds" className="rounded-xl border border-border bg-surface p-4">
+        <h2 className="font-semibold text-foreground">Interview rounds</h2>
+        <label className="mt-3 block text-sm font-semibold text-body">
+          Round template
+          <select name="roundPreset" value={roundPreset}
+            onChange={event=>{
+              if(isTpoRoundPresetKey(event.target.value)){setRoundPreset(event.target.value);markDirty();}
+            }} className={inputClass}>
+            {Object.entries(TPO_DRIVE_ROUND_PRESETS).map(([key,preset])=>
+              <option key={key} value={key}>{preset.label}</option>)}
+          </select>
+        </label>
+        <p role="status" className="mt-3 text-sm font-semibold text-body">{plannedTpoRoundRows(roundPreset).length} rounds planned</p>
+        <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm text-body">
+          {plannedTpoRoundRows(roundPreset).map(round=><li key={round.sequence}>{round.name} · {round.kind}</li>)}
+        </ol>
+        <p className="mt-2 text-xs text-muted-foreground">
+          These rounds are created as pending with the draft. Configure online or on-campus mode,
+          venues and dates in the drive workspace before inviting candidates.
+        </p>
+      </section>
       <section aria-label="Who this reaches" className="rounded-xl border border-border bg-surface p-4">
         <h2 className="font-semibold text-foreground">Who this reaches</h2>
         <p className="mt-2 text-sm text-body">Eligible and excluded learner counts depend on saved cohort and marks evidence. Save the draft, then use the drive workspace eligibility preview to review actual counts before publishing. No reach estimate is fabricated on this form.</p>
