@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { and, desc, eq, lt } from "drizzle-orm";
+import { and, desc, eq, isNull, lt, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { db10ScheduledJobLeases as leases } from "@/db/schema/db10-scheduled-job-leases.draft";
 import { db10LogAlertSignatures as signatures, db10LogAlertStates as states, db10LogAlertDailyCounts as daily } from "@/db/schema/db10-log-alerts.draft";
@@ -14,18 +14,33 @@ export function istDayAndHour(now: Date) {
 export function formatDailyDigest(input: {
   day: string; total: number; firstSeen: number;
   muted: number; spikes: number; top: { hash: string; count: number }[];
+  deploy?: string;
+  health?: string;
 }): string {
   return [
     "vNext daily error digest (" + input.day + ", IST)",
     "Errors: " + input.total,
+    "Recurring occurrences: " + Math.max(0, input.total - input.firstSeen),
     "New signatures: " + input.firstSeen,
     "Muted signatures: " + input.muted,
     "Spike signatures: " + input.spikes,
     "Top recurring:",
     ...(input.top.length ? input.top.map((item) =>
       item.hash.slice(0, 12) + ": " + item.count + " occurrences") : ["None"]),
-    "Deploy: check the rollout health report",
+    "Deploy: " + (input.deploy ?? "not recorded"),
+    "Health watch: " + (input.health ?? "not configured"),
   ].join("\n");
+}
+
+export function healthWatchStatus(
+  row: { lockedBy: string; updatedAt: Date } | undefined,
+  now: Date,
+): string {
+  if (!row) return "not configured";
+  if (now.getTime() - row.updatedAt.getTime() > 5 * 60_000) return "watcher stale";
+  if (row.lockedBy === "HEALTHY") return "healthy";
+  if (row.lockedBy === "DOWN") return "not responding";
+  return "degraded";
 }
 
 export async function withScheduledLease(jobName: string, now: Date, task: () => Promise<void>): Promise<boolean> {
@@ -37,7 +52,8 @@ export async function withScheduledLease(jobName: string, now: Date, task: () =>
     jobName, lockedBy, lockedUntil,
   }).onConflictDoUpdate({
     target: leases.jobName,
-    set: { lockedBy, lockedUntil, updatedAt: now },
+    set: { lockedBy, lockedUntil, updatedAt: now,
+      fence: sql.raw("scheduled_job_leases.fence + 1") },
     setWhere: lt(leases.lockedUntil, now),
   }).returning({ lockedBy: leases.lockedBy });
   if (!acquired || acquired.lockedBy !== lockedBy) return false;
@@ -50,10 +66,97 @@ export async function withScheduledLease(jobName: string, now: Date, task: () =>
   return true;
 }
 
+/** Subsequent burst errors are recorded in the state row and sent during the next tick. */
+export function burstOverflowText(count: number, environment: string): string {
+  const safeCount = Number.isSafeInteger(count) && count > 0 ? count : 0;
+  return "vNext alert burst: " + safeCount +
+    " more new or recurring errors; see the Logs page. Environment: " + environment;
+}
+
+async function flushOverflow(now: Date): Promise<boolean> {
+  const environment = process.env.APP_ENV === "production" ? "PRODUCTION" :
+    process.env.APP_ENV === "uat" ? "UAT" : "DEVELOPMENT";
+  return getDb().transaction(async (tx) => {
+    const key = "TELEGRAM_BURST_" + environment;
+    const [state] = await tx.select().from(states)
+      .where(eq(states.stateKey, key)).for("update").limit(1);
+    if (!state?.overflowCount) return false;
+    const minute = new Date(Math.floor(now.getTime() / 60_000) * 60_000);
+    const sent = state.burstMinuteAt?.getTime() === minute.getTime()
+      ? state.burstCount : 0;
+    if (sent >= 5) return false;
+    if (!await sendTelegramAlert(burstOverflowText(state.overflowCount, environment))) {
+      return false;
+    }
+    await tx.update(states).set({
+      overflowCount: 0,
+      burstMinuteAt: minute,
+      burstCount: sent + 1,
+    }).where(eq(states.stateKey, key));
+    return true;
+  });
+}
+
+/** Replays a post-fix regression that was counted but could not be delivered. */
+export async function sweepUndeliveredRegressions(now: Date): Promise<number> {
+  const environment = process.env.APP_ENV === "production" ? "PRODUCTION" :
+    process.env.APP_ENV === "uat" ? "UAT" : "DEVELOPMENT";
+  let delivered = 0;
+  await withScheduledLease("telegram-regression-sweep", now, async () => {
+    const threshold = new Date(now.getTime() - 86_400_000);
+    const candidates = await getDb().select({ id: signatures.id })
+      .from(signatures)
+      .where(and(
+        eq(signatures.environment, environment),
+        eq(signatures.fixStatus, "FIXED"),
+        isNull(signatures.regressedAt),
+        lt(signatures.fixedAt, threshold),
+        sql`${signatures.lastSeenAt} >= ${signatures.fixedAt} + interval '24 hours'`,
+      )).orderBy(desc(signatures.lastSeenAt)).limit(5);
+    for (const candidate of candidates) {
+      await getDb().transaction(async (tx) => {
+        const key = "TELEGRAM_BURST_" + environment;
+        await tx.insert(states).values({ stateKey: key }).onConflictDoNothing();
+        const [state] = await tx.select().from(states)
+          .where(eq(states.stateKey, key)).for("update").limit(1);
+        const [current] = await tx.select().from(signatures)
+          .where(eq(signatures.id, candidate.id)).for("update").limit(1);
+        if (!state || !current || current.fixStatus !== "FIXED" || !current.fixedAt ||
+            current.regressedAt || current.lastSeenAt.getTime() <
+              current.fixedAt.getTime() + 86_400_000) return;
+        const minute = new Date(Math.floor(now.getTime() / 60_000) * 60_000);
+        const spent = state.burstMinuteAt?.getTime() === minute.getTime()
+          ? state.burstCount : 0;
+        if (spent >= 5) return; // Leave pending for the next in-cluster tick.
+        const ok = await sendTelegramAlert(
+          "vNext regression detected after fix. Environment: " + environment +
+          "\nSignature: " + current.signatureHash.slice(0, 12) +
+          "\nCount: " + current.occurrenceCount.toString() +
+          "\nSee the Logs page.",
+          { acknowledgeSignatureId: current.id },
+        );
+        if (!ok) return; // Delivery-gated transition, retry next tick.
+        await tx.update(signatures)
+          .set({ fixStatus: "OPEN", regressedAt: now })
+          .where(eq(signatures.id, current.id));
+        await tx.update(states).set({
+          burstMinuteAt: minute, burstCount: spent + 1,
+        }).where(eq(states.stateKey, key));
+        delivered++;
+      });
+    }
+  });
+  return delivered;
+}
+
 /** Tick may run every 1-2 minutes; exactly one daily message after 09:00 IST. */
 export async function runAlertTick(now = new Date()): Promise<{ acquired: boolean; digest: boolean }> {
   if (!logAlertsRuntimeEnabled() || !telegramAlertsConfigured()) return { acquired: false, digest: false };
   const { day, hour } = istDayAndHour(now);
+  // Burst overflow is not lost even if no subsequent error arrives to trigger a send.
+  // The locked state row preserves the five-per-minute ceiling across web replicas.
+  await flushOverflow(now);
+  await sweepUndeliveredRegressions(now);
   let digest = false;
   const acquired = await withScheduledLease("telegram-digest", now, async () => {
     if (hour < 9) return;
@@ -76,8 +179,15 @@ export async function runAlertTick(now = new Date()): Promise<{ acquired: boolea
       .orderBy(desc(daily.occurrenceCount)).limit(1000);
     const start = new Date(Date.parse(previousDay + "T00:00:00Z") - 330 * 60_000);
     const end = new Date(start.getTime() + 86_400_000);
+    const [health] = await db.select({
+      lockedBy: leases.lockedBy,
+      updatedAt: leases.updatedAt,
+    }).from(leases).where(eq(leases.jobName, "vnext-health-watch")).limit(1);
     const message = formatDailyDigest({
       day: previousDay,
+      health: healthWatchStatus(health, now),
+      deploy: /^[0-9a-f]{7,64}$/i.test(process.env.DEPLOY_COMMIT ?? "")
+        ? process.env.DEPLOY_COMMIT : undefined,
       total: rows.reduce((sum, row) => sum + row.dayOccurrences, 0),
       firstSeen: rows.filter(row => row.firstSeenAt >= start && row.firstSeenAt < end).length,
       muted: rows.filter(row => row.muted).length,

@@ -2,6 +2,9 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useGuardedAction } from "@/hooks/use-guarded-action";
+import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
+import { friendlyApiError } from "@/lib/friendly-error";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
@@ -10,7 +13,7 @@ import type { listKnownErrorsForAdmin } from "@/modules/log-alerts/admin-service
 type KnownError = Awaited<ReturnType<typeof listKnownErrorsForAdmin>>[number];
 
 function formatInstant(value: Date | string | null) {
-  if (!value) return "—";
+  if (!value || Number.isNaN(new Date(value).getTime())) return "—";
   return new Intl.DateTimeFormat("en-IN", {
     timeZone: "Asia/Kolkata",
     dateStyle: "medium", timeStyle: "short",
@@ -20,31 +23,29 @@ function formatInstant(value: Date | string | null) {
 function KnownErrorCard({ item }: { item: KnownError }) {
   const router = useRouter();
   const { showToast } = useToast();
-  const [pending, setPending] = useState(false);
+  const { run, pending } = useGuardedAction({ timeoutMs: 20_000 });
   const [note, setNote] = useState("");
   const [commit, setCommit] = useState("");
   const [issuePublicId, setIssuePublicId] = useState(item.issuePublicId ?? "");
 
   async function update(body: Record<string, unknown>) {
-    setPending(true);
     try {
-      const response = await fetch(
-        "/api/tracker/logs/known-errors/" + item.id,
-        { method: "PATCH", headers: { "content-type": "application/json" },
-          body: JSON.stringify(body) },
-      );
-      if (!response.ok) {
-        throw new Error("Could not update this known error. Please retry.");
-      }
-      showToast({ tone: "success", title: "Known error updated" });
-      router.refresh();
+      await run(async () => {
+        await apiFetch("/api/tracker/logs/known-errors/" + item.id, {
+          method: "PATCH",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(body),
+          timeoutMs: 15_000,
+        });
+        showToast({ tone: "success", title: "Known error updated" });
+        router.refresh();
+      });
     } catch (error) {
       showToast({
         tone: "error", title: "Known error update failed",
-        description: error instanceof Error ? error.message : "Please retry.",
+        description: error instanceof FriendlyFetchError
+          ? error.message : friendlyApiError({}),
       });
-    } finally {
-      setPending(false);
     }
   }
 
@@ -163,19 +164,20 @@ export function KnownErrorsWorkspace({
   const [pending, setPending] = useState(false);
 
   async function markViewed() {
-    setPending(true);
     try {
-      const response = await fetch("/api/tracker/logs/viewed", { method: "POST" });
-      if (!response.ok) throw new Error("Last-viewed status could not be updated.");
-      router.refresh();
-      showToast({ tone: "success", title: "Logs review time updated" });
+      await run(async () => {
+        await apiFetch("/api/tracker/logs/viewed", {
+          method: "POST", timeoutMs: 15_000,
+        });
+        router.refresh();
+        showToast({ tone: "success", title: "Logs review time updated" });
+      });
     } catch (error) {
       showToast({
         tone: "error", title: "Update failed",
-        description: error instanceof Error ? error.message : "Retry",
+        description: error instanceof FriendlyFetchError
+          ? error.message : friendlyApiError({}),
       });
-    } finally {
-      setPending(false);
     }
   }
 
