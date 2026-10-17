@@ -172,10 +172,10 @@ Audit: `docs/audit/pages/recruiter/home-drives.md` (and `home-drives-review.md` 
 | REC-home-drives-18 | S3 | COPY | FIXED-ON-MAIN |
 | REC-home-drives-20 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | REC-home-drives-23 | S3 | MISSING-FIELD | OPEN |
-| REC-home-drives-27 | S3 | VALIDATION | OPEN |
+| REC-home-drives-27 | S3 | VALIDATION | FIXED-ON-MAIN |
 | REC-home-drives-28 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | REC-home-drives-29 | S3 | STATE | FIXED-ON-MAIN |
-| REC-home-drives-30 | S3 | STATE | OPEN |
+| REC-home-drives-30 | S3 | STATE | FIXED-ON-MAIN |
 | REC-home-drives-31 | S3 | COPY | FIXED-ON-MAIN |
 | REC-home-drives-34 | S3 | COPY | FIXED-ON-MAIN |
 | REC-home-drives-36 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
@@ -196,7 +196,7 @@ Audit: `docs/audit/pages/recruiter/home-drives.md` (and `home-drives-review.md` 
 | REC-home-drives-09 | S4 | MISSING-ACTION | UNCONFIRMED |
 | REC-home-drives-11 | S4 | COPY | FIXED-ON-MAIN |
 | REC-home-drives-19 | S4 | PERMISSION | UNCONFIRMED |
-| REC-home-drives-32 | S4 | STATE | OPEN |
+| REC-home-drives-32 | S4 | STATE | FIXED-ON-MAIN |
 | REC-home-drives-52 | S4 | MISSING-COLUMN | OPEN |
 | REC-home-drives-53 | S4 | STATE | OPEN |
 | REC-home-drives-54 | S4 | COPY | FIXED-ON-MAIN |
@@ -244,7 +244,7 @@ Audit: `docs/audit/pages/faculty/courses.md` (and `courses-review.md` if present
 | FAC-courses-07 | S4 | COPY | FIXED-ON-MAIN |
 | FAC-courses-17 | S4 | COPY | WRONG |
 | FAC-courses-19 | S4 | MISSING-FIELD | OPEN |
-| FAC-courses-21 | S4 | MISSING-ACTION | OPEN |
+| FAC-courses-21 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
 | FAC-courses-28 | S4 | MISSING-FIELD | WRONG |
 | FAC-courses-29 | S4 | COPY | FIXED-ON-MAIN |
 | FAC-courses-30 | S4 | COPY | FIXED-ON-MAIN |
