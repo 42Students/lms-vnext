@@ -307,7 +307,7 @@ export default async function LearnerPlacementsPage({
             </li>)}</ul>}
       </section>
       <LearnerPlacementPartialAlert missing={display.failed} />
-      <LearnerPlacementsDashboard snapshot={dashboard} availability={availability} learnerName={learnerName} applicationFunnel={applicationFunnel} />
+      <LearnerPlacementsDashboard snapshot={dashboard} availability={availability} learnerName={learnerName} applicationFunnel={applicationFunnel} registration={registrationRead.status==="fulfilled"?registrationRead.value:null} />
 
       {journeyBundle ? <LearnerRecentPlacementActivity events={journeyBundle.activity} /> : null}
 
