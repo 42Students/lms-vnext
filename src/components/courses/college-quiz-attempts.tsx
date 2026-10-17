@@ -16,12 +16,13 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
  const [learnerSearch,setLearnerSearch]=useState("");
  const [page,setPage]=useState(1),[hasMore,setHasMore]=useState(false);
  const chosen=options.find(x=>x.deliveryId===deliveryId)??options[0];
- async function open(){
+ async function open(requestedPage=1){
   if(!chosen||loading)return;
   setOpened(true);setLoading(true);setError("");setAttempts([]);
   try{
    const response=await fetch("/api/courses/quiz-attempts?quizId="+encodeURIComponent(quizId)+
-    "&deliveryId="+encodeURIComponent(chosen.deliveryId),{cache:"no-store"});
+    "&deliveryId="+encodeURIComponent(chosen.deliveryId)+
+    "&page="+requestedPage,{cache:"no-store"});
    const data=await response.json().catch(()=>null);
    if(!response.ok||!Array.isArray(data?.attempts))
     throw Error(typeof data?.error==="string"?data.error:"Could not load quiz attempts.");
