@@ -21,6 +21,7 @@ export function MentorTaskCreate({
   const [busy,setBusy]=useState(false);
   const [title,setTitle]=useState("");
   const [description,setDescription]=useState("");
+  const [approach,setApproach]=useState("");
   const [criteria,setCriteria]=useState("");
   const [priority,setPriority]=useState<"LOW"|"MEDIUM"|"HIGH"|"CRITICAL">("MEDIUM");
   const [estimate,setEstimate]=useState("");
