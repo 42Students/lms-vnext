@@ -58,7 +58,7 @@ export function groupAttendanceDays<T extends { id: string; startsAt: string }>(
 export function attendanceMonthDays<T extends {id:string;startsAt:string}>(
  month:string,sessions:readonly T[],
 ){
- if(!/^\\d{4}-(0[1-9]|1[0-2])$/.test(month))
+ if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(month))
   throw new Error("Invalid attendance month");
  const [year,m]=month.split("-").map(Number);
  const count=new Date(Date.UTC(year!,m!,0)).getUTCDate();
