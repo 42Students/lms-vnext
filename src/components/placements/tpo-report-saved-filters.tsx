@@ -1,12 +1,12 @@
 "use client";
 import {useEffect,useState} from "react";
 import {useRouter,useSearchParams} from "next/navigation";
-type SavedView={name:string;seasonId:string;jobId:string;batchId?:string;branchId?:string;sort?:string;outcome?:string;q?:string;group?:string;state?:string;days?:string};
+type SavedView={name:string;seasonId:string;jobId:string;batchId?:string;branchId?:string;sort?:string;outcome?:string;q?:string;group?:string;state?:string;days?:string;companyId?:string;workMode?:string;payCategory?:string};
 const keyFor=(path:string,collegeId:string,userId:string)=>"lms.tpo.report-view."+collegeId+"."+userId+"."+path.replace(/[^a-z0-9/-]/gi,"");
 const clean=(value:unknown):SavedView[]=>Array.isArray(value)?value.flatMap(item=>
  item&&typeof item==="object"&&typeof item.name==="string"&&
  typeof item.seasonId==="string"&&typeof item.jobId==="string"?
- [{name:item.name.slice(0,50),seasonId:item.seasonId.slice(0,80),jobId:item.jobId.slice(0,80),batchId:typeof item.batchId==="string"?item.batchId.slice(0,80):"",branchId:typeof item.branchId==="string"?item.branchId.slice(0,80):"",sort:typeof item.sort==="string"?item.sort.slice(0,30):"",outcome:typeof item.outcome==="string"?item.outcome.slice(0,30):"",q:typeof item.q==="string"?item.q.slice(0,100):"",group:typeof item.group==="string"?item.group.slice(0,30):"",state:typeof item.state==="string"?item.state.slice(0,30):"",days:typeof item.days==="string"?item.days.slice(0,5):""}]:[]).slice(0,12):[];
+ [{name:item.name.slice(0,50),seasonId:item.seasonId.slice(0,80),jobId:item.jobId.slice(0,80),batchId:typeof item.batchId==="string"?item.batchId.slice(0,80):"",branchId:typeof item.branchId==="string"?item.branchId.slice(0,80):"",sort:typeof item.sort==="string"?item.sort.slice(0,30):"",outcome:typeof item.outcome==="string"?item.outcome.slice(0,30):"",q:typeof item.q==="string"?item.q.slice(0,100):"",group:typeof item.group==="string"?item.group.slice(0,30):"",state:typeof item.state==="string"?item.state.slice(0,30):"",days:typeof item.days==="string"?item.days.slice(0,5):"",companyId:typeof item.companyId==="string"?item.companyId.slice(0,80):"",workMode:typeof item.workMode==="string"?item.workMode.slice(0,20):"",payCategory:typeof item.payCategory==="string"?item.payCategory.slice(0,30):""}]:[]).slice(0,12):[];
 export function TpoReportSavedFilters({path,collegeId,userId}:{path:string;collegeId:string;userId:string}){
  const router=useRouter(),params=useSearchParams();
  const [views,setViews]=useState<SavedView[]>([]);
