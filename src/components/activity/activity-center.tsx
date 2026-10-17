@@ -76,9 +76,13 @@ function tone(
 export function ActivityCenter({
   groups,
   nextHref,
+  todayKey,
+  yesterdayKey,
 }: {
   groups: readonly ActivityCenterGroup[];
   nextHref: string | null;
+  todayKey?: string;
+  yesterdayKey?: string;
 }) {
   if (groups.length === 0) {
     return (
@@ -102,7 +106,7 @@ export function ActivityCenter({
           const previousDay=index>0?activityDay(groups[index-1].latest.event.occurredAt):null;
           return (
             <Fragment key={group.key+":"+item.event.id}>
-            {day!==previousDay?<h3 className="mt-5 text-sm font-semibold text-muted-foreground">{activityDayHeading(item.event.occurredAt)}</h3>:null}
+            {day!==previousDay?<h3 className="mt-5 text-sm font-semibold text-muted-foreground">{day===todayKey?"Today":day===yesterdayKey?"Yesterday":activityDayHeading(item.event.occurredAt)}</h3>:null}
             <article
               key={
                 group.key +
@@ -199,7 +203,7 @@ export function ActivityCenter({
             href={nextHref}
             className="inline-flex min-h-10 items-center justify-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
           >
-            Older activity
+            Load more activity
           </Link>
         </div>
       ) : null}
