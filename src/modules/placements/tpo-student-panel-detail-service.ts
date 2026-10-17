@@ -40,6 +40,7 @@ export async function getTpoStudentPanelDetail(ctx:RequestContext,raw:unknown){
  const [requests,notes,studentNotes]=await Promise.all([
   db.select({id:placementLearnerRequests.id,applicationId:placementLearnerRequests.applicationId,
    status:placementLearnerRequests.status,type:placementLearnerRequests.requestType,
+   updatedAt:placementLearnerRequests.updatedAt,
    reason:placementLearnerRequests.reason,note:placementLearnerRequests.decisionNote,
    requestedAt:placementLearnerRequests.requestedAt,
   }).from(placementLearnerRequests)
