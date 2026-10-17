@@ -118,7 +118,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
     Draft assignments are hidden until they are published.</p>
    <div className="sm:col-span-2"><FacultyAssignmentMethodPicker methods={allowedMethods} onChange={setAllowedMethods} disabled={pending}/></div>
    <div className="flex flex-wrap gap-2 sm:col-span-2">
-    <button type="button" disabled={pending||!title.trim()} onClick={()=>void create()}
+    <button type="button" disabled={pending||!chosen||!title.trim()} onClick={()=>void create()}
      className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
      {pending?"Creating…":"Create draft"}</button>
     <button type="button" disabled={pending} onClick={close}
