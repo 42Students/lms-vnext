@@ -148,17 +148,17 @@ Audit: `docs/audit/pages/learner/home-courses.md` (and `home-courses-review.md` 
 | LEARNER-home-courses-04 | S3 | MISSING-FIELD / COPY | FIXED-ON-MAIN |
 | LEARNER-home-courses-05 | S3 | COPY / MISSING-FIELD | FIXED-ON-MAIN |
 | LEARNER-home-courses-08 | S3 | PERFORMANCE | FIXED-ON-MAIN |
-| LEARNER-home-courses-09 | S3 | COPY / STATE | FIXED-ON-MAIN |
+| LEARNER-home-courses-09 | S3 | COPY / STATE | DONE |
 | LEARNER-home-courses-12 | S3 | COPY | OPEN |
 | LEARNER-home-courses-16 | S3 | COPY | OPEN |
 | LEARNER-home-courses-19 | S3 | COPY | FIXED-ON-MAIN |
 | LEARNER-home-courses-21 | S3 | STATE | FIXED-ON-MAIN |
-| LEARNER-home-courses-R01 | S3 | STATE | FIXED-ON-MAIN |
-| LEARNER-home-courses-06 | S4 | COPY | FIXED-ON-MAIN |
-| LEARNER-home-courses-07 | S4 | MISSING-FILTER | FIXED-ON-MAIN |
+| LEARNER-home-courses-R01 | S3 | STATE | DONE |
+| LEARNER-home-courses-06 | S4 | COPY | DONE |
+| LEARNER-home-courses-07 | S4 | MISSING-FILTER | DONE |
 | LEARNER-home-courses-10 | S4 | STATE | OPEN |
-| LEARNER-home-courses-11 | S4 | STATE | FIXED-ON-MAIN |
-| LEARNER-home-courses-13 | S4 | COPY | FIXED-ON-MAIN |
+| LEARNER-home-courses-11 | S4 | STATE | DONE |
+| LEARNER-home-courses-13 | S4 | COPY | DONE |
 | LEARNER-home-courses-15 | S4 | COPY / MISSING-ACTION | FIXED-ON-MAIN |
 | LEARNER-home-courses-18 | S4 | PERFORMANCE | OPEN |
 | LEARNER-home-courses-20 | S4 | MISSING-FIELD / PERMISSION | FIXED-ON-MAIN |
@@ -173,15 +173,15 @@ Audit: `docs/audit/pages/college/course-tabs.md` (and `course-tabs-review.md` if
 |---|---|---|---|
 | COL-course-tabs-03 | S1 | MISSING-ACTION | FIXED-ON-MAIN |
 | COL-course-tabs-04 | S1 | MISSING-ACTION | FIXED-ON-MAIN |
-| COL-course-tabs-05 | S1 | MISSING-ACTION | FIXED-ON-MAIN |
-| COL-course-tabs-06 | S1 | MISSING-ACTION | FIXED-ON-MAIN |
-| COL-course-tabs-08 | S1 | MISSING-TAB | FIXED-ON-MAIN |
-| COL-course-tabs-07 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| COL-course-tabs-09 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
-| COL-course-tabs-10 | S2 | MISSING-EXPORT | FIXED-ON-MAIN |
-| COL-course-tabs-11 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
-| COL-course-tabs-12 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| COL-course-tabs-13 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| COL-course-tabs-05 | S1 | MISSING-ACTION | DONE |
+| COL-course-tabs-06 | S1 | MISSING-ACTION | DONE |
+| COL-course-tabs-08 | S1 | MISSING-TAB | DONE |
+| COL-course-tabs-07 | S2 | MISSING-ACTION | DONE |
+| COL-course-tabs-09 | S2 | MISSING-FILTER | DONE |
+| COL-course-tabs-10 | S2 | MISSING-EXPORT | DONE |
+| COL-course-tabs-11 | S2 | MISSING-COLUMN | DONE |
+| COL-course-tabs-12 | S2 | MISSING-ACTION | DONE |
+| COL-course-tabs-13 | S2 | MISSING-ACTION | DONE |
 | COL-course-tabs-16 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | COL-course-tabs-17 | S2 | MISSING-ACTION | OPEN |
 | COL-course-tabs-14 | S3 | MISSING-ACTION | OPEN |
@@ -191,7 +191,7 @@ Audit: `docs/audit/pages/college/course-tabs.md` (and `course-tabs-review.md` if
 | COL-course-tabs-22 | S3 | STATE | OPEN |
 | COL-course-tabs-23 | S3 | STATE | UNCONFIRMED |
 | COL-course-tabs-26 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
-| COL-course-tabs-24 | S4 | MISSING-FILTER | FIXED-ON-MAIN |
+| COL-course-tabs-24 | S4 | MISSING-FILTER | DONE |
 | COL-course-tabs-25 | S4 | PERMISSION | UNCONFIRMED |
 | COL-course-tabs-27 | S4 | RESPONSIVE | OPEN |
 
@@ -201,25 +201,25 @@ Audit: `docs/audit/pages/college/verification-misc.md` (and `verification-misc-r
 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
-| COL-verification-misc-01 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| COL-verification-misc-03 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| COL-verification-misc-01 | S2 | MISSING-ACTION | DONE |
+| COL-verification-misc-03 | S2 | MISSING-ACTION | DONE |
 | COL-verification-misc-04 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| COL-verification-misc-05 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| COL-verification-misc-07 | S2 | SIDE-EFFECT | FIXED-ON-MAIN |
+| COL-verification-misc-05 | S2 | MISSING-FIELD | DONE |
+| COL-verification-misc-07 | S2 | SIDE-EFFECT | DONE |
 | COL-verification-misc-10 | S2 | STATE | OPEN |
 | COL-verification-misc-11 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | COL-verification-misc-17 | S2 | PERMISSION | OPEN |
-| COL-verification-misc-02 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
+| COL-verification-misc-02 | S3 | MISSING-FIELD | DONE |
 | COL-verification-misc-06 | S3 | COPY | OPEN |
 | COL-verification-misc-08 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
-| COL-verification-misc-12 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
+| COL-verification-misc-12 | S3 | MISSING-ACTION | DONE |
 | COL-verification-misc-13 | S3 | STATE | FIXED-ON-MAIN |
-| COL-verification-misc-15 | S3 | STATE | FIXED-ON-MAIN |
-| COL-verification-misc-16 | S3 | PERMISSION | OPEN |
+| COL-verification-misc-15 | S3 | STATE | DONE |
+| COL-verification-misc-16 | S3 | PERMISSION | NOT-A-GAP |
 | COL-verification-misc-18 | S3 | PERMISSION | OPEN |
-| COL-verification-misc-19 | S3 | STATE | OPEN |
+| COL-verification-misc-19 | S3 | STATE | NOT-A-GAP |
 | COL-verification-misc-09 | S4 | COPY | OPEN |
-| COL-verification-misc-14 | S4 | MISSING-EXPORT | FIXED-ON-MAIN |
+| COL-verification-misc-14 | S4 | MISSING-EXPORT | NOT-A-GAP |
 | COL-verification-misc-20 | S4 | STATE | OPEN |
 
 ## college/academic-people (9: OPEN 9)
@@ -261,6 +261,8 @@ Audit: `docs/audit/pages/college/operations.md` (and `operations-review.md` if p
 - Aggregate verification recorded this round: 29 DONE and 1 NOT-A-GAP (30 gaps) across the first two page areas. No private storage, malware-scanner, provider-secret or owner-old-LMS-sign-in blocker encountered in these two verification groups. No tests, typecheck, lint, builds or CI runs by chat-4; orchestrator owns independent execution and final acceptance.
 
 ## Notes (blockers, one line each)
+- COL-verification-misc-01/02 photo *upload* remains blocked on a private object-storage bucket and scanner; approved HTTPS photo links and editable profile fields are implemented.
+
 
 ## Chat-4 round 2 — verified gap closure and graceful UX (2026-10-17)
 
@@ -271,6 +273,16 @@ Audit: `docs/audit/pages/college/operations.md` (and `operations-review.md` if p
 - **Remaining OPEN** Super Admin Tenants/Modules: `SA-tenants-modules-43/45/46/47/48/49/50/53/54/57/60/64/67/68` and any others without acceptance rows. Audit findings importer and inbound mail receiver need real integration; do not falsely certify through source strings.
 - **Graceful operation:** shared `src/lib/friendly-error.ts` and `src/lib/api-fetch.ts` were absent on origin/main at round start, so the TPO error/loading states were made friendly locally; adopt chat-14 helpers and GR-30/32/70/71/72/73/90/91/92 as applicable after merge. Do not label absent helpers as formal BLOCKED; no private bucket, scanner, real provider credential or old-LMS sign-in blocker was discovered in this round.
 - **Next queue page:** learner/home-courses (S2 first). No test, lint, typecheck, build or CI run by builder; orchestrator owns execution.
+
+## Chat-4 round 3 — source-backed gap verification and friendly errors (2026-10-17)
+
+- Synchronized `chatgpt/chat-4-b` to the latest merged origin/main before edits; never pushed to main.
+- **26 gap outcomes** recorded individually in `docs/audit/acceptance/learner-home-courses-verification.md`, `college-course-tabs-verification.md`, `college-verification-misc-verification.md` with test names containing each ID. **23 DONE, 3 NOT-A-GAP**, all provisional pending orchestrator-run tests and integrated acceptance.
+- Learner DONE: `LEARNER-home-courses-06/07/09/11/13/R01`. Added legacy error copy, tests for search, filtering, course-tab fallback and independent corrupt-card handling. Partial `LEARNER-home-courses-15/19/20/21` remain OPEN pending complete legacy parity; learner discussion POST/DELETE/PATCH now use `apiFetch` and retain draft on failed submit.
+- College Course Tabs DONE: `COL-course-tabs-05/06/07/08/09/10/11/12/13/24`. Verified grade/quiz actions, Section-first progress, learner export, denominators, lessons, bulk visibility, page sizes. Bulk Lesson writes now use `apiFetch`; partial `COL-course-tabs-03/04/16/17/18/19` remain OPEN, especially private materials and Section ordering.
+- College Verification/Misc DONE: `COL-verification-misc-01/02/03/05/07/12/15`. NOT-A-GAP: `COL-verification-misc-14` (privacy-preserving capped CSV), `-16` (owner allows scoped college announcements), `-19` (account-scoped notifications are an intentional improvement). Admin profile save now uses `apiFetch`; verified sequential decisions, history, status messages, activity shortcuts and explicit no-college alerts.
+- Graceful behavior: introduced friendly API error handling and guarded double-submits in touched learner discussion, College lesson visibility and College profile editing; preserved input after failures. Other GR-30/32/60/70/71/90/91/92 gaps in all page surfaces still require stronger browser-level acceptance; do not count them as closed.
+- No tests, typecheck, lint, builds, or CI executed by this lane; orchestrator owns actual test execution, typechecks and acceptance.
 
 ## Needs shell (chat-9 only)
 - TPO-home-40 duplicate global notifications entry and TPO-home-44 global topbar placement belong to chat-9; chat-4 must not edit `src/components/shell`.
