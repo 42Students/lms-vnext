@@ -13,7 +13,9 @@ import {activityEvents,collegeMemberships,learnerProfiles,placementApplications,
 import {placementApplicationNotes} from "@/db/schema/placement-application-notes";
 import {placementCollegeApplicationStages,placementCollegeApplicationStageHistory}
  from "@/db/schema/placement-college-application-stages";
-import type {RequestContext} from "@/modules/identity/context";
+import {hasMembershipRole,isSuperAdmin,type RequestContext} from "@/modules/identity/context";
+import {profileVerifications} from "@/db/schema/profile-verification";
+import {verificationDocumentManifest} from "@/modules/verification/document-manifest";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {collegeDriveIdSchema} from "./college-drive-read-model";
@@ -75,6 +77,21 @@ export async function getCollegeApplicationDetail(ctx:RequestContext,job:unknown
     .from(placementOffers).where(eq(placementOffers.applicationId,application.id))
     .orderBy(asc(placementOffers.issuedAt)).limit(50),
  ]);
+ const [receiptRecord]=await db.select({snapshot:profileVerifications.submittedSnapshot})
+   .from(profileVerifications).where(and(
+    eq(profileVerifications.learnerMembershipId,application.membershipId),
+    eq(profileVerifications.section,"EDUCATION"))).limit(1);
+ const resumeReceipt=receiptRecord?verificationDocumentManifest(receiptRecord.snapshot)
+   .find(doc=>doc.purpose==="RESUME"):null;
+ // Do not expose an object key or signed URL. The linked receipt API performs
+ // a separate authorization check and validates the CLEAN private object.
+ const prefix=isSuperAdmin(ctx)?"/api/admin/verification":
+   hasMembershipRole(ctx,"TPO")?"/api/tpo/verification":"/api/college/verification";
+ const resumeUrl=resumeReceipt?
+   prefix+"/"+encodeURIComponent(application.membershipId)+"/EDUCATION/documents/"+
+   encodeURIComponent(resumeReceipt.receiptId)+
+   (isSuperAdmin(ctx)?"?collegeId="+encodeURIComponent(await requireCollegePlacementAdmin(ctx)):"")
+   :null;
  const [stageHistory,screeningHistory]=await Promise.all([
   stage[0]?db.select({from:placementCollegeApplicationStageHistory.fromStage,
     to:placementCollegeApplicationStageHistory.toStage,
@@ -95,7 +112,9 @@ export async function getCollegeApplicationDetail(ctx:RequestContext,job:unknown
   stage:stage[0]?.stage??null,stageHistory,screeningHistory,history,
   notes,rounds,offers,
   scoring:{available:false,reason:"No persisted screening score is available for this application."},
-  resume:{available:false,reason:"A private resume receipt was not supplied by the application record."}};
+  resume:{available:Boolean(resumeUrl),url:resumeUrl,
+   reason:resumeUrl?"Open the verified resume through the authorized document route.":
+    "A submitted verified private resume receipt is not available."}};
 }
 export async function appendCollegeApplicationNote(ctx:RequestContext,job:unknown,id:unknown,raw:unknown){
  const input=z.strictObject({body:z.string().trim().min(1).max(2000),

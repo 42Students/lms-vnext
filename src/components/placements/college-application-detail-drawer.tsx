@@ -12,7 +12,7 @@ export type CollegeApplicationDetail={
  notes:{id:string;body:string;createdAt:string}[];
  rounds:{id:string;name:string;testUrl:string|null;scheduledAt:string|null}[];
  offers:{id:string;status:string;issuedAt:string;offerLetterUrl:string|null;offerLetterAttachedAt:string|null}[];
- scoring:{available:boolean;reason:string};resume:{available:boolean;reason:string};
+ scoring:{available:boolean;reason:string};resume:{available:boolean;reason:string;url:string|null};
 };
 const when=(v:string)=>new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
  timeZone:"Asia/Kolkata"}).format(new Date(v));
@@ -126,8 +126,13 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
       <section className="rounded-lg border border-border p-4">
        <h3 className="font-semibold">Resume and match score</h3>
        <p className="mt-2 text-sm text-body">{detail.resume.reason}</p>
+       {detail.resume.available&&detail.resume.url?
+        <a href={detail.resume.url} target="_blank" rel="noopener noreferrer"
+          className="mt-2 inline-flex min-h-10 items-center rounded border border-border px-3 font-semibold text-primary-text">
+          Resume Preview · Open securely
+        </a>:null}
        <p className="mt-2 text-sm text-body">{detail.scoring.reason}</p>
-       <p className="text-xs text-muted-foreground">No invented private document URL or computed match score is shown.</p>
+       <p className="text-xs text-muted-foreground">The private document endpoint checks access again. No fabricated public resume URL or match score is shown.</p>
        <button type="button" disabled={rescreening||detail.application.status!=="SUBMITTED"}
         onClick={()=>void rescreen()}
         className="mt-3 min-h-10 rounded border border-border px-3 font-semibold text-primary-text disabled:opacity-50">
