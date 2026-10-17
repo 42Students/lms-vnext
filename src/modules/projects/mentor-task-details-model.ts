@@ -7,6 +7,7 @@ export const mentorTaskDetailsParamsSchema=z.object({
 export const mentorTaskDetailsInputSchema=z.object({
   title:z.string().trim().min(1).max(200),
   description:z.string().trim().max(4000).nullable(),
+  approach:z.string().trim().max(4000).nullable().optional(),
   acceptanceCriteria:z.string().trim().max(4000).nullable(),
   priority:z.enum(["LOW","MEDIUM","HIGH","CRITICAL"]),
   expectedUpdatedAt:z.iso.datetime({offset:true}),
