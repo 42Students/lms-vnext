@@ -1,6 +1,7 @@
 import "server-only";
 
 import { createHash, createHmac } from "node:crypto";
+import {resolveMx} from "node:dns/promises";
 import { and, count, eq, gte, gt, isNull, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
@@ -15,7 +16,7 @@ import { companyJoinEmailCandidate } from "./company-preview-policy";
 type Scope = "COLLEGE" | "COMPANY";
 export class PublicJoinCodeError extends Error {
   constructor(readonly code: "INVALID_LINK" | "RATE_LIMITED" |
-    "NETWORK_GUARD_NOT_READY" | "DELIVERY_FAILED") {
+    "NETWORK_GUARD_NOT_READY" | "DELIVERY_FAILED" | "EMAIL_NO_MX" | "EMAIL_MX_UNAVAILABLE") {
     super("PUBLIC_JOIN_" + code);
     this.name = "PublicJoinCodeError";
   }
@@ -50,6 +51,23 @@ export async function requestPublicJoinCode(
   }
   const digest = createHash("sha256").update(input.data.token).digest("hex");
   const email = input.data.email;
+  // Delivery must be possible at the domain before recording a challenge.
+  const host=email.split("@")[1];
+  let records:{exchange:string;priority:number}[];
+  try{
+   records=await Promise.race([
+    resolveMx(host),
+    new Promise<never>((_,reject)=>setTimeout(()=>reject(new Error("DNS_TIMEOUT")),3500)),
+   ]);
+  }catch(error){
+   if(error instanceof Error&&("code" in error)&&error.code==="ENODATA")
+    throw new PublicJoinCodeError("EMAIL_NO_MX");
+   if(error instanceof Error&&("code" in error)&&error.code==="ENOTFOUND")
+    throw new PublicJoinCodeError("EMAIL_NO_MX");
+   throw new PublicJoinCodeError("EMAIL_MX_UNAVAILABLE");
+  }
+  if(records.length===0||!records.some(x=>x.exchange.trim()))
+   throw new PublicJoinCodeError("EMAIL_NO_MX");
   const code = newPublicJoinCode();
   const issued = await getDb().transaction(async tx => {
     const now = new Date();

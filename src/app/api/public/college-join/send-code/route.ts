@@ -20,8 +20,10 @@ export async function POST(request: Request) {
     if (error instanceof PublicJoinCodeError) {
       const unavailable = error.code === "NETWORK_GUARD_NOT_READY";
       const limited = error.code === "RATE_LIMITED";
-      return NextResponse.json({ error: unavailable ? "SERVICE_NOT_READY" : limited ? "TOO_MANY_CODES" : "COULD_NOT_SEND_CODE" },
-        { status: unavailable ? 503 : limited ? 429 : 400, headers: { "Cache-Control": "no-store" } });
+      const noMx=error.code==="EMAIL_NO_MX";
+      const dnsUnavailable=error.code==="EMAIL_MX_UNAVAILABLE";
+      return NextResponse.json({ error: unavailable ? "SERVICE_NOT_READY" : limited ? "TOO_MANY_CODES" : noMx?"EMAIL_NO_MX":dnsUnavailable?"EMAIL_MX_UNAVAILABLE":"COULD_NOT_SEND_CODE" },
+        { status: unavailable||dnsUnavailable ? 503 : limited ? 429 : 400, headers: { "Cache-Control": "no-store" } });
     }
     throw error;
   }

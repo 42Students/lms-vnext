@@ -21,3 +21,5 @@
 | TPO-campaigns-public-R09 | DONE (source, tests not run) | Missing storage and network failures preserve confirmation page and show retry rather than raw JSON; same named test. |
 
 | TPO-campaigns-public-R10 | DONE (source; unrun) | Engagement audience count by segment is now one tenant-scoped aggregate SQL query instead of unbounded JS roster, and selected preview uses SQL IN with <=100 IDs; named `tests/unit/chat2-engage-sql-audience-preview.test.ts`. |
+
+| TPO-campaigns-public-22 | DONE (source; unrun) | Shared business-email policy now blocks personal/disposable/academic/IP hosts, adds distinct client hints and bounded server-side MX validation with retryable unavailable state before sending OTP. Named `tests/unit/chat2-business-email-safety.test.ts`. |
