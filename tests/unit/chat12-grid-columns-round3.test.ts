@@ -20,7 +20,10 @@ describe("chat-12 Students responsive grid and column preference",()=>{
   const sheet=src("src/components/tpo/tpo-students-spreadsheet.tsx");
   expect(grid).toContain("mobileActionsCollapsible?");
   expect(grid).toContain("<summary");
-  expect(sheet).toContain("mobileActionsCollapsible storageKey=");
+  expect(sheet).toContain("mobileActionsCollapsible mobilePrimaryKeys=");
+  expect(sheet).toContain('storageKey="tpo-students-columns-v1"');
+  expect(grid).toContain("mobileActionsCollapsible ?");
+  expect(grid).toContain('aria-label="Row actions"');
   expect(sheet).toContain("rows={sortedRows}");
  });
  it("GR-39 uses break-words and min-width guards on narrow screen grid rows",()=>{
