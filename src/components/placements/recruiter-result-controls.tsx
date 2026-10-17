@@ -372,9 +372,9 @@ export function RecruiterResultControls({
                   </button>
                   <button type="button" disabled={bulkPending!==null}
                     className="rounded-md border border-border px-3 py-2 text-primary-text disabled:opacity-50"
-                    onClick={()=>setSelected(old=>({...old,[round.id]:
+                    onClick={()=>{setActiveRoundId(round.id);setSelected(old=>({...old,[round.id]:
                       old[round.id]?.length===round.participants.filter(p=>p.result?.status!=="APPLIED").length?
-                        []:round.participants.filter(p=>p.result?.status!=="APPLIED").map(p=>p.applicationId)}))}>
+                        []:round.participants.filter(p=>p.result?.status!=="APPLIED").map(p=>p.applicationId)}));}}>
                     {(selected[round.id]??[]).length?"Clear selection":"Select all eligible"}
                   </button>
                 </div>:null}
