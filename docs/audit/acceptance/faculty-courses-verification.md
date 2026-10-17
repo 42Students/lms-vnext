@@ -32,3 +32,10 @@ Not verified: resource uploads (requires private bucket and scanning), enrollmen
 
 | FAC-courses-R01 | DONE | `src/components/courses/faculty-course-home-signals.tsx`; `tests/unit/faculty-courses-chat7-risk-performance.test.ts` — `FAC-courses-R01 separates critical and moderate learner risk and has a true zero-risk empty state`. Tests authored, not run. |
 | FAC-courses-R02 | DONE | `src/components/courses/faculty-course-home-signals.tsx`; `tests/unit/faculty-courses-chat7-risk-performance.test.ts` — `FAC-courses-R02 shows strongest and weakest performance with a learner distribution drilldown`. Tests authored, not run. |
+| FAC-courses-29 | DONE | `src/components/courses/faculty-course-roster.tsx`; `tests/unit/faculty-courses-chat7-r7.test.ts` — `FAC-courses-29 confirms the audited source behavior`. Tests authored, not run. |
+
+| FAC-courses-31 | DONE | `src/app/(authenticated)/teacher/courses/[deliveryId]/discussions/page.tsx`; `tests/unit/faculty-courses-chat7-r7.test.ts` — `FAC-courses-31 confirms the audited source behavior`. Tests authored, not run. |
+
+| FAC-courses-R05 | DONE | `src/components/courses/learner-course-discussion.tsx`; `tests/unit/faculty-courses-chat7-r7.test.ts` — `FAC-courses-R05 confirms the audited source behavior`. Tests authored, not run. |
+
+| FAC-courses-R06 | DONE | `src/components/courses/learner-course-discussion.tsx`; `tests/unit/faculty-courses-chat7-r7.test.ts` — `FAC-courses-R06 confirms the audited source behavior`. Tests authored, not run. |
