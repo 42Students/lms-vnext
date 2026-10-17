@@ -14,6 +14,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
 }){
  const [search,setSearch]=useState("");
  const [sort,setSort]=useState<number|null>(null);
+ const [columnFilters,setColumnFilters]=useState<Record<number,string>>({});
  const [descending,setDescending]=useState(false);
  const [hidden,setHidden]=useState<number[]>([]);
  const [message,setMessage]=useState("");
@@ -21,7 +22,9 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
  const displayedColumns=headings.map((heading,index)=>({heading,index})).filter(row=>!hidden.includes(row.index));
  const ordered=useMemo(()=>{
   const q=search.trim().toLocaleLowerCase("en-IN");
-  const matched=rows.filter(row=>!q||row.some(value=>stringValue(value).toLocaleLowerCase("en-IN").includes(q)));
+  const matched=rows.filter(row=>(!q||row.some(value=>stringValue(value).toLocaleLowerCase("en-IN").includes(q)))&&
+   Object.entries(columnFilters).every(([index,term])=>!term.trim()||stringValue(row[Number(index)]??null)
+    .toLocaleLowerCase("en-IN").includes(term.trim().toLocaleLowerCase("en-IN"))));
   if(sort!==null)matched.sort((a,b)=>{
    const left=a[sort],right=b[sort];
    const comp=typeof left==="number"&&typeof right==="number"?left-right:
@@ -29,7 +32,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
    return descending?-comp:comp;
   });
   return matched;
- },[rows,search,sort,descending]);
+ },[rows,search,sort,descending,columnFilters]);
  const showing=ordered.slice(0,limit);
  const exportRows=[displayedColumns.map(row=>row.heading),...showing.map(row=>displayedColumns.map(col=>row[col.index]??null))];
  const textRows=exportRows.map(row=>row.map(safeCsvCell).join(",")).join("\r\n")+"\r\n";
@@ -74,7 +77,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
     </details>
     <button type="button" onClick={()=>void copy()} className="min-h-10 rounded border border-border px-3 text-xs font-semibold">Copy shown</button>
     <button type="button" onClick={saveCsv} className="min-h-10 rounded border border-border px-3 text-xs font-semibold">Export shown CSV</button>
-    <button type="button" onClick={()=>{setSearch("");setHidden([]);setSort(null);setDescending(false);setLimit(100);}}
+    <button type="button" onClick={()=>{setSearch("");setColumnFilters({});setHidden([]);setSort(null);setDescending(false);setLimit(100);}}
      className="min-h-10 rounded border border-border px-3 text-xs font-semibold">Reset view</button>
    </div>
    <p role="status" className="text-xs text-muted-foreground">
