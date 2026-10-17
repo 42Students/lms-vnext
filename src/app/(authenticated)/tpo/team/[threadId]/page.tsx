@@ -1,4 +1,6 @@
 import Link from "next/link";
+import {listTpoTeamAsks} from "@/modules/placements/tpo-team-asks-service";
+import {TpoTeamAskPanel} from "@/components/tpo/tpo-team-ask-panel";
 import {createHash} from "node:crypto";
 import {tpoTeamCanEdit} from "@/modules/placements/tpo-team-message-change-model";
 import {TpoTeamMessageActions} from "@/components/tpo/tpo-team-message-actions";
@@ -16,7 +18,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { readTpoInternalConversation, tpoThreadIdSchema, tpoMessagePageSchema } from "@/modules/placements/tpo-team-conversation-service";
-export default async function InternalThread({params,searchParams}:{params:Promise<{threadId:string}>;searchParams:Promise<{page?:string|string[];m?:string|string[]}>}){
+export default async function InternalThread({params,searchParams}:{params:Promise<{threadId:string}>;searchParams:Promise<{page?:string|string[];m?:string|string[];ask?:string|string[]}>}){
  const context=await getCurrentRequestContext();
  if(!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const {threadId}=await params;
@@ -36,6 +38,9 @@ export default async function InternalThread({params,searchParams}:{params:Promi
    <Link href="/tpo/team" className="text-primary-text">Back to team</Link>
  </main>;
  const preferences=await getTpoTeamThreadPreferences(context,parsed.data);
+ const asks=await listTpoTeamAsks(context,parsed.data).catch(()=>({status:"FAILED" as const,items:[]}));
+ const rawAsk=Array.isArray(query.ask)?query.ask[0]:query.ask;
+ const highlightAskId=rawAsk&&tpoThreadIdSchema.safeParse(rawAsk).success?rawAsk:undefined;
  const serverNow=new Date();
  return <main className="space-y-5">
   <TpoLiveRefresh intervalMs={30000}/>
@@ -48,6 +53,14 @@ export default async function InternalThread({params,searchParams}:{params:Promi
    counterpart={result.thread.counterpartName}
    createdDate={new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(result.thread.createdAt)}
    decisions={result.messages.filter(message=>message.decision&&!message.removed).length}/>
+  {asks.status==="READY"?<TpoTeamAskPanel threadId={result.thread.id}
+   actorId={context.membership?.id??""}
+   recipientId={result.thread.startedByMembershipId===context.membership?.id?
+    result.thread.invitedMembershipId:result.thread.startedByMembershipId}
+   recipientName={result.thread.counterpartName}
+   items={asks.items.map(ask=>({...ask,dueAt:ask.dueAt?.toISOString()??null}))}
+   highlightAskId={highlightAskId}/>:asks.status==="FAILED"?
+   <p role="alert" className="text-sm text-danger">Could not load team asks. Other messages are still available.</p>:null}
   <TpoTeamFollowControls threadId={result.thread.id} following={preferences.following}
    muted={preferences.muted} ready={preferences.status==="READY"}/>
   <form method="post" action={"/api/placements/tpo/team/threads/"+result.thread.id+"/acknowledge"}>
