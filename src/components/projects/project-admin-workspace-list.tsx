@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ProjectArchiveControl } from "@/components/projects/project-archive-control";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
+import {collegeWorkspaceStatusLabel} from "@/modules/projects/college-workspace-status-label";
 
 export type ProjectAdminWorkspaceListItem = {
   id: string;
@@ -13,6 +14,7 @@ export type ProjectAdminWorkspaceListItem = {
   templateTitle?: string | null;
   memberCount: number;
   progressPercent: number;
+  riskReasons?: readonly string[];
 };
 
 function tone(status: string) {
@@ -76,7 +78,7 @@ export function ProjectAdminWorkspaceList({
           </span>
         </td>
         <td className="p-3">{item.mentorName??"Unassigned"}</td>
-        <td className="p-3"><StatusBadge tone={tone(item.status)}>{label(item.status)}</StatusBadge></td>
+        <td className="p-3"><StatusBadge tone={tone(item.status)}>{collegeWorkspaceStatusLabel(item.status,item.riskReasons)}</StatusBadge></td>
         <td className="min-w-32 p-3"><div className="flex items-center gap-2">
           <div role="progressbar" aria-label={item.title+" progress"} aria-valuemin={0}
             aria-valuemax={100} aria-valuenow={item.progressPercent}
@@ -112,7 +114,7 @@ export function ProjectAdminWorkspaceList({
             <StatusBadge
               tone={tone(item.status)}
             >
-              {label(item.status)}
+              {collegeWorkspaceStatusLabel(item.status,item.riskReasons)}
             </StatusBadge>
           </div>
 
