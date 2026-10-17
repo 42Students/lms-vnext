@@ -26,7 +26,8 @@ export function CollegeQuizCreate({lessons,deliveries}:{
   setQuestions(rows=>rows.map((row,index)=>index===i?updated:row));
  }
  function valid(){
-  if(!title.trim()||!lesson||lesson.nextSequence>10000)return "Select a lesson and enter a quiz title.";
+  if(!title.trim()||!lesson||(nextOverride[lesson.id]??lesson.nextSequence)>10000)
+   return "Select a lesson and enter a quiz title.";
   if(deliveryId&&!sections.some(x=>x.deliveryId===deliveryId))return "Choose a Section within this offering.";
   const attempts=Number(maxAttempts);
   if(!Number.isInteger(attempts)||attempts<1||attempts>20)return "Attempts must be 1–20.";
