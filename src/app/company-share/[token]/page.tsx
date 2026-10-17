@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {getPublicCompanyApplicantShare} from "@/modules/placements/company-share/public-service";
 import {companyShareApplicantHref} from "@/modules/placements/company-share/public-filter-model";
 import {publicApplicantExportHref} from "@/modules/placements/company-share/export-href-model";
@@ -14,7 +15,7 @@ export default async function CompanySharePage({
   <section role="alert" className="space-y-4 rounded-xl border border-border bg-surface p-6">
    <h1 className="text-xl font-semibold">This link is not valid any more.</h1>
    <p className="text-sm text-body">It may have expired or been withdrawn. Please ask the placement cell for a new one.</p>
-   <a href="/" className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">Home</a>
+   <Link href="/" className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">Home</Link>
   </section>
  </main>;
  const href=(p:number)=>companyShareApplicantHref(token,p,result.search);
