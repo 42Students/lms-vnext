@@ -61,5 +61,7 @@ export async function listAdminPlacementApplications(context:RequestContext,raw:
   status:row.status,details:["Channel: "+row.channel,"Eligibility: "+row.eligibilityStatus,
    "Submitted: "+fmt.format(row.submittedAt)+" IST","Age: "+Math.max(0,Math.floor((now-row.submittedAt.getTime())/86400000))+" day(s)","Stage: "+row.pipelineStage],
   href:`/admin/placements/applications/${encodeURIComponent(row.id)}`,
+  secondaryHref:`/admin/placements/jobs/${encodeURIComponent(row.jobId)}/applications`,
+  secondaryLabel:"Manage hiring stage →",
  }))};
 }
