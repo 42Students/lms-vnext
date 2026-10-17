@@ -79,7 +79,7 @@ Audit: `docs/audit/pages/tpo/home.md` (and `home-review.md` if present; any ID: 
 | TPO-home-25 | S3 | PERMISSION | NOT-A-GAP |
 | TPO-home-29 | S3 | COPY | DONE |
 | TPO-home-30 | S3 | COPY | DONE |
-| TPO-home-32 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-home-32 | S3 | MISSING-ACTION | DONE |
 | TPO-home-34 | S3 | STATE | DONE |
 | TPO-home-36 | S3 | MISSING-FIELD | DONE |
 | TPO-home-37 | S3 | STATE | DONE |
@@ -87,7 +87,7 @@ Audit: `docs/audit/pages/tpo/home.md` (and `home-review.md` if present; any ID: 
 | TPO-home-40 | S3 | COPY | OPEN |
 | TPO-home-41 | S3 | MISSING-ACTION | DONE |
 | TPO-home-R04 | S3 | STATE | FIXED-ON-MAIN |
-| TPO-home-R05 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
+| TPO-home-R05 | S3 | MISSING-FIELD | DONE |
 | TPO-home-R06 | S3 | COPY | DONE |
 | TPO-home-R07 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-home-R08 | S3 | PERFORMANCE | FIXED-ON-MAIN |
@@ -160,7 +160,7 @@ Audit: `docs/audit/pages/learner/home-courses.md` (and `home-courses-review.md` 
 | LEARNER-home-courses-11 | S4 | STATE | DONE |
 | LEARNER-home-courses-13 | S4 | COPY | DONE |
 | LEARNER-home-courses-15 | S4 | COPY / MISSING-ACTION | DONE |
-| LEARNER-home-courses-18 | S4 | PERFORMANCE | OPEN |
+| LEARNER-home-courses-18 | S4 | PERFORMANCE | DONE |
 | LEARNER-home-courses-20 | S4 | MISSING-FIELD / PERMISSION | DONE |
 | LEARNER-home-courses-22 | S4 | PERFORMANCE | OPEN |
 | LEARNER-home-courses-23 | S4 | COPY | DONE |
@@ -342,3 +342,5 @@ Audit: `docs/audit/pages/college/operations.md` (and `operations-review.md` if p
 - Source or explicit previously accepted owner decisions, each with a named regression test in acceptance; test execution remains **unverified**. SA-tenants-modules-46 requires GitHub provider access to 42Students/lms-findings (current connection returns 404), SA-tenants-modules-54 requires verified inbound mail provider credentials. No page restyling done.
 
 - Additional source-verified functional gaps: SA-tenants-modules-57 (only live TPO recipients), TPO-home-07 (Engage CRM counts), LEARNER-home-courses-15 (quick links/Start learning); see ID-named tests and acceptance. Runtime/browser verification not performed.
+
+- New functional verification: LEARNER-home-courses-18 now pages SQL attendance to one authorized delivery and IST month; TPO-home-32 scoped + New, TPO-home-R05 bounded 7-day calendar are source verified. All have ID tests. Tests NOT RUN.
