@@ -36,6 +36,23 @@ Work packages originally indexed under `docs/audit/work-packages/chat-5/`, now e
 4. WP-chat-5-14-requests-verification-recruiters-s3 | TODO | 17 gaps (S3 17)
 5. WP-chat-5-15-students-settings-audit-s3 | TODO | 15 gaps (S3 15)
 
+## FAST v2 migration 0128/0129 implementation ledger — 2026-10-17
+
+- Merged origin/main at start (fast-forward because all earlier chat-3-b work had already landed), including registered migrations 0128/0129. Pushed **only** to `chatgpt/chat-3-b`, every source group committed with `[chat-3]` and IDs.
+- **COL-academic-setup-27:** migration 0128 now registered; validation, create/update service, batch create/edit inputs, directory source and grid surface now persist/display separate academic year, start date and end date. History-sensitive start/end changes refuse batches with sections, enrollments, offerings or progression. Older period-based rows continue to fall back to academic-period dates. Legacy independent Inactive transition remains a separate guarded lifecycle follow-up.
+- **TPO-students-05 / TPO-students-54 / TPO-settings-audit-30:** migration 0128 registered the nine allowable after-college outcomes. Typed taxonomy, labels, manual writer validation, inline editor, bulk editor and NAAC/NIRF reporting now support expanded vocabulary. Automatic on-campus/off-campus outcomes derive from accepted/verified external offer evidence. **BLOCKED:** entrepreneurship/competitive-exam detail values and campus-specific labels need separate approved persisted details and policy; these are not represented by migration 0128.
+- **COL-academic-setup-30:** new class capacity must be 1–200 and is explicitly required; Class code can be derived from name; description remains supported. Existing >200-capacity classes are not rewritten.
+- **TPO-students-27/26:** Program · Batch marker, finished-batch tag, Stage/Profile/After-college spreadsheet columns.
+- **TPO-students-37/38/41:** safe TSV Copy visible/selected, paste roll-number selection with missing list, focused spreadsheet Ctrl+A/Ctrl+C keyboard actions (visible page only).
+- **TPO-students-40:** numeric Applications/Offers asc/desc sorting on current roster page only, clearly labeled.
+- **TPO-students-19:** population-scoped student journey strip with counts, percentages and filterable gap chips.
+- **TPO-requests-verification-10:** TPO global queue exposes saved decision actor and date alongside reason and note.
+- **TPO-requests-verification-12:** visible-page attention categories (Urgent / Waiting over two days / possible proof review); proof is **not** verified by metadata, explicitly labeled heuristic, not actual missing-document fact.
+- **TPO-students-44:** tenant-scoped activity-events history added to student drawer, including audited team actions, plus full placement history link.
+- **Previously blocked migration 0128 dependencies now available:** no longer record COL-academic-setup-27 and nine-outcome enum itself as schema-blocked; remaining semantic detail gaps above are distinct.
+- **Remaining:** WP-chat-3-02 and WP-chat-3-03 still partial; WP-chat-3-04 and moved chat-5 WP-02/09/10 still have gaps. WP-chat-5-14/15 remain TODO. SKIP OD-22 security-sensitive permissions, do not invent private proof storage, offer letters or email provider credentials.
+- No tests, typecheck, lint, build or CI waiting under FAST v2 directive. Work is source-committed, not acceptance-tested.
+
 ## FAST v2 2026-10-17 continuation — post-orchestrator lane merge
 
 - Branch `chatgpt/chat-3-b` was fast-forwarded to the latest merged `main` before work. Each file group was then committed to the lane branch with `[chat-3]` and gap IDs; no direct writes to main.

@@ -22,7 +22,9 @@ export async function getTpoAfterCollegeReport(ctx:RequestContext,input:{
  }
  if(!rows.length)ready=(await getTpoAfterCollegeForRoster(ctx,[])).available;
  const result=rows.map(row=>({...row,
-  outcome:entries[row.membershipId]?.outcome??"NOT_DECIDED",
+  outcome:row.acceptedOfferCount>0?"PLACED_ON_CAMPUS" as const:
+    row.verifiedExternalOfferCount>0?"PLACED_OFF_CAMPUS" as const:
+    entries[row.membershipId]?.outcome??"NOT_DECIDED",
  }));
  const counts=Object.fromEntries(AFTER_COLLEGE_OUTCOMES.map(key=>[key,
   result.filter(row=>row.outcome===key).length])) as Record<keyof typeof AFTER_COLLEGE_LABELS,number>;

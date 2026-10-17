@@ -149,6 +149,10 @@ export async function listCollegeBatches(context: RequestContext, raw: unknown) 
     status: aliasedColumn(cohorts.status, "batch_status"),
     updatedAt: aliasedColumn(cohorts.updatedAt, "batch_updated_at"),
     expectedEndPeriodId: aliasedColumn(cohorts.expectedEndPeriodId, "batch_expected_end_period_id"),
+    academicYear:aliasedColumn(cohorts.academicYear,"batch_academic_year"),
+    legacyStartDate:aliasedColumn(cohorts.startDate,"batch_legacy_start_date"),
+    legacyEndDate:aliasedColumn(cohorts.endDate,"batch_legacy_end_date"),
+    inactiveAt:aliasedColumn(cohorts.inactiveAt,"batch_inactive_at"),
     programId: aliasedColumn(programs.id, "batch_program_id"),
     programName: aliasedColumn(programs.name, "batch_program_name"),
     programCode: aliasedColumn(programs.code, "batch_program_code"),
@@ -230,6 +234,8 @@ export async function listCollegeBatches(context: RequestContext, raw: unknown) 
     ...item,
     activeSections: sectionsMap.get(item.id) ?? 0,
     activeEnrolledLearners: learnersMap.get(item.id) ?? 0,
+    startDate:item.legacyStartDate??item.startDate,
+    endDate:item.legacyEndDate??item.endDate,
   }));
   const total = totalRows[0]?.total ?? 0;
   return {
