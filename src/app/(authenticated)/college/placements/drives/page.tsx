@@ -68,7 +68,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
       </label>
       <button type="submit" className="min-h-10 self-end rounded-md bg-primary px-3 font-semibold text-on-primary">Filter</button>
     </form>
-    <CollegeDriveBulkActions drives={data.items}/>
+    <CollegeDriveBulkActions key={JSON.stringify(query)} drives={data.items}/>
     <section className="overflow-x-auto rounded-xl border border-border">
       <p className="p-3 text-sm text-muted-foreground">{data.total} matching persisted drives</p>
       {data.items.length ? <>
