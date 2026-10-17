@@ -149,12 +149,6 @@ export const ACTIVITY_EVENT_TYPES = {
   PROJECTS_TEMPLATE_UNASSIGNED: "projects.template.unassigned",
   PROJECTS_TEMPLATE_METADATA_UPDATED: "projects.template.metadata_updated",
   PROJECTS_TEMPLATE_ROLLED_BACK: "projects.template.rolled_back",
-  PROJECTS_TEMPLATE_CREATED: "projects.template.created",
-  PROJECTS_TEMPLATE_REVISED: "projects.template.revised",
-  PROJECTS_TEMPLATE_PUBLISHED: "projects.template.published",
-  PROJECTS_TEMPLATE_UNPUBLISHED: "projects.template.unpublished",
-  PROJECTS_TEMPLATE_DUPLICATED: "projects.template.duplicated",
-  PROJECTS_TEMPLATE_ARCHIVED: "projects.template.archived",
   PROJECTS_TEMPLATE_COLLEGE_ASSIGNED: "projects.template.college_assigned",
   PROJECTS_TEMPLATE_COLLEGE_REVOKED: "projects.template.college_revoked",
   PROJECTS_PROJECT_CREATED:
@@ -223,6 +217,10 @@ export const ACTIVITY_EVENT_TYPES = {
   PLACEMENTS_JOB_PUBLISHED_EDITED: "placements.job.published_edited",
   PLACEMENTS_JOB_ARCHIVED: "placements.job.archived",
   PLACEMENTS_JOB_REOPENED: "placements.job.reopened",
+  PLACEMENTS_JOB_CANCELLED: "placements.job.cancelled",
+  PROJECTS_RELEASE_CREATED: "projects.release.created",
+  PROJECTS_RELEASE_UPDATED: "projects.release.updated",
+  PROJECTS_RELEASE_DELETED: "projects.release.deleted",
   PLACEMENTS_JOB_CLOSED:
     "placements.job.closed",
   PLACEMENTS_APPLICATION_SUBMITTED:
