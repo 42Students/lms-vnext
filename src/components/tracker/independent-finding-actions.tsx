@@ -4,8 +4,9 @@ import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {FINDING_STATUSES,FINDING_SEVERITIES} from "@/modules/bug-tracker/independent-audit-findings-model";
+import {canTransitionIndependentFinding,type IndependentFindingStatus} from "@/modules/bug-tracker/independent-finding-transition-model";
 type Action="STATUS"|"SEVERITY"|"ASSIGNEE"|"DUPLICATE"|"FIX_COMMIT"|"COMMENT";
-export function IndependentFindingActions({externalId,version,status,severity}:{externalId:string;version:number;status:string;severity:string}){
+export function IndependentFindingActions({externalId,version,status,severity,candidates=[]}:{externalId:string;version:number;status:string;severity:string;candidates?:readonly {id:string;externalId:string;title:string}[]}){
  const router=useRouter(),lock=useRef(false);
  const [action,setAction]=useState<Action>("STATUS");
  const [nextStatus,setNextStatus]=useState(status);
@@ -54,7 +55,9 @@ export function IndependentFindingActions({externalId,version,status,severity}:{
   </label>
   {action==="STATUS"?<label className="grid gap-1 text-sm">Status
    <select value={nextStatus} disabled={pending} onChange={e=>setNextStatus(e.target.value)} className="min-h-10 rounded border border-border bg-surface p-2">
-    {FINDING_STATUSES.map(value=><option key={value} value={value}>{value.replaceAll("_"," ")}</option>)}
+    {FINDING_STATUSES.map(value=><option key={value} value={value}
+      disabled={!canTransitionIndependentFinding(status as IndependentFindingStatus,value,"Reason supplied")}>
+      {value.replaceAll("_"," ")}</option>)}
    </select></label>:null}
   {action==="SEVERITY"?<label className="grid gap-1 text-sm">Severity
    <select value={nextSeverity} disabled={pending} onChange={e=>setNextSeverity(e.target.value)} className="min-h-10 rounded border border-border bg-surface p-2">
@@ -64,7 +67,12 @@ export function IndependentFindingActions({externalId,version,status,severity}:{
    <input value={assignee} disabled={pending} maxLength={150} onChange={e=>setAssignee(e.target.value)} className="min-h-10 rounded border border-border bg-surface p-2"/>
    </label>:null}
   {action==="DUPLICATE"?<label className="grid gap-1 text-sm">Duplicate of finding UUID
-   <input value={duplicateOf} disabled={pending} onChange={e=>setDuplicateOf(e.target.value)} className="min-h-10 rounded border border-border bg-surface p-2"/>
+   <input value={duplicateOf} list="finding-duplicate-candidates" disabled={pending}
+    onChange={e=>setDuplicateOf(e.target.value)}
+    placeholder="Select a matching finding"
+    className="min-h-10 rounded border border-border bg-surface p-2"/>
+   <datalist id="finding-duplicate-candidates">{candidates.map(item=><option key={item.id}
+     value={item.id}>{item.externalId} · {item.title}</option>)}</datalist>
    </label>:null}
   {action==="FIX_COMMIT"?<div className="grid gap-2">
    <label className="grid gap-1 text-sm">Repository

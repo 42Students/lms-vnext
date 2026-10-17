@@ -12,6 +12,7 @@ import {
 import { getDb } from "@/db/client";
 import {placementTpoApplicationStages} from "@/db/schema/placement-tpo-application-stages";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import {deliverRecordedLearnerPlacementEvent} from "./learner-placement-event-delivery";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   placementApplications,
@@ -724,7 +725,7 @@ export async function applyPlacementRoundResult(
         eq(placementTpoApplicationStages.applicationId,current.application.id));
     }
 
-    await recordActivityEventInTransaction(
+    const learnerResultEvent=await recordActivityEventInTransaction(
       tx,
       context,
       {
@@ -750,6 +751,13 @@ export async function applyPlacementRoundResult(
           `placement-result:${applied.id}:applied`,
       },
     );
+
+    await deliverRecordedLearnerPlacementEvent(tx,{
+      eventId:learnerResultEvent.id,collegeId:current.job.collegeId,
+      membershipId:current.application.membershipId,
+      kind:applied.outcome==="ABSENT"?"MARKED_ABSENT":"APPLICATION_STATUS_CHANGED",
+      subject:current.round.name+" · "+current.job.title,
+    });
 
     return applied;
   });

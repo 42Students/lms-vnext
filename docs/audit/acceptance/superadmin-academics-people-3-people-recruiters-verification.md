@@ -68,3 +68,7 @@ Unresolved: faculty register optional profile fields; platform-wide account bloc
 ## Chat-6 UNCONFIRMED decisions, 2026-10-18
 
 | SA-academics-people-111 | DONE (source) | Canonical recruiter phone reuse and global session invalidation on phone change; decision evidence: `docs/audit/acceptance/chat-6-unconfirmed-decisions.md`; test: `tests/unit/chat6-unconfirmed-decisions-round13.test.ts` → `SA-academics-people-111` |
+
+## Chat-6 follow-up: incremental OPEN-gap behavior
+
+| SA-academics-people-101 | OPEN (partial: in-tab create implemented; edit still missing) | `src/components/admin/super-admin-faculty-assignment-create.tsx` and `src/app/(authenticated)/admin/faculty-assignment/page.tsx` invoke audited `createCourseTeachingAssignment` through same-origin `/api/courses/teaching-assignments`, using active selected-college delivery and faculty pickers. `tests/unit/chat6-superadmin-faculty-assignment-create-101.test.ts` → `SA-academics-people-101 validates a typed delivery/faculty/role and rejects malformed assignments` and `SA-academics-people-101 creates only active faculty teaching assignments in the selected college`. In-place teaching role editing is not yet implemented, so the full gap remains OPEN. |

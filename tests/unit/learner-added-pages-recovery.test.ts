@@ -16,7 +16,7 @@ const detailPages = [
   ["learn/my-placements/applications/[applicationId]/history",
     "No application-status history records", "sm:"],
   ["learn/my-placements/applications/[applicationId]/company",
-    "No extended company biography", "sm:"],
+    "No verified-safe public website URL is available.", "sm:"],
   ["learn/my-placements/offers", "learnerOffersEmptyState", "sm:"],
   ["learn/my-placements/assessments/results", "No official assessment results yet", "sm:"],
   ["learn/notifications/history", "emptyMessage", "NotificationList"],

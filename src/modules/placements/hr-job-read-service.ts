@@ -33,14 +33,20 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
   const shareBranch=Boolean(share?.columns?.includes("branch"));
   const sharePhone=Boolean(share?.columns?.includes("phone"));
   const shareEmail=Boolean(share?.columns?.includes("email"));
-  const shareUg=Boolean(share?.columns?.includes("cgpa"));
-  const shareTenth=Boolean(share?.columns?.includes("tenth"));
-  const shareTwelfth=Boolean(share?.columns?.includes("twelfth"));
+  // Both controls must permit release: relationship column AND college-wide visibility.
+  // A missing college visibility row denies disclosure rather than inheriting permissive defaults.
+  const [visibility]=await db.select({
+    projects:placementCompanyVisibilitySettings.showProjectLinks,
+    academic:placementCompanyVisibilitySettings.showTenthTwelfth,
+    cgpa:placementCompanyVisibilitySettings.showCgpaExact,
+  }).from(placementCompanyVisibilitySettings)
+    .where(eq(placementCompanyVisibilitySettings.collegeId,workspace.college.id)).limit(1);
+  const shareUg=Boolean(share?.columns?.includes("cgpa") && visibility?.cgpa);
+  const shareTenth=Boolean(share?.columns?.includes("tenth") && visibility?.academic);
+  const shareTwelfth=Boolean(share?.columns?.includes("twelfth") && visibility?.academic);
   const shareSkills=Boolean(share?.columns?.includes("skillMatch"));
   const shareResume=Boolean(share?.columns?.includes("resume"));
-  const shareProjects=Boolean(share?.columns?.includes("projects"));
-  const [linkPolicy]=shareProjects?await db.select({projects:placementCompanyVisibilitySettings.showProjectLinks})
-   .from(placementCompanyVisibilitySettings).where(eq(placementCompanyVisibilitySettings.collegeId,workspace.college.id)).limit(1):[];
+  const shareProjects=Boolean(share?.columns?.includes("projects") && visibility?.projects);
   // REC-home-drives-45: milestone predicates evaluate only inside the same
   // college-scoped, TPO-shortlisted audience. Stage counts may overlap.
   const roundMilestone=(kinds:readonly string[],outcome:"PASS"|"FAIL")=>exists(
@@ -256,7 +262,7 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
   const projected = projectSharedApplicants(applications.map(({membershipId,profileDocument,...row})=>{
     const marks=byMember.get(membershipId);
     const links=projectRecruiterProfileLinks(profileDocument,{
-      projects:shareProjects&&linkPolicy?.projects===true,skills:shareSkills,
+      projects:shareProjects,skills:shareSkills,
     });
     return {...row,
       resumeShared:shareResume,

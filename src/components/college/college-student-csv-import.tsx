@@ -54,7 +54,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
         Maximum 500 learner rows and 1 MB. Use the exact header order below.
         Choose a program and batch from the selectors; you do not need to copy their IDs into legacy CSV rows.
         Indian 10-digit mobile numbers are normalized to +91 for the legacy template.
-        The dry run validates format and college ownership; existing identity conflicts are checked during import.
+        The dry run checks format, college ownership, duplicate rows and existing account conflicts. All rows must validate before import.
       </p>
       <p className="mt-2 break-all font-mono text-xs text-muted-foreground">{TEMPLATE}</p>
       <a download="student-import-template.csv"
@@ -143,7 +143,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
           </tr>)}</tbody>
         </table> : <p className="text-sm text-body">No row-level results are available.</p>}
       </div>
-      {report.preview && report.valid > 0 && report.structuralErrors.length === 0 ? <div className="space-y-3">
+      {report.preview && report.valid > 0 && report.invalid === 0 && report.structuralErrors.length === 0 ? <div className="space-y-3">
         <label className="flex items-start gap-2 text-sm text-body">
           <input type="checkbox" checked={confirm} onChange={event => setConfirm(event.target.checked)}
             className="mt-1" />
