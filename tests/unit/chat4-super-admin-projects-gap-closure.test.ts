@@ -331,4 +331,25 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
   expect(page).toContain("workspaceTitle={submission.projectTitle}");
  });
 
+
+ it("SA-placements-projects-56 lists per-learner create, covered and duplicate decisions from a scoped preflight",()=>{
+   const service=source("src/modules/projects/cohort-preflight-service.ts");
+   const creator=source("src/components/projects/class-team-workspace-creator.tsx");
+   expect(service).toContain("requireTeamCreationAuthority(context,input.collegeId)");
+   expect(service).toContain('status:"DUPLICATE"');
+   expect(service).toContain('"ALREADY_COVERED" as const');
+   expect(service).toContain('"TO_CREATE" as const');
+   expect(creator).toContain("Learner creation preflight details");
+   expect(creator).toContain("preflight.items.map");
+   expect(creator).toContain("Already covered");
+   expect(creator).toContain("Duplicate");
+ });
+ it("SA-placements-projects-58 shows failed mentor moves in a modal without losing retry selection",()=>{
+   const view=source("src/components/projects/project-mentor-reassignment.tsx");
+   expect(view).toContain("Some workspaces were not reassigned");
+   expect(view).toContain("setFailureOpen(response.failures.length > 0)");
+   expect(view).toContain("setSelected([...new Set(response.failures.map");
+   expect(view).toContain("Retry failed workspaces");
+   expect(view).toContain("selectedMentorName");
+ });
 });
