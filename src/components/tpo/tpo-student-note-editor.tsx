@@ -4,7 +4,7 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 export function TpoStudentNoteEditor({membershipIds,afterSave}:{
- membershipIds:string[];afterSave?:()=>void;
+ membershipIds:readonly string[];afterSave?:()=>void;
 }){
  const router=useRouter();
  const [note,setNote]=useState("");
