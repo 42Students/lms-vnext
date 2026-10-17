@@ -91,3 +91,20 @@ Rule: a customer never sees a raw code, a stack trace, a framework screen, a dat
 - GR-81 A "no raw code in the DOM" Playwright helper reused by every journey test.
 - GR-82 Production-build smoke: no dev overlay, no source maps, error screens render with a reference id.
 - GR-83 Unit and integration tests for every helper (GR-01..GR-08, GR-30..GR-34, GR-50..GR-52, GR-60).
+
+## 10. Alerts to Telegram (alerting = chat-16; parity with the old LMS, see docs/orchestrator/queues/alerting-chat-16.md)
+- GR-111 Telegram notifier: Bot API sendMessage, never throws, returns boolean, plain text (no parse_mode), 3500 character cap, `[vnext dev] ` tag outside production, no Acknowledge button outside production, no-op when `TELEGRAM_ALERT_BOT_TOKEN` / `TELEGRAM_ALERT_CHAT_ID` unset.
+- GR-112 Error signature (normalise then hash, per environment).
+- GR-113 Redaction: no personal data, tokens, cookies, connection strings or SQL parameter values in any alert.
+- GR-114 Reporter hook in `logError` and `apiErrorResponse` (async, fire-and-forget, carries `requestId`).
+- GR-115 Persistence of signatures, counters, accounts and states (muted / fixed / acknowledged).
+- GR-116 Alert policy: new signature alerts once, known silent, burst cap 5 per minute with a summary line, delivery-gated persistence, spike alerts.
+- GR-117 Browser error reporting endpoint feeding the same pipeline.
+- GR-118 Exclusive scheduled work (lease) and a protected in-cluster tick endpoint.
+- GR-119 Daily digest at 09:00 IST.
+- GR-120 Health watch CronJob (works when the web pods are down; alert on two consecutive failures, recovery message).
+- GR-121 Deploy health check script posting to Telegram.
+- GR-122 Acknowledge webhook, production only, secret-token verified.
+- GR-123 Logs page parity (list, counts, mute, mark fixed, acknowledge) with old-LMS wording.
+- GR-124 Safe when unconfigured, with a readiness note on the Logs page.
+- GR-125 Tests for all of the above, including a fake Telegram server.
