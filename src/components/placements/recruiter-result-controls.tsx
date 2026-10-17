@@ -355,7 +355,7 @@ export function RecruiterResultControls({
   return (
     <div className="space-y-5" tabIndex={0} role="region" aria-label="Recruiter results editor" aria-keyshortcuts="S W H R A Z"
       onKeyDown={event=>{
-        if(event.defaultPrevented||event.ctrlKey||event.altKey||event.metaKey)return;
+        if(event.defaultPrevented||event.ctrlKey||event.altKey||event.metaKey||pendingKey!==null||bulkPending!==null)return;
         const target=event.target as HTMLElement;
         if(target.closest("input,textarea,select,button,[contenteditable=true]"))return;
         const key=event.key.toLowerCase();
@@ -413,11 +413,11 @@ export function RecruiterResultControls({
                     ["PASS","Pass"],["HOLD","Waitlist"],["FAIL","Not selected"],["ABSENT","Absent"],
                   ] as const).map(([outcome,label])=><button key={outcome} type="button"
                     onClick={()=>{setActiveRoundId(round.id);draftSelectedOutcome(round.id,outcome);}}
-                    disabled={bulkPending!==null||!(selected[round.id]??[]).length}
+                    disabled={bulkPending!==null||pendingKey!==null||!(selected[round.id]??[]).length}
                     className="rounded-md border border-border px-2 py-1 text-primary-text disabled:opacity-40">
                     {label}
                   </button>)}
-                  <button type="button" disabled={bulkPending!==null||undoHistory.length===0}
+                  <button type="button" disabled={bulkPending!==null||pendingKey!==null||undoHistory.length===0}
                     onClick={undoDraftOutcome} className="rounded-md border border-border px-2 py-1 text-primary-text disabled:opacity-40">
                     Undo draft
                   </button>
@@ -427,7 +427,7 @@ export function RecruiterResultControls({
                     {bulkPending===round.id?"Sending results…":
                       "Send "+(selected[round.id]??[]).length+" results"}
                   </button>
-                  <button type="button" disabled={bulkPending!==null}
+                  <button type="button" disabled={bulkPending!==null||pendingKey!==null}
                     className="rounded-md border border-border px-3 py-2 text-primary-text disabled:opacity-50"
                     onClick={()=>{setActiveRoundId(round.id);setSelected(old=>({...old,[round.id]:
                       old[round.id]?.length===round.participants.filter(p=>p.result?.status!=="APPLIED").length?
@@ -761,7 +761,7 @@ export function RecruiterResultControls({
                                   size="sm"
                                   disabled={
                                     pendingKey !==
-                                    null
+                                    null || bulkPending !== null
                                   }
                                   onClick={() =>
                                     stage(
