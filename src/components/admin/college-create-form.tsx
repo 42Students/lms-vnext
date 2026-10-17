@@ -48,7 +48,9 @@ export function CollegeCreateForm({
 
       if (!response.ok) {
         const payload = await response.json().catch(() => null);
-        setError(payload?.error ?? "Could not create college");
+        setError(payload?.error==="COLLEGE_CODE_CONFLICT"
+          ?"uniqueId '"+code.trim().toLowerCase()+"' is already used by another college"
+          :payload?.error ?? "Could not create college");
         return;
       }
 
@@ -131,10 +133,10 @@ export function CollegeCreateForm({
         <Input
           id="college-code"
           value={code}
-          onChange={(event) => setCode(event.target.value)}
-          required
-          maxLength={64}
+          onChange={(event) => setCode(event.target.value.toLowerCase())}
+          required minLength={3} maxLength={63} pattern="[a-z0-9-]{3,63}"
           placeholder="e.g., nsrit or eng-college"
+          title="Unique ID must be 3-63 chars, lowercase letters/numbers/hyphen only."
         />
       </div>
       <div className="space-y-3 lg:col-span-4">

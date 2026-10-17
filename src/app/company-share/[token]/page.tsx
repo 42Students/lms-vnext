@@ -1,4 +1,3 @@
-import {notFound} from "next/navigation";
 import {getPublicCompanyApplicantShare} from "@/modules/placements/company-share/public-service";
 import {companyShareApplicantHref} from "@/modules/placements/company-share/public-filter-model";
 import {publicApplicantExportHref} from "@/modules/placements/company-share/export-href-model";
@@ -11,7 +10,13 @@ export default async function CompanySharePage({
  const {token}=await params;
  const {page,q}=await searchParams;
  const result=await getPublicCompanyApplicantShare(token,page??1,"VIEW",q??"");
- if(result.kind!=="READY")notFound();
+ if(result.kind!=="READY")return <main className="mx-auto flex min-h-screen max-w-xl flex-col justify-center px-4 py-10">
+  <section role="alert" className="space-y-4 rounded-xl border border-border bg-surface p-6">
+   <h1 className="text-xl font-semibold">This link is not valid any more.</h1>
+   <p className="text-sm text-body">It may have expired or been withdrawn. Please ask the placement cell for a new one.</p>
+   <a href="/" className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">Home</a>
+  </section>
+ </main>;
  const href=(p:number)=>companyShareApplicantHref(token,p,result.search);
  return <main className="relative isolate mx-auto max-w-5xl space-y-5 px-4 py-8">
   <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-40 grid select-none grid-cols-2 place-items-center overflow-hidden text-center text-lg font-semibold uppercase tracking-widest text-muted-foreground opacity-20 sm:grid-cols-3">

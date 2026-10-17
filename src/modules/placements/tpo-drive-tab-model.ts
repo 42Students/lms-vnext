@@ -1,7 +1,6 @@
 export type TpoDriveTab={label:string;href:string};
 
-/** Primary legacy workspace tabs. Discussion is withheld until a real drive-
- * scoped discussion reader exists; a generic activity feed is not equivalent. */
+/** Primary workspace tabs, including persisted drive-scoped recruiter threads. */
 export function tpoDriveTabs(jobId:string):TpoDriveTab[]{
  const root="/tpo/placements/jobs/"+encodeURIComponent(jobId);
  return [
@@ -10,6 +9,7 @@ export function tpoDriveTabs(jobId:string):TpoDriveTab[]{
   {label:"Rounds",href:root+"/rounds"},
   {label:"Offers",href:root+"/offers"},
   {label:"Drive day",href:root+"/drive-day"},
+  {label:"Discussion",href:root+"/discussion"},
   {label:"About this drive",href:root+"/about"},
  ];
 }
@@ -34,7 +34,7 @@ export function tpoDriveTabHref(jobId:string,tab:string){
  const routes:Record<string,string>={
   overview:root,applicants:root+"/applicants-pipeline",rounds:root+"/rounds",
   offers:root+"/offers","drive-day":root+"/drive-day",
-  about:root+"/about",
+  about:root+"/about",discussion:root+"/discussion",
  };
  return routes[tab]??root;
 }

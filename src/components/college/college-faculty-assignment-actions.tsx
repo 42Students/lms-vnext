@@ -1,6 +1,7 @@
 "use client";
 
 import { FACULTY_ASSIGNMENT_COPY, FACULTY_ASSIGNMENT_ROLE_LABELS } from "@/modules/courses/college-courses-copy";
+import {courseApiError} from "@/components/courses/learner-course-api";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
@@ -9,11 +10,7 @@ type Option = { id: string; label: string };
 type CourseTeachingRole = "PRIMARY" | "CO_TEACHER" | "TA";
 
 async function mutationError(response: Response) {
-  const value: unknown = await response.json().catch(() => null);
-  if (value && typeof value === "object" && "error" in value && typeof value.error === "string") {
-    return value.error;
-  }
-  return "The change was not saved. Check the assignment and retry.";
+  return courseApiError(response);
 }
 
 type DeliveryOption = Option & {

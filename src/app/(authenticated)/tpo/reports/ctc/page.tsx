@@ -63,7 +63,7 @@ export default async function TpoCtcReportPage({
     <div data-tpo-presentation-report className="space-y-6">
       <PageHeader
         eyebrow="TPO · Reports"
-        title="Compensation (CTC)"
+        title="Packages"
         description="Annual package statistics use each learner’s single highest accepted full-time offer. The separate distribution counts accepted offer records."
         actions={<ReportCsvLink workspace={workspace} kind="ctc" />}
       />

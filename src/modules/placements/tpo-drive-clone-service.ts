@@ -8,6 +8,7 @@ import {createPlacementJob} from "./job-service";
 import {requireTpoJobCollege} from "./tpo-job-write-base";
 import {placementJobIdSchema} from "./validation";
 import {PlacementsServiceError} from "./errors";
+import {cloneTpoEligibilityAudience} from "./tpo-drive-clone-eligibility-model";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 
@@ -20,7 +21,7 @@ export async function cloneTpoDrive(context:RequestContext,rawJobId:unknown,raw:
  const [source]=await getDb().select().from(placementJobs).where(and(
   eq(placementJobs.id,jobId),eq(placementJobs.collegeId,collegeId))).limit(1);
  if(!source)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
- if(!["CLOSED","CANCELLED"].includes(source.status))
+ if(!["CLOSED","CANCELLED","REJECTED"].includes(source.status))
   throw new Error("Only completed or cancelled drives can be run again.");
  const draft=await createPlacementJob(context,{
   collegeId,companyRelationshipId:source.companyRelationshipId,
@@ -45,9 +46,13 @@ export async function cloneTpoDrive(context:RequestContext,rawJobId:unknown,raw:
     ctcLpa:source.ctcLpa,fixedCtcLpa:source.fixedCtcLpa,
     variableCtcLpa:source.variableCtcLpa,updatedAt:new Date(),
   }).where(and(eq(placementJobs.id,draft.id),eq(placementJobs.status,"DRAFT")));
+  const audience=oldPolicy?cloneTpoEligibilityAudience({
+    allowedCohortIds:oldPolicy.allowedCohortIds??[],
+    allowedPassingYears:oldPolicy.allowedPassingYears??[],
+  },new Date().getUTCFullYear()):null;
   if(oldPolicy)await tx.insert(placementJobEligibilityPolicies).values({
     jobId:draft.id,allowedProgramIds:oldPolicy.allowedProgramIds,
-    allowedCohortIds:oldPolicy.allowedCohortIds,allowedSectionIds:oldPolicy.allowedSectionIds,
+    allowedCohortIds:audience!.allowedCohortIds,allowedSectionIds:oldPolicy.allowedSectionIds,
     minCgpaHundredths:oldPolicy.minCgpaHundredths,
     maxActiveBacklogs:oldPolicy.maxActiveBacklogs,maxPastBacklogs:oldPolicy.maxPastBacklogs,
     minTenthPctBasisPoints:oldPolicy.minTenthPctBasisPoints,
@@ -55,7 +60,7 @@ export async function cloneTpoDrive(context:RequestContext,rawJobId:unknown,raw:
     minDiplomaPctBasisPoints:oldPolicy.minDiplomaPctBasisPoints,
     minUndergraduatePctBasisPoints:oldPolicy.minUndergraduatePctBasisPoints,
     minPctThroughoutBasisPoints:oldPolicy.minPctThroughoutBasisPoints,
-    maxGapYears:oldPolicy.maxGapYears,allowedPassingYears:oldPolicy.allowedPassingYears,
+    maxGapYears:oldPolicy.maxGapYears,allowedPassingYears:audience!.allowedPassingYears,
     requireVerifiedEvidence:oldPolicy.requireVerifiedEvidence,
     missingEvidencePolicy:oldPolicy.missingEvidencePolicy,updatedByUserId:context.user.id,
   });

@@ -285,7 +285,7 @@ export default async function LearnerPlacementsPage({
       </section>
       <section aria-labelledby="learner-college-notice-preview" className="rounded-xl border border-border bg-surface p-4 sm:p-6">
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-          <h2 id="learner-college-notice-preview" className="text-base font-semibold text-foreground">Recent college notices</h2>
+          <h2 id="learner-college-notice-preview" className="text-base font-semibold text-foreground">Latest from the placement cell</h2>
           <div className="flex flex-wrap gap-3">
             <Link href="/learn/my-placements/announcements"
               className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">View all visible notices →</Link>
@@ -296,7 +296,7 @@ export default async function LearnerPlacementsPage({
         <p className="mt-1 text-xs text-muted-foreground">These are notices visible to your college membership, not necessarily placement-cell announcements.</p>
         {collegeNoticesFailed ? <p role="alert" className="mt-3 text-sm text-body">College notices are temporarily unavailable. Your other placement information is unchanged.</p>
           : collegeNotices===null ? <p className="mt-3 text-sm text-body">The college notice feed is not enabled.</p>
-          : collegeNotices.length===0 ? <p className="mt-3 text-sm text-body">No currently visible college notices.</p>
+          : collegeNotices.length===0 ? <p className="mt-3 text-sm text-body">No notices yet.</p>
           : <ul className="mt-3 space-y-2">{collegeNotices.map(notice=><li key={notice.id} className="rounded-lg border border-border px-3 py-2">
               {learnerNoticeHref(notice.id) ? (
                 <Link href={learnerNoticeHref(notice.id)!} className="inline-flex min-h-11 items-center break-words text-sm font-semibold text-primary-text underline">

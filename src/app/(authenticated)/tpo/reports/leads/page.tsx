@@ -98,7 +98,7 @@ export default async function TpoLeadsReportPage({
     <div data-tpo-presentation-report className="space-y-6">
       <PageHeader
         eyebrow="TPO · Reports"
-        title="Recruiter leads"
+        title="Recruiter engagement"
         description="College-wide CRM lead stages, recorded acquisition sources and observable invitation/account-linkage conversion signals."
         actions={
           <ReportCsvLink

@@ -1,0 +1,30 @@
+# Cloud Build CI for vNext (stand-in for GitHub Actions, which never starts jobs on this repo).
+# Runs on the default free-tier machine (no machineType override => no extra cost).
+# Usage (from a clean checkout directory, isolated gcloud config):
+#   gcloud builds submit . --project students-384817 --region asia-south1 --config deploy/ci/cloudbuild-ci.yaml
+# Steps are sequential and each step reports its own result; a failing step stops the build,
+# so run ci-all (substitution _KEEP_GOING=1) to see every result in one pass.
+options:
+  logging: CLOUD_LOGGING_ONLY
+timeout: 3300s
+steps:
+  - id: install
+    name: node:22
+    entrypoint: bash
+    args: ["-c", "npm ci --no-audit --no-fund 2>&1 | tail -5"]
+  - id: typecheck
+    name: node:22
+    entrypoint: bash
+    env: ["NODE_OPTIONS=--max-old-space-size=6144"]
+    args: ["-c", "npx tsc --noEmit 2>&1 | tail -150; test $${PIPESTATUS[0]} -eq 0 && echo CI-TYPECHECK-PASS || (echo CI-TYPECHECK-FAIL; [ \"$_KEEP_GOING\" = 1 ])"]
+  - id: lint
+    name: node:22
+    entrypoint: bash
+    args: ["-c", "npx eslint . -f compact 2>&1 | tail -150; test $${PIPESTATUS[0]} -eq 0 && echo CI-LINT-PASS || (echo CI-LINT-FAIL; [ \"$_KEEP_GOING\" = 1 ])"]
+  - id: unit
+    name: node:22
+    entrypoint: bash
+    env: ["VITE_CONFIG_NATIVE_IGNORE_WARNING=true", "NODE_OPTIONS=--max-old-space-size=5120"]
+    args: ["-c", "node node_modules/vitest/vitest.mjs run --reporter=dot 2>&1 | tail -200; test $${PIPESTATUS[0]} -eq 0 && echo CI-UNIT-PASS || (echo CI-UNIT-FAIL; [ \"$_KEEP_GOING\" = 1 ])"]
+substitutions:
+  _KEEP_GOING: "1"

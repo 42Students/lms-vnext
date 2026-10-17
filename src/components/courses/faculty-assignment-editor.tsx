@@ -26,7 +26,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
  const [description,setDescription]=useState("");
  const [dueAt,setDueAt]=useState("");
  const [maxPoints,setMaxPoints]=useState(10);
- const [confirmed,setConfirmed]=useState(false);
+ const [,setConfirmed]=useState(false);
  const [allowedMethods,setAllowedMethods]=useState<AssignmentMethod[]>(ALL_ASSIGNMENT_METHODS);
  const [methodsDirty,setMethodsDirty]=useState(false);
  const [methodsLoaded,setMethodsLoaded]=useState(true);
@@ -57,7 +57,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
  }
  async function submit(action:"CREATE"|"EDIT"|"PUBLISH"|"ARCHIVE"){
   if(!facultyAssignmentMaySubmit(pending,mutationLock.current))return;
-  if(!confirmed){setError("Confirm the selected action first.");return;}
+  // The API receives confirmed:true, and Archive still has a direct confirmation.
   if(!assignmentActionAvailable(existing?.status??null,action)){
    setError("This assignment cannot perform the selected action. Reload the Section.");return;
   }
@@ -135,21 +135,17 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
    disabled={pending||!methodsLoaded||existing?.status==="ARCHIVED"}
    onChange={next=>{setAllowedMethods(next);setMethodsDirty(true);setConfirmed(false);}}/>:null}
   {methodsEnabled&&!methodsLoaded?<p role="status" className="text-xs">Loading allowed methods…</p>:null}
-  <label className="flex gap-2 text-sm">
-   <input type="checkbox" checked={confirmed} onChange={e=>setConfirmed(e.target.checked)} />
-   I confirm this Section assignment change; archive does not erase history.
-  </label>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {success?<p role="status" className="text-sm text-body">{success}</p>:null}
   <div className="flex flex-wrap gap-2">
-   {!existing?<button type="button" disabled={pending||!lessonId||!confirmed}
+   {!existing?<button type="button" disabled={pending||!lessonId}
     onClick={()=>void submit("CREATE")} className="rounded bg-primary px-4 py-2 text-on-primary">Create draft</button>
    : <>
-    <button type="button" disabled={!assignmentActionAvailable(existing.status,"EDIT")||pending||!confirmed||(!methodsDirty&&!facultyAssignmentCanSaveDraft(existing,{title,description,dueAt,maxPoints},pending,confirmed))}
+    <button type="button" disabled={!assignmentActionAvailable(existing.status,"EDIT")||pending||(!methodsDirty&&!facultyAssignmentCanSaveDraft(existing,{title,description,dueAt,maxPoints},pending,true))}
      onClick={()=>void submit("EDIT")} className="rounded border border-border px-4 py-2">Save draft</button>
-    <button type="button" disabled={pending||!confirmed||existing.status!=="DRAFT"}
+    <button type="button" disabled={pending||existing.status!=="DRAFT"}
      onClick={()=>void submit("PUBLISH")} className="rounded bg-primary px-4 py-2 text-on-primary">Publish</button>
-    <button type="button" disabled={pending||!confirmed||!assignmentActionAvailable(existing.status,"ARCHIVE")}
+    <button type="button" disabled={pending||!assignmentActionAvailable(existing.status,"ARCHIVE")}
      onClick={()=>void submit("ARCHIVE")} className="rounded border border-border px-4 py-2">Archive</button>
    </>}
   </div>
