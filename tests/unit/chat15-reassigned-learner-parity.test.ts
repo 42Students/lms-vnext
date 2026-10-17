@@ -35,7 +35,7 @@ describe("chat-15 reassigned learner course and placement parity",()=>{
   const s=read("src/components/courses/learner-course-workspace.tsx");
   for(const copy of ["Back to Learning Path","Previous lesson","Next lesson"])expect(s).toContain(copy);
  });
- it("LEARNER-course-detail-20 published roadmap empty state uses exact legacy copy",()=>{
+ it("LEARNER-course-detail-20 differentiates teacher-unpublished lessons from missing content without instructor copy",()=>{
   expect(learnerRoadmapEmptyState(true,[])).toEqual({title:"No lessons published yet",description:"Your teacher has not published any lessons in this course."});
   expect(learnerRoadmapEmptyState(true,[{items:[]}])?.title).toBe("No learning items published yet");
   expect(learnerRoadmapEmptyState(false,[])?.title).toBe("No roadmap items yet");
