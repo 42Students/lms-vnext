@@ -23,6 +23,7 @@ export const tpoGeneralRequestInputSchema=z.discriminatedUnion("kind",[
  z.object({kind:z.literal("ABSENCE_DISPUTE"),reason,applicationId:uuid,roundId:uuid,proofUrl}),
  z.object({kind:z.literal("CORRECTION_WITH_PROOF"),reason,section:z.enum(["EDUCATION"]),
   field:nonempty,proposedValue:nonempty,proofUrl}),
+ z.object({kind:z.literal("OFFER_ACCEPTANCE_DISPUTE"),reason,offerId:uuid}),
  z.object({kind:z.literal("PLACEMENT_AFTER_PLACEMENT"),reason,
   requestedJobId:uuid,justification:nonempty}),
 ]);
@@ -41,6 +42,7 @@ export function tpoGeneralRequestTarget(input:TpoGeneralRequestInput):string {
   case "REGISTRATION_CHANGE":return input.cohortId;
   case "ABSENCE_DISPUTE":return input.applicationId+":"+input.roundId;
   case "CORRECTION_WITH_PROOF":return input.section+":"+input.field.trim().toLocaleLowerCase("en-IN");
+  case "OFFER_ACCEPTANCE_DISPUTE":return input.offerId;
   case "PLACEMENT_AFTER_PLACEMENT":return input.requestedJobId;
  }
 }
