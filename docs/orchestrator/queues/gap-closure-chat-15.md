@@ -137,3 +137,14 @@ This reconciliation is not a claim that all 41 gaps are closed. Final VERIFIED d
 - LEARNER-placements-43: SOURCE-DONE with externally reported acceptance-dispute window; the companion `-43/-51/-52` general-request migration is proposed, not registered or replayed.
 
 - LEARNER-learning-misc-04: SOURCE-DONE after ledger. See `tests/unit/chat15-multipart-no-file.test.ts`, `assignment-submission-file-service.ts`, `assignment-method-policy.ts` and the one-shot learner control. Runtime tests not executed in this connector session.
+
+
+## Chat-15 last reconciled result (source review only)
+
+- 25 IDs SOURCE-DONE (including the follow-up improvements for LEARNER-placements-28 and LEARNER-learning-misc-04); source tests are authored, but not executed or runtime-accepted.
+- 2 IDs NOT-A-GAP by recorded owner decision: LEARNER-placements-33 and LEARNER-placements-R08.
+- 4 PARTIAL: LEARNER-course-detail-12, LEARNER-learning-misc-34, LEARNER-placements-30, LEARNER-placements-41.
+- 1 BLOCKED: LEARNER-learning-misc-01, scanned private object storage.
+- 9 remain OPEN: LEARNER-course-detail-03/05/19; LEARNER-learning-misc-02/07/11/12/15; LEARNER-placements-R04.
+
+The SOURCE-DONE label does not replace test, DB replay or deployment verification. The general request schema proposal for LEARNER-placements-43/51/52 still requires registered migration and full PostgreSQL acceptance. No unexecuted test has been recorded as passing.
