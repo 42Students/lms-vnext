@@ -42,7 +42,7 @@ export async function decideMentorProjectMeeting(context:RequestContext,rawProje
    throw new ProjectsServiceError("PROJECT_MEETING_STALE_VERSION");
   const now=new Date(Math.max(Date.now(),current.updatedAt.getTime()+1));
   const [updated]=await tx.update(projectMeetings).set(input.action==="COMPLETE"?{
-    status:"COMPLETED",outcome:input.outcome??null,cancellationNote:null,updatedAt:now,
+    status:"COMPLETED",outcome:input.outcome??current.outcome??null,cancellationNote:null,updatedAt:now,
    }:{
     status:"CANCELLED",cancellationNote:input.note??null,updatedAt:now,
    }).where(and(eq(projectMeetings.id,current.id),
