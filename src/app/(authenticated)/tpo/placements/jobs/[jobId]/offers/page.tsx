@@ -64,10 +64,20 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
      <option value="UNKNOWN">No expiry recorded</option>
     </select>
    </label>
+   <label className="grid gap-1 text-sm font-semibold text-body">Minimum package (LPA)
+    <input type="number" name="minCtcLpa" min={0} max={1000} step="0.01"
+      defaultValue={parsed.data.minCtcLpa??""}
+      className="min-h-11 w-36 rounded-md border border-border bg-surface px-3 text-foreground"/>
+   </label>
+   <label className="grid gap-1 text-sm font-semibold text-body">Maximum package (LPA)
+    <input type="number" name="maxCtcLpa" min={0} max={1000} step="0.01"
+      defaultValue={parsed.data.maxCtcLpa??""}
+      className="min-h-11 w-36 rounded-md border border-border bg-surface px-3 text-foreground"/>
+   </label>
    <label className="grid flex-1 gap-1 text-sm font-semibold text-body">Search learner, email, roll, batch, branch or role
     <input type="search" name="q" maxLength={100} defaultValue={searchQuery} placeholder="Name or offer role" className="min-h-11 w-full min-w-0 rounded-md border border-border bg-surface px-3 text-foreground"/>
    </label><button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Search</button>
-   {searchQuery||parsed.data.joining!=="ALL"||parsed.data.kind!=="ALL"||parsed.data.expiry!=="ALL"?<Link href={root+"/offers?status="+data.status} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Clear filters</Link>:null}
+   {searchQuery||parsed.data.joining!=="ALL"||parsed.data.kind!=="ALL"||parsed.data.expiry!=="ALL"||parsed.data.minCtcLpa!==undefined||parsed.data.maxCtcLpa!==undefined?<Link href={root+"/offers?status="+data.status} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Clear filters</Link>:null}
   </form>
   <p role="status" className="text-sm text-body">Showing {data.totalMatching===0?0:(data.page-1)*data.pageSize+1}–{Math.min(data.totalMatching,data.page*data.pageSize)} of {data.totalMatching} matching offer versions. Page {data.page} of {data.totalPages}.</p>
   {data.rows.length===0?<p role="status" className="rounded border border-border p-5 text-sm">No offers match this filter.</p>:
