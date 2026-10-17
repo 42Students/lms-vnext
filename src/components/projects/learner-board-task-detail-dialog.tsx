@@ -19,7 +19,7 @@ export function LearnerBoardTaskDetailDialog({
   projectId:string;
   filters:LearnerTaskBoardUrlFilters;
   task:{
-    id:string;title:string;description:string|null;acceptanceCriteria:string|null;
+    id:string;title:string;description:string|null;approach:string|null;acceptanceCriteria:string|null;
     status:string;priority:string;updatedAt:Date;assigneeMembershipId:string|null;blockerReason:string|null;
     dueDate:string|null;estimatePoints:number|null;taskType:string|null;
   };
