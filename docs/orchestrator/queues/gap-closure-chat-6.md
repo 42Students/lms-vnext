@@ -112,9 +112,9 @@ Audit: `docs/audit/pages/superadmin/academics-people-2-courses-content.md` (and 
 | SA-academics-people-65 | S2 | MISSING-ACTION | OPEN |
 | SA-academics-people-67 | S2 | MISSING-COLUMN | OPEN |
 | SA-academics-people-72 | S2 | MISSING-MODAL | OPEN |
-| SA-academics-people-77 | S2 | MISSING-ACTION | UNCONFIRMED |
-| SA-academics-people-48 | S3 | COPY | OPEN |
-| SA-academics-people-51 | S3 | MISSING-ACTION | OPEN |
+| SA-academics-people-77 | S2 | MISSING-ACTION | DONE |
+| SA-academics-people-48 | S3 | COPY | DONE |
+| SA-academics-people-51 | S3 | MISSING-ACTION | DONE |
 | SA-academics-people-54 | S3 | MISSING-FILTER | OPEN |
 | SA-academics-people-55 | S3 | COPY | OPEN |
 | SA-academics-people-57 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
@@ -124,11 +124,11 @@ Audit: `docs/audit/pages/superadmin/academics-people-2-courses-content.md` (and 
 | SA-academics-people-66 | S3 | MISSING-FILTER | OPEN |
 | SA-academics-people-68 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | SA-academics-people-69 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
-| SA-academics-people-73 | S3 | STATE | UNCONFIRMED |
-| SA-academics-people-74 | S3 | STATE | OPEN |
-| SA-academics-people-63 | S4 | COPY | OPEN |
-| SA-academics-people-70 | S4 | STATE | OPEN |
-| SA-academics-people-71 | S4 | COPY | OPEN |
+| SA-academics-people-73 | S3 | STATE | DONE |
+| SA-academics-people-74 | S3 | STATE | DONE |
+| SA-academics-people-63 | S4 | COPY | DONE |
+| SA-academics-people-70 | S4 | STATE | NOT-A-GAP |
+| SA-academics-people-71 | S4 | COPY | DONE |
 | SA-academics-people-75 | S4 | RESPONSIVE | UNCONFIRMED |
 | SA-academics-people-76 | S4 | A11Y | UNCONFIRMED |
 
@@ -293,3 +293,5 @@ Audit: `docs/audit/pages/college/dashboard.md` (and `dashboard-review.md` if pre
 - Faculty FAC-assessments-12, FAC-assessments-13, FAC-assessments-14, FAC-assessments-20, FAC-assessments-24: tested on main with named cases, recorded in `docs/audit/acceptance/faculty-assessments-verification.md` (20 is OD-38 intentional scope).
 - Super Admin People SA-academics-people-79, SA-academics-people-84, SA-academics-people-87, SA-academics-people-109, SA-academics-people-112, SA-academics-people-114: acceptance in `docs/audit/acceptance/superadmin-academics-people-3-people-recruiters-verification.md`; 84/87 follow OD-23 (no hard delete/impersonation).
 - These are prior source-authored tests being reconciled, not claimed as newly run. Cloud test failures in SA-academics-people-58 and SA-academics-people-63 fixed in this batch.
+
+- Super Admin Courses/Content: SA-academics-people-48, SA-academics-people-51, SA-academics-people-63, SA-academics-people-70, SA-academics-people-71, SA-academics-people-74, SA-academics-people-77, SA-academics-people-73 matched existing ID-named tests and recorded dispositions in `docs/audit/acceptance/superadmin-academics-people-2-courses-content-verification.md`; -70 is OD-38 authoritative-scope intentional difference. Tests not executed by lane.
