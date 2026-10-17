@@ -3,7 +3,6 @@
 import Link from "next/link";
 import {
   useState,
-  useTransition,
 } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -13,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { apiFetch } from "@/lib/api-fetch";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 
@@ -31,15 +31,14 @@ async function mutate(
 function useCourseMutation() {
   const router = useRouter();
   const { showToast } = useToast();
-  const [pending, startTransition] =
-    useTransition();
+  const {pending,run:guardedRun}=useGuardedAction();
 
   function run(
     task: () => Promise<unknown>,
     successTitle: string,
     onSuccess?: () => void,
   ) {
-    startTransition(async () => {
+    void guardedRun(async () => {
       try {
         await task();
         onSuccess?.();
