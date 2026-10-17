@@ -1,4 +1,5 @@
 import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
+import {TpoTeamSearch} from "@/components/tpo/tpo-team-search";
 import Link from "next/link";
 import {redirect} from "next/navigation";
 import {z} from "zod";
