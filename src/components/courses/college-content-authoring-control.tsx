@@ -84,9 +84,6 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    if(kind==="LIVE_CLASS"&&(!start||!end))throw Error("Enter Start Date and End Date.");
    if(kind==="LIVE_CLASS"&&new Date(isoIst(end,timeZone)).getTime()<=new Date(isoIst(start,timeZone)).getTime())
     throw Error("End time must be after start time");
-   if(editing&&deliveryId&& !allowedDeliveries.some(row=>row.deliveryId===deliveryId)){
-    setError("This Section is no longer active for the selected Lesson.");return;
-   }
    if(!editing&&deliveryId&&!allowedDeliveries.some(row=>row.deliveryId===deliveryId)){
     setError("Select a Section for this Course.");return;
    }
