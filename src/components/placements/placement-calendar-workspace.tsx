@@ -452,12 +452,13 @@ export async function PlacementCalendarWorkspace({
         company: state.company || undefined,
         kind: state.kind,
         roundKind: state.roundKind,
+        tpoLegacyScope:audience==="TPO",
       },
     );
 
   const eventTypeCountsSource=audience==="TPO"&&(state.kind||state.company)
    ?await listPlacementCalendarEvents(context,{
-    collegeId,from:window.from,to:window.to,
+    collegeId,from:window.from,to:window.to,tpoLegacyScope:true,
    })
    :response;
   const eventTypeCounts=new Map<string,number>();
@@ -484,6 +485,7 @@ export async function PlacementCalendarWorkspace({
     collegeId,
     from:placementCalendarDayKey(new Date(now.getTime()-90*86400000)),
     to:placementCalendarDayKey(new Date(now.getTime()+7*86400000)),
+    tpoLegacyScope:true,
   }):null;
   const blockedDays=audience==="TPO"?await getTpoBlockedDates(context):null;
   const blockedEvents=audience==="TPO"&&blockedDays?.ready&&(!state.kind||state.kind==="BLOCKED")?

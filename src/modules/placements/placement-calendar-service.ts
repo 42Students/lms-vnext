@@ -81,6 +81,7 @@ export const placementCalendarQuerySchema = z
       .enum(placementRoundKinds)
       .optional(),
     includeDraftDeadlines:z.boolean().optional(),
+    tpoLegacyScope:z.boolean().optional(),
   })
   .strict()
   .superRefine((input, ctx) => {
@@ -294,10 +295,11 @@ export async function listPlacementCalendarEvents(
                 isNull(
                   placementJobs.archivedAt,
                 ),
-                inArray(
+                input.tpoLegacyScope?undefined:inArray(
                   placementJobRounds.status,
                   ["SCHEDULED", "COMPLETED"],
                 ),
+                input.tpoLegacyScope?inArray(placementJobs.status,["DRAFT","PUBLISHED"]):undefined,
                 gte(
                   placementJobRounds.scheduledAt,
                   startsAt,
@@ -378,6 +380,7 @@ export async function listPlacementCalendarEvents(
                 ),
                 inArray(
                   placementJobs.status,
+                  input.tpoLegacyScope?["PUBLISHED"]:
                   input.includeDraftDeadlines?["DRAFT","PUBLISHED","CLOSED"]:["PUBLISHED", "CLOSED"],
                 ),
                 gte(
@@ -465,6 +468,7 @@ export async function listPlacementCalendarEvents(
                   placementTpoFollowups.collegeId,
                   college.id,
                 ),
+                input.tpoLegacyScope?isNull(placementTpoFollowups.doneAt):undefined,
                 gte(
                   placementTpoFollowups.dueAt,
                   startsAt,
