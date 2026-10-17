@@ -12,12 +12,14 @@ import type {listOwnRecruiterPlacementJobs} from "./recruiter-service";
 /** REC-home-drives-R08: page and filter the authorized job set in PostgreSQL. */
 export async function searchOwnRecruiterDrives(
  context:RequestContext,collegeId:string,query:RecruiterDriveListQuery,now:Date,
+ options:{pageSize?:number}={},
 ){
  if(!hasActiveRecruiter(context)||!context.recruiter)
   throw new AuthorizationError("placements.recruiter.read");
  const grants=context.recruiter.grants.filter(grant=>grant.collegeId===collegeId);
  if(!grants.length)throw new AuthorizationError("placements.recruiter.read");
  const relationshipIds=[...new Set(grants.map(grant=>grant.companyRelationshipId))];
+ const pageSize=Math.max(1,Math.min(201,Math.trunc(options.pageSize??HR_DRIVE_PAGE_SIZE)));
 
  const base=()=>getDb().select({
   job:placementJobs,
@@ -58,7 +60,7 @@ export async function searchOwnRecruiterDrives(
  const totals={all:live+closed,live,closed,waiting:0};
  if(query.view==="WAITING")return {
   rows:[] as Awaited<ReturnType<typeof listOwnRecruiterPlacementJobs>>,
-  total:0,page:1,pages:0,pageSize:HR_DRIVE_PAGE_SIZE,totals,
+  total:0,page:1,pages:0,pageSize,totals,
  };
 
  const escaped=query.q.trim().replace(/[%_\\]/g,"\\$&");
@@ -87,7 +89,7 @@ export async function searchOwnRecruiterDrives(
   .innerJoin(colleges,eq(colleges.id,placementJobs.collegeId))
   .where(criteria);
  const total=Number(totalResult?.count??0);
- const pages=Math.ceil(total/HR_DRIVE_PAGE_SIZE);
+ const pages=Math.ceil(total/pageSize);
  const page=Math.min(Math.max(1,query.page),Math.max(1,pages));
  const order=query.sort==="TITLE"
   ? [asc(placementJobs.title),asc(placementJobs.id)]
@@ -95,10 +97,10 @@ export async function searchOwnRecruiterDrives(
   ? [sql`${placementJobs.applicationDeadline} asc nulls last`,asc(placementJobs.id)]
   : [desc(placementJobs.createdAt),asc(placementJobs.id)];
  const rows=await base().where(criteria).orderBy(...order)
-  .limit(HR_DRIVE_PAGE_SIZE).offset((page-1)*HR_DRIVE_PAGE_SIZE);
+  .limit(pageSize).offset((page-1)*pageSize);
  const visible=rows.filter(row=>isExactRecruiterEmployerRow(context.recruiter!,row));
  for(const row of visible)requirePermission(context,"placements.recruiter.read",{
   collegeId:row.collegeId,placementCompanyRelationshipId:row.relationshipId,
  });
- return {rows:visible,total,page,pages,pageSize:HR_DRIVE_PAGE_SIZE,totals};
+ return {rows:visible,total,page,pages,pageSize,totals};
 }
