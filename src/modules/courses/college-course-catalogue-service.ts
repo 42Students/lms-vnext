@@ -42,23 +42,23 @@ export async function listCollegeCourseCatalogue(
  const query=collegeCourseCatalogueQuerySchema.parse(raw);
  const college=await authorizedCollege(context);
  const db=getDb(),predicate=whereCatalogue(college.id,query.q);
- const [{total},items]=await Promise.all([
-  db.select({total:count()}).from(courses)
-   .innerJoin(departments,eq(departments.id,courses.departmentId))
-   .where(predicate).then(rows=>({total:rows[0]?.total??0})),
-  db.select({
-   id:courses.id,name:courses.name,code:courses.code,
-   description:courses.description,status:courses.status,
-   departmentId:courses.departmentId,departmentName:departments.name,
-   createdAt:courses.createdAt,updatedAt:courses.updatedAt,
-  }).from(courses)
-   .innerJoin(departments,eq(departments.id,courses.departmentId))
-   .where(predicate).orderBy(...orderCatalogue(query.sort))
-   .limit(COLLEGE_COURSE_CATALOGUE_PAGE_SIZE)
-   .offset((query.page-1)*COLLEGE_COURSE_CATALOGUE_PAGE_SIZE),
- ]);
- return {query,items,total,pages:Math.max(1,Math.ceil(total/COLLEGE_COURSE_CATALOGUE_PAGE_SIZE)),
-  page:query.page,pageSize:COLLEGE_COURSE_CATALOGUE_PAGE_SIZE};
+ const [totalRow]=await db.select({total:count()}).from(courses)
+  .innerJoin(departments,eq(departments.id,courses.departmentId))
+  .where(predicate);
+ const total=totalRow?.total??0;
+ const pages=Math.max(1,Math.ceil(total/COLLEGE_COURSE_CATALOGUE_PAGE_SIZE));
+ const page=Math.min(query.page,pages);
+ const items=await db.select({
+  id:courses.id,name:courses.name,code:courses.code,
+  description:courses.description,status:courses.status,
+  departmentId:courses.departmentId,departmentName:departments.name,
+  createdAt:courses.createdAt,updatedAt:courses.updatedAt,
+ }).from(courses)
+  .innerJoin(departments,eq(departments.id,courses.departmentId))
+  .where(predicate).orderBy(...orderCatalogue(query.sort))
+  .limit(COLLEGE_COURSE_CATALOGUE_PAGE_SIZE)
+  .offset((page-1)*COLLEGE_COURSE_CATALOGUE_PAGE_SIZE);
+ return {query,items,total,pages,page,pageSize:COLLEGE_COURSE_CATALOGUE_PAGE_SIZE};
 }
 /** Export reads a bounded SQL slice; private college records never leak across tenants. */
 export async function listCollegeCourseCatalogueExport(context:RequestContext,raw:unknown){
