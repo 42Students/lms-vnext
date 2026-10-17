@@ -13,6 +13,16 @@ import {
 } from "@/modules/courses/super-admin-content-directory-model";
 import { listSuperAdminContentDirectory } from "@/modules/courses/super-admin-content-directory-service";
 
+function publicHttpsHref(value:string|null){
+ if(!value)return null;
+ try{
+  const url=new URL(value);
+  return url.protocol==="https:"?url.toString():null;
+ }catch{return null;}
+}
+function studentContentVisible(item:{status:string;visibleToStudents:boolean;lessonStatus:string;offeringStatus:string}){
+ return item.status==="PUBLISHED"&&item.visibleToStudents&&item.lessonStatus==="ACTIVE"&&item.offeringStatus==="ACTIVE";
+}
 function ist(value:Date) {
  return new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(value)+" IST";
 }
@@ -61,7 +71,14 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
     </div>
     <p className="text-sm text-body">{adminContentTypeLabel(item.contentType)} · Lesson: {item.lessonName}</p>
     <p className="text-sm text-body">{item.courseName} ({item.courseCode}) · {item.cohortName}</p>
-    <p className="text-xs text-muted-foreground">{item.periodName} · Lesson {item.lessonStatus} · Offering {item.offeringStatus} · Order {item.sequence+1}</p>
+    <p className="text-xs text-muted-foreground">{item.periodName} · Lesson {item.lessonStatus} · Offering {item.offeringStatus}</p>
+    <div className="flex flex-wrap items-center gap-3">
+      <StatusBadge tone={studentContentVisible(item)?"success":"neutral"}>Students {studentContentVisible(item)?"Visible":"Hidden"}</StatusBadge>
+      <span className="text-xs text-muted-foreground">Order within lesson: {item.sequence+1}</span>
+      {item.contentType==="RESOURCE"?<span className="text-xs text-muted-foreground">Linked materials: {publicHttpsHref(item.externalUrl)?1:0}</span>:null}
+    </div>
+    {publicHttpsHref(item.externalUrl)?<a href={publicHttpsHref(item.externalUrl)??"#"} target="_blank" rel="noopener noreferrer"
+      className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">Open public link</a>:null}
     {item.durationSeconds!==null?<p className="text-sm text-body">Duration: {Math.ceil(item.durationSeconds/60)} minutes</p>:null}
     {item.startsAt?<p className="text-sm text-body">Starts: {ist(item.startsAt)}</p>:null}
     {item.endsAt?<p className="text-sm text-body">Ends: {ist(item.endsAt)}</p>:null}
