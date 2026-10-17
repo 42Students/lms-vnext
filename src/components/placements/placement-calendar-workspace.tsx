@@ -7,6 +7,8 @@ import {TpoCalendarMoveFollowup} from "@/components/placements/tpo-calendar-foll
 import {TpoNewFollowupModal} from "@/components/tpo/tpo-new-followup-modal";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { SuperAdminInterviewOperations } from "@/components/admin/super-admin-interview-operations";
+import { listSuperAdminBookedInterviews } from "@/modules/placements/super-admin-booked-interviews-service";
+import { PlacementPanelErrorBoundary } from "@/components/admin/placement-panel-error-boundary";
 
 import { parseActivityDateBoundary } from "@/modules/activity/date-boundary";
 import type { RequestContext } from "@/modules/identity/context";
@@ -174,7 +176,7 @@ function calendarHref(
   audience: CalendarAudience,
   state: CalendarState,
   overrides: Partial<
-    Pick<CalendarState, "anchor" | "view" | "kind">
+    Pick<CalendarState, "anchor" | "view" | "kind" | "company">
   > = {},
 ): string {
   const params = new URLSearchParams();
@@ -189,9 +191,8 @@ function calendarHref(
     overrides.view ?? state.view,
   );
 
-  if (state.company) {
-    params.set("company", state.company);
-  }
+  const company="company" in overrides?overrides.company:state.company;
+  if(company)params.set("company",company);
 
   if (audience === "TPO") {
     const requestedKind="kind" in overrides?overrides.kind:state.kind;
@@ -457,6 +458,8 @@ export async function PlacementCalendarWorkspace({
       },
     );
 
+  const bookings=audience==="SUPER_ADMIN"?await listSuperAdminBookedInterviews(context,window.from,window.to)
+    .then(value=>({...value,failed:false})).catch(()=>({events:[],truncated:false,failed:true})):null;
   const eventTypeCountsSource=audience==="TPO"&&(state.kind||state.company)
    ?await listPlacementCalendarEvents(context,{
     collegeId,from:window.from,to:window.to,tpoLegacyScope:true,
@@ -774,7 +777,18 @@ export async function PlacementCalendarWorkspace({
             />
           </label>
 
-          {isTpo?<datalist id="tpo-calendar-company-choices">
+          {isTpo&&eventTypeCountsSource.events.length>0?<div aria-label="Quick company filters" className="flex max-w-full flex-wrap items-center gap-2">
+    <span className="text-xs font-semibold text-muted-foreground">Companies in this period:</span>
+    {[...new Set(eventTypeCountsSource.events.map(event=>event.companyName).filter(Boolean))]
+      .sort((a,b)=>a.localeCompare(b,"en-IN")).slice(0,16).map(name=>
+      <Link key={name} href={calendarHref(basePath,audience,state,{company:name})}
+       aria-current={state.company===name?"page":undefined}
+       className="inline-flex min-h-9 max-w-52 items-center truncate rounded-full border border-border px-3 text-xs text-primary-text"
+       title={name}>{name}</Link>)}
+    {state.company?<Link href={calendarHref(basePath,audience,state,{company:""})}
+       className="inline-flex min-h-9 items-center text-xs text-primary-text underline">All companies</Link>:null}
+   </div>:null}
+   {isTpo?<datalist id="tpo-calendar-company-choices">
            {[...new Set(eventTypeCountsSource.events.map(event=>event.companyName).filter(Boolean))]
              .sort((a,b)=>a.localeCompare(b,"en-IN")).slice(0,200).map(name=><option key={name} value={name}/>)}
           </datalist>:null}
@@ -853,9 +867,11 @@ export async function PlacementCalendarWorkspace({
          aria-current={active?"page":undefined}
          className={active?"inline-flex min-h-10 items-center rounded-full bg-primary px-3 text-xs font-semibold text-on-primary":
           "inline-flex min-h-10 items-center rounded-full border border-border px-3 text-xs font-semibold text-primary-text"}>
+         <span aria-hidden="true" className={"mr-1.5 inline-block h-2.5 w-2.5 rounded-full "+(filter.value==="BLOCKED"?"bg-muted-foreground":filter.value==="APPLICATION_DEADLINE"?"bg-warning":filter.value==="FOLLOW_UP"?"bg-success":"bg-primary")}/>
          {filter.label} ({count})
         </Link>;
        })}
+       <p className="self-center text-xs text-muted-foreground">Legend: rounds and talks · deadlines · follow-ups · blocked days (IST).</p>
        {eventTypeCounts.has("INTERVIEW_SLOT")?<p className="self-center text-xs text-muted-foreground">
         {eventTypeCounts.get("INTERVIEW_SLOT")} interview slot events are included in All events.
        </p>:null}
@@ -920,7 +936,7 @@ export async function PlacementCalendarWorkspace({
        }))}/>:state.view !== "agenda" ? (
         <section
           aria-label={`${state.view} placement calendar`}
-          className="overflow-x-auto rounded-xl border border-border bg-surface p-3"
+          className="hidden overflow-x-auto rounded-xl border border-border bg-surface p-3 md:block"
         >
           <div className="grid min-w-[56rem] grid-cols-7 gap-1">
             {[
@@ -1028,13 +1044,13 @@ export async function PlacementCalendarWorkspace({
         </section>
       ) : null}
 
-      {audience==="SUPER_ADMIN" ? <SuperAdminInterviewOperations today={today}
-        events={visibleEvents.filter(event=>event.kind==="ROUND").map(event=>({
-         id:event.id,roundId:event.roundId,jobId:event.jobId,jobTitle:event.jobTitle,
-         title:event.title,companyName:event.companyName,status:event.status,
-         kind:event.roundKind??"OTHER",startsAt:event.startsAt.toISOString(),
-         endsAt:event.endsAt?.toISOString()??null,venue:event.venue??null,
-        }))} /> : null}
+      {audience==="SUPER_ADMIN" ? <PlacementPanelErrorBoundary>
+        {bookings?.failed ? <section role="alert" className="rounded-xl border border-border bg-surface p-5">
+          <p>Could not load candidate interviews right now. The calendar is still available.</p>
+          <Link href={calendarHref(basePath,audience,state,{})}
+           className="mt-3 inline-flex min-h-11 items-center rounded border border-border px-4 font-semibold text-primary-text focus-visible:ring-2 focus-visible:ring-primary">Retry interviews</Link>
+        </section> : <SuperAdminInterviewOperations today={today} events={bookings?.events??[]} truncated={bookings?.truncated??false} />}
+       </PlacementPanelErrorBoundary> : null}
       <section
         aria-label="Calendar agenda"
         className="space-y-4"
@@ -1058,6 +1074,7 @@ export async function PlacementCalendarWorkspace({
           </p>
         </div>
 
+        {state.view!=="agenda"?<p className="text-xs text-muted-foreground md:hidden">Calendar events are listed below for a better fit on small screens.</p>:null}
         {groups.length === 0 ? (
           <div className="rounded-xl border border-border bg-surface p-8 text-sm text-body">
             {state.view==="agenda"?TPO_EMPTY_AGENDA:

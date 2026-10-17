@@ -1,4 +1,4 @@
-import { createHmac, randomUUID } from "node:crypto";
+import { createHash, createHmac, randomUUID } from "node:crypto";
 import { and, count, eq, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
@@ -6,6 +6,7 @@ import {
   db10LogAlertSignatureAccounts as accounts,
   db10LogAlertStates as states,
   db10LogAlertDailyCounts as daily,
+  db10LogAlertObservedEvents as observed,
 } from "@/db/schema/db10-log-alerts.draft";
 import { logAlertsRuntimeEnabled } from "./readiness";
 import { redactAlertText, safeAlertPath, safeAlertLabel } from "./redaction";
@@ -47,6 +48,14 @@ export function formatAlert(input: {
   ].join("\n");
 }
 
+/** Same request + error is counted once, whether encountered in-process or in Cloud Logging. */
+export function observedEventHash(environment: string, signatureHash: string, requestId?: string): string | null {
+  if (!requestId || !/^(?:[0-9a-f]{8}|[0-9a-f-]{36})$/i.test(requestId)) return null;
+  return createHash("sha256").update(
+    environment + ":" + signatureHash + ":" + requestId.toLowerCase(),
+  ).digest("hex");
+}
+
 function trustedAccountHash(input: ReportableError): string | null {
   const key = process.env.LOG_ALERT_ACCOUNT_HASH_KEY;
   if (!key || !input.userId || !/^[a-f0-9-]{20,64}$/i.test(input.userId)) return null;
@@ -54,29 +63,33 @@ function trustedAccountHash(input: ReportableError): string | null {
     .update((input.collegeId ?? "platform") + ":" + input.userId).digest("hex");
 }
 
-async function emergencySend(hash: string, message: string): Promise<void> {
+async function emergencySend(hash: string, message: string): Promise<boolean> {
   const minute = Math.floor(Date.now() / 60_000);
   if (minute !== fallbackMinute) {
     fallbackMinute = minute;
     fallbackSent = 0;
   }
-  if (fallbackSeen.has(hash) || fallbackSent >= 4) return;
+  if (fallbackSeen.has(hash)) return true;
+  if (fallbackSent >= 4) return false;
   if (await sendTelegramAlert(message + "\nAlert persistence pending DB10 migration")) {
     fallbackSeen.add(hash);
     fallbackSent += 1;
     if (fallbackSeen.size > 500) fallbackSeen.clear();
+    return true;
   }
+  return false;
 }
 
 /** Global state row holds an exclusive lock across delivery, preventing duplicate sends. */
-export async function reportErrorForAlert(input: ReportableError): Promise<void> {
-  if (!telegramAlertsConfigured()) return;
+export async function reportErrorForAlert(input: ReportableError): Promise<boolean> {
+  if (!telegramAlertsConfigured()) return false;
   const now = new Date();
   const environment = alertEnvironment();
   const dayKey = new Date(now.getTime() + 330 * 60_000).toISOString().slice(0, 10);
   const message = redactAlertText(input.error instanceof Error ? input.error.message : input.error);
   const path = safeAlertPath(input.path);
   const hash = errorSignatureHash({ environment, message, path });
+  const eventHash = observedEventHash(environment, hash, input.requestId);
   const summary = formatAlert({
     kind: "new error", environment, time: now,
     event: input.event, path, message, requestId: input.requestId,
@@ -84,10 +97,10 @@ export async function reportErrorForAlert(input: ReportableError): Promise<void>
   });
 
   if (!logAlertsRuntimeEnabled()) {
-    await emergencySend(hash, summary);
-    return;
+    return emergencySend(hash, summary);
   }
   let providerAccepted = false;
+  let outcome = true;
   try {
     await getDb().transaction(async (tx) => {
       const key = "TELEGRAM_BURST_" + environment;
@@ -95,6 +108,15 @@ export async function reportErrorForAlert(input: ReportableError): Promise<void>
       const [state] = await tx.select().from(states)
         .where(eq(states.stateKey, key)).limit(1).for("update");
       if (!state) return;
+      if (eventHash) {
+        const [existingEvent] = await tx.select({ eventHash: observed.eventHash })
+          .from(observed).where(eq(observed.eventHash, eventHash)).limit(1);
+        if (existingEvent) return; // Both reporting paths already handled this incident.
+      }
+      const rememberEvent = async () => {
+        if (eventHash) await tx.insert(observed)
+          .values({ eventHash, observedAt: now }).onConflictDoNothing();
+      };
       const minute = new Date(Math.floor(now.getTime() / 60_000) * 60_000);
       const spent = state.burstMinuteAt?.getTime() === minute.getTime() ? state.burstCount : 0;
       const [current] = await tx.select().from(signatures).where(and(
@@ -127,12 +149,13 @@ export async function reportErrorForAlert(input: ReportableError): Promise<void>
           signatureId: current.id, accountKeyHash: accountHash, firstSeenAt: now,
         }).onConflictDoNothing();
       }
-      if (decision === "NONE") return;
+      if (decision === "NONE") { await rememberEvent(); return; }
       const slot = burstSlot(spent);
       if (slot === "SUPPRESS") {
         await tx.update(states).set({
           burstMinuteAt: minute, overflowCount: sql.raw("log_alert_states.overflow_count + 1"),
         }).where(eq(states.stateKey, key));
+        await rememberEvent();
         return;
       }
       if (slot === "SUMMARY") {
@@ -141,6 +164,9 @@ export async function reportErrorForAlert(input: ReportableError): Promise<void>
             burstMinuteAt: minute, burstCount: spent + 1,
             overflowCount: sql.raw("log_alert_states.overflow_count + 1"),
           }).where(eq(states.stateKey, key));
+          await rememberEvent();
+        } else {
+          outcome = false;
         }
         return;
       }
@@ -155,7 +181,13 @@ export async function reportErrorForAlert(input: ReportableError): Promise<void>
         count: current ? Number(current.occurrenceCount) + 1 : 1,
         affectedAccounts: radius?.total ?? 0,
       }), { acknowledgeSignatureId: id });
-      if (!delivered) return;
+      if (!delivered) {
+        // A known signature was counted even if an optional spike/regression
+        // notification failed; a new signature must remain retryable.
+        outcome = Boolean(current);
+        if (current) await rememberEvent();
+        return;
+      }
       providerAccepted = true;
       if (!current) {
         await tx.insert(signatures).values({
@@ -180,9 +212,13 @@ export async function reportErrorForAlert(input: ReportableError): Promise<void>
       await tx.update(states).set({
         burstMinuteAt: minute, burstCount: spent + 1,
       }).where(eq(states.stateKey, key));
+      await rememberEvent();
     });
+    return outcome;
   } catch {
-    // If Telegram accepted but DB commit failed, never send an immediate duplicate.
-    if (!providerAccepted) await emergencySend(hash, summary);
+    // Never throw into the originating request. Do not retry an accepted
+    // message immediately if the DB commit failed: it could double notify.
+    if (!providerAccepted) return emergencySend(hash, summary);
+    return false;
   }
 }

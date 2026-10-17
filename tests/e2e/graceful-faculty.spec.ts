@@ -71,7 +71,7 @@ test("GR-80 Faculty offline assignment authoring preserves unsaved content", asy
   await authenticateGracefulRole(context, "faculty");
   await page.goto("/teacher/courses");
   await page.getByRole("link", { name: /E2E Browser Course/ }).click();
-  await expect(page).toHaveURL(/\\/teacher\\/courses\\/[0-9a-f-]{36}\\/home$/i);
+  await expect(page).toHaveURL(/\/teacher\/courses\/[0-9a-f-]{36}\/home$/i);
   const deliveryId = new URL(page.url()).pathname.split("/")[3];
   await page.goto("/teacher/courses/" + deliveryId + "/assignments/manage");
   const title = page.getByRole("textbox", { name: "Title", exact: true });

@@ -40,6 +40,9 @@ type SearchParams = {
   branchId?: string | string[];
   programId?: string | string[];
   afterCollege?:string|string[];
+  legacyStage?:string|string[];minRoundReached?:string|string[];needsAttention?:string|string[];
+  minTenthPct?:string|string[];minTwelfthPct?:string|string[];minDiplomaPct?:string|string[];minUgPct?:string|string[];
+  passingYear?:string|string[];maxGapYears?:string|string[];marksVerified?:string|string[];isLateralEntry?:string|string[];
   profileStatus?:string|string[];
   minApplications?:string|string[];maxApplications?:string|string[];
   minOffers?:string|string[];maxOffers?:string|string[];
@@ -72,6 +75,7 @@ function first(value: string | string[] | undefined) {
 function studentsHref(
   filters: {
     journeyState?: string;
+    legacyStage?:string;minRoundReached?:number;needsAttention?:boolean;
     branchId?: string;
     programId?:string;
     afterCollege?:string;
@@ -79,6 +83,8 @@ function studentsHref(
     minApplications?:number;maxApplications?:number;minOffers?:number;maxOffers?:number;
     offerWaiting?:boolean;
     minCgpa?:number;maxCgpa?:number;
+    minTenthPct?:number;minTwelfthPct?:number;minDiplomaPct?:number;minUgPct?:number;
+    passingYear?:number;maxGapYears?:number;marksVerified?:boolean;isLateralEntry?:boolean;
     maxActiveBacklogs?:number;maxPastBacklogs?:number;
     cgpaRecorded?:boolean;
     classId?:string;
@@ -93,8 +99,11 @@ function studentsHref(
   const params = new URLSearchParams();
 
   if (filters.journeyState) {
-    params.set("journeyState", filters.journeyState);
+    params.set("journeyState",filters.journeyState);
   }
+  if(filters.legacyStage)params.set("legacyStage",filters.legacyStage);
+  if(filters.minRoundReached!==undefined)params.set("minRoundReached",String(filters.minRoundReached));
+  if(filters.needsAttention!==undefined)params.set("needsAttention",filters.needsAttention?"YES":"NO");
 
   if (filters.branchId) {
     params.set("branchId", filters.branchId);
@@ -104,7 +113,9 @@ function studentsHref(
   if(filters.profileStatus)params.set("profileStatus",filters.profileStatus);
   if(filters.offerWaiting!==undefined)params.set("offerWaiting",filters.offerWaiting?"YES":"NO");
   if(filters.cgpaRecorded!==undefined)params.set("cgpaRecorded",filters.cgpaRecorded?"YES":"NO");
-  for(const key of ["minCgpa","maxCgpa","maxActiveBacklogs","maxPastBacklogs"] as const){
+  if(filters.marksVerified!==undefined)params.set("marksVerified",filters.marksVerified?"YES":"NO");
+  if(filters.isLateralEntry!==undefined)params.set("isLateralEntry",filters.isLateralEntry?"YES":"NO");
+  for(const key of ["minCgpa","maxCgpa","maxActiveBacklogs","maxPastBacklogs","minTenthPct","minTwelfthPct","minDiplomaPct","minUgPct","passingYear","maxGapYears"] as const){
    if(filters[key]!==undefined)params.set(key,String(filters[key]));
   }
   for(const key of ["minApplications","maxApplications","minOffers","maxOffers"] as const){
@@ -172,7 +183,10 @@ export default async function TpoStudentsPage({
   const urlError = tpoStudentUrlError(raw);
   const parsed = tpoStudentsQuerySchema.safeParse({
     collegeId: context.membership.collegeId,
-    journeyState: first(raw.journeyState) || undefined,
+    journeyState:first(raw.journeyState)||undefined,
+    legacyStage:first(raw.legacyStage)||undefined,
+    minRoundReached:first(raw.minRoundReached)||undefined,
+    needsAttention:first(raw.needsAttention)||undefined,
     branchId: first(raw.branchId) || undefined,
     programId:first(raw.programId)||undefined,
     afterCollege:first(raw.afterCollege)||undefined,
@@ -183,6 +197,14 @@ export default async function TpoStudentsPage({
     maxOffers:first(raw.maxOffers)||undefined,
     offerWaiting:first(raw.offerWaiting)||undefined,
     minCgpa:first(raw.minCgpa)||undefined,maxCgpa:first(raw.maxCgpa)||undefined,
+    minTenthPct:first(raw.minTenthPct)||undefined,
+    minTwelfthPct:first(raw.minTwelfthPct)||undefined,
+    minDiplomaPct:first(raw.minDiplomaPct)||undefined,
+    minUgPct:first(raw.minUgPct)||undefined,
+    passingYear:first(raw.passingYear)||undefined,
+    maxGapYears:first(raw.maxGapYears)||undefined,
+    marksVerified:first(raw.marksVerified)||undefined,
+    isLateralEntry:first(raw.isLateralEntry)||undefined,
     maxActiveBacklogs:first(raw.maxActiveBacklogs)||undefined,maxPastBacklogs:first(raw.maxPastBacklogs)||undefined,
     cgpaRecorded:first(raw.cgpaRecorded)||undefined,
     classId:first(raw.classId)||undefined,
@@ -274,10 +296,20 @@ export default async function TpoStudentsPage({
       programId:query.programId,
       afterCollege:query.afterCollege,
       profileStatus:query.profileStatus,
+      legacyStage:query.legacyStage,
+      minRoundReached:query.minRoundReached,
+      needsAttention:query.needsAttention,
       minApplications:query.minApplications,maxApplications:query.maxApplications,
       minOffers:query.minOffers,maxOffers:query.maxOffers,
       offerWaiting:query.offerWaiting,
     minCgpa:query.minCgpa,maxCgpa:query.maxCgpa,
+    minTenthPct:query.minTenthPct,
+    minTwelfthPct:query.minTwelfthPct,
+    minDiplomaPct:query.minDiplomaPct,
+    minUgPct:query.minUgPct,
+    passingYear:query.passingYear,
+    maxGapYears:query.maxGapYears,
+    marksVerified:query.marksVerified,isLateralEntry:query.isLateralEntry,
     maxActiveBacklogs:query.maxActiveBacklogs,maxPastBacklogs:query.maxPastBacklogs,
     cgpaRecorded:query.cgpaRecorded,
       classId:query.classId,
@@ -293,10 +325,20 @@ export default async function TpoStudentsPage({
     programId:query.programId,
     afterCollege:query.afterCollege,
     profileStatus:query.profileStatus,
+    legacyStage:query.legacyStage,
+    minRoundReached:query.minRoundReached,
+    needsAttention:query.needsAttention,
     minApplications:query.minApplications,maxApplications:query.maxApplications,
     minOffers:query.minOffers,maxOffers:query.maxOffers,
     offerWaiting:query.offerWaiting,
     minCgpa:query.minCgpa,maxCgpa:query.maxCgpa,
+    minTenthPct:query.minTenthPct,
+    minTwelfthPct:query.minTwelfthPct,
+    minDiplomaPct:query.minDiplomaPct,
+    minUgPct:query.minUgPct,
+    passingYear:query.passingYear,
+    maxGapYears:query.maxGapYears,
+    marksVerified:query.marksVerified,isLateralEntry:query.isLateralEntry,
     maxActiveBacklogs:query.maxActiveBacklogs,maxPastBacklogs:query.maxPastBacklogs,
     cgpaRecorded:query.cgpaRecorded,
     classId:query.classId,
@@ -348,6 +390,24 @@ export default async function TpoStudentsPage({
             {data.classChoices.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
           </select>
         </label>
+        <label className="text-sm font-semibold">Stage
+          <select name="legacyStage" defaultValue={query.legacyStage??""}
+            className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
+            <option value="">All stages</option>
+            {(["ELIGIBLE","INVITED","REGISTERED","VERIFIED","PLACED"] as const).map(stage=>
+              <option key={stage} value={stage}>{stage.charAt(0)+stage.slice(1).toLowerCase()}</option>)}
+          </select>
+        </label>
+        <label className="text-sm font-semibold">Needs attention
+          <select name="needsAttention" defaultValue={query.needsAttention===undefined?"":query.needsAttention?"YES":"NO"}
+            className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
+            <option value="">Any</option><option value="YES">Needs attention</option><option value="NO">No attention flags</option>
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold">Furthest round reached (minimum)
+          <input type="number" name="minRoundReached" min={0} max={10000} step={1}
+           defaultValue={query.minRoundReached??""} className="min-h-11 w-28 rounded border border-border bg-surface px-3"/>
+        </label>
         <label className="text-sm font-semibold">Profile verified
           <select name="profileStatus" defaultValue={query.profileStatus??""}
             className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
@@ -376,6 +436,33 @@ export default async function TpoStudentsPage({
            defaultValue={value??""} placeholder="Any"
            className="min-h-11 w-28 rounded border border-border bg-surface px-3"/>
          </label>)}
+        <details className="w-full rounded-lg border border-border p-3">
+          <summary className="cursor-pointer font-semibold">Academic marks and passing year filters</summary>
+          <div className="mt-3 flex flex-wrap gap-3">
+            {([
+              ["minTenthPct","10th % from",query.minTenthPct],
+              ["minTwelfthPct","12th % from",query.minTwelfthPct],
+              ["minDiplomaPct","Diploma % from",query.minDiplomaPct],
+              ["minUgPct","UG % from",query.minUgPct],
+            ] as const).map(([key,label,value])=><label key={key} className="grid gap-1 text-sm">{label}
+              <input type="number" min={0} max={100} step="0.01" name={key} defaultValue={value??""}
+               className="min-h-11 w-28 rounded border border-border p-2"/></label>)}
+            <label className="grid gap-1 text-sm">Passing year
+              <input name="passingYear" type="number" min={1950} max={2100} defaultValue={query.passingYear??""}
+                className="min-h-11 w-28 rounded border border-border p-2"/></label>
+            <label className="grid gap-1 text-sm">Maximum gap years
+              <input name="maxGapYears" type="number" min={0} max={100} defaultValue={query.maxGapYears??""}
+                className="min-h-11 w-28 rounded border border-border p-2"/></label>
+            {([
+              ["marksVerified","Marks verified",query.marksVerified],
+              ["isLateralEntry","Lateral entry",query.isLateralEntry],
+            ] as const).map(([key,label,value])=><label key={key} className="grid gap-1 text-sm">{label}
+              <select name={key} defaultValue={value===undefined?"":value?"YES":"NO"}
+                className="min-h-11 rounded border border-border p-2">
+                <option value="">Any</option><option value="YES">Yes</option><option value="NO">No</option>
+              </select></label>)}
+          </div>
+        </details>
         <label className="text-sm font-semibold">CGPA recorded
           <select name="cgpaRecorded" defaultValue={query.cgpaRecorded===undefined?"":query.cgpaRecorded?"YES":"NO"}
             className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
@@ -473,7 +560,7 @@ export default async function TpoStudentsPage({
         </section>
       ) : null}
 
-      {data.uninvitedCount>0?<section role="status" className="rounded-xl border border-border bg-surface p-4 text-sm">
+      {(data.uninvitedCount??0)>0?<section role="status" className="rounded-xl border border-border bg-surface p-4 text-sm">
         Registration is not open for {data.uninvitedCount} students: their batch has not been invited, so they cannot register.
         <Link href="/tpo/batches" className="ml-2 font-semibold text-primary-text underline">Open Placement eligibility</Link>
       </section>:null}

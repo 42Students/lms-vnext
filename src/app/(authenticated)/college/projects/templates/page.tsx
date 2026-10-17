@@ -25,7 +25,7 @@ export default async function CollegeProjectTemplatesPage() {
       />
       <PageHeader
         eyebrow="Projects"
-        title="Template catalogue"
+        title="Project templates"
         description="Published project templates assigned to this college."
       />
       {!templates.length ? (

@@ -111,40 +111,38 @@ describe("chat-4 College Verification and Misc verification",()=>{
   }
  });
  it("COL-verification-misc-06 offers precise Education and Identity send-back reasons",()=>{
-  const drawer=source("src/components/verification/VerificationReviewDrawer.tsx");
+  const drawer=read("src/components/verification/VerificationReviewDrawer.tsx");
   expect(drawer).toContain("tpoVerificationSectionReasons(row.section)");
   expect(drawer).toContain("The student sees your reason and fixes it on their profile.");
-  const college=source("src/components/verification/CollegeVerificationPanel.tsx");
+  const college=read("src/components/verification/CollegeVerificationPanel.tsx");
   expect(college).toContain('tpoVerificationSectionReasons("EDUCATION")');
   expect(college).toContain('tpoVerificationSectionReasons("IDENTITY")');
   expect(college).toContain("apiFetch<unknown>");
  });
 
  it("COL-verification-misc-17 keeps domains branding and logo mutations Super Admin only",()=>{
-  expect(source("src/modules/tenant-domains/service.ts")).toContain('if(!isSuperAdmin(context))throw new AuthorizationError("college.manage")');
-  expect(source("src/modules/colleges/branding-service.ts")).toContain('if(!isSuperAdmin(context))throw new AuthorizationError("college.manage")');
-  expect(source("src/modules/colleges/admin-branding-logo-service.ts")).toContain('if(!isSuperAdmin(ctx))throw new AuthorizationError("college.manage")');
-  expect(source("src/app/(authenticated)/college/branding/page.tsx")).toContain('isSuperAdmin(context)&&can(context, "college.manage"');
+  expect(read("src/modules/tenant-domains/service.ts")).toContain('if(!isSuperAdmin(context))throw new AuthorizationError("college.manage")');
+  expect(read("src/modules/colleges/branding-service.ts")).toContain('if(!isSuperAdmin(context))throw new AuthorizationError("college.manage")');
+  expect(read("src/modules/colleges/admin-branding-logo-service.ts")).toContain('if(!isSuperAdmin(ctx))throw new AuthorizationError("college.manage")');
+  expect(read("src/app/(authenticated)/college/branding/page.tsx")).toContain('isSuperAdmin(context)&&can(context, "college.manage"');
  });
  it("COL-verification-misc-18 accepts approved extra Student groups surface under OD-38",()=>{
-  const s=source("docs/audit/owner-decisions-resolved.md");
+  const s=read("docs/audit/owner-decisions-resolved.md");
   expect(s).toContain("OD-38");
-  expect(source("src/app/(authenticated)/college/groups/page.tsx")).toContain("getCurrentRequestContext");
+  expect(read("src/app/(authenticated)/college/groups/page.tsx")).toContain("getCurrentRequestContext");
  });
  it("COL-verification-misc-20 documents which role edits profile contacts versus branding",()=>{
-  expect(source("src/app/(authenticated)/college/branding/page.tsx")).toContain("Sign-in branding, domains and logo changes are controlled by a Super Admin.");
-  expect(source("src/app/(authenticated)/college/college-profile/page.tsx")).toContain("College profile manages operational contact details.");
+  expect(read("src/app/(authenticated)/college/branding/page.tsx")).toContain("Sign-in branding, domains and logo changes are controlled by a Super Admin.");
+  expect(read("src/app/(authenticated)/college/college-profile/page.tsx")).toContain("College profile manages operational contact details.");
  });
-
  it("COL-verification-misc-10 reviews the first 1000 rather than failing an oversized queue",()=>{
-  const service=source("src/modules/verification/staff-queue-service.ts");
+  const service=read("src/modules/verification/staff-queue-service.ts");
   expect(service).toContain(".limit(1001)");
   expect(service).toContain("const truncated=candidateRows.length>1000");
   expect(service).toContain("candidateRows.slice(0,1000)");
   expect(service).not.toContain("if(rows.length>5000)throw new VerificationQueueLimitError()");
-  const view=source("src/components/verification/CollegeVerificationPanel.tsx");
+  const view=read("src/components/verification/CollegeVerificationPanel.tsx");
   expect(view).toContain("Showing the first 1,000 students in this view.");
   expect(view).toContain("narrow the filters to review other students.");
  });
-
 });

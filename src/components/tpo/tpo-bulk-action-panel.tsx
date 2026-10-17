@@ -1,11 +1,14 @@
 "use client";
 
 import {useState} from "react";
+import {apiFetch} from "@/lib/api-fetch";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {TpoBulkActionPreview} from "@/components/tpo/tpo-bulk-action-preview";
 import {TpoSelectedReviewQueue} from "@/components/tpo/tpo-selected-review-queue";
 import {tpoBulkActionLabel} from "@/modules/placements/tpo-bulk-workflow-model";
+import {TPO_INELIGIBLE_REASONS} from "@/modules/placements/tpo-ineligible-reasons";
 import {suggestTpoBulkAction,type TpoBulkActionCount} from "@/modules/placements/tpo-bulk-action-suggestion-model";
 import {tpoReviewOneByOneHref} from "@/modules/placements/tpo-bulk-follow-up-model";
 import type {BulkOutcome,BulkPreviewRow} from "@/modules/placements/tpo-bulk-action-model";
@@ -31,6 +34,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
  const [outcomes,setOutcomes]=useState<BulkOutcome[]>([]);
  const [actionCounts,setActionCounts]=useState<TpoBulkActionCount[]>([]);
  const [busy,setBusy]=useState(false);
+ const {run:runGuarded,pending:guardedPending}=useGuardedAction();
  const [companyShareUrl,setCompanyShareUrl]=useState<string|null>(null);
  const [shareDays,setShareDays]=useState(2);
  const [acknowledged,setAcknowledged]=useState(false);
@@ -43,19 +47,11 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
  const permitted=new Set(availableRows.map(row=>row.id));
  const safeSelected=selected.filter(id=>permitted.has(id));
  function invalidate(){setAcknowledged(false);setPreview(null);setPlan(null);setOutcomes([]);setActionCounts([]);setError("");}
- async function post(path:string,payload:unknown){
-  const response=await fetch("/api/placements/tpo/bulk-actions/"+path,{
+ async function post(path:string,payload:unknown):Promise<unknown>{
+  return apiFetch("/api/placements/tpo/bulk-actions/"+path,{
     method:"POST",credentials:"same-origin",cache:"no-store",
     headers:{"Content-Type":"application/json"},body:JSON.stringify(payload),
   });
-  if(!response.ok)throw new Error(
-    response.status===409?"The preview expired or rows changed. Preview again.":
-    response.status===503?"Bulk applications or round-stage storage are unavailable until database registration is verified.":
-    response.status===400?"Selection or screening details are invalid. Review and preview again.":
-    response.status===403?"You no longer have permission to perform this action.":
-    "The action could not be verified. Refresh and try again."
-  );
-  return response.json() as Promise<unknown>;
  }
  async function startPreview(choice:Action=action){
   if(busy||safeSelected.length===0)return;
@@ -72,7 +68,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
   setBusy(true);invalidate();
   try{
    const result=await post("preview",next) as PreviewResponse;
-   if(!Array.isArray(result.rows)||!result.previewToken)throw new Error("Invalid preview");
+   if(!Array.isArray(result.rows)||!result.previewToken)throw new Error("Could not read the preview. Please try again.");
    setAction(choice);setPreview(result);setPlan(next);
   }catch(cause){setError(cause instanceof Error?cause.message:"Preview unavailable. Refresh the roster and try again.");}
   finally{setBusy(false);}
@@ -103,17 +99,10 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
   if(!window.confirm("Share exactly "+safeSelected.length+" selected, currently shortlisted applications with the company? The link can be viewed by anyone holding it."))return;
   setBusy(true);setError("");setCompanyShareUrl(null);
   try{
-   const response=await fetch("/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/company-shares",{
+   const data=await apiFetch<{token:string}>("/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/company-shares",{
     method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
     body:JSON.stringify({expiresInDays:shareDays,selectedApplicationIds:safeSelected}),
    });
-   if(!response.ok){
-    const error=await response.json().catch(()=>({error:"SHARE_FAILED"})) as {error?:string};
-    throw new Error(error.error==="MIGRATION_PENDING"?"Selected-applicant share storage is awaiting migration.":
-      error.error==="NOT_SHAREABLE"?"One or more selected applicants are no longer shortlisted. Refresh and select again.":
-      "Cannot issue selected-applicant share. Try again.");
-   }
-   const data=await response.json() as {token:string};
    setCompanyShareUrl(new URL("/company-share/"+encodeURIComponent(data.token),window.location.origin).href);
    router.refresh();
   }catch(error){setError(error instanceof Error?error.message:"Could not share selected candidates.");}
@@ -128,7 +117,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
      ...plan,selections:preview.rows.map(row=>({id:row.id,version:row.version})),
      previewToken:preview.previewToken,confirmed:true,acknowledged,
    }) as {outcomes:BulkOutcome[]};
-   if(!Array.isArray(response.outcomes))throw new Error("Missing outcomes");
+   if(!Array.isArray(response.outcomes))throw new Error("Could not confirm the outcomes. Please refresh and try again.");
    setOutcomes(response.outcomes);
    setSelected(current=>current.filter(id=>!plan.ids.includes(id)));
    router.refresh();
@@ -218,6 +207,13 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
     </select>
    </label>
    {(target==="APPLICATIONS"||(target==="STUDENTS"&&action==="INELIGIBLE"))?<label className="text-sm font-semibold text-body">{target==="STUDENTS"?"Ineligibility reason (required)":"Review context / private note / message"}
+    {target==="STUDENTS"?<div className="mb-2 flex flex-wrap gap-2" role="group" aria-label="Ineligibility reason presets">
+      {TPO_INELIGIBLE_REASONS.map(preset=><button type="button" key={preset}
+       disabled={busy} onClick={()=>{setNote(preset);invalidate();}}
+       className="min-h-10 rounded border border-border px-2 text-xs">{preset}</button>)}
+      <button type="button" disabled={busy} onClick={()=>{setNote("");invalidate();}}
+       className="min-h-10 rounded border border-border px-2 text-xs">Other</button>
+    </div>:null}
     <textarea value={note} disabled={busy} maxLength={target==="STUDENTS"?200:1000} rows={2}
       onChange={e=>{setNote(e.target.value);invalidate();}}
       className="mt-1 w-full rounded border border-border bg-background p-3"/>
@@ -297,7 +293,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
     </label>
   ):null}
   {preview&&plan&&isTpoBulkPreviewCurrent(plan.ids,[...permitted])?<TpoBulkActionPreview rows={previewWithNames} outcomes={outcomes}
-    busy={busy||outcomes.length>0||(["INELIGIBLE","REJECTED","SEND_MESSAGE","MOVE_TEST","MOVE_INTERVIEW"].includes(plan.action)&&!acknowledged)} actionLabel={tpoBulkActionLabel(plan.action)} onConfirm={()=>void confirm()}/>:null}
+    busy={busy||guardedPending||outcomes.length>0||(["INELIGIBLE","REJECTED","SEND_MESSAGE","MOVE_TEST","MOVE_INTERVIEW"].includes(plan.action)&&!acknowledged)} actionLabel={tpoBulkActionLabel(plan.action)} onConfirm={()=>void runGuarded(confirm)}/>:null}
   {outcomes.length>0?<div className="space-y-2 rounded-lg border border-border p-3">
     <p role="status" className="text-sm font-semibold">
      {outcomes.filter(item=>item.status==="updated").length} updated ·
@@ -317,7 +313,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
      <button type="button" disabled={busy} onClick={()=>{
        const lines=outcomes.filter(item=>item.status!=="updated").map(item=>
         (labelsById.get(item.id)??item.id)+" — "+(item.reason??item.status));
-       void navigator.clipboard.writeText(lines.join("\\n")).then(
+       void navigator.clipboard.writeText(lines.join("\n")).then(
         ()=>setError("Failed-row details copied."),
         ()=>setError("Could not copy failed-row details."),
        );

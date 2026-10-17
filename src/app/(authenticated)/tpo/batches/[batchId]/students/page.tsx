@@ -1,3 +1,4 @@
+import {batchDecisionLabel,batchSourceLabel,batchRegistrationLabel} from "@/modules/placements/tpo-batch-labels-model";
 import {studentJourneyForBatch} from "@/modules/placements/tpo-batch-student-journey-model";
 import {getTpoBatchEligibilitySummary} from "@/modules/placements/tpo-batch-eligibility-summary-service";
 import {getTpoBatchRegistrationSummary} from "@/modules/placements/tpo-batch-registration-summary-service";
@@ -58,6 +59,13 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
   {!registrationCounts.available?<p className="text-xs text-muted-foreground">Registration choice totals are unavailable.</p>:null}
   <p className="text-xs text-muted-foreground">Invited is a lifecycle event, not a trustworthy per-student delivery count. Registered means a student recorded a placement registration choice, not merely that they were eligible or invited.</p>
  </section>
+ {!finished&&journey.undecided!==null&&journey.undecided>0?
+ <aside aria-label="Suggested placement action" className="rounded-md border border-border bg-surface-subtle p-4 text-sm">
+   <strong>Suggested: make them eligible</strong>
+   <p className="mt-1 text-body">{journey.undecided} learners still need a placement eligibility decision. Review each learner before changing their status.</p>
+   <Link href={batchStudentPageHref(batchId,1,{...view.data,decision:"NOT_DECIDED"})+"#batch-student-decisions"}
+     className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline">Show me</Link>
+ </aside>:null}
  <div className="flex flex-wrap items-center justify-between gap-2">
   <p className="text-xs text-muted-foreground">CSV includes only this page (up to 25 students), with decision source and review flags.</p>
   <a href={"/api/placements/tpo/batches/"+batchId+"/students/export?page="+result.page}
@@ -87,13 +95,13 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  <dl aria-label="Loaded-page eligibility evidence" className="grid grid-cols-2 gap-2 sm:grid-cols-3">{[["Loaded",pageSummary.assessed],["Eligible",pageSummary.eligible],["Ineligible",pageSummary.ineligible],["Not decided",pageSummary.undecided],["Needs review",pageSummary.needsReview],["Direct overrides",pageSummary.directOverrides]].map(([name,count])=><div key={name} className="rounded border border-border bg-surface p-3"><dt className="text-xs text-muted-foreground">{name}</dt><dd className="font-semibold tabular-nums">{count}</dd></div>)}</dl>
  <p className="text-xs text-muted-foreground">These metrics cover the currently loaded 25-person slice before the filters above, not the full cohort.</p>
  <p className="text-sm text-muted-foreground">Active learners only. Eligibility decisions inherit from learner, class, then batch; ambiguous class enrollment requires review.</p>
- {visible.length===0?<p role="status">{result.students.length===0?"No active learners found on this page.":"No learners match the selected page filters."}</p>:<ul className="space-y-2">
+ {visible.length===0?<p role="status">{result.students.length===0?"No active learners found on this page.":"No students match these filters. Clear the filters or change the page."}</p>:<ul id="batch-student-decisions" className="space-y-2">
  {visible.map(s=><li className="min-w-0 rounded-lg border border-border bg-surface p-3 text-sm" key={s.membershipId}>
-  <div className="flex flex-wrap justify-between gap-2"><strong className="break-words">{s.name}</strong><span>{s.ambiguous?"Needs review":s.decision.replaceAll("_"," ")}</span></div>
+  <div className="flex flex-wrap justify-between gap-2"><strong className="break-words">{s.name}</strong><span>{s.ambiguous?"Needs review":batchDecisionLabel(s.decision)}</span></div>
   <p className="text-xs text-muted-foreground">Roll number: {s.rollNumber??"Not recorded"} · Class: {s.ambiguous?"Multiple active classes":s.className??"Not assigned"}</p>
   <p className="text-xs text-muted-foreground">Branch: {s.branch} · Program: {s.program}</p>
-  <p className="text-xs text-muted-foreground">Registration: {s.registration?s.registration.choice?.replaceAll("_"," ")??"Not recorded":"Unavailable"}{s.registration?.source?" · via "+s.registration.source.toLowerCase():""}</p>
-  <p className="text-xs text-muted-foreground">Source: {s.source.toLowerCase()}{s.reason?" · "+s.reason:""}</p>
+  <p className="text-xs text-muted-foreground">Registration: {s.registration?batchRegistrationLabel(s.registration.choice):"Unavailable"}{s.registration?.source?" · via "+batchSourceLabel(s.registration.source):""}</p>
+  <p className="text-xs text-muted-foreground">Source: {batchSourceLabel(s.source)}{s.reason?" · "+s.reason:""}</p>
   {!finished&&!s.ambiguous?<TpoBatchInlineDecision key={s.membershipId+":"+(s.direct.updatedAt??"none")} membershipId={s.membershipId} expected={s.direct}/>:null}
   <Link className="mt-2 inline-flex min-h-10 items-center text-primary-text underline" href={"/tpo/students/"+s.membershipId+"/participation"}>Open learner participation</Link>
  </li>)}</ul>}

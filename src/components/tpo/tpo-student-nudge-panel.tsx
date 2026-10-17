@@ -1,6 +1,8 @@
 "use client";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
+import {Dialog} from "@/components/ui/dialog";
+import {Button} from "@/components/ui/button";
 import { useState } from "react";
 import {
  tpoStudentNudgeTemplates,tpoStudentNudgeLabels,
@@ -14,6 +16,7 @@ export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
  const [message,setMessage]=useState<string>(tpoStudentNudgeTemplates.REGISTRATION);
  const [pending,setPending]=useState(false);
  const {run:runGuarded,pending:guardedPending}=useGuardedAction();
+ const [confirmOpen,setConfirmOpen]=useState(false);
  const [notice,setNotice]=useState("");
  const [error,setError]=useState("");
  const eligible=new Set(rows.map(row=>row.id));
@@ -27,7 +30,6 @@ export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
    learnerMembershipIds:validSelected,template,message,
   });
   if(!parsed.success){setError(parsed.error.issues[0]?.message??"Check recipients and message.");return;}
-  if(!window.confirm("Send an in-app message to "+validSelected.length+" learner(s)? The message will be audited."))return;
   setPending(true);setError("");setNotice("");
   try{
    const data=await apiFetch<{sent?:number;skipped?:number}>("/api/placements/tpo/students/nudges",{
@@ -36,7 +38,7 @@ export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
     body:JSON.stringify(parsed.data),
    });
    setNotice(String(data?.sent??0)+" sent; "+String(data?.skipped??0)+" already delivered today.");
-   setSelected([]);
+   setSelected([]);setConfirmOpen(false);
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not send follow-up.");}
   finally{setPending(false);}
  }
@@ -73,7 +75,15 @@ export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
   </label>
   <button type="button" disabled={pending||guardedPending||!validSelected.length}
    className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50"
-   onClick={()=>void runGuarded(send)}>{pending?"Sending…":"Send to "+validSelected.length+" selected"}</button>
+   onClick={()=>setConfirmOpen(true)}>{"Send to "+validSelected.length+" selected"}</button>
+  <Dialog open={confirmOpen} onOpenChange={value=>{if(!pending&&!guardedPending)setConfirmOpen(value);}}
+   title="Send a message" description={"Send an in-app message to "+validSelected.length+" learner(s)? The message will be audited."}
+   footer={<><Button variant="secondary" disabled={pending||guardedPending} onClick={()=>setConfirmOpen(false)}>Cancel</Button>
+    <Button disabled={pending||guardedPending||!validSelected.length} onClick={()=>void runGuarded(send)}>
+      {pending||guardedPending?"Sending…":"Confirm send"}
+    </Button></>}>
+   <p className="text-sm">The student will see this message in their LMS notifications.</p>
+  </Dialog>
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
  </section>;

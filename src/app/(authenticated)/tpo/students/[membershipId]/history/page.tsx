@@ -100,6 +100,9 @@ export default async function TpoLearnerPlacementHistoryPage({
                   <p className="mt-1 text-sm text-body">
                     {item.companyName} · {item.seasonName} · {item.roleTitle}
                   </p>
+                  {item.addedByCollege?<p className="mt-1 text-sm font-semibold">Added by the college</p>:null}
+                  {item.jobId?<Link href={"/tpo/placements/jobs/"+encodeURIComponent(item.jobId)}
+                    className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">Open drive</Link>:null}
                 </div>
                 <span className="rounded-md border border-border bg-surface-subtle px-3 py-1 text-xs font-semibold text-foreground">
                   {item.applicationStatus}

@@ -22,7 +22,7 @@ spec:
                 - /bin/sh
                 - -ec
                 - |
-                  curl -fsS --connect-timeout 3 --max-time 30 -o /dev/null \
+                  curl -fsS --connect-timeout 3 --max-time 150 -o /dev/null \
                     -X POST -H "x-internal-alerts-key: $INTERNAL_ALERT_TICK_SECRET" \
                     http://lms-vnext.lms-dev-2026.svc.cluster.local:8080/api/internal/alerts/tick
               env:
