@@ -1,6 +1,8 @@
 "use client";
 
 import type { FormEvent } from "react";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
+import {friendlyApiError} from "@/lib/friendly-error";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { learnerDiscussionCanPost } from "@/modules/courses/learner-discussion-capability-model";
@@ -247,7 +249,7 @@ export function LearnerCourseDiscussion({
     postLocked.current = true;
     setPosting(true);
     try {
-      const response = await fetch(
+      await apiFetch(
         `/api/courses/deliveries/${encodeURIComponent(deliveryId)}/discussions`+
           (moderate&&replyTo?"/faculty-reply":""),
         {
@@ -259,11 +261,6 @@ export function LearnerCourseDiscussion({
           }:{})}),
         },
       );
-      if (!response.ok) throw new Error(
-        moderate&&replyTo?
-         "The parent discussion changed or was removed. Refresh and retry the reply.":
-         "discussion_post_failed",
-      );
       setDraft("");
       setReplyTo(null);
       forceBottomOnNextLoad.current = true;
@@ -272,7 +269,9 @@ export function LearnerCourseDiscussion({
         composerRef.current?.focus(),
       );
     } catch(e) {
-      setModerationError(e instanceof Error?e.message:"Could not post reply.");
+      setModerationError(e instanceof FriendlyFetchError&&e.status===409?
+        "The discussion changed while you were writing. Your message is still here. Refresh and retry.":
+        e instanceof Error?e.message:friendlyApiError({}));
     } finally {
       postLocked.current = false;
       setPosting(false);
@@ -285,12 +284,11 @@ export function LearnerCourseDiscussion({
     if (!window.confirm("Delete this message?")) return;
     setDeletingId(messageId);setModerationError(null);
     try {
-      const response = await fetch(
+      await apiFetch(
         `/api/courses/deliveries/${encodeURIComponent(deliveryId)}/discussions/${encodeURIComponent(messageId)}`,
         { method: "DELETE",headers:{"content-type":"application/json"},
           body:JSON.stringify({expectedUpdatedAt:current.updatedAt,confirmed:true}) },
       );
-      if (!response.ok) throw new Error("Message was changed or is no longer editable. Refresh and retry.");
       // Requests already in flight can return a pre-delete snapshot.
       // Tombstone this ID for this workspace to prevent resurrection.
       locallyDeletedIds.current.add(messageId);
@@ -314,15 +312,11 @@ export function LearnerCourseDiscussion({
     if(!window.confirm((current.pinned?"Unpin":"Pin")+" this Section message?"))return;
     setPinningId(messageId);setModerationError(null);
     try {
-      const response = await fetch(
+      const payload = await apiFetch<{message?:{id:string;pinned:boolean;updatedAt:string}}>(
         `/api/courses/deliveries/${encodeURIComponent(deliveryId)}/discussions/${encodeURIComponent(messageId)}`,
         { method: "PATCH",headers:{"content-type":"application/json"},
           body:JSON.stringify({expectedUpdatedAt:current.updatedAt,confirmed:true}) },
       );
-      if (!response.ok) {
-        throw new Error("Message was changed or is no longer editable. Refresh and retry.");
-      }
-      const payload = await response.json();
       const updated = payload?.message;
       if(updated?.id===highlightedPinned?.id && !updated.pinned)
         setHighlightedPinned(null);
@@ -408,7 +402,7 @@ export function LearnerCourseDiscussion({
                 We could not load this discussion.
               </h3>
               <p className="mt-2 text-sm text-body">
-                This is a loading problem, not an empty discussion.
+                Check your connection and try again.
               </p>
               <Button className="mt-4" variant="secondary" onClick={() => void load()}>
                 Retry
@@ -525,7 +519,7 @@ export function LearnerCourseDiscussion({
                                 : "Pin"}
                           </button>
                         ) : null}
-                        {(moderate || !row.item.pinned) ? <button
+                        {(moderate || row.item.isMine) ? <button
                           type="button"
                           disabled={deletingId === row.item.id}
                           onClick={() => void remove(row.item.id)}
@@ -563,7 +557,7 @@ export function LearnerCourseDiscussion({
         <form onSubmit={submit} className="border-t border-border p-4 sm:p-5">
           {loadError && messages.length > 0 ? (
             <p className="mb-3 text-xs font-semibold text-warning">
-              Background refresh failed. You can keep reading the messages already loaded.
+              Discussion refresh failed. Could not refresh the discussion. Showing the last messages we loaded.
             </p>
           ) : null}
           <p className="mb-3 text-xs leading-5 text-muted-foreground">
@@ -601,12 +595,12 @@ export function LearnerCourseDiscussion({
           />
           <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <span className="text-xs text-muted-foreground">
-              <span className="sm:hidden">Tap Post to send · Enter adds a new line</span>
+              <span className="sm:hidden">Tap Send to post · Enter adds a new line</span>
               <span className="hidden sm:inline">Enter to send · Shift+Enter for a new line</span>
               {" · "}{draft.length}/{LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH}
             </span>
             <Button type="submit" className="min-h-11 w-full sm:w-auto" disabled={!learnerDiscussionDraftValid(draft) || posting}>
-              {posting ? "Posting…" : "Post"}
+              {posting ? "Sending…" : "Send"}
             </Button>
           </div>
         </form>

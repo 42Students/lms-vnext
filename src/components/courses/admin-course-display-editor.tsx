@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
-import { courseApiError } from "./learner-course-api";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
+import { apiFetch } from "@/lib/api-fetch";
 
 type Display = {
   introductionText: string | null;
@@ -28,8 +29,7 @@ export function AdminCourseDisplayEditor({
 }) {
   const router = useRouter();
   const { showToast } = useToast();
-  const [pending, startTransition] =
-    useTransition();
+  const {pending,run:guardedRun}=useGuardedAction();
   const [introductionText, setIntroductionText] =
     useState(initial?.introductionText ?? "");
   const [bodyHtml, setBodyHtml] =
@@ -42,9 +42,9 @@ export function AdminCourseDisplayEditor({
     useState(initial?.thumbnailUrl ?? "");
 
   function save() {
-    startTransition(async () => {
+    void guardedRun(async () => {
       try {
-        const response = await fetch(
+        await apiFetch<void>(
           `/api/courses/${courseId}/display`,
           {
             method: "PUT",
@@ -77,11 +77,6 @@ export function AdminCourseDisplayEditor({
             }),
           },
         );
-        if (!response.ok) {
-          throw new Error(
-            await courseApiError(response),
-          );
-        }
         showToast({
           tone: "success",
           title:

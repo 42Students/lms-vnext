@@ -52,7 +52,7 @@ describe("Chat-2 graceful messaging and TPO action acceptance",()=>{
   const c=source("src/components/tpo/tpo-team-forms.tsx");
   expect(c).toContain("pending.current||busy");
   expect(c).toContain("pending.current=false");
-  expect(c).toContain("signal:controller.signal");
+  expect(c).toContain("apiFetch<");
   expect(c).toContain("30000");
  });
  it("GR-62 warns about unsent replies and announcement changes before leaving",()=>{
@@ -131,7 +131,8 @@ describe("Chat-2 graceful messaging and TPO action acceptance",()=>{
   const create=source("src/app/api/placements/tpo/team/threads/route.ts");
   const reply=source("src/app/api/placements/tpo/team/threads/[threadId]/messages/route.ts");
   expect(form).toContain('headers:{Accept:"application/json"}');
-  expect(form).toContain('if(response.redirected)return {ok:false,code:"SESSION_EXPIRED"}');
+  expect(form).toContain("FriendlyFetchError");
+  expect(form).toContain("timeoutMs:30000");
   expect(create).toContain('request.headers.get("accept")');
   expect(reply).toContain('request.headers.get("accept")');
   const feedback=source("src/modules/placements/tpo-team-form-feedback-model.ts");
@@ -145,6 +146,38 @@ describe("Chat-2 graceful messaging and TPO action acceptance",()=>{
   expect(internalMessageSchema.safeParse({threadId,body:"Hello",idempotencyKey:"20000000-0000-4000-8000-000000000002"}).success).toBe(true);
   expect(internalMessageSchema.safeParse({threadId,body:"Hello",idempotencyKey:"invalid"}).success).toBe(false);
   expect(internalMessageSchema.safeParse({threadId,body:"Hello",collegeId:threadId}).success).toBe(false);
+ });
+
+ it("TPO-inbox-team-17 GR-34 prevents duplicate private conversation creation on retry",()=>{
+  const svc=source("src/modules/placements/tpo-team-internal-create-service.ts");
+  const client=source("src/components/tpo/tpo-team-forms.tsx");
+  expect(svc).toContain('createHash("sha256").update(input.topic)');
+  expect(svc).toContain("eq(activityEvents.dedupeKey,key)");
+  expect(svc).toContain("dedupeKey:key");
+  expect(svc).toContain('.for("update")');
+  expect(client).toContain('draftKey+":createKey"');
+ });
+ it("TPO-inbox-team-19 GR-71/72/73/76 preserves Team search and shows Retry instead of false empty",()=>{
+  const p=source("src/app/(authenticated)/tpo/team/page.tsx");
+  expect(p).toContain('status:"FAILED" as const');
+  expect(p).toContain("Could not load conversations right now.");
+  expect(p).toContain("Retry conversations");
+  expect(p).toContain('conversations?.status==="FAILED"?null:');
+ });
+ it("TPO-inbox-team-45 GR-71/72/73 preserves audience preview filters when one section fails",()=>{
+  const p=source("src/app/(authenticated)/tpo/announcements/page.tsx");
+  expect(p).toContain("const previewRequest=");
+  expect(p).toContain("preview.failed");
+  expect(p).toContain("Retry audience preview");
+  expect(p).toContain("targetId:query.data.targetId");
+ });
+ it("TPO-inbox-team-54 GR-90 marks From 42 announcements New only with verified college-scoped reads",()=>{
+  const service=source("src/modules/announcements/tpo-placement-read-service.ts");
+  const page=source("src/app/(authenticated)/tpo/announcements/page.tsx");
+  expect(service).toContain("placementCellAnnouncementReads");
+  expect(service).toContain("eq(placementCellAnnouncementReads.collegeId,college.id)");
+  expect(service).toContain("readStateReady:cellReadsReady");
+  expect(page).toContain('tab.data==="from-42"&&result.readStateReady&&!row.readAt');
  });
 
 });

@@ -18,9 +18,8 @@ export default async function SuperAdminDepartmentsPage() {
   if (!collegeId) {
     return (
       <div className="space-y-6">
-      <AcademicSetupSteps step={1} />
         <PageHeader
-          eyebrow="Super Admin"
+          
           title="Departments"
           description="Department administration requires a college safety scope."
         />
@@ -53,7 +52,7 @@ export default async function SuperAdminDepartmentsPage() {
     <div className="space-y-6">
       <AcademicSetupSteps step={1} />
       <PageHeader
-        eyebrow="Super Admin"
+        
         title="Departments"
         description="Search, export and maintain departments inside the selected college safety scope."
       />

@@ -1,6 +1,8 @@
 "use client";
 import {useMemo,useState} from "react";
 import {useRouter} from "next/navigation";
+import {apiFetch} from "@/lib/api-fetch";
+import {friendlyApiError} from "@/lib/friendly-error";
 import {COLLEGE_APPLICATION_STAGES} from "@/modules/placements/college-stage-action-model";
 import type {DriveApplicationsQuery} from "@/modules/placements/college-drive-applications-model";
 import {CollegeApplicationDetailDrawer,type CollegeApplicationDetail} from "./college-application-detail-drawer";
@@ -14,7 +16,7 @@ const transitions:Record<string,readonly string[]>={
  INTERVIEW:["WAITLISTED","OFFERED","REJECTED"],
  WAITLISTED:["OFFERED","REJECTED"],OFFERED:["HIRED","REJECTED"],HIRED:[],REJECTED:[],
 };
-export function CollegeApplicationPipelineControls({jobId,rows,total,query}:{jobId:string;rows:Row[];total:number;query:DriveApplicationsQuery}){
+export function CollegeApplicationPipelineControls({jobId,rows,total,query,basePath="/college/placements"}:{jobId:string;rows:Row[];total:number;query:DriveApplicationsQuery;basePath?: "/college/placements"|"/admin/placements"}){
  const router=useRouter();
  const [selected,setSelected]=useState<string[]>([]);
  const [allMatching,setAllMatching]=useState(false);
@@ -37,13 +39,12 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query}:{job
  async function openDetail(id:string){
   setError("");
   try{
-   const response=await fetch("/api/placements/college/jobs/"+encodeURIComponent(jobId)+
+   const body=await apiFetch<CollegeApplicationDetail>("/api/placements/college/jobs/"+encodeURIComponent(jobId)+
     "/applications/"+encodeURIComponent(id),{cache:"no-store"});
-   const body=await response.json().catch(()=>null);
-   if(!response.ok||!body?.application)throw Error(body?.error??"Unable to load application");
-   setDetailPayload(body as CollegeApplicationDetail);
+   if(!body?.application)throw Error("Could not load this application. Please try again.");
+   setDetailPayload(body);
    setDetailId(id);
-  }catch(reason){setError(reason instanceof Error?reason.message:"Unable to open application");}
+  }catch(reason){setError(reason instanceof Error?reason.message:friendlyApiError({}));}
  }
  function selectRow(row:Row,next:string){
   setAllMatching(false);setSelected([row.id]);setTarget(next);setAction(next==="REINSTATE"?"REINSTATE":"MOVE");
@@ -56,20 +57,17 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query}:{job
   if(!selectedCount||reason.trim().length<3||busy)return;
   setBusy(true);setError("");setOutcome(null);
   try{
-   const response=await fetch("/api/placements/college/jobs/"+encodeURIComponent(jobId)+"/pipeline",{
+   const payload=await apiFetch<{moved?:number;skipped?:number;results?:Array<{applicationId:string;status:string;reason?:string}>}>("/api/placements/college/jobs/"+encodeURIComponent(jobId)+"/pipeline",{
     method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({action,applicationIds:allMatching?[]:selected,
       matchingFilter:allMatching?query:undefined,stage:action==="MOVE"?target:undefined,
       reason:reason.trim(),notifyByEmail:email,confirmed:true}),
    });
-   const payload=await response.json() as {error?:string;issues?:Array<{message:string}>;moved?:number;skipped?:number;
-    results?:Array<{applicationId:string;status:string;reason?:string}>};
-   if(!response.ok)throw Error(payload.issues?.[0]?.message??payload.error??"Could not update applications");
    setOutcome({moved:payload.moved??0,skipped:payload.skipped??0,results:payload.results??[]});
    setAllMatching(false);
    setSelected(payload.results?.filter(r=>r.status==="skipped").map(r=>r.applicationId).slice(0,100)??[]);
    router.refresh();
-  }catch(e){setError(e instanceof Error?e.message:"Update failed");}finally{setBusy(false);}
+  }catch(e){setError(e instanceof Error?e.message:friendlyApiError({}));}finally{setBusy(false);}
  }
  return <section className="space-y-4">
   <div className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-surface p-4 text-sm">
@@ -97,7 +95,34 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query}:{job
    <span className="text-body">Changes are tracked with per-row results and students receive in-app notifications.</span>
   </div>
   <div className="overflow-x-auto rounded-xl border border-border bg-surface">
-   <table className="min-w-full text-left text-sm">
+   <div className="grid gap-3 p-3 sm:hidden" aria-label="Application mobile cards">
+    {rows.map(row=><article key={row.id} className="min-w-0 space-y-2 rounded-lg border border-border bg-surface p-4">
+      <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
+        <h3 className="min-w-0 break-words font-semibold">{row.name??"Unnamed learner"}</h3>
+        <span className="rounded border border-border px-2 py-1 text-xs">{row.stage}</span>
+      </div>
+      <p className="break-all text-sm text-body">{row.email??"Email not recorded"}</p>
+      <p className="text-sm text-body">{row.collegeName} · {row.roleTitle}</p>
+      <p className="text-xs text-muted-foreground">{row.source} · {row.ageDays} days since applying</p>
+      <div className="flex flex-wrap items-center gap-3">
+        <label className="flex min-h-10 items-center gap-2 text-sm">
+          <input type="checkbox" disabled={row.status!=="SUBMITTED"||busy||allMatching}
+           checked={selected.includes(row.id)} onChange={()=>toggle(row.id)}/> Select
+        </label>
+        <button type="button" onClick={()=>void openDetail(row.id)}
+          className="min-h-10 rounded border border-border px-3 font-semibold text-primary-text">Details</button>
+        {row.stage==="REJECTED"?<button type="button" disabled={busy||row.status!=="SUBMITTED"}
+          onClick={()=>selectRow(row,"REINSTATE")} className="min-h-10 rounded border border-border px-3 text-sm">Reinstate</button>:
+        <select aria-label={"Move "+(row.name??"learner")+" to"} value="" disabled={busy||row.status!=="SUBMITTED"}
+          onChange={event=>{if(event.target.value)selectRow(row,event.target.value);}}
+          className="min-h-10 rounded border border-border bg-surface px-2 text-sm">
+          <option value="">Move to...</option>
+          {(transitions[row.stage]??[]).map(stage=><option key={stage} value={stage}>{stage}</option>)}
+        </select>}
+      </div>
+    </article>)}
+   </div>
+   <table className="hidden min-w-[70rem] w-full text-left text-sm sm:table">
     <thead><tr className="border-b border-border bg-muted"><th className="p-3">Select</th>
      <th className="p-3">Learner Name</th><th className="p-3">Email</th><th className="p-3">College</th>
      <th className="p-3">Roll</th><th className="p-3">Role</th><th className="p-3">Source</th>
@@ -134,7 +159,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query}:{job
    </table>
   </div>
   {detailId?<CollegeApplicationDetailDrawer key={detailId} jobId={jobId}
-    applicationId={detailId} initialDetail={detailPayload??undefined}
+    applicationId={detailId} initialDetail={detailPayload??undefined} basePath={basePath}
     onClose={()=>{setDetailId(null);setDetailPayload(null);}}/>:null}
   {dialog?<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
    <div role="dialog" aria-modal="true" aria-label="Application status update"

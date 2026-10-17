@@ -2,7 +2,7 @@
 
 import {LEARNER_EDUCATION_TYPES,learnerQualifyingExamSuggestions,LEARNER_QUALIFYING_EXAM_DETAILS,learnerEducationValidationProblem} from "@/modules/people/learner-education-picker-model";
 import {LearnerSkillCatalogInput} from "@/components/profile/learner-skill-catalog-input";
-import { useEffect, useMemo, useRef, useState, useTransition, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {useRouter} from "next/navigation";
 import { learnerProfileCollectionMayEdit } from "@/modules/people/learner-profile-collection-busy-model";
 import { learnerProfileDeletePrompt } from "@/modules/people/learner-profile-delete-confirm-model";
@@ -14,6 +14,8 @@ import {learnerProfilePublicationsAwards,newLearnerShowcaseEntry,isLearnerShowca
 import {learnerProfileMobileQuickLinks} from "@/modules/people/learner-profile-mobile-model";
 import {learnerProfileSocialFocusField} from "@/modules/people/learner-profile-social-connect-model";
 import { learnerContactEditSchema } from "@/modules/people/learner-contact-model";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -192,7 +194,7 @@ export function LearnerProfileWorkspace(props: {
   const [showcaseBaseline,setShowcaseBaseline]=useState<string|null>(null);
   const [jobPrefsEditing,setJobPrefsEditing]=useState(false);
   const [jobPrefsDraft,setJobPrefsDraft]=useState(props.initialDocument.jobPreferences);
-  const [pending, startTransition] = useTransition();
+  const {pending,run:guardedRun}=useGuardedAction();
 
   const checklist = useMemo(
     () => learnerProfileChecklist(document),
@@ -267,27 +269,23 @@ export function LearnerProfileWorkspace(props: {
   },[detailsOpen,props.initialSection]);
 
   function saveDocument(next: LearnerProfileDocument, onDone?: () => void, expectedDocument=document) {
-    startTransition(async () => {
+    void guardedRun(async () => {
       try {
-        const response = await fetch("/api/profile/me", {
-          method: "PUT",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({document:next,expectedDocument}),
+        const payload=await apiFetch<{profile:{profileDocument:LearnerProfileDocument}}>("/api/profile/me",{
+          method:"PUT",headers:{"content-type":"application/json"},
+          body:JSON.stringify({document:next,expectedDocument}),
         });
-        const payload = await response.json().catch(() => null);
-        if (!response.ok) {
-          if(payload?.error==="LEARNER_PROFILE_DOCUMENT_STALE"){
-            router.refresh();
-            throw new Error("Your saved profile changed in another tab. Your draft was kept. Close this editor and reopen it to review the latest version before saving.");
-          }
-          throw new Error("Profile changes were not saved. Review your fields and try again.");
-        }
-        if(!payload?.profile?.profileDocument)throw new Error("Could not confirm the saved profile. Reload before trying again.");
+        if(!payload?.profile?.profileDocument)
+          throw new Error("Could not confirm the saved profile. Reload before trying again.");
         setDocument(payload.profile.profileDocument);
         onDone?.();
         showToast({ tone: "success", title: "Profile updated" });
       } catch(error) {
-        showToast({tone:"error",title:"Profile update failed",description:error instanceof Error?error.message:"Please try again."});
+        if(error instanceof FriendlyFetchError && error.status===409)router.refresh();
+        const message=error instanceof FriendlyFetchError && error.status===409
+          ?"Your saved profile changed in another tab. Your draft was kept. Close this editor and reopen it to review the latest version before saving."
+          :error instanceof Error?error.message:"Please try again.";
+        showToast({tone:"error",title:"Profile update failed",description:message});
       }
     });
   }
@@ -358,30 +356,25 @@ export function LearnerProfileWorkspace(props: {
     setContactPending(true);
     setContactError(null);
     try {
-      const response = await fetch("/api/profile/me/contacts", {
-        method: "PATCH",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(parsed.data),
+      const payload=await apiFetch<{contacts:LearnerProfileDocument["contacts"]}>("/api/profile/me/contacts",{
+        method:"PATCH",headers:{"content-type":"application/json"},
+        body:JSON.stringify(parsed.data),
       });
-      const payload = await response.json().catch(() => null);
-      if(!response.ok && payload?.error==="LEARNER_CONTACT_STALE"){
-        router.refresh();
-        throw new Error("These contact details were updated in another tab. Review the latest saved values before retrying.");
-      }
-      if(!response.ok && payload?.error==="ALTERNATE_PHONE_SAME_AS_PRIMARY")
-        throw new Error("Alternate phone number cannot be the same as primary mobile number");
-      if(!response.ok && payload?.error==="ALTERNATE_PHONE_INVALID")
-        throw new Error("Alternate phone number must be 10 to 15 digits");
-      if (!response.ok || !payload?.contacts) {
-        throw new Error("Contact details could not be saved. Your existing details are unchanged.");
-      }
+      if(!payload?.contacts)throw new Error("Contact details could not be saved. Your existing details are unchanged.");
       const savedContacts = learnerProfileDocumentSchema.parse({ contacts: payload.contacts }).contacts;
       setDocument(current => ({ ...current, contacts: savedContacts }));
       setDetailsDraft(current => ({ ...current, contacts: savedContacts }));
       setContactOpen(false);
       showToast({ tone: "success", title: "Contact details saved" });
     } catch (error) {
-      setContactError(error instanceof Error ? error.message : "Could not save contact details.");
+      if(error instanceof FriendlyFetchError && error.status===409)router.refresh();
+      const message=error instanceof FriendlyFetchError
+        ?error.code==="ALTERNATE_PHONE_SAME_AS_PRIMARY"?"Alternate phone number cannot be the same as primary mobile number"
+        :error.code==="ALTERNATE_PHONE_INVALID"?"Alternate phone number must be 10 to 15 digits"
+        :error.status===409?"These contact details were updated in another tab. Review the latest saved values before retrying."
+        :error.message
+        :error instanceof Error?error.message:"Could not save contact details.";
+      setContactError(message);
     } finally {
       setContactPending(false);
     }
@@ -447,27 +440,23 @@ export function LearnerProfileWorkspace(props: {
     items: LearnerProfileDocument[typeof section],
     onDone?: () => void,
   ) {
-    startTransition(async () => {
+    void guardedRun(async () => {
       try {
-        const result = await fetch("/api/profile/me/sections", {
-          method: "PATCH",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ confirmed: true, section, items, expectedItems: document[section] }),
+        const payload=await apiFetch<{items:unknown[]}>("/api/profile/me/sections",{
+          method:"PATCH",headers:{"content-type":"application/json"},
+          body:JSON.stringify({confirmed:true,section,items,expectedItems:document[section]}),
         });
-        const payload = await result.json().catch(() => null);
-        if(!result.ok && payload?.error==="LEARNER_PROFILE_SECTION_STALE"){
-          router.refresh();
-          throw new Error("This section changed in another tab. Review the latest saved version before retrying.");
-        }
-        if (!result.ok || !Array.isArray(payload?.items)) {
+        if(!Array.isArray(payload?.items))
           throw new Error("Could not save this section; other profile details were not changed.");
-        }
         setDocument(current => ({ ...current, [section]: payload.items }));
         onDone?.();
         showToast({ tone:"success",title:"Profile section saved" });
       } catch (error) {
-        showToast({ tone:"error",title:"Section update failed",
-          description:error instanceof Error ? error.message : "Try again." });
+        if(error instanceof FriendlyFetchError && error.status===409)router.refresh();
+        const message=error instanceof FriendlyFetchError && error.status===409
+          ?"This section changed in another tab. Review the latest saved version before retrying."
+          :error instanceof Error?error.message:"Try again.";
+        showToast({ tone:"error",title:"Section update failed",description:message });
       }
     });
   }

@@ -6,7 +6,7 @@ Audit `docs/audit/pages/public/auth-public-2-links-marketing.md`. Protocol `docs
 | --- | --- | --- |
 | PUB-auth-public-44 | OPEN | Client validates name, 6-digit OTP and optional Indian mobile; full email-classification/MX validation not reverified |
 | PUB-auth-public-45 | OPEN | Joined state provides sign-in link; PENDING_HR state not independently verified |
-| PUB-auth-public-46 | DONE | RecruiterInviteLanding distinguishes load_error and Retry from invalid or consumed token; named test PUB-auth-public-46 |
+| PUB-auth-public-46 | DONE | RecruiterInviteLanding uses shared apiFetch with timeout/non-JSON failure handling; 404 invalid differs from 5xx/offline load_error Retry, and OTP actions are guarded; named test PUB-auth-public-46 |
 | PUB-auth-public-47 | OPEN | Company and college context exists; every historical invitation-specific sentence not confirmed |
 | PUB-auth-public-50 | OPEN | One-time company share code gate not wired into public share GET and SQL authorization |
 | PUB-auth-public-51 | OPEN | Email me a code instead for company share not yet available |

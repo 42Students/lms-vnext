@@ -37,3 +37,5 @@ Source evidence cross-checked against `docs/audit/pages/faculty/assessments.md`.
 | FAC-assessments-15 | DONE | `src/modules/courses/faculty-assignment-authoring-service.ts`, `src/modules/courses/faculty-assignment-authoring-model.ts`, `src/components/courses/faculty-assessment-editor.tsx`; `tests/unit/chat6-faculty-round2.test.ts` → `FAC-assessments-15 allows title corrections but locks deadline points and methods after submission` |
 
 Remaining unverified / still open: FAC-assessments-13, FAC-assessments-27, FAC-assessments-R01/R02/R03/R04/R05/R06/R07/R08, FAC-attendance-grades-R01/R02. Storage-backed assignment resources / inline file previews require private storage and scanner support; do not claim closure based on UI copy alone.
+
+| FAC-assessments-13 | DONE (source authored; runtime pending) | `src/components/courses/faculty-choice-quiz-builder.tsx`, `src/components/courses/faculty-assignment-editor.tsx`; `tests/unit/chat6-faculty-publish-now-round3.test.ts` → `FAC-assessments-13 defaults new quiz and assignment to Publish now and keeps a saved draft after publish failure` |

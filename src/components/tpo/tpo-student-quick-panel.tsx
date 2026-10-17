@@ -1,4 +1,5 @@
 "use client";
+import {apiFetch} from "@/lib/api-fetch";
 import Link from "next/link";
 import {tpoStudentDisplayLabel} from "@/modules/placements/tpo-student-display-label";
 import {useEffect,useState} from "react";
@@ -25,11 +26,8 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
  const [error,setError]=useState("");
  async function fetchDetail(){
   setLoading(true);setError("");
-  try{const response=await fetch("/api/placements/tpo/students/"+encodeURIComponent(student.membershipId)+"/panel",{cache:"no-store"});
-   const body=await response.json().catch(()=>null);
-   if(!response.ok||!body?.student)throw Error(response.status===403
-     ?"You do not have permission to open these student details.":
-      "Could not load student records. Please try again.");
+  try{const body=await apiFetch<{student:unknown;applications:PanelDetail["applications"];requests:PanelDetail["requests"];notes:PanelDetail["notes"];studentNotes:PanelDetail["studentNotes"];teamHistory:PanelDetail["teamHistory"];truncated?:boolean}>("/api/placements/tpo/students/"+encodeURIComponent(student.membershipId)+"/panel",{cache:"no-store"});
+   if(!body?.student)throw Error("Could not load student records. Please try again.");
    setDetail(body as PanelDetail);
   }catch(e){setError(e instanceof Error?e.message:"Could not load student records");}
   finally{setLoading(false);}

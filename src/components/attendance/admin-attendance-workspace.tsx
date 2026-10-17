@@ -1,6 +1,8 @@
 "use client";
 
 import { ADMIN_ATTENDANCE_COPY } from "@/modules/attendance/admin-attendance-copy";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {
   useMemo,
   useState,
@@ -130,6 +132,7 @@ export function AdminAttendanceWorkspace({
   basePath: string;
 }) {
   const router = useRouter();
+  const correctionGuard=useGuardedAction({busyLabel:"Correcting attendance..."});
   const [target, setTarget] =
     useState<CellTarget | null>(null);
   const [correcting, setCorrecting] =
@@ -139,6 +142,7 @@ export function AdminAttendanceWorkspace({
   const [notice,setNotice]=useState<string|null>(null);
   const [sectionId, setSectionId] = useState(data.selectedSectionId ?? "");
   const [courseId, setCourseId] = useState(data.selectedCourseId ?? "");
+  const [deliveryId,setDeliveryId]=useState(data.selectedDeliveryId??"");
   const [showAllCourses, setShowAllCourses] = useState(data.showAllCourses);
   const [chooser, setChooser] = useState<{
     learner: Learner; sessions: Session[];
@@ -149,6 +153,7 @@ export function AdminAttendanceWorkspace({
   const syncKey = [
     data.selectedSectionId,
     data.selectedCourseId,
+    data.selectedDeliveryId,
     data.showAllCourses,
     data.month,
   ].join("|");
@@ -157,6 +162,7 @@ export function AdminAttendanceWorkspace({
     setSyncedKey(syncKey);
     setSectionId(data.selectedSectionId ?? "");
     setCourseId(data.selectedCourseId ?? "");
+    setDeliveryId(data.selectedDeliveryId??"");
     setShowAllCourses(data.showAllCourses);
     setTarget(null);
     setChooser(null);
@@ -174,6 +180,7 @@ export function AdminAttendanceWorkspace({
     return data.courses.filter((course) => ids.has(course.id));
   }, [data.courses, data.deliveries, sectionId]);
   const visibleCourses = showAllCourses ? data.courses : offeredCourses;
+  const termDeliveries=data.deliveries.filter(row=>row.sectionId===sectionId && row.courseId===courseId);
   const sessionDays = useMemo(() =>
     attendanceMonthDays(data.month,data.grid?.sessions ?? []),
     [data.grid?.sessions,data.month],
@@ -183,6 +190,8 @@ export function AdminAttendanceWorkspace({
     const params = new URLSearchParams({ month });
     if (sectionId) params.set("sectionId", sectionId);
     if (courseId) params.set("courseId", courseId);
+    const selected=termDeliveries.find(row=>row.deliveryId===deliveryId)??termDeliveries[0];
+    if(selected)params.set("deliveryId",selected.deliveryId);
     if (showAllCourses) params.set("allCourses", "1");
     router.push(basePath + "?" + params.toString());
   }
@@ -234,6 +243,7 @@ export function AdminAttendanceWorkspace({
       | "MEDICAL"
       | "LATE",
   ) {
+    return correctionGuard.run(async()=>{
     if (
       !target ||
       !data.selectedDeliveryId ||
@@ -244,49 +254,31 @@ export function AdminAttendanceWorkspace({
     setError(null);
     setCorrecting(true);
     try {
-      const response = await fetch(
-        `/api/attendance/admin/sessions/${encodeURIComponent(
-          target.session.id,
-        )}`,
+      await apiFetch<void>(
+        `/api/attendance/admin/sessions/${encodeURIComponent(target.session.id)}`,
         {
           method: "PATCH",
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             collegeId: data.collegeId,
-            deliveryId:
-              data.selectedDeliveryId,
-            membershipId:
-              target.learner.membershipId,
+            deliveryId: data.selectedDeliveryId,
+            membershipId: target.learner.membershipId,
             status,
           }),
         },
       );
-      if (!response.ok) {
-        // Do not echo provider, SQL or framework messages from the API body.
-        setError(
-          response.status===409
-            ? "This changed while you were working. Refresh the attendance grid and re-apply the correction."
-            :response.status===403
-            ? "You do not have access to correct this attendance. Ask a college administrator."
-            :response.status===429
-            ? "Too many changes were requested. Try again shortly."
-            : "Attendance could not be corrected. Check the record and retry.",
-        );
-        return;
-      }
       setNotice("Attendance corrected for "+learnerName(target.learner)+" — "+target.session.title+".");
       setTarget(null);
       router.refresh();
-    } catch {
-      setError(
-        "Attendance correction failed. Check your connection and retry.",
-      );
+    } catch (cause) {
+      setError(cause instanceof FriendlyFetchError && cause.status===409
+        ? "This changed while you were working. Refresh the attendance grid and re-apply the correction."
+        :cause instanceof Error ? cause.message
+        : "Attendance correction failed. Check your connection and retry.");
     } finally {
       setCorrecting(false);
     }
+    });
   }
 
   function exportCsv() {
@@ -361,7 +353,7 @@ export function AdminAttendanceWorkspace({
           <Select className="mt-1.5" value={sectionId}
             onChange={(event) => {
               setSectionId(event.target.value);
-              setCourseId("");
+              setCourseId("");setDeliveryId("");
             }}>
             <option value="">Select class</option>
             {classes.map((item) => (
@@ -375,7 +367,7 @@ export function AdminAttendanceWorkspace({
           Course
           <Select className="mt-1.5" value={courseId}
             disabled={!sectionId}
-            onChange={(event) => setCourseId(event.target.value)}>
+            onChange={(event) => {setCourseId(event.target.value);setDeliveryId("");}}>
             <option value="">Select course</option>
             {visibleCourses.map((course) => (
               <option key={course.id} value={course.id}>
@@ -386,6 +378,15 @@ export function AdminAttendanceWorkspace({
             ))}
           </Select>
         </label>
+        {termDeliveries.length>1?<label className="text-xs font-semibold text-body">
+          Academic term
+          <Select className="mt-1.5" value={deliveryId||termDeliveries[0]?.deliveryId||""}
+            onChange={event=>setDeliveryId(event.target.value)}>
+            {termDeliveries.map(item=><option key={item.deliveryId} value={item.deliveryId}>
+              {item.academicPeriodName} · {item.sectionName}
+            </option>)}
+          </Select>
+        </label>:null}
         <Button className="self-end" type="submit" disabled={!sectionId || !courseId}>
           View attendance
         </Button>

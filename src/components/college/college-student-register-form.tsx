@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useTransition, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
+import {apiFetch} from "@/lib/api-fetch";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {legacyPersonName,indianMobileToE164} from "@/modules/people/college-onboard-mobile-model";
@@ -12,7 +14,7 @@ type Choices = {
 };
 export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
   const router=useRouter();
-  const [pending,start]=useTransition();
+  const {pending,run:guardedRun}=useGuardedAction({busyLabel:"Registering..."});
   const [result,setResult]=useState<string|null>(null);
   const [savedMemberId,setSavedMemberId]=useState<string|null>(null);
   const [error,setError]=useState("");
@@ -36,20 +38,19 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
       setError("Name, phone, program and batch are required.");return;
     }
     if(!window.confirm("Register this student and enroll them in the selected batch?"))return;
-    start(async()=>{
+    void guardedRun(async()=>{
       try {
-        const response=await fetch("/api/college/students/register",{
+        const body=await apiFetch<{
+          status?:string;membershipId?:string;failures?:string[];
+        }>("/api/college/students/register",{
           method:"POST",headers:{"content-type":"application/json"},
           body:JSON.stringify({displayName,phoneE164:indianMobileToE164(phoneE164),email,programId,cohortId,
             sectionId:sectionId||undefined,rollNumber,gender,dateOfBirth,address}),
         });
-        const body=await response.json().catch(()=>null) as
-          {error?:string;status?:string;membershipId?:string;failures?:string[]}|null;
-        if(!response.ok && response.status!==207)throw Error(body?.error??"Student registration failed");
         const isPartial=body?.status==="PARTIAL";
         setSavedMemberId(body?.membershipId??null);
         setResult(isPartial
-          ? "Partially registered. Student membership "+(body?.membershipId??"")+"; "+(body?.failures??[]).join("; ")
+          ? "Partially registered. Some enrollment steps need attention. Check the student roster before retrying."
           : "Student registered and enrolled successfully.");
         if(!isPartial){
           setFirstName("");setLastName("");setPhone("");setEmail("");setRoll("");setDob("");setAddress("");

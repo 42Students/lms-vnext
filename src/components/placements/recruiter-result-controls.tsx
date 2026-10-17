@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {apiFetch} from "@/lib/api-fetch";
+import {friendlyApiError} from "@/lib/friendly-error";
 
 type ResultOutcome =
   | "PASS"
@@ -228,7 +230,7 @@ export function RecruiterResultControls({
     singleSubmissionLock.current=true;
     setPendingKey(key);
     try {
-      const response = await fetch(
+      await apiFetch(
         "/api/placements/rounds/" +
           roundId +
           "/results",
@@ -262,18 +264,6 @@ export function RecruiterResultControls({
           }),
         },
       );
-      const payload = (await response
-        .json()
-        .catch(() => null)) as
-        | { error?: string }
-        | null;
-      if (!response.ok) {
-        throw new Error(
-          payload?.error ??
-            "PLACEMENT_RESULT_STAGE_FAILED",
-        );
-      }
-
       showToast({
         tone: "success",
         title: "Result staged",
@@ -281,11 +271,11 @@ export function RecruiterResultControls({
           "The employer result is staged for the college placement team to review and apply.",
       });
       router.refresh();
-    } catch {
+    } catch (error) {
       showToast({
         tone: "error",
         title: "Could not stage result",
-        description: "Could not save this result. Please try again.",
+        description: error instanceof Error?error.message:friendlyApiError({}),
       });
     } finally {
       singleSubmissionLock.current=false;
@@ -336,7 +326,7 @@ export function RecruiterResultControls({
     for(const participant of participants){
       const draft=drafts[round.id+":"+participant.applicationId]!;
       try{
-        const response=await fetch("/api/placements/rounds/"+encodeURIComponent(round.id)+"/results",{
+        await apiFetch("/api/placements/rounds/"+encodeURIComponent(round.id)+"/results",{
           method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
           body:JSON.stringify({
             applicationId:participant.applicationId,outcome:draft.outcome,
@@ -345,8 +335,7 @@ export function RecruiterResultControls({
             reasonCategory:draft.reasonCategory||null,candidateMessage:draft.candidateMessage.trim()||null,
           }),
         });
-        if(response.ok)succeeded.push(participant.applicationId);
-        else failures++;
+        succeeded.push(participant.applicationId);
       }catch{failures++;}
     }
     setSelected(current=>({...current,

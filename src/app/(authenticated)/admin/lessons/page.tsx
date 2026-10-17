@@ -58,6 +58,10 @@ export default async function SuperAdminLessonsPage({
         <p className="mt-1 text-xs text-muted-foreground">{lesson.cohortName} · {lesson.periodName} · Order {lesson.sequence + 1}</p>
         <p className="mt-3 text-sm text-body">Learning path: {lesson.pathStatus} · Offering: {lesson.offeringStatus}</p>
         <p className="mt-2 text-sm text-body">{lesson.publishedContentCount} published / {lesson.contentCount} authored content records</p>
+        <Link href={`/admin/courses/offerings/${encodeURIComponent(lesson.offeringId)}`}
+          className="mt-3 inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
+          Open offering →
+        </Link>
       </article>)}
     </div> : <EmptyState title="No lessons found" description="The current college and filters have no recorded lessons." />}
     <nav aria-label="Lesson pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">

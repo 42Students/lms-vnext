@@ -32,7 +32,8 @@ export default async function SuperAdminDrivesPage({searchParams}:{
    description="Review and open every persisted non-archived drive in the selected college." />
   <div className="flex flex-wrap gap-3">
    <Link href="/admin/placements" className="text-sm font-semibold text-primary-text">← Placement overview</Link>
-   <Link href="/admin/placements/new" className="text-sm font-semibold text-primary-text">Create drive →</Link>
+   <Link href="/admin/placements/student-lookup" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Look up a student&apos;s placement status →</Link>
+    <Link href="/admin/placements/new" className="text-sm font-semibold text-primary-text">Create drive →</Link>
   </div>
   <form action="/admin/placements/drives" method="get"
    className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">

@@ -20,7 +20,7 @@ Tests below are authored but not executed in this lane. DONE on a helper means i
 | GR-50 | DONE | `src/lib/outbound.ts`; `tests/unit/graceful-action-helpers.test.ts` — GR-50; adopted provider paths below |
 | GR-52 | DONE | `src/lib/transaction-retry.ts`; `tests/unit/graceful-action-helpers.test.ts` — GR-52 |
 | GR-60 | DONE | `src/hooks/use-form-draft.ts`; `tests/unit/graceful-action-helpers.test.ts` — GR-60 |
-| GR-11 | DONE | `src/app/global-error.tsx`, `src/app/error.tsx`, `src/app/api/client-errors/route.ts`; `tests/unit/graceful-root-screens.test.ts` — GR-11 |
+| GR-11 | DONE | `src/app/global-error.tsx`, `src/app/error.tsx`, `src/components/public/graceful-error-boundary.tsx`, `src/app/api/client-errors/route.ts`; `tests/unit/graceful-root-screens.test.ts`, `tests/unit/graceful-merge-syntax.test.ts` — GR-11 (UUID browser report accepted by chat-16 schema and correlated with visible 8-character reference) |
 | GR-12 | DONE | `src/components/public/graceful-error-boundary.tsx`; `tests/unit/graceful-root-screens.test.ts` — GR-12 |
 | GR-13 | DONE | `src/app/(authenticated)/*/not-found.tsx` and root; `tests/unit/graceful-root-screens.test.ts` — GR-13 |
 | GR-14 | DONE | `src/app/forbidden/page.tsx`; `tests/unit/graceful-root-screens.test.ts` — GR-14 |
@@ -44,7 +44,7 @@ Tests below are authored but not executed in this lane. DONE on a helper means i
 | GR-56 | DONE | `src/components/ui/third-party-link.tsx`; `tests/unit/graceful-ui-primitives.test.ts` — GR-56 (shared primitive; per-page adoption pending) |
 | GR-62 | DONE | `src/hooks/use-form-draft.ts`; `tests/unit/graceful-ui-primitives.test.ts` — GR-62 (shared primitive; per-page adoption pending) |
 | GR-64 | DONE | `src/lib/safe-download.ts`; `tests/unit/graceful-ui-primitives.test.ts` — GR-64 (shared primitive; per-page adoption pending) |
-| GR-53 | DONE | `src/components/auth/login-form.tsx`; `tests/unit/graceful-login-guards.test.ts` — GR-53 (shared OTP UI) |
+| GR-53 | DONE | `src/components/auth/login-form.tsx`; `tests/unit/graceful-login-guards.test.ts`, `tests/unit/graceful-merge-syntax.test.ts` — GR-53 (reapplied to latest main clean login: guarded apiFetch, timeout, resend/email fallback and returnTo; legacy wording preserved) |
 
 | GR-55 | DONE | `src/lib/background-job.ts`; `tests/unit/graceful-background-import.test.ts` — GR-55 (worker adoption pending) |
 | GR-63 | DONE | `src/lib/import-preview.ts`; `tests/unit/graceful-background-import.test.ts` — GR-63 (import-route adoption pending) |

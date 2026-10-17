@@ -42,7 +42,7 @@ const columns: DataTableColumn<DepartmentDirectoryRow>[] = [
     key: "actions",
     header: <span className="sr-only">Actions</span>,
     className: "text-right",
-    cell: (row) => <DepartmentActions departmentId={row.id} name={row.name} />,
+    cell: (row) => <DepartmentActions departmentId={row.id} name={row.name} usage={row.usage} />,
   },
 ];
 

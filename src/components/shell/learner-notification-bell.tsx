@@ -1,6 +1,9 @@
 "use client";
 import Link from "next/link";
 import {useCallback,useEffect,useRef,useState} from "react";
+import {apiFetch} from "@/lib/api-fetch";
+import {InlineNotice} from "@/components/ui/inline-notice";
+import {GracefulPageLoading} from "@/components/ui/graceful-page-loading";
 import {learnerNotificationTarget} from "@/modules/activity/learner-notification-inbox-model";
 type Due={key:string;title:string;body:string;href:string;dueAt:string};
 type Row={notification:{id:string;title:string;body:string;actionHref:string|null;
@@ -10,26 +13,25 @@ export function LearnerNotificationBell(){
  const [due,setDue]=useState<Due[]>([]);
  const [open,setOpen]=useState(false);
  const [error,setError]=useState("");
+ const [loading,setLoading]=useState(true);
+ const [everLoaded,setEverLoaded]=useState(false);
  const root=useRef<HTMLDivElement|null>(null);
  const [count,setCount]=useState(0);
  const refreshDue=useCallback(async()=>{
   try{
-   const response=await fetch("/api/courses/learner/due-notices",{cache:"no-store"});
-   if(!response.ok)return;
-   const payload=await response.json() as {notices?:Due[]};
+   const payload=await apiFetch<{notices?:Due[]}>("/api/courses/learner/due-notices",{cache:"no-store"});
    setDue(Array.isArray(payload.notices)?payload.notices:[]);
   }catch{ /* Existing personal notification inbox remains available. */ }
  },[]);
  const refresh=useCallback(async()=>{
   try{
-   const response=await fetch("/api/notifications?limit=40",{cache:"no-store"});
-   if(!response.ok)throw new Error("FAILED");
-   const body=await response.json() as {notifications?:Row[]};
-   if(!Array.isArray(body.notifications))throw new Error("INVALID");
+   const body=await apiFetch<{notifications?:Row[]}>("/api/notifications?limit=40",{cache:"no-store"});
+   if(!Array.isArray(body.notifications))throw new Error("Invalid notification response");
    setItems(body.notifications);
    setCount(body.notifications.filter(item=>item.notification.readAt===null).length);
-   setError("");
+   setError("");setEverLoaded(true);
   }catch{setError("Notifications could not be loaded. Retry without leaving this page.");}
+  finally{setLoading(false);}
  },[]);
  useEffect(()=>{
   // eslint-disable-next-line react-hooks/set-state-in-effect -- initial and 30s polling load.
@@ -60,10 +62,12 @@ export function LearnerNotificationBell(){
     <button type="button" onClick={()=>setOpen(false)}
       className="min-h-11 px-2 text-sm text-primary-text">Close</button>
    </div>
-   {error?<div role="alert" className="mt-2 text-sm text-error">{error}
-    <button type="button" className="ml-2 underline" onClick={()=>void refresh()}>Retry</button>
+   {error?<div className="mt-2 space-y-2"><InlineNotice tone="error" message={error} onDismiss={()=>setError("")}/>
+    <button type="button" className="min-h-10 text-sm text-primary-text underline" onClick={()=>void refresh()}>Retry notifications</button>
    </div>:null}
-   {items.length===0&&!error?<p role="status" className="mt-3 text-sm text-muted-foreground">No notifications yet</p>:null}
+   {loading&&!everLoaded?<GracefulPageLoading/>:null}
+   {error&&everLoaded?<p className="mt-2 text-xs text-muted-foreground">Showing the last successful notifications.</p>:null}
+   {items.length===0&&!error&&!loading?<p role="status" className="mt-3 text-sm text-muted-foreground">No notifications yet</p>:null}
    {due.length>0?<section aria-label="Assignments due soon" className="mt-3">
     <h3 className="text-sm font-semibold text-foreground">Assignments due within 48 hours</h3>
     <ul className="mt-2 space-y-2">

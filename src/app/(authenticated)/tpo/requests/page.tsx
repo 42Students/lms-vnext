@@ -57,6 +57,17 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
   const attention=tpoRequestAttentionOnPage(data.requests,asOf);
   return <main className="min-w-0 space-y-5">
     <PageHeader eyebrow="TPO · Operations" title="Requests" description="What students have asked you to decide: withdrawals, off-campus offers, registration changes and disputes. Urgent ones come first." />
+    <nav aria-label="Request history views" className="flex flex-wrap gap-2">
+      <Link href={href({...data.query,status:"PENDING",age:"ALL",page:1})}
+        aria-current={data.query.status==="PENDING"&&data.query.age==="ALL"?"page":undefined}
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-3 font-semibold text-primary-text">Waiting</Link>
+      <Link href={href({...data.query,status:"ALL",age:"LAST_30_DAYS",page:1})}
+        aria-current={data.query.status==="ALL"&&data.query.age==="LAST_30_DAYS"?"page":undefined}
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-3 font-semibold text-primary-text">Last 30 days</Link>
+      <Link href={href({...data.query,status:"ALL",age:"ALL",page:1})}
+        aria-current={data.query.status==="ALL"&&data.query.age==="ALL"?"page":undefined}
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-3 font-semibold text-primary-text">All history</Link>
+    </nav>
     <nav aria-label="Request statuses" className="flex flex-wrap gap-2">
       {TPO_REQUEST_STATUSES.map(status=>
         <Link key={status} href={href({...data.query,status,page:1})} aria-current={data.query.status===status?"page":undefined}
@@ -71,7 +82,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
        {data.query.jobId&&!jobChoices.some(row=>row.job.id===data.query.jobId)?<option value={data.query.jobId}>Previously selected drive</option>:null}
        {jobChoices.map(row=><option value={row.job.id} key={row.job.id}>{row.company.name} · {row.job.title}</option>)}
       </select></label>
-      <label className="min-w-0 flex-1 text-sm">Search student, job or company
+      <label className="min-w-0 flex-1 text-sm">Search student number, student, job or company
         <input name="search" defaultValue={data.query.search} type="search" maxLength={150} className="mt-1 block min-h-11 w-full rounded border border-border bg-surface px-3" />
       </label>
       <label className="text-sm">Page size
@@ -79,7 +90,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
           <option value="25">25</option><option value="50">50</option><option value="100">100</option>
         </select>
       </label>
-      <label className="text-sm">Age<select name="age" defaultValue={data.query.age} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">Any age</option><option value="TODAY">Asked today</option><option value="ONE_TO_TWO_DAYS">1–2 days</option><option value="OLDER_THAN_1_DAY">Older than 24 hours</option><option value="OLDER_THAN_2_DAYS">Older than 2 days</option><option value="OLDER_THAN_7_DAYS">Older than 7 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option></select></label>
+      <label className="text-sm">Age<select name="age" defaultValue={data.query.age} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">Any age</option><option value="TODAY">Asked today</option><option value="ONE_TO_TWO_DAYS">1–2 days</option><option value="OLDER_THAN_1_DAY">Older than 24 hours</option><option value="OLDER_THAN_2_DAYS">Older than 2 days</option><option value="OLDER_THAN_7_DAYS">Older than 7 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option><option value="LAST_30_DAYS">Last 30 days</option></select></label>
       <label className="text-sm">Order<select name="sort" defaultValue={data.query.sort} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="URGENCY_FIRST">Urgent first</option><option value="NEWEST_FIRST">Newest first</option><option value="OLDEST_FIRST">Oldest first</option></select></label>
       <button type="submit" className="min-h-11 rounded bg-primary px-4 text-on-primary">Apply</button>
       <Link href={tpoRequestClearAdvancedHref(data.query.status)} className="inline-flex min-h-11 items-center text-primary-text underline">Clear search, age and drive filters</Link>

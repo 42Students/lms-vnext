@@ -27,7 +27,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
   const context = await getCurrentRequestContext();
   if (!context.adminScope?.collegeId) {
     return <div className="space-y-4">
-      <PageHeader eyebrow="Super Admin" title="Semesters" />
+      <PageHeader  title="Semesters" />
       <EmptyState title="Select a college to continue" description="Choose a college in the header above to see its semesters." />
     </div>;
   }
@@ -37,7 +37,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
   );
   if (!parsed.success) {
     return <div className="space-y-4">
-      <PageHeader eyebrow="Super Admin" title="Semesters" />
+      <PageHeader  title="Semesters" />
       <ErrorState title="Invalid semester filters"
         description="Check the selected program, term, status or page."
         action={<Link href="/admin/semesters" className="font-semibold text-primary-text">Clear filters</Link>} />
@@ -47,7 +47,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
   const data = await listCollegeSemesters(context, parsed.data);
   return <div className="space-y-6">
       <AcademicSetupSteps step={3} />
-    <PageHeader eyebrow="Super Admin" title="Semesters"
+    <PageHeader  title="Semesters"
       description="Create and manage semesters. Credits sum the mapped courses; unmapped semesters show —." />
     <CollegeSemesterCreateForm programs={data.programs.filter(program => program.status === "ACTIVE")} />
     <section className="rounded-xl border border-border bg-surface p-4" aria-label="Semester filters">

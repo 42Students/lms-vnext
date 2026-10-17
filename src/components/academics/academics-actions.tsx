@@ -81,14 +81,17 @@ export function ProgramActions({
   program,
   displayDurationYears = false,
   contents,
+  departments = [],
 }: {
   program: {
     id: string;
     name: string;
     code: string;
     durationTerms: number;
+    departmentId?: string;
   };
   displayDurationYears?: boolean;
+  departments?: readonly {id:string;name:string}[];
   contents?: { semesters: number; batches: number; classes: number } | null;
 }) {
   const programHasLinkedRecords = Boolean(contents &&
@@ -103,12 +106,14 @@ export function ProgramActions({
     useState(program.name);
   const [code, setCode] =
     useState(program.code);
+  const [departmentId, setDepartmentId] = useState(program.departmentId ?? "");
   const [durationTerms, setDurationTerms] =
     useState(String(displayDurationYears?program.durationTerms/2:program.durationTerms));
   const { pending, run } =
     useAcademicMutation();
 
   function openEdit() {
+    setDepartmentId(program.departmentId ?? "");
     setName(program.name);
     setCode(program.code);
     setDurationTerms(
@@ -124,7 +129,7 @@ export function ProgramActions({
       return;
     }
     if (pending) return;
-    if (hasUnsavedCollegeProgramEdit(program, { name, code, durationTerms: displayDurationYears ? String(Number(durationTerms)*2) : durationTerms })) {
+    if (departmentId !== (program.departmentId ?? "") || hasUnsavedCollegeProgramEdit(program, { name, code, durationTerms: displayDurationYears ? String(Number(durationTerms)*2) : durationTerms })) {
       setDiscardOpen(true);
     } else {
       setEditOpen(false);
@@ -158,7 +163,7 @@ export function ProgramActions({
         open={editOpen}
         onOpenChange={requestEditOpenChange}
         title="Edit program"
-        description="Department ownership is immutable; update the Program identity and duration here."
+        description="You can change the department before any semesters, batches or learners are linked."
         footer={
           <>
             <Button
@@ -184,10 +189,11 @@ export function ProgramActions({
                       updateCollegeProgramSchema.parse({
                         name,
                         code,
+                        ...(departments.length ? {departmentId} : {}),
                         durationTerms: displayDurationYears ? Number(durationTerms)*2 : Number(durationTerms),
                       }),
                     ),
-                  "Program updated",
+                  displayDurationYears ? `Updated program “${program.name}”.` : "Program updated",
                   () => setEditOpen(false),
                 )
               }
@@ -198,6 +204,11 @@ export function ProgramActions({
         }
       >
         <div className="grid gap-4 sm:grid-cols-2">
+          {departments.length ? <label className="grid gap-1 text-sm font-semibold">Department
+            <Select value={departmentId} onChange={event=>setDepartmentId(event.target.value)}>
+              {departments.map(department=><option key={department.id} value={department.id}>{department.name}</option>)}
+            </Select>
+          </label> : null}
           <div className="sm:col-span-2">
             <label className="mb-1.5 block text-xs font-semibold text-body">
               Program name
@@ -228,9 +239,9 @@ export function ProgramActions({
             </label>
             <Input
               type="number"
-              min={displayDurationYears?0.5:1}
-              max={displayDurationYears?12:24}
-              step={displayDurationYears?0.5:1}
+              min={1}
+              max={displayDurationYears?10:24}
+              step={1}
               value={durationTerms}
               onChange={(event) =>
                 setDurationTerms(

@@ -21,6 +21,7 @@ export default async function AdminPlacementsPage() {
           description="Placement administration requires a college safety scope."
         />
         <SuperAdminPlacementOversightNav />
+      <Link href="/admin/placements/student-lookup" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Look up a student&apos;s placement status →</Link>
         <SuperAdminPlatformPlacementPolicy initial={policy} />
         <Link href="/admin/placements/drives" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Open All drives table →</Link>
       <Link href="/admin/companies" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Browse companies across your current scope →</Link>
@@ -47,6 +48,7 @@ export default async function AdminPlacementsPage() {
         }
       />
       <SuperAdminPlacementOversightNav />
+      <Link href="/admin/placements/student-lookup" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Look up a student&apos;s placement status →</Link>
       <SuperAdminPlatformPlacementPolicy initial={policy} />
       <Link href="/admin/companies" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Companies directory →</Link>
       <PlacementOperationsWorkspace

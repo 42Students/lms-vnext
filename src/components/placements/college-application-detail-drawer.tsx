@@ -1,5 +1,6 @@
 "use client";
 import {useState} from "react";
+import {apiFetch} from "@/lib/api-fetch";
 type Event={from:string|null;to:string;reason:string|null;when:string};
 export type CollegeApplicationDetail={
  application:{id:string;name:string|null;email:string|null;phone:string|null;
@@ -15,8 +16,9 @@ export type CollegeApplicationDetail={
 };
 const when=(v:string)=>new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
  timeZone:"Asia/Kolkata"}).format(new Date(v));
-export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,initialDetail}:{
+export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,initialDetail,basePath="/college/placements"}:{
  jobId:string;applicationId:string;onClose:()=>void;initialDetail?:CollegeApplicationDetail;
+ basePath?: "/college/placements"|"/admin/placements";
 }){
  const [detail,setDetail]=useState<CollegeApplicationDetail|null>(initialDetail??null);
  const [loading,setLoading]=useState(false);
@@ -29,10 +31,9 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
  async function reload(){
   setLoading(true);setError("");
   try{
-   const response=await fetch(url,{cache:"no-store"});
-   const body=await response.json().catch(()=>null);
-   if(!response.ok||!body?.application)throw Error(body?.error??"Unable to load application");
-   setDetail(body as CollegeApplicationDetail);
+   const body=await apiFetch<CollegeApplicationDetail>(url,{cache:"no-store"});
+   if(!body?.application)throw Error("Could not load this application. Please try again.");
+   setDetail(body);
   }catch(reason){setError(reason instanceof Error?reason.message:"Unable to load application");}
   finally{setLoading(false);}
  }
@@ -40,10 +41,8 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
   if(!note.trim()||saving)return;
   setSaving(true);setError("");setSuccess("");
   try{
-   const response=await fetch(url,{method:"POST",headers:{"content-type":"application/json"},
+   await apiFetch(url,{method:"POST",headers:{"content-type":"application/json"},
     body:JSON.stringify({body:note.trim()})});
-   const result=await response.json().catch(()=>null);
-   if(!response.ok)throw Error(result?.error??"Note could not be saved");
    setNote("");await reload();setSuccess("Internal note saved to application history.");
   }catch(reason){setError(reason instanceof Error?reason.message:"Note could not be saved");}
   finally{setSaving(false);}
@@ -103,8 +102,8 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
       </section>
       <section className="rounded-lg border border-border p-4">
        <h3 className="font-semibold">Interview scheduling</h3>
-       <a href={"/college/placements/jobs/"+encodeURIComponent(jobId)+
-        "/interviews?applicationId="+encodeURIComponent(applicationId)}
+       <a href={basePath+"/jobs/"+encodeURIComponent(jobId)+
+        (basePath==="/admin/placements"?"/schedule":"/interviews")+"?applicationId="+encodeURIComponent(applicationId)}
         className="mt-2 inline-flex min-h-10 items-center rounded border border-border px-3 font-semibold text-primary-text">
         Schedule or view candidate interviews
        </a>

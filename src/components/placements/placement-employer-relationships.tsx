@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import {apiFetch} from "@/lib/api-fetch";
+import {friendlyApiError} from "@/lib/friendly-error";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
@@ -27,18 +29,6 @@ type Draft = {
   isTrusted: boolean;
   ownerMembershipId: string;
 };
-
-function humanize(value: string) {
-  return value
-    .toLowerCase()
-    .split("_")
-    .map(
-      (part) =>
-        part.charAt(0).toUpperCase() +
-        part.slice(1),
-    )
-    .join(" ");
-}
 
 export function PlacementEmployerRelationships({
   relationships,
@@ -73,36 +63,14 @@ export function PlacementEmployerRelationships({
     method: "PATCH" | "DELETE",
     body?: unknown,
   ) {
-    const response = await fetch(
+    await apiFetch(
       `/api/placements/companies/${relationshipId}`,
       {
         method,
-        headers:
-          body === undefined
-            ? undefined
-            : {
-                "content-type":
-                  "application/json",
-              },
-        body:
-          body === undefined
-            ? undefined
-            : JSON.stringify(body),
+        headers: body===undefined ? undefined : {"content-type":"application/json"},
+        body: body===undefined ? undefined : JSON.stringify(body),
       },
     );
-    const payload = (await response
-      .json()
-      .catch(() => null)) as
-      | { error?: string }
-      | null;
-    if (!response.ok) {
-      throw new Error(
-        humanize(
-          payload?.error ??
-            "PLACEMENT_RELATIONSHIP_UPDATE_FAILED",
-        ),
-      );
-    }
   }
 
   async function save(
@@ -133,9 +101,7 @@ export function PlacementEmployerRelationships({
         tone: "error",
         title: "Could not update employer",
         description:
-          error instanceof Error
-            ? error.message
-            : "Please try again.",
+          error instanceof Error ? error.message : friendlyApiError({}),
       });
     } finally {
       setPendingId(null);
@@ -164,9 +130,7 @@ export function PlacementEmployerRelationships({
         tone: "error",
         title: "Could not archive employer",
         description:
-          error instanceof Error
-            ? error.message
-            : "Please try again.",
+          error instanceof Error ? error.message : friendlyApiError({}),
       });
     } finally {
       setPendingId(null);
@@ -177,16 +141,16 @@ export function PlacementEmployerRelationships({
     <section className="rounded-xl border border-border bg-surface">
       <div className="border-b border-border px-5 py-4">
         <h2 className="m-0 text-base font-semibold text-foreground">
-          Employer relationships
+          Companies
         </h2>
         <p className="mt-1 text-sm text-body">
-          Keep recruiter ownership and trust decisions private to this college while reusing canonical employer identity.
+          Maintain each recruiting company once and reuse it across drives.
         </p>
       </div>
 
       {relationships.length === 0 ? (
         <p className="m-0 px-5 py-6 text-sm text-muted-foreground">
-          No employer relationships yet. Create an opportunity to add the first employer.
+          No companies yet.
         </p>
       ) : (
         <div className="divide-y divide-border">

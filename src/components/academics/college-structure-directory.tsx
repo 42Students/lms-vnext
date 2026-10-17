@@ -32,11 +32,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="College Admin · Academic Setup"
         title={title}
-        description={classes
-          ? "Read-only college classes with program, batch, term and recorded active learner enrollments."
-          : "Registered elective slots with guarded creation, editing, choice constraints and active course offerings."}
         actions={<Link href="/college/academics"
           className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
           Academic workspace
@@ -367,7 +363,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             {data.total === 0
               ? classes
                 ? "No recorded college classes match these filters. Classes are not inferred from batches."
-                : "No registered elective slots match these filters. This does not establish whether electives are enabled for your college."
+                : "No electives match these filters."
               : "No rows on this page. Choose an earlier page."}
            </p>
            <Link href={path} className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear filters and view all {title.toLowerCase()}</Link>
@@ -472,7 +468,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
         {classes
           ? "Active enrollments count persisted section enrollments for active learner memberships. Class capacity is configured capacity, not occupancy or attendance; scheduling conflicts and recurring series creation are not available here."
           : "Offered-course counts represent nondeleted active elective offerings with college-owned courses. Slots do not prove that the elective feature is enabled or that learner selections are open. Selection finalization and capacity enforcement are not implemented here."}
-        Read-only. Legacy create/edit/delete, confirmation and browser parity remain open.
+ 
       </p>
     </div>
   );

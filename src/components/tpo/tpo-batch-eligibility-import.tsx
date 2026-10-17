@@ -1,6 +1,8 @@
 "use client";
 import {useRouter} from "next/navigation";
 import {useRef,useState} from "react";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
+import {friendlyApiError} from "@/lib/friendly-error";
 import {TpoBatchUndoControl} from "./tpo-batch-undo-control";
 import {serializeTpoEligibilityPreviewCsv} from "@/modules/placements/tpo-eligibility-preview-csv-model";
 import {parseTpoEligibilitySheetCsv} from "@/modules/placements/tpo-eligibility-sheet-model";
@@ -19,9 +21,10 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
  const [previewTab,setPreviewTab]=useState<"ALL"|"MATCHED"|"UNUSABLE">("ALL");
  const [chosenName,setChosenName]=useState("");
  const [previewPage,setPreviewPage]=useState(1);
+ const [acknowledged,setAcknowledged]=useState(false);
  async function chooseFile(file:File|null){
   if(!file)return;
-  setError("");setPreview(null);setNotice("");setLastActionId(null);setPreviewPage(1);
+  setError("");setPreview(null);setNotice("");setLastActionId(null);setPreviewPage(1);setAcknowledged(false);
   if(!file.name.toLowerCase().endsWith(".csv")) {
     setError("Choose a CSV export of the spreadsheet (.csv).");return;
   }
@@ -30,16 +33,16 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
   catch{setError("Unable to read the selected CSV file.");}
  }
  async function previewChanges(){
-  if(busy)return;setBusy(true);setError("");setNotice("");setPreview(null);setSkippedByUser([]);
+  if(busy)return;setBusy(true);setError("");setNotice("");setPreview(null);setSkippedByUser([]);setAcknowledged(false);
   try{
    const rows=parseTpoEligibilitySheetCsv(csv);
-   const response=await fetch("/api/placements/tpo/batches/"+batchId+"/import-preview",{
+   const value=await apiFetch<Preview>("/api/placements/tpo/batches/"+encodeURIComponent(batchId)+"/import-preview",{
     method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({rows}),
    });
-   const value=await response.json().catch(()=>null) as Preview|null;
-   if(!response.ok||!value)throw Error(response.status===409?"This changed while you were working. Your import is still here; preview it again.":"We could not prepare your import. Please check the file and try again.");
    setPreview(value);setPreviewPage(1);
-  }catch(e){setError(e instanceof Error?e.message:"Preview unavailable.");}finally{setBusy(false);}
+  }catch(e){setError(e instanceof FriendlyFetchError&&e.status===409?
+    "This changed while you were working. Your import is still here; preview it again.":
+    e instanceof Error?e.message:friendlyApiError({}));}finally{setBusy(false);}
  }
  async function copyPreview(){
   if(!preview||busy)return;
@@ -49,26 +52,25 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
   }catch{setError("Could not copy this preview. Review the result list instead.");}
  }
  async function commit(){
-  if(!preview||preview.ready===0||busy)return;
+  if(!preview||preview.ready===0||busy||!acknowledged)return;
   const selections=preview.preview.map((row,index)=>({row,index}))
     .filter(item=>!skippedByUser.includes(item.index));
   const selected=selections.filter(item=>item.row.status==="matched");
   if(!selected.length){setError("Select at least one matched row to import.");return;}
-  if(!window.confirm("Apply "+selected.length+" matched eligibility decisions? The remaining rows will be skipped."))return;
   setBusy(true);setError("");setNotice("");
   try{
    const versions=Object.fromEntries(selected.filter(({row})=>row.membershipId&&row.expectedVersion)
     .map(({row})=>[row.membershipId!,row.expectedVersion!]));
-   const response=await fetch("/api/placements/tpo/batches/"+batchId+"/import-commit",{
+   const data=await apiFetch<{changedCount?:number;skipped?:number;actionId?:string|null}>("/api/placements/tpo/batches/"+encodeURIComponent(batchId)+"/import-commit",{
     method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({rows:selections.map(item=>preview.rows[item.index]),expectedVersions:versions,previewMemberIds:selections.map(item=>item.row.membershipId),confirmed:true}),
    });
-   const data=await response.json().catch(()=>null) as {changedCount?:number;skipped?:number;actionId?:string|null}|null;
-   if(!response.ok||!data)throw Error(response.status===409?"This changed while you were working. Your import is still here; preview it again.":"We could not save the import. Your file and choices are kept; please try again.");
    setLastActionId(data.actionId??null);
    setNotice((data.changedCount??0)+" changes saved; "+(data.skipped??0)+" skipped.");
-   setPreview(null);router.refresh();
-  }catch(e){setError(e instanceof Error?e.message:"Import could not be confirmed.");}
+   setPreview(null);setAcknowledged(false);router.refresh();
+  }catch(e){setError(e instanceof FriendlyFetchError&&e.status===409?
+    "This changed while you were working. Your import is still here; preview it again.":
+    e instanceof Error?e.message:friendlyApiError({}));}
   finally{setBusy(false);}
  }
  return <section className="min-w-0 space-y-3 rounded-lg border border-border bg-surface p-4">
@@ -115,7 +117,14 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
     <button type="button" disabled={busy} onClick={()=>{setPreview(null);setSkippedByUser([]);setNotice("Review discarded; no eligibility changes were saved.");}} className="min-h-10 rounded border border-border px-3 text-sm">Discard review</button>
    </div>
    <button type="button" disabled={busy} onClick={()=>void copyPreview()} className="min-h-11 rounded border border-border px-4 text-sm">Copy preview outcomes CSV</button>
-   <button type="button" disabled={busy||preview.ready===0} onClick={()=>void commit()}
+   <label className="flex items-start gap-2 text-sm text-body">
+     <input type="checkbox" className="mt-1 h-4 w-4 accent-primary"
+       checked={acknowledged} disabled={busy}
+       onChange={event=>setAcknowledged(event.target.checked)}/>
+     I reviewed the matched learners and understand that applying these decisions will be audited.
+     Unmatched or skipped rows will not be changed.
+   </label>
+   <button type="button" disabled={busy||preview.ready===0||!acknowledged} onClick={()=>void commit()}
     className="min-h-11 rounded bg-primary px-4 text-sm text-on-primary disabled:opacity-50">Confirm matched decisions</button>
   </div>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}

@@ -1,9 +1,11 @@
 "use client";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
+import {apiFetch} from "@/lib/api-fetch";
+import {friendlyApiError} from "@/lib/friendly-error";
 import {authoringLocalDateTime,authoringDueInstant}
  from "@/modules/courses/faculty-authoring-datetime-model";
-import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption,facultyQuizConfirmationAfterEdit,facultyRemoveQuizQuestion,facultyAppendQuizQuestion,facultyQuizDraftLoadAllowsAction,facultyQuizMetadataIssue,facultyQuizWriteMessage,facultyQuizCanRetryDetails,facultyQuizSavedFromCommand,facultyQuizReconcileRows,facultyMoveQuizQuestion,facultyMoveQuizOption,facultyDuplicateQuizQuestion,facultyDuplicateQuizOption,facultyQuizSwitchNeedsConfirmation,facultyBeginQuizWrite,facultyQuizDraftReview,facultyQuizCanSaveChanges,facultyQuizMayResetDraft,facultyQuizCanCopyToDraft,facultyQuizCopyTitle,facultyQuizNormalizeQuestions,facultyQuizMatchesSearch,facultyQuizQuestionIssue,facultyQuizAnswerSummary,facultyInsertQuizQuestionAfter,facultyMoveQuizQuestionToEdge,facultyInsertQuizOptionAfter,facultyQuizOptionRemovalNeedsConfirmation,facultyQuizQuestionRemovalPrompt,facultyQuizApplyPastedOptions,facultyQuizLoadedBankIssue,facultyQuizRetryNeedsConfirmation,facultyQuizTitleConflict,facultyQuizReviewIssues,facultyQuizShouldDisplayQuestion,facultyQuizReadErrorMessage,facultyQuizOptionRemovalPrompt,facultyQuizReadyToPublish}
+import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption,facultyQuizConfirmationAfterEdit,facultyRemoveQuizQuestion,facultyAppendQuizQuestion,facultyQuizDraftLoadAllowsAction,facultyQuizMetadataIssue,facultyQuizCanRetryDetails,facultyQuizSavedFromCommand,facultyQuizReconcileRows,facultyMoveQuizQuestion,facultyMoveQuizOption,facultyDuplicateQuizQuestion,facultyDuplicateQuizOption,facultyQuizSwitchNeedsConfirmation,facultyBeginQuizWrite,facultyQuizDraftReview,facultyQuizCanSaveChanges,facultyQuizMayResetDraft,facultyQuizCanCopyToDraft,facultyQuizCopyTitle,facultyQuizNormalizeQuestions,facultyQuizMatchesSearch,facultyQuizQuestionIssue,facultyQuizAnswerSummary,facultyInsertQuizQuestionAfter,facultyMoveQuizQuestionToEdge,facultyInsertQuizOptionAfter,facultyQuizOptionRemovalNeedsConfirmation,facultyQuizQuestionRemovalPrompt,facultyQuizApplyPastedOptions,facultyQuizLoadedBankIssue,facultyQuizRetryNeedsConfirmation,facultyQuizTitleConflict,facultyQuizReviewIssues,facultyQuizShouldDisplayQuestion,facultyQuizReadErrorMessage,facultyQuizOptionRemovalPrompt,facultyQuizReadyToPublish}
  from "@/modules/courses/faculty-quiz-builder-model";
 type Option={text:string;correct:boolean;sequence:number};
 type Question={type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;sequence:number;options:Option[]};
@@ -39,6 +41,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
  const [confirmed,setConfirmed]=useState(false);
  const [dirtyDraft,setDirtyDraft]=useState(false);
  const [pending,setPending]=useState(false);
+ const [publishNow,setPublishNow]=useState(true);
  const [detailsFailed,setDetailsFailed]=useState(false);
  const [error,setError]=useState<string|null>(null);
  const review=facultyQuizDraftReview(questions);
@@ -59,10 +62,8 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
   setTitle(q.title);setDescription(q.description??"");setDueAt(authoringLocalDateTime(q.dueAt));
   setMaxAttempts(q.maxAttempts);setShuffleQuestions(Boolean(q.shuffleQuestions));setShuffleOptions(Boolean(q.shuffleOptions));setLessonId(q.lessonId);setPending(true);
   try{
-   const res=await fetch("/api/courses/quizzes/"+encodeURIComponent(q.id)+
+   const response=await apiFetch<unknown>("/api/courses/quizzes/"+encodeURIComponent(q.id)+
      "?deliveryId="+encodeURIComponent(deliveryId),{cache:"no-store"});
-   if(!res.ok)throw new Error("Cannot load quiz questions for this Section.");
-   const response:unknown=await res.json();
    if(token!==choiceRequest.current)return;
    const fetched=facultyAuthoringQuestionsFromResponse(response);
    const loadIssue=facultyQuizLoadedBankIssue(q.status,fetched.length);
@@ -122,6 +123,12 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
     const issue=facultyQuizMetadataIssue(title,description,dueAt,maxAttempts);
     if(issue){setError(issue);return;}
   }
+  if(action==="CREATE" && publishNow){
+    const due=authoringDueInstant(dueAt);
+    if(!due || !Number.isFinite(Date.parse(due)) || Date.parse(due)<=Date.now()){
+      setError("Pick a due date and time in the future");return;
+    }
+  }
   const warning=action==="ARCHIVE" ?
     "Archive this Section Quiz? Learners will no longer see it. Quizzes with attempts cannot be archived." :
     action==="CLOSE" ?
@@ -142,26 +149,39 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
      maxAttempts,shuffleQuestions,shuffleOptions,
      ...(action==="CREATE" || chosen?.status==="DRAFT" ? {questions:facultyQuizNormalizeQuestions(questions)} : {}),
    };
-   const res=await fetch("/api/courses/faculty/quizzes/"+encodeURIComponent(deliveryId)+"/command",{
-    method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body),
+   const endpoint="/api/courses/faculty/quizzes/"+encodeURIComponent(deliveryId)+"/command";
+   const result=await apiFetch<unknown>(endpoint,{
+     method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body),
    });
-   if(!res.ok){
-     const failure:unknown=await res.json().catch(()=>null);
-     throw new Error(facultyQuizWriteMessage(failure));
-   }
-   const result:unknown=await res.json().catch(()=>null);
    const saved=facultyQuizSavedFromCommand(result);
    if(!saved){router.refresh();throw new Error("Quiz write succeeded, but its new version could not be loaded. Refresh before another action.");}
    setLocalQuizzes(previous=>facultyQuizReconcileRows(previous,saved));
    if(action==="CREATE")setSelected(saved.id);
-   setConfirmed(false);setDirtyDraft(false);setSuccess("Quiz "+action.toLowerCase()+" completed.");
+   setConfirmed(false);setDirtyDraft(false);
+   if(action==="CREATE" && publishNow){
+     try{
+       const published=facultyQuizSavedFromCommand(await apiFetch<unknown>(endpoint,{
+         method:"POST",headers:{"Content-Type":"application/json"},
+         body:JSON.stringify({action:"PUBLISH",quizId:saved.id,
+           expectedUpdatedAt:saved.updatedAt,confirmed:true}),
+       }));
+       if(!published||published.status!=="PUBLISHED")throw new Error("The quiz was saved, but publishing could not be confirmed.");
+       setLocalQuizzes(previous=>facultyQuizReconcileRows(previous,published));
+       setSuccess("Quiz created and published. Learners can attempt it until the due date.");
+     }catch(reason){
+       setSuccess("Quiz created as a draft. Publish it when it is ready for learners.");
+       setError(reason instanceof Error?reason.message:friendlyApiError({}));
+     }
+   }else if(action==="CREATE"){
+     setSuccess("Quiz created as a draft. Publish it when it is ready for learners.");
+   }else setSuccess("Quiz "+action.toLowerCase()+" completed.");
    if(action==="ARCHIVE"){
      ++choiceRequest.current;
      setSelected("");setTitle("");setDescription("");setDueAt("");
      setMaxAttempts(1);setShuffleQuestions(false);setShuffleOptions(false);setQuestions([fresh()]);setLessonId(lessons[0]?.id??"");
    }
    router.refresh();
-  }catch(e){setError(e instanceof Error?e.message:"Unable to save");}
+  }catch(e){setError(e instanceof Error?e.message:friendlyApiError({}));}
   finally{mutationInFlight.current=false;setPending(false);}
  }
  return <section className="min-w-0 w-full max-w-full space-y-4 rounded-xl border border-border bg-surface p-5">
@@ -356,8 +376,15 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
   <div className="flex flex-wrap gap-3">
    {facultyQuizMayResetDraft(dirtyDraft,pending)?<button type="button" onClick={resetDraft}
     className="rounded border border-border px-4 py-2 text-sm">Discard unsaved edits</button>:null}
-   {!chosen?<button type="button" disabled={pending||!lessonId}
-    onClick={()=>void submit("CREATE")} className="rounded bg-primary px-4 py-2 text-on-primary">Create draft</button>:
+   {!chosen?<div className="flex flex-wrap items-center gap-3">
+    <label className="flex min-h-10 items-center gap-2 text-sm">
+      <input type="checkbox" checked={publishNow} disabled={pending}
+        onChange={event=>setPublishNow(event.target.checked)}/>
+      Publish now
+    </label>
+    <button type="button" disabled={pending||!lessonId}
+    onClick={()=>void submit("CREATE")} className="rounded bg-primary px-4 py-2 text-on-primary">{publishNow?"Create and publish":"Create draft"}</button>
+   </div>:
     <>
     <button type="button" disabled={!facultyQuizCanSaveChanges(chosen.status,dirtyDraft,detailsFailed,pending)}
      onClick={()=>void submit("EDIT")} className="rounded border border-border px-4 py-2">{chosen.status==="DRAFT"?"Save draft":"Save metadata"}</button>

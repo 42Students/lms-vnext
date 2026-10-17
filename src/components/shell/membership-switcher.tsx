@@ -4,6 +4,8 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { MembershipChoice } from "@/modules/identity/context-service";
 import { Select } from "@/components/ui/select";
+import {apiFetch} from "@/lib/api-fetch";
+import {InlineNotice} from "@/components/ui/inline-notice";
 
 export function MembershipSwitcher({
   memberships,
@@ -23,22 +25,15 @@ export function MembershipSwitcher({
     setError(null);
 
     startTransition(async () => {
-      const response = membershipId
-        ? await fetch("/api/auth/memberships", {
-            method: "POST",
-            headers: { "content-type": "application/json" },
-            body: JSON.stringify({ membershipId }),
-          })
-        : await fetch("/api/auth/memberships", {
-            method: "DELETE",
-          });
-
-      if (!response.ok) {
+      try{
+        await apiFetch("/api/auth/memberships",membershipId?{
+          method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({membershipId}),
+        }:{method:"DELETE"});
+        router.refresh();
+      }catch{
         setError("Could not switch college. Refresh and try again.");
-        return;
       }
 
-      router.refresh();
     });
   }
 
@@ -69,11 +64,7 @@ export function MembershipSwitcher({
           </option>
         ))}
       </Select>
-      {error ? (
-        <p role="alert" className="mt-1 text-xs font-medium text-error">
-          {error}
-        </p>
-      ) : null}
+      {error?<InlineNotice tone="error" message={error} onDismiss={()=>setError(null)}/>:null}
     </div>
   );
 }
