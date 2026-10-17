@@ -255,13 +255,15 @@ export async function listCollegeAssessmentAggregate(
         isNull(courseSectionDeliveries.endedAt),
         eq(sections.status,"ACTIVE")))
       .orderBy(asc(sections.name),asc(sections.code)):[];
-  const eligibleByOffering=new Map<string,number>();
+  const eligibleByOfferingMembers=new Map<string,Set<string>>();
   const eligibleByDelivery=new Map<string,number>();
   for(const entry of eligibleRows){
-    eligibleByOffering.set(entry.offeringId,
-      (eligibleByOffering.get(entry.offeringId)??0)+entry.eligible);
+    const audience=eligibleByOfferingMembers.get(entry.offeringId)??new Set<string>();
+    for(const member of entry.members)audience.add(member);
+    eligibleByOfferingMembers.set(entry.offeringId,audience);
     eligibleByDelivery.set(entry.deliveryId,entry.eligible);
   }
+  const eligibleByOffering=new Map([...eligibleByOfferingMembers].map(([id,ids])=>[id,ids.size]));
 
   // Count only submissions from currently active learners in the actual
   // section delivery; resubmissions and repeat quiz attempts count once.
