@@ -21,3 +21,6 @@ Still required: shared `apiFetch` and `useGuardedAction` adoption after chat-14 
 
 | GR-04 | DONE (chat-12 Requests & Verification) | decision POST, review GET and review POST use apiFetch; `tests/unit/chat12-round3-requests-api-fetch.test.ts` named test `GR-04` |
 | GR-32 | DONE (chat-12 Requests & Verification) | 409 keeps edits in Requests and resets stale review details for safe retry; named test `GR-32` |
+
+| GR-04 | DONE (TPO debar forms) | Tagged participation and timed debar forms use shared apiFetch with safe 409/no-JSON paths; `tests/unit/chat12-debar-error-round3.test.ts` named `GR-04` |
+| GR-32 | DONE (TPO debar forms) | Stale decision retains reason and offers retry; `tests/unit/chat12-debar-error-round3.test.ts` named `GR-32` |
