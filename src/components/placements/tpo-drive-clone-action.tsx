@@ -4,7 +4,7 @@ import {useRouter} from "next/navigation";
 export function TpoDriveCloneAction({jobId,label="Run it again"}:{jobId:string;label?:string}){
  const router=useRouter(),[busy,setBusy]=useState(false),[error,setError]=useState("");
  async function clone(){
-  if(busy||!window.confirm("Run this drive again as a new draft? Dates, rounds, candidates, outcomes, batch targets and external portal links will be cleared."))return;
+  if(busy||!window.confirm("Run this drive again as a new draft? Dates, candidates, rounds, results, offers and external links are cleared. Package details and restrictive eligibility rules are copied, so review old batches and passing years before publishing."))return;
   setBusy(true);setError("");
   try{
    const res=await fetch("/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/clone",{
