@@ -11,6 +11,7 @@ import { getHrJobRead } from "@/modules/placements/hr-job-read-service";
 import { hrSelectionReadyApplicationIds } from "@/modules/placements/hr-offer-selection-read-model";
 import { HR_OFFER_STATES } from "@/modules/placements/hr-job-applicants-model";
 import { buildHrDriveOverview } from "@/modules/placements/hr-drive-overview-model";
+import { recruiterVisibleDriveFunnel } from "@/modules/placements/recruiter-drive-funnel-model";
 import { projectRecruiterRoundResults } from "@/modules/placements/recruiter-round-results-read-model";
 import { hrInlineRoundResultsHref, hrInlineRoundResultFilters } from "@/modules/placements/hr-inline-round-results-model";
 import { buildHrApplicantDrawer } from "@/modules/placements/hr-applicant-drawer-model";
@@ -18,6 +19,7 @@ import {recruiterDriveProgressSteps,recruiterDriveNextAction} from "@/modules/pl
 import { listRecruiterApplicantNotes } from "@/modules/placements/applicant-notes-service";
 import { ApplicantNotesPanel } from "@/components/placements/applicant-notes-panel";
 import { focusedReviewNavigation } from "@/modules/placements/hr-focused-review-model";
+import {RecruiterFocusedReviewShortcuts} from "@/components/placements/recruiter-focused-review-shortcuts";
 import { hrScheduledRoundRows,hrRoundConflictLinks } from "@/modules/placements/hr-round-schedule-model";
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 import { hrDriveMessagesHref } from "@/modules/placements/hr-drive-messages-link-model";
@@ -244,6 +246,29 @@ export default async function HrPlacementJobPage({
               </dd></div>
             </dl>
           </section>
+          <section aria-labelledby="recruiter-shared-funnel-title"
+            className="rounded-lg border border-border bg-surface p-4">
+            <h3 id="recruiter-shared-funnel-title" className="font-semibold text-foreground">Hiring pipeline</h3>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Only applicants shared by the placement cell are counted. Earlier or unshared applications are not visible to your employer account.
+              Assessment and interview steps show recorded applied results; “—” means this drive has no such round. Offered/Hired count distinct employer-visible recipients, not historical offer versions.
+            </p>
+            <ol className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3" aria-label="Employer-visible stage funnel">
+              {recruiterVisibleDriveFunnel({
+                shared:applicants.counts.all,shortlisted:applicants.counts.shortlisted,
+                rounds:workspace.rounds,
+                offered:offerSummary.distinctOffered,hired:offerSummary.distinctHired,
+              }).map(stage=><li key={stage.label} className="rounded-lg border border-border bg-surface-subtle p-3">
+                <p className="text-xs font-semibold text-body">{stage.label}</p>
+                <p className="mt-1 text-xl font-bold tabular-nums text-foreground">{stage.count??"—"}</p>
+                <div role="img" aria-label={stage.ofPrevious===null?"Percentage unavailable":stage.ofPrevious+"% of previous known stage"}
+                  className="mt-2 h-2 overflow-hidden rounded-full bg-border">
+                  <div className="h-full bg-primary" style={{width:(stage.ofPrevious??0)+"%"}}/>
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">{stage.ofPrevious===null?"No comparable previous count":stage.ofPrevious+"% of previous known stage"}</p>
+              </li>)}
+            </ol>
+          </section>
           <ol aria-label="Drive progress" className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
             {recruiterDriveProgressSteps(driveOverview).map(step=><li key={step.label}
               aria-current={step.state==="CURRENT"?"step":undefined}
@@ -349,7 +374,7 @@ export default async function HrPlacementJobPage({
             ))}
           </div> : <p className="text-sm text-muted-foreground">No shared applicants match this stage.</p>}
           {selectedApplicant ? (
-            <section role="dialog" aria-modal={focused ? "true" : "false"} aria-labelledby="hr-applicant-drawer-title"
+            <section id="recruiter-focused-review-dialog" role="dialog" aria-modal={focused ? "true" : "false"} aria-labelledby="hr-applicant-drawer-title"
               className="fixed inset-x-0 bottom-0 z-30 max-h-[85vh] overflow-y-auto rounded-t-2xl border border-border bg-surface p-5 shadow-xl sm:inset-x-auto sm:right-0 sm:top-0 sm:h-screen sm:max-h-screen sm:w-full sm:max-w-lg sm:rounded-none"
             >
               <div className="flex flex-wrap items-center justify-between gap-3">
@@ -357,6 +382,10 @@ export default async function HrPlacementJobPage({
                 <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page}
                   className="rounded-md border border-border px-3 py-2 text-sm text-foreground">Close</Link>
               </div>
+              {focusedNavigation ? <RecruiterFocusedReviewShortcuts
+                closeHref={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page}
+                previousHref={focusedNavigation.previous?focusedHref(focusedNavigation.previous):null}
+                nextHref={focusedNavigation.next?focusedHref(focusedNavigation.next):null}/> : null}
               {focusedNavigation ? <nav aria-label="Step through shortlisted applicants" className="mt-4 flex flex-wrap items-center gap-3 text-sm">
                 <span className="text-body">{focusedNavigation.index+1} of {focusedNavigation.total} shared applicants on this page</span>
                 {focusedNavigation.previous ? <Link className="rounded-md border border-border px-3 py-2 text-primary-text" href={focusedHref(focusedNavigation.previous)}>Previous applicant</Link> : null}

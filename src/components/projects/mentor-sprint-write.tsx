@@ -18,13 +18,18 @@ export function MentorSprintCreate({
   const [busy,setBusy]=useState(false);
   const [title,setTitle]=useState("");
   const [description,setDescription]=useState("");
+  const [goal,setGoal]=useState(""),[done,setDone]=useState("");
+  const [startDate,setStartDate]=useState(""),[endDate,setEndDate]=useState(""),[dueDate,setDueDate]=useState("");
 
   async function create() {
-    if(!title.trim() || title.trim().length>200 || description.length>4000) return;
+    if(!title.trim() || title.trim().length>200 || description.length>4000||
+      goal.length>4000||done.length>4000||(startDate&&endDate&&endDate<startDate)) return;
     setBusy(true);
     try {
       await projectMutation("/api/projects/"+projectId+"/sprints","POST",{
         releaseId,title:title.trim(),description:description.trim()||null,
+        goal:goal.trim()||null,definitionOfDone:done.trim()||null,
+        startDate:startDate||null,endDate:endDate||null,dueDate:dueDate||null,
       });
       showToast({tone:"success",title:"Sprint created"});
       setOpen(false);setTitle("");setDescription("");
@@ -40,7 +45,7 @@ export function MentorSprintCreate({
       Add sprint
     </Button>
     <Dialog open={open} onOpenChange={setOpen} title="Create sprint"
-      description="Create a planned sprint in this release. Dates cannot be saved until registered sprint date columns are available."
+      description="Create a planned sprint with goal, dates and definition of done in this release."
       footer={<>
         <Button variant="secondary" disabled={busy} onClick={()=>setOpen(false)}>Cancel</Button>
         <Button disabled={busy||!title.trim()||title.trim().length>200||
@@ -58,6 +63,18 @@ export function MentorSprintCreate({
             onChange={e=>setDescription(e.target.value)}
             placeholder="Optional description" />
         </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Sprint goal
+          <Textarea maxLength={4000} value={goal} onChange={e=>setGoal(e.target.value)}/></label>
+        <label className="grid gap-1 text-sm font-semibold text-body">What does done look like?
+          <Textarea maxLength={4000} value={done} onChange={e=>setDone(e.target.value)}/></label>
+        <div className="grid gap-2 sm:grid-cols-3">
+          <label className="text-xs font-semibold">Start date
+            <Input type="date" value={startDate} onChange={e=>setStartDate(e.target.value)}/></label>
+          <label className="text-xs font-semibold">End date
+            <Input type="date" value={endDate} onChange={e=>setEndDate(e.target.value)}/></label>
+          <label className="text-xs font-semibold">Due date
+            <Input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}/></label>
+        </div>
       </div>
     </Dialog>
   </>;

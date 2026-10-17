@@ -11,7 +11,7 @@ import { trackerReportSchema } from "@/modules/bug-tracker/report-input-model";
 const field = "mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground";
 const label = "block text-sm font-semibold text-body";
 
-export function TrackerReportForm() {
+export function TrackerReportForm({contextPrefill=""}:{contextPrefill?:string}={}) {
   const [page, setPage] = useState("");
   const [screen, setScreen] = useState("");
   const [pending, setPending] = useState(false);
@@ -26,6 +26,11 @@ export function TrackerReportForm() {
     const form = event.currentTarget;
     const data = new FormData(form);
     const value = (name: string) => String(data.get(name) ?? "");
+    if(contextPrefill&&
+      value("description").replace("\n\nCaptured context:\n"+contextPrefill,"").trim().length===0){
+      setError("Describe what went wrong before submitting the captured context.");
+      return;
+    }
     const parsed = trackerReportSchema.safeParse({
       reporterName: value("reporterName"), accountRole: value("accountRole"),
       environment: value("environment"), page, screen: screen || null,
@@ -147,6 +152,7 @@ export function TrackerReportForm() {
       </div>
       <label className={label}>What went wrong?
         <textarea className={field + " min-h-36"} name="description" required maxLength={4000} rows={6}
+          defaultValue={contextPrefill?"\n\nCaptured context:\n"+contextPrefill:""}
           placeholder="Example: I opened Lesson 3 and the lesson content kept loading without showing anything." />
         <span className="mt-1 block text-xs font-normal text-muted-foreground">Up to 4000 characters</span>
       </label>

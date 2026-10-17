@@ -1,5 +1,8 @@
 "use client";
 import Link from "next/link";
+import {useState} from "react";
+import {TpoStudentNoteEditor} from "./tpo-student-note-editor";
+import {TpoStudentOutcomePill} from "./tpo-student-outcome-pill";
 import {usePathname,useRouter,useSearchParams} from "next/navigation";
 import {TpoStudentQuickPanel} from "./tpo-student-quick-panel";
 import type {TpoStudentRow} from "@/modules/placements/tpo-students-model";
@@ -38,6 +41,7 @@ export function TpoStudentsSpreadsheet({rows,branches,afterCollege,afterCollegeA
  afterCollege:Record<string,{outcome:AfterCollegeOutcome;expectedVersion:string}>;afterCollegeAvailable:boolean}){
  const router=useRouter(),pathname=usePathname(),params=useSearchParams();
  const selected=params.get("student");
+ const [noteSelection,setNoteSelection]=useState<string[]>([]);
  const active=rows.find(row=>row.membershipId===selected)??null;
  const open=(id:string|null)=>{const q=new URLSearchParams(params.toString());if(id)q.set("student",id);else q.delete("student");router.replace(pathname+(q.size?"?"+q.toString():""),{scroll:false});};
  const filters:TpoFilterField[]=[
@@ -46,6 +50,22 @@ export function TpoStudentsSpreadsheet({rows,branches,afterCollege,afterCollegeA
  ];
  return <div className="space-y-3">
   <TpoAfterCollegeBulkEditor rows={rows} current={afterCollege} available={afterCollegeAvailable} />
+  <details className="rounded-xl border border-border p-4">
+   <summary className="cursor-pointer font-semibold">Bulk Add a note</summary>
+   <p className="mt-2 text-xs text-muted-foreground">Choose up to 100 students on this visible roster page; no student is added outside your current filtered page.</p>
+   <label className="mt-3 flex min-h-10 items-center gap-2 text-sm"><input type="checkbox"
+     checked={rows.length>0&&rows.every(r=>noteSelection.includes(r.membershipId))}
+     onChange={e=>setNoteSelection(e.target.checked?rows.slice(0,100).map(r=>r.membershipId):[])} />Select visible page</label>
+   <div className="my-3 grid max-h-44 grid-cols-1 gap-2 overflow-y-auto sm:grid-cols-2 lg:grid-cols-3">
+    {rows.map(row=><label className="flex gap-2 text-sm" key={row.membershipId}>
+     <input type="checkbox" checked={noteSelection.includes(row.membershipId)}
+       disabled={!noteSelection.includes(row.membershipId)&&noteSelection.length>=100}
+       onChange={e=>setNoteSelection(ids=>e.target.checked?[...ids,row.membershipId]:ids.filter(id=>id!==row.membershipId))}/>
+     {row.displayName}</label>)}
+   </div>
+   <p className="text-sm">{noteSelection.length} selected</p>
+   <TpoStudentNoteEditor membershipIds={noteSelection} afterSave={()=>setNoteSelection([])}/>
+  </details>
   <TpoGridFilterPanel fields={filters}/>
   <TpoSpreadsheetGrid rows={rows} columns={columns} rowKey={row=>row.membershipId}
    rowActions={row=><div className="flex flex-col items-start gap-1">
@@ -53,6 +73,8 @@ export function TpoStudentsSpreadsheet({rows,branches,afterCollege,afterCollegeA
       onClick={()=>open(row.membershipId)} aria-label={"Open student panel for "+row.displayName}>
       Open student panel
     </button>
+    <TpoStudentOutcomePill recorded={afterCollege[row.membershipId]?.outcome??null}
+      placed={row.placed} registered={row.registeredForPlacements}/>
     <TpoAfterCollegeEditor membershipId={row.membershipId} learnerName={row.displayName}
       initial={afterCollege[row.membershipId]??{outcome:"NOT_DECIDED",expectedVersion:"none"}}
       available={afterCollegeAvailable} />

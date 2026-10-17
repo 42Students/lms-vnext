@@ -14,7 +14,7 @@ import { ProjectsServiceError } from "./errors";
 import { mentorSprintDetailsParamsSchema, mentorSprintDetailsSchema,
   sprintDetailsChanged } from "./mentor-sprint-details-model";
 
-/** Edit registered sprint title/description only; all other state remains lifecycle-owned. */
+/** Edit registered 0123 sprint plan fields; lock sprint dates once ACTIVE. */
 export async function updateMentorSprintDetails(
   context: RequestContext, rawParams: unknown, rawInput: unknown,
 ) {
@@ -56,6 +56,10 @@ export async function updateMentorSprintDetails(
     if (sprint.updatedAt.getTime()!==expected.getTime()) {
       throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
     }
+    if(sprint.status==="ACTIVE"&&
+       (sprint.startDate!==input.startDate||sprint.endDate!==input.endDate||
+         sprint.dueDate!==input.dueDate))
+      throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
     if (!sprintDetailsChanged(sprint,input)) {
       throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
     }
@@ -69,7 +73,9 @@ export async function updateMentorSprintDetails(
     // version. Incrementing by at least 1ms preserves stale-write detection.
     const now = new Date(Math.max(Date.now(), sprint.updatedAt.getTime()+1));
     const [updated] = await tx.update(projectSprints).set({
-      title:input.title,description:input.description,updatedAt:now,
+      title:input.title,description:input.description,goal:input.goal,
+      definitionOfDone:input.definitionOfDone,startDate:input.startDate,
+      endDate:input.endDate,dueDate:input.dueDate,updatedAt:now,
     }).where(and(
       eq(projectSprints.id,sprint.id),
       eq(projectSprints.projectId,scope.project.id),
@@ -83,6 +89,8 @@ export async function updateMentorSprintDetails(
       metadata:{projectId:scope.project.id,sprintId:updated.id,changedFields:[
         ...(sprint.title!==input.title?["title"]:[]),
         ...(sprint.description!==input.description?["description"]:[]),
+        ...(["goal","definitionOfDone","startDate","endDate","dueDate"] as const)
+          .filter(key=>sprint[key]!==input[key]),
       ]},
       groupKey:"project:"+scope.project.id,
       dedupeKey:"project-sprint:"+updated.id+":details:"+randomUUID(),

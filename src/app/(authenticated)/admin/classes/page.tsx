@@ -63,7 +63,8 @@ export default async function SuperAdminClassesPage({ searchParams }: {
               <th className="p-2">Description</th><th className="p-2">Students</th><th className="p-2">Max Students</th><th className="p-2">Actions</th></tr></thead>
             <tbody>{data.items.map(row => <tr key={row.id} className="border-t border-border">
               <td className="p-2">{row.name} ({row.code})
-                <Link href={`/admin/academics/sections/${encodeURIComponent(row.id)}`} className="mt-1 block text-xs font-semibold text-primary-text">Manage students &amp; schedule →</Link></td>
+                <Link href={`/admin/academics/sections/${encodeURIComponent(row.id)}`} className="mt-1 block text-xs font-semibold text-primary-text">Manage students →</Link>
+                <Link href={`/admin/academics/sections/${encodeURIComponent(row.id)}#section-schedule`} className="mt-1 block text-xs font-semibold text-primary-text">Schedule →</Link></td>
               <td className="p-2">{row.programName}</td>
               <td className="p-2">{row.cohortName}</td>
               <td className="p-2">{row.description?.trim() || "—"}</td>

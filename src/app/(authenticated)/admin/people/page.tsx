@@ -78,9 +78,15 @@ const columns: DataTableColumn<PersonMembershipView>[] = [
 export default async function SuperAdminPeoplePage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string;q?:string;role?:string;status?:string;pageSize?:string }>;
 }) {
-  const { page: pageParam } = await searchParams;
+  const { page: pageParam,q:rawQ,role:rawRole,status:rawStatus,pageSize:rawPageSize } = await searchParams;
+  const q=(rawQ??"").trim().slice(0,100);
+  const role=["ALL","LEARNER","FACULTY","MENTOR","TPO","COLLEGE_ADMIN"].includes(rawRole??"ALL")?rawRole??"ALL":"ALL";
+  const status=["ALL","ACTIVE","SUSPENDED","ENDED"].includes(rawStatus??"ALL")?rawStatus??"ALL":"ALL";
+  const pageSize=[10,20,50].includes(Number(rawPageSize))?Number(rawPageSize):10;
+  const base=new URLSearchParams({...q?{q}:{},...role!=="ALL"?{role}:{},...status!=="ALL"?{status}:{},...(pageSize!==10?{pageSize:String(pageSize)}:{})});
+  const href=(target:number)=>"/admin/people?"+new URLSearchParams({...Object.fromEntries(base),...(target>1?{page:String(target)}:{})}).toString();
   const requestedPage = parsePeoplePage(pageParam);
   const context = await getCurrentRequestContext();
   const collegeId = context.adminScope?.collegeId ?? null;
@@ -107,14 +113,14 @@ export default async function SuperAdminPeoplePage({
 
   const people = await listCollegePeopleWithRuntime(context, {
     collegeId,
-    limit: PEOPLE_PAGE_SIZE,
-    offset: (requestedPage - 1) * PEOPLE_PAGE_SIZE,
+    limit: pageSize,
+    offset: (requestedPage - 1) * pageSize,
+    q,role,status,
   });
 
-  const pagination = peoplePageState(requestedPage, people.pagination.total);
+  const pagination = peoplePageState(requestedPage, people.pagination.total,pageSize);
   if (requestedPage !== pagination.page) {
-    redirect("/admin/people" +
-      (pagination.page === 1 ? "" : `?page=${pagination.page}`));
+    redirect(href(pagination.page));
   }
 
   return (
@@ -125,7 +131,30 @@ export default async function SuperAdminPeoplePage({
         description="Canonical people and memberships inside the selected college safety scope."
         actions={<PersonOnboardDialog collegeId={collegeId} />}
       />
-      <SuperAdminPeopleCsvControl href={superAdminPeopleExportHref({})} />
+      <SuperAdminPeopleCsvControl href={superAdminPeopleExportHref({q,role,membershipStatus:status})} />
+      <form method="get" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-4">
+       <label className="grid gap-1 text-sm font-semibold">Search contacts
+        <input name="q" defaultValue={q} maxLength={100} placeholder="Search contacts..." className="min-h-11 rounded border border-border bg-background px-3"/>
+       </label>
+       <label className="grid gap-1 text-sm font-semibold">Role
+        <select name="role" defaultValue={role} className="min-h-11 rounded border border-border bg-background px-2">
+          {["ALL","LEARNER","FACULTY","MENTOR","TPO","HR","COLLEGE_ADMIN"].map(s=><option key={s} value={s}>{s}</option>)}
+        </select>
+       </label>
+       <label className="grid gap-1 text-sm font-semibold">Status
+        <select name="status" defaultValue={status} className="min-h-11 rounded border border-border bg-background px-2">
+          {["ALL","ACTIVE","SUSPENDED","ENDED"].map(s=><option key={s} value={s}>{s}</option>)}
+        </select>
+       </label>
+       <label className="grid gap-1 text-sm font-semibold">Rows per page
+        <select name="pageSize" defaultValue={pageSize} className="min-h-11 rounded border border-border bg-background px-2">
+          {[10,20,50].map(n=><option key={n} value={n}>{n}</option>)}
+        </select>
+       </label>
+       <button type="submit" className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary">Search</button>
+       <Link href="/admin/people" className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear filters</Link>
+      </form>
+      <p role="status" aria-live="polite" className="text-sm text-body">{people.pagination.total} matching contacts</p>
       <Link href="/admin/people/directory" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
         Browse platform users & roles →
       </Link>
@@ -134,12 +163,13 @@ export default async function SuperAdminPeoplePage({
         rows={people.items}
         getRowKey={(person) => person.membership.id}
       />
-      <PeoplePagination
-        basePath="/admin/people"
-        page={pagination.page}
-        pageSize={PEOPLE_PAGE_SIZE}
-        total={pagination.total}
-      />
+      <nav aria-label="People pages" className="flex flex-wrap items-center justify-between gap-4 text-sm">
+       <span>Page {pagination.page} of {pagination.pages} · {pagination.total} results</span>
+       <div className="flex gap-3">
+        {pagination.hasPrevious?<Link className="font-semibold text-primary-text" href={href(pagination.page-1)}>Previous</Link>:null}
+        {pagination.hasNext?<Link className="font-semibold text-primary-text" href={href(pagination.page+1)}>Next</Link>:null}
+       </div>
+      </nav>
     </div>
   );
 }
