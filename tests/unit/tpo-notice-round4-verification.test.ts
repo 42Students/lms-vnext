@@ -58,9 +58,14 @@ describe("TPO placement announcement round-4 evidence",()=>{
   expect(c).toContain("remaining<=0");
   expect(c).toContain("Undo send");
  });
- it("TPO-inbox-team-54 labels unread From 42 cards and truthfully scopes page badge counts",()=>{
+ it("TPO-inbox-team-54 labels unread From 42 cards and shows college-wide unread count",()=>{
   expect(page()).toContain('tab.data==="from-42"&&result.readStateReady&&!row.readAt');
-  expect(page()).toContain("new on this page");
+  expect(page()).toContain('value==="from-42"&&from42Unread!==null');
+  expect(page()).not.toContain("new on this page");
+  expect(page()).toContain("countUnreadTpo42Announcements(context)");
+  const read=src("src/modules/announcements/tpo-placement-read-service.ts");
+  expect(read).toContain("isNull(placementCellAnnouncementReads.announcementId)");
+  expect(read).toContain("eq(db10Announcements.collegeId,college.id)");
   expect(page()).toContain("TpoPlacementCellReadAction");
  });
  it("TPO-inbox-team-55 never echoes raw validation codes into the form",()=>{

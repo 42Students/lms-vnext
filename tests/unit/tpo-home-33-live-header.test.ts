@@ -26,6 +26,8 @@ describe("TPO-home-33 and TPO-inbox-team-62 live topbar counts",()=>{
  it("keeps bell local read state consistent with refreshed server revisions",()=>{
   const source=readFileSync("src/components/tpo/tpo-bell-panel.tsx","utf8");
   expect(source).toContain("allReadRevision===revision");
-  expect(source).toContain("items.some(item=>item.id===id&&!item.readAt)");
+  expect(source).toContain("displayedItems.some(item=>item.id===id&&!item.readAt)");
+  expect(source).toContain("setAllReadRevision(null)");
+  expect(source).toContain("setLatest({items:parsed.data.items,unread:parsed.data.unread})");
  });
 });

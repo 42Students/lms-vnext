@@ -267,3 +267,11 @@ Status is deliberately **PARTIAL** or **OPEN**, not DONE, until the complete leg
 The existing queue blocker TPO-inbox-team-08 remains provider-credential dependent; no other technical gap is treated as a provider blocker. The named tests in `tests/unit/tpo-inbox-team-round5-parity-review.test.ts` protect seven specific partial workflows without claiming end-to-end parity. Tests were authored, not executed by this lane.
 
 - Round 5 review tally: **19 PARTIAL / 8 OPEN** across the 27 reviewed queue rows. TPO-inbox-team-34 also treats expired away status as absent for optimistic replace, guarded by the new `tpoEffectiveAwayUntil` unit case.
+
+## Chat-2 2026-10-17 unit-failures-r1 refresh
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-inbox-team-62 / TPO-home-33 | DONE (source, not yet run) | `tests/unit/tpo-home-33-live-header.test.ts` checks displayed server-snapshot unread matching, and `src/components/tpo/tpo-bell-panel.tsx` clears the optimistic mark-all revision when a newer server snapshot arrives. |
+| TPO-inbox-team-61 / TPO-home-35 | DONE (source, not yet run) | `tests/unit/tpo-home-35-bell-open.test.ts` verifies guarded 12-second `apiFetch`, read POST, and no navigation after failure rather than obsolete `response.ok` branching. |
+| TPO-inbox-team-54 | DONE (college-wide count source; other legacy aspects remain OPEN) | `tests/unit/tpo-notice-round4-verification.test.ts` checks persisted college-scoped total unread From 42 rather than obsolete page-only count. |

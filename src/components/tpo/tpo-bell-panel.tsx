@@ -28,6 +28,8 @@ export function TpoBellPanel({initialUnread,items,revision=0}:{initialUnread:num
    const parsed=tpoHeaderSnapshotSchema.safeParse(payload);
    if(!parsed.success)throw new Error("Couldn\u0027t refresh notifications.");
    setLatest({items:parsed.data.items,unread:parsed.data.unread});
+   // A newer server snapshot supersedes local mark-all, even without a parent rerender.
+   setAllReadRevision(null);
   }catch{setError("Couldn\u0027t refresh notifications. Showing the last messages we loaded.");}
   finally{setRefreshing(false);}
  }
