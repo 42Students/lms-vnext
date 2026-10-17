@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { formatTpoInboxTime } from "@/modules/placements/tpo-inbox-date-model";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -463,7 +464,7 @@ export default async function TpoMessagesPage({
 
                     <td className="px-4 py-4 text-body">
                       <time dateTime={item.occurredAt.toISOString()}>
-                        {dateTime(item.occurredAt)} IST
+                        {formatTpoInboxTime(item.occurredAt, new Date())}
                       </time>
                     </td>
 
