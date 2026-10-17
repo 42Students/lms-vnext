@@ -12,6 +12,7 @@ import { projectMutation } from "./project-api";
 
 type Props={
   projectId:string;taskId:string;title:string;description:string|null;
+  approach:string|null;
   acceptanceCriteria:string|null;priority:string;updatedAt:string;
   taskType:string|null;estimatePoints:number|null;dueDate:string|null;blockerReason:string|null;
 };
