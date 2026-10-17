@@ -150,6 +150,7 @@ export async function listTpoRecruiterAccess(
         query.q ? or(
           ilike(users.displayName,"%"+escapeLiteralApplicantSearch(query.q)+"%"),
           ilike(placementCompanies.name,"%"+escapeLiteralApplicantSearch(query.q)+"%"),
+          ilike(placementRecruiterProfiles.title,"%"+escapeLiteralApplicantSearch(query.q)+"%"),
         ) : undefined,
         query.status==="ENDING_SOON"?and(
           eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
