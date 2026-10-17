@@ -61,6 +61,7 @@ export function LearnerCourseDiscussion({
   const [olderError, setOlderError] = useState(false);
   const [loadError, setLoadError] = useState(false);
   const [draft, setDraft] = useState("");
+  const [posting, setPosting] = useState(false);
   useEffect(()=>{
     if(!draft.trim()&&!posting)return;
     const guard=(event:BeforeUnloadEvent)=>{
@@ -71,7 +72,6 @@ export function LearnerCourseDiscussion({
     return ()=>window.removeEventListener("beforeunload",guard);
   },[draft,posting]);
   const [replyTo, setReplyTo] = useState<{id:string;text:string;updatedAt:string}|null>(null);
-  const [posting, setPosting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [moderationError, setModerationError] = useState<string | null>(null);
   const [pinningId, setPinningId] = useState<string | null>(null);
