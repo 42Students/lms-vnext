@@ -1,9 +1,10 @@
 "use client";
 
-import {useState} from "react";
+import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Dialog} from "@/components/ui/dialog";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {useToast} from "@/components/ui/toast";
@@ -18,6 +19,7 @@ export function MentorTaskCreate({
   const router=useRouter();
   const {showToast}=useToast();
   const [open,setOpen]=useState(false);
+  const [confirmDiscard,setConfirmDiscard]=useState(false);
   const [busy,setBusy]=useState(false);
   const [title,setTitle]=useState("");
   const [description,setDescription]=useState("");
@@ -35,6 +37,26 @@ export function MentorTaskCreate({
     sprintId?[{id:sprintId,title:"Current sprint",status:"PLANNED",updatedAt}]:[];
   const chosenSprint=choices.find(item=>item.id===selectedSprintId);
   const canSetStatus=status==="TODO"||chosenSprint?.status==="ACTIVE";
+  const dirty=Boolean(title||description||approach||criteria||priority!=="MEDIUM"||estimate||
+    taskType||dueDate||blockerReason||selectedSprintId!==sprintId||status!=="TODO"||assigneeMembershipId);
+  useEffect(()=>{
+    if(!open||!dirty)return;
+    const warn=(event:BeforeUnloadEvent)=>{
+      event.preventDefault();
+      event.returnValue="You have unsaved project changes. Leave this page and discard them?";
+    };
+    window.addEventListener("beforeunload",warn);
+    return ()=>window.removeEventListener("beforeunload",warn);
+  },[open,dirty]);
+  function resetForm(){
+    setTitle("");setDescription("");setApproach("");setCriteria("");setPriority("MEDIUM");
+    setEstimate("");setTaskType("");setDueDate("");setBlockerReason("");
+    setSelectedSprintId(sprintId);setStatus("TODO");setAssigneeMembershipId("");
+  }
+  function requestClose(){
+    if(busy)return;
+    if(dirty)setConfirmDiscard(true);else setOpen(false);
+  }
   const valid=title.trim().length>0&&title.trim().length<=200&&
     description.length<=4000&&approach.length<=4000&&criteria.length<=4000&&blockerReason.length<=4000&&
     (estimate===""||(Number.isInteger(Number(estimate))&&Number(estimate)>=0&&Number(estimate)<=1000))&&
@@ -54,21 +76,19 @@ export function MentorTaskCreate({
         taskType:taskType||null,dueDate:dueDate||null,blockerReason:blockerReason.trim()||null,
       });
       showToast({tone:"success",title:"Task added."});
-      setOpen(false);setTitle("");setDescription("");setApproach("");setCriteria("");setPriority("MEDIUM");
-      setEstimate("");setTaskType("");setDueDate("");setBlockerReason("");
-      setSelectedSprintId(sprintId);setStatus("TODO");setAssigneeMembershipId("");
+      setOpen(false);resetForm();
       router.refresh();
-    }catch(error){
+    }catch{
       showToast({tone:"error",title:"Task was not created",
-        description:error instanceof Error?error.message:"Refresh and retry."});
+        description:"Check the task details and try again."});
     }finally{setBusy(false);}
   }
   return <>
     <Button size="sm" variant="secondary" onClick={()=>setOpen(true)}>Create task</Button>
-    <Dialog open={open} onOpenChange={setOpen} title="Confirm new task"
+    <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else requestClose();}} title="Confirm new task"
       description="Leave Sprint blank for the backlog. Select an assignee, priority and task details."
       footer={<>
-        <Button variant="secondary" disabled={busy} onClick={()=>setOpen(false)}>Cancel</Button>
+        <Button variant="secondary" disabled={busy} onClick={requestClose}>Cancel</Button>
         <Button disabled={busy||!valid} onClick={()=>void create()}>
           {busy?"Creating…":"Create task"}
         </Button>
@@ -148,5 +168,10 @@ export function MentorTaskCreate({
         </p>:null}
       </div>
     </Dialog>
+    <ConfirmDialog open={confirmDiscard} onOpenChange={setConfirmDiscard}
+      title="Discard unsaved project changes?"
+      description="You have unsaved project changes. Leave this page and discard them?"
+      confirmLabel="Discard changes" pending={busy}
+      onConfirm={()=>{setConfirmDiscard(false);setOpen(false);resetForm();}}/>
   </>;
 }

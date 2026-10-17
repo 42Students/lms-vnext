@@ -27,7 +27,7 @@ describe("chat-16 reassigned mentor legacy parity",()=>{
     const service=read("src/modules/projects/resource-service.ts");
     expect(service).toContain("eq(projectSprints.projectId,scope.project.id)");
     expect(service).toContain("eq(projectTasks.projectId,scope.project.id)");
-    expect(read("docs/proposed-migrations/mentor-resources-legacy-metadata.sql"))
+    expect(read("docs/proposed-migrations/registered-0133/mentor-resources-legacy-metadata.sql"))
       .toContain("project_resources_task_project_fk");
   });
   it("MEN-projects-meetings-55 exposes type, status, pin, visibility, sprint/task and reset filters",()=>{
