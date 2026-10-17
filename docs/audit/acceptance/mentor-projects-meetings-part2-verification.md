@@ -22,6 +22,8 @@ DONE means source implemented and ID-named tests authored, not executed or certi
 | MEN-projects-meetings-63 | DONE | Mentor lock action, origin-guarded route and atomic delivery history/notice: src/components/projects/mentor-delivery-lock-control.tsx; src/app/api/projects/[projectId]/submissions/[submissionId]/mentor-lock/route.ts; src/modules/projects/mentor-delivery-lock-service.ts; tests/unit/chat11-mentor-resources-round8-verification.test.ts — `it("MEN-projects-meetings-63 protects mentor delivery locking and persists history")` |
 | MEN-projects-meetings-77 | DONE | Task scoped select and blocker controls: src/components/projects/mentor-task-status-transition.tsx; tests/unit/mentor-navigation-confirmations-round5.test.ts — `it("MEN-projects-meetings-77 exposes task-scoped state and blocker field labels")` |
 
+| MEN-projects-meetings-72 | DONE | src/modules/projects/project-notification-service.ts, member-service.ts, meeting-service.ts, task-comment-service.ts, task-assignment-service.ts; tests/unit/chat11-project-notice-persistence-round8.test.ts — `it("MEN-projects-meetings-72 records scoped persistent project event notifications atomically")`; tests/integration/project-notification-r01.test.ts checks real PostgreSQL notices for assigned mentor and learner, comments, meeting requests, changes and archive with duplicate rejection. Test execution pending. |
+
 ## Partial (still open)
 
 - MEN-projects-meetings-57: The safe link and legacy action labels are implemented, but file metadata, resource statuses and updated-time tags still differ. Test: `it("MEN-projects-meetings-57 shows Open link and guards invalid or blocked resource windows")` in `tests/unit/college-mentor-round7-gap-verification.test.ts`.
@@ -57,3 +59,13 @@ MEN-projects-meetings-58/75 and partial editor/document integration (57/72/76). 
 | MEN-projects-meetings-69 | PARTIAL | `mentor-calendar-load-failure.tsx` inline retry + `mentor/calendar/page.tsx`; `tests/unit/chat16-reassigned-mentor-parity.test.ts` `MEN-projects-meetings-69 keeps meeting load failure inline with a Retry action`. No persisted RESCHEDULED/DRAFT statuses in vNext; do not misreport full parity. |
 
 Remaining reassigned mentor OPEN items require data-model or full UI workflows: MEN-53,55,56,57,58,65,69(status),72,73,75,76. These have not been relabeled DONE merely for partial code. Tests are authored, not run by this lane.
+
+| MEN-projects-meetings-64 | DONE | src/components/projects/project-workspace.tsx, project-delivery-evidence-download.tsx; tests/unit/chat11-mentor-final-evidence.test.ts — `it("MEN-projects-meetings-64 shows author, submitted time, learner notes, typed links, and all recorded version events")` and `it("MEN-projects-meetings-64 opens verified evidence through a same-origin short-lived grant")` |
+
+| MEN-projects-meetings-75 | PARTIAL — task and sprint creation guards | src/components/projects/project-editor-discard-guard.ts, mentor-task-create.tsx, mentor-sprint-write.tsx; tests/unit/chat11-mentor-draft-guard-round8.test.ts — `it("MEN-projects-meetings-75 protects task and sprint drafts against dialog dismiss and page unload")`. Resource guards were already in place. Meeting, task edit, and delivery review editors still need complete unsaved-state coverage. |
+
+| MEN-projects-meetings-75 | PARTIAL — meeting editor guards | project-meeting-controls.tsx; tests/unit/chat11-mentor-meeting-draft-round8.test.ts — `it("MEN-projects-meetings-75 protects meeting requests, scheduling and decision notes")`. Task edit and delivery feedback remain to reconcile. |
+
+| MEN-projects-meetings-75 | PARTIAL — task edit and delivery reopen drafts | src/components/projects/mentor-task-details-edit.tsx and project-delivery-reopen-control.tsx; tests/unit/chat11-mentor-edit-draft-round8.test.ts — `it("MEN-projects-meetings-75 keeps task edit and delivery reopen drafts until confirmed")`. Final delivery feedback editors still to reconcile. |
+
+| MEN-projects-meetings-75 | PARTIAL — final delivery review + rubric guards | project-final-delivery-controls.tsx; tests/unit/chat11-mentor-final-feedback-guard-round8.test.ts — `it("MEN-projects-meetings-75 protects final delivery and evaluation feedback on discard")`. Additional mentor editors and route change guard remain subject to audit. |

@@ -242,10 +242,11 @@ export function AssignmentSubmissionControl({
           >
             External Link
           </Button>
-          <Button type="button" size="sm" disabled={!fileUploadsEnabled || !methodsLoaded || !mayUpload || submitting}
+          <Button type="button" size="sm" disabled={!methodsLoaded || submitting ||
+              (multipartEnabled ? !(mayWrite&&mayLink) && !(fileUploadsEnabled&&mayUpload) : !fileUploadsEnabled || !mayUpload)}
             variant={submissionType === "FILE" ? "primary" : "secondary"}
             aria-pressed={submissionType === "FILE"} onClick={() => setSubmissionType("FILE")}>
-            File Upload
+            {multipartEnabled?"Combine work":"File Upload"}
           </Button>
         </div>
 
@@ -262,7 +263,7 @@ export function AssignmentSubmissionControl({
             </select>
           </label>:null}
         {submissionType === "FILE" ? <AssignmentFileSubmissionControl
-          assignmentId={assignmentId} deliveryId={deliveryId} onBusyChange={setSubmitting} multipartEnabled={multipartEnabled} pdfOnly={methodsEnabled&&!allowedMethods.includes("FILE_UPLOAD")&&allowedMethods.includes("PDF_UPLOAD")}
+          assignmentId={assignmentId} deliveryId={deliveryId} onBusyChange={setSubmitting} multipartEnabled={multipartEnabled} uploadsAllowed={fileUploadsEnabled&&mayUpload} pdfOnly={methodsEnabled&&!allowedMethods.includes("FILE_UPLOAD")&&allowedMethods.includes("PDF_UPLOAD")}
           onSubmitted={() => { setSuccess(true); router.refresh(); }} /> : submissionType === "TEXT" ? (
           <label className="mt-4 block">
             <span className="mb-1.5 block text-xs font-semibold text-body">

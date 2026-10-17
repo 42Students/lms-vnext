@@ -11,7 +11,7 @@ Audit `docs/audit/pages/superadmin/tenants-modules.md`. Protocol `docs/orchestra
 | SA-tenants-modules-03 | OPEN | Tenant setup navigation exists; full 11-card scoped overview grid not confirmed |
 | SA-tenants-modules-04 | DONE (source; test not run) | `SUPER_ADMIN_GLOBAL_LINKS` now has Tenant Setup→unscoped directory, Recruiter accounts, Feature Controls and Activity Log with distinct descriptions, rendered under exact legacy hero in a four-card grid. `tests/unit/superadmin-tenants-gap-closure.test.ts`: `SA-tenants-modules-04 unscoped platform has four described navigation cards including Recruiter accounts`. |
 | SA-tenants-modules-06 | OPEN | Tenant structure and launch setup remain separate navigation; two-tab parity open |
-| SA-tenants-modules-07 | NOT-A-GAP (intentional vNext improvement) | Owner resolution keeps Archive instead of permanent Delete, preserving historical organizations. Organization service persists ARCHIVED status and checks dependent colleges, with explicit refusal and no data deletion. `tests/unit/superadmin-tenants-gap-closure.test.ts`: `SA-tenants-modules-07 archive is intentionally non-destructive with dependent-college guard`. Restore workflow remains separately OPEN as `SA-tenants-modules-R02`. |
+| SA-tenants-modules-07 | NOT-A-GAP (intentional vNext improvement) | Owner resolution keeps Archive instead of permanent Delete, preserving historical organizations. Organization service persists ARCHIVED status and checks dependent colleges, with explicit refusal and no data deletion. `tests/unit/superadmin-tenants-gap-closure.test.ts`: `SA-tenants-modules-07 archive is intentionally non-destructive with dependent-college guard`. Restore workflow now has a source-level implementation under `SA-tenants-modules-R02`. |
 | SA-tenants-modules-08 | OPEN | Organization archive guard exists; full search/pagination/refresh controls need verification |
 | SA-tenants-modules-11 | DONE | College create has City/State/Address/Pin/Country inputs and typed persisted payload; named test SA-tenants-modules-11 |
 | SA-tenants-modules-13 | OPEN | Tenant directory searches/paginates; specific legacy Colleges table and page-size controls incomplete |
@@ -20,7 +20,7 @@ Audit `docs/audit/pages/superadmin/tenants-modules.md`. Protocol `docs/orchestra
 | SA-tenants-modules-17 | OPEN | Admin lifecycle actions exist; Manage College tab/role-create workflow incomplete |
 | SA-tenants-modules-19 | OPEN | Scoped per-college Activity tab with export not yet confirmed |
 | SA-tenants-modules-23 | OPEN | Launch readiness copy/list distinctions need original semantic states |
-| SA-tenants-modules-R02 | OPEN | Action not verified across legacy parity |
+| SA-tenants-modules-R02 | DONE (source verified; PostgreSQL/browser unexecuted) | Same-origin restore POST routes, scoped service restore of ARCHIVED only, audited transaction, parent ACTIVE guard, duplicate organization-name check and confirmed client action. See Round 8 R02 evidence below and `tests/unit/superadmin-tenants-gap-closure.test.ts` named SA-tenants-modules-R02. |
 | SA-tenants-modules-05 | OPEN | Native scope picker is not equivalent to searchable/clearable switcher at scale |
 | SA-tenants-modules-09 | DONE | `src/components/admin/organization-create-form.tsx`, `college-create-form.tsx` use per-form `useFormDraft` restored state, beforeunload warning and clear-on-commit; `tests/unit/superadmin-tenants-gap-closure.test.ts` test SA-tenants-modules-09 |
 | SA-tenants-modules-R01 | OPEN | Metadata not independently verified |
@@ -39,3 +39,7 @@ New mutation tests check real typed request validation and current source contra
 | SA-tenants-modules-07 | NOT-A-GAP | Approved archive-not-delete safety model; named SA-tenants-modules-07 test. |
 | SA-tenants-modules-14 | NOT-A-GAP | Approved archive-not-delete dependency-preserving model; named SA-tenants-modules-14 test. |
 | SA-tenants-modules-R03 | NOT-A-GAP | Deliberately restricted Audit Findings to active Super Admin with scoped permission; named SA-tenants-modules-R03 test. |
+
+| SA-tenants-modules-R02 | DONE (source verified; PG/browser unexecuted) | Scoped archived organization/college restore is implemented, validated and audited through `src/modules/{organizations,colleges}/service.ts`, same-origin restore POST routes, `tenant-restore-action.tsx`, archived Organization list and College detail. Parent must be ACTIVE before restoring college, no child state auto-recovery. Unit test named SA-tenants-modules-R02 in `tests/unit/superadmin-tenants-gap-closure.test.ts`; browser and PostgreSQL remain unexecuted. |
+
+| SA-tenants-modules-23 | DONE (source verified; tests unexecuted) | Readiness page now shows per-requirement Must fix before launch with scoped remediation and optional Recommended setup using actual nullable supplemental source facts, never unknown-as-ready. Runtime DNS/login certification remains separate. Gap-ID test in `tests/unit/superadmin-tenants-gap-closure.test.ts`. |

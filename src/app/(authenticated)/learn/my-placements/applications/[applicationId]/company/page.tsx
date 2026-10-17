@@ -38,6 +38,24 @@ export default async function LearnerApplicationCompanyPage({
           </StatusBadge>
         }
       />
+      <section aria-label="What the company sees" className="rounded-xl border border-border bg-surface p-4 sm:p-6">
+        <h2 className="text-base font-semibold text-foreground">What the company sees</h2>
+        <p className="mt-2 text-sm text-body">
+          {company.companySharePreview.currentlyShared
+            ?"Your submitted, shortlisted application is currently included in an active employer share."
+            :"Your application is not currently visible through an active employer share. It must be shortlisted and included in a live, unrevoked share first."}
+        </p>
+        <dl className="mt-4 grid gap-3 text-sm">
+          <div><dt className="font-semibold">Application ID</dt><dd className="break-all">{company.companySharePreview.applicationId}</dd></div>
+          <div><dt className="font-semibold">Learner</dt><dd>{company.companySharePreview.learnerName}</dd></div>
+          <div><dt className="font-semibold">Email</dt><dd className="break-all">{company.companySharePreview.email??"No email recorded"}</dd></div>
+        </dl>
+        <p className="mt-4 rounded-md bg-surface-subtle p-3 text-xs text-body">
+          This is the current selected-applicant share projection, not proof that a recruiter opened your record.
+          Short-lived or revoked employer links cannot reveal your application. Phone numbers, private documents,
+          attendance and other learners are not included.
+        </p>
+      </section>
       <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
         <h2 className="text-base font-semibold text-foreground">Company and drive</h2>
         <dl className="mt-4 grid gap-4 text-sm sm:grid-cols-2">

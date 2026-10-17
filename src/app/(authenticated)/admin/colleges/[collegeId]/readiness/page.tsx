@@ -96,6 +96,22 @@ export default async function CollegeReadinessPage({
   } = result;
   if(!parsed)return <ErrorState title="Invalid readiness filter" description="Choose a supported check status." action={<Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"}>Clear</Link>}/>;
   const shownChecks=visibleReadinessChecks(evaluation.checks,parsed.status,parsed.area);
+  // SA-tenants-modules-23: distinguish measured blockers from optional
+  // configuration suggestions without implying runtime acceptance.
+  const mustFix=evaluation.checks.filter(check=>check.status!=="PASS");
+  const recommended=[
+    supplemental.activeLectureHalls===null
+      ?"Verify lecture-hall source availability before scheduling."
+      :supplemental.activeLectureHalls===0
+        ?"Consider registering lecture halls if on-campus sessions are planned."
+        :null,
+    supplemental.attendancePolicyRecord===null
+      ?"Verify the attendance-policy data source."
+      :!supplemental.attendancePolicyRecord
+        ?"Review the attendance policy defaults before operating."
+        :null,
+  ].filter((item):item is string=>item!==null);
+
 
   return (
     <div className="space-y-6">
@@ -173,6 +189,26 @@ export default async function CollegeReadinessPage({
         ))}
       </section>
 
+      <section aria-label="Must fix before launch" className="space-y-3 rounded-xl border border-border bg-surface p-5">
+        <h2 className="m-0 text-lg font-semibold text-foreground">Must fix before launch</h2>
+        {mustFix.length===0
+          ?<p role="status" className="text-sm text-body">All persisted readiness checks pass. Runtime DNS, login, teaching and placement verification are still required before launch.</p>
+          :<ul className="list-disc space-y-2 pl-5 text-sm text-body">
+            {mustFix.map(check=><li key={check.id}>
+              <span className="font-semibold">{check.label} — {check.status==="FAIL"?"Not ready":"Unverified"}</span>
+              <p className="mt-1">{check.remediation}</p>
+              <Link className="inline-flex min-h-10 items-center font-semibold text-primary-text underline"
+               href={readinessRemediationLink(check.id,college.id)}>Fix or verify this requirement →</Link>
+            </li>)}
+          </ul>}
+      </section>
+      <section aria-label="Recommended setup" className="rounded-xl border border-border bg-surface p-5">
+        <h2 className="m-0 text-lg font-semibold text-foreground">Recommended setup</h2>
+        {recommended.length?<ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-body">
+          {recommended.map(item=><li key={item}>{item}</li>)}
+        </ul>:<p role="status" className="mt-2 text-sm text-body">No additional configuration suggestions were detected from the two optional persisted sources.</p>}
+        <p className="mt-2 text-xs text-muted-foreground">These suggestions are not extra checklist pass criteria. A runtime launch decision still requires separate operational verification.</p>
+      </section>
       <section className="rounded-xl border border-border bg-surface p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="m-0 text-lg font-semibold text-foreground">

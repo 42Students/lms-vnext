@@ -94,7 +94,7 @@ Audit: `docs/audit/pages/public/auth-public-1-login-session.md` (and `auth-publi
 | PUB-auth-public-38 | S4 | PERMISSION | OPEN |
 | PUB-auth-public-39 | S4 | MISSING-PAGE | OPEN |
 
-## college/academic-setup (34: DONE 30, NOT-A-GAP 2, FIXED-ON-MAIN 1, UNCONFIRMED 1)
+## college/academic-setup (34: DONE 31, NOT-A-GAP 2, UNCONFIRMED 1)
 
 Audit: `docs/audit/pages/college/academic-setup.md` (and `academic-setup-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/college-academic-setup-verification.md`.
 
@@ -118,7 +118,7 @@ Audit: `docs/audit/pages/college/academic-setup.md` (and `academic-setup-review.
 | COL-academic-setup-05 | S3 | MISSING-COLUMN | DONE |
 | COL-academic-setup-13 | S3 | MISSING-ACTION | DONE |
 | COL-academic-setup-15 | S3 | COPY | DONE |
-| COL-academic-setup-16 | S3 | A11Y | FIXED-ON-MAIN |
+| COL-academic-setup-16 | S3 | A11Y | DONE |
 | COL-academic-setup-17 | S3 | STATE | DONE |
 | COL-academic-setup-19 | S3 | STATE | NOT-A-GAP |
 | COL-academic-setup-23 | S3 | VALIDATION | DONE |
@@ -135,7 +135,7 @@ Audit: `docs/audit/pages/college/academic-setup.md` (and `academic-setup-review.
 | COL-academic-setup-39 | S4 | MISSING-EXPORT | DONE |
 | COL-academic-setup-41 | S4 | RESPONSIVE | UNCONFIRMED |
 
-## mentor/projects-meetings-part2 (25: DONE 20, OPEN 5)
+## mentor/projects-meetings-part2 (25: DONE 21, OPEN 4)
 
 Audit: `docs/audit/pages/mentor/projects-meetings-part2.md` (and `projects-meetings-part2-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/mentor-projects-meetings-part2-verification.md`.
 
@@ -143,7 +143,7 @@ Audit: `docs/audit/pages/mentor/projects-meetings-part2.md` (and `projects-meeti
 |---|---|---|---|
 | MEN-projects-meetings-64 | S2 | MISSING-MODAL | DONE |
 | MEN-projects-meetings-66 | S2 | SIDE-EFFECT | DONE |
-| MEN-projects-meetings-72 | S2 | SIDE-EFFECT | OPEN |
+| MEN-projects-meetings-72 | S2 | SIDE-EFFECT | DONE |
 | MEN-projects-meetings-53 | S3 | MISSING-FIELD | DONE |
 | MEN-projects-meetings-54 | S3 | MISSING-FIELD | DONE |
 | MEN-projects-meetings-55 | S3 | MISSING-FILTER | DONE |
@@ -282,3 +282,15 @@ Audit: `docs/audit/pages/superadmin/tenants-modules-2.md` (and `tenants-modules-
 ## Needs shell (chat-9 only)
 - PUB-auth-public-20/21/22/24/29/31: chat-9 owns shell membership switching, cross-tab signout, forbidden notices and global connectivity banners; chat-11 cannot modify src/components/shell.
 
+
+- FAC-attendance-grades-01: learner notices built on active same-college recipient scope; parent absence/correction SMS cannot be sent until the real registered attendance DLT sender/template/provider credentials and approved parent contact mappings exist (do not send OTP template for attendance).
+
+- MEN-projects-meetings-75: task/sprint create drafts now guarded by styled discard confirmation + beforeunload; still OPEN for meeting, task edit, delivery review editor coverage.
+
+- MEN-projects-meetings-75: request/schedule/cancel-note dialogs now guard dirty drafts; still OPEN for task details and delivery review.
+
+- MEN-projects-meetings-75: task details edit and delivery reopen feedback now guard dirty-state exits and browser unload; final delivery feedback editors remain.
+
+- MEN-projects-meetings-75: final delivery decision feedback and evaluation rubric now get styled discard + beforeunload guard; still OPEN for other mentor form audit and client router navigation.
+
+- COL-academic-setup-16: batch/class edits now use native focus-managed Dialog and ConfirmDialog with unsaved-change checks; semester row controls still need parity.

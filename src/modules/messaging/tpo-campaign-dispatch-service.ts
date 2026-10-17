@@ -1,8 +1,10 @@
 import "server-only";
+import {randomUUID} from "node:crypto";
 import {and,eq} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {placementTpoEmailCampaigns,placementTpoEmailCampaignRecipients,placementTpoLeads,placementTpoLeadActivities,placementTpoCompanyCommunication} from "@/db/schema";
+import {messagingDeliveryBatches,messagingDeliveryReceipts} from "@/db/schema/messaging-receipts";
 import {tpoCompanyKey} from "@/modules/placements/tpo-company-memory-service";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
@@ -64,6 +66,11 @@ export async function dispatchTpoCampaign(context:RequestContext,rawId:unknown){
     eq(placementTpoEmailCampaigns.collegeId,college.id),
     eq(placementTpoEmailCampaigns.status,"DRAFT")))
    .returning({id:placementTpoEmailCampaigns.id});
+  if(campaign)await tx.insert(messagingDeliveryBatches).values({
+   id,organizationId:college.organizationId,collegeId:college.id,
+   actorUserId:context.user.id,purpose:("TPO email: "+draft.subject).slice(0,160),
+   total:draft.total_recipients,queued:0,sent:0,failed:0,suppressed:0,
+  });
   return Boolean(campaign);
  });
  if(!claimed)throw new TpoCampaignDispatchError("ALREADY_STARTED");
@@ -129,7 +136,8 @@ export async function dispatchTpoCampaign(context:RequestContext,rawId:unknown){
   if(result){
    await db.transaction(async tx=>{
     await tx.insert(placementTpoLeadActivities).values({
-     collegeId:college.id,leadId:row.leadId,type:"EMAIL",isSystem:true,
+     collegeId:college.id,leadId:row.leadId,type:"EMAIL",isSystem:false,
+     createdByUserId:context.user.id,
      note:"Campaign: "+draft.subject.slice(0,180),createdAt:new Date(),
     });
     const key=tpoCompanyKey(row.company);
@@ -148,9 +156,39 @@ export async function dispatchTpoCampaign(context:RequestContext,rawId:unknown){
    totals.sent++;
   }else totals.failed++;
  }
- await db.update(placementTpoEmailCampaigns).set({status:"SENT"})
- .where(and(eq(placementTpoEmailCampaigns.collegeId,college.id),
-   eq(placementTpoEmailCampaigns.id,id),
-   eq(placementTpoEmailCampaigns.status,"SENDING")));
+ // Record only actual recipient statuses; never store addresses or messages.
+ // An interrupted send remains unfinalized and cannot silently be retried.
+ await db.transaction(async tx=>{
+  const outcomes=await tx.select({
+   recipientKey:placementTpoEmailCampaignRecipients.recipientKey,
+   status:placementTpoEmailCampaignRecipients.status,
+  }).from(placementTpoEmailCampaignRecipients).where(and(
+   eq(placementTpoEmailCampaignRecipients.collegeId,college.id),
+   eq(placementTpoEmailCampaignRecipients.campaignId,id),
+  )).limit(500);
+  const purpose=("TPO email: "+draft.subject).slice(0,160);
+  const receipts=outcomes.map(row=>{
+   const suppressed=row.status.startsWith("SKIPPED_")||row.status==="UNSUBSCRIBED";
+   const status=row.status==="SENT"?"SENT" as const:
+    row.status==="FAILED"?"FAILED" as const:
+    suppressed?"SUPPRESSED" as const:"QUEUED" as const;
+   return {id:randomUUID(),batchId:id,recipientKey:row.recipientKey,
+    channel:"EMAIL",templateKey:draft.template_key,purpose,status,
+    reason:suppressed?(row.status==="SKIPPED_NO_EMAIL"?"invalid-recipient":"unsubscribed"):null};
+  });
+  if(receipts.length)await tx.insert(messagingDeliveryReceipts).values(receipts);
+  const count=(status:"SENT"|"FAILED"|"SUPPRESSED"|"QUEUED")=>
+   receipts.filter(row=>row.status===status).length;
+  await tx.update(messagingDeliveryBatches).set({
+   queued:count("QUEUED"),sent:count("SENT"),failed:count("FAILED"),
+   suppressed:count("SUPPRESSED"),finalizedAt:new Date(),
+  }).where(and(eq(messagingDeliveryBatches.id,id),
+   eq(messagingDeliveryBatches.collegeId,college.id),
+   eq(messagingDeliveryBatches.organizationId,college.organizationId)));
+  await tx.update(placementTpoEmailCampaigns).set({status:"SENT"})
+   .where(and(eq(placementTpoEmailCampaigns.collegeId,college.id),
+     eq(placementTpoEmailCampaigns.id,id),
+     eq(placementTpoEmailCampaigns.status,"SENDING")));
+ });
  return totals;
 }

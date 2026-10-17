@@ -16,7 +16,7 @@ export const placementLegacyPostingDetailsSchema=z.strictObject({
   graduationYear:z.number().int().min(1990).max(2050).nullable().default(null),
   minGpa:z.number().min(0).max(10).nullable().default(null),
   city:z.string().trim().max(160).default(""),
- }).default({}),
+ }).prefault({}),
  customEligibilityRules:z.array(z.strictObject({
   label:z.string().trim().min(1).max(160),
   value:z.string().trim().min(1).max(500),

@@ -23,11 +23,14 @@ export default async function BatchRules({params}:{params:Promise<{batchId:strin
  <div><dt className="font-semibold">Finished</dt><dd>{lifecycle?.finishedAt?batchRuleDate(lifecycle.finishedAt):"Still accepting placements"}</dd></div></dl>
  <p className="mt-3 text-sm text-muted-foreground">The college placement rules apply unless this batch has approved changes.</p></section>}
  {stored.success?<TpoBatchRuleEditor batchId={batchId} batchName={batch.name}
-  college={{countsAsPlacedAt:college.countsAsPlacedAt,maxHeldOffers:college.maxHeldOffers,
+  college={{countsAsPlacedAt:college.countsAsPlacedAt as "OFFER_RELEASED"|"OFFER_ACCEPTED",maxHeldOffers:college.maxHeldOffers,
     upliftPct:college.upliftPct,minResponseHours:college.minResponseHours}}
   initialOverride={stored.data} expectedVersion={lifecycle?.updatedAt.toISOString()??"none"}
   readOnly={!ready||Boolean(lifecycle?.finishedAt)}/>:<p role="alert">Batch rules could not be read safely. Refresh before editing.</p>}
- <TpoBatchDecisionControl batchId={batchId} current={decision}/>
+ {ready&&!lifecycle?.finishedAt?<TpoBatchDecisionControl batchId={batchId} current={decision}/>:
+  <p role="status" className="rounded border border-border bg-surface p-3 text-sm">
+   {lifecycle?.finishedAt?"This batch is finished. Eligibility decisions are read-only.":"Batch eligibility decisions are temporarily unavailable. Retry when the rules are available."}
+  </p>}
  <Link href="/tpo/settings/rules" className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm">View college placement rules</Link>
  </main>;
 }

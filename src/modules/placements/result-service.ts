@@ -32,6 +32,7 @@ import {
 import { PlacementsServiceError } from "./errors";
 import { requirePlacementManageScope } from "./scope";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
+import {recruiterOwnJobExists} from "./recruiter-job-ownership";
 import {notifyTpoOfRecruiterAction} from "./hr-tpo-notification-service";
 import {
   placementResultIdSchema,
@@ -245,6 +246,10 @@ export async function stagePlacementRoundResult(
           job.companyRelationshipId,
       },
     );
+
+  // Company grants do not authorize changing a colleague\u0027s results.
+  if(recruiterCanStage && !(await recruiterOwnJobExists(context.user.id,job.id)))
+    throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
 
   if (
     job.status === "CLOSED" ||
