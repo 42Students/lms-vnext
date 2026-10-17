@@ -1,12 +1,12 @@
 import "server-only";
-import { and, desc, eq, inArray, sql } from "drizzle-orm";
+import { and, desc, eq, exists, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { collegeMemberships, placementApplications, placementApplicationScreenings,
-  placementJobRoleOptions, placementOffers, placementJoiningOutcomes, users,
-  learnerProfiles,placementCompanyRelationships,profileVerificationAcademicMarks,profileVerifications } from "@/db/schema";
+  placementJobRoleOptions, placementOffers, placementJoiningOutcomes, placementJobRounds,placementRoundResults,users,
+  learnerProfiles,placementCompanyRelationships,profileVerificationAcademicMarks,profileVerifications,placementDriveSelections,placementRoundCandidateSlots,learnerProgramEnrollments,programs,departments } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { getRecruiterPlacementWorkspace } from "./recruiter-workspace-service";
-import { hrApplicantFilterSchema, HR_APPLICANT_PAGE_SIZE, projectSharedApplicants, hrApplicantPageBounds, HR_OFFER_PAGE_SIZE, hrOfferPageBounds } from "./hr-job-applicants-model";
+import { hrApplicantFilterSchema, HR_APPLICANT_PAGE_SIZE, projectSharedApplicants, hrApplicantPageBounds, HR_OFFER_PAGE_SIZE, hrOfferPageBounds,type HrApplicantStage } from "./hr-job-applicants-model";
 
 export async function getHrJobRead(context: RequestContext, rawJobId: string, rawFilters: unknown) {
   const filters = hrApplicantFilterSchema.parse(rawFilters);
@@ -29,21 +29,54 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
     eq(placementCompanyRelationships.companyId,context.recruiter?.companyId??""),
     eq(placementCompanyRelationships.status,"ACTIVE"))).limit(1):[];
   const shareRoll=Boolean(share?.columns?.includes("roll"));
+  const shareBranch=Boolean(share?.columns?.includes("branch"));
+  const sharePhone=Boolean(share?.columns?.includes("phone"));
   const shareEmail=Boolean(share?.columns?.includes("email"));
   const shareUg=Boolean(share?.columns?.includes("cgpa"));
   const shareTenth=Boolean(share?.columns?.includes("tenth"));
   const shareTwelfth=Boolean(share?.columns?.includes("twelfth"));
-  const stageCondition=filters.stage === "ALL"
-    ? where
-    : and(where,eq(placementApplications.status,filters.stage === "SHORTLISTED" ? "SUBMITTED" : "WITHDRAWN"));
+  // REC-home-drives-45: milestone predicates evaluate only inside the same
+  // college-scoped, TPO-shortlisted audience. Stage counts may overlap.
+  const roundMilestone=(kinds:readonly string[],outcome:"PASS"|"FAIL")=>exists(
+   db.select({id:placementRoundResults.id}).from(placementRoundResults)
+    .innerJoin(placementJobRounds,eq(placementJobRounds.id,placementRoundResults.roundId))
+    .where(and(eq(placementRoundResults.applicationId,placementApplications.id),
+     eq(placementJobRounds.jobId,workspace.job.id),
+     eq(placementRoundResults.status,"APPLIED"),
+     eq(placementRoundResults.outcome,outcome),
+     inArray(placementJobRounds.kind,[...kinds]))));
+  const hasIssuedOffer=exists(db.select({id:placementOffers.id}).from(placementOffers)
+    .where(eq(placementOffers.applicationId,placementApplications.id)));
+  const hasJoinedOffer=exists(db.select({id:placementJoiningOutcomes.offerId})
+    .from(placementJoiningOutcomes)
+    .innerJoin(placementOffers,eq(placementOffers.id,placementJoiningOutcomes.offerId))
+    .where(and(eq(placementOffers.applicationId,placementApplications.id),
+     eq(placementJoiningOutcomes.status,"JOINED"))));
+  const stageConditions:Record<Exclude<HrApplicantStage,"ALL">,ReturnType<typeof eq>|ReturnType<typeof exists>>={
+   APPLIED:eq(placementApplications.status,"SUBMITTED"),
+   SHORTLISTED:eq(placementApplications.status,"SUBMITTED"),
+   ASSESSMENT:roundMilestone(["TEST","VENDOR_TEST","GD"],"PASS"),
+   INTERVIEW:roundMilestone(["INTERVIEW"],"PASS"),
+   OFFERED:hasIssuedOffer,HIRED:hasJoinedOffer,
+   REJECTED:roundMilestone(["TEST","VENDOR_TEST","GD","INTERVIEW"],"FAIL"),
+   WITHDRAWN:eq(placementApplications.status,"WITHDRAWN"),
+  };
+  const stageCondition=and(where,filters.stage==="ALL"?undefined:stageConditions[filters.stage]);
+  const selectionOnly=["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState);
   const offerCondition=filters.offerState === "ALL"
     ? where
-    : and(where,eq(placementOffers.status,filters.offerState));
+    : selectionOnly?and(where,sql`false`):
+      and(where,eq(placementOffers.status,filters.offerState));
   const [counts,applications, offerCounts,offers] = await Promise.all([
     db.select({
       total: sql<number>`count(*)::integer`,
       active: sql<number>`count(*) filter (where ${placementApplications.status} = 'SUBMITTED')::integer`,
       withdrawn: sql<number>`count(*) filter (where ${placementApplications.status} = 'WITHDRAWN')::integer`,
+      assessment:sql<number>`count(*) filter (where ${stageConditions.ASSESSMENT})::integer`,
+      interview:sql<number>`count(*) filter (where ${stageConditions.INTERVIEW})::integer`,
+      offered:sql<number>`count(*) filter (where ${stageConditions.OFFERED})::integer`,
+      hired:sql<number>`count(*) filter (where ${stageConditions.HIRED})::integer`,
+      rejected:sql<number>`count(*) filter (where ${stageConditions.REJECTED})::integer`,
     }).from(placementApplications)
       .innerJoin(placementApplicationScreenings, eq(placementApplicationScreenings.applicationId, placementApplications.id))
       .innerJoin(collegeMemberships, eq(collegeMemberships.id, placementApplications.membershipId))
@@ -51,7 +84,7 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
       .where(where),
     db.select({
       id: placementApplications.id, membershipId:placementApplications.membershipId,
-      name: users.displayName, email: users.email,
+      name: users.displayName, email: users.email, phone:users.phoneE164,
       rollNumber: learnerProfiles.rollNumber,
       role: placementJobRoleOptions.title, status: placementApplications.status,
       screening: placementApplicationScreenings.status,
@@ -107,11 +140,67 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
       .orderBy(desc(placementOffers.issuedAt), desc(placementOffers.id))
       .limit(HR_OFFER_PAGE_SIZE).offset((filters.offerPage - 1) * HR_OFFER_PAGE_SIZE),
   ]);
+  // REC-home-drives-46: only placement-cell recorded candidate slots
+  // with confirmedAt count as confirmed; internal recruiter BOOKED does not.
+  const slotRows=filters.tab==="rounds"
+    ?await db.select({roundId:placementRoundCandidateSlots.roundId,
+      total:sql<number>`count(*) filter (where ${placementRoundCandidateSlots.status} <> 'CANCELLED')::integer`,
+      confirmed:sql<number>`count(*) filter (where ${placementRoundCandidateSlots.confirmedAt} is not null and ${placementRoundCandidateSlots.status} <> 'CANCELLED')::integer`})
+     .from(placementRoundCandidateSlots)
+     .where(eq(placementRoundCandidateSlots.jobId,workspace.job.id))
+     .groupBy(placementRoundCandidateSlots.roundId):[];
+  const roundSlotCounts=Object.fromEntries(slotRows.map(row=>[row.roundId,
+   {confirmed:Number(row.confirmed),total:Number(row.total)}])) as Record<string,{confirmed:number;total:number}>;
+  // REC-home-drives-52: formal selection ledger is not an issued offer.
+  // Share the same shortlisted/active-college boundary as the offer reader,
+  // and never treat a CANCELLED selection as a revoked issued offer.
+  const selectionStatus=filters.offerState==="SELECTED"?"SELECTED":
+   filters.offerState==="PENDING_VERIFICATION"?"VERIFIED":
+   filters.offerState==="REVOKED"?"CANCELLED":null;
+  const readSelections=filters.offerState==="ALL"||selectionStatus!==null;
+  const selectionWhere=and(where,
+   eq(placementDriveSelections.jobId,workspace.job.id),
+   selectionStatus?eq(placementDriveSelections.status,selectionStatus):
+    inArray(placementDriveSelections.status,["SELECTED","VERIFIED","CANCELLED"]));
+  const selectionJoin=()=>db.select({
+   id:placementDriveSelections.id,
+   applicationId:placementDriveSelections.applicationId,
+   name:users.displayName,
+   role:placementDriveSelections.roleTitle,
+   status:placementDriveSelections.status,
+   annualCtcInr:placementDriveSelections.annualCtcInr,
+   recordedAt:placementDriveSelections.recordedAt,
+  }).from(placementDriveSelections)
+   .innerJoin(placementApplications,eq(placementApplications.id,placementDriveSelections.applicationId))
+   .innerJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
+   .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
+   .innerJoin(users,eq(users.id,collegeMemberships.userId));
+  const [selectionCountRows,selectionRows]=readSelections
+   ?await Promise.all([
+    db.select({total:sql<number>`count(*)::integer`}).from(placementDriveSelections)
+     .innerJoin(placementApplications,eq(placementApplications.id,placementDriveSelections.applicationId))
+     .innerJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
+     .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
+     .innerJoin(users,eq(users.id,collegeMemberships.userId))
+     .where(selectionWhere),
+    selectionJoin().where(selectionWhere).orderBy(desc(placementDriveSelections.recordedAt),
+     desc(placementDriveSelections.id)).limit(HR_OFFER_PAGE_SIZE)
+     .offset((filters.offerState==="ALL"?0:filters.offerPage-1)*HR_OFFER_PAGE_SIZE),
+   ]):[[],[]];
+  const selectionTotal=Number(selectionCountRows[0]?.total??0);
+  const selectionPage=hrOfferPageBounds(filters.offerState==="ALL"?1:filters.offerPage,selectionTotal);
   const totals = counts[0];
   const applicantCounts = {
     all: Number(totals?.total ?? 0),
     shortlisted: Number(totals?.active ?? 0),
     withdrawn: Number(totals?.withdrawn ?? 0),
+  };
+  const stageCounts:Record<HrApplicantStage,number>={
+   ALL:applicantCounts.all,APPLIED:applicantCounts.shortlisted,
+   SHORTLISTED:applicantCounts.shortlisted,
+   ASSESSMENT:Number(totals?.assessment??0),INTERVIEW:Number(totals?.interview??0),
+   OFFERED:Number(totals?.offered??0),HIRED:Number(totals?.hired??0),
+   REJECTED:Number(totals?.rejected??0),WITHDRAWN:applicantCounts.withdrawn,
   };
   // REC-home-drives-38: read only already-verified academic marks for
   // this authorized 25-row page. Raw learner JSON is never sent to employers.
@@ -138,6 +227,23 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
    row[mark.level]=mark.percentage;
    byMember.set(mark.membershipId,row);
   }
+  // A branch is derived from the college's active program enrollment, never
+  // unverified learner-supplied profile JSON. Ambiguous multiple branches fail closed.
+  const activeBranches=(memberIds.length&&shareBranch)
+   ?await db.select({membershipId:learnerProgramEnrollments.membershipId,
+      branch:departments.name})
+      .from(learnerProgramEnrollments)
+      .innerJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
+      .innerJoin(departments,eq(departments.id,programs.departmentId))
+      .where(and(inArray(learnerProgramEnrollments.membershipId,memberIds),
+       eq(learnerProgramEnrollments.status,"ACTIVE"),
+       eq(departments.collegeId,workspace.college.id))):[];
+  const branchSet=new Map<string,Set<string>>();
+  for(const row of activeBranches){
+   const names=branchSet.get(row.membershipId)??new Set<string>();
+   names.add(row.branch);
+   branchSet.set(row.membershipId,names);
+  }
   const percentage=(points:number|undefined)=>
    points===undefined?null:(points/100).toFixed(2).replace(/\.00$/,"")+"%";
   const projected = projectSharedApplicants(applications.map(({membershipId,...row})=>{
@@ -145,16 +251,18 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
     return {...row,
       rollNumber:shareRoll?row.rollNumber:null,
       email:shareEmail?row.email:null,
+      phone:sharePhone?row.phone:null,
+      branch:shareBranch && branchSet.get(membershipId)?.size===1
+       ?[...branchSet.get(membershipId)!][0]??null:null,
       ugPercentage:shareUg?percentage(marks?.UG):null,
       tenthPercentage:shareTenth?percentage(marks?.["10TH"]):null,
       twelfthOrDiplomaPercentage:shareTwelfth?
         percentage(marks?.["12TH"]??marks?.DIPLOMA):null,
     };
   }), filters.stage);
-  const selectedTotal = filters.stage === "SHORTLISTED" ? applicantCounts.shortlisted
-    : filters.stage === "WITHDRAWN" ? applicantCounts.withdrawn : applicantCounts.all;
+  const selectedTotal = stageCounts[filters.stage];
   return {
-    workspace, filters,
+    workspace, filters, roundSlotCounts, selectionRows, selectionPage, selectionTotal, stageCounts,
     applicants: { rows: projected.rows, counts: applicantCounts },
     applicantsPage: hrApplicantPageBounds(filters.page, selectedTotal),
     applicantsTruncated: false,

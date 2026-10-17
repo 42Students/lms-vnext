@@ -129,3 +129,66 @@ export async function saveAdminTenantSettings(ctx:RequestContext,raw:unknown){
  }
  return {results:updates,saved:updates.filter(item=>item.status!=="FAILED").length,failed:updates.filter(item=>item.status==="FAILED").length};
 }
+
+
+/** SA-tenants-modules-40: free-form stored values are deliberately NOT
+ * executable configuration; never store credentials here. */
+const unlistedKey=z.string().min(1).max(120).regex(/^[A-Za-z][A-Za-z0-9._-]*$/);
+const unlistedBase=z.strictObject({
+ scopeType:z.enum(["GLOBAL","COLLEGE"]),collegeId:z.uuid().optional(),key:unlistedKey,
+});
+const unlistedCreate=unlistedBase.extend({value:z.string().trim().min(1).max(4096)});
+const unlistedRemove=unlistedBase.extend({expectedVersion:z.number().int().positive()});
+function assertUnlistedSettingKey(key:string){
+ if(LEGACY_TENANT_SETTING_MAP.has(key)||
+  /secret|token|password|credential|api[._-]?key|private[._-]?key/i.test(key))
+  throw new TenantSettingEditorError("INVALID_SETTING");
+}
+export async function addUnlistedTenantSetting(ctx:RequestContext,raw:unknown){
+ const input=unlistedCreate.parse(raw);
+ const target=await scope(ctx,input.scopeType,input.collegeId);
+ assertUnlistedSettingKey(input.key);
+ return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,ctx,
+   target.collegeId?"college.manage":"admin-scope.select",
+   target.collegeId?{collegeId:target.collegeId,organizationId:target.organizationId!}:undefined);
+  const [created]=await tx.insert(platformSettingOverrides).values({
+   scopeType:input.scopeType,scopeId:target.scopeId,key:input.key,
+   value:input.value,updatedByUserId:ctx.user.id,
+  }).onConflictDoNothing().returning({key:platformSettingOverrides.key});
+  if(!created)throw new TenantSettingEditorError("SETTING_STALE");
+  await tx.insert(activityEvents).values({
+   module:"PLATFORM",eventType:"platform.setting.updated",
+   organizationId:target.organizationId,collegeId:target.collegeId,actorUserId:ctx.user.id,
+   subjectType:"platform_setting",subjectId:input.key,summary:"Unlisted tenant setting added",
+   metadata:{key:input.key,scope:input.scopeType,action:"ADDED_UNLISTED",operationalReader:false},
+  });
+  return {key:created.key,status:"SAVED" as const};
+ });
+}
+export async function removeUnlistedTenantSetting(ctx:RequestContext,raw:unknown){
+ const input=unlistedRemove.parse(raw);
+ const target=await scope(ctx,input.scopeType,input.collegeId);
+ const known=LEGACY_TENANT_SETTING_MAP.get(input.key);
+ if(known?.scope===input.scopeType)throw new TenantSettingEditorError("INVALID_SETTING");
+ return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,ctx,
+   target.collegeId?"college.manage":"admin-scope.select",
+   target.collegeId?{collegeId:target.collegeId,organizationId:target.organizationId!}:undefined);
+  const where=and(eq(platformSettingOverrides.scopeType,input.scopeType),
+   eq(platformSettingOverrides.scopeId,target.scopeId),eq(platformSettingOverrides.key,input.key));
+  const [current]=await tx.select({version:platformSettingOverrides.version})
+   .from(platformSettingOverrides).where(where).for("update").limit(1);
+  if(!current||current.version!==input.expectedVersion)
+   throw new TenantSettingEditorError("SETTING_STALE");
+  await tx.delete(platformSettingOverrides).where(where);
+  await tx.insert(activityEvents).values({
+   module:"PLATFORM",eventType:"platform.setting.updated",
+   organizationId:target.organizationId,collegeId:target.collegeId,actorUserId:ctx.user.id,
+   subjectType:"platform_setting",subjectId:input.key,summary:"Unlisted tenant setting removed",
+   metadata:{key:input.key,scope:input.scopeType,action:"REMOVED_UNLISTED",
+    previousVersion:current.version,operationalReader:false},
+  });
+  return {key:input.key,status:"DELETED" as const};
+ });
+}
