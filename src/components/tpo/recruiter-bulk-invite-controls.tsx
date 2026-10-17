@@ -84,8 +84,9 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
      </label><button type="button" className="min-h-10 rounded border border-border px-3 text-sm"
       onClick={()=>void copy(linkLines)}>Copy invite links</button></>:null}
     {failed.length?<><ul>{failed.map(item=><li key={item.id} className="text-sm">{item.name}: {item.reason}</li>)}</ul>
-     <button type="button" className="min-h-10 rounded border border-border px-3 text-sm"
-      onClick={()=>void createLinks(rows.filter(row=>failed.some(item=>item.id===row.id)&&!bulkInviteDisposition(row)),true)}>Retry failed</button></>:null}
+     {retryableFailed.length?<button type="button" disabled={busy} className="min-h-10 rounded border border-border px-3 text-sm"
+      onClick={()=>void createLinks(rows.filter(row=>retryableFailed.some(item=>item.id===row.id)),true)}>Retry eligible failures ({retryableFailed.length})</button>:null}
+     {retryableFailed.length!==failed.length?<p role="status" className="text-xs">Some failed contacts are no longer eligible. They will not be retried.</p>:null}</>:null}
     <button type="button" className="min-h-10 rounded border border-border px-3 text-sm"
       onClick={()=>{setResults([]);setOpen(false);}}>Close results</button>
    </div>:null}
