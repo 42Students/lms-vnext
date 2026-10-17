@@ -1,16 +1,28 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname,useRouter } from "next/navigation";
 import { tpoDriveTabs,tpoDriveMoreTabs } from "@/modules/placements/tpo-drive-tab-model";
 
 /** Keep the same drive navigation and active state on every nested workflow. */
 export function TpoDriveWorkspaceNav({ jobId }: { jobId: string }) {
   const pathname = usePathname();
+  const router=useRouter();
   const root = "/tpo/placements/jobs/" + encodeURIComponent(jobId);
+  const tabs=[...tpoDriveTabs(jobId),...tpoDriveMoreTabs(jobId)];
+  const selected=tabs.filter(tab=>pathname===tab.href.split("#")[0]||pathname.startsWith(tab.href.split("#")[0]+"/"))
+   .sort((a,b)=>b.href.length-a.href.length)[0]?.href??root;
   return (
     <nav aria-label="Drive workspace sections"
-      className="flex flex-wrap gap-2 rounded-lg border border-border bg-surface p-3">
+      className="min-w-0 rounded-lg border border-border bg-surface p-3">
+      <label className="grid gap-1 text-sm font-semibold sm:hidden">Workspace section
+        <select aria-label="Drive workspace section" value={selected}
+          onChange={event=>router.push(event.target.value)}
+          className="min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+          {tabs.map(tab=><option key={tab.href} value={tab.href}>{tab.label}</option>)}
+        </select>
+      </label>
+      <div className="hidden min-w-0 flex-wrap gap-2 sm:flex">
       {tpoDriveTabs(jobId).map((tab) => {
         const active = tab.href === root
           ? pathname === root
@@ -42,6 +54,7 @@ export function TpoDriveWorkspaceNav({ jobId }: { jobId: string }) {
           ))}
         </div>
       </details>
+      </div>
     </nav>
   );
 }
