@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {tpoNoticeTextParts} from "@/modules/announcements/tpo-notice-safe-links";
 import {TpoPlacementCellReadAction} from "@/components/tpo/tpo-placement-cell-read-action";
 import {TpoNoticeDeleteConfirm} from "@/components/tpo/tpo-notice-delete-confirm";
 import {TpoNoticeComposerDialog} from "@/components/tpo/tpo-notice-composer-dialog";
@@ -152,7 +153,12 @@ export default async function TpoAnnouncements({searchParams}:Props){
       <p role="status" className="mt-2 text-sm font-semibold text-amber-700">Scheduled for {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(row.scheduledAt))} IST</p>:
       tab.data==="yours"&&row.expiresAt&&new Date(row.expiresAt)<=new Date()?
       <p role="status" className="mt-2 text-sm font-semibold text-muted-foreground">Ended</p>:null}
-    <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{row.message}</p>
+    <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">
+     {tpoNoticeTextParts(row.message).map((part,index)=>part.kind==="link"?
+      <a key={index} href={part.value} target="_blank" rel="noopener noreferrer"
+       className="font-semibold text-primary-text underline underline-offset-2">{part.value}</a>:
+      <span key={index}>{part.value}</span>)}
+    </p>
     {row.buttonUrl?.startsWith("https://")&&row.buttonLabel?<a href={row.buttonUrl}
       target="_blank" rel="noopener noreferrer"
       className="mt-3 inline-flex min-h-10 items-center rounded-md border border-border px-3 font-semibold text-primary-text">

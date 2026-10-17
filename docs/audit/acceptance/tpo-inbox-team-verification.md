@@ -107,3 +107,10 @@ The additional unit test `tests/unit/tpo-notice-round4-verification.test.ts` con
 | --- | --- | --- |
 | TPO-inbox-team-64 | DONE (source; unrun) | `src/components/activity/notification-list.tsx` now uses 12 s guarded `apiFetch` and shows friendly Retry-able toast without navigation on failed read acknowledgement; whole-row TPO cards, unread dot, New and arrow remain. Named **TPO-inbox-team-64** in `tests/unit/tpo-bell-notification-ack-chat2.test.ts`. |
 | TPO-inbox-team-61 | DONE (source; unrun) | Reviewed existing `src/components/tpo/tpo-bell-panel.tsx`: 20-row drawer with click-then-read-then-route, errors and mark-all guard; named **TPO-inbox-team-61** in the same test. |
+
+## Builder chat-2 continuation — visible announcement links and counters
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-inbox-team-49 | PARTIAL — OPEN | `src/modules/announcements/tpo-notice-safe-links.ts` and announcement cards linkify verified HTTPS URLs, preserve other text, and retain the existing author/date/audience/state/CTA. Named test **TPO-inbox-team-49** in `tests/unit/tpo-notice-safe-links-chat2.test.ts`. Full email-delivery labels depend on additional delivery work. |
+| TPO-inbox-team-62 | DONE (source; unrun) | Reviewed `src/components/tpo/tpo-header-indicators.tsx` and `src/app/(authenticated)/tpo/layout.tsx`: 30-second + focus-visible refresh of scoped recruiter-message and TPO bell unread counts. Named test **TPO-inbox-team-62** in `tests/unit/tpo-notice-safe-links-chat2.test.ts`. |
