@@ -653,7 +653,7 @@ export function SuperAdminHrAccounts({
     <div className="space-y-6">
       <PageHeader
         eyebrow="Industry access"
-        title="Recruiter accounts"
+        title="Recruiter account lifecycle"
         description="Manage recruiter accounts, their company links and college access. Account actions follow the current administrative scope."
         actions={
           <Button onClick={openCreate}>
