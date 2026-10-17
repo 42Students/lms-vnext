@@ -1,6 +1,11 @@
 import "server-only";
 
 import type { RequestContext } from "@/modules/identity/context";
+import {eq} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {placementCollegeRules} from "@/db/schema";
+import {loadPlacementHeldOfferFacts} from "./held-offer-facts-service";
+import {learnerCollegePlacementRulePoints} from "./learner-college-placement-rules-model";
 import { requirePermission } from "@/modules/permissions/policy";
 import { getCandidatePreferences } from "./candidate-preferences-service";
 import {getLearnerPlacementJourney} from "./learner-journey-service";
@@ -26,13 +31,22 @@ export async function getOwnLearnerPlacementRulesView(
     collegeId: membership.collegeId,
     organizationId: membership.organizationId,
   });
-  const [evidence, preferences, applications] = await Promise.all([
+  const [evidence, preferences, applications,policyRows] = await Promise.all([
     getOwnAcademicEvidence(context),
     getCandidatePreferences(context),
     getLearnerPlacementJourney(context),
+    getDb().select({
+      countsAsPlacedAt:placementCollegeRules.countsAsPlacedAt,
+      maxHeldOffers:placementCollegeRules.maxHeldOffers,
+      upliftPct:placementCollegeRules.upliftPct,
+      minResponseHours:placementCollegeRules.minResponseHours,
+    }).from(placementCollegeRules).where(eq(placementCollegeRules.collegeId,membership.collegeId)).limit(1),
   ]);
+  const policy=policyRows[0]??null;
+  const ownHeldOffers=policy?await loadPlacementHeldOfferFacts(membership.collegeId,membership.id):[];
+  const policyView=policy?learnerCollegePlacementRulePoints(policy,ownHeldOffers):null;
   return {
-    back,
+    back,policyView,
     evidence,
     preferences,
     ruleApplicability:learnerRuleChangeApplicability(applications),
