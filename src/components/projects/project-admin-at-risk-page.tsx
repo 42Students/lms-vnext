@@ -11,6 +11,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import {
   listProjectAdminRiskQueue,
 } from "@/modules/projects/admin-insights-service";
+import {ProjectAtRiskPageExport} from "./project-at-risk-page-export";
 
 function one(
   value: string | string[] | undefined,
