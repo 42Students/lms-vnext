@@ -1,5 +1,6 @@
 "use client";
 import {useRouter} from "next/navigation";
+import {verificationSessionProgress,verificationSessionStopped,verificationSessionFinished} from "@/modules/verification/sequential-review-progress";
 import {useState} from "react";
 import {VerificationWorkspace,type VerificationQueueCard} from "./VerificationWorkspace";
 import {VerificationReviewDrawer} from "./VerificationReviewDrawer";
@@ -35,19 +36,19 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
  const [bulkResult,setBulkResult]=useState<{summary:{attempted:number;succeeded:number;failed:number};outcomes:BulkReviewOutcome[];labels:ReturnType<typeof describeBulkReviewOutcomeRows>}|null>(null);
  const selectable=rows.filter(row=>row.status==="SUBMITTED"||row.status==="UPDATE_PENDING");
  const queueKeys=selectable.map(verificationSelectionKey);
- const sequenceLabel=sequential ? `${sequential.index+1} of ${sequential.keys.length}` : "";
+ const sequenceLabel=sequential ? verificationSessionProgress(sequential.index,sequential.keys.length) : "";
  function nextInSequence(afterDecision=false) {
   if(!sequential)return;
   const nextIndex=sequential.index+1;
   if(nextIndex>=sequential.keys.length){
    setSelected(null);setSequential(null);
-   if(!afterDecision)setReviewFeedback("Review session finished.");
+   if(!afterDecision)setReviewFeedback(verificationSessionFinished(sequential.keys.length));
    return;
   }
   const next=rows.find(item=>verificationSelectionKey(item)===sequential.keys[nextIndex]);
   if(!next){
    setSelected(null);setSequential(null);
-   setReviewFeedback(`Stopped at ${nextIndex} of ${sequential.keys.length}. The next request is no longer on this page.`);
+   setReviewFeedback(verificationSessionStopped(sequential.index,sequential.keys.length)+" The next request is no longer on this page.");
    return;
   }
   setSequential({...sequential,index:nextIndex});setSelected(next);
@@ -209,7 +210,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
     sequenceProgress={sequential?sequenceLabel:undefined}
     onNext={sequential?()=>nextInSequence():undefined}
     onFinish={sequential?()=>{setSelected(null);setSequential(null);
-      setReviewFeedback(`Stopped at ${sequential.index+1} of ${sequential.keys.length}.`);}:undefined}
+      setReviewFeedback(verificationSessionStopped(sequential.index,sequential.keys.length));}:undefined}
     onClose={()=>{if(sequential)setReviewFeedback(
       `Stopped at ${sequential.index+1} of ${sequential.keys.length}.`);
       setSelected(null);setSequential(null);}}
