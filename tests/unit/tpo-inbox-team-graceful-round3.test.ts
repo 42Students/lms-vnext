@@ -52,7 +52,7 @@ describe("Chat-2 graceful messaging and TPO action acceptance",()=>{
   const c=source("src/components/tpo/tpo-team-forms.tsx");
   expect(c).toContain("pending.current||busy");
   expect(c).toContain("pending.current=false");
-  expect(c).toContain("signal:controller.signal");
+  expect(c).toContain("apiFetch<");
   expect(c).toContain("30000");
  });
  it("GR-62 warns about unsent replies and announcement changes before leaving",()=>{
@@ -131,7 +131,8 @@ describe("Chat-2 graceful messaging and TPO action acceptance",()=>{
   const create=source("src/app/api/placements/tpo/team/threads/route.ts");
   const reply=source("src/app/api/placements/tpo/team/threads/[threadId]/messages/route.ts");
   expect(form).toContain('headers:{Accept:"application/json"}');
-  expect(form).toContain('if(response.redirected)return {ok:false,code:"SESSION_EXPIRED"}');
+  expect(form).toContain("FriendlyFetchError");
+  expect(form).toContain("timeoutMs:30000");
   expect(create).toContain('request.headers.get("accept")');
   expect(reply).toContain('request.headers.get("accept")');
   const feedback=source("src/modules/placements/tpo-team-form-feedback-model.ts");
