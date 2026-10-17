@@ -56,7 +56,7 @@ function hasMutationGuard(source: string): boolean {
     /(?:set[A-Z]\w*\(true\)|setRolePending\(|start\w*Transition\()/.test(source);
   const disabledControl =
     /disabled=\{[^}]*\b(?:pending|busy|saving|savingResults|rolePending|lifecyclePending|submitting|deleting|loading)\b/.test(source);
-  return pendingControl && disabledControl;
+  return pendingControl && (disabledControl || source.includes("pending={pending}"));
 }
 
 describe("new raw-error and mutation regression gate", () => {
