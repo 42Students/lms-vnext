@@ -37,7 +37,8 @@ export default async function TpoTeamPage({searchParams}:{
  const peopleSort:TpoPeopleSort=parsed.success?(parsed.data.sort??"WORK"):"WORK";
  const people=sortTpoPeople(team.members,peopleSort);
  const search=parsed.success?(parsed.data.q??""):"";
- const conversations=tab==="conversations"?await listMyTpoInternalThreads(context,search):null;
+ const conversations=tab==="conversations"?await listMyTpoInternalThreads(context,search)
+  .catch(()=>({status:"FAILED" as const,items:[]})):null;
  return <div className="space-y-6">
   <TpoLiveRefresh intervalMs={30000}/>
   <PageHeader eyebrow="TPO · Internal" title={TPO_OWNER_PAGE_COPY.team}
@@ -77,6 +78,10 @@ export default async function TpoTeamPage({searchParams}:{
     {conversations?.status==="READY"?<TpoTeamThreadCreate actorUserId={context.user.id} members={team.members.filter(
       member=>member.membershipId!==context.membership?.id&&member.roles.includes("TPO"))
       .map(member=>({membershipId:member.membershipId,displayName:member.displayName}))}/>:null}
+    {conversations?.status==="FAILED"?<div role="alert" className="mt-3 rounded-lg border border-border p-3 text-sm">
+     Could not load conversations right now. Your search has been kept.
+     <Link className="ml-2 font-semibold text-primary-text underline" href={"/tpo/team?tab=conversations"+(search?"&q="+encodeURIComponent(search):"")}>Retry conversations</Link>
+    </div>:null}
     {conversations?.status==="NOT_REGISTERED"?
       <p role="status" className="mt-2 text-sm text-body">Private placement-team conversations require the unregistered internal messaging migration. No messages were inferred from recruiter conversations.</p>:
       conversations?.items.length?<ul className="mt-3 space-y-2">{conversations.items.map(row=>
