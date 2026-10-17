@@ -2,7 +2,7 @@ import "server-only";
 import {and,eq} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {placementJobs} from "@/db/schema";
+import {placementJobRoleOptions,placementJobs} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {createPlacementJob} from "./job-service";
 import {requireTpoJobCollege} from "./tpo-job-write-base";
@@ -32,6 +32,34 @@ export async function cloneTpoDrive(context:RequestContext,rawJobId:unknown,raw:
   maximumAnnualCtcInr:source.maximumAnnualCtcInr,
   // Never carry a past deadline or old company portal URL into a new drive.
   applicationMode:"INTERNAL",externalApplicationUrl:null,applicationDeadline:null,
+ });
+ // Copy active non-primary packages while the newly created draft remains unpublished.
+ const options=await getDb().select().from(placementJobRoleOptions)
+  .where(and(eq(placementJobRoleOptions.jobId,source.id),
+   eq(placementJobRoleOptions.status,"ACTIVE")));
+ await getDb().transaction(async tx=>{
+  const [primary]=await tx.select({id:placementJobRoleOptions.id}).from(placementJobRoleOptions)
+    .where(and(eq(placementJobRoleOptions.jobId,draft.id),
+      eq(placementJobRoleOptions.isPrimary,true))).limit(1);
+  const primarySource=options.find(row=>row.isPrimary);
+  if(primary&&primarySource){
+   await tx.update(placementJobRoleOptions).set({
+    fixedLpa:primarySource.fixedLpa,variableLpa:primarySource.variableLpa,
+    joiningBonusLpa:primarySource.joiningBonusLpa,bondMonths:primarySource.bondMonths,
+    bondAmount:primarySource.bondAmount,updatedAt:new Date(),
+   }).where(eq(placementJobRoleOptions.id,primary.id));
+  }
+  for(const option of options.filter(row=>!row.isPrimary)){
+   await tx.insert(placementJobRoleOptions).values({
+    jobId:draft.id,title:option.title,employmentType:option.employmentType,
+    workMode:option.workMode,locations:option.locations,openings:option.openings,
+    minimumAnnualCtcInr:option.minimumAnnualCtcInr,
+    maximumAnnualCtcInr:option.maximumAnnualCtcInr,
+    fixedLpa:option.fixedLpa,variableLpa:option.variableLpa,
+    joiningBonusLpa:option.joiningBonusLpa,bondMonths:option.bondMonths,
+    bondAmount:option.bondAmount,isPrimary:false,
+   });
+  }
  });
  await getDb().transaction(tx=>recordActivityEventInTransaction(tx,context,{
   eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_JOB_DRAFT_CREATED,collegeId,
