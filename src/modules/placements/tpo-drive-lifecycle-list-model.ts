@@ -2,6 +2,7 @@ import { z } from "zod";
 export const tpoDriveLifecycleQuerySchema = z.object({
   seasonId: z.string().uuid().optional(),
   companyId:z.string().uuid().optional(),
+  ownerUserId:z.string().uuid().optional(),
   view: z.enum(["ALL", "REQUESTS", "DRAFT", "LIVE", "CLOSED"]).default("ALL"),
   search:z.string().trim().max(100).default(""),
   deadline:z.enum(["ALL","TODAY","DUE_SOON","LATER","OVERDUE","UNSET"]).default("ALL"),
