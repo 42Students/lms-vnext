@@ -43,6 +43,7 @@ export function RecruiterBulkStageControls({
     ["NEW", "CONTACTED", "NOT_NOW"].includes(row.manualStage),
   );
   const selected = available.filter((row) => chosenIds.includes(row.id));
+  const retryable=results.filter(item=>item.status==="ineligible"&&available.some(row=>row.id===item.leadId));
   const isValid = selected.length > 0 && selected.length <= 100 &&
     (action !== "NOT_NOW" || (reason.trim().length > 0 && reason.trim().length <= 255));
 
