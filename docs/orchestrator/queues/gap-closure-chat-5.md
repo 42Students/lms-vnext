@@ -125,7 +125,7 @@ Audit: `docs/audit/pages/tpo/batches.md` (and `batches-review.md` if present; an
 | TPO-batches-25 | S3 | MISSING-ACTION | DONE |
 | TPO-batches-27 | S3 | COPY | DONE |
 | TPO-batches-28 | S3 | STATE | DONE |
-| TPO-batches-29 | S3 | MISSING-TAB | FIXED-ON-MAIN |
+| TPO-batches-29 | S3 | MISSING-TAB | DONE |
 | TPO-batches-40 | S3 | COPY | DONE |
 | TPO-batches-43 | S3 | MISSING-MODAL | DONE |
 | TPO-batches-46 | S3 | MISSING-ACTION | OPEN |
@@ -138,7 +138,7 @@ Audit: `docs/audit/pages/tpo/batches.md` (and `batches-review.md` if present; an
 | TPO-batches-60 | S3 | COPY | DONE |
 | TPO-batches-61 | S3 | MISSING-ACTION | DONE |
 | TPO-batches-63 | S3 | SIDE-EFFECT | DONE |
-| TPO-batches-64 | S3 | PERMISSION | UNCONFIRMED |
+| TPO-batches-64 | S3 | PERMISSION | DONE |
 | TPO-batches-R04 | S3 | VALIDATION | OPEN |
 | TPO-batches-12 | S4 | STATE | DONE |
 | TPO-batches-17 | S4 | STATE | OPEN |
@@ -160,16 +160,16 @@ Audit: `docs/audit/pages/tpo/students.md` (and `students-review.md` if present; 
 | TPO-students-33 | S1 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-students-06 | S2 | MISSING-ACTION | OPEN |
 | TPO-students-07 | S2 | SIDE-EFFECT | OPEN |
-| TPO-students-08 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| TPO-students-09 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-students-08 | S2 | MISSING-ACTION | DONE |
+| TPO-students-09 | S2 | MISSING-ACTION | DONE |
 | TPO-students-10 | S2 | MISSING-ACTION | OPEN |
-| TPO-students-11 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-students-11 | S2 | MISSING-ACTION | DONE |
 | TPO-students-12 | S2 | MISSING-ACTION | OPEN |
 | TPO-students-14 | S2 | MISSING-FIELD | OPEN |
 | TPO-students-15 | S2 | SIDE-EFFECT | UNCONFIRMED |
 | TPO-students-16 | S2 | MISSING-ACTION | OPEN |
 | TPO-students-17 | S2 | MISSING-ACTION | OPEN |
-| TPO-students-18 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
+| TPO-students-18 | S2 | MISSING-FILTER | DONE |
 | TPO-students-19 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | TPO-students-20 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | TPO-students-21 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
@@ -178,7 +178,7 @@ Audit: `docs/audit/pages/tpo/students.md` (and `students-review.md` if present; 
 | TPO-students-26 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
 | TPO-students-28 | S2 | MISSING-COLUMN | OPEN |
 | TPO-students-29 | S2 | MISSING-FIELD | OPEN |
-| TPO-students-30 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
+| TPO-students-30 | S2 | MISSING-FIELD | DONE |
 | TPO-students-31 | S2 | MISSING-FIELD | OPEN |
 | TPO-students-32 | S2 | STATE | OPEN |
 | TPO-students-34 | S2 | SIDE-EFFECT | OPEN |
@@ -188,7 +188,7 @@ Audit: `docs/audit/pages/tpo/students.md` (and `students-review.md` if present; 
 | TPO-students-13 | S3 | MISSING-ACTION | OPEN |
 | TPO-students-24 | S3 | MISSING-FILTER | OPEN |
 | TPO-students-25 | S3 | MISSING-FILTER | OPEN |
-| TPO-students-27 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
+| TPO-students-27 | S3 | MISSING-COLUMN | DONE |
 | TPO-students-37 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-students-38 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-students-39 | S3 | MISSING-ACTION | OPEN |
@@ -221,9 +221,9 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 | ID | Sev | Type | Status now |
 |---|---|---|---|
 | TPO-requests-verification-01 | S1 | MISSING-ACTION | OPEN |
-| TPO-requests-verification-02 | S2 | MISSING-MODAL | FIXED-ON-MAIN |
-| TPO-requests-verification-03 | S2 | MISSING-MODAL | FIXED-ON-MAIN |
-| TPO-requests-verification-04 | S2 | SIDE-EFFECT | FIXED-ON-MAIN |
+| TPO-requests-verification-02 | S2 | MISSING-MODAL | DONE |
+| TPO-requests-verification-03 | S2 | MISSING-MODAL | DONE |
+| TPO-requests-verification-04 | S2 | SIDE-EFFECT | DONE |
 | TPO-requests-verification-05 | S2 | SIDE-EFFECT | FIXED-ON-MAIN |
 | TPO-requests-verification-07 | S2 | SIDE-EFFECT | FIXED-ON-MAIN |
 | TPO-requests-verification-13 | S2 | MISSING-ACTION | OPEN |
@@ -328,3 +328,5 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - Round follow-up (chat-5): TPO-drive-workspace-65 BLOCKED — private resume ZIP needs an object-storage scanner; emailed company codes need provider credentials.
 - Round follow-up (chat-5): TPO-batches-20 BLOCKED — in-app daily reminders are audited, but OD-11/12 outbound messaging needs provider credentials; no email/SMS delivery is claimed.
 - Round follow-up (chat-5): TPO-drive-workspace-39 still OPEN — round reorder guards page unload; app navigation protection across round edits remains.
+
+- [chat-5] source revalidation (tests authored, not executed): TPO-batches-29, TPO-students-08, TPO-students-09, TPO-students-11, TPO-students-18, TPO-students-27, TPO-students-30, TPO-requests-verification-02, TPO-requests-verification-03, TPO-requests-verification-04 now DONE with ID-named assertions in `tests/unit/chat5-fixed-on-main-verified.test.ts`; TPO-batches-64 central permission test in `tests/unit/chat5-unconfirmed-permission-decisions.test.ts`.
