@@ -47,3 +47,7 @@
 ### Chat-16 SA-placements-projects-114 linked live log triage (authored, provider unverified)
 
 | SA-placements-projects-114 | DONE (source; integration pending) | `tracker-cloud-logs.ts` matches redacted live errors against persisted Known Error signatures by canonical hash and environment only when DB10 Log Alerts is verified; `tracker-live-logs-explorer.tsx` opens matched detail or prompts before muting/unmuting via authorized origin-checked PATCH; `known-errors-workspace.tsx` adds permalink targets. `tests/unit/chat16-tracker-known-error-link-round4.test.ts` — SA-placements-projects-114. No raw samples or account identities returned by this mapping. |
+
+## Chat-6 UNCONFIRMED decisions, 2026-10-18
+
+| SA-placements-projects-115 | OPEN (partial) | Sanitized Copy for Claude and prefilled tracker report; no unscoped production logs or SQL; decision evidence: `docs/audit/acceptance/chat-6-unconfirmed-decisions.md`; test: `tests/unit/chat6-unconfirmed-decisions-round13.test.ts` → `SA-placements-projects-115` |
