@@ -14,7 +14,7 @@
 ## Round 4 — test contracts authored, not executed
 
 | SA-placements-projects-104 | DONE (source authored; real-browser/database pending) | `src/components/tracker/tracker-report-form.tsx`, `src/hooks/use-form-draft.ts`, `src/app/api/tracker/issues/route.ts`; `tests/unit/chat6-tracker-parity-round4.test.ts` → `SA-placements-projects-104 restores saved report context and remembers selected reporter and environment`, `SA-placements-projects-104 supports shortcut submit, source-linked success and permission-scoped similar reports`. Similar matches are explicit keyword searches, not inferred fuzzy matches. |
-| SA-placements-projects-112 | OPEN (partial navigation and accessibility, dark-mode switch not yet supported) | `src/components/tracker/tracker-admin-nav.tsx`; `tests/unit/chat6-tracker-parity-round4.test.ts` → `SA-placements-projects-112 exposes the legacy manager nav destinations with an accessible skip target`. Distinct Audit findings route present; Logs route still describes persistent Known Errors, not live Cloud Logging. |
+| SA-placements-projects-112 | DONE (source authored; browser contrast/keyboard acceptance pending) | `src/components/tracker/tracker-admin-nav.tsx`, `src/components/tracker/tracker-theme-toggle.tsx`, `src/app/globals.css`; `tests/unit/chat6-tracker-theme-nav-verification.test.ts` → `SA-placements-projects-112 provides exact tracker navigation, skip link and a working keyboard-operable Light / Dark toggle`. Preference persists per browser, dark palette is scoped to tracker and reset on exit. Actual Cloud Logging page remains separately tracked as SA-placements-projects-113. |
 
 ## Chat-6 saved issue-list controls (named tests authored; not run)
 
