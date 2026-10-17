@@ -11,7 +11,7 @@ export async function getTpoJobTypes(ctx:RequestContext){
  const collegeId=await requireTpoBatchActor(ctx);
  const ready=await placementTableExists("placement_tpo_job_types");
  const rows=ready?await getDb().select({
-  id:tpoJobTypes.id,label:tpoJobTypes.label,active:tpoJobTypes.active,updatedAt:tpoJobTypes.updatedAt,
+  id:tpoJobTypes.id,label:tpoJobTypes.label,active:tpoJobTypes.active,countsAsPlaced:tpoJobTypes.countsAsPlaced,isBuiltin:tpoJobTypes.isBuiltin,updatedAt:tpoJobTypes.updatedAt,
  }).from(tpoJobTypes).where(eq(tpoJobTypes.collegeId,collegeId))
  .orderBy(asc(tpoJobTypes.label)):[];
  return {ready,rows};
