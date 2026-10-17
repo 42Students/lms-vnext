@@ -39,3 +39,8 @@ The following gaps each have their own named assertion in `tests/unit/tpo-drives
 
 | TPO-drives-35 | OPEN | Create now sends `minPctThroughout` and `requireVerifiedEvidence` and validates percentage bounds; PG/gender/branch parity remains. Test TPO-drives-35 in `tests/unit/tpo-drives-chat-3-round4.test.ts`. |
 | TPO-drives-36 | OPEN | Five legacy eligibility presets populate actual policy values with a college conversion caution. Dynamic CGPA-to-percentage hint remains. Test TPO-drives-36. |
+
+| TPO-drives-R02 | DONE | Publish action creates a reviewed draft and navigates to workspace `?publish=1`, never publishes directly from form; named TPO-drives-R02 test. Existing flow independently verified in source. |
+| TPO-drives-R03 | DONE | Preflight now shows warning for absent rounds and warns when all targeting/evidence fields are empty, nonblocking; named TPO-drives-R03 test. |
+| TPO-drives-R05 | OPEN | Create fields enforce annual CTC upper bounds and numeric/percentage caps; complete Zod field error mapping, description parity and role creation remain. Named TPO-drives-R05 test. |
+| TPO-drives-44 | OPEN | Internal create response failures now tell the operator to inspect saved drafts/employers instead of echoing implementation detail; exact legacy copy per error remains unverified; named TPO-drives-44 test. |
