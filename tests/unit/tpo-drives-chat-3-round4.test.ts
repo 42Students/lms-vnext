@@ -3,6 +3,7 @@ import {join} from "node:path";
 import {describe,it,expect} from "vitest";
 import {defaultTpoDriveView} from "@/modules/placements/tpo-drive-lifecycle-list-model";
 import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
+import {driveEligibilityPresetValue} from "@/modules/placements/tpo-drive-eligibility-presets";
 const source=(path:string)=>readFileSync(join(process.cwd(),path),"utf8");
 describe("chat-3 Drives round 4",()=>{
  it("TPO-drives-04 review-first default and persistent badge counts",()=>{
@@ -34,5 +35,18 @@ describe("chat-3 Drives round 4",()=>{
   const body=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/edit/page.tsx");
   expect(body).toContain("This drive is not editable");
   expect(body).toContain("open Create drive");
+ });
+ it("TPO-drives-35 percentage throughout and verified marks are persisted from Create",()=>{
+  const body=source("src/components/placements/placement-job-create-form.tsx");
+  expect(body).toContain("minPctThroughout:nullableDecimal");
+  expect(body).toContain("requireVerifiedEvidence:data.get");
+ });
+ it("TPO-drives-36 legacy presets set real eligibility form values",()=>{
+  expect(driveEligibilityPresetValue("CGPA_6","minCgpa")).toBe("6");
+  expect(driveEligibilityPresetValue("CGPA_7","minCgpa")).toBe("7");
+  expect(driveEligibilityPresetValue("PCT_60","minPctThroughout")).toBe("60");
+  expect(driveEligibilityPresetValue("PCT_70","minPctThroughout")).toBe("70");
+  expect(driveEligibilityPresetValue("OPEN","minCgpa")).toBe("");
+  expect(source("src/components/placements/placement-job-create-form.tsx")).toContain('key={eligibilityPreset+":"+name}');
  });
 });
