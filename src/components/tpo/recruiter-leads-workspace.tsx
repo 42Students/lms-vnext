@@ -113,7 +113,7 @@ export function RecruiterLeadsWorkspace({
   initialAdd?: boolean;
   initialCompany?: string;
   initialFilters?: Partial<Record<"q"|"stage"|"owner"|"invite"|"status"|"source"|
-    "company"|"reach"|"designation"|"nextFollowup"|"lastActivity"|"added"|"need"|"attention",string>>;
+    "company"|"reach"|"designation"|"nextFollowup"|"lastActivity"|"added"|"need"|"attention"|"drives",string>>;
 }) {
   const [rows, setRows] = useState<Lead[]>([]);
   const [selectedIds,setSelectedIds]=useState<string[]>([]);
@@ -136,7 +136,7 @@ export function RecruiterLeadsWorkspace({
       const saved=window.localStorage.getItem("tpo-engage-sort-v1");
       if(!saved)return;
       const value=JSON.parse(saved) as {sort?:string;ascending?:boolean};
-      if(["LAST_ACTIVITY","NEXT_FOLLOWUP","ADDED","NAME"].includes(value.sort??""))
+      if(["LAST_ACTIVITY","NEXT_FOLLOWUP","ADDED","NAME","DRIVES"].includes(value.sort??""))
         setRosterSort(value.sort as EngageSort);
       if(typeof value.ascending==="boolean")setSortAscending(value.ascending);
     }catch{ /* Browser storage is optional. */ }
@@ -168,6 +168,7 @@ export function RecruiterLeadsWorkspace({
   const [statusFilter,setStatusFilter]=useState(initialFilters.status??"ALL");
   const [sourceFilter,setSourceFilter]=useState(initialFilters.source??"ALL");
   const [companyFilter,setCompanyFilter]=useState(initialFilters.company??"ALL");
+  const [driveFilter,setDriveFilter]=useState(initialFilters.drives??"ALL");
   const [designationFilter,setDesignationFilter]=useState(initialFilters.designation??"");
   const [reachFilter,setReachFilter]=useState(initialFilters.reach??"ALL");
   const [nextFilter,setNextFilter]=useState(initialFilters.nextFollowup??"ALL");
@@ -331,14 +332,19 @@ export function RecruiterLeadsWorkspace({
       (communication[company.key]??"NOT_CONTACTED")!==companyCommunicationFilter)return false;
     return true;
   }),[companies,companySearch,companyContacts,companyHistory,companyAliases,companyCommunicationFilter,communication]);
+  const leadDriveCounts=useMemo(()=>new Map(companies.flatMap(company=>
+    company.people.map(person=>[person.id,company.drivesRan] as const))),[companies]);
+  const rosterRows=useMemo(()=>rows.map(row=>({
+    ...row,drivesRan:companiesPhase==="ready"?leadDriveCounts.get(row.id)??null:null,
+  })),[rows,leadDriveCounts,companiesPhase]);
   const needCounts=useMemo(()=>engageNeedsCounts(rows),[rows]);
   const filters:EngageRosterFilters={stage,query,owner:ownerFilter,invite:inviteFilter,status:statusFilter,
     source:sourceFilter,company:companyFilter,designation:designationFilter,reach:reachFilter,
-    nextFollowup:nextFilter,lastActivity:activityFilter,added:addedFilter};
-  const visible=useMemo(()=>filterEngageRoster(rows,filters,lead=>
+    nextFollowup:nextFilter,lastActivity:activityFilter,added:addedFilter,drives:driveFilter};
+  const visible=useMemo(()=>filterEngageRoster(rosterRows,filters,lead=>
     matchesEngageNeed(lead,need)&&(attention==="ALL"||lead.chips?.includes(attention))),
-    [rows,stage,query,need,attention,ownerFilter,inviteFilter,statusFilter,sourceFilter,
-      companyFilter,designationFilter,reachFilter,nextFilter,activityFilter,addedFilter]);
+    [rosterRows,stage,query,need,attention,ownerFilter,inviteFilter,statusFilter,
+      companyFilter,designationFilter,reachFilter,nextFilter,activityFilter,addedFilter,driveFilter]);
   const sortedVisible=useMemo(()=>sortEngageRows(visible,rosterSort,sortAscending),
     [visible,rosterSort,sortAscending]);
   const filterChips=([
@@ -350,6 +356,7 @@ export function RecruiterLeadsWorkspace({
     {key:"status",label:"Status",value:statusFilter},
     {key:"source",label:"Source",value:sourceFilter},
     {key:"company",label:"Company",value:companyFilter},
+    {key:"drives",label:"Drives that ran",value:driveFilter},
     {key:"designation",label:"Designation",value:designationFilter},
     {key:"reach",label:"Reach",value:reachFilter},
     {key:"nextFollowup",label:"Next follow-up",value:nextFilter},
@@ -380,7 +387,7 @@ export function RecruiterLeadsWorkspace({
   }
 
   function updateFilter(kind:"owner"|"invite"|"status"|"source"|"query"|"company"|"designation"|
-     "reach"|"nextFollowup"|"lastActivity"|"added"|"stage"|"need"|"attention",value:string){
+     "reach"|"nextFollowup"|"lastActivity"|"added"|"stage"|"need"|"attention"|"drives",value:string){
    const params=new URLSearchParams(window.location.search);
    if(kind==="nextFollowup")params.delete("due");
    if(value&&value!=="ALL")params.set(kind==="query"?"q":kind,value);
@@ -392,6 +399,7 @@ export function RecruiterLeadsWorkspace({
    else if(kind==="status")setStatusFilter(value);
    else if(kind==="source")setSourceFilter(value);
    else if(kind==="company")setCompanyFilter(value);
+   else if(kind==="drives")setDriveFilter(value);
    else if(kind==="designation")setDesignationFilter(value==="ALL"?"":value);
    else if(kind==="reach")setReachFilter(value);
    else if(kind==="nextFollowup")setNextFilter(value);
@@ -423,7 +431,7 @@ export function RecruiterLeadsWorkspace({
   }
 
   async function createInviteLink(lead:Lead){
-    if(invitingId||lead.recruiterUserId||lead.unsubscribedAt||lead.manualStage==="NOT_NOW"||
+    if(invitingId||lead.recruiterUserId||lead.unsubscribedAt||
       !lead.emailNorm||!lead.companyRelationshipId)return;
     if(lead.inviteSentAt&&!window.confirm("Make a new link? The old link stops working."))return;
     setInvitingId(lead.id);setFreshInvite(null);setActionToast("");
@@ -698,6 +706,16 @@ export function RecruiterLeadsWorkspace({
                     .sort().map(name=><option key={name} value={name}>{name}</option>)}
                 </select>
               </label>
+              <label className="text-sm">Drives that ran
+                <select className={inputStyle+" mt-1"} value={driveFilter}
+                  onChange={e=>updateFilter("drives",e.target.value)}>
+                  <option value="ALL">Any drive count</option>
+                  <option value="NONE">No drives</option>
+                  <option value="ONE_TWO">1–2 drives</option>
+                  <option value="THREE_FIVE">3–5 drives</option>
+                  <option value="SIX_PLUS">6 or more drives</option>
+                </select>
+              </label>
               <label className="text-sm">Designation
                 <input className={inputStyle+" mt-1"} value={designationFilter}
                   placeholder="Search designation" maxLength={100}
@@ -747,7 +765,7 @@ export function RecruiterLeadsWorkspace({
               </label>
               <button type="button" className={buttonStyle} onClick={()=>{
                 for(const key of ["owner","invite","status","source","query","company","designation",
-                  "reach","nextFollowup","lastActivity","added"] as const)updateFilter(key,"ALL");
+                  "reach","nextFollowup","lastActivity","added","drives"] as const)updateFilter(key,"ALL");
                 updateFilter("stage","ALL");updateFilter("attention","ALL");updateFilter("need","ALL");
               }}>Clear filters</button>
             </div>:null}
@@ -920,7 +938,7 @@ export function RecruiterLeadsWorkspace({
                           [...new Set([...current,...visible.map(row=>row.id)])]:
                           current.filter(id=>!visible.some(row=>row.id===id)))}/>
                     </th>
-                    {["Contact", "Company", "Status", "Stage", "Owner", "Last activity", "Next follow-up", "Invite", "Added", "Flags", "Source", "Email", "Phone", "Actions"].filter(x=>visibleColumns.includes(x as EngageColumn)).map(x =>
+                    {["Contact", "Company", "Status", "Stage", "Owner", "Last activity", "Next follow-up", "Company drives", "Invite", "Added", "Flags", "Source", "Email", "Phone", "Actions"].filter(x=>visibleColumns.includes(x as EngageColumn)).map(x =>
                     <th key={x} scope="col" className="px-4 py-3 font-semibold">{x}</th>)}</tr>
                 </thead>
                 <tbody>
@@ -942,6 +960,7 @@ export function RecruiterLeadsWorkspace({
                        <td style={{display:visibleColumns.includes("Owner")?undefined:"none"}} className="px-4 py-3"><RecruiterInlineOwner lead={lead} onUpdated={()=>void load()}/></td>
                        <td style={{display:visibleColumns.includes("Last activity")?undefined:"none"}} className="px-4 py-3">{lead.lastActivityAt?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(lead.lastActivityAt)):"—"}</td>
                        <td style={{display:visibleColumns.includes("Next follow-up")?undefined:"none"}} className="px-4 py-3">{lead.nextFollowupAt?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(lead.nextFollowupAt)):"—"}</td>
+                       <td style={{display:visibleColumns.includes("Company drives")?undefined:"none"}} className="px-4 py-3">{lead.drivesRan??"—"}</td>
                        <td style={{display:visibleColumns.includes("Invite")?undefined:"none"}} className="px-4 py-3">{lead.inviteStatus.replaceAll("_"," ")}</td>
                        <td style={{display:visibleColumns.includes("Added")?undefined:"none"}} className="px-4 py-3">{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(lead.createdAt))}</td>
                       <td style={{display:visibleColumns.includes("Flags")?undefined:"none"}} className="px-4 py-3">
@@ -957,7 +976,7 @@ export function RecruiterLeadsWorkspace({
                       <td style={{display:visibleColumns.includes("Actions")?undefined:"none"}} className="px-4 py-3">
                         {!lead.recruiterUserId?(
                           <button type="button" className={buttonStyle}
-                            disabled={Boolean(invitingId)||!lead.emailNorm||!lead.companyRelationshipId||Boolean(lead.unsubscribedAt)||lead.manualStage==="NOT_NOW"}
+                            disabled={Boolean(invitingId)||!lead.emailNorm||!lead.companyRelationshipId||Boolean(lead.unsubscribedAt)}
                             onClick={()=>void createInviteLink(lead)}>
                             {lead.inviteSentAt?"Resend invite":"Invite"}
                           </button>
@@ -1023,7 +1042,7 @@ export function RecruiterLeadsWorkspace({
                                href={"/tpo/recruiters/"+encodeURIComponent(lead.id)}>Open recruiter</Link>
                            </div>
                          </details>
-                         {!lead.recruiterUserId&&!lead.unsubscribedAt&&lead.manualStage!=="NOT_NOW"?
+                         {!lead.recruiterUserId&&!lead.unsubscribedAt?
                          <button type="button" className={buttonStyle+" mt-2"}
                           disabled={Boolean(invitingId)||!lead.emailNorm||!lead.companyRelationshipId} onClick={()=>void createInviteLink(lead)}>Create invite link</button>:null}
                       </div>
