@@ -73,9 +73,7 @@ export async function ProjectAdminAtRiskPage({
       />
       {!result.blockerSignalSupported ? (
         <section className="rounded-xl border border-warning-border bg-warning-subtle p-4 text-sm leading-6 text-body">
-          Active task blockers are included in this queue.
-          The legacy workspace-level blocker field is not yet persisted,
-          so that separate signal is not counted.
+          Workspace blocker data is unavailable. Task blockers are still counted.
         </section>
       ) : null}
       <div className="grid gap-3 sm:grid-cols-3">
