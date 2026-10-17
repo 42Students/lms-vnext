@@ -819,6 +819,12 @@ export function ProjectWorkspace({
                               projectId={workspace.project.id}
                               sprintId={sprint.id}
                               updatedAt={sprint.updatedAt.toISOString()}
+                              sprints={workspace.sprints.filter(item=>item.status!=="COMPLETED"
+                                && workspace.releases.some(release=>release.id===item.releaseId
+                                  && release.status!=="SHIPPED")).map(item=>({
+                                id:item.id,title:item.title,status:item.status,
+                                updatedAt:item.updatedAt.toISOString(),
+                              }))}
                             />
                           ) : null}
                           {mode === "MENTOR" ? (
