@@ -66,7 +66,7 @@ export function TpoBellPanel({initialUnread,items,revision=0}:{initialUnread:num
      </button>
     </li>)}</ul>}
    <div className="flex flex-wrap gap-3"><Link className="min-h-10 inline-flex items-center text-sm underline" href="/tpo/notifications">See all notifications</Link>
-    <button type="button" className="min-h-10 rounded border border-border px-3 text-sm disabled:opacity-50" onClick={()=>void markAll()} disabled={pending||unread===0}>{pending?"Saving…":"Mark all read"}</button></div>
+    {unread>0?<button type="button" className="min-h-10 rounded border border-border px-3 text-sm disabled:opacity-50" onClick={()=>void markAll()} disabled={pending}>{pending?"Saving…":"Mark all read"}</button>:null}</div>
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   </Drawer>
  </div>;
