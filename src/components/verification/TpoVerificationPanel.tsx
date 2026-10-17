@@ -42,7 +42,7 @@ export function TpoVerificationPanel({rows,serverTab,serverKind}:{rows:Verificat
    <p className="text-xs text-muted-foreground sm:col-span-3">Showing {visible.length} of {rows.length} records from the server-filtered authorized page. Status, section, batch and branch filters apply before pagination.</p>
   </section>
   {serverTab==="WAITING"&&visible.length>0?
-   <TpoRosterVerificationBulk key={"queue:"+JSON.stringify(filters)+serverTab+serverKind} rows={visible}/>:null}
+   <TpoRosterVerificationBulk key={"queue:"+JSON.stringify(filters)+serverTab+serverKind} rows={visible} scope="verification"/>:null}
   <VerificationWorkspace key={JSON.stringify(filters)+serverTab+serverKind} rows={visible}
    legacyTpoCopy initialTab={serverTab} initialKind={serverKind}
    disableLocalSearch preserveServerOrder
