@@ -1,6 +1,7 @@
 "use client";
 import {useEffect,useRef,useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
+import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
 import {hrReplySuccess,hrReplyErrorMessage} from "@/modules/placements/hr-conversation-send-feedback-model";
 export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
  const router=useRouter();
@@ -8,6 +9,7 @@ export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
  const [body,setBody]=useState("");
  const [sending,setSending]=useState(false);
  const [notice,setNotice]=useState("");
+ const [leaveHref,setLeaveHref]=useState<string|null>(null);
  useEffect(()=>{
   if(!body.trim()&&!sending)return;
   const warn=(event:BeforeUnloadEvent)=>{
@@ -15,7 +17,18 @@ export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
     event.returnValue="";
   };
   window.addEventListener("beforeunload",warn);
-  return ()=>window.removeEventListener("beforeunload",warn);
+  const intercept=(event:MouseEvent)=>{
+   const target=event.target;
+   if(!(target instanceof Element))return;
+   const anchor=target.closest("a[href]");
+   if(!(anchor instanceof HTMLAnchorElement))return;
+   const url=new URL(anchor.href,window.location.href);
+   if(url.origin!==window.location.origin || url.pathname===window.location.pathname)return;
+   event.preventDefault();event.stopPropagation();
+   setLeaveHref(url.pathname+url.search+url.hash);
+  };
+  document.addEventListener("click",intercept,true);
+  return ()=>{window.removeEventListener("beforeunload",warn);document.removeEventListener("click",intercept,true);};
  },[body,sending]);
 
  async function submit(event:FormEvent<HTMLFormElement>){
@@ -80,5 +93,11 @@ export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
    className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-60">
    {sending?"Sending…":"Send reply"}
   </button>
+  <ConfirmActionDialog open={leaveHref!==null} title="Discard this unsent message?"
+   consequence="Your draft reply will be lost." confirmLabel="Discard"
+   onCancel={()=>setLeaveHref(null)} onConfirm={()=>{
+    const destination=leaveHref;setLeaveHref(null);setBody("");
+    if(destination)router.push(destination);
+   }}/>
  </form>;
 }

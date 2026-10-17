@@ -100,7 +100,7 @@ export default async function HrMessagesPage({searchParams}:{
         className="rounded-md border border-border px-3 py-2 text-sm text-primary-text">Next</Link>:null}
       </div>
     </nav>
-   <p className="text-xs text-muted-foreground">Conversation threads and replies remain unavailable. Read acknowledgement applies only to your own employer-scoped notification.</p>
+   <p className="text-xs text-muted-foreground"><Link href="/hr/messages" className="font-semibold text-primary-text underline">Messages</Link> opens conversations with the placement cell. Notification read acknowledgement applies only to your own employer-scoped notification.</p>
   </>}
  </div>;
 }
