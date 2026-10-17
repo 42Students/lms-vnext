@@ -1,3 +1,4 @@
+import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import {ReportBarChart} from "@/components/placements/report-bar-chart";
@@ -62,7 +63,7 @@ export default async function TpoFailureReasonsPage({
       : "No placement season or matching drive data is available. No adverse outcome is inferred from missing data.";
 
   return (
-    <div className="space-y-6">
+    <div data-tpo-presentation-report className="space-y-6">
       <PageHeader
         eyebrow="TPO · Reports"
         title="Failure reasons"
@@ -76,6 +77,7 @@ export default async function TpoFailureReasonsPage({
       />
 
       <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/failure-reasons" collegeId={context.membership.collegeId}/></Suspense>
+      <TpoReportPresentation />
       <ReportNavigation workspace={workspace} />
       <ReportFilters
         workspace={workspace}
