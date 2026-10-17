@@ -29,6 +29,18 @@ describe("chat-4 verified TPO Home gap coverage",()=>{
   expect(tpoHomeGreeting(fixed,null).title).toBe("Good morning");
   expect(source("src/app/(authenticated)/tpo/home/page.tsx")).toContain("profileRows[0]?.displayName");
  });
+ it("TPO-home-22 retains prior Home snapshot on failed return refresh and exposes Retry",()=>{
+  const s=source("src/components/tpo/tpo-home-return-refresh.tsx");
+  expect(s).toContain("Refreshing placement home…");
+  expect(s).toContain("Home refresh failed. Showing the last successful snapshot.");
+  expect(s).toContain("Retry");
+  expect(s).toContain('cache:"no-store"');
+  expect(s).toContain("if(!response.ok||response.redirected)");
+  expect(s).toContain("if(!controller.signal.aborted)setFailed(true)");
+  expect(s).toContain("router.refresh()");
+  expect(s).toContain('document.addEventListener("visibilitychange",handle)');
+  expect(s).toContain("now-lastRefresh.current<15000");
+ });
  it("TPO-home-R06 avoids invented fallback copy or fabricated null counts",()=>{
   const unknown=rows({batch:{name:"Batch",eligible:null,registered:null,placed:null,invited:false}});
   expect(unknown[0].status).toBe("Batch");

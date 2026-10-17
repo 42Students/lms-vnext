@@ -59,15 +59,17 @@ export async function listCollegeProjectMentorWorkload(context: RequestContext, 
   const atRisk = riskExpression();
   const rows = await getDb().select({
     mentorMembershipId: projectMembers.membershipId,
+    mentorName:users.displayName,
     activeWorkspaces: count(),
     atRisk: sql<number>`count(*) filter (where ${atRisk})`.mapWith(Number),
   }).from(projectInstances).leftJoin(projectMembers, and(
     eq(projectMembers.projectId, projectInstances.id), activePrimaryMentor,
-  )).where(and(
+  )).leftJoin(collegeMemberships,eq(collegeMemberships.id,projectMembers.membershipId))
+    .leftJoin(users,eq(users.id,collegeMemberships.userId)).where(and(
     eq(projectInstances.collegeId, college.id),
     ne(projectInstances.status, "ARCHIVED"),
     ne(projectInstances.status, "COMPLETED"),
-  )).groupBy(projectMembers.membershipId);
+  )).groupBy(projectMembers.membershipId,users.displayName);
   return rows;
 }
 

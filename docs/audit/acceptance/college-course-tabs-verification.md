@@ -40,3 +40,5 @@ the selection and return plain retry guidance.
 | COL-course-tabs-27 | DONE | Lessons/Progress use independent keyed mobile cards and desktop-only tables in `college-learning-directory.tsx`, Assignments/Quizzes use mobile cards with review actions and hide wide tables below sm in `college-assessment-aggregate.tsx`; `tests/unit/chat4-college-course-tabs-gap-closure.test.ts` test `COL-course-tabs-27`. |
 
 | COL-course-tabs-R01 | DONE | `src/modules/courses/college-learner-progress-service.ts` uses video completion, unique assignment submissions and unique quiz attempts by learner/item, not resource clicks; `college-learner-progress-report.tsx` states exact measured-work rules and retake semantics; `tests/unit/chat4-college-course-tabs-gap-closure.test.ts` test `COL-course-tabs-R01`. |
+
+| COL-course-tabs-14 | DONE | `college-lesson-drag-order.tsx` drag/drop and keyboard Move up/down, optimistic rollback; transactional `reorderCollegeCourseLessons` compares entire active order under lock, parks sequences to respect unique index, one audit event; route validates same origin; `tests/unit/chat4-college-course-tabs-gap-closure.test.ts` test `COL-course-tabs-14`. |
