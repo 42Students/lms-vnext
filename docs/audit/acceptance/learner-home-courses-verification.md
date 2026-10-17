@@ -34,3 +34,10 @@ orchestrator test execution before full acceptance.
 | LEARNER-course-detail-R04 | DONE | `learner-course-file-reference-service.ts` resolves exactly one authorized learner-owned visible content reference; route signs 15-minute R2 GET and redirects rather than hydrating workspace or proxying download/range bytes; `tests/unit/chat4-learner-home-courses-gap-closure.test.ts` test `LEARNER-course-detail-R04`. |
 
 | LEARNER-home-courses-03 | DONE | `learner-course-setup-service.ts` diagnoses current enrollment/program/batch/class/term before showing `learnerCourseSetupCopy` administrator recovery instructions, instead of generic missing-courses state; `tests/unit/chat4-learner-home-courses-gap-closure.test.ts` test `LEARNER-home-courses-03`. |
+
+## chat-15 UNCONFIRMED decisions (2026-10-18; no shell or restyling)
+
+| ID | Disposition | Evidence / rationale |
+|---|---|---|
+| LEARNER-home-courses-01 | NOT-A-GAP | Keep the deliberate shared `/dashboard` for multi-role memberships with `Active Courses` linking to `/learn/courses`; removing other workspaces would be a regression. `src/app/(authenticated)/dashboard/page.tsx`; `tests/unit/chat15-unconfirmed-decisions.test.ts`, `LEARNER-home-courses-01 deliberately preserves a multi-role dashboard and a dedicated learner courses link`. |
+| LEARNER-home-courses-14 | OPEN (implementation decision recorded) | The legacy GENERAL class/course announcement feed must come from tenant-, class-, course- and recipient-scoped official announcements, newest two. Faculty discussion messages are not that source, and must not be relabeled or mixed as official announcements. `src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx`; `tests/unit/chat15-unconfirmed-decisions.test.ts` test `LEARNER-home-courses-14 does not pass off discussions as official announcements` checks current honest behavior, not parity. Requires a server-side announcement query and permissions. |
