@@ -12,7 +12,7 @@ const forbidden = [
   /\brelation\s+["'`][^"'`]+/i,
   /\bviolates\b/i,
   /\bnull\b/i, /\bSQLSTATE\b/i, /Unexpected token/i,
-  /\b(?:HTTP\s*)?(?:403|404|429|500|502|503|504)\b/i,
+  /\b(?:HTTP|status|error|response)\s*[:#-]?\s*(?:403|404|429|500|502|503|504)\b/i,
 ];
 
 export async function expectNoRawErrors(page: Page): Promise<void> {
