@@ -358,3 +358,10 @@ No tests were run here; orchestrator CI and database verification remain necessa
 | TPO-inbox-team-44 | PARTIAL — OPEN | Searchable multi-select batch and branch picker, preserved URL-selected IDs, validated preview union and SQL-scoped frozen recipient IDs. `src/components/tpo/tpo-notice-audience-picker.tsx`, `src/modules/announcements/tpo-audience-preview-query.ts`, `src/modules/announcements/tpo-targeted-recipient-query.ts`, `src/modules/announcements/tpo-placement-write-service.ts`, `src/app/api/placements/tpo/announcements/route.ts`, announcement page; `tests/unit/chat2-tpo-multi-notice-audience.test.ts` **TPO-inbox-team-44 selects multiple persisted cohorts/branches…**, **TPO-inbox-team-44 saves exact selected audience groups…**, **TPO-inbox-team-44 lets users search multiple batches/branches…**. Full drive search and disposable database acceptance pending. |
 
 No unit, type, lint or PostgreSQL tests were run by this builder.
+
+## [chat-5] Owner-delegated UNCONFIRMED decisions (2026-10-17)
+
+| ID | Result | Decision and evidence |
+|---|---|---|
+| TPO-inbox-team-08 | BLOCKED | Decision: In-app recruiter threads remain canonical. SMTP relay and inbound reply reconciliation require verified provider credentials and durable message-id signatures; never claim unconfigured email was sent. Test: `tests/unit/chat5-delegated-policy-decisions.test.ts` — named test `TPO-inbox-team-08` (source/policy regression; executable CI pending). |
+| TPO-inbox-team-35 | NOT-A-GAP | Decision: Keep granting staff the TPO role under College Admin's existing controlled people/role-management flow; avoid a TPO Team page that can self-grant college-wide access. Test: `tests/unit/chat5-delegated-policy-decisions.test.ts` — named test `TPO-inbox-team-35` (source/policy regression; executable CI pending). |
