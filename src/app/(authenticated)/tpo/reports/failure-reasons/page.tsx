@@ -122,6 +122,16 @@ export default async function TpoFailureReasonsPage({
       <p className="text-xs text-muted-foreground">Share of the round = applied FAIL decisions divided by all applied round decisions. It does not count candidates who have no recorded round result, and is not a share of registered students.</p>
 
       <ReportTable
+       title="Round failures by current branch"
+       headings={["Round","Branch","Failed decisions","Applied decisions","Share of branch's recorded round decisions"]}
+       rows={workspace.roundBranchFailureShares.map(row=>[
+        row.roundName,row.branchName,row.failed,row.decisions,
+        row.shareOfRoundPercent===null?"Unavailable":row.shareOfRoundPercent+"%",
+       ])}
+       emptyDescription="No applied round decisions are available by current academic branch."/>
+      <p className="text-xs text-muted-foreground">Branch uses the learner's current active academic enrollment; past branch membership is not reconstructed. A missing branch is labelled Not recorded. Percentages use only applied round decisions for that round and branch.</p>
+      
+      <ReportTable
         title="Outcomes by type"
         headings={["Outcome", "Recorded count"]}
         rows={failures.byKind.map((row) => [
