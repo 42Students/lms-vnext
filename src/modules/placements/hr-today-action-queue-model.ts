@@ -26,6 +26,20 @@ export function buildRecruiterActionQueue(input:{
     href:"/recruiter/drives/"+encodeURIComponent(item.jobId)+"?tab=rounds&roundId="+encodeURIComponent(item.id)}));
  const live=input.jobs.filter(row=>row.collegeId===input.collegeId&&row.companyId===input.companyId&&
    row.job.status==="PUBLISHED"&&row.job.archivedAt===null).slice(0,3);
+ const deadlines = input.now ? live
+  .filter(row=>row.job.applicationDeadline instanceof Date &&
+    Number.isFinite(row.job.applicationDeadline.getTime()))
+  .filter(row=>row.job.applicationDeadline!.getTime()>=input.now!.getTime()-86400000)
+  .sort((a,b)=>a.job.applicationDeadline!.getTime()-b.job.applicationDeadline!.getTime())
+  .slice(0,3)
+  .map(row=>({
+    key:"deadline:"+row.job.id,
+    tone:(row.job.applicationDeadline!.getTime()<input.now!.getTime()?"URGENT":"SOON") as "URGENT"|"SOON",
+    at:row.job.applicationDeadline!,
+    label:"Check application deadline · "+row.job.title,
+    description:"Review the published deadline and available shared applications.",
+    href:"/recruiter/drives/"+encodeURIComponent(row.job.id)+"?tab=overview",
+  })) : [];
  const reviews=live.map(row=>({key:"review:"+row.job.id, tone:"FINE" as const, at:null as Date|null,
    label:"Review shared applicants · "+row.job.title,
    description:"Open the employer-visible shortlist and notes. No unshared applications are included.",
@@ -34,5 +48,5 @@ export function buildRecruiterActionQueue(input:{
    label:"Read "+input.unread+" unread notifications",
    description:"Open your college-scoped drive notification inbox.",
    href:recruiterTodayHref({kind:"MESSAGES"})+"?collegeId="+encodeURIComponent(input.collegeId)+"&unreadOnly=true"}]:[];
- return [...conversations,...due,...reviews,...notices];
+ return [...conversations,...due,...deadlines,...reviews,...notices];
 }
