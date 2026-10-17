@@ -50,7 +50,7 @@ const collectionLabels: Record<CollectionKey, string> = {
   achievements: "Academic Achievements",
   languages: "Languages",
   extracurriculars: "Extra-curricular Activities",
-  metadata: "Additional information",
+  metadata: "Additional Information",
 };
 
 const fields: Record<CollectionKey, Field[]> = {
@@ -645,14 +645,14 @@ export function LearnerProfileWorkspace(props: {
             <Value label="Blood group" value={document.personalDetails.bloodGroup} />
           </div>
         </Card>
-        <Card id="identity" title="Identity">
+        <Card id="identity" title="Identity Documents">
           <div className="grid gap-4 sm:grid-cols-2">
             <Value label="Aadhaar number" value={document.identity.aadhaarNumber ? "•••• •••• " + document.identity.aadhaarNumber.slice(-4) : ""} />
             <Value label="PAN number" value={document.identity.panNumber ? document.identity.panNumber.slice(0, 2) + "••••••" + document.identity.panNumber.slice(-2) : ""} />
           </div>
           <p className="mt-4 text-xs leading-5 text-muted-foreground">Aadhaar/PAN files remain blocked on secure Cloud Storage; saved numbers are masked in the UI.</p>
         </Card>
-        <Card id="hobbies" title="Hobbies">
+        <Card id="hobbies" title="Hobbies & Interests">
           {document.hobbies.length ? <div className="flex flex-wrap gap-2">{document.hobbies.map((hobby) => <StatusBadge key={hobby}>{hobby}</StatusBadge>)}</div> : <p className="m-0 text-sm text-muted-foreground">No hobbies added yet.</p>}
         </Card>
         {(["award","publication"] as const).map(kind=>{
