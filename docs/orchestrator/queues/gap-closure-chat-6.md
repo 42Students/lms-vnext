@@ -22,8 +22,8 @@ Audit: `docs/audit/pages/faculty/assessments.md` (and `assessments-review.md` if
 | FAC-assessments-09 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | FAC-assessments-10 | S3 | COPY | FIXED-ON-MAIN |
 | FAC-assessments-11 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
-| FAC-assessments-12 | S3 | COPY | OPEN |
-| FAC-assessments-13 | S3 | STATE | OPEN |
+| FAC-assessments-12 | S3 | COPY | DONE |
+| FAC-assessments-13 | S3 | STATE | DONE |
 | FAC-assessments-16 | S3 | COPY | FIXED-ON-MAIN |
 | FAC-assessments-17 | S3 | COPY | FIXED-ON-MAIN |
 | FAC-assessments-23 | S3 | COPY | FIXED-ON-MAIN |
@@ -31,13 +31,13 @@ Audit: `docs/audit/pages/faculty/assessments.md` (and `assessments-review.md` if
 | FAC-assessments-29 | S3 | RESPONSIVE | FIXED-ON-MAIN |
 | FAC-assessments-R03 | S3 | STATE | OPEN |
 | FAC-assessments-R04 | S3 | PERFORMANCE | OPEN |
-| FAC-assessments-14 | S4 | STATE | OPEN |
+| FAC-assessments-14 | S4 | STATE | DONE |
 | FAC-assessments-18 | S4 | VALIDATION | FIXED-ON-MAIN |
 | FAC-assessments-19 | S4 | VALIDATION | FIXED-ON-MAIN |
-| FAC-assessments-20 | S4 | MISSING-FIELD | OPEN |
+| FAC-assessments-20 | S4 | MISSING-FIELD | NOT-A-GAP |
 | FAC-assessments-21 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
 | FAC-assessments-22 | S4 | MISSING-FIELD | FIXED-ON-MAIN |
-| FAC-assessments-24 | S4 | COPY | OPEN |
+| FAC-assessments-24 | S4 | COPY | DONE |
 | FAC-assessments-25 | S4 | MISSING-COLUMN | WRONG |
 | FAC-assessments-26 | S4 | MISSING-ACTION | WRONG |
 | FAC-assessments-28 | S4 | COPY | WRONG |
@@ -58,7 +58,7 @@ Audit: `docs/audit/pages/superadmin/academics-people-3-people-recruiters.md` (an
 | SA-academics-people-101 | S2 | MISSING-ACTION | OPEN |
 | SA-academics-people-106 | S2 | PERMISSION | OPEN |
 | SA-academics-people-108 | S2 | MISSING-FIELD | OPEN |
-| SA-academics-people-109 | S2 | MISSING-ACTION | OPEN |
+| SA-academics-people-109 | S2 | MISSING-ACTION | DONE |
 | SA-academics-people-110 | S2 | MISSING-FIELD | OPEN |
 | SA-academics-people-116 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-academics-people-80 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
@@ -78,20 +78,20 @@ Audit: `docs/audit/pages/superadmin/academics-people-3-people-recruiters.md` (an
 | SA-academics-people-105 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | SA-academics-people-107 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
 | SA-academics-people-111 | S3 | VALIDATION | UNCONFIRMED |
-| SA-academics-people-112 | S3 | STATE | OPEN |
+| SA-academics-people-112 | S3 | STATE | DONE |
 | SA-academics-people-113 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
-| SA-academics-people-114 | S3 | COPY | OPEN |
+| SA-academics-people-114 | S3 | COPY | DONE |
 | SA-academics-people-115 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | SA-academics-people-78 | S3 | COPY | OPEN |
-| SA-academics-people-79 | S3 | COPY | OPEN |
-| SA-academics-people-87 | S3 | MISSING-ACTION | OPEN |
+| SA-academics-people-79 | S3 | COPY | DONE |
+| SA-academics-people-87 | S3 | MISSING-ACTION | NOT-A-GAP |
 | SA-academics-people-89 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | SA-academics-people-90 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | SA-academics-people-91 | S3 | COPY | OPEN |
 | SA-academics-people-97 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-academics-people-98 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | SA-academics-people-99 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
-| SA-academics-people-84 | S4 | MISSING-ACTION | OPEN |
+| SA-academics-people-84 | S4 | MISSING-ACTION | NOT-A-GAP |
 | SA-academics-people-86 | S4 | MISSING-ACTION | OPEN |
 | SA-academics-people-92 | S4 | VALIDATION | OPEN |
 
@@ -287,3 +287,9 @@ Audit: `docs/audit/pages/college/dashboard.md` (and `dashboard-review.md` if pre
 
 - SA-placements-projects-102: chat-9 must mount the existing `src/components/tracker/tracker-quick-report-launcher.tsx` into the shared `src/components/shell/app-shell.tsx` for all authenticated roles, with permission-aware visibility and keyboard focus; chat-6 may not edit shell. Do not mark global-launcher parity DONE until mounted and keyboard-tested.
 
+
+### Chat-6 current batch: verified formerly OPEN statuses
+
+- Faculty FAC-assessments-12, FAC-assessments-13, FAC-assessments-14, FAC-assessments-20, FAC-assessments-24: tested on main with named cases, recorded in `docs/audit/acceptance/faculty-assessments-verification.md` (20 is OD-38 intentional scope).
+- Super Admin People SA-academics-people-79, SA-academics-people-84, SA-academics-people-87, SA-academics-people-109, SA-academics-people-112, SA-academics-people-114: acceptance in `docs/audit/acceptance/superadmin-academics-people-3-people-recruiters-verification.md`; 84/87 follow OD-23 (no hard delete/impersonation).
+- These are prior source-authored tests being reconciled, not claimed as newly run. Cloud test failures in SA-academics-people-58 and SA-academics-people-63 fixed in this batch.
