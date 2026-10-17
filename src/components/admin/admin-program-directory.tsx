@@ -139,7 +139,7 @@ export function AdminProgramDirectory({
         </p>
         {departments.length === 0 ? (
           <p role="status" className="mt-3 text-sm text-muted-foreground">
-            No departments in this college yet. <Link href="/admin/departments" className="font-semibold text-primary-text underline">Go to Departments</Link>
+            No departments in this college yet. <Link href="/college/departments" className="font-semibold text-primary-text underline">Go to Departments</Link>
           </p>
         ) : null}
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
