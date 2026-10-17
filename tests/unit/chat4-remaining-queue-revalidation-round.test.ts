@@ -42,4 +42,24 @@ describe("chat-4 remaining source contracts after final-sprint split",()=>{
   expect(center).toContain("subjectLabel");
   expect(center).toContain("item.event.summary");
  });
+ it("SA-placements-projects-71 keeps pending-age, reviewer evidence, scoped export, and mentor reassignment",()=>{
+  const page=source("src/components/projects/project-admin-submissions-page.tsx");
+  const exportComponent=source("src/components/projects/project-submissions-page-export.tsx");
+  expect(page).toContain("pendingDays:");
+  expect(page).toContain("reviewedBy");
+  expect(page).toContain("Reassign mentor");
+  expect(exportComponent).toContain("Export CSV");
+  expect(exportComponent).toContain("Revisions");
+  expect(exportComponent).toContain("Reviewed by");
+ });
+ it("SA-placements-projects-88 requires selected historical version, optimistic expected version and confirmation for rollback",()=>{
+  const rollback=source("src/components/projects/super-admin-template-rollback-control.tsx");
+  expect(rollback).toContain('status!=="ARCHIVED"');
+  expect(rollback).toContain('selectedVersion.version!==currentVersion');
+  expect(rollback).toContain("expectedTemplateVersion:currentVersion");
+  expect(rollback).toContain("confirmed:true");
+  expect(rollback).toContain("Roll back");
+  expect(rollback).toContain("Review the compared changes above.");
+ });
+
 });
