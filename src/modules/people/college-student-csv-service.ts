@@ -1,11 +1,12 @@
 import "server-only";
 import {randomUUID} from "node:crypto";
 
-import { and, eq, inArray } from "drizzle-orm";
+import { and, desc, eq, inArray } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {activityEvents, cohorts, departments, programs, sections } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
-import { hasMembershipRole } from "@/modules/identity/context";
+import { hasMembershipRole, isSuperAdmin } from "@/modules/identity/context";
+import { resolveActingCollege } from "@/modules/permissions/acting-college";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { createLearnerProgramEnrollment } from "@/modules/academics/enrollment-service";
 import { onboardPersonWithRuntime, upsertLearnerProfileWithRuntime } from "./runtime";
@@ -36,7 +37,14 @@ export function requireCollegeStudentImporter(context: RequestContext) {
 /** Bulk transport orchestrator; canonical identity/onboard and enrollment services own writes/audit. */
 export async function runCollegeStudentCsv(context: RequestContext, raw: unknown) {
   const request = studentCsvRequestSchema.parse(raw);
-  const member = requireCollegeStudentImporter(context);
+  // SA-academics-people-95: the selected, active college is authoritative.
+  // Other college memberships may not silently supply an import target.
+  const member = isSuperAdmin(context)
+    ? await resolveActingCollege(context, "people.manage")
+    : requireCollegeStudentImporter(context);
+  requirePermission(context, "academics.manage", {
+    collegeId: member.collegeId, organizationId: member.organizationId,
+  });
   const parsed = parseStudentCsv(request.csv, request);
   if (parsed.structuralErrors.length) {
     return { preview: true, structuralErrors: parsed.structuralErrors,
@@ -151,7 +159,7 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
   const runId=randomUUID();
   await getDb().insert(activityEvents).values({
    organizationId:member.organizationId,collegeId:member.collegeId,
-   actorUserId:context.user.id,actorMembershipId:member.id,
+   actorUserId:context.user.id,actorMembershipId:"id" in member ? member.id : null,
    module:"IDENTITY",eventType:"IDENTITY_COLLEGE_STUDENT_CSV_IMPORT",
    subjectType:"college_student_import",subjectId:runId,
    summary:"College Student CSV import completed",
@@ -160,4 +168,18 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
     failed:results.filter(x=>["INVALID","FAILED"].includes(x.status)).length},
   });
   return { preview: false, structuralErrors: [], results, valid: valid.length, invalid,runId };
+}
+
+/** SA-academics-people-95: history reads use the same selected active college as imports. */
+export async function listSuperAdminStudentCsvImportHistory(context: RequestContext) {
+  if (!isSuperAdmin(context)) throw new AuthorizationError("people.manage");
+  const selected = await resolveActingCollege(context, "people.manage");
+  return getDb().select({
+    occurredAt:activityEvents.occurredAt,
+    metadata:activityEvents.metadata,
+  }).from(activityEvents).where(and(
+    eq(activityEvents.collegeId,selected.collegeId),
+    eq(activityEvents.organizationId,selected.organizationId),
+    eq(activityEvents.eventType,"IDENTITY_COLLEGE_STUDENT_CSV_IMPORT"),
+  )).orderBy(desc(activityEvents.occurredAt)).limit(50);
 }

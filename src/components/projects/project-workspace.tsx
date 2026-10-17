@@ -1498,7 +1498,7 @@ export function ProjectWorkspace({
             ) : null}
           </div>
           {mode==="MENTOR" && workspace.meetings.length ? (() => {
-            const upcoming=workspace.meetings.filter(m=>m.status==="SCHEDULED"&&new Date(m.endsAt)>renderTime)
+            const upcoming=workspace.meetings.filter(m=>(m.status==="SCHEDULED"||m.status==="RESCHEDULED")&&new Date(m.endsAt)>renderTime)
               .sort((a,b)=>new Date(a.startsAt).getTime()-new Date(b.startsAt).getTime());
             return <section aria-label="Upcoming project meetings" className="rounded-xl border border-border bg-surface p-4">
               <h3 className="text-sm font-semibold">Next meeting</h3>
@@ -1515,7 +1515,7 @@ export function ProjectWorkspace({
               </details>:null}
               <MentorMeetingHistory meetings={workspace.meetings
                 .filter(m=>m.status==="COMPLETED"||m.status==="CANCELLED"||
-                  (m.status==="SCHEDULED"&&new Date(m.endsAt)<=renderTime))
+                  ((m.status==="SCHEDULED"||m.status==="RESCHEDULED")&&new Date(m.endsAt)<=renderTime))
                 .sort((a,b)=>new Date(b.startsAt).getTime()-new Date(a.startsAt).getTime())
                 .map(m=>({id:m.id,title:m.title,
                   startsAt:new Date(m.startsAt).toISOString(),
@@ -1618,8 +1618,8 @@ export function ProjectWorkspace({
                     ) : null}
                     {mode !== "LEARNER" &&
                     !readOnly &&
-                    (meeting.status === "REQUESTED" ||
-                      meeting.status === "SCHEDULED") && mentorMeetingDisplayStatus(meeting.status,meeting.endsAt,renderTime)!=="MISSED" ? (
+                    (meeting.status === "REQUESTED" || meeting.status === "DRAFT" ||
+                      meeting.status === "SCHEDULED" || meeting.status === "RESCHEDULED") && mentorMeetingDisplayStatus(meeting.status,meeting.endsAt,renderTime)!=="MISSED" ? (
                       <div className="mt-3">
                         <ScheduleProjectMeetingControl
                           projectId={workspace.project.id}

@@ -205,7 +205,7 @@ export async function liftPlacementDebarment(
       liftedByUserId: context.user.id,
       liftedReason: input.reason,
     }).where(eq(placementDebarments.id, locked.id)).returning();
-    // The DB trigger creates immutable LIFTED history. A repeated lift is a no-op.
+    // The DB trigger creates an immutable LIFTED action. A repeated lift is a no-op.
     const [learner]=await tx.select({userId:collegeMemberships.userId})
       .from(collegeMemberships).where(and(
         eq(collegeMemberships.id,locked.membershipId),

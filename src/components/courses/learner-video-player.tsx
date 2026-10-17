@@ -17,11 +17,11 @@ import { playbackGrantRefreshDelay, resumePositionForGrant } from "@/modules/cou
  */
 export function LearnerVideoPlayer({
   lessonId, contentId, storageKey, deliveryId, initialPositionSeconds,
-  authoredDurationSeconds, completed, readOnly = false,
+  authoredDurationSeconds, completed, readOnly = false, saveIntervalMs = 5000,
 }: {
   lessonId: string; contentId: string; storageKey: string | null; deliveryId: string;
   initialPositionSeconds: number; authoredDurationSeconds: number;
-  completed: boolean; readOnly?: boolean;
+  completed: boolean; readOnly?: boolean; saveIntervalMs?:number;
 }) {
   const router = useRouter();
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -35,6 +35,7 @@ export function LearnerVideoPlayer({
   const hasPlaybackGrantRef = useRef(false);
   const lastSavedRef = useRef(initialPositionSeconds);
   const savingRef = useRef(false);
+  const lastSaveAttemptMs=useRef(0);
   const completedRef = useRef(completed);
   const [savedSeconds, setSavedSeconds] = useState(initialPositionSeconds);
   const [isCompleted, setIsCompleted] = useState(completed);
@@ -46,9 +47,12 @@ export function LearnerVideoPlayer({
   const persist = useCallback(async (force: boolean, keepalive = false) => {
     const video = videoRef.current;
     if (!video || readOnly || savingRef.current || completedRef.current) return;
+    const attemptAt=Date.now();
+    if(!force&&attemptAt-lastSaveAttemptMs.current<saveIntervalMs)return;
     const current = video.currentTime;
     if (!Number.isFinite(current) || !shouldPersistPlayback(lastSavedRef.current, current, force)) return;
     savingRef.current = true;
+    lastSaveAttemptMs.current=attemptAt;
     try {
       const response = await fetch(`/api/courses/progress/${encodeURIComponent(contentId)}`, {
         method: "PUT", headers: { "Content-Type": "application/json" },
@@ -74,7 +78,7 @@ export function LearnerVideoPlayer({
     } finally {
       savingRef.current = false;
     }
-  }, [contentId, deliveryId, readOnly, router]);
+  }, [contentId, deliveryId, readOnly, router, saveIntervalMs]);
 
   const clearTimer = useCallback(() => {
     if (timerRef.current) { clearTimeout(timerRef.current); timerRef.current = null; }

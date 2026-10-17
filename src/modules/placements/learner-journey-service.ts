@@ -21,6 +21,7 @@ import {
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { listOwnAppliedPlacementResults } from "./result-service";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
+import {learnerStaffApplicationOptOut} from "./learner-staff-application-optout-model";
 
 function requireLearner(context: RequestContext) {
   if (
@@ -146,7 +147,13 @@ export async function getLearnerPlacementJourney(
     }
   }
 
+  const snapshotNow=new Date();
   return applications.map((row) => {
+    const optOut=learnerStaffApplicationOptOut({
+      submittedAt:row.application.submittedAt,
+      submittedByUserId:row.application.submittedByUserId,
+      learnerUserId:context.user.id,now:snapshotNow,
+    });
     const terminal =
       row.screening.status ===
         "SHORTLISTED" ||
@@ -157,7 +164,9 @@ export async function getLearnerPlacementJourney(
       applicationStatus:
         row.application.status,
       offerStatus: offerStatusByApplication.get(row.application.id) ?? null,
-      channel: row.application.channel,
+      channel: optOut.staffApplied?"PLACEMENT_CELL":row.application.channel,
+      staffOptOutUntil:optOut.expiresAt,
+      mayStaffOptOut:optOut.canOptOut,
       submittedAt:
         row.application.submittedAt,
       withdrawnAt:
