@@ -40,6 +40,12 @@ describe("chat-7 final sprint Super Admin courses and content",()=>{
   const single=read("src/modules/courses/college-content-visibility-service.ts");
   expect(single).toContain("isSuperAdmin(context)");
   expect(single).toContain("requirePermission(context");
+  const lessons=read("src/app/(authenticated)/admin/lessons/page.tsx");
+  const lessonService=read("src/modules/courses/college-lesson-visibility-service.ts");
+  expect(lessons).toContain("<CollegeLessonVisibilityControl");
+  expect(lessonService).toContain("isSuperAdmin(context)");
+  expect(lessonService).toContain("resolveActingCollege(context");
+
  });
  it("SA-academics-people-56 can edit archive reorder and open offering creation from the lesson directory",()=>{
   const page=read("src/app/(authenticated)/admin/lessons/page.tsx");
