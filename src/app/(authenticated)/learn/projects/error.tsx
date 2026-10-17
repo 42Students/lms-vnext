@@ -9,13 +9,12 @@ export default function LearnerProjectsError({
 }) {
   return (
     <section role="alert" className="rounded-xl border border-border bg-surface px-5 py-10 text-center sm:px-8">
-      <h1 className="text-lg font-semibold text-foreground">Couldn&apos;t load Projects</h1>
+      <h1 className="text-lg font-semibold text-foreground">Projects could not be loaded</h1>
       <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-body">
-        We couldn&apos;t load your assigned Projects. No results have been
-        assumed while the request is failing.
+        Check your connection, then try again. Your project data has not been changed.
       </p>
       <div className="mt-5 flex justify-center">
-        <Button onClick={reset}>Retry Projects</Button>
+        <Button onClick={reset}>Retry</Button>
       </div>
     </section>
   );

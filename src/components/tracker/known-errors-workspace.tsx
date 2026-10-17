@@ -63,9 +63,12 @@ function KnownErrorCard({ item }: { item: KnownError }) {
           </p>
         </div>
         <p className="m-0 text-xs text-muted-foreground">
-          Last seen {formatInstant(item.lastSeenAt)}
+          First seen {formatInstant(item.firstSeenAt)} · Last seen {formatInstant(item.lastSeenAt)}
         </p>
       </div>
+      {item.acknowledgedAt ? (
+        <p role="status" className="text-xs text-muted-foreground">Acknowledged {formatInstant(item.acknowledgedAt)}</p>
+      ) : null}
       {item.regressedAt ? (
         <p role="status" className="text-sm font-semibold text-error">
           Regression observed {formatInstant(item.regressedAt)}
@@ -98,6 +101,10 @@ function KnownErrorCard({ item }: { item: KnownError }) {
         </label>
       </div>
       <div className="flex flex-wrap gap-2">
+        <Button size="sm" variant="secondary" disabled={pending || Boolean(item.acknowledgedAt)}
+          onClick={() => update({ action: "ACKNOWLEDGE" })}>
+          {item.acknowledgedAt ? "Acknowledged" : "Acknowledge"}
+        </Button>
         <Button size="sm" variant="secondary" disabled={pending}
           onClick={() => update({
             action: "MUTE", muted: !item.muted,

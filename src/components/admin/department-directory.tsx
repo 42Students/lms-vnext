@@ -130,7 +130,7 @@ export function DepartmentDirectory({
           <p className="m-0 text-sm text-muted-foreground">
             {search.trim()
               ? "No departments match this search."
-              : "No departments yet. Create a department to get started."}
+              : "No departments found. Create a college first, then add departments."}
           </p>
         }
       />

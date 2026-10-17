@@ -92,7 +92,7 @@ export function SuperAdminHrAccountDialog({
       }}
       title={
         creating
-          ? "Add recruiter account"
+          ? "Add recruiter"
           : `Edit ${account.displayName ?? "recruiter account"}`
       }
       description={
@@ -117,7 +117,7 @@ export function SuperAdminHrAccountDialog({
             {pending
               ? "Saving…"
               : creating
-                ? "Add recruiter account"
+                ? "Add recruiter"
                 : "Save changes"}
           </Button>
         </>

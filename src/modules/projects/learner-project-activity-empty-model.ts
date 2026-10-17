@@ -7,5 +7,5 @@ export function learnerProjectActivityEmptyMessage(state:State):string {
  if(state.hasMore)return "No activity on this loaded page. Older Project activity may exist.";
  if(state.olderPage)return "No older activity found for this selection. Return to the newest activity page.";
  if(state.filtered)return "No activity matches these filters. Clear them to see recent activity.";
- return "No persisted Project activity yet.";
+ return "No project activity yet. Task moves, sprint updates and resource changes will appear here.";
 }

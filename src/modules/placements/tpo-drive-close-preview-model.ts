@@ -15,8 +15,10 @@ export const tpoDriveCloseSchema=z.object({
 export function evaluateTpoDriveClosure(
  status:string,seasonStatus:string|null,
  current:TpoDriveImpactCounts,expected:TpoDriveImpactCounts,
+ unreleasedSelections=0,
 ){
  if(status!=="PUBLISHED"||seasonStatus!=="ACTIVE")return "READ_ONLY" as const;
+ if(unreleasedSelections>0)return "UNRELEASED_SELECTIONS" as const;
  if(current.applications!==expected.applications||current.rounds!==expected.rounds||
   current.offers!==expected.offers)return "PREVIEW_STALE" as const;
  return "ALLOW" as const;

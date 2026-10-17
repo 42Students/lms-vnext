@@ -1,5 +1,5 @@
 import {z} from "zod";
-export const TPO_REPORT_GALLERY_GROUPS=["ALL","Overview and performance","Student outcomes","Relationships and compliance"] as const;
+export const TPO_REPORT_GALLERY_GROUPS=["ALL","Overview and performance","Offers, joining and readiness gaps","Recruiter funnel and accreditation"] as const;
 export const tpoReportGalleryGroupSchema=z.enum(TPO_REPORT_GALLERY_GROUPS).default("ALL");
 export const tpoReportGallerySearchSchema=z.string().trim().max(80);
 export function filterTpoReportGallery<T extends {heading:string;cards:readonly {title:string;description:string}[]}>(

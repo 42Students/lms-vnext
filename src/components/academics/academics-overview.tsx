@@ -3,6 +3,7 @@ import {
   type DataTableColumn,
 } from "@/components/ui/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { legacyAcademicStatus } from "@/modules/academics/legacy-academic-status";
 import type { getAcademicsWorkspace } from "@/modules/academics/workspace";
 import { AcademicsCreatePanel } from "./academics-create-panel";
 import {
@@ -128,7 +129,7 @@ export function AcademicsOverview({
         <StatusBadge
           tone={periodTone(period.status)}
         >
-          {period.status}
+          {legacyAcademicStatus(period.status)}
         </StatusBadge>
       ),
     },
@@ -180,7 +181,7 @@ export function AcademicsOverview({
         <StatusBadge
           tone={cohortTone(cohort.status)}
         >
-          {cohort.status}
+          {legacyAcademicStatus(cohort.status, true)}
         </StatusBadge>
       ),
     },

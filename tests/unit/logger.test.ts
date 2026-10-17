@@ -6,22 +6,22 @@ import {
 } from "@/observability/logger";
 
 describe("structured logger", () => {
-  it("creates Cloud Logging friendly JSON records", () => {
+  it("GR-05 creates Cloud Logging friendly JSON records with a short reference", () => {
     const now = new Date("2026-10-03T00:00:00.000Z");
 
-    expect(
-      createStructuredLogRecord(
+    const record = createStructuredLogRecord(
         "ERROR",
         "api.unhandled_error",
         { component: "api" },
         now,
-      ),
-    ).toEqual({
+      );
+    expect(record).toMatchObject({
       severity: "ERROR",
       event: "api.unhandled_error",
       timestamp: "2026-10-03T00:00:00.000Z",
       component: "api",
     });
+    expect(record.requestId).toMatch(/^[a-f0-9]{8}$/);
   });
 
   it("serializes errors without copying arbitrary object fields", () => {

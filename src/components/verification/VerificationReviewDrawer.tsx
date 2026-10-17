@@ -83,7 +83,9 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
      setPendingAction(null);
      throw Error("The request changed since it was opened. Reload the current details before deciding again.");
     }
-    throw Error(payload.error??"Decision failed");
+    throw Error(apiBase==="/api/tpo/verification"
+     ?(action==="VERIFY"?"Could not verify":"Could not send it back")
+     :(payload.error??"Decision failed"));
    }
    setPendingAction(null);onSaved(action);
   }catch(e){setError(e instanceof Error?e.message:"Decision failed");}
@@ -93,6 +95,7 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
   <aside ref={drawer} role="dialog" aria-modal="true" aria-label={`Review ${row.learnerName}`} className="h-full w-full max-w-xl overflow-y-auto bg-background p-4 shadow-xl sm:p-6">
    <header className="flex items-start justify-between gap-3 border-b pb-3">
     <div className="min-w-0"><h2 className="break-words text-lg font-semibold">{row.learnerName}</h2>
+     {row.rollNumber?<p className="text-xs text-muted-foreground">Roll no.: {row.rollNumber}</p>:null}
      <p className="text-sm">{row.section==="EDUCATION"?"Education":"Identity"} · {row.status.replaceAll("_"," ")}</p></div>
     <button type="button" ref={closeButton} disabled={saving} onClick={onClose} className="rounded-md border px-3 py-2 disabled:opacity-50">Close</button>
    </header>
@@ -131,6 +134,7 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
         Showing the latest 100 history events.
       </p>}
     </section>
+    {row.section==="IDENTITY"?<p className="text-sm text-muted-foreground">Numbers show only the last four digits; compare them with the document.</p>:null}
     <section><h3 className="font-semibold">Submitted versus previously verified</h3>
      <dl className="mt-3 space-y-3">{verificationSnapshotComparison(detail.review.submittedSnapshot,detail.review.verifiedSnapshot)
       .map(item=><div key={item.key} className="min-w-0 rounded-md border p-3">
