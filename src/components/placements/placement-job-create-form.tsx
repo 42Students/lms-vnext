@@ -153,8 +153,6 @@ export function PlacementJobCreateForm({
     visiblePrograms.some(program=>program.id===cohort.programId));
   const visibleSections=academicOptions.sections.filter(section=>
     visibleCohorts.some(cohort=>cohort.id===section.cohortId));
-  const effectiveProgramIds=selectedProgramIds.length?selectedProgramIds:
-    departmentFilter==="ALL"?[]:visiblePrograms.map(program=>program.id);
   const [
     selectedProgramIds,
     setSelectedProgramIds,
@@ -163,6 +161,8 @@ export function PlacementJobCreateForm({
     selectedCohortIds,
     setSelectedCohortIds,
   ] = useState<string[]>([]);
+  const effectiveProgramIds=selectedProgramIds.length?selectedProgramIds:
+    departmentFilter==="ALL"?[]:visiblePrograms.map(program=>program.id);
 
   // TPO-drives-41: per-user/college browser-only recovery for long-form drafts.
   // No passwords, tokens, email invitations or learner records are present here.
