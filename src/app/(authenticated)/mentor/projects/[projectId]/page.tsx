@@ -25,7 +25,7 @@ export default async function MentorProjectPage({
   const { tab } = await searchParams;
   const selectedTab = tab === "tasks" ? "board" : tab === "meetings" ? "team" : tab;
   const activeSection =
-    selectedTab === "board" || tab === "performance"
+    selectedTab === "board" || selectedTab === "performance"
       ? "tasks"
       : selectedTab === "activity"
         ? "audit"
