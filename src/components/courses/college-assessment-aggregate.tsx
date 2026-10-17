@@ -6,6 +6,7 @@ import { FacultyItemActions } from "./faculty-item-actions";
 import { AdminQuizResultsActions } from "./admin-learning-structure-actions";
 import { CollegeAssignmentReview } from "./college-assignment-review";
 import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
+import {collegeAssessmentExportHref} from "@/modules/courses/college-assessment-export-model";
 import {
   collegeAssessmentHref,
   collegeAssessmentSummary,
@@ -71,6 +72,10 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
         }
         actions={
           <div className="flex flex-wrap gap-2">
+            <Link prefetch={false} download href={collegeAssessmentExportHref(data.kind,data.query)}
+              className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+              Export CSV
+            </Link>
             <Link href={isAssignment ? "/college/quizzes" : "/college/assignments"}
               className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
               {isAssignment ? "View quizzes" : "View assignments"}
