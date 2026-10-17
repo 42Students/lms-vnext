@@ -56,7 +56,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
           estimatePoints:points?Number(points):null,
           taskType:taskType||null,dueDate:dueDate||null,blockerReason:blockerReason.trim()||null,
         });
-        setAdding(false);setTitle("");setDescription("");setCriteria("");
+        setAdding(false);setTitle("");setDescription("");setApproach("");setCriteria("");
         setPriority("MEDIUM");setPoints("");setTaskType("");setDueDate("");setBlockerReason("");
         router.refresh();
       }catch(err){setError(err instanceof Error?err.message:"Could not add backlog task");}
