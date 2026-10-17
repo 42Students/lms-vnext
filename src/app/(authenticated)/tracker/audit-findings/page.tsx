@@ -42,6 +42,20 @@ export default async function IndependentFindingsPage({searchParams}:{
    {sync?.lastSyncedAt?<p className="mt-1 text-body">Last recorded sync: {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(sync.lastSyncedAt)} IST · {sync.importedCount} imported · {sync.refusedCount} refused.</p>:
     <p role="status" className="mt-1 text-body">No verified import has been recorded. Independent findings already stored here remain available; automatic GitHub sync is not configured.</p>}
    <p className="mt-1 text-xs text-muted-foreground">A manual sync is unavailable until the findings repository is accessible and import credentials are verified. No sync was performed by opening this page.</p>
+   {sync?.refusedCount ? <section aria-label="Files the importer refused or flagged" className="mt-4 space-y-2">
+    <h3 className="font-semibold">Files the importer refused or flagged ({sync.refusedCount})</h3>
+    <div className="overflow-x-auto"><table className="w-full min-w-[28rem] text-left text-xs">
+     <thead><tr className="border-b border-border"><th scope="col" className="p-2">Source file</th>
+      <th scope="col" className="p-2">Refusal reason</th></tr></thead>
+     <tbody>{sync.refusedFiles.map((item,index)=><tr key={index} className="border-b border-border">
+      <td className="max-w-xs break-all p-2 font-mono">{item.path||"Unknown file"}</td>
+      <td className="break-words p-2">{item.reason||"Reason not recorded"}</td>
+     </tr>)}</tbody>
+    </table></div>
+    {sync.refusedCount>sync.refusedFiles.length?<p role="status" className="text-xs text-muted-foreground">
+     Showing the first {sync.refusedFiles.length} of {sync.refusedCount} refused files. Review importer logs for the remaining details.
+    </p>:null}
+   </section>:null}
   </section>
   <nav aria-label="Finding views" className="flex flex-wrap gap-2">
    {(["OPEN","RELEASE","ALL"] as const).map(value=><Link key={value} aria-current={parsed.view===value?"page":undefined}
