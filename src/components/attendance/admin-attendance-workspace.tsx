@@ -2,6 +2,7 @@
 
 import { ADMIN_ATTENDANCE_COPY } from "@/modules/attendance/admin-attendance-copy";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {
   useMemo,
   useState,
@@ -131,6 +132,7 @@ export function AdminAttendanceWorkspace({
   basePath: string;
 }) {
   const router = useRouter();
+  const correctionGuard=useGuardedAction({busyLabel:"Correcting attendance..."});
   const [target, setTarget] =
     useState<CellTarget | null>(null);
   const [correcting, setCorrecting] =
@@ -235,6 +237,7 @@ export function AdminAttendanceWorkspace({
       | "MEDICAL"
       | "LATE",
   ) {
+    return correctionGuard.run(async()=>{
     if (
       !target ||
       !data.selectedDeliveryId ||
@@ -269,6 +272,7 @@ export function AdminAttendanceWorkspace({
     } finally {
       setCorrecting(false);
     }
+    });
   }
 
   function exportCsv() {
