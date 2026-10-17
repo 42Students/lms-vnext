@@ -119,9 +119,9 @@ export async function changeTpoRecruiterGrant(context: RequestContext, raw: unkn
     }
     if(input.action==="EXTEND"){
       const now=new Date();
-      const candidate=recruiterGrantValidUntil(now,input.months);
-      const validUntil=record.grant.validUntil&&record.grant.validUntil>candidate
-        ?record.grant.validUntil:candidate;
+      const base=record.grant.validUntil&&record.grant.validUntil>now
+        ?record.grant.validUntil:now;
+      const validUntil=recruiterGrantValidUntil(base,input.months);
       const [extended]=await tx.update(placementRecruiterCollegeGrants).set({
         validUntil,updatedAt:now,
       }).where(and(eq(placementRecruiterCollegeGrants.id,input.grantId),
