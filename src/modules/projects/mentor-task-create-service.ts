@@ -89,7 +89,7 @@ export async function createMentorProjectTask(context:RequestContext,rawParams:u
         await tx.update(projectSprints).set({updatedAt})
           .where(and(eq(projectSprints.id,sprint.id),eq(projectSprints.projectId,scope.project.id)));
       }
-      await recordActivityEventInTransaction(tx,context,{
+      const event=await recordActivityEventInTransaction(tx,context,{
         eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TASK_CREATED,
         collegeId:scope.collegeId,organizationId:scope.organizationId,
         subjectType:"project_task",subjectId:created.id,
