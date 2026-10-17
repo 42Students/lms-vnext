@@ -187,3 +187,9 @@ Additional source-level closures this continuation: TPO-inbox-team-57, -62, -64,
 
 | TPO-inbox-team-R05 | DONE (source; tests not run) | Explicit same-origin POST on Team detail open via `TpoTeamOpenRead`, JSON success support on acknowledgement route, and graceful manual Retry; named `TPO-inbox-team-R05` in `tests/unit/tpo-team-read-on-open-chat2.test.ts`. The read pointer remains separate from personal bell read state. |
 | TPO-inbox-team-20 | PARTIAL — OPEN | Opening conversation clears per-thread unread through authorized POST (existing follow/mute survives), guarded failure shows manual retry. `tests/unit/tpo-team-read-on-open-chat2.test.ts` names `TPO-inbox-team-20`. Mentions/object subscription remains open. |
+
+## Chat-2 round 5 — activity ordering and Team notices
+
+| TPO-inbox-team-18 | PARTIAL — OPEN | Sorted limited Team inbox by latest actual message activity (college-scoped) and displayed IST timestamp, with existing search/preview; `tests/unit/tpo-team-activity-notices-chat2.test.ts` named `TPO-inbox-team-18`. Object/ask/decision filters remain. |
+| TPO-inbox-team-29 | PARTIAL — OPEN | Private thread invitations and replies now include actor name and 120-character recipient-only preview; reply uses deep link to message; same named `TPO-inbox-team-29` test. Full TEAM_MENTION, TEAM_ASK, TEAM_ASK_DONE, TEAM_ASSIGNED require those first-class workflows. |
+| TPO-inbox-team-R05 | DONE (source; tests unrun) | Old and `?m=` deep-linked Team alerts count and acknowledge with independently persisted read pointer. Named `TPO-inbox-team-R05` regression test in same suite. |

@@ -22,9 +22,13 @@ export async function listMyTpoInternalThreads(context:RequestContext,rawSearch=
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{
    organizationId:college.organizationId,collegeId:college.id,
   });
+  const lastActivity=sql<Date>`coalesce((select max(m.created_at) from placement_tpo_internal_messages m
+   where m.thread_id=${tpoInternalThreads.id} and m.college_id=${college.id}::uuid),
+   ${tpoInternalThreads.createdAt})`;
   const items=await tx.select({
    id:tpoInternalThreads.id,topic:tpoInternalThreads.topic,
    createdAt:tpoInternalThreads.createdAt,
+   lastActivityAt:lastActivity,
    counterpartName:sql<string|null>`(select coalesce(nullif(btrim(u.display_name),''),'Team member')
     from college_memberships cm join users u on u.id=cm.user_id
     where cm.college_id=${college.id}::uuid and cm.id=
@@ -60,7 +64,7 @@ export async function listMyTpoInternalThreads(context:RequestContext,rawSearch=
         where m.thread_id=${tpoInternalThreads.id}
         and m.college_id=${college.id}::uuid
         and position(lower(${q}) in lower(m.body))>0)`) : undefined))
-   .orderBy(desc(tpoInternalThreads.createdAt),desc(tpoInternalThreads.id)).limit(100);
+   .orderBy(desc(lastActivity),desc(tpoInternalThreads.id)).limit(100);
   if(readsReady)return {status:"READY" as const,items:items.map(row=>({
    ...row,unreadCount:row.following&&!row.muted?Number(row.unreadMessages):0,
   }))};
@@ -81,7 +85,12 @@ export async function listMyTpoInternalThreads(context:RequestContext,rawSearch=
     isNull(inAppNotifications.readAt),
     like(inAppNotifications.actionHref,"/tpo/team/%"),
    )).groupBy(inAppNotifications.actionHref);
-  const unreadByHref=new Map(unread.map(row=>[row.href,Number(row.total)]));
+  const unreadByHref=new Map<string,number>();
+  for(const row of unread){
+   if(!row.href)continue;
+   const threadHref=row.href.split("?")[0];
+   unreadByHref.set(threadHref,(unreadByHref.get(threadHref)??0)+Number(row.total));
+  }
   return {status:"READY" as const,items:items.map(row=>({
    ...row,unreadCount:unreadByHref.get("/tpo/team/"+row.id)??0,
   }))};
