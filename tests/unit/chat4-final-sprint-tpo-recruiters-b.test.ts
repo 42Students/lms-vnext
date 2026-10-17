@@ -22,6 +22,12 @@ describe("chat-4 final sprint TPO recruiter gaps B",()=>{
   expect(detail).toContain('aria-label="Call outcome"');
   expect(detail).toContain('"No answer"');
   expect(detail).toContain('"Not interested"');
+  const crm=source("src/modules/placements/tpo-crm-service.ts");
+  expect(crm).toContain('input.outcome === "Not interested"');
+  expect(crm).toContain('manualStage: "NOT_NOW"');
+  expect(crm).toContain('input.outcome === "No answer"');
+  expect(crm).toContain('note:"Call again — no answer"');
+  expect(crm).toContain('isNull(placementTpoFollowups.doneAt)');
   expect(detail).toContain('Log activity');
  });
  it("TPO-recruiters-27 rejects past follow-ups and exposes quick scheduling choices",()=>{
@@ -45,6 +51,12 @@ describe("chat-4 final sprint TPO recruiter gaps B",()=>{
   expect(error).toContain("Retry");
   expect(loading).toContain('aria-busy="true"');
   expect(detail).toContain('role="dialog" aria-modal="true"');
+  expect(detail).toContain("Discard unsaved recruiter changes?");
+  expect(detail).toContain("Discard your Not now reason and revisit date?");
+  expect(detail).toContain('onKeyDown={event=>dialogKeyDown(event,"EDIT")}');
+  expect(detail).toContain('onKeyDown={event=>dialogKeyDown(event,"NOT_NOW")}');
+  expect(detail).toContain('window.addEventListener("beforeunload",warn)');
+  expect(detail).toContain("if(!confirmLeave())event.preventDefault()");
  });
  it("TPO-recruiters-31 requires a reason for Not now and renders an IST revisit date",()=>{
   expect(detail).toContain("Please tell us why this recruiter is not available now.");
@@ -73,5 +85,9 @@ describe("chat-4 final sprint TPO recruiter gaps B",()=>{
   expect(roster).toContain('role="dialog" aria-modal="true"');
   expect(detail).toContain("keepRecruiterDialogFocus");
   expect(detail).toContain("event.key");
+  expect(detail).toContain('if(event.key==="Escape")');
+  expect(detail).toContain("keepRecruiterDialogFocus(event)");
+  expect(detail).toContain('autoFocus={name==="name"}');
+  expect(roster).toContain("<RecruiterInlineStage");
  });
 });
