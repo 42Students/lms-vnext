@@ -218,7 +218,7 @@ export function CourseActions({
         onOpenChange={setArchiveOpen}
         title={"Archive " + course.name + "?"}
         description={activeOfferingCount>0
-          ?activeOfferingCount+" active Course Offering(s) must be archived before you can archive this Course. Historical records remain preserved."
+          ?"A Course with active Offerings cannot be archived. "+activeOfferingCount+" active Course Offering(s) must be archived first. Historical records remain preserved."
           :"This course can be archived. Historical records remain preserved."}
         confirmLabel="Archive Course"
         pending={pending}

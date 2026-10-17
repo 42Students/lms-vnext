@@ -4,6 +4,10 @@ import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {apiFetch} from "@/lib/api-fetch";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
+import {DEFAULT_ATTENDANCE_POLICY} from "@/modules/attendance/policy-validation";
 
 type PolicyValues = {
   eligibilityThresholdPercent: number;
@@ -36,95 +40,52 @@ export function CollegeAttendancePolicyForm({
       ),
     );
   const [saving, setSaving] = useState(false);
+  const [resetOpen,setResetOpen]=useState(false);
+  const {pending,run}=useGuardedAction({timeoutMs:35000});
   const [message, setMessage] =
     useState<SaveMessage | null>(null);
 
-  async function save(
-    event: FormEvent<HTMLFormElement>,
-  ) {
-    event.preventDefault();
-
-    if (saving) {
-      return;
-    }
-
+  async function persistPolicy(values:PolicyValues,successText:string){
+    if(saving||pending)return;
     setSaving(true);
     setMessage(null);
-
-    try {
-      const response = await fetch(
-        "/api/attendance/admin/policy",
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            collegeId,
-            eligibilityThresholdPercent:
-              Number(threshold),
-            correctionWindowHours:
-              Number(correctionHours),
-          }),
-        },
-      );
-
-      if (!response.ok) {
-        if (
-          response.status === 401 ||
-          response.status === 403
-        ) {
-          throw new Error(
-            "You are not authorized to change this college's attendance policy.",
-          );
-        }
-
-        if (response.status === 400) {
-          throw new Error(
-            "Enter a whole-number threshold from 1 to 100 and a correction window from 1 to 168 hours.",
-          );
-        }
-
-        throw new Error(
-          "The attendance policy could not be saved. Please retry.",
-        );
-      }
-
-      const result: {
-        policy: PolicyValues;
-      } = await response.json();
-
-      setThreshold(
-        String(
-          result.policy.eligibilityThresholdPercent,
-        ),
-      );
-      setCorrectionHours(
-        String(
-          result.policy.correctionWindowHours,
-        ),
-      );
-
-      setMessage({
-        kind: "success",
-        text: "Attendance policy saved. New attendance reads and corrections will use these settings.",
+    try{
+      await run(async()=>{
+        const result=await apiFetch<{policy:PolicyValues}>("/api/attendance/admin/policy",{
+          method:"PUT",credentials:"same-origin",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({collegeId,...values}),
+        });
+        setThreshold(String(result.policy.eligibilityThresholdPercent));
+        setCorrectionHours(String(result.policy.correctionWindowHours));
+        setMessage({kind:"success",text:successText});
+        router.refresh();
       });
-
-      router.refresh();
-    } catch (error) {
-      setMessage({
-        kind: "error",
-        text:
-          error instanceof Error
-            ? error.message
-            : "The attendance policy could not be saved.",
-      });
-    } finally {
+    }catch(reason){
+      setMessage({kind:"error",text:reason instanceof Error?reason.message:
+        "The attendance policy could not be saved. Please retry."});
+    }finally{
       setSaving(false);
     }
   }
 
+  async function save(event:FormEvent<HTMLFormElement>){
+    event.preventDefault();
+    await persistPolicy({
+      eligibilityThresholdPercent:Number(threshold),
+      correctionWindowHours:Number(correctionHours),
+    },"Attendance policy saved. New attendance reads and corrections will use these settings.");
+  }
+
+  async function resetToDefaults(){
+    setResetOpen(false);
+    // COL-attendance-16: reset persists through the audited, college-scoped PUT.
+    await persistPolicy(DEFAULT_ATTENDANCE_POLICY,
+      "Attendance policy reset to the defaults. Existing attendance records remain unchanged.");
+  }
+
   return (
+    <>
     <form
       onSubmit={save}
       className="space-y-6 rounded-xl border border-border bg-surface p-5 sm:p-6"
@@ -239,10 +200,18 @@ export function CollegeAttendancePolicyForm({
             ? "Saving policy…"
             : "Save attendance policy"}
         </Button>
+        <Button type="button" variant="secondary" disabled={saving||pending}
+          onClick={()=>setResetOpen(true)}>Reset to default</Button>
         <span className="text-xs text-muted-foreground">
           Changes apply to this college only.
         </span>
       </div>
     </form>
+    <ConfirmDialog open={resetOpen} onOpenChange={setResetOpen}
+      title="Reset attendance policy to default?"
+      description="The threshold will return to 75% and the correction window to 24 hours. This also affects which past sessions may be corrected; existing attendance records are not changed."
+      confirmLabel="Reset to default" pending={saving||pending}
+      onConfirm={()=>void resetToDefaults()}/>
+    </>
   );
 }

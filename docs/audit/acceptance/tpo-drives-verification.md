@@ -88,3 +88,17 @@ The following gaps each have their own named assertion in `tests/unit/tpo-drives
 | TPO-drives-50 | OPEN | Edit checks TPO actor and college scope, but recruiter-originated approved drive fields are not yet protected by a company-owned-field policy and last-saved attribution. Test TPO-drives-50. |
 
 | TPO-drives-22 | DONE (visible wording) | Create and Edit use `Create drive`, `Create draft`, `Publish`, `Save changes`, `Back to drives` and `Open drive page`. Edit now uses accessible confirmation and guarded friendly API. Named test TPO-drives-22. Full legacy wizard semantics still tracked in other IDs. |
+
+## Round 5 — 2026-10-17, current authoritative dispositions
+
+All tests below were authored but **not executed**. The prior "Remaining unaddressed" snapshot above is historical and should not be used as the current disposition for these IDs.
+
+| ID | Status | Evidence (implementation and named regression) |
+| --- | --- | --- |
+| TPO-drives-39 | OPEN | Create now explicitly explains that round templates, recruiter invitations and rounds are configured in the saved workspace, never falsely creating rounds. `placement-job-create-form.tsx`; `tests/unit/tpo-drives-chat-3-open-verification.test.ts` TPO-drives-39. Creating/editing round preset rows on the form is still missing. |
+| TPO-drives-42 | OPEN | Publish preflight now checks selected or named employer **before** creating employer/job, alongside future IST deadline, pay, role title and HTTPS link. `placement-job-create-form.tsx`; `tests/unit/tpo-drives-gap-closure.test.ts` TPO-drives-42. End-to-end server publication parity and field-level validation are not yet accepted. |
+| TPO-drives-44 | OPEN | Dedicated `tpo-drive-form-error-copy.ts` maps known employer, stale, compensation and publish errors to sentences, used by Create and Edit instead of leaking codes. `tests/unit/tpo-drives-chat-3-round4.test.ts` TPO-drives-44. Exact copy for every server error still requires audit and browser testing. |
+| TPO-drives-45 | OPEN | Strict IST wall-clock conversion works independently of browser zone; explicit 11:59 PM IST action validates the date and preserves draft autosave. `tpo-drive-deadline-ist.ts`, `placement-job-create-form.tsx`; named round4 TPO-drives-45 tests. A date-first picker that defaults to 23:59 automatically remains. |
+| TPO-drives-49 | DONE (source verified; browser unrun) | Frozen Closed/Cancelled drive explains that it cannot be changed and links to Create drive/Clone; the edit route already had a non-destructive loading skeleton, and its error boundary now has exact safe failed-load wording, Retry and Back to drives. `src/app/(authenticated)/tpo/placements/jobs/[jobId]/edit/{page,error,loading}.tsx`; `tests/unit/tpo-drives-chat-3-round4.test.ts` — TPO-drives-49 closed drive has immutable explanation, clone path and retriable read boundary. |
+
+No new schema or proposed migrations in this round. Shell was not edited. `TPO-drives-27` remains blocked by private storage and malware scanning; TPO-drives-47/-48/-50 retain their full server behavior backlog.

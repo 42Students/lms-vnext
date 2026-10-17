@@ -161,7 +161,9 @@ describe("TPO Drives independently inspected legacy gap contracts",()=>{
   expect(body).toContain("Set a future application deadline before publishing.");
   expect(body).toContain("Add a CTC figure or stipend for at least one role before publishing.");
   expect(body).toContain("Add a valid HTTPS employer application link before publishing.");
-  expect(body.indexOf("if(reviewPublish){")).toBeLessThan(body.indexOf('if (companyMode === "NEW")'));
+  expect(body).toContain('if(companyMode==="EXISTING"&&!companies.some(company=>company.relationshipId===companyRelationshipId))');
+   expect(body).toContain('if(companyMode==="NEW"&&String(data.get("companyName")??"").trim().length<2)');
+   expect(body.indexOf("if(reviewPublish){")).toBeLessThan(body.indexOf('if (companyMode === "NEW" && !createdJobRef.current)'));
  });
  it("TPO-drives-43 JSON provider errors and network failures cannot display machine codes during draft creation",()=>{
   const body=create();
