@@ -12,7 +12,7 @@ describe("TPO Team away until",()=>{
   expect(service).toContain("assertPersistedPlatformPermission");
   expect(service).toContain("365*86400000");
   expect(service).toContain("TEAM_AWAY_STALE");
-  expect(src("docs/proposed-migrations/tpo-inbox-team-away-until.sql")).toContain("tpo_team_away_membership_college_fk");
+  expect(src("drizzle/0133_lanes_round_1.sql")).toContain("tpo_team_away_membership_college_fk");
  });
  it("TPO-inbox-team-34 permits a new away entry after the previous one expires",()=>{
   const now=new Date("2099-06-01T12:00:00.000Z");

@@ -63,6 +63,7 @@ export async function PlacementJobCreateWorkspace({
       and joined.status='JOINED')::int`,
     lastDriveAt:sql<Date>`max(${placementJobs.createdAt})`,
     recentRoles:sql<string[]>`(array_agg(${placementJobs.title} order by ${placementJobs.createdAt} desc))[1:3]`,
+    existingRoles:sql<Array<{jobId:string;title:string;status:string}>>`json_agg(json_build_object('jobId', ${placementJobs.id}, 'title', ${placementJobs.title}, 'status', ${placementJobs.status}) order by ${placementJobs.createdAt} desc)`,
   }).from(placementJobs).where(and(eq(placementJobs.collegeId,collegeId),
     isNull(placementJobs.archivedAt)))
     .groupBy(placementJobs.companyRelationshipId);

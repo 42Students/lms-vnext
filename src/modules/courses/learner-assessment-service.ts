@@ -4,10 +4,8 @@ import {getDb} from "@/db/client";
 import {learnerProgramEnrollments,sectionEnrollments} from "@/db/schema";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import { requireOwnCourseLearnerRead } from "./learner-access-guard";
-import {
-  getLearnerCourseWorkspace,
-  listLearnerCourseDeliveries,
-} from "./learner-course-service";
+import {listLearnerCourseDeliveries} from "./learner-course-service";
+import {listOwnLearnerAssessmentRows} from "./learner-assessment-flat-query";
 
 function byDueDateThenTitle<
   T extends {
@@ -53,54 +51,7 @@ export async function getLearnerAssessmentOverview(
     if(error instanceof AuthorizationError)throw error;
     classScope="UNAVAILABLE";
   }
-  const rows = await Promise.all(
-    deliveries.map(async (delivery) => ({
-      delivery,
-      workspace:
-        await getLearnerCourseWorkspace(
-          context,
-          delivery.deliveryId,
-        ),
-    })),
-  );
-
-  const assignments = rows.flatMap(
-    ({ delivery, workspace }) =>
-      workspace.lessons.flatMap((lesson) =>
-        lesson.assignments.map(
-          (assignment) => ({
-            ...assignment,
-            deliveryId:
-              delivery.deliveryId,
-            courseId: delivery.courseId,
-            courseName:
-              delivery.courseName,
-            courseCode:
-              delivery.courseCode,
-            lessonId: lesson.id,
-            lessonName: lesson.name,
-          }),
-        ),
-      ),
-  );
-
-  const quizzes = rows.flatMap(
-    ({ delivery, workspace }) =>
-      workspace.lessons.flatMap((lesson) =>
-        lesson.quizzes.map((quiz) => ({
-          ...quiz,
-          deliveryId:
-            delivery.deliveryId,
-          courseId: delivery.courseId,
-          courseName:
-            delivery.courseName,
-          courseCode:
-            delivery.courseCode,
-          lessonId: lesson.id,
-          lessonName: lesson.name,
-        })),
-      ),
-  );
+  const {assignments,quizzes}=await listOwnLearnerAssessmentRows(deliveries,context.membership!.id,snapshotNowMs);
 
   assignments.sort(byDueDateThenTitle);
   quizzes.sort(byDueDateThenTitle);
