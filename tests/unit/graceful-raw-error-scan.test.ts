@@ -43,13 +43,19 @@ function hasInteractiveMutation(source: string): boolean {
  * locks simply for not importing a specific React hook. */
 function hasMutationGuard(source: string): boolean {
   if (source.includes("useGuardedAction(")) return true;
-  // Playback autosave is already serialized through its synchronous ref lock.
+  // Playback autosave and learner submission have synchronous in-flight
+  // guards: these cannot be double-submitted by a second click.
   if (/(?:savingRef|inFlightRef|pendingRef)\s*=\s*useRef\(/.test(source) &&
       /(?:savingRef|inFlightRef|pendingRef)\.current/.test(source)) return true;
+  if (source.includes("createSubmissionFlightGuard()") &&
+      source.includes("flight.current.begin()") &&
+      source.includes("flight.current.end()")) return true;
+  // Existing forms also guard a request with a busy state plus disabled
+  // submission controls. This is valid without prescribing one React hook.
   const pendingControl =
-    /(?:setPending|setBusy|setSaving|setSubmitting|startTransition)\(/.test(source);
+    /(?:set[A-Z]\w*\(true\)|setRolePending\(|start\w*Transition\()/.test(source);
   const disabledControl =
-    /disabled=\{[^}]*\b(?:pending|busy|saving|submitting|deleting|loading)\b/.test(source);
+    /disabled=\{[^}]*\b(?:pending|busy|saving|savingResults|rolePending|lifecyclePending|submitting|deleting|loading)\b/.test(source);
   return pendingControl && disabledControl;
 }
 
