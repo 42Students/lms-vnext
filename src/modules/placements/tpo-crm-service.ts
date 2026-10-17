@@ -813,13 +813,17 @@ export async function markTpoLeadContacted(
       note: "Manual stage changed to Contacted",
       createdByUserId: context.user.id,
     });
-    await tx.insert(activityEvents).values({
+    const [event]=await tx.insert(activityEvents).values({
       organizationId:college.organizationId,collegeId,
       actorUserId:context.user.id,actorMembershipId:context.membership?.id??null,
       module:"PLACEMENTS",eventType:"RECRUITER_LEADS_STAGE_SET",
       subjectType:"placement_tpo_lead",subjectId:leadId,
       summary:"Recruiter lead marked Contacted",
       metadata:{beforeStage:current.manualStage,afterStage:"CONTACTED"},
+    }).returning({id:activityEvents.id});
+    if(event)await notifyActiveTposOfRecruiterEvent(tx,{
+     collegeId,eventId:event.id,leadId,title:"Recruiter marked Contacted",
+     body:"Recruiter outreach has been recorded.",
     });
     return tpoLeadView(updated);
   });
