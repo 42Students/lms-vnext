@@ -122,3 +122,12 @@ Status reflects committed source and authored test evidence. Tests are **not run
 | TPO-calendar-reports-09 | DONE source | Today and next-week summaries distinguish missing reads from zero scheduled. `tests/unit/chat9-round9-calendar-behavior.test.ts` case TPO-calendar-reports-09. Tests not executed. |
 | TPO-calendar-reports-39 | DONE source | Journey strip uses actual filtered report metrics and offers-made scope. `tests/unit/chat9-round9-calendar-behavior.test.ts` case TPO-calendar-reports-39. Tests not executed. |
 | TPO-calendar-reports-40 | PARTIAL | Branch percent bar chart uses measured values; exact legacy chart parity on every report still requires verification. `tests/unit/chat9-round9-calendar-behavior.test.ts` case TPO-calendar-reports-40. Tests not executed. |
+
+## Final sprint — chat-7 verification of already-implemented items
+
+| ID | Review | Evidence |
+|---|---|---|
+| TPO-calendar-reports-45 | FIXED-ON-MAIN source verified (six actual offer states; selection lifecycle intentionally separate) | `src/app/(authenticated)/tpo/reports/placement-summary/page.tsx` and `src/modules/placements/report-model.ts`; `tests/unit/chat7-final-sprint-tpo-calendar-reports.test.ts` — `TPO-calendar-reports-45 shows actual issued-offer states without inventing selection evidence`. Test authored, not run. Selection/verifying/reversed statuses are not present in issued-offer rows; this is a deliberate truthful scope distinction, not an invented count. |
+| TPO-calendar-reports-52 | FIXED-ON-MAIN CSV contract source verified; exact legacy Excel/shown-rows parity NOT claimed | `src/app/api/placements/reports/route.ts` uses UTF-8 BOM for report CSVs; `src/modules/placements/report-model.ts` serializes CRLF and formula-safe quoting, and each report kind uses its own headings. `tests/unit/chat7-final-sprint-tpo-calendar-reports.test.ts` — `TPO-calendar-reports-52 escapes report-specific CSV, writes CRLF and starts downloads with BOM`. Test authored, not run. Legacy Excel/table-shown-rows remains separate enhancement. |
+| TPO-calendar-reports-R07 | FIXED-ON-MAIN source verified | `src/app/(authenticated)/tpo/calendar/page.tsx` and `src/components/placements/placement-calendar-workspace.tsx` consume bounded event feed, not a full `listTpoLeads` call or `slice(0,100)` of recruiter leads. `tests/unit/chat7-final-sprint-tpo-calendar-reports.test.ts` — `TPO-calendar-reports-R07 renders calendar from scheduled bounded event data without full leads directory scans`. Test authored, not run. |
+

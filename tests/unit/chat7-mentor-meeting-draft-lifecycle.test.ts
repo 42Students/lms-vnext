@@ -53,4 +53,25 @@ describe("MEN-projects-meetings-27 meeting draft lifecycle", () => {
     expect(code).toContain('resolveOptionalModuleAccess(context)).projects.enabled');
     expect(code).toContain('if(current.status==="DRAFT")return updated;');
   });
+  it("MEN-projects-meetings-27 preserves original organiser and linked work on edits", () => {
+    const service=read("src/modules/projects/meeting-service.ts");
+    expect(service).toContain("const organiserId=existing?.scheduledByUserId??context.user.id;");
+    expect(service).toContain("eq(projectMeetings.scheduledByUserId,organiserId)");
+    expect(service).toContain('scheduledByUserId: targetStatus==="DRAFT"?null:organiserId');
+    expect(service).toContain('meetingType: input.meetingType ?? existing?.meetingType');
+    expect(service).toContain("const effectiveSprintId=input.linkedSprintId===undefined");
+    expect(service).toContain("existing?.linkedSprintId??null : links.linkedSprintId");
+    expect(service).toContain("const effectiveTaskId=input.linkedTaskId===undefined");
+    expect(service).toContain("existing?.linkedTaskId??null : links.linkedTaskId");
+    expect(service).toContain('throw new ProjectsServiceError("PROJECT_MEETING_LINK_INVALID")');
+  });
+  it("MEN-projects-meetings-27 does not announce manager-only facilitator changes", () => {
+    const service=read("src/modules/projects/meeting-service.ts");
+    expect(service).toContain("const facilitatorOnlyChange=existing.status===targetStatus");
+    expect(service).toContain('targetStatus==="RESCHEDULED" && existing && existing.status!=="RESCHEDULED"');
+    expect(service).toContain('if(targetStatus==="DRAFT" || facilitatorOnlyChange)return updated;');
+    expect(service).toContain("(existing.outcome??null)===(values.outcome??null)");
+    const decisions=read("src/modules/projects/mentor-meeting-decision-service.ts");
+    expect(decisions).toContain("outcome:input.outcome??current.outcome??null");
+  });
 });

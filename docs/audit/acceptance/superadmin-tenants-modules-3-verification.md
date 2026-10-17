@@ -49,3 +49,12 @@ Remaining unclosed work includes SA-tenants-modules-43/45/46/47/48/49/50/53/54/5
 | SA-tenants-modules-60 | NOT-A-GAP (source) | Selected-college broadcast preserves separate receipt/retry/audit records; one synthetic row would obscure deliveries. Owner decision retained. |
 | SA-tenants-modules-67 | DONE (source) | Verification drawer supports section-specific SEND_BACK workflows and feedback. `tests/unit/chat13-superadmin-gap-register-reconcile-c.test.ts` test `SA-tenants-modules-67` (written, not run). |
 | SA-tenants-modules-68 | DONE (source) | Verification drawer shows persisted decision history and masked-ID posture. `tests/unit/chat13-superadmin-gap-register-reconcile-c.test.ts` test `SA-tenants-modules-68` (written, not run). |
+
+### Chat-4 follow-up acceptance, 2026-10-18
+
+| Gap ID | Status | Evidence |
+| --- | --- | --- |
+| SA-tenants-modules-47 | PARTIAL (transactional safety) | independent-audit-findings-service.ts prevents chained duplicate findings, clears duplicateOf after reasoned reopen, and keeps status transitions under locked transaction. tests/unit/chat4-independent-findings-transition.test.ts tests SA-tenants-modules-47. Full history and candidate search still need acceptance. |
+| SA-tenants-modules-48 | PARTIAL (corrected query) | independent-audit-findings-service.ts now has a valid SQL facet block with source path/JSONB path search, explicit view/area/kind filters and independent status/severity counts scoped by persisted authorization. tests/unit/chat4-independent-findings-filters.test.ts tests SA-tenants-modules-48. No browser/database test run. |
+
+Source inspections and regression tests authored, **not executed**. No UX page restyling is part of these records.

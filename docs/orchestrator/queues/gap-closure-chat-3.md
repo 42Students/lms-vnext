@@ -24,7 +24,7 @@ Audit: `docs/audit/pages/tpo/drives.md` (and `drives-review.md` if present; any 
 | TPO-drives-23 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-drives-24 | S2 | VALIDATION | FIXED-ON-MAIN |
 | TPO-drives-26 | S2 | MISSING-ACTION | DONE |
-| TPO-drives-28 | S2 | MISSING-FIELD | UNCONFIRMED |
+| TPO-drives-28 | S2 | MISSING-FIELD | OPEN |
 | TPO-drives-31 | S2 | MISSING-ACTION | OPEN |
 | TPO-drives-32 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-drives-33 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
@@ -45,7 +45,7 @@ Audit: `docs/audit/pages/tpo/drives.md` (and `drives-review.md` if present; any 
 | TPO-drives-25 | S3 | MISSING-FIELD | DONE |
 | TPO-drives-27 | S3 | MISSING-FIELD | OPEN |
 | TPO-drives-29 | S3 | MISSING-FIELD | OPEN |
-| TPO-drives-30 | S3 | MISSING-FIELD | OPEN |
+| TPO-drives-30 | S3 | MISSING-FIELD | DONE |
 | TPO-drives-35 | S3 | MISSING-FIELD | OPEN |
 | TPO-drives-37 | S3 | VALIDATION | DONE |
 | TPO-drives-38 | S3 | MISSING-FIELD | OPEN |
@@ -206,7 +206,7 @@ Audit: `docs/audit/pages/college/courses-content.md` (and `courses-content-revie
 | ID | Sev | Type | Status now |
 |---|---|---|---|
 | COL-courses-content-01 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
-| COL-courses-content-02 | S2 | MISSING-FIELD | UNCONFIRMED |
+| COL-courses-content-02 | S2 | MISSING-FIELD | OPEN |
 | COL-courses-content-03 | S2 | MISSING-ACTION | OPEN |
 | COL-courses-content-07 | S2 | MISSING-ACTION | DONE |
 | COL-courses-content-08 | S2 | MISSING-FIELD | DONE |
@@ -231,7 +231,7 @@ Audit: `docs/audit/pages/college/attendance.md` (and `attendance-review.md` if p
 | COL-attendance-05 | S3 | STATE | DONE |
 | COL-attendance-06 | S3 | STATE | DONE |
 | COL-attendance-07 | S3 | VALIDATION | NOT-A-GAP |
-| COL-attendance-09 | S3 | COPY | UNCONFIRMED |
+| COL-attendance-09 | S3 | COPY | DONE |
 | COL-attendance-11 | S3 | STATE | DONE |
 | COL-attendance-16 | S3 | PERMISSION | DONE |
 | COL-attendance-10 | S4 | COPY | OPEN |
@@ -353,3 +353,35 @@ Changed code (functional, not styling): TPO-drives-42 enforces actual policy and
 **UNCONFIRMED delegation:** `MEN-projects-meetings-71` already has the approved partial-source/fail-soft decision with an ID-named test in `docs/audit/acceptance/mentor-projects-meetings-part2-verification.md`. Other queue UNCONFIRMEDs have separate owner-lane dispositions (chat-5/chat-15); do not overwrite them.
 
 The old `unit-failures-r1.md` chat-3 lines describe source assertions that presently match on the branch (COL-people-20, TPO-drives-47, TPO-drives-51). Latest `typecheck-errors.md` no longer lists a chat-3 owned error; the four `courses-c3-progress` fixture missing-points regressions were fixed in the previous integrated round. **No tests were run here.** Keep UI/UX restyling frozen until the playbook is signed off after three audits.
+
+## Chat-3 round 14 — functional work after latest main sync (2026-10-18)
+
+Owner UX freeze upheld: **no page restyling**; new controls/sections exist solely to expose required functions and persisted facts. The latest `main` was merged twice during this round because 355 concurrent upstream commits landed; no other lanes' files were overwritten.
+
+- Typecheck FIRST: latest `docs/orchestrator/typecheck-errors.md` assigns no errors to chat-3. Earlier four `courses-c3-progress` fixture errors were already corrected on main. The dated `unit-failures-r1.md` reports COL-people-20 / TPO-drives-47 / TPO-drives-51; all three exact source assertions match current code, but a fresh CI run is still required.
+- **UNCONFIRMED decisions:** `TPO-drives-28` is OPEN (configured job types cannot safely imply employment/placed outcomes without a real linkage); `COL-courses-content-02` is OPEN (DB05 Course display migration must be explicitly verified; no fake file/image backend); `COL-attendance-09` is DONE at source-level with authoritative IST academic-period end and delivery end-date labeling. `MEN-projects-meetings-71` remains the documented prior partial-source notification decision and has an ID-named test.
+- `TPO-drives-30` DONE at source-level: named HTTPS portal can be saved and read, with strict input limits and no credential-bearing URLs. Other touched TPO IDs `29`, `31`, `38`, `41`, `43`, `52` remain **OPEN**: code and tests have advanced, but missing scheduling, applicant-matching, atomicity, or unified workflows remain.
+- `COL-people-13` remains OPEN: membership metrics now accurate and private presence clearly Not tracked; missing profile columns require a separate need-to-know privacy review.
+- Functional changes include: distinct and scoped historical outside-drive list with exclusion from live jobs; persisted pool travel/reporting details; bounded tags; in-app navigation discard guard; IST local-save feedback; unknown create-response duplicate avoidance on both create paths; unified safe quick-draft API errors; and privacy-safe college directory counts. `tests/unit/chat3-tpo-supplemental-round14.test.ts`, `chat3-tpo-round14-decisions.test.ts`, `chat3-people-metrics-round14.test.ts` and the strengthened `college-attendance-gap-closure.test.ts` all include named gap IDs.
+- **Do not claim runtime acceptance:** GitHub source updates succeeded, but Vitest, `tsc`, browser validation and database integration were not executable in the connector-only workspace. Build/CI remains the acceptance gate. No migrations were created or registered in this round.
+
+## Chat-3 final sprint assignment — TPO Companies (18 IDs)
+
+The new `docs/orchestrator/queues/final-sprint.md` assigns 18 additional, non-overlapping TPO Companies IDs to this lane. All 18 have ID-named tests in `tests/unit/chat3-final-sprint-companies-round14.test.ts` and individual evidence in `docs/audit/acceptance/tpo-companies-verification.md`.
+
+- **17 FIXED-ON-MAIN**: TPO-companies-07, -08, -10, -11, -12, -13, -14, -15, -16, -17, -18, -24, -26, -27, -28, -R02, -R05. These already exist in source; the missing acceptance/test evidence is now authored, not yet executed in CI. R02 copy/domain error and Retry behavior were additionally repaired on this branch.
+- **1 OPEN**: TPO-companies-05. Existing TPO Team conversations are scoped to two membership IDs, not a company object; no audited company group conversation, mentions, due tasks or explicit decision thread exists. Do **not** pretend a pairwise private chat is the legacy company conversation, and do not add a dangerous generic company link. Requires a registered college-scoped object-thread model, permissions, message/task service and runtime testing.
+- No page UI restyling, no fake joins/learners, no guessed migrations, and no privacy relaxation. Company hiring cards were additionally checked not to render learner full names. The external orchestrator still must run `tsc`, ID-named Vitest cases, and college-isolation integration/browser tests.
+
+## Chat-3 final sprint (2026-10-18): TPO Companies — 18/18 addressed
+
+Source and acceptance: `docs/audit/acceptance/tpo-companies-verification.md`; tests:
+`chat3-final-sprint-company-memory.test.ts`,
+`chat3-final-sprint-company-engage.test.ts`,
+`chat3-final-sprint-company-accessibility.test.ts`,
+`chat3-final-sprint-company-team-and-review.test.ts` under `tests/unit/`.
+
+- **17 FIXED-ON-MAIN verified or repaired:** `TPO-companies-07/08/10/11/12/13/14/15/16/17/18/24/26/27/28/R02/R05`; each has an ID-named test and a page acceptance line. Company hiring bars and the join-link accessible replacement/status retry needed additional code; all were committed to this branch.
+- **TPO-companies-05 (original OPEN):** implemented a college-scoped company Team feature with actual service, API, client conversation, both company surfaces, full Team deep link, 30 s refresh, mentions with verified recipient notifications, decisions, asks, follow, edit/delete, and proposed SQL. This is **source-complete but not deployed**. `docs/proposed-migrations/chat3-tpo-company-team.sql` must be registered on main and applied before runtime use; code checks table existence and shows a truthful pending state.
+- **Validation:** 18 distinct test IDs and 18 acceptance IDs verified by source inspection; test suite, TypeScript, lint, PostgreSQL integration and browser were NOT executed in this connector-only session. Orchestrator must run CI and database migration and review the new Team notification flows.
+- Owner UX freeze honored: new UI exists only to implement missing functions, no restyling of existing page visual system and no shared-shell edits.

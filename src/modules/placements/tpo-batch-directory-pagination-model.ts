@@ -11,9 +11,12 @@ export function paginateTpoBatches<T>(rows:readonly T[],page:number,pageSize:num
   from:items.length?start+1:0,to:start+items.length,
   hasPrev:actualPage>1,hasNext:actualPage<totalPages};
 }
-export function tpoBatchPageHref(filters:Record<string,string|undefined>,page:number,pageSize:number){
+export function tpoBatchPageHref(filters:Record<string,string|string[]|undefined>,page:number,pageSize:number){
  const q=new URLSearchParams();
- for(const [k,v] of Object.entries(filters)){if(v)q.set(k,v);}
+ for(const [k,v] of Object.entries(filters)){
+  if(Array.isArray(v)){for(const each of v){if(each)q.append(k,each);}}
+  else if(v)q.set(k,v);
+ }
  q.set("page",String(page));q.set("pageSize",String(pageSize));
  return "/tpo/batches?"+q.toString();
 }

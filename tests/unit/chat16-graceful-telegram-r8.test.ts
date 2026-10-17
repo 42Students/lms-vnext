@@ -31,7 +31,7 @@ describe("chat-16 SA-placements-projects-116 GR-111 graceful Telegram delivery",
     expect(sanitizeTelegramLine(line)).not.toContain(secret);
   });
   it("SA-placements-projects-116 clips by Unicode characters, not UTF-16 code units",()=>{
-    expect(Array.from(limitTelegramAlert("🙂".repeat(4000))).toHaveLength(3500);
+    expect(Array.from(limitTelegramAlert("🙂".repeat(4000)))).toHaveLength(3500);
     expect(limitTelegramAlert("A".repeat(3500))).toHaveLength(3500);
     expect(limitTelegramAlert("A".repeat(3501)).endsWith("...")).toBe(true);
   });

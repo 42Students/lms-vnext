@@ -43,6 +43,22 @@ describe("chat-14 recruiter ownership and private review gap closure",()=>{
    expect(service).toContain("eq(placementJobs.id,placementApplications.jobId)");
    expect(service).toContain("recruiterOwnJobPredicate(ctx.user.id)");
  });
+ it("REC-home-drives-46 records confirmed slot totals on both overview and round detail",()=>{
+  const code=source("src/modules/placements/hr-job-read-service.ts");
+  expect(code).toContain('filters.tab==="rounds"||filters.tab==="overview"');
+  expect(code).toContain("placementRoundCandidateSlots.confirmedAt");
+ });
+ it("REC-home-drives-52 pages all selection statuses instead of hiding older records",()=>{
+  const code=source("src/modules/placements/hr-job-read-service.ts");
+  const page=source("src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx");
+  expect(code).toContain('(filters.offerPage-1)*HR_OFFER_PAGE_SIZE');
+  expect(code).toContain('hrOfferPageBounds(filters.offerPage,selectionTotal)');
+  expect(code).not.toContain('filters.offerState==="ALL"?0:filters.offerPage-1');
+  expect(page).toContain('<nav aria-label="Selection history pages"');
+  expect(page).not.toContain('selectionTotal>selectionRows.length?<Link');
+  expect(page).toContain("Previous selections");
+  expect(page).toContain("Next selections");
+ });
  it("REC-home-drives-52 separates pre-issue selections and cancellations from real issued offers",()=>{
    const code=source("src/modules/placements/hr-job-read-service.ts");
    const page=source("src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx");
