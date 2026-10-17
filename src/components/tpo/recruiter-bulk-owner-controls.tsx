@@ -225,6 +225,11 @@ export function RecruiterBulkOwnerControls({
           {tpoBulkFailedLines(results).length>0?<button type="button"
             className={fieldClass+" mt-2"} onClick={()=>void copyFailed()}>Copy failed</button>:null}
           {copyNotice?<p role="status" className="text-xs text-body">{copyNotice}</p>:null}
+          {retryable.length>0?<button type="button" disabled={busy} className={fieldClass+" mt-2"}
+            onClick={()=>{setChosen(retryable.slice(0,100).map(item=>item.leadId));setReviewOpen(false);setError("");
+              setCopyNotice("Failed rows selected for review. Refresh owners and leads before retrying.");}}>
+            Select failed for review ({retryable.length})
+          </button>:null}
           <ul className="mt-2 max-h-36 overflow-auto text-xs text-body">
             {results.map((item) => (
               <li key={item.leadId}>
