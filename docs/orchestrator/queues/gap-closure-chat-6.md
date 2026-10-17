@@ -155,7 +155,7 @@ Audit: `docs/audit/pages/college/placements.md` (and `placements-review.md` if p
 | COL-placements-20 | S2 | MISSING-COLUMN | DONE |
 | COL-placements-07 | S3 | MISSING-COLUMN | DONE |
 | COL-placements-11 | S3 | MISSING-FIELD | DONE |
-| COL-placements-15 | S3 | MISSING-ACTION | OPEN |
+| COL-placements-15 | S3 | MISSING-ACTION | DONE |
 | COL-placements-16 | S3 | COPY | DONE |
 | COL-placements-18 | S3 | PERMISSION | DONE |
 | COL-placements-21 | S3 | MISSING-FIELD | DONE |
