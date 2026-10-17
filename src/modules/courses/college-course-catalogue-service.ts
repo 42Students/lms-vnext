@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,desc,count,eq,ilike,isNull,or,sql} from "drizzle-orm";
+import {and,asc,desc,count,eq,ilike,isNull,or} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {courses,departments} from "@/db/schema";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
