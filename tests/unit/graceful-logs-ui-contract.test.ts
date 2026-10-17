@@ -14,6 +14,15 @@ describe("known error triage UI resilience", () => {
     expect(source).not.toMatch(/\bawait fetch\(/);
     expect(source).not.toContain("error.message :");
   });
+  it("GR-123 preserves legacy Known errors empty and mute confirmation wording", () => {
+    const ui = readFileSync("src/components/tracker/known-errors-workspace.tsx", "utf8");
+    expect(ui).toContain("No tracked errors yet");
+    expect(ui).toContain("Mute this error");
+    expect(ui).toContain("Why is it safe to ignore? It comes back on its own if it suddenly spikes.");
+    expect(ui).toContain("setConfirmMute(true)");
+    expect(ui).toContain('action: "MUTE", muted: true');
+    expect(ui).toContain('action: "MUTE", muted: false');
+  });
   it("GR-124 does not imply Cloud Logging backup is active when unconfigured", async () => {
     const { cloudLogPollConfigured } = await import("@/modules/log-alerts/readiness");
     const original = process.env.LOG_ALERT_CLOUD_POLL_ENABLED;
