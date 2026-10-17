@@ -89,4 +89,19 @@ describe("TPO supplemental job metadata",()=>{
   expect(drives).toContain('href="/tpo/placements/recorded-outside"');
  });
 
+ it("TPO-drives-52 quick draft shares strict IST parsing and safe errors with full create",()=>{
+  const quick=source("src/components/tpo/tpo-draft-drive-step-one-form.tsx");
+  expect(quick).toContain("driveDeadlineIstToIso(deadline)");
+  expect(quick).toContain('apiFetch<{id:string;status:string}>');
+  expect(quick).toContain("tpoDriveFormErrorMessage(cause)");
+  expect(quick).toContain("title.trim().length < 3");
+ });
+ it("TPO-drives-43/52 quick create requires a duplicate check after unknown POST outcome",()=>{
+  const quick=source("src/components/tpo/tpo-draft-drive-step-one-form.tsx");
+  expect(quick).toContain("setUnknownCreate(true)");
+  expect(quick).toContain('[0,499,504].includes(cause.status)');
+  expect(quick).toContain('disabled={pending || unknownCreate || !companyRelationshipId}');
+  expect(quick).toContain("I checked for duplicates");
+ });
+
 });
