@@ -61,6 +61,15 @@ export function MentorSprintCreate({
         </Button>
       </>}>
       <div className="grid gap-4">
+        <label className="grid gap-1 text-sm font-semibold text-body">Ships in release
+          <select value={chosenReleaseId} disabled={busy}
+            onChange={event=>setChosenReleaseId(event.target.value)}
+            className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+            {releases.length?releases.filter(release=>release.status!=="SHIPPED").map(release=>
+              <option key={release.id} value={release.id}>{release.title}</option>):
+              <option value={releaseId}>Current release</option>}
+          </select>
+        </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Sprint title
           <Input maxLength={200} value={title}
             onChange={e=>setTitle(e.target.value)} required />
