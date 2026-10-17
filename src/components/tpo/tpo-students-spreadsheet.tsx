@@ -18,7 +18,7 @@ const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
    row.displayName+" · From "+row.cohortName:row.displayName},
  {key:"number",label:"Student number",read:row=>row.rollNumber??row.registrationNumber},
  {key:"branch",label:"Branch",read:row=>row.branchName},
- {key:"batch",label:"Batch",read:row=>row.cohortName},
+ {key:"batch",label:"Batch",read:row=>row.programName+" · "+row.cohortName+(row.fromFinishedBatch?" · From "+row.cohortName:"")},
  {key:"cgpa",label:"CGPA",read:row=>row.cgpa},
  {key:"backlogs",label:"Active backlogs",read:row=>row.activeBacklogs},
  {key:"readiness",label:"Readiness evidence",read:row=>row.readinessSignal.replaceAll("_"," ")},
