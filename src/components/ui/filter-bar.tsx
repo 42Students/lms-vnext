@@ -1,43 +1,78 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
-import { BottomSheet } from "@/components/ui/bottom-sheet";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { cx } from "@/lib/class-names";
 
 export type FilterBarProps = {
   title?: string;
   activeCount?: number;
-  children: ReactNode;
+  /** Always-visible search input; use form="..." to associate with the GET form in filters. */
+  search?: ReactNode;
+  /** Optional alias for existing children; only one subtree is mounted. */
+  filters?: ReactNode;
+  children?: ReactNode;
   action?: ReactNode;
   className?: string;
 };
 
-export function FilterBar({ title = "Filters", activeCount = 0, children, action, className }: FilterBarProps) {
-  const [mobile, setMobile] = useState(false);
+const FOCUSABLE = 'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+
+export function FilterBar({ title = "Filters", activeCount = 0, search, filters, children, action, className }: FilterBarProps) {
   const [open, setOpen] = useState(false);
-  useEffect(() => {
-    const media = window.matchMedia("(max-width: 639px)");
-    const update = () => { setMobile(media.matches); if (!media.matches) setOpen(false); };
-    update();
-    media.addEventListener("change", update);
-    return () => media.removeEventListener("change", update);
-  }, []);
+  const launcher = useRef<HTMLButtonElement>(null);
+  const panel = useRef<HTMLDivElement>(null);
   const count = Number.isFinite(activeCount) ? Math.max(0, Math.trunc(activeCount)) : 0;
-  return (
-    <section data-slot="filter-bar" aria-label={title} className={cx("min-w-0", className)}>
-      {mobile ? (
-        <>
-          <div className="flex min-w-0 flex-wrap items-center gap-2">
-            <Button variant="secondary" onClick={() => setOpen(true)}>{title} ({count})</Button>{action}
-          </div>
-          <BottomSheet open={open} onOpenChange={setOpen} title={title}>
-            <div className="space-y-4">{children}</div>
-          </BottomSheet>
-        </>
-      ) : (
-        <div className="flex min-w-0 flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">{children}{action}</div>
-      )}
-    </section>
-  );
+
+  useEffect(() => {
+    if (!open) return;
+    const media = window.matchMedia("(min-width: 640px)");
+    function resize() { if (media.matches) setOpen(false); }
+    media.addEventListener("change", resize);
+    const priorOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const first = panel.current?.querySelector<HTMLElement>(FOCUSABLE);
+    first?.focus();
+    function keys(event: KeyboardEvent) {
+      if (event.key === "Escape") { event.preventDefault(); setOpen(false); return; }
+      if (event.key !== "Tab" || !panel.current) return;
+      const tabbable = Array.from(panel.current.querySelectorAll<HTMLElement>(FOCUSABLE));
+      if (!tabbable.length) return;
+      const firstControl = tabbable[0]!, lastControl = tabbable[tabbable.length - 1]!;
+      if (event.shiftKey && document.activeElement === firstControl) { event.preventDefault(); lastControl.focus(); }
+      else if (!event.shiftKey && document.activeElement === lastControl) { event.preventDefault(); firstControl.focus(); }
+    }
+    document.addEventListener("keydown", keys);
+    return () => {
+      media.removeEventListener("change", resize);
+      document.removeEventListener("keydown", keys);
+      document.body.style.overflow = priorOverflow;
+      launcher.current?.focus();
+    };
+  }, [open]);
+
+  return <section data-slot="filter-bar" aria-label={title} className={cx("min-w-0 space-y-3", className)}>
+    <div className="flex min-w-0 flex-wrap items-end gap-3 sm:hidden">
+      {search ? <div className="min-w-0 flex-1 basis-40">{search}</div> : null}
+      <Button ref={launcher} variant="secondary" aria-expanded={open} aria-controls="lms-filter-panel"
+        onClick={() => setOpen(true)}>{title} ({count})</Button>
+      {action}
+    </div>
+    <div className="hidden min-w-0 flex-wrap items-end gap-3 sm:flex">
+      {search ? <div className="min-w-0 flex-1 basis-48">{search}</div> : null}
+      {action}
+    </div>
+    {open ? <button type="button" aria-label="Close filters" onClick={() => setOpen(false)}
+      className="fixed inset-0 z-30 bg-foreground/30 sm:hidden"/> : null}
+    <div id="lms-filter-panel" ref={panel} role={open ? "dialog" : undefined} aria-modal={open ? true : undefined}
+      aria-label={open ? title : undefined}
+      className={cx("min-w-0 rounded-xl border border-border bg-surface p-4 sm:static sm:z-auto sm:block sm:max-h-none sm:w-full sm:rounded-xl sm:shadow-none",
+        open ? "fixed inset-0 z-40 block max-h-[100dvh] w-full overflow-y-auto overscroll-contain pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] shadow-lg" : "hidden sm:block")}>
+      <div className="mb-4 flex items-center justify-between gap-3 sm:hidden">
+        <h2 className="text-lg font-semibold">{title}</h2>
+        <Button variant="ghost" aria-label="Close filters" onClick={() => setOpen(false)}>×</Button>
+      </div>
+      {filters ?? children}
+    </div>
+  </section>;
 }
