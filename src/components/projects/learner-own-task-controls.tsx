@@ -41,7 +41,8 @@ export function LearnerAddOwnTask({projectId,sprints}:{projectId:string;sprints:
    className="min-h-11 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground disabled:opacity-50">
    Add my task
   </button>
-  {!available.length?<p className="text-sm text-muted-foreground">Start a sprint before adding your own tasks.</p>:null}
+  {!available.length?<p className="text-sm text-muted-foreground">
+    No sprint is active. You can add your task to the product backlog.</p>:null}
   {open?<form onSubmit={e=>void save(e)}
    className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2">
    <label className="text-sm font-semibold">Task title
