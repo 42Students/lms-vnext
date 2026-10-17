@@ -171,7 +171,7 @@ Audit: `docs/audit/pages/superadmin/placements-projects-c-tracker.md` (and `plac
 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
-| SA-placements-projects-101 | S2 | PERMISSION | OPEN |
+| SA-placements-projects-101 | S2 | PERMISSION | NOT-A-GAP |
 | SA-placements-projects-102 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-placements-projects-103 | S2 | MISSING-FIELD | BLOCKED |
 | SA-placements-projects-113 | S2 | MISSING-PAGE | BLOCKED |
