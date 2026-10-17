@@ -86,6 +86,8 @@ export function LearnerJobsBrowse({
   const pagination=learnerDrivePageState(visible.length,parsedPage,PAGE_SIZE);
   const {page,totalPages}=pagination;
   const paged=visible.slice(pagination.startIndex,pagination.endIndex);
+  const ordinaryRoleCards=paged.filter(item=>item.canApply||item.application!==null||item.deadlinePassed);
+  const notOpenRoleCards=paged.filter(item=>!item.canApply&&item.application===null&&!item.deadlinePassed);
   const savedExpired=paged.filter(item=>item.deadlinePassed);
   const savedOpen=paged.filter(item=>!item.deadlinePassed);
   const empty=learnerDrivesEmptyState(matchingItems.length,visible.length,filters);
@@ -269,8 +271,22 @@ export function LearnerJobsBrowse({
             <LearnerPlacementJobs items={savedExpired} snapshotNowIso={snapshotNowIso}
              returnQuery={params.toString()} savedJobIds={savedJobIds}/>
           </section>:null}
-        </div>:<LearnerPlacementJobs items={paged} snapshotNowIso={snapshotNowIso}
-          returnQuery={params.toString()} savedJobIds={savedJobIds} />
+        </div>:<div className="space-y-5">
+          {ordinaryRoleCards.length>0?<LearnerPlacementJobs items={ordinaryRoleCards}
+            snapshotNowIso={snapshotNowIso} returnQuery={params.toString()} savedJobIds={savedJobIds}/>:null}
+          {notOpenRoleCards.length>0?<details className="rounded-xl border border-border bg-surface p-4"
+            defaultOpen={filters.availability==="not-open"} aria-label="Not open to you">
+            <summary className="min-h-11 cursor-pointer font-semibold text-foreground">
+              Not open to you ({notOpenRoleCards.length} roles on this page) · See reasons
+            </summary>
+            <p className="mb-3 mt-2 text-sm text-body">
+              These published roles target your cohort but a registration, academic,
+              deadline, or college policy check currently prevents self-application.
+            </p>
+            <LearnerPlacementJobs items={notOpenRoleCards}
+              snapshotNowIso={snapshotNowIso} returnQuery={params.toString()} savedJobIds={savedJobIds}/>
+          </details>:null}
+        </div>
       )}
 
       {totalPages > 1 ? (

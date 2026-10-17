@@ -11,8 +11,15 @@ export function learnerWaitingOnYou(input:{
  registration?:{stage:string;choice:string|null}|null;
  eligibleToApply?:number|null;
  applications?:number|null;
+ profileFixes?:readonly {label:string;href:string}[];
 }):LearnerPlacementTodo[]{
  const items:LearnerPlacementTodo[]=[];
+ for(const fix of input.profileFixes??[]){
+  if(!fix.href.startsWith("/learn/profile"))continue;
+  items.push({key:"profile:"+fix.href,label:fix.label,
+   detail:"A reviewer returned this profile section. Correct the evidence before relying on it for placements.",
+   href:fix.href,priority:"URGENT"});
+ }
  if(input.registration?.stage==="OPEN" && input.registration.choice!=="PLACEMENTS")items.push({
   key:"register",label:input.registration.choice===null?"Register for placements":"Review your placement registration",
   detail:"Registration is open for your batch. Choose Placements to take part in campus drives.",
