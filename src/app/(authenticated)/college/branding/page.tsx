@@ -22,7 +22,7 @@ export default async function CollegeBrandingPage() {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         eyebrow="College Admin"
         title="Branding"
