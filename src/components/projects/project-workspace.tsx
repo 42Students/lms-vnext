@@ -179,6 +179,7 @@ export function ProjectWorkspace({
   currentMembershipId,
   activeSection,
   sectionBaseHref,
+  sectionQuerySuffix = "",
   readOnlyOverride = false,
 }: {
   workspace: Workspace;
@@ -188,6 +189,8 @@ export function ProjectWorkspace({
   currentMembershipId: string | null;
   activeSection?: ProjectWorkspaceSection;
   sectionBaseHref?: string;
+  sectionQuerySuffix?: string;
+  riskReason?: string | null;
   readOnlyOverride?: boolean;
 }) {
   const { readiness } = workspace;
@@ -281,7 +284,7 @@ export function ProjectWorkspace({
           {PROJECT_WORKSPACE_SECTIONS.map((section) => (
             <Link
               key={section}
-              href={sectionBaseHref + "/" + section}
+              href={sectionBaseHref + "/" + section + sectionQuerySuffix}
               aria-current={
                 activeSection === section ? "page" : undefined
               }
