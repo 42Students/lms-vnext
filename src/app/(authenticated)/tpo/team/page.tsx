@@ -13,7 +13,7 @@ import {parseTpoTeamTab} from "@/modules/placements/tpo-team-tabs-model";
 import {TPO_TEAM_ROLE_LABELS} from "@/modules/placements/tpo-settings-read-model";
 import {sortTpoPeople,type TpoPeopleSort} from "@/modules/placements/tpo-team-people-sort-model";
 
-const tabSchema=z.object({tab:z.enum(["conversations","people"]).optional(),sort:z.enum(["WORK","NAME"]).optional()}).strict();
+const tabSchema=z.object({tab:z.enum(["conversations","people"]).optional(),sort:z.enum(["WORK","NAME"]).optional(),q:z.string().max(120).optional()}).strict();
 export default async function TpoTeamPage({searchParams}:{
  searchParams:Promise<{tab?:string|string[];sort?:string|string[]}>}) {
  const context=await getCurrentRequestContext();
