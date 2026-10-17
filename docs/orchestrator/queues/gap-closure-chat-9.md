@@ -332,3 +332,5 @@ Merged latest origin/main before editing; no test, lint, typecheck or build runs
 - Updated `chat9-super-admin-college-create-copy` source expectation from raw fetch to shared safe `apiFetch`; `colleges-domain` slug normalization expectation to lowercase `eec`.
 - Updated tenant-domain service and DB01 positive authorization fixtures to the current superadmin-only policy without weakening negative college/TPO permission tests.
 - `notification-providers` tests now read Headers correctly after outbound transport added `new Headers`; `src/lib/outbound.ts` redacts exception detail before structured provider logging (leaked PII/OTP prevented). Tests not run.
+
+- TPO-calendar-reports-25 OPEN: hour Enter activates Add, Escape/cancel focus restored; Enter-to-Move on existing followup not yet paritied.

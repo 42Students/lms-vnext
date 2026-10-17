@@ -13,6 +13,13 @@ describe("TPO calendar graceful interactions",()=>{
   expect(grid).toContain("document.addEventListener");
   expect(grid).toContain("beforeunload");
  });
+ it("TPO-calendar-reports-25 returns keyboard focus to the activated hour after Escape, cancel or successful create",()=>{
+  const grid=file("src/components/placements/tpo-week-hour-calendar.tsx");
+  expect(grid).toContain("useRef<HTMLButtonElement|null>");
+  expect(grid).toContain("triggerRef.current?.focus()");
+  expect(grid).toContain("clickEvent.currentTarget");
+  expect(grid).toContain("onKeyDown={event=>{if(event.key===\"Escape\")");
+ });
  it("TPO-calendar-reports-14 defaults desktop to Week and mobile to Agenda without displaying the wide grid on phones",()=>{
   const route=file("src/app/(authenticated)/tpo/calendar/page.tsx");
   const workspace=file("src/components/placements/placement-calendar-workspace.tsx");
