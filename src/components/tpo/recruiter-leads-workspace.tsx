@@ -524,6 +524,7 @@ export function RecruiterLeadsWorkspace({
           encodeURIComponent(collegeId)+"&contact="+encodeURIComponent(contact),{
           credentials:"same-origin",cache:"no-store",
         });
+        if(sequence!==contactCheckSeq.current)return;
         if(result.status===204)continue;
         const data=await result.json() as {lead?:Lead;error?:string};
         if(!result.ok)throw new Error(friendlyError(result.status,data));
