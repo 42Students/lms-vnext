@@ -1,5 +1,8 @@
 "use client";
-import {apiFetch} from "@/lib/api-fetch";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
+import {Dialog} from "@/components/ui/dialog";
+import {Button} from "@/components/ui/button";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {
@@ -28,6 +31,8 @@ export function TpoAfterCollegeBulkEditor({
   const [outcome, setOutcome] = useState<AfterCollegeOutcome>("NOT_DECIDED");
   const [undo, setUndo] = useState<Result["results"] | null>(null);
   const [busy, setBusy] = useState(false);
+  const {run:runGuarded,pending:guardedPending}=useGuardedAction();
+  const [confirmation,setConfirmation]=useState<"SAVE"|"UNDO"|null>(null);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   if (!rows.length) return null;
@@ -45,8 +50,6 @@ export function TpoAfterCollegeBulkEditor({
 
   async function save() {
     if (!available || !ids.length) return;
-    const description = ids.length + " learner(s) will have their After college outcome changed.";
-    if (!window.confirm(description + " Continue?")) return;
     setBusy(true); setError(""); setMessage(""); setUndo(null);
     try {
       const receipt = await post(ids.map(id => ({
@@ -54,16 +57,17 @@ export function TpoAfterCollegeBulkEditor({
         expectedVersion: current[id]?.expectedVersion ?? "none",
       })));
       setMessage("Updated " + receipt.updated + " After college outcome(s).");
-      setUndo(receipt.results.filter(result => result.changed)); setSelected([]);
+      setUndo(receipt.results.filter(result => result.changed)); setSelected([]);setConfirmation(null);
       router.refresh();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Unable to update outcomes");
+      setError(cause instanceof FriendlyFetchError && cause.status===409
+        ?"This changed while you were working. Your selected outcomes are kept. Refresh before retrying."
+        :cause instanceof Error?cause.message:"Could not update outcomes. Please try again.");
     } finally { setBusy(false); }
   }
 
   async function reverse() {
     if (!undo?.length) return;
-    if (!window.confirm("Undo the last bulk After college change?")) return;
     setBusy(true); setError("");
     try {
       const receipt = await post(undo.map(row => ({
@@ -71,10 +75,12 @@ export function TpoAfterCollegeBulkEditor({
         outcome: row.previousOutcome,
         expectedVersion: row.version,
       })));
-      setUndo(null); setMessage("Restored " + receipt.updated + " previous outcome(s).");
+      setUndo(null);setConfirmation(null);setMessage("Restored " + receipt.updated + " previous outcome(s).");
       router.refresh();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Undo failed because a record changed");
+      setError(cause instanceof FriendlyFetchError && cause.status===409
+        ?"Someone changed one of these outcomes. Your undo choices are kept; refresh before retrying."
+        :cause instanceof Error?cause.message:"Could not undo the update. Please try again.");
     } finally { setBusy(false); }
   }
 
@@ -112,13 +118,25 @@ export function TpoAfterCollegeBulkEditor({
         </select>
       </label>
       <button type="button" disabled={!available || busy || !ids.length}
-        onClick={() => void save()}
+        onClick={() => setConfirmation("SAVE")}
         className="min-h-10 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
         Update {ids.length} student(s)
       </button>
-      {undo?.length ? <button type="button" disabled={busy} onClick={() => void reverse()}
+      {undo?.length ? <button type="button" disabled={busy} onClick={() => setConfirmation("UNDO")}
         className="min-h-10 rounded border border-border px-4 font-semibold text-primary-text">Undo last bulk update</button> : null}
     </div>
+    <Dialog open={confirmation!==null} onOpenChange={value=>{if(!value&&!busy&&!guardedPending)setConfirmation(null);}}
+      title={confirmation==="SAVE"?"Update after-college outcomes":"Undo bulk after-college update"}
+      description={confirmation==="SAVE"?
+        ids.length+" student(s) will have their recorded After college outcome changed. Continue?":
+        "Restore the previous outcome for "+(undo?.length??0)+" student(s)?"}
+      footer={<><Button variant="secondary" disabled={busy||guardedPending} onClick={()=>setConfirmation(null)}>Cancel</Button>
+        <Button disabled={busy||guardedPending||(confirmation==="SAVE"?!ids.length:!undo?.length)}
+          onClick={()=>void runGuarded(async()=>{if(confirmation==="SAVE")await save();else if(confirmation==="UNDO")await reverse();})}>
+          {busy||guardedPending?"Saving…":"Confirm"}
+        </Button></>}>
+      <p className="text-sm">Only version-matching outcomes will be updated. Your choices are kept if saving fails.</p>
+    </Dialog>
     {error && <p role="alert" className="text-sm text-error">{error}</p>}
     {message && <p role="status" className="text-sm">{message}</p>}
   </section>;
