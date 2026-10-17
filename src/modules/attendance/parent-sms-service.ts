@@ -1,7 +1,7 @@
 import "server-only";
-import {and,eq,sql} from "drizzle-orm";
+import {and,asc,eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {attendanceParentContacts,attendanceParentSmsOutbox,collegeMemberships,membershipRoles,users} from "@/db/schema";
+import {attendanceParentContacts,attendanceParentSmsOutbox,attendanceRecords,collegeMemberships,membershipRoles,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireAttendanceCollege} from "./admin-service";
 import {attendanceParentContactInputSchema,attendanceParentSmsBody,canNotifyVerifiedParent,type AttendanceParentSmsKind} from "./parent-sms-model";
@@ -70,6 +70,19 @@ export async function dispatchQueuedAttendanceParentSms(rawId:string){
  const [entry]=await db.select().from(attendanceParentSmsOutbox)
   .where(and(eq(attendanceParentSmsOutbox.id,id),eq(attendanceParentSmsOutbox.status,"QUEUED"))).limit(1);
  if(!entry)return {status:"ALREADY_HANDLED" as const};
+ // A queued notice can become outdated before credentials are configured.
+ // Never notify a parent of an absence that has since been corrected.
+ const [currentAttendance]=await db.select({status:attendanceRecords.status})
+  .from(attendanceRecords).where(and(
+   eq(attendanceRecords.scheduleEventId,entry.scheduleEventId),
+   eq(attendanceRecords.membershipId,entry.membershipId))).limit(1);
+ const actualAbsent=currentAttendance?.status==="ABSENT";
+ const eventStillCurrent=entry.kind==="ABSENT"?actualAbsent:!actualAbsent;
+ if(!eventStillCurrent){
+  await db.update(attendanceParentSmsOutbox).set({status:"SKIPPED"}).where(and(
+   eq(attendanceParentSmsOutbox.id,id),eq(attendanceParentSmsOutbox.status,"QUEUED")));
+  return {status:"SKIPPED" as const};
+ }
  const [contact]=await db.select().from(attendanceParentContacts).where(and(
   eq(attendanceParentContacts.membershipId,entry.membershipId),
   eq(attendanceParentContacts.collegeId,entry.collegeId))).limit(1);
@@ -99,4 +112,26 @@ export async function dispatchQueuedAttendanceParentSms(rawId:string){
  }).where(and(eq(attendanceParentSmsOutbox.id,id),
   eq(attendanceParentSmsOutbox.status,"ATTEMPTED")));
  return {status:result};
+}
+
+/** Bounded recovery after a missing DLT template is configured. A College
+ * Admin explicitly triggers it; the outbox keeps all attempts idempotent. */
+export async function retryQueuedAttendanceParentSmsForCollege(ctx:RequestContext,rawCollegeId:unknown){
+ const collegeId=z.string().uuid().parse(rawCollegeId);
+ await requireAttendanceCollege(ctx,collegeId);
+ const ready=await getDb().transaction(async tx=>parentTablesReady(tx));
+ if(!ready)return {ready:false,accepted:0,skipped:0,unavailable:0};
+ const rows=await getDb().select({id:attendanceParentSmsOutbox.id})
+  .from(attendanceParentSmsOutbox).where(and(
+   eq(attendanceParentSmsOutbox.collegeId,collegeId),
+   eq(attendanceParentSmsOutbox.status,"QUEUED")))
+  .orderBy(asc(attendanceParentSmsOutbox.createdAt)).limit(25);
+ let accepted=0,skipped=0,unavailable=0;
+ for(const row of rows){
+  const outcome=await dispatchQueuedAttendanceParentSms(row.id);
+  if(outcome.status==="ACCEPTED")accepted++;
+  else if(outcome.status==="SKIPPED")skipped++;
+  else unavailable++;
+ }
+ return {ready:true,accepted,skipped,unavailable};
 }
