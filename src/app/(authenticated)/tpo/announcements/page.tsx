@@ -21,7 +21,7 @@ import {listTpoPlacementAnnouncements,countUnreadTpo42Announcements} from "@/mod
 import {previewTpoCollegeAnnouncementVisibility,previewTpoPlacementAudience} from "@/modules/announcements/tpo-audience-preview-service";
 import {announcementPreviewScope,tpoAudiencePreviewQuery} from "@/modules/announcements/tpo-audience-preview-query";
 import {tpoAnnouncementTabSchema} from "@/modules/announcements/tpo-placement-read-model";
-type Props={searchParams:Promise<{tab?:string|string[];audience?:string|string[];targetId?:string|string[];noticeError?:string|string[];sentNotice?:string|string[];page?:string|string[];noticeSuccess?:string|string[]}>};
+type Props={searchParams:Promise<{tab?:string|string[];audience?:string|string[];targetId?:string|string[];noticeError?:string|string[];sentNotice?:string|string[];page?:string|string[];mine?:string|string[];noticeSuccess?:string|string[]}>};
 export default async function TpoAnnouncements({searchParams}:Props){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
@@ -32,7 +32,8 @@ export default async function TpoAnnouncements({searchParams}:Props){
  if(!tab.success)return <main role="alert" className="p-5">Invalid tab. <Link href="/tpo/announcements">Return to announcements</Link></main>;
  const pageValue=Array.isArray(raw.page)?raw.page[0]:raw.page;
  const page=pageValue&&/^[1-9][0-9]{0,3}$/.test(pageValue)?Math.min(1000,Number(pageValue)):1;
- const result=await listTpoPlacementAnnouncements(context,tab.data,new Date(),page);
+ const showTeam=Array.isArray(raw.mine)?raw.mine[0]==="0":raw.mine==="0";
+ const result=await listTpoPlacementAnnouncements(context,tab.data,new Date(),page,showTeam?"COLLEGE":"MINE");
  const from42Unread=await countUnreadTpo42Announcements(context).catch(()=>null);
  const targetedReady=await placementTableExists("placement_tpo_notice_audiences")&&
   await placementTableExists("placement_tpo_notice_recipients");
@@ -135,6 +136,12 @@ export default async function TpoAnnouncements({searchParams}:Props){
     className={value===tab.data?"inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm text-on-primary":
     "inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm text-body"}>{label}{value==="from-42"&&from42Unread!==null?` (${from42Unread})`:""}</Link>)}
   </nav>
+  {tab.data!=="from-42"?<nav aria-label="Announcement author scope" className="flex flex-wrap items-center gap-3 text-sm">
+   <Link href={"/tpo/announcements?tab="+tab.data} aria-current={!showTeam?"page":undefined}
+    className={!showTeam?"font-semibold underline underline-offset-4":"text-primary-text"}>Your notices</Link>
+   <Link href={"/tpo/announcements?tab="+tab.data+"&mine=0"} aria-current={showTeam?"page":undefined}
+    className={showTeam?"font-semibold underline underline-offset-4":"text-primary-text"}>All team notices</Link>
+  </nav>:null}
   {result.status==="NOT_REGISTERED"?<section role="status" className="rounded-xl border border-border bg-surface p-5">
    <h2 className="font-semibold text-foreground">Announcement storage pending</h2>
    <p className="mt-2 text-sm text-body">The announcements table has not been registered. No notices or audience counts are inferred from unrelated notifications.</p>
@@ -237,9 +244,9 @@ export default async function TpoAnnouncements({searchParams}:Props){
     className="flex flex-wrap items-center justify-between gap-3 text-sm">
    <span>Page {result.page}{result.hasMore?" · More announcements available":""}</span>
    <div className="flex gap-2">
-    {result.page>1?<Link href={"/tpo/announcements?tab="+tab.data+"&page="+(result.page-1)}
+    {result.page>1?<Link href={"/tpo/announcements?tab="+tab.data+(showTeam?"&mine=0":"")+"&page="+(result.page-1)}
       className="min-h-10 rounded-md border border-border px-4 py-2 text-primary-text">Previous</Link>:null}
-    {result.hasMore?<Link href={"/tpo/announcements?tab="+tab.data+"&page="+(result.page+1)}
+    {result.hasMore?<Link href={"/tpo/announcements?tab="+tab.data+(showTeam?"&mine=0":"")+"&page="+(result.page+1)}
       className="min-h-10 rounded-md border border-border px-4 py-2 text-primary-text">Show older</Link>:null}
    </div>
   </nav>:null}

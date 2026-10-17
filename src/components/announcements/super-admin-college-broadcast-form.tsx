@@ -77,6 +77,7 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
     <Input type="url" value={buttonUrl} maxLength={500} onChange={e=>setButtonUrl(e.target.value)} placeholder="https://example.com"/>
    </label>
    <p className="text-xs text-muted-foreground">Provide both fields or leave both blank. Label must be 60 characters or fewer.</p>
+   <p role="status" className="text-xs text-muted-foreground">Button label {buttonLabel.length}/60 · HTTPS link {buttonUrl.length}/500</p>
    {!buttonValid?<p role="alert" className="text-sm text-danger-text">Provide a button label and a valid HTTPS link.</p>:null}
   </fieldset>
   <div className="grid gap-3 sm:grid-cols-2">

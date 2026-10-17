@@ -8,9 +8,12 @@ function source(path: string) {
 describe("Learner notification and placement UI source guards", () => {
   it("links pagination from the existing personal/announcement inbox", () => {
     const page = source("src/app/(authenticated)/learn/notifications/page.tsx");
+    const inbox = source("src/components/activity/learner-notifications-inbox.tsx");
     const history = source("src/app/(authenticated)/learn/notifications/history/page.tsx");
-    expect(page).toContain("Browse older personal notifications");
-    expect(page).toContain("/learn/notifications/history");
+    expect(page).toContain("LearnerNotificationsInbox");
+    expect(inbox).toContain("Browse older personal notifications");
+    expect(inbox).toContain("/learn/notifications/history");
+    expect(inbox).toContain("/learn/notifications/history");
     expect(history).toContain("getOwnLearnerNotificationHistory");
     expect(history).toContain("learnerNotificationHistoryQuerySchema");
     expect(history).toContain("NotificationList");

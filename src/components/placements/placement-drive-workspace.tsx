@@ -8,6 +8,8 @@ import { PlacementBulkAddApplicants } from "./placement-bulk-add-applicants";
 import { TpoRemindNonApplicants } from "./tpo-remind-non-applicants";
 import { getTpoNonApplicantReminderPreview } from "@/modules/placements/tpo-remind-not-applied-service";
 import { TpoDriveCloneAction } from "./tpo-drive-clone-action";
+import {TpoDeleteDraftAction} from "./tpo-delete-draft-action";
+import {TpoDriveRefreshControl} from "./tpo-drive-refresh-control";
 import { getPlacementDriveDay } from "@/modules/placements/drive-day-service";
 import { getJobEligibilityPolicy } from "@/modules/placements/eligibility-service";
 import { getPlacementEvaluationConfig } from "@/modules/placements/evaluation-config-service";
@@ -80,31 +82,23 @@ export async function PlacementDriveWorkspace({
     ),
   ]);
 
-  const isTpo = hasMembershipRole(context, "TPO");
-  const lifecycleReadiness = isTpo
-    ? await getTpoDriveLifecycleReadiness(context, jobId)
-    : null;
-  const [collisionAssessment, shortlist] = isTpo
-    ? await Promise.all([
-        getTpoScheduleConflicts(context, { days: 90 }).catch(() => null),
-        getTpoDriveShortlist(context, { jobId }).catch(() => null),
-      ])
-    : [null, null];
+  const isTpo = hasMembershipRole(context,"TPO");
+  // Read optional panels concurrently. Their failure must not misrepresent
+  // a safe-to-publish state or hide the primary drive page.
+  const [lifecycleReadiness,collisionAssessment,shortlist,roundOrder,deadlineState,bulkCandidates]=
+   await Promise.all([
+    isTpo?getTpoDriveLifecycleReadiness(context,jobId).catch(()=>null):Promise.resolve(null),
+    isTpo?getTpoScheduleConflicts(context,{days:90}).catch(()=>null):Promise.resolve(null),
+    isTpo?getTpoDriveShortlist(context,{jobId}).catch(()=>null):Promise.resolve(null),
+    isTpo?getTpoRoundReorderReadiness(context,jobId).catch(()=>null):Promise.resolve(null),
+    isTpo&&job.status==="PUBLISHED"?
+     getTpoDriveDeadlineState(context,jobId).catch(()=>null):Promise.resolve(null),
+    isTpo&&job.status==="PUBLISHED"?
+     listBulkDriveCandidates(context,jobId).catch(()=>null):Promise.resolve(null),
+   ]);
 
-  const roundOrder = isTpo ? await getTpoRoundReorderReadiness(context,jobId) : null;
-  const deadlineState = isTpo && job.status==="PUBLISHED" ?
-    await getTpoDriveDeadlineState(context,jobId) : null;
-
-  const scheduleWarnings = isTpo
-    ? projectTpoDriveScheduleWarnings(
-        collisionAssessment,
-        driveDay.rounds.map((round) => round.id),
-      )
-    : undefined;
-
-  const bulkCandidates = isTpo && job.status === "PUBLISHED"
-    ? await listBulkDriveCandidates(context, jobId)
-    : null;
+  const scheduleWarnings=isTpo?projectTpoDriveScheduleWarnings(
+   collisionAssessment,driveDay.rounds.map(round=>round.id)):undefined;
 
   const programs =
     job.status === "DRAFT"
@@ -263,7 +257,7 @@ export async function PlacementDriveWorkspace({
     <div className="space-y-6">
       <PageHeader
         eyebrow={eyebrow}
-        title={driveDay.job.title}
+        title={driveDay.job.company.name + " · " + driveDay.job.title}
         description={
           driveDay.job.company.name +
           " · " + headerFacts.status
@@ -279,13 +273,13 @@ export async function PlacementDriveWorkspace({
             {hasMembershipRole(context, "TPO") ? (
               <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/applicants-pipeline"}
                 className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground">
-                Applicant stages
+                Applicants
               </Link>
             ) : null}
             {isTpo && job.status === "PUBLISHED" ? (
               <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/close-preview"}
                 className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground">
-                Review close consequences
+                Close drive
               </Link>
             ) : null}
             {isTpo && job.status === "PUBLISHED" ? (
@@ -375,6 +369,14 @@ export async function PlacementDriveWorkspace({
           </div>
         }
       />
+      {isTpo?<TpoDriveRefreshControl/>:null}
+      {isTpo&&job.status==="DRAFT"?
+       <TpoDeleteDraftAction jobId={jobId} updatedAt={job.updatedAt.toISOString()}/>:null}
+      {isTpo&&!lifecycleReadiness?
+       <p role="status" className="rounded-md border border-border p-3 text-sm text-body">
+        Could not load: Publication readiness. Publishing is unavailable until these checks recover.
+        Refresh the drive to try again.
+       </p>:null}
       <section aria-label="Drive status and details" className="rounded-xl border border-border bg-surface p-4">
         <div className="flex flex-wrap items-center gap-2 text-sm">
           <strong className="rounded-md border border-border bg-surface-secondary px-2 py-1">{headerFacts.status}</strong>
@@ -647,6 +649,11 @@ export async function PlacementDriveWorkspace({
           status: role.status,
         }))}
       />
+      {isTpo&&job.status==="PUBLISHED"&&!bulkCandidates?
+       <p role="status" className="rounded-md border border-border p-3 text-sm text-body">
+        Could not load: Bulk applicants. Other drive sections are still available.
+        Refresh the drive to retry this section.
+       </p>:null}
       {bulkCandidates ? (
         <PlacementBulkAddApplicants
           jobId={jobId}

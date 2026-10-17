@@ -24,5 +24,8 @@
 | FAC-attendance-grades-13 | DONE | src/components/attendance/faculty-attendance-workspace.tsx; tests/unit/faculty-attendance-source-round5.test.ts — `it("FAC-attendance-grades-13 shows exact faculty attendance-window closure and not-started messages")` |
 | FAC-attendance-grades-17 | DONE | src/components/courses/faculty-report-download.tsx; tests/unit/faculty-attendance-source-round5.test.ts — `it("FAC-attendance-grades-17 shows Download Report and safe PDF error feedback")` |
 
+| FAC-attendance-grades-10 | DONE | src/components/courses/faculty-course-tab-navigation.tsx; tests/unit/chat11-session-course-gap-verification.test.ts — `it("FAC-attendance-grades-10 offers the legacy class selector on the attendance tab")`. Navigation remains centralized in the course tab strip. |
+| FAC-attendance-grades-16 | DONE | src/app/(authenticated)/teacher/courses/[deliveryId]/attendance-corrections/page.tsx; tests/unit/chat11-session-course-gap-verification.test.ts — `it("FAC-attendance-grades-16 retires the dead-end correction request page after access validation")`. Redirects to working Attendance tab. |
+
 ## Outstanding
-FAC-attendance-grades-01/03/04/10/16/20 remain to be reconciled; no tests executed by chat-11.
+FAC-attendance-grades-01/03/04/20 remain to be reconciled; no tests executed by chat-11.

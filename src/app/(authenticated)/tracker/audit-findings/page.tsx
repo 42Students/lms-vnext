@@ -8,6 +8,7 @@ import { requirePermission } from "@/modules/permissions/policy";
 import { listBugTrackerIssuesForAdmin } from "@/modules/bug-tracker/admin-service";
 import { trackerAdminRuntimeEnabled } from "@/modules/bug-tracker/readiness";
 import {AuditFindingStatusAction} from "@/components/tracker/audit-finding-status-action";
+import {AuditFindingFilterPersistence} from "@/components/tracker/audit-finding-filter-persistence";
 import { BUG_STATUSES, BUG_RESOLUTIONS } from "@/modules/bug-tracker/workflow";
 import { BUG_SEVERITIES, BUG_ENVIRONMENTS, BUG_ACCOUNT_ROLES } from "@/modules/bug-tracker/admin-validation";
 import { parseAuditFindingsSearchParams, trackerAuditFindingsInput } from "@/modules/bug-tracker/audit-findings-board-model";
@@ -49,6 +50,8 @@ export default async function AuditFindingsBoard({searchParams}:{searchParams:Pr
   beforeId:data.nextCursor.beforeId,
  }):null;
  return <div className="min-w-0 space-y-5">{header}
+  <AuditFindingFilterPersistence search={new URLSearchParams(Object.entries(params).flatMap(([key,value])=>
+   typeof value==="string"?[[key,value]]:Array.isArray(value)&&value[0]?[[key,value[0]]]:[])).toString()}/>
   <form method="get" className="grid min-w-0 gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-3">
    <label className="min-w-0 text-sm">Find issue
     <input name="q" defaultValue={query.q} maxLength={120} className="mt-1 min-h-11 w-full min-w-0 rounded-md border border-border bg-surface px-3" placeholder="ID or description"/></label>
