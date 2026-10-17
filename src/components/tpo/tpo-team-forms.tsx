@@ -10,13 +10,16 @@ async function postForm(url:string,values:Record<string,string>){
  try {
  const body=new FormData();
  for(const [key,value] of Object.entries(values))body.set(key,value);
- const response=await fetch(url,{method:"POST",credentials:"same-origin",body,redirect:"manual",signal:controller.signal});
- if(response.type==="opaqueredirect"||response.status===303)return {ok:true};
+ const response=await fetch(url,{method:"POST",credentials:"same-origin",body,
+  headers:{Accept:"application/json"},redirect:"follow",signal:controller.signal});
+ if(response.redirected)return {ok:false,code:"SESSION_EXPIRED"};
  if(!response.ok){
   const payload=await response.json().catch(()=>null) as {error?:string}|null;
   return {ok:false,code:payload?.error??"UNKNOWN"};
  }
- return {ok:true};
+ const payload=await response.json().catch(()=>null) as {id?:string;href?:string}|null;
+ if(!payload||typeof payload.id!=="string")return {ok:false,code:"INVALID_RESPONSE"};
+ return {ok:true,href:payload.href};
  }finally{window.clearTimeout(timeout);}
 }
 export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];actorUserId:string}){
@@ -43,16 +46,14 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
   event.preventDefault();if(pending.current||busy||!recipient||!topic.trim())return;
   pending.current=true;setBusy(true);setError("");
   try{
-   const response=await fetch("/api/placements/tpo/team/threads",{
-    method:"POST",credentials:"same-origin",redirect:"follow",
-    body:(()=>{const form=new FormData();form.set("recipientMembershipId",recipient);form.set("topic",topic.trim());return form;})(),
+   const result=await postForm("/api/placements/tpo/team/threads",{
+    recipientMembershipId:recipient,topic:topic.trim(),
    });
-   if(!response.ok){
-    const payload=await response.json().catch(()=>null) as {error?:string}|null;
-    setError(tpoTeamFormErrorMessage(payload?.error??"UNKNOWN","CREATE"));return;
+   if(!result.ok||!result.href){
+    setError(tpoTeamFormErrorMessage(result.code??"UNKNOWN","CREATE"));return;
    }
    try{sessionStorage.removeItem(draftKey);}catch{/* Optional. */}
-   router.push(new URL(response.url).pathname);router.refresh();
+   router.push(result.href);router.refresh();
   }catch{setError(tpoTeamFormErrorMessage("UNKNOWN","CREATE"));}
   finally{pending.current=false;setBusy(false);}
  }
@@ -80,11 +81,13 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
 export function TpoTeamReplyComposer({threadId,actorUserId}:{threadId:string;actorUserId:string}){
  const router=useRouter();
  const pending=useRef(false);
+ const sendKey=useRef<string|null>(null);
  const draftKey="tpo-team-reply:"+actorUserId+":"+threadId;
  const [body,setBody]=useState(""),[busy,setBusy]=useState(false),[error,setError]=useState("");
  useEffect(()=>{
   const task=window.setTimeout(()=>{
-   try{const saved=sessionStorage.getItem(draftKey);if(saved&&saved.length<=4000)setBody(saved);}catch{/* Optional. */}
+   try{const saved=sessionStorage.getItem(draftKey);if(saved&&saved.length<=4000)setBody(saved);
+    sendKey.current=sessionStorage.getItem(draftKey+":sendKey");}catch{/* Optional. */}
   },0);
   return ()=>window.clearTimeout(task);
  },[draftKey]);
@@ -94,15 +97,20 @@ export function TpoTeamReplyComposer({threadId,actorUserId}:{threadId:string;act
   window.addEventListener("beforeunload",protect);
   return ()=>window.removeEventListener("beforeunload",protect);
  },[body]);
- function changeBody(next:string){setBody(next);
-  try{if(next)sessionStorage.setItem(draftKey,next);else sessionStorage.removeItem(draftKey);}catch{/* Optional. */}
+ function changeBody(next:string){setBody(next);sendKey.current=null;
+  try{if(next)sessionStorage.setItem(draftKey,next);else sessionStorage.removeItem(draftKey);
+   sessionStorage.removeItem(draftKey+":sendKey");}catch{/* Optional. */}
  }
  const [success,setSuccess]=useState("");
  async function send(){
   if(pending.current||busy||!body.trim())return;
   pending.current=true;setBusy(true);setError("");setSuccess("");
   try{
-   const result=await postForm("/api/placements/tpo/team/threads/"+encodeURIComponent(threadId)+"/messages",{body:body.trim()});
+   if(!sendKey.current){sendKey.current=crypto.randomUUID();
+    try{sessionStorage.setItem(draftKey+":sendKey",sendKey.current);}catch{/* Optional. */}}
+   const result=await postForm("/api/placements/tpo/team/threads/"+encodeURIComponent(threadId)+"/messages",{
+    body:body.trim(),idempotencyKey:sendKey.current,
+   });
    if(!result.ok){setError(tpoTeamFormErrorMessage(result.code??"UNKNOWN","REPLY"));return;}
    changeBody("");setSuccess("Sent");router.refresh();
   }catch{setError(tpoTeamFormErrorMessage("UNKNOWN","REPLY"));}
