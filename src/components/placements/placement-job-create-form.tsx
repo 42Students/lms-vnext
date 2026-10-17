@@ -7,6 +7,7 @@ import {
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
+import { useUnsavedDriveGuard } from "./use-unsaved-drive-guard";
 
 export type PlacementAcademicTargetingChoice = {
   programs: Array<{
@@ -132,6 +133,7 @@ export function PlacementJobCreateForm({
 }) {
   const router = useRouter();
   const { showToast } = useToast();
+  const { dirty, markDirty, clearDirty } = useUnsavedDriveGuard();
   const [companyMode, setCompanyMode] =
     useState<"EXISTING" | "NEW">(
       companies.length > 0
@@ -458,6 +460,7 @@ export function PlacementJobCreateForm({
       router.push(
         `${basePath}/jobs/${jobId}${reviewPublish ? "?publish=1#drive-lifecycle-publish" : ""}`,
       );
+      clearDirty();
       router.refresh();
     } catch (error) {
       showToast({
@@ -476,6 +479,7 @@ export function PlacementJobCreateForm({
   return (
     <form
       onSubmit={submit}
+      onChange={markDirty}
       className="space-y-6"
     >
       <nav aria-label="Drive setup review" className="rounded-xl border border-border bg-surface p-5">
@@ -514,6 +518,7 @@ export function PlacementJobCreateForm({
           ) : (
             <p className="m-0 text-sm font-semibold text-danger">
               No active placement season. Start one from Drives before creating a drive.
+              <a href={basePath+"/seasons"} className="ml-2 inline-flex font-semibold underline focus-visible:ring-2 focus-visible:ring-primary">Open placement seasons →</a>
             </p>
           )}
         </div>
@@ -1060,6 +1065,7 @@ export function PlacementJobCreateForm({
           </button>
         </div>
       </section>
+      {dirty ? <p role="status" className="text-xs text-muted-foreground">You have unsaved changes. Save this draft before leaving the page.</p> : null}
     </form>
   );
 }
