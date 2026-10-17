@@ -32,7 +32,12 @@ export function SuperAdminContentActions({item}:{item:Content}){
    setError("Enter a title and valid Order.");return;
   }
   let changes:Record<string,unknown>={title:title.trim(),sequence:index-1};
-  if(item.contentType==="RESOURCE")changes={...changes,notes:notes.trim()||null};
+  if(item.contentType==="RESOURCE"){
+   if(!notes.trim()&&!(item.notes??"").trim()){
+    // The database may still hold private FILE/LINK materials. Keep them untouched.
+    changes={...changes};
+   }else if(notes.trim())changes={...changes,notes:notes.trim()};
+  }
   if(item.contentType==="YOUTUBE"){
    const seconds=Number(duration);
    if(!duration||!Number.isInteger(seconds)||seconds<1||seconds>86400){
