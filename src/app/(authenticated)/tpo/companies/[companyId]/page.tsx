@@ -331,7 +331,16 @@ export default async function TpoCompanyDetailPage({
             </p>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[34rem] text-left text-sm">
+              <ul aria-label="Company drive cards" className="divide-y divide-border md:hidden">
+               {drives.map(drive=><li key={drive.id} className="space-y-2 p-4 text-sm">
+                <Link href={"/tpo/placements/jobs/"+encodeURIComponent(drive.id)}
+                 className="block break-words font-semibold text-primary-text underline">{drive.title}</Link>
+                <p className="text-body">{({PUBLISHED:"Live",CLOSED:"Completed",DRAFT:"Draft",REQUEST:"Sent for review",CANCELLED:"Cancelled"} as Record<string,string>)[drive.status]??"Recorded"}
+                 {" · "+drive.employmentType.replaceAll("_"," ")}</p>
+                <p className="text-xs text-muted-foreground">Created {dateLabel(drive.createdAt)}</p>
+               </li>)}
+              </ul>
+              <table className="hidden w-full min-w-[34rem] text-left text-sm md:table">
                 <thead className="bg-muted text-muted-foreground">
                   <tr>
                     <th scope="col" className="px-4 py-3">Drive</th>
@@ -366,7 +375,7 @@ export default async function TpoCompanyDetailPage({
                               : "neutral"
                           }
                         >
-                          {drive.status}
+                          {({PUBLISHED:"Live",CLOSED:"Completed",DRAFT:"Draft",REQUEST:"Sent for review",CANCELLED:"Cancelled"} as Record<string,string>)[drive.status]??"Recorded"}
                         </StatusBadge>
                       </td>
                       <td className="px-4 py-3">
@@ -399,7 +408,20 @@ export default async function TpoCompanyDetailPage({
           </p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[65rem] text-left text-sm">
+            <ul aria-label="Company hiring cards" className="divide-y divide-border md:hidden">
+             {hiringHistory.map(offer=><li key={offer.id} className="space-y-2 p-4 text-sm">
+              <p className="break-words font-semibold text-foreground">{offer.roleTitle}</p>
+              <dl className="grid grid-cols-2 gap-2 text-body">
+               <div><dt className="text-xs text-muted-foreground">Annual CTC</dt><dd>{currency(offer.annualCtcInr)}</dd></div>
+               <div><dt className="text-xs text-muted-foreground">Offer</dt><dd>{({ACCEPTED:"Accepted",DECLINED:"Declined",PENDING:"Pending",WITHDRAWN:"Withdrawn"} as Record<string,string>)[offer.status]??"Recorded"}</dd></div>
+               <div><dt className="text-xs text-muted-foreground">Joining</dt><dd>{offer.joiningStatus?({JOINED:"Joined",NOT_JOINED:"Not joined",PENDING:"Pending",DEFERRED:"Deferred"} as Record<string,string>)[offer.joiningStatus]??"Recorded":"Not recorded"}</dd></div>
+               <div><dt className="text-xs text-muted-foreground">Issued</dt><dd>{dateLabel(offer.issuedAt)}</dd></div>
+              </dl>
+              <Link href={"/tpo/placements/jobs/"+encodeURIComponent(offer.jobId)}
+               className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Open drive</Link>
+             </li>)}
+            </ul>
+            <table className="hidden w-full min-w-[65rem] text-left text-sm md:table">
               <thead className="bg-muted text-muted-foreground">
                 <tr>
                   <th scope="col" className="px-4 py-3">Role</th>
