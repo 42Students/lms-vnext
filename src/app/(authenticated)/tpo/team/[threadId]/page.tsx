@@ -1,12 +1,13 @@
 import Link from "next/link";
 import {TpoLiveRefresh} from "@/components/tpo/tpo-live-refresh";
 import {TpoTeamReplyComposer} from "@/components/tpo/tpo-team-forms";
+import {TpoTeamMessageScroll} from "@/components/tpo/tpo-team-message-scroll";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { readTpoInternalConversation, tpoThreadIdSchema, tpoMessagePageSchema } from "@/modules/placements/tpo-team-conversation-service";
-export default async function InternalThread({params,searchParams}:{params:Promise<{threadId:string}>;searchParams:Promise<{page?:string|string[]}>}){
+export default async function InternalThread({params,searchParams}:{params:Promise<{threadId:string}>;searchParams:Promise<{page?:string|string[];m?:string|string[]}>}){
  const context=await getCurrentRequestContext();
  if(!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const {threadId}=await params;
@@ -15,6 +16,8 @@ export default async function InternalThread({params,searchParams}:{params:Promi
  const query=await searchParams;
  const rawPage=Array.isArray(query.page)?query.page[0]:query.page;
  const parsedPage=tpoMessagePageSchema.safeParse(rawPage ?? 1);
+ const rawMessage=Array.isArray(query.m)?query.m[0]:query.m;
+ const highlightId=rawMessage&&tpoThreadIdSchema.safeParse(rawMessage).success?rawMessage:undefined;
  if(!parsedPage.success)notFound();
  const result=await readTpoInternalConversation(context,parsed.data,parsedPage.data);
  if(result.status==="NOT_FOUND")notFound();
@@ -34,13 +37,14 @@ export default async function InternalThread({params,searchParams}:{params:Promi
     Mark this conversation&apos;s alerts as read
    </button>
   </form>
-  <ol aria-label="Private team messages" className="space-y-3">
-   {result.messages.map(message=><li key={message.id}
+  <ol role="log" aria-live="polite" aria-label="Private team messages" className="space-y-3">
+   {result.messages.map(message=><li id={"team-message-"+message.id} key={message.id}
     className="min-w-0 rounded-xl border border-border bg-surface p-4">
     <p className="text-xs text-muted-foreground">{message.authorMembershipId===context.membership?.id?"You":"Team member"} · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(message.createdAt)} IST</p>
     <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{message.body}</p>
    </li>)}
   </ol>
+  <TpoTeamMessageScroll highlightId={highlightId}/>
   <nav aria-label="Team message history pages" className="flex flex-wrap items-center gap-3 text-sm">
    <span className="text-body">Page {result.page} of {result.pages}</span>
    {result.page < result.pages ? <Link
