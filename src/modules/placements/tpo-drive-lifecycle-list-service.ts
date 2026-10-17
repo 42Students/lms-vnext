@@ -62,7 +62,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     const common = {seasons,season,companies,companyId:filters.companyId,view:filters.view,search:filters.search,
       deadline:filters.deadline,workMode:filters.workMode,
       employmentType:filters.employmentType,sort:filters.sort,display:filters.display,
-      minApplied:filters.minApplied,minOffers:filters.minOffers,payCategory:filters.payCategory,attention:filters.attention,
+      minApplied:filters.minApplied,minOffers:filters.minOffers,payCategory:filters.payCategory,attention:filters.attention,journey:filters.journey,
       attentionCounts,asOf:now.toISOString()};
     if (!available) return {...tpoDriveLifecyclePage(0,filters.page),counts,
       rows:[],requestRows:[],requestsAvailable:false as const,...common};
@@ -135,6 +135,16 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
       join placement_applications ap on ap.id=ofr.application_id
       where ap.job_id=${placementJobs.id} and ofr.status in ('ISSUED','ACCEPTED'))
       >= ${filters.minOffers}`:undefined,
+    filters.journey==="TAKING_APPLICATIONS"?and(eq(placementJobs.status,"PUBLISHED"),
+      gte(placementJobs.applicationDeadline,now)):
+    filters.journey==="RUNNING_ROUNDS"?and(eq(placementJobs.status,"PUBLISHED"),
+      sql`exists(select 1 from placement_job_rounds jr
+        where jr.job_id=${placementJobs.id} and jr.status in ('SCHEDULED','COMPLETED'))`):
+    filters.journey==="OFFERS_ISSUED"?sql`exists(
+      select 1 from placement_offers po join placement_applications pa on pa.id=po.application_id
+      where pa.job_id=${placementJobs.id} and po.status in ('ISSUED','ACCEPTED'))`:
+    filters.journey==="COMPLETE"?inArray(placementJobs.status,["CLOSED","CANCELLED"]):
+    undefined,
     filters.payCategory==="DREAM"?eq(placementJobs.isDream,true):
       filters.payCategory==="REGULAR"?eq(placementJobs.isDream,false):undefined,
     filters.attention==="NO_APPLICANTS"?and(eq(placementJobs.status,"PUBLISHED"),
@@ -206,7 +216,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
   },{isolationLevel:"repeatable read",accessMode:"read only"});
   return {
     ...projection, seasons, season,companies,companyId:filters.companyId, view: filters.view,search:filters.search,deadline:filters.deadline,workMode:filters.workMode,employmentType:filters.employmentType,sort:filters.sort,display:filters.display,
-    minApplied:filters.minApplied,minOffers:filters.minOffers,payCategory:filters.payCategory,attention:filters.attention,
+    minApplied:filters.minApplied,minOffers:filters.minOffers,payCategory:filters.payCategory,attention:filters.attention,journey:filters.journey,
     attentionCounts,asOf: now.toISOString(),
     requestsAvailable: false as const,
     requestRows: [] as {id:string;status:string;title:string;company:string;createdAt:string;approvedJobId:string|null}[],

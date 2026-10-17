@@ -4,12 +4,13 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import {TpoDriveRequestActions} from "@/components/tpo/tpo-drive-request-actions";
 import {TpoRemindNonApplicants} from "@/components/placements/tpo-remind-non-applicants";
 import {TpoDriveCloneAction} from "@/components/placements/tpo-drive-clone-action";
+import {TpoBulkDriveReminder} from "@/components/placements/tpo-bulk-drive-reminder";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoDriveLifecycleList } from "@/modules/placements/tpo-drive-lifecycle-list-service";
 import {driveRequestStatusLabel,TPO_REQUESTS_COPY,tpoDriveStatusLabel,tpoDriveWhereItIs} from "@/modules/placements/tpo-drive-lifecycle-list-model";
-type Search = { companyId?:string|string[];seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];employmentType?:string|string[];sort?:string|string[];minApplied?:string|string[];minOffers?:string|string[];payCategory?:string|string[];attention?:string|string[];display?:string|string[];page?:string|string[] };
+type Search = { companyId?:string|string[];seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];employmentType?:string|string[];sort?:string|string[];minApplied?:string|string[];minOffers?:string|string[];payCategory?:string|string[];attention?:string|string[];journey?:string|string[];display?:string|string[];page?:string|string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 export default async function TpoDriveLifecyclePage({ searchParams }: { searchParams: Promise<Search> }) {
   const context = await getCurrentRequestContext();
@@ -28,6 +29,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
     ...(first(params.minOffers)?{minOffers:first(params.minOffers)}:{}),
     ...(first(params.payCategory)?{payCategory:first(params.payCategory)}:{}),
     ...(first(params.attention)?{attention:first(params.attention)}:{}),
+    ...(first(params.journey)?{journey:first(params.journey)}:{}),
     ...(first(params.display)?{display:first(params.display)}:{}),
     ...(first(params.page)?{page:first(params.page)}:{}),
   });
@@ -36,7 +38,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
     ...(data.companyId?{companyId:data.companyId}:{}),
     payCategory:data.payCategory,
     attention:data.attention,
-   display:data.display,
+    journey:data.journey,
     display:data.display,
     ...(data.minApplied!==undefined?{minApplied:String(data.minApplied)}:{}),
     ...(data.minOffers!==undefined?{minOffers:String(data.minOffers)}:{}),
@@ -53,6 +55,8 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
   function pageHref(page:number){return {pathname:"/tpo/placements/lifecycle",query:{
    ...(data.season?{seasonId:data.season.id}:{}),...(data.companyId?{companyId:data.companyId}:{}),view:data.view,search:data.search,deadline:data.deadline,workMode:data.workMode,employmentType:data.employmentType,sort:data.sort,payCategory:data.payCategory,
    attention:data.attention,
+   journey:data.journey,
+   display:data.display,
    ...(data.minApplied!==undefined?{minApplied:data.minApplied}:{}),
    ...(data.minOffers!==undefined?{minOffers:data.minOffers}:{}),page,
   }};}
@@ -102,6 +106,16 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
       <label className="min-w-36 flex-1 text-sm font-semibold text-body">Card columns
         <select name="display" defaultValue={data.display} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
           <option value="DETAILED">Detailed</option><option value="COMPACT">Compact</option>
+        </select>
+      </label>
+      <label className="min-w-36 flex-1 text-sm font-semibold text-body">Where it is
+        <select name="journey" defaultValue={data.journey}
+          className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+          <option value="ALL">Every stage</option>
+          <option value="TAKING_APPLICATIONS">Taking applications</option>
+          <option value="RUNNING_ROUNDS">Rounds in progress</option>
+          <option value="OFFERS_ISSUED">Offers issued</option>
+          <option value="COMPLETE">Closed or cancelled</option>
         </select>
       </label>
       <label className="min-w-36 flex-1 text-sm font-semibold text-body">Work mode
@@ -281,9 +295,12 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
                 </details>
               </div>
             </div></article>)}
+          <div className="flex flex-wrap items-start gap-3">
           <button type="submit" className="min-h-11 justify-self-start rounded border border-primary px-4 text-sm font-semibold text-primary-text">
             Export selected drives (CSV)
           </button>
+           <TpoBulkDriveReminder/>
+          </div>
         </form>}
       <nav aria-label="Drive pages" className="flex flex-wrap items-center justify-between gap-3">
        {data.page>1?<Link href={pageHref(data.page-1)} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Previous</Link>:<span/>}

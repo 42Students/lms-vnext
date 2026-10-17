@@ -41,13 +41,17 @@ async function readRoster(context:RequestContext,rawJobId:unknown,rawRoundId:unk
  return {round,roster,jobId,roundId};
 }
 function matchSource(row:ImportRow,roster:readonly Roster[]){
+ // Every supplied known identity must agree. A correct application ID paired
+ // with another learner's email/roll must never silently assign their outcome.
  const methods=[
-  row.applicationId?roster.filter(r=>r.applicationId.toLowerCase()===row.applicationId.toLowerCase()):[],
-  // Company portal IDs are not yet recorded on learner applications. Never mistake them for internal IDs.
-  row.email?roster.filter(r=>r.email?.toLowerCase()===row.email.toLowerCase()):[],
-  row.roll?roster.filter(r=>r.roll?.toLowerCase()===row.roll.toLowerCase()):[],
- ];
- return methods.find(candidates=>candidates.length>0)??[];
+  row.applicationId?roster.filter(r=>r.applicationId.toLowerCase()===row.applicationId.toLowerCase()):null,
+  // Company portal IDs are not persisted and are not trusted for auto-match.
+  row.email?roster.filter(r=>r.email?.toLowerCase()===row.email.toLowerCase()):null,
+  row.roll?roster.filter(r=>r.roll?.toLowerCase()===row.roll.toLowerCase()):null,
+ ].filter((rows):rows is Roster[]=>rows!==null);
+ if(!methods.length)return [];
+ return methods[0]!.filter(candidate=>methods.every(list=>list.some(
+  row=>row.applicationId===candidate.applicationId)));
 }
 function suggested(row:ImportRow,roster:readonly Roster[]){
  const token=(row.name||row.email||row.roll||row.identity).toLowerCase();
@@ -119,10 +123,12 @@ export async function stageTpoRoundImport(
   throw new Error("A skipped or matched row is not present in the uploaded file. Preview the file again.");
  const explicitlySkippedApplications=new Set<string>();
  const problemApplications=new Set<string>();
+ let unresolvedSkippedRows=0;
  for(const row of inputRows){
   if(skippedLines.has(row.line)){
    const unique=matchSource(row,roster.roster);
    if(unique.length===1)explicitlySkippedApplications.add(unique[0]!.applicationId);
+   else unresolvedSkippedRows++;
    continue;
   }
   const exact=matchSource(row,roster.roster);
@@ -150,6 +156,7 @@ export async function stageTpoRoundImport(
   entries.push({line:row.line,applicationId:match,outcome:row.outcome!,rank:row.rank,message:row.message});
  }
  if(input.missingPolicy==="MARK_NOT_CLEARED"){
+  if(rejected.length||unresolvedSkippedRows)throw Error("Resolve ambiguous source identities before automatically marking missing learners not cleared. Skipping an unmatched row cannot identify which learner to protect.");
   for(const candidate of roster.roster){
    if(!used.has(candidate.applicationId)&&
      !explicitlySkippedApplications.has(candidate.applicationId)&&
