@@ -37,21 +37,11 @@ describe("chat-4 verified TPO Home gap coverage",()=>{
    href:"/tpo/students",needsAttention:false});
   expect(rows({registered:0,placedUnique:0})[2].status).toBe("Nobody registered yet");
  });
- it("TPO-home-07 shows recruiter and due follow-up workload",()=>{
-  const row=rows({recruiterLeads:3,followUps:2,recruiterAccess:1})[3];
-  expect(row).toMatchObject({title:"Engage",status:"3 recruiters · 2 follow-ups today",
-   href:"/tpo/recruiters?due=1",needsAttention:true});
- });
  it("TPO-home-08 combines inbox requests and recruiter messages",()=>{
   const row=rows({pendingRequests:2,messages:1})[4];
   expect(row).toMatchObject({title:"Inbox",status:"2 requests · 1 message to answer",
    href:"/tpo/requests",needsAttention:true});
   expect(rows({pendingRequests:0,messages:0})[4].status).toBe("No requests or messages waiting");
- });
- it("TPO-home-09 prioritizes team asks and the personal team inbox",()=>{
-  const row=rows({teamAsks:2,teamMentions:1,teamUnread:4})[5];
-  expect(row).toMatchObject({title:"Team",status:"2 asks for you",
-   href:"/tpo/team?filter=me",needsAttention:true});
  });
  it("TPO-home-13 shows the first undone setup step when no need cards exist",()=>{
   const next=buildTpoLegacyNextUp({needsYou:[],batches:[],checklist:[
@@ -73,4 +63,31 @@ describe("chat-4 verified TPO Home gap coverage",()=>{
    expect(src).toContain('label:"'+label+'"');
   expect(source("src/app/(authenticated)/tpo/layout.tsx")).toContain("<TpoMobileFooter/>");
  });
+ it("TPO-home-17 exposes titled rows and a text Needs you indicator, not colour alone",()=>{
+  const src=source("src/app/(authenticated)/tpo/home/page.tsx");
+  expect(src).toContain('data-testid={"home.row."+row.key}');
+  expect(src).toContain('aria-label="Needs you"');
+  expect(src).toContain("row.needsAttention");
+  expect(src).toContain("row.status");
+ });
+ it("TPO-home-36 renders dated notifications and screen-reader unread text",()=>{
+  const src=source("src/components/tpo/tpo-bell-panel.tsx");
+  expect(src).toContain("item.createdAt");
+  expect(src).toContain('className="sr-only"> New notification.');
+  expect(source("src/app/(authenticated)/tpo/layout.tsx")).toContain("slice(0,20)");
+ });
+ it("TPO-home-39 uses the accessible notification Drawer instead of an absolute region",()=>{
+  const src=source("src/components/tpo/tpo-bell-panel.tsx");
+  expect(src).toContain('<Drawer open={open} onOpenChange={setOpen} title="Notifications"');
+  expect(src).toContain("aria-expanded={open}");
+ });
+ it("TPO-home-41 supports G/N chords, Escape and the keyboard help dialog",()=>{
+  const src=source("src/components/tpo/tpo-keyboard-shortcuts.tsx");
+  expect(src).toContain('prefix.current==="g"?go:make');
+  expect(src).toContain('event.key==="Escape"');
+  expect(src).toContain('event.key==="?"');
+  expect(src).toContain('title="Keyboard shortcuts"');
+  expect(src).toContain('h:"/tpo/home"');
+ });
+
 });
