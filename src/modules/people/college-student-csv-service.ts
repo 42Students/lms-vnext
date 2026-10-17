@@ -159,7 +159,7 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
   const runId=randomUUID();
   await getDb().insert(activityEvents).values({
    organizationId:member.organizationId,collegeId:member.collegeId,
-   actorUserId:context.user.id,actorMembershipId:"id" in member ? member.id : null,
+   actorUserId:context.user.id,actorMembershipId:context.membership?.collegeId===member.collegeId?context.membership.id:null,
    module:"IDENTITY",eventType:"IDENTITY_COLLEGE_STUDENT_CSV_IMPORT",
    subjectType:"college_student_import",subjectId:runId,
    summary:"College Student CSV import completed",
