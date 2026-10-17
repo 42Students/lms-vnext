@@ -285,3 +285,11 @@ The existing queue blocker TPO-inbox-team-08 remains provider-credential depende
 
 | TPO-inbox-team-R04 | DONE (source, tests not run) | `listTpoPlacementAnnouncements` defaults to authored notices, while an explicit **All team notices** switch preserves college colleague access and pagination scope. Named `TPO-inbox-team-R04` test in `tests/unit/tpo-team-notice-colleague-access-chat2.test.ts`. |
 | TPO-inbox-team-57 | DONE (source, tests not run) | Colleague-managed notices remain accessible by the separate scoped view, with server-side persisted permission and version checks retained. Named `TPO-inbox-team-57` tests. |
+
+## Chat-2 round 6 — first-class Team asks (proposed storage)
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-inbox-team-22 | PARTIAL — OPEN | New `placement_tpo_team_asks` schema/SQL proposal, authorized/idempotent create, optional bounded due date, overdue classification, assignee Done (+ reply note), asker Cancel, guarded UI and row-locked lifecycle. `tests/unit/tpo-team-asks-chat2.test.ts` tests named **TPO-inbox-team-22**. The orchestrator must register `docs/proposed-migrations/tpo-team-asks.sql` and execute DB integration acceptance; Home and cross-thread filters remain. |
+| TPO-inbox-team-29 | PARTIAL — OPEN | Ask-created/done/cancelled persisted activity and single-recipient in-app notifications with `?ask=<id>` links. Named **TPO-inbox-team-29** test in same suite. Mentions and ownership assignment notices remain. |
+| TPO-inbox-team-30 | PARTIAL — OPEN | `?ask=<uuid>` deep-links within authorized thread and scrolls to the requested ask. Named **TPO-inbox-team-30** test. Object `?about=` context remains. |
