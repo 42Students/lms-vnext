@@ -57,3 +57,9 @@
 The independent audit findings page displays the **persisted** `audit_finding_syncs.last_result` without inferring a completed import. It distinguishes `SUCCESS`, `FAILED`, `PARTIAL`, and unconfigured/unknown states; it also retains the verified import timestamp, total accepted and refused counts. Test: `tests/unit/chat16-tracker-findings-sync-r6.test.ts` → SA-placements-projects-120. The active GitHub connection returned **404 Not Found** for `42Students/lms-findings` on this round. Therefore no import or successful source synchronization can be claimed. The central gap register intentionally remains OPEN; do not close it until a real authenticated source, validated mapping, and server-side import are exercised.
 
 The source-level feature statuses for SA-placements-projects-101/103/104/106/107/109/112/113/114/116/117/118/119/121/122 have been reconciled in `docs/audit/gap-register.md`; source-complete is not a passing DB/browser/provider test.
+
+### Chat-6 follow-up: SA-placements-projects-115 report linkage
+
+| Gap ID | Status | Evidence and remaining acceptance |
+|---|---|---|
+| SA-placements-projects-115 | OPEN (source-authored create-and-link; runtime pending) | `KnownErrorsWorkspace` opens `/tracker?context=…&knownErrorId=…` with sanitized bounded text; `tracker/page.tsx` passes the UUID only to Super Admin; `TrackerReportForm` creates an issue via the origin-guarded tracker API, then PATCHes the Known Error via `LINK_ISSUE`. Failed linking retains the created issue ID and exposes `Retry linking Known Error` without creating another issue. `tests/unit/chat6-known-error-issue-link-115.test.ts` covers authorization, Zod validation and recoverable partial failure. Browser/PG transaction checks still pending; direct one-click submission is deliberately not performed without a reporter's description. |
