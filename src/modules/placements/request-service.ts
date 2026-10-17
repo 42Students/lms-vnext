@@ -37,6 +37,7 @@ import {
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { PlacementsServiceError } from "./errors";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
+import {learnerPlacementRoundDeadlineAvailable} from "./learner-assessment-deadline-readiness";
 import { requirePlacementManageScope } from "./scope";
 import {
   createPlacementRequestInputSchema,
@@ -1238,6 +1239,7 @@ export async function getLearnerPlacementRequestWorkspace(
   const membership = requireLearner(context);
   await requireLearnerPlacementAccess(context);
   const db = getDb();
+  const deadlineAvailable=await learnerPlacementRoundDeadlineAvailable();
 
   const [requests, rounds, offers] =
     await Promise.all([
@@ -1257,6 +1259,7 @@ export async function getLearnerPlacementRequestWorkspace(
           roundName: placementJobRounds.name,
           roundKind: placementJobRounds.kind,
           testUrl: placementJobRounds.testUrl,
+          assessmentDueAt:deadlineAvailable?placementJobRounds.assessmentDueAt:sql<Date|null>`null`,
           sequence:
             placementJobRounds.sequence,
           durationMinutes: placementJobRounds.durationMinutes,
