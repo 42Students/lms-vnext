@@ -7,6 +7,8 @@ export const tpoVerificationQuerySchema=z.object({
  kind:z.enum(["ALL","EDUCATION","IDENTITY"]).default("ALL"),
  waitingState:z.enum(["ALL","SUBMITTED","UPDATE_PENDING"]).default("ALL"),
  search:z.string().trim().max(100).default(""),
+ batchId:z.string().uuid().optional(),
+ branchId:z.string().uuid().optional(),
  page:z.coerce.number().int().min(1).max(100000).default(1),
  pageSize:z.coerce.number().int().refine(n=>[25,50,100].includes(n)).default(50),
 }).strict();
@@ -19,5 +21,7 @@ export function tpoVerificationHref(query:TpoVerificationQuery){
   tab:query.tab,kind:query.kind,waitingState:query.waitingState,search:query.search,
   page:String(query.page),pageSize:String(query.pageSize),
  });
+ if(query.batchId)params.set("batchId",query.batchId);
+ if(query.branchId)params.set("branchId",query.branchId);
  return "/tpo/verification?"+params.toString();
 }
