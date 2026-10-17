@@ -22,6 +22,7 @@ export type NotificationListItem = {
   pinned?: boolean;
   actionLabel?:string;
   contextLine?:string;
+  externalCta?:{label:string;href:string}|null;
 };
 
 function formatWhen(value: string) {
