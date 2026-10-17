@@ -137,6 +137,11 @@ export default async function TpoAnnouncements({searchParams}:Props){
       tab.data==="yours"&&row.expiresAt&&new Date(row.expiresAt)<=new Date()?
       <p role="status" className="mt-2 text-sm font-semibold text-muted-foreground">Ended</p>:null}
     <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{row.message}</p>
+    {row.buttonUrl?.startsWith("https://")&&row.buttonLabel?<a href={row.buttonUrl}
+      target="_blank" rel="noopener noreferrer"
+      className="mt-3 inline-flex min-h-10 items-center rounded-md border border-border px-3 font-semibold text-primary-text">
+      {row.buttonLabel} ↗
+    </a>:null}
     {tab.data==="from-42"?<TpoPlacementCellReadAction id={row.id}/>:null}
     {tab.data==="yours"&&row.senderUserId===context.user.id?<TpoNoticeReadProgress id={row.id}/>:null}
     {tab.data==="yours" && row.senderUserId===context.user.id ?
