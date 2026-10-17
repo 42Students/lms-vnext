@@ -50,7 +50,7 @@ export function TpoRequestDecisionControl({requestId,expectedUpdatedAt,requestTy
     try{
       await apiFetch("/api/placements/tpo/requests/"+encodeURIComponent(requestId)+"/decision",{
         method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
-        body:JSON.stringify({confirmed:true,action,note:decisionText||null,expectedUpdatedAt}),
+        body:JSON.stringify({confirmed:true,action,note:decisionText,expectedUpdatedAt}),
       });
       showToast({tone:"success",title:action==="APPROVE"
         ?"Approved. The student has been told."
