@@ -196,8 +196,7 @@ describe("College People legacy audited page contracts",()=>{
   expect(login).toContain("ATTEMPT_LIFETIME_SECONDS = 300");
   expect(login).toContain("OTP_ATTEMPTS_EXCEEDED");
   expect(login).toContain("verificationAttempts");
-  const policy=src("src/modules/auth/login-validation.ts");
-  expect(policy).not.toContain("clearUserLockout");
+  expect(login).not.toContain("clearUserLockout");
  });
  it("COL-people-24 mentor reassignment preserves selection and uses explicit confirmed legacy copy",()=>{
   const reassignment=src("src/components/projects/project-mentor-reassignment.tsx");
