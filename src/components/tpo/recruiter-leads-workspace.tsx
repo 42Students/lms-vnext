@@ -487,9 +487,9 @@ export function RecruiterLeadsWorkspace({
         setDuplicate(data.lead ?? null);
       }
     } catch (cause) {
-      setSaveError(cause instanceof Error ? cause.message : "Could not check contact.");
+      if(sequence===contactCheckSeq.current)setSaveError(cause instanceof Error ? cause.message : "Could not check contact.");
     } finally {
-      setChecking(false);
+      if(sequence===contactCheckSeq.current)setChecking(false);
     }
   }
 
