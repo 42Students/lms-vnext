@@ -21,7 +21,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
  useEffect(()=>{setTasks(initialTasks)},[initialTasks]);
  const sprintState=new Map(sprints.map(sprint=>[sprint.id,sprint.status]));
  const lanes=groupLearnerBoardLanes(tasks,sprints);
- async function move(taskId:string,next:EditableStatus,restoreNote?:string|null){
+ async function move(taskId:string,next:EditableStatus,restoreNote?:string|null,isUndo=false){
   const task=tasks.find(row=>row.id===taskId);
   if(!task||busy||!membershipId||task.assigneeMembershipId!==membershipId||
     !task.sprintId||sprintState.get(task.sprintId)!=="ACTIVE"||
