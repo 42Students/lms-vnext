@@ -9,7 +9,7 @@ describe("Super Admin create and edit drive safety",()=>{
   expect(guard).toContain('window.removeEventListener("beforeunload"');
   for(const path of ["placement-job-create-form.tsx","placement-draft-edit-form.tsx"]){
    const code=source("src/components/placements/"+path);
-   expect(code).toContain("onChange={markDirty}");
+   expect(code).toMatch(/onChange=\{(?:markDirty|event\s*=>\s*\{[\s\S]*?markDirty\(\))/);
    expect(code).toContain("clearDirty();");
    expect(code).toContain("You have unsaved changes.");
   }
