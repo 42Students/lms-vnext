@@ -98,4 +98,11 @@ describe("chat-4 Super Admin Tenants and Modules verified source contracts",()=>
   expect(s).toContain("setSequenceIndex");
   expect(s).toContain("nextInSequence");
  });
+ it("SA-tenants-modules-44 tells Super Admin the current activity scope",()=>{
+  const s=source("src/app/(authenticated)/activity/page.tsx");
+  expect(s).toContain('aria-label="Activity scope"');
+  expect(s).toContain("Platform-wide activity.");
+  expect(s).toContain("Organization-wide activity.");
+  expect(s).toContain("Activity restricted to the selected college.");
+ });
 });
