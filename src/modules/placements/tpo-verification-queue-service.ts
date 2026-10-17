@@ -69,7 +69,7 @@ export async function getTpoVerificationQueue(ctx:RequestContext,query?:TpoVerif
     ...(query.search?[or(ilike(users.displayName,"%"+query.search+"%"),ilike(learnerProfiles.rollNumber,"%"+query.search+"%"))]:[]),
     ...(academicMembers?[inArray(profileVerifications.learnerMembershipId,academicMembers)]:[]),
    ]:[])))
-  .orderBy(desc(profileVerifications.submittedAt))
+  .orderBy(desc(profileVerifications.submittedAt),desc(profileVerifications.id))
   .limit(query?query.pageSize+1:100).offset(query?(query.page-1)*query.pageSize:0);
  const selected=query?records.slice(0,query.pageSize):records;
  const memberIds=[...new Set(selected.map(row=>row.id))];
