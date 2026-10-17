@@ -275,7 +275,7 @@ export function LearnerJobsBrowse({
           {ordinaryRoleCards.length>0?<LearnerPlacementJobs items={ordinaryRoleCards}
             snapshotNowIso={snapshotNowIso} returnQuery={params.toString()} savedJobIds={savedJobIds}/>:null}
           {notOpenRoleCards.length>0?<details className="rounded-xl border border-border bg-surface p-4"
-            defaultOpen={filters.availability==="not-open"} aria-label="Not open to you">
+            open={filters.availability==="not-open"} aria-label="Not open to you">
             <summary className="min-h-11 cursor-pointer font-semibold text-foreground">
               Not open to you ({notOpenRoleCards.length} roles on this page) · See reasons
             </summary>
