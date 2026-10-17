@@ -50,6 +50,14 @@ export function filterEngageRoster<T extends EngageRosterRow>(
   if(filters.company&&filters.company!=="ALL"&&filters.company!==row.companyName)return false;
   if(filters.designation&&filters.designation!=="ALL"&&!row.designation?.toLowerCase()
     .includes(filters.designation.toLowerCase()))return false;
+  if(filters.drives&&filters.drives!=="ALL"){
+   // Unknown drive counts must not be treated as zero.
+   if(row.drivesRan==null)return false;
+   if(filters.drives==="NONE"&&row.drivesRan!==0)return false;
+   if(filters.drives==="ONE_TWO"&&(row.drivesRan<1||row.drivesRan>2))return false;
+   if(filters.drives==="THREE_FIVE"&&(row.drivesRan<3||row.drivesRan>5))return false;
+   if(filters.drives==="SIX_PLUS"&&row.drivesRan<6)return false;
+  }
   if(filters.reach==="EMAIL"&&!row.emailNorm)return false;
   if(filters.reach==="PHONE"&&!row.phoneNorm)return false;
   if(filters.reach==="BOTH"&&!(row.emailNorm&&row.phoneNorm))return false;
