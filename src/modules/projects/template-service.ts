@@ -8,6 +8,8 @@ import {
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {
   projectTemplateCollegeAssignments,
   projectTemplates,
@@ -277,6 +279,11 @@ export async function createProjectTemplate(
         })
         .returning();
 
+      await recordActivityEventInTransaction(tx,context,{
+        eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_CREATED,
+        subjectType:"project_template",subjectId:template.id,subjectLabel:template.title,
+        summary:"Super Admin created project template",metadata:{version:1},
+      });
       return { template, version };
     });
   } catch (error) {
@@ -344,6 +351,12 @@ export async function reviseProjectTemplate(
         })
         .returning();
 
+      await recordActivityEventInTransaction(tx,context,{
+        eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_REVISED,
+        subjectType:"project_template",subjectId:template.id,subjectLabel:template.title,
+        summary:"Super Admin revised project template",
+        metadata:{version:template.currentVersion},
+      });
       return { template, version };
     });
   } catch (error) {
@@ -451,6 +464,12 @@ export async function publishProjectTemplate(
         ),
       );
 
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_PUBLISHED,
+      subjectType:"project_template",subjectId:published.id,subjectLabel:published.title,
+      summary:"Super Admin published project template",
+      metadata:{version:published.publishedVersion},
+    });
     return published;
   });
 }
@@ -494,6 +513,12 @@ export async function unpublishProjectTemplate(
       )
       .returning();
 
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_UNPUBLISHED,
+      subjectType:"project_template",subjectId:draft!.id,subjectLabel:draft!.title,
+      summary:"Super Admin unpublished project template",
+      metadata:{previousPublishedVersion:template.publishedVersion},
+    });
     return draft!;
   });
 }
@@ -579,6 +604,12 @@ export async function duplicateProjectTemplate(
         })
         .returning();
 
+      await recordActivityEventInTransaction(tx,context,{
+        eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_DUPLICATED,
+        subjectType:"project_template",subjectId:template.id,subjectLabel:template.title,
+        summary:"Super Admin duplicated project template",
+        metadata:{sourceTemplateId:source.id},
+      });
       return { template, version };
     });
   } catch (error) {
