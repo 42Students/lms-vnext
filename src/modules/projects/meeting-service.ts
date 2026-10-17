@@ -402,7 +402,7 @@ export async function transitionProjectMeeting(
       );
     }
 
-    if (meeting.status !== "SCHEDULED") {
+    if (!["SCHEDULED","RESCHEDULED"].includes(meeting.status)) {
       throw new ProjectsServiceError(
         "PROJECT_MEETING_INVALID_STATE",
       );
@@ -421,7 +421,7 @@ export async function transitionProjectMeeting(
         and(
           eq(projectMeetings.id, meeting.id),
           eq(projectMeetings.projectId,scope.project.id),
-          eq(projectMeetings.status, "SCHEDULED"),
+          inArray(projectMeetings.status, ["SCHEDULED","RESCHEDULED"]),
         ),
       )
       .returning();
@@ -477,7 +477,7 @@ export async function transitionProjectMeeting(
 
   if (
     meeting.status !== "REQUESTED" &&
-    meeting.status !== "SCHEDULED"
+    meeting.status !== "SCHEDULED" && meeting.status !== "RESCHEDULED"
   ) {
     throw new ProjectsServiceError(
       "PROJECT_MEETING_INVALID_STATE",
@@ -499,7 +499,7 @@ export async function transitionProjectMeeting(
           projectMeetings.projectId,
           scope.project.id,
         ),
-        inArray(projectMeetings.status, ["REQUESTED", "SCHEDULED"]),
+        inArray(projectMeetings.status, ["REQUESTED", "SCHEDULED","RESCHEDULED"]),
         ...(scope.access === "LEARNER" ? [
           eq(projectMeetings.status, "REQUESTED"),
           eq(projectMeetings.requestedByMembershipId, context.membership!.id),
