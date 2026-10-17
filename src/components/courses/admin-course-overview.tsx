@@ -1,5 +1,7 @@
 import Link from "next/link";
 import {collegeCourseCatalogueHref,paginateCollegeCourses,type CollegeCourseCatalogueQuery} from "@/modules/courses/college-course-catalogue-model";
+import {collegeCourseCatalogueExportHref} from "@/modules/courses/college-course-catalogue-export-model";
+import type {listCollegeCourseCatalogue} from "@/modules/courses/college-course-catalogue-service";
 import { COLLEGE_COURSES_COPY, courseVisibleToStudentsLabel, facultyAssignmentRoleLabel } from "@/modules/courses/college-courses-copy";
 import { CollegeOfferingLifecycleAction } from "@/components/college/college-offering-lifecycle-action";
 import { CollegeOfferingMetadataAction } from "@/components/college/college-offering-metadata-action";
@@ -51,15 +53,16 @@ export function AdminCourseOverview({
   workspace,
   offeringBasePath,
   allowOfferingLifecycle = false,
-  duplicateCourseId,catalogueQuery,
+  duplicateCourseId,catalogueQuery,catalogueData,
 }: {
   workspace: Workspace;
   offeringBasePath: string;
   allowOfferingLifecycle?: boolean;
   duplicateCourseId?:string;
   catalogueQuery?:CollegeCourseCatalogueQuery;
+  catalogueData?:Awaited<ReturnType<typeof listCollegeCourseCatalogue>>;
 }) {
-  const catalogue=catalogueQuery?paginateCollegeCourses(workspace.courses,catalogueQuery):null;
+  const catalogue=catalogueData??(catalogueQuery?paginateCollegeCourses(workspace.courses,catalogueQuery):null);
   const deliveryCountByOffering = new Map<
     string,
     number
@@ -443,6 +446,7 @@ export function AdminCourseOverview({
         offerings={workspace.offerings.filter(offering => offering.status === "ACTIVE")}
         deliveries={workspace.deliveries}
         faculty={workspace.faculty}
+        facultyTruncated={workspace.facultyTruncated}
       />
 
       <section className="space-y-3">
@@ -465,8 +469,15 @@ export function AdminCourseOverview({
           </select>
          </label>
          <button type="submit" className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
+         <a href={collegeCourseCatalogueExportHref(catalogueQuery)} download
+          className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">
+          Export CSV
+         </a>
          <Link className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm" href="/college/courses">Clear</Link>
         </form>:null}
+        {catalogue&&catalogue.total>1000?<p className="text-xs text-muted-foreground">
+         Export CSV includes up to the first 1,000 matching courses. Narrow filters to export a smaller set.
+        </p>:null}
         {catalogue&&catalogue.total===0?<p role="status" className="text-sm text-muted-foreground">
          No courses match these filters. Clear filters to see the whole catalogue.
         </p>:null}
