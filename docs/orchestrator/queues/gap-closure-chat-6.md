@@ -153,7 +153,7 @@ Audit: `docs/audit/pages/college/placements.md` (and `placements-review.md` if p
 | COL-placements-17 | S2 | MISSING-TAB | FIXED-ON-MAIN |
 | COL-placements-19 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | COL-placements-20 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
-| COL-placements-07 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
+| COL-placements-07 | S3 | MISSING-COLUMN | DONE |
 | COL-placements-11 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | COL-placements-15 | S3 | MISSING-ACTION | OPEN |
 | COL-placements-16 | S3 | COPY | DONE |
@@ -210,16 +210,16 @@ Audit: `docs/audit/pages/learner/profile-misc.md` (and `profile-misc-review.md` 
 | LEARNER-profile-misc-13 | S3 | MISSING-FIELD | DONE |
 | LEARNER-profile-misc-14 | S3 | MISSING-FIELD | DONE |
 | LEARNER-profile-misc-21 | S3 | MISSING-FIELD | DONE |
-| LEARNER-profile-misc-22 | S3 | SIDE-EFFECT | FIXED-ON-MAIN |
+| LEARNER-profile-misc-22 | S3 | SIDE-EFFECT | DONE |
 | LEARNER-profile-misc-08 | S4 | COPY | NOT-A-GAP |
 | LEARNER-profile-misc-10 | S4 | VALIDATION | DONE |
 | LEARNER-profile-misc-11 | S4 | STATE | DONE |
 | LEARNER-profile-misc-12 | S4 | STATE | DONE |
 | LEARNER-profile-misc-18 | S4 | MISSING-PAGE | FIXED-ON-MAIN |
 | LEARNER-profile-misc-23 | S4 | COPY | DONE |
-| LEARNER-profile-misc-24 | S4 | COPY | FIXED-ON-MAIN |
-| LEARNER-profile-misc-25 | S4 | STATE | FIXED-ON-MAIN |
-| LEARNER-profile-misc-26 | S4 | COPY | FIXED-ON-MAIN |
+| LEARNER-profile-misc-24 | S4 | COPY | DONE |
+| LEARNER-profile-misc-25 | S4 | STATE | DONE |
+| LEARNER-profile-misc-26 | S4 | COPY | DONE |
 
 ## college/dashboard (12: FIXED-ON-MAIN 7, OPEN 4, UNCONFIRMED 1)
 
