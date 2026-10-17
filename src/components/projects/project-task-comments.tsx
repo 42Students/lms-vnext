@@ -35,7 +35,7 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
   setBusy(true);setError(null);
   try{
    const result=await projectMutation(url,"POST",{
-     body:body.trim(),expectedTaskUpdatedAt:currentToken,
+     body:body.trim(),commentKind:kind,expectedTaskUpdatedAt:currentToken,
    }) as {comment:{updatedTaskAt?:string|Date}};
    const nextToken=result.comment.updatedTaskAt;
    if(nextToken)setLastPosted({taskId,updatedAt:new Date(nextToken).toISOString()});
