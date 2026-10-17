@@ -40,6 +40,8 @@ const STUDENT_CSV_HEADERS = [
   "Participation",
   "Readiness evidence",
   "CGPA",
+  "10th %","12th %","Diploma %","UG %","Passing year","Gap years",
+  "Marks verified","Lateral entry","Stage","After college",
   "Active backlogs",
   "Past backlogs",
   "Journey",
@@ -63,6 +65,7 @@ const STUDENT_CSV_HEADERS = [
  */
 export function exportTpoStudentsCsv(
   rows: readonly TpoStudentRow[],
+  afterCollege:Readonly<Record<string,string>> = {},
 ): string {
   const header = STUDENT_CSV_HEADERS
     .map(tpoStudentCsvCell)
@@ -81,6 +84,10 @@ export function exportTpoStudentsCsv(
       row.participationStatus,
       row.readinessSignal,
       row.cgpa,
+      row.tenthPct,row.twelfthPct,row.diplomaPct,row.ugPct,
+      row.passingYear,row.gapYears,row.marksVerified?"Yes":"No",
+      row.isLateralEntry==null?"":row.isLateralEntry?"Yes":"No",
+      row.journeyState,afterCollege[row.membershipId]??"",
       row.activeBacklogs,
       row.pastBacklogs,
       row.journeyState,

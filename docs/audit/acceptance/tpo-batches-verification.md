@@ -73,3 +73,27 @@ Pending graceful-operation dependency: `src/lib/friendly-error.ts`, `src/lib/api
 | TPO-batches-43 | OPEN | Preset reason buttons and three-character validation are present in `src/components/tpo/tpo-batch-inline-decision.tsx`, but legacy dedicated modal parity remains incomplete; `tests/unit/tpo-batches-bulk-legacy-chat5.test.ts` — `TPO-batches-43 offers reason presets and enforces a three-character ineligibility reason`. |
 | TPO-batches-47 | DONE | `src/modules/placements/tpo-bulk-ui-model.ts` now treats duplicate roll identifiers as ambiguous, never choosing a last-wins member; `tests/unit/tpo-batches-bulk-legacy-chat5.test.ts` — `TPO-batches-47 never matches an ambiguous roll number to an arbitrary student`. |
 | TPO-batches-62 | DONE | Batch overview translates old tab query parameters into actual routable workspace subpages; `tests/unit/tpo-batches-bulk-legacy-chat5.test.ts` — `TPO-batches-62 restores old tab URL aliases without a conflicting dynamic path`. |
+
+## Chat-5 next round — verified source changes and remaining OPEN gaps
+
+Tests are written but not run. This section supersedes older partial statuses only for the exact items below.
+
+| ID | Status | Evidence |
+|---|---|---|
+| TPO-batches-39 | OPEN | Import now calls out unchanged rows; full modal review and per-row detail remain partial; `tests/unit/tpo-batches-chat5-next-round.test.ts` — `TPO-batches-39` named regression. |
+| TPO-batches-40 | OPEN | Legacy heading, preview and confirm wording corrected; dedicated modal parity remains; `tests/unit/tpo-batches-chat5-next-round.test.ts` — `TPO-batches-40` named regression. |
+| TPO-batches-43 | OPEN | Inline decision now uses safe guarded fetch and reason presets; legacy reason modal is still missing; `tests/unit/tpo-batches-chat5-next-round.test.ts` — `TPO-batches-43` named regression. |
+| TPO-batches-49 | OPEN | Suggested eligibility-review card and Show me link added; quick Do it action remains missing; `tests/unit/tpo-batches-chat5-next-round.test.ts` — `TPO-batches-49` named regression. |
+| TPO-batches-50 | OPEN | Added loading skeleton, Retry boundary and filtered-empty guidance; partial profile-detail failure state remains; `tests/unit/tpo-batches-chat5-next-round.test.ts` — `TPO-batches-50` named regression. |
+| TPO-batches-52 | DONE | Eligibility, source and all five registration choices now use readable labels; `tests/unit/tpo-batches-chat5-next-round.test.ts` — `TPO-batches-52` named regression. |
+| TPO-batches-56 | DONE | Rules lifecycle timestamps are rendered in IST and migration jargon is suppressed; `tests/unit/tpo-batches-chat5-next-round.test.ts` — `TPO-batches-56` named regression. |
+| TPO-batches-57 | OPEN | Reason schema now caps at 200 chars; API request naming and full validation parity still need work; `tests/unit/tpo-batches-chat5-next-round.test.ts` — `TPO-batches-57` named regression. |
+| TPO-batches-60 | OPEN | History now uses IST and readable decisions; undo grouping and target labels remain incomplete; `tests/unit/tpo-batches-chat5-next-round.test.ts` — `TPO-batches-60` named regression. |
+| TPO-batches-61 | OPEN | Header uses Undo last decision and guarded reviewed undo with friendly errors; target and tooltip details remain partial; `tests/unit/tpo-batches-chat5-next-round.test.ts` — `TPO-batches-61` named regression. |
+| TPO-batches-20 | OPEN | Existing source contract reviewed; full gap feature remains incomplete. `tests/unit/tpo-chat5-open-gap-partial-evidence.test.ts` — `TPO-batches-20 partial baseline — further implementation required`. |
+| TPO-batches-33 | OPEN | Existing source contract reviewed; full gap feature remains incomplete. `tests/unit/tpo-chat5-open-gap-partial-evidence.test.ts` — `TPO-batches-33 partial baseline — further implementation required`. |
+| TPO-batches-34 | OPEN | Existing source contract reviewed; full gap feature remains incomplete. `tests/unit/tpo-chat5-open-gap-partial-evidence.test.ts` — `TPO-batches-34 partial baseline — further implementation required`. |
+| TPO-batches-35 | OPEN | Existing source contract reviewed; full gap feature remains incomplete. `tests/unit/tpo-chat5-open-gap-partial-evidence.test.ts` — `TPO-batches-35 partial baseline — further implementation required`. |
+| TPO-batches-37 | OPEN | Existing source contract reviewed; full gap feature remains incomplete. `tests/unit/tpo-chat5-open-gap-partial-evidence.test.ts` — `TPO-batches-37 partial baseline — further implementation required`. |
+| TPO-batches-45 | OPEN | Existing source contract reviewed; full gap feature remains incomplete. `tests/unit/tpo-chat5-open-gap-partial-evidence.test.ts` — `TPO-batches-45 partial baseline — further implementation required`. |
+| TPO-batches-53 | OPEN | Existing source contract reviewed; full gap feature remains incomplete. `tests/unit/tpo-chat5-open-gap-partial-evidence.test.ts` — `TPO-batches-53 partial baseline — further implementation required`. |

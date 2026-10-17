@@ -337,7 +337,7 @@ export function LearnerCourseDiscussion({
           body:JSON.stringify({expectedUpdatedAt:current.updatedAt,confirmed:true}) },
       );
       const updated = payload?.message;
-      if(updated?.id===highlightedPinned?.id && !updated.pinned)
+      if(updated && updated.id===highlightedPinned?.id && !updated.pinned)
         setHighlightedPinned(null);
       if (updated?.id) {
         setMessages((current) =>

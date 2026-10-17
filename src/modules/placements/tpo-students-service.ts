@@ -87,12 +87,23 @@ export const tpoStudentsQuerySchema = z
     classId:uuid.optional(),
     afterCollege:afterCollegeOutcomeSchema.optional(),
     profileStatus:z.enum(["VERIFIED","WAITING","SENT_BACK","NOT_VERIFIED"]).optional(),
+    legacyStage:z.enum(["ELIGIBLE","INVITED","REGISTERED","VERIFIED","PLACED"]).optional(),
+    minRoundReached:z.coerce.number().int().min(0).max(10000).optional(),
+    needsAttention:z.enum(["YES","NO"]).transform(x=>x==="YES").optional(),
     minApplications:z.coerce.number().int().min(0).max(10000).optional(),
     maxApplications:z.coerce.number().int().min(0).max(10000).optional(),
     minOffers:z.coerce.number().int().min(0).max(10000).optional(),
     maxOffers:z.coerce.number().int().min(0).max(10000).optional(),
     offerWaiting:z.union([z.boolean(),z.enum(["YES","NO"])]).transform(value=>typeof value==="boolean"?value:value==="YES").optional(),
     minCgpa:z.coerce.number().min(0).max(10).optional(),
+    minTenthPct:z.coerce.number().min(0).max(100).optional(),
+    minTwelfthPct:z.coerce.number().min(0).max(100).optional(),
+    minDiplomaPct:z.coerce.number().min(0).max(100).optional(),
+    minUgPct:z.coerce.number().min(0).max(100).optional(),
+    passingYear:z.coerce.number().int().min(1950).max(2100).optional(),
+    maxGapYears:z.coerce.number().int().min(0).max(100).optional(),
+    marksVerified:z.enum(["YES","NO"]).transform(x=>x==="YES").optional(),
+    isLateralEntry:z.enum(["YES","NO"]).transform(x=>x==="YES").optional(),
     maxCgpa:z.coerce.number().min(0).max(10).optional(),
     maxActiveBacklogs:z.coerce.number().int().min(0).max(100).optional(),
     maxPastBacklogs:z.coerce.number().int().min(0).max(100).optional(),
@@ -252,6 +263,15 @@ export async function getTpoStudentsIntelligence(
         placementCandidateAcademicEvidence.activeBacklogs,
       pastBacklogs:
         placementCandidateAcademicEvidence.pastBacklogs,
+      tenthPctBasisPoints:placementCandidateAcademicEvidence.tenthPctBasisPoints,
+      twelfthPctBasisPoints:placementCandidateAcademicEvidence.twelfthPctBasisPoints,
+      diplomaPctBasisPoints:placementCandidateAcademicEvidence.diplomaPctBasisPoints,
+      undergraduatePctBasisPoints:placementCandidateAcademicEvidence.undergraduatePctBasisPoints,
+      passingYear:placementCandidateAcademicEvidence.passingYear,
+      gapYears:placementCandidateAcademicEvidence.gapYears,
+      isLateralEntry:placementCandidateAcademicEvidence.isLateralEntry,
+      academicSource:placementCandidateAcademicEvidence.source,
+      verifiedAt:placementCandidateAcademicEvidence.verifiedAt,
       preferencesMembershipId:
         placementCandidatePreferences.membershipId,
     })
@@ -482,6 +502,7 @@ export async function getTpoStudentsIntelligence(
             status: placementApplications.status,
             screeningStatus:
               placementApplicationScreenings.status,
+            companyName:placementCompanies.name,
           })
           .from(placementApplications)
           .innerJoin(
@@ -491,6 +512,11 @@ export async function getTpoStudentsIntelligence(
               placementApplications.jobId,
             ),
           )
+          .innerJoin(placementCompanyRelationships,and(
+            eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
+            eq(placementCompanyRelationships.collegeId,college.id),
+          ))
+          .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
           .leftJoin(
             placementApplicationScreenings,
             eq(
@@ -712,6 +738,7 @@ export async function getTpoStudentsIntelligence(
         status: application.status,
         screeningStatus:
           application.screeningStatus,
+        companyName:application.companyName,
       },
     );
   }
@@ -841,6 +868,13 @@ export async function getTpoStudentsIntelligence(
         cgpaHundredths: learner.cgpaHundredths,
         activeBacklogs: learner.activeBacklogs,
         pastBacklogs: learner.pastBacklogs,
+        tenthPctBasisPoints:learner.tenthPctBasisPoints,
+        twelfthPctBasisPoints:learner.twelfthPctBasisPoints,
+        diplomaPctBasisPoints:learner.diplomaPctBasisPoints,
+        undergraduatePctBasisPoints:learner.undergraduatePctBasisPoints,
+        passingYear:learner.passingYear,gapYears:learner.gapYears,
+        isLateralEntry:learner.isLateralEntry,
+        academicSource:learner.academicSource,verifiedAt:learner.verifiedAt,
       },
       preferencesPresent:
         learner.preferencesMembershipId !== null,

@@ -1,10 +1,10 @@
 "use client";
 import {usePathname,useRouter,useSearchParams} from "next/navigation";
-import type {ReactNode} from "react";
+import {useEffect,useRef,type ReactNode} from "react";
 import {chosenTpoGridColumns,displayTpoGridCell,parseTpoGridColumns,updateTpoGridQuery,type TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 import {TpoGridColumnChooser} from "./tpo-grid-column-chooser";
 
-export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrimary,mobileActionsCollapsible=false}:{rows:readonly Row[];columns:readonly TpoGridColumn<Row>[];rowKey:(row:Row)=>string;rowActions?:(row:Row)=>ReactNode;mobileActionsCollapsible?:boolean;
+export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrimary,mobileActionsCollapsible=false,storageKey}:{rows:readonly Row[];columns:readonly TpoGridColumn<Row>[];rowKey:(row:Row)=>string;rowActions?:(row:Row)=>ReactNode;mobileActionsCollapsible?:boolean;storageKey?:string;
  openPrimary?:{columnKey:string;onOpen:(row:Row)=>void;ariaLabel:(row:Row)=>string}
 }){
  const router=useRouter(),pathname=usePathname(),params=useSearchParams();
@@ -12,9 +12,28 @@ export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrim
  const selected=parseTpoGridColumns(params.get("columns")??undefined,permitted);
  const active=selected.length?selected:permitted;
  const display=chosenTpoGridColumns(columns,active);
+ const restored=useRef(false),permittedCsv=permitted.join(",");
+ useEffect(()=>{
+  if(restored.current)return;
+  restored.current=true;
+  if(!storageKey||params.has("columns"))return;
+  try{
+   const saved=window.localStorage.getItem(storageKey);
+   if(!saved)return;
+   const keys=parseTpoGridColumns(saved,permittedCsv.split(","));
+   if(!keys.length)return;
+   const next=updateTpoGridQuery(new URLSearchParams(params.toString()),{columns:keys.join(",")},false);
+   router.replace(pathname+(next.size?"?"+next.toString():""));
+  }catch{/* Local browser storage may be disabled: URL controls keep working. */}
+ },[storageKey,permittedCsv,params,pathname,router]);
  function choose(keys:string[]){
   const defaults=keys.length===permitted.length&&keys.every((key,index)=>key===permitted[index]);
   const next=updateTpoGridQuery(new URLSearchParams(params.toString()),{columns:defaults?"":keys.join(",")},false);
+  if(storageKey){
+   try{if(defaults)window.localStorage.removeItem(storageKey);
+   else window.localStorage.setItem(storageKey,keys.join(","));}
+   catch{/* Continue with URL state when storage is disabled. */}
+  }
   router.replace(pathname+(next.size?"?"+next.toString():""));
  }
  return <section className="min-w-0 space-y-3" aria-label="Spreadsheet grid">

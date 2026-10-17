@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 export type ProjectAdminCollectionQuery = {
+  view?:"cards"|"table";
   fromMentorId?: string;
   riskBucket?: "STALLED" | "BLOCKER" | "REVIEW";
   riskSort?: "INACTIVE" | "WORKSPACE" | "SEVERITY";
@@ -90,6 +91,7 @@ export function ProjectAdminFilters({
           ))}
         </select>
       </label>
+      {query.view?<input type="hidden" name="view" value={query.view}/>:null}
       {query.fromMentorId ? <input type="hidden" name="fromMentorId" value={query.fromMentorId} /> : null}
       {query.riskBucket ? <input type="hidden" name="riskBucket" value={query.riskBucket} /> : null}
       {includeRiskSort ? (
@@ -131,7 +133,7 @@ export function ProjectAdminFilters({
           )}
           className="rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground"
         >
-          {[25, 50, 100].map((size) => (
+          {[10, 20, 25, 50, 100].map((size) => (
             <option key={size} value={size}>
               {size}
             </option>
@@ -170,6 +172,7 @@ export function ProjectAdminPagination({
   const href = (targetPage: number) => {
     const params = new URLSearchParams();
     if (query.q) params.set("q", query.q);
+    if (query.view) params.set("view", query.view);
     if (query.fromMentorId) params.set("fromMentorId", query.fromMentorId);
     if (query.riskBucket) params.set("riskBucket", query.riskBucket);
     if (query.riskSort) params.set("riskSort", query.riskSort);

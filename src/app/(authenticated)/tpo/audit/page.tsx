@@ -158,7 +158,7 @@ export default async function TpoAuditPage({
       <PageHeader
         eyebrow="TPO · Oversight"
         title="Audit log"
-        description="Read-only college-wide placement event history. Times are shown in IST. Duplicate canonical and domain-history records may describe the same underlying action."
+        description="A traceable history of placement decisions, changes, sharing and access across the workspace."
         actions={<div className="flex flex-wrap gap-2">
           <a href={"/api/placements/tpo/audit/export?"+new URLSearchParams({
             ...(query.kind!=="ALL"?{kind:query.kind}:{}),
@@ -186,7 +186,7 @@ export default async function TpoAuditPage({
       >
         {[
           {
-            label: "Matching records",
+            label: "Logged events",
             count: summary.total,
           },
           {

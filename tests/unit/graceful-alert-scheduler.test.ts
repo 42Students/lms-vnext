@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { burstOverflowText, formatDailyDigest, healthWatchStatus, istDayAndHour } from "@/modules/log-alerts/scheduler";
+import { burstOverflowText, cloudPollSettings, formatDailyDigest, healthWatchStatus, istDayAndHour } from "@/modules/log-alerts/scheduler";
 import { isValidTickSecret } from "@/app/api/internal/alerts/tick/route";
 
 describe("scheduled Telegram alerts", () => {
@@ -21,6 +21,12 @@ describe("scheduled Telegram alerts", () => {
     expect(burstOverflowText(13, "DEVELOPMENT")).toContain("13 more");
     expect(burstOverflowText(13, "DEVELOPMENT")).toContain("Logs page");
     expect(burstOverflowText(Number.NaN, "PRODUCTION")).toContain("0 more");
+  });
+  it("GR-118 requires explicit Cloud Logging enablement and namespace in production", () => {
+    expect(cloudPollSettings({ APP_ENV: "production", GOOGLE_CLOUD_PROJECT: "lms-vnext-1234" } as unknown as NodeJS.ProcessEnv)).toBeNull();
+    expect(cloudPollSettings({ APP_ENV: "production", GOOGLE_CLOUD_PROJECT: "lms-vnext-1234", LOG_ALERT_CLOUD_POLL_ENABLED: "true" } as unknown as NodeJS.ProcessEnv)).toBeNull();
+    expect(cloudPollSettings({ APP_ENV: "production", GOOGLE_CLOUD_PROJECT: "lms-vnext-1234", LOG_ALERT_CLOUD_POLL_ENABLED: "true", LOG_ALERT_K8S_NAMESPACE: "lms-production" } as unknown as NodeJS.ProcessEnv))
+      .toEqual({ project: "lms-vnext-1234", namespace: "lms-production" });
   });
   it("GR-120 includes reliable health status and detects a stopped watcher", () => {
     const now = new Date("2099-07-01T03:30:00Z");

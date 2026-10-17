@@ -1,6 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
+import {TPO_INELIGIBLE_REASONS} from "@/modules/placements/tpo-ineligible-reasons";
 import { useState, type FormEvent } from "react";
 import {
   type TpoMembershipDecisionSnapshot,
@@ -34,44 +36,15 @@ export function TpoParticipationDecisionForm({
     setFeedback(null);
     setPending(true);
     try {
-      const response = await fetch(
-        "/api/placements/tpo/students/" +
-          encodeURIComponent(membershipId) +
-          "/participation",
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          credentials: "same-origin",
-          body: JSON.stringify({
-            status,
-            ...(status === "INELIGIBLE" ? { reason } : {}),
-            ...(status !== "NOT_DECIDED" ? { note } : {}),
-            expected,
-          }),
-        },
-      );
-
-      if (!response.ok) {
-        if (response.status === 409) {
-          setFeedback({
-            tone: "error",
-            message:
-              "Another decision changed after this page loaded. Reload to review the current value before trying again.",
-          });
-        } else {
-          setFeedback({
-            tone: "error",
-            message:
-              "The decision was not saved. Check the reason, your permissions and the learner's current enrollment.",
-          });
-        }
-        return;
-      }
-
-      const result: {
-        changed: boolean;
-        direct: TpoMembershipDecisionSnapshot;
-      } = await response.json();
+      const result=await apiFetch<{changed:boolean;direct:TpoMembershipDecisionSnapshot}>(
+        "/api/placements/tpo/students/"+encodeURIComponent(membershipId)+"/participation",{
+          method:"PUT",headers:{"Content-Type":"application/json"},
+          credentials:"same-origin",
+          body:JSON.stringify({status,
+            ...(status==="INELIGIBLE"?{reason}:{}),
+            ...(status!=="NOT_DECIDED"?{note}:{}),
+            expected}),
+        });
 
       setExpected(result.direct);
       setFeedback({
@@ -81,10 +54,12 @@ export function TpoParticipationDecisionForm({
           : "No changes were needed.",
       });
       router.refresh();
-    } catch {
+    } catch (cause) {
       setFeedback({
-        tone: "error",
-        message: "A network error prevented saving. No success is assumed.",
+        tone:"error",
+        message:cause instanceof FriendlyFetchError&&cause.status===409
+          ?"This changed while you were working. Your reason is kept below. Refresh and try again."
+          :cause instanceof Error?cause.message:"Could not save the decision. Please try again.",
       });
     } finally {
       setPending(false);
@@ -110,6 +85,13 @@ export function TpoParticipationDecisionForm({
       {status === "INELIGIBLE" ? (
         <label className="grid gap-2 text-sm font-semibold text-body">
           Reason (required)
+          <div role="group" aria-label="Ineligibility reason presets" className="flex flex-wrap gap-2">
+            {TPO_INELIGIBLE_REASONS.map(preset=><button type="button" key={preset}
+              disabled={pending} onClick={()=>setReason(preset)}
+              className="min-h-10 rounded border border-border px-2 text-xs">{preset}</button>)}
+            <button type="button" disabled={pending} onClick={()=>setReason("")}
+              className="min-h-10 rounded border border-border px-2 text-xs">Other</button>
+          </div>
           <input
             type="text"
             required

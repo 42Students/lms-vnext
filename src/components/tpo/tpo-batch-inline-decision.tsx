@@ -1,28 +1,30 @@
 "use client";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
+import {apiFetch} from "@/lib/api-fetch";
+import {friendlyApiError} from "@/lib/friendly-error";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 import type {TpoMembershipDecisionSnapshot} from "@/modules/placements/tpo-participation-model";
 type Decision="ELIGIBLE"|"INELIGIBLE"|"NOT_DECIDED";
 export function TpoBatchInlineDecision({membershipId,expected}:{membershipId:string;expected:TpoMembershipDecisionSnapshot}){
  const router=useRouter();
+ const {run}=useGuardedAction({timeoutMs:35000});
  const [decision,setDecision]=useState<Decision>(expected.status??"NOT_DECIDED");
  const [reason,setReason]=useState(expected.reason??"");
  const [busy,setBusy]=useState(false),[error,setError]=useState("");
  const valid=decision!=="INELIGIBLE"||(reason.trim().length>=3&&reason.trim().length<=200);
  async function save(){
-  if(!valid||busy)return;setBusy(true);setError("");
+  if(!valid||busy)return;
+  await run(async()=>{setBusy(true);setError("");
   try{
-   const response=await fetch("/api/placements/tpo/students/"+membershipId+"/participation",{
+   await apiFetch("/api/placements/tpo/students/"+encodeURIComponent(membershipId)+"/participation",{
     method:"PUT",credentials:"same-origin",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({status:decision,expected,
      ...(decision==="INELIGIBLE"?{reason:reason.trim()}:{}),}),
    });
-   if(!response.ok){if(response.status===409)throw Error("Decision changed. Refresh to review the latest value.");
-    const data=await response.json() as {error?:string};
-    throw Error(data.error??"Unable to save learner decision.");
-   }
    router.refresh();
-  }catch(e){setError(e instanceof Error?e.message:"Could not confirm change.");}finally{setBusy(false);}
+  }catch(e){setError(e instanceof Error?e.message:friendlyApiError({}));}finally{setBusy(false);}
+  });
  }
  return <div className="mt-2 flex min-w-0 flex-wrap items-end gap-2">
   <label className="min-w-0 flex-1 text-xs">Learner override

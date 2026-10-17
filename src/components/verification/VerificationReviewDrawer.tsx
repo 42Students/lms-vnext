@@ -1,6 +1,7 @@
 "use client";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {useEffect,useRef,useState} from "react";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 import type {SafeSnapshot} from "@/modules/profile-verification/domain";
 import {verificationSnapshotComparison} from "@/modules/verification/snapshot-comparison";
 import {tpoVerificationSectionReasons} from "@/modules/verification/review-reasons";
@@ -27,6 +28,7 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
  const [loading,setLoading]=useState(true);
  const [retryKey,setRetryKey]=useState(0);
  const [saving,setSaving]=useState(false);
+ const {run:runGuarded,pending:guardedPending}=useGuardedAction();
  const [pendingAction,setPendingAction]=useState<"VERIFY"|"SEND_BACK"|null>(null);
  const isTpo=apiBase==="/api/tpo/verification";
  const reasonChoices:readonly string[]=tpoVerificationSectionReasons(row.section);
@@ -68,7 +70,7 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
   setRetryKey(key=>key+1);
  }
  async function decide(action:"VERIFY"|"SEND_BACK"){
-  if(!detail||saving||pendingAction!==action)return;
+  if(!detail||saving||guardedPending||pendingAction!==action)return;
   if(action==="SEND_BACK"&&[reason,additional.trim()].filter(Boolean).join(": ").trim().length<3){
    setError("Write what needs to change before sending this back.");return;
   }
@@ -194,7 +196,7 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
       <h3 className="font-semibold">{isTpo&&pendingAction==="SEND_BACK"?"Send "+(row.section==="EDUCATION"?"education":"identity")+" back":verificationDecisionConfirmation(pendingAction,row.section,[reason,additional].filter(Boolean).join(": ")).heading}</h3>
       <p className="break-words text-sm">{pendingAction==="SEND_BACK"?"The student sees your reason and fixes it on their profile.":verificationDecisionConfirmation(pendingAction,row.section,[reason,additional].filter(Boolean).join(": ")).message}</p>
       <div className="flex flex-wrap gap-2">
-       <button type="button" disabled={saving} onClick={()=>void decide(pendingAction)} className="rounded-md border px-3 py-2 font-semibold disabled:opacity-50">{verificationDecisionConfirmation(pendingAction,row.section,reason).button}</button>
+       <button type="button" disabled={saving||guardedPending} onClick={()=>void runGuarded(()=>decide(pendingAction))} className="rounded-md border px-3 py-2 font-semibold disabled:opacity-50">{verificationDecisionConfirmation(pendingAction,row.section,reason).button}</button>
        <button type="button" disabled={saving} onClick={()=>setPendingAction(null)} className="rounded-md border px-3 py-2 disabled:opacity-50">Cancel</button>
       </div>
      </section>}

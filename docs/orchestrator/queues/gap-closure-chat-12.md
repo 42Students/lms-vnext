@@ -119,6 +119,12 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - TPO-students-33 OPEN: CSV preview/commit works, but legacy XLSX support and the full academic import aliases still need closing.
 - GR-30/GR-31 partial: shared `apiFetch` and `useGuardedAction` are now adopted in chat-12 Students and Requests/Verification mutation controls; other mutating flows still require the guard.
 
+
+- TPO-students-10 OPEN: course Assign prep (course picker, due date, skip duplicate, learner notification) is still missing.
+- TPO-students-12 OPEN: scoped drive INCLUDE/EXCLUDE visibility overrides, reason and undo are still missing.
+- TPO-students-34 OPEN: academic import updates need application re-evaluation, learner notice and placement-team bell.
+- TPO-students-49 OPEN: do not widen roster/export authorization without proving College Admin, SA and placement-team faculty role parity.
+
 ## Needs shell (chat-9 only)
 
 - TPO-requests-verification-06, -21: chat-9 owns Requests sidebar pending-count badge and conditional Verification sidebar visibility; consult queue/access flags, never leak a denied preview.

@@ -6,7 +6,9 @@ export const tpoStudentHistoryQuerySchema = z.object({
 }).strict();
 
 export type HistoryApplicationFact = {
-  id: string;
+  id:string;
+  jobId?:string;
+  addedByCollege?:boolean;
   jobTitle: string;
   companyName: string;
   seasonName: string;
@@ -100,8 +102,10 @@ export function projectTpoStudentPlacementHistory(
         appliedAt: round.appliedAt?.toISOString() ?? null,
       }));
     return {
-      id: application.id,
-      jobTitle: application.jobTitle,
+      id:application.id,
+      jobId:application.jobId??null,
+      addedByCollege:application.addedByCollege??false,
+      jobTitle:application.jobTitle,
       companyName: application.companyName,
       seasonName: application.seasonName,
       roleTitle: application.roleTitle,

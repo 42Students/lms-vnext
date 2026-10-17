@@ -1,3 +1,4 @@
+import {batchRuleDate} from "@/modules/placements/tpo-batch-labels-model";
 import Link from "next/link";
 import { TpoBatchWorkspaceTabs } from "@/components/tpo/tpo-batch-workspace-tabs";
 import { TpoBatchDecisionControl } from "@/components/tpo/tpo-batch-decision-control";
@@ -9,12 +10,12 @@ export default async function BatchRules({params}:{params:Promise<{batchId:strin
  const {batch,lifecycle,ready,decision}=await getTpoBatch(await getCurrentRequestContext(),batchId);
  return <main className="min-w-0 space-y-4"><h1 className="text-xl font-semibold">{batch.name} — Rules</h1>
  <TpoBatchWorkspaceTabs batchId={batchId} active="rules" />
- {!ready?<p role="status" className="rounded border border-border p-4">Batch lifecycle table is not registered. Rules are not editable until migration.</p>:
+ {!ready?<p role="status" className="rounded border border-border p-4">Batch rules are temporarily unavailable. You can review other batch details and try again.</p>:
  <section className="rounded border border-border p-4"><h2 className="font-semibold">Participation policy</h2>
- <dl className="mt-3 space-y-2 text-sm"><div><dt className="font-semibold">Registration deadline</dt><dd>{lifecycle?.registrationDeadline?.toISOString()??"Not set"}</dd></div>
- <div><dt className="font-semibold">Invited</dt><dd>{lifecycle?.invitedAt?.toISOString()??"Not yet"}</dd></div>
- <div><dt className="font-semibold">Finished</dt><dd>{lifecycle?.finishedAt?.toISOString()??"Open"}</dd></div></dl>
- <p className="mt-3 text-sm text-muted-foreground">No batch-specific override is shown unless it is stored. College rules remain the fallback.</p></section>}
+ <dl className="mt-3 space-y-2 text-sm"><div><dt className="font-semibold">Registration deadline</dt><dd>{batchRuleDate(lifecycle?.registrationDeadline)}</dd></div>
+ <div><dt className="font-semibold">Invited</dt><dd>{batchRuleDate(lifecycle?.invitedAt)}</dd></div>
+ <div><dt className="font-semibold">Finished</dt><dd>{lifecycle?.finishedAt?batchRuleDate(lifecycle.finishedAt):"Still accepting placements"}</dd></div></dl>
+ <p className="mt-3 text-sm text-muted-foreground">The college placement rules apply unless this batch has approved changes.</p></section>}
  <TpoBatchDecisionControl batchId={batchId} current={decision}/>
  <Link href="/tpo/settings/rules" className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm">View college placement rules</Link>
  </main>;

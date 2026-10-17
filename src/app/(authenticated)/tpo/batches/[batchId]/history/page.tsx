@@ -1,3 +1,4 @@
+import {batchDecisionLabel,batchHistoryDate} from "@/modules/placements/tpo-batch-labels-model";
 import {tpoCohortHistoryCsvHref} from "@/modules/placements/tpo-batch-history-csv-model";
 import Link from "next/link";
 import { TpoBatchWorkspaceTabs } from "@/components/tpo/tpo-batch-workspace-tabs";
@@ -22,11 +23,11 @@ export default async function BatchHistory({params,searchParams}:{params:Promise
  <a href={tpoCohortHistoryCsvHref(batchId,filters.data)} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm text-primary-text">Export matching latest-100 events CSV</a>
  <p className="text-xs text-muted-foreground">Showing {visible.length} of the latest {events.length} batch, class and learner events.</p>
  {!ready?<p role="status" className="rounded border border-border p-4">Decision history migration has not been applied.</p>:visible.length===0?<p role="status">{events.length===0?"No batch, class or learner decisions recorded yet.":"No matching decisions in the latest recorded batch and learner events."}</p>:<ol className="space-y-2">{visible.map(e=><li className="min-w-0 break-words rounded border border-border bg-surface p-3 text-sm" key={e.id}>
- <strong>{e.kind==="UNDO"?"Undo":"Decision"}: {e.before??"NOT_DECIDED"} → {e.after??"NOT_DECIDED"}</strong>
- <p className="mt-1 text-xs text-muted-foreground">{e.occurredAt.toISOString()} · {e.actorName??"Unknown actor"} · {e.scopeType.toLowerCase()} · {e.scopeId}</p>
+ <strong>{e.kind==="UNDO"?"Undo":"Decision"}: {batchDecisionLabel(e.before)} → {batchDecisionLabel(e.after)}</strong>
+ <p className="mt-1 text-xs text-muted-foreground">{batchHistoryDate(e.occurredAt)} · {e.actorName??"Unknown actor"} · {e.scopeType==="MEMBERSHIP"?"Learner":e.scopeType==="SECTION"?"Class":"Batch"} · {e.scopeId}</p>
  <p className="text-xs text-body">{e.afterReason??e.beforeReason??"No reason recorded"}</p>
- <p className="text-xs text-muted-foreground">Action: {e.actionId}</p>
- {e.reversesActionId?<p className="text-xs">Reverses {e.reversesActionId}</p>:null}
+ <p className="text-xs text-muted-foreground">Action: Recorded in audit history</p>
+ {e.reversesActionId?<p className="text-xs">Undone</p>:null}
  {e.canRequestUndo?<TpoBatchUndoControl batchId={batchId} actionId={e.actionId}/>:null}
  </li>)}</ol>}
  </main>;
