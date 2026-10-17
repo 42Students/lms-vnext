@@ -17,7 +17,7 @@ import {listTpoPlacementAnnouncements} from "@/modules/announcements/tpo-placeme
 import {previewTpoCollegeAnnouncementVisibility,previewTpoPlacementAudience} from "@/modules/announcements/tpo-audience-preview-service";
 import {announcementPreviewScope,tpoAudiencePreviewQuery} from "@/modules/announcements/tpo-audience-preview-query";
 import {tpoAnnouncementTabSchema} from "@/modules/announcements/tpo-placement-read-model";
-type Props={searchParams:Promise<{tab?:string|string[];audience?:string|string[];targetId?:string|string[];noticeError?:string|string[];sentNotice?:string|string[]}>};
+type Props={searchParams:Promise<{tab?:string|string[];audience?:string|string[];targetId?:string|string[];noticeError?:string|string[];sentNotice?:string|string[];page?:string|string[]}>};
 export default async function TpoAnnouncements({searchParams}:Props){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
@@ -26,7 +26,9 @@ export default async function TpoAnnouncements({searchParams}:Props){
  const legacyTab=t==="from42"?"from-42":t==="students"?"yours":t;
  const tab=tpoAnnouncementTabSchema.safeParse(legacyTab??"yours");
  if(!tab.success)return <main role="alert" className="p-5">Invalid tab. <Link href="/tpo/announcements">Return to announcements</Link></main>;
- const result=await listTpoPlacementAnnouncements(context,tab.data);
+ const pageValue=Array.isArray(raw.page)?raw.page[0]:raw.page;
+ const page=pageValue&&/^[1-9][0-9]{0,3}$/.test(pageValue)?Math.min(1000,Number(pageValue)):1;
+ const result=await listTpoPlacementAnnouncements(context,tab.data,new Date(),page);
  const targetedReady=await placementTableExists("placement_tpo_notice_audiences")&&
   await placementTableExists("placement_tpo_notice_recipients");
  const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
