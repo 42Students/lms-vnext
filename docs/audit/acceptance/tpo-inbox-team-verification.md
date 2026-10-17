@@ -206,3 +206,8 @@ Additional source-level closures this continuation: TPO-inbox-team-57, -62, -64,
 ## Chat-2 round 5 — Team inbox pagination
 
 | TPO-inbox-team-18 | PARTIAL — OPEN | Team list now paginates beyond the old 100-row cap, preserves search/filter URL, selects latest activity descending with stable ID tie-break, and labels page-scoped filter counts truthfully; `tests/unit/tpo-team-inbox-paging-chat2.test.ts` (two `TPO-inbox-team-18` named tests). Other legacy thread-kind filters not built. |
+
+## Chat-2 round 5 — Team message corrections
+
+| TPO-inbox-team-24 | PARTIAL — OPEN | Scoped optimistic private-message edit (author only, first 15 min), delete tombstone, guarded UI and event-backed edited/removed indicators with explicit same-origin POST, `tests/unit/tpo-team-message-corrections-chat2.test.ts` tests named `TPO-inbox-team-24`. Newly mentioned recipients and ask cancellation need ask/mention persistence. |
+| TPO-inbox-team-25 | PARTIAL — OPEN | Actual event-backed “edited” tag and “Message removed” UI now render with existing author names/day separators/alignment; same suite names `TPO-inbox-team-25`. Rich system-event lines remain. |

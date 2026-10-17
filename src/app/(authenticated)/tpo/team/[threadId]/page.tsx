@@ -1,4 +1,7 @@
 import Link from "next/link";
+import {createHash} from "node:crypto";
+import {tpoTeamCanEdit} from "@/modules/placements/tpo-team-message-change-model";
+import {TpoTeamMessageActions} from "@/components/tpo/tpo-team-message-actions";
 import {TpoTeamOpenRead} from "@/components/tpo/tpo-team-open-read";
 import {TpoTeamRename} from "@/components/tpo/tpo-team-rename";
 import {TpoLiveRefresh} from "@/components/tpo/tpo-live-refresh";
@@ -31,6 +34,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
    <Link href="/tpo/team" className="text-primary-text">Back to team</Link>
  </main>;
  const preferences=await getTpoTeamThreadPreferences(context,parsed.data);
+ const serverNow=new Date();
  return <main className="space-y-5">
   <TpoLiveRefresh intervalMs={30000}/>
   <PageHeader eyebrow="TPO · Team" title={result.thread.topic}
@@ -62,7 +66,14 @@ export default async function InternalThread({params,searchParams}:{params:Promi
        {own?"You":message.authorName?.trim()||"Team member"} ·
        {" "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",timeStyle:"short"}).format(message.createdAt)} IST
       </p>
-      <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{message.body}</p>
+      <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">
+       {message.removed?"Message removed":message.body}
+      </p>
+      {message.edited&&!message.removed?<span className="text-xs text-muted-foreground">edited</span>:null}
+      {own&&!message.removed?<TpoTeamMessageActions
+       threadId={result.thread.id} messageId={message.id} body={message.body}
+       expectedBodyHash={createHash("sha256").update(message.body).digest("hex")}
+       canEdit={tpoTeamCanEdit(message.createdAt,serverNow)}/>:null}
      </div>
     </li>;
    })}
