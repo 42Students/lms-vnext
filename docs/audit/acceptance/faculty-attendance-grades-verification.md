@@ -13,5 +13,16 @@
 
 | FAC-attendance-grades-21 | NOT-A-GAP | docs/audit/owner-decisions-resolved.md OD-33; tests/unit/chat11-provider-copy-round5.test.ts — `it("FAC-attendance-grades-21 keeps manual non-assignment grade entry out of scope per OD-33")`. Published assignment and quiz grades remain accessible. |
 
+| FAC-attendance-grades-02 | DONE | src/components/attendance/faculty-attendance-workspace.tsx; tests/unit/faculty-attendance-source-round5.test.ts — `it("FAC-attendance-grades-02 guards all attendance dirty-mode, date, session and unload changes")` |
+| FAC-attendance-grades-05 | DONE | src/components/attendance/faculty-attendance-workspace.tsx; tests/unit/faculty-attendance-source-round5.test.ts — `it("FAC-attendance-grades-05 filters the class schedule by selected local date")` |
+| FAC-attendance-grades-06 | DONE | src/components/attendance/faculty-attendance-workspace.tsx; tests/unit/faculty-attendance-source-round5.test.ts — `it("FAC-attendance-grades-06 preserves no-class and schedule-action guidance")` |
+| FAC-attendance-grades-07 | DONE | src/modules/attendance/faculty-schedule-editor-model.ts; src/components/attendance/faculty-attendance-workspace.tsx; tests/unit/faculty-attendance-source-round5.test.ts — `it("FAC-attendance-grades-07 validates end after start, 12-hour bound and successful scheduling")` |
+| FAC-attendance-grades-08 | DONE | src/components/attendance/faculty-attendance-workspace.tsx; tests/unit/faculty-attendance-source-round5.test.ts — `it("FAC-attendance-grades-08 shows legacy monthly attendance legend and Active days")` |
+| FAC-attendance-grades-09 | DONE | src/components/attendance/faculty-attendance-workspace.tsx; tests/unit/faculty-attendance-source-round5.test.ts — `it("FAC-attendance-grades-09 shows marked and unmarked session counts with monthly report tiles")` |
+| FAC-attendance-grades-11 | DONE | src/components/attendance/faculty-attendance-workspace.tsx; tests/unit/faculty-attendance-source-round5.test.ts — `it("FAC-attendance-grades-11 searches the roster with the legacy student-name label")` |
+| FAC-attendance-grades-12 | DONE | src/components/attendance/faculty-attendance-workspace.tsx; tests/unit/faculty-attendance-source-round5.test.ts — `it("FAC-attendance-grades-12 offers previous, jump and next month controls")` |
+| FAC-attendance-grades-13 | DONE | src/components/attendance/faculty-attendance-workspace.tsx; tests/unit/faculty-attendance-source-round5.test.ts — `it("FAC-attendance-grades-13 shows exact faculty attendance-window closure and not-started messages")` |
+| FAC-attendance-grades-17 | DONE | src/components/courses/faculty-report-download.tsx; tests/unit/faculty-attendance-source-round5.test.ts — `it("FAC-attendance-grades-17 shows Download Report and safe PDF error feedback")` |
+
 ## Outstanding
-FAC-attendance-grades-01/02/03/04/05/06/07/08/09/10/11/12/13/16/17/20 remain to be reconciled; no tests executed by chat-11.
+FAC-attendance-grades-01/03/04/10/16/20 remain to be reconciled; no tests executed by chat-11.
