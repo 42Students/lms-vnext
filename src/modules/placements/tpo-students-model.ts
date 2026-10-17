@@ -128,6 +128,8 @@ export type TpoStudentRosterFilter = {
   branchId?: string;
   programId?: string;
   profileStatus?:Exclude<TpoStudentVerificationFact["status"],"UNKNOWN">;
+  minApplications?:number;maxApplications?:number;
+  minOffers?:number;maxOffers?:number;
   classId?:string;
   search?: string;
   page: number;
@@ -422,6 +424,10 @@ export function filterTpoStudentRoster(
     .filter(row=>!filter.programId||row.programId===filter.programId)
     .filter(row=>!filter.classId||row.classIds.includes(filter.classId))
     .filter(row=>!filter.profileStatus||row.verification.status===filter.profileStatus)
+    .filter(row=>filter.minApplications===undefined||row.applicationCount>=filter.minApplications)
+    .filter(row=>filter.maxApplications===undefined||row.applicationCount<=filter.maxApplications)
+    .filter(row=>filter.minOffers===undefined||row.offerCount>=filter.minOffers)
+    .filter(row=>filter.maxOffers===undefined||row.offerCount<=filter.maxOffers)
     .filter((row) => {
       if (!search) return true;
 
