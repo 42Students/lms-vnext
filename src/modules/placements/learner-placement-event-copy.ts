@@ -41,8 +41,8 @@ const routes:Record<LearnerPlacementEventKind,string>={
  REQUEST_DECIDED:"/learn/my-placements/placement#requests",MARKED_ABSENT:"/learn/my-placements/schedule",
  DEBARRED:"/learn/my-placements",REGISTRATION_OPEN:"/learn/my-placements/placement#registration",
  REGISTRATION_REMINDER:"/learn/my-placements/placement#registration",
- NUDGE:"/learn/my-placements",PREP_ASSIGNED:"/learn/courses",PROFILE_VERIFIED:"/learn/my-placements/profile",
- PROFILE_SENT_BACK:"/learn/my-placements/profile",PLACEMENT_ANNOUNCEMENT:"/learn/my-placements/announcements",
+ NUDGE:"/learn/my-placements",PREP_ASSIGNED:"/learn/courses",PROFILE_VERIFIED:"/learn/profile",
+ PROFILE_SENT_BACK:"/learn/profile",PLACEMENT_ANNOUNCEMENT:"/learn/my-placements/announcements",
 };
 export function learnerPlacementEventCopy(kind:LearnerPlacementEventKind,subject:string){
  const safeSubject=subject.replace(/[\r\n\u0000-\u001f]/g," ").trim().slice(0,150);
