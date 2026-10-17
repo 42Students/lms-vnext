@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { getPlacementTpoOperations } from "@/modules/placements/tpo-operations-service";
 import { PageHeader } from "@/components/ui/page-header";
+import { SuperAdminBulkDriveActions } from "@/components/placements/super-admin-bulk-drive-actions";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { adminDriveDirectoryHref, adminDriveDirectoryQuerySchema, adminDriveStatus, filterAdminDriveDirectory } from "@/modules/placements/admin-drive-directory-model";
@@ -57,6 +58,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
    <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-on-primary">Filter</button>
    <Link href="/admin/placements/drives" className="min-h-11 inline-flex items-center text-primary-text">Clear all</Link>
   </form>
+  <SuperAdminBulkDriveActions drives={data.items.map(row=>({id:row.job.id,title:row.job.title,status:row.job.status,companyName:row.company.name}))} />
   <p role="status" className="text-sm text-muted-foreground">{data.total} matching drives · Page {data.page} of {data.totalPages}</p>
   {data.items.length===0?<EmptyState title="No drives found" description="No drives match these filters."/>:
    <div className="overflow-x-auto rounded-xl border border-border bg-surface">
