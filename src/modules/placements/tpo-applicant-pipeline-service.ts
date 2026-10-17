@@ -42,7 +42,22 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
         or(ilike(cohorts.name,queryPattern),ilike(cohorts.code,queryPattern),
           ilike(programs.name,queryPattern),ilike(departments.name,queryPattern))))
    ):undefined;
+   const flagScope=input.flag==="WITHDRAWAL_REQUESTED"?sql<boolean>`exists(
+      select 1 from placement_learner_requests req
+       where req.application_id=${placementApplications.id}
+        and req.request_type='APPLICATION_WITHDRAWAL' and req.status='PENDING')`:
+    input.flag==="NO_SHOW"?sql<boolean>`exists(
+      select 1 from placement_round_results r
+       where r.application_id=${placementApplications.id}
+        and r.status='APPLIED' and r.outcome='ABSENT' and r.superseded_at is null)`:
+    input.flag==="PLACED_ELSEWHERE"?sql<boolean>`exists(
+      select 1 from placement_offers o
+       join placement_applications other on other.id=o.application_id
+       where other.membership_id=${placementApplications.membershipId}
+        and other.job_id<>${job.id} and o.status='ACCEPTED')`:
+    input.flag==="ADDED_BY_COLLEGE"?sql<boolean>`${placementApplications.submittedByUserId}<>${collegeMemberships.userId}`:undefined;
    const scope=and(eq(placementApplications.jobId,job.id),
+    flagScope,
     since?gte(placementApplications.submittedAt,since):undefined,
     input.channel!=="ALL"?eq(placementApplications.channel,input.channel):undefined,
     input.eligibility!=="ALL"?eq(placementApplications.eligibilityStatus,input.eligibility):undefined,
@@ -169,5 +184,5 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
     screeningUpdatedAt:row.screeningUpdatedAt?.toISOString()??null,
    }))};
   },{isolationLevel:"repeatable read",accessMode:"read only"});
-  return {job,stage:input.stage,search:input.search,channel:input.channel,eligibility:input.eligibility,sort:input.sort,submittedWithin:input.submittedWithin,...projection};
+  return {job,stage:input.stage,search:input.search,channel:input.channel,eligibility:input.eligibility,sort:input.sort,submittedWithin:input.submittedWithin,flag:input.flag,...projection};
 }
