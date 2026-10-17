@@ -11,7 +11,7 @@ import {
 import { logAlertsRuntimeEnabled } from "./readiness";
 import { redactAlertText, safeAlertPath, safeAlertLabel } from "./redaction";
 import { alertEnvironment, errorSignatureHash } from "./signature";
-import { burstSlot, decideAlert } from "./policy";
+import { burstSlot, countSuppressedOccurrence, decideAlert } from "./policy";
 import { sendTelegramAlert, telegramAlertsConfigured } from "./telegram-notifier";
 
 export type ReportableError = {
@@ -162,13 +162,14 @@ export async function reportErrorForAlert(input: ReportableError): Promise<boole
       if (decision === "NONE") { await rememberEvent(); return; }
       const slot = burstSlot(spent);
       if (slot === "SUPPRESS") {
-        // A NEW signature has not been delivered or stored: a source poller
-        // must retry it rather than checkpointing a silently lost incident.
+        // New signatures are still undelivered and retryable. A polling retry
+        // is not a new occurrence and must NOT inflate the overflow counter.
         outcome = Boolean(current);
+        if (!countSuppressedOccurrence(Boolean(current))) return;
         await tx.update(states).set({
           burstMinuteAt: minute, overflowCount: sql.raw("log_alert_states.overflow_count + 1"),
         }).where(eq(states.stateKey, key));
-        if (current) await rememberEvent();
+        await rememberEvent();
         return;
       }
       if (slot === "SUMMARY") {
