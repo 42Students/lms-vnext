@@ -139,7 +139,7 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
    byMember.set(mark.membershipId,row);
   }
   const percentage=(points:number|undefined)=>
-   points===undefined?null:(points/100).toFixed(2).replace(/\\.00$/,"")+"%";
+   points===undefined?null:(points/100).toFixed(2).replace(/\.00$/,"")+"%";
   const projected = projectSharedApplicants(applications.map(({membershipId,...row})=>{
     const marks=byMember.get(membershipId);
     return {...row,
