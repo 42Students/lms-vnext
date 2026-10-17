@@ -9,3 +9,5 @@ Audit: `docs/audit/pages/learner/profile-misc.md`. The owner decision `docs/audi
 | LEARNER-profile-misc-04 | BLOCKED | Video introduction recording and upload require safe camera/file capture, private video storage, scanner and verified delivery receipts; see queue blocker. |
 
 No upload is claimed complete or safe without those dependencies. These blocked IDs intentionally have no passing tests pretending private storage exists; when provisioned the orchestrator should require named upload/integration tests for each ID.
+
+| LEARNER-profile-misc-23 | DONE | `src/app/(authenticated)/learn/notifications/page.tsx`, `src/components/activity/learner-notifications-inbox.tsx`; `tests/unit/chat6-learner-notification-copy-round2.test.ts` → `LEARNER-profile-misc-23 removes extraneous history header counts and pinned duplication while retaining feed` |
