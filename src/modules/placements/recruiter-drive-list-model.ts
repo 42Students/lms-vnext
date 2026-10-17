@@ -72,7 +72,7 @@ export function recruiterDrivesHref(query: RecruiterDriveListQuery) {
   if (query.page > 1) p.set("page", String(query.page));
   if (query.sort !== "RECENT") p.set("sort", query.sort);
   const s = p.toString();
-  return "/hr/drives" + (s ? "?" + s : "");
+  return "/recruiter/drives" + (s ? "?" + s : "");
 }
 
 export const HR_DRIVE_PAGE_SIZE=20;
