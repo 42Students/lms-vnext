@@ -127,7 +127,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
     action==="CLOSE" ?
     "Close this published Section Quiz? New learner attempts stop; existing attempts and grades remain." :
     "Confirm "+action.toLowerCase()+" for this Section Quiz?";
-  if(!window.confirm(warning))return;
+  if((action==="ARCHIVE"||action==="CLOSE")&&!window.confirm(warning))return;
   if(!facultyBeginQuizWrite(mutationInFlight))return;
   setError(null);setSuccess(null);setPending(true);
   try{
