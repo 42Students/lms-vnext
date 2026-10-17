@@ -45,7 +45,7 @@ export function StudentRuleEditor({collegeId,membershipId,module,stored,locked,b
    const data:unknown=await response.json().catch(()=>null);
    if(!response.ok){
     const code=data&&typeof data==="object"&&"error" in data?String(data.error):"REQUEST_FAILED";
-    setFeedback(code==="STALE_RULE"?"The stored rule changed. Reload this page before editing.":code==="ANCESTOR_LOCKED"?"A broader locked rule prevents this change.":"Change failed ("+code+").");
+    setFeedback(code==="STALE_RULE"?"The stored rule changed. Reload this page before editing.":code==="ANCESTOR_LOCKED"?"A broader locked rule prevents this change.":"The module change could not be saved. Recheck the stored rule and try again.");
     return;
    }
    if(!hasStudentRuleAcknowledgement(data,module,choice,nextLocked)){

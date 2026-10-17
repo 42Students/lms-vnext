@@ -27,7 +27,7 @@ export default async function CollegeAttendanceSettingsPage() {
     );
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         eyebrow="College Admin · Academics"
         title="Attendance policy"
@@ -35,7 +35,7 @@ export default async function CollegeAttendanceSettingsPage() {
         actions={
           <Link
             href="/college/attendance"
-            className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle"
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle"
           >
             Back to Attendance
           </Link>

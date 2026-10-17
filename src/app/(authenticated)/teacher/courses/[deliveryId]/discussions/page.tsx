@@ -21,7 +21,7 @@ export default async function FacultyCourseDiscussionsPage({
     <div className="space-y-5">
       <Link
         href={`/teacher/courses/${deliveryId}/home`}
-        className="inline-flex text-sm font-semibold text-primary-text hover:text-primary-hover"
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
       >
         ← Course workspace
       </Link>
