@@ -1,6 +1,12 @@
 import {z} from "zod";
 import {placementReportCsv} from "./report-model";
-export const offerRegisterQuery=z.object({jobId:z.string().uuid(),status:z.enum(["ALL","ISSUED","ACCEPTED","DECLINED","WITHDRAWN"]).default("ALL"),page:z.coerce.number().int().min(1).max(10000).default(1),q:z.string().trim().max(100).default(""),joining:z.enum(["ALL","PENDING","JOINED","DEFERRED","DID_NOT_JOIN"]).default("ALL"),kind:z.enum(["ALL","OFFER","LOI"]).default("ALL"),expiry:z.enum(["ALL","EXPIRED","DUE_SOON","OPEN","UNKNOWN"]).default("ALL")}).strict();
+export const offerRegisterQuery=z.object({jobId:z.string().uuid(),status:z.enum(["ALL","ISSUED","ACCEPTED","DECLINED","WITHDRAWN"]).default("ALL"),page:z.coerce.number().int().min(1).max(10000).default(1),q:z.string().trim().max(100).default(""),joining:z.enum(["ALL","PENDING","JOINED","DEFERRED","DID_NOT_JOIN"]).default("ALL"),kind:z.enum(["ALL","OFFER","LOI"]).default("ALL"),expiry:z.enum(["ALL","EXPIRED","DUE_SOON","OPEN","UNKNOWN"]).default("ALL"),
+ minCtcLpa:z.coerce.number().min(0).max(1000).optional(),
+ maxCtcLpa:z.coerce.number().min(0).max(1000).optional(),
+}).strict().superRefine((input,ctx)=>{
+ if(input.minCtcLpa!==undefined&&input.maxCtcLpa!==undefined&&input.maxCtcLpa<input.minCtcLpa)
+  ctx.addIssue({code:"custom",path:["maxCtcLpa"],message:"Maximum package must be at least the minimum package"});
+});
 export type OfferRegisterFact={offer:{id:string;status:string;roleTitle:string;kind:string;annualCtcInr:number|null;issuedAt:Date;respondedAt:Date|null;expiresAt?:Date|null},joining:{status:string}|null,candidate:{membershipId:string;displayName:string|null;email?:string|null;phone?:string|null;rollNumber?:string|null;batch?:string|null;branch?:string|null}};
 /** Offer-level states only; campus held-offer policy is intentionally not inferred here. */
 export function offerRulesCheck(status:string,kind:string){
