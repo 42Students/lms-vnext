@@ -40,6 +40,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
   if(!title.trim()||!Number.isInteger(maxPoints)||maxPoints<1||maxPoints>10000){
    setError("Enter an assignment title and 1–10000 points.");return;
   }
+  if(description.length>10000){setError("Instructions must be at most 10,000 characters.");return;}
   if(allowedMethods.length===0){setError("Select at least one allowed submission method.");return;}
   if((nextOverride[chosen.id]??chosen.nextSequence)>10000){
    setError("This lesson has reached the assignment ordering limit.");return;
