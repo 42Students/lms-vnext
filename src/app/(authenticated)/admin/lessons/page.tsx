@@ -5,6 +5,7 @@ import {SuperAdminLessonBulkVisibility} from "@/components/courses/super-admin-l
 import {LessonActions} from "@/components/courses/admin-learning-structure-actions";
 import {CollegeLessonReorderActions} from "@/components/courses/college-lesson-reorder-actions";
 import {SuperAdminLessonCreate} from "@/components/courses/super-admin-lesson-create";
+import {CollegeLessonVisibilityControl} from "@/components/courses/college-lesson-visibility-controls";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -67,6 +68,8 @@ export default async function SuperAdminLessonsPage({
         <p className="mt-2 text-sm text-body">{lesson.publishedContentCount} published / {lesson.contentCount} authored content records</p>
         {lesson.status==="ACTIVE"?<div className="mt-3 flex flex-wrap items-center gap-3">
           <LessonActions lesson={{id:lesson.id,name:lesson.name,description:lesson.description,sequence:lesson.sequence}}/>
+          <CollegeLessonVisibilityControl lesson={{id:lesson.id,name:lesson.name,
+            visibleToStudents:lesson.visibleToStudents,updatedAt:lesson.updatedAt.toISOString()}}/>
           <CollegeLessonReorderActions learningPathId={lesson.learningPathId} lessonId={lesson.id}
             expectedSequence={lesson.sequence} canMoveUp={lesson.sequence>0} canMoveDown={true}/>
         </div>:null}
