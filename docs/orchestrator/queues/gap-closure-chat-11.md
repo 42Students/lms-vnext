@@ -290,3 +290,5 @@ Audit: `docs/audit/pages/superadmin/tenants-modules-2.md` (and `tenants-modules-
 - MEN-projects-meetings-75: request/schedule/cancel-note dialogs now guard dirty drafts; still OPEN for task details and delivery review.
 
 - MEN-projects-meetings-75: task details edit and delivery reopen feedback now guard dirty-state exits and browser unload; final delivery feedback editors remain.
+
+- MEN-projects-meetings-75: final delivery decision feedback and evaluation rubric now get styled discard + beforeunload guard; still OPEN for other mentor form audit and client router navigation.

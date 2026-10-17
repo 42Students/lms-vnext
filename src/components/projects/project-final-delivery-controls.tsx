@@ -15,6 +15,8 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import {ProjectDeliveryFileUploader} from "./project-delivery-file-uploader";
 
 type Submission = {
@@ -442,6 +444,12 @@ export function FinalReviewControl({
   const [pending, setPending] =
     useState(false);
   const [staleReview, setStaleReview] = useState(false);
+  function discardDraft(){
+    setOpen(false);setFeedback("");setDecision("APPROVED");setStaleReview(false);
+  }
+  const guard=useProjectEditorDiscardGuard(open,
+    Boolean(feedback.trim())||(mode!=="MENTOR"&&decision!=="APPROVED"),
+    pending,discardDraft);
 
   async function review() {
     if (
@@ -509,7 +517,7 @@ export function FinalReviewControl({
       )}
       <Dialog
         open={open}
-        onOpenChange={setOpen}
+        onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}}
         title={mode==="MENTOR" ? (decision==="APPROVED"
           ? "Accept this submission?" : "Request changes on this submission?") : "Review submission"}
         description={mode==="MENTOR"
@@ -522,7 +530,7 @@ export function FinalReviewControl({
             <Button
               variant="secondary"
               disabled={pending}
-              onClick={() => setOpen(false)}
+              onClick={guard.requestClose}
             >
               Cancel
             </Button>
@@ -593,6 +601,10 @@ export function FinalReviewControl({
           </label>
         </div>
       </Dialog>
+      <ConfirmDialog open={guard.discardOpen} onOpenChange={guard.setDiscardOpen}
+        title="Discard final review feedback?"
+        description="You have unsaved project changes. Leave this page and discard them?"
+        confirmLabel="Discard changes" pending={pending} onConfirm={guard.confirmDiscard}/>
     </>
   );
 }
@@ -631,6 +643,10 @@ export function ProjectEvaluationControl({
     useState(false);
   const [error, setError] =
     useState<string | null>(null);
+  const dirty=Boolean(summary.trim())||rows.length!==1||
+    rows.some(row=>Boolean(row.criterion||row.score||row.maxScore||row.feedback));
+  function discardDraft(){setOpen(false);setSummary("");setRows([emptyEvaluationRow()]);setError(null);}
+  const guard=useProjectEditorDiscardGuard(open,dirty,pending,discardDraft);
 
   const valid = useMemo(
     () =>
@@ -716,7 +732,7 @@ export function ProjectEvaluationControl({
       </Button>
       <Dialog
         open={open}
-        onOpenChange={setOpen}
+        onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}}
         title="Evaluate approved project"
         description="Score explicit criteria. The total is derived from these rubric rows."
       >
@@ -856,7 +872,7 @@ export function ProjectEvaluationControl({
               type="button"
               variant="secondary"
               disabled={pending}
-              onClick={() => setOpen(false)}
+              onClick={guard.requestClose}
             >
               Cancel
             </Button>
@@ -871,6 +887,10 @@ export function ProjectEvaluationControl({
           </div>
         </form>
       </Dialog>
+      <ConfirmDialog open={guard.discardOpen} onOpenChange={guard.setDiscardOpen}
+        title="Discard project evaluation?"
+        description="You have unsaved project changes. Leave this page and discard them?"
+        confirmLabel="Discard changes" pending={pending} onConfirm={guard.confirmDiscard}/>
     </>
   );
 }
