@@ -382,7 +382,16 @@ export async function transitionProjectMeeting(
       );
     }
 
+    const event=await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.PROJECTS_MEETING_DECIDED,
+      collegeId:scope.collegeId,organizationId:scope.organizationId,
+      subjectType:"project_meeting",subjectId:completed.id,subjectLabel:completed.title,
+      summary:"Project meeting completed",
+      metadata:{projectId:scope.project.id,meetingId:completed.id,status:"COMPLETED"},
+      groupKey:"project:"+scope.project.id+":meetings",
+    });
     return completed;
+    });
   }
 
   const learnerMayCancel =
