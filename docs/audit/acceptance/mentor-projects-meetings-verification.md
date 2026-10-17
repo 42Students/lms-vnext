@@ -188,3 +188,13 @@ Remaining queue entries are OPEN until the behavior described in the legacy audi
 | MEN-projects-meetings-R03 | SOURCE VERIFIED; CI pending | `src/components/projects/project-meeting-controls.tsx`; `tests/unit/chat7-round3-mentor-policy.test.ts` — `MEN-projects-meetings-R03 meeting form fixes the user-visible wall-time zone to IST`. |
 | MEN-projects-meetings-R04 | SOURCE VERIFIED; CI pending | `src/components/projects/project-workspace.tsx`; `tests/unit/chat7-round3-mentor-policy.test.ts` — `MEN-projects-meetings-R04 join action does not appear on cancelled, completed or missed meetings`. |
 | MEN-projects-meetings-R05 | SOURCE VERIFIED; CI pending | `src/modules/projects/meeting-service.ts`; `tests/unit/chat7-round3-mentor-policy.test.ts` — `MEN-projects-meetings-R05 completed and archived workspaces reject meeting writes`. |
+
+## Chat-7 round 3 — legacy URLs, version tokens and estimation
+
+| Gap ID | Review | Evidence |
+|---|---|---|
+| MEN-projects-meetings-R06 | MODEL / SOURCE VERIFIED; CI pending | `tests/unit/chat7-round3-mentor-legacy-urls.test.ts` — gap-named regression; R10 also updates `src/modules/projects/mentor-project-list-query.ts` to ignore unknown legacy-only URL fields. |
+| MEN-projects-meetings-R07 | MODEL / SOURCE VERIFIED; CI pending | `tests/unit/chat7-round3-mentor-legacy-urls.test.ts` — gap-named regression; R10 also updates `src/modules/projects/mentor-project-list-query.ts` to ignore unknown legacy-only URL fields. |
+| MEN-projects-meetings-R08 | MODEL / SOURCE VERIFIED; CI pending | `tests/unit/chat7-round3-mentor-legacy-urls.test.ts` — gap-named regression; R10 also updates `src/modules/projects/mentor-project-list-query.ts` to ignore unknown legacy-only URL fields. |
+| MEN-projects-meetings-R09 | MODEL / SOURCE VERIFIED; CI pending | `tests/unit/chat7-round3-mentor-legacy-urls.test.ts` — gap-named regression; R10 also updates `src/modules/projects/mentor-project-list-query.ts` to ignore unknown legacy-only URL fields. |
+| MEN-projects-meetings-R10 | FIXED / MODEL TEST AUTHOR, CI pending | `tests/unit/chat7-round3-mentor-legacy-urls.test.ts` — gap-named regression; R10 also updates `src/modules/projects/mentor-project-list-query.ts` to ignore unknown legacy-only URL fields. |
