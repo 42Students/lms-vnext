@@ -45,6 +45,7 @@ type SearchParams = {
   offerWaiting?:string|string[];
   minCgpa?:string|string[];maxCgpa?:string|string[];
   maxActiveBacklogs?:string|string[];maxPastBacklogs?:string|string[];
+  cgpaRecorded?:string|string[];
   classId?:string|string[];
   batchId?: string | string[];
   search?: string | string[];
@@ -77,6 +78,7 @@ function studentsHref(
     offerWaiting?:boolean;
     minCgpa?:number;maxCgpa?:number;
     maxActiveBacklogs?:number;maxPastBacklogs?:number;
+    cgpaRecorded?:boolean;
     classId?:string;
     batchId?: string;
     search?: string;
@@ -99,6 +101,7 @@ function studentsHref(
   if(filters.afterCollege)params.set("afterCollege",filters.afterCollege);
   if(filters.profileStatus)params.set("profileStatus",filters.profileStatus);
   if(filters.offerWaiting!==undefined)params.set("offerWaiting",filters.offerWaiting?"YES":"NO");
+  if(filters.cgpaRecorded!==undefined)params.set("cgpaRecorded",filters.cgpaRecorded?"YES":"NO");
   for(const key of ["minCgpa","maxCgpa","maxActiveBacklogs","maxPastBacklogs"] as const){
    if(filters[key]!==undefined)params.set(key,String(filters[key]));
   }
@@ -179,6 +182,7 @@ export default async function TpoStudentsPage({
     offerWaiting:first(raw.offerWaiting)||undefined,
     minCgpa:first(raw.minCgpa)||undefined,maxCgpa:first(raw.maxCgpa)||undefined,
     maxActiveBacklogs:first(raw.maxActiveBacklogs)||undefined,maxPastBacklogs:first(raw.maxPastBacklogs)||undefined,
+    cgpaRecorded:first(raw.cgpaRecorded)||undefined,
     classId:first(raw.classId)||undefined,
     batchId: first(raw.batchId) || undefined,
     search: first(raw.search) || undefined,
