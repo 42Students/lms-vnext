@@ -4,7 +4,6 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import type { LearnerPlacementJourneyItem } from "@/components/placements/learner-placement-journey";
 import { LearnerApplicationsBrowse } from "@/components/placements/learner-applications-browse";
 import { Suspense } from "react";
-import { PageHeader } from "@/components/ui/page-header";
 import { getLearnerPlacementJourney } from "@/modules/placements/learner-journey-service";
 import {getLearnerPlacementRequestWorkspace} from "@/modules/placements/request-service";
 import {readOptionalLearnerPlacementSource} from "@/modules/placements/learner-optional-placement-source";
@@ -59,11 +58,7 @@ export default async function LearnerPlacementApplicationsPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        eyebrow="My Placements"
-        title="Applications"
-        description="Your placement applications and their current journey."
-      />
+
       <section aria-label="Saved application status summary" className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <p className="rounded-xl border border-border bg-surface p-4 text-sm text-body"><strong>{savedCounts.total}</strong> recorded applications</p>
         <p className="rounded-xl border border-border bg-surface p-4 text-sm text-body"><strong>{savedCounts.submitted}</strong> still submitted</p>
