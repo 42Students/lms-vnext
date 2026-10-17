@@ -7,9 +7,6 @@ import { listTpoCompanies } from "@/modules/placements/tpo-company-memory-servic
 export const runtime = "nodejs";
 
 export async function GET(request: Request) {
-  if (!await placementTableExists("placement_tpo_leads") || !await placementTableExists("placement_tpo_lead_activities")) {
-    return NextResponse.json({ error: "DATABASE_NOT_READY" }, { status: 503 });
-  }
   try {
     const context = await getCurrentRequestContext();
     const collegeId = new URL(request.url).searchParams.get("collegeId") ?? "";
