@@ -5,6 +5,7 @@ const oversightLinks=[
  {href:"/admin/placements/shortlisted",label:"Shortlisted"},
  {href:"/admin/placements/job-settings",label:"Job Settings"},
  {href:"/admin/placements/hiring",label:"Hiring"},
+ {href:"/admin/placements/retention",label:"Data retention report"},
  {href:"/admin/placements/analytics",label:"Company-wise Hiring Report"},
  {href:"/admin/placements/offers",label:"Offers"},
  {href:"/admin/placements/joining",label:"Joining"},
