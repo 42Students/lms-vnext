@@ -1,6 +1,6 @@
 # Graceful alerting verification — builder chat-16
 
-Branch: `chatgpt/chat-16-b`. Operational prerequisites: `docs/operations/vnext-telegram-alerting.md`. All tests below are **authored but NOT RUN**. DONE means code authored, not test-passed or deployed. Source implementation does not certify production readiness; DB10 migration registration, real webhook registration and Kubernetes tests are orchestrator-owned.
+Branch: `chatgpt/chat-16-b`. Operational prerequisites: `docs/operations/vnext-telegram-alerting.md`. All tests below are **authored but NOT RUN**. The two chat-16 failures in `docs/orchestrator/unit-failures-r1.md` have source follow-up and updated assertions (GR-112, GR-123); no claim of passing CI is made. DONE means code authored, not test-passed or deployed. Source implementation does not certify production readiness; DB10 migration registration, real webhook registration and Kubernetes tests are orchestrator-owned.
 
 | ID | Status | Evidence (implementation; test with ID in name) |
 | --- | --- | --- |
