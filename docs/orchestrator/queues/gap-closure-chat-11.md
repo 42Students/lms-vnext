@@ -305,3 +305,13 @@ Audit: `docs/audit/pages/superadmin/tenants-modules-2.md` (and `tenants-modules-
 - COL-people-05 audit insert retains same-college and same-organization membership typing, avoiding the old union-property inference error. Unit regression written; no tsc execution available.
 - No page restyling attempted. Tests, typecheck and lint are not run; orchestrator must verify.
 - Other OPEN pages in the legacy queue have been reassigned to chat-3, chat-6, chat-9, chat-15 or chat-16; do not claim 30 new gap closures by editing their files or relabeling historical DONE IDs.
+
+
+## Chat-11 October 18 large round — source and CI repair checkpoint
+- Fast-forwarded chatgpt/chat-11-b from behind main, then merged later concurrent main fixes without overwriting them. Committed 30+ source/test/documentation changes including the two-parent merge. Pushed each change only to chatgpt/chat-11-b.
+- Latest main typecheck report from 2026-10-18 01:15 identified chat-11 errors in college-company-directory-service.ts, chat11-college-company-restore.test.ts, and college interviews CSV type. Replaced invalid query.status with supported showDeleted filters; corrected two invalid directory query objects and the membership status; made nullable interview student name an explicit Unnamed learner CSV value with formula-protection tests. Exact file evidence in docs/audit/acceptance/college-placements-verification.md. CI is still required to certify tsc.
+- Fixed stale college Dashboard setup test to preserve 14 exact legacy steps plus new required academic-period prerequisite and 4 Super Admin global links. Rechecked existing college-academic-setup source checks; tests were not executed.
+- New boundary tests for COL-dashboard-12, COL-academic-setup-06/07/08/10/19/20/29/32/33/36/39/40, COL-course-tabs-15, COL-placements-15/19, plus row-level CSV protection; these are test scenarios, NOT a claim of 30 distinct gap closures.
+- COL-course-tabs-23 remains PARTIAL because route-level Retry is not the same as per-tab last-good refresh retention; COL-placements-03 remains PARTIAL for College Admin offer-letter evidence and attention. FAC-attendance-grades-01 requires registered attendance SMS DLT/provider and verified parent mappings.
+- Reassigned mentor/projects-meetings-part2 remains chat-16's scope. Chat-11 test MEN-projects-meetings-65 still demands a dedicated Refresh latest submission action absent from the owning component. No cross-lane page edit or UI restyling made.
+- No local npm/tsc/test execution available through this GitHub connector; the orchestrator/CI must run the suite.

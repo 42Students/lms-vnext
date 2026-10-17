@@ -8,6 +8,18 @@ export const tpoDriveLifecycleSchema = z.object({
   notifyByEmail:z.boolean().optional().default(false),
 }).strict();
 
+/** TPO-drives-42: reject insecure or credential-bearing external application links. */
+export function hasSecureEmployerPortalUrl(
+  applicationMode:string, raw:string|null|undefined,
+):boolean{
+  if(applicationMode==="INTERNAL")return true;
+  if(!raw?.trim())return false;
+  try{
+    const url=new URL(raw);
+    return url.protocol==="https:"&&Boolean(url.hostname)&&!url.username&&!url.password;
+  }catch{return false;}
+}
+
 export type TpoDriveReadinessFacts = {
   jobStatus: string;
   seasonActive: boolean;

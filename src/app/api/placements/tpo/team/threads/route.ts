@@ -12,6 +12,7 @@ export async function POST(request:Request){
  const parsed=internalThreadSchema.safeParse({
   recipientMembershipId:form?.get("recipientMembershipId"),
   topic:form?.get("topic"),
+  firstMessage:form?.get("firstMessage")||undefined,
   idempotencyKey:form?.get("idempotencyKey")||undefined,
  });
  if(!parsed.success)return NextResponse.json({error:"INVALID_BODY"},{status:400});
