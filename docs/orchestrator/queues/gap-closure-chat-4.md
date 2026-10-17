@@ -8,11 +8,11 @@ Audit: `docs/audit/pages/superadmin/placements-projects-b-projects.md` (and `pla
 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
-| SA-placements-projects-51 | S2 | MISSING-PAGE | OPEN |
+| SA-placements-projects-51 | S2 | MISSING-PAGE | NOT-A-GAP |
 | SA-placements-projects-56 | S2 | MISSING-ACTION | OPEN |
 | SA-placements-projects-60 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | SA-placements-projects-62 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| SA-placements-projects-64 | S2 | MISSING-FIELD | OPEN |
+| SA-placements-projects-64 | S2 | MISSING-FIELD | DONE |
 | SA-placements-projects-65 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | SA-placements-projects-69 | S2 | MISSING-TAB | FIXED-ON-MAIN |
 | SA-placements-projects-70 | S2 | STATE | FIXED-ON-MAIN |
@@ -24,25 +24,25 @@ Audit: `docs/audit/pages/superadmin/placements-projects-b-projects.md` (and `pla
 | SA-placements-projects-89 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | SA-placements-projects-90 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | SA-placements-projects-91 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| SA-placements-projects-52 | S3 | COPY | OPEN |
+| SA-placements-projects-52 | S3 | COPY | DONE |
 | SA-placements-projects-53 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | SA-placements-projects-54 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
-| SA-placements-projects-57 | S3 | COPY | OPEN |
+| SA-placements-projects-57 | S3 | COPY | DONE |
 | SA-placements-projects-58 | S3 | MISSING-FIELD | UNCONFIRMED |
-| SA-placements-projects-59 | S3 | MISSING-FILTER | OPEN |
+| SA-placements-projects-59 | S3 | MISSING-FILTER | DONE |
 | SA-placements-projects-61 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | SA-placements-projects-63 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
-| SA-placements-projects-66 | S3 | MISSING-COLUMN | OPEN |
-| SA-placements-projects-67 | S3 | STATE | OPEN |
+| SA-placements-projects-66 | S3 | MISSING-COLUMN | DONE |
+| SA-placements-projects-67 | S3 | STATE | DONE |
 | SA-placements-projects-68 | S3 | STATE | UNCONFIRMED |
 | SA-placements-projects-71 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | SA-placements-projects-72 | S3 | MISSING-ACTION | UNCONFIRMED |
-| SA-placements-projects-73 | S3 | COPY | OPEN |
+| SA-placements-projects-73 | S3 | COPY | DONE |
 | SA-placements-projects-74 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | SA-placements-projects-75 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | SA-placements-projects-76 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
-| SA-placements-projects-78 | S3 | COPY | OPEN |
-| SA-placements-projects-79 | S3 | COPY | OPEN |
+| SA-placements-projects-78 | S3 | COPY | DONE |
+| SA-placements-projects-79 | S3 | COPY | DONE |
 | SA-placements-projects-80 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-placements-projects-86 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-placements-projects-87 | S3 | MISSING-ACTION | OPEN |
