@@ -3,7 +3,7 @@ import {and,eq,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,placementApplications,placementApplicationScreenings,
  placementJobs,placementOffers,users} from "@/db/schema";
-import {prioritizeRecruiterOfferFollowups} from "./hr-today-offer-followup-model";
+import {prioritizeRecruiterOfferFollowups,HR_FOLLOWUP_JOB_STATUSES} from "./hr-today-offer-followup-model";
 
 /** REC-home-drives-01: count offer follow-ups on the college-shared
  * applicant population only; never disclose unshared learner identities. */
@@ -20,7 +20,7 @@ export async function listRecruiterTodayOfferActions(collegeId:string,
   .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
   .innerJoin(users,eq(users.id,collegeMemberships.userId))
   .where(and(inArray(placementJobs.id,ids),eq(placementJobs.collegeId,collegeId),
-   eq(placementJobs.status,"PUBLISHED"),
+   inArray(placementJobs.status,[...HR_FOLLOWUP_JOB_STATUSES]),
    isNull(placementJobs.archivedAt),
    // A withdrawn candidate must not resurface in the recruiter's queue
    // just because old shortlisted screening and offer records remain.

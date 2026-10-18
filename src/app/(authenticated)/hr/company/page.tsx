@@ -109,7 +109,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
         />
         <Link
           href="/hr/profile"
-          className="rounded-md border border-border bg-surface px-3 py-2 text-sm font-medium text-foreground hover:bg-surface-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-3 py-2 text-sm font-medium text-foreground hover:bg-surface-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
         >
           Your profile
         </Link>
@@ -122,8 +122,8 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
               key={grant.id}
               href={"/hr/company?collegeId=" + encodeURIComponent(grant.collegeId) + "&tab=" + tab}
               className={grant.collegeId === result.grant.collegeId
-                ? "rounded-full bg-primary px-3 py-1.5 text-sm font-medium text-on-primary"
-                : "rounded-full border border-border bg-surface px-3 py-1.5 text-sm text-foreground"}
+                ? "inline-flex min-h-11 items-center rounded-full bg-primary px-3 py-1.5 text-sm font-medium text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+                : "inline-flex min-h-11 items-center rounded-full border border-border bg-surface px-3 py-1.5 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"}
             >
               {grant.collegeName}
             </Link>
@@ -135,16 +135,16 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
         <Link
           href={base + "&tab=company"}
           className={tab === "company"
-            ? "border-b-2 border-primary px-3 py-2 text-sm font-semibold text-foreground"
-            : "px-3 py-2 text-sm text-muted-foreground"}
+            ? "inline-flex min-h-11 items-center border-b-2 border-primary px-3 py-2 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+            : "inline-flex min-h-11 items-center px-3 py-2 text-sm text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"}
         >
           Company
         </Link>
         <Link
           href={base + "&tab=team"}
           className={tab === "team"
-            ? "border-b-2 border-primary px-3 py-2 text-sm font-semibold text-foreground"
-            : "px-3 py-2 text-sm text-muted-foreground"}
+            ? "inline-flex min-h-11 items-center border-b-2 border-primary px-3 py-2 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+            : "inline-flex min-h-11 items-center px-3 py-2 text-sm text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"}
         >
           Team
         </Link>
