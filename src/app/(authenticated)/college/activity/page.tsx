@@ -89,7 +89,7 @@ export default async function CollegeActivityPage({
         <label className="grid gap-1 text-sm font-semibold text-body">
           Module
           <select name="module" defaultValue={data.query.module ?? ""}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
             <option value="">All modules</option>
             {ACTIVITY_MODULES.map(v =>
               <option key={v} value={v}>{v}</option>)}
@@ -98,7 +98,7 @@ export default async function CollegeActivityPage({
         <label className="grid gap-1 text-sm font-semibold text-body">
           Importance
           <select name="importance" defaultValue={data.query.importance ?? ""}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
             <option value="">All importance levels</option>
             {ACTIVITY_IMPORTANCE.map(v =>
               <option key={v} value={v}>{v}</option>)}
@@ -108,52 +108,52 @@ export default async function CollegeActivityPage({
           Event type
           <input name="eventType" defaultValue={data.query.eventType ?? ""}
             maxLength={120} placeholder="identity.membership.suspended"
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
           Search audit summary or entity
           <input name="q" defaultValue={data.query.q ?? ""} maxLength={100}
             placeholder="Summary, entity or action text"
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
           Actor user UUID
           <input name="actorUserId" defaultValue={data.query.actorUserId ?? ""}
             placeholder="Optional actor UUID"
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
           Actor display name
           <input name="actorName" defaultValue={data.query.actorName ?? ""} maxLength={100}
             placeholder="Search recorded actor name"
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
           Entity type
           <input name="subjectType" defaultValue={data.query.subjectType ?? ""}
             maxLength={80} placeholder="course_lesson"
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
           Entity identifier
           <input name="subjectId" defaultValue={data.query.subjectId ?? ""}
             maxLength={500} placeholder="Persisted entity identifier"
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
           From date (IST)
           <input name="from" type="date" defaultValue={data.query.from ?? ""}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
           To date (IST)
           <input name="to" type="date" defaultValue={data.query.to ?? ""}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
           Events per page
           <select name="pageSize" defaultValue={data.query.pageSize ?? "25"}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
             <option value="10">10 events</option>
             <option value="25">25 events</option>
             <option value="50">50 events</option>
