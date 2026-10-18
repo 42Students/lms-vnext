@@ -39,6 +39,30 @@ describe("TPO bounded mutation request contracts",()=>{
    expect(post,route).not.toMatch(/await (?:req|request)\.json\(\)/);
   }
  });
+ it("PLACEMENTS-OFFER-REQUEST-44 and PLACEMENTS-CASCADE-UNDO-BODY-45 cap every offer-changing POST",()=>{
+  const routes=[
+    "src/app/api/placements/applications/[applicationId]/offers/route.ts",
+    "src/app/api/placements/offers/[offerId]/actions/route.ts",
+    "src/app/api/placements/jobs/[jobId]/offers/bulk-withdraw/route.ts",
+    "src/app/api/placements/tpo/offers/[offerId]/cascade-undo/route.ts",
+  ];
+  for(const route of routes){
+    const source=src(route);
+    const post=source.slice(source.indexOf("export async function POST("));
+    const origin=post.indexOf("isSameOriginRequest(request)");
+    const parse=post.indexOf("readTpoBulkRequestBody(request)");
+    expect(origin,route).toBeGreaterThanOrEqual(0);
+    expect(parse,route).toBeGreaterThan(origin);
+    expect(post,route).toContain("err instanceof TpoBulkBodyError" .replace("err",route.includes("cascade-undo")?"err":"error"));
+    expect(post,route).toContain("status:");
+    expect(post,route).not.toContain("request.json()");
+  }
+  const undo=src("src/app/api/placements/tpo/offers/[offerId]/cascade-undo/route.ts");
+  expect(undo).toContain("body.safeParse(await readTpoBulkRequestBody(request))");
+  expect(undo).toContain("Invalid undo confirmation.");
+  expect(undo.indexOf("readTpoBulkRequestBody(request)"))
+    .toBeLessThan(undo.indexOf("undoPlacementOfferCascade(ctx,offerId,input.data.cascadeId)"));
+ });
  it("PLACEMENTS-JOINING-BODY-43 caps all joining corrections before parsing untrusted request data",()=>{
   const route=src("src/app/api/placements/offers/[offerId]/joining/route.ts");
   const put=route.slice(route.indexOf("export async function PUT("));
