@@ -27,6 +27,22 @@ describe("chat-16 TPO campaign live recipient recheck",()=>{
   expect(campaignRecipientStillMatchesSnapshot(ready,{...ready,emailNorm:" PLACEMENT@Example.ORG "})).toBe(true);
   expect(campaignRecipientStillMatchesSnapshot({...ready,emailNorm:null},ready)).toBe(false);
  });
+ it("TPO-campaigns-public-12 never records provider acceptance if persisted CAS outcome is lost",()=>{
+  const source=readFileSync("src/modules/messaging/tpo-campaign-dispatch-service.ts","utf8");
+  const send=source.indexOf("const result=await outbound.send(");
+  const persisted=source.indexOf("const [persistedOutcome]=await db.update(",send);
+  const refusal=source.indexOf('if(!persistedOutcome)throw new Error("CAMPAIGN_RECIPIENT_OUTCOME_UNCONFIRMED");',persisted);
+  const activity=source.indexOf("if(result){",refusal);
+  expect(send).toBeGreaterThan(-1);
+  expect(persisted).toBeGreaterThan(send);
+  expect(refusal).toBeGreaterThan(persisted);
+  expect(activity).toBeGreaterThan(refusal);
+  const cas=source.slice(persisted,refusal);
+  expect(cas).toContain("eq(placementTpoEmailCampaignRecipients.campaignId,id)");
+  expect(cas).toContain('eq(placementTpoEmailCampaignRecipients.status,"QUEUED")');
+  expect(cas).toContain("eq(placementTpoEmailCampaignRecipients.collegeId,college.id)");
+  expect(cas).toContain(".returning({id:placementTpoEmailCampaignRecipients.id})");
+ });
  it("TPO-campaigns-public-12 dispatch reads live college-scoped recipient after claim, before provider call",()=>{
   const source=readFileSync("src/modules/messaging/tpo-campaign-dispatch-service.ts","utf8");
   const claim=source.indexOf("if(!claimedRecipient)continue;");
