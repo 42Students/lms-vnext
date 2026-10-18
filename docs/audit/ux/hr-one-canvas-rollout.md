@@ -44,3 +44,14 @@ The old LMS uses a continuous page, not a pile of bordered section cards. **chat
 5. Browser/CI layout acceptance occurs in orchestrator's final pass; nothing in this document claims a browser run.
 
 Initial audit: **20 actual HR page routes + 2 aliases**, approximately 49 top-level `section` occurrences and many child entity cards; numbers are review annotations, not DOM assertions. `docs/audit/coverage/hr-pages-ledger.md` tracks behavioral test coverage.
+
+## Delegated component surfaces (inspected after route inventory)
+
+| Component | Card shells to flatten once shared primitive lands | What stays distinct |
+|---|---|---|
+| `src/components/hr/hr-drive-draft-form.tsx` | Four workflow steps: role and compensation (lines ~267,323), rounds (~391), review/submit (~454), plus completion status (~228) must read as *one* long request form, not four cards. Preserve input `name`, Zod errors, auto-save and draft idempotency; use a heading + thin divider for each step. | Editable repeated round row (~412) is a true item; payout warnings (~484), cost details (~494), in-progress receipt (~522) are semantic status affordances, not top-level section wrappers. |
+| `src/components/placements/recruiter-placement-portfolio.tsx` | No simple section/card root wrappers were found; review delegated filters/cards visually against the shared canvas, do not add a second canvas. | Own hiring drive summaries. |
+| `src/components/hr/recruiter-profile-access.tsx` | Current College Access wrapper (~50) is an entire card section; place it as a shared section inside Profile canvas. | Destructive access confirmation remains its own modal; errors remain clear. |
+| `src/components/hr/hr-unsent-drive-alert.tsx` | Warning aside (~28) is a semantic warning, not a generic page section; keep its visual warning affordance. | Saved-draft alert and discard modal are distinct actions. |
+
+**Ownership boundary:** Do not change shared components in chat-19. Avoid CSS-only imitation of the new kit that would need an immediate second rewrite. Maintain exact duplicate-field labels and recruiter-private request states. UI-kit migration remains ready for the first published chat-17 shared section primitive.
