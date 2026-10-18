@@ -85,6 +85,7 @@ export function LearnerFinalDeliveryControl({
   const [linkUrl,setLinkUrl]=useState("");
   const [pending, setPending] =
     useState(false);
+  const [submitConfirmation,setSubmitConfirmation]=useState(false);
   // One shared lock for manual save, debounced autosave and final submission.
   const pendingRef = useRef(false);
   const [error, setError] =
@@ -204,7 +205,7 @@ export function LearnerFinalDeliveryControl({
 
   const unsaved=JSON.stringify(currentPayload())!==savedSnapshot;
 
-  async function submitDraft() {
+  async function submitDraft(confirmed=false) {
     if (!draft || pendingRef.current) return;
     // The server props may be stale after a successful autosave but before a
     // router refresh. The saved snapshot represents the last acknowledged
@@ -222,7 +223,7 @@ export function LearnerFinalDeliveryControl({
       showToast({tone:"error",title:"Add at least one attachment and a summary before submitting."});
       return;
     }
-    if(!window.confirm("Submit on behalf of your team?"))return;
+    if(!confirmed){setSubmitConfirmation(true);return;}
     pendingRef.current=true;
     setPending(true);
     try {
@@ -230,6 +231,7 @@ export function LearnerFinalDeliveryControl({
         `/api/projects/${projectId}/submissions/${draft.id}/submit`,
         "POST",
       );
+      setSubmitConfirmation(false);
       showToast({
         tone: "success",
         title: "Submission sent for review.",
@@ -439,6 +441,12 @@ export function LearnerFinalDeliveryControl({
           </div>
         </form>
       </Dialog>
+      <ConfirmDialog open={submitConfirmation}
+        onOpenChange={next=>{if(!next&&!pending)setSubmitConfirmation(false);}}
+        title="Submit final delivery for mentor review?"
+        description="The final delivery is shared with your project team and cannot be edited while it awaits review."
+        confirmLabel="Submit final work" pending={pending}
+        onConfirm={()=>{void submitDraft(true);}} />
     </div>
   );
 }
