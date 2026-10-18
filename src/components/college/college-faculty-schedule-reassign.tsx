@@ -60,7 +60,7 @@ export function CollegeFacultyScheduleReassign({membershipId,name}:{
     {receipt?<section role="status" className="space-y-2">
      <p className="font-semibold">Reassigned {receipt.reassigned} of {receipt.total} upcoming session(s).</p>
      <p>{receipt.skipped} skipped.</p>
-     <ul className="max-h-48 space-y-1 overflow-y-auto text-sm">
+     <ul className="space-y-1 text-sm">
       {receipt.results.filter(row=>row.status==="SKIPPED").map(row=><li key={row.id}>
        {row.title}: {row.reason}</li>)}
      </ul>
