@@ -72,7 +72,7 @@ export function StudentClassMoveAction({ membershipId, name }: {
         <p className="mb-2 text-xs text-muted-foreground">No other eligible class is available in the current batch and period.</p> : null}
       {loaded ? <select aria-label={"Destination class for " + name}
         value={targetId} onChange={e => setTargetId(e.target.value)}
-        className="w-full rounded-md border border-border bg-surface p-2 text-sm text-foreground">
+        className="min-h-11 w-full rounded-md border border-border bg-surface p-2 text-base sm:text-sm text-foreground">
         <option value="">Choose destination</option>
         {loaded.options.filter(item => item.id !== loaded.current.sectionId).map(item =>
           <option key={item.id} value={item.id}>{item.name} (capacity {item.capacity ?? "unlimited"})</option>)}

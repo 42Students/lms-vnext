@@ -4,6 +4,9 @@ import {getSuperAdminCompanyHiringReport} from "@/modules/admin-ui/super-admin-h
 import {getSuperAdminHiringReportFilters} from "@/modules/admin-ui/super-admin-hiring-report-filters-service";
 import {superAdminHiringReportQuery,hiringCompanyRollups,COMPANY_HIRING_COLUMNS} from "@/modules/admin-ui/super-admin-hiring-report-model";
 import {PageHeader} from "@/components/ui/page-header";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
+import {Button} from "@/components/ui/button";
 import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
 import {hiringFunnel, hiringMetricLabel} from "@/modules/admin-ui/super-admin-hiring-funnel-model";
 export default async function SuperAdminPlacementAnalytics({searchParams}:{
@@ -51,25 +54,25 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   })),
  ];
  const select=(key:"jobId"|"departmentId"|"programId"|"cohortId",label:string,values:readonly {id:string;name:string}[])=>(
-  <label className="grid gap-1 text-sm font-semibold">{label}<select name={key} defaultValue={q[key]??""}
+  <label className="grid gap-1 text-sm font-semibold">{label}<Select name={key} defaultValue={q[key]??""}
    className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-2">
-   <option value="">All {label.toLowerCase()}</option>{values.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
+   <option value="">All {label.toLowerCase()}</option>{values.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}</Select></label>
  );
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Placements" title="Placement Analytics"
    description="Track the hiring funnel, conversion and company performance for the selected college. Filters apply consistently to the headline metrics, funnel and company report below."/>
-  <form method="get" action="/admin/placements/analytics" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 lg:grid-cols-4">
+  <form method="get" action="/admin/placements/analytics" className="grid min-w-0 grid-cols-1 gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 lg:grid-cols-4">
    <label className="grid gap-1 text-sm font-semibold">Drive or company
-    <input name="q" defaultValue={q.q} maxLength={100} className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-2"/></label>
+    <Input name="q" defaultValue={q.q} maxLength={100} className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-2"/></label>
    {select("jobId","Job",filters.jobs)}
    {select("departmentId","Department",filters.departments)}
    {select("programId","Program",filters.programs)}
    {select("cohortId","Batch",filters.batches)}
    <label className="grid gap-1 text-sm font-semibold">Applied from
-    <input type="date" name="appliedFrom" defaultValue={q.appliedFrom??""} className="min-h-11 rounded-md border border-border bg-surface px-2"/></label>
+    <Input type="date" name="appliedFrom" defaultValue={q.appliedFrom??""} className="min-h-11 rounded-md border border-border bg-surface px-2"/></label>
    <label className="grid gap-1 text-sm font-semibold">Applied through
-    <input type="date" name="appliedTo" defaultValue={q.appliedTo??""} className="min-h-11 rounded-md border border-border bg-surface px-2"/></label>
-   <div className="flex flex-wrap items-end gap-3"><button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-foreground">Refresh</button>
+    <Input type="date" name="appliedTo" defaultValue={q.appliedTo??""} className="min-h-11 rounded-md border border-border bg-surface px-2"/></label>
+   <div className="flex flex-wrap items-end gap-3"><Button type="submit">Refresh</Button>
     <Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Clear all</Link></div>
   </form>
   {params.size?<p className="text-sm text-body">Active filters: {[...params.entries()].map(([key,value])=>key+" = "+value).join(" · ")}</p>:null}

@@ -22,7 +22,7 @@ export default async function MentorReportsPage({searchParams}:{
   });
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid Mentor report filters</h1>
-    <Link href="/mentor/reports" className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
+    <Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
   </section>;
   const data=await getMentorReports(await getCurrentRequestContext(),parsed.data);
   const statusMetrics=[
@@ -122,7 +122,7 @@ export default async function MentorReportsPage({searchParams}:{
         <Button type="submit" variant="primary">
           Filter
         </Button>
-        <Link href="/mentor/reports" className="text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
+        <Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
       </form>
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <Link href={"/api/mentor/reports/export?"+
@@ -170,9 +170,9 @@ export default async function MentorReportsPage({searchParams}:{
         <span className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</span>
         <div className="flex gap-3">
           {data.page>1?<Link href={mentorReportsHref({...data.query,page:data.page-1})}
-            className="text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>:null}
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>:null}
           {data.page<data.totalPages?<Link href={mentorReportsHref({...data.query,page:data.page+1})}
-            className="text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>:null}
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>:null}
         </div>
       </nav>
     </>}

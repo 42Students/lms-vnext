@@ -14,8 +14,8 @@ export function TpoBatchWorkspaceTabs({ batchId, active, students }: {
   return <nav aria-label="Batch workspace tabs" className="flex flex-wrap gap-2 border-b border-border pb-3">
     {tabs.map(tab => <Link key={tab.slug} aria-current={tab.slug === active ? "page" : undefined}
       href={`/tpo/batches/${encodeURIComponent(batchId)}${tab.slug ? "/"+tab.slug : ""}`}
-      className={`inline-flex min-h-10 items-center rounded-md border px-3 text-sm font-semibold ${tab.slug === active
-        ? "border-primary bg-primary-subtle text-primary-text" : "border-border bg-surface text-body"}`}>
+      className={`inline-flex min-h-11 items-center rounded-md border px-3 text-sm font-semibold ${tab.slug === active
+        ? "border-primary bg-primary-subtle text-[var(--lms-teal-deep)]" : "border-border bg-surface text-body"}`}>
       {tab.label}{tab.slug === "students" && students !== undefined ? ` (${students})` : ""}
     </Link>)}
   </nav>;

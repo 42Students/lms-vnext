@@ -14,7 +14,7 @@ export function TpoGridColumnChooser({ columns, selected, onChange }: {
     <legend className="px-1 text-sm font-semibold">Visible columns</legend>
     <p role="status" className="text-xs text-muted-foreground">{visibleCount} of {available.length} display columns visible. Export-only fields remain hidden.</p>
     <div className="flex flex-wrap gap-3">
-      {available.map((column) => <label key={column.key} className="flex min-h-10 items-center gap-2 text-sm">
+      {available.map((column) => <label key={column.key} className="flex min-h-11 items-center gap-2 text-sm">
         <input type="checkbox" checked={selected.includes(column.key)} disabled={selected.length === 1 && selected.includes(column.key)} onChange={(event) => {
           if (!canToggleTpoGridColumn(selected, event.target.checked)) return;
           const next = event.target.checked ? [...selected, column.key] : selected.filter((key) => key !== column.key);
@@ -35,10 +35,10 @@ export function TpoGridColumnChooser({ columns, selected, onChange }: {
         return <div key={key} className="flex flex-wrap items-center gap-2">
           <span className="min-w-24 text-sm">{column.label}</span>
           <button type="button" disabled={index===0} onClick={()=>move(-1)}
-            className="min-h-10 rounded border border-border px-3 text-xs disabled:opacity-50"
+            className="min-h-11 rounded border border-border px-3 text-xs disabled:opacity-50"
             aria-label={"Move "+column.label+" earlier"}>Earlier</button>
           <button type="button" disabled={index===selected.length-1} onClick={()=>move(1)}
-            className="min-h-10 rounded border border-border px-3 text-xs disabled:opacity-50"
+            className="min-h-11 rounded border border-border px-3 text-xs disabled:opacity-50"
             aria-label={"Move "+column.label+" later"}>Later</button>
         </div>;
       })}
@@ -46,9 +46,9 @@ export function TpoGridColumnChooser({ columns, selected, onChange }: {
     <div className="flex flex-wrap gap-2">
       <button type="button" disabled={selected.length===available.length}
         onClick={()=>onChange([...selected,...defaultKeys.filter(key=>!selected.includes(key))])}
-        className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">Show all columns</button>
+        className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">Show all columns</button>
       <button type="button" disabled={atDefaults} onClick={()=>onChange(defaultKeys)}
-        className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">Reset columns</button>
+        className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">Reset columns</button>
     </div>
   </fieldset>;
 }

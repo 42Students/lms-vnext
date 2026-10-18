@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TpoSettingsNav } from "@/components/placements/tpo-settings-nav";
 import { PageHeader } from "@/components/ui/page-header";
+import { DataTable } from "@/components/ui/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { TpoTrustToggle } from "@/components/placements/tpo-trust-toggle";
@@ -37,7 +38,7 @@ export default async function TpoTrustedCompaniesPage() {
         actions={
           <Link
             href="/tpo/settings/team"
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
           >
             Placement Team
           </Link>
@@ -116,68 +117,32 @@ export default async function TpoTrustedCompaniesPage() {
             available for this college.
           </p>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[38rem] text-left text-sm">
-              <thead className="bg-muted text-muted-foreground">
-                <tr>
-                  <th scope="col" className="px-4 py-3">
-                    Company
-                  </th>
-                  <th scope="col" className="px-4 py-3">
-                    Trust status
-                  </th>
-                  <th scope="col" className="px-4 py-3">
-                    Company primary domain
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.companies.map((company) => (
-                  <tr
-                    key={company.relationshipId}
-                    className="border-t border-border"
-                  >
-                    <td className="px-4 py-4">
-                      <Link
-                        href={`/tpo/companies/${encodeURIComponent(
-                          company.companyId,
-                        )}`}
-                        className="font-semibold text-primary-text hover:underline"
-                      >
-                        {company.name}
-                      </Link>
-                    </td>
-                    <td className="px-4 py-4">
-                      <StatusBadge
-                        tone={
-                          company.isTrusted
-                            ? "success"
-                            : "neutral"
-                        }
-                      >
-                        {company.isTrusted
-                          ? "Trusted"
-                          : "Not trusted"}
-                      </StatusBadge>
-                      <TpoTrustToggle
-                        relationshipId={company.relationshipId}
-                        companyName={company.name}
-                        isTrusted={company.isTrusted}
-                      />
-                    </td>
-                    <td className="px-4 py-4 text-body">
-                      {company.primaryDomain ?? "Not recorded"}
-                      {company.primaryDomain ? (
-                        <p className="mt-1 text-xs text-muted-foreground">
-                          Company metadata; not an allowlist grant
-                        </p>
-                      ) : null}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <DataTable
+            rows={data.companies}
+            getRowKey={company=>company.relationshipId}
+            caption="Company trust"
+            empty={<p>No active placement company relationships are available for this college.</p>}
+            columns={[
+              {key:"company",header:"Company",mobilePriority:"primary",cell:company=>
+                <Link href={"/tpo/companies/"+encodeURIComponent(company.companyId)}
+                  className="font-semibold text-[var(--lms-teal-deep)] underline">{company.name}</Link>},
+              {key:"trust",header:"Trust status",mobilePriority:"secondary",cell:company=>
+                <div className="flex min-w-0 flex-wrap items-center gap-2">
+                  <StatusBadge tone={company.isTrusted?"success":"neutral"}>
+                    {company.isTrusted?"Trusted":"Not trusted"}
+                  </StatusBadge>
+                  <TpoTrustToggle relationshipId={company.relationshipId}
+                    companyName={company.name} isTrusted={company.isTrusted}/>
+                </div>},
+              {key:"domain",header:"Company primary domain",mobilePriority:"secondary",cell:company=>
+                <div className="min-w-0 break-words text-body">
+                  {company.primaryDomain??"Not recorded"}
+                  {company.primaryDomain?<p className="mt-1 text-xs text-muted-foreground">
+                    Company metadata; not an allowlist grant
+                  </p>:null}
+                </div>},
+            ]}
+          />
         )}
       </section>
 

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TpoSettingsNav } from "@/components/placements/tpo-settings-nav";
 import { PageHeader } from "@/components/ui/page-header";
+import { DataTable } from "@/components/ui/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {
@@ -48,7 +49,7 @@ export default async function TpoPlacementTeamPage() {
         actions={
           <Link
             href="/tpo/settings/trusted"
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
           >
             Trusted Companies
           </Link>
@@ -141,98 +142,38 @@ export default async function TpoPlacementTeamPage() {
             found in the available sources.
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[48rem] text-left text-sm">
-              <thead className="bg-muted text-muted-foreground">
-                <tr>
-                  <th scope="col" className="px-4 py-3">
-                    Member
-                  </th>
-                  <th scope="col" className="px-4 py-3">
-                    Role / assignment
-                  </th>
-                  <th scope="col" className="px-4 py-3">
-                    Membership status
-                  </th>
-                  <th scope="col" className="px-4 py-3">
-                    Student duties
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {members.map((member) => (
-                  <tr
-                    key={member.membershipId}
-                    className="border-t border-border align-top"
-                  >
-                    <td className="px-4 py-4">
-                      <span className="font-semibold text-foreground">
-                        {member.displayName}
-                      </span>
-                    </td>
-
-                    <td className="px-4 py-4">
-                      <div className="flex flex-wrap gap-2">
-                        {member.roles.map((role) => (
-                          <StatusBadge
-                            key={role}
-                            tone={
-                              role === "TPO_ADMIN"
-                                ? "info"
-                                : "neutral"
-                            }
-                          >
-                            {TPO_TEAM_ROLE_LABELS[role]}
-                          </StatusBadge>
-                        ))}
-                      </div>
-                    </td>
-
-                    <td className="px-4 py-4">
-                      <StatusBadge tone="success">
-                        {member.status}
-                      </StatusBadge>
-                    </td>
-
-                    <td className="px-4 py-4">
-                      {member.studentDuties.length === 0 ? (
-                        <span className="text-muted-foreground">
-                          —
-                        </span>
-                      ) : (
-                        <div className="space-y-2">
-                          <p className="text-xs font-semibold text-body">
-                            {member.studentDuties.length} recorded
-                            {" "}drive/date assignment
-                            {member.studentDuties.length === 1
-                              ? ""
-                              : "s"}
-                          </p>
-                          {member.studentDuties.map((duty) => (
-                            <p
-                              key={`${duty.jobId}:${duty.onDate}`}
-                              className="text-xs text-body"
-                            >
-                              <Link
-                                href={`/tpo/placements/jobs/${encodeURIComponent(
-                                  duty.jobId,
-                                )}`}
-                                className="font-semibold text-primary-text hover:underline"
-                              >
-                                {duty.jobTitle}
-                              </Link>
-                              {" · "}
-                              {dutyDate(duty.onDate)}
-                            </p>
-                          ))}
-                        </div>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <DataTable
+            rows={members}
+            getRowKey={member=>member.membershipId}
+            caption="Active team memberships"
+            empty={<p>No matching active TPO or coordinator memberships were found in the available sources.</p>}
+            columns={[
+              {key:"member",header:"Member",mobilePriority:"primary",cell:member=>
+                <span className="font-semibold text-foreground">{member.displayName}</span>},
+              {key:"role",header:"Role / assignment",mobilePriority:"secondary",cell:member=>
+                <div className="flex flex-wrap gap-2">{member.roles.map(role=>
+                  <StatusBadge key={role} tone={role==="TPO_ADMIN"?"info":"neutral"}>
+                    {TPO_TEAM_ROLE_LABELS[role]}
+                  </StatusBadge>)}</div>},
+              {key:"status",header:"Membership status",mobilePriority:"secondary",cell:member=>
+                <StatusBadge tone="success">{member.status}</StatusBadge>},
+              {key:"duties",header:"Student duties",mobilePriority:"secondary",cell:member=>
+                member.studentDuties.length===0?<span className="text-muted-foreground">—</span>:
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold text-body">
+                    {member.studentDuties.length} recorded{" "}drive/date assignment
+                    {member.studentDuties.length===1?"":"s"}
+                  </p>
+                  {member.studentDuties.map(duty=><p key={duty.jobId+":"+duty.onDate} className="text-xs text-body">
+                    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(duty.jobId)}
+                      className="font-semibold text-[var(--lms-teal-deep)] underline">
+                      {duty.jobTitle}
+                    </Link>
+                    {" · "}{dutyDate(duty.onDate)}
+                  </p>)}
+                </div>},
+            ]}
+          />
         )}
       </section>
 

@@ -10,6 +10,7 @@ const tabs = [
   { key: "board", label: "Board" },
   { key: "performance", label: "Task Allocation" },
   { key: "resources", label: "Resources" },
+  { key: "delivery", label: "Delivery" },
   { key: "activity", label: "Activity" },
 ] as const;
 

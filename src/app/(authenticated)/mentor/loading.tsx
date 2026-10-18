@@ -1,1 +1,2 @@
-export default function MentorLoading(){return <section role="status" aria-busy="true" className="rounded-xl border border-border bg-surface p-6"><p className="font-semibold text-foreground">Opening your mentor workspace…</p></section>}
+import {GracefulPageLoading} from "@/components/ui/graceful-page-loading";
+export default function MentorLoading(){return <GracefulPageLoading label="Opening your mentor workspace…" />;}

@@ -9,6 +9,7 @@ import {ProjectTaskComments} from "./project-task-comments";
 import {MentorBoardTaskDetailDialog} from "./mentor-board-task-detail-dialog";
 import {MentorTaskCreate} from "./mentor-task-create";
 import {projectTaskDueState} from "@/modules/projects/project-task-visible-facts-model";
+import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evidence-model";
 import {MentorTaskDeleteControl} from "./mentor-task-delete-control";
 type Task={id:string;title:string;status:string;priority:string;sprintId:string|null;carriedFromSprintId?:string|null;createdAt:Date;updatedAt:Date;
  description:string|null;approach:string|null;acceptanceCriteria:string|null;blockerReason:string|null;
@@ -104,40 +105,40 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
          membershipId:member.membershipId,displayName:member.displayName,
        }))}/>:null}
      <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
-       className="min-h-10 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+       className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
       Review submission</Link>
    </div>
   </div>
   <div className="flex flex-wrap gap-3 rounded-xl border border-border p-3">
    <label className="text-sm font-semibold">Release
     <select value={release} onChange={e=>{setRelease(e.target.value);setSprint("");remember("release",e.target.value);remember("sprint","");}}
-      className="ml-2 min-h-10 rounded-md border border-border bg-background px-2">
+      className="ml-2 min-h-11 rounded-md border border-border bg-background px-2">
      <option value="">All releases</option>{releases.map(r=><option key={r.id} value={r.id}>{r.title}</option>)}
     </select></label>
    <label className="text-sm font-semibold">Sprint
     <select value={sprint} onChange={e=>{setSprint(e.target.value);remember("sprint",e.target.value);}}
-      className="ml-2 min-h-10 rounded-md border border-border bg-background px-2">
+      className="ml-2 min-h-11 rounded-md border border-border bg-background px-2">
      <option value="">All sprints</option>{sprints.filter(s=>!release||s.releaseId===release)
       .map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
     </select></label>
    <label className="text-sm font-semibold">Sprint scope
     <select value={scope} aria-label="Board sprint scope"
       onChange={e=>{setScope(e.target.value==="all"?"all":"current");remember("scope",e.target.value);}}
-      className="ml-2 min-h-10 rounded border border-border bg-background p-2">
+      className="ml-2 min-h-11 rounded border border-border bg-background p-2">
       <option value="current">Current sprint + backlog</option>
       <option value="all">All sprints (full history)</option>
     </select>
    </label>
    <label className="text-sm font-semibold">Priority
     <select value={priority} onChange={e=>{setPriority(e.target.value);remember("priority",e.target.value);}}
-     className="ml-2 min-h-10 rounded border border-border bg-background p-2">
+     className="ml-2 min-h-11 rounded border border-border bg-background p-2">
      <option value="">All priorities</option>
      {["LOW","MEDIUM","HIGH","CRITICAL"].map(v=><option key={v} value={v}>{v}</option>)}
     </select>
    </label>
    <label className="text-sm font-semibold">Assignee
     <select value={assignee} onChange={e=>{setAssignee(e.target.value);remember("assignee",e.target.value);}}
-     className="ml-2 min-h-10 rounded border border-border bg-background p-2">
+     className="ml-2 min-h-11 rounded border border-border bg-background p-2">
      <option value="">Everyone</option><option value="UNASSIGNED">Unassigned</option>
      {members.filter(m=>m.role==="LEARNER").map(m=>
       <option key={m.membershipId} value={m.membershipId}>{m.displayName??"Learner"}</option>)}
@@ -145,7 +146,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
    </label>
    <label className="text-sm font-semibold">Lane
     <select value={statusFilter} onChange={e=>{setStatusFilter(e.target.value);remember("lane",e.target.value);}}
-      className="ml-2 min-h-10 rounded border border-border bg-background p-2">
+      className="ml-2 min-h-11 rounded border border-border bg-background p-2">
       <option value="">All lanes</option>
       <option value="BACKLOG">Backlog</option>
       {editable.map(v=><option key={v} value={v}>{v.replaceAll("_"," ")}</option>)}
@@ -153,7 +154,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     </select>
    </label>
    <button type="button" onClick={()=>{setPriority("");setAssignee("");setSprint("");setRelease("");setStatusFilter("");setScope("current");["priority","assignee","sprint","release","lane","scope"].forEach(k=>remember(k,""));}}
-    className="min-h-10 text-sm font-semibold text-primary-text underline">Clear all</button>
+    className="min-h-11 text-sm font-semibold text-primary-text underline">Clear all</button>
   </div>
   <div className="flex flex-wrap items-center gap-2" aria-label="Board lane filters">
     {[{value:"",label:"All lanes"},{value:"BACKLOG",label:"Backlog"},
@@ -197,7 +198,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       onDragStart={e=>e.dataTransfer.setData("text/plain",task.id)}
       className="space-y-2 rounded-lg border border-border bg-surface p-3 text-sm">
       <button type="button" onClick={()=>setSelected(task.id)}
-        className="min-h-10 text-left font-semibold text-primary-text underline">{task.title}</button>
+        className="min-h-11 text-left font-semibold text-primary-text underline">{task.title}</button>
       <p className="text-xs text-body">{task.priority} · {sprintRow?.title??"Backlog"}</p>
       <p className="text-xs text-body">Assignee: {members.find(m=>m.membershipId===task.assigneeMembershipId)?.displayName??"Unassigned"} ·
         {" "}Estimate: {task.estimatePoints??"Unsized"} · {task.taskType??"Task"}</p>
@@ -210,7 +211,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       {task.blockerReason?<p className="whitespace-pre-wrap text-xs text-warning-text">Blocked: {task.blockerReason}</p>:null}
       {canMove?<label className="block text-xs font-semibold">Move task
        <select value={task.status} disabled={busy} onChange={e=>void move(task.id,e.target.value)}
-        className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-2">
+        className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-2">
         {editable.map(x=><option key={x} value={x}>{x.replaceAll("_"," ")}</option>)}
        </select></label>:null}
       {!readOnly&&["TODO","IN_PROGRESS","BLOCKED"].includes(task.status)?
@@ -233,8 +234,8 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
        {taskSubmissions.filter(s=>s.taskId===task.id).slice(-3).map(item=>
         <div key={item.id} className="mt-1 text-xs">
           <span>{item.status} · version {item.version}</span>
-          {/^https?:\/\//i.test(item.submissionUrl)?<a href={item.submissionUrl} target="_blank"
-            rel="noreferrer noopener" className="ml-2 text-primary-text underline">Open submission link</a>:null}
+          {safeProjectExternalHref(item.submissionUrl)?<a href={safeProjectExternalHref(item.submissionUrl)!} target="_blank"
+            rel="noreferrer noopener" className="ml-2 inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Open submission link</a>:null}
         </div>
        )}
        {!taskSubmissions.some(s=>s.taskId===task.id)?<p className="text-xs text-muted-foreground">No submission yet.</p>:null}
@@ -253,7 +254,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
    </section>)}
   </div></div>
   {matching.length>visible.length?<button type="button"
-    className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold text-primary-text"
+    className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text"
     onClick={()=>setVisibleLimit(limit=>limit+150)}>Show 150 more</button>:null}
   {selected&&tasks.find(task=>task.id===selected)?<MentorBoardTaskDetailDialog
     projectId={projectId} task={tasks.find(task=>task.id===selected)!}
