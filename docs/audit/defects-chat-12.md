@@ -70,3 +70,13 @@ The rolling `docs/orchestrator/unit-failures-latest.md` explicitly reports two `
 Tests are **authored but not executed** here. Typecheck, the complete Vitest suite, database transactions under concurrency and real browser checks remain external release gates. These uncovered gates must not be translated into DONE.
 
 The branch was fast-forwarded again from main at `3273bbbcdb20f7f5bcf569053f574f3fe1f75645` before the latest fixes. GitHub connector writes publish each commit to `chatgpt/chat-12-b`; no direct main writes.
+
+## 2026-10-18 refreshed CI (ff6819dd), service authorization and requests grid
+
+| ID | Severity | Evidence | Resolution | Verification |
+|---|---|---|---|---|
+| D12-35 | HIGH | `getTpoStudentsIntelligence`, `listTpoStudentRequests`, and `getTpoStudentPlacementHistory` trusted a session role even after a persisted TPO role was revoked. UI-level actor rechecks do not protect direct service callers. | Revalidate the currently active TPO/college actor against the persisted membership before any roster, requests, or archived history row access. Bind the actor's live college to the requested college. | `fea493e5`, `1f5a1190`, `07bce3d9`; `chat12-tpo-live-role-private-reads.test.ts`, `chat12-tpo-student-requests-service-tenant.test.ts` mocked authorization tests; PostgreSQL/browser revocation remains open. |
+| D12-36 | HIGH | The TPO company directory/detail/export service `loadCompanySources` authenticated only the cached request context; revoked sessions could obtain employer contact and applicant history through direct service calls. | Require a currently persisted placement-team actor and identical college before any company relationship/contact query or export. | `720273a3`, `93ad636c`; `chat12-tpo-company-view-service-permissions.test.ts`; real PostgreSQL concurrent-revocation proof pending. |
+| D12-37 | TEST CONTRACT DRIFT | Three refreshed CI failures under `chat12-requests-grid-round6`, `chat12-round10-requests-state-contracts`, and `chat12-round27-request-grid` targeted a direct filter expression and outdated clipboard/accessibility implementation. | Keep the authorized-page selection explicit in the UI; strengthen the 500-row test with off-page rejection, selected visible columns, TSV formula neutralization and current table caption/sticky selection offset. | `d8d7514d`, `c0cc758e`, `ae263482`; all three listed failures addressed in source/test, awaiting cloud CI. |
+
+No test suite or TypeScript compiler was run by chat-12. Source review does not constitute a green CI result.
