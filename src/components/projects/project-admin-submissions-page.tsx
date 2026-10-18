@@ -73,8 +73,10 @@ export async function ProjectAdminSubmissionsPage({
     listProjectAdminSubmissionQueue(context, collegeId, query),
     getProjectAdminSubmissionSummary(context, collegeId),
   ]):null;
-  const result=all?.[0]?.status==="fulfilled"?all[0].value:null;
-  const summary=all?.[1]?.status==="fulfilled"?all[1].value:null;
+  const submissionsRead=all?.[0];
+  const summaryRead=all?.[1];
+  const result=submissionsRead?.status==="fulfilled"?submissionsRead.value:null;
+  const summary=summaryRead?.status==="fulfilled"?summaryRead.value:null;
   const queuePath=basePath+"/submissions";
   const renderedAt=new Date();
   const unsubmittedResult=view==="NOT_SUBMITTED"
