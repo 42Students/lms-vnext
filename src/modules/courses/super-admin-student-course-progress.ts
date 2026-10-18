@@ -57,20 +57,20 @@ export async function getSuperAdminStudentCourseProgress(context:RequestContext,
   select lc.id,lc.content_type,lc.delivery_id from lesson_contents lc
   join course_lessons l on l.id=lc.lesson_id and l.status='ACTIVE'
   join course_learning_paths p on p.id=l.learning_path_id
-  where p.offering_id=${offeringId}::uuid and p.status='ACTIVE'
+  where p.offering_id=${offeringId}::uuid and p.status='PUBLISHED'
    and lc.status='PUBLISHED' and lc.visible_to_students=true
    and lc.content_type in ('VIDEO','YOUTUBE')
  ), published_assignments as (
   select a.id,a.delivery_id from course_assignments a
   join course_lessons l on l.id=a.lesson_id
   join course_learning_paths p on p.id=l.learning_path_id
-  where p.offering_id=${offeringId}::uuid and p.status='ACTIVE'
+  where p.offering_id=${offeringId}::uuid and p.status='PUBLISHED'
    and l.status='ACTIVE' and a.status='PUBLISHED'
  ), published_quizzes as (
   select q.id,q.delivery_id from course_quizzes q
   join course_lessons l on l.id=q.lesson_id
   join course_learning_paths p on p.id=l.learning_path_id
-  where p.offering_id=${offeringId}::uuid and p.status='ACTIVE'
+  where p.offering_id=${offeringId}::uuid and p.status='PUBLISHED'
    and l.status='ACTIVE' and q.status in ('PUBLISHED','CLOSED')
  )
  select r.membership_id as "membershipId",r.student_name as "studentName",
