@@ -80,7 +80,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         description="Inventory of effective source limits and college policy values. Attendance settings can be edited for the selected college."
       />
 
-      <section aria-label="Tenant Settings overview" className="rounded-xl border border-border bg-surface p-4">
+      <section aria-label="Tenant Settings overview" className="border-b border-border pb-5">
         <p className="text-sm font-semibold">Runtime configuration · {scopeLabel}</p>
         <h2 className="mt-1 text-base font-semibold">Settings with explicit execution scope</h2>
         <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-3">
@@ -128,7 +128,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         Authentication and privileged access checklist →
       </Link>
 
-      <form className="flex min-w-0 flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+      <form className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
         <label className="grid min-w-48 flex-1 gap-1 text-sm font-semibold text-body">Setting or source
           <Input name="q" defaultValue={parsed.q} maxLength={100} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground"/>
         </label>
