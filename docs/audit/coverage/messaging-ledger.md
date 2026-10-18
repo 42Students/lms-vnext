@@ -280,3 +280,7 @@ No outbound network or test runner was invoked in this lane. These tests are aut
 ### Private inbox double-submit race closure
 
 `src/components/admin/inbound-mail-list.tsx` now uses a per-component synchronous `createInboundMailTriageGate` to suppress repeated PATCH events even before `busy` triggers a React rerender. Existing `expectedStatus`/`expectedVersion` optimistic concurrency and legacy labels remain unchanged; `finally` releases the gate even when a network or stale-state request fails. `tests/unit/chat16-inbound-mail-double-submit-16.test.ts` cases `inbound-mail-double-submit-16`–`18` exercise the gate directly, instance isolation and UI CAS wiring. Browser double-click and real PostgreSQL stale-version checks still require CI execution.
+
+### Recruiter notification acknowledgement CAS coverage
+
+`tests/unit/chat16-hr-notification-read-cas-16.test.ts` invokes the actual `markHrNotificationRead` service using an injected, in-memory transactional query mock. Named cases `hr-notification-read-16`–`20` verify strict UUID/version parsing, current recruiter principal (not a substituted user), persisted eligible employer-drive scope before any DB read, missing/read/stale notification rejection, compare-and-swap race refusal and confirmed persisted `readAt` projection. Tests are authored, not executed; SQL race conditions and real employer grant expiry require the PostgreSQL integration suite.
