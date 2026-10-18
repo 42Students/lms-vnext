@@ -24,7 +24,7 @@ export function Pagination({ page, pageCount, hrefForPage, label = "Pages", clas
     <nav data-slot="pagination" aria-label={label} className={cx("flex min-w-0 flex-wrap items-center gap-2", className)}>
       {current === 1 ? <span aria-disabled="true" className={cx(buttonClass, "opacity-50")}>Previous</span> :
         <Link className={buttonClass} href={hrefForPage(current - 1)}>Previous</Link>}
-      <span className="sr-only" role="status" aria-live="polite">Page {current} of {total}</span>
+      <span className="sr-only" aria-label="Current page">Page {current} of {total}</span>
       {paginationWindow(current, total).map(item => (
         <Link key={item} href={hrefForPage(item)}
           aria-label={`Page ${item} of ${total}`}

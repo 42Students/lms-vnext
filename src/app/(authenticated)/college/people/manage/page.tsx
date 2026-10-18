@@ -107,7 +107,7 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
     </section>
     <section className="space-y-2" aria-label="Filtered people">
       <p className="text-sm text-muted-foreground">{pagination.total} matching membership{pagination.total === 1 ? "" : "s"}</p>
-      {people.items.length ? <DataTable columns={columns} rows={people.items}
+      {people.items.length ? <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>} columns={columns} rows={people.items}
         getRowKey={person => person.membership.id} /> :
         <div role="status" className="space-y-3 rounded-xl border border-border bg-surface p-6 text-sm text-muted-foreground">
           <p>{collegePeopleHasFilters(filter)

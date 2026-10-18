@@ -17,7 +17,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const params=await searchParams;
  const query=messagingHistoryQuerySchema.safeParse({page:first(params.page),purpose:first(params.purpose)});
- if(!query.success)return <main className="space-y-4"><PageHeader eyebrow="Engage" title="Emails"/><p role="alert">Invalid history filters. <Link href="/tpo/recruiters/campaigns">Reset filters</Link></p></main>;
+ if(!query.success)return <div className="min-w-0 space-y-4"><PageHeader eyebrow="Engage" title="Emails"/><p role="alert">Invalid history filters. <Link href="/tpo/recruiters/campaigns">Reset filters</Link></p></div>;
  const result=await listTpoMessagingHistory(context,query.data);
  const drafts=await listTpoCampaignDrafts(context);
  const deliveryReady=await tpoCampaignDispatchReady();
@@ -29,8 +29,8 @@ export default async function CampaignHistory({searchParams}:PageProps){
      .map(([value,label])=><Link key={value} href={"/tpo/recruiters?view="+value}
        aria-current={value==="campaigns"?"page":undefined}
        className={value==="campaigns"
-         ?"inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary"
-         :"inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body"}>
+         ?"inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary"
+         :"inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-body"}>
        {label}
      </Link>)}
   </nav>
@@ -40,19 +40,19 @@ export default async function CampaignHistory({searchParams}:PageProps){
   <form method="get" action="/tpo/recruiters/campaigns" className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-surface p-3">
    <label className="text-sm">Purpose
     <input name="purpose" maxLength={120} defaultValue={first(params.purpose)??""}
-     placeholder="Filter by purpose" className="mt-1 block min-h-10 rounded border border-border px-3"/>
+     placeholder="Filter by purpose" className="mt-1 block min-h-11 rounded border border-border px-3"/>
    </label>
-   <button type="submit" className="min-h-10 rounded border border-border px-3 text-sm">Apply</button>
-   <Link href="/tpo/recruiters/campaigns" className="text-sm text-primary-text underline">Clear</Link>
+   <button type="submit" className="min-h-11 rounded border border-border px-3 text-sm">Apply</button>
+   <Link href="/tpo/recruiters/campaigns" className="text-sm text-[var(--lms-teal-deep)] underline">Clear</Link>
   </form>
   <nav aria-label="Campaign history actions" className="flex flex-wrap gap-3">
    <Link href="/tpo/recruiters/campaigns/new"
     className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
     New email campaign
    </Link>
-   <Link href="/tpo/recruiters" className="inline-flex min-h-11 items-center text-sm text-primary-text">Back to Engage</Link>
+   <Link href="/tpo/recruiters" className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)]">Back to Engage</Link>
    <Link href={"/api/placements/tpo/campaigns/history/export"+(first(params.purpose)?"?purpose="+encodeURIComponent(first(params.purpose)!):"")}
-     className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm text-primary-text">Export filtered history as CSV</Link>
+     className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm text-[var(--lms-teal-deep)]">Export filtered history as CSV</Link>
   </nav>
   <section aria-label="Email campaigns" className="space-y-3">
    <h2 className="text-lg font-semibold text-foreground">Email campaigns</h2>
@@ -63,7 +63,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
     <ul className="grid gap-3 sm:grid-cols-2">
      {drafts.rows.map(item=><li key={item.campaign_id}
       className="rounded-md border border-border bg-surface p-4">
-      <Link className="font-semibold text-primary-text underline"
+      <Link className="font-semibold text-[var(--lms-teal-deep)] underline"
        href={"/tpo/recruiters/campaigns/drafts/"+encodeURIComponent(item.campaign_id)}>
        {item.title}
       </Link>
@@ -85,7 +85,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
     {result.rows.map(row=><li key={row.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
       <h2 className="break-words font-semibold text-foreground">
        <Link href={"/tpo/recruiters/campaigns/"+encodeURIComponent(row.id)}
-        className="text-primary-text underline-offset-2 hover:underline">{row.purpose}</Link>
+        className="text-[var(--lms-teal-deep)] underline-offset-2 hover:underline">{row.purpose}</Link>
       </h2>
       <p className="mt-1 text-xs text-muted-foreground">{tpoCampaignHistoryTime(row.createdAt)} IST · {row.status}</p>
       <dl className="mt-3 grid grid-cols-2 gap-2 text-sm text-body">
@@ -97,8 +97,8 @@ export default async function CampaignHistory({searchParams}:PageProps){
     </li>)}
   </ol>:<p className="rounded-xl border border-border bg-surface p-5 text-sm text-body">No emails sent from Engage yet.</p>}
   <nav className="flex flex-wrap gap-3" aria-label="Campaign history pagination">
-    {result.page>1?<Link href={"/tpo/recruiters/campaigns?page="+(result.page-1)+(first(params.purpose)?"&purpose="+encodeURIComponent(first(params.purpose)!):"")} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Previous</Link>:null}
-    {result.page<result.pages?<Link href={"/tpo/recruiters/campaigns?page="+(result.page+1)+(first(params.purpose)?"&purpose="+encodeURIComponent(first(params.purpose)!):"")} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Next</Link>:null}
+    {result.page>1?<Link href={"/tpo/recruiters/campaigns?page="+(result.page-1)+(first(params.purpose)?"&purpose="+encodeURIComponent(first(params.purpose)!):"")} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-[var(--lms-teal-deep)]">Previous</Link>:null}
+    {result.page<result.pages?<Link href={"/tpo/recruiters/campaigns?page="+(result.page+1)+(first(params.purpose)?"&purpose="+encodeURIComponent(first(params.purpose)!):"")} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-[var(--lms-teal-deep)]">Next</Link>:null}
   </nav>
  </main>;
 }

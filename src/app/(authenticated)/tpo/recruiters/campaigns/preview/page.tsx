@@ -14,13 +14,13 @@ export default async function PreviewCampaign({searchParams}:PageProps){
  const query=engageAudienceQuerySchema.safeParse({segment});
  if(!query.success)return <div role="alert" className="p-5">Invalid audience. <Link href="/tpo/recruiters/campaigns/preview">Reset</Link></div>;
  const preview=await previewEngageCampaignAudience(context,query.data);
- return <main className="space-y-6">
+ return <div className="min-w-0 space-y-6">
   <PageHeader eyebrow="Engage · Campaigns" title="Audience preview"
     description="Read-only counts from current recruiter contacts. No messages will be sent from this page." />
   <nav aria-label="Audience segments" className="flex flex-wrap gap-2">
    {(["ALL_ELIGIBLE","NEW","UNASSIGNED"] as const).map(item=><Link key={item}
     href={"/tpo/recruiters/campaigns/preview?segment="+item} aria-current={query.data.segment===item?"page":undefined}
-    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm text-primary-text">
+    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm text-[var(--lms-teal-deep)]">
     {item.replaceAll("_"," ")}
    </Link>)}
   </nav>
@@ -34,6 +34,6 @@ export default async function PreviewCampaign({searchParams}:PageProps){
     </div>)}
   </dl>
   <p className="text-sm text-body">Potential does not mean deliverable: provider availability, daily caps, global email suppression and non-production allowlists require checks again at dispatch. Sending is not enabled here.</p>
-  <Link href="/tpo/recruiters" className="inline-flex min-h-11 items-center text-sm text-primary-text">Back to Engage</Link>
- </main>;
+  <Link href="/tpo/recruiters" className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)]">Back to Engage</Link>
+ </div>;
 }

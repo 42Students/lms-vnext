@@ -29,8 +29,8 @@ export default async function TpoDriveCloseoutPage({
     ["Currently accepted learners", counts.accepted],
     ["Confirmed joined learners", counts.joined],
   ] as const;
-  return <div className="space-y-5">
-    <Link className="text-sm font-semibold text-primary-text"
+  return <div className="min-w-0 space-y-5">
+    <Link className="text-sm font-semibold text-[var(--lms-teal-deep)]"
       href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id)}>← Back to drive</Link>
     <header>
       <h1 className="text-2xl font-bold text-foreground">{data.job.title} · Close-out summary</h1>
@@ -40,7 +40,7 @@ export default async function TpoDriveCloseoutPage({
       </p>
     </header>
     <a href={"/api/placements/tpo/drives/" + encodeURIComponent(data.job.id) + "/closeout/export"}
-      className="inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+      className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
       Export CSV
     </a>
     <section aria-label="Close-out metrics" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">

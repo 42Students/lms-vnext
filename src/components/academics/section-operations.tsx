@@ -679,7 +679,7 @@ export function SectionOperations({
           <h3 className="m-0 text-sm font-semibold text-foreground">
             Program enrollments
           </h3>
-          <DataTable
+          <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
             columns={enrollmentColumns}
             rows={programEnrollments}
             getRowKey={(row) => row.id}
@@ -690,7 +690,7 @@ export function SectionOperations({
           <h3 id="section-roster" className="m-0 text-sm font-semibold text-foreground">
             Section roster history
           </h3>
-          <DataTable
+          <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
             columns={rosterColumns}
             rows={roster}
             getRowKey={(row) => row.id}
@@ -771,7 +771,7 @@ export function SectionOperations({
           </Button>
         </div>
 
-        <DataTable
+        <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
           columns={facultyColumns}
           rows={facultyAssignments}
           getRowKey={(row) => row.id}
@@ -962,7 +962,7 @@ export function SectionOperations({
           </div>
         </div>
 
-        <DataTable
+        <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
           columns={scheduleColumns}
           rows={scheduleEvents}
           getRowKey={(row) => row.id}

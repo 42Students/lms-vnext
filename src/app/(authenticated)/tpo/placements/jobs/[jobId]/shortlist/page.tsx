@@ -40,9 +40,9 @@ export default async function TpoDriveShortlistPage({
 
   const pathname = "/tpo/placements/jobs/" + encodeURIComponent(data.job.id) + "/shortlist";
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <Link href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id)}
-        className="text-sm font-semibold text-primary-text hover:underline">
+        className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
         ← Drive workspace
       </Link>
       <PageHeader
@@ -51,14 +51,14 @@ export default async function TpoDriveShortlistPage({
         description="Current SHORTLISTED screening decisions for submitted applications belonging to active college learners."
         actions={
           <a href={"/api/placements/jobs/" + encodeURIComponent(data.job.id) + "/shortlist/export"}
-            className="inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+            className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
             Export shortlist CSV
           </a>
         }
       />
       <Link
         href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id) + "/share-preview"}
-        className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline"
+        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline"
       >
         Recruiter-visible shortlist report →
       </Link>
@@ -105,11 +105,11 @@ export default async function TpoDriveShortlistPage({
         <div className="flex gap-4">
           {data.page > 1 ? (
             <Link href={pathname + "?page=" + (data.page - 1)}
-              className="font-semibold text-primary-text hover:underline">← Previous</Link>
+              className="font-semibold text-[var(--lms-teal-deep)] hover:underline">← Previous</Link>
           ) : null}
           {data.page < data.totalPages ? (
             <Link href={pathname + "?page=" + (data.page + 1)}
-              className="font-semibold text-primary-text hover:underline">Next →</Link>
+              className="font-semibold text-[var(--lms-teal-deep)] hover:underline">Next →</Link>
           ) : null}
         </div>
       </nav>

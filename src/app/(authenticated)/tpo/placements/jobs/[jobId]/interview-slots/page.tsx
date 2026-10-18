@@ -23,9 +23,9 @@ export default async function TpoRecruiterSlotReviewPage({params}:{
  const when=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
   timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
  }).format(date)+" IST";
- return <main className="space-y-5">
+ return <div className="min-w-0 space-y-5">
   <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)}
-    className="inline-flex min-h-11 items-center text-sm text-primary-text underline">← Back to drive</Link>
+    className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] underline">← Back to drive</Link>
   <header><h1 className="text-2xl font-semibold text-foreground">Interview slot proposals</h1>
    <p className="mt-2 text-sm text-body">{data.job.title} · Employer-proposed time blocks for your college.</p>
   </header>
@@ -50,5 +50,5 @@ export default async function TpoRecruiterSlotReviewPage({params}:{
     No recruiter interview slot proposals were recorded for this drive.
   </p>}
   {data.capReached?<p role="status" className="text-sm text-body">Showing the first 200 proposals. Contact the placement cell administrator for older records.</p>:null}
- </main>;
+ </div>;
 }

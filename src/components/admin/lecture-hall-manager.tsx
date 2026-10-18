@@ -180,7 +180,7 @@ export function LectureHallManager({
           description={emptyState?.description ?? "Add the rooms your college teaches in, so classes can be scheduled into them."}
         />
       ) : (
-        <DataTable
+        <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
           columns={[
             { key: "name", header: LECTURE_HALL_COPY.columns.name, cell: (hall: HallRow) => <span className="font-semibold text-foreground">{hall.name}</span> },
             { key: "type", header: LECTURE_HALL_COPY.columns.type, cell: (hall) => ROOM_TYPE_LABELS[hall.roomType] ?? hall.roomType },

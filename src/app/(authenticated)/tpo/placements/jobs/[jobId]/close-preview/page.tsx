@@ -15,8 +15,8 @@ export default async function TpoDriveClosePreviewPage({params}:{params:Promise<
   if(error instanceof PlacementsServiceError&&error.code==="PLACEMENT_JOB_NOT_FOUND")notFound();
   throw error;
  }
- return <div className="space-y-5">
-  <Link href={"/tpo/placements/jobs/"+preview.id} className="text-sm font-semibold text-primary-text hover:underline">← Drive workspace</Link>
+ return <div className="min-w-0 space-y-5">
+  <Link href={"/tpo/placements/jobs/"+preview.id} className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">← Drive workspace</Link>
   <PageHeader eyebrow="TPO · Drive lifecycle" title={preview.title+" · Close preview"}
    description="Review persisted application, round and offer counts before an audited closure."/>
   {preview.canClose?<TpoDriveClosePreviewForm preview={preview}/>:

@@ -29,9 +29,9 @@ export default async function TpoOfferLettersPage({
     offerId: row.offer.id, offerStatus: row.offer.status,
     issuedAt: row.offer.issuedAt, respondedAt: row.offer.respondedAt,
   })));
-  return <div className="space-y-5">
+  return <div className="min-w-0 space-y-5">
     <Link href={"/tpo/placements/jobs/" + encodeURIComponent(job.id)}
-      className="text-sm font-semibold text-primary-text">← Back to drive</Link>
+      className="text-sm font-semibold text-[var(--lms-teal-deep)]">← Back to drive</Link>
     <header>
       <h1 className="text-2xl font-bold text-foreground">{job.title} · Offer letter evidence</h1>
       <p className="mt-2 text-sm text-body">
