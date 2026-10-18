@@ -172,14 +172,12 @@ export async function ProjectAdminSubmissionsPage({
       {view==="ALL" && result ? <>
       {summary?<div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {([
-          ["Active workspaces", summary.activeWorkspaces, "status", "ACTIVE"],
-          ["Pending review", summary.pendingReview, "submissionStatus", "SUBMITTED"],
-          ["Needs student action", summary.needsStudentAction, "submissionStatus", "CHANGES_REQUESTED"],
-          ["Reviewed", summary.reviewed, "submissionStatus", "APPROVED"],
-        ] as const).map(([name, value, key, filter]) => {
-          const params = new URLSearchParams();
-          params.set(key, filter);
-          return <Link key={name} href={queuePath + "?" + params.toString()}
+          ["Active workspaces", summary.activeWorkspaces, basePath+"?status=ACTIVE"],
+          ["Pending review", summary.pendingReview, queuePath+"?status=ACTIVE&submissionStatus=SUBMITTED"],
+          ["Needs student action", summary.needsStudentAction, queuePath+"?status=ACTIVE&submissionStatus=CHANGES_REQUESTED"],
+          ["Reviewed", summary.reviewed, queuePath+"?submissionStatus=APPROVED"],
+        ] as const).map(([name, value, href]) => {
+          return <Link key={name} href={href}
             className="rounded-xl border border-border bg-surface p-4 hover:border-primary">
             <p className="text-xs font-semibold text-muted-foreground">{name}</p>
             <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>

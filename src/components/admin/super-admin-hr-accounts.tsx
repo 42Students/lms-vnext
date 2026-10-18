@@ -140,7 +140,7 @@ export function SuperAdminHrAccounts({
   scopeDescription,
 }: {
   list: HrAccountsPageData | null;
-  statusSummary: {accounts:number;active:number;archived:number;disabled:number};
+  statusSummary: {accounts:number;active:number;archived:number;disabled:number}|null;
   scopeDescription:string;
   filters: HrListFilters;
   loadError: string | null;
@@ -665,9 +665,16 @@ export function SuperAdminHrAccounts({
         <p className="text-sm text-body">Manage recruiter access, suspension and signed-in devices.</p>
       </section>
       <h2 className="text-base font-semibold">Recruiter accounts</h2>
+      {!statusSummary&&<p role="status" className="rounded-lg border border-border bg-surface-subtle p-3 text-sm text-body">
+        Account totals are temporarily unavailable. The directory is still usable.
+        <button type="button" onClick={()=>router.refresh()}
+          className="ml-2 inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">
+          Retry totals
+        </button>
+      </p>}
       <dl className="grid grid-cols-2 gap-3 md:grid-cols-4">{([
-        ["Accounts",statusSummary.accounts],["Active",statusSummary.active],["Suspended",statusSummary.archived],["Disabled",statusSummary.disabled],
-      ] as const).map(([label,value])=><div key={label} className="rounded-xl border border-border bg-surface p-4"><dt className="text-sm text-muted-foreground">{label}</dt><dd className="mt-2 text-2xl font-semibold tabular-nums">{value}</dd></div>)}</dl>
+        ["Accounts",statusSummary?.accounts],["Active",statusSummary?.active],["Suspended",statusSummary?.archived],["Disabled",statusSummary?.disabled],
+      ] as const).map(([label,value])=><div key={label} className="rounded-xl border border-border bg-surface p-4"><dt className="text-sm text-muted-foreground">{label}</dt><dd className="mt-2 text-2xl font-semibold tabular-nums">{value??"Unavailable"}</dd></div>)}</dl>
       <form
         key={[
           filters.q,
