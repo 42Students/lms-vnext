@@ -23,6 +23,7 @@ vi.mock("@/db/client", () => ({
         return { sql: q.sql, params: q.params };
       };
       if (projection && "teacherName" in projection) {
+        const fields = projection;
         class SourceQuery {
           innerJoin(_table: unknown, condition: SQL) {
             state.joins.push(sqlPart(condition));
@@ -34,9 +35,9 @@ vi.mock("@/db/client", () => ({
           }
           as() {
             return {
-              teacherName: projection.teacherName,
-              courseName: projection.courseName,
-              id: projection.id,
+              teacherName: fields.teacherName,
+              courseName: fields.courseName,
+              id: fields.id,
             };
           }
         }
