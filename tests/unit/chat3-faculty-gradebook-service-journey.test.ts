@@ -69,7 +69,7 @@ describe("chat-3 Faculty gradebook service account journeys (mocked dependency b
 
   it("FAC-attendance-grades-01 denies expired, suspended and wrong-role sessions before roster reads",async()=>{
     for(const change of [
-      (c:RequestContext)=>{c.user.platformStatus="SUSPENDED";},
+      (c:RequestContext)=>{c.user.platformStatus="DISABLED";},
       (c:RequestContext)=>{c.membership!.status="SUSPENDED";},
       (c:RequestContext)=>{c.membership!.roles=["MENTOR"];},
       (c:RequestContext)=>{c.membership=null;},
