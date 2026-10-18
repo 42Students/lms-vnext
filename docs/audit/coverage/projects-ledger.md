@@ -58,7 +58,7 @@ Source fixes: `af9179c` and `99db146`. Tests are **authored, not run**; database
 |---|---|---|
 | `mentor-review-completeness-model.ts:mentorReviewCompletenessQuerySchema / reviewCompletenessPage` | `tests/unit/PROJ-BREAK-chat14-mentor-review-evidence-pagination.test.ts` | `383` strict decimal page token, rejects foreign URL fields; `384` corrupted counts and page values fall back to safe offset |
 | `mentor-review-completeness-model.ts:projectReviewCompleteness / mentorReviewCompletenessHref` | Same test | `385` only APPROVED/CHANGES_REQUESTED persisted decisions count, no hallucinated feedback; `386` exact project UUID/deep link |
-Source fix `3f025d6`; tests **authored but not run**. True DB review duplicate rows, concurrent updates, grade-release policy, and browser offset/phone acceptance remain open.
+Source fix `3f025d6`; tests **authored but not run**. `tests/unit/PROJ-BREAK-chat14-mentor-review-evidence-boundaries.test.tsx` additionally covers `PROJ-BREAK-MENTOR-387/388`: accessible loading/failed-read boundaries without private identities, raw SQL messages, or false claims about missing submissions. True DB review duplicate rows, concurrent updates, grade-release policy, and browser offset/phone acceptance remain open.
 
 ## CI failure triage (refreshed inventory ff6819dd, 2026-10-18)
 - `projects-mentor-service-guards-chat14.test.ts` final-delivery boundary assertion: the current service still contains every checked guard, version token, audited notification and scoped mutation gate. This appears to be a stale snapshot; do not change code or weaken the check without a new failing trace.
