@@ -1,4 +1,8 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import {useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 import Link from "next/link";
@@ -30,84 +34,84 @@ export function SuperAdminTemplateCreateForm(){
   {key:"sprint",label:"First sprint",limit:200,required:true},
   {key:"task",label:"First task",limit:200,required:true},
  ] as const;
- return <form onSubmit={event=>void submit(event)} className="mx-auto grid max-w-3xl gap-5 rounded-xl border border-border bg-surface p-4 sm:p-6">
+ return <form onSubmit={event=>void submit(event)} className="grid min-w-0 gap-5">
   <p className="m-0 text-sm text-body">The draft starts with one release, one sprint and one task. Review and publish after creation.</p>
   <div className="grid min-w-0 gap-4 sm:grid-cols-2">
    {fields.map(field=><label key={field.key} className="grid min-w-0 gap-1 text-sm font-semibold text-body">
-    {field.label}<input required={field.required} maxLength={field.limit} disabled={saving}
+    {field.label}<Input required={field.required} maxLength={field.limit} disabled={saving}
      value={values[field.key]} onChange={event=>edit(field.key,field.key==="slug"?event.target.value.toLowerCase():event.target.value)}
      pattern={field.key==="slug"?"[a-z0-9]+(?:-[a-z0-9]+)*":undefined}
-     className="min-h-11 min-w-0 rounded-md border border-border bg-background px-3 text-foreground"/>
+     className="w-full"/>
    </label>)}
   </div>
   <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Summary (optional)
-   <textarea maxLength={2000} disabled={saving} value={values.summary} onChange={event=>edit("summary",event.target.value)}
-    className="min-h-24 min-w-0 rounded-md border border-border bg-background p-3 text-foreground"/>
+   <Textarea maxLength={2000} disabled={saving} value={values.summary} onChange={event=>edit("summary",event.target.value)}
+    className="w-full"/>
   </label>
   <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Goal (optional)
-   <textarea maxLength={2000} disabled={saving} value={values.goal} onChange={event=>edit("goal",event.target.value)}
-    className="min-h-24 min-w-0 rounded-md border border-border bg-background p-3 text-foreground"/>
+   <Textarea maxLength={2000} disabled={saving} value={values.goal} onChange={event=>edit("goal",event.target.value)}
+    className="w-full"/>
   </label>
   <fieldset className="grid gap-3 rounded-lg border border-border p-3 sm:grid-cols-2">
     <legend className="px-2 text-sm font-semibold">Overview and submission</legend>
     {([{key:"courseLabel",label:"Course label"},{key:"phase",label:"Phase"}] as const)
       .map(item=><label key={item.key} className="grid gap-1 text-sm font-semibold">{item.label}
-       <input maxLength={160} disabled={saving} value={values[item.key]}
+       <Input maxLength={160} disabled={saving} value={values[item.key]}
         onChange={e=>edit(item.key,e.target.value)}
-        className="min-h-11 rounded border border-border bg-background px-3"/></label>)}
+        className="w-full"/></label>)}
     {([{key:"deliverables",label:"Deliverables (one per line)"},
        {key:"definitionOfDone",label:"Definition of done (one per line)"},
        {key:"personas",label:"Personas (one per line)"},
        {key:"submissionInstructions",label:"Submission instructions"}] as const).map(item=>
       <label key={item.key} className="grid gap-1 text-sm font-semibold sm:col-span-2">
        {item.label}
-       <textarea value={values[item.key]} onChange={e=>edit(item.key,e.target.value)}
+       <Textarea value={values[item.key]} onChange={e=>edit(item.key,e.target.value)}
         maxLength={4000} disabled={saving}
-        className="min-h-20 rounded border border-border bg-background p-2"/>
+        className="w-full"/>
       </label>)}
     <label className="grid gap-1 text-sm font-semibold">Submission type
-      <select disabled={saving} value={values.submissionType}
+      <Select disabled={saving} value={values.submissionType}
        onChange={e=>edit("submissionType",e.target.value)}
-       className="min-h-11 rounded border border-border bg-background px-3">
+       className="w-full">
        <option value="LINK">Link</option><option value="FILE">File upload</option>
        <option value="TEXT">Text</option>
-      </select>
+      </Select>
     </label>
   </fieldset>
   <label className="grid gap-1 text-sm font-semibold text-body">First task priority
-   <select disabled={saving} value={values.priority} onChange={event=>edit("priority",event.target.value)} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+   <Select disabled={saving} value={values.priority} onChange={event=>edit("priority",event.target.value)} className="w-full">
     <option value="LOW">Low</option><option value="MEDIUM">Medium</option><option value="HIGH">High</option><option value="CRITICAL">Critical</option>
-   </select>
+   </Select>
   </label>
   <label className="grid gap-1 text-sm font-semibold text-body">First task acceptance criteria (optional)
-   <textarea maxLength={4000} disabled={saving} value={values.acceptanceCriteria} onChange={event=>edit("acceptanceCriteria",event.target.value)} className="min-h-24 rounded-md border border-border bg-background p-3 text-foreground"/>
+   <Textarea maxLength={4000} disabled={saving} value={values.acceptanceCriteria} onChange={event=>edit("acceptanceCriteria",event.target.value)} className="min-h-24 rounded-md border border-border bg-background p-3 text-foreground"/>
   </label>
   <label className="grid gap-1 text-sm font-semibold text-body">First release description (optional)
-   <textarea maxLength={4000} disabled={saving} value={values.releaseDescription} onChange={event=>edit("releaseDescription",event.target.value)} className="min-h-24 rounded-md border border-border bg-background p-3 text-foreground"/>
+   <Textarea maxLength={4000} disabled={saving} value={values.releaseDescription} onChange={event=>edit("releaseDescription",event.target.value)} className="min-h-24 rounded-md border border-border bg-background p-3 text-foreground"/>
   </label>
   <label className="grid gap-1 text-sm font-semibold text-body">First sprint description (optional)
-   <textarea maxLength={4000} disabled={saving} value={values.sprintDescription} onChange={event=>edit("sprintDescription",event.target.value)} className="min-h-24 rounded-md border border-border bg-background p-3 text-foreground"/>
+   <Textarea maxLength={4000} disabled={saving} value={values.sprintDescription} onChange={event=>edit("sprintDescription",event.target.value)} className="min-h-24 rounded-md border border-border bg-background p-3 text-foreground"/>
   </label>
   <label className="grid gap-1 text-sm font-semibold text-body">First task description (optional)
-   <textarea maxLength={4000} disabled={saving} value={values.taskDescription} onChange={event=>edit("taskDescription",event.target.value)} className="min-h-24 rounded-md border border-border bg-background p-3 text-foreground"/>
+   <Textarea maxLength={4000} disabled={saving} value={values.taskDescription} onChange={event=>edit("taskDescription",event.target.value)} className="min-h-24 rounded-md border border-border bg-background p-3 text-foreground"/>
   </label>
   <label className="grid gap-1 text-sm font-semibold text-body">Overview description (optional)
-   <textarea maxLength={4000} disabled={saving} value={values.overviewDescription} onChange={event=>edit("overviewDescription",event.target.value)} className="min-h-24 rounded-md border border-border bg-background p-3 text-foreground"/>
+   <Textarea maxLength={4000} disabled={saving} value={values.overviewDescription} onChange={event=>edit("overviewDescription",event.target.value)} className="min-h-24 rounded-md border border-border bg-background p-3 text-foreground"/>
   </label>
   <fieldset className="min-w-0 space-y-3 rounded-lg border border-border p-3">
    <legend className="px-2 text-sm font-semibold text-body">Starting resource link (optional)</legend>
    <p className="text-xs text-muted-foreground">Add a public HTTP(S) resource. Both title and URL are required when adding one.</p>
    <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Resource title
-    <input maxLength={200} disabled={saving} value={values.resourceTitle} onChange={event=>edit("resourceTitle",event.target.value)} className="min-h-11 min-w-0 rounded-md border border-border bg-background px-3 text-foreground"/>
+    <Input maxLength={200} disabled={saving} value={values.resourceTitle} onChange={event=>edit("resourceTitle",event.target.value)} className="w-full"/>
    </label>
    <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Resource URL
-    <input type="url" maxLength={2048} disabled={saving} value={values.resourceUrl} onChange={event=>edit("resourceUrl",event.target.value)} className="min-h-11 min-w-0 rounded-md border border-border bg-background px-3 text-foreground"/>
+    <Input type="url" maxLength={2048} disabled={saving} value={values.resourceUrl} onChange={event=>edit("resourceUrl",event.target.value)} className="w-full"/>
    </label>
   </fieldset>
   {error?<p role="alert" className="break-words text-sm text-error-text">{error}</p>:null}
   <div className="flex flex-wrap justify-end gap-3">
    <Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm">Cancel</Link>
-   <button type="submit" disabled={saving} className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-50">{saving?"Creating…":"Create draft template"}</button>
+   <Button type="submit" disabled={saving} className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-50">{saving?"Creating…":"Create draft template"}</Button>
   </div>
  </form>;
 }
