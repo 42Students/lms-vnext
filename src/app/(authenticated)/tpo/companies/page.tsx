@@ -1,3 +1,4 @@
+import {DataTable} from "@/components/ui/data-table";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
@@ -273,100 +274,35 @@ export default async function TpoCompanyMemoryPage({
             </Link>
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-xl border border-border bg-surface">
-            <ul aria-label="Companies on this page" className="divide-y divide-border md:hidden">
-              {page.items.map(company=><li key={company.companyId??"unlinked:"+company.name}
-               className="space-y-3 p-4 text-sm">
-                <Link className="block break-words font-semibold text-[var(--lms-teal-deep)] underline"
-                 href={companyHref(company)}>{company.name}</Link>
-                <dl className="grid grid-cols-2 gap-3 text-body">
-                  {([["Contacts",company.contacts??"Unavailable"],["Drives",company.drives],
-                    ["Offers",company.offers],["Accepted",company.acceptedOffers],
-                    ["Confirmed joins",company.confirmedJoinedLearners]] as const).map(([label,value])=>
-                    <div key={label} className="min-w-0">
-                      <dt className="text-xs text-muted-foreground">{label}</dt>
-                      <dd className="font-medium tabular-nums">{value}</dd>
-                    </div>)}
-                </dl>
-                {company.companyId?<Link className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline"
-                 href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}>Create drive</Link>:
-                 <span className="text-xs text-muted-foreground">Link company first</span>}
-              </li>)}
-            </ul>
-            <table className="hidden w-full min-w-[58rem] text-left text-sm md:table">
-              <thead className="bg-muted text-muted-foreground">
-                <tr>
-                  <th scope="col" className="px-4 py-3">Company</th>
-                  <th scope="col" className="px-4 py-3">Contacts</th>
-                  <th scope="col" className="px-4 py-3">Drives</th>
-                  <th scope="col" className="px-4 py-3">Offers</th>
-                  <th scope="col" className="px-4 py-3">Accepted</th>
-                  <th scope="col" className="px-4 py-3">Confirmed joins</th>
-                  <th scope="col" className="px-4 py-3">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {page.items.map((company) => (
-                  <tr
-                    key={
-                      company.companyId ??
-                      `unlinked:${company.name}`
-                    }
-                    className="border-t border-border align-top"
-                  >
-                    <td className="px-4 py-4">
-                      <Link
-                        href={companyHref(company)}
-                        className="font-semibold text-[var(--lms-teal-deep)] hover:underline"
-                      >
-                        {company.name}
-                      </Link>
-
-                      {company.unlinkedLeadGroup ? (
-                        <div className="mt-2">
-                          <StatusBadge tone="warning">
-                            CRM name only · not linked
-                          </StatusBadge>
-                        </div>
-                      ) : (
-                        <p className="mt-1 text-xs text-muted-foreground">
-                          Linked employer
-                        </p>
-                      )}
-
-                      {company.websiteUrl ? (
-                        <p className="mt-1 max-w-xs truncate text-xs text-body">
-                          {company.websiteUrl}
-                        </p>
-                      ) : null}
-                    </td>
-
-                    <td className="px-4 py-4 tabular-nums">
-                      {company.contacts ?? "Unavailable"}
-                    </td>
-                    <td className="px-4 py-4 tabular-nums">
-                      {company.drives}
-                    </td>
-                    <td className="px-4 py-4 tabular-nums">
-                      {company.offers}
-                    </td>
-                    <td className="px-4 py-4 tabular-nums">
-                      {company.acceptedOffers}
-                    </td>
-                    <td className="px-4 py-4 tabular-nums">
-                      {company.confirmedJoinedLearners}
-                    </td>
-                    <td className="px-4 py-4">
-                      {company.companyId?<Link
-                        href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
-                        className="whitespace-nowrap font-semibold text-[var(--lms-teal-deep)] underline">Create drive</Link>:
-                        <span className="text-xs text-muted-foreground">Link company first</span>}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <DataTable
+            caption="Companies on this page"
+            rows={page.items}
+            getRowKey={company=>company.companyId??"unlinked:"+company.name}
+            empty={<p role="status" className="text-sm text-body">No companies match these filters.</p>}
+            columns={[
+              {key:"company",header:"Company",mobileLabel:"Company",mobilePriority:"primary",
+               cell:company=><div className="min-w-0">
+                <Link href={companyHref(company)} className="inline-flex min-h-11 items-center break-words font-semibold text-[var(--lms-teal-deep)] underline">{company.name}</Link>
+                {company.unlinkedLeadGroup?<div className="mt-2"><StatusBadge tone="warning">CRM name only · not linked</StatusBadge></div>:<p className="mt-1 text-xs text-muted-foreground">Linked employer</p>}
+                {company.websiteUrl?<p className="mt-1 break-all text-xs text-body">{company.websiteUrl}</p>:null}
+               </div>},
+              {key:"contacts",header:"Contacts",mobileLabel:"Contacts",mobilePriority:"secondary",
+               cell:company=>company.contacts??"Unavailable"},
+              {key:"drives",header:"Drives",mobileLabel:"Drives",mobilePriority:"secondary",
+               cell:company=>company.drives},
+              {key:"offers",header:"Offers",mobileLabel:"Offers",mobilePriority:"secondary",
+               cell:company=>company.offers},
+              {key:"accepted",header:"Accepted",mobileLabel:"Accepted",mobilePriority:"secondary",
+               cell:company=>company.acceptedOffers},
+              {key:"joins",header:"Confirmed joins",mobileLabel:"Confirmed joins",mobilePriority:"secondary",
+               cell:company=>company.confirmedJoinedLearners},
+              {key:"actions",header:"Actions",mobileLabel:"Actions",mobilePriority:"action",
+               cell:company=>company.companyId?
+                <Link href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
+                  className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Create drive</Link>:
+                <span className="text-xs text-muted-foreground">Link company first</span>},
+            ]}
+          />
         )}
 
         <nav
