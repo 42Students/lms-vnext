@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import type { ReactNode } from "react";
 import { join } from "node:path";
 import { describe, expect, it, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
@@ -21,7 +22,7 @@ const member = (overrides: Partial<RequestContext> = {}): RequestContext => ({
   recruiter: null,
   ...overrides,
 });
-const render = (node: React.ReactNode) => renderToStaticMarkup(<>{node}</>);
+const render = (node: ReactNode) => renderToStaticMarkup(<>{node}</>);
 
 describe("UX-kit-HARDEN-23 authorization boundaries and WebView history", () => {
   it("UX-kit-HARDEN-23 permission action renders controls only in the actor's college", () => {
