@@ -80,3 +80,14 @@ The coverage ledger maps these six previously unmapped board-review exports to a
 | PROJ-BREAK-MENTOR-35..39,41..45 | Behavioural coverage, not separate source defects | Tests cover roster-scoped attention options, report filters/counts, escaped literal query text, IST wall-time conversion, midnight calendar filters, pending-vs-missed semantics, 500-meeting export cap, 200-resource export cap, data-only CSV and rejected hostile tenant filters. | `289b64ee`, `9645b374`; mapped to `docs/audit/coverage/projects-ledger.md` | Every test authored/unrun; PostgreSQL, real service permission matrix and browser tests pending |
 
 **Certification:** The rolling cloud report may predate these commits. No check status was delivered for these commits through the connected repository session, and tests must not be marked green. The canonical ledger retains remaining behavioural service/route/page GAPs; role/session/tenancy races, signed URL fault injection, PostgreSQL migration/rollback, independent reviewer and accessibility runs remain required.
+
+
+## Lead export-handler and persisted-review hardening
+
+| ID | Severity | Evidence and correction | Commit / regression | Outstanding |
+|---|---|---|---|---|
+| PROJ-BREAK-MENTOR-55..58 | S2 input bypass / export integrity | Four Mentor GET exports (board, Sprint summary, reports, final-delivery review) used `URLSearchParams.get`; repeating `status` silently selected the first value and unrecognized/forged `projectId`, `collegeId`, `page` were ignored. The routes now use `singleValueMentorExportFilters` with explicit individual allowlists and a cache-disabled 400 on duplicates or unknown fields; immutable project scope always comes from the path + service authorization. | `93aa9df7`, `3be747e8`, `b5572392`, `a8be4258`; mocked HTTP runtime tests `e96b1154`, heading assertion `d30e2af2`. | Real auth/cross-tenant GET, malformed value mapping and browser CSV tests not run |
+| PROJ-BREAK-MENTOR-59 | S2 grade/report integrity | Review overview count treated any non-null decision as a persisted review, even unrecognized values; restrict to APPROVED/CHANGES_REQUESTED. Direct delivery audit CSV accepted unbounded arrays and could throw on malformed Date; 200-record cap, explicit truncated count, and safe date text now enforced. | `6b66d422`, `tests/unit/PROJ-BREAK-chat14-mentor-delivery-meetings.test.ts`. | PostgreSQL verification and screen/export comparison unrun |
+| PROJ-BREAK-MENTOR-60..63 | S2 resilience / hostile query | Direct team-meeting pagination now clamps invalid pages; runtime tests exercise persisted review labeling, URL scope preservation, percent/underscore/backslash SQL pattern escaping and duplicate/unrecognized export filters. | `1b05fd6f`, test `3b3d3655`. | Real DB/HTTP and accessibility unrun |
+
+Cloud tests/typecheck and independent review remain required. These are authored fixes and assertions, not certification.
