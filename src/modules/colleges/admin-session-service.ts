@@ -33,7 +33,11 @@ export async function listCollegeAdminSessionTargets(ctx:RequestContext,rawColle
  const collegeId=z.uuid().parse(rawCollegeId);
  const college=await getSuperAdminTenantLifecycleDetail(ctx,collegeId);
  requirePermission(ctx,"college.manage",{collegeId,organizationId:college.organizationId});
- const rows=await getDb().select({userId:users.id,name:users.displayName,email:users.email,
+ return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,ctx,"college.manage",{
+   organizationId:college.organizationId,collegeId:college.id,
+  });
+ const rows=await tx.select({userId:users.id,name:users.displayName,email:users.email,
   membershipId:collegeMemberships.id,status:collegeMemberships.status,
   role:membershipRoles.role}).from(collegeMemberships)
   .innerJoin(users,eq(users.id,collegeMemberships.userId))
@@ -48,7 +52,7 @@ export async function listCollegeAdminSessionTargets(ctx:RequestContext,rawColle
   map.set(item.userId,item);
  }
  if(map.size){
-  const allRoles=await getDb().select({membershipId:membershipRoles.membershipId,
+  const allRoles=await tx.select({membershipId:membershipRoles.membershipId,
    role:membershipRoles.role}).from(membershipRoles)
    .where(inArray(membershipRoles.membershipId,[...map.values()].map(item=>item.membershipId)));
   const byMembership=new Map([...map.values()].map(item=>[item.membershipId,item]));
@@ -58,6 +62,7 @@ export async function listCollegeAdminSessionTargets(ctx:RequestContext,rawColle
   }
  }
  return {college,items:[...map.values()],truncated:rows.length>500};
+ });
 }
 
 export async function listCollegeAdminSessions(ctx:RequestContext,collegeId:unknown,userId:unknown){
