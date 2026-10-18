@@ -103,6 +103,8 @@ Branch: `chatgpt/chat-9-b`. Owner: chat-9. These are observed source-level findi
 
 | PROJ9-057 · SA-content-admin-01/04 | High | Shared `/admin/videos` and `/admin/resources` directory trusted selected `adminScope.collegeId` without an explicit ACTIVE Super Admin gate; ignored duplicate/unknown filters and could surface a raw error when content, lesson or section lookup failed. Added a pre-read role denial, strict decimal/duplicate/unknown GET handling and recoverable retry that retains validated filters. | `8b51dad`, `3249330` | `tests/unit/PROJ-BREAK-chat9-admin-content-last-third.test.tsx` (`3ac0294`), four direct SSR role/scope/failure scenarios; CI, PostgreSQL and browser verification OPEN |
 
+| PROJ9-058 · SA-content-admin-05 | High | Super Admin content listing accepted section delivery references whose offering ID did not match the lesson's offering; the section dropdown joined deliveries to sections by ID without verifying the selected offering's cohort and academic period. Corrupt imported foreign-section associations could leak/offer incorrect section choices. Reject mismatching delivery in the directory query and require matching cohort and period on section choices. | `1c00b9f` | `tests/unit/PROJ-BREAK-chat9-admin-content-last-third.test.tsx` (`a93464c`): correlated SQL source assertions; adversarial PostgreSQL rows still OPEN |
+
 ## Outstanding release gates (not yet closed)
 
 - Live PostgreSQL integration tests for wrong-tenant IDs, serializable races, rollback and event/notification dedupe; chat-17 owns shared fixtures. Static service assertions alone cannot establish real DB behavior.
