@@ -6,7 +6,7 @@ const source=(p:string)=>readFileSync(join(process.cwd(),p),"utf8");
 describe("TPO Settings legacy copy and graceful editing",()=>{
  it("TPO-settings-audit-03 uses the original placement settings section names",()=>{
   const value=source("src/components/placements/tpo-settings-nav.tsx");
-  for(const label of ["Placement Rules","Placement Branding","What Companies See","Public placements","Recruiter access"])expect(value).toContain('label:"'+label+'"');
+  for(const label of ["Placement Rules","Placement Branding","What Companies See","Public placements","Recruiters"])expect(value).toContain('label:"'+label+'"');
  });
  it("TPO-settings-audit-06 protects edited readiness choices against accidental navigation",()=>{
   const value=source("src/components/tpo/tpo-prep-readiness-editor.tsx");
