@@ -177,7 +177,7 @@ export async function offerToNextWaitlisted(context:RequestContext,rawJobId:unkn
    status:"RELEASED",offerId:offer.id,releasedAt:new Date(),
   }).where(and(eq(placementWaitlistPromotions.id,existing.id),
    eq(placementWaitlistPromotions.status,"PENDING"))).returning({id:placementWaitlistPromotions.id});
-  if(!saved)throw Error("Offer was issued; reload the waitlist to reconcile release.");
+  if(!saved)throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
  });
  return {promoted:1,offerId:offer.id,seatNumber:existing.seatNumber};
 }
