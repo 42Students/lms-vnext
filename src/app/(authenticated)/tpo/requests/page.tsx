@@ -40,17 +40,17 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
     urgentOnly:first(raw.urgentOnly),jobId:first(raw.jobId),
     page:first(raw.page),pageSize:first(raw.pageSize),
   });
-  if(!parsed.success)return <main className="space-y-5">
+  if(!parsed.success)return <div className="space-y-5">
     <PageHeader title="Requests"
       description="What students have asked you to decide: withdrawals, off-campus offers, registration changes and disputes. Urgent ones come first."/>
     <section role="alert" className="rounded-xl border border-border bg-surface p-6">
       <h2 className="font-semibold text-foreground">Invalid request filters</h2>
       <p className="mt-2 text-sm text-body">Check the request status, kind, age, sorting and page values. No request data was loaded.</p>
-      <Link href="/tpo/requests" className="mt-3 inline-flex min-h-11 items-center font-semibold text-primary-text underline">
+      <Link href="/tpo/requests" className="mt-3 inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">
         Clear invalid filters
       </Link>
     </section>
-  </main>;
+  </div>;
   const [data,jobChoices]=await Promise.all([
     getTpoGlobalRequestsInbox(context, parsed.data),
     listPlacementJobs(context,context.membership.collegeId),
@@ -59,23 +59,23 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
   const statusCounts=tpoRequestStatusCounts(data.summary);
   const asOf=new Date();
   const attention=tpoRequestAttentionOnPage(data.requests,asOf);
-  return <main className="min-w-0 space-y-5">
+  return <div className="min-w-0 space-y-5">
     <PageHeader title="Requests" description="What students have asked you to decide: withdrawals, off-campus offers, registration changes and disputes. Urgent ones come first." />
     <nav aria-label="Request history views" className="flex flex-wrap gap-2">
       <Link href={href({...data.query,status:"PENDING",age:"ALL",page:1})}
         aria-current={data.query.status==="PENDING"&&data.query.age==="ALL"?"page":undefined}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-3 font-semibold text-primary-text">Waiting</Link>
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">Waiting</Link>
       <Link href={href({...data.query,status:"ALL",age:"LAST_30_DAYS",page:1})}
         aria-current={data.query.status==="ALL"&&data.query.age==="LAST_30_DAYS"?"page":undefined}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-3 font-semibold text-primary-text">Last 30 days</Link>
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">Last 30 days</Link>
       <Link href={href({...data.query,status:"ALL",age:"ALL",page:1})}
         aria-current={data.query.status==="ALL"&&data.query.age==="ALL"?"page":undefined}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-3 font-semibold text-primary-text">All history</Link>
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">All history</Link>
     </nav>
     <nav aria-label="Request statuses" className="flex flex-wrap gap-2">
       {TPO_REQUEST_STATUSES.map(status=>
         <Link key={status} href={href({...data.query,status,page:1})} aria-current={data.query.status===status?"page":undefined}
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm text-primary-text">{status==="PENDING"?"Waiting":status.charAt(0)+status.slice(1).toLowerCase()} · {statusCounts[status]}</Link>)}
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm text-[var(--lms-teal-deep)]">{status==="PENDING"?"Waiting":status.charAt(0)+status.slice(1).toLowerCase()} · {statusCounts[status]}</Link>)}
     </nav>
     <form method="get" action="/tpo/requests" className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-surface p-4">
       <input type="hidden" name="status" value={data.query.status}/>
@@ -97,17 +97,17 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
       <label className="text-sm">Age<select name="age" defaultValue={data.query.age} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">Any age</option><option value="TODAY">Asked today</option><option value="ONE_TO_TWO_DAYS">1–2 days</option><option value="OLDER_THAN_1_DAY">Older than 24 hours</option><option value="OLDER_THAN_2_DAYS">Older than 2 days</option><option value="OLDER_THAN_7_DAYS">Older than 7 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option><option value="LAST_30_DAYS">Last 30 days</option></select></label>
       <label className="text-sm">Order<select name="sort" defaultValue={data.query.sort} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="URGENCY_FIRST">Urgent first</option><option value="NEWEST_FIRST">Newest first</option><option value="OLDEST_FIRST">Oldest first</option><option value="DECIDED_NEWEST">Decided on · newest</option><option value="DECIDED_OLDEST">Decided on · oldest</option></select></label>
       <button type="submit" className="min-h-11 rounded bg-primary px-4 text-on-primary">Apply</button>
-      <Link href={tpoRequestClearAdvancedHref(data.query.status)} className="inline-flex min-h-11 items-center text-primary-text underline">Clear search, age and drive filters</Link>
+      <Link href={tpoRequestClearAdvancedHref(data.query.status)} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Clear search, age and drive filters</Link>
     </form>
     {(await placementTableExists("placement_learner_general_requests"))?<TpoGeneralRequestsPanel/>:null}
     <section aria-label="Needs doing first" className="space-y-3 rounded-xl border border-border bg-surface p-4">
      <h2 className="font-semibold">Needs doing first</h2>
      <p className="text-sm">{data.summary.pending?data.summary.pending+" waiting for you.":"Nothing is waiting for you."}</p>
      <div className="flex flex-wrap gap-3 text-sm">
-      <Link href={href({...data.query,status:"PENDING",urgentOnly:true,page:1})} aria-current={data.query.urgentOnly?"page":undefined} className="rounded border border-border px-3 py-2 font-semibold text-primary-text">Urgent · {attention.urgent}</Link>
+      <Link href={href({...data.query,status:"PENDING",urgentOnly:true,page:1})} aria-current={data.query.urgentOnly?"page":undefined} className="rounded border border-border px-3 py-2 font-semibold text-[var(--lms-teal-deep)]">Urgent · {attention.urgent}</Link>
       <Link href={href({...data.query,status:"PENDING",age:"OLDER_THAN_2_DAYS",page:1})}
        aria-current={data.query.age==="OLDER_THAN_2_DAYS"?"page":undefined}
-       className="rounded border border-border px-3 py-2 font-semibold text-primary-text">Waiting more than 2 days · {attention.waitingOverTwoDays}</Link>
+       className="rounded border border-border px-3 py-2 font-semibold text-[var(--lms-teal-deep)]">Waiting more than 2 days · {attention.waitingOverTwoDays}</Link>
       <span className="rounded border border-border px-3 py-2">May need proof review · {attention.proofUnconfirmed}</span>
      </div>
      <p className="text-xs text-muted-foreground">Attention category numbers cover this visible request page only. Proof hints are text-based and are not verified attachment counts.</p>
@@ -137,7 +137,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
       {data.total>0?"This page is past the available request results.":data.query.status==="PENDING"?"Nothing is waiting for you.":"No requests in this period."}
       {data.total===0?<p className="mt-2 text-sm">Withdrawals, off-campus offers, registration changes and disputes from students show up here.</p>:null}
       <Link href={data.total>0?globalTpoRequestFirstPageHref(data.query):tpoRequestClearAdvancedHref(data.query.status)}
-       className="ml-3 inline-flex min-h-11 items-center text-primary-text underline">
+       className="ml-3 inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">
        {data.total>0?"First matching page":"Reset filters"}
       </Link>
     </section>:<ul className="space-y-3">{data.requests.map(request=>
@@ -161,16 +161,16 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
              <div><dt className="inline font-semibold">Decided on: </dt><dd className="inline">{request.decidedAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST</dd></div>
              <div><dt className="inline font-semibold">Why: </dt><dd className="inline">{request.decisionNote||"No additional decision note recorded"}</dd></div>
             </dl>:null}
-            <Link href={tpoRequestContextLink(request).href} className="mt-2 inline-flex min-h-11 items-center text-primary-text underline">{tpoRequestContextLink(request).label}</Link>
+            <Link href={tpoRequestContextLink(request).href} className="mt-2 inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">{tpoRequestContextLink(request).label}</Link>
           </div>
           {request.status==="PENDING"?<TpoRequestDecisionControl requestId={request.id} expectedUpdatedAt={request.updatedAt.toISOString()} requestType={request.requestType}/>:<span className="text-sm text-body">{request.status}</span>}
         </div>
       </li>)}</ul>}
     <nav aria-label="Request pages" className="flex flex-wrap gap-3">
-      {data.page>1?<Link href={href({...data.query,page:data.page-1})} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-primary-text">Previous</Link>:null}
-      {data.page<data.totalPages?<Link href={href({...data.query,page:data.page+1})} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-primary-text">Next</Link>:null}
+      {data.page>1?<Link href={href({...data.query,page:data.page-1})} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-[var(--lms-teal-deep)]">Previous</Link>:null}
+      {data.page<data.totalPages?<Link href={href({...data.query,page:data.page+1})} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-[var(--lms-teal-deep)]">Next</Link>:null}
     </nav>
     <p className="text-xs text-muted-foreground">CSV exports matching authorized requests across pages (up to 5,000), includes their recorded reasons and decisions, and neutralizes spreadsheet formulas. If the export is truncated, narrow the filters.</p>
     <p className="text-xs text-muted-foreground">Pending actions require explicit confirmation. The learner receives an in-app notice when a request is approved or rejected; no email is sent from this inbox.</p>
-  </main>;
+  </div>;
 }
