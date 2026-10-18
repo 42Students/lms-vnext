@@ -13,6 +13,11 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 
 The shared `assertPersistedLearnerProjectMutation` already provides ACTIVE user, ACTIVE college membership/LEARNER role and writable non-ended project-member checks under SHARE locks. Mentor/Admin keep the existing persisted project mutation gate. These new cases do not close the known legacy meeting status ABA/version-contract release gap.
 
+## Mentor attention aggregated activity — PROJ-BREAK-MENTOR-354..356 (2026-10-19)
+| Export | Test file / cases | Status and remaining acceptance |
+|---|---|---|
+| `mentor-attention-service.ts:listMyMentorProjectAttention` | `tests/unit/PROJ-BREAK-chat14-mentor-attention-aggregation.test.ts`; `PROJ-BREAK-MENTOR-354` tenant-scoped grouped latest activity, `355` 1,200-project roster bounded result contract, `356` denied actor/module short circuit | Source updated `c4610fe`: PostgreSQL computes `max(occurredAt)` grouped per authorized project instead of hydrating all matching events; redundant foreign group rows are rejected by roster ID set. Behavioral mocked-query assertions authored, **not run**. Real PostgreSQL execution plan, 1k+ rows, index selectivity and load/timeout tests remain release GAPs. |
+
 ## CI failure triage (refreshed inventory ff6819dd, 2026-10-18)
 - `projects-mentor-service-guards-chat14.test.ts` final-delivery boundary assertion: the current service still contains every checked guard, version token, audited notification and scoped mutation gate. This appears to be a stale snapshot; do not change code or weaken the check without a new failing trace.
 - `recruiter-chat14-message-email-bridge-contract.test.ts`: the expectation referred to the raw email string, but the provider now normalizes the recipient *before* applying the allowlist; updated the test to assert both normalization and the runtime allowlist, preserving the stronger safety invariant.
