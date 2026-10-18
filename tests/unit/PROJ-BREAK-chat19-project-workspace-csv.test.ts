@@ -19,8 +19,10 @@ describe("PROJ-BREAK-EXPORT-01: Project workspace visible-page CSV safety and sc
  });
  it("preserves numeric negative or zero values without turning them into literal text",()=>{
   expect(projectWorkspaceCsvCell(-1)).toBe('"-1"');
+  expect(projectWorkspaceCsvCell(-25.5)).toBe('"-25.5"');
   expect(projectWorkspaceCsvCell(0)).toBe('"0"');
   expect(projectWorkspaceCsvCell("-1")).toBe('"\'-1"');
+  expect(projectWorkspaceCsvCell("-25.5")).toBe('"\'-25.5"');
  });
  it("exports only supplied, authorized page rows with original order and quoted titles",()=>{
   const csv=projectWorkspacePageCsv([{

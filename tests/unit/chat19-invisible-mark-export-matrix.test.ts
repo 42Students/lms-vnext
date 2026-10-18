@@ -39,6 +39,7 @@ describe("HR/PROJ-CSV-UNICODE-03: combining-mark prefix is unsafe across every e
  it("preserves ordinary negative numeric totals and literal nonformula marks",()=>{
   expect(safeReportCsvCell(-25)).toBe('"-25"');
   expect(projectWorkspaceCsvCell(-25)).toBe('"-25"');
+  expect(projectWorkspaceCsvCell("-25")).toBe('"\'-25"');
   expect(safeReportCsvCell("Team\u0301 A")).toBe('"Team\u0301 A"');
  });
 });

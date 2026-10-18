@@ -6,6 +6,30 @@ import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 
 type JobItem={job:{id:string;createdByUserId:string};collegeId:string;relationshipId:string};
+type ApprovedAttribution={userId:string;jobId:string|null};
+
+/** Count each authorized job only once. A duplicate or conflicting approval
+ * record cannot arbitrarily credit a colleague: fall back to the persisted
+ * job creator until an authoritative single attribution can be established.
+ * This projection never grants access to a job. */
+export function attributeRecruiterTeamJobs(
+ authorizedJobs:readonly JobItem[],requests:readonly ApprovedAttribution[]
+):Record<string,number>{
+ const jobs=new Map<string,JobItem>();
+ for(const row of authorizedJobs)if(!jobs.has(row.job.id))jobs.set(row.job.id,row);
+ const approved=new Map<string,string|null>();
+ for(const request of requests){
+  if(!request.jobId||!jobs.has(request.jobId))continue;
+  if(!approved.has(request.jobId))approved.set(request.jobId,request.userId);
+  else if(approved.get(request.jobId)!==request.userId)approved.set(request.jobId,null);
+ }
+ const counts:Record<string,number>={};
+ for(const [id,row] of jobs){
+  const userId=approved.get(id)??row.job.createdByUserId;
+  counts[userId]=(counts[userId]??0)+1;
+ }
+ return counts;
+}
 
 /** Creator or approved request attribution, never an ownership permission grant.
  * Team totals cannot expose unpublished drives or another employer/college. */
@@ -17,7 +41,7 @@ export async function recruiterTeamAttributedDriveCounts(context:RequestContext,
  requirePermission(context,"placements.recruiter.read",{collegeId,placementCompanyRelationshipId:relationshipId});
  const selected=authorizedJobs.filter(row=>
    row.collegeId===collegeId&&row.relationshipId===relationshipId);
- const ids=selected.map(row=>row.job.id);
+ const ids=[...new Set(selected.map(row=>row.job.id))];
  if(!ids.length)return {} as Record<string,number>;
  const requests=await getDb().select({
   userId:placementRecruiterDriveRequests.recruiterUserId,
@@ -27,12 +51,5 @@ export async function recruiterTeamAttributedDriveCounts(context:RequestContext,
    eq(placementRecruiterDriveRequests.companyRelationshipId,relationshipId),
    inArray(placementRecruiterDriveRequests.approvedJobId,ids),
  ));
- const byJob=new Map<string,string>();
- for(const row of requests)if(row.jobId)byJob.set(row.jobId,row.userId);
- const counts:Record<string,number>={};
- for(const row of selected){
-   const userId=byJob.get(row.job.id)??row.job.createdByUserId;
-   counts[userId]=(counts[userId]??0)+1;
- }
- return counts;
+ return attributeRecruiterTeamJobs(selected,requests);
 }
