@@ -7,9 +7,14 @@ import {superAdminReadQuerySchema} from "./super-admin-read-directory-model";
 const columns=["Faculty","Course","Class","Semester","Year","Role","Active"] as const;
 export async function exportSuperAdminFacultyAssignments(request:Request){
  try{
-  const raw=Object.fromEntries(new URL(request.url).searchParams.entries());
-  const parsed=superAdminReadQuerySchema.safeParse(raw);
-  if(!parsed.success||!["ALL","ACTIVE","ENDED"].includes(parsed.data.status))
+  const params=new URL(request.url).searchParams;
+  const entries=[...params.entries()];
+  // Object.fromEntries collapses duplicate query keys. Reject ambiguous
+  // filters rather than silently choosing the attacker's final selector.
+  const raw=Object.fromEntries(entries);
+  const duplicate=entries.length!==Object.keys(raw).length;
+  const parsed=duplicate?null:superAdminReadQuerySchema.safeParse(raw);
+  if(!parsed?.success||!["ALL","ACTIVE","ENDED"].includes(parsed.data.status))
    return Response.json({error:"INVALID_ASSIGNMENT_FILTERS"},{status:400});
   const context=await getCurrentRequestContext();
   const rows:(string|number)[][]=[];
