@@ -4,7 +4,7 @@ import {hasActiveMembership,hasMembershipRole,type RequestContext} from "@/modul
 import {CoursesServiceError} from "./errors";
 import {listFacultyCourseDeliveries,getFacultyCourseWorkspace} from "./faculty-course-service";
 import {
- facultyLiveClassesQuerySchema,pageFacultyLiveClasses,safeHttpsMeetingLink,
+ facultyLiveClassesQuerySchema,pageFacultyLiveClasses,safeHttpsMeetingLink,mapFacultyLiveWorkspacesInBatches,
  type FacultyLiveClass,
 } from "./faculty-live-classes-model";
 
@@ -21,7 +21,8 @@ export async function getFacultyLiveClasses(context:RequestContext,rawQuery:unkn
  if(query.deliveryId&&!deliveries.some(d=>d.deliveryId===query.deliveryId))
   throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
  const filtered=query.deliveryId?deliveries.filter(d=>d.deliveryId===query.deliveryId):deliveries;
- const workspaces=await Promise.all(filtered.map(d=>getFacultyCourseWorkspace(context,d.deliveryId)));
+ const workspaces=await mapFacultyLiveWorkspacesInBatches(filtered,
+  d=>getFacultyCourseWorkspace(context,d.deliveryId));
  const sessions:FacultyLiveClass[]=workspaces.flatMap(w=>w.lessons.flatMap(lesson=>
   lesson.contents.filter(c=>c.contentType==="LIVE_CLASS"&&
     c.startsAt&&c.endsAt&&c.status==="PUBLISHED").map(c=>({
