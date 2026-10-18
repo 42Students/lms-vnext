@@ -71,7 +71,7 @@ export async function readTpoLearnerPrepOutcomes(
   for(const row of learners)outcomes.set(row.membershipId,"UNCONFIGURED");
   return {available:true,outcomes};
  }
- const cohorts=requested.cohortIds;
+ const requestedCohortIds=requested.cohortIds;
  const contents=await db.select({
   courseId:courseOfferings.courseId,
   cohortId:courseOfferings.cohortId,
@@ -92,7 +92,7 @@ export async function readTpoLearnerPrepOutcomes(
    eq(lessonContents.status,"PUBLISHED"),
    eq(lessonContents.visibleToStudents,true),
    inArray(courseOfferings.courseId,ids),
-   inArray(courseOfferings.cohortId,cohorts),
+   inArray(courseOfferings.cohortId,requestedCohortIds),
   )).limit(5001);
  if(contents.length>5000)return {available:false,outcomes};
  const contentIds=[...new Set(contents.map(row=>row.contentId))];

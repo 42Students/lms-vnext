@@ -98,3 +98,9 @@ No source under `src/auth` or `src/security` was changed; this lane's UI edit is
 ## AUTH-sessions-09 persisted actor and audit under a transaction
 
 `tests/unit/chat6-super-admin-session-service-races.test.ts` exercises `revokeCollegeAdminSessions` with a mocked database adapter: unsupported roles, disabled actors and wrong selected tenant fail before revocation; out-of-roster targets fail; lost persisted actor permission fails before UPDATE; a zero-row repeat never emits another audit; actual affected-row count is audited once; failures propagate instead of returning a false success. This is **mocked transaction boundary coverage**, not proof of a PostgreSQL lock/rollback or cross-request serialization. Real concurrent revoke and role-change tests remain mandatory.
+
+## AUTH-sessions-10 device HTTP journeys, CSRF and private caching (chat-6)
+
+`tests/unit/chat6-auth-devices-http-role-journey.test.ts` invokes each exported account-security device handler rather than inferring safety from import names. The tests cover GET's authenticated owner-derived list, current-device indicator and sensitive-data no-store headers; missing/revoked session denial; same-origin rejection before auth or SQL; sign-out-other-devices zero-row idempotence and exact owner/current IDs; single-device UUID validation, foreign-owner guessing, successful revoke and a database-failure response that never exposes connection information or falsely claims success. Source now sets `Cache-Control: private, no-store` for successful private device enumeration and revocation at both routes.
+
+The existing source/SQL tests additionally check persisted ownership predicates; this HTTP mock is not a PostgreSQL IDOR/race proof. Tests authored, **not executed** locally. CI and concurrent real-DB/browser session-revocation acceptance remain required.

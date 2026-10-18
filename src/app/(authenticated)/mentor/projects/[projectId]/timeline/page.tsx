@@ -5,17 +5,18 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {mentorTimelineHref,mentorTimelineQuerySchema}
   from "@/modules/projects/mentor-project-timeline-model";
 import {getMentorProjectTimeline} from "@/modules/projects/mentor-project-timeline-service";
+import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
 type Search={releaseStatus?:string|string[];sprintStatus?:string|string[];page?:string|string[]};
-const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
 export default async function MentorProjectTimelinePage({
   params,searchParams,
 }:{params:Promise<{projectId:string}>;searchParams:Promise<Search>}){
   const [p,q]=await Promise.all([params,searchParams]);
-  const parsed=mentorTimelineQuerySchema.safeParse({
-    projectId:p.projectId,releaseStatus:first(q.releaseStatus)??undefined,
-    sprintStatus:first(q.sprintStatus)??undefined,
-    page:first(q.page)??undefined,
+  const normalized=singleValueMentorFilters({
+    releaseStatus:q.releaseStatus,sprintStatus:q.sprintStatus,page:q.page,
   });
+  const parsed=mentorTimelineQuerySchema.safeParse(
+    normalized?{projectId:p.projectId,...normalized}:null,
+  );
   if(!parsed.success)return <section role="alert" className="space-y-2">
     <h1>Invalid timeline selector</h1>
     <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Projects</Link>
@@ -25,7 +26,7 @@ export default async function MentorProjectTimelinePage({
   );
   return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Mentor · Project" title="Release &amp; Sprint timeline"
-      description={data.projectTitle}
+      description={data.enabled?data.projectTitle:"Projects access is disabled; no timeline was loaded."}
       actions={<Link href={"/mentor/projects/"+encodeURIComponent(p.projectId)+"?tab=sprints"}
         className="inline-flex min-h-11 items-center rounded-md border border-border px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Sprint workspace

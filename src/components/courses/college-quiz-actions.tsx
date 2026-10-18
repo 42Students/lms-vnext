@@ -25,7 +25,7 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
    const response=await fetch("/api/courses/quizzes/"+encodeURIComponent(quiz.id),{cache:"no-store"});
    const payload=await response.json().catch(()=>null);
    if(!response.ok||payload?.quiz?.quiz?.id!==quiz.id)
-    throw Error(payload?.error??"Unable to load Quiz metadata.");
+    throw Error("Unable to load Quiz metadata. Refresh this page and try again.");
    const current=payload.quiz.quiz;
    setTitle(current.title);setDescription(current.description??"");
    setDue(istInput(current.dueAt));setMaxAttempts(current.maxAttempts);
@@ -66,7 +66,7 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
      "The maximum attempts cannot be lower than attempts already recorded.":
     data?.error==="FACULTY_QUIZ_STALE_VERSION"?
      "Another author changed this Quiz. Close the editor and reload its latest revision.":
-    typeof data?.error==="string"?data.error:"Unable to update quiz.");
+    "Unable to update quiz. Check the form and try again.");
    setEditing(false);setExpectedUpdatedAt("");setNotice(action==="EDIT"?"Quiz updated.":"Quiz deleted.");
    router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to update quiz.");}
