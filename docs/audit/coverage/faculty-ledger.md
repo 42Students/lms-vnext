@@ -150,22 +150,45 @@ Status: INCOMPLETE. Tests have not been executed; do not use this ledger for rel
 | `src/modules/courses/faculty-discussion-history-model.ts` | `facultyDiscussionHistoryHref`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-discussion-history-model.ts` | `discussionHistoryLabel`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-discussion-history-model.ts` | `parseFacultyDiscussionHistoryLocation`: GAP — behavioural test needed |
-| `src/modules/courses/faculty-discussion-history-service.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-discussion-moderation-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-discussion-participation-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-discussion-participation-service.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-discussion-reply-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-discussion-reply-service.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-followup-export.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-grade-editor-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-grade-noop-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-gradebook-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-gradebook-service.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-inbox-query-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-ist-month-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-ist-month-service.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-ist-quarter-hour-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-lesson-visibility-model.ts` | GAP: exported-function test inventory required |
+| `src/modules/courses/faculty-discussion-history-service.ts` | `getFacultyDiscussionHistory`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-discussion-moderation-model.ts` | `facultyDiscussionModerationSchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-discussion-moderation-model.ts` | `facultyDiscussionTokenMatches`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-discussion-participation-model.ts` | `facultyDiscussionParticipationSchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-discussion-participation-model.ts` | `facultyDiscussionParticipationSummary`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-discussion-participation-service.ts` | `getFacultyDiscussionParticipation`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-discussion-reply-model.ts` | `facultyDiscussionReplySchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-discussion-reply-model.ts` | `facultyReplyParentTokenMatches`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-discussion-reply-service.ts` | `postFacultyDiscussionReply`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-followup-export.ts` | `facultyFollowUpPageCsv`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-followup-export.ts` | `facultyFollowUpCsvHref`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-grade-editor-model.ts` | `facultyGradeEditorState`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-grade-noop-model.ts` | `facultyGradeHasChanges`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-gradebook-model.ts` | `facultyGradebookParamsSchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-gradebook-model.ts` | `facultyPublishedGradeRows`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-gradebook-model.ts` | `facultyGradebookCsv`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-gradebook-model.ts` | `facultyPublishedLearnerBreakdown`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-gradebook-model.ts` | `facultyGradebookViewQuerySchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-gradebook-model.ts` | `paginateFacultyGradebookRows`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-gradebook-model.ts` | `facultyGradebookViewHref`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-gradebook-model.ts` | `facultyGradebookPrivateNotFound`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-gradebook-service.ts` | `getFacultyPublishedGradebook`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-gradebook-service.ts` | `getFacultyPublishedGradebookLearner`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-inbox-query-model.ts` | `parseFacultyInboxQuery`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-ist-month-model.ts` | `facultyMonthQuerySchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-ist-month-model.ts` | `istDateKey`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-ist-month-model.ts` | `currentIstMonth`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-ist-month-model.ts` | `shiftMonth`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-ist-month-model.ts` | `facultyMonthGrid`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-ist-month-model.ts` | `facultyMonthHref`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-ist-month-service.ts` | `getFacultyIstMonth`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-ist-quarter-hour-model.ts` | `FACULTY_IST_QUARTER_MINUTES`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-ist-quarter-hour-model.ts` | `FACULTY_IST_NOTE`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-ist-quarter-hour-model.ts` | `facultyIstTimeParts`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-ist-quarter-hour-model.ts` | `facultyIstWallTime`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-ist-quarter-hour-model.ts` | `facultyIstQuarterHourIssue`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-lesson-visibility-model.ts` | `lessonVisibilityCommandSchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-lesson-visibility-model.ts` | `lessonVisibleToReader`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-lesson-visibility-model.ts` | `mayEditLessonStudentVisibility`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-lesson-visibility-staged.ts` | GAP: exported-function test inventory required |
 | `src/modules/courses/faculty-live-classes-model.ts` | GAP: exported-function test inventory required |
 | `src/modules/courses/faculty-live-classes-service.ts` | GAP: exported-function test inventory required |
