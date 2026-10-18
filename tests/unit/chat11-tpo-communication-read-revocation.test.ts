@@ -35,6 +35,7 @@ describe("TPO-settings-audit-COMM-READ-10 private college settings",()=>{
   expect(transaction).toBeGreaterThan(firstGate);
   expect(college).toBeGreaterThan(transaction);
   expect(activeCollege).toBeGreaterThan(college);
+  expect(read.slice(college,persisted)).toContain('.for("share").limit(1)');
   expect(persisted).toBeGreaterThan(activeCollege);
   expect(settings).toBeGreaterThan(persisted);
   expect(result).toBeGreaterThan(settings);
