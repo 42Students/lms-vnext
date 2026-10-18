@@ -16,7 +16,7 @@ import TeacherLayout from "@/app/(authenticated)/teacher/layout";
 
 const collegeId="11111111-1111-4111-8111-111111111111";
 const orgId="22222222-2222-4222-8222-222222222222";
-function principal(roles:RequestContext["membership"] extends infer M ? readonly ("FACULTY"|"MENTOR"|"LEARNER")[]:never,
+function principal(roles:readonly ("FACULTY"|"MENTOR"|"LEARNER")[],
  status:"ACTIVE"|"SUSPENDED"="ACTIVE",platformStatus:"ACTIVE"|"DISABLED"="ACTIVE"):RequestContext{
  return {
   user:{id:"person",identityUid:"identity",platformStatus,systemRoles:[]},
