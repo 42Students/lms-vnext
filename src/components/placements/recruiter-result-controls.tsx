@@ -446,9 +446,9 @@ export function RecruiterResultControls({
                 {round.meetingUrl ? (
                   <a
                     href={round.meetingUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="mt-2 inline-block text-xs font-semibold text-primary-text hover:text-primary-hover"
+                    
+                    rel="noopener noreferrer"
+                    className="mt-2 inline-flex min-h-11 items-center text-xs font-semibold text-primary-text hover:text-primary-hover"
                   >
                     Open meeting →
                   </a>

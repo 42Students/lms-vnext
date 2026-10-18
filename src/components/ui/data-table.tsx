@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { ScrollCue } from "@/components/ui/scroll-cue";
+import { Disclosure } from "@/components/ui/disclosure";
 import { cx } from "@/lib/class-names";
 
 export type DataTableColumn<Row> = {
@@ -59,7 +61,7 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
   }));
   const cell=(item:(typeof prepared)[number],col:DataTableColumn<Row>)=>item.cells.get(col.key);
   return <div data-slot="data-table" className="min-w-0">
-    <div role="region" aria-label={caption ? caption+" scrollable columns" : "Scrollable table columns"} tabIndex={0} className="min-w-0 sm:overflow-x-auto sm:overscroll-x-contain sm:[mask-image:linear-gradient(to_right,black_92%,transparent_100%)] sm:rounded-xl sm:border sm:border-border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+    <ScrollCue axis="x" label={caption ? caption+" scrollable columns" : "Scrollable table columns"} className="min-w-0 sm:rounded-xl sm:border sm:border-border">
       <table className="block w-full border-separate border-spacing-0 text-left text-sm leading-5 sm:table sm:border-collapse">
         <caption className="sr-only">{caption ?? "Records"}</caption>
         <thead className="hidden sm:table-header-group sm:bg-muted">
@@ -84,13 +86,12 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
               </td>;
             })}
             {extra.length ? <td className="block min-w-0 py-1 sm:hidden">
-              <details className="mt-2 border-t border-border pt-2">
-                <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-[var(--lms-teal-deep)]">More details</summary>
+              <Disclosure title="More details" className="mt-2 pt-2">
                 <dl className="grid gap-2 text-sm">{extra.map(col=><div key={col.key} className="min-w-0">
                   <dt className="font-medium text-body">{col.mobileLabel??col.header}</dt>
                   <dd className="break-words text-foreground">{cell(item,col)}</dd>
                 </div>)}</dl>
-              </details>
+              </Disclosure>
             </td>:null}
             {recoverable.length ? <td className="block min-w-0 py-1 sm:hidden">
               <ul className="space-y-2" aria-label="Fields on detail page">
@@ -106,6 +107,6 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
           </tr>)}
         </tbody>
       </table>
-    </div>
+    </ScrollCue>
   </div>;
 }
