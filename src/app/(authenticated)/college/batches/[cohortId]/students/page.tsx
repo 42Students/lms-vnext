@@ -82,15 +82,15 @@ export default async function CollegeBatchStudentsPage({
       </label>
       <button className="min-h-11 rounded bg-primary px-4 font-semibold text-foreground">Search</button>
     </form>
-    <div className="overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-surface">
+    <div role="region" aria-label="Students in this batch" tabIndex={0} className="overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       <p className="p-3 text-xs text-muted-foreground">Showing up to 500 matching students in this batch.</p>
       <table className="w-full min-w-[700px] text-left text-sm">
         <thead className="sticky top-0 z-10 bg-surface"><tr className="border-y border-border">
           {["Name", "Roll Number", "Email", "Current class", "Action"].map(label =>
-            <th key={label} className="p-3 font-semibold">{label}</th>)}
+            <th key={label} scope="col" className={label==="Name"?"sticky left-0 z-20 bg-surface p-3 font-semibold":"p-3 font-semibold"}>{label}</th>)}
         </tr></thead>
         <tbody>{students.map(item => <tr key={item.membershipId} className="border-b border-border">
-          <td className="p-3 font-semibold">{item.name ?? item.membershipId}</td>
+          <th scope="row" className="sticky left-0 z-10 bg-surface p-3 text-left font-semibold">{item.name ?? item.membershipId}</th>
           <td className="p-3">{item.roll ?? "—"}</td>
           <td className="p-3">{item.email ?? "—"}</td>
           <td className="p-3">{item.sectionName ?? "Not in a class"}</td>

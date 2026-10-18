@@ -9,6 +9,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { DataTable } from "@/components/ui/data-table";
 import {
   collegeIdSchema,
 } from "@/modules/colleges/validation";
@@ -240,87 +241,24 @@ export default async function SuperAdminLearnerAccessTracePage({
           Page {page} of {totalPages}
         </p>
 
-        {learners.length === 0 ? (
-          <EmptyState
-            title="No matching learners"
-            description="This college has no active learner memberships matching the search on this page."
-          />
-        ) : (
-          <div className="overflow-x-auto rounded-lg border border-border">
-            <table className="w-full border-collapse text-left text-sm">
-              <thead className="bg-muted text-body">
-                <tr>
-                  <th
-                    scope="col"
-                    className="border-b border-border px-4 py-3"
-                  >
-                    Learner
-                  </th>
-                  <th
-                    scope="col"
-                    className="border-b border-border px-4 py-3"
-                  >
-                    Roll number
-                  </th>
-                  <th
-                    scope="col"
-                    className="border-b border-border px-4 py-3"
-                  >
-                    Access trace
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {learners.map((learner) => {
-                  const isSelected =
-                    selected?.membershipId ===
-                    learner.membershipId;
-
-                  return (
-                    <tr
-                      key={learner.membershipId}
-                      className="border-b border-border last:border-b-0"
-                    >
-                      <td className="px-4 py-3 font-semibold text-foreground">
-                        {learner.displayName ||
-                          "Unnamed learner"}
-                      </td>
-                      <td className="px-4 py-3 text-body">
-                        {learner.rollNumber || "—"}
-                      </td>
-                      <td className="px-4 py-3">
-                        <Link
-                          href={adminModuleTraceHref(
-                            college.id,
-                            {
-                              q: query.q,
-                              page,
-                              overridesOnly: query.overridesOnly,
-                              overridesModule: query.overridesModule,
-                              storedValue: query.storedValue,
-                              membershipId:
-                                learner.membershipId,
-                            },
-                          )}
-                          aria-current={
-                            isSelected
-                              ? "true"
-                              : undefined
-                          }
-                          className="font-semibold text-[var(--lms-teal-deep)] hover:underline"
-                        >
-                          {isSelected
-                            ? "Selected"
-                            : "Explain access →"}
-                        </Link>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
+        <DataTable<(typeof learners)[number]> caption="Learner access trace"
+          rows={learners} getRowKey={learner=>learner.membershipId}
+          empty={<EmptyState title="No matching learners"
+            description="This college has no active learner memberships matching the search on this page."/>}
+          columns={[
+            {key:"learner",header:"Learner",mobilePriority:"primary",cell:learner=><strong>{learner.displayName||"Unnamed learner"}</strong>},
+            {key:"roll",header:"Roll number",mobilePriority:"secondary",cell:learner=>learner.rollNumber||"—"},
+            {key:"trace",header:"Access trace",mobilePriority:"action",cell:learner=><Link
+              href={adminModuleTraceHref(college.id,{
+                q:query.q,page,overridesOnly:query.overridesOnly,
+                overridesModule:query.overridesModule,storedValue:query.storedValue,
+                membershipId:learner.membershipId,
+              })}
+              aria-current={selected?.membershipId===learner.membershipId?"true":undefined}
+              className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">
+              {selected?.membershipId===learner.membershipId?"Selected":"Explain access →"}
+            </Link>},
+          ]}/>
 
         <nav
           aria-label="Learner search pagination"
@@ -487,7 +425,7 @@ export default async function SuperAdminLearnerAccessTracePage({
                     <tr>
                       <th
                         scope="col"
-                        className="border-b border-border px-4 py-3"
+                        className="sticky left-0 z-10 border-b border-border bg-surface px-4 py-3"
                       >
                         Resolution level
                       </th>
@@ -524,7 +462,7 @@ export default async function SuperAdminLearnerAccessTracePage({
                       >
                         <th
                           scope="row"
-                          className="px-4 py-3 text-left align-top font-semibold text-foreground"
+                          className={step.winner?"sticky left-0 z-10 bg-primary-subtle px-4 py-3 text-left align-top font-semibold text-foreground":"sticky left-0 z-10 bg-surface px-4 py-3 text-left align-top font-semibold text-foreground"}
                         >
                           {scopeLabel(step.level)}
                           {step.scopeId ? (

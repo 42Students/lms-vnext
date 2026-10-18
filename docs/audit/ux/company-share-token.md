@@ -11,7 +11,7 @@ Sensitive share code/search controls used custom small controls and the shortlis
 Retained service-driven permissions, selected columns, proof cookie, share expiry, confidentiality watermark and legacy messages. Replaced code/search controls with shared Input and Button and authorized result view with shared DataTable (mandatory exact empty copy) and Pagination; 44px+ actions and safe-area-aware layout.
 
 ## States and safety
-6-digit code required/invalid, expired/withdrawn share, ready shortlist, empty filtered set with Clear, search URL, pagination, CSV export. Never reveals columns outside safeCompanyShareColumns.
+6-digit code required/invalid, temporary share service failure with same-link retry, expired/withdrawn share, ready shortlist, empty filtered set with Clear, search URL, pagination, CSV export. Never reveals columns outside safeCompanyShareColumns.
 
 ## Tests and acceptance
 - `UX-public-company-share-01` in `tests/ux-public-second-half.test.mjs` (added to `ux:audit:source`).

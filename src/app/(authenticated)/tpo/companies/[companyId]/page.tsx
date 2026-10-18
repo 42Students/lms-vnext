@@ -1,3 +1,4 @@
+import {DataTable} from "@/components/ui/data-table";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
@@ -337,60 +338,25 @@ export default async function TpoCompanyDetailPage({
             </p>
           ) : (
             <div className="overflow-x-auto">
-              <ul aria-label="Company drive cards" className="divide-y divide-border md:hidden">
-               {drives.map(drive=><li key={drive.id} className="space-y-2 p-4 text-sm">
-                <Link href={"/tpo/placements/jobs/"+encodeURIComponent(drive.id)}
-                 className="block break-words font-semibold text-[var(--lms-teal-deep)] underline">{drive.title}</Link>
-                <p className="text-body">{({PUBLISHED:"Live",CLOSED:"Completed",DRAFT:"Draft",REQUEST:"Sent for review",CANCELLED:"Cancelled"} as Record<string,string>)[drive.status]??"Recorded"}
-                 {" · "+drive.employmentType.replaceAll("_"," ")}</p>
-                <p className="text-xs text-muted-foreground">Created {dateLabel(drive.createdAt)}</p>
-               </li>)}
-              </ul>
-              <table className="hidden w-full min-w-[34rem] text-left text-sm md:table">
-                <thead className="bg-muted text-muted-foreground">
-                  <tr>
-                    <th scope="col" className="px-4 py-3">Drive</th>
-                    <th scope="col" className="px-4 py-3">Status</th>
-                    <th scope="col" className="px-4 py-3">Created</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {drives.map((drive) => (
-                    <tr
-                      key={drive.id}
-                      className="border-t border-border"
-                    >
-                      <td className="px-4 py-3">
-                        <Link
-                          href={`/tpo/placements/jobs/${encodeURIComponent(
-                            drive.id,
-                          )}`}
-                          className="font-semibold text-[var(--lms-teal-deep)] hover:underline"
-                        >
-                          {drive.title}
-                        </Link>
-                        <p className="mt-1 text-xs text-muted-foreground">
-                          {drive.employmentType.replaceAll("_", " ")}
-                        </p>
-                      </td>
-                      <td className="px-4 py-3">
-                        <StatusBadge
-                          tone={
-                            drive.status === "PUBLISHED"
-                              ? "success"
-                              : "neutral"
-                          }
-                        >
-                          {({PUBLISHED:"Live",CLOSED:"Completed",DRAFT:"Draft",REQUEST:"Sent for review",CANCELLED:"Cancelled"} as Record<string,string>)[drive.status]??"Recorded"}
-                        </StatusBadge>
-                      </td>
-                      <td className="px-4 py-3">
-                        {dateLabel(drive.createdAt)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <DataTable
+                caption="Company placement drives"
+                rows={drives} getRowKey={drive=>drive.id}
+                empty={<p className="text-sm text-body">No placement drives are recorded for this company.</p>}
+                columns={[
+                  {key:"drive",header:"Drive",mobileLabel:"Drive",mobilePriority:"primary",
+                   cell:drive=><div className="min-w-0">
+                    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(drive.id)}
+                     className="inline-flex min-h-11 items-center break-words font-semibold text-[var(--lms-teal-deep)] underline">{drive.title}</Link>
+                    <p className="mt-1 text-xs text-muted-foreground">{drive.employmentType.replaceAll("_"," ")}</p>
+                   </div>},
+                  {key:"status",header:"Status",mobileLabel:"Status",mobilePriority:"secondary",
+                   cell:drive=><StatusBadge tone={drive.status==="PUBLISHED"?"success":"neutral"}>
+                    {({PUBLISHED:"Live",CLOSED:"Completed",DRAFT:"Draft",REQUEST:"Sent for review",CANCELLED:"Cancelled"} as Record<string,string>)[drive.status]??"Recorded"}
+                   </StatusBadge>},
+                  {key:"created",header:"Created",mobileLabel:"Created",mobilePriority:"secondary",
+                   cell:drive=>dateLabel(drive.createdAt)},
+                ]}
+              />
             </div>
           )}
         </section>
@@ -414,75 +380,27 @@ export default async function TpoCompanyDetailPage({
           </p>
         ) : (
           <div className="overflow-x-auto">
-            <ul aria-label="Company hiring cards" className="divide-y divide-border md:hidden">
-             {hiringHistory.map(offer=><li key={offer.id} className="space-y-2 p-4 text-sm">
-              <p className="break-words font-semibold text-foreground">{offer.roleTitle}</p>
-              <dl className="grid grid-cols-2 gap-2 text-body">
-               <div><dt className="text-xs text-muted-foreground">Annual CTC</dt><dd>{currency(offer.annualCtcInr)}</dd></div>
-               <div><dt className="text-xs text-muted-foreground">Offer</dt><dd>{({ACCEPTED:"Accepted",DECLINED:"Declined",PENDING:"Pending",WITHDRAWN:"Withdrawn"} as Record<string,string>)[offer.status]??"Recorded"}</dd></div>
-               <div><dt className="text-xs text-muted-foreground">Joining</dt><dd>{offer.joiningStatus?({JOINED:"Joined",NOT_JOINED:"Not joined",PENDING:"Pending",DEFERRED:"Deferred"} as Record<string,string>)[offer.joiningStatus]??"Recorded":"Not recorded"}</dd></div>
-               <div><dt className="text-xs text-muted-foreground">Issued</dt><dd>{dateLabel(offer.issuedAt)}</dd></div>
-              </dl>
-              <Link href={"/tpo/placements/jobs/"+encodeURIComponent(offer.jobId)}
-               className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Open drive</Link>
-             </li>)}
-            </ul>
-            <table className="hidden w-full min-w-[65rem] text-left text-sm md:table">
-              <thead className="bg-muted text-muted-foreground">
-                <tr>
-                  <th scope="col" className="px-4 py-3">Role</th>
-                  <th scope="col" className="px-4 py-3">Annual CTC</th>
-                  <th scope="col" className="px-4 py-3">Offer</th>
-                  <th scope="col" className="px-4 py-3">Joining</th>
-                  <th scope="col" className="px-4 py-3">Issued</th>
-                  <th scope="col" className="px-4 py-3">Drive</th>
-                </tr>
-              </thead>
-              <tbody>
-                {hiringHistory.map((offer) => (
-                  <tr
-                    key={offer.id}
-                    className="border-t border-border align-top"
-                  >
-                    <td className="px-4 py-3 text-body">
-                      {offer.roleTitle}
-                    </td>
-                    <td className="px-4 py-3 tabular-nums text-body">
-                      {currency(offer.annualCtcInr)}
-                    </td>
-                    <td className="px-4 py-3">
-                      <StatusBadge
-                        tone={
-                          offer.status === "ACCEPTED"
-                            ? "success"
-                            : offer.status === "DECLINED"
-                              ? "warning"
-                              : "neutral"
-                        }
-                      >
-                        {({ACCEPTED:"Accepted",DECLINED:"Declined",PENDING:"Pending",WITHDRAWN:"Withdrawn"} as Record<string,string>)[offer.status]??"Recorded"}
-                      </StatusBadge>
-                    </td>
-                    <td className="px-4 py-3">
-                      {offer.joiningStatus?({JOINED:"Joined",NOT_JOINED:"Not joined",PENDING:"Pending",DEFERRED:"Deferred"} as Record<string,string>)[offer.joiningStatus]??"Recorded":"Not recorded"}
-                    </td>
-                    <td className="px-4 py-3 text-body">
-                      {dateLabel(offer.issuedAt)}
-                    </td>
-                    <td className="px-4 py-3">
-                      <Link
-                        href={`/tpo/placements/jobs/${encodeURIComponent(
-                          offer.jobId,
-                        )}`}
-                        className="font-semibold text-[var(--lms-teal-deep)] hover:underline"
-                      >
-                        Open drive
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <DataTable
+              caption="Company hiring history"
+              rows={hiringHistory} getRowKey={offer=>offer.id}
+              empty={<p className="text-sm text-body">No placement offers are recorded for this company.</p>}
+              columns={[
+                {key:"role",header:"Role",mobileLabel:"Role",mobilePriority:"primary",cell:offer=>offer.roleTitle},
+                {key:"ctc",header:"Annual CTC",mobileLabel:"Annual CTC",mobilePriority:"secondary",
+                 cell:offer=>currency(offer.annualCtcInr)},
+                {key:"offer",header:"Offer",mobileLabel:"Offer",mobilePriority:"secondary",
+                 cell:offer=><StatusBadge tone={offer.status==="ACCEPTED"?"success":offer.status==="DECLINED"?"warning":"neutral"}>
+                  {({ACCEPTED:"Accepted",DECLINED:"Declined",PENDING:"Pending",WITHDRAWN:"Withdrawn"} as Record<string,string>)[offer.status]??"Recorded"}
+                 </StatusBadge>},
+                {key:"joining",header:"Joining",mobileLabel:"Joining",mobilePriority:"secondary",
+                 cell:offer=>offer.joiningStatus?({JOINED:"Joined",NOT_JOINED:"Not joined",PENDING:"Pending",DEFERRED:"Deferred"} as Record<string,string>)[offer.joiningStatus]??"Recorded":"Not recorded"},
+                {key:"issued",header:"Issued",mobileLabel:"Issued",mobilePriority:"secondary",
+                 cell:offer=>dateLabel(offer.issuedAt)},
+                {key:"drive",header:"Drive",mobileLabel:"Drive",mobilePriority:"action",
+                 cell:offer=><Link href={"/tpo/placements/jobs/"+encodeURIComponent(offer.jobId)}
+                  className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Open drive</Link>},
+              ]}
+            />
           </div>
         )}
 

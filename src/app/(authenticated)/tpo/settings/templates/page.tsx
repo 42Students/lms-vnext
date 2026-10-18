@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TpoSettingsNav } from "@/components/placements/tpo-settings-nav";
@@ -9,7 +10,7 @@ export default async function TpoCommunicationTemplatesPage() {
   await requireTpoBatchActor(await getCurrentRequestContext());
   return <main className="min-w-0 space-y-5">
     <TpoSettingsNav active="templates" />
-    <h1 className="text-xl font-semibold">Communication templates</h1>
+    <PageHeader eyebrow="TPO · Settings" title="Communication templates" />
     <p className="text-sm text-body">Safe draft text for manual use. These are source-provided examples, not stored college templates. Copying text does not send email, SMS, WhatsApp or a portal notice.</p>
     <div className="grid gap-4 lg:grid-cols-2">{TPO_MANUAL_MESSAGE_TEMPLATES.map(item=><section key={item.kind} className="min-w-0 space-y-3 rounded-xl border border-border bg-surface p-5">
       <h2 className="font-semibold">{item.label}</h2>

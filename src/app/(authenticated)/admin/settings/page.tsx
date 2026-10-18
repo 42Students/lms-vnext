@@ -7,6 +7,9 @@ import {parseAdminInventoryQuery,filterPlatformInventory} from "@/modules/platfo
 import {ErrorState} from "@/components/ui/error-state";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
+import {Button} from "@/components/ui/button";
 import {requirePermission} from "@/modules/permissions/policy";
 import {adminControlScopeTag} from "@/modules/module-access/admin-control-overview-model";
 import {
@@ -91,16 +94,16 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         Authentication and privileged access checklist →
       </Link>
 
-      <form className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+      <form className="flex min-w-0 flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
         <label className="grid min-w-48 flex-1 gap-1 text-sm font-semibold text-body">Setting or source
-          <input name="q" defaultValue={parsed.q} maxLength={100} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground"/>
+          <Input name="q" defaultValue={parsed.q} maxLength={100} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground"/>
         </label>
         <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Section
-          <select name="section" defaultValue={parsed.section} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+          <Select name="section" defaultValue={parsed.section} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
             <option value="ALL">All settings</option>{allSections.map(section=><option key={section.id} value={section.id}>{section.title}</option>)}
-          </select>
+          </Select>
         </label>
-        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
+        <Button type="submit">Filter</Button>
         <Link href="/admin/settings" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Clear</Link>
       </form>
       {sections.length===0 ? <p role="status" className="rounded-lg border border-border p-4 text-sm text-body">No visible settings match the selected filters.</p> : null}

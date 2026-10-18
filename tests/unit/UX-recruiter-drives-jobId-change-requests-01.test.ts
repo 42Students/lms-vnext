@@ -15,5 +15,8 @@ describe("UX-recruiter-drives-jobId-change-requests-01",()=>{
   expect(source).toContain("focus-visible:outline-2");
   expect(source).toContain("<TpoDriveChangeRequests");
   expect(source).toContain("data.storageReady");
+  expect(read("src/app/(authenticated)/recruiter/drives/[jobId]/change-requests/loading.tsx")).toContain("GracefulPageLoading");
+  expect(read("src/app/(authenticated)/recruiter/drives/[jobId]/change-requests/error.tsx")).toContain("GracefulErrorBoundary");
+
  });
 });

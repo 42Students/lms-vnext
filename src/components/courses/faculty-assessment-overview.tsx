@@ -221,7 +221,7 @@ export function FacultyAssessmentOverview({
                       <Link
                         href={"/teacher/courses/" + encodeURIComponent(item.deliveryId) +
                           (item.kind === "QUIZ" ? "/quizzes/manage" : "/assignments/manage")}
-                        className="inline-flex min-h-9 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text hover:border-primary"
+                        className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] hover:border-primary"
                       >
                         Manage {item.kind === "QUIZ" ? "quiz" : "assignment"}
                       </Link>
@@ -238,18 +238,18 @@ export function FacultyAssessmentOverview({
                   ) : null}
                   <Link
                     href={`/teacher/report/${item.kind === "QUIZ" ? "quiz" : "assignment"}/${item.id}?deliveryId=${encodeURIComponent(item.deliveryId)}`}
-                    className="rounded-md border border-primary px-3 py-2 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+                    className="inline-flex min-h-11 items-center rounded-md border border-primary px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] hover:bg-primary-subtle"
                   >
                     View Report
                   </Link>
                   {item.kind==="ASSIGNMENT"?<Link
                     href={`/teacher/report/assignment/${item.id}?deliveryId=${encodeURIComponent(item.deliveryId)}#submissions`}
-                    className="rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+                    className="inline-flex min-h-11 items-center rounded-md border border-border px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)]">
                     View submissions
                   </Link>:null}
                   <Link
                     href={facultyCourseTabHref(item.deliveryId, "blueprint")}
-                    className="rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text hover:border-primary"
+                    className="inline-flex min-h-11 items-center rounded-md border border-border px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] hover:border-primary"
                   >
                     Open Course
                   </Link>
@@ -297,7 +297,7 @@ export function FacultyAssessmentOverview({
             type="button"
             disabled={currentPage <= 1}
             onClick={() => setPage((value) => Math.max(1, value - 1))}
-            className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-body disabled:opacity-50"
+            className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-body disabled:opacity-50"
           >
             Previous
           </button>
@@ -306,7 +306,7 @@ export function FacultyAssessmentOverview({
             type="button"
             disabled={currentPage >= totalPages}
             onClick={() => setPage((value) => Math.min(totalPages, value + 1))}
-            className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-body disabled:opacity-50"
+            className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-body disabled:opacity-50"
           >
             Next
           </button>

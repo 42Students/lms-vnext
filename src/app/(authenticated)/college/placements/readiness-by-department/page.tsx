@@ -20,12 +20,12 @@ export default async function CollegePlacementDepartmentReadinessPage({
   const parsed = collegeDepartmentInsightsQuerySchema.safeParse(
     departmentInsightsQueryFromSearchParams(await searchParams),
   );
-  if (!parsed.success) return <div className="space-y-4">
+  if (!parsed.success) return <main className="min-w-0 space-y-4">
     <PageHeader eyebrow="College Admin" title="Placement Evidence by Department" />
     <ErrorState title="Invalid department filters"
       description="The search or page value is invalid. No placement evidence was loaded."
-      action={<Link href="/college/placements/readiness-by-department" className="font-semibold text-primary-text">Clear filters</Link>} />
-  </div>;
+      action={<Link href="/college/placements/readiness-by-department" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Clear filters</Link>} />
+  </main>;
   return <CollegeDepartmentInsights data={
     await listCollegeDepartmentInsights(context, "PLACEMENT_READINESS", parsed.data)
   } />;

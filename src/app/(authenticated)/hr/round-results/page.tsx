@@ -19,16 +19,16 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
  const raw=await searchParams;
  const query=recruiterResultTableQuerySchema.safeParse({jobId:first(raw.jobId)||undefined,
    roundId:first(raw.roundId)||undefined,outcome:first(raw.outcome)||undefined});
- if(!query.success) return <div className="space-y-5"><PageHeader eyebrow="Employer Recruiter" title="Round Results" />
+ if(!query.success) return <div className="min-w-0 max-w-full space-y-5"><PageHeader eyebrow="Employer Recruiter" title="Round Results" />
    <ErrorState title="Invalid round filters" description="Choose a valid hiring drive, round and outcome filter."
-    action={<Link href="/hr/round-results" className="text-primary-text underline">Clear filters</Link>}/></div>;
+    action={<Link href="/hr/round-results" className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>}/></div>;
  if(!query.data.jobId) {
    const jobs=(await listOwnRecruiterPlacementJobs(context)).filter(item=>item.job.archivedAt===null);
-   return <div className="space-y-6"><PageHeader eyebrow="Employer Recruiter" title="Round Results"
+   return <div className="min-w-0 max-w-full space-y-6"><PageHeader eyebrow="Employer Recruiter" title="Round Results"
      description="Choose one of your employer's authorized published or closed hiring drives. Private college applications are never listed." />
     {jobs.length?<section className="grid gap-3 sm:grid-cols-2">{jobs.map(item=>
      <Link key={item.job.id} href={recruiterResultTableHref({jobId:item.job.id})}
-       className="rounded-lg border border-border bg-surface p-4 hover:border-primary">
+       className="rounded-lg border border-border bg-surface p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
        <span className="block font-semibold text-foreground">{item.job.title}</span>
        <span className="mt-1 block text-sm text-body">{item.collegeName} · {item.job.status}</span>
      </Link>)}</section>:<EmptyState title="No hiring drives" description="There are no authorized drives available for round review."/>}
@@ -52,12 +52,12 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
   ALL:counts?.all??0,RECORDED:counts?.recorded??0,UNRECORDED:counts?.unrecorded??0,
   PASS:counts?.pass??0,FAIL:counts?.fail??0,HOLD:counts?.hold??0,ABSENT:counts?.absent??0,
  };
- return <div className="space-y-6">
+ return <div className="min-w-0 max-w-full space-y-6">
    <PageHeader eyebrow="Employer Recruiter" title="Round Results"
     description={workspace.company.name+" · "+workspace.college.name+" · "+workspace.job.title} />
    <nav aria-label="Round review navigation" className="flex flex-wrap gap-4 text-sm">
-     <Link href="/hr/round-results" className="text-primary-text">Choose another drive</Link>
-     <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=rounds"} className="text-primary-text">Open hiring rounds & staging</Link>
+     <Link href="/hr/round-results" className="text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Choose another drive</Link>
+     <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=rounds"} className="text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Open hiring rounds & staging</Link>
    </nav>
    {rounds.length===0?<EmptyState title="No rounds yet" description="The placement cell has not configured any non-cancelled rounds for this drive."/>:<>
     <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">

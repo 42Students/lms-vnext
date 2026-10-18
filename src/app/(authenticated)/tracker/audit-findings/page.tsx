@@ -24,7 +24,7 @@ export default async function IndependentFindingsPage({searchParams}:{
  const header=<><AuditFindingFilterMemory/><PageHeader eyebrow="42 Tracker · Super Admin" title="Audit findings"
   description="Independent findings imported from the audit repository, not user bug reports."/><TrackerAdminNav/></>;
  if(!parsed)return <div className="space-y-5">{header}
-  <ErrorState title="Invalid audit findings filters." description="Invalid audit findings filters."
+  <ErrorState title="Invalid audit findings filters." description="Independent findings imported from the audit repository, not user bug reports."
    action={<Link href="/tracker/audit-findings?view=OPEN"
     className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Reset filters</Link>}/>
  </div>;

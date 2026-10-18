@@ -1,3 +1,4 @@
+import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -23,7 +24,7 @@ export default async function MentorProjectActivityHistoryPage({
   );
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid activity filters</h1>
-    <Link href="/mentor/projects" className="text-primary-text underline">
+    <Link href="/mentor/projects" className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       Return to projects
     </Link>
   </section>;
@@ -33,7 +34,7 @@ export default async function MentorProjectActivityHistoryPage({
     <PageHeader eyebrow="Mentor · Project Activity" title="Recorded project activity"
       description={data.title+" · Events linked to this assigned project."}
       actions={<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=activity"}
-        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Project activity workspace
       </Link>} />
     {!data.enabled ?
@@ -86,11 +87,11 @@ export default async function MentorProjectActivityHistoryPage({
             <option value="50">50 events</option>
           </select>
         </label>
-        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+        <Button type="submit" variant="primary">
           Filter
-        </button>
+        </Button>
         <Link href={mentorProjectActivityHref({...data.query,importance:"ALL",view:"ALL",window:"ALL",order:"NEWEST",pageSize:20,page:1})}
-          className="px-3 py-2 text-sm font-semibold text-primary-text">Clear</Link>
+          className="px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
       </form>
       <p className="text-sm text-body">
         {data.total} matching persisted event{data.total===1?"":"s"}
@@ -99,7 +100,7 @@ export default async function MentorProjectActivityHistoryPage({
         <Link href={"/api/projects/"+encodeURIComponent(projectId)+
           "/mentor-activity-export"+(data.query.importance==="ALL"&&data.query.view==="ALL"&&data.query.window==="ALL"&&data.query.order==="NEWEST"?"":"?"+
             new URLSearchParams({importance:data.query.importance,view:data.query.view,window:data.query.window,order:data.query.order}).toString())}
-          download className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 font-semibold text-primary-text">
+          download className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           Export recorded events CSV (max 200)
         </Link>
         {data.total>200?<span role="status">
@@ -124,9 +125,9 @@ export default async function MentorProjectActivityHistoryPage({
         <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
         <div className="flex gap-3">
           {data.page>1 && <Link href={mentorProjectActivityHref({...data.query,page:data.page-1})}
-            className="text-sm font-semibold text-primary-text">Previous</Link>}
+            className="text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>}
           {data.page<data.totalPages && <Link href={mentorProjectActivityHref({...data.query,page:data.page+1})}
-            className="text-sm font-semibold text-primary-text">Next</Link>}
+            className="text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>}
         </div>
       </nav>
     </>}

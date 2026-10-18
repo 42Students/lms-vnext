@@ -1,3 +1,4 @@
+import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -22,13 +23,13 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
   }));
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid activity filters</h1>
-    <Link href="/mentor/activity" className="text-primary-text underline">Clear filters</Link>
+    <Link href="/mentor/activity" className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
   </section>;
   const data = await getMentorPortfolioActivity(context, parsed.data);
   return <div className="min-w-0 max-w-full space-y-6 overflow-x-clip">
     <PageHeader eyebrow="Mentor · Projects" title="Project activity"
       description="Recorded activity in your currently assigned projects. Raw summaries and metadata are omitted."
-      actions={<Link href="/mentor/projects" className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-primary-text">Projects</Link>} />
+      actions={<Link href="/mentor/projects" className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Projects</Link>} />
     {!data.enabled ? <div role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
       Projects access is disabled. No activity was loaded.
     </div> : <>
@@ -87,13 +88,13 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
             <option value="20">20</option><option value="50">50</option>
           </select>
         </label>
-        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Apply</button>
-        <Link href="/mentor/activity" className="px-3 py-2 text-sm font-semibold text-primary-text">Clear</Link>
+        <Button type="submit" variant="primary">Apply</Button>
+        <Link href="/mentor/activity" className="px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
       </form>
       <div className="flex flex-wrap items-center gap-3">
         <p className="text-sm text-body">{data.total} recorded project event{data.total === 1 ? "" : "s"}</p>
         <Link href={mentorPortfolioActivityExportHref(data.query)} download
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           Export filtered activity CSV (max 200)
         </Link>
         {data.total>200?<span role="status" className="text-xs text-body">
@@ -109,7 +110,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
               <span className="text-xs text-muted-foreground">{mentorActivityImportanceLabel(event.importance)}</span>
             </div>
             <Link href={`/mentor/projects/${encodeURIComponent(event.projectId)}?tab=activity`}
-              className="mt-1 block break-words text-sm font-semibold text-primary-text hover:underline">
+              className="mt-1 block break-words text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
               {event.projectTitle} →
             </Link>
             <time dateTime={event.occurredAt.toISOString()} className="mt-2 block text-xs text-muted-foreground">
@@ -120,9 +121,9 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
         <span className="text-sm text-body">Page {data.page} of {data.totalPages}</span>
         <div className="flex gap-3">
           {data.page > 1 && <Link href={mentorPortfolioHref("activity",{...data.query,page:data.page-1})}
-            className="text-sm font-semibold text-primary-text">Previous</Link>}
+            className="text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>}
           {data.page < data.totalPages && <Link href={mentorPortfolioHref("activity",{...data.query,page:data.page+1})}
-            className="text-sm font-semibold text-primary-text">Next</Link>}
+            className="text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>}
         </div>
       </nav>
     </>}

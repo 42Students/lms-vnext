@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
@@ -84,7 +85,7 @@ export default async function TpoPlacementSummaryPage({
         userId={context.user.id}
         path="/tpo/reports/placement-summary"
       />
-      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/placement-summary" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
+      <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/placement-summary" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <ReportMetrics metrics={metrics} />
 
       <section
@@ -192,7 +193,7 @@ export default async function TpoPlacementSummaryPage({
               ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
               ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{}),
               ...(companyId?{companyId}:{}),...(workMode?{workMode}:{}),...(payCategory?{payCategory}:{}),
-            }).toString()} className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 py-2 font-semibold text-primary-text">Retry</Link>
+            }).toString()} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 py-2 font-semibold text-primary-text">Retry</Link>
           </section>:null}
           {dimensions?<p role="status" className="text-xs text-muted-foreground">
            Showing {shownDrives.length} of {byDrive.length} drive rows. This filters the drive table only.

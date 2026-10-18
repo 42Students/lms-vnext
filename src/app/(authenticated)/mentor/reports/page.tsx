@@ -1,3 +1,4 @@
+import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -21,7 +22,7 @@ export default async function MentorReportsPage({searchParams}:{
   });
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid Mentor report filters</h1>
-    <Link href="/mentor/reports" className="text-primary-text underline">Clear filters</Link>
+    <Link href="/mentor/reports" className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
   </section>;
   const data=await getMentorReports(await getCurrentRequestContext(),parsed.data);
   const statusMetrics=[
@@ -37,7 +38,7 @@ export default async function MentorReportsPage({searchParams}:{
     <PageHeader eyebrow="Mentor · Reports" title="Assigned Project reports"
       description="Persisted project states and actionable attention across your current assigned workspaces."
       actions={<Link href="/mentor/projects"
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Projects list
       </Link>}/>
     {!data.enabled?<section role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
@@ -118,10 +119,10 @@ export default async function MentorReportsPage({searchParams}:{
             <option value="TASK_PROGRESS">Least registered task progress first</option>
           </select>
         </label>
-        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+        <Button type="submit" variant="primary">
           Filter
-        </button>
-        <Link href="/mentor/reports" className="text-sm font-semibold text-primary-text underline">Clear</Link>
+        </Button>
+        <Link href="/mentor/reports" className="text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
       </form>
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <Link href={"/api/mentor/reports/export?"+
@@ -131,7 +132,7 @@ export default async function MentorReportsPage({searchParams}:{
             assignment:data.query.assignment,order:data.query.order,
             search:data.query.search,
           }).toString()} download
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           Export filtered project report CSV (max 100)
         </Link>
         {data.exportOmitted>0?<span role="status">
@@ -160,18 +161,18 @@ export default async function MentorReportsPage({searchParams}:{
             </p>
             <div className="mt-3 flex flex-wrap gap-3 text-sm">
               <Link href={"/mentor/projects/"+encodeURIComponent(project.id)}
-                className="min-h-11 font-semibold text-primary-text underline">Open project</Link>
+                className="min-h-11 font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Open project</Link>
               <Link href={"/mentor/projects/"+encodeURIComponent(project.id)+"/risk-readiness"}
-                className="min-h-11 font-semibold text-primary-text underline">Risk / readiness</Link>
+                className="min-h-11 font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Risk / readiness</Link>
             </div>
           </li>)}</ol>}
       <nav aria-label="Mentor report pages" className="flex items-center justify-between gap-3">
         <span className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</span>
         <div className="flex gap-3">
           {data.page>1?<Link href={mentorReportsHref({...data.query,page:data.page-1})}
-            className="text-sm font-semibold text-primary-text underline">Previous</Link>:null}
+            className="text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>:null}
           {data.page<data.totalPages?<Link href={mentorReportsHref({...data.query,page:data.page+1})}
-            className="text-sm font-semibold text-primary-text underline">Next</Link>:null}
+            className="text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>:null}
         </div>
       </nav>
     </>}

@@ -1,3 +1,5 @@
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
 import { tpoCrmTablesReady } from "@/modules/placements/tpo-crm-storage-readiness";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -50,9 +52,9 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
       <form action="/tpo/follow-ups" method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
         <input type="hidden" name="scope" value={scope}/><input type="hidden" name="window" value={window}/>
         <label className="min-w-0 flex-1 text-sm font-semibold text-body">Find recruiter or company
-          <input type="search" name="q" maxLength={100} defaultValue={q} placeholder="Search recorded lead or company name"
+          <Input type="search" name="q" maxLength={100} defaultValue={q} placeholder="Search recorded lead or company name"
             className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/>
-        </label><button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Search</button>
+        </label><Button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Search</Button>
         {q?<Link href={tpoFollowupQueueHref({scope,window})} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">Clear</Link>:null}
       </form>
       <p className="text-sm text-body">{scope==="MINE"?"Only open due follow-ups assigned to your persisted TPO membership.":"Open due follow-ups for the placement team; this includes all owners."}</p>

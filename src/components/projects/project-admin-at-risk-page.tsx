@@ -86,7 +86,7 @@ export async function ProjectAdminAtRiskPage({
           ["Pending review", result.buckets.review, "REVIEW"],
         ] as const).map(([title, value, key]) =>
           <Link key={key} href={basePath + "/at-risk?riskBucket=" + key}
-            className={"rounded-xl border bg-surface p-4 hover:border-primary " +
+            className={"block min-h-11 min-w-0 rounded-xl border bg-surface p-4 hover:border-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] " +
               (query.riskBucket === key ? "border-primary" : "border-border")}>
             <p className="text-sm font-semibold text-body">{title}</p>
             <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>

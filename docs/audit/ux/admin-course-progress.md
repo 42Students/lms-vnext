@@ -4,3 +4,6 @@
 - **Change:** Applied responsive min-width containment, replaced 5 short targets and 8 decorative-teal small-text uses. Kept original scope authorization, pagination links and user-visible copy.
 - **States:** Source code retains existing error, empty and loading pathways. A real 320/360/390px, keyboard, screen-reader and WebView pass is still required.
 - **Test:** `tests/unit/ux-admin-first-third.test.ts` → `UX-admin-course-progress-01`.
+
+## Bounded loading and retry
+- Upgraded the indefinite skeleton to `GracefulPageLoading` while retaining “Loading course progress”. A reduced-motion loading shape and 12-second recovery control are provided; source test `UX-admin-course-progress-03`.
