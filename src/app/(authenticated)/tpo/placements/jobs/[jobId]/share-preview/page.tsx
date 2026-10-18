@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { DataTable } from "@/components/ui/data-table";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { PlacementsServiceError } from "@/modules/placements/errors";
 import { tpoShareableShortlistQuerySchema } from "@/modules/placements/tpo-shareable-shortlist-model";
@@ -50,14 +51,14 @@ export default async function TpoShortlistSharePreviewPage({
   return <div className="min-w-0 space-y-5">
     <Link
       href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id) + "/shortlist"}
-      className="font-semibold text-[var(--lms-teal-deep)] hover:underline">
+      className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline hover:underline">
       ← Current internal shortlist
     </Link>
     <PageHeader eyebrow="TPO · Placements"
       title={data.job.title + " · Recruiter-visible shortlist preview"}
       description="Read-only, current submitted/shortlisted candidates. This is a TPO report, not a sent share or authorization for an external recipient."
       actions={<a href={tpoFilteredSharePreviewExportHref(data.job.id,parsed.data.q)}
-        className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+        className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-foreground">
         Export capped CSV
       </a>}
     />
@@ -68,10 +69,10 @@ export default async function TpoShortlistSharePreviewPage({
         <input type="search" name="q" defaultValue={parsed.data.q} maxLength={80}
           placeholder="Learner name" className="min-h-11 rounded border border-border bg-surface px-3"/>
       </label>
-      <button type="submit" className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary">
+      <button type="submit" className="min-h-11 rounded bg-primary px-4 font-semibold text-foreground">
         Search
       </button>
-      <Link href={path} className="text-sm font-semibold text-[var(--lms-teal-deep)] underline">Clear</Link>
+      <Link href={path} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">Clear</Link>
     </form>
     <p className="text-sm text-body">
       {data.total} currently shortlisted application(s) in this drive.
@@ -79,37 +80,14 @@ export default async function TpoShortlistSharePreviewPage({
       the fields exposed by the current recruiter round workspace. The CSV is capped
       at 500 application rows with an explicit notice if truncated. It performs no sharing.
     </p>
-    {data.rows.length === 0 ? <p role="status"
-      className="rounded-xl border border-border bg-surface p-6 text-sm text-body">
-      No recruiter-visible shortlisted applications are recorded on this page.
-      Screening state may have changed; absence here is not proof of no applicants.
-    </p> : <>
-      <ul aria-label="Shortlisted applicant cards" className="space-y-3 sm:hidden">
-        {data.rows.map(item=><li key={item.applicationId}
-          className="min-w-0 rounded-xl border border-border bg-surface p-4">
-          <h3 className="break-words text-sm font-semibold text-foreground">{item.displayName}</h3>
-          <dl className="mt-2 space-y-2 text-xs text-body">
-            <div><dt className="font-semibold">Application</dt><dd className="break-all font-mono">{item.applicationId}</dd></div>
-            <div><dt className="font-semibold">Email</dt><dd className="break-all">{item.email ?? "Not recorded"}</dd></div>
-          </dl>
-        </li>)}
-      </ul>
-      <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface sm:block">
-      <table className="w-full min-w-[36rem] text-left text-sm">
-        <thead className="bg-surface-secondary text-muted-foreground">
-          <tr>{["Application ID", "Learner", "Email"].map((name) =>
-            <th key={name} scope="col" className="px-4 py-3 font-semibold">{name}</th>)}
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-border">
-          {data.rows.map((item) => <tr key={item.applicationId}>
-            <td className="px-4 py-3 font-mono text-xs text-body">{item.applicationId}</td>
-            <td className="px-4 py-3 font-semibold text-foreground">{item.displayName}</td>
-            <td className="px-4 py-3 text-body">{item.email ?? "Not recorded"}</td>
-          </tr>)}
-        </tbody>
-      </table>
-    </div></>}
+    <DataTable<(typeof data.rows)[number]> caption="Shortlisted applicant cards"
+      rows={data.rows} getRowKey={item=>item.applicationId}
+      empty={<p role="status" className="text-sm text-body">No recruiter-visible shortlisted applications are recorded on this page. Screening state may have changed; absence here is not proof of no applicants.</p>}
+      columns={[
+        {key:"application",header:"Application ID",mobilePriority:"secondary",cell:item=><span className="break-all font-mono text-xs">{item.applicationId}</span>},
+        {key:"learner",header:"Learner",mobilePriority:"primary",cell:item=><strong>{item.displayName}</strong>},
+        {key:"email",header:"Email",mobilePriority:"secondary",cell:item=><span className="break-all">{item.email??"Not recorded"}</span>},
+      ]}/>
     <Link href={"/tpo/placements/jobs/"+encodeURIComponent(data.job.id)+"/share-audit"}
      className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">
      View company-share access history
@@ -118,7 +96,7 @@ export default async function TpoShortlistSharePreviewPage({
       className="flex flex-wrap gap-3 text-sm">
       {companyShareStatusSchema.options.map(status=><Link key={status}
        aria-current={shareStatus===status?"page":undefined}
-       className="rounded border border-border px-3 py-2 font-semibold text-[var(--lms-teal-deep)]"
+       className="inline-flex min-h-11 items-center rounded border border-border px-3 py-2 font-semibold text-[var(--lms-teal-deep)]"
        href={companyShareLinksHref(data.job.id,status,1,parsed.data.q,data.page)}>
        {companyShareStatusLabel(status)}
       </Link>)}
@@ -136,7 +114,7 @@ export default async function TpoShortlistSharePreviewPage({
     <nav aria-label="Company-share link pages" className="flex flex-wrap items-center gap-3 text-sm">
       <span>{shares.total} matching link(s) · Page {shares.page} of {shares.totalPages}</span>
       {shares.page>1?<Link href={companyShareLinksHref(data.job.id,shareStatus,shares.page-1,parsed.data.q,data.page)}
-        className="font-semibold text-[var(--lms-teal-deep)] underline">Previous links</Link>:null}
+        className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Previous links</Link>:null}
       {shares.page<shares.totalPages?<Link href={companyShareLinksHref(data.job.id,shareStatus,shares.page+1,parsed.data.q,data.page)}
         className="font-semibold text-[var(--lms-teal-deep)] underline">Next links</Link>:null}
     </nav>
@@ -145,7 +123,7 @@ export default async function TpoShortlistSharePreviewPage({
       <span>Page {data.page} of {data.totalPages}</span>
       <div className="flex gap-4">
         {data.page > 1 ? <Link href={path + "?" + new URLSearchParams({page:String(data.page-1),...(parsed.data.q?{q:parsed.data.q}:{}),shareStatus})}
-          className="font-semibold text-[var(--lms-teal-deep)] hover:underline">← Previous</Link> : null}
+          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline hover:underline">← Previous</Link> : null}
         {data.page < data.totalPages ? <Link href={path + "?" + new URLSearchParams({page:String(data.page+1),...(parsed.data.q?{q:parsed.data.q}:{}),shareStatus})}
           className="font-semibold text-[var(--lms-teal-deep)] hover:underline">Next →</Link> : null}
       </div>
