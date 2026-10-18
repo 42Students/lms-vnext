@@ -350,16 +350,21 @@ describe("Placement P8 offers and joining", () => {
   });
 
   it("TPO-2ND-PAGE-OFFER-EVIDENCE-DB-02 rejects a real offer ID paired with a different drive",async()=>{
-    // Create both ready drives before issuing an offer; the second learner
-    // application must not be blocked by the first job's held-offer policy.
     const first=await preparePassedApplication();
-    const second=await preparePassedApplication();
+    // Same-college job identity is enough to prove the offer/job linkage.
+    // Do not seed another application or collide on the fixture company name.
+    const secondJob=await createPlacementJob(tpo,{
+      ...publishableJobTerms,collegeId:SEED_IDS.collegeA,
+      companyRelationshipId:first.company.relationship.id,
+      title:"Unrelated offer evidence job",description:"Drive identity isolation",
+      employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL",
+    });
     const issued=await issuePlacementOffer(tpo,first.application.id,{
       roleTitle:"Offer provenance engineer",annualCtcInr:800_000,
     });
     const correct=await getTpoOfferEvidence(tpo,{jobId:first.job.id,offerId:issued.id});
     expect(correct.offer.id).toBe(issued.id);
-    await expect(getTpoOfferEvidence(tpo,{jobId:second.job.id,offerId:issued.id}))
+    await expect(getTpoOfferEvidence(tpo,{jobId:secondJob.id,offerId:issued.id}))
       .rejects.toMatchObject({code:"PLACEMENT_OFFER_NOT_FOUND"});
     const untouched=await pool.query<{status:string}>(
       "select status from placement_offers where id=$1",[issued.id]);
