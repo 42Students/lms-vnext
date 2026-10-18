@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
-import {requirePermission,can} from "@/modules/permissions/policy";
+import {can} from "@/modules/permissions/policy";
+import {isSuperAdmin} from "@/modules/identity/context";
 import {listOrganizations} from "@/modules/organizations/service";
 import {OrganizationCreateForm} from "@/components/admin/organization-create-form";
 import {CollegeCreateForm} from "@/components/admin/college-create-form";
@@ -10,7 +11,13 @@ import {preferredNewTenantOrganization} from "@/modules/colleges/admin-tenant-or
 export const dynamic="force-dynamic";
 export default async function SuperAdminTenantCreateStage({searchParams}:{searchParams:Promise<Record<string,string|string[]|undefined>>}){
  const context=await getCurrentRequestContext();
- requirePermission(context,"admin-scope.select");
+ if(!isSuperAdmin(context)||!can(context,"admin-scope.select"))
+  return <div className="min-w-0 space-y-5">
+   <PageHeader eyebrow="Super Admin · Tenant Setup" title="Create the customer, then make one college launch-ready"/>
+   <ErrorState title="Tenant creation access denied"
+    description="Your account cannot create or configure platform tenants."
+    action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
+  </div>;
  let organizations:Awaited<ReturnType<typeof listOrganizations>>;
  try{
   organizations=await listOrganizations(context);
