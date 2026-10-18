@@ -10,6 +10,7 @@ import {hasActiveMembership,hasMembershipRole,type RequestContext} from "@/modul
 import {can} from "@/modules/permissions/policy";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {requireProjectLifecycleAccess} from "./access";
+import {assertPersistedProjectMutationActor} from "./persisted-mentor-mutation";
 import {ProjectsServiceError,postgresConstraintName} from "./errors";
 import {mentorTaskCreateParamsSchema,mentorTaskCreateSchema} from "./mentor-task-create-model";
 import {notifyProjectMemberships} from "./project-notification-service";
@@ -21,12 +22,13 @@ export async function createMentorProjectTask(context:RequestContext,rawParams:u
   const membership=context.membership;
   if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR"))
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  // A disabled tenant must not reveal whether the project ID exists.
+  if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const scope=await requireProjectLifecycleAccess(context,projectId);
   if(scope.access!=="MENTOR"||!can(context,"projects.read",{
     collegeId:scope.collegeId,organizationId:scope.organizationId,
   }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
-  const modules=await resolveOptionalModuleAccess(context);
-  if(!modules.projects.enabled)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   try{
     return await getDb().transaction(async tx=>{
       const [project]=await tx.select({status:projectInstances.status})
@@ -36,6 +38,7 @@ export async function createMentorProjectTask(context:RequestContext,rawParams:u
         .for("update").limit(1);
       if(!project||!["PLANNED","ACTIVE"].includes(project.status))
         throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+      await assertPersistedProjectMutationActor(tx,context,scope);
       const [sprint]=input.sprintId?await tx.select().from(projectSprints)
         .where(and(eq(projectSprints.id,input.sprintId),
           eq(projectSprints.projectId,scope.project.id)))
