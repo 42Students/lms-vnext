@@ -65,11 +65,14 @@ describe("chat-9 last-third scroll and motion: hidden scrollbars require visible
  });
  it("UX-admin-scroll-motion-09 /admin/settings and /admin/semesters share a focusable responsive DataTable scroller",()=>{
   const page=read("src/components/ui/data-table.tsx");
-  expect(page).toContain("sm:overflow-x-auto sm:overscroll-x-contain");
-  expect(page).toContain("sm:[mask-image:linear-gradient(to_right");
-  expect(page).toContain('role="region"');
-  expect(page).toContain("tabIndex={0}");
-  expect(page).toContain("aria-label={caption ?");
+  expect(page).toContain('<ScrollCue axis="x"');
+  expect(page).toContain('label={caption ? caption+" scrollable columns"');
+  const cue=read("src/components/ui/scroll-cue.tsx");
+  expect(cue).toContain("overflow-x-auto overscroll-x-contain");
+  expect(cue).toContain('role={edges.scrollable ? "region" : undefined}');
+  expect(cue).toContain("tabIndex={edges.scrollable ? 0 : -1}");
+  expect(cue).toContain('data-scroll-fade="end"');
+  expect(cue).toContain("pointer-events-none");
  });
  it("UX-admin-scroll-motion-10 all audited custom cues avoid hardcoded duration and animation of layout size",()=>{
   const paths=[
@@ -88,4 +91,22 @@ describe("chat-9 last-third scroll and motion: hidden scrollbars require visible
   expect(css).toContain("--lms-motion-base: 200ms");
   expect(css).toContain("prefers-reduced-motion");
  });
+ it("UX-admin-scroll-motion-11 /admin/projects/readiness and /admin/projects/templates use responsive tables without hidden raw scroll traps",()=>{
+  const page=read("src/components/projects/project-admin-readiness-page.tsx");
+  expect(page.match(/<DataTable</g)?.length).toBe(2);
+  expect(page).not.toMatch(/<table\\b/);
+  expect(page).not.toContain("overflow-x-auto");
+  expect(page).toContain('mobilePriority:"action"');
+  expect(page).toContain("No workspace overrides match these filters.");
+ });
+ it("UX-admin-scroll-motion-12 /admin/students bulk selection gives 25 learners a scroll cue and full touch targets",()=>{
+  const page=read("src/components/admin/super-admin-student-bulk-access.tsx");
+  expect(page).toContain('aria-label="Bulk student selection"');
+  expect(page).toContain("overscroll-contain");
+  expect(page).toContain("[mask-image:linear-gradient(to_bottom");
+  expect(page).toContain("min-h-11");
+  expect(page).not.toContain("min-h-9");
+  expect(page).not.toContain("min-h-10");
+ });
+
 });
