@@ -20,11 +20,11 @@ export default async function TrackerReportPage({
   const context = await getCurrentRequestContext();
   if (context.user.platformStatus !== "ACTIVE") redirect("/dashboard");
   const ready = trackerAdminRuntimeEnabled();
-  return <div className="space-y-6">
+  return <div className="min-w-0 space-y-6">
     <PageHeader eyebrow="Report an LMS issue" title="What went wrong?"
       description="Pick the context, describe the problem, and submit." />
     {isSuperAdmin(context)?<TrackerAdminNav />:
-      <Link href="/tracker/mine" className="font-semibold text-primary-text underline">
+      <Link href="/tracker/mine" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         My reports
       </Link>}
     {!ready ? <div role="status" className="rounded-xl border border-border bg-surface p-5">
