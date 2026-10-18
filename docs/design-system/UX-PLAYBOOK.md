@@ -402,7 +402,9 @@ Do not send a second Back while `pending`; treat a prevented non-dismissible mod
 
 **Exact shell:** sidebar is `w-64=256px` at `lg:1024px` and up, phone/tablet menu below `lg`; shell content `lg:pl-64`. Container `px-4` until 640px, `sm:px-6` at ≥640, `lg:px-8` at ≥1024. Two columns only at ≥1024. 768px remains one-column content with full-width navigation trigger.
 
-### 15.5. Guarded form with focus-to-first-error (use with FormField)
+### 15.5. Versioned guarded form with focus-to-first-error (FormField)
+
+**Do not copy a no-op Save.** The caller must inject an authorized, tenant-scoped and version-aware `onSave` mutation; no default or mocked successful callback is allowed in a shipped page. `copy` keys below come from the exact role/route legacy-copy fixture, **never arbitrary strings invented by a builder**. Preserve the edited value on offline, validation and version-conflict results. The server must check permission, origin, input and expected version; the UI prevents double-submit but is not the authorization boundary.
 
 ```tsx
 "use client";
@@ -411,36 +413,57 @@ import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-function ProfileForm({ initial }: { initial: string }) {
+type SaveResult =
+  | { ok: true; version: string }
+  | { ok: false; reason: "CONFLICT" | "ERROR" };
+type ProfileCopy = {
+  nameLabel: string; requiredError: string; saveLabel: string;
+  conflictMessage: string; failedMessage: string; savedMessage: string;
+};
+export function ProfileForm({ initial, version: initialVersion, copy, onSave }: {
+  initial: string; version: string; copy: ProfileCopy;
+  onSave: (input: { name: string; expectedVersion: string }) => Promise<SaveResult>;
+}) {
   const [value, setValue] = useState(initial);
+  const [version, setVersion] = useState(initialVersion);
   const [error, setError] = useState("");
+  const [status, setStatus] = useState("");
   const [pending, setPending] = useState(false);
   const inFlight = useRef(false);
+  const fieldRef = useRef<HTMLInputElement>(null);
+  const validate = () => value.trim() ? "" : copy.requiredError;
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (inFlight.current) return;
-    if (!value.trim()) {
-      setError("Required"); // Replace with exact legacy field error if available
-      requestAnimationFrame(() => document.getElementById("profile-name")?.focus());
-      return;
-    }
+    const problem = validate();
+    if (problem) { setError(problem); fieldRef.current?.focus(); return; }
     inFlight.current = true;
     setPending(true);
+    setStatus("");
     try {
-      // await authorized version-aware server mutation; preserve value on failure
-    } finally { inFlight.current = false; setPending(false); }
+      const result = await onSave({ name: value.trim(), expectedVersion: version });
+      if (result.ok) { setVersion(result.version); setStatus(copy.savedMessage); }
+      else setStatus(result.reason === "CONFLICT" ? copy.conflictMessage : copy.failedMessage);
+    } catch {
+      setStatus(copy.failedMessage); // Never clear or silently "save" the draft.
+    } finally {
+      inFlight.current = false;
+      setPending(false);
+    }
   }
-  return <form onSubmit={save} className="space-y-6" aria-busy={pending}>
-    <FormField id="profile-name" label="Name" required error={error}>
-      {field => <Input {...field} value={value} onChange={e => {
-        setValue(e.target.value);
-        if (error) setError("");
-      }} onBlur={() => setError(value.trim() ? "" : "Required")} />}
+  return <form onSubmit={save} noValidate className="space-y-6" aria-busy={pending}>
+    <FormField id="profile-name" label={copy.nameLabel} required error={error}>
+      {field => <Input {...field} ref={fieldRef} value={value}
+        onChange={e => { setValue(e.target.value); setError(""); setStatus(""); }}
+        onBlur={() => setError(validate())} />}
     </FormField>
-    <Button type="submit" loading={pending}>Save</Button>
+    {status ? <p role="status" aria-live="polite" className="text-sm text-body">{status}</p> : null}
+    <Button type="submit" loading={pending} disabled={pending}>{copy.saveLabel}</Button>
   </form>;
 }
 ```
+
+**Acceptance fixture:** instantiate with a spy `onSave` that resolves `{ok:true,version:"v2"}` after receiving `{name:"Updated",expectedVersion:"v1"}`; assert exactly one call under repeated submission. Then resolve `{ok:false,reason:"CONFLICT"}` and reject a request; assert the input still contains the draft, the copy-sourced status is announced and a subsequent retry remains possible. A blank input must focus its native input and must not invoke `onSave`.
 
 ### 15.6. Component API/action examples (no guessed props)
 
