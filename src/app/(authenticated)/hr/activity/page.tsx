@@ -10,7 +10,7 @@ export default async function HrJobActivityPage({searchParams}:{
  searchParams:Promise<{collegeId?:string|string[];kind?:string|string[];page?:string|string[];q?:string|string[]}>
 }) {
  const context=await getCurrentRequestContext();
- if(!hasActiveRecruiter(context))redirect("/dashboard");
+ if(!hasActiveRecruiter(context) || context.recruiter?.userId !== context.user.id)redirect("/dashboard");
  const raw=await searchParams;
  const input=hrActivityQuerySchema.safeParse({
   collegeId:raw.collegeId,kind:raw.kind,page:raw.page,q:raw.q,

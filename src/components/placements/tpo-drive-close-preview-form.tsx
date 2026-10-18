@@ -2,9 +2,13 @@
 import {useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {apiFetch} from "@/lib/api-fetch";
+import {friendlyApiError} from "@/lib/friendly-error";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 type Preview={id:string;expectedUpdatedAt:string;counts:{applications:number;rounds:number;offers:number}};
 export function TpoDriveClosePreviewForm({preview}:{preview:Preview}){
  const router=useRouter(),[pending,setPending]=useState(false),[error,setError]=useState<string|null>(null);
+ const {run}=useGuardedAction({timeoutMs:35000});
  const [confirmOpen,setConfirmOpen]=useState(false);
  const [confirmedReason,setConfirmedReason]=useState("");
  function submit(event:FormEvent<HTMLFormElement>){
@@ -15,17 +19,26 @@ export function TpoDriveClosePreviewForm({preview}:{preview:Preview}){
  }
  async function performClose(){
   if(pending||!confirmedReason)return;
-  setPending(true);setError(null);
-  try{
-   const response=await fetch("/api/placements/tpo/jobs/"+preview.id+"/close-preview",{
-    method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
-    body:JSON.stringify({action:"CLOSE",confirmed:true,expectedUpdatedAt:preview.expectedUpdatedAt,
-     expectedCounts:preview.counts,reason:confirmedReason}),
-   });
-   if(!response.ok)throw Error("Preview became stale. Refresh and review again.");
-   router.push("/tpo/placements/jobs/"+preview.id);router.refresh();
-  }catch(e){setConfirmOpen(false);setError(e instanceof Error?e.message:"Close failed");}finally{setPending(false);}
+  await run(async()=>{
+    setPending(true);setError(null);
+    try{
+      await apiFetch("/api/placements/tpo/jobs/"+encodeURIComponent(preview.id)+"/close-preview",{
+        method:"POST",credentials:"same-origin",timeoutMs:35000,
+        headers:{"content-type":"application/json"},
+        body:JSON.stringify({action:"CLOSE",confirmed:true,
+          expectedUpdatedAt:preview.expectedUpdatedAt,
+          expectedCounts:preview.counts,reason:confirmedReason}),
+      });
+      router.push("/tpo/placements/jobs/"+encodeURIComponent(preview.id));
+      router.refresh();
+    }catch(error){
+      setConfirmOpen(false);
+      // apiFetch maps HTML, network, provider and timeout failures to safe text.
+      setError(error instanceof Error?error.message:friendlyApiError({}));
+    }finally{setPending(false);}
+  });
  }
+
  const consequences=[
   ["Applications",preview.counts.applications],
   ["Round records",preview.counts.rounds],

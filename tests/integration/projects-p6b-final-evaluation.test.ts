@@ -392,6 +392,7 @@ describe("Projects P6B final delivery and evaluation", () => {
             "https://example.com/source",
           demoUrl:
             "https://example.com/demo",
+          expectedUpdatedAt:draft.updatedAt.toISOString(),
         },
       );
     expect(updated.sourceUrl).toBe(
@@ -403,6 +404,7 @@ describe("Projects P6B final delivery and evaluation", () => {
         learner,
         project.id,
         draft.id,
+        {expectedUpdatedAt:updated.updatedAt.toISOString()},
       ),
     ).rejects.toMatchObject({
       code: "PROJECT_SUBMISSION_INVALID_STATE",
@@ -415,6 +417,7 @@ describe("Projects P6B final delivery and evaluation", () => {
         learner,
         project.id,
         draft.id,
+        {expectedUpdatedAt:updated.updatedAt.toISOString()},
       ),
     ).resolves.toMatchObject({
       status: "SUBMITTED",
@@ -441,6 +444,7 @@ describe("Projects P6B final delivery and evaluation", () => {
       learner,
       project.id,
       first.id,
+      {expectedUpdatedAt:first.updatedAt.toISOString()},
     );
 
     const changes =
@@ -474,6 +478,7 @@ describe("Projects P6B final delivery and evaluation", () => {
       learner,
       project.id,
       second.id,
+      {expectedUpdatedAt:second.updatedAt.toISOString()},
     );
 
     const approved =
@@ -541,7 +546,7 @@ describe("Projects P6B final delivery and evaluation", () => {
     const draft=await createProjectSubmissionDraft(learner,project.id,{
       summary:"Initial accepted delivery",sourceUrl:"https://example.com/final-approved",
     });
-    const submitted=await submitProjectSubmission(learner,project.id,draft.id);
+    const submitted=await submitProjectSubmission(learner,project.id,draft.id,{expectedUpdatedAt:draft.updatedAt.toISOString()});
     const outcome=await reviewProjectSubmission(mentor,project.id,submitted.id,{
       decision:"APPROVED",
     });
@@ -591,6 +596,7 @@ describe("Projects P6B final delivery and evaluation", () => {
     expect(draft.attachments).toEqual([link]);
     const updated=await updateProjectSubmissionDraft(learner,project.id,draft.id,{
       summary:"Updated links",attachments:[{...link,url:"https://example.com/revised"}],
+      expectedUpdatedAt:draft.updatedAt.toISOString(),
     });
     expect(updated.attachments).toHaveLength(1);
     const rows=await pool.query<{event_type:string}>(`
@@ -621,6 +627,7 @@ describe("Projects P6B final delivery and evaluation", () => {
       learner,
       project.id,
       draft.id,
+      {expectedUpdatedAt:draft.updatedAt.toISOString()},
     );
 
     await expect(

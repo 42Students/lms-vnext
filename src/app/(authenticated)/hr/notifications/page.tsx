@@ -11,7 +11,7 @@ export default async function HrMessagesPage({searchParams}:{
  searchParams:Promise<{collegeId?:string|string[];unreadOnly?:string|string[];page?:string|string[];q?:string|string[]}>
 }) {
  const context=await getCurrentRequestContext();
- if(!hasActiveRecruiter(context))redirect("/dashboard");
+ if(!hasActiveRecruiter(context) || context.recruiter?.userId !== context.user.id)redirect("/dashboard");
  const raw=await searchParams;
  const query=hrNotificationsQuerySchema.safeParse({
   collegeId:raw.collegeId,unreadOnly:raw.unreadOnly,page:raw.page,q:raw.q,

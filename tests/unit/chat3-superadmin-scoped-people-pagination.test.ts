@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { RequestContext } from "@/modules/identity/context";
+import { PgDialect } from "drizzle-orm/pg-core";
+import type { SQL } from "drizzle-orm";
 
 vi.mock("server-only", () => ({}));
 
@@ -10,6 +12,7 @@ const state = vi.hoisted(() => ({
   countQueries: 0,
   offset: -1,
   pageSize: -1,
+  classProjection: null as { sql: string; params: unknown[] } | null,
 }));
 
 vi.mock("@/db/client", () => ({
@@ -17,11 +20,15 @@ vi.mock("@/db/client", () => ({
     select: (projection?: Record<string, unknown>) => {
       state.queries++;
       if (projection && "joinedAt" in projection) {
+        const classExpression = projection.className as SQL.Aliased;
+        const compiled = new PgDialect().sqlToQuery(classExpression.sql);
+        state.classProjection = { sql: compiled.sql, params: compiled.params };
+        const fields = projection;
         class TableQuery {
           innerJoin() { return this; }
           leftJoin() { return this; }
           where() { return this; }
-          as() { return { id: projection.id, name: projection.name }; }
+          as() { return { id: fields.id, name: fields.name }; }
         }
         return { from: () => new TableQuery() };
       }
@@ -93,6 +100,7 @@ beforeEach(() => {
   state.countQueries = 0;
   state.offset = -1;
   state.pageSize = -1;
+  state.classProjection = null;
 });
 
 describe("SA-people-scoped-01 selected-college membership pagination", () => {
@@ -133,6 +141,17 @@ describe("SA-people-scoped-01 selected-college membership pagination", () => {
     expect(result).toMatchObject({ total: 0, totalPages: 1, items: [] });
     expect(result.query.page).toBe(1);
     expect(state.offset).toBe(0);
+  });
+
+  it("SA3-PEOPLE-CLASS-01 restricts projected learner class to the selected college, matching cohort and term", async () => {
+    await listAdminScopedPeople(context(), "LEARNER", {});
+    expect(state.classProjection).not.toBeNull();
+    const sql = state.classProjection!.sql;
+    expect(sql).toContain("class_department.college_id");
+    expect(sql).toContain("s.cohort_id=e.cohort_id");
+    expect(sql).toContain("s.academic_period_id=se.academic_period_id");
+    expect(sql).toContain("class_program.id=e.program_id");
+    expect(state.classProjection!.params).toContain(collegeId);
   });
 
   it("rejects Learner, Mentor, disabled administrator or missing selected college before any SQL", async () => {
