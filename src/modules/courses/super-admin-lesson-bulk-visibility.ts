@@ -6,6 +6,7 @@ import {courseLessons,lessonContents} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {updateCollegeContentStudentVisibility} from "./college-content-visibility-service";
+import {safeCourseVisibilityFailure} from "./bulk-visibility-failure-model";
 
 const inputSchema=z.strictObject({
  lessonIds:z.array(z.uuid()).min(1).max(25).refine(ids=>new Set(ids).size===ids.length),
@@ -29,7 +30,7 @@ export async function bulkSuperAdminLessonVisibility(context:RequestContext,raw:
     expectedUpdatedAt:row.updatedAt.toISOString(),confirmed:true,
    });
    changed.push(row.id);
-  }catch(error){failures.push({id:row.id,reason:error instanceof Error?error.message:"VISIBILITY_UPDATE_FAILED"});}
+  }catch(error){failures.push({id:row.id,reason:safeCourseVisibilityFailure(error)});}
  }
  return {selectedLessons:input.lessonIds.length,matchedContents:rows.length,changed:changed.length,unchanged:rows.length-changed.length-failures.length,failures};
 }
