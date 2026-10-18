@@ -51,6 +51,8 @@ Scope: IIT Dharwad College Admin Projects role journeys, TPO Settings final-spri
 
 | CHAT11-PROJ-10 | BLOCKER | `archiveProjectInstance` used a request-time permission snapshot then locked the project, allowing a role/user revoked during the request to archive or return a privileged no-op. | `e89effc`, `c706c3a`: persisted actor role SHARE locks after project lock and before archived-state retry or mutation. | `PROJ-COL-REVOKE-02` | Two-session PostgreSQL role-revocation test pending |
 
+| CHAT11-PROJ-11 | BLOCKER | College Admin mentor reassignment and add/update/end member mutations checked request-context permission before starting their transaction, but did not re-authorize a suspended role under database locks. Some paths also allowed member changes after project ARCHIVED. | `492ddf5`, `9ce8291`, `930b009`: check persisted actor roles after locking the project, explicitly reject archived project before no-op and writes. | `PROJ-COL-REVOKE-03` | Two-session PG race and role revocation E2E pending |
+
 ## Latest r9 unit-failure disposition
 
 `tests/unit/company-share-mobile-cards.test.ts` is the only chat-11 entry in `docs/orchestrator/unit-failures-r9.md`. On the synchronized main baseline, the tested `src/app/company-share/[token]/page.tsx`, shared DataTable mobile/desktop branches, and `projectCompanyShareRows` match the listed selected-field assertions. This appears fixed by subsequent main changes. **Do not delete or loosen this privacy test**; require the orchestrator to rerun it on the updated branch.
