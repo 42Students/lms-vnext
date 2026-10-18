@@ -397,6 +397,28 @@ describe("PROJ-HARNESS-PLACEMENTS canonical real PostgreSQL fixtures", () => {
     });
   });
 
+  it("PROJ-HARNESS-PLACEMENTS-32 archived employer or college relationship denies new applicants",async()=>{
+    await withPlacementCase(async({db,drive,learner,actor})=>{
+      const count=async()=>db.query<{n:number}>(`
+        select count(*)::int n from placement_applications where job_id=$1`,[drive.jobId]);
+      const before=await count();
+      await db.query(`
+        update placement_company_relationships
+        set status='ARCHIVED',archived_at=now() where id=$1`,[drive.relationshipId]);
+      await expect(createPlacementCandidateFixture(db,drive,learner,actor))
+        .rejects.toThrow(/drive is not open for applications/);
+      await db.query(`
+        update placement_company_relationships
+        set status='ACTIVE',archived_at=null where id=$1`,[drive.relationshipId]);
+      await db.query(`
+        update placement_companies set status='ARCHIVED',archived_at=now() where id=$1`,
+        [drive.companyId]);
+      await expect(createPlacementCandidateFixture(db,drive,learner,actor))
+        .rejects.toThrow(/drive is not open for applications/);
+      expect(await count()).toEqual(before);
+    });
+  });
+
   it("PROJ-HARNESS-PLACEMENTS-17 closed season cannot accept a candidate even with a published job",async()=>{
     await withPlacementCase(async({db,drive,actor,learner})=>{
       const before=await db.query<{n:number}>(`

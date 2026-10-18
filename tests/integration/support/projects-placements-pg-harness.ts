@@ -602,9 +602,13 @@ export async function createPlacementCandidateFixture(
     select j.college_id,r.id as round_id,r.status as round_status,
         role.id as role_option_id,
         (j.status='PUBLISHED' and j.published_at is not null
-          and j.application_deadline>now() and season.status='ACTIVE') as accepting_applications
+          and j.application_deadline>now() and season.status='ACTIVE'
+          and rel.status='ACTIVE' and company.status='ACTIVE') as accepting_applications
       from placement_jobs j
       join placement_seasons season on season.id=j.season_id and season.college_id=j.college_id
+      join placement_company_relationships rel
+        on rel.id=j.company_relationship_id and rel.college_id=j.college_id
+      join placement_companies company on company.id=rel.company_id
       left join placement_job_rounds r
         on r.job_id=j.id and r.id=$2
       left join placement_job_role_options role
