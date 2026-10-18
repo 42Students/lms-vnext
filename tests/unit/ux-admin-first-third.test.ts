@@ -270,4 +270,22 @@ describe("Super Admin UX first-third rollout",()=>{
    expect(page).not.toContain("min-h-10");
    expect(page).toContain("min-w-0");
  });
+ it("UX-admin-colleges-02 renders one responsive college directory with labelled actions and pagination",()=>{
+   const page=read("src/app/(authenticated)/admin/colleges/page.tsx");
+   expect(page).toContain('<DataTable columns={columns} rows={visible}');
+   expect(page).toContain('mobilePriority: "primary"');
+   expect(page).toContain('mobilePriority: "action"');
+   expect(page).toContain('<Pagination page={page} pageCount={pages} hrefForPage={href}');
+   expect(page).not.toContain('lg:hidden');
+   expect(page).not.toContain('lg:block');
+   expect(page).toContain('empty={<EmptyState title="No active colleges in this scope"');
+ });
+ it("UX-admin-batch-promotion-02 keeps Preview accessible on phone without a wide table",()=>{
+   const page=read("src/app/(authenticated)/admin/batch-promotion/page.tsx");
+   expect(page).toContain('<DataTable<(typeof visibleCohorts)[number]>');
+   expect(page).toContain('mobilePriority:"action"');
+   expect(page).toContain('No batches match the selected program and status.');
+   expect(page).toContain('cohortId:batch.id');
+   expect(page).not.toContain('min-w-[44rem]');
+ });
 });
