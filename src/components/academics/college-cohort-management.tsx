@@ -89,7 +89,7 @@ export function CollegeCohortCreateForm({ programs, periods }: {
       ? <p role="status" className="mt-2 text-sm text-muted-foreground">
         {programs.length === 0 ? "Create a program before adding batches." : <>
           Create a usable academic period before adding batches.{" "}
-          <Link href="/college/academics" className="font-semibold text-primary-text underline">Set up academic periods</Link>
+          <Link href="/college/academics" className="font-semibold text-[var(--lms-teal-deep)] underline">Set up academic periods</Link>
         </>}
       </p>
       : <form onSubmit={submit} className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
@@ -237,13 +237,13 @@ export function CollegeCohortRowActions({ row, periods }: {
     <div className="flex flex-wrap gap-2">
     <button type="button" disabled={pending || blocked}
       onClick={() => { setEditing(true);setDiscardConfirm(false);setPendingLifecycleAction(null);setNotice(""); }}
-      className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+      className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
       Edit
     </button>
     {row.status === "ACTIVE" && <button type="button"
       disabled={pending || !row.currentTermNumber || (row.durationTerms !== undefined && row.currentTermNumber < row.durationTerms)}
       onClick={graduate}
-      className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+      className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
       Mark graduated
     </button>}
     <button type="button" disabled={pending || row.status!=="PLANNED" ||
@@ -251,7 +251,7 @@ export function CollegeCohortRowActions({ row, periods }: {
       title={row.activeSections>0 || row.activeEnrolledLearners>0
         ? `Move or remove its ${row.activeSections} classes and ${row.activeEnrolledLearners} students before deleting.`
         : row.status!=="PLANNED" ? "Only planned batches can be removed." : "Remove this unlinked planned batch"}
-      className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+      className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
       Remove
     </button>
     </div>
@@ -289,13 +289,13 @@ export function CollegeCohortRowActions({ row, periods }: {
           </select>
         </label>
         <label className="grid gap-1 text-sm">Academic Year
-          <input maxLength={16} value={academicYear} onChange={e=>setAcademicYear(e.target.value)} className="min-h-10 rounded border border-border bg-surface px-3"/>
+          <input maxLength={16} value={academicYear} onChange={e=>setAcademicYear(e.target.value)} className="min-h-11 rounded border border-border bg-surface px-3"/>
         </label>
         <label className="grid gap-1 text-sm">Start Date
-          <input type="date" disabled={endDateLocked} value={startDate} onChange={e=>setStartDate(e.target.value)} className="min-h-10 rounded border border-border bg-surface px-3"/>
+          <input type="date" disabled={endDateLocked} value={startDate} onChange={e=>setStartDate(e.target.value)} className="min-h-11 rounded border border-border bg-surface px-3"/>
         </label>
         <label className="grid gap-1 text-sm">End Date
-          <input type="date" disabled={endDateLocked} value={endDate} min={startDate||undefined} onChange={e=>setEndDate(e.target.value)} className="min-h-10 rounded border border-border bg-surface px-3"/>
+          <input type="date" disabled={endDateLocked} value={endDate} min={startDate||undefined} onChange={e=>setEndDate(e.target.value)} className="min-h-11 rounded border border-border bg-surface px-3"/>
         </label>
         {endDateLocked && <p className="text-xs text-muted-foreground">
           End period is locked because the batch has enrolled learners or classes. Name and code remain editable.
@@ -303,7 +303,7 @@ export function CollegeCohortRowActions({ row, periods }: {
         {notice ? <p role="alert" className="text-sm text-body">{notice}</p> : null}
         <div className="flex flex-wrap justify-end gap-3">
           <button disabled={pending} type="button" onClick={close}
-            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
             Cancel
           </button>
           <button disabled={pending || !hasUnsavedCollegeCohortEdit(original, draft)} type="submit"
