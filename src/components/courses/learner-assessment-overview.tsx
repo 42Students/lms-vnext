@@ -238,9 +238,15 @@ export function LearnerAssessmentOverview({
           <details className="min-w-0 rounded-lg border border-border px-3 py-1">
             <summary className="cursor-pointer text-primary-text">{submittedQuizzes.length} Submitted</summary>
             {submittedQuizzes.length>0 ? (
-              <ul className="mt-2 max-h-48 space-y-1 overflow-y-auto text-xs font-normal">
-                {submittedQuizzes.map(item=><li key={item.deliveryId+":"+item.id}>{item.title}</li>)}
-              </ul>
+              <>
+                <ul role="region" aria-label="Submitted quizzes, scroll for more" tabIndex={0}
+                  className="mt-2 max-h-48 space-y-1 overflow-y-auto overscroll-contain pr-2 text-xs font-normal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                  {submittedQuizzes.map(item=><li key={item.deliveryId+":"+item.id}>{item.title}</li>)}
+                </ul>
+                {submittedQuizzes.length>5?<p className="mt-1 text-xs font-normal text-muted-foreground">
+                  Scroll to see more submitted quizzes.
+                </p>:null}
+              </>
             ) : <p className="mt-2 text-xs font-normal">No quizzes submitted yet.</p>}
           </details>
         </section>
