@@ -28,8 +28,9 @@ export function ProjectArchiveControl({
     setPending(true);
     try {
       await projectMutation(
-        `/api/projects/${projectId}/archive`,
+        `/api/projects/${encodeURIComponent(projectId)}/archive`,
         "POST",
+        {expectedUpdatedAt},
       );
       setOpen(false);
       showToast({
@@ -39,14 +40,11 @@ export function ProjectArchiveControl({
           "The workspace remains available for review.",
       });
       router.refresh();
-    } catch (error) {
+    } catch {
       showToast({
         tone: "error",
         title: "Could not archive project",
-        description:
-          error instanceof Error
-            ? error.message
-            : "The request could not be completed.",
+        description: "This changed while you were working. Refresh and try again.",
       });
     } finally {
       setPending(false);
