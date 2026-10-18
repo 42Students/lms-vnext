@@ -1,3 +1,4 @@
+import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -24,7 +25,7 @@ export default async function MentorReviewsPage({
   }));
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid review filters</h1>
-    <Link href="/mentor/reviews" className="text-primary-text underline">Clear filters</Link>
+    <Link href="/mentor/reviews" className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
   </section>;
   const data = await getMentorReviewQueue(context, parsed.data);
   return <div className="min-w-0 max-w-full space-y-6 overflow-x-clip">
@@ -32,11 +33,11 @@ export default async function MentorReviewsPage({
       description="Submitted deliveries awaiting review across your currently assigned Mentor projects."
       actions={<div className="flex flex-wrap items-center gap-3">
         <Link href="/mentor/review-history"
-          className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+          className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           Review history
         </Link>
         <Link href="/mentor/projects"
-          className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+          className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           Projects
         </Link>
       </div>} />
@@ -84,12 +85,12 @@ export default async function MentorReviewsPage({
             <option value="20">20</option><option value="50">50</option>
           </select>
         </label>
-        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
-        <Link href="/mentor/reviews" className="px-3 py-2 text-sm font-semibold text-primary-text">Clear</Link>
+        <Button type="submit" variant="primary">Filter</Button>
+        <Link href="/mentor/reviews" className="px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
       </form>
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <Link href={mentorReviewExportHref(data.query)} download
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           Export filtered delivery review metadata CSV (max 200)
         </Link>
         {data.total>200?<span role="status">CSV omits {data.total-200} matching reviews.</span>:null}
@@ -98,20 +99,20 @@ export default async function MentorReviewsPage({
       {data.items.length === 0 ? <EmptyState title="No deliveries awaiting review"
         description="No submitted delivery needs review in the matching projects. Reopened or already-reviewed work is not treated as a new submission." />
         : <div className="grid gap-3">{data.items.map(item =>
-          <Link key={item.key} href={item.href} className="block rounded-xl border border-border bg-surface p-4 hover:border-primary">
-            <p className="min-w-0 break-words font-semibold text-primary-text">{item.description}</p>
+          <Link key={item.key} href={item.href} className="block rounded-xl border border-border bg-surface p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+            <p className="min-w-0 break-words font-semibold text-[var(--lms-teal-deep)]">{item.description}</p>
             <p className="mt-2 text-xs text-muted-foreground">Submitted: {new Intl.DateTimeFormat("en-IN",{
               dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
             }).format(new Date(item.occurredAt))} IST</p>
-            <p className="mt-2 text-sm font-semibold text-primary-text">Open delivery review →</p>
+            <p className="mt-2 text-sm font-semibold text-[var(--lms-teal-deep)]">Open delivery review →</p>
           </Link>)}</div>}
       <nav aria-label="Review queue pagination" className="flex items-center justify-between gap-3">
         <span className="text-sm text-body">Page {data.page} of {data.totalPages}</span>
         <div className="flex gap-3">
           {data.page > 1 && <Link href={mentorPortfolioHref("reviews",{...data.query,page:data.page-1})}
-            className="text-sm font-semibold text-primary-text">Previous</Link>}
+            className="text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>}
           {data.page < data.totalPages && <Link href={mentorPortfolioHref("reviews",{...data.query,page:data.page+1})}
-            className="text-sm font-semibold text-primary-text">Next</Link>}
+            className="text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>}
         </div>
       </nav>
     </>}

@@ -1,3 +1,4 @@
+import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -30,7 +31,7 @@ export default async function MentorSprintProgressPage({
   });
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid sprint progress filters</h1>
-    <Link href="/mentor/sprint-progress" className="text-primary-text underline">Clear filters</Link>
+    <Link href="/mentor/sprint-progress" className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
   </section>;
   const context = await getCurrentRequestContext();
   if (!hasMembershipRole(context, "MENTOR")) redirect("/dashboard");
@@ -38,7 +39,7 @@ export default async function MentorSprintProgressPage({
   return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Mentor · Projects" title="Sprint progress"
       description="Registered sprint, release and task status across your current project assignments."
-      actions={<Link href="/mentor/projects" className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+      actions={<Link href="/mentor/projects" className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Mentoring projects
       </Link>} />
     {!data.enabled ? <section role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
@@ -80,10 +81,10 @@ export default async function MentorSprintProgressPage({
             <option value="PROJECT">Project and Sprint order</option><option value="ACTIVE_FIRST">Active Sprints first</option>
           </select>
         </label>
-        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+        <Button type="submit" variant="primary">
           Filter
-        </button>
-        <Link href="/mentor/sprint-progress" className="px-3 py-2 text-sm font-semibold text-primary-text">Clear</Link>
+        </Button>
+        <Link href="/mentor/sprint-progress" className="px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
       </form>
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <Link href={"/api/mentor/sprint-progress/export?"+
@@ -92,7 +93,7 @@ export default async function MentorSprintProgressPage({
             projectId:data.query.projectId??"",taskAttention:data.query.taskAttention,
             order:data.query.order,
           }).toString()}
-          download className="min-h-11 rounded-md border border-border px-4 py-2 font-semibold text-primary-text">
+          download className="min-h-11 rounded-md border border-border px-4 py-2 font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           Export filtered sprint CSV (max 100)
         </Link>
         {data.total>100?<span role="status">
@@ -128,7 +129,7 @@ export default async function MentorSprintProgressPage({
               ? "Unknown (no tasks)" : item.tasks.completionPercent + "%"} of persisted tasks marked Done
           </p>
           <Link href={"/mentor/projects/" + encodeURIComponent(item.projectId) + "?tab=sprints"}
-            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
+            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
             Open authorized sprint workspace →
           </Link>
         </article>)}</div>}
@@ -136,9 +137,9 @@ export default async function MentorSprintProgressPage({
         <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
         <div className="flex gap-3">
           {data.page > 1 && <Link href={mentorSprintProgressHref({...data.query, page:data.page-1})}
-            className="text-sm font-semibold text-primary-text">Previous</Link>}
+            className="text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>}
           {data.page < data.totalPages && <Link href={mentorSprintProgressHref({...data.query, page:data.page+1})}
-            className="text-sm font-semibold text-primary-text">Next</Link>}
+            className="text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>}
         </div>
       </nav>
     </>}
