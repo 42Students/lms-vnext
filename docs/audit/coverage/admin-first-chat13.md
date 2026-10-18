@@ -32,3 +32,7 @@
 ## P0 release acceptance still required
 
 Run tests, typecheck and Postgres integration with A/B tenant, dual-role SA, inactive sessions and a concurrent offer acceptance. Verify all first-third pages at 320/360/390 px, overlays with keyboard navigation, browser back/forward, and failures on slow networks. Record actual pass/fail per test and screenshot before claiming release parity.
+
+
+## Responsive overlay correction — SA-ADMIN-HISTORY-MODAL-10
+The first-third Super Admin import-history overlay in `src/components/admin/super-admin-student-import-history.tsx` now returns focus to the Import History button when native dialog closes, including Escape, and uses a stationary header with one bounded vertical records scroller. Shared DataTable owns horizontal scrolling. `tests/unit/chat13-super-admin-history-modal-ux.test.ts` verifies the authored source contract; real browser/mobile inspection is still required.
