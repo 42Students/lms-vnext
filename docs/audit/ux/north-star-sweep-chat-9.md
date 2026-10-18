@@ -31,6 +31,82 @@ Owner: chat-9 · 2026-10-19 · branch `chatgpt/chat-9-b`
 ## Status
 - [x] Branch fast-forwarded to `main` before the chat-9 sweep (previous lane head was behind without unique commits).
 - [x] Initial file/style inventory and source-of-truth review.
-- [ ] Page/component sweep and per-file review.
-- [ ] Record all changed paths and intentionally exempt components.
-- [ ] Test/CI deliberately not run per owner's direction; source-level syntax review only.
+- [x] First-pass page/component sweep and per-file review of the listed paths.
+- [x] Record changed paths and intentionally exempt components.
+- [x] Test/CI deliberately not run per owner's direction; source-level syntax review only.
+
+## 2026-10-19 execution ledger — commit-backed source sweep
+
+**Branch:** `chatgpt/chat-9-b`. **Head comparison when recorded:** 93 lane commits ahead of the moving `main` branch, 36 concurrent upstream commits behind; the branch was cleanly fast-forwarded to main before the first lane commit. No changes were sent to main.
+
+**Source files changed (58 returned in the branch comparison):**
+
+- `src/app/(authenticated)/admin/module-access/page.tsx`
+- `src/app/(authenticated)/admin/placements/student-lookup/page.tsx`
+- `src/app/(authenticated)/admin/programs/page.tsx`
+- `src/app/(authenticated)/admin/projects/page.tsx`
+- `src/app/(authenticated)/admin/projects/templates/[templateId]/colleges/page.tsx`
+- `src/app/(authenticated)/admin/projects/templates/[templateId]/page.tsx`
+- `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/[versionId]/page.tsx`
+- `src/app/(authenticated)/admin/projects/templates/new/page.tsx`
+- `src/app/(authenticated)/admin/projects/templates/page.tsx`
+- `src/app/(authenticated)/admin/projects/workspaces/new/page.tsx`
+- `src/app/(authenticated)/admin/quizzes/page.tsx`
+- `src/app/(authenticated)/admin/semesters/page.tsx`
+- `src/app/(authenticated)/admin/settings/auth/page.tsx`
+- `src/app/(authenticated)/admin/settings/page.tsx`
+- `src/app/(authenticated)/admin/students/page.tsx`
+- `src/app/(authenticated)/admin/tenants/create/page.tsx`
+- `src/app/(authenticated)/admin/tenants/page.tsx`
+- `src/app/(authenticated)/admin/tenants/setup/page.tsx`
+- `src/app/(authenticated)/admin/verification/page.tsx`
+- `src/app/(authenticated)/college/projects/create/page.tsx`
+- `src/app/(authenticated)/college/projects/page.tsx`
+- `src/app/(authenticated)/college/projects/templates/page.tsx`
+- `src/app/(authenticated)/college/projects/workspaces/new/page.tsx`
+- `src/components/admin/super-admin-attendance-settings-editor.tsx`
+- `src/components/admin/super-admin-learning-filter-fields.tsx`
+- `src/components/admin/super-admin-student-bulk-access.tsx`
+- `src/components/admin/tenant-settings-editor.tsx`
+- `src/components/admin/tenant-settings-other-keys.tsx`
+- `src/components/projects/admin-readiness-workspace-picker.tsx`
+- `src/components/projects/college-project-summary-editor-full.tsx`
+- `src/components/projects/college-project-summary-editor.tsx`
+- `src/components/projects/project-admin-at-risk-page.tsx`
+- `src/components/projects/project-admin-audit-page.tsx`
+- `src/components/projects/project-admin-collection-controls.tsx`
+- `src/components/projects/project-admin-missing-college.tsx`
+- `src/components/projects/project-admin-readiness-page.tsx`
+- `src/components/projects/project-admin-reassign-mentor-page.tsx`
+- `src/components/projects/project-admin-submission-review.tsx`
+- `src/components/projects/project-admin-submissions-page.tsx`
+- `src/components/projects/project-admin-workspace-list.tsx`
+- `src/components/projects/project-create-control.tsx`
+- `src/components/projects/project-readiness-override-form.tsx`
+- `src/components/projects/project-resource-files-panel.tsx`
+- `src/components/projects/project-resource-list.tsx`
+- `src/components/projects/project-template-catalogue-export.tsx`
+- `src/components/projects/project-template-view.tsx`
+- `src/components/projects/project-workspace-page-export.tsx`
+- `src/components/projects/project-workspace-readiness.tsx`
+- `src/components/projects/super-admin-template-archive-control.tsx`
+- `src/components/projects/super-admin-template-college-bulk.tsx`
+- `src/components/projects/super-admin-template-create-form.tsx`
+- `src/components/projects/super-admin-template-overview-editor.tsx`
+- `src/components/projects/super-admin-template-page-export.tsx`
+- `src/components/projects/super-admin-template-plan-editor.tsx`
+- `src/components/projects/super-admin-template-resource-editor.tsx`
+- `src/components/projects/super-admin-template-rollback-control.tsx`
+- `src/components/projects/super-admin-template-subview-page.tsx`
+- `src/components/projects/super-admin-template-tabs.tsx`
+
+**Change types actually applied:**
+1. Removed redundant nested full-width page cards, page-local max-width caps, repeated page padding and `main` wrappers in Projects creation and template flows. Existing content structure, headings, fields, routes and actions remain.
+2. Converted native Project filters, Super Admin tenant policy fields, template editors, audit filters, student lookup controls and resource forms to the shared `Button`, `Input`, `Select` and `Textarea` components. Removed local border, font and background classes that overrode the shared controls; used secondary variants for cancellation and review, primary for writes, danger for resource removal.
+3. Updated tab and action chrome toward the teal legacy underline and 9px button radius. Fixed primary CTA contrast: white on teal, not `text-foreground`.
+4. Flattened purely decorative nested section cards into thin separators; independent template/workspace objects, user-selectable mentor tiles, independently actionable stats, actual upload rows, modals and warnings can retain their individual boundary.
+5. Kept the common sidebar, shared top bar, global CSS and `src/components/ui/**` untouched. No page contents or functionality intentionally redesigned.
+
+**Source-level verification:** inspected rendered TSX source and counted opening/closing converted `Button`, `Select` tags; repaired the multi-line native `select`/shared `Select` mismatch in the Project audit filter. No automated typecheck, lint, unit test, CI, runtime execution, screenshots, or browser acceptance was performed as directed; **strict TypeScript cleanliness and pixel parity are not certified**.
+
+**Remaining checks:** independent browser comparison to old LMS, 320–390px viewport pass, acceptance of the 37 last-third routes, and reconciliation with upstream global token/sidebar/top-bar commits. Concurrent upstream commits arrived after initial branch sync, so this report does not certify integration with the latest `main`. Keep those issues visible rather than claiming full North Star completion.
