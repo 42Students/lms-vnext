@@ -37,6 +37,19 @@ describe("TPO-BREAK-exports-01 formula-safe company and learner exports",()=>{
   expect(data.split("\r\n")).toHaveLength(2);
  });
 });
+describe("TPO-students-export-UNICODE-01 hidden prefix spreadsheet formula safety",()=>{
+ it("quotes and neutralizes export cells with bidirectional, word-joiner and combining-mark prefixes",()=>{
+  const hidden=["\\u2060=1+1","\\u200C+SUM(1,2)","\\u200D@CMD","\\u202E-42","\\u0301=HYPERLINK(1)","\\u00AD=1+2"];
+  for(const source of hidden.map(x=>x.replace(/\\\\u([0-9a-f]{4})/gi,(_whole,hex:string)=>String.fromCharCode(parseInt(hex,16))))){
+   expect(tpoStudentCsvCell(source)).toBe(`"'${source}"`);
+   expect(tpoStudentClipboardCell(source)).toBe("'"+source);
+  }
+  expect(tpoStudentCsvCell("Ordinary Student")).toBe('"Ordinary Student"');
+  expect(tpoStudentCsvCell("8.4")).toBe('"8.4"');
+  expect(tpoStudentClipboardCell("Ordinary Student")).toBe("Ordinary Student");
+ });
+});
+
 describe("TPO-BREAK-company-route-03 CSV response hardening",()=>{
  it("the actual company CSV route uses the common Unicode-safe cell encoder",async()=>{
   const {readFileSync}=await import("node:fs");
