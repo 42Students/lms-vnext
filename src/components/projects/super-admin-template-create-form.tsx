@@ -84,19 +84,19 @@ export function SuperAdminTemplateCreateForm(){
    </Select>
   </label>
   <label className="grid gap-1 text-sm font-semibold text-body">First task acceptance criteria (optional)
-   <Textarea maxLength={4000} disabled={saving} value={values.acceptanceCriteria} onChange={event=>edit("acceptanceCriteria",event.target.value)} className="min-h-24 rounded-md border border-border bg-background p-3 text-foreground"/>
+   <Textarea maxLength={4000} disabled={saving} value={values.acceptanceCriteria} onChange={event=>edit("acceptanceCriteria",event.target.value)} className="w-full"/>
   </label>
   <label className="grid gap-1 text-sm font-semibold text-body">First release description (optional)
-   <Textarea maxLength={4000} disabled={saving} value={values.releaseDescription} onChange={event=>edit("releaseDescription",event.target.value)} className="min-h-24 rounded-md border border-border bg-background p-3 text-foreground"/>
+   <Textarea maxLength={4000} disabled={saving} value={values.releaseDescription} onChange={event=>edit("releaseDescription",event.target.value)} className="w-full"/>
   </label>
   <label className="grid gap-1 text-sm font-semibold text-body">First sprint description (optional)
-   <Textarea maxLength={4000} disabled={saving} value={values.sprintDescription} onChange={event=>edit("sprintDescription",event.target.value)} className="min-h-24 rounded-md border border-border bg-background p-3 text-foreground"/>
+   <Textarea maxLength={4000} disabled={saving} value={values.sprintDescription} onChange={event=>edit("sprintDescription",event.target.value)} className="w-full"/>
   </label>
   <label className="grid gap-1 text-sm font-semibold text-body">First task description (optional)
-   <Textarea maxLength={4000} disabled={saving} value={values.taskDescription} onChange={event=>edit("taskDescription",event.target.value)} className="min-h-24 rounded-md border border-border bg-background p-3 text-foreground"/>
+   <Textarea maxLength={4000} disabled={saving} value={values.taskDescription} onChange={event=>edit("taskDescription",event.target.value)} className="w-full"/>
   </label>
   <label className="grid gap-1 text-sm font-semibold text-body">Overview description (optional)
-   <Textarea maxLength={4000} disabled={saving} value={values.overviewDescription} onChange={event=>edit("overviewDescription",event.target.value)} className="min-h-24 rounded-md border border-border bg-background p-3 text-foreground"/>
+   <Textarea maxLength={4000} disabled={saving} value={values.overviewDescription} onChange={event=>edit("overviewDescription",event.target.value)} className="w-full"/>
   </label>
   <fieldset className="min-w-0 space-y-3 rounded-lg border border-border p-3">
    <legend className="px-2 text-sm font-semibold text-body">Starting resource link (optional)</legend>
@@ -111,7 +111,7 @@ export function SuperAdminTemplateCreateForm(){
   {error?<p role="alert" className="break-words text-sm text-error-text">{error}</p>:null}
   <div className="flex flex-wrap justify-end gap-3">
    <Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm">Cancel</Link>
-   <Button type="submit" disabled={saving} className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-50">{saving?"Creating…":"Create draft template"}</Button>
+   <Button type="submit" disabled={saving} className="">{saving?"Creating…":"Create draft template"}</Button>
   </div>
  </form>;
 }
