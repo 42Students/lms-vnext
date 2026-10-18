@@ -22,6 +22,7 @@ export const HR_PROPOSAL_PAGE_SIZE=20;
 export function hrProposalHistoryWindow(requestedPage:number,total:number){
  if(!Number.isSafeInteger(total)||total<0)throw new Error("INVALID_PROPOSAL_COUNT");
  const pages=Math.max(1,Math.ceil(total/HR_PROPOSAL_PAGE_SIZE));
- const page=Math.max(1,Math.min(requestedPage,pages));
+ const page=Number.isSafeInteger(requestedPage)
+  ?Math.max(1,Math.min(requestedPage,pages)):1;
  return {page,pages,offset:(page-1)*HR_PROPOSAL_PAGE_SIZE,total};
 }

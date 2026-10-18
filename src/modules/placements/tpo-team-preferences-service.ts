@@ -1,5 +1,6 @@
 import {hasPlacementTeamMembership} from "./placement-team-access-model";
-import {planTpoThreadPreferenceChange} from "./tpo-team-preference-state-model";
+import {planTpoThreadPreferenceChange,tpoTeamPreferenceActionSchema} from "./tpo-team-preference-state-model";
+export {tpoTeamPreferenceActionSchema} from "./tpo-team-preference-state-model";
 import "server-only";
 import {and,eq,or} from "drizzle-orm";
 import {z} from "zod";
@@ -11,10 +12,6 @@ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted
 import {requirePlacementManageScope} from "./scope";
 import {placementTableExists} from "./staged-tables";
 
-export const tpoTeamPreferenceActionSchema=z.strictObject({
- threadId:z.string().uuid(),
- action:z.enum(["FOLLOW","UNFOLLOW","MUTE","UNMUTE"]),
-});
 async function scope(context:RequestContext,threadId:string){
  const member=context.membership;
  if(!member||member.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE"||

@@ -103,3 +103,11 @@ Scope: `src/modules/organizations/service.ts`, `src/modules/colleges/service.ts`
 
 | `verifyCollegeLogoPngChunks` and `uploadCollegeLogo` | Browser-cropped PNG must contain real consecutive IHDR/IDAT/IEND chunks, valid per-chunk CRC32, supported noninterlaced layout, no unknown critical chunk/APNG/trailing polyglot payload; rejects fake signature-only uploads before private object PUT. Distinct from malware scanning or full decompression. | `tests/unit/chat11-super-admin-logo-png-structural.test.ts` — BRAND-PNG-06 4 actual byte-stream cases; verify browser canvas output |
 | `verifyCollegeLogoPngChunks` inflated scanlines | In addition to chunk bounds and CRC, logo parser validates PNG signature, 8-bit square RGBA/RGB IHDR, bounded IDAT inflate and exact pixel-row lengths/filter methods 0–4; prevents header-only, deflate-bomb, invalid compressed image and appended polyglot bytes before any R2 upload | `tests/unit/chat11-super-admin-logo-png-structural.test.ts` — BRAND-PNG-06/07 | Malware scan and R2/browser integration still pending |
+
+## Readiness integrity — 2026-10-19
+
+| ID | Surface | Fix | Named behavioural test | Remaining |
+|---|---|---|---|---|
+| SA-tenants-modules-READY-04 | `evaluateCollegeReadiness`, `summarizeTenantSetupReadiness` | A malformed or overflowed persisted count (negative, fractional, infinite, NaN, unsafe integer, missing at runtime) is UNKNOWN and never a pass. A summary with fewer/more than the ten canonical checks or invalid count arithmetic is Unknown even when its purported `overall` says READY. Verified zeros remain FAIL, archived college remains NOT_READY, valid ten-check pass is still explicitly **not** launch approval. | `tests/unit/chat11-readiness-count-integrity.test.ts` — six behavioural cases, all count fields and corrupted rollups | PostgreSQL unexpected driver aggregate, real runtime/DNS/sign-in checks, CI not run |
+
+This audit documents source-level hardening only. Do not declare the IIT Dharwad launch ready based on the persisted setup checklist.
