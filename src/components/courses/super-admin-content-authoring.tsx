@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import {resolveSuperAdminAuthoringLesson} from "@/modules/courses/super-admin-selected-lesson-model";
 import { FacultyLessonAuthoring } from "@/components/courses/faculty-lesson-authoring";
 import { FacultyLessonVideoManager } from "@/components/courses/faculty-lesson-video-manager";
 
@@ -10,7 +11,7 @@ export function SuperAdminContentAuthoring({kind,lessons,allowVideoUpload=true}:
  const [lessonId,setLessonId]=useState(lessons[0]?.id??"");
  // A changed acting-college scope can replace all lesson IDs without remounting this client panel.
  // Never leave a foreign/stale ID selected or silently hide the current college authoring control.
- const selected=lessons.find(x=>x.id===lessonId)??lessons[0];
+ const selected=resolveSuperAdminAuthoringLesson(lessons,lessonId);
  return <section aria-label="Create lesson content" className="space-y-3 rounded-xl border border-border bg-surface p-4">
   <h2 className="font-semibold">Add {kind==="VIDEOS"?"video":kind==="LIVE_CLASSES"?"live class":"resource"}</h2>
   {!lessons.length?<p className="text-sm text-muted-foreground">Create a course offering, learning path and lesson before adding content.</p>:<>
