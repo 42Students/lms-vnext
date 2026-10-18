@@ -529,4 +529,13 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   for(const header of ["Candidate","Round","Shared start (IST)","Round venue","Candidate slot","Panel"])
    expect(page).toContain('header:"'+header+'"');
  });
+ it("UX-tpo-reports-after-college-02 keeps six report columns on phone and explicit filtered-empty wording",()=>{
+  const page=source("src/app/(authenticated)/tpo/reports/after-college/page.tsx");
+  expect(page).toContain('import {DataTable} from "@/components/ui/data-table"');
+  expect(page).toContain("rows={data.rows.slice(0,300)}");
+  expect(page).toContain('empty={<p role="status">No students match these filters.</p>}');
+  expect((page.match(/mobilePriority:"secondary"/g)??[]).toHaveLength(5);
+  for(const header of ["Student","Roll no.","Batch","Branch","After college","Applications"])
+   expect(page).toContain('header:"'+header+'"');
+ });
 });
