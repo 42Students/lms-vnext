@@ -99,7 +99,7 @@ export default async function CollegeLectureHallsPage({
         className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
         Export CSV
       </Link>
-      <section aria-label="Lecture hall filters" className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <section aria-label="Lecture hall filters" className="- sm: border-t border-border pt-4">
         <form action="/college/lecture-halls" method="get" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
           <label className="grid gap-1 text-sm font-semibold text-body">
             Room name
