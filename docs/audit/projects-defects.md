@@ -20,6 +20,8 @@ Every item below was reproduced by code-path review and has a source repair on `
 
 | PROJ-DEF-009-12 | S1 Security/exports | All Projects admin CSV pages shared a formula guard that did not classify leading NUL/C0 controls as ignorable; spreadsheet importers can discard those controls and interpret a concealed formula start. College workspace export also maintained a second encoder rather than the centralized sanitizer. | chat-9 October 18 2026 branch commits: unify `admin-workspace-page-export-model.ts` with `projectAdminCsv`, discard non-text controls and detect all Unicode mark/control prefixes. | `PROJ-BREAK-exports-12/13/14/15/16` | Source + tests authored; CI/browser spreadsheet import pending |
 
+| PROJ-DEF-009-13 | S2 Resilience/SA | Super Admin Projects workspaces page awaited optional assigned-template discovery and workspace listing in the same uncaught `Promise.all`; a template-query outage hid all otherwise authorized workspaces. College equivalent was already failure-tolerant. | `src/app/(authenticated)/admin/projects/page.tsx`: catch only the optional template read, render a recovery message and continue the scoped workspaces list. | `PROJ-BREAK-admin-resilience-17`, `PROJ-BREAK-admin-idor-17` | Source/static test authored, real outage injection/CI pending |
+
 ## Explicit outstanding acceptance / limits
 
 - **Tests not executed** in this GitHub-connector-only lane: Vitest unit suite, TypeScript strict typecheck, lint, PostgreSQL transaction/deadline tests, migrations on realistic tenant fixtures, race stress, file storage and antivirus verification, signed URL expiry, load tests (1,000+ workspaces), actual export spreadsheet import, all seven-role UI journeys, keyboard/mobile AT tests.
