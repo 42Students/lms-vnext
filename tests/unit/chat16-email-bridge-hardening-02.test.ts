@@ -28,6 +28,12 @@ describe("chat-16 recruiter email bridge security and resend policy",()=>{
   expect(makeRecruiterReplyAddress(token,"example.org@evil.test")).toBeNull();
   expect(makeRecruiterReplyAddress(token,"localhost")).toBeNull();
   expect(makeRecruiterReplyAddress("invalid","reply.example.org")).toBeNull();
+  expect(makeRecruiterReplyAddress(token,"-spoof.example.org")).toBeNull();
+  expect(makeRecruiterReplyAddress(token,"spoof-.example.org")).toBeNull();
+  expect(makeRecruiterReplyAddress(token,"a".repeat(64)+".example.org")).toBeNull();
+  expect(makeRecruiterReplyAddress(token,Array.from({length:6},()=>"a".repeat(48)).join(".")+".org")).toBeNull();
+  expect(makeRecruiterReplyAddress(token,"reply.EXAMPLE.ORG")).toBe(address);
+  expect(isRecruiterReplyAddress("r-"+token+"@-spoof.example.org","-spoof.example.org")).toBe(false);
  });
  it("email-bridge-hmac-01 authenticates exact upstream bytes, including whitespace",()=>{
   const body='{"from":"a@example.org","message":"Hi"}';
@@ -44,6 +50,12 @@ describe("chat-16 recruiter email bridge security and resend policy",()=>{
   expect(extractRecruiterEmailReply("")).toBeNull();
   expect(extractRecruiterEmailReply("x".repeat(20001))).toBeNull();
   expect(extractRecruiterEmailReply("A\u0000B")).toBe("AB");
+  // REC-calendar-messages-profile-R01: forwarded history and Outlook-style
+  // headers must never be persisted as a new recruiter message.
+  expect(extractRecruiterEmailReply("New answer\nBegin forwarded message:\nprivate history")).toBe("New answer");
+  expect(extractRecruiterEmailReply("New answer\n---- Forwarded message ----\nprivate history")).toBe("New answer");
+  expect(extractRecruiterEmailReply("New answer\nSent: 18 October 2026 15:00\nprivate history")).toBe("New answer");
+  expect(extractRecruiterEmailReply("Begin forwarded message:\nprivate history")).toBeNull();
  });
  it("email-bridge-escape-01 bounds and escapes provider template merge variables",()=>{
   expect(safeRecruiterEmailMergeText("<a>&\"'")).toBe("&lt;a&gt;&amp;&quot;&#39;");

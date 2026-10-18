@@ -26,20 +26,27 @@ describe("Chat-2 Company relationship and legacy Companies navigation",()=>{
   expect(route).toContain("TpoCompanyMemoryWorkspace");
   expect(engage).toContain('requested === "board" || requested === "companies"');
  });
- it("TPO-companies-29 offers a non-scrolling mobile directory with per-company data and create-drive action",()=>{
+ it("TPO-companies-29 keeps accessible phone cards and per-company data without a second roster",()=>{
   const page=source("src/app/(authenticated)/tpo/companies/page.tsx");
-  expect(page).toContain('aria-label="Companies on this page"');
-  expect(page).toContain("md:hidden");
-  expect(page).toContain('className="hidden w-full min-w-[58rem] text-left text-sm md:table"');
-  expect(page).toContain('["Confirmed joins",company.confirmedJoinedLearners]');
+  const table=source("src/components/ui/data-table.tsx");
+  expect(page).toContain('<DataTable');
+  expect(page).toContain('caption="Companies on this page"');
+  expect(page).toContain('mobilePriority:"primary"');
+  expect(page).toContain('mobileLabel:"Confirmed joins"');
+  expect(page).toContain('cell:company=>company.confirmedJoinedLearners');
   expect(page).toContain('href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}');
+  // Phone rows are block cards with wrapped values, expandable secondary
+  // metrics and a discoverable Create drive action; desktop retains columns.
+  expect(table).toContain('className="block space-y-3 sm:table-row-group');
+  expect(table).toContain('sm:table-row sm:overflow-visible');
+  expect(table).toContain('phoneVisible?"block":"hidden"');
+  expect(table).toContain('More details');
+  expect(table).toContain('<ScrollCue axis="x"');
   const canonical=source("src/app/(authenticated)/tpo/companies/[companyId]/page.tsx");
-  expect(canonical).toContain('aria-label="Company drive cards"');
-  expect(canonical).toContain('aria-label="Company hiring cards"');
-  expect(canonical).toContain('className="hidden w-full min-w-[65rem] text-left text-sm md:table"');
-  expect(canonical).toContain('"Live",CLOSED:"Completed"');
+  expect(canonical).toContain('caption="Company placement drives"');
+  expect(canonical).toContain('caption="Company hiring history"');
+  expect(canonical).toContain('PUBLISHED:"Live",CLOSED:"Completed"');
   expect(canonical).toContain('href={"/tpo/placements/jobs/"+encodeURIComponent(offer.jobId)}');
-
  });
  it("TPO-companies-22 retains verified company numbers and no-activity label",()=>{
   const workspace=source("src/components/tpo/tpo-company-memory-workspace.tsx");

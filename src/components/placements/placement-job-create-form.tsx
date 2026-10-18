@@ -1088,6 +1088,10 @@ export function PlacementJobCreateForm({
                     try{field.value=driveDeadlineIstEndOfDay(field.value);deadlineTimeChosen.current=true;}
                     catch{/* Invalid dates are rejected on submit, not while typing. */}
                   }
+                  // The native datetime input is uncontrolled. Persist its latest
+                  // value rather than losing it to a delayed draft snapshot.
+                  markDirty();
+                  if(formRef.current)saveBrowserDraft(formRef.current);
                 }}
               />
             </label>

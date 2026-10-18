@@ -1,6 +1,6 @@
 export type AdminDeliveryAction="APPROVED"|"CHANGES_REQUESTED"|"LOCK";
 export function canAdminSettleDelivery(status:string,locked:boolean,projectStatus:string,action:AdminDeliveryAction){
- if(locked||projectStatus==="ARCHIVED")return false;
+ // Completed, planned and unknown workspaces are read-only review contexts.\n if(locked||projectStatus!=="ACTIVE")return false;
  if(action==="LOCK")return status==="SUBMITTED"||status==="APPROVED";
  return status==="SUBMITTED";
 }

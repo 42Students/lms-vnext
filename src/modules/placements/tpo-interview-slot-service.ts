@@ -10,7 +10,7 @@ import {PlacementsServiceError} from "./errors";
 import {placementTableExists} from "./staged-tables";
 import {requireTpoJobCollege,requireTpoJobActor,type TpoJobTx} from "./tpo-job-write-base";
 import {placementJobIdSchema,placementRoundIdSchema} from "./validation";
-import {planInterviewDay,tpoInterviewSlotActionSchema} from "./tpo-interview-slot-model";
+import {planInterviewDay,sameInterviewRoom,tpoInterviewSlotActionSchema} from "./tpo-interview-slot-model";
 import {actOnPlacementRequest} from "./request-service";
 
 async function scope(context:RequestContext,rawJobId:unknown,rawRoundId:unknown){
@@ -130,12 +130,20 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
    if(proposed.some(p=>p.startsAt.getTime()<=Date.now()))throw Error("New interview slots must be in the future.");
    const existing=await tx.select().from(placementRoundCandidateSlots).where(and(
     eq(placementRoundCandidateSlots.roundId,info.round.id),ne(placementRoundCandidateSlots.status,"CANCELLED")));
-   if(proposed.some(p=>existing.some(e=>e.room.toLowerCase()===p.room.toLowerCase()&&
+   if(proposed.some(p=>existing.some(e=>sameInterviewRoom(e.room,p.room)&&
     e.startsAt<p.endsAt&&e.endsAt>p.startsAt)))throw Error("These times overlap an existing room booking.");
    const saved=await tx.insert(placementRoundCandidateSlots).values(proposed.map(p=>({
     jobId:job.id,roundId:info.round.id,room:p.room,startsAt:p.startsAt,endsAt:p.endsAt,
     applicationId:null,status:"AVAILABLE",changedByUserId:context.user.id,
    }))).returning({id:placementRoundCandidateSlots.id});
+   if(saved.length)await tx.insert(activityEvents).values({
+    organizationId:context.membership!.organizationId,collegeId:info.collegeId,
+    actorUserId:context.user.id,actorMembershipId:context.membership!.id,
+    module:"PLACEMENTS",eventType:"PLACEMENTS_TPO_INTERVIEW_SLOTS_GENERATED",
+    subjectType:"placement_round",subjectId:info.round.id,
+    summary:"TPO generated "+saved.length+" interview slots for "+job.title,
+    metadata:{created:saved.length,rooms:proposed.map(slot=>slot.room).filter((room,index,list)=>list.indexOf(room)===index)},
+   });
    return {created:saved.length};
   }
   if(input.action==="CLEAR_AVAILABLE"){
@@ -144,6 +152,14 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
    }).where(and(eq(placementRoundCandidateSlots.roundId,info.round.id),
     eq(placementRoundCandidateSlots.status,"AVAILABLE")))
     .returning({id:placementRoundCandidateSlots.id});
+   if(cleared.length)await tx.insert(activityEvents).values({
+    organizationId:context.membership!.organizationId,collegeId:info.collegeId,
+    actorUserId:context.user.id,actorMembershipId:context.membership!.id,
+    module:"PLACEMENTS",eventType:"PLACEMENTS_TPO_INTERVIEW_AVAILABLE_CLEARED",
+    subjectType:"placement_round",subjectId:info.round.id,
+    summary:"TPO cleared "+cleared.length+" available interview slots for "+job.title,
+    metadata:{cleared:cleared.length},
+   });
    return {cleared:cleared.length};
   }
   if(input.action==="CONFIRM_RECRUITER_PROPOSAL"){
@@ -184,9 +200,9 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
    let changed=0;const skipped:Array<{applicationId:string;reason:string}>=[];
    for(const item of eligible){
     const slot=item.slot;
-    if(slot.room.toLowerCase()===input.room.toLowerCase())continue;
+    if(sameInterviewRoom(slot.room,input.room))continue;
     const conflict=all.some(other=>other.id!==slot.id&&other.status!=="CANCELLED"&&
-     other.room.toLowerCase()===input.room.toLowerCase()&&
+     sameInterviewRoom(other.room,input.room)&&
      other.startsAt<slot.endsAt&&other.endsAt>slot.startsAt);
     if(conflict){
      skipped.push({applicationId:slot.applicationId!,reason:"Room already has an overlapping slot"});continue;
@@ -273,12 +289,15 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
   if(!slot||slot.version!==input.expectedVersion||slot.status==="CANCELLED")
    throw new PlacementsServiceError("PLACEMENT_ROUND_STALE");
   if(input.action==="ASSIGN_ROOM"){
+   // An unchanged room is not a new edit: no version bump and no duplicate notice.
+   if(sameInterviewRoom(slot.room,input.room))
+    return {changed:0};
    const collisions=await tx.select({id:placementRoundCandidateSlots.id})
     .from(placementRoundCandidateSlots).where(and(
      eq(placementRoundCandidateSlots.roundId,info.round.id),
      ne(placementRoundCandidateSlots.id,slot.id),
      ne(placementRoundCandidateSlots.status,"CANCELLED"),
-     sql`lower(${placementRoundCandidateSlots.room}) = lower(${input.room})`,
+     sql`lower(trim(${placementRoundCandidateSlots.room})) = lower(trim(${input.room}))`,
      sql`${placementRoundCandidateSlots.startsAt} < ${slot.endsAt}`,
      sql`${placementRoundCandidateSlots.endsAt} > ${slot.startsAt}`)).limit(1);
    if(collisions.length)throw Error("That room is already in use at this time.");
@@ -292,6 +311,14 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
      eq(placementApplicationRoundExceptions.roundId,info.round.id)));
    if(slot.applicationId&&slot.status==="BOOKED")await notice(tx,context,job,slot.applicationId,
     "PLACEMENTS_TPO_INTERVIEW_ROOM_CHANGED","Your interview for "+job.title+" has moved to room "+input.room+".");
+   else await tx.insert(activityEvents).values({
+    organizationId:context.membership!.organizationId,collegeId:info.collegeId,
+    actorUserId:context.user.id,actorMembershipId:context.membership!.id,
+    module:"PLACEMENTS",eventType:"PLACEMENTS_TPO_INTERVIEW_ROOM_CHANGED",
+    subjectType:"placement_round",subjectId:info.round.id,
+    summary:"TPO changed an available interview slot room for "+job.title,
+    metadata:{slotId:slot.id,room:input.room},
+   });
    return {changed:1};
   }
   if(input.action==="BOOK"){
@@ -336,6 +363,14 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
     eq(placementApplicationRoundExceptions.roundId,info.round.id)));
    if(slot.applicationId)await notice(tx,context,job,slot.applicationId,"PLACEMENTS_TPO_INTERVIEW_CANCELLED",
     "Your interview slot was cancelled. Reason: "+input.reason);
+   else await tx.insert(activityEvents).values({
+    organizationId:context.membership!.organizationId,collegeId:info.collegeId,
+    actorUserId:context.user.id,actorMembershipId:context.membership!.id,
+    module:"PLACEMENTS",eventType:"PLACEMENTS_TPO_INTERVIEW_CANCELLED",
+    subjectType:"placement_round",subjectId:info.round.id,
+    summary:"TPO cancelled an unassigned interview slot for "+job.title,
+    metadata:{slotId:slot.id,reason:input.reason},
+   });
    return {cancelled:1};
   }
   if(input.action==="MOVE"){

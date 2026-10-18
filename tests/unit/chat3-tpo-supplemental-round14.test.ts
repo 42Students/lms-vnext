@@ -46,7 +46,11 @@ describe("TPO supplemental job metadata",()=>{
     "studentsRegisterSeparately","portalName","portalUrl","skillsWanted"])
    expect(create).toContain('name="'+field+'"');
   expect(show).toContain("job.legacyPostingDetails.skillsWanted");
-  expect(show).toContain('rel="noopener noreferrer"');
+  expect(show).toContain('<ThirdPartyLink href={job.legacyPostingDetails.portal.url} label="Open employer portal"/>');
+  const safe=source("src/components/ui/third-party-link.tsx");
+  expect(safe).toContain('url.protocol === "https:"');
+  expect(safe).toContain('!url.username && !url.password');
+  expect(safe).not.toContain('target="_blank"');
  });
  it("TPO-drives-41 blocks both native unload and in-app navigation while unsaved",()=>{
   const guard=source("src/components/placements/use-unsaved-drive-guard.ts");

@@ -23,14 +23,28 @@ export const tpoInterviewSlotActionSchema=z.discriminatedUnion("action",[
  z.object({action:z.literal("ASSIGN_ROOM"),confirmed:z.literal(true),slotId:uuid,expectedVersion:z.number().int().positive(),
   room:z.string().trim().min(1).max(160)}).strict(),
 ]);
+/** Normalize names for logical room equality across planners and stored rows. */
+export function sameInterviewRoom(left:string,right:string):boolean{
+ return left.normalize("NFKC").trim().toLocaleLowerCase("en-IN")===
+  right.normalize("NFKC").trim().toLocaleLowerCase("en-IN");
+}
 export function planInterviewDay(input:{startsAt:string;durationMinutes:number;gapMinutes:number;
  slotsPerRoom:number;rooms:readonly string[]}){
- const start=Date.parse(input.startsAt);
+ // TPO-drive-workspace-44: exported planners must validate even when called
+ // without the route-level schema. Do not allocate from unchecked row counts.
+ const parsed=tpoInterviewSlotActionSchema.safeParse({
+  action:"GENERATE_DAY",confirmed:true,...input,
+ });
+ if(!parsed.success||parsed.data.action!=="GENERATE_DAY")
+  throw Error("Invalid interview day configuration");
+ const plan=parsed.data;
+ const start=Date.parse(plan.startsAt);
  if(!Number.isFinite(start))throw Error("Invalid interview date");
- if(new Set(input.rooms.map(r=>r.toLowerCase())).size!==input.rooms.length)throw Error("Room names must be different");
- return input.rooms.flatMap(room=>Array.from({length:input.slotsPerRoom},(_,index)=>{
-  const begins=new Date(start+index*(input.durationMinutes+input.gapMinutes)*60_000);
-  const ends=new Date(begins.getTime()+input.durationMinutes*60_000);
+ if(new Set(plan.rooms.map(r=>r.normalize("NFKC").trim().toLocaleLowerCase("en-IN"))).size!==plan.rooms.length)
+  throw Error("Room names must be different");
+ return plan.rooms.flatMap(room=>Array.from({length:plan.slotsPerRoom},(_,index)=>{
+  const begins=new Date(start+index*(plan.durationMinutes+plan.gapMinutes)*60_000);
+  const ends=new Date(begins.getTime()+plan.durationMinutes*60_000);
   const localDay=(value:Date)=>new Intl.DateTimeFormat("en-CA",{
    timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
   }).format(value);

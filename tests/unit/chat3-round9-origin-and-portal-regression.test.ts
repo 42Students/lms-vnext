@@ -5,7 +5,12 @@ const read=(name:string)=>readFileSync(join(process.cwd(),name),"utf8");
 describe("Chat-3 Round 9 restored contracts",()=>{
  it("TPO-drives-29/30/38 external employer portal uses noopener noreferrer",()=>{
   const src=read("src/components/placements/placement-drive-workspace.tsx");
-  expect(src).toContain('target="_blank" rel="noopener noreferrer"');
+  // The portal is now an HTTPS-validated same-tab navigation: no target=_blank needed.
+  expect(src).toContain('<ThirdPartyLink href={job.legacyPostingDetails.portal.url} label="Open employer portal"/>');
+  const safe=read("src/components/ui/third-party-link.tsx");
+  expect(safe).toContain('url.protocol === "https:"');
+  expect(safe).toContain("!url.username && !url.password");
+  expect(safe).not.toContain('target="_blank"');
   expect(src).toContain("Open employer portal");
  });
  it("api-origin-guard protects POST and DELETE assignment materials at route boundaries",()=>{
