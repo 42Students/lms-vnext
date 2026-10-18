@@ -15,8 +15,8 @@ import {
   sections,
   users,
 } from "@/db/schema";
-import type { RequestContext } from "@/modules/identity/context";
-import { requirePermission } from "@/modules/permissions/policy";
+import {hasMembershipRole,isSuperAdmin,type RequestContext} from "@/modules/identity/context";
+import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import { AcademicsServiceError } from "./errors";
 import { listLearnerProgramEnrollments } from "./enrollment-service";
 import { listSectionFacultyAssignments } from "./faculty-assignment-service";
@@ -74,6 +74,10 @@ export async function getSectionOperationsWorkspace(
   context: RequestContext,
   sectionIdInput: string,
 ) {
+  // A guessed Section UUID must not reveal even whether an administrative
+  // workspace exists to Faculty, Mentor, Learner or disabled actors.
+  if(!isSuperAdmin(context)&&!hasMembershipRole(context,"COLLEGE_ADMIN"))
+    throw new AuthorizationError("academics.manage");
   const sectionId =
     sectionIdSchema.parse(sectionIdInput);
   const scope = await loadSectionScope(sectionId);
