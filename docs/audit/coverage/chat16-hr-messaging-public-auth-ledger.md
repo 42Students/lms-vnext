@@ -472,3 +472,25 @@ The existing `changeInboundMailStatusForAdmin` permission matrix, status machine
 | `createZeptoMailEmailProvider` | same (`AUTH-OTP-MERGE-46`) | Exactly one accepted OTP POST, only canonical email address, harmless escaped learner name, malformed/untrusted mobile omitted, valid E.164 preserved, no OTP value in structured logs |
 
 Only provider-template merge variables changed, not SMS DLT wording, auth OTP lifetime, sign-in permission or provider delivery policy. This is direct mocked-transport test authorship, **not a real ZeptoMail acceptance/delivery test**.
+
+
+### 2026-10-19: public join-link first-open telemetry is bounded and POST-only
+
+| Handler | Test | Verification |
+|---|---|---|
+| `POST /api/public/join-link/open` | `tests/unit/chat16-public-join-open-boundary-47.test.ts` (`PUBLIC-JOIN-OPEN-47..49`) | Same-origin denial, 8 KB UTF-8 cap, malformed JSON and forged `collegeId` refusal, only strict `COLLEGE/COMPANY` token passed to service, no-store 200 and generic 503 on unavailable database |
+| `recordPublicJoinOpen` (route invocation) | same | Never called for wrong-origin, oversized, invalid or mass-assigned body. Real PostgreSQL idempotency and activity-event tests remain covered separately and await final CI. |
+
+All added test evidence is authored but **not run**; no provider or database connection was exercised.
+
+
+### 2026-10-19: outbound recipient display and quota boundaries
+
+| Export | Direct behavioral test | Cases |
+|---|---|---|
+| `isValidRecipient`, `normalizeRecipient` | `tests/unit/chat16-messaging-recipient-bidi-policy-50.test.ts` (`MSG-RECIPIENT-BIDI-50`) | malformed/invisible/BiDi control addresses denied, normal Unicode local mailbox preserved, E.164 phone normalization |
+| `outboundChannelSchema`, `outboundStatusSchema`, `outboundSendSchema` | same (`MSG-RECIPIENT-SCHEMA-51`) | accepted channel/status enums, mass assignment, template/path/variable limits and invalid purpose denial |
+| `decideDelivery` | same (`MSG-RECIPIENT-QUOTAS-52`) | production and invalid global/daily/recipient counters fail closed rather than bypass configured send caps |
+| `previewAudience` | same (`MSG-RECIPIENT-PREVIEW-53`) | same recipient+purpose+template dedupe, separate purpose allowed, nonprod allowlist suppression |
+
+The outbound recipient parser now explicitly rejects Unicode format/line-control characters which could visually impersonate another address while bypassing human review. Normal email and SMS delivery contracts are unchanged. Tests authored but **not run**, provider integration remains pending.
