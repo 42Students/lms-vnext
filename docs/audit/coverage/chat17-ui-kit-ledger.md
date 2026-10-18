@@ -27,7 +27,7 @@ Tests are in:
 | `empty-state.tsx` | `EmptyState` | STATES-08; HARDEN-06 | empty is not alert; optional recovery |
 | `error-state.tsx` | `ErrorState` | STATES-08; HARDEN-06 | alert is not success, explicit recovery |
 | `file-upload.tsx` | `FileUpload, fileSizeIsValid, fileMatchesAccept, mustClearFileSelection` | STATES-13; HARDEN-05; HARDEN-28; HARDEN-34 | disabled/unavailable fallback, size/type, combined assistive helper/error IDs |
-| `filter-bar.tsx` | `FilterBar` | STATES-11; HARDEN-19 | search visible, sanitize activeCount, overlay keyboard contract |
+| `filter-bar.tsx` | `FilterBar` | STATES-11; HARDEN-19; HARDEN-37 | search visible, activeCount clamp, WebView media fallback, focus/keyboard cleanup |
 | `form-field.tsx` | `FormField` | STATES-03; HARDEN-03 | id association, helper/error, invalid merge |
 | `graceful-page-loading.tsx` | `GracefulPageLoading` | STATES-07; HARDEN-13 | directory/card, readable loading, timeout source |
 | `inline-notice.tsx` | `InlineNotice` | STATES-08; HARDEN-07 | alert/status semantics and dismiss action |
@@ -74,3 +74,5 @@ Tests are in:
 
 - **UX-kit-HARDEN-27:** the single listed chat-17 unit regression was re-read against `DataTable` and `ScrollCue`. It preserves **exactly one** formatter call per row, rejects unsafe row links and renders an accessible caption while SSR lacks physical overflow. Its brittle implementation-string assertion was replaced with semantic caption/scroll-label patterns, and ordered formatter calls are now explicitly asserted. Requires a refreshed cloud runner to confirm passing; the published report is from an older commit.
 - **UX-kit-HARDEN-36:** hidden field detail authorization is **per-row**, not global to the table. Rows without `mobileDetail.canView(row)` do not run or serialize the sensitive cell formatter, disclose a fallback value on mobile, or render an unauthorized detail link. Mixed-permission assertions cover the leak and authorized row continuity.
+
+- **UX-kit-HARDEN-37:** `FilterBar` no longer requires `window.matchMedia` on embedded WebViews; it listens for resize and restores listener, body overflow and focus on closing. Source and SSR assertions are in `tests/unit/UX-kit-states-chat17.test.tsx`.

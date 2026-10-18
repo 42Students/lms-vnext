@@ -239,6 +239,23 @@ describe("IIT Dharwad College Admin Projects role journeys", () => {
     expect(source).toContain("notifyProjectMemberships(tx,createdEvent.id");
   });
 
+  it("PROJ-COL-REVOKE-02 checks live college admin authorization before archived project no-op or mutation",()=>{
+    const source=readFileSync("src/modules/projects/instance-service.ts","utf8");
+    const archive=source.indexOf("export async function archiveProjectInstance(");
+    const locked=source.indexOf('.for("update")',archive);
+    const persisted=source.indexOf('assertPersistedPlatformPermission(tx,context,"projects.manage"',archive);
+    const noOp=source.indexOf('if (project.status === "ARCHIVED")',archive);
+    const mutate=source.indexOf('.update(projectInstances)',archive);
+    const activity=source.indexOf("recordActivityEventInTransaction(",archive);
+    expect(archive).toBeGreaterThan(0);
+    expect(locked).toBeGreaterThan(archive);
+    expect(persisted).toBeGreaterThan(locked);
+    expect(noOp).toBeGreaterThan(persisted);
+    expect(mutate).toBeGreaterThan(noOp);
+    expect(activity).toBeGreaterThan(mutate);
+    expect(source).toContain("collegeId:scope.collegeId,organizationId:scope.organizationId");
+  });
+
   it("PROJ-COL-ORIGIN-01 protects project creation and mentor reassignment from cross-origin POSTs", () => {
     for (const route of ["src/app/api/projects/route.ts",
       "src/app/api/projects/reassign-mentor/route.ts"]) {

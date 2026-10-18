@@ -1,4 +1,5 @@
-import { and, asc, eq, isNull, ne } from "drizzle-orm";
+import { and, asc, eq, inArray, isNull, ne } from "drizzle-orm";
+import {placementDriveSelections} from "@/db/schema/placement-drive-selections";
 import { getDb } from "@/db/client";
 import { can, requirePermission, AuthorizationError } from "@/modules/permissions/policy";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
@@ -652,6 +653,17 @@ export async function closePlacementJob(
         "PLACEMENT_JOB_NOT_CLOSABLE",
       );
     }
+
+    // This direct close path predates staged company selections. A pending
+    // SELECTED/VERIFIED row must not be silently stranded under CLOSED.
+    // The job UPDATE holds the row lock, serializing a concurrent selection
+    // record/verify with this check and rollback.
+    const [unreleasedSelection] = await tx.select({id:placementDriveSelections.id})
+      .from(placementDriveSelections).where(and(
+        eq(placementDriveSelections.jobId,closed.id),
+        inArray(placementDriveSelections.status,["SELECTED","VERIFIED"]),
+      )).limit(1);
+    if(unreleasedSelection)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_CLOSABLE");
 
     await withdrawJobIssuedOffers(tx, closed.id, context.user.id, now);
     const closedEvent=await recordActivityEventInTransaction(
