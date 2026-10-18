@@ -1,4 +1,4 @@
-# Unit test failures, latest (CI 698eb9dd) (cloud CI 698eb9dd)
+# Unit test failures, latest (CI 372038db) (cloud CI 698eb9dd)
 
 Fix YOUR section: read the test, read the source it checks. Usually a merge dropped or reverted source, or the test expectation drifted. Restore the source behaviour (never delete features; only change the test if it is plainly wrong). Run nothing locally; reason carefully. Push to your -b branch, say done. Files with a chatN- prefix belong to lane N; `other` goes to chat-2.
 
@@ -21,17 +21,38 @@ Fix YOUR section: read the test, read the source it checks. Usually a merge drop
 - tests/unit/chat2-tpo-recruiter-leads-copy.test.ts
   - TPO recruiter leads visible legacy parity > TPO-recruiters-40 restores edit-action heading and legacy Save label
 - tests/unit/chat2-unsubscribe-graceful.test.ts
-  - Public unsubscribe confirmations > TPO-campaigns-public-16 shows a retryable inline error, not raw JSON form navigation
-- tests/unit/tpo-notice-safe-links-chat2.test.ts
-  - TPO notice link rendering > TPO-inbox-team-49 never turns escaped or syntactically invalid URLs into outbound buttons
+  - Public unsubscribe confirmations > TPO-campaigns-public-16 uses the same success response for used or unknown tokens
+- tests/unit/HR-BREAK-company-reports-page-01.test.ts
+  - HR-BREAK-company-reports-page-01: unauthorized, invalid, multiple college and retry > invalid college, stage or page params produce friendly
+- tests/unit/HR-BREAK-drives-01.test.ts
+  - HR-BREAK-drives-01: recruiter requests, retries and stale tabs > validates stale-state token and exact draft identity on recruiter request c
+- tests/unit/HR-BREAK-profile-01.test.ts
+  - HR-BREAK-profile-01: employer profile, grants and wrong-tenant visibility > fails closed on malformed phone, stale timestamp, invalid names 
+- tests/unit/HR-BREAK-round-results-page-01.test.ts
+  - HR-BREAK-round-results-page-01 recruiter job and shared candidate privacy > invalid job/round/outcome filter renders reset instead of issuin
+- tests/unit/HR-BREAK-tracker-pages-01.test.ts
+  - HR-BREAK-tracker-pages-01: reporter-owned routes and recovery > detail view shows own report, non-secret severity and return path
+- tests/unit/PROJ-BREAK-LEARNER-ROUTES-01.test.ts
+  - PROJ-BREAK-LEARNER-ROUTES-01 actual Next.js Learner task route actions > maps simulated expired/stale/cross-tenant backlog pull failure to f
+  - PROJ-BREAK-LEARNER-ROUTES-01 actual Next.js Learner task route actions > maps simulated expired/stale/cross-tenant own-task deletion failure
+  - PROJ-BREAK-LEARNER-ROUTES-01 actual Next.js Learner task route actions > maps simulated expired/stale/cross-tenant task progress failure to 
+  - PROJ-BREAK-LEARNER-ROUTES-01 actual Next.js Learner task route actions > maps simulated expired/stale/cross-tenant task status failure to fr
+- tests/unit/PROJ-BREAK-SA-security-and-resilience.test.ts
+  - Super Admin Projects adversarial controls > PROJ-BREAK-SA-03 denies lock/review transitions for archived or locked projects and stale submis
 - tests/unit/UX-attendance-calendar-scroll-01.test.ts
   - UX-attendance-calendar-scroll-01 large variable-width attendance calendar > admin-attendance-workspace preserves learner/day/mark grid with 
 - tests/unit/UX-college-college-batches-cohort-id-students-01.test.ts
   - UX-college-college-batches-cohort-id-students-01 provides keyboard-scrolling wide roster with fixed identity
 - tests/unit/UX-college-college-electives-slot-id-allocate-01.test.ts
   - UX-college-college-electives-slot-id-allocate-01 provides keyboard-scrolling wide roster with fixed identity
+- tests/unit/UX-college-college-electives-slot-id-offerings-offering-id-roster-01.test.ts
+  - UX-college-college-electives-slot-id-offerings-offering-id-roster-01 provides keyboard-scrolling wide roster with fixed identity
 - tests/unit/UX-college-overlays-01.test.ts
   - UX-college-overlays-01 college dialog behavior > use-college-confirmation delegates destructive confirmation to shared ConfirmDialog
+- tests/unit/UX-college-roster-data-tables-01.test.ts
+  - UX-college-roster-data-tables-01 responsive roster and faculty detail > /college/batches/[cohortId]/students keeps enrollment move actions o
+  - UX-college-roster-data-tables-01 responsive roster and faculty detail > /college/electives/[slotId]/allocate retains checked learner IDs ins
+  - UX-college-roster-data-tables-01 responsive roster and faculty detail > /college/faculty/[membershipId] retains every course and assignment 
 - tests/unit/UX-courses-attendance-overlays-01.test.ts
   - UX-courses-attendance-overlay-foundation-01 > shared modal enforces Escape/backdrop policy, focus restoration, scroll cues and accessible ti
 - tests/unit/UX-teach-courses-coverage-01.test.ts
@@ -51,6 +72,10 @@ Fix YOUR section: read the test, read the source it checks. Usually a merge drop
   - Faculty shared surface mobile and focus rollout > UX-teacher-reports-shared-02 uses both phone cards and desktop report rows with 44px pagin
 - tests/unit/inbound-mail-admin-service.test.ts
   - Super Admin inbound mail authorization > rejects wrong role before touching storage and ignores selected tenant scope
+- tests/unit/mentor-final-delivery-decision-model.test.ts
+  - Mentor final review constraints > does not re-review resolved or archived deliveries
+- tests/unit/mentor-task-transition-model.test.ts
+  - Mentor Board transitions > validates mandatory confirmation, ISO token and strict path
 - tests/unit/super-admin-colleges-empty-state.test.ts
   - Super Admin college empty state > uses the authorized collection rather than a global unscoped count
 - tests/unit/super-admin-colleges-navigation-parity.test.ts
@@ -78,6 +103,8 @@ Fix YOUR section: read the test, read the source it checks. Usually a merge drop
   - chat-3 Drives round 4 > TPO-drives-45 automatically applies 11:59 PM IST once, then preserves user edits and restored drafts
   - chat-3 Drives round 4 > TPO-drives-49 closed drive has immutable explanation, clone path and retriable read boundary
   - chat-3 Drives round 4 > TPO-drives-51 college administrator has a real separate create flow
+- tests/unit/college-admin-final-delivery-review.test.ts
+  - COL-projects-01 final delivery settlement > restricts decisions to submitted, and lock to submitted/approved
 - tests/unit/college-admin-read-first-boundaries.test.ts
   - College Admin read-first page boundaries > quizzes retains a page, loading and retry-capable error boundary
   - College Admin read-first page boundaries > resources retains a page, loading and retry-capable error boundary
@@ -91,17 +118,22 @@ Fix YOUR section: read the test, read the source it checks. Usually a merge drop
   - College People legacy audited page contracts > COL-people-20 Super Admin permission guards COLLEGE_ADMIN grant and revoke before writes
   - College People legacy audited page contracts > COL-people-24 mentor reassignment preserves selection and uses explicit confirmed legacy copy
   - College People legacy audited page contracts > COL-people-27 Faculty and Learner use responsive cards and bounded desktop table
+- tests/unit/college-project-delivery-review.test.ts
+  - COL-projects-14 workspace Delivery review > supports Accept/Request changes only from submitted and Lock from submitted or accepted
 - tests/unit/college-recurring-preview.test.ts
   - College recurring preview is IST-safe and bounded > truncates displayed error payloads
 - tests/unit/faculty-attendance-source-round5.test.ts
   - chat-11 faculty attendance gap closure verification > FAC-attendance-grades-02 guards all attendance dirty-mode, date, session and unload ch
 
 ## chat-4
-- tests/unit/chat4-college-academic-people-gap-closure.test.ts
-  - chat-4 College academic and people gap closure > COL-academic-setup-R03 links the required academic-period setup from guides and empty state
 - tests/unit/chat4-college-course-tabs-gap-closure.test.ts
   - chat-4 College Course Tabs gap closure > COL-course-tabs-17 permits only metadata in authorized admin content preview
   - chat-4 College Course Tabs gap closure > COL-course-tabs-27 shows Lessons, Progress, Assignments and Quizzes as mobile cards
+- tests/unit/chat4-college-ux-round3.test.ts
+  - Chat-4 college UX round 3 > UX-college-batches-cohortId-students-01 adds safe narrow-screen affordances
+- tests/unit/chat4-college-ux-round5.test.ts
+  - Chat-4 college UX round five > UX-college-electives-slotId-allocate-01 makes the layout or actions more readable on narrow screens
+  - Chat-4 college UX round five > UX-college-electives-slotId-offerings-offeringId-roster-01 makes the layout or actions more readable on narro
 - tests/unit/chat4-final-fac-courses-28.test.ts
   - FAC-courses-28 roster parity with secure image fallback > FAC-courses-28 makes a keyboard-operable, namespaced avatar preview and always-vis
 - tests/unit/chat4-final-sprint-tpo-recruiters-a.test.ts
@@ -112,6 +144,7 @@ Fix YOUR section: read the test, read the source it checks. Usually a merge drop
 - tests/unit/chat4-learner-home-courses-gap-closure.test.ts
   - chat-4 learner Home and Courses gap closure > LEARNER-home-courses-19 uses an in-page Delete this message dialog
 - tests/unit/chat4-super-admin-projects-gap-closure.test.ts
+  - chat-4 Super Admin Projects verified gap coverage > SA-placements-projects-55 uses the legacy workspaces search URL key, size 20 and page si
   - chat-4 Super Admin Projects verified gap coverage > SA-placements-projects-63 retains the verified Projects behavior
 - tests/unit/chat4-super-admin-tenants-modules-gap-closure.test.ts
   - chat-4 Super Admin Tenants and Modules verified source contracts > SA-tenants-modules-55 preserves the audited admin workflow
@@ -144,36 +177,30 @@ Fix YOUR section: read the test, read the source it checks. Usually a merge drop
   - chat-5 OPEN gap regression baselines > TPO-drive-workspace-27 partial baseline ? further implementation required
 
 ## chat-6
-- tests/unit/PROJ-BREAK-chat6-state-security.test.ts
-  - IIT Dharwad Projects breaker ? state, access, integrity, deadlines and files > PROJ-BREAK-file-01 uploading cannot succeed from transfer pro
-- tests/unit/chat6-college-placements-round3-ui.test.ts
-  - College Admin drive UI and graceful failure > COL-placements-25 renders selectable action-capable mobile application and drive cards
-- tests/unit/chat6-faculty-assessment-parity-batch.test.ts
-  - Faculty assessment legacy parity follow-up > FAC-assessments-14 saves routine drafts without redundant checkbox and confirm dialog
-- tests/unit/chat6-faculty-quiz-report-header-r06.test.ts
-  - Faculty quiz report legacy header > FAC-assessments-R06 shows the legacy Back link and Submitted, Average score, Questions and Due date metr
-- tests/unit/chat6-faculty-schedule-and-tracker-evidence-round17.test.ts
-  - chat-6 source-evidence gaps > SA-placements-projects-102 mounts authenticated Alt+B report drawer with captured page/browser/viewport contex
+- tests/unit/PROJ-BREAK-chat6-role-journeys.test.ts
+  - Projects IIT Dharwad ? cross-account navigation and denial breaker > PROJ-BREAK-pages-02 College Admin without an active selected membership
 - tests/unit/chat6-final-sprint-rec-home-drives-r05.test.ts
   - Final sprint recruiter applicant review accessibility > REC-home-drives-R05 traps focus in the native Drawer and closes with Escape before r
 - tests/unit/chat6-independent-finding-actions-round10.test.ts
   - Independent audit finding action workflow > SA-placements-projects-121 records version-checked finding edits and reason-required terminal st
 - tests/unit/chat6-people-phone-session-and-mobile-round6.test.ts
   - Chat-6 recruiter login and mobile layout safety > SA-academics-people-75 keeps create controls and scrolling course tables within mobile wid
-- tests/unit/chat6-recruiter-lifecycle-round3.test.ts
-  - Super Admin recruiter legacy lifecycle > SA-academics-people-109 offers suspend and reactivate with confirmation and session-safe archive
-  - Super Admin recruiter legacy lifecycle > SA-academics-people-114 restores recruiter accounts page search and college access copy
-- tests/unit/chat6-superadmin-course-catalogue-round4.test.ts
-  - chat-6 Super Admin selected-college course directory parity > SA-academics-people-62 shows scoped student visibility and lesson ordering wit
-- tests/unit/chat6-superadmin-course-entrypoints.test.ts
-  - Super Admin course in-tab entry points > SA-academics-people-77 links lessons assignments quizzes and progress to owning offering workspace
 - tests/unit/graceful-raw-error-scan.test.ts
   - new raw-error and mutation regression gate > GR-09 rejects new renderings of API codes or internal error messages
   - new raw-error and mutation regression gate > GR-31 inventories newly changed unguarded mutating components
 
 ## chat-7
+- tests/unit/chat7-college-assessment-export-service-weak.test.ts
+  - COURSES-WEAK-EXPORT-SERVICE-01 account-scoped export query and cap > cannot silently export more than 1000 rows, labels truncated set and ne
+  - COURSES-WEAK-EXPORT-SERVICE-01 account-scoped export query and cap > reads paginated results using the same current context/kind, returns qu
 - tests/unit/chat7-college-project-legacy-one-tab.test.ts
   - College Admin Projects legacy Workspaces and one tab strip > shows legacy Projects group and single Workspaces page heading
+- tests/unit/chat7-course-delivery-roster-weak.test.ts
+  - COURSES-WEAK-DELIVERY-ROSTER-01 exact College, Section and Elective enrolment gates > source query guards both paths by persisted ACTIVE use
+- tests/unit/chat7-course-resource-materials-weak.test.ts
+  - COURSES-WEAK-RESOURCE-MATERIALS-01 real resource lifecycle validation > permits only titled, credential-free HTTPS resources without fragmen
+- tests/unit/chat7-legacy-faculty-quiz-report-copy.test.ts
+  - Faculty QuizReportContent.jsx dev legacy headings and empty states > preserves dynamic report title and exact legacy section names
 - tests/unit/chat7-round3-mentor-basics.test.ts
   - chat-7 round 3 mentor access and state > MEN-projects-meetings-02 mentor workspace advertises pending loading
 - tests/unit/learner-placements-chat7-schedule-surface.test.ts
@@ -182,39 +209,45 @@ Fix YOUR section: read the test, read the source it checks. Usually a merge drop
   - Recruiter Home Drives source contracts > REC-home-drives-42 uses the native modal drawer for URL-selected applicant review
 
 ## chat-9
+- tests/unit/PROJ-BREAK-chat9-admin-role-journeys.test.ts
+  - IIT Dharwad Projects: College Admin access and lifecycle breaker > PROJ-BREAK-state-20 no review or lock can revive completed or archived pr
 - tests/unit/chat9-college-projects-round4-evidence.test.ts
-  - College Projects gap closure round 4 > COL-projects-23 uses responsive wrappers but retains browser width acceptance as open
-- tests/unit/chat9-final-SA-placements-projects-102.test.ts
-  - chat9 final quick-report launcher > SA-placements-projects-102 exposes the existing issue launcher in every authenticated shell without a ne
-- tests/unit/chat9-round6-project-risk-audit.test.ts
-  - College Projects risk and activity acceptance > COL-projects-23 ensures ten-tab workspace navigation is keyboard-scrollable at narrow widths
+  - College Projects gap closure round 4 > COL-projects-01 allows only valid final submission review and lock transitions
+- tests/unit/chat9-college-projects-template-catalogue.test.ts
+  - chat-9 College Projects template catalogue > COL-projects-08 renders template tags in both list and cards without introducing a new status
+- tests/unit/chat9-phase2-college-group-tabs.test.ts
+  - college group tabs exact legacy navigation labels > COL-academic-setup-13 keeps the academic-period overview reachable without inventing a l
+  - college group tabs exact legacy navigation labels > renders academic section labels in exact dev-legacy order
 - tests/unit/chat9-round9-recruiter-settings.test.ts
   - chat-9 round9 TPO recruiter and communication settings > TPO-settings-audit-54 requires a same-origin authenticated write and never treats d
+- tests/unit/chat9-super-admin-navigation-reachability.test.ts
+  - Super Admin 13-row sidebar grouped page reachability > every grouped tab is a real vNext Super Admin page with unique active state
 - tests/unit/chat9-tpo-settings-source-closure.test.ts
   - TPO settings audited source features > TPO-settings-audit-59 verifies partial implementation in src/components/placements/tpo-recruiter-gran
 - tests/unit/chat9-unknown-report-recovery.test.ts
   - TPO report unknown-route recovery > TPO-calendar-reports-53 announces Refreshing report instead of an unlabeled skeleton
 - tests/unit/proj-break-chat9-models.test.ts
-  - IIT Dharwad Projects adversarial admin/college models > PROJ-BREAK-exports-02 quoted commas, quotes and multiline fields do not create a new
+  - IIT Dharwad Projects adversarial admin/college models > PROJ-BREAK-state-03 approval/review/lock cannot mutate archived, locked or draft sub
 - tests/unit/proj-break-chat9-services.test.ts
   - IIT Dharwad Projects adversarial service and route contracts > PROJ-BREAK-races-05 version publish serializes concurrent archives and reassi
   - IIT Dharwad Projects adversarial service and route contracts > PROJ-BREAK-routing-01 all sampled project write routes reject foreign origins
   - IIT Dharwad Projects adversarial service and route contracts > PROJ-BREAK-ux-01 admin and college Project screens preserve explicit empty/de
+- tests/unit/ux-admin-chat9-batch-01.test.ts
+  - chat-9 last-third admin UX rollout, batch 01 > UX-admin-projects-01 preserves authorized route and accessible UX surface
 - tests/unit/ux-admin-chat9-coverage-closure.test.ts
   - chat-9 route coverage and native DataTable closure > UX-admin-route-coverage-04 every /admin last-third route has a named source contract an
-- tests/unit/ux-admin-chat9-scroll-motion.test.ts
-  - chat-9 last-third scroll and motion: hidden scrollbars require visible cues > UX-admin-scroll-motion-04 /admin/projects workspace table has 
-  - chat-9 last-third scroll and motion: hidden scrollbars require visible cues > UX-admin-scroll-motion-05 /admin/projects/templates/[templateI
-  - chat-9 last-third scroll and motion: hidden scrollbars require visible cues > UX-admin-scroll-motion-06 /admin/projects/submissions unsubmit
+- tests/unit/ux-admin-chat9-round9-legacy.test.ts
+  - chat-9 Round 9: legacy labels survive UX rollout > UX-admin-legacy-academic-01 keeps only ten academic tabs and routes the overview through 
+  - chat-9 Round 9: legacy labels survive UX rollout > UX-admin-projects-labels-01 preserves the original College Project copy and scope recover
 
 ## chat-11
+- tests/unit/tpo-company-memory-effect-retry.test.ts
+  - TPO Company Memory fetch lifecycle > clears previous data explicitly for a user-triggered retry
 - tests/unit/tpo-drive-workspace-s2-evidence-contracts.test.ts
   - Drive workspace S2 source-to-UI contracts > TPO-drive-workspace-27 provides an authorized modal and per-selection review queue
 - tests/unit/tpo-inbox-team-round2.test.ts
   - Chat-2 TPO Inbox + Team legacy verification round 2 > TPO-inbox-team-13 provides phone-friendly conversation cards and All conversations bac
-  - Chat-2 TPO Inbox + Team legacy verification round 2 > TPO-inbox-team-49 displays a scoped notice CTA only when it is a safe HTTPS link
 - tests/unit/tpo-notice-round4-verification.test.ts
-  - TPO placement announcement round-4 evidence > TPO-inbox-team-49 renders a safe button for notices with HTTPS destinations
   - TPO placement announcement round-4 evidence > TPO-inbox-team-50 has the legacy modal and paired optional button input
 - tests/unit/tpo-settings-primary-nav.test.ts
   - TPO-settings-audit-01 legacy primary Settings sections > keeps the ten legacy sections in original group order alongside linked destinations
@@ -232,39 +265,32 @@ Fix YOUR section: read the test, read the source it checks. Usually a merge drop
   - Chat13 Academic existing route and mutation contracts > SA-academics-people-39 academic tables have narrow screen horizontal scrolling
 - tests/unit/chat13-academic-graduation-capacity.test.ts
   - Super Admin graduation and class capacity > SA-academics-people-41 labels full classes and blocks full-class moves before the request
+- tests/unit/chat13-admin-first-third-audit.test.ts
+  - chat-13 Super Admin /admin first-third route source audit > SA-ADMIN-FIRST-08 retains exact academic lifecycle labels, including archived ba
 - tests/unit/chat13-placement-access-trace-gap31.test.ts
   - SA-tenants-modules-31 in-page learner explanation > SA-tenants-modules-31 offers college-scoped autocomplete with an accessible closeable dr
 - tests/unit/chat13-super-admin-academic-copy.test.ts
   - Super Admin Academic Setup legacy copy and defaults > SA-academics-people-36 formats persisted status enums as legacy-readable names
 
 ## chat-14
+- tests/unit/recruiter-chat14-resume-access.test.ts
+  - REC-home-drives-38 employer-shared private resume grants > REC-home-drives-38 avoids server-rendering object keys and requests signed link o
+- tests/unit/recruiter-chat14-round3.test.ts
+  - chat-14 recruiter reassigned batch 3 > REC-home-drives-50 uses readable, scoped offer columns and employment outcomes
+- tests/unit/recruiter-chat14-round4-ownership-private-review.test.ts
+  - chat-14 recruiter ownership and private review gap closure > REC-home-drives-38 never exposes roll number or email without an active relatio
+  - chat-14 recruiter ownership and private review gap closure > REC-home-drives-38 only projects verified college-authorized academic marks
+  - chat-14 recruiter ownership and private review gap closure > REC-home-drives-38 shares enrolled branch/phone only when college columns allow
 - tests/unit/ux-chat14-high-risk-contracts.test.ts
-  - chat-14 mentor and HR UX critical page contracts > UX-hr-company-reports-02 preserves phone cards and accessible desktop data reports
-  - chat-14 mentor and HR UX critical page contracts > UX-hr-profile-02 preserves recruiter profile mutations and read-only college access
-- tests/unit/ux-chat14-hr-01.test.ts
-  - chat-14 HR UX rollout batch 01 > UX-hr-hr-company-reports-01 retains recruiter UX and safe markup contracts
-- tests/unit/ux-chat14-hr-03.test.ts
-  - chat-14 HR UX rollout batch 03 > UX-hr-hr-profile-01 protects responsive route semantics
-- tests/unit/projects-phase2-exact-tabs.test.ts
-  - Phase2 exact legacy Projects labels + single tab strip > keeps exact Mentor labels and drops obsolete unassigned-task warning
-- tests/unit/projects-phase2-legacy-labels.test.ts
-  - exact legacy Mentor Projects copy > preserves exact legacy project tabs from the source catalogue
-
-## chat-15
-- tests/unit/chat15-assessment-submission-deadline.test.ts
-  - learner vendor assessment deadline source of truth > LEARNER-placements-37 and LEARNER-placements-41 expose safe test links with no inferred
-- tests/unit/chat15-offer-letter-and-placement.test.ts
-  - chat-15 learner offers and internship truth > LEARNER-placements-45 only reveals persisted safe HTTPS employer letters
-- tests/unit/chat15-quiz-table-legacy.test.ts
-  - Chat-15 learner quizzes table parity > LEARNER-learning-misc-16 presents the seven legacy quiz table columns and honest grade disclosure
-- tests/unit/learner-attendance-parity.test.ts
-  - learner attendance parity surface > keeps server-loaded course identity and explicit loading/error recovery
-- tests/unit/learner-learning-misc-gap-closure.test.ts
-  - Learner Learning Misc legacy gap evidence > LEARNER-learning-misc-36 attendance report restores legacy four column labels
+  - chat-14 mentor and HR UX critical page contracts > UX-hr-placements-jobs-jobId-02 distinguishes authorized applicant review, selection and o
+- tests/unit/ux-chat14-hr-02.test.ts
+  - chat-14 HR UX rollout batch 02 > UX-hr-hr-placements-jobs-jobId-01 guards recruiter responsive page source
+- tests/unit/UX-college-projects-create-01.test.ts
+  - UX-college-projects-create-01 /college/projects/create > keeps college membership scope before fetching assigned templates or showing creati
+- tests/unit/w03-project-admin-surfaces.test.ts
+  - W03 project admin daily-use surface parity > keeps workspace search, status and pagination on both admin accounts
 
 ## chat-16
-- tests/unit/chat16-final-sa-tenants-modules-25.test.ts
-  - SA-tenants-modules-25 inline college feature controls > SA-tenants-modules-25 renders independent college x module editors with explicit inh
 - tests/unit/chat16-gap-register-reconciliation-r7.test.ts
   - chat-16 centralized gap tracking reconciliation > chat-16 register includes exactly the 32 reassigned mentor and tracker gaps
 - tests/unit/chat16-round3-two-unit-regressions.test.ts
@@ -281,6 +307,12 @@ Fix YOUR section: read the test, read the source it checks. Usually a merge drop
   - College cross-audit fixes (independent chat-19) > COL-XA-03 batch-promotion retains a scrollable sticky identity column
   - College cross-audit fixes (independent chat-19) > COL-XA-03 batches/[cohortId]/students retains a scrollable sticky identity column
   - College cross-audit fixes (independent chat-19) > COL-XA-03 electives/[slotId]/allocate retains a scrollable sticky identity column
+  - College cross-audit fixes (independent chat-19) > COL-XA-03 electives/[slotId]/offerings/[offeringId]/roster retains a scrollable sticky ide
+  - College cross-audit fixes (independent chat-19) > COL-XA-03 faculty-assignment retains a scrollable sticky identity column
   - College cross-audit fixes (independent chat-19) > COL-XA-03 faculty/[membershipId] retains a scrollable sticky identity column
   - College cross-audit fixes (independent chat-19) > COL-XA-03 index retains a scrollable sticky identity column
+- tests/unit/chat19-college-cross-audit.test.ts
+  - chat-19 college UX cross-audit > COL-XA-09 keeps workspaces visible when optional template labels fail
+- tests/unit/chat19-college-source-coverage.test.ts
+  - chat-19 all /college route entry point source coverage > UX-college-source-coverage-02 verifies links into Projects are always scoped to /co
 
