@@ -35,6 +35,8 @@ describe("UX-hr-data-tables-chat15-01 responsive authorized data",()=>{
   expect(s).toContain("More details");
   expect(s).toContain("mobilePriority");
   expect(s).toContain("caption");
-  expect(s).toContain("overscroll");
+  const cue=source("src/components/ui/scroll-cue.tsx");
+  expect(cue).toContain("overscroll-x-contain");
+  expect(cue).toContain('data-scroll-fade="end"');
  });
 });
