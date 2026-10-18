@@ -100,11 +100,11 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
   <div className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
     <label className="grid min-w-40 flex-1 gap-1 text-xs font-semibold">Search
       <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
-       aria-label="Search resources" placeholder="Search title, description, file name, or link" className="min-h-10 rounded border border-border bg-background px-3"/>
+       aria-label="Search resources" placeholder="Search title, description, file name, or link" className=""/>
     </label>
     <label className="grid gap-1 text-xs font-semibold">Type
       <Select value={type} onChange={event=>setType(event.target.value)}
-        className="min-h-10 rounded border border-border bg-background px-3">
+        className="">
        <option value="ALL">All types</option><option value="LINK">Links</option>
        <option value="OTHER">Other</option>
        {(["FILE","DOCUMENT","CODE","NOTE","ENVIRONMENT"] as const).map(kind=>
@@ -113,7 +113,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
     </label>
     {mode!=="LEARNER"?<label className="grid gap-1 text-xs font-semibold">Visible to
       <Select value={visibility} onChange={event=>setVisibility(event.target.value)}
-       className="min-h-10 rounded border border-border bg-background px-3">
+       className="">
         <option value="ALL">Everyone and mentors</option>
         <option value="TEAM">Everyone</option><option value="MENTOR_ONLY">Mentors only</option>
       </Select>
@@ -121,7 +121,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
     {mode!=="LEARNER"?<>
       <label className="grid gap-1 text-xs font-semibold">Status
         <Select value={status} onChange={event=>setStatus(event.target.value)}
-          className="min-h-10 rounded border border-border bg-background px-3">
+          className="">
           <option value="ALL">All statuses</option><option value="ACTIVE">Active</option>
           <option value="DRAFT">Draft</option><option value="ARCHIVED">Archived</option>
         </Select>
@@ -132,14 +132,14 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
       </label>
       <label className="grid gap-1 text-xs font-semibold">Sprint
         <Select value={sprint} onChange={event=>setSprint(event.target.value)}
-          className="min-h-10 rounded border border-border bg-background px-3">
+          className="">
           <option value="">All sprints</option>
           {sprints.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}
         </Select>
       </label>
       <label className="grid gap-1 text-xs font-semibold">Task
         <Select value={task} onChange={event=>setTask(event.target.value)}
-          className="min-h-10 rounded border border-border bg-background px-3">
+          className="">
           <option value="">All tasks</option>
           {tasks.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}
         </Select>
