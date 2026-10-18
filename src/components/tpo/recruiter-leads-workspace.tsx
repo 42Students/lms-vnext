@@ -101,9 +101,9 @@ function friendlyError(status: number, payload: { error?: string }) {
   return "The request failed. Check your connection and try again.";
 }
 
-const inputStyle = "min-h-11 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground";
-const buttonStyle = "inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground hover:bg-surface-secondary disabled:cursor-not-allowed disabled:opacity-50";
-const primaryStyle = "inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50";
+const inputStyle = "min-h-11 sm:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3 py-2 text-sm text-foreground";
+const buttonStyle = "inline-flex min-h-11 sm:min-h-9 items-center justify-center rounded-[9px] border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground hover:bg-surface-secondary disabled:cursor-not-allowed disabled:opacity-50";
+const primaryStyle = "inline-flex min-h-11 sm:min-h-9 items-center justify-center rounded-[9px] bg-primary px-4 py-2 text-sm font-[650] text-on-primary hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50";
 
 export function RecruiterLeadsWorkspace({
   collegeId,
@@ -640,7 +640,7 @@ export function RecruiterLeadsWorkspace({
         </div>
       ) : (
         <>
-          <section aria-label="Needs doing" className="space-y-2 rounded-lg border border-border bg-surface p-4">
+          <section aria-label="Needs doing" className="space-y-2 border-b border-border py-4">
             <button type="button" aria-expanded={needsExpanded}
               className="flex min-h-11 w-full items-center justify-between gap-3 text-sm font-semibold text-foreground"
               onClick={()=>setNeedsExpanded(open=>!open)}>
@@ -673,7 +673,7 @@ export function RecruiterLeadsWorkspace({
             </Link>
             {!needsExpanded?<p className="text-xs text-muted-foreground">Show needs doing to review outreach priorities.</p>:null}
           </section>
-          <div className="flex flex-wrap gap-3 rounded-lg border border-border bg-surface p-4">
+          <div className="flex flex-wrap gap-3 border-b border-border py-4">
             <label className="min-w-48 flex-1 text-sm">
               Search name, company or contact
               <input className={inputStyle + " mt-1"} value={query} onChange={e => updateFilter("query",e.target.value)}
@@ -708,14 +708,14 @@ export function RecruiterLeadsWorkspace({
             {filterChips.length?<div role="group" aria-label="Active recruiter filters"
               className="flex flex-wrap gap-2">
               {filterChips.map(chip=><button type="button" key={chip.key}
-                className="rounded-full border border-border bg-primary-subtle px-3 py-1 text-xs text-body"
+                className="rounded-[9px]-full border border-border bg-primary-subtle px-3 py-1 text-xs text-on-primary"
                 title={"Clear "+chip.label+" filter"}
                 onClick={()=>updateFilter(chip.key,"ALL")}>
                 {chip.label}: {chip.value} ×
               </button>)}
             </div>:null}
             {filterOpen?<div id="engage-filter-panel" role="group" aria-label="Recruiter filters"
-              className="grid gap-3 rounded-lg border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-4">
+              className="grid gap-3 border-b border-border py-4 sm:grid-cols-2 xl:grid-cols-4">
               <label className="text-sm">Status
                 <select className={inputStyle+" mt-1"} value={statusFilter}
                   onChange={e=>updateFilter("status",e.target.value)}>
@@ -936,7 +936,7 @@ export function RecruiterLeadsWorkspace({
                     </div>},
                     {key:"Communication",header:"Communication",mobilePriority:"action",cell:company=>
                       <select aria-label={"Communication for "+company.name}
-                        className="min-h-11 rounded-md border border-border bg-surface px-2 text-base"
+                        className="min-h-11 rounded-[9px] border border-border bg-surface px-2 text-base"
                         value={communication[company.key]??deriveLegacyCompanyCommunication(company.drivesRan,
                           rows.filter(row=>company.people.some(person=>person.id===row.id)))}
                         disabled={!communicationReady}
