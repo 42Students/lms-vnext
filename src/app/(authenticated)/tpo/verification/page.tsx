@@ -4,24 +4,19 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {TpoVerificationPanel} from "@/components/verification/TpoVerificationPanel";
 import {getTpoVerificationQueue} from "@/modules/placements/tpo-verification-queue-service";
 import {listTpoBatches} from "@/modules/placements/tpo-batch-workspace-read-service";
-import {tpoVerificationQuerySchema,tpoVerificationHref} from "@/modules/verification/tpo-queue-server-model";
+import {parseTpoVerificationParams,tpoVerificationHref} from "@/modules/verification/tpo-queue-server-model";
 
 export const dynamic="force-dynamic";
 
 export default async function TpoVerificationPage({searchParams}:{searchParams:Promise<Record<string,string|string[]|undefined>>}){
  const params=await searchParams;
- const first=(key:string)=>Array.isArray(params[key])?params[key][0]:params[key];
- const parsed=tpoVerificationQuerySchema.safeParse({
-  tab:first("tab"),kind:first("kind"),waitingState:first("waitingState"),waitingSince:first("waitingSince"),
-  page:first("page"),pageSize:first("pageSize"),search:first("search"),
-  batchId:first("batchId")||undefined,branchId:first("branchId")||undefined,
- });
- if(!parsed.success)return <div className="space-y-3 p-5">
+ const parsed=parseTpoVerificationParams(params);
+ if(!parsed)return <div className="space-y-3 p-5">
   <h1 className="text-lg font-semibold">Invalid verification filters</h1>
   <p role="alert">No verification records were loaded. Choose a supported status or reset the filters.</p>
   <Link href="/tpo/verification" className="text-[var(--lms-teal-deep)] underline">Clear filters</Link>
  </div>;
- const query=parsed.data;
+ const query=parsed;
  const context=await getCurrentRequestContext();
  const queue=await getTpoVerificationQueue(context,query);
  const directory=queue.available&&queue.enabled&&queue.permitted?await listTpoBatches(context):null;
