@@ -106,4 +106,19 @@ describe("chat-13 TPO second-third cross-audit repairs",()=>{
    expect(s).not.toContain("window.confirm");
    expect(s).not.toContain("<table");
  });
+ it("UX-cross-tpo-second-C13-016 round import requests accessible confirmation before staging",()=>{
+  const s=read("src/components/placements/tpo-round-results-import.tsx");
+  expect(s).toContain("<ConfirmDialog");
+  expect(s).toContain('confirmLabel="Confirm and stage results"');
+  expect(s).toContain('preview.previewToken');
+  expect(s).not.toContain("window.confirm");
+ });
+ it("UX-cross-tpo-second-C13-017 bulk results remain two-step and cap 25",()=>{
+  const s=read("src/components/placements/tpo-bulk-round-result-recorder.tsx");
+  expect(s).toContain("<ConfirmDialog");
+  expect(s).toContain("pendingTotal > 25");
+  expect(s).toContain("stageSelected(true)");
+  expect(s).not.toContain("window.confirm");
+  expect(s).not.toContain("min-h-10");
+ });
 });
