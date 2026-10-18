@@ -55,12 +55,12 @@ export function CollegeLegacyDriveSettings({
         <p>{action.confirmation}</p>
         <div className="flex flex-wrap gap-3">
           <button type="button" disabled={busy} onClick={closeDrive}
-            className="min-h-10 rounded-md bg-primary px-4 text-on-primary">Yes</button>
+            className="min-h-11 rounded-md bg-primary px-4 text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Yes</button>
           <button type="button" disabled={busy} onClick={()=>setConfirmation(null)}
-            className="min-h-10 rounded-md border px-4">No</button>
+            className="min-h-11 rounded-md border px-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">No</button>
         </div>
       </div>:<button type="button" disabled={busy}
-        onClick={()=>setConfirmation("CLOSE")} className="min-h-10 rounded-md border px-4">
+        onClick={()=>setConfirmation("CLOSE")} className="min-h-11 rounded-md border px-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         {action.label}
       </button>}
     </div>:null}
@@ -68,13 +68,13 @@ export function CollegeLegacyDriveSettings({
       {confirmation==="REOPEN"?<div role="group" aria-label={reopen.confirmation} className="space-y-3">
         <p>{reopen.confirmation}</p>
         <button type="button" disabled={busy} onClick={()=>void reopenDrive()}
-          className="min-h-10 rounded bg-primary px-4 font-semibold text-on-primary">
+          className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           {busy?"Reopening…":"Yes, reopen"}
         </button>
         <button type="button" disabled={busy} onClick={()=>setConfirmation(null)}
-          className="ml-2 min-h-10 rounded border border-border px-4">Cancel</button>
+          className="ml-2 min-h-11 rounded border border-border px-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Cancel</button>
       </div>:<button type="button" disabled={busy} onClick={()=>setConfirmation("REOPEN")}
-        className="min-h-10 rounded border border-border px-4">{reopen.label}</button>}
+        className="min-h-11 rounded border border-border px-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{reopen.label}</button>}
     </div>:null}
     {feedback?<p role="status">{feedback}</p>:null}
   </section>;

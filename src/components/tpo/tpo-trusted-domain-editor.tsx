@@ -1,13 +1,15 @@
 "use client";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 export function TpoTrustedDomainEditor({domains}:{domains:readonly string[]}){
  const router=useRouter();
  const [domain,setDomain]=useState(""),[busy,setBusy]=useState(false),[status,setStatus]=useState("");
+ const [review,setReview]=useState<{action:"TRUST"|"REMOVE";value:string}|null>(null);
  async function change(action:"TRUST"|"REMOVE",value:string){
   const normalized=value.trim().toLowerCase().replace(/^@/,"");
   if(busy||!normalized)return;
-  if(!window.confirm(action==="TRUST"?"Trust @"+normalized+"? Only verified recruiters are eligible.":"Stop trusting @"+normalized+"?"))return;
+  // Confirmation happens in the focus-managed shared dialog.
   setBusy(true);setStatus("");
   try{
    const response=await fetch("/api/placements/tpo/trusted-domains",{method:"POST",
@@ -20,6 +22,7 @@ export function TpoTrustedDomainEditor({domains}:{domains:readonly string[]}){
      "Could not change the trusted domain.");
    }
    if(action==="TRUST")setDomain("");
+   setReview(null);
    setStatus(action==="TRUST"?"Domain trusted.":"Stopped trusting domain.");
    router.refresh();
   }catch(error){setStatus(error instanceof Error?error.message:"Could not save.");}
@@ -32,14 +35,21 @@ export function TpoTrustedDomainEditor({domains}:{domains:readonly string[]}){
    <input value={domain} onChange={event=>setDomain(event.target.value)} maxLength={253} placeholder="company.example"
     className="min-h-11 rounded border border-border px-3 text-sm"/></label>
   <button type="button" disabled={busy||domain.trim().length<4}
-   onClick={()=>void change("TRUST",domain)}
+   onClick={()=>setReview({action:"TRUST",value:domain})}
    className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">Trust @{domain.replace(/^@/,"")||"domain"}</button>
   <ul className="divide-y divide-border">{domains.map(item=><li key={item} className="flex min-h-12 items-center justify-between gap-3 py-2">
    <span className="break-all text-sm">@{item}</span>
-   <button type="button" disabled={busy} onClick={()=>void change("REMOVE",item)}
-    className="rounded border border-border px-3 py-2 text-sm text-primary-text disabled:opacity-50">Stop trusting</button>
+   <button type="button" disabled={busy} onClick={()=>setReview({action:"REMOVE",value:item})}
+    className="min-h-11 rounded border border-border px-3 py-2 text-sm text-[var(--lms-teal-deep)] disabled:opacity-50">Stop trusting</button>
   </li>)}</ul>
   {domains.length===0?<p role="status" className="text-sm text-muted-foreground">No explicit trusted domains.</p>:null}
   {status?<p role="status" className="text-sm">{status}</p>:null}
+  <ConfirmDialog open={review!==null}
+    onOpenChange={value=>{if(!value&&!busy)setReview(null);}}
+    title={review?.action==="REMOVE"?"Stop trusting @"+review.value+"?":"Trust @"+(review?.value.trim().replace(/^@/,"")??"")+"?"}
+    description={review?.action==="TRUST"?"Only verified recruiters are eligible.":undefined}
+    confirmLabel={review?.action==="REMOVE"?"Stop trusting":"Trust domain"}
+    pending={busy}
+    onConfirm={()=>{if(review)void change(review.action,review.value);}}/>
  </section>;
 }

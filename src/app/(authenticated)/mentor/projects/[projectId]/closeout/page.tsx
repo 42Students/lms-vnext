@@ -20,7 +20,7 @@ export default async function MentorProjectCloseoutPage({
     <PageHeader eyebrow="Mentor · Project" title="Project closeout"
       description={data.title+" · Current state "+data.status}
       actions={<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
-        className="rounded-md border border-border px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Delivery workspace
       </Link>} />
     <section className="rounded-xl border border-border bg-surface p-5">

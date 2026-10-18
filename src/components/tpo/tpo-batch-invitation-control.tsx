@@ -1,6 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {
   formatTpoBatchInviteSuccess,
   TPO_INVITATION_COPY,
@@ -33,9 +34,11 @@ export function TpoBatchInvitationControl(props: Props) {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [remindReview,setRemindReview]=useState(false);
+  const [confirmClear,setConfirmClear]=useState(false);
   const ready = props.eligible > 0 &&
     !props.invitedAt && !props.finishedAt;
   async function invite() {
+    if(busy)return;
     setError(""); setMessage("");
     if (!date) { setError(TPO_INVITATION_COPY.pickDate); return; }
     setBusy(true);
@@ -61,9 +64,9 @@ export function TpoBatchInvitationControl(props: Props) {
   if (props.finishedAt) return <p>{TPO_INVITATION_COPY.markFinished}</p>;
 
   async function saveDeadline(clear: boolean) {
+    if(busy)return;
     setError(""); setMessage("");
     if (!clear && !date) { setError(TPO_INVITATION_COPY.pickDate); return; }
-    if (clear && !window.confirm("Remove the registration deadline?")) return;
     setBusy(true);
     try {
       const response = await fetch("/api/placements/tpo/batches/" + props.batchId + "/invitation", {
@@ -79,8 +82,10 @@ export function TpoBatchInvitationControl(props: Props) {
           errors[body.error ?? ""] ?? "Could not save the deadline.");
       setMessage(clear ? "Deadline removed" : "Deadline moved");
       router.refresh();
+      return true;
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Could not save the deadline.");
+      return false;
     } finally { setBusy(false); }
   }
   async function remind(){
@@ -119,7 +124,7 @@ export function TpoBatchInvitationControl(props: Props) {
           {busy ? "Saving…" : deadlinePassed ? TPO_INVITATION_COPY.reopenAndTell : TPO_INVITATION_COPY.move}
         </button>
         <button type="button" disabled={busy || !props.deadline}
-          onClick={() => void saveDeadline(true)}
+          onClick={() => setConfirmClear(true)}
           className="min-h-11 rounded border border-border px-4 disabled:opacity-50">
           {TPO_INVITATION_COPY.clear}
         </button>
@@ -143,6 +148,9 @@ export function TpoBatchInvitationControl(props: Props) {
       </p> : null}
       {message ? <p role="status" className="text-sm">{message}</p> : null}
       {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
+      <ConfirmDialog open={confirmClear} onOpenChange={setConfirmClear}
+       title="Remove the registration deadline?" confirmLabel="Remove" pending={busy}
+       onConfirm={()=>{void saveDeadline(true).then(saved=>{if(saved)setConfirmClear(false);});}}/>
     </section>;
   }
   return <section className="space-y-3 rounded border border-border bg-surface p-4" aria-label="Invite batch">
