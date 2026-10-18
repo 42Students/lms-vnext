@@ -59,7 +59,9 @@ function presenceCheck(
   evidenceName: string,
   remediation: string,
 ): CollegeReadinessCheck {
-  if (count === null) {
+  // A count is trusted only when it is a nonnegative integer. A broken
+  // adapter, overflow or malformed aggregate must never make go-live green.
+  if (count === null || !Number.isSafeInteger(count) || count < 0) {
     return {
       id,
       label,
