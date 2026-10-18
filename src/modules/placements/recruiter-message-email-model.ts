@@ -26,6 +26,13 @@ export function safeRecruiterEmailMergeText(value:string,limit=4000){
  // Never leave a cut-off HTML character entity at the excerpt boundary.
  return escaped.slice(0,max).replace(/&(?:#[0-9]*|#x[0-9a-f]*|[a-z]*)?$/i,"");
 }
+/** Plain-text provider address name, not an HTML merge variable.
+ * Prevent CR/LF headers, bidirectional overrides and oversized recipient names.
+ */
+export function safeRecruiterEmailAddressName(value:string):string{
+ return value.replace(/[\\p{Cc}\\p{Cf}\\p{Zl}\\p{Zp}]+/gu," ")
+  .replace(/\\s+/gu," ").trim().slice(0,160);
+}
 export function safeRecruiterDigestMessages(messages:readonly {body:string}[]){
  return messages.slice(-3).map(row=>safeRecruiterEmailMergeText(row.body));
 }
