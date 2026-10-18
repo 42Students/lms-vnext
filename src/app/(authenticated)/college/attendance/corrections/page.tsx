@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import {DataTable} from "@/components/ui/data-table";
 import {ErrorState} from "@/components/ui/error-state";
 import {collegeCorrectionReadSchema} from "@/modules/attendance/college-correction-read-model";
 import {getCollegeCorrectionRead} from "@/modules/attendance/college-correction-read-service";
@@ -56,20 +57,15 @@ export default async function CollegeCorrectionReadPage({searchParams}:{searchPa
       {data.truncated?<p role="status" className="text-sm text-warning">More than 250 sessions match. Results are truncated; narrow the date range.</p>:null}
       {data.items.length===0?<p className="rounded-xl border border-border bg-surface p-6 text-sm text-body">
         No persisted scheduled sessions overlap this date range. This does not mean no attendance corrections occurred.
-      </p>:<div className="overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-surface">
-        <table className="w-full min-w-[45rem] text-left text-sm [&_th:first-child]:sticky [&_th:first-child]:left-0 [&_th:first-child]:z-10 [&_th:first-child]:bg-surface [&_td:first-child]:sticky [&_td:first-child]:left-0 [&_td:first-child]:z-10 [&_td:first-child]:bg-surface">
-          <thead className="sticky top-0 z-10 bg-surface"><tr><th className="p-3" scope="col">Session / class</th>
-            <th className="p-3" scope="col">Time (IST)</th>
-            <th className="p-3" scope="col">Attendance</th>
-            <th className="p-3" scope="col">Faculty window</th></tr></thead>
-          <tbody>{data.items.map(item=><tr key={item.id} className="border-t border-border">
-            <td className="p-3">{item.title} · {item.sectionName}</td>
-            <td className="p-3">{when(item.startsAt)} – {when(item.endsAt)}</td>
-            <td className="p-3">{item.attendanceStatus??"No attendance session row"}</td>
-            <td className="p-3">{item.facultyMarkingWindow.replaceAll("_"," ")}</td>
-          </tr>)}</tbody>
-        </table>
-      </div>}
+      </p>:<DataTable rows={data.items} getRowKey={item=>item.id}
+        caption="Recorded attendance correction windows"
+        columns={[
+          {key:"session",header:"Session / class",mobilePriority:"primary",cell:item=>item.title+" · "+item.sectionName},
+          {key:"time",header:"Time (IST)",mobilePriority:"secondary",cell:item=>when(item.startsAt)+" – "+when(item.endsAt)},
+          {key:"attendance",header:"Attendance",mobilePriority:"secondary",cell:item=>item.attendanceStatus??"No attendance session row"},
+          {key:"window",header:"Faculty window",mobilePriority:"secondary",cell:item=>item.facultyMarkingWindow.replaceAll("_"," ")},
+        ]}
+        empty={<p className="text-sm text-body">No persisted scheduled sessions overlap this date range.</p>}/>}
     </section>}
   </div>;
 }
