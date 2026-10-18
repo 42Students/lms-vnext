@@ -37,7 +37,7 @@
 | `src/modules/placements/tpo-bulk-action-confirm-service.ts` | `TpoBulkPreviewError` | `tests/unit/PROJ-BREAK-TPO-bulk-partial-audit-01.test.ts` | rejects stale token and reordered IDs | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-bulk-action-confirm-service.ts` | `confirmTpoBulkAction` | `tests/unit/PROJ-BREAK-TPO-bulk-partial-audit-01.test.ts` | partial rows, audit outage, undo only with receipt, replay invalidation | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-bulk-action-preview-service.ts` | `loadTpoBulkCurrent` | `tests/unit/chat12-tpo-bulk-preview-service-behavior.test.ts` | Actual service with mocked actor/DB: persisted role revoked before person reads, foreign learner skipped, source scoped actor; PostgreSQL + high-volume query count still pending | **BEHAVIOURAL/MOCKED DB** |
-| `src/modules/placements/tpo-bulk-action-preview-service.ts` | `previewTpoBulkAction` | `tests/unit/chat12-tpo-bulk-preview-service-behavior.test.ts` | Actual preview service signs exact authorized rows/order/versions, no-op rows skipped, forged action/IDs fail before I/O, stale role denied; PostgreSQL under concurrent actors pending | **BEHAVIOURAL/MOCKED DB** |
+| `src/modules/placements/tpo-bulk-action-preview-service.ts` | `previewTpoBulkAction` | `tests/unit/chat12-tpo-bulk-preview-service-behavior.test.ts` | Actual preview service signs exact authorized rows/order/versions, no-op rows skipped, forged action/IDs fail before I/O, stale role denied; 21-row ordered result with max eight active reads; PostgreSQL under concurrent actors pending | **BEHAVIOURAL/MOCKED DB** |
 | `src/modules/placements/tpo-companies-view-model.ts` | `buildTpoCompanyRows` | `tests/unit/chat12-tpo-company-directory-hardening.test.ts` | canonical IDs, duplicate offers, wrong relationship | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-companies-view-model.ts` | `filterTpoCompanyRows` | `tests/unit/chat12-tpo-company-directory-hardening.test.ts` | search and deterministic paging | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-companies-view-model.ts` | `buildTpoCompanyTimeline` | `tests/unit/chat12-tpo-company-directory-hardening.test.ts` | persisted events only, tie ordering | **BEHAVIOURAL** |
@@ -106,6 +106,8 @@
 | Production export | Test file | Evidence / remaining acceptance | Status |
 |---|---|---|---|
 | `src/modules/placements/company-share/company-history-service.ts` — `listCompanyShareHistory` | `tests/unit/chat12-tpo-company-share-history-behavior.test.ts` | Actual reader mocked DB: zero jobs return without queries, missing migration reports `ready:false`, persisted revocation/expiry/selection counts returned, static tenant join and 100-row limit; authentic tenant authorization is delegated to callers and needs end-to-end PostgreSQL proof | **BEHAVIOURAL/MOCKED DB** |
+
+- Actual Students bulk preview now uses an eight-wide bounded read window for up to 200 authorized learners; `chat12-tpo-bulk-preview-service-behavior.test.ts` verifies peak concurrency and signed output order without claiming database race proof. The confirm writer remains deliberately sequential for CAS/audit semantics.
 
 ## Critical outstanding integration tests
 
