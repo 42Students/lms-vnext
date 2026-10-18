@@ -22,7 +22,11 @@ vi.mock("@/db/client",()=>({getDb:()=>({
   if(table==="classes")state.classCount=projection.learnerCount as SQL;
   class Query {
    from(){return this;}
-   innerJoin(){return this;}
+   innerJoin(_target:unknown,condition:SQL){
+    const q=dialect.sqlToQuery(condition);
+    state.joins.push({table,sql:q.sql,params:q.params});
+    return this;
+   }
    leftJoin(_target:unknown,condition:SQL){
     const q=dialect.sqlToQuery(condition);
     state.joins.push({table,sql:q.sql,params:q.params});
@@ -69,8 +73,13 @@ describe("SA-ACADEMICS-BATCH-COUNT-01 scoped active batch learner census",()=>{
   expect(sql).toContain('"college_memberships"."status"');
   expect(sql).toContain('"learner_program_enrollments"."status"');
   expect(sql).toContain('"section_enrollments"."status"');
+  expect(sql).toContain('"membership_roles"."membership_id"');
+  expect(joins.flatMap(x=>x.params)).toContain("LEARNER");
   expect(joins.flatMap(x=>x.params)).toContain("ACTIVE");
   expect(joins.flatMap(x=>x.params)).toContain(collegeId);
+  const rosterWhere=state.joins.filter(x=>x.table==="roster");
+  expect(rosterWhere.map(x=>x.sql).join("\n")).toContain('"membership_roles"."role"');
+  expect(rosterWhere.flatMap(x=>x.params)).toContain("LEARNER");
  });
  it("SA-ACADEMICS-BATCH-EMPTY-03 skips private learner reads when no scoped Sections exist",async()=>{
   state.rows.classes=[];
