@@ -43,3 +43,17 @@
 ### Sign-off remains blocked
 
 No runtime checkout or authenticated app/CI runner is exposed in this session. Every new test is **authored/unrun**, not green. The canonical ledger still has extensive GAP rows (module exports, API handlers, pages); rendered meeting-notes coverage is only one page. More than 90% Projects branch coverage, two-writer races, expired sessions, real signed URLs, device accessibility, full mentor permission matrix, release-notification exactly-once and external reviewer approval are not verified. No IIT Dharwad release approval can be inferred.
+
+
+## New lead findings: IST calendar and history pagination (2026-10-18)
+
+| ID | Severity | Source risk / observed divergence | Fix commits | Regression | Release proof |
+|---|---|---|---|---|---|
+| PROJ-DEF-014-05 / PROJ-BREAK-MENTOR-21 | S1 scheduling integrity | `mentorMeetingScheduleError` accepted calendar-shaped strings by constructing a `Date` and checking only finiteness, so some runtimes normalize nonexistent IST wall dates (February 30, April 31, 24:00). The UI could show one time while persisting another. | `96cef5d8`, `76c0aa16` | `tests/unit/PROJ-BREAK-chat14-mentor-time-history.test.ts`: leap day, impossible dates, 23:59 IST, exact now/end order | Run full Vitest and real meeting HTTP/DB replay; **not executed** |
+| PROJ-DEF-014-06 / PROJ-BREAK-MENTOR-22 | S2 pagination resiliency | Review, task and team history exported pagination helpers accepted negative/NaN/infinite requested page, and team history accepted zero/huge page size. Callers normally validate URLs but helpers must not create invalid offsets on alternate direct calls. | `903f44fd`, `bc95f9c1`, `632a309c` | `tests/unit/PROJ-BREAK-chat14-mentor-time-history.test.ts`: direct-call abuse, query validation, normal 10/20 page sizes | Run cloud CI and DB bounded-offset integration; **not executed** |
+
+### Rolling chat-14 CI failures: source-shape contract reconciliation
+
+The rolling `docs/orchestrator/unit-failures-latest.md` listed seven failing chat-14 test files. This branch updated **assertions to preserve or strengthen the underlying safeguards rather than undoing the safer application code**: active `SUBMITTED` and column/college consent required before applicant PII or resume exposure; full verified-marks college visibility; `DataTable` mobile-priority/accessible `ScrollCue` semantics rather than removed local overflow markup; explicit `getProjectAdminCollegeId` scoped permission guard on create; parsed filters/error recovery and shared page controls for Projects admin surfaces. Fix test commits: `96986d6c`, `7d33e56f`, `5f7a99e1`, `df88f3bd`, `af6cc501`, `0ad65aca`, `d82e15ae`, `166f8296`. The cloud runner **has not verified these tests pass**; retain failure status until a new successful run.
+
+Release status remains **BLOCKED**: hundreds of ledger GAP symbols/pages/handlers still lack complete behavioural proof, PostgreSQL integration and cross-lane review are unavailable, and chat-6 draft update CAS and chat-13 membershipless Super Admin delivery lock actor migration remain unresolved.
