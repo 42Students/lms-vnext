@@ -50,12 +50,12 @@ export default async function TpoHome(){
  const [batchResult,operationsResult,pendingRequestCount,studentStats,unreadMessages,
   crmReady,collegeRules,placementTeam,teamThreads,weekEvents,profileRows]=await Promise.all([
    listTpoBatches(ctx).catch(()=>null),getPlacementTpoOperations(ctx,collegeId).catch(()=>null),
-   getPendingTpoRequestsCount(ctx),
-   getTpoStudentsIntelligence(ctx,{collegeId,page:1,pageSize:1}),
-   countTpoUnreadRecruiterMessages(ctx),tpoCrmTablesReady(),
-   getCollegePlacementRules(ctx,collegeId),
-   getTpoPlacementTeam(ctx,collegeId),
-   listMyTpoInternalThreads(ctx),
+   getPendingTpoRequestsCount(ctx).catch(()=>null),
+   getTpoStudentsIntelligence(ctx,{collegeId,page:1,pageSize:1}).catch(()=>null),
+   countTpoUnreadRecruiterMessages(ctx).catch(()=>null),tpoCrmTablesReady().catch(()=>false),
+   getCollegePlacementRules(ctx,collegeId).catch(()=>null),
+   getTpoPlacementTeam(ctx,collegeId).catch(()=>null),
+   listMyTpoInternalThreads(ctx).catch(()=>null),
    listPlacementCalendarEvents(ctx,{collegeId,from:placementCalendarDayKey(calendarNow),
     to:placementCalendarDayKey(weekEnd),includeDraftDeadlines:true}).catch(()=>null),
    getDb().select({displayName:users.displayName}).from(users)
@@ -69,7 +69,7 @@ export default async function TpoHome(){
  };
  const greeting=tpoHomeGreeting(calendarNow,profileRows[0]?.displayName);
  const pendingRequests=pendingRequestCount!==null?pendingTpoRequestsAction(pendingRequestCount):null;
- const optionalDataUnavailable=[pendingRequestCount,studentStats,unreadMessages,collegeRules,placementTeam,teamThreads].some(value=>value===null);
+ const optionalDataUnavailable=[batchResult,operationsResult,pendingRequestCount,studentStats,unreadMessages,collegeRules,placementTeam,teamThreads,weekEvents].some(value=>value===null)||!crmReady;
  const crmCounts=crmReady?await getTpoHomeCrmCounts(ctx,collegeId).catch(()=>null):null;
  const weekNext=(weekEvents?.events??[]).filter(event=>event.startsAt>=calendarNow&&
   (event.kind==="ROUND"||event.kind==="APPLICATION_DEADLINE"))
@@ -137,7 +137,7 @@ export default async function TpoHome(){
   registered:studentStats?.definitions.registrationsAvailable?studentStats.summary.placementPool:null,
   placedUnique:studentStats?.summary.placed??null,recruiterLeads:crmCounts?.leads??null,
   followUps:crmCounts?.dueFollowups??null,recruiterAccess:crmCounts?.pendingRecruiterAccess??null,
-  pendingRequests:pendingRequestCount??0,
+  pendingRequests:pendingRequestCount,
   messages:unreadMessages,teamAsks,teamMentions:null,
   teamUnread,
   upcoming:weekNext,calendarAvailable:weekEvents!==null,
