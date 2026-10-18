@@ -22,7 +22,7 @@ const organizationId="aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
 const otherOrganizationId="bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
 const ctx:RequestContext={
  user:{id:"actor",identityUid:"actor",platformStatus:"ACTIVE",systemRoles:["SUPER_ADMIN"]},
- membership:null,adminScope:{organizationId},
+ membership:null,adminScope:{organizationId,collegeId:null},
 };
 const csv=(...rows:string[])=>"name,code,city,state,country\n"+rows.join("\n");
 
