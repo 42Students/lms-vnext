@@ -63,9 +63,21 @@ expect(text).toContain("Requests");
 it("REC-home-drives-40 preserves the verified recruiter drive behavior",()=>{const text=src("src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx");
 expect(text).toContain("Discussion");
 });
-it("REC-home-drives-42 preserves the verified recruiter drive behavior",()=>{const text=src("src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx");
-expect(text).toContain("focusApplicantId");
-expect(text).toContain("aria-modal");
+it("REC-home-drives-42 uses the native modal drawer for URL-selected applicant review",()=>{
+ const page=src("src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx");
+ const recruiterDrawer=src("src/components/hr/recruiter-applicant-review-drawer.tsx");
+ const drawer=src("src/components/ui/drawer.tsx");
+ expect(page).toContain("focusApplicantId");
+ expect(page).toContain("<RecruiterApplicantReviewDrawer");
+ expect(recruiterDrawer).toContain("<Drawer open");
+ expect(recruiterDrawer).toContain('historyMode="route"');
+ expect(recruiterDrawer).toContain("router.replace(closeHref)");
+ // showModal creates a real modal dialog and supplies accessible modal
+ // semantics, inert background, focus containment and Escape handling.
+ expect(drawer).toContain("<dialog ref={ref}");
+ expect(drawer).toContain("modal.showModal()");
+ expect(drawer).toContain("onCancel={event =>");
+ expect(drawer).toContain("aria-labelledby={titleId}");
 });
 it("REC-home-drives-48 preserves the verified recruiter drive behavior",()=>{const text=src("src/app/(authenticated)/hr/drives/[jobId]/interview-slots/page.tsx");
 expect(text).toContain("Time blocks");
