@@ -11,6 +11,7 @@ import {
   issueUnsubscribeToken, verifyUnsubscribeToken, unsubscribeConfirmation,
 } from "@/modules/messaging/unsubscribe-model";
 import { isCampaignTemplateKey } from "@/modules/messaging/template-boundary-model";
+import { planTpoCampaignRecipients } from "@/modules/messaging/tpo-campaign-send-policy";
 
 const secret = "secure-hmac-secret".repeat(4);
 const claim = { version: 1 as const, recipientKey: "a".repeat(64), expiresAt: 2000 };
@@ -106,4 +107,25 @@ describe("chat-16 campaign source, filters, recipient consent, and IST time beha
     expect(isCampaignTemplateKey("")).toBe(false);
     expect(isCampaignTemplateKey(" bad space ")).toBe(false);
   });
+  it("T-S2-04 preview and send policy agree on whitespace, bounce and unsubscribe suppression precedence", () => {
+    const contacts = [
+      { ...baseContact, id: "lead-a", emailNorm: "  " },
+      { ...baseContact, id: "lead-b", emailNorm: "  ", inviteBouncedAt: new Date(0) },
+      { ...baseContact, id: "lead-c", emailNorm: "  ", unsubscribedAt: new Date(0) },
+      { ...baseContact, id: "lead-d", emailNorm: "  ", manualStage: "NOT_NOW" },
+      { ...baseContact, id: "lead-e", emailNorm: "eligible@example.org" },
+    ];
+    const preview = summarizeEngageAudience(contacts, "ALL_ELIGIBLE");
+    const dispatch = planTpoCampaignRecipients(contacts);
+    expect(preview).toMatchObject({
+      total: 5, eligible: 1, withoutEmail: 3,
+      unsubscribed: 1, bounced: 0, notNow: 0,
+    });
+    expect(dispatch.recipientIds).toEqual(["lead-e"]);
+    expect(dispatch.suppressed).toMatchObject({
+      NO_EMAIL: preview.withoutEmail, UNSUBSCRIBED: preview.unsubscribed,
+      BOUNCED: preview.bounced, NOT_NOW: preview.notNow,
+    });
+  });
+
 });
