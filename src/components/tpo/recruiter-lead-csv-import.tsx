@@ -1,7 +1,7 @@
+"use client";
 import {Dialog} from "@/components/ui/dialog";
 import {DataTable} from "@/components/ui/data-table";
 import {ScrollCue} from "@/components/ui/scroll-cue";
-"use client";
 
 import Link from "next/link";
 import {recruiterXlsxToCsv} from "@/modules/placements/tpo-lead-xlsx-import-model";

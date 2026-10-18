@@ -1,5 +1,5 @@
-import {Drawer} from "@/components/ui/drawer";
 "use client";
+import {Drawer} from "@/components/ui/drawer";
 import {apiFetch} from "@/lib/api-fetch";
 import Link from "next/link";
 import {tpoStudentDisplayLabel} from "@/modules/placements/tpo-student-display-label";
