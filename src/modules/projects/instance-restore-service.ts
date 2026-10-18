@@ -7,6 +7,7 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireProjectManageAccess} from "./access";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {ProjectsServiceError} from "./errors";
 import {restoreProjectInstanceInputSchema,restoredProjectStatus} from "./instance-restore-model";
 import {notifyActiveProjectMembers} from "./project-notification-service";
@@ -21,6 +22,12 @@ export async function restoreProjectInstance(context:RequestContext,projectIdInp
       .where(and(eq(projectInstances.id,scope.project.id),eq(projectInstances.collegeId,scope.collegeId)))
       .for("update").limit(1);
     if(!project)throw new ProjectsServiceError("PROJECT_NOT_FOUND");
+    // A stale tab can outlive College Admin or Super Admin role removal.
+    // Check the persisted actor inside the same locked restoration transaction
+    // so a revoked session cannot re-activate a previously archived workspace.
+    await assertPersistedPlatformPermission(tx,context,"projects.manage",{
+      organizationId:scope.organizationId,collegeId:scope.collegeId,
+    });
     if(project.status!=="ARCHIVED"||project.updatedAt.getTime()!==Date.parse(input.expectedUpdatedAt))
       throw new ProjectsServiceError("PROJECT_INVALID_STATE");
     const [mentor]=await tx.select({id:projectMembers.id}).from(projectMembers)

@@ -218,6 +218,62 @@ describe("PROJ-HARNESS role/tenancy and concurrent PostgreSQL fixture boundaries
     });
   });
 
+  it("PROJ-HARNESS-40 two same-college workspaces cannot mix task and project IDs", async () => {
+    await withProjectPg(pool, async db => {
+      const f = await actors(db);
+      const second = await createProjectFixture(db,f.own,f.author,f.mentor,f.learner);
+      const before = await count(db,"project_task_submissions");
+      await expect(createTaskSubmission(db,{...f.project,taskId:second.taskId},f.learner))
+        .rejects.toThrow(/task does not belong to this project/);
+      expect(await count(db,"project_task_submissions")).toBe(before);
+      const id = await createTaskSubmission(db,f.project,f.learner);
+      const rows = await db.query<{project_id:string; task_id:string}>(
+        "select project_id,task_id from project_task_submissions where id=$1",[id]);
+      expect(rows).toEqual([{project_id:f.project.projectId,task_id:f.project.taskId}]);
+    });
+  });
+
+  it("PROJ-HARNESS-41 only an active project mentor or college admin can coordinate meetings", async () => {
+    await withProjectPg(pool,async db=>{
+      const f=await actors(db);
+      const outsideMentor=await createPrincipal(db,f.own,["MENTOR"]);
+      await expect(createMeeting(db,f.project,f.learner,outsideMentor))
+        .rejects.toThrow(/mentor is not active on this project/);
+      const allowed = await createMeeting(db,f.project,f.learner,f.mentor);
+      expect(await db.query("select id from project_meetings where id=$1",[allowed]))
+        .toHaveLength(1);
+      await db.query("update project_members set can_mutate=false where project_id=$1 and membership_id=$2",
+        [f.project.projectId,f.mentor.membershipId]);
+      await expect(createMeeting(db,f.project,f.learner,f.mentor))
+        .rejects.toThrow(/mentor is not active on this project/);
+      expect(await count(db,"project_meetings")).toBe(1);
+      await expect(createMeeting(db,f.project,f.learner,f.author)).resolves.toBeTruthy();
+      expect(await count(db,"project_meetings")).toBe(2);
+    });
+  });
+
+  it("PROJ-HARNESS-42 another active project learner can submit the team's final draft", async () => {
+    await withProjectPg(pool,async db=>{
+      const f=await actors(db);
+      const teammate=await createPrincipal(db,f.own,["LEARNER"]);
+      await db.query(`
+        insert into project_members (project_id,membership_id,role,created_by_user_id)
+        values ($1,$2,'LEARNER',$3)`,[f.project.projectId,teammate.membershipId,f.author.userId]);
+      const draftId=await createFinalSubmission(db,f.project,f.learner);
+      await expect(submitFinalSubmission(db,draftId,f.outsider))
+        .rejects.toThrow(/active member/);
+      await submitFinalSubmission(db,draftId,teammate);
+      const rows=await db.query<{status:string;created_by_membership_id:string;submitted_by_membership_id:string}>(`
+        select status,created_by_membership_id,submitted_by_membership_id
+        from project_submissions where id=$1`,[draftId]);
+      expect(rows).toMatchObject([{
+        status:"SUBMITTED",created_by_membership_id:f.learner.membershipId,
+        submitted_by_membership_id:teammate.membershipId,
+      }]);
+      await expect(submitFinalSubmission(db,draftId,f.learner)).rejects.toThrow(/expected one draft/);
+    });
+  });
+
   it("PROJ-HARNESS-26 independent sessions contend for the same transaction advisory lock", async () => {
     const key = BigInt("0x" + randomUUID().replaceAll("-", "").slice(0, 15)).toString();
     await withTwoPgSessions(pool, async (first, second) => {

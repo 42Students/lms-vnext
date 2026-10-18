@@ -159,3 +159,14 @@ These rows establish tests for listed exports only. **Not exhaustive**: 319 acad
 | `readAdminCollegeSignInPolicy`, `saveAdminCollegeSignInPolicy`, `signInPolicyReadState`, `signInCapabilities`, `updateCollegeSignInSchema` | `tests/unit/chat4-super-admin-signin-and-history-guard.test.ts`: permission held through policy SELECT, strict method schema and expectedVersion, CAS/idempotent no-audit retry order, no-table, unconfigured, invalid policy | Persisted PostgreSQL device role revocation race |
 | `effectiveCollegeSignInMethod`, `effectiveCollegeSignInCapabilities` | `tests/unit/chat4-public-college-signin-policy-behaviour.test.ts`: real service against fake PG selects; host missing, staged table absent, policy row absent, EMAIL_ONLY/PHONE_ONLY enabled channel matrix, corrupt policy fails closed | Actual college host and browser sign-in route |
 | `collegeAdminHistoryCsv`, `MAX_ADMIN_HISTORY_EXPORT_ROWS` | `tests/unit/chat4-super-admin-signin-and-history-guard.test.ts`: IST event timestamps, output BOM, formula escaping and quotes, 100-event cap with truncation footer | Page CSV integration |
+
+
+## College tenant overview and readiness (chat-4, continued)
+
+| Export | Tests | Coverage / limitation |
+|---|---|---|
+| `getSuperAdminCollegeAtGlance` and `isCollegeAtGlanceCounts`, `displayedGlanceNumber` | `tests/unit/chat4-superadmin-at-glance-tenant.test.ts` | Tenant ID cross-organization checks, ACTIVE persisted user/membership/role count, bounded source query, revocation-safe transaction, nonnegative finite number parsing and truthful load failure; PostgreSQL snapshot integration still pending |
+| `evaluateCollegeReadiness` | `tests/unit/chat4-superadmin-college-readiness-behavior.test.ts` | 10 unique checks; READY only if all PASS, NOT_READY for verified failure, INCOMPLETE for unknown, archived parent fails; pure behavioural assertions |
+| `visibleReadinessChecks`, `parseSuperAdminReadinessParams` | same | Areas, failed/unknown/attention filters, duplicate keys, unknown statuses, cross-tenant query injection rejection |
+| `buildSuperAdminReadinessCsv` | same | Recorded checks only, CSV formula neutralization, correctly escaped quotes and full remediation text; production approval is NOT asserted |
+
