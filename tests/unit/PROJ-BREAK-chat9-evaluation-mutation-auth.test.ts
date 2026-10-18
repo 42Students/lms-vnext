@@ -7,12 +7,12 @@ const submissionId="22222222-2222-4222-8222-222222222222";
 const collegeId="33333333-3333-4333-8333-333333333333";
 const organizationId="44444444-4444-4444-8444-444444444444";
 const state=vi.hoisted(()=>({
-  access:"ADMIN" as "ADMIN"|"MENTOR",
+  access:"ADMIN" as "ADMIN"|"MENTOR"|"LEARNER",
   adminAllowed:true,
   mentorAllowed:true,
   projectStatus:"ACTIVE",
   submissionStatus:"APPROVED",
-  locks:0,checks:0,mentors:0,inserts:0,events:0,
+  locks:0,checks:0,mentors:0,inserts:0,events:0,transactions:0,
 }));
 vi.mock("@/modules/projects/access",()=>({
   requireProjectLifecycleAccess:async()=>({
@@ -33,6 +33,7 @@ vi.mock("@/modules/activity/service",()=>({
 vi.mock("@/db/client",()=>({
   getDb:()=>({
     transaction:async(run:(tx:unknown)=>Promise<unknown>)=>{
+      state.transactions+=1;
       let reads=0;
       const tx={
         select:()=>{
@@ -83,9 +84,18 @@ const valid={items:[{criterion:"Completion",score:8,maxScore:10}],summary:"Revie
 beforeEach(()=>{
   state.access="ADMIN";state.adminAllowed=true;state.mentorAllowed=true;
   state.projectStatus="ACTIVE";state.submissionStatus="APPROVED";
-  state.locks=0;state.checks=0;state.mentors=0;state.inserts=0;state.events=0;
+  state.locks=0;state.checks=0;state.mentors=0;state.inserts=0;state.events=0;state.transactions=0;
 });
 describe("IIT Dharwad Projects evaluation write: persisted role and grading integrity",()=>{
+  it("PROJ-BREAK-grading-09 a forged learner lifecycle scope never opens a grading transaction",async()=>{
+    state.access="LEARNER";
+    await expect(createProjectEvaluation(mentor(),projectId,submissionId,valid))
+      .rejects.toThrow("PROJECT_LIFECYCLE_ACCESS_DENIED");
+    expect(state.transactions).toBe(0);
+    expect(state.locks).toBe(0);
+    expect(state.inserts).toBe(0);
+    expect(state.events).toBe(0);
+  });
   it("PROJ-BREAK-grading-05 revoked Super Admin cannot grade after the page opened",async()=>{
     state.adminAllowed=false;
     await expect(createProjectEvaluation(admin(),projectId,submissionId,valid))

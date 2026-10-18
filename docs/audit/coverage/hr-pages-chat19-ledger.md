@@ -217,3 +217,33 @@ This is an independent TPO/HR workflow review; real clipboard permission denial,
 | ID | Export / provider | Behavioral test | Verification remaining |
 |---|---|---|---|
 | HR-BREAK-DIGEST-HEADER-16 | `safeRecruiterEmailAddressName` → `sendRecruiterMessageDigest` | `tests/unit/HR-BREAK-chat19-mail-digest-provider.test.ts`: CRLF/header spoof, Unicode bidi control and excessive name length normalized before provider payload, recipient email remains unchanged | Live ZeptoMail rendering/inbound reply transport integration |
+
+## HR Today aggregated action queue notification link
+
+| Gap | Scope and source | Behavioral evidence | Safety property |
+|---|---|---|---|
+| HR-BREAK-TODAY-NOTICES-17 | `buildRecruiterActionQueue` → notification card | `tests/unit/hr-today-action-queue-scoped.test.ts` | System notifications link to `/hr/notifications?collegeId=...&unreadOnly=true`, not `/recruiter/messages`. Conversations retain their own authorized thread deeplinks. |
+
+## Large-portfolio HR Today offer follow-up priority
+
+| ID | Source | Direct test | Cases and remaining integration |
+|---|---|---|---|
+| HR-BREAK-TODAY-OFFERS-18 | `prioritizeRecruiterOfferFollowups` and `listRecruiterTodayOfferActions` | `tests/unit/HR-BREAK-chat19-today-offer-priority.test.ts` | ISSUED priority over 40 history groups, exact 30-row cap, stable ordering, zero/NaN exclusion, no mutation, shortlist/college/job scoped SQL; full PostgreSQL fanout still requires cloud CI |
+
+## Recruiter Today college-selection URL hardening
+
+| ID | Route and source | Direct regression | Boundary |
+|---|---|---|---|
+| HR-BREAK-HOME-QUERY-19 | `/hr/home` server-page `querySchema` | `tests/unit/HR-BREAK-chat19-home-portfolio-proposals.test.ts` | Repeated collegeId parameter arrays are invalid and produce an actionable recovery state; no employer-grant or job reader called. |
+
+## Today route cross-principal session denial
+
+| ID | Export / entry | Behavioral coverage | Boundary |
+|---|---|---|---|
+| HR-BREAK-HOME-IDENTITY-20 | `HrHomePage` session check | `tests/unit/HR-BREAK-chat19-home-portfolio-proposals.test.ts` | Exact user/recruiter identity equality required before employer job, grant or discussion retrieval. |
+
+## HR persisted drive proposal route security
+
+| ID | Entry point | Direct tests | Scope |
+|---|---|---|---|
+| HR-BREAK-PROPOSALS-QUERY-21 | `/hr/drives/proposals` | `tests/unit/HR-BREAK-chat19-home-portfolio-proposals.test.ts` | Repeated college/page/search/sort values fail strict URL validation, mismatched recruiter identity redirects, unauthorized proposal-history service never called. |

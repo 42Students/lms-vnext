@@ -4,6 +4,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { DataTable } from "@/components/ui/data-table";
 import {collegeWorkspaceStatusLabel} from "@/modules/projects/college-workspace-status-label";
+import {formatProjectAdminUpdatedDateIst} from "@/modules/projects/project-admin-date-model";
 
 export type ProjectAdminWorkspaceListItem = {
   id: string;
@@ -157,12 +158,7 @@ export function ProjectAdminWorkspaceList({
 
           <p className="mb-0 mt-3 text-xs text-muted-foreground">
             Updated{" "}
-            {new Intl.DateTimeFormat(
-              "en-IN",
-              {
-                dateStyle: "medium",
-              },
-            ).format(item.updatedAt)}
+            {formatProjectAdminUpdatedDateIst(item.updatedAt)}
           </p>
 
           <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-4">
