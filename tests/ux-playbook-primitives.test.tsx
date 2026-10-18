@@ -4,7 +4,7 @@ import { Pagination, paginationWindow } from "@/components/ui/pagination";
 import { Tabs, tabNextEnabled } from "@/components/ui/tabs";
 import { avatarInitials } from "@/components/ui/avatar";
 import { fileSizeIsValid } from "@/components/ui/file-upload";
-import { DataTable } from "@/components/ui/data-table";
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StatTile } from "@/components/ui/stat-tile";
 
@@ -77,20 +77,18 @@ describe("UX playbook shared behaviour", () => {
   });
   it("RV-05 B-02 requires positive per-row detail authority to hide a field",()=>{
     const rows=[{id:"one",secret:"Visible without authority"}];
-    const base=[
-      {key:"id",header:"Student",mobilePriority:"primary" as const,cell:(row:{id:string;secret:string})=>row.id},
-      {key:"secret",header:"Secret",mobilePriority:"hidden" as const,
-        mobileHiddenReason:"Verified detail field",cell:(row:{id:string;secret:string})=>row.secret,
-        mobileDetail:{fieldKey:"secret",href:(row:{id:string;secret:string})=>"/learners/"+row.id,
-          canView:(_row:{id:string;secret:string})=>false}},
+    type Row = {id:string;secret:string};
+    const makeColumns=(allowed:boolean): DataTableColumn<Row>[] => [
+      {key:"id",header:"Student",mobilePriority:"primary",cell:row=>row.id},
+      {key:"secret",header:"Secret",mobilePriority:"hidden",
+        mobileHiddenReason:"Verified detail field",cell:row=>row.secret,
+        mobileDetail:{fieldKey:"secret",href:row=>"/learners/"+row.id,canView:()=>allowed}},
     ];
     const denied=renderToStaticMarkup(<DataTable rows={rows} getRowKey={row=>row.id}
-      empty={<p>No learners</p>} columns={base}/>);
+      empty={<p>No learners</p>} columns={makeColumns(false)}/>);
     expect(denied).toContain("More details");
     const allowed=renderToStaticMarkup(<DataTable rows={rows} getRowKey={row=>row.id}
-      empty={<p>No learners</p>} columns={[
-        base[0]!,{...base[1]!,mobileDetail:{...base[1]!.mobileDetail,canView:()=>true}},
-      ]}/>);
+      empty={<p>No learners</p>} columns={makeColumns(true)}/>);
     expect(allowed).toContain("Secret · View details");
   });
   it("E-05 100 rows serialize exactly one responsive table row each",()=>{
@@ -99,8 +97,8 @@ describe("UX playbook shared behaviour", () => {
     const html=renderToStaticMarkup(<DataTable rows={rows}
       empty={<p>No records in legacy role</p>} getRowKey={row=>row.id}
       columns={[{key:"id",header:"Identifier",mobilePriority:"primary",cell:formatter}]}/>);
-    expect((html.match(/<tr(?: |\\>)/g)??[])).toHaveLength(101);
-    expect((html.match(/<table\\b/g)??[])).toHaveLength(1);
+    expect((html.match(/<tr\b/g)??[])).toHaveLength(101);
+    expect((html.match(/<table\b/g)??[])).toHaveLength(1);
     expect(formatter).toHaveBeenCalledTimes(100);
   });
   it("UX-PLAYBOOK-07 pagination announces current page", () => {
