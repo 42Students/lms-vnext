@@ -122,9 +122,9 @@ export function TpoOfferLifecyclePanel({
           No offers currently match this action. Nothing will be changed.
         </p>
       ) : (
-        <div className="max-h-56 space-y-1 overflow-auto rounded-lg border border-border p-2">
+        <div tabIndex={0} role="group" aria-label="Eligible offers, scroll for more" className="max-h-56 min-h-0 space-y-1 overflow-auto overscroll-contain rounded-lg border border-border p-2 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
           {eligible.map((offer) => (
-            <label key={offer.id} className="flex min-h-10 items-center gap-3 px-2 text-sm">
+            <label key={offer.id} className="flex min-h-11 items-center gap-3 px-2 text-sm">
               <input
                 type="checkbox"
                 checked={ids.includes(offer.id)}
