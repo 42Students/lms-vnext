@@ -12,14 +12,8 @@ import {ProjectAdminWorkspacePageExport} from "@/components/projects/project-adm
 import { PageHeader } from "@/components/ui/page-header";
 import { listProjectAdminSnapshots } from "@/modules/projects/admin-insights-service";
 import { listAssignedProjectTemplates } from "@/modules/projects/template-service";
-
-function one(
-  value: string | string[] | undefined,
-) {
-  return Array.isArray(value)
-    ? value[0]
-    : value;
-}
+import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
+import { collegeProjectsQueryFromParams } from "@/modules/projects/college-projects-query-model";
 
 export default async function CollegeProjectsPage({
   searchParams,
@@ -32,8 +26,8 @@ export default async function CollegeProjectsPage({
   >;
 }) {
   const context = await getCurrentRequestContext();
-  const membership = context.membership;
-  if (!membership) {
+  const collegeId = getProjectAdminCollegeId(context);
+  if (!collegeId) {
     return <div className="space-y-4"><PageHeader title="Project workspaces"
      description="Select a college to continue."/>
      <p role="alert" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
@@ -44,27 +38,17 @@ export default async function CollegeProjectsPage({
   }
 
   const params = await searchParams;
-  const query: ProjectAdminCollectionQuery = {
-    q: one(params.q),
-    view:one(params.view)==="table"?"table":"cards",
-    status: one(
-      params.status,
-    ) as ProjectAdminCollectionQuery["status"],
-    page: Number(one(params.page) ?? 1),
-    pageSize: Number(
-      one(params.pageSize) ?? 25,
-    ),
-  };
+  const query = collegeProjectsQueryFromParams(params);
 
   const [result, templates] = await Promise.all([
     listProjectAdminSnapshots(
       context,
-      membership.collegeId,
+      collegeId,
       query,
     ),
     listAssignedProjectTemplates(
       context,
-      membership.collegeId,
+      collegeId,
     ),
   ]);
 
