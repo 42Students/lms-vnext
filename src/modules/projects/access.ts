@@ -85,6 +85,12 @@ export async function requireProjectReadAccess(
     !hasMembershipRole(context,"MENTOR")&&
     !hasMembershipRole(context,"LEARNER"))
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  // A revoked Mentor/Learner must not learn whether a private project ID
+  // exists. Preflight principal status before performing the object lookup.
+  if (!isSuperAdmin(context) && !hasMembershipRole(context,"COLLEGE_ADMIN") &&
+      (context.user.platformStatus !== "ACTIVE" ||
+       context.membership?.status !== "ACTIVE"))
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const scope =
     await loadProjectScope(projectIdInput);
 
