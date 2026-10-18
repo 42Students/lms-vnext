@@ -163,7 +163,7 @@ Each page path was opened and checked for literal `target="_blank"`, native dial
 |---|---:|---:|---:|---:|---|
 | /teacher | 36 | 1 (LX-11 shared) | 4 (LX-01, LX-05, LX-07, LX-17 shared) | 0 | PASS WITH FIXES — source only |
 | /teach | 2 | 0 | 1 (LX-05 shared) | 0 | PASS WITH FIXES — source only |
-| /learn | 43 | 2 (LX-10, LX-11) | 11 (LX-02/03/04/06/07/08/12/13/14/15/16 and LX-17 where shared) | 0 | PASS WITH FIXES — source only |
+| /learn | 43 | 2 (LX-10, LX-11) | 12 (LX-02/03/04/06/07/08/12/13/14/15/16/17) | 0 | PASS WITH FIXES — source only |
 | /quiz | 1 | 0 | 1 (LX-09) | 0 | PASS WITH FIXES — source only |
 | /dashboard | 1 | 0 | 0 | 0 | PASS — source only |
 | /notifications | 1 | 0 | 2 (LX-07, LX-17) | 0 | PASS WITH FIXES — source only |
