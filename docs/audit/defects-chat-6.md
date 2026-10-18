@@ -59,3 +59,14 @@ This connected GitHub session supports source fetches and commits but cannot run
 | AUTH-retention-01/02/03 | Coverage | Login challenge and session purge code lacked a route-specific failure/parameter regression. | Add behavioural fake-DB tests of deletion predicates, null rowCount and partial failure, plus browser notice tests (`83b3af7`). | `tests/unit/chat6-auth-retention-network.test.ts` | CI pending |
 
 The global `GR-09/GR-31` unit gate remains unverified: additional offenders may live in other lanes' components. No allowlist changes or scanner relaxations were made. Current auth ledger is `docs/audit/coverage/chat6-auth-sessions-ledger.md`.
+
+## Final delivery and file WAIT hardening follow-up
+
+| ID | Severity | Evidence | Fix | Test | Remaining |
+|---|---|---|---|---|---|
+| PROJ-BREAK-file-11 | S1 | After an expired WAIT read but before the transaction's status update, another request could successfully transition the file to READY. The loser still returned STORAGE_UPLOAD_EXPIRED, potentially prompting a duplicate upload. | Compare-and-swap returns the current READY winner and suppresses the expired failure (`51a32f5`). | `tests/unit/PROJ-BREAK-chat6-delivery-grade-notices.test.ts` (`6dec147`) | Real concurrent PG and object-store WAIT fault injection |
+| PROJ-BREAK-submissions-07 | S1 | Manual save, debounced autosave and submit were protected only by asynchronous React pending state. A rapid user sequence could dispatch overlapping PATCH/POST or submit an unsaved state. | Synchronous pendingRef serializes writes; `savedDeliverySubmissionReadiness` requires exact server-acknowledged snapshot (`0f90fcb`, `b5e4ffd`, `90bb21f`). | `tests/unit/PROJ-BREAK-chat6-saved-delivery-ui.test.ts` (`2e10611`) | Real mobile and stale-tab browser flows, version-aware draft updates |
+| PROJ-BREAK-submissions-08 | S2 | Native window.confirm for final delivery did not use shared focus-managed confirmation; React passed click events to a potential confirmation boolean. | Shared ConfirmDialog with explicit `submitDraft(true)` only on confirm; event-safe click handler (`e25a4eb`, `8c47136`). | `tests/unit/PROJ-BREAK-chat6-saved-delivery-ui.test.ts` | WebView Back/Escape E2E |
+| PROJ-BREAK-submissions-09 | S1 | Reopen after successful autosave could reset inputs to stale initial server props despite a newer acknowledged save, risking user-visible data loss. | Reset from latest persisted success snapshot, never old draft prop (`014d52d`). | `tests/unit/PROJ-BREAK-chat6-saved-delivery-ui.test.ts` | Full prop-refresh and multi-tab concurrency acceptance |
+
+**Explicit outstanding S1:** Final-delivery PATCH still has no server-mandatory optimistic version token. The client-only lock prevents same-tab overlap but cannot stop **two different devices** writing stale drafts. The Projects lead must coordinate the API/schema/UI version protocol and PostgreSQL race coverage before any IIT Dharwad release sign-off.
