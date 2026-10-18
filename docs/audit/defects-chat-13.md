@@ -178,3 +178,6 @@ Full Super Admin parity for membershipless submission locks requires the schema/
 
 
 | SA-REPORT-PACKAGE-08/09 | S1 / false placement compensation analytics | `bestAcceptedFullTimePackages` and detailed accepted full-time CTC selection checked `ACCEPTED` status and `FULL_TIME` job but **not** persisted offer kind. `placement_offers.kind` permits `LOI` and `OFFER`; the established placed predicate explicitly excludes LOI, yet a high LOI amount skewed summary/branch/company CTC and detailed CTC bands. | Filter actual `kind: OFFER` (or legacy omitted kind) before package calculations and detailed CTC; leave total offer records and event history intact. Authored source + two behavioral tests, unexecuted. | `tests/unit/chat13-placement-offer-vs-loi-compensation.test.ts` |
+
+
+| PROJ-BREAK-SA-40 | S2 / unactionable review queue | A PLANNED project could retain a previously SUBMITTED delivery version (e.g. after restore) and `deriveProjectRiskReasons` marked it `Pending review` although `canAdminSettleDelivery` categorically rejects review outside ACTIVE status. | Restrict pending-review reason to ACTIVE while retaining independent inactivity risk for PLANNED. State-machine behavioral tests added, not executed. | `tests/unit/PROJ-BREAK-SA-40-planned-submission-risk.test.ts` |
