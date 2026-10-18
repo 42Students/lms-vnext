@@ -17,12 +17,12 @@ export default async function TpoSelectionsPage({params}:{params:Promise<{jobId:
  try{data=await getTpoSelectionWorkspace(context,jobId);}
  catch(e){if(e instanceof PlacementsServiceError&&e.code==="PLACEMENT_JOB_NOT_FOUND")notFound();throw e;}
  const root="/tpo/placements/jobs/"+encodeURIComponent(jobId);
- return <div className="space-y-5">
+ return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="TPO · Drive workspace" title={data.job.title+" · Selections"}
    description="Record the company's selections, verify placement rules, and release the offers."/>
   <div className="flex flex-wrap gap-4 text-sm font-semibold">
-   <Link className="text-primary-text underline" href={root+"/rounds"}>Review completed rounds</Link>
-   <Link className="text-primary-text underline" href={root+"/offers"}>Open offer register</Link>
+   <Link className="text-[var(--lms-teal-deep)] underline" href={root+"/rounds"}>Review completed rounds</Link>
+   <Link className="text-[var(--lms-teal-deep)] underline" href={root+"/offers"}>Open offer register</Link>
   </div>
   {!data.storageReady?<div role="status" className="rounded-lg border border-border bg-surface p-5 text-sm text-body">
     <strong>Selections are not available yet.</strong> {data.pendingMessage}
