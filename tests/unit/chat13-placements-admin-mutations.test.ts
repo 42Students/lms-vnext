@@ -4,6 +4,7 @@ import {
  companyGlobalVerificationSchema, canVerifyGlobalCompany,
 } from "@/modules/placements/super-admin-company-verification-model";
 import { superAdminCollegeCompanyActionSchema } from "@/modules/placements/super-admin-college-company-action-model";
+import {companyMergeInputSchema} from "@/modules/placements/admin-company-merge-model";
 import { superAdminPublishedDriveEditSchema } from "@/modules/placements/super-admin-published-drive-edit-model";
 import {
  assertSuperAdminHrCompanyMatch, parseSuperAdminHrPageParams,
@@ -44,7 +45,10 @@ describe("chat-13 additional admin mutation and recruiter account security",()=>
   expect(service).toContain("sourceRelationships.some(r => r.collegeId !== acting.collegeId)");
   expect(service).toContain('throw new CompanyMergeError("MERGE_SOURCE_SHARED_OUTSIDE_COLLEGE")');
   expect(service).toContain('.for("update")');
-  expect(service).toContain("v.keepCompanyId !== v.mergeCompanyId");
+  const model=read("src/modules/placements/admin-company-merge-model.ts");
+  expect(model).toContain("value.keepCompanyId!==value.mergeCompanyId");
+  expect(companyMergeInputSchema.safeParse({keepCompanyId:id,mergeCompanyId:id,confirm:true}).success).toBe(false);
+  expect(companyMergeInputSchema.safeParse({keepCompanyId:id,mergeCompanyId:anotherId,confirm:true}).success).toBe(true);
   expect(service).toContain("recordActivityEventInTransaction(tx, context");
  });
 
