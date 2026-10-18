@@ -45,7 +45,12 @@ export function isExactTpoSelectionReplay(
   existing: readonly {applicationId:string;roleTitle:string;annualCtcInr:number|null;status:string}[],
   entries: readonly {applicationId:string;roleTitle:string;annualCtcInr:number|null}[],
 ): boolean {
+  // A repeated application cannot constitute a complete replay of a set of
+  // persisted selections. Never suppress recording/audit based on duplicates.
+  const entryIds = new Set(entries.map(entry=>entry.applicationId));
+  const existingIds = new Set(existing.map(row=>row.applicationId));
   return entries.length>0 && entries.length===existing.length &&
+    entryIds.size===entries.length && existingIds.size===existing.length &&
     entries.every(entry=>existing.some(row=>row.applicationId===entry.applicationId &&
       row.status==="SELECTED" && row.roleTitle===entry.roleTitle &&
       row.annualCtcInr===entry.annualCtcInr));
@@ -65,8 +70,14 @@ export function matchesTpoSelectionReleaseRevision(
   },
   expectedRecordedAt:string,
 ):boolean{
-  return Number.isFinite(current.recordedAt.getTime()) &&
-    current.recordedAt.toISOString()===expectedRecordedAt &&
+  // The API accepts offset-aware ISO dates. A +05:30 token and a Z token
+  // for the same instant describe the same persisted revision; textual ISO
+  // equality would incorrectly reject a valid, still-current selection.
+  const persistedInstant = current.recordedAt.getTime();
+  const expectedInstant = Date.parse(expectedRecordedAt);
+  return Number.isFinite(persistedInstant) &&
+    Number.isFinite(expectedInstant) &&
+    persistedInstant === expectedInstant &&
     current.applicationId===displayed.applicationId &&
     current.roleTitle===displayed.roleTitle &&
     current.annualCtcInr===displayed.annualCtcInr;

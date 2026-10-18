@@ -65,6 +65,21 @@ describe("TPO release — no internal errors leak in partial results",()=>{
   expect(matchesTpoSelectionReleaseRevision({...current,annualCtcInr:null},
     {...shown,annualCtcInr:null},token)).toBe(true);
  });
+ it("PLACEMENTS-SELECTION-CAS-05 treats offset-equivalent versions as identical but rejects different instants and terms",()=>{
+  const saved={recordedAt:new Date("2099-10-18T05:30:00.000Z"),applicationId:id,
+    roleTitle:"Graduate engineer",annualCtcInr:950000};
+  const displayed={applicationId:id,roleTitle:"Graduate engineer",annualCtcInr:950000};
+  const equivalent="2099-10-18T11:00:00.000+05:30";
+  expect(releaseSelectionsSchema.safeParse({action:"VERIFY_AND_RELEASE",confirmed:true,
+    selectionIds:[id],expectedRecordedAt:{[id]:equivalent}}).success).toBe(true);
+  expect(matchesTpoSelectionReleaseRevision(saved,displayed,equivalent)).toBe(true);
+  expect(matchesTpoSelectionReleaseRevision(saved,displayed,"2099-10-18T11:00:00.001+05:30")).toBe(false);
+  expect(matchesTpoSelectionReleaseRevision(saved,displayed,"bad")).toBe(false);
+  expect(matchesTpoSelectionReleaseRevision(saved,{...displayed,roleTitle:"Different job"},equivalent)).toBe(false);
+  expect(matchesTpoSelectionReleaseRevision(saved,{...displayed,annualCtcInr:950001},equivalent)).toBe(false);
+  const service=src("src/modules/placements/tpo-drive-selection-service.ts");
+  expect(service).toContain("!matchesTpoSelectionReleaseRevision(selection,selection,input.expectedRecordedAt[id])");
+ });
  it("PLACEMENTS-SELECTION-SEASON-06 locks the owning season before every selection mutation",()=>{
   const service=src("src/modules/placements/tpo-drive-selection-service.ts");
   const check=service.slice(service.indexOf("async function requireActiveTpoSelectionSeason"),service.indexOf("const pendingCode"));
