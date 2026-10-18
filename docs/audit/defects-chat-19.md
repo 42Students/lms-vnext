@@ -215,3 +215,9 @@ This is an independent unowned responsive UX pickup for the critical TPO/HR plac
 |---|---|---|---|---|---|
 | UX-SPILL-TPO-CLIP-03 | COVERAGE | `src/components/placements/tpo-request-page-clipboard.tsx` | Extracted immutable visible-row sorting and selected-row projection so clipboard output matches chosen sort order and stale IDs from prior pages cannot be copied. | `108622ce` | `tests/unit/UX-SPILL-chat19-tpo-request-clipboard.test.ts` (`e0c33c4c`) |
 | UX-SPILL-TPO-CLIP-04 | MAJOR | Same clipboard serializer | NEL (U+0085), vertical tabs and other Unicode control codes were not stripped by the narrow tab/CR/LF separator cleanup. Spreadsheet importers can treat them as row separators. Replace Unicode control and line/paragraph separators with spaces before formula neutralization; preserve the authorized visible-column restriction. | `cbc0d6e4` | Same direct unit suite (`5e2a2efa`) |
+
+## HR notifications stale-tab recovery
+
+| ID | Pre-fix severity | Source and defect | Fix | Commits | Regression |
+|---|---|---|---|---|---|
+| HR-BREAK-NOTIFICATIONS-02 | MAJOR | `listHrNotifications` accepted a syntactically valid old `page=9999` even after the selected college/unread filter shrank to one page. SQL offset returned zero rows and misleadingly said there were no matching notifications, although the database still contained authorized notifications. | After counting only authorized matching events, clamp the page to the final actual page before SQL offset and response metadata. Leave strict 1–10000 query validation and original bounds helper semantics unchanged. | `e0febf75`, `93d4d1ca` | `tests/unit/HR-BREAK-chat19-notification-stale-page.test.ts` (`0ec2ea1f`), `tests/integration/hr-notifications.test.ts` (`5d4b6fa6`) |
