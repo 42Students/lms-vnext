@@ -2,15 +2,16 @@ import "server-only";
 import {and,eq,inArray,isNotNull,isNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {
- courses,departments,courseOfferings,courseLearningPaths,courseLessons,
+ colleges,courses,departments,courseOfferings,courseLearningPaths,courseLessons,
  lessonContents,learnerContentProgress,collegeMemberships,membershipRoles,users,
- learnerProgramEnrollments,cohorts,programs,
+ learnerProgramEnrollments,cohorts as cohortTable,programs,
 } from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {getTpoPrepReadiness} from "./tpo-configuration-read-service";
 import {getTpoCommunicationSettings} from "./tpo-communication-settings-service";
 import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 import {AuthorizationError} from "@/modules/permissions/policy";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {validateTpoPrepLearnerPairs,hasEveryScopedTpoPrepLearner} from "./tpo-prep-learner-scope-model";
 import {tpoPrepConfigSchema} from "./tpo-configuration-model";
 import {
@@ -31,6 +32,18 @@ export async function readTpoLearnerPrepOutcomes(
  const requested=validateTpoPrepLearnerPairs(learners);
  if(!requested)throw new AuthorizationError("placements.read");
  const db=getDb();
+ // A role may have been revoked while lengthy learner-progress queries run.
+ // Return only after validating the active tenant and persisted actor under
+ // SHARE locks; unavailable and unconfigured results must also be checked.
+ const deliver=async(available:boolean)=>db.transaction(async tx=>{
+  const [college]=await tx.select({organizationId:colleges.organizationId,status:colleges.status})
+   .from(colleges).where(eq(colleges.id,collegeId)).for("share").limit(1);
+  if(!college||college.status!=="ACTIVE")throw new AuthorizationError("placements.read");
+  await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+   collegeId,organizationId:college.organizationId,
+  });
+  return {available,outcomes};
+ });
  // A caller-supplied membership ID is never evidence of college ownership.
  // Require the actual learner role, active platform identity, active college
  // membership and recorded (active or completed) matching cohort enrollment.
@@ -44,9 +57,9 @@ export async function readTpoLearnerPrepOutcomes(
    eq(membershipRoles.membershipId,collegeMemberships.id),
    eq(membershipRoles.role,"LEARNER"),
   ))
-  .innerJoin(cohorts,eq(cohorts.id,learnerProgramEnrollments.cohortId))
+  .innerJoin(cohortTable,eq(cohortTable.id,learnerProgramEnrollments.cohortId))
   .innerJoin(programs,and(eq(programs.id,learnerProgramEnrollments.programId),
-   eq(cohorts.programId,programs.id)))
+   eq(cohortTable.programId,programs.id)))
   .innerJoin(departments,eq(departments.id,programs.departmentId))
   .where(and(
    eq(collegeMemberships.collegeId,collegeId),
@@ -65,11 +78,11 @@ export async function readTpoLearnerPrepOutcomes(
   getTpoPrepReadiness(context),getTpoCommunicationSettings(context),
  ]);
  const config=tpoPrepConfigSchema.safeParse(stored.config);
- if(!stored.ready||!communication.ready||!config.success)return {available:false,outcomes};
+ if(!stored.ready||!communication.ready||!config.success)return deliver(false);
  const ids=config.data.courseIds;
  if(!ids.length){
   for(const row of learners)outcomes.set(row.membershipId,"UNCONFIGURED");
-  return {available:true,outcomes};
+  return deliver(true);
  }
  const requestedCohortIds=requested.cohortIds;
  const contents=await db.select({
@@ -95,7 +108,7 @@ export async function readTpoLearnerPrepOutcomes(
    inArray(courseOfferings.courseId,ids),
    inArray(courseOfferings.cohortId,requestedCohortIds),
   )).limit(5001);
- if(contents.length>5000)return {available:false,outcomes};
+ if(contents.length>5000)return deliver(false);
  const contentIds=[...new Set(contents.map(row=>row.contentId))];
  const complete=new Set<string>();
  if(contentIds.length){
@@ -130,5 +143,5 @@ export async function readTpoLearnerPrepOutcomes(
    progressThresholdPct:communication.prepThresholdPct,
   },evidence));
  }
- return {available:true,outcomes};
+ return deliver(true);
 }

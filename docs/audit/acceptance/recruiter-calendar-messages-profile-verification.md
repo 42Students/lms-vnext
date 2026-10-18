@@ -239,3 +239,8 @@ Job listing, hiring rounds, private candidates and interview blocks now use pers
 ## Chat-15 HR-SELF-GRANTS-53 and UX-CHAT15-SERVER-52 (2026-10-18)
 
 The recruiter profile's college-access overview no longer describes expired or unverified grants as active when its session context remains cached. The persisted query checks verification, future validity and the actor's exact college-company relationship. `tests/unit/chat15-hr-self-grants-53.test.ts` covers wrong recruiter, no grants, wrong college and an authorized private-contact-free row. `tests/unit/chat15-hr-tracker-page-render-52.test.tsx` renders real recruiter Drives and tracker My Reports pages across denial, outage, failed load, empty and authorized data. Authenticated browser and PostgreSQL expiry validation remain open. Tests authored, not executed.
+
+
+## UX-HR-BROWSER-57 Recruiter role mobile browser suite
+
+The Playwright suite `tests/e2e/chat15-hr-recruiter-responsive-57.spec.ts` navigates authenticated employer Today, Drives, Calendar, Messages, Company & Team, Profile, Notifications and Hiring activity at 320px and 390px, checking headings, no document overflow, no framework overlay and no raw user-facing errors. It also signs in as a Learner and expects redirect to Dashboard on HR routes and an arbitrary pasted recruiter job ID. Tests are gated on the repository's existing E2E_AUTH_ENABLED / E2E_AUTH_SECRET disposable fixture, and are **not locally executed**. Browser and CI proof remain open.

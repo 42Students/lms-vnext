@@ -36,6 +36,8 @@ import { decidePlacementScreening } from "@/modules/placements/screening-service
 import { recordTpoDriveSelections,verifyAndReleaseTpoSelections } from "@/modules/placements/tpo-drive-selection-service";
 import {getTpoDriveClosePreview,closeTpoDriveWithPreview} from "@/modules/placements/tpo-drive-close-preview-service";
 import {recordTpoOfferLifecycle} from "@/modules/placements/tpo-offer-lifecycle-service";
+import {getTpoDriveOfferRegister,getTpoDriveOfferRegisterCsv} from "@/modules/placements/tpo-drive-offer-register-service";
+import {getTpoOfferEvidence} from "@/modules/placements/tpo-offer-evidence-service";
 import {sweepExpiredPlacementOffers} from "@/modules/placements/placement-offer-expiry-sweep-service";
 import {getTpoWaitlistPreview,offerToNextWaitlisted} from "@/modules/placements/tpo-waitlist-promotion-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
@@ -324,6 +326,51 @@ describe("Placement P8 offers and joining", () => {
     expect(after.rows[0]?.count).toBe(0);
   });
 
+  it("TPO-2ND-PAGE-OFFERS-DB-01 protects live register and export against a foreign-college actor",async()=>{
+    const {job,application}=await preparePassedApplication();
+    const offer=await issuePlacementOffer(tpo,application.id,{
+      roleTitle:"Systems engineer",annualCtcInr:900_000,
+    });
+    const own=await getTpoDriveOfferRegister(tpo,{jobId:job.id,status:"ALL"});
+    expect(own.rows.some(row=>row.id===offer.id)).toBe(true);
+    const exported=await getTpoDriveOfferRegisterCsv(tpo,{jobId:job.id,status:"ALL"});
+    expect(exported.csv).toContain(offer.id);
+    const foreign:RequestContext={...tpo,membership:{
+      ...tpo.membership!,id:SEED_IDS.facultyCollegeBMembership,collegeId:SEED_IDS.collegeB,
+    }};
+    for(const query of [
+      getTpoDriveOfferRegister(foreign,{jobId:job.id,status:"ALL"}),
+      getTpoDriveOfferRegisterCsv(foreign,{jobId:job.id,status:"ALL"}),
+    ]){
+      await expect(query).rejects.toMatchObject({code:"PLACEMENT_JOB_NOT_FOUND"});
+    }
+    const state=await pool.query<{status:string}>(
+      "select status from placement_offers where id=$1",[offer.id]);
+    expect(state.rows).toEqual([{status:"ISSUED"}]);
+  });
+
+  it("TPO-2ND-PAGE-OFFER-EVIDENCE-DB-02 rejects a real offer ID paired with a different drive",async()=>{
+    const first=await preparePassedApplication();
+    // Same-college job identity is enough to prove the offer/job linkage.
+    // Do not seed another application or collide on the fixture company name.
+    const secondJob=await createPlacementJob(tpo,{
+      ...publishableJobTerms,collegeId:SEED_IDS.collegeA,
+      companyRelationshipId:first.company.relationship.id,
+      title:"Unrelated offer evidence job",description:"Drive identity isolation",
+      employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL",
+    });
+    const issued=await issuePlacementOffer(tpo,first.application.id,{
+      roleTitle:"Offer provenance engineer",annualCtcInr:800_000,
+    });
+    const correct=await getTpoOfferEvidence(tpo,{jobId:first.job.id,offerId:issued.id});
+    expect(correct.offer.id).toBe(issued.id);
+    await expect(getTpoOfferEvidence(tpo,{jobId:secondJob.id,offerId:issued.id}))
+      .rejects.toMatchObject({code:"PLACEMENT_OFFER_NOT_FOUND"});
+    const untouched=await pool.query<{status:string}>(
+      "select status from placement_offers where id=$1",[issued.id]);
+    expect(untouched.rows).toEqual([{status:"ISSUED"}]);
+  });
+
   it("PLACEMENTS-IDOR-01 refuses a wrong-college TPO, learner issuing an offer and TPO self-acceptance", async () => {
     const { job, application } = await preparePassedApplication();
     const foreignTpo: RequestContext = {
@@ -447,6 +494,29 @@ describe("Placement P8 offers and joining", () => {
     const stillOne=await pool.query<{count:number}>(
       "select count(*)::integer as count from placement_drive_selections where job_id = $1",[job.id]);
     expect(stillOne.rows[0]?.count).toBe(1);
+  });
+
+  it("PLACEMENTS-CLOSE-WAIT-12 DB cannot close between waitlist seat reservation and offer issuance",async()=>{
+    const {job,application,round}=await preparePassedApplication();
+    await pool.query(`
+      insert into placement_waitlist_promotions(
+        job_id,round_id,application_id,seat_number,waitlist_rank,reason,promoted_by_user_id
+      ) values($1,$2,$3,1,1,'TPO reserved the next available offer seat',$4)`,[
+        job.id,round.id,application.id,SEED_IDS.facultyUser,
+      ]);
+    const preview=await getTpoDriveClosePreview(tpo,job.id);
+    expect(preview.pendingSelections).toBe(0);
+    expect(preview.pendingPromotions).toBe(1);
+    expect(preview.issuedOffers).toBe(0);
+    expect(preview.canClose).toBe(false);
+    await expect(closeTpoDriveWithPreview(tpo,job.id,{
+      action:"CLOSE",confirmed:true,expectedUpdatedAt:preview.expectedUpdatedAt,
+      expectedCounts:preview.counts,
+      reason:"An unissued waitlist offer must prevent premature closure",
+    })).rejects.toMatchObject({code:"PLACEMENT_JOB_NOT_CLOSABLE"});
+    const stored=await pool.query<{status:string}>(
+      "select status from placement_jobs where id=$1",[job.id]);
+    expect(stored.rows).toEqual([{status:"PUBLISHED"}]);
   });
 
   it("PLACEMENTS-WAIT-RACE-06 DB never releases two offers for concurrent identical waitlist previews",async()=>{
