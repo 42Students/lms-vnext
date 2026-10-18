@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -48,6 +48,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
   const [outcome, setOutcome] = useState<Outcome>("CONTACTED");
   const [doneNote, setDoneNote] = useState("");
   const [pending, setPending] = useState(false);
+  const inFlightRef=useRef(false);
   const [confirmCreate,setConfirmCreate]=useState(false);
   const [confirmComplete,setConfirmComplete]=useState<DueRow|null>(null);
   const [error, setError] = useState("");
@@ -71,12 +72,14 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
   }
 
   async function create() {
+    if(inFlightRef.current||pending)return;
     let parsedDue:Date|null=null;
     try{parsedDue=dueLocal?new Date(calendarLocalIstToOffset(dueLocal)):null;}catch{parsedDue=null;}
     if (!leadId || !parsedDue || Number.isNaN(parsedDue.getTime())) {
       setError("Select a recruiter and a valid follow-up date and time.");
       return;
     }
+    inFlightRef.current=true;
     setPending(true); setError(""); setSuccess("");
     try {
       await post("/api/placements/tpo/follow-up-queue", {
@@ -88,10 +91,11 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Follow-up scheduling failed.");
-    } finally { setPending(false); }
+    } finally { inFlightRef.current=false;setPending(false); }
   }
 
   async function complete(row: DueRow) {
+    if(inFlightRef.current||pending)return;
     if (!doneNote.trim()) {
       setError("Record a brief outcome note before completing the follow-up.");
       return;
@@ -111,7 +115,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Follow-up completion failed.");
-    } finally { setPending(false); }
+    } finally { inFlightRef.current=false;setPending(false); }
   }
 
   return (
