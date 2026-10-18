@@ -376,6 +376,7 @@ export async function createMeeting(db: PgHarness, project: ProjectFixture,
   learner: PrincipalFixture, author: PrincipalFixture): Promise<string> {
   await requireProjectLearner(db, project.projectId, learner);
   await requireProjectCollegeActor(db, project.projectId, author);
+  await requireFixtureCollegePrincipal(db, author.collegeId!, author, ["COLLEGE_ADMIN","MENTOR"]);
   const [row] = await db.query<{id:string}>(`
     insert into project_meetings
       (project_id,title,starts_at,ends_at,time_zone,requested_by_membership_id,created_by_user_id)
@@ -442,6 +443,10 @@ export async function createPlacementCandidateFixture(
   if (job?.college_id !== learner.collegeId) {
     throw new Error("PROJ-HARNESS: applicant and drive have different colleges");
   }
+  // Roles held in fixture objects are insufficient evidence; the real
+  // memberships and both users must still be active in the drive's college.
+  await requireFixtureCollegePrincipal(db, job.college_id, learner, ["LEARNER"]);
+  await requireFixtureCollegePrincipal(db, job.college_id, actor, ["COLLEGE_ADMIN", "TPO"]);
   const [application] = await db.query<{id:string}>(`
     insert into placement_applications
       (job_id,membership_id,channel,eligibility_status,eligibility_snapshot,submitted_by_user_id)

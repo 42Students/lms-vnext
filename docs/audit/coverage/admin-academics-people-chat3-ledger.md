@@ -24,3 +24,10 @@ Snapshot: 2026-10-18, source branch `chatgpt/chat-3-b`. Role-journal and code-ba
 - `COL-people-24`: exact legacy mentor-reassignment confirmation description restored at `src/components/projects/project-admin-reassign-mentor-page.tsx`; must rerun its failing test, and real keyboard/retry browser checks remain.
 - `COL-people-20` permission protection and `TPO-drives-51` create-route authority appeared source-correct in the current snapshot; the published unit-failure report may be stale. Neither test was weakened or deleted.
 - Remaining: full click/action matrix, authenticated wrong-tenant/expired-session browser journeys, current on-screen/CSV reconciliation, responsive keyboard/phone tests, and real PostgreSQL tenancy checks.
+
+## Membership UI failure resilience (SA-PEOPLE-BREAK-01)
+
+- The Super Admin / College Admin membership controls now require validated, action-specific mutation receipts before updating role checkboxes, changing the lifecycle badge, dismissing confirmation dialogs, or erasing a typed suspension reason.
+- A synchronous in-flight ref prevents duplicate requests and overlapping role/lifecycle commands, even before React commits pending state; network and invalid-JSON failures show actionable recovery and do not announce success.
+- Direct behavioural tests: `tests/unit/SA-PEOPLE-BREAK-chat3-01.test.ts` covers grant/revoke, duplicate/invalid/contradictory receipts and each lifecycle transition; browser/network and real PostgreSQL concurrency coverage remains **GAP**.
+- The previous unit-failure report's `TPO-drives-51`, `COL-people-20`, and `COL-people-24` expectations all match the current exact source strings. Cloud CI rerun is still required; see `docs/audit/defects-chat-3.md`.
