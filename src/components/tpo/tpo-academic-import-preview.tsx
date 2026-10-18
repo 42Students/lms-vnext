@@ -17,7 +17,7 @@ export function TpoAcademicImportPreview({activeIds}:{activeIds:readonly string[
   <h2 className="font-semibold">Preview academic CSV</h2>
   <p className="text-xs text-muted-foreground">Strict studentCode,cgpa,activeBacklogs format. This checks IDs only against the 25 active learners on this page, never the whole batch. No changes are saved and no marksheets are uploaded.</p>
   <label className="block text-sm">CSV data<textarea value={text} onChange={e=>{setText(e.target.value);setRows(null);}} rows={5} maxLength={50000} className="mt-1 w-full rounded border border-border bg-surface p-3 font-mono text-xs"/></label>
-  <button type="button" onClick={preview} className="min-h-11 rounded border border-border px-4">Validate this-page preview</button>
+  <button type="button" onClick={preview} className="min-h-11 rounded-[9px] border border-border px-4">Validate this-page preview</button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {rows?<div role="status" className="space-y-2 text-sm"><p>{rows.filter(row=>row.matchedOnCurrentPage).length} matched this page; {rows.filter(row=>!row.matchedOnCurrentPage).length} outside this page or not in the cohort.</p>
    <ul className="max-h-64 space-y-1 overflow-auto">{rows.map(row=><li key={row.studentCode} className="break-all">{row.studentCode} — {row.matchedOnCurrentPage?"Matched current page":"Unverified outside current page"} · CGPA {row.cgpa} · Active backlogs {row.activeBacklogs}</li>)}</ul>
