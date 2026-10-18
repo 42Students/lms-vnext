@@ -66,6 +66,8 @@ Branch: `chatgpt/chat-9-b`. Owner: chat-9. These are observed source-level findi
 
 | PROJ9-039 · PROJ-BREAK-idor-50/53 | High | Global project-template creation, revision, and publication trusted the initial request-context platform role. If a Super Admin was disabled or lost role between opening a screen and mutation, their stale tab could still create or publish project templates and emit activity. Each transaction now performs persisted role reauthorization before its first write, after the parent row lock where applicable. The existing no-migration template lifecycle is retained. | `e0e56d7` | `tests/unit/PROJ-BREAK-chat9-template-authoring-auth.test.ts` (`3e01e55`): revoked roles before inserts/version changes, disabled and wrong role denied. Actual PostgreSQL role-update concurrency OPEN |
 
+| PROJ9-040 · PROJ-BREAK-idor-54 / state-27 | High | Project archive restoration authorized against the original RequestContext only. A college administrator removed after loading the archived workspace could use a stale browser tab to restore it and notify members. Restoration now requires a persisted projects.manage recheck in the locked transaction before any changes, while retaining strict archived-only and optimistic-version gates. | `cbdfd23` | `tests/unit/PROJ-BREAK-chat9-project-restore-auth.test.ts` (`a2f2f22`), role revocation, wrong state, invalid CAS and disabled module. Real concurrent PostgreSQL changes and notification delivery OPEN |
+
 ## Outstanding release gates (not yet closed)
 
 - Live PostgreSQL integration tests for wrong-tenant IDs, serializable races, rollback and event/notification dedupe; chat-17 owns shared fixtures. Static service assertions alone cannot establish real DB behavior.
