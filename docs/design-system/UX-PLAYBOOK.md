@@ -649,3 +649,81 @@ The repository `scripts/check-ux-anti-drift.mjs` and `npm run ux:guard` are norm
 ### 18.1. Hard stop before rollout
 
 For each finding, auditor must attach source commit, the matching §18 rule, a passing targeted unit/integration or device observation when relevant, and a deterministic outcome in the review ledger. Execute `npm run ux:guard`, full typecheck/lint/Vitest, 320/360/390/768/1280 viewport capture, keyboard/AT and Android/iOS WebView verification on the **same revision**. Use authenticated disposable test tenants only. When fixtures or devices are unavailable, mark the result **OPEN — evidence unavailable**, not PASS. Do not build or restyle additional pages as part of this documentation-only stabilization pass.
+
+## 19. Audit 2 — implementation requirements and status (not acceptance sign-off)
+
+The independent [Audit 2 report](audits/UX-AUDIT-2.md) is **BLOCKED**. This section controls the targeted source repairs for 14 new findings and the 18 Audit 1 entries marked REOPENED/PARTIAL/OPEN-EVIDENCE. A branch commit or authored test is not proof of passing typecheck, native host, screenshot, VoiceOver/TalkBack or browser focus. No page-level design rollout before external audit sign-off.
+
+### 19.1. Applicant route overlay — A2-01
+
+At `/recruiter/drives/[jobId]?tab=applicants&applicant=...`, the server-authorized row selects the client `RecruiterApplicantReviewDrawer`. Use the shared native `Drawer` with `historyMode="route"` (no synthetic same-URL marker on a URL-selected detail); close navigates to the route without `applicant` while preserving stage, page and approved `returnTo`. Native host Back may dismiss via `lms:native-back`; browser Back retains its normal URL navigation. No raw `role=dialog`, `sm:h-screen`, 40px close or manual inaccessible backdrop. Verify Escape, Tab containment, focus return and 320/360/390 keyboard state.
+
+### 19.2. Synthetic history, pending state and compact viewport — A2-02/A2-10
+
+In `useOverlayWebview`, only the top marker handles hardware Back. **An explicit close first queues a cleanup pop and removes the top marker; every listener must ignore that exact popstate** so the surviving parent is not dismissed. Once consumed, a subsequent genuine Back may dismiss the next overlay. A pending (nondismissible) state update MUST NOT tear down/re-push a hook marker—use a ref for pending/dismissible state; effect registration depends on `open`, ID and route/marker mode, not pending. For URL-driven drawers use route history rather than a duplicate marker. The visual viewport's real `height` and `offsetTop` define the overlay bounds; **never clamp the height to 240px**, even on keyboard/landscape split view. Keep footer inside a scrollable area and respect safe-area insets. Require nested A+B explicit close, hardware Back B then A, and pending A+B device tests before sign-off.
+
+### 19.3. Phone/tablet geometry and shell — A2-03/A2-04/A2-06/A2-09
+
+Use shared `Input`/`Select` (16px text, `min-h-11`) in the mentor calendar; always-visible Search and one SSR-stable `FilterBar` form for filters. Every phone-facing TPO Messages, Module Access and Contacts link/tab/action needs `min-h-11`, not only the initial four reference pages. Grid width/pin controls at 768px touch width need `min-h-11 min-w-11`, visible focus and `gap-2` (8px). App shell outer **and inner** min height is `min-h-dvh`; header top padding reads `env(safe-area-inset-top)`. Measure actual 44×44 targets at 320/360/390 and 768, test 200% zoom/orientation and hardware keyboard.
+
+### 19.4. Permission-denied action — A2-05
+
+`PermissionAction` renders the authorized child, an explicit `fallback`, or a persistent readable denied reason by default. Only confidential controls where the *existence* of the action is sensitive may use `deniedMode="hide-sensitive"`, after permission-owner review. Missing authority never becomes a retryable server error. Document any intentionally hidden action with its permission scope in the page review evidence.
+
+### 19.5. Third-party URL — A2-07
+
+`ThirdPartyLink` validates absolute HTTPS, rejects embedded credentials and plain HTTP by default, exposes the destination URL in selectable text *before* navigation and retains copyable fallback for blocked WebView links. Domain-specific HTTP exceptions need an independently reviewed app-navigation policy, not an arbitrary `href` on this component. No `target=_blank` for LMS workflow links.
+
+### 19.6. Executable form specimen — A2-08
+
+§15.5 is normative: typed injected versioned `onSave`, direct `await onSave`, synchronous in-flight lock, no draft clearing on errors, server-conflict text, live success/failure notice, copy strings supplied from legacy fixtures. A form that only toggles `pending` is **not** a valid reference. Unit fixture must cover success, double-submit, blank focus, conflict, retry and thrown network error.
+
+### 19.7. Shared component invariants — A2-11/A2-12/A2-13/A2-14
+
+Each `FilterBar` generates its own stable `useId()` so `aria-controls` targets the correct overlay. `DataTable` requires explicit caller-supplied approved `empty` content with next authorized action; never inject universal invented empty copy. `InfoPopover` exposes a contextual `label` for icon-only summaries and applies a non-empty accessible fallback until callers migrate. Error toasts do **not** auto-expire; other toast durations scale with reading length and users can dismiss at any time. Persistent `InlineNotice` is preferred for blocking errors.
+
+### 19.8. New finding-to-fix and source crosswalk (14/14)
+
+| ID | Severity | Playbook rule | Changed source | Source fix |
+|---|---|---|---|---|
+| **A2-01** | BLOCKER | §19.1 / §15.4 | src/components/hr/recruiter-applicant-review-drawer.tsx; hr/placements/jobs/[jobId]/page.tsx; Drawer | Replaced unmanaged applicant modal with shared Drawer, URL-backed close/Back and 44px actions |
+| **A2-02** | BLOCKER | §19.2 / §15.4 | src/components/ui/use-overlay-webview.ts; tests/unit/ux-audit2-overlay-history.test.ts | Synthetic cleanup-pop ownership prevents nested parent dismissal; pending updates do not re-register hook |
+| **A2-03** | MAJOR | §19.3 / §6.2 | src/app/(authenticated)/mentor/calendar/page.tsx | Persistent FilterBar search and 16px/44px shared Input/Select controls |
+| **A2-04** | MAJOR | §19.3 / §6.5 | tpo/messages; admin/module-access; college/contacts | Replaced cited 40px targets with 44px links and buttons; enlarged guard coverage |
+| **A2-05** | MAJOR | §19.4 / §8 | src/components/ui/permission-action.tsx | Visible permission-denied reason by default, explicit hide-sensitive mode for audited cases |
+| **A2-06** | MAJOR | §19.3 / §3 | src/components/shell/app-shell.tsx | Use dvh for nested shell and safe-area padding for sticky header |
+| **A2-07** | MAJOR | §19.5 / §6.11 | src/components/ui/third-party-link.tsx | Reject HTTP and credential URLs; show vetted HTTPS destination before leaving |
+| **A2-08** | MAJOR | §19.6 / §15.5 | docs/design-system/UX-PLAYBOOK.md | Replace fake save with injected authorized versioned onSave, explicit error/conflict/live status |
+| **A2-09** | MAJOR | §19.3 / §6.5 | src/components/tpo/tpo-spreadsheet-grid.tsx | Give resize/pin buttons 44×44 bounds, focus treatment and 8px gaps |
+| **A2-10** | MAJOR | §19.2 / §15.4 | use-overlay-webview.ts; dialog.tsx; drawer.tsx; bottom-sheet.tsx | Remove 240px height clamp, account for visualViewport top, scroll action container |
+| **A2-11** | MINOR | §19.7 / §5.1 | src/components/ui/filter-bar.tsx | Generate per-instance useId for panel and aria-controls |
+| **A2-12** | MINOR | §19.7 / §8 | src/components/ui/data-table.tsx; admin/colleges; college/contacts; test fixtures | Require caller-supplied legacy-approved empty content rather than inventing generic copy |
+| **A2-13** | MINOR | §19.7 / §9 | src/components/ui/tooltip.tsx | Give icon disclosures accessible label and expose context label API |
+| **A2-14** | MINOR | §19.7 / §8 | src/components/ui/toast.tsx | Persist error messages until dismissed; length-aware timeout for other toasts |
+
+### 19.9. Reopened, partial and evidence-status disposition (18/18)
+
+| Audit 1 ID | Audit 2 status | Source or acceptance site | Disposition after this pass |
+|---|---|---|---|
+| C-02 | REOPENED | tpo-students-spreadsheet.tsx | Removed mobileActionsCollapsible on actual roster so row actions remain visible |
+| C-03 | REOPENED | learner assignment page; placement-drive-workspace.tsx | Removed both popup-only destinations; updated mobile target |
+| C-05 | REOPENED | use-overlay-webview.ts; Drawer | Cleanup pop ownership, pending-stable hook, URL-backed recruiter route mode |
+| E-02 | REOPENED | tpo/home/page.tsx | Isolated independent Home fetch failures with null fallbacks and visible unavailable notice |
+| F-02 | REOPENED | check-ux-anti-drift.mjs; tests/ux-audit2-source.test.mjs | Widened named files + branch-changed routes guard, popup expressions, source regression checks |
+| A-03 | PARTIAL | file-upload.tsx; UX-PLAYBOOK §15.6 | Explicit picker-disabled guidance; typed component examples; entire caller sweep still pending |
+| A-04 | PARTIAL | UX-PLAYBOOK §15.5 | Replaced no-op mutation example with typed versioned authorized onSave contract |
+| B-02 | PARTIAL | data-table.tsx | Validate every hidden column recovery via actual internal row detail route; expose otherwise |
+| C-06 | PARTIAL | use-overlay-webview.ts; shared overlays | Actual visual viewport height/offset, no 240px clamp, scrollable footer |
+| C-07 | PARTIAL | mentor/calendar; tpo/messages; admin/module-access; college/contacts | Upgrade cited 40px controls; physical target measurement still pending |
+| C-08 | PARTIAL | file-upload.tsx | Unavailable chooser explicitly blocks progress or offers provided alternative; server/device tests pending |
+| D-02 | PARTIAL | form-field.tsx; UX-PLAYBOOK §15.5 | Typed FormField error relation used in canonical form; whole-route validation/AT sweep pending |
+| D-04 | PARTIAL | route-announcer.tsx; pagination.tsx | Existing route/query live announcer retained; native screen-reader focus proof pending |
+| E-05 | PARTIAL | data-table.tsx | Single formatter call and strict internal hidden-data recovery; 100-row DOM benchmark pending |
+| E-01 | OPEN-EVIDENCE | ux-capture-references.mjs | Source recipe exists; four role × eight state browser fixtures and owner-approved captures still needed |
+| E-03 | OPEN-EVIDENCE | package.json UX scripts; tests | Added Audit 2 source and overlay tests; same-commit CI/devices still required |
+| E-04 | OPEN-EVIDENCE | ux-callsite-audit.mjs | Affected-callsite inventory available; 30 interaction/visual baselines not available |
+| F-03 | OPEN-EVIDENCE | ux-capture-references.mjs; UX-PLAYBOOK §17 | Only real captured SHA256 files may be approved; no hashes fabricated |
+
+### 19.10. Evidence gate
+
+The required same-commit gate is `npm run ux:audit:verify`, including Audit 2 source tests and the nested overlay unit test. Independently inspect the 33 original findings and 14 new items with actual developer/browser evidence. Record all eight states × four reference routes × 320/360/390/768/1280; 30 affected hydrated component call sites, 100-row DataTable rendering, keyboard/native host Back A+B and pending A+B, WKWebView/Android safe area/file-picker handling, 200% zoom, screen-reader announcements, theme/contrast snapshots, and owner-approved SHA256 image baselines. If any is unavailable, mark `OPEN-EVIDENCE`; never replace a missing observation with a passing source regex.
