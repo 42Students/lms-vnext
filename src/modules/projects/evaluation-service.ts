@@ -48,9 +48,9 @@ async function assertCurrentEvaluationActor(
     });
     return;
   }
-  const membershipId=context.membership?.id;
-  if (!membershipId || context.membership?.collegeId!==scope.collegeId ||
-      context.membership.organizationId!==scope.organizationId) {
+  const membership=context.membership;
+  if (!membership || membership.collegeId!==scope.collegeId ||
+      membership.organizationId!==scope.organizationId) {
     throw new ProjectsServiceError("PROJECT_LIFECYCLE_ACCESS_DENIED");
   }
   const [persistedMentor]=await tx.select({id:projectMembers.id})
@@ -71,7 +71,7 @@ async function assertCurrentEvaluationActor(
     ))
     .where(and(
       eq(projectMembers.projectId,scope.project.id),
-      eq(projectMembers.membershipId,membershipId),
+      eq(projectMembers.membershipId,membership.id),
       eq(projectMembers.role,"MENTOR"),
       isNull(projectMembers.endedAt),
     )).for("share").limit(1);
