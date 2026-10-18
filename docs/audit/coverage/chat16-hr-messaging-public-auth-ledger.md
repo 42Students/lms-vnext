@@ -462,3 +462,13 @@ Method-level tests mock external service writes, do not verify the real transact
 | `PATCH /api/admin/inbound-mail/status` | `tests/unit/chat16-inbound-mail-status-json-cap-42.test.ts` (`INBOUND-TRIAGE-SIZE-42..44`) | Same-origin denies before reading JSON, strict 8 KB UTF-8 byte cap and 400/413 before loading even a privileged session, global Super Admin context forwarded to the existing compare-and-swap service, exact 200/409/503 persistence states, no-store private response |
 
 The existing `changeInboundMailStatusForAdmin` permission matrix, status machine and database version token are unchanged. This fills the route body-size coverage gap without accepting untrusted actor IDs from the payload. These direct tests are authored, not run.
+
+
+### 2026-10-19: ZeptoMail OTP untrusted merge-variable safety
+
+| Source function | Direct behavioural witness | Cases |
+|---|---|---|
+| `safeOtpEmailDisplayName` in `src/modules/notifications/zeptomail-email.ts` | `tests/unit/chat16-otp-template-merge-sanitization-45.test.ts` (`AUTH-OTP-MERGE-45`) | Escape HTML metacharacters, replace control/bidi formatting, cap at 160 Unicode codepoints (not partial surrogate pairs), keep normal recipient names |
+| `createZeptoMailEmailProvider` | same (`AUTH-OTP-MERGE-46`) | Exactly one accepted OTP POST, only canonical email address, harmless escaped learner name, malformed/untrusted mobile omitted, valid E.164 preserved, no OTP value in structured logs |
+
+Only provider-template merge variables changed, not SMS DLT wording, auth OTP lifetime, sign-in permission or provider delivery policy. This is direct mocked-transport test authorship, **not a real ZeptoMail acceptance/delivery test**.
