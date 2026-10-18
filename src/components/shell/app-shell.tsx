@@ -109,8 +109,8 @@ export async function AppShell({
         </div>
       </aside>
 
-      <div className="min-h-screen lg:pl-64">
-        <header className="sticky top-0 z-10 border-b border-border bg-surface/95 backdrop-blur">
+      <div className="min-h-dvh lg:pl-64">
+        <header className="sticky top-0 pt-[env(safe-area-inset-top)] z-10 border-b border-border bg-surface/95 backdrop-blur">
           <div className="mx-auto flex w-full flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
             <div className="flex min-w-0 items-center gap-3">
               <ShellWidgetBoundary name="Mobile navigation" fallbackHref="/dashboard"><MobileNavigation items={navigation} /></ShellWidgetBoundary>

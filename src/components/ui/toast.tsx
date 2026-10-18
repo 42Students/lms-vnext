@@ -23,8 +23,13 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const showToast = useCallback((input: ToastInput) => {
     const id = crypto.randomUUID();
     setToasts(current => [...current.slice(-3), { ...input, id }]);
-    const timer = setTimeout(() => dismiss(id), 4500);
-    timers.current.set(id, timer);
+    // Errors must remain readable/recoverable until explicitly dismissed.
+    // Longer informational messages get time proportional to reading length.
+    if (input.tone !== "error") {
+      const readingTime = Math.max(4500, Math.min(15000, 2500 + (input.title.length + (input.description?.length ?? 0)) * 70));
+      const timer = setTimeout(() => dismiss(id), readingTime);
+      timers.current.set(id, timer);
+    }
   }, [dismiss]);
   useEffect(() => {
     const currentTimers = timers.current;

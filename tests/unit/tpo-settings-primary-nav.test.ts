@@ -5,12 +5,12 @@ describe("TPO-settings-audit-01 legacy primary Settings sections",()=>{
   expect(TPO_SETTINGS_NAV_GROUPS.map(g=>g.title)).toEqual(["Placement policy","People","Students and companies"]);
   const labels=TPO_SETTINGS_NAV_GROUPS.flatMap(g=>(g.items as readonly {label:string}[]).map(x=>x.label));
   expect(labels).toEqual([
-   "Placement seasons","Placement rules","Job types","After college","Prep readiness","Blocked dates",
-   "Trusted domains","Recruiters","Placement Team","Public recruiter link",
-   "Student Notices & Preparation","My Notifications","Email templates","What companies see","Placements page","Branding",
+   "Placement seasons","Placement Rules","Job types","After college","Prep readiness","Blocked dates",
+   "Trusted domains","Recruiter access","Placement Team","Public recruiter link",
+   "Student Notices & Preparation","My Notifications","Email templates","What Companies See","Public placements","Placement Branding",
   ]);
-  const legacy=["Placement rules","Job types","After college","Prep readiness","Blocked dates",
-   "Recruiters","Student Notices & Preparation","What companies see","Placements page","Branding"];
+  const legacy=["Placement Rules","Job types","After college","Prep readiness","Blocked dates",
+   "Recruiter access","Student Notices & Preparation","What Companies See","Public placements","Placement Branding"];
   expect(labels.filter(label=>legacy.includes(label))).toEqual(legacy);
   expect(TPO_SETTINGS_NAV_GROUPS.flatMap(g=>[...g.items] as {href:string}[]).every(x=>x.href.startsWith("/tpo/settings/"))).toBe(true);
  });

@@ -86,7 +86,7 @@ export default async function TpoMessagesPage({
           action={
             <Link
               href="/tpo/messages"
-              className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
             >
               Clear filters
             </Link>
@@ -164,13 +164,13 @@ export default async function TpoMessagesPage({
             {isRecruiterInbox ? <TpoNewRecruiterConversation recruiters={availableRecruiters} actorUserId={context.user.id} /> : null}
             <Link
               href="/tpo/messages/notifications"
-              className="inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary"
+              className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary"
             >
               My placement notifications
             </Link>
             <Link
               href="/tpo/more"
-              className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
             >
               More TPO tools
             </Link>
@@ -265,7 +265,7 @@ export default async function TpoMessagesPage({
           key={status}
           href={tpoMessagesHref({...commonFilters,status,page:1})}
           aria-current={query.status===status?"page":undefined}
-          className={"inline-flex min-h-10 items-center rounded-md border px-4 text-sm font-semibold "+
+          className={"inline-flex min-h-11 items-center rounded-md border px-4 text-sm font-semibold "+
             (query.status===status?"border-primary bg-primary-subtle text-primary-text":
               "border-border bg-surface text-foreground")}>
             {label} ({count})
@@ -533,7 +533,7 @@ export default async function TpoMessagesPage({
                   ...commonFilters,
                   page: page - 1,
                 })}
-                className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
               >
                 Previous
               </Link>
@@ -545,7 +545,7 @@ export default async function TpoMessagesPage({
                   ...commonFilters,
                   page: page + 1,
                 })}
-                className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
               >
                 Next
               </Link>
