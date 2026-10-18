@@ -150,3 +150,9 @@ This corrects the earlier blind spot in the People directory CSV encoder (which 
 | `/admin/colleges/[collegeId]/admins/[userId]` | `tests/unit/chat4-superadmin-college-admin-sessions-page.test.tsx` (`SA-colleges-admins-sessions-01`) | Empty device state, persisted per-device labels, user agent HTML escaped, IP and IST timestamp, matching revoke count, no cross-tenant render after service denial |
 
 Both use isolated service mocks and server-rendered markup, **not** end-to-end browser or database races. Verification of device revocation persistence, pagination and accessibility remains outstanding. No CI execution performed.
+
+## College student import history read service
+
+| Export | Test | Coverage / outstanding |
+| --- | --- | --- |
+| `src/modules/people/college-import-history-service.ts` `listCollegeStudentImportHistory` | `tests/unit/chat4-college-student-import-history.test.ts` (`COL-people-import-history-01`) | Reject malformed/ambiguous numeric strings before SQL, deny ordinary learner/inactive College Admin, recheck persisted `people.manage` before any event rows, page by 20 with 21-row lookahead and correct offset, map metadata counts safely and suppress negative, fractional, infinite or NaN counts. No real PostgreSQL race or UI browser run. |
