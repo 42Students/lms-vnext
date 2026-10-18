@@ -1,4 +1,4 @@
-# UX review: /college/batches/cohort/id/students
+# UX review: /college/batches/[cohortId]/students
 
 - Route: `src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx`; owner chat-4, first-half College UX rollout.
 - Legacy copy, persisted data, mutation endpoints and permission checks unchanged.
