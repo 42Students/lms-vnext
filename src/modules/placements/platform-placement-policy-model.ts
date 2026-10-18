@@ -36,7 +36,7 @@ export function storedPlacementPolicyValue(
 ): number {
  const field=PLACEMENT_POLICY_FIELDS.find(item=>item.key===key)!;
  const text=raw?.trim();
- if(!text||!/^(?:0|[1-9]\\d*)(?:\\.\\d+)?$/.test(text))return field.defaultValue;
+ if(!text||!/^(?:0|[1-9]\d*)(?:\.\d+)?$/.test(text))return field.defaultValue;
  const value=Number(text);
  return placementPolicyValidate(key,value)?value:field.defaultValue;
 }
