@@ -239,3 +239,7 @@ No runtime CI execution. Numeric internally validated number callers remain supp
 ## Super Admin college branding page (rendered route behavior)
 
 `/admin/colleges/[collegeId]/branding` is covered by `tests/unit/chat4-superadmin-branding-page-journey.test.tsx` (`SA-colleges-branding-page-01`): deny non-Super Admin before loading private branding/upload receipts, 404 malformed and foreign-scoped college IDs, no fallback to another college's branding, stored preview and optimistic version 7, signed/uploaded logo manager scoped to the same tenant, and propagate storage failures instead of inventing a successful preview. All assertions use mocked service projections and SSR, **not** actual file uploads or browser-domain appearance; CI execution pending.
+
+### Promotion faculty readiness now holds persisted actor authorization
+
+`getPromotionFacultyReadiness` now executes the full trusted-cohort, target-term and active-faculty read inside one PostgreSQL transaction protected by `assertPersistedPlatformPermission(tx,context,"academics.read",{collegeId,organizationId})`. `tests/unit/chat4-college-promotion-faculty-service-behavior.test.ts` adds `COL-promotion-faculty-ACTOR-03`: revoking the actor between request-context scope preflight and the first database SELECT must deny with no private read. Still requires CI and real concurrent role-revocation PG integration.
