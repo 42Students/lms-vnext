@@ -6,6 +6,7 @@ import { collegeMemberships, placementApplications, placementApplicationScreenin
   learnerProfiles,placementCompanyRelationships,profileVerificationAcademicMarks,profileVerifications,placementDriveSelections,placementRoundCandidateSlots,learnerProgramEnrollments,programs,departments,placementCompanyVisibilitySettings } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import {projectRecruiterProfileLinks} from "./recruiter-applicant-shared-links-model";
+import { findRecruiterScopedGrant } from "./recruiter-grant-selection-model";
 import { getRecruiterPlacementWorkspace } from "./recruiter-workspace-service";
 import { hrApplicantFilterSchema, HR_APPLICANT_PAGE_SIZE, projectSharedApplicants, hrApplicantPageBounds, HR_OFFER_PAGE_SIZE, hrOfferPageBounds,type HrApplicantStage } from "./hr-job-applicants-model";
 
@@ -22,7 +23,8 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
     eq(placementApplicationScreenings.status, "SHORTLISTED"),
   );
   const db = getDb();
-  const grant=context.recruiter?.grants.find(item=>item.collegeId===workspace.college.id);
+  const grant=findRecruiterScopedGrant(context.recruiter?.grants,
+    workspace.college.id, workspace.job.companyRelationshipId);
   const [share]=grant?await db.select({columns:placementCompanyRelationships.shareColumnDefaults})
    .from(placementCompanyRelationships)
    .where(and(eq(placementCompanyRelationships.id,grant.companyRelationshipId),
