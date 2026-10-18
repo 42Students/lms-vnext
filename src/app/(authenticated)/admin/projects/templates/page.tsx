@@ -13,7 +13,7 @@ import {SuperAdminTemplatePageExport} from "@/components/projects/super-admin-te
 import {SuperAdminTemplateArchiveControl} from "@/components/projects/super-admin-template-archive-control";
 
 import { can } from "@/modules/permissions/policy";
-import { templateDirectoryHref, templateDirectoryQuerySchema } from "@/modules/projects/super-admin-template-directory-model";
+import { templateDirectoryHref, parseSuperAdminTemplateDirectoryQuery } from "@/modules/projects/super-admin-template-directory-model";
 import { listSuperAdminTemplateDirectory } from "@/modules/projects/super-admin-template-directory-service";
 const statuses=["ALL","DRAFT","PUBLISHED","ARCHIVED"] as const;
 function tone(status:string){
@@ -23,7 +23,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }){
  const raw=await searchParams;
- const query=templateDirectoryQuerySchema.safeParse({q:raw.q,status:raw.status,page:raw.page});
+ const query=parseSuperAdminTemplateDirectoryQuery(raw);
  if(!query.success)return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Projects" title="Templates" />
   <ErrorState title="Invalid template filters" description="Check search, status and page."
