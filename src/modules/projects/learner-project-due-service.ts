@@ -38,7 +38,7 @@ export async function listMyLearnerProjectDueStates(context: RequestContext, raw
   const now=new Date();
   return scoped.map(projectId=>{
     const nearest=nearestByProject.get(projectId)??null;
-    const dueAt=nearest?new Date(nearest+"T23:59:59+05:30"):null;
+    const dueAt=nearest?new Date(nearest+"T23:59:59.999+05:30"):null;
     const days=dueAt?(dueAt.getTime()-now.getTime())/86400000:null;
     return {projectId,date:nearest,state:days===null?"No due date":
       days<0?"Overdue":days<=3?"Due soon":"Due date"};
