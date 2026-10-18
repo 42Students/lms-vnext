@@ -17,13 +17,15 @@ export function recruiterDriveApprovalPolicy(input:{
  approvalRequired:boolean;grantVerified:boolean;
  recruiterEmail:string|null;companyDomain:string|null;
  trustedDomains:readonly string[];relationshipTrusted:boolean;
-}):{autoApprove:boolean;reason:"APPROVAL_OFF"|"TRUSTED_DOMAIN"|"REVIEW_REQUIRED"}{
+}):{autoApprove:boolean;reason:"APPROVAL_OFF"|"TRUSTED_COMPANY"|"TRUSTED_DOMAIN"|"REVIEW_REQUIRED"}{
+ // The persisted grant must be verified even when staff have trusted a
+ // company, its domain or the college has disabled manual approval.
  if(!input.grantVerified)return {autoApprove:false,reason:"REVIEW_REQUIRED"};
  if(!input.approvalRequired)return {autoApprove:true,reason:"APPROVAL_OFF"};
- if(input.relationshipTrusted&&trustedRecruiterDomain(input.recruiterEmail,
-     input.companyDomain,[input.companyDomain??""])){
-  return {autoApprove:true,reason:"TRUSTED_DOMAIN"};
- }
+ // A placement officer's explicit, persisted company-trust decision is
+ // separate from a company-domain decision. Do not silently require the
+ // contact email to match a domain for this independent trusted-company rule.
+ if(input.relationshipTrusted)return {autoApprove:true,reason:"TRUSTED_COMPANY"};
  if(trustedRecruiterDomain(input.recruiterEmail,input.companyDomain,input.trustedDomains))
   return {autoApprove:true,reason:"TRUSTED_DOMAIN"};
  return {autoApprove:false,reason:"REVIEW_REQUIRED"};
