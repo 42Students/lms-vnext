@@ -7,3 +7,6 @@
 
 ## Bounded loading recovery
 - Kept the existing PageHeader and “Loading scoped module inheritance and overrides…” announcement while replacing indefinite `LoadingState` with the shared `GracefulPageLoading` retry/skeleton behavior. Test `UX-admin-features-collegeId-03`.
+
+## Unified module inheritance + override directories
+- Replaced duplicated phone-card and desktop-table DOM trees with two shared `DataTable` instances, one for the module inheritance matrix and one for paged persisted descendant rules. Preserved original columns, state labels, the existing no-override messages, URLs, privacy (no contact details) and backend permission boundaries. All fields are exposed on narrow screens through labelled cards and the shared “More details” disclosure. Test `UX-admin-features-collegeId-02`.
