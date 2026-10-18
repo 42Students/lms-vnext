@@ -23,6 +23,8 @@ Source inspection: 2026-10-18. Branch: `chatgpt/chat-11-b`. **Partial, source-re
 
 | SA-tenants-modules-R01 | `getModuleAccessOverviewMetrics`, `parseModuleMetricsCollegeIds`, `assertModuleMetricsCollegeScopes` | Reject foreign/archived/missing colleges, org/college-scoped SA UUID spoofing and more than 100/duplicate IDs before aggregating. Largest learner scope excludes suspended/disabled identities; membership overrides count only active LEARNER roles with distinct rule IDs. | `tests/unit/chat11-super-admin-module-metrics-scope.test.ts`, `SA-tenants-modules-R01` | PostgreSQL multi-college aggregation and performance at 100 colleges |
 
+| SA-tenants-modules-MOD-02 | `adminFeatureQuerySchema`, `parseAdminFeaturePageParams`, `boundedAdminFeaturePage`, `/admin/module-access` | Bounded decimal page, rejects hex/exponents/whitespace/repeated keys and caller-selected college IDs before scoped service list; no-rule and rule-state combination validation; recovery link and authorization first | `tests/unit/chat11-super-admin-module-query-adversarial.test.ts` — `SA-tenants-modules-MOD-02` | Browser and PostgreSQL pagination E2E |
+
 ## Audit disposition
 
 - **Source-level blockers found and patched:** unauthorized malformed-filter route bypass across three administrative pages.
