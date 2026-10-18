@@ -1,4 +1,6 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
 import {useRef,useState} from "react";
 import {bulkStudentSelectionIsCurrent,superAdminStudentBulkFailure} from "@/modules/module-access/super-admin-student-bulk-feedback";
 import {useRouter} from "next/navigation";
@@ -35,7 +37,7 @@ export function SuperAdminStudentBulkAccess({learners}:{learners:readonly Learne
   }catch(e){setError(e instanceof Error?e.message:"Update failed. Refresh and retry.");}
   finally{pendingRef.current=false;setBusy(false);}
  }
- return <section aria-label="Bulk student access" className="space-y-3 rounded-xl border border-border bg-surface p-4">
+ return <section aria-label="Bulk student access" className="space-y-3 border-b border-border pb-5">
   <div className="flex flex-wrap justify-between gap-3"><h2 className="font-semibold">Bulk module access</h2>
    <p role="status" className="text-sm text-muted-foreground">{selected.length}/25 students selected</p></div>
   <p className="text-xs text-muted-foreground">Membership-scoped overrides work for Projects and Electives. Placements is configured at college scope, so it is deliberately not offered here. Locked ancestor policies remain protected.</p>
@@ -52,15 +54,15 @@ export function SuperAdminStudentBulkAccess({learners}:{learners:readonly Learne
    </label>)}
   </div>
   <div className="flex flex-wrap items-end gap-3 text-sm">
-   <label className="grid gap-1 font-semibold">Module<select value={module} disabled={busy} onChange={e=>setModule(e.target.value as typeof module)}
+   <label className="grid gap-1 font-semibold">Module<Select value={module} disabled={busy} onChange={e=>setModule(e.target.value as typeof module)}
     className="min-h-11 rounded border border-border bg-background px-3">
-    <option value="projects">Projects</option><option value="electives">Electives</option></select></label>
-   <label className="grid gap-1 font-semibold">Access<select value={action} disabled={busy} onChange={e=>setAction(e.target.value as typeof action)}
+    <option value="projects">Projects</option><option value="electives">Electives</option></Select></label>
+   <label className="grid gap-1 font-semibold">Access<Select value={action} disabled={busy} onChange={e=>setAction(e.target.value as typeof action)}
     className="min-h-11 rounded border border-border bg-background px-3">
     <option value="ENABLE">Enable</option><option value="DISABLE">Disable</option>
-    <option value="INHERIT">Clear override / Inherit</option></select></label>
-   <button type="button" disabled={busy||!selected.length} onClick={()=>void submit()}
-    className="min-h-11 rounded bg-primary px-4 font-semibold text-foreground disabled:opacity-50">{busy?"Saving…":"Apply to selected"}</button>
+    <option value="INHERIT">Clear override / Inherit</option></Select></label>
+   <Button variant="primary" type="button" disabled={busy||!selected.length} onClick={()=>void submit()}
+    className="min-h-11 rounded bg-primary px-4 font-semibold text-foreground disabled:opacity-50">{busy?"Saving…":"Apply to selected"}</Button>
   </div>
   {error?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
   {report?<div role="status" className="space-y-1 text-sm">
