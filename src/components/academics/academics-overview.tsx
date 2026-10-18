@@ -65,7 +65,7 @@ export function AcademicsOverview({
           <p className="m-0 font-semibold text-foreground">
             {program.name}
           </p>
-          <p className="mt-1 text-xs font-semibold text-primary-text">
+          <p className="mt-1 text-xs font-semibold text-[var(--lms-teal-deep)]">
             {program.code}
           </p>
         </div>
@@ -110,7 +110,7 @@ export function AcademicsOverview({
           <p className="m-0 font-semibold text-foreground">
             {period.name}
           </p>
-          <p className="mt-1 text-xs font-semibold text-primary-text">
+          <p className="mt-1 text-xs font-semibold text-[var(--lms-teal-deep)]">
             {period.code}
           </p>
         </div>
@@ -163,7 +163,7 @@ export function AcademicsOverview({
           <p className="m-0 font-semibold text-foreground">
             {cohort.name}
           </p>
-          <p className="mt-1 text-xs font-semibold text-primary-text">
+          <p className="mt-1 text-xs font-semibold text-[var(--lms-teal-deep)]">
             {cohort.code}
           </p>
         </div>
@@ -222,7 +222,7 @@ export function AcademicsOverview({
           <p className="m-0 font-semibold text-foreground">
             {section.name}
           </p>
-          <p className="mt-1 text-xs font-semibold text-primary-text">
+          <p className="mt-1 text-xs font-semibold text-[var(--lms-teal-deep)]">
             {section.code}
           </p>
         </div>
