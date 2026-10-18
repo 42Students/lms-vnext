@@ -53,6 +53,10 @@ try {
 
 `PgHarness.client` exposes the actual `pg.PoolClient` for drivers that require it. `db.query<T>(sql, values)` returns typed rows. `db.savepoint(fn, rollback?)` brackets nested assertions; `db.expectSqlState(op, "23505" | "23514" | "23503")` checks the database error class and recovers the transaction by rolling back to a SAVEPOINT. Always parameterize values; the helper's internal SAVEPOINT names are generated numeric strings.
 
+### Cross-account and concurrency helpers
+
+`withTwoPgSessions(pool, async (a, b) => { /* ... */ })` opens two independent real PostgreSQL connections against the same *disposable* database, sets `SET LOCAL lock_timeout = '1500ms'`, and rolls back/releases both even on errors. It is for state races, stale sessions and shared **committed** seed records. Do not nest it within `withProjectPg` using the default two-connection pool (that would exhaust the pool). Example `PROJ-HARNESS-21` verifies separate client identities and safe parallel reads. For destructive races, choose disposable rows committed only by an explicitly managed service fixture lifecycle with cleanup; this rollback-only harness intentionally never publishes new data to other sessions.
+
 **Critical isolation limitation:** PostgreSQL transaction fixtures are only visible on the *same connection*. Services that call `getDb()` allocate another pool connection and cannot read this uncommitted graph; this is expected MVCC behavior. Never conclude the service failed authorization from missing rows! For service-level/HTTP IDOR tests, use a separate explicitly disposable dedicated DB with a lifecycle-managed cleanup graph, or refactor service dependency injection to accept this connection; do not COMMIT these fixtures merely to make them visible. Other lanes own service tests, not this harness.
 
 ## Group-by-group acceptance examples
@@ -73,13 +77,13 @@ try {
 | Reviews / grading | project_submission_reviews, project_evaluations, project_evaluation_items | Changes-requested feedback, bounded rubric math, unique criteria order |
 | Meetings | project_meetings | End after start, server IST label, required schedule actor |
 | Placement companies / drives | placement_companies, placement_company_relationships, placement_jobs, placement_job_rounds | Unique company-college relationship, positive openings, published status shape, round sequence uniqueness |
-| Transactions / tenancy | all groups | Savepoint recovery after 23514, hard rollback with separate-connection proof, other-college rows excluded by explicit tenant predicates |
+| Transactions / tenancy | all groups | Savepoint recovery after 23514, hard rollback with separate-connection proof, other-college rows excluded by explicit tenant predicates, two independent rollback-only sessions with a bounded lock wait |
 
 **Cascades vs deletion:** Canonical project ancestry uses `ON DELETE RESTRICT` for the core project rows, **not** `ON DELETE CASCADE`. The example expressly verifies deletion of an instance with dependent tasks is blocked (23503); never assert a cascade that the registered database does not specify. Other table-specific cascades, if any, need exact migration evidence.
 
 **Tenancy vs DB constraints:** The fixture refuses mismatched actor/college inputs and exercises tenant-scoped `WHERE college_id=$1` queries. It does not pretend that filtering alone proves route/service authorization. Candidate DB073/074/075 ancestry migrations have historically been staged; their separate tests use opt-in flags. Where those composite FKs are actually registered, `project_delivery_events(project_id,submission_id)` already has a registered composite FK and is tested here. Do not assert unregistered composites or silently accept a cross-project SQL write.
 
-**Release bar:** The 20 example tests are **authored**, not claimed passed. After a disposable migration replay, run the command and attach output to the project hardening ledger. Any failed constraint/tenancy witness is a defect, not a reason to weaken or skip a test. Request a different lane's review before describing IIT Dharwad readiness as verified.
+**Release bar:** The 21 example tests are **authored**, not claimed passed. After a disposable migration replay, run the command and attach output to the project hardening ledger. Any failed constraint/tenancy witness is a defect, not a reason to weaken or skip a test. Request a different lane's review before describing IIT Dharwad readiness as verified.
 
 ## For other lanes
 
