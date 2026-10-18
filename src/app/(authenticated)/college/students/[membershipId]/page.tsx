@@ -38,14 +38,14 @@ export default async function CollegeStudentDetailPage({ params, searchParams }:
         <label className="grid gap-2 text-sm font-semibold text-body">
           Enrollment lifecycle
           <select name="status" defaultValue={data.filter.status}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
             <option value="ALL">All enrollments</option>
             <option value="ACTIVE">Active</option>
             <option value="COMPLETED">Completed</option>
             <option value="WITHDRAWN">Withdrawn</option>
           </select>
         </label>
-        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] inline-flex items-center">Filter</button>
+        <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] inline-flex items-center">Filter</button>
       </form>
       <p className="mt-2 text-xs text-muted-foreground">{data.enrollmentTotal} total persisted enrollment(s), including other lifecycle statuses.</p>
       {data.enrollments.length === 0 ? <p className="mt-3 text-sm text-body">No program enrollment matches the selected lifecycle status.</p> :
