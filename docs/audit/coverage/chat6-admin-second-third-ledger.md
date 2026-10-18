@@ -51,6 +51,7 @@ Source entrypoints exist at `src/app/(authenticated)/admin/<route>/page.tsx`, ex
 - `tests/unit/chat6-admin-second-third-people-inbound.test.ts`: inbox filters/previews, membership role-tab precedence, private search, unassigned identities global-only, query encoding and pagination.
 - `tests/unit/chat6-admin-second-third-placements.test.ts`: 5,000-drive export cap, date range, company rollups, drive state labels, paginated status filters, application query allowlist, stage/source export links, shared admin directory injection and escape rules.
 - `tests/unit/chat6-admin-second-third-academic-scopes.test.ts`: classroom capacity/date conflicts, strict lecture-hall query, IST inclusive calendar date window, Super Admin selected-college role and cross-organization permission matrix.
+- `tests/unit/chat6-admin-second-third-page-contracts.test.ts`: every one of the 37 listed route files retains its security or delegate boundary; shared scoped-list authorization, recovery and service-owned application/job/college predicates. This is a **source contract**, not a rendered route/browser pass.
 - For each source-only page in the table, full page-action and data-mutation acceptance is still outstanding. Existing lane suites cover many routes, but this ledger does not infer test PASS from filenames. No browser, phone, keyboard or real PostgreSQL replay was performed.
 
 ## Hardening concerns and next gates

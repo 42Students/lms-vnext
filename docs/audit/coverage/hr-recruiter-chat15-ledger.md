@@ -270,3 +270,25 @@ Every test is **authored but unexecuted**; no CI was run. The larger HR, Recruit
 | `GET /api/placements/recruiter/notifications/export` | `tests/unit/HR-BREAK-chat15-notification-export-api-113.test.ts` | UnreadOnly/college filters, 2-page grant revocation abort, 200-row cap/omitted header, no selection/college access, unexpected service failure sanitized | Real DB unread receipt concurrent with 8-page export, role matrix and CI |
 
 All test cases are authored, not executed; user-mandated final CI is deferred. These tests supplement duplicate/unknown filter coverage under HR-EXPORT-104.
+
+
+## HR applicant private file and review route checks — 2026-10-19
+
+| Exact authenticated endpoint | Behavioral tests | Denial and successful behavior | Unverified |
+|---|---|---|---|
+| `POST /api/placements/recruiter/jobs/[jobId]/applicants/[applicationId]/resume-grant` | `tests/unit/HR-BREAK-chat15-applicant-private-routes-115.test.ts` | Wrong origin rejected before principal load, swapped recruiter cannot obtain private signed resume, auth backend outage maps to indistinguishable unavailable 404, authorized request remains no-store and uses job/application IDs | Real signed URL expiry/scanner/withdraw/revoke race, PostgreSQL and browser |
+| `GET /api/placements/recruiter/jobs/[jobId]/applicants/[applicationId]/private-rating` | `tests/unit/HR-BREAK-chat15-applicant-private-routes-115.test.ts` | Swapped principal denied before staging-table lookup; authorized read-only GET exact job/application IDs and no mutations | Real rating tenancy/revocation, visibility and database |
+| `PATCH /api/placements/recruiter/jobs/[jobId]/applicants/[applicationId]/private-rating` | `tests/unit/HR-BREAK-chat15-applicant-private-routes-115.test.ts` | Same-origin first, principal swap denied before schema, authorized record-scoped mutation | Optimistic version race, actor audit and notification behavior in PostgreSQL |
+| `listRecruiterJobActivity` / `listHrNotifications` cross-role additions | `tests/unit/HR-BREAK-chat15-activity-service-105.test.ts`; `tests/unit/HR-BREAK-chat15-notifications-service-106.test.ts` | TPO-only and acting-college Super Admin cannot borrow employer recruiter permissions; no private job or notification reads before authorization | Real dual-role account and session revocation |
+
+No CI or database executed. Test cases are source-authored pending the final integrated run.
+
+
+## HR applicant writing boundary and final CSV route follow-up — 19 October
+
+| Entrypoint | Behavioral evidence | Source-level contract exercised | Pending |
+|---|---|---|---|
+| `PATCH /api/placements/recruiter/jobs/[jobId]/applicants/[applicationId]/private-rating` | `tests/unit/HR-BREAK-chat15-private-rating-body-116.test.ts` | Same origin before JSON parsing, 16KiB bound for a private rating, malformed JSON 400, overlimit 413, swapped employer 404 before schema lookup, valid record-scoped write | Real PostgreSQL stale CAS, two sessions, row ownership |
+| `POST /api/placements/recruiter/jobs/[jobId]/applicants/[applicationId]/notes` | `tests/unit/HR-BREAK-chat15-applicant-notes-api-117.test.ts` | Cross-origin forbidden before principal lookup, 16KiB parser cap, invalid/oversized JSON friendly 400/413, authorized job/application note service, revoked private candidate failure does not claim success | Real notes ownership, withdrawn-after-shortlist, audit/event exactly once |
+
+Both cases remain **authored but not executed**. Do not equate mocked behavior with production acceptance.

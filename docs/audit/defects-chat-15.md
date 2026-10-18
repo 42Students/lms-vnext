@@ -183,3 +183,20 @@ Page-level **coverage-only** additions: `HR-BREAK-chat15-activity-page-96.test.t
 | HR-PROPOSAL-API-110 | S2 access and resilience | Employer drive proposal POST checked active recruiter but not cached recruiter principal equality before entering service; context/backend failures and unexpected DB errors could reject the HTTP route without safe response. Added principal check and common sanitized error mapping while retaining replay semantics and 403 origin guard. | `HR-BREAK-chat15-proposal-post-api-110.test.ts` | Concurrent PostgreSQL submission and TPO notice audit |
 
 Coverage-only without a new defect claim: HR-CALENDAR-SERVICE-107 and HR-TRACKER-FALLBACK-108 behavior tests; pending live verification.
+
+
+## HR applicant resume and review endpoint scope — 19 October 2026
+
+| ID | Severity | Issue and guard | Regression evidence | Acceptance |
+|---|---|---|---|---|
+| HR-APPLICANT-PRIVATE-115 | S1 private PII | Signed resume grant and private rating endpoints checked an active recruiter role but did not consistently verify the cached recruiter profile belonged to the authenticated user before processing a private object. Resume auth-context failures occurred outside the nonenumerating catch and could surface a raw backend failure instead of a generic resume-unavailable 404. All three handler entries now deny actor swap before any storage or rating schema read, and the resume context load uses the same safe 404 boundary. | `HR-BREAK-chat15-applicant-private-routes-115.test.ts` | Real employer grant/membership revocation, signed URL lifetime, rating CAS, browser and CI pending |
+
+
+## HR applicant write-body boundedness — October 19
+
+| Gap | Severity | Issue and correction | Regression | Pending |
+|---|---|---|---|---|
+| HR-APPLICANT-REVIEW-116 | S2 abuse/resilience | Private rating PATCH used unbounded `request.json()`; chunked or oversized JSON reached parser without size guard, risking memory/DoS and uncontrolled response semantics. Now uses shared bounded reader at 16KiB with 400 malformed and 413 oversized, retaining CSRF and optimistic conflict behavior. | `HR-BREAK-chat15-private-rating-body-116.test.ts` | Actual chunked HTTP and PostgreSQL CAS |
+| HR-APPLICANT-NOTES-117 | S2 abuse/resilience | Employer-private applicant note POST also used unbounded `request.json()`. It now bounds at 16KiB and maps invalid/malformed request consistently without touching note storage. | `HR-BREAK-chat15-applicant-notes-api-117.test.ts` | Actual chunked HTTP, own/foreign job and withdrawn candidate E2E |
+
+Tests authored only, not executed, per owner directive.
