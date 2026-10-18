@@ -158,7 +158,7 @@ export default async function SuperAdminPeoplePage({
       <Link href="/admin/people/directory" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
         Browse platform users & roles →
       </Link>
-      <DataTable
+      <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
         columns={columns}
         rows={people.items}
         getRowKey={(person) => person.membership.id}
