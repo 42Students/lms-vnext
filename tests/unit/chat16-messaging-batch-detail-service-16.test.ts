@@ -33,8 +33,7 @@ function dbFixture(row:typeof batch|null){
 }
 beforeEach(()=>{
  vi.clearAllMocks();
- vi.mocked(requirePlacementManageScope).mockResolvedValue({id:collegeId,organizationId}
-  as Awaited<ReturnType<typeof requirePlacementManageScope>>);
+ vi.mocked(requirePlacementManageScope).mockResolvedValue({id:collegeId,organizationId} as Awaited<ReturnType<typeof requirePlacementManageScope>>);
  vi.mocked(assertPersistedPlatformPermission).mockResolvedValue(undefined);
 });
 
