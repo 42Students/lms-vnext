@@ -68,3 +68,5 @@ These branch-level tests are authored, not executed; fixture timestamps use 2099
 | HR self-profile state and grant-remount boundary | HR-BREAK-PROFILE-SCOPE-44 | `tests/unit/HR-BREAK-chat19-profile-page.test.ts` | Actor changes, current grant revision and no previous user's profile on server render |
 
 | Recruiter portfolio shared applicant/offer aggregate | HR-BREAK-PORTFOLIO-WITHDRAWN-45 | `tests/unit/HR-BREAK-chat19-portfolio-withdrawn.test.ts` | Expired/foreign identity, empty IDs, withdrawn exclusion in both SQL aggregates |
+
+| HR recruiter decision notification read mutation | HR-BREAK-DECISION-READ-46 | `tests/unit/HR-BREAK-chat19-decision-read.test.ts` | Read receipt identity and timestamp, failed response, redirect guard, double-submit and 44px |
