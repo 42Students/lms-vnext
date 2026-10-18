@@ -1,11 +1,12 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
-import { and, desc, eq, isNull } from "drizzle-orm";
+import { and, desc, eq, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import { projectInstances, projectTasks, projectSprints, projectReleases } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requireProjectLifecycleMutationAccess } from "./access";
+import { assertPersistedProjectMutationActor } from "./persisted-mentor-mutation";
 import { ProjectsServiceError } from "./errors";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
@@ -34,6 +35,7 @@ export async function moveMentorBacklogTask(context: RequestContext, projectIdIn
     const [project] = await tx.select({ status: projectInstances.status }).from(projectInstances)
       .where(and(eq(projectInstances.id, scope.project.id),eq(projectInstances.collegeId, scope.collegeId)))
       .for("update").limit(1);
+    await assertPersistedProjectMutationActor(tx,context,scope);
     if(project?.status !== "ACTIVE")throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
     const [task] = await tx.select().from(projectTasks)
       .where(and(eq(projectTasks.projectId,scope.project.id),eq(projectTasks.id,input.taskId)))
@@ -62,7 +64,7 @@ export async function moveMentorBacklogTask(context: RequestContext, projectIdIn
       carriedOverAt:input.targetSprintId===null?now:task.carriedOverAt,
       updatedAt:now,
     }).where(and(eq(projectTasks.id,task.id),eq(projectTasks.projectId,scope.project.id),
-      eq(projectTasks.updatedAt,task.updatedAt))).returning();
+      sql`date_trunc('milliseconds', ${projectTasks.updatedAt}) = ${task.updatedAt.toISOString()}::timestamptz`)).returning();
     if(!updated)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
     await recordActivityEventInTransaction(tx,context,{
       eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TASK_DETAILS_UPDATED,
@@ -82,6 +84,7 @@ export async function createMentorBacklogTask(context: RequestContext, projectId
     const [project] = await tx.select({status:projectInstances.status}).from(projectInstances)
       .where(and(eq(projectInstances.id,scope.project.id),eq(projectInstances.collegeId,scope.collegeId)))
       .for("update").limit(1);
+    await assertPersistedProjectMutationActor(tx,context,scope);
     if(!project || !["PLANNED","ACTIVE"].includes(project.status))
       throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
     const [last] = await tx.select({sequence:projectTasks.sequence}).from(projectTasks)
