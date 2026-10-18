@@ -22,8 +22,8 @@ function contents(node:ReactNode):string{
 function urls(node:ReactNode):string[]{
  if(Array.isArray(node))return node.flatMap(urls);
  if(!isValidElement(node))return [];
- const props=node.props as {children?:ReactNode;href?:unknown};
- return [...(typeof props.href==="string"?[props.href]:[]),...urls(props.children)];
+ const props=node.props as {children?:ReactNode;href?:unknown;action?:ReactNode;actions?:ReactNode};
+ return [...(typeof props.href==="string"?[props.href]:[]),...urls(props.children),...urls(props.action),...urls(props.actions)];
 }
 const read=(searchParams:Record<string,unknown>={})=>
  RecruiterCompanyReportsPage({searchParams:Promise.resolve(searchParams) as never});
