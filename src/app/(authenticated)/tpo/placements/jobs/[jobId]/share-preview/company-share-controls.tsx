@@ -1,5 +1,6 @@
 "use client";
 import {useCallback,useState,useSyncExternalStore} from "react";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {parseCompanyShareExpiry} from "@/modules/placements/company-share/remembered-settings-model";
 import {companyShareEmptyMessage,shouldDisplayNewCompanyShare,companyShareLifecycleStatus,companyShareLifecycleLabel,type CompanyShareStatus} from "@/modules/placements/company-share/status-model";
 import {afterCompanyShareRevocation} from "@/modules/placements/company-share/revoke-ui-model";
@@ -51,6 +52,7 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
  const [shortlistBy,setShortlistBy]=useState("");
  const [newCode,setNewCode]=useState<string|null>(null);
  const [pending,setPending]=useState(false);
+ const [revokeTarget,setRevokeTarget]=useState<string|null>(null);
  const [error,setError]=useState("");
  const [newUrl,setNewUrl]=useState<string|null>(null);
  const [copyState,setCopyState]=useState<"IDLE"|"COPIED"|"MANUAL_COPY">("IDLE");
@@ -84,7 +86,7 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
   setCopyState(state);
  }
  async function revokeLink(id:string){
-  if(!window.confirm("Revoke this company applicant link? Anyone using it will immediately lose access."))return;
+  if(pending)return;
   setPending(true);setError("");
   try{
    const res=await fetch(root+"/"+encodeURIComponent(id)+"/revoke",{
@@ -94,7 +96,7 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
    setLinks(current=>afterCompanyShareRevocation(current,id,status,new Date().toISOString()));
    setNewUrl(null);setNewCode(null);
   }catch{setError("Could not revoke link. Refresh before trying again.");}
-  finally{setPending(false);}
+  finally{setPending(false);setRevokeTarget(null);}
  }
  return <section aria-label="Company applicant sharing"
    className="space-y-3 rounded-xl border border-border bg-surface p-5">
@@ -113,12 +115,12 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
     </label>
     <label className="grid gap-1 text-sm">Please shortlist by
      <input type="date" value={shortlistBy} onChange={event=>setShortlistBy(event.target.value)}
-      className="min-h-10 rounded border border-border bg-surface px-2"/>
+      className="min-h-11 rounded border border-border bg-surface px-2"/>
     </label>
     <fieldset className="w-full rounded border border-border p-3">
      <legend className="px-1 text-sm font-semibold">Columns to share ({selectedColumns.length} of 11 maximum)</legend>
      <div className="grid gap-2 sm:grid-cols-3">{SHARE_COLUMNS.map(([key,label])=>
-      <label key={key} className="inline-flex min-h-10 items-center gap-2 text-sm">
+      <label key={key} className="inline-flex min-h-11 items-center gap-2 text-sm">
        <input type="checkbox" checked={selectedColumns.includes(key)}
         disabled={pending||(!selectedColumns.includes(key)&&selectedColumns.length>=11)}
         onChange={event=>setSelectedColumns(current=>event.target.checked?
@@ -127,7 +129,7 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
       </label>)}</div>
     </fieldset>
     <button type="button" disabled={pending||selectedColumns.length===0} onClick={createLink}
-     className="min-h-10 rounded bg-primary px-4 font-semibold text-on-primary">
+     className="min-h-11 rounded bg-primary px-4 font-semibold text-foreground">
      Create expiring link
     </button>
    </div>
@@ -140,7 +142,7 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
     <input aria-label="One-time share URL" readOnly value={newUrl} onFocus={event=>event.currentTarget.select()}
      className="mt-2 w-full rounded border border-border bg-surface p-2 text-xs"/>
     <button type="button" onClick={()=>void copyLink()}
-     className="mt-2 text-sm font-semibold text-primary-text underline">Copy URL</button>
+     className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">Copy URL</button>
     {copyState==="COPIED"?<p role="status" className="mt-2 text-sm text-body">Copied to clipboard.</p>:null}
     {copyState==="MANUAL_COPY"?<p role="status" className="mt-2 text-sm text-body">Clipboard unavailable. Select the URL field above and copy it manually.</p>:null}
    </div>:null}
@@ -152,10 +154,13 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
      {link.audit.views} views · {link.audit.exports} CSV downloads
     </span>
     {!link.revokedAt?<button type="button" disabled={pending}
-     onClick={()=>void revokeLink(link.id)}
-     className="font-semibold text-primary-text underline">Revoke</button>:null}
+     onClick={()=>setRevokeTarget(link.id)}
+     className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Revoke</button>:null}
    </li>)}</ul>:<p className="text-sm text-body">{companyShareEmptyMessage(status)}</p>}
   </>}
+  <ConfirmDialog open={revokeTarget!==null} onOpenChange={open=>{if(!open)setRevokeTarget(null);}} pending={pending}
+    title="Revoke this company applicant link?" description="Anyone using it will immediately lose access."
+    confirmLabel="Revoke" onConfirm={()=>{if(revokeTarget)void revokeLink(revokeTarget);}}/>
   {error?<p role="alert" className="text-sm text-body">{error}</p>:null}
  </section>;
 }
