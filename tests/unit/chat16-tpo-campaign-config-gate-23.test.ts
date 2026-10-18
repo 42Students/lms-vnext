@@ -62,4 +62,19 @@ describe("chat-16 TPO campaign provider readiness cannot consume drafts on misco
     }
     expect(getDb).not.toHaveBeenCalled();
   });
+  it("T-S2-04-CREDENTIAL-04 refuses unsafe ZeptoMail transport before consuming any campaign draft", async () => {
+    vi.stubEnv("ZEPTOMAIL_TOKEN", "valid-token");
+    for (const apiUrl of [
+      "http://api.zeptomail.in/v1.1/email/template",
+      "https://credential:secret@api.zeptomail.in/v1.1/email/template",
+      "not-a-valid-url",
+    ]) {
+      vi.stubEnv("ZEPTOMAIL_API_URL", apiUrl);
+      expect(await tpoCampaignDispatchReady()).toBe(false);
+      await expect(dispatchTpoCampaign(context, collegeId))
+        .rejects.toMatchObject({ code: "NOT_READY" });
+    }
+    expect(getDb).not.toHaveBeenCalled();
+  });
+
 });
