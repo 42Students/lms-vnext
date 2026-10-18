@@ -160,6 +160,7 @@ export default async function SuperAdminProjectsPage({
       </nav>
       <ProjectWorkspacePageExport items={result.items.map(item=>({
         id:item.id,title:item.title,mentorName:item.mentorName,status:item.status,
+        riskReasons:item.riskReasons,
         memberCount:item.memberCount,progressPercent:item.progressPercent,updatedAt:item.updatedAt,
       }))}/>
       <ProjectAdminWorkspaceList

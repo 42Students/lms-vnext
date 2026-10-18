@@ -83,6 +83,8 @@ This is the **tested-function ledger for the focused model suite**, not a claim 
 
 | `src/modules/courses/faculty-results-service.ts` | `getFacultyAssessmentResults` | `tests/unit/chat3-faculty-results-service-matrix.test.ts` | FAC-RESULTS-SERVICE-01 | wrong-role/disabled denial before reads, selected Section rejection, published assignment/quiz metrics, five-row report cap, stale pagination and revoked teaching grant propagation |
 
+| `src/modules/courses/faculty-quiz-attempts-service.ts` | `getFacultyQuizAttemptDrilldown` | `tests/unit/chat3-faculty-quiz-attempts-privacy-service.test.ts` | FAC-QUIZ-PII-01 | actual service strips email fallback and private selected answers from response, preserves current teaching scope, wrong-role/disabled and forged query denial |
+| `src/modules/courses/faculty-quiz-question-csv-service.ts` | `getFacultyQuizQuestionCsvForDownload` | `tests/unit/chat3-faculty-quiz-question-csv-service.test.ts` | FAC-QUIZ-CSV-SERVICE-01 | strict quiz and delivery scope, report grant enforced at export, 500-row cap, CSV formula neutralization and no private contact fields |
 ## Role/security matrix
 
 - FAC-SCOPE-01/02: Faculty allowed only after central `courses.read` and active teaching role; Learner, Mentor, College Admin, Super Admin, missing membership and foreign tenant denied in unit-model mock contract.

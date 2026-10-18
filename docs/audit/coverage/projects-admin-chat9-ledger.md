@@ -91,3 +91,6 @@ The Projects squad lead (chat-14) must reconcile these missing exports and route
 | `admin-projects-query-model.ts` | `parseAdminProjectsQuery` | BEHAVIOR | `PROJ-BREAK-admin-input-22/23/27`: decimal-only paging, ambiguous legacy search and unsupported filter rejection; `tests/unit/PROJ-BREAK-chat9-admin-query-boundaries.test.ts`, `PROJ-BREAK-chat9-admin-project-list-page.test.tsx`. |
 | `src/app/(authenticated)/admin/projects/page.tsx` | `SuperAdminProjectsPage` | MOCK SSR BEHAVIOR | `PROJ-BREAK-admin-resilience-24/25`, `PROJ-BREAK-admin-idor-26`, `PROJ-BREAK-admin-input-27`: DB outage, optional template read failure, unscoped actor and malformed GET; mocked element-tree only, authenticated browser OPEN. |
 
+
+| `project-admin-date-model.ts` | `formatProjectAdminUpdatedDateIst` | PURE BEHAVIOR | `PROJ-BREAK-admin-time-33/34`: exact IST midnight and day rollover for customer-visible Project cards; `tests/unit/PROJ-BREAK-chat9-admin-IST-dates.test.ts`. |
+| `src/components/projects/project-workspace-page-export.tsx` | `ProjectWorkspacePageExport` | SOURCE + PURE MODEL | `PROJ-BREAK-admin-exports-35`: visible status, risk reasons, IST dates and central CSV injection sanitizer. Real client download pending. |
