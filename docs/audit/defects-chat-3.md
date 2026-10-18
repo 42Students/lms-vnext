@@ -216,6 +216,12 @@ The `resolveSuperAdminSectionDetail` service checked `academics.read` and a sele
 
 **Fix:** Require `isSuperAdmin(context)` up front and raise the canonical `AuthorizationError("academics.read")` before scoped database reads. Preserve the Super Admin no-college prompt (null) and private foreign/not-found behavior. `tests/unit/chat3-sa-academics-section-platform-role.test.ts` covers active and disabled principals, forged role/adminScope combinations, correct and foreign Section records and database failures. CI and authenticated page tests pending.
 
+### UX-teacher-notices-redirect-036 — malformed legacy Notices URL surfaced an uncaught validation error (S2)
+
+The retired Faculty notices bookmark path used `facultyNoticeParamsSchema.parse(await params)` without a safe-parse or private not-found mapping. A mistyped/hostile delivery ID therefore surfaced as an unhandled Zod error rather than the standard private 404 used by the other Faculty Section legacy aliases.
+
+**Fix:** `safeParse` and `notFound()` before any request context or Section read; still call `getFacultySectionNotices` before redirect on valid IDs, so revoked teaching assignments cannot be bypassed. `tests/unit/UX-teacher-redirect-no-shared-route-journey.test.tsx` verifies this and three additional alias routes. Runtime/browser acceptance pending.
+
 ### FAC-GRADEBOOK-UX-032 — repeated page key bypassed strict Faculty query rules (S2)
 
 The Faculty gradebook only verified allowed query-key **names**, not that Next.js had received exactly one value per key. For example `?page=1&page=999` becomes `page: ["1","999"]`; the Zod `coerce.number` path can also accept an array of one value. This silently accepts an ambiguous deep link despite the code's intended strict filter validation.
