@@ -68,6 +68,8 @@ Test references: **BEHAVIOR** = direct function assertions; **SOURCE** = source 
 
 | `admin-insights-group-model.ts` | `groupProjectAdminRows` | BEHAVIOR | PROJ-BREAK-scale-22/23/24, PROJ-BREAK-idor-29: preserves original order, partitions 20k records into 100 project groups and resists object-prototype key collision; `tests/unit/PROJ-BREAK-chat9-admin-grouping.test.ts`. Used by admin snapshots and risk queue; PostgreSQL EXPLAIN OPEN. |
 
+| `super-admin-template-directory-model.ts` | `templateDirectoryPages`, `templateDirectoryHref`, `templateDirectoryQuerySchema` | BEHAVIOR | PROJ-BREAK-scale-25, PROJ-BREAK-ux-40/41: strict search/status/page, safe URL encoding, bounded page count for nonfinite input. `tests/unit/PROJ-BREAK-chat9-template-directory-query.test.ts`. |
+
 ## Route/page tests and independent audit
 
 The 37 routes in `docs/orchestrator/ui-ux/pages-admin.md` positions 75–111 have named **source-level** tests across `tests/unit/ux-admin-chat9-batch-01..04.test.ts`; `tests/unit/ux-admin-chat9-coverage-closure.test.ts` verifies mapping. These do not constitute keyboard, screen reader, phone, navigation or role journey tests. Significant audited UX surfaces: `/admin/projects`, `/admin/projects/[projectId]`, `/admin/projects/templates/[templateId]/*`, `/admin/projects/submissions`, `/admin/settings` and TPO recovery. Unit-failure repairs are captured in `docs/audit/defects-chat-9.md`.
