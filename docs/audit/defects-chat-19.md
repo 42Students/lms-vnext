@@ -320,3 +320,16 @@ These fixes are committed on chat-19; live provider, PostgreSQL revocation races
 | ID | Severity | Source | Failure and correction | Regression |
 |---|---|---|---|---|
 | HR-BREAK-TODAY-SLOTS-12 | MAJOR | `src/modules/placements/hr-today-open-slots-service.ts` | Query selected the earliest 100 upcoming scheduled interview rounds **before** excluding rounds already covered by OFFERED/BOOKED slots. If all first 100 were covered, an authorized round 101 needing slots was never shown. Add a college- and round-scoped SQL `NOT EXISTS` guard before the limit. Recheck latest slot status in the returned rows to avoid falsely prompting an offer if another employer operation offered a slot after the initial query. Do not expand authorized job IDs. | `tests/unit/HR-BREAK-chat19-today-slots-query-limit.test.ts` uses 110 rounds, mixed cancelled/proposed/offered/booked and a concurrent status change. |
+
+## Recruiter activity stale-filter recovery
+
+| ID | Severity | Source | Root cause and correction | Test |
+|---|---|---|---|---|
+| HR-BREAK-ACTIVITY-PAGE-13 | MAJOR | `src/modules/placements/hr-job-activity-service.ts`, `hr-job-activity-model.ts`, `src/app/(authenticated)/hr/activity/page.tsx` | The service applied the URL-supplied offset before checking whether that page still existed. An old bookmarked page after filters or grants changed would falsely report no events while eligible published/closed activity was still present. Count only current recruiter/company/college authorized job activity, clamp stale page to final real page, then apply the bounded offset and render the effective page in Previous/Next links. Keep strict malformed-query recovery and event privacy. | `tests/unit/HR-BREAK-chat19-activity-stale-page.test.ts` |
+
+## Further independent HR messaging and filter validation
+
+| ID | Severity | Finding | Mitigation / evidence |
+|---|---|---|---|
+| HR-BREAK-MAIL-DIGEST-15 | COVERAGE | Previously unreferenced recruiter digest email provider was a high-risk outgoing PII/token boundary. No verified source defect was found in reviewed path. | Added direct injected-provider tests for runtime recipient allowlist, non-OTP template isolation, secure endpoint, Reply-To ownership, exact three bounded escaped excerpts, no redirects/retries for non-idempotent POST, and fail-closed provider denial or exception; `tests/unit/HR-BREAK-chat19-mail-digest-provider.test.ts`. |
+| HR-BREAK-ACTIVITY-QUERY-14 | MAJOR | `hrActivityQuerySchema` used `z.coerce.number()` for URL page and limit: strings `1e3` and `0x10` unexpectedly became valid navigation indices. | Use strict decimal-only URL string parsing alongside typed internal numeric inputs; reject noncanonical syntax and preserve valid pagination and recovery. `tests/unit/HR-BREAK-chat19-activity-stale-page.test.ts`. |

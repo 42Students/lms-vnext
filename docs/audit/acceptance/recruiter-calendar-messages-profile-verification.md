@@ -234,3 +234,8 @@ The company directory revalidates the current actor and each returned colleague:
 ### HR-ACTOR-STATUS-48 account-level revoke boundary
 
 Job listing, hiring rounds, private candidates and interview blocks now use persisted ACTIVE actor checks in addition to identity/relationship/expiry/capability checks. `tests/unit/HR-BREAK-chat15-persisted-user-48.test.ts` verifies disabled and cross-session actors as well as each SQL guard. The tests are unexecuted; real session-revocation workflow remains open.
+
+
+## Chat-15 HR-SELF-GRANTS-53 and UX-CHAT15-SERVER-52 (2026-10-18)
+
+The recruiter profile's college-access overview no longer describes expired or unverified grants as active when its session context remains cached. The persisted query checks verification, future validity and the actor's exact college-company relationship. `tests/unit/chat15-hr-self-grants-53.test.ts` covers wrong recruiter, no grants, wrong college and an authorized private-contact-free row. `tests/unit/chat15-hr-tracker-page-render-52.test.tsx` renders real recruiter Drives and tracker My Reports pages across denial, outage, failed load, empty and authorized data. Authenticated browser and PostgreSQL expiry validation remain open. Tests authored, not executed.

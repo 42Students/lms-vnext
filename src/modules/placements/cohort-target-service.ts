@@ -5,6 +5,7 @@ import { cohorts, colleges, departments, placementJobs, programs } from "@/db/sc
 import { placementJobCohortTargets } from "@/db/schema/placement-job-cohorts";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePlacementManageScope } from "./scope";
+import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import { PlacementsServiceError } from "./errors";
 
 const uuid = z.string().uuid();
@@ -25,9 +26,14 @@ export async function replacePlacementJobCohortTargets(
   raw: unknown,
 ) {
   const input = replaceInput.parse(raw);
-  await requirePlacementManageScope(context, input.collegeId);
+  const scopedCollege = await requirePlacementManageScope(context, input.collegeId);
   const db = getDb();
   return db.transaction(async tx => {
+    // A stale authenticated role cannot authorize a later draft audience write.
+    // Hold the persisted actor and membership SHARE locks for this transaction.
+    await assertPersistedPlatformPermission(tx, context, "placements.manage", {
+      collegeId: scopedCollege.id, organizationId: scopedCollege.organizationId,
+    });
     // Same college lock ordering as DB08 eligibility and registration writes.
     const [college] = await tx.select({ id: colleges.id }).from(colleges)
       .where(eq(colleges.id, input.collegeId)).for("update").limit(1);
