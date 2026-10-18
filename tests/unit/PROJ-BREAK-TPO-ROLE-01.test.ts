@@ -53,7 +53,7 @@ describe("PROJ-BREAK-TPO-ROLE-01 Projects and placements per-account scope",()=>
     {id:"grant",organizationId:"orgA",collegeId:"collegeA",collegeName:"College",
      companyRelationshipId:"relationshipA"},
    ]},
-  } as RequestContext;
+  } as unknown as RequestContext;
   expect(can(recruiter,"placements.recruiter.read",{
    ...scope,placementCompanyRelationshipId:"relationshipA"})).toBe(true);
   expect(can(recruiter,"projects.read",scope)).toBe(false);
@@ -67,7 +67,7 @@ describe("PROJ-BREAK-TPO-ROLE-01 Projects and placements per-account scope",()=>
    ...context(["TPO"]),
    user:{...context(["TPO"]).user,systemRoles:["SUPER_ADMIN"]},
    adminScope:{collegeId:"collegeA",organizationId:"orgA"},
-  } as RequestContext;
+  } as unknown as RequestContext;
   expect(can(root,"projects.read",scope)).toBe(true);
   expect(can(root,"projects.manage",scope)).toBe(true);
   expect(can(root,"projects.manage",otherCollege)).toBe(false);

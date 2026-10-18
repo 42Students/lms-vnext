@@ -35,6 +35,8 @@ Reviewed: 2026-10-18 (source inspection; tests **not executed**). Scope: Super A
 | PROJ-BREAK-SA-20..22 | S2 / wildcard abuse in project filters | An untrusted % or _ entered in the unsubmitted directory was interpreted as an ILIKE wildcard, not a literal search. | Fixed in 710ab55e, 86437e67 and 7c228f87: tested bounded query and literal escape model; tests in 81a55639. | PROJ-BREAK-SA-20..22 |
 | UX-cross-tpo-second-C13-026-22 | S3 / generic loading recovery | TPO report loading lost the approved destination-specific wording. | Fixed 61ade3fd; retains accessible loading component. | chat13-ux-cross-audit-tpo-loading.test.ts |
 
+| SA-COMPANY-CSV-02 | S1 / spreadsheet command injection | Company CSV exported untrusted employer/name fields using trimStart() before checking =, +, @, -, so Unicode zero-width and bidi-control prefixes could bypass formula neutralization. | Fixed cf50d64f: apply Unicode-aware leading-control detection and quote/prefix the cell; test a713004d covers 5 disguised formulas and a normal name. | SA-COMPANY-CSV-02 |
+
 ## Latest unit-failure note reviewed
 
 The refreshed cloud report (`docs/orchestrator/unit-failures-latest.md`, CI `372038db`) additionally listed `SA-ADMIN-FIRST-08` and `PROJ-BREAK-SA-03` among failures. `SA-ADMIN-FIRST-08` had a brittle whitespace-only source assertion despite a runtime formatter test already proving inactive/archived labels; fixed test in `7eb0e7db`. `PROJ-BREAK-SA-03` was a genuine failing state transition caused by the now-fixed escaped-newline guard (`5394c859`). **The refreshed report predates these branch changes; a clean rerun remains required.**

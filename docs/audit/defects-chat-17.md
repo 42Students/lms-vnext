@@ -10,6 +10,8 @@
 | WEAK-tenant-domains-06 | S1 (host normalization) | URL parsing of literal backslash or embedded control in Host / configured DNS claim can reinterpret or silently strip separators, accepting a different hostname than the presented input. | Reject backslash/ASCII controls before URL parse in `normalizeTenantHost` and `normalizeRequestHost`; test `WEAK-tenant-domains-06`. Commits `b4e22bf4`, `679e407b`. | Fix pushed; cloud execution pending |
 | WEAK-auth-tenant-access-06/07 | S1 (tenant access) | `isTenantAccessAllowed` compared cached college UUIDs without confirming active user or current membership; a disabled account or ended/suspended membership can still pass the pure tenant host check if a stale context is supplied. | Uses `hasActiveMembership` / `hasActiveRecruiter`, requires active platform status, then checks tenant UUID. Tests `WEAK-auth-tenant-access-06/07`. Commits `154f5ba0`, `5694d9a2`. | Fix pushed; cloud execution pending |
 
+| UX-kit-HARDEN-32 | S2 (external URL integrity) | Browser URL normalization silently treats raw backslashes as slashes and strips tab/newline characters, potentially opening an unintended link presented as a saved external evidence destination. | `ThirdPartyLink` rejects ambiguous raw characters and whitespace before HTTPS parsing. Unit `UX-kit-HARDEN-32`. Commits `05bbd841`, `2085706b`. | Fix pushed; cloud execution pending |
+
 ## Integration fixture hardening
 
 - `PROJ-HARNESS-22..28`: explicit current college, project roster, active user and `can_mutate` checks protect example SQL fixtures against accidental incorrect cross-tenant writes. This is fixture integrity, not proof of product route authorization.
