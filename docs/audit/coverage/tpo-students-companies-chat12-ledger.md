@@ -6,8 +6,8 @@
 |---|---|---|---|---|
 | `src/modules/placements/tpo-students-model.ts` | `TPO_STUDENT_JOURNEY_STATES` | `tests/unit/chat12-tpo-roster-facets-behavioral.test.ts` | enumerated journey states; enum consumers | **PARTIAL** |
 | `src/modules/placements/tpo-students-model.ts` | `deriveTpoStudent` | `tests/unit/chat12-round34-profile-readiness.test.ts` | source-level readiness provenance | **SOURCE** |
-| `src/modules/placements/tpo-students-model.ts` | `summarizeTpoStudents` | `tests/unit/chat12-tpo-students-contract.test.ts` | source aggregation contract | **SOURCE** |
-| `src/modules/placements/tpo-students-model.ts` | `summarizeTpoStudentBranches` | **NO TARGETED TEST** | branch weights, denominators and empty cohorts | **OPEN** |
+| `src/modules/placements/tpo-students-model.ts` | `summarizeTpoStudents` | `tests/unit/chat12-tpo-roster-summaries-behavior.test.ts` | Active roster, registered placement pool vs unregistered, placed outside pool, null rate for no denominator, deterministic branch sorting | **BEHAVIOURAL** |
+| `src/modules/placements/tpo-students-model.ts` | `summarizeTpoStudentBranches` | `tests/unit/chat12-tpo-roster-summaries-behavior.test.ts` | Active roster, registered placement pool vs unregistered, placed outside pool, null rate for no denominator, deterministic branch sorting | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-students-model.ts` | `filterTpoStudentRoster` | `tests/unit/chat12-tpo-roster-facets-behavioral.test.ts` | facet intersection, nulls, search and pagination | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-students-model.ts` | `selectTpoStudentWorkingSet` | `tests/unit/chat12-tpo-roster-facets-behavioral.test.ts` | default vs explicit finished-batch access | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-students-model.ts` | `tpoStudentRegisteredForPlacements` | `tests/unit/chat12-tpo-roster-facets-behavioral.test.ts` | explicit selection vs application fallback | **BEHAVIOURAL** |
@@ -32,8 +32,8 @@
 | `src/modules/placements/tpo-participation-model.ts` | `isTpoDecisionSnapshotCurrent` | `tests/unit/chat12-tpo-participation-state-cas.test.ts` | CAS equality and null safety | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-participation-model.ts` | `hasTpoDecisionChanged` | `tests/unit/chat12-tpo-participation-state-cas.test.ts` | idempotency and diff with null status | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-participation-service.ts` | `TpoParticipationConflictError` | `tests/unit/chat12-tpo-bulk-concurrency-and-authorization.test.ts` | caught on failed preview, not direct DB | **SOURCE** |
-| `src/modules/placements/tpo-participation-service.ts` | `getTpoLearnerParticipation` | `tests/unit/PROJ-BREAK-TPO-bulk-partial-audit-01.test.ts` | mocked under confirm; real active/tenant DB proof pending | **MOCKED** |
-| `src/modules/placements/tpo-participation-service.ts` | `decideTpoLearnerParticipation` | `tests/unit/PROJ-BREAK-TPO-bulk-partial-audit-01.test.ts` | mocked CAS: actual PostgreSQL row locks/audit pending | **MOCKED** |
+| `src/modules/placements/tpo-participation-service.ts` | `getTpoLearnerParticipation` | `tests/unit/chat12-tpo-participation-persisted-role.test.ts` | Actual service with mocked DB: invalid/stale/disabled/wrong-role actor denied before learner read, missing student denied; real tenant DB proof pending | **BEHAVIOURAL/MOCKED DB** |
+| `src/modules/placements/tpo-participation-service.ts` | `decideTpoLearnerParticipation` | `tests/unit/chat12-tpo-participation-persisted-role.test.ts` | Actual service stale actor denied before write; source assertions verify persisted SHARE-lock check inside college-lock transaction; real DB CAS/audit pending | **BEHAVIOURAL/MOCKED DB** |
 | `src/modules/placements/tpo-bulk-action-confirm-service.ts` | `TpoBulkPreviewError` | `tests/unit/PROJ-BREAK-TPO-bulk-partial-audit-01.test.ts` | rejects stale token and reordered IDs | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-bulk-action-confirm-service.ts` | `confirmTpoBulkAction` | `tests/unit/PROJ-BREAK-TPO-bulk-partial-audit-01.test.ts` | partial rows, audit outage, undo only with receipt, replay invalidation | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-bulk-action-preview-service.ts` | `loadTpoBulkCurrent` | `tests/unit/PROJ-BREAK-TPO-bulk-partial-audit-01.test.ts` | mocked; database authorization still pending | **MOCKED** |
@@ -59,10 +59,14 @@
 
 | Production path | Export | Test file | Evidence and missing cases | Status |
 |---|---|---|---|---|
-| `src/modules/placements/tpo-student-panel-detail-service.ts` | `getTpoStudentPanelDetail` | `tests/unit/PROJ-BREAK-TPO-PANEL-01.test.ts` | Source guard: TPO, active learner/actor, college-scoped apps, PLACEMENTS-only activity, 100/1000 capped history; real DB negative joins pending | **SOURCE** |
+| `src/modules/placements/tpo-student-panel-detail-service.ts` | `getTpoStudentPanelDetail` | `tests/unit/PROJ-BREAK-TPO-PANEL-auth-session-05.test.ts` | Real service with mocked persistence: revoked persisted role fails before data access, expired/disabled/wrong role denied, invalid UUID and missing learner handled; live DB joins still pending | **BEHAVIOURAL/MOCKED DB** |
 | `src/modules/placements/tpo-student-notes-service.ts` | `tpoStudentNotesInput` | `tests/unit/PROJ-BREAK-TPO-PANEL-01.test.ts` | Strict UUIDs, no duplicate rows, max 100 IDs, note nonempty/2K limit, tenant override rejected | **BEHAVIOURAL** |
-| `src/modules/placements/tpo-student-notes-service.ts` | `addTpoStudentNotes` | `tests/unit/PROJ-BREAK-TPO-PANEL-01.test.ts` | Source persisted actor and tenant audit guard; per-row transaction, partial selected count; concurrency and rollback pending | **SOURCE** |
-| `src/modules/placements/tpo-student-notes-service.ts` | `listTpoStudentNotes` | `tests/unit/PROJ-BREAK-TPO-PANEL-01.test.ts` | Source guard: wrong tenant, suspended/disabled learner filtered, notes capped at 100; DB role/session race still pending | **SOURCE** |
+| `src/modules/placements/tpo-student-notes-service.ts` | `addTpoStudentNotes` | `tests/unit/chat12-tpo-notes-authorization-behavior.test.ts` | Mocked transaction: persisted permission before reads, foreign ID skip, active saved row, audit write failure; actual DB atomicity/race pending | **BEHAVIOURAL/MOCKED DB** |
+| `src/modules/placements/tpo-student-notes-service.ts` | `listTpoStudentNotes` | `tests/unit/chat12-tpo-notes-authorization-behavior.test.ts` | Mocked disappeared learner returns null without leaking old notes; production SQL checks active learner/college and caps at 100; DB role/session race still pending | **BEHAVIOURAL/MOCKED DB** |
+
+### Real permission policy matrix
+
+`tests/unit/PROJ-BREAK-TPO-real-permission-matrix.test.ts` asserts the **actual** `can` function for own-college TPO versus College Admin, learner/faculty/mentor/recruiter, wrong college, forged org, disabled account, suspended membership and Super Admin acting-college scope. This is distinct from the mocked persisted project-member SQL read in `PROJ-BREAK-TPO-01.test.ts`. `projects.read` by itself does not permit a nonmember to open a project workspace; the access service still checks a persisted project-member row.
 
 ## Critical outstanding integration tests
 

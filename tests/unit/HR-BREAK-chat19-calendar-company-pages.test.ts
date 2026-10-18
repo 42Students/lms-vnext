@@ -48,8 +48,8 @@ describe("HR-BREAK-chat19-calendar-company: account-deny and stable navigation",
  it("malformed calendar day, view and category use bounded fallback rather than DB exceptions",async()=>{
   await calendar({date:"2026-99-99",view:"admin",category:"PRIVATE"});
   expect(m.calendar).toHaveBeenCalledWith(actor,expect.objectContaining({
-   from:expect.stringMatching(/^\\d{4}-\\d{2}-\\d{2}$/),
-   to:expect.stringMatching(/^\\d{4}-\\d{2}-\\d{2}$/),
+   from:expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
+   to:expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
   }));
  });
  it("no active grant displays explicit calendar recovery even if event feed is empty",async()=>{

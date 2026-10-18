@@ -37,6 +37,13 @@ Reviewed: 2026-10-18 (source inspection; tests **not executed**). Scope: Super A
 
 | SA-COMPANY-CSV-02 | S1 / spreadsheet command injection | Company CSV exported untrusted employer/name fields using trimStart() before checking =, +, @, -, so Unicode zero-width and bidi-control prefixes could bypass formula neutralization. | Fixed cf50d64f: apply Unicode-aware leading-control detection and quote/prefix the cell; test a713004d covers 5 disguised formulas and a normal name. | SA-COMPANY-CSV-02 |
 
+| PROJ-BREAK-SA-23 | **S1 / cross-request mutable fallback** | `parseWorkspaceBrief` returned the exported singleton `emptyWorkspaceBrief` for malformed stored payloads. A caller mutating its deliverables, conditions, personas or goal could contaminate later reads for other projects on the same server process. | **Fixed** `4e78c863`: return a fresh independent, typed empty object on failure. Runtime mutation/isolation, strict validation and timestamp tests `PROJ-BREAK-SA-23/24` in `tests/unit/PROJ-BREAK-SA-workspace-brief-isolation.test.ts` (`e7d50791`). | PROJ-BREAK-SA-23/24 |
+| PROJ-BREAK-SA-25 | S2 / conflicting URL alias | `parseAdminProjectsQuery` supported legacy `search` and new `q` but accepted two different values silently by preferring `search`, so links could communicate one filter while applying another. | **Fixed** `314b852c`: identical/trim-equivalent aliases remain accepted; conflicting dual values cause recoverable parse failure. Regression `d32bf2ea`. | PROJ-BREAK-SA-25 |
+
+| PROJ-BREAK-SA-26 | S2 / wildcard filter bypass across all project summaries | `admin-insights-service.ts` applied `%${query.q}%` as an SQL ILIKE pattern to workspace titles/slugs/IDs for snapshot, risk and submission directories, allowing `%` and `_` to match unrelated projects. Tenant boundaries still applied, but user-facing filtering and exports were misleading. | **Fixed** `b4aaaf4f`: all three paths bind escaped literal search strings through `adminUnsubmittedLiteralSearchPattern`; regression `1c8a5872`, refined `d378894d`. | PROJ-BREAK-SA-26 |
+
+| PROJ-BREAK-SA-27/28/29 | S2 / ambiguous activity filters | The Super Admin Projects activity query selected the first of duplicate URL values and silently preferred `action` over contradictory `status`/`eventType`, causing audit-filter mismatch. | **Fixed** `f8e640b8` and `ac83913a`: any array is ignored with a visible invalid-filter signal; contradictory aliases cannot select an event, while identical aliases and valid date/cursor pairs remain supported. Regression `PROJ-BREAK-SA-27..29` (`10f84437`, `53105687`, `c3923469`). | PROJ-BREAK-SA-27/28/29 |
+
 ## Latest unit-failure note reviewed
 
 The refreshed cloud report (`docs/orchestrator/unit-failures-latest.md`, CI `372038db`) additionally listed `SA-ADMIN-FIRST-08` and `PROJ-BREAK-SA-03` among failures. `SA-ADMIN-FIRST-08` had a brittle whitespace-only source assertion despite a runtime formatter test already proving inactive/archived labels; fixed test in `7eb0e7db`. `PROJ-BREAK-SA-03` was a genuine failing state transition caused by the now-fixed escaped-newline guard (`5394c859`). **The refreshed report predates these branch changes; a clean rerun remains required.**
@@ -44,6 +51,12 @@ The refreshed cloud report (`docs/orchestrator/unit-failures-latest.md`, CI `372
 
 
 `docs/orchestrator/unit-failures-latest.md` lists four additional chat-13 failures in academic scroll, class-capacity source formatting, native Drawer modal semantics and legacy academic status whitespace. Their assertions were updated to preserve the exact safety/UX invariants while accepting the current implementations. The newer file supersedes the older `r9` report, which lists `PUB-auth-public-53` in `chat13-final-sprint-public-share.test.ts` and `SA-academics-people-36` in `chat13-super-admin-academic-copy.test.ts`. On the current `main` source, the DataTable maps the selected approved columns to `tableColumns` and uses the same `result.rows`; `legacyAcademicStatus` is called with the expected boolean on batches and cohorts. The reported failures may refer to an older source revision. Do **not** mark them green without the orchestrator rerunning Vitest.
+
+## Newest lane-unit and typecheck report reconciliation
+
+The refreshed files on `main` no longer contain a `## chat-13` failure section. The two earlier lane failures were `SA-PLACEMENT-POLICY-03` and `UX-cross-tpo-second-C13-026-22`. Current production source and test are aligned after commits `9bf3a6c6` (field-aware strict policy schema) and `61ade3fd` (exact `Loading TPO reports` text). These are **source-level reconciliations**, not a claim of fresh green CI.
+
+The report still lists `PROJ-BREAK-SA-16` under the shared `chat-2` section. Re-read its test and current source: the required dynamic page components use `getCurrentRequestContext` and `requireProjectManageAccess`, global template subview validates `projectTemplateIdSchema`, and every literal assertion in that test is present in `src/modules/projects/access.ts` and its delegates. Thus the reported failure refers to an earlier main snapshot or unavailable detailed failure information. Keep the security assertions intact; obtain a newer CI trace before changing behavior. Current typecheck report lists no chat-13 files.
 
 ## Remaining hardening obligations
 

@@ -1,5 +1,6 @@
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";import {join} from "node:path";
+import {tpoCommunicationChangeSchema} from "@/modules/placements/tpo-communication-change-model";
 const source=(p:string)=>readFileSync(join(process.cwd(),p),"utf8");
 describe("chat-9 round9 TPO recruiter and communication settings",()=>{
  it("TPO-settings-audit-54 requires a same-origin authenticated write and never treats domain trust as recruiter verification",()=>{
@@ -37,10 +38,16 @@ describe("chat-9 round9 TPO recruiter and communication settings",()=>{
   const service=source("src/modules/placements/tpo-communication-settings-service.ts");
   expect(editor).toContain("Monthly limit on optional SMS");
   expect(editor).toContain("SMS used this month: unavailable until delivery usage is connected.");
-  expect(service).toContain("smsMonthlyCap:z.number().int().min(0).max(100000)");
+  const model=source("src/modules/placements/tpo-communication-change-model.ts");
+  expect(service).toContain("tpoCommunicationChangeSchema.parse(raw)");
+  expect(model).toContain("smsMonthlyCap:z.number().int().min(0).max(100000)");
   expect(editor).toContain('section:"SMS_CAP"');
-  expect(service).toContain('section:z.literal("SMS_CAP")');
-  expect(service).toContain('input.section==="SMS_CAP"?{smsMonthlyCap:input.smsMonthlyCap}');
+  expect(model).toContain('section:z.literal("SMS_CAP")');
+  expect(model).toContain('input.section==="SMS_CAP"?{smsMonthlyCap:input.smsMonthlyCap}');
+  for(const value of [0,100000])
+   expect(tpoCommunicationChangeSchema.safeParse({section:"SMS_CAP",smsMonthlyCap:value,expectedVersion:null}).success).toBe(true);
+  for(const value of [-1,100001,1.5,Number.POSITIVE_INFINITY])
+   expect(tpoCommunicationChangeSchema.safeParse({section:"SMS_CAP",smsMonthlyCap:value,expectedVersion:null}).success).toBe(false);
  });
  it("TPO-settings-audit-72 maintains sharing choices on a 409 conflict without widening learner disclosure",()=>{
   const sourceUi=source("src/components/tpo/tpo-company-visibility-editor.tsx");

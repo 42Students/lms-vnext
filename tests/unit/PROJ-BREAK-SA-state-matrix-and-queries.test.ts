@@ -58,6 +58,23 @@ describe("Super Admin Projects: hostile state, URL, and concurrency contracts", 
     expect(parseProjectAdminSubmissionsQuery({ submissionStatus: "SECRET" }).success).toBe(false);
   });
 
+  it("PROJ-BREAK-SA-25 rejects contradictory legacy and new project search values",()=>{
+    const legacy=parseAdminProjectsQuery({search:"Alpha",page:"1"});
+    const modern=parseAdminProjectsQuery({q:"Alpha",page:"1"});
+    expect(legacy.success).toBe(true);
+    expect(modern.success).toBe(true);
+    if(legacy.success&&modern.success)expect(legacy.data).toEqual(modern.data);
+    const both=parseAdminProjectsQuery({search:" Alpha ",q:"Alpha"});
+    expect(both.success).toBe(true);
+    if(both.success)expect(both.data.q).toBe("Alpha");
+    for(const hostile of [
+      {search:"college-a",q:"college-b"},
+      {search:"",q:"other"},
+      {search:"ARCHIVED",q:"ACTIVE"},
+      {search:"a",q:"b",page:"1"},
+    ]) expect(parseAdminProjectsQuery(hostile).success,JSON.stringify(hostile)).toBe(false);
+  });
+
   it("PROJ-BREAK-SA-19 refuses duplicate query keys instead of silently choosing an attacker-controlled first value",()=>{
     const parsers=[parseAdminProjectsQuery,parseProjectAdminRiskQuery,parseProjectAdminSubmissionsQuery];
     for(const parse of parsers){

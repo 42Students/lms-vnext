@@ -112,3 +112,60 @@ The dedicated `docs/audit/coverage/hr-pages-chat19-ledger.md` enumerates all 22 
 | UX-SPILL-HR-03 | MAJOR (mobile overflow) | Report column/filter `<details>` absolute dropdowns min-width 16rem/12rem at far-right anchors | Made phone disclosures bottom-anchored responsive sheets, bounded height with safe-area padding, added visible dismiss control that returns focus to summary. Desktop popover mode retained. | `70a97cff` | `tests/unit/chat19-report-interactive-table-render.test.tsx` (`6657055e`) |
 
 The matrix `docs/audit/ux/COVERAGE-MATRIX.md` is a generated snapshot and is not hand-edited. Regenerate it after the cloud merge; the former `src/components/placements/report-interactive-table.tsx` raw table entry should disappear. Server page and real browser/clipboard tests are still required by release CI; the new model and SSR tests are authored but not executed in this GitHub-only lane.
+
+## Projects unowned hardening — IIT Dharwad visible exports
+
+| ID | Severity | Evidence | Defect | Fix | Commits | Regression |
+|---|---|---|---|---|---|---|
+| PROJ-BREAK-EXPORT-01 | MAJOR | `src/components/projects/project-admin-workspace-page-export.tsx`, previous `/^\\s*[=+\\-@\\t\\r]/` cell guard | User-authored workspace titles and mentor names with Unicode format characters/line separators preceding `=+@-` could evade superficial CSV formula escaping; numeric negatives were erroneously converted to text. | Export through `src/modules/projects/admin-workspace-page-export-model.ts`; quote every cell, prefix malicious text, preserve numerical values and IST timestamps. Accept *only* already scoped page items; no additional database read. | `59bc0619`, `dd1001f1` | `tests/unit/PROJ-BREAK-chat19-project-workspace-csv.test.ts` (`d41722f7`) |
+| PROJ-BREAK-EXPORT-02 | COVERAGE | Same `ProjectAdminWorkspacePageExport` button | Added direct SSR assertions that export is disabled for zero visible authorized workspaces and enabled for a nonempty page, including keyboard-sized button contract. | Behavioural component tests. | `21328196` | `tests/unit/PROJ-BREAK-chat19-project-workspace-export-ui.test.tsx` |
+
+**Remaining risk:** Browser download behavior, real Excel formula handling, and independently verified college-scoped DB list must pass orchestrator/integration tests. This lane has authored source and test regressions, not claimed production readiness.
+
+## Unowned follow-on: recruiter report resilience and College Admin placement mobile
+
+| ID | Before-fix severity | Evidence | Defect/fix | Commits | Test |
+|---|---|---|---|---|---|
+| UX-SPILL-HR-04 | MAJOR | `src/components/placements/report-interactive-table.tsx` CSV export: single click + immediate URL revoke, no browser-restriction failure state | Download could be blocked or URL revoked before consumption, while UI still claimed export had completed. `trySaveReportCsv` now models browser failures, safely disposes temporary anchors and revokes URLs after click; message says download started rather than confirming a saved file. | `0fc28a5a`, `57438140`, `444c699d`, `6513ac68` | `tests/unit/chat19-report-download-lifecycle.test.ts` (`5aafda1c`) |
+| UX-SPILL-COL-FUNNEL-01 | MAJOR | `src/components/placements/college-hiring-funnel.tsx`, fixed `min-w-[72rem]` company performance table | 320px college users had no readable company-stage context without extensive sideways scrolling; converted to DataTable card rows with all nine stages reachable through accessible disclosure, kept counts and a separate totals panel and the same authorized CSV link. | `3a5713b7` | `tests/unit/chat19-college-hiring-funnel-mobile.test.tsx` (`8991b118`) |
+
+Generated `docs/audit/ux/COVERAGE-MATRIX.md` should be refreshed after orchestrator merge, not directly patched. These contributions eliminate two more owner-listed raw-table components at the source level but do not certify real-browser visual layout. No database permission logic was broadened.
+
+### Round candidate list UX spillover
+
+| Finding ID | Before-fix severity | Evidence | Fix | Commit | Regression |
+|---|---|---|---|---|---|
+| UX-SPILL-DRIVE-DAY-01 | MAJOR | `src/components/placements/placement-drive-day-overview.tsx` candidate table forced `min-w-[42rem]` and sticky desktop columns | Migrate to `DataTable` responsive cards preserving the four original fields: Candidate (role/contact), Membership, Schedule exception, Result. No change to authorized data or statuses. | `d7053e49` | `tests/unit/chat19-drive-day-candidates-mobile.test.tsx` (`a2f9df02`) |
+
+Requires actual 320/360/390px and keyboard browser acceptance; only source/SSR contracts were authored on this branch.
+
+### Independent HR messaging/notifications author cross-audit
+
+| Finding | Severity | Affected source | Behaviour and fix | Commits | Regression |
+|---|---|---|---|---|---|
+| HR-BREAK-NOTIFICATIONS-02 | MAJOR | `src/components/hr/hr-notification-read-button.tsx` | Button relied only on async React `saving` state and allowed two same-tick POST receipts; successful read could also be re-sent before refresh, and revoked session/permission/rate-limit errors fell through to generic copy. Reused `createHrBellMutationGate`, terminal success ref, 44px focusable action, and safe 401/403/404/409/429 recovery model, preserving expectedCreatedAt CAS token. | `fbfcbb23`, `5ad9bfd2` | `tests/unit/HR-BREAK-chat19-notification-ack-02.test.tsx` (`206549d8`) |
+
+Persistence-level double-click/read-receipt CAS races and interactive browser clicks remain integration gates. The test validates the gate's runtime behavior, response model, initial SSR, and handler wiring, not an executed production browser session.
+
+## Rolling cloud unit-failure follow-up — two chat-19 tests
+
+The published `docs/orchestrator/unit-failures-latest.md` still references CI `ff6819dd` / `698eb9dd`, preceding the current centrally scoped College Projects page. Both **COL-XA-09** and **UX-college-source-coverage-02** now have their original strict source checks satisfied by the current source; simply removing or weakening them would lose intended coverage. Instead, each named test was expanded to execute behavior.
+
+| Failure ID | Source and test decision | Remediation | Committed |
+|---|---|---|---|
+| COL-XA-09 | The production `src/app/(authenticated)/college/projects/page.tsx` already uses central `getProjectAdminCollegeId`, independently calls snapshots, and catches only optional template metadata. The rolling diagnostics refer to an earlier shape, not a demonstrated current source regression. | Keep all eight source checks; add real async server-page invocation with failing template lookup and successful scoped workspace read. Assert workspace remains in list, safe status is shown, no raw exception, both scoped service arguments remain authorized. | `a72cb150` |
+| UX-college-source-coverage-02 | Page navigation already calls `getProjectAdminCollegeId` before scoped reads; exact required strings currently match. Reintroducing direct `membership.collegeId` as older tests demanded would weaken Super Admin acting-college security. | Retain route/source checks; additionally invoke the actual resolver with College Admin permission allowed and denied, and with recruiter grant but no college membership. Assert no recruiter grant privilege escalation. | `fb918d83` |
+
+No test was skipped, deleted, or made weaker. The two reported failures require a fresh orchestrator cloud run before their current pass status can be stated.
+
+## Rolling CI dd44f0f2 / new chat-19 unit failures
+
+The latest orchestrator unit report named seven additional failed assertions, all in three chat-19-authored tests. The reviewed application sources already produce the intended behavior; these failures were introduced by test helpers, not by weakening the underlying authorization or recovery flows.
+
+| Gap IDs | Failure count | Source/test diagnosis | Correction | Branch commit |
+|---|---:|---|---|---|
+| HR-BREAK-CALENDAR-01 | 1 | `placementCalendarWindow` provides ISO `YYYY-MM-DD` strings. The test accidentally used `/\\\\d/`, matching a literal backslash instead of a decimal digit. | Correct the regex to real `/\\d/` character classes, retaining bounded date checks and invalid input. | `63893f08` |
+| HR-BREAK-CONVO-01 | 1 | Page returns an `ErrorState` with a safe `action` React element linking to Today, but the test's recursive text walker ignored the `action` prop and falsely concluded the link was missing. | Traverse `action` as well as `children/title/description`. Retain forbidden-message redaction assertions. | `3a527874` |
+| HR-BREAK-JOB-02 | 5 | All malformed recruiter filters use a safe `ErrorState` with `action={<Link>Clear filters</Link>}`. The test text walker omitted `action`, incorrectly reporting five separate missing recovery actions. | Read `action` React content; leave all five invalid-filter and no-redirect assertions in place. | `00488860` |
+
+These are evidence-based test corrections against current source. The next cloud CI round determines confirmed pass/fail; no test was skipped or removed.

@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { MarketingLayout, MarketingHero, MarketingFeatureGrid, MarketingCta } from "@/components/marketing/marketing-layout";
-export const metadata: Metadata = {title:"42 LMS | Talent development",description:"AI-first learning, projects and placements for universities and enterprises."};
+export const metadata: Metadata = {title:"42 LMS | Talent development",description:"Connected learning, projects and placements for universities and enterprises."};
 export default function HomeMarketingPage() {
  return <MarketingLayout>
   <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify({"@context":"https://schema.org","@type":"SoftwareApplication",name:"42 LMS",applicationCategory:"EducationalApplication",operatingSystem:"Web"})}} />
-  <MarketingHero eyebrow="AI-first talent development" title="One connected platform for learning, projects and placements"
+  <MarketingHero eyebrow="Connected talent development" title="One connected platform for learning, projects and placements"
     description="Help students build skills, deliver projects, get mentored, and connect to employers. One experience for every role." />
-  <MarketingFeatureGrid title="Your AI-enabled team" items={[
+  <MarketingFeatureGrid title="A connected campus and employer team" items={[
     {title:"Learning",description:"Courses, guided paths, quizzes, assignments and learning progress."},
     {title:"Projects",description:"Team projects with mentors, tasks, reviews and real delivery."},
     {title:"Placement",description:"Eligibility, opportunities, screening, interviews and offers."},

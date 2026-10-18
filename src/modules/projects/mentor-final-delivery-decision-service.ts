@@ -1,12 +1,12 @@
 import "server-only";
-import {and,eq,sql} from "drizzle-orm";
+import {and,desc,eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {projectInstances,projectSubmissions,projectSubmissionReviews,projectDeliveryEvents} from "@/db/schema";
 import {type RequestContext,hasActiveMembership,hasMembershipRole} from "@/modules/identity/context";
 import {can} from "@/modules/permissions/policy";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
-import {requireProjectReadAccess} from "./access";
+import {requireProjectLifecycleMutationAccess} from "./access";
 import {ProjectsServiceError} from "./errors";
 import {projectSubmissionIdSchema} from "./validation";
 import {mentorFinalDeliveryCanReview,mentorFinalDeliveryDecisionSchema} from "./mentor-final-delivery-decision-model";
@@ -17,7 +17,7 @@ import {learnerProjectDeliveryReviewNotice} from "./learner-project-review-notif
 export async function decideMentorFinalDelivery(context:RequestContext,projectId:string,
  submissionIdInput:string,raw:unknown){
  const input=mentorFinalDeliveryDecisionSchema.parse(raw);
- const scope=await requireProjectReadAccess(context,projectId);
+ const scope=await requireProjectLifecycleMutationAccess(context,projectId);
  const membership=context.membership;
  if(scope.access!=="MENTOR"||!membership||!hasActiveMembership(context)||
  !hasMembershipRole(context,"MENTOR")||!can(context,"projects.read",{
@@ -31,7 +31,15 @@ export async function decideMentorFinalDelivery(context:RequestContext,projectId
    eq(projectSubmissions.id,submissionId),eq(projectSubmissions.projectId,scope.project.id),
   )).for("update").limit(1);
   if(!submission)throw new ProjectsServiceError("PROJECT_SUBMISSION_NOT_FOUND");
-  if(!project||!mentorFinalDeliveryCanReview(submission.status,project.status))
+  if(!project||!mentorFinalDeliveryCanReview(submission.status,project.status,Boolean(submission.lockedAt)))
+   throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
+  // The project row lock serializes new draft/version creation. Never accept
+  // a stale URL naming an older submission, even if its status was corrupted
+  // or left SUBMITTED by a previous deployment.
+  const [latest]=await tx.select({id:projectSubmissions.id})
+   .from(projectSubmissions).where(eq(projectSubmissions.projectId,scope.project.id))
+   .orderBy(desc(projectSubmissions.version)).limit(1);
+  if(latest?.id!==submission.id)
    throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
   const expected=new Date(input.expectedUpdatedAt);
   if(submission.updatedAt.getTime()!==expected.getTime())
