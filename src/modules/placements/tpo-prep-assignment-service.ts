@@ -31,6 +31,18 @@ function activeCollegeOfferingCohort(collegeId:string){
 export class TpoPrepError extends Error{
  constructor(readonly code:"UNAVAILABLE"|"NO_ACTIVE_OFFERING"|"DUE_DATE_INVALID"|"INVALID_SELECTION"){super(code);}
 }
+/** Never send the underlying PostgreSQL error back for a due date that
+ * crossed the server clock between validation and INSERT. */
+function isDueDateConstraintFailure(reason:unknown):boolean{
+ let current:unknown=reason;
+ for(let depth=0;depth<5;depth++){
+  if(!current||typeof current!=="object")break;
+  if("code" in current&&current.code==="23514"&&
+     "constraint" in current&&current.constraint==="tpo_prep_due_after_assigned_ck")return true;
+  current="cause" in current?current.cause:null;
+ }
+ return false;
+}
 async function requireTpo(ctx:RequestContext){
  const m=ctx.membership;
  if(!m||!hasMembershipRole(ctx,"TPO")||m.status!=="ACTIVE"||ctx.user.platformStatus!=="ACTIVE")
@@ -83,7 +95,7 @@ export async function assignTpoPrepCourse(ctx:RequestContext,raw:unknown){
   `).then(result=>result.rows[0]?.ready===true).catch(()=>false);
   if(!nullable)throw new TpoPrepError("UNAVAILABLE");
  }
- return getDb().transaction(async tx=>{
+ try{return await getDb().transaction(async tx=>{
   // College first, then live persisted TPO membership, to serialize against
   // archive, account suspension and role removal before writing any assignments.
   const [lock]=await tx.select({id:colleges.id,status:colleges.status}).from(colleges)
@@ -144,7 +156,10 @@ export async function assignTpoPrepCourse(ctx:RequestContext,raw:unknown){
    }))).onConflictDoNothing();
   }
   return {results,counts};
- });
+ });}catch(error){
+  if(isDueDateConstraintFailure(error))throw new TpoPrepError("DUE_DATE_INVALID");
+  throw error;
+ }
 }
 export async function listOwnTpoPrepAssignments(ctx:RequestContext){
  const member=ctx.membership;
