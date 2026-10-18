@@ -1,3 +1,6 @@
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
 import {DataTable} from "@/components/ui/data-table";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -84,33 +87,31 @@ export default async function TpoActorAuditPage({
       ] as const).map(([name, label, placeholder]) => <label key={name}
         className="grid gap-1 text-sm font-semibold text-foreground">
         {label}
-        <input name={name} defaultValue={parsed.data[name] ?? ""} placeholder={placeholder}
+        <Input name={name} defaultValue={parsed.data[name] ?? ""} placeholder={placeholder}
           className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm font-normal text-foreground"/>
       </label>)}
       {(["from", "to"] as const).map((name) => <label key={name}
         className="grid gap-1 text-sm font-semibold text-foreground">
         {name === "from" ? "From (IST)" : "Through (IST)"}
-        <input type="date" name={name} defaultValue={parsed.data[name] ?? ""}
+        <Input type="date" name={name} defaultValue={parsed.data[name] ?? ""}
           className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm font-normal text-foreground"/>
       </label>)}
       <label className="grid gap-1 text-sm font-semibold text-foreground">
        Sort date
-       <select name="sort" defaultValue={parsed.data.sort}
+       <Select name="sort" defaultValue={parsed.data.sort}
         className="min-h-11 rounded-md border border-border bg-surface px-3">
         <option value="NEWEST">Newest first</option><option value="OLDEST">Oldest first</option>
-       </select>
+       </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-foreground">
         Page size
-        <select name="pageSize" defaultValue={String(parsed.data.pageSize)}
+        <Select name="pageSize" defaultValue={String(parsed.data.pageSize)}
           className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm font-normal text-foreground">
           {[25, 50, 100].map((size) => <option key={size} value={size}>{size}</option>)}
-        </select>
+        </Select>
       </label>
       <div className="flex flex-wrap items-end gap-3 sm:col-span-2 lg:col-span-3">
-        <button type="submit" className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-foreground">
-          Apply filters
-        </button>
+        <Button type="submit">Apply filters</Button>
         <Link href="/tpo/audit/actors" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">
           Reset filters
         </Link>

@@ -1,3 +1,5 @@
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -25,9 +27,9 @@ export default async function TpoRecordFinder({searchParams}:{searchParams:Promi
   <PageHeader eyebrow="TPO" title="Find a student, recruiter or company" description="Search your college records. Search does not execute actions or navigate to arbitrary pages."/>
   <form action="/tpo/find" method="get" className="flex min-w-0 flex-wrap gap-2">
    <label className="min-w-0 flex-1 text-sm">Record name
-    <input type="search" name="q" defaultValue={rawText??""} maxLength={100} required
+    <Input type="search" name="q" defaultValue={rawText??""} maxLength={100} required
      className="mt-1 block min-h-11 w-full min-w-0 rounded border border-border bg-surface px-3" placeholder="Find a student, recruiter, company or drive"/>
-   </label><button type="submit" className="min-h-11 self-end rounded bg-primary px-4 text-foreground">Find</button>
+   </label><Button type="submit" className="self-end">Find</Button>
   </form>
   {invalid?<p role="alert">Search must contain 2–100 characters.</p>:!text?<p role="status">Type a name or a roll number, for example 21CS001</p>:<>
    {!hasMatches?<p role="status">No student, recruiter, company or drive matches &quot;{rawText}&quot;</p>:null}
