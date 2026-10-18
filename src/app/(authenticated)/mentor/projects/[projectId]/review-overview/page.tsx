@@ -1,3 +1,4 @@
+import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {EmptyState} from "@/components/ui/empty-state";
@@ -17,14 +18,14 @@ export default async function MentorReviewOverviewPage({
  });
  if(!parsed.success)return <section role="alert">
  <h1 className="text-xl font-semibold">Invalid project review filters</h1>
- <Link href="/mentor/projects" className="text-primary-text underline">Projects</Link>
+ <Link href="/mentor/projects" className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Projects</Link>
  </section>;
  const data=await getMentorDeliveryReviewOverview(await getCurrentRequestContext(),parsed.data);
  return <div className="min-w-0 max-w-full space-y-6">
  <PageHeader eyebrow="Mentor · Project" title="Delivery review overview"
  description={data.project.title+" · "+data.project.status}
  actions={<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
-  className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+  className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
   Delivery workspace</Link>}/>
  <form method="get" action={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"}
  className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
@@ -48,17 +49,17 @@ export default async function MentorReviewOverviewPage({
     defaultValue={data.query.version??""}
     placeholder="All versions" className="min-h-11 rounded-md border border-border bg-background px-3"/>
   </label>
-  <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+  <Button type="submit" variant="primary">
    Filter
-  </button>
+  </Button>
   <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"}
-   className="text-sm font-semibold text-primary-text underline">Clear</Link>
+   className="text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
  </form>
  <div className="flex flex-wrap items-center gap-3 text-sm">
   <Link href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-delivery-review-export?"+
    new URLSearchParams({status:data.query.status,feedback:data.query.feedback,
     ...(data.query.version===undefined?{}:{version:String(data.query.version)})}).toString()}
-   download className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
+   download className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
    Export filtered delivery review CSV (max 200)
   </Link>
   {data.total>200?<p role="status">CSV omits {data.total-200} versions beyond the cap.</p>:null}
@@ -82,7 +83,7 @@ export default async function MentorReviewOverviewPage({
  <p className="mt-2 text-sm text-body">{item.reviewLabel}</p>
  <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+
   "/deliveries/"+encodeURIComponent(item.id)+"/review"}
-  className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+  className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
   View recorded review details
  </Link>
  <p className="mt-1 text-xs text-muted-foreground">
@@ -100,9 +101,9 @@ export default async function MentorReviewOverviewPage({
  <span className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</span>
  <div className="flex gap-3">
  {data.page>1&&<Link href={mentorReviewOverviewHref({...data.query,page:data.page-1})}
- className="text-sm font-semibold text-primary-text">Previous</Link>}
+ className="text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>}
  {data.page<data.totalPages&&<Link href={mentorReviewOverviewHref({...data.query,page:data.page+1})}
- className="text-sm font-semibold text-primary-text">Next</Link>}
+ className="text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>}
  </div></nav>
  <p className="text-xs text-muted-foreground">
  Only registered decision and feedback presence are shown. Historical missing versions,

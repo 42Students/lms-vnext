@@ -1,3 +1,4 @@
+import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -15,7 +16,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
  if(!parsed)return <section role="alert" className="space-y-3">
   <h1>Invalid resource filters</h1>
   <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/resources-directory"}
-   className="text-primary-text underline">Clear invalid filters</Link>
+   className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear invalid filters</Link>
  </section>;
  const data=await getMentorResourceDirectory(await getCurrentRequestContext(),parsed);
  const base="/mentor/projects/"+encodeURIComponent(projectId);
@@ -25,7 +26,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
   <PageHeader eyebrow="Mentor · Project resources" title="Registered resource links"
    description={data.projectTitle}
    actions={<Link href={base+"?tab=resources"}
-    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
      Project resources
    </Link>}/>
   {!data.enabled?<section role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
@@ -68,17 +69,17 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
       <option value="SEQUENCE">Recorded sequence</option><option value="TITLE">Title (A–Z)</option>
      </select>
     </label>
-    <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+    <Button type="submit" variant="primary">
      Filter
-    </button>
-    <Link href={base+"/resources-directory" } className="text-sm font-semibold text-primary-text underline">
+    </Button>
+    <Link href={base+"/resources-directory" } className="text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
      Clear
     </Link>
    </form>
    <div className="flex flex-wrap items-center gap-3">
     <Link href={"/api/projects/"+encodeURIComponent(projectId)+
       "/mentor-resources-export"+filters}
-      download className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+      download className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
      Export resource metadata CSV (max 200)
     </Link>
     {data.exportOmitted>0?<p role="status" className="text-xs text-body">
@@ -102,7 +103,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
      {resource.description?<p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">
       {resource.description}</p>:null}
      {resource.safeUrl?<Link href={resource.safeUrl} target="_blank" rel="noopener noreferrer"
-      className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+      className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       Open HTTPS resource
      </Link>:<p className="mt-2 text-xs text-muted-foreground">
       No safe HTTPS link recorded.
@@ -113,9 +114,9 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
     <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
     <div className="flex gap-3">
      {data.page>1?<Link href={mentorResourceDirectoryHref({...data.query,page:data.page-1})}
-      className="text-sm font-semibold text-primary-text underline">Previous</Link>:null}
+      className="text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>:null}
      {data.page<data.totalPages?<Link href={mentorResourceDirectoryHref({...data.query,page:data.page+1})}
-      className="text-sm font-semibold text-primary-text underline">Next</Link>:null}
+      className="text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>:null}
     </div>
    </nav>
   </>}
