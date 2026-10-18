@@ -14,6 +14,17 @@ export const tpoVerificationQuerySchema=z.object({
  pageSize:z.coerce.number().int().refine(n=>[25,50,100,1000].includes(n)).default(1000),
 }).strict();
 export type TpoVerificationQuery=z.infer<typeof tpoVerificationQuerySchema>;
+/** Preserve one value per filter: repeated or foreign URL keys must never
+ * silently choose the first value before an authorized roster read. */
+export function parseTpoVerificationParams(
+ raw:Record<string,string|string[]|undefined>,
+):TpoVerificationQuery|null{
+ const allowed=new Set(["tab","kind","waitingState","waitingSince","search","batchId","branchId","page","pageSize"]);
+ if(Object.keys(raw).some(key=>!allowed.has(key)))return null;
+ if(Object.values(raw).some(Array.isArray))return null;
+ const parsed=tpoVerificationQuerySchema.safeParse(raw);
+ return parsed.success?parsed.data:null;
+}
 export function tpoVerificationStatuses(query:Pick<TpoVerificationQuery,"tab"|"waitingState">){
  return [...verificationTabStatuses(query.tab,query.waitingState)];
 }
