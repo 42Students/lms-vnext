@@ -83,6 +83,12 @@ Unresolved: faculty register optional profile fields; platform-wide account bloc
 |---|---|---|
 | SA-academics-people-92 | DONE (source verified; browser/database acceptance pending) | `src/components/college/college-student-register-form.tsx` provides First Name, Last Name, 10-digit Indian mobile normalization, optional email, gender, DOB and address. `src/modules/people/college-onboard-mobile-model.ts` validates the mobile and formats the name. `tests/unit/chat9-final-named-gap-verification.test.ts` → `SA-academics-people-92 uses structured legacy identity and validates the Indian mobile without requiring demographic fields`. Existing verified source behavior was not removed. |
 
+### Chat-3 global unassigned identities URL safety (source/tests authored)
+
+| Case | Evidence | Status |
+| --- | --- | --- |
+| SA-PEOPLE-UNASSIGNED-URL-01 | `src/app/(authenticated)/admin/people/unassigned/page.tsx` now rejects duplicated or unknown query selectors before global identity data loads. `tests/unit/chat3-sa-unassigned-global-identity-ssr.test.tsx` exercises own global scope, wrong/disabled actors, selected-college denial, empty state and invalid-filter recovery. | Source/test authored; cloud CI and browser pending |
+
 ### Chat-3 recruiter partial-failure acceptance (source/tests authored, unexecuted)
 
 | Case | Source and test | Status |
