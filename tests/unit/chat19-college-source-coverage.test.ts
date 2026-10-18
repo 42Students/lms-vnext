@@ -1,4 +1,9 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import type {RequestContext} from "@/modules/identity/context";
+import {can} from "@/modules/permissions/policy";
+import {getProjectAdminCollegeId} from "@/modules/projects/admin-college-scope";
+
+vi.mock("@/modules/permissions/policy",()=>({can:vi.fn()}));
 import { readFileSync, existsSync } from "node:fs";
 
 /** Audit the owner-maintained route list rather than an easy-to-forget handpicked subset. */
@@ -64,5 +69,33 @@ describe("chat-19 all /college route entry point source coverage", () => {
     expect(projects).toContain('if (!collegeId)');
     expect(projects).toContain('listProjectAdminSnapshots(context, collegeId');
     expect(projects).toContain('listAssignedProjectTemplates(context, collegeId');
+    // This is an authorization contract, not merely a URL spelling check:
+    // do not infer Projects admin authority from a recruiter college grant.
+    const collegeId="11111111-1111-4111-8111-111111111111";
+    const membership={
+      id:"member",collegeId,organizationId:"org-a",status:"ACTIVE" as const,
+      roles:["COLLEGE_ADMIN" as const],
+    };
+    const actor:RequestContext={
+      user:{id:"actor",identityUid:"identity",platformStatus:"ACTIVE",systemRoles:[]},
+      membership,recruiter:null,
+    };
+    vi.mocked(can).mockReset();
+    vi.mocked(can).mockReturnValue(true);
+    expect(getProjectAdminCollegeId(actor)).toBe(collegeId);
+    expect(can).toHaveBeenCalledWith(actor,"projects.manage",{
+      collegeId,organizationId:"org-a",
+    });
+    vi.mocked(can).mockReturnValue(false);
+    expect(getProjectAdminCollegeId(actor)).toBeNull();
+    const recruiter:RequestContext={...actor,membership:null,recruiter:{
+      userId:"actor",companyId:"company",companyName:"Company",title:null,status:"ACTIVE",
+      grants:[{id:"grant",organizationId:"org-a",collegeId,collegeName:"College",
+        companyRelationshipId:"relationship"}],
+    }};
+    vi.mocked(can).mockClear();
+    expect(getProjectAdminCollegeId(recruiter)).toBeNull();
+    expect(can).not.toHaveBeenCalled();
+
   });
 });

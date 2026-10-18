@@ -120,6 +120,28 @@ describe("WEAK-tenant-domains service authorization, idempotency and hostile hos
     expect(repo.findByHost).toHaveBeenCalledOnce();
   });
 
+  it("WEAK-tenant-domains-27 nested Drizzle causes recover only true 23505 races",async()=>{
+    const repo=makeRepo();
+    const existing=domain({verificationToken:"first-writer"});
+    repo.findByHost.mockResolvedValueOnce(null).mockResolvedValueOnce(existing);
+    const sql=Object.assign(new Error("driver duplicate"),{code:"23505"});
+    const wrapped=new Error("DrizzleQueryError",{
+      cause:new Error("database adapter", {cause:sql}),
+    });
+    repo.createDomain.mockRejectedValueOnce(wrapped);
+    await expect(createTenantDomain(asSuperAdmin(),{collegeId:OWNER,host:HOST},repo))
+      .resolves.toEqual(existing);
+    expect(repo.findByHost).toHaveBeenCalledTimes(2);
+
+    const separate=makeRepo();
+    const cycle:{code?:string;cause?:unknown}={code:"not-duplicate"};
+    cycle.cause=cycle;
+    separate.createDomain.mockRejectedValueOnce(cycle);
+    await expect(createTenantDomain(asSuperAdmin(),{collegeId:OWNER,host:HOST},separate))
+      .rejects.toBe(cycle);
+    expect(separate.findByHost).toHaveBeenCalledOnce();
+  });
+
   it("WEAK-tenant-domains-11 proof failure is recorded, not misreported as verified",async()=>{
     const repo=makeRepo();
     const verify=vi.fn(async()=>({verified:false as const,result:"TXT_RECORD_MISSING" as const}));

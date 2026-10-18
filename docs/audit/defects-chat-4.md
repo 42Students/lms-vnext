@@ -48,3 +48,24 @@ Validation: source review and committed behavioural/source-guard tests; cloud te
 
 
 | COL-faculty-reassign-RACE-01 | S1 concurrency | Two different source faculty could move overlapping upcoming sessions to the same replacement in parallel, each seeing no existing replacement collision and both committing. The service now acquires a transaction-scoped PostgreSQL advisory lock keyed on the replacement membership *before* reading slots or checking overlap. | `f2f572e` | `tests/unit/chat4-college-faculty-schedule-hardening.test.ts`, `tests/integration/chat4-college-faculty-schedule-reassignment.test.ts` | Fix and concurrent PostgreSQL test committed; CI pending |
+
+
+
+## Super Admin tenant/session follow-through
+
+| ID | Severity | Finding/fix | Test | Remaining |
+|---|---|---|---|---|
+| SA-colleges-bulk-input-01 | S2 data integrity | Bulk CSV parser accepted trailing junk after closing quotes, potentially reinterpreting a college name/code. Explicitly reject all non-delimiter characters after a closed quoted cell; preserve valid escaped quotes and CRLF. | `chat4-super-admin-colleges-bulk-csv-hardening.test.ts` | UI and PostgreSQL acceptance |
+| SA-colleges-sessions-READ-01 | S1 privacy | Super Admin device session detail, target roster and admin history were read after preflight using an in-memory platform role. Role removal/account disable before the sensitive SELECT could expose session/IP and audit rows. Sensitive reads now run in transactions with `assertPersistedPlatformPermission` and held actor locks. | `chat4-super-admin-session-hardening.test.ts` | PG concurrent role revocation |
+| SA-colleges-sessions-DISABLED-01 | S1 security operations | A disabled College Admin user was visible in the target roster but could not be selected for signing out everywhere, potentially leaving unexpired device sessions. The target lookup now permits disabled users while still requiring college-scoped membership/role and a persisted, ACTIVE acting Super Admin. | same | Live endpoint acceptance |
+| SA-colleges-sessions-RETRY-01 | S2 audit integrity | Repeating sign-out-everywhere with zero live sessions previously generated a second misleading event. Zero-update return now skips audit emission. | same | DB audit dedupe/race |
+
+
+| COL-academics-promotion-readiness-01 | S1 readiness integrity | Semester promotion advisory counted a teaching assignment from a disabled user, suspended membership, or removed FACULTY role as staffed, creating a false launch-ready signal. Added joins to persisted actor, membership role, college and ACTIVE states. Pure summary counts distinct mapped courses, including fail-closed no-course case. | `chat4-college-promotion-faculty-readiness.test.ts` | DB fixture needed |
+
+
+| COL-faculty-reassign-ROLE-RACE-01 | S1 concurrency | Faculty reassignment originally locked only membership records, not joined replacement user or role rows. A concurrent account disable or FACULTY role revocation could race assignment after eligibility was read. Changed SELECT to FOR SHARE on joined membership, user and role rows until transaction commit. | `chat4-college-faculty-schedule-hardening.test.ts` | PostgreSQL concurrent revocation race still required |
+
+
+| SA-tenants-signin-READ-01 | S1 tenant information isolation | Admin college sign-in policy details were fetched using an in-memory Super Admin snapshot after tenant preflight, with no persisted check in the read operation. Added same-transaction persisted permission check before either migration/table state or policy row query. | `chat4-super-admin-signin-and-history-guard.test.ts` | PG concurrent disable test pending |
+| SA-tenants-admin-history-CSV-01 | S2 export bounds | Admin history CSV builder accepted arbitrarily many rows although its caller displays a max 100. Enforced defensive 100-event cap and a clear truncated footer; retained existing <=100 CSV cells and legacy header text unchanged. | `chat4-super-admin-signin-and-history-guard.test.ts` | Browser CSV delivery pending |

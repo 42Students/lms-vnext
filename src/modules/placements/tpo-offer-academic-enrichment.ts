@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,inArray} from "drizzle-orm";
+import {and,eq,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,learnerProfiles,learnerProgramEnrollments,
  cohorts,programs,departments,users} from "@/db/schema";
@@ -15,7 +15,11 @@ export async function enrichTpoOfferFacts(
  }}));
  const academic=await getDb().select({
   membershipId:collegeMemberships.id,rollNumber:learnerProfiles.rollNumber,
-  batch:cohorts.name,branch:departments.name,phone:users.phoneE164,
+  // The membership is tenant-scoped, but an invalid cross-college
+ // enrollment must not leak another college's cohort name. The joined
+ // department proves both the cohort and program belong to this college.
+ batch:sql<string|null>`case when ${departments.id} is not null then ${cohorts.name} else null end`,
+ branch:departments.name,phone:users.phoneE164,
  }).from(collegeMemberships)
  .innerJoin(users,eq(users.id,collegeMemberships.userId))
  .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))

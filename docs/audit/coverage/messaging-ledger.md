@@ -182,3 +182,18 @@ The direct HTTP tests use mocked persisted services; PostgreSQL tenant-grant che
 | `src/app/api/placements/recruiter/conversations/[threadId]/acknowledge/route.ts:POST` | Same-origin, UUID validation, safe 401 on expired actor, service call with authenticated actor only, redirect to first-party thread | Same | Authored, unrun |
 
 These HTTP cases complement the existing `hrConversationQuerySchema`/tenant scope tests, but real-DB multi-college grant expiry, concurrent read receipts and message-send notification outbox recovery remain pending.
+
+## Direct persistent recruiter TPO notification claims (2026-10-18)
+
+| Export | Required security/idempotency contract | Evidence | State |
+|---|---|---|---|
+| `notifyTpoOfRecruiterMessage` | Sender, persisted message, thread recruiter and college must all match before reading body or inserting event; duplicate message ID is a single globally unique activity dedupe key; a replay does not insert more recipient bells; originating sender excluded | `tests/unit/chat16-recruiter-tpo-notice-once-20.test.ts` | Authored, unrun |
+| Same, real PostgreSQL | Current active recruiter/TPO membership fixture delivers once and replay returns `{notified:0}`, with exactly one activity event under the dedupe key and one recipient bell | `tests/integration/recruiter-message-tpo-notifications.test.ts` | Conditional disposable-DB integration, unrun |
+
+The current `unit-failures-latest.md` chat-16 entries refer to an older CI snapshot, while the current queue+canonical gap-register sources satisfy each recorded assertion. We preserved the original 32-ID historical invariant. CI rerun, role-revocation race and actual PostgreSQL lock contention remain open gates.
+
+| `src/modules/messaging/tpo-campaign-send-policy.ts:campaignRecipientDisposition,planTpoCampaignRecipients` | Shared normalized validator rejects malformed, whitespace-only and dot-invalid email recipients before planning a recipient list, preserving the live suppressed counts and avoiding accidental outbound calls | `tests/unit/chat16-messaging-model-matrix-16.test.ts`, `tests/unit/t-s2-04-campaign-send-policy.test.ts` | Authored, cloud CI pending |
+
+| `src/modules/auth/crypto.ts:mac,safeEqualHex,generateCode,generateToken,codeMac,contactFingerprint,sessionDigest,maskPhone,maskEmail` | Canonical 256-bit lowercase HMAC only, constant-time full-MAC comparison, purpose separation for OTP/contact/session, random code/token shape, masked personal contacts | `tests/unit/chat16-auth-crypto-boundaries-22.test.ts` | Authored, unrun |
+| `src/modules/auth/http.ts:guardLoginRequest,ipTag,auditLogin` | Real guard behavior for CSRF, IP throttle, invalid JSON/schema, unknown/unavailable college host, server-derived tenant, opaque audit IP tags | `tests/unit/chat16-auth-guard-tenant-behavior-21.test.ts` | Authored, unrun |
+| `src/modules/messaging/tpo-campaign-dispatch-service.ts:tpoCampaignDispatchReady,dispatchTpoCampaign` | Provider disabled on whitespace-only credentials, auth template aliases and invalid public origin; no DB claim while disabled | `tests/unit/chat16-tpo-campaign-config-gate-23.test.ts` | Authored, unrun |

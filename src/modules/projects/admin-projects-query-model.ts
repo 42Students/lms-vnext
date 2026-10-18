@@ -19,8 +19,18 @@ function first(value: string | string[] | undefined) {
 export function parseAdminProjectsQuery(
   params: Record<string, string | string[] | undefined>,
 ) {
-  if (Object.values(params).some(Array.isArray)) return schema.safeParse(null);
-  const search = first(params.search) ?? first(params.q);
+  // Legacy Next searchParams may deliver repeated search/status values.
+  // Only their first (validated) value is authoritative. Pagination and
+  // display mode must be singular to prevent ambiguous/high-cost offsets.
+  if ([params.page, params.pageSize, params.view].some(Array.isArray))
+    return schema.safeParse(null);
+  // Legacy `search` and current `q` are aliases, not independently
+  // selectable filters. Reject conflicts rather than silently preferring one.
+  const legacySearch=first(params.search);
+  const currentSearch=first(params.q);
+  if(legacySearch!==undefined&&currentSearch!==undefined&&
+     legacySearch.trim()!==currentSearch.trim())return schema.safeParse(null);
+  const search = legacySearch ?? currentSearch;
   const status = first(params.status);
   const view = first(params.view);
   const page = first(params.page);

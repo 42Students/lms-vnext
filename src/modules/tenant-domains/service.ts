@@ -77,6 +77,22 @@ export class TenantDomainServiceError extends Error {
   }
 }
 
+/** Drizzle and PostgreSQL drivers may wrap 23505 in one or more causes.
+ * Only a genuine duplicate-key SQLSTATE may be converted into an idempotent
+ * host create response. Never inspect/log database messages or raw SQL text. */
+function isUniqueViolation(error: unknown): boolean {
+  const seen = new Set<unknown>();
+  let cursor: unknown = error;
+  for (let depth = 0; depth < 6; depth++) {
+    if (!cursor || typeof cursor !== "object" || seen.has(cursor)) return false;
+    seen.add(cursor);
+    const value = cursor as { code?: unknown; cause?: unknown };
+    if (value.code === "23505") return true;
+    cursor = value.cause;
+  }
+  return false;
+}
+
 function verificationToken() {
   return randomBytes(24).toString("base64url");
 }
@@ -170,7 +186,7 @@ export async function createTenantDomain(
     // host UNIQUE index is the final arbiter: recover an identical college
     // claim without issuing duplicate DNS tokens; never borrow a foreign
     // college's domain. Do not translate unrelated database errors.
-    if ((error as { code?: unknown })?.code !== "23505") throw error;
+    if (!isUniqueViolation(error)) throw error;
     const raced = await repository.findByHost(input.host);
     if (raced?.collegeId === college.id) return raced;
     throw new TenantDomainServiceError("HOST_CONFLICT");

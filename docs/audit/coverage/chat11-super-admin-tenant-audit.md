@@ -14,6 +14,10 @@ Source inspection: 2026-10-18. Branch: `chatgpt/chat-11-b`. **Partial, source-re
 
 | SA-tenants-modules-SEC-02 | `/admin/colleges/[collegeId]/signin`, `/branding`, `/readiness` | Invalid tenant UUID could be parsed before an explicit Super Admin system-role check; sign-in and branding relied on downstream service auth | `c5e0d52`, `8d9ea45`, `e063736`: require `admin-scope.select` before parsing or loading per-college data | `tests/unit/chat11-super-admin-tenant-route-guard.test.ts`: `SA-tenants-modules-SEC-02` | HTTP unauthorized/expired session and load-shedding E2E |
 
+
+| SA-tenants-modules-BRAND-02 | `describeAdminCollegeBranding` (source-neutral model) | No persisted row uses standard colours and no fabricated public URLs; valid HTTPS logo/background/terms/privacy, mobile background fallback and sanitized contacts; reject HTTP, credentials, signed URL query/fragment, object keys, CSS injection and contact header injection | `tests/unit/chat11-super-admin-branding-readiness-adversarial.test.ts`, `SA-tenants-modules-BRAND-02` | Browser rendering, upload authorization and object-storage E2E |
+| SA-tenants-modules-READY-02 | `parseSuperAdminReadinessParams`, `visibleReadinessChecks` | Strict status/area URL filters, deny duplicates and extra keys; selecting PASS alone cannot convert one UNKNOWN domain check into verified launch readiness | Same test `SA-tenants-modules-READY-02` | DB source absence and real DNS/OTP |
+
 ## Audit disposition
 
 - **Source-level blockers found and patched:** unauthorized malformed-filter route bypass across three administrative pages.

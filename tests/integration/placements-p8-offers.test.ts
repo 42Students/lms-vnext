@@ -15,6 +15,7 @@ import { createPlacementCompany } from "@/modules/placements/company-service";
 import {
   createPlacementJob,
   publishPlacementJob,
+  closePlacementJob,
 } from "@/modules/placements/job-service";
 import {
   actOnPlacementOffer,
@@ -441,6 +442,29 @@ describe("Placement P8 offers and joining", () => {
     }
   });
 
+  it("PLACEMENTS-CLOSE-PENDING-DB-06 direct close cannot strand a recorded but unreleased company selection",async()=>{
+    const {job,application}=await preparePassedApplication();
+    const record=await recordTpoDriveSelections(tpo,job.id,{
+      action:"RECORD",entries:[{applicationId:application.id,
+        roleTitle:"Offer Engineer",annualCtcInr:900_000}],
+    });
+    expect(record.recorded).toBe(1);
+    await expect(closePlacementJob(tpo,job.id)).rejects.toMatchObject({
+      code:"PLACEMENT_JOB_NOT_CLOSABLE",
+    });
+    const jobState=await pool.query<{status:string}>(
+      "select status from placement_jobs where id=$1",[job.id]);
+    expect(jobState.rows[0]?.status).toBe("PUBLISHED");
+    const selection=await pool.query<{status:string}>(
+      "select status from placement_drive_selections where id=$1",[record.selectionIds[0]]);
+    expect(selection.rows[0]?.status).toBe("SELECTED");
+    const closedEvents=await pool.query<{n:number}>(
+      "select count(*)::integer as n from activity_events where subject_id=$1 and event_type=$2",
+      [job.id,"placements.job.closed"],
+    );
+    expect(closedEvents.rows[0]?.n).toBe(0);
+  });
+
   it("issues an idempotent offer, lets the learner accept, and preserves corrected joining history", async () => {
     const { application } =
       await preparePassedApplication();
@@ -532,6 +556,29 @@ describe("Placement P8 offers and joining", () => {
     expect(accepted.status).toBe(
       "ACCEPTED",
     );
+    // PLACEMENTS-OFFER-RETRY-05: the same durable response can be replayed
+    // long after the response window closed; do not double-notify or cascade.
+    const historyBeforeExpiredRetry=await pool.query<{n:number}>(
+      "select count(*)::integer as n from placement_offer_status_history where offer_id=$1",
+      [issued.id],
+    );
+    const replay=await actOnPlacementOffer(
+      learner,issued.id,{action:"ACCEPT"},new Date("2099-10-18T18:30:00Z"),
+    );
+    expect(replay.status).toBe("ACCEPTED");
+    if (!("cascadeId" in replay) || !("cascadeId" in accepted)) {
+      throw new Error("A replayed acceptance must preserve its durable cascade ID");
+    }
+    expect(replay.cascadeId).toBe(accepted.cascadeId);
+    const historyAfterExpiredRetry=await pool.query<{n:number}>(
+      "select count(*)::integer as n from placement_offer_status_history where offer_id=$1",
+      [issued.id],
+    );
+    expect(historyAfterExpiredRetry.rows).toEqual(historyBeforeExpiredRetry.rows);
+    await expect(actOnPlacementOffer(
+      learner,issued.id,{action:"DECLINE"},new Date("2099-10-18T18:30:00Z"),
+    )).rejects.toMatchObject({code:"PLACEMENT_OFFER_EXPIRED"});
+
 
     const offers =
       await listOwnPlacementOffers(
@@ -676,6 +723,20 @@ describe("Placement P8 offers and joining", () => {
     expect(declined.status).toBe(
       "DECLINED",
     );
+    const beforeDeclinedReplay=await pool.query<{n:number}>(
+      "select count(*)::integer as n from placement_offer_status_history where offer_id=$1",
+      [first.id],
+    );
+    const sameDecline=await actOnPlacementOffer(
+      learner,first.id,{action:"DECLINE"},new Date("2099-10-18T18:30:00Z"),
+    );
+    expect(sameDecline.status).toBe("DECLINED");
+    const afterDeclinedReplay=await pool.query<{n:number}>(
+      "select count(*)::integer as n from placement_offer_status_history where offer_id=$1",
+      [first.id],
+    );
+    expect(afterDeclinedReplay.rows).toEqual(beforeDeclinedReplay.rows);
+
 
     const second =
       await issuePlacementOffer(

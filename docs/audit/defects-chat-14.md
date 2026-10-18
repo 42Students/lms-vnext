@@ -113,3 +113,29 @@ The canonical ledger additionally links existing inspected runtime assertions fo
 | PROJ-BREAK-MENTOR-83..98 | Coverage expansion | Rendered role-denied/disabled/invalid/partial Mentor Reviews/Task Reviews and service authorization matrices for assigned vs foreign project, role revocation and no read when module disabled. | `e2431ba5`, `5fd952d6`; mapped canonical ledger | Runtime assertions authored but not executed; underlying PostgreSQL permissions, exact tenancy race and browser keyboard remain open |
 
 The lead inspected existing PostgreSQL integration sources `mentor-project-closeout.test.ts`, `projects-p7b-meetings.test.ts`, `mentor-project-activity-export.test.ts` and mapped their four service exports to the ledger. These tests require a disposable `TEST_DATABASE_URL`; mapping them does not imply execution, transaction concurrency proof or IIT Dharwad release readiness.
+
+
+## CI ff6819dd lane-specific failure triage and final-review integrity (18 October 2026)
+
+| ID | Impact | Diagnosis and correction | Commits and regression | CI status |
+|---|---|---|---|---|
+| PR-S2-11 | S1 tenant and private download authorization | Only chat-14 failure still listed by the latest archived unit-failure report. The present source already satisfied **every one** of that test's positive ACTIVE+TEAM, direct-grant, READY/CLEAN and short-TTL assertions; the report is therefore not evidence of a current mismatch. Preserved every assertion and strengthened the implementation: list also filters `projectResourceFiles.collegeId = scope.collegeId`; signing independently denies a file row whose college differs from its authorized project. Added matching assertions. | `39453ace` source, `93d2ef51` original failing test | Source/text contract inspected, all 15 guards present; runner still reports this same test from CI ff6819dd, so **not marked passing until fresh CI** |
+| PROJ-BREAK-MENTOR-117 | S1 disabled-module mutation bypass | Mentor final-delivery decision used `requireProjectReadAccess`, which only evaluates optional Projects access for learner reads. It now calls `requireProjectLifecycleMutationAccess`, which re-checks current Projects module entitlement before write. | `b9996474`, `tests/unit/PROJ-BREAK-chat14-mentor-final-delivery-guard.test.ts` | Authored/unrun; real revoke-after-open PG/HTTP tests pending |
+| PROJ-BREAK-MENTOR-118 | S1 locked submitted delivery review bypass | Unlike the earlier general review service, the Mentor-specific review path did not reject an already LOCKED submission. `mentorFinalDeliveryCanReview` now rejects locked rows; Mentor service passes the actual DB row lock state. | `e50282be`, `b9996474`, above regression | Authored/unrun; concurrent lock vs review requires PostgreSQL test |
+| PROJ-BREAK-MENTOR-119..121 | S1 stale-version, double-review and audit consistency | On a stale deep link naming an older `SUBMITTED` version, latest version was not explicitly checked. After the same transactional project lock used by draft creation, the service now requires the target row to equal the highest persisted version; invalid/locked/unentitled requests cannot generate review, audit or notifications. | `b9996474`, above mocked-transaction regression | Mocked transaction only; PG rollback/parallel-browser actions pending |
+
+**Blockers remain:** GitHub queue showed CI runs still queued; no in-process Vitest/TypeScript/PostgreSQL/browser execution or independent peer review was performed. Other-lane failures do not belong to chat-14. This note does not claim all 83 global failures are fixed.
+
+
+## Refreshed cloud CI e2fbd697 lane failures: regression triage
+
+The earlier PR-S2-11 source-text failure is **absent** from the newer `docs/orchestrator/unit-failures-latest.md`; this is a change in reported failures, not a sign-off of the entire project. The refreshed report lists 8 chat-14 failures. Corrections to all 8 listed assertions were pushed as four narrowly scoped commits:
+
+| Failure group | Count | Diagnosis | Correction |
+|---|---:|---|---|
+| `PROJ-BREAK-chat14-mentor-review-pages.test.tsx` (83) | 1 | `singleValueMentorFilters` incorrectly discarded the authorized `projectId` selector instead of passing it to the strict UUID Zod schema; malicious/invalid IDs looked valid as absent selectors. | `45ebe30a` forwards `projectId` and `projectStatus` to schema while still ignoring unrelated identity fields; existing rendered invalid-URL test remains strict |
+| `projects-mentor-route-guards-chat14.test.ts` | 4 | Tests were stale after stronger 128KiB JSON decoding replaced bare `request.json()` for meeting decisions/reschedules and sprint/task transitions. | `79879566` requires *the actual decoder* to appear after `isSameOriginRequest(request)`, checks bounded reader error handling when used, retains authenticated service, method, 403, and no-raw-error assertions |
+| `learner-projects-gap-verification.test.ts` (LEARNER-projects-40) | 1 | Team final-submit confirmation had drifted from exact legacy copy; service behavior unchanged. | `f599f3b1` restores `Submit on behalf of your team?` while retaining the newer explanatory description and submission evidence/summary validation |
+| `w03-project-admin-audit.test.ts` | 2 | W03 static assertions demanded inline `searchParams.*` parsing and an unconditional college requirement, ignoring the refactored validated parser and narrowly authorized platform-wide template audit. | `c17ce3c3` inspects `parseProjectAdminAuditQuery` and exact legacy filters plus `mayReadGlobalProjectAudit` (active unscoped Super Admin + `activity.read`) instead of weakening the security contract |
+
+**Verification:** Source/test comparisons performed after these commits; no local Vitest, typecheck, authenticated browser or fresh cloud results were available for this four-commit batch. Do not mark tests passing until the next actual CI run.

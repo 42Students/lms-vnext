@@ -325,6 +325,8 @@ export async function listProjectFiles(context: RequestContext, projectIdInput: 
     .where(
       and(
         eq(projectResourceFiles.projectId, scope.project.id),
+        // Treat the college scope as a separate invariant from the project FK.
+        eq(projectResourceFiles.collegeId, scope.collegeId),
         manager ? ne(projectResourceFiles.status, "DELETED") : eq(projectResourceFiles.status, "READY"),
         manager ? undefined : or(
           isNull(projectResourceFiles.resourceId),
@@ -432,6 +434,8 @@ export async function issueProjectFileDownloadGrant(
 ) {
   const scope = await authorizeOrNotFound(() => requireProjectReadAccess(context, projectIdInput));
   const row = await loadFile(scope.project.id, fileIdInput);
+  // A malformed or incorrectly migrated file row must not grant access across tenants.
+  if (row.collegeId !== scope.collegeId) throw new StorageFileError("STORAGE_NOT_FOUND");
   if (row.status === "DELETED") throw new StorageFileError("STORAGE_NOT_FOUND");
   const manager = scope.access === "ADMIN" || scope.access === "MENTOR";
   if(row.resourceId && !manager){
