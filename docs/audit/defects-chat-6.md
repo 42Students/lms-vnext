@@ -15,3 +15,25 @@ Branch: `chatgpt/chat-6-b`. Scope: IIT Dharwad Projects breaker (files, submissi
 ## Remaining verification
 
 Cloud typecheck, Vitest, and PostgreSQL integration suite are **not runnable via this connected GitHub API session**. The checks here are source-level and must not be represented as executed passing tests. Project storage, notification, and evaluation flows also require concurrent integration tests and external-storage fault injection on the PostgreSQL harness before release sign-off.
+
+## Additional findings (18 October 2026)
+
+| ID | Severity | Evidence | Correction | Regression | Validation |
+| --- | --- | --- | --- | --- | --- |
+| PROJ-BREAK-file-08 | S1 | Learner listing previously excluded only linked resources with `MENTOR_ONLY` visibility. `TEAM` resources in `DRAFT`/`ARCHIVED` state, or missing linked resource rows, still exposed resource file metadata despite download grants rejecting those files. | Learner listing now positively allows unlinked READY files or linked files whose resource is `ACTIVE`, `TEAM`, and in the exact project. `bdf0ae7`. | `tests/unit/PROJ-BREAK-chat6-delivery-grade-notices.test.ts` `9b80a4b` | Cloud CI pending |
+| AUTH-rate-limits-01 | S1 | Unauthenticated IP throttler cleared the *entire* active map after 50,000 different keys, resetting live account protection during a spoofed-address flood. | Bounded map and periodic expired-key cleanup; fail closed for new keys at capacity and preserve active quotas. `b1c0b70`. | `tests/unit/auth-ip-rate-limit.test.ts` `4ed3086` (50,000-key adversarial load) | Cloud CI pending |
+| AUTH-sessions-04 | S2 | Atomic relogin's prior-session revocation matched only credential digest; a supplied token for someone else could be revoked even though authenticated user IDs differed. | Include `AND user_id = ${userId}` in same transaction's UPDATE. `6d5adf7`. | `tests/unit/chat6-auth-session-adversarial.test.ts` `3daa0f6` / `5564d26` | Cloud CI pending |
+| SA-admin-middle-applications-export-01 | S1 | Shared College/Super Admin application CSV endpoint accepted only q/status/screening despite UI supplying stage, source, department, program and batch. Exports silently included candidates outside selected filters. | Parse all supported filter dimensions through the existing strict schema before the scoped CSV service. `d4ab84b`. | `tests/unit/chat6-superadmin-middle-third-adversarial.test.ts` `d330a26` | Cloud CI pending |
+| SA-admin-middle-placements-settings-01 | S2 | The Super Admin drive deadline page displayed a UTC date fragment rather than the operating timezone, risking an off-by-one local date. | Render date and time explicitly in `Asia/Kolkata`. `7acfa97`. | `tests/unit/chat6-superadmin-middle-third-adversarial.test.ts` | Cloud CI pending |
+
+### Super Admin second-third review
+
+All 37 identified page entrypoints in `docs/orchestrator/ui-ux/pages-admin.md` (positions 38–74, `/admin/inbound-mail` through `/admin/placements/seasons/[seasonId]`) were source-retrieved. Full interactive, cross-role and browser accessibility sign-off is **not** claimed: that requires running the application, a test database and instrumented browser against live authenticated sessions. Existing shared `AdminScopedReadPage` and `requireSuperAdminSelectedCollege` guards were inspected. Additional source-level adversarial coverage targets invalid filters, selected-college safety, export fidelity, tenant predicates and deadlines.
+
+### Auth and session review
+
+Source-reviewed `start`, `email`, `verify` login routes; keyed code MAC verification and atomic challenge consumption; device session creation, targeted revocation, all-other-devices sign-out, logout cookie invalidation, per-IP and DB-backed OTP rate budgets. Added `tests/unit/chat6-auth-session-adversarial.test.ts` for cryptographic separation, key-space saturation, active quota independence, tenant handoff and ownership. Multi-replica and transaction-concurrency testing is outstanding, as are complete device/browser flow automation and cloud execution.
+
+### Validation gate
+
+This connected GitHub session supports source fetches and commits but cannot run `tsc`, `vitest`, E2E tests, PostgreSQL or object-store fault injection. No claim is made that these additions pass CI, or that the IIT Dharwad hardening brief is entirely satisfied. The final branch requires cloud CI and independent review before merging.

@@ -120,6 +120,23 @@ describe("IIT Dharwad: adversarial file, submission, grading and notification ru
     expect(writer).toContain("assertScopedNotificationRecipients(");
   });
 
+  it("PROJ-BREAK-file-08 learner file listing excludes archived, draft, mentor-only and dangling linked resources", () => {
+    const service = source("src/modules/projects/project-resource-file-service.ts");
+    const listing = service.slice(
+      service.indexOf("export async function listProjectFiles("),
+      service.indexOf("export async function updateProjectFileDetails("),
+    );
+    expect(listing).toContain('eq(projectResourceFiles.status, "READY")');
+    expect(listing).toContain("isNull(projectResourceFiles.resourceId)");
+    expect(listing).toContain("exists(getDb().select");
+    expect(listing).toContain('eq(projectResources.status,"ACTIVE")');
+    expect(listing).toContain('eq(projectResources.visibility,"TEAM")');
+    expect(listing).toContain("eq(projectResources.projectId,scope.project.id)");
+    expect(listing).not.toContain("notExists(");
+    const grant = service.slice(service.indexOf("export async function issueProjectFileDownloadGrant("));
+    expect(grant).toContain('linked.status!=="ACTIVE"||linked.visibility!=="TEAM"');
+  });
+
   it("PROJ-BREAK-file-07 only ready and scanned objects can receive short-lived signed read URLs", () => {
     const service = source("src/modules/projects/project-resource-file-service.ts");
     const start = service.indexOf("export async function issueProjectFileDownloadGrant(");
