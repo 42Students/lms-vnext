@@ -71,6 +71,9 @@ describe("TPO-BREAK-round-03 reports, live interviews and strict result input",(
   expect(tpoRoundResultEntryFormSchema.safeParse({...base,outcome:"HOLD",waitlistRank:"1"}).success).toBe(true);
   expect(tpoRoundResultEntryFormSchema.safeParse({...base,outcome:"HOLD",waitlistRank:""}).success).toBe(false);
   expect(tpoRoundResultEntryFormSchema.safeParse({...base,outcome:"HOLD",waitlistRank:"1.5"}).success).toBe(false);
+  expect(tpoRoundResultEntryFormSchema.safeParse({...base,outcome:"HOLD",waitlistRank:"1e2"}).success).toBe(false);
+  expect(tpoRoundResultEntryFormSchema.safeParse({...base,outcome:"HOLD",waitlistRank:"0x10"}).success).toBe(false);
+  expect(tpoRoundResultEntryFormSchema.safeParse({...base,outcome:"PASS",waitlistRank:"1"}).success).toBe(false);
   expect(tpoRoundResultEntryFormSchema.safeParse({...base,unexpectedTenant:id}).success).toBe(false);
   expect(canEditTpoRoundResult({kind:"INTERVIEW",status:"SCHEDULED"},{resultStatus:"APPLIED"})).toBe(false);
   expect(canApplyTpoRoundResult({kind:"INTERVIEW",status:"COMPLETED"},{resultStatus:"STAGED"})).toBe(true);
