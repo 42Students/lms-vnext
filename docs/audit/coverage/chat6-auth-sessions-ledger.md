@@ -116,3 +116,7 @@ The throttled `resolveSession` last-seen UPDATE now includes `revoked_at IS NULL
 ## AUTH-sessions-13 private error and IDOR cache contract
 
 Account device enumeration and revocation now set `Cache-Control: private, no-store` for **all** responses, including cross-origin 403, malformed UUID 400, revoked/expired-session 401, foreign-device 404 and persistence-failure 503; previously only successful enumerations/revocations had the header. `src/modules/auth/private-response.ts` applies the policy to mapped failures as well, with HTTP handler regressions in `tests/unit/chat6-auth-devices-http-role-journey.test.ts`. Source authored, not executed locally; authenticated browser and proxy-cache checks remain outstanding.
+
+## AUTH-OTP-14 strict OTP payload and cache safety
+
+Start, verify and email-fallback routes now reject unknown JSON properties and apply `Cache-Control: private, no-store` on successful challenges and session cookies. The shared guard/error helper sets private no-store headers on invalid origin, malformed bodies, throttling, unknown tenants and provider errors. Tests: `tests/unit/chat6-auth-tenant-failclosed.test.ts` and `tests/unit/chat6-auth-otp-strict-private-14.test.ts`. CI, live provider tests and browser verification remain pending.
