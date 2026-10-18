@@ -20,4 +20,28 @@ describe("Super Admin UX first-third rollout",()=>{
    expect(page).toContain('min-w-0 w-full sm:min-w-');
    expect(page).not.toContain('min-w-[38rem]');
  });
+ it("UX-admin-college-admins-01 uses shared phone-safe cards and explicit empty copy",()=>{
+   const page=read("src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx");
+   expect(page).toContain("<DataTable");
+   expect(page).toContain("No active College Admin or TPO accounts in this college.");
+   expect(page).toContain("mobilePriority:");
+   expect(page).not.toContain("<main");
+   expect(page).not.toContain('min-w-[46rem]');
+ });
+ it("UX-admin-admin-sessions-01 uses shared phone-safe cards and explicit empty copy",()=>{
+   const page=read("src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/page.tsx");
+   expect(page).toContain("<DataTable");
+   expect(page).toContain("No active sessions for this account.");
+   expect(page).toContain("mobilePriority:");
+   expect(page).not.toContain("<main");
+   expect(page).not.toContain('min-w-[46rem]');
+ });
+ it("UX-admin-admin-history-01 uses shared phone-safe cards and explicit empty copy",()=>{
+   const page=read("src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/page.tsx");
+   expect(page).toContain("<DataTable");
+   expect(page).toContain("No matching identity or platform history was recorded for this administrator in the current college.");
+   expect(page).toContain("mobilePriority:");
+   expect(page).not.toContain("<main");
+   expect(page).not.toContain('min-w-[46rem]');
+ });
 });

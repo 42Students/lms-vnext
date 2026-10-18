@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {DataTable} from "@/components/ui/data-table";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {listCollegeAdminHistory} from "@/modules/colleges/admin-session-service";
@@ -15,36 +16,26 @@ export default async function AdministratorHistoryPage({params,searchParams}:{
  const format=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
   dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
  }).format(date);
- return <main className="min-w-0 space-y-5">
-  <Link href={base} className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">← College admins</Link>
+ return <div className="min-w-0 space-y-5">
+  <Link href={base} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">← College admins</Link>
   <PageHeader eyebrow="Super Admin · Tenant" title={data.target.name+" · History"}
    description="Recorded identity, college-admin lifecycle and platform actions concerning this administrator in this college. Cross-college and raw event metadata are excluded."/>
   <a href={"/api/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history?page="+data.page}
-   className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export shown history (CSV)</a>
+   className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Export shown history (CSV)</a>
   <p role="status" className="text-sm text-body">
    Page {data.page} · {data.events.length} recorded event(s) shown{data.truncated?" · more available":""}.
   </p>
-  {data.events.length?<div className="overflow-x-auto rounded-xl border border-border bg-surface">
-   <table className="w-full min-w-[38rem] text-left text-sm">
-    <thead className="bg-surface-subtle text-body"><tr>
-     <th scope="col" className="p-3">When (IST)</th>
-     <th scope="col" className="p-3">Event</th>
-     <th scope="col" className="p-3">Summary</th>
-    </tr></thead>
-    <tbody>{data.events.map(event=><tr key={event.id} className="border-t border-border">
-     <td className="whitespace-nowrap p-3">{format(event.occurredAt)}</td>
-     <td className="break-all p-3 font-mono text-xs">{event.eventType}</td>
-     <td className="break-words p-3">{event.summary}</td>
-    </tr>)}</tbody>
-   </table>
-  </div>:<p role="status" className="rounded-xl border border-border p-5 text-sm">
-   No matching identity or platform history was recorded for this administrator in the current college.
-  </p>}
-  <nav aria-label="Administrator activity pages" className="flex flex-wrap gap-3 text-sm">
+  <DataTable<(typeof data.events)[number]> caption="Administrator activity history" rows={data.events} getRowKey={row=>row.id}
+    empty={<p role="status" className="text-sm">No matching identity or platform history was recorded for this administrator in the current college.</p>}
+    columns={[
+      {key:"when",header:"When (IST)",mobilePriority:"secondary",cell:row=>format(row.occurredAt)},
+      {key:"event",header:"Event",mobilePriority:"primary",cell:row=><span className="break-all font-mono text-xs">{row.eventType}</span>},
+      {key:"summary",header:"Summary",mobilePriority:"secondary",cell:row=><span className="break-words">{row.summary}</span>},
+    ]}/>  <nav aria-label="Administrator activity pages" className="flex flex-wrap gap-3 text-sm">
     {data.page>1?<Link href={"?page="+(data.page-1)}
-     className="inline-flex min-h-10 items-center text-primary-text underline">Previous 100</Link>:null}
+     className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Previous 100</Link>:null}
     {data.truncated?<Link href={"?page="+(data.page+1)}
-     className="inline-flex min-h-10 items-center text-primary-text underline">Next 100</Link>:null}
+     className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Next 100</Link>:null}
   </nav>
- </main>;
+ </div>;
 }
