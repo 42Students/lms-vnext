@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
+import { ScrollCue } from "@/components/ui/scroll-cue";
 import { CollegeCohortRowActions } from "@/components/academics/college-cohort-management";
 import { CollegeSemesterCreateForm, CollegeSemesterRowActions } from "@/components/academics/college-semester-management";
 import {
@@ -28,7 +29,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
         title={title}
         actions={
           <Link href="/college/academics"
-            className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
             Academic workspace
           </Link>
         }
@@ -242,7 +243,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
            <Link href={path} className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear filters and view all {title.toLowerCase()}</Link>
           </div>
         ) : (
-          <table className="w-full min-w-[48rem] text-left text-sm">
+          <ScrollCue axis="x" label={title + " table columns"}><table className="w-full min-w-[48rem] text-left text-sm">
             <thead className="bg-muted text-muted-foreground">
               {data.kind === "SEMESTERS" ? (
                 <tr>
@@ -313,7 +314,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
                     <td className="px-4 py-4">
                       <div className="flex flex-wrap gap-2">
                         <Link href={"/college/batches/" + encodeURIComponent(item.id) + "/students"}
-                          className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">
+                          className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">
                           Students
                         </Link>
                         <CollegeCohortRowActions row={item} periods={batchPeriods} />
@@ -322,7 +323,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
                   </tr>
                 ))}
             </tbody>
-          </table>
+          </table></ScrollCue>
         )}
       </section>
       <nav aria-label={title + " pagination"} className="flex flex-wrap items-center justify-between gap-3 text-sm">
