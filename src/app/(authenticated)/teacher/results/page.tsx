@@ -42,12 +42,12 @@ export default async function FacultyAssessmentResultsPage({
       className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
       <label className="grid gap-1 text-sm font-semibold text-body">Search
         <input name="search" type="search" maxLength={120} defaultValue={data.query.search}
-          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
           placeholder="Assessment, course code or Section" />
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Type
         <select name="kind" defaultValue={data.query.kind}
-          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="ALL">All</option>
           <option value="ASSIGNMENT">Assignments</option>
           <option value="QUIZ">Quizzes</option>
@@ -55,7 +55,7 @@ export default async function FacultyAssessmentResultsPage({
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Teaching Section
         <select name="deliveryId" aria-label="Teaching Section" defaultValue={data.query.deliveryId ?? ""}
-          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="">All teaching sections</option>
           {data.sections.map(section => (
             <option key={section.deliveryId} value={section.deliveryId}>
@@ -66,14 +66,14 @@ export default async function FacultyAssessmentResultsPage({
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Status
         <select name="status" defaultValue={data.query.status}
-          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="ALL">All</option>
           <option value="PUBLISHED">Published</option>
         </select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Due date
         <select name="due" defaultValue={data.query.due}
-          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="ALL">All due dates</option>
           <option value="OVERDUE">Past due, published</option>
           <option value="UPCOMING">Upcoming due</option>
@@ -82,7 +82,7 @@ export default async function FacultyAssessmentResultsPage({
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Sort
         <select name="sort" defaultValue={data.query.sort}
-          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="DUE_DESC">Latest due date</option>
           <option value="DUE_ASC">Earliest due date</option>
           <option value="TITLE">Assessment title</option>
@@ -90,7 +90,7 @@ export default async function FacultyAssessmentResultsPage({
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Records per page
         <select name="pageSize" defaultValue={data.query.pageSize}
-          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="5">5</option><option value="10">10</option>
         </select>
       </label>
