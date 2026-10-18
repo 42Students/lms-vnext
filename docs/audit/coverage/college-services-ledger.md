@@ -35,3 +35,22 @@
 | `collegeGroupDetailWriteSchema`, `collegeWaitlistPromotionBlocker`, `collegeGroupDetailActionLabel` | `college-group-detail-write-model.ts` | waitlist identity, version, queue order, capacity and confirmation |
 | `collegeStudyMemberSchema`, `collegeStudyMemberLabel` | `college-member-management-model.ts` | guarded member role changes, lock/unlock and copy |
 | `groupRuleCriteriaSchema`, `matchesGroupRuleCandidate`, `collegeRulePreviewInputSchema`, `projectCollegeGroupRulePreview` | `rule-evaluator.ts` / `college-rule-preview-model.ts` | strict criteria, missing evidence, scoped input, partial preview totals |
+
+## College People and Contacts model batch
+
+| Exported function or schema | Source | Test and cases |
+|---|---|---|
+| `maskedPhone`, `maskedEmail`, `visibleContactDetails` | `src/modules/people/college-contacts-privacy.ts` | `chat4-people-contacts-ledger.test.ts`: mask full learner data, missing and malformed identity |
+| `collegeContactsQuerySchema`, `parseCollegeContactsSearchParams` | `college-contacts-model.ts` | allowed/foreign/duplicate/date/role exclusion filters |
+| `contactRoleAudienceCompatible`, `contactAcademicFiltersCompatible`, `contactDateWindowValid` | same | contradictory role/teaching/enrollment/date matrix |
+| `collegeContactsHref`, `clearedCollegeContactsHref`, `collegeContactsTabHref`, `collegeContactsWithoutMemberHref` | same | encoded URLs, canonical reset, preserve tab safely |
+| `collegeContactLiteralPattern`, `collegeContactFilterMessage` | same | escaped SQL LIKE and no raw exception details |
+| `collegeContactsPageRange`, `activeCollegeContactFilterCount` | same | empty/partial pages and ignore tabs/sort/pagination facets |
+| `collegeRoleDirectoryQuerySchema`, `parseCollegeRoleDirectorySearchParams`, `assertCompatibleCollegeRoleDirectoryFilters` | `college-role-directory-model.ts` | strict parsing, allowed role/tenant combinations and conflicts |
+| `describeCollegeDirectoryContext`, `collegeDirectorySearchHint` | same | truthful faculty and learner summaries |
+| `collegeRoleDirectoryHref`, `canonicalCollegeRoleDirectoryHref`, `selectedDirectoryValueNotListed`, `collegeRoleContactHref` | same | role-restricted links, stale pages, scoped drilldown |
+| `collegeRoleDirectoryFilterMessage`, `roleDirectoryDateWindowValid`, `roleDirectoryIstDayStart`, `roleDirectoryNextIstDayStart`, `collegeRoleDirectoryHasActiveFilters`, `collegeRoleDirectoryPageRange` | same | friendly error, IST day boundaries and count |
+| `collegePeopleDirectoryFilterSchema`, `parseCollegePeopleDirectorySearchParams`, `collegePeopleDirectoryHref`, `collegePeopleHasFilters` | `college-people-directory-model.ts` | duplicates, foreign filters, canonical URLs |
+| `collegePersonDetailQuerySchema`, `collegeStudentEnrollmentQuerySchema`, `recordedAttendanceSummary`, `CollegePersonNotFoundError` | `college-person-detail-model.ts` | strict filters, explicit denominator, zero unknown |
+| `collegeFacultyLifecycleSchema`, `facultyLifecycleConfirmation` | `college-faculty-lifecycle-model.ts` | guardian and confirmation lifecycle |
+| `studentCsvRequestSchema`, `tokenizeStudentCsv`, `parseStudentCsv`, `neutralStudentCsvCell`, `studentImportReportCsv` | `college-student-csv-model.ts` | rows, strict structure, duplicate phone, formula neutralization |
