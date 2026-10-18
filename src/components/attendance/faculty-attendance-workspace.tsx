@@ -1,6 +1,4 @@
 "use client";
-import { ScrollCue } from "@/components/ui/scroll-cue";
-
 import {
   type FormEvent,
   useEffect,
