@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,ne,inArray,isNull} from "drizzle-orm";
+import {and,eq,gt,ne,inArray,isNull,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {placementJobs,placementCompanies,placementCompanyRelationships,placementRecruiterProfiles,
@@ -35,7 +35,10 @@ async function verifyRecruiterSlotJob(tx:TpoJobTx,context:RequestContext,jobId:s
   .innerJoin(placementRecruiterCollegeGrants,and(
    eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
    eq(placementRecruiterCollegeGrants.companyRelationshipId,placementCompanyRelationships.id),
-   eq(placementRecruiterCollegeGrants.status,"ACTIVE")))
+   eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
+   eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
+   gt(placementRecruiterCollegeGrants.validUntil,sql`now()`),
+   sql<boolean>`'DRIVES' = ANY(${placementRecruiterCollegeGrants.capabilities})`))
   .where(and(eq(placementJobs.id,jobId),eq(placementJobs.status,"PUBLISHED"),
     isNull(placementJobs.archivedAt),
     eq(placementCompanies.status,"ACTIVE"),eq(colleges.status,"ACTIVE"),

@@ -2,7 +2,9 @@ import {
   and,
   asc,
   eq,
+  gt,
   ne,
+  sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
@@ -14,6 +16,8 @@ import {
   placementCompanyRelationships,
   placementJobRounds,
   placementJobs,
+  placementRecruiterCollegeGrants,
+  placementRecruiterProfiles,
   placementRoundResults,
   users,
 } from "@/db/schema";
@@ -74,6 +78,21 @@ export async function getRecruiterPlacementWorkspace(
         placementJobs.collegeId,
       ),
     )
+    // HR-GRANT-EXPIRE-39: a cached session grant never bypasses persisted
+    // verification, validity and DRIVES capability before candidate reads.
+    .innerJoin(placementRecruiterProfiles,and(
+      eq(placementRecruiterProfiles.userId,context.user.id),
+      eq(placementRecruiterProfiles.companyId,placementCompanies.id),
+      eq(placementRecruiterProfiles.status,"ACTIVE"),
+    ))
+    .innerJoin(placementRecruiterCollegeGrants,and(
+      eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
+      eq(placementRecruiterCollegeGrants.companyRelationshipId,placementCompanyRelationships.id),
+      eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
+      eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
+      gt(placementRecruiterCollegeGrants.validUntil,sql`now()`),
+      sql<boolean>`'DRIVES' = ANY(${placementRecruiterCollegeGrants.capabilities})`,
+    ))
     .where(
       and(
         eq(placementJobs.id, jobId),
