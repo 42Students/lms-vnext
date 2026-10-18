@@ -150,4 +150,30 @@ describe("chat-13 TPO second-third cross-audit repairs",()=>{
   expect(s).not.toContain("min-h-10");
   expect(s).not.toContain("result.issues?.[0]?.message");
  });
+ it("UX-cross-tpo-second-C13-021 joining records and corrections require accessible confirmation",()=>{
+  const s=read("src/components/placements/tpo-joining-update-form.tsx");
+  expect(s).toContain("<ConfirmDialog");
+  expect(s).toContain("save(true)");
+  expect(s).not.toContain("window.confirm");
+  expect(s).toContain("min-h-11");
+ });
+ it("UX-cross-tpo-second-C13-022 selection import confirms before any recorded offers",()=>{
+  const s=read("src/components/placements/tpo-selection-import.tsx");
+  expect(s).toContain("<ConfirmDialog");
+  expect(s).toContain('No offers will be released yet.');
+  expect(s).not.toContain("window.confirm");
+ });
+ it("UX-cross-tpo-second-C13-023 bulk drive act-on has focus-managed irreversible confirmation",()=>{
+  const s=read("src/components/placements/tpo-drive-act-on-panel.tsx");
+  expect(s).toContain("<ConfirmDialog");
+  expect(s).toContain("apply(retry,true)");
+  expect(s).not.toContain("window.confirm");
+  expect(s).toContain("expectedUpdatedAt:row.expectedUpdatedAt");
+ });
+ it("UX-cross-tpo-second-C13-024 inline round application preview has correct region semantics and no raw server error",()=>{
+  const s=read("src/components/placements/tpo-round-apply-control.tsx");
+  expect(s).toContain('role="region" aria-label="Round application preview"');
+  expect(s).not.toContain('aria-modal="false"');
+  expect(s).not.toContain('value.error??');
+ });
 });

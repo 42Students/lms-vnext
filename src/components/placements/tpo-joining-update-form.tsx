@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 type JoiningChoice = "JOINED" | "DEFERRED" | "DID_NOT_JOIN";
 
@@ -20,12 +21,13 @@ export function TpoJoiningUpdateForm({
   const [reason, setReason] = useState("");
   const [correctionReason, setCorrectionReason] = useState("");
   const [busy, setBusy] = useState(false);
+  const [confirmOpen,setConfirmOpen]=useState(false);
   const [error, setError] = useState<string | null>(null);
   const corrected = initialStatus !== "PENDING";
   const needsDate = status === "JOINED" || status === "DEFERRED";
   const needsReason = status !== "JOINED";
 
-  async function save() {
+  async function save(confirmed=false) {
     if (busy) return;
     if ((needsDate && !joiningDate) ||
         (needsReason && !reason.trim()) ||
@@ -33,10 +35,7 @@ export function TpoJoiningUpdateForm({
       setError("Complete the required date, reason and correction fields.");
       return;
     }
-    if (!window.confirm(
-      "Record " + status.replaceAll("_", " ") +
-      " for this accepted offer? Changes are kept in joining history.",
-    )) return;
+
     setBusy(true);
     setError(null);
     try {
@@ -63,7 +62,7 @@ export function TpoJoiningUpdateForm({
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Could not update joining status.");
     } finally {
-      setBusy(false);
+      setBusy(false);setConfirmOpen(false);
     }
   }
 
@@ -74,7 +73,7 @@ export function TpoJoiningUpdateForm({
         <select
           value={status}
           onChange={(event) => setStatus(event.target.value as JoiningChoice)}
-          className="mt-1 w-full rounded-md border border-border bg-surface p-2"
+          className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface p-2"
         >
           <option value="JOINED">Joined</option>
           <option value="DEFERRED">Deferred</option>
@@ -107,11 +106,16 @@ export function TpoJoiningUpdateForm({
       ) : null}
       <div className="sm:col-span-2">
         <button type="button" disabled={busy} onClick={() => void save()}
-          className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+          className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50">
           {busy ? "Saving..." : corrected ? "Confirm corrected outcome" : "Confirm joining outcome"}
         </button>
-        {error ? <p role="alert" className="mt-2 text-sm text-error">{error}</p> : null}
+        {error ? <p role="alert" className="mt-2 text-sm text-foreground">{error}</p> : null}
       </div>
+      <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={busy}
+        title={"Record "+status.replaceAll("_"," ")+" for this accepted offer?"}
+        description="Changes are kept in joining history."
+        confirmLabel={corrected?"Confirm corrected outcome":"Confirm joining outcome"}
+        onConfirm={()=>void save(true)}/>
     </div>
   );
 }
