@@ -124,7 +124,7 @@ export async function ProjectAdminSubmissionsPage({
       </nav>
       {unsubmitted?<section className="space-y-3 rounded-xl border border-border bg-surface p-4">
         <h2 className="font-semibold">Not submitted · {unsubmitted.total} workspaces</h2>
-        {unsubmitted.items.length?<div className="overflow-x-auto"><table className="min-w-full text-left text-sm">
+        {unsubmitted.items.length?<div role="region" aria-label="Unsubmitted project workspaces table" tabIndex={0} className="overflow-x-auto overscroll-x-contain [mask-image:linear-gradient(to_right,black_90%,transparent_100%)] focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]"><table className="min-w-full text-left text-sm">
           <thead><tr><th className="p-2">Workspace</th><th className="p-2">Status</th>
             <th className="p-2">Progress</th><th className="p-2">Inactive</th><th className="p-2">Action</th></tr></thead>
           <tbody>{unsubmitted.items.map(row=><tr key={row.id} className="border-t border-border">
