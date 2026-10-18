@@ -1,5 +1,8 @@
 # MASTER QUEUE (owner: use every lane at full throttle, never idle)
 
+## PRIORITY CHANGE (owner, 2026-10-18 23:40): NO CI GATING UNTIL THE END
+Stop fixing failing unit tests and compile errors from docs/orchestrator/unit-failures-latest.md and typecheck-errors-latest.md for now: the orchestrator is NOT running CI rounds until all tasks are finished. Spend ALL your time on your task queue below (Projects hardening, exhaustive coverage, TPO/HR depth, Super Admin audit, UX coverage), item by item, pushing every ~10 commits. Still keep syntax valid (balanced parentheses and braces, no line break before an as-cast) because the push gate is a syntax check. One full CI, test-fix and deploy pass happens at the very end.
+
 Rule for every lane: finish your current item, `git pull origin main`, then work YOUR section below from top to bottom without reporting between items. Push to your own `chatgpt/chat-N-b` branch every ~10 commits, tag commits `[chat-N]`, TypeScript strict-clean, legacy wording exact, never weaken or delete tests, dev only. Reply only when your WHOLE section is done or you are blocked. When done, take items from "Unowned and spillover" at the bottom, then tell the orchestrator.
 
 Definition of "exhaustive coverage" for a module or page group (used in every test task):
