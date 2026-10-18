@@ -258,6 +258,10 @@ The Super Admin directory extracted only six known URL fields, ignoring arbitrar
 
 The Faculty calendar applied `first(raw.month)` and `first(raw.deliveryId)`, silently accepting duplicated URL parameters and ignoring unrecognized tenant selectors. This could mislead users about which Section/month had actually been requested and undermine auditability of copied links. The SSR route now rejects array-valued or unknown query selectors outright with the existing **Invalid month or Section filter** clear-filters recovery. `tests/unit/UX-teacher-calendar-strict-scope-query.test.tsx` exercises invalid/valid/foreign deep links. Runtime and mobile-browser acceptance pending.
 
+### FAC-ASSESSMENT-SCALE-046 — very large Faculty lessons overflow next-position calculation (S2)
+
+The batched Faculty assessment overview calculated the next authored lesson position using `Math.max(...sequences)`, which spreads one argument per lesson content/assessment card. Large lessons can exceed V8's argument limit and fail the entire index, even if the batched SQL succeeded. The service now uses an iterative `nextFacultyLessonContentSequence` model which preserves zero-index and sparse order but rejects invalid/unsafe persisted sequence values. `tests/unit/chat3-faculty-assessment-sequence-scale.test.ts` covers 130,000 items plus boundary/tenant targeting. CI and large PostgreSQL dataset acceptance pending.
+
 ### FAC-LIVE-SCALE-042 — unbounded teaching workspace fanout (S2)
 
 `getFacultyLiveClasses` used `Promise.all` across every assigned Section, potentially exhausting PostgreSQL connections for accounts with many teaching deliveries. The service now loads the same verified deliveries in ordered batches with at most eight concurrent workspace calls. The helper rejects unsafe concurrency and propagates revoked-scope failure. `tests/unit/chat3-faculty-live-classes-scaled-service.test.ts` verifies actual authorization, filtering, throughput and ordering. CI and realistic large-college profiling pending.
