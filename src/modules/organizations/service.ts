@@ -90,104 +90,63 @@ async function assertUniqueActiveName(
 }
 
 export async function listOrganizations(context: RequestContext) {
-  const db = getDb();
-
-  if (isSuperAdmin(context)) {
-    const selected = context.adminScope;
-    const selectedOrganizationId =
-      selected?.organizationId ?? null;
-
-    if (selected?.collegeId) {
-      // A college-scoped Super Admin must never see all organizations when
-      // the selected organization is absent (or mismatched). Derive the
-      // organization from the persisted selected college, not an input UUID.
-      requirePermission(context, "organization.read", {
-        organizationId: selectedOrganizationId,
-        collegeId: selected.collegeId,
-      });
-      return db.select({
-        id: organizations.id,
-        name: organizations.name,
-        createdAt: organizations.createdAt,
-        updatedAt: organizations.updatedAt,
-      }).from(organizations)
-        .innerJoin(colleges, eq(colleges.organizationId, organizations.id))
-        .where(and(
-          eq(colleges.id, selected.collegeId),
-          eq(colleges.status, "ACTIVE"),
-          eq(organizations.status, "ACTIVE"),
-          selectedOrganizationId ? eq(organizations.id, selectedOrganizationId) : undefined,
-        ))
-        .limit(1);
-    }
-
-    if (selectedOrganizationId) {
-      requirePermission(context, "organization.read", {
-        organizationId: selectedOrganizationId,
-        collegeId: selected?.collegeId ?? null,
-      });
-
-      return db
-        .select({
-          id: organizations.id,
-          name: organizations.name,
-          createdAt: organizations.createdAt,
-          updatedAt: organizations.updatedAt,
-        })
-        .from(organizations)
-        .where(
-          and(
-            eq(organizations.id, selectedOrganizationId),
-            eq(organizations.status, "ACTIVE"),
-          ),
-        )
-        .orderBy(asc(organizations.name));
-    }
-
-    return db
-      .select({
-        id: organizations.id,
-        name: organizations.name,
-        createdAt: organizations.createdAt,
-        updatedAt: organizations.updatedAt,
-      })
-      .from(organizations)
-      .where(eq(organizations.status, "ACTIVE"))
-      .orderBy(asc(organizations.name));
-  }
-
-  if (
-    !context.membership ||
-    !hasMembershipRole(context, "COLLEGE_ADMIN")
-  ) {
-    requirePermission(context, "organization.read", {});
-  }
-
-  const organizationId = context.membership?.organizationId;
-  if (!organizationId) {
-    requirePermission(context, "organization.read", {});
-    return [];
-  }
-
-  requirePermission(context, "organization.read", {
-    organizationId,
+ // Organization names are visible only while the current persisted actor
+ // keeps organization.read. Hold live actor locks through the directory SELECT
+ // instead of trusting the stale role captured at request startup.
+ return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,context,"organization.read",{
+   collegeId:context.adminScope?.collegeId??undefined,
+   organizationId:context.adminScope?.organizationId??undefined,
   });
-
-  return db
-    .select({
-      id: organizations.id,
-      name: organizations.name,
-      createdAt: organizations.createdAt,
-      updatedAt: organizations.updatedAt,
-    })
-    .from(organizations)
-    .where(
-      and(
-        eq(organizations.id, organizationId),
-        eq(organizations.status, "ACTIVE"),
-      ),
-    )
-    .limit(1);
+  if(isSuperAdmin(context)){
+   const selected=context.adminScope;
+   const selectedOrganizationId=selected?.organizationId??null;
+   if(selected?.collegeId){
+    requirePermission(context,"organization.read",{
+     organizationId:selectedOrganizationId,collegeId:selected.collegeId,
+    });
+    // College-only scope resolves through the actual college FK, never
+    // falls back to every organization just because orgId is not selected.
+    return tx.select({
+     id:organizations.id,name:organizations.name,
+     createdAt:organizations.createdAt,updatedAt:organizations.updatedAt,
+    }).from(organizations)
+     .innerJoin(colleges,eq(colleges.organizationId,organizations.id))
+     .where(and(eq(colleges.id,selected.collegeId),eq(colleges.status,"ACTIVE"),
+      eq(organizations.status,"ACTIVE"),
+      selectedOrganizationId?eq(organizations.id,selectedOrganizationId):undefined))
+     .limit(1);
+   }
+   if(selectedOrganizationId){
+    requirePermission(context,"organization.read",{organizationId:selectedOrganizationId});
+    return tx.select({
+     id:organizations.id,name:organizations.name,
+     createdAt:organizations.createdAt,updatedAt:organizations.updatedAt,
+    }).from(organizations)
+     .where(and(eq(organizations.id,selectedOrganizationId),eq(organizations.status,"ACTIVE")))
+     .orderBy(asc(organizations.name));
+   }
+   return tx.select({
+    id:organizations.id,name:organizations.name,
+    createdAt:organizations.createdAt,updatedAt:organizations.updatedAt,
+   }).from(organizations)
+    .where(eq(organizations.status,"ACTIVE")).orderBy(asc(organizations.name));
+  }
+  if(!context.membership||!hasMembershipRole(context,"COLLEGE_ADMIN"))
+   requirePermission(context,"organization.read");
+  const organizationId=context.membership?.organizationId;
+  if(!organizationId){
+   requirePermission(context,"organization.read");
+   return [];
+  }
+  requirePermission(context,"organization.read",{organizationId});
+  return tx.select({
+   id:organizations.id,name:organizations.name,
+   createdAt:organizations.createdAt,updatedAt:organizations.updatedAt,
+  }).from(organizations)
+   .where(and(eq(organizations.id,organizationId),eq(organizations.status,"ACTIVE")))
+   .limit(1);
+ });
 }
 
 export async function createOrganization(
