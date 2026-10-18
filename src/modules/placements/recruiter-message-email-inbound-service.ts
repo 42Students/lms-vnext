@@ -21,6 +21,9 @@ export type RecruiterEmailInboundResult={accepted:boolean;replayed:boolean};
 export async function acceptAuthenticatedRecruiterEmailReply(
  rawBody:string,signature:string,env:Record<string,string|undefined>=process.env,
 ):Promise<RecruiterEmailInboundResult>{
+ // Enforce the same byte bound for non-HTTP callers before HMAC and JSON work.
+ if(Buffer.byteLength(rawBody,"utf8")>20_000)
+  return {accepted:false,replayed:false};
  const secret=env.RECRUITER_MESSAGE_INBOUND_HMAC_SECRET??"";
  if(env.RECRUITER_MESSAGE_EMAIL_BRIDGE_ENABLED!=="true"||
     !verifyRecruiterMailBridgeSignature(secret,rawBody,signature))
