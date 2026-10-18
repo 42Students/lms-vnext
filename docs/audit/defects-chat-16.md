@@ -149,3 +149,8 @@ No code/tests were run, no external OTP was sent, and no production service was 
 | PUBLIC-JOIN-OPEN-47..49 | S2 | Public join-link opened telemetry parsed unbounded anonymous JSON and let unexpected database errors escape. Shared bounded reader now protects stream memory and returns generic no-store 503, while unchanged strict scope/token Zod and same-origin guard preserve anti-enumeration. | `tests/unit/chat16-public-join-open-boundary-47.test.ts` (authored, unrun) | `ee656422f82a` |
 
 Open: final TypeScript/Vitest, cross-process rate and IDOR integration, browser and provider acceptance execution.
+
+
+| MSG-RECIPIENT-BIDI-50..53 | S2 | Shared outbound email recipient validation rejected ASCII controls but admitted invisible Unicode directional/format controls in mailbox local parts, potentially producing misleading deliverability/recipient review. The parser now denies Unicode control/format classes. Additional direct assertions cover channel enums, quota fail-closed and duplicate preview semantics. | `tests/unit/chat16-messaging-recipient-bidi-policy-50.test.ts` (authored, unrun) | `119e38e89864` |
+
+This is a source-level boundary hardening; delivery-provider integration and final CI remain open by owner instruction.
