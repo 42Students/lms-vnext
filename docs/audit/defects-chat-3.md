@@ -109,3 +109,12 @@ Rapidly switching a Faculty editor between different assignments triggered overl
 **Fix:** A per-editor `facultyAssignmentMethodsLoadVersion` invalidates pending requests whenever selection changes. Late resolve/reject handlers return without mutating B. `verifiedFacultyAssignmentMethodsResponse` requires a valid nonempty unique method list for a successful fetch; invalid responses leave loading false and display a retry instruction. Editing an assignment cannot proceed until methods are confirmed when this feature is enabled.
 
 **Evidence:** `src/components/courses/faculty-assignment-editor.tsx`, `src/modules/courses/faculty-assignment-method-load-model.ts`, `tests/unit/COURSES-BREAK-FACULTY-13.test.ts` (stale async requests, retry invalidation, malformed methods). React/browser network-race acceptance and CI remain outstanding.
+
+
+### FAC-SCHEDULE-018 — revoked Faculty could create/reschedule attendance classes (S1)
+
+`commandFacultyAttendanceSchedule` checked the Faculty role and Section ownership before the transaction but, after advisory-locking the actor and Section, proceeded to insert/update session rows without rebuilding the persisted user/membership/teaching grant. Removing the Faculty role or ending the teaching assignment between those steps could leave a new schedule and activity from a revoked account.
+
+**Fix:** Call shared `assertPersistedFacultyTeachingMutation` in the schedule write transaction immediately after the two advisory locks and before any scheduled-event reads or writes. This also requires current college and organization authority, currently active membership and currently assigned Faculty teaching rights.
+
+**Test:** `tests/unit/COURSES-BREAK-FACULTY-14.test.ts` checks a revoke after preflight but before write, valid author, disabled and non-Faculty sessions, invalid confirmation, malformed windows and extra spoofed college fields. Release still requires live PostgreSQL concurrent revoke/schedule tests and current CI.
