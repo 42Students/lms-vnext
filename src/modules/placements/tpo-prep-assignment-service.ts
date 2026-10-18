@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,inArray} from "drizzle-orm";
+import {and,eq,inArray,isNull} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,colleges,courseOfferings,courses,departments,
@@ -38,7 +38,8 @@ export async function listTpoPrepCourseOptions(ctx:RequestContext){
  return getDb().select({id:courseOfferings.id,courseId:courses.id,name:courses.name,
   code:courses.code,cohortId:courseOfferings.cohortId}).from(courseOfferings)
   .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
-  .innerJoin(departments,and(eq(departments.id,courses.departmentId),eq(departments.collegeId,college.id)))
+  .innerJoin(departments,and(eq(departments.id,courses.departmentId),
+   eq(departments.collegeId,college.id),isNull(departments.archivedAt)))
   .where(and(eq(courseOfferings.status,"ACTIVE"),eq(courses.status,"ACTIVE")))
   .orderBy(courses.name,courses.code).limit(300);
 }
@@ -56,7 +57,8 @@ export async function assignTpoPrepCourse(ctx:RequestContext,raw:unknown){
   const [offering]=await tx.select({id:courseOfferings.id,cohortId:courseOfferings.cohortId,
    title:courses.name}).from(courseOfferings)
    .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
-   .innerJoin(departments,and(eq(departments.id,courses.departmentId),eq(departments.collegeId,college.id)))
+   .innerJoin(departments,and(eq(departments.id,courses.departmentId),
+   eq(departments.collegeId,college.id),isNull(departments.archivedAt)))
    .where(and(eq(courseOfferings.id,input.offeringId),eq(courseOfferings.status,"ACTIVE"),eq(courses.status,"ACTIVE")))
    .limit(1);
   if(!offering)throw new TpoPrepError("NO_ACTIVE_OFFERING");
