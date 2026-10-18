@@ -14,8 +14,14 @@ const rows=initialQueue.split("\n").flatMap(line=>{
 
 describe("chat-16 centralized gap tracking reconciliation",()=>{
  it("chat-16 register includes exactly the 32 reassigned mentor and tracker gaps",()=>{
+  expect(initialQueue).toContain("- MEN-projects-meetings-53 (S3) — DONE");
+  expect(initialQueue).toContain("- SA-placements-projects-122 (S3) — DONE");
   expect(rows).toHaveLength(32);
   expect(new Set(rows.map(row=>row.id)).size).toBe(32);
+ });
+ it("chat-16 historical gap inventory is unchanged by later queue sections",()=>{
+  const future=queue+"\n## Future reassignments\n- MEN-projects-meetings-999 (S4) — DONE\n";
+  expect(future.split("## Chat-16 reassigned round checkpoints",1)[0]).toBe(initialQueue);
  });
  it.each(rows)("$id remains in the canonical register after cross-lane verification",({id,status})=>{
   const match=register.split("\n").find(line=>line.startsWith("| "+id+" |"));
