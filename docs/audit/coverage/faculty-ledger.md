@@ -515,3 +515,8 @@ The same persisted actor/project Mentor grant recheck now protects meeting decis
 ### FAC-QUIZ-016 — distribution versus grading count consistency
 
 `getFacultyQuizReport` now excludes nonfinite score/maxScore pairs from the histogram exactly as it does from the score summary; `COURSES-BREAK-FACULTY-06.test.ts` covers NaN/Infinity. A real PostgreSQL score-integrity constraint check and actual CI run remain open.
+
+
+### FAC-METHODS-017 — assignment method async-switch validation
+
+`facultyAssignmentMethodsLoadVersion` and `verifiedFacultyAssignmentMethodsResponse` in `src/modules/courses/faculty-assignment-method-load-model.ts` have `COURSES-BREAK-FACULTY-13.test.ts` covering version invalidation, stale response reorder and malformed saved policy. `src/components/courses/faculty-assignment-editor.tsx` uses these on each `choose` fetch and disables edits when methods have not been verified. Full rendered/browser-network acceptance is still an open gate.
