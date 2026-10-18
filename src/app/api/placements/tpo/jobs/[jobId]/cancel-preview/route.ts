@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import {readTpoBulkRequestBody,TpoBulkBodyError} from "@/modules/placements/tpo-bulk-request-body";
 import { cancelTpoDriveWithPreview, getTpoDriveCancelPreview } from "@/modules/placements/tpo-drive-cancel-service";
 
 export const runtime = "nodejs";
@@ -19,10 +20,13 @@ export async function POST(
       await cancelTpoDriveWithPreview(
         await getCurrentRequestContext(),
         jobId,
-        await request.json(),
+        await readTpoBulkRequestBody(request),
       ),
     );
   } catch (error) {
+    if(error instanceof TpoBulkBodyError)return NextResponse.json({error:error.message},{
+      status:error.status,headers:{"Cache-Control":"private, no-store"},
+    });
     return apiErrorResponse(error);
   }
 }

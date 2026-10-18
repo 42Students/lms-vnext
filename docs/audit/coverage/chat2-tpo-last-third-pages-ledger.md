@@ -67,3 +67,7 @@ The rows above are a truthful **first pass only** and must not be marked complet
 | Both settings pages | Same file | Service rejection goes to route error boundary without deliberate raw-error interpolation | Route error boundary + retry integration and offline browser |
 
 The other 40 assigned last-third routes still need runtime/phone/permission/state tests. The manifest source assertions are a baseline, **not exhaustive coverage**.
+
+## 2026-10-19 runtime server report additions
+
+`tests/unit/chat2-tpo-last-third-report-branch-ctc-runtime.test.tsx` directly invokes the real `/tpo/reports/by-branch` and `/tpo/reports/ctc` server pages with mocked report services and presentational UI boundaries. Cases: role/missing membership denial before all report reads; duplicate season IDs rejected before DB; proper college+season query propagation; truthful no-season branch recovery; persisted branch counts/20% placement evidence with unknown package; package distribution/accepted-offer distinction, explicitly missing CTC and offer histogram; empty states, responsive class markers, and error propagation. **Authored, not executed.** Phone browser/accessibility, real tenant DB joins, per-route partial storage and all remaining report routes still require coverage.

@@ -52,6 +52,18 @@ describe("TPO offer register screen/export URL integrity",()=>{
   expect(src).toContain("Show all rounds");
   expect(src).toContain("<DataTable");
  });
+ it("TPO-EXPIRY-CSV-46 rejects repeated days rather than choosing one expiry range",()=>{
+  expect(tpoReportHasRepeatedSearchParams(new URLSearchParams("days=1&days=90"))).toBe(true);
+  expect(tpoReportHasRepeatedSearchParams(new URLSearchParams("days=7"))).toBe(false);
+  const route=code("src/app/api/placements/tpo/offers/expiry/route.ts");
+  expect(route).toContain("tpoReportHasRepeatedSearchParams(parameters)");
+  expect(route).toContain("Invalid expiry filters. Clear filters and try again.");
+  expect(route.indexOf("tpoReportHasRepeatedSearchParams(parameters)"))
+    .toBeLessThan(route.indexOf("getTpoOfferExpiryWatchlist(context, query)"));
+  expect(route).toContain('status:400');
+  expect(route).toContain('Vary:"Cookie"');
+  expect(route).toContain('return new Response("\\uFEFF"');
+ });
  it("TPO-OFFERS-URL-32 uses the same strict persisted filter schema as the CSV export",()=>{
   const jobId="11111111-1111-4111-8111-111111111111";
   expect(offerRegisterQuery.safeParse({jobId,status:"EXPIRED"}).success).toBe(true);

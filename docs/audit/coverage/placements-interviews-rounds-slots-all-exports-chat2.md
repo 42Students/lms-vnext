@@ -1,6 +1,6 @@
 # Chat-2 exhaustive placement interview/round/slot export inventory
 
-Scope: **all 71** `src/modules/placements/*interview*/*round*/*slot*` TypeScript files present on the branch at snapshot time. This file catalogs exports, **not passed coverage**. For each runtime export the test column must eventually cite a direct behavioral test. N/A applies only to TypeScript-only declarations. Cloud CI, PostgreSQL behaviors and role journeys remain distinct release gates.
+Scope: **72 files including `round-action-guards.ts`** matching `src/modules/placements/*interview*/*round*/*slot*` at the 2026-10-19 chat-2 snapshot. This file catalogs exports, **not passed coverage**. For each runtime export the test column must eventually cite a direct behavioral test. N/A applies only to TypeScript-only declarations. Cloud CI, PostgreSQL behaviors and role journeys remain distinct release gates.
 
 | Module | Named export | Direct behavioral test | State |
 | --- | --- | --- | --- |
@@ -23,14 +23,14 @@ Scope: **all 71** `src/modules/placements/*interview*/*round*/*slot*` TypeScript
 | `src/modules/placements/college-round-slot-action-service.ts` | `mutateCollegeRoundSlotInterview` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/hr-draft-round-duplicate-model.ts` | `duplicateHrDraftRound` (function) | \`tests/unit/chat2-interview-hr-break-06.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/hr-draft-round-order-model.ts` | `reorderHrDraftRound` (function) | \`tests/unit/chat2-interview-hr-break-06.test.ts\` (CI pending) | TEST AUTHORED |
-| `src/modules/placements/hr-drive-round-presets.ts` | `HR_DRIVE_ROUND_PRESETS` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/hr-drive-round-presets.ts` | `HR_DRIVE_ROUND_PRESETS` (const) | `tests/unit/chat2-round-uncovered-pure-models.test.ts` (written; not run) | TEST AUTHORED |
 | `src/modules/placements/hr-drive-round-presets.ts` | `HrRoundPresetId` (type) | N/A (compile-time only) | TYPE ONLY |
-| `src/modules/placements/hr-drive-round-presets.ts` | `applyHrRoundPreset` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/hr-inline-round-results-model.ts` | `HR_ROUND_OUTCOMES` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/hr-drive-round-presets.ts` | `applyHrRoundPreset` (function) | `tests/unit/chat2-round-uncovered-pure-models.test.ts` (written; not run) | TEST AUTHORED |
+| `src/modules/placements/hr-inline-round-results-model.ts` | `HR_ROUND_OUTCOMES` (const) | `tests/unit/chat2-round-uncovered-pure-models.test.ts` (written; not run) | TEST AUTHORED |
 | `src/modules/placements/hr-inline-round-results-model.ts` | `HrRoundOutcome` (type) | N/A (compile-time only) | TYPE ONLY |
 | `src/modules/placements/hr-inline-round-results-model.ts` | `HrRoundCount` (type) | N/A (compile-time only) | TYPE ONLY |
-| `src/modules/placements/hr-inline-round-results-model.ts` | `hrInlineRoundResultFilters` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/hr-inline-round-results-model.ts` | `hrInlineRoundResultsHref` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/hr-inline-round-results-model.ts` | `hrInlineRoundResultFilters` (function) | `tests/unit/chat2-round-uncovered-pure-models.test.ts` (written; not run) | TEST AUTHORED |
+| `src/modules/placements/hr-inline-round-results-model.ts` | `hrInlineRoundResultsHref` (function) | `tests/unit/chat2-round-uncovered-pure-models.test.ts` (written; not run) | TEST AUTHORED |
 | `src/modules/placements/hr-interview-slot-model.ts` | `hrInterviewSlotCreateSchema` (const) | \`tests/unit/chat2-interview-hr-break-06.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/hr-interview-slot-model.ts` | `hrInterviewSlotActionSchema` (const) | \`tests/unit/chat2-interview-hr-break-06.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/hr-interview-slot-model.ts` | `slotTransitionAllowed` (function) | \`tests/unit/chat2-interview-hr-break-06.test.ts\` (CI pending) | TEST AUTHORED |
@@ -46,13 +46,13 @@ Scope: **all 71** `src/modules/placements/*interview*/*round*/*slot*` TypeScript
 | `src/modules/placements/hr-round-editor-service.ts` | `editHrJobRound` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/hr-round-editor-service.ts` | `listHrRoundEditorRows` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/hr-round-schedule-model.ts` | `RoundScheduleRow` (type) | N/A (compile-time only) | TYPE ONLY |
-| `src/modules/placements/hr-round-schedule-model.ts` | `hrScheduledRoundRows` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/hr-round-schedule-model.ts` | `hrRoundConflictLabels` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/hr-round-schedule-model.ts` | `hrRoundConflictLinks` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/hr-round-schedule-model.ts` | `hrScheduledRoundRows` (function) | `tests/unit/chat2-round-uncovered-pure-models.test.ts` (written; not run) | TEST AUTHORED |
+| `src/modules/placements/hr-round-schedule-model.ts` | `hrRoundConflictLabels` (function) | `tests/unit/chat2-round-uncovered-pure-models.test.ts` (written; not run) | TEST AUTHORED |
+| `src/modules/placements/hr-round-schedule-model.ts` | `hrRoundConflictLinks` (function) | `tests/unit/chat2-round-uncovered-pure-models.test.ts` (written; not run) | TEST AUTHORED |
 | `src/modules/placements/hr-today-open-slots-service.ts` | `listRecruiterTodayRoundsNeedingSlots` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/learner-application-interview-links-model.ts` | `OwnApplicationInterviewRound` (type) | N/A (compile-time only) | TYPE ONLY |
 | `src/modules/placements/learner-application-interview-links-model.ts` | `OwnApplicationInterviewLink` (type) | N/A (compile-time only) | TYPE ONLY |
-| `src/modules/placements/learner-application-interview-links-model.ts` | `ownApplicationInterviewLinks` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/learner-application-interview-links-model.ts` | `ownApplicationInterviewLinks` (function) | `tests/unit/chat2-learner-recruiter-round-uncovered-models.test.ts` (written; not run) | TEST AUTHORED |
 | `src/modules/placements/learner-interview-calendar-model.ts` | `learnerInterviewCalendarInputSchema` (const) | \`tests/unit/chat2-college-learner-calendar-break-08.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/learner-interview-calendar-model.ts` | `foldLearnerCalendarLine` (function) | \`tests/unit/chat2-college-learner-calendar-break-08.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/learner-interview-calendar-model.ts` | `learnerInterviewCalendarArtifacts` (function) | \`tests/unit/chat2-college-learner-calendar-break-08.test.ts\` (CI pending) | TEST AUTHORED |
@@ -63,10 +63,10 @@ Scope: **all 71** `src/modules/placements/*interview*/*round*/*slot*` TypeScript
 | `src/modules/placements/learner-interview-focus-model.ts` | `learnerInterviewFocusState` (function) | \`tests/unit/chat2-learner-interview-break-07.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/learner-interview-mobile-model.ts` | `learnerInterviewMobileSummary` (function) | \`tests/unit/chat2-learner-interview-break-07.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/learner-interview-reschedule-summary-model.ts` | `learnerInterviewRescheduleSummary` (function) | \`tests/unit/chat2-learner-interview-break-07.test.ts\` (CI pending) | TEST AUTHORED |
-| `src/modules/placements/learner-interview-view-model.ts` | `learnerInterviewScheduleViewSchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/learner-interview-view-model.ts` | `learnerInterviewScheduleViewSchema` (const) | `tests/unit/chat2-learner-recruiter-round-uncovered-models.test.ts` (written; not run) | TEST AUTHORED |
 | `src/modules/placements/learner-interview-view-model.ts` | `LearnerInterviewScheduleView` (type) | N/A (compile-time only) | TYPE ONLY |
-| `src/modules/placements/learner-interview-view-model.ts` | `learnerInterviewScheduleCounts` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/learner-interview-view-model.ts` | `learnerInterviewViewHref` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/learner-interview-view-model.ts` | `learnerInterviewScheduleCounts` (function) | `tests/unit/chat2-learner-recruiter-round-uncovered-models.test.ts` (written; not run) | TEST AUTHORED |
+| `src/modules/placements/learner-interview-view-model.ts` | `learnerInterviewViewHref` (function) | `tests/unit/chat2-learner-recruiter-round-uncovered-models.test.ts` (written; not run) | TEST AUTHORED |
 | `src/modules/placements/learner-interview-withdrawal-model.ts` | `learnerInterviewWithdrawalInputSchema` (const) | \`tests/unit/chat2-learner-interview-break-07.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/learner-interview-withdrawal-model.ts` | `LearnerInterviewWithdrawalTarget` (type) | N/A (compile-time only) | TYPE ONLY |
 | `src/modules/placements/learner-interview-withdrawal-model.ts` | `learnerInterviewWithdrawalTarget` (function) | \`tests/unit/chat2-learner-interview-break-07.test.ts\` (CI pending) | TEST AUTHORED |
@@ -85,13 +85,15 @@ Scope: **all 71** `src/modules/placements/*interview*/*round*/*slot*` TypeScript
 | `src/modules/placements/learner-rounds-browse-model.ts` | `LearnerRoundBrowseSource` (type) | N/A (compile-time only) | TYPE ONLY |
 | `src/modules/placements/learner-rounds-browse-model.ts` | `LearnerRoundTimeBucket` (type) | N/A (compile-time only) | TYPE ONLY |
 | `src/modules/placements/learner-rounds-browse-model.ts` | `LearnerRoundBrowseFilters` (type) | N/A (compile-time only) | TYPE ONLY |
-| `src/modules/placements/learner-rounds-browse-model.ts` | `learnerRoundScheduledInstant` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/learner-rounds-browse-model.ts` | `learnerRoundUrgency` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/learner-rounds-browse-model.ts` | `browseLearnerCareerRounds` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/recruiter-round-results-read-model.ts` | `recruiterResultTableQuerySchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/learner-rounds-browse-model.ts` | `learnerRoundScheduledInstant` (function) | `tests/unit/chat2-learner-recruiter-round-uncovered-models.test.ts` (written; not run) | TEST AUTHORED |
+| `src/modules/placements/learner-rounds-browse-model.ts` | `learnerRoundUrgency` (function) | `tests/unit/chat2-learner-recruiter-round-uncovered-models.test.ts` (written; not run) | TEST AUTHORED |
+| `src/modules/placements/learner-rounds-browse-model.ts` | `browseLearnerCareerRounds` (function) | `tests/unit/chat2-learner-recruiter-round-uncovered-models.test.ts` (written; not run) | TEST AUTHORED |
+| `src/modules/placements/recruiter-round-results-read-model.ts` | `recruiterResultTableQuerySchema` (const) | `tests/unit/chat2-learner-recruiter-round-uncovered-models.test.ts` (written; not run) | TEST AUTHORED |
 | `src/modules/placements/recruiter-round-results-read-model.ts` | `RecruiterResultRound` (type) | N/A (compile-time only) | TYPE ONLY |
-| `src/modules/placements/recruiter-round-results-read-model.ts` | `projectRecruiterRoundResults` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/recruiter-round-results-read-model.ts` | `recruiterResultTableHref` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/recruiter-round-results-read-model.ts` | `projectRecruiterRoundResults` (function) | `tests/unit/chat2-learner-recruiter-round-uncovered-models.test.ts` (written; not run) | TEST AUTHORED |
+| `src/modules/placements/recruiter-round-results-read-model.ts` | `recruiterResultTableHref` (function) | `tests/unit/chat2-learner-recruiter-round-uncovered-models.test.ts` (written; not run) | TEST AUTHORED |
+| `src/modules/placements/round-action-guards.ts` | `roundActionSnapshotMatches` (function) | `tests/unit/chat2-round-action-concurrency.test.ts` (written; not run) | TEST AUTHORED |
+| `src/modules/placements/round-action-guards.ts` | `roundActionJobMutable` (function) | `tests/unit/chat2-round-action-concurrency.test.ts` (written; not run) | TEST AUTHORED |
 | `src/modules/placements/round-service.ts` | `listPlacementRounds` (function) | `tests/unit/chat2-tpo-round-service-scope-break-12.test.ts` (malformed ID and scope-denial only; CI pending) | PARTIAL |
 | `src/modules/placements/round-service.ts` | `getPlacementRound` (function) | `tests/unit/chat2-tpo-round-service-scope-break-12.test.ts` (malformed ID and scope-denial only; CI pending) | PARTIAL |
 | `src/modules/placements/round-service.ts` | `createPlacementRound` (function) | `tests/unit/chat2-tpo-round-service-scope-break-12.test.ts` (malformed ID and scope-denial only; CI pending) | PARTIAL |
@@ -190,3 +192,9 @@ Scope: **all 71** `src/modules/placements/*interview*/*round*/*slot*` TypeScript
 | `tpoInterviewRescheduleSchema`, `validInterviewWindow`, `overlappingInterviewVenue` | `tests/unit/chat2-interview-reschedule-security.test.ts` | Credential-free HTTPS-only meetings, valid duration and venue overlap guards |
 
 These records supplement existing export rows; CI and integration results are still pending. The HR round schedule model was also hardened against fractional interview durations, which previously created invented fractional-minute end times. No other module/branch was modified.
+
+## October 19 follow-up
+
+The two new round action guard exports are directly exercised by `tests/unit/chat2-round-action-concurrency.test.ts`, with source checks on schedule/complete/cancel job locks. `tests/integration/chat2-round-action-locking-postgres.test.ts` adds actual service scheduling, stale COMPLETE/CANCEL, foreign-college access, closed-job barriers, and persisted event/audit checks. **Authored only, not run.** Other incomplete service rows in this inventory remain OPEN/PARTIAL.
+
+Pure-model coverage advanced on 2026-10-19: direct tests now exercise date/exception precedence, IST time classification, company and role filters, encoded application links, HR round outcome count and suppression of unrecorded results, attendance/conflict scheduling and no-contact leakage. Model unit testing is not a substitute for tenant-scoped DB read services.
