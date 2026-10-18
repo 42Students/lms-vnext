@@ -106,6 +106,8 @@ This is the **tested-function ledger for the focused model suite**, not a claim 
 
 | `src/modules/courses/faculty-assessment-batch-model.ts`, `faculty-assessment-service.ts` | `nextFacultyLessonContentSequence`, `facultyAssessmentVisibleToDelivery`, `getFacultyAssessmentOverview` | `tests/unit/chat3-faculty-assessment-sequence-scale.test.ts` plus existing `tests/unit/chat3-faculty-results-service-matrix.test.ts` | FAC-ASSESSMENT-SCALE-03 | >130k lesson entries no V8 spread-overflow, reject corrupt indexes and preserve shared/own-sibling delivery visibility |
 
+| `src/modules/courses/delivery-roster.ts` | `listActiveDeliveryLearners` | `tests/unit/chat3-faculty-delivery-roster-elective-fallback.test.ts` and existing `tests/unit/chat3-faculty-course-roster-cross-tenant-joins.test.ts` | FAC-DELIVERY-ROSTER-ELECTIVE-04 | active elective restricts roster to group, disabled/deleted elective gives empty, invalid/foreign backing fails closed rather than fallback to all Section learners, ordinary deliveries still use Section roster |
+
 ## Role/security matrix
 
 - FAC-SCOPE-01/02: Faculty allowed only after central `courses.read` and active teaching role; Learner, Mentor, College Admin, Super Admin, missing membership and foreign tenant denied in unit-model mock contract.

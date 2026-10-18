@@ -230,3 +230,6 @@ The shared tenant builder now wraps organization and college inserts in a savepo
 
 ### PROJ-HARNESS-PRINCIPAL-30: all-or-nothing role identity
 `createPrincipal` now encloses global user, optional Super Admin system role, college membership and all membership-role assignments in one SAVEPOINT. A failure on the second permission grant rolls back the first grant, membership and user; real PostgreSQL case 30 asserts identical counts before/after and verifies a valid multi-role retry. No production identity service is modified.
+
+### PROJ-HARNESS-PLACEMENTS-25 follow-up: season currently active, not merely ordered
+A 2098-2099 season has valid start/end order but is not yet in its date window on today's server. The shared ACTIVE placement-season fixture now begins in **2020** and ends June 2099, so today's database date and the published job deadline are both inside the same season. PG case 25 explicitly evaluates `current_date BETWEEN start_date AND end_date`; this intentionally broad date span is test-only and not customer season policy.

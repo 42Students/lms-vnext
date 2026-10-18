@@ -164,6 +164,36 @@ describe("UX-kit-HARDEN-23 authorization boundaries and WebView history", () => 
     expect(deniedOnly).not.toContain("More details");
   });
 
+  it("UX-kit-HARDEN-58 hidden cell permissions fail closed if resolver or detail href throws",()=>{
+    type Row={id:string;secret:string};
+    const secretFormatter=vi.fn((row:Row)=>row.secret);
+    const failPermission=vi.fn(()=>{throw new Error("permission unavailable");});
+    const denied=render(<DataTable rows={[{id:"one",secret:"SECRET_ONE"}]}
+      getRowKey={row=>row.id} empty="None" rowHref={()=>{throw new Error("navigation failed");}}
+      columns={[
+        {key:"id",header:"Project",mobilePriority:"primary",cell:(row:Row)=>row.id},
+        {key:"secret",header:"Restricted",mobilePriority:"hidden",
+          mobileHiddenReason:"Private",
+          mobileDetail:{fieldKey:"private",canView:failPermission,href:()=>"/private"},
+          cell:secretFormatter},
+      ]}/>);
+    expect(denied).toContain("one");
+    expect(denied).not.toContain("SECRET_ONE");
+    expect(denied).not.toContain('href="/private"');
+    expect(secretFormatter).not.toHaveBeenCalled();
+    expect(failPermission).toHaveBeenCalledTimes(1);
+    const allowed=render(<DataTable rows={[{id:"two",secret:"VISIBLE_TWO"}]}
+      getRowKey={row=>row.id} empty="None" columns={[
+        {key:"id",header:"Project",mobilePriority:"primary",cell:(row:Row)=>row.id},
+        {key:"secret",header:"Restricted",mobilePriority:"hidden",
+          mobileHiddenReason:"Private",
+          mobileDetail:{fieldKey:"private",canView:()=>true,href:()=>{throw Error("link unavailable");}},
+          cell:secretFormatter},
+      ]}/>);
+    expect(allowed).toContain("VISIBLE_TWO");
+    expect(allowed).not.toContain('href="/private"');
+  });
+
   it("UX-kit-HARDEN-45 explicit mobile-hidden fields never appear in expanded mobile details",()=>{
     type Row={id:string;name:string;secret:string;other:string};
     const columns=[
