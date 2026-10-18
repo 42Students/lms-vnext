@@ -54,19 +54,19 @@ describe("chat-4 College Admin export boundaries", () => {
   });
 
   it("COL-export-06 formats history using IST and neutralizes spreadsheet commands", () => {
-    const csv=collegeAdminHistoryCsv([{occurredAt:new Date("2026-10-18T00:00:00.000Z"),
+    const csv=collegeAdminHistoryCsv([{occurredAt:new Date("2099-10-18T00:00:00.000Z"),
       eventType:"=NOW()",summary:"@bad"}]);
     expect(csv.startsWith("\ufeff")).toBe(true);
     expect(csv).toContain("When (IST)");
     expect(csv).toContain('"\'=NOW()"');
     expect(csv).toContain('"\'@bad"');
-    expect(csv).toContain("18 Oct 2026");
+    expect(csv).toContain("18 Oct 2099");
     expect(csv.endsWith("\r\n")).toBe(true);
   });
 
   it("COL-export-07 caps history at 100 rows and visibly reports truncation", () => {
     const rows=Array.from({length:MAX_ADMIN_HISTORY_EXPORT_ROWS+1},(_,i)=>({
-      occurredAt:new Date("2026-10-18T00:00:00.000Z"),
+      occurredAt:new Date("2099-10-18T00:00:00.000Z"),
       eventType:"HISTORY",summary:"event "+i,
     }));
     const csv=collegeAdminHistoryCsv(rows);
