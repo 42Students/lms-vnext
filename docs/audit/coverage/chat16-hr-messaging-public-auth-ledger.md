@@ -336,3 +336,21 @@ Types/interfaces are compile-time contracts rather than runnable exports; they a
 ### TPO campaign draft and recipient-status service fail-closed matrix
 
 `tests/unit/chat16-messaging-campaign-draft-boundaries-16.test.ts` invokes model exports `tpoCampaignDraftSchema`, `previewTpoCampaignText` and exact unavailable copy (`MESSAGING-DRAFT-SCHEMA-16`, `MESSAGING-DRAFT-PREVIEW-16`). It also invokes every draft-store service export: `createTpoCampaignDraft` (`MESSAGING-DRAFT-CREATE-16`), `listTpoCampaignDrafts` and `getTpoCampaignDraft` (`MESSAGING-DRAFT-READ-16`), and `listTpoCampaignRecipientStatuses` (`MESSAGING-DRAFT-READ-16`, `MESSAGING-DRAFT-DENY-16`). The tests deliberately disable `DB09_TPO_API_READY` to prove that unavailable storage never pretends to return a successful empty campaign, that invalid inputs/OTP templates and removed roles deny before DB work, and that raw template text is not interpreted by the model as trusted HTML. Browser React text escaping is tested elsewhere. This is the **unavailable and validation branch only**; happy persistence, CAS and sending require the existing isolated database/provider suites. Authored without executing tests.
+
+
+### 2026-10-19: bounded recruiter inbound mail and uncovered permission/state edges
+
+The internal `/api/internal/placements/recruiter-message-inbound` POST previously called `request.text()` before testing its 20,000-byte body cap, letting a client force an unbounded allocation before the size guard. `src/modules/placements/recruiter-mail-body-model.ts` now reads `Request.body` incrementally, rejects over-cap UTF-8 bytes and malformed sequences before any HMAC verification or persistence, and retains the exact original decoded text for the signature. `src/app/api/internal/placements/recruiter-message-inbound/route.ts` retains its same-origin guard and its denial/friendly outage mapping. Test suites are authored, not executed; streamed network/CDN ingress behaviour still requires integration verification.
+
+| Export / route | Test | Direct behaviour asserted |
+|---|---|---|
+| `readBoundedRecruiterInboundBody` | `tests/unit/chat16-recruiter-mail-body-bounds-01.test.ts` (`HR-MAIL-INBOUND-01..05`) | 20 KB exact-byte acceptance, UTF-8 byte excess denial, malformed byte refusal, multibyte exact-text preservation, invalid limit rejection |
+| `POST /api/internal/placements/recruiter-message-inbound` | `tests/unit/chat16-recruiter-mail-inbound-route-01.test.ts` (`HR-MAIL-ROUTE-01..05`) | same-origin denial before signature, 413/400 before service, valid raw body and signature forwarding, invalid signature denial, redacted 503 |
+| `campaignRecipientStillMatchesSnapshot` | `tests/unit/chat16-campaign-snapshot-consent-matrix-02.test.ts` (`HR-CAMPAIGN-SNAPSHOT-01..03`) | unchanged normalized recipient accepted; changed address, revoked consent, bounced and NOT_NOW blocked |
+| `resolveTpoCampaignRecipientSecret`, `issueTpoCampaignEmailRecipientKey`, `matchesTpoCampaignEmailRecipientKey` | same (`HR-CAMPAIGN-HMAC-04`, `HR-CAMPAIGN-SECRET-05`) | key binding, wrong-secret and forged-key denial, strict canonical-secret precedence |
+| `inboundMailStatusTransitionAllowed`, `inboundMailStatusActions`, `createInboundMailTriageGate` | `tests/unit/chat16-inbound-triage-state-matrix-02.test.ts` (`INBOUND-TRIAGE-01..03`) | all nine state pairs, action parity, duplicate guard and retry release |
+| `inboundMailMetadataSchema`, `inboundMailListQuerySchema`, `safeInboundPreview` | same (`INBOUND-TRIAGE-04..05`) | strict metadata/filters, malformed role/scope fields and sanitized display |
+| `ownsHrNotificationActor`, `hrNotificationReadSchema`, `hrNotificationVersionMatches` | `tests/unit/chat16-hr-notification-identity-matrix-02.test.ts` (`HR-NOTIFICATION-IDENTITY-01`, `HR-NOTIFICATION-VERSION-02`) | active persisted identity, role revocation and optimistic token failures |
+| `summarizeRecruiterUnread`, `safeRecruiterEmailAddressName` | same (`HR-NOTIFICATION-UNREAD-03`, `HR-NOTIFICATION-MAIL-NAME-04`) | corrupt cached bell counts clamped, CRLF/bidi stripped and no surrogate split at 160-code-unit limit |
+
+These rows establish direct unit behaviour only. Tests, TypeScript, database concurrency, actual provider signatures and browser/API journeys **have not been run in this lane**. A complete whole-repository coverage certificate is not claimed.
