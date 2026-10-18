@@ -39,6 +39,7 @@ import {recordTpoOfferLifecycle} from "@/modules/placements/tpo-offer-lifecycle-
 import {getTpoDriveOfferRegister,getTpoDriveOfferRegisterCsv} from "@/modules/placements/tpo-drive-offer-register-service";
 import {getTpoOfferEvidence} from "@/modules/placements/tpo-offer-evidence-service";
 import {sweepExpiredPlacementOffers} from "@/modules/placements/placement-offer-expiry-sweep-service";
+import {escalatePendingWithdrawalRequests} from "@/modules/placements/tpo-withdrawal-escalation-service";
 import {getTpoWaitlistPreview,offerToNextWaitlisted} from "@/modules/placements/tpo-waitlist-promotion-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { enableSeedLearnerPlacementAccess } from "../support/w04-placement-access-fixture";
@@ -130,6 +131,7 @@ async function cleanup() {
   await pool.query(
     "delete from placement_application_status_history",
   );
+  await pool.query("delete from placement_learner_requests");
   await pool.query(
     "delete from placement_applications",
   );
@@ -414,6 +416,42 @@ describe("Placement P8 offers and joining", () => {
     );
     expect(rows.rows).toEqual([{status:"ISSUED"}]);
     expect(job.collegeId).toBe(SEED_IDS.collegeA);
+  });
+
+  it("PLACEMENTS-TPO-ESCALATE-21 DB escalates a future round only once, with a real college TPO recipient",async()=>{
+    const {job,application,round}=await preparePassedApplication();
+    const reference=new Date("2099-10-24T00:00:00.000Z");
+    await pool.query(`
+      update placement_job_rounds set status='SCHEDULED',scheduled_at=$2
+      where id=$1`,[round.id,new Date(reference.getTime()+6*3600_000)]);
+    const saved=await pool.query<{id:string}>(`
+      insert into placement_learner_requests(
+        application_id,request_type,round_id,scope_key,reason,requested_by_user_id
+      ) values($1,'APPLICATION_WITHDRAWAL',null,$2,
+        'Need to withdraw before next interview',$3) returning id`,[
+        application.id,"chat5-tpo-escalation:"+application.id,SEED_IDS.learnerUser,
+      ]);
+    const requestId=saved.rows[0]!.id;
+    const first=await escalatePendingWithdrawalRequests(reference);
+    expect(first.errors).toEqual([]);
+    expect(first.escalated).toBeGreaterThanOrEqual(1);
+    const history=await pool.query<{id:string}>(`
+      select id from activity_events where dedupe_key=$1`,
+      ["tpo-withdrawal-escalation:"+requestId]);
+    expect(history.rows).toHaveLength(1);
+    const notice=await pool.query<{user_id:string}>(`
+      select user_id from in_app_notifications where event_id=$1`,
+      [history.rows[0]!.id]);
+    expect(notice.rows.some(row=>row.user_id===SEED_IDS.facultyUser)).toBe(true);
+    const second=await escalatePendingWithdrawalRequests(reference);
+    expect(second.escalated).toBe(0);
+    const after=await pool.query<{count:number}>(`
+      select count(*)::int as count from in_app_notifications where event_id=$1`,
+      [history.rows[0]!.id]);
+    expect(after.rows[0]?.count).toBe(notice.rows.length);
+    const request=await pool.query<{status:string}>(`
+      select status from placement_learner_requests where id=$1`,[requestId]);
+    expect(request.rows).toEqual([{status:"PENDING"}]);
   });
 
   it("PLACEMENTS-TPO-NOTICE-19 DB preference opt-out suppresses TPO notice without dropping audited decision",async()=>{
