@@ -34,16 +34,21 @@ export type DataTableProps<Row> = {
  * by different hosts; only unambiguous same-app absolute paths are allowed.
  */
 export function isSafeDataTableHref(href: string): boolean {
-  if (!href.startsWith("/") || href !== href.trim() || /[\\\\\u0000-\u001f\u007f]/.test(href)) return false;
-  // Decode only the initial slash/backslash run, including double encoding.
-  let prefix = href.slice(0, 64);
-  for (let depth = 0; depth < 3; depth++) {
-    const decoded = prefix.replace(/%2f/gi, "/").replace(/%5c/gi, "\\\\")
+  if (!href.startsWith("/") || href !== href.trim() || /[\\\x00-\x1f\x7f]/.test(href)) {
+    return false;
+  }
+  // Work only on the initial path prefix: percent escapes in later query
+  // values are not origins, but nested URL-encoded separators can be.
+  let prefix = href.split(/[?#]/, 1)[0]!.slice(0, 128);
+  for (let depth = 0; depth < 16; depth++) {
+    if (prefix.startsWith("//") || prefix.startsWith("/\\")) return false;
+    const decoded = prefix.replace(/%2f/gi, "/").replace(/%5c/gi, "\\")
       .replace(/%25/gi, "%");
-    if (decoded === prefix) break;
+    if (decoded === prefix) return true;
     prefix = decoded;
   }
-  return !prefix.startsWith("//") && !prefix.startsWith("/\\\\");
+  // Extreme nested encoding is ambiguous and never needed for app routes.
+  return false;
 }
 
 export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHref }: DataTableProps<Row>) {
