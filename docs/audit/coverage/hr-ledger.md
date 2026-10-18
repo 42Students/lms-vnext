@@ -672,3 +672,13 @@ The stale CI snapshot in `docs/orchestrator/unit-failures-latest.md` lists `chat
 All new checks are **authored but not executed** by this lane. Previously reported failures from `unit-failures-latest.md` and test-only TypeScript error snapshot are older than their source/test corrections; they still require fresh CI evidence before marking green. Continue outstanding HR jobs, offers, applicant export and messaging DB scenarios, plus 47-page interactive browser matrix.
 
 | HR-OFFERS-STATE-14 | `tests/unit/HR-BREAK-chat15-offer-states-14.test.ts` checks persisted ISSUED/ACCEPTED/WITHDRAWN states and precise expiration, completed/APPLIED/PASS intersection across evaluative rounds, forged selection payloads, encoded round-result views | PostgreSQL offer issuance/revocation races, TPO verification release, mobile/keyboard and audit recipient counts remain unverified |
+
+
+## Additional account page and selection coverage (tests not executed)
+
+| Requirement | New ID-named evidence | Remaining acceptance |
+|---|---|---|
+| UX-HR-TRACKER-15 | `tests/unit/UX-chat15-hr-tracker-pages-15.test.ts`: additional HR activity/round-results/company-reports page role gates, invalid-filter and selector recovery, tracker Super Admin issue detail, logs/global-scope, findings, reporter details and distinct operational retry failures | Browser render/navigation, small-screen focus and live authorization on each route |
+| HR-ROUND-RESULTS-15 | `tests/unit/HR-BREAK-chat15-round-results-15.test.ts`: selected-round-only participant projection, anonymized unnamed learners, one-per-outcome counts, invalid job/round/query denied, encoded deep links | PostgreSQL staging vs APPLIED release authorizations, cross-college/expired grant HTTP |
+
+**State:** Coverage inventory is broader, but many exported functions and routes still need independent service-level behaviour, real PostgreSQL tenancy/concurrency, and interactive page checks. This ledger remains OPEN, not release-certified.
