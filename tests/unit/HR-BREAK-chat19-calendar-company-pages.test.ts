@@ -77,6 +77,23 @@ describe("HR-BREAK-chat19-calendar-company: account-deny and stable navigation",
    expect(readText(await company(query))).toMatch(/Invalid college selection|Invalid team filter/);
    expect(m.team).not.toHaveBeenCalled();
   });
+ it.each([
+  {collegeId:[college,"22222222-2222-4222-8222-222222222222"]},
+  {collegeId:[college,college]},
+  {tab:["company","reports"]},
+  {q:["safe","forged"]},
+  {teamPage:["1","100"]},
+ ])("does not silently accept repeated company/team query values %j",async query=>{
+  expect(readText(await company(query))).toContain("Invalid college selection");
+  expect(m.team).not.toHaveBeenCalled();
+  expect(m.jobs).not.toHaveBeenCalled();
+ });
+ it("company/team rejects recruiter identity belonging to another logged-in account",async()=>{
+  m.ctx.mockResolvedValue({...actor,recruiter:{...actor.recruiter!,userId:"another-recruiter"}});
+  await expect(company()).rejects.toThrow("REDIRECT");
+  expect(m.team).not.toHaveBeenCalled();
+  expect(m.jobs).not.toHaveBeenCalled();
+ });
  it("retired Reports tab redirects to company-scoped reporting without reading team data",async()=>{
   await expect(company({collegeId:college,tab:"reports"})).rejects.toThrow("REDIRECT");
   expect(m.redirect).toHaveBeenCalledWith("/hr/company/reports?collegeId="+college);
