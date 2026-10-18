@@ -270,7 +270,7 @@ export async function ProjectAdminAuditPage({
           </Button>
           <a
             href={basePath + "/audit"}
-            className="inline-flex min-h-10 items-center justify-center rounded-md border border-border px-3 text-sm font-semibold text-foreground"
+            className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-3 text-sm font-semibold text-foreground"
           >
             Reset
           </a>
