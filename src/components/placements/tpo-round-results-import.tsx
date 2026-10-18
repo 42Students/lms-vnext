@@ -51,14 +51,14 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
   <h2 className="text-lg font-semibold text-foreground">Import company round results</h2>
   <p className="text-sm text-body">Upload a CSV or Excel (.xlsx) result list. All supplied Application ID, email and roll identifiers must agree.
    Company portal IDs with no matching application are left unmatched. Contradictory IDs, email and roll must be reviewed; a manual match is audited. Nothing is applied to the round until the separate Apply results step.</p>
-  <a href={url} download className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">Download CSV template</a>
+  <a href={url} download className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">Download CSV template</a>
   <label className="block text-sm font-semibold text-body">Company results file
    <input type="file" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     disabled={busy} onChange={e=>{setFile(e.target.files?.[0]??null);setPreview(null);setReport(null);setOverrides({});setSkips([]);setMissingPolicy("LEAVE_PENDING");setConfirmMissingFailure(false);}}
     className="mt-2 block w-full rounded-[9px] border border-border p-3 text-foreground"/>
   </label>
   <button type="button" disabled={busy||!file} onClick={()=>void send("PREVIEW")}
-   className="min-h-11 rounded border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
+   className="min-h-11 md:min-h-9 rounded border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
    {busy?"Checking…":"Preview matching results"}</button>
   {preview?<div className="space-y-4 rounded-lg border border-border bg-surface-subtle p-4">
    <h3 className="font-semibold">Import preview</h3>
@@ -72,7 +72,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
     {preview.unmatched.map(row=><div key={row.line} className="grid gap-2 rounded border border-border bg-surface p-3 sm:grid-cols-2">
      <p className="text-sm">Row {row.line}: {row.identity||"No ID"} · {row.reason}</p>
      <div className="flex flex-wrap gap-2">
-      <select aria-label={"Match row "+row.line} className="min-h-11 flex-1 rounded border border-border bg-surface p-2 text-sm"
+      <select aria-label={"Match row "+row.line} className="min-h-11 md:min-h-9 flex-1 rounded border border-border bg-surface p-2 text-sm"
        value={overrides[row.line]??""} disabled={busy} onChange={e=>{setOverrides(p=>({...p,[row.line]:e.target.value}));if(e.target.value)setSkips(p=>p.filter(n=>n!==row.line));}}>
        <option value="">Do not match this row</option>
        {row.suggestions.map(s=><option key={s.applicationId} value={s.applicationId}>{s.name}{s.roll?" · "+s.roll:""}</option>)}
@@ -108,7 +108,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
    </fieldset>
    <button type="button" disabled={busy||(missingPolicy==="MARK_NOT_CLEARED"&&!confirmMissingFailure)||
     (!preview.matched.length&&missingPolicy==="LEAVE_PENDING"&&!Object.values(overrides).some(Boolean))} onClick={()=>setConfirmOpen(true)}
-    className="min-h-11 rounded bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
+    className="min-h-11 md:min-h-9 rounded bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
     {busy?"Staging…":"Confirm and stage results"}</button>
   </div>:null}
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={busy}

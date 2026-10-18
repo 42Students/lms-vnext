@@ -60,7 +60,7 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
      {e.annualCtcInr==null?"":" · ₹"+(e.annualCtcInr/100000)+" LPA"}</p>)}
    </div>
    <button type="button" disabled={busy} onClick={()=>setConfirmOpen(true)}
-    className="min-h-11 rounded bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
+    className="min-h-11 md:min-h-9 rounded bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
     {busy?"Recording…":"Confirm and record "+entries.length+" selections"}
    </button>
   </div>:null}

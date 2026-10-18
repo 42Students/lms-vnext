@@ -52,7 +52,7 @@ export function TpoWaitlistPromotionControl({jobId,preview}:{jobId:string;previe
     <textarea rows={2} minLength={3} maxLength={500} value={reason} onChange={e=>setReason(e.target.value)}
      className="rounded border border-border bg-surface p-3"/></label>
    <button type="button" disabled={busy||reason.trim().length<3} onClick={()=>setConfirmOpen(true)}
-    className="min-h-11 rounded bg-primary px-4 font-semibold text-foreground disabled:opacity-50">
+    className="min-h-11 md:min-h-9 rounded bg-primary px-4 font-semibold text-primary-foreground disabled:opacity-50">
     {busy?"Verifying…":"Verify and release next offer"}</button>
   </div>:null}
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={busy}
@@ -61,7 +61,7 @@ export function TpoWaitlistPromotionControl({jobId,preview}:{jobId:string;previe
     confirmLabel="Verify and release next offer" onConfirm={()=>void promote()}/>
   {success?<p role="status">{success}</p>:null}
   <button type="button" disabled={busy} onClick={()=>router.refresh()}
-    className="min-h-11 rounded border border-border px-3 text-sm font-semibold">Refresh waitlist and seats</button>
+    className="min-h-11 md:min-h-9 rounded border border-border px-3 text-sm font-semibold">Refresh waitlist and seats</button>
   {error?<p role="alert" className="text-foreground">{error} Refresh the preview before retrying.</p>:null}
  </section>;
 }
