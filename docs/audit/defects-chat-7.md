@@ -72,3 +72,12 @@ The complete cloud unit-job logs (not just truncated `unit-failures-latest.md`) 
 **Validation:** Draft PR [#175](https://github.com/42Students/lms-vnext/pull/175) triggered a cloud CI run, but the unit/typecheck/lint/build jobs were queued on last inspection. Until results arrive, do not claim zero failures. No test was weakened, disabled or deleted.
 
 **Projects continuation:** `PROJ-BREAK-LEARNER-SCALE-05` replaces repeated per-project task filtering/sorting with a linear earliest-due aggregation and a Set of eligible project IDs, paired with `PROJ-BREAK-LEARNER-DUE-05.test.ts` at 1,000 projects. `PROJ-BREAK-LEARNER-PROGRESS-04.test.ts` exercises revoked/wrong-role actor, forged project IDs, dedupe and empty states. `PROJ-BREAK-LEARNER-RELEASE-RACE-03` now accepts only mutable release states under row locks. PostgreSQL race and independent breaker checks remain open.
+
+### Subsequent main snapshot after 473-commit synchronization
+
+The refreshed `unit-failures-latest.md` on main listed two additional lane-7 failures that were absent from the immediately preceding snapshot:
+
+- `COL-projects-legacy-01`: College Projects `PageHeader` was again titled `Project workspaces` on the unauthenticated-college, invalid-filter and normal states, contrary to the exact `Workspaces` legacy test. Repaired all three source titles in `8e944e7`.
+- `COURSES7-07/08`: `chat7-learner-results-service-scoping.test.ts` release-positive fixture supplied `status=CLOSED` and `resultsPublished=true` but omitted the persisted `dueAt` now required by the common quiz embargo rule. Added an elapsed due timestamp to the fixture rather than relaxing result secrecy in `4bafe06`.
+
+No test was weakened, disabled or deleted. This branch still requires an executed unit/typecheck/build run. Draft PR #175 is CI-only and must not be merged for release based on these source fixes alone.
