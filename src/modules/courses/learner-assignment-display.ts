@@ -1,3 +1,4 @@
+import { learnerAssignmentPublishedGradeLabel } from "./learner-assignment-grade-label-model";
 /** Pure deadline/grade display policy for the learner's aggregate Assignments page. */
 export type AssignmentDisplayInput = {
   submittedAt: string | null;
@@ -10,7 +11,7 @@ export type AssignmentDisplayInput = {
 export function assignmentOverviewState(item: AssignmentDisplayInput, nowMs: number) {
   if (item.gradePublished) {
     return {
-      label: `Graded · ${item.pointsAwarded ?? 0}/${item.maxPoints}`,
+      label: learnerAssignmentPublishedGradeLabel(item.pointsAwarded,item.maxPoints),
       tone: "success" as const,
       action: "View" as const,
     };
