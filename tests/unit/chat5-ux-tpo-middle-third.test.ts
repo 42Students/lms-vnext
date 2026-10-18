@@ -575,4 +575,30 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   expect(page).not.toContain("min-w-[46rem]");
  });
 
+ it("UX-tpo-recruiters-leadid-02 uses shared bounded loading without a nested main and maintains route-specific status",()=>{
+  const loading=source("src/app/(authenticated)/tpo/recruiters/[leadId]/loading.tsx");
+  const note=source("docs/audit/ux/tpo-recruiters-leadid.md");
+  expect(loading).toContain("GracefulPageLoading");
+  expect(loading).toContain("label=\"Loading recruiter lead details\"");
+  expect(loading).not.toContain("<main");
+  expect(note).toContain("UX-tpo-recruiters-leadid-02");
+ });
+
+ it("UX-tpo-recruiters-campaigns-batchid-02 uses shared bounded loading without a nested main and maintains route-specific status",()=>{
+  const loading=source("src/app/(authenticated)/tpo/recruiters/campaigns/[batchId]/loading.tsx");
+  const note=source("docs/audit/ux/tpo-recruiters-campaigns-batchid.md");
+  expect(loading).toContain("GracefulPageLoading");
+  expect(loading).toContain("label=\"Loading campaign delivery batch\"");
+  expect(loading).not.toContain("<main");
+  expect(note).toContain("UX-tpo-recruiters-campaigns-batchid-02");
+ });
+
+ it("UX-tpo-recruiters-campaigns-drafts-campaignid-02 uses shared bounded loading without a nested main and maintains route-specific status",()=>{
+  const loading=source("src/app/(authenticated)/tpo/recruiters/campaigns/drafts/[campaignId]/loading.tsx");
+  const note=source("docs/audit/ux/tpo-recruiters-campaigns-drafts-campaignid.md");
+  expect(loading).toContain("GracefulPageLoading");
+  expect(loading).toContain("label=\"Loading campaign draft\"");
+  expect(loading).not.toContain("<main");
+  expect(note).toContain("UX-tpo-recruiters-campaigns-drafts-campaignid-02");
+ });
 });
