@@ -50,3 +50,5 @@ Each row lists exported runtime functions (non-executable TS interfaces and type
 - Run `npm run test:chat17:weak` for the explicitly selected weak-area suite, `npm run test:ux:kit:hardening` for all shared UI kit assertions, and `npm run test:db:projects-harness` against a migrated disposable PostgreSQL DB.
 - A source-level inventory gives no proof of complete branch coverage. Remaining UNVERIFIED rows require live service/database tests, including multi-session races, HTTP session revocations, DNS handover, system-role bootstrap and grant expiry. Other lane handoffs must include a separate reviewer.
 - **Release gate:** no claim that every account is unbreakable until the orchestrator publishes passing typecheck, unit, DB-integrity and browser role-journey results.
+
+- **WEAK-system-roles-05..08:** `tests/unit/chat17-system-bootstrap-race.test.ts` exercises bootstrap existing-identity reconciliation, cross-contact collision denial, duplicate create race and invalid-input rejection before persistence. This is a service-level injected-directory test; real directory persistence remains unverified.
