@@ -28,7 +28,7 @@ export function planInterviewDay(input:{startsAt:string;durationMinutes:number;g
  // TPO-drive-workspace-44: exported planners must validate even when called
  // without the route-level schema. Do not allocate from unchecked row counts.
  const parsed=tpoInterviewSlotActionSchema.safeParse({
-  action:"GENERATE_DAY",confirmed:true,...input,rooms:[...input.rooms],
+  action:"GENERATE_DAY",confirmed:true,...input,
  });
  if(!parsed.success||parsed.data.action!=="GENERATE_DAY")
   throw Error("Invalid interview day configuration");
