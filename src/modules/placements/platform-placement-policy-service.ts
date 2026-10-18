@@ -5,6 +5,8 @@ import { platformSettingOverrides } from "@/db/schema/platform-setting-overrides
 import { isSuperAdmin, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
+import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import { PLACEMENT_POLICY_FIELDS, platformPlacementPolicyInput, placementPolicyValidate } from "./platform-placement-policy-model";
 
 function requirePlatformAdministrator(context:RequestContext) {
@@ -72,6 +74,21 @@ export async function setPlatformPlacementPolicy(context:RequestContext,raw:unkn
    await tx.insert(platformSettingOverrides).values({
     scopeType:"GLOBAL",scopeId:"GLOBAL",key:input.key,value:String(input.value),
     version:1,updatedByUserId:context.user.id,
+   });
+  }
+  // Audit is part of the same transaction: a failed event insert rolls back
+  // the policy mutation. No event is needed when resetting an absent override.
+  if(input.value!==null||existing){
+   const field=PLACEMENT_POLICY_FIELDS.find(item=>item.key===input.key)!;
+   await recordActivityEventInTransaction(tx,context,{
+    eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_PLATFORM_POLICY_UPDATED,
+    subjectType:"platform_setting",subjectId:input.key,subjectLabel:field.label,
+    summary:"Super Admin updated a global placement policy",
+    metadata:{key:input.key,action:input.value===null?"RESET":"SET",
+     previousVersion:existing?.version??0,
+     nextVersion:input.value===null?0:(existing?.version??0)+1,
+     previousValue:existing?.value??null,nextValue:input.value},
+    groupKey:"placements:platform_policy:"+input.key,
    });
   }
   return {key:input.key,overridden:input.value!==null};
