@@ -80,6 +80,17 @@ describe("College Admin Projects summary break-it journeys", () => {
     }
   });
 
+  it("PROJ-BREAK-COL-STALE-02 accepts same instant with non-Z timezone only for exact CAS version", () => {
+    const source = service();
+    expect(source).toContain("row.updatedAt.getTime()!==Date.parse(input.expectedUpdatedAt)");
+    const utc = "2026-10-18T06:30:00.000Z";
+    const ist = "2026-10-18T12:00:00.000+05:30";
+    const stale = "2026-10-18T12:00:00.001+05:30";
+    expect(Date.parse(utc)).toBe(Date.parse(ist));
+    expect(Date.parse(utc)).not.toBe(Date.parse(stale));
+    expect(collegeProjectSummaryPatch.safeParse({ ...body, expectedUpdatedAt: ist }).success).toBe(true);
+  });
+
   it("PROJ-BREAK-COL-INPUT-01 rejects bad types, reversed deadlines, unknown keys and fabricated status", () => {
     expect(collegeProjectSummaryPatch.safeParse(body).success).toBe(true);
     for (const invalid of [
