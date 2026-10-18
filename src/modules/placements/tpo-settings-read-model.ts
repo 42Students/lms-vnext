@@ -1,3 +1,8 @@
+import {z} from "zod";
+
+/** TPO-settings-audit-55: validate the exact selected college before any service read. */
+export const tpoSettingsCollegeIdSchema=z.string().uuid();
+
 export type TpoTeamEvidenceRole =
   | "TPO"
   | "TPO_ADMIN"
