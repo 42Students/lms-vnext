@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {requirePermission} from "@/modules/permissions/policy";
 import {PageHeader} from "@/components/ui/page-header";
@@ -38,7 +39,7 @@ export default async function SuperAdminModuleAccessPage({
     <PageHeader eyebrow="Super Admin" title="Module Access"
       description="Select a college to inspect the existing inherited module access rules."
       actions={<Link href="/admin/features" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Feature Controls</Link>}/>
-    <section aria-label="Module Access overview" className="rounded-xl border border-border bg-surface p-4">
+    <section aria-label="Module Access overview" className="border-b border-border pb-5">
       <p className="text-sm font-semibold">Effective access · {scopeLabel}</p>
       <h2 className="mt-1 text-base font-semibold">Optional module access hierarchy</h2>
       <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-3">
@@ -47,13 +48,13 @@ export default async function SuperAdminModuleAccessPage({
         <div><dt>Student overrides</dt><dd className="font-semibold">{scopeMetrics.studentOverrides} stored membership rules in the visible colleges</dd></div>
       </dl>
     </section>
-    <form method="get" className="grid grid-cols-1 gap-3 rounded-lg border border-border bg-surface p-4 sm:grid-cols-[minmax(0,1fr)_auto_auto]">
+    <form method="get" className="grid grid-cols-1 gap-3 border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto]">
       <label className="grid min-w-0 flex-1 gap-1 text-sm font-semibold text-body">
         College
         <input type="search" name="q" maxLength={100} defaultValue={result.q}
           className="min-h-11 w-full min-w-0 rounded-md border border-border bg-surface px-3"/>
       </label>
-      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Filter</button>
+      <Button type="submit">Filter</Button>
       <Link className="inline-flex min-h-11 items-center px-3 py-3 text-sm font-semibold text-[var(--lms-teal-deep)]"
         href="/admin/module-access">Clear filters</Link>
     </form>
