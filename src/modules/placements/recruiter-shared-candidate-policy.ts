@@ -14,7 +14,9 @@ export type RecruiterCandidateDisclosure = {
  userPlatformStatus:string;
 };
 export function isRecruiterSharedCandidateAllowed(input:RecruiterCandidateDisclosure) {
- return input.companyId!==null &&
+ return input.companyId!==null && input.companyId.trim().length>0 &&
+   input.jobCompanyId.trim().length>0 &&
+   input.jobCollegeId.trim().length>0 && input.membershipCollegeId.trim().length>0 &&
    input.companyId===input.jobCompanyId &&
    input.jobCollegeId===input.membershipCollegeId &&
    input.applicationStatus==="SUBMITTED" &&

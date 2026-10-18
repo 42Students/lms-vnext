@@ -209,3 +209,13 @@ The current `unit-failures-latest.md` chat-16 entries refer to an older CI snaps
 | `src/app/campaign-unsubscribe/[token]/page.tsx:CampaignUnsubscribe` | Distinct valid token, expired token and transient storage-outage render states; explicit POST-only opt-out and retry link | `tests/unit/chat16-public-unsubscribe-page-27.test.ts` | Authored, unrun |
 
 Remaining page E2E coverage: interactive keyboard focus, phone viewport and real links across hosts, signed token origin/session semantics, consent POST handling, and rendering with actual provider and PostgreSQL fixture state are still open.
+
+## Additional real-service tests and fixed provider gates (2026-10-18)
+
+| Source function | Tests and explored boundaries | Execution status |
+|---|---|---|
+| `unsubscribeTpoCampaignRecipient` | `tests/unit/chat16-campaign-unsubscribe-auth-28.test.ts`: invalid and forged signature, too long, tampered token, no pre-auth DB access, missing schema, broken DB, replay already unsubscribed, wrong tenant/recipient denial, no duplicate notification | Authored; GitHub-only session, not run |
+| `createExotelSmsProvider:sendOtp` | `tests/unit/chat16-otp-provider-resilience-05.test.ts`: blank API key/token, DLT entity/sender/template fail before outbound network | Authored; not run |
+| `createOutboundProvider:send` | `tests/unit/chat16-provider-channel-boundaries-07.test.ts`: blank Exotel authentication, DLT entity/sender and template IDs fail before sending campaign SMS | Authored; not run |
+
+**Published CI reconciliation:** two tests shown as failing by `docs/orchestrator/unit-failures-latest.md` in CI `ff6819dd` were directly observed green in completed GitHub Actions run `39120880707` on a later `main` commit. These failures require an orchestrator report refresh, not softened or deleted acceptance criteria. The overall CI run remains red due to other lanes.

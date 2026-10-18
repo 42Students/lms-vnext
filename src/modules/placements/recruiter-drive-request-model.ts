@@ -38,4 +38,13 @@ export const recruiterRequestUpdateSchema=z.strictObject({
  action:z.enum(["EDIT","RESUBMIT","CANCEL"]),
  expectedUpdatedAt:z.iso.datetime({offset:true}),
  draft:hrDriveDraftSchema.optional(),
+}).superRefine((input,ctx)=>{
+ // A cancellation records a decision on the original request; it must not
+ // silently replace its terms in the same write.
+ if(input.action==="CANCEL"&&input.draft!==undefined)
+  ctx.addIssue({code:"custom",path:["draft"],
+   message:"Cancellation cannot change drive request details"});
+ if(input.action!=="CANCEL"&&input.draft===undefined)
+  ctx.addIssue({code:"custom",path:["draft"],
+   message:"Updated drive request details are required"});
 });
