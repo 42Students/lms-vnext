@@ -241,7 +241,7 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
                   onClick={()=>void retryComplete(file)} className="">Retry</Button>}
                 <Button variant="secondary" type="button" disabled={busy} onClick={()=>beginEdit(file)}
                   className="">Edit resource</Button>
-                <Button variant="secondary" type="button" disabled={busy} onClick={()=>setDeleteTarget(file)}
+                <Button variant="danger" type="button" disabled={busy} onClick={()=>setDeleteTarget(file)}
                   className="">Delete</Button>
               </>}
             </div>
