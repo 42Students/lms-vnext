@@ -121,4 +121,13 @@ describe("chat-13 TPO second-third cross-audit repairs",()=>{
   expect(s).not.toContain("window.confirm");
   expect(s).not.toContain("min-h-10");
  });
+ it("UX-cross-tpo-second-C13-018 company-share revoke uses accessible dialog and preserves lifecycle",()=>{
+  const s=read("src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/company-share-controls.tsx");
+  expect(s).toContain("<ConfirmDialog");
+  expect(s).toContain('title="Revoke this company applicant link?"');
+  expect(s).toContain("afterCompanyShareRevocation");
+  expect(s).toContain("setRevokeTarget(link.id)");
+  expect(s).not.toContain("window.confirm");
+  expect(s).not.toContain("min-h-10");
+ });
 });
