@@ -86,7 +86,7 @@
 
 - Actual `getTpoStudentsIntelligence`, `listTpoStudentRequests`, and `getTpoCompaniesView` against a disposable migrated PostgreSQL database, with a wrong-college actor and a disabled TPO membership. Model-level tests are **not** these service tests.
 - True simultaneous updates to `decideTpoLearnerParticipation` across two database connections; select/preview/confirm stale versions and aggregate event failure; persisted replay/idempotency design remains D12-03.
-- Company Team transactionally atomic follow + send + notifications with duplicate idempotency keys, archived relationship, wrong tenant, role removal and a disabled recipient.
+- Company Team now has `tests/integration/chat12-tpo-company-team-db-constraints.test.ts`: rollback-only PostgreSQL proof of same-college author/assignee FK, unique key replay, follow uniqueness and invalid ask/body checks. Still open: two-session simultaneous SEND race through the service, transactionally atomic notifications, archived relationship mutation, role removal after preview and disabled recipient under real DB.
 - Company-share public expiry/revocation and redacted recruiter output with two actual colleges and exact privacy policy switches.
 - All 42 first-third TPO page viewports at 320/360/390 px, focus order and keyboard/back/forward, plus slow DB, outage and session expiry.
 
