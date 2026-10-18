@@ -172,3 +172,6 @@ Full Super Admin parity for membershipless submission locks requires the schema/
 
 
 | SA-REPORT-CSV-UNICODE-06/07 | S1 / formula injection in analytics and accreditation exports | Unlike the hardened employer/roster exporters, `placementReportCsvCell` checked only ASCII whitespace before a formula operator. A Unicode `Cf` zero-width format mark or `Mn` combining mark before `=+@-` could be evaluated as a formula when the CSV is opened by a spreadsheet, affecting season, company and branch fields. | Extended formula-prefix guard to Unicode `Cc/Cf/Mn/Me` with existing CSV quoting and nonformula preservation. Behavioral tests authored, not executed; downstream end-to-end exported download still requires review. | `tests/unit/chat13-placement-analytics-unicode-csv.test.ts` |
+
+
+| SA-ADMIN-CSV-05 | S1 / Unicode spreadsheet formula prefix in two remaining Super Admin CSVs | Employer directory and scoped record CSV neutralizers ignored leading `Cc` controls and `Me` enclosing marks; spreadsheet applications can strip formatting before interpreting operators. The existing tests covered `Cf/Mn` only. | Added `Cc/Me` to both guards in the same order as analytics CSV; behavior and innocent quoted values tested. Awaiting unit/Excel/LibreOffice CSV importer verification. | `tests/unit/chat13-all-admin-csv-hidden-control-matrix.test.ts` |
