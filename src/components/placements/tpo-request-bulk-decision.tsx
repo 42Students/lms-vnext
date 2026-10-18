@@ -101,7 +101,8 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
     }
     setSelected(ids=>ids.filter(id=>!results.some(result=>result.id===id&&result.status==="updated")));
     setAcknowledged(false);setConfirmOpen(false);
-    router.refresh();
+    // Keep the audit-only retry control mounted after an uncertain response.
+    if(auditRecorded)router.refresh();
    });
   }catch{
    setError("The request review did not finish. Check the decisions before retrying.");

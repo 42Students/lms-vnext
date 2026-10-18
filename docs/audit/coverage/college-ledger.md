@@ -191,3 +191,27 @@ No in-memory preview may be considered tenant proof without the persisted member
 | Source | Tests | Required integrity |
 | --- | --- | --- |
 | `src/modules/people/college-student-import-placement.ts` `placeImportedLearnerInSection` | `tests/unit/chat4-college-student-import-placement-integrity.test.ts` (`COL-student-import-placement-tenant-01`); `tests/integration/chat4-college-academic-cross-tenant-pg.test.ts` (`COL-student-import-placement-tenant-PG-01`) | The section's program, academic period, cohort start period and learner member must all belong to the same college; learner enrollment's declared program must actually own its referenced cohort before the locked capacity check, membership insert, and single audit. Disposable DB fixture for a College A member with a College B declared program and College A cohort expects CLASS_BATCH_MISMATCH and zero inserted class memberships. CI/test execution pending. |
+
+## Further weakest-module tests (College Admin, authored and pending CI)
+
+| Export | Behavioral test | Cases and remaining evidence |
+| --- | --- | --- |
+| `src/modules/people/college-person-profile-overview-service.ts` `getCollegePersonProfileOverview` | `tests/unit/chat4-college-person-profile-overview.test.ts` (`COL-people-profile-overview-01`) | Validates UUID/kind before reads, permits authorized same-college editor, rejects stale actor within private profile read transaction, absent/foreign row denied, strips learner Aadhaar/PAN numbers and faculty masked PAN/private receipt IDs in the returned view model |
+| `src/modules/people/e2e-identity-directory.ts` `e2eIdentityDirectory.findByPhone/findByEmail/createUser/updateUser` | `tests/unit/chat4-college-e2e-identity-directory.test.ts` (`COL-people-e2e-identity-01`) | Stable opaque SHA-derived synthetic test identity, does not expose raw contact in UID, email casefolding, no user-row writes from fixture directory, missing and existing identity paths |
+| `src/modules/people/identity-profile.staged.ts` `loadOwnIdentityProfileStaged`, `saveOwnPersonNameStaged` | `tests/unit/chat4-college-staged-identity-profile-safety.test.ts` (`COL-people-staged-profile-01`) | Explicit staging disclaimer, live persisted `identity.self.manage`, actor UPDATE lock, safe positive CAS, atomic version increment, no email/phone/identity UID overwrite in name-only SQL. Intentionally **not** a runtime route; migration not promoted |
+| `src/modules/academics/college-promotion-faculty-readiness.ts` `getPromotionFacultyReadiness` | `tests/unit/chat4-college-promotion-faculty-service-behavior.test.ts` (`COL-promotion-faculty-02`) and existing `chat4-college-promotion-faculty-readiness.test.ts` | Wrong/revoked actor denied before read, unknown cohort and unmapped target term return truthful incomplete, all mapped courses must have eligible staff, duplicate assignments do not inflate distinct courses, empty/staffed state. Database readiness/cross-tenant role revocation race remains open |
+
+Tests were authored but not executed. On no account should a staged adapter be promoted to a live route solely because its model has source-contract tests.
+
+## Super Admin tenant landing pages (rendered, CI pending)
+
+| Page | Test file | Paths exercised |
+| --- | --- | --- |
+| `/admin/colleges/[collegeId]` | `tests/unit/chat4-superadmin-college-detail-page-states.test.tsx` (`SA-colleges-detail-01`) | Active selected college's setup and verification links, archived college restoration only with an active parent, archived parent restore-first notice, no unsafe setup on archived tenants, missing/forbidden tenant denial |
+| `/admin/organizations` | `tests/unit/chat4-superadmin-organizations-page-journey.test.tsx` (`SA-organizations-page-01`) | Super Admin permission before invalid URL errors, duplicate/unknown/invalid pagination, truthful page 2 of 2 from twelve scoped records, archived organization restore choices, create action and empty scope without fabrication |
+
+These SSR mock journeys supplement, not replace, persisted actor authorization in the respective services and PostgreSQL tenant-scope fixtures. They are authored and **not run**.
+
+### Synthetic E2E identity missing-contact collision prevention
+
+`src/modules/people/e2e-identity-directory.ts` now rejects direct `createUser` invocations with neither phone nor email via `IDENTITY_CONTACT_REQUIRED`. Its old deterministic `e2eUid("missing-contact")` branch could map unrelated fixture users onto the same synthetic UID if bypassing the outer identity resolver. `tests/unit/chat4-college-e2e-identity-directory.test.ts` now includes `COL-people-e2e-identity-02` with no database read. Cloud CI pending.

@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,inArray} from "drizzle-orm";
+import {and,eq,inArray,isNull} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,colleges,courseOfferings,courses,departments,
@@ -9,10 +9,12 @@ import type {RequestContext} from "@/modules/identity/context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy";
 import {requirePlacementManageScope} from "./scope";
+import {requirePersistedTpoMembership} from "./tpo-persisted-actor-service";
+import {requireTpoJobActor} from "./tpo-job-write-base";
 import {placementTableExists} from "./staged-tables";
 const uuid=z.string().uuid();
 const inputSchema=z.strictObject({
- offeringId:uuid,dueAt:z.iso.datetime({offset:true}),membershipIds:z.array(uuid).min(1).max(100),
+ offeringId:uuid,dueAt:z.iso.datetime({offset:true}).nullable().optional(),membershipIds:z.array(uuid).min(1).max(100),
 }).refine(data=>new Set(data.membershipIds).size===data.membershipIds.length,
  {message:"Select each student only once",path:["membershipIds"]});
 export class TpoPrepError extends Error{
@@ -24,6 +26,7 @@ async function requireTpo(ctx:RequestContext){
   throw new AuthorizationError("placements.manage");
  if(!can(ctx,"placements.manage",{collegeId:m.collegeId}))throw new AuthorizationError("placements.manage");
  requirePermission(ctx,"placements.manage",{collegeId:m.collegeId});
+ await requirePersistedTpoMembership(ctx,m.collegeId);
  return requirePlacementManageScope(ctx,m.collegeId);
 }
 async function hasPrepTable(){
@@ -35,23 +38,27 @@ export async function listTpoPrepCourseOptions(ctx:RequestContext){
  return getDb().select({id:courseOfferings.id,courseId:courses.id,name:courses.name,
   code:courses.code,cohortId:courseOfferings.cohortId}).from(courseOfferings)
   .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
-  .innerJoin(departments,and(eq(departments.id,courses.departmentId),eq(departments.collegeId,college.id)))
+  .innerJoin(departments,and(eq(departments.id,courses.departmentId),
+   eq(departments.collegeId,college.id),isNull(departments.archivedAt)))
   .where(and(eq(courseOfferings.status,"ACTIVE"),eq(courses.status,"ACTIVE")))
   .orderBy(courses.name,courses.code).limit(300);
 }
 export async function assignTpoPrepCourse(ctx:RequestContext,raw:unknown){
  const college=await requireTpo(ctx),input=inputSchema.parse(raw);
  await hasPrepTable();
- const due=new Date(input.dueAt);
- if(due.getTime()<=Date.now())throw new TpoPrepError("DUE_DATE_INVALID");
+ const due=input.dueAt?new Date(input.dueAt):null;
+ if(due!==null&&due.getTime()<=Date.now())throw new TpoPrepError("DUE_DATE_INVALID");
  return getDb().transaction(async tx=>{
+  // Persisted team permission is locked throughout assignment, audit and notices.
+  await requireTpoJobActor(tx,ctx);
   const [lock]=await tx.select({id:colleges.id}).from(colleges)
    .where(eq(colleges.id,college.id)).for("update").limit(1);
   if(!lock)throw new TpoPrepError("INVALID_SELECTION");
   const [offering]=await tx.select({id:courseOfferings.id,cohortId:courseOfferings.cohortId,
    title:courses.name}).from(courseOfferings)
    .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
-   .innerJoin(departments,and(eq(departments.id,courses.departmentId),eq(departments.collegeId,college.id)))
+   .innerJoin(departments,and(eq(departments.id,courses.departmentId),
+   eq(departments.collegeId,college.id),isNull(departments.archivedAt)))
    .where(and(eq(courseOfferings.id,input.offeringId),eq(courseOfferings.status,"ACTIVE"),eq(courses.status,"ACTIVE")))
    .limit(1);
   if(!offering)throw new TpoPrepError("NO_ACTIVE_OFFERING");
@@ -69,7 +76,7 @@ export async function assignTpoPrepCourse(ctx:RequestContext,raw:unknown){
    eventType:"PLACEMENTS_TPO_PREP_ASSIGNED",
    subjectType:"course_offering",subjectId:offering.id,subjectLabel:offering.title,
    summary:"TPO assigned preparation course to selected learners",
-   metadata:{selected:input.membershipIds.length,offeringId:offering.id,dueAt:input.dueAt},
+   metadata:{selected:input.membershipIds.length,offeringId:offering.id,dueAt:input.dueAt??null},
   }).returning({id:activityEvents.id});
   if(!event)throw new TpoPrepError("INVALID_SELECTION");
   const results:{id:string;status:"assigned"|"duplicate"|"skipped"}[]=[];
@@ -82,7 +89,8 @@ export async function assignTpoPrepCourse(ctx:RequestContext,raw:unknown){
    if(!saved){results.push({id,status:"duplicate"});continue;}
    await tx.insert(inAppNotifications).values({
     userId,eventId:event.id,title:"New preparation course",
-    body:"Your placement cell assigned "+offering.title+". Review it in your courses by the stated due date.",
+    body:"Your placement cell assigned "+offering.title+". Review it in your courses"+
+     (due?". The due date is recorded in your assignment.":"."),
     actionHref:"/learn/courses",
    }).onConflictDoNothing();
    results.push({id,status:"assigned"});
@@ -96,6 +104,15 @@ export async function listOwnTpoPrepAssignments(ctx:RequestContext){
  const member=ctx.membership;
  if(!member||!hasMembershipRole(ctx,"LEARNER")||member.status!=="ACTIVE"||ctx.user.platformStatus!=="ACTIVE")
   throw new AuthorizationError("placements.read");
+ // Do not trust a cached LEARNER role after account suspension or college
+ // unenrollment. Prove the same currently active person and college first.
+ const [live]=await getDb().select({id:collegeMemberships.id}).from(collegeMemberships)
+  .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
+  .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+   eq(membershipRoles.role,"LEARNER")))
+  .where(and(eq(collegeMemberships.id,member.id),eq(collegeMemberships.userId,ctx.user.id),
+   eq(collegeMemberships.collegeId,member.collegeId),eq(collegeMemberships.status,"ACTIVE"))).limit(1);
+ if(!live)throw new AuthorizationError("placements.read");
  await hasPrepTable();
  const rows=await getDb().select({id:placementTpoPrepAssignments.id,dueAt:placementTpoPrepAssignments.dueAt,
   offeringId:placementTpoPrepAssignments.offeringId,title:courses.name,courseCode:courses.code,
