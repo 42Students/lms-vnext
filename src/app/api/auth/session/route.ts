@@ -25,16 +25,23 @@ export async function DELETE(request: Request) {
   }
 
   const token = (await cookies()).get(SESSION_COOKIE_NAME)?.value;
+  let revokeFailed = false;
   if (token) {
     try {
       await revokeSessionByToken(token);
     } catch (error) {
-      // The cookie is still cleared below; the token also expires on its own.
+      // Clearing local cookies is necessary on a shared device but cannot
+      // guarantee remote revocation when persistence is unavailable. Return
+      // a retryable failure, never a false "signed out everywhere" success.
       logError("auth.logout_revoke_failed", error);
+      revokeFailed = true;
     }
   }
 
-  const response = NextResponse.json({ ok: true });
+  const response = NextResponse.json(
+    revokeFailed ? { ok: false, error: "LOGOUT_REVOKE_FAILED" } : { ok: true },
+    { status: revokeFailed ? 503 : 200 },
+  );
   // PUB-auth-public-38: clear per-person drafts, cached reminders and quiz state
   // across all tabs on this shared device, not merely session cookies.
   // Deliberately exclude the `cookies` Clear-Site-Data directive: explicitly
