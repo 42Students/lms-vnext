@@ -6,3 +6,8 @@
 - **State coverage:** existing loading/error/empty, read-only, retry and result messages retained; no mutations introduced.
 - **Regression:** `tests/unit/ux-chat14-mentor-02.test.ts`, `UX-mentor-mentor-projects-projectId-review-completeness-01`.
 - **Verification:** source check authored, TypeScript + browser audit + unit execution pending; inventory unticked.
+
+## Mentor-only quality pass
+- Accessible deep-teal text: 4; visible link focus outline: 4; shared submit Button: 0.
+- Preserves current saved data, legacy terms, route scope and no-fabrication policy.
+- Source test `UX-mentor-projects-projectId-review-completeness-02` in `tests/unit/ux-chat14-mentor-quality-04c.test.ts`. No browser/typecheck evidence yet.

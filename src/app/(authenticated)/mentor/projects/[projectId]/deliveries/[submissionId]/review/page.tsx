@@ -18,7 +18,7 @@ export default async function MentorDeliveryVersionPage({params}:{
     <PageHeader eyebrow="Mentor · Final delivery" title={"Delivery version "+v.version}
       description={data.projectTitle+" · "+data.projectStatus}
       actions={<Link href={"/mentor/projects/"+encodeURIComponent(data.projectId)+"/review-overview"}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Review overview
       </Link>}/>
     <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
@@ -66,7 +66,7 @@ export default async function MentorDeliveryVersionPage({params}:{
         {([{label:"Source",href:safeProjectExternalHref(v.sourceUrl)},
           {label:"Demo",href:safeProjectExternalHref(v.demoUrl)}]).map(item=>
             item.href?<a key={item.label} href={item.href} target="_blank"
-              rel="noopener noreferrer" className="text-sm font-semibold text-primary-text underline">
+              rel="noopener noreferrer" className="text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
               Open {item.label.toLowerCase()} link ↗</a>:null)}
         {!safeProjectExternalHref(v.sourceUrl)&&!safeProjectExternalHref(v.demoUrl)?
           <p className="text-sm text-muted-foreground">No valid source or demo URL.</p>:null}
@@ -82,7 +82,7 @@ export default async function MentorDeliveryVersionPage({params}:{
         return <li key={index} className="rounded-lg border border-border p-3 text-sm">
           <span className="font-semibold">{name}</span> · {kind}
           {href?<a href={href} target="_blank" rel="noopener noreferrer"
-            className="ml-2 text-primary-text underline">Open link ↗</a>:null}
+            className="ml-2 text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Open link ↗</a>:null}
           {kind==="File"&&typeof entry.fileId==="string"?
             <span className="ml-2 text-muted-foreground">Uploaded file recorded</span>:null}
         </li>;

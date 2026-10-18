@@ -17,7 +17,7 @@ export default async function MentorProjectReviewCompletenessPage({
   });
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid review history selector</h1>
-    <Link href="/mentor/projects" className="text-primary-text underline">
+    <Link href="/mentor/projects" className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       Return to assigned projects
     </Link>
   </section>;
@@ -27,7 +27,7 @@ export default async function MentorProjectReviewCompletenessPage({
     <PageHeader eyebrow="Mentor · Project Overview" title="Delivery review completeness"
       description={data.projectTitle??"Current assigned project"}
       actions={<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
-        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Delivery workspace
       </Link>} />
     {!data.enabled?<section role="status"
@@ -76,10 +76,10 @@ export default async function MentorProjectReviewCompletenessPage({
         <div className="flex gap-3">
           {data.page>1?<Link
             href={mentorReviewCompletenessHref({projectId,page:data.page-1})}
-            className="text-sm font-semibold text-primary-text">Previous</Link>:null}
+            className="text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>:null}
           {data.page<data.totalPages?<Link
             href={mentorReviewCompletenessHref({projectId,page:data.page+1})}
-            className="text-sm font-semibold text-primary-text">Next</Link>:null}
+            className="text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>:null}
         </div>
       </nav>
     </>}

@@ -1,3 +1,4 @@
+import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -19,7 +20,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
   });
   if(!parsed.success)return <section role="alert">
     <h1>Invalid risk/readiness filters</h1>
-    <Link href="/mentor/projects" className="text-primary-text underline">Projects</Link>
+    <Link href="/mentor/projects" className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Projects</Link>
   </section>;
   const data=await getMentorRiskReadiness(await getCurrentRequestContext(),parsed.data);
   const base="/mentor/projects/"+encodeURIComponent(projectId);
@@ -34,7 +35,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
     <PageHeader eyebrow="Mentor · Project" title="At-risk & readiness drill-in"
       description={data.projectTitle+" · "+data.projectStatus}
       actions={<Link href={base}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Full project workspace
       </Link>}/>
     {!data.enabled?<section role="status" className="rounded-xl border border-border bg-surface p-5">
@@ -71,11 +72,11 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
             <option value="MEDIUM">Medium</option><option value="LOW">Low</option>
           </select>
         </label>
-        <button type="submit" className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary">
+        <Button type="submit" variant="primary">
           Filter
-        </button>
+        </Button>
         <Link href={base+"/risk-readiness"}
-          className="inline-flex min-h-11 items-center text-sm text-primary-text underline">Clear</Link>
+          className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
       </form>
       {data.items.length===0?<EmptyState title="No recorded items for this filter"
         description="No matching stored signals were found. This is not a certificate of project safety or completeness."/>:
@@ -89,7 +90,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
           </div>
           <p className="mt-2 break-words text-sm text-body">{row.detail}</p>
           <Link href={row.href}
-            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
             Open exact project workspace →
           </Link>
         </li>)}</ol>}
@@ -97,9 +98,9 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
         <span className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</span>
         <div className="flex gap-3">
           {data.page>1?<Link href={mentorRiskReadinessHref({...data.query,page:data.page-1})}
-            className="text-sm text-primary-text underline">Previous</Link>:null}
+            className="text-sm text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>:null}
           {data.page<data.totalPages?<Link href={mentorRiskReadinessHref({...data.query,page:data.page+1})}
-            className="text-sm text-primary-text underline">Next</Link>:null}
+            className="text-sm text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>:null}
         </div>
       </nav>
     </>}
