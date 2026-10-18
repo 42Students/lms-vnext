@@ -6,12 +6,14 @@ export function tpoStudentProfileFacts(raw:unknown):TpoStudentProfileFacts{
  const person=doc.personalDetails&&typeof doc.personalDetails==="object"&&!Array.isArray(doc.personalDetails)?doc.personalDetails as Record<string,unknown>:{};
  const social=doc.socialProfiles&&typeof doc.socialProfiles==="object"&&!Array.isArray(doc.socialProfiles)?doc.socialProfiles as Record<string,unknown>:{};
  const date=typeof person.dateOfBirth==="string"?person.dateOfBirth:"";
- const birthYear=/^\d{4}-\d{2}-\d{2}$/.test(date)?Number(date.slice(0,4)):null;
+ const parsedBirthDate=/^\d{4}-\d{2}-\d{2}$/.test(date)?new Date(date+"T00:00:00.000Z"):null;
+ const birthYear=parsedBirthDate&&!Number.isNaN(parsedBirthDate.getTime())&&
+  parsedBirthDate.toISOString().slice(0,10)===date?parsedBirthDate.getUTCFullYear():null;
  const gender=typeof person.gender==="string"&&["Male","Female","Other"].includes(person.gender)?person.gender:null;
  const count=(key:string)=>Array.isArray(doc[key])?Math.min(doc[key].length,100):0;
  const nonempty=(value:unknown)=>typeof value==="string"&&value.trim().length>0;
  const resume=nonempty(doc.resumeDocumentId)||nonempty(doc.resumeUrl)||
-   (doc.resume!==null&&typeof doc.resume==="object"&&Object.keys(doc.resume).length>0);
+   (doc.resume!==null&&typeof doc.resume==="object"&&!Array.isArray(doc.resume)&&Object.keys(doc.resume).length>0);
  const codingProfiles=(Array.isArray(doc.codingProfiles)&&doc.codingProfiles.length>0)||
    (Array.isArray(social.codingProfiles)&&social.codingProfiles.length>0)||
    ["leetcodeUrl","codechefUrl","codeforcesUrl","hackerrankUrl","geeksForGeeksUrl"].some(key=>nonempty(social[key]));
@@ -31,7 +33,11 @@ export function tpoStudentProfileFacts(raw:unknown):TpoStudentProfileFacts{
   return ["PG","POST_GRADUATE","POSTGRADUATE","MASTERS","MASTER"].some(kind=>level.includes(kind));
  }) as Record<string,unknown>|undefined;
  const percentValue=postgraduate?.percentage??postgraduate?.percentageMarks;
- const pgPercentage=typeof percentValue==="number"&&percentValue>=0&&percentValue<=100?percentValue:null;
+ const parsedPercentage=typeof percentValue==="number"?percentValue:
+  typeof percentValue==="string"&&/^(?:100(?:\.0{1,2})?|\d{1,2}(?:\.\d{1,2})?)$/.test(percentValue.trim())?
+   Number(percentValue.trim()):NaN;
+ const pgPercentage=Number.isFinite(parsedPercentage)&&parsedPercentage>=0&&parsedPercentage<=100?
+  parsedPercentage:null;
  const degree=education.map(item=>item&&typeof item==="object"&&!Array.isArray(item)?
   safeText((item as Record<string,unknown>).degreeName??(item as Record<string,unknown>).degree):null)
   .filter((value):value is string=>value!==null).at(-1)??null;
