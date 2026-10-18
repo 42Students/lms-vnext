@@ -9,6 +9,9 @@ describe("UX-tracker-audit-findings-01",()=>{
   expect(source).toContain("caption=\"Independent audit findings\"");
   expect(source).toContain("mobilePriority:\"primary\"");
   expect(source).toContain("mobilePriority:\"secondary\"");
+  expect(source).toContain("const refusedColumns");
+  expect(source).toContain("<DataTable columns={refusedColumns}");
+  expect(source).toContain("Review importer logs for the remaining details.");
   expect(source).toContain("empty={<p role=\"status\"");
   expect(source).toContain("No independent audit findings match these filters.");
   expect(source).toContain("independentFindingHref");
