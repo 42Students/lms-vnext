@@ -100,7 +100,7 @@ export function TpoCompanyMemoryWorkspace({
   const [error, setError] = useState("");
   const [driveSearch,setDriveSearch]=useState("");
 
-  type LoadResult = { company: CompanyMemory | null; phase: Phase; error: string };
+  type LoadResult = { company: CompanyMemory | null; phase: Phase; message: string };
   const load = useCallback(async (signal?: AbortSignal): Promise<LoadResult | null> => {
     try {
       const response = await fetch(
@@ -117,17 +117,17 @@ export function TpoCompanyMemoryWorkspace({
       if (signal?.aborted) return null;
       if (!response.ok) {
         if (response.status === 503 && (payload.error === "DATABASE_NOT_READY" || payload.error === "DB09_MIGRATIONS_PENDING"))
-          return { company: null, phase: "migration-pending", error: "Company details are unavailable right now. Try again." };
+          return { company: null, phase: "migration-pending", message: "Company details are unavailable right now. Try again." };
         if (response.status === 404)
-          return { company: null, phase: "not-found", error: "Company not found" };
-        return { company: null, phase: "error", error: "Company Memory could not be loaded." };
+          return { company: null, phase: "not-found", message: "Company not found" };
+        return { company: null, phase: "error", message: "Company Memory could not be loaded." };
       }
       return payload.company
-        ? { company: payload.company, phase: "ready", error: "" }
-        : { company: null, phase: "error", error: "Company Memory could not be loaded." };
+        ? { company: payload.company, phase: "ready", message: "" }
+        : { company: null, phase: "error", message: "Company Memory could not be loaded." };
     } catch {
       if (signal?.aborted) return null;
-      return { company: null, phase: "error", error: "Company Memory could not be loaded. Try again." };
+      return { company: null, phase: "error", message: "Company Memory could not be loaded. Try again." };
     }
   }, [collegeId, companyName]);
 
@@ -135,7 +135,7 @@ export function TpoCompanyMemoryWorkspace({
     if (!result) return;
     setCompany(result.company);
     setPhase(result.phase);
-    setError(result.error);
+    setError(result.message);
   }
 
   function retry() {
