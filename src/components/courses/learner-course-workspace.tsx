@@ -512,6 +512,7 @@ function AssignmentCard({
         </div>:null}
       {!readOnly && !submissionClosed && interaction.canSubmit ? (
         <AssignmentSubmissionControl
+          key={deliveryId+":"+assignment.id}
           fileUploadsEnabled={assignmentFilesRuntimeEnabled()}
           multipartEnabled={multipartAssignmentRuntimeEnabled()}
           methodsEnabled={true}
