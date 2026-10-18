@@ -6,7 +6,10 @@ export const tpoInterviewRescheduleSchema=z.object({
  localDateTime:z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/),
  mode:z.enum(["ON_CAMPUS","VIRTUAL"]),
  venue:z.string().trim().min(1).max(500).optional(),
- meetingUrl:z.url({protocol:/^https?$/}).max(2000).optional(),
+ meetingUrl:z.url({protocol:/^https$/}).max(2000).refine(value=>{
+  const url=new URL(value);
+  return !url.username&&!url.password;
+ },{message:"Use a secure meeting link without embedded credentials"}).optional(),
  reason:z.string().trim().min(10).max(1000),
 }).strict().superRefine((value,ctx)=>{
  if(value.mode==="ON_CAMPUS"&&!value.venue)ctx.addIssue({
@@ -16,7 +19,7 @@ export const tpoInterviewRescheduleSchema=z.object({
 });
 export function validInterviewWindow(start:Date,now:Date,durationMinutes:number|null){
  return start.getTime()>now.getTime()&&
-  (durationMinutes===null||durationMinutes>0);
+  (durationMinutes===null||(Number.isSafeInteger(durationMinutes)&&durationMinutes>0&&durationMinutes<=1440));
 }
 export function overlappingInterviewVenue(
  proposedStart:Date,durationMinutes:number,

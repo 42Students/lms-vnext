@@ -291,3 +291,11 @@ The two corrections are authored on chat-19's branch. The next CI run is require
 |---|---|---|---|
 | HR-BREAK-PROFILE-IDENTITY-10 | MAJOR | `src/modules/placements/recruiter-profile-service.ts`, `src/app/(authenticated)/hr/profile/page.tsx` | Both the self-profile reader and own-grant selector previously relied on `hasActiveRecruiter(context)` but did not verify `context.recruiter.userId===context.user.id`. Reject the mismatched identity before any DB lookup/mutation, matching the already-hardened grant overview. Added service and real page tests to assert no read/write is attempted. |
 | HR-BREAK-PROFILE-NAME-11 | COVERAGE | `src/modules/placements/hr-recruiter-name-fields-model.ts` | Added independent direct tests for Unicode name splitting, canonical editing, strict rejection of injected fields, length boundaries and millisecond IST/UTC optimistic versioning; no source defect identified on review. |
+
+## HR Today action queue: covered interview rounds shadow unslotted rounds
+
+| Finding ID | Before-fix severity | Source and concrete defect | Fix | Regression |
+|---|---|---|---|---|
+| HR-BREAK-TODAY-SLOTS-12 | MAJOR | `src/modules/placements/hr-today-open-slots-service.ts` selected the *earliest 100 scheduled future interview rounds*, then removed those with OFFERED/BOOKED employer slots **after** the 100-row limit. An employer with 100 covered earlier interviews could see no action even though the next interview requires a slot. | Exclude active OFFERED/BOOKED slots in a correlated, college-scoped `NOT EXISTS` filter **before** the bounded selection, retaining job-ID/college/published/scheduled/future filters. Add an independent second-read exclusion so a concurrently offered slot does not remain actionable due to a race. Prepared PROPOSED and CANCELLED status behavior is unchanged. | `tests/unit/HR-BREAK-chat19-today-slots-query-limit.test.ts` covers 110 rounds, last eight visible actions, offered/booked/cancelled/proposed status, revocation race, and exact SQL query-scope assertions. |
+
+Production, unit, database and browser verification require the next cloud cycle; these changes are authored, not claimed green.
