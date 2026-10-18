@@ -19,7 +19,7 @@ export type TpoBulkCurrent={version:string;ready:boolean;reason?:string};
 /** Read only; only current college-scoped records are projected, never person names. */
 export async function loadTpoBulkCurrent(context:RequestContext,plan:TpoBulkPreviewRequest){
  const collegeId=await requireTpoJobCollege(context);
- await getDb().transaction(async tx=>requireTpoJobActor(tx,context),{accessMode:"read only"});
+ await getDb().transaction(async tx=>requireTpoJobActor(tx,context));
  const current=new Map<string,TpoBulkCurrent>();
  if(plan.target==="STUDENTS"){
    // One eligibility projection performs several scoped reads. The 200-row
