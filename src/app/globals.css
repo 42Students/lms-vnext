@@ -698,3 +698,49 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
 @media (prefers-reduced-motion: reduce) {
   [data-slot="button"][data-variant="primary"]:active:not(:disabled) { transform: none; }
 }
+
+/* Tracker-only opt-in dark mode stays legible without changing the legacy
+ * light skin used by every other account and portal. */
+:root[data-tracker-theme="dark"] [data-slot="page-canvas"],
+:root[data-tracker-theme="dark"] [data-slot="card"],
+:root[data-tracker-theme="dark"] [data-slot="stat-tile"],
+:root[data-tracker-theme="dark"] [data-slot="empty-state"],
+:root[data-tracker-theme="dark"] [data-slot="dialog"],
+:root[data-tracker-theme="dark"] [data-slot="drawer"],
+:root[data-tracker-theme="dark"] [data-slot="dropdown"],
+:root[data-tracker-theme="dark"] [data-slot="menu"],
+:root[data-tracker-theme="dark"] [data-slot="table"],
+:root[data-tracker-theme="dark"] [data-slot="toast-stack"] > section {
+  background: var(--lms-surface);
+  color: var(--lms-foreground);
+  border-color: var(--lms-border);
+}
+:root[data-tracker-theme="dark"] [data-slot="page-canvas"] h1,
+:root[data-tracker-theme="dark"] [data-slot="page-canvas"] h2,
+:root[data-tracker-theme="dark"] [data-slot="page-header"] h1,
+:root[data-tracker-theme="dark"] [data-slot="stat-tile"] p,
+:root[data-tracker-theme="dark"] [data-slot="dialog"] h2,
+:root[data-tracker-theme="dark"] [data-slot="drawer"] h2,
+:root[data-tracker-theme="dark"] [data-slot="empty-state"] h2,
+:root[data-tracker-theme="dark"] [data-slot="error-state"] h2 {
+  color: var(--lms-foreground);
+}
+:root[data-tracker-theme="dark"] [data-slot="input"],
+:root[data-tracker-theme="dark"] [data-slot="select"],
+:root[data-tracker-theme="dark"] [data-slot="textarea"],
+:root[data-tracker-theme="dark"] [data-slot="dropdown-root"] > summary,
+:root[data-tracker-theme="dark"] [data-slot="button"][data-variant="secondary"] {
+  background: var(--lms-surface);
+  color: var(--lms-foreground);
+  border-color: var(--lms-border);
+}
+:root[data-tracker-theme="dark"] [data-slot="data-table"] th,
+:root[data-tracker-theme="dark"] [data-slot="table"] thead,
+:root[data-tracker-theme="dark"] [data-slot="table"] th {
+  background: var(--lms-neutral-100);
+  color: var(--lms-body-text);
+}
+:root[data-tracker-theme="dark"] [data-slot="tabs"] nav,
+:root[data-tracker-theme="dark"] [data-slot="tabs"] [role="tablist"] {
+  background: var(--lms-surface);
+}
