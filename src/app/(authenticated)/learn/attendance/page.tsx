@@ -25,13 +25,13 @@ export default async function LearnerAttendancePage({searchParams}:{
     );
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         title="Attendance"
       />
       <div className="flex flex-wrap justify-end gap-3">
         <Link href="/learn/attendance/calendar"
-          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline">
+          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
           Monthly attendance calendar →
         </Link>
       </div>

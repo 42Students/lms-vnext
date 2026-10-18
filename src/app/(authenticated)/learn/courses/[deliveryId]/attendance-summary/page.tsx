@@ -34,9 +34,9 @@ export default async function LearnerCourseAttendanceSummaryPage({
     ? available.filter((row) => row.month === selectedMonth) : available;
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <Link href={"/learn/courses/" + encodeURIComponent(deliveryId) + "/attendanceDetail"}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
         ← Course attendance
       </Link>
       <PageHeader title="Course attendance history" />
@@ -72,7 +72,7 @@ export default async function LearnerCourseAttendanceSummaryPage({
       <nav aria-label="Attendance month filter" className="flex flex-wrap gap-2">
         <Link href={"/learn/courses/" + encodeURIComponent(deliveryId) + "/attendance-summary"}
           aria-current={selectedMonth === null ? "page" : undefined}
-          className="inline-flex min-h-10 items-center rounded-full border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-full border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-teal-deep)]">
           All months
         </Link>
         {available.map((entry) => (
@@ -80,7 +80,7 @@ export default async function LearnerCourseAttendanceSummaryPage({
             href={"/learn/courses/" + encodeURIComponent(deliveryId) +
               "/attendance-summary?month=" + entry.month}
             aria-current={selectedMonth === entry.month ? "page" : undefined}
-            className="inline-flex min-h-10 items-center rounded-full border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 items-center rounded-full border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-teal-deep)]">
             {entry.month}
           </Link>
         ))}

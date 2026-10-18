@@ -23,16 +23,16 @@ export default async function LearnerPlacementPreparationPage({
   if(!parsed.success) return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid preparation filter</h1>
     <Link href="/learn/my-placements/preparation"
-      className="text-primary-text underline">Clear filters</Link>
+      className="text-[var(--lms-teal-deep)] underline">Clear filters</Link>
   </section>;
   const context=await getCurrentRequestContext();
   if(!hasMembershipRole(context,"LEARNER")) redirect("/dashboard");
   const data=await getOwnLearnerPlacementPreparation(context,parsed.data);
-  return <div className="space-y-6">
+  return <div className="min-w-0 space-y-6">
     <PageHeader eyebrow="Learner · My Placements" title="Placement preparation"
       description="A checklist of information and activity actually recorded for your account."
       actions={<Link href="/learn/my-placements"
-        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)]">
         My Placements
       </Link>} />
     {(await placementTableExists("placement_tpo_prep_assignments"))?<LearnerPrepAssignmentCards/>:null}
@@ -56,8 +56,8 @@ export default async function LearnerPlacementPreparationPage({
         <Link key={view} href={learnerPreparationHref({view})}
           aria-current={data.query.view===view?"page":undefined}
           className={data.query.view===view
-            ? "inline-flex min-h-10 items-center rounded-full border border-primary bg-primary px-4 py-2 text-sm font-semibold text-on-primary"
-            : "inline-flex min-h-10 items-center rounded-full border border-border bg-surface px-4 py-2 text-sm font-semibold text-body"}>
+            ? "inline-flex min-h-11 items-center rounded-full border border-primary bg-primary px-4 py-2 text-sm font-semibold text-on-primary"
+            : "inline-flex min-h-11 items-center rounded-full border border-border bg-surface px-4 py-2 text-sm font-semibold text-body"}>
           {label}
         </Link>)}
     </nav>
@@ -76,7 +76,7 @@ export default async function LearnerPlacementPreparationPage({
             </div>
             <p className="mt-2 text-sm leading-6 text-body">{item.description}</p>
             <Link href={item.href}
-              className="mt-4 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
+              className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
               {item.recorded?"Review recorded information":"Review this section"} →
             </Link>
           </li>)}
