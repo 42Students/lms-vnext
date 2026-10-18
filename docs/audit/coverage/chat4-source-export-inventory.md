@@ -71,3 +71,17 @@ Source-scan inventory of the assigned module directories; **PENDING is not verif
 | `src/modules/academics/college-batch-promotion-model.ts` | `formatPromotionAcademicYear`, `collegePromotionQuerySchema`, `CollegePromotionQuery`, `PromotionBlocker`, `batchPromotionPlan`, `promotionLearnerBlockers`, `collegePromotionExecuteSchema`, `promotionReady`, `promotionPreviewMatches` | PENDING |
 | `src/modules/academics/college-batch-promotion-service.ts` | `CollegePromotionPreviewError`, `listCollegePromotionOptions`, `previewCollegeBatchPromotion`, `previewCollegeBatchPromotionInTransaction` | PENDING |
 | `src/modules/academics/college-batch-retire-model.ts` | `collegeBatchRetireSchema`, `collegeBatchRetireIdSchema`, `batchRetirementPrompt` | PENDING |
+| `src/modules/academics/college-batch-retire-service.ts` | `CollegeBatchRetireError`, `retireCollegeBatch` | PENDING |
+| `src/modules/academics/college-classes-export-model.ts` | `CLASSES_EXPORT_CAP`, `collegeClassesExportSchema`, `ClassExportRow`, `classesExportHref`, `renderCollegeClassesCsv`, `readClassesExportParams` | PENDING |
+| `src/modules/academics/college-classes-export-service.ts` | `exportCollegeClasses` | PENDING |
+| `src/modules/academics/college-cohort-mutation-model.ts` | `createCollegeCohortSchema`, `updateCollegeCohortSchema`, `collegeCohortIdSchema`, `hasUnsavedCollegeCohortEdit`, `validCohortPeriodRange`, `batchAcademicYearFromDates` | PENDING |
+| `src/modules/academics/college-cohort-mutation-service.ts` | `CollegeCohortMutationCode`, `CollegeCohortMutationError`, `createCollegeCohort`, `updateCollegeCohort` | PENDING |
+| `src/modules/academics/college-directory-export-model.ts` | `exportParams`, `buildCollegeDirectoryCsv`, `collectCollegeExportRows` | PENDING |
+| `src/modules/academics/college-directory-validation.ts` | `collegeDirectoryValidationMessage` | PENDING |
+| `src/modules/academics/college-elective-export-model.ts` | `ELECTIVES_EXPORT_CAP`, `electiveCsvSchema`, `exportParams`, `electiveCsvHref`, `renderElectivesCsv` | PENDING |
+| `src/modules/academics/college-elective-export-service.ts` | `exportCollegeElectives` | PENDING |
+| `src/modules/academics/college-faculty-assignment-export-model.ts` | `FACULTY_ASSIGNMENT_EXPORT_CAP`, `facultyAssignmentCsvSchema`, `exportParams`, `facultyAssignmentCsvHref`, `renderFacultyAssignmentCsv` | PENDING |
+| `src/modules/academics/college-faculty-assignment-export-service.ts` | `exportCollegeFacultyAssignments` | PENDING |
+| `src/modules/academics/college-hall-availability-model.ts` | `collegeHallAvailabilitySchema`, `istWindow`, `HallScheduledRow`, `collegeHallAvailabilityProjection` | PENDING |
+| `src/modules/academics/college-hall-availability-service.ts` | `CollegeHallAvailabilityNotFoundError`, `getCollegeHallAvailability` | PENDING |
+| `src/modules/academics/college-hall-booking-model.ts` | `collegeHallBookingSchema`, `hallBookingWindow`, `hallCanFitClass`, `hallFacultyIsEligible` | PENDING |
