@@ -37,9 +37,11 @@ const createInput = z.object({
 }).strict().superRefine((value,ctx)=>{
   const hasDate=value.untilDate!=null;
   const hasDriveCount=value.untilDrives!=null;
-  if(hasDate===hasDriveCount)ctx.addIssue({
+  // The legacy MANUAL duration leaves both null until an explicit lift.
+  // Reject conflicting date and drive-count windows; do not choose silently.
+  if(hasDate&&hasDriveCount)ctx.addIssue({
     code:"custom",path:["untilDate"],
-    message:"Choose either an end date or a number of drives",
+    message:"Choose an end date or a number of drives, not both",
   });
 });
 const liftInput = z.object({

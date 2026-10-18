@@ -6,7 +6,11 @@ import {placementReportCsv} from "@/modules/placements/report-model";
 export const runtime="nodejs";
 export async function GET(request:Request){
  try{
-  const id=new URL(request.url).searchParams.get("offeringId");
+  const search=new URL(request.url).searchParams;
+  const ids=search.getAll("offeringId");
+  if(search.size!==1||ids.length!==1)
+   return Response.json({error:"INVALID_REQUEST"},{status:400,headers:{"Cache-Control":"private, no-store"}});
+  const id=ids[0];
   const result=await getSuperAdminStudentCourseProgress(await getCurrentRequestContext(),{offeringId:id});
   const rows=result.rows.map(row=>[row.studentName,
    row.videos,row.assignments,row.quizzes,
