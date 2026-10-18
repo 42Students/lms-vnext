@@ -51,25 +51,27 @@ export function projectSharedApplicants(rows: readonly SharedApplicant[], stage:
 
 export const HR_APPLICANT_PAGE_SIZE = 25;
 export function hrApplicantPageBounds(page: number, total: number) {
+  const safeTotal=Number.isSafeInteger(total)&&total>=0?total:0;
+  const safePage=Number.isSafeInteger(page)&&page>=1?page:1;
+  const first=safeTotal===0||(safePage-1)*HR_APPLICANT_PAGE_SIZE>=safeTotal
+    ?0:(safePage-1)*HR_APPLICANT_PAGE_SIZE+1;
   return {
-    page, pageSize: HR_APPLICANT_PAGE_SIZE,
-    pages: Math.ceil(total / HR_APPLICANT_PAGE_SIZE),
-    first: total === 0 || (page - 1) * HR_APPLICANT_PAGE_SIZE >= total
-      ? 0 : (page - 1) * HR_APPLICANT_PAGE_SIZE + 1,
-    last: total === 0 || (page - 1) * HR_APPLICANT_PAGE_SIZE >= total
-      ? 0 : Math.min(total, page * HR_APPLICANT_PAGE_SIZE),
+    page:safePage,pageSize:HR_APPLICANT_PAGE_SIZE,
+    pages:Math.ceil(safeTotal/HR_APPLICANT_PAGE_SIZE),
+    first,last:first===0?0:Math.min(safeTotal,safePage*HR_APPLICANT_PAGE_SIZE),
   };
 }
 
 export const HR_OFFER_STATES = ["ALL", "SELECTED", "PENDING_VERIFICATION", "ISSUED", "ACCEPTED", "DECLINED", "EXPIRED", "WITHDRAWN", "REVOKED"] as const;
 export const HR_OFFER_PAGE_SIZE = 15;
 export function hrOfferPageBounds(page: number, total: number) {
+  const safeTotal=Number.isSafeInteger(total)&&total>=0?total:0;
+  const safePage=Number.isSafeInteger(page)&&page>=1?page:1;
+  const first=safeTotal===0||(safePage-1)*HR_OFFER_PAGE_SIZE>=safeTotal
+    ?0:(safePage-1)*HR_OFFER_PAGE_SIZE+1;
   return {
-    page, pageSize: HR_OFFER_PAGE_SIZE, total,
-    pages: Math.ceil(total / HR_OFFER_PAGE_SIZE),
-    first: total === 0 || (page - 1) * HR_OFFER_PAGE_SIZE >= total ? 0
-      : (page - 1) * HR_OFFER_PAGE_SIZE + 1,
-    last: total === 0 || (page - 1) * HR_OFFER_PAGE_SIZE >= total
-      ? 0 : Math.min(total, page * HR_OFFER_PAGE_SIZE),
+    page:safePage,pageSize:HR_OFFER_PAGE_SIZE,total:safeTotal,
+    pages:Math.ceil(safeTotal/HR_OFFER_PAGE_SIZE),
+    first,last:first===0?0:Math.min(safeTotal,safePage*HR_OFFER_PAGE_SIZE),
   };
 }
