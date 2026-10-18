@@ -57,7 +57,7 @@ Date: 2026-10-18. Source basis: `docs/orchestrator/briefs/ux-scroll-motion-pass.
 
 ## Motion review
 
-Global `src/app/globals.css` owns the 150ms fast and 200ms base motion tokens, overlay enter/fade and reduced-motion fallback. New scroll cues are static mask/edge fades: no JS animation, manual clock, hard-coded duration or animation of width/height/top/left introduced. Overlay focus and native dialog behavior still require real-browser/native-host validation; no fake screenshot or accessibility result is claimed.
+Global `src/app/globals.css` owns the 150ms fast and 200ms base motion tokens, overlay enter/fade and reduced-motion fallback. Route-specific long panes use static edge masks; the shared DataTable instead uses main's overflow-aware `ScrollCue`, which measures start/end edges and only draws nonblocking fades when scrollable. No JS animation, manual clock, hard-coded duration or animation of width/height/top/left was introduced. Overlay focus and native dialog behavior still require real-browser/native-host validation; no fake screenshot or accessibility result is claimed.
 
 ## Regression and acceptance
 
