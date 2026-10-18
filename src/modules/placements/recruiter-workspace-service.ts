@@ -89,7 +89,8 @@ export async function getRecruiterPlacementWorkspace(
   if (
     !scope ||
     (scope.job.status !== "PUBLISHED" &&
-      scope.job.status !== "CLOSED")
+      scope.job.status !== "CLOSED") ||
+    scope.job.archivedAt !== null
   ) {
     throw new PlacementsServiceError(
       "PLACEMENT_JOB_NOT_FOUND",

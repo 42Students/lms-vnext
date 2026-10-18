@@ -7,7 +7,7 @@ Scope: 37 routes (positions 75–111) of `docs/orchestrator/ui-ux/pages-admin.md
 | Route | Source-contract test | Live behavior / role/phone audit |
 | --- | --- | --- |
 | `/admin/placements/shortlisted` | `UX-admin-placements-shortlisted-01` | **OPEN** — no live/browser or full service-role journey confirmation |
-| `/admin/placements/shortlisted/[applicationId]` | `UX-admin-placements-shortlisted-application-id-01` | **OPEN** — no live/browser or full service-role journey confirmation |
+| `/admin/placements/shortlisted/[applicationId]` | `UX-admin-placements-shortlisted-application-id-01`, `SA-placements-shortlisted-01/07` | Service SQL pins shortlisted outcome, job, learner membership and college+organization; role disabled/invalid UUID/no data denials, privacy facts exclude recruiter notes. Page shows denied/no scope and safe service-error recovery. `tests/unit/PROJ-BREAK-chat9-sa-shortlisted-detail.test.ts`, `tests/unit/PROJ-BREAK-chat9-sa-shortlisted-page.test.tsx`. Live PG/browser role journey OPEN. |
 | `/admin/placements/student-lookup` | `UX-admin-placements-student-lookup-01`, `SA-placements-student-lookup-01/07` | Page rejects duplicate/overlong search before PII query, requires a selected college, and service SQL joins both jobs and company relationships to the current college. `tests/unit/PROJ-BREAK-chat9-sa-student-lookup-recovery.test.tsx`, `tests/unit/PROJ-BREAK-chat9-sa-student-lookup-tenant.test.ts`. PG/browser authorization pending. |
 | `/admin/programs` | `UX-admin-programs-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/projects` | `UX-admin-projects-01` | **OPEN** — no live/browser or full service-role journey confirmation |

@@ -74,6 +74,12 @@ describe("College student import choice picker security and validation",()=>{
   expect(s).toContain('eq(departments.collegeId, member.collegeId)');
   expect(s).toContain('eq(programs.status,"ACTIVE")');
   expect(s).toContain('inArray(cohorts.status, ["PLANNED", "ACTIVE"])');
+  // A historical cohort can start in a CLOSED period; it must still belong
+  // to this college, rather than passing through a cross-college FK.
+  const batches=s.slice(s.indexOf("const batches ="),s.indexOf("const classes ="));
+  expect(batches).toContain("eq(academicPeriods.id, cohorts.startPeriodId)");
+  expect(batches).toContain("eq(academicPeriods.collegeId, member.collegeId)");
+  expect(batches).not.toContain('ne(academicPeriods.status,"CLOSED")');
   expect(s).toContain('eq(academicPeriods.collegeId, member.collegeId)');
   expect(s).toContain('ne(academicPeriods.status,"CLOSED")');
   expect(s).toContain('eq(sections.status, "ACTIVE")');

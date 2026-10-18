@@ -9,6 +9,7 @@ import {
 import { hasActiveMembership, hasMembershipRole, type RequestContext } from
   "@/modules/identity/context";
 import {can} from "@/modules/permissions/policy";
+import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import { listMyProjectInstances } from "./member-service";
 import { ProjectsServiceError } from "./errors";
 import { deriveMentorProjectAttention } from "./mentor-attention";
@@ -28,6 +29,8 @@ export async function listMyMentorProjectAttention(
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   }
   const membership=context.membership!;
+  if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const rows=(verifiedRows??await listMyProjectInstances(context))
     .filter(row=>row.memberRole==="MENTOR"&&row.project.collegeId===membership.collegeId);
   if (!rows.length) return [];

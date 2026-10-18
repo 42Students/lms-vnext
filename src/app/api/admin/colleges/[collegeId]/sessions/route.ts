@@ -8,8 +8,17 @@ export const runtime = "nodejs";
 type RouteContext = {params:Promise<{collegeId:string}>};
 export async function GET(request:Request,{params}:RouteContext){
  try{
-  const userId=z.uuid().parse(new URL(request.url).searchParams.get("userId"));
-  const result=await listCollegeAdminSessions(await getCurrentRequestContext(),(await params).collegeId,userId);
+  // get() silently takes the first occurrence. Reject duplicated userId
+  // or unexpected query keys rather than permitting ambiguous admin target
+  // selection while enumerating private device sessions.
+  const rawParams=new URL(request.url).searchParams;
+  const raw=Object.fromEntries(
+   [...new Set(rawParams.keys())].map(key=>[key,rawParams.getAll(key)]),
+  );
+  const {userId:[userId]}=z.strictObject({
+   userId:z.array(z.uuid()).length(1),
+  }).parse(raw);
+  const result=await listCollegeAdminSessions(await getCurrentRequestContext(),(await params).collegeId,userId!);
   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
