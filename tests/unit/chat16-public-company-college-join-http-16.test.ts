@@ -109,7 +109,9 @@ describe("chat-16 public recruiter company and college OTP HTTP security",()=>{
   const response=await route.send(req(route.path,"send-code"));
   expect(response.status).toBe(400);
   expect(await response.json()).toEqual({error:"EMAIL_NO_MX"});
-  expect(JSON.stringify(await route.send(req(route.path,"send-code")))).not.toContain("private");
+  const repeated=await route.send(req(route.path,"send-code"));
+  expect(await repeated.json()).toEqual({error:"EMAIL_NO_MX"});
+  expect(repeated.headers.get("Cache-Control")).toBe("no-store");
  });
  it.each(scopeRoutes)("REC-JOIN-HTTP-22 $scope preserves explicit persisted join rejection",async route=>{
   vi.mocked(acceptPublicRecruiterJoin).mockRejectedValue(new PublicJoinAcceptError("PHONE_STORAGE_NOT_READY"));
