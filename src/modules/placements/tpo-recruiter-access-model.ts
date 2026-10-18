@@ -18,16 +18,31 @@ export const tpoRecruiterAccessQuerySchema =
       .enum(TPO_RECRUITER_ACCESS_FILTERS)
       .default("ALL"),
     q: z.string().trim().max(80).default(""),
-    page: z.coerce
-      .number()
-      .int()
-      .min(1)
-      .max(10000)
-      .default(1),
+    page: z.union([
+      z.number().int().min(1).max(10000),
+      z.string().regex(/^[0-9]+$/).transform(Number)
+        .pipe(z.number().int().min(1).max(10000)),
+    ]).default(1),
   }).strict();
 
 export type TpoRecruiterAccessQuery =
   z.infer<typeof tpoRecruiterAccessQuerySchema>;
+
+/** An untrusted URL may repeat one filter or append a foreign identity.
+ * Never select the first occurrence and load recruiter grant records. */
+export function parseTpoRecruiterAccessParams(
+  raw: Record<string,string|string[]|undefined>,
+):TpoRecruiterAccessQuery|null{
+  if(Object.keys(raw).some(key=>!["status","q","page"].includes(key)))return null;
+  if(Object.values(raw).some(Array.isArray))return null;
+  const parsed=tpoRecruiterAccessQuerySchema.safeParse({
+    status:raw.status||undefined,
+    q:raw.q||"",
+    page:raw.page||undefined,
+  });
+  return parsed.success?parsed.data:null;
+}
+
 
 export type TpoRecruiterGrantSourceRow = {
   grantId?: string;
