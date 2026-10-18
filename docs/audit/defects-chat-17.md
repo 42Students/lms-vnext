@@ -43,3 +43,5 @@
 - **WEAK-tenant-domains-27:** Postgres 23505 may be nested beneath `DrizzleQueryError.cause`, so the earlier direct-code check could surface an implementation error on a genuine duplicate hostname race. A bounded, cycle-safe cause walker handles only code 23505; test covers nested duplicate plus cyclic unrelated error. Commits `92e30130`, `688e68c1`. Cloud unit testing pending.
 
 - **PROJ-HARNESS-36:** Meeting fixtures permitted same-college active learners to be scheduling authors because the SQL guard only checked college/membership. The harness now requires a current active coordinator role; a real PostgreSQL wrong-role attempt must leave `project_meetings` unchanged. Commits `d7f43d53`, `4afe1160`. Runner pending.
+
+- **UX-kit-HARDEN-37:** `FilterBar` previously called `window.matchMedia` unconditionally while opening the mobile filter overlay; WebViews without the API could crash the control. It now detects support and uses viewport width/resize fallback, removing listeners during cleanup. Test `UX-kit-HARDEN-37`; commits `3d05ec94` / `38bd19d9`. Browser runtime witness pending.

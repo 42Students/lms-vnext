@@ -7,7 +7,7 @@ import {PlacementsServiceError} from "./errors";
 import {applyPlacementRoundResult} from "./result-service";
 import {requireTpoJobCollege} from "./tpo-job-write-base";
 import {placementJobIdSchema,placementRoundIdSchema} from "./validation";
-import {roundApplyInputSchema,roundApplyPreviewToken,summarizeRoundApply} from "./tpo-round-apply-model";
+import {roundApplyInputSchema,roundApplyPreviewToken,summarizeRoundApply,roundApplyFailureReason} from "./tpo-round-apply-model";
 
 export async function getTpoRoundApplyPreview(context:RequestContext,rawJobId:unknown,rawRoundId:unknown){
  const collegeId=await requireTpoJobCollege(context);
@@ -60,7 +60,7 @@ export async function applyTpoWholeRound(context:RequestContext,rawJobId:unknown
    await applyPlacementRoundResult(context,row.resultId);
    results.push({...row,status:"applied"});
   }catch(error){
-   results.push({...row,status:"skipped",reason:error instanceof Error?error.message:"Result not applied"});
+   results.push({...row,status:"skipped",reason:roundApplyFailureReason(error)});
   }
  }
  return {total:preview.rows.length,previouslyApplied:preview.applied,

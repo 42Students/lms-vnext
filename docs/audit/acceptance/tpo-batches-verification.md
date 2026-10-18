@@ -209,3 +209,15 @@ The following DONE statuses are limited to the named source/model behavior. Thei
 | Gap ID | Status | Evidence and verification |
 |---|---|---|
 | TPO-batches-12 | DONE — current source; generated register stale | `src/components/tpo/tpo-batch-instant-search.tsx` performs debounced 250-ms `?q=` URL updates, resets paging and retains other authorized filters. `src/app/(authenticated)/tpo/batches/page.tsx` renders it. Named test `tests/unit/chat5-tracker-open-wrong-adjudication.test.ts` — `TPO-batches-12 keeps instant URL-synced...`. Existing `tests/unit/tpo-batches-chat5-navigation-round.test.ts` also covers it. No new UI/UX restyling; source review only; tests not executed. |
+
+
+## chat-15 final sprint independent evidence (source-reviewed, tests not run)
+
+| Gap ID | Source status | Code and named test |
+|---|---|---|
+| TPO-batches-11 | DONE (source) | `src/components/tpo/tpo-batch-facet-filters.tsx` and `src/modules/placements/tpo-batch-facets-model.ts` implement scoped multi-select State, Department, Program, Final year, live counts, chips, Reset/Clear all. `tests/unit/chat15-final-sprint-tpo-batches.test.ts` → `TPO-batches-11 supports checked multiselect facets with live counts and fails closed for forged choices`. |
+| TPO-batches-44 | DONE (source) | `src/components/tpo/tpo-student-nudge-panel.tsx` and `src/components/tpo/tpo-batch-student-bulk-notes.tsx` implement bounded, confirmed, guarded notifications and private notes. `tests/unit/chat15-final-sprint-tpo-batches.test.ts` → `TPO-batches-44 sends audited bounded learner nudges and offers scoped private notes`. |
+| TPO-batches-46 | DONE (source) | `src/components/tpo/tpo-batch-student-saved-views.tsx`, `src/modules/placements/tpo-batch-saved-view-model.ts` implement strictly scoped save/update/open/delete, pinned views and download. `tests/unit/chat15-final-sprint-tpo-batches.test.ts` → `TPO-batches-46 saved views remain batch-scoped and reject malformed commands`. |
+| TPO-batches-65 | DONE (source) | `src/components/tpo/tpo-batch-student-keyboard-actions.tsx`, `src/modules/placements/tpo-batch-keyboard-actions-model.ts` limit selection to visible rows and prevent shortcuts in editable controls, expose phone actions. `tests/unit/chat15-final-sprint-tpo-batches.test.ts` → `TPO-batches-65 keyboard and mobile selection only cover visible rows, not an unseen college roster`. |
+
+**Remaining acceptance:** CI/typecheck, actual PostgreSQL role and tenant matrices, and narrow-screen browser checks. Source-only completion does not certify runtime.
