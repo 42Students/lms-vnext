@@ -88,6 +88,8 @@ describe("COURSES7-07 / COURSES7-08 authenticated learner assessment HTTP bounda
   ),assignmentParams);
   expect(quiz.status).toBe(200);
   expect(assignment.status).toBe(200);
+  expect(quiz.headers.get("Cache-Control")).toContain("no-store");
+  expect(assignment.headers.get("Cache-Control")).toContain("no-store");
   expect(state.myAttempts).toHaveBeenCalledTimes(1);
   expect(state.myAttempts).toHaveBeenCalledWith(actor,quizId,deliveryId);
   expect(state.mySubmission).toHaveBeenCalledTimes(1);
