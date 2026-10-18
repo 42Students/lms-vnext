@@ -254,3 +254,8 @@ The two legacy inventory-B recruiter entries previously flagged UNKNOWN have sou
 ## HR-TODAY-CHANGE-56 recruiter change requests after job archive (2026-10-18)
 
 The Today change-request list and per-drive open badge counts only include submitted recruiter-owned job IDs that still belong to the selected college, remain PUBLISHED or CLOSED, are not archived, and have OPEN, COMPANY-targeted requests. `tests/unit/chat15-hr-today-change-56.test.ts` checks both SQL scope contracts and true empty, list and count behaviors under mocked DB. Real PostgreSQL archive races and authenticated mobile Today page remain unverified.
+
+
+## UX-HR-BROWSER-57 phone-layout and wrong-role acceptance
+
+Eight recruiter canonical pages, two phone sizes and learner wrong-role paths are covered in `tests/e2e/chat15-hr-recruiter-responsive-57.spec.ts`. The suite explicitly rejects horizontal document scroll and failed-role private job access, and detects raw error/Next overlay leaks. It requires disposable seeded recruiter and learner authentication. No real browser pass is claimed.
