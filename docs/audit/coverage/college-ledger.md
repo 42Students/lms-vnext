@@ -231,3 +231,7 @@ No runtime CI execution. Numeric internally validated number callers remain supp
 ## Super Admin verified web address page
 
 `/admin/colleges/[collegeId]/subdomain` has a new actual SSR route test, `tests/unit/chat4-superadmin-college-domain-page-journey.test.tsx` (`SA-colleges-domains-page-01`), exercising selected-college management permission before private domain/verification-token calls, empty and verified hosts, managed subdomain routing, missing/out-of-scope tenant 404, and non-Super Admin denial without domain metadata reads. All rendered tests are mocked, not an actual DNS/TLS check. Cloud CI and staging deployment verification remain required.
+
+## Super Admin college verification page
+
+`/admin/colleges/[collegeId]/verification` now rejects nondecimal `page`/`pageSize` URL values (scientific/hex/whitespace/blank) *after* authorized college selection but *before* queue and policy reads. `tests/unit/chat4-superadmin-college-verification-page.test.tsx` (`SA-colleges-verification-FILTER-01`) covers malformed paging, repeated values, denied persisted Super Admin preflight, scoped valid queue, persisted TPO policy and safe scan-cap retry state. Authored, not run; actual verification table/storage, full filter matrix and browser profile-review workflows remain separate gates.
