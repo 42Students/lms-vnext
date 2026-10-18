@@ -4,15 +4,13 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getMentorTeamHistory } from "@/modules/projects/mentor-team-history-service";
+import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
 import {
   mentorTeamHistoryHref,
   mentorTeamHistoryQuerySchema,
 } from "@/modules/projects/mentor-team-history-model";
 
 type Raw = { view?: string | string[]; role?: string | string[]; primary?:string|string[]; order?:string|string[]; page?: string | string[] };
-const one = (value: string | string[] | undefined) =>
-  Array.isArray(value) ? value[0] : value;
-
 const formatDate = (value: Date) => new Intl.DateTimeFormat("en-IN", {
   dateStyle: "medium", timeZone: "Asia/Kolkata",
 }).format(value);
@@ -24,12 +22,13 @@ export default async function MentorTeamHistoryPage({
   searchParams: Promise<Raw>;
 }) {
   const [{ projectId }, raw] = await Promise.all([params, searchParams]);
-  const parsed = mentorTeamHistoryQuerySchema.safeParse({
-    projectId, view: one(raw.view) ?? undefined, role: one(raw.role) ?? undefined,
-    primary: one(raw.primary) ?? undefined,
-    order: one(raw.order) ?? undefined,
-    page: one(raw.page) ?? undefined,
+  const normalized = singleValueMentorFilters({
+    view: raw.view,role:raw.role,primary:raw.primary,
+    order:raw.order,page:raw.page,
   });
+  const parsed = mentorTeamHistoryQuerySchema.safeParse(
+    normalized ? {projectId,...normalized} : null,
+  );
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid team history filters</h1>
     <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Back to projects</Link>
