@@ -167,4 +167,17 @@ describe("IIT Dharwad Projects breaker — state, access, integrity, deadlines a
   }
  });
 
+ it("PROJ-BREAK-resilience-02 storage cleanup outage cannot resurrect a soft-deleted file or mark scan failed",()=>{
+  const code=src("src/modules/projects/project-resource-file-service.ts");
+  const remove=code.slice(code.indexOf("export async function removeProjectFile("),
+    code.indexOf("export async function issueProjectFileDownloadGrant("));
+  expect(remove).toContain('status: "DELETED"');
+  expect(remove).toContain("try { await removeStoredObject(row.objectKey); }");
+  expect(remove).toContain("catch {");
+  const complete=code.slice(code.indexOf("export async function completeProjectFileUpload("),
+    code.indexOf("export async function listProjectFiles("));
+  expect(complete).toContain("try { await removeStoredObject(row.objectKey); }");
+  expect(complete).toContain("STORAGE_CONTENT_REJECTED");
+ });
+
 });
