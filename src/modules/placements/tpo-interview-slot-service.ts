@@ -136,6 +136,14 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
     jobId:job.id,roundId:info.round.id,room:p.room,startsAt:p.startsAt,endsAt:p.endsAt,
     applicationId:null,status:"AVAILABLE",changedByUserId:context.user.id,
    }))).returning({id:placementRoundCandidateSlots.id});
+   if(saved.length)await tx.insert(activityEvents).values({
+    organizationId:context.membership!.organizationId,collegeId:info.collegeId,
+    actorUserId:context.user.id,actorMembershipId:context.membership!.id,
+    module:"PLACEMENTS",eventType:"PLACEMENTS_TPO_INTERVIEW_SLOTS_GENERATED",
+    subjectType:"placement_round",subjectId:info.round.id,
+    summary:"TPO generated "+saved.length+" interview slots for "+job.title,
+    metadata:{created:saved.length,rooms:proposed.map(slot=>slot.room).filter((room,index,list)=>list.indexOf(room)===index)},
+   });
    return {created:saved.length};
   }
   if(input.action==="CLEAR_AVAILABLE"){
@@ -144,6 +152,14 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
    }).where(and(eq(placementRoundCandidateSlots.roundId,info.round.id),
     eq(placementRoundCandidateSlots.status,"AVAILABLE")))
     .returning({id:placementRoundCandidateSlots.id});
+   if(cleared.length)await tx.insert(activityEvents).values({
+    organizationId:context.membership!.organizationId,collegeId:info.collegeId,
+    actorUserId:context.user.id,actorMembershipId:context.membership!.id,
+    module:"PLACEMENTS",eventType:"PLACEMENTS_TPO_INTERVIEW_AVAILABLE_CLEARED",
+    subjectType:"placement_round",subjectId:info.round.id,
+    summary:"TPO cleared "+cleared.length+" available interview slots for "+job.title,
+    metadata:{cleared:cleared.length},
+   });
    return {cleared:cleared.length};
   }
   if(input.action==="CONFIRM_RECRUITER_PROPOSAL"){
@@ -273,6 +289,9 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
   if(!slot||slot.version!==input.expectedVersion||slot.status==="CANCELLED")
    throw new PlacementsServiceError("PLACEMENT_ROUND_STALE");
   if(input.action==="ASSIGN_ROOM"){
+   // An unchanged room is not a new edit: no version bump and no duplicate notice.
+   if(slot.room.trim().toLocaleLowerCase("en-IN")===input.room.trim().toLocaleLowerCase("en-IN"))
+    return {changed:0};
    const collisions=await tx.select({id:placementRoundCandidateSlots.id})
     .from(placementRoundCandidateSlots).where(and(
      eq(placementRoundCandidateSlots.roundId,info.round.id),
@@ -292,6 +311,14 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
      eq(placementApplicationRoundExceptions.roundId,info.round.id)));
    if(slot.applicationId&&slot.status==="BOOKED")await notice(tx,context,job,slot.applicationId,
     "PLACEMENTS_TPO_INTERVIEW_ROOM_CHANGED","Your interview for "+job.title+" has moved to room "+input.room+".");
+   else await tx.insert(activityEvents).values({
+    organizationId:context.membership!.organizationId,collegeId:info.collegeId,
+    actorUserId:context.user.id,actorMembershipId:context.membership!.id,
+    module:"PLACEMENTS",eventType:"PLACEMENTS_TPO_INTERVIEW_ROOM_CHANGED",
+    subjectType:"placement_round",subjectId:info.round.id,
+    summary:"TPO changed an available interview slot room for "+job.title,
+    metadata:{slotId:slot.id,room:input.room},
+   });
    return {changed:1};
   }
   if(input.action==="BOOK"){
@@ -336,6 +363,14 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
     eq(placementApplicationRoundExceptions.roundId,info.round.id)));
    if(slot.applicationId)await notice(tx,context,job,slot.applicationId,"PLACEMENTS_TPO_INTERVIEW_CANCELLED",
     "Your interview slot was cancelled. Reason: "+input.reason);
+   else await tx.insert(activityEvents).values({
+    organizationId:context.membership!.organizationId,collegeId:info.collegeId,
+    actorUserId:context.user.id,actorMembershipId:context.membership!.id,
+    module:"PLACEMENTS",eventType:"PLACEMENTS_TPO_INTERVIEW_CANCELLED",
+    subjectType:"placement_round",subjectId:info.round.id,
+    summary:"TPO cancelled an unassigned interview slot for "+job.title,
+    metadata:{slotId:slot.id,reason:input.reason},
+   });
    return {cancelled:1};
   }
   if(input.action==="MOVE"){
