@@ -18,7 +18,7 @@ export function TpoApplicantReviewDrawer({jobId,jobStatus,app,previousId,nextId}
  }
  return <>
   <button type="button" onClick={()=>dialog.current?.showModal()}
-   className="mt-2 min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+   className="mt-2 min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
    Review applicant
   </button>
   <dialog ref={dialog} onKeyDown={move} aria-labelledby={titleId}
@@ -41,12 +41,12 @@ export function TpoApplicantReviewDrawer({jobId,jobStatus,app,previousId,nextId}
      expectedUpdatedAt={app.screeningUpdatedAt}/>:
     <p role="status" className="text-sm text-body">This application is read-only. Review requires a published drive and a pending or held submitted application.</p>}
    <nav aria-label="Review neighbours" className="flex flex-wrap gap-3 text-sm">
-    {previousId?<Link href={applicantHref(previousId)} className="inline-flex min-h-11 items-center text-primary-text underline">← Previous applicant</Link>:null}
-    {nextId?<Link href={applicantHref(nextId)} className="inline-flex min-h-11 items-center text-primary-text underline">Next applicant →</Link>:null}
+    {previousId?<Link href={applicantHref(previousId)} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">← Previous applicant</Link>:null}
+    {nextId?<Link href={applicantHref(nextId)} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Next applicant →</Link>:null}
    </nav>
    <p className="text-xs text-body">Use left and right arrows outside form controls to open the previous or next applicant.</p>
    <Link href={"/tpo/placements/jobs/"+jobId+"/applicants/"+app.id}
-    className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
+    className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
     Open full applicant detail →
    </Link>
   </dialog>
