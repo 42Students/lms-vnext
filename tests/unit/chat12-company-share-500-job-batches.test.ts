@@ -44,6 +44,9 @@ describe("TPO-companies-scale-03 bounded application, offer and share facts",()=
   const counts=source("src/modules/placements/tpo-company-drive-counts-service.ts");
   const history=source("src/modules/placements/company-share/company-history-service.ts");
   expect(counts).toContain("for(const jobBatch of companyJobIdBatches(ids))");
+  expect(counts.indexOf("for(const id of ids)counts.set")).toBeLessThan(
+   counts.indexOf("for(const jobBatch of companyJobIdBatches(ids))"));
+  expect(counts.match(/for\(const id of ids\)counts\.set/g)).toHaveLength(1);
   expect(counts.match(/inArray\(placementApplications\.jobId,jobBatch\)/g)).toHaveLength(2);
   expect(history).toContain("mapTpoBulkBounded(companyJobIdBatches(jobIds)");
   expect(history).toContain("latestCompanyShareRows(chunks.flat())");
