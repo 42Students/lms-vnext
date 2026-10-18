@@ -76,3 +76,5 @@ These branch-level tests are authored, not executed; fixture timestamps use 2099
 | Recruiter notifications Mark as read | HR-BREAK-READ-RECEIPT-48 | `tests/unit/HR-BREAK-chat19-read-receipt.test.ts` | Server origin protection, exact persisted receipt, HTML redirect/foreign notification refusal, single-flight gating |
 
 | HR profile details saved-response verification | HR-BREAK-PROFILE-RECEIPT-48 | `tests/unit/HR-BREAK-chat19-profile-receipt.test.ts` | Exact persisted profile/versions, forged sign-in JSON, invalid phone/name, draft preservation |
+
+| HR recruiter reply and confirmation | HR-BREAK-CONVO-RECEIPT-49 | `tests/unit/HR-BREAK-chat19-conversation-receipt.test.ts` | Actor authorization, origin guard, persisted ID, HTML fallback denial, native 303 |

@@ -19,7 +19,9 @@ export async function POST(request:Request,{params}:{params:Promise<{threadId:st
   const context=await getCurrentRequestContext();
   if(!hasActiveRecruiter(context)||context.recruiter?.userId!==context.user.id)
    return NextResponse.json({error:"FORBIDDEN"},{status:403});
-  await sendRecruiterThreadMessage(context,parsed.data.threadId,parsed.data.body);
+  const receipt=await sendRecruiterThreadMessage(context,parsed.data.threadId,parsed.data.body);
+  if(request.headers.get("accept")?.includes("application/json"))
+   return NextResponse.json({sent:true,id:receipt.id,threadId:receipt.threadId});
  }catch(error){
   if(error instanceof TpoMessagingError)
    return NextResponse.json({error:error.code==="TPO_MESSAGE_FORBIDDEN"?"FORBIDDEN":"NOT_FOUND"},
