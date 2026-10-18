@@ -10,7 +10,8 @@ export function matchesMentorProjectWork(filter:MentorProjectWorkFilter|undefine
   if(filter==="NO_TASKS")return (counts?.total??0)===0;
   if(filter==="ALL_DONE")return counts!==undefined && counts.total>0 && counts.open===0;
   if(filter==="HAS_DONE_TASKS")return counts!==undefined && counts.total>counts.open;
-  return (counts?.open??0)>0;
+  if(filter==="HAS_OPEN_TASKS")return (counts?.open??0)>0;
+  return false;
 }
 
 /** Registered task completion only; no tasks means unknown, not zero progress. */
