@@ -127,3 +127,16 @@ The main failure snapshot predated the shared ZeptoMail provider configuration a
 | `getTpoCommunicationSettings`, `updateTpoCommunicationSettings` | `tests/unit/chat2-tpo-communication-settings-service-cas.test.ts`: strict shape, actor denied, unregistered storage, revocation before mutation, stale CAS, identical retry no-op, successful audit | PostgreSQL transaction/rollback and real session integration |
 
 All tests authored and committed; **not executed**. Existing partial ledger rows stay PARTIAL until full database, role and UI verification.
+
+## TPO last-third actual server-page state tests — 2026-10-18
+
+The 42-route source matrix is complemented by **direct async server-page behavior** on selected high-risk pages (not claimed for all 42):
+
+| Page(s) | Test | Tested states |
+| --- | --- | --- |
+| `/tpo/settings/public-link` | `tests/unit/chat2-tpo-last-third-settings-render.test.ts` | TPO-only authorization vs College Admin/learner/missing membership, college-bound status lookup, pending public-link state, legacy title |
+| `/tpo/settings/blocked-dates` | `tests/unit/chat2-tpo-last-third-settings-render.test.ts` | truthful unregistered-storage message vs ready editor, persisted timestamp ISO value, titled page |
+| `/tpo/reports/by-branch` | `tests/unit/chat2-tpo-reports-server-page-states.test.ts` | repeated selectors denied before scoped service, learner/admin denial, selected college + season/job bound, no-season empty state |
+| `/tpo/reports/ctc` | `tests/unit/chat2-tpo-reports-server-page-states.test.ts` | repeated selectors denied before private CTC report lookup; learner denied before read |
+
+**Remaining:** 38 other pages require equivalent executable per-page states; the existing 42-route inventory/source matrix is not a substitute. Loading/error boundary, mobile/browser and database integration remain pending CI. This table records authored tests only, not passed coverage.
