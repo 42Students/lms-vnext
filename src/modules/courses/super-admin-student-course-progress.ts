@@ -34,8 +34,8 @@ export async function getSuperAdminStudentCourseProgress(context:RequestContext,
  const count=Number((found.rows[0] as {total:number}|undefined)?.total??0);
  if(count!==1)throw new AuthorizationError("courses.read");
  const result=await getDb().execute(sql`
- with roster as (
-  select distinct m.id as membership_id,
+ with eligible_deliveries as (
+  select distinct m.id as membership_id, d.id as delivery_id,
    coalesce(nullif(btrim(u.display_name),''),'Student') as student_name
   from course_section_deliveries d
    join course_offerings o on o.id=d.offering_id
@@ -50,38 +50,62 @@ export async function getSuperAdminStudentCourseProgress(context:RequestContext,
    join users u on u.id=m.user_id and u.platform_status='ACTIVE'
    where d.offering_id=${offeringId}::uuid and d.ended_at is null
     and m.college_id=${collegeId}::uuid
+ ), roster as (
+  select distinct membership_id,student_name from eligible_deliveries
  ), published_items as (
-  select lc.id,lc.content_type from lesson_contents lc
+  select lc.id,lc.content_type,lc.delivery_id from lesson_contents lc
   join course_lessons l on l.id=lc.lesson_id and l.status='ACTIVE'
   join course_learning_paths p on p.id=l.learning_path_id
-  where p.offering_id=${offeringId}::uuid
+  where p.offering_id=${offeringId}::uuid and p.status='ACTIVE'
    and lc.status='PUBLISHED' and lc.visible_to_students=true
    and lc.content_type in ('VIDEO','YOUTUBE')
  ), published_assignments as (
-  select a.id from course_assignments a
+  select a.id,a.delivery_id from course_assignments a
   join course_lessons l on l.id=a.lesson_id
   join course_learning_paths p on p.id=l.learning_path_id
-  where p.offering_id=${offeringId}::uuid and a.status='PUBLISHED'
+  where p.offering_id=${offeringId}::uuid and p.status='ACTIVE'
+   and l.status='ACTIVE' and a.status='PUBLISHED'
  ), published_quizzes as (
-  select q.id from course_quizzes q
+  select q.id,q.delivery_id from course_quizzes q
   join course_lessons l on l.id=q.lesson_id
   join course_learning_paths p on p.id=l.learning_path_id
-  where p.offering_id=${offeringId}::uuid and q.status in ('PUBLISHED','CLOSED')
+  where p.offering_id=${offeringId}::uuid and p.status='ACTIVE'
+   and l.status='ACTIVE' and q.status in ('PUBLISHED','CLOSED')
  )
  select r.membership_id as "membershipId",r.student_name as "studentName",
  (select count(distinct pr.lesson_content_id)::int
   from learner_content_progress pr
   join published_items pi on pi.id=pr.lesson_content_id
-  where pr.membership_id=r.membership_id and pr.completed_at is not null) as videos,
+  where pr.membership_id=r.membership_id and pr.completed_at is not null
+   and (pi.delivery_id is null or exists (
+    select 1 from eligible_deliveries ed
+    where ed.membership_id=r.membership_id and ed.delivery_id=pi.delivery_id
+   ))) as videos,
  (select count(distinct sub.assignment_id)::int from assignment_submissions sub
   join published_assignments pa on pa.id=sub.assignment_id
-  where sub.membership_id=r.membership_id) as assignments,
+  where sub.membership_id=r.membership_id
+   and (pa.delivery_id is null or pa.delivery_id=sub.delivery_id)
+   and exists (
+    select 1 from eligible_deliveries ed
+    where ed.membership_id=r.membership_id and ed.delivery_id=sub.delivery_id
+   )) as assignments,
  (select count(distinct attempt.quiz_id)::int from quiz_attempts attempt
   join published_quizzes pq on pq.id=attempt.quiz_id
-  where attempt.membership_id=r.membership_id) as quizzes,
- (select count(*)::int from published_items) as "totalVideos",
- (select count(*)::int from published_assignments) as "totalAssignments",
- (select count(*)::int from published_quizzes) as "totalQuizzes"
+  where attempt.membership_id=r.membership_id
+   and (pq.delivery_id is null or pq.delivery_id=attempt.delivery_id)
+   and exists (
+    select 1 from eligible_deliveries ed
+    where ed.membership_id=r.membership_id and ed.delivery_id=attempt.delivery_id
+   )) as quizzes,
+ (select count(*)::int from published_items pi where pi.delivery_id is null
+   or exists (select 1 from eligible_deliveries ed
+    where ed.membership_id=r.membership_id and ed.delivery_id=pi.delivery_id)) as "totalVideos",
+ (select count(*)::int from published_assignments pa where pa.delivery_id is null
+   or exists (select 1 from eligible_deliveries ed
+    where ed.membership_id=r.membership_id and ed.delivery_id=pa.delivery_id)) as "totalAssignments",
+ (select count(*)::int from published_quizzes pq where pq.delivery_id is null
+   or exists (select 1 from eligible_deliveries ed
+    where ed.membership_id=r.membership_id and ed.delivery_id=pq.delivery_id)) as "totalQuizzes"
  from roster r order by r.student_name,r.membership_id
  limit 501
  `);
