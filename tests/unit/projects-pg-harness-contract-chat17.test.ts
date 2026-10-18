@@ -60,6 +60,12 @@ describe("PROJ-HARNESS source and environment guard",()=>{
    expect(helper).toContain("c.status = 'ACTIVE'");
    expect(helper).toContain("mr.role = 'LEARNER'");
    expect(helper).toContain("task does not belong to this project");
+   expect(helper).toContain("task assignee is not the submitting learner");
+   expect(helper).toContain("task sprint or task state cannot accept a submission");
+   expect(helper).toContain("assignee_membership_id");
+   expect(helper).toContain("s.status as sprint_status");
+   expect(helper).toContain("'Harness sprint',0,'ACTIVE'");
+
    expect(helper).toContain("meeting mentor is not active on this project");
    expect(helper).toContain("requireMutableFixtureProject");
    expect(helper).toContain('"final delivery"');
