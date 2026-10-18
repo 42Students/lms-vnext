@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import publicStyles from "@/components/public/public-screen.module.css";
 
 const primaryNav=[
  {label:"Platform",href:"/platform"},
@@ -11,7 +12,7 @@ export function MarketingLayout({children}:{children:ReactNode}){
  return <div className="min-h-dvh bg-background text-foreground">
   <header className="border-b border-border bg-surface">
    <nav aria-label="Public navigation" className="mx-auto flex max-w-6xl flex-col items-start gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-5">
-    <Link href="/home" className="inline-flex min-h-11 items-center rounded-md text-xl font-bold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">42 LMS</Link>
+    <Link href="/home" className={publicStyles.brand} aria-label="42LMS home"><span aria-hidden="true" className={publicStyles.mark} /><span className={publicStyles.wordmark}>42<span className={publicStyles.wordmarkAccent}>LMS</span></span></Link>
     <div className="flex w-full flex-wrap items-center gap-x-3 gap-y-1 sm:w-auto sm:justify-end sm:gap-x-4">
       {primaryNav.map(item=><Link key={item.href} href={item.href}
        className="inline-flex min-h-11 items-center rounded-md px-1 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{item.label}</Link>)}
