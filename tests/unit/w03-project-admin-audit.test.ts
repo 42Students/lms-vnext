@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
+import { parseProjectAdminAuditQuery } from "@/modules/projects/admin-audit-query-model";
 
 const root = process.cwd();
 const audit = readFileSync(
@@ -39,7 +40,19 @@ describe("W03 project admin audit parity contract", () => {
     expect(audit).toContain('module: "PROJECTS"');
     // The component delegates parsing to a shared validated query model.
     expect(audit).toContain("parseProjectAdminAuditQuery(searchParams)");
-    expect(queryModel).toContain('read("action") ?? read("status") ?? read("eventType")');
+    // Action/status/eventType are aliases, but conflicting aliases must fail closed.
+    expect(queryModel).toContain("actionAliases");
+    const action = "projects.task.created";
+    expect(parseProjectAdminAuditQuery({ action }).eventType).toBe(action);
+    expect(parseProjectAdminAuditQuery({ status: action }).eventType).toBe(action);
+    expect(parseProjectAdminAuditQuery({ eventType: action }).eventType).toBe(action);
+    expect(parseProjectAdminAuditQuery({ action, status: action }).ignoredInvalidFilters).toBe(false);
+    const conflicting = parseProjectAdminAuditQuery({ action, eventType: "projects.project.created" });
+    expect(conflicting.eventType).toBeUndefined();
+    expect(conflicting.ignoredInvalidFilters).toBe(true);
+    const duplicated = parseProjectAdminAuditQuery({ action: [action, action] });
+    expect(duplicated.eventType).toBeUndefined();
+    expect(duplicated.ignoredInvalidFilters).toBe(true);
     expect(queryModel).toContain('allow("subjectType"');
     expect(queryModel).toContain('allow("from", validCalendarDate)');
     expect(queryModel).toContain('allow("to", validCalendarDate)');
