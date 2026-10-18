@@ -26,6 +26,8 @@
 
 | UX-project-workspaces-42 | S2 (grading/report fidelity) | Invalid project progress percentages, including NaN/Infinity or beyond 100, were passed directly into `aria-valuenow`, CSS width and screen text. | `safeProjectProgressPercent` keeps valid percentages and displays `Progress unavailable` rather than a false number; test `UX-project-workspaces-42`, commits `e77e0160` / `18fb353d`. | Fix pushed; cloud pending |
 
+| UX-kit-HARDEN-36 | S1 (navigation integrity) | StatTile, navigation Tabs, and Pagination previously passed any caller-supplied string into Next Link; encoded or external destinations could navigate off-site. | Use `isSafeInternalHref`; disallowed targets become inert and labeled. Unit `UX-kit-HARDEN-36`, commits `e8ad2a65`, `33b571f8`, `c8ed765e`, `5bea28ad`. | Fix pushed; cloud pending |
+
 ## Integration fixture hardening
 
 - `PROJ-HARNESS-22..28`: explicit current college, project roster, active user and `can_mutate` checks protect example SQL fixtures against accidental incorrect cross-tenant writes. This is fixture integrity, not proof of product route authorization.
@@ -35,3 +37,7 @@
 **Browser follow-up:** `UX-kit-HARDEN-35` now also has a real Chromium URL-parser witness in `tests/e2e/ux-safe-internal-href-chat17.spec.ts`, authored but not executed in the GitHub-only connector environment.
 
 - **PROJ-HARNESS-33..35:** An in-memory fixture role claim previously could create a project or placement graph with a wrong-role or revoked author because the constructor only compared tenant IDs; the SQL schema permits these actors and would not automatically reject them. The harness now verifies active user, membership and role rows before writing, and `tests/integration/projects-placements-pg-harness-boundaries.test.ts` includes negative role/suspension examples. Commits `3322dd9d`, `384361bb`. Cloud PostgreSQL execution pending.
+
+- **WEAK-tenant-domains-27:** Postgres 23505 may be nested beneath `DrizzleQueryError.cause`, so the earlier direct-code check could surface an implementation error on a genuine duplicate hostname race. A bounded, cycle-safe cause walker handles only code 23505; test covers nested duplicate plus cyclic unrelated error. Commits `92e30130`, `688e68c1`. Cloud unit testing pending.
+
+- **PROJ-HARNESS-36:** Meeting fixtures permitted same-college active learners to be scheduling authors because the SQL guard only checked college/membership. The harness now requires a current active coordinator role; a real PostgreSQL wrong-role attempt must leave `project_meetings` unchanged. Commits `d7f43d53`, `4afe1160`. Runner pending.
