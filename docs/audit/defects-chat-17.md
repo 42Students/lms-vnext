@@ -31,3 +31,5 @@
 - `PROJ-HARNESS-22..28`: explicit current college, project roster, active user and `can_mutate` checks protect example SQL fixtures against accidental incorrect cross-tenant writes. This is fixture integrity, not proof of product route authorization.
 - `PROJ-HARNESS-29..32`: real PostgreSQL index catalogue, restricted deletion semantics, `EXPLAIN (FORMAT JSON)` and savepoint rollback examples in `tests/integration/projects-placements-pg-harness-relations-chat17.test.ts`.
 - **Unverified:** actual cloud execution of this new suite and browser keyboard/focus/visual viewport tests. Run `npm run test:db:projects-harness` on a migrated disposable `TEST_DATABASE_URL` and `npm run test:ux:kit:hardening` in CI; never report a suite as green merely because tests are checked in.
+
+**Browser follow-up:** `UX-kit-HARDEN-35` now also has a real Chromium URL-parser witness in `tests/e2e/ux-safe-internal-href-chat17.spec.ts`, authored but not executed in the GitHub-only connector environment.
