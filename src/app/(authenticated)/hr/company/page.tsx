@@ -28,10 +28,13 @@ function one(value: string | string[] | undefined) {
 
 export default async function HrCompanyPage({ searchParams }: PageProps) {
   const context = await getCurrentRequestContext();
-  if (!hasActiveRecruiter(context)) redirect("/dashboard");
+  if (!hasActiveRecruiter(context) || context.recruiter?.userId !== context.user.id) redirect("/dashboard");
 
   const query = await searchParams;
-  const collegeQuery = z.string().uuid().optional().safeParse(one(query.collegeId));
+  // A repeated filter cannot be treated as the first college or first search
+  // value. Keep the existing recoverable invalid-college state on ambiguity.
+  const repeated=Object.values(query).some(Array.isArray);
+  const collegeQuery = z.string().uuid().optional().safeParse(repeated?null:one(query.collegeId));
   if (!collegeQuery.success) return <div className="min-w-0 max-w-full space-y-5"><PageHeader eyebrow="Recruiter" title="Company & Team" />
     <ErrorState title="Invalid college selection" description="Choose a college from your authorized access list."
       action={<Link href="/hr/company" className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Choose college</Link>} /></div>;
