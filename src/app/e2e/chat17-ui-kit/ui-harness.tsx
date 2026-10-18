@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/selection-controls";
 import { Dialog } from "@/components/ui/dialog";
+import { Drawer } from "@/components/ui/drawer";
+import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { FileUpload } from "@/components/ui/file-upload";
 import { FilterBar } from "@/components/ui/filter-bar";
 import { Input } from "@/components/ui/input";
@@ -13,6 +15,8 @@ import { ToastProvider, useToast } from "@/components/ui/toast";
 
 function UIKitTestSurface() {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
   const [tab, setTab] = useState("overview");
   const [fileStatus, setFileStatus] = useState("No file selected");
   const [pickerDisabled, setPickerDisabled] = useState(false);
@@ -30,6 +34,20 @@ function UIKitTestSurface() {
         <p>Dialog body with keyboard focus.</p>
         <Input aria-label="Dialog input" placeholder="Type here"/>
       </Dialog>
+    </section>
+
+    <section aria-label="Nested overlays fixture">
+      <Button variant="secondary" onClick={() => setDrawerOpen(true)}>Open harness drawer</Button>
+      <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}
+        title="Harness drawer" description="Nested history and focus test.">
+        <p>The workspace drawer stays open when its sheet is dismissed.</p>
+        <Button onClick={() => setSheetOpen(true)}>Open nested sheet</Button>
+      </Drawer>
+      <BottomSheet open={sheetOpen} onOpenChange={setSheetOpen}
+        title="Harness nested sheet" description="Second overlay">
+        <p>Sheet content is nested above the workspace drawer.</p>
+        <Button onClick={() => setSheetOpen(false)}>Close nested sheet</Button>
+      </BottomSheet>
     </section>
 
     <section aria-label="Tabs fixture">
