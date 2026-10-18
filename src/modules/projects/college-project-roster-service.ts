@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,exists,inArray,isNull} from "drizzle-orm";
+import {and,eq,exists,inArray,isNull,sql} from "drizzle-orm";
 import {replaceCollegeProjectRosterSchema} from "./college-project-roster-model";
 import {getDb} from "@/db/client";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
@@ -54,9 +54,11 @@ export async function replaceCollegeProjectLearners(context:RequestContext,proje
       eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"),
       // Section-bound workspaces require a live enrollment in that section,
       // not merely an active enrollment in some other section or term.
+      // Explicitly qualify the outer enrollment ID inside the correlated
+      // subquery so PostgreSQL cannot resolve it as the inner row ID.
       project.sectionId?exists(tx.select({id:sectionEnrollments.id})
         .from(sectionEnrollments).where(and(
-          eq(sectionEnrollments.learnerEnrollmentId,learnerProgramEnrollments.id),
+          eq(sectionEnrollments.learnerEnrollmentId,sql.raw('"learner_program_enrollments"."id"')),
           eq(sectionEnrollments.sectionId,project.sectionId),
           eq(sectionEnrollments.status,"ACTIVE"),
         ))):undefined));

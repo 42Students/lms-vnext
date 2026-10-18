@@ -24,7 +24,7 @@ export function AdminAssessmentDirectory({ data }: { data: Data }) {
   const stats = adminAssessmentStats(data.items);
   return <div className="space-y-5">
     <PageHeader eyebrow="Super Admin · Courses" title={title}
-      description={`Read-only ${title.toLowerCase()} across the selected college. Submission/attempt counts reflect persisted rows, not distinct learners or completion rates.`} />
+      description={`${title} across the selected college. Submission/attempt counts reflect persisted rows, not distinct learners or completion rates.`} />
     <form action={base} className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-3">
       <label className="grid gap-1 text-sm font-semibold text-body">Assessment title
         <input name="q" type="search" maxLength={100} defaultValue={data.query.q}

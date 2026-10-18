@@ -32,6 +32,7 @@ describe("COURSES7-06 learner assignment overview integrity", () => {
  it("LEARNER-learning-misc-05 reminders contain only future, unsubmitted, finite deadlines",()=>{
   const rows=[
    {id:"due",title:"Assignment due",deliveryId,dueAt:new Date(now+3600000),submissionId:null},
+   {id:"due",title:"Joined duplicate",deliveryId,dueAt:new Date(now+3600000),submissionId:null},
    {id:"done",title:"Completed",deliveryId,dueAt:new Date(now+3600000),submissionId:"submitted"},
    {id:"past",title:"Expired",deliveryId,dueAt:new Date(now-1),submissionId:null},
    {id:"none",title:"Missing",deliveryId,dueAt:null,submissionId:null},
@@ -42,6 +43,9 @@ describe("COURSES7-06 learner assignment overview integrity", () => {
   expect(notices[0]).toMatchObject({key:"due:"+deliveryId,title:"Assignment due soon",
    href:"/learn/allAssignments/due?deliveryId="+deliveryId});
   expect(notices[0].body).toContain("Due ");
+  expect(notices[0].body).not.toContain("Joined duplicate");
+  expect(learnerDueSoonNotices(rows,new Date(now),Number.POSITIVE_INFINITY)).toEqual([]);
+  expect(learnerDueSoonNotices(rows,new Date(now),-1)).toEqual([]);
  });
  it("COURSES7-08 rejects unsupported files before requesting a signed upload grant",()=>{
   const valid={name:"answers.pdf",type:"",size:1024};

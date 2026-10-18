@@ -173,3 +173,9 @@ This is an independent TPO/HR workflow review; real clipboard permission denial,
 |---|---|---|---|
 | HR-BREAK-PROFILE-IDENTITY-10 | `ownRecruiterGrant`, `getRecruiterSelfProfile`, `leaveOwnRecruiterCollegeAccess` | `tests/unit/HR-BREAK-chat19-recruiter-profile-service-identity.test.ts`; `tests/unit/HR-BREAK-chat19-profile-page.test.ts` | Context recruiter must belong to the exact signed-in user; reject before any employer/grant read or write when IDs differ |
 | HR-BREAK-PROFILE-NAME-11 | `hrRecruiterNameFieldsSchema`, `splitHrRecruiterName`, `joinHrRecruiterName`, `sameHrNameVersion` | `tests/unit/HR-BREAK-chat19-profile-name-model.test.ts` | Multi-token name, Unicode whitespace, strict field validation and length caps, forbidden role/company input, millisecond CAS with IST/UTC equivalence |
+
+## HR Today scheduled interview slot limit and race cross-audit
+
+| ID | Entry / services | Direct behavioural test | Coverage and remaining gate |
+|---|---|---|---|
+| HR-BREAK-TODAY-SLOTS-12 | `listRecruiterTodayRoundsNeedingSlots` and `recruiterTodayRoundsNeedingSlots` | `tests/unit/HR-BREAK-chat19-today-slots-query-limit.test.ts` | 110 scheduled rounds with 100 earlier covered interviews still produce next eight actionable slots; offered/BOOKED excluded; PROPOSED retains needs-offer state; post-query race exclusion; SQL `NOT EXISTS` precedes `LIMIT 100`, scoped to authorized job IDs and college. PostgreSQL runtime/EXPLAIN and multi-tenant browser checks still needed. |

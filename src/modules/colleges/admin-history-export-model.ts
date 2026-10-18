@@ -3,8 +3,8 @@ export type AdminHistoryExportRow={occurredAt:Date;eventType:string;summary:stri
 function cell(input:string){
  // Spreadsheet importers can strip invisible format and combining marks
  // before deciding whether a value starts with a formula operator.
- const visible=input.replace(/^[\\s\\p{Cf}\\p{Mn}]*/u,"");
- const safe= (/^[\\t\\r]/u.test(input)||/^[=+\\-@]/u.test(visible))?"'"+input:input;
+ const visible=input.replace(/^[\s\p{Cf}\p{Mn}]*/u,"");
+ const safe= (/^[\t\r]/u.test(input)||/^[=+@-]/u.test(visible))?"'"+input:input;
  return '"'+safe.replaceAll('"','""')+'"';
 }
 export const MAX_ADMIN_HISTORY_EXPORT_ROWS=100;

@@ -209,3 +209,8 @@ Neither test suite, actual account browser journey nor PostgreSQL tenant corpus 
 | HR-REPORT-ARCHIVE-31 | `recruiter-company-reports-service.ts` | Paginated company job rows, status totals and SQL funnel use non-archived published/closed jobs consistently. `tests/unit/HR-BREAK-chat15-company-report-archive-31.test.ts`; cross-tab counts need real PostgreSQL/browser acceptance. |
 
 Unit tests authored but not executed locally; no claim of CI pass or production deployment.
+
+
+## Chat-15 source verification (2026-10-18)
+
+**HR-TODAY-ARCHIVE-34:** Today interview slot proposal and offer follow-up listings require same-college PUBLISHED jobs that have not been archived. Empty job allowlists return without SQL. Source proof: `tests/unit/HR-BREAK-chat15-today-archive-34.test.ts`. Test authored; database/provider/browser execution remains pending.
