@@ -610,3 +610,12 @@ These paths require one test row **per exported function** after parsing each fi
 | HR-BREAK-profile-01 / `isExactRecruiterEmployerRow` | `tests/unit/HR-BREAK-profile-01.test.ts` / identical college ID relationship mismatch case | Fixture now statically typed to the complete `RecruiterContext.grants` shape; preserves multi-college denial checks | CI test-typecheck and revoked grant / relationship database query |
 
 The previously recorded 154-file inventory is not exhaustive behavioural certification; **OPEN** rows stay open until full role-state/tenancy/transactional assertions and CI execution are reviewed. Branch updates are not evidence of a production deploy.
+
+## IIT Dharwad Projects HR-view role boundary (2026-10-18)
+
+| Risk | Evidence | State |
+|---|---|---|
+| PROJ-BREAK-HR-ORG-02: identical college ID with foreign organization | `requireProjectReadAccess` checks membership college **and** membership organization against authoritative project-college scope before project-member lookup. `tests/unit/PROJ-BREAK-HR-01.test.ts` rejects a forged organization context and checks no project membership SELECT or module access. | SOURCE FIX + TEST AUTHORED, not executed |
+| HR/recruiter hiring grant without project membership | `PROJ-BREAK-HR-01` tests no college member, wrong tenant, suspended membership, revoked/inactive recruiter context, and lifecycle denial. | TEST AUTHORED; real database ownership and expired-session checks OPEN |
+
+No HR/Recruiter account obtains Projects access merely through employer/drive grants. Actual PostgreSQL member rows, role revocation and parallel session tests are still required for the IIT Dharwad acceptance gate.
