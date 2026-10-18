@@ -29,6 +29,19 @@ try {
   process.stderr.write("UX guard cannot enumerate tracked UI sources: "+String(error)+"\n");
   process.exit(1);
 }
+// GitHub Actions may use fetch-depth:1. Fetch ONLY the immutable reviewed
+// baseline commit when absent; never silently replace it with HEAD/main.
+const hasBaseline=spawnSync("git",["cat-file","-e",waiver.baselineCommit+"^{commit}"],{cwd:root});
+if(hasBaseline.status!==0){
+  const fetched=spawnSync("git",["fetch","--no-tags","--depth=1","origin",waiver.baselineCommit],{
+    cwd:root,encoding:"utf8",maxBuffer:32*1024*1024,
+  });
+  if(fetched.status!==0){
+    process.stderr.write("Cannot verify immutable UX baseline "+waiver.baselineCommit+
+      ". Inspect checkout history or network before lint can pass.\n");
+    process.exit(1);
+  }
+}
 const allowedRules=new Set(waiver.rules);
 const violations=[];
 let waivedCount=0;
