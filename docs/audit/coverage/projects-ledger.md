@@ -10,6 +10,11 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 - `mentor-project-card-progress.test.ts`: previous test expected invalid `open=-3` to show 100% task completion; source correctly rejects corrupt aggregates with `null`. Updated the behavioral test for negative, excess, NaN and no-task inputs (`PROJ-BREAK-MENTOR-217`).
 - This is static reconciliation, not an executed Vitest/typecheck pass. Latest checked-in typecheck inventory has no chat-14-owned compiler error.
 
+## Mentor meeting transaction guards — PROJ-BREAK-MENTOR-280..283
+- `meeting-service.ts`: direct meeting list, learner request and state transitions now deny disabled Projects entitlement **before** resolving user-supplied project IDs. Schedule and Mentor complete/cancel acquire the project row using project ID **and** college ID, then re-check persisted user/membership/Project Mentor permission under lock before meeting writes or activity/notifications. This retains the separate learner-request/cancel behavior.
+- `tests/unit/PROJ-BREAK-chat14-mentor-meeting-races.test.ts` covers disabled module no-lookup and Mentor revocation after a page scope was granted on scheduling, completion and cancellation. Mock-only, not executed.
+- Legacy `transitionProjectMeeting` lacks a version token and loads the meeting before its transaction; race/ABA and duplicate replays require database-backed tests and a planned endpoint contract change. This is an explicit **S1 release GAP**, not treated as closed.
+
 ## Mentor resource transaction authorization and audit — PROJ-BREAK-MENTOR-274..279
 - `resource-service.ts`: list and create now check Projects module entitlement before resolving submitted IDs; create preserves the restricted Learner-specific path and additionally rechecks persisted Mentor/Admin project grants under a college-scoped project lock. Update, archive and reorder now require lifecycle mutation authorization, a college-scoped parent lock, and persisted actor/grant recheck before child resources are fetched.
 - Reorder now records one `PROJECTS_RESOURCE_UPDATED` activity event for an actual order change, none for a no-op. No broad learner notification is issued for cosmetic sequencing. `tests/unit/PROJ-BREAK-chat14-mentor-resource-races.test.ts` tests stale Mentor grant across create/edit/archive/reorder, module-off, invalid order shape, audit exactly once on changed order and none on idempotent retry.
@@ -256,10 +261,10 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/modules/projects/lifecycle-service.ts` | `updateProjectTaskStatus` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/lifecycle-service.ts` | `unshipProjectRelease` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/lifecycle-service.ts` | `shipProjectRelease` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/meeting-service.ts` | `listProjectMeetings` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/meeting-service.ts` | `requestProjectMeeting` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/meeting-service.ts` | `scheduleProjectMeeting` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/meeting-service.ts` | `transitionProjectMeeting` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/meeting-service.ts` | `listProjectMeetings` | `tests/unit/PROJ-BREAK-chat14-mentor-meeting-races.test.ts` | Module-disabled rejects before project scope query; behavioral mocked, real HTTP GET role/tenant matrix pending |
+| `src/modules/projects/meeting-service.ts` | `requestProjectMeeting` | `tests/unit/PROJ-BREAK-chat14-mentor-meeting-races.test.ts` | Module-off prevents learner request project enumeration, mock; learner persisted-auth/concurrent DB acceptance delegated to Learner lane |
+| `src/modules/projects/meeting-service.ts` | `scheduleProjectMeeting` | `tests/unit/PROJ-BREAK-chat14-mentor-meeting-races.test.ts` | Revoked Mentor denies after college-scoped project lock before meeting selection/write/audit; mocked, live PostgreSQL race pending |
+| `src/modules/projects/meeting-service.ts` | `transitionProjectMeeting` | `tests/unit/PROJ-BREAK-chat14-mentor-meeting-races.test.ts` | Module-off denies before lookup, Mentor COMPLETE/CANCEL revoked inside transaction before write/audit/notice; mocked, legacy version-token race GAP |
 | `src/modules/projects/meeting-window-policy.ts` | `isFutureProjectMeetingWindow` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/member-role-kind-model.ts` | `mayMutateProjectWithRole` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/member-role-kind-model.ts` | `PROJECT_MEMBER_ROLE_KINDS` | **GAP** | **GAP — behaviour untested** |
