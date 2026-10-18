@@ -12,6 +12,10 @@ export async function GET(request: Request, { params }: RouteContext) {
   try {
     const { jobId } = await params;
     const url = new URL(request.url);
+  const allowed=["stage"];
+  if([...url.searchParams.keys()].some(key=>!allowed.includes(key))||
+     allowed.some(key=>url.searchParams.getAll(key).length>1))
+   return Response.json({error:"INVALID_QUERY"},{status:400});
     const filters = hrApplicantFilterSchema.parse({
       tab: "applicants",
       stage: url.searchParams.get("stage") ?? undefined,
