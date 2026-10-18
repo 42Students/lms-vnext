@@ -60,7 +60,7 @@ describe("SA-PLACEMENT-POLICY-07 Super Admin global policy read boundary", () =>
     const rows = await listPlatformPlacementPolicy(admin);
     expect(rows).toHaveLength(PLACEMENT_POLICY_FIELDS.length);
     expect(rows.map(row => row.key)).toEqual(PLACEMENT_POLICY_FIELDS.map(field => field.key));
-    expect(rows.find(row => row.key === "unrelated.tenant.setting")).toBeUndefined();
+    expect(rows.some(row => String(row.key) === "unrelated.tenant.setting")).toBe(false);
     expect(rows.find(row => row.key === "placement.lowConversionThreshold")).toMatchObject({
       value: 0.25, version: 4, isOverridden: true,
       updatedAt: "2099-01-02T10:00:00.000Z",

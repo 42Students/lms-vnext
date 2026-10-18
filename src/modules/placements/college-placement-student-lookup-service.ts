@@ -1,5 +1,5 @@
 import "server-only";
-import {and,desc,eq,ilike,inArray,or} from "drizzle-orm";
+import {and,asc,desc,eq,ilike,inArray,or} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {collegeMemberships,learnerProfiles,membershipRoles,users,
@@ -21,6 +21,7 @@ export async function lookupCollegeStudentPlacement(ctx:RequestContext,raw:unkno
  .where(and(eq(collegeMemberships.collegeId,collegeId),
   or(ilike(users.displayName,"%"+q.replace(/[\\%_]/g,"\\$&")+"%"),
    eq(learnerProfiles.rollNumber,q),eq(users.email,q))))
+ .orderBy(asc(users.displayName),asc(collegeMemberships.id))
  .limit(STUDENT_LOOKUP_CAP+1);
  if(!people.length)return{students:[],truncated:false};
  const visiblePeople=capStudentLookupRows(people,STUDENT_LOOKUP_CAP).items;

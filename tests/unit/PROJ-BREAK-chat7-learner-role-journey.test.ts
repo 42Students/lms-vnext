@@ -85,4 +85,17 @@ describe("IIT Dharwad Learner project role journey: hostile edits and stale sess
   expect(move).toContain('sprint?.status!=="ACTIVE"');
   expect(move).toContain('["PLANNED","IN_PROGRESS"].includes(release.status)');
  });
+ it("PROJ-BREAK-LEARNER-95 refuses learner-created tasks in cancelled or shipped release states",()=>{
+  const own=read("src/modules/projects/learner-own-task-service.ts");
+  const pull=read("src/modules/projects/learner-backlog-pull-service.ts");
+  const status=read("src/modules/projects/learner-task-status-service.ts");
+  const allowed='["PLANNED","IN_PROGRESS"].includes(release.status)';
+  expect(own).toContain(allowed);
+  expect(pull).toContain(allowed);
+  expect(status).toContain(allowed);
+  expect(own).not.toContain('release.status==="SHIPPED"');
+  expect(own).toContain('sprint.status!=="ACTIVE"');
+  expect(own).toContain('getDb().transaction(async tx=>');
+ });
+
 });
