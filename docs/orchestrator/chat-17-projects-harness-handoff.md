@@ -137,3 +137,12 @@ npm run test:db:projects-harness  # only on migrated disposable TEST_DATABASE_UR
 ```
 
 The UI coverage matrix still contains other teams' page-level/raw-table entries; run the generator against merged code to distinguish stale generated flags from actual active route defects. Do not designate release readiness until the actual browser/PostgreSQL runners and the owning lanes attest passing status.
+
+## Unowned UX spillover accepted (2026-10-18)
+
+- `UX-UNOWNED-TABLE-01`: College Admin recurring-session table migrated to shared responsive DataTable; `Date (IST)`, `Time (IST)` and conflict/empty/confirmation copy retained. IST pure time regression included.
+- `UX-UNOWNED-TABLE-02`: Super Admin academic scope hierarchy migrated from raw six-column table to DataTable, 44px controls, safe query-preserving hierarchy page links and effective rule copies. Wrong-origin page destinations are inert. Regression tests added.
+- `UX-UNOWNED-TPO-03`: TPO built-in job type settings now uses the shared accessible confirmation instead of browser `window.confirm`, keeping the authoritative API's stale-version and last-active-type protections.
+- `UX-kit-HARDEN-49`: FormField required flag now reaches actual input validation, with both SSR and real Chromium checkValidity browser cases.
+
+New targeted regression files are included in `npm run test:ux:kit:hardening`; tests remain **unverified until CI runs**. Refresh `docs/audit/ux/COVERAGE-MATRIX.md` from the generator after merging; do not manually edit red gap counts.
