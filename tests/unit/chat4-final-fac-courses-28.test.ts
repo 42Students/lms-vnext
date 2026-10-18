@@ -29,7 +29,10 @@ describe("FAC-courses-28 roster parity with secure image fallback",()=>{
  it("FAC-courses-28 makes a keyboard-operable, namespaced avatar preview and always-visible result count",()=>{
   const roster=read("src/components/courses/faculty-course-roster.tsx");
   const page=read("src/app/(authenticated)/teacher/courses/[deliveryId]/students/page.tsx");
-  expect(roster).toContain('aria-label={"Preview avatar for "+name}');
+  expect(roster).toContain('aria-label={"Preview avatar for "+nameOf(learner)}');
+  expect(roster).toContain("onClick={()=>setPreview(learner)}");
+  expect(roster).toContain("focus-visible:outline-2");
+  expect(roster).toContain('alt={"Profile photograph of "+nameOf(preview)}');
   expect(roster).toContain('<Dialog open={preview!==null}');
   expect(roster).toContain("No photo is available for this student.");
   expect(roster).toContain("Showing {rows.length} of {filtered.length} students");

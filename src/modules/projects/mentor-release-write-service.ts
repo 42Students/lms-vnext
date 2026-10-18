@@ -9,6 +9,7 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireProjectLifecycleMutationAccess} from "./access";
 import {ProjectsServiceError} from "./errors";
+import {mentorReleaseDeleteSchema,mentorReleaseVersionMatches} from "./mentor-release-version-model";
 
 const uuid=z.string().uuid();
 const body=z.strictObject({
@@ -24,7 +25,7 @@ export async function writeMentorProjectRelease(
  const projectId=uuid.parse(projectIdInput);
  const scope=await requireProjectLifecycleMutationAccess(context,projectId);
  const releaseId=releaseIdInput?uuid.parse(releaseIdInput):null;
- const input=operation==="DELETE"?null:body.parse(raw);
+ const input=operation==="DELETE"?mentorReleaseDeleteSchema.parse(raw):body.parse(raw);
  return getDb().transaction(async tx=>{
   const [project]=await tx.select({status:projectInstances.status}).from(projectInstances)
    .where(and(eq(projectInstances.id,projectId),eq(projectInstances.collegeId,scope.collegeId)))
@@ -47,14 +48,15 @@ export async function writeMentorProjectRelease(
    result=row??null;change="CREATED";
   }else if(operation==="PATCH"){
    if(!existing||existing.status==="SHIPPED"||
-      existing.updatedAt.toISOString()!==input?.expectedUpdatedAt)
+      (!input?.expectedUpdatedAt||!mentorReleaseVersionMatches(existing.updatedAt,input.expectedUpdatedAt)))
     throw new ProjectsServiceError("PROJECT_LIFECYCLE_INVALID_STATE");
    const [row]=await tx.update(projectReleases).set({
     title:input!.title,description:input!.description??null,updatedAt:new Date(),
    }).where(and(eq(projectReleases.id,existing.id),eq(projectReleases.projectId,projectId))).returning();
    result=row??null;change="UPDATED";
   }else{
-   if(!existing||existing.status==="SHIPPED")
+   if(!existing||existing.status==="SHIPPED"||
+      !mentorReleaseVersionMatches(existing.updatedAt,input.expectedUpdatedAt!))
     throw new ProjectsServiceError("PROJECT_LIFECYCLE_INVALID_STATE");
    const [sprint]=await tx.select({id:projectSprints.id}).from(projectSprints)
     .where(and(eq(projectSprints.projectId,projectId),eq(projectSprints.releaseId,existing.id))).limit(1);

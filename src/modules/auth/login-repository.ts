@@ -284,6 +284,7 @@ export const drizzleLoginRepository: LoginRepository = {
                 revoked_by_user_id = user_id,
                 revocation_reason = 'RELOGIN'
             WHERE credential_digest = ${session.previousDigest}
+              AND user_id = ${userId}
               AND revoked_at IS NULL
           `);
         }

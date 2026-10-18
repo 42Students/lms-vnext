@@ -150,7 +150,10 @@ describe("TPO settings audited source features",()=>{
   const source=text("src/components/placements/tpo-recruiter-grant-controls.tsx");
   expect(source).toContain("Remove ");
   expect(source).toContain("Access removed");
-  expect(source).toContain("window.confirm");
+  expect(source).toContain("<ConfirmDialog open={confirmOpen}");
+  expect(source).toContain("onConfirm={()=>void revoke()}");
+  expect(source).toContain("expectedUpdatedAt");
+  expect(source).not.toContain("window.confirm");
  });
  it("TPO-settings-audit-71 verifies partial implementation in src/app/(authenticated)/tpo/settings/notices/page.tsx",()=>{
   const source=text("src/app/(authenticated)/tpo/settings/notices/page.tsx");

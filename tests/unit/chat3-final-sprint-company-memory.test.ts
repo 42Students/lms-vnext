@@ -12,8 +12,8 @@ describe("chat-3 final sprint TPO Companies company memory",()=>{
  it("TPO-companies-08 preserves the persisted legacy company memory contract",()=>{
   expect(file("src/components/tpo/tpo-company-memory-workspace.tsx")).toContain("Search drives");
   expect(file("src/components/tpo/tpo-company-memory-workspace.tsx")).toContain("Export drives CSV");
-  expect(file("src/components/tpo/tpo-company-memory-workspace.tsx")).toContain("Year</th>");
-  expect(file("src/components/tpo/tpo-company-memory-workspace.tsx")).toContain("Applied</th>");
+  expect(file("src/components/tpo/tpo-company-memory-workspace.tsx")).toContain('key:"year",header:"Year"');
+  expect(file("src/components/tpo/tpo-company-memory-workspace.tsx")).toContain('key:"applied",header:"Applied"');
   expect(file("src/components/tpo/tpo-company-memory-workspace.tsx")).toContain("companyDriveCsv(visibleDrives)");
  });
  it("TPO-companies-10 preserves the persisted legacy company memory contract",()=>{

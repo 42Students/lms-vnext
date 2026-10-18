@@ -10,11 +10,14 @@ describe("chat9 final quick-report launcher",()=>{
   expect(shell).toContain('import { TrackerQuickReportLauncher } from "@/components/tracker/tracker-quick-report-launcher"');
   expect(shell).toContain("<TrackerQuickReportLauncher />");
   expect(launcher).toContain('event.altKey&&!event.repeat&&event.key.toLowerCase()==="b"');
-  expect(launcher).toContain('event.key==="Escape"');
+  const drawer=read("src/components/ui/drawer.tsx");
+  expect(drawer).toContain("modal.showModal()");
+  expect(drawer).toContain("onCancel={event => { event.preventDefault(); if (dismissible) onOpenChange(false); }}");
+  expect(drawer).toContain("aria-labelledby={titleId}");
   expect(launcher).toContain("window.location.pathname+window.location.search");
   expect(launcher).toContain("navigator.userAgent");
   expect(launcher).toContain("window.innerWidth");
-  expect(launcher).toContain('aria-modal="true"');
+  expect(launcher).toContain("<Drawer open={open} onOpenChange={setOpen}");
   expect(launcher).toContain("<TrackerReportForm contextPrefill={context}/>");
   expect(form).toContain('useFormDraft("tracker-issue-report",initial)');
   expect(form).toContain('"/api/tracker/issues"');

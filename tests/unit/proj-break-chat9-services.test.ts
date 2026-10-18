@@ -139,7 +139,11 @@ describe("IIT Dharwad Projects adversarial service and route contracts",()=>{
    const page=api(route);
    expect(page).toContain("isSameOriginRequest(request)");
    expect(page).toMatch(/status:\\s*403/);
-   expect(page.indexOf("isSameOriginRequest(request)")).toBeLessThan(page.indexOf("getCurrentRequestContext()"));
+   // Some routes also export GET, which can read context before POST.
+   // Check the mutation handler itself, never compare unrelated GET code.
+   const mutation=page.slice(page.indexOf("export async function POST"));
+   expect(mutation.indexOf("isSameOriginRequest(request)")).toBeGreaterThanOrEqual(0);
+   expect(mutation.indexOf("isSameOriginRequest(request)")).toBeLessThan(mutation.indexOf("getCurrentRequestContext()"));
    expect(page).toContain("apiErrorResponse(error)");
   }
  });
@@ -154,7 +158,9 @@ describe("IIT Dharwad Projects adversarial service and route contracts",()=>{
   const projectPage=source("src/app/(authenticated)/admin/projects/page.tsx");
   const collegePage=source("src/app/(authenticated)/college/projects/page.tsx");
   expect(projectPage).toContain("<EmptyState");
-  expect(collegePage).toContain("ProjectAdminMissingCollege");
+  expect(collegePage).toContain("Select a college to continue.");
+  expect(collegePage).toContain('role="alert"');
+  expect(collegePage).toContain('href="/dashboard"');
   expect(projectPage).toContain("<PageHeader");
   expect(collegePage).toContain('title="Project workspaces"');
  });
