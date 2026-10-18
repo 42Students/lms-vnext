@@ -576,6 +576,9 @@ export async function actOnPlacementOffer(
     );
   const current =
     await loadOfferContext(offerId);
+  // Explicit/injected clocks must be finite. Invalid time is never a way
+  // to bypass the expiration guard.
+  if(!Number.isFinite(now.getTime()))throw new PlacementsServiceError("PLACEMENT_OFFER_EXPIRED");
 
   if (
     input.action === "ACCEPT" ||
@@ -640,6 +643,10 @@ export async function actOnPlacementOffer(
         "PLACEMENT_OFFER_NOT_FOUND",
       );
     }
+    // A caller can wait on this offer row lock past its response deadline.
+    // The function-entry instant must not let an already expired offer
+    // transition after a competing transaction releases the lock.
+    const lockedNow=new Date(Math.max(lockedNow.getTime(),Date.lockedNow()));
 
     // Guard selected status beneath the same offer row lock as the transition.
     if (expectedStatus && offer.status !== expectedStatus) {
@@ -648,7 +655,7 @@ export async function actOnPlacementOffer(
 
     if (
       input.action !== "WITHDRAW" &&
-      isPlacementOfferResponseExpired(offer.expiresAt, now)
+      isPlacementOfferResponseExpired(offer.expiresAt, lockedNow)
     ) {
       throw new PlacementsServiceError(
         "PLACEMENT_OFFER_EXPIRED",
@@ -678,8 +685,8 @@ export async function actOnPlacementOffer(
           status: "ACCEPTED",
           respondedByUserId:
             context.user.id,
-          respondedAt: now,
-          updatedAt: now,
+          respondedAt: lockedNow,
+          updatedAt: lockedNow,
         })
         .where(
           and(
@@ -780,7 +787,7 @@ export async function actOnPlacementOffer(
       for(const other of declinedOffers){
         const [declined]=await tx.update(placementOffers).set({
           status:"DECLINED",respondedByUserId:context.user.id,
-          respondedAt:now,updatedAt:now,
+          respondedAt:lockedNow,updatedAt:lockedNow,
         }).where(and(
           eq(placementOffers.id,other.id),
           eq(placementOffers.status,"ISSUED"),
@@ -815,7 +822,7 @@ export async function actOnPlacementOffer(
       })).map(candidate=>candidate.id);
       const withdrawn=withdrawIds.length>0
         ? await tx.update(placementApplications).set({
-          status:"WITHDRAWN",withdrawnAt:now,updatedAt:now,
+          status:"WITHDRAWN",withdrawnAt:lockedNow,updatedAt:lockedNow,
         }).where(and(
           inArray(placementApplications.id,withdrawIds),
           eq(placementApplications.status,"SUBMITTED"),
@@ -882,8 +889,8 @@ export async function actOnPlacementOffer(
           status: "DECLINED",
           respondedByUserId:
             context.user.id,
-          respondedAt: now,
-          updatedAt: now,
+          respondedAt: lockedNow,
+          updatedAt: lockedNow,
         })
         .where(
           and(
@@ -993,8 +1000,8 @@ export async function actOnPlacementOffer(
         status: "WITHDRAWN",
         withdrawnByUserId:
           context.user.id,
-        withdrawnAt: now,
-        updatedAt: now,
+        withdrawnAt: lockedNow,
+        updatedAt: lockedNow,
       })
       .where(
         eq(
