@@ -76,3 +76,9 @@ New mutation tests check real typed request validation and current source contra
 | SA-tenants-modules-BRAND-06 | `src/modules/colleges/public-branding-model.ts`, `tests/unit/chat11-super-admin-public-branding-safe.test.ts` | Public sign-in suppresses signed/credential-bearing stored image URLs and unsafe contact inputs |
 | SA-tenants-modules-R01 | `src/modules/module-access/admin-overview-metrics-scope.ts`, `tests/unit/chat11-super-admin-module-metrics-scope.test.ts` | Counts scoped active college learners and explicit membership overrides; live SQL verification needed |
 | SA-tenants-modules-LOGIN-02 | `src/modules/colleges/admin-signin-request-body.ts`, `tests/unit/chat11-super-admin-signin-route-adversarial.test.ts` | Sign-in policy PUT origin, 2 KiB cap, actor before parse, safe stale conflict |
+
+## Chat-11 current-role read barrier — source verified, CI pending
+
+| ID | Status | Evidence |
+|---|---|---|
+| SA-tenants-modules-R01 | DONE — source hardening, database race acceptance pending | `getModuleAccessOverviewMetrics` rechecks persisted `admin-scope.select` inside a transaction holding actor SHARE locks before either the empty-page shortcut or reading selected tenants and learner/override counts. Selected colleges are still validated individually against persisted organization and status; `tests/unit/chat11-super-admin-module-metrics-revoked-role.test.ts` — `SA-tenants-modules-R01`, commits `db34e73`, `df3d5e4`, `eee568d`. Two-session actor revocation and PostgreSQL aggregation checks remain pending. |
