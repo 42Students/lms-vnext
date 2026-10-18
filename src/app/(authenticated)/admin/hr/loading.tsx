@@ -1,4 +1,4 @@
-import { LoadingState } from "@/components/ui/loading-state";
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 import { PageHeader } from "@/components/ui/page-header";
 
 export default function SuperAdminHrLoading() {
@@ -9,7 +9,7 @@ export default function SuperAdminHrLoading() {
         title="HR Accounts"
         description="Loading employer recruiter accounts…"
       />
-      <LoadingState label="Loading recruiter accounts and college access…" />
+      <GracefulPageLoading label="Loading recruiter accounts and college access…" />
     </div>
   );
 }

@@ -7,3 +7,6 @@
 
 ## Learner trace interaction follow-up
 - Learner selection now uses the shared mobile-card `DataTable` with the original searchable learner, roll, and Explain access link; exact query filters and active learner selection remain in its href. The resolution matrix retains horizontal scrolling but fixes its Resolution level header/row to the left so winning and ignored steps remain identifiable on phones. See `UX-admin-features-collegeId-trace-02`.
+
+## Bounded loading recovery
+- Kept the existing PageHeader and “Resolving learner module access…” announcement while replacing indefinite `LoadingState` with the shared `GracefulPageLoading` retry/skeleton behavior. Test `UX-admin-features-collegeId-trace-03`.
