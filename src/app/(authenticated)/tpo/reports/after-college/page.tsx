@@ -3,6 +3,7 @@ import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import Link from "next/link";
 import {DataTable} from "@/components/ui/data-table";
+import {Pagination} from "@/components/ui/pagination";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -25,6 +26,11 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
  const branches=new Map(data.branches.map(row=>[row.id,row.name]));
  if(branchId&&!branches.has(branchId))return <p role="alert">Invalid branch for this college. <Link href="/tpo/reports/after-college">Clear filters</Link></p>;
  const query=new URLSearchParams({...batchId?{batchId}: {},...branchId?{branchId}:{}});
+ const displayedCount=Math.min(data.rows.length,300);
+ const pageCount=Math.max(1,Math.ceil(displayedCount/25));
+ const requestedPage=Number(first(raw.page)??"1");
+ const page=Number.isSafeInteger(requestedPage)?Math.max(1,Math.min(pageCount,requestedPage)):1;
+ const pageHref=(nextPage:number)=>{const next=new URLSearchParams(query);next.set("page",String(nextPage));return "/tpo/reports/after-college?"+next.toString();};
  return <div data-tpo-presentation-report className="space-y-5">
   <Link href="/tpo/reports" className="text-sm font-semibold text-[var(--lms-teal-deep)] underline">← All reports</Link>
       <TpoReportPresentation />
@@ -57,7 +63,7 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
      <p className="mt-2 text-2xl font-bold tabular-nums">{data.counts[key]}</p>
     </div>)}
    </div>
-   <DataTable rows={data.rows.slice(0,300)} getRowKey={row=>row.membershipId}
+   <DataTable rows={data.rows.slice((page-1)*25,page*25)} getRowKey={row=>row.membershipId}
     caption="After college"
     empty={<p role="status">No students match these filters.</p>}
     columns={[
@@ -69,6 +75,7 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
      {key:"applications",header:"Applications",cell:row=>row.applicationCount,mobilePriority:"secondary"},
     ]}
    />
+   <Pagination page={page} pageCount={pageCount} hrefForPage={pageHref} label="After-college report pages"/>
    {data.rows.length>300?<p className="text-xs text-muted-foreground">Showing the first 300 rows. Download CSV for the complete filtered list.</p>:null}
   </>}
  </div>;
