@@ -1,5 +1,6 @@
 import {describe,expect,it} from "vitest";
-import {formatProjectAdminUpdatedDateIst} from "@/modules/projects/project-admin-date-model";
+import {readFileSync} from "node:fs";
+import {formatProjectAdminUpdatedDateIst,formatProjectAdminActivityDateIst,safeProjectAdminUtcIso} from "@/modules/projects/project-admin-date-model";
 import {projectWorkspacePageCsv} from "@/modules/projects/admin-workspace-page-export-model";
 
 describe("IIT Dharwad Projects: malformed stored dates do not crash exports",()=>{
@@ -28,4 +29,19 @@ describe("IIT Dharwad Projects: malformed stored dates do not crash exports",()=
     expect(csv).not.toContain('"Invalid Date"');
     expect(csv.split("\r\n")).toHaveLength(4);
   });
+  it("PROJ-BREAK-resilience-21 at-risk and submission history dates fail safely without changing valid IST semantics",()=>{
+    const bad=new Date(Number.NaN);
+    expect(formatProjectAdminActivityDateIst(bad)).toBe("Date unavailable");
+    expect(formatProjectAdminActivityDateIst(null)).toBe("Not submitted");
+    expect(safeProjectAdminUtcIso(bad)).toBe("Date unavailable");
+    const valid=new Date("2026-09-30T20:00:00.000Z");
+    expect(formatProjectAdminActivityDateIst(valid)).toContain("Oct");
+    expect(safeProjectAdminUtcIso(valid)).toBe("2026-09-30T20:00:00.000Z");
+    const risk=readFileSync("src/components/projects/project-admin-at-risk-page.tsx","utf8");
+    const submissions=readFileSync("src/components/projects/project-admin-submissions-page.tsx","utf8");
+    expect(risk).toContain("safeProjectAdminUtcIso(project.lastActivityAt)");
+    expect(risk).toContain("formatProjectAdminActivityDateIst as formatDate");
+    expect(submissions).toContain("formatProjectAdminActivityDateIst as formatDate");
+  });
+
 });
