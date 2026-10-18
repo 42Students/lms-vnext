@@ -109,3 +109,13 @@ No tests, migrations or CI were executed. `HR-ROUND-DEPTH-64`, `HR-CALENDAR-DEPT
 
 | HR-APPLICANT-EXPORT-70 | S3 resilience | A malformed persisted submission timestamp could abort the entire recruiter export; invalid totals could print NaN. The CSV now renders a clear unavailable date and bounded totals without changing contact masking or caps. | `hr-applicant-export-model.ts`, `HR-BREAK-chat15-applicant-export-70.test.ts` | Unit and PostgreSQL exports not run |
 | HR-DRIVE-API-71 | S2 graceful failure | Unexpected recruiter drive request service failures were rethrown from GET/POST/PATCH, leaving an unstructured HTTP exception instead of a safe response. The route now delegates those cases to the common sanitized API error handler. | `api/placements/recruiter/drives/requests/route.ts`, `HR-BREAK-chat15-request-api-71.test.ts` | HTTP and cloud CI not run |
+
+
+## HR-first continuation findings — October 19, 2026
+
+| Gap | Severity | Concrete defect and change | Named behavioral test | Verification |
+|---|---|---|---|---|
+| HR-OFFER-EXPORT-74 | S2 | Corrupted `issuedAt` or `expiresAt` throws `RangeError: Invalid time value` during the entire employer CSV export; an invalid aggregate `total` can insert NaN/Infinity in the cap row. Export now treats invalid dates as empty and uses only safe integer counts. | `HR-BREAK-chat15-offer-export-74.test.ts` | Tests authored, not run |
+| HR-CALENDAR-75 | S2 | The HR Today results-due projection accepted any round status when its date/job looked valid; stale canceled and pending dates could appear as actionable employer deadlines. Now only SCHEDULED/COMPLETED results are projected. | `HR-BREAK-chat15-calendar-state-75.test.ts` | Tests authored, not run |
+| HR-PROFILE-76 | S3 | Recruiter first/last name validation accepted embedded control characters in identity data. Input now rejects CR/LF/tab/NUL without prohibiting normal Unicode names. | `HR-BREAK-chat15-profile-name-76.test.ts` | Tests authored, not run |
+| PROJ-BREAK-HR-77 | S1 | `requireProjectLifecycleMutationAccess` loaded feature settings before checking whether a recruiter, TPO or learner may ever mutate Projects. Such roles now fail early, before private module config or project ID lookups. | `PROJ-BREAK-HR-77.test.ts` | Tests authored, not run; external Projects reviewer and real tenant DB pending |

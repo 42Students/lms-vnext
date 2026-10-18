@@ -1,4 +1,5 @@
 import {privateAuthJson} from "@/modules/auth/private-response";
+import {readBoundedAuthJson,AuthRequestBodyTooLarge} from "@/modules/auth/bounded-json";
 import { z } from "zod";
 import { isSameOriginRequest } from "@/auth/origin";
 import {
@@ -105,11 +106,12 @@ export async function POST(request: Request) {
 
     let body: unknown;
     try {
-      body = await request.json();
-    } catch {
+      body = await readBoundedAuthJson(request,2_048);
+    } catch(error) {
+      const tooLarge=error instanceof AuthRequestBodyTooLarge;
       return privateAuthJson(
-        { error: "INVALID_REQUEST" },
-        { status: 400 },
+        { error: tooLarge?"REQUEST_TOO_LARGE":"INVALID_REQUEST" },
+        { status: tooLarge?413:400 },
       );
     }
 
