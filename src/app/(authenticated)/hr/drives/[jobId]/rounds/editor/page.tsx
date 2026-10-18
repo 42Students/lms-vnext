@@ -11,7 +11,7 @@ export default async function HrRoundsEditorPage({params}:{
  params:Promise<{jobId:string}>;
 }){
  const context=await getCurrentRequestContext();
- if(!hasActiveRecruiter(context))redirect("/dashboard");
+ if(!hasActiveRecruiter(context) || context.recruiter?.userId !== context.user.id)redirect("/dashboard");
  const {jobId}=await params;
  if(!z.string().uuid().safeParse(jobId).success)notFound();
  let rounds:Awaited<ReturnType<typeof listHrRoundEditorRows>>;
