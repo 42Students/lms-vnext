@@ -2,24 +2,25 @@ import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {getSuperAdminStudentCourseProgress} from "@/modules/courses/super-admin-student-course-progress";
 import {studentCourseCompletion} from "@/modules/courses/super-admin-student-progress-model";
+import {parseSuperAdminStudentProgressParams} from "@/modules/courses/super-admin-course-progress-query";
+import {requirePermission} from "@/modules/permissions/policy";
 import {PageHeader} from "@/components/ui/page-header";
 import {ErrorState} from "@/components/ui/error-state";
 import {DataTable} from "@/components/ui/data-table";
 
 export default async function SuperAdminStudentCourseProgressPage({searchParams}:{
- searchParams:Promise<{offeringId?:string|string[]}>
+ searchParams:Promise<Record<string,string|string[]|undefined>>
 }){
- const query=await searchParams;
- // Duplicate offeringId query parameters are ambiguous; never silently pick
- // the first identifier from a hostile or stale link.
- const offeringId=typeof query.offeringId==="string"?query.offeringId:null;
+ const context=await getCurrentRequestContext();
+ requirePermission(context,"admin-scope.select");
+ const offeringId=parseSuperAdminStudentProgressParams(await searchParams);
  const back=<Link href="/admin/course-progress" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Back to Course Progress</Link>;
  if(!offeringId)return <div className="space-y-5">
   <PageHeader title="Student Course Progress" eyebrow="Super Admin · Courses"/>
   <ErrorState title="Choose a course offering" description="Select a course and class from Course Progress first." action={back}/>
  </div>;
  let report:Awaited<ReturnType<typeof getSuperAdminStudentCourseProgress>>;
- try{report=await getSuperAdminStudentCourseProgress(await getCurrentRequestContext(),{offeringId});}
+ try{report=await getSuperAdminStudentCourseProgress(context,{offeringId});}
  catch{return <div className="space-y-5">
   <PageHeader title="Student Course Progress" eyebrow="Super Admin · Courses"/>
   <ErrorState title="Unable to read course progress" description="Check your selected college and course offering." action={back}/>

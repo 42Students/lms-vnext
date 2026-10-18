@@ -465,6 +465,21 @@ export const learnerProfileDocumentSchema = z
     certifications: z
       .array(certificationSchema)
       .max(50)
+      .superRefine((entries, ctx) => {
+        // An ID identifies a single editable learner credential. Duplicate
+        // IDs can make React reuse a different certificate or delete both.
+        const seen = new Set<string>();
+        entries.forEach((entry, index) => {
+          if (seen.has(entry.id)) {
+            ctx.addIssue({
+              code: "custom",
+              path: [index, "id"],
+              message: "Duplicate certification identifier",
+            });
+          }
+          seen.add(entry.id);
+        });
+      })
       .default([]),
     achievements: z
       .array(achievementSchema)
