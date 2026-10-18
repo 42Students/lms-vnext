@@ -9,7 +9,7 @@ describe("TPO-settings-audit-55 recruiter link", () => {
     const links = TPO_SETTINGS_NAV_GROUPS.flatMap(
       (group): readonly { href: string; label: string }[] => group.items,
     );
-    expect(links.some(item => item.href === "/tpo/settings/recruiters" && item.label === "Recruiters")).toBe(true);
+    expect(links.some(item => item.href === "/tpo/settings/recruiters" && item.label === "Recruiter access")).toBe(true);
     const page = readFileSync("src/app/(authenticated)/tpo/settings/recruiters/page.tsx", "utf8");
     expect(page).toContain("TpoPublicJoinLinkCard");
   });

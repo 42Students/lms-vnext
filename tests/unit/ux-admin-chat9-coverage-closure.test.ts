@@ -57,7 +57,7 @@ describe("chat-9 route coverage and native DataTable closure",()=>{
  });
  it("UX-admin-route-coverage-04 every /admin last-third route has a named source contract and route path",()=>{
   const list=read("docs/orchestrator/ui-ux/pages-admin.md");
-  const routes=[...list.matchAll(/^- \[[ x]\] `(\/admin[^\`]+)` \(([^)]+)\)/gm)].map(x=>({route:x[1],path:x[2]})).slice(74,111);
+  const routes=[...list.matchAll(/^- \[[ x]\] `(\/admin[^\`]+)` \((src\/app\/.*\/page\.tsx)\)$/gm)].map(x=>({route:x[1],path:x[2]})).slice(74,111);
   expect(routes).toHaveLength(37);
   const suites=[
     "tests/unit/ux-admin-chat9-batch-01.test.ts",

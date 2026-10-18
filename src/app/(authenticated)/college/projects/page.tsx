@@ -29,7 +29,7 @@ export default async function CollegeProjectsPage({
   const context = await getCurrentRequestContext();
   const collegeId = getProjectAdminCollegeId(context);
   if (!collegeId) {
-    return <div className="space-y-4"><PageHeader title="Workspaces"
+    return <div className="space-y-4"><PageHeader title="Project workspaces"
      description="Select a college to continue."/>
      <p role="alert" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
       Project workspaces are college-scoped. Choose an active college from the account switcher before opening this page.
@@ -41,7 +41,7 @@ export default async function CollegeProjectsPage({
   const parsed = parseCollegeProjectsQuery(await searchParams);
   if (!parsed.success) {
     return <div className="space-y-4">
-      <PageHeader title="Workspaces" description="Live projects, each run by a mentor with a team of students." />
+      <PageHeader title="Project workspaces" description="Live projects, each run by a mentor with a team of students." />
       <ErrorState title="Invalid project filters"
         description="Check the search, status, page and rows filters, or clear them to continue."
         action={<Link href="/college/projects" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Clear filters</Link>}
@@ -77,7 +77,7 @@ export default async function CollegeProjectsPage({
         active="workspaces"
       />
       <PageHeader
-        title="Workspaces"
+        title="Project workspaces"
         description="Live projects, each run by a mentor with a team of students."
         actions={<Link href="/college/projects/create"
           className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
