@@ -9,6 +9,7 @@ import { learnerCourseAttendanceSummary, learnerCourseAttendanceThresholdReached
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { DataTable } from "@/components/ui/data-table";
 import type { getLearnerAttendanceWorkspace } from "@/modules/attendance/learner-service";
 
 type AttendanceWorkspace = Awaited<
@@ -339,120 +340,32 @@ export function LearnerCourseAttendance({
           description="Try selecting a different month."
         />
       ) : (
-        <>
-          <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface md:block">
-            <table className="w-full border-collapse text-left text-sm">
-              <thead className="bg-surface-subtle text-xs uppercase tracking-[0.06em] text-muted-foreground">
-                <tr>
-                  <th className="px-4 py-3">
-                    Date
-                  </th>
-                  <th className="px-4 py-3">Day</th>
-                  <th className="px-4 py-3">
-                    Class
-                  </th>
-                  <th className="px-4 py-3">
-                    Faculty / location
-                  </th>
-                  <th className="px-4 py-3">
-                    Status
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {records.map((row) => (
-                  <tr
-                    key={row.id}
-                    className="border-t border-border"
-                  >
-                    <td className="px-4 py-3">
-                      <p className="m-0 font-semibold text-foreground">
-                        {dateLabel(
-                          row.startsAt,
-                        )}
-                      </p>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {timeLabel(
-                          row.startsAt,
-                        )}
-                      </p>
-                    </td>
-                    <td className="px-4 py-3 text-body">{weekdayLabel(row.startsAt)}</td>
-                  <td className="px-4 py-3">
-                      <p className="m-0 font-semibold text-foreground">
-                        {row.title}
-                      </p>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {course.courseCode} ·{" "}
-                        {course.sectionName}
-                      </p>
-                    </td>
-                    <td className="px-4 py-3 text-body">
-                      {[
-                        row.facultyName,
-                        row.location,
-                      ]
-                        .filter(Boolean)
-                        .join(" · ") ||
-                        "Not specified"}
-                    </td>
-                    <td className="px-4 py-3">
-                      <StatusBadge
-                        tone={learnerCourseAttendanceTone(
-                          row.status,
-                        )}
-                      >
-                        {label(row.status)}
-                      </StatusBadge>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="space-y-3 md:hidden">
-            {records.map((row) => (
-              <article
-                key={row.id}
-                className="rounded-xl border border-border bg-surface p-4"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <h3 className="m-0 text-sm font-semibold text-foreground">
-                      {row.title}
-                    </h3>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      {dateLabel(
-                        row.startsAt,
-                      )}{" "}
-                      ·{" "}
-                      {timeLabel(
-                        row.startsAt,
-                      )}
-                    </p>
-                  </div>
-                  <StatusBadge
-                    tone={learnerCourseAttendanceTone(
-                      row.status,
-                    )}
-                  >
-                    {label(row.status)}
-                  </StatusBadge>
-                </div>
-                <p className="mt-3 text-xs text-body">
-                  {[
-                    row.facultyName,
-                    row.location,
-                  ]
-                    .filter(Boolean)
-                    .join(" · ") ||
-                    "Faculty / location not specified"}
-                </p>
-              </article>
-            ))}
-          </div>
-        </>
+        <DataTable
+          caption="Attendance History"
+          rows={records}
+          getRowKey={row=>row.id}
+          empty={<EmptyState title="No classes in this period" description="Try selecting a different month." />}
+          columns={[
+            {key:"date",header:"Date",mobilePriority:"primary" as const,
+              cell:(row:AttendanceRecord)=><span className="block min-w-0">
+                <strong className="block text-foreground">{dateLabel(row.startsAt)}</strong>
+                <span className="block text-xs text-muted-foreground">{timeLabel(row.startsAt)}</span>
+              </span>},
+            {key:"class",header:"Class",mobilePriority:"secondary" as const,
+              cell:(row:AttendanceRecord)=><span className="block min-w-0">
+                <strong className="block break-words text-foreground">{row.title}</strong>
+                <span className="block text-xs text-muted-foreground">{course.courseCode} · {course.sectionName}</span>
+              </span>},
+            {key:"status",header:"Status",mobilePriority:"secondary" as const,
+              cell:(row:AttendanceRecord)=><StatusBadge tone={learnerCourseAttendanceTone(row.status)}>
+                {label(row.status)}
+              </StatusBadge>},
+            {key:"faculty",header:"Faculty / location",mobilePriority:"secondary" as const,
+              cell:(row:AttendanceRecord)=>[row.facultyName,row.location].filter(Boolean).join(" · ")||"Not specified"},
+            {key:"day",header:"Day",mobilePriority:"secondary" as const,
+              cell:(row:AttendanceRecord)=>weekdayLabel(row.startsAt)},
+          ]}
+        />
       )}
     </div>
   );
