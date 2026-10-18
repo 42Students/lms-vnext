@@ -55,6 +55,8 @@ describe("College contact CSV read route role and failure matrix", () => {
     expect(response.status).toBe(200);
     expect(response.headers.get("cache-control")).toBe("private, no-store");
     expect(response.headers.get("content-type")).toContain("text/csv");
+    expect(response.headers.get("vary")).toBe("Cookie");
+    expect(response.headers.get("x-content-type-options")).toBe("nosniff");
     expect(response.headers.get("x-export-total")).toBe("1");
     expect(response.headers.get("x-export-truncated")).toBe("false");
     expect(await response.text()).toContain("s•••@example.edu");
@@ -68,6 +70,8 @@ describe("College contact CSV read route role and failure matrix", () => {
     const response = await GET(new Request("https://lms.example/api/college/contacts/export"));
     expect(response.status).toBe(403);
     expect(response.headers.get("content-type")).toContain("application/json");
+    expect(response.headers.get("cache-control")).toBe("private, no-store");
+    expect(response.headers.get("vary")).toBe("Cookie");
     expect(mocks.exportCsv).toHaveBeenCalledTimes(1);
     expect(await response.text()).not.toContain("Masked");
   });
