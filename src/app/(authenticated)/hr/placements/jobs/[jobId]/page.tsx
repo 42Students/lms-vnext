@@ -1,3 +1,4 @@
+import { ScrollCue } from "@/components/ui/scroll-cue";
 import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
 import { PlacementsServiceError } from "@/modules/placements/errors";
@@ -467,7 +468,7 @@ export default async function HrPlacementJobPage({
           </div>:null}
         {threadMessages?<div className="space-y-3">
           <p className="text-xs text-muted-foreground">{threadMessages.total} recorded messages</p>
-          <ol aria-label="Drive discussion history" className="max-h-[36rem] space-y-2 overflow-y-auto">
+          <ScrollCue axis="y" label="Drive discussion history" viewportClassName="max-h-[36rem]"><ol aria-label="Drive discussion history" className="space-y-2">
             {[...threadMessages.messages].reverse().map(message=><li key={message.id}
               className="rounded-lg border border-border bg-surface-subtle p-3">
               <p className="text-xs font-semibold text-muted-foreground">
@@ -476,7 +477,7 @@ export default async function HrPlacementJobPage({
               </p>
               <p className="mt-1 whitespace-pre-wrap break-words text-sm text-body">{message.body}</p>
             </li>)}
-          </ol>
+          </ol></ScrollCue>
           <RecruiterConversationReplyForm threadId={selectedThread!.id}/>
           <Link href={"/hr/conversations/"+selectedThread!.id}
             className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Browse full conversation history</Link>
