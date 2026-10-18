@@ -23,7 +23,7 @@ export default async function MentorProjectReviewCompletenessPage({
   </section>;
   const context=await getCurrentRequestContext();
   const data=await getMentorProjectReviewCompleteness(context,parsed.data);
-  return <div className="space-y-6">
+  return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Mentor · Project Overview" title="Delivery review completeness"
       description={data.projectTitle??"Current assigned project"}
       actions={<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
