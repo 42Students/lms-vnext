@@ -61,6 +61,8 @@ Scope: TPO Projects read journey, TPO Students and Companies bulk operations, fi
 
 | D12-33 | MAJOR | TPO Students signed bulk preview iterated up to 200 learners sequentially, with each eligibility projection performing several DB queries. Even a modest roster could exhaust a request deadline while TPO staff prepared time-sensitive eligibility decisions. | Execute read-only learner projections in bounded windows of eight; preserve the selected row ordering for HMAC signing and forbid unbounded PostgreSQL pool fan-out. Confirmation stays sequential to preserve per-row CAS/audit outcomes. | `f91e4ed7`, `51e94929`, `chat12-tpo-bulk-preview-service-behavior.test.ts`; cloud duration/load tests pending. |
 
+| D12-34 | CRITICAL | Both `loadTpoBulkCurrent` and the directly callable `loadTpoBulkApplicationStages` executed `requireTpoJobActor` inside PostgreSQL `READ ONLY` transactions. That helper issues `SELECT ... FOR SHARE`, which PostgreSQL forbids inside `READ ONLY` transactions, so every protected bulk preview could fail before processing a single row. | Keep transactions (and actor SHARE locks) but do not mark these short, mutation-free transactions `READ ONLY`. Assert both reader entrypoints and the live lock primitive in regression tests. | `40e83799`, `e9d31d52`, `df59a7f9`; cloud PostgreSQL runtime verification outstanding. |
+
 ## Verification status
 
 The rolling `docs/orchestrator/unit-failures-latest.md` explicitly reports two `chat-12` failures (TPO-students-51); their stale selectors were repaired but remain **unverified in CI**. The branch was fast-forwarded to main `a172b146ede1992a428dbe3e74a6d87dd3a12985` before these changes. No direct commits to main.
