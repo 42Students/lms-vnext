@@ -183,7 +183,7 @@ export async function ProjectAdminAuditPage({
         })}
       </nav>
       <form
-        className="grid gap-3 rounded-xl border border-border bg-surface p-5 sm:grid-cols-2 xl:grid-cols-5"
+        className="grid gap-3 border-b border-border pb-5 sm:grid-cols-2 xl:grid-cols-5"
         action={basePath + "/audit"}
       >
         <label>
