@@ -117,4 +117,34 @@ describe("UX cross-audit /admin second third (chat-9)",()=>{
   expect(page).toContain("basePath=\"/admin/placements\"");
   expect(page).toContain("<EmptyState");
  });
+ it("UX-admin-live-classes-02 public content links are same-tab, https vetted and phone reachable",()=>{
+  const page=source("src/components/courses/super-admin-content-directory-page.tsx");
+  expect(page).toContain("<ThirdPartyLink");
+  expect(page).toContain('label="Open public link"');
+  expect(page).toContain("<Pagination");
+  expect(page).not.toContain('target="_blank"');
+  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("min-h-10");
+ });
+ it("UX-admin-placements-calendar-02 all calendar chips/events meet phone size and high contrast focus",()=>{
+  const page=source("src/components/placements/placement-calendar-workspace.tsx");
+  expect(page).not.toContain("min-h-9");
+  expect(page).not.toContain("min-h-8");
+  expect(page).toContain("focus-visible:outline-2");
+  expect(page).toContain("min-h-11");
+ });
+ it("UX-admin-placements-jobs-03 employer portal never launches a raw popup",()=>{
+  const page=source("src/components/placements/placement-drive-workspace.tsx");
+  expect(page).toContain('label="Open employer portal"');
+  expect(page).toContain("<ThirdPartyLink");
+  expect(page).not.toContain('target="_blank"');
+ });
+ it("UX-admin-placements-jobs-04 all drive tabs are 44px and contrast safe",()=>{
+  const tabs=source("src/components/placements/super-admin-drive-tabs.tsx");
+  expect(tabs).toContain("min-h-11");
+  expect(tabs).not.toContain("min-h-10");
+  expect(tabs).not.toContain("text-primary-text");
+  expect(tabs).toContain('aria-current={tab.label===active?"page":undefined}');
+ });
+
 });
