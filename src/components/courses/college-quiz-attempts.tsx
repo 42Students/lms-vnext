@@ -35,14 +35,15 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
   {options.length>1?<label className="grid gap-1 text-xs font-semibold">Section
    <select value={chosen.deliveryId} disabled={loading} onChange={e=>{
     setDeliveryId(e.target.value);setOpened(false);setAttempts([]);setLearnerSearch("");setPage(1);setHasMore(false);}}
-    className="min-h-10 rounded border border-border px-2">
+    className="min-h-11 rounded border border-border px-2">
     {options.map(x=><option key={x.deliveryId} value={x.deliveryId}>{x.sectionName} ({x.sectionCode})</option>)}
    </select></label>:null}
   <button type="button" disabled={loading} onClick={()=>opened?setOpened(false):void open()}
-   aria-expanded={opened} className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-primary-text">
+   aria-expanded={opened} className="min-h-11 rounded border border-border px-3 text-xs font-semibold text-primary-text">
    {opened?"Close submissions":loading?"Loading…":"Submissions"}
   </button>
-  {opened?<div className="max-h-80 overflow-auto rounded border border-border bg-surface p-2">
+  {opened?<div role="region" aria-label="Quiz submissions, scroll for more attempts" tabIndex={0}
+   className="max-h-80 overflow-y-auto overscroll-contain rounded border border-border bg-surface p-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
    {error?<div role="alert" className="flex flex-wrap items-center gap-2 text-xs text-error">{error}
     <button type="button" className="underline" disabled={loading} onClick={()=>void open(page)}>Retry</button>
    </div>:null}
@@ -51,7 +52,7 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
    {!loading&&attempts.length>0?<><p className="mb-2 text-xs font-semibold">{attempts.length} attempts</p>
     <label className="mb-2 grid gap-1 text-xs font-semibold">Search Student on this page
      <input type="search" value={learnerSearch} onChange={event=>setLearnerSearch(event.target.value)}
-      className="min-h-10 rounded border border-border bg-background p-2" placeholder="Student name or email"/>
+      className="min-h-11 rounded border border-border bg-background p-2" placeholder="Student name or email"/>
     </label>
     {learnerSearch.trim()&&!attempts.some(item=>(item.learnerDisplayName??"").toLowerCase().includes(learnerSearch.trim().toLowerCase())||(item.learnerEmail??"").toLowerCase().includes(learnerSearch.trim().toLowerCase()))?
      <p className="text-xs text-muted-foreground">No Students match your search.</p>:null}
@@ -80,15 +81,16 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
     </li>)}</ul>
    </>:null}
     {loading?<p role="status" className="mt-3 text-xs text-muted-foreground">Loading quiz submissions, page {page}…</p>:null}
+    {!loading&&!error&&attempts.length>5?<p className="mt-2 text-xs text-muted-foreground">Scroll inside this panel to see more quiz submissions.</p>:null}
     {!loading&&!error?<nav aria-label="Quiz submission pages" className="mt-3 flex items-center justify-between gap-3 border-t border-border pt-3 text-xs">
       <span>Page {page} · up to 25 attempts per page</span>
       <div className="flex items-center gap-3">
        <button type="button" disabled={loading||page<=1}
         onClick={()=>{setLearnerSearch("");void open(page-1);}}
-        className="min-h-10 rounded border border-border px-3 font-semibold text-primary-text disabled:opacity-50">Previous</button>
+        className="min-h-11 rounded border border-border px-3 font-semibold text-primary-text disabled:opacity-50">Previous</button>
        <button type="button" disabled={loading||!hasMore}
         onClick={()=>{setLearnerSearch("");void open(page+1);}}
-        className="min-h-10 rounded border border-border px-3 font-semibold text-primary-text disabled:opacity-50">Next</button>
+        className="min-h-11 rounded border border-border px-3 font-semibold text-primary-text disabled:opacity-50">Next</button>
       </div>
      </nav>:null}
   </div>:null}
