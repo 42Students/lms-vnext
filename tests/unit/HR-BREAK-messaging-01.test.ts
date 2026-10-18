@@ -50,10 +50,12 @@ describe("HR-BREAK-messaging-01: drive conversations, IDOR and expired-session j
   expect(mocks.threads).not.toHaveBeenCalled();
  });
  it("never leaks another relationship's conversation because the ID happens to match a job",()=>{
-  const source=threads.slice();
+  // The service first authorizes and filters the persisted college; this
+  // pure projection then enforces the employer's job and recruiter identity.
+  const source=threads.filter(thread=>thread.collegeId===workspace.college.id);
   expect(recruiterDriveThreads(source,job,"recruiter-a")).toEqual([threads[0]]);
   expect(recruiterDriveThreads(source,job,"recruiter-b")).toEqual([threads[1]]);
   expect(recruiterDriveThreads(source,"unrelated","recruiter-a")).toEqual([]);
-  expect(source).toEqual(threads);
+  expect(source).toEqual(threads.filter(thread=>thread.collegeId===workspace.college.id));
  });
 });

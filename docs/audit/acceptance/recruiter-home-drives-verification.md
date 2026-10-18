@@ -239,3 +239,8 @@ Employer grant authorization uses a real PostgreSQL wall-clock expiry within pot
 ### HR-API-MATRIX-47 and HR-ACTOR-STATUS-48
 
 Every dedicated recruiter API route now has an inventory assertion in `tests/unit/chat15-recruiter-api-route-coverage-47.test.ts` distinguishing mutation-origin guards from read-only GETs; the request and slot handlers also have mocked behavioural HTTP tests. A stale/revoked recruiter user must be ACTIVE in persistence before job, candidate, round or slot reads, even if an earlier session object still says ACTIVE; see `tests/unit/HR-BREAK-chat15-persisted-user-48.test.ts`. These are authored but not executed; browser and PostgreSQL session-revocation checks remain necessary.
+
+
+## Chat-15 HR-RECORDED-QUERY-51 — outside-platform drives
+
+The retired/external recruiter drive page rejects ambiguous duplicate `collegeId` and `saved` parameters before it reads an authorized college's choices or displays a saved receipt. Actual SSR evidence: `tests/unit/chat15-hr-recorded-outside-page-51.test.tsx`, covering active/revoked actor, one/multiple grants, foreign/malformed college, repeated keys and independently verified saving. The page never presents an outside-drive historical record as a published learner-visible job. CI and browser run pending.

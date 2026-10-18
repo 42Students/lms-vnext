@@ -5,7 +5,7 @@ import {projectSubmissions} from "@/db/schema";
 import type {SQL} from "drizzle-orm";
 import type {RequestContext} from "@/modules/identity/context";
 import {listProjectAdminUnsubmitted} from "@/modules/projects/admin-unsubmitted-service";
-import {adminUnsubmittedLiteralSearchPattern} from "@/modules/projects/admin-unsubmitted-query-model";
+import {adminUnsubmittedLiteralSearchPattern,adminUnsubmittedQuerySchema} from "@/modules/projects/admin-unsubmitted-query-model";
 
 const collegeId="11111111-1111-4111-8111-111111111111";
 const otherCollegeId="22222222-2222-4222-8222-222222222222";
@@ -93,6 +93,19 @@ describe("IIT Dharwad Projects Admin unsubmitted workspaces service permissions 
   });
   it("PROJ-BREAK-scale-21 rejects hostile offsets before loading college scope or DB",async()=>{
     for(const input of [{page:0},{page:100001},{page:1.5},{pageSize:101},{pageSize:0},{q:"x".repeat(121)}]){
+      await expect(listProjectAdminUnsubmitted(admin(),collegeId,input)).rejects.toThrow();
+    }
+    expect(state.selects).toBe(0);
+    expect(state.offsetValues).toHaveLength(0);
+  });
+  it("PROJ-BREAK-scale-21 rejects exotic numeric encodings and duplicated search tokens before querying",async()=>{
+    for(const input of [
+      {page:"0x10"},{page:"1e3"},{page:" 2"},{page:"1.5"},
+      {page:Infinity},{page:Number.NaN},{pageSize:"1e2"},{pageSize:" 20"},
+      {pageSize:"0x20"},{pageSize:""},{page:["1","2"]},{q:["foo","bar"]},
+      {page:1,unexpected:true},
+    ]){
+      expect(adminUnsubmittedQuerySchema.safeParse(input).success,JSON.stringify(input)).toBe(false);
       await expect(listProjectAdminUnsubmitted(admin(),collegeId,input)).rejects.toThrow();
     }
     expect(state.selects).toBe(0);
