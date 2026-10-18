@@ -4,6 +4,7 @@ import LegacySuperAdminLoginPage from "@/app/superadmin-login/page";
 import LegacySuperAdminE2ELoginPage from "@/app/e2e/superadmin-login/page";
 import RetiredHandoffPage from "@/app/auth/handoff/page";
 import LegacyHrInvite from "@/app/hr-invite/[token]/page";
+import PrivacyPolicyPage,{metadata as privacyMetadata} from "@/app/privacy-policy/page";
 
 vi.mock("next/navigation",()=>({
  redirect:vi.fn((href:string)=>{throw new Error("REDIRECT:"+href);}),
@@ -22,6 +23,12 @@ describe("chat-16 legacy authentication and HR invite actual page routes",()=>{
  it("UX-chat16-legacy-auth-handoff-17 never exchanges a cross-domain token on old handoff route",()=>{
   expect(()=>RetiredHandoffPage()).toThrow("REDIRECT:/?auth=handoff-retired");
   expect(redirect).toHaveBeenCalledExactlyOnceWith("/?auth=handoff-retired");
+  expect(notFound).not.toHaveBeenCalled();
+ });
+ it("UX-chat16-privacy-policy-20 always redirects to the full public privacy statement, not a sign-in wall",()=>{
+  expect(privacyMetadata.title).toBe("Privacy | 42LMS");
+  expect(()=>PrivacyPolicyPage()).toThrow("REDIRECT:/assets/static/privacy-policy-view.html");
+  expect(redirect).toHaveBeenCalledExactlyOnceWith("/assets/static/privacy-policy-view.html");
   expect(notFound).not.toHaveBeenCalled();
  });
  it("UX-chat16-legacy-hr-invite-18 maps only a validated opaque token to the live public invite URL",async()=>{
