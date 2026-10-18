@@ -46,7 +46,7 @@ export default async function TpoPerformanceIntelligencePage({
           description="The selected reporting filters were invalid." />
         <p role="alert" className="rounded-lg border border-border bg-surface p-5 text-sm text-body">
           No reports were loaded. <Link href="/tpo/reports/intelligence"
-            className="font-semibold text-[var(--lms-teal-deep)] hover:underline">Clear filters</Link>
+            className="font-semibold text-[var(--lms-link-text)] hover:underline">Clear filters</Link>
         </p>
       </div>
     );
@@ -69,7 +69,7 @@ export default async function TpoPerformanceIntelligencePage({
         description="Observed applications and offer decisions by employer, plus explicitly defined annual CTC measures."
         actions={
           <a href={csvHref}
-            className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary">
             Export intelligence CSV
           </a>
         }

@@ -43,7 +43,7 @@ export default async function TpoReportsPage({
     className="rounded-xl border border-border bg-surface p-6">
     <h1 className="font-semibold text-foreground">Invalid report search</h1>
     <p className="mt-2 text-sm text-body">Enter up to 80 characters to filter reports.</p>
-    <Link href="/tpo/reports" className="mt-3 inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">
+    <Link href="/tpo/reports" className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-[var(--lms-link-text)] underline">
       Clear search
     </Link>
   </section>;
@@ -62,7 +62,7 @@ export default async function TpoReportsPage({
       <section role="alert" className="rounded-xl border border-warning-border bg-warning-subtle p-6">
         <h2 className="text-base font-semibold text-foreground">The headline numbers could not be loaded.</h2>
         <p className="mt-2 text-sm text-body">The report is temporarily unavailable. No placement totals are being inferred from missing data.</p>
-        <Link href="/tpo/reports" className="mt-3 inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Retry</Link>
+        <Link href="/tpo/reports" className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)]">Retry</Link>
       </section>
     </div>;
   }
@@ -186,7 +186,7 @@ export default async function TpoReportsPage({
         actions={
           <Link
             href={reportHref("/tpo/reports/placement-summary", workspace)}
-            className="inline-flex min-h-11 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-foreground"
+            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-primary bg-primary px-4 text-sm font-semibold text-white"
           >
             Open management view
           </Link>
@@ -225,26 +225,26 @@ export default async function TpoReportsPage({
       ) : null}
 
       <form method="get" action="/tpo/reports"
-        className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+        className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
         {workspace.selectedSeasonId?<input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
         {workspace.selectedJobId?<input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
         <label className="grid min-w-0 flex-1 gap-2 text-sm font-semibold text-body">
           Find a report
           <input type="search" name="q" maxLength={80} defaultValue={parsedSearch.data}
             placeholder="Report name or purpose"
-            className="min-h-11 w-full rounded border border-border bg-surface px-3"/>
+            className="min-h-11 sm:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3"/>
         </label>
         <label className="grid gap-2 text-sm font-semibold text-body">Report category
           <select name="group" defaultValue={parsedGroup.data}
-            className="min-h-11 rounded border border-border bg-surface px-3">
+            className="min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-3">
             {TPO_REPORT_GALLERY_GROUPS.map(group=><option key={group} value={group}>
               {group==="ALL"?"All report categories":group}
             </option>)}
           </select>
         </label>
-        <button type="submit" className="min-h-11 rounded bg-primary px-4 font-semibold text-foreground">Search</button>
+        <button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 font-semibold text-white">Search</button>
         <Link href={reportHref("/tpo/reports",workspace)}
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">
+          className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">
           Clear
         </Link>
       </form>
@@ -270,14 +270,14 @@ export default async function TpoReportsPage({
                   href={reportHref(card.path, workspace)}
                   className="block rounded-xl border border-border bg-surface p-5 transition hover:border-primary hover:bg-primary-subtle"
                 >
-                  <h3 className="font-semibold text-[var(--lms-teal-deep)]">
+                  <h3 className="font-semibold text-[var(--lms-link-text)]">
                     {card.title}
                   </h3>
-                  {card.path==="/tpo/reports/placement-summary"?<p className="mt-1 text-xs font-semibold text-[var(--lms-teal-deep)]">Start here</p>:null}
+                  {card.path==="/tpo/reports/placement-summary"?<p className="mt-1 text-xs font-semibold text-[var(--lms-link-text)]">Start here</p>:null}
                   <p className="mt-2 text-sm leading-6 text-body">
                     {card.description}
                   </p>
-                  <p className="mt-3 text-sm font-semibold text-[var(--lms-teal-deep)]">
+                  <p className="mt-3 text-sm font-semibold text-[var(--lms-link-text)]">
                     Open report →
                   </p>
                 </Link>
