@@ -47,8 +47,14 @@ export default async function RecruiterConversationDetail({params,searchParams}:
      item.companyId===context.recruiter?.companyId)
   : null;
  const conversationSubject=result.thread.jobId ? matchingDrive?.job.title??"Drive unavailable" : "General";
- const changeRequests=matchingDrive?
-  await getDriveChangeRequests(context,matchingDrive.job.id):null;
+ // Change-request summaries are optional. An outage must not hide an already
+ // authorized conversation or discard its pending recruiter reply.
+ const changeRequestResult=matchingDrive
+  ?await getDriveChangeRequests(context,matchingDrive.job.id)
+    .then(value=>({ok:true as const,value}))
+    .catch(()=>({ok:false as const}))
+  :null;
+ const changeRequests=changeRequestResult?.ok?changeRequestResult.value:null;
  const messages=[...result.messages].reverse().map(message=>({
   ...message,proposal:recruiterProposalMessageMarker(message.senderType,message.body),
  }));
@@ -65,6 +71,10 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   <p className="text-sm text-body">{result.total} messages · {result.unread} unread placement cell messages · Page {result.page} of {result.pages}</p>
   <p className="text-xs text-muted-foreground">Messages on this page are shown oldest to newest. Use Older and Newer to browse the rest of the conversation.</p>
   {result.unread>0?<RecruiterConversationReadControl threadId={result.thread.id}/>:null}
+  {changeRequestResult && !changeRequestResult.ok?
+    <p role="status" className="rounded-md border border-border bg-surface p-3 text-sm text-body">
+      Change request updates are temporarily unavailable. Messages remain available; refresh to try again.
+    </p>:null}
   {changeRequests?.party==="COMPANY" && changeRequests.requests.length>0?
     <section aria-label="Drive change request updates" className="rounded-xl border border-border bg-surface p-4">
       <h2 className="text-sm font-semibold text-foreground">Change requests · {changeRequests.requests.length}</h2>
