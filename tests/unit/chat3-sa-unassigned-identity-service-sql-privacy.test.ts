@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { PgDialect } from "drizzle-orm/pg-core";
-import type { SQL } from "drizzle-orm";
+import { sql, type SQL, type SQLWrapper } from "drizzle-orm";
 import type { RequestContext } from "@/modules/identity/context";
 
 vi.mock("server-only", () => ({}));
@@ -16,11 +16,19 @@ vi.mock("@/db/client", () => ({
       const fields = Object.keys(projection);
       state.selections.push(fields);
       class Query {
-        from() { return this; }
+        private source: SQLWrapper | null = null;
+        private condition: SQL | null = null;
+        from(table: SQLWrapper) { this.source = table; return this; }
         where(condition: SQL) {
+          this.condition = condition;
           const compiled = new PgDialect().sqlToQuery(condition);
           state.predicates.push({ sql: compiled.sql, params: compiled.params });
           return this;
+        }
+        getSQL() {
+          if (!this.source) throw new Error("Unbound SQL source");
+          return this.condition ? sql`select 1 from ${this.source} where ${this.condition}` :
+            sql`select 1 from ${this.source}`;
         }
         orderBy() { return this; }
         limit() { return this; }
