@@ -1,6 +1,7 @@
 "use client";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {authoringLocalDateTime,authoringDueInstant}
@@ -41,6 +42,13 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
  const [confirmed,setConfirmed]=useState(false);
  const [dirtyDraft,setDirtyDraft]=useState(false);
  const [pending,setPending]=useState(false);
+ const confirmTask=useRef<(()=>void)|null>(null);
+ const [confirmRequest,setConfirmRequest]=useState<{title:string;variant:"danger"|"primary"}|null>(null);
+ function askConfirm(title:string,task:()=>void,variant:"danger"|"primary"="danger"){
+  confirmTask.current=task;setConfirmRequest({title,variant});
+ }
+ function dismissConfirm(){confirmTask.current=null;setConfirmRequest(null);}
+ function acceptConfirm(){const task=confirmTask.current;dismissConfirm();task?.();}
  const [publishNow,setPublishNow]=useState(true);
  const [detailsFailed,setDetailsFailed]=useState(false);
  const [error,setError]=useState<string|null>(null);
@@ -73,18 +81,18 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
   finally{if(token===choiceRequest.current)setPending(false);}
  }
  function chooseWithDraftProtection(id:string){
-  if(facultyQuizSwitchNeedsConfirmation(dirtyDraft,selected,id) &&
-    !window.confirm("Discard unsaved Quiz edits and switch to another Quiz?"))return;
+  if(facultyQuizSwitchNeedsConfirmation(dirtyDraft,selected,id)){
+   askConfirm("Discard unsaved Quiz edits and switch to another Quiz?",()=>void choose(id));return;
+  }
   void choose(id);
  }
  function resetDraft(){
   if(!facultyQuizMayResetDraft(dirtyDraft,pending))return;
-  if(!window.confirm("Discard unsaved Quiz changes and restore the saved version?"))return;
-  void choose(selected);
+  askConfirm("Discard unsaved Quiz changes and restore the saved version?",()=>void choose(selected));
  }
- function copyToNewDraft(){
+ function copyToNewDraft(confirmed=false){
   if(!facultyQuizCanCopyToDraft(chosen?.status,questions.length>0,pending,detailsFailed))return;
-  if(dirtyDraft && !window.confirm("Copy the current unsaved Quiz changes into a new draft?"))return;
+  if(dirtyDraft && !confirmed){askConfirm("Copy the current unsaved Quiz changes into a new draft?",()=>copyToNewDraft(true),"primary");return;}
   setSelected("");setTitle(facultyQuizCopyTitle(title));setConfirmed(false);
   setDirtyDraft(true);setError(null);
   setSuccess("Quiz copied to an unsaved draft. Review and select Create draft to save it.");
@@ -92,7 +100,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
  function updateQuestion(i:number,fn:(q:Question)=>Question){
   setQuestions(old=>old.map((q,n)=>n===i?fn(q):q));setConfirmed(false);setDirtyDraft(true);
  }
- async function submit(action:"CREATE"|"EDIT"|"PUBLISH"|"CLOSE"|"ARCHIVE"){
+ async function submit(action:"CREATE"|"EDIT"|"PUBLISH"|"CLOSE"|"ARCHIVE",confirmed=false){
   // Routine quiz save relies on the command response and server validation; only destructive actions prompt.
   if(pending)return;
   if(action==="EDIT" && !facultyQuizCanSaveChanges(chosen?.status,dirtyDraft,detailsFailed,pending)){
@@ -134,7 +142,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
     action==="CLOSE" ?
     "Close this published Section Quiz? New learner attempts stop; existing attempts and grades remain." :
     "Confirm "+action.toLowerCase()+" for this Section Quiz?";
-  if((action==="ARCHIVE"||action==="CLOSE")&&!window.confirm(warning))return;
+  if((action==="ARCHIVE"||action==="CLOSE")&&!confirmed){askConfirm(warning,()=>void submit(action,true));return;}
   if(!facultyBeginQuizWrite(mutationInFlight))return;
   setError(null);setSuccess(null);setPending(true);
   try{
@@ -199,7 +207,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
   {quizSearch.trim()&&visibleQuizzes.length===0?<p role="status" className="text-sm text-body">No matching quizzes. Clear the search to see all Section quizzes.</p>:null}
   {chosen?<p className="text-xs text-body">State: {chosen.status}; published quizzes and attempted quizzes cannot change their questions.</p>:null}
   {facultyQuizCanCopyToDraft(chosen?.status,questions.length>0,pending,detailsFailed)?
-   <button type="button" onClick={copyToNewDraft} className="rounded border border-border px-3 py-2 text-sm font-semibold">Copy as new draft</button>:null}
+   <button type="button" onClick={()=>copyToNewDraft()} className="rounded border border-border px-3 py-2 text-sm font-semibold">Copy as new draft</button>:null}
   {!chosen?<label className="grid min-w-0 gap-1 text-sm">Lesson
    <select value={lessonId} onChange={e=>{setConfirmed(false);setDirtyDraft(true);setLessonId(e.target.value);}}
     className="min-h-10 min-w-0 max-w-full rounded border border-border p-2">
@@ -316,10 +324,12 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
      onClick={()=>updateQuestion(i,old=>({...old,options:facultyDuplicateQuizOption(old.options,j)}))}
      aria-label={"Duplicate answer "+(j+1)+" in question "+(i+1)} className="rounded border border-border px-2 py-1 text-xs">Duplicate</button>
     <button type="button" disabled={q.options.length<=2}
-     onClick={()=>{if(facultyQuizOptionRemovalNeedsConfirmation(q.options,j) &&
-      !window.confirm(facultyQuizOptionRemovalPrompt(q.type,q.options,i,j)))return;
+     onClick={()=>{if(facultyQuizOptionRemovalNeedsConfirmation(q.options,j)){
+       askConfirm(facultyQuizOptionRemovalPrompt(q.type,q.options,i,j),
+         ()=>updateQuestion(i,old=>({...old,options:facultyRemoveQuizOption(old,j)})));return;
+      }
       updateQuestion(i,old=>({...old,options:facultyRemoveQuizOption(old,j)}));}}
-     className="rounded border border-border px-2 py-1 text-xs">Remove</button>
+      className="rounded border border-border px-2 py-1 text-xs">Remove</button>
    </div>)}
    <button type="button" disabled={q.options.length>=20}
     onClick={()=>{const pasted=window.prompt("Paste up to 20 answer choices separated by a new line or |. Empty draft choices will be replaced.");
@@ -348,9 +358,10 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
     onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyDuplicateQuizQuestion(old,i));}}
     className="rounded border border-border px-3 py-2 text-sm" aria-label={"Duplicate question "+(i+1)}>Duplicate question</button>
    <button type="button" disabled={questions.length<=1}
-    onClick={()=>{if(!window.confirm(facultyQuizQuestionRemovalPrompt(i,q.prompt)))return;
-     setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyRemoveQuizQuestion(old,i));}}
-    className="ml-2 rounded border border-border px-3 py-2 text-sm">Remove question</button>
+    onClick={()=>askConfirm(facultyQuizQuestionRemovalPrompt(i,q.prompt),()=>{
+      setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyRemoveQuizQuestion(old,i));
+     })}
+     className="ml-2 rounded border border-border px-3 py-2 text-sm">Remove question</button>
   </fieldset>)}
   <button type="button" disabled={!editable||questions.length>=100}
    onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyAppendQuizQuestion(old,{...fresh(),sequence:old.length}));}}
@@ -366,8 +377,9 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
     <p role="status" className="text-sm text-body">You have unsaved changes. Save the draft before publishing.</p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {facultyQuizCanRetryDetails(detailsFailed,chosen?.id,pending) ?
-    <button type="button" onClick={()=>{if(facultyQuizRetryNeedsConfirmation(dirtyDraft,pending)&&
-      !window.confirm("Discard unsaved Quiz metadata and retry loading the saved question bank?"))return;
+    <button type="button" onClick={()=>{if(facultyQuizRetryNeedsConfirmation(dirtyDraft,pending)){
+       askConfirm("Discard unsaved Quiz metadata and retry loading the saved question bank?",()=>void choose(selected));return;
+      }
       void choose(selected);}}
       className="inline-flex min-h-10 items-center rounded border border-border px-3 py-2 text-sm font-semibold text-primary-text">
       Reload Quiz questions
@@ -407,5 +419,8 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
   <p className="text-xs text-muted-foreground">
    Each question needs unique nonblank options and valid correct answers; total points must not exceed 10000. Edits are blocked after publication or first attempt. Closing stops future attempts while keeping submitted results. Archiving hides the quiz from learner lists without deleting history and is refused after any attempt.
   </p>
- </section>;
+ <ConfirmDialog open={confirmRequest!==null} onOpenChange={open=>{if(!open&&!pending)dismissConfirm();}}
+     title={confirmRequest?.title??"Confirm Quiz action"} confirmVariant={confirmRequest?.variant??"danger"} pending={pending}
+     onConfirm={acceptConfirm}/>
+  </section>;
 }
