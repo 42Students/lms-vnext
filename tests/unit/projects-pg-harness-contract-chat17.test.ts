@@ -71,10 +71,26 @@ describe("PROJ-HARNESS source and environment guard",()=>{
    expect(helper).toContain('"final delivery"');
    expect(helper).toContain('"task submissions"');
    expect(helper).toContain('"meetings"');
-   expect(helper).toContain('status not in (\'ARCHIVED\',\'COMPLETED\')');
-   expect(helper).toContain("status not in ('ARCHIVED','COMPLETED')");
+   expect(helper).toContain("where id=$1 and status='ACTIVE'");
    expect(helper).toContain("where id=$1 and status='DRAFT'");
    expect(helper).not.toContain("where id=$1 and created_by_membership_id=$2 and status='DRAFT'");
+ });
+
+ it("PROJ-HARNESS-GUARD-09 active projects and durable future dates match production lifecycle",()=>{
+   expect(helper).toContain("(college_id,template_id,template_version_id,slug,title,status,created_by_user_id)");
+   expect(helper).toContain("'ACTIVE',$6");
+   expect(helper).toContain("where id=$1 and status='ACTIVE'");
+   expect(helper).toContain('"2099-10-20T04:30:00Z"');
+   expect(helper).toContain('"2099-10-01"');
+   expect(helper).not.toContain('"2026-10-20T04:30:00Z"');
+ });
+
+ it("PROJ-HARNESS-GUARD-10 published drive fixtures enforce offer-ready deadline and pay",()=>{
+   expect(helper).toContain("'2099-06-01T12:00:00Z','PUBLISHED',now()");
+   expect(helper).toContain("minimum_annual_ctc_inr");
+   expect(helper).toContain("j.status='PUBLISHED' and j.published_at is not null");
+   expect(helper).toContain("j.application_deadline>now()");
+   expect(helper).toContain("drive is not open for applications");
  });
 
  it("PROJ-HARNESS-GUARD-05 always rolls back transaction and savepoint errors",()=>{

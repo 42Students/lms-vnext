@@ -96,7 +96,7 @@ describe("Super Admin colleges and organizations directory contracts (chat-4)", 
     // The organizations page may use its compact style, but must guard the same capability.
     expect(organizationPage).toMatch(/requirePermission\(context,\s*"admin-scope\.select"\)/);
     for (const page of [collegePage, organizationPage]) {
-      expect(page.indexOf("requirePermission(context")).toBeLessThan(page.indexOf("parseAdminDirectorySearchParams"));
+      expect(page.indexOf("requirePermission(context")).toBeLessThan(page.indexOf("parseAdminDirectorySearchParams(await searchParams)"));
     }
   });
 

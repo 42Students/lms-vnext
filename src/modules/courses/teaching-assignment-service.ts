@@ -22,6 +22,7 @@ import { requirePermission } from "@/modules/permissions/policy";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { teachingAssignmentConflict } from "./teaching-assignment-guard";
+import {teachingAssignmentRevisionMatches,nextTeachingAssignmentRevision} from "./teaching-assignment-revision";
 import {
   CoursesServiceError,
   postgresConstraintName,
@@ -35,6 +36,7 @@ import {
   courseSectionDeliveryIdSchema,
   courseTeachingAssignmentIdSchema,
   createCourseTeachingAssignmentInputSchema,
+  changeCourseTeachingAssignmentRoleInputSchema,
 } from "./validation";
 
 function mapTeachingConstraint(error: unknown) {
@@ -397,7 +399,8 @@ export async function changeCourseTeachingAssignmentRole(
   roleInput: unknown,
 ) {
   const assignmentId = courseTeachingAssignmentIdSchema.parse(assignmentIdInput);
-  const role = createCourseTeachingAssignmentInputSchema.shape.role.parse(roleInput);
+  const input = changeCourseTeachingAssignmentRoleInputSchema.parse(roleInput);
+  const {role,expectedUpdatedAt} = input;
   const current = await loadCourseTeachingAssignmentScope(assignmentId);
   requirePermission(context,"courses.manage",{
     organizationId:current.organizationId,collegeId:current.collegeId,
@@ -413,6 +416,7 @@ export async function changeCourseTeachingAssignmentRole(
       if(!liveDelivery)throw new CoursesServiceError("SECTION_DELIVERY_NOT_FOUND");
       const [locked]=await tx.select({
         id:courseTeachingAssignments.id,role:courseTeachingAssignments.role,
+        updatedAt:courseTeachingAssignments.updatedAt,
         membershipId:courseTeachingAssignments.membershipId,
       }).from(courseTeachingAssignments)
         .where(and(
@@ -422,6 +426,10 @@ export async function changeCourseTeachingAssignmentRole(
           isNull(courseTeachingAssignments.endedAt),
         )).for("update").limit(1);
       if(!locked)throw new CoursesServiceError("TEACHING_ASSIGNMENT_NOT_FOUND");
+      // Compare while holding FOR UPDATE, before role changes and audit writes.
+      // A monotonic revision protects against two writes within one millisecond.
+      if(!teachingAssignmentRevisionMatches(locked.updatedAt,expectedUpdatedAt))
+        throw new CoursesServiceError("TEACHING_ASSIGNMENT_CONFLICT");
       // Tenant ancestry is rechecked inside the same transaction after the
       // initial authorization; a transferred delivery cannot be mutated.
       const [scope]=await tx.select({
@@ -462,8 +470,9 @@ export async function changeCourseTeachingAssignmentRole(
       const conflict=teachingAssignmentConflict({membershipId:locked.membershipId,role},
         peers.filter(item=>item.membershipId!==locked.membershipId));
       if(conflict)throw new CoursesServiceError(conflict);
+      const nextUpdatedAt=nextTeachingAssignmentRevision(locked.updatedAt);
       const [updated]=await tx.update(courseTeachingAssignments)
-        .set({role,updatedAt:new Date()})
+        .set({role,updatedAt:nextUpdatedAt})
         .where(and(
           eq(courseTeachingAssignments.id,assignmentId),
           eq(courseTeachingAssignments.deliveryId,current.deliveryId),
