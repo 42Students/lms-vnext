@@ -57,7 +57,11 @@ function isInsideAdminScope(
   if (!selected) return true;
 
   if (selected.collegeId) {
-    return resource.collegeId === selected.collegeId;
+    // Explicit organization and college scope must agree when both are present.
+    // A forged cross-organization resource cannot be authorized by UUID alone.
+    return resource.collegeId === selected.collegeId &&
+      (!selected.organizationId || !resource.organizationId ||
+        resource.organizationId === selected.organizationId);
   }
 
   if (selected.organizationId) {

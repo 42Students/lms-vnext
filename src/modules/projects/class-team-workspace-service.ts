@@ -18,7 +18,7 @@ import { classTeamCapacity } from "./class-team-capacity";
 import {cohortCreationResultRows} from "./cohort-creation-outcome-model";
 import { planClassTeamWorkspaceNames } from "./class-team-workspace-names";
 import { publishableProjectTemplateBlueprintSchema } from "./validation";
-import { ProjectsServiceError, postgresConstraintName } from "./errors";
+import { ProjectsServiceError, postgresConstraintName, isRetryableProjectTransactionError } from "./errors";
 
 export async function createClassTeamWorkspaces(context: RequestContext, raw: unknown) {
   const input = createClassTeamWorkspacesSchema.parse(raw);
@@ -26,8 +26,11 @@ export async function createClassTeamWorkspaces(context: RequestContext, raw: un
   // Only the persisted current class may be used; the browser cannot supply learners.
   await loadClassTeamRoster(context, scope.id, input.classId);
   const db = getDb();
-  try {
-    return await db.transaction(async tx => {
+  // Each retry is a fresh SERIALIZABLE transaction. No partial work survives
+  // PostgreSQL 40001/40P01, and cohortMode recomputes covered learners.
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      return await db.transaction(async tx => {
       const [section] = await tx.select({ id: sections.id })
         .from(sections).innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
         .innerJoin(programs,eq(programs.id,cohorts.programId))
@@ -155,9 +158,18 @@ export async function createClassTeamWorkspaces(context: RequestContext, raw: un
         cohortCreationResultRows(groups,created,covered):[];
       return {created,teamCount:created.length,learnerCount:members.length,
         alreadyCovered:covered.size,requested:groups.length,individualResults};
-    },{isolationLevel:"serializable"});
-  } catch(error) {
-    if(postgresConstraintName(error)==="project_instances_college_slug_uq")throw new ProjectsServiceError("PROJECT_SLUG_CONFLICT");
-    throw error;
+      },{isolationLevel:"serializable"});
+    } catch(error) {
+      if(postgresConstraintName(error)==="project_instances_college_slug_uq")
+        throw new ProjectsServiceError("PROJECT_SLUG_CONFLICT");
+      if(isRetryableProjectTransactionError(error)) {
+        if(attempt < 2) continue;
+        // A stale roster/parallel edit is actionable and must never expose
+        // raw 40001 or 40P01 SQL error internals to the caller.
+        throw new ProjectsServiceError("PROJECT_CLASS_ROSTER_STALE");
+      }
+      throw error;
+    }
   }
+  throw new ProjectsServiceError("PROJECT_CLASS_ROSTER_STALE");
 }

@@ -17,6 +17,13 @@ The global invisible scrollbar rule remains unchanged. Native Drawer owns body l
 | src/app/(authenticated)/hr/profile/page.tsx | Replaced nested 2x horizontal table scroller with responsive DataTable/ScrollCue, 44px accessible access listing, original grant wording. | UX-hr-data-tables-chat15-01 |
 | src/app/(authenticated)/hr/company/reports/page.tsx | Replaced duplicated mobile cards / nested desktop raw table with one shared DataTable, preserves all 10 metrics, mobile disclosures, responsive cues. | UX-hr-data-tables-chat15-01 |
 
+| src/components/hr/recruiter-notification-bell.tsx (second pass) | Corrected footer from /hr/messages (conversations) to /hr/notifications; Escape now returns trigger focus, outside pointer closes, links and retry are 44px. | UX-chat15-overlays-second-pass |
+| src/components/tracker/tracker-live-logs-explorer.tsx | Replaced falsely modal, inline report export with real shared Dialog; labelled CSV/text export, 44px result actions, empty role=status, keyboard-reachable details. | UX-chat15-overlays-second-pass |
+| src/components/tracker/tracker-telegram-manual-panel.tsx | Enlarged all digest/test/confirm actions to 44px; confirmation and rate-limit consequence retained. | UX-chat15-overlays-second-pass |
+| src/components/activity/learner-notifications-inbox.tsx | Fixed 40px action to 44px; retained Dialog focus, guarded mark-all and explicit errors. | UX-chat15-overlays-second-pass |
+
+| src/components/shell/learner-notification-bell.tsx | Kept bell and live deadline semantics; 44px trigger/notifications and retry; focusable conditional ScrollCue for hidden vertical scrollbar, pointer-outside close, Escape with focus return. | UX-chat15-shell-activity-components-01 |
+
 ## Still pending
 
 Other HR, tracker, activity and verification surfaces in docs/audit/ui-surfaces/UI-SURFACES.md require individual scroll and motion verification. Shell source remains owned by chat-9; only non-mutating coverage is planned here. Unreviewed components are not waived.

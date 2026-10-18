@@ -1,3 +1,4 @@
+import { ScrollCue } from "@/components/ui/scroll-cue";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -632,7 +633,8 @@ export default async function HrCalendarPage({
                           : ""}
                       </p>
 
-                      <div className="mt-2 max-h-52 space-y-2 overflow-y-auto">
+                      <ScrollCue axis="y" label={"Calendar events for " + shortDayLabel(day)} className="mt-2" viewportClassName="max-h-52">
+                        <div className="space-y-2">
                         {events.map((event) => {
                           const href =
                             eventHref(event);
@@ -672,7 +674,8 @@ export default async function HrCalendarPage({
                             —
                           </span>
                         ) : null}
-                      </div>
+                        </div>
+                      </ScrollCue>
                     </div>
                   );
                 })}

@@ -23,7 +23,7 @@ Do not bypass the disposable-database-name guard; use a properly named test data
 
 ```ts
 import { newHarnessPool, withProjectPg, createTenant, createPrincipal,
-  createProjectFixture, createTaskSubmission, createFinalSubmission,
+  createProjectFixture, createTaskSubmission, createFinalSubmission, submitFinalSubmission,
   createMeeting, createPlacementFixture } from "./support/projects-placements-pg-harness";
 
 const pool = newHarnessPool();
@@ -38,6 +38,7 @@ try {
     const project = await createProjectFixture(db, tenant, admin, mentor, learner);
     const taskSubmissionId = await createTaskSubmission(db, project, learner);
     const finalSubmissionId = await createFinalSubmission(db, project, learner);
+    await submitFinalSubmission(db, finalSubmissionId, learner);
     const meetingId = await createMeeting(db, project, learner, admin);
     const drive = await createPlacementFixture(db, tenant, admin);
     // SELECT/query/UPDATE/etc. using db.query with parameter binding;

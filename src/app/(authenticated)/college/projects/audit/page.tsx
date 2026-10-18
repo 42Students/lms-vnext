@@ -1,6 +1,6 @@
 import {ProjectAdminMissingCollege} from "@/components/projects/project-admin-missing-college";
 import {getCurrentRequestContext} from "@/auth/request-context";
-import {isSuperAdmin} from "@/modules/identity/context";
+import {getProjectAdminCollegeId} from "@/modules/projects/admin-college-scope";
 import { ProjectAdminAuditPage } from "@/components/projects/project-admin-audit-page";
 
 export default async function CollegeProjectAuditPage({
@@ -14,7 +14,7 @@ export default async function CollegeProjectAuditPage({
   >;
 }) {
   const context=await getCurrentRequestContext();
-  if(!context.membership && !isSuperAdmin(context))return <ProjectAdminMissingCollege/>;
+  if(!getProjectAdminCollegeId(context))return <ProjectAdminMissingCollege/>;
   return (
     <ProjectAdminAuditPage
       basePath="/college/projects"

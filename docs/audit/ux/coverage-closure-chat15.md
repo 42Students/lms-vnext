@@ -12,4 +12,8 @@
 
 - Canonical HR pages: tests/unit/UX-hr-page-states-chat15-01.test.ts names all 22 /hr routes and checks role-gating, alternate-state copy, and safe legacy redirects/aliases.
 
+- Secondary owned overlay pass: tests/unit/UX-chat15-overlays-second-pass.test.ts checks 4 surfaces and correct notification-vs-message navigation.
+- HR API safe body consumption: tests/unit/hr-recruiter-json-request-chat15-01.test.ts checks actual streaming parser failure cases; tests/unit/hr-recruiter-route-security-chat15-01.test.ts audits 10 mutating endpoints for same-origin, authorization context and replay.
+
+- Shell and learner activity: tests/unit/UX-chat15-shell-activity-components-01.test.ts names learner bell, mobile navigation focus trap, route announcer and learner announcement inbox, with follow-up scroll-fade implementation on bell.
 **Remaining:** all other overlays in matrix, database-backed handler security tests, HR/tracker page-level partial and denied state verification, and full audit against the 21-point rubric. /recruiter route aliases and redirected /hr pages should not be marked complete solely for importing/redirecting. No owner waiver is claimed.
