@@ -651,3 +651,12 @@ The stale CI snapshot in `docs/orchestrator/unit-failures-latest.md` lists `chat
 |---|---|---|
 | HR-REQUEST-CANCEL-INTEGRITY-07 | `recruiterRequestUpdateSchema` rejects CANCEL with any draft (prevents historical terms overwrite) and requires validated draft on EDIT and RESUBMIT. `HR-BREAK-chat15-request-cancel-integrity-07.test.ts` checks all three paths, stale/foreign IDs and parse-before-transaction order | End-to-end HTTP 409/400, concurrent cancellation and request audit history in PostgreSQL |
 | HR-CALENDAR-SCOPE-08 | `HR-BREAK-chat15-calendar-08.test.ts` validates one-day 00:00 through 23:59 IST, foreign job and slot exclusion, calendar query 366-day bound, no SQL when no authorized jobs | Real PostgreSQL slot/round calendar role matrix, event/CSV equality, 320px and keyboard UX |
+
+
+## HR account service coverage continued — 2026-10-18 (CI pending)
+
+| Requirement | Authored test and real assertions | Remaining |
+|---|---|---|
+| HR-NOTIFY-SCOPE-09 | `HR-BREAK-chat15-notifications-09.test.ts`: inactive/revoked recruiter denied before DB; no grants yields NO_ACCESS; multi-college requires explicit choice; unauthorized subject and non-job notifications removed; invalid/foreign query blocked | PostgreSQL event/audience, notifications from concurrent employer changes and browser fetch |
+| HR-CONVERSATIONS-SCOPE-10 | `HR-BREAK-chat15-conversations-10.test.ts`: inactive account, foreign tenant, malformed query denied before messaging; multi-grant choice; foreign recruiter/college/unowned drive thread invisible; unread, general/drive, search and stable order | Real database unread update, concurrent replies and last-message race |
+| HR-APPLICANTS-EXPORT-11 | `HR-BREAK-chat15-applicant-export-11.test.ts`: formula injection and CRLF controls escaped; IST midnight; contacts, resume/skills/roll/branch excluded; 200 row cap with notice, withdrew vs submitted separation, bounded query and pagination | Direct HTTP download vs screen equality, revoked grant export denial, real CSV spreadsheet validation |
