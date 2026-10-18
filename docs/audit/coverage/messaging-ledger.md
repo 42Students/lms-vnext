@@ -232,3 +232,5 @@ Remaining page E2E coverage: interactive keyboard focus, phone viewport and real
 
 | `src/modules/placements/public-join/send-code-service.ts:lookupDeliveredJoinCompanyName` | Optional company lookup is active-company-only and registrable-domain scoped, handles invalid/free email and directory outages without throwing | `tests/unit/chat16-public-join-delivery-recovery-29.test.ts` | Authored, unrun |
 | `src/modules/placements/public-join/send-code-service.ts:requestPublicJoinCode` | Fully mocked signed link, verified-IP/MX, rate checks, challenge persistence, actual `deliver` callback, then failed company-name lookup returns `{ sent:true, companyName:null }` without duplicate send or false failure | Same | Authored, unrun |
+
+| `requestPublicJoinCode` anonymous preflight | Signed invitation token digest, scope, active organization/college, revocation and expiration, company work-domain match checked before performing MX resolution; the DB transaction repeats the checks under row lock, preserving revocation safety | `tests/unit/chat16-public-join-delivery-recovery-29.test.ts` | Authored, unrun |
