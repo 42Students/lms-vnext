@@ -218,22 +218,88 @@ Status: INCOMPLETE. Tests have not been executed; do not use this ledger for rel
 | `src/modules/courses/faculty-notices-model.ts` | `facultyNoticeParamsSchema`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-notices-model.ts` | `FACULTY_SECTION_NOTICES_BLOCKER`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-notices-service.ts` | `getFacultySectionNotices`: GAP — behavioural test needed |
-| `src/modules/courses/faculty-notification-link-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-profile-teaching-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-profile-teaching-service.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-quiz-attempts-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-quiz-attempts-service.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-quiz-authoring-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-quiz-authoring-service.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-quiz-builder-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-quiz-csv-cap.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-quiz-question-csv-service.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-quiz-question-csv.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-quiz-report-route-errors.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-quiz-request-body.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-quiz-results-command-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-quiz-results-command-service.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-quiz-results-legacy-model.ts` | GAP: exported-function test inventory required |
+| `src/modules/courses/faculty-notification-link-model.ts` | `facultyNotificationActionHref`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-profile-teaching-model.ts` | `facultyProfileTeachingQuerySchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-profile-teaching-model.ts` | `pageOwnFacultyTeaching`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-profile-teaching-model.ts` | `ownFacultyTeachingHref`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-profile-teaching-service.ts` | `getOwnFacultyTeachingSection`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-attempts-model.ts` | `facultyQuizAttemptsQuerySchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-attempts-model.ts` | `facultyQuizAttemptSearchSchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-attempts-model.ts` | `facultyQuizAttemptsPage`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-attempts-model.ts` | `facultyQuizAttemptsHref`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-attempts-model.ts` | `facultySearchQuizAttempts`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-attempts-service.ts` | `getFacultyQuizAttemptDrilldown`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-authoring-model.ts` | `facultyQuizParamsSchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-authoring-model.ts` | `facultyQuizCommandSchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-authoring-model.ts` | `sumQuizPoints`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-authoring-model.ts` | `facultyQuizVersionMatches`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-authoring-model.ts` | `facultyQuizLegacyEdit`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-authoring-model.ts` | `facultyQuizMetadataUnchanged`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-authoring-model.ts` | `facultyQuizAttemptLimitLocked`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-authoring-service.ts` | `commandFacultyQuiz`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyAuthoringQuestionsFromResponse`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizDraftIssue`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyChangeQuizChoiceType`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizDraftEditable`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizMetadataEditable`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyToggleQuizAnswer`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyRemoveQuizOption`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizConfirmationAfterEdit`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyRemoveQuizQuestion`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyAppendQuizQuestion`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizDraftLoadAllowsAction`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizMetadataIssue`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizWriteMessage`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizCanRetryDetails`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizCanPublishSavedDraft`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizSavedFromCommand`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizReconcileRows`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyMoveQuizQuestion`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyMoveQuizOption`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyDuplicateQuizQuestion`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyDuplicateQuizOption`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizSwitchNeedsConfirmation`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyBeginQuizWrite`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizDraftReview`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizCanSaveChanges`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizMayResetDraft`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizCanCopyToDraft`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizCopyTitle`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizNormalizeQuestions`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizMatchesSearch`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizQuestionMatches`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizQuestionIssue`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizAnswerSummary`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyInsertQuizQuestionAfter`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyMoveQuizQuestionToEdge`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyInsertQuizOptionAfter`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizOptionRemovalNeedsConfirmation`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizQuestionRemovalPrompt`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizApplyPastedOptions`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizLoadedBankIssue`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizRetryNeedsConfirmation`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizTitleConflict`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizReviewIssues`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizShouldDisplayQuestion`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizReadErrorMessage`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizOptionRemovalPrompt`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizReadyToPublish`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-csv-cap.ts` | `FACULTY_QUIZ_CSV_MAX_ROWS`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-csv-cap.ts` | `capFacultyQuizCsvRows`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-csv-cap.ts` | `facultyQuizCsvNotice`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-csv-cap.ts` | `selectFacultyQuizCsvRows`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-question-csv-service.ts` | `getFacultyQuizQuestionCsvForDownload`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-question-csv.ts` | `FACULTY_QUIZ_QUESTION_CSV_MAX_ROWS`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-question-csv.ts` | `facultyQuizQuestionAccuracyCsv`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-report-route-errors.ts` | `hidesFacultyQuizRouteError`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-request-body.ts` | `FACULTY_QUIZ_COMMAND_LIMIT_BYTES`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-request-body.ts` | `FacultyQuizBodyError`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-request-body.ts` | `facultyQuizAcceptsContentType`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-request-body.ts` | `readFacultyQuizCommandBody`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-results-command-model.ts` | `facultyQuizResultsCommandSchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-results-command-model.ts` | `facultyQuizResultsTransition`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-results-command-service.ts` | `commandFacultyQuizResults`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-quiz-results-legacy-model.ts` | `legacyQuizResultsWriteAllowed`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-regrade-feedback-model.ts` | GAP: exported-function test inventory required |
 | `src/modules/courses/faculty-report-completeness.ts` | GAP: exported-function test inventory required |
 | `src/modules/courses/faculty-report-csv-request.ts` | GAP: exported-function test inventory required |
