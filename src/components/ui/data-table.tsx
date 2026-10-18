@@ -9,8 +9,16 @@ export type DataTableColumn<Row> = {
   className?: string;
   mobileLabel?: string;
   mobilePriority?: "primary" | "secondary" | "action" | "hidden";
-  /** Only hide on phone if redundant AND a full-detail URL exists. */
+  /** Legacy rationale alone is NOT proof that the detail renders this field. */
   mobileHiddenReason?: string;
+  /** Audited column-level mapping to a field on a permission-authorized detail route.
+   * If absent or denied for any row, the field remains inside More details.
+   */
+  mobileDetail?: {
+    fieldKey: string;
+    href: (row: Row) => string;
+    canView: (row: Row) => boolean;
+  };
 };
 export type DataTableProps<Row> = {
   columns: readonly DataTableColumn<Row>[];
@@ -26,18 +34,25 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
   if (rows.length === 0) return <div className="rounded-xl border border-border bg-surface p-4 sm:p-6">
     {empty}
   </div>;
-  // Treat a hidden phone column as recoverable only if every row has a valid
-  // internal detail destination; otherwise reveal it in mobile More details.
+  // A generic rowHref is never proof a hidden field exists on the detail route.
   const detailHrefs = rows.map(row => {
     const href = rowHref?.(row);
     return typeof href === "string" && href.startsWith("/") && !href.startsWith("//") && href.length > 1 ? href : null;
   });
-  const allDetailRoutesAvailable = detailHrefs.every(Boolean) && Boolean(rowHref);
+  const mappedToAuthorizedDetail = (column: DataTableColumn<Row>) => {
+    if (column.mobilePriority !== "hidden" || !column.mobileHiddenReason || !column.mobileDetail?.fieldKey.trim()) return false;
+    return rows.every(row => {
+      if (!column.mobileDetail?.canView(row)) return false;
+      const href = column.mobileDetail.href(row);
+      return href.startsWith("/") && !href.startsWith("//") && href.length > 1;
+    });
+  };
   const primary = columns.find(column => column.mobilePriority === "primary") ??
     columns.find(column => column.mobilePriority === undefined || column.mobilePriority === "secondary");
   const actions = columns.filter(column => column.mobilePriority === "action");
   const secondary = columns.filter(column => column.key !== primary?.key && column.mobilePriority !== "action" &&
-    !(column.mobilePriority === "hidden" && column.mobileHiddenReason && allDetailRoutesAvailable));
+    !mappedToAuthorizedDetail(column));
+  const mapped = columns.filter(mappedToAuthorizedDetail);
   const shown = secondary.slice(0, 3);
   const extra = secondary.slice(3);
   // Evaluate expensive row cell formatters once, then reuse the results in
