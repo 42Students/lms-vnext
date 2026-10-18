@@ -18,11 +18,11 @@ const secret="test-only-campaign-unsubscribe-hmac-secret-32-bytes";
 const tpo:RequestContext={user:{id:SEED_IDS.facultyUser,identityUid:"seed-faculty",platformStatus:"ACTIVE",systemRoles:[]},
  membership:{id:SEED_IDS.facultyCollegeAMembership,collegeId:SEED_IDS.collegeA,
  organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["TPO"]}};
-const previous=process.env.TPO_CAMPAIGN_RECIPIENT_HMAC_SECRET;
+const previous=process.env.TPO_CAMPAIGN_RECIPIENT_TOKEN_SECRET;
 describe.skipIf(!enabled)("T-S2-04 staged campaign unsubscribe PostgreSQL",()=>{
  it("atomically cancels active invites, suppresses campaign recipients and is idempotent",async()=>{
   if(!pool)throw new Error("Disposable PostgreSQL required");
-  process.env.TPO_CAMPAIGN_RECIPIENT_HMAC_SECRET=secret;
+  process.env.TPO_CAMPAIGN_RECIPIENT_TOKEN_SECRET=secret;
   const id=randomUUID(),email="campaign-"+id+"@example.org";
   const lead=await createTpoLead(tpo,{collegeId:SEED_IDS.collegeA,name:"Campaign opt out "+id,email});
   await pool.query("update placement_tpo_leads set invite_token_hash=$1,invite_sent_at=now() where id=$2",
@@ -49,11 +49,43 @@ describe.skipIf(!enabled)("T-S2-04 staged campaign unsubscribe PostgreSQL",()=>{
   expect(recipient?.status).toBe("UNSUBSCRIBED");
   expect(recipient?.unsubscribed_at).toBeInstanceOf(Date);
   const activity=(await pool.query<{total:number}>(
-   "select count(*)::int as total from placement_tpo_lead_activities where lead_id=$1 and note='Unsubscribed from campaign emails'",
+   "select count(*)::int as total from placement_tpo_lead_activities where lead_id=$1 and note='Unsubscribed from emails'",
    [lead.id],
   )).rows[0];
   expect(activity?.total).toBe(1);
   // Append-only audit history is intentionally left in the isolated database.
+ });
+ it("T-S2-04 concurrent recipient opt-outs serialize and emit exactly one event and timeline",async()=>{
+  if(!pool)throw new Error("Disposable PostgreSQL required");
+  process.env.TPO_CAMPAIGN_RECIPIENT_TOKEN_SECRET=secret;
+  const id=randomUUID();
+  const lead=await createTpoLead(tpo,{collegeId:SEED_IDS.collegeA,
+   name:"Campaign simultaneous optout "+id,email:"race-"+id+"@example.org"});
+  const campaignId=randomUUID(),recipientId=randomUUID();
+  await pool.query(`insert into placement_tpo_email_campaigns
+   (id,college_id,created_by_user_id,total_recipients) values($1,$2,$3,1)`,
+   [campaignId,SEED_IDS.collegeA,SEED_IDS.facultyUser]);
+  await pool.query(`insert into placement_tpo_email_campaign_recipients
+   (id,college_id,campaign_id,lead_id,recipient_key) values($1,$2,$3,$4,$5)`,
+   [recipientId,SEED_IDS.collegeA,campaignId,lead.id,"d".repeat(64)]);
+  const token=issueTpoCampaignRecipientToken({v:1,collegeId:SEED_IDS.collegeA,
+   campaignId,recipientId,expiresAt:Date.now()+86_400_000},secret);
+  const results=await Promise.all([
+   unsubscribeTpoCampaignRecipient(token),
+   unsubscribeTpoCampaignRecipient(token),
+  ]);
+  expect(results).toEqual([{unsubscribed:true},{unsubscribed:true}]);
+  const [recipient]=(await pool.query<{status:string;unsubscribed_at:Date|null}>(
+   "select status,unsubscribed_at from placement_tpo_email_campaign_recipients where id=$1",
+   [recipientId],
+  )).rows;
+  expect(recipient?.status).toBe("UNSUBSCRIBED");
+  expect(recipient?.unsubscribed_at).toBeInstanceOf(Date);
+  const [activity]=(await pool.query<{total:number}>(
+   "select count(*)::int as total from placement_tpo_lead_activities where lead_id=$1 and note=$2",
+   [lead.id,"Unsubscribed from emails"],
+  )).rows;
+  expect(activity?.total).toBe(1);
  });
  it("enforces one recipient digest per campaign, even across two different lead IDs",async()=>{
   if(!pool)throw new Error("Disposable PostgreSQL required");
@@ -75,14 +107,14 @@ describe.skipIf(!enabled)("T-S2-04 staged campaign unsubscribe PostgreSQL",()=>{
  });
  it("rejects campaign or recipient swaps using a valid but different signed claim",async()=>{
   if(!pool)throw new Error("Disposable PostgreSQL required");
-  process.env.TPO_CAMPAIGN_RECIPIENT_HMAC_SECRET=secret;
+  process.env.TPO_CAMPAIGN_RECIPIENT_TOKEN_SECRET=secret;
   const token=issueTpoCampaignRecipientToken({v:1,collegeId:SEED_IDS.collegeA,
    campaignId:randomUUID(),recipientId:randomUUID(),expiresAt:Date.now()+60_000},secret);
   await expect(unsubscribeTpoCampaignRecipient(token)).rejects.toBeDefined();
  });
 });
 afterAll(async()=>{
- if(previous===undefined)delete process.env.TPO_CAMPAIGN_RECIPIENT_HMAC_SECRET;
- else process.env.TPO_CAMPAIGN_RECIPIENT_HMAC_SECRET=previous;
+ if(previous===undefined)delete process.env.TPO_CAMPAIGN_RECIPIENT_TOKEN_SECRET;
+ else process.env.TPO_CAMPAIGN_RECIPIENT_TOKEN_SECRET=previous;
  await pool?.end();await closeDatabaseConnection();
 });

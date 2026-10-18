@@ -247,3 +247,17 @@ This is an independent TPO/HR workflow review; real clipboard permission denial,
 | ID | Entry point | Direct tests | Scope |
 |---|---|---|---|
 | HR-BREAK-PROPOSALS-QUERY-21 | `/hr/drives/proposals` | `tests/unit/HR-BREAK-chat19-home-portfolio-proposals.test.ts` | Repeated college/page/search/sort values fail strict URL validation, mismatched recruiter identity redirects, unauthorized proposal-history service never called. |
+
+## HR Drive list and new-request source URL entry
+
+| Gap | Page | Direct test | Security invariant |
+|---|---|---|---|
+| HR-BREAK-DRIVES-QUERY-22 | `/hr/drives` | `tests/unit/HR-BREAK-chat19-drive-list-page.test.ts` | Repeated college/status/legacy-tab/search/page keys and mismatched recruiter identity rejected before scoped list services |
+| HR-BREAK-DRIVE-DRAFT-QUERY-23 | `/hr/drives/new` | `tests/unit/HR-BREAK-chat19-drive-draft-duplicate-query.test.ts` | Source job/request URL cannot contain repeated IDs, conflicting source modes, or mismatched recruiter; denied before portfolio/request/branch services |
+
+## Calendar and company/team strict query entries
+
+| ID | Entry point | Direct behavioral tests | Security/UX contract |
+|---|---|---|---|
+| HR-BREAK-CALENDAR-QUERY-24 | `/hr/calendar` | `tests/unit/HR-BREAK-chat19-calendar-company-pages.test.ts` | Duplicate date/view/category and cross-user recruiter denied before calendar service, normal invalid single date still falls back safely |
+| HR-BREAK-COMPANY-QUERY-25 | `/hr/company` | Same test suite | Duplicate college/team tab/search/page and cross-user account denied before roster/jobs; user-visible invalid selection recovery intact |
