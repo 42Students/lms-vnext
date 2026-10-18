@@ -37,7 +37,7 @@ export default async function TpoTrustedCompaniesPage() {
         actions={
           <Link
             href="/tpo/settings/team"
-            className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
           >
             Placement Team
           </Link>

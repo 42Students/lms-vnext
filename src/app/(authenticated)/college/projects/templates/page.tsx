@@ -2,6 +2,7 @@ import Link from "next/link";
 import {ProjectAdminMissingCollege} from "@/components/projects/project-admin-missing-college";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { listAssignedProjectTemplates } from "@/modules/projects/template-service";
@@ -37,6 +38,20 @@ export default async function CollegeProjectTemplatesPage({
     sections: projectTemplateSectionCounts(template.blueprint),
   }));
 
+  const columns:DataTableColumn<(typeof visible)[number]>[]=[
+    {key:"template",header:"Template",mobilePriority:"primary",cell:template=><div>
+      <p className="font-semibold">{template.title}</p>
+      {template.summary?<p className="mt-1 max-w-lg text-xs text-muted-foreground">{template.summary}</p>:null}
+    </div>},
+    {key:"version",header:"Version",cell:template=><StatusBadge tone="success">Version {template.version}</StatusBadge>},
+    {key:"sections",header:"Sections",cell:template=>{
+      const counts=projectTemplateSectionCounts(template.blueprint);
+      return `${counts.overview} overview · ${counts.releases} releases · ${counts.sprints} sprints · ${counts.tasks} tasks · ${counts.resources} resources`;
+    }},
+    {key:"action",header:"Action",mobilePriority:"action",cell:template=>
+      <Link href={"/college/projects/templates/"+template.templateId}
+        className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">View template</Link>},
+  ];
   return (
     <div className="space-y-6">
       <ProjectAdminNav
@@ -54,9 +69,9 @@ export default async function CollegeProjectTemplatesPage({
           Search templates
           <input type="search" name="q" maxLength={120} defaultValue={q}
             placeholder="Search by template or version"
-            className="mt-1 block w-full rounded-md border border-border bg-surface px-3 py-2 text-sm font-normal" />
+            className="mt-1 block min-h-11 w-full rounded-md border border-border bg-surface px-3 py-2 text-base font-normal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" />
         </label>
-        <button type="submit" className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold">
+        <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold">
           Search
         </button>
         {q ? <Link href="/college/projects/templates" className="py-2 text-sm text-primary-text underline">
@@ -65,47 +80,13 @@ export default async function CollegeProjectTemplatesPage({
         <ProjectTemplateCatalogueExport rows={rows} />
       </form>
       {q ? <p role="status" className="text-sm text-body">{visible.length} of {templates.length} templates</p> : null}
-      {!templates.length ? (
-        <section className="rounded-xl border border-border bg-surface p-6 text-sm text-muted-foreground">
-          No project templates are currently assigned to this college.
-        </section>
-      ) : !visible.length ? (
-        <p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
-          No project templates match this search.
-        </p>
-      ) : (
-        <div className="overflow-x-auto rounded-xl border border-border bg-surface">
-          <table className="min-w-full text-left text-sm">
-            <thead className="bg-muted"><tr>
-              <th scope="col" className="p-3">Template</th>
-              <th scope="col" className="p-3">Version</th>
-              <th scope="col" className="p-3">Sections</th>
-              <th scope="col" className="p-3">Action</th>
-            </tr></thead>
-            <tbody>
-          {visible.map((template) => (
-            <tr key={template.assignmentId} className="border-t border-border">
-              <td className="p-3">
-                <p className="font-semibold">{template.title}</p>
-                {template.summary ? <p className="mt-1 max-w-lg text-xs text-muted-foreground">{template.summary}</p> : null}
-              </td>
-              <td className="p-3"><StatusBadge tone="success">Version {template.version}</StatusBadge></td>
-              <td className="p-3">
-                {(() => {
-                  const counts = projectTemplateSectionCounts(template.blueprint);
-                  return `${counts.overview} overview · ${counts.releases} releases · ${counts.sprints} sprints · ${counts.tasks} tasks · ${counts.resources} resources`;
-                })()}
-              </td>
-              <td className="p-3">
-                <Link href={"/college/projects/templates/" + template.templateId}
-                  className="font-semibold text-primary-text underline">View template</Link>
-              </td>
-            </tr>
-          ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      <DataTable caption="Assigned project templates" columns={columns} rows={visible}
+        getRowKey={template=>template.assignmentId}
+        empty={<div role="status" className="space-y-3 text-sm text-body">
+          <p>{templates.length===0?"No project templates are currently assigned to this college.":"No project templates match this search."}</p>
+          {q?<Link href="/college/projects/templates"
+            className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Clear search</Link>:null}
+        </div>} />
     </div>
   );
 }

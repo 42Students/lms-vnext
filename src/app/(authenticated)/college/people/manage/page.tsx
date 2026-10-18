@@ -21,7 +21,7 @@ function collegePeopleManageHref(filter: CollegePeopleDirectoryFilter) {
 }
 
 const columns: DataTableColumn<PersonMembershipView>[] = [
-  { key: "person", header: "Person", cell: person => (
+  { key: "person", header: "Person", mobilePriority: "primary", mobileLabel: "Person", cell: person => (
     <div className="min-w-32">
       <p className="m-0 font-semibold text-foreground">{person.user.displayName || "Unnamed person"}</p>
       <p className="mt-1 break-all text-xs text-muted-foreground">
@@ -29,14 +29,14 @@ const columns: DataTableColumn<PersonMembershipView>[] = [
       </p>
     </div>
   ) },
-  { key: "roles", header: "Roles", cell: person => person.membership.roles.join(", ") || "No roles recorded" },
-  { key: "status", header: "Status", cell: person => (
+  { key: "roles", header: "Roles", mobileLabel: "Roles", cell: person => person.membership.roles.join(", ") || "No roles recorded" },
+  { key: "status", header: "Status", mobileLabel: "Status", cell: person => (
     <StatusBadge tone={person.membership.status === "ACTIVE" ? "success" :
       person.membership.status === "SUSPENDED" ? "warning" : "neutral"}>
       {person.membership.status}
     </StatusBadge>
   ) },
-  { key: "actions", header: <span className="sr-only">Actions</span>, className: "text-right",
+  { key: "actions", header: <span className="sr-only">Actions</span>, mobileLabel: "Actions", mobilePriority: "action", className: "text-right",
     cell: person => (
       <PersonMembershipActions membershipId={person.membership.id}
         collegeId={person.membership.collegeId}
@@ -74,9 +74,9 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
     <PageHeader eyebrow="College Admin" title={COLLEGE_LEGACY_PAGE_TITLES.peopleDirectory}
       description="Manage college memberships, roles and lifecycle. For the read-only legacy contact tabs, open Contacts."
       actions={<div className="flex flex-wrap items-center gap-3"><Link href="/college/groups"
-        className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Student groups</Link><Link href="/college/contacts" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Browse contacts</Link><Link href={collegePeopleExportHref(filter)} className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Export filtered CSV</Link><PersonOnboardDialog collegeId={membership.collegeId} /></div>} />
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Student groups</Link><Link href="/college/contacts" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Browse contacts</Link><Link href={collegePeopleExportHref(filter)} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Export filtered CSV</Link><PersonOnboardDialog collegeId={membership.collegeId} /></div>} />
     <section className="rounded-xl border border-border bg-surface p-4" aria-label="People filters">
-      <form action="/college/people/manage" method="get" className="flex flex-wrap items-end gap-3">
+      <form action="/college/people/manage" method="get" role="search" className="flex flex-wrap items-end gap-3">
         <label className="grid min-w-44 flex-1 gap-1 text-sm font-semibold text-body">Name, email or phone
           <input name="q" type="search" maxLength={100} defaultValue={filter.q}
             className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
@@ -107,15 +107,15 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
     </section>
     <section className="space-y-2" aria-label="Filtered people">
       <p className="text-sm text-muted-foreground">{pagination.total} matching membership{pagination.total === 1 ? "" : "s"}</p>
-      {people.items.length ? <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>} columns={columns} rows={people.items}
-        getRowKey={person => person.membership.id} /> :
-        <div role="status" className="space-y-3 rounded-xl border border-border bg-surface p-6 text-sm text-muted-foreground">
+      <DataTable caption="College memberships" columns={columns} rows={people.items}
+        getRowKey={person => person.membership.id}
+        empty={<div role="status" className="space-y-3 text-sm text-body">
           <p>{collegePeopleHasFilters(filter)
-            ?"No memberships match the selected People filters."
-            :"No memberships are recorded in this college yet."}</p>
-          {collegePeopleHasFilters(filter)?<Link href="/college/people"
-            className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">Clear People filters</Link>:null}
-        </div>}
+            ? "No memberships match the selected People filters."
+            : "No memberships are recorded in this college yet."}</p>
+          {collegePeopleHasFilters(filter) ? <Link href="/college/people/manage"
+            className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Clear People filters</Link> : null}
+        </div>} />
     </section>
     <nav aria-label="People directory pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
       <span className="text-muted-foreground">
@@ -123,9 +123,9 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
       </span>
       <div className="flex flex-wrap gap-3">
         {pagination.hasPrevious ? <Link href={collegePeopleManageHref({ ...filter, page: filter.page - 1 })}
-          className="inline-flex min-h-10 items-center rounded-md border border-border px-4 font-semibold text-primary-text">Previous</Link> : null}
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-primary-text">Previous</Link> : null}
         {pagination.hasNext ? <Link href={collegePeopleManageHref({ ...filter, page: filter.page + 1 })}
-          className="inline-flex min-h-10 items-center rounded-md border border-border px-4 font-semibold text-primary-text">Next</Link> : null}
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-primary-text">Next</Link> : null}
       </div>
     </nav>
     <p className="text-xs text-muted-foreground">The CSV includes at most 1,000 matching memberships and visibly discloses truncation. Roles are membership grants, not separate people. A multi-role person may appear under multiple role filters. Profile and lifecycle actions are governed by existing permissions.</p>
