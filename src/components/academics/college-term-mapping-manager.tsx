@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { ScrollCue } from "@/components/ui/scroll-cue";
 import { TERM_MAPPING_COPY, collegeTermCourseAddSchema, collegeTermCourseUpdateSchema, collegeTermMappingErrorMessage } from "@/modules/academics/college-term-mapping-model";
 
 type MappingRead = {
@@ -155,7 +156,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
     </form>
     {!termId ? <p className="text-sm text-body">Select a program and semester to view mapped courses.</p> :
     currentMappings.length === 0 ? <p className="text-sm text-body">No courses mapped to this semester.</p> :
-      <div className="overflow-x-auto"><table className="w-full min-w-[40rem] text-left text-sm">
+      <ScrollCue axis="x" label="Semester course mappings"><table className="w-full min-w-[40rem] text-left text-sm">
         <thead><tr>
           <th scope="col" className="px-2 py-2">{TERM_MAPPING_COPY.columns.courseName}</th>
           <th scope="col" className="px-2 py-2">{TERM_MAPPING_COPY.columns.courseCode}</th>
@@ -195,34 +196,34 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
                 <label className="text-xs">Credits
                   <input type="number" min={1} max={10} step={1} required value={editing.credits}
                     onChange={event => setEditing({ ...editing, credits: event.target.value })}
-                    className="block min-h-9 w-24 rounded border border-border bg-surface px-2" />
+                    className="block min-h-11 w-24 rounded border border-border bg-surface px-2" />
                 </label>
                 <label className="text-xs">Order
                   <input type="number" min={1} max={orderedPeers(row).length} step={1} value={editing.position}
                     onChange={event => setEditing({ ...editing, position: event.target.value })}
-                    className="block min-h-9 w-24 rounded border border-border bg-surface px-2" />
+                    className="block min-h-11 w-24 rounded border border-border bg-surface px-2" />
                 </label>
                 <div className="flex gap-2">
                   <button type="submit" disabled={pending}
-                    className="min-h-9 rounded border border-border px-2 text-xs font-semibold">Save</button>
+                    className="min-h-11 rounded border border-border px-2 text-xs font-semibold">Save</button>
                   <button type="button" disabled={pending} onClick={() => setEditing(null)}
-                    className="min-h-9 rounded border border-border px-2 text-xs">Cancel</button>
+                    className="min-h-11 rounded border border-border px-2 text-xs">Cancel</button>
                 </div>
               </form>
             ) : (
               <div className="flex flex-wrap gap-2">
-                <button type="button" disabled={pending} className="min-h-9 rounded border border-border px-2 text-xs"
+                <button type="button" disabled={pending} className="min-h-11 rounded border border-border px-2 text-xs"
                   onClick={() => setEditing({
                     id: row.id, credits: row.credits === null ? "3" : String(row.credits),
                     position: String(orderedPeers(row).findIndex(item => item.id === row.id) + 1),
                   })}>Edit</button>
                 <button type="button" disabled={pending || orderedPeers(row)[0]?.id === row.id}
-                  className="min-h-9 rounded border border-border px-2 text-xs"
+                  className="min-h-11 rounded border border-border px-2 text-xs"
                   aria-label={"Move " + row.courseName + " up"}
                   onClick={() => updateMapping(row.id, row.credits === null ? "3" : String(row.credits),
                     orderedPeers(row).findIndex(item => item.id === row.id))}>↑</button>
                 <button type="button" disabled={pending || orderedPeers(row).at(-1)?.id === row.id}
-                  className="min-h-9 rounded border border-border px-2 text-xs"
+                  className="min-h-11 rounded border border-border px-2 text-xs"
                   aria-label={"Move " + row.courseName + " down"}
                   onClick={() => updateMapping(row.id, row.credits === null ? "" : String(row.credits),
                     orderedPeers(row).findIndex(item => item.id === row.id) + 2)}>↓</button>
@@ -234,7 +235,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
             )}
           </td>
         </tr>)}</tbody>
-      </table></div>}
+      </table></ScrollCue>}
     {notice ? <p role="status" className="text-sm text-body">{notice}</p> : null}
     {error ? <p role="alert" className="text-sm text-[var(--lms-error)]">{error}</p> : null}
     <ConfirmDialog open={confirm !== null} onOpenChange={value => { if (!value && !pending) setConfirm(null); }}
