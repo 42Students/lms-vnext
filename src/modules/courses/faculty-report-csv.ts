@@ -3,10 +3,10 @@ import { z } from "zod";
 const csvRowSchema = z.object({
   name: z.string().max(500),
   status: z.enum(["SUBMITTED", "NOT_SUBMITTED", "ATTEMPTED", "NOT_ATTEMPTED"]),
-  score: z.string().nullable(),
+  score: z.string().max(120).nullable(),
   percent: z.number().min(0).max(100).nullable(),
-  submittedAt: z.string().nullable(),
-  note: z.string(),
+  submittedAt: z.string().max(80).nullable(),
+  note: z.string().max(10000),
 }).strict();
 
 export const facultyReportCsvSchema = z.object({
