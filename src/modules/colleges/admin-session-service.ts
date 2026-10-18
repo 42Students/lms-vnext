@@ -113,14 +113,21 @@ export async function revokeCollegeAdminSessions(ctx:RequestContext,collegeId:un
 export async function listCollegeAdminHistory(ctx:RequestContext,collegeId:unknown,userId:unknown,rawPage:unknown=1){
  const page=z.coerce.number().int().min(1).max(10000).parse(rawPage);
  const target=await authorizedTarget(ctx,collegeId,userId);
- const rows=await getDb().select({
-  id:activityEvents.id,eventType:activityEvents.eventType,
-  occurredAt:activityEvents.occurredAt,summary:activityEvents.summary,
- }).from(activityEvents)
-  .where(and(eq(activityEvents.collegeId,target.college.id),
-   inArray(activityEvents.module,["IDENTITY","PLATFORM"]),
-   or(eq(activityEvents.subjectId,target.userId),
-    eq(activityEvents.subjectId,target.membershipId))))
-  .orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id)).limit(101).offset((page-1)*100);
- return {target,events:rows.slice(0,100),page,truncated:rows.length>100};
+ // Do not trust a Super Admin role captured before an expired session or
+ // role removal. Authorize under SHARE locks until sensitive event data loads.
+ return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,ctx,"college.manage",{
+   organizationId:target.college.organizationId,collegeId:target.college.id,
+  });
+  const rows=await tx.select({
+   id:activityEvents.id,eventType:activityEvents.eventType,
+   occurredAt:activityEvents.occurredAt,summary:activityEvents.summary,
+  }).from(activityEvents)
+   .where(and(eq(activityEvents.collegeId,target.college.id),
+    inArray(activityEvents.module,["IDENTITY","PLATFORM"]),
+    or(eq(activityEvents.subjectId,target.userId),
+     eq(activityEvents.subjectId,target.membershipId))))
+   .orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id)).limit(101).offset((page-1)*100);
+  return {target,events:rows.slice(0,100),page,truncated:rows.length>100};
+ });
 }
