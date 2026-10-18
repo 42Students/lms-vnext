@@ -2,12 +2,26 @@
 import {useState} from "react";
 export type TpoRequestClipboardRow={id:string;student:string;number:string|null;
  kind:string;company:string;asked:string;status:string;decided:string|null};
-export function requestRowsTsv(rows:readonly TpoRequestClipboardRow[]):string{
- const neutral=(v:string|null)=>{const value=(v??"").replace(/[\t\r\n]+/g," ").trim();
-  return /^[=+@-]/.test(value)?"'"+value:value;};
- return [["Student","Student number","Request","Company","Asked","Status","Decided"],...rows.map(row=>
-  [row.student,row.number,row.kind,row.company,row.asked,row.status,row.decided])]
- .map(cells=>cells.map(neutral).join("\t")).join("\n");
+export type TpoRequestClipboardColumn=Exclude<keyof TpoRequestClipboardRow,"id">;
+const clipboardLabels:Record<TpoRequestClipboardColumn,string>={
+ student:"Student",number:"Student number",kind:"Request",company:"Company",
+ asked:"Asked",status:"Status",decided:"Decided",
+};
+const allClipboardColumns=Object.keys(clipboardLabels) as TpoRequestClipboardColumn[];
+/** Copy only columns the operator chose to display; never include hidden fields. */
+export function requestRowsTsv(
+ rows:readonly TpoRequestClipboardRow[],
+ columns:readonly TpoRequestClipboardColumn[]=allClipboardColumns,
+):string{
+ const selected=allClipboardColumns.filter(column=>columns.includes(column));
+ if(selected.length===0)throw new Error("At least one request column must be selected");
+ const neutral=(v:string|null)=>{
+  const value=(v??"").replace(/[\t\r\n\u2028\u2029]+/g," ").trim();
+  return /^[\p{Cc}\p{Cf}\p{Zs}\p{Zl}\p{Zp}]*[=+@-]/u.test(value)
+   ?"'"+value:value;
+ };
+ return [selected.map(column=>clipboardLabels[column]),...rows.map(row=>selected.map(column=>row[column]))]
+  .map(cells=>cells.map(neutral).join("\t")).join("\n");
 }
 export function TpoRequestPageClipboard({rows}:{rows:readonly TpoRequestClipboardRow[]}){
  const [selected,setSelected]=useState<string[]>([]);
@@ -26,10 +40,10 @@ export function TpoRequestPageClipboard({rows}:{rows:readonly TpoRequestClipboar
   const direction=sort.endsWith("OLD")?1:-1;
   return direction*(left??"").localeCompare(right??"")||a.id.localeCompare(b.id);
  });
- const selectedRows=rows.filter(row=>selected.includes(row.id));
+ const selectedRows=sorted.filter(row=>selected.includes(row.id));
  async function copy(){
   try{
-   await navigator.clipboard.writeText(requestRowsTsv(selectedRows));
+   await navigator.clipboard.writeText(requestRowsTsv(selectedRows,visible as readonly TpoRequestClipboardColumn[]));
    setNotice("Copied "+selectedRows.length+" selected requests.");
   }catch{setNotice("Could not copy. Check your browser clipboard permissions.");}
  }

@@ -143,4 +143,27 @@ describe("chat-16 generic campaign and recruiter email channel fail-closed behav
     expect(transport).not.toHaveBeenCalled();
   });
 
+  it("MSG-SMS-PROVIDER-04 refuses whitespace-only Exotel credentials and DLT registration", async () => {
+    for (const change of [
+      { apiKey: " " }, { apiToken: "  " }, { dltEntityId: "\t " },
+    ]) {
+      const outbound = createOutboundProvider({
+        ...config, sms: { ...config.sms, ...change },
+      }, fetch, { APP_ENV: "production" });
+      expect(await outbound.send(sms)).toBe(false);
+    }
+    for (const template of [
+      { exotelSenderId: "   " },
+      { exotelDltTemplateId: "  " },
+    ]) {
+      const outbound = createOutboundProvider({
+        ...config, templates: { [templateKey]: {
+          ...config.templates[templateKey], ...template,
+        } },
+      }, fetch, { APP_ENV: "production" });
+      expect(await outbound.send(sms)).toBe(false);
+    }
+    expect(outboundFetch).not.toHaveBeenCalled();
+  });
+
 });
