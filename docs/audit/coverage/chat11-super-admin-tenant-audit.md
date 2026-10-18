@@ -21,6 +21,8 @@ Source inspection: 2026-10-18. Branch: `chatgpt/chat-11-b`. **Partial, source-re
 
 | SA-tenants-modules-LOGIN-02 | `PUT /api/admin/colleges/[collegeId]/signin` | Origin verified first; live Super Admin context required before parsing; 2 KiB bounded UTF-8 JSON reader; rejects oversized 413/malformed 400 and URL/body college mismatch, preserves CAS 409/storage 503; returns only policy status and version | `tests/unit/chat11-super-admin-signin-route-adversarial.test.ts` — `SA-tenants-modules-LOGIN-02` | Provider/DB integration, real revoked-session concurrency |
 
+| SA-tenants-modules-R01 | `getModuleAccessOverviewMetrics`, `parseModuleMetricsCollegeIds`, `assertModuleMetricsCollegeScopes` | Reject foreign/archived/missing colleges, org/college-scoped SA UUID spoofing and more than 100/duplicate IDs before aggregating. Largest learner scope excludes suspended/disabled identities; membership overrides count only active LEARNER roles with distinct rule IDs. | `tests/unit/chat11-super-admin-module-metrics-scope.test.ts`, `SA-tenants-modules-R01` | PostgreSQL multi-college aggregation and performance at 100 colleges |
+
 ## Audit disposition
 
 - **Source-level blockers found and patched:** unauthorized malformed-filter route bypass across three administrative pages.
