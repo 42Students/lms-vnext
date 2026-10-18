@@ -95,6 +95,17 @@ describe("UX-kit-HARDEN-23 authorization boundaries and WebView history", () => 
     expect(source).toContain("activeOverlayStack.splice(index, 1)");
   });
 
+  it("UX-kit-HARDEN-39 overlay viewport sizing updates without visualViewport on orientation changes",()=>{
+    const source=readFileSync(join(process.cwd(),"src/components/ui/use-overlay-webview.ts"),"utf8");
+    expect(source).toContain('const height = viewport?.height ?? window.innerHeight');
+    expect(source).toContain('window.addEventListener("resize", resize)');
+    expect(source).toContain('window.removeEventListener("resize", resize)');
+    expect(source).toContain('window.visualViewport?.addEventListener("resize", resize)');
+    expect(source).toContain('window.visualViewport?.removeEventListener("resize", resize)');
+    expect(source).toContain('setAvailableHeight');
+    expect(source).toContain('setViewportBottom');
+  });
+
   it("UX-kit-HARDEN-27 table cells render once per row and redacts unsafe rowHref navigation", () => {
     const called = vi.fn((row:{id:string,title:string})=>row.title);
     const columns = [{key:"title",header:"Project",mobilePriority:"primary" as const,cell:called}];
