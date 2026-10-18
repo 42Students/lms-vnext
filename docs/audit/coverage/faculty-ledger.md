@@ -461,6 +461,13 @@ Status: INCOMPLETE. Tests have not been executed; do not use this ledger for rel
 | `src/app/api/courses/faculty/response-followups/csv/route.ts` | GAP: each handler requires role, scope, validation and race test |
 | `src/app/api/courses/faculty/results/csv/route.ts` | GAP: each handler requires role, scope, validation and race test |
 
-Known role and integrity evidence: `tests/unit/PROJ-BREAK-FACULTY-01.test.ts`, `PROJ-BREAK-FACULTY-02.test.ts`, `PROJ-BREAK-FACULTY-03.test.ts`, `COURSES-BREAK-FACULTY-01.test.ts`, `COURSES-BREAK-FACULTY-02.test.ts`, `COURSES-BREAK-FACULTY-03.test.ts`, `COURSES-BREAK-FACULTY-04.test.ts`, and `chat3-faculty-gradebook-integrity.test.ts`. These do not establish PostgreSQL integration or full method coverage.
+Known role and integrity evidence: `tests/unit/PROJ-BREAK-FACULTY-01.test.ts`, `PROJ-BREAK-FACULTY-02.test.ts`, `PROJ-BREAK-FACULTY-03.test.ts`, `COURSES-BREAK-FACULTY-01.test.ts`, `COURSES-BREAK-FACULTY-02.test.ts`, `COURSES-BREAK-FACULTY-03.test.ts`, `COURSES-BREAK-FACULTY-04.test.ts`, `COURSES-BREAK-FACULTY-05.test.ts`, `SA-ACADEMICS-PEOPLE-BREAK-chat3.test.ts`, and `chat3-faculty-gradebook-integrity.test.ts`. These do not establish PostgreSQL integration or full method coverage.
 
 Next actions: enumerate runtime symbols, map behavioural tests per export, run TypeScript and Vitest, complete Super Admin Academics/People audit, close UX gaps.
+
+### 18 October follow-on risk findings
+
+- `FAC-CSV-004/005/006` in `docs/audit/defects-chat-3.md`: bounded report cells, zero-width prefixed spreadsheet formula mitigation, and valid aggregate count guards; unexecuted tests `COURSES-BREAK-FACULTY-04`.
+- `FAC-courses-01`: real central `can()` plus `canAccessFacultyRoute` role, disabled-session, stale-membership and selected-admin-scope tests (`COURSES-BREAK-FACULTY-05`); does not replace authenticated browser testing.
+- `SA-academics-people`: scoped section lookup, foreign college and disabled Super Admin account regressions (`SA-ACADEMICS-PEOPLE-BREAK-chat3`); remainder of admin people and recruiter pages **not audited exhaustively**.
+- Initial unit-failure report may contain stale source-assertion failures already remediated by main merges; only a fresh Vitest run can verify.
