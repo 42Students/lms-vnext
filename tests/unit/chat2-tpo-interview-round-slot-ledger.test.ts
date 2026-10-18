@@ -75,6 +75,11 @@ describe("TPO-drive-workspace-44 bulk room concurrency ledger",()=>{
   const source=readFileSync("src/modules/placements/tpo-interview-slot-service.ts","utf8");
   const bulk=source.slice(source.indexOf('if(input.action==="ASSIGN_ROOMS_BY_ROLL")'),
    source.indexOf('if(input.action==="MOVE_REQUEST")'));
+  expect(bulk).toContain('eq(placementApplications.jobId,job.id)');
+  expect(bulk).toContain('eq(placementApplications.status,"SUBMITTED")');
+  expect(bulk).toContain('eq(collegeMemberships.collegeId,info.collegeId)');
+  expect(bulk).toContain('eq(collegeMemberships.status,"ACTIVE")');
+  expect(bulk).toContain('eq(users.platformStatus,"ACTIVE")');
   expect(bulk).toContain('eq(placementRoundCandidateSlots.status,"BOOKED")');
   expect(bulk).toContain('eq(placementRoundCandidateSlots.applicationId,slot.applicationId!)');
   expect(bulk).toContain('eq(placementRoundCandidateSlots.version,slot.version)');
