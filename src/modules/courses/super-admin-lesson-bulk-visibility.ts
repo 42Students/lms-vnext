@@ -1,8 +1,8 @@
 import "server-only";
-import {eq,inArray} from "drizzle-orm";
+import {and,eq,inArray} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {courseLessons,lessonContents} from "@/db/schema";
+import {academicPeriods,courseLessons,courseLearningPaths,courseOfferings,courses,departments,lessonContents} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {updateCollegeContentStudentVisibility} from "./college-content-visibility-service";
@@ -14,12 +14,21 @@ const inputSchema=z.strictObject({
 });
 export async function bulkSuperAdminLessonVisibility(context:RequestContext,raw:unknown){
  const input=inputSchema.parse(raw);
- await resolveActingCollege(context,"courses.manage");
+ const acting=await resolveActingCollege(context,"courses.manage");
  const rows=await getDb().select({
   id:lessonContents.id,lessonId:courseLessons.id,status:lessonContents.status,
   visible:lessonContents.visibleToStudents,updatedAt:lessonContents.updatedAt,
- }).from(lessonContents).innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
- .where(inArray(lessonContents.lessonId,input.lessonIds)).limit(501);
+ }).from(lessonContents)
+ .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
+ .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+ .innerJoin(courseOfferings,eq(courseOfferings.id,courseLearningPaths.offeringId))
+ .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
+ .innerJoin(departments,eq(departments.id,courses.departmentId))
+ .innerJoin(academicPeriods,eq(academicPeriods.id,courseOfferings.academicPeriodId))
+ .where(and(inArray(lessonContents.lessonId,input.lessonIds),
+   eq(departments.collegeId,acting.collegeId),
+   eq(academicPeriods.collegeId,acting.collegeId)))
+ .limit(501);
  if(rows.length>500)throw new Error("LESSON_CONTENT_BULK_TOO_LARGE");
  const changed:string[]=[],failures:{id:string;reason:string}[]=[];
  for(const row of rows){
