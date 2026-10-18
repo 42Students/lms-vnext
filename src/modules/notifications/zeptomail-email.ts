@@ -39,10 +39,9 @@ export function createZeptoMailEmailProvider(
   return {
     async sendOtpEmail(message) {
       if (
-        !config.token ||
+        !config.token.trim() ||
         !config.otpTemplateKey ||
         !isValidRecipient("EMAIL", message.toEmail) ||
-        !config.token.trim() ||
         !/^[0-9]{4,8}$/.test(message.code)
       ) {
         writeStructuredLog("WARNING", "email.otp_not_sent", {
