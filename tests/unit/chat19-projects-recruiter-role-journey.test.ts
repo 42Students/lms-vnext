@@ -45,7 +45,8 @@ describe("HR/Recruiter Projects role journey", () => {
 
   it.each([
     "javascript:alert(1)", "data:text/html,hi", "http://example.org/project",
-    "https://localhost/test", "https://127.0.0.1/test",
+    "https://localhost/test", "https://localhost./test",
+    "https://dev.local./internal", "https://127.0.0.1/test",
     "https://192.168.1.1/test", "https://10.0.0.12/test",
     "https://169.254.169.254/test", "https://user:pass@example.org",
     "not a url", "x".repeat(2200),
@@ -123,6 +124,16 @@ describe("HR/Recruiter Projects role journey", () => {
     expect(service).toContain("ugPercentage:active && shareUg?");
     expect(service).toContain("githubUrl:links.githubUrl,portfolioUrl:links.portfolioUrl");
     expect(service).toContain("projects: [] as Array<{ name: string; url: string }>");
+  });
+
+  it("PROJ-HR-08 trailing-dot localhost and local network hostnames stay blocked", () => {
+    for (const value of [
+      "https://localhost./dashboard",
+      "https://localhost.../dashboard",
+      "https://campus.local./dashboard",
+      "https://127.0.0.1./dashboard",
+      "https://192.168.1.1./dashboard",
+    ]) expect(safeRecruiterExternalLink(value)).toBeNull();
   });
 
 });
