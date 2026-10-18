@@ -26,3 +26,12 @@ The source was committed but local tests/typecheck/lint and browser 320/360/390,
 - Faculty attendance scheduling/unsaved-mark navigation preserves drafts through focus-managed confirmation and unknown server error codes fall back to friendly operation-level copy.
 - Total authored source regression cases for the slice: 77 (original 42 plus 35 new UX-teacher/UX-teach cases); all 38 per-route notes plus component refinement notes exist.
 - This is **source-ready only**. Actions runs on main are queued/pending; no successful typecheck, lint, unit, browser widths 320/360/390, screen-reader or WebView evidence has been returned for the final source SHA. Keep both route checklists unchecked until the orchestrator confirms them and records test/device evidence.
+
+
+## Round 9 repair and source-completion addendum
+
+- The Round 9 failures were triaged against the current source. `TPO-drives-29/30/38` employer portal external links regained `noopener noreferrer`; the exported POST/DELETE assignment-material handlers now have explicit same-origin rejection in addition to the shared guarded implementation.
+- `TPO-drives-45`, `TPO-drives-51`, and `COL-people-20` retain the expected deadline restoration, College Admin create route and Super Admin-only grant/revoke guards; their known source-contract assertions were verified on the branch.
+- Subsequent UX refinements corrected interactive input typography to 16px at every breakpoint and converted 10 page-level search/filter submits to the shared Button component; the existing action wording and query behavior were preserved.
+- The route inventories remain 36/36 `/teacher` and 2/2 `/teach` implemented at source level. The 77 prior UX source cases plus eight font cases, five shared font cases and ten submit-action cases total **100 authored UX source cases**; two separate Round 9 source regression cases also exist.
+- Acceptance checkboxes are intentionally **pending**, not green. The signed-off lane brief delegates TypeScript, lint, unit, 320/360/390, native WebView and assistive-tech runtime execution to the orchestrator; GitHub Actions still shows CI queued/pending at this check. These are unverified, not claimed to pass.
