@@ -27,7 +27,8 @@ describe("LEARNER-course-detail-R03 — scheduled live class Join/Copy",()=>{
   expect(service).toContain("externalUrl: row.contentExternalUrl,");
   expect(service).toContain('row.contentType === "LIVE_CLASS"');
   expect(service).toContain("row.contentEndsAt.getTime() <= now");
-  expect(service).toContain('storageKey:\n        contentAvailability === "AVAILABLE"');
+  // Verify the actual storage-release ternary, not incidental indentation.
+  expect(service).toMatch(/storageKey:\s*contentAvailability\s*===\s*"AVAILABLE"\s*\?\s*row\.contentStorageKey\s*:\s*null/);
   expect(service).toContain("requireLearnerMembership(");
  });
  it("LEARNER-course-detail-R03 exposes both scheduled Join and Copy only for a safe meeting URL, with accurate status",()=>{
