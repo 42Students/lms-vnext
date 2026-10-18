@@ -125,7 +125,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
    </label>
   </div>
   <p className="text-xs text-muted-foreground">Click an empty hour to add a recruiter follow-up, or drag an existing follow-up onto another hour to move it. Events with an unknown duration use a 30-minute visual marker; it is not a booked time range. Overlapping events share their time lane.</p>
-  <div className="overflow-x-auto rounded-xl border border-border bg-surface">
+  <div tabIndex={0} role="region" aria-label="Recruiter follow-up weekly calendar, scroll horizontally for more days" className="overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-surface [mask-image:linear-gradient(to_right,black_0%,black_95%,transparent_100%)]">
    <div className="grid min-w-[63rem] grid-cols-[5rem_repeat(7,minmax(0,1fr))]">
     <div className="sticky left-0 z-10 border-b border-r border-border bg-surface p-2 text-xs">IST</div>
     {days.map(day=><div key={day} className="border-b border-r border-border p-3 text-center text-xs font-semibold">
