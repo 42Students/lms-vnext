@@ -397,3 +397,12 @@ The public HTTP probes mock the system-readiness collaborators; they do not esta
 | `safeInboundPreview` | same (`INBOUND-MAIL-BIDI-13`) | strip override/isolate controls in untrusted inbound-mail subject but leave ZWJ emoji intact |
 
 All cases are **authored but unexecuted**. Existing tests are retained. No actual provider send, PostgreSQL concurrency, branch-percentage certification or visual inspection is claimed.
+
+
+### 2026-10-19: first-policy-read outage must not abandon the delivery ledger
+
+| Function | Behavioral test | Cases |
+|---|---|---|
+| `deliverBatch` (initial policy failure branch) | `tests/unit/chat16-messaging-initial-policy-outage-14.test.ts` (`MSG-POLICY-INITIAL-14`, `MSG-POLICY-INITIAL-15`) | A failing initial authorization/suppression policy read records `FAILED/policy-read-failed` with opaque recipient key before any send. A later eligible contact can still send and complete aggregate audit; an all-recipient policy outage leaves no queued/unconfirmed sends and records exact failed totals. Errors and recipient addresses are not copied to receipts. |
+
+Fix `src/modules/messaging/service.ts`: the previous unhandled initial `policyFor` exception could abort a partially-sent batch before calling `repository.auditBatch`, even when the preceding recipient had already been accepted by the provider. The new fail-closed branch continues the remaining recipients and emits complete receipt counts. Existing retryless provider POST and secondary live-policy recheck stay unchanged. This is unit-level test authorship, **not executed**; multi-worker PostgreSQL concurrency still needs acceptance.
