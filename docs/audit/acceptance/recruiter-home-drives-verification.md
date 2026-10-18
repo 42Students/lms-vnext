@@ -219,3 +219,8 @@ Unit tests authored but not executed locally; no claim of CI pass or production 
 ## Chat-15 HR employer portfolio visibility — 2026-10-18
 
 **HR-PORTFOLIO-ARCHIVE-36** excludes archived jobs from the canonical recruiter job portfolio, preventing them from appearing in dependent dashboard, calendar, activity and notification lists. **HR-PORTFOLIO-REVOKE-37** rechecks the acting recruiter's persisted ACTIVE grant and profile on each list query; session grants alone never keep employer data visible after revocation. Evidence: `tests/unit/HR-BREAK-chat15-portfolio-owner-24.test.ts`. The test was authored but not run; multi-session PostgreSQL replay is outstanding.
+
+
+## HR-PORTFOLIO-EXPIRY-38 live grant expiry safety (2026-10-18)
+
+The recruiter job-list SQL now rechecks all persisted grant-validity invariants: recruiter and grant ACTIVE, grant VERIFIED, non-null future validity, and `DRIVES` capability. This prevents a previously issued context from continuing to enumerate employer drives after expiry or capability removal. `tests/unit/HR-BREAK-chat15-portfolio-owner-24.test.ts` covers the precise expiry boundary and source predicate. CI and real PostgreSQL authorization remain outstanding.
