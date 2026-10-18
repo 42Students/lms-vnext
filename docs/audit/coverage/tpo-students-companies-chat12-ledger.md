@@ -6,8 +6,8 @@
 |---|---|---|---|---|
 | `src/modules/placements/tpo-students-model.ts` | `TPO_STUDENT_JOURNEY_STATES` | `tests/unit/chat12-tpo-roster-facets-behavioral.test.ts` | enumerated journey states; enum consumers | **PARTIAL** |
 | `src/modules/placements/tpo-students-model.ts` | `deriveTpoStudent` | `tests/unit/chat12-round34-profile-readiness.test.ts` | source-level readiness provenance | **SOURCE** |
-| `src/modules/placements/tpo-students-model.ts` | `summarizeTpoStudents` | `tests/unit/chat12-tpo-students-contract.test.ts` | source aggregation contract | **SOURCE** |
-| `src/modules/placements/tpo-students-model.ts` | `summarizeTpoStudentBranches` | **NO TARGETED TEST** | branch weights, denominators and empty cohorts | **OPEN** |
+| `src/modules/placements/tpo-students-model.ts` | `summarizeTpoStudents` | `tests/unit/chat12-tpo-roster-summaries-behavior.test.ts` | Active roster, registered placement pool vs unregistered, placed outside pool, null rate for no denominator, deterministic branch sorting | **BEHAVIOURAL** |
+| `src/modules/placements/tpo-students-model.ts` | `summarizeTpoStudentBranches` | `tests/unit/chat12-tpo-roster-summaries-behavior.test.ts` | Active roster, registered placement pool vs unregistered, placed outside pool, null rate for no denominator, deterministic branch sorting | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-students-model.ts` | `filterTpoStudentRoster` | `tests/unit/chat12-tpo-roster-facets-behavioral.test.ts` | facet intersection, nulls, search and pagination | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-students-model.ts` | `selectTpoStudentWorkingSet` | `tests/unit/chat12-tpo-roster-facets-behavioral.test.ts` | default vs explicit finished-batch access | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-students-model.ts` | `tpoStudentRegisteredForPlacements` | `tests/unit/chat12-tpo-roster-facets-behavioral.test.ts` | explicit selection vs application fallback | **BEHAVIOURAL** |
