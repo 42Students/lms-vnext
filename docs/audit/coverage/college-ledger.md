@@ -266,3 +266,13 @@ All cases are authored, not executed. Remaining project acceptance gates: concur
 
 | `src/components/college/college-role-directory-workspace.tsx` `CollegeRoleDirectoryWorkspace` | `tests/unit/chat4-college-people-responsive-directory.test.tsx` (`COL-UX-PEOPLE-TABLE-03`) | Replaces desktop People native table with labelled `DataTable` (stable membership-ID row keys, sticky first column, scroll cue), while retaining independently optimized existing `md:hidden` phone cards. Faculty teaching/role actions, learner program/batch/class, contact card, verification, modal and lifecycle actions retained. Denied-scoped service case, rendered learner/faculty cases authored; browser keyboard and 320px audit pending. |
 | `src/modules/people/college-faculty-csv-draft-model.ts` `facultyCsvResponseBelongsToDraft`; `src/components/college/college-faculty-csv-import.tsx` | `tests/unit/chat4-college-faculty-csv-draft-race.test.ts` (`COL-people-faculty-csv-RACE-03`) | Valid preview only for the same CSV revision, cancel stale file reads, disable edits while request is pending, preserve draft on failed submit, show safe errors without backend details, prevent an outdated preview from authorizing a different draft. Browser double-submit and API races remain integration gates. |
+
+## IIT Dharwad Projects archive conflict safety — COL role journey
+
+| Surface | Test | Evidence and unfinished gate |
+| --- | --- | --- |
+| `src/modules/projects/instance-archive-model.ts` `archiveProjectInstanceInputSchema`, `projectArchiveTokenMatches`; `src/modules/projects/instance-service.ts` `archiveProjectInstance` | `tests/unit/chat4-project-archive-cas-handler.test.ts` (`PROJ-BREAK-COLLEGE-04-ARCHIVE-07`) | User-submitted stale tabs compare the expected updated timestamp against the row-locked project before archive. Already archived repeats remain idempotent, persisted role checked even for no-ops. Internal no-body callers still use legacy service path; all-caller CAS migration remains. |
+| `src/app/api/projects/[projectId]/archive/route.ts` POST | Same test | Same-origin, bounded strict JSON ISO timestamp, no unexpected fields, malformed/oversize body rejected before mutation, service authorizes tenant/role. |
+| `src/components/projects/project-archive-control.tsx` | Same test and source | Now sends the exact timestamp in the confirmation, URL-encodes project ID, and displays refresh/try-again message on failure. |
+
+PostgreSQL concurrent archive/edit and exactly-once event/notification assertions remain final integration gates. Tests authored, deliberately not executed per owner.
