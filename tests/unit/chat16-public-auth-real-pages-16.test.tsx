@@ -85,6 +85,38 @@ describe("chat-16 real public sign-in page security and tenant rendering",()=>{
   await expect(HomePage(params({returnTo:"https://attacker.example.org"}))).rejects.toThrow("REDIRECT:/dashboard");
   expect(redirect).toHaveBeenCalledTimes(2);
  });
+ it("UX-chat16-auth-unavailable-06 never shows a tenant OTP form after a domain lookup outage",async()=>{
+  vi.mocked(resolveRequestTenant).mockResolvedValue({kind:"unavailable",host:"college.example.edu"});
+  const page=await HomePage(params());
+  expect(textOf(page)).toContain("This address may be correct");
+  expect(textOf(page)).toContain("We couldn");
+  expect(elements(page).some(el=>el.type===LoginForm)).toBe(false);
+  const links=elements(page).filter(el=>el.type==="a");
+  expect(links.some(el=>(el.props as {href?:string}).href==="https://42lms.com/login")).toBe(true);
+ });
+ it("UX-chat16-auth-recovery-07 explains expired, revoked and legacy handoff sessions without exposing tokens",async()=>{
+  for(const [auth,fragment] of [
+   ["revoked","Your session was ended"],
+   ["expired","Your session expired. Please log in again."],
+   ["handoff-retired","This old sign-in link has changed"],
+  ] as const){
+   const page=await HomePage(params({auth}));
+   expect(textOf(page)).toContain(fragment);
+   expect(elements(page).some(el=>(el.props as {role?:string}).role==="alert")).toBe(true);
+   expect(textOf(page)).not.toContain("private-auth-secret");
+  }
+ });
+ it("UX-chat16-auth-recruiter-08 does not override a tenant that disables email OTP",async()=>{
+  vi.mocked(resolveRequestTenant).mockResolvedValue({
+   kind:"college",host:"college.example.edu",collegeId:"college-1",organizationId:"org-1",
+  });
+  vi.mocked(effectiveCollegeSignInCapabilities).mockResolvedValue({
+   email:false,phone:true,primary:"PHONE",
+  });
+  const page=await HomePage(params({recruiter:"email"}));
+  const login=elements(page).find(el=>el.type===LoginForm);
+  expect(login?.props).toMatchObject({defaultChannel:"PHONE",allowedChannels:["PHONE"]});
+ });
  it("UX-chat16-auth-metadata-05 reads verified tenant rather than forwarded-host headers",async()=>{
   await expect(generateMetadata()).resolves.toMatchObject({title:"Sign in · 42LMS"});
   expect(resolveRequestTenant).toHaveBeenCalledWith("42lms.com");

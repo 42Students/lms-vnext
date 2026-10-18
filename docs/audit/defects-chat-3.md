@@ -126,6 +126,12 @@ The Quiz POST route already bounded streams, but silently ignored non-decimal Co
 
 **Tests:** `tests/unit/chat3-faculty-quiz-transport-errors.test.ts` FAC-QUIZ-TRANSPORT-01/02; static authoring only, pending cloud CI.
 
+### SA3-PEOPLE-09 — stale scoped People directory deep link displays false empty page (S2)
+
+The selected-college `listAdminScopedPeople` service used `offset((query.page-1)*pageSize)` before knowing the current number of matching Faculty/Learner memberships. An old bookmarked page could produce “page 999 of 1” and an incorrect no-matches state after a role revocation, status/filter change or removal. Unlike the global Super Admin directory, the selected-college directory did not clamp pagination.
+
+**Fix:** Count under the server-selected organization/college SQL scope, compute `totalPages`, clamp `page`, then issue the row query with the corrected offset. Return corrected query state so existing navigation can render truthful page numbers. `tests/unit/chat3-superadmin-scoped-people-pagination.test.ts` (SA-people-scoped-01) includes service-level role/tenant preflight, bounded pages, stale page and empty results. CI and live PG verification pending.
+
 ### FAC-HTTP-BODY-021 — unbounded live-class and attendance scheduling commands (S1)
 
 Both Faculty live-class and attendance scheduling POST routes previously called `request.json()` directly. The Zod/authorization service subsequently rejected bad fields, but the HTTP input body had already been fully buffered, permitting oversized metadata requests to waste memory in a stale or malicious session.

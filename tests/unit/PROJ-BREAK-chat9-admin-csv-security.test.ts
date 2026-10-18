@@ -4,6 +4,7 @@ import {
   projectAdminCsv,
   projectAdminCsvCell,
 } from "@/modules/projects/project-admin-csv-model";
+import {projectWorkspacePageCsv} from "@/modules/projects/admin-workspace-page-export-model";
 
 describe("IIT Dharwad Projects admin exports: spreadsheet injection resilience", () => {
   it("PROJ-BREAK-exports-10 neutralizes formulas after Unicode isolates, bidi controls and invisible prefixes", () => {
@@ -18,6 +19,18 @@ describe("IIT Dharwad Projects admin exports: spreadsheet injection resilience",
     expect(projectAdminCsvCell(" Normal note")).toBe('" Normal note"');
     expect(projectAdminCsvCell(null)).toBe('""');
     expect(projectAdminCsvCell(0)).toBe('"0"');
+  });
+
+  it("PROJ-BREAK-exports-16 strips control-code formula concealment without erasing legitimate multiline text", () => {
+    for (const payload of [
+      "\u0000=1+1", "\u0007\u200D@HYPERLINK(1)", "\u0001 \u0301+SUM(1)", "\u007F\u2066-HYPERLINK(1)",
+    ]) {
+      const csvCell = projectAdminCsvCell(payload);
+      expect(csvCell.startsWith('"\''), payload).toBe(true);
+      expect(csvCell).not.toMatch(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/);
+    }
+    expect(projectAdminCsvCell("Line one\nLine two")).toBe('"Line one\nLine two"');
+    expect(projectAdminCsvCell("ordinary value")).toBe('"ordinary value"');
   });
 
   it("PROJ-BREAK-exports-11 escapes multiline, quotes and comma fields without adding columns", () => {
@@ -36,7 +49,6 @@ describe("IIT Dharwad Projects admin exports: spreadsheet injection resilience",
     for (const file of [
       "project-audit-page-export.tsx",
       "project-submissions-page-export.tsx",
-      "project-admin-workspace-page-export.tsx",
       "project-at-risk-page-export.tsx",
       "super-admin-template-page-export.tsx",
       "project-workspace-page-export.tsx",
@@ -48,5 +60,20 @@ describe("IIT Dharwad Projects admin exports: spreadsheet injection resilience",
       expect(source, file).not.toContain("function csvField(");
       expect(source, file).not.toContain("function escape(");
     }
+    const client = readFileSync("src/components/projects/project-admin-workspace-page-export.tsx", "utf8");
+    const model = readFileSync("src/modules/projects/admin-workspace-page-export-model.ts", "utf8");
+    expect(client).toContain("projectWorkspacePageCsv(items)");
+    expect(model).toContain("projectAdminCsv([headings,...rows])");
+    expect(model).toContain("projectAdminCsvCell(value)");
+    const protectedCsv = projectWorkspacePageCsv([{
+      title: "\u2066=HYPERLINK(1)",
+      mentorName: null,
+      status: "ACTIVE",
+      progressPercent: 10,
+      memberCount: 1,
+      updatedAt: new Date("2026-10-01T00:00:00.000Z"),
+    }]);
+    expect(protectedCsv).toContain('"\'\u2066=HYPERLINK(1)"');
+    expect(protectedCsv).toContain('"In progress"');
   });
 });

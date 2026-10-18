@@ -16,14 +16,14 @@ export async function getMentorBoardReview(context:RequestContext,raw:unknown){
     !can(context,"projects.read",{
       collegeId:membership.collegeId,organizationId:membership.organizationId,
     }))throw new AuthorizationError("projects.read");
+  const enabled=(await resolveOptionalModuleAccess(context)).projects.enabled;
+  if(!enabled)return {enabled:false as const,query,projectTitle:"",
+    ...mentorBoardReview([],[],query)};
   const scope=await requireProjectReadAccess(context,query.projectId);
   if(scope.access!=="MENTOR"||scope.collegeId!==membership.collegeId||
     !can(context,"projects.read",{
       collegeId:scope.collegeId,organizationId:scope.organizationId,
     }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
-  const enabled=(await resolveOptionalModuleAccess(context)).projects.enabled;
-  if(!enabled)return {enabled:false as const,query,projectTitle:scope.project.title,
-    ...mentorBoardReview([],[],query)};
   const view=await getProjectInstanceWorkspace(context,scope.project.id);
   return {enabled:true as const,query,projectTitle:view.project.title,
     ...mentorBoardReview(view.tasks,view.sprints,query)};
