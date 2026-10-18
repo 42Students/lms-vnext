@@ -416,12 +416,11 @@ export type AddProjectMemberInput = z.input<
 export const projectMentorCandidateQuerySchema = z
   .object({
     q: z.string().trim().max(120).default(""),
-    limit: z.coerce
-      .number()
-      .int()
-      .min(1)
-      .max(100)
-      .default(50),
+    limit: z.union([
+      z.number().int().min(1).max(100),
+      z.string().regex(/^[0-9]+$/).transform(Number)
+        .pipe(z.number().int().min(1).max(100)),
+    ]).default(50),
   })
   .strict();
 

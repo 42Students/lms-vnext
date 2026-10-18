@@ -38,6 +38,7 @@ import {
   requireProjectReadAccess,
 } from "./access";
 import { loadProjectCollegeScope } from "./scope";
+import {getProjectAdminCollegeId} from "./admin-college-scope";
 import {
   addProjectMemberInputSchema,
   bulkProjectMentorReassignmentInputSchema,
@@ -201,18 +202,15 @@ export async function listProjectMentorCandidates(
   collegeIdInput: string,
   rawQuery: unknown,
 ) {
-  const college =
-    await loadProjectCollegeScope(
-      collegeIdInput,
-    );
-  requirePermission(context, "projects.manage", {
-    organizationId: college.organizationId,
-    collegeId: college.id,
+  const query=projectMentorCandidateQuerySchema.parse(rawQuery);
+  // A forged college must not reveal a staff roster or even whether its ID
+  // exists. A request snapshot is not sufficient for a long-running read.
+  if(getProjectAdminCollegeId(context)!==collegeIdInput)
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  const college=await loadProjectCollegeScope(collegeIdInput);
+  requirePermission(context,"projects.manage",{
+    organizationId:college.organizationId,collegeId:college.id,
   });
-  const query =
-    projectMentorCandidateQuerySchema.parse(
-      rawQuery,
-    );
   const search = query.q
     ? or(
         ilike(users.displayName, containsLikePattern(query.q)),
@@ -220,8 +218,11 @@ export async function listProjectMentorCandidates(
       )
     : undefined;
 
-  return getDb()
-    .select({
+  return getDb().transaction(async tx=>{
+    await assertPersistedPlatformPermission(tx,context,"projects.manage",{
+      organizationId:college.organizationId,collegeId:college.id,
+    });
+    return tx.select({
       membershipId: collegeMemberships.id,
       displayName: users.displayName,
       email: users.email,
@@ -257,6 +258,7 @@ export async function listProjectMentorCandidates(
       asc(collegeMemberships.id),
     )
     .limit(query.limit);
+  });
 }
 
 export async function reassignProjectPrimaryMentor(
