@@ -1,5 +1,5 @@
 "use client";
-import {useState} from "react";
+import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {DataTable} from "@/components/ui/data-table";
@@ -7,21 +7,22 @@ type Row={applicationId:string;name:string;roleTitle:string;annualCtcInr:number|
  reasons:string[];canPromote:boolean;promotionStatus:string|null};
 type Preview={storageReady:boolean;freeSeats:number|null;activeOffers:number;rows:Row[];next:Row|null;previewToken:string};
 export function TpoWaitlistPromotionControl({jobId,preview}:{jobId:string;preview:Preview}){
- const router=useRouter();const [reason,setReason]=useState("A placement offer seat became available");
+ const router=useRouter();const inFlight=useRef(false);const [reason,setReason]=useState("A placement offer seat became available");
  const [busy,setBusy]=useState(false);const [error,setError]=useState("");const [success,setSuccess]=useState("");const [confirmOpen,setConfirmOpen]=useState(false);
  async function promote(){
-  if(!preview.next||busy||reason.trim().length<3)return;
+  if(!preview.next||inFlight.current||reason.trim().length<3)return;
+  inFlight.current=true;
   setBusy(true);setError("");setSuccess("");
   try{const res=await fetch("/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/waitlist-promote",{
    method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
    body:JSON.stringify({action:"OFFER_NEXT",confirmed:true,expectedPreviewToken:preview.previewToken,reason:reason.trim()}),
   });
-  const data=await res.json() as {error?:string;seatNumber?:number};
-  if(!res.ok)throw Error("Could not promote waitlisted learner. Refresh the preview before retrying.");
+  const data=await res.json().catch(()=>null) as {seatNumber?:number}|null;
+  if(!res.ok||typeof data?.seatNumber!=="number")throw Error("Could not promote waitlisted learner. Refresh the preview before retrying.");
   setSuccess("Offer released to "+preview.next.name+" for seat "+data.seatNumber+".");
   router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Could not release offer");}
-  finally{setBusy(false);setConfirmOpen(false);}
+  finally{inFlight.current=false;setBusy(false);setConfirmOpen(false);}
  }
  return <section className="space-y-4">
   <p className="rounded border border-border bg-surface p-4 text-sm">
