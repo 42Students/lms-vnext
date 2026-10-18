@@ -16,6 +16,7 @@ export async function listProjectAdminUnsubmitted(context:RequestContext,college
  requirePermission(context,"projects.manage",{organizationId:college.organizationId,collegeId:college.id});
  const db=getDb();
  const where=and(eq(projectInstances.collegeId,college.id),
+  ne(projectInstances.status,"ARCHIVED"),
   notExists(db.select({id:projectSubmissions.id}).from(projectSubmissions)
    .where(eq(projectSubmissions.projectId,projectInstances.id))),
   q.q?or(ilike(projectInstances.title,"%"+q.q+"%"),
