@@ -571,6 +571,9 @@ export async function duplicateProjectTemplate(
 
   try {
     return await db.transaction(async (tx) => {
+      // The source snapshot was loaded before the transaction. Never trust
+      // that the caller's global management role is still active at insert.
+      await assertPersistedPlatformPermission(tx,context,"project-template.manage");
       const [template] = await tx
         .insert(projectTemplates)
         .values({
