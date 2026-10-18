@@ -227,22 +227,22 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/modules/projects/mentor-calendar-view.ts` | `splitMentorMeetings` | `tests/unit/PROJ-BREAK-chat14-mentor-calendar-resources.test.ts` | Runtime happy/hostile input, state, scoped URL, privacy, export bounds as applicable; **authored, unrun**. Full service/PG/browser coverage remains open |
 | `src/modules/projects/mentor-calendar-view.ts` | `mentorMeetingDisplayStatus` | `tests/unit/PROJ-BREAK-chat14-mentor-calendar-resources.test.ts` | Runtime happy/hostile input, state, scoped URL, privacy, export bounds as applicable; **authored, unrun**. Full service/PG/browser coverage remains open |
 | `src/modules/projects/mentor-calendar-view.ts` | `safeMentorMeetingJoinUrl` | `tests/unit/PROJ-BREAK-chat14-mentor-calendar-resources.test.ts` | Runtime happy/hostile input, state, scoped URL, privacy, export bounds as applicable; **authored, unrun**. Full service/PG/browser coverage remains open |
-| `src/modules/projects/mentor-closeout-model.ts` | `closeoutChecklist` | `tests/unit/projects-mentor-policy-matrix-chat14.test.ts` | Runtime authored, unrun |
-| `src/modules/projects/mentor-closeout-model.ts` | `mentorCloseoutParamsSchema` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-closeout-model.ts` | `mentorCloseoutSchema` | `tests/unit/projects-mentor-policy-matrix-chat14.test.ts` | Runtime authored, unrun |
+| `src/modules/projects/mentor-closeout-model.ts` | `closeoutChecklist` | `tests/unit/projects-mentor-policy-matrix-chat14.test.ts`, `tests/unit/PROJ-BREAK-chat14-mentor-state-evidence.test.ts` | Runtime state-machine and role-adjacent evidence, version/confirmation, stable ordering; **authored/unrun**; PG/HTTP concurrency remains GAP |
+| `src/modules/projects/mentor-closeout-model.ts` | `mentorCloseoutParamsSchema` | `tests/unit/PROJ-BREAK-chat14-mentor-state-evidence.test.ts` | Runtime state-machine and role-adjacent evidence, version/confirmation, stable ordering; **authored/unrun**; PG/HTTP concurrency remains GAP |
+| `src/modules/projects/mentor-closeout-model.ts` | `mentorCloseoutSchema` | `tests/unit/projects-mentor-policy-matrix-chat14.test.ts`, `tests/unit/PROJ-BREAK-chat14-mentor-state-evidence.test.ts` | Runtime state-machine and role-adjacent evidence, version/confirmation, stable ordering; **authored/unrun**; PG/HTTP concurrency remains GAP |
 | `src/modules/projects/mentor-closeout-service.ts` | `getMentorProjectCloseout` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-closeout-service.ts` | `completeMentorProject` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-delivery-lock-service.ts` | `lockMentorFinalDelivery` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-delivery-version-model.ts` | `mentorDeliveryVersionDisplay` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-delivery-version-model.ts` | `mentorDeliveryVersionParamsSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-delivery-version-model.ts` | `mentorDeliveryVersionDisplay` | `tests/unit/PROJ-BREAK-chat14-mentor-state-evidence.test.ts` | Runtime state-machine and role-adjacent evidence, version/confirmation, stable ordering; **authored/unrun**; PG/HTTP concurrency remains GAP |
+| `src/modules/projects/mentor-delivery-version-model.ts` | `mentorDeliveryVersionParamsSchema` | `tests/unit/PROJ-BREAK-chat14-mentor-state-evidence.test.ts` | Runtime state-machine and role-adjacent evidence, version/confirmation, stable ordering; **authored/unrun**; PG/HTTP concurrency remains GAP |
 | `src/modules/projects/mentor-delivery-version-service.ts` | `getMentorDeliveryVersion` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-estimation-unit-model.ts` | `mentorEstimationUnit` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-estimation-unit-model.ts` | `mentorEstimateOptions` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-estimation-unit-model.ts` | `mentorEstimateLabel` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-estimation-unit-model.ts` | `mentorEstimationUnit` | `tests/unit/PROJ-BREAK-chat14-mentor-state-evidence.test.ts` | Runtime state-machine and role-adjacent evidence, version/confirmation, stable ordering; **authored/unrun**; PG/HTTP concurrency remains GAP |
+| `src/modules/projects/mentor-estimation-unit-model.ts` | `mentorEstimateOptions` | `tests/unit/PROJ-BREAK-chat14-mentor-state-evidence.test.ts` | Runtime state-machine and role-adjacent evidence, version/confirmation, stable ordering; **authored/unrun**; PG/HTTP concurrency remains GAP |
+| `src/modules/projects/mentor-estimation-unit-model.ts` | `mentorEstimateLabel` | `tests/unit/PROJ-BREAK-chat14-mentor-state-evidence.test.ts` | Runtime state-machine and role-adjacent evidence, version/confirmation, stable ordering; **authored/unrun**; PG/HTTP concurrency remains GAP |
 | `src/modules/projects/mentor-filter-query.ts` | `singleValueMentorFilters` | `tests/unit/PROJ-BREAK-chat14-mentor-delivery-meetings.test.ts` | Runtime state/validation/privacy and bounded export cases; **authored/unrun**; DB concurrency and HTTP authorization remain GAP |
 | `src/modules/projects/mentor-filter-query.ts` | `singleValueMentorExportFilters` | `tests/unit/PROJ-BREAK-chat14-mentor-delivery-meetings.test.ts` | Runtime state/validation/privacy and bounded export cases; **authored/unrun**; DB concurrency and HTTP authorization remain GAP |
-| `src/modules/projects/mentor-final-delivery-decision-model.ts` | `mentorFinalDeliveryCanReview` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-final-delivery-decision-model.ts` | `mentorFinalDeliveryDecisionSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-final-delivery-decision-model.ts` | `mentorFinalDeliveryCanReview` | `tests/unit/PROJ-BREAK-chat14-mentor-state-evidence.test.ts` | Runtime state-machine and role-adjacent evidence, version/confirmation, stable ordering; **authored/unrun**; PG/HTTP concurrency remains GAP |
+| `src/modules/projects/mentor-final-delivery-decision-model.ts` | `mentorFinalDeliveryDecisionSchema` | `tests/unit/PROJ-BREAK-chat14-mentor-state-evidence.test.ts` | Runtime state-machine and role-adjacent evidence, version/confirmation, stable ordering; **authored/unrun**; PG/HTTP concurrency remains GAP |
 | `src/modules/projects/mentor-final-delivery-decision-service.ts` | `decideMentorFinalDelivery` | `tests/unit/projects-mentor-service-guards-chat14.test.ts` | Static/source only, behavioural pending |
 | `src/modules/projects/mentor-latest-review-model.ts` | `currentPendingMentorSubmissions` | `tests/unit/PROJ-BREAK-chat14-mentor-lead-hardening.test.ts` | Behavioural regression authored (currentPendingMentorSubmissions); **not run**; service / tenant / PostgreSQL acceptance remains open |
 | `src/modules/projects/mentor-meeting-decision-model.ts` | `mentorMeetingDecisionStatus` | `tests/unit/projects-mentor-policy-matrix-chat14.test.ts` | Runtime authored, unrun |
@@ -305,11 +305,11 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/modules/projects/mentor-project-attention-filter-model.ts` | `matchesMentorProjectAttention` | `tests/unit/projects-mentor-attention-risk-chat14.test.ts` | Runtime authored, unrun |
 | `src/modules/projects/mentor-project-event-attribution.ts` | `resolveMentorActivityProjectId` | `tests/unit/PROJ-BREAK-chat14-mentor-lead-hardening.test.ts` | Behavioural regression authored (resolveMentorActivityProjectId); **not run**; service / tenant / PostgreSQL acceptance remains open |
 | `src/modules/projects/mentor-project-list-query.ts` | `mentorProjectListQuerySchema` | `tests/unit/projects-mentor-policy-matrix-chat14.test.ts` | Runtime authored, unrun |
-| `src/modules/projects/mentor-project-order-model.ts` | `compareMentorProjects` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-project-order-model.ts` | `compareMentorProjectsByProgress` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-project-order-model.ts` | `compareMentorProjectsByMostProgress` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-project-order-model.ts` | `compareMentorProjectsByOpenTasks` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-project-order-model.ts` | `compareMentorProjectsByTeamSize` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-project-order-model.ts` | `compareMentorProjects` | `tests/unit/PROJ-BREAK-chat14-mentor-state-evidence.test.ts` | Runtime state-machine and role-adjacent evidence, version/confirmation, stable ordering; **authored/unrun**; PG/HTTP concurrency remains GAP |
+| `src/modules/projects/mentor-project-order-model.ts` | `compareMentorProjectsByProgress` | `tests/unit/PROJ-BREAK-chat14-mentor-state-evidence.test.ts` | Runtime state-machine and role-adjacent evidence, version/confirmation, stable ordering; **authored/unrun**; PG/HTTP concurrency remains GAP |
+| `src/modules/projects/mentor-project-order-model.ts` | `compareMentorProjectsByMostProgress` | `tests/unit/PROJ-BREAK-chat14-mentor-state-evidence.test.ts` | Runtime state-machine and role-adjacent evidence, version/confirmation, stable ordering; **authored/unrun**; PG/HTTP concurrency remains GAP |
+| `src/modules/projects/mentor-project-order-model.ts` | `compareMentorProjectsByOpenTasks` | `tests/unit/PROJ-BREAK-chat14-mentor-state-evidence.test.ts` | Runtime state-machine and role-adjacent evidence, version/confirmation, stable ordering; **authored/unrun**; PG/HTTP concurrency remains GAP |
+| `src/modules/projects/mentor-project-order-model.ts` | `compareMentorProjectsByTeamSize` | `tests/unit/PROJ-BREAK-chat14-mentor-state-evidence.test.ts` | Runtime state-machine and role-adjacent evidence, version/confirmation, stable ordering; **authored/unrun**; PG/HTTP concurrency remains GAP |
 | `src/modules/projects/mentor-project-team-size-service.ts` | `getMentorProjectTeamSizes` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-project-timeline-model.ts` | `mentorProjectTimeline` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-project-timeline-model.ts` | `mentorTimelineHref` | **GAP** | **GAP — behaviour untested** |
@@ -385,8 +385,8 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/modules/projects/mentor-task-details-model.ts` | `mentorTaskDetailsParamsSchema` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-task-details-model.ts` | `mentorTaskDetailsInputSchema` | `tests/unit/projects-mentor-sprint-resource-coverage-chat14.test.ts` | Runtime authored, unrun |
 | `src/modules/projects/mentor-task-details-service.ts` | `updateMentorTaskDetails` | `tests/unit/projects-mentor-service-guards-chat14.test.ts` | Static/source only, behavioural pending |
-| `src/modules/projects/mentor-task-feedback-model.ts` | `taskFeedbackStatusLabel` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-task-feedback-model.ts` | `mentorTaskFeedbackParamsSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-task-feedback-model.ts` | `taskFeedbackStatusLabel` | `tests/unit/PROJ-BREAK-chat14-mentor-state-evidence.test.ts` | Runtime state-machine and role-adjacent evidence, version/confirmation, stable ordering; **authored/unrun**; PG/HTTP concurrency remains GAP |
+| `src/modules/projects/mentor-task-feedback-model.ts` | `mentorTaskFeedbackParamsSchema` | `tests/unit/PROJ-BREAK-chat14-mentor-state-evidence.test.ts` | Runtime state-machine and role-adjacent evidence, version/confirmation, stable ordering; **authored/unrun**; PG/HTTP concurrency remains GAP |
 | `src/modules/projects/mentor-task-feedback-service.ts` | `getMentorTaskFeedback` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-task-history-model.ts` | `mentorTaskHistoryPage` | `tests/unit/PROJ-BREAK-chat14-mentor-time-history.test.ts` | Runtime behavioural cases for mentorTaskHistoryPage; authored, **unrun**; full tenant / DB / device acceptance open |
 | `src/modules/projects/mentor-task-history-model.ts` | `mentorTaskHistoryHref` | `tests/unit/PROJ-BREAK-chat14-mentor-time-history.test.ts` | Runtime behavioural cases for mentorTaskHistoryHref; authored, **unrun**; full tenant / DB / device acceptance open |
@@ -405,8 +405,8 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/modules/projects/mentor-task-review-model.ts` | `mentorTaskReviewMobileLayout` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-task-review-model.ts` | `mentorTaskReviewMobileFilters` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-task-review-service.ts` | `getMentorTaskReviews` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-task-review-token-model.ts` | `mentorTaskReviewTokenMatches` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-task-review-token-model.ts` | `mentorTaskReviewTokenSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-task-review-token-model.ts` | `mentorTaskReviewTokenMatches` | `tests/unit/PROJ-BREAK-chat14-mentor-state-evidence.test.ts` | Runtime state-machine and role-adjacent evidence, version/confirmation, stable ordering; **authored/unrun**; PG/HTTP concurrency remains GAP |
+| `src/modules/projects/mentor-task-review-token-model.ts` | `mentorTaskReviewTokenSchema` | `tests/unit/PROJ-BREAK-chat14-mentor-state-evidence.test.ts` | Runtime state-machine and role-adjacent evidence, version/confirmation, stable ordering; **authored/unrun**; PG/HTTP concurrency remains GAP |
 | `src/modules/projects/mentor-task-transition-model.ts` | `allowedMentorTaskTransition` | `tests/unit/projects-mentor-policy-matrix-chat14.test.ts` | Runtime authored, unrun |
 | `src/modules/projects/mentor-task-transition-model.ts` | `mentorTaskTransitionParamsSchema` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-task-transition-model.ts` | `mentorTaskTransitionSchema` | `tests/unit/projects-mentor-policy-matrix-chat14.test.ts` | Runtime authored, unrun |
@@ -679,13 +679,13 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/page.tsx` | **GAP — source test mapping pending** | loading, empty, error, denied, partial, mobile, keyboard |
 | `src/app/(authenticated)/mentor/projects/[projectId]/timeline/page.tsx` | **GAP — source test mapping pending** | loading, empty, error, denied, partial, mobile, keyboard |
 | `src/app/(authenticated)/mentor/projects/page.tsx` | **GAP — source test mapping pending** | loading, empty, error, denied, partial, mobile, keyboard |
-| `src/app/(authenticated)/mentor/reports/page.tsx` | **GAP — source test mapping pending** | loading, empty, error, denied, partial, mobile, keyboard |
+| `src/app/(authenticated)/mentor/reports/page.tsx` | `tests/unit/PROJ-BREAK-chat14-mentor-reports-page.test.tsx` | Server-rendered invalid/duplicate filters, empty, module-disabled, authorized partial list, denied/no-data propagation; **authored/unrun**; interactive keyboard/phone browser **GAP** |
 | `src/app/(authenticated)/mentor/review-history/page.tsx` | **GAP — source test mapping pending** | loading, empty, error, denied, partial, mobile, keyboard |
 | `src/app/(authenticated)/mentor/reviews/page.tsx` | **GAP — source test mapping pending** | loading, empty, error, denied, partial, mobile, keyboard |
 | `src/app/(authenticated)/mentor/sprint-progress/page.tsx` | **GAP — source test mapping pending** | loading, empty, error, denied, partial, mobile, keyboard |
 | `src/app/(authenticated)/mentor/task-review-history/page.tsx` | **GAP — source test mapping pending** | loading, empty, error, denied, partial, mobile, keyboard |
 | `src/app/(authenticated)/mentor/task-reviews/page.tsx` | **GAP — source test mapping pending** | loading, empty, error, denied, partial, mobile, keyboard |
-| `src/app/(authenticated)/mentor/team-coverage/page.tsx` | **GAP — source test mapping pending** | loading, empty, error, denied, partial, mobile, keyboard |
+| `src/app/(authenticated)/mentor/team-coverage/page.tsx` | `tests/unit/PROJ-BREAK-chat14-mentor-team-page.test.tsx` | Server-rendered invalid/duplicate filters, empty, module-disabled, authorized partial list, denied/no-data propagation; **authored/unrun**; interactive keyboard/phone browser **GAP** |
 
 ## Role/tenant matrix (must have behavioural proof)
 
