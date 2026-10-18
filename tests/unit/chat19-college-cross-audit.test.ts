@@ -73,4 +73,37 @@ describe("chat-19 college UX cross-audit", () => {
     expect(table).toContain('const visibleOnPhone');
     expect(table).toContain('<ScrollCue axis="x"');
   });
+  it("COL-XA-10 rejects invalid cohort identifiers before querying the roster", () => {
+    const page = read("src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx");
+    expect(page).toContain("z.string().uuid().safeParse(rawId)");
+    expect(page).toContain("if (!checkedId.success) notFound()");
+    expect(page).toContain("eq(departments.collegeId, context.membership.collegeId)");
+    expect(page).toContain("requirePermission(context");
+  });
+
+  it("COL-XA-11 uses mobile cards with labelled elective allocation checkboxes", () => {
+    const page = read("src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx");
+    expect(page).toContain("<DataTable");
+    expect(page).toContain('caption="Eligible students for allocation"');
+    expect(page).toContain('mobilePriority: "action"');
+    expect(page).toContain('mobilePriority: "primary"');
+    expect(page).toContain('mobilePriority: "secondary"');
+    expect(page).toContain('name="membershipId"');
+    expect(page).toContain('empty={<p');
+    expect(page).not.toMatch(/<table[\\s>]/);
+    expect(page).toContain('<ScrollCue axis="y"');
+    expect(page).toContain('viewportClassName="max-h-80"');
+    expect(page).toContain('aria-label={"Select "');
+  });
+
+  it("COL-XA-12 validates slot and offering before database mutation", () => {
+    const page = read("src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx");
+    expect(page).toContain("uuid.safeParse(slotId)");
+    expect(page).toContain("if (!checkedSlot.success) notFound()");
+    expect(page).toContain("uuid.safeParse(groupId)");
+    expect(page).toContain("if (!checkedGroup.success) redirect(");
+    expect(page).toContain("eq(electiveOfferings.groupId, checkedGroup.data)");
+    expect(page).not.toMatch(/uuid\\.parse\\((slotId|groupId)\\)/);
+  });
+
 });
