@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import {isSuperAdmin} from "@/modules/identity/context";
+import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import {z} from "zod";
 import {
   evaluatePlacementEligibility,
@@ -24,6 +26,10 @@ export async function GET(
 ) {
   try {
     const context = await getCurrentRequestContext();
+    // A direct eligibility read exposes student academic evidence and
+    // effective overrides. Recheck the current TPO/College Admin membership
+    // before accepting a job ID from a stale browser session.
+    if(!isSuperAdmin(context))await requireTpoBatchActor(context);
     const { jobId, membershipId } = await params;
     const eligibility =
       await evaluatePlacementEligibility(
