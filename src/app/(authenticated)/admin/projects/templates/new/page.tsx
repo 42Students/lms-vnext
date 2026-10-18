@@ -9,10 +9,10 @@ export default async function NewSuperAdminTemplatePage(){
  if (!can(ctx,"project-template.manage")) return <div className="mx-auto w-full min-w-0 max-w-3xl space-y-5 px-3 py-5 sm:px-6">
   <PageHeader eyebrow="Super Admin · Projects" title="New project template"/>
   <ErrorState title="Access denied" description="Global project templates can only be created outside a selected college or organization scope."
-   action={<Link href="/admin/projects/templates" className="font-semibold text-primary-text">Back to template catalogue</Link>}/>
+   action={<Link href="/admin/projects/templates" className="font-semibold text-[var(--lms-teal-deep)]">Back to template catalogue</Link>}/>
  </div>;
  return <div className="min-w-0 space-y-5">
-  <Link href="/admin/projects/templates" className="text-sm font-semibold text-primary-text">← Template catalogue</Link>
+  <Link href="/admin/projects/templates" className="text-sm font-semibold text-[var(--lms-teal-deep)]">← Template catalogue</Link>
   <PageHeader eyebrow="Super Admin · Projects" title="New project template"
    description="Create a global draft with a valid starting blueprint. College-scoped administrators cannot publish global templates."/>
   <SuperAdminTemplateCreateForm/>

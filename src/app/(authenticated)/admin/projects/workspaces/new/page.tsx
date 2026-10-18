@@ -10,7 +10,7 @@ export default async function AdminClassProjectWorkspacePage({searchParams}:{
 }) {
   const context = await getCurrentRequestContext();
   const collegeId = context.adminScope?.collegeId;
-  if (!collegeId) return <main className="space-y-5"><PageHeader eyebrow="Super Admin · Projects" title="Create workspaces from a class" description="Choose a college safety scope before creating Project workspaces."/><EmptyState title="Select a college" description="Use the admin scope selector to choose an active college."/></main>;
+  if (!collegeId) return <main className="min-w-0 space-y-5"><PageHeader eyebrow="Super Admin · Projects" title="Create workspaces from a class" description="Choose a college safety scope before creating Project workspaces."/><EmptyState title="Select a college" description="Use the admin scope selector to choose an active college."/></main>;
   await requireTeamCreationAuthority(context, collegeId);
   const templates = await listAssignedProjectTemplates(context, collegeId);
   const requested=(await searchParams).templateId;
