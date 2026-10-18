@@ -1,4 +1,5 @@
 import {describe,expect,it} from "vitest";
+import {tpoCampaignUnsubscribeEvent} from "@/modules/messaging/tpo-campaign-unsubscribe-notification-model";
 import {campaignRecipientStillMatchesSnapshot,type CampaignRecipientFact} from "@/modules/messaging/tpo-campaign-send-policy";
 import {
  resolveTpoCampaignRecipientSecret,issueTpoCampaignEmailRecipientKey,
@@ -47,6 +48,11 @@ describe("chat-16 campaign recipient dispatch consent and token identity",()=>{
   expect(matchesTpoCampaignEmailRecipientKey("not-hex","recruiter@example.org",secret)).toBe(false);
   expect(matchesTpoCampaignEmailRecipientKey(key,null,secret)).toBe(false);
   expect(()=>issueTpoCampaignEmailRecipientKey("r@example.org","weak")).toThrow();
+ });
+ it("HR-CAMPAIGN-UNSUB-NAME-06 never ends a notification name in half an emoji",()=>{
+  const title=tpoCampaignUnsubscribeEvent("a".repeat(119)+"😀"+"other","lead-id").notification.title;
+  expect(title).toBe("a".repeat(119)+" unsubscribed");
+  expect(title).not.toContain("\uFFFD");
  });
  it("HR-CAMPAIGN-SECRET-05 canonical signing config wins and a bad canonical secret fails closed",()=>{
   expect(resolveTpoCampaignRecipientSecret({

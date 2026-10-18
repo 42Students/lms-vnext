@@ -57,3 +57,13 @@ The rows above are a truthful **first pass only** and must not be marked complet
 | Routes | Test evidence | Verified source behaviour | Remaining |
 | --- | --- | --- | --- |
 | `/api/placements/tpo/reports/{after-college,branch-season/export,engagement,intelligence/export,round-failures,unplaced}` | `tests/unit/chat2-tpo-six-csv-route-query-security.test.ts` — UX-tpo-last-third-CSV-01/02/03 | Reject repeated query selectors before private scoped report reads; after-college also rejects unrecognized fields; reuse shared URLSearchParams ambiguity helper | Runtime invalid-query 400 verification, data DB isolation, oversized exports, phone download UX |
+
+## 2026-10-19 runtime page cases (chat-2; tests authored, not executed)
+
+| Route | Behavioural test | Verified by assertions | Still open |
+| --- | --- | --- | --- |
+| `/tpo/settings/team` | `tests/unit/chat2-tpo-last-third-runtime-settings-pages.test.tsx` | Anonymous and wrong-role redirect ahead of service call; college ID passed to service; empty roster, unavailable source flags, aggregate truth; team-member email/phone suppressed; responsive DataTable phone labels | Live browser 375px, PostgreSQL active/revoked member and other-tenant checks |
+| `/tpo/settings/public-link` | `tests/unit/chat2-tpo-last-third-runtime-settings-pages.test.tsx` | Unauthorized redirect before service; COLLEGE scope; link-ready and unready recovery states; legacy page title | Real one-time token disclosure, API conflict and live browser failure injection |
+| Both settings pages | Same file | Service rejection goes to route error boundary without deliberate raw-error interpolation | Route error boundary + retry integration and offline browser |
+
+The other 40 assigned last-third routes still need runtime/phone/permission/state tests. The manifest source assertions are a baseline, **not exhaustive coverage**.

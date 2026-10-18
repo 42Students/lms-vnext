@@ -15,6 +15,7 @@ describe("TPO offer register screen/export URL integrity",()=>{
   expect(tpoReportHasAmbiguousFilters({status:"ALL",q:"learner"})).toBe(false);
   const ui=code(page);
   expect(ui).toContain("tpoReportHasAmbiguousFilters(q)");
+  expect(ui).toContain('Object.prototype.hasOwnProperty.call(q,"jobId")');
   expect(ui).toContain("<TpoReportInvalidFilters");
   expect(ui.indexOf("tpoReportHasAmbiguousFilters(q)")).toBeLessThan(ui.indexOf("offerRegisterQuery.safeParse("));
   expect(ui).toContain('hasMembershipRole(context,"TPO")');
@@ -33,6 +34,8 @@ describe("TPO offer register screen/export URL integrity",()=>{
   expect(route).toContain("getTpoDriveOfferRegisterCsv");
   expect(route).toContain('"Cache-Control":"private, no-store, max-age=0"');
   expect(route).toContain('status:400');
+  expect(route).toContain("Invalid report filters. Clear the filters and try again.");
+  expect(route).toContain('"X-Content-Type-Options":"nosniff"');
   expect(route).not.toContain("{jobId,...Object.fromEntries");
  });
  it("TPO-CANDIDATE-SCHEDULE-34 distinguishes an unknown single round from ambiguous repeated round filters",()=>{
