@@ -66,7 +66,7 @@ describe("chat-7 weak export boundaries: calendar exactness, rollout flags, scop
    departmentName:"Engineering",description:"A\nB",status:"ACTIVE"}],false);
   expect(csv).not.toContain("\n=2+3,");
   expect(csv).toContain("CS,01");
-  const url=collegeCourseCatalogueExportHref({q:"sec",sort:"NAME_ASC",page:9,pageSize:25});
+  const url=collegeCourseCatalogueExportHref({q:"sec",sort:"NAME_ASC",page:9,pageSize:"25"});
   expect(url).toBe("/api/academics/college-course-export?q=sec");
  });
 });
