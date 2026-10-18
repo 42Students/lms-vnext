@@ -17,6 +17,6 @@ const sizeClasses = { sm: "min-h-11 px-3 text-sm", md: "min-h-11 px-4 text-sm" }
 
 export function Button({ className, variant = "primary", size = "md", loading = false, type = "button", disabled, children, ...props }: ButtonProps) {
   return <button data-slot="button" type={type} disabled={disabled || loading} aria-busy={loading || undefined}
-    className={cx("inline-flex min-h-11 items-center justify-center gap-2 rounded-md border font-semibold outline-none motion-safe:transition-colors motion-safe:duration-[120ms] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] disabled:cursor-not-allowed disabled:opacity-50", variantClasses[variant], sizeClasses[size], className)}
+    className={cx("inline-flex min-h-11 items-center justify-center gap-2 rounded-md border font-semibold outline-none motion-safe:transition-colors motion-safe:duration-[var(--lms-motion-fast)] motion-safe:ease-[var(--lms-motion-ease)] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] disabled:cursor-not-allowed disabled:opacity-50", variantClasses[variant], sizeClasses[size], className)}
     {...props}>{children}</button>;
 }
