@@ -11,3 +11,17 @@ export function relativeHrBellTime(at:string,now:number):string{
 }
 export const HR_BELL_EMPTY="Nothing yet";
 export const HR_BELL_EMPTY_HELP="Replies and drive decisions will show up here.";
+
+/** Synchronous single-flight guard: two clicks before a React rerender
+ * cannot send two read-receipt mutations for the same recruiter bell. */
+export function createHrBellMutationGate(){
+ let inFlight=false;
+ return {
+  tryBegin():boolean{
+   if(inFlight)return false;
+   inFlight=true;
+   return true;
+  },
+  end():void{inFlight=false;},
+ };
+}
