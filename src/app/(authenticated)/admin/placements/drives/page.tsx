@@ -7,7 +7,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { SuperAdminBulkDriveActions } from "@/components/placements/super-admin-bulk-drive-actions";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
-import { adminDriveDirectoryHref, adminDriveDirectoryQuerySchema, adminDriveStatus, filterAdminDriveDirectory } from "@/modules/placements/admin-drive-directory-model";
+import { adminDriveDirectoryHref, adminDriveDirectoryQuerySchema, adminDriveStatus, filterAdminDriveDirectory, adminDriveIstDate } from "@/modules/placements/admin-drive-directory-model";
 
 export default async function SuperAdminDrivesPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
@@ -38,8 +38,8 @@ export default async function SuperAdminDrivesPage({searchParams}:{
   {key:"location",header:"Location",mobilePriority:"secondary",cell:row=>row.job.locations.join(", ")||"Not specified"},
   {key:"deadline",header:"Deadline",mobilePriority:"secondary",cell:row=>row.job.applicationDeadline?
    <span className={row.job.applicationDeadline<today?"line-through text-muted-foreground":""}>
-    {row.job.applicationDeadline.toISOString().slice(0,10)}</span>:"—"},
-  {key:"posted",header:"Posted",mobilePriority:"secondary",cell:row=>row.job.publishedAt?.toISOString().slice(0,10)??"—"},
+    {adminDriveIstDate(row.job.applicationDeadline)}</span>:"—"},
+  {key:"posted",header:"Posted",mobilePriority:"secondary",cell:row=>adminDriveIstDate(row.job.publishedAt)},
   {key:"applicants",header:"Applicants",mobilePriority:"secondary",
    cell:row=><span className="tabular-nums">{row.metrics.submittedApplications}</span>},
   {key:"actions",header:"Actions",mobilePriority:"action",
