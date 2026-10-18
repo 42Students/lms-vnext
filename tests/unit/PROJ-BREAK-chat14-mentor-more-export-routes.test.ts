@@ -53,7 +53,8 @@ describe("PROJ-BREAK-MENTOR-99..102 export handler query trust boundaries",()=>{
    expect(response.headers.get("Cache-Control")).toBe("private, no-store");
    const csv=await response.text();
    expect(csv).toContain("Atlas");
-   expect(csv).toContain("IST".slice(0,route.name==="task"?3:0));
+   expect(csv).toContain(route.name==="task"?"Reviewed (IST)":"Completion percent");
+   expect(csv).not.toContain("learner_email");
   }
   expect(state.queries).toHaveLength(2);
   for(const [i,route] of routes.entries()){
