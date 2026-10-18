@@ -23,7 +23,7 @@ export default async function TpoOutsideDriveDetail({params,searchParams}:{
    timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(data.record.occurredAt)} IST</p>
   <form method="get" className="flex gap-2">
    <label className="grid gap-1 text-sm">Search college learners
-    <input name="q" defaultValue={q} maxLength={80} className="min-h-11 rounded-md border border-border px-3"/>
+    <input name="q" defaultValue={q} maxLength={80} className="min-h-11 rounded-[9px] border border-border px-3"/>
    </label>
    <button type="submit" className="self-end min-h-11 rounded-md border border-border px-4 text-sm font-semibold">Find</button>
   </form>
