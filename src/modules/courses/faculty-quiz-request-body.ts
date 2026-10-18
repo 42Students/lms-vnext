@@ -14,8 +14,15 @@ export async function readFacultyQuizCommandBody(request:Request):Promise<unknow
  if(!facultyQuizAcceptsContentType(request.headers.get("content-type")))
   throw new FacultyQuizBodyError("UNSUPPORTED_QUIZ_CONTENT_TYPE",415);
  const declared=request.headers.get("content-length");
- if(declared!==null&&Number.isFinite(Number(declared))&&Number(declared)>FACULTY_QUIZ_COMMAND_LIMIT_BYTES)
-  throw new FacultyQuizBodyError("FACULTY_QUIZ_BODY_TOO_LARGE",413);
+ if(declared!==null){
+  const size=Number(declared);
+  // Treat invalid or ambiguous Content-Length as malformed transport rather
+  // than silently ignoring it and risking inconsistent proxy/body framing.
+  if(!/^\\d+$/.test(declared)||!Number.isSafeInteger(size))
+   throw new FacultyQuizBodyError("INVALID_QUIZ_JSON",400);
+  if(size>FACULTY_QUIZ_COMMAND_LIMIT_BYTES)
+   throw new FacultyQuizBodyError("FACULTY_QUIZ_BODY_TOO_LARGE",413);
+ }
  if(!request.body)throw new FacultyQuizBodyError("INVALID_QUIZ_JSON",400);
  const reader=request.body.getReader();
  const decoder=new TextDecoder("utf-8",{fatal:true});
