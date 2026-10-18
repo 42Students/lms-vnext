@@ -16,6 +16,8 @@ export const platformPlacementPolicyInput=z.strictObject({
  key:z.enum(PLACEMENT_POLICY_FIELDS.map(field=>field.key) as [PlacementPolicyKey,...PlacementPolicyKey[]]),
  value:z.number().finite().nullable(),
  expectedVersion:z.number().int().min(0),
+}).refine(input=>input.value===null||placementPolicyValidate(input.key,input.value),{
+ path:["value"],message:"Policy value outside allowed range",
 });
 export function placementPolicyValidate(key:PlacementPolicyKey,value:number) {
  const rule=PLACEMENT_POLICY_FIELDS.find(item=>item.key===key)!;
