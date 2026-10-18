@@ -45,6 +45,8 @@ Branch: `chatgpt/chat-9-b`. Owner: chat-9. These are observed source-level findi
 
 | PROJ9-025 · PROJ-BREAK-races-12/13, PROJ-BREAK-idor-29 | High | College Projects readiness override recorded a brand-new event for each identical double-click or replay (random activity dedupe key), corrupting change history and making failed-response retries non-idempotent. Cached role snapshots could also persist an override after the user's platform role was revoked. Parent-row serialization now checks persisted roles under SHARE locks, compares latest persisted readiness state/note, and writes a new event only when the intent actually changes. `CLEAR` when no override exists is a no-op. | `c01af7f`, `48a9e70` | `tests/unit/PROJ-BREAK-chat9-readiness-retries.test.ts` (`febc395`): duplicate writes, changed notes, archive denial and stale role rejection; real PostgreSQL race validation remains OPEN |
 
+| PROJ9-028 · PROJ-BREAK-files-20/21/22 | Coverage gap, no code defect confirmed | Project file DTO was recorded as untested in the admin ledger; introduced direct projection tests that prohibit exposing storage keys, token hashes, uploader membership or creator identity, verify server-validated MIME/bytes take precedence, and preserve honest pending/quarantined timestamps. The existing DTO code satisfied these contracts; no behavior change required. | No source patch | `tests/unit/PROJ-BREAK-chat9-file-dto.test.ts` (`c79b047`), cloud execution OPEN |
+
 ## Outstanding release gates (not yet closed)
 
 - Live PostgreSQL integration tests for wrong-tenant IDs, serializable races, rollback and event/notification dedupe; chat-17 owns shared fixtures. Static service assertions alone cannot establish real DB behavior.
