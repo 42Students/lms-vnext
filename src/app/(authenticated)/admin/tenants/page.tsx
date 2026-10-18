@@ -11,7 +11,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { tenantLifecycleQuerySchema, tenantLifecycleHref } from "@/modules/colleges/admin-tenant-lifecycle-model";
+import { parseTenantLifecycleSearchParams, tenantLifecycleHref } from "@/modules/colleges/admin-tenant-lifecycle-model";
 import { getSuperAdminTenantLifecycleDirectory } from "@/modules/colleges/admin-tenant-lifecycle-service";
 export default async function TenantDirectory({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
@@ -19,13 +19,13 @@ export default async function TenantDirectory({searchParams}:{
  const context=await getCurrentRequestContext();
  requirePermission(context,"admin-scope.select");
  const raw=await searchParams;
- const parsed=tenantLifecycleQuerySchema.safeParse({q:raw.q,organizationId:raw.organizationId,status:raw.status,page:raw.page});
- if(!parsed.success) return <div className="space-y-4">
+ const parsed=parseTenantLifecycleSearchParams(raw);
+ if(!parsed) return <div className="space-y-4">
   <PageHeader eyebrow="Super Admin" title="Tenant Setup" />
   <ErrorState title="Invalid tenant filters" description="Search, organization or page is invalid."
    action={<Link href="/admin/tenants" className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>}/>
  </div>;
- const data=await getSuperAdminTenantLifecycleDirectory(context,parsed.data);
+ const data=await getSuperAdminTenantLifecycleDirectory(context,parsed);
  const url=(page:number)=>tenantLifecycleHref({...data.query,page});
  const statuses = ["ACTIVE", "ARCHIVED", "ALL"] as const;
  return <div className="min-w-0 space-y-5">

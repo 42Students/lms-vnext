@@ -1,10 +1,11 @@
-import { eq, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { collegeBranding, colleges } from "@/db/schema";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {
   collegeBrandingInputSchema,
   type CollegeBrandingInput,
@@ -127,6 +128,15 @@ export async function saveCollegeBranding(
   });
 
   return getDb().transaction(async tx=>{
+   // A Super Admin can lose their role while editing a stale tab; the
+   // write must recheck persisted authority before touching login branding.
+   await assertPersistedPlatformPermission(tx,context,"college.manage",{
+    collegeId:college.id,organizationId:college.organizationId,
+   });
+   const [active]=await tx.select({id:colleges.id}).from(colleges)
+    .where(and(eq(colleges.id,college.id),eq(colleges.status,"ACTIVE")))
+    .for("update").limit(1);
+   if(!active)throw new CollegeBrandingNotFoundError();
    const [row] = await tx
     .insert(collegeBranding)
     .values({ collegeId, ...input })

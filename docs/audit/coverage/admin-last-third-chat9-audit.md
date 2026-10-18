@@ -8,11 +8,11 @@ Scope: 37 routes (positions 75–111) of `docs/orchestrator/ui-ux/pages-admin.md
 | --- | --- | --- |
 | `/admin/placements/shortlisted` | `UX-admin-placements-shortlisted-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/placements/shortlisted/[applicationId]` | `UX-admin-placements-shortlisted-application-id-01` | **OPEN** — no live/browser or full service-role journey confirmation |
-| `/admin/placements/student-lookup` | `UX-admin-placements-student-lookup-01` | **OPEN** — no live/browser or full service-role journey confirmation |
+| `/admin/placements/student-lookup` | `UX-admin-placements-student-lookup-01`, `SA-placements-student-lookup-01/07` | Page rejects duplicate/overlong search before PII query, requires a selected college, and service SQL joins both jobs and company relationships to the current college. `tests/unit/PROJ-BREAK-chat9-sa-student-lookup-recovery.test.tsx`, `tests/unit/PROJ-BREAK-chat9-sa-student-lookup-tenant.test.ts`. PG/browser authorization pending. |
 | `/admin/programs` | `UX-admin-programs-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/projects` | `UX-admin-projects-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/projects/[projectId]` | `UX-admin-projects-project-id-01` | **OPEN** — no live/browser or full service-role journey confirmation |
-| `/admin/projects/[projectId]/[section]` | `UX-admin-projects-project-id-section-01` | **OPEN** — no live/browser or full service-role journey confirmation |
+| `/admin/projects/[projectId]/[section]` | `UX-admin-projects-project-id-section-01`, `PROJ-BREAK-ux-38/39`, `PROJ-BREAK-idor-55` | Unknown sections 404 before service calls; unauthorized tenant fails before workspace fetch; breadcrumbs whitelist referrals/reasons and encode query navigation. `tests/unit/PROJ-BREAK-chat9-admin-project-sections.test.tsx`. Live browser/role matrix still OPEN. |
 | `/admin/projects/[projectId]/readiness` | `UX-admin-projects-project-id-readiness-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/projects/at-risk` | `UX-admin-projects-at-risk-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/projects/audit` | `UX-admin-projects-audit-01` + `PROJ-BREAK-ux-22..26` + `PROJ-BREAK-idor-24..26` | Invalid URL recovery, global Super Admin-only template activity, selected-scope isolation, actual remaining-page counter. **OPEN** — no live/browser or full service-role journey confirmation |
@@ -21,7 +21,7 @@ Scope: 37 routes (positions 75–111) of `docs/orchestrator/ui-ux/pages-admin.md
 | `/admin/projects/submissions` | `UX-admin-projects-submissions-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/projects/templates` | `UX-admin-projects-templates-01`, `PROJ-BREAK-ux-30/33` | Permission-denied and DB-outage recovery, malformed filters, exact scoped empty state in server element-tree tests (`tests/unit/PROJ-BREAK-chat9-template-directory-page.test.tsx`); live browser and full role matrix OPEN |
 | `/admin/projects/templates/[templateId]` | `UX-admin-projects-templates-template-id-01` | **OPEN** — no live/browser or full service-role journey confirmation |
-| `/admin/projects/templates/[templateId]/colleges` | `UX-admin-projects-templates-template-id-colleges-01` | **OPEN** — no live/browser or full service-role journey confirmation |
+| `/admin/projects/templates/[templateId]/colleges` | `UX-admin-projects-templates-template-id-colleges-01`, `PROJ-BREAK-ux-34/37` | Denied role never reads, invalid URL recovers, service outage retains filters and does not claim availability, legitimate zero results show empty. `tests/unit/PROJ-BREAK-chat9-template-college-page.test.tsx`. Browser and DB role checks OPEN. |
 | `/admin/projects/templates/[templateId]/overview` | `UX-admin-projects-templates-template-id-overview-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/projects/templates/[templateId]/resources` | `UX-admin-projects-templates-template-id-resources-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/projects/templates/[templateId]/sprints` | `UX-admin-projects-templates-template-id-sprints-01` | **OPEN** — no live/browser or full service-role journey confirmation |

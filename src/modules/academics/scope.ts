@@ -249,6 +249,16 @@ export async function loadSectionScope(
       departments,
       eq(departments.id, programs.departmentId),
     )
+    // Sections are joined through their cohort/program college, but their
+    // academic_period_id is an independent FK. A corrupt cross-tenant period
+    // must not authorize or expose another college's calendar or timetable.
+    .innerJoin(
+      academicPeriods,
+      and(
+        eq(academicPeriods.id, sections.academicPeriodId),
+        eq(academicPeriods.collegeId, departments.collegeId),
+      ),
+    )
     .innerJoin(
       colleges,
       eq(colleges.id, departments.collegeId),

@@ -72,3 +72,19 @@ Validation: source review and committed behavioural/source-guard tests; cloud te
 
 
 | SA-colleges-at-glance-01 | S2 accuracy / S1 stale access | Tenant summary counted learner/faculty memberships as active even when the user was disabled, and trusted a Super Admin session snapshot without persisted authorization while reading. Count now joins ACTIVE users and locks persisted `college.read` permission through the scoped queries. | `tests/unit/chat4-superadmin-at-glance-tenant.test.ts` | PostgreSQL offboarding/race verification pending |
+
+
+| COL-student-import-options-01 | S2 UX/security | Student CSV selector could offer batches of archived programs, classes of archived cohorts and classes in CLOSED/foreign academic periods, then fail on import; also read options with a stale admin RequestContext after role revocation. Filters now track import eligibility and check persisted authority in transaction before private query. | `chat4-college-student-import-options-hardening.test.ts` | PostgreSQL+browser acceptance pending |
+| COL-classes-tenant-01/04 | S1 IDOR/data isolation | A section's academicPeriodId references an independent FK; class workspace and central loadSectionScope derived tenant only through cohort/program and could expose/accept another college's academic period when referential data is malformed. Both scope and details now require academicPeriod.collegeId to equal persisted cohort/program department college. | `chat4-college-section-workspace-tenant.test.ts` | PostgreSQL corrupt-FK tenant fixture pending |
+
+
+| COL-academics-workspace-PERF-01 | S2 performance | College Academics workspace dispatched an unbounded Promise.all of separate cohort and section queries for every program/batch. Large college tenants could exhaust pooled DB connections, causing timeouts and inaccessible setup pages. Introduced order-preserving eight-at-a-time parallel batches, no data truncation and explicit query error propagation. | `tests/unit/chat4-college-academics-workspace-fanout.test.ts` | 1,000+ cohorts DB performance verification pending |
+
+
+| SA-tenants-directory-QUERY-01 | S2 input / ambiguous tenancy | Tenant page manually cherry-picked known query keys before invoking a strict schema; repeated `?page=1&page=2` and unknown params could be silently coerced/ignored, bypassing the same validation as tenant CSV export. Added strict full-key query parser with explicit rejection of arrays and unknowns before DB access and kept the recoverable error page. | `tests/unit/chat4-superadmin-tenant-directory-query.test.ts` | Browser malformed-URL acceptance pending |
+
+
+| COL-classes-tenant-05 | S1 least privilege | Section Operations previously accepted broad `academics.read`, granted to Faculty/Learner roles, while composing full college learner/faculty pickers and administrative schedule/assignment data. Restricts this combined operations workspace to `academics.manage` (College Admin), leaving role-specific learner/faculty views to dedicated scoped services. | `chat4-college-section-workspace-tenant.test.ts` | Full route journey CI pending |
+
+
+| SA-tenants-lifecycle-ACTOR-01 | S1 tenant isolation | Tenant directory, detail and CSV export trusted a previously captured Super Admin role at service preflight, so disabling the user or revoking the system role before the actual read could still expose tenant names and organization data. Added transaction-local `assertPersistedPlatformPermission` before each SELECT with SHARE locks held through the scoped read. Organization filter choices are loaded before the transaction to avoid deadlock on one-connection pools; the persisted denial still prevents returning them. | `chat4-superadmin-tenant-lifecycle-actor.test.ts` | PostgreSQL role race and long-running connection verification pending |
