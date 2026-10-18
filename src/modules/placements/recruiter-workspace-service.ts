@@ -10,6 +10,7 @@ import { getDb } from "@/db/client";
 import {
   collegeMemberships,
   colleges,
+  organizations,
   placementApplications,
   placementApplicationScreenings,
   placementCompanies,
@@ -78,6 +79,10 @@ export async function getRecruiterPlacementWorkspace(
         placementJobs.collegeId,
       ),
     )
+    .innerJoin(organizations,and(
+      eq(organizations.id,colleges.organizationId),
+      eq(organizations.status,"ACTIVE"),
+    ))
     .innerJoin(users,and(
       eq(users.id,context.user.id),
       eq(users.platformStatus,"ACTIVE"),
