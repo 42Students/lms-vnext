@@ -681,6 +681,7 @@ export function LearnerAssessmentOverview({
 
                 {selectedAssignment.dueAt && new Date(selectedAssignment.dueAt).getTime() > currentNowMs ? (
                   <AssignmentSubmissionControl
+                    key={selectedAssignment.deliveryId+":"+selectedAssignment.id}
                     fileUploadsEnabled={fileUploadsEnabled}
                     assignmentId={selectedAssignment.id}
                     deliveryId={selectedAssignment.deliveryId}
