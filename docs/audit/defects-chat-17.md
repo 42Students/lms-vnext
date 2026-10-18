@@ -12,6 +12,8 @@
 
 | UX-kit-HARDEN-32 | S2 (external URL integrity) | Browser URL normalization silently treats raw backslashes as slashes and strips tab/newline characters, potentially opening an unintended link presented as a saved external evidence destination. | `ThirdPartyLink` rejects ambiguous raw characters and whitespace before HTTPS parsing. Unit `UX-kit-HARDEN-32`. Commits `05bbd841`, `2085706b`. | Fix pushed; cloud execution pending |
 
+| WEAK-tenant-domains-17/18 | S1 (double-submit race) | `createTenantDomain` performed a find-then-insert without handling concurrent UNIQUE violations; parallel same-host requests could surface raw PostgreSQL 23505 instead of returning the existing college domain or a friendly foreign-host conflict. | Catch only SQLSTATE 23505, re-read host, return own winner or throw HOST_CONFLICT. Tests `WEAK-tenant-domains-17..19`. Commits `53a4821a`, `87b79496`. | Fix pushed; cloud execution pending |
+
 ## Integration fixture hardening
 
 - `PROJ-HARNESS-22..28`: explicit current college, project roster, active user and `can_mutate` checks protect example SQL fixtures against accidental incorrect cross-tenant writes. This is fixture integrity, not proof of product route authorization.
