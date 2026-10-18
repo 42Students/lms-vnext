@@ -69,6 +69,23 @@ describe("IIT Dharwad College Admin Projects role journeys", () => {
     expect(page).not.toContain("membership.collegeId");
   });
 
+  it("PROJ-COL-SCOPE-04 every College Admin Projects index, create, templates, audit and mentor reassignment route checks the active selected college", () => {
+    const routes = [
+      "src/app/(authenticated)/college/projects/page.tsx",
+      "src/app/(authenticated)/college/projects/create/page.tsx",
+      "src/app/(authenticated)/college/projects/templates/page.tsx",
+      "src/app/(authenticated)/college/projects/audit/page.tsx",
+      "src/app/(authenticated)/college/projects/reassign-mentor/page.tsx",
+    ];
+    for (const route of routes) {
+      const source = readFileSync(route, "utf8");
+      expect(source, route).toContain("getProjectAdminCollegeId(context)");
+      expect(source, route).not.toContain("context.membership.collegeId");
+      expect(source, route).not.toContain("context.membership?.collegeId");
+      expect(source, route).not.toContain('redirect("/dashboard")');
+    }
+  });
+
   it("PROJ-COL-SCOPE-02 declines expired, disabled and roleless sessions before loading projects", () => {
     const active = adminContext();
     expect(getProjectAdminCollegeId({ ...active, membership: null })).toBeNull();
