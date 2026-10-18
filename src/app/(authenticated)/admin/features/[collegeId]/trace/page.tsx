@@ -422,105 +422,27 @@ export default async function SuperAdminLearnerAccessTracePage({
                 </StatusBadge>
               </div>
 
-              <div className="overflow-x-auto rounded-lg border border-border">
-                <table className="w-full min-w-[42rem] border-collapse text-left text-sm">
-                  <thead className="bg-muted text-body">
-                    <tr>
-                      <th
-                        scope="col"
-                        className="sticky left-0 z-10 border-b border-border bg-surface px-4 py-3"
-                      >
-                        Resolution level
-                      </th>
-                      <th
-                        scope="col"
-                        className="border-b border-border px-4 py-3"
-                      >
-                        Stored rule / fallback
-                      </th>
-                      <th
-                        scope="col"
-                        className="border-b border-border px-4 py-3"
-                      >
-                        Result
-                      </th>
-                      <th
-                        scope="col"
-                        className="border-b border-border px-4 py-3"
-                      >
-                        Why
-                      </th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {module.steps.map((step) => (
-                      <tr
-                        key={step.level}
-                        className={
-                          step.winner
-                            ? "border-b border-border bg-primary-subtle last:border-b-0"
-                            : "border-b border-border last:border-b-0"
-                        }
-                      >
-                        <th
-                          scope="row"
-                          className={step.winner?"sticky left-0 z-10 bg-primary-subtle px-4 py-3 text-left align-top font-semibold text-foreground":"sticky left-0 z-10 bg-surface px-4 py-3 text-left align-top font-semibold text-foreground"}
-                        >
-                          {scopeLabel(step.level)}
-                          {step.scopeId ? (
-                            <span className="mt-1 block text-xs font-normal text-muted-foreground">
-                              Scope ID ending{" "}
-                              {step.scopeId.slice(-8)}
-                            </span>
-                          ) : null}
-                        </th>
-
-                        <td className="px-4 py-3 align-top text-body">
-                          {step.source === "SOURCE_DEFAULT"
-                            ? `Source default · ${
-                                step.value ? "On" : "Off"
-                              }`
-                            : step.source === "PERSISTED"
-                              ? describeStoredOverride({
-                                  enabled:
-                                    step.value === true,
-                                  locked:
-                                    step.locked,
-                                })
-                              : step.inChain
-                                ? "Inherit · no stored rule"
-                                : "Not in current chain"}
-                        </td>
-
-                        <td className="px-4 py-3 align-top">
-                          {step.winner ? (
-                            <StatusBadge tone="success">
-                              Winner
-                            </StatusBadge>
-                          ) : step.ignored ? (
-                            <StatusBadge tone="warning">
-                              Ignored
-                            </StatusBadge>
-                          ) : step.source === "PERSISTED" ? (
-                            <StatusBadge tone="neutral">
-                              Not selected
-                            </StatusBadge>
-                          ) : (
-                            <span className="text-xs text-muted-foreground">
-                              —
-                            </span>
-                          )}
-                        </td>
-
-                        <td className="px-4 py-3 align-top text-xs leading-5 text-body">
-                          {step.reason}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              <DataTable<(typeof module.steps)[number]>
+                caption={module.label+" access resolution chain"}
+                rows={module.steps}
+                getRowKey={step=>step.level}
+                columns={[
+                  {key:"level",header:"Resolution level",mobilePriority:"primary",cell:step=><>
+                    <span className="font-semibold text-foreground">{scopeLabel(step.level)}</span>
+                    {step.scopeId?<span className="mt-1 block text-xs text-muted-foreground">Scope ID ending {step.scopeId.slice(-8)}</span>:null}
+                  </>},
+                  {key:"stored",header:"Stored rule / fallback",mobilePriority:"secondary",cell:step=>
+                    step.source==="SOURCE_DEFAULT"?`Source default · ${step.value?"On":"Off"}`:
+                    step.source==="PERSISTED"?describeStoredOverride({enabled:step.value===true,locked:step.locked}):
+                    step.inChain?"Inherit · no stored rule":"Not in current chain"},
+                  {key:"result",header:"Result",mobilePriority:"secondary",cell:step=>
+                    step.winner?<StatusBadge tone="success">Winner</StatusBadge>:
+                    step.ignored?<StatusBadge tone="warning">Ignored</StatusBadge>:
+                    step.source==="PERSISTED"?<StatusBadge tone="neutral">Not selected</StatusBadge>:"—"},
+                  {key:"reason",header:"Why",mobilePriority:"secondary",cell:step=><span className="text-xs text-body">{step.reason}</span>},
+                ]}
+                empty={<p role="status" className="text-sm text-body">No stored rules or fallback steps were found for this module.</p>}
+              />
             </article>
           ))}
 
