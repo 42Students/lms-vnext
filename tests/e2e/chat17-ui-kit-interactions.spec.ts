@@ -155,6 +155,14 @@ test.describe("UX-kit-E2E-01 real browser shared UI states",()=>{
     await expect(page.getByRole("alert")).toContainText("file type is not allowed");
     await expect(page.getByTestId("file-status")).toContainText("No file selected");
 
+    await page.getByRole("button",{name:"Disable file selection"}).click();
+    await expect(upload).toBeDisabled();
+    await expect(page.getByRole("alert").filter({hasText:"file type is not allowed"}))
+      .toHaveCount(0);
+    await expect(upload).not.toHaveAttribute("aria-invalid","true");
+    await page.getByRole("button",{name:"Enable file selection"}).click();
+    await expect(upload).toBeEnabled();
+
     await upload.setInputFiles({
       name:"huge.pdf",mimeType:"application/pdf",buffer:Buffer.alloc(2048),
     });
