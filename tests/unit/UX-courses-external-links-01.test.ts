@@ -4,15 +4,12 @@ const read=(p:string)=>readFileSync(new URL("../../src/components/courses/"+p+".
 
 describe("UX-courses-external-links-01 safe learner and offering external content",()=>{
  for(const component of ["admin-offering-learning-overview","learner-youtube-player"]){
-  it(`${component} protects every rendered new-tab content link from opener access`,()=>{
+  it(`${component} opens external media in the same tab and never grants opener access`,()=>{
    const src=read(component);
-   expect(src).toContain('target="_blank"');
    expect(src).toContain('rel="noopener noreferrer"');
-   const matches=[...src.matchAll(/target="_blank"/g)];
-   for(const match of matches){
-    const around=src.slice(Math.max(0,match.index-150),match.index+175);
-    expect(around).toContain('rel="noopener noreferrer"');
-   }
+   expect(src).not.toContain('target="_blank"');
+   expect(src).toMatch(/href=\{(?:item\.)?externalUrl\}/);
+   expect(src).toContain("min-h-11");
   });
  }
 });
