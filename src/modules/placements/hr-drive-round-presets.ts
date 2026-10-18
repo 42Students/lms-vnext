@@ -4,7 +4,7 @@ export const HR_DRIVE_ROUND_PRESETS=[
  {id:"TEST_INTERVIEW",label:"Talk, Test, Interview",rounds:[
   {kind:"TALK",name:"Company talk"},{kind:"TEST",name:"Online test"},{kind:"INTERVIEW",name:"Interview"}]},
  // Preserve the employer briefing stage as the first editable draft round.
- {id:"FULL_PROCESS",label:"Talk, Test, Group discussion, Interview",rounds:[
+ {id:"FULL_PROCESS",label:"Test, Group discussion, Interview",rounds:[
   {kind:"TALK",name:"Company talk"},{kind:"TEST",name:"Online test"},
   {kind:"GD",name:"Group discussion"},{kind:"INTERVIEW",name:"Interview"}]},
 ] as const;
