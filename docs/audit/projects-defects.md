@@ -1,6 +1,6 @@
 # IIT Dharwad Projects hardening — adversarial defect register
 
-**Owner lane:** chat-9, breaker (chat-14 owns the full module-wide function coverage ledger). **Date:** 2026-10-18.
+**Owner:** chat-14 for the module-wide Projects defect register and coverage ledger; chat-9 retains attribution for its admin/college breaker findings. **Dates:** 2026-10-18 through 2026-10-19.
 Every item below was reproduced by code-path review and has a source repair on `chatgpt/chat-9-b`; adversarial regressions are authored but **Vitest/PostgreSQL/browser runs and cross-lane review are still required**. These are release blockers until those checks pass.
 ## Chat-14 meeting hardening findings (2026-10-19)
 
