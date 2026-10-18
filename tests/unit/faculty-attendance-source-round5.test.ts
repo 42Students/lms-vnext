@@ -7,9 +7,14 @@ const ui=()=>file("src/components/attendance/faculty-attendance-workspace.tsx");
 describe("chat-11 faculty attendance gap closure verification",()=>{
  it("FAC-attendance-grades-02 guards all attendance dirty-mode, date, session and unload changes",()=>{
    const code=ui();expect(code).toContain("beforeunload");
-   expect(code).toContain('window.confirm("Discard your unsaved attendance changes?")');
+   expect(code).toContain('<ConfirmDialog open={discardOpen}');
+   expect(code).toContain('title="Discard your unsaved attendance changes?"');
+   expect(code).toContain('confirmLabel="Discard changes" confirmVariant="danger"');
+   expect(code).toContain("nextAfterDiscard.current=next;setDiscardOpen(true)");
+   expect(code).toContain("nextAfterDiscard.current=null;setDiscardOpen(false);next?.();");
    expect(code).toContain("chooseDate(");expect(code).toContain("chooseSession(");
-   expect(code).toContain('if(!confirmDiscardMarks())return;');
+   expect(code).toContain("confirmDiscardMarks(()=>");
+   expect(code).not.toContain("window.confirm(");
  });
  it("FAC-attendance-grades-05 filters the class schedule by selected local date",()=>{
    const code=ui();expect(code).toContain('value={selectedDate}');
