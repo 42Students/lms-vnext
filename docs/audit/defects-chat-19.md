@@ -505,3 +505,20 @@ Interactive router transitions and cloud CI still require orchestrator verificat
 | HR-BREAK-DRIVE-DRAFT-SCOPE-38 | MAJOR | `/hr/drives/new` switched between colleges, copied drive requests, edits and resubmissions while reusing the same unkeyed client `HrDriveDraftForm`. Hook state (including unsent private role details, `submittedRef`, idempotency tokens and optimistic versions) could carry into another college/source on URL-only navigation. Moreover, `?copy=REQUEST_ID` used the general NEW localStorage key, so restoring a prior unsent new request could overwrite the authorized copied template. Set a composite per-user/college/mode/request React key and isolate COPY in a source-request-specific local draft namespace. Existing page copy and backend tenant authorization are unchanged. | `tests/unit/HR-BREAK-chat19-drive-draft-scope.test.ts` exercises principal, college, request and action boundaries and source integration. |
 
 Browser navigation and storage-restore tests are pending cloud/orchestrator acceptance; no local execution.
+
+## Recruiter attribution and branch suggestions cross-audit
+
+| ID | Severity | Finding, correction and evidence |
+|---|---|---|
+| HR-BREAK-TEAM-ATTRIBUTION-40 | MAJOR | Company & Team job attribution considered every recruiter request with `approvedJobId` regardless of status, so stale/cancelled/nonapproved rows could count a colleague as the owner. Restrict persisted requests to the autoapproved `DRAFT` state; ignore invalid-status rows in projection and favor actual creator on conflicting approvals. Add explicit current recruiter user equality before team counts and department/branch suggestions; do not query private colleges on a stale/mismatched identity. `tests/unit/HR-BREAK-chat19-team-attribution.test.ts` covers double rows, status transitions, creator fallback, unknown IDs and authorization guards. |
+
+Auth/DB fixtures and browser execution remain orchestrator acceptance gates. No local tests were run.
+
+## HR Today offer follow-ups and Company & Team phone UX
+
+| ID | Severity | Evidence and correction | Regression |
+|---|---|---|---|
+| HR-BREAK-CLOSED-OFFER-41 | MAJOR | HR Today filtered offers to `placement_jobs.status=PUBLISHED`; closing a drive hid still-outstanding ISSUED offer and joining follow-ups. Match the recruiter Today jobs' published-or-closed visibility while keeping strict own-college, unarchived, active learner, SUBMITTED application and SHORTLISTED employer-visible scope. | `tests/unit/HR-BREAK-chat19-closed-offer-company-touch.test.ts` |
+| UX-HR-COMPANY-TOUCH-42 | UX | /hr/company main section tabs, college selection pills and profile link had undersized keyboard/touch targets. Give navigation 44px minimum height and visible keyboard outlines; retain exact wording and route destinations. | Same named suite |
+
+Tests and viewport validation were not run locally.

@@ -2,6 +2,7 @@ import "server-only";
 import { and, count, eq, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {placementDriveSelections} from "@/db/schema/placement-drive-selections";
+import {placementWaitlistPromotions} from "@/db/schema/placement-waitlist-promotions";
 import {
   placementApplications,
   placementJobRoundEvents,
@@ -28,6 +29,12 @@ import {
   type TpoDriveCancelImpact,
 } from "./tpo-drive-cancel-model";
 
+async function pendingWaitlistReservations(tx:TpoJobTx,jobId:string):Promise<number>{
+ const [row]=await tx.select({total:count()}).from(placementWaitlistPromotions)
+  .where(and(eq(placementWaitlistPromotions.jobId,jobId),
+    eq(placementWaitlistPromotions.status,"PENDING")));
+ return row?.total??0;
+}
 async function impact(tx: TpoJobTx, jobId: string): Promise<TpoDriveCancelImpact> {
   const [applications, rounds, offers] = await Promise.all([
     tx
@@ -102,7 +109,8 @@ export async function getTpoDriveCancelPreview(
       )
       .limit(1);
     const counts = await impact(tx, job.id);
-    const cancellable = job.status === "DRAFT" || (job.status === "PUBLISHED" && season?.status === "ACTIVE");
+    const pendingPromotions=await pendingWaitlistReservations(tx,job.id);
+    const cancellable = (job.status === "DRAFT" || (job.status === "PUBLISHED" && season?.status === "ACTIVE")) && pendingPromotions===0;
     return {
       id: job.id,
       title: job.title,
@@ -110,6 +118,7 @@ export async function getTpoDriveCancelPreview(
       expectedUpdatedAt: job.updatedAt.toISOString(),
       cancellable,
       blockedByAcceptedOffers: false,
+      pendingPromotions,
       impact: counts,
     };
   });
@@ -146,6 +155,12 @@ export async function cancelTpoDriveWithPreview(
       )
       .limit(1);
     const current = await impact(tx, job.id);
+    // A pending promotion can be between seat reservation and actual
+    // offer issuance. Job-row locking serializes with the reservation
+    // transaction; cancellation must not strand its immutable PENDING row.
+    const pendingPromotions=await pendingWaitlistReservations(tx,job.id);
+    if(pendingPromotions>0)
+      throw new PlacementsServiceError("PLACEMENT_JOB_NOT_CLOSABLE");
     const decision = evaluateTpoDriveCancellation(
       job.status,
       season?.status ?? null,

@@ -62,6 +62,7 @@ async function fixture(acceptOffer: boolean) {
 
 async function cleanup() {
   if (!pool) return;
+  if (ids.job) await pool.query("DELETE FROM placement_waitlist_promotions WHERE job_id=$1", [ids.job]);
   if (ids.round) await pool.query("DELETE FROM placement_job_round_events WHERE round_id=$1", [ids.round]);
   if (ids.offer) await pool.query("DELETE FROM placement_offer_status_history WHERE offer_id=$1", [ids.offer]);
   if (ids.offer) await pool.query("DELETE FROM placement_offers WHERE id=$1", [ids.offer]);
@@ -141,6 +142,32 @@ describe.skipIf(!enabled)("TPO drive cancellation isolated PostgreSQL", () => {
     await expect(cancelTpoDriveWithPreview(tpo, jobId, write)).rejects.toMatchObject({ code: "PLACEMENT_JOB_STALE" });
     const audit = await pool.query<{ count: number }>("SELECT count(*)::int AS count FROM activity_events WHERE subject_id=$1 AND event_type='PLACEMENTS_TPO_DRIVE_CANCELLED'", [jobId]);
     expect(audit.rows[0]?.count).toBe(1);
+    await cleanup();
+  });
+
+  it("PLACEMENTS-CANCEL-WAIT-34 refuses to strand a reserved waitlist seat on direct cancellation", async () => {
+    if(!pool)throw Error("PG required");
+    const jobId=await fixture(false);
+    const reserved=await one(
+      "INSERT INTO placement_waitlist_promotions(job_id,round_id,application_id,seat_number,waitlist_rank,reason,promoted_by_user_id) VALUES($1,$2,$3,1,1,'Pending release before cancellation',$4) RETURNING id",
+      [jobId,ids.round,ids.application,SEED_IDS.facultyUser],
+    );
+    const preview=await getTpoDriveCancelPreview(tpo,jobId);
+    expect(preview.pendingPromotions).toBe(1);
+    expect(preview.cancellable).toBe(false);
+    await expect(cancelTpoDriveWithPreview(tpo,jobId,{
+      action:"CANCEL",confirmed:true,expectedUpdatedAt:preview.expectedUpdatedAt,
+      expectedImpact:preview.impact,reason:"Employer abandoned the interview drive",
+    })).rejects.toMatchObject({code:"PLACEMENT_JOB_NOT_CLOSABLE"});
+    const [job,seat,offer]=await Promise.all([
+      pool.query<{status:string}>("SELECT status FROM placement_jobs WHERE id=$1",[jobId]),
+      pool.query<{status:string}>("SELECT status FROM placement_waitlist_promotions WHERE id=$1",[reserved]),
+      pool.query<{status:string}>("SELECT status FROM placement_offers WHERE id=$1",[ids.offer]),
+    ]);
+    expect(job.rows).toEqual([{status:"PUBLISHED"}]);
+    expect(seat.rows).toEqual([{status:"PENDING"}]);
+    expect(offer.rows).toEqual([{status:"ISSUED"}]);
+    await pool.query("DELETE FROM placement_waitlist_promotions WHERE id=$1",[reserved]);
     await cleanup();
   });
 

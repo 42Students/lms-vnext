@@ -1,28 +1,39 @@
 "use client";
-import {useState} from "react";
+import {useRef,useState} from "react";
+import {bulkStudentSelectionIsCurrent,superAdminStudentBulkFailure} from "@/modules/module-access/super-admin-student-bulk-feedback";
 import {useRouter} from "next/navigation";
 type Learner={id:string;name:string};
 export function SuperAdminStudentBulkAccess({learners}:{learners:readonly Learner[]}){
  const router=useRouter(),[selected,setSelected]=useState<string[]>([]);
+ const pendingRef=useRef(false);
  const [module,setModule]=useState<"projects"|"electives">("projects");
  const [action,setAction]=useState<"ENABLE"|"DISABLE"|"INHERIT">("ENABLE");
  const [busy,setBusy]=useState(false),[error,setError]=useState<string|null>(null);
  const [report,setReport]=useState<{requested:number;applied:number;failures:{id:string;error:string}[]}|null>(null);
  const capped=learners.slice(0,100);
  async function submit(){
-  if(!selected.length)return;
-  if(!confirm(action+" "+module+" access for "+selected.length+" student(s) in this college?"))return;
+  if(pendingRef.current||busy)return;
+  if(!bulkStudentSelectionIsCurrent(selected,capped.map(learner=>learner.id))){
+   setError("The student roster changed. Refresh the page and select students again.");
+   setSelected([]);
+   return;
+  }
+  const membershipIds=[...selected],requestedModule=module,requestedAction=action;
+  if(!confirm(requestedAction+" "+requestedModule+" access for "+membershipIds.length+" student(s) in this college?"))return;
+  // A ref closes the gap before React commits busy=true; the exact confirmed
+  // members/action are immutable during this in-flight request.
+  pendingRef.current=true;
   setBusy(true);setError(null);setReport(null);
   try{
    const response=await fetch("/api/admin/students/module-access/bulk",{method:"POST",
     headers:{"content-type":"application/json"},
-    body:JSON.stringify({membershipIds:selected,module,action,confirmed:true}),
+    body:JSON.stringify({membershipIds,module:requestedModule,action:requestedAction,confirmed:true}),
    });
-   const data=await response.json().catch(()=>null);
-   if(!response.ok)throw new Error(data?.error??"Cannot update selected student overrides.");
+   if(!response.ok)throw new Error(superAdminStudentBulkFailure(response.status));
+   const data=await response.json() as {requested:number;applied:number;failures:{id:string;error:string}[]};
    setReport(data);router.refresh();
-  }catch(e){setError(e instanceof Error?e.message:"Update failed.");}
-  finally{setBusy(false);}
+  }catch(e){setError(e instanceof Error?e.message:"Update failed. Refresh and retry.");}
+  finally{pendingRef.current=false;setBusy(false);}
  }
  return <section aria-label="Bulk student access" className="space-y-3 rounded-xl border border-border bg-surface p-4">
   <div className="flex flex-wrap justify-between gap-3"><h2 className="font-semibold">Bulk module access</h2>
@@ -41,10 +52,10 @@ export function SuperAdminStudentBulkAccess({learners}:{learners:readonly Learne
    </label>)}
   </div>
   <div className="flex flex-wrap items-end gap-3 text-sm">
-   <label className="grid gap-1 font-semibold">Module<select value={module} onChange={e=>setModule(e.target.value as typeof module)}
+   <label className="grid gap-1 font-semibold">Module<select value={module} disabled={busy} onChange={e=>setModule(e.target.value as typeof module)}
     className="min-h-11 rounded border border-border bg-background px-3">
     <option value="projects">Projects</option><option value="electives">Electives</option></select></label>
-   <label className="grid gap-1 font-semibold">Access<select value={action} onChange={e=>setAction(e.target.value as typeof action)}
+   <label className="grid gap-1 font-semibold">Access<select value={action} disabled={busy} onChange={e=>setAction(e.target.value as typeof action)}
     className="min-h-11 rounded border border-border bg-background px-3">
     <option value="ENABLE">Enable</option><option value="DISABLE">Disable</option>
     <option value="INHERIT">Clear override / Inherit</option></select></label>
