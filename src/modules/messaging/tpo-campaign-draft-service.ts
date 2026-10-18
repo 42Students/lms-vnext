@@ -1,5 +1,4 @@
 import "server-only";
-import {createHmac} from "node:crypto";
 import {z} from "zod";
 import {and,asc,eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
@@ -10,7 +9,7 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {requirePlacementManageScope} from "@/modules/placements/scope";
 import {planTpoCampaignRecipients} from "./tpo-campaign-send-policy";
-import {resolveTpoCampaignRecipientSecret} from "./tpo-campaign-recipient-token";
+import {resolveTpoCampaignRecipientSecret,issueTpoCampaignEmailRecipientKey} from "./tpo-campaign-recipient-token";
 import {tpoCampaignDraftSchema} from "./tpo-campaign-draft-model";
 
 export class TpoCampaignDraftError extends Error{
@@ -80,8 +79,7 @@ export async function createTpoCampaignDraft(context:RequestContext,raw:unknown)
   await tx.insert(placementTpoEmailCampaignRecipients).values(
    snapshot.recipientIds.map(leadId=>({
     collegeId:college.id,campaignId:campaign.id,leadId,
-    recipientKey:createHmac("sha256",key).update("tpo-campaign-email-v1:")
-     .update((emails.get(leadId)??"").trim().toLowerCase()).digest("hex"),
+    recipientKey:issueTpoCampaignEmailRecipientKey(emails.get(leadId)??"",key),
     status:"PENDING",
    })),
   );

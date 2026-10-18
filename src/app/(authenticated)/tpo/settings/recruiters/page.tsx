@@ -132,7 +132,7 @@ export default async function TpoRecruiterAccessPage({
         description="Review active and revoked recruiter college-access grants for your current college. This is historical grant data, not a live recruiter-session or login-status check."
       />
 
-      {communication.ready?<TpoRecruiterDurationEditor initial={communication.recruiterAccessMonths} version={communication.version}/>:
+      {communication.ready?<TpoRecruiterDurationEditor key={context.membership.collegeId} initial={communication.recruiterAccessMonths} version={communication.version}/>:
        <p role="status" className="rounded border border-border p-4 text-sm">Recruiter access duration settings are not available yet.</p>}
       <TpoPublicJoinLinkCard initial={publicLink} scope="COLLEGE" />
 

@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 import { getCurrentDeviceSession } from "@/auth/current-session";
+import { SessionAuthenticationError } from "@/auth/session";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { listActiveSessions, revokeOtherSessions, revokeOwnSession } from "@/modules/auth/session-service";
@@ -28,11 +29,15 @@ beforeEach(() => {
   vi.mocked(getCurrentDeviceSession).mockResolvedValue({
     userId, sessionId, identityUid: "identity-1", platformStatus: "ACTIVE",
   });
-  vi.mocked(apiErrorResponse).mockImplementation((error) => error instanceof ZodError
-    ? NextResponse.json({ error: "INVALID_REQUEST", message: "Please check the device identifier.",
-      requestId: "test-ref" }, { status: 400, headers: { "x-request-id": "test-ref" } })
-    : NextResponse.json({ error: "INTERNAL_ERROR", message: "Please try again.",
-      requestId: "test-ref" }, { status: 503, headers: { "x-request-id": "test-ref" } }));
+  vi.mocked(apiErrorResponse).mockImplementation((error) => {
+    const detail = error instanceof ZodError
+      ? { error: "INVALID_REQUEST", status: 400, message: "Please check the device identifier." }
+      : error instanceof SessionAuthenticationError
+        ? { error: error.code, status: 401, message: "Please sign in again." }
+        : { error: "INTERNAL_ERROR", status: 503, message: "Please try again." };
+    return NextResponse.json({error: detail.error, message: detail.message, requestId:"test-ref"},
+      {status: detail.status, headers:{"x-request-id":"test-ref"}});
+  });
 });
 
 describe("AUTH-sessions-10 device list and revocation HTTP hostile journeys", () => {
@@ -62,12 +67,21 @@ describe("AUTH-sessions-10 device list and revocation HTTP hostile journeys", ()
   });
 
   it("AUTH-sessions-10 an absent/revoked session fails closed before reading any device records", async () => {
-    vi.mocked(getCurrentDeviceSession).mockRejectedValue(new Error("private-token"));
+    vi.mocked(getCurrentDeviceSession).mockRejectedValue(new SessionAuthenticationError("SESSION_REVOKED"));
     const result = await GET();
-    expect(result.status).toBe(503);
+    expect(result.status).toBe(401);
     expect(result.headers.get("x-request-id")).toBe("test-ref");
-    expect(await result.text()).not.toContain("private-token");
+    expect(await result.text()).not.toContain("lms_session");
     expect(listActiveSessions).not.toHaveBeenCalled();
+  });
+
+  it("AUTH-sessions-10 revoked/expired callers cannot sign out other people\'s devices or claim an update", async () => {
+    vi.mocked(getCurrentDeviceSession).mockRejectedValue(new SessionAuthenticationError("SESSION_EXPIRED"));
+    const result=await DELETE_OTHERS(request());
+    expect(result.status).toBe(401);
+    expect((await result.json()).error).toBe("SESSION_EXPIRED");
+    expect(revokeOtherSessions).not.toHaveBeenCalled();
+    expect(revokeOwnSession).not.toHaveBeenCalled();
   });
 
   it("AUTH-sessions-10 cross-origin bulk revoke is denied before identity resolution or SQL writes", async () => {

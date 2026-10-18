@@ -1,7 +1,7 @@
 import "server-only";
 import {and,eq,gt,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {collegeMemberships,placementApplications,placementApplicationScreenings,placementOffers,placementJobs,placementCompanyRelationships,placementCompanies,placementRecruiterCollegeGrants,placementRecruiterProfiles,colleges,users} from "@/db/schema";
+import {collegeMemberships,placementApplications,placementApplicationScreenings,placementOffers,placementJobs,placementCompanyRelationships,placementCompanies,placementRecruiterCollegeGrants,placementRecruiterProfiles,colleges,organizations,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {recruiterOwnJobPredicate} from "./recruiter-job-ownership";
@@ -52,6 +52,9 @@ export async function recruiterVisiblePortfolioCounts(context:RequestContext,
     eq(placementCompanies.status,"ACTIVE")))
    .innerJoin(colleges,and(eq(colleges.id,placementJobs.collegeId),
     eq(colleges.status,"ACTIVE")))
+   .innerJoin(organizations,and(
+    eq(organizations.id,colleges.organizationId),
+    eq(organizations.status,"ACTIVE")))
    .innerJoin(placementRecruiterProfiles,and(
     eq(placementRecruiterProfiles.userId,context.user.id),
     eq(placementRecruiterProfiles.companyId,placementCompanies.id),
@@ -80,6 +83,9 @@ export async function recruiterVisiblePortfolioCounts(context:RequestContext,
     eq(placementCompanies.status,"ACTIVE")))
    .innerJoin(colleges,and(eq(colleges.id,placementJobs.collegeId),
     eq(colleges.status,"ACTIVE")))
+   .innerJoin(organizations,and(
+    eq(organizations.id,colleges.organizationId),
+    eq(organizations.status,"ACTIVE")))
    .innerJoin(placementRecruiterProfiles,and(
     eq(placementRecruiterProfiles.userId,context.user.id),
     eq(placementRecruiterProfiles.companyId,placementCompanies.id),

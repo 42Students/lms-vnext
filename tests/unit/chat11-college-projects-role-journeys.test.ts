@@ -60,12 +60,15 @@ describe("IIT Dharwad College Admin Projects role journeys", () => {
 
   it("PROJ-COL-QUERY-02 retains valid filters and pagination across navigation", () => {
     const valid = parseCollegeProjectsQuery({
-      view: ["table", "cards"], status: "ARCHIVED", page: "2", pageSize: "50", q: "  Sprint ",
+      view: "table", status: "ARCHIVED", page: "2", pageSize: "50", q: "  Sprint ",
     });
     expect(valid.success).toBe(true);
     if(valid.success)expect(valid.data).toMatchObject({
       view: "table", status: "ARCHIVED", page: 2, pageSize: 50, q: "Sprint",
     });
+    // Repeated query values are ambiguous and must not select the first one.
+    expect(parseCollegeProjectsQuery({view:["table","cards"]}).success).toBe(false);
+    expect(parseCollegeProjectsQuery({page:["2","3"]}).success).toBe(false);
     const defaults = parseCollegeProjectsQuery({});
     expect(defaults.success).toBe(true);
     if(defaults.success)expect(defaults.data).toMatchObject({
@@ -77,8 +80,8 @@ describe("IIT Dharwad College Admin Projects role journeys", () => {
     const user = adminContext();
     expect(getProjectAdminCollegeId(user)).toBe(COLLEGE);
     const forged = parseCollegeProjectsQuery({ collegeId: OTHER_COLLEGE });
-    expect(forged.success).toBe(true);
-    if (forged.success) expect(forged.data).not.toHaveProperty("collegeId");
+    // A forged tenant key is rejected before any college data is queried.
+    expect(forged.success).toBe(false);
     const page = readFileSync("src/app/(authenticated)/college/projects/page.tsx", "utf8");
     expect(page).toContain("getProjectAdminCollegeId(context)");
     expect(page).toContain("listProjectAdminSnapshots(");
