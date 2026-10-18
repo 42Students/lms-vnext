@@ -298,3 +298,13 @@ The branch was reconciled with the then-current `origin/main` using a two-parent
 - **PLACEMENTS-OFFER-SM-08:** an ISSUED offer with any already persisted joining state is internally contradictory and is rejected by all TPO administrative status actions. Acceptance and offer extension require no joining record. Model: `tpo-offer-lifecycle-model.ts`; test: `chat5-placements-core-extended-state-machines.test.ts` (entire matrix plus contradictory-state cases).
 
 These are source-level changes with new Vitest assertions, not evidence of a successful CI or PostgreSQL run. The canonical acceptance-cascade parity between learner and TPO-recorded decisions remains a separate high-risk integration task.
+
+
+## Additional TPO UI state-machine boundaries (branch, cloud checks pending)
+
+| Case | Scope | Evidence | Still outstanding |
+|---|---|---|---|
+| PLACEMENTS-OFFER-IST-09 | `tpo-offer-lifecycle-model.ts`, `tpo-offer-lifecycle-panel.tsx` | `chat5-placements-core-extended-state-machines.test.ts` verifies browser-independent IST parsing of `datetime-local` including year rollover, calendar-invalid input rejection, and TPO form preflight | Browser timezone simulation, authoritative server clock expiry competition |
+| PLACEMENTS-WAIT-UI-10 | `tpo-waitlist-promotion-control.tsx` | `chat5-tpo-second-third-behavior.test.ts` checks synchronous `useRef` double-submit exclusion, bounded `apiFetch` timeout, safe HTML/non-JSON errors and positive integer seat evidence | Rapid double click browser test, lost HTTP reply recovery against PostgreSQL |
+
+These fixes do not weaken existing confirmations, selection limits or legacy copy. The final-sprint Faculty Courses source changes `FAC-courses-07` (soft GET navigation) and `FAC-courses-02` (safe bundled fallback; authored photo storage blocked) are tracked in `docs/audit/acceptance/faculty-courses-verification.md`. Tests/typecheck were **not run** by chat-5.
