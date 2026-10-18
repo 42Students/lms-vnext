@@ -6,6 +6,7 @@ import {projectInstances,projectTasks,projectSprints,projectReleases} from "@/db
 import type {RequestContext} from "@/modules/identity/context";
 import {requireProjectReadAccess} from "./access";
 import {ProjectsServiceError} from "./errors";
+import {assertPersistedLearnerProjectMutation} from "./learner-mutation-guard";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {notifyActiveProjectMembers} from "./project-notification-service";
@@ -24,6 +25,7 @@ export async function pullOwnBacklogTask(context:RequestContext,projectIdInput:s
     .where(and(eq(projectInstances.id,scope.project.id),eq(projectInstances.collegeId,scope.collegeId)))
     .for("update").limit(1);
   if(project?.status!=="ACTIVE")throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+  await assertPersistedLearnerProjectMutation(tx,context,scope.project.id,scope.collegeId);
   const [task]=await tx.select().from(projectTasks)
     .where(and(eq(projectTasks.id,input.taskId),eq(projectTasks.projectId,scope.project.id)))
     .for("update").limit(1);

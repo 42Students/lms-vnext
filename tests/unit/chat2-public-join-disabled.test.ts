@@ -3,7 +3,10 @@ import {readFileSync} from "node:fs";
 import {tpoPublicJoinLinkToggleSchema} from "@/modules/placements/tpo-public-join-link-model";
 describe("TPO-campaigns-public-21 opt-in link gate",()=>{
  it("refuses forged company and college scopes",()=>{
-  expect(tpoPublicJoinLinkToggleSchema.safeParse({scope:"COLLEGE",enabled:false}).success).toBe(true);
+  expect(tpoPublicJoinLinkToggleSchema.safeParse({scope:"COLLEGE",enabled:false}).success).toBe(false);
+  const linkId="00000000-0000-4000-8000-000000000001";
+  expect(tpoPublicJoinLinkToggleSchema.safeParse({scope:"COLLEGE",expectedLinkId:linkId,enabled:false}).success).toBe(true);
+  expect(tpoPublicJoinLinkToggleSchema.safeParse({scope:"COLLEGE",expectedLinkId:"stale-tab",enabled:false}).success).toBe(false);
   expect(tpoPublicJoinLinkToggleSchema.safeParse({scope:"COLLEGE",companyId:"bad",enabled:true}).success).toBe(false);
  });
  it("blocks disabled links at preview, OTP send, join and open",()=>{
