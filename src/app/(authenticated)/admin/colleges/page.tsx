@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/data-table";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { Pagination } from "@/components/ui/pagination";
 import { can } from "@/modules/permissions/policy";
 import {canManageCollegeDirectoryRow} from "@/modules/colleges/admin-directory-access-model";
 import { listColleges } from "@/modules/colleges/service";
@@ -21,6 +22,7 @@ const columns: DataTableColumn<CollegeRow>[] = [
   {
     key: "name",
     header: "Name",
+    mobilePriority: "primary",
     cell: (college) => <span className="font-semibold text-foreground">{college.name}</span>,
   },
   {
@@ -45,10 +47,11 @@ const columns: DataTableColumn<CollegeRow>[] = [
   },
   {
     key: "actions",
+    mobilePriority: "action",
     header: <span className="sr-only">Actions</span>,
     className: "text-right",
     cell: (college) => (
-      <div className="flex justify-end gap-2">
+      <div className="flex min-w-0 flex-wrap justify-start gap-2 sm:justify-end">
         <Link href={`/admin/colleges/${encodeURIComponent(college.id)}`}
           className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-primary-subtle">
           Tenant setup
@@ -135,8 +138,8 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
         Search tenant directory →
       </Link>
       <form className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4" method="get">
-       <label className="flex min-w-48 flex-1 flex-col gap-1 text-sm font-semibold">Search college, code, city or organization
-        <input type="search" name="q" defaultValue={q} maxLength={100} className="min-h-11 rounded border border-border px-3" />
+       <label className="flex min-w-0 w-full flex-1 flex-col gap-1 text-sm font-semibold sm:min-w-48">Search college, code, city or organization
+        <input type="search" name="q" defaultValue={q} maxLength={100} className="min-h-11 w-full min-w-0 rounded border border-border px-3" />
        </label>
        <label className="flex flex-col gap-1 text-sm font-semibold">Rows per page
         <select name="pageSize" defaultValue={String(pageSize)} className="min-h-11 rounded border border-border px-3">
@@ -152,35 +155,11 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
         <EmptyState title="No active colleges in this scope"
           description="No college records are visible under the selected Super Admin safety scope. Clear or change the scope to search elsewhere; no tenants were modified." />
       ) : null}
-      <div className="grid min-w-0 gap-3 lg:hidden" aria-label="College onboarding cards">
-        {visible.map(college=>(
-          <article key={college.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
-            <h2 className="break-words text-base font-semibold text-foreground">{college.name}</h2>
-            <p className="mt-1 break-words text-xs text-muted-foreground">{college.code}</p>
-            <p className="mt-2 break-words text-sm text-body">{[college.city,college.state,college.country].filter(Boolean).join(", ")||"Location not recorded"}</p>
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              <Link href={`/admin/colleges/${encodeURIComponent(college.id)}`}
-                className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)]">Tenant setup</Link>
-              <Link href={`/admin/colleges/${encodeURIComponent(college.id)}/branding`}
-                className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)]">Branding</Link>
-              <Link href={`/admin/colleges/${encodeURIComponent(college.id)}/readiness`}
-                className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)]">Readiness</Link>
-              {college.canManage ? <>
-                <CollegeEditDialog college={college}/>
-                <CollegeArchiveButton collegeId={college.id} name={college.name}/>
-              </> : null}
-            </div>
-          </article>
-        ))}
-      </div>
-      <div className="hidden min-w-0 lg:block">
-        <DataTable columns={columns} rows={visible} getRowKey={(college)=>college.id}
-           empty={<EmptyState title="No active colleges in this scope" description="No college records are visible under the selected Super Admin safety scope. Clear or change the scope to search elsewhere; no tenants were modified."/>}/>
-      </div>
-      <nav aria-label="College directory pages" className="flex flex-wrap gap-3 text-sm">
-       {page>1?<Link href={href(page-1)} className="min-h-11 rounded border border-border px-3 py-2">Previous</Link>:null}
-       {page<pages?<Link href={href(page+1)} className="min-h-11 rounded border border-border px-3 py-2">Next</Link>:null}
-      </nav>
+      <DataTable columns={columns} rows={visible} getRowKey={college=>college.id}
+        caption="Colleges"
+        empty={<EmptyState title="No active colleges in this scope"
+          description="No college records are visible under the selected Super Admin safety scope. Clear or change the scope to search elsewhere; no tenants were modified."/>}/>
+      <Pagination page={page} pageCount={pages} hrefForPage={href} label="College directory pages"/>
     </div>
   );
 }

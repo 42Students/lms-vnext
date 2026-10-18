@@ -4,6 +4,9 @@ import { facultyCourseListHref, type FacultyCourseListQuery } from "@/modules/co
 import { COURSE_TEACHING_ROLES } from "@/modules/courses/constants";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import type { listFacultyCourseDeliveries } from "@/modules/courses/faculty-course-service";
 import type { FacultyCourseCardSummary } from "@/modules/courses/faculty-course-card-summary-service";
 
@@ -55,13 +58,13 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
   }
 
   return (
-    <div className="space-y-5">
+    <div className="min-w-0 max-w-full space-y-5">
       <div className="flex flex-wrap items-center gap-3 text-sm text-body" role="status">
         <details className="relative rounded-lg border border-border bg-surface px-3 py-2">
           <summary className="flex min-h-11 cursor-pointer items-center font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{scopeCount} Teaching assignment(s)</summary>
           <ul className="mt-2 max-h-48 space-y-1 overflow-auto text-xs">
             {assignmentChoices.map(item=><li key={item.deliveryId}>
-              <Link className="text-[var(--lms-teal-deep)] underline" href={"/teacher/courses/"+encodeURIComponent(item.deliveryId)+"/home"}>
+              <Link className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" href={"/teacher/courses/"+encodeURIComponent(item.deliveryId)+"/home"}>
                 {item.courseName} · {item.sectionName} · {item.academicPeriodName}
               </Link>
             </li>)}
@@ -79,36 +82,36 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
         <FacultyCourseFilterAutoSubmit />
         <div className="grid gap-3 md:grid-cols-4">
           <label className="grid gap-1 text-sm font-semibold text-body">Search courses
-            <input name="q" type="search" defaultValue={query.q} maxLength={120}
+            <Input name="q" type="search" defaultValue={query.q} maxLength={120}
               placeholder="Course, code, Section or academic period"
-              className="min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground" />
+              className="text-base sm:text-sm" />
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Academic period
-            <select name="period" defaultValue={query.period}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground">
+            <Select name="period" defaultValue={query.period}
+              className="text-base sm:text-sm">
               <option value="">All assigned periods</option>
               {periods.map(period => <option key={period.id} value={period.id}>{period.name}</option>)}
-            </select>
+            </Select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Section
-            <select name="section" defaultValue={query.section}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground">
+            <Select name="section" defaultValue={query.section}
+              className="text-base sm:text-sm">
               <option value="">All sections ({sections.length})</option>
               {sections.map(section=><option key={section.id} value={section.id}>
                 {section.name} ({section.count})
               </option>)}
-            </select>
+            </Select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Teaching role
-            <select name="role" defaultValue={query.role}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground">
+            <Select name="role" defaultValue={query.role}
+              className="text-base sm:text-sm">
               <option value="">All assigned roles</option>
               {COURSE_TEACHING_ROLES.map(role => <option key={role} value={role}>{role.replaceAll("_"," ")}</option>)}
-            </select>
+            </Select>
           </label>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Apply filters</button>
+          <Button type="submit" variant="primary">Apply filters</Button>
           <Link href="/teacher/courses" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
           <p className="text-xs text-muted-foreground" aria-live="polite">
             Showing {rows.length} of {pagination.total} matching course Sections · Page {pagination.page} of {pagination.totalPages}
