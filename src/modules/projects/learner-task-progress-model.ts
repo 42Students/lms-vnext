@@ -12,7 +12,13 @@ export const learnerTaskProgressInputSchema = z.discriminatedUnion("action", [
     expectedUpdatedAt: stamp,
   }),
   z.strictObject({ action: z.enum(["MOVE_UP", "MOVE_DOWN"]), expectedUpdatedAt: stamp }),
-]);
+]).superRefine((input,ctx)=>{
+  if(input.action!=="STATUS")return;
+  if(input.status==="BLOCKED"&&!input.blockerNote?.trim())
+    ctx.addIssue({code:"custom",path:["blockerNote"],message:"Describe what is blocking this task."});
+  if(input.status!=="BLOCKED"&&input.blockerNote?.trim())
+    ctx.addIssue({code:"custom",path:["blockerNote"],message:"Clear blocker details before continuing."});
+});
 
 export function learnerTaskTransitionAllowed(before: string, after: string, blocker?: string | null) {
   return ["TODO", "IN_PROGRESS", "BLOCKED"].includes(before) &&
