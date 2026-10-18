@@ -53,7 +53,7 @@ beforeEach(()=>{
   offeringId:"77777777-7777-4777-8777-777777777777"});
  state.assignmentScope.mockResolvedValue({deliveryId:null,offeringId:"77777777-7777-4777-8777-777777777777"});
 });
-describe("COURSES7-07 / COURSES7-08 learner result read scope and release",()=>{
+describe("COURSES7-07 / COURSES7-08 learner owner isolation and historical submission continuity",()=>{
  const attempt={id:"88888888-8888-4888-8888-888888888888",
   quizId,deliveryId,membershipId:memberId,score:10,maxScore:10,attemptNumber:1};
  const answer={id:"99999999-9999-4999-8999-999999999999",attemptId:attempt.id,
@@ -61,15 +61,16 @@ describe("COURSES7-07 / COURSES7-08 learner result read scope and release",()=>{
   pointsPossible:10,selectedOptionIds:["choice"],correct:true,pointsAwarded:10,
   optionsSnapshot:[{id:"choice",text:"Correct answer",correct:true,sequence:0}],
   createdAt:new Date()};
- it("uses quiz ID, exact delivery and own membership in the persisted attempt query",async()=>{
+ it("uses quiz ID and own membership, after authorizing the requested delivery",async()=>{
   state.attempts=[attempt];state.answers=[answer];
   const out=await getMyQuizAttempts(context,quizId,deliveryId);
   expect(out).toHaveLength(1);
   expect(state.conditions.length).toBe(2);
   const sql=sqlWhere(state.conditions[0]);
   expect(sql).toContain("quiz_id");
-  expect(sql).toContain("delivery_id");
   expect(sql).toContain("membership_id");
+  expect(state.access).toHaveBeenCalledWith(context,
+   "77777777-7777-4777-8777-777777777777",deliveryId);
   expect(out[0].score).toBeNull();
   expect(out[0].maxScore).toBeNull();
   expect(out[0].resultsVisible).toBe(false);
@@ -100,7 +101,7 @@ describe("COURSES7-07 / COURSES7-08 learner result read scope and release",()=>{
   await expect(getMyQuizAttempts(context,quizId,deliveryId)).rejects.toThrow();
   expect(state.reads).toBe(0);
  });
- it("scopes shared assignment submission to selected delivery and own membership",async()=>{
+ it("preserves the learner’s one shared-assignment submission after section moves",async()=>{
   state.submission=[{
    id:"sub1",gradePublished:false,pointsAwarded:8,feedback:"Private",
    gradingStatus:"GRADED",gradedByUserId:"faculty1",gradedAt:new Date(),
@@ -110,7 +111,8 @@ describe("COURSES7-07 / COURSES7-08 learner result read scope and release",()=>{
    feedback:null,gradingStatus:"NOT_GRADED",gradedByUserId:null,gradedAt:null});
   const sql=sqlWhere(state.conditions[0]);
   expect(sql).toContain("assignment_id");
-  expect(sql).toContain("delivery_id");
   expect(sql).toContain("membership_id");
+  expect(state.access).toHaveBeenCalledWith(context,
+   "77777777-7777-4777-8777-777777777777",deliveryId);
  });
 });
