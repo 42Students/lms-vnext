@@ -7,6 +7,7 @@ import { TpoSettingsNav } from "@/components/placements/tpo-settings-nav";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { DataTable } from "@/components/ui/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
 
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -255,80 +256,29 @@ export default async function TpoMyNotificationsPage({
             }
           />
         ) : (
-          <div className="overflow-x-auto rounded-xl border border-border bg-surface">
-            <table className="w-full min-w-[40rem] text-left text-sm">
-              <thead className="bg-muted text-muted-foreground">
-                <tr>
-                  <th scope="col" className="px-4 py-3">
-                    Subject
-                  </th>
-                  <th scope="col" className="px-4 py-3">
-                    Module
-                  </th>
-                  <th scope="col" className="px-4 py-3">
-                    Read status
-                  </th>
-                  <th scope="col" className="px-4 py-3">
-                    Received
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {items.map((item) => (
-                  <tr
-                    key={item.id}
-                    className="border-t border-border"
-                  >
-                    <td className="px-4 py-4">
-                      <p className="font-semibold text-foreground">
-                        {item.subject}
-                      </p>
-                      {item.importance === "HIGH" ||
-                      item.importance === "CRITICAL" ? (
-                        <div className="mt-2">
-                          <StatusBadge
-                            tone={
-                              item.importance === "CRITICAL"
-                                ? "error"
-                                : "warning"
-                            }
-                          >
-                            {item.importance === "CRITICAL"
-                              ? "Critical"
-                              : "High importance"}
-                          </StatusBadge>
-                        </div>
-                      ) : null}
-                    </td>
-
-                    <td className="px-4 py-4 text-body">
-                      {item.module}
-                    </td>
-
-                    <td className="px-4 py-4">
-                      <StatusBadge
-                        tone={
-                          item.status === "UNREAD"
-                            ? "info"
-                            : "neutral"
-                        }
-                      >
-                        {item.status === "UNREAD"
-                          ? "Unread"
-                          : "Read"}
-                      </StatusBadge>
-                    </td>
-
-                    <td className="px-4 py-4 text-body">
-                      <time dateTime={item.createdAt.toISOString()}>
-                        {formatWhen(item.createdAt)} IST
-                      </time>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <DataTable
+            rows={items}
+            getRowKey={item=>item.id}
+            caption="My notifications"
+            empty={<p>No in-app notification deliveries to your account match this read-status filter within your current college.</p>}
+            columns={[
+              {key:"subject",header:"Subject",mobilePriority:"primary",cell:item=>
+                <div className="space-y-2">
+                  <p className="font-semibold text-foreground">{item.subject}</p>
+                  {item.importance==="HIGH"||item.importance==="CRITICAL"?
+                    <StatusBadge tone={item.importance==="CRITICAL"?"error":"warning"}>
+                      {item.importance==="CRITICAL"?"Critical":"High importance"}
+                    </StatusBadge>:null}
+                </div>},
+              {key:"module",header:"Module",mobilePriority:"secondary",cell:item=>item.module},
+              {key:"status",header:"Read status",mobilePriority:"secondary",cell:item=>
+                <StatusBadge tone={item.status==="UNREAD"?"info":"neutral"}>
+                  {item.status==="UNREAD"?"Unread":"Read"}
+                </StatusBadge>},
+              {key:"received",header:"Received",mobilePriority:"secondary",cell:item=>
+                <time dateTime={item.createdAt.toISOString()}>{formatWhen(item.createdAt)} IST</time>},
+            ]}
+          />
         )}
 
         <nav
