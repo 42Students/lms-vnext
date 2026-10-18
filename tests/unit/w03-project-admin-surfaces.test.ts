@@ -32,7 +32,9 @@ describe("W03 project admin daily-use surface parity", () => {
       expect(source).toContain("Invalid project filters");
       expect(source).toContain("Clear filters");
       expect(source).toContain("query.status");
-      expect(source).toContain("query.pageSize");
+      expect(source).toContain("query={query}");
+      expect(source).toContain("page={result.page}");
+      expect(source).toContain("totalPages={result.totalPages}");
     }
   });
 
