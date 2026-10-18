@@ -26,6 +26,16 @@ describe("Super Admin control-page overview final sprint",()=>{
   expect(access).toContain("getModuleAccessOverviewMetrics(context,result.items.map(item=>item.id))");
   expect(settings).toContain("editorData?.ready?editorData.entries.length");
  });
+ it("SA-tenants-modules-R01 never inflates visible module counts with disabled or duplicate settings",()=>{
+  expect(adminControlFeatureCounts([])).toEqual({projectsOn:0,placementsOn:0,shown:0});
+  expect(adminControlFeatureCounts([
+   {modules:[{module:"projects",enabled:false},{module:"placements",enabled:true}]},
+   {modules:[{module:"projects",enabled:true},{module:"projects",enabled:true},{module:"placements",enabled:false}]},
+   {modules:[]},
+  ])).toEqual({projectsOn:1,placementsOn:1,shown:3});
+  expect(adminControlScopeTag({collegeId:null,organizationId:null})).toBe("Platform view");
+  expect(adminControlScopeTag({collegeId:"college-b",organizationId:"org-a"})).toBe("One college");
+ });
  it("SA-tenants-modules-R01 never computes learner or override counts outside the selected authorized college page",()=>{
   const service=read("src/modules/module-access/admin-overview-metrics-service.ts");
   expect(service).toContain('requirePermission(context,"admin-scope.select")');
