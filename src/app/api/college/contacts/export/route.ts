@@ -12,6 +12,8 @@ export async function GET(request:Request){
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="college-contacts.csv"',
    "Cache-Control":"private, no-store",
+   "X-Content-Type-Options":"nosniff",
+   Vary:"Cookie",
    "X-Export-Total":String(report.total),
    "X-Export-Truncated":String(report.truncated),
   }});
@@ -21,6 +23,9 @@ export async function GET(request:Request){
     error:"INVALID_CONTACT_EXPORT",
     message:"Contact export filters are invalid. Clear the filters and try again.",
    },{status:400,headers:{"Cache-Control":"private, no-store",Vary:"Cookie"}});
-  return apiErrorResponse(error);
+  const response=apiErrorResponse(error);
+  response.headers.set("Cache-Control","private, no-store");
+  response.headers.set("Vary","Cookie");
+  return response;
  }
 }
