@@ -42,9 +42,9 @@ export default async function CollegeDriveShortlistedPage({
     <form method="get" role="search" aria-label="Shortlisted student filters" className="flex flex-wrap items-end gap-3 rounded-xl border border-border p-4">
       <label className="grid min-w-0 flex-1 gap-1 text-sm">Student
         <input type="search" name="q" maxLength={100} defaultValue={query.q}
-          className="min-h-11 rounded-md border border-border px-3 text-base sm:text-sm"/>
+          className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-base sm:text-sm"/>
       </label>
-      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] inline-flex items-center">Filter</button>
+      <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] inline-flex items-center">Filter</button>
     </form>
     <p role="status" className="text-sm">{data.total} shortlisted</p>
     {query.q&&data.total===0?<Link href={collegeShortlistedHref(jobId,{q:"",page:1})}

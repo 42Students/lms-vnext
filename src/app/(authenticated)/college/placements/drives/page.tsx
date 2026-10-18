@@ -54,46 +54,46 @@ export default async function CollegeDrivesPage({ searchParams }: {
     <form method="get" role="search" aria-label="Drive filters" className="grid gap-3 rounded-xl border border-border p-4 sm:grid-cols-3 lg:grid-cols-6">
       <label className="grid gap-1 text-sm">Title or company
         <input name="q" defaultValue={query.q} maxLength={100}
-          className="min-h-11 rounded-md border border-border px-2 text-base sm:text-sm" />
+          className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-2 text-base sm:text-sm" />
       </label>
       <label className="grid gap-1 text-sm">Status
-        <select name="status" defaultValue={query.status} className="min-h-11 rounded-md border border-border px-2 text-base sm:text-sm">
+        <select name="status" defaultValue={query.status} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-2 text-base sm:text-sm">
           {["PUBLISHED","DRAFT","CLOSED","ARCHIVED","ALL"].map(s=><option key={s} value={s}>{s==="PUBLISHED"?"Active":s}</option>)}
         </select>
       </label>
       <label className="grid gap-1 text-sm">Season
-        <select name="seasonId" defaultValue={query.seasonId ?? ""} className="min-h-11 rounded-md border border-border px-2 text-base sm:text-sm">
+        <select name="seasonId" defaultValue={query.seasonId ?? ""} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-2 text-base sm:text-sm">
           <option value="">All seasons</option>
           {data.seasons.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}
         </select>
       </label>
       <label className="grid gap-1 text-sm">Company
         <select name="relationshipId" defaultValue={query.relationshipId ?? ""}
-          className="min-h-11 rounded-md border border-border px-2 text-base sm:text-sm">
+          className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-2 text-base sm:text-sm">
           <option value="">All companies</option>
           {data.companies.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}
         </select>
       </label>
       <label className="grid gap-1 text-sm">Deadline from
         <input type="date" name="deadlineAfter" defaultValue={query.deadlineAfter??""}
-          className="min-h-11 rounded-md border border-border px-2 text-base sm:text-sm"/>
+          className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-2 text-base sm:text-sm"/>
       </label>
       <label className="grid gap-1 text-sm">Deadline on or before
         <input type="date" name="deadlineBefore" defaultValue={query.deadlineBefore??""}
-          className="min-h-11 rounded-md border border-border px-2 text-base sm:text-sm"/>
+          className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-2 text-base sm:text-sm"/>
       </label>
       <label className="grid gap-1 text-sm">At least N applicants
         <input type="number" name="minimumApplicants" min={0} max={100000}
           defaultValue={query.minimumApplicants??""}
-          className="min-h-11 rounded-md border border-border px-2 text-base sm:text-sm"/>
+          className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-2 text-base sm:text-sm"/>
       </label>
       <label className="grid gap-1 text-sm">Sort
-        <select name="sort" defaultValue={query.sort} className="min-h-11 rounded-md border border-border px-2 text-base sm:text-sm">
+        <select name="sort" defaultValue={query.sort} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-2 text-base sm:text-sm">
           <option value="TITLE">Title A–Z</option><option value="DEADLINE">Deadline first</option>
           <option value="NEWEST">Newest created</option><option value="APPLICANTS">Most applicants</option>
         </select>
       </label>
-      <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-3 font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] inline-flex items-center">Filter</button>
+      <button type="submit" className="min-h-11 self-end rounded-[var(--lms-control-radius,9px)] bg-primary px-3 font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] inline-flex items-center">Filter</button>
     </form>
     <CollegeDriveBulkActions key={JSON.stringify(query)} drives={data.items}/>
     <section className="space-y-2" aria-label="Persisted drives">

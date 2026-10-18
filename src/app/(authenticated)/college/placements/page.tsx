@@ -25,15 +25,15 @@ export default async function CollegePlacementsPage() {
         actions={
           <Link
             href="/college/placements/new"
-            className="inline-flex min-h-11 items-center justify-center rounded-md border border-primary bg-primary px-3 text-sm font-semibold text-foreground motion-safe:transition-colors hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-primary bg-primary px-3 text-sm font-semibold text-foreground motion-safe:transition-colors hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
           >
             New drive
           </Link>
         }
       />
       <nav aria-label="Placement workspaces" className="flex min-w-0 flex-wrap gap-3">
-      <Link href="/college/placements/interviews" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Interviews</Link>
-      <Link href="/college/placements/drives" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">All drives</Link>
+      <Link href="/college/placements/interviews" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Interviews</Link>
+      <Link href="/college/placements/drives" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">All drives</Link>
       </nav>
       <CollegeDriveAttentionCards data={attention}/>
       <PlacementOperationsWorkspace
