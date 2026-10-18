@@ -64,3 +64,5 @@ These branch-level tests are authored, not executed; fixture timestamps use 2099
 | HR Company/Team phone tab links | UX-HR-COMPANY-TOUCH-42 | Same test | Minimum 44px tabs, college pills, keyboard focus and exact title |
 
 | HR profile college access revocation | HR-BREAK-LEAVE-GRANT-43 | `tests/unit/HR-BREAK-chat19-leave-grant.test.ts` | Exact persisted revocation receipt, foreign status/ID rejection, accessible confirmation and single-flight |
+
+| HR self-profile state and grant-remount boundary | HR-BREAK-PROFILE-SCOPE-44 | `tests/unit/HR-BREAK-chat19-profile-page.test.ts` | Actor changes, current grant revision and no previous user's profile on server render |
