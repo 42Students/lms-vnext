@@ -8,9 +8,16 @@ export type RecruiterCompanyJob = {
 export function buildRecruiterCompanyOverview<T extends RecruiterCompanyJob>(
  rows:readonly T[], collegeId:string, relationshipId:string,
 ) {
- const scoped=rows.filter(row=>row.collegeId===collegeId &&
-  row.relationshipId===relationshipId && row.job.archivedAt===null &&
-  (row.job.status==="PUBLISHED" || row.job.status==="CLOSED"));
+ const scoped:T[]=[];
+ const seen=new Set<string>();
+ for(const row of rows){
+  if(row.collegeId!==collegeId || row.relationshipId!==relationshipId ||
+     row.job.archivedAt!==null ||
+     (row.job.status!=="PUBLISHED"&&row.job.status!=="CLOSED") ||
+     seen.has(row.job.id))continue;
+  seen.add(row.job.id);
+  scoped.push(row);
+ }
  return {
   active:scoped.filter(row=>row.job.status==="PUBLISHED").length,
   closed:scoped.filter(row=>row.job.status==="CLOSED").length,
