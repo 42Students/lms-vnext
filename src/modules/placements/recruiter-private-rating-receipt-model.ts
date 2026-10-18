@@ -18,7 +18,7 @@ export function parseRecruiterPrivateReviewReceipt(value:unknown):
  if(value===null||typeof value!=="object"||Array.isArray(value))return null;
  const object=value as Record<string,unknown>;
  const rating=object.rating;
- if(rating!==null&&(!Number.isInteger(rating)||typeof rating!=="number"||
+ if(rating!==null&&(typeof rating!=="number"||!Number.isInteger(rating)||
   rating<1||rating>5))return null;
  if(typeof object.note!=="string"||object.note.length>1000)return null;
  const version=object.updatedAt;
