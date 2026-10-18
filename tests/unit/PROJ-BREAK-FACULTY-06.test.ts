@@ -2,6 +2,7 @@ import {beforeEach,describe,expect,it,vi} from "vitest";
 import type {RequestContext} from "@/modules/identity/context";
 import {updateMentorMeetingNotes} from "@/modules/projects/mentor-meeting-notes-service";
 import {decideMentorProjectMeeting} from "@/modules/projects/mentor-meeting-decision-service";
+import {rescheduleMentorMeeting} from "@/modules/projects/mentor-meeting-reschedule-service";
 
 const projectId="11111111-1111-4111-8111-111111111111";
 const meetingId="22222222-2222-4222-8222-222222222222";
@@ -99,6 +100,14 @@ describe("PROJ-BREAK-FACULTY-06 meeting revisions, duplicate submits and notific
   state.persistedRevoked=true;state.status="SCHEDULED";
   await expect(decide(newer))
     .rejects.toMatchObject({code:"PROJECT_LIFECYCLE_ACCESS_DENIED"});
+  expect(state).toMatchObject({persistedChecks:1,reads:1,writes:0,events:0,notifications:0});
+ });
+ it("PROJ-BREAK-FACULTY-08-03 a revoked Mentor cannot reschedule from an old browser session",async()=>{
+  state.persistedRevoked=true;state.status="SCHEDULED";
+  await expect(rescheduleMentorMeeting(faculty,{projectId,meetingId},{
+   startsAt:"2030-01-01T09:00:00.000Z",endsAt:"2030-01-01T10:00:00.000Z",
+   expectedUpdatedAt:newer,confirmed:true,
+  })).rejects.toMatchObject({code:"PROJECT_LIFECYCLE_ACCESS_DENIED"});
   expect(state).toMatchObject({persistedChecks:1,reads:1,writes:0,events:0,notifications:0});
  });
  it("PROJ-BREAK-FACULTY-06-01 stale note replay wins over no-op and cannot write or notify",async()=>{
