@@ -8,6 +8,7 @@ import {
 import type {RequestContext} from "@/modules/identity/context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {loadCourseMembership,loadCourseSectionDeliveryScope} from "./scope";
@@ -53,6 +54,11 @@ export async function createCourseTeachingAssignmentsBatch(
     .orderBy(courseSectionDeliveries.id).for("update");
    if(lockedDeliveries.length!==ids.length)
     throw new CoursesServiceError("SECTION_DELIVERY_NOT_FOUND");
+   // The session snapshot alone is insufficient: actor suspension or role
+   // revocation in another tab must win before any assignment is persisted.
+   await assertPersistedPlatformPermission(tx,context,"courses.manage",{
+     collegeId:first.collegeId,organizationId:first.organizationId,
+   });
    // Lock and recheck tenant/course ancestry while still in this transaction.
    const live=await tx.select({
     id:courseSectionDeliveries.id,
