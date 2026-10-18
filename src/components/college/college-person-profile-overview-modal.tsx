@@ -1,4 +1,5 @@
 "use client";
+import {Dialog} from "@/components/ui/dialog";
 import {useState} from "react";
 type Overview={person:{name:string;kind:"FACULTY"|"LEARNER";gender:string;bio:string;
  academicTitle:string|null;employmentType:string|null;rollNumber:string|null};
@@ -24,14 +25,12 @@ export function CollegePersonProfileOverviewModal({membershipId,name,kind}:{
  }
  return <>
   <button type="button" onClick={()=>void show()}
-   className="min-h-9 rounded border border-border px-3 text-xs font-semibold text-primary-text">Profile</button>
-  {open?<div role="presentation" className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-   <section role="dialog" aria-modal="true" aria-label={"Profile for "+name}
-    className="max-h-[90vh] w-full max-w-2xl space-y-4 overflow-y-auto rounded-xl bg-surface p-5">
+   className="min-h-11 rounded border border-border px-3 text-xs font-semibold text-primary-text">Profile</button>
+  <Dialog open={open} onOpenChange={setOpen} title={"Profile for "+name}>
     <div className="flex items-center justify-between gap-2">
      <h2 className="text-lg font-semibold">Profile · {name}</h2>
      <button type="button" onClick={()=>setOpen(false)}
-      className="min-h-10 rounded border border-border px-3">Close</button>
+      className="min-h-11 rounded border border-border px-3">Close</button>
     </div>
     {loading?<p role="status">Loading profile…</p>:null}
     {error?<p role="alert" className="text-error">{error}</p>:null}
@@ -58,7 +57,6 @@ export function CollegePersonProfileOverviewModal({membershipId,name,kind}:{
       </section>)}</div>
      <section><h3 className="font-semibold">Identity</h3><p className="text-sm text-muted-foreground">{data.identity}</p></section>
     </div>:null}
-   </section>
-  </div>:null}
+  </Dialog>
  </>;
 }
