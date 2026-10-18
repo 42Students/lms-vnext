@@ -6,7 +6,10 @@ import { PublicEnquiryError } from "@/modules/placements/public-enquiry/send-ser
 export const runtime="nodejs";
 export async function POST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- const tenant=await resolveRequestTenant(request.headers.get("host"));
+ let tenant:Awaited<ReturnType<typeof resolveRequestTenant>>;
+ try {tenant=await resolveRequestTenant(request.headers.get("host"));}
+ catch {return NextResponse.json({error:"SERVICE_UNAVAILABLE"},
+  {status:503,headers:{"Cache-Control":"no-store"}});}
  if(tenant.kind!=="college")return NextResponse.json({error:"PAGE_UNAVAILABLE"},{status:404});
  const ip=process.env.PUBLIC_JOIN_TRUSTED_PROXY_READY==="VERIFIED"
   ?request.headers.get("x-public-verified-client-ip"):null;
@@ -19,6 +22,7 @@ export async function POST(request:Request){
     error.code==="LIMIT"?"TOO_MANY_TRIES":"COULD_NOT_SEND_ENQUIRY",
   },{status:error.code==="NOT_READY"?503:error.code==="LIMIT"?429:400,
    headers:{"Cache-Control":"no-store"}});
-  throw error;
+  return NextResponse.json({error:"SERVICE_UNAVAILABLE"},
+   {status:503,headers:{"Cache-Control":"no-store"}});
  }
 }
