@@ -142,62 +142,62 @@ Status: INCOMPLETE. Tests have not been executed; do not use this ledger for rel
 | `src/modules/courses/faculty-course-navigation.ts` | `facultyCourseTabHref`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-course-navigation.test.ts` |
 | `src/modules/courses/faculty-course-navigation.ts` | `facultyCourseTabFromPath`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-course-navigation.test.ts` |
 | `src/modules/courses/faculty-course-navigation.ts` | `validFacultyDefaultDeliveryId`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-course-navigation.test.ts` |
-| `src/modules/courses/faculty-course-route-errors.ts` | `hidesFacultyCourseRouteError`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-course-route-errors.test.ts` |
+| `src/modules/courses/faculty-course-route-errors.ts` | `hidesFacultyCourseRouteError`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-course-route-errors.test.ts` |
 | `src/modules/courses/faculty-course-service.ts` | `listFacultyCourseDeliveries`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-course-service.ts` | `getFacultyCourseWorkspace`: GAP — behavioural test needed |
-| `src/modules/courses/faculty-discussion-history-model.ts` | `facultyDiscussionHistorySchema`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-discussion-history-model.test.ts` |
-| `src/modules/courses/faculty-discussion-history-model.ts` | `discussionHistoryPagination`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-discussion-history-model.test.ts` |
-| `src/modules/courses/faculty-discussion-history-model.ts` | `facultyDiscussionHistoryHref`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-discussion-history-model.test.ts` |
-| `src/modules/courses/faculty-discussion-history-model.ts` | `discussionHistoryLabel`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-discussion-history-model.test.ts` |
-| `src/modules/courses/faculty-discussion-history-model.ts` | `parseFacultyDiscussionHistoryLocation`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-discussion-history-model.test.ts` |
+| `src/modules/courses/faculty-discussion-history-model.ts` | `facultyDiscussionHistorySchema`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-discussion-history-model.test.ts` |
+| `src/modules/courses/faculty-discussion-history-model.ts` | `discussionHistoryPagination`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-discussion-history-model.test.ts` |
+| `src/modules/courses/faculty-discussion-history-model.ts` | `facultyDiscussionHistoryHref`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-discussion-history-model.test.ts` |
+| `src/modules/courses/faculty-discussion-history-model.ts` | `discussionHistoryLabel`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-discussion-history-model.test.ts` |
+| `src/modules/courses/faculty-discussion-history-model.ts` | `parseFacultyDiscussionHistoryLocation`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-discussion-history-model.test.ts` |
 | `src/modules/courses/faculty-discussion-history-service.ts` | `getFacultyDiscussionHistory`: GAP — behavioural test needed |
-| `src/modules/courses/faculty-discussion-moderation-model.ts` | `facultyDiscussionModerationSchema`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-discussion-moderation-model.test.ts` |
-| `src/modules/courses/faculty-discussion-moderation-model.ts` | `facultyDiscussionTokenMatches`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-discussion-moderation-model.test.ts` |
+| `src/modules/courses/faculty-discussion-moderation-model.ts` | `facultyDiscussionModerationSchema`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-discussion-moderation-model.test.ts` |
+| `src/modules/courses/faculty-discussion-moderation-model.ts` | `facultyDiscussionTokenMatches`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-discussion-moderation-model.test.ts` |
 | `src/modules/courses/faculty-discussion-participation-model.ts` | `facultyDiscussionParticipationSchema`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-discussion-participation-model.ts` | `facultyDiscussionParticipationSummary`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-discussion-participation-service.ts` | `getFacultyDiscussionParticipation`: GAP — behavioural test needed |
-| `src/modules/courses/faculty-discussion-reply-model.ts` | `facultyDiscussionReplySchema`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-discussion-reply-model.test.ts` |
-| `src/modules/courses/faculty-discussion-reply-model.ts` | `facultyReplyParentTokenMatches`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-discussion-reply-model.test.ts` |
+| `src/modules/courses/faculty-discussion-reply-model.ts` | `facultyDiscussionReplySchema`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-discussion-reply-model.test.ts` |
+| `src/modules/courses/faculty-discussion-reply-model.ts` | `facultyReplyParentTokenMatches`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-discussion-reply-model.test.ts` |
 | `src/modules/courses/faculty-discussion-reply-service.ts` | `postFacultyDiscussionReply`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-followup-export.ts` | `facultyFollowUpPageCsv` — `tests/unit/COURSES-BREAK-FACULTY-04.test.ts` (not executed) |
 | `src/modules/courses/faculty-followup-export.ts` | `facultyFollowUpCsvHref`: GAP — behavioural test needed |
-| `src/modules/courses/faculty-grade-editor-model.ts` | `facultyGradeEditorState`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-grade-editor-model.test.ts` |
-| `src/modules/courses/faculty-grade-noop-model.ts` | `facultyGradeHasChanges`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-grade-noop-model.test.ts` |
-| `src/modules/courses/faculty-gradebook-model.ts` | `facultyGradebookParamsSchema`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-gradebook-model.test.ts` |
+| `src/modules/courses/faculty-grade-editor-model.ts` | `facultyGradeEditorState`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-grade-editor-model.test.ts` |
+| `src/modules/courses/faculty-grade-noop-model.ts` | `facultyGradeHasChanges`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-grade-noop-model.test.ts` |
+| `src/modules/courses/faculty-gradebook-model.ts` | `facultyGradebookParamsSchema`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-gradebook-model.test.ts` |
 | `src/modules/courses/faculty-gradebook-model.ts` | `facultyPublishedGradeRows` — `tests/unit/chat3-faculty-gradebook-integrity.test.ts` (not executed) |
-| `src/modules/courses/faculty-gradebook-model.ts` | `facultyGradebookCsv`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-gradebook-model.test.ts` |
+| `src/modules/courses/faculty-gradebook-model.ts` | `facultyGradebookCsv`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-gradebook-model.test.ts` |
 | `src/modules/courses/faculty-gradebook-model.ts` | `facultyPublishedLearnerBreakdown` — `tests/unit/chat3-faculty-gradebook-integrity.test.ts` (not executed) |
-| `src/modules/courses/faculty-gradebook-model.ts` | `facultyGradebookViewQuerySchema`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-gradebook-model.test.ts` |
-| `src/modules/courses/faculty-gradebook-model.ts` | `paginateFacultyGradebookRows`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-gradebook-model.test.ts` |
-| `src/modules/courses/faculty-gradebook-model.ts` | `facultyGradebookViewHref`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-gradebook-model.test.ts` |
-| `src/modules/courses/faculty-gradebook-model.ts` | `facultyGradebookPrivateNotFound`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-gradebook-model.test.ts` |
+| `src/modules/courses/faculty-gradebook-model.ts` | `facultyGradebookViewQuerySchema`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-gradebook-model.test.ts` |
+| `src/modules/courses/faculty-gradebook-model.ts` | `paginateFacultyGradebookRows`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-gradebook-model.test.ts` |
+| `src/modules/courses/faculty-gradebook-model.ts` | `facultyGradebookViewHref`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-gradebook-model.test.ts` |
+| `src/modules/courses/faculty-gradebook-model.ts` | `facultyGradebookPrivateNotFound`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-gradebook-model.test.ts` |
 | `src/modules/courses/faculty-gradebook-service.ts` | `getFacultyPublishedGradebook` — `tests/unit/chat3-faculty-gradebook-service-journey.test.ts` (not executed) |
 | `src/modules/courses/faculty-gradebook-service.ts` | `getFacultyPublishedGradebookLearner` — `tests/unit/chat3-faculty-gradebook-service-journey.test.ts` (not executed) |
-| `src/modules/courses/faculty-inbox-query-model.ts` | `parseFacultyInboxQuery`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-inbox-query-model.test.ts` |
-| `src/modules/courses/faculty-ist-month-model.ts` | `facultyMonthQuerySchema`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-ist-month-model.test.ts` |
-| `src/modules/courses/faculty-ist-month-model.ts` | `istDateKey`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-ist-month-model.test.ts` |
-| `src/modules/courses/faculty-ist-month-model.ts` | `currentIstMonth`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-ist-month-model.test.ts` |
-| `src/modules/courses/faculty-ist-month-model.ts` | `shiftMonth`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-ist-month-model.test.ts` |
-| `src/modules/courses/faculty-ist-month-model.ts` | `facultyMonthGrid`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-ist-month-model.test.ts` |
-| `src/modules/courses/faculty-ist-month-model.ts` | `facultyMonthHref`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-ist-month-model.test.ts` |
+| `src/modules/courses/faculty-inbox-query-model.ts` | `parseFacultyInboxQuery`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-inbox-query-model.test.ts` |
+| `src/modules/courses/faculty-ist-month-model.ts` | `facultyMonthQuerySchema`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-ist-month-model.test.ts` |
+| `src/modules/courses/faculty-ist-month-model.ts` | `istDateKey`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-ist-month-model.test.ts` |
+| `src/modules/courses/faculty-ist-month-model.ts` | `currentIstMonth`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-ist-month-model.test.ts` |
+| `src/modules/courses/faculty-ist-month-model.ts` | `shiftMonth`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-ist-month-model.test.ts` |
+| `src/modules/courses/faculty-ist-month-model.ts` | `facultyMonthGrid`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-ist-month-model.test.ts` |
+| `src/modules/courses/faculty-ist-month-model.ts` | `facultyMonthHref`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-ist-month-model.test.ts` |
 | `src/modules/courses/faculty-ist-month-service.ts` | `getFacultyIstMonth`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-ist-quarter-hour-model.ts` | `FACULTY_IST_QUARTER_MINUTES`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-ist-quarter-hour-model.ts` | `FACULTY_IST_NOTE`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-ist-quarter-hour-model.ts` | `facultyIstTimeParts`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-ist-quarter-hour-model.ts` | `facultyIstWallTime`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-ist-quarter-hour-model.ts` | `facultyIstQuarterHourIssue`: GAP — behavioural test needed |
-| `src/modules/courses/faculty-lesson-visibility-model.ts` | `lessonVisibilityCommandSchema`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-lesson-visibility-model.test.ts` |
-| `src/modules/courses/faculty-lesson-visibility-model.ts` | `lessonVisibleToReader`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-lesson-visibility-model.test.ts` |
-| `src/modules/courses/faculty-lesson-visibility-model.ts` | `mayEditLessonStudentVisibility`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-lesson-visibility-model.test.ts` |
+| `src/modules/courses/faculty-lesson-visibility-model.ts` | `lessonVisibilityCommandSchema`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-lesson-visibility-model.test.ts` |
+| `src/modules/courses/faculty-lesson-visibility-model.ts` | `lessonVisibleToReader`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-lesson-visibility-model.test.ts` |
+| `src/modules/courses/faculty-lesson-visibility-model.ts` | `mayEditLessonStudentVisibility`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-lesson-visibility-model.test.ts` |
 | `src/modules/courses/faculty-lesson-visibility-staged.ts` | `filterStagedStudentVisibleLessonContents`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-lesson-visibility-staged.test.ts` |
 | `src/modules/courses/faculty-live-classes-model.ts` | `facultyLiveClassesQuerySchema`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-live-classes-model.ts` | `safeHttpsMeetingLink`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-live-classes-model.ts` | `pageFacultyLiveClasses`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-live-classes-model.ts` | `facultyLiveClassesHref`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-live-classes-service.ts` | `getFacultyLiveClasses`: GAP — behavioural test needed |
-| `src/modules/courses/faculty-live-confirmation.ts` | `facultyLiveConfirmText`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-live-confirmation.test.ts` |
-| `src/modules/courses/faculty-live-editor-command.ts` | `facultyLiveEditorCommand`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-live-editor-command.test.ts` |
-| `src/modules/courses/faculty-live-editor-model.ts` | `facultyLiveEditorDraft`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-live-editor-model.test.ts` |
+| `src/modules/courses/faculty-live-confirmation.ts` | `facultyLiveConfirmText`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-live-confirmation.test.ts` |
+| `src/modules/courses/faculty-live-editor-command.ts` | `facultyLiveEditorCommand`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-live-editor-command.test.ts` |
+| `src/modules/courses/faculty-live-editor-model.ts` | `facultyLiveEditorDraft`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-live-editor-model.test.ts` |
 | `src/modules/courses/faculty-live-editor-model.ts` | `emptyFacultyLiveDraft`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-live-editor-model.test.ts` |
 | `src/modules/courses/faculty-live-lock-model.ts` | `facultyLiveDeliveryLockKey`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-live-lock-model.test.ts` |
 | `src/modules/courses/faculty-live-mutation-model.ts` | `facultyLiveMutationParamsSchema`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-live-mutation-model.test.ts` |
