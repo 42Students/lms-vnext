@@ -14,14 +14,22 @@ export function shuffleQuizForLearner(
  questions:readonly QuizDisplayQuestion[],quizId:string,memberId:string,
  shuffleQuestions:boolean,shuffleOptions:boolean
 ):QuizDisplayQuestion[]{
- const rows=questions.map(question=>({
-  ...question,
-  options:shuffleOptions?[...question.options].sort((a,b)=>{
-   const left=digestOrder(quizId,memberId,question.id,a.id);
-   const right=digestOrder(quizId,memberId,question.id,b.id);
-   return left.localeCompare(right)||a.id.localeCompare(b.id);
-  }):[...question.options],
- }));
+ const rows=questions.map(question=>{
+  // Never propagate the authored correct-answer flag to learner display data.
+  // Project to an allowlist even if a caller passes extra properties at runtime.
+  const options=question.options.map(option=>({
+   id:option.id,text:option.text,sequence:option.sequence,
+  }));
+  return {
+   id:question.id,type:question.type,prompt:question.prompt,
+   points:question.points,sequence:question.sequence,
+   options:shuffleOptions?options.sort((a,b)=>{
+    const left=digestOrder(quizId,memberId,question.id,a.id);
+    const right=digestOrder(quizId,memberId,question.id,b.id);
+    return left.localeCompare(right)||a.id.localeCompare(b.id);
+   }):options,
+  };
+ });
  if(!shuffleQuestions)return rows;
  return rows.sort((a,b)=>{
   const left=digestOrder(quizId,memberId,"question",a.id);
