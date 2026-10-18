@@ -405,6 +405,42 @@ describe("Placement P8 offers and joining", () => {
     }
   });
 
+  it("PLACEMENTS-EXPIRY-RACE-DB-04 rejects acceptance delayed past expiry by a competing offer row lock",async()=>{
+    const {application}=await preparePassedApplication();
+    const issued=await issuePlacementOffer(tpo,application.id,{
+      kind:"OFFER",roleTitle:"Offer Engineer",annualCtcInr:900_000,
+    });
+    const requestTime=new Date();
+    const deadline=new Date(requestTime.getTime()+900);
+    // Force a narrow expiry window only in the disposable test DB: the
+    // public issuance API correctly requires a longer minimum response time.
+    await pool.query("update placement_offers set expires_at=$1 where id=$2",[deadline,issued.id]);
+    const blocker=await pool.connect();
+    await blocker.query("begin");
+    try {
+      await blocker.query("select id from placement_offers where id=$1 for update",[issued.id]);
+      // The explicit requestTime predates expiry. A transaction that obtains
+      // the lock later must not be allowed to reuse that earlier timestamp.
+      const outcome=actOnPlacementOffer(learner,issued.id,{action:"ACCEPT"},requestTime)
+        .then(()=>({accepted:true,code:null}),error=>({
+          accepted:false,code:error instanceof Error&&"code" in error?String(error.code):null,
+        }));
+      await new Promise(resolve=>setTimeout(resolve,1400));
+      await blocker.query("commit");
+      expect(await outcome).toEqual({accepted:false,code:"PLACEMENT_OFFER_EXPIRED"});
+      const saved=await pool.query<{status:string}>(
+        "select status from placement_offers where id=$1",[issued.id]);
+      expect(saved.rows[0]?.status).toBe("ISSUED");
+      const acceptedHistory=await pool.query<{count:number}>(
+        "select count(*)::integer as count from placement_offer_status_history where offer_id=$1 and to_status='ACCEPTED'",
+        [issued.id]);
+      expect(acceptedHistory.rows[0]?.count).toBe(0);
+    } finally {
+      await blocker.query("rollback").catch(()=>{});
+      blocker.release();
+    }
+  });
+
   it("issues an idempotent offer, lets the learner accept, and preserves corrected joining history", async () => {
     const { application } =
       await preparePassedApplication();
