@@ -77,7 +77,9 @@ export async function listOwnLearnerAssessmentRows(deliveries:readonly Delivery[
    id:row.id,title:row.title,description:row.description,dueAt:row.dueAt,createdAt:row.createdAt,
    maxAttempts:row.maxAttempts,totalPoints:row.totalPoints,sequence:row.sequence,
    status:row.status==="CLOSED"?"CLOSED" as const:"PUBLISHED" as const,
-   resultsPublished:row.resultsPublished,attemptsUsed,
+   // An authoring publication flag does not authorize early learner visibility.
+   // Match getMyQuizAttempts: CLOSED and explicitly released are both required.
+   resultsPublished:row.status==="CLOSED"&&row.resultsPublished,attemptsUsed,
    attemptsRemaining:row.status==="PUBLISHED"?Math.max(0,row.maxAttempts-attemptsUsed):0,
    deliveryId:row.deliveryId,courseId:delivery.courseId,courseName:delivery.courseName,
    courseCode:delivery.courseCode,lessonId:row.lessonId,lessonName:row.lessonName,
