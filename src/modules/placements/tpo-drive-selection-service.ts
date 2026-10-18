@@ -9,7 +9,7 @@ import { issuePlacementOffer, listPlacementOfferCandidates } from "./offer-servi
 import {listPlacementRoleOptions} from "./role-option-service";
 import { auditTpoJobChange, requireTpoJobActor, requireTpoJobCollege } from "./tpo-job-write-base";
 import { placementJobIdSchema } from "./validation";
-import { recordSelectionsSchema, releaseSelectionsSchema, summarizeSelectionRelease, tpoSelectionReleaseFailureMessage } from "./tpo-drive-selection-model";
+import { recordSelectionsSchema, releaseSelectionsSchema, summarizeSelectionRelease, tpoSelectionReleaseFailureMessage, isExactTpoSelectionReplay } from "./tpo-drive-selection-model";
 
 const pendingCode = null;
 
@@ -103,6 +103,12 @@ export async function recordTpoDriveSelections(context: RequestContext, rawJobId
       .for("update");
     if (existing.some(row => row.jobId !== job.id || row.status !== "SELECTED")) {
       throw new PlacementsServiceError("PLACEMENT_OFFER_ACTIVE_EXISTS");
+    }
+    // Lost HTTP replies and double-click retries should not move the version
+    // or create another audit event. Compare persisted fields under the locks.
+    if(isExactTpoSelectionReplay(existing,input.entries)){
+      return {recorded:input.entries.length,selectionIds:input.entries.map(entry=>
+        existing.find(row=>row.applicationId===entry.applicationId)!.id)};
     }
     const now=new Date();
     const recorded=[];
