@@ -204,3 +204,16 @@ This is an independent TPO/HR workflow review; real clipboard permission denial,
 | ID | Source | Direct test | Coverage |
 |---|---|---|---|
 | HR-BREAK-ACTIVITY-PAGE-13 | `listRecruiterJobActivity`, `clampHrActivityPage`, HR Activity page | `tests/unit/HR-BREAK-chat19-activity-stale-page.test.ts` | Old bookmarked page recovery, 0/1/40/41/105 scoped event boundaries, no cross-company job IDs, strict malformed input rejection, links use effective page. Live PostgreSQL under grant revocation still requires CI. |
+
+## Additional recruiter digest and activity input audits
+
+| ID | Source boundary | Direct tests | Cases |
+|---|---|---|---|
+| HR-BREAK-MAIL-DIGEST-15 | `sendRecruiterMessageDigest` in `recruiter-message-email-provider.ts` | `tests/unit/HR-BREAK-chat19-mail-digest-provider.test.ts` | Disabled bridge, test allowlist, no token, non-OTP template, invalid Reply-To domain, insecure URL, empty messages, exactly three recent HTML-escaped snippets, POST redirect rejected, bounded outbound retries, provider rejection/failure never acknowledges a message |
+| HR-BREAK-ACTIVITY-QUERY-14 | `hrActivityQuerySchema` | `tests/unit/HR-BREAK-chat19-activity-stale-page.test.ts` | Decimals accepted as URL page/limit, nondecimal hex/scientific/plus/whitespace/NaN rejected, internally typed numbers continue to validate |
+
+## Recruiter message digest outgoing address-name safeguard
+
+| ID | Export / provider | Behavioral test | Verification remaining |
+|---|---|---|---|
+| HR-BREAK-DIGEST-HEADER-16 | `safeRecruiterEmailAddressName` → `sendRecruiterMessageDigest` | `tests/unit/HR-BREAK-chat19-mail-digest-provider.test.ts`: CRLF/header spoof, Unicode bidi control and excessive name length normalized before provider payload, recipient email remains unchanged | Live ZeptoMail rendering/inbound reply transport integration |

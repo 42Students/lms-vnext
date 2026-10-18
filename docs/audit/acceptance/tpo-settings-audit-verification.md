@@ -179,3 +179,7 @@ Round 3 scope corrections: TPO-settings-audit-56 extension supports timed grants
 | TPO-settings-audit-PREP-CATALOG-07 | DONE — source and pure tests, CI pending | Preparation catalog and outcome service both require non-archived owning department in this college, so an archived course cannot supply misleading readiness evidence. `tests/unit/chat11-tpo-prep-archived-catalog.test.ts` covers unresolved course, zero published content and college scoping. |
 
 | TPO-settings-audit-PREF-HTTP-08 | DONE — HTTP-unit authored, CI pending | Actual Next.js route-unit cases now cover CSRF origin before context, bounded JSON 400/413, private no-store successful save, actor/session denial, stale CAS 409 and missing table 503. `tests/unit/chat11-tpo-preferences-http-security.test.ts`. |
+
+| TPO-settings-audit-PREP-CATALOG-07 transaction | DONE — guarded writer source, CI pending | In addition to the catalog/evidence filters, `setTpoPrepReadiness` now rejects a disabled college or archived department even for direct PUT, before CAS save and activity event. `chat11-tpo-prep-archived-catalog.test.ts` covers transaction ordering. |
+
+| TPO-settings-audit-GRANT-REVOCATION-09 | DONE — guard source and tests, CI pending | `changeTpoRecruiterGrant` now enforces live persisted TPO membership within the grant transaction before GRANT, EXTEND, REVOKE, or already-active no-op. `tests/unit/chat11-tpo-recruiter-grant-live-role.test.ts` (three gap-named assertions). |
