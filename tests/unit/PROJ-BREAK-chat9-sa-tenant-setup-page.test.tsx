@@ -2,8 +2,6 @@ import {beforeEach,describe,expect,it,vi} from "vitest";
 import {isValidElement} from "react";
 import SuperAdminTenantSetup from "@/app/(authenticated)/admin/tenants/setup/page";
 
-const collegeId="11111111-1111-4111-8111-111111111111";
-const organizationId="22222222-2222-4222-8222-222222222222";
 const state=vi.hoisted(()=>({
   scoped:false,allowed:true,failAt:"",
   orgReads:0,directoryReads:0,collegeReads:0,readinessReads:0,
