@@ -68,6 +68,7 @@ describe("HR-BREAK-JOIN-CODE-01: recruiter OTP delivery safety and fail-soft han
   expect(body.to).toEqual([{email_address:{address,name:address}}]);
   expect(body.merge_info.otp).toBe("123456");
   expect(body.merge_info.expiryMinutes).toBe("10");
+  expect(options.redirect).toBe("error");
   expect(options.signal).toBeDefined();
  });
  it("does not claim delivery on provider denial, timeout or connection failure",async()=>{

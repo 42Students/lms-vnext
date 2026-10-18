@@ -80,4 +80,4 @@ Date: 2026-10-18. **Targeted inventory: 65 exported functions/route handlers/pag
 
 | `src/app/(authenticated)/admin/projects/workspaces/new/page.tsx` | `Page` | `PROJ-BREAK-ux-14` | SOURCE: college-scope guard, safe retry and denied state; browser outage/revocation journey pending |
 
-| `src/components/projects/super-admin-template-subview-page.tsx` | `SuperAdminTemplateSubviewPage` | `PROJ-BREAK-ux-15; PROJ-BREAK-scale-25` | SOURCE: 404 vs safe error fallback, history-page parser; server render/outage journey pending |
+| `src/components/projects/super-admin-template-subview-page.tsx` | `SuperAdminTemplateSubviewPage` | `PROJ-BREAK-ux-15; PROJ-BREAK-scale-28` | SOURCE: 404 vs safe error fallback, history-page parser; server render/outage journey pending |

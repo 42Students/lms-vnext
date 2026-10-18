@@ -13,6 +13,7 @@ import {
   sections,
   sectionFacultyAssignments,
   sectionScheduleEvents,
+  academicPeriods,
 } from "@/db/schema";
 import type { MembershipRole } from "@/modules/identity/constants";
 import { AcademicsServiceError } from "./errors";
@@ -136,9 +137,9 @@ export async function loadLearnerEnrollmentScope(
     )
     .innerJoin(
       cohorts,
-      eq(
-        cohorts.id,
-        learnerProgramEnrollments.cohortId,
+      and(
+        eq(cohorts.id, learnerProgramEnrollments.cohortId),
+        eq(cohorts.programId, learnerProgramEnrollments.programId),
       ),
     )
     .innerJoin(
@@ -205,6 +206,21 @@ export async function loadSectionEnrollmentScope(
       ),
     )
     .innerJoin(
+      sections,
+      and(
+        eq(sections.id, sectionEnrollments.sectionId),
+        eq(sections.cohortId, learnerProgramEnrollments.cohortId),
+        eq(sections.academicPeriodId, sectionEnrollments.academicPeriodId),
+      ),
+    )
+    .innerJoin(
+      cohorts,
+      and(
+        eq(cohorts.id, learnerProgramEnrollments.cohortId),
+        eq(cohorts.programId, learnerProgramEnrollments.programId),
+      ),
+    )
+    .innerJoin(
       programs,
       eq(
         programs.id,
@@ -214,6 +230,20 @@ export async function loadSectionEnrollmentScope(
     .innerJoin(
       departments,
       eq(departments.id, programs.departmentId),
+    )
+    .innerJoin(
+      academicPeriods,
+      and(
+        eq(academicPeriods.id, sectionEnrollments.academicPeriodId),
+        eq(academicPeriods.collegeId, departments.collegeId),
+      ),
+    )
+    .innerJoin(
+      collegeMemberships,
+      and(
+        eq(collegeMemberships.id, learnerProgramEnrollments.membershipId),
+        eq(collegeMemberships.collegeId, departments.collegeId),
+      ),
     )
     .innerJoin(
       colleges,
