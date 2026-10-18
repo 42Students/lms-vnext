@@ -10,6 +10,7 @@ import { previewClassTeams, type ProjectTeam } from "@/modules/projects/class-te
 import { moveMemberBalanced } from "@/modules/projects/class-team-balanced-move";
 import { swapClassTeamMembers } from "@/modules/projects/class-team-swap-model";
 import { previewVersion } from "@/modules/projects/class-team-preview-token";
+import {classTeamCreationOutcomeCsv} from "@/modules/projects/class-team-creation-outcome-export";
 import {classTeamCreatorEmptyMessages} from "@/modules/projects/class-team-creator-empty-model";
 import {canRefreshClassTeamRoster} from "@/modules/projects/class-team-roster-refresh-model";
 import {isValidClassTeamBaseSlug} from "@/modules/projects/class-team-slug-model";
@@ -282,16 +283,26 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
           empty={<p>No individual results recorded.</p>}
         />
       </div>
-      <button type="button" className="text-sm font-semibold text-primary-text underline"
+      <button type="button"
+        className="inline-flex min-h-11 items-center rounded font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
         onClick={()=>{
-          const rows=["Learner,Student membership,Result,Workspace,Project ID",
-            ...outcome.individualResults.map(item=>[
-             names.get(item.membershipId)?.displayName??"",item.membershipId,
-             item.status,item.title??"",item.projectId??"",
-            ].map(value=>'"'+value.replaceAll('"','""')+'"').join(","))];
-          const blob=new Blob(["\uFEFF"+rows.join("\r\n")],{type:"text/csv;charset=utf-8"});
-          const url=URL.createObjectURL(blob),link=document.createElement("a");
-          link.href=url;link.download="cohort-creation-outcome.csv";link.click();URL.revokeObjectURL(url);
+          let url:string|null=null;
+          let link:HTMLAnchorElement|null=null;
+          try {
+            const csv=classTeamCreationOutcomeCsv(outcome.individualResults,names);
+            const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"});
+            url=URL.createObjectURL(blob);
+            link=document.createElement("a");
+            link.href=url;
+            link.download="cohort-creation-outcome.csv";
+            document.body.appendChild(link);
+            link.click();
+          } catch {
+            setError("Could not export outcome CSV. Review the displayed results and try again.");
+          } finally {
+            link?.remove();
+            if(url)window.setTimeout(()=>URL.revokeObjectURL(url),0);
+          }
         }}>Export outcome CSV</button>
     </section>:null}
     <div className="flex flex-wrap justify-end gap-3">
