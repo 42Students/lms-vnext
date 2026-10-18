@@ -19,8 +19,13 @@ export default async function SuperAdminUserDirectory({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }) {
  const raw=await searchParams;
- const query=adminUsersQuerySchema.safeParse({tab:raw.tab,q:raw.q,role:raw.role,
-  membershipStatus:raw.membershipStatus,platformStatus:raw.platformStatus,page:raw.page});
+ const validKeys=new Set(["tab","q","role","membershipStatus","platformStatus","page"]);
+ const validShape=Object.keys(raw).every(key=>validKeys.has(key))&&
+  Object.values(raw).every(value=>!Array.isArray(value));
+ const query=adminUsersQuerySchema.safeParse(validShape?{
+  tab:raw.tab,q:raw.q,role:raw.role,membershipStatus:raw.membershipStatus,
+  platformStatus:raw.platformStatus,page:raw.page,
+ }:{invalid:true});
  if(!query.success) return <div className="space-y-4"><PageHeader eyebrow="Super Admin" title="People Directory"/>
   <ErrorState title="Invalid directory filters" description="Review search, roles, statuses, or page."
    action={<Link href="/admin/people/directory" className="font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>}/>

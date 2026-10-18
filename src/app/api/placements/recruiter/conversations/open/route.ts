@@ -17,7 +17,7 @@ export async function POST(request:Request){
  if(!payload.success)return NextResponse.json({error:"INVALID_BODY"},{status:400});
  try{
   const context=await getCurrentRequestContext();
-  if(!hasActiveRecruiter(context))
+  if(!hasActiveRecruiter(context)||context.recruiter?.userId!==context.user.id)
    return NextResponse.json({error:"FORBIDDEN"},{status:403});
   const thread=await openRecruiterMessageThread(context,payload.data);
   return NextResponse.redirect(new URL("/hr/conversations/"+thread.id,request.url),303);

@@ -157,3 +157,13 @@ The other half of the admin coverage boundary lives in `src/modules/admin-ui/`, 
 
 
 | `src/modules/admin-ui/super-admin-read-directory-model.ts` — `superAdminReadQuerySchema`, `readAdminQuery`, `superAdminReadPages`, `superAdminReadHref`, `scopedSearchLike` | Decimal-only paging and allowed sizes; duplicate arrays, malicious filters and invalid UUIDs denied. URL round-trip retains selected authorized facets and literal wildcard escaping; internal page-count math is finite. | `SA-DIRECTORY-QUERY-12` in `tests/unit/chat13-admin-directory-query-hardening.test.ts` | Executable pure-parser/URL/count cases authored; cloud CI deferred |
+
+
+| `src/app/api/admin/placements/hiring-report/export/route.ts` — `GET` | GET is read-only, strict query filters, duplicate URL keys rejected before selected-college read, error on invalid scope, 5000 cap/truncation and private no-store CSV response | `SA-HIRING-EXPORT-13` in `tests/unit/chat13-super-admin-hiring-export-route.test.ts` | Route-level exercised through mocked authorized read and real CSV output; no CI/browser execution per owner instruction |
+
+
+| `src/modules/admin-ui/super-admin-hiring-report-service.ts` — `getSuperAdminCompanyHiringReport` hired metric | Count only submitted applications with selected-college membership and EXISTS accepted offer plus JOINED outcome, distinct across offer history | `SA-HIRING-LEDGER-14` `tests/unit/chat13-hiring-report-confirmed-hired.test.ts`, `tests/integration/chat13-hiring-verified-joining-tenant.test.ts` | Source and PostgreSQL witness authored, CI deferred |
+| `src/modules/admin-ui/super-admin-placement-retention-service.ts` — `getSuperAdminPlacementRetentionReport` selected organization | Selected-college UUID must belong to selected organization; preserve stale timestamp ordering and 200-row cap | `SA-RETENTION-ORG-SCOPE-15` `tests/unit/chat13-super-admin-retention-staleness.test.ts` | Source guard authored, SQL execution deferred |
+
+
+| `src/modules/placements/admin-request-body-model.ts` — `readAdminPlacementJson`; Super Admin published-drive PATCH and platform-policy PUT | Actual streamed byte cap, valid JSON, invalid length, malformed UTF-8/JSON, same-origin first and no authentication for invalid bodies | `SA-ADMIN-BODY-16` `tests/unit/chat13-admin-placement-body-guard.test.ts` | Behavioral parser and route-source guard authored; HTTP integration pending |

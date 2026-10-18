@@ -5,6 +5,7 @@ import {
  colleges,departments,programs,learnerProgramEnrollments,cohorts,
  collegeMemberships,placementApplications,placementCompanies,
  placementCompanyRelationships,placementJobs,placementApplicationScreenings,
+ placementOffers,placementJoiningOutcomes,
 } from "@/db/schema";
 import {placementCollegeApplicationStages} from "@/db/schema/placement-college-application-stages";
 import type {RequestContext} from "@/modules/identity/context";
@@ -40,7 +41,23 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
   withdrawn:sql<number>`count(distinct ${placementApplications.id}) filter (where ${placementApplications.status} = 'WITHDRAWN')::integer`.mapWith(Number),
   waitlisted:tally("WAITLISTED"),
   shortlisted:tally("SHORTLISTED"),assessment:tally("ASSESSMENT"),interview:tally("INTERVIEW"),
-  offered:tally("OFFERED"),hired:tally("HIRED"),rejected:tally("REJECTED"),
+  offered:tally("OFFERED"),
+  // A mutable pipeline stage alone cannot prove that a learner joined.
+  // Use the accepted offer + persisted JOINED outcome, consistent with
+  // the selected-college employer-history tally. EXISTS prevents multiple
+  // historical offers inflating the same applicant.
+  hired:sql<number>`count(distinct ${placementApplications.id}) filter (
+    where ${placementApplications.status} = 'SUBMITTED'
+    and exists (
+      select 1 from ${placementOffers}
+      inner join ${placementJoiningOutcomes}
+        on ${placementJoiningOutcomes.offerId} = ${placementOffers.id}
+      where ${placementOffers.applicationId} = ${placementApplications.id}
+        and ${placementOffers.status} = 'ACCEPTED'
+        and ${placementJoiningOutcomes.status} = 'JOINED'
+    )
+  )::integer`.mapWith(Number),
+  rejected:tally("REJECTED"),
  }).from(placementJobs)
   .innerJoin(placementCompanyRelationships,and(
     eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),

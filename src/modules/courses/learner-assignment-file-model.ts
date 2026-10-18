@@ -33,12 +33,15 @@ const requiredUploadHeaders = [
   "x-amz-meta-malware-scan-status",
 ] as const;
 export function learnerAssignmentUploadHeadersSafe(headers: Record<string, string>): boolean {
-  if (!requiredUploadHeaders.every(name => Object.hasOwn(headers, name))) return false;
+  // Signed PUT grants are exact capabilities: extra metadata headers can
+  // override scanning/identity expectations or leak unintended information.
+  if (Object.keys(headers).length !== requiredUploadHeaders.length ||
+      !requiredUploadHeaders.every(name => Object.hasOwn(headers, name))) return false;
   if (headers["x-amz-meta-malware-scan-status"] !== "PENDING") return false;
   const size = headers["x-amz-meta-expected-size"];
   if (!/^[1-9][0-9]{0,7}$/.test(size) || Number(size) > 50 * 1024 * 1024) return false;
   return Object.entries(headers).every(([name, value]) =>
-    (name === "content-type" || name.startsWith("x-amz-meta-")) &&
+    requiredUploadHeaders.some(allowed => name === allowed) &&
     /^[a-z0-9-]+$/.test(name) && value.length > 0 && value.length <= 1024 &&
     !/[\r\n]/.test(value)
   );

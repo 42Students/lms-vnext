@@ -153,3 +153,37 @@ Tests were authored only, not executed. No CI run was requested; HR release cert
 
 
 | `/api/placements/recruiter/drives/[jobId]/rounds` POST | `tests/unit/HR-BREAK-chat15-round-api-73.test.ts` (HR-ROUND-API-73) | Actual form handler denies cross-origin before actor/DB; strict round create/edit/remove payload and optimistic token parsing; own create 303 target; stale/used round 409; foreign ID non-enumerating 404 | Live HR form POST and PostgreSQL sequential/concurrent author checks |
+
+
+## HR-first continuation — October 19, 2026 (coverage authored, CI deferred)
+
+| Exact exported function | Behavioral tests | Account/state matrix proven by authored assertions | Outstanding validation |
+|---|---|---|---|
+| `buildHrOfferCsv` | `tests/unit/HR-BREAK-chat15-offer-export-74.test.ts` | Corrupt persisted issued/expiry Date cannot throw; NaN/Infinity/fractional export totals cannot print invalid omitted counts; formula escaping, masked contact and cap retained | Disposable PostgreSQL export-200/201 consistency and CSV import in common viewers |
+| `projectHrTodayResultsDue` | `tests/unit/HR-BREAK-chat15-calendar-state-75.test.ts` | Keeps SCHEDULED and COMPLETED result reminders for authorized jobs; no canceled, pending, draft, foreign college/job or malformed date; stable sort | Live calendar staleness on round reschedule and multi-college selection |
+| `hrRecruiterNameFieldsSchema`, `joinHrRecruiterName`, `splitHrRecruiterName`, `sameHrNameVersion` | `tests/unit/HR-BREAK-chat15-profile-name-76.test.ts` | Embedded CR/LF/control rejected, Unicode allowed, unknown fields fail, normalized names and offset-aware optimistic stale version | Browser edit/cancel/retry and PostgreSQL name CAS |
+| `requireProjectLifecycleMutationAccess` (HR-restricted Projects entry) | `tests/unit/PROJ-BREAK-HR-77.test.ts` | HR-only, TPO, learner, faculty, disabled/suspended/revoked mentor never query private project or module settings; authorized mentor still honors feature-disabled gate | IIT Dharwad real-tenant role journey, 2-session concurrency and separate lane reviewer |
+
+No suites were executed or disabled. The HR-first continuation remains open for full per-export, per-route, PostgreSQL and page-level certification.
+
+
+## HR-depth continuation — applicant validation and actual page-level journeys
+
+| Export or authenticated page | Behavioral test | Covered account and failure transitions | Remaining gates |
+|---|---|---|---|
+| `uniqueHrVerifiedAcademicMarks` used by `getHrJobRead` | `tests/unit/HR-BREAK-chat15-verified-marks-78.test.ts` | Conflicting academic records for the same member/level no longer arbitrarily disclose whichever historical row wins query order; identical duplicates are safe; invalid percentages fail closed; cross-member/level boundaries are preserved | PostgreSQL mixed `VERIFIED`/`UPDATE_PENDING` fixtures, view policy, real released grade display |
+| `/hr/drives/new` and `/recruiter/drives/new` page | `tests/unit/HR-BREAK-chat15-drive-new-page-79.test.tsx` | Direct page invocation for revoked actor, conflicting `edit/fix/from` parameters, wrong-college 404, multi-college chooser, missing grants, stale editing request and authorized form | Browser form draft/restoration and disabled React client states |
+| `/hr/drives/proposals` and recruiter alias | `tests/unit/HR-BREAK-chat15-proposals-page-80.test.tsx` | Actual page: revoked role, duplicate filters, college chooser, no-access/empty, persisted list, export link; discussion proposals cannot claim a hiring approval | Real TPO thread history from DB and pagination comparison |
+| `/tracker` report intake | `tests/unit/HR-BREAK-chat15-tracker-report-page-81.test.tsx` | Recruiter versus Super Admin known-error disclosure, disabled user redirect, backend unavailable state, repeated/oversized query inputs | Browser/keyboard, live auth, actual persisted own report |
+| `hrDriveDraftSchema` / `hrDriveDraftQuerySchema` | `tests/unit/HR-BREAK-chat15-drive-round-82.test.ts` | Control characters in round labels refused; Unicode NFKC+whitespace lookalike duplicate rounds rejected; supported names and single-action query retained | PostgreSQL proposal submission and TPO round import checks |
+
+All evidence above is **authored but not executed** under the owner's no-CI direction. Every item retains the full end-to-end and database acceptance gate.
+
+
+## Chat-15 messaging resilience and HTTP principal preflight
+
+| Export / authenticated route | Behavioral file | Invariants exercised | Still open |
+|---|---|---|---|
+| `/hr/conversations` server page | `tests/unit/HR-BREAK-chat15-messaging-page-83.test.tsx` | An optional general-thread lookup failure does not crash the primary authorized message directory or offer a misleading duplicate new-thread action; revoked recruiter, duplicate filters, authentic empty state and primary failure are distinct | Live multi-college thread, keyboard/phone and read receipt integration |
+| `/api/placements/recruiter/conversations/open` POST | `tests/unit/HR-BREAK-chat15-messaging-api-84.test.ts` | Same-origin first, strict college UUID, inactive and swapped recruiter user, canonical 303 redirect, sanitized downstream error response | Real HTTP body caps, concurrent open idempotence and transaction lock |
+| `/api/placements/recruiter/conversations/[threadId]/reply` POST | `tests/unit/HR-BREAK-chat15-messaging-api-84.test.ts` | Same-origin, trimmed nonblank body, canonical recruiter identity, disabled session, single authorized message service call, redirect and failure no false success | Live message audit and TPO notification exactly-once/rollback |
