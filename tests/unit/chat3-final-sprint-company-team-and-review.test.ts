@@ -6,7 +6,12 @@ describe("Chat-3 final sprint team and review contracts",()=>{
  it("TPO-companies-05 company messages are bound to a real college relationship and active placement actor",()=>{
   const service=read("src/modules/placements/tpo-company-team-service.ts");
   expect(service).toContain("hasPlacementTeamMembership(context)");
-  expect(service).toContain("requirePlacementManageScope(context,membership.collegeId)");
+  // A persisted actor check rejects revoked/disabled team members before the scope is used.
+  expect(service).toContain("const activeCollegeId=await requireTpoBatchActor(context);");
+  expect(service).toContain("requirePlacementManageScope(context,activeCollegeId)");
+  const persistedActor=read("src/modules/placements/tpo-batch-workspace-read-service.ts");
+  expect(persistedActor).toContain('eq(collegeMemberships.status,"ACTIVE")');
+  expect(persistedActor).toContain('eq(users.platformStatus,"ACTIVE")');
   expect(service).toContain('eq(placementCompanyRelationships.collegeId,college.id)');
   expect(service).toContain('eq(placementCompanyRelationships.companyId,companyId)');
   expect(service).toContain("assertPersistedPlatformPermission(tx,context");
