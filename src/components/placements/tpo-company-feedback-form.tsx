@@ -50,7 +50,7 @@ export function TpoCompanyFeedbackForm({
   }
 
   return (
-    <section className="space-y-3 rounded-xl border border-border bg-surface p-5">
+    <section className="space-y-3 border-b border-border pb-6">
       <h2 className="text-base font-semibold text-foreground">Record recruiter feedback</h2>
       <p className="text-sm text-body">
         Internal note attached to an explicitly linked company contact. This does
@@ -59,7 +59,7 @@ export function TpoCompanyFeedbackForm({
       <label className="block text-sm font-medium text-foreground">
         Linked contact
         <select value={leadId} onChange={(event) => {setReviewing(false);setLeadId(event.target.value);}}
-          className="mt-1 w-full rounded-md border border-border bg-surface p-2">
+          className="mt-1 w-full rounded-[9px] border border-border bg-surface p-2">
           {contacts.map((item) => (
             <option key={item.id} value={item.id}>{item.name}</option>
           ))}
@@ -69,7 +69,7 @@ export function TpoCompanyFeedbackForm({
         Feedback / meeting note
         <textarea value={note} onChange={(event) => {setReviewing(false);setNote(event.target.value);}}
           rows={4} maxLength={2000}
-          className="mt-1 w-full rounded-md border border-border bg-surface p-2" />
+          className="mt-1 w-full rounded-[9px] border border-border bg-surface p-2" />
       </label>
       {reviewing?<div role="group" aria-label="Review recruiter feedback" className="rounded-lg border border-border p-3 text-sm">
         <p>Record this internal recruiter note? New CRM contacts become CONTACTED when an activity is logged.</p>

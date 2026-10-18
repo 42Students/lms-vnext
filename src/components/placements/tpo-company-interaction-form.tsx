@@ -74,7 +74,7 @@ export function TpoCompanyInteractionForm({
   }
 
   return (
-    <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
+    <section className="space-y-4 border-b border-border pb-6">
       <h2 className="text-base font-semibold text-foreground">Record a contact interaction</h2>
       <p className="text-sm leading-6 text-body">
         This records an internal CRM event, not a delivered call, email or message.
@@ -85,7 +85,7 @@ export function TpoCompanyInteractionForm({
           Contact
           <select value={leadId} onChange={(event) => {setReviewing(false);setLeadId(event.target.value);}}
             disabled={busy}
-            className="mt-1 block min-h-10 w-full rounded-md border border-border bg-surface px-3 font-normal">
+            className="mt-1 block min-h-10 w-full rounded-[9px] border border-border bg-surface px-3 font-normal">
             {contacts.map((contact) => (
               <option key={contact.id} value={contact.id}>{contact.name}</option>
             ))}
@@ -96,7 +96,7 @@ export function TpoCompanyInteractionForm({
           <select value={type}
             onChange={(event) => {setReviewing(false);setType(event.target.value as TpoCompanyInteractionKind);}}
             disabled={busy}
-            className="mt-1 block min-h-10 w-full rounded-md border border-border bg-surface px-3 font-normal">
+            className="mt-1 block min-h-10 w-full rounded-[9px] border border-border bg-surface px-3 font-normal">
             {(["CALL", "EMAIL", "WHATSAPP", "MEETING", "NOTE"] as const).map((kind) => (
               <option key={kind} value={kind}>{kind}</option>
             ))}
@@ -107,13 +107,13 @@ export function TpoCompanyInteractionForm({
         Outcome (optional)
         <input value={outcome} onChange={(event) => {setReviewing(false);setOutcome(event.target.value);}}
           maxLength={30} disabled={busy}
-          className="mt-1 block min-h-10 w-full rounded-md border border-border bg-surface px-3 font-normal" />
+          className="mt-1 block min-h-10 w-full rounded-[9px] border border-border bg-surface px-3 font-normal" />
       </label>
       <label className="block text-sm font-semibold text-foreground">
         Notes (required)
         <textarea value={note} onChange={(event) => {setReviewing(false);setNote(event.target.value);}}
           maxLength={2000} rows={3} disabled={busy}
-          className="mt-1 block w-full rounded-md border border-border bg-surface p-3 font-normal" />
+          className="mt-1 block w-full rounded-[9px] border border-border bg-surface p-3 font-normal" />
       </label>
       {reviewing?<div role="group" aria-label="Review company interaction" className="rounded-lg border border-border p-3 text-sm">
         <p>{interactionConfirmationSummary({type,contactName:contacts.find(c=>c.id===leadId)?.name??"contact"})}</p>
