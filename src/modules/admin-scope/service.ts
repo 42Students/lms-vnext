@@ -13,7 +13,7 @@ import type {
 } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 
-const scopeSelectionSchema = z.discriminatedUnion("kind", [
+export const scopeSelectionSchema = z.discriminatedUnion("kind", [
   z.object({
     kind: z.literal("organization"),
     organizationId: z.string().uuid(),
