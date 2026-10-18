@@ -14,7 +14,7 @@ export default async function BatchRules({params}:{params:Promise<{batchId:strin
  const {batch,collegeId,lifecycle,ready,decision}=await getTpoBatch(ctx,batchId);
  const college=await getCollegePlacementRules(ctx,collegeId);
  const stored=tpoBatchRuleOverridesSchema.safeParse(lifecycle?.rulesOverride??{});
- return <main className="min-w-0 space-y-4"><h1 className="text-xl font-semibold">{batch.name} — Rules</h1>
+ return <div className="min-w-0 space-y-4"><h1 className="text-xl font-semibold">{batch.name} — Rules</h1>
  <TpoBatchWorkspaceTabs batchId={batchId} active="rules" />
  {!ready?<p role="status" className="rounded border border-border p-4">Batch rules are temporarily unavailable. You can review other batch details and try again.</p>:
  <section className="rounded border border-border p-4"><h2 className="font-semibold">Participation policy</h2>
@@ -32,5 +32,5 @@ export default async function BatchRules({params}:{params:Promise<{batchId:strin
    {lifecycle?.finishedAt?"This batch is finished. Eligibility decisions are read-only.":"Batch eligibility decisions are temporarily unavailable. Retry when the rules are available."}
   </p>}
  <Link href="/tpo/settings/rules" className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm">View college placement rules</Link>
- </main>;
+ </div>;
 }
