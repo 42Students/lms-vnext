@@ -23,7 +23,7 @@ describe("SA-placements-projects-56 truthful per-student creation results",()=>{
   expect(csv).toContain("'=HYPERLINK");
   expect(csv).toContain('"learner-a","CREATED","Project A","project-a"');
   expect(csv).toContain('"learner-b","ALREADY_COVERED","",""');
-  expect((csv.match(/\\r\\n/g)??[])).toHaveLength(3);
+  expect((csv.match(/\r\n/g)??[])).toHaveLength(3);
  });
  it("SA-placements-projects-56 retains the server-side authenticated class roster and atomic serializable transaction",()=>{
   const service=read("src/modules/projects/class-team-workspace-service.ts");
