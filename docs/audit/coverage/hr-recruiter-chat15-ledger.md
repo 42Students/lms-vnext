@@ -76,3 +76,30 @@ The following tests import live exported services and substitute only DB reads /
 | RecruiterCompanyReportsPage | `HR-BREAK-company-reports-page-01.test.ts` | Wrong role redirect; invalid query reset; no college access; multiple-college chooser excludes global sum | Full READY branch and DB pagination |
 
 The Weak Areas generated report also names `recruiter-selection-staged-schema.ts`. It is explicitly staged, not live; no tenant query or write should be introduced before its orchestrator-registered migration. Treat it as **N/A to live persistence tests**, not tested and not approved for writes.
+
+### Additional interactive HR routes and draft resilience
+
+| Export / route | Behavioral test | Break-it cases | Still unverified |
+|---|---|---|---|
+| `RecruiterRequestDrivePage` (`/hr/drives/new`) | `HR-BREAK-request-drive-page-01.test.ts` | Wrong role, invalid UUID, unauthorized college, mutually exclusive URL actions, no grants, multiple grants, cancelled/stale edit, authorized new request | Real database/tenant session, draft POST |
+| `HrRoundResultsPage` (`/hr/round-results`) | `HR-BREAK-round-results-page-01.test.ts` | Wrong role, forged job ID, invalid outcome, no drive, archived drive hidden, other employer, other round in owned job, no rounds | Real round results query, TPO review state |
+| `saveHrUnsentDraft`, `restoreHrUnsentDraft`, `hrDriveSessionStorageKey` | `HR-BREAK-unsent-draft-01.test.ts` | Cross-user / cross-college key separation, incomplete edit restore, expiration at 24h boundary, future timestamp, malformed/oversized/extra keys, legacy schema validation | Browser storage quota and real tab contention |
+| Third-party assessment and offer links, responsive quiz and attendance tables | Updated existing `chat15-assessment-submission-deadline.test.ts`, `chat15-offer-letter-and-placement.test.ts`, `chat15-quiz-table-legacy.test.ts`, `learner-attendance-parity.test.ts`, `learner-learning-misc-gap-closure.test.ts` | Preserved actual safe HTTPS and copy behavior, DataTable field disclosure, IST and legacy labels following shared UX replacement | CI must confirm these legacy assertions |
+
+### Confirmed source defects fixed
+
+| Defect | Symptom | Fix commit | Regression test |
+|---|---|---|---|
+| `HR-APP-PAGE-STALE` | On a deleted/changed final page, pagination told user `first=0` but `last=total` | `81ad4bd` | `HR-BREAK-applicants-01` |
+| `TRACKER-IST-INVALID-DATE` | Impossible dates could silently normalize into a neighboring IST audit day | `72916f2` | `HR-BREAK-tracker-01` |
+| `HR-BELL-WRONG-DESTINATION` | Recruiter notification bell footer opened conversations instead of its notifications inbox | `12f0cb6` | `UX-chat15-overlays-second-pass` |
+
+**Gate remains open:** Unit tests added but not executed in this environment; real HR PostgreSQL fixtures and browser journey testing are required before claiming the complete HR module or its 2,300+ placements exports exhaustively covered.
+
+### Additional draft payload coverage
+
+| Exported symbols | Behavioral test | Cases | Still unverified |
+|---|---|---|---|
+| `hrDriveDraftSchema`, `hrDriveDraftQuerySchema`, `hrDraftFromAuthorizedJob` | `HR-BREAK-drive-payload-01.test.ts` | TPO-review-safe hire-again, off-campus HTTPS only, deny credentials/scripts, salary parts and internship stipend, invalid duplicate rounds/CGPA/bond/branches, URL mode clashes, prevent conflicting edit/copy/fix | Database-side compensation policy and concurrent proposal reconciliation |
+
+**Working rule:** A test source reference alone is not counted as closed here. The new `HR-BREAK-*.test.ts` test cases invoke the actual function or page directly. Assertions which mock the database do not substitute for transaction, uniqueness, tenant or audit guarantees on real PostgreSQL.
