@@ -239,3 +239,6 @@ A published drive may outlive an archived global company or archived college-com
 
 ### PROJ-HARNESS-RECRUITER-33: persisted HR capability gate witness
 `fixtureRecruiterCanAccess(db,recruiter,capability)` is a test-only helper to determine expected access using registered profile/grant/relationship/company/college/organization records, live account status, verification, validity and capability. Real PG case -33 changes a verified grant through pending verification, disabled account, archived recruiter profile, expiration and revocation, asserting that no stale fixture claims it can still use DRIVES. This does **not** replace product recruiter permission service testing.
+
+### PROJ-HARNESS-PLACEMENTS-34: duplicate candidate retries
+The canonical role-option/membership unique index guards duplicate applications; a repeated candidate fixture attempt now exercises the entire multi-write savepoint, confirms the original screening/result/offer graph was not changed and then successfully creates a different learner's candidate in the same still-usable PostgreSQL transaction. This test guards harness isolation; the application API is separately responsible for friendly idempotent retry UX.
