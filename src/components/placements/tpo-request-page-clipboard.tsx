@@ -1,5 +1,6 @@
 "use client";
 import {useState} from "react";
+import {DataTable} from "@/components/ui/data-table";
 export type TpoRequestClipboardRow={id:string;student:string;number:string|null;
  kind:string;company:string;asked:string;status:string;decided:string|null};
 export type TpoRequestClipboardColumn=Exclude<keyof TpoRequestClipboardRow,"id">;
@@ -69,33 +70,39 @@ export function TpoRequestPageClipboard({rows}:{rows:readonly TpoRequestClipboar
     <button type="button" className="mt-2 rounded border px-2 py-1" onClick={()=>setVisible(options.map(option=>option.key))}>Reset columns</button>
    </details>
   </div>
-  <div className="hidden max-h-[540px] overflow-auto rounded border border-border md:block" role="region" aria-label="Request spreadsheet">
-   <table className="w-full text-left text-sm">
-    <thead className="sticky top-0 z-10 bg-surface"><tr>
-     <th className="sticky left-0 z-20 bg-surface px-3 py-2"><input type="checkbox" aria-label="Select all request rows" checked={rows.length>0&&selectedRows.length===rows.length}
-      onChange={e=>setSelected(e.target.checked?rows.map(row=>row.id):[])}/></th>
-     {columns.map((column,index)=><th key={column.key} className={"px-3 py-2 "+(index===0?"sticky left-10 z-10 bg-surface":"")}>
-      {column.label}
-     </th>)}
-    </tr></thead>
-    <tbody>{sorted.map(row=><tr key={row.id} className="border-t border-border">
-     <td className="sticky left-0 z-10 bg-surface px-3 py-2"><input type="checkbox" checked={selected.includes(row.id)}
-      aria-label={"Select request from "+row.student} onChange={e=>setSelected(ids=>e.target.checked?[...new Set([...ids,row.id])]:ids.filter(id=>id!==row.id))}/></td>
-     {columns.map((column,index)=><td key={column.key} className={"max-w-72 break-words px-3 py-2 "+(index===0?"sticky left-10 bg-surface":"")}>
-      {row[column.key]??"—"}
-     </td>)}
-    </tr>)}</tbody>
-   </table>
-  </div>
-  <label className="flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" checked={rows.length>0&&selectedRows.length===rows.length}
-   onChange={event=>setSelected(event.target.checked?rows.map(row=>row.id):[])}/>Select visible page</label>
-  <div className="grid max-h-44 gap-1 overflow-y-auto sm:grid-cols-2 md:hidden">
-   {rows.map(row=><label key={row.id} className="flex min-h-10 items-center gap-2 text-sm">
-    <input type="checkbox" checked={selected.includes(row.id)}
-     onChange={event=>setSelected(old=>event.target.checked?[...old,row.id]:old.filter(id=>id!==row.id))}/>
-    <span className="min-w-0 truncate" title={row.student}>{row.student} · {row.company}</span>
-   </label>)}
-  </div>
+  <DataTable<TpoRequestClipboardRow>
+   caption="Request spreadsheet"
+   rows={sorted}
+   getRowKey={row=>row.id}
+   empty={<p role="status" className="text-sm text-body">No requests on this page.</p>}
+   columns={[
+    {key:"selection",header:<input type="checkbox"
+      aria-label="Select all request rows"
+      checked={rows.length>0&&selectedRows.length===rows.length}
+      onChange={event=>setSelected(event.target.checked?rows.map(row=>row.id):[])}/>,
+     mobilePriority:"action" as const,
+     cell:row=><label className="inline-flex min-h-11 items-center gap-2">
+      <input type="checkbox" checked={selected.includes(row.id)}
+       aria-label={"Select request from "+row.student}
+       onChange={event=>setSelected(ids=>event.target.checked
+        ?[...new Set([...ids,row.id])]:ids.filter(id=>id!==row.id))}/>
+      <span className="text-xs text-body sm:hidden">Select request</span>
+     </label>},
+    ...columns.map((column,index)=>({
+     key:column.key,
+     header:column.label,
+     mobileLabel:column.label,
+     mobilePriority:index===0?"primary" as const:"secondary" as const,
+     className:index===0?"sm:sticky sm:left-10 sm:z-10 sm:bg-surface":"",
+     cell:(row:TpoRequestClipboardRow)=>row[column.key]??"—",
+    })),
+   ]}
+  />
+  <label className="flex min-h-11 items-center gap-2 text-sm">
+   <input type="checkbox" checked={rows.length>0&&selectedRows.length===rows.length}
+    onChange={event=>setSelected(event.target.checked?rows.map(row=>row.id):[])}/>
+   Select visible page
+  </label>
   <button type="button" disabled={selectedRows.length===0} onClick={()=>void copy()}
    className="min-h-11 rounded border border-border px-4 text-sm font-semibold disabled:opacity-50">Copy selected rows</button>
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
