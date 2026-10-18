@@ -151,6 +151,19 @@ describe("chat-5 offers, waitlist eligibility, expiry and cascade invariants",()
   expect(isIssuedPlacementOfferDue(rows[1]!,due)).toBe(false);
   expect(selectDuePlacementOfferIds(rows,afterDue)).toEqual(["early","later"]);
  });
+ it("PLACEMENTS-EXPIRY-SM-04 never treats invalid scheduler time or offer expiry as a valid due batch",()=>{
+  const invalid=new Date(Number.NaN);
+  const rows=[
+   {id:"due",status:"ISSUED",expiresAt:due},
+   {id:"not-a-date",status:"ISSUED",expiresAt:invalid},
+   {id:"terminal",status:"EXPIRED",expiresAt:due},
+  ];
+  expect(selectDuePlacementOfferIds(rows,due)).toEqual(["due"]);
+  expect(selectDuePlacementOfferIds(rows,invalid)).toEqual([]);
+  for(const row of rows)expect(isIssuedPlacementOfferDue(row,invalid)).toBe(false);
+  expect(isIssuedPlacementOfferDue(rows[1]!,due)).toBe(false);
+  expect(isIssuedPlacementOfferDue(rows[2]!,due)).toBe(false);
+ });
  it("PLACEMENTS-EXPIRY-03 minimum response clock excludes IST Sunday exactly",()=>{
   const saturday2330=new Date("2099-10-17T18:00:00.000Z");
   expect(minimumOfferResponseDeadline(saturday2330,1).toISOString())
