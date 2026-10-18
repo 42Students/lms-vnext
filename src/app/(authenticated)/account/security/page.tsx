@@ -5,7 +5,7 @@ import { DeviceList } from "@/components/auth/device-list";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
-import { describeDevice } from "@/modules/auth/device-label";
+import { describeDevice, deviceTimestampIso } from "@/modules/auth/device-label";
 import { listActiveSessions } from "@/modules/auth/session-service";
 
 export default async function AccountSecurityPage() {
@@ -42,8 +42,8 @@ export default async function AccountSecurityPage() {
             label:
               (row.device_name as string | null) ??
               describeDevice(row.user_agent as string | null),
-            createdAt: new Date(row.created_at as string).toISOString(),
-            lastSeenAt: new Date(row.last_seen_at as string).toISOString(),
+            createdAt: deviceTimestampIso(row.created_at),
+            lastSeenAt: deviceTimestampIso(row.last_seen_at),
             current: row.id === session.sessionId,
           }))}
         />
