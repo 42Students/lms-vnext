@@ -58,3 +58,36 @@ Existing chat5-ux-tpo-middle-third.test.ts inventories the TPO second-third 42 r
 ## Release gate (not complete)
 
 Do not mark this ledger complete until CI runs npm run typecheck; Vitest on all new/changed chat-5, TPO-batches and P8 tests; the full suite; isolated PostgreSQL adversarial concurrency, audit/event/notification checks; and 320/360/390px real-browser role journeys. There are **967 root files** under src/modules/placements on the current source listing, so this ledger is an enumerated core slice, **not an exhaustive register of every exported function or route handler**. Missing cases must remain explicit and unaccepted for IIT Dharwad.
+
+## Source-scanned export inventory — 24 core files
+
+Inventory source: direct GitHub reads of the 24 named production placement files at this branch head. The symbol list contains exported runtime declarations (functions, constants and classes) only; types, other modules, other tests and HTTP route handlers are not inventoried here. A checkmark records only a **direct symbol reference in the eight sampled current lane test files**, which is **not evidence that a test was executed or that every branch is asserted**. A circle denotes no direct reference among these eight, not necessarily a missing test across all project suites.
+
+| Module | Runtime export names (✓ direct name reference; ○ not referenced in sampled tests) | Coverage count |
+|---|---|---|
+| application-service.ts | ○ resolveExistingApplication, ○ canReapplyWithdrawnPlacementApplication, ✓ applyToPlacementJob, ○ listOwnPlacementApplications, ○ listPlacementJobApplications, ○ getPlacementApplication, ○ canSelfWithdrawPlacementApplication, ○ withdrawPlacementApplication | 1 / 8 |
+| job-service.ts | ○ listPlacementJobs, ○ getPlacementJob, ✓ createPlacementJob, ○ updatePlacementJob, ✓ publishPlacementJob, ○ mustWithdrawPendingOfferOnDriveStop, ○ closePlacementJob, ○ canCancelPublishedPlacementJob, ○ cancelPlacementJob, ○ archivePlacementJob | 2 / 10 |
+| offer-service.ts | ✓ issuePlacementOffer, ✓ actOnPlacementOffer, ○ previewOwnOfferAcceptanceImpact, ✓ recordPlacementJoiningOutcome, ✓ listOwnPlacementOffers, ○ listPlacementJobOffers, ○ listPlacementOfferCandidates | 4 / 7 |
+| screening-service.ts | ○ listPlacementScreeningQueue, ○ getPlacementScreening, ✓ decidePlacementScreening | 1 / 3 |
+| result-service.ts | ○ listPlacementRoundResults, ✓ stagePlacementRoundResult, ✓ applyPlacementRoundResult, ○ listOwnAppliedPlacementResults | 2 / 4 |
+| round-service.ts | ○ listPlacementRounds, ○ getPlacementRound, ✓ createPlacementRound, ○ updatePlacementRound, ✓ actOnPlacementRound, ○ getTpoRoundReorderReadiness, ○ reorderPlacementRounds | 2 / 7 |
+| tpo-drive-lifecycle-model.ts | ✓ tpoDriveLifecycleSchema, ✓ hasSecureEmployerPortalUrl, ✓ evaluateTpoDriveLifecycle, ✓ tpoDriveReadinessMessage | 4 / 4 |
+| tpo-drive-cancel-model.ts | ○ tpoDriveCancelImpactSchema, ✓ tpoDriveCancelSchema, ✓ evaluateTpoDriveCancellation, ✓ isIssuedOfferCancelable | 3 / 4 |
+| tpo-drive-cancel-service.ts | ○ getTpoDriveCancelPreview, ○ cancelTpoDriveWithPreview | 0 / 2 |
+| tpo-drive-selection-model.ts | ✓ recordSelectionsSchema, ✓ releaseSelectionsSchema, ✓ summarizeSelectionRelease | 3 / 3 |
+| tpo-drive-selection-service.ts | ○ countUnreleasedTpoSelections, ✓ getTpoSelectionWorkspace, ○ recordTpoDriveSelections, ○ verifyAndReleaseTpoSelections | 1 / 4 |
+| tpo-waitlist-promotion-model.ts | ✓ tpoWaitlistPromotionSchema, ✓ waitlistPreviewToken | 2 / 2 |
+| tpo-waitlist-promotion-service.ts | ✓ getTpoWaitlistPreview, ○ offerToNextWaitlisted | 1 / 2 |
+| tpo-joining-tracker-model.ts | ✓ tpoJoiningTrackerQuerySchema, ✓ projectTpoJoiningTracker | 2 / 2 |
+| tpo-joining-tracker-service.ts | ✓ getTpoJoiningTracker | 1 / 1 |
+| tpo-joining-followup-model.ts | ✓ tpoJoiningFollowupQuerySchema, ✓ projectTpoJoiningFollowups, ✓ TPO_JOINING_FOLLOWUP_CSV_LIMIT, ✓ tpoJoiningFollowupCsv | 4 / 4 |
+| tpo-offer-lifecycle-model.ts | ✓ TPO_OFFER_ACTIONS, ✓ tpoOfferLifecycleInputSchema, ✓ canRecordTpoOfferAction | 3 / 3 |
+| tpo-offer-lifecycle-service.ts | ○ recordTpoOfferLifecycle | 0 / 1 |
+| college-retention-report-service.ts | ○ getCollegeApplicationRetentionReport | 0 / 1 |
+| college-retention-report-policy.ts | ✓ COLLEGE_APPLICATION_RETENTION_DAYS, ✓ collegeApplicationRetentionCutoff | 2 / 2 |
+| placement-offer-expiry-sweep-service.ts | ○ sweepExpiredPlacementOffers | 0 / 1 |
+| offer-cascade-undo-service.ts | ○ undoPlacementOfferCascade | 0 / 1 |
+| tpo-drive-deadline-model.ts | ○ tpoDriveDeadlineSchema, ○ evaluateTpoDriveDeadline | 0 / 2 |
+| tpo-drive-deadline-service.ts | ○ getTpoDriveDeadlineState, ○ extendTpoDriveDeadline | 0 / 2 |
+
+Sampled core inventory: **80 runtime exports**, **38 directly referenced names** and **42 with no direct name reference in eight sampled tests**. It is a prioritized gap map, not a certification or an exhaustive 967-file inventory. Unreferenced service exports must be assigned proper behavioural/DB tests, especially mutations and exports.
