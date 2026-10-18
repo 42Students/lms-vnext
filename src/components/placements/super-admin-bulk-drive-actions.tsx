@@ -66,8 +66,8 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
         Preview {selected.length} drive(s)
       </button>
     </div>
-    <p id="bulk-drive-scroll-cue" className="text-xs text-muted-foreground">More drives below ↓ · Scroll to review the eligible drives.</p>
-    <div tabIndex={0} role="region" aria-label="Eligible drive list" aria-describedby="bulk-drive-scroll-cue"
+    {eligible.length>3?<p id="bulk-drive-scroll-cue" className="text-xs text-muted-foreground">More drives below ↓ · Scroll to review the eligible drives.</p>:null}
+    <div tabIndex={0} role="region" aria-label="Eligible drive list" aria-describedby={eligible.length>3?"bulk-drive-scroll-cue":undefined}
       className="grid max-h-48 min-w-0 gap-2 overflow-y-auto overscroll-contain sm:grid-cols-2 xl:grid-cols-4 [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1.25rem),transparent_100%)]">
       {eligible.map(d=><label key={d.id} className="flex gap-2 rounded border border-border p-2 text-xs">
         <input type="checkbox" disabled={busy} checked={selected.includes(d.id)}
