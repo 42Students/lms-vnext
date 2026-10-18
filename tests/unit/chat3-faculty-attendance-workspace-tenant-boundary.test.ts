@@ -23,19 +23,19 @@ vi.mock("@/db/client",()=>({
    const table="eligibilityThresholdPercent" in projection?"policy":
     "facultyMembershipId" in projection?"sessions":"records";
    state.queries.push(table);
-   const chain={
-    from:()=>chain,
-    innerJoin:()=>chain,
-    leftJoin:()=>chain,
-    where:(condition:SQL)=>{
+   class Query {
+    from(){return this;}
+    innerJoin(){return this;}
+    leftJoin(){return this;}
+    where(condition:SQL){
      const compiled=dialect.sqlToQuery(condition);
      state.conditions.push({table,sql:compiled.sql,params:compiled.params});
-     return chain;
-    },
-    orderBy:async()=>table==="sessions"?state.sessionRows:state.recordRows,
-    limit:async()=>[],
-   };
-   return chain;
+     return this;
+    }
+    async orderBy(){return table==="sessions"?state.sessionRows:state.recordRows;}
+    async limit(){return [];}
+   }
+   return new Query();
   },
  }),
 }));
