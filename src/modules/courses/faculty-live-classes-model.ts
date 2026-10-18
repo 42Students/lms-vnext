@@ -42,3 +42,21 @@ export function facultyLiveClassesHref(query:FacultyLiveClassesQuery){
  if(query.page>1)params.set("page",String(query.page));
  return "/teacher/live-classes"+(params.size?"?"+params.toString():"");
 }
+
+/**
+ * Reading every assigned Section at once can exhaust the database pool for
+ * Faculty teaching many Sections. Retain stable UI ordering but constrain
+ * in-flight workspace queries to at most eight.
+ */
+export async function mapFacultyLiveWorkspacesInBatches<T,U>(
+  inputs:readonly T[],mapper:(input:T)=>Promise<U>,concurrency=8,
+):Promise<U[]>{
+  if(!Number.isSafeInteger(concurrency)||concurrency<1||concurrency>8)
+    throw new RangeError("INVALID_FACULTY_LIVE_WORKSPACE_CONCURRENCY");
+  const output:U[]=[];
+  for(let start=0;start<inputs.length;start+=concurrency){
+    const batch=await Promise.all(inputs.slice(start,start+concurrency).map(mapper));
+    output.push(...batch);
+  }
+  return output;
+}
