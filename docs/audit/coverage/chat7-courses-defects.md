@@ -84,3 +84,7 @@ All regressions are *authored, not yet run* under the owner’s no-CI-until-fina
 - **SA-COURSES-TOUCH-13 (S3):** Super Admin Course catalogue's Filter, CSV, Refresh, pagination, and Open learning controls rendered with 36–40px minimum heights on touch devices. `0b218337` raises them to 44px; `tests/unit/chat7-superadmin-course-catalogue-touch-pagination.test.ts` verifies touch targets and safe catalogue sorting/page clamping.
 
 Authored-only under the owner’s no-CI policy; phone/browser acceptance remains pending.
+
+## Learner thumbnail URL privacy
+
+**LEARNER-THUMBNAIL-15 (S2):** The learner Course card accepted any credential-free HTTPS thumbnail host, including loopback, RFC1918/private and cloud metadata endpoints, and allowed fragments from imported legacy URLs. Browsers could be induced to request a learner's local network when merely loading Course cards. `0db8bd4e` now falls back to the bundled course illustration for local/private/fragment-containing image addresses; `tests/unit/learner-course-card-media-model.test.ts` covers the URL matrix. No privileged server fetch occurs and no image was externally fetched during this source-only audit.
