@@ -41,6 +41,23 @@ describe("IIT Dharwad College Admin Projects role journeys", () => {
     expect(page).toContain("if (!parsed.success)");
   });
 
+  it("PROJ-COL-QUERY-03 refuses number-coercion bypasses and retains canonical decimal navigation", () => {
+    for (const hostile of ["1e2", "0x10", "0b101", " 2", "2 ", "1.0", "+2", "-0", "Infinity", "NaN"]) {
+      expect(parseCollegeProjectsQuery({page: hostile}).success, hostile).toBe(false);
+      expect(parseCollegeProjectsQuery({pageSize: hostile}).success, hostile).toBe(false);
+    }
+    expect(parseCollegeProjectsQuery({page: "100001"}).success).toBe(false);
+    expect(parseCollegeProjectsQuery({pageSize: "9"}).success).toBe(false);
+    for (const valid of [{page:"1",pageSize:"10"},{page:"0002",pageSize:"025"},{page:"100000",pageSize:"100"}]) {
+      const parsed=parseCollegeProjectsQuery(valid);
+      expect(parsed.success,JSON.stringify(valid)).toBe(true);
+      if(parsed.success) {
+        expect(parsed.data.page).toBe(Number(valid.page));
+        expect(parsed.data.pageSize).toBe(Number(valid.pageSize));
+      }
+    }
+  });
+
   it("PROJ-COL-QUERY-02 retains valid filters and pagination across navigation", () => {
     const valid = parseCollegeProjectsQuery({
       view: ["table", "cards"], status: "ARCHIVED", page: "2", pageSize: "50", q: "  Sprint ",
