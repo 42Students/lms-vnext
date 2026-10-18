@@ -3,10 +3,13 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { DataTable } from "@/components/ui/data-table";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Button } from "@/components/ui/button";
+import { requirePermission } from "@/modules/permissions/policy";
+import { collegeGroupsDirectoryHref, parseCollegeGroupsDirectoryParams } from "@/modules/groups/college-group-directory-query-model";
 import { CollegeGroupActions } from "@/components/groups/college-group-actions";
 import {
   GROUP_STATUSES,
@@ -20,10 +23,6 @@ const STATUS_TONE = {
   CLOSED: "warning",
   ARCHIVED: "neutral",
 } as const;
-
-function one(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
 
 function label(kind: string) {
   return kind
@@ -48,11 +47,17 @@ export default async function CollegeGroupsPage({
   const membership = context.membership;
   if (!membership) redirect("/dashboard");
 
-  const params = await searchParams;
-  const kind = one(params.kind) || undefined;
-  const statusRaw = one(params.status);
-  const status = GROUP_STATUSES.find((value) => value === statusRaw);
-  const offset = Math.max(0, Number.parseInt(one(params.offset) ?? "0", 10) || 0);
+  requirePermission(context, "academics.manage", {
+    organizationId: membership.organizationId, collegeId: membership.collegeId,
+  });
+  const filters = parseCollegeGroupsDirectoryParams(await searchParams);
+  if (!filters) return <div className="min-w-0 space-y-4">
+    <PageHeader eyebrow="College Admin" title="Student groups" />
+    <ErrorState title="Invalid group filters"
+      description="Choose a supported group type, status and page. Remove repeated or unrelated filters."
+      action={<Link href="/college/groups" className="inline-flex min-h-11 items-center font-semibold underline">Clear filters</Link>}/>
+  </div>;
+  const { kind, status, offset } = filters;
 
   const result = await listCollegeGroups(context, {
     collegeId: membership.collegeId,
@@ -62,14 +67,9 @@ export default async function CollegeGroupsPage({
   });
 
   const { limit, total } = result.pagination;
-  const query = (next: number) => {
-    const search = new URLSearchParams();
-    if (kind) search.set("kind", kind);
-    if (status) search.set("status", status);
-    if (next > 0) search.set("offset", String(next));
-    const text = search.toString();
-    return `/college/groups${text ? `?${text}` : ""}`;
-  };
+  const query = (next: number) => collegeGroupsDirectoryHref({
+    kind, status, offset: next,
+  });
 
   return (
     <div className="min-w-0 overflow-x-clip space-y-6">
@@ -82,7 +82,7 @@ export default async function CollegeGroupsPage({
 
       <form
         method="get"
-        className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4"
+        className="flex flex-wrap items-end gap-3 border-t border-border pt-4"
       >
         <label className="block min-w-[180px]">
           <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">
