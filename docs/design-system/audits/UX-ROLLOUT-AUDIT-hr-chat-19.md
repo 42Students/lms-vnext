@@ -67,3 +67,16 @@ Employer-facing project data is surfaced inside shortlisted applicant reviews, n
 ## Acceptance decision
 
 **FAIL pending executable and device validation; source-level MAJOR findings fixed (6/6).** No claim that prior authors' HR workflow integration is exhaustive. Before release, run Vitest/tsc, browser flows at 320/360/390px, keyboard focus/return on drawers, employer cross-college URL tampering, expired session read, stale tabs and double-submit behavior against PostgreSQL. Missing checked artifacts must be filed back to the responsible HR service owner. Do not treat an unexecuted source assertion as authorization proof.
+
+## chat-19 independent revisit after rolling cloud CI
+
+Source inspection of `/hr/conversations/[threadId]` found two more concrete issues beyond the original six UX findings.
+
+| Page | ID | Severity | Evidence | Fix | Test |
+|---|---|---|---|---|---|
+| `/hr/conversations/[threadId]` | HR-BREAK-CONVO-02 | MAJOR | `src/app/(authenticated)/hr/conversations/[threadId]/page.tsx`, matchingDrive lookup | Cross-check recruiter company ID against selected job/college before deriving employer-facing drive title or link | `tests/unit/HR-BREAK-chat19-conversation-page.test.ts` |
+| `/hr/conversations/[threadId]` | HR-BREAK-CONVO-03 | MAJOR | Same page, optional `getDriveChangeRequests` await | Fail-soft change requests; keep authorized message history and reply UI available; show recoverable warning without exposing raw server exception | `tests/unit/HR-BREAK-chat19-conversation-page.test.ts` |
+
+The HR page ledger `docs/audit/coverage/hr-pages-chat19-ledger.md` enumerates all 22 `/hr` routes, distinguishes source assertions from directly invoked server-page tests, and records outstanding integration/device gates. The new tests directly invoke async `/hr/conversations/[threadId]`, `/hr/notifications`, and `/hr/profile` entry points with deliberately hostile/expired contexts and mocked service dependencies; they do not claim real browser or DB verification.
+
+**Revised source-audit findings:** 11 MAJOR found and source-fixed across the two HR passes (original six, subsequent three, and these two). **Acceptance verdict: FAIL pending the orchestrator's cloud green verification and browser/PostgreSQL acceptance**, not a reason for the builder lane to halt implementation.
