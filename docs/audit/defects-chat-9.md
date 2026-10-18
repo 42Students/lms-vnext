@@ -100,6 +100,9 @@ Branch: `chatgpt/chat-9-b`. Owner: chat-9. These are observed source-level findi
 
 | PROJ9-056 · PROJ-BREAK-idor-59/60 | Medium | Super Admin bulk mentor reassignment previously passed any selected college directly to the server view without a page-level projects.manage check. The scoped mutation service remains authoritative, but the route could expose management affordances to an expired or read-only selection. It now denies before rendering the mentor-assignment component unless the active account may manage that exact college, and still refuses unscoped assignments. | `709c410` | `tests/unit/PROJ-BREAK-chat9-sa-mentor-reassignment-page.test.tsx` (`2fce53d`, `fb254cd`); real membership race/SQL/multi-tenant browser proof OPEN |
 
+
+| PROJ9-057 · SA-content-admin-01/04 | High | Shared `/admin/videos` and `/admin/resources` directory trusted selected `adminScope.collegeId` without an explicit ACTIVE Super Admin gate; ignored duplicate/unknown filters and could surface a raw error when content, lesson or section lookup failed. Added a pre-read role denial, strict decimal/duplicate/unknown GET handling and recoverable retry that retains validated filters. | `8b51dad`, `3249330` | `tests/unit/PROJ-BREAK-chat9-admin-content-last-third.test.tsx` (`3ac0294`), four direct SSR role/scope/failure scenarios; CI, PostgreSQL and browser verification OPEN |
+
 ## Outstanding release gates (not yet closed)
 
 - Live PostgreSQL integration tests for wrong-tenant IDs, serializable races, rollback and event/notification dedupe; chat-17 owns shared fixtures. Static service assertions alone cannot establish real DB behavior.
