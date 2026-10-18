@@ -245,3 +245,6 @@ The canonical role-option/membership unique index guards duplicate applications;
 
 ### PROJ-HARNESS-MEETING-35: explicit UTC↔IST round trip
 The fixture meeting uses UTC timestamps with the Asia/Kolkata label. A real PostgreSQL witness converts both instants using `AT TIME ZONE 'Asia/Kolkata'` and asserts 10:00–10:30 IST plus exactly 1,800 seconds duration, preventing accidental timezone-label-only tests or DST-based shifts in a South India customer workflow.
+
+### PROJ-HARNESS-PLACEMENTS-36: tenant-bounded EXPLAIN syntax witness
+In addition to existing Projects query plans, the real-PG placements suite now issues `EXPLAIN (FORMAT JSON)` for tenant/status-scoped drive listing and college+job+status applicant listing, verifies the planner produces a valid plan and that actual applicant results include the scoped candidate. Tiny rollback-only fixtures do not prove index selection, production latency or 1,000+ tenant scale; those require dedicated load tests.

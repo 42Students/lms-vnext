@@ -177,3 +177,5 @@ All newly authored tests remain pending cloud execution; migration retains the p
 | UX-kit-E2E-14 | S2 (phone vertical scroll evidence) | Prior drawer/sheet tests checked accessible labels and safe-area classes but used short content that never actually tested vertical overflow or fade changes. | Developer harness long-content fixtures and real Chromium scroll-edge assertions for nested drawer/sheet. | Authored; browser CI deferred |
 
 | PROJ-HARNESS-MEETING-35 | S2 (IST time authority) | Merely asserting a meeting's `time_zone` text does not prove its persisted UTC start/end represent the intended India-local session or preserved duration. | PostgreSQL `AT TIME ZONE` conversion and epoch delta assertion confirms 10:00–10:30 IST. | Authored; final database gate pending |
+
+| PROJ-HARNESS-PLACEMENTS-36 | S2 (bounded-list query safety) | The integration suite had Projects EXPLAIN witnesses but no equivalent for core TPO drive and applicant list predicates, risking untested SQL plan regressions. | PostgreSQL JSON EXPLAIN for tenant-scoped drives/applicants with actual scoped candidate result; explicitly not a latency proof. | Authored; full scale gate pending |
