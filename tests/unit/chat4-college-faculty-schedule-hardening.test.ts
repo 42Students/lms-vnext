@@ -33,6 +33,8 @@ describe("College faculty schedule reassignment break-it workflows",()=>{
   expect(s).toContain('if(!sourceFaculty)throw Error("Faculty not found in this college.")');
   expect(s).toContain("eq(collegeMemberships.id,id)");
   expect(s).toContain("eq(collegeMemberships.collegeId,m.collegeId)");
+  expect(s).toContain('eq(users.platformStatus,"ACTIVE")');
+  expect(s).toContain('p.userStatus==="ACTIVE"');
   expect(s).toContain("eq(departments.collegeId,m.collegeId)");
   expect(s).toContain("eq(sections.id,sectionScheduleEvents.sectionId)");
   expect(s).toContain("eq(sectionScheduleEvents.facultyMembershipId,old)");
