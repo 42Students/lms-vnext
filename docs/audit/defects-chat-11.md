@@ -33,6 +33,8 @@ Scope: IIT Dharwad College Admin Projects role journeys, TPO Settings final-spri
 
 | CHAT11-SA-02 | MAJOR | Three Super Admin college detail routes parsed the route college ID before explicit Super Admin role enforcement, creating an inconsistent invalid-ID denial path and reliance on later service checks. | `c5e0d52`, `8d9ea45`, `e063736`, `d380c0e`: gate `admin-scope.select` before param validation and add early-auth route tests. | `SA-tenants-modules-SEC-02` | HTTP / expired-session E2E pending |
 
+| CHAT11-TPO-10 | BLOCKER | `updateTpoCommunicationSettings` resolved an active TPO/College Admin actor before starting the transaction but did not recheck persisted actor status/roles under locks before mutating. Revoking access mid-request could still allow a stale write. | `7e931c3`, `2cb617f`: authorize persisted user, membership and role inside locked transaction before no-op or CAS. | `TPO-settings-audit-REVOKE-01` | Parallel revocation transaction test pending |
+
 ## Latest r9 unit-failure disposition
 
 `tests/unit/company-share-mobile-cards.test.ts` is the only chat-11 entry in `docs/orchestrator/unit-failures-r9.md`. On the synchronized main baseline, the tested `src/app/company-share/[token]/page.tsx`, shared DataTable mobile/desktop branches, and `projectCompanyShareRows` match the listed selected-field assertions. This appears fixed by subsequent main changes. **Do not delete or loosen this privacy test**; require the orchestrator to rerun it on the updated branch.
