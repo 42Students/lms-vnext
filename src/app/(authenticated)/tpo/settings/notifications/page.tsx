@@ -78,7 +78,7 @@ export default async function TpoMyNotificationsPage({
           action={
             <Link
               href="/tpo/settings/notifications"
-              className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
             >
               Clear filters
             </Link>
@@ -347,7 +347,7 @@ export default async function TpoMyNotificationsPage({
                   pageSize,
                   page: page - 1,
                 })}
-                className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
               >
                 Previous
               </Link>
@@ -360,7 +360,7 @@ export default async function TpoMyNotificationsPage({
                   pageSize,
                   page: page + 1,
                 })}
-                className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
               >
                 Next
               </Link>

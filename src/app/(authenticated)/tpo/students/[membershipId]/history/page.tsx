@@ -58,7 +58,7 @@ export default async function TpoLearnerPlacementHistoryPage({
           <Link
             href={"/tpo/students/" +
               encodeURIComponent(history.learner.membershipId) + "/participation"}
-            className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground"
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground"
           >
             Participation decision
           </Link>
@@ -102,7 +102,7 @@ export default async function TpoLearnerPlacementHistoryPage({
                   </p>
                   {item.addedByCollege?<p className="mt-1 text-sm font-semibold">Added by the college</p>:null}
                   {item.jobId?<Link href={"/tpo/placements/jobs/"+encodeURIComponent(item.jobId)}
-                    className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">Open drive</Link>:null}
+                    className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline">Open drive</Link>:null}
                 </div>
                 <span className="rounded-md border border-border bg-surface-subtle px-3 py-1 text-xs font-semibold text-foreground">
                   {item.applicationStatus}

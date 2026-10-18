@@ -1,3 +1,4 @@
+import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -19,7 +20,7 @@ export default async function MentorBoardReviewPage({
   });
   if(!validated.success)return <section role="alert" className="space-y-3">
     <h1>Invalid board filters</h1>
-    <Link href="/mentor/projects" className="text-primary-text underline">Projects</Link>
+    <Link href="/mentor/projects" className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Projects</Link>
   </section>;
   const data=await getMentorBoardReview(await getCurrentRequestContext(),validated.data);
   const base="/mentor/projects/"+encodeURIComponent(projectId);
@@ -27,7 +28,7 @@ export default async function MentorBoardReviewPage({
     <PageHeader eyebrow="Mentor · Project" title="Task board status"
       description={data.projectTitle}
       actions={<Link href={base+"?tab=board"}
-        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Full task workspace
       </Link>}/>
     {!data.enabled?
@@ -72,16 +73,16 @@ export default async function MentorBoardReviewPage({
             {data.sprints.map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
           </select>
         </label>
-        <button type="submit" className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary">
+        <Button type="submit" variant="primary">
           Filter
-        </button>
-        <Link href={base+"/board-review"} className="px-3 py-2 text-primary-text underline">Clear</Link>
+        </Button>
+        <Link href={base+"/board-review"} className="px-3 py-2 text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
       </form>
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <Link href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-board-export"+
           (mentorBoardReviewHref({...data.query,page:1}).split("?")[1]?
             "?"+mentorBoardReviewHref({...data.query,page:1}).split("?")[1]:"")}
-          download className="min-h-11 rounded-md border border-border px-4 py-2 font-semibold text-primary-text">
+          download className="min-h-11 rounded-md border border-border px-4 py-2 font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           Download filtered CSV (max 500)
         </Link>
         {data.exportOmitted>0?<span role="status">
@@ -94,7 +95,7 @@ export default async function MentorBoardReviewPage({
           <Link href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-sprint-summary-export"+
             (mentorBoardReviewHref({...data.query,page:1}).split("?")[1]?
               "?"+mentorBoardReviewHref({...data.query,page:1}).split("?")[1]:"")}
-            download className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+            download className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
             Download filtered Sprint summary CSV (max 100)
           </Link>
         </div>
@@ -145,9 +146,9 @@ export default async function MentorBoardReviewPage({
         <span className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</span>
         <div className="flex gap-3">
           {data.page>1?<Link href={mentorBoardReviewHref({...data.query,page:data.page-1})}
-            className="text-sm text-primary-text underline">Previous</Link>:null}
+            className="text-sm text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>:null}
           {data.page<data.totalPages?<Link href={mentorBoardReviewHref({...data.query,page:data.page+1})}
-            className="text-sm text-primary-text underline">Next</Link>:null}
+            className="text-sm text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>:null}
         </div>
       </nav>
     </>}

@@ -6,3 +6,8 @@
 - **States/authority:** Existing legacy wording, server permissions, loading/empty/error paths, links, forms and data readers preserved; no fabricated status or mutation.
 - **Test:** `tests/unit/ux-chat14-mentor-01.test.ts` — `UX-mentor-mentor-projects-01`.
 - **Verification:** source contract authored; TypeScript, unit and 320/360/390 browser checks pending orchestrator. Do not tick inventory until run.
+
+## Mentor-only quality pass
+- Accessible deep-teal links: 8; visible keyboard focus rings: 8; shared submit buttons: 0.
+- Kept exact legacy copy, forms, tenant authorization, and all original result/error branches.
+- Regression `UX-mentor-projects-02` in `tests/unit/ux-chat14-mentor-quality-04a.test.ts`; TypeScript/Vitest/device QA not yet executed.
