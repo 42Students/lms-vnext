@@ -134,3 +134,4 @@
 Requests grid refreshed-failure trio: `chat12-requests-grid-round6.test.ts`, `chat12-round10-requests-state-contracts.test.ts`, `chat12-round27-request-grid.test.ts`; page-local selection preserves 500-row paging and defends copy against off-page IDs, formula cells and unselected columns. Current table caption, sticky student column and privacy-respecting selected TSV are retained rather than restoring a stale literal DOM contract.
 
 All evidence above is authored but unexecuted, and no green CI/typecheck result is claimed.
+- `getTpoRecruiterLeadStages`, `listTpoCompanies` and `getTpoCompanyMemory`: `tests/unit/chat12-tpo-company-memory-live-actor.test.ts` verifies persisted actor role revocation and wrong-college denial before the shared CRM/lead query. This is a mocked service test, not a real-PostgreSQL concurrency proof (TPO-BREAK-company-memory-actor-04).
