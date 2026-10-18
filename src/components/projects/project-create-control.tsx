@@ -313,19 +313,19 @@ export function CreateProjectControl({
             </span>
           </label>
           <label className="grid gap-1 text-sm font-semibold">Class
-            <select value={sectionId} onChange={e=>{setSectionId(e.target.value);setRoster([]);setLearnerMembershipIds([]);setLoadedRosterSectionId(null);setRosterError(false);}}
+            <Select value={sectionId} onChange={e=>{setSectionId(e.target.value);setRoster([]);setLearnerMembershipIds([]);setLoadedRosterSectionId(null);setRosterError(false);}}
               className="min-h-11 rounded-md border border-border bg-background px-3">
               <option value="">No class</option>
               {classes.map(item=><option key={item.id} value={item.id}>{item.name} · {item.code}</option>)}
-            </select>
+            </Select>
           </label>
           {classesError?<p role="alert" className="text-sm text-error">Classes could not load. <button type="button" className="min-h-11 underline" onClick={()=>{setClassesError(false);setClassesRetry(value=>value+1);}}>Try again</button></p>:null}
           <label className="grid gap-1 text-sm font-semibold">Status
-            <select value={initialStatus} onChange={e=>setInitialStatus(e.target.value as "PLANNED"|"ACTIVE")}
+            <Select value={initialStatus} onChange={e=>setInitialStatus(e.target.value as "PLANNED"|"ACTIVE")}
               className="min-h-11 rounded-md border border-border bg-background px-3">
               <option value="PLANNED">Planned</option>
               <option value="ACTIVE" disabled={!mentorMembershipId}>Active</option>
-            </select>
+            </Select>
           </label>
           {!mentorMembershipId?<p className="text-xs text-warning">This workspace has no mentor.</p>:null}
           {sectionId?<section className="rounded-lg border border-border p-3">
@@ -389,7 +389,7 @@ export function CreateProjectControl({
         <Button size="sm" onClick={openDialog}>Create workspace</Button>
       ) : null}
       {standalone ? (
-        <section aria-label="Create workspace" className="space-y-5 rounded-xl border border-border bg-surface p-5">
+        <section aria-label="Create workspace" className="space-y-5">
           <h2 className="text-xl font-semibold text-foreground">Create workspace</h2>
           <p className="text-sm text-body">Create an independent Project workspace from a published template assigned to this college.</p>
           {form}
