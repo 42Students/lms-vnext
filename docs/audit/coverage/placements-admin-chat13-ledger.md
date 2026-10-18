@@ -140,3 +140,6 @@ The other half of the admin coverage boundary lives in `src/modules/admin-ui/`, 
 
 
 | `src/modules/placements/super-admin-published-drive-edit-service.ts` + `super-admin-published-drive-edit-feedback.ts` — typed optimistic conflict recovery | For selected-college PUBLISHED metadata edits, compare equivalent instants rather than string offsets; detect stale DB CAS as HTTP 409 and show friendly next step while preserving input | `SA-placements-projects-13-409` in `tests/unit/chat13-published-drive-edit.test.ts` | Source/feedback tests authored; actual concurrent UI/DB transaction test outstanding |
+
+
+| `src/modules/placements/admin-company-directory-service.ts` — `driveCount` and `lastActiveAt` | Both correlated employer metrics must require job college equals selected employer relationship college, not just its relationship UUID | `SA-COMPANY-DIRECTORY-COUNT-07` in `tests/unit/chat13-company-directory-counts-tenant.test.ts` + disposable `tests/integration/chat13-super-admin-company-directory-counts-tenant.test.ts` | Source hardened; registered PostgreSQL harness now includes witness but execution unverified |
