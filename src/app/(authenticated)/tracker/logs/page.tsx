@@ -24,7 +24,8 @@ export default async function TrackerLogsPage({
   searchParams: Promise<{ environment?: string; query?: string }>;
 }) {
   const context = await getCurrentRequestContext();
-  if (!isSuperAdmin(context)) redirect("/dashboard");
+  if (!isSuperAdmin(context) || context.adminScope?.collegeId ||
+      context.adminScope?.organizationId) redirect("/dashboard");
   const search=await searchParams;
   const environment = search.environment ?? "PRODUCTION";
   const liveQuery=typeof search.query==="string"?search.query.slice(0,150):"";

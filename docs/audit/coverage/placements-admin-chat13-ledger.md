@@ -146,3 +146,6 @@ The other half of the admin coverage boundary lives in `src/modules/admin-ui/`, 
 
 
 | `src/modules/admin-ui/super-admin-placement-retention-service.ts` — `getSuperAdminPlacementRetentionReport` | Cutoff, shown last activity and first 200 oldest items must all use max(application.updated_at, stage.updated_at); maintain selected-college job and candidate restrictions | `SA-RETENTION-STALENESS-08` in `tests/unit/chat13-super-admin-retention-staleness.test.ts` | Source guard authored; SQL/clock and browser verification pending |
+
+
+| `src/modules/admin-ui/super-admin-placement-joining-service.ts` / `super-admin-joining-integrity-model.ts` | Super Admin joins remain selected-college scoped; mismatched offer and joining histories remain visible with a review warning, not hidden or silently counted as valid | `SA-JOINING-ANOMALY-09` in `tests/unit/chat13-super-admin-joining-integrity.test.ts` | Pure state matrix written; service source guard, real tenant PG/UX pending |

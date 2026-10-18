@@ -14,6 +14,8 @@ import { getDb } from "@/db/client";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { notifyActiveProjectMembers } from "./project-notification-service";
+import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
+import {assertPersistedProjectMutationActor} from "./persisted-mentor-mutation";
 import {
   projectMeetings,
   projectInstances,
@@ -149,6 +151,8 @@ export async function listProjectMeetings(
   context: RequestContext,
   projectIdInput: string,
 ) {
+  if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
+    throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
   const scope =
     await requireProjectReadAccess(
       context,
@@ -184,6 +188,8 @@ export async function requestProjectMeeting(
   projectIdInput: string,
   rawInput: RequestProjectMeetingInput,
 ) {
+  if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
+    throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
   const scope = await requireProjectReadAccess(context, projectIdInput);
   ensureMeetingProjectMutable(scope.project.status);
   if (scope.access !== "LEARNER" || !context.membership) {
@@ -197,8 +203,10 @@ export async function requestProjectMeeting(
   }
   return getDb().transaction(async (tx) => {
     const [project] = await tx.select({status:projectInstances.status})
-      .from(projectInstances).where(eq(projectInstances.id, scope.project.id))
-      .for("update").limit(1);
+      .from(projectInstances).where(and(
+        eq(projectInstances.id, scope.project.id),
+        eq(projectInstances.collegeId,scope.collegeId),
+      )).for("update").limit(1);
     if (!project) throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
     ensureMeetingProjectMutable(project.status);
     const [conflict] = await tx.select({id:projectMeetings.id}).from(projectMeetings)
@@ -258,10 +266,13 @@ export async function scheduleProjectMeeting(
   const links = await validateMeetingLinks(scope.project.id,input.linkedSprintId,input.linkedTaskId);
   return getDb().transaction(async (tx) => {
     const [project] = await tx.select({status:projectInstances.status,updatedAt:projectInstances.updatedAt})
-      .from(projectInstances).where(eq(projectInstances.id,scope.project.id))
-      .for("update").limit(1);
+      .from(projectInstances).where(and(
+        eq(projectInstances.id,scope.project.id),
+        eq(projectInstances.collegeId,scope.collegeId),
+      )).for("update").limit(1);
     if (!project) throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
     ensureMeetingProjectMutable(project.status);
+    await assertPersistedProjectMutationActor(tx,context,scope);
     const [existing] = meetingIdInput ? await tx.select().from(projectMeetings)
       .where(and(eq(projectMeetings.id,projectMeetingIdSchema.parse(meetingIdInput)),
         eq(projectMeetings.projectId,scope.project.id))).for("update").limit(1) : [null];
@@ -412,6 +423,8 @@ export async function transitionProjectMeeting(
   meetingIdInput: string,
   rawInput: ProjectMeetingTransitionInput,
 ) {
+  if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
+    throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
   const scope =
     await requireProjectReadAccess(
       context,
@@ -446,6 +459,14 @@ export async function transitionProjectMeeting(
     }
 
     return getDb().transaction(async tx => {
+    const [project]=await tx.select({status:projectInstances.status})
+      .from(projectInstances).where(and(
+        eq(projectInstances.id,scope.project.id),
+        eq(projectInstances.collegeId,scope.collegeId),
+      )).for("update").limit(1);
+    if(!project)throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+    ensureMeetingProjectMutable(project.status);
+    await assertPersistedProjectMutationActor(tx,context,scope);
     const [completed] = await tx
       .update(projectMeetings)
       .set({
@@ -523,6 +544,15 @@ export async function transitionProjectMeeting(
   }
 
   return getDb().transaction(async tx => {
+  const [project]=await tx.select({status:projectInstances.status})
+    .from(projectInstances).where(and(
+      eq(projectInstances.id,scope.project.id),
+      eq(projectInstances.collegeId,scope.collegeId),
+    )).for("update").limit(1);
+  if(!project)throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+  ensureMeetingProjectMutable(project.status);
+  if(scope.access==="MENTOR"||scope.access==="ADMIN")
+    await assertPersistedProjectMutationActor(tx,context,scope);
   const [cancelled] = await tx
     .update(projectMeetings)
     .set({

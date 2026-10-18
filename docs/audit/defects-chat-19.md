@@ -428,3 +428,8 @@ Seven source page guards, real page invocation tests and a companion UX note are
 | HR-BREAK-RECORDED-PRINCIPAL-29 | MAJOR | `/hr/drives/recorded-outside` refuses a mismatched recruiter before using profile grant IDs, showing college choices or reading outside-drive confirmation. | `tests/unit/HR-BREAK-chat19-recorded-outside-principal.test.ts` |
 
 No local test or runtime execution. Existing exact wording and all service authorization remain unchanged.
+
+
+## 22-route HR cross-audit inventory and identity regression gate
+
+All 20 non-alias recruiter pages from `docs/orchestrator/ui-ux/pages-hr.md` were independently read on chat-19; each now enforces `hasActiveRecruiter(context)` and matching `context.recruiter.userId === context.user.id` before page data loads. Two legacy aliases (`/hr/colleges`, `/hr/messages`) redirect or re-export protected routes and do not fetch protected data independently. The 20-route invariant is asserted in `tests/unit/chat19-hr-page-contracts.test.ts`; detailed per-page behavioral tests and coverage mapping are in `docs/audit/coverage/hr-pages-ledger.md`. Source audit is complete; cloud typecheck, unit/browser execution and end-to-end authorization remain verification gates.

@@ -50,9 +50,14 @@ export default async function CollegeProjectsPage({
     </div>;
   }
   const query: ProjectAdminCollectionQuery = parsed.data;
+  // The strict service schema accepts database filters only, not the
+  // presentational view toggle. Keep cards/table navigation in the UI.
+  const serviceQuery = {
+    q: query.q, status: query.status, page: query.page, pageSize: query.pageSize,
+  };
   // Failure to read optional template labels must not hide the actual projects.
   const [result, templatesResult] = await Promise.all([
-    listProjectAdminSnapshots(context, collegeId, query),
+    listProjectAdminSnapshots(context, collegeId, serviceQuery),
     listAssignedProjectTemplates(context, collegeId)
       .then(value => ({ ok: true as const, value }))
       .catch(() => ({ ok: false as const })),
