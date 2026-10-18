@@ -38,8 +38,8 @@ Scope: 37 routes (positions 75–111) of `docs/orchestrator/ui-ux/pages-admin.md
 | `/admin/settings` | `UX-admin-settings-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/settings/auth` | `UX-admin-settings-auth-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/students` | `UX-admin-students-01` | **OPEN** — no live/browser or full service-role journey confirmation |
-| `/admin/tenants` | `UX-admin-tenants-01` | **OPEN** — no live/browser or full service-role journey confirmation |
-| `/admin/tenants/create` | `UX-admin-tenants-create-01` | **OPEN** — no live/browser or full service-role journey confirmation |
+| `/admin/tenants` | `UX-admin-tenants-01`, `SA-tenants-ux-09/11`, `SA-tenants-idor-58` | Typed hostile GET validation and authorization precede tenant reads; backend outages show safe retry preserving validated filters instead of false empty tenant list. `tests/unit/PROJ-BREAK-chat9-sa-tenant-directory-page.test.tsx`. Live selected scope/database/browser verification OPEN. |
+| `/admin/tenants/create` | `UX-admin-tenants-create-01`, `SA-tenants-create-08/11` | Authorized organizations are the sole college-creation destinations; forged/array preferred IDs cannot select another tenant. Directory outage disables creation and provides retry; disabled Super Admin denied before list. `tests/unit/PROJ-BREAK-chat9-sa-tenant-create-page.test.tsx`. Live browser/write integration OPEN. |
 | `/admin/tenants/setup` | `UX-admin-tenants-setup-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/verification` | `UX-admin-verification-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/videos` | `UX-admin-videos-01` | **OPEN** — no live/browser or full service-role journey confirmation |
