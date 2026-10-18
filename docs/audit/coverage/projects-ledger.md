@@ -218,20 +218,32 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/modules/projects/mentor-board-review-model.ts` | `mentorBoardExportCsv` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-board-review-model.ts` | `mentorSprintSummaryCsv` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-board-review-model.ts` | `mentorBoardReviewQuerySchema` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-board-review-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-calendar-export-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-calendar-filter-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-calendar-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-calendar-view.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-closeout-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-closeout-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-delivery-lock-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-delivery-version-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-delivery-version-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-estimation-unit-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-filter-query.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-final-delivery-decision-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-final-delivery-decision-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
+| `src/modules/projects/mentor-board-review-service.ts` | `getMentorBoardReview` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-calendar-export-model.ts` | `mentorCalendarCsv` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-calendar-filter-model.ts` | `filterMentorCalendar` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-calendar-filter-model.ts` | `mentorCalendarFilterHref` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-calendar-filter-model.ts` | `mentorCalendarFiltersSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-calendar-service.ts` | `listMyMentorCalendarMeetings` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-calendar-view.ts` | `splitMentorMeetings` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-calendar-view.ts` | `mentorMeetingDisplayStatus` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-calendar-view.ts` | `safeMentorMeetingJoinUrl` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-closeout-model.ts` | `closeoutChecklist` | `tests/unit/projects-mentor-policy-matrix-chat14.test.ts` | Runtime authored, unrun |
+| `src/modules/projects/mentor-closeout-model.ts` | `mentorCloseoutParamsSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-closeout-model.ts` | `mentorCloseoutSchema` | `tests/unit/projects-mentor-policy-matrix-chat14.test.ts` | Runtime authored, unrun |
+| `src/modules/projects/mentor-closeout-service.ts` | `getMentorProjectCloseout` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-closeout-service.ts` | `completeMentorProject` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-delivery-lock-service.ts` | `lockMentorFinalDelivery` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-delivery-version-model.ts` | `mentorDeliveryVersionDisplay` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-delivery-version-model.ts` | `mentorDeliveryVersionParamsSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-delivery-version-service.ts` | `getMentorDeliveryVersion` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-estimation-unit-model.ts` | `mentorEstimationUnit` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-estimation-unit-model.ts` | `mentorEstimateOptions` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-estimation-unit-model.ts` | `mentorEstimateLabel` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-filter-query.ts` | `singleValueMentorFilters` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-filter-query.ts` | `singleValueMentorExportFilters` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-final-delivery-decision-model.ts` | `mentorFinalDeliveryCanReview` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-final-delivery-decision-model.ts` | `mentorFinalDeliveryDecisionSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-final-delivery-decision-service.ts` | `decideMentorFinalDelivery` | `tests/unit/projects-mentor-service-guards-chat14.test.ts` | Static/source only, behavioural pending |
 | `src/modules/projects/mentor-latest-review-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
 | `src/modules/projects/mentor-meeting-decision-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
 | `src/modules/projects/mentor-meeting-decision-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
