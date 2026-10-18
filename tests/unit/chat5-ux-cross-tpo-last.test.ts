@@ -78,6 +78,7 @@ describe("Chat-5 UX CROSS AUDIT: /tpo LAST THIRD (routes 85–126)",()=>{
   expect(component).not.toContain("window.confirm");
   expect(component).toContain("<ConfirmDialog");
   expect(component).toContain("Only verified recruiters are eligible.");
+  expect(component).toContain('role="alert" className="text-sm text-foreground"');
   expect(component).toContain('action:"REMOVE"');
   expect(component).toContain('action:"TRUST"');
  });
@@ -85,6 +86,7 @@ describe("Chat-5 UX CROSS AUDIT: /tpo LAST THIRD (routes 85–126)",()=>{
   const control=source("src/components/placements/tpo-recruiter-grant-controls.tsx");
   expect(control).not.toContain("window.confirm");
   expect((control.match(/<ConfirmDialog/g)??[])).toHaveLength(3);
+  expect((control.match(/role="alert" className="text-sm text-foreground"/g)??[])).toHaveLength(3);
   expect(control).toContain("Grant the existing user recruiter access to this college/company?");
   expect(control).toContain('expectedUpdatedAt');
   expect(control).toContain('action: "REVOKE"');
