@@ -50,3 +50,11 @@ The published `docs/orchestrator/unit-failures-latest.md` identifies three chat-
 - `COL-people-24`: the current mentor reassignment component has the exact confirmed title, saved-success title, empty/no-op text, `ConfirmDialog`, no `window.confirm` or raw `failure.code`; the page description has the exact `Move selected non-archived project workspaces to a new primary mentor.` copy, corrected by a prior merge.
 
 **Verification limitation:** this is an exact source-assertion reconciliation, **not** a claim of a fresh passing Vitest run. CI for recent `main` commits was queued when checked. The orchestrator must refresh the failure report from that run before declaring zero failures. Do not revert these current guards or change the tests just to match an older report.
+
+### SA-PEOPLE-BREAK-01 — false-success and unhandled network failure on membership writes
+
+- **Area:** Super Admin and College Admin membership role/lifecycle controls.
+- **Severity:** S2 data-state integrity and resilience.
+- **Reproduction from source:** Before this patch, `PersonMembershipActions.mutateRole` called `setCurrentRoles(payload.roles)` even after an HTTP 200 with HTML/invalid JSON, resulting in a thrown exception. Lifecycle treated a 200 without a valid `person.membership.status` as a successful change, closed dialogs, cleared the typed suspension reason and announced the old state. Neither action caught network errors, and simultaneous role/lifecycle actions had no shared immediate lock.
+- **Fix:** Validate that role responses contain unique known roles consistent with the requested grant/revoke, and that lifecycle receipts confirm exactly SUSPENDED/ACTIVE/ENDED for the requested action. Do not announce success or destroy unsent suspension reasons for malformed receipts. Catch failed network requests and offer reload-before-retry. Use ref locks to block double submissions and conflicting role/lifecycle writes. No legacy copy assertions were weakened.
+- **Evidence:** `src/modules/people/membership-action-receipt.ts`, `src/components/admin/person-membership-actions.tsx`, `tests/unit/SA-PEOPLE-BREAK-chat3-01.test.ts`. Tests have not been run in this connector-only environment; awaiting cloud TypeScript and Vitest verification.
