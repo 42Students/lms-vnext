@@ -32,7 +32,7 @@ export function parseTpoRoundImport(bytes:Buffer,filename:string){
  const ext=filename.toLowerCase();
  const grid=ext.endsWith(".xlsx")?parseResultXlsx(bytes):
   ext.endsWith(".csv")?parseSelectionCsv(bytes.toString("utf8"),true,1000):
-  (()=>{throw Error("Use a .xlsx or .csv file.");})();
+  (()=>{throw Error("Use a .xlsx or a .csv file.");})();
  const header=grid.shift()??[];
  if(header.length>80||grid.some(row=>row.length>80))
   throw Error("The result file is too wide; keep at most 80 columns.");
