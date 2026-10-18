@@ -178,7 +178,7 @@ export function TenantDomainManager({
 
   return (
     <div className="space-y-5">
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="- border-t border-border pt-5">
         <div className="grid gap-3 md:grid-cols-[1fr_auto] md:items-end">
           <div>
             <label
@@ -211,7 +211,7 @@ export function TenantDomainManager({
       </section>
 
       {domains.length === 0 ? (
-        <section className="rounded-xl border border-border bg-surface p-6">
+        <section className="- border-t border-border pt-6">
           <p className="m-0 text-sm font-semibold text-foreground">
             No tenant domains configured
           </p>
@@ -234,7 +234,7 @@ export function TenantDomainManager({
             return (
               <section
                 key={domain.id}
-                className="rounded-xl border border-border bg-surface p-5"
+                className="- border-t border-border pt-5"
               >
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div className="min-w-0">
