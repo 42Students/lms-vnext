@@ -14,6 +14,8 @@ import { FileUpload } from "@/components/ui/file-upload";
 import { FilterBar } from "@/components/ui/filter-bar";
 import { Input } from "@/components/ui/input";
 import { FormField } from "@/components/ui/form-field";
+import { DisabledReason } from "@/components/ui/disabled-reason";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 import { Tabs } from "@/components/ui/tabs";
 import { ToastProvider, useToast } from "@/components/ui/toast";
@@ -30,6 +32,7 @@ function UIKitTestSurface() {
   const [fileStatus, setFileStatus] = useState("No file selected");
   const [pickerDisabled, setPickerDisabled] = useState(false);
   const [wideScroll, setWideScroll] = useState(true);
+  const [inlineSaved, setInlineSaved] = useState(false);
   const { showToast } = useToast();
 
   return <main className="mx-auto max-w-4xl space-y-8 p-4">
@@ -113,11 +116,24 @@ function UIKitTestSurface() {
         <Checkbox name="in-progress" label="In progress"/>
       </div>}/>
 
+    <section aria-label="Unavailable action and feedback fixture" className="space-y-3">
+      <DisabledReason reason="Assign a learner before submitting.">
+        <Button disabled>Submit unassigned project</Button>
+      </DisabledReason>
+      <Button variant="secondary" onClick={() => setInlineSaved(true)}>
+        Show inline saved notice
+      </Button>
+      {inlineSaved ? <InlineNotice tone="success" message="Saved inline workspace update"
+        onDismiss={() => setInlineSaved(false)} successDismissMs={800}/> : null}
+    </section>
+
     <section aria-label="Upload fixture" className="space-y-2">
       <Button variant="secondary" onClick={() => setPickerDisabled(value => !value)}>
         {pickerDisabled ? "Enable file selection" : "Disable file selection"}
       </Button>
+      <p id="harness-external-help" className="text-sm">Files must be readable PDFs.</p>
       <FileUpload id="harness-proof" label="Project proof PDF" accept=".pdf" disabled={pickerDisabled}
+        aria-describedby="harness-external-help"
         helper="PDF file, maximum 1 KB" maxBytes={1024}
         onFiles={files => setFileStatus(files?.length ? "Selected: " + files[0]!.name : "No file selected")}/>
       <p role="status" data-testid="file-status">{fileStatus}</p>

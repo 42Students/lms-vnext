@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
+import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import {getSuperAdminCompanyHiringReport} from "@/modules/admin-ui/super-admin-hiring-report-service";
 import {getSuperAdminHiringReportFilters} from "@/modules/admin-ui/super-admin-hiring-report-filters-service";
 import {superAdminHiringReportQuery,hiringCompanyRollups,COMPANY_HIRING_COLUMNS} from "@/modules/admin-ui/super-admin-hiring-report-model";
@@ -28,6 +29,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
    description="Track the hiring funnel, conversion and company performance for the selected college. Filters apply consistently to the headline metrics, funnel and company report below."/>
   <EmptyState title="Select a college to continue" description="Choose a college in the Super Admin scope selector before reviewing placement analytics."/>
  </div>;
+ requireSuperAdminSelectedCollege(context,"placements.read");
  const [data,filters]=await Promise.all([
   getSuperAdminCompanyHiringReport(context,parsed.data),
   getSuperAdminHiringReportFilters(context),
@@ -87,6 +89,9 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
    <a href={"/api/admin/placements/hiring-report/export?"+params.toString()}
     className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">Export report (CSV) →</a>
   </div>
+  {data.truncated?<p role="alert" className="rounded-md border border-border bg-surface p-3 text-sm text-body">
+    This report reached its 5,000-drive safety limit. The headline metrics, funnel, company totals and CSV may be incomplete. Narrow the filters before using these figures for decisions.
+  </p>:null}
   <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">{(["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const).map(key=>
    <div key={key} className="rounded-xl border border-border bg-surface p-4"><dt className="text-sm capitalize text-muted-foreground">{hiringMetricLabel(key)}</dt>
     <dd className="mt-1 text-2xl font-semibold tabular-nums">{totals[key]}</dd></div>)}</dl>
