@@ -45,7 +45,7 @@ describe("HR-BREAK-company-reports-page-01: unauthorized, invalid, multiple coll
  });
  it("invalid college, stage or page params produce friendly reset without hitting service",async()=>{
   const invalids=[{collegeId:"../../../another-college"},{status:"PRIVATE"},
-   {page:"-1"},{page:"bad"},{pageSize:"99999"}];
+   {page:"-1"},{page:"bad"},{pageSize:"99999"},{collegeId:[college,"other-college"]},{status:["ALL","CLOSED"]}];
   for(const query of invalids){
    const page=await read(query);
    expect(contents(page)).toContain("Invalid report filters");
