@@ -202,6 +202,31 @@ describe("UX-kit-STATES: semantic SSR states and accessible fallbacks", () => {
     expect(html).toContain('aria-selected="true"');
   });
 
+  it("UX-kit-HARDEN-33 recovers from disabled or deleted bookmarked tab without orphaned ARIA selection",()=>{
+    const items=[
+      {value:"overview",label:"Overview",content:<span>Project overview</span>},
+      {value:"grades",label:"Grades",disabled:true,content:<span>Private grading</span>},
+      {value:"members",label:"Members",content:<span>Project members</span>},
+    ];
+    for(const value of ["grades","no-longer-exists"]){
+      const html=render(<Tabs items={items} value={value} onValueChange={()=>{}}
+        ariaLabel="Project navigation"/>);
+      expect(html).toContain("Project overview");
+      expect(html).not.toContain("Private grading");
+      expect(html).toContain('role="tabpanel"');
+      expect((html.match(/aria-selected="true"/g)??[])).toHaveLength(1);
+      expect((html.match(/tabindex="0"/g)??[]).length).toBeGreaterThanOrEqual(1);
+      expect(html).not.toContain("tab--1");
+    }
+    const allDisabled=render(<Tabs value="grade" ariaLabel="Private tabs"
+      onValueChange={()=>{}} items={[
+        {value:"grade",label:"Grade",disabled:true,content:<span>Private</span>},
+      ]}/>);
+    expect(allDisabled).not.toContain("Private</span>");
+    expect(allDisabled).not.toContain('aria-selected="true"');
+    expect(allDisabled).not.toContain('aria-labelledby="');
+  });
+
   it("UX-kit-STATES-11 hidden filter sheet retains always-visible search and count sanitization", () => {
     const invalid=render(<FilterBar title="Candidates" activeCount={-99}
       search={<Input aria-label="Find candidates"/>}
