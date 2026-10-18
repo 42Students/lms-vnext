@@ -57,11 +57,13 @@ export function ProjectAdminFilters({
   includeSubmissionStatus = false,
   includeRiskSort = false,
   legacyWorkspaces = false,
+  filterView,
 }: {
   query: ProjectAdminCollectionQuery;
   includeSubmissionStatus?: boolean;
   includeRiskSort?: boolean;
   legacyWorkspaces?: boolean;
+  filterView?: "NOT_SUBMITTED";
 }) {
   return (
     <form
@@ -93,7 +95,7 @@ export function ProjectAdminFilters({
           ))}
         </select>
       </label>
-      {query.view?<input type="hidden" name="view" value={query.view}/>:null}
+      {filterView?<input type="hidden" name="view" value={filterView}/>:query.view?<input type="hidden" name="view" value={query.view}/>:null}
       {query.fromMentorId ? <input type="hidden" name="fromMentorId" value={query.fromMentorId} /> : null}
       {query.riskBucket ? <input type="hidden" name="riskBucket" value={query.riskBucket} /> : null}
       {includeRiskSort ? (
@@ -149,7 +151,7 @@ export function ProjectAdminFilters({
         Apply
       </button>
       <Link
-        href="?"
+        href={filterView?"?view=NOT_SUBMITTED":"?"}
         className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-body hover:bg-muted"
       >
         Clear

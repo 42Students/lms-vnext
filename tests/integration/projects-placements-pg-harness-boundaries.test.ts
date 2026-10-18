@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import type { Pool } from "pg";
+import type { Pool, QueryResultRow } from "pg";
 import {
   createFinalSubmission, createMeeting, createPrincipal, createSiblingCollege, createProjectFixture,
   createPlacementCandidateFixture, createPlacementFixture,
@@ -359,6 +359,41 @@ describe("PROJ-HARNESS role/tenancy and concurrent PostgreSQL fixture boundaries
         [f.project.projectId]);
       await expect(createTaskSubmission(db,f.project,f.learner)).resolves.toBeTruthy();
       await expect(createMeeting(db,f.project,f.learner,f.author)).resolves.toBeTruthy();
+    });
+  });
+
+  it("PROJ-HARNESS-TASK-21 task CAS conflict rolls back the inserted submission",async()=>{
+    await withProjectPg(pool,async db=>{
+      const f=await actors(db);
+      // Simulate another session winning the status CAS while retaining the
+      // real PostgreSQL insert/savepoint on this fixture transaction.
+      const racing:PgHarness={...db,
+        async query<T extends QueryResultRow = QueryResultRow>(sql:string, values?:unknown[]):Promise<T[]>{
+          if(sql.includes("update project_tasks set status='IN_REVIEW'"))return [];
+          return db.query<T>(sql,values);
+        },
+      };
+      await expect(createTaskSubmission(racing,f.project,f.learner))
+        .rejects.toThrow(/task state changed while submitting/);
+      expect(await count(db,"project_task_submissions")).toBe(0);
+      const states=await db.query<{status:string}>(
+        "select status from project_tasks where id=$1",[f.project.taskId]);
+      expect(states).toEqual([{status:"TODO"}]);
+      await expect(createTaskSubmission(db,f.project,f.learner)).resolves.toBeTruthy();
+    });
+  });
+
+  it("PROJ-HARNESS-TASK-20 submitted task transitions to IN_REVIEW and prevents duplicate submission",async()=>{
+    await withProjectPg(pool,async db=>{
+      const f=await actors(db);
+      const id=await createTaskSubmission(db,f.project,f.learner);
+      expect(id).toBeTruthy();
+      const rows=await db.query<{status:string}>(`
+        select status from project_tasks where id=$1`,[f.project.taskId]);
+      expect(rows).toEqual([{status:"IN_REVIEW"}]);
+      await expect(createTaskSubmission(db,f.project,f.learner))
+        .rejects.toThrow(/task sprint or task state/);
+      expect(await count(db,"project_task_submissions")).toBe(1);
     });
   });
 
