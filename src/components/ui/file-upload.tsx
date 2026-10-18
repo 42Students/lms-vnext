@@ -26,6 +26,10 @@ export function fileMatchesAccept(file: Pick<File,"name"|"type">, accept?: strin
     return type === rule;
   });
 }
+export function mustClearFileSelection(selected: boolean, pickerUnavailable: boolean, disabled: boolean): boolean {
+  return selected && (pickerUnavailable || disabled);
+}
+
 export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerUnavailable = false,
   id: suppliedId, className, disabled, accept, ref: forwardedRef, ...props }: FileUploadProps) {
   const autoId = useId();
@@ -38,7 +42,7 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
   // Clearing after a picker is disabled is necessary even if the DOM input
   // unmounts: the form's parent must never retain a previously approved file.
   useEffect(() => {
-    if (!(pickerUnavailable || disabled) || !selectedRef.current) return;
+    if (!mustClearFileSelection(selectedRef.current, pickerUnavailable, Boolean(disabled))) return;
     selectedRef.current = false;
     if (inputRef.current) inputRef.current.value = "";
     onFilesRef.current(null);
