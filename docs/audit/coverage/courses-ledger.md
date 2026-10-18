@@ -96,6 +96,10 @@ All prior failing unit tests are retained. The snapshot's failing cases have not
 
 Remaining: real PostgreSQL concurrency cases, live role revocation between preflight and transaction, the other Courses API routes, Super Admin UI page-level browser checks, all Learner certificates and discussion transitions. Do not infer execution or passing coverage from authored tests alone.
 
+## Learner assessment directory model batch (2026-10-18)
+
+`tests/unit/chat7-learner-assessment-list-resilience.test.ts` directly exercises the persisted-snapshot clock, bounded searchable text, deterministic due/creation/title sorting, no-data vs filtered-empty copy, and assignment drawer invalidation on delivery/tenant-filter switch. Cases named `COURSES7-06`, `COURSES7-09` and `COURSES7-10` are authored but **not executed**. This covers five additional pure-model exports; it does not close role-scoped PostgreSQL directory reads, client navigation or page-level accessibility.
+
 ## Learner discussion direct model suite (2026-10-18)
 
 `tests/unit/chat7-learner-discussion-scope-and-race.test.ts` now exercises six direct behaviors: UUID-scoped remount keys across tenant/delivery switches, explicit-boolean posting capability, no whitespace or double-submits, the canonical 3,900-character persisted text cap, refresh ordering for overlapping requests, and response projection preserving authorized off-page pins without forwarding private fields. `learnerDiscussionMayPost` now delegates message validation to `learnerDiscussionDraftValid`, so oversized drafts do not begin requests guaranteed to fail server-side. No browser/DB runs were performed; discussion service tenant filters and moderation still require independent PostgreSQL checks.
