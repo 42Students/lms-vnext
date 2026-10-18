@@ -1,0 +1,167 @@
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { RequestContext } from "@/modules/identity/context";
+
+vi.mock("server-only", () => ({}));
+
+const state = vi.hoisted(() => ({
+  total: 0,
+  rows: [] as Array<Record<string, unknown>>,
+  queries: 0,
+  countQueries: 0,
+  offset: -1,
+  pageSize: -1,
+}));
+
+vi.mock("@/db/client", () => ({
+  getDb: () => ({
+    select: (projection?: Record<string, unknown>) => {
+      state.queries++;
+      if (projection && "joinedAt" in projection) {
+        const tableQuery = {
+          innerJoin: () => tableQuery,
+          leftJoin: () => tableQuery,
+          where: () => tableQuery,
+          as: () => ({ id: projection.id, name: projection.name }),
+        };
+        return { from: () => tableQuery };
+      }
+      if (projection && "total" in projection) {
+        return {
+          from: async () => {
+            state.countQueries++;
+            return [{ total: state.total }];
+          },
+        };
+      }
+      return {
+        from: () => ({
+          orderBy: () => ({
+            limit: (amount: number) => ({
+              offset: async (value: number) => {
+                state.offset = value;
+                state.pageSize = amount;
+                return state.rows.slice(value, value + amount);
+              },
+            }),
+          }),
+        }),
+      };
+    },
+  }),
+}));
+
+import { listAdminScopedPeople } from "@/modules/admin-ui/super-admin-scoped-people-service";
+
+const collegeId = "11111111-1111-4111-8111-111111111111";
+const organizationId = "22222222-2222-4222-8222-222222222222";
+
+function context(): RequestContext {
+  return {
+    user: {
+      id: "33333333-3333-4333-8333-333333333333",
+      identityUid: "super-admin",
+      platformStatus: "ACTIVE",
+      systemRoles: ["SUPER_ADMIN"],
+    },
+    membership: null,
+    adminScope: { collegeId, organizationId },
+  };
+}
+
+const sample = (index: number) => ({
+  id: "person-" + index,
+  status: "ACTIVE",
+  joinedAt: new Date("2099-01-01T00:00:00.000Z"),
+  name: "Faculty " + index,
+  platformStatus: "ACTIVE",
+  email: "person" + index + "@example.test",
+  phone: null,
+  collegeName: "Selected College",
+  departmentName: null,
+  employmentType: null,
+  academicTitle: null,
+  mentorRole: false,
+  gender: null,
+  rollNumber: null,
+  className: null,
+});
+
+beforeEach(() => {
+  state.total = 0;
+  state.rows = [];
+  state.queries = 0;
+  state.countQueries = 0;
+  state.offset = -1;
+  state.pageSize = -1;
+});
+
+describe("SA-people-scoped-01 selected-college membership pagination", () => {
+  it("clamps a stale deep page to the last available page before selecting records", async () => {
+    state.total = 2;
+    state.rows = [sample(1), sample(2)];
+    const result = await listAdminScopedPeople(context(), "FACULTY", {
+      page: 999, pageSize: 10,
+    });
+    expect(result.query.page).toBe(1);
+    expect(result.totalPages).toBe(1);
+    expect(result.total).toBe(2);
+    expect(result.items).toHaveLength(2);
+    expect(result.items.map(row => row.title)).toEqual(["Faculty 1", "Faculty 2"]);
+    expect(state.offset).toBe(0);
+    expect(state.pageSize).toBe(10);
+    expect(state.countQueries).toBe(1);
+  });
+
+  it("keeps a valid filtered page and limits the selected rows to the allowed page size", async () => {
+    state.total = 28;
+    state.rows = Array.from({ length: 28 }, (_, i) => sample(i + 1));
+    const result = await listAdminScopedPeople(context(), "FACULTY", {
+      page: 2, pageSize: 25,
+    });
+    expect(result.totalPages).toBe(2);
+    expect(result.query.page).toBe(2);
+    expect(result.items).toHaveLength(3);
+    expect(result.items[0]?.title).toBe("Faculty 26");
+    expect(state.offset).toBe(25);
+    expect(state.pageSize).toBe(25);
+  });
+
+  it("represents an empty selected college as page 1 of 1, not an invalid offset", async () => {
+    const result = await listAdminScopedPeople(context(), "FACULTY", {
+      page: 1000,
+    });
+    expect(result).toMatchObject({ total: 0, totalPages: 1, items: [] });
+    expect(result.query.page).toBe(1);
+    expect(state.offset).toBe(0);
+  });
+
+  it("rejects Learner, Mentor, disabled administrator or missing selected college before any SQL", async () => {
+    const active = context();
+    const actors: RequestContext[] = [
+      { ...active, user: { ...active.user, systemRoles: [] }, membership: {
+        id: "mentor", organizationId, collegeId, status: "ACTIVE", roles: ["MENTOR"],
+      } },
+      { ...active, user: { ...active.user, systemRoles: [] }, membership: {
+        id: "learner", organizationId, collegeId, status: "ACTIVE", roles: ["LEARNER"],
+      } },
+      { ...active, user: { ...active.user, platformStatus: "DISABLED" } },
+      { ...active, adminScope: { collegeId: null, organizationId } },
+    ];
+    for (const actor of actors) {
+      await expect(listAdminScopedPeople(actor, "FACULTY", {}))
+        .rejects.toThrow("Missing permission: people.manage");
+    }
+    expect(state.queries).toBe(0);
+  });
+
+  it("rejects injected scope, duplicate query and invalid pagination before database lookup", async () => {
+    for (const filters of [
+      { collegeId: "foreign" }, { page: -1 }, { page: 1.5 },
+      { pageSize: 999 }, { status: "UNKNOWN" }, { q: "x".repeat(101) },
+    ]) {
+      await expect(listAdminScopedPeople(context(), "FACULTY", filters))
+        .rejects.toThrow();
+    }
+    expect(state.queries).toBe(0);
+  });
+});
