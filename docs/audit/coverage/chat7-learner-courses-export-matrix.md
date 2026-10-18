@@ -185,3 +185,35 @@
 | `learner-recent-course-activity-model.ts` | `learnerRecentCourseActivity` | Not individually linked in this inventory |
 | `learner-roadmap-dialog-key-model.ts` | `learnerRoadmapDialogKey` | Not individually linked in this inventory |
 | `learner-roadmap-empty-state-model.ts` | `learnerRoadmapEmptyState` | Not individually linked in this inventory |
+| `learner-roadmap-filter-recovery-model.ts` | `learnerRoadmapFilterRecoveryNotice` | Not individually linked in this inventory |
+| `learner-roadmap-focus-filter-model.ts` | `LearnerRoadmapFilter` | Not individually linked in this inventory |
+| `learner-roadmap-focus-filter-model.ts` | `resolveLearnerRoadmapFocusFilter` | Not individually linked in this inventory |
+| `learner-roadmap-headline-model.ts` | `learnerRoadmapHeadline` | Not individually linked in this inventory |
+| `learner-roadmap-item-focus-model.ts` | `learnerRoadmapShouldOpenItem` | Not individually linked in this inventory |
+| `learner-roadmap-mobile-model.ts` | `LearnerRoadmapMobileLesson` | Not individually linked in this inventory |
+| `learner-roadmap-mobile-model.ts` | `learnerRoadmapMobileOutline` | Not individually linked in this inventory |
+| `learner-roadmap-progress-availability-model.ts` | `learnerRoadmapMeasuredProgress` | Not individually linked in this inventory |
+| `learner-storage-ui-model.ts` | `submissionFileSchema` | Not individually linked in this inventory |
+| `learner-storage-ui-model.ts` | `SubmissionFile` | Not individually linked in this inventory |
+| `learner-storage-ui-model.ts` | `parseSubmissionFiles` | Not individually linked in this inventory |
+| `learner-storage-ui-model.ts` | `readySubmissionFileIds` | Not individually linked in this inventory |
+| `learner-storage-ui-model.ts` | `canSubmitStagedFiles` | Not individually linked in this inventory |
+| `learner-storage-ui-model.ts` | `canRemoveStagedFile` | Not individually linked in this inventory |
+| `learner-storage-ui-model.ts` | `stagedUploadGrantSchema` | Not individually linked in this inventory |
+| `learner-storage-ui-model.ts` | `parseStagedUploadGrant` | Not individually linked in this inventory |
+| `learner-storage-ui-model.ts` | `parseFileDownloadGrant` | Not individually linked in this inventory |
+| `learner-storage-ui-model.ts` | `learnerVideoSchema` | Not individually linked in this inventory |
+| `learner-storage-ui-model.ts` | `LearnerVideo` | Not individually linked in this inventory |
+| `learner-storage-ui-model.ts` | `parseLearnerVideos` | Not individually linked in this inventory |
+| `learner-storage-ui-model.ts` | `videoForContent` | Not individually linked in this inventory |
+| `learner-storage-ui-model.ts` | `parseLearnerPlaybackGrant` | Not individually linked in this inventory |
+| `learner-storage-ui-model.ts` | `storageApiError` | Not individually linked in this inventory |
+| `learner-submission-flight-model.ts` | `createSubmissionFlightGuard` | Not individually linked in this inventory |
+| `learner-video-grant-model.ts` | `resumePositionForGrant` | Not individually linked in this inventory |
+| `learner-video-grant-model.ts` | `playbackGrantRefreshDelay` | Not individually linked in this inventory |
+
+## Remaining gates
+
+- This table inventories named declarations in 129 learner-prefixed source modules, not every assignment, quiz, discussion, profile, route or component export, nor re-exports. Named functions without direct evidence remain OPEN for behavioural tests; no inference of production safety from a source-only audit.
+- Cross-check learner tenant enrollment and session revocation, wrong-delivery IDs, published-state, quiz embargo, terminal assignment submission, notice dedupe, and stale optimistic writes through real PostgreSQL two-tenant tests.
+- Complete browser 320px/375px keyboard and mobile role journey, strict TypeScript, Vitest and measured branch coverage when the owner restores final CI gating. No executed test results are claimed.
