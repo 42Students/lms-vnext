@@ -26,7 +26,7 @@ describe("HR-TODAY-ARCHIVE-34 no stale archived-drive follow-ups",()=>{
    "src/modules/placements/hr-today-offer-actions-service.ts",
   ]){
    const source=readFileSync(file,"utf8");
-   expect(source).toContain("inArray(placementJobs.id,ids)");
+   expect(source).toMatch(/inArray\(placement(?:Jobs\.id|JobRounds\.jobId),ids\)/);
    expect(source).toContain("eq(placementJobs.collegeId,collegeId)");
    expect(source).toContain('eq(placementJobs.status,"PUBLISHED")');
    expect(source).toContain("isNull(placementJobs.archivedAt)");
