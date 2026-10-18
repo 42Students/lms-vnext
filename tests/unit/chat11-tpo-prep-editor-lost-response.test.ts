@@ -34,7 +34,7 @@ describe("TPO-settings-audit-PREP-UI-03 preparation setting editor correctness",
   expect(source).toContain("setVersion(result.updatedAt)");
   expect(source).toContain("setSaved({courseIds:[...selected],minimumCompleted:minimum})");
   expect(source).toContain("Remove unavailable courses");
-  expect(source).toContain("if(e instanceof FriendlyFetchError");
+  expect(source).toContain("e instanceof FriendlyFetchError?e.message");
   expect(source).not.toContain('setError(e instanceof Error?e.message');
   expect(service).toContain("tpoPrepReadinessSamePolicy(current.config,input)");
   expect(service).toContain("assertPersistedPlatformPermission(tx,context");
