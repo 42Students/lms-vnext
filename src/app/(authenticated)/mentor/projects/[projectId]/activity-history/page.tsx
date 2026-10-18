@@ -24,7 +24,7 @@ export default async function MentorProjectActivityHistoryPage({
   );
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid activity filters</h1>
-    <Link href="/mentor/projects" className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       Return to projects
     </Link>
   </section>;
@@ -34,7 +34,7 @@ export default async function MentorProjectActivityHistoryPage({
     <PageHeader eyebrow="Mentor · Project Activity" title="Recorded project activity"
       description={data.title+" · Events linked to this assigned project."}
       actions={<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=activity"}
-        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Project activity workspace
       </Link>} />
     {!data.enabled ?
@@ -91,7 +91,7 @@ export default async function MentorProjectActivityHistoryPage({
           Filter
         </Button>
         <Link href={mentorProjectActivityHref({...data.query,importance:"ALL",view:"ALL",window:"ALL",order:"NEWEST",pageSize:20,page:1})}
-          className="px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
+          className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
       </form>
       <p className="text-sm text-body">
         {data.total} matching persisted event{data.total===1?"":"s"}
@@ -125,9 +125,9 @@ export default async function MentorProjectActivityHistoryPage({
         <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
         <div className="flex gap-3">
           {data.page>1 && <Link href={mentorProjectActivityHref({...data.query,page:data.page-1})}
-            className="text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>}
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>}
           {data.page<data.totalPages && <Link href={mentorProjectActivityHref({...data.query,page:data.page+1})}
-            className="text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>}
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>}
         </div>
       </nav>
     </>}

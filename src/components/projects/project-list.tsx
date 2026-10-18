@@ -78,16 +78,16 @@ export function ProjectList({
         <Link
           key={item.id}
           href={item.href ?? basePath + "/" + item.id}
-          className="group flex min-h-56 flex-col rounded-xl border border-border bg-surface p-5 transition hover:border-primary hover:shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+          className="group flex min-h-56 flex-col rounded-xl border border-border bg-surface p-5 transition hover:border-primary hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
         >
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               {item.participation ? (
-                <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text">
+                <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-[var(--lms-teal-deep)]">
                   {item.participation}
                 </p>
               ) : (
-                <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text">
+                <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-[var(--lms-teal-deep)]">
                   Project
                 </p>
               )}
@@ -165,7 +165,7 @@ export function ProjectList({
             </span>
           ) : null}
           {item.actionLine ? (
-            <p className="mt-3 text-sm font-semibold text-primary-text">{item.actionLine} →</p>
+            <p className="mt-3 text-sm font-semibold text-[var(--lms-teal-deep)]">{item.actionLine} →</p>
           ) : null}
           <div className="mt-auto flex items-end justify-between gap-3 pt-5">
             <p className="m-0 text-xs text-muted-foreground">
@@ -176,7 +176,7 @@ export function ProjectList({
             </p>
             <span
               aria-hidden="true"
-              className="text-lg text-primary-text transition-transform group-hover:translate-x-0.5"
+              className="text-lg text-[var(--lms-teal-deep)] transition-transform group-hover:translate-x-0.5"
             >
               <span className="sr-only">Open workspace</span>→
             </span>

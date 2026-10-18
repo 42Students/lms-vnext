@@ -20,7 +20,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
   });
   if(!parsed.success)return <section role="alert">
     <h1>Invalid risk/readiness filters</h1>
-    <Link href="/mentor/projects" className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Projects</Link>
+    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Projects</Link>
   </section>;
   const data=await getMentorRiskReadiness(await getCurrentRequestContext(),parsed.data);
   const base="/mentor/projects/"+encodeURIComponent(projectId);
@@ -98,9 +98,9 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
         <span className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</span>
         <div className="flex gap-3">
           {data.page>1?<Link href={mentorRiskReadinessHref({...data.query,page:data.page-1})}
-            className="text-sm text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>:null}
+            className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>:null}
           {data.page<data.totalPages?<Link href={mentorRiskReadinessHref({...data.query,page:data.page+1})}
-            className="text-sm text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>:null}
+            className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>:null}
         </div>
       </nav>
     </>}

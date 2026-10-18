@@ -1,4 +1,5 @@
 "use client";
+import {Dialog} from "@/components/ui/dialog";
 import {useState} from "react";
 type Event={id:string;summary:string;kind:string;at:string;importance:string;authorId:string|null;authorName:string|null};
 export function CollegePersonAuditModal({membershipId,name,kind}:{membershipId:string;name:string;kind:"FACULTY"|"LEARNER"}){
@@ -17,13 +18,11 @@ export function CollegePersonAuditModal({membershipId,name,kind}:{membershipId:s
  const date=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"});
  return <>
   <button type="button" onClick={()=>void show()}
-   className="min-h-9 rounded border border-border px-3 text-xs font-semibold text-primary-text">Audit trail</button>
-  {open?<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-   <section role="dialog" aria-modal="true" aria-label={"Audit trail for "+name}
-    className="w-full max-w-2xl space-y-3 rounded-xl bg-surface p-5">
+   className="min-h-11 rounded border border-border px-3 text-xs font-semibold text-primary-text">Audit trail</button>
+  <Dialog open={open} onOpenChange={setOpen} title={"Audit trail for "+name}>
     <div className="flex items-center justify-between">
      <h2 className="font-semibold">Audit trail · {name}</h2>
-     <button type="button" className="min-h-10 rounded border border-border px-3"
+     <button type="button" className="min-h-11 rounded border border-border px-3"
       onClick={()=>setOpen(false)}>Close</button>
     </div>
     {busy?<p role="status">Loading audit trail…</p>:null}
@@ -37,7 +36,6 @@ export function CollegePersonAuditModal({membershipId,name,kind}:{membershipId:s
      </li>)}
     </ol>
     {truncated?<p className="text-xs text-muted-foreground">Showing 100 most recent events.</p>:null}
-   </section>
-  </div>:null}
+  </Dialog>
  </>;
 }

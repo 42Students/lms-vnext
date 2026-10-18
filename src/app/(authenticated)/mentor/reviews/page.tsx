@@ -25,7 +25,7 @@ export default async function MentorReviewsPage({
   }));
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid review filters</h1>
-    <Link href="/mentor/reviews" className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
+    <Link href="/mentor/reviews" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
   </section>;
   const data = await getMentorReviewQueue(context, parsed.data);
   return <div className="min-w-0 max-w-full space-y-6 overflow-x-clip">
@@ -33,11 +33,11 @@ export default async function MentorReviewsPage({
       description="Submitted deliveries awaiting review across your currently assigned Mentor projects."
       actions={<div className="flex flex-wrap items-center gap-3">
         <Link href="/mentor/review-history"
-          className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="inline-flex min-h-11 items-center rounded-lg border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           Review history
         </Link>
         <Link href="/mentor/projects"
-          className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="inline-flex min-h-11 items-center rounded-lg border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           Projects
         </Link>
       </div>} />
@@ -86,7 +86,7 @@ export default async function MentorReviewsPage({
           </select>
         </label>
         <Button type="submit" variant="primary">Filter</Button>
-        <Link href="/mentor/reviews" className="px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
+        <Link href="/mentor/reviews" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
       </form>
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <Link href={mentorReviewExportHref(data.query)} download
@@ -99,7 +99,7 @@ export default async function MentorReviewsPage({
       {data.items.length === 0 ? <EmptyState title="No deliveries awaiting review"
         description="No submitted delivery needs review in the matching projects. Reopened or already-reviewed work is not treated as a new submission." />
         : <div className="grid gap-3">{data.items.map(item =>
-          <Link key={item.key} href={item.href} className="block rounded-xl border border-border bg-surface p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          <Link key={item.key} href={item.href} className="min-h-11 block rounded-xl border border-border bg-surface p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
             <p className="min-w-0 break-words font-semibold text-[var(--lms-teal-deep)]">{item.description}</p>
             <p className="mt-2 text-xs text-muted-foreground">Submitted: {new Intl.DateTimeFormat("en-IN",{
               dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
@@ -110,9 +110,9 @@ export default async function MentorReviewsPage({
         <span className="text-sm text-body">Page {data.page} of {data.totalPages}</span>
         <div className="flex gap-3">
           {data.page > 1 && <Link href={mentorPortfolioHref("reviews",{...data.query,page:data.page-1})}
-            className="text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>}
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>}
           {data.page < data.totalPages && <Link href={mentorPortfolioHref("reviews",{...data.query,page:data.page+1})}
-            className="text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>}
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>}
         </div>
       </nav>
     </>}

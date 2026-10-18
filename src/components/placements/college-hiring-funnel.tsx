@@ -20,42 +20,42 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
      <p className="text-sm text-body">Track the hiring funnel, conversion and company performance for the selected college. Filters apply consistently to the headline metrics, funnel and company report below.</p>
     </div>
     <div className="flex gap-3 text-sm">
-     <Link href={collegeHiringAnalyticsHref({...raw})} className="min-h-10 rounded border border-border px-4 py-2">Refresh</Link>
+     <Link href={collegeHiringAnalyticsHref({...raw})} className="min-h-11 rounded border border-border px-4 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Refresh</Link>
      <a href={"/api/college/placements/hiring-analytics/export"+(exportQuery?"?"+exportQuery:"")}
-      className="min-h-10 rounded border border-border px-4 py-2 font-semibold text-primary-text">Export CSV</a>
+      className="min-h-11 rounded border border-border px-4 py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Export CSV</a>
     </div>
    </div>
    <form method="get" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
     <input type="hidden" name="seasonId" value={selectedSeasonId??""}/>
     <input type="hidden" name="jobId" value={selectedJobId??""}/>
     <label className="grid gap-1 text-sm">Department
-     <select name="departmentId" defaultValue={q.departmentId??""} className="min-h-10 rounded border border-border bg-surface px-2">
+     <select name="departmentId" defaultValue={q.departmentId??""} className="min-h-11 rounded border border-border bg-surface px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
       <option value="">All departments</option>
       {data.filters.departments.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
      </select>
     </label>
     <label className="grid gap-1 text-sm">Program
-     <select name="programId" defaultValue={q.programId??""} className="min-h-10 rounded border border-border bg-surface px-2">
+     <select name="programId" defaultValue={q.programId??""} className="min-h-11 rounded border border-border bg-surface px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
       <option value="">All programs</option>
       {data.filters.programs.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
      </select>
     </label>
     <label className="grid gap-1 text-sm">Batch
-     <select name="cohortId" defaultValue={q.cohortId??""} className="min-h-10 rounded border border-border bg-surface px-2">
+     <select name="cohortId" defaultValue={q.cohortId??""} className="min-h-11 rounded border border-border bg-surface px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
       <option value="">All batches</option>
       {data.filters.cohorts.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
      </select>
     </label>
     <label className="grid gap-1 text-sm">Applied from
-     <input type="date" name="from" defaultValue={q.from??""} className="min-h-10 rounded border border-border bg-surface px-2"/>
+     <input type="date" name="from" defaultValue={q.from??""} className="min-h-11 rounded border border-border bg-surface px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm"/>
     </label>
     <label className="grid gap-1 text-sm">Applied to
-     <input type="date" name="to" defaultValue={q.to??""} className="min-h-10 rounded border border-border bg-surface px-2"/>
+     <input type="date" name="to" defaultValue={q.to??""} className="min-h-11 rounded border border-border bg-surface px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm"/>
     </label>
     <div className="flex gap-3 sm:col-span-2 lg:col-span-5">
-     <button type="submit" className="min-h-10 rounded bg-primary px-4 font-semibold text-on-primary">Apply filters</button>
+     <button type="submit" className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Apply filters</button>
      <Link href={collegeHiringAnalyticsHref({seasonId:selectedSeasonId??undefined,jobId:selectedJobId??undefined})}
-      className="inline-flex min-h-10 items-center rounded border border-border px-4 text-sm">Clear all</Link>
+      className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear all</Link>
     </div>
    </form>
   </section>
@@ -78,7 +78,7 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
    {data.totalApplications===0?<div className="space-y-2">
     <p>No data for the selected filters</p>
     <Link href={collegeHiringAnalyticsHref({seasonId:selectedSeasonId??undefined,jobId:selectedJobId??undefined})}
-     className="font-semibold text-primary-text underline">Clear filters</Link>
+     className="font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
    </div>:<div className="space-y-3">
     {order.map(stage=><div key={stage} className="grid grid-cols-[7rem_1fr_4rem] items-center gap-3 text-sm">
       <span>{label(stage)}</span>
@@ -93,7 +93,7 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
   </section>
   <section className="overflow-x-auto rounded-xl border border-border bg-surface p-5">
    <h2 className="mb-4 text-lg font-semibold">Company-wise Hiring Report</h2>
-   {data.companyRows.length?<table className="w-full min-w-[72rem] text-left text-sm">
+   {data.companyRows.length?<table className="w-full min-w-[72rem] text-left text-sm [&_th:first-child]:sticky [&_th:first-child]:left-0 [&_th:first-child]:z-10 [&_th:first-child]:bg-surface [&_td:first-child]:sticky [&_td:first-child]:left-0 [&_td:first-child]:z-10 [&_td:first-child]:bg-surface">
     <thead><tr className="border-b border-border bg-muted"><th className="p-2">Company</th><th className="p-2">Job</th>
      <th className="p-2">Total</th>{order.map(s=><th key={s} className="p-2">{label(s)}</th>)}</tr></thead>
     <tbody>{data.companyRows.map(row=><tr key={row.jobId} className="border-b border-border">

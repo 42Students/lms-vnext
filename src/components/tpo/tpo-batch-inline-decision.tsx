@@ -1,6 +1,7 @@
 "use client";
 import {useRouter} from "next/navigation";
-import {useRef,useState} from "react";
+import {useState} from "react";
+import {Dialog} from "@/components/ui/dialog";
 import {TpoBatchUndoControl} from "./tpo-batch-undo-control";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
@@ -12,7 +13,8 @@ const LEGACY_INELIGIBLE_REASONS=[
  "Discontinued","Disciplinary","Already has a job",
 ] as const;
 export function TpoBatchInlineDecision({membershipId,batchId,expected}:{membershipId:string;batchId:string;expected:TpoMembershipDecisionSnapshot}){
- const router=useRouter(),reasonDialog=useRef<HTMLDialogElement>(null);
+ const router=useRouter();
+ const [reasonOpen,setReasonOpen]=useState(false);
  const {run}=useGuardedAction({timeoutMs:35000});
  const [decision,setDecision]=useState<Decision>(expected.status??"NOT_DECIDED");
  const [reason,setReason]=useState(expected.reason??"");
@@ -39,30 +41,28 @@ export function TpoBatchInlineDecision({membershipId,batchId,expected}:{membersh
  }
  return <div className="mt-2 flex min-w-0 flex-wrap items-end gap-2">
   <label className="min-w-0 flex-1 text-xs">Learner override
-   <select aria-label="Learner eligibility override" className="mt-1 min-h-10 w-full rounded border border-border bg-surface px-2"
+   <select aria-label="Learner eligibility override" className="mt-1 min-h-11 w-full rounded border border-border bg-surface px-2"
     value={decision} disabled={busy} onChange={event=>{setDecision(event.target.value as Decision);setReviewed(false);}}>
     <option value="NOT_DECIDED">Inherit class/batch</option><option value="ELIGIBLE">Eligible</option><option value="INELIGIBLE">Ineligible</option>
    </select>
   </label>
   {decision==="INELIGIBLE"?<div className="min-w-0 flex-1 space-y-2">
    <p className="text-xs">Reason: {reason.trim()||"Not selected"}</p>
-   <button type="button" disabled={busy} onClick={()=>reasonDialog.current?.showModal()}
-    className="min-h-10 rounded border border-border px-3 text-xs text-primary-text">
+   <button type="button" disabled={busy} onClick={()=>setReasonOpen(true)}
+    className="min-h-11 rounded border border-border px-3 text-xs text-[var(--lms-teal-deep)]">
     Pick ineligibility reason
    </button>
-   <dialog ref={reasonDialog} aria-label="Mark learner ineligible"
-    onCancel={event=>{if(busy)event.preventDefault();}}
-    className="m-auto max-h-[90dvh] w-[calc(100%_-_2rem)] max-w-lg space-y-3 overflow-y-auto rounded-xl border border-border bg-surface p-5 text-foreground backdrop:bg-black/40">
-    <h3 className="font-semibold">Mark learner ineligible</h3>
+   <Dialog open={reasonOpen} onOpenChange={setReasonOpen} dismissible={!busy}
+    title="Mark learner ineligible"><div className="space-y-3">
     <p className="text-sm">Pick the reason. Students never see this. You can undo it straight after.</p>
     <div className="flex flex-wrap gap-2" role="group" aria-label="Common ineligibility reasons">
      {LEGACY_INELIGIBLE_REASONS.map(preset=><button type="button" key={preset}
       aria-pressed={!other&&reason===preset} disabled={busy}
       onClick={()=>{setReason(preset);setOther(false);setReviewed(false);}}
-      className="min-h-10 rounded border border-border px-2 text-xs text-primary-text">{preset}</button>)}
+      className="min-h-11 rounded border border-border px-2 text-xs text-[var(--lms-teal-deep)]">{preset}</button>)}
      <button type="button" aria-pressed={other} disabled={busy}
       onClick={()=>{setOther(true);setReason("");setReviewed(false);}}
-      className="min-h-10 rounded border border-border px-2 text-xs text-primary-text">Other</button>
+      className="min-h-11 rounded border border-border px-2 text-xs text-[var(--lms-teal-deep)]">Other</button>
     </div>
     {other?<label className="block text-sm">Reason
      <textarea autoFocus aria-label="Reason for ineligibility" placeholder="Why are they not in placements?"
@@ -71,11 +71,11 @@ export function TpoBatchInlineDecision({membershipId,batchId,expected}:{membersh
     </label>:null}
     {!valid?<p role="status" className="text-xs text-error">Enter a reason of at least 3 characters.</p>:null}
     <div className="flex gap-2">
-     <button type="button" onClick={()=>reasonDialog.current?.close()} className="min-h-10 rounded border border-border px-3">Cancel</button>
-     <button type="button" disabled={!valid} onClick={()=>reasonDialog.current?.close()}
-      className="min-h-10 rounded bg-primary px-3 text-on-primary disabled:opacity-50">Use reason</button>
+     <button type="button" onClick={()=>setReasonOpen(false)} className="min-h-11 rounded border border-border px-3">Cancel</button>
+     <button type="button" disabled={!valid} onClick={()=>setReasonOpen(false)}
+      className="min-h-11 rounded bg-primary px-3 text-foreground disabled:opacity-50">Use reason</button>
     </div>
-   </dialog>
+   </div></Dialog>
   </div>:null}
   <label className="flex w-full items-center gap-2 text-xs text-body">
    <input type="checkbox" checked={reviewed} disabled={busy}
@@ -83,7 +83,7 @@ export function TpoBatchInlineDecision({membershipId,batchId,expected}:{membersh
    I reviewed this learner eligibility decision; it will be audited.
   </label>
   <button type="button" onClick={()=>void save()} disabled={!valid||busy||!reviewed}
-   className="min-h-10 rounded border border-primary px-3 text-sm disabled:opacity-50">
+   className="min-h-11 rounded border border-primary px-3 text-sm disabled:opacity-50">
    {busy?"Saving…":"Save decision"}</button>
   {error?<p role="alert" className="w-full text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="w-full text-sm">{notice}</p>:null}

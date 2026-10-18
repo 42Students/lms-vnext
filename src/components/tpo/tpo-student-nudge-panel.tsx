@@ -53,7 +53,7 @@ export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
    Select first {Math.min(rows.length,25)} on this page
   </label>
   <div className="max-h-48 space-y-1 overflow-y-auto">
-   {rows.map(row=><label key={row.id} className="flex min-h-9 items-center gap-2 text-sm">
+   {rows.map(row=><label key={row.id} className="flex min-h-11 items-center gap-2 text-sm">
     <input type="checkbox" checked={validSelected.includes(row.id)}
      disabled={pending||(!validSelected.includes(row.id)&&validSelected.length>=25)}
      onChange={e=>setSelected(current=>e.target.checked?[...current,row.id]:current.filter(id=>id!==row.id))}/>
@@ -63,7 +63,7 @@ export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
   <p role="status" className="text-xs text-muted-foreground">{validSelected.length} selected;
    {outside} not registered for placements (messages still deliver).</p>
   <label className="grid gap-1 text-sm">Message template
-   <select value={template} disabled={pending} className="min-h-10 rounded border border-border bg-surface px-3"
+   <select value={template} disabled={pending} className="min-h-11 rounded border border-border bg-surface px-3"
     onChange={e=>setChoice(e.target.value as TpoStudentNudgeTemplate)}>
     {Object.entries(tpoStudentNudgeLabels).map(([key,label])=><option key={key} value={key}>{label}</option>)}
    </select>
@@ -74,7 +74,7 @@ export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
     disabled={pending} value={message} onChange={e=>{setMessage(e.target.value);setNotice("");}}/>
   </label>
   <button type="button" disabled={pending||guardedPending||!validSelected.length}
-   className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50"
+   className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50"
    onClick={()=>setConfirmOpen(true)}>{"Send to "+validSelected.length+" selected"}</button>
   <Dialog open={confirmOpen} onOpenChange={value=>{if(!pending&&!guardedPending)setConfirmOpen(value);}}
    title="Send a message" description={"Send an in-app message to "+validSelected.length+" learner(s)? The message will be audited."}

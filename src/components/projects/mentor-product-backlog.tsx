@@ -3,6 +3,8 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
 import {MentorTaskDetailsEdit} from "./mentor-task-details-edit";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 type Task={id:string;title:string;status:string;sprintId:string|null;carriedFromSprintId?:string|null;updatedAt:Date;
  priority:string;estimatePoints:number|null;
  description:string|null;approach:string|null;acceptanceCriteria:string|null;
@@ -15,18 +17,26 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
  const [adding,setAdding]=useState(false),[title,setTitle]=useState(""),[description,setDescription]=useState(""),[approach,setApproach]=useState(""),[criteria,setCriteria]=useState(""),[priority,setPriority]=useState("MEDIUM"),[points,setPoints]=useState("");
  const [taskType,setTaskType]=useState(""),[dueDate,setDueDate]=useState(""),[blockerReason,setBlockerReason]=useState("");
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
+ const [moveRequest,setMoveRequest]=useState<{task:Task;targetSprintId:string|null}|null>(null);
+ const draftDirty=Boolean(title||description||approach||criteria||points||taskType||dueDate||blockerReason||priority!=="MEDIUM");
+ function discardDraft(){
+  setAdding(false);setTitle("");setDescription("");setApproach("");setCriteria("");
+  setPriority("MEDIUM");setPoints("");setTaskType("");setDueDate("");setBlockerReason("");
+ }
+ const guard=useProjectEditorDiscardGuard(adding,draftDirty,busy,discardDraft);
  const backlog=tasks.filter(task=>task.sprintId===null),completed=tasks.filter(task=>task.status==="DONE");
  const velocity=completed.reduce((sum,task)=>sum+(task.estimatePoints??0),0);
- async function move(task:Task,targetSprintId:string|null){
-  if(busy||readOnly||!window.confirm(targetSprintId?
-    "Pull task into selected sprint?":"Move task into the product backlog?"))return;
+ async function move(){
+  if(busy||readOnly||!moveRequest)return;
+  const {task,targetSprintId}=moveRequest;
   setBusy(true);setError("");setNotice("");
   try{
    await projectMutation("/api/projects/"+encodeURIComponent(projectId)+"/backlog","PATCH",{
     taskId:task.id,targetSprintId,expectedUpdatedAt:new Date(task.updatedAt).toISOString(),
    });
+   setMoveRequest(null);
    setNotice(targetSprintId?"Task pulled into sprint.":"Task returned to backlog.");router.refresh();
-  }catch(e){setError(e instanceof Error?e.message:"Cannot move task.");}finally{setBusy(false);}
+  }catch{setError("Cannot move task.");}finally{setBusy(false);}
  }
  const targets=sprints.filter(s=>s.status!=="COMPLETED");
  const returnable=tasks.filter(task=>task.sprintId!==null&&["TODO","IN_PROGRESS","BLOCKED"].includes(task.status));
@@ -41,12 +51,12 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
    </div>
   </div>
   {!readOnly?<section className="space-y-2">
-    <button type="button" onClick={()=>setAdding(v=>!v)}
-      className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+    <button type="button" onClick={()=>adding?guard.requestClose():setAdding(true)}
+      className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       Add backlog task
     </button>
     {adding?<form onSubmit={async e=>{
-      e.preventDefault();setError("");
+      e.preventDefault();if(busy)return;setError("");
       if(!title.trim()||!Number.isInteger(points?Number(points):0)||
         (points!==""&&(Number(points)<0||Number(points)>1000))){
         setError("Enter a task title and a valid estimate from 0 to 1000.");return;
@@ -63,15 +73,15 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
         setAdding(false);setTitle("");setDescription("");setApproach("");setCriteria("");
         setPriority("MEDIUM");setPoints("");setTaskType("");setDueDate("");setBlockerReason("");
         router.refresh();
-      }catch(err){setError(err instanceof Error?err.message:"Could not add backlog task");}
+      }catch{setError("Could not add backlog task");}
       finally{setBusy(false);}
     }} className="grid gap-3 rounded-lg border border-border p-3 sm:grid-cols-2">
       <label className="text-sm font-semibold">Title<input required maxLength={200} value={title}
         onChange={e=>setTitle(e.target.value)}
-        className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3"/></label>
+        className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-3"/></label>
       <label className="text-sm font-semibold">Priority<select value={priority}
         onChange={e=>setPriority(e.target.value)}
-        className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3">
+        className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-3">
         {["LOW","MEDIUM","HIGH","CRITICAL"].map(v=><option key={v} value={v}>{v}</option>)}
       </select></label>
       <label className="text-sm font-semibold">Description<textarea maxLength={4000}
@@ -85,10 +95,10 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
         className="mt-1 w-full rounded-md border border-border bg-background p-2"/></label>
       <label className="text-sm font-semibold">Estimate points<input type="number" min={0} max={1000}
         value={points} onChange={e=>setPoints(e.target.value)}
-        className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3"/></label>
+        className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-3"/></label>
       <label className="text-sm font-semibold">Task type
         <select value={taskType} onChange={e=>setTaskType(e.target.value)}
-          className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3">
+          className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-3">
           <option value="">Not specified</option>
           <option value="STORY">Story</option><option value="BUG">Bug</option>
           <option value="CHORE">Chore</option><option value="SPIKE">Spike</option>
@@ -96,18 +106,18 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
       </label>
       <label className="text-sm font-semibold">Due date
         <input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}
-          className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3"/>
+          className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-3"/>
       </label>
       <label className="text-sm font-semibold sm:col-span-2">What&apos;s blocking this task?
         <textarea value={blockerReason} maxLength={4000} onChange={e=>setBlockerReason(e.target.value)}
-          className="mt-1 min-h-10 w-full rounded-md border border-border bg-background p-2"/>
+          className="mt-1 min-h-11 w-full rounded-md border border-border bg-background p-2"/>
       </label>
       <div className="flex items-end gap-2"><button type="submit"
         disabled={busy||!title.trim()||(points!==""&&
           (!Number.isInteger(Number(points))||Number(points)<0||Number(points)>1000))}
-        className="min-h-10 rounded-md bg-primary px-3 text-sm font-semibold text-primary-foreground">Add task</button>
-      <button type="button" onClick={()=>setAdding(false)}
-        className="min-h-10 rounded-md border border-border px-3 text-sm">Cancel</button></div>
+        className="min-h-11 rounded-md bg-primary px-3 text-sm font-semibold text-primary-foreground">Add task</button>
+      <button type="button" onClick={guard.requestClose}
+        className="min-h-11 rounded-md border border-border px-3 text-sm">Cancel</button></div>
     </form>:null}
   </section>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
@@ -132,8 +142,8 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
           dueDate={task.dueDate} blockerReason={task.blockerReason}/>
       </div>:null}
     {!readOnly?<label className="mt-2 block text-sm font-semibold">Pull into sprint
-     <select disabled={busy} defaultValue="" onChange={e=>{const id=e.target.value;if(id)void move(task,id);}}
-      className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-2">
+     <select disabled={busy} value="" onChange={e=>{const id=e.target.value;if(id)setMoveRequest({task,targetSprintId:id});}}
+      className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-2">
       <option value="">Choose sprint</option>
       {targets.map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
      </select>
@@ -145,11 +155,21 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
     Return unfinished tasks to backlog</summary>
     <div className="mt-2 space-y-2">
      {returnable.map(task=><button key={task.id} type="button" disabled={busy}
-        onClick={()=>void move(task,null)}
-        className="block min-h-10 w-full rounded-md border border-border p-2 text-left text-sm">
+        onClick={()=>setMoveRequest({task,targetSprintId:null})}
+        className="block min-h-11 w-full rounded-md border border-border p-2 text-left text-sm">
         {task.title} · Return to backlog
        </button>)}
     </div>
   </details>:null}
+  <ConfirmDialog open={moveRequest!==null} onOpenChange={open=>{if(!open&&!busy)setMoveRequest(null);}}
+   title={moveRequest?.targetSprintId?"Pull task into selected sprint?":"Move task into the product backlog?"}
+   description={moveRequest?.task.title??"Task movement will update the project board."}
+   confirmLabel="Confirm" pending={busy} confirmVariant="primary" onConfirm={move}>
+   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  </ConfirmDialog>
+  <ConfirmDialog open={guard.discardOpen} onOpenChange={guard.setDiscardOpen}
+   title="Discard backlog task changes?"
+   description="You have unsaved project changes. Leave this page and discard them?"
+   confirmLabel="Discard changes" pending={busy} onConfirm={guard.confirmDiscard}/>
  </section>;
 }
