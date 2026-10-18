@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/selection-controls";
 import { Dialog } from "@/components/ui/dialog";
+import { Disclosure } from "@/components/ui/disclosure";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Drawer } from "@/components/ui/drawer";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { FileUpload } from "@/components/ui/file-upload";
@@ -87,6 +89,13 @@ function UIKitTestSurface() {
         helper="PDF file, maximum 1 KB" maxBytes={1024}
         onFiles={files => setFileStatus(files?.length ? "Selected: " + files[0]!.name : "No file selected")}/>
       <p role="status" data-testid="file-status">{fileStatus}</p>
+    </section>
+
+    <section aria-label="Loading and disclosure fixture" className="space-y-3">
+      <Skeleton variant="row" count={2} label="Loading project workspace status"/>
+      <Disclosure title="More workspace information">
+        <p>Disclosed workspace details</p>
+      </Disclosure>
     </section>
 
     <section aria-label="Toast fixture" className="flex gap-3">
