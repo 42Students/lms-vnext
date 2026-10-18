@@ -88,3 +88,23 @@ npx playwright test tests/e2e/ux-safe-internal-href-chat17.spec.ts
 # after preparing an EMPTY disposable database with the registered migration journal
 npm run test:db:projects-harness
 ```
+
+## Live browser coverage extension (UX-kit-HARDEN-38/39, UX-kit-E2E-01..03)
+
+The latest shared CI reports available to lane chat-17 do not list chat-17-specific TypeScript or unit failures; their dates/SHAs may precede this branch's new tests. Checked-in branch additions include:
+
+- `src/components/ui/toast.tsx`: use provider-owned monotonic IDs rather than unsupported WebView `crypto.randomUUID` for UI notifications.
+- `src/components/ui/use-overlay-webview.ts`: update viewport metrics from `window.resize` even without the optional `window.visualViewport` object, and remove that listener during cleanup.
+- `src/app/e2e/chat17-ui-kit/page.tsx` plus `ui-harness.tsx`: **development-only** real React fixtures behind `notFound()` on production builds.
+- `tests/e2e/chat17-ui-kit-interactions.spec.ts`: Chromium keyboard/scroll/media-fallback/file-selection/toast behavioral journeys. `tests/unit/UX-kit-dev-harness-chat17.test.ts` verifies the route gate.
+
+Run:
+```bash
+npm run test:ux:kit:hardening
+npm run test:chat17:weak
+npm run test:e2e:chat17:kit
+# only on an EMPTY disposable database with all registered migrations
+npm run test:db:projects-harness
+```
+
+**Runner caveat:** this GitHub-only environment cannot execute local compilation, Vitest, Playwright or PostgreSQL, so the new browser fixture/tests are pushed for the next runner pass rather than claimed green. Independently test nested modal Back ownership, physical screen-reader announcements and any named unowned page/role failures before designating the whole queue complete.

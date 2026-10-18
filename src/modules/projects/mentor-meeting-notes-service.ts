@@ -9,6 +9,7 @@ import {hasActiveMembership,hasMembershipRole,type RequestContext}
 import {can} from "@/modules/permissions/policy";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {requireProjectReadAccess} from "./access";
+import {assertPersistedProjectMutationActor} from "./persisted-mentor-mutation";
 import {ProjectsServiceError} from "./errors";
 import {mentorMeetingNotesParamsSchema,mentorMeetingNotesWriteSchema,meetingNotesEditable}
   from "./mentor-meeting-notes-model";
@@ -47,6 +48,7 @@ export async function updateMentorMeetingNotes(context:RequestContext,
     const [project]=await tx.select({status:projectInstances.status})
       .from(projectInstances).where(and(eq(projectInstances.id,scope.project.id),
         eq(projectInstances.collegeId,scope.collegeId))).for("update").limit(1);
+    await assertPersistedProjectMutationActor(tx,context,scope);
     const [meeting]=await tx.select().from(projectMeetings).where(and(
       eq(projectMeetings.id,params.meetingId),
       eq(projectMeetings.projectId,scope.project.id),

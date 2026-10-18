@@ -15,6 +15,8 @@ function UIKitTestSurface() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [tab, setTab] = useState("overview");
   const [fileStatus, setFileStatus] = useState("No file selected");
+  const [pickerDisabled, setPickerDisabled] = useState(false);
+  const [wideScroll, setWideScroll] = useState(true);
   const { showToast } = useToast();
 
   return <main className="mx-auto max-w-4xl space-y-8 p-4">
@@ -39,11 +41,14 @@ function UIKitTestSurface() {
     </section>
 
     <section aria-label="Scroll fixture">
-      <div className="w-56">
+      <Button variant="secondary" onClick={() => setWideScroll(value => !value)}>
+        {wideScroll ? "Narrow scroll content" : "Widen scroll content"}
+      </Button>
+      <div className="mt-2 w-56">
         <ScrollCue axis="x" label="Harness horizontal overflow">
-          <div className="w-[1200px] whitespace-nowrap p-3">
+          <div className={wideScroll ? "w-[1200px] whitespace-nowrap p-3" : "w-28 whitespace-nowrap p-3"}>
             <span>Scroll position: first</span>
-            <span className="ml-[850px]">Scroll position: last</span>
+            {wideScroll ? <span className="ml-[850px]">Scroll position: last</span> : null}
           </div>
         </ScrollCue>
       </div>
@@ -57,7 +62,10 @@ function UIKitTestSurface() {
       </div>}/>
 
     <section aria-label="Upload fixture" className="space-y-2">
-      <FileUpload id="harness-proof" label="Project proof PDF" accept=".pdf"
+      <Button variant="secondary" onClick={() => setPickerDisabled(value => !value)}>
+        {pickerDisabled ? "Enable file selection" : "Disable file selection"}
+      </Button>
+      <FileUpload id="harness-proof" label="Project proof PDF" accept=".pdf" disabled={pickerDisabled}
         helper="PDF file, maximum 1 KB" maxBytes={1024}
         onFiles={files => setFileStatus(files?.length ? "Selected: " + files[0]!.name : "No file selected")}/>
       <p role="status" data-testid="file-status">{fileStatus}</p>

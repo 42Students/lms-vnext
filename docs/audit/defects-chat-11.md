@@ -57,6 +57,8 @@ Scope: IIT Dharwad College Admin Projects role journeys, TPO Settings final-spri
 
 | CHAT11-TPO-16 | MAJOR | Job-type custom labels excluded Unicode combining marks used by Telugu and many Indian-language names, yet allowed punctuation-only names like `--`, weakening data quality. | `637e30f`, `6da2ea7`, `aa74042`: include Unicode marks within bounded names while requiring at least one Unicode letter or digit. | `TPO-settings-audit-CONFIG-01` | Cloud unit and legacy parity rerun pending |
 
+| CHAT11-PROJ-12 | BLOCKER | College Admin member creation checked a learner/Mentor candidate through `loadEligibleMembership` outside its mutation transaction. Suspending that person's membership or revoking the role after this read could leave an unauthorized project member and notification. | `9fee976`, `39fb5e3`: read and SHARE-lock target user, active membership and role from the project transaction after actor reauthorization and before insert. | `PROJ-COL-REVOKE-04` | Two-session PostgreSQL race pending |
+
 ## Latest r9 unit-failure disposition
 
 `tests/unit/company-share-mobile-cards.test.ts` is the only chat-11 entry in `docs/orchestrator/unit-failures-r9.md`. On the synchronized main baseline, the tested `src/app/company-share/[token]/page.tsx`, shared DataTable mobile/desktop branches, and `projectCompanyShareRows` match the listed selected-field assertions. This appears fixed by subsequent main changes. **Do not delete or loosen this privacy test**; require the orchestrator to rerun it on the updated branch.
