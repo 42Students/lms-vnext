@@ -43,7 +43,8 @@ vi.mock("@/components/placements/placement-report-ui",async()=>{
   const plain=({children}:{children?:import("react").ReactNode})=>createElement("div",{},children);
   return {
     ReportCsvLink:()=>createElement("a",{href:"/tpo/reports/export"},"Export CSV"),
-    ReportFilters:plain,ReportNavigation:plain,ReportMetrics:plain,ReportScopeNote:plain,
+    ReportFilters:plain,ReportNavigation:plain,ReportMetrics:plain,
+    ReportScopeNote:({note}:{note:string})=>createElement("p",{},note),
     ReportTable:({title,rows,emptyDescription}:{
       title:string;rows:readonly (readonly unknown[])[];emptyDescription:string;
     })=>createElement("section",{"aria-label":title},
