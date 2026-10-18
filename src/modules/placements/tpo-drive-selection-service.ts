@@ -194,7 +194,8 @@ export async function verifyAndReleaseTpoSelections(context:RequestContext,rawJo
         const offerId=candidate.offer.id;
         await getDb().transaction(async tx=>{
           await requireTpoJobActor(tx,context);
-          await requireActiveTpoSelectionSeason(tx,job.id,context.membership!.collegeId);
+          // This only reconciles an already-issued official offer. Allow
+          // durable recovery after season closure without issuing anything.
           const [locked]=await tx.select().from(placementDriveSelections)
             .where(and(eq(placementDriveSelections.id,id),eq(placementDriveSelections.jobId,job.id)))
             .for("update").limit(1);
