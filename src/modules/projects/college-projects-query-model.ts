@@ -1,12 +1,19 @@
 import { z } from "zod";
 
 const statuses = ["PLANNED", "ACTIVE", "COMPLETED", "ARCHIVED"] as const;
+// URL page values must be base-10 integers. z.coerce.number() also accepts
+// scientific notation, hexadecimal and surrounding whitespace from hostile URLs.
+const positivePageNumber = (max: number, defaultValue: number) =>
+  z.union([
+    z.number().int().min(1).max(max),
+    z.string().regex(/^[0-9]+$/).transform(Number).pipe(z.number().int().min(1).max(max)),
+  ]).default(defaultValue);
 const schema = z.object({
   q: z.string().trim().max(120).optional(),
   status: z.enum(statuses).optional(),
   view: z.enum(["cards", "table"]).default("cards"),
-  page: z.coerce.number().int().min(1).max(100000).default(1),
-  pageSize: z.coerce.number().int().min(10).max(100).default(25),
+  page: positivePageNumber(100000, 1),
+  pageSize: z.union([z.number().int().min(10).max(100), z.string().regex(/^[0-9]+$/).transform(Number).pipe(z.number().int().min(10).max(100))]).default(25),
 });
 
 function first(value: string | string[] | undefined) {
