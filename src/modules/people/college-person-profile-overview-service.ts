@@ -2,6 +2,7 @@ import "server-only";
 import {and,eq} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {collegeMemberships,facultyProfiles,learnerProfiles} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
@@ -15,12 +16,20 @@ export async function getCollegePersonProfileOverview(ctx:RequestContext,rawId:u
  const id=z.uuid().parse(rawId),kind=z.enum(["FACULTY","LEARNER"]).parse(rawKind);
  const scope=await resolveActingCollege(ctx,"people.manage");
  const person=await getCollegePersonEditor(ctx,id,kind);
- const [row]=await getDb().select({
+ // A private profile must never be read using a College Admin session
+ // revoked after the editor preflight completed. Lock the persisted actor
+ // until the tenant-scoped document read has completed.
+ const [row]=await getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,ctx,"people.manage",{
+   collegeId:scope.collegeId,organizationId:scope.organizationId,
+  });
+  return tx.select({
   faculty:facultyProfiles.profileDocument,learner:learnerProfiles.profileDocument,
  }).from(collegeMemberships)
   .leftJoin(facultyProfiles,eq(facultyProfiles.membershipId,collegeMemberships.id))
   .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
   .where(and(eq(collegeMemberships.id,id),eq(collegeMemberships.collegeId,scope.collegeId))).limit(1);
+ });
  if(!row)throw Error("PERSON_NOT_FOUND");
  if(kind==="FACULTY"){
   const d=facultyProfileDocumentSchema.parse(row.faculty??{});

@@ -91,3 +91,14 @@ The coverage ledger maps these six previously unmapped board-review exports to a
 | PROJ-BREAK-MENTOR-60..63 | S2 resilience / hostile query | Direct team-meeting pagination now clamps invalid pages; runtime tests exercise persisted review labeling, URL scope preservation, percent/underscore/backslash SQL pattern escaping and duplicate/unrecognized export filters. | `1b05fd6f`, test `3b3d3655`. | Real DB/HTTP and accessibility unrun |
 
 Cloud tests/typecheck and independent review remain required. These are authored fixes and assertions, not certification.
+
+
+## Mentor page runtime tests and legacy transition correction
+
+| Gap | Severity | Evidence / result | Fix and regression | Verification |
+|---|---|---|---|---|
+| PROJ-BREAK-MENTOR-64..75 | S2 page trust and UX | Mentor reports and Team coverage pages previously collapsed repeated query values by taking the first (including conflicting same-value duplicates). Both now reject multi-value filters with an actionable invalid-filter view before any data fetch. Render tests exercise malformed/duplicated query, unauthorized role, disabled module, empty roster, populated scoped data, safe navigation, partial export and service denial. | `146f49a9`, `a1b982db`, `c1af67bb`, `018b6d4b` | Mocked server-render tests authored/unrun; true HTTP session expiry, mobile keyboard and browser tests pending |
+| PROJ-BREAK-MENTOR-76..82 | Coverage | Added runtime state matrix for recognized task estimate units, permitted SUBMITTED/ACTIVE review, version rendering, closeout readiness (including archived and negative counts), review-token/confirmation, and archive-last sorting with unknown progress. | `05e09da6` | Behaviour authored/unrun; actual PostgreSQL services and E2E still open |
+| PROJ-BREAK-state-04 | S1 stale regression test | `mentor-final-delivery-decision-model.test.ts` still expected a Mentor to review a SUBMITTED final delivery on a COMPLETED project; current hardening policy correctly forbids this. Retained the ACTIVE success case and added explicit COMPLETED/PLANNED denials rather than reverting the fix. | `ee5ba6e8` | New cloud Vitest feedback pending |
+
+The canonical ledger additionally links existing inspected runtime assertions for 12 previously incorrectly unmapped portfolio, activity, export and work-filter symbols. Mapping a test is **not** proof of 90% branch coverage or a passing CI build.

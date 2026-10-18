@@ -1,5 +1,5 @@
 import "server-only";
-import { and, eq, inArray, count } from "drizzle-orm";
+import { and, asc, eq, inArray, count } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { placementApplications, placementJobs, placementOffers } from "@/db/schema";
 import { placementDriveSelections } from "@/db/schema/placement-drive-selections";
@@ -96,11 +96,12 @@ export async function recordTpoDriveSelections(context: RequestContext, rawJobId
     const applications = await tx.select({id:placementApplications.id}).from(placementApplications)
       .where(and(eq(placementApplications.jobId, job.id),
         inArray(placementApplications.id,input.entries.map(e=>e.applicationId)),
-        eq(placementApplications.status,"SUBMITTED"))).for("update");
+        eq(placementApplications.status,"SUBMITTED")))
+      .orderBy(asc(placementApplications.id)).for("update");
     if (applications.length !== input.entries.length) throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
     const existing = await tx.select().from(placementDriveSelections)
       .where(inArray(placementDriveSelections.applicationId,input.entries.map(e=>e.applicationId)))
-      .for("update");
+      .orderBy(asc(placementDriveSelections.applicationId)).for("update");
     if (existing.some(row => row.jobId !== job.id || row.status !== "SELECTED")) {
       throw new PlacementsServiceError("PLACEMENT_OFFER_ACTIVE_EXISTS");
     }

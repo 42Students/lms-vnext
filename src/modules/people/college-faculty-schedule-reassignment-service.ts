@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,eq,gt,lt,ne,or} from "drizzle-orm";
+import {and,asc,eq,gt,lt,ne,or,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
@@ -67,6 +67,11 @@ export async function reassignFacultyUpcomingSchedules(ctx:RequestContext,rawId:
   await assertPersistedPlatformPermission(tx,ctx,"academics.manage",{
    collegeId:m.collegeId,organizationId:m.organizationId,
   });
+  // Concurrent moves from different source faculty into the SAME replacement
+  // must serialize before checking overlap, or both can observe an empty
+  // schedule and commit clashing lectures. Advisory key collisions only
+  // over-serialize; the lock is released on transaction commit/rollback.
+  await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${input.replacementMembershipId}))`);
   const sessions=await tx.select({id:sectionScheduleEvents.id,title:sectionScheduleEvents.title,
    sectionId:sectionScheduleEvents.sectionId,startsAt:sectionScheduleEvents.startsAt,
    endsAt:sectionScheduleEvents.endsAt})
