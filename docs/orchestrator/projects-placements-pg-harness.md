@@ -179,3 +179,7 @@ The fixture now publishes version 1 of its template before assigning it to the c
 ### PROJ-HARNESS-48 service-contract correction
 
 The initially authored stricter PLANNED-state denial was **not** faithful to live product services. `task-submission-service.ts`, `submission-service.ts`, and `meeting-service.ts` currently allow PLANNED projects and refuse only COMPLETED/ARCHIVED, with additional task/sprint/access constraints. Rather than invent a harness-only prohibition, `requireMutableFixtureProject` now uses the same terminal-state predicate; `PROJ-HARNESS-48` verifies positive PLANNED paths and `43/46` retain negative terminal-state checks. The default fixture still uses explicit ACTIVE state to model an in-progress IIT Dharwad workspace. Any proposal to prohibit PLANNED in production belongs to the owning Projects lane with cross-role review, not to this fixture helper.
+
+### PROJ-HARNESS-GUARD-13: stable negative date invariants
+
+The sprint date-order CHECK witness now uses 2099-10-22 > 2099-10-21, and the duplicate ACTIVE placement season uses a deterministic 2099 interval. These avoid fixture drift as the 2026/2027 calendar passes while preserving the exact SQLSTATE assertions. The fixed 2020 application deadline in `PLACEMENTS-13` is intentional **expired input** for a negative authorization test, not a positive fixture. `PROJ-HARNESS-GUARD-13` guards against reintroducing near-future test dates.
