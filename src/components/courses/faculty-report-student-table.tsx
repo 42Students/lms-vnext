@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
+import { DataTable } from "@/components/ui/data-table";
 import { facultyReportIstTimestamp } from "@/modules/courses/faculty-report-time";
 import { facultyReportStudentPage, type FacultyReportStudentRow } from "@/modules/courses/faculty-report-students";
 
@@ -50,49 +51,28 @@ export function FacultyReportStudentTable({
       ) : result.rows.length === 0 ? (
         <p className="mt-4 text-sm text-body">No students match this search.</p>
       ) : (
-        <>
-          <div className="mt-4 hidden overflow-x-auto md:block">
-            <table className="w-full min-w-[40rem] text-left text-sm">
-              <thead className="border-b border-border text-muted-foreground">
-                <tr>
-                  <th scope="col" className="py-2 pr-3">Learner</th>
-                  <th scope="col" className="py-2 pr-3">Score</th>
-                  <th scope="col" className="py-2 pr-3">Submitted</th>
-                  <th scope="col" className="py-2 pr-3">Details</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {result.rows.map((student) => (
-                  <tr key={student.id}>
-                    <td className="py-3 pr-3 font-semibold text-foreground">
-                      {student.name}
-                    </td>
-                    <td className="py-3 pr-3">
-                      <span className="font-semibold text-foreground">
-                        {student.percent === null ? "—" : student.percent + "%"}
-                      </span>
-                      <span className="block text-xs text-muted-foreground">{student.score}</span>
-                    </td>
-                    <td className="py-3 pr-3">{formatDate(student.submittedAt)}</td>
-                    <td className="py-3 pr-3">{student.note}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div className="mt-4 space-y-3 md:hidden">
-            {result.rows.map((student) => (
-              <article key={student.id} className="rounded-lg border border-border p-4">
-                <h3 className="font-semibold text-foreground">{student.name}</h3>
-                <p className="mt-2 text-sm text-body">
-                  <strong>{student.percent === null ? "Not graded" : student.percent + "%"}</strong>
-                  {" · "}{student.score}
-                </p>
-                <p className="mt-1 text-xs text-muted-foreground">{formatDate(student.submittedAt)} · {student.note}</p>
-              </article>
-            ))}
-          </div>
-        </>
+        <div className="mt-4 min-w-0">
+          <DataTable
+            caption={title}
+            rows={result.rows}
+            getRowKey={student=>student.id}
+            empty={<p className="text-sm text-body">No students match this search.</p>}
+            columns={[
+              {key:"learner",header:"Learner",mobilePriority:"primary" as const,
+                cell:(student)=><strong className="break-words text-foreground">{student.name}</strong>},
+              {key:"score",header:"Score",mobilePriority:"secondary" as const,
+                cell:(student)=><span>
+                  <strong className="text-foreground">{student.percent===null?"Not graded":student.percent+"%"}</strong>
+                  <span className="block text-xs text-muted-foreground">{student.score}</span>
+                </span>},
+              {key:"submitted",header:"Submitted",mobilePriority:"secondary" as const,
+                cell:(student)=>formatDate(student.submittedAt)},
+              {key:"details",header:"Details",mobilePriority:"secondary" as const,
+                cell:(student)=>student.note},
+            ]}
+          />
+        </div>
+
       )}
 
       {result.pages > 1 ? (
