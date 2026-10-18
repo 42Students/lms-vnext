@@ -7,7 +7,7 @@ describe("Chat-4 College UX round one",()=>{
   const source=page("college");
   expect(source).toContain("min-w-0 overflow-x-clip space-y");
   expect(source).toContain("min-h-11");
-  expect(source).toContain('sticky top-0 z-10 bg-surface');
+  expect(source).toContain('<DataTable rows={lowAttendance.rows}');
  });
  it("UX-college-academics-01 preserves narrow-screen content and 44px navigation targets",()=>{
   const source=page("college/academics");

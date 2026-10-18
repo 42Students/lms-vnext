@@ -15,6 +15,7 @@ import { getCollegeDashboardPendingGrades } from "@/modules/admin-ui/college-das
 import { getCollegeDashboardSetupGaps } from "@/modules/admin-ui/college-dashboard-setup-gaps-service";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { DataTable } from "@/components/ui/data-table";
 import { listColleges } from "@/modules/colleges/service";
 import { formatCollegeHeaderDate } from "@/modules/admin-ui/college-dashboard-cards-model";
 import { COLLEGE_LEGACY_PAGE_TITLES } from "@/modules/people/college-page-title-model";
@@ -194,21 +195,14 @@ export default async function CollegeOverviewPage() {
         </p>
         {lowAttendance.rows.length === 0
           ? <p className="text-sm text-muted-foreground">No learners below the attendance threshold.</p>
-          : <div className="max-h-72 overflow-auto">
-            <table className="w-full text-left text-sm [&_th:first-child]:sticky [&_th:first-child]:left-0 [&_th:first-child]:z-10 [&_th:first-child]:bg-surface [&_td:first-child]:sticky [&_td:first-child]:left-0 [&_td:first-child]:z-10 [&_td:first-child]:bg-surface">
-              <thead className="sticky top-0 z-10 bg-surface"><tr className="border-b border-border">
-                <th scope="col" className="py-2">Student</th>
-                <th scope="col" className="py-2">Attendance</th>
-                <th scope="col" className="py-2">Sessions attended</th>
-              </tr></thead>
-              <tbody>{lowAttendance.rows.map(row => <tr key={row.membershipId}
-                className="border-b border-border">
-                <td className="py-2 font-semibold">{row.displayName ?? row.membershipId}</td>
-                <td className="py-2">{row.percent}%</td>
-                <td className="py-2">{row.attended} / {row.marked}</td>
-              </tr>)}</tbody>
-            </table>
-          </div>}
+          : <DataTable rows={lowAttendance.rows} getRowKey={row=>row.membershipId}
+            caption="Learners below attendance threshold"
+            columns={[
+              {key:"name",header:"Student",mobilePriority:"primary",cell:row=>row.displayName??row.membershipId},
+              {key:"attendance",header:"Attendance",mobilePriority:"secondary",cell:row=>row.percent+"%"},
+              {key:"sessions",header:"Sessions attended",mobilePriority:"secondary",cell:row=>row.attended+" / "+row.marked},
+            ]}
+            empty={<p className="text-sm text-muted-foreground">No learners below the attendance threshold.</p>}/>}
         {lowAttendance.rows.length === 200 &&
           <p className="text-xs text-muted-foreground">Showing first 200 at-risk learners. Open attendance for full reports.</p>}
       </section>
