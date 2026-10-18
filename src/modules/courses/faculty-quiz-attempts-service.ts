@@ -22,7 +22,7 @@ export async function getFacultyQuizAttemptDrilldown(context:RequestContext,raw:
     ...page,
     items:page.items.map(attempt=>({
       id:attempt.id,
-      learnerName:attempt.learnerDisplayName||attempt.learnerEmail||"Learner",
+      learnerName:attempt.learnerDisplayName?.trim()||"Learner",
       attemptNumber:attempt.attemptNumber,
       submittedAt:attempt.submittedAt,
       score:attempt.score,

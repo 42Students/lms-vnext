@@ -18,6 +18,7 @@ export const releaseSelectionsSchema = z.object({
   expectedRecordedAt: z.record(z.string().uuid(), z.string().datetime({offset:true})),
 }).strict().refine(input =>
   new Set(input.selectionIds).size === input.selectionIds.length &&
+  Object.keys(input.expectedRecordedAt).length === input.selectionIds.length &&
   input.selectionIds.every(id => Boolean(input.expectedRecordedAt[id])),
   "Each selection needs the original recorded timestamp");
 

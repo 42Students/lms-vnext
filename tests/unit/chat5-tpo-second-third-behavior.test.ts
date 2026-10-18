@@ -5,7 +5,7 @@ import {
  type RoundResultEntry,
 } from "@/modules/placements/tpo-round-result-table-model";
 import {
- offerRegisterQuery,projectOfferRegister,tpoDriveOfferRegisterCsv,offerExpiryIndicator,
+ offerRegisterQuery,projectOfferRegister,tpoDriveOfferRegisterCsv,offerExpiryIndicator,offerResponseHoursRemaining,optionalOfferInstantIso,
  type OfferRegisterFact,
 } from "@/modules/placements/tpo-drive-offer-register-model";
 import {tpoOfferEvidenceQuery,projectOfferEvidence} from "@/modules/placements/tpo-offer-evidence-model";
@@ -115,6 +115,30 @@ describe("chat-5 TPO second-third: behavioural round and offer reporting",()=>{
   const pageSource=src("src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/page.tsx");
   expect(pageSource).toContain('["EXPIRED","Expired",data.counts.expired]');
   expect(offerRegisterQuery.safeParse({jobId:uuid,status:"CANCELLED"}).success).toBe(false);
+ });
+ it("PLACEMENTS-OFFERS-EXPIRY-07 never crashes or invents response hours for malformed optional timestamps",()=>{
+  const asOf=new Date("2099-10-18T10:00:00.000Z");
+  const invalid=new Date(Number.NaN);
+  const broken:OfferRegisterFact={offer:{
+    id:"invalid-optional",status:"ISSUED",kind:"OFFER",roleTitle:"Engineer",
+    annualCtcInr:900000,issuedAt:asOf,respondedAt:invalid,expiresAt:invalid,
+    acceptedDisputableUntil:invalid,
+  },joining:null,candidate};
+  expect(optionalOfferInstantIso(invalid)).toBeNull();
+  expect(optionalOfferInstantIso(asOf)).toBe(asOf.toISOString());
+  expect(offerResponseHoursRemaining("ISSUED",invalid,asOf)).toBeNull();
+  expect(offerResponseHoursRemaining("ISSUED",asOf,invalid)).toBeNull();
+  expect(offerResponseHoursRemaining("ACCEPTED",asOf,asOf)).toBeNull();
+  const projected=projectOfferRegister([broken],"ALL",1,"","ALL",asOf);
+  expect(projected.rows[0]).toMatchObject({
+    expires:null,responded:null,acceptedDisputableUntil:null,
+    respondByHours:null,expiryIndicator:"UNKNOWN",
+  });
+  const csv=tpoDriveOfferRegisterCsv([broken],offerRegisterQuery.parse({jobId:uuid}));
+  expect(csv.totalMatching).toBe(1);
+  expect(csv.csv).toContain("Not recorded");
+  expect(csv.csv).toContain("UNKNOWN");
+  expect(csv.csv).not.toContain("NaN");
  });
  it("PLACEMENTS-OFFERS-EXPIRY-04 distinguishes exact deadline, seven-day edge and invalid evidence",()=>{
   const expiry=new Date("2099-10-25T10:00:00.000Z");
