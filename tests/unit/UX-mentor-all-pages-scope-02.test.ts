@@ -20,7 +20,7 @@ const pages=[
     "route": "/mentor/calendar",
     "file": "src/app/(authenticated)/mentor/calendar/page.tsx",
     "service": "listMyMentorCalendarMeetings",
-    "state": "No upcoming meetings"
+    "state": "MentorMeetingsCalendar"
   },
   {
     "route": "/mentor/notifications",
