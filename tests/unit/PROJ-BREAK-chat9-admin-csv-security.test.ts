@@ -32,13 +32,14 @@ describe("IIT Dharwad Projects admin exports: spreadsheet injection resilience",
     expect(data).not.toContain("\u0000");
   });
 
-  it("PROJ-BREAK-exports-12/13/14/15 all five client exports use the tested sanitizer", () => {
+  it("PROJ-BREAK-exports-12/13/14/15 all six client exports use the tested sanitizer", () => {
     for (const file of [
       "project-audit-page-export.tsx",
       "project-submissions-page-export.tsx",
       "project-admin-workspace-page-export.tsx",
       "project-at-risk-page-export.tsx",
       "super-admin-template-page-export.tsx",
+      "project-workspace-page-export.tsx",
     ]) {
       const source = readFileSync("src/components/projects/" + file, "utf8");
       expect(source.startsWith('"use client";'), file).toBe(true);
