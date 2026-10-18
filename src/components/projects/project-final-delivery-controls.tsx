@@ -85,6 +85,8 @@ export function LearnerFinalDeliveryControl({
   const [linkUrl,setLinkUrl]=useState("");
   const [pending, setPending] =
     useState(false);
+  // One shared lock for manual save, debounced autosave and final submission.
+  const pendingRef = useRef(false);
   const [error, setError] =
     useState<string | null>(null);
   const [autosaveStatus,setAutosaveStatus]=useState<"idle"|"saving"|"saved"|"failed">("idle");
@@ -129,6 +131,8 @@ export function LearnerFinalDeliveryControl({
     event: FormEvent<HTMLFormElement>,
   ) {
     event.preventDefault();
+    if (pendingRef.current) return;
+    pendingRef.current = true;
     setError(null);
     setPending(true);
     try {
@@ -165,6 +169,7 @@ export function LearnerFinalDeliveryControl({
           : "Could not save the final draft.",
       );
     } finally {
+      pendingRef.current = false;
       setPending(false);
     }
   }
@@ -175,6 +180,8 @@ export function LearnerFinalDeliveryControl({
     const snapshot=JSON.stringify(payload);
     if(snapshot===lastSavedSnapshot.current||snapshot===failedSnapshot.current)return;
     const timer=window.setTimeout(async()=>{
+      if(pendingRef.current)return;
+      pendingRef.current=true;
       setAutosaveStatus("saving");setPending(true);
       try{
         await projectMutation(
@@ -188,6 +195,7 @@ export function LearnerFinalDeliveryControl({
         failedSnapshot.current=snapshot;
         setAutosaveStatus("failed");
       }finally{
+        pendingRef.current=false;
         setPending(false);
       }
     },1800);
@@ -197,15 +205,25 @@ export function LearnerFinalDeliveryControl({
   const unsaved=JSON.stringify(currentPayload())!==savedSnapshot;
 
   async function submitDraft() {
-    if (!draft) return;
-    const hasEvidence=Boolean(draft.sourceUrl||draft.demoUrl||
-      draft.attachments?.some(item=>Boolean(item)&&typeof item==="object"&&
-        (item as {kind?:unknown}).kind==="FILE"));
-    if(!draft.summary.trim()||!hasEvidence){
+    if (!draft || pendingRef.current) return;
+    // The server props may be stale after a successful autosave but before a
+    // router refresh. The saved snapshot represents the last acknowledged
+    // persisted version; never submit an unsaved edit or trust local-only data.
+    if(JSON.stringify(currentPayload())!==lastSavedSnapshot.current){
+      showToast({tone:"error",title:"Save your latest changes before submitting."});
+      return;
+    }
+    const saved=JSON.parse(lastSavedSnapshot.current) as {
+      summary:string;sourceUrl?:string;demoUrl?:string;attachments?:DeliveryAttachment[];
+    };
+    const hasEvidence=Boolean(saved.sourceUrl||saved.demoUrl||
+      saved.attachments?.some(item=>item.kind==="FILE"));
+    if(!saved.summary.trim()||!hasEvidence){
       showToast({tone:"error",title:"Add at least one attachment and a summary before submitting."});
       return;
     }
     if(!window.confirm("Submit on behalf of your team?"))return;
+    pendingRef.current=true;
     setPending(true);
     try {
       await projectMutation(
@@ -227,6 +245,7 @@ export function LearnerFinalDeliveryControl({
             : undefined,
       });
     } finally {
+      pendingRef.current=false;
       setPending(false);
     }
   }
