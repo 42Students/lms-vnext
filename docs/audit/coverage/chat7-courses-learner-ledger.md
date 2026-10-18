@@ -157,3 +157,20 @@ Both tests were authored without execution as requested. Role/tenant and schedul
 | `bulkSuperAdminLessonVisibility`, `bulkSuperAdminCourseVisibility` | SQL counts currently published lesson contents under published paths, active offering/course/lesson, matching department and academic-period college; draft-only rows do not consume the 500-row safety cap | `tests/unit/chat7-superadmin-bulk-published-only.test.ts`, `tests/unit/chat7-superadmin-course-bulk-typed-boundaries.test.ts` — `SA-COURSES-BULK-PUBLISHED-06/SA-COURSES-BULK-SCOPE-07` |
 
 The owner has deferred CI and PostgreSQL integration until final all-lane completion. These changes are committed to the lane branch but neither a green test run nor tenant-race sign-off is claimed.
+
+## Legacy learner profile certification role journey
+
+| Export and page | Contract | Behavioral test |
+|---|---|---|
+| `learnerProfileDocumentSchema.shape.certifications`, `/learn/profile` | The profile's **Certifications** section is not an auto-awarded course-completion certificate. Credentials require a name, valid independent optional calendar dates and, when both exist, expiry strictly after issue; rejects extra injected owner/college identity. The saved profile uses the existing authenticated profile-write path. | `tests/unit/chat7-learner-certification-date-parity.test.ts` — `LEARNER-CERT-EXPIRY-01` (authored, CI/browser pending) |
+
+Source-only crosswalk: `docs/audit/legacy-vs-vnext-chat7-learner-gaps.md`. Learner source routes and legacy copy mapped, but dev and production legacy runtime sign-off are still outstanding.
+
+## Legacy lesson resource link and certificate parity — continuation
+
+| Export / read | Behavior and denied conditions | Regression |
+|---|---|---|
+| `resourceMaterialLinkSchema`, `resourceMaterialCommandSchema`, `safeLearnerResourceMaterialHref`, `resourceMaterialsWriteReady` | HTTPS only, no credentials/fragment, local/private/loopback URL targets denied; exact typed command/UUID; DB05 material authoring requires `DB05_VERIFIED`; historic invalid links map to null | `tests/unit/chat7-learner-resource-material-link-boundary.test.ts` — `LEARNER-RESOURCE-LINK-08` |
+| `listLessonResourceMaterials` | Checks learner delivery and published/visible content before querying; only LINK URLs sanitized before the response, FILE object keys never exposed | `tests/unit/chat7-learner-resource-material-link-boundary.test.ts` plus service source contract; PostgreSQL role/tenant matrix remains pending |
+
+Source-level legacy role crosswalk in `docs/audit/legacy-vs-vnext-chat7-learner-gaps.md` includes direct learner routes and profile certification expiry parity; signed browser acceptance is pending.
