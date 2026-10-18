@@ -37,17 +37,17 @@ export default async function CollegeAdminProfilePage({
     <PageHeader eyebrow="College Admin" title="Profile"
       description="Your personal and contact details. College contact information is managed separately."
       actions={<Link href="/account/security"
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
         Signed-in devices
       </Link>} />
     <CollegeAdminProfileEditor initial={profile}
       email={account?.email ?? null} phone={account?.phoneE164 ?? null}
       college={account?.college?.name ?? null} />
     <div className="flex flex-wrap gap-3">
-      <Link href="/college/domains" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+      <Link href="/college/domains" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
         Tenant domains
       </Link>
-      <Link href="/college/college-profile" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+      <Link href="/college/college-profile" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
         Edit college display and support contacts
       </Link>
     </div>
