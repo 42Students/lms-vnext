@@ -129,3 +129,9 @@ These are named and scope-specific tests, but full per-export coverage of all se
 | Surface | Checked contract | Test | Runtime remainder |
 |---|---|---|---|
 | `parseTpoRulesPageParams`, `getTpoPlacementRulesSettings`, `/tpo/settings/rules` | Absent page defaults to 1; only canonical 1–10000 decimal accepted, no arrays, duplicate page, unknown college/user keys, hex/exponent/whitespace; invalid returns friendly clear-filter state **before** job-policy reads. Service also rejects noncanonical input without coercion | `tests/unit/chat11-tpo-rules-pagination-adversarial.test.ts` — TPO-settings-audit-RULES-PAGE-01; `e01d3c3`, `661618d`, `f01868f`, `b746ba5` | HTTP/browser back-forward on invalid filter and role change |
+
+## Preparation policy editor — lost response and inactive catalog safeguards
+
+| Export/page | Checked behaviour | Test | Pending |
+|---|---|---|---|
+| `getTpoPrepSelectionState`, `TpoPrepReadinessEditor` | Selected courses missing from live active same-college catalog are surfaced rather than dropped, no save until resolved; 0–40 unique choices, finite integer threshold, dirty check against last saved policy, ref latch before React state, conflict preserves edits, successful response updates CAS token | `tests/unit/chat11-tpo-prep-editor-lost-response.test.ts` — TPO-settings-audit-PREP-UI-03, commits `5bbd2b6`, `16f726d`, `bba8201`, `4a56e13`, `5371c42` | Browser rapid-click/slow network, DB stale token replay |
