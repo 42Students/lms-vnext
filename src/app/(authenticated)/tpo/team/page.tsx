@@ -124,7 +124,7 @@ export default async function TpoTeamPage({searchParams}:{
          <dd className="font-semibold">
           {label.includes("drives")&&!ownerWorkload.drivesReady?"Unavailable":
            <Link href={href} title={"Open "+label.toLowerCase()+" records"}
-            className="text-[var(--lms-teal-deep)] underline underline-offset-2">{count}</Link>}
+            className="text-[var(--lms-link-text)] underline underline-offset-2">{count}</Link>}
          </dd>
         </div>)}
        </dl>:null}
@@ -152,14 +152,14 @@ export default async function TpoTeamPage({searchParams}:{
       {key==="ALL"?"All":key==="FOLLOWING"?"Following":key==="UNREAD"?"Unread":key==="TOPICS"?"Topics":key==="DECISIONS"?"Decisions":key==="ASKS"?"Asks":"@ Me"} ({conversationCounts[key]})
      </Link>)}
     </nav>:null}
-    <Link href="/tpo/team/everyone" className="mt-3 block rounded-lg border border-border bg-surface-secondary p-4 font-semibold text-[var(--lms-teal-deep)]">Everyone → <span className="mt-1 block text-xs font-normal text-body">Everyone in the placement team, including people who join later. You can mute it, not leave it.</span></Link>
+    <Link href="/tpo/team/everyone" className="mt-3 block rounded-lg border border-border bg-surface-secondary p-4 font-semibold text-[var(--lms-link-text)]">Everyone → <span className="mt-1 block text-xs font-normal text-body">Everyone in the placement team, including people who join later. You can mute it, not leave it.</span></Link>
     {conversations?.status==="READY"?<TpoTeamThreadCreate actorUserId={context.user.id} members={team.members.filter(
       member=>member.membershipId!==context.membership?.id&&
       (member.roles.includes("TPO")||member.roles.includes("TPO_ADMIN")||member.roles.includes("COLLEGE_ADMIN")))
       .map(member=>({membershipId:member.membershipId,displayName:member.displayName}))}/>:null}
     {conversations?.status==="FAILED"?<div role="alert" className="mt-3 rounded-lg border border-border p-3 text-sm">
      Could not load conversations right now. Your search has been kept.
-     <Link className="ml-2 font-semibold text-[var(--lms-teal-deep)] underline" href={"/tpo/team?tab=conversations"+(search?"&q="+encodeURIComponent(search):"")}>Retry conversations</Link>
+     <Link className="ml-2 font-semibold text-[var(--lms-link-text)] underline" href={"/tpo/team?tab=conversations"+(search?"&q="+encodeURIComponent(search):"")}>Retry conversations</Link>
     </div>:null}
     {conversations?.status==="NOT_REGISTERED"?
       <p role="status" className="mt-2 text-sm text-body">Private placement-team conversations require the unregistered internal messaging migration. No messages were inferred from recruiter conversations.</p>:
@@ -167,9 +167,9 @@ export default async function TpoTeamPage({searchParams}:{
       visibleConversations.length?<ul className="mt-3 space-y-2">{visibleConversations.map(row=>
        <li key={row.id} className="rounded-md border border-border p-3">
         <div className="flex flex-wrap items-start justify-between gap-2">
-         <Link className="min-w-0 break-words font-semibold text-[var(--lms-teal-deep)]" href={"/tpo/team/"+row.id}>🔒 {row.topic}</Link>
+         <Link className="min-w-0 break-words font-semibold text-[var(--lms-link-text)]" href={"/tpo/team/"+row.id}>🔒 {row.topic}</Link>
          {row.unreadCount>0 ? <span aria-label={row.unreadCount+" unread updates"}
-          className="rounded-full border border-border px-2 py-1 text-xs font-semibold text-[var(--lms-teal-deep)]">
+          className="rounded-full border border-border px-2 py-1 text-xs font-semibold text-[var(--lms-link-text)]">
           {row.unreadCount} unread
          </span>:null}
         </div>
@@ -178,18 +178,18 @@ export default async function TpoTeamPage({searchParams}:{
         {conversations?.status==="READY"&&conversations.asksReady&&row.openAsks>0?<p className="mt-1 text-xs text-body">{row.openAsks} open {row.openAsks===1?"ask":"asks"}{row.asksForMe>0?" · "+row.asksForMe+" assigned to you":""}</p>:null}
         <p className="mt-1 text-xs text-muted-foreground">Last activity · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(row.lastActivityAt)} IST</p>
        </li>)}</ul>:
-       <div className="mt-2 space-y-2 text-sm text-body"><p role="status">{search||filter!=="ALL"?"No conversations match these filters. Clear filters to see all.":"No private team conversations yet. Everyone is always available."}</p>{search||filter!=="ALL"?<Link href="/tpo/team?tab=conversations" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Clear filters</Link>:null}</div>}
+       <div className="mt-2 space-y-2 text-sm text-body"><p role="status">{search||filter!=="ALL"?"No conversations match these filters. Clear filters to see all.":"No private team conversations yet. Everyone is always available."}</p>{search||filter!=="ALL"?<Link href="/tpo/team?tab=conversations" className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-[var(--lms-link-text)] underline">Clear filters</Link>:null}</div>}
     {conversations?.status==="READY" && (conversations.page>1||conversations.hasMore)?
      <nav aria-label="Team conversation pages" className="mt-4 flex flex-wrap items-center gap-3">
       <span className="text-sm text-body">Page {conversations.page}</span>
-      {conversations.page>1?<Link className="min-h-11 rounded border border-border px-4 py-3 text-[var(--lms-teal-deep)]"
+      {conversations.page>1?<Link className="min-h-11 sm:min-h-9 rounded-[9px] border border-border px-4 py-3 text-[var(--lms-link-text)]"
        href={"/tpo/team?"+new URLSearchParams({tab:"conversations",filter,
         ...(search?{q:search}:{}),page:String(conversations.page-1)}).toString()}>Previous</Link>:null}
-      {conversations.hasMore?<Link className="min-h-11 rounded border border-border px-4 py-3 text-[var(--lms-teal-deep)]"
+      {conversations.hasMore?<Link className="min-h-11 sm:min-h-9 rounded-[9px] border border-border px-4 py-3 text-[var(--lms-link-text)]"
        href={"/tpo/team?"+new URLSearchParams({tab:"conversations",filter,
         ...(search?{q:search}:{}),page:String(conversations.page+1)}).toString()}>Show older</Link>:null}
      </nav>:null}
-    <Link href="/tpo/messages" className="mt-3 inline-flex min-h-11 items-center text-[var(--lms-teal-deep)]">
+    <Link href="/tpo/messages" className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-[var(--lms-link-text)]">
       Open existing recruiter communications
     </Link>
   </section>}
