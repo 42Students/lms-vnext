@@ -150,3 +150,18 @@ describe("TPO-students-14 client boundary and streaming resource guard", () => {
     await expect(readTpoBulkRequestBody(request)).rejects.toMatchObject({ status: 413 });
   });
 });
+
+describe("TPO-BREAK-bulk-ui-02 in-flight click race", () => {
+  it("uses a synchronous ref for every mutation path before awaiting the API", () => {
+    const code = readFileSync(resolve(process.cwd(), "src/components/tpo/tpo-bulk-action-panel.tsx"), "utf8");
+    expect(code).toContain("const actionInFlightRef=useRef(false)");
+    expect(code).toContain("if(actionInFlightRef.current||busy||!plan||!preview");
+    expect(code).toContain("if(!runAuditId||busy||actionInFlightRef.current)return;");
+    expect(code.match(/actionInFlightRef\.current=true;setBusy\(true\);/g)).toHaveLength(5);
+    expect(code.match(/finally\{actionInFlightRef\.current=false;setBusy\(false\);\}/g)).toHaveLength(5);
+    expect(code.indexOf("actionInFlightRef.current=true;setBusy(true);",code.indexOf("async function confirm()")))
+      .toBeLessThan(code.indexOf('post("confirm"',code.indexOf("async function confirm()")));
+    expect(code.indexOf("actionInFlightRef.current=true;setBusy(true);",code.indexOf("async function shareSelected()")))
+      .toBeLessThan(code.indexOf('apiFetch<{token:string}>',code.indexOf("async function shareSelected()")));
+  });
+});
