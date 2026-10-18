@@ -22,8 +22,21 @@ export function mentorMeetingHttpUrl(raw: string): boolean {
 }
 
 function istInstant(value: string): number {
-  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value)) return NaN;
-  return new Date(value + ":00+05:30").getTime();
+  const parts=/^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2})$/.exec(value);
+  if (!parts) return NaN;
+  const [,rawYear,rawMonth,rawDay,rawHour,rawMinute]=parts;
+  const year=Number(rawYear),month=Number(rawMonth),day=Number(rawDay);
+  const hour=Number(rawHour),minute=Number(rawMinute);
+  if(month<1||month>12||day<1||day>31||hour>23||minute>59) return NaN;
+  const instant=new Date(value+":00+05:30");
+  if(!Number.isFinite(instant.getTime()))return NaN;
+  // Date silently normalizes Feb 31 / 24:00 in some runtimes. A local
+  // round trip must preserve every wall-clock component, even at IST midnight.
+  const local=new Date(instant.getTime()+330*60_000);
+  if(local.getUTCFullYear()!==year||local.getUTCMonth()+1!==month||
+    local.getUTCDate()!==day||local.getUTCHours()!==hour||
+    local.getUTCMinutes()!==minute)return NaN;
+  return instant.getTime();
 }
 
 export function mentorMeetingScheduleError(input: {
