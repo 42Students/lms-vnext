@@ -16,7 +16,7 @@ export const mentorMeetingRescheduleSchema=z.object({
 });
 export function mentorMeetingCanReschedule(status:string,projectStatus:string){
   return (status==="SCHEDULED"||status==="RESCHEDULED")&&
-    projectStatus!=="ARCHIVED"&&projectStatus!=="COMPLETED";
+    (projectStatus==="PLANNED"||projectStatus==="ACTIVE");
 }
 export function toIstLocalInput(iso:string){
   const date=new Date(iso);
