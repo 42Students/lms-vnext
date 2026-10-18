@@ -240,6 +240,13 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
     .from(placementApplications)
     .innerJoin(placementApplicationScreenings,
      eq(placementApplicationScreenings.applicationId,placementApplications.id))
+    .innerJoin(collegeMemberships,and(
+     eq(collegeMemberships.id,placementApplications.membershipId),
+     eq(collegeMemberships.collegeId,info.collegeId),
+     eq(collegeMemberships.status,"ACTIVE")))
+    .innerJoin(users,and(
+     eq(users.id,collegeMemberships.userId),
+     eq(users.platformStatus,"ACTIVE")))
     .where(and(
      eq(placementApplications.id,request.applicationId),
      eq(placementApplications.jobId,job.id),eq(placementApplications.status,"SUBMITTED"),
@@ -342,6 +349,13 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
    const [candidate]=await tx.select({id:placementApplications.id})
     .from(placementApplications).innerJoin(placementApplicationScreenings,
       eq(placementApplicationScreenings.applicationId,placementApplications.id))
+    .innerJoin(collegeMemberships,and(
+     eq(collegeMemberships.id,placementApplications.membershipId),
+     eq(collegeMemberships.collegeId,info.collegeId),
+     eq(collegeMemberships.status,"ACTIVE")))
+    .innerJoin(users,and(
+     eq(users.id,collegeMemberships.userId),
+     eq(users.platformStatus,"ACTIVE")))
     .where(and(eq(placementApplications.id,input.applicationId),
      eq(placementApplications.jobId,job.id),eq(placementApplications.status,"SUBMITTED"),
      eq(placementApplicationScreenings.status,"SHORTLISTED"))).limit(1);
