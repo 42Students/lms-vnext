@@ -32,3 +32,5 @@ Scope is the IIT Dharwad College Admin Projects entry, creation, team preview, a
 | `verifyClassTeamPreview`, `classTeamPreviewSchema`, `previewVersion`, `assertPreviewVersion`, `mayBeginClassTeamCreation` | Exactly-once learner partitions, Unicode-equivalent duplicate team names, cross-tenant/malformed UUIDs, oversized teams, stale preview and double-submit rejection | `tests/unit/chat11-projects-preview-adversarial.test.ts`: `PROJ-BREAK-COL-TEAM-01` | Server integration against a changed live class roster |
 
 This remains the **College Admin role-journey supplement**; it does not replace the Project lead's full per-export ledger, independent review, and 90% branch-coverage gate.
+
+| `CreateProjectControl` active status | Clear the Mentor after selecting ACTIVE: a native form submission is refused before the network call rather than relying only on the disabled option/server Zod guard | `tests/unit/chat11-college-projects-role-journeys.test.ts` — `PROJ-COL-STALE-06` | Browser switch/retry race |
