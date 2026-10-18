@@ -43,7 +43,6 @@ describe("TPO-companies-05 company team follow / unfollow persisted transitions"
    limit(){return Promise.resolve([{id:"linked-relation"}]);},
   }));
   mock.txInsert.mockImplementation(()=>{
-   const ix=mock.txInsert.mock.calls.length;
    return {values(value:unknown){
     mock.inserts.push(value);
     return {onConflictDoNothing(){return this;},
