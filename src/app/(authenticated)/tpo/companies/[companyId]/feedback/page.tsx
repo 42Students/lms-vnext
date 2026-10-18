@@ -36,7 +36,7 @@ export default async function TpoCompanyFeedbackPage({
   return (
     <div className="space-y-6">
       <Link href={"/tpo/companies/" + encodeURIComponent(companyId)}
-        className="text-sm font-semibold text-primary-text hover:underline">
+        className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
         ← Company details
       </Link>
       <PageHeader
@@ -79,7 +79,7 @@ export default async function TpoCompanyFeedbackPage({
                   <li key={item.id} className="space-y-2 px-5 py-4">
                     <div className="flex flex-wrap justify-between gap-2">
                       <Link href={"/tpo/recruiters/" + encodeURIComponent(item.leadId)}
-                        className="font-semibold text-primary-text hover:underline">
+                        className="font-semibold text-[var(--lms-teal-deep)] hover:underline">
                         {item.contactName}
                       </Link>
                       <time className="text-xs text-muted-foreground" dateTime={item.recordedAtIso}>
@@ -97,11 +97,11 @@ export default async function TpoCompanyFeedbackPage({
             <div className="flex gap-3">
               {data.page > 1 ? (
                 <Link href={base + "?page=" + (data.page - 1)}
-                  className="font-semibold text-primary-text hover:underline">← Previous</Link>
+                  className="font-semibold text-[var(--lms-teal-deep)] hover:underline">← Previous</Link>
               ) : null}
               {data.totalPages !== null && data.page < data.totalPages ? (
                 <Link href={base + "?page=" + (data.page + 1)}
-                  className="font-semibold text-primary-text hover:underline">Next →</Link>
+                  className="font-semibold text-[var(--lms-teal-deep)] hover:underline">Next →</Link>
               ) : null}
             </div>
           </nav>
