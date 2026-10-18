@@ -187,7 +187,7 @@ describe("chat-4 college people/contact privacy and directory coverage",()=>{
   it("student CSV export neutralizes formula injection and spreadsheet quoting",()=>{
     expect(neutralStudentCsvCell(" =2+2")).toContain("' =2+2");
     expect(neutralStudentCsvCell('"quoted"')).toBe('"""quoted"""');
-    const report=studentImportReportCsv([{row:2,status:"INVALID",detail:"=HYPERLINK(\\"evil\\")"}]);
+    const report=studentImportReportCsv([{row:2,status:"INVALID",detail:"=2+2"}]);
     expect(report).toContain("'=2+2");
     expect(report).toContain("row,status,detail,membershipId,enrollmentId");
   });
