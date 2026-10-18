@@ -104,51 +104,51 @@ Scope: **all 71** `src/modules/placements/*interview*/*round*/*slot*` TypeScript
 | `src/modules/placements/super-admin-booked-interviews-service.ts` | `listSuperAdminBookedInterviews` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/tpo-bulk-round-result-model.ts` | `bulkTpoRoundResultSchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/tpo-bulk-round-result-model.ts` | `TpoBulkRoundResultOutcome` (type) | N/A (compile-time only) | TYPE ONLY |
-| `src/modules/placements/tpo-bulk-round-result-model.ts` | `summarizeBulkRoundResults` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-bulk-round-result-model.ts` | `resolveBulkRoundLearnerTokens` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-bulk-round-result-model.ts` | `summarizeBulkRoundResults` (function) | \`tests/unit/chat2-tpo-round-model-break-02.test.ts\` (CI pending) | TEST AUTHORED |
+| `src/modules/placements/tpo-bulk-round-result-model.ts` | `resolveBulkRoundLearnerTokens` (function) | \`tests/unit/chat2-tpo-round-model-break-02.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-bulk-round-result-service.ts` | `confirmTpoBulkRoundResults` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/tpo-confirmed-round-result-model.ts` | `confirmedTpoRoundResultSchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/tpo-confirmed-round-result-model.ts` | `TPO_RESULT_LABELS` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-confirmed-round-result-model.ts` | `canEditTpoRoundResult` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-confirmed-round-result-model.ts` | `canApplyTpoRoundResult` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-confirmed-round-result-model.ts` | `canEditTpoRoundResult` (function) | \`tests/unit/chat2-tpo-round-csv-and-lifecycle-break-03.test.ts\` (CI pending) | TEST AUTHORED |
+| `src/modules/placements/tpo-confirmed-round-result-model.ts` | `canApplyTpoRoundResult` (function) | \`tests/unit/chat2-tpo-round-csv-and-lifecycle-break-03.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-confirmed-round-result-service.ts` | `confirmTpoRoundResult` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/tpo-drive-round-presets.ts` | `TPO_DRIVE_ROUND_PRESETS` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/tpo-drive-round-presets.ts` | `TpoRoundPresetKey` (type) | N/A (compile-time only) | TYPE ONLY |
 | `src/modules/placements/tpo-drive-round-presets.ts` | `isTpoRoundPresetKey` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/tpo-drive-round-presets.ts` | `plannedTpoRoundRows` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/tpo-failure-round-share-model.ts` | `AppliedRoundDecision` (type) | N/A (compile-time only) | TYPE ONLY |
-| `src/modules/placements/tpo-failure-round-share-model.ts` | `summarizeFailedRoundShares` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-failure-round-share-model.ts` | `summarizeFailedRoundShares` (function) | \`tests/unit/chat2-tpo-round-csv-and-lifecycle-break-03.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-failure-round-share-model.ts` | `AppliedRoundBranchDecision` (type) | N/A (compile-time only) | TYPE ONLY |
-| `src/modules/placements/tpo-failure-round-share-model.ts` | `summarizeFailedRoundSharesByBranch` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-interview-readiness-model.ts` | `tpoInterviewWindowSchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-failure-round-share-model.ts` | `summarizeFailedRoundSharesByBranch` (function) | \`tests/unit/chat2-tpo-round-csv-and-lifecycle-break-03.test.ts\` (CI pending) | TEST AUTHORED |
+| `src/modules/placements/tpo-interview-readiness-model.ts` | `tpoInterviewWindowSchema` (const) | \`tests/unit/chat2-tpo-round-model-break-02.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-interview-readiness-model.ts` | `InterviewRoundFact` (type) | N/A (compile-time only) | TYPE ONLY |
-| `src/modules/placements/tpo-interview-readiness-model.ts` | `projectTpoInterviewReadiness` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-interview-readiness-model.ts` | `projectTpoInterviewReadiness` (function) | \`tests/unit/chat2-tpo-round-model-break-02.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-interview-readiness-service.ts` | `getTpoInterviewReadiness` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-interview-reschedule-model.ts` | `tpoInterviewRescheduleSchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-interview-reschedule-model.ts` | `validInterviewWindow` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-interview-reschedule-model.ts` | `overlappingInterviewVenue` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-interview-reschedule-model.ts` | `tpoInterviewRescheduleSchema` (const) | \`tests/unit/chat2-ledger-round-import-and-scheduling.test.ts\` (CI pending) | TEST AUTHORED |
+| `src/modules/placements/tpo-interview-reschedule-model.ts` | `validInterviewWindow` (function) | \`tests/unit/chat2-tpo-interview-plan-break-01.test.ts\` (CI pending) | TEST AUTHORED |
+| `src/modules/placements/tpo-interview-reschedule-model.ts` | `overlappingInterviewVenue` (function) | \`tests/unit/chat2-tpo-interview-plan-break-01.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-interview-reschedule-service.ts` | `rescheduleTpoInterview` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-interview-slot-model.ts` | `tpoInterviewSlotActionSchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-interview-slot-model.ts` | `sameInterviewRoom` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-interview-slot-model.ts` | `planInterviewDay` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-interview-slot-model.ts` | `tpoInterviewSlotActionSchema` (const) | \`tests/unit/chat2-tpo-interview-plan-break-01.test.ts\` (CI pending) | TEST AUTHORED |
+| `src/modules/placements/tpo-interview-slot-model.ts` | `sameInterviewRoom` (function) | \`tests/unit/chat2-tpo-interview-plan-break-01.test.ts\` (CI pending) | TEST AUTHORED |
+| `src/modules/placements/tpo-interview-slot-model.ts` | `planInterviewDay` (function) | \`tests/unit/chat2-tpo-interview-plan-break-01.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-interview-slot-service.ts` | `getTpoInterviewSlotWorkspace` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/tpo-interview-slot-service.ts` | `mutateTpoInterviewSlots` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-live-round-job-link-model.ts` | `tpoLiveRoundJobHref` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-live-round-search-model.ts` | `tpoLiveRoundSearchSchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-live-round-search-model.ts` | `filterTpoLiveRoundSearch` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-live-round-timing-model.ts` | `tpoLiveRoundTiming` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-live-round-venue-model.ts` | `tpoLiveRoundVenueLabel` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-live-round-job-link-model.ts` | `tpoLiveRoundJobHref` (function) | \`tests/unit/chat2-tpo-round-csv-and-lifecycle-break-03.test.ts\` (CI pending) | TEST AUTHORED |
+| `src/modules/placements/tpo-live-round-search-model.ts` | `tpoLiveRoundSearchSchema` (const) | \`tests/unit/chat2-tpo-round-csv-and-lifecycle-break-03.test.ts\` (CI pending) | TEST AUTHORED |
+| `src/modules/placements/tpo-live-round-search-model.ts` | `filterTpoLiveRoundSearch` (function) | \`tests/unit/chat2-tpo-round-csv-and-lifecycle-break-03.test.ts\` (CI pending) | TEST AUTHORED |
+| `src/modules/placements/tpo-live-round-timing-model.ts` | `tpoLiveRoundTiming` (function) | \`tests/unit/chat2-tpo-round-csv-and-lifecycle-break-03.test.ts\` (CI pending) | TEST AUTHORED |
+| `src/modules/placements/tpo-live-round-venue-model.ts` | `tpoLiveRoundVenueLabel` (function) | \`tests/unit/chat2-tpo-round-csv-and-lifecycle-break-03.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-recruiter-slot-review-service.ts` | `listTpoRecruiterProposedSlots` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-round-apply-csv-model.ts` | `roundApplyPreviewCsv` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-round-apply-csv-model.ts` | `roundApplyReportCsv` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-round-apply-model.ts` | `roundApplyInputSchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-apply-csv-model.ts` | `roundApplyPreviewCsv` (function) | \`tests/unit/chat2-tpo-round-csv-and-lifecycle-break-03.test.ts\` (CI pending) | TEST AUTHORED |
+| `src/modules/placements/tpo-round-apply-csv-model.ts` | `roundApplyReportCsv` (function) | \`tests/unit/chat2-tpo-round-csv-and-lifecycle-break-03.test.ts\` (CI pending) | TEST AUTHORED |
+| `src/modules/placements/tpo-round-apply-model.ts` | `roundApplyInputSchema` (const) | \`tests/unit/chat2-tpo-round-state-break-01.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-round-apply-model.ts` | `RoundApplyRow` (type) | N/A (compile-time only) | TYPE ONLY |
-| `src/modules/placements/tpo-round-apply-model.ts` | `summarizeRoundApply` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-round-apply-model.ts` | `roundApplyPreviewToken` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-apply-model.ts` | `summarizeRoundApply` (function) | \`tests/unit/chat2-tpo-round-state-break-01.test.ts\` (CI pending) | TEST AUTHORED |
+| `src/modules/placements/tpo-round-apply-model.ts` | `roundApplyPreviewToken` (function) | \`tests/unit/chat2-tpo-round-state-break-01.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-round-apply-service.ts` | `getTpoRoundApplyPreview` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/tpo-round-apply-service.ts` | `applyTpoWholeRound` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-round-calendar-model.ts` | `tpoRoundCalendarMutationSchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-round-calendar-model.ts` | `parseIstRoundLocalTime` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-calendar-model.ts` | `tpoRoundCalendarMutationSchema` (const) | \`tests/unit/chat2-ledger-round-import-and-scheduling.test.ts\` (CI pending) | TEST AUTHORED |
+| `src/modules/placements/tpo-round-calendar-model.ts` | `parseIstRoundLocalTime` (function) | \`tests/unit/chat2-ledger-round-import-and-scheduling.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-round-calendar-service.ts` | `listTpoCalendarRoundChoices` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/tpo-round-calendar-service.ts` | `decideTpoCalendarRound` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/tpo-round-drive-day-model.ts` | `TPO_ROUND_ATTENDANCE_STATES` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
@@ -156,25 +156,25 @@ Scope: **all 71** `src/modules/placements/*interview*/*round*/*slot*` TypeScript
 | `src/modules/placements/tpo-round-drive-day-model.ts` | `TpoRoundRosterSourceStudent` (type) | N/A (compile-time only) | TYPE ONLY |
 | `src/modules/placements/tpo-round-drive-day-model.ts` | `TpoRoundApplicationDetail` (type) | N/A (compile-time only) | TYPE ONLY |
 | `src/modules/placements/tpo-round-drive-day-model.ts` | `TpoRoundRosterRow` (type) | N/A (compile-time only) | TYPE ONLY |
-| `src/modules/placements/tpo-round-drive-day-model.ts` | `buildTpoRoundDriveDayRoster` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-drive-day-model.ts` | `buildTpoRoundDriveDayRoster` (function) | \`tests/unit/chat2-tpo-round-model-break-02.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-round-drive-day-service.ts` | `getTpoRoundDriveDay` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/tpo-round-facts-model.ts` | `TpoRoundFactInput` (type) | N/A (compile-time only) | TYPE ONLY |
-| `src/modules/placements/tpo-round-facts-model.ts` | `projectTpoRoundFacts` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-facts-model.ts` | `projectTpoRoundFacts` (function) | \`tests/unit/chat2-tpo-round-model-break-02.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-round-failure-csv-model.ts` | `tpoRoundFailureCsvQuerySchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/tpo-round-failure-csv-model.ts` | `TpoRoundFailureCsvRow` (type) | N/A (compile-time only) | TYPE ONLY |
-| `src/modules/placements/tpo-round-failure-csv-model.ts` | `tpoRoundFailureCsv` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-round-import-model.ts` | `roundImportActionSchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-failure-csv-model.ts` | `tpoRoundFailureCsv` (function) | \`tests/unit/chat2-tpo-round-model-break-02.test.ts\` (CI pending) | TEST AUTHORED |
+| `src/modules/placements/tpo-round-import-model.ts` | `roundImportActionSchema` (const) | \`tests/unit/chat2-ledger-round-import-and-scheduling.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-round-import-model.ts` | `ImportRow` (type) | N/A (compile-time only) | TYPE ONLY |
-| `src/modules/placements/tpo-round-import-model.ts` | `parseTpoRoundImport` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-round-import-model.ts` | `ROUND_IMPORT_TEMPLATE` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-import-model.ts` | `parseTpoRoundImport` (function) | \`tests/unit/chat2-ledger-round-import-and-scheduling.test.ts\` (CI pending) | TEST AUTHORED |
+| `src/modules/placements/tpo-round-import-model.ts` | `ROUND_IMPORT_TEMPLATE` (const) | \`tests/unit/chat2-ledger-round-import-and-scheduling.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-round-import-service.ts` | `previewTpoRoundImport` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/tpo-round-import-service.ts` | `stageTpoRoundImport` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-round-reorder-model.ts` | `roundReorderLockMessage` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-round-reorder-model.ts` | `moveRound` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-round-result-entry-model.ts` | `tpoRoundResultEntryFormSchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-reorder-model.ts` | `roundReorderLockMessage` (function) | \`tests/unit/chat2-tpo-round-state-break-01.test.ts\` (CI pending) | TEST AUTHORED |
+| `src/modules/placements/tpo-round-reorder-model.ts` | `moveRound` (function) | \`tests/unit/chat2-tpo-round-state-break-01.test.ts\` (CI pending) | TEST AUTHORED |
+| `src/modules/placements/tpo-round-result-entry-model.ts` | `tpoRoundResultEntryFormSchema` (const) | \`tests/unit/chat2-tpo-round-csv-and-lifecycle-break-03.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-round-result-table-model.ts` | `tpoRoundResultTableQuerySchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/tpo-round-result-table-model.ts` | `RoundResultEntry` (type) | N/A (compile-time only) | TYPE ONLY |
-| `src/modules/placements/tpo-round-result-table-model.ts` | `projectTpoRoundResultTable` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-round-result-table-model.ts` | `tpoRoundResultViewSchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-round-result-table-model.ts` | `filterTpoRoundResultRows` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-result-table-model.ts` | `projectTpoRoundResultTable` (function) | \`tests/unit/chat2-tpo-round-model-break-02.test.ts\` (CI pending) | TEST AUTHORED |
+| `src/modules/placements/tpo-round-result-table-model.ts` | `tpoRoundResultViewSchema` (const) | \`tests/unit/chat2-tpo-round-model-break-02.test.ts\` (CI pending) | TEST AUTHORED |
+| `src/modules/placements/tpo-round-result-table-model.ts` | `filterTpoRoundResultRows` (function) | \`tests/unit/chat2-tpo-round-model-break-02.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-round-result-table-service.ts` | `getTpoRoundResultTable` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
