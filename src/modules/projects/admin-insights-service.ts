@@ -33,6 +33,8 @@ import {
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
+import {getProjectAdminCollegeId} from "./admin-college-scope";
+import {ProjectsServiceError} from "./errors";
 import { deriveProjectExecutionReadiness } from "./execution-readiness";
 import {
   deriveProjectRiskReasons,
@@ -82,6 +84,10 @@ export async function listProjectAdminSnapshots(
 ) {
   const query =
     projectAdminQuerySchema.parse(rawQuery);
+  // Never resolve an attacker-supplied tenant ID before the selected actor
+  // is authorized to see that exact college. Prevent an existence oracle.
+  if(getProjectAdminCollegeId(context)!==collegeIdInput)
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const college =
     await loadProjectCollegeScope(
       collegeIdInput,
@@ -454,6 +460,10 @@ export async function listProjectAdminRiskQueue(
 ) {
   const query =
     projectAdminQuerySchema.parse(rawQuery);
+  // Never resolve an attacker-supplied tenant ID before the selected actor
+  // is authorized to see that exact college. Prevent an existence oracle.
+  if(getProjectAdminCollegeId(context)!==collegeIdInput)
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const college =
     await loadProjectCollegeScope(
       collegeIdInput,
@@ -713,6 +723,10 @@ const projectSubmissionQueueQuerySchema =
 
 /** COL-projects-13: whole-college cards reflect the latest delivery only. */
 export async function getProjectAdminSubmissionSummary(context: RequestContext, collegeIdInput: string) {
+  // Never resolve an attacker-supplied tenant ID before the selected actor
+  // is authorized to see that exact college. Prevent an existence oracle.
+  if(getProjectAdminCollegeId(context)!==collegeIdInput)
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const college = await loadProjectCollegeScope(collegeIdInput);
   requirePermission(context, "projects.manage", {
     organizationId: college.organizationId, collegeId: college.id,
@@ -756,6 +770,10 @@ export async function listProjectAdminSubmissionQueue(
     projectSubmissionQueueQuerySchema.parse(
       rawQuery,
     );
+  // Never resolve an attacker-supplied tenant ID before the selected actor
+  // is authorized to see that exact college. Prevent an existence oracle.
+  if(getProjectAdminCollegeId(context)!==collegeIdInput)
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const college =
     await loadProjectCollegeScope(
       collegeIdInput,
