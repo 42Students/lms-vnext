@@ -212,12 +212,12 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/modules/projects/mentor-auto-assign-service.ts` | `autoAssignProjectTasks` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-backlog-service.ts` | `moveMentorBacklogTask` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-backlog-service.ts` | `createMentorBacklogTask` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-board-review-model.ts` | `mentorBoardReview` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-board-review-model.ts` | `mentorBoardReviewHref` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-board-review-model.ts` | `csvSafeCell` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-board-review-model.ts` | `mentorBoardExportCsv` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-board-review-model.ts` | `mentorSprintSummaryCsv` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-board-review-model.ts` | `mentorBoardReviewQuerySchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-board-review-model.ts` | `mentorBoardReview` | `tests/unit/PROJ-BREAK-chat14-mentor-board-export.test.ts` | Behavioural totals/filter/ordering, hostile query, bounded exports and CSV formula injection; authored, **unrun**; full DB/request UX pending |
+| `src/modules/projects/mentor-board-review-model.ts` | `mentorBoardReviewHref` | `tests/unit/PROJ-BREAK-chat14-mentor-board-export.test.ts` | Behavioural totals/filter/ordering, hostile query, bounded exports and CSV formula injection; authored, **unrun**; full DB/request UX pending |
+| `src/modules/projects/mentor-board-review-model.ts` | `csvSafeCell` | `tests/unit/PROJ-BREAK-chat14-mentor-board-export.test.ts` | Behavioural totals/filter/ordering, hostile query, bounded exports and CSV formula injection; authored, **unrun**; full DB/request UX pending |
+| `src/modules/projects/mentor-board-review-model.ts` | `mentorBoardExportCsv` | `tests/unit/PROJ-BREAK-chat14-mentor-board-export.test.ts` | Behavioural totals/filter/ordering, hostile query, bounded exports and CSV formula injection; authored, **unrun**; full DB/request UX pending |
+| `src/modules/projects/mentor-board-review-model.ts` | `mentorSprintSummaryCsv` | `tests/unit/PROJ-BREAK-chat14-mentor-board-export.test.ts` | Behavioural totals/filter/ordering, hostile query, bounded exports and CSV formula injection; authored, **unrun**; full DB/request UX pending |
+| `src/modules/projects/mentor-board-review-model.ts` | `mentorBoardReviewQuerySchema` | `tests/unit/PROJ-BREAK-chat14-mentor-board-export.test.ts` | Behavioural totals/filter/ordering, hostile query, bounded exports and CSV formula injection; authored, **unrun**; full DB/request UX pending |
 | `src/modules/projects/mentor-board-review-service.ts` | `getMentorBoardReview` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-calendar-export-model.ts` | `mentorCalendarCsv` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-calendar-filter-model.ts` | `filterMentorCalendar` | **GAP** | **GAP — behaviour untested** |
@@ -709,6 +709,7 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 - `PROJ-BREAK-MENTOR-13..15`: rendered meeting-notes page assertions for project/meeting states, empty content and access-denied propagation.
 - `PROJ-BREAK-MENTOR-16..20`: mocked service-level transaction assertions for lock/check order, stale edit, revoked membership, wrong role or tenant and audit-on-success-only.
 - `PROJ-BREAK-MENTOR-21..26`: impossible leap/day/hour IST values rejected, history pagination and member classification fail closed, URL and meeting label safety regression; authored/unrun.
+- `PROJ-BREAK-MENTOR-27..31`: board status totals and filters, deterministic per-sprint grouping, export formula neutralization, 500-task/100-sprint absolute CSV caps, and scoped hrefs; authored/unrun.
 - **Verification state:** These are test source additions, not passing CI. No PostgreSQL, actual HTTP, device, independent review or full role matrix run. Uncovered exports and routes remain explicitly GAP.
 
 ## Known release blockers / unverified gates
