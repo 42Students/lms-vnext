@@ -93,12 +93,12 @@ try {
 
 Use the same fixture helpers for: Super Admin acting scope, College Admin tenant ownership, faculty/mentor task access, learner submission and visibility, TPO/HR drive access. A single `withProjectPg` call can seed multiple organizations and users. Nested `savepoint` allows negative SQL cases without aborting later assertions. Test IDOR and HTTP boundaries separately with actor contexts and current production services, not only SQL selects.
 
-## Cross-tenant and concurrency fixture examples (PROJ-HARNESS-22..27)
+## Cross-tenant and concurrency fixture examples (PROJ-HARNESS-22..28)
 
 The registered suite `tests/integration/projects-placements-pg-harness-boundaries.test.ts` exercises:
 - Foreign-college, non-rostered and wrong-role actors attempting task submissions, final submissions, and meeting requests.
 - A foreign or stale tab attempting to complete someone else's draft final delivery; failed calls must leave the row DRAFT.
-- A suspended college membership, an ended `project_members` roster membership and a `can_mutate=false` project member; none may create submissions through the fixture helpers.
+- A suspended college membership, a disabled user, an ended `project_members` roster membership and a `can_mutate=false` project member; none may create submissions through the fixture helpers.
 - Genuine PostgreSQL two-session advisory lock contention, released by rolling back a SAVEPOINT. Neither session commits any rows.
 
 `createTaskSubmission`, `createFinalSubmission`, `submitFinalSubmission` and `createMeeting` now verify tenant-linked active learner project membership and current mutation capability in the **same transaction** before writing. Meeting authors must be from the project college. This improves fixture integrity and does *not* claim service/route IDOR protection or background worker idempotency. To validate production security, test each service with an authenticated request context and a separate disposable database transaction/cleanup strategy.
