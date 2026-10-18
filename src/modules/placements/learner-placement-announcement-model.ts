@@ -38,7 +38,8 @@ export function safeLearnerNoticeAction(label: string | null | undefined, url: s
   if (!clean || clean.length > 60 || !url || !url.startsWith("https://")) return null;
   try {
     const parsed = new URL(url);
-    return parsed.protocol === "https:" && Boolean(parsed.hostname)
+    return parsed.protocol === "https:" && Boolean(parsed.hostname) &&
+      !parsed.username && !parsed.password && !parsed.hash
       ? { buttonLabel: clean, buttonUrl: parsed.toString() } : null;
   } catch {
     return null;

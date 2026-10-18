@@ -1,5 +1,16 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import type {RequestContext} from "@/modules/identity/context";
+import {can} from "@/modules/permissions/policy";
+
+const mocks=vi.hoisted(()=>({
+ getDb:vi.fn(),select:vi.fn(),college:vi.fn(),moduleAccess:vi.fn(),
+ rows:[] as unknown[][],
+}));
+vi.mock("@/db/client",()=>({getDb:mocks.getDb}));
+vi.mock("@/modules/projects/scope",()=>({loadProjectCollegeScope:mocks.college}));
+vi.mock("@/modules/module-access/service",()=>({resolveOptionalModuleAccess:mocks.moduleAccess}));
+import {requireProjectReadAccess,requireProjectManageAccess,requireProjectLifecycleAccess}
+ from "@/modules/projects/access";
 
 const mocks=vi.hoisted(()=>({
  getDb:vi.fn(),can:vi.fn(),college:vi.fn(),moduleAccess:vi.fn(),
@@ -43,7 +54,6 @@ describe("PROJ-BREAK-TPO-01 Projects are NOT accessible from roster visibility a
   mocks.select.mockImplementation(()=>query(mocks.rows.shift()??[]));
   mocks.getDb.mockReturnValue({select:mocks.select});
   mocks.college.mockResolvedValue({id:COLLEGE,organizationId:ORG});
-  mocks.can.mockReturnValue(false);
   mocks.moduleAccess.mockResolvedValue({projects:{enabled:true}});
  });
  it("TPO student-directory permission does not expose unassigned project workspace",async()=>{
@@ -66,13 +76,14 @@ describe("PROJ-BREAK-TPO-01 Projects are NOT accessible from roster visibility a
  it("foreign college and foreign organization cannot infer assigned project-membership records",async()=>{
   for(const member of [
    {...tpo().membership!,collegeId:FOREIGN},
+   {...tpo().membership!,organizationId:FOREIGN,collegeId:COLLEGE},
    {...tpo().membership!,organizationId:FOREIGN,collegeId:FOREIGN},
   ]){
    mocks.rows=[[{id:PROJECT,collegeId:COLLEGE}]];
    await expect(requireProjectReadAccess(tpo({membership:member}),PROJECT))
     .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
   }
-  expect(mocks.select).toHaveBeenCalledTimes(2);
+  expect(mocks.select).toHaveBeenCalledTimes(3);
  });
  it("PROJ-BREAK-TPO-02 denies projects and placement data from any wrong college OR organization",async()=>{
   const {can:actualCan}=await vi.importActual<typeof import("@/modules/permissions/policy")>(
@@ -121,10 +132,8 @@ describe("PROJ-BREAK-TPO-02 truthful self-reported portfolio counts",()=>{
   const {resolve}=await import("node:path");
   const grid=readFileSync(resolve(process.cwd(),"src/components/tpo/tpo-students-spreadsheet.tsx"),"utf8");
   const page=readFileSync(resolve(process.cwd(),"src/app/(authenticated)/tpo/students/page.tsx"),"utf8");
-  expect(grid).toContain('key:"projects",label:"Projects"');
-  expect(grid).toContain("Self-reported learner profile entries; not verified Projects workspace outcomes");
-  expect(page).toContain('["minProjects","Projects"]');
-  expect(page).toContain("not verified Projects workspace outcomes or released grades.");
+  expect(grid).toContain('key:"projects",label:"Profile projects (self-reported)"');
+  expect(page).toContain('["minProjects","Profile project entries (self-reported)"]');
   expect(grid).not.toContain('key:"projects",label:"Verified Projects"');
   const {tpoStudentProfileFacts}=await import("@/modules/placements/tpo-student-profile-facts");
   const facts=tpoStudentProfileFacts({projects:[{title:"Claim without approval"},

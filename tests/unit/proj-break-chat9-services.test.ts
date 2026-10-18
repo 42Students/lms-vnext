@@ -1,6 +1,7 @@
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {join} from "node:path";
+import {adminUnsubmittedQuerySchema} from "@/modules/projects/admin-unsubmitted-query-model";
 const source=(path:string)=>readFileSync(join(process.cwd(),path),"utf8");
 const moduleSource=(name:string)=>source("src/modules/projects/"+name+".ts");
 const api=(route:string)=>source("src/app/api/projects/"+route+"/route.ts");
@@ -151,8 +152,13 @@ describe("IIT Dharwad Projects adversarial service and route contracts",()=>{
  });
  it("PROJ-BREAK-performance-01 admin pages bound list size and publish authoring has size caps",()=>{
   const page=moduleSource("admin-unsubmitted-service");
-  expect(page).toContain(".max(100)");
+  // Size validation moved into a shared strict query model. Assert the
+  // service parses that model *before* invoking any DB access, then exercise
+  // the actual accepted and rejected limits.
+  expect(page).toContain("adminUnsubmittedQuerySchema.parse(raw)");
   expect(page).toContain(".limit(q.pageSize)");
+  expect(adminUnsubmittedQuerySchema.safeParse({page:1,pageSize:100}).success).toBe(true);
+  expect(adminUnsubmittedQuerySchema.safeParse({page:1,pageSize:101}).success).toBe(false);
   const blueprint=moduleSource("validation");
   for(const bound of [".max(50)",".max(200)",".max(2000)"])expect(blueprint).toContain(bound);
  });
