@@ -497,3 +497,11 @@ No live navigation, browser or CI execution was performed.
 | HR-BREAK-CONVO-THREAD-SCOPE-37 | MAJOR | The private reply form retained an unsent body and its pending navigation/submit state if Next.js reused the same client component while navigating between `/hr/conversations/[threadId]` pages. The read control also retained `acknowledgedOnOpen=true` and could skip the new thread's read acknowledgment. Wrap the existing hook-owning components in per-thread keyed children, remounting old state and cleaning browser listeners when the thread changes. No message is automatically sent, and the backend still reauthorizes each mutation. | `tests/unit/HR-BREAK-chat19-conversation-thread-scope.test.tsx` compares actual child identities for different threads and SSR neutral states. |
 
 Interactive router transitions and cloud CI still require orchestrator verification.
+
+## HR new-drive cross-college and edit-mode state isolation
+
+| Gap ID | Severity | Finding and correction | Regression |
+|---|---|---|---|
+| HR-BREAK-DRIVE-DRAFT-SCOPE-38 | MAJOR | `/hr/drives/new` switched between colleges, copied drive requests, edits and resubmissions while reusing the same unkeyed client `HrDriveDraftForm`. Hook state (including unsent private role details, `submittedRef`, idempotency tokens and optimistic versions) could carry into another college/source on URL-only navigation. Moreover, `?copy=REQUEST_ID` used the general NEW localStorage key, so restoring a prior unsent new request could overwrite the authorized copied template. Set a composite per-user/college/mode/request React key and isolate COPY in a source-request-specific local draft namespace. Existing page copy and backend tenant authorization are unchanged. | `tests/unit/HR-BREAK-chat19-drive-draft-scope.test.ts` exercises principal, college, request and action boundaries and source integration. |
+
+Browser navigation and storage-restore tests are pending cloud/orchestrator acceptance; no local execution.
