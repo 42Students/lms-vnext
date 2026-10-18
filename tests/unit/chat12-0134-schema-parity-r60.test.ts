@@ -56,10 +56,17 @@ describe("chat-12 migration 0134 effective schema fidelity",()=>{
   expect(general).toContain('nextStatus:varchar("next_status",{length:20})');
   expect(general).toContain('index("placement_general_request_events_parent_idx")');
  });
- it("TPO-students-10 matches non-null due date and dedupes per offering",()=>{
+ it("TPO-students-10 keeps original 0134 and applies registered 0136 nullable deadline without losing uniqueness",()=>{
+  // Migration history must remain immutable: 0134 originally required a date.
   expect(sql).toContain("due_at timestamptz not null");
-  expect(prep).toContain('dueAt:timestamp("due_at",{withTimezone:true}).notNull()');
+  const upgrade=read("drizzle/0136_tpo_prep_optional_due_date.sql");
+  const journal=JSON.parse(read("drizzle/meta/_journal.json")) as {entries:{tag:string;idx:number}[]};
+  expect(journal.entries.some(entry=>entry.idx===136&&entry.tag==="0136_tpo_prep_optional_due_date")).toBe(true);
+  expect(upgrade).toContain("ALTER COLUMN due_at DROP NOT NULL");
+  expect(upgrade).toContain("due_at IS NULL OR due_at > created_at");
+  expect(prep).toContain('dueAt:timestamp("due_at",{withTimezone:true}),');
   expect(prep).toContain('uniqueIndex("tpo_prep_member_offering_uq")');
+  expect(prep).toContain('sql\x60\x24{t.dueAt} is null or \x24{t.dueAt}>\x24{t.createdAt}\x60');
  });
  it("TPO-students-10 matches creation-to-due integrity and same-college learner FK",()=>{
   expect(prep).toContain('check("tpo_prep_due_after_assigned_ck"');
