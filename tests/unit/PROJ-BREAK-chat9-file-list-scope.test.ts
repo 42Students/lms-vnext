@@ -1,6 +1,5 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
-import {sql} from "drizzle-orm";
-import type {SQL} from "drizzle-orm";
+import {sql,type SQL} from "drizzle-orm";
 import {PgDialect} from "drizzle-orm/pg-core";
 import type {RequestContext} from "@/modules/identity/context";
 import {listProjectFiles} from "@/modules/projects/project-resource-file-service";
