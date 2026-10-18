@@ -11,6 +11,7 @@ const state=vi.hoisted(()=>({
  lockedAt:null as Date|null,found:true,checks:0,allowed:true,
  updates:0,deliveryEvents:0,activityEvents:0,
  previousReason:null as string|null,previousActor:null as string|null,
+ latestId:"22222222-2222-4222-8222-222222222222",
 }));
 vi.mock("@/modules/projects/access",()=>({
  requireProjectManageAccess:async()=>({
@@ -37,6 +38,7 @@ vi.mock("@/db/client",()=>({
      const rows=step===0?[{status:state.projectStatus}]:
       step===1?(state.found?[{id:submissionId,projectId,status:state.submissionStatus,
        lockedAt:state.lockedAt,version:2}]:[]):
+      step===2?[{id:state.latestId}]:
       state.previousReason?[{reason:state.previousReason,actorMembershipId:state.previousActor}]:[];
      const q={from:()=>q,where:()=>q,for:()=>q,orderBy:()=>q,limit:async()=>rows};
      return q;
@@ -69,6 +71,7 @@ beforeEach(()=>{
  state.found=true;state.checks=0;state.allowed=true;
  state.updates=0;state.deliveryEvents=0;state.activityEvents=0;
  state.previousReason=null;state.previousActor=null;
+ state.latestId=submissionId;
 });
 describe("IIT Dharwad College Admin delivery final lock transaction",()=>{
  it("PROJ-BREAK-races-18 duplicate lock returns the winner without another delivery/activity event",async()=>{
@@ -110,6 +113,25 @@ describe("IIT Dharwad College Admin delivery final lock transaction",()=>{
    .rejects.toThrow("Missing permission: projects.manage");
   expect(state.updates).toBe(0);
   expect(state.deliveryEvents).toBe(0);
+ });
+ it("PROJ-BREAK-races-81 stale tab cannot lock an earlier version after a newer delivery is submitted",async()=>{
+  state.latestId="88888888-8888-4888-8888-888888888888";
+  await expect(lockAdminProjectSubmission(actor(),projectId,submissionId,{reason:"Old review"}))
+   .rejects.toThrow("PROJECT_SUBMISSION_CONFLICT");
+  expect(state.updates).toBe(0);
+  expect(state.deliveryEvents).toBe(0);
+  expect(state.activityEvents).toBe(0);
+ });
+ it("PROJ-BREAK-races-82 stale tab cannot return success for an old idempotent lock after a newer version",async()=>{
+  state.lockedAt=new Date("2026-10-18T10:00:00.000Z");
+  state.previousReason="Final review";
+  state.previousActor=actor().membership!.id;
+  state.latestId="88888888-8888-4888-8888-888888888888";
+  await expect(lockAdminProjectSubmission(actor(),projectId,submissionId,{reason:"Final review"}))
+   .rejects.toThrow("PROJECT_SUBMISSION_CONFLICT");
+  expect(state.updates).toBe(0);
+  expect(state.deliveryEvents).toBe(0);
+  expect(state.activityEvents).toBe(0);
  });
  it("PROJ-BREAK-input-36 malformed reasons and absent submissions never create events",async()=>{
   await expect(lockAdminProjectSubmission(actor(),projectId,submissionId,{reason:""})).rejects.toThrow();
