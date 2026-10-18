@@ -2,6 +2,7 @@ import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {recruiterAutoApprovalReason} from "@/modules/placements/recruiter-request-autoapproval-policy";
 import {initialRecruiterRequestStatus} from "@/modules/placements/recruiter-drive-request-model";
+import {recruiterDriveApprovalPolicy} from "@/modules/placements/recruiter-drive-autoapproval-policy";
 const src=(s:string)=>readFileSync(new URL("../../"+s,import.meta.url),"utf8");
 describe("Trust-policy recruiter REQUEST autoapproval",()=>{
  it("TPO-requests-verification-37 prevents pending verification from taking any autoapprove shortcut",()=>{
@@ -14,6 +15,26 @@ describe("Trust-policy recruiter REQUEST autoapproval",()=>{
   expect(recruiterAutoApprovalReason({...base,trustedDomain:true})).toBe("TRUSTED_DOMAIN");
   expect(recruiterAutoApprovalReason({...base,approvalRequired:false})).toBe("COLLEGE_APPROVAL_DISABLED");
   expect(recruiterAutoApprovalReason(base)).toBe(null);
+ });
+ it("TPO-requests-verification-37 separately honors persisted company trust without requiring matching email domain",()=>{
+  const decision=(overrides:Partial<Parameters<typeof recruiterDriveApprovalPolicy>[0]>={})=>
+   recruiterDriveApprovalPolicy({
+    approvalRequired:true,grantVerified:true,relationshipTrusted:false,
+    recruiterEmail:"recruiter@agency.example",companyDomain:"employer.example",
+    trustedDomains:[],...overrides,
+   });
+  expect(decision({relationshipTrusted:true})).toEqual({
+   autoApprove:true,reason:"TRUSTED_COMPANY",
+  });
+  expect(decision({trustedDomains:["employer.example"]})).toMatchObject({
+   autoApprove:false,reason:"REVIEW_REQUIRED",
+  });
+  expect(decision({relationshipTrusted:true,grantVerified:false})).toMatchObject({
+   autoApprove:false,reason:"REVIEW_REQUIRED",
+  });
+  expect(decision({recruiterEmail:"recruiter@employer.example",trustedDomains:["employer.example"]}))
+   .toEqual({autoApprove:true,reason:"TRUSTED_DOMAIN"});
+  expect(decision({approvalRequired:false})).toEqual({autoApprove:true,reason:"APPROVAL_OFF"});
  });
  it("TPO-requests-verification-37 saves the real draft in the same transaction as the request, not a decorative status",()=>{
   const code=src("src/modules/placements/recruiter-drive-request-service.ts");
