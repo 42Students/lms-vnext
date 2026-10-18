@@ -75,3 +75,26 @@ No tests were run here. These are *pending cloud CI*, not green/verified claims.
 | `src/modules/colleges/admin-history-export-model.ts` `collegeAdminHistoryCsv` | Same test COL-export-08 | guards Unicode-hidden formulas; client-visible truncation remains explicit |
 
 The coverage still is **not exhaustive**: module-wide service and handler inventories, all role permutations, in-transaction races, real PostgreSQL and browser sign-off remain open. CI has not executed these branch changes.
+
+## College academic weak-area closure — incremental, cloud CI pending
+
+| Area | Export / reader | Test, evidence and pending stage |
+| --- | --- | --- |
+| `src/modules/academics/college-academic-export-service.ts` | `exportCollegeAcademicDirectory` | `tests/unit/chat4-college-academic-export-service.test.ts` (`COL-academic-export-service-01`): invalid semester/batch filters rejected before services, actor and normalized filters retained on pagination, Unicode-safe CSV, 1,000-row cap/truncation, service authorization failures bubble without substituting data; no DB run |
+| `src/modules/academics/workspace.ts` | `mapAcademicWorkspaceInBatches`, `getAcademicsWorkspace` | `tests/unit/chat4-college-academics-workspace-service.test.ts` (`COL-academics-workspace-01`): 85 items with eight-flight read bound/order, invalid concurrency, failed batch stops later requests, joins the appropriate period by ID, same context in all services, corrupt period unknown, not foreign title; no DB run |
+| `src/modules/academics/a2-scope.ts` | `loadLearnerEnrollmentScope`, `loadSectionEnrollmentScope` | `tests/unit/chat4-college-academic-cross-tenant-joins.test.ts` (`COL-academics-scope-tenant-01`): query joins now require cohort/program agreement, section/cohort agreement, section/enrollment period agreement, and membership/period same college; source contract only, real PostgreSQL corrupt-FK fixture outstanding |
+| `src/modules/academics/roster-service.ts` | `listSectionRoster`, `listLearnerSectionHistory` | Same test (`COL-academics-scope-tenant-02`): roster membership college, cohort/program and period consistency; learner history section cohort and period must agree with authorized enrollment and college; source contract only, PG fixture outstanding |
+| `src/modules/academics/a2-scope.ts` | `loadFacultyAssignmentScope`, `loadScheduleEventScope` | Same test (`COL-academics-scope-tenant-03`): prevents foreign faculty membership and academic-period scope joins; source contract only, PG corrupt-FK fixture outstanding |
+| `src/modules/academics/college-directory-export-model.ts`, `src/modules/colleges/admin-history-export-model.ts` | Academic and admin history CSV encoding | `tests/unit/chat4-college-admin-export-boundaries.test.ts` (`COL-export-08/09`): Unicode format controls and combining marks cannot hide spreadsheet formulas. A doubled regex-escape defect discovered by read-through was corrected in both source files; CI has not been rerun on these corrections |
+
+No route/page has been marked release-complete merely because its module export now has a named source contract. PostgreSQL concurrency, corrupt joins, and full tenant/journey role matrices remain separate, open gates.
+
+## College sign-in policy paths
+
+| Export | Behavioral test | Boundaries and still-open evidence |
+| --- | --- | --- |
+| `src/modules/colleges/public-signin-policy-service.ts` `effectiveCollegeSignInMethod` and `effectiveCollegeSignInCapabilities` | `tests/unit/chat4-college-public-signin-policy-read.test.ts` (`COL-tenant-public-signin-01`) | Null host college does not open DB; pending staged table and absent row use documented dual-channel defaults; configured EMAIL_ONLY and PHONE_ONLY exclude other channel; malformed stored value fails closed instead of enabling forbidden sign-in. Host-based tenant resolution is an upstream assumption to verify separately |
+| `src/modules/colleges/admin-signin-policy-service.ts` `saveAdminCollegeSignInPolicy` / `CollegeSignInPolicyError` | `tests/unit/chat4-superadmin-college-signin-service-cas.test.ts` (`SA-colleges-signin-01`) | Non-SA, disabled actor, wrong selected college, malformed method/version/unknown keys, migration-not-ready, in-transaction persisted revocation, inactive target, no-op retry, stale CAS, increment+single tenant audit. These exercise mocked transactions, **not** a simultaneous PostgreSQL write/revoke race |
+| `src/modules/colleges/admin-signin-policy-service.ts` `readAdminCollegeSignInPolicy` | `tests/unit/chat4-superadmin-college-signin-service-cas.test.ts` (`SA-colleges-signin-02`) | Service mock: persisted actor scope before reading, migration-pending, unconfigured, configured and corrupt policy states, revoked actor and wrong selected tenant; real DB race/integration remains open |
+
+All newly added test cases are authored, **not executed** by this lane.
