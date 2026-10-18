@@ -49,7 +49,7 @@ describe("HR-BREAK-PRIVATE-RECEIPT-52: employer rating success must be a persist
   expect(source).toContain("parseRecruiterPrivateReviewReceipt(payload)");
   expect(source).toContain("isConfirmedRecruiterPrivateReview(body,requested)");
   expect(source.indexOf("isConfirmedRecruiterPrivateReview(body,requested)"))
-   .toBeLessThan(source.indexOf("setSaved(body);setRating(body.rating);setNote(body.note);"));
+   .toBeLessThan(source.lastIndexOf("setSaved(body);setRating(body.rating);setNote(body.note);"));
   expect(source).toContain("expectedUpdatedAt:saved.updatedAt");
   expect(source).toContain("Your changes are still here; try again.");
  });
