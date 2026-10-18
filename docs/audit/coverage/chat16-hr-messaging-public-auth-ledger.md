@@ -482,3 +482,15 @@ Only provider-template merge variables changed, not SMS DLT wording, auth OTP li
 | `recordPublicJoinOpen` (route invocation) | same | Never called for wrong-origin, oversized, invalid or mass-assigned body. Real PostgreSQL idempotency and activity-event tests remain covered separately and await final CI. |
 
 All added test evidence is authored but **not run**; no provider or database connection was exercised.
+
+
+### 2026-10-19: outbound recipient display and quota boundaries
+
+| Export | Direct behavioral test | Cases |
+|---|---|---|
+| `isValidRecipient`, `normalizeRecipient` | `tests/unit/chat16-messaging-recipient-bidi-policy-50.test.ts` (`MSG-RECIPIENT-BIDI-50`) | malformed/invisible/BiDi control addresses denied, normal Unicode local mailbox preserved, E.164 phone normalization |
+| `outboundChannelSchema`, `outboundStatusSchema`, `outboundSendSchema` | same (`MSG-RECIPIENT-SCHEMA-51`) | accepted channel/status enums, mass assignment, template/path/variable limits and invalid purpose denial |
+| `decideDelivery` | same (`MSG-RECIPIENT-QUOTAS-52`) | production and invalid global/daily/recipient counters fail closed rather than bypass configured send caps |
+| `previewAudience` | same (`MSG-RECIPIENT-PREVIEW-53`) | same recipient+purpose+template dedupe, separate purpose allowed, nonprod allowlist suppression |
+
+The outbound recipient parser now explicitly rejects Unicode format/line-control characters which could visually impersonate another address while bypassing human review. Normal email and SMS delivery contracts are unchanged. Tests authored but **not run**, provider integration remains pending.
