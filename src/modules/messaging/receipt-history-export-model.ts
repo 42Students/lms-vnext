@@ -2,7 +2,7 @@ import {projectMessagingHistory,type MessagingHistoryRow} from "./receipt-histor
 function cell(value:string|number){
  const raw=String(value);
  // Spreadsheet tools may trim leading spaces/control characters before parsing formulas.
- const safe=/^[\p{Cc}\p{Cf}\p{Zs}\p{Zl}\p{Zp}]*[=+@\-]/u.test(raw)?"'"+raw:raw;
+ const safe=/^[\p{Cc}\p{Cf}\p{M}\p{Zs}\p{Zl}\p{Zp}]*[=+@\-]/u.test(raw)?"'"+raw:raw;
  return '"'+safe.replaceAll('"','""')+'"';
 }
 /** Aggregate-only CSV; individual contacts/opaque recipient keys are never exported. */

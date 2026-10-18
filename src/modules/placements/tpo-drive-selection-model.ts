@@ -50,3 +50,24 @@ export function isExactTpoSelectionReplay(
       row.status==="SELECTED" && row.roleTitle===entry.roleTitle &&
       row.annualCtcInr===entry.annualCtcInr));
 }
+
+
+/** Exact optimistic revision check shared by post-issue settlement and
+ * lost-response recovery. Status and official-offer proof are checked separately
+ * under the same transaction row lock before marking a selection RELEASED.
+ */
+export function matchesTpoSelectionReleaseRevision(
+  current:{
+    recordedAt:Date;applicationId:string;roleTitle:string;annualCtcInr:number|null;
+  },
+  displayed:{
+    applicationId:string;roleTitle:string;annualCtcInr:number|null;
+  },
+  expectedRecordedAt:string,
+):boolean{
+  return Number.isFinite(current.recordedAt.getTime()) &&
+    current.recordedAt.toISOString()===expectedRecordedAt &&
+    current.applicationId===displayed.applicationId &&
+    current.roleTitle===displayed.roleTitle &&
+    current.annualCtcInr===displayed.annualCtcInr;
+}
