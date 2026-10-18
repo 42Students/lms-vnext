@@ -19,7 +19,7 @@ describe("Super Admin Projects: safe template subview failures", () => {
     expect(code).toContain("templateVersionHistoryQuerySchema.safeParse(historyQuery)");
     expect(code).toContain('title="Invalid version page"');
   });
-  it("PROJ-BREAK-scale-25 rejects corrupt, fractional or oversized history page selectors", () => {
+  it("PROJ-BREAK-scale-28 rejects corrupt, fractional or oversized history page selectors", () => {
     for(const page of [0, -1, "Infinity", "NaN", 1.5, "0", "99999999999999", "0x10", "1e2", ["1"], ["1","2"], " 1 "]) {
       expect(templateVersionHistoryQuerySchema.safeParse({page}).success, String(page)).toBe(false);
     }

@@ -50,3 +50,7 @@ The earlier `docs/audit/coverage/admin-first-chat13.md` already inventories the 
 
 - `PROJ-BREAK-SA-30/31`: fixed Projects admin mentor display/ID projection joins that previously trusted project membership IDs without a same-college, ACTIVE membership constraint; three scoped paths across snapshots, risk queue and submitted-work pages (`6cc66f6d`). Regression `chat13-project-admin-member-tenant-isolation.test.ts` was authored but not run. Pending A/B PostgreSQL validation and active-then-suspended stale-session test.
 - `SA-BOOKED-INTERVIEWS-03`: filtered department labels in booked-interview admin projection by the selected college; previously an enrollment referring to a foreign-college program could expose its department label. `chat13-super-admin-booked-interviews-window.test.ts` includes the join contract; database joins not executed.
+
+
+- `SA-BOOKED-INTERVIEWS-04`: registered BOOKED slots whose application belongs to another job/college now fail an INNER JOIN rather than appearing with missing candidate data. A/B disposable PostgreSQL witness authored and added to harness script; runner evidence pending.
+- `SA-PLACEMENT-POLICY-08`: corrupt persisted global policy overrides no longer silently affect displayed limits or duration counterpart comparisons. Bounded canonical numeric parser and adversarial test authored; runner evidence pending.

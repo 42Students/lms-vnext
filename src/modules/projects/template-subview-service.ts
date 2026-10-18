@@ -103,7 +103,7 @@ export async function getSuperAdminTemplateSubview(
   return {
     template,
     currentVersion: currentVersion ?? null,
-    versions: [],
+    versions: [] as Array<NonNullable<typeof currentVersion>>,
     assignments: [],
     assignedColleges,
   };

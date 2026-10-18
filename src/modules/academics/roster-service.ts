@@ -8,6 +8,7 @@ import {
 import { getDb } from "@/db/client";
 import {
   academicPeriods,
+  cohorts,
   collegeMemberships,
   learnerProgramEnrollments,
   sectionEnrollments,
@@ -92,6 +93,13 @@ export async function listSectionRoster(
       ),
     )
     .innerJoin(
+      cohorts,
+      and(
+        eq(cohorts.id, learnerProgramEnrollments.cohortId),
+        eq(cohorts.programId, learnerProgramEnrollments.programId),
+      ),
+    )
+    .innerJoin(
       collegeMemberships,
       eq(
         collegeMemberships.id,
@@ -103,7 +111,12 @@ export async function listSectionRoster(
       eq(users.id, collegeMemberships.userId),
     )
     .where(
-      eq(sectionEnrollments.sectionId, sectionId),
+      and(
+        eq(sectionEnrollments.sectionId, sectionId),
+        eq(sectionEnrollments.academicPeriodId, section.academicPeriodId),
+        eq(learnerProgramEnrollments.cohortId, section.cohortId),
+        eq(collegeMemberships.collegeId, section.collegeId),
+      ),
     )
     .orderBy(
       asc(users.displayName),
@@ -145,7 +158,18 @@ export async function listLearnerSectionHistory(
     .from(sectionEnrollments)
     .innerJoin(
       sections,
-      eq(sections.id, sectionEnrollments.sectionId),
+      and(
+        eq(sections.id, sectionEnrollments.sectionId),
+        eq(sections.cohortId, enrollment.cohortId),
+        eq(sections.academicPeriodId, sectionEnrollments.academicPeriodId),
+      ),
+    )
+    .innerJoin(
+      academicPeriods,
+      and(
+        eq(academicPeriods.id, sectionEnrollments.academicPeriodId),
+        eq(academicPeriods.collegeId, enrollment.collegeId),
+      ),
     )
     .where(
       eq(
