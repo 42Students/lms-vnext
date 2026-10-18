@@ -8,7 +8,8 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy";
 import {requirePlacementManageScope} from "./scope";
 import {PlacementsServiceError} from "./errors";
-import {sameTpoBulkRequestRun} from "./tpo-request-bulk-run-model";
+import {sameTpoBulkRequestRun,persistedTpoBulkRequestCount} from "./tpo-request-bulk-run-model";
+import {requireTpoJobActor} from "./tpo-job-write-base";
 
 const uuid=z.string().uuid();
 const schema=z.strictObject({
@@ -26,6 +27,9 @@ export async function recordTpoBulkRequestRun(ctx:RequestContext,raw:unknown){
  requirePermission(ctx,"placements.manage",{collegeId:actor.collegeId});
  const college=await requirePlacementManageScope(ctx,actor.collegeId);
  return getDb().transaction(async tx=>{
+  // Bulk run metadata is a mutation: a stale TPO cookie must not create
+  // activity history after the persisted team membership was revoked.
+  await requireTpoJobActor(tx,ctx);
   const dedupeKey="tpo-requests-bulk:"+college.id+":"+input.runId;
   const [prior]=await tx.select({id:activityEvents.id,metadata:activityEvents.metadata}).from(activityEvents)
    .where(and(eq(activityEvents.collegeId,college.id),eq(activityEvents.dedupeKey,dedupeKey))).limit(1);
@@ -34,7 +38,9 @@ export async function recordTpoBulkRequestRun(ctx:RequestContext,raw:unknown){
    // learners under an existing audit event.
    if(!sameTpoBulkRequestRun(prior.metadata,input))
     throw new PlacementsServiceError("PLACEMENT_REQUEST_CONFLICT");
-   return {eventId:prior.id,replayed:true};
+   const verifiedCount=persistedTpoBulkRequestCount(prior.metadata,input.requestIds.length);
+   if(verifiedCount===null)throw new PlacementsServiceError("PLACEMENT_REQUEST_CONFLICT");
+   return {eventId:prior.id,replayed:true,verifiedCount};
   }
   const rows=await tx.select({id:placementLearnerRequests.id,status:placementLearnerRequests.status})
    .from(placementLearnerRequests)
@@ -65,9 +71,9 @@ export async function recordTpoBulkRequestRun(ctx:RequestContext,raw:unknown){
     .limit(1);
    if(!winner||!sameTpoBulkRequestRun(winner.metadata,input))
     throw new PlacementsServiceError("PLACEMENT_REQUEST_CONFLICT");
-   const evidence=winner.metadata&&typeof winner.metadata==="object"&&!Array.isArray(winner.metadata)?
-    (winner.metadata as Record<string,unknown>).verifiedCount:null;
-   return {eventId:winner.id,replayed:true,verifiedCount:typeof evidence==="number"?evidence:count};
+   const verifiedCount=persistedTpoBulkRequestCount(winner.metadata,input.requestIds.length);
+   if(verifiedCount===null)throw new PlacementsServiceError("PLACEMENT_REQUEST_CONFLICT");
+   return {eventId:winner.id,replayed:true,verifiedCount};
   }
   return {eventId:event.id,replayed:false,verifiedCount:count};
  });

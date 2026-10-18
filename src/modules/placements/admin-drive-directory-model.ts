@@ -32,3 +32,11 @@ export function adminDriveStatus(job:{status:string;applicationDeadline:Date|nul
  if(job.status==="PUBLISHED")return job.applicationDeadline&&job.applicationDeadline.getTime()<now.getTime()?"Open · Expired":"Open";
  return job.status==="DRAFT"?"Draft":job.status==="CLOSED"?"Closed":job.status;
 }
+
+/** Super Admin directory dates are displayed in the owner's IST timezone. */
+export function adminDriveIstDate(value:Date|null|undefined):string {
+ if(!value||!Number.isFinite(value.getTime()))return "—";
+ return new Intl.DateTimeFormat("en-IN",{
+  timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric",
+ }).format(value);
+}
