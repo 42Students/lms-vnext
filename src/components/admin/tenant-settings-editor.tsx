@@ -1,4 +1,7 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -40,7 +43,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
   finally{setSaving(false);}
  }
  const groups=[...new Set(keys.map(spec=>spec.group))];
- return <section aria-label="Edit Tenant Settings" className="space-y-5 - border-t border-border pt-5">
+ return <section aria-label="Edit Tenant Settings" className="space-y-5 border-b border-border pb-5">
   <h2 className="text-lg font-semibold">Edit Tenant Settings</h2>
   <p className="text-sm text-body">Scope: {scopeType==="GLOBAL"?"Global":"Selected college"}. Blank values restore the source default.
    Each field has its legacy validation range. Platform security overrides require a separate rollout before taking effect.</p>
@@ -48,13 +51,13 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
   {groups.map(group=><fieldset disabled={!ready||saving} key={group} className="space-y-3">
    <legend className="mb-2 text-base font-semibold">{group}</legend>
    <div className="grid gap-3 md:grid-cols-2">
-    {keys.filter(spec=>spec.group===group).map(spec=><label key={spec.key} className="grid min-w-0 gap-1 rounded-md border border-border p-3 text-sm">
+    {keys.filter(spec=>spec.group===group).map(spec=><label key={spec.key} className="grid min-w-0 gap-1 border-b border-border py-3 text-sm">
      <span className="font-semibold">{spec.label}{spec.dangerous?" · High impact":""}</span>
      <span className="break-all font-mono text-xs text-muted-foreground">{spec.key}</span>
-     {spec.type==="textarea"?<textarea rows={3} maxLength={4096} value={draft[spec.key]??""}
+     {spec.type==="textarea"?<Textarea rows={3} maxLength={4096} value={draft[spec.key]??""}
       onChange={event=>setDraft(prev=>({...prev,[spec.key]:event.target.value}))}
       className="rounded-md border border-border bg-background p-2"/>:
-      <input type={spec.type==="int"||spec.type==="decimal"?"number":"text"}
+      <Input type={spec.type==="int"||spec.type==="decimal"?"number":"text"}
        min={"min" in spec?spec.min:undefined} max={"max" in spec?spec.max:undefined}
        step={spec.type==="int"?1:spec.type==="decimal"?"any":undefined}
        value={draft[spec.key]??""} maxLength={4096}
@@ -67,10 +70,10 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
   </fieldset>)}
   <OtherTenantSettings scopeType={scopeType} collegeId={collegeId} ready={ready} entries={entries}/>
   <div className="flex flex-wrap items-center gap-3">
-   <button type="button" disabled={!ready||saving||changed.length===0} onClick={()=>void save()}
+   <Button variant="primary" type="button" disabled={!ready||saving||changed.length===0} onClick={()=>void save()}
     className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
     {saving?"Saving…":"Save "+changed.length+" changed setting"+(changed.length===1?"":"s")}
-   </button>
+   </Button>
    <span className="text-xs text-muted-foreground">Each key is saved independently, with an audit record.</span>
   </div>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
