@@ -109,4 +109,27 @@ describe("HR page-level access, recovery and mobile contracts", () => {
     expect(source).not.toContain('max-h-52 space-y-2 overflow-y-auto');
   });
 
+  it("UX-hr-scroll-motion-01 keeps hidden scrollbar scroll containers labelled and focusable", () => {
+    for (const [route, label] of [
+      ["conversations", "General placement-cell messages"],
+      ["conversations/[threadId]", "Drive change request updates"],
+      ["placements/jobs/[jobId]", "Drive discussion history"],
+    ]) {
+      const source = load(root + route + "/page.tsx");
+      expect(source).toContain('ScrollCue axis="y" label="' + label + '"');
+    }
+    const cue = load("src/components/ui/scroll-cue.tsx");
+    expect(cue).toContain("data-scroll-fade");
+    expect(cue).toContain("overscroll-contain");
+    expect(cue).toContain('role={edges.scrollable ? "region" : undefined}');
+  });
+
+  it("UX-hr-scroll-motion-02 uses one motion system without extra hard-coded duration", () => {
+    for (const route of ["conversations", "conversations/[threadId]", "calendar", "placements/jobs/[jobId]"]) {
+      const source = load(root + route + "/page.tsx");
+      expect(source).not.toMatch(/duration-[0-9]{2,4}/);
+      expect(source).not.toContain("transition-[");
+    }
+  });
+
 });

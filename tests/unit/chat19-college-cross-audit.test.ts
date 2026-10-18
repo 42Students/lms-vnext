@@ -157,4 +157,24 @@ describe("chat-19 college UX cross-audit", () => {
     expect(source).toContain('eq(electiveSlots.collegeId, context.membership.collegeId)');
   });
 
+  it("UX-college-scroll-motion-01 responsive rosters offer an actual shared scroll cue instead of a hidden scrollbar", () => {
+    const tables = [
+      "src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx",
+      "src/app/(authenticated)/college/faculty-assignment/page.tsx",
+      "src/app/(authenticated)/college/faculty/[membershipId]/page.tsx",
+      "src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx",
+      "src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx",
+    ];
+    for (const path of tables) {
+      const source = read(path);
+      expect(source).toContain("<DataTable");
+      expect(source).not.toContain("<table");
+    }
+    const allocation = read(tables[4]);
+    expect(allocation).toContain('<ScrollCue axis="y"');
+    expect(allocation).toContain('viewportClassName="max-h-80"');
+    const shared = read("src/components/ui/data-table.tsx");
+    expect(shared).toContain('<ScrollCue axis="x"');
+  });
+
 });
