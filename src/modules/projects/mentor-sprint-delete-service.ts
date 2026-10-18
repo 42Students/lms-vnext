@@ -5,6 +5,7 @@ import {getDb} from "@/db/client";
 import {projectInstances,projectMeetings,projectReleases,projectSprints,projectTasks} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireProjectLifecycleMutationAccess} from "./access";
+import {assertPersistedProjectMutationActor} from "./persisted-mentor-mutation";
 import {ProjectsServiceError} from "./errors";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
@@ -20,6 +21,7 @@ export async function deleteMentorProjectSprint(context:RequestContext,rawPath:u
    .for("update").limit(1);
   if(!project||!["PLANNED","ACTIVE"].includes(project.status))
    throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
+  await assertPersistedProjectMutationActor(tx,context,scope);
   const [sprint]=await tx.select().from(projectSprints)
     .where(and(eq(projectSprints.id,path.sprintId),eq(projectSprints.projectId,scope.project.id)))
     .for("update").limit(1);
