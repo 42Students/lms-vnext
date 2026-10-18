@@ -25,3 +25,14 @@ export function summarizeSelectionRelease(rows: readonly { status: "released" | 
   return { released: rows.filter(row => row.status === "released").length,
     skipped: rows.filter(row => row.status === "skipped").length };
 }
+
+
+/** Never return caught database, permission, or internal exception text to a
+ * TPO. A multi-selection release can report individual failures to the UI.
+ * Safe, bounded outcome copy is essential even if one candidate fails.
+ */
+export function tpoSelectionReleaseFailureMessage(error: unknown): string {
+  if(error instanceof Error && error.message === "PLACEMENT_JOB_PREVIEW_STALE")
+    return "This selection changed. Refresh before releasing.";
+  return "Could not release this selection. Refresh and try again or contact your administrator.";
+}
