@@ -2,6 +2,8 @@
 
 **Owner lane:** chat-9, breaker (chat-14 owns the full module-wide function coverage ledger). **Date:** 2026-10-18.
 Every item below was reproduced by code-path review and has a source repair on `chatgpt/chat-9-b`; adversarial regressions are authored but **Vitest/PostgreSQL/browser runs and cross-lane review are still required**. These are release blockers until those checks pass.
+| PROJ-DEF-009-09 | S2 State machine | `collegeProjectStatusChangeAllowed` treated identical unknown/ARCHIVED states as an allowed no-op; callers could accidentally skip an explicit archived-state guard. | `0d8fa73`: fail closed unless from/to both belong to PLANNED/ACTIVE/COMPLETED. | `PROJ-BREAK-state-01/02` | Pure model test authored; runtime pending |
+| PROJ-DEF-009-10 | S2 Resilience/storage | `removeProjectFile` committed a soft deletion but then awaited object-store removal without catching failure. An outage presented a false failed action after DB deletion; quarantine cleanup likewise replaced the intended friendly rejection. | `a8dae38`: preserve authoritative deleted/quarantined DB result when best-effort object-store cleanup fails, retaining tombstone for cleanup. | `PROJ-BREAK-resilience-01` | Source fixed; object-store failure injection pending |
 
 | ID | Severity | Invariant violated / evidence | Fix | Adversarial regression | Acceptance |
 |---|---|---|---|---|---|
