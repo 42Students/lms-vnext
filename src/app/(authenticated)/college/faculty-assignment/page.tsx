@@ -63,7 +63,7 @@ export default async function CollegeFacultyAssignmentPage({
         Export filtered faculty assignments CSV
       </Link>
       <CollegeFacultyAssignmentCreate {...options} />
-      <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <section className="- sm: border-t border-border pt-4">
         <form action="/college/faculty-assignment" method="get" className="flex flex-wrap items-end gap-3">
           <label className="grid min-w-0 sm:min-w-56 flex-1 gap-1 text-sm font-semibold text-body">
             Faculty, course or class

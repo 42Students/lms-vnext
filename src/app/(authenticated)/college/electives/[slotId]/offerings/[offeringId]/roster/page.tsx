@@ -124,7 +124,7 @@ export default async function ElectiveRoster({
     {feedback.updated && <p role="status" className="text-sm">Roster updated.</p>}
     {feedback.error && <p role="alert" className="text-sm text-error">{feedback.error}</p>}
     {archived && <p className="text-sm text-muted-foreground">Archived offerings are read-only.</p>}
-    <section className="space-y-3 rounded-xl border border-border bg-surface p-4">
+    <section className="space-y-3 - border-t border-border pt-4">
       <h2 className="text-lg font-semibold">Faculty</h2>
       <p className="text-sm text-muted-foreground">Assign a primary lecturer and co-teachers to this offering&apos;s course delivery.</p>
       {assignments.length === 0 && <p className="text-sm text-muted-foreground">No faculty assigned.</p>}
