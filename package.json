@@ -52,7 +52,8 @@
     "ux:capture": "node scripts/ux-capture-references.mjs",
     "ux:audit:verify": "npm run typecheck && npm run lint && npm run ux:audit:source && npm run ux:audit:unit",
     "ux:callsites": "node scripts/ux-callsite-audit.mjs",
-    "ux:callsite:capture": "node scripts/ux-capture-affected-callsites.mjs"
+    "ux:callsite:capture": "node scripts/ux-capture-affected-callsites.mjs",
+    "test:chat17:weak": "vitest run tests/unit/chat17-auth-crypto-hardening.test.ts tests/unit/chat17-auth-http-hardening.test.ts tests/unit/chat17-auth-tenant-branding.test.ts tests/unit/chat17-auth-config-retention-network.test.ts tests/unit/auth-tenant-access.test.ts tests/unit/chat17-identity-system-roles-hardening.test.ts tests/unit/chat17-identity-portal-matrix.test.ts tests/unit/chat17-tenant-dns-verifier.test.ts tests/unit/tenant-domain-validation.test.ts"
   },
   "dependencies": {
     "drizzle-orm": "0.45.3",
