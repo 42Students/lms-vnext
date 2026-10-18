@@ -37,6 +37,8 @@ import {
   type TpoStoredDecision,
 } from "./tpo-participation-model";
 import { requirePlacementManageScope } from "./scope";
+import { requireTpoBatchActor } from "./tpo-batch-workspace-read-service";
+import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import { placementTableExists } from "./staged-tables";
 import { placementEligibilityEvents } from "@/db/schema/placement-batches";
 
@@ -60,8 +62,11 @@ async function requireTpoCollege(context: RequestContext) {
       context.user.platformStatus !== "ACTIVE") {
     return unavailable();
   }
+  // Session roles can be stale after a revocation: re-read the persisted
+  // actor before exposing any learner eligibility or decision history.
+  const activeCollegeId=await requireTpoBatchActor(context);
   const college = await requirePlacementManageScope(
-    context, context.membership.collegeId,
+    context, activeCollegeId,
   );
   return college;
 }
@@ -220,6 +225,15 @@ export async function decideTpoLearnerParticipation(
       .from(colleges).where(eq(colleges.id, college.id))
       .for("update").limit(1);
     if (!locked) return unavailable();
+
+    // SHARE-lock the real actor, active college membership and roles in the
+    // SAME transaction as the decision. A stale TPO session must never write
+    // after the administrator has revoked its persisted role.
+    const persistedActor=await assertPersistedPlatformPermission(
+      tx,context,"placements.manage",{
+        collegeId:college.id,organizationId:college.organizationId,
+      });
+    if(!persistedActor.membership?.roles.includes("TPO"))return unavailable();
 
     const [member] = await tx.select({
       id: collegeMemberships.id,

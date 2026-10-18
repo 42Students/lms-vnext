@@ -151,3 +151,11 @@ These rows establish tests for listed exports only. **Not exhaustive**: 319 acad
 
 
 | `getPromotionFacultyReadiness` and `summarizePromotionFacultyReadiness` (`src/modules/academics/college-promotion-faculty-readiness.ts`) | `tests/unit/chat4-college-promotion-faculty-readiness.test.ts`: zero mapped courses fail closed; absent staff and duplicate teaching assignments do not inflate readiness; source contract checks same-college ACTIVE FACULTY membership, ACTIVE user and current assignment. | Disposable PostgreSQL: revoked faculty + old-term offering fixtures |
+
+
+| `reassignFacultyUpcomingSchedules` target-role race | `chat4-college-faculty-schedule-hardening.test.ts`: target user/role/membership joined SELECT uses transaction-scoped FOR SHARE, guard precedes write, collision lock precedes schedule scan; disabled/expired replacement denied | Dual-session PostgreSQL role revoke interleaving |
+
+
+| `readAdminCollegeSignInPolicy`, `saveAdminCollegeSignInPolicy`, `signInPolicyReadState`, `signInCapabilities`, `updateCollegeSignInSchema` | `tests/unit/chat4-super-admin-signin-and-history-guard.test.ts`: permission held through policy SELECT, strict method schema and expectedVersion, CAS/idempotent no-audit retry order, no-table, unconfigured, invalid policy | Persisted PostgreSQL device role revocation race |
+| `effectiveCollegeSignInMethod`, `effectiveCollegeSignInCapabilities` | `tests/unit/chat4-public-college-signin-policy-behaviour.test.ts`: real service against fake PG selects; host missing, staged table absent, policy row absent, EMAIL_ONLY/PHONE_ONLY enabled channel matrix, corrupt policy fails closed | Actual college host and browser sign-in route |
+| `collegeAdminHistoryCsv`, `MAX_ADMIN_HISTORY_EXPORT_ROWS` | `tests/unit/chat4-super-admin-signin-and-history-guard.test.ts`: IST event timestamps, output BOM, formula escaping and quotes, 100-event cap with truncation footer | Page CSV integration |
