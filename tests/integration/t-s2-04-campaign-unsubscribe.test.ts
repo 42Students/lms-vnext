@@ -55,6 +55,38 @@ describe.skipIf(!enabled)("T-S2-04 staged campaign unsubscribe PostgreSQL",()=>{
   expect(activity?.total).toBe(1);
   // Append-only audit history is intentionally left in the isolated database.
  });
+ it("T-S2-04 concurrent recipient opt-outs serialize and emit exactly one event and timeline",async()=>{
+  if(!pool)throw new Error("Disposable PostgreSQL required");
+  process.env.TPO_CAMPAIGN_RECIPIENT_TOKEN_SECRET=secret;
+  const id=randomUUID();
+  const lead=await createTpoLead(tpo,{collegeId:SEED_IDS.collegeA,
+   name:"Campaign simultaneous optout "+id,email:"race-"+id+"@example.org"});
+  const campaignId=randomUUID(),recipientId=randomUUID();
+  await pool.query(`insert into placement_tpo_email_campaigns
+   (id,college_id,created_by_user_id,total_recipients) values($1,$2,$3,1)`,
+   [campaignId,SEED_IDS.collegeA,SEED_IDS.facultyUser]);
+  await pool.query(`insert into placement_tpo_email_campaign_recipients
+   (id,college_id,campaign_id,lead_id,recipient_key) values($1,$2,$3,$4,$5)`,
+   [recipientId,SEED_IDS.collegeA,campaignId,lead.id,"d".repeat(64)]);
+  const token=issueTpoCampaignRecipientToken({v:1,collegeId:SEED_IDS.collegeA,
+   campaignId,recipientId,expiresAt:Date.now()+86_400_000},secret);
+  const results=await Promise.all([
+   unsubscribeTpoCampaignRecipient(token),
+   unsubscribeTpoCampaignRecipient(token),
+  ]);
+  expect(results).toEqual([{unsubscribed:true},{unsubscribed:true}]);
+  const [recipient]=(await pool.query<{status:string;unsubscribed_at:Date|null}>(
+   "select status,unsubscribed_at from placement_tpo_email_campaign_recipients where id=$1",
+   [recipientId],
+  )).rows;
+  expect(recipient?.status).toBe("UNSUBSCRIBED");
+  expect(recipient?.unsubscribed_at).toBeInstanceOf(Date);
+  const [activity]=(await pool.query<{total:number}>(
+   "select count(*)::int as total from placement_tpo_lead_activities where lead_id=$1 and note=$2",
+   [lead.id,"Unsubscribed from emails"],
+  )).rows;
+  expect(activity?.total).toBe(1);
+ });
  it("enforces one recipient digest per campaign, even across two different lead IDs",async()=>{
   if(!pool)throw new Error("Disposable PostgreSQL required");
   const ref=randomUUID();
