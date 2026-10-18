@@ -125,6 +125,26 @@ describe("HR-BREAK-chat19-conversation-page: actual async role, IDOR and recover
   expect(content).not.toContain("private internal storage error");
   expect(m.changes).toHaveBeenCalledWith(context,id);
  });
+ it("HR-BREAK-CONVO-05 isolates an optional employer drive outage from authorized thread history",async()=>{
+  m.read.mockResolvedValue({...data,thread:{...data.thread,jobId:id}});
+  m.jobs.mockRejectedValue(new Error("private datastore error: employer directory"));
+  const rendered=await page();
+  const content=textOf(rendered);
+  expect(content).toContain("Welcome to your authorized conversation");
+  expect(content).toContain("Hiring drive details are temporarily unavailable.");
+  expect(content).toContain("You can still read and reply");
+  expect(content).toContain("Drive unavailable");
+  expect(content).not.toContain("private datastore error");
+  expect(m.jobs).toHaveBeenCalledWith(context,college);
+  expect(m.changes).not.toHaveBeenCalled();
+  expect(content).not.toContain("Open drive: ");
+ });
+ it("does not query unrelated employer inventory for the general recruiter thread",async()=>{
+  const rendered=await page();
+  expect(textOf(rendered)).toContain("General");
+  expect(m.jobs).not.toHaveBeenCalled();
+  expect(m.changes).not.toHaveBeenCalled();
+ });
  it("links only the current employer's current college drive",async()=>{
   m.read.mockResolvedValue({...data,thread:{...data.thread,jobId:id}});
   m.jobs.mockResolvedValue([{
