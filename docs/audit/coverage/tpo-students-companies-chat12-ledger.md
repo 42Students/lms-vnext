@@ -121,3 +121,17 @@
 ## Projects priority
 
 `PROJ-BREAK-TPO-01.test.ts` exercises TPO role, IDOR, stale session, bogus mentor claim and read vs write denial on the actual project access service with mocked DB reads. `PROJ-BREAK-TPO-02` verifies unreviewed portfolio counts cannot be presented as approved Projects outcomes. No direct `project_instances`/enrollment reconciliation has been established. `PROJ-BREAK-TPO-bulk-partial-audit-01.test.ts` exercises the actual TPO bulk confirmation service and audit outage without a real PostgreSQL transaction. `tests/integration/PROJ-BREAK-TPO-DB-01.test.ts` adds a rollback-only PostgreSQL witness for unassigned TPO, foreign tenant and revoked project role joins; the harness cannot exercise the service's own connection with uncommitted fixtures, so HTTP authorization is still unproven. All are authored, not locally executed.
+
+## 2026-10-18 service-level persisted-role revocation closure
+
+| Export | New regression evidence | Limits |
+|---|---|---|
+| `getTpoStudentsIntelligence` | `chat12-tpo-live-role-private-reads.test.ts`: revoked role, stale/foreign persisted college denied before touching any sensitive roster query | Mocked scopes, not migrated PostgreSQL; page and CSV callers independently recheck actor |
+| `listTpoStudentRequests` | `chat12-tpo-student-requests-service-tenant.test.ts`: revoked actor before requests; malformed and cross-college query refusals; empty/count/filter fixtures | Mocked DB rows; real role revocation/locking and pagination need database proof |
+| `getTpoStudentPlacementHistory` | `chat12-tpo-live-role-private-reads.test.ts`: actor revocation and wrong-college identity before archived offer/application history | Mocked DB; archived participation/event join authority needs PostgreSQL proof |
+| `getTpoCompaniesView`, `getTpoCompanyDetailView`, `exportTpoCompanyDirectory` | `chat12-tpo-company-view-service-permissions.test.ts`: persisted-role revocation and college drift deny contact and CRM reads, preserves no-result/filter cases | Mocked DB and company service; genuine multi-college relationships, CSV and revoke races remain |
+
+Requests grid refreshed-failure trio: `chat12-requests-grid-round6.test.ts`, `chat12-round10-requests-state-contracts.test.ts`, `chat12-round27-request-grid.test.ts`; page-local selection preserves 500-row paging and defends copy against off-page IDs, formula cells and unselected columns. Current table caption, sticky student column and privacy-respecting selected TSV are retained rather than restoring a stale literal DOM contract.
+
+All evidence above is authored but unexecuted, and no green CI/typecheck result is claimed.
+- `getTpoRecruiterLeadStages`, `listTpoCompanies` and `getTpoCompanyMemory`: `tests/unit/chat12-tpo-company-memory-live-actor.test.ts` verifies persisted actor role revocation and wrong-college denial before the shared CRM/lead query. This is a mocked service test, not a real-PostgreSQL concurrency proof (TPO-BREAK-company-memory-actor-04).
