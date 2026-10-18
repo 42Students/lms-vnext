@@ -134,6 +134,11 @@ describe("PROJ-HARNESS source and environment guard",()=>{
    expect(helper).toContain("season.status='ACTIVE'");
  });
 
+ it("PROJ-HARNESS-GUARD-17 cancelled round is checked against persisted status",()=>{
+   expect(helper).toContain("r.status as round_status");
+   expect(helper).toContain('job.round_status === "CANCELLED"');
+ });
+
  it("PROJ-HARNESS-GUARD-05 always rolls back transaction and savepoint errors",()=>{
    expect(helper).toContain('if (begun) await client.query("ROLLBACK")');
    expect(helper).toContain("client.release()");

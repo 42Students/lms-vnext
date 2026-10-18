@@ -117,3 +117,9 @@ All newly authored tests remain pending cloud execution; migration retains the p
 | PROJ-HARNESS-TENANCY-17 | S1 (multi-college isolation) | Previously only cross-organization examples existed; a learner/administrator from a second college under the SAME organization could pass a weakened org-only authorization query unnoticed. | Added sibling-college fixture and explicit Project task/final/meeting and Placement drive/application denials in real-PG case PROJ-HARNESS-TENANCY-17. | Authored; PostgreSQL acceptance pending |
 
 | PROJ-HARNESS-PLACEMENTS-17 | S1 (placement lifecycle) | Published job + stale season can become CLOSED while the old fixture still constructs new applicants and offers. | Persisted same-college ACTIVE season required in candidate fixture; SQL test 17 closes the season and verifies no new application; source GUARD-16. | Authored; final PostgreSQL gate pending |
+
+| PROJ-HARNESS-PLACEMENTS-18 | S1 (round state) | Fixture would create staged candidate results for a drive round that had already been cancelled. | Reads selected round status, refuses CANCELLED; PG case 18 and source GUARD-17. | Authored; final PostgreSQL CI pending |
+
+| UX-kit-HARDEN-55 | S2 (motion a11y) | Shared interactive Tabs used a color transition even when the user requested reduced motion. | Adds `motion-reduce:transition-none` and ARIA-preserving tab regression HARDEN-55. | Authored; final browser gate pending |
+
+| UX-kit-HARDEN-56 | S2 (pending state a11y) | `Button` rendered `aria-busy` before `...props`, allowing a stale caller-provided false value to override its actual loading state. | `aria-busy` is now derived after spreading native props; regression HARDEN-56 covers loading and idle. | Authored; final CI pending |

@@ -405,6 +405,16 @@ describe("UX-kit-STATES: semantic SSR states and accessible fallbacks", () => {
     expect(allowed).toContain("Copy link");
   });
 
+  it("UX-kit-HARDEN-55 interactive tab indicator does not transition for reduced-motion users",()=>{
+    const html=render(<Tabs items={[
+      {value:"overview",label:"Overview",content:"Project overview"},
+      {value:"tasks",label:"Tasks",content:"Project tasks"},
+    ]} value="overview" onValueChange={()=>{}} ariaLabel="Project tabs"/>);
+    expect(html).toContain('role="tablist"');
+    expect(html).toContain('aria-selected="true"');
+    expect(html).toContain("motion-reduce:transition-none");
+  });
+
   it("UX-kit-STATES-15 scroll cue only becomes keyboard-focusable on actual measured overflow", () => {
     const html=render(<ScrollCue axis="x" label="Project navigation"><span>Small</span></ScrollCue>);
     expect(html).toContain('data-scroll-start="false"');
