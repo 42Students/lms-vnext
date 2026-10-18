@@ -86,10 +86,10 @@ export default async function TpoDriveRoundsPage({
               Slots and rooms · {countFor(proposals,round.id)+countFor(requests,round.id)} need review
             </Link>:null}
             {round.whatToBring ? <p className="mt-3 text-sm text-body">Bring: {round.whatToBring}</p> : null}
-            {round.meetingUrl ? <a href={round.meetingUrl} target="_blank" rel="noopener noreferrer"
-              className="mt-3 inline-block text-sm font-semibold text-[var(--lms-teal-deep)] underline">Meeting link</a> : null}
-            {round.testUrl ? <a href={round.testUrl} target="_blank" rel="noopener noreferrer"
-              className="ml-4 mt-3 inline-block text-sm font-semibold text-[var(--lms-teal-deep)] underline">Test link</a> : null}
+            {round.meetingUrl ? <a href={round.meetingUrl}
+              className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">Meeting link</a> : null}
+            {round.testUrl ? <a href={round.testUrl}
+              className="ml-4 mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">Test link</a> : null}
           </article>;
         })}
       </div>}
