@@ -15,7 +15,7 @@ export function SuperAdminTemplateTabs({
   return (
     <nav
       aria-label="Project template sections"
-      role="region" aria-label="Project template sections" tabIndex={0} className="overflow-x-auto overscroll-x-contain [mask-image:linear-gradient(to_right,black_90%,transparent_100%)] border-b border-border pb-3 focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]"
+      aria-label="Project template sections" tabIndex={0} className="overflow-x-auto overscroll-x-contain [mask-image:linear-gradient(to_right,black_90%,transparent_100%)] border-b border-border pb-3 focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]"
     >
       <div className="flex min-w-max gap-2">
         {TEMPLATE_SUBVIEW_TABS.map((tab) => (
