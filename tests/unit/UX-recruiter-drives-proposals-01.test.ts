@@ -8,5 +8,8 @@ describe("UX-recruiter-drives-proposals-01",()=>{
   expect(source).toContain("@/app/(authenticated)/hr/drives/proposals/page");
   expect(source).toMatch(/export\s*\{\s*default\s*\}/);
   expect(read("src/app/(authenticated)/hr/drives/proposals/page.tsx")).toMatch(/export\s+default|export\s*\{\s*default/);
+  expect(read("src/app/(authenticated)/recruiter/drives/proposals/loading.tsx")).toContain("GracefulPageLoading");
+  expect(read("src/app/(authenticated)/recruiter/drives/proposals/error.tsx")).toContain("GracefulErrorBoundary");
+  expect(canonical).toContain("PageHeader");
  });
 });
