@@ -55,7 +55,7 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
   </label>
   {entries.length?<div className="space-y-2">
    <p role="status" className="text-sm">{entries.length} matched · {unmatched.length} unmatched</p>
-   <div className="max-h-52 overflow-auto rounded border border-border p-2 text-sm">
+   <div tabIndex={0} role="group" aria-label="Selection import preview, scroll for more" className="max-h-52 min-h-0 overflow-auto overscroll-contain rounded border border-border p-2 text-sm [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
     {entries.map(e=><p key={e.applicationId} className="border-b border-border px-2 py-1">{e.name} · {e.roleTitle}
      {e.annualCtcInr==null?"":" · ₹"+(e.annualCtcInr/100000)+" LPA"}</p>)}
    </div>
@@ -71,7 +71,7 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
     onConfirm={()=>void confirm()}/>
   {unmatched.length?<details className="rounded border border-border p-3" open>
    <summary className="cursor-pointer text-sm font-semibold">{unmatched.length} unmatched or unusable rows</summary>
-   <ul className="mt-2 max-h-40 list-disc overflow-y-auto pl-6 text-sm">{unmatched.map(x=>
+   <ul tabIndex={0} aria-label="Unmatched selection import rows, scroll for more" className="mt-2 max-h-40 min-h-0 list-disc overflow-y-auto overscroll-contain pl-6 text-sm [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">{unmatched.map(x=>
     <li key={x.line}>Row {x.line}: {x.value||"Empty identifier"} — {x.reason}</li>)}</ul>
   </details>:null}
   {error?<p role="alert" className="text-sm text-foreground">{error}</p>:null}

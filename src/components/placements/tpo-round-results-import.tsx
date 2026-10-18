@@ -55,7 +55,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
   {preview?<div className="space-y-4 rounded-lg border border-border bg-surface-subtle p-4">
    <h3 className="font-semibold">Import preview</h3>
    <p role="status" className="text-sm">{preview.sourceRows} source rows · {preview.matched.length} matched · {preview.unmatched.length} unmatched · {preview.notInFile.length} not in file</p>
-   <div className="max-h-44 overflow-auto rounded border border-border p-2">
+   <div tabIndex={0} role="group" aria-label="Imported round preview, scroll for more rows" className="max-h-44 min-h-0 overflow-auto overscroll-contain rounded border border-border p-2 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
     {preview.matched.map(row=><p key={row.line} className="border-b border-border px-2 py-1 text-sm">
      Row {row.line}: {row.name} · {row.outcome} {row.status?"· existing "+row.status:""}</p>)}
    </div>
@@ -78,7 +78,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
    </div>:null}
    <details className="rounded border border-border bg-surface p-3 text-sm">
     <summary className="cursor-pointer font-semibold">Not in file ({preview.notInFile.length})</summary>
-    {preview.notInFile.length?<ul className="mt-2 max-h-48 space-y-1 overflow-auto">
+    {preview.notInFile.length?<ul tabIndex={0} aria-label="Learners not in import file, scroll for more" className="mt-2 max-h-48 min-h-0 space-y-1 overflow-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
      {preview.notInFile.map(row=><li key={row.applicationId} className="border-b border-border py-1">
       {row.name} · <span className="font-mono text-xs">{row.applicationId}</span>
      </li>)}
@@ -110,7 +110,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
     onConfirm={()=>{setConfirmOpen(false);void send("STAGE_IMPORT");}}/>
   {report?<div role="status" className="space-y-2 rounded border border-border p-4 text-sm">
    <p className="font-semibold">{report.staged} results staged · {report.skipped} skipped · {report.unmatched} unmatched.</p>
-   <div className="max-h-40 overflow-y-auto">{report.results.map((r,i)=><p key={r.line+":"+r.applicationId+":"+i}>
+   <div tabIndex={0} role="group" aria-label="Round import outcomes, scroll for more" className="max-h-40 min-h-0 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">{report.results.map((r,i)=><p key={r.line+":"+r.applicationId+":"+i}>
     {r.applicationId}: {r.status} {r.reason??""}</p>)}</div>
    <p>Stage completed. Use the Apply results preview above to publish progression when the round is completed.</p>
   </div>:null}
