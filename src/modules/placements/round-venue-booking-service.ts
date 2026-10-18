@@ -9,7 +9,8 @@ export async function requireAvailableRoundVenue(tx:TpoJobTx,input:{
  collegeId:string;roundId:string;venue:string;start:Date;durationMinutes:number|null;
 }){
  const venue=input.venue.trim().toLowerCase();
- if(!venue||!input.durationMinutes||input.durationMinutes<=0||!Number.isFinite(input.start.getTime()))
+ if(!venue||!Number.isSafeInteger(input.durationMinutes)||input.durationMinutes===null||
+    input.durationMinutes<=0||input.durationMinutes>1440||!Number.isFinite(input.start.getTime()))
   throw new PlacementsServiceError("PLACEMENT_ROUND_INVALID_TRANSITION");
  await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${input.collegeId}::text || '|' || ${venue}::text))`);
  const competitors=await tx.select({scheduledAt:placementJobRounds.scheduledAt,

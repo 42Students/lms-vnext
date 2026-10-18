@@ -17,10 +17,11 @@ const otherJob="123e4567-e89b-42d3-a456-426614174002";
 const actor={user:{id:"recruiter-a"}};
 const workspace={job:{id:job},college:{id:"college-a"}};
 const threads=[
- {id:"good",jobId:job,recruiterUserId:"recruiter-a"},
- {id:"other-recruiter",jobId:job,recruiterUserId:"recruiter-b"},
- {id:"other-job",jobId:otherJob,recruiterUserId:"recruiter-a"},
- {id:"unscoped",jobId:null,recruiterUserId:"recruiter-a"},
+ {id:"good",collegeId:"college-a",jobId:job,recruiterUserId:"recruiter-a"},
+ {id:"other-recruiter",collegeId:"college-a",jobId:job,recruiterUserId:"recruiter-b"},
+ {id:"other-job",collegeId:"college-a",jobId:otherJob,recruiterUserId:"recruiter-a"},
+ {id:"unscoped",collegeId:"college-a",jobId:null,recruiterUserId:"recruiter-a"},
+ {id:"foreign-college",collegeId:"college-b",jobId:job,recruiterUserId:"recruiter-a"},
 ];
 
 describe("HR-BREAK-messaging-01: drive conversations, IDOR and expired-session journeys",()=>{
@@ -49,10 +50,12 @@ describe("HR-BREAK-messaging-01: drive conversations, IDOR and expired-session j
   expect(mocks.threads).not.toHaveBeenCalled();
  });
  it("never leaks another relationship's conversation because the ID happens to match a job",()=>{
-  const source=threads.slice();
+  // The service first authorizes and filters the persisted college; this
+  // pure projection then enforces the employer's job and recruiter identity.
+  const source=threads.filter(thread=>thread.collegeId===workspace.college.id);
   expect(recruiterDriveThreads(source,job,"recruiter-a")).toEqual([threads[0]]);
   expect(recruiterDriveThreads(source,job,"recruiter-b")).toEqual([threads[1]]);
   expect(recruiterDriveThreads(source,"unrelated","recruiter-a")).toEqual([]);
-  expect(source).toEqual(threads);
+  expect(source).toEqual(threads.filter(thread=>thread.collegeId===workspace.college.id));
  });
 });

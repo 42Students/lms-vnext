@@ -37,7 +37,8 @@ async function readRoster(context:RequestContext,rawJobId:unknown,rawRoundId:unk
  .leftJoin(placementRoundResults,and(eq(placementRoundResults.applicationId,placementApplications.id),
   eq(placementRoundResults.roundId,round.id),ne(placementRoundResults.status,"SUPERSEDED")))
  .where(and(eq(placementApplications.jobId,jobId),
-  eq(placementApplications.status,"SUBMITTED"),eq(placementApplicationScreenings.status,"SHORTLISTED")));
+  eq(placementApplications.status,"SUBMITTED"),eq(placementApplicationScreenings.status,"SHORTLISTED"),
+  eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")));
  const roster=uniqueTpoRoundImportRoster(rows);
  return {round,roster,jobId,roundId};
 }

@@ -70,6 +70,23 @@ Date: 2026-10-18. **Targeted inventory: 65 exported functions/route handlers/pag
 | `src/app/(authenticated)/admin/projects/page.tsx` | `Page` | `PROJ-BREAK-ux-01` | SOURCE: route or page invariant; runtime denied/empty/error journey pending |
 | `src/app/(authenticated)/college/projects/page.tsx` | `Page` | `PROJ-BREAK-ux-01` | SOURCE: route or page invariant; runtime denied/empty/error journey pending |
 
+## Chat-9 added adversarial coverage — latest branch
+
+| File | Export/route/page | New regression cases | Depth and outstanding acceptance |
+|---|---|---|---|
+| `src/modules/projects/project-admin-csv-model.ts` | `projectAdminCsvCell`, `projectAdminCsv` | `PROJ-BREAK-exports-10..17` | PURE BEHAVIOR: Unicode, C0 control, formula prefix, delimiters; actual spreadsheet import pending |
+| `src/modules/projects/admin-workspace-page-export-model.ts` | `projectWorkspaceCsvCell`, `projectWorkspacePageCsv` | `PROJ-BREAK-exports-12/13/14/15`, `COL-projects-08` | PURE BEHAVIOR: centralized sanitizer, visible page only; real browser export pending |
+| `src/modules/projects/project-template-catalogue-model.ts` | `projectTemplateCatalogueCsv` | `PROJ-BREAK-exports-17` | PURE BEHAVIOR: previously missed Unicode combining mark; spreadsheet import pending |
+| `src/modules/projects/admin-college-scope.ts` | `getProjectAdminCollegeId` | `PROJ-BREAK-admin-idor-18/19` | PURE BEHAVIOR: active membership/role/selected SA college; DB scope and page navigation pending |
+| `src/modules/projects/admin-submission-lock-policy.ts` | `mayRecordCollegeAdminDeliveryLock` | `PROJ-BREAK-admin-idor-20` | PURE BEHAVIOR: role, disabled/suspended actor, organization + college dimensions; persisted-actor race pending |
+| `src/modules/projects/admin-submission-review-model.ts` | `canAdminSettleDelivery`, `adminDeliveryToast` | `PROJ-BREAK-admin-state-18` | PURE BEHAVIOR: valid/forbidden transitions; SQL CAS review lock pending |
+| `src/modules/projects/instance-restore-model.ts` | `restoreProjectInstanceInputSchema`, `restoredProjectStatus` | `PROJ-BREAK-admin-state-19` | PURE BEHAVIOR: strict restore token/state; archived-restore transaction pending |
+| `src/modules/projects/risk-signals.ts` | `latestProjectSubmission`, `deriveProjectRiskReasons` | `PROJ-BREAK-admin-state-20/21` | PURE BEHAVIOR: version ordering, archived exclusion, pending review; persisted analytics parity pending |
+| `src/modules/projects/admin-projects-query-model.ts` | `parseAdminProjectsQuery` | `PROJ-BREAK-admin-input-22/23` | PURE BEHAVIOR: decimal-only paging, bounded sizes, URL duplicate/conflict/unknown rejection; browser journey pending |
+| `src/app/(authenticated)/admin/projects/page.tsx` | `SuperAdminProjectsPage` | `PROJ-BREAK-admin-resilience-17`, `PROJ-BREAK-admin-idor-17` | SOURCE: optional template failure preserves workspace view; test with actual server-render rejection pending |
+
+Every regression listed above is authored but **not executed**. This targeted ledger does not replace chat-14's module-wide owner ledger.
+
 ## Whole-product acceptance remaining (no waivers authorized)
 
 - Remaining Projects exports outside chat-9's selected service slice: assigned to chat-14 and other squad owners per the hardening brief. `WEAK-AREAS.md` identifies 14 project source files without a reference prior to this round.

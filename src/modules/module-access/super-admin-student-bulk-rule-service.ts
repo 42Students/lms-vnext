@@ -7,7 +7,7 @@ import {isSuperAdmin} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {getSuperAdminLearnerAccessTrace} from "./admin-trace-service";
-import {writeSuperAdminStudentRule} from "./admin-student-rule-write";
+import {writeSuperAdminStudentRule,StudentRuleConflict} from "./admin-student-rule-write";
 
 /** Placements intentionally excluded: its inheritance ignores membership scope.
  * Never claim a per-student placement override changed access. */
@@ -33,9 +33,24 @@ export async function updateSuperAdminStudentRulesInBulk(context:RequestContext,
    const action=input.action==="INHERIT"
     ?{action:"INHERIT" as const,module:input.module,expected}
     :{action:"SET" as const,module:input.module,enabled:input.action==="ENABLE",locked:false,expected};
-   await writeSuperAdminStudentRule(context,acting.collegeId,membershipId,action);
+   const saved=await writeSuperAdminStudentRule(context,acting.collegeId,membershipId,action);
+   if(!saved)throw new Error("LEARNER_NOT_FOUND");
    applied.push(membershipId);
-  }catch(e){failures.push({id:membershipId,error:e instanceof Error?e.message:"UPDATE_FAILED"});}
+  }catch(e){
+   // A repository/database/provider exception must never become UI copy.
+   // Preserve per-learner failure reporting without leaking raw SQL details.
+   const reason=e instanceof AuthorizationError?"Not allowed to edit this learner.":
+    e instanceof StudentRuleConflict&&e.code==="STALE_RULE"?
+     "The rule changed. Refresh and try again.":
+    e instanceof StudentRuleConflict&&e.code==="ANCESTOR_LOCKED"?
+     "A higher-level locked rule prevents this change.":
+    e instanceof Error&&e.message==="LEARNER_NOT_FOUND"?
+     "Learner unavailable in this college.":
+    e instanceof Error&&e.message==="MODULE_NOT_SUPPORTED"?
+     "This module cannot be edited for the selected learner.":
+    "Could not update this learner.";
+   failures.push({id:membershipId,error:reason});
+  }
  }
  // SA-tenants-modules-32: each learner edit already writes an immutable audit
  // event. This additional bounded college summary makes bulk actions visible

@@ -362,7 +362,7 @@ export default async function TpoMyNotificationsPage({
               </p>
             ) : null}
 
-            <TpoMyNotificationPreferencesEditor
+            <TpoMyNotificationPreferencesEditor key={context.user.id+":"+data.collegeId}
              initial={preferences.values} version={data.preferencesVersion}/>
 
           </>
