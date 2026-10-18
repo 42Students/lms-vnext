@@ -39,7 +39,7 @@ describe("UX-PLAYBOOK compatibility and accessibility",()=>{
     expect(combined).toContain('role="alert"');
   });
   it("UX-PLAYBOOK-15 original DataTable props still work",()=>{
-    const html=renderToStaticMarkup(<DataTable columns={[{key:"label",header:"Label",cell:(row:{id:string})=>row.id}]} rows={[{id:"A"}]} getRowKey={row=>row.id}/>);
+    const html=renderToStaticMarkup(<DataTable columns={[{key:"label",header:"Label",cell:(row:{id:string})=>row.id}]} rows={[{id:"A"}]} getRowKey={row=>row.id} empty={<p>No entries</p>}/>);
     expect(html).toContain("<table");
     expect(html).toContain('role="list"');
   });
