@@ -14,6 +14,8 @@
 
 | WEAK-tenant-domains-17/18 | S1 (double-submit race) | `createTenantDomain` performed a find-then-insert without handling concurrent UNIQUE violations; parallel same-host requests could surface raw PostgreSQL 23505 instead of returning the existing college domain or a friendly foreign-host conflict. | Catch only SQLSTATE 23505, re-read host, return own winner or throw HOST_CONFLICT. Tests `WEAK-tenant-domains-17..19`. Commits `53a4821a`, `87b79496`. | Fix pushed; cloud execution pending |
 
+| WEAK-auth-tenant-access-08 | S1 (cross-principal stale grant) | Cached recruiter context with an active company grant but a `recruiter.userId` belonging to another account previously passed the pure tenant admission check by college ID alone. | Require the recruiter principal to match `context.user.id` before inspecting grants. Unit `WEAK-auth-tenant-access-08`. Commits `f014556a`, `70c9324e`. | Fix pushed; cloud execution pending |
+
 ## Integration fixture hardening
 
 - `PROJ-HARNESS-22..28`: explicit current college, project roster, active user and `can_mutate` checks protect example SQL fixtures against accidental incorrect cross-tenant writes. This is fixture integrity, not proof of product route authorization.
