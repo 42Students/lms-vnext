@@ -29,7 +29,7 @@ describe("chat-16 public auth and invitation page journeys",()=>{
   const handoff=read("src/app/auth/handoff/page.tsx");
   const oldSuper=read("src/app/superadmin-login/page.tsx");
   expect(handoff).toContain('redirect("/?auth=handoff-retired")');
-  expect(oldSuper).toContain('redirect("/")');
+  expect(oldSuper).toContain('redirect("/login")');
   expect(handoff).not.toContain("exchangeToken");
   expect(oldSuper).not.toContain("createSession");
  });

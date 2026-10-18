@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
-import { ScrollCue } from "@/components/ui/scroll-cue";
+import { DataTable } from "@/components/ui/data-table";
 import { CollegeCohortRowActions } from "@/components/academics/college-cohort-management";
 import { CollegeSemesterCreateForm, CollegeSemesterRowActions } from "@/components/academics/college-semester-management";
 import {
@@ -243,87 +243,69 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
            <Link href={path} className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear filters and view all {title.toLowerCase()}</Link>
           </div>
         ) : (
-          <ScrollCue axis="x" label={title + " table columns"}><table className="w-full min-w-[48rem] text-left text-sm">
-            <thead className="bg-muted text-muted-foreground">
-              {data.kind === "SEMESTERS" ? (
-                <tr>
-                  <th scope="col" className="px-4 py-3">Semester</th>
-                  <th scope="col" className="px-4 py-3">Program</th>
-                  <th scope="col" className="px-4 py-3">Credits</th>
-                  <th scope="col" className="px-4 py-3">Mapped courses</th>
-                  <th scope="col" className="px-4 py-3">Status</th>
-                  <th scope="col" className="px-4 py-3">Actions</th>
-                </tr>
-              ) : (
-                <tr>
-                  <th scope="col" className="px-4 py-3">Batch</th>
-                  <th scope="col" className="px-4 py-3">Program</th>
-                  <th scope="col" className="px-4 py-3">Years</th>
-                  <th scope="col" className="px-4 py-3">Academic Year</th>
-                  <th scope="col" className="px-4 py-3">Current Semester</th>
-                  <th scope="col" className="px-4 py-3">Active classes / learners</th>
-                  <th scope="col" className="px-4 py-3">Status</th>
-                  <th scope="col" className="px-4 py-3">Actions</th>
-                </tr>
-              )}
-            </thead>
-            <tbody>
-              {data.kind === "SEMESTERS"
-                ? data.items.map((item) => (
-                  <tr key={item.id} className="border-t border-border align-top">
-                    <td className="px-4 py-4">
-                      <p className="font-semibold text-foreground">{item.name}</p>
-                      <p className="mt-1 text-xs text-muted-foreground">Semester {item.termNumber}</p>
-                    </td>
-                    <td className="px-4 py-4 text-body">{item.programName} ({item.programCode})</td>
-                    <td className="px-4 py-4 text-body">
-                      {item.mappedCredits ?? 0}
-                    </td>
-                    <td className="px-4 py-4 text-body">{item.mappedCourses}</td>
-                    <td className="px-4 py-4 text-body">{item.isActive ? "Active" : "Inactive"}</td>
-                    <td className="px-4 py-4"><CollegeSemesterRowActions row={item} /></td>
-                  </tr>
-                ))
-                : data.items.map((item) => (
-                  <tr key={item.id} className="border-t border-border align-top">
-                    <td className="px-4 py-4">
-                      <p className="font-semibold text-foreground">{item.name}</p>
-                      <p className="mt-1 text-xs text-muted-foreground">{item.code}</p>
-                    </td>
-                    <td className="px-4 py-4 text-body">{item.programName} ({item.programCode})</td>
-                    <td className="px-4 py-4 text-body">
-                      <p>Start Date: {item.startDate}</p>
-                      <p>End Date: {item.endDate ?? "Not set"}</p>
-                      <p className="mt-1 text-xs text-muted-foreground">{item.startPeriodName}</p>
-                    </td>
-                    <td className="px-4 py-4 text-body">
-                      {item.academicYear??(item.currentAcademicYearStart !== null
-                        ? `${item.currentAcademicYearStart}-${String((item.currentAcademicYearStart + 1) % 100).padStart(2, "0")}`
-                        : "Not recorded")}
-                    </td>
-                    <td className="px-4 py-4 text-body">
-                      {batchProgressLabel(item.currentTermNumber === null ? null : {
-                        currentTermNumber: item.currentTermNumber,
-                        currentAcademicYearStart: item.currentAcademicYearStart,
-                      })}
-                    </td>
-                    <td className="px-4 py-4 text-body">
-                      {item.activeSections} classes / {item.activeEnrolledLearners} learners
-                    </td>
-                    <td className="px-4 py-4 text-body">{item.inactiveAt?"Inactive":item.status}</td>
-                    <td className="px-4 py-4">
-                      <div className="flex flex-wrap gap-2">
-                        <Link href={"/college/batches/" + encodeURIComponent(item.id) + "/students"}
-                          className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">
-                          Students
-                        </Link>
-                        <CollegeCohortRowActions row={item} periods={batchPeriods} />
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-            </tbody>
-          </table></ScrollCue>
+          <>{data.kind === "SEMESTERS" ? (
+            <DataTable
+              caption="Semester directory"
+              rows={data.items}
+              getRowKey={item=>item.id}
+              empty={<p>No semesters match these filters.</p>}
+              columns={[
+                {key:"semester",header:"Semester",mobilePriority:"primary",cell:item=><>
+                  <p className="font-semibold text-foreground">{item.name}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">Semester {item.termNumber}</p>
+                </>},
+                {key:"program",header:"Program",mobilePriority:"secondary",cell:item=>
+                  <span>{item.programName} ({item.programCode})</span>},
+                {key:"credits",header:"Credits",mobilePriority:"secondary",cell:item=>item.mappedCredits??0},
+                {key:"courses",header:"Mapped courses",mobilePriority:"secondary",cell:item=>item.mappedCourses},
+                {key:"status",header:"Status",mobilePriority:"secondary",cell:item=>
+                  item.isActive ? "Active" : "Inactive"},
+                {key:"actions",header:"Actions",mobilePriority:"action",cell:item=>
+                  <CollegeSemesterRowActions row={item}/>},
+              ]}
+            />
+          ) : (
+            <DataTable
+              caption="Batch directory"
+              rows={data.items}
+              getRowKey={item=>item.id}
+              empty={<p>No batches match these filters.</p>}
+              columns={[
+                {key:"batch",header:"Batch",mobilePriority:"primary",cell:item=><>
+                  <p className="font-semibold text-foreground">{item.name}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{item.code}</p>
+                </>},
+                {key:"program",header:"Program",mobilePriority:"secondary",cell:item=>
+                  <span>{item.programName} ({item.programCode})</span>},
+                {key:"years",header:"Years",mobilePriority:"secondary",cell:item=><>
+                  <p>Start Date: {item.startDate}</p>
+                  <p>End Date: {item.endDate ?? "Not set"}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{item.startPeriodName}</p>
+                </>},
+                {key:"year",header:"Academic Year",mobilePriority:"secondary",cell:item=>
+                  item.academicYear??(item.currentAcademicYearStart !== null
+                    ? String(item.currentAcademicYearStart)+"-"+String((item.currentAcademicYearStart+1)%100).padStart(2,"0")
+                    : "Not recorded")},
+                {key:"semester",header:"Current Semester",mobilePriority:"secondary",cell:item=>
+                  batchProgressLabel(item.currentTermNumber === null ? null : {
+                    currentTermNumber:item.currentTermNumber,
+                    currentAcademicYearStart:item.currentAcademicYearStart,
+                  })},
+                {key:"population",header:"Active classes / learners",mobilePriority:"secondary",cell:item=>
+                  <span>{item.activeSections} classes / {item.activeEnrolledLearners} learners</span>},
+                {key:"status",header:"Status",mobilePriority:"secondary",cell:item=>
+                  item.inactiveAt?"Inactive":item.status},
+                {key:"actions",header:"Actions",mobilePriority:"action",cell:item=>
+                  <div className="flex flex-wrap gap-2">
+                    <Link href={"/college/batches/"+encodeURIComponent(item.id)+"/students"}
+                      className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">
+                      Students
+                    </Link>
+                    <CollegeCohortRowActions row={item} periods={batchPeriods}/>
+                  </div>},
+              ]}
+            />
+          )}</>
         )}
       </section>
       <nav aria-label={title + " pagination"} className="flex flex-wrap items-center justify-between gap-3 text-sm">
