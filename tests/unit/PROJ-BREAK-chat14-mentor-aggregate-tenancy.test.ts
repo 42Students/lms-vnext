@@ -5,7 +5,7 @@ import {getMentorProjectWorkCounts} from "@/modules/projects/mentor-project-work
 import {getMentorProjectTeamSizes} from "@/modules/projects/mentor-project-team-size-service";
 
 const state=vi.hoisted(()=>({
- active:true,role:true,allow:true,reads:0,rosterReads:0,
+ active:true,role:true,allow:true,enabled:true,reads:0,rosterReads:0,
 }));
 vi.mock("server-only",()=>({}));
 vi.mock("@/modules/identity/context",()=>({
@@ -13,6 +13,9 @@ vi.mock("@/modules/identity/context",()=>({
  hasMembershipRole:(_:unknown,role:string)=>role==="MENTOR"&&state.role,
 }));
 vi.mock("@/modules/permissions/policy",()=>({can:()=>state.allow}));
+vi.mock("@/modules/module-access/service",()=>({
+ resolveOptionalModuleAccess:async()=>({projects:{enabled:state.enabled}}),
+}));
 vi.mock("@/modules/projects/member-service",()=>({
  listMyProjectInstances:async()=>{state.rosterReads++;return [];},
 }));
@@ -36,7 +39,7 @@ const calls=[
  (ctx:RequestContext,rows:never[])=>getMentorProjectTeamSizes(ctx,rows),
 ] as const;
 beforeEach(()=>{
- state.active=true;state.role=true;state.allow=true;
+ state.active=true;state.role=true;state.allow=true;state.enabled=true;
  state.reads=0;state.rosterReads=0;
 });
 describe("PROJ-BREAK-MENTOR-136..140 aggregate source-of-truth and scope",()=>{
@@ -72,6 +75,15 @@ describe("PROJ-BREAK-MENTOR-136..140 aggregate source-of-truth and scope",()=>{
   for(const service of calls)
    await expect(service(actor(),[own])).rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
   expect(state.reads).toBe(0);
+ });
+ it("PROJ-BREAK-MENTOR-141 disabled Projects cannot expose aggregate data even for valid assigned Mentor rows",async()=>{
+  state.enabled=false;
+  for(const service of calls){
+   await expect(service(actor(),[own]))
+    .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
+  }
+  expect(state.reads).toBe(0);
+  expect(state.rosterReads).toBe(0);
  });
  it("PROJ-BREAK-MENTOR-140 other-role injected rows cannot be counted as Mentors",async()=>{
   const fake={memberRole:"LEARNER",project:{id:"11111111-1111-4111-8111-111111111111",
