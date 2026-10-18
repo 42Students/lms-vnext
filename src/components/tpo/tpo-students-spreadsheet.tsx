@@ -1,5 +1,5 @@
-import {tpoStudentMarksVerificationLabel} from "@/modules/placements/tpo-student-marks-label";
 "use client";
+import {tpoStudentMarksVerificationLabel} from "@/modules/placements/tpo-student-marks-label";
 import Link from "next/link";
 import {tpoStudentDisplayLabel} from "@/modules/placements/tpo-student-display-label";
 import {useState} from "react";
