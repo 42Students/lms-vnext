@@ -5,6 +5,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import { loadProjectCollegeScope } from "./scope";
+import { getProjectAdminCollegeId } from "./admin-college-scope";
 import { ProjectsServiceError } from "./errors";
 import { previewVersion } from "./class-team-preview-token";
 import { z } from "zod";
@@ -18,6 +19,13 @@ export function classRosterRevision(classId: string, members: readonly { members
 /** Both roles are checked against persisted authority, never client-supplied role flags. */
 export async function requireTeamCreationAuthority(context: RequestContext, collegeId: string) {
   const college = await loadProjectCollegeScope(uuid.parse(collegeId));
+  // This is the College Admin workspace flow. Even a platform Super Admin
+  // must explicitly act in the selected college; an organization-only or
+  // unscoped session must not create another tenant's projects from a forged
+  // collegeId in the request body.
+  if (getProjectAdminCollegeId(context) !== college.id) {
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  }
   requirePermission(context, "projects.manage", { organizationId: college.organizationId, collegeId: college.id });
   if (!isSuperAdmin(context)) {
     const membership = context.membership;
