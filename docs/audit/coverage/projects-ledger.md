@@ -16,6 +16,7 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 - `PROJ-BREAK-MENTOR-164..167`: read-only meeting notes enforce exact project and meeting IDs, role and module authorization, with mocked no-audit / no-write checks.
 - `PROJ-BREAK-MENTOR-168..172`: four mentor mutation handlers now have request-level test cases for origin denial, unsupported JSON content type, oversized body declarations, authenticated delegation, friendly service error mapping.
 - `PROJ-BREAK-MENTOR-173..177`: task-feedback service mocked persisted review versions, denied wrong role/tenant, missing task and 50-result cap.
+- `PROJ-DEF-014-02 / PROJ-BREAK-MENTOR-185`: disabled Mentor risk/readiness now returns no project identity or synthetic counts and short-circuits before project scope enumeration; page header hides title/status. Mocked regression authored, real HTTP and browser verification pending.
 - `PROJ-BREAK-MENTOR-178..184`: six mentor read services exercised denied/disabled routes before DB, exact project scope, and happy-path dependency reachability. These are not equivalent to tenant fixture/database acceptance.
 - Existing CI failure inventory also lists `PROJ-BREAK-MENTOR-83`, four mentor route guard tests and `LEARNER-projects-40` against a previous cloud snapshot; source inspection indicates these assertions now exist, but **a new CI run is required to clear the failures**.
 
