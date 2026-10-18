@@ -225,6 +225,20 @@ describe("IIT Dharwad College Admin Projects role journeys", () => {
     expect(source).toContain("getDb().transaction(");
   });
 
+  it("PROJ-COL-REVOKE-01 authenticates persisted creator under the project materialization transaction",()=>{
+    const source=readFileSync("src/modules/projects/instance-service.ts","utf8");
+    const begin=source.indexOf("return await db.transaction(async (tx) => {");
+    const actor=source.indexOf('assertPersistedPlatformPermission(tx,context,"projects.manage"');
+    const insert=source.indexOf(".insert(projectInstances)");
+    expect(begin).toBeGreaterThan(0);
+    expect(actor).toBeGreaterThan(begin);
+    expect(actor).toBeLessThan(insert);
+    expect(source).toContain("collegeId:college.id,organizationId:college.organizationId");
+    expect(source).toContain("mapInstanceConstraint(error)");
+    expect(source).toContain("recordActivityEventInTransaction(");
+    expect(source).toContain("notifyProjectMemberships(tx,createdEvent.id");
+  });
+
   it("PROJ-COL-ORIGIN-01 protects project creation and mentor reassignment from cross-origin POSTs", () => {
     for (const route of ["src/app/api/projects/route.ts",
       "src/app/api/projects/reassign-mentor/route.ts"]) {
