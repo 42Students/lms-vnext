@@ -64,7 +64,7 @@ export function ProjectAdminWorkspaceList({
     );
   }
 
-  if(view==="table")return <div className="overflow-x-auto rounded-xl border border-border bg-surface">
+  if(view==="table")return <div role="region" aria-label="Project workspace table" tabIndex={0} className="overflow-x-auto overscroll-x-contain [mask-image:linear-gradient(to_right,black_90%,transparent_100%)] rounded-xl border border-border bg-surface focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]">
     <table className="min-w-full text-left text-sm">
       <thead className="bg-muted"><tr>
         <th scope="col" className="p-3">Workspace</th><th scope="col" className="p-3">Mentor</th>
