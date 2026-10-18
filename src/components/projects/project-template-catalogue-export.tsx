@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import type { TemplateCatalogueRow } from "@/modules/projects/project-template-catalogue-model";
 import { projectTemplateCatalogueCsv } from "@/modules/projects/project-template-catalogue-model";
 
@@ -13,8 +14,8 @@ export function ProjectTemplateCatalogueExport({ rows }: { rows: readonly Templa
     anchor.click();
     URL.revokeObjectURL(href);
   }
-  return <button type="button" disabled={!rows.length} onClick={download}
-    className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold disabled:opacity-50">
+  return <Button variant="secondary" type="button" disabled={!rows.length} onClick={download}
+    className="">
     Export this page (CSV)
-  </button>;
+  </Button>;
 }
