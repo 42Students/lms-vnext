@@ -51,8 +51,10 @@ export async function dispatchTpoCampaign(context:RequestContext,rawId:unknown){
  const member=context.membership;
  if(!member||!hasMembershipRole(context,"TPO")||member.status!=="ACTIVE"||
   context.user.platformStatus!=="ACTIVE")throw new AuthorizationError("placements.manage");
- const college=await requirePlacementManageScope(context,member.collegeId);
+ // Provider readiness is tenant-independent; refuse disabled delivery
+ // before touching college storage, while still denying unauthenticated roles.
  const config=configuration();
+ const college=await requirePlacementManageScope(context,member.collegeId);
  if(!await tpoCampaignDraftStorageReady())throw new TpoCampaignDispatchError("NOT_READY");
  const draft=await getTpoCampaignDraft(context,id);
  if(!draft)throw new TpoCampaignDispatchError("NOT_FOUND");
