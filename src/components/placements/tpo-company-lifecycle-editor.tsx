@@ -73,19 +73,19 @@ export function TpoCompanyLifecycleEditor({ company }: { company: Company }) {
           <>
             <button type="button" disabled={busy || reason.trim().length < 8}
               onClick={() => void submit("EDIT_TRUST")}
-              className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold disabled:opacity-50">
+              className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-4 text-sm font-semibold disabled:opacity-50">
               {company.isTrusted ? "Remove trust" : "Mark trusted"}
             </button>
             <button type="button" disabled={busy || reason.trim().length < 8}
               onClick={() => void submit("ARCHIVE")}
-              className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold disabled:opacity-50">
+              className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-4 text-sm font-semibold disabled:opacity-50">
               Archive relationship
             </button>
           </>
         ) : (
           <button type="button" disabled={busy || reason.trim().length < 8}
             onClick={() => void submit("RESTORE")}
-            className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold disabled:opacity-50">
+            className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-4 text-sm font-semibold disabled:opacity-50">
             Restore relationship
           </button>
         )}
@@ -96,9 +96,9 @@ export function TpoCompanyLifecycleEditor({ company }: { company: Company }) {
           This changes only this college&apos;s relationship and is audited.</p>
         <div className="mt-2 flex gap-2">
           <button type="button" disabled={busy} onClick={()=>void submit(reviewAction)}
-            className="min-h-10 rounded-[9px] bg-primary px-4 font-semibold text-on-primary text-primary-foreground">Confirm change</button>
+            className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 font-semibold text-on-primary text-primary-foreground">Confirm change</button>
           <button type="button" disabled={busy} onClick={()=>setReviewAction(null)}
-            className="min-h-10 rounded-md border border-border px-4">Cancel</button>
+            className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-4">Cancel</button>
         </div>
       </div>:null}
       {busy ? <p role="status" className="text-sm text-body">Saving change…</p> : null}

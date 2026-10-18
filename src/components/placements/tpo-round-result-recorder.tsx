@@ -162,7 +162,7 @@ export function TpoRoundResultRecorder({
     );
   }
   return (
-    <div className="mt-3 space-y-2 rounded-md border border-border bg-surface p-2 text-xs">
+    <div className="mt-3 space-y-2 rounded-[9px] border border-border bg-surface p-2 text-xs">
       {editable ? (
         <>
           <label className="block font-semibold text-body">
