@@ -2,6 +2,7 @@ import "server-only";
 import {and,eq,isNull,or} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {activityEvents,colleges,moduleAccessRules} from "@/db/schema";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
@@ -18,6 +19,9 @@ export async function writeSuperAdminCollegeRule(context:RequestContext,rawColle
    .from(colleges).where(eq(colleges.id,collegeId)).for("update").limit(1);
   if(!college||college.status!=="ACTIVE")return null;
   requirePermission(context,"college.manage",{collegeId:college.id,organizationId:college.organizationId});
+  await assertPersistedPlatformPermission(tx,context,"college.manage",{
+   collegeId:college.id,organizationId:college.organizationId,
+  });
   const where=and(eq(moduleAccessRules.scopeType,"COLLEGE"),eq(moduleAccessRules.scopeId,college.id),eq(moduleAccessRules.module,input.module));
   const [existing]=await tx.select({id:moduleAccessRules.id,enabled:moduleAccessRules.enabled,locked:moduleAccessRules.locked})
    .from(moduleAccessRules).where(where).limit(1);

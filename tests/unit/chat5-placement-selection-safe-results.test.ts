@@ -80,6 +80,16 @@ describe("TPO release — no internal errors leak in partial results",()=>{
   const service=src("src/modules/placements/tpo-drive-selection-service.ts");
   expect(service).toContain("!matchesTpoSelectionReleaseRevision(selection,selection,input.expectedRecordedAt[id])");
  });
+ it("PLACEMENTS-SELECTION-CAS-06 rechecks all displayed selection terms under the verification lock",()=>{
+  const service=src("src/modules/placements/tpo-drive-selection-service.ts");
+  const start=service.indexOf("const candidateMap=new Map(",service.indexOf("export async function verifyAndReleaseTpoSelections"));
+  const verification=service.slice(start,service.indexOf("const offer=await issuePlacementOffer(",start));
+  expect(verification).toContain("!matchesTpoSelectionReleaseRevision(locked,selection,input.expectedRecordedAt[id])");
+  expect(verification).not.toContain("locked.recordedAt.toISOString()!==input.expectedRecordedAt[id]");
+  expect(verification).toContain('!["SELECTED","VERIFIED"].includes(locked.status)');
+  expect(verification).toContain('await requireTpoJobActor(tx,context)');
+  expect(verification).toContain('.for("update").limit(1)');
+ });
  it("PLACEMENTS-SELECTION-SEASON-06 locks the owning season before every selection mutation",()=>{
   const service=src("src/modules/placements/tpo-drive-selection-service.ts");
   const check=service.slice(service.indexOf("async function requireActiveTpoSelectionSeason"),service.indexOf("const pendingCode"));

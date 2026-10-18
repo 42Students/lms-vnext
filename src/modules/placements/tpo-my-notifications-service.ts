@@ -12,6 +12,7 @@ import {
 } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {
   activityEvents,
   inAppNotifications,
@@ -206,6 +207,17 @@ export async function getTpoMyNotifications(
       requests:preference.requests,resultsReady:preference.resultsReady,followUps:preference.followUps,
     }:null;
   }
+
+  // The query may have started before a TPO role or account was revoked.
+  // Recheck the active persisted TPO role at the response boundary; it is not
+  // enough for a stale request context to have once held placements.manage.
+  await db.transaction(async tx=>{
+    const persisted=await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+      collegeId,organizationId,
+    });
+    if(!hasMembershipRole(persisted,"TPO"))
+      throw new AuthorizationError("placements.manage");
+  });
 
   return {
     query,

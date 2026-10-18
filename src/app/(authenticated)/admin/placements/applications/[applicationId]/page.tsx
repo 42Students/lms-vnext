@@ -6,9 +6,10 @@ import {getSuperAdminApplicationDetail} from "@/modules/admin-ui/super-admin-app
 import {listSuperAdminApplicationStageHistory} from "@/modules/admin-ui/super-admin-application-stage-history-service";
 export default async function SuperAdminApplicationDetail({params}:{params:Promise<{applicationId:string}>}){
  const {applicationId}=await params;
- const detail=await getSuperAdminApplicationDetail(await getCurrentRequestContext(),applicationId);
+ const context=await getCurrentRequestContext();
+ const detail=await getSuperAdminApplicationDetail(context,applicationId);
  if(!detail)notFound();
- const history=await listSuperAdminApplicationStageHistory(await getCurrentRequestContext(),applicationId);
+ const history=await listSuperAdminApplicationStageHistory(context,applicationId);
  return <div className="space-y-5">
   <SuperAdminPlacementDetailView data={detail}/>
   {detail.related?<div className="flex flex-wrap gap-3">

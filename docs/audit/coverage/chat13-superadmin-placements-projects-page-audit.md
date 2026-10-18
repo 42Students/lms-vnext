@@ -54,3 +54,12 @@ The earlier `docs/audit/coverage/admin-first-chat13.md` already inventories the 
 
 - `SA-BOOKED-INTERVIEWS-04`: registered BOOKED slots whose application belongs to another job/college now fail an INNER JOIN rather than appearing with missing candidate data. A/B disposable PostgreSQL witness authored and added to harness script; runner evidence pending.
 - `SA-PLACEMENT-POLICY-08`: corrupt persisted global policy overrides no longer silently affect displayed limits or duration counterpart comparisons. Bounded canonical numeric parser and adversarial test authored; runner evidence pending.
+
+
+- `SA-DRIVE-ARCHIVE-NOTIFY-05`: archive notification recipients now require the selected college's persisted membership, rather than any application membership. Source regression added; no external delivery executed.
+- `SA-HIRING-REPORT-SCOPE-03`, `SA-PIPELINE-TENANT-02`: Super Admin hiring and funnel counts now exclude forged foreign-college applicant memberships before counting; SQL A/B fixture added alongside source and pure model assertions. Tests not run.
+
+
+- `SA-SCOPED-CSV-CAP-05`: scoped CSV endpoint now forces 25-row fetches regardless of a manually supplied pageSize. This closes first-250 under-fetch and 1,000-row over-fetch. Mocked service export test written; no browser/CI run.
+- `SA-APPLICATIONS-ACADEMIC-05`: Super Admin application directory academic facets now require current ACTIVE enrollment with a consistent cohort/program. New source test and expanded all-page read-service matrix authored; no PostgreSQL execution.
+- `SA-ADMIN-LEDGER-01`: 38 dedicated placement admin, Super Admin, report, and platform-policy modules dynamically inventoried; 13 `src/modules/admin-ui` Placements read and CSV services are recorded in the central coverage ledger. Existing route audits cover 37 first-third /admin pages and 48 Placements/Projects pages. None of these inventory counts substitutes for an executed accessibility or tenancy role-journey check.

@@ -118,3 +118,25 @@ The main failure snapshot predated the shared ZeptoMail provider configuration a
 | `recruiter-job-visibility-model.ts`: `isRecruiterJobVisible` | Active grant AND central policy AND exact authenticated recruiter user ID; denies impersonation, wrong college/relationship | `tests/unit/HR-BREAK-authorization-01.test.ts` |
 
 **Not verified:** production provider calls, DB integration and competing writers, browser last-third pages’ loading/partial/error/phone states. All tests authored, not run. Do not interpret `UNIT WRITTEN` as CI passed.
+
+## 2026-10-18 direct service behavior follow-up
+
+| Entry point | Unit evidence added | Remaining gate |
+| --- | --- | --- |
+| `getTpoPublicJoinLinkStatus`, `changeTpoPublicJoinLink`, `setTpoPublicJoinLinkEnabled` | `tests/unit/chat2-public-link-service-security-races.test.ts`: tenant/role/disabled-session denial before DB, fail-closed unavailable storage, strict company/link CAS IDs, scoped college-admin read | Token rotation competing DB writers, real audit and one-time display |
+| `getTpoCommunicationSettings`, `updateTpoCommunicationSettings` | `tests/unit/chat2-tpo-communication-settings-service-cas.test.ts`: strict shape, actor denied, unregistered storage, revocation before mutation, stale CAS, identical retry no-op, successful audit | PostgreSQL transaction/rollback and real session integration |
+
+All tests authored and committed; **not executed**. Existing partial ledger rows stay PARTIAL until full database, role and UI verification.
+
+## TPO last-third actual server-page state tests — 2026-10-18
+
+The 42-route source matrix is complemented by **direct async server-page behavior** on selected high-risk pages (not claimed for all 42):
+
+| Page(s) | Test | Tested states |
+| --- | --- | --- |
+| `/tpo/settings/public-link` | `tests/unit/chat2-tpo-last-third-settings-render.test.ts` | TPO-only authorization vs College Admin/learner/missing membership, college-bound status lookup, pending public-link state, legacy title |
+| `/tpo/settings/blocked-dates` | `tests/unit/chat2-tpo-last-third-settings-render.test.ts` | truthful unregistered-storage message vs ready editor, persisted timestamp ISO value, titled page |
+| `/tpo/reports/by-branch` | `tests/unit/chat2-tpo-reports-server-page-states.test.ts` | repeated selectors denied before scoped service, learner/admin denial, selected college + season/job bound, no-season empty state |
+| `/tpo/reports/ctc` | `tests/unit/chat2-tpo-reports-server-page-states.test.ts` | repeated selectors denied before private CTC report lookup; learner denied before read |
+
+**Remaining:** 38 other pages require equivalent executable per-page states; the existing 42-route inventory/source matrix is not a substitute. Loading/error boundary, mobile/browser and database integration remain pending CI. This table records authored tests only, not passed coverage.

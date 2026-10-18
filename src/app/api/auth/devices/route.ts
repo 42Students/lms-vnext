@@ -25,7 +25,7 @@ export async function GET() {
         expiresAt: row.expires_at,
         current: row.id === session.sessionId,
       })),
-    });
+    }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
     return apiErrorResponse(error);
   }
@@ -43,7 +43,7 @@ export async function DELETE(request: Request) {
       session.userId,
       session.sessionId,
     );
-    return NextResponse.json({ ok: true, revoked });
+    return NextResponse.json({ ok: true, revoked }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
     return apiErrorResponse(error);
   }
