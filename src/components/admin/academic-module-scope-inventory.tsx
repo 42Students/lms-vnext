@@ -4,6 +4,13 @@ import Link from "next/link";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { isSafeInternalHref } from "@/lib/safe-internal-href";
 import type {AcademicModuleScope} from "@/modules/module-access/admin-descendant-rule-write";
+/** Preserve active query filters when navigating bounded academic hierarchy pages. */
+export function academicScopePageHref(baseHref: string, page: number): string | null {
+ if (!isSafeInternalHref(baseHref) || !Number.isSafeInteger(page) || page<1) return null;
+ const url=new URL(baseHref,"https://local.invalid");
+ url.searchParams.set("academicPage",String(page));
+ return url.pathname+url.search+url.hash;
+}
 /** All stored and inheriting academic nodes on the bounded college scope page.
  * The effective learner decision still depends on runtime enrollment/locks. */
 export function AcademicModuleScopeInventory({scopes,page=1,baseHref}:{
@@ -11,7 +18,9 @@ export function AcademicModuleScopeInventory({scopes,page=1,baseHref}:{
 }){
  const [expanded,setExpanded]=useState(false);
  const visible=expanded?scopes:scopes.slice(0,15);
- const safeBaseHref=baseHref && isSafeInternalHref(baseHref) ? baseHref : null;
+ const safePage=Number.isSafeInteger(page)&&page>=1?page:1;
+ const prevHref=baseHref&&safePage>1?academicScopePageHref(baseHref,safePage-1):null;
+ const nextHref=baseHref&&scopes.length===500?academicScopePageHref(baseHref,safePage+1):null;
  const columns:DataTableColumn<AcademicModuleScope>[]=[
   {key:"level",header:"Level",mobilePriority:"primary",
    cell:scope=>scope.scopeType==="COHORT"?"Batch":scope.scopeType},
@@ -46,12 +55,12 @@ export function AcademicModuleScopeInventory({scopes,page=1,baseHref}:{
     caption="Academic hierarchy and effective module rules"
     empty={<p>No academic scopes found.</p>}/>
   </div>
-  {safeBaseHref?<nav aria-label="Academic scope pages" className="flex flex-wrap items-center gap-4 text-sm">
-   <span>Academic hierarchy page {page} · {scopes.length} nodes on this page</span>
-   {page>1?<Link href={safeBaseHref+"?academicPage="+(page-1)}
+  {prevHref||nextHref?<nav aria-label="Academic scope pages" className="flex flex-wrap items-center gap-4 text-sm">
+   <span>Academic hierarchy page {safePage} · {scopes.length} nodes on this page</span>
+   {prevHref?<Link href={prevHref}
     className="inline-flex min-h-11 items-center text-primary-text underline">Previous hierarchy page</Link>:null}
-   {scopes.length===500?<Link href={safeBaseHref+"?academicPage="+(page+1)}
-    className="inline-flex min-h-10 items-center text-primary-text underline">Next hierarchy page</Link>:null}
+   {nextHref?<Link href={nextHref}
+    className="inline-flex min-h-11 items-center text-primary-text underline">Next hierarchy page</Link>:null}
   </nav>:null}
  </section>;
 }
