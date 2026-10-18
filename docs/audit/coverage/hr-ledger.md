@@ -8,7 +8,7 @@
 |---|---|---|---|
 | HR-ROUND-ROLE-01 | `canRecruiterEditRound` in `hr-round-editor-model.ts` | `hr-recruiter-exhaustive-chat15-01.test.ts`; new `HR-BREAK-chat15-round-versions-02.test.ts` (including blank/mismatched actors, PENDING, results, slots) | Real DB authorization and race |
 | HR-ROUND-STALENESS-01 | `matchesRecruiterRoundVersion` in `hr-round-editor-model.ts` | New `HR-BREAK-chat15-round-versions-02.test.ts`: offsets, ms mismatch, malformed/absent versions | DB round edit end-to-end |
-| HR-ROUND-CAS-02 | `editHrJobRound` in `hr-round-editor-service.ts` | `hr-round-editor-concurrency.test.ts` and version-model tests | Parallel PostgreSQL UPDATE/REMOVE, audit exactly once |
+| HR-ROUND-CAS-02 | `editHrJobRound` in `hr-round-editor-service.ts` | `hr-round-editor-concurrency.test.ts`, `HR-BREAK-chat15-round-service-03.test.ts` (transactional role, version, event), and version-model tests | Real PostgreSQL parallel UPDATE/REMOVE and rollback |
 | HR-ROUND-CAS-02 | `listHrRoundEditorRows` | `hr-recruiter-exhaustive-chat15-01.test.ts` covers pure eligibility; service read still untested | Revoked grant, wrong tenant, TPO-only role |
 | HR-ROUND-NAMES-01 | `duplicateRecruiterRoundName` | `hr-recruiter-exhaustive-chat15-01.test.ts` (NFKC, whitespace, cancelled/self) | Race on simultaneous inserts |
 | HR-ROUND-NAMES-01 | `hrRoundFormSchema` | `hr-round-command-validation.test.ts`, `HR-BREAK-chat15-round-versions-02.test.ts` | Integration error mapping |
@@ -297,3 +297,170 @@ These paths require one test row **per exported function** after parsing each fi
 - `src/modules/placements/recruiter-today-waiting-model.ts`
 - `src/modules/placements/recruiter-today-week-events-model.ts`
 - `src/modules/placements/recruiter-workspace-service.ts`
+
+## Exported functions inventory batch 1 (12 files; 19 functions)
+
+| Source | Exported function | Test closure |
+|---|---|---|
+| `src/modules/placements/hr-activity-csv-model.ts` | `buildHrActivityCsv` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-applicant-drawer-model.ts` | `buildHrApplicantDrawer` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-applicant-export-model.ts` | `buildHrApplicantCsv` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-calendar-category-model.ts` | `filterHrCalendarDays` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-calendar-day-model.ts` | `combineHrCalendarDays` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-calendar-day-model.ts` | `hrResultsDueHref` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-calendar-day-model.ts` | `selectHrMobileCalendarDays` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-calendar-export-model.ts` | `buildHrCalendarCsv` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-calendar-next-event-model.ts` | `hrNextCalendarEvent` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-company-report-export-model.ts` | `buildHrCompanyReportCsv` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-conversation-detail-links-model.ts` | `hrConversationDetailHref` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-conversation-detail-pagination-model.ts` | `hrConversationDetailPageWindow` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-conversation-inbox-model.ts` | `filterRecruiterConversations` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-conversation-inbox-model.ts` | `hrConversationPageBounds` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-conversation-inbox-model.ts` | `onlyUnreadRecruiterThreads` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-conversation-inbox-model.ts` | `orderRecruiterConversations` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-conversation-inbox-model.ts` | `scopeRecruiterConversations` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-conversation-inbox-model.ts` | `countScopedConversations` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-conversation-inbox-service.ts` | `listHrConversations` | **OPEN** — exact behavioural test and role matrix pending |
+
+## Exported functions inventory offset 12 (16 files; 16 functions)
+
+| Source | Exported function | Test closure |
+|---|---|---|
+| `src/modules/placements/hr-conversation-open-model.ts` | (no direct exported function detected) | Inspect schemas/types and re-exports |
+| `src/modules/placements/hr-conversation-reply-model.ts` | (no direct exported function detected) | Inspect schemas/types and re-exports |
+| `src/modules/placements/hr-conversation-return-url-model.ts` | `recruiterInboxReturnUrl` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-conversation-send-feedback-model.ts` | `hrReplySuccess` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-conversation-send-feedback-model.ts` | `hrReplyErrorMessage` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-conversation-snippet-model.ts` | `conversationSnippet` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-conversation-unread-model.ts` | `summarizeRecruiterUnread` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-conversation-urls-model.ts` | `hrConversationsHref` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-display-name-model.ts` | `normalizeHrDisplayName` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-display-name-model.ts` | `sameHrNameVersion` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-display-name-service.ts` | `updateOwnHrDisplayName` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-draft-compensation-review-model.ts` | `hrDraftCompensationWarnings` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-draft-preview-model.ts` | `hrDraftPreviewRounds` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-draft-reset-model.ts` | `hrDraftContainsWork` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-draft-round-duplicate-model.ts` | `duplicateHrDraftRound` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-draft-round-order-model.ts` | `reorderHrDraftRound` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-drive-attention-model.ts` | `hrDriveAttention` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-drive-conversation-model.ts` | `recruiterDriveThreads` | **OPEN** — exact behavioural test and role matrix pending |
+
+## Exported functions inventory offset 28 (16 files; 21 functions)
+
+| Source | Exported function | Test closure |
+|---|---|---|
+| `src/modules/placements/hr-drive-conversation-service.ts` | `getRecruiterDriveConversations` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-draft-links.ts` | `recruiterDriveDraftHref` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-draft-model.ts` | `emptyHrDriveDraft` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-draft-model.ts` | `hrDraftFromAuthorizedJob` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-draft-model.ts` | `hrDriveDraftQuerySchema` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-draft-model.ts` | `hrDriveDraftSchema` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-messages-link-model.ts` | `hrDriveMessagesHref` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-overview-model.ts` | `buildHrDriveOverview` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-proposal-attempt-model.ts` | `nextHrProposalAttempt` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-proposal-export-model.ts` | `hrDriveProposalHistoryCsv` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-proposal-history-links.ts` | `hrSentProposalHistoryHref` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-proposal-history-links.ts` | `hrSentProposalExportHref` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-proposal-history-model.ts` | `previewHrDriveProposalMessage` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-proposal-history-model.ts` | `hrProposalHistoryWindow` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-proposal-history-service.ts` | `listHrDriveProposals` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-proposal-links-model.ts` | `hrSentProposalsHref` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-proposal-model.ts` | `formatHrDriveProposal` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-proposal-response-model.ts` | `isHrDriveProposalResponse` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-round-presets.ts` | `applyHrRoundPreset` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drives-csv-model.ts` | `buildHrDrivesCsv` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-focused-review-model.ts` | `focusedReviewNavigation` | **OPEN** — test and role matrix not verified |
+
+## Exported functions inventory offset 44 (16 files; 31 functions)
+
+| Source | Exported function | Test closure |
+|---|---|---|
+| `src/modules/placements/hr-inbox-csv-model.ts` | `buildHrInboxCsv` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-inline-round-results-model.ts` | `hrInlineRoundResultFilters` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-inline-round-results-model.ts` | `hrInlineRoundResultsHref` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-interview-slot-model.ts` | `slotTransitionAllowed` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-interview-slot-model.ts` | `slotsOverlap` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-interview-slot-model.ts` | `parseIstLocalSlot` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-interview-slot-model.ts` | `canRecruiterMutateOwnSlot` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-interview-slot-model.ts` | `hrInterviewSlotCreateSchema` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-interview-slot-service.ts` | `listHrInterviewSlots` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-interview-slot-service.ts` | `writeHrInterviewSlot` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-job-activity-model.ts` | `projectHrJobActivity` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-job-activity-model.ts` | `hrActivityEventFilter` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-job-activity-model.ts` | `hrActivityHasNext` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-job-activity-model.ts` | `searchHrActivityJobs` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-job-activity-service.ts` | `listRecruiterJobActivity` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-job-applicants-model.ts` | `projectSharedApplicants` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-job-applicants-model.ts` | `hrApplicantPageBounds` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-job-applicants-model.ts` | `hrOfferPageBounds` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-job-applicants-model.ts` | `hrApplicantFilterSchema` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-job-read-service.ts` | `getHrJobRead` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-notification-groups-model.ts` | `groupHrNotificationPage` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-notification-read-model.ts` | `hrNotificationVersionMatches` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-notification-read-service.ts` | `markHrNotificationRead` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-notifications-model.ts` | `projectHrNotifications` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-notifications-model.ts` | `hrInboxPageBounds` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-notifications-model.ts` | `filterHrNotificationJobs` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-notifications-service.ts` | `listHrNotifications` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-offer-export-model.ts` | `buildHrOfferCsv` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-offer-selection-read-model.ts` | `buildHrOfferOverview` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-offer-selection-read-model.ts` | `hrSelectionReadyApplicationIds` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-proposal-message-marker-model.ts` | `recruiterProposalMessageMarker` | **OPEN** — test and role matrix not verified |
+
+## Exported functions inventory offset 60 (16 files; 26 functions)
+
+| Source | Exported function | Test closure |
+|---|---|---|
+| `src/modules/placements/hr-recruiter-bell-model.ts` | `relativeHrBellTime` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-recruiter-bell-model.ts` | `createHrBellMutationGate` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-recruiter-bell-service.ts` | `readHrRecruiterBell` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-recruiter-bell-service.ts` | `markHrRecruiterBellRead` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-recruiter-grant-navigation-model.ts` | `hrRecruiterGrantLinks` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-recruiter-name-fields-model.ts` | `splitHrRecruiterName` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-recruiter-name-fields-model.ts` | `joinHrRecruiterName` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-recruiter-name-fields-model.ts` | `sameHrNameVersion` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-recruiter-name-fields-model.ts` | `hrRecruiterNameFieldsSchema` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-recruiter-open-change-counts-service.ts` | `countRecruiterAnswerableDriveRequests` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-report-page-signals-model.ts` | `hrCompanyReportPageSignals` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-result-deadline-urgency-model.ts` | `hrResultDeadlineUrgency` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-review-note-model.ts` | (no direct function export) | Review schemas/re-exports |
+| `src/modules/placements/hr-round-editor-model.ts` | `canRecruiterEditRound` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-round-editor-model.ts` | `duplicateRecruiterRoundName` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-round-editor-model.ts` | `matchesRecruiterRoundVersion` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-round-editor-model.ts` | `hrRoundFormSchema` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-round-editor-service.ts` | `editHrJobRound` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-round-editor-service.ts` | `listHrRoundEditorRows` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-round-schedule-model.ts` | `hrScheduledRoundRows` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-round-schedule-model.ts` | `hrRoundConflictLabels` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-round-schedule-model.ts` | `hrRoundConflictLinks` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-team-csv-model.ts` | `buildHrTeamCsv` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-team-pagination-model.ts` | `hrTeamPage` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-team-roster-message-model.ts` | `hrTeamRosterMessage` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-team-search-model.ts` | `searchHrTeam` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-today-action-queue-model.ts` | `buildRecruiterActionQueue` | **OPEN** — test and role matrix not verified |
+
+## Exported functions inventory offset 76 (16 files; 21 functions)
+
+| Source | Exported function | Test closure |
+|---|---|---|
+| `src/modules/placements/hr-today-change-request-service.ts` | `listRecruiterTodayChangeRequests` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-today-conversation-model.ts` | `hrTodayConversationSignals` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-today-deeplink-model.ts` | `recruiterTodayHref` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-today-live-drive-model.ts` | `hrTodayLiveDriveRows` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-today-offer-actions-service.ts` | `listRecruiterTodayOfferActions` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-today-open-slots-service.ts` | `listRecruiterTodayRoundsNeedingSlots` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-today-results-due-model.ts` | `projectHrTodayResultsDue` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-today-unread-model.ts` | `hrTodayUnreadAction` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-tpo-notification-service.ts` | `notifyTpoOfRecruiterAction` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-unsent-draft-storage-model.ts` | `hrDriveSessionStorageKey` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-unsent-draft-storage-model.ts` | `saveHrUnsentDraft` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-unsent-draft-storage-model.ts` | `restoreHrUnsentDraft` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-access-defaults.ts` | `recruiterAccessMonthsOrDefault` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-applicant-resume-service.ts` | `grantRecruiterSharedResume` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-applicant-shared-links-model.ts` | `safeRecruiterExternalLink` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-applicant-shared-links-model.ts` | `projectRecruiterProfileLinks` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-approved-draft-job-service.ts` | `createRecruiterApprovedDraftJob` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-bell-model.ts` | `recruiterBellAriaLabel` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-bell-model.ts` | `recruiterBellPreview` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-board-view-model.ts` | `recruiterBoardColumn` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-board-view-model.ts` | `shouldRenderCompaniesView` | **OPEN** — test and role matrix not verified |
