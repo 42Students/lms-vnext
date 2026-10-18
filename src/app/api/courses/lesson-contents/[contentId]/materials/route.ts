@@ -6,9 +6,15 @@ import {isSameOriginRequest} from "@/auth/origin";
 
 export const runtime="nodejs";
 type Route={params:Promise<{contentId:string}>};
+const deliveryQuerySchema=z.strictObject({deliveryId:z.string().uuid().optional()});
 function delivery(request:Request){
- const input=new URL(request.url).searchParams.get("deliveryId");
- return input?z.string().uuid().parse(input):null;
+ const raw:Record<string,unknown>={};
+ for(const [key,value] of new URL(request.url).searchParams){
+  // URLSearchParams.get() silently ignores repeated audience selectors.
+  // Turn repeats into an invalid shape before parsing a strict scope.
+  raw[key]=Object.hasOwn(raw,key)?[raw[key],value]:value;
+ }
+ return deliveryQuerySchema.parse(raw).deliveryId??null;
 }
 export async function GET(request:Request,{params}:Route){
  try{
