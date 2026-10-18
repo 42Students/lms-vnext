@@ -93,22 +93,22 @@ export default async function SuperAdminTenantSetup({
   </section>
   <nav aria-label="Tenant Setup steps" className="flex flex-wrap gap-2">
    <Link href={tabLink("STRUCTURE")} aria-current={tab==="STRUCTURE"?"page":undefined}
-    className={"inline-flex min-h-11 items-center rounded-lg border px-4 text-sm font-semibold "+(tab==="STRUCTURE"?active:inactive)}>
+    className={"inline-flex min-h-11 items-center border-b-[3px] px-4 text-sm font-semibold "+(tab==="STRUCTURE"?active:inactive)}>
     1. Tenant structure
    </Link>
    <Link href={tabLink("LAUNCH")} aria-current={tab==="LAUNCH"?"page":undefined}
-    className={"inline-flex min-h-11 items-center rounded-lg border px-4 text-sm font-semibold "+(tab==="LAUNCH"?active:inactive)}>
+    className={"inline-flex min-h-11 items-center border-b-[3px] px-4 text-sm font-semibold "+(tab==="LAUNCH"?active:inactive)}>
     2. Launch setup
    </Link>
   </nav>
   {tab==="STRUCTURE"?<>
    <section aria-label="Create organization and college" className="grid min-w-0 gap-4 xl:grid-cols-2">
-    <div className="min-w-0 space-y-3 rounded-xl border border-border bg-surface p-4">
+    <div className="min-w-0 space-y-3 border-b border-border pb-5">
      <h2 className="font-semibold text-foreground">Create an organization</h2>
      {orgCreate?<OrganizationCreateForm/>:
       <p role="status" className="text-sm text-body">Organization creation is not permitted in your selected administrative scope.</p>}
     </div>
-    <div className="min-w-0 space-y-3 rounded-xl border border-border bg-surface p-4">
+    <div className="min-w-0 space-y-3 border-b border-border pb-5">
      <h2 className="font-semibold text-foreground">Create a college</h2>
      {creatable.length?<CollegeCreateForm organizations={creatable.map(o=>({id:o.id,name:o.name}))}/>:
       <p role="status" className="text-sm text-body">No authorized active organization is available. Create one or change the Super Admin scope.</p>}
