@@ -12,13 +12,13 @@ export function projectTpoInterviewReadiness(
  facts:readonly InterviewRoundFact[],nowIso:string,days:number,
 ) {
  const now=Date.parse(nowIso);
- if(!Number.isFinite(now)||days<1||days>90)throw Error("Invalid interview window");
+ if(!Number.isFinite(now)||!Number.isSafeInteger(days)||days<1||days>90)throw Error("Invalid interview window");
  const end=now+days*86_400_000;
- const rounds=facts.filter(x=>x.kind==="INTERVIEW");
+ const rounds=facts.filter(x=>x.kind==="INTERVIEW"&&x.status!=="CANCELLED");
  const states=rounds.map((r)=>{
   const at=r.scheduledAt?Date.parse(r.scheduledAt):NaN;
   const known=Number.isFinite(at);
-  const validDuration=r.durationMinutes!==null&&r.durationMinutes>0;
+  const validDuration=r.durationMinutes!==null&&Number.isSafeInteger(r.durationMinutes)&&r.durationMinutes>0;
   const inWindow=known&&at>=now&&at<=end;
   const active=known&&validDuration&&at<=now&&now<at+r.durationMinutes!*60_000;
   const state=r.status==="PENDING"||!known?"UNSCHEDULED":
