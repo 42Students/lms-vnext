@@ -114,6 +114,9 @@ export async function withProjectPg<T>(pool: Pool, action: (db: PgHarness) => Pr
     await assertHarnessSchema(client);
     await client.query("BEGIN");
     begun = true;
+    // A connection-string options=search_path setting must not redirect
+    // fixture writes to another schema after validating public tables.
+    await client.query("SET LOCAL search_path = public, pg_temp");
     const db: PgHarness = {
       client, runId: randomUUID(),
       async query<T extends QueryResultRow>(sql: string, values?: unknown[]) {
@@ -169,6 +172,8 @@ export async function withTwoPgSessions<T>(
     await assertHarnessSchema(b);
     await a.query("BEGIN"); aStarted = true;
     await b.query("BEGIN"); bStarted = true;
+    await a.query("SET LOCAL search_path = public, pg_temp");
+    await b.query("SET LOCAL search_path = public, pg_temp");
     await a.query("SET LOCAL lock_timeout = '1500ms'");
     await b.query("SET LOCAL lock_timeout = '1500ms'");
     return await run(a,b);
