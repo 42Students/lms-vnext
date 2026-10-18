@@ -47,8 +47,8 @@ export function isSecureMailProviderEndpoint(value: string): boolean {
  * inject markup, visual impersonation or extra mail-template lines.
  */
 export function safeOtpEmailDisplayName(value:string):string{
- const compact=value.replace(/[\\p{Cc}\\p{Cf}\\p{Zl}\\p{Zp}]+/gu," ")
-  .replace(/\\s+/gu," ").trim();
+ const compact=value.replace(/[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]+/gu," ")
+  .replace(/\s+/gu," ").trim();
  return Array.from(compact).slice(0,160).join("")
   .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
   .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
@@ -100,7 +100,7 @@ export function createZeptoMailEmailProvider(
               otp: message.code,
               learnerName: safeOtpEmailDisplayName(message.displayName),
               email: recipient,
-              mobile: message.phoneE164 && /^\\+[1-9][0-9]{7,14}$/.test(message.phoneE164)
+              mobile: message.phoneE164 && /^\+[1-9][0-9]{7,14}$/.test(message.phoneE164)
                 ? message.phoneE164 : "",
               expiryMinutes: "5",
             },
