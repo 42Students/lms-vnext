@@ -1,4 +1,5 @@
 "use client";
+import {Dialog} from "@/components/ui/dialog";
 import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
 import {useState,useTransition} from "react";
 import {useRouter} from "next/navigation";
@@ -34,9 +35,7 @@ export function CollegeOfferingMetadataAction({offering}:{
   return <div className="space-y-1">{confirmation}
     <button type="button" disabled={pending} onClick={()=>setOpen(true)}
       className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Edit</button>
-    {open?<div role="dialog" aria-modal="true" aria-label={"Edit offering "+offering.courseName}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="w-full max-w-md space-y-4 rounded-xl border border-border bg-surface p-5">
+    <Dialog open={open} onOpenChange={next=>{if(!next&&!pending)setOpen(false);}} title={"Edit offering "+offering.courseName} dismissible={!pending}>
         <h2 className="text-lg font-semibold text-foreground">Edit course offering</h2>
         <label className="grid gap-1 text-sm font-semibold text-body">Offering type
           <select value={type} onChange={e=>setType(e.target.value as "CORE"|"ELECTIVE")}
@@ -61,8 +60,7 @@ export function CollegeOfferingMetadataAction({offering}:{
             className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
             {pending?"Saving…":"Confirm edit"}</button>
         </div>
-      </div>
-    </div>:null}
+    </Dialog>
     {!open&&error?<p role="alert" className="text-xs text-error">{error}</p>:null}
   </div>;
 }
