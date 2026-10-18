@@ -5,9 +5,11 @@ import {PageHeader} from "@/components/ui/page-header";
 import {CollegeServiceError} from "@/modules/colleges/service";
 import {readAdminCollegeSignInPolicy} from "@/modules/colleges/admin-signin-policy-service";
 import {CollegeSigninMethodForm} from "@/components/admin/college-signin-method-form";
+import {collegeIdSchema} from "@/modules/colleges/validation";
 
 export default async function CollegeSignInMethods({params}:{params:Promise<{collegeId:string}>}){
  const {collegeId}=await params;
+ if(!collegeIdSchema.safeParse(collegeId).success)notFound();
  const context=await getCurrentRequestContext();
  let result:Awaited<ReturnType<typeof readAdminCollegeSignInPolicy>>;
  try {result=await readAdminCollegeSignInPolicy(context,collegeId);}
