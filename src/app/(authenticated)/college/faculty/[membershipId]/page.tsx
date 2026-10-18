@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { DataTable } from "@/components/ui/data-table";
 import { getCollegeFacultyDetail } from "@/modules/people/college-faculty-detail-service";
 import { CollegePersonNotFoundError } from "@/modules/people/college-person-detail-model";
 import {CollegeFacultyScheduleReassign} from "@/components/college/college-faculty-schedule-reassign";
@@ -70,15 +71,25 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
       </p>
       {data.assignments.length === 0
         ? <p className="mt-4 text-sm text-muted-foreground">No college-scoped teaching assignments recorded.</p>
-        : <div className="mt-4"><DataTable rows={data.assignments} getRowKey={item=>item.id}
-            caption="Faculty teaching assignments"
+        : <div className="mt-4">
+          <DataTable
+            caption="Persisted teaching assignments"
+            rows={data.assignments}
+            getRowKey={item => item.id}
+            empty={<p className="text-sm text-muted-foreground">No college-scoped teaching assignments recorded.</p>}
             columns={[
-              {key:"course",header:"Course",mobilePriority:"primary",cell:item=><Link href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">{item.courseName} ({item.courseCode})</Link>},
-              {key:"class",header:"Class / cohort",mobilePriority:"secondary",cell:item=>item.sectionName+" · "+item.cohortName+" · "+item.periodName},
-              {key:"role",header:"Role",mobilePriority:"secondary",cell:item=>item.role},
-              {key:"status",header:"Status",mobilePriority:"secondary",cell:item=>item.status},
+              { key: "course", header: "Course", mobilePriority: "primary",
+                cell: item => <Link href={`/college/courses/offerings/${encodeURIComponent(item.offeringId)}`}
+                  className="font-semibold text-[var(--lms-teal-deep)] hover:underline">
+                  {item.courseName} ({item.courseCode})
+                </Link> },
+              { key: "class", header: "Class / cohort", mobilePriority: "secondary",
+                cell: item => item.sectionName + " · " + item.cohortName + " · " + item.periodName },
+              { key: "role", header: "Role", mobilePriority: "secondary", cell: item => item.role },
+              { key: "status", header: "Status", mobilePriority: "secondary", cell: item => item.status },
             ]}
-            empty={<p className="text-sm text-muted-foreground">No college-scoped teaching assignments recorded.</p>}/></div>}
+          />
+        </div>}
       {data.truncated ? <p className="mt-3 text-sm text-muted-foreground">
         Showing the first 100 matching assignment rows; summary totals include all assignment states.
       </p> : null}
