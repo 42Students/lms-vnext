@@ -7,7 +7,7 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
-import { PLACEMENT_POLICY_FIELDS, platformPlacementPolicyInput, placementPolicyValidate } from "./platform-placement-policy-model";
+import { PLACEMENT_POLICY_FIELDS, platformPlacementPolicyInput, placementPolicyValidate, storedPlacementPolicyValue } from "./platform-placement-policy-model";
 
 function requirePlatformAdministrator(context:RequestContext) {
  if(!isSuperAdmin(context)||context.user.platformStatus!=="ACTIVE")
@@ -31,8 +31,8 @@ export async function listPlatformPlacementPolicy(context:RequestContext) {
  const values=new Map(overrides.map(row=>[row.key,row]));
  return PLACEMENT_POLICY_FIELDS.map(field=>{
   const override=values.get(field.key);
-  const raw=override===undefined?null:Number(override.value);
-  return {...field,value:raw!==null&&Number.isFinite(raw)?raw:field.defaultValue,
+  const value=storedPlacementPolicyValue(field.key,override?.value);
+  return {...field,value,
    isOverridden:override!==undefined,version:override?.version??0,updatedAt:override?.updatedAt.toISOString()??null};
  });
 }
@@ -55,8 +55,7 @@ export async function setPlatformPlacementPolicy(context:RequestContext,raw:unkn
   if(input.key==="interview.durationMinMinutes"||input.key==="interview.durationMaxMinutes") {
    const otherKey=input.key==="interview.durationMinMinutes"?"interview.durationMaxMinutes":"interview.durationMinMinutes";
    const [other]=await tx.select({value:platformSettingOverrides.value}).from(platformSettingOverrides).where(identity(otherKey)).limit(1);
-   const defaultOther=PLACEMENT_POLICY_FIELDS.find(field=>field.key===otherKey)!.defaultValue;
-   const currentOther=other?Number(other.value):defaultOther;
+   const currentOther=storedPlacementPolicyValue(otherKey,other?.value);
    const ownDefault=PLACEMENT_POLICY_FIELDS.find(field=>field.key===input.key)!.defaultValue;
    const ownValue=input.value??ownDefault;
    const minimum=input.key==="interview.durationMinMinutes"?ownValue:currentOther;

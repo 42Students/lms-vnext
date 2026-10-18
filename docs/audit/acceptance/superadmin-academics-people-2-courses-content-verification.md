@@ -104,3 +104,13 @@ The Super Admin Assignments and Quizzes pages now render the existing full Colle
 | SA-academics-people-62 | PARTIAL | Legacy public HTTPS link previews are now revalidated at render before creating a third-party link; test `SA-academics-people-62 imported content links fail closed` in `tests/unit/chat7-superadmin-content-public-link-safety.test.ts`. Private material previews and scanner remain blocked. |
 
 No TypeScript, Vitest, browser or PostgreSQL execution was performed by chat-7. Existing infrastructure and release blockers remain unchanged.
+
+## Chat-7 actionable catalogue copy correction (2026-10-18)
+
+| ID | Status | Evidence |
+|---|---|---|
+| SA-academics-people-56 | PARTIAL; corrected misleading directory copy | The Super Admin Lessons page no longer claims to be "Read-only" while presenting create, edit, archive and reorder. `tests/unit/chat7-superadmin-course-catalogue-actionable-copy.test.ts` — `SA-academics-people-56 does not describe an actionable Lessons directory as read-only`. |
+| SA-academics-people-64 | PARTIAL; corrected misleading directory copy | Assignment directory now states its scope without claiming read-only; create, review and grade actions remain surfaced. `tests/unit/chat7-superadmin-course-catalogue-actionable-copy.test.ts`. |
+| SA-academics-people-65 | PARTIAL; corrected misleading directory copy | Quiz directory now states its scope without claiming read-only; create, attempts and result-release actions remain surfaced. `tests/unit/chat7-superadmin-course-catalogue-actionable-copy.test.ts`. |
+
+Tests authored, not executed. This copy correction does not satisfy the unfinished full legacy authoring/grade publication matrix or PostgreSQL tenant/scope verification.

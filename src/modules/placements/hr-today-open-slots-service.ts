@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,eq,gt,inArray,ne} from "drizzle-orm";
+import {and,asc,eq,gt,inArray,ne,isNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementJobRounds,placementJobs} from "@/db/schema";
 import {hrInterviewSlots} from "@/db/schema/placement-hr-interview-slots";
@@ -17,6 +17,7 @@ export async function listRecruiterTodayRoundsNeedingSlots(
   eq(placementJobs.id,placementJobRounds.jobId))
  .where(and(inArray(placementJobRounds.jobId,ids),
   eq(placementJobs.collegeId,collegeId),eq(placementJobs.status,"PUBLISHED"),
+  isNull(placementJobs.archivedAt),
   eq(placementJobRounds.kind,"INTERVIEW"),eq(placementJobRounds.status,"SCHEDULED"),
   gt(placementJobRounds.scheduledAt,now)))
  .orderBy(asc(placementJobRounds.scheduledAt)).limit(100);
