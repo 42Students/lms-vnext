@@ -16,10 +16,10 @@ export default async function SuperAdminFacultyPage({searchParams}:{
  const context=await getCurrentRequestContext();
  const peopleFilters=context.adminScope?.collegeId?await getSuperAdminPeopleFilterOptions(context):null;
  const facultyPicker=context.adminScope?.collegeId?await listCollegeFacultyPicker(context,context.adminScope.collegeId):null;
- return <div className="space-y-4">
+ return <div className="min-w-0 space-y-4">
   {context.adminScope?.collegeId?<div className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-surface p-4"><p className="font-semibold">Register New Faculty</p>
     <PersonOnboardDialog collegeId={context.adminScope.collegeId} forcedRole="FACULTY"/>
-    <Link className="inline-flex min-h-10 items-center font-semibold text-primary-text" href="/admin/people">
+    <Link className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]" href="/admin/people">
       Manage memberships, profiles and account status →
     </Link>
   </div>:null}
