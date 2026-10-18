@@ -1,4 +1,6 @@
 "use client";
+import {Select} from "@/components/ui/select";
+
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -65,10 +67,10 @@ export function StudentRuleEditor({collegeId,membershipId,module,stored,locked,b
  return <div className="mt-4 space-y-3 border-t border-border pt-3">
   {blocked?<p className="text-xs text-warning-text">A broader locked rule prevents writing On/Off. You can still remove a stored membership override with Inherit.</p>:null}
   <label className="grid gap-1 text-sm font-semibold text-body">Stored override
-   <select value={choice} disabled={pending} onChange={e=>setChoice(e.target.value as StudentSelection)}
+   <Select value={choice} disabled={pending} onChange={e=>setChoice(e.target.value as StudentSelection)}
     className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
     <option value="INHERIT">Inherit</option><option value="ON" disabled={blocked}>On</option><option value="OFF" disabled={blocked}>Off</option>
-   </select>
+   </Select>
   </label>
   <label className="flex items-center gap-2 text-sm text-body">
    <input type="checkbox" checked={nextLocked} onChange={e=>setNextLocked(e.target.checked)}

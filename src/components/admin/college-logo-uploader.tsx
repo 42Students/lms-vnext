@@ -1,6 +1,9 @@
 import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 "use client";
+import {Button} from "@/components/ui/button";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+
 import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
 export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
