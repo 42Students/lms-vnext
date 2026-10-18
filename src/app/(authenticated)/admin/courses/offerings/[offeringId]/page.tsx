@@ -21,11 +21,13 @@ export default async function SuperAdminOfferingLearningPage({
   if (!(await resolveSuperAdminOfferingDetail(context, offeringId))) notFound();
 
   return (
-    <AdminOfferingLearningPage
+    <div className="min-w-0">
+      <AdminOfferingLearningPage
       context={context}
       offeringId={offeringId}
       eyebrow="Super Admin · Courses"
       backHref="/admin/courses"
-    />
+      />
+    </div>
   );
 }

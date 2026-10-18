@@ -17,7 +17,7 @@ export default async function SuperAdminDepartmentsPage() {
 
   if (!collegeId) {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-6">
         <PageHeader
           
           title="Departments"
@@ -49,14 +49,14 @@ export default async function SuperAdminDepartmentsPage() {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <AcademicSetupSteps step={1} />
       <PageHeader
         
         title="Departments"
         description="Search, export and maintain departments inside the selected college safety scope."
       />
-      <Link href="/admin/academics" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">Academic Setup overview →</Link>
+      <Link href="/admin/academics" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">Academic Setup overview →</Link>
       <DepartmentCreateForm collegeId={collegeId} />
       <DepartmentDirectory rows={rows} />
     </div>

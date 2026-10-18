@@ -36,18 +36,18 @@ export default async function AdminCollegeVerification({
  ));
  const header=<PageHeader eyebrow="Super Admin · Verification" title={college.name}
   description="College-scoped learner Education and Identity verification. Review only the currently selected college."/>;
- if(!parsed.success)return <div className="space-y-5">{header}
+ if(!parsed.success)return <div className="min-w-0 space-y-5">{header}
   <div role="alert" className="rounded-xl border border-border p-5">Invalid verification filters.
-   <Link href={base} className="ml-2 text-primary-text underline">Reset</Link></div></div>;
+   <Link href={base} className="ml-2 text-[var(--lms-teal-deep)] underline">Reset</Link></div></div>;
  let data:Awaited<ReturnType<typeof listCollegeVerificationQueue>>;
  try{data=await listCollegeVerificationQueue(context,parsed.data,college.id);}
  catch(e){
   if(!(e instanceof VerificationUnavailableError)&&!(e instanceof VerificationQueueLimitError))throw e;
-  return <div className="space-y-5">{header}
+  return <div className="min-w-0 space-y-5">{header}
    <p role="alert" className="rounded-xl border border-border p-5">{e instanceof VerificationUnavailableError?
     "Verification storage is not yet available. No queue decisions can be made.":
     "The verification queue exceeds its safe scan cap. Narrow server-side filters before reviewing."}</p>
-   <Link className="text-primary-text underline" href={base}>Retry</Link>
+   <Link className="text-[var(--lms-teal-deep)] underline" href={base}>Retry</Link>
   </div>;
  }
  const [policy]=await getDb().select({enabled:profileVerificationSettings.tpoCanVerifyProfiles})

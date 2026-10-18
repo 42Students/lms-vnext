@@ -1,4 +1,7 @@
 import Link from "next/link";
+import {PageHeader} from "@/components/ui/page-header";
+import {Breadcrumbs} from "@/components/ui/breadcrumbs";
+import {DataTable} from "@/components/ui/data-table";
 import {SuperAdminBatchRosterManager} from "@/components/admin/super-admin-batch-roster-manager";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -13,23 +16,23 @@ export default async function SuperAdminBatchStudentsPage({params}:{
  const data=await getSuperAdminBatchRosterOverview(context,batchId);
  if(!data)notFound();
  const total=data.classes.reduce((sum,section)=>sum+section.learnerCount,0);
- return <main className="space-y-5">
-  <nav aria-label="Breadcrumbs" className="flex flex-wrap gap-2 text-sm"><Link href="/admin/batches" className="font-semibold text-primary-text">Batches</Link><span>›</span><span>{data.batch.name}</span></nav>
-  <div><h1 className="text-2xl font-semibold">Manage students · {data.batch.name}</h1>
-   <p className="mt-1 text-sm text-body">{data.batch.programName} · {data.batch.code} · {total} active class assignments</p></div>
-  <a href={"/api/admin/batches/"+encodeURIComponent(batchId)+"/students/export"} className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Export batch students (CSV)</a>
+ return <div className="min-w-0 space-y-5">
+  <Breadcrumbs items={[{label:"Batches",href:"/admin/batches"},{label:data.batch.name}]}/>
+  <PageHeader eyebrow="Super Admin · Academic Setup" title={"Manage students · "+data.batch.name} description={`${data.batch.programName} · ${data.batch.code} · ${total} active class assignments`}/>
+  <a href={"/api/admin/batches/"+encodeURIComponent(batchId)+"/students/export"} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Export batch students (CSV)</a>
   <p className="rounded-md border border-border bg-surface p-4 text-sm text-body">Select a class to search its roster by learner name, roll number or email and move learners through the existing capacity-checked class assignment controls. A learner may have distinct period-based assignments.</p>
-  <section className="overflow-x-auto rounded-xl border border-border bg-surface" aria-label="Batch classes">
-   <table className="w-full min-w-[36rem] text-left text-sm"><thead><tr className="border-b border-border">
-    <th scope="col" className="p-3">Class</th><th scope="col" className="p-3">Status</th><th scope="col" className="p-3">Students</th><th scope="col" className="p-3">Capacity</th><th scope="col" className="p-3">Actions</th></tr></thead>
-    <tbody>{data.classes.map(section=><tr key={section.id} className="border-b border-border">
-      <td className="p-3">{section.name} ({section.code})</td><td className="p-3">{section.status}</td>
-      <td className="p-3 tabular-nums">{section.learnerCount}</td><td className="p-3 tabular-nums">{section.capacity??"—"}</td>
-      <td className="p-3"><Link className="font-semibold text-primary-text underline" href={"/admin/academics/sections/"+encodeURIComponent(section.id)}>Manage roster and schedule →</Link></td>
-    </tr>)}</tbody></table>
+  <section className="min-w-0 space-y-3" aria-label="Batch classes">
+    <DataTable<(typeof data.classes)[number]> caption="Batch classes" rows={data.classes} getRowKey={row=>row.id}
+      empty={<p role="status">No classes exist for this batch. Create a class before managing its roster.</p>}
+      columns={[
+        {key:"class",header:"Class",mobilePriority:"primary",cell:row=><strong>{row.name} ({row.code})</strong>},
+        {key:"status",header:"Status",mobilePriority:"secondary",cell:row=>row.status},
+        {key:"students",header:"Students",mobilePriority:"secondary",cell:row=><span className="tabular-nums">{row.learnerCount}</span>},
+        {key:"capacity",header:"Capacity",mobilePriority:"secondary",cell:row=><span className="tabular-nums">{row.capacity??"—"}</span>},
+        {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><Link className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline" href={"/admin/academics/sections/"+encodeURIComponent(row.id)}>Manage roster and schedule →</Link>},
+      ]}/>
   </section>
   <SuperAdminBatchRosterManager classes={data.classes} students={data.roster}/>
-  {!data.classes.length?<p role="status">No classes exist for this batch. Create a class before managing its roster.</p>:null}
-  <Link href={"/admin/classes?cohortCode="+encodeURIComponent(data.batch.code)} className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">Manage batch classes →</Link>
- </main>;
+  <Link href={"/admin/classes?cohortCode="+encodeURIComponent(data.batch.code)} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Manage batch classes →</Link>
+ </div>;
 }
