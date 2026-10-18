@@ -58,15 +58,20 @@ export function buildTpoRoundDriveDayRoster(
   students: readonly TpoRoundRosterSourceStudent[],
   details: readonly TpoRoundApplicationDetail[],
 ) {
-  const detailsByApplication = new Map(
-    details.map((detail) => [
-      detail.applicationId,
-      detail,
-    ]),
-  );
-
+  // TPO-drive-workspace-40: duplicated or conflicting identity evidence
+  // must never produce duplicate attendance/results or choose an arbitrary row.
+  const detailsByApplication = new Map<string, TpoRoundApplicationDetail>();
+  const ambiguous = new Set<string>();
+  for(const detail of details){
+    if(detailsByApplication.has(detail.applicationId))ambiguous.add(detail.applicationId);
+    else detailsByApplication.set(detail.applicationId,detail);
+  }
+  const seenStudents = new Set<string>();
   const rows: TpoRoundRosterRow[] = students.flatMap(
     (student) => {
+      if(seenStudents.has(student.applicationId) || ambiguous.has(student.applicationId))
+        return [];
+      seenStudents.add(student.applicationId);
       const detail = detailsByApplication.get(
         student.applicationId,
       );

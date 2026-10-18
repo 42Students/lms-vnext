@@ -3,7 +3,7 @@ import type {TpoAuditRow} from "./tpo-audit-service";
 
 /** Export only the same allowlisted fields displayed by the TPO audit UI. */
 function csvCell(value:string){
- const text=/^[=+@\-\t\r]/.test(value)? "'"+value:value;
+ const text=/^\s*[=+@\-\t\r]/.test(value)? "'"+value:value;
  return '"'+text.replaceAll('"','""')+'"';
 }
 export function tpoAuditCsv(rows:readonly TpoAuditRow[]){

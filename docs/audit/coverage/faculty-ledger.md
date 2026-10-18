@@ -6,29 +6,29 @@ Status: INCOMPLETE. Tests have not been executed; do not use this ledger for rel
 
 | Source path | Export coverage |
 |---|---|
-| `src/modules/attendance/faculty-attendance-edit-state.ts` | `initialAbsencesForSession`: GAP — behavioural test needed |
-| `src/modules/attendance/faculty-attendance-edit-state.ts` | `resolveFacultyAttendanceSession`: GAP — behavioural test needed |
-| `src/modules/attendance/faculty-attendance-edit-state.ts` | `resolveFacultyAttendanceDeepLink`: GAP — behavioural test needed |
-| `src/modules/attendance/faculty-attendance-edit-state.ts` | `facultyAttendanceMarksDirty`: GAP — behavioural test needed |
-| `src/modules/attendance/faculty-correction-audit-model.ts` | `facultyCorrectionDelta`: GAP — behavioural test needed |
-| `src/modules/attendance/faculty-correction-audit-model.ts` | `facultyCorrectionReasonValid`: GAP — behavioural test needed |
-| `src/modules/attendance/faculty-correction-audit-model.ts` | `facultyAttendanceConfirmation`: GAP — behavioural test needed |
-| `src/modules/attendance/faculty-correction-audit-model.ts` | `facultyAttendanceChangedMemberships`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-attendance-edit-state.ts` | `initialAbsencesForSession` — `tests/unit/COURSES-BREAK-FACULTY-07.test.ts` (behavioural, CI pending) |
+| `src/modules/attendance/faculty-attendance-edit-state.ts` | `resolveFacultyAttendanceSession` — `tests/unit/COURSES-BREAK-FACULTY-07.test.ts` (behavioural, CI pending) |
+| `src/modules/attendance/faculty-attendance-edit-state.ts` | `resolveFacultyAttendanceDeepLink` — `tests/unit/COURSES-BREAK-FACULTY-07.test.ts` (behavioural, CI pending) |
+| `src/modules/attendance/faculty-attendance-edit-state.ts` | `facultyAttendanceMarksDirty` — `tests/unit/COURSES-BREAK-FACULTY-07.test.ts` (behavioural, CI pending) |
+| `src/modules/attendance/faculty-correction-audit-model.ts` | `facultyCorrectionDelta` — `tests/unit/COURSES-BREAK-FACULTY-07.test.ts` (behavioural, CI pending) |
+| `src/modules/attendance/faculty-correction-audit-model.ts` | `facultyCorrectionReasonValid` — `tests/unit/COURSES-BREAK-FACULTY-07.test.ts` (behavioural, CI pending) |
+| `src/modules/attendance/faculty-correction-audit-model.ts` | `facultyAttendanceConfirmation` — `tests/unit/COURSES-BREAK-FACULTY-07.test.ts` (behavioural, CI pending) |
+| `src/modules/attendance/faculty-correction-audit-model.ts` | `facultyAttendanceChangedMemberships` — `tests/unit/COURSES-BREAK-FACULTY-07.test.ts` (behavioural, CI pending) |
 | `src/modules/attendance/faculty-correction-model.ts` | `facultyCorrectionQuerySchema`: GAP — behavioural test needed |
 | `src/modules/attendance/faculty-correction-model.ts` | `facultyCorrectionSessionPage`: GAP — behavioural test needed |
 | `src/modules/attendance/faculty-correction-model.ts` | `facultyCorrectionHref`: GAP — behavioural test needed |
 | `src/modules/attendance/faculty-correction-service.ts` | `getFacultyCorrectionAvailability`: GAP — behavioural test needed |
-| `src/modules/attendance/faculty-correction-token-model.ts` | `facultyAttendanceCorrectionTokenMatches`: GAP — behavioural test needed |
-| `src/modules/attendance/faculty-correction-token-model.ts` | `facultyAttendanceNextMarkedAt`: GAP — behavioural test needed |
-| `src/modules/attendance/faculty-grid-model.ts` | `indiaAttendanceDayKey`: GAP — behavioural test needed |
-| `src/modules/attendance/faculty-grid-model.ts` | `indiaAttendanceMonthKey`: GAP — behavioural test needed |
-| `src/modules/attendance/faculty-grid-model.ts` | `shiftIndiaAttendanceMonth`: GAP — behavioural test needed |
-| `src/modules/attendance/faculty-grid-model.ts` | `groupFacultyAttendanceSessionsByIndiaDay`: GAP — behavioural test needed |
-| `src/modules/attendance/faculty-grid-model.ts` | `facultyAttendanceDayCell`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-correction-token-model.ts` | `facultyAttendanceCorrectionTokenMatches` — `tests/unit/COURSES-BREAK-FACULTY-07.test.ts` (behavioural, CI pending) |
+| `src/modules/attendance/faculty-correction-token-model.ts` | `facultyAttendanceNextMarkedAt` — `tests/unit/COURSES-BREAK-FACULTY-07.test.ts` (behavioural, CI pending) |
+| `src/modules/attendance/faculty-grid-model.ts` | `indiaAttendanceDayKey` — `tests/unit/COURSES-BREAK-FACULTY-07.test.ts` (behavioural, CI pending) |
+| `src/modules/attendance/faculty-grid-model.ts` | `indiaAttendanceMonthKey` — `tests/unit/COURSES-BREAK-FACULTY-07.test.ts` (behavioural, CI pending) |
+| `src/modules/attendance/faculty-grid-model.ts` | `shiftIndiaAttendanceMonth` — `tests/unit/COURSES-BREAK-FACULTY-07.test.ts` (behavioural, CI pending) |
+| `src/modules/attendance/faculty-grid-model.ts` | `groupFacultyAttendanceSessionsByIndiaDay` — `tests/unit/COURSES-BREAK-FACULTY-07.test.ts` (behavioural, CI pending) |
+| `src/modules/attendance/faculty-grid-model.ts` | `facultyAttendanceDayCell` — `tests/unit/COURSES-BREAK-FACULTY-07.test.ts` (behavioural, CI pending) |
 | `src/modules/attendance/faculty-learner-attendance-detail.ts` | `facultyLearnerAttendanceDetail`: GAP — behavioural test needed |
 | `src/modules/attendance/faculty-learner-attendance-detail.ts` | `facultyAttendanceMonthSummary`: GAP — behavioural test needed |
 | `src/modules/attendance/faculty-learner-attendance-detail.ts` | `facultyAttendanceThresholdBreakdown`: GAP — behavioural test needed |
-| `src/modules/attendance/faculty-marking-window.ts` | `facultyAttendanceMarkingWindow`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-marking-window.ts` | `facultyAttendanceMarkingWindow` — `tests/unit/COURSES-BREAK-FACULTY-07.test.ts` (behavioural, CI pending) |
 | `src/modules/attendance/faculty-schedule-editor-model.ts` | `localDateTimeInput`: GAP — behavioural test needed |
 | `src/modules/attendance/faculty-schedule-editor-model.ts` | `facultyScheduleInstants`: GAP — behavioural test needed |
 | `src/modules/attendance/faculty-schedule-editor-model.ts` | `validateFacultyScheduleWindow`: GAP — behavioural test needed |
@@ -43,19 +43,19 @@ Status: INCOMPLETE. Tests have not been executed; do not use this ledger for rel
 | `src/modules/attendance/faculty-service.ts` | `createFacultyAttendanceSession`: GAP — behavioural test needed |
 | `src/modules/attendance/faculty-service.ts` | `markFacultyAttendance`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-assessment-batch-model.ts` | `facultyAssessmentVisibleToDelivery`: GAP — behavioural test needed |
-| `src/modules/courses/faculty-assessment-editor-model.ts` | `facultyAssessmentLimitEditable`: GAP — behavioural test needed |
-| `src/modules/courses/faculty-assessment-editor-model.ts` | `facultyAssessmentLimitPatch`: GAP — behavioural test needed |
-| `src/modules/courses/faculty-assessment-editor-model.ts` | `facultyAssessmentCanArchive`: GAP — behavioural test needed |
-| `src/modules/courses/faculty-assessment-editor-model.ts` | `facultyAssessmentEditReceiptMatches`: GAP — behavioural test needed |
-| `src/modules/courses/faculty-assessment-editor-model.ts` | `facultyAssessmentArchiveReceiptMatches`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assessment-editor-model.ts` | `facultyAssessmentLimitEditable` — `tests/unit/COURSES-BREAK-FACULTY-01.test.ts` (behavioural, CI pending) |
+| `src/modules/courses/faculty-assessment-editor-model.ts` | `facultyAssessmentLimitPatch` — `tests/unit/COURSES-BREAK-FACULTY-01.test.ts` (behavioural, CI pending) |
+| `src/modules/courses/faculty-assessment-editor-model.ts` | `facultyAssessmentCanArchive` — `tests/unit/COURSES-BREAK-FACULTY-01.test.ts` (behavioural, CI pending) |
+| `src/modules/courses/faculty-assessment-editor-model.ts` | `facultyAssessmentEditReceiptMatches` — `tests/unit/COURSES-BREAK-FACULTY-01.test.ts` (behavioural, CI pending) |
+| `src/modules/courses/faculty-assessment-editor-model.ts` | `facultyAssessmentArchiveReceiptMatches` — `tests/unit/COURSES-BREAK-FACULTY-01.test.ts` (behavioural, CI pending) |
 | `src/modules/courses/faculty-assessment-filter.ts` | `filterFacultyAssessments`: GAP — behavioural test needed |
-| `src/modules/courses/faculty-assessment-report-service.ts` | `buildScoreDistribution`: GAP — behavioural test needed |
-| `src/modules/courses/faculty-assessment-report-service.ts` | `latestQuizAttemptsByLearner`: GAP — behavioural test needed |
-| `src/modules/courses/faculty-assessment-report-service.ts` | `questionAccuracy`: GAP — behavioural test needed |
-| `src/modules/courses/faculty-assessment-report-service.ts` | `assignmentScoreSummary`: GAP — behavioural test needed |
-| `src/modules/courses/faculty-assessment-report-service.ts` | `scoreSummary`: GAP — behavioural test needed |
-| `src/modules/courses/faculty-assessment-report-service.ts` | `getFacultyQuizReport`: GAP — behavioural test needed |
-| `src/modules/courses/faculty-assessment-report-service.ts` | `getFacultyAssignmentReport`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assessment-report-service.ts` | `buildScoreDistribution` — `tests/unit/faculty-assessment-report.test.ts` (behavioural, CI pending) |
+| `src/modules/courses/faculty-assessment-report-service.ts` | `latestQuizAttemptsByLearner` — `tests/unit/faculty-assessment-report.test.ts` (behavioural, CI pending) |
+| `src/modules/courses/faculty-assessment-report-service.ts` | `questionAccuracy` — `tests/unit/faculty-assessment-report.test.ts` (behavioural, CI pending) |
+| `src/modules/courses/faculty-assessment-report-service.ts` | `assignmentScoreSummary` — `tests/unit/faculty-assessment-report.test.ts` (behavioural, CI pending) |
+| `src/modules/courses/faculty-assessment-report-service.ts` | `scoreSummary` — `tests/unit/faculty-assessment-report.test.ts` (behavioural, CI pending) |
+| `src/modules/courses/faculty-assessment-report-service.ts` | `getFacultyQuizReport` — `tests/unit/COURSES-BREAK-FACULTY-06.test.ts` (behavioural, CI pending) |
+| `src/modules/courses/faculty-assessment-report-service.ts` | `getFacultyAssignmentReport` — `tests/unit/COURSES-BREAK-FACULTY-06.test.ts` (behavioural, CI pending) |
 | `src/modules/courses/faculty-assessment-route-boundary.ts` | `parseFacultyAssessmentReportRoute`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-assessment-route-boundary.ts` | `facultyAssignmentReportHidden`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-assessment-route-boundary.ts` | `facultyQuizReportHidden`: GAP — behavioural test needed |
@@ -449,17 +449,17 @@ Status: INCOMPLETE. Tests have not been executed; do not use this ledger for rel
 
 | Route | Handler coverage |
 |---|---|
-| `src/app/api/courses/faculty/assignments/[deliveryId]/command/route.ts` | GAP: each handler requires role, scope, validation and race test |
-| `src/app/api/courses/faculty/assignments/[deliveryId]/methods/route.ts` | GAP: each handler requires role, scope, validation and race test |
-| `src/app/api/courses/faculty/assignments/[deliveryId]/submissions/route.ts` | GAP: each handler requires role, scope, validation and race test |
-| `src/app/api/courses/faculty/attendance/[deliveryId]/schedule/route.ts` | GAP: each handler requires role, scope, validation and race test |
-| `src/app/api/courses/faculty/gradebook/[deliveryId]/csv/route.ts` | GAP: each handler requires role, scope, validation and race test |
-| `src/app/api/courses/faculty/live-classes/[deliveryId]/command/route.ts` | GAP: each handler requires role, scope, validation and race test |
-| `src/app/api/courses/faculty/quizzes/[deliveryId]/command/route.ts` | GAP: each handler requires role, scope, validation and race test |
-| `src/app/api/courses/faculty/reports/[kind]/[assessmentId]/csv/route.ts` | GAP: each handler requires role, scope, validation and race test |
-| `src/app/api/courses/faculty/reports/quiz/[quizId]/question-csv/route.ts` | GAP: each handler requires role, scope, validation and race test |
-| `src/app/api/courses/faculty/response-followups/csv/route.ts` | GAP: each handler requires role, scope, validation and race test |
-| `src/app/api/courses/faculty/results/csv/route.ts` | GAP: each handler requires role, scope, validation and race test |
+| `src/app/api/courses/faculty/assignments/[deliveryId]/command/route.ts` (`POST`) | `tests/unit/COURSES-BREAK-FACULTY-08.test.ts` (route host, session, malformed body; pending CI) |
+| `src/app/api/courses/faculty/assignments/[deliveryId]/methods/route.ts` (`GET`) | **GAP — authenticated GET handler, export scoping and cache tests pending** |
+| `src/app/api/courses/faculty/assignments/[deliveryId]/submissions/route.ts` (`GET`) | **GAP — authenticated GET handler, export scoping and cache tests pending** |
+| `src/app/api/courses/faculty/attendance/[deliveryId]/schedule/route.ts` (`POST`) | `tests/unit/COURSES-BREAK-FACULTY-08.test.ts` (route host, session, malformed body; pending CI) |
+| `src/app/api/courses/faculty/gradebook/[deliveryId]/csv/route.ts` (`GET`) | **GAP — authenticated GET handler, export scoping and cache tests pending** |
+| `src/app/api/courses/faculty/live-classes/[deliveryId]/command/route.ts` (`POST`) | `tests/unit/COURSES-BREAK-FACULTY-08.test.ts` (route host, session, malformed body; pending CI) |
+| `src/app/api/courses/faculty/quizzes/[deliveryId]/command/route.ts` (`POST`) | `tests/unit/COURSES-BREAK-FACULTY-08.test.ts` (route host, session, malformed body; pending CI) |
+| `src/app/api/courses/faculty/reports/[kind]/[assessmentId]/csv/route.ts` (`GET`) | **GAP — authenticated GET handler, export scoping and cache tests pending** |
+| `src/app/api/courses/faculty/reports/quiz/[quizId]/question-csv/route.ts` (`GET`) | **GAP — authenticated GET handler, export scoping and cache tests pending** |
+| `src/app/api/courses/faculty/response-followups/csv/route.ts` (`GET`) | **GAP — authenticated GET handler, export scoping and cache tests pending** |
+| `src/app/api/courses/faculty/results/csv/route.ts` (`GET`) | **GAP — authenticated GET handler, export scoping and cache tests pending** |
 
 Known role and integrity evidence: `tests/unit/PROJ-BREAK-FACULTY-01.test.ts`, `PROJ-BREAK-FACULTY-02.test.ts`, `PROJ-BREAK-FACULTY-03.test.ts`, `COURSES-BREAK-FACULTY-01.test.ts`, `COURSES-BREAK-FACULTY-02.test.ts`, `COURSES-BREAK-FACULTY-03.test.ts`, `COURSES-BREAK-FACULTY-04.test.ts`, `COURSES-BREAK-FACULTY-05.test.ts`, `SA-ACADEMICS-PEOPLE-BREAK-chat3.test.ts`, and `chat3-faculty-gradebook-integrity.test.ts`. These do not establish PostgreSQL integration or full method coverage.
 
@@ -471,3 +471,12 @@ Next actions: enumerate runtime symbols, map behavioural tests per export, run T
 - `FAC-courses-01`: real central `can()` plus `canAccessFacultyRoute` role, disabled-session, stale-membership and selected-admin-scope tests (`COURSES-BREAK-FACULTY-05`); does not replace authenticated browser testing.
 - `SA-academics-people`: scoped section lookup, foreign college and disabled Super Admin account regressions (`SA-ACADEMICS-PEOPLE-BREAK-chat3`); remainder of admin people and recruiter pages **not audited exhaustively**.
 - Initial unit-failure report may contain stale source-assertion failures already remediated by main merges; only a fresh Vitest run can verify.
+
+
+## October 18 additional evidence
+
+- Faculty/mentor Projects routes: `tests/unit/PROJ-BREAK-FACULTY-04.test.ts` asserts origin, persisted actor, safe failure and strict body parser across six mutation endpoints; `PROJ-BREAK-FACULTY-05.test.ts` covers byte cap/UTF-8/content type.
+- Faculty current-Section Quiz and Assignment report data integrity: `tests/unit/COURSES-BREAK-FACULTY-06.test.ts` and `src/modules/courses/faculty-assessment-report-service.ts`; mocked dependencies only, real DB enrollment churn remains a release gate.
+- Faculty attendance correction token, role/session URL, IST midnight and exact deadline: `tests/unit/COURSES-BREAK-FACULTY-07.test.ts`.
+- Four Faculty POST command routes' CSRF/session/body bounds: `tests/unit/COURSES-BREAK-FACULTY-08.test.ts`.
+- These are direct runtime/route assertions, but not proof of successful TypeScript, Vitest or PostgreSQL CI.
