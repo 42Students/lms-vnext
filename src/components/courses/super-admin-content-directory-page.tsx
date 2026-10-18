@@ -4,6 +4,7 @@ import { SuperAdminContentAuthoring } from "@/components/courses/super-admin-con
 import { SuperAdminContentActions } from "@/components/courses/super-admin-content-actions";
 import { listSuperAdminContentAuthoringLessons } from "@/modules/courses/super-admin-content-authoring-service";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { isSuperAdmin } from "@/modules/identity/context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -30,8 +31,13 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }) {
  const raw=await searchParams;
- const parsed=adminContentQuerySchema.safeParse({q:raw.q,status:raw.status,page:raw.page,
-  offeringId:raw.offeringId,lessonId:raw.lessonId,deliveryId:raw.deliveryId,scope:raw.scope});
+ const invalidKeys=Object.keys(raw).some(key=>
+  !["q","status","page","offeringId","lessonId","deliveryId","scope"].includes(key));
+ const duplicated=Object.values(raw).some(Array.isArray);
+ const parsed=(invalidKeys||duplicated)
+  ?adminContentQuerySchema.safeParse(null)
+  :adminContentQuerySchema.safeParse({q:raw.q,status:raw.status,page:raw.page,
+    offeringId:raw.offeringId,lessonId:raw.lessonId,deliveryId:raw.deliveryId,scope:raw.scope});
  const title=ADMIN_CONTENT_LABELS[kind];
  if(!parsed.success)return <div className="space-y-5">
   <PageHeader eyebrow="Super Admin · Courses" title={title}/>
@@ -39,11 +45,30 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
    action={<Link href={adminContentHref(kind,{})} className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>}/>
  </div>;
  const context=await getCurrentRequestContext();
+ if(!isSuperAdmin(context))return <div className="space-y-5">
+  <PageHeader eyebrow="Super Admin · Courses" title={title}/>
+  <ErrorState title="Content access denied"
+   description="Your account cannot access Super Admin course content."
+   action={<Link href="/dashboard" className="font-semibold text-[var(--lms-teal-deep)]">Back to dashboard</Link>}/>
+ </div>;
  if(!context.adminScope?.collegeId)return <div className="space-y-5">
   <PageHeader eyebrow="Super Admin · Courses" title={title}/>
   <EmptyState title="Select a college to continue" description={"Choose a college in the header above to see its "+title.toLowerCase()+"."}/>
  </div>;
- const [data, lessons, sections]=await Promise.all([listSuperAdminContentDirectory(context,kind,parsed.data),listSuperAdminContentAuthoringLessons(context),listSuperAdminContentSectionOptions(context)]);
+ const loaded=await Promise.all([
+  listSuperAdminContentDirectory(context,kind,parsed.data),
+  listSuperAdminContentAuthoringLessons(context),
+  listSuperAdminContentSectionOptions(context),
+ ]).then(([data,lessons,sections])=>({ok:true as const,data,lessons,sections}))
+   .catch(()=>({ok:false as const}));
+ if(!loaded.ok)return <div className="space-y-5">
+  <PageHeader eyebrow="Super Admin · Courses" title={title}/>
+  <ErrorState title="Content directory unavailable"
+   description="The selected college content could not be loaded. Your filters are unchanged."
+   action={<Link href={adminContentHref(kind,parsed.data)}
+    className="font-semibold text-[var(--lms-teal-deep)]">Retry loading content</Link>}/>
+ </div>;
+ const {data,lessons,sections}=loaded;
  const offerings=[...new Map(lessons.map(item=>[item.offeringId,{id:item.offeringId,name:item.courseCode+" · "+item.courseName}])).values()];
  const statuses=["ALL","DRAFT","PUBLISHED","ARCHIVED"] as const;
  return <div className="min-w-0 space-y-5">

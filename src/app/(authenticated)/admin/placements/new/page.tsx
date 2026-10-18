@@ -2,6 +2,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PlacementJobCreateWorkspace } from "@/components/placements/placement-job-create-workspace";
+import { requireSuperAdminSelectedCollege } from "@/modules/admin-ui/super-admin-selected-college";
 
 export default async function AdminNewPlacementPage() {
   const context = await getCurrentRequestContext();
@@ -13,6 +14,9 @@ export default async function AdminNewPlacementPage() {
       <EmptyState title="Choose a college" description="Select a college in the Super Admin scope selector to manage its drives."/>
     </div>;
   }
+  // Require the platform role and exact selected-college write permission before
+  // rendering the form or loading any company, learner or season options.
+  requireSuperAdminSelectedCollege(context,"placements.manage");
   return (
     <PlacementJobCreateWorkspace
       context={context}
