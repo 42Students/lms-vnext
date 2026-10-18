@@ -1,4 +1,5 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
+import {readFileSync} from "node:fs";
 import {getDb} from "@/db/client";
 import {getAuthConfig} from "@/modules/auth/config";
 import {
@@ -84,6 +85,21 @@ describe("AUTH-sessions-06: DB-backed device lifecycle and fail-closed revocatio
     await expect(revokeOwnSession(sessionId,otherUser)).resolves.toBe(false);
     execute.mockResolvedValueOnce({rows:[{id:sessionId}]});
     await expect(revokeOwnSession(sessionId,userId)).resolves.toBe(true);
+  });
+  it("AUTH-sessions-11 every revoke count concerns live, non-expired sessions only",()=>{
+    const source=readFileSync("src/modules/auth/session-service.ts","utf8");
+    const sections=[
+      source.slice(source.indexOf("export async function revokeAllSessionsForUser("),source.indexOf("export async function listActiveSessions(")),
+      source.slice(source.indexOf("export async function revokeOtherSessions("),source.indexOf("export async function revokeOwnSession(")),
+      source.slice(source.indexOf("export async function revokeOwnSession(")),
+    ];
+    for(const section of sections){
+      expect(section).toContain("AND revoked_at IS NULL");
+      expect(section).toContain("AND expires_at > now()");
+    }
+    expect(sections[1]).toContain("AND id <> ${currentSessionId}");
+    expect(sections[2]).toContain("AND user_id = ${userId}");
+    expect(sections[2]).toContain("RETURNING id");
   });
   it("active-device directory preserves provider response and database failures",async()=>{
     const rows=[{id:sessionId,device_name:"Laptop",last_seen_at:new Date()}];
