@@ -109,7 +109,7 @@ describe("PROJ-BREAK-MENTOR-205..210 shared project HTTP authorization and role 
   expect(state.calls).toHaveLength(writes.length);
   for(const entry of writes){
    const call=state.calls.find(call=>call.service===entry.service);
-   expect(call?.args[1]).toBe(projectId);
+   expect(call?.args[1]).toEqual(entry.service==="createMentorTask"?{projectId}:projectId);
    if(entry.service!=="autoAssign"){
     const body=call?.args.find(value=>Boolean(value)&&typeof value==="object"&&
       Object.hasOwn(value,"title"));
