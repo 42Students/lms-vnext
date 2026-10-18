@@ -1,7 +1,7 @@
 import "server-only";
 import {and,eq,exists,not,sql,isNull,ilike} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {collegeMemberships,learnerProfiles,facultyProfiles,learnerProgramEnrollments,programs,departments,courseTeachingAssignments,courseSectionDeliveries,courseOfferings,courses,sectionEnrollments,sections,cohorts} from "@/db/schema";
+import {collegeMemberships,learnerProfiles,facultyProfiles,learnerProgramEnrollments,academicPeriods,programs,departments,courseTeachingAssignments,courseSectionDeliveries,courseOfferings,courses,sectionEnrollments,sections,cohorts} from "@/db/schema";
 export function collegeContactAcademicScope(collegeId:string){
  const db=getDb();
  const learnerProfile=exists(db.select({memberId:learnerProfiles.membershipId}).from(learnerProfiles)
@@ -20,6 +20,9 @@ export function collegeContactAcademicScope(collegeId:string){
  const activeClass=exists(db.select({sectionId:sectionEnrollments.id}).from(sectionEnrollments)
   .innerJoin(learnerProgramEnrollments,and(eq(learnerProgramEnrollments.id,sectionEnrollments.learnerEnrollmentId),eq(learnerProgramEnrollments.status,"ACTIVE")))
   .innerJoin(sections,and(eq(sections.id,sectionEnrollments.sectionId),eq(sections.cohortId,learnerProgramEnrollments.cohortId),eq(sections.academicPeriodId,sectionEnrollments.academicPeriodId),eq(sections.status,"ACTIVE")))
+  .innerJoin(academicPeriods,and(
+    eq(academicPeriods.id,sections.academicPeriodId),
+    eq(academicPeriods.collegeId,collegeId)))
   .innerJoin(cohorts,and(eq(cohorts.id,sections.cohortId),eq(cohorts.programId,learnerProgramEnrollments.programId)))
   .innerJoin(programs,eq(programs.id,cohorts.programId))
   .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
@@ -27,6 +30,9 @@ export function collegeContactAcademicScope(collegeId:string){
  const inSection=(sectionId:string)=>exists(db.select({enrollmentId:sectionEnrollments.id}).from(sectionEnrollments)
   .innerJoin(learnerProgramEnrollments,and(eq(learnerProgramEnrollments.id,sectionEnrollments.learnerEnrollmentId),eq(learnerProgramEnrollments.status,"ACTIVE")))
   .innerJoin(sections,and(eq(sections.id,sectionEnrollments.sectionId),eq(sections.cohortId,learnerProgramEnrollments.cohortId),eq(sections.status,"ACTIVE")))
+  .innerJoin(academicPeriods,and(
+    eq(academicPeriods.id,sections.academicPeriodId),
+    eq(academicPeriods.collegeId,collegeId)))
   .innerJoin(cohorts,and(eq(cohorts.id,sections.cohortId),eq(cohorts.programId,learnerProgramEnrollments.programId)))
   .innerJoin(programs,eq(programs.id,cohorts.programId))
   .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
@@ -35,6 +41,9 @@ export function collegeContactAcademicScope(collegeId:string){
   const placedInEnrollment=exists(db.select({id:sectionEnrollments.id}).from(sectionEnrollments)
    .innerJoin(sections,and(eq(sections.id,sectionEnrollments.sectionId),
      eq(sections.academicPeriodId,sectionEnrollments.academicPeriodId),eq(sections.status,"ACTIVE")))
+   .innerJoin(academicPeriods,and(
+     eq(academicPeriods.id,sections.academicPeriodId),
+     eq(academicPeriods.collegeId,collegeId)))
    .where(and(eq(sectionEnrollments.learnerEnrollmentId,learnerProgramEnrollments.id),
      eq(sections.cohortId,cohorts.id),eq(sectionEnrollments.status,"ACTIVE"),
      input.sectionId?eq(sections.id,input.sectionId):undefined)));

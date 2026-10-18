@@ -18,7 +18,7 @@ export function requestRowsTsv(
  if(selected.length===0)throw new Error("At least one request column must be selected");
  const neutral=(v:string|null)=>{
   const value=(v??"").replace(/[\p{Cc}\p{Zl}\p{Zp}]+/gu," ").trim();
-  return /^[\p{Cc}\p{Cf}\p{Zs}\p{Zl}\p{Zp}]*[=+@-]/u.test(value)
+  return /^[\p{Cc}\p{Cf}\p{M}\p{Zs}\p{Zl}\p{Zp}]*[=+@-]/u.test(value)
    ?"'"+value:value;
  };
  return [selected.map(column=>clipboardLabels[column]),...rows.map(row=>selected.map(column=>row[column]))]
