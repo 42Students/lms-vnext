@@ -103,4 +103,23 @@ describe("TPO-students-14 actual preview service signed authorization and row re
   await expect(loadTpoBulkCurrent(ctx,plan)).rejects.toBeInstanceOf(AuthorizationError);
   expect(mock.read).not.toHaveBeenCalled();
  });
+ it("bounds 200-row preview lookups to eight concurrent scoped reads without reordering the signed rows",async()=>{
+  const ids=Array.from({length:21},(_,i)=>
+   "aaaaaaaa-aaaa-4aaa-8aaa-"+i.toString(16).padStart(12,"0"));
+  let active=0,peak=0;
+  mock.read.mockImplementation(async()=>{
+   active+=1;peak=Math.max(peak,active);
+   await Promise.resolve();
+   active-=1;
+   return {direct:directA};
+  });
+  const result=await previewTpoBulkAction(ctx,{target:"STUDENTS",ids,
+   action:"ELIGIBLE",note:""});
+  expect(mock.read).toHaveBeenCalledTimes(ids.length);
+  expect(peak).toBe(8);
+  expect(active).toBe(0);
+  expect(result.rows.map(row=>row.id)).toEqual(ids);
+  expect(result.counts).toEqual({ready:21,skipped:0});
+ });
+
 });
