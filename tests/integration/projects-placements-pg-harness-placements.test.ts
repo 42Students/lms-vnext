@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import type { Pool } from "pg";
+import type { Pool, QueryResultRow } from "pg";
 import {
   createPlacementCandidateFixture, createPlacementFixture, createRecruiterFixture, createPrincipal,
   createTenant, newHarnessPool, withProjectPg,
@@ -88,6 +88,26 @@ describe("PROJ-HARNESS-PLACEMENTS canonical real PostgreSQL fixtures", () => {
       }]);
     });
   });
+  it("PROJ-HARNESS-RECRUITER-24 a grant failure leaves no orphaned user or company profile",async()=>{
+    await withPlacementCase(async({db,actor,drive})=>{
+      const before=await db.query<{n:number}>(`
+        select count(*)::int n from placement_recruiter_profiles`);
+      const failed:PgHarness={...db,
+        async query<T extends QueryResultRow=QueryResultRow>(sql:string,values?:unknown[]):Promise<T[]>{
+          if(sql.includes("insert into placement_recruiter_college_grants"))
+            throw new Error("simulated grant constraint failure");
+          return db.query<T>(sql,values);
+        },
+      };
+      await expect(createRecruiterFixture(failed,drive,actor))
+        .rejects.toThrow(/simulated grant constraint failure/);
+      const after=await db.query<{n:number}>(`
+        select count(*)::int n from placement_recruiter_profiles`);
+      expect(after[0]?.n).toBe(before[0]?.n);
+      await expect(createRecruiterFixture(db,drive,actor)).resolves.toHaveProperty("grantId");
+    });
+  });
+
   it("PROJ-HARNESS-RECRUITER-23 wrong-college coordinator cannot issue an HR grant",async()=>{
     await withPlacementCase(async({db,outsiderTenant,drive})=>{
       const foreignAdmin=await createPrincipal(db,outsiderTenant,["COLLEGE_ADMIN"]);

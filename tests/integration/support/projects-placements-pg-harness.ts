@@ -94,6 +94,9 @@ export async function assertHarnessSchema(client: PoolClient): Promise<void> {
     ["placement_applications", "role_option_id"],
     ["placement_job_rounds", "cancelled_at"],
     ["placement_seasons", "status"],
+    ["placement_recruiter_profiles", "company_id"],
+    ["placement_recruiter_college_grants", "verification_status"],
+    ["placement_recruiter_college_grants", "valid_until"],
   ] as const;
   const missingColumns = await client.query<{tbl: string; col: string}>(`
     select req.tbl, req.col
@@ -552,19 +555,23 @@ export async function createRecruiterFixture(
   if (!row || row.company_id!==drive.companyId || row.relationship_id!==drive.relationshipId)
     throw new Error("PROJ-HARNESS: recruiter company relationship does not match drive");
   await requireFixtureCollegePrincipal(db,row.college_id,actor,["COLLEGE_ADMIN","TPO"]);
-  const user=await createPrincipal(db,null);
-  await db.query(`
-    insert into placement_recruiter_profiles(user_id,company_id,created_by_user_id)
-    values ($1,$2,$3)`,[user.userId,row.company_id,actor.userId]);
-  const [grant]=await db.query<{id:string}>(`
-    insert into placement_recruiter_college_grants
-      (recruiter_user_id,company_relationship_id,granted_by_user_id,valid_until,
-       verification_status,capabilities)
-    values ($1,$2,$3,'2099-12-31T23:59:00Z','VERIFIED',
-      ARRAY['DRIVES','INTERVIEWS','MESSAGES','APPLICANT_EXPORT']::text[]) returning id`,
-    [user.userId,row.relationship_id,actor.userId]);
-  return {userId:user.userId,companyId:row.company_id,
-    relationshipId:row.relationship_id,grantId:grant!.id};
+  // The global user/profile and relationship grant form one atomic identity:
+  // a grant constraint failure must never leave an orphaned recruiter profile.
+  return db.savepoint(async()=>{
+    const user=await createPrincipal(db,null);
+    await db.query(`
+      insert into placement_recruiter_profiles(user_id,company_id,created_by_user_id)
+      values ($1,$2,$3)`,[user.userId,row.company_id,actor.userId]);
+    const [grant]=await db.query<{id:string}>(`
+      insert into placement_recruiter_college_grants
+        (recruiter_user_id,company_relationship_id,granted_by_user_id,valid_until,
+         verification_status,capabilities)
+      values ($1,$2,$3,'2099-12-31T23:59:00Z','VERIFIED',
+        ARRAY['DRIVES','INTERVIEWS','MESSAGES','APPLICANT_EXPORT']::text[]) returning id`,
+      [user.userId,row.relationship_id,actor.userId]);
+    return {userId:user.userId,companyId:row.company_id,
+      relationshipId:row.relationship_id,grantId:grant!.id};
+  });
 }
 
 export async function createPlacementCandidateFixture(
