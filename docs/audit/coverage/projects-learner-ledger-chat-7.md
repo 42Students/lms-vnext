@@ -26,3 +26,16 @@ Generated against chatgpt/chat-7-b October 18, 2026. Every named exported symbol
 | `src/modules/projects/learner-board-summary-model.ts` | `LearnerBoardStatusCounts` | **OPEN — NO DIRECT TEST LINKED**; exercise wrong tenant, revoked member, stale version, state transition |
 | `src/modules/projects/learner-board-summary-model.ts` | `learnerBoardStatusCounts` | **OPEN — NO DIRECT TEST LINKED**; exercise wrong tenant, revoked member, stale version, state transition |
 | `src/modules/projects/learner-board-summary-model.ts` | `learnerBoardStatusFilterHref` | **OPEN — NO DIRECT TEST LINKED**; exercise wrong tenant, revoked member, stale version, state transition |
+| `src/modules/projects/learner-board-task-attention-tone-model.ts` | `learnerBoardTaskStatusTone` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-board-task-attention-tone-model.ts` | `learnerBoardTaskPriorityTone` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-board-task-detail-model.ts` | `LearnerTaskBoardUrlFilters` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-board-task-detail-model.ts` | `findOwnLearnerBoardTask` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-board-task-detail-model.ts` | `learnerBoardTaskHref` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-board-task-dialog-navigation-model.ts` | `createLearnerBoardTaskDialogNavigationGuard` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-board-task-status-label-model.ts` | `learnerBoardTaskStatusLabel` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-board-task-status-label-model.ts` | `learnerBoardTaskPriorityLabel` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-board-task-workflow-model.ts` | `learnerBoardTaskWorkspaceHref` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-mutation-guard.ts` | `assertPersistedLearnerProjectMutation` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-own-task-input-model.ts` | `learnerOwnTaskCreateInputSchema` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-own-task-service.ts` | `createLearnerOwnTask` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-own-task-service.ts` | `deleteLearnerOwnTask` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
