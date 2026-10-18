@@ -29,7 +29,7 @@ export function overlappingInterviewVenue(
  // TPO-drive-workspace-44: fail closed on unknown/invalid timing evidence.
  // NaN comparisons must never allow an overlapping venue booking.
  if(!Number.isFinite(start)||!Number.isSafeInteger(durationMinutes)||durationMinutes<=0||
-    !Number.isFinite(end))return true;
+    durationMinutes>1440||!Number.isFinite(end))return true;
  return existing.some(item=>{
   if(item.durationMinutes===null||!Number.isSafeInteger(item.durationMinutes)||
      item.durationMinutes<=0)return true;
