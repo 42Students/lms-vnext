@@ -481,3 +481,11 @@ Cloud/browser execution remains pending.
 | HR-BREAK-BELL-PAYLOAD-35 | MAJOR | The long-lived HR shell bell trusted any HTTP 200 JSON as a complete `HrBellResponse`. A malformed payload could crash when `state.items.length` was accessed; a returned link could also leave the recruiter's permitted drive route. Parse finite unread counts, bounded notice rows, valid dates and same-route job UUID links before displaying the response. Fail closed and surface a recoverable error if invalid. | `tests/unit/HR-BREAK-chat19-bell-payload.test.ts` executes successful and hostile shapes and checks guarded rendering. |
 
 No CI or runtime test was run during this priority phase.
+
+## HR private applicant review cross-scope remount
+
+| Gap ID | Severity | Finding and correction | Direct regression |
+|---|---|---|---|
+| HR-BREAK-PRIVATE-RATING-36 | MAJOR | `RecruiterPrivateRatingEditor` held its previous candidate's private rating, note, optimistic version and `ready=true` across a change of `jobId/applicationId` when the App Router reused the client component. Before the next GET returned, a recruiter could see the previous applicant's private note or attempt to save it against another applicant. Place the existing hook-owning inner editor behind a stable composite job+applicant React key so every candidate switch unmounts (and aborts) previous private state. | `tests/unit/HR-BREAK-chat19-private-rating-scope.test.tsx` invokes the exported wrapper, asserts per-job and per-applicant instance identity, initial disabled form and abort/CAS wiring. |
+
+No live navigation, browser or CI execution was performed.
