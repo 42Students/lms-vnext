@@ -17,7 +17,7 @@ const inputSchema = z.object({
 export type MentorReassignmentQuery = z.input<typeof inputSchema>;
 /** Scope-bound text search treats LIKE metacharacters as literal user input. */
 export function mentorReassignmentLiteralSearch(value:string){
-  return value.replace(/[\\\\%_]/g,"\\\\export type MentorReassignmentQuery = z.input<typeof inputSchema>;");
+  return value.replace(/[\\%_]/g,"\\$&");
 }
 
 async function scopeCollege(context: RequestContext, collegeId: string) {
