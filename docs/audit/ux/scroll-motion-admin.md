@@ -24,6 +24,6 @@ No new arbitrary durations, easing or layout-affecting animations were introduce
 ## Verification boundary and count
 
 - 37/37 assigned pages mapped; 8 source files updated for the scroll pass (four shared scroll primitives and four placement widgets). One additional widget confirmation flow changed without altering the legacy confirmation text.
-- 17 source regression tests in `tests/unit/UX-admin-scroll-motion-chat6.test.ts`; 37 exact-route behavioral source tests remain in `tests/unit/ux-admin-chat6-middle-third.test.ts`.
-- Source-level check: all 16 targeted source test blocks plus global CSS token expectations matched the branch content at verification time. No TypeScript, Vitest, lint, real wheel/touch/keyboard, 320/360/390px, VoiceOver/TalkBack, or native WebView execution was available here. These are pending orchestrator acceptance, not asserted as passing.
+- 18 source regression tests in `tests/unit/UX-admin-scroll-motion-chat6.test.ts`; 37 exact-route behavioral source tests remain in `tests/unit/ux-admin-chat6-middle-third.test.ts`.
+- Source-level check: all 16 targeted component source blocks, global CSS tokens and the added eight-file motion-timing contract matched the branch content at verification time. No TypeScript, Vitest, lint, real wheel/touch/keyboard, 320/360/390px, VoiceOver/TalkBack, or native WebView execution was available here. These are pending orchestrator acceptance, not asserted as passing.
 - The overlay was already covered by shared Dialog/Drawer native `showModal`/Escape/focus-return behavior; the changes only modified the scrollers and cues.
