@@ -2,6 +2,7 @@ import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {join} from "node:path";
 import {parseAdminProjectsQuery} from "@/modules/projects/admin-projects-query-model";
+import {projectAdminCsv} from "@/modules/projects/project-admin-csv-model";
 
 /** Source-contract checks for earlier merged functionality and exact legacy copy.
  * Integration-level permissions, database transitions and parity still require
@@ -206,10 +207,11 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
   const controls=source("src/components/projects/project-admin-collection-controls.tsx");
   const queryModel=source("src/modules/projects/admin-projects-query-model.ts");
   expect(page).toContain("parseAdminProjectsQuery(await searchParams)");
-  expect(queryModel).toContain("first(params.search) ?? first(params.q)");
+  expect(queryModel).toContain("const search = legacySearch ?? currentSearch;");
   expect(queryModel).toContain('pageSize: z.coerce.number().int().min(10).max(100).default(20)');
   expect(parseAdminProjectsQuery({search:"capstone"}).data).toMatchObject({q:"capstone",pageSize:20});
-  expect(parseAdminProjectsQuery({search:"from search",q:"from q"}).data?.q).toBe("from search");
+  expect(parseAdminProjectsQuery({search:"from search",q:"from q"}).success).toBe(false);
+   expect(parseAdminProjectsQuery({search:"same",q:"same"}).data?.q).toBe("same");
   expect(parseAdminProjectsQuery({pageSize:"0"}).success).toBe(false);
   expect(page).toContain("<ProjectAdminFilters query={query} legacyWorkspaces />");
   expect(controls).toContain('legacyWorkspaces ? "search" : "q"');
@@ -226,7 +228,7 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
   const page=source("src/components/projects/project-admin-reassign-mentor-page.tsx");
   expect(page).toContain("isProjectMentorOverloaded(row.activeWorkspaces, mentorCounts)");
   expect(page).toContain("Filter by current mentor");
-  expect(page).toContain("Move multiple active workspaces to a new mentor at once.");
+  expect(page).toContain("Move selected non-archived project workspaces to a new primary mentor.");
  });
  it("SA-placements-projects-67 confirms readiness safely and retains failed drafts",()=>{
   const form=source("src/components/projects/project-readiness-override-form.tsx");
@@ -285,7 +287,9 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
   const exportFile=source("src/components/projects/project-submissions-page-export.tsx");
   const page=source("src/components/projects/project-admin-submissions-page.tsx");
   expect(exportFile).toContain("project-submissions-page.csv");
-  expect(exportFile).toContain('function csvField(');
+  expect(exportFile).toContain("projectAdminCsv([headings,...data])");
+   // The shared export model is stronger than a page-local CSV escape helper.
+   expect(projectAdminCsv([["=SUM(1,1)", "+unsafe", "safe"]])).toContain("\"'=SUM(1,1)\"");
   expect(exportFile).toContain("Pending (days)");
   expect(page).toContain("<ProjectSubmissionsPageExport");
   expect(page).toContain("Reviewed by");

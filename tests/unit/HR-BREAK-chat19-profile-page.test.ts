@@ -48,6 +48,13 @@ describe("HR-BREAK-chat19-profile-page: active recruiter reads and session denia
   await expect(HrProfilePage()).rejects.toThrow("REDIRECT");
   expect(m.profile).not.toHaveBeenCalled();
  });
+ it("HR-BREAK-PROFILE-IDENTITY-10 rejects mismatched recruiter identity before profile and grant reads",async()=>{
+  m.ctx.mockResolvedValue({...actor,recruiter:{...actor.recruiter!,userId:"another-employee"}});
+  await expect(HrProfilePage()).rejects.toThrow("REDIRECT");
+  expect(m.redirect).toHaveBeenCalledWith("/dashboard");
+  expect(m.profile).not.toHaveBeenCalled();
+  expect(m.grants).not.toHaveBeenCalled();
+ });
  it("shows only the authenticated recruiter's own email and employer from service projections",async()=>{
   const result=await HrProfilePage();
   const text=collect(result);

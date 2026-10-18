@@ -86,3 +86,6 @@ The biggest remaining admin-placement release gates are a real PostgreSQL two-se
 
 
 | `src/modules/placements/admin-company-directory-export-model.ts` + `src/modules/admin-ui/super-admin-scoped-csv-model.ts` — CSV formula escaping | Formula injection prefixed by Unicode `Mn` combining marks, arbitrary `Cf` controls, whitespace and bidi text | `SA-ADMIN-CSV-04` in `chat13-admin-export-unicode-formula.test.ts` (six malicious prefixes per export and safe-text preservation) | Fixed `c7bca430` / `4fa85596`; pure model behavior authored, no CI executed |
+
+
+| `src/modules/placements/college-placement-student-lookup-service.ts` + `college-placement-student-lookup-model.ts` — `lookupCollegeStudentPlacement`, `capStudentLookupRows` | Scoped learner/job/relationship links; exactly 15 or 100 records must not falsely claim truncation, sixteenth/101st record omitted and signaled; deterministic order; actual joined placement across whole history even beyond 100 visible records | `SA-STUDENT-LOOKUP-CAP-01/02` and `SA-STUDENT-LOOKUP-PLACED-03` in `chat13-student-placement-lookup-cap.test.ts` | Model boundary tests and scoped SQL source contracts authored; PostgreSQL query/role journey not run |
