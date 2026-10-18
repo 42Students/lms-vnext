@@ -137,7 +137,7 @@ export default async function TpoHome(){
   registered:studentStats?.definitions.registrationsAvailable?studentStats.summary.placementPool:null,
   placedUnique:studentStats?.summary.placed??null,recruiterLeads:crmCounts?.leads??null,
   followUps:crmCounts?.dueFollowups??null,recruiterAccess:crmCounts?.pendingRecruiterAccess??null,
-  pendingRequests:pendingRequestCount,
+  pendingRequests:pendingRequestCount??0,
   messages:unreadMessages,teamAsks,teamMentions:null,
   teamUnread,
   upcoming:weekNext,calendarAvailable:weekEvents!==null,
