@@ -2,7 +2,7 @@
 
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
-import {apiFetch} from "@/lib/api-fetch";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 
@@ -27,12 +27,12 @@ export function RecruiterRequestCancelButton({requestId,collegeId,updatedAt}:{
    setConfirmOpen(false);
    setNotice("Request cancelled.");
    router.refresh();
-  }catch(error){setNotice(error instanceof Error?error.message:friendlyApiError({}));}
+  }catch(error){setNotice(error instanceof FriendlyFetchError?error.message:friendlyApiError({}));}
   finally{lock.current=false;setBusy(false);}
  }
  return <div className="mt-2">
   <button type="button" disabled={busy} onClick={()=>setConfirmOpen(true)}
-   className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm text-primary-text disabled:opacity-50">
+   className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm text-primary-text disabled:opacity-50">
    {busy?"Cancelling…":"Cancel request"}
   </button>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
