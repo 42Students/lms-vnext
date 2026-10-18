@@ -6,3 +6,9 @@
 - **Legacy wording:** Exact headings, labels, form actions, tab order and destinations retained.
 - **Regression:** `tests/unit/ux-admin-chat9-batch-04.test.ts` case `UX-admin-videos-01`.
 - **Validation:** Source test authored; TypeScript strict-check, lint, Vitest and device/browser evidence pending orchestrator run. Page-list checkbox stays open until tests pass.
+
+## Bounded loading follow-through
+
+- Video directory loading now uses the shared bounded skeleton; scoped directory remains delegated.
+- Regression: `tests/unit/ux-admin-chat9-loading-b.test.ts` case `UX-admin-videos-02`.
+- Unverified: TypeScript, lint, Vitest, UX guard and visual/a11y device acceptance. Checklist remains open until a runner confirms them.
