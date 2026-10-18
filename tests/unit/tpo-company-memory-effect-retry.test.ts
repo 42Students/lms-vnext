@@ -14,6 +14,9 @@ describe("TPO Company Memory fetch lifecycle",()=>{
   expect(retry).toContain("setCompany(null)");
   expect(retry).toContain("setPhase(\"loading\")");
   expect(retry).toContain("setError(\"\")");
-  expect(retry).toContain("void load()");
+  // The guarded retry must pass its own AbortSignal and ignore older responses.
+  expect(retry).toContain("activeLoad.current?.abort()");
+  expect(retry).toContain("void load(controller.signal)");
+  expect(retry).toContain("activeLoad.current===controller");
  });
 });
