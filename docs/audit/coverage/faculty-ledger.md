@@ -6,18 +6,38 @@ Status: INCOMPLETE. Tests have not been executed; do not use this ledger for rel
 
 | Source path | Export coverage |
 |---|---|
-| `src/modules/attendance/faculty-attendance-edit-state.ts` | GAP: exported-function test inventory required |
-| `src/modules/attendance/faculty-correction-audit-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/attendance/faculty-correction-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/attendance/faculty-correction-service.ts` | GAP: exported-function test inventory required |
-| `src/modules/attendance/faculty-correction-token-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/attendance/faculty-grid-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/attendance/faculty-learner-attendance-detail.ts` | GAP: exported-function test inventory required |
-| `src/modules/attendance/faculty-marking-window.ts` | GAP: exported-function test inventory required |
-| `src/modules/attendance/faculty-schedule-editor-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/attendance/faculty-schedule-errors.ts` | GAP: exported-function test inventory required |
-| `src/modules/attendance/faculty-schedule-mutation-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/attendance/faculty-schedule-mutation-service.ts` | GAP: exported-function test inventory required |
+| `src/modules/attendance/faculty-attendance-edit-state.ts` | `initialAbsencesForSession`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-attendance-edit-state.ts` | `resolveFacultyAttendanceSession`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-attendance-edit-state.ts` | `resolveFacultyAttendanceDeepLink`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-attendance-edit-state.ts` | `facultyAttendanceMarksDirty`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-correction-audit-model.ts` | `facultyCorrectionDelta`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-correction-audit-model.ts` | `facultyCorrectionReasonValid`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-correction-audit-model.ts` | `facultyAttendanceConfirmation`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-correction-audit-model.ts` | `facultyAttendanceChangedMemberships`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-correction-model.ts` | `facultyCorrectionQuerySchema`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-correction-model.ts` | `facultyCorrectionSessionPage`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-correction-model.ts` | `facultyCorrectionHref`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-correction-service.ts` | `getFacultyCorrectionAvailability`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-correction-token-model.ts` | `facultyAttendanceCorrectionTokenMatches`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-correction-token-model.ts` | `facultyAttendanceNextMarkedAt`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-grid-model.ts` | `indiaAttendanceDayKey`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-grid-model.ts` | `indiaAttendanceMonthKey`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-grid-model.ts` | `shiftIndiaAttendanceMonth`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-grid-model.ts` | `groupFacultyAttendanceSessionsByIndiaDay`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-grid-model.ts` | `facultyAttendanceDayCell`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-learner-attendance-detail.ts` | `facultyLearnerAttendanceDetail`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-learner-attendance-detail.ts` | `facultyAttendanceMonthSummary`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-learner-attendance-detail.ts` | `facultyAttendanceThresholdBreakdown`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-marking-window.ts` | `facultyAttendanceMarkingWindow`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-schedule-editor-model.ts` | `localDateTimeInput`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-schedule-editor-model.ts` | `facultyScheduleInstants`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-schedule-editor-model.ts` | `validateFacultyScheduleWindow`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-schedule-errors.ts` | `mapFacultyScheduleInsertError`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-schedule-mutation-model.ts` | `facultyAttendanceScheduleSchema`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-schedule-mutation-model.ts` | `facultyAttendanceScheduleParamsSchema`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-schedule-mutation-model.ts` | `facultyScheduleFieldsChanged`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-schedule-mutation-model.ts` | `facultyScheduleErrorMessage`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-schedule-mutation-service.ts` | `commandFacultyAttendanceSchedule`: GAP — behavioural test needed |
 | `src/modules/attendance/faculty-service.ts` | GAP: exported-function test inventory required |
 | `src/modules/courses/faculty-assessment-batch-model.ts` | GAP: exported-function test inventory required |
 | `src/modules/courses/faculty-assessment-editor-model.ts` | GAP: exported-function test inventory required |
