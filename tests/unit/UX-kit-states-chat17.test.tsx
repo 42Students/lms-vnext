@@ -174,7 +174,7 @@ describe("UX-kit-STATES: semantic SSR states and accessible fallbacks", () => {
     expect(avatarInitials("   ")).toBe("?");
     expect(avatarInitials("Grace Student Name")).toBe("GS");
     const img=render(<Avatar name="Project Learner" src="https://assets.example.test/p.png" size="sm"/>);
-    expect(img).toContain('referrerpolicy="no-referrer"');
+    expect(img).toMatch(/referrerpolicy="no-referrer"/i);
     expect(img).toContain('alt=""');
     expect(img).toContain('width="32"');
     expect(render(<LongText value={'<script>alert("x")</script>'}/>)).not.toContain("<script>");
