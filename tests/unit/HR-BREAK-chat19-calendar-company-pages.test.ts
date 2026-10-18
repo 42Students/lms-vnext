@@ -31,7 +31,7 @@ function readText(n:ReactNode):string{
 describe("HR-BREAK-chat19-calendar-company: account-deny and stable navigation",()=>{
  beforeEach(()=>{
   vi.clearAllMocks();m.ctx.mockResolvedValue(actor);
-  m.calendar.mockResolvedValue({events:[],resultsDue:[]});
+  m.calendar.mockResolvedValue({events:[],resultsDue:[],days:[],summary:{rounds:0,deadlines:0},authorizedJobCount:0});
   m.team.mockResolvedValue({status:"NO_ACCESS",choices:[]});
   m.redirect.mockImplementation(()=>{throw new Error("REDIRECT");});
  });
