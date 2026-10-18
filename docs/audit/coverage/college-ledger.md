@@ -164,3 +164,9 @@ Both use isolated service mocks and server-rendered markup, **not** end-to-end b
 | `src/modules/people/college-faculty-csv-service.ts` `runCollegeFacultyCsv`, `FACULTY_CSV_COLUMNS` | `tests/unit/chat4-college-faculty-csv-import.test.ts` (`COL-people-faculty-csv-01`) | PREVIEW has no mutations, 500-row structural cap, explicit confirmation/unknown-field validation, wrong role/deactivated account denial, duplicate mobile/email/casefolding, invalid type, normalized +91 phone and legacy faculty title, successful College-scoped onboarding/profile, distinct safe FAILED vs PARTIAL receipts without exposing exception details. Real identity/index conflicts and cross-request rate limits remain PostgreSQL/integration gates. |
 
 New tests have not been executed.
+
+## Super Admin per-person audit private read
+
+| Export | Test | Evidence and remaining stage |
+| --- | --- | --- |
+| `src/modules/people/super-admin-person-audit-service.ts` `listSuperAdminPersonAudit` | `tests/unit/chat4-superadmin-person-audit-actor.test.ts` (`SA-people-audit-ACTOR-01`) | Denies without selected college or authorized membership; rechecks live `people.manage` Super Admin permission *inside the activity-events transaction*, holding actor lock until private event read finishes; returns only membership-specific 100-row audit projection; no raw metadata. Live PostgreSQL concurrent role/scope revocation remains open. |
