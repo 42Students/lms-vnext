@@ -1,6 +1,6 @@
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
-import {tpoPrepAssignmentInputSchema} from "@/modules/placements/tpo-prep-assignment-service";
+import {tpoPrepAssignmentInputSchema} from "@/modules/placements/tpo-prep-assignment-model";
 const UUID="aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
 const MEMBER="bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
 const valid={offeringId:UUID,membershipIds:[MEMBER]};

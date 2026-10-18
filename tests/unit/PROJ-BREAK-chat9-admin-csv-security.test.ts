@@ -72,7 +72,11 @@ describe("IIT Dharwad Projects admin exports: spreadsheet injection resilience",
       const source = readFileSync("src/components/projects/" + file, "utf8");
       expect(source.startsWith('"use client";'), file).toBe(true);
       expect(source, file).toContain('from "@/modules/projects/project-admin-csv-model"');
-      expect(source, file).toContain("projectAdminCsv([");
+      // The template export builds a named, already scoped row collection;
+      // all other client exports build the collection inline. Both must pass
+      // those rows through the same formula-safe CSV serializer.
+      expect(source, file).toContain(file === "super-admin-template-page-export.tsx"
+        ? "projectAdminCsv(rows)" : "projectAdminCsv([");
       expect(source, file).not.toContain("function csvField(");
       expect(source, file).not.toContain("function escape(");
     }
