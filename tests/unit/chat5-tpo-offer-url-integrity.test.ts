@@ -35,6 +35,20 @@ describe("TPO offer register screen/export URL integrity",()=>{
   expect(route).toContain('status:400');
   expect(route).not.toContain("{jobId,...Object.fromEntries");
  });
+ it("TPO-CANDIDATE-SCHEDULE-34 distinguishes an unknown single round from ambiguous repeated round filters",()=>{
+  expect(tpoReportHasAmbiguousFilters({roundId:["11111111-1111-4111-8111-111111111111",
+   "22222222-2222-4222-8222-222222222222"]})).toBe(true);
+  expect(tpoReportHasAmbiguousFilters({roundId:"11111111-1111-4111-8111-111111111111"})).toBe(false);
+  const src=code("src/app/(authenticated)/tpo/placements/jobs/[jobId]/candidate-schedule/page.tsx");
+  expect(src).toContain("tpoReportHasAmbiguousFilters(query)");
+  expect(src).toContain("<TpoReportInvalidFilters");
+  expect(src.indexOf("tpoReportHasAmbiguousFilters(query)")).toBeLessThan(
+   src.indexOf("getTpoCandidateScheduleReadiness(context, jobId)"));
+  expect(src).toContain('roundId ? readiness.displayed.filter(row => row.roundId === roundId)');
+  expect(src).toContain("That round is not part of this drive.");
+  expect(src).toContain("Show all rounds");
+  expect(src).toContain("<DataTable");
+ });
  it("TPO-OFFERS-URL-32 uses the same strict persisted filter schema as the CSV export",()=>{
   const jobId="11111111-1111-4111-8111-111111111111";
   expect(offerRegisterQuery.safeParse({jobId,status:"EXPIRED"}).success).toBe(true);
