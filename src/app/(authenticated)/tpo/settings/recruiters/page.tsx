@@ -33,7 +33,7 @@ import {
   TPO_RECRUITER_ACCESS_FILTERS,
   tpoRecruiterAccessHref,
   nextTpoRecruiterGrantPage,
-  tpoRecruiterAccessQuerySchema,
+  parseTpoRecruiterAccessParams,
 } from "@/modules/placements/tpo-recruiter-access-model";
 import {
   listTpoRecruiterAccess,
@@ -63,17 +63,9 @@ export default async function TpoRecruiterAccessPage({
 
   const params = await searchParams;
 
-  // Duplicate query keys are ambiguous; do not silently prefer the first
-  // attacker-supplied value for a TPO college-grant directory.
-  const parsed = Object.values(params).some(Array.isArray)
-    ? {success:false as const}
-    : tpoRecruiterAccessQuerySchema.safeParse({
-      status:params.status || undefined,
-      q:params.q || "",
-      page:params.page || undefined,
-    });
+  const parsed=parseTpoRecruiterAccessParams(params);
 
-  if (!parsed.success) {
+  if (!parsed) {
     return (
       <div className="space-y-6">
         <TpoSettingsNav active="recruiters" />
@@ -101,7 +93,7 @@ export default async function TpoRecruiterAccessPage({
   }
 
   const [data, linkedCompanies, publicLink,communication] = await Promise.all([
-    listTpoRecruiterAccess(context, parsed.data),
+    listTpoRecruiterAccess(context, parsed),
     getTpoTrustedCompanies(context, context.membership.collegeId),
     getTpoPublicJoinLinkStatus(context, "COLLEGE"),
     getTpoCommunicationSettings(context),
