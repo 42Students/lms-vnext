@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import { LectureHallManager } from "@/components/admin/lecture-hall-manager";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
@@ -30,6 +31,7 @@ export default async function SuperAdminLectureHallsPage({
     <EmptyState title="Select a college to continue"
       description="Choose a college in the header above to see its lecture halls." />
   </div>;
+  requireSuperAdminSelectedCollege(context,"academics.manage");
 
   const query = parseSuperAdminLectureHallFilters(await searchParams);
   if (!query) return <div className="space-y-6">
