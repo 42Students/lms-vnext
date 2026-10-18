@@ -203,6 +203,21 @@ describe("PROJ-HARNESS-PLACEMENTS canonical real PostgreSQL fixtures", () => {
       expect(after[0]?.n).toBe(before[0]?.n);
     });
   });
+  it("PROJ-HARNESS-PLACEMENTS-18 a cancelled round cannot receive candidate results",async()=>{
+    await withPlacementCase(async({db,drive,actor,learner})=>{
+      const before=await db.query<{n:number}>(`
+        select count(*)::int n from placement_round_results where round_id=$1`,[drive.roundId]);
+      await db.query(`
+        update placement_job_rounds set status='CANCELLED',cancelled_at=now() where id=$1`,
+        [drive.roundId]);
+      await expect(createPlacementCandidateFixture(db,drive,learner,actor))
+        .rejects.toThrow(/cancelled round cannot accept candidate results/);
+      const after=await db.query<{n:number}>(`
+        select count(*)::int n from placement_round_results where round_id=$1`,[drive.roundId]);
+      expect(after[0]?.n).toBe(before[0]?.n);
+    });
+  });
+
   it("PROJ-HARNESS-PLACEMENTS-17 closed season cannot accept a candidate even with a published job",async()=>{
     await withPlacementCase(async({db,drive,actor,learner})=>{
       const before=await db.query<{n:number}>(`
