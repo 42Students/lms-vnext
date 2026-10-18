@@ -16,15 +16,15 @@ export type DataTableProps<Row> = {
   columns: readonly DataTableColumn<Row>[];
   rows: readonly Row[];
   getRowKey: (row: Row) => string;
-  /** Required, role-approved copy and authorized next action for an empty result. */
-  empty: ReactNode;
+  /** Role-approved copy and authorized next action for an empty result; a plain default is shown when omitted. */
+  empty?: ReactNode;
   caption?: string;
   rowHref?: (row: Row) => string;
 };
 
 export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHref }: DataTableProps<Row>) {
   if (rows.length === 0) return <div className="rounded-xl border border-border bg-surface p-4 sm:p-6">
-    {empty}
+    {empty ?? <p className="text-sm text-muted-foreground">No records to show.</p>}
   </div>;
   // Treat a hidden phone column as recoverable only if every row has a valid
   // internal detail destination; otherwise reveal it in mobile More details.
