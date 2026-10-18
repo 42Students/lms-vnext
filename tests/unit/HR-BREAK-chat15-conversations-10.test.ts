@@ -35,6 +35,7 @@ describe("HR-CONVERSATIONS-SCOPE-10 account, grant and private thread protection
  it("inactive, wrong-role or disconnected recruiter cannot read inbox threads",async()=>{
   for(const who of [
    {...context,recruiter:null},
+   {...context,recruiter:{...context.recruiter,userId:"another-recruiter"}},
    {...context,user:{...context.user,platformStatus:"SUSPENDED"}},
   ])await expect(listHrConversations(who as never,{})).rejects.toThrow();
   expect(mocks.threads).not.toHaveBeenCalled();
