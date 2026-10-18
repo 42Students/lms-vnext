@@ -241,6 +241,7 @@ export function LearnerFinalDeliveryControl({
       await projectMutation(
         `/api/projects/${projectId}/submissions/${draft.id}/submit`,
         "POST",
+        {expectedUpdatedAt:lastSavedUpdatedAt.current},
       );
       setSubmitConfirmation(false);
       showToast({
