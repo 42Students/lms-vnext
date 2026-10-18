@@ -1,3 +1,4 @@
+"use server";
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { and, asc, eq, ilike, inArray, isNull, or } from "drizzle-orm";
@@ -102,7 +103,6 @@ export default async function CollegeElectiveAllocatePage({
   ]);
 
   async function allocate(formData: FormData) {
-    "use server";
     const { context, slot: current } = await scopedSlot(slotId);
     const groupId = String(formData.get("offeringGroup") ?? "");
     const checkedGroup = uuid.safeParse(groupId);

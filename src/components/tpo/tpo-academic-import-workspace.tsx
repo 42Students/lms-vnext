@@ -1,5 +1,5 @@
-import {DataTable} from "@/components/ui/data-table";
 "use client";
+import {DataTable} from "@/components/ui/data-table";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";

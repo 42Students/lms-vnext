@@ -1,5 +1,5 @@
-import {DataTable} from "@/components/ui/data-table";
 "use client";
+import {DataTable} from "@/components/ui/data-table";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {TPO_BUILTIN_JOB_TYPES} from "@/modules/placements/tpo-builtin-job-types";
