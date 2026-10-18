@@ -93,7 +93,7 @@ export async function ProjectAdminReadinessPage({
         description="Execution completion and final-delivery readiness across project workspaces."
       />
       <p className="text-sm text-body">See whether each team is ready to submit, and override the gate when you need to.</p>
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="border-b border-border pb-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-base font-semibold">Active overrides ({activeOverrides.length})</h2>
           <a href={"/api/projects/readiness-overrides/export?collegeId=" + encodeURIComponent(collegeId)}
@@ -122,7 +122,7 @@ export async function ProjectAdminReadinessPage({
           empty={<p role="status" className="text-sm text-body">No workspace overrides match these filters.</p>}
         />}
       </section>
-      <section className="space-y-3 rounded-xl border border-border bg-surface p-5">
+      <section className="space-y-3 border-b border-border pb-5">
         <h2 className="text-base font-semibold">Select workspace</h2>
         {outsideScope ? <p role="alert" className="rounded-md border border-border p-3 text-sm text-warning-text">This workspace belongs to a different college — switch colleges in the header and try again.</p> : null}
         <AdminReadinessWorkspacePicker items={workspaceChoices} selected={selected} action={readinessPath}/>
@@ -158,7 +158,7 @@ export async function ProjectAdminReadinessPage({
           {result.items.map((project) => (
             <article
               key={project.id}
-              className="rounded-xl border border-border bg-surface p-5"
+              className="border-b border-border py-5 last:border-b-0"
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
