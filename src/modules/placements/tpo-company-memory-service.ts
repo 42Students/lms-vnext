@@ -164,10 +164,17 @@ async function loadCompanySourceRows(
   return { collegeId, leads, jobs };
 }
 
-async function loadDriveFacts(jobIds: string[]) {
-  if (jobIds.length === 0) return [];
-  const db = getDb();
-  const rows = await db
+/** Bound PostgreSQL IN predicates; omit duplicate job IDs without losing offer rows. */
+export function tpoDriveFactIdChunks(ids:readonly string[]):string[][]{
+ const unique=[...new Set(ids)];
+ const batches:string[][]=[];
+ for(let offset=0;offset<unique.length;offset+=500)
+  batches.push(unique.slice(offset,offset+500));
+ return batches;
+}
+async function selectDriveFactRows(jobIds:string[]){
+  const db=getDb();
+  return db
     .select({
       jobId: placementJobs.id,
       jobStatus: placementJobs.status,
@@ -192,7 +199,15 @@ async function loadDriveFacts(jobIds: string[]) {
       eq(placementJoiningOutcomes.offerId, placementOffers.id),
     )
     .where(inArray(placementJobs.id, jobIds));
-  return rows;
+}
+/** Queries stay bounded even for a college with more than 500 employer drives. */
+async function loadDriveFacts(jobIds:string[]){
+ const chunks=tpoDriveFactIdChunks(jobIds);
+ const first=chunks[0];
+ if(!first)return [];
+ const rows=await selectDriveFactRows(first);
+ for(const part of chunks.slice(1))rows.push(...await selectDriveFactRows(part));
+ return rows;
 }
 
 /**

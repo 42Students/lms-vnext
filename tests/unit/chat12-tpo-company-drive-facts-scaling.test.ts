@@ -1,6 +1,6 @@
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
-import {groupTpoDriveFactsByJob} from "@/modules/placements/tpo-company-memory-service";
+import {groupTpoDriveFactsByJob,tpoDriveFactIdChunks} from "@/modules/placements/tpo-company-memory-service";
 import {deriveCompanyDriveFacts} from "@/modules/placements/company-drive-facts-policy";
 
 describe("TPO-companies-scale-01 company directory batching and correct evidence partition",()=>{
@@ -31,6 +31,14 @@ describe("TPO-companies-scale-01 company directory batching and correct evidence
   expect(buckets.get("c")).toBeUndefined();
   expect(source).toEqual(original);
   expect(groupTpoDriveFactsByJob([])).toEqual(new Map());
+ });
+ it("TPO-companies-scale-02 caps SQL predicates at 500 unique drive IDs while preserving order",()=>{
+  const ids=Array.from({length:1205},(_,i)=>"job-"+i);
+  const batches=tpoDriveFactIdChunks([...ids,"job-1","job-1","job-1204"]);
+  expect(batches.map(batch=>batch.length)).toEqual([500,500,205]);
+  expect(batches.flat()).toEqual(ids);
+  expect(new Set(batches.flat()).size).toBe(1205);
+  expect(tpoDriveFactIdChunks([])).toEqual([]);
  });
  it("wires only one drive-facts read into the college directory, not one per company",()=>{
   const source=readFileSync(new URL("../../src/modules/placements/tpo-company-memory-service.ts",import.meta.url),"utf8");
