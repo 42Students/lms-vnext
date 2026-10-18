@@ -17,6 +17,7 @@ vi.mock("@/modules/placements/tpo-messaging-service",()=>({
 vi.mock("@/modules/placements/recruiter-service",()=>({listOwnRecruiterPlacementJobs:m.jobs}));
 vi.mock("@/modules/placements/tpo-drive-change-request-service",()=>({getDriveChangeRequests:m.changes}));
 import RecruiterConversationDetail from "@/app/(authenticated)/hr/conversations/[threadId]/page";
+import {TpoMessagingError} from "@/modules/placements/tpo-messaging-service";
 
 const id="11111111-1111-4111-8111-111111111111";
 const college="22222222-2222-4222-8222-222222222222";
@@ -90,9 +91,12 @@ describe("HR-BREAK-chat19-conversation-page: actual async role, IDOR and recover
   expect(m.changes).not.toHaveBeenCalled();
  });
  it("turns revoked college access into safe recovery, not private thread details",async()=>{
-  m.read.mockRejectedValue(new (class extends Error{code="TPO_MESSAGE_FORBIDDEN";})());
-  // Unexpected error class does not trigger the typed recovery path.
-  await expect(page()).rejects.toThrow();
+  m.read.mockRejectedValue(new TpoMessagingError("TPO_MESSAGE_FORBIDDEN"));
+  const result=await page();
+  const content=textOf(result);
+  expect(content).toContain("No access to this college");
+  expect(content).toContain("Return to Today");
+  expect(content).not.toContain("Welcome to your authorized conversation");
   expect(m.jobs).not.toHaveBeenCalled();
  });
  it("unavailable or wrong-company drives never render an unverified job title/link",async()=>{
