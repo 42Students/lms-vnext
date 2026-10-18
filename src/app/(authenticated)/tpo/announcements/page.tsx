@@ -1,3 +1,6 @@
+import {Button} from "@/components/ui/button";
+import {Textarea} from "@/components/ui/textarea";
+import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import {tpoNoticeTextParts} from "@/modules/announcements/tpo-notice-safe-links";
 import {TpoPlacementCellReadAction} from "@/components/tpo/tpo-placement-cell-read-action";
@@ -84,7 +87,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
       initialAudience={query.success?query.data.audience:"COLLEGE"}
       initialTarget={first(raw.targetId)??""}
       initialTargets={query.success?query.data.targetIds??[]:[]} options={targetOptions}/>
-     <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm text-[var(--lms-teal-deep)]">Preview audience</button>
+     <Button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm text-[var(--lms-teal-deep)]">Preview audience</Button>
    </form>
    {!query.success?<p role="alert" className="mt-2 text-sm">Choose a valid audience and target ID.</p>:null}
    {preview.failed?<p role="alert" className="mt-3 rounded-lg border border-border p-3 text-sm">
@@ -107,25 +110,25 @@ export default async function TpoAnnouncements({searchParams}:Props){
     {query.success&&query.data.targetId?<input type="hidden" name="targetId" value={query.data.targetId}/>:null}
     {query.success?query.data.targetIds?.map(id=><input key={id} type="hidden" name="targetIds" value={id}/>):null}
     <label className="grid gap-1 text-sm font-semibold">Title
-     <input name="title" required maxLength={200} className="min-h-11 rounded-md border border-border bg-surface px-3" />
+     <Input name="title" required maxLength={200} className="min-h-11 rounded-md border border-border bg-surface px-3" />
     </label>
     <label className="grid gap-1 text-sm font-semibold">Message
-     <textarea name="message" required maxLength={8000} rows={5} className="rounded-md border border-border bg-surface p-3" />
+     <Textarea name="message" required maxLength={8000} rows={5} className="rounded-md border border-border bg-surface p-3" />
     </label>
     <fieldset className="grid gap-2 rounded-md border border-border p-3">
      <legend className="text-sm font-semibold">Button (optional)</legend>
      <label className="grid gap-1 text-sm">Button label
-      <input name="buttonLabel" maxLength={60} placeholder="Register"
+      <Input name="buttonLabel" maxLength={60} placeholder="Register"
        className="min-h-11 rounded-md border border-border bg-surface px-3"/>
      </label>
      <label className="grid gap-1 text-sm">Button link
-      <input name="buttonUrl" type="url" pattern="https://.*" maxLength={500}
+      <Input name="buttonUrl" type="url" pattern="https://.*" maxLength={500}
        placeholder="https://forms.gle/…" title="The link has to start with https://"
        className="min-h-11 rounded-md border border-border bg-surface px-3"/>
      </label>
     </fieldset>
     <label className="grid gap-1 text-sm">Show until (IST, optional)
-      <input type="datetime-local" name="showUntil" min={formMinDateTime} className="min-h-11 rounded-md border border-border bg-surface px-3"/>
+      <Input type="datetime-local" name="showUntil" min={formMinDateTime} className="min-h-11 rounded-md border border-border bg-surface px-3"/>
     </label>
     <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="pinned" /> Pin this notice</label>
     <TpoNoticeScheduleControls minDateTime={formMinDateTime} count={audience?.potentiallyVisibleMemberships??null}
@@ -182,32 +185,32 @@ export default async function TpoAnnouncements({searchParams}:Props){
       <form method="post" action={"/api/placements/tpo/announcements/"+row.id+"/edit"} className="mt-3 grid gap-3">
        <input type="hidden" name="expectedVersion" value={row.version}/>
        <label className="grid gap-1 text-sm text-body">Title
-        <input name="title" required maxLength={200} defaultValue={row.title}
+        <Input name="title" required maxLength={200} defaultValue={row.title}
          className="min-h-11 rounded-md border border-border bg-surface px-3"/>
        </label>
        <label className="grid gap-1 text-sm text-body">Message
-        <textarea name="message" rows={5} required maxLength={8000} defaultValue={row.message}
+        <Textarea name="message" rows={5} required maxLength={8000} defaultValue={row.message}
          className="rounded-md border border-border bg-surface p-3"/>
        </label>
        <fieldset className="grid gap-2 rounded-md border border-border p-3">
         <legend className="text-sm font-semibold">Button (optional)</legend>
         <label className="grid gap-1 text-sm">Button label
-         <input name="buttonLabel" maxLength={60} defaultValue={row.buttonLabel??""}
+         <Input name="buttonLabel" maxLength={60} defaultValue={row.buttonLabel??""}
           className="min-h-11 rounded-md border border-border bg-surface px-3"/>
         </label>
         <label className="grid gap-1 text-sm">Button link
-         <input name="buttonUrl" type="url" pattern="https://.*" maxLength={500}
+         <Input name="buttonUrl" type="url" pattern="https://.*" maxLength={500}
           defaultValue={row.buttonUrl??""} title="The link has to start with https://"
           className="min-h-11 rounded-md border border-border bg-surface px-3"/>
         </label>
        </fieldset>
        <label className="grid gap-1 text-sm text-body">Send at (IST)
-        <input type="datetime-local" name="sendAt"
+        <Input type="datetime-local" name="sendAt"
          defaultValue={row.scheduledAt?new Date(new Date(row.scheduledAt).getTime()+330*60000).toISOString().slice(0,16):""}
          className="min-h-11 rounded border border-border bg-surface px-3"/>
        </label>
        <label className="grid gap-1 text-sm text-body">Show until (IST)
-        <input type="datetime-local" name="showUntil"
+        <Input type="datetime-local" name="showUntil"
          defaultValue={row.expiresAt?new Date(new Date(row.expiresAt).getTime()+330*60000).toISOString().slice(0,16):""}
          className="min-h-11 rounded border border-border bg-surface px-3"/>
        </label>
@@ -236,7 +239,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
           initialTargets={[]} options={targetOptions}/>
         </fieldset>:null}
        <p className="text-xs text-muted-foreground">Save fails if the notice changed since this page was loaded.</p>
-       <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Save notice edits</button>
+       <Button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Save notice edits</Button>
       </form>
      </TpoNoticeComposerDialog>:null}
     {tab.data==="yours"?<TpoNoticeDeleteConfirm id={row.id} version={row.version}/>:null}
@@ -245,9 +248,9 @@ export default async function TpoAnnouncements({searchParams}:Props){
       className="mt-4 flex flex-wrap gap-2">
       <input type="hidden" name="expectedVersion" value={row.version}/>
       <input type="hidden" name="action" value={tab.data==="deleted"?"RESTORE":"DELETE"}/>
-      <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm text-[var(--lms-teal-deep)]">
+      <Button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm text-[var(--lms-teal-deep)]">
        {tab.data==="deleted"?"Undo removal":"Remove notice"}
-      </button>
+      </Button>
      </form>:null}
     {tab.data==="yours"&&
      canUndoTpoAnnouncementSend(row.createdAt,new Date())?
@@ -255,9 +258,9 @@ export default async function TpoAnnouncements({searchParams}:Props){
       className="mt-2">
       <input type="hidden" name="expectedVersion" value={row.version}/>
       <input type="hidden" name="action" value="UNDO_SEND"/>
-      <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm text-[var(--lms-teal-deep)]">
+      <Button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm text-[var(--lms-teal-deep)]">
        Undo send (30 seconds)
-      </button>
+      </Button>
      </form>:null}
     <p className="mt-3 text-xs text-muted-foreground">
      {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(row.createdAt)} IST</p>
