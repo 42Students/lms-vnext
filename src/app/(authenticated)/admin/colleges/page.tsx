@@ -161,7 +161,7 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
       <p role="status" className="text-sm text-body">{q?matches.length+" of "+rows.length:rows.length} colleges · Page {page} of {pages}</p>
       <DataTable columns={columns} rows={visible} getRowKey={college=>college.id}
         caption="Colleges"
-        empty={<EmptyState title="No active colleges in this scope"
+        empty={<EmptyState title={q ? "No colleges match your search" : "No active colleges in this scope"}
           description="No college records are visible under the selected Super Admin safety scope. Clear or change the scope to search elsewhere; no tenants were modified."/>}/>
       <Pagination page={page} pageCount={pages} hrefForPage={href} label="College directory pages"/>
     </div>

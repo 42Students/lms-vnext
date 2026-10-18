@@ -134,4 +134,43 @@ describe("PROJ-HARNESS-PLACEMENTS canonical real PostgreSQL fixtures", () => {
       expect(after[0]?.n).toBe(before[0]?.n);
     });
   });
+  it("PROJ-HARNESS-PLACEMENTS-09 suspended learner cannot be added from a stale fixture object",async()=>{
+    await withPlacementCase(async({db,learner,actor,drive})=>{
+      const before=await db.query<{count:number}>(`
+        select count(*)::int as count from placement_applications where job_id=$1`,[drive.jobId]);
+      await db.query("update college_memberships set status='SUSPENDED' where id=$1",[learner.membershipId]);
+      await expect(createPlacementCandidateFixture(db,drive,learner,actor))
+        .rejects.toThrow(/not an active member in the required role/);
+      const after=await db.query<{count:number}>(`
+        select count(*)::int as count from placement_applications where job_id=$1`,[drive.jobId]);
+      expect(after[0]?.count).toBe(before[0]?.count);
+    });
+  });
+
+  it("PROJ-HARNESS-PLACEMENTS-10 coordinator without a current TPO role cannot issue an offer fixture",async()=>{
+    await withPlacementCase(async({db,learner,actor,drive})=>{
+      const before=await db.query<{count:number}>(`
+        select count(*)::int as count from placement_offers`);
+      await db.query("delete from membership_roles where membership_id=$1 and role='TPO'",[actor.membershipId]);
+      await expect(createPlacementCandidateFixture(db,drive,learner,actor))
+        .rejects.toThrow(/not an active member in the required role/);
+      const after=await db.query<{count:number}>(`
+        select count(*)::int as count from placement_offers`);
+      expect(after[0]?.count).toBe(before[0]?.count);
+    });
+  });
+
+  it("PROJ-HARNESS-PLACEMENTS-11 disabled TPO account cannot create application or offer rows",async()=>{
+    await withPlacementCase(async({db,learner,actor,drive})=>{
+      const before=await db.query<{count:number}>(`
+        select count(*)::int as count from placement_round_results where round_id=$1`,[drive.roundId]);
+      await db.query("update users set platform_status='DISABLED' where id=$1",[actor.userId]);
+      await expect(createPlacementCandidateFixture(db,drive,learner,actor))
+        .rejects.toThrow(/not an active member in the required role/);
+      const after=await db.query<{count:number}>(`
+        select count(*)::int as count from placement_round_results where round_id=$1`,[drive.roundId]);
+      expect(after[0]?.count).toBe(before[0]?.count);
+    });
+  });
+
 });
