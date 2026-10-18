@@ -146,3 +146,14 @@ Requires actual 320/360/390px and keyboard browser acceptance; only source/SSR c
 | HR-BREAK-NOTIFICATIONS-02 | MAJOR | `src/components/hr/hr-notification-read-button.tsx` | Button relied only on async React `saving` state and allowed two same-tick POST receipts; successful read could also be re-sent before refresh, and revoked session/permission/rate-limit errors fell through to generic copy. Reused `createHrBellMutationGate`, terminal success ref, 44px focusable action, and safe 401/403/404/409/429 recovery model, preserving expectedCreatedAt CAS token. | `fbfcbb23`, `5ad9bfd2` | `tests/unit/HR-BREAK-chat19-notification-ack-02.test.tsx` (`206549d8`) |
 
 Persistence-level double-click/read-receipt CAS races and interactive browser clicks remain integration gates. The test validates the gate's runtime behavior, response model, initial SSR, and handler wiring, not an executed production browser session.
+
+## Rolling cloud unit-failure follow-up — two chat-19 tests
+
+The published `docs/orchestrator/unit-failures-latest.md` still references CI `ff6819dd` / `698eb9dd`, preceding the current centrally scoped College Projects page. Both **COL-XA-09** and **UX-college-source-coverage-02** now have their original strict source checks satisfied by the current source; simply removing or weakening them would lose intended coverage. Instead, each named test was expanded to execute behavior.
+
+| Failure ID | Source and test decision | Remediation | Committed |
+|---|---|---|---|
+| COL-XA-09 | The production `src/app/(authenticated)/college/projects/page.tsx` already uses central `getProjectAdminCollegeId`, independently calls snapshots, and catches only optional template metadata. The rolling diagnostics refer to an earlier shape, not a demonstrated current source regression. | Keep all eight source checks; add real async server-page invocation with failing template lookup and successful scoped workspace read. Assert workspace remains in list, safe status is shown, no raw exception, both scoped service arguments remain authorized. | `a72cb150` |
+| UX-college-source-coverage-02 | Page navigation already calls `getProjectAdminCollegeId` before scoped reads; exact required strings currently match. Reintroducing direct `membership.collegeId` as older tests demanded would weaken Super Admin acting-college security. | Retain route/source checks; additionally invoke the actual resolver with College Admin permission allowed and denied, and with recruiter grant but no college membership. Assert no recruiter grant privilege escalation. | `fb918d83` |
+
+No test was skipped, deleted, or made weaker. The two reported failures require a fresh orchestrator cloud run before their current pass status can be stated.
