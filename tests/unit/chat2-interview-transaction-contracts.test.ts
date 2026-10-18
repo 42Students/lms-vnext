@@ -61,6 +61,16 @@ describe("chat-2 TPO round and interview transaction boundaries",()=>{
   expect(core).toContain("recordActivityEventInTransaction(");
   expect(core).toContain("deliverRecordedLearnerPlacementEvent(tx");
  });
+ it("TPO-drive-workspace-42/44 reject stale sessions after long result and roster reads",()=>{
+  const slots=source("tpo-interview-slot-service.ts");
+  const results=source("tpo-round-apply-service.ts");
+  const gate="await getDb().transaction(async tx=>{await requireTpoJobActor(tx,context);});";
+  expect(slots).toContain(gate);
+  expect(results).toContain(gate);
+  expect(slots.indexOf(gate)).toBeGreaterThan(slots.indexOf("const booked=new Set("));
+  expect(results.indexOf(gate)).toBeGreaterThan(results.indexOf("const ready=scope.jobStatus"));
+  expect(slots).toContain("eq(collegeMemberships.status,\"ACTIVE\")");
+ });
  it("TPO-drive-workspace-40 result imports are college-scoped and matched against the persisted roster",()=>{
   const s=source("tpo-round-import-service.ts");
   expect(s).toContain("await requireTpoJobCollege(context)");
