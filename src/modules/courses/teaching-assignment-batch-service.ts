@@ -42,7 +42,15 @@ export async function createCourseTeachingAssignmentsBatch(
  if(!member.roles.includes("FACULTY"))throw new CoursesServiceError("FACULTY_ROLE_REQUIRED");
  try{
   return await getDb().transaction(async tx=>{
-   // Lock deliveries in stable ID order to serialize concurrent batch writers.
+   // Explicit row locks serialize overlapping writers, including same-member
+   // requests with different roles that the per-role unique index permits.
+   const lockedDeliveries=await tx.select({id:courseSectionDeliveries.id})
+    .from(courseSectionDeliveries)
+    .where(and(inArray(courseSectionDeliveries.id,ids),isNull(courseSectionDeliveries.endedAt)))
+    .orderBy(courseSectionDeliveries.id).for("update");
+   if(lockedDeliveries.length!==ids.length)
+    throw new CoursesServiceError("SECTION_DELIVERY_NOT_FOUND");
+   // Lock and recheck tenant/course ancestry while still in this transaction.
    const live=await tx.select({
     id:courseSectionDeliveries.id,
     sectionId:courseSectionDeliveries.sectionId,
@@ -63,7 +71,7 @@ export async function createCourseTeachingAssignmentsBatch(
       eq(colleges.organizationId,first.organizationId),
       eq(colleges.status,"ACTIVE"),eq(organizations.status,"ACTIVE"),
       eq(courseOfferings.status,"ACTIVE"),
-    )).orderBy(courseSectionDeliveries.id).for("share",{of:courseSectionDeliveries});
+    )).orderBy(courseSectionDeliveries.id).for("share");
    if(live.length!==ids.length||!live.every(delivery=>
      delivery.sectionId===first.sectionId&&
      delivery.cohortId===first.cohortId&&
