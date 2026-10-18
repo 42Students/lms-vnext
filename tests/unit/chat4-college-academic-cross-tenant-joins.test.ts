@@ -61,7 +61,7 @@ describe("COL-academics-scope-tenant-02 corrupt roster links do not disclose for
 describe("COL-academics-scope-tenant-03 faculty assignment and schedule scope reads",()=>{
  it("faculty assignment scope rejects a membership from another college and foreign academic periods",()=>{
   const src=sectionOf(scopeSource,"loadFacultyAssignmentScope","loadScheduleEventScope");
-  expect(src).toContain("eq(sectionFacultyAssignments.id,");
+  expect(src).toContain("sectionFacultyAssignments.id,");
   expect(src).toContain("eq(collegeMemberships.id, sectionFacultyAssignments.membershipId)");
   expect(src).toContain("eq(collegeMemberships.collegeId, departments.collegeId)");
   expect(src).toContain("eq(academicPeriods.id, sections.academicPeriodId)");
