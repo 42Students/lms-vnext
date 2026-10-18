@@ -16,6 +16,7 @@ function UIKitTestSurface() {
   const [tab, setTab] = useState("overview");
   const [fileStatus, setFileStatus] = useState("No file selected");
   const [pickerDisabled, setPickerDisabled] = useState(false);
+  const [wideScroll, setWideScroll] = useState(true);
   const { showToast } = useToast();
 
   return <main className="mx-auto max-w-4xl space-y-8 p-4">
@@ -40,9 +41,12 @@ function UIKitTestSurface() {
     </section>
 
     <section aria-label="Scroll fixture">
-      <div className="w-56">
+      <Button variant="secondary" onClick={() => setWideScroll(value => !value)}>
+        {wideScroll ? "Narrow scroll content" : "Widen scroll content"}
+      </Button>
+      <div className="mt-2 w-56">
         <ScrollCue axis="x" label="Harness horizontal overflow">
-          <div className="w-[1200px] whitespace-nowrap p-3">
+          <div className={wideScroll ? "w-[1200px] whitespace-nowrap p-3" : "w-28 whitespace-nowrap p-3"}>
             <span>Scroll position: first</span>
             <span className="ml-[850px]">Scroll position: last</span>
           </div>
