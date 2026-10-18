@@ -11,7 +11,10 @@ describe("chat-5 final sprint: Faculty course discussions",()=>{
   expect(page).toContain('!draft.trim()&&!posting');
   expect(page).toContain('event.metaKey||event.ctrlKey||event.shiftKey||event.altKey');
   expect(page).toContain('href.startsWith("#")');
-  expect(page).toContain('window.confirm("Discard your unsent discussion message?")');
+  expect(page).toContain("<ConfirmDialog open={leaveHref!==null}");
+  expect(page).toContain('confirmLabel="Discard"');
+  expect(page).toContain("setLeaveHref(destination.pathname+destination.search+destination.hash)");
+  expect(page).toContain("onConfirm={()=>{");
   expect(page).toContain("event.preventDefault()");
  });
  it("FAC-courses-R06 preserves latest successfully fetched discussion messages and exposes retry on refresh failure even when posting permission is revoked",()=>{
