@@ -383,3 +383,14 @@ These fixes are committed on chat-19; live provider, PostgreSQL revocation races
 |---|---|---|---|---|
 | HR-BREAK-CALENDAR-QUERY-24 | MAJOR | `src/app/(authenticated)/hr/calendar/page.tsx` | The calendar previously selected the first repeated date/view/category URL parameter, hiding contradictory values before calendar aggregation. Reject any array with a recoverable `Invalid calendar filters.` state and no event fetch; deny mismatched recruiter identity before events. Keep existing single invalid-date default behavior. | `tests/unit/HR-BREAK-chat19-calendar-company-pages.test.ts` |
 | HR-BREAK-COMPANY-QUERY-25 | MAJOR | `src/app/(authenticated)/hr/company/page.tsx` | Repeated college/tab/team-search/pagination parameters were silently reduced to first value. Deny repeated arrays before an authorized team roster or company read, preserve `Invalid college selection` recovery, and check recruiter principal equality early. | Same test suite: duplicate fields and cross-user actor, no team/job reads. |
+
+
+## Refreshed unit failures — numeric CSV and strict URL filters (2026-10-18)
+
+| Failure | Diagnosis | Remediation / evidence |
+|---|---|---|
+| PROJ-BREAK-EXPORT-01 | `projectAdminCsvCell` interpreted **numeric** negative values as spreadsheet formulas, changing `-1` into a quoted text cell. This also broke the exported-row test for negative numeric aggregates. | Preserve `number` inputs as numeric quoted cells; retain apostrophe neutralization for **string** values starting with `-` and for Unicode-prefixed formulas. Strengthened `tests/unit/PROJ-BREAK-chat19-project-workspace-csv.test.ts`. |
+| HR/PROJ-CSV-UNICODE-03 | Same numeric negative source defect triggered this otherwise-valid cross-export suite. | Repaired the shared Projects CSV model and retained malicious-mark checks across the other exporters. Strengthened numeric-string contrast in `tests/unit/chat19-invisible-mark-export-matrix.test.ts`. |
+| COL-XA-08 | Current `college-projects-query-model.ts` already matches the failing test's bounded/default values and rejects duplicate keys, hexadecimal/scientific URL values. The latest failure register points to earlier CI. | No security weakening and no speculative production change; keep the existing real parser checks in `tests/unit/chat19-college-cross-audit.test.ts`. Needs fresh cloud CI to confirm. |
+
+The files were reviewed but no tests, typecheck or browser run was executed locally, per lane policy.
