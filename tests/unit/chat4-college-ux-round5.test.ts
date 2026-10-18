@@ -24,7 +24,10 @@ describe("Chat-4 college UX round five",()=>{
  it("UX-college-electives-slotId-allocate-01 makes the layout or actions more readable on narrow screens",()=>{
  const page=source("electives/[slotId]/allocate");
  expect(page).toContain("min-w-0 overflow-x-clip space-y");
- expect(page).toContain('<DataTable rows={students}');
+ expect(page).toContain("<DataTable");
+ expect(page).toContain("rows={students}");
+ expect(page).toContain('<ScrollCue axis="y" label="Eligible students for allocation"');
+ expect(page).toContain('caption="Eligible students for allocation"');
  expect(page).toContain("min-h-11");
  });
  it("UX-college-electives-slotId-offerings-offeringId-roster-01 makes the layout or actions more readable on narrow screens",()=>{
