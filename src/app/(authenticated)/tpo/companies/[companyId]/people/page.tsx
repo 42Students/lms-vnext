@@ -2,6 +2,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { TpoCompanyPersonEditor } from "@/components/placements/tpo-company-person-editor";
 import { listTpoCompanyPeople } from "@/modules/placements/tpo-company-person-service";
@@ -11,6 +12,7 @@ export default async function TpoCompanyPeoplePage({
 }: { params: Promise<{ companyId: string }> }) {
   const context = await getCurrentRequestContext();
   if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
+  await requireTpoBatchActor(context);
   const { companyId } = await params;
   const company = await listTpoCompanyPeople(context, companyId);
   if (!company) notFound();
