@@ -49,7 +49,7 @@ describe("LEARNER-courses-roster-01 active course and elective ownership matrix"
    {user:context.user,membership:{...context.membership,status:"DISABLED"}},
    {user:context.user,membership:{...context.membership,roles:["FACULTY"]}},
   ]){
-   await expect(listLearnerCourseDeliveries(invalid as RequestContext)).rejects.toThrow();
+   await expect(listLearnerCourseDeliveries(invalid as unknown as RequestContext)).rejects.toThrow();
   }
   expect(state.select).not.toHaveBeenCalled();
  });
