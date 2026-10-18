@@ -7,6 +7,7 @@ import {Button} from "@/components/ui/button";
 import {Textarea} from "@/components/ui/textarea";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
+import {Checkbox} from "@/components/ui/selection-controls";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {authoringLocalDateTime,authoringDueInstant}
@@ -236,16 +237,10 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
     className="min-h-11 min-w-0 max-w-full rounded border border-border p-2 text-base"/></label>
   <fieldset disabled={!editable} className="space-y-2 rounded-md border border-border p-3">
     <legend className="text-sm font-semibold">Quiz order</legend>
-    <label className="flex items-center gap-2 text-sm">
-      <input type="checkbox" checked={shuffleQuestions}
-        onChange={e=>{setConfirmed(false);setDirtyDraft(true);setShuffleQuestions(e.target.checked);}}/>
-      Shuffle question order per learner
-    </label>
-    <label className="flex items-center gap-2 text-sm">
-      <input type="checkbox" checked={shuffleOptions}
-        onChange={e=>{setConfirmed(false);setDirtyDraft(true);setShuffleOptions(e.target.checked);}}/>
-      Shuffle answer options per learner
-    </label>
+    <Checkbox label="Shuffle question order per learner" checked={shuffleQuestions}
+         onChange={e=>{setConfirmed(false);setDirtyDraft(true);setShuffleQuestions(e.target.checked);}}/>
+    <Checkbox label="Shuffle answer options per learner" checked={shuffleOptions}
+         onChange={e=>{setConfirmed(false);setDirtyDraft(true);setShuffleOptions(e.target.checked);}}/>
   </fieldset>
   <section aria-label="Quiz preview" className="rounded-lg border border-border bg-surface-subtle p-3">
    <div className="flex flex-wrap items-center justify-between gap-3">
@@ -260,11 +255,8 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
     </Button>
    </div>
    {previewOpen?<div id="faculty-quiz-preview" className="mt-3 space-y-4">
-    <label className="flex items-center gap-2 text-sm">
-     <input type="checkbox" checked={previewAnswers}
-      onChange={e=>setPreviewAnswers(e.target.checked)}/>
-     Show answer key to faculty
-    </label>
+    <Checkbox label="Show answer key to faculty" checked={previewAnswers}
+       onChange={e=>setPreviewAnswers(e.target.checked)}/>
     {!questions.length?<p role="status" className="text-sm">No questions yet.</p>:null}
     {questions.map((question,index)=><fieldset key={index}
      className="space-y-2 rounded-lg border border-border bg-surface p-3">
@@ -284,8 +276,8 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    <Input type="search" value={questionSearch} onChange={e=>setQuestionSearch(e.target.value)}
     placeholder="Question number, prompt, or option" className="min-h-11 min-w-0 max-w-full rounded border border-border p-2 text-base"/>
   </label>
-  <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={invalidOnly}
-    onChange={e=>setInvalidOnly(e.target.checked)}/>Show only questions needing correction</label>
+  <Checkbox label="Show only questions needing correction" checked={invalidOnly}
+     onChange={e=>setInvalidOnly(e.target.checked)}/>
   {matchingQuestions.length===0?<p role="status" className="text-sm text-body">No questions match these review filters. Clear the search or invalid-only filter to view the entire bank.</p>:null}
   {matchingQuestions.map(({q,i})=><fieldset key={i} disabled={!editable}
    className="min-w-0 max-w-full space-y-3 rounded-lg border border-border p-4">
@@ -315,11 +307,8 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
      <Input value={o.text} maxLength={2000}
       onChange={e=>updateQuestion(i,old=>({...old,options:old.options.map((x,k)=>k===j?{...x,text:e.target.value}:x)}))}
       className="mt-1 block min-h-11 min-w-0 w-full max-w-full rounded border border-border p-2 text-base"/></label>
-    <label className="flex items-center gap-1 text-xs">
-     <input type="checkbox" checked={o.correct}
-      onChange={e=>updateQuestion(i,old=>({...old,options:facultyToggleQuizAnswer(old,j,e.target.checked)}))}/>
-     Correct
-    </label>
+    <Checkbox label="Correct" checked={o.correct}
+       onChange={e=>updateQuestion(i,old=>({...old,options:facultyToggleQuizAnswer(old,j,e.target.checked)}))}/>
     <Button variant="secondary" type="button" disabled={j===0} onClick={()=>updateQuestion(i,old=>({...old,options:facultyMoveQuizOption(old.options,j,j-1)}))}
      aria-label={"Move answer "+(j+1)+" up in question "+(i+1)} className="min-h-11 rounded border border-border px-2 py-1 text-xs">↑</Button>
     <Button variant="secondary" type="button" disabled={j===q.options.length-1} onClick={()=>updateQuestion(i,old=>({...old,options:facultyMoveQuizOption(old.options,j,j+1)}))}
@@ -392,11 +381,8 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    {facultyQuizMayResetDraft(dirtyDraft,pending)?<Button variant="secondary" type="button" onClick={resetDraft}
     className="min-h-11 rounded border border-border px-4 py-2 text-sm">Discard unsaved edits</Button>:null}
    {!chosen?<div className="flex flex-wrap items-center gap-3">
-    <label className="flex min-h-11 items-center gap-2 text-sm">
-      <input type="checkbox" checked={publishNow} disabled={pending}
+    <Checkbox label="Publish now" checked={publishNow} disabled={pending}
         onChange={event=>setPublishNow(event.target.checked)}/>
-      Publish now
-    </label>
     <Button variant="primary" type="button" disabled={pending||!lessonId}
     onClick={()=>void submit("CREATE")} className="min-h-11 rounded bg-primary px-4 py-2 text-foreground">{publishNow?"Create and publish":"Create draft"}</Button>
    </div>:
