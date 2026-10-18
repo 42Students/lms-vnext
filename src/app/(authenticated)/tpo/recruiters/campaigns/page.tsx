@@ -47,7 +47,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
   </form>
   <nav aria-label="Campaign history actions" className="flex flex-wrap gap-3">
    <Link href="/tpo/recruiters/campaigns/new"
-    className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] bg-primary px-4 text-sm font-semibold text-white">
+    className="inline-flex min-h-11 items-center border-b-2 border-[var(--lms-primary)] px-4 text-sm font-semibold text-[var(--lms-primary-text)] sm:min-h-9">
     New email campaign
    </Link>
    <Link href="/tpo/recruiters" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm text-[var(--lms-link-text)]">Back to Engage</Link>
