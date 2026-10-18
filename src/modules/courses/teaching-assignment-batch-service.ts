@@ -3,7 +3,7 @@ import {and,eq,inArray,isNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {
   collegeMemberships,courseSectionDeliveries,courseTeachingAssignments,
-  membershipRoles,courseOfferings,courses,departments,colleges,organizations,
+  membershipRoles,courseOfferings,courses,departments,colleges,organizations,sections,academicPeriods,
 } from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requirePermission} from "@/modules/permissions/policy";
@@ -42,7 +42,15 @@ export async function createCourseTeachingAssignmentsBatch(
  if(!member.roles.includes("FACULTY"))throw new CoursesServiceError("FACULTY_ROLE_REQUIRED");
  try{
   return await getDb().transaction(async tx=>{
-   // Lock deliveries in stable ID order to serialize concurrent batch writers.
+   // Explicit row locks serialize overlapping writers, including same-member
+   // requests with different roles that the per-role unique index permits.
+   const lockedDeliveries=await tx.select({id:courseSectionDeliveries.id})
+    .from(courseSectionDeliveries)
+    .where(and(inArray(courseSectionDeliveries.id,ids),isNull(courseSectionDeliveries.endedAt)))
+    .orderBy(courseSectionDeliveries.id).for("update");
+   if(lockedDeliveries.length!==ids.length)
+    throw new CoursesServiceError("SECTION_DELIVERY_NOT_FOUND");
+   // Lock and recheck tenant/course ancestry while still in this transaction.
    const live=await tx.select({
     id:courseSectionDeliveries.id,
     sectionId:courseSectionDeliveries.sectionId,
@@ -54,6 +62,11 @@ export async function createCourseTeachingAssignmentsBatch(
    }).from(courseSectionDeliveries)
     .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
     .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
+    .innerJoin(sections,and(eq(sections.id,courseSectionDeliveries.sectionId),
+      eq(sections.cohortId,courseOfferings.cohortId),
+      eq(sections.academicPeriodId,courseOfferings.academicPeriodId)))
+    .innerJoin(academicPeriods,and(eq(academicPeriods.id,sections.academicPeriodId),
+      eq(academicPeriods.collegeId,first.collegeId)))
     .innerJoin(departments,eq(departments.id,courses.departmentId))
     .innerJoin(colleges,eq(colleges.id,departments.collegeId))
     .innerJoin(organizations,eq(organizations.id,colleges.organizationId))
@@ -62,8 +75,8 @@ export async function createCourseTeachingAssignmentsBatch(
       eq(departments.collegeId,first.collegeId),
       eq(colleges.organizationId,first.organizationId),
       eq(colleges.status,"ACTIVE"),eq(organizations.status,"ACTIVE"),
-      eq(courseOfferings.status,"ACTIVE"),
-    )).orderBy(courseSectionDeliveries.id).for("share",{of:courseSectionDeliveries});
+      eq(sections.status,"ACTIVE"),eq(courseOfferings.status,"ACTIVE"),
+    )).orderBy(courseSectionDeliveries.id).for("share");
    if(live.length!==ids.length||!live.every(delivery=>
      delivery.sectionId===first.sectionId&&
      delivery.cohortId===first.cohortId&&
