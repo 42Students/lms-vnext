@@ -42,3 +42,15 @@ GitHub source declaration review, October 19, 2026. **This is a symbol map, not 
 | `src/modules/courses/faculty-course-service.ts` | `listFacultyCourseDeliveries`, `getFacultyCourseWorkspace` | — | 335 | Declared; behavioral verification pending |
 | `src/modules/courses/faculty-discussion-history-model.ts` | `facultyDiscussionHistorySchema`, `discussionHistoryPagination`, `facultyDiscussionHistoryHref`, `discussionHistoryLabel`, `parseFacultyDiscussionHistoryLocation` | `FacultyDiscussionHistoryQuery` | 41 | Declared; behavioral verification pending |
 | `src/modules/courses/faculty-discussion-history-service.ts` | `getFacultyDiscussionHistory` | — | 54 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-discussion-moderation-model.ts` | `facultyDiscussionModerationSchema`, `facultyDiscussionTokenMatches` | — | 12 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-discussion-participation-model.ts` | `facultyDiscussionParticipationSchema`, `facultyDiscussionParticipationSummary` | `FacultyDiscussionCountRow` | 10 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-discussion-participation-service.ts` | `getFacultyDiscussionParticipation` | — | 38 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-discussion-reply-model.ts` | `facultyDiscussionReplySchema`, `facultyReplyParentTokenMatches` | — | 12 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-discussion-reply-service.ts` | `postFacultyDiscussionReply` | — | 24 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-followup-export.ts` | `facultyFollowUpPageCsv`, `facultyFollowUpCsvHref` | — | 22 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-grade-editor-model.ts` | `facultyGradeEditorState` | — | 27 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-grade-noop-model.ts` | `facultyGradeHasChanges` | — | 9 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-gradebook-model.ts` | `facultyGradebookParamsSchema`, `facultyPublishedGradeRows`, `facultyGradebookCsv`, `facultyPublishedLearnerBreakdown`, `facultyGradebookViewQuerySchema`, `paginateFacultyGradebookRows`, `facultyGradebookViewHref`, `facultyGradebookPrivateNotFound` | `GradebookScore`, `GradebookLearner`, `FacultyGradebookRow`, `FacultyGradebookAssessment`, `FacultyGradebookViewQuery` | 141 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-gradebook-report-batch.ts` | `mapFacultyGradebookReportBatch` | — | 14 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-gradebook-service.ts` | `getFacultyPublishedGradebook`, `getFacultyPublishedGradebookLearner` | — | 101 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-inbox-query-model.ts` | `parseFacultyInboxQuery` | — | 27 | Declared; behavioral verification pending |
