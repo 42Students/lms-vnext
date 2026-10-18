@@ -11,7 +11,8 @@ import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {FacultyAssignmentMethodPicker} from "./faculty-assignment-method-picker";
 import {FacultyAssignmentMaterialLinks} from "./faculty-assignment-material-links";
-import {ALL_ASSIGNMENT_METHODS,normalizeAssignmentMethods,type AssignmentMethod} from "@/modules/courses/assignment-submission-methods";
+import {ALL_ASSIGNMENT_METHODS,type AssignmentMethod} from "@/modules/courses/assignment-submission-methods";
+import {facultyAssignmentMethodsLoadVersion,verifiedFacultyAssignmentMethodsResponse} from "@/modules/courses/faculty-assignment-method-load-model";
 import {authoringDueInstant,authoringLocalDateTime,assignmentActionAvailable}
  from "@/modules/courses/faculty-authoring-datetime-model";
 import {facultyAssignmentDraftDirty,facultyAssignmentDraftIssue,facultyAssignmentCommandReceipt,facultyAssignmentMaySubmit,facultyAssignmentConfirmationOnEdit,facultyAssignmentSwitchNeedsConfirmation,facultyAssignmentArchiveWarning,facultyAssignmentPublishIssue,facultyAssignmentCanSaveDraft} from "@/modules/courses/faculty-assignment-editor-ui-model";
@@ -26,6 +27,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
 }){
  const router=useRouter();
  const mutationLock=useRef(false);
+ const methodsLoadVersion=useRef(facultyAssignmentMethodsLoadVersion());
  const [error,setError]=useState<string|null>(null);
  const [success,setSuccess]=useState<string|null>(null);
  const [pending,setPending]=useState(false);
@@ -47,6 +49,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
   if(facultyAssignmentSwitchNeedsConfirmation(selected,id,existing??null,{title,description,dueAt,maxPoints}) && !confirmed){
    setConfirmation({kind:"SWITCH",id});return;
   }
+  const requestVersion=methodsLoadVersion.current.next();
   setSelected(id);const row=assignments.find(x=>x.id===id);
   setTitle(row?.title??"");setDescription(row?.description??"");
   setDueAt(authoringLocalDateTime(row?.dueAt??null));
@@ -61,8 +64,13 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
       if(!response.ok)throw new Error("Unable to load permitted submission methods.");
       return response.json();
     }).then(data=>{
-      setAllowedMethods(normalizeAssignmentMethods(data?.methods));setMethodsLoaded(true);
+      if(!methodsLoadVersion.current.isCurrent(requestVersion))return;
+      const confirmed=verifiedFacultyAssignmentMethodsResponse(data);
+      if(!confirmed)throw new Error("Invalid assignment methods response");
+      setAllowedMethods(confirmed);setMethodsLoaded(true);
     }).catch(()=>{
+      if(!methodsLoadVersion.current.isCurrent(requestVersion))return;
+      setMethodsLoaded(false);
       setError("Unable to load permitted submission methods. Re-select this assignment to retry.");
     });
   }
@@ -72,6 +80,10 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
   // The API receives confirmed:true, and Archive still has a direct confirmation.
   if(!assignmentActionAvailable(existing?.status??null,action)){
    setError("This assignment cannot perform the selected action. Reload the Section.");return;
+  }
+  if(action==="EDIT" && methodsEnabled && !methodsLoaded){
+    setError("Allowed methods have not loaded. Re-select this assignment to retry.");
+    return;
   }
   if(action==="CREATE" || action==="EDIT"){
     const issue=facultyAssignmentDraftIssue({title,description,maxPoints});
