@@ -15,7 +15,7 @@ Date 2026-10-18, branch `chatgpt/chat-12-b`. Evidence is split between executabl
 | Companies joining/offer metrics | Same test: 2 accepted offers from 1 learner counts 1 joined; no estimated zero when CRM table unavailable | Actual multi-year joins, partial data and 2,000-row CSV in PostgreSQL |
 | Companies filters, paging, history | Same test — TPO-companies-10/11/24: strict query, deterministic pagination, persisted timeline | Browser search/page reset, history auth after expired session |
 | Companies creation/memory | Same test: `"use client"`, review-before-commit, synchronous in-flight latch, clean load/error/migration-pending states | Race between two distinct sessions, server unique-index conflict, reload after 409 |
-| First-third /tpo route role UX | `chat12-tpo-first-third-role-pages.test.ts`: 9 sampled routes and preview/confirm origin gates | All 42 routes require browser and negative authorization journey coverage |
+| First-third /tpo route role UX | `chat12-tpo-first-third-role-pages.test.ts`: 18 sampled routes and preview/confirm origin gates | All 42 routes require browser and negative authorization journey coverage |
 | /admin first-third cross-audit | `docs/design-system/audits/UX-ROLLOUT-AUDIT-admin-first-chat-12.md` — 37 inspected route entrypoints | Full child-component + mobile/keyboard audit remains open; no release sign-off |
 
 ## First-third /tpo route inventory
@@ -64,6 +64,25 @@ Date 2026-10-18, branch `chatgpt/chat-12-b`. Evidence is split between executabl
 | 40 | `/tpo/placements/jobs/[jobId]/about` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
 | 41 | `/tpo/placements/jobs/[jobId]/applicants` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
 | 42 | `/tpo/placements/jobs/[jobId]/applicants-pipeline` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+
+## Additional 2026-10-18 test contracts (after main 3273bbbc)
+
+| Exported surface / route | New test | Exercised checks | Remaining integration gate |
+|---|---|---|---|
+| `tpoStudentHistoryQuerySchema` | `chat12-tpo-history-team-and-sharing-behavior.test.ts` | Valid UUID, malformed membership, wrong page bounds, unknown tenant override | The route/service must recheck membership and college in PostgreSQL |
+| `projectTpoStudentPlacementHistory` | Same | Applied vs staged result versions, offer counts, chronological event mapping, no inferred events | Rounds and joins under actual persisted data |
+| `tpoCompanyTeamPostSchema`, `canPostToTpoCompanyTeam` | Same | Trim, UUID idempotency key, blank/oversize body, archived and non-active states | Actual mutation schema in `tpo-company-team-service` has its own tests still needed |
+| `sortTpoPeople` | Same | Work / overdue / name ordering, stable identity and non-mutating input | Large-team query pagination |
+| `describeTpoCompanyVisibility` | Same | All five sharing controls disabled with accurate non-consent copy | Verify every recruiter consumer enforces each flag |
+| `readTpoBulkRequestBody` | `chat12-tpo-bulk-stream-adversarial.test.ts` | Byte limit despite lying header, split multi-byte UTF-8, invalid encoding, invalid object shape and content-type, exact limit | Slow-client stream cancellation and memory profile |
+| `hasPlacementTeamMembership` | `chat12-tpo-team-scope-and-notifications.test.ts` | TPO/College Admin vs Faculty/Learner, removed memberships, disabled users | Persisted role revocation across a race with a write |
+| `mutateTpoCompanyTeam` | Same (service-source checks) | Persisted actor recheck; active relationship lock; idempotent FOLLOW row changes audited only once; deactivated notification recipient excluded | Transactional integration for insert/delete races and duplicate bell delivery |
+| `/tpo/find`, `/tpo/audit/actors`, `/tpo/calendar/rounds` | `chat12-tpo-first-third-second-pass.test.ts` | Explicit TPO gate, invalid input handling, clear/recovery links, IST wording | Real narrow viewport, focus, loading and unavailable DB |
+| `/tpo/companies/[companyId]/people`, `/tpo/messages/[threadId]`, `/tpo/notifications` | Same | Role gates, missing storage and missing record, empty/messages states, cursor recovery | Browser focus and tenant-crossed ID checks |
+| `/tpo/placements/jobs/[jobId]/applicants-pipeline`, `/tpo/more`, `/tpo/drive-day` | Same | Invalid deep links refuse private reads, accessible nav, coordinator role split | Data-backed wrong-college, page transitions, phone |
+| Student mobile filter sheet | `chat12-filter-chips-mobile-round5.test.ts`, `chat12-round19-roster-responsive-counts.test.ts` | Follow actual shared modal contract: native dialog, Escape, opener focus restoration and bottom inset | Real phone and keyboard acceptance |
+
+New tests are **authored, not executed**. The row for a route/model does not imply all exported siblings are covered; this ledger is incomplete against the full exhaustive-coverage definition.
 
 ## Release gates
 
