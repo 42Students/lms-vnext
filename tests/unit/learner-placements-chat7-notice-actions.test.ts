@@ -17,6 +17,8 @@ describe("Chat-7 learner notice action and audience parity", () => {
     });
     expect(safeLearnerNoticeAction("View", "javascript:alert(1)")).toBeNull();
     expect(safeLearnerNoticeAction("View", "http://example.edu/prep")).toBeNull();
+    expect(safeLearnerNoticeAction("View", "https://user:password@example.edu/prep")).toBeNull();
+    expect(safeLearnerNoticeAction("View", "https://example.edu/prep#secret")).toBeNull();
     expect(safeLearnerNoticeAction("", "https://example.edu/prep")).toBeNull();
     expect(learnerPlacementNoticeFeed([{ ...base, buttonUrl: "data:text/html,unsafe" }])[0]).not.toHaveProperty("buttonUrl");
     const page = source("src/app/(authenticated)/learn/my-placements/announcements/page.tsx");

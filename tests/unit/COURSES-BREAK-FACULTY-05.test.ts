@@ -17,11 +17,23 @@ describe("COURSES-BREAK-FACULTY-05 /teacher route authorization and session scop
   expect(can(ctx,"courses.read",{collegeId,organizationId})).toBe(true);
   expect(canAccessFacultyRoute(ctx)).toBe(true);
  });
- it("FAC-courses-01 Learner, Mentor, HR, TPO and College Admin cannot enter faculty routes by guessed URL",()=>{
-  for(const role of ["LEARNER","MENTOR","HR","TPO","COLLEGE_ADMIN"] as const){
+ it("FAC-courses-01 Learner, Mentor, TPO, College Admin and Recruiter cannot enter faculty routes by guessed URL",()=>{
+  for(const role of ["LEARNER","MENTOR","TPO","COLLEGE_ADMIN"] as const){
    const ctx=actor([role]);
    expect(canAccessFacultyRoute(ctx)).toBe(false);
   }
+  const recruiter=actor();
+  recruiter.membership=null;
+  recruiter.recruiter={
+   userId:recruiter.user.id,companyId:"55555555-5555-4555-8555-555555555555",
+   companyName:"Test employer",title:null,status:"ACTIVE",
+   grants:[{
+    id:"66666666-6666-4666-8666-666666666666",
+    organizationId,collegeId,collegeName:"Test college",
+    companyRelationshipId:"77777777-7777-4777-8777-777777777777",
+   }],
+  };
+  expect(canAccessFacultyRoute(recruiter)).toBe(false);
   expect(canAccessFacultyRoute(null)).toBe(false);
   expect(canAccessFacultyRoute(undefined)).toBe(false);
  });

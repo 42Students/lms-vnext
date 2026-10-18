@@ -9,12 +9,15 @@ import {listTpoStudentNotes} from "./tpo-student-notes-service";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {requirePlacementManageScope} from "./scope";
+import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 
 export async function getTpoStudentPanelDetail(ctx:RequestContext,raw:unknown){
  const id=z.uuid().parse(raw),membership=ctx.membership;
  if(!membership||!hasMembershipRole(ctx,"TPO")||membership.status!=="ACTIVE")
   throw new AuthorizationError("placements.manage");
- const college=await requirePlacementManageScope(ctx,membership.collegeId);
+ // Revalidate the persisted TPO/college-admin membership on every private read.
+ const collegeId=await requireTpoBatchActor(ctx);
+ const college=await requirePlacementManageScope(ctx,collegeId);
  const db=getDb();
  const [student]=await db.select({id:collegeMemberships.id,name:users.displayName})
   .from(collegeMemberships)
