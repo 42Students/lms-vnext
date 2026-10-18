@@ -1,9 +1,18 @@
 import { z } from "zod";
+/** URL paging accepts only plain base-10 integers, never JS numeric coercions. */
+const strictUrlInteger = (maximum: number) => z.union([
+ z.number().int().min(1).max(maximum),
+ z.string().regex(/^[1-9][0-9]*$/).transform(Number).pipe(z.number().int().min(1).max(maximum)),
+]);
+const strictDrivePageSize = z.union([
+ z.number().int(),
+ z.string().regex(/^(10|20|50|100)$/).transform(Number),
+]).refine(value => [10,20,50,100].includes(value));
 export const adminDriveDirectoryQuerySchema=z.object({
  q:z.string().trim().max(100).default(""),
  status:z.enum(["ALL","DRAFT","ACTIVE","CLOSED"]).default("ALL"),
- page:z.coerce.number().int().min(1).max(100000).default(1),
- pageSize:z.coerce.number().int().refine(n=>[10,20,50,100].includes(n)).default(10),
+ page:strictUrlInteger(100000).default(1),
+ pageSize:strictDrivePageSize.default(10),
 }).strict();
 type Drive={job:{id:string;title:string;status:string;applicationDeadline:Date|null};company?:{name:string}};
 export function filterAdminDriveDirectory<T extends Drive>(rows:readonly T[],
