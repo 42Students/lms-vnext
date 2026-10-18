@@ -2,6 +2,7 @@ import {TpoReportPresentation} from "@/components/placements/tpo-report-presenta
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import Link from "next/link";
+import {DataTable} from "@/components/ui/data-table";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -56,19 +57,18 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
      <p className="mt-2 text-2xl font-bold tabular-nums">{data.counts[key]}</p>
     </div>)}
    </div>
-   <section className="overflow-x-auto rounded border border-border">
-    {data.rows.length?<table className="w-full min-w-[45rem] text-left text-sm">
-     <thead className="bg-surface-subtle"><tr>
-      {["Student","Roll no.","Batch","Branch","After college","Applications"].map(label=>
-       <th key={label} className="p-3" scope="col">{label}</th>)}
-     </tr></thead>
-     <tbody>{data.rows.slice(0,300).map(row=><tr key={row.membershipId} className="border-t border-border">
-      <td className="p-3">{row.displayName}</td><td className="p-3">{row.rollNumber??"—"}</td>
-      <td className="p-3">{row.cohortName}</td><td className="p-3">{row.branchName}</td>
-      <td className="p-3">{AFTER_COLLEGE_LABELS[row.outcome]}</td>
-      <td className="p-3 tabular-nums">{row.applicationCount}</td>
-     </tr>)}</tbody></table>:<p className="p-5 text-sm">No students match these filters.</p>}
-   </section>
+   <DataTable rows={data.rows.slice(0,300)} getRowKey={row=>row.membershipId}
+    caption="After college"
+    empty={<p role="status">No students match these filters.</p>}
+    columns={[
+     {key:"student",header:"Student",cell:row=>row.displayName,mobilePriority:"primary"},
+     {key:"roll",header:"Roll no.",cell:row=>row.rollNumber??"—",mobilePriority:"secondary"},
+     {key:"batch",header:"Batch",cell:row=>row.cohortName,mobilePriority:"secondary"},
+     {key:"branch",header:"Branch",cell:row=>row.branchName,mobilePriority:"secondary"},
+     {key:"after",header:"After college",cell:row=>AFTER_COLLEGE_LABELS[row.outcome],mobilePriority:"secondary"},
+     {key:"applications",header:"Applications",cell:row=>row.applicationCount,mobilePriority:"secondary"},
+    ]}
+   />
    {data.rows.length>300?<p className="text-xs text-muted-foreground">Showing the first 300 rows. Download CSV for the complete filtered list.</p>:null}
   </>}
  </div>;

@@ -4,6 +4,10 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Pagination } from "@/components/ui/pagination";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ProjectTemplateActions } from "@/components/projects/project-template-controls";
 import { SuperAdminTemplateTabs } from "@/components/projects/super-admin-template-tabs";
@@ -37,12 +41,12 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
     <SuperAdminTemplateTabs templateId={id.data} active="colleges" />
     <form method="get" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-3">
       <label className="grid gap-1 text-sm font-semibold text-body">College name or code
-        <input name="q" type="search" maxLength={100} defaultValue={data.query.q} className="min-h-11 rounded-md border border-border bg-surface px-3" /></label>
+        <Input name="q" type="search" maxLength={100} defaultValue={data.query.q} className="min-h-11 rounded-md border border-border bg-surface px-3" /></label>
       <label className="grid gap-1 text-sm font-semibold text-body">Availability
-        <select name="status" defaultValue={data.query.status} className="min-h-11 rounded-md border border-border bg-surface px-3">
+        <Select name="status" defaultValue={data.query.status} className="min-h-11 rounded-md border border-border bg-surface px-3">
           {statuses.map(status => <option key={status}>{status}</option>)}
-        </select></label>
-      <button className="min-h-11 self-end rounded-md bg-primary px-4 font-semibold text-on-primary" type="submit">Filter</button>
+        </Select></label>
+      <Button className="self-end" type="submit">Filter</Button>
     </form>
     <p className="text-xs text-muted-foreground">{data.total} matching active colleges · page {data.query.page} of {data.totalPages}</p>
     <SuperAdminTemplateCollegeBulk templateId={id.data} published={data.template.status==="PUBLISHED"}
@@ -60,9 +64,6 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
             status={data.template.status} selectedCollegeId={row.id} assignedToSelectedCollege={Boolean(row.assignment)} allowGlobalActions={false} /></div> : null}
       </article>)}
     </div> : <EmptyState title="No matching colleges" description="No active colleges match the filters in the current safety scope." />}
-    <nav aria-label="College availability pages" className="flex flex-wrap gap-4 text-sm font-semibold text-primary-text">
-      {data.query.page > 1 ? <Link href={templateCollegeAvailabilityHref(id.data, { ...data.query, page: data.query.page - 1 })}>Previous</Link> : null}
-      {data.query.page < data.totalPages ? <Link href={templateCollegeAvailabilityHref(id.data, { ...data.query, page: data.query.page + 1 })}>Next</Link> : null}
-    </nav>
+    <Pagination page={data.query.page} pageCount={data.totalPages} hrefForPage={page=>templateCollegeAvailabilityHref(id.data,{...data.query,page})} label="College availability pages" />
   </div>;
 }

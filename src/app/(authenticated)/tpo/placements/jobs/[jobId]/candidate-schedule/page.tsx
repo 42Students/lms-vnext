@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DataTable } from "@/components/ui/data-table";
 import { notFound, redirect } from "next/navigation";
 import { PlacementsServiceError } from "@/modules/placements/errors";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -92,25 +93,21 @@ export default async function TpoCandidateSchedulePage({
           {roundId ? displayed.length+" candidate entries shown for this round." : readiness.total+" round-candidate combinations found."}
           {readiness.limited ? " Only the first 1,000 combined round entries were loaded; the selected round may be incomplete." : ""}
         </p>
-        <div className="overflow-x-auto rounded-xl border border-border bg-surface">
-          <table className="w-full min-w-[50rem] text-left text-sm">
-            <thead className="bg-surface-subtle">
-              <tr>{["Candidate", "Round", "Shared start (IST)", "Round venue", "Candidate slot", "Panel"].map(label =>
-                <th key={label} scope="col" className="px-4 py-3">{label}</th>)}</tr>
-            </thead>
-            <tbody>{displayed.map(item =>
-              <tr key={item.roundId + ":" + item.applicationId} className="border-t border-border">
-                <td className="px-4 py-3">{item.name}</td>
-                <td className="px-4 py-3">{item.roundName}</td>
-                <td className="px-4 py-3">{item.roundStartIso
-                  ? dateFormat.format(new Date(item.roundStartIso)) + " IST"
-                  : "Not scheduled"}</td>
-                <td className="px-4 py-3">{item.roundVenue ?? "Not recorded"}</td>
-                <td className="px-4 py-3">Unavailable</td>
-                <td className="px-4 py-3">Unavailable</td>
-              </tr>)}</tbody>
-          </table>
-        </div>
+        <DataTable
+          caption="Candidate schedule"
+          rows={displayed}
+          getRowKey={item=>item.roundId+":"+item.applicationId}
+          empty={<p role="status">No progression-eligible round participants are currently recorded. This does not imply slots were assigned.</p>}
+          columns={[
+            {key:"name",header:"Candidate",cell:item=>item.name,mobilePriority:"primary"},
+            {key:"round",header:"Round",cell:item=>item.roundName,mobilePriority:"secondary"},
+            {key:"when",header:"Shared start (IST)",cell:item=>item.roundStartIso
+              ?dateFormat.format(new Date(item.roundStartIso))+" IST":"Not scheduled",mobilePriority:"secondary"},
+            {key:"venue",header:"Round venue",cell:item=>item.roundVenue??"Not recorded",mobilePriority:"secondary"},
+            {key:"slot",header:"Candidate slot",cell:()=> "Unavailable",mobilePriority:"secondary"},
+            {key:"panel",header:"Panel",cell:()=> "Unavailable",mobilePriority:"secondary"},
+          ]}
+        />
       </>}
     <p className="text-xs leading-5 text-muted-foreground">
       Candidate slot assignments, if registered, are maintained in the dedicated slots workspace. This page shows shared-round planning only.

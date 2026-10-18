@@ -24,7 +24,7 @@ export default async function LearnerApplicationCompanyPage({
       <Link
         href={"/learn/my-placements/applications?applicationId=" +
           encodeURIComponent(company.applicationId)}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline"
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline"
       >
         ← Back to application
       </Link>
@@ -79,7 +79,7 @@ export default async function LearnerApplicationCompanyPage({
                   href={company.websiteUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex min-h-10 items-center font-semibold text-primary-text underline"
+                  className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline"
                 >
                   Visit employer website ↗
                 </a>

@@ -1,7 +1,9 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentDeviceSession } from "@/auth/current-session";
 import { DeviceList } from "@/components/auth/device-list";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { describeDevice } from "@/modules/auth/device-label";
 import { listActiveSessions } from "@/modules/auth/session-service";
@@ -15,7 +17,7 @@ export default async function AccountSecurityPage() {
     redirect("/dashboard");
   }
 
-  const rows = await listActiveSessions(session.userId);
+  const rows = await listActiveSessions(session.userId).catch(() => null);
 
   return (
     <div className="space-y-6">
@@ -24,7 +26,11 @@ export default async function AccountSecurityPage() {
         title="Signed-in devices"
         description="Every place you're signed in. Sign out any device you don't recognise."
       />
-      {rows.length === 0 ? (
+      {rows === null ? (
+        <ErrorState description="Your current session could not be listed."
+          action={<Link href="/account/security"
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Try again</Link>}/>
+      ) : rows.length === 0 ? (
         <EmptyState
           title="No active devices"
           description="Your current session could not be listed."

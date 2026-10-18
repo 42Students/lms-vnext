@@ -2,6 +2,8 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { Card } from "@/components/ui/card";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ActivityServiceError } from "@/modules/activity/errors";
 import { getActivityEventDetail } from "@/modules/activity/service";
@@ -44,7 +46,8 @@ export default async function ActivityDetailPage({
 
   const { event, actor } = detail;
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
+      <Breadcrumbs items={[{ label: "Activity Log", href: "/activity" }, { label: event.summary }]} />
       <PageHeader
         eyebrow="Activity Center"
         title={event.summary}
@@ -52,14 +55,14 @@ export default async function ActivityDetailPage({
         actions={
           <Link
             href="/activity"
-            className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-foreground"
+            className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
           >
             Back to activity
           </Link>
         }
       />
 
-      <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
+      <Card as="section" className="space-y-4">
         <div className="flex flex-wrap gap-2">
           <StatusBadge>{event.module}</StatusBadge>
           <StatusBadge>{event.importance}</StatusBadge>
@@ -74,7 +77,7 @@ export default async function ActivityDetailPage({
           </div>
           <div>
             <dt className="font-semibold text-muted-foreground">Occurred</dt>
-            <dd className="m-0 text-foreground">{when(event.occurredAt)}</dd>
+            <dd className="m-0 text-foreground"><time dateTime={event.occurredAt.toISOString()}>{when(event.occurredAt)} IST</time></dd>
           </div>
           <div>
             <dt className="font-semibold text-muted-foreground">Subject type</dt>
@@ -105,7 +108,7 @@ export default async function ActivityDetailPage({
             <dd className="m-0 break-all text-foreground">{event.groupKey ?? "—"}</dd>
           </div>
         </dl>
-      </section>
+      </Card>
 
       <section className="space-y-3">
         <h2 className="m-0 text-lg font-semibold text-foreground">Event context</h2>
@@ -114,13 +117,13 @@ export default async function ActivityDetailPage({
             This event has no structured context.
           </p>
         ) : (
-          <pre className="max-h-[32rem] overflow-auto whitespace-pre-wrap break-words rounded-xl border border-border bg-surface p-5 text-xs leading-6 text-body">
+          <pre className="max-h-[32rem] max-w-full overflow-auto whitespace-pre-wrap break-words rounded-xl border border-border bg-surface p-4 text-xs leading-6 text-body sm:p-6">
             {JSON.stringify(event.metadata, null, 2)}
           </pre>
         )}
       </section>
 
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <Card as="section">
         <h2 className="m-0 text-base font-semibold text-foreground">Legacy audit gap notice</h2>
         <p className="mt-2 text-sm leading-6 text-body">
           The legacy admin audit table also persisted an actor role snapshot,
@@ -128,7 +131,7 @@ export default async function ActivityDetailPage({
           vNext activity events and are tracked as DB10 parity gaps rather than
           being synthesized on this page.
         </p>
-      </section>
+      </Card>
     </div>
   );
 }

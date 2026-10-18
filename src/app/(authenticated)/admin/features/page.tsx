@@ -32,7 +32,7 @@ type SearchParams = Record<
   decision: AdminModuleDecision;
 }) {
   return (
-    <div className="space-y-1.5">
+    <div className="min-w-0 space-y-1.5">
       <StatusBadge
         tone={
           decision.enabled
@@ -69,7 +69,7 @@ export default async function SuperAdminFeaturesPage({
 
   if (!parsed) {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-6">
         <PageHeader
           eyebrow="Super Admin · Tenant Controls"
           title="Feature Controls"
@@ -81,7 +81,7 @@ export default async function SuperAdminFeaturesPage({
           action={
             <Link
               href="/admin/features"
-              className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text"
+              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]"
             >
               Clear filters
             </Link>
@@ -113,7 +113,7 @@ export default async function SuperAdminFeaturesPage({
   );
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         eyebrow="Super Admin · Tenant Controls"
         title="Feature Controls"
@@ -183,20 +183,20 @@ export default async function SuperAdminFeaturesPage({
           </label>
           <button
             type="submit"
-            className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover"
+            className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-foreground hover:bg-primary-hover"
           >
             Search
           </button>
           <Link
             href="/admin/features"
-            className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
+            className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
           >
             Clear
           </Link>
         </form>
       </section>
 
-      <section className="space-y-3">
+      <section className="min-w-0 space-y-3">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <h2 className="m-0 text-lg font-semibold text-foreground">
             College module matrix
@@ -205,7 +205,7 @@ export default async function SuperAdminFeaturesPage({
             q:result.q,page:result.page,sort:result.sort,module:result.moduleFilter??undefined,
             storedState:result.stateFilter,locks:result.lockFilter,presence:result.presenceFilter,
             recent:result.recentFilter,searchField:result.searchField,
-          })} className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
+          })} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-teal-deep)]">
             Export current page (CSV)
           </Link>
           <p className="m-0 text-sm text-muted-foreground">
@@ -242,7 +242,7 @@ export default async function SuperAdminFeaturesPage({
                       <dd className="m-0 min-w-44 text-right">
                         <ModuleState decision={decision}/>
                         <details className="mt-2 text-left">
-                         <summary className="inline-flex min-h-10 cursor-pointer items-center text-sm font-semibold text-primary-text">
+                         <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-[var(--lms-teal-deep)]">
                           Change {decision.label} →
                          </summary>
                          <CollegeFeatureRuleEditor collegeId={college.id}
@@ -257,7 +257,7 @@ export default async function SuperAdminFeaturesPage({
                   {summary.locked} locked · {summary.persisted} rules with persisted source
                 </p>
                 <Link href={adminFeatureHierarchyHref(college.id,result.moduleFilter)}
-                  className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">
+                  className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">
                   View access hierarchy →
                 </Link>
               </article>;
@@ -317,7 +317,7 @@ export default async function SuperAdminFeaturesPage({
                           >
                             <ModuleState decision={decision}/>
                             <details className="mt-2 min-w-44">
-                             <summary className="inline-flex min-h-10 cursor-pointer items-center text-sm font-semibold text-primary-text">
+                             <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-[var(--lms-teal-deep)]">
                               Change {decision.label} →
                              </summary>
                              <CollegeFeatureRuleEditor collegeId={college.id}
@@ -331,7 +331,7 @@ export default async function SuperAdminFeaturesPage({
                       <td className="px-4 py-4 align-top">
                         <Link
                           href={adminFeatureHierarchyHref(college.id,result.moduleFilter)}
-                          className="font-semibold text-primary-text hover:underline"
+                          className="font-semibold text-[var(--lms-teal-deep)] hover:underline"
                         >
                           View hierarchy →
                         </Link>
@@ -366,7 +366,7 @@ export default async function SuperAdminFeaturesPage({
                   searchField: result.searchField,
                   page: result.page - 1,
                 })}
-                className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
               >
                 ← Previous
               </Link>
@@ -384,7 +384,7 @@ export default async function SuperAdminFeaturesPage({
                   searchField: result.searchField,
                   page: result.page + 1,
                 })}
-                className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
               >
                 Next →
               </Link>

@@ -68,7 +68,7 @@ export default async function FacultyNotificationsPage({
   }));
 
   return (
-    <div className="space-y-8">
+    <div className="min-w-0 max-w-full space-y-8">
       <PageHeader
         title="Notifications"
       />
@@ -94,7 +94,7 @@ export default async function FacultyNotificationsPage({
           <div role="alert" className="rounded-xl border border-border bg-surface p-4 text-sm text-foreground">
             The notification filters or page link are invalid.{" "}
             <Link href={FACULTY_INBOX + "?view=" + view}
-              className="font-semibold text-primary-text underline">
+              className="font-semibold text-[var(--lms-teal-deep)] underline">
               Return to the newest notifications
             </Link>
           </div>

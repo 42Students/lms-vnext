@@ -34,7 +34,7 @@ export default async function TpoHome(){
  if(!hasTpoTooling(ctx)) return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Placement cell" title="Home" description="Your college has no TPO account on this sign-in, so placement work is run from the college placements area."/>
   <ul className="divide-y divide-border rounded-xl border border-border bg-surface">
-   {[["Drives","/college/placements/drives"],["Calendar","/college/placements/calendar"],["Placements","/college/placements"]].map(([label,href])=><li key={href} className="p-4"><Link href={href} className="min-h-11 inline-flex items-center text-sm text-primary-text underline">{label}</Link></li>)}
+   {[["Drives","/college/placements/drives"],["Calendar","/college/placements/calendar"],["Placements","/college/placements"]].map(([label,href])=><li key={href} className="p-4"><Link href={href} className="min-h-11 inline-flex items-center text-sm text-[var(--lms-teal-deep)] underline">{label}</Link></li>)}
   </ul>
  </div>;
  const moduleAccess=await resolveOptionalModuleAccess(ctx);
@@ -208,7 +208,7 @@ export default async function TpoHome(){
      <span className="min-w-0 flex-1"><strong className="block text-sm text-foreground">{row.title}</strong>
       <span className="block break-words text-xs text-muted-foreground">{row.status}</span></span>
      {row.needsAttention?<span aria-label="Needs you" className="shrink-0 rounded-full bg-warning-subtle px-2 py-1 text-xs font-semibold text-foreground">Needs you</span>:null}
-     <span aria-hidden="true" className="shrink-0 text-primary-text">›</span>
+     <span aria-hidden="true" className="shrink-0 text-[var(--lms-teal-deep)]">›</span>
     </Link>
    </li>)}</ul>
  </section>

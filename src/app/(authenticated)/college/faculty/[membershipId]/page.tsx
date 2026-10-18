@@ -20,14 +20,14 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
     if (error instanceof CollegePersonNotFoundError) notFound();
     throw error;
   }
-  return <div className="min-w-0 space-y-6">
+  return <div className="min-w-0 overflow-x-clip space-y-6">
     <PageHeader eyebrow="College Admin · Faculty" title={data.person.name}
       description="College-scoped teaching record. These are assignment counts, not teaching hours or a complete workload measure."
       actions={<div className="flex flex-wrap gap-3">
         <Link href={`/college/activity?subjectType=college_membership&subjectId=${encodeURIComponent(membershipId)}`}
-          className="text-sm font-semibold text-primary-text">Lifecycle audit</Link>
+          className="text-sm font-semibold text-[var(--lms-teal-deep)]">Lifecycle audit</Link>
         <CollegeFacultyScheduleReassign membershipId={membershipId} name={data.person.name}/>
-        <Link href="/college/faculty" className="text-sm font-semibold text-primary-text">Back to faculty</Link>
+        <Link href="/college/faculty" className="text-sm font-semibold text-[var(--lms-teal-deep)]">Back to faculty</Link>
       </div>} />
     <section className="rounded-xl border border-border bg-surface p-5">
       <h2 className="font-semibold text-foreground">Faculty record</h2>
@@ -61,7 +61,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
             <option value="TA">Teaching assistant</option>
           </select>
         </label>
-        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
+        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Filter</button>
       </form>
       <p className="mt-2 text-sm text-body">{data.counts.totalAssignments} total assignments ·
         {" "}{data.counts.activeAssignments} active ·
@@ -69,7 +69,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
       </p>
       {data.assignments.length === 0
         ? <p className="mt-4 text-sm text-muted-foreground">No college-scoped teaching assignments recorded.</p>
-        : <div className="mt-4 overflow-x-auto"><table className="w-full min-w-[42rem] text-left text-sm">
+        : <div className="mt-4 overflow-x-auto overscroll-x-contain"><table className="w-full min-w-[42rem] text-left text-sm">
           <thead className="bg-muted"><tr>
             <th scope="col" className="p-3">Course</th>
             <th scope="col" className="p-3">Class / cohort</th>
@@ -78,7 +78,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
           </tr></thead>
           <tbody>{data.assignments.map(item => <tr key={item.id} className="border-t border-border">
             <td className="p-3"><Link href={`/college/courses/offerings/${item.offeringId}`}
-              className="font-semibold text-primary-text hover:underline">
+              className="font-semibold text-[var(--lms-teal-deep)] hover:underline">
               {item.courseName} ({item.courseCode})
             </Link></td>
             <td className="p-3">{item.sectionName} · {item.cohortName} · {item.periodName}</td>

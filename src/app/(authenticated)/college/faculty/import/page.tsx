@@ -12,11 +12,11 @@ export default async function CollegeFacultyImportPage(){
   requirePermission(context,"people.manage",{
     collegeId:member.collegeId,organizationId:member.organizationId,
   });
-  return <div className="min-w-0 space-y-6">
+  return <div className="min-w-0 overflow-x-clip space-y-6">
     <PageHeader eyebrow="College Admin · Faculty" title="Import faculty"
       description="Validate and register faculty using the legacy CSV template."
       actions={<Link href="/college/faculty"
-        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">Back to Faculty</Link>}/>
+        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)]">Back to Faculty</Link>}/>
     <CollegeFacultyCsvImport/>
   </div>;
 }
