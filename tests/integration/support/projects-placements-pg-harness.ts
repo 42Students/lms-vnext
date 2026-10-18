@@ -294,52 +294,56 @@ export async function createProjectFixture(db: PgHarness, tenant: TenantFixture,
   await requireFixtureCollegePrincipal(db, tenant.collegeId, author, ["COLLEGE_ADMIN"]);
   await requireFixtureCollegePrincipal(db, tenant.collegeId, mentor, ["MENTOR"]);
   await requireFixtureCollegePrincipal(db, tenant.collegeId, learner, ["LEARNER"]);
-  const suffix = randomUUID().slice(0,12);
-  const [template] = await db.query<{id:string}>(`
-    insert into project_templates (slug,title,created_by_user_id)
-    values ($1,$2,$3) returning id`, ["ph-template-"+suffix,"Harness template",author.userId]);
-  const [version] = await db.query<{id:string}>(`
-    insert into project_template_versions (template_id,version,title,blueprint,created_by_user_id)
-    values ($1,1,$2,$3::jsonb,$4) returning id`,
-    [template!.id,"Harness version",JSON.stringify({overview:{goal:"Harness",deliverables:["Proof"]},releases:[],sprints:[],tasks:[],resources:[]}),author.userId]);
-  // College assignment of a DRAFT template would skip the template's
-  // publication gate; make the fixture version visible before assigning.
-  await db.query(
-    "update project_templates set status='PUBLISHED',published_version=1 where id=$1",
-    [template!.id]);
-  const [assignment] = await db.query<{id:string}>(`
-    insert into project_template_college_assignments
-      (template_id,template_version_id,college_id,assigned_by_user_id)
-    values ($1,$2,$3,$4) returning id`,
-    [template!.id,version!.id,tenant.collegeId,author.userId]);
-  const [project] = await db.query<{id:string}>(`
-    insert into project_instances
-      (college_id,template_id,template_version_id,slug,title,status,created_by_user_id)
-    values ($1,$2,$3,$4,$5,'ACTIVE',$6) returning id`,
-    [tenant.collegeId,template!.id,version!.id,"ph-workspace-"+suffix,"Harness workspace",author.userId]);
-  const [release] = await db.query<{id:string}>(`
-    insert into project_releases (project_id,template_key,title,sequence,status)
-    values ($1,'release-1','Harness release',0,'IN_PROGRESS') returning id`,[project!.id]);
-  const [sprint] = await db.query<{id:string}>(`
-    insert into project_sprints (project_id,release_id,template_key,title,sequence,status)
-    values ($1,$2,'sprint-1','Harness sprint',0,'ACTIVE') returning id`,[project!.id,release!.id]);
-  const [task] = await db.query<{id:string}>(`
-    insert into project_tasks
-      (project_id,sprint_id,template_key,title,sequence,assignee_membership_id)
-    values ($1,$2,'task-1','Harness task',0,$3) returning id`,
-    [project!.id,sprint!.id,learner.membershipId]);
-  const [resource] = await db.query<{id:string}>(`
-    insert into project_resources (project_id,template_key,title,sequence)
-    values ($1,'resource-1','Harness resource',0) returning id`,[project!.id]);
-  const [mentorRow] = await db.query<{id:string}>(`
-    insert into project_members (project_id,membership_id,role,is_primary,created_by_user_id)
-    values ($1,$2,'MENTOR',true,$3) returning id`,[project!.id,mentor.membershipId,author.userId]);
-  const [learnerRow] = await db.query<{id:string}>(`
-    insert into project_members (project_id,membership_id,role,created_by_user_id)
-    values ($1,$2,'LEARNER',$3) returning id`,[project!.id,learner.membershipId,author.userId]);
-  return {templateId:template!.id,versionId:version!.id,assignmentId:assignment!.id,
-    projectId:project!.id,workspaceId:project!.id,releaseId:release!.id,sprintId:sprint!.id,
-    taskId:task!.id,resourceId:resource!.id,mentorMemberId:mentorRow!.id,learnerMemberId:learnerRow!.id};
+  // A project fixture must either contain its complete template-to-roster
+  // graph or none of it, even if an injected late FK/roster insert fails.
+  return db.savepoint(async()=>{
+    const suffix = randomUUID().slice(0,12);
+    const [template] = await db.query<{id:string}>(`
+      insert into project_templates (slug,title,created_by_user_id)
+      values ($1,$2,$3) returning id`, ["ph-template-"+suffix,"Harness template",author.userId]);
+    const [version] = await db.query<{id:string}>(`
+      insert into project_template_versions (template_id,version,title,blueprint,created_by_user_id)
+      values ($1,1,$2,$3::jsonb,$4) returning id`,
+      [template!.id,"Harness version",JSON.stringify({overview:{goal:"Harness",deliverables:["Proof"]},releases:[],sprints:[],tasks:[],resources:[]}),author.userId]);
+    // College assignment of a DRAFT template would skip the template's
+    // publication gate; make the fixture version visible before assigning.
+    await db.query(
+      "update project_templates set status='PUBLISHED',published_version=1 where id=$1",
+      [template!.id]);
+    const [assignment] = await db.query<{id:string}>(`
+      insert into project_template_college_assignments
+        (template_id,template_version_id,college_id,assigned_by_user_id)
+      values ($1,$2,$3,$4) returning id`,
+      [template!.id,version!.id,tenant.collegeId,author.userId]);
+    const [project] = await db.query<{id:string}>(`
+      insert into project_instances
+        (college_id,template_id,template_version_id,slug,title,status,created_by_user_id)
+      values ($1,$2,$3,$4,$5,'ACTIVE',$6) returning id`,
+      [tenant.collegeId,template!.id,version!.id,"ph-workspace-"+suffix,"Harness workspace",author.userId]);
+    const [release] = await db.query<{id:string}>(`
+      insert into project_releases (project_id,template_key,title,sequence,status)
+      values ($1,'release-1','Harness release',0,'IN_PROGRESS') returning id`,[project!.id]);
+    const [sprint] = await db.query<{id:string}>(`
+      insert into project_sprints (project_id,release_id,template_key,title,sequence,status)
+      values ($1,$2,'sprint-1','Harness sprint',0,'ACTIVE') returning id`,[project!.id,release!.id]);
+    const [task] = await db.query<{id:string}>(`
+      insert into project_tasks
+        (project_id,sprint_id,template_key,title,sequence,assignee_membership_id)
+      values ($1,$2,'task-1','Harness task',0,$3) returning id`,
+      [project!.id,sprint!.id,learner.membershipId]);
+    const [resource] = await db.query<{id:string}>(`
+      insert into project_resources (project_id,template_key,title,sequence)
+      values ($1,'resource-1','Harness resource',0) returning id`,[project!.id]);
+    const [mentorRow] = await db.query<{id:string}>(`
+      insert into project_members (project_id,membership_id,role,is_primary,created_by_user_id)
+      values ($1,$2,'MENTOR',true,$3) returning id`,[project!.id,mentor.membershipId,author.userId]);
+    const [learnerRow] = await db.query<{id:string}>(`
+      insert into project_members (project_id,membership_id,role,created_by_user_id)
+      values ($1,$2,'LEARNER',$3) returning id`,[project!.id,learner.membershipId,author.userId]);
+    return {templateId:template!.id,versionId:version!.id,assignmentId:assignment!.id,
+      projectId:project!.id,workspaceId:project!.id,releaseId:release!.id,sprintId:sprint!.id,
+      taskId:task!.id,resourceId:resource!.id,mentorMemberId:mentorRow!.id,learnerMemberId:learnerRow!.id};
+  });
 }
 /**
  * Guard the fixture API against accidentally creating impossible cross-tenant or

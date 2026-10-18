@@ -36,6 +36,30 @@ async function count(db: PgHarness, table: "project_task_submissions" | "project
 }
 
 describe("PROJ-HARNESS role/tenancy and concurrent PostgreSQL fixture boundaries", () => {
+  it("PROJ-HARNESS-PROJECT-28 late learner-roster failure rolls back template, workspace and task",async()=>{
+    await withProjectPg(pool,async db=>{
+      const f=await actors(db);
+      const counts=async()=>db.query<{templates:number;projects:number;tasks:number;members:number}>(`
+        select (select count(*)::int from project_templates) as templates,
+          (select count(*)::int from project_instances) as projects,
+          (select count(*)::int from project_tasks) as tasks,
+          (select count(*)::int from project_members) as members`);
+      const baseline=await counts();
+      const broken:PgHarness={...db,
+        async query<T extends QueryResultRow=QueryResultRow>(sql:string,values?:unknown[]):Promise<T[]> {
+          if(sql.includes("insert into project_members") && sql.includes("'LEARNER'"))
+            throw new Error("simulated project roster failure");
+          return db.query<T>(sql,values);
+        },
+      };
+      await expect(createProjectFixture(broken,f.own,f.author,f.mentor,f.learner))
+        .rejects.toThrow("simulated project roster failure");
+      expect(await counts()).toEqual(baseline);
+      const second=await createProjectFixture(db,f.own,f.author,f.mentor,f.learner);
+      expect(second.projectId).not.toBe(f.project.projectId);
+    });
+  });
+
   it("PROJ-HARNESS-22 foreign college and unrostered learner cannot create task submissions", async () => {
     await withProjectPg(pool, async db => {
       const f = await actors(db);
