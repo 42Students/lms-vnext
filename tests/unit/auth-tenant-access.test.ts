@@ -89,6 +89,30 @@ describe("isTenantAccessAllowed", () => {
     ).toBe(false);
   });
 
+  it("WEAK-auth-tenant-access-06 denies disabled users even when a stale college or recruiter grant matches",()=>{
+    const tenant={kind:"college",collegeId:COLLEGE_A} as const;
+    const member=memberOf(COLLEGE_A);
+    const disabledMember={
+      ...member,user:{...member.user,platformStatus:"DISABLED" as const},
+    };
+    expect(isTenantAccessAllowed(disabledMember,tenant)).toBe(false);
+    expect(isTenantAccessAllowed(disabledMember,{kind:"platform"})).toBe(false);
+    const recruiter=recruiterAt(COLLEGE_A);
+    const disabledRecruiter={
+      ...recruiter,user:{...recruiter.user,platformStatus:"DISABLED" as const},
+    };
+    expect(isTenantAccessAllowed(disabledRecruiter,tenant)).toBe(false);
+    expect(isTenantAccessAllowed(disabledRecruiter,{kind:"platform"})).toBe(false);
+  });
+
+  it.each(["SUSPENDED","ENDED"] as const)(
+    "WEAK-auth-tenant-access-07 %s membership cannot authorize college Host", status=>{
+      const original=memberOf(COLLEGE_A);
+      const stale={...original,membership:{...original.membership!,status}};
+      expect(isTenantAccessAllowed(stale,{kind:"college",collegeId:COLLEGE_A})).toBe(false);
+      expect(isTenantAccessAllowed(stale,{kind:"platform"})).toBe(true);
+    });
+
   it("fails closed on unknown hosts", () => {
     expect(
       isTenantAccessAllowed(memberOf(COLLEGE_A), { kind: "unknown" }),
