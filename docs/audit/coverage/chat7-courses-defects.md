@@ -88,3 +88,18 @@ Authored-only under the owner’s no-CI policy; phone/browser acceptance remains
 ## Learner thumbnail URL privacy
 
 **LEARNER-THUMBNAIL-15 (S2):** The learner Course card accepted any credential-free HTTPS thumbnail host, including loopback, RFC1918/private and cloud metadata endpoints, and allowed fragments from imported legacy URLs. Browsers could be induced to request a learner's local network when merely loading Course cards. `0db8bd4e` now falls back to the bundled course illustration for local/private/fragment-containing image addresses; `tests/unit/learner-course-card-media-model.test.ts` covers the URL matrix. No privileged server fetch occurs and no image was externally fetched during this source-only audit.
+
+
+## 2026-10-19 independent learner quiz and Admin course/content defect findings
+
+| Defect ID | Severity | Evidence / effect | Source fix | Regression (authored; not executed) |
+|---|---|---|---|---|
+| LEARNER-QUIZ-HISTORY-GRADE-16 | S2 | Result label accepted NaN/Infinity/negative stored score values; a multi-selected historical answer with one removed and one remaining option silently suppressed the removed-option notice | `4fae8ad9` validates finite/nonnegative displayed marks and detects **any** removed selected option | `tests/unit/chat7-learner-quiz-history-grade-hardening.test.ts` |
+| PROJ-BREAK-LEARNER-ACTIVITY-99 | S3 | Activity page summary emitted `NaN of NaN` when corrupt/nonfinite counts escaped a service boundary, instead of a bounded authorized-page count | `638cb1ca` projects nonfinite counters to zero | `tests/unit/PROJ-BREAK-chat7-learner-readonly-model-matrix.test.ts` |
+| SA-COURSES-ASSESSMENT-16 | S2 | The Super Admin Assignment view had no explicit route-level role denial, accepted duplicate/array-coerced `page` values, and erased its directory if independent creation options failed | `f6f7b6a7`, `6eabe6d2`, `2fa14b22` add role denial, typed URL normalization and independent read/authoring failures | `tests/unit/chat7-admin-courses-assessment-boundaries.test.ts` |
+| SA-COURSES-CONTENT-17 | S2 | Video/resource/live-class directory used one `Promise.all` for results, lesson choices and Section choices; a picker outage removed all authorized content and looked like directory failure | `7bfb40a7` preserves results, shows degraded-state notices and retains applied filters | `tests/unit/chat7-admin-courses-content-hardening.test.ts` |
+| SA-COURSES-QUERY-18 | S3 | Course catalogue accepted unknown URL keys and array-coerced page values, while `duplicate` was matched with a permissive 36-char hex/hyphen regex (not UUID validation) | `271e74f1`, `7879096d` apply strict URL key, numeric-page and canonical UUID boundary | `tests/unit/chat7-admin-courses-content-hardening.test.ts` |
+
+Outstanding: these unit regressions have not been run; acting-college A/B live switch, browser/network degradation,
+PostgreSQL role/tenant/race matrix, complete content builder acceptance and private scanned
+upload integration remain release gates. No CI result was invented and no existing test was weakened.
