@@ -86,4 +86,27 @@ describe("HR page-level access, recovery and mobile contracts", () => {
     expect(service).toContain("getRecruiterPlacementWorkspace(context, rawJobId)");
     expect(service).toContain("eq(collegeMemberships.collegeId, workspace.college.id)");
   });
+  it("HR-XA-05 keeps vertical inbox and discussion overflow keyboard reachable with visible cues", () => {
+    const inbox = load(root + "conversations/page.tsx");
+    const thread = load(root + "conversations/[threadId]/page.tsx");
+    const job = load(root + "placements/jobs/[jobId]/page.tsx");
+    expect(inbox).toContain('<ScrollCue axis="y" label="General placement-cell messages"');
+    expect(thread).toContain('<ScrollCue axis="y" label="Drive change request updates"');
+    expect(job).toContain('<ScrollCue axis="y" label="Drive discussion history"');
+    expect(inbox).not.toContain("max-h-72 space-y-2 overflow-y-auto");
+    expect(thread).not.toContain("max-h-56 space-y-2 overflow-y-auto");
+    expect(job).not.toContain('className="max-h-[36rem] space-y-2 overflow-y-auto"');
+    const primitive = load("src/components/ui/scroll-cue.tsx");
+    expect(primitive).toContain('data-scroll-fade="end"');
+    expect(primitive).toContain('tabIndex={edges.scrollable ? 0 : -1}');
+    expect(primitive).toContain("overscroll-contain");
+  });
+
+  it("HR-XA-06 calendar scrollable day cells advertise hidden content without a scrollbar", () => {
+    const source = load(root + "calendar/page.tsx");
+    expect(source).toContain('<ScrollCue axis="y" label={"Calendar events for " + shortDayLabel(day)}');
+    expect(source).toContain('viewportClassName="max-h-52"');
+    expect(source).not.toContain('max-h-52 space-y-2 overflow-y-auto');
+  });
+
 });
