@@ -282,11 +282,13 @@ export async function createProjectFixture(db: PgHarness, tenant: TenantFixture,
     insert into project_releases (project_id,template_key,title,sequence)
     values ($1,'release-1','Harness release',0) returning id`,[project!.id]);
   const [sprint] = await db.query<{id:string}>(`
-    insert into project_sprints (project_id,release_id,template_key,title,sequence)
-    values ($1,$2,'sprint-1','Harness sprint',0) returning id`,[project!.id,release!.id]);
+    insert into project_sprints (project_id,release_id,template_key,title,sequence,status)
+    values ($1,$2,'sprint-1','Harness sprint',0,'ACTIVE') returning id`,[project!.id,release!.id]);
   const [task] = await db.query<{id:string}>(`
-    insert into project_tasks (project_id,sprint_id,template_key,title,sequence)
-    values ($1,$2,'task-1','Harness task',0) returning id`,[project!.id,sprint!.id]);
+    insert into project_tasks
+      (project_id,sprint_id,template_key,title,sequence,assignee_membership_id)
+    values ($1,$2,'task-1','Harness task',0,$3) returning id`,
+    [project!.id,sprint!.id,learner.membershipId]);
   const [resource] = await db.query<{id:string}>(`
     insert into project_resources (project_id,template_key,title,sequence)
     values ($1,'resource-1','Harness resource',0) returning id`,[project!.id]);
@@ -350,12 +352,22 @@ export async function createTaskSubmission(db: PgHarness, project: ProjectFixtur
   await requireMutableFixtureProject(db, project.projectId, "task submissions");
   // The schema has separate task_id and project_id foreign keys. Neither
   // alone proves that a task belongs to the selected workspace.
-  const tasks = await db.query<{id:string}>(
-    "select id from project_tasks where id=$1 and project_id=$2",
+  const tasks = await db.query<{id:string;assignee_membership_id:string|null;status:string;sprint_status:string}>(`
+    select t.id,t.assignee_membership_id,t.status,s.status as sprint_status
+      from project_tasks t
+      join project_sprints s on s.id=t.sprint_id and s.project_id=t.project_id
+     where t.id=$1 and t.project_id=$2`,
     [project.taskId, project.projectId],
   );
   if (tasks.length !== 1) {
     throw new Error("PROJ-HARNESS: task does not belong to this project");
+  }
+  if (tasks[0]!.assignee_membership_id !== learner.membershipId) {
+    throw new Error("PROJ-HARNESS: task assignee is not the submitting learner");
+  }
+  if (tasks[0]!.sprint_status !== "ACTIVE" ||
+      ["DONE","IN_REVIEW"].includes(tasks[0]!.status)) {
+    throw new Error("PROJ-HARNESS: task sprint or task state cannot accept a submission");
   }
   const [row] = await db.query<{id:string}>(`
     insert into project_task_submissions
