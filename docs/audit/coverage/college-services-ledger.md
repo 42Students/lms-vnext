@@ -216,3 +216,6 @@ No claim of green cloud CI is made. Test-file TypeScript verification, isolated 
 
 
 | `collegeContactAcademicScope` activeClass, inSection, inCombinedPlacement, inProgram and inCohort | `tests/unit/chat4-college-contacts-period-sql.test.ts` | Builds REAL Drizzle SQL without connecting to PostgreSQL, asserts period FK ownership by persisted current college for class presence/placement and tenant department constraints on program/cohort filters. Cross-tenant fixture execution remains pending |
+
+
+| `listCollegeStudentImportOptions` cohort start-period tenant guard | `chat4-college-student-import-options-hardening.test.ts` | Confirms cohort start period same-college FK and preserves historical CLOSED start periods; class period still requires current non-CLOSED and same-college status |
