@@ -497,3 +497,8 @@ Next actions: enumerate runtime symbols, map behavioural tests per export, run T
 ### PROJ-BREAK-FACULTY-08 — meeting actions checked inside the transaction
 
 The same persisted actor/project Mentor grant recheck now protects meeting decisions, completed-meeting notes, and meeting reschedules before the meeting row is read. `tests/unit/PROJ-BREAK-FACULTY-06.test.ts` covers three post-page-load revocations and unchanged audit/notification state. This is code and test evidence only; concurrent PostgreSQL revocation and actual frontend retry behaviour remain release gates.
+
+
+### PROJ-BREAK-FACULTY-09 — Sprint creation/transition persisted actor checks
+
+`mentor-sprint-write-service.ts` now takes the same persisted authorization grant locks before creating or transitioning Sprints. `tests/unit/PROJ-BREAK-FACULTY-09.test.ts` covers revoked Mentor roles, stale tabs and archived/completed Projects; no DB mutation/audit occurs on denial. This is not a complete Sprint state-machine audit; see chat-14 and the project ledger for remaining multi-session and closeout checks.
