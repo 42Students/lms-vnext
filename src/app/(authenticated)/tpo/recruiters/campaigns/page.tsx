@@ -37,22 +37,22 @@ export default async function CampaignHistory({searchParams}:PageProps){
   <p className="text-sm text-body">
    To send one, select recruiters in the table and choose Act, then Send an email.
   </p>
-  <form method="get" action="/tpo/recruiters/campaigns" className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-surface p-3">
+  <form method="get" action="/tpo/recruiters/campaigns" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
    <label className="text-sm">Purpose
     <input name="purpose" maxLength={120} defaultValue={first(params.purpose)??""}
-     placeholder="Filter by purpose" className="mt-1 block min-h-11 rounded border border-border px-3"/>
+     placeholder="Filter by purpose" className="mt-1 block min-h-11 sm:min-h-9 rounded-[9px] border border-border px-3"/>
    </label>
-   <button type="submit" className="min-h-11 rounded border border-border px-3 text-sm">Apply</button>
-   <Link href="/tpo/recruiters/campaigns" className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] underline">Clear</Link>
+   <button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] border border-border px-3 text-sm">Apply</button>
+   <Link href="/tpo/recruiters/campaigns" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm text-[var(--lms-link-text)] underline">Clear</Link>
   </form>
   <nav aria-label="Campaign history actions" className="flex flex-wrap gap-3">
    <Link href="/tpo/recruiters/campaigns/new"
-    className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-foreground">
+    className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] bg-primary px-4 text-sm font-semibold text-white">
     New email campaign
    </Link>
-   <Link href="/tpo/recruiters" className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)]">Back to Engage</Link>
+   <Link href="/tpo/recruiters" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm text-[var(--lms-link-text)]">Back to Engage</Link>
    <Link href={"/api/placements/tpo/campaigns/history/export"+(first(params.purpose)?"?purpose="+encodeURIComponent(first(params.purpose)!):"")}
-     className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm text-[var(--lms-teal-deep)]">Export filtered history as CSV</Link>
+     className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border px-4 text-sm text-[var(--lms-link-text)]">Export filtered history as CSV</Link>
   </nav>
   <section aria-label="Email campaigns" className="space-y-3">
    <h2 className="text-lg font-semibold text-foreground">Email campaigns</h2>
@@ -63,7 +63,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
     <ul className="grid gap-3 sm:grid-cols-2">
      {drafts.rows.map(item=><li key={item.campaign_id}
       className="rounded-md border border-border bg-surface p-4">
-      <Link className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline"
+      <Link className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-[var(--lms-link-text)] underline"
        href={"/tpo/recruiters/campaigns/drafts/"+encodeURIComponent(item.campaign_id)}>
        {item.title}
       </Link>
@@ -85,7 +85,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
     {result.rows.map(row=><li key={row.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
       <h2 className="break-words font-semibold text-foreground">
        <Link href={"/tpo/recruiters/campaigns/"+encodeURIComponent(row.id)}
-        className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline-offset-2 hover:underline">{row.purpose}</Link>
+        className="inline-flex min-h-11 sm:min-h-9 items-center text-[var(--lms-link-text)] underline-offset-2 hover:underline">{row.purpose}</Link>
       </h2>
       <p className="mt-1 text-xs text-muted-foreground">{tpoCampaignHistoryTime(row.createdAt)} IST · {row.status}</p>
       <dl className="mt-3 grid grid-cols-2 gap-2 text-sm text-body">
@@ -97,8 +97,8 @@ export default async function CampaignHistory({searchParams}:PageProps){
     </li>)}
   </ol>:<p className="rounded-xl border border-border bg-surface p-5 text-sm text-body">No emails sent from Engage yet.</p>}
   <nav className="flex flex-wrap gap-3" aria-label="Campaign history pagination">
-    {result.page>1?<Link href={"/tpo/recruiters/campaigns?page="+(result.page-1)+(first(params.purpose)?"&purpose="+encodeURIComponent(first(params.purpose)!):"")} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-[var(--lms-teal-deep)]">Previous</Link>:null}
-    {result.page<result.pages?<Link href={"/tpo/recruiters/campaigns?page="+(result.page+1)+(first(params.purpose)?"&purpose="+encodeURIComponent(first(params.purpose)!):"")} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-[var(--lms-teal-deep)]">Next</Link>:null}
+    {result.page>1?<Link href={"/tpo/recruiters/campaigns?page="+(result.page-1)+(first(params.purpose)?"&purpose="+encodeURIComponent(first(params.purpose)!):"")} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border px-4 text-[var(--lms-link-text)]">Previous</Link>:null}
+    {result.page<result.pages?<Link href={"/tpo/recruiters/campaigns?page="+(result.page+1)+(first(params.purpose)?"&purpose="+encodeURIComponent(first(params.purpose)!):"")} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border px-4 text-[var(--lms-link-text)]">Next</Link>:null}
   </nav>
  </div>;
 }
