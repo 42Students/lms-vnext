@@ -43,6 +43,8 @@ Scope: TPO Projects read journey, TPO Students and Companies bulk operations, fi
 - Audited the current test against the exact `tpo-bulk-action-panel.tsx` source on main: **all four recorded assertions are present**. `undoLastRun` owns a synchronous `actionInFlightRef` independently of `runGuarded`, and releases it in `finally`; the guarded button only invokes the hook. Thus the stale result does not justify removing the second lock or weakening the test.
 - Strengthened the test at `c7e6fea2` to inspect the actual undo function boundaries, lock ordering, separate button guard, API endpoint and safe failure. Cloud CI has not rerun this commit yet; **do not claim green solely from source inspection**.
 
+| D12-25 | HIGH | TPO student quick-panel read required TPO only from the selected session context. A removed persisted TPO membership could continue reading private histories before session renewal. | Added `requireTpoBatchActor` persisted membership recheck before student table reads and tests for revoked/suspended/disabled/wrong-role actors. | `9c13ffc1`, `021a549a`, `f661fc71`; browser/database approval still pending. |
+
 ## Verification status
 
 The rolling `docs/orchestrator/unit-failures-latest.md` explicitly reports two `chat-12` failures (TPO-students-51); their stale selectors were repaired but remain **unverified in CI**. The branch was fast-forwarded to main `a172b146ede1992a428dbe3e74a6d87dd3a12985` before these changes. No direct commits to main.
