@@ -764,11 +764,20 @@ export async function getProjectAdminSubmissionSummary(context: RequestContext, 
     where sub.project_id = ${instanceId}
     order by sub.version desc limit 1
   )`;
+  // A reopened approved delivery is no longer counted as reviewed:
+  // the queue's APPROVED filter explicitly excludes reopened rows. Without
+  // this predicate the card count can exceed the rows it links to.
+  const latestApproved = sql<boolean>`coalesce((
+    select (sub.status = 'APPROVED' and sub.reopened_at is null)
+    from project_submissions sub
+    where sub.project_id = ${instanceId}
+    order by sub.version desc limit 1
+  ), false)`;
   const [row] = await db.select({
     activeWorkspaces: sql<number>`count(*) filter (where ${projectInstances.status} = 'ACTIVE')`.mapWith(Number),
     pendingReview: sql<number>`count(*) filter (where ${projectInstances.status} = 'ACTIVE' and ${latestStatus} = 'SUBMITTED')`.mapWith(Number),
     needsStudentAction: sql<number>`count(*) filter (where ${projectInstances.status} = 'ACTIVE' and ${latestStatus} = 'CHANGES_REQUESTED')`.mapWith(Number),
-    reviewed: sql<number>`count(*) filter (where ${latestStatus} = 'APPROVED')`.mapWith(Number),
+    reviewed: sql<number>`count(*) filter (where ${latestApproved})`.mapWith(Number),
   }).from(projectInstances).where(eq(projectInstances.collegeId, college.id));
   return {
     activeWorkspaces: row?.activeWorkspaces ?? 0,
