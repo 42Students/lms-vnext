@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, useState, useEffect, useRef, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useMemo, useState, useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import { cx } from "@/lib/class-names";
 
 type ToastTone = "success" | "error" | "info";
@@ -34,8 +34,48 @@ export function clearEvictedToastTimers(
   }
 }
 
+export type ToastViewport = { height: number; bottom: number };
+
+/** Persistent errors are never evicted. The whole notification list remains
+ * keyboard-focusable and scrolls within the actual visual viewport, including
+ * safe areas and a software keyboard. No offscreen dismiss buttons are lost.
+ */
+export function ToastStack({ toasts, onDismiss, viewport }: {
+  toasts: readonly ToastItem[];
+  onDismiss: (id: string) => void;
+  viewport?: ToastViewport | null;
+}) {
+  const bounds = {
+    "--lms-toast-visual-height": viewport ? `${viewport.height}px` : "100dvh",
+    "--lms-toast-visual-bottom": viewport ? `${viewport.bottom}px` : "0px",
+    bottom: "calc(var(--lms-toast-visual-bottom) + max(1rem, env(safe-area-inset-bottom)))",
+    maxHeight: "max(1px, calc(var(--lms-toast-visual-height) - max(1rem, env(safe-area-inset-top)) - max(1rem, env(safe-area-inset-bottom))))",
+  } as CSSProperties;
+  return <div data-slot="toast-stack" role="region"
+    aria-label="Notifications, scroll to review all notices"
+    aria-live="polite" aria-relevant="additions"
+    tabIndex={toasts.length > 0 ? 0 : -1}
+    style={bounds}
+    className="pointer-events-auto fixed inset-x-4 z-50 flex min-w-0 max-w-sm flex-col gap-2 overflow-y-auto overscroll-contain rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] sm:inset-x-auto sm:right-4">
+    {toasts.map(toast => <section key={toast.id} role={toast.tone === "error" ? "alert" : "status"}
+      className={cx("min-w-0 shrink-0 rounded-lg border border-l-4 bg-surface p-3 text-foreground shadow-lg", toneClasses[toast.tone])}>
+      <div className="flex items-start gap-3">
+        <span aria-hidden="true" className={cx("mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full", dotClasses[toast.tone])} />
+        <div className="min-w-0 flex-1">
+          <p className="m-0 break-words text-sm font-semibold text-foreground">{toast.title}</p>
+          {toast.description ? <p className="mt-1 break-words text-sm leading-6 text-body">{toast.description}</p> : null}
+        </div>
+        <button type="button" aria-label={`Dismiss ${toast.tone === "error" ? "error" : "notification"}: ${toast.title}`}
+          onClick={() => onDismiss(toast.id)}
+          className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-md text-lg font-semibold text-foreground hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">×</button>
+      </div>
+    </section>)}
+  </div>;
+}
+
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
+  const [viewport, setViewport] = useState<ToastViewport | null>(null);
   const itemsRef = useRef<ToastItem[]>([]);
   const timers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
   const dismiss = useCallback((id: string) => {
@@ -63,23 +103,28 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     const currentTimers = timers.current;
     return () => { currentTimers.forEach(timer => clearTimeout(timer)); currentTimers.clear(); };
   }, []);
+  useEffect(() => {
+    const visual = window.visualViewport;
+    function updateViewport() {
+      const height = Math.max(1, Math.floor(visual?.height ?? window.innerHeight));
+      const bottom = Math.max(0, Math.floor(window.innerHeight - (visual?.offsetTop ?? 0) - height));
+      setViewport(current => current?.height === height && current.bottom === bottom
+        ? current : { height, bottom });
+    }
+    updateViewport();
+    visual?.addEventListener("resize", updateViewport);
+    visual?.addEventListener("scroll", updateViewport);
+    window.addEventListener("resize", updateViewport);
+    return () => {
+      visual?.removeEventListener("resize", updateViewport);
+      visual?.removeEventListener("scroll", updateViewport);
+      window.removeEventListener("resize", updateViewport);
+    };
+  }, []);
   const value = useMemo(() => ({ showToast }), [showToast]);
   return <ToastContext.Provider value={value}>
     {children}
-    <div aria-live="polite" aria-relevant="additions" className="pointer-events-none fixed inset-x-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-50 flex max-w-sm flex-col gap-2 sm:inset-x-auto sm:right-4">
-      {toasts.map(toast => <section key={toast.id} role={toast.tone === "error" ? "alert" : "status"}
-        className={cx("pointer-events-auto min-w-0 rounded-lg border border-l-4 bg-surface p-3 text-foreground shadow-lg", toneClasses[toast.tone])}>
-        <div className="flex items-start gap-3">
-          <span aria-hidden="true" className={cx("mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full", dotClasses[toast.tone])} />
-          <div className="min-w-0 flex-1">
-            <p className="m-0 break-words text-sm font-semibold text-foreground">{toast.title}</p>
-            {toast.description ? <p className="mt-1 break-words text-sm leading-6 text-body">{toast.description}</p> : null}
-          </div>
-          <button type="button" aria-label="Dismiss notification" onClick={() => dismiss(toast.id)}
-            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-lg font-semibold text-foreground hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">×</button>
-        </div>
-      </section>)}
-    </div>
+    <ToastStack toasts={toasts} onDismiss={dismiss} viewport={viewport}/>
   </ToastContext.Provider>;
 }
 export function useToast() {
