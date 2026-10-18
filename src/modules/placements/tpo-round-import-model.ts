@@ -32,7 +32,7 @@ export function parseTpoRoundImport(bytes:Buffer,filename:string){
  const ext=filename.toLowerCase();
  const grid=ext.endsWith(".xlsx")?parseResultXlsx(bytes):
   ext.endsWith(".csv")?parseSelectionCsv(bytes.toString("utf8"),true,1000):
-  (()=>{throw Error("Use a .xlsx or .csv file.");})();
+  (()=>{throw Error("Use a .xlsx or a .csv file.");})();
  const header=grid.shift()??[];
  if(header.length>80||grid.some(row=>row.length>80))
   throw Error("The result file is too wide; keep at most 80 columns.");
@@ -59,12 +59,14 @@ export function parseTpoRoundImport(bytes:Buffer,filename:string){
  if(grid.some(parts=>parts.every(value=>!value.trim())))throw Error("Remove blank data rows from the result file.");
  const rows:ImportRow[]=grid.map((parts,i)=>{
   const value=(col:number)=>col>=0?parts[col]?.trim()??"":"";
-  const rankText=value(rank),rankValue=rankText?Number(rankText):null;
+  const rankText=value(rank);
+  const rankTextValid=/^[1-9][0-9]{0,5}$/.test(rankText)&&Number(rankText)<=100000;
+  const rankValue=rankTextValid?Number(rankText):null;
   const result=outcome(value(status));
   return {line:i+2,identity:value(app)||value(company)||value(email)||value(roll),
    applicationId:value(app),email:value(email),roll:value(roll),companyId:value(company),name:value(name),
-   outcome:result,invalidRank:rankValue!==null&&(result!=="HOLD"||!Number.isSafeInteger(rankValue)||rankValue<1||rankValue>100000),
-   rank:rankValue===null||Number.isInteger(rankValue)&&rankValue>0&&rankValue<=100000?rankValue:null,
+   outcome:result,invalidRank:rankText!==""&&(result!=="HOLD"||!rankTextValid),
+   rank:rankValue,
    message:value(message)||null};
  });
  return rows;

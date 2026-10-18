@@ -32,6 +32,22 @@ describe("chat-19 all /college route entry point source coverage", () => {
     expect(source).toMatch(/export /);
   });
 
+  it("COL-XA-AUDIT-01 reconciles the 85-route cross-audit report with the source manifest", () => {
+    const report = readFileSync("docs/design-system/audits/UX-ROLLOUT-AUDIT-college-chat-19.md","utf8");
+    const section = report.split("## All entry-point routes sampled by functional group")[1]
+      ?.split("## Non-regression and acceptance requirements")[0] ?? "";
+    const declared = [...section.matchAll(/^\| `([^`]+)` \| (\d+) \|$/gm)]
+      .map(match => [match[1],Number(match[2])] as const);
+    const counted = new Map<string,number>();
+    for (const {route} of routes) {
+      const group = route === "/college" ? "dashboard" : route.slice("/college/".length).split("/")[0]!;
+      counted.set(group,(counted.get(group)??0)+1);
+    }
+    expect(new Map(declared)).toEqual(counted);
+    expect([...counted.values()].reduce((sum,n)=>sum+n,0)).toBe(85);
+    expect(declared.every(([,n])=>Number.isSafeInteger(n)&&n>0)).toBe(true);
+  });
+
   it("UX-college-source-coverage-02 verifies links into Projects are always scoped to /college", () => {
     const files = [
       "src/app/(authenticated)/college/projects/page.tsx",
@@ -44,7 +60,9 @@ describe("chat-19 all /college route entry point source coverage", () => {
       expect(source).not.toContain('href="//');
     }
     const projects = readFileSync(files[0], "utf8");
-    expect(projects).toContain('membership.collegeId');
-    expect(projects).toContain('listProjectAdminSnapshots(context, membership.collegeId');
+    expect(projects).toContain('getProjectAdminCollegeId(context)');
+    expect(projects).toContain('if (!collegeId)');
+    expect(projects).toContain('listProjectAdminSnapshots(context, collegeId');
+    expect(projects).toContain('listAssignedProjectTemplates(context, collegeId');
   });
 });

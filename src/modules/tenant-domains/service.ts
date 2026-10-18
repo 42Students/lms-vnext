@@ -159,11 +159,22 @@ export async function createTenantDomain(
     throw new TenantDomainServiceError("HOST_CONFLICT");
   }
 
-  return repository.createDomain({
-    collegeId: college.id,
-    host: input.host,
-    verificationToken: tokenFactory(),
-  });
+  try {
+    return await repository.createDomain({
+      collegeId: college.id,
+      host: input.host,
+      verificationToken: tokenFactory(),
+    });
+  } catch (error) {
+    // Concurrent same-host requests may both pass the read. The registered
+    // host UNIQUE index is the final arbiter: recover an identical college
+    // claim without issuing duplicate DNS tokens; never borrow a foreign
+    // college's domain. Do not translate unrelated database errors.
+    if ((error as { code?: unknown })?.code !== "23505") throw error;
+    const raced = await repository.findByHost(input.host);
+    if (raced?.collegeId === college.id) return raced;
+    throw new TenantDomainServiceError("HOST_CONFLICT");
+  }
 }
 
 export async function verifyTenantDomain(

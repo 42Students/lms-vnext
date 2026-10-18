@@ -1,6 +1,7 @@
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
+import {singleValueMentorExportFilters} from "@/modules/projects/mentor-filter-query";
 import {mentorTaskHistoryQuerySchema} from "@/modules/projects/mentor-task-history-model";
 import {getMentorTaskReviewHistory} from "@/modules/projects/mentor-task-history-service";
 import {mentorReviewedTasksCsv} from "@/modules/projects/mentor-task-review-export-model";
@@ -9,12 +10,11 @@ export const runtime="nodejs";
 export async function GET(request:Request){
   try{
     const url=new URL(request.url);
-    const query=mentorTaskHistoryQuerySchema.parse({
-      decision:url.searchParams.get("decision")??undefined,
-      priority:url.searchParams.get("priority")??undefined,
-      order:url.searchParams.get("order")??undefined,
-      search:url.searchParams.get("search")??undefined,page:1,
-    });
+    const filters=singleValueMentorExportFilters(url.searchParams,
+      ["decision","priority","order","search"]);
+    if(!filters)return NextResponse.json({error:"INVALID_QUERY"},{status:400,
+      headers:{"Cache-Control":"private, no-store"}});
+    const query=mentorTaskHistoryQuerySchema.parse({...filters,page:1});
     const context=await getCurrentRequestContext();
     const first=await getMentorTaskReviewHistory(context,query);
     if(!first.enabled)return NextResponse.json({error:"PROJECT_ACCESS_DENIED"},{status:403});

@@ -25,7 +25,7 @@ describe("COURSES-BREAK-FACULTY-04 hostile spreadsheet input, bounded exports an
  });
  it("FAC-attendance-grades-01 neutralizes formula injection with hidden Unicode prefixes",()=>{
   for(const unsafe of ["=2+2","+SUM(A1)","-42","@NOW()",
-   "\t=1+1","\uFEFF=1+1","\u200B=1+1","\u200E=1+1"]){
+   "\t=1+1","\uFEFF=1+1","\u200B=1+1","\u200E=1+1","\u200C=1+1","\u2060=1+1","\u202E=1+1","\u00AD=1+1"]){
    const safe=neutralizeFacultyCsvCell(unsafe);
    expect(safe.startsWith("'")).toBe(true);
    const csv=facultyReportCsv({kind:"quiz",title:"Safe",sectionName:"A",

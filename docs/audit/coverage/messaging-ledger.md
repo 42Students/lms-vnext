@@ -99,3 +99,86 @@ Updated 2026-10-18; source branch `chatgpt/chat-16-b`. This is an **in-progress 
 - TPO campaign dispatcher, receipts and inbound mail: production PostgreSQL unique constraints, transaction rollback, concurrent provider callbacks and cross-college object access need real DB harness (chat-17 fixture dependencies).
 - Email gateway: upstream signature authentication, dedupe across tenant-scoped message IDs, replay expiration and in-app bell atomicity require provider + DB integration, not source text checks.
 - Full exported-function and route-handler inventory across `src/modules/messaging`, `src/modules/notifications`, `src/modules/inbound-mail`, placement email/notification handlers and `src/app/api` remains OPEN. No >90% branch-coverage assertion.
+
+## Public/auth direct route and page coverage added to this branch
+
+| Route or source | Export | Security/error/UX behaviour under test | Test |
+|---|---|---|---|
+| `src/app/page.tsx` | `HomePage` | Actual React SSR output: OTP entry, email-only college, expired-session alert, unknown/unavailable tenant, platform marketing redirect, active session safe return URL, college branding | `tests/unit/chat16-public-login-page-render-08.test.ts` |
+| `src/app/page.tsx` | `generateMetadata` | Host-resolved college title instead of untrusted search content | `tests/unit/chat16-public-login-page-render-08.test.ts` |
+| `src/app/login/page.tsx` | `default`, `generateMetadata` aliases | Shared root page direct import plus existing alias source-contract check | `tests/unit/chat16-public-login-page-render-08.test.ts`, `tests/unit/chat16-public-auth-role-journeys-02.test.ts` |
+| `src/app/api/auth/login/start/route.ts` | `POST` | Pre-handler guard rejection cannot send OTP, authenticated tenant injected from guard, no client college overrides, safe start audit | `tests/unit/chat16-otp-route-tenant-session-09.test.ts` |
+| `src/app/api/auth/login/verify/route.ts` | `POST` | Expired/wrong OTP error emits no new session; successful sign-in rotates cookie, clears previous admin scope and membership; multi-college login does not auto-select | `tests/unit/chat16-otp-route-tenant-session-09.test.ts` |
+| `src/app/api/auth/login/email/route.ts` | `POST` | Rate-limit rejection cannot resend; email fallback calls only server-scoped tenant attempt | `tests/unit/chat16-otp-route-tenant-session-09.test.ts` |
+
+**Still pending:** Execute those direct route/page tests under Vitest and a real Next.js browser; test actual OTP form keyboard actions, interrupted network, rapid double-POST, browser back/forward state, 2FA, mobile focus, session expiry and cookie replay under PostgreSQL. No test execution or full route coverage is asserted by these authored additions.
+
+## 2026-10-18 Projects-first notification hardening and direct route tests
+
+Source-verified test authoring only. The cloud CI report `docs/orchestrator/unit-failures-latest.md` still lists historical chat-16 gap-register reconciliation failures; the 32 IDs, source file references, queue statuses, target lane, and citations were checked directly against current main and remain consistent. A new execution is required rather than weakening these acceptance checks.
+
+| Area / boundary | Tested export or route | New behavioural assertions | Regression test | Status |
+|---|---|---|---|---|
+| Projects notification audience | `notifyActiveProjectMembers` | Fail closed on explicitly empty role set, do not expand to every project member; active membership and tenant/role SQL; deduplicate and exclude initiating actor | `tests/unit/PROJ-BREAK-chat16-notification-scope-01.test.ts` | Authored, unrun |
+| Projects membership notices | `notifyProjectMemberships` | Deduplicate membership ids; current active college scope; exclusion and zero-membership no-op | Same | Authored, unrun |
+| Projects notice links | `projectNoticeHref` | Encode hostile path/query/fragment content into a single route segment | Same | Authored, unrun |
+| Project in-app notification writer | `deliverInAppNotificationInTransaction` | Reject persisted wrong-college recipient, duplicate recipient-event retry, disabled user, invalid link/event UUID, zero-recipient no-op | `tests/unit/PROJ-BREAK-chat16-notification-writer-14.test.ts` | Authored, unrun; PostgreSQL concurrency open |
+| Inbound Super Admin list | `listInboundMailForAdmin` | Disabled user, wrong role, acting-college denial before storage; malformed filters, 50-row page, NEW global count, missing-table honesty | `tests/unit/chat16-inbound-mail-admin-journeys-10.test.ts` | Authored, unrun |
+| Inbound status CAS | `changeInboundMailStatusForAdmin` | Wrong-role and scope denial, invalid version/type rejection, expected status+version in UPDATE predicate, no false success on 0-row update | Same | Authored, unrun |
+| Inbound mail PATCH | `src/app/api/admin/inbound-mail/status/route.ts:PATCH` | Same-origin before login/body, tenant-bound actor, stale 409, unavailable 503, safe unauthorized response | `tests/unit/chat16-inbound-mail-route-11.test.ts` | Authored, unrun |
+| Inbound global scope regression | `listInboundMailForAdmin` | Selected-tenant global administrator must be denied private platform mail; old contrary expectation repaired | `tests/unit/inbound-mail-admin-service.test.ts` | Authored, unrun |
+| Recruiter mail digest | `sendRecruiterMessageDigest` | Disabled bridge, nonproduction allowlist, OTP template rejection, Reply-To host, HTTPS-only, safe HTML excerpts and last-three messages, single POST and network failure | `tests/unit/chat16-recruiter-digest-delivery-12.test.ts` | Authored, unrun |
+| Recruiter inbound email | `acceptAuthenticatedRecruiterEmailReply` | Disabled feature, signature mismatch, exact-byte HMAC, rogue fields/addresses, quoted-only history, missing PostgreSQL migration and no transaction | `tests/unit/chat16-recruiter-inbound-bridge-boundaries-15.test.ts` | Authored, unrun |
+| Public OTP form | `LoginForm` | Actual React server-rendered controls, a11y tab semantics, phone-only and email-only tenancy, consent | `tests/unit/chat16-auth-form-ssr-accessibility-13.test.ts` | Authored, unrun |
+
+**Unclosed run-required gates:** real PostgreSQL transaction/rollback, simultaneous recipient dedupe across worker instances, exact provider acknowledgements and retry semantics, complete inbox TPO vs recruiter vs other college state transitions, browser keyboard/focus/phone flows and all producer/handler export rows. The Project notification role-filter guard closes one known product defect but must not be mistaken for full project module hardening (chat-14 owns its complete ledger).
+
+## 2026-10-18 endpoint and model-matrix additions
+
+| Module/function | Behaviour now asserted directly | Test | Verification |
+|---|---|---|---|
+| `src/modules/notifications/zeptomail-email.ts:isSecureMailProviderEndpoint` | Deny HTTP, embedded credentials and unparseable provider URL; permit configured HTTPS endpoint | `tests/unit/chat16-otp-provider-resilience-05.test.ts` | Author/test unrun |
+| `src/modules/notifications/zeptomail-email.ts:createZeptoMailEmailProvider` | No outbound HTTP request when provider URL fails scheme/credential guard | Same | Author/test unrun |
+| `src/modules/messaging/providers.ts:createOutboundProvider` | No campaign mail POST to malformed/plaintext/credentialed endpoint | `tests/unit/chat16-provider-channel-boundaries-07.test.ts` | Author/test unrun |
+| `src/modules/messaging/public-join-code-delivery.ts:deliverPublicRecruiterJoinCode` | No recruiter code POST to HTTP loopback URL | Same | Author/test unrun |
+| `src/modules/messaging/campaign-filter-model.ts:campaignFilterSchema, campaignFilterHref` | Search normalization, URL encoding, pagination/state/rogue-field bounds | `tests/unit/chat16-messaging-model-matrix-16.test.ts` | Author/test unrun |
+| `src/modules/messaging/campaign-source-model.ts:campaignSourceSchema` | OTHER detail required; trim and size limits; unknown field denied | Same | Author/test unrun |
+| `src/modules/messaging/engage-audience-model.ts:engageAudienceQuerySchema, summarizeEngageAudience` | Segment counts, unsubscribe, bounce, missing email and NOT_NOW suppression | Same | Author/test unrun |
+| `src/modules/messaging/tpo-campaign-history-copy.ts:tpoCampaignHistoryTime, tpoCampaignHistoryStatus` | 18:40 UTC resolves to next-day 00:10 IST, known/unknown state copy | Same | Author/test unrun |
+| `src/modules/messaging/unsubscribe-model.ts:issueUnsubscribeToken, verifyUnsubscribeToken, unsubscribeConfirmation` | Signed expiring HMAC, expiry exact boundary, tamper denial and GET-side-effect prohibition | Same | Author/test unrun |
+| `src/modules/messaging/template-boundary-model.ts:isCampaignTemplateKey` | OTP/login/magic-link key fragments rejected, campaign keys allowed | Same | Author/test unrun |
+
+**Not yet exercised with a full real environment:** multi-process exact-once, provider credential/DNS allowlist validation, mail SSRF from compromised deployment configuration, and unique receipt replay after a network timeout. Unit assertions alone do not prove production exactly-once delivery.
+
+## TPO aggregate receipt permissions and export bounds (chat-16)
+
+| Source function | Permissions and side effects asserted | Behavioural test | Verification |
+|---|---|---|---|
+| `listTpoMessagingHistory` | Reject learner, disabled TPO and absent membership before DB; scoped to college+organization and persisted TPO permission; page limit 25, provider acceptance truthfully labelled | `tests/unit/chat16-messaging-receipts-tenant-17.test.ts` | Authored, unrun |
+| `exportTpoMessagingHistory` | Same role/scope check; up to 2,000 aggregate rows, never emails/recipient HMAC; explicit error if row 2,001 exists | Same | Authored, unrun |
+| `getTpoMessagingBatch` | UUID validation, wrong-role denial, scoped college+organization detail lookup, no receipt drillthrough for unowned batch; return only aggregate statuses | Same | Authored, unrun |
+
+Remaining integration: actual PostgreSQL query-plan/index verification for 2,000 receipts, snapshot consistency between aggregate batch and receipt rows, race on receipt updates, tamper/cross-college IDOR at HTTP routes, strict same-origin on exporting writes (GET reads must remain side-effect-free).
+
+## 2026-10-18 account-journey and template-purpose gate follow-up
+
+| Export / route | New direct regression | Purpose and failure modes covered | Execution |
+|---|---|---|---|
+| `src/modules/messaging/engage-audience-model.ts:summarizeEngageAudience` | `tests/unit/chat16-messaging-model-matrix-16.test.ts` | Source-level correction: whitespace and multiply-suppressed leads now use the exact send-policy disposition precedence; preview counts match suppression facts | Authored, unrun |
+| `src/app/api/placements/recruiter/conversations/open/route.ts:POST` | `tests/unit/chat16-recruiter-conversation-route-18.test.ts` | Origin before identity; malformed body; expired session friendly response; missing recruiter; safe same-host thread redirect | Authored, unrun |
+| `src/app/api/placements/recruiter/conversations/acknowledge/route.ts:POST` | Same | Origin before identity; expired session friendly response; missing recruiter; forged external return URL cannot redirect externally | Authored, unrun |
+| `src/app/api/placements/recruiter/bell/route.ts:GET` | `tests/unit/chat16-hr-bell-http-19.test.ts` | Private no-store response; service outage maps to safe error; GET never acknowledges anything | Authored, unrun |
+| `src/app/api/placements/recruiter/bell/route.ts:POST` | Same | Same-origin CSRF guard; caller context; idempotent zero-updated acknowledgment; revoked session denied | Authored, unrun |
+| `src/modules/placements/recruiter-message-email-provider.ts:sendRecruiterMessageDigest` | `tests/unit/chat16-recruiter-digest-delivery-12.test.ts` | Reject authentication, OTP, password-reset, MFA and magic-link template keys even when not equal to currently provisioned OTP key | Authored, unrun |
+| `src/modules/placements/recruiter-message-email-dispatch-service.ts:dispatchRecruiterUnreadMessageDigests` | Same | Invalid digest-template purpose disables worker before reading database messages or contacting mail provider | Authored, unrun |
+
+The direct HTTP tests use mocked persisted services; PostgreSQL tenant-grant checks, actual mail-provider acceptance, web session expiry and browser redirect behavior must still pass independently. Every exposed failure should remain a safe status/code, never raw private message contents.
+
+### Individual recruiter thread POST routes: additional direct tests
+
+| Route/handler | Adversarial assertions | Direct test | Status |
+|---|---|---|---|
+| `src/app/api/placements/recruiter/conversations/[threadId]/reply/route.ts:POST` | Same-origin before actor lookup, bounded nonempty reply schema, expired-session safe 401 and no write; central safe error mapping for unexpected failures | `tests/unit/chat16-recruiter-conversation-route-18.test.ts` | Authored, unrun |
+| `src/app/api/placements/recruiter/conversations/[threadId]/acknowledge/route.ts:POST` | Same-origin, UUID validation, safe 401 on expired actor, service call with authenticated actor only, redirect to first-party thread | Same | Authored, unrun |
+
+These HTTP cases complement the existing `hrConversationQuerySchema`/tenant scope tests, but real-DB multi-college grant expiry, concurrent read receipts and message-send notification outbox recovery remain pending.

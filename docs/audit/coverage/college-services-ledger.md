@@ -93,3 +93,45 @@
 | Five legacy `/college` redirect routes and `components/college` responsive lists | `chat4-college-ux-redirect-coverage.test.ts`: canonical destinations, encoded URL parameters, downstream authorization, labelled scroll cue | Actual browser keyboard/focus/screen-reader tests pending |
 
 The College, academics, groups and people exported-function inventory remains **incomplete**. This section records newly covered symbols without claiming that the master-queue's exhaustive coverage requirement is satisfied. A dedicated PostgreSQL fixture run is required before release.
+
+
+## Pass B / IIT Dharwad additional verified source invariants — 2026-10-18
+
+| Function or route | Adversarial/behavioural test | Open integration work |
+|---|---|---|
+| `updateCollegeProjectSummary` | `PROJ-BREAK-chat4-college-persisted-actor.test.ts`: role/tenant policy and SQL order; locked persisted-actor check before stale/no-op retry, write, audit and notifications | Transactional PostgreSQL revoked-role race not yet executed |
+| `replaceCollegeProjectLearners` | same: stale role check before no-op and member writes, college-bound learner set, revoked account | PostgreSQL concurrent roster replace and rollback |
+| `createClassTeamWorkspaces` | same: assert persisted permission inside SERIALIZABLE transaction before any group insert; channel attribution rebuilt from locked actor | Actual serializable retry and 2000-learner fixture |
+| `exportVisibleCollegePeople` | `chat4-college-academics-people-weak-area.test.ts`: locked reauthorization between directory read and private phone/profile enrichment; college-ID and selected-membership intersections | Connection-level revocation and snapshot consistency |
+| `requireActiveAcademicMembership`, `requireAcademicRole` | same: ACTIVE/ENDED/SUSPENDED, exact FACULTY/LEARNER authorization and typed denial codes | End-to-end membership switches |
+| `renderBatchCsv`, `renderSemesterCsv`, `academicExportHref`, `ACADEMIC_EXPORT_CAP` | same: recorded counts, CSV formula neutralization, blank credits/year, 1000-row limit, encoded search | 1000+ row paginated DB export |
+| `exportCollegeAcademicDirectory` | same: strict semester/batch filter parser before page reads and matching renderer | Full PostgreSQL export result equal to screen |
+| `parseCollegeRoleDirectorySearchParams`, `assertCompatibleCollegeRoleDirectoryFilters`, `collegeRoleDirectoryFilterMessage` | same: duplicated/unknown/bad date filters, wrong role, error copy cannot expose raw SQL detail | Browser filters and permission error route |
+| `roleDirectoryDateWindowValid`, `roleDirectoryIstDayStart`, `roleDirectoryNextIstDayStart` | same: inclusive IST start and exclusive next-day midnight | DST-independent date edge integration |
+| `describeCollegeDirectoryContext`, `selectedDirectoryValueNotListed` | same: deduped sorted section names, no fabricated course teaching counts, bookmarked missing option | Rendered directory UI |
+
+These rows establish tests for listed exports only. **Not exhaustive**: 319 academics + 323 people + 94 colleges + 48 groups exports need individually accounted for, with PostgreSQL and page journeys before closing the lane.
+
+
+## College groups / persisted-actor test (chat-4)
+
+| Export | Test and outcomes |
+|---|---|
+| `assertPersistedGroupActor` (`src/modules/groups/actor-access.ts`) | `tests/unit/chat4-college-group-persisted-authority.test.ts`: real function executed against deterministic transactional query adapter; active College Admin lock sequence, revoked/disabled actor, wrong college, forged user, missing member, missing role, SELF learner role and membership matching, Super Admin persisted role removal. **Not yet** tested against PostgreSQL lock races. |
+
+
+## College Admin sensitive mutations + profile privacy, additional Pass B slice
+
+| Export | Test and verified cases | PostgreSQL gap |
+|---|---|---|
+| `placeImportedLearnerInSection` — `src/modules/people/college-student-import-placement.ts` | `chat4-college-import-placement-authorization.test.ts`: serialized same-college class, learner's persisted ACTIVE membership and role, active user, origin context revoked within write tx, capacity and already-placed checks | Foreign enrollment and concurrent user-disable integration required |
+| `scheduleReassignInput` — `college-faculty-schedule-reassignment-service.ts` | `chat4-college-faculty-schedule-hardening.test.ts`: confirmation literal true, UUID, strict unknown-key rejection | None for pure schema |
+| `getFacultyScheduleReassignOptions` | same: rejects foreign source membership and counts only same-college section events; excludes disabled replacement users | PostgreSQL wrong tenant injected schedule row |
+| `reassignFacultyUpcomingSchedules` | same: actor persisted while row locks held, source and replacement FACULTY, future sessions belonging to current college only, collision skipped, max 200, duplicate/no-write retries produce no duplicate audit, disabled replacement denied | Parallel reassignment, session collision and revocation race |
+| `getCollegePersonProfileOverview` | `chat4-college-profile-projection-revocation.test.ts`: exact FACULTY/LEARNER kind, tenant-filtered private profile document read, persisted actor SHARE locks held, projection lists only sanctioned fields, no raw identity or file tokens | Revocation between preflight and read in PostgreSQL |
+
+**Suite additions:** `tests/integration/chat4-college-project-actor-revocation.test.ts` uses disposable DB03 fixtures to disable an authorized College Admin before a Project summary PATCH and remove their persisted role before learner roster mutations. Both assert no committed write. Green CI result is pending; the source contracts in the unit tests do not substitute for this DB acceptance.
+
+
+| `reassignFacultyUpcomingSchedules` concurrency | `COL-faculty-reassign-RACE-01` PostgreSQL integration adds two different source lecturers with the same future interval and simultaneously reassigns both to a single replacement. Exactly one wins, the other is skipped; retry does not change the outcome. Source guard verifies `pg_advisory_xact_lock(hashtext(replacementMembershipId))` before slot acquisition. | Requires disposable PostgreSQL CI |
+| `placeImportedLearnerInSection` database | `tests/integration/chat4-college-student-placement-tenant.test.ts`: foreign college enrollment with forged same cohort cannot be placed, authorized learner inserts once, duplicate is denied, removed College Admin role denies stale session. | Requires disposable PostgreSQL CI |

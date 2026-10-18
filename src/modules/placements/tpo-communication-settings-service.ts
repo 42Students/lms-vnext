@@ -1,22 +1,16 @@
 import "server-only";
 import {eq,sql} from "drizzle-orm";
-import {z} from "zod";
+import {
+ tpoCommunicationChangeSchema,tpoCommunicationChanges,
+ tpoCommunicationUpdateAlreadyApplied,
+} from "./tpo-communication-change-model";
 import {getDb} from "@/db/client";
 import {activityEvents,colleges,placementTpoCollegeSettings} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 import {placementTableExists} from "./staged-tables";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 
-const changeSchema=z.discriminatedUnion("section",[
- z.object({section:z.literal("SMS_CAP"),smsMonthlyCap:z.number().int().min(0).max(100000),expectedVersion:z.iso.datetime({offset:true}).nullable()}).strict(),
- z.object({section:z.literal("SIGNATURE"),emailSignature:z.string().trim().max(300),expectedVersion:z.iso.datetime({offset:true}).nullable()}).strict(),
- z.object({section:z.literal("OPTIONAL_EMAILS"),
-  notifyDriveOpenEmail:z.boolean(),notifyResultApplied:z.boolean(),
-  notifyNudges:z.boolean(),notifyPrepAssigned:z.boolean(),
-  expectedVersion:z.iso.datetime({offset:true}).nullable()}).strict(),
- z.object({section:z.literal("PREP_THRESHOLD"),prepThresholdPct:z.number().int().min(0).max(100),expectedVersion:z.iso.datetime({offset:true}).nullable()}).strict(),
- z.object({section:z.literal("RECRUITER_DURATION"),recruiterAccessMonths:z.union([z.literal(3),z.literal(6),z.literal(12),z.literal(24)]),expectedVersion:z.iso.datetime({offset:true}).nullable()}).strict(),
-]);
 export class TpoCommunicationSettingsError extends Error {
  constructor(public readonly code:"TPO_SETTINGS_PENDING"|"TPO_SETTINGS_STALE"|"TPO_SETTINGS_NOT_FOUND"){super(code);}
 }
@@ -41,7 +35,7 @@ export async function getTpoCommunicationSettings(context:RequestContext){
 }
 
 export async function updateTpoCommunicationSettings(context:RequestContext,raw:unknown){
- const input=changeSchema.parse(raw);
+ const input=tpoCommunicationChangeSchema.parse(raw);
  const collegeId=await requireTpoBatchActor(context);
  if(!await placementTableExists("placement_tpo_college_settings"))
   throw new TpoCommunicationSettingsError("TPO_SETTINGS_PENDING");
@@ -49,18 +43,21 @@ export async function updateTpoCommunicationSettings(context:RequestContext,raw:
   const [college]=await tx.select({organizationId:colleges.organizationId})
    .from(colleges).where(eq(colleges.id,collegeId)).for("update").limit(1);
   if(!college)throw new TpoCommunicationSettingsError("TPO_SETTINGS_NOT_FOUND");
+  // The request may have been authenticated before a concurrent role or
+  // session revocation. Rebuild and lock the persisted actor in this write.
+  await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+   collegeId,organizationId:college.organizationId,
+  });
   const [current]=await tx.select().from(placementTpoCollegeSettings)
    .where(eq(placementTpoCollegeSettings.collegeId,collegeId)).limit(1);
+  const changes=tpoCommunicationChanges(input);
+  // The college row is locked above: a repeated successful request is a
+  // harmless no-op with the same version and without another audit event.
+  if(current&&tpoCommunicationUpdateAlreadyApplied(current,changes))
+   return {saved:true,version:current.updatedAt.toISOString()};
   if((current?.updatedAt.toISOString()??null)!==input.expectedVersion)
    throw new TpoCommunicationSettingsError("TPO_SETTINGS_STALE");
   if(!current)await tx.insert(placementTpoCollegeSettings).values({collegeId});
-  const changes=input.section==="SMS_CAP"?{smsMonthlyCap:input.smsMonthlyCap}:
-   input.section==="SIGNATURE"?{emailSignature:input.emailSignature}:
-   input.section==="PREP_THRESHOLD"?{prepThresholdPct:input.prepThresholdPct}:
-   input.section==="OPTIONAL_EMAILS"?{
-    notifyDriveOpenEmail:input.notifyDriveOpenEmail,notifyResultApplied:input.notifyResultApplied,
-    notifyNudges:input.notifyNudges,notifyPrepAssigned:input.notifyPrepAssigned}:
-   {recruiterAccessMonths:input.recruiterAccessMonths};
   const [updated]=await tx.update(placementTpoCollegeSettings).set({...changes,updatedAt:sql`greatest(clock_timestamp(),date_trunc('milliseconds',${placementTpoCollegeSettings.updatedAt}) + interval '1 millisecond')`})
    .where(eq(placementTpoCollegeSettings.collegeId,collegeId))
    .returning({updatedAt:placementTpoCollegeSettings.updatedAt});

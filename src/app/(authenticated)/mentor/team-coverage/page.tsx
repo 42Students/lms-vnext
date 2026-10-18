@@ -27,6 +27,7 @@ export default async function MentorTeamCoveragePage({
   searchParams,
 }: { searchParams: Promise<Params> }) {
   const raw = await searchParams;
+  const duplicated=Object.values(raw).some(value=>Array.isArray(value)&&value.length!==1);
   const parsed = mentorTeamCoverageQuerySchema.safeParse({
     filter:first(raw.filter) ?? undefined,
     status:first(raw.status) ?? undefined,
@@ -35,7 +36,7 @@ export default async function MentorTeamCoveragePage({
     search:first(raw.search) ?? undefined,
     page:first(raw.page) ?? undefined,
   });
-  if (!parsed.success) return <section role="alert" className="space-y-3">
+  if (duplicated || !parsed.success) return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid team coverage filters</h1>
     <Link href="/mentor/team-coverage" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
   </section>;

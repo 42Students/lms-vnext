@@ -32,6 +32,7 @@ import {
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
+import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import { collegeIdSchema } from "@/modules/academics/validation";
 import { requireProjectManageAccess, requireProjectReadAccess } from "./access";
 import { loadProjectCollegeScope } from "./scope";
@@ -167,6 +168,12 @@ export async function createProjectInstance(
 
   try {
     return await db.transaction(async (tx) => {
+      // The request context is a snapshot; role or user suspension could
+      // happen while the published template and members are loaded. Lock the
+      // actual actor before any project instance or activity is persisted.
+      await assertPersistedPlatformPermission(tx,context,"projects.manage",{
+        collegeId:college.id,organizationId:college.organizationId,
+      });
       if (input.primaryMentorMembershipId) {
         const [mentor] = await tx
           .select({

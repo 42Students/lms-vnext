@@ -11,7 +11,9 @@ describe("Mentor final review constraints",()=>{
   expect(mentorFinalDeliveryDecisionSchema.safeParse({...payload,collegeId:"forge"}).success).toBe(false);
  });
  it("does not re-review resolved or archived deliveries",()=>{
-  expect(mentorFinalDeliveryCanReview("SUBMITTED","COMPLETED")).toBe(true);
+  expect(mentorFinalDeliveryCanReview("SUBMITTED","ACTIVE")).toBe(true);
+  expect(mentorFinalDeliveryCanReview("SUBMITTED","COMPLETED")).toBe(false);
+  expect(mentorFinalDeliveryCanReview("SUBMITTED","PLANNED")).toBe(false);
   expect(mentorFinalDeliveryCanReview("APPROVED","COMPLETED")).toBe(false);
   expect(mentorFinalDeliveryCanReview("SUBMITTED","ARCHIVED")).toBe(false);
  });

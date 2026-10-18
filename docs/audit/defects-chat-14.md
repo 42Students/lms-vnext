@@ -66,3 +66,50 @@ Release status remains **BLOCKED**: hundreds of ledger GAP symbols/pages/handler
 | PROJ-DEF-014-07 / PROJ-BREAK-MENTOR-27 | S2 export resiliency | `mentorBoardReview` hands the current routes 500 tasks / 100 Sprints, but the exported `mentorBoardExportCsv` and `mentorSprintSummaryCsv` formatters previously trusted an unbounded caller array and inconsistent `omitted` values. Any future route/service bypass could generate oversized reports and erase the truncation indicator. | `12c97f77`: defensive 500 / 100 cap and internally computed excess, finite nonnegative omitted counts; caller-facing project headings unchanged. | `38b12afc`: 503-task/103-Sprint inputs, formula injection, stable status and sprint totals, hostile query, scoped export URLs. | Authored, **NOT run**; PostgreSQL and report UI comparison pending |
 
 The coverage ledger maps these six previously unmapped board-review exports to authored behavioural assertions but still contains many GAP entries. The independent review/CI/blocking release gates above remain unchanged.
+
+
+## Follow-up: Mentor services, calendar and scoped exports — 18 October 2026
+
+| Defect / gap | Severity | Evidence and correction | Change / regression | Remaining gate |
+|---|---|---|---|---|
+| PR-S2-11 | S1 regression contract | Earlier cloud failure still demanded a negated `MENTOR_ONLY` filter although learner list now correctly uses a **positive** ACTIVE + TEAM linked-resource allowlist. Kept the stricter production check and replaced the outdated test with list + direct guessed-UUID grant contract coverage, including scan cleanliness and expiring read URLs. | `1242d6a2`, `tests/unit/projects-phase2-file-visibility-guard.test.ts` | HTTP wrong-role and PostgreSQL orphan/archived resource tests unrun |
+| PROJ-BREAK-MENTOR-32 | S1 fail-open enum handling | Meeting reschedule predicate allowed unknown string project statuses because it only excluded ARCHIVED and COMPLETED. Restrict to PLANNED/ACTIVE with scheduled/rescheduled meeting. | `72b29cd1`, `PROJ-BREAK-chat14-mentor-reports-attention.test.ts` | Cloud CI, actual meeting routes, complete project transition tests |
+| PROJ-BREAK-MENTOR-33 | S2 direct helper pagination | `mentorTaskReviewSummary` accepted zero/negative/nonfinite pages or sizes from direct callers; clamp to valid 1–50 sizes, nonnegative totals and finite bounded page. | `286a0415`, `PROJ-BREAK-chat14-mentor-reports-attention.test.ts` | Cloud CI and DB limit-offset |
+| PROJ-BREAK-MENTOR-34 | S2 export hardening | Mentor report CSV formatter trusted an unbounded caller array and threw on an invalid Date, despite 100-row cap in report projection. Formatter now independently caps at 100, reports all excess, renders unknown times safely and neutralizes formulas. | `085f1524`, `PROJ-BREAK-chat14-mentor-reports-attention.test.ts` | Cloud CI, export and page exact-count comparison |
+| PROJ-BREAK-MENTOR-40 | S2 unsafe link | `safeMentorMeetingJoinUrl` accepted credential-bearing http(s) URLs; rejects embedded usernames and passwords before exposing the link. | `ccded102`, `PROJ-BREAK-chat14-mentor-calendar-resources.test.ts` | Browser opening and same-origin/destination tests |
+| PROJ-BREAK-MENTOR-35..39,41..45 | Behavioural coverage, not separate source defects | Tests cover roster-scoped attention options, report filters/counts, escaped literal query text, IST wall-time conversion, midnight calendar filters, pending-vs-missed semantics, 500-meeting export cap, 200-resource export cap, data-only CSV and rejected hostile tenant filters. | `289b64ee`, `9645b374`; mapped to `docs/audit/coverage/projects-ledger.md` | Every test authored/unrun; PostgreSQL, real service permission matrix and browser tests pending |
+
+**Certification:** The rolling cloud report may predate these commits. No check status was delivered for these commits through the connected repository session, and tests must not be marked green. The canonical ledger retains remaining behavioural service/route/page GAPs; role/session/tenancy races, signed URL fault injection, PostgreSQL migration/rollback, independent reviewer and accessibility runs remain required.
+
+
+## Lead export-handler and persisted-review hardening
+
+| ID | Severity | Evidence and correction | Commit / regression | Outstanding |
+|---|---|---|---|---|
+| PROJ-BREAK-MENTOR-55..58 | S2 input bypass / export integrity | Four Mentor GET exports (board, Sprint summary, reports, final-delivery review) used `URLSearchParams.get`; repeating `status` silently selected the first value and unrecognized/forged `projectId`, `collegeId`, `page` were ignored. The routes now use `singleValueMentorExportFilters` with explicit individual allowlists and a cache-disabled 400 on duplicates or unknown fields; immutable project scope always comes from the path + service authorization. | `93aa9df7`, `3be747e8`, `b5572392`, `a8be4258`; mocked HTTP runtime tests `e96b1154`, heading assertion `d30e2af2`. | Real auth/cross-tenant GET, malformed value mapping and browser CSV tests not run |
+| PROJ-BREAK-MENTOR-59 | S2 grade/report integrity | Review overview count treated any non-null decision as a persisted review, even unrecognized values; restrict to APPROVED/CHANGES_REQUESTED. Direct delivery audit CSV accepted unbounded arrays and could throw on malformed Date; 200-record cap, explicit truncated count, and safe date text now enforced. | `6b66d422`, `tests/unit/PROJ-BREAK-chat14-mentor-delivery-meetings.test.ts`. | PostgreSQL verification and screen/export comparison unrun |
+| PROJ-BREAK-MENTOR-60..63 | S2 resilience / hostile query | Direct team-meeting pagination now clamps invalid pages; runtime tests exercise persisted review labeling, URL scope preservation, percent/underscore/backslash SQL pattern escaping and duplicate/unrecognized export filters. | `1b05fd6f`, test `3b3d3655`. | Real DB/HTTP and accessibility unrun |
+
+Cloud tests/typecheck and independent review remain required. These are authored fixes and assertions, not certification.
+
+
+## Mentor page runtime tests and legacy transition correction
+
+| Gap | Severity | Evidence / result | Fix and regression | Verification |
+|---|---|---|---|---|
+| PROJ-BREAK-MENTOR-64..75 | S2 page trust and UX | Mentor reports and Team coverage pages previously collapsed repeated query values by taking the first (including conflicting same-value duplicates). Both now reject multi-value filters with an actionable invalid-filter view before any data fetch. Render tests exercise malformed/duplicated query, unauthorized role, disabled module, empty roster, populated scoped data, safe navigation, partial export and service denial. | `146f49a9`, `a1b982db`, `c1af67bb`, `018b6d4b` | Mocked server-render tests authored/unrun; true HTTP session expiry, mobile keyboard and browser tests pending |
+| PROJ-BREAK-MENTOR-76..82 | Coverage | Added runtime state matrix for recognized task estimate units, permitted SUBMITTED/ACTIVE review, version rendering, closeout readiness (including archived and negative counts), review-token/confirmation, and archive-last sorting with unknown progress. | `05e09da6` | Behaviour authored/unrun; actual PostgreSQL services and E2E still open |
+| PROJ-BREAK-state-04 | S1 stale regression test | `mentor-final-delivery-decision-model.test.ts` still expected a Mentor to review a SUBMITTED final delivery on a COMPLETED project; current hardening policy correctly forbids this. Retained the ACTIVE success case and added explicit COMPLETED/PLANNED denials rather than reverting the fix. | `ee5ba6e8` | New cloud Vitest feedback pending |
+
+The canonical ledger additionally links existing inspected runtime assertions for 12 previously incorrectly unmapped portfolio, activity, export and work-filter symbols. Mapping a test is **not** proof of 90% branch coverage or a passing CI build.
+
+
+## Export GET and Mentor JSON mutation follow-up (2026-10-18)
+
+| ID | Severity | Reproduced source gap and correction | Fix and test | Verification |
+|---|---|---|---|---|
+| PROJ-BREAK-MENTOR-99..101 | S2 request ambiguity | Remaining sprint-progress and task-review-history CSV routes silently used the first repeated key from `URLSearchParams.get` and ignored unknown scope parameters; now reject duplicate/unrecognized controls with a no-store 400 and parse only explicit supported filters. | `44299cc8`, `50efb0ec`, `tests/unit/PROJ-BREAK-chat14-mentor-more-export-routes.test.ts` | Mocked route test authored/unrun, actual session/tenant/PG snapshot tests pending |
+| PROJ-BREAK-MENTOR-103..107 | S1 unbounded input and error UX | Mentor Project Overview PATCH and Final Delivery Lock POST called unbounded `request.json()` unlike other mentor mutation routes. Both now use strict UTF-8 `readMentorProjectCommandBody` (128 KiB cap, JSON content type, explicit 400/413/415 friendly errors) after same-origin guard. | `f6ba33e5`, `fdddf553`, `tests/unit/PROJ-BREAK-chat14-mentor-command-routes.test.ts` | Authored origin-first/malformed/over-limit/unsupported/valid-once tests, unrun; DB, server status/error mappings and revoked-session E2E pending |
+| PROJ-BREAK-MENTOR-83..98 | Coverage expansion | Rendered role-denied/disabled/invalid/partial Mentor Reviews/Task Reviews and service authorization matrices for assigned vs foreign project, role revocation and no read when module disabled. | `e2431ba5`, `5fd952d6`; mapped canonical ledger | Runtime assertions authored but not executed; underlying PostgreSQL permissions, exact tenancy race and browser keyboard remain open |
+
+The lead inspected existing PostgreSQL integration sources `mentor-project-closeout.test.ts`, `projects-p7b-meetings.test.ts`, `mentor-project-activity-export.test.ts` and mapped their four service exports to the ledger. These tests require a disposable `TEST_DATABASE_URL`; mapping them does not imply execution, transaction concurrency proof or IIT Dharwad release readiness.

@@ -28,7 +28,11 @@ export function Tabs({ items, value, onValueChange, ariaLabel, className, render
   const id = useId();
   const buttons = useRef<Array<HTMLButtonElement | null>>([]);
   const interactive = renderPanel && typeof onValueChange === "function";
-  const selected = items.find(item => item.value === value && !item.disabled);
+  // A bookmarked tab can disappear or become disabled when permissions
+  // change. Present the first still-enabled panel with ONE valid tab stop.
+  const preferredIndex = items.findIndex(item => item.value === value && !item.disabled);
+  const activeIndex = preferredIndex >= 0 ? preferredIndex : items.findIndex(item => !item.disabled);
+  const selected = activeIndex >= 0 ? items[activeIndex] : undefined;
   function keyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     if (!interactive) return;
     let target = -1;
@@ -50,14 +54,14 @@ export function Tabs({ items, value, onValueChange, ariaLabel, className, render
           <button key={item.value} ref={node => { buttons.current[index] = node; }}
             id={`${id}-tab-${index}`} type="button" role="tab"
             aria-controls={renderPanel ? `${id}-panel` : undefined}
-            aria-selected={item.value === value}
+            aria-selected={index === activeIndex}
             disabled={item.disabled || !interactive}
             aria-disabled={item.disabled || !interactive || undefined}
-            tabIndex={interactive && item.value === value ? 0 : -1}
+            tabIndex={interactive && index === activeIndex ? 0 : -1}
             onKeyDown={event => keyDown(event, index)}
             onClick={() => { if (interactive) onValueChange?.(item.value); }}
             className={cx("inline-flex min-h-11 shrink-0 items-center justify-center whitespace-nowrap border-b-2 px-4 transition-colors duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] disabled:opacity-50",
-              item.value === value ? "border-[var(--lms-teal-deep)] text-foreground" : "border-transparent text-body hover:bg-primary-subtle")}>
+              index === activeIndex ? "border-[var(--lms-teal-deep)] text-foreground" : "border-transparent text-body hover:bg-primary-subtle")}>
             {item.label}
           </button>
         ))}
@@ -67,7 +71,7 @@ export function Tabs({ items, value, onValueChange, ariaLabel, className, render
               item.value === value ? "border-[var(--lms-teal-deep)] text-foreground" : "border-transparent text-body hover:bg-primary-subtle")}>
               {item.label}</Link>)}
       </nav></ScrollCue>}
-      {renderPanel ? <section id={`${id}-panel`} role="tabpanel" tabIndex={0} aria-labelledby={`${id}-tab-${items.findIndex(item => item.value === value)}`} className="min-w-0 pt-4">{selected?.content}</section> : null}
+      {renderPanel ? <section id={`${id}-panel`} role="tabpanel" tabIndex={0} aria-labelledby={activeIndex >= 0 ? `${id}-tab-${activeIndex}` : undefined} className="min-w-0 pt-4">{selected?.content}</section> : null}
     </div>
   );
 }

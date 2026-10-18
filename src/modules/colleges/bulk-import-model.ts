@@ -4,16 +4,18 @@ export const collegeImportInputSchema=z.strictObject({organizationId:z.uuid(),cs
 export type CollegeImportRow={line:number;name:string;code:string;city:string|null;state:string|null;country:string|null};
 export function parseCollegeImportCsv(raw:string):CollegeImportRow[]{
  const records:string[][]=[], source=raw.replace(/^\uFEFF/,"");
- let fields:string[]=[],value="",inside=false;
+ let fields:string[]=[],value="",inside=false,afterQuote=false;
  for(let i=0;i<source.length;i++){
   const char=source[i];
   if(inside){
    if(char==='"'&&source[i+1]==='"'){value+='"';i++;}
-   else if(char==='"')inside=false;
+   else if(char==='"'){inside=false;afterQuote=true;}
    else value+=char;
+  }else if(afterQuote&&char!==","&&char!=="\n"&&char!=="\r"){
+   throw Error("Malformed CSV quote");
   }else if(char==='"'&&value.length===0){inside=true;}
   else if(char===","||char==="\n"||char==="\r"){
-   fields.push(value.trim());value="";
+   fields.push(value.trim());value="";afterQuote=false;
    if(char!==","){
     if(char==="\r"&&source[i+1]==="\n")i++;
     if(fields.some(Boolean))records.push(fields);

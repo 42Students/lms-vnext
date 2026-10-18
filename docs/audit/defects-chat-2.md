@@ -19,6 +19,11 @@ Scope: lane chat-2, branch `chatgpt/chat-2-b`. Severity reflects exposure if the
 | CH2-012 | Medium | TPO-drive-workspace-44 | Slot creation/clearing and unassigned room changes/cancellations were persistent mutations without their own audit events. | `f14d201` | Source regression only; DB service integration still required |
 | CH2-013 | High | TPO-drive-workspace-44 | Room collision comparisons were inconsistent across create, room-assignment and roll-range assignment. Whitespace/case/compatibility Unicode could split a logical room. | `d1ae6c6`, `9cdf249` | `tests/unit/chat2-tpo-interview-plan-break-01.test.ts` and slot DB constraints |
 
+| CH2-014 | High | TPO-campaigns-public-16 | GET unsubscribe token preview used the old HMAC alias while POST/dispatch used canonical resolver, so a valid canonical-key campaign unsubscribe link was shown as invalid before confirmation. | `a7e17a9` | `tests/unit/chat2-unsubscribe-graceful.test.ts` (+ preview source contract pending) |
+| CH2-015 | Medium | TPO-drive-workspace-44 | Interview readiness model included CANCELLED interviews and accepted NaN/noninteger windows or invalid durations, risking invented upcoming/active sessions. | `285abe3` | `tests/unit/chat2-tpo-round-model-break-02.test.ts` |
+| CH2-016 | Medium | TPO-drive-workspace-40 | Round facts status displayed inherited JS prototype members for unexpected persisted status strings. | `fd4d3f9` | `tests/unit/chat2-tpo-round-model-break-02.test.ts` |
+| CH2-017 | High | TPO-drive-workspace-40/41 | Drive Day projections counted duplicated roster application IDs or overwrote conflicting details; bulk pasted tokens could allocate unboundedly when bypassing UI limits. | `55e45f4`, `2cab016` | `tests/unit/chat2-tpo-round-model-break-02.test.ts` |
+
 ## Test-contract repairs — not feature removals
 
 Shared `Dialog`, `Input`, and `DataTable` components replaced hand-written dialog focus handlers, raw `<input>` tags, and duplicate mobile/desktop roster markup. Several older source-assertion tests demanded removed implementation details even though the new shared components implement the same controls. Their assertions now verify shared native modal focus/Escape restoration, accessible titles, responsive company row data, report metrics and read-only email behavior. No test case was deleted.
@@ -30,3 +35,13 @@ Files updated: `chat2-company-memory-gap-parity.test.ts`, `chat2-company-trust-a
 - Cloud typecheck/unit suite, browser journeys, PostgreSQL fixtures and migration tests have **not run** in this connector-only workspace. The above are repository edits, not release certification.
 - Exported-function ledgers now exist under `docs/audit/coverage/placements-interviews-rounds-slots-chat2-ledger.md` and `docs/audit/coverage/tpo-campaigns-public-links-settings-people-chat2-ledger.md`, but their many explicit GAP/PARTIAL rows still require direct behavioral and cross-writer integration coverage.
 - Other lane-owned generic entries included under the CI `chat-2` bucket require coordination; no tests were weakened or deleted.
+
+## Additional Pass B defects (October 18)
+
+| ID | Severity | Gap | Defect | Fix | Test |
+| --- | --- | --- | --- | --- | --- |
+| CH2-018 | Medium | TPO-drive-workspace-40 | UI and CSV waitlist rank input accepted scientific/hex notation through `Number(...)`, giving unintended ranks despite precise integer-only college workflows. | `7e5d555`, `07aad2d` | `chat2-ledger-round-import-and-scheduling.test.ts`, `chat2-tpo-round-csv-and-lifecycle-break-03.test.ts` |
+| CH2-019 | Medium | TPO-drive-workspace-44 | Live interview countdown accepted NaN, infinite and fractional duration when helper called outside UI validation; unreliable remaining time rendered. | `8362d3f`, `5bf0bf0` | `chat2-tpo-round-csv-and-lifecycle-break-03.test.ts` |
+| CH2-020 | Security regression test | PROJ-BREAK-TPO-ROLE-01 | Confirmed central policy must never grant Projects management to TPO or recruiters; scoped Projects read may be available to TPO but not another tenant. No production authorization bypass identified. | Test-only `a1e6380` | `PROJ-BREAK-TPO-ROLE-01.test.ts` |
+
+**Caveat:** The suite is authored and pushed; cloud CI and PostgreSQL verification remain pending. The full all-export inventory contains explicit uncovered service functions that remain release work, not fabricated green coverage.
