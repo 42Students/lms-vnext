@@ -9,6 +9,10 @@ export const runtime="nodejs";
 export async function GET(request:Request){
  try{
   const p=new URL(request.url).searchParams;
+  const allowed=["date","view","category"];
+  if([...p.keys()].some(key=>!allowed.includes(key))||
+     allowed.some(key=>p.getAll(key).length>1))
+   return Response.json({error:"INVALID_QUERY"},{status:400});
   const date=z.iso.date().parse(p.get("date"));
   const view=z.enum(["week","month","agenda"]).parse(p.get("view"));
   const category=hrCalendarCategorySchema.parse(p.get("category")??"ALL");

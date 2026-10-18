@@ -164,7 +164,9 @@ describe("Mentor meeting and resource endpoint permission matrix",()=>{
   for(const item of mutators){
    if(item.name==="resource archive")continue;
    const response=await item.call(req(item.method,"{not valid JSON"));
-   expect(response.status).toBe(403);
+   // Meeting commands use bounded JSON decoding; untouched resource writers
+   // still delegate malformed bodies to the shared API error mapper.
+   expect(response.status).toBe(item.name.startsWith("meeting")?400:403);
   }
   expect(state.writes).toBe(0);
  });
