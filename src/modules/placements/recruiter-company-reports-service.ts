@@ -6,6 +6,7 @@ import {
   desc,
   eq,
   inArray,
+  isNull,
   sql,
 } from "drizzle-orm";
 
@@ -100,6 +101,9 @@ export async function getRecruiterCompanyReports(
       placementJobs.status,
       ["PUBLISHED", "CLOSED"],
     ),
+    // Keep summary, paginated jobs and the SQL funnel on the same
+    // non-archived employer-visible portfolio.
+    isNull(placementJobs.archivedAt),
   );
 
   const selectedCondition =

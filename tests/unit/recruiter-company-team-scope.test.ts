@@ -61,6 +61,23 @@ describe("W05 recruiter company college scope", () => {
     });
   });
 
+  it("HR-TEAM-OWNER-30 never returns college choices from another recruiter's session", () => {
+    const second = grant(
+      "00000000-0000-4000-8000-000000000012",
+      "00000000-0000-4000-8000-000000000022", "College B",
+    );
+    const forged: RequestContext = {
+      ...base,
+      recruiter: {...base.recruiter!, userId:"00000000-0000-4000-8000-000000000099",
+        grants:[second]},
+    };
+    expect(() => resolveRecruiterCompanyScope(forged)).toThrow();
+    expect(() => resolveRecruiterCompanyScope(forged,second.collegeId)).toThrow();
+    expect(resolveRecruiterCompanyScope({
+      ...base,recruiter:{...base.recruiter!,grants:[second]},
+    },second.collegeId)).toMatchObject({status:"READY",grant:second});
+  });
+
   it("rejects a forged college id instead of falling back", () => {
     const a = grant("00000000-0000-4000-8000-000000000011", "00000000-0000-4000-8000-000000000021", "A");
     const context = { ...base, recruiter: { ...base.recruiter!, grants: [a] } };

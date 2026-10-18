@@ -1,7 +1,7 @@
 import "server-only";
-import {and,eq,inArray,sql} from "drizzle-orm";
+import {and,eq,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {collegeMemberships,placementApplications,placementApplicationScreenings,placementOffers,placementJobs,users} from "@/db/schema";
+import {collegeMemberships,placementApplications,placementApplicationScreenings,placementOffers,placementJobs,placementCompanyRelationships,placementCompanies,colleges,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {recruiterOwnJobPredicate} from "./recruiter-job-ownership";
@@ -12,14 +12,24 @@ import {requirePermission,AuthorizationError} from "@/modules/permissions/policy
  * college; private applications and screening decisions never enter this count. */
 export async function recruiterVisiblePortfolioCounts(context:RequestContext,
  collegeId:string,authorizedJobIds:readonly string[]){
- const activeGrant=context.recruiter?.grants.find(g=>g.collegeId===collegeId);
- if(!hasActiveRecruiter(context)||!activeGrant)
+ const recruiter=context.recruiter;
+ const activeGrant=recruiter?.grants.find(g=>g.collegeId===collegeId);
+ if(!hasActiveRecruiter(context)||!recruiter||recruiter.userId!==context.user.id||!activeGrant)
   throw new AuthorizationError("placements.recruiter.read");
  const ids=[...new Set(authorizedJobIds)].slice(0,20);
  if(ids.length===0)return {} as Record<string,{sharedApplicants:number;offers:number}>;
+ // A provided job ID cannot enlarge the employer's granted college/relationship.
+ // Preserve all active relationships for a multi-grant recruiter within the college.
+ const relationshipIds=[...new Set(recruiter.grants
+   .filter(grant=>grant.collegeId===collegeId&&grant.companyRelationshipId.trim())
+   .map(grant=>grant.companyRelationshipId))];
  const db=getDb();
  const scope=and(inArray(placementApplications.jobId,ids),
   recruiterOwnJobPredicate(context.user.id),
+  eq(placementJobs.collegeId,collegeId),
+  inArray(placementJobs.companyRelationshipId,relationshipIds),
+  inArray(placementJobs.status,["PUBLISHED","CLOSED"]),
+  isNull(placementJobs.archivedAt),
   eq(collegeMemberships.collegeId,collegeId),
   eq(collegeMemberships.status,"ACTIVE"),
   eq(users.platformStatus,"ACTIVE"),
@@ -32,6 +42,16 @@ export async function recruiterVisiblePortfolioCounts(context:RequestContext,
   db.select({jobId:placementApplications.jobId,n:sql<number>`count(distinct ${placementApplications.id})::integer`})
    .from(placementApplications)
    .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
+   .innerJoin(placementCompanyRelationships,and(
+    eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
+    eq(placementCompanyRelationships.collegeId,placementJobs.collegeId),
+    eq(placementCompanyRelationships.status,"ACTIVE")))
+   .innerJoin(placementCompanies,and(
+    eq(placementCompanies.id,placementCompanyRelationships.companyId),
+    eq(placementCompanies.id,recruiter.companyId),
+    eq(placementCompanies.status,"ACTIVE")))
+   .innerJoin(colleges,and(eq(colleges.id,placementJobs.collegeId),
+    eq(colleges.status,"ACTIVE")))
    .innerJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
    .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
    .innerJoin(users,eq(users.id,collegeMemberships.userId))
@@ -39,6 +59,16 @@ export async function recruiterVisiblePortfolioCounts(context:RequestContext,
   db.select({jobId:placementApplications.jobId,n:sql<number>`count(distinct ${placementOffers.applicationId})::integer`})
    .from(placementOffers).innerJoin(placementApplications,eq(placementApplications.id,placementOffers.applicationId))
    .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
+   .innerJoin(placementCompanyRelationships,and(
+    eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
+    eq(placementCompanyRelationships.collegeId,placementJobs.collegeId),
+    eq(placementCompanyRelationships.status,"ACTIVE")))
+   .innerJoin(placementCompanies,and(
+    eq(placementCompanies.id,placementCompanyRelationships.companyId),
+    eq(placementCompanies.id,recruiter.companyId),
+    eq(placementCompanies.status,"ACTIVE")))
+   .innerJoin(colleges,and(eq(colleges.id,placementJobs.collegeId),
+    eq(colleges.status,"ACTIVE")))
    .innerJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
    .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
    .innerJoin(users,eq(users.id,collegeMemberships.userId))
