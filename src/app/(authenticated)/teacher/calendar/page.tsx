@@ -64,11 +64,11 @@ export default async function FacultyCalendarPage({
         <label className="grid gap-1 text-sm font-semibold text-body">Month (IST)
           <input type="month" name="month" required defaultValue={grid.query.month}
             min="1900-01" max="2099-12"
-            className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" />
+            className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Teaching Section
           <select name="deliveryId" defaultValue={selected??""}
-            className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+            className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
             <option value="">All my Sections</option>
             {schedule.courses.map(course=><option key={course.deliveryId} value={course.deliveryId}>
               {course.courseCode} · {course.courseName}
