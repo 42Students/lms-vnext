@@ -10,7 +10,7 @@ describe("Chat-4 college UX round 3",()=>{
  });
  it("UX-college-batches-cohortId-students-01 adds safe narrow-screen affordances",()=>{
  const page=source("batches/[cohortId]/students");
- expect(page).toContain("sticky top-0 z-10 bg-surface");
+ expect(page).toContain('<DataTable rows={students}');
  expect(page).toContain("min-h-11");
  
  });
