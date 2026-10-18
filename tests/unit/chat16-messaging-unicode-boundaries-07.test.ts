@@ -8,9 +8,9 @@ describe("chat-16 recruiter email and inbound mail Unicode-safe truncation",()=>
  it("HR-EMAIL-DIGEST-UNICODE-01 never emits partial emoji or HTML entity at the provider limit",()=>{
   expect(safeRecruiterEmailMergeText("abc😀remaining",4)).toBe("abc");
   expect(safeRecruiterEmailMergeText("abc😀remaining",5)).toBe("abc😀");
-  expect(safeRecruiterEmailMergeText("<a>",3)).toBe("&lt");
+  expect(safeRecruiterEmailMergeText("<a>",3)).toBe("");
   expect(safeRecruiterEmailMergeText("<a>",2)).toBe("");
-  expect(safeRecruiterEmailMergeText("a\nb")).toBe("a\nb");
+  expect(safeRecruiterEmailMergeText("a\nb")).toBe("a b");
   expect(safeRecruiterDigestMessages([{body:"first"},{body:"second"},{body:"abc😀remaining"}]))
    .toEqual(["first","second","abc😀remaining"]);
  });
