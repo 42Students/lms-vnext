@@ -34,7 +34,14 @@ const createInput = z.object({
   reason: z.string().trim().min(1).max(500),
   untilDate: dateString.nullable().optional(),
   untilDrives: z.number().int().min(1).max(10_000).nullable().optional(),
-}).strict();
+}).strict().superRefine((value,ctx)=>{
+  const hasDate=value.untilDate!=null;
+  const hasDriveCount=value.untilDrives!=null;
+  if(hasDate===hasDriveCount)ctx.addIssue({
+    code:"custom",path:["untilDate"],
+    message:"Choose either an end date or a number of drives",
+  });
+});
 const liftInput = z.object({
   debarmentId: uuid,
   reason: z.string().trim().min(1).max(500),
