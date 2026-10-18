@@ -6,3 +6,7 @@
 - **Legacy wording:** Exact headings, labels, form actions, tab order and destinations retained.
 - **Regression:** `tests/unit/ux-admin-chat9-batch-04.test.ts` case `UX-admin-tenants-01`.
 - **Validation:** Source test authored; TypeScript strict-check, lint, Vitest and device/browser evidence pending orchestrator run. Page-list checkbox stays open until tests pass.
+
+## Follow-up implementation
+
+The tenant lifecycle directory now uses shared Input/Select/Button controls and accessible shared Pagination with explicit page state. Regression assertions in the named UX batch test now cover the shared contract. Execution remains pending orchestrator.
