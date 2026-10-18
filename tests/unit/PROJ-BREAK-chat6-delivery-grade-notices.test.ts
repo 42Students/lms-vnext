@@ -150,6 +150,18 @@ describe("IIT Dharwad: adversarial file, submission, grading and notification ru
     expect(finish).toContain('if (plan.status === "QUARANTINED")');
   });
 
+  it("PROJ-BREAK-file-11 stale WAIT expiry preserves a verified winner instead of falsely failing", () => {
+    const code=source("src/modules/projects/project-resource-file-service.ts");
+    const finish=code.slice(code.indexOf("export async function completeProjectFileUpload("),
+      code.indexOf("export async function listProjectFiles("));
+    expect(finish).toContain('if (raced.status === "READY") return toProjectFileDto(raced)');
+    expect(finish).toContain("const [failed] = await tx.update(projectResourceFiles)");
+    expect(finish).toContain("eq(projectResourceFiles.status,row.status)");
+    expect(finish).toContain("if(failed)return failed");
+    expect(finish).toContain('if(expiredOrWinner?.status==="READY")return toProjectFileDto(expiredOrWinner)');
+    expect(finish).toContain('throw new StorageFileError("STORAGE_UPLOAD_EXPIRED")');
+  });
+
   it("PROJ-BREAK-file-10 double soft-delete does not double audit or surface a false storage failure", () => {
     const code=source("src/modules/projects/project-resource-file-service.ts");
     const remove=code.slice(code.indexOf("export async function removeProjectFile("),
