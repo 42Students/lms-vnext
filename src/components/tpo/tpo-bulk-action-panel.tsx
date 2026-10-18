@@ -165,7 +165,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
   <p role="status" aria-live="polite" className="text-sm text-body">Selected {safeSelected.length} of {viewCount} matching records (up to 200 processed in each confirmed batch).</p>
   <button type="button" disabled={busy||!canActOnEntireTpoView(viewCount,allRows)}
    onClick={()=>{setSelected(allRows!.map(row=>row.id));invalidate();}}
-   className="min-h-11 rounded-md border border-primary px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+   className="min-h-11 rounded-md border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
    Act on all {viewCount} in this view
   </button>
   {viewCount>TPO_BULK_VIEW_LIMIT?<p role="status" className="text-sm text-warning-text">
@@ -180,7 +180,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
      <textarea value={pastedRolls} onChange={event=>setPastedRolls(event.target.value)}
       rows={2} maxLength={40000} placeholder="23CS001, 23CS002" className="w-full rounded border border-border bg-surface p-2"/>
    </label>
-   <button type="button" disabled={busy||!pastedRolls.trim()} className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50"
+   <button type="button" disabled={busy||!pastedRolls.trim()} className="min-h-11 rounded border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50"
      onClick={()=>{
       const matched=matchTpoBulkRollNumbers(availableRows,pastedRolls);
       setSelected(current=>selectTpoBulkPage([...current,...matched.ids]));
@@ -198,7 +198,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
       current.filter(id=>!pageIds.includes(id)));invalidate();}}/>
     Select current-page rows
    </label>
-   {rows.map(row=><label key={row.id} className="flex min-h-10 items-center gap-2 rounded p-2 text-sm hover:bg-muted">
+   {rows.map(row=><label key={row.id} className="flex min-h-11 items-center gap-2 rounded p-2 text-sm hover:bg-muted">
     <input type="checkbox" disabled={busy||!canSelectTpoBulkRow(safeSelected,row.id)} checked={safeSelected.includes(row.id)}
       onChange={e=>{setSelected(current=>toggleTpoBulkRow(current,row.id,e.target.checked));invalidate();}}/>
     <span className="min-w-0 break-words">{row.label}</span>
@@ -207,7 +207,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
   <div className="flex flex-wrap gap-2">
    <button type="button" disabled={busy||safeSelected.length===0}
      onClick={()=>{setSelected([]);invalidate();}}
-     className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text disabled:opacity-50">
+     className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
      Clear selection
    </button>
    {target==="STUDENTS"?<button type="button" disabled={busy||safeSelected.length===0}
@@ -217,15 +217,15 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
        setCopyFeedback(safeSelected.length+" selected student rows copied.");
       }catch{setCopyFeedback("Could not copy selected student rows. Check browser clipboard permission.");}
     }}
-    className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text disabled:opacity-50">Copy selected rows</button>:null}
+    className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">Copy selected rows</button>:null}
    {preview&&!busy?<button type="button" onClick={invalidate}
-     className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+     className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)]">
      Cancel preview
    </button>:null}
   </div>
   {copyFeedback?<p role="status" className="text-xs text-muted-foreground">{copyFeedback}</p>:null}
   {runAuditId&&target==="STUDENTS"?<button type="button" disabled={busy||guardedPending}
-   className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text"
+   className="min-h-11 rounded border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)]"
    onClick={()=>void runGuarded(undoLastRun)}>Undo last student batch (five minutes)</button>:null}
   {undoNotice?<p role="status" aria-live="polite" className="text-sm">{undoNotice}</p>:null}
   <div className="grid gap-3 sm:grid-cols-2">
@@ -240,9 +240,9 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
     {target==="STUDENTS"?<div className="mb-2 flex flex-wrap gap-2" role="group" aria-label="Ineligibility reason presets">
       {TPO_INELIGIBLE_REASONS.map(preset=><button type="button" key={preset}
        disabled={busy} onClick={()=>{setNote(preset);invalidate();}}
-       className="min-h-10 rounded border border-border px-2 text-xs">{preset}</button>)}
+       className="min-h-11 rounded border border-border px-2 text-xs">{preset}</button>)}
       <button type="button" disabled={busy} onClick={()=>{setNote("");invalidate();}}
-       className="min-h-10 rounded border border-border px-2 text-xs">Other</button>
+       className="min-h-11 rounded border border-border px-2 text-xs">Other</button>
     </div>:null}
     <textarea value={note} disabled={busy} maxLength={target==="STUDENTS"?200:1000} rows={2}
       onChange={e=>{setNote(e.target.value);invalidate();}}
@@ -255,7 +255,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
    {target==="STUDENTS"&&note.trim().length<3?<p className="text-xs text-muted-foreground">To include “Make ineligible” in the action counts, enter an ineligibility reason of at least 3 characters. No eligibility is changed while checking counts.</p>:null}
    <button type="button" disabled={busy||safeSelected.length===0}
      onClick={()=>void compareActions()}
-     className="min-h-11 rounded border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+     className="min-h-11 rounded border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
      Check action counts
    </button>
    {target==="APPLICATIONS"&&jobId&&safeSelected.length>0?<div className="space-y-2 rounded-lg border border-border bg-surface p-3">
@@ -263,14 +263,14 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
      <p className="text-xs text-muted-foreground">Share only this selection using an expiring link. Every selected application is rechecked for a current shortlist before issuance. Review one by one opens each candidate&apos;s authorized detail.</p>
      <label className="flex flex-wrap items-center gap-2 text-sm">Link expires in
       <select value={shareDays} onChange={event=>setShareDays(Number(event.target.value))}
-        disabled={busy} className="min-h-10 rounded border border-border px-3">
+        disabled={busy} className="min-h-11 rounded border border-border px-3">
        {[1,2,3,4,5,6,7].map(day=><option key={day} value={day}>{day} day{day===1?"":"s"}</option>)}
       </select>
      </label>
      {safeSelected.length>200?<p role="status" className="text-xs text-warning-text">Select at most 200 currently shortlisted applications for one company link. Other rows are not shared.</p>:null}
      <div className="flex flex-wrap gap-2">
        <button type="button" disabled={busy||safeSelected.length===0||safeSelected.length>200} onClick={()=>setShareConfirmOpen(true)}
-        className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text disabled:opacity-50">
+        className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
          Share {safeSelected.length} selected with the company
        </button>
        <TpoSelectedReviewQueue jobId={jobId} rows={safeSelected.map(id=>({id,label:labelsById.get(id)??"Selected applicant"}))}/>
@@ -287,7 +287,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
       <p className="text-xs font-semibold">Copy this URL now. The secret cannot be recovered later.</p>
       <input aria-label="Selected applicant share URL" readOnly value={companyShareUrl}
        onFocus={e=>e.currentTarget.select()} className="w-full rounded border border-border bg-surface p-2 text-xs"/>
-      <button type="button" className="min-h-10 text-sm font-semibold text-primary-text underline"
+      <button type="button" className="min-h-11 text-sm font-semibold text-[var(--lms-teal-deep)] underline"
        onClick={()=>void navigator.clipboard.writeText(companyShareUrl).then(
         ()=>setError("Link copied."),()=>setError("Select the link field and copy it manually."))}>Copy link</button>
      </div>:null}
@@ -295,7 +295,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
        <summary>Review selected applicants individually ({safeSelected.length})</summary>
        <ol className="mt-2 max-h-40 space-y-2 overflow-y-auto">
          {safeSelected.map((id,index)=><li key={id}>
-           <Link href={tpoReviewOneByOneHref(jobId,id)} className="text-primary-text underline">
+           <Link href={tpoReviewOneByOneHref(jobId,id)} className="text-[var(--lms-teal-deep)] underline">
              Applicant {index+1}
            </Link>
          </li>)}
@@ -313,12 +313,12 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
    {suggested?<div className="flex flex-wrap items-center gap-3">
      <p className="text-sm font-semibold">Suggested: {suggested.label}</p>
      <button type="button" disabled={busy} onClick={()=>void startPreview(suggested.action as Action)}
-       className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary">Do it</button>
+       className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-foreground">Do it</button>
    </div>:null}
   </section>
   <button type="button" disabled={busy||safeSelected.length===0}
     onClick={()=>void startPreview()}
-    className="min-h-11 rounded bg-primary px-4 py-2 text-sm font-semibold text-on-primary disabled:opacity-50">
+    className="min-h-11 rounded bg-primary px-4 py-2 text-sm font-semibold text-foreground disabled:opacity-50">
     {busy?"Checking…":"Preview next "+Math.min(TPO_BULK_UI_LIMIT,safeSelected.length)+" selected"}
   </button>
   {preview&&plan&&!isTpoBulkPreviewCurrent(plan.ids,[...permitted])?
@@ -345,14 +345,14 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
      </li>)}</ul>
     </div>:null}
     {safeSelected.length>0?<button type="button" disabled={busy} onClick={()=>void startPreview(plan?.action??action)}
-     className="min-h-11 rounded-md bg-primary px-3 font-semibold text-on-primary">
+     className="min-h-11 rounded-md bg-primary px-3 font-semibold text-foreground">
      Preview next batch ({Math.min(TPO_BULK_UI_LIMIT,safeSelected.length)} of {safeSelected.length} remaining)
     </button>:null}
    {outcomes.some(item=>item.status!=="updated")?<div className="flex flex-wrap gap-2">
      <button type="button" disabled={busy} onClick={()=>{
        const ids=outcomes.filter(item=>item.status!=="updated").map(item=>item.id);
        setSelected(ids);setPreview(null);setPlan(null);setOutcomes([]);setActionCounts([]);setError("");
-     }} className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+     }} className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
       Retry skipped/failed (preview again)
      </button>
      <button type="button" disabled={busy} onClick={()=>{
@@ -362,7 +362,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
         ()=>setError("Failed-row details copied."),
         ()=>setError("Could not copy failed-row details."),
        );
-     }} className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+     }} className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
       Copy failed
      </button>
     </div>:null}
