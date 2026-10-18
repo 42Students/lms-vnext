@@ -11,7 +11,7 @@ function neutralizeFormula(value: ReportCell): string {
   if (typeof value !== "string") return text;
   // Leading control/format/space Unicode may be discarded by spreadsheets
   // before interpreting the following =, +, -, or @ as a formula.
-  return /^[\p{Cc}\p{Cf}\p{Zs}\p{Zl}\p{Zp}]*[=+\-@]/u.test(text)
+  return /^[\p{Cc}\p{Cf}\p{M}\p{Zs}\p{Zl}\p{Zp}]*[=+\-@]/u.test(text)
     ? "'" + text
     : text;
 }
@@ -22,7 +22,7 @@ export function safeReportCsvCell(value: ReportCell): string {
 
 /** Plain-text clipboard output cannot allow a cell to insert rows/columns. */
 export function safeReportTsvCell(value: ReportCell): string {
-  return neutralizeFormula(value).replace(/[\t\r\n\u2028\u2029]+/g, " ");
+  return neutralizeFormula(value).replace(/[\p{Cc}\p{Zl}\p{Zp}]+/gu, " ");
 }
 
 export function reportTableCsv(
