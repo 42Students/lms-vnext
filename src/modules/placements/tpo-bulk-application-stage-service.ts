@@ -6,7 +6,7 @@ import {activityEvents,collegeMemberships,colleges,placementApplications,
  placementApplicationScreenings,placementJobRounds,placementJobs,users} from "@/db/schema";
 import {placementTpoApplicationStages} from "@/db/schema/placement-tpo-application-stages";
 import type {RequestContext} from "@/modules/identity/context";
-import {requireTpoJobCollege} from "./tpo-job-write-base";
+import {requireTpoJobCollege,requireTpoJobActor} from "./tpo-job-write-base";
 import {placementTableExists} from "./staged-tables";
 
 export type TpoBulkStageAction="MOVE_TEST"|"MOVE_INTERVIEW";
@@ -78,6 +78,9 @@ export async function moveTpoBulkApplicationStage(ctx:RequestContext,jobId:strin
   throw new TpoBulkStageError("STAGE_STORAGE_PENDING");
  const target=targetStage(action);
  return getDb().transaction(async tx=>{
+  // A revoked persisted TPO/CA role must be rejected in the SAME transaction
+  // as the applicant change, even if its session cookie has not expired.
+  await requireTpoJobActor(tx,ctx);
   const [app]=await tx.select({id:placementApplications.id,jobId:placementApplications.jobId,
    status:placementApplications.status,screening:placementApplicationScreenings.status})
    .from(placementApplications).innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
