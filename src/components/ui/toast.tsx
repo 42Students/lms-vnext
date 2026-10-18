@@ -22,6 +22,18 @@ const ToastContext = createContext<ToastContextValue | null>(null);
 const toneClasses = { success: "border-success", error: "border-error", info: "border-primary" } as const;
 const dotClasses = { success: "bg-success", error: "bg-error", info: "bg-primary" } as const;
 
+export function clearEvictedToastTimers(
+  evictedIds: readonly string[],
+  timers: Map<string, ReturnType<typeof setTimeout>>,
+  cancel: (timer: ReturnType<typeof setTimeout>) => void = clearTimeout,
+): void {
+  for (const id of evictedIds) {
+    const timer = timers.get(id);
+    if (timer) cancel(timer);
+    timers.delete(id);
+  }
+}
+
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
   const itemsRef = useRef<ToastItem[]>([]);
@@ -36,11 +48,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const showToast = useCallback((input: ToastInput) => {
     const id = crypto.randomUUID();
     const { items, evictedIds } = enqueueToast(itemsRef.current, { ...input, id });
-    for (const evictedId of evictedIds) {
-      const staleTimer = timers.current.get(evictedId);
-      if (staleTimer) clearTimeout(staleTimer);
-      timers.current.delete(evictedId);
-    }
+    clearEvictedToastTimers(evictedIds, timers.current);
     itemsRef.current = items;
     setToasts(items);
     // Errors must remain readable/recoverable until explicitly dismissed.
