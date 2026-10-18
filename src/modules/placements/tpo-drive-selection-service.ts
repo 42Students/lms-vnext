@@ -9,7 +9,7 @@ import { issuePlacementOffer, listPlacementOfferCandidates } from "./offer-servi
 import {listPlacementRoleOptions} from "./role-option-service";
 import { auditTpoJobChange, requireTpoJobActor, requireTpoJobCollege } from "./tpo-job-write-base";
 import { placementJobIdSchema } from "./validation";
-import { recordSelectionsSchema, releaseSelectionsSchema, summarizeSelectionRelease, tpoSelectionReleaseFailureMessage, isExactTpoSelectionReplay } from "./tpo-drive-selection-model";
+import { recordSelectionsSchema, releaseSelectionsSchema, summarizeSelectionRelease, tpoSelectionReleaseFailureMessage, isExactTpoSelectionReplay, matchesTpoSelectionReleaseRevision } from "./tpo-drive-selection-model";
 
 const pendingCode = null;
 
@@ -181,9 +181,7 @@ export async function verifyAndReleaseTpoSelections(context:RequestContext,rawJo
           const [locked]=await tx.select().from(placementDriveSelections)
             .where(and(eq(placementDriveSelections.id,id),eq(placementDriveSelections.jobId,job.id)))
             .for("update").limit(1);
-          if(!locked||locked.recordedAt.toISOString()!==input.expectedRecordedAt[id]||
-            locked.applicationId!==selection.applicationId||locked.roleTitle!==selection.roleTitle||
-            locked.annualCtcInr!==selection.annualCtcInr)
+          if(!locked||!matchesTpoSelectionReleaseRevision(locked,selection,input.expectedRecordedAt[id]))
             throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
           if(locked.status==="RELEASED"&&locked.releasedOfferId===offerId)return;
           if(locked.status!=="VERIFIED")throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
@@ -247,9 +245,7 @@ export async function verifyAndReleaseTpoSelections(context:RequestContext,rawJo
         const [locked]=await tx.select().from(placementDriveSelections)
           .where(and(eq(placementDriveSelections.id,id),eq(placementDriveSelections.jobId,job.id)))
           .for("update").limit(1);
-        if(!locked||locked.recordedAt.toISOString()!==input.expectedRecordedAt[id]||
-          locked.applicationId!==selection.applicationId||locked.roleTitle!==selection.roleTitle||
-          locked.annualCtcInr!==selection.annualCtcInr)
+        if(!locked||!matchesTpoSelectionReleaseRevision(locked,selection,input.expectedRecordedAt[id]))
           throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
         if(locked.status==="RELEASED"&&locked.releasedOfferId===offer.id)return;
         if(locked.status!=="VERIFIED")throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
