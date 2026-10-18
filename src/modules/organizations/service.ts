@@ -337,14 +337,29 @@ export async function restoreOrganization(context:RequestContext, rawId:unknown)
 }
 export async function listArchivedOrganizations(context:RequestContext){
  if(!isSuperAdmin(context))requirePermission(context,"admin-scope.select");
+ const selectedCollegeId=context.adminScope?.collegeId??null;
+ let organizationId=context.adminScope?.organizationId??null;
  requirePermission(context,"organization.manage",{
-  organizationId:context.adminScope?.organizationId??undefined,
-  collegeId:context.adminScope?.collegeId??undefined,
+  organizationId:organizationId??undefined,collegeId:selectedCollegeId??undefined,
  });
- return getDb().select({
-  id:organizations.id,name:organizations.name,createdAt:organizations.createdAt,
- }).from(organizations).where(and(
-  eq(organizations.status,"ARCHIVED"),
-  context.adminScope?.organizationId?eq(organizations.id,context.adminScope.organizationId):undefined,
- )).orderBy(asc(organizations.name)).limit(200);
+ return getDb().transaction(async tx=>{
+  // A college-scoped Super Admin cannot enumerate every archived parent when
+  // the selected organization is missing from the request context.
+  if(selectedCollegeId){
+   const [selected]=await tx.select({organizationId:colleges.organizationId})
+    .from(colleges).where(eq(colleges.id,selectedCollegeId)).for("share").limit(1);
+   if(!selected||(organizationId&&organizationId!==selected.organizationId))
+    throw new OrganizationServiceError("ORGANIZATION_NOT_FOUND");
+   organizationId=selected.organizationId;
+  }
+  await assertPersistedPlatformPermission(tx,context,"organization.manage",{
+   organizationId:organizationId??undefined,collegeId:selectedCollegeId??undefined,
+  });
+  return tx.select({
+   id:organizations.id,name:organizations.name,createdAt:organizations.createdAt,
+  }).from(organizations).where(and(
+   eq(organizations.status,"ARCHIVED"),
+   organizationId?eq(organizations.id,organizationId):undefined,
+  )).orderBy(asc(organizations.name)).limit(200);
+ });
 }
