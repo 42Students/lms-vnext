@@ -57,8 +57,8 @@ describe("PROJ-BREAK-HR-01: HR/Recruiter cannot traverse college project member 
  it("denies wrong-tenant membership before querying project members",async()=>{
   await expect(requireProjectReadAccess({...tpo,membership:{...tpo.membership,collegeId:otherCollege}} as never,projectId))
    .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
-  // A TPO-only role is rejected ahead of any project existence probe.
-  expect(mocks.select).not.toHaveBeenCalled();
+  // TPO is not a project-member role: reject the URL before object lookup.
+  expect(mocks.getDb).not.toHaveBeenCalled();
  });
  it("PROJ-BREAK-HR-ORG-02 denies mismatched organization context before project-member SQL",async()=>{
   const forged={...tpo,membership:{...tpo.membership,
@@ -74,8 +74,21 @@ describe("PROJ-BREAK-HR-01: HR/Recruiter cannot traverse college project member 
    await expect(requireProjectReadAccess({...tpo,membership} as never,projectId))
     .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
   }
-  // Inactive roles must not look up even a public-looking project ID.
-  expect(mocks.select).not.toHaveBeenCalled();
+  expect(mocks.getDb).not.toHaveBeenCalled();
+ });
+ it("PROJ-BREAK-HR-ORG-03 active mentors with forged college or organization are denied before member read",async()=>{
+  const mentor={...tpo,membership:{...tpo.membership,roles:["MENTOR"]}};
+  for(const membership of [
+   {...mentor.membership,collegeId:otherCollege},
+   {...mentor.membership,organizationId:"123e4567-e89b-42d3-a456-426614174099"},
+  ]){
+   mocks.queries=[[jobProject]];
+   await expect(requireProjectReadAccess({...mentor,membership} as never,projectId))
+    .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
+  }
+  // The project scope is read, but the member table is never queried.
+  expect(mocks.select).toHaveBeenCalledTimes(2);
+  expect(mocks.moduleAccess).not.toHaveBeenCalled();
  });
  it("rejects inactive recruiter sessions independently of company grant",async()=>{
   const suspended={...recruiter,user:{...recruiter.user,platformStatus:"SUSPENDED"}};

@@ -17,12 +17,13 @@ export async function getMentorDeliveryReviewOverview(context:RequestContext,raw
  const membership=context.membership;
  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR"))
   throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+ // A disabled tenant must not enumerate delivery review project identities.
+ if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
+  throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const scope=await requireProjectReadAccess(context,query.projectId);
  if(scope.access!=="MENTOR"||!can(context,"projects.read",{
   collegeId:scope.collegeId,organizationId:scope.organizationId,
  }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
- const access=await resolveOptionalModuleAccess(context);
- if(!access.projects.enabled)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const db=getDb();
  const feedbackWith=sql<boolean>`coalesce(trim(${projectSubmissionReviews.feedback}), '') <> ''`;
  const feedbackWithout=sql<boolean>`coalesce(trim(${projectSubmissionReviews.feedback}), '') = ''`;

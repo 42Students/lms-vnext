@@ -231,3 +231,15 @@ No runtime CI execution. Numeric internally validated number callers remain supp
 ## Super Admin verified web address page
 
 `/admin/colleges/[collegeId]/subdomain` has a new actual SSR route test, `tests/unit/chat4-superadmin-college-domain-page-journey.test.tsx` (`SA-colleges-domains-page-01`), exercising selected-college management permission before private domain/verification-token calls, empty and verified hosts, managed subdomain routing, missing/out-of-scope tenant 404, and non-Super Admin denial without domain metadata reads. All rendered tests are mocked, not an actual DNS/TLS check. Cloud CI and staging deployment verification remain required.
+
+## Super Admin college verification page
+
+`/admin/colleges/[collegeId]/verification` now rejects nondecimal `page`/`pageSize` URL values (scientific/hex/whitespace/blank) *after* authorized college selection but *before* queue and policy reads. `tests/unit/chat4-superadmin-college-verification-page.test.tsx` (`SA-colleges-verification-FILTER-01`) covers malformed paging, repeated values, denied persisted Super Admin preflight, scoped valid queue, persisted TPO policy and safe scan-cap retry state. Authored, not run; actual verification table/storage, full filter matrix and browser profile-review workflows remain separate gates.
+
+## Super Admin college branding page (rendered route behavior)
+
+`/admin/colleges/[collegeId]/branding` is covered by `tests/unit/chat4-superadmin-branding-page-journey.test.tsx` (`SA-colleges-branding-page-01`): deny non-Super Admin before loading private branding/upload receipts, 404 malformed and foreign-scoped college IDs, no fallback to another college's branding, stored preview and optimistic version 7, signed/uploaded logo manager scoped to the same tenant, and propagate storage failures instead of inventing a successful preview. All assertions use mocked service projections and SSR, **not** actual file uploads or browser-domain appearance; CI execution pending.
+
+### Promotion faculty readiness now holds persisted actor authorization
+
+`getPromotionFacultyReadiness` now executes the full trusted-cohort, target-term and active-faculty read inside one PostgreSQL transaction protected by `assertPersistedPlatformPermission(tx,context,"academics.read",{collegeId,organizationId})`. `tests/unit/chat4-college-promotion-faculty-service-behavior.test.ts` adds `COL-promotion-faculty-ACTOR-03`: revoking the actor between request-context scope preflight and the first database SELECT must deny with no private read. Still requires CI and real concurrent role-revocation PG integration.
