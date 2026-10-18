@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
@@ -44,15 +45,15 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
    currentOperation==="assign"?"Selected colleges assigned":"Selected colleges removed");
   inFlight.current=false;setPending(false);router.refresh();
  }
- return <section aria-label="Template college bulk assignment" className="space-y-3 rounded-xl border border-border bg-surface p-4">
+ return <section aria-label="Template college bulk assignment" className="space-y-3 border-b border-border pb-5">
   <h2 className="text-base font-semibold">College availability</h2>
   <p className="text-xs text-muted-foreground">Select colleges on this page to update availability; existing workspaces remain unchanged.</p>
   <div className="flex flex-wrap gap-3 text-sm">
-   <button type="button" disabled={pending||!allowed.length}
+   <Button type="button" variant="secondary" disabled={pending||!allowed.length}
     onClick={()=>setSelected(allowed.map(row=>row.id))}
-    className="rounded-[9px] border border-border px-3 py-2 disabled:opacity-50">Select all on page</button>
-   <button type="button" disabled={pending||!selected.length} onClick={()=>setSelected([])}
-    className="rounded-[9px] border border-border px-3 py-2 disabled:opacity-50">Clear selection</button>
+    className="rounded-[9px] border border-border px-3 py-2 disabled:opacity-50">Select all on page</Button>
+   <Button type="button" variant="secondary" disabled={pending||!selected.length} onClick={()=>setSelected([])}
+    className="rounded-[9px] border border-border px-3 py-2 disabled:opacity-50">Clear selection</Button>
    <span className="self-center">{selectedItems.length} selected</span>
   </div>
   <ul className="grid gap-2 sm:grid-cols-2">
@@ -66,10 +67,10 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
    </li>)}
   </ul>
   <div className="flex flex-wrap gap-2">
-   <button type="button" disabled={pending||!published||!selectedItems.some(row=>!row.assigned)}
-    onClick={()=>setOperation("assign")} className="rounded-[9px] bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50">Assign selected</button>
-   <button type="button" disabled={pending||!selectedItems.some(row=>row.assigned)}
-    onClick={()=>setOperation("remove")} className="rounded-[9px] border border-border px-3 py-2 text-sm font-semibold disabled:opacity-50">Remove selected</button>
+   <Button type="button" variant="primary" disabled={pending||!published||!selectedItems.some(row=>!row.assigned)}
+    onClick={()=>setOperation("assign")} className="rounded-[9px] bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50">Assign selected</Button>
+   <Button type="button" variant="secondary" disabled={pending||!selectedItems.some(row=>row.assigned)}
+    onClick={()=>setOperation("remove")} className="rounded-[9px] border border-border px-3 py-2 text-sm font-semibold disabled:opacity-50">Remove selected</Button>
   </div>
   {notice?<p role="status" className="text-sm text-body">{notice}</p>:null}
   <ConfirmDialog open={operation!==null} onOpenChange={open=>{if(!open)setOperation(null)}}
