@@ -22,18 +22,18 @@ export async function getMentorProjectActivityHistory(
       !can(context,"projects.read",{
         collegeId:membership.collegeId,organizationId:membership.organizationId,
       })) throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  // Disabled Projects must not resolve or disclose an exact project ID.
+  const enabled=(await resolveOptionalModuleAccess(context)).projects.enabled;
+  if(!enabled)return {
+    enabled:false as const,title:"",query,
+    ...mentorProjectActivityPage(0,1,query.pageSize),
+    items:[] as {id:string;label:string;importance:string;occurredAt:Date}[],
+  };
   const scope=await requireProjectReadAccess(context,query.projectId);
   if(scope.access!=="MENTOR" || scope.collegeId!==membership.collegeId ||
     !can(context,"projects.read",{
       collegeId:scope.collegeId,organizationId:scope.organizationId,
     })) throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
-  const enabled=(await resolveOptionalModuleAccess(context)).projects.enabled;
-  const empty=()=>({
-    enabled:false as const,title:scope.project.title,query,
-    ...mentorProjectActivityPage(0,1,query.pageSize),
-    items:[] as {id:string;label:string;importance:string;occurredAt:Date}[],
-  });
-  if(!enabled)return empty();
   const allowedTypes=mentorProjectActivityEventTypes(query.view);
   const since=mentorProjectActivitySince(query.window,new Date());
   const filters=and(

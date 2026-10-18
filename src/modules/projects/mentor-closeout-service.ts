@@ -12,6 +12,7 @@ import {hasActiveMembership,hasMembershipRole,type RequestContext} from "@/modul
 import {can} from "@/modules/permissions/policy";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {requireProjectLifecycleAccess} from "./access";
+import {assertPersistedProjectMutationActor} from "./persisted-mentor-mutation";
 import {ProjectsServiceError} from "./errors";
 import {
   closeoutChecklist,mentorCloseoutParamsSchema,mentorCloseoutSchema,
@@ -21,12 +22,12 @@ async function scopeMentor(context:RequestContext,projectId:string){
   const membership=context.membership;
   if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR"))
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const scope=await requireProjectLifecycleAccess(context,projectId);
   if(scope.access!=="MENTOR"||!can(context,"projects.read",{
     collegeId:scope.collegeId,organizationId:scope.organizationId,
   })) throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
-  const enabled=(await resolveOptionalModuleAccess(context)).projects.enabled;
-  if(!enabled) throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   return scope;
 }
 async function facts(db:ReturnType<typeof getDb>,projectId:string,projectStatus:string){
@@ -70,6 +71,8 @@ export async function completeMentorProject(
     if(!locked||locked.status!=="ACTIVE"||
       locked.updatedAt.getTime()!==new Date(input.expectedUpdatedAt).getTime())
       throw new ProjectsServiceError("PROJECT_INVALID_STATE");
+    // Guard the closeout decision against revoked memberships and stale Mentor assignments.
+    await assertPersistedProjectMutationActor(tx,context,scope);
     // PostgreSQL FK/mutation ownership ensures all rows originate from this project.
     const [latest]=await tx.select({status:projectSubmissions.status})
       .from(projectSubmissions).where(eq(projectSubmissions.projectId,locked.id))

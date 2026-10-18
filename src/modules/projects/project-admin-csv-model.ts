@@ -10,7 +10,9 @@ export function projectAdminCsvCell(value: ProjectAdminCsvValue): string {
   // hostile invisible prefixes cannot bypass the quote-prefix guard.
   const original = String(value ?? "").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "");
   const visible = original.replace(/^[\p{Cc}\p{Cf}\p{M}\p{Zs}\p{Zl}\p{Zp}]*/u, "");
-  const guarded = /^[=+@-]/u.test(visible) ? "'" + original : original;
+  // Persisted numeric values (including negative totals) are data, not formulas.
+  // A user-supplied string such as "-1" still requires neutralization.
+  const guarded = typeof value === "number" ? original : /^[=+@-]/u.test(visible) ? "'" + original : original;
   return '"' + guarded.replaceAll('"', '""') + '"';
 }
 

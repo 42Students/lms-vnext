@@ -2,7 +2,7 @@ import {createHash} from "node:crypto";
 import {z} from "zod";
 export const roundApplyInputSchema=z.object({
  confirmed:z.literal(true),
- expectedPreviewToken:z.string().length(64),
+ expectedPreviewToken:z.string().regex(/^[0-9a-f]{64}$/, "Invalid round preview token"),
 }).strict();
 export type RoundApplyRow={
  resultId:string;applicationId:string;student:string;outcome:string;

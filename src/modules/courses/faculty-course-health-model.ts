@@ -46,6 +46,10 @@ export function facultyCourseHealthHref(query: FacultyCourseHealthParams) {
 }
 
 export function responseCoverage(eligible: number, responded: number) {
-  return eligible <= 0 ? null :
-    Math.round((Math.max(0,Math.min(eligible,responded)) / eligible) * 100);
+  // Data integrity failures should be unknown, not a plausible 0% or 100%.
+  if (!Number.isInteger(eligible) || eligible <= 0 ||
+      !Number.isInteger(responded) || responded < 0 || responded > eligible) {
+    return null;
+  }
+  return Math.round((responded / eligible) * 100);
 }
