@@ -13,7 +13,10 @@ describe("College Projects risk and activity acceptance",()=>{
   expect(s).toContain('aria-label="Project workspace sections"');
   expect(s).toContain("flex max-w-full gap-2 overflow-x-auto");
   expect(s).toContain("tabIndex={0}");
-  expect(src("src/components/projects/project-admin-workspace-list.tsx")).toContain("overflow-x-auto");
+  const list=src("src/components/projects/project-admin-workspace-list.tsx");
+  expect(list).toContain('<DataTable');
+  expect(list).toContain('caption="Project workspace table"');
+  expect(src("src/components/ui/data-table.tsx")).toContain('<ScrollCue axis="x"');
  });
  it("COL-projects-10 verifies whole-college risk buckets, scoped CSV and complete row actions",()=>{
   const s=src("src/components/projects/project-admin-at-risk-page.tsx");

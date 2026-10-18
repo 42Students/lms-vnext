@@ -10,17 +10,11 @@ import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { ProjectAdminWorkspaceList } from "@/components/projects/project-admin-workspace-list";
 import {ProjectWorkspacePageExport} from "@/components/projects/project-workspace-page-export";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { parseAdminProjectsQuery } from "@/modules/projects/admin-projects-query-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { listProjectAdminSnapshots } from "@/modules/projects/admin-insights-service";
 import { listAssignedProjectTemplates } from "@/modules/projects/template-service";
-
-function one(
-  value: string | string[] | undefined,
-) {
-  return Array.isArray(value)
-    ? value[0]
-    : value;
-}
 
 export default async function SuperAdminProjectsPage({
   searchParams,
@@ -56,18 +50,19 @@ export default async function SuperAdminProjectsPage({
     );
   }
 
-  const params = await searchParams;
-  const view=one(params.view)==="cards"?"cards":"table";
-  const query: ProjectAdminCollectionQuery = {
-    q: one(params.search) ?? one(params.q),
-    status: one(
-      params.status,
-    ) as ProjectAdminCollectionQuery["status"],
-    page: Number(one(params.page) ?? 1),
-    pageSize: Number(
-      one(params.pageSize) ?? 20,
-    ),
-  };
+  const parsed = parseAdminProjectsQuery(await searchParams);
+  if (!parsed.success) {
+    return <div className="min-w-0 space-y-6">
+      <PageHeader eyebrow="Super Admin" title="Project workspaces"
+        description="Live projects, each run by a mentor with a team of students." />
+      <ErrorState title="Invalid project filters"
+        description="Check the search, status, page and rows filters, or clear them to continue."
+        action={<Link href="/admin/projects" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Clear filters</Link>}
+      />
+    </div>;
+  }
+  const query: ProjectAdminCollectionQuery = parsed.data;
+  const view = parsed.data.view;
 
   const [result, templates] = await Promise.all([
     listProjectAdminSnapshots(
