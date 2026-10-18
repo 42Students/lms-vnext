@@ -139,3 +139,9 @@ This is an independent TPO/HR workflow review; real clipboard permission denial,
 |---|---|---|---|
 | HR/PROJ-CSV-UNICODE-03 | All five spreadsheet/TSV serializers for HR reports, team exports, Projects workspace exports, TPO request clipboard and message receipt history | `tests/unit/chat19-invisible-mark-export-matrix.test.ts` | Combining-mark prefixes U+034F, U+0301 and U+20DD cannot bypass quoted formulas; U+0085 and vertical tabs do not forge report rows |
 | UX-SPILL-TPO-CLIP-05 | `src/components/placements/tpo-request-page-clipboard.tsx` | `tests/unit/UX-SPILL-chat19-tpo-request-responsive.test.tsx` | Sort select, disclosure summary and column reset have minimum 44px targets and a visible keyboard focus ring |
+
+## HR duplicate-parameter adversarial page entries
+
+| ID | Page | Direct behavioral evidence | Expected security invariant |
+|---|---|---|---|
+| HR-BREAK-QUERY-05 | Notifications, conversations and activity | `tests/unit/HR-BREAK-chat19-notifications-page.test.ts`, `tests/unit/HR-BREAK-chat19-conversation-inbox-page.test.ts`, `tests/unit/HR-BREAK-chat19-activity-results-pages.test.ts` | Duplicate college, page, or search keys are invalid input, not a first-value fallback. Every one is rejected before tenant-aware query/service invocation; legacy invalid-filter recovery copy stays exact. |
