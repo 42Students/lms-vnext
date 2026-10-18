@@ -1,11 +1,13 @@
 import "server-only";
-import {eq} from "drizzle-orm";
+import {eq,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents,colleges,placementTpoCollegeSettings} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 import {placementTableExists} from "./staged-tables";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
+import {tpoOutcomeLabelsAlreadyApplied} from "./tpo-outcome-label-retry-model";
 import {AFTER_COLLEGE_LABELS,afterCollegeManualSchema} from "./tpo-after-college-model";
 
 const entrySchema=z.object({
@@ -50,14 +52,25 @@ export async function saveTpoOutcomeLabels(context:RequestContext,raw:unknown){
   const [college]=await tx.select({organizationId:colleges.organizationId})
    .from(colleges).where(eq(colleges.id,collegeId)).for("update").limit(1);
   if(!college)throw new TpoOutcomeLabelError("TPO_SETTINGS_NOT_FOUND");
-  const [current]=await tx.select({updatedAt:placementTpoCollegeSettings.updatedAt})
-   .from(placementTpoCollegeSettings).where(eq(placementTpoCollegeSettings.collegeId,collegeId)).limit(1);
+  await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+   collegeId,organizationId:college.organizationId,
+  });
+  const [current]=await tx.select({
+   updatedAt:placementTpoCollegeSettings.updatedAt,
+   outcomeLabels:placementTpoCollegeSettings.outcomeLabels,
+  }).from(placementTpoCollegeSettings)
+   .where(eq(placementTpoCollegeSettings.collegeId,collegeId)).limit(1);
+  const stored=current?z.array(entrySchema).safeParse(current.outcomeLabels):null;
+  if(current&&stored?.success&&tpoOutcomeLabelsAlreadyApplied(stored.data,input.labels)){
+   return {labels:stored.data.map(row=>({...row,id:row.id??null})),
+    version:current.updatedAt.toISOString()};
+  }
   if((current?.updatedAt.toISOString()??null)!==input.expectedVersion)
    throw new TpoOutcomeLabelError("TPO_SETTINGS_STALE");
   if(!current)await tx.insert(placementTpoCollegeSettings).values({collegeId});
   const labels=input.labels.map(row=>({...row,id:row.id??crypto.randomUUID()}));
   const [saved]=await tx.update(placementTpoCollegeSettings).set({
-   outcomeLabels:labels,updatedAt:new Date(),
+   outcomeLabels:labels,updatedAt:sql`greatest(clock_timestamp(),date_trunc('milliseconds',${placementTpoCollegeSettings.updatedAt}) + interval '1 millisecond')`,
   }).where(eq(placementTpoCollegeSettings.collegeId,collegeId))
    .returning({updatedAt:placementTpoCollegeSettings.updatedAt});
   if(!saved)throw new TpoOutcomeLabelError("TPO_SETTINGS_NOT_FOUND");
