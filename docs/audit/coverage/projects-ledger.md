@@ -10,6 +10,10 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 - `mentor-project-card-progress.test.ts`: previous test expected invalid `open=-3` to show 100% task completion; source correctly rejects corrupt aggregates with `null`. Updated the behavioral test for negative, excess, NaN and no-task inputs (`PROJ-BREAK-MENTOR-217`).
 - This is static reconciliation, not an executed Vitest/typecheck pass. Latest checked-in typecheck inventory has no chat-14-owned compiler error.
 
+## Projects cross-lane safe SQLSTATE spillover — PROJ-BREAK-MENTOR-326..330
+- `tests/unit/PROJ-BREAK-chat14-project-transaction-errors.test.ts`: nested constraint extraction, serialization/deadlock-only retry selection and refusal of unique/authorization/network/input errors; bounded cause traversal including cyclic or excessively nested values. This closes two cross-lane, previously test-unmapped helper exports which affect Mentor Sprint and task error handling.
+- Authored only. PostgreSQL actual SQLSTATE envelopes, transaction SAVEPOINT behavior and retry attempt caps are a separate real DB release gate.
+
 ## Mentor Sprint locked transition acceptance — PROJ-BREAK-MENTOR-319..325
 - `tests/unit/PROJ-BREAK-chat14-mentor-sprint-transition-service.test.ts` covers all registered START/COMPLETE/REOPEN service flows through mocked parent lock, persisted Mentor grant, primary Mentor requirement, Sprint/release lookups, single active Sprint exclusion, no-open-tasks completion, audited writes, shipped Release guard, wrong source state and stale millisecond version.
 - All cases authored but unrun. Actual PostgreSQL row ordering, concurrent sibling Sprint creation, two stale tabs and query-plan scale still require database/browser acceptance.
@@ -186,8 +190,8 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/modules/projects/constants.ts` | `PROJECT_MEETING_TYPES` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/delivery-activity-model.ts` | `projectDeliveryActivity` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/delivery-reopen-service.ts` | `reopenApprovedProjectDelivery` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/errors.ts` | `postgresConstraintName` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/errors.ts` | `isRetryableProjectTransactionError` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/errors.ts` | `postgresConstraintName` | `tests/unit/PROJ-BREAK-chat14-project-transaction-errors.test.ts` | Behavioral nested SQLSTATE/error constraint, safe retry allowlist, invalid values and bounded depth; authored/unrun. Real PostgreSQL wrapper response GAP |
+| `src/modules/projects/errors.ts` | `isRetryableProjectTransactionError` | `tests/unit/PROJ-BREAK-chat14-project-transaction-errors.test.ts` | Behavioral nested SQLSTATE/error constraint, safe retry allowlist, invalid values and bounded depth; authored/unrun. Real PostgreSQL wrapper response GAP |
 | `src/modules/projects/evaluation-service.ts` | `createProjectEvaluation` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/evaluation-service.ts` | `getProjectEvaluation` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/evaluation-service.ts` | `listProjectEvaluations` | **GAP** | **GAP — behaviour untested** |
