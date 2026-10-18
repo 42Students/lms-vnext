@@ -1,25 +1,35 @@
 "use client";
-import {useState} from "react";
+import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {TPO_NOTIFICATION_PREFERENCE_FIELDS,type TpoNotificationPreferences} from "@/modules/placements/tpo-my-notifications-model";
 export function TpoMyNotificationPreferencesEditor({initial,version}:{initial:TpoNotificationPreferences;version:string|null}){
  const router=useRouter(),[value,setValue]=useState<TpoNotificationPreferences>(initial);
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[message,setMessage]=useState("");
+ const saving=useRef(false);
  const dirty=TPO_NOTIFICATION_PREFERENCE_FIELDS.some(field=>value[field.key]!==initial[field.key]);
  async function save(){
-  if((!dirty&&version!==null)||busy)return;
-  setBusy(true);setError("");setMessage("");
+  if((!dirty&&version!==null)||saving.current)return;
+  saving.current=true;setBusy(true);setError("");setMessage("");
   try{
    const response=await fetch("/api/placements/tpo/my-notification-preferences",{
     method:"PUT",credentials:"same-origin",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({...value,expectedVersion:version}),
    });
-   const result=await response.json() as {error?:string};
-   if(!response.ok)throw new Error(result.error==="STALE"?"Preferences changed elsewhere. Refresh and try again.":
-    result.error==="NOT_READY"?"Preference storage is not available.":result.error??"Could not save preferences.");
+   const result=await response.json().catch(()=>null) as {error?:string}|null;
+   if(!response.ok)throw new Error(result?.error==="STALE"?"Preferences changed elsewhere. Refresh and try again.":
+    result?.error==="NOT_READY"?"Preference storage is not available. Please try again later.":
+    response.status===401?"Your session expired. Sign in again.":
+    response.status===403?"You do not have permission to save these preferences.":
+    "Could not save preferences. Try again.");
    setMessage("Notification preferences saved");router.refresh();
-  }catch(e){setError(e instanceof Error?e.message:"Could not save preferences.");}
-  finally{setBusy(false);}
+  }catch(e){setError(e instanceof Error && [
+   "Preferences changed elsewhere. Refresh and try again.",
+   "Preference storage is not available. Please try again later.",
+   "Your session expired. Sign in again.",
+   "You do not have permission to save these preferences.",
+   "Could not save preferences. Try again.",
+  ].includes(e.message)?e.message:"Could not save preferences. Try again.");}
+  finally{saving.current=false;setBusy(false);}
  }
  return <section aria-label="Edit my notification preferences" className="space-y-3 p-5">
   <p className="text-xs text-muted-foreground">These five preferences are for your own TPO account in this college. In-app history remains accessible. Delivery routing is controlled separately.</p>

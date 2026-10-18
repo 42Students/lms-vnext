@@ -13,6 +13,8 @@ export function deriveTpoPrepCourseOutcome(
 ):TpoPrepCourseOutcome{
  if(!policy.courseIds.length)return "UNCONFIGURED";
  if(evidence===null)return "UNAVAILABLE";
+ if(new Set(policy.courseIds).size!==policy.courseIds.length ||
+    new Set(evidence.map(row=>row.courseId)).size!==evidence.length)return "UNAVAILABLE";
  if(!Number.isInteger(policy.minimumCompleted)||policy.minimumCompleted<0||
     policy.minimumCompleted>policy.courseIds.length||!Number.isFinite(policy.progressThresholdPct)||
     policy.progressThresholdPct<0||policy.progressThresholdPct>100)return "UNAVAILABLE";
@@ -20,7 +22,8 @@ export function deriveTpoPrepCourseOutcome(
  if(policy.courseIds.some(id=>!byCourse.has(id)))return "UNAVAILABLE";
  const rows=policy.courseIds.map(id=>byCourse.get(id)!);
  if(rows.some(row=>!Number.isInteger(row.totalContent)||row.totalContent<=0||
-   row.completedContent<0||row.completedContent>row.totalContent))return "UNAVAILABLE";
+   !Number.isInteger(row.completedContent)||row.completedContent<0||
+   row.completedContent>row.totalContent))return "UNAVAILABLE";
  const completed=rows.filter(row=>row.completedContent===row.totalContent).length;
  const total=rows.reduce((sum,row)=>sum+row.totalContent,0);
  const done=rows.reduce((sum,row)=>sum+row.completedContent,0);
