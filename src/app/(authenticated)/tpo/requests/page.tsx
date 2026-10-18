@@ -4,6 +4,7 @@ import {placementTableExists} from "@/modules/placements/staged-tables";
 import {TpoSafeCsvDownload} from "@/components/tpo/tpo-safe-csv-download";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { PageHeader } from "@/components/ui/page-header";
 import { TpoRequestDecisionControl } from "@/components/placements/tpo-request-decision-control";
 import {TpoRequestBulkDecision} from "@/components/placements/tpo-request-bulk-decision";
@@ -33,6 +34,10 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
   if (!context.membership || !hasMembershipRole(context, "TPO")) {
     redirect("/dashboard");
   }
+  // Reject a revoked/suspended TPO before even parsing the request URL.
+  // The page loads job choices in parallel with the inbox, so a downstream
+  // inbox-only persisted check is too late to protect that earlier read.
+  await requireTpoBatchActor(context);
   const raw = await searchParams;
   const parsed=parseGlobalTpoRequestFilters({
     status:first(raw.status),age:first(raw.age),sort:first(raw.sort),
