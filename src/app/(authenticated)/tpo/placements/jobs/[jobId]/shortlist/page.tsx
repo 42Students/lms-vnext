@@ -52,7 +52,7 @@ export default async function TpoDriveShortlistPage({
         description="Current SHORTLISTED screening decisions for submitted applications belonging to active college learners."
         actions={
           <a href={"/api/placements/jobs/" + encodeURIComponent(data.job.id) + "/shortlist/export"}
-            className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-foreground">
+            className="inline-flex min-h-11 items-center rounded-[9px] bg-primary px-4 text-sm font-semibold text-primary-foreground">
             Export shortlist CSV
           </a>
         }
