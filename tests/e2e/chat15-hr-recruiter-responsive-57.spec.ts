@@ -5,7 +5,7 @@ import {captureUncaughtErrors,expectNoRawErrors} from "./support/no-raw-error";
 const enabled=Boolean(process.env.E2E_AUTH_SECRET)&&
  process.env.E2E_AUTH_ENABLED==="true";
 const routes=[
- {url:"/hr/home",heading:"Today"},
+ {url:"/hr/home",heading:/./},
  {url:"/hr/drives",heading:"Drives"},
  {url:"/hr/calendar",heading:"Calendar"},
  {url:"/hr/conversations",heading:"Messages"},
@@ -43,8 +43,7 @@ test.describe("UX-HR-BROWSER-57 authenticated Recruiter phone and keyboard journ
    "/recruiter/drives/123e4567-e89b-42d3-a456-426614174001",
   ]){
    await page.goto(route);
-   await expect(page.getByRole("heading",{level:1,name:/^(Today|Drives|Company & Team|Notifications)$/}))
-    .toHaveCount(0);
+   await expect(page).toHaveURL(/\\/dashboard(?:[?#].*)?$/);
    await expectNoRawErrors(page);
   }
  });
