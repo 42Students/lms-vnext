@@ -9,6 +9,17 @@ import {
 import type { RequestContext } from "@/modules/identity/context";
 import { resolveActingCollege } from "@/modules/permissions/acting-college";
 
+/** Unstaffed or unmapped courses fail closed. Duplicated teaching assignments
+ * cannot inflate the number of unique courses ready for promotion. */
+export function summarizePromotionFacultyReadiness(
+  courseIds: readonly string[], staffedCourseIds: readonly string[],
+) {
+  const staffed = new Set(staffedCourseIds);
+  const missingCourses = courseIds.filter(id => !staffed.has(id)).length;
+  return {incomplete: courseIds.length === 0 || missingCourses > 0,
+    missingCourses,totalCourses:courseIds.length};
+}
+
 /** Read-only advisory for the target term; the promotion service rechecks
  * saved progression and reports this advisory in the audit result. */
 export async function getPromotionFacultyReadiness(
@@ -51,10 +62,7 @@ export async function getPromotionFacultyReadiness(
       isNull(courseTeachingAssignments.endedAt),
       isNull(courseSectionDeliveries.endedAt)))
     .groupBy(courseOfferings.courseId);
-  const staffed = new Set(active.map(item => item.courseId));
-  return {
-    incomplete: courses.some(row => !staffed.has(row.courseId)),
-    missingCourses: courses.filter(row => !staffed.has(row.courseId)).length,
-    totalCourses: courses.length,
-  };
+  return summarizePromotionFacultyReadiness(
+    courses.map(row => row.courseId), active.map(item => item.courseId),
+  );
 }
