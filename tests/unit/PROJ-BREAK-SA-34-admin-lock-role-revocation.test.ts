@@ -72,6 +72,44 @@ describe("PROJ-BREAK-SA-34 persisted actor guard precedes project and submission
     expect(insert).not.toHaveBeenCalled();
   });
 
+  it("retries an exact same-actor lock idempotently without duplicating the delivery event",async()=>{
+    const submission={id:submissionId,projectId,status:"SUBMITTED",lockedAt:new Date("2099-01-01T00:00:00Z"),version:3};
+    const rows=[
+      [{status:"ACTIVE"}],
+      [submission],
+      [{reason:"Reviewer lock",actorMembershipId:membershipId}],
+    ];
+    let index=0;
+    select.mockImplementation(()=>({
+      from(){return this;},where(){return this;},for(){return this;},orderBy(){return this;},
+      limit(){return Promise.resolve(rows[index++]);},
+    }));
+    const result=await lockAdminProjectSubmission(actor,projectId,submissionId,{reason:"Reviewer lock"});
+    expect(result).toBe(submission);
+    expect(index).toBe(3);
+    expect(update).not.toHaveBeenCalled();
+    expect(insert).not.toHaveBeenCalled();
+    expect(mocks.recordActivityEventInTransaction).not.toHaveBeenCalled();
+  });
+
+  it("never silently attributes a prior lock with changed reason to the same reviewer",async()=>{
+    const rows=[
+      [{status:"ACTIVE"}],
+      [{id:submissionId,status:"APPROVED",lockedAt:new Date("2099-01-01T00:00:00Z"),version:3}],
+      [{reason:"First lock",actorMembershipId:membershipId}],
+    ];
+    let index=0;
+    select.mockImplementation(()=>({
+      from(){return this;},where(){return this;},for(){return this;},orderBy(){return this;},
+      limit(){return Promise.resolve(rows[index++]);},
+    }));
+    await expect(lockAdminProjectSubmission(actor,projectId,submissionId,{reason:"Changed reason"}))
+      .rejects.toMatchObject({code:"PROJECT_SUBMISSION_CONFLICT"});
+    expect(update).not.toHaveBeenCalled();
+    expect(insert).not.toHaveBeenCalled();
+    expect(mocks.recordActivityEventInTransaction).not.toHaveBeenCalled();
+  });
+
   it("rejects blank or extra-field lock reasons without inserting an event",async()=>{
     for(const command of [{reason:""},{reason:"OK",overrideLock:true},{reason:"x".repeat(4001)}]){
       await expect(lockAdminProjectSubmission(actor,projectId,submissionId,command)).rejects.toThrow();

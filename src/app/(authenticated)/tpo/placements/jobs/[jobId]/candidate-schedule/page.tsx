@@ -5,6 +5,8 @@ import { PlacementsServiceError } from "@/modules/placements/errors";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { placementTableExists } from "@/modules/placements/staged-tables";
+import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
+import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
 import {
   getTpoCandidateScheduleReadiness,
 } from "@/modules/placements/tpo-candidate-schedule-service";
@@ -18,6 +20,8 @@ export default async function TpoCandidateSchedulePage({
   const context = await getCurrentRequestContext();
   if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
   const { jobId } = await params;
+  const query = await searchParams;
+  if(tpoReportHasAmbiguousFilters(query))return <TpoReportInvalidFilters path={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/candidate-schedule"}/>;
   let result: Awaited<ReturnType<typeof getTpoCandidateScheduleReadiness>>;
   try {
     result = await getTpoCandidateScheduleReadiness(context, jobId);
@@ -28,7 +32,6 @@ export default async function TpoCandidateSchedulePage({
   }
   const { drive, readiness, warning } = result;
   const slotsReady=await placementTableExists("placement_round_candidate_slots");
-  const query = await searchParams;
   const roundId = typeof query.roundId === "string" ? query.roundId : null;
   const selectedRound = roundId ? drive.rounds.find(round => round.id === roundId) : null;
   const displayed = roundId ? readiness.displayed.filter(row => row.roundId === roundId) : readiness.displayed;
