@@ -98,7 +98,15 @@ describe("chat-4 College academic and people gap closure",()=>{
   const guide=source("src/modules/admin-ui/admin-dashboard-navigation.ts");
   const batches=source("src/components/academics/college-cohort-management.tsx");
   const classes=source("src/components/academics/college-section-management.tsx");
-  expect(tabs).toContain('{label:"Academic periods",href:"/college/academics"}');
+  // This route is a *prerequisite*, not an additional legacy tab. Keep the
+  // exact legacy six-step strip while making academic periods discoverable.
+  expect(tabs).not.toContain('{label:"Academic periods",href:"/college/academics"}');
+  expect(tabs).toContain('pathname === "/college/academics"');
+  expect(tabs).toContain('return "/college/departments"');
+  expect(tabs).toContain("group?.tabs.slice(0,6)");
+  const departments=source("src/app/(authenticated)/college/departments/page.tsx");
+  expect(departments).toContain('<Link href="/college/academics"');
+  expect(departments).toContain("Academic periods and sections");
   expect(guide).toContain('key: "academic-periods", href: "/college/academics"');
   expect(guide.indexOf('key: "academic-periods"')).toBeLessThan(guide.indexOf('key: "batches"'));
   for(const content of [batches,classes]){

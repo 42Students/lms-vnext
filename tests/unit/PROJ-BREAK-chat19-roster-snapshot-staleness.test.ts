@@ -1,4 +1,6 @@
-import {describe,expect,it} from "vitest";
+import {describe,expect,it,vi} from "vitest";
+vi.mock("server-only",()=>({}));
+vi.mock("@/db/client",()=>({getDb:()=>{throw new Error("DB forbidden in pure roster snapshot tests");}}));
 import {
   classRosterSnapshotSchema,assertRosterStillCurrent,
 } from "@/modules/projects/class-team-roster-snapshot";
