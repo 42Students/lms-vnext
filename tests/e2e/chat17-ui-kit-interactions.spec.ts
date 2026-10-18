@@ -41,6 +41,13 @@ test.describe("UX-kit-E2E-01 real browser shared UI states",()=>{
     await expect(cue).toHaveAttribute("data-scroll-start","true");
     await expect(cue).toHaveAttribute("data-scroll-end","false");
 
+    await page.getByRole("button",{name:"Narrow scroll content"}).click();
+    await expect(cue).toHaveAttribute("data-scroll-start","false");
+    await expect(cue).toHaveAttribute("data-scroll-end","false");
+    await expect(cue.getByRole("region",{name:"Harness horizontal overflow"})).toHaveCount(0);
+    await page.getByRole("button",{name:"Widen scroll content"}).click();
+    await expect(cue).toHaveAttribute("data-scroll-end","true");
+
     // Native host browser shims sometimes lack this standard API.
     await page.evaluate(() => {
       Object.defineProperty(window,"matchMedia",{configurable:true,value:undefined});
