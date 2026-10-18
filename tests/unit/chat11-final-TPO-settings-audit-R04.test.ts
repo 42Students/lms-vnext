@@ -51,7 +51,7 @@ describe("TPO-settings-audit-R04 persisted audit saved views across devices",()=
   expect(service).toContain("existing.stored.revision!==input.expectedRevision");
   expect(service).toContain("await tx.insert(activityEvents)");
   expect(service).toContain('input.action==="OPEN"');
-  expect(service).toContain("lastUsedAt");
+  expect(service).toContain("usedAt:new Date().toISOString()");
  });
  it("TPO-settings-audit-R04 uses signed-in server-backed views and never a browser-only shared cache",()=>{
   const ui=read("src/components/tpo/tpo-audit-saved-views.tsx");
