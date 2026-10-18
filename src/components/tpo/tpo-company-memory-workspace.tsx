@@ -173,7 +173,7 @@ export function TpoCompanyMemoryWorkspace({
 
   if (phase !== "ready" || !company) {
     return (
-      <section className="rounded-lg border border-border bg-surface p-6">
+      <section className="border-b border-border py-6">
         <p role={phase === "loading" ? "status" : "alert"}>
           {phase === "loading" ? "Loading Company Memory…" : error}
         </p>
@@ -216,12 +216,12 @@ export function TpoCompanyMemoryWorkspace({
            <nav aria-label={"New work for "+company.name}
             className="absolute right-0 z-20 mt-1 w-60 space-y-1 rounded-md border border-border bg-surface p-2 shadow-lg">
             <Link href={"/tpo/recruiters?add=1&company="+encodeURIComponent(company.name)}
-             className="block rounded px-2 py-3 text-sm text-[var(--lms-teal-deep)] hover:bg-primary-subtle">New recruiter lead for {company.name}</Link>
+             className="block rounded-[9px] px-2 py-3 text-sm text-[var(--lms-teal-deep)] hover:bg-primary-subtle">New recruiter lead for {company.name}</Link>
             <Link href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
-             className="block rounded px-2 py-3 text-sm text-[var(--lms-teal-deep)] hover:bg-primary-subtle">New drive for {company.name}</Link>
+             className="block rounded-[9px] px-2 py-3 text-sm text-[var(--lms-teal-deep)] hover:bg-primary-subtle">New drive for {company.name}</Link>
             <div role="separator" className="border-t border-border"/>
             <Link href={"/tpo/calendar?company="+encodeURIComponent(company.name)}
-             className="block rounded px-2 py-3 text-sm text-[var(--lms-teal-deep)] hover:bg-primary-subtle">Follow-up</Link>
+             className="block rounded-[9px] px-2 py-3 text-sm text-[var(--lms-teal-deep)] hover:bg-primary-subtle">Follow-up</Link>
            </nav>
           </details>
           {company.canonicalCompanyId?<Link className={buttonStyle}
@@ -263,7 +263,7 @@ export function TpoCompanyMemoryWorkspace({
       ) : null}
 
       {company.hiredPerYear.length>0?(
-        <section aria-label="Students placed, by year" className="rounded-lg border border-border bg-surface p-4">
+        <section aria-label="Students placed, by year" className="border-b border-border py-4">
           <h2 className="font-semibold text-foreground">Students placed, by year</h2>
           <p className="mt-1 text-xs text-muted-foreground">Years hiring: {company.hiredPerYear.length}. Counts are distinct confirmed JOINED learners with a recorded joining year, not estimated offers.</p>
           <ul className="mt-3 space-y-3">
@@ -286,7 +286,7 @@ export function TpoCompanyMemoryWorkspace({
       </p>}
       <div className="grid gap-5 xl:grid-cols-2">
         <div className="space-y-5">
-          <section className="rounded-lg border border-border bg-surface p-4">
+          <section className="border-b border-border py-4">
             <h2 className="font-semibold text-foreground">People</h2>
             {company.people.length === 0 ? (
               <p className="mt-3 text-sm text-muted-foreground">No contacts yet.</p>
@@ -318,7 +318,7 @@ export function TpoCompanyMemoryWorkspace({
             )}
           </section>
 
-          <section className="rounded-lg border border-border bg-surface p-4">
+          <section className="border-b border-border py-4">
             <h2 className="font-semibold text-foreground">Documents</h2>
             {company.documentsStatus!=="READY"?
               <p role="status" className="mt-3 text-sm text-muted-foreground">
@@ -337,7 +337,7 @@ export function TpoCompanyMemoryWorkspace({
         </div>
 
         <div className="space-y-5">
-          <section className="rounded-lg border border-border bg-surface p-4">
+          <section className="border-b border-border py-4">
             <h2 className="font-semibold text-foreground">Drives</h2>
             <button type="button" className={buttonStyle+" mt-3"}
               disabled={visibleDrives.length===0}
@@ -352,7 +352,7 @@ export function TpoCompanyMemoryWorkspace({
               Export drives CSV
             </button>
             <label className="mt-3 block text-sm text-body">Search drives
-              <input className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3"
+              <input className="mt-1 min-h-11 w-full rounded-[9px] border border-border bg-surface px-3"
                 type="search" value={driveSearch} onChange={e=>setDriveSearch(e.target.value)}
                 placeholder="Search role, status or year"/>
             </label>
@@ -375,7 +375,7 @@ export function TpoCompanyMemoryWorkspace({
             )}
           </section>
 
-          <section className="rounded-lg border border-border bg-surface p-4">
+          <section className="border-b border-border py-4">
             <h2 className="font-semibold text-foreground">Timeline</h2>
             {company.timeline.length === 0 ? (
               <p className="mt-3 text-sm text-muted-foreground">Nothing logged yet.</p>
