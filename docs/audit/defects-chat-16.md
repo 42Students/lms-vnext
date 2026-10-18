@@ -36,3 +36,12 @@ The GitHub-only session does not expose a local checkout, PostgreSQL, package in
 
 **Release-blocking verification still missing:** connected GitHub tools permit reading/writing commits but expose no local checkout, Vitest process, PostgreSQL fixtures, or browser test runner. The new tests have not been executed. Integration must still verify provider reply statuses, mail-ingress gateway signatures, idempotency under concurrent schedulers, replay, recovery after partial failure, OTP start/verify/resend and all public/HR page states.
 
+
+## 2026-10-18 Projects notifications and inbound-mail scope follow-up
+
+| ID | Severity | Attack / direct evidence | Patch and test | Verification |
+|---|---|---|---|---|
+| PROJ-BREAK-NOTIFY-02 | S2, unintended notification audience | `notifyActiveProjectMembers` interpreted an explicitly supplied `roles: []` as no filter, broadcasting to every currently active project role instead of zero recipients. This is a tenant-scoped privacy breach of the caller's role targeting contract, even though the DB membership and tenant checks still restrict the set. | `0b84afb9e4ee48180e935e8efa8892bf6ce897bc` plus `tests/unit/PROJ-BREAK-chat16-notification-scope-01.test.ts` | Authored; cloud test pending |
+| INBOUND-MAIL-SCOPE-01 | S2, regression assertion contradicted security guard | `tests/unit/inbound-mail-admin-service.test.ts` asserted selected-college Super Admin could read platform-wide private inbound messages, while the service explicitly denies `adminScope` acting tenants. The old test would fail or encourage unsafe broad mailbox access. Kept and strengthened tests to reject wrong-role, tenant-scoped administrators before storage. | `38bbe33dbc53b869313f7f01852581c21dedd0da` and `tests/unit/chat16-inbound-mail-admin-journeys-10.test.ts` | Authored; cloud test pending |
+
+The source-hardening helpers use the central notification writer's recipient-scope verification and database conflict handling. This round does **not** claim recovery from a PostgreSQL connection loss, guaranteed delivery, real provider acceptance, or exactly-once semantics across different workers; those remain integration gates. Historical chat-16 queue/register reconciliation assertions were compared with current main and remain true from source inspection; failure list may represent an older CI commit and must be rerun by the orchestrator rather than weakened.
