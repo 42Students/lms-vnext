@@ -13,10 +13,12 @@ vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:vi.fn()}));
 vi.mock("@/lib/api-error",()=>({
  apiErrorResponse:vi.fn(()=>Response.json({error:"OPERATION_UNAVAILABLE"},{status:500})),
 }));
-vi.mock("@/modules/messaging/tpo-campaign-dispatch-service",async(importOriginal)=>{
- const actual=await importOriginal<typeof import("@/modules/messaging/tpo-campaign-dispatch-service")>();
- return {...actual,dispatchTpoCampaign:vi.fn()};
-});
+vi.mock("@/modules/messaging/tpo-campaign-dispatch-service",()=>({
+ TpoCampaignDispatchError:class TpoCampaignDispatchError extends Error{
+  constructor(readonly code:"NOT_READY"|"ALREADY_STARTED"|"NOT_FOUND"){super(code);}
+ },
+ dispatchTpoCampaign:vi.fn(),
+}));
 
 const id="11111111-1111-4111-8111-111111111111";
 const request=()=>new Request("https://college.example.edu/api/placements/tpo/campaigns/drafts/"+id+"/send",{
@@ -44,9 +46,6 @@ describe("chat-16 authenticated TPO campaign dispatch HTTP boundary",()=>{
   expect(dispatchTpoCampaign).not.toHaveBeenCalled();
  });
  it("TPO-CAMPAIGN-HTTP-17 never masks an invalid campaign identifier as successful delivery",async()=>{
-  vi.mocked(dispatchTpoCampaign).mockRejectedValue(
-   z.string().uuid().parse.bind(null,"invalid-uuid"),
-  );
   const error=new z.ZodError([{code:"custom",message:"INVALID_UUID",path:[]}]);
   vi.mocked(dispatchTpoCampaign).mockRejectedValue(error);
   const response=await post("not-a-campaign");
@@ -54,7 +53,7 @@ describe("chat-16 authenticated TPO campaign dispatch HTTP boundary",()=>{
   expect(await response.json()).toEqual({error:"INVALID_CAMPAIGN"});
  });
  it.each([
-  ["NOT_READY",503],["NOT_FOUND",404],["INVALID_STATE",409],
+  ["NOT_READY",503],["NOT_FOUND",404],["ALREADY_STARTED",409],
  ] as const)("TPO-CAMPAIGN-HTTP-18 maps %s into %i without a fake success",async(code,status)=>{
   vi.mocked(dispatchTpoCampaign).mockRejectedValue(new TpoCampaignDispatchError(code));
   const response=await post();
@@ -63,8 +62,8 @@ describe("chat-16 authenticated TPO campaign dispatch HTTP boundary",()=>{
   expect(response.headers.get("Cache-Control")).toBe("no-store");
  });
  it("TPO-CAMPAIGN-HTTP-19 retains only server-confirmed dispatch counts, no guessed delivery",async()=>{
-  const result={campaignId:id,sent:0,failed:1,skipped:2};
-  vi.mocked(dispatchTpoCampaign).mockResolvedValue(result as Awaited<ReturnType<typeof dispatchTpoCampaign>>);
+  const result={sent:0,failed:1,skipped:2};
+  vi.mocked(dispatchTpoCampaign).mockResolvedValue(result);
   const response=await post();
   expect(response.status).toBe(200);
   expect(response.headers.get("Cache-Control")).toBe("no-store");
