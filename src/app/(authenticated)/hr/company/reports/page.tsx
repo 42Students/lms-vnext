@@ -28,12 +28,6 @@ type SearchParams = {
   pageSize?: string | string[];
 };
 
-function first(
-  value: string | string[] | undefined,
-) {
-  return Array.isArray(value) ? value[0] : value;
-}
-
 function formatDate(value: Date | null) {
   if (!value) return "Not recorded";
 
@@ -58,10 +52,10 @@ export default async function RecruiterCompanyReportsPage({
 
   const parsed =
     recruiterCompanyReportsQuerySchema.safeParse({
-      collegeId: first(raw.collegeId) || undefined,
-      status: first(raw.status) || undefined,
-      page: first(raw.page) || undefined,
-      pageSize: first(raw.pageSize) || undefined,
+      collegeId: raw.collegeId || undefined,
+      status: raw.status || undefined,
+      page: raw.page || undefined,
+      pageSize: raw.pageSize || undefined,
     });
 
   if (!parsed.success) {

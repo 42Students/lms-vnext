@@ -12,13 +12,12 @@ import {listOwnRecruiterPlacementJobs} from "@/modules/placements/recruiter-serv
 import {getRecruiterPlacementWorkspace} from "@/modules/placements/recruiter-workspace-service";
 import {projectRecruiterRoundResults,recruiterResultTableHref,recruiterResultTableQuerySchema} from "@/modules/placements/recruiter-round-results-read-model";
 type Search={jobId?:string|string[];roundId?:string|string[];outcome?:string|string[]};
-function first(value:string|string[]|undefined){return Array.isArray(value)?value[0]:value;}
 export default async function HrRoundResultsPage({searchParams}:{searchParams:Promise<Search>}) {
  const context=await getCurrentRequestContext();
  if(!hasActiveRecruiter(context)) redirect("/dashboard");
  const raw=await searchParams;
- const query=recruiterResultTableQuerySchema.safeParse({jobId:first(raw.jobId)||undefined,
-   roundId:first(raw.roundId)||undefined,outcome:first(raw.outcome)||undefined});
+ const query=recruiterResultTableQuerySchema.safeParse({jobId:raw.jobId||undefined,
+   roundId:raw.roundId||undefined,outcome:raw.outcome||undefined});
  if(!query.success) return <div className="min-w-0 max-w-full space-y-5"><PageHeader eyebrow="Employer Recruiter" title="Round Results" />
    <ErrorState title="Invalid round filters" description="Choose a valid hiring drive, round and outcome filter."
     action={<Link href="/hr/round-results" className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>}/></div>;
