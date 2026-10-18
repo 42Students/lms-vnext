@@ -6,6 +6,11 @@ import {getMentorProjectReviewCompleteness} from "@/modules/projects/mentor-revi
 import {getMentorReviewHistory} from "@/modules/projects/mentor-review-history-service";
 import {getMentorTaskReviewHistory} from "@/modules/projects/mentor-task-history-service";
 import {getMentorTeamCoverage} from "@/modules/projects/mentor-team-coverage-service";
+import {getMentorBoardReview} from "@/modules/projects/mentor-board-review-service";
+import {getMentorProjectTimeline} from "@/modules/projects/mentor-project-timeline-service";
+import {getMentorTeamHistory} from "@/modules/projects/mentor-team-history-service";
+import {getMentorTeamMeetings} from "@/modules/projects/mentor-team-meetings-service";
+import {getMentorSprintProgress} from "@/modules/projects/mentor-sprint-progress-service";
 
 const state=vi.hoisted(()=>({
  active:true,role:true,permission:true,enabled:true,scopeAccess:"MENTOR",
@@ -18,6 +23,7 @@ vi.mock("@/modules/identity/context",()=>({
  hasMembershipRole:(_:unknown,role:string)=>role==="MENTOR"&&state.role,
 }));
 vi.mock("@/modules/permissions/policy",()=>({
+ AuthorizationError:class AuthorizationError extends Error{},
  can:(context:{membership?:{collegeId:string;organizationId:string}},
   _:unknown,resource:{collegeId:string;organizationId:string})=>
    state.permission&&context.membership?.collegeId===resource.collegeId&&
@@ -67,6 +73,7 @@ const queries=[
  {name:"final review history",run:()=>getMentorReviewHistory(context(),{})},
  {name:"task review history",run:()=>getMentorTaskReviewHistory(context(),{})},
  {name:"team coverage",run:()=>getMentorTeamCoverage(context(),{})},
+ {name:"sprint progress",run:()=>getMentorSprintProgress(context(),{})},
 ] as const;
 beforeEach(()=>{
  state.active=true;state.role=true;state.permission=true;state.enabled=true;
@@ -102,10 +109,12 @@ describe("PROJ-BREAK-MENTOR-178..184 read-service access and disabled modules",(
   const task=await getMentorTaskReviewHistory(context(),{});
   const team=await getMentorTeamCoverage(context(),{});
   const complete=await getMentorProjectReviewCompleteness(context(),{projectId});
+  const progress=await getMentorSprintProgress(context(),{});
   expect(review).toMatchObject({enabled:false,items:[],projects:[]});
   expect(task).toMatchObject({enabled:false,items:[]});
   expect(team).toMatchObject({enabled:false,projectCount:0,items:[]});
   expect(complete).toMatchObject({enabled:false,items:[],projectTitle:null});
+  expect(progress).toMatchObject({enabled:false,items:[],projects:[]});
   expect(state.dbCalls).toBe(0);
   expect(state.rosterCalls).toBe(0);
  });
@@ -153,11 +162,43 @@ describe("PROJ-BREAK-MENTOR-178..184 read-service access and disabled modules",(
    ()=>getMentorReviewHistory(context(),{}),
    ()=>getMentorTaskReviewHistory(context(),{}),
    ()=>getMentorTeamCoverage(context(),{}),
+   ()=>getMentorSprintProgress(context(),{}),
   ]){
    await expect(read()).rejects.toThrow("DB_READ_ATTEMPTED");
   }
   expect(state.readinessCalls).toBe(3);
   expect(state.dbCalls).toBe(5);
+ });
+ it("PROJ-BREAK-MENTOR-190 disabled board, timeline, team history and meeting log reveal no project metadata",async()=>{
+  state.enabled=false;
+  const board=await getMentorBoardReview(context(),{projectId});
+  const timeline=await getMentorProjectTimeline(context(),{projectId});
+  const history=await getMentorTeamHistory(context(),{projectId});
+  const meetings=await getMentorTeamMeetings(context(),{projectId});
+  expect(board).toMatchObject({enabled:false,projectTitle:"",items:[]});
+  expect(timeline).toMatchObject({enabled:false,projectTitle:"",projectStatus:"",items:[]});
+  expect(history).toMatchObject({enabled:false,title:"",items:[]});
+  expect(meetings).toMatchObject({
+   enabled:false,projectTitle:"",projectStatus:"",items:[],
+   team:{learners:0,mentors:0,primaryRecorded:false},
+  });
+  expect(state.scopedCalls).toBe(0);
+  expect(state.dbCalls).toBe(0);
+  expect(state.rosterCalls).toBe(0);
+  expect(state.readinessCalls).toBe(0);
+ });
+ it("PROJ-BREAK-MENTOR-191 authorized board/timeline and team records do not falsely report disabled",async()=>{
+  for(const read of [
+   ()=>getMentorBoardReview(context(),{projectId}),
+   ()=>getMentorProjectTimeline(context(),{projectId}),
+  ])await expect(read()).rejects.toThrow("READINESS_FETCH");
+  for(const read of [
+   ()=>getMentorTeamHistory(context(),{projectId}),
+   ()=>getMentorTeamMeetings(context(),{projectId}),
+  ])await expect(read()).rejects.toThrow("DB_READ_ATTEMPTED");
+  expect(state.scopedCalls).toBe(4);
+  expect(state.readinessCalls).toBe(2);
+  expect(state.dbCalls).toBe(2);
  });
  it("PROJ-BREAK-MENTOR-184 malformed exact project IDs reject before any query or resolver",async()=>{
   for(const read of [
