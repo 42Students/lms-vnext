@@ -24,6 +24,20 @@ describe("chat-5 TPO drive closure and correction journeys",()=>{
   expect(service).toContain("endDriveApplicants(");
   expect(service).toContain("tellRecruiterDriveStopped(");
  });
+ it("PLACEMENTS-CANCEL-SEASON-40 uses a shared season lock after the exclusive job mutex",()=>{
+  const service=src("src/modules/placements/tpo-drive-cancel-service.ts");
+  const mutation=service.slice(service.indexOf("export async function cancelTpoDriveWithPreview"));
+  const lockJob=mutation.indexOf('.for("update")');
+  const seasonRead=mutation.indexOf('.from(placementSeasons)');
+  const lockSeason=mutation.indexOf('.for("share")',seasonRead);
+  const decision=mutation.indexOf('evaluateTpoDriveCancellation(');
+  expect(lockJob).toBeGreaterThanOrEqual(0);
+  expect(seasonRead).toBeGreaterThan(lockJob);
+  expect(lockSeason).toBeGreaterThan(seasonRead);
+  expect(decision).toBeGreaterThan(lockSeason);
+  expect(mutation.slice(seasonRead,decision)).toContain(
+    'eq(placementSeasons.collegeId, collegeId)');
+ });
  it("PLACEMENTS-CANCEL-WAIT-34 requires settling pending waitlist reservations before cancellation",()=>{
   const service=src("src/modules/placements/tpo-drive-cancel-service.ts");
   const page=src("src/app/(authenticated)/tpo/placements/jobs/[jobId]/cancel-preview/page.tsx");
