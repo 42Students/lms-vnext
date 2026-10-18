@@ -19,6 +19,12 @@ export function buildCollegeDirectoryCsv(headers:readonly string[],
 export async function collectCollegeExportRows<T>(
  read:(page:number)=>Promise<{items:T[];total:number;totalPages:number}>,
  pageSize:number,cap=1000){
+ // This is also invoked by internal export jobs; do not rely solely on
+ // HTTP-boundary schemas to prevent an infinite or oversized paging walk.
+ if(!Number.isSafeInteger(pageSize)||pageSize<1||pageSize>1000)
+  throw new RangeError("INVALID_EXPORT_PAGE_SIZE");
+ if(!Number.isSafeInteger(cap)||cap<1||cap>1000)
+  throw new RangeError("INVALID_EXPORT_CAP");
  const first=await read(1);
  const rows=[...first.items];
  const maxPages=Math.ceil(cap/pageSize);
