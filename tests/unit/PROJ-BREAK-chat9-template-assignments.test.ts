@@ -132,7 +132,8 @@ describe("IIT Dharwad: Project template assignment retries and scope", () => {
     expect(state.events).toBe(1);
 
     const assignedAt = first.assignedAt.getTime();
-    const second = await assignProjectTemplateToCollege(actor, templateId, collegeId);
+    const secondActor = { ...actor, user: { ...actor.user, id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa" } };
+    const second = await assignProjectTemplateToCollege(secondActor, templateId, collegeId);
     expect(second).toEqual(first);
     expect(second.assignedAt.getTime()).toBe(assignedAt);
     expect(second.assignedByUserId).toBe(actor.user.id);
@@ -177,10 +178,12 @@ describe("IIT Dharwad: Project template assignment retries and scope", () => {
 
   it("PROJ-BREAK-state-21 archive, draft or unpublished template never writes an assignment", async () => {
     for (const status of ["ARCHIVED", "DRAFT", "UNKNOWN"]) {
+      state.selectCalls = 0;
       state.templateStatus = status;
       await expect(assignProjectTemplateToCollege(superAdmin(), templateId, collegeId))
         .rejects.toThrow("PROJECT_TEMPLATE_NOT_PUBLISHED");
     }
+    state.selectCalls = 0;
     state.templateStatus = "PUBLISHED";
     state.publishedVersion = null;
     await expect(assignProjectTemplateToCollege(superAdmin(), templateId, collegeId))
