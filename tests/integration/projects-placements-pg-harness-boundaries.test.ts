@@ -252,6 +252,28 @@ describe("PROJ-HARNESS role/tenancy and concurrent PostgreSQL fixture boundaries
     });
   });
 
+  it("PROJ-HARNESS-42 another active project learner can submit the team's final draft", async () => {
+    await withProjectPg(pool,async db=>{
+      const f=await actors(db);
+      const teammate=await createPrincipal(db,f.own,["LEARNER"]);
+      await db.query(`
+        insert into project_members (project_id,membership_id,role,created_by_user_id)
+        values ($1,$2,'LEARNER',$3)`,[f.project.projectId,teammate.membershipId,f.author.userId]);
+      const draftId=await createFinalSubmission(db,f.project,f.learner);
+      await expect(submitFinalSubmission(db,draftId,f.outsider))
+        .rejects.toThrow(/active member/);
+      await submitFinalSubmission(db,draftId,teammate);
+      const rows=await db.query<{status:string;created_by_membership_id:string;submitted_by_membership_id:string}>(`
+        select status,created_by_membership_id,submitted_by_membership_id
+        from project_submissions where id=$1`,[draftId]);
+      expect(rows).toMatchObject([{
+        status:"SUBMITTED",created_by_membership_id:f.learner.membershipId,
+        submitted_by_membership_id:teammate.membershipId,
+      }]);
+      await expect(submitFinalSubmission(db,draftId,f.learner)).rejects.toThrow(/expected one draft/);
+    });
+  });
+
   it("PROJ-HARNESS-26 independent sessions contend for the same transaction advisory lock", async () => {
     const key = BigInt("0x" + randomUUID().replaceAll("-", "").slice(0, 15)).toString();
     await withTwoPgSessions(pool, async (first, second) => {
