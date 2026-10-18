@@ -15,5 +15,5 @@ export function companyShareApplicantHref(token:string,page:number,search:string
 /** An expired/out-of-range link should not pretend that a later page exists. */
 export function clampCompanySharePage(requestedPage:number,total:number){
  const totalPages=Math.max(1,Math.ceil(Math.max(0,total)/25));
- return {page:Math.max(1,Math.min(requestedPage,totalPages)),totalPages};
+ return {page:Number.isSafeInteger(requestedPage)?Math.max(1,Math.min(requestedPage,totalPages)):1,totalPages};
 }
