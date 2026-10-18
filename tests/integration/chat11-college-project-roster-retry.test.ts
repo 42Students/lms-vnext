@@ -71,17 +71,26 @@ describe("IIT Dharwad College Admin roster retries and concurrent tabs (PostgreS
       learnerMembershipIds: [SEED_IDS.learnerCollegeAMembership], expectedUpdatedAt: original,
     });
     expect(first).toMatchObject({ added: 1, removed: 0 });
+    const eventCount = async () => Number((await pool.query<{ count: string }>(
+      "select count(*)::text as count from activity_events where metadata->>'projectId'=$1",
+      [project.id],
+    )).rows[0]?.count ?? "0");
+    const notificationCount = async () => Number((await pool.query<{ count: string }>(
+      "select count(*)::text as count from in_app_notifications where event_id in (select id from activity_events where metadata->>'projectId'=$1)",
+      [project.id],
+    )).rows[0]?.count ?? "0");
+    const eventsBefore = await eventCount();
+    const noticesBefore = await notificationCount();
+    expect(eventsBefore).toBeGreaterThan(0);
+    expect(noticesBefore).toBe(1);
     const repeat = await replaceCollegeProjectLearners(admin, project.id, {
       learnerMembershipIds: [SEED_IDS.learnerCollegeAMembership], expectedUpdatedAt: original,
     });
     expect(repeat).toEqual({ added: 0, removed: 0, updatedAt: first.updatedAt });
     expect((await listProjectMembers(admin, project.id)).filter(row => row.role === "LEARNER"))
       .toHaveLength(1);
-    const duplicateEvents = await pool.query<{ count: string }>(
-      "select count(*)::text as count from activity_events where subject_id=$1 and event_type like '%member%'",
-      [project.id],
-    );
-    expect(Number(duplicateEvents.rows[0]?.count ?? "0")).toBeLessThanOrEqual(1);
+    expect(await eventCount()).toBe(eventsBefore);
+    expect(await notificationCount()).toBe(noticesBefore);
   });
 
   it("PROJ-COL-STALE-03 a genuinely different stale request is refused, preserving the first write", async () => {
