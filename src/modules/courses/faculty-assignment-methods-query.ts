@@ -9,8 +9,8 @@ const methodsQuery=z.object({
 export function parseFacultyAssignmentMethodsQuery(requestUrl:string){
  const params=new URL(requestUrl).searchParams;
  const keys=[...params.keys()];
- if(keys.length!==1||keys[0]!=="assignmentId"||
-   params.getAll("assignmentId").length!==1)
-   return methodsQuery.parse({assignmentId:null});
- return methodsQuery.parse({assignmentId:params.get("assignmentId")});
+ const selector=keys.length===1&&keys[0]==="assignmentId" &&
+   params.getAll("assignmentId").length===1
+   ?params.get("assignmentId"):null;
+ return methodsQuery.parse({assignmentId:selector});
 }
