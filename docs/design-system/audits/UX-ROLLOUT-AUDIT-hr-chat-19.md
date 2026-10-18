@@ -22,6 +22,16 @@ Only a subset of nested HR components, drawer behavior, server permissions and w
 
 **Counts:** 0 BLOCKER, 6 MAJOR, 0 MINOR, 0 NIT found and addressed in this review. Code commits `86d4e58a`, `2c21cb71`, `8f859ed4`, `f150fa86`, `56742618`, `8a8df46e`, `c9ead3e5`, `1eaae5e9`, `3de439aa`. Test file: `tests/unit/chat19-hr-page-contracts.test.ts`.
 
+### 2026-10-18 follow-on cross-audit of chat-15/16 recruiter work
+
+| Route | Finding ID | Severity before fix | Source evidence | Verified source fix | Regression |
+|---|---|---|---|---|---|
+| `/hr/drives/new` / copied job drafts | HR-XA-07 | MAJOR | `src/modules/placements/hr-drive-draft-model.ts` external HTTPS URL refinement and copied-job projection | Reject loopback/private-network/local-host application links using the same fail-closed recruiter browser-link policy (`e8267309`) | `tests/unit/HR-BREAK-drive-payload-01.test.ts` (`1fc0b092`) |
+| `/hr/drives/new` form double submit | HR-XA-08 | MAJOR | `src/components/hr/hr-drive-draft-form.tsx` asynchronous `submitting` state | Add immediate synchronous in-flight guard, terminal saved state and preserve same idempotency submission ID for ambiguous retries (`c2c46d25`) | `tests/unit/HR-BREAK-double-submit-01.test.ts` (`9c20e646`) |
+| All recruiter pages under `/hr` | HR-BREAK-session-layout-01 | COVERAGE | `src/app/(authenticated)/hr/layout.tsx` | Live test of active, expired, missing-profile, suspended and zero-grant recruiter entry, without loosening role gate | `tests/unit/HR-BREAK-session-layout-01.test.ts` (`d2da705b`) |
+
+**Revised source-level count:** 0 confirmed outstanding BLOCKER, **8 MAJOR discovered and source-fixed**, plus one session-layout coverage improvement. Earlier source-level 6/6 has been retained. **Verdict remains FAIL** until TypeScript, all affected Vitest suites, PostgreSQL race tests, real browser/keyboard and 320/360/390px verification are executed. The API-only review cannot certify the race and session behaviour end-to-end.
+
 ## HR pages reviewed
 
 | Route | Cross-audit check | Test evidence |
