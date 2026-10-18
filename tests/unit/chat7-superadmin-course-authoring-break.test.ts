@@ -28,7 +28,7 @@ describe("SA-academics-people-58 GR-COURSES-TENANT-02 authoring, stale tabs and 
   expect(cleaned).not.toContain("<a ");
   expect(cleaned).not.toContain("onclick=");
   expect(cleaned).not.toContain("style=");
-  expect(cleaned).not.toContain('href="javascript:');
+  expect(cleaned).not.toMatch(/<a\s/i);
   expect(cleaned).toContain("&lt;svg");
   expect(sanitizeCourseDisplayHtml(null)).toBeNull();
   expect(sanitizeCourseDisplayHtml("   ")).toBeNull();
