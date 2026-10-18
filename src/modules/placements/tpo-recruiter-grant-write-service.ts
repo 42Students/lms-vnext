@@ -3,6 +3,7 @@ import "server-only";
 import { and, eq, sql } from "drizzle-orm";
 import { equalsIgnoreCase } from "@/lib/sql-match";
 import { getDb } from "@/db/client";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {
   activityEvents, placementCompanies, placementCompanyRelationships,
   placementRecruiterCollegeGrants, placementRecruiterProfiles,
@@ -32,6 +33,17 @@ export async function changeTpoRecruiterGrant(context: RequestContext, raw: unkn
   const actorMembershipId = member.id;
 
   return getDb().transaction(async (tx) => {
+    // The TPO role may have been revoked since the request was authorized.
+    // All grant, extension, revocation and already-active paths must use the
+    // persisted account/role inside the same transaction as their writes.
+    const persisted = await assertPersistedPlatformPermission(
+      tx, context, "placements.manage", {
+        collegeId, organizationId: college.organizationId,
+      },
+    );
+    if (!hasMembershipRole(persisted, "TPO")) {
+      throw new AuthorizationError("placements.manage");
+    }
     if (input.action === "GRANT") {
       await tx.insert(placementTpoCollegeSettings)
         .values({collegeId})
