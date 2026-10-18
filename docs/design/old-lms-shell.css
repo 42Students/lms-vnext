@@ -1,0 +1,100 @@
+/*
+ * OLD LMS SHELL CSS, extracted verbatim (computed rule text) from the running legacy app, TPO portal, 2026-10-19.
+ * REFERENCE ONLY: port these rules/tokens into vNext's shell (sidebar, top bar). Do not import this file.
+ * Key facts: sidebar rail 6rem (96px) -> 16rem (256px) on :hover, transition width .15s cubic-bezier(.2,0,0,1);
+ * top header 68px, bottom border #e7ecf2, light shadow, command bar grid (new button | search 220-380px | actions);
+ * active nav item: bg #eff8fa + 3px teal inset bar #26bac7, text/icon #1a95a1; hover bg rgba(38,186,199,.07).
+ */
+
+/* ===== SIDEBAR (desktop) ===== */
+.fl-d-panel-l * { scrollbar-width: none; }
+.fl-d-panel-l ::-webkit-scrollbar { display: none; }
+.fl-d-panel-l__logo { object-fit: cover; object-position: left center; width: 38px; height: 36px; display: block; }
+.fl-d-panel-l { background: rgb(255, 255, 255); border-right: 1px solid rgb(241, 244, 249); flex-direction: column; flex-shrink: 0; width: 6rem; min-width: 6rem; height: 100vh; transition: width 0.15s cubic-bezier(0.2, 0, 0, 1), opacity 0.15s cubic-bezier(0.2, 0, 0, 1); display: flex; position: relative; }
+.fl-d-panel-l .menu-txt { display: none; }
+.fl-d-panel-l.ln-learner-sidebar-expanded { width: 16rem; }
+.fl-d-panel-l.ln-learner-sidebar-expanded .fl-module-link { justify-content: left !important; }
+.fl-d-panel-l.ln-learner-sidebar-expanded .menu-txt { display: block; }
+.fl-d-panel-l:hover { width: 16rem; }
+.fl-d-panel-l:hover .fl-module-link { justify-content: left !important; }
+.fl-d-panel-l:hover .menu-txt { display: block; }
+.fl-d-panel-l__body { text-wrap: nowrap; padding: 8px 0px 16px; overflow: hidden visible; }
+.fl-d-panel-l__footer { z-index: 2; margin-top: auto; padding: 25px 16px; }
+@media (max-width: 767px) { .fl-d-panel-l { display: none !important; } }
+.learn-layout .fl-d-panel-l { padding-right: 8px; }
+@media (min-width: 768px) { .learn-layout .fl-d-panel-l { padding-right: 16px; } }
+.admin-sidebar-panel.fl-d-panel-l .fl-panel-module-list__item { min-height: 44px; }
+.admin-sidebar-panel.fl-d-panel-l .fl-module-link { min-height: 44px; padding-top: 12px; padding-bottom: 12px; }
+
+/* ===== TPO / RECRUITER SIDEBAR ITEMS ===== */
+.tpo-sidebar-panel.fl-d-panel-l .fl-panel-module-list__item, .recruiter-sidebar-panel.fl-d-panel-l .fl-panel-module-list__item { margin-bottom: 6px; }
+.tpo-sidebar-panel.fl-d-panel-l .fl-module-link, .recruiter-sidebar-panel.fl-d-panel-l .fl-module-link { border-radius: 8px; min-height: 44px; padding: 10px 12px; position: relative; }
+.tpo-sidebar-panel.fl-d-panel-l .fl-module-link:focus-visible, .recruiter-sidebar-panel.fl-d-panel-l .fl-module-link:focus-visible { outline-offset: -2px; outline: rgba(38, 186, 199, 0.45) solid 2px; }
+.tpo-sidebar-panel.fl-d-panel-l .fl-module-link > .menu-txt, .recruiter-sidebar-panel.fl-d-panel-l .fl-module-link > .menu-txt { min-width: 0px; font-size: 15px; line-height: 20px; }
+.tpo-sidebar-panel.fl-d-panel-l .fl-module-link__icon, .recruiter-sidebar-panel.fl-d-panel-l .fl-module-link__icon { color: rgb(84, 80, 93); opacity: 0.55; flex: 0 0 24px; justify-content: center; width: 24px; height: 24px; line-height: 1; }
+.tpo-sidebar-panel.fl-d-panel-l .fl-module-link__icon .anticon, .tpo-sidebar-panel.fl-d-panel-l .fl-module-link__icon .fl-module-link__ant-icon, .recruiter-sidebar-panel.fl-d-panel-l .fl-module-link__icon .anticon, .recruiter-sidebar-panel.fl-d-panel-l .fl-module-link__icon .fl-module-link__ant-icon { justify-content: center; align-items: center; font-size: 20px; line-height: 1; display: inline-flex; }
+.tpo-sidebar-panel.fl-d-panel-l .fl-module-link__icon .fl-module-link__image-icon, .recruiter-sidebar-panel.fl-d-panel-l .fl-module-link__icon .fl-module-link__image-icon { object-fit: contain; display: block; width: 20px !important; height: 20px !important; }
+.tpo-sidebar-panel.fl-d-panel-l .fl-module-link__badge, .recruiter-sidebar-panel.fl-d-panel-l .fl-module-link__badge { flex: 0 0 auto; align-items: center; margin-left: auto; display: inline-flex; }
+.tpo-sidebar-panel.fl-d-panel-l .fl-module-link__badge .ant-badge-count, .recruiter-sidebar-panel.fl-d-panel-l .fl-module-link__badge .ant-badge-count { font-size: 10px; line-height: 18px; }
+.tpo-sidebar-panel.fl-d-panel-l:not(:hover) .fl-module-link__badge, .recruiter-sidebar-panel.fl-d-panel-l:not(:hover) .fl-module-link__badge { transform-origin: center center; margin-left: 5px; position: absolute; top: 4px; left: 50%; transform: scale(0.72); }
+.tpo-sidebar-panel.fl-d-panel-l:hover .fl-module-link__badge, .recruiter-sidebar-panel.fl-d-panel-l:hover .fl-module-link__badge { margin-left: auto; position: static; transform: none; }
+.tpo-sidebar-panel.fl-d-panel-l:hover .ln-hov__visible { scrollbar-width: thin; scrollbar-color: rgba(107, 114, 128, 0.28) rgba(0, 0, 0, 0); }
+.tpo-sidebar-panel.fl-d-panel-l:hover .ln-hov__visible::-webkit-scrollbar { width: 4px; display: block; }
+.tpo-sidebar-panel.fl-d-panel-l:hover .ln-hov__visible::-webkit-scrollbar-thumb { background: rgba(107, 114, 128, 0.28); border-radius: 999px; }
+.tpo-sidebar-panel.fl-d-panel-l .fl-panel-module-list__indicator, .recruiter-sidebar-panel.fl-d-panel-l .fl-panel-module-list__indicator { display: none; }
+.tpo-sidebar-panel.fl-d-panel-l .fl-panel-module-list__item.active > .fl-module-link, .recruiter-sidebar-panel.fl-d-panel-l .fl-panel-module-list__item.active > .fl-module-link { background: rgb(239, 248, 250); box-shadow: rgb(38, 186, 199) 3px 0px inset; }
+.tpo-sidebar-panel.fl-d-panel-l .fl-panel-module-list__item.active > .fl-module-link .fl-module-link__icon, .tpo-sidebar-panel.fl-d-panel-l .fl-panel-module-list__item.active > .fl-module-link .menu-txt, .recruiter-sidebar-panel.fl-d-panel-l .fl-panel-module-list__item.active > .fl-module-link .fl-module-link__icon, .recruiter-sidebar-panel.fl-d-panel-l .fl-panel-module-list__item.active > .fl-module-link .menu-txt { color: rgb(26, 149, 161); }
+.tpo-sidebar-panel.fl-d-panel-l .fl-module-link:hover, .recruiter-sidebar-panel.fl-d-panel-l .fl-module-link:hover { background: rgba(38, 186, 199, 0.07); }
+.tpo-sidebar-panel.fl-d-panel-l .fl-module-link:hover .fl-module-link__icon, .tpo-sidebar-panel.fl-d-panel-l .fl-module-link:hover .menu-txt, .recruiter-sidebar-panel.fl-d-panel-l .fl-module-link:hover .fl-module-link__icon, .recruiter-sidebar-panel.fl-d-panel-l .fl-module-link:hover .menu-txt { color: rgb(26, 149, 161); }
+/* group headings: collapsed shows only a thin divider line; on hover shows OPERATE / COORDINATE / ... */
+.tpo-sidebar-panel .fl-panel-module-list__section { color: rgb(91, 107, 130); letter-spacing: 0.105em; pointer-events: none; text-transform: uppercase; align-items: center; height: 18px; margin: 7px 12px 4px; padding: 0px; font-size: 0px; font-weight: 750; line-height: 18px; list-style: none; display: flex; min-height: 18px !important; }
+.tpo-sidebar-panel .fl-panel-module-list__section::after { content: ""; border-top: 1px solid rgb(241, 244, 249); width: 22px; margin: 0px auto; }
+.tpo-sidebar-panel:hover .fl-panel-module-list__section { justify-content: flex-start; font-size: 12px; }
+.tpo-sidebar-panel:hover .fl-panel-module-list__section::after { display: none; }
+
+/* ===== TOP HEADER ===== */
+.tpo-shell-header.ln-head { border-bottom: 1px solid rgb(231, 236, 242); gap: 18px; height: 68px; min-height: 68px; box-shadow: rgba(26, 45, 72, 0.035) 0px 1px 3px; padding: 0px 20px !important; }
+.tpo-shell-header.ln-head .tpo-command-bar { flex: 1 1 auto; grid-template-columns: auto minmax(220px, 380px) 1fr; align-items: center; gap: 12px; min-width: 0px; max-width: none; display: grid; }
+.tpo-shell-header .tpo-command-bar__search kbd { color: rgb(91, 107, 130); }
+.tpo-shell-header .ln-profile__progress-ring, .recruiter-shell-header .ln-profile__progress-ring { display: none; }
+.tpo-shell-header__account { flex: 0 0 auto; gap: 10px !important; }
+.tpo-shell-header__account .ln-org-text-desk { max-width: 260px; }
+.tpo-shell-header__account .ln-org-current__title, .tpo-shell-header__account .ln-org-switcher-trigger__title { color: rgb(51, 65, 85); font-size: 12px; font-weight: 600; }
+.tpo-shell-header__account .ln-org-switcher .ant-select-selector { box-shadow: none; border-color: rgb(231, 236, 242) !important; border-radius: 9px !important; min-height: 38px !important; }
+.tpo-shell-header__account .ln-profile__avatar-wrap { width: 42px; height: 42px; }
+.tpo-shell-header__account .ln-profile__progress-ring { transform: scale(0.82); }
+.tpo-shell-header__account .ln-profile__icon { width: 38px; height: 38px; }
+@media (max-width: 1199px) and (min-width: 768px) {
+  .tpo-shell-header.ln-head { gap: 10px; padding-inline: 14px !important; }
+  .tpo-shell-header.ln-head .tpo-command-bar { grid-template-columns: auto minmax(180px, 1fr) auto; gap: 8px; }
+  .tpo-shell-header__account .ln-org-text-desk { max-width: 180px; }
+  .tpo-shell-header__account .ln-org-switcher { min-width: 170px !important; max-width: 190px !important; }
+}
+@media (max-width: 767px) {
+  .tpo-shell-header.ln-head { height: auto; min-height: 58px; padding: max(7px, env(safe-area-inset-top, 0px)) 10px 7px !important; gap: 8px; flex-wrap: nowrap !important; }
+  .tpo-shell-header.ln-head .tpo-command-bar { flex: 1 1 0px; align-items: center; gap: 8px; width: auto; min-width: 0px; display: flex !important; }
+  .tpo-shell-header.ln-head .tpo-shell-header__account { flex: 0 0 auto; }
+  .tpo-shell-header.ln-head .ln-org-text-mob { display: none !important; }
+  .tpo-shell-header.ln-head .tpo-command-bar__search { flex: 0 0 36px; justify-content: center; width: 36px; padding: 0px; }
+  .tpo-shell-header.ln-head .tpo-command-bar__search > span:not(.anticon), .tpo-shell-header.ln-head .tpo-command-bar__search kbd { display: none; }
+  .tpo-shell-header.ln-head .tpo-command-bar__new { width: 38px; padding: 0px; }
+  .tpo-shell-header.ln-head .tpo-command-bar__new > span:not(.ant-btn-icon) { display: none; }
+  .tpo-shell-header.ln-head .tpo-command-bar__actions { flex: 0 0 auto; gap: 6px; }
+  .tpo-shell-header__account { gap: 5px !important; }
+  .tpo-shell-header__account .ln-profile__avatar-wrap { width: 40px; height: 40px; }
+  .tpo-shell-header__account .ln-profile__icon { width: 36px; height: 36px; }
+}
+
+/* ===== MOBILE MENU DRAWER (sidebar becomes a 16rem drawer under 768px) ===== */
+@media (max-width: 767px) {
+  .fl-d-panel-l { width: 16rem !important; }
+  .fl-d-panel-l .fl-module-link { justify-content: left !important; }
+  .fl-d-panel-l .menu-txt { opacity: 1 !important; display: block !important; }
+  .ln-menu-drawer .fl-d-panel-l { border-right: 0px; height: 100%; min-height: 0px; width: 100% !important; padding-inline: 8px !important; display: flex !important; }
+  .ln-menu-drawer .fl-d-panel-l:hover { width: 100% !important; }
+  .ln-menu-drawer .fl-d-panel-l__head { display: none; }
+  .ln-menu-drawer .fl-d-panel-l > .mt-2 { margin-top: 0px !important; }
+  .ln-menu-drawer .fl-d-panel-l__body { padding-top: 8px; }
+  .ln-menu-drawer .tpo-sidebar-panel .fl-panel-module-list__section { justify-content: flex-start; height: 18px; margin: 12px 12px 6px 46px; min-height: 18px !important; font-size: 9px !important; display: flex !important; }
+  .ln-menu-drawer .tpo-sidebar-panel .fl-panel-module-list__section::after { display: none !important; }
+}
