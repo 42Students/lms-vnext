@@ -150,4 +150,17 @@ describe("IIT Dharwad Projects breaker — state, access, integrity, deadlines a
   expect(complete).toContain('inArray(projectResourceFiles.status, ["UPLOADING", "VERIFYING"])');
  });
 
+ it("PROJ-BREAK-file-05 resource edit and deletion recheck archived status under project row lock",()=>{
+  const code=src("src/modules/projects/project-resource-file-service.ts");
+  for(const name of ["updateProjectFileDetails","removeProjectFile"]){
+    const start=code.indexOf("export async function "+name+"(");
+    const end=code.indexOf("export async function ",start+1);
+    const body=code.slice(start,end<0?undefined:end);
+    expect(body,name).toContain("requireOpenProject(scope.project.status)");
+    expect(body,name).toContain("requireOpenProject(project.status)");
+    expect(body,name).toContain('.for("share")');
+    expect(body,name).toContain('eq(projectResourceFiles.projectId,scope.project.id)');
+  }
+ });
+
 });
