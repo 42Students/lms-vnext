@@ -195,3 +195,9 @@ The new planner guard is a source change; browser and PostgreSQL verification re
 | UX-SPILL-TPO-ROUND-01 | MAJOR | `src/components/placements/tpo-round-drive-day-read-only.tsx` — `Round applicant roster` | The critical check-in/result controls were inside a 46rem horizontally scrollable table, inaccessible at phone width without horizontal navigation. Converted to the shared `DataTable` with mobile identity and roll number and always-visible attendance and result action cells. Preserved status, eligibility, empty copy, audit warnings and server-controlled mutations; mobile controls are not hidden in `More details`. | `a0ed8a36` | `tests/unit/UX-SPILL-chat19-tpo-round-drive-day-responsive.test.tsx` (`2a27820d`) |
 
 This is an independent unowned responsive UX pickup for the critical TPO/HR placement workflow. A real 320/360/390px screen-reader/browser pass remains an acceptance gate; SSR test validates emitted controls and no wide-table requirement.
+
+## Unowned TPO request clipboard spillover
+
+| ID | Before-fix severity | Source | Defect and fix | Commits | Test |
+|---|---|---|---|---|---|
+| UX-SPILL-TPO-CLIP-01 | MAJOR | `src/components/placements/tpo-request-page-clipboard.tsx` | The Choose columns control hid columns visually, but Copy selected rows still exported **all** fields, including concealed employer/student-number data. TSV also allowed Unicode zero-width/paragraph prefixed spreadsheet formulas and copied rows in original rather than displayed sort order. Scope clipboard fields to selected visible columns, retain canonical headings, preserve displayed sort, neutralize Unicode formulas and strip row/column delimiters. | `a5d72407` | `tests/unit/UX-SPILL-chat19-tpo-request-clipboard.test.ts` (`41ceef55`, `3457acc4`) |
