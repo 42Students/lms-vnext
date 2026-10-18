@@ -1,7 +1,11 @@
 import "server-only";
 import { and, asc, eq, isNotNull, lte } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { placementOffers, placementOfferStatusHistory } from "@/db/schema";
+import {
+ activityEvents,colleges,placementApplications,placementJobs,
+ placementOffers,placementOfferStatusHistory,
+} from "@/db/schema";
+import {deliverRecordedLearnerPlacementEvent} from "./learner-placement-event-delivery";
 import { isIssuedPlacementOfferDue } from "./placement-offer-sweep-policy";
 
 /**
@@ -31,12 +35,25 @@ export async function sweepExpiredPlacementOffers(
       id: placementOffers.id,
       status: placementOffers.status,
       expiresAt: placementOffers.expiresAt,
-    }).from(placementOffers).where(and(
+      roleTitle:placementOffers.roleTitle,
+      membershipId:placementApplications.membershipId,
+      collegeId:placementJobs.collegeId,
+      jobId:placementJobs.id,
+      jobTitle:placementJobs.title,
+      organizationId:colleges.organizationId,
+      collegeStatus:colleges.status,
+    }).from(placementOffers)
+      .innerJoin(placementApplications,
+        eq(placementApplications.id,placementOffers.applicationId))
+      .innerJoin(placementJobs,
+        eq(placementJobs.id,placementApplications.jobId))
+      .innerJoin(colleges,eq(colleges.id,placementJobs.collegeId))
+      .where(and(
       eq(placementOffers.status, "ISSUED"),
       isNotNull(placementOffers.expiresAt),
       lte(placementOffers.expiresAt, now),
     )).orderBy(asc(placementOffers.expiresAt), asc(placementOffers.id))
-      .limit(limit).for("update",{skipLocked:true});
+      .limit(limit).for("update",{of:placementOffers,skipLocked:true});
 
     let expired = 0;
     for (const row of candidates) {
@@ -54,6 +71,30 @@ export async function sweepExpiredPlacementOffers(
         fromStatus: "ISSUED",
         toStatus: "EXPIRED",
         actorUserId,
+      });
+      const [event]=await tx.insert(activityEvents).values({
+        organizationId:row.organizationId,
+        collegeId:row.collegeId,
+        actorUserId,
+        actorMembershipId:null,
+        module:"PLACEMENTS",
+        eventType:"PLACEMENTS_OFFER_EXPIRED",
+        subjectType:"placement_offer",
+        subjectId:row.id,
+        subjectLabel:row.roleTitle,
+        summary:"Offer expired for "+row.jobTitle,
+        metadata:{offerId:row.id,jobTitle:row.jobTitle,
+          expiryAt:row.expiresAt?.toISOString()??null},
+        groupKey:"placement-job:"+row.jobId+":offers",
+        dedupeKey:"placement-offer-expired:"+row.id,
+      }).onConflictDoNothing().returning({id:activityEvents.id});
+      // Historical expiry remains auditable after college suspension, but
+      // a stopped tenant must not receive a fresh notification.
+      if(event&&row.collegeStatus==="ACTIVE")await deliverRecordedLearnerPlacementEvent(tx,{
+        eventId:event.id,collegeId:row.collegeId,
+        membershipId:row.membershipId,
+        kind:"APPLICATION_STATUS_CHANGED",
+        subject:"Offer expired for "+row.jobTitle,
       });
       expired += 1;
     }
