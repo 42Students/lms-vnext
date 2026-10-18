@@ -36,7 +36,7 @@ describe("SA-academics-people-67 selected-college learner progress hardening",()
   expect(service).toContain("with eligible_deliveries as (");
   expect(service).toContain("select distinct membership_id,student_name from eligible_deliveries");
   expect(service).toContain("select lc.id,lc.content_type,lc.delivery_id");
-  expect(service.match(/p\\.status=\'PUBLISHED\'/g)).toHaveLength(3);
+  expect(service.match(/p\.status='PUBLISHED'/g)).toHaveLength(3);
   expect(service).not.toContain("p.status='ACTIVE'");
   expect(service).toContain("select a.id,a.delivery_id");
   expect(service).toContain("select q.id,q.delivery_id");
