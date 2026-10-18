@@ -2,7 +2,7 @@ import {describe,expect,it} from "vitest";
 import {evaluateTpoDriveClosure,tpoDriveCloseSchema} from "@/modules/placements/tpo-drive-close-preview-model";
 const before={applications:3,rounds:2,offers:1};
 describe("TPO drive close preview",()=>{
- it("permits confirmed published active-season closure only against the same counts",()=>{
+ it("permits closing published drives with season evidence and unchanged counts",()=>{
   expect(evaluateTpoDriveClosure("PUBLISHED","ACTIVE",before,before)).toBe("ALLOW");
   expect(evaluateTpoDriveClosure("DRAFT","ACTIVE",before,before)).toBe("READ_ONLY");
   // Closing a still-published drive remains valid after its season ends.
