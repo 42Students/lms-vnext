@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { PgDialect } from "drizzle-orm/pg-core";
 import { getDb } from "@/db/client";
+import { getTpoMessagingBatch } from "@/modules/messaging/receipt-detail-service";
 import { requirePlacementManageScope } from "@/modules/placements/scope";
 import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import {
@@ -117,4 +118,37 @@ describe("chat-16 TPO campaign receipt tenancy and full export behavior", () => 
       .rejects.toThrow("CAMPAIGN_EXPORT_TOO_LARGE");
     expect(db.queriedLimits).toContain(2001);
   });
+  it("MSG-RECEIPT-DETAIL-05 rejects malformed UUID and revoked TPO role before storage access", async () => {
+    await expect(getTpoMessagingBatch(tpo, "bad")).rejects.toThrow();
+    await expect(getTpoMessagingBatch({
+      ...tpo, membership: { ...tpo.membership!, roles: ["LEARNER"] },
+    }, collegeId)).rejects.toThrow();
+    expect(requirePlacementManageScope).not.toHaveBeenCalled();
+    expect(getDb).not.toHaveBeenCalled();
+  });
+
+  it("MSG-RECEIPT-DETAIL-06 reveals scoped aggregates, never contact keys or addresses", async () => {
+    const details = receipt("campus-notice");
+    const db = fakeDb([
+      [details], [{ receipts: 2, queued: 0, sent: 1, failed: 1, suppressed: 0 }],
+    ]);
+    const result = await getTpoMessagingBatch(tpo, collegeId);
+    expect(result).toMatchObject({
+      id: collegeId, purpose: "campus-notice",
+      actualReceipts: 2, actualSent: 1, actualFailed: 1,
+    });
+    expect(result).not.toHaveProperty("recipientKey");
+    expect(result).not.toHaveProperty("toEmail");
+    expect(db.predicates).toHaveLength(2);
+    const query = new PgDialect().sqlToQuery(db.predicates[0] as never);
+    expect(query.params).toContain(collegeId);
+    expect(query.params).toContain(organizationId);
+  });
+
+  it("MSG-RECEIPT-DETAIL-07 wrong-college batch cannot fall through to aggregate receipts", async () => {
+    const db = fakeDb([[]]);
+    await expect(getTpoMessagingBatch(tpo, collegeId)).resolves.toBeNull();
+    expect(db.select).toHaveBeenCalledTimes(1);
+  });
+
 });
