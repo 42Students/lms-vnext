@@ -96,11 +96,11 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
       placeholder="Search name, email or role" className="min-h-11 rounded border border-border bg-surface px-3"/>
     </label>
     <div className="flex flex-wrap gap-3 text-sm">
-      <button type="button" disabled={pending} className="font-semibold text-[var(--lms-teal-deep)]" onClick={()=>setChosen(previous=>[
+      <button type="button" disabled={pending} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]" onClick={()=>setChosen(previous=>[
        ...new Set([...previous,...(mode==="RECORD"?visibleRecordable.map(x=>x.applicationId):visibleReleasable.map(x=>x.id))])].slice(0,100))}>
        Select matching (max 100)
       </button>
-      <button type="button" disabled={pending||!chosen.length} className="font-semibold text-[var(--lms-teal-deep)]" onClick={()=>setChosen([])}>Clear selection</button>
+      <button type="button" disabled={pending||!chosen.length} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]" onClick={()=>setChosen([])}>Clear selection</button>
     </div>
     <fieldset className="max-h-60 space-y-1 overflow-auto rounded border border-border p-3">
      <legend className="font-semibold">Students ({chosen.length} selected, maximum 100)</legend>
