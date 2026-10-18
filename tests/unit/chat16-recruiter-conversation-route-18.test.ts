@@ -4,15 +4,19 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import {
   acknowledgeRecruiterThreads, openRecruiterMessageThread,
+  acknowledgeRecruiterThread, sendRecruiterThreadMessage,
 } from "@/modules/placements/tpo-messaging-service";
 import { POST as acknowledge } from "@/app/api/placements/recruiter/conversations/acknowledge/route";
 import { POST as open } from "@/app/api/placements/recruiter/conversations/open/route";
+import { POST as replyOne } from "@/app/api/placements/recruiter/conversations/[threadId]/reply/route";
+import { POST as acknowledgeOne } from "@/app/api/placements/recruiter/conversations/[threadId]/acknowledge/route";
 
 vi.mock("@/auth/request-context", () => ({ getCurrentRequestContext: vi.fn() }));
 vi.mock("@/auth/origin", () => ({ isSameOriginRequest: vi.fn() }));
 vi.mock("@/lib/api-error", () => ({ apiErrorResponse: vi.fn() }));
 vi.mock("@/modules/placements/tpo-messaging-service", () => ({
   acknowledgeRecruiterThreads: vi.fn(), openRecruiterMessageThread: vi.fn(),
+  acknowledgeRecruiterThread: vi.fn(), sendRecruiterThreadMessage: vi.fn(),
   TpoMessagingError: class TpoMessagingError extends Error {},
 }));
 
@@ -116,4 +120,70 @@ describe("chat-16 recruiter conversations route-level expired session and CSRF j
     expect(response.headers.get("location"))
       .toBe("https://lms.example.org/hr/conversations");
   });
+  it.each(["reply", "acknowledge"] as const)(
+    "HR-BREAK-SESSION-15/16 %s denies cross-origin before session or mutation",
+    async action => {
+      vi.mocked(isSameOriginRequest).mockReturnValue(false);
+      const request = new Request(
+        "https://lms.example.org/api/placements/recruiter/conversations/" + threadId + "/" + action,
+        { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams({ body: "Hello" }).toString() },
+      );
+      const params = { params: Promise.resolve({ threadId }) };
+      const response = action === "reply"
+        ? await replyOne(request, params) : await acknowledgeOne(request, params);
+      expect(response.status).toBe(403);
+      expect(getCurrentRequestContext).not.toHaveBeenCalled();
+      expect(sendRecruiterThreadMessage).not.toHaveBeenCalled();
+      expect(acknowledgeRecruiterThread).not.toHaveBeenCalled();
+    },
+  );
+
+  it.each(["reply", "acknowledge"] as const)(
+    "HR-BREAK-SESSION-15/16 %s maps expired session without attempting a message write",
+    async action => {
+      vi.mocked(getCurrentRequestContext).mockRejectedValue(new Error("expired private session"));
+      const request = new Request(
+        "https://lms.example.org/api/placements/recruiter/conversations/" + threadId + "/" + action,
+        { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams({ body: "Hello" }).toString() },
+      );
+      const params = { params: Promise.resolve({ threadId }) };
+      const response = action === "reply"
+        ? await replyOne(request, params) : await acknowledgeOne(request, params);
+      expect(response.status).toBe(401);
+      expect(await response.json()).toMatchObject({ error: "SESSION_EXPIRED" });
+      expect(sendRecruiterThreadMessage).not.toHaveBeenCalled();
+      expect(acknowledgeRecruiterThread).not.toHaveBeenCalled();
+      expect(apiErrorResponse).toHaveBeenCalledOnce();
+    },
+  );
+
+  it("HR-BREAK-REPLY-17 rejects blank message before fetching the recruiter session", async () => {
+    const request = new Request(
+      "https://lms.example.org/api/placements/recruiter/conversations/" + threadId + "/reply",
+      { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ body: "   " }).toString() },
+    );
+    const response = await replyOne(request, { params: Promise.resolve({ threadId }) });
+    expect(response.status).toBe(400);
+    expect(getCurrentRequestContext).not.toHaveBeenCalled();
+    expect(sendRecruiterThreadMessage).not.toHaveBeenCalled();
+  });
+
+  it("HR-BREAK-ACK-18 acknowledges only a valid ID and redirects to a first-party thread", async () => {
+    const request = new Request(
+      "https://lms.example.org/api/placements/recruiter/conversations/" + threadId + "/acknowledge",
+      { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: "" },
+    );
+    vi.mocked(acknowledgeRecruiterThread).mockResolvedValue(undefined as never);
+    const response = await acknowledgeOne(request, { params: Promise.resolve({ threadId }) });
+    expect(response.status).toBe(303);
+    expect(acknowledgeRecruiterThread).toHaveBeenCalledWith(context, threadId);
+    expect(response.headers.get("location")).toBe(
+      "https://lms.example.org/hr/conversations/" + threadId,
+    );
+  });
+
 });
