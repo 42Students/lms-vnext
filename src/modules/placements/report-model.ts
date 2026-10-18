@@ -184,6 +184,7 @@ function bestAcceptedFullTimePackages(
   for (const offer of offers) {
     if (
       offer.status !== "ACCEPTED" ||
+      (offer.kind ?? "OFFER") !== "OFFER" ||
       jobsById.get(offer.jobId)?.employmentType !== "FULL_TIME"
     ) {
       continue;
@@ -755,6 +756,7 @@ export function summarizePlacementReportDetails(input: {
   const acceptedFullTime = offers.filter(
     (offer) =>
       offer.status === "ACCEPTED" &&
+      (offer.kind ?? "OFFER") === "OFFER" &&
       offer.employmentType === "FULL_TIME",
   );
 
