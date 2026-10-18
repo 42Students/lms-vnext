@@ -3,6 +3,7 @@
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {Button} from "@/components/ui/button";
 import {projectMutation} from "./project-api";
 
 export function MentorProjectCloseoutControl({
@@ -19,7 +20,7 @@ export function MentorProjectCloseoutControl({
     "I confirm that completing this project is intended.",
   ];
   async function submit(){
-    if(!checks.every(Boolean)) return;
+    if(pending||!checks.every(Boolean)) return;
     setConfirming(false);
     setPending(true);setError(null);
     try{
@@ -38,10 +39,8 @@ export function MentorProjectCloseoutControl({
         onChange={event=>setChecks(old=>old.map((v,j)=>i===j?event.target.checked:v))}
         className="mt-1" />{label}
     </label>)}
-    <button type="button" onClick={()=>setConfirming(true)} disabled={pending||!checks.every(Boolean)}
-      className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
-      {pending?"Completing…":"Confirm project completion"}
-    </button>
+    <Button type="button" onClick={()=>setConfirming(true)} disabled={pending||!checks.every(Boolean)}
+      loading={pending}>{pending?"Completing…":"Confirm project completion"}</Button>
     <ConfirmDialog open={confirming} onOpenChange={setConfirming}
       title="Complete this project?"
       description="This updates its registered status to COMPLETED."
