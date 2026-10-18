@@ -108,6 +108,21 @@ describe("UX-kit-HARDEN-01 shared primitives: a11y, validation, phone and failur
     expect(error).toContain('aria-label="Dismiss notice"');
     expect(error).toContain("min-h-11");
   });
+  it("UX-kit-HARDEN-53 disabled action reason has its own keyboard stop without duplicating enabled stops",()=>{
+    const disabled=render(<DisabledReason reason="Add a student first">
+      <Button disabled aria-describedby="existing-hint">Create project</Button>
+    </DisabledReason>);
+    expect(disabled).toContain('role="group"');
+    expect(disabled).toContain('tabindex="0"');
+    expect(disabled).toMatch(/<button[^>]*disabled=""[^>]*aria-describedby="existing-hint [^"]+"/);
+    expect(disabled).toContain("Add a student first");
+    const enabled=render(<DisabledReason reason="Optional guidance">
+      <Button>Continue</Button>
+    </DisabledReason>);
+    expect(enabled).not.toContain('role="group"');
+    expect(enabled).not.toContain('tabindex="0"');
+    expect(enabled).toContain('aria-describedby="');
+  });
   it("UX-kit-HARDEN-08 pager handles out-of-range values and has keyboard navigable labels",()=>{
     expect(paginationWindow(2,10)).toEqual([1,2,3,4,5]);
     expect(paginationWindow(100,2)).toEqual([1,2]);
