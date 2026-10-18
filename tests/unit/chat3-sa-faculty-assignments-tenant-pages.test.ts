@@ -23,35 +23,37 @@ vi.mock("@/db/client", () => ({
         return { sql: q.sql, params: q.params };
       };
       if (projection && "teacherName" in projection) {
-        const source = {
-          innerJoin: (_table: unknown, condition: SQL) => {
+        class SourceQuery {
+          innerJoin(_table: unknown, condition: SQL) {
             state.joins.push(sqlPart(condition));
-            return source;
-          },
-          where: (condition: SQL | undefined) => {
+            return this;
+          }
+          where(condition: SQL | undefined) {
             if (condition) state.filters.push(sqlPart(condition));
-            return source;
-          },
-          as: () => ({
-            teacherName: projection.teacherName,
-            courseName: projection.courseName,
-            id: projection.id,
-          }),
-        };
-        return { from: () => source };
+            return this;
+          }
+          as() {
+            return {
+              teacherName: projection.teacherName,
+              courseName: projection.courseName,
+              id: projection.id,
+            };
+          }
+        }
+        return { from: () => new SourceQuery() };
       }
       if (projection && "total" in projection) {
         return { from: async () => [{ total: state.count }] };
       }
       if (projection && "name" in projection) {
-        const source = {
-          innerJoin: (_table: unknown, condition: SQL) => {
+        class FacetQuery {
+          innerJoin(_table: unknown, condition: SQL) {
             state.joins.push(sqlPart(condition));
-            return source;
-          },
-          orderBy: () => ({ limit: async () => [] }),
-        };
-        return { from: () => source };
+            return this;
+          }
+          orderBy() { return { limit: async () => [] }; }
+        }
+        return { from: () => new FacetQuery() };
       }
       return {
         from: () => ({
