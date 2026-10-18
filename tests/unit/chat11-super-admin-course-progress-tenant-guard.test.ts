@@ -5,27 +5,7 @@ import {parseSuperAdminCourseProgressParams,parseSuperAdminStudentProgressParams
 describe("SA-tenants-modules-COURSE-PROGRESS-07 authoritative scope and strict URL state",()=>{
  it("retains supported user filters with safe defaults",()=>{
   expect(parseSuperAdminCourseProgressParams({}))
-   .toMatchObject({q:"",status:"ACTIVE",page:1 it("denies malformed, duplicated, extra-scope and missing learner offering IDs",()=>{
-  const valid="11111111-1111-4111-8111-111111111111";
-  expect(parseSuperAdminStudentProgressParams({offeringId:valid})).toBe(valid);
-  for(const query of [
-   {},{offeringId:["a","b"]},{offeringId:"../foreign"},
-   {offeringId:"123"},{offeringId:""},{offeringId:valid,collegeId:valid},
-   {offeringId:valid,organizationId:valid},{offeringId:valid,page:"2"},
-  ])expect(parseSuperAdminStudentProgressParams(query)).toBeNull();
- });
- it("authenticates Super Admin before offering query fallback and student data retrieval",()=>{
-  const source=readFileSync("src/app/(authenticated)/admin/course-progress/students/page.tsx","utf8");
-  const auth=source.indexOf('requirePermission(context,"admin-scope.select")');
-  const parse=source.indexOf("parseSuperAdminStudentProgressParams(await searchParams)");
-  const read=source.indexOf("getSuperAdminStudentCourseProgress(context,{offeringId})");
-  expect(auth).toBeGreaterThan(-1);
-  expect(auth).toBeLessThan(parse);
-  expect(parse).toBeLessThan(read);
-  expect(source).toContain("Student Course Progress");
-  expect(source).toContain("Not measured");
- });
-});
+   .toMatchObject({q:"",status:"ACTIVE",page:1});
   expect(parseSuperAdminCourseProgressParams({
    q:"  Algorithms  ",status:"ARCHIVED",page:"3",courseCode:"CS101",cohortCode:"2026",
   })).toMatchObject({
@@ -55,5 +35,25 @@ describe("SA-tenants-modules-COURSE-PROGRESS-07 authoritative scope and strict U
   expect(invalid).toBeLessThan(data);
   expect(source).toContain('if (!context.adminScope?.collegeId)');
   expect(source).toContain("getSuperAdminLearningFilterOptions(context)");
+ });
+ it("denies malformed, duplicated, extra-scope and missing learner offering IDs",()=>{
+  const valid="11111111-1111-4111-8111-111111111111";
+  expect(parseSuperAdminStudentProgressParams({offeringId:valid})).toBe(valid);
+  for(const query of [
+   {},{offeringId:["a","b"]},{offeringId:"../foreign"},
+   {offeringId:"123"},{offeringId:""},{offeringId:valid,collegeId:valid},
+   {offeringId:valid,organizationId:valid},{offeringId:valid,page:"2"},
+  ])expect(parseSuperAdminStudentProgressParams(query)).toBeNull();
+ });
+ it("authenticates Super Admin before offering query fallback and student data retrieval",()=>{
+  const source=readFileSync("src/app/(authenticated)/admin/course-progress/students/page.tsx","utf8");
+  const auth=source.indexOf('requirePermission(context,"admin-scope.select")');
+  const parse=source.indexOf("parseSuperAdminStudentProgressParams(await searchParams)");
+  const read=source.indexOf("getSuperAdminStudentCourseProgress(context,{offeringId})");
+  expect(auth).toBeGreaterThan(-1);
+  expect(auth).toBeLessThan(parse);
+  expect(parse).toBeLessThan(read);
+  expect(source).toContain("Student Course Progress");
+  expect(source).toContain("Not measured");
  });
 });
