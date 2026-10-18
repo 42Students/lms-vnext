@@ -54,7 +54,10 @@ export function deriveProjectRiskReasons({
 
   const reasons: string[] = [];
 
-  if (inactiveDays >= 7) {
+  // Corrupt/partial activity projections must never produce "Infinity days",
+  // "NaN days" or a fractional inactivity duration in customer-facing copy.
+  // Retain other independent risk signals if the age is unusable.
+  if (Number.isSafeInteger(inactiveDays) && inactiveDays >= 7) {
     reasons.push(
       `No activity in ${inactiveDays} day${
         inactiveDays === 1 ? "" : "s"

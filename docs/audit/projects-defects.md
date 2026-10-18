@@ -2,6 +2,14 @@
 
 **Owner lane:** chat-9, breaker (chat-14 owns the full module-wide function coverage ledger). **Date:** 2026-10-18.
 Every item below was reproduced by code-path review and has a source repair on `chatgpt/chat-9-b`; adversarial regressions are authored but **Vitest/PostgreSQL/browser runs and cross-lane review are still required**. These are release blockers until those checks pass.
+## Chat-14 meeting hardening findings (2026-10-19)
+
+| ID | Severity | Evidence / invariant | Fix on `chatgpt/chat-14-b` | Regression | Outstanding verification |
+|---|---|---|---|---|---|
+| PROJ-DEF-014-36 | S1 Revoked learner Project grant | `requestProjectMeeting` checked page-time LEARNER scope but did not reconstruct user/college membership/LEARNER role/active project assignment under its parent-project lock before creating a meeting and notifications. | `721d2e7`: call `assertPersistedLearnerProjectMutation` inside transaction before conflict read/write. | `PROJ-BREAK-MENTOR-351` | Authored; no Vitest/real concurrent PostgreSQL or cross-lane reviewer yet |
+| PROJ-DEF-014-37 | S1 Revoked learner meeting cancellation | `transitionProjectMeeting` learner CANCEL validated the requester's page-time membership only and could still cancel a prior request after role or project grant revocation. | `721d2e7`: persisted learner actor gate under college-scoped parent lock, before update and notices. | `PROJ-BREAK-MENTOR-352` | Authored; no Vitest/real concurrent PostgreSQL or cross-lane reviewer yet |
+| PROJ-DEF-014-38 | S2 Time-of-check/time-of-write expiry | `requestProjectMeeting` and `scheduleProjectMeeting` checked future windows only before waiting on locks, permitting past-start records after long contention. | `721d2e7`: repeat authoritative future-window validation under locked parent before writes. | `PROJ-BREAK-MENTOR-353` for schedule; request expiry real-DB replay remains GAP | Authored mock regression; PostgreSQL lock waits and IST boundaries pending |
+
 | PROJ-DEF-009-09 | S2 State machine | `collegeProjectStatusChangeAllowed` treated identical unknown/ARCHIVED states as an allowed no-op; callers could accidentally skip an explicit archived-state guard. | `0d8fa73`: fail closed unless from/to both belong to PLANNED/ACTIVE/COMPLETED. | `PROJ-BREAK-state-01/02` | Pure model test authored; runtime pending |
 | PROJ-DEF-009-10 | S2 Resilience/storage | `removeProjectFile` committed a soft deletion but then awaited object-store removal without catching failure. An outage presented a false failed action after DB deletion; quarantine cleanup likewise replaced the intended friendly rejection. | `a8dae38`: preserve authoritative deleted/quarantined DB result when best-effort object-store cleanup fails, retaining tombstone for cleanup. | `PROJ-BREAK-resilience-01` | Source fixed; object-store failure injection pending |
 
