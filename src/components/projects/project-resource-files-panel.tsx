@@ -172,19 +172,19 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
     {canUpload&&<form onSubmit={upload} className="space-y-3">
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="text-sm font-medium text-body">Title
-          <Input className="mt-1 block w-full rounded border border-border bg-surface p-2"
+          <Input className="mt-1 block w-full"
             maxLength={200} value={uploadTitle} onChange={event=>setUploadTitle(event.target.value)}
             disabled={busy} placeholder="Resource title"/>
         </label>
         <label className="text-sm font-medium text-body">Description
-          <Input className="mt-1 block w-full rounded border border-border bg-surface p-2"
+          <Input className="mt-1 block w-full"
             maxLength={4000} value={uploadDescription} onChange={event=>setUploadDescription(event.target.value)}
             disabled={busy} placeholder="Short note about this resource"/>
         </label>
       </div>
       {resources.length>0?<label className="block text-sm font-medium text-body">Related resource (optional)
         <Select value={linkedResourceId} disabled={busy} onChange={event=>setLinkedResourceId(event.target.value)}
-          className="mt-1 block min-h-10 w-full rounded border border-border bg-surface px-3">
+          className="mt-1 block w-full">
           <option value="">New standalone file</option>
           {resources.map(item=><option key={item.id} value={item.id}>{item.title}</option>)}
         </Select>
@@ -201,11 +201,11 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
       </div>}
       <div className="flex flex-wrap gap-2">
         <Button variant="primary" type="submit" disabled={busy||!selected}
-          className="rounded bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50">
+          className="">
           {busy?"Uploading…":"Upload file"}
         </Button>
         {busy&&<Button variant="secondary" type="button" onClick={()=>xhrRef.current?.abort()}
-          className="rounded border border-border px-3 py-2 text-sm">Cancel</Button>}
+          className="">Cancel</Button>}
       </div>
     </form>}
     {files.length===0?<p className="text-sm text-muted-foreground">
@@ -235,14 +235,14 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
             </div>
             <div className="flex flex-wrap gap-2">
               {projectFileUsable(file)&&<Button variant="secondary" type="button" disabled={busy} onClick={()=>void download(file)}
-                className="rounded border border-border px-3 py-1.5 text-sm">Open file</Button>}
+                className="">Open file</Button>}
               {canManage&&<>
                 {file.status==="UPLOADING"&&<Button variant="secondary" type="button" disabled={busy}
-                  onClick={()=>void retryComplete(file)} className="rounded border border-border px-3 py-1.5 text-sm">Retry</Button>}
+                  onClick={()=>void retryComplete(file)} className="">Retry</Button>}
                 <Button variant="secondary" type="button" disabled={busy} onClick={()=>beginEdit(file)}
-                  className="rounded border border-border px-3 py-1.5 text-sm">Edit resource</Button>
+                  className="">Edit resource</Button>
                 <Button variant="secondary" type="button" disabled={busy} onClick={()=>setDeleteTarget(file)}
-                  className="rounded border border-border px-3 py-1.5 text-sm">Delete</Button>
+                  className="">Delete</Button>
               </>}
             </div>
           </div>
@@ -251,18 +251,18 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
             <label className="text-sm text-body">Title
               <Input required maxLength={200} value={editTitle} disabled={busy}
                 onChange={event=>setEditTitle(event.target.value)}
-                className="mt-1 block w-full rounded border border-border bg-surface p-2"/>
+                className="mt-1 block w-full"/>
             </label>
             <label className="text-sm text-body">Description
               <Input maxLength={4000} value={editDescription} disabled={busy}
                 onChange={event=>setEditDescription(event.target.value)}
-                className="mt-1 block w-full rounded border border-border bg-surface p-2"/>
+                className="mt-1 block w-full"/>
             </label>
             <div className="flex gap-2 sm:col-span-2">
               <Button variant="secondary" type="submit" disabled={busy||!editTitle.trim()}
-                className="rounded bg-primary px-3 py-2 text-sm text-primary-foreground">Update resource</Button>
+                className="">Update resource</Button>
               <Button variant="secondary" type="button" disabled={busy} onClick={discardGuard.requestClose}
-                className="rounded border border-border px-3 py-2 text-sm">Cancel</Button>
+                className="">Cancel</Button>
             </div>
           </form>}
         </li>;
