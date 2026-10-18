@@ -1,7 +1,9 @@
 "use client";
 import {useEffect,useRef,useState,type FormEvent} from "react";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
-type Review={rating:number|null;note:string;updatedAt:string|null};
+import {parseRecruiterPrivateReviewReceipt,isConfirmedRecruiterPrivateReview,
+ type RecruiterPrivateReviewReceipt} from "@/modules/placements/recruiter-private-rating-receipt-model";
+type Review=RecruiterPrivateReviewReceipt;
 const empty:Review={rating:null,note:"",updatedAt:null};
 type PrivateRatingEditorProps={jobId:string;applicationId:string};
 /** The App Router can reuse this component as focused applicant changes.
@@ -24,9 +26,12 @@ function RecruiterPrivateRatingEditorState({jobId,applicationId}:PrivateRatingEd
   const controller=new AbortController();
   void (async()=>{
    try{
-    const response=await fetch(endpoint,{cache:"no-store",credentials:"same-origin",signal:controller.signal});
-    if(!response.ok)throw new Error("READ_FAILED");
-    const body=await response.json() as Review;
+    const response=await fetch(endpoint,{cache:"no-store",credentials:"same-origin",
+     redirect:"error",signal:controller.signal});
+    if(!response.ok||response.redirected)throw new Error("READ_FAILED");
+    const payload:unknown=await response.json();
+    const body=parseRecruiterPrivateReviewReceipt(payload);
+    if(!body)throw new Error("UNVERIFIED_REVIEW");
     if(mounted.current){setSaved(body);setRating(body.rating);setNote(body.note);setReady(true);setMessage("");}
    }catch{
     if(mounted.current&&!controller.signal.aborted)setMessage("Your private review could not be loaded. Reload this applicant to try again.");
@@ -39,19 +44,21 @@ function RecruiterPrivateRatingEditorState({jobId,applicationId}:PrivateRatingEd
   if(pending||!ready)return;
   setMessage("");
   try{
+   const requested={rating:clear?null:rating,note:clear?"":note};
    const response=await run(()=>fetch(endpoint,{
     method:"PATCH",headers:{"Content-Type":"application/json"},
-    credentials:"same-origin",
-    body:JSON.stringify({rating:clear?null:rating,note:clear?"":note,
-     expectedUpdatedAt:saved.updatedAt}),
+    credentials:"same-origin",redirect:"error",
+    body:JSON.stringify({...requested,expectedUpdatedAt:saved.updatedAt}),
    }));
-   if(!response)throw new Error("NOT_CONFIRMED");
+   if(!response||response.redirected)throw new Error("NOT_CONFIRMED");
    if(response.status===409){
     setMessage("Your private review changed. Your edits are kept here. Reload this applicant before saving again.");
     return;
    }
    if(!response.ok)throw new Error("SAVE_FAILED");
-   const body=await response.json() as Review;
+   const payload:unknown=await response.json();
+   const body=parseRecruiterPrivateReviewReceipt(payload);
+   if(!isConfirmedRecruiterPrivateReview(body,requested))throw new Error("UNVERIFIED_SAVE");
    setSaved(body);setRating(body.rating);setNote(body.note);
    setMessage(clear?"Rating and note cleared.":"Private review saved.");
   }catch{setMessage("Private review was not saved. Your changes are still here; try again.");}
