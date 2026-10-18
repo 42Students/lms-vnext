@@ -17,7 +17,7 @@ export function ownRecruiterGrant(
   context: RequestContext,
   grantId: string,
 ) {
-  if (!hasActiveRecruiter(context) || !context.recruiter) {
+  if (!hasActiveRecruiter(context) || !context.recruiter || context.recruiter.userId !== context.user.id) {
     throw new AuthorizationError("placements.recruiter.read");
   }
   const grant = context.recruiter.grants.find((item) => item.id === grantId);
@@ -26,7 +26,7 @@ export function ownRecruiterGrant(
 }
 
 export async function getRecruiterSelfProfile(context: RequestContext) {
-  if (!hasActiveRecruiter(context) || !context.recruiter) {
+  if (!hasActiveRecruiter(context) || !context.recruiter || context.recruiter.userId !== context.user.id) {
     throw new AuthorizationError("placements.recruiter.read");
   }
   const [row] = await getDb()

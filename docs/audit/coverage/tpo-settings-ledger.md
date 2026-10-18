@@ -88,3 +88,25 @@ These are named and scope-specific tests, but full per-export coverage of all se
 | `parseTpoMyNotificationsParams` and `/tpo/settings/notifications` | Repeated view/page/pageSize and appended user/college IDs fail closed with clear-filters recovery; unread filters and links retained; prevent interpreting attacker-controlled first value | Same test `TPO-settings-audit-NOTIFY-03` | 401/403 and browser repeated-URL error-state tests |
 
 | `readTpoLearnerPrepOutcomes`, `validateTpoPrepLearnerPairs`, `hasEveryScopedTpoPrepLearner` | Member/cohort request requires persisted active College Admin/TPO, exact college, active user/learner role and actual ACTIVE/COMPLETED matching academic enrollment. Reject foreign learner membership, forged cohort, duplicate identity, 5001+ learners, stale/disabled roles before progress; no cross-college inference | `tests/unit/chat11-tpo-prep-learner-scope.test.ts`, `tests/integration/chat11-tpo-prep-learner-scope.test.ts` — `TPO-settings-audit-PREP-SCOPE-02` | CI needs PostgreSQL and enrolment-history stress test |
+
+## TPO job-type transaction authorization hardening — chat-11
+
+| Function / mutation | Newly verified contract | Evidence | Unverified |
+|---|---|---|---|
+| `createTpoJobType` | Rebuild persisted TPO/College Admin authority under the active-college update lock before duplicate lookup, limit check, insert or activity event | `tests/unit/chat11-tpo-job-type-transaction-authorization.test.ts` — `TPO-settings-audit-23`; commit `7ba3174` | PostgreSQL role-revocation concurrency test |
+| `setTpoJobTypeActive` | Persisted authority precedes stale check, active-choice calculation, update and audit | Same named test and commit | Cross-tenant and concurrent last-active test |
+| `renameTpoJobType` | Persisted authority precedes candidate name lookup, optimistic version and rename | Same named test and commit | Rename/drive historical consumption |
+| `setTpoBuiltinJobTypeActive` | Persisted authority precedes virtual built-in materialization, no-op and activity | Same named test and commit | Duplicate edit and published-drive preservation |
+| `setTpoJobTypeCountsAsPlaced` | Persisted authority precedes count-as-placed edits and activity event | Same named test and commit | Downstream existing-offer/reports recalculation |
+
+**Disposition:** This fixes one TPO-settings-audit-23 write-authorization race across five exports but **does not close** the gap's drive form/filter/report side effects or establish full behavioural, PostgreSQL or runtime coverage. Regression suite is written but not run.
+
+## Blocked-date settings transaction boundary
+
+| Function | Verified safety boundary | New test | Still pending |
+|---|---|---|---|
+| `createBlockedDate` | Revoked user / membership / placement role is checked from persisted rows under the selected-college update lock before checking existing days, inserting up to 90 and auditing | `tests/unit/chat11-tpo-blocked-date-transaction-auth.test.ts` — `TPO-settings-audit-43`; commit `1ef26ab` | Two-session PostgreSQL race, scheduling side effects (`TPO-settings-audit-44`) |
+| `deleteBlockedDate` | Revalidation before version-token check, scoped delete and audit in one transaction | Same named test and commit | Repeated delete and missing row against live PG |
+| `removeBlockedRange` | Revalidation before composite day/version match, scoped range delete and audit | Same named test and commit | Concurrent range delete and 90-day batch performance |
+
+**Runtime status:** Source/test authored without executing code. The audited blocked-date UX and scheduling consumers still require separate live acceptance; this is not a full TPO settings closeout.
