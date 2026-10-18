@@ -1,4 +1,7 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 
 import {useState} from "react";
 import {useRouter} from "next/navigation";
@@ -94,56 +97,56 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
        <strong>{label}</strong><p className="mt-1 tabular-nums">{value}</p>
      </div>)}
   </div>
-  <div className="flex flex-wrap items-end gap-3 rounded-xl border border-border p-3">
+  <div className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
     <label className="grid min-w-40 flex-1 gap-1 text-xs font-semibold">Search
-      <input type="search" value={search} onChange={event=>setSearch(event.target.value)}
+      <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
        aria-label="Search resources" placeholder="Search title, description, file name, or link" className="min-h-10 rounded border border-border bg-background px-3"/>
     </label>
     <label className="grid gap-1 text-xs font-semibold">Type
-      <select value={type} onChange={event=>setType(event.target.value)}
+      <Select value={type} onChange={event=>setType(event.target.value)}
         className="min-h-10 rounded border border-border bg-background px-3">
        <option value="ALL">All types</option><option value="LINK">Links</option>
        <option value="OTHER">Other</option>
        {(["FILE","DOCUMENT","CODE","NOTE","ENVIRONMENT"] as const).map(kind=>
          <option key={kind} value={kind}>{kind[0]+kind.slice(1).toLowerCase()}</option>)}
-      </select>
+      </Select>
     </label>
     {mode!=="LEARNER"?<label className="grid gap-1 text-xs font-semibold">Visible to
-      <select value={visibility} onChange={event=>setVisibility(event.target.value)}
+      <Select value={visibility} onChange={event=>setVisibility(event.target.value)}
        className="min-h-10 rounded border border-border bg-background px-3">
         <option value="ALL">Everyone and mentors</option>
         <option value="TEAM">Everyone</option><option value="MENTOR_ONLY">Mentors only</option>
-      </select>
+      </Select>
     </label>:null}
     {mode!=="LEARNER"?<>
       <label className="grid gap-1 text-xs font-semibold">Status
-        <select value={status} onChange={event=>setStatus(event.target.value)}
+        <Select value={status} onChange={event=>setStatus(event.target.value)}
           className="min-h-10 rounded border border-border bg-background px-3">
           <option value="ALL">All statuses</option><option value="ACTIVE">Active</option>
           <option value="DRAFT">Draft</option><option value="ARCHIVED">Archived</option>
-        </select>
+        </Select>
       </label>
       <label className="flex min-h-10 items-center gap-2 text-xs font-semibold">
         <input type="checkbox" checked={pinned} onChange={event=>setPinned(event.target.checked)}/>
         Pinned only
       </label>
       <label className="grid gap-1 text-xs font-semibold">Sprint
-        <select value={sprint} onChange={event=>setSprint(event.target.value)}
+        <Select value={sprint} onChange={event=>setSprint(event.target.value)}
           className="min-h-10 rounded border border-border bg-background px-3">
           <option value="">All sprints</option>
           {sprints.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-xs font-semibold">Task
-        <select value={task} onChange={event=>setTask(event.target.value)}
+        <Select value={task} onChange={event=>setTask(event.target.value)}
           className="min-h-10 rounded border border-border bg-background px-3">
           <option value="">All tasks</option>
           {tasks.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}
-        </select>
+        </Select>
       </label>
     </>:null}
-    <button type="button" onClick={()=>{setSearch("");setType("ALL");setVisibility("ALL");setStatus("ACTIVE");setPinned(false);setSprint("");setTask("");}}
-      className="min-h-10 text-sm font-semibold text-primary-text underline">Clear filters</button>
+    <Button variant="secondary" type="button" onClick={()=>{setSearch("");setType("ALL");setVisibility("ALL");setStatus("ACTIVE");setPinned(false);setSprint("");setTask("");}}
+      className="min-h-10 text-sm font-semibold text-primary-text underline">Clear filters</Button>
   </div>
   {mode!=="LEARNER"&&!readOnly?<p role="status" className="text-xs text-muted-foreground">
     {canReorder?"Drag resources to change their priority order, or use Move up and Move down.":
@@ -164,7 +167,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
       onDragOver={event=>{if(canReorder&&resource.status==="ACTIVE")event.preventDefault();}}
       onDrop={event=>{if(!canReorder||resource.status!=="ACTIVE")return;event.preventDefault();
         dropOnto(event.dataTransfer.getData("text/plain"),resource.id);}}
-      className="rounded-xl border border-border bg-surface p-4">
+      className="border-b border-border py-4">
      <div className="flex flex-wrap items-start justify-between gap-3">
       <div className="min-w-0">
        <p className="font-semibold text-foreground">{resource.title}</p>
@@ -192,12 +195,12 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
      </div>
      <ProjectResourceOpenLink url={resource.url} linkText={mode==="LEARNER"?"Open resource ↗":"Open link"}/>
      {canReorder&&resource.status==="ACTIVE"?<div className="mt-2 flex flex-wrap gap-2">
-       <button type="button" disabled={stableOrder[0]===resource.id}
+       <Button variant="secondary" type="button" disabled={stableOrder[0]===resource.id}
          className="min-h-9 rounded border border-border px-3 text-xs font-semibold disabled:opacity-50"
-         onClick={()=>moveRelative(resource.id,-1)}>Move up</button>
-       <button type="button" disabled={stableOrder.at(-1)===resource.id}
+         onClick={()=>moveRelative(resource.id,-1)}>Move up</Button>
+       <Button variant="secondary" type="button" disabled={stableOrder.at(-1)===resource.id}
          className="min-h-9 rounded border border-border px-3 text-xs font-semibold disabled:opacity-50"
-         onClick={()=>moveRelative(resource.id,1)}>Move down</button>
+         onClick={()=>moveRelative(resource.id,1)}>Move down</Button>
      </div>:null}
      {mode!=="LEARNER"&&!readOnly&&resource.status!=="ARCHIVED"?<ProjectResourceActions
         projectId={projectId} resource={{id:resource.id,title:resource.title,
