@@ -21,8 +21,8 @@ export default async function CollegeAdministratorsPage({params}:{
    <PersonOnboardDialog collegeId={collegeId} forcedRole="COLLEGE_ADMIN"/>
    <PersonOnboardDialog collegeId={collegeId} forcedRole="TPO"/>
   </div>
-  <section aria-label="College administrator directory" className="rounded-xl border border-border bg-surface">
-   <h2 className="border-b border-border p-4 font-semibold">College Admin and TPO accounts</h2>
+  <section aria-label="College administrator directory" className="border-t border-border pt-4">
+   <h2 className="mb-3 font-semibold">College Admin and TPO accounts</h2>
    <DataTable<(typeof data.items)[number]> caption="College Admin and TPO accounts" rows={data.items} getRowKey={item=>item.userId}
     empty={<p role="status" className="text-sm text-body">No active College Admin or TPO accounts in this college.</p>}
     columns={[

@@ -153,6 +153,7 @@ export async function cancelTpoDriveWithPreview(
           eq(placementSeasons.collegeId, collegeId),
         ),
       )
+      .for("share")
       .limit(1);
     const current = await impact(tx, job.id);
     // A pending promotion can be between seat reservation and actual

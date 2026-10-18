@@ -3,6 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { tpoOfferExpiryCsv } from "@/modules/placements/tpo-offer-expiry-model";
 import { getTpoOfferExpiryWatchlist } from "@/modules/placements/tpo-offer-expiry-service";
+import {tpoReportHasRepeatedSearchParams} from "@/modules/placements/tpo-report-url-guard";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export async function GET(request: Request) {
@@ -14,7 +15,13 @@ export async function GET(request: Request) {
   }
   try {
     const context = await getCurrentRequestContext();
-    const query = Object.fromEntries(new URL(request.url).searchParams.entries());
+    const parameters=new URL(request.url).searchParams;
+    if(tpoReportHasRepeatedSearchParams(parameters))
+      return NextResponse.json({error:"Invalid expiry filters. Clear filters and try again."},{
+        status:400,headers:{"Cache-Control":"private, no-store, max-age=0",
+          "X-Content-Type-Options":"nosniff",Vary:"Cookie"},
+      });
+    const query = Object.fromEntries(parameters.entries());
     const report = await getTpoOfferExpiryWatchlist(context, query);
     return new Response("\uFEFF" + tpoOfferExpiryCsv(report), {
       status: 200,
