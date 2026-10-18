@@ -16,11 +16,13 @@ export default async function CollegeSectionOperationsPage({
   const { sectionId } = await params;
 
   return (
+    <div className="min-w-0 overflow-x-clip">
     <AcademicsSectionPage
       context={context}
       sectionId={sectionId}
       eyebrow="College Admin · Academics"
       backHref="/college/academics"
     />
+    </div>
   );
 }
