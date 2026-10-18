@@ -19,8 +19,10 @@ describe("Faculty shared surface mobile and focus rollout",()=>{
  });
  it("UX-teacher-reports-shared-02 uses both phone cards and desktop report rows with 44px paging",()=>{
   const src=read("src/components/courses/faculty-report-student-table.tsx");
-  expect(src).toContain("md:hidden");
-  expect(src).toContain("md:block");
+  expect(src).toContain("<DataTable");
+  const table=read("src/components/ui/data-table.tsx");
+  expect(table).toContain("sm:table-row");
+  expect(table).toContain("mobilePriority");
   expect(src).toContain("min-h-11 rounded-md");
   expect(src).toContain("emptyMessage");
  });
