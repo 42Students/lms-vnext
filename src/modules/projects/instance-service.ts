@@ -36,6 +36,7 @@ import { assertPersistedPlatformPermission } from "@/modules/permissions/persist
 import { collegeIdSchema } from "@/modules/academics/validation";
 import { requireProjectManageAccess, requireProjectReadAccess } from "./access";
 import { loadProjectCollegeScope } from "./scope";
+import {archiveProjectInstanceInputSchema,projectArchiveTokenMatches} from "./instance-archive-model";
 import {
   ProjectsServiceError,
   postgresConstraintName,
@@ -495,7 +496,11 @@ export async function listProjectInstances(
 export async function archiveProjectInstance(
   context: RequestContext,
   projectIdInput: string,
+  rawInput?: unknown,
 ) {
+  // Legacy internal service callers may omit the token. The authenticated
+  // HTTP route requires it for every user-initiated archive attempt.
+  const input=rawInput===undefined?null:archiveProjectInstanceInputSchema.parse(rawInput);
   const scope =
     await requireProjectManageAccess(
       context,
@@ -529,8 +534,11 @@ export async function archiveProjectInstance(
     });
 
     if (project.status === "ARCHIVED") {
+      // Safe idempotent retry: no second audit, notification or mutation.
       return project;
     }
+    if(input && !projectArchiveTokenMatches(project.updatedAt,input.expectedUpdatedAt))
+      throw new ProjectsServiceError("PROJECT_INVALID_STATE");
 
     const now = new Date();
     const [archived] = await tx
