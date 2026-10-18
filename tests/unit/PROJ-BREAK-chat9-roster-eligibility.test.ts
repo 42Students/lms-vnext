@@ -14,7 +14,7 @@ describe("IIT Dharwad Projects: College Admin roster security", () => {
     expect(code).toContain("learnerProgramEnrollments.membershipId,collegeMemberships.id");
     expect(code).toContain('eq(learnerProgramEnrollments.status,"ACTIVE")');
     expect(code).toContain("project.sectionId?exists(");
-    expect(code).toContain("eq(sectionEnrollments.learnerEnrollmentId,learnerProgramEnrollments.id)");
+    expect(code).toContain(`eq(sectionEnrollments.learnerEnrollmentId,sql.raw('"learner_program_enrollments"."id"'))`);
     expect(code).toContain("eq(sectionEnrollments.sectionId,project.sectionId)");
     expect(code).toContain('eq(sectionEnrollments.status,"ACTIVE")');
     expect(code).toContain('eq(collegeMemberships.status,"ACTIVE")');

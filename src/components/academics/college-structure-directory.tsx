@@ -5,6 +5,7 @@ import { CollegeSlotManager } from "@/components/electives/college-slot-manager"
 import {CollegeElectiveOfferingManager} from "@/components/electives/college-elective-offering-manager";
 import { CollegeElectiveLifecycleAction } from "@/components/electives/college-elective-lifecycle-action";
 import { PageHeader } from "@/components/ui/page-header";
+import { ScrollCue } from "@/components/ui/scroll-cue";
 import {
   classCapacityLabel,
   collegeStructureHref,
@@ -34,7 +35,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
       <PageHeader
         title={title}
         actions={<Link href="/college/academics"
-          className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
           Academic workspace
         </Link>}
       />
@@ -369,7 +370,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
            <Link href={path} className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear filters and view all {title.toLowerCase()}</Link>
           </div>
         ) : (
-          <table className="w-full min-w-[53rem] text-left text-sm">
+          <ScrollCue axis="x" label={title + " table columns"}><table className="w-full min-w-[53rem] text-left text-sm">
             {data.kind === "CLASSES" ? (
               <>
                 <thead className="bg-muted text-muted-foreground"><tr>
@@ -395,7 +396,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
                     <td className="px-4 py-4 text-body">{item.status}</td>
                     <td className="px-4 py-4"><div className="flex flex-wrap items-start gap-2">
                       <Link href={"/college/classes/recurring-preview?classId=" + encodeURIComponent(item.id)}
-                        className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text"
+                        className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text"
                         aria-label={"Schedule recurring sessions for " + item.name}>Schedule</Link>
                       <CollegeClassRowActions row={item} />
                       <CollegeSectionLifecycleAction row={{
@@ -435,11 +436,11 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
                     <td className="px-4 py-4">
                       <div className="flex flex-wrap items-start gap-2">
                         {electiveOptions && item.status === "ACTIVE" ? <>
-                          <Link href={"/college/electives/"+encodeURIComponent(item.id)} className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">Open</Link>
+                          <Link href={"/college/electives/"+encodeURIComponent(item.id)} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">Open</Link>
                            <CollegeSlotManager options={electiveOptions} row={item} />
                           <CollegeElectiveOfferingManager slotId={item.id}/>
                           <Link href={"/college/electives/" + encodeURIComponent(item.id) + "/allocate"}
-                            className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">
+                            className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">
                             Eligible students
                           </Link>
                         </> : null}
@@ -451,7 +452,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
                 ))}</tbody>
               </>
             )}
-          </table>
+          </table></ScrollCue>
         )}
       </section>
       <nav aria-label={title + " pagination"} className="flex flex-wrap items-center justify-between gap-3 text-sm">
