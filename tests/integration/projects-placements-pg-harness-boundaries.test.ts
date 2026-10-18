@@ -299,6 +299,26 @@ describe("PROJ-HARNESS role/tenancy and concurrent PostgreSQL fixture boundaries
     });
   });
 
+  it("PROJ-HARNESS-46 archived/completed projects reject task submissions and meetings", async () => {
+    await withProjectPg(pool,async db=>{
+      const f=await actors(db);
+      for(const terminalStatus of ["ARCHIVED","COMPLETED"] as const) {
+        await db.query("update project_instances set status=$2 where id=$1",
+          [f.project.projectId,terminalStatus]);
+        await expect(createTaskSubmission(db,f.project,f.learner))
+          .rejects.toThrow(/project task submissions is closed/);
+        await expect(createMeeting(db,f.project,f.learner,f.author))
+          .rejects.toThrow(/project meetings is closed/);
+        expect(await count(db,"project_task_submissions")).toBe(0);
+        expect(await count(db,"project_meetings")).toBe(0);
+      }
+      await db.query("update project_instances set status='ACTIVE' where id=$1",
+        [f.project.projectId]);
+      await expect(createTaskSubmission(db,f.project,f.learner)).resolves.toBeTruthy();
+      await expect(createMeeting(db,f.project,f.learner,f.author)).resolves.toBeTruthy();
+    });
+  });
+
   it("PROJ-HARNESS-26 independent sessions contend for the same transaction advisory lock", async () => {
     const key = BigInt("0x" + randomUUID().replaceAll("-", "").slice(0, 15)).toString();
     await withTwoPgSessions(pool, async (first, second) => {
