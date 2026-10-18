@@ -30,7 +30,8 @@ export async function decideMentorProjectMeeting(context:RequestContext,rawProje
  const meetingId=projectMeetingIdSchema.parse(rawMeetingId);
  return getDb().transaction(async tx=>{
   const [project]=await tx.select({status:projectInstances.status}).from(projectInstances)
-   .where(eq(projectInstances.id,scope.project.id)).for("update").limit(1);
+   .where(and(eq(projectInstances.id,scope.project.id),
+    eq(projectInstances.collegeId,scope.collegeId))).for("update").limit(1);
   if(!project||project.status==="ARCHIVED"||project.status==="COMPLETED")
    throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
   await assertPersistedProjectMutationActor(tx,context,scope);

@@ -10,6 +10,7 @@ import { can } from "@/modules/permissions/policy";
 import type { RequestContext } from "@/modules/identity/context";
 import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import { requireProjectLifecycleAccess } from "./access";
+import { assertPersistedProjectMutationActor } from "./persisted-mentor-mutation";
 import { ProjectsServiceError } from "./errors";
 import { mentorSprintDetailsParamsSchema, mentorSprintDetailsSchema,
   sprintDetailsChanged } from "./mentor-sprint-details-model";
@@ -20,12 +21,13 @@ export async function updateMentorSprintDetails(
 ) {
   const params = mentorSprintDetailsParamsSchema.parse(rawParams);
   const input = mentorSprintDetailsSchema.parse(rawInput);
+  // Check entitlement before resolving untrusted project IDs.
+  const modules = await resolveOptionalModuleAccess(context);
+  if (!modules.projects.enabled) throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const scope = await requireProjectLifecycleAccess(context,params.projectId);
   if (!can(context,"projects.read",{
     collegeId:scope.collegeId,organizationId:scope.organizationId,
   })) throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
-  const modules = await resolveOptionalModuleAccess(context);
-  if (!modules.projects.enabled) throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const expected = new Date(input.expectedUpdatedAt);
   const db = getDb();
   return db.transaction(async tx => {
@@ -37,6 +39,7 @@ export async function updateMentorSprintDetails(
     if (!project || !["PLANNED","ACTIVE"].includes(project.status)) {
       throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
     }
+    await assertPersistedProjectMutationActor(tx,context,scope);
     const [sprint] = await tx.select().from(projectSprints)
       .where(and(eq(projectSprints.id,params.sprintId),
         eq(projectSprints.projectId,scope.project.id)))
