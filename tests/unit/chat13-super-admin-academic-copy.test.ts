@@ -26,10 +26,10 @@ describe("Super Admin Academic Setup legacy copy and defaults",()=>{
   expect(legacyAcademicStatus("ARCHIVED",true)).toBe("Inactive");
   expect(legacyAcademicStatus("COMPLETED",true)).toBe("Completed");
   const rows=read("src/app/(authenticated)/admin/batches/page.tsx");
-  expect(rows).toContain("legacyAcademicStatus(row.status, true)");
+  expect(rows).toMatch(/legacyAcademicStatus\(row\.status,\s*true\)/);
   expect(read("src/app/(authenticated)/admin/electives/page.tsx")).toContain("legacyAcademicStatus(item.status)");
   const overview=read("src/components/academics/academics-overview.tsx");
-  expect(overview).toContain("legacyAcademicStatus(cohort.status, true)");
+  expect(overview).toMatch(/legacyAcademicStatus\(cohort\.status,\s*true\)/);
   expect(overview).toContain("legacyAcademicStatus(period.status)");
  });
  it("SA-academics-people-37 restores legacy department and lecture-hall empty list copy",()=>{

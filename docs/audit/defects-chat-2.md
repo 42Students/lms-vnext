@@ -12,6 +12,13 @@ Scope: lane chat-2, branch `chatgpt/chat-2-b`. Severity reflects exposure if the
 | CH2-006 | Low | TPO-campaigns-public-16 | Retryable unsubscribe failures were visible but not explicitly announced as an accessible alert. | `2790108` | `tests/unit/chat2-unsubscribe-graceful.test.ts` |
 | CH2-007 | Low | TPO-inbox-team-49 | External announcement links omitted explicit `rel="noopener noreferrer"`, weakening link hardening and parity with safe outbound link contract. | `196af11` | `tests/unit/tpo-notice-safe-links-chat2.test.ts` |
 
+| CH2-008 | High | TPO-settings-audit-55 | Same-millisecond updates could leave the exact same `updated_at` CAS token in communication settings; repeated stale tab edits might overwrite data. | `faa3c1a` | `tests/integration/chat2-tpo-settings-cas-db.test.ts` |
+| CH2-009 | Critical | TPO-settings-audit-55 | Public join link REPLACE blindly rotated any newer link from an old browser tab (the form lacked optimistic identity); old-tab toggle could also disable a new link. | `34d4357`, `1d04eb7`, `bedb067`, `e0c3e06` | `tests/unit/chat2-ledger-campaign-public-link-and-settings.test.ts`, `chat2-tpo-settings-people-break-01.test.ts` |
+| CH2-010 | Medium | TPO-settings-audit-55 | Repeating identical enable/disable toggles wrote duplicate activity events; public link UI had no synchronous in-flight lock. | `a5067b2`, `32a1ba6` | New link identity and status contract tests; browser double-click test still required |
+| CH2-011 | High | TPO-campaigns-public-12 | Draft signing used only an older secret alias while dispatch used the canonical secret with fallback, leading to inconsistent readiness/configuration. | `1482326` | `tests/unit/chat2-ledger-campaign-public-link-and-settings.test.ts` |
+| CH2-012 | Medium | TPO-drive-workspace-44 | Slot creation/clearing and unassigned room changes/cancellations were persistent mutations without their own audit events. | `f14d201` | Source regression only; DB service integration still required |
+| CH2-013 | High | TPO-drive-workspace-44 | Room collision comparisons were inconsistent across create, room-assignment and roll-range assignment. Whitespace/case/compatibility Unicode could split a logical room. | `d1ae6c6`, `9cdf249` | `tests/unit/chat2-tpo-interview-plan-break-01.test.ts` and slot DB constraints |
+
 ## Test-contract repairs — not feature removals
 
 Shared `Dialog`, `Input`, and `DataTable` components replaced hand-written dialog focus handlers, raw `<input>` tags, and duplicate mobile/desktop roster markup. Several older source-assertion tests demanded removed implementation details even though the new shared components implement the same controls. Their assertions now verify shared native modal focus/Escape restoration, accessible titles, responsive company row data, report metrics and read-only email behavior. No test case was deleted.
@@ -21,5 +28,5 @@ Files updated: `chat2-company-memory-gap-parity.test.ts`, `chat2-company-trust-a
 ## Outstanding validation / risk
 
 - Cloud typecheck/unit suite, browser journeys, PostgreSQL fixtures and migration tests have **not run** in this connector-only workspace. The above are repository edits, not release certification.
-- Full service/route/page function-by-function ledger remains incomplete; especially cross-writer races, DB rollback, notification dedupe, tenant/role matrix, public links and campaigns must be exercised before release.
+- Exported-function ledgers now exist under `docs/audit/coverage/placements-interviews-rounds-slots-chat2-ledger.md` and `docs/audit/coverage/tpo-campaigns-public-links-settings-people-chat2-ledger.md`, but their many explicit GAP/PARTIAL rows still require direct behavioral and cross-writer integration coverage.
 - Other lane-owned generic entries included under the CI `chat-2` bucket require coordination; no tests were weakened or deleted.
