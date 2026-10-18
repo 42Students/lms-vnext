@@ -40,3 +40,12 @@ export function adminContentTypeLabel(type:string) {
  return type==="YOUTUBE"?"YouTube Video":type==="VIDEO"?"Video (Upload)":
   type==="RESOURCE"?"Resource":type==="LIVE_CLASS"?"Live class":"Unknown content";
 }
+/** Effective visibility is the entire published ancestry, not just content's flag. */
+export function effectiveCourseContentVisibleToStudents(input:{
+ status:string;visibleToStudents:boolean;lessonStatus:string;
+ learningPathStatus:string;offeringStatus:string;courseStatus:string;
+}):boolean{
+ return input.status==="PUBLISHED"&&input.visibleToStudents&&
+  input.lessonStatus==="ACTIVE"&&input.learningPathStatus==="PUBLISHED"&&
+  input.offeringStatus==="ACTIVE"&&input.courseStatus==="ACTIVE";
+}
