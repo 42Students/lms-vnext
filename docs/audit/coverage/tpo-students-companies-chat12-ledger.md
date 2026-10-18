@@ -82,6 +82,14 @@
 |---|---|---|---|---|
 | `src/app/api/placements/tpo/companies/export/route.ts` | `GET` | `tests/unit/chat12-tpo-export-and-clipboard-security.test.ts` | Source contract ensures route uses Unicode-safe shared cell helper and bounded company export; full HTTP role, no-store and CSV import acceptance pending | **SOURCE/ENCODER BEHAVIOURAL** |
 
+### Company Team input and relationship state
+
+| Production path | Export | Test | Evidence and remaining cases | Status |
+|---|---|---|---|---|
+| `src/modules/placements/tpo-company-team-model.ts` | `tpoCompanyTeamPostSchema` | `tests/unit/chat12-tpo-company-team-validation-and-archive.test.ts` | Accept/trim bounded private message, reject invalid idempotency key, extra scope or action, whitespace-only and 4001-byte body | **BEHAVIOURAL** |
+| `src/modules/placements/tpo-company-team-model.ts` | `tpoCompanyTeamCompanyIdSchema` | same file | Canonical UUID accepts, malformed company path denies | **BEHAVIOURAL** |
+| `src/modules/placements/tpo-company-team-model.ts` | `canPostToTpoCompanyTeam` | same file | ACTIVE only; ARCHIVED/SUSPENDED/DELETED/unknown denied, including casing confusion | **BEHAVIOURAL** |
+
 ## Critical outstanding integration tests
 
 - Actual `getTpoStudentsIntelligence`, `listTpoStudentRequests`, and `getTpoCompaniesView` against a disposable migrated PostgreSQL database, with a wrong-college actor and a disabled TPO membership. Model-level tests are **not** these service tests.
