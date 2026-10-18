@@ -11,6 +11,7 @@ import {
 } from "@/components/projects/project-admin-collection-controls";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { PageHeader } from "@/components/ui/page-header";
+import { DataTable } from "@/components/ui/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
   listProjectAdminSnapshots,
@@ -102,29 +103,24 @@ export async function ProjectAdminReadinessPage({
         </div>
         {!activeOverrides.length ? <p className="mt-3 text-sm text-muted-foreground">
           No workspace currently has a manual override — every gate is running on its own completion state.
-        </p> : <div className="mt-3 overflow-x-auto">
-          <table className="min-w-full text-left text-sm">
-            <thead><tr className="border-b border-border text-xs text-muted-foreground">
-              <th className="p-2">Workspace</th><th className="p-2">Override</th>
-              <th className="p-2">Note</th><th className="p-2">By</th>
-              <th className="p-2">At</th><th className="p-2">Action</th>
-            </tr></thead>
-            <tbody>{activeOverrides
-              .filter(row => !query.q || row.workspace.toLowerCase().includes(query.q.toLowerCase()))
-              .map(row => <tr key={row.projectId} className="border-b border-border">
-                <td className="p-2">{row.workspace}</td>
-                <td className="p-2">{row.direction}</td>
-                <td className="max-w-xs break-words p-2">{row.note}</td>
-                <td className="p-2">{row.by}</td>
-                <td className="p-2">{new Intl.DateTimeFormat("en-IN", {
-                  dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
-                }).format(row.at)}</td>
-                <td className="p-2"><Link className="font-semibold text-primary-text underline"
-                  href={basePath + "/" + row.projectId + "/readiness"}>Manage</Link></td>
-              </tr>)}
-            </tbody>
-          </table>
-        </div>}
+        </p> : <DataTable<(typeof activeOverrides)[number]>
+          caption="Active overrides"
+          rows={activeOverrides.filter(row=>!query.q||row.workspace.toLowerCase().includes(query.q.toLowerCase()))}
+          getRowKey={row=>row.projectId}
+          columns={[
+            {key:"workspace",header:"Workspace",mobilePriority:"primary",cell:row=>row.workspace},
+            {key:"direction",header:"Override",mobilePriority:"secondary",cell:row=>row.direction},
+            {key:"note",header:"Note",mobilePriority:"secondary",cell:row=>row.note},
+            {key:"by",header:"By",mobilePriority:"secondary",cell:row=>row.by},
+            {key:"at",header:"At",mobilePriority:"secondary",cell:row=>new Intl.DateTimeFormat("en-IN",{
+              dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
+            }).format(row.at)},
+            {key:"action",header:"Action",mobilePriority:"action",cell:row=><Link
+              className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline"
+              href={basePath+"/"+row.projectId+"/readiness"}>Manage</Link>},
+          ]}
+          empty={<p role="status" className="text-sm text-body">No workspace overrides match these filters.</p>}
+        />}
       </section>
       <section className="space-y-3 rounded-xl border border-border bg-surface p-5">
         <h2 className="text-base font-semibold">Select workspace</h2>
@@ -136,23 +132,19 @@ export async function ProjectAdminReadinessPage({
           </Link>
           <h3 className="text-sm font-semibold">Releases</h3>
           {!releaseContext.length ? <p className="text-sm text-muted-foreground">No releases recorded.</p> :
-            <div className="overflow-x-auto">
-              <table className="min-w-full text-left text-sm">
-                <thead><tr className="border-b border-border text-muted-foreground">
-                  <th className="p-2">Release</th><th className="p-2">Status</th>
-                  <th className="p-2">Sprints</th><th className="p-2">Points</th>
-                  <th className="p-2">Target date</th>
-                </tr></thead>
-                <tbody>{releaseContext.map(release=><tr key={release.id} className="border-b border-border">
-                  <td className="p-2 font-semibold">{release.title}</td>
-                  <td className="p-2">{release.status==="SHIPPED"?"Shipped":
-                    release.status==="IN_PROGRESS"?"In progress":"Planned"}</td>
-                  <td className="p-2">{release.completedSprints}/{release.sprintCount}</td>
-                  <td className="p-2">{release.points}</td>
-                  <td className="p-2">{release.targetDate??"—"}</td>
-                </tr>)}</tbody>
-              </table>
-            </div>}
+            <DataTable<(typeof releaseContext)[number]>
+              caption="Readiness releases"
+              rows={releaseContext}
+              getRowKey={release=>release.id}
+              columns={[
+                {key:"release",header:"Release",mobilePriority:"primary",cell:release=>release.title},
+                {key:"status",header:"Status",mobilePriority:"secondary",cell:release=>release.status==="SHIPPED"?"Shipped":release.status==="IN_PROGRESS"?"In progress":"Planned"},
+                {key:"sprints",header:"Sprints",mobilePriority:"secondary",cell:release=>release.completedSprints+"/"+release.sprintCount},
+                {key:"points",header:"Points",mobilePriority:"secondary",cell:release=>release.points},
+                {key:"target",header:"Target date",mobilePriority:"secondary",cell:release=>release.targetDate??"—"},
+              ]}
+              empty={<p role="status" className="text-sm text-body">No releases recorded.</p>}
+            />}
         </> : null}
       </section>
       <ProjectAdminFilters query={query} />
