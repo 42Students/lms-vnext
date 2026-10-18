@@ -11,7 +11,9 @@ describe("UX-attendance-calendar-scroll-01 large variable-width attendance calen
    expect(src).toContain('sticky left-0');
    expect(src).toContain("<table");
    expect(src).toContain("</ScrollCue>");
-   expect(src).toContain("overflow");
+   const cue=read("src/components/ui/scroll-cue.tsx");
+   expect(cue).toContain("overflow-x-auto overscroll-x-contain");
+   expect(cue).toContain("node.scrollWidth - node.clientWidth");
   });
  }
  it("shared scroll primitives expose focusable keyboard regions only on actual overflow",()=>{
