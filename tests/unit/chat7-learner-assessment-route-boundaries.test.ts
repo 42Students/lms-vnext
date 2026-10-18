@@ -2,7 +2,7 @@ import {beforeEach,describe,expect,it,vi} from "vitest";
 
 const state=vi.hoisted(()=>({
  context:vi.fn(),origin:vi.fn(),submitQuiz:vi.fn(),submitAssignment:vi.fn(),
- myAttempts:vi.fn(),mySubmission:vi.fn(),errors:vi.fn(),
+ myAttempts:vi.fn(),mySubmission:vi.fn(),workspace:vi.fn(),errors:vi.fn(),
 }));
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:state.context}));
 vi.mock("@/auth/origin",()=>({isSameOriginRequest:state.origin}));
@@ -16,6 +16,7 @@ vi.mock("@/lib/api-error",()=>({
 vi.mock("@/modules/courses/quiz-attempt-service",()=>({
  submitCourseQuiz:state.submitQuiz,getMyQuizAttempts:state.myAttempts,
 }));
+vi.mock("@/modules/courses/learner-course-service",()=>({getLearnerCourseWorkspace:state.workspace}));
 vi.mock("@/modules/courses/assignment-submission-service",()=>({
  submitCourseAssignment:state.submitAssignment,getMyAssignmentSubmission:state.mySubmission,
 }));
@@ -24,6 +25,7 @@ import {POST as submitQuizRoute} from "@/app/api/courses/quizzes/[quizId]/submit
 import {POST as submitAssignmentRoute} from "@/app/api/courses/assignments/[assignmentId]/submit/route";
 import {GET as myQuizAttemptsRoute} from "@/app/api/courses/quizzes/[quizId]/my-attempts/route";
 import {GET as myAssignmentSubmissionRoute} from "@/app/api/courses/assignments/[assignmentId]/my-submission/route";
+import {GET as learnerWorkspaceRoute} from "@/app/api/courses/learner/workspace/route";
 
 const quizId="11111111-1111-4111-8111-111111111111";
 const assignmentId="22222222-2222-4222-8222-222222222222";
@@ -44,6 +46,7 @@ beforeEach(()=>{
  state.submitAssignment.mockResolvedValue({id:"assignment-submission"});
  state.myAttempts.mockResolvedValue([]);
  state.mySubmission.mockResolvedValue(null);
+ state.workspace.mockResolvedValue({courseName:"Safe workspace"});
 });
 
 describe("COURSES7-07 / COURSES7-08 authenticated learner assessment HTTP boundaries",()=>{
@@ -88,12 +91,23 @@ describe("COURSES7-07 / COURSES7-08 authenticated learner assessment HTTP bounda
   ),assignmentParams);
   expect(quiz.status).toBe(200);
   expect(assignment.status).toBe(200);
+  expect(quiz.headers.get("Cache-Control")).toContain("no-store");
+  expect(assignment.headers.get("Cache-Control")).toContain("no-store");
   expect(state.myAttempts).toHaveBeenCalledTimes(1);
   expect(state.myAttempts).toHaveBeenCalledWith(actor,quizId,deliveryId);
   expect(state.mySubmission).toHaveBeenCalledTimes(1);
   expect(state.mySubmission).toHaveBeenCalledWith(actor,assignmentId,deliveryId);
   expect(state.submitQuiz).not.toHaveBeenCalled();
   expect(state.submitAssignment).not.toHaveBeenCalled();
+ });
+ it("COURSES7-08 learner workspace GET keeps private course progress uncached",async()=>{
+  const response=await learnerWorkspaceRoute(new Request(
+   "https://campus.invalid/api/courses/learner/workspace?deliveryId="+deliveryId,
+  ));
+  expect(response.status).toBe(200);
+  expect(response.headers.get("Cache-Control")).toContain("no-store");
+  expect(state.workspace).toHaveBeenCalledTimes(1);
+  expect(state.workspace).toHaveBeenCalledWith(actor,deliveryId);
  });
  it("COURSES7-07 and COURSES7-08 never send raw exceptions to learner clients",async()=>{
   state.myAttempts.mockRejectedValueOnce(new Error("sensitive postgres connection: secret"));
