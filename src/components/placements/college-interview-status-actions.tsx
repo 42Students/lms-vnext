@@ -1,5 +1,5 @@
 "use client";
-import {useId,useRef,useState} from "react";
+import {useId,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -11,7 +11,6 @@ export function CollegeInterviewStatusActions({id,version,status}:{
 }){
  const router=useRouter();
  const reasonId=useId();
- const reasonInput=useRef<HTMLTextAreaElement>(null);
  const [busy,setBusy]=useState(false);
  const [message,setMessage]=useState("");
  const [next,setNext]=useState<InterviewNextStatus|null>(null);
@@ -28,7 +27,7 @@ export function CollegeInterviewStatusActions({id,version,status}:{
   const trimmed=reason.trim();
   if(trimmed.length<3){
    setReasonError("Enter a reason of at least 3 characters.");
-   reasonInput.current?.focus();
+   document.getElementById(reasonId)?.focus();
    return;
   }
   setBusy(true);setMessage("");setReasonError("");
@@ -55,11 +54,11 @@ export function CollegeInterviewStatusActions({id,version,status}:{
   <ConfirmDialog open={next!==null} onOpenChange={open=>{if(!open)close();}}
    title={title} description={reasonLabel}
    confirmLabel="Confirm" cancelLabel="Cancel" pending={busy}
-   confirmDisabled={!reason.trim() || reason.trim().length<3}
    onConfirm={()=>{void update();}}>
    <label htmlFor={reasonId} className="block text-sm font-semibold text-body">{reasonLabel}</label>
-   <Textarea ref={reasonInput} id={reasonId} name="reason" value={reason} required minLength={3}
+   <Textarea id={reasonId} name="reason" value={reason} required minLength={3}
     maxLength={2000} error={Boolean(reasonError)} aria-describedby={reasonError?reasonId+"-error":undefined}
+    onBlur={()=>{if(reason.length>0&&reason.trim().length<3)setReasonError("Enter a reason of at least 3 characters.");}}
     onChange={event=>{setReason(event.target.value);if(reasonError)setReasonError("");}}
     className="mt-2" />
    {reasonError?<p id={reasonId+"-error"} role="alert" className="mt-2 text-sm text-error">{reasonError}</p>:null}
