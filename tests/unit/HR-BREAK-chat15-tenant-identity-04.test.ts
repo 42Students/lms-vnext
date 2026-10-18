@@ -62,7 +62,7 @@ describe("HR-TENANT-ID-04: deny forged empty employer, college and relationship 
   expect(findRecruiterScopedGrant(null,college,relationship)).toBeNull();
  });
  it("denies malformed visibility scope without invoking central permissions",()=>{
-  const context={recruiter:employer};
+  const context={user:{id:"recruiter-a"},recruiter:{...employer,userId:"recruiter-a",status:"ACTIVE"}};
   permissions.can.mockReturnValue(true);
   expect(isRecruiterJobVisible(context as never,college,relationship)).toBe(true);
   permissions.can.mockReset();
@@ -71,5 +71,12 @@ describe("HR-TENANT-ID-04: deny forged empty employer, college and relationship 
    ["other-college",relationship],[college,"other-relationship"],
   ])expect(isRecruiterJobVisible(context as never,targetCollege,targetRelationship)).toBe(false);
   expect(permissions.can).not.toHaveBeenCalled();
+ });
+ it("HR-TENANT-ID-16 refuses a valid grant carried in another session before permission lookup",()=>{
+  const context={user:{id:"recruiter-a"},recruiter:{...employer,userId:"recruiter-b",status:"ACTIVE"}};
+  permissions.can.mockReturnValue(true);
+  expect(isRecruiterJobVisible(context as never,college,relationship)).toBe(false);
+  expect(permissions.can).not.toHaveBeenCalled();
+  expect(isRecruiterJobVisible({...context,recruiter:null} as never,college,relationship)).toBe(false);
  });
 });

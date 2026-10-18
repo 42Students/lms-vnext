@@ -24,6 +24,12 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
   const context = await getCurrentRequestContext();
   const id = projectTemplateIdSchema.safeParse((await params).templateId);
   if (!id.success) notFound();
+  if (!can(context,"project-template.read")) return <div className="min-w-0 space-y-5">
+    <PageHeader eyebrow="Super Admin · Template college availability" title="College availability" />
+    <ErrorState title="College availability access denied"
+      description="Only an active Super Admin can read global project template assignments."
+      action={<Link href="/admin/projects/templates" className="font-semibold text-[var(--lms-teal-deep)]">Back to template catalogue</Link>} />
+  </div>;
   const raw = await searchParams;
   const parsed = templateCollegeAvailabilityQuerySchema.safeParse({ q: raw.q, status: raw.status, page: raw.page });
   if (!parsed.success) return <ErrorState title="Invalid college filters" description="Review the search, status and page."
@@ -32,7 +38,14 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
   try { data = await listSuperAdminTemplateCollegeAvailability(context, id.data, parsed.data); }
   catch (error) {
     if (error instanceof ProjectsServiceError && error.code === "PROJECT_TEMPLATE_NOT_FOUND") notFound();
-    throw error;
+    // A failed college/template read must never be interpreted as an empty
+    // assignment list. Keep the filters for an explicit retry instead.
+    return <div className="min-w-0 space-y-5">
+      <PageHeader eyebrow="Super Admin · Template college availability" title="College availability" />
+      <ErrorState title="College availability unavailable"
+        description="Template assignments could not be loaded. No availability is shown until the read succeeds."
+        action={<Link href={templateCollegeAvailabilityHref(id.data,parsed.data)} className="font-semibold text-[var(--lms-teal-deep)]">Retry loading colleges</Link>} />
+    </div>;
   }
   const statuses = ["ALL", "ASSIGNED", "UNASSIGNED"] as const;
   return <div className="min-w-0 space-y-5">

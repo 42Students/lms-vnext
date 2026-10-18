@@ -112,3 +112,28 @@ npm run test:db:projects-harness
 - **Nested overlay browser acceptance (UX-kit-E2E-04):** development harness additionally mounts Drawer → BottomSheet to exercise real history markers, nested explicit close, parent survival and Back/focus restoration. Execute using `npm run test:e2e:chat17:kit` and do not mark nested overlays complete without the browser result.
 
 - **PROJ-HARNESS-PLACEMENTS-12:** SQL-backed candidate fixtures now require the supplied round to belong to the selected drive. `tests/integration/projects-placements-pg-harness-placements.test.ts` checks two same-college drives and forbids forged cross-drive round references before any application rows are written. Requires the disposable PostgreSQL integration runner, not just unit/source tests.
+
+## Additional PostgreSQL state/lineage and browser pending-state witnesses
+
+`PROJ-HARNESS-38..43` extend disposable PostgreSQL negative and legitimate transition tests: archived organization/college; revoked persisted learner role; cross-project task UUID; unassigned or readonly project mentors; collaborative team final-delivery submitter distinct from draft author; closed project cannot receive a new final draft or submit an existing draft. `tests/integration/support/projects-placements-pg-harness.ts` verifies those SQL predicates on the same transaction; separate column foreign keys alone are not lineage checks. `tests/unit/projects-pg-harness-contract-chat17.test.ts` protects essential guards. **No DB runner success is asserted.**
+
+`UX-kit-E2E-06` adds a development-only pending `ConfirmDialog` fixture and Chromium test asserting that confirm/cancel actions are disabled, Escape cannot dismiss during pending state, repeated submits are not issued, and completion restores focus. Test remains unverified by a browser runner.
+
+- **Follow-on kit issues:** `UX-kit-HARDEN-45` removes explicitly mobile-hidden fields from DataTable's `More details` overlay; the real Chromium narrow/desktop test confirms private-value visibility tracks viewport and public collapsed fields remain readable. `UX-kit-HARDEN-47` keeps disabled file pickers accessible without falsely marking them invalid. Newly authored tests have no runner result yet.
+
+## Chat-17 handoff continuation — current branch-only CI gates
+
+At latest source inspection, `docs/orchestrator/unit-failures-latest.md` still reported CI `ff6819dd` / `698eb9dd` and no `chat-17` section, while the refreshed typecheck report also listed no `chat-17` files. These snapshots are **not results** for the branch's newest unmerged changes. Verified branch was fast-forward/merged from main before this batch; all additions are pushed to `chatgpt/chat-17-b`.
+
+This batch adds `UX-kit-HARDEN-45` (mobile-hidden DataTable fields must never surface inside More details, including a dev-only browser viewport witness), `UX-kit-HARDEN-47` (disabled FileUpload is not incorrectly `aria-invalid`), `UX-kit-HARDEN-48` (disabled Switch cursor), and `PROJ-HARNESS-46` (task/meeting terminal state, in addition to final-delivery state). Their exact defect/evidence entries live in `docs/audit/defects-chat-17.md` and `docs/audit/coverage/chat17-ui-kit-ledger.md`.
+
+Gate them on the cloud runner without weakening assertions:
+```bash
+npm run typecheck
+npm run test:ux:kit:hardening
+npm run test:chat17:weak
+npm run test:e2e:chat17:kit
+npm run test:db:projects-harness  # only on migrated disposable TEST_DATABASE_URL
+```
+
+The UI coverage matrix still contains other teams' page-level/raw-table entries; run the generator against merged code to distinguish stale generated flags from actual active route defects. Do not designate release readiness until the actual browser/PostgreSQL runners and the owning lanes attest passing status.

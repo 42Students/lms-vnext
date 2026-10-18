@@ -5,6 +5,16 @@ export const tenantLifecycleQuerySchema = z.strictObject({
   status: z.enum(["ACTIVE", "ARCHIVED", "ALL"]).default("ACTIVE"),
   page: z.coerce.number().int().min(1).max(1000).default(1),
 });
+/** Reject ambiguous duplicate, unknown and array-valued URL parameters
+ * before validating the tenant directory query. Coercing ["1"] to 1 would
+ * otherwise silently accept repeated page keys on some runtimes. */
+export function parseTenantLifecycleSearchParams(raw:Record<string,string|string[]|undefined>){
+ if(Object.values(raw).some(Array.isArray))return null;
+ const parsed=tenantLifecycleQuerySchema.safeParse(
+  Object.fromEntries(Object.entries(raw).filter(([,value])=>value!==undefined))
+ );
+ return parsed.success?parsed.data:null;
+}
 export const TENANT_LIFECYCLE_PAGE_SIZE = 20;
 export function tenantLifecyclePaging(total: number, requested: number) {
   const totalPages = Math.max(1, Math.ceil(total / TENANT_LIFECYCLE_PAGE_SIZE));

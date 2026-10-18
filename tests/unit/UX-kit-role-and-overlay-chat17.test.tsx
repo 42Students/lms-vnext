@@ -164,6 +164,30 @@ describe("UX-kit-HARDEN-23 authorization boundaries and WebView history", () => 
     expect(deniedOnly).not.toContain("More details");
   });
 
+  it("UX-kit-HARDEN-45 explicit mobile-hidden fields never appear in expanded mobile details",()=>{
+    type Row={id:string;name:string;secret:string;other:string};
+    const columns=[
+      {key:"name",header:"Project",mobilePriority:"primary" as const,cell:(row:Row)=>row.name},
+      ...[1,2,3,4].map(i=>({
+        key:"other"+i,header:"Public "+i,mobilePriority:"secondary" as const,
+        cell:(row:Row)=>row.other+"-"+i,
+      })),
+      {key:"secret",header:"Private feedback",mobilePriority:"hidden" as const,
+        cell:(row:Row)=>row.secret},
+    ];
+    const html=render(<DataTable columns={columns}
+      rows={[{id:"p1",name:"Project",secret:"PRIVATE_DESKTOP_VALUE",other:"Milestone"}]}
+      getRowKey={row=>row.id} empty="No projects"/>);
+    // The desktop-only cell is still rendered, once. It must NOT be copied
+    // into the mobile disclosure, even when other secondary fields collapse.
+    expect((html.match(/PRIVATE_DESKTOP_VALUE/g)??[])).toHaveLength(1);
+    expect(html).toContain('class="min-w-0');
+    expect(html).toContain("More details");
+    const disclosure=html.slice(html.indexOf("<details"));
+    expect(disclosure).not.toContain("PRIVATE_DESKTOP_VALUE");
+    expect(disclosure).toContain("Milestone-4");
+  });
+
   it("UX-kit-HARDEN-30 rejects encoded slash/backslash row links before Next navigation", () => {
     for (const href of [
       "https://attacker.test", "//attacker.test", "/\\\\attacker.test",

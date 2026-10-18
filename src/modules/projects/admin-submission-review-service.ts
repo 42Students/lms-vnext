@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,isNull} from "drizzle-orm";
+import {and,desc,eq,isNull} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {projectInstances,projectSubmissions,projectDeliveryEvents} from "@/db/schema";
@@ -41,7 +41,21 @@ export async function lockAdminProjectSubmission(ctx:RequestContext,projectIdRaw
   // is safe, does not rewrite its reason, and cannot duplicate audit history.
   // An archived/completed workspace must not turn an old lock into a write.
   if(project.status==="ACTIVE"&&submission.lockedAt&&
-     (submission.status==="SUBMITTED"||submission.status==="APPROVED"))return submission;
+     (submission.status==="SUBMITTED"||submission.status==="APPROVED")){
+    // Idempotency applies only to the exact same actor and reason. A second
+    // administrator or altered reason cannot silently claim the first lock.
+    const [previousLock]=await tx.select({
+      reason:projectDeliveryEvents.reason,
+      actorMembershipId:projectDeliveryEvents.actorMembershipId,
+    }).from(projectDeliveryEvents).where(and(
+      eq(projectDeliveryEvents.projectId,scope.project.id),
+      eq(projectDeliveryEvents.submissionId,submissionId),
+      eq(projectDeliveryEvents.eventType,"LOCKED"),
+    )).orderBy(desc(projectDeliveryEvents.occurredAt),desc(projectDeliveryEvents.id)).limit(1);
+    if(previousLock?.reason===input.reason&&
+       previousLock.actorMembershipId===actorMembershipId)return submission;
+    throw new ProjectsServiceError("PROJECT_SUBMISSION_CONFLICT");
+  }
   if(!canAdminSettleDelivery(submission.status,!!submission.lockedAt,project.status,"LOCK"))
    throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
   const now=new Date();
