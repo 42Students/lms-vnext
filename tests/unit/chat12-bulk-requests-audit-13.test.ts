@@ -34,6 +34,20 @@ describe("TPO bulk decisions audit",()=>{
   expect(ui).toContain("Retry batch audit only");
   expect(ui).toContain("auditRetry!==null");
  });
+ it("TPO-requests-verification-13 retries only the original run ID and does not re-decide any student",()=>{
+  const ui=src("src/components/placements/tpo-request-bulk-decision.tsx");
+  const start=ui.indexOf("async function retryAudit()");
+  const end=ui.indexOf("async function copyFailed()",start);
+  expect(start).toBeGreaterThan(0);
+  expect(end).toBeGreaterThan(start);
+  const retry=ui.slice(start,end);
+  expect(retry).toContain("body:JSON.stringify(auditRetry)");
+  expect(retry).toContain("setAuditRetry(null)");
+  expect(retry).toContain("router.refresh()");
+  expect(retry).not.toContain("/decision");
+  expect(retry).not.toContain("auditRecorded");
+  expect(ui).toContain("if(!valid||!acknowledged||pending||auditRetry)return");
+ });
  it("TPO-requests-verification-13 requires CSRF-safe route and truthful partial-failure notice",()=>{
   expect(src("src/app/api/placements/tpo/requests/bulk-audit/route.ts")).toContain("isSameOriginRequest(request)");
   const ui=src("src/components/placements/tpo-request-bulk-decision.tsx");
