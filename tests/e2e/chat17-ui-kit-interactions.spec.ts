@@ -3,6 +3,16 @@ import { expect, test } from "@playwright/test";
 const route="/e2e/chat17-ui-kit";
 
 test.describe("UX-kit-E2E-01 real browser shared UI states",()=>{
+  test("UX-kit-HARDEN-49 browser-native required field validity follows the label",async({page})=>{
+    await page.goto(route);
+    const input=page.getByRole("textbox",{name:"Learner roll number"});
+    await expect(input).toHaveAttribute("required","");
+    await expect(input).toHaveAttribute("id","harness-roll");
+    expect(await input.evaluate(el=>(el as HTMLInputElement).checkValidity())).toBe(false);
+    await input.fill("24CS001");
+    expect(await input.evaluate(el=>(el as HTMLInputElement).checkValidity())).toBe(true);
+  });
+
   test("dialog focus restoration and tab keyboard selection skip unauthorized panels",async({page})=>{
     await page.goto(route);
     const opener=page.getByRole("button",{name:"Open harness dialog"});
