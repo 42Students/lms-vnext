@@ -22,7 +22,7 @@ export default async function TpoRecordedOutsidePage({searchParams}:{searchParam
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="TPO · Drive creation" title="Record an outside-platform drive"
    description="Document a drive that already happened outside LMS without publishing any job or learners."/>
-  <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)]">Back to platform drive creation</Link>
+  <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] md:min-h-9">Back to platform drive creation</Link>
   {saved?<p role="status" className="rounded-md border border-border p-3 text-sm text-body">
    External drive record saved. It was not published as a job.
   </p>:null}
