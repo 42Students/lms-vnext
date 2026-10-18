@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {calendarLocalIstToOffset} from "@/modules/placements/tpo-calendar-followup-model";
 import {tpoFollowupContactLinks} from "@/modules/placements/tpo-followup-queue-model";
 
 type DueRow = {
@@ -29,8 +31,8 @@ type Queue = {
   window:"DUE"|"NEXT_7_DAYS";
 };
 
-const field = "min-h-10 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground";
-const action = "min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50";
+const field = "min-h-11 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground";
+const action = "min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50";
 function displayDate(value: string) {
   return new Intl.DateTimeFormat("en-IN", {
     dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
@@ -46,6 +48,8 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
   const [outcome, setOutcome] = useState<Outcome>("CONTACTED");
   const [doneNote, setDoneNote] = useState("");
   const [pending, setPending] = useState(false);
+  const [confirmCreate,setConfirmCreate]=useState(false);
+  const [confirmComplete,setConfirmComplete]=useState<DueRow|null>(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -67,12 +71,10 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
   }
 
   async function create() {
-    const parsedDue = dueLocal ? new Date(dueLocal) : null;
+    let parsedDue:Date|null=null;
+    try{parsedDue=dueLocal?new Date(calendarLocalIstToOffset(dueLocal)):null;}catch{parsedDue=null;}
     if (!leadId || !parsedDue || Number.isNaN(parsedDue.getTime())) {
       setError("Select a recruiter and a valid follow-up date and time.");
-      return;
-    }
-    if (!window.confirm("Schedule this follow-up and record an immutable staff audit entry?")) {
       return;
     }
     setPending(true); setError(""); setSuccess("");
@@ -81,7 +83,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
         confirmed: true, leadId, dueAt: parsedDue.toISOString(),
         note: createNote.trim() || null,
       });
-      setDueLocal(""); setCreateNote("");
+      setConfirmCreate(false);setDueLocal(""); setCreateNote("");
       setSuccess("Follow-up scheduled. Use the Due now / Next 7 days views to locate open tasks.");
       router.refresh();
     } catch (err) {
@@ -94,10 +96,6 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
       setError("Record a brief outcome note before completing the follow-up.");
       return;
     }
-    if (!window.confirm(
-      "Mark the follow-up for " + row.leadName +
-      " done with outcome " + outcome + "? This action is terminal and audited.",
-    )) return;
     setPending(true); setError(""); setSuccess("");
     try {
       await post(
@@ -108,7 +106,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
           outcome, note: doneNote.trim(),
         },
       );
-      setActiveId(null); setDoneNote("");
+      setConfirmComplete(null);setActiveId(null); setDoneNote("");
       setSuccess("Follow-up completed and recorded in the recruiter activity history.");
       router.refresh();
     } catch (err) {
@@ -159,7 +157,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
                 value={createNote} disabled={pending} onChange={(event) => setCreateNote(event.target.value)} />
             </label>
             <button type="button" disabled={pending || !leadId || !dueLocal}
-              onClick={() => void create()} className={action}>
+              onClick={() => setConfirmCreate(true)} className={action}>
               {pending ? "Saving..." : "Review and confirm follow-up"}
             </button>
           </div>
@@ -185,15 +183,15 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
               <article key={row.id} className="space-y-3 p-5">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <Link className="font-semibold text-primary-text hover:underline"
+                    <Link className="font-semibold text-[var(--lms-teal-deep)] hover:underline"
                       href={"/tpo/recruiters/" + encodeURIComponent(row.leadId)}>{row.leadName}</Link>
                     {row.companyName ? <p className="text-sm text-body">{row.companyName}</p> : null}
                     <p className="mt-1 text-xs text-muted-foreground">
                       Due {displayDate(row.dueAt)}
                     </p>
                     {row.canContact?<div className="mt-2 flex flex-wrap gap-3 text-sm font-semibold">
-                      {tpoFollowupContactLinks(row.phoneNorm,row.canContact).call?<a href={tpoFollowupContactLinks(row.phoneNorm,row.canContact).call!} className="inline-flex min-h-10 items-center text-primary-text hover:underline">Call recruiter ↗</a>:null}
-                      {tpoFollowupContactLinks(row.phoneNorm,row.canContact).whatsapp?<a href={tpoFollowupContactLinks(row.phoneNorm,row.canContact).whatsapp!} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-10 items-center text-primary-text hover:underline">Open WhatsApp ↗</a>:null}
+                      {tpoFollowupContactLinks(row.phoneNorm,row.canContact).call?<a href={tpoFollowupContactLinks(row.phoneNorm,row.canContact).call!} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] hover:underline">Call recruiter ↗</a>:null}
+                      {tpoFollowupContactLinks(row.phoneNorm,row.canContact).whatsapp?<a href={tpoFollowupContactLinks(row.phoneNorm,row.canContact).whatsapp!} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] hover:underline">Open WhatsApp ↗</a>:null}
                     </div>:null}
                   </div>
                   <button type="button" disabled={pending}
@@ -202,7 +200,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
                       setActiveId(activeId === row.id ? null : row.id);
                       setDoneNote(""); setOutcome("CONTACTED");
                     }}
-                    className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold text-foreground">
+                    className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-foreground">
                     {activeId === row.id ? "Cancel" : "Record outcome and Done"}
                   </button>
                 </div>
@@ -226,7 +224,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
                         onChange={(event) => setDoneNote(event.target.value)}
                         className={"mt-1 " + field} rows={2} />
                     </label>
-                    <button type="button" onClick={() => void complete(row)}
+                    <button type="button" onClick={() => setConfirmComplete(row)}
                       disabled={pending || !doneNote.trim()} className={action}>
                       {pending ? "Recording..." : "Review and confirm Done"}
                     </button>
@@ -237,6 +235,15 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
           </div>
         )}
       </section>
+      <ConfirmDialog open={confirmCreate} onOpenChange={setConfirmCreate}
+       title="Schedule this follow-up and record an immutable staff audit entry?"
+       confirmLabel="Confirm" confirmVariant="primary" pending={pending}
+       onConfirm={()=>void create()}/>
+      <ConfirmDialog open={confirmComplete!==null} onOpenChange={open=>{if(!open)setConfirmComplete(null);}}
+       title={confirmComplete?"Mark the follow-up for "+confirmComplete.leadName+
+        " done with outcome "+outcome+"? This action is terminal and audited.":""}
+       confirmLabel="Confirm" pending={pending}
+       onConfirm={()=>{if(confirmComplete)void complete(confirmComplete);}}/>
     </div>
   );
 }
