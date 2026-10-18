@@ -44,7 +44,9 @@ export function normalizeRecipient(channel: "EMAIL" | "SMS", recipient: string):
 }
 export function isValidRecipient(channel: "EMAIL" | "SMS", recipient: string): boolean {
   if(channel === "SMS")return /^\+[1-9][0-9]{7,14}$/.test(recipient);
-  if(recipient.length>254||/[\x00-\x1f\x7f]/.test(recipient))return false;
+  // Invisible format/BiDi controls are not valid mailbox characters and can
+ // spoof recipient comparisons or displayed contact addresses.
+ if(recipient.length>254||/[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/u.test(recipient))return false;
   const match=/^([^\s@]+)@([^\s@]+)$/.exec(recipient);
   if(!match)return false;
   const [,local,domain]=match;
