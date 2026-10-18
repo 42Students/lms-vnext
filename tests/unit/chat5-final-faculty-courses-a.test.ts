@@ -45,7 +45,9 @@ describe("chat-5 final sprint faculty course list and core lesson contracts",()=
   expect(roster).toContain('const contacts = learners.filter(');
   expect(roster).toContain("sortFacultyRosterByRollThenName");
   expect(roster).toContain("facultyRosterMetrics");
-  expect(roster).toContain('aria-label={"Preview avatar for "+name}');
+  expect(roster).toContain('aria-label={"Preview avatar for "+nameOf(learner)}');
+  expect(roster).toContain("facultyRosterPhotoPreview(preview.photoDownloadUrl)");
+  expect(roster).toContain('description="Only photos provided through an authorized course roster can be displayed."');
   expect(roster).toContain("No photo is available for this student.");
   expect(src("docs/audit/pages/faculty/courses-review.md")).toContain("WRONG (partly)");
  });
