@@ -56,3 +56,6 @@
   .footer { padding: 16px 22px 24px; }
 }
 @media (prefers-reduced-motion: reduce) { .page * { scroll-behavior: auto; } }
+
+.loadingHost { margin-top: 24px; text-align: left; }
+.loadingHost :global(> section) { border: none; background: transparent; padding: 0; box-shadow: none; }
