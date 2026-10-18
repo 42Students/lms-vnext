@@ -18,7 +18,7 @@ describe("WEAK-tenant-managed-20..25 wildcard and primary domain integrity",()=>
     expect(managedBaseDomain("lms.example.edu",true)).toBe("lms.example.edu");
     expect(managedBaseDomain("LMS.Example.EDU.",true)).toBe("lms.example.edu");
     for(const raw of ["foo/bar.example.edu","foo.example.edu:443",
-      "foo\\bar.example.edu","127.0.0.1",""]){
+      "foo\\bar.example.edu","127.0.0.1","8.8.8.8","0.0.0.0",""]){
       expect(managedBaseDomain(raw,true)).toBeNull();
     }
   });

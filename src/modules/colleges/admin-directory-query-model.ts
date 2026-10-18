@@ -23,7 +23,7 @@ export const adminDirectoryQuerySchema=z.strictObject({
 export function parseAdminDirectorySearchParams(raw:Record<string,string|string[]|undefined>){
   if(Object.keys(raw).some(key=>!["q","page","pageSize"].includes(key)))return null;
   if(Object.values(raw).some(Array.isArray))return null;
-  const params=Object.fromEntries(Object.entries(raw).filter(([,value])=>value!==undefined&&value!==""));
+  const params=Object.fromEntries(Object.entries(raw).filter(([,value])=>value!==undefined));
   const parsed=adminDirectoryQuerySchema.safeParse(params);
   return parsed.success?parsed.data:null;
 }

@@ -11,6 +11,6 @@ const historyParams=z.strictObject({
 export function parseAdminSessionHistoryPage(raw:Record<string,string|string[]|undefined>):number|null{
   if(Object.values(raw).some(Array.isArray))return null;
   const parsed=historyParams.safeParse(Object.fromEntries(
-    Object.entries(raw).filter(([,v])=>v!==undefined&&v!=="")));
+    Object.entries(raw).filter(([,v])=>v!==undefined)));
   return parsed.success?parsed.data.page:null;
 }
