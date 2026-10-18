@@ -48,7 +48,9 @@ describe("HR-BREAK-chat19-activity-results: release-scoped source and abnormal i
   expect(m.jobs).not.toHaveBeenCalled();
   expect(m.workspace).not.toHaveBeenCalled();
  });
- it.each([{collegeId:"other"},{page:"0"},{page:"1.5"},{kind:"PRIVATE"},{q:"x".repeat(121)}])(
+ it.each([{collegeId:"other"},{page:"0"},{page:"1.5"},{kind:"PRIVATE"},{q:"x".repeat(121)},
+  {collegeId:[college,"22222222-2222-4222-8222-222222222222"]},
+  {page:["1","2"]},{q:["a","b"]}])(
   "rejects invalid activity filters %j before querying history",async input=>{
    expect(textOf(await activity(input))).toContain("Invalid activity filters.");
    expect(m.activity).not.toHaveBeenCalled();

@@ -14,7 +14,7 @@ import {RecruiterConversationLiveRefresh} from "@/components/hr/recruiter-conver
 import {RecruiterConversationReplyForm} from "@/components/hr/recruiter-conversation-reply-form";
 const HR_CONVERSATION_KINDS=[{value:"ALL",label:"All threads"},{value:"GENERAL",label:"General"},{value:"DRIVE",label:"Hiring drives"}] as const;
 type Query={collegeId?:string|string[];q?:string|string[];page?:string|string[];unreadOnly?:string|string[];sort?:string|string[];scope?:string|string[]};
-function first(value:string|string[]|undefined){return Array.isArray(value)?value[0]:value;}
+
 function when(value:Date){return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(value);}
 function timeAgo(value:Date,now:Date){
  const minutes=Math.max(0,Math.floor((now.getTime()-value.getTime())/60000));
@@ -29,7 +29,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
  const context=await getCurrentRequestContext();
  if(!hasActiveRecruiter(context))redirect("/dashboard");
  const raw=await searchParams;
- const parsed=hrConversationQuerySchema.safeParse({collegeId:first(raw.collegeId),q:first(raw.q),page:first(raw.page),unreadOnly:first(raw.unreadOnly),sort:first(raw.sort),scope:first(raw.scope)});
+ const parsed=hrConversationQuerySchema.safeParse({collegeId:raw.collegeId,q:raw.q,page:raw.page,unreadOnly:raw.unreadOnly,sort:raw.sort,scope:raw.scope});
  if(!parsed.success)return <div role="alert" className="space-y-3 p-5">
   <PageHeader eyebrow="Recruiter" title="Conversations"/>
   <p>Invalid conversation filters.</p><Link href="/hr/conversations" className="text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Reset</Link></div>;

@@ -33,6 +33,7 @@ import {
   placementJobRounds,
   placementJobRoleOptions,
   placementJobs,
+  placementSeasons,
   placementOffers,
   placementOfferStatusHistory,
   placementRoundResults,
@@ -320,6 +321,17 @@ export async function issuePlacementOffer(
         liveJob.archivedAt !== null) {
       throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
     }
+    // An inconsistent PUBLISHED job must never issue a new offer after the
+    // owning season is closed. The season read lock also serializes a
+    // competing season-close transaction against this issuance.
+    const [liveSeason]=await tx.select({
+      status:placementSeasons.status,collegeId:placementSeasons.collegeId,
+    }).from(placementSeasons)
+      .where(eq(placementSeasons.id,current.job.seasonId))
+      .for("share").limit(1);
+    if(liveSeason?.status!=="ACTIVE"||
+      liveSeason.collegeId!==current.job.collegeId)
+      throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
     // Per-learner serialization for cross-drive releases, in the same
     // membership-before-application order used by learner withdrawal.
     const [member] = await tx.select({

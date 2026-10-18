@@ -7,7 +7,7 @@ Scope: 37 routes (positions 75–111) of `docs/orchestrator/ui-ux/pages-admin.md
 | Route | Source-contract test | Live behavior / role/phone audit |
 | --- | --- | --- |
 | `/admin/placements/shortlisted` | `UX-admin-placements-shortlisted-01` | **OPEN** — no live/browser or full service-role journey confirmation |
-| `/admin/placements/shortlisted/[applicationId]` | `UX-admin-placements-shortlisted-application-id-01` | **OPEN** — no live/browser or full service-role journey confirmation |
+| `/admin/placements/shortlisted/[applicationId]` | `UX-admin-placements-shortlisted-application-id-01`, `SA-placements-shortlisted-01/07` | Service SQL pins shortlisted outcome, job, learner membership and college+organization; role disabled/invalid UUID/no data denials, privacy facts exclude recruiter notes. Page shows denied/no scope and safe service-error recovery. `tests/unit/PROJ-BREAK-chat9-sa-shortlisted-detail.test.ts`, `tests/unit/PROJ-BREAK-chat9-sa-shortlisted-page.test.tsx`. Live PG/browser role journey OPEN. |
 | `/admin/placements/student-lookup` | `UX-admin-placements-student-lookup-01`, `SA-placements-student-lookup-01/07` | Page rejects duplicate/overlong search before PII query, requires a selected college, and service SQL joins both jobs and company relationships to the current college. `tests/unit/PROJ-BREAK-chat9-sa-student-lookup-recovery.test.tsx`, `tests/unit/PROJ-BREAK-chat9-sa-student-lookup-tenant.test.ts`. PG/browser authorization pending. |
 | `/admin/programs` | `UX-admin-programs-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/projects` | `UX-admin-projects-01` | **OPEN** — no live/browser or full service-role journey confirmation |
@@ -38,8 +38,8 @@ Scope: 37 routes (positions 75–111) of `docs/orchestrator/ui-ux/pages-admin.md
 | `/admin/settings` | `UX-admin-settings-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/settings/auth` | `UX-admin-settings-auth-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/students` | `UX-admin-students-01` | **OPEN** — no live/browser or full service-role journey confirmation |
-| `/admin/tenants` | `UX-admin-tenants-01` | **OPEN** — no live/browser or full service-role journey confirmation |
-| `/admin/tenants/create` | `UX-admin-tenants-create-01` | **OPEN** — no live/browser or full service-role journey confirmation |
+| `/admin/tenants` | `UX-admin-tenants-01`, `SA-tenants-ux-09/11`, `SA-tenants-idor-58` | Typed hostile GET validation and authorization precede tenant reads; backend outages show safe retry preserving validated filters instead of false empty tenant list. `tests/unit/PROJ-BREAK-chat9-sa-tenant-directory-page.test.tsx`. Live selected scope/database/browser verification OPEN. |
+| `/admin/tenants/create` | `UX-admin-tenants-create-01`, `SA-tenants-create-08/11` | Authorized organizations are the sole college-creation destinations; forged/array preferred IDs cannot select another tenant. Directory outage disables creation and provides retry; disabled Super Admin denied before list. `tests/unit/PROJ-BREAK-chat9-sa-tenant-create-page.test.tsx`. Live browser/write integration OPEN. |
 | `/admin/tenants/setup` | `UX-admin-tenants-setup-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/verification` | `UX-admin-verification-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/videos` | `UX-admin-videos-01` | **OPEN** — no live/browser or full service-role journey confirmation |

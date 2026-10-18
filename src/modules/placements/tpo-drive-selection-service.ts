@@ -1,15 +1,30 @@
 import "server-only";
 import { and, asc, eq, inArray, count } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { placementApplications, placementJobs, placementOffers } from "@/db/schema";
+import { placementApplications, placementJobs, placementOffers, placementSeasons } from "@/db/schema";
 import { placementDriveSelections } from "@/db/schema/placement-drive-selections";
 import type { RequestContext } from "@/modules/identity/context";
 import { PlacementsServiceError } from "./errors";
 import { issuePlacementOffer, listPlacementOfferCandidates } from "./offer-service";
 import {listPlacementRoleOptions} from "./role-option-service";
-import { auditTpoJobChange, requireTpoJobActor, requireTpoJobCollege } from "./tpo-job-write-base";
+import { auditTpoJobChange, requireTpoJobActor, requireTpoJobCollege, type TpoJobTx } from "./tpo-job-write-base";
 import { placementJobIdSchema } from "./validation";
-import { recordSelectionsSchema, releaseSelectionsSchema, summarizeSelectionRelease, tpoSelectionReleaseFailureMessage, isExactTpoSelectionReplay } from "./tpo-drive-selection-model";
+import { recordSelectionsSchema, releaseSelectionsSchema, summarizeSelectionRelease, tpoSelectionReleaseFailureMessage, isExactTpoSelectionReplay, matchesTpoSelectionReleaseRevision } from "./tpo-drive-selection-model";
+
+/** A drive in a CLOSED season can be read for reconciliation, but no
+ * selection may be newly recorded or verified for a fresh official offer.
+ * Both tables are read-locked while the write transaction runs.
+ */
+async function requireActiveTpoSelectionSeason(tx:TpoJobTx,jobId:string,collegeId:string){
+  const [row]=await tx.select({status:placementSeasons.status,
+    seasonCollegeId:placementSeasons.collegeId})
+    .from(placementJobs)
+    .innerJoin(placementSeasons,eq(placementSeasons.id,placementJobs.seasonId))
+    .where(and(eq(placementJobs.id,jobId),eq(placementJobs.collegeId,collegeId)))
+    .for("share").limit(1);
+  if(row?.status!=="ACTIVE"||row.seasonCollegeId!==collegeId)
+    throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
+}
 
 const pendingCode = null;
 
@@ -90,6 +105,7 @@ export async function recordTpoDriveSelections(context: RequestContext, rawJobId
   }
   return getDb().transaction(async tx => {
     await requireTpoJobActor(tx, context);
+    await requireActiveTpoSelectionSeason(tx,job.id,context.membership!.collegeId);
     const [locked] = await tx.select({status:placementJobs.status}).from(placementJobs)
       .where(eq(placementJobs.id,job.id)).for("share").limit(1);
     if (locked?.status !== "PUBLISHED") throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
@@ -170,6 +186,7 @@ export async function verifyAndReleaseTpoSelections(context:RequestContext,rawJo
     // A previous request can issue the canonical offer and time out before
     // marking the selection RELEASED. Reconcile the exact issued offer first.
     if(selection.status==="VERIFIED"&&candidate?.offer&&
+      candidate.offer.kind==="OFFER"&&
       ["ISSUED","ACCEPTED"].includes(candidate.offer.status)&&
       candidate.offer.roleTitle===selection.roleTitle&&
       candidate.offer.annualCtcInr===selection.annualCtcInr){
@@ -177,21 +194,22 @@ export async function verifyAndReleaseTpoSelections(context:RequestContext,rawJo
         const offerId=candidate.offer.id;
         await getDb().transaction(async tx=>{
           await requireTpoJobActor(tx,context);
+          // This only reconciles an already-issued official offer. Allow
+          // durable recovery after season closure without issuing anything.
           const [locked]=await tx.select().from(placementDriveSelections)
             .where(and(eq(placementDriveSelections.id,id),eq(placementDriveSelections.jobId,job.id)))
             .for("update").limit(1);
-          if(!locked||locked.recordedAt.toISOString()!==input.expectedRecordedAt[id]||
-            locked.applicationId!==selection.applicationId||locked.roleTitle!==selection.roleTitle||
-            locked.annualCtcInr!==selection.annualCtcInr)
+          if(!locked||!matchesTpoSelectionReleaseRevision(locked,selection,input.expectedRecordedAt[id]))
             throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
           if(locked.status==="RELEASED"&&locked.releasedOfferId===offerId)return;
           if(locked.status!=="VERIFIED")throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
           const [persistedOffer]=await tx.select({
             id:placementOffers.id,status:placementOffers.status,applicationId:placementOffers.applicationId,
-            roleTitle:placementOffers.roleTitle,annualCtcInr:placementOffers.annualCtcInr,
+            kind:placementOffers.kind,roleTitle:placementOffers.roleTitle,annualCtcInr:placementOffers.annualCtcInr,
           }).from(placementOffers).where(eq(placementOffers.id,offerId))
             .for("share").limit(1);
-          if(!persistedOffer||!["ISSUED","ACCEPTED"].includes(persistedOffer.status)||
+          if(!persistedOffer||persistedOffer.kind!=="OFFER"||
+            !["ISSUED","ACCEPTED"].includes(persistedOffer.status)||
             persistedOffer.applicationId!==locked.applicationId||
             persistedOffer.roleTitle!==locked.roleTitle||
             persistedOffer.annualCtcInr!==locked.annualCtcInr)
@@ -223,6 +241,7 @@ export async function verifyAndReleaseTpoSelections(context:RequestContext,rawJo
     try{
       await getDb().transaction(async tx=>{
         await requireTpoJobActor(tx,context);
+        await requireActiveTpoSelectionSeason(tx,job.id,context.membership!.collegeId);
         const [locked]=await tx.select().from(placementDriveSelections)
           .where(and(eq(placementDriveSelections.id,id),eq(placementDriveSelections.jobId,job.id)))
           .for("update").limit(1);
@@ -242,12 +261,11 @@ export async function verifyAndReleaseTpoSelections(context:RequestContext,rawJo
       });
       await getDb().transaction(async tx=>{
         await requireTpoJobActor(tx,context);
+        await requireActiveTpoSelectionSeason(tx,job.id,context.membership!.collegeId);
         const [locked]=await tx.select().from(placementDriveSelections)
           .where(and(eq(placementDriveSelections.id,id),eq(placementDriveSelections.jobId,job.id)))
           .for("update").limit(1);
-        if(!locked||locked.recordedAt.toISOString()!==input.expectedRecordedAt[id]||
-          locked.applicationId!==selection.applicationId||locked.roleTitle!==selection.roleTitle||
-          locked.annualCtcInr!==selection.annualCtcInr)
+        if(!locked||!matchesTpoSelectionReleaseRevision(locked,selection,input.expectedRecordedAt[id]))
           throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
         if(locked.status==="RELEASED"&&locked.releasedOfferId===offer.id)return;
         if(locked.status!=="VERIFIED")throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");

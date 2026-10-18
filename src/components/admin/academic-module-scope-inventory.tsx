@@ -1,7 +1,16 @@
 "use client";
 import {useState} from "react";
 import Link from "next/link";
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
+import { isSafeInternalHref } from "@/lib/safe-internal-href";
 import type {AcademicModuleScope} from "@/modules/module-access/admin-descendant-rule-write";
+/** Preserve active query filters when navigating bounded academic hierarchy pages. */
+export function academicScopePageHref(baseHref: string, page: number): string | null {
+ if (!isSafeInternalHref(baseHref) || !Number.isSafeInteger(page) || page<1) return null;
+ const url=new URL(baseHref,"https://local.invalid");
+ url.searchParams.set("academicPage",String(page));
+ return url.pathname+url.search+url.hash;
+}
 /** All stored and inheriting academic nodes on the bounded college scope page.
  * The effective learner decision still depends on runtime enrollment/locks. */
 export function AcademicModuleScopeInventory({scopes,page=1,baseHref}:{
@@ -9,40 +18,49 @@ export function AcademicModuleScopeInventory({scopes,page=1,baseHref}:{
 }){
  const [expanded,setExpanded]=useState(false);
  const visible=expanded?scopes:scopes.slice(0,15);
+ const safePage=Number.isSafeInteger(page)&&page>=1?page:1;
+ const prevHref=baseHref&&safePage>1?academicScopePageHref(baseHref,safePage-1):null;
+ const nextHref=baseHref&&scopes.length===500?academicScopePageHref(baseHref,safePage+1):null;
+ const columns:DataTableColumn<AcademicModuleScope>[]=[
+  {key:"level",header:"Level",mobilePriority:"primary",
+   cell:scope=>scope.scopeType==="COHORT"?"Batch":scope.scopeType},
+  {key:"path",header:"Academic path",mobilePriority:"secondary",cell:scope=>scope.label},
+  {key:"projects",header:"Projects",mobilePriority:"secondary",cell:scope=><>
+    <span className={scope.projectsShadowed?"line-through text-muted-foreground":""}>{scope.projectsRule}</span>
+    <p className="text-xs text-body">Effective: {scope.projectsEffective}</p>
+  </>},
+  {key:"placements",header:"Placements",mobilePriority:"secondary",cell:scope=><>
+    <span className={scope.placementsShadowed?"line-through text-muted-foreground":""}>{scope.placementsRule}</span>
+    <p className="text-xs text-body">Effective: {scope.placementsEffective}</p>
+  </>},
+  {key:"electives",header:"Electives",mobilePriority:"secondary",cell:scope=><>
+    <span className={scope.electivesShadowed?"line-through text-muted-foreground":""}>{scope.electivesRule}</span>
+    <p className="text-xs text-body">Effective: {scope.electivesEffective}</p>
+  </>},
+  {key:"students",header:"Students in scope",mobilePriority:"secondary",
+   cell:scope=><span className="tabular-nums">{scope.studentsInScope}</span>},
+ ];
  return <section aria-label="Academic scope inventory" className="mt-4 space-y-3">
   <div className="flex flex-wrap items-center justify-between gap-2">
    <h3 className="font-semibold">Academic hierarchy</h3>
    <div className="flex gap-2 text-sm">
-    <button type="button" className="underline" onClick={()=>setExpanded(true)}>Expand all</button>
-    <button type="button" className="underline" onClick={()=>setExpanded(false)}>Collapse all</button>
+    <button type="button" className="inline-flex min-h-11 items-center underline disabled:opacity-50" disabled={expanded || scopes.length<=15} onClick={()=>setExpanded(true)}>Expand all</button>
+    <button type="button" className="inline-flex min-h-11 items-center underline disabled:opacity-50" disabled={!expanded} onClick={()=>setExpanded(false)}>Collapse all</button>
    </div>
   </div>
   <p className="text-xs text-muted-foreground">{scopes.length} academic scopes loaded (including inheriting scopes). Effective values trace the configured scope hierarchy and locks; an individual learner still needs active enrollment and participation. Student counts include active learners with current enrollment in this college.</p>
   <div className="max-h-96 overflow-auto rounded border border-border">
-   <table className="w-full min-w-[44rem] text-left text-sm">
-    <thead className="sticky top-0 bg-surface-subtle text-muted-foreground">
-     <tr><th className="p-3">Level</th><th className="p-3">Academic path</th>
-      <th className="p-3">Projects</th><th className="p-3">Placements</th><th className="p-3">Electives</th><th className="p-3">Students in scope</th></tr>
-    </thead>
-    <tbody>{visible.map(scope=><tr key={scope.scopeType+":"+scope.scopeId} className="border-t border-border">
-     <td className="p-3">{scope.scopeType==="COHORT"?"Batch":scope.scopeType}</td>
-     <td className="p-3">{scope.label}</td>
-     <td className="p-3"><span className={scope.projectsShadowed?"line-through text-muted-foreground":""}>{scope.projectsRule}</span>
-      <p className="text-xs text-body">Effective: {scope.projectsEffective}</p></td>
-     <td className="p-3"><span className={scope.placementsShadowed?"line-through text-muted-foreground":""}>{scope.placementsRule}</span>
-      <p className="text-xs text-body">Effective: {scope.placementsEffective}</p></td>
-     <td className="p-3"><span className={scope.electivesShadowed?"line-through text-muted-foreground":""}>{scope.electivesRule}</span>
-      <p className="text-xs text-body">Effective: {scope.electivesEffective}</p></td>
-     <td className="p-3 tabular-nums">{scope.studentsInScope}</td>
-    </tr>)}</tbody>
-   </table>
+   <DataTable columns={columns} rows={visible}
+    getRowKey={scope=>scope.scopeType+":"+scope.scopeId}
+    caption="Academic hierarchy and effective module rules"
+    empty={<p>No academic scopes found.</p>}/>
   </div>
-  {baseHref?<nav aria-label="Academic scope pages" className="flex flex-wrap items-center gap-4 text-sm">
-   <span>Academic hierarchy page {page} · {scopes.length} nodes on this page</span>
-   {page>1?<Link href={baseHref+"?academicPage="+(page-1)}
-    className="inline-flex min-h-10 items-center text-primary-text underline">Previous hierarchy page</Link>:null}
-   {scopes.length===500?<Link href={baseHref+"?academicPage="+(page+1)}
-    className="inline-flex min-h-10 items-center text-primary-text underline">Next hierarchy page</Link>:null}
+  {prevHref||nextHref?<nav aria-label="Academic scope pages" className="flex flex-wrap items-center gap-4 text-sm">
+   <span>Academic hierarchy page {safePage} · {scopes.length} nodes on this page</span>
+   {prevHref?<Link href={prevHref}
+    className="inline-flex min-h-11 items-center text-primary-text underline">Previous hierarchy page</Link>:null}
+   {nextHref?<Link href={nextHref}
+    className="inline-flex min-h-11 items-center text-primary-text underline">Next hierarchy page</Link>:null}
   </nav>:null}
  </section>;
 }

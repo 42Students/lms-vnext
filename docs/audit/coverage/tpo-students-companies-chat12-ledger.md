@@ -49,7 +49,7 @@
 | `src/modules/placements/tpo-company-team-service.ts` | `companyTeamCompanyIdSchema` | `tests/unit/chat12-tpo-history-team-and-sharing-behavior.test.ts` | schema of related model; service-specific id check pending | **SOURCE** |
 | `src/modules/placements/tpo-company-team-service.ts` | `TpoCompanyTeamError` | `tests/unit/chat12-tpo-team-scope-and-notifications.test.ts` | route mapping, source contract | **SOURCE** |
 | `src/modules/placements/tpo-company-team-service.ts` | `readTpoCompanyTeam` | `tests/unit/PROJ-BREAK-TPO-company-team-role-revocation-07.test.ts` | Real service with mocked persistence: role revoked before any private read, disallowed actor, foreign/unlinked company not found; live messages/pagination still pending | **BEHAVIOURAL/MOCKED DB** |
-| `src/modules/placements/tpo-company-team-service.ts` | `mutateTpoCompanyTeam` | `tests/unit/PROJ-BREAK-TPO-company-team-role-revocation-07.test.ts`, `tests/unit/chat12-tpo-company-team-send-idempotency.test.ts` | Actual service with mocked transaction: revoked-role denial, first SEND one message and audit, same-key replay no second audit/notification, changed-payload replay conflict, self-ask denied; live PostgreSQL race and delivery acceptance pending | **BEHAVIOURAL/MOCKED DB** |
+| `src/modules/placements/tpo-company-team-service.ts` | `mutateTpoCompanyTeam` | `tests/unit/PROJ-BREAK-TPO-company-team-role-revocation-07.test.ts`, `tests/unit/chat12-tpo-company-team-send-idempotency.test.ts`, `tests/unit/chat12-tpo-company-team-follow-transitions.test.ts` | Actual service with mocked transaction: revoked-role denial, first SEND one message and audit, same-key replay no second audit/notification, changed-payload replay conflict, self-ask denied, FOLLOW/UNFOLLOW transitions emit events only for actual changes; live PostgreSQL race and delivery acceptance pending | **BEHAVIOURAL/MOCKED DB** |
 | `src/modules/placements/tpo-company-directory-export-model.ts` | `tpoCompanyDirectoryCsv` | `tests/unit/chat12-tpo-export-and-clipboard-security.test.ts` | unsafe Unicode formulas and CSV escaping | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-company-visibility-model.ts` | `describeTpoCompanyVisibility` | `tests/unit/chat12-tpo-history-team-and-sharing-behavior.test.ts` | deny-by-default sharing copy and 5 flags | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-student-profile-facts.ts` | `tpoStudentProfileFacts` | `tests/unit/PROJ-BREAK-TPO-01.test.ts` | masked contact, no raw project metadata, HTTPS-only links | **BEHAVIOURAL** |
@@ -63,6 +63,10 @@
 | `src/modules/placements/tpo-student-notes-service.ts` | `tpoStudentNotesInput` | `tests/unit/PROJ-BREAK-TPO-PANEL-01.test.ts` | Strict UUIDs, no duplicate rows, max 100 IDs, note nonempty/2K limit, tenant override rejected | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-student-notes-service.ts` | `addTpoStudentNotes` | `tests/unit/chat12-tpo-notes-authorization-behavior.test.ts` | Mocked transaction: persisted permission before reads, foreign ID skip, active saved row, audit write failure; actual DB atomicity/race pending | **BEHAVIOURAL/MOCKED DB** |
 | `src/modules/placements/tpo-student-notes-service.ts` | `listTpoStudentNotes` | `tests/unit/chat12-tpo-notes-authorization-behavior.test.ts` | Mocked disappeared learner returns null without leaking old notes; production SQL checks active learner/college and caps at 100; DB role/session race still pending | **BEHAVIOURAL/MOCKED DB** |
+
+### Projects ID-oracle denial for TPO-only sessions
+
+`tests/unit/PROJ-BREAK-TPO-01.test.ts` now asserts that pure TPO cannot call either `requireProjectReadAccess` or `requireProjectManageAccess` even for an existing, unknown or malformed project ID **without an underlying DB read**. The previous existing-vs-nonexistent return-code difference was a cross-tenant object-existence oracle. Genuine persisted Mentor/Learner project member reads and normal PROJECT_NOT_FOUND for a properly authorized viewer retain explicit positive tests. Fix `6f44aea6`, test `0f182fdd`; full role/browser coverage remains open.
 
 ### Real permission policy matrix
 
@@ -82,11 +86,19 @@
 |---|---|---|---|---|
 | `src/app/api/placements/tpo/companies/export/route.ts` | `GET` | `tests/unit/chat12-tpo-export-and-clipboard-security.test.ts` | Source contract ensures route uses Unicode-safe shared cell helper and bounded company export; full HTTP role, no-store and CSV import acceptance pending | **SOURCE/ENCODER BEHAVIOURAL** |
 
+### Company Team input and relationship state
+
+| Production path | Export | Test | Evidence and remaining cases | Status |
+|---|---|---|---|---|
+| `src/modules/placements/tpo-company-team-model.ts` | `tpoCompanyTeamPostSchema` | `tests/unit/chat12-tpo-company-team-validation-and-archive.test.ts` | Accept/trim bounded private message, reject invalid idempotency key, extra scope or action, whitespace-only and 4001-byte body | **BEHAVIOURAL** |
+| `src/modules/placements/tpo-company-team-model.ts` | `tpoCompanyTeamCompanyIdSchema` | same file | Canonical UUID accepts, malformed company path denies | **BEHAVIOURAL** |
+| `src/modules/placements/tpo-company-team-model.ts` | `canPostToTpoCompanyTeam` | same file | ACTIVE only; ARCHIVED/SUSPENDED/DELETED/unknown denied, including casing confusion | **BEHAVIOURAL** |
+
 ## Critical outstanding integration tests
 
 - Actual `getTpoStudentsIntelligence`, `listTpoStudentRequests`, and `getTpoCompaniesView` against a disposable migrated PostgreSQL database, with a wrong-college actor and a disabled TPO membership. Model-level tests are **not** these service tests.
 - True simultaneous updates to `decideTpoLearnerParticipation` across two database connections; select/preview/confirm stale versions and aggregate event failure; persisted replay/idempotency design remains D12-03.
-- Company Team transactionally atomic follow + send + notifications with duplicate idempotency keys, archived relationship, wrong tenant, role removal and a disabled recipient.
+- Company Team now has `tests/integration/chat12-tpo-company-team-db-constraints.test.ts`: rollback-only PostgreSQL proof of same-college author/assignee FK, unique key replay, follow uniqueness and invalid ask/body checks. Still open: two-session simultaneous SEND race through the service, transactionally atomic notifications, archived relationship mutation, role removal after preview and disabled recipient under real DB.
 - Company-share public expiry/revocation and redacted recruiter output with two actual colleges and exact privacy policy switches.
 - All 42 first-third TPO page viewports at 320/360/390 px, focus order and keyboard/back/forward, plus slow DB, outage and session expiry.
 
