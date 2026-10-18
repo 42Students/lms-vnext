@@ -18,7 +18,7 @@ export function parseCollegeContactsExportParams(params:URLSearchParams){
  return parsed;
 }
 export function neutralizeContactCell(value:string){
- const safe=/^[\s\u0000-\u001f]*[=+@-]/u.test(value)?"'"+value:value;
+ const safe=/^[=+@-]/u.test(value.replace(/^[\s\p{Cc}\p{Cf}\p{Mn}]*/u, ""))?"'"+value:value;
  return '"'+safe.replaceAll('"','""')+'"';
 }
 export function renderCollegeContactCsv(rows:readonly CollegeContactRow[],truncated:boolean){

@@ -146,7 +146,7 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
       <Link href="/admin/tenants" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)]">
         Search tenant directory →
       </Link>
-      <form className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4" method="get">
+      <form className="flex flex-wrap items-end gap-3 border-t border-border pt-4" method="get">
        <label className="flex min-w-0 w-full flex-1 flex-col gap-1 text-sm font-semibold sm:min-w-48">Search college, code, city or organization
         <Input type="search" name="q" defaultValue={q} maxLength={100} className="min-h-11 w-full min-w-0 rounded border border-border px-3" />
        </label>

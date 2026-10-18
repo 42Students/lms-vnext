@@ -95,7 +95,7 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
         <OrganizationCreateForm />
       </section> : null}
       <h2 className="text-lg font-semibold text-foreground">Existing Organizations</h2>
-      {canCreate?<details className="rounded-xl border border-border bg-surface p-4">
+      {canCreate?<details className="border-t border-border pt-4">
        <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-foreground">
         Archived organizations · {archived.length} shown
        </summary>
@@ -109,7 +109,7 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
        </ul>
        {!archived.length?<p role="status" className="mt-3 text-sm text-body">No archived organizations in this scope.</p>:null}
       </details>:null}
-      <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+      <form method="get" className="flex flex-wrap items-end gap-3 border-t border-border pt-4">
        <label className="flex min-w-48 flex-1 flex-col gap-1 text-sm font-semibold text-body">Search organizations
         <Input name="q" defaultValue={q} maxLength={100} placeholder="Search organizations"
          className="min-h-11 rounded border border-border bg-surface px-3 text-foreground" />
