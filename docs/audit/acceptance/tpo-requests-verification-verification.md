@@ -131,3 +131,4 @@ The generated `docs/audit/gap-register.md` still labels six requests gaps FIXED-
 
 All tests are authored, not executed by this lane. No green typecheck, Vitest, CI or PostgreSQL outcome is inferred.
 TPO-BREAK-audit-revoked-06: `/tpo/audit` and `src/modules/placements/tpo-audit-service.ts` now reject revoked TPO role before any private history read. Authored `tests/unit/chat12-tpo-audit-revocation-service.test.ts` checks actor/college denial and empty/unavailable source; cloud CI pending.
+TPO-BREAK-actor-audit-revoked-07: Actor/entity TPO audit service and page reject removed TPO membership before looking up private activity. `tests/unit/chat12-tpo-actor-audit-revocation.test.ts` checks role, college and empty/invalid state; authored, not run.
