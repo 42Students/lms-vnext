@@ -47,7 +47,7 @@ export function CollegeFacultyLifecycleAction({ membershipId, name, status }: {
   }
   return <div className="mt-2">
     <Link href={`/college/activity?subjectType=college_membership&subjectId=${encodeURIComponent(membershipId)}`}
-      className="mr-2 inline-flex min-h-10 items-center text-xs font-semibold text-primary-text hover:underline">Audit history</Link>
+      className="mr-2 inline-flex min-h-11 items-center text-xs font-semibold text-primary-text hover:underline">Audit history</Link>
     <button type="button" onClick={() => setEditing(value => !value)} disabled={busy}
       className="rounded-md border border-border px-3 py-2 text-xs font-semibold text-primary-text">
       {action === "DEACTIVATE" ? "Suspend Faculty" : "Reactivate Faculty"}
@@ -58,7 +58,7 @@ export function CollegeFacultyLifecycleAction({ membershipId, name, status }: {
       {action === "DEACTIVATE" ? <label className="block text-xs text-body">
         Reason
         <input maxLength={500} value={reason} onChange={e => setReason(e.target.value)}
-          className="mt-1 w-full rounded-md border border-border p-2 text-foreground" />
+          className="mt-1 w-full rounded-md border border-border p-2 text-foreground text-base sm:text-sm" />
       </label> : <p className="text-xs text-body">Restore access for this faculty membership?</p>}
       {error ? <p role="alert" className="text-xs text-red-700">{error}</p> : null}
       <button type="button" onClick={submit} disabled={busy}

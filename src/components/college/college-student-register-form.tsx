@@ -32,7 +32,7 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
   const [gender,setGender]=useState<""|"Male"|"Female"|"Other"|"Prefer not to say">("");
   const [dateOfBirth,setDob]=useState("");
   const [address,setAddress]=useState("");
-  const field="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground";
+  const field="min-h-11 rounded-md border border-border bg-surface px-3 text-base sm:text-sm text-foreground";
   async function submit(event:FormEvent<HTMLFormElement>) {
     event.preventDefault();setError("");setResult(null);setSavedMemberId(null);
     if(!indianMobileToE164(phoneE164)){setError("Mobile number must be 10 digits");return;}
@@ -108,7 +108,7 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
     </label>
     <label className="grid gap-1 text-sm font-semibold sm:col-span-2">Address
       <textarea maxLength={1000} rows={3} value={address} onChange={e=>setAddress(e.target.value)}
-        className="rounded-md border border-border bg-surface p-3 text-foreground"/>
+        className="rounded-md border border-border bg-surface p-3 text-foreground text-base sm:text-sm"/>
     </label>
     <div className="space-y-2 sm:col-span-2">
       <button disabled={pending} className="min-h-11 rounded-md bg-primary px-5 font-semibold text-on-primary disabled:opacity-50">

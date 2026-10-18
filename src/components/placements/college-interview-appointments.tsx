@@ -83,9 +83,9 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
    <div><h2 className="text-lg font-semibold">Candidate interviews</h2>
     <p className="mt-1 text-sm text-body">Schedule, edit, cancel, mark Completed or No Show. Actions are audited and notify the learner.</p></div>
    <button type="button" disabled={!available.length||!candidates.length} onClick={()=>open()}
-    className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">Schedule interview</button>
+    className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Schedule interview</button>
   </div>
-  <div className="overflow-x-auto"><table className="min-w-full text-left text-sm">
+  <div className="overflow-x-auto"><table className="min-w-full text-left text-sm [&_th:first-child]:sticky [&_th:first-child]:left-0 [&_th:first-child]:z-10 [&_th:first-child]:bg-surface [&_td:first-child]:sticky [&_td:first-child]:left-0 [&_td:first-child]:z-10 [&_td:first-child]:bg-surface">
    <thead><tr className="border-b border-border bg-muted"><th className="p-3">Candidate</th><th className="p-3">Round</th>
     <th className="p-3">Date & Time (IST)</th><th className="p-3">Mode and location</th>
     <th className="p-3">Interviewer</th><th className="p-3">Status</th><th className="p-3">Actions</th></tr></thead>
@@ -100,17 +100,17 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
       href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(collegeInterviewIcs({
        id:row.id,title:"College interview",date:row.scheduledAt,
        durationMinutes:row.durationMinutes,location:row.venue??row.meetingUrl,
-      }))} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-primary-text">
+      }))} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       Download .ics</a>:null}
      {row.status==="SCHEDULED"?<>
       <button type="button" disabled={busy} onClick={()=>open(row)}
-       className="min-h-11 rounded border border-border px-3 text-primary-text">Edit</button>
+       className="min-h-11 rounded border border-border px-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Edit</button>
       <button type="button" disabled={busy} onClick={()=>void decide(row,"COMPLETED")}
-       className="min-h-11 rounded border border-border px-3">Completed</button>
+       className="min-h-11 rounded border border-border px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Completed</button>
       <button type="button" disabled={busy} onClick={()=>void decide(row,"NO_SHOW")}
-       className="min-h-11 rounded border border-border px-3">No Show</button>
+       className="min-h-11 rounded border border-border px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">No Show</button>
       <button type="button" disabled={busy} onClick={()=>void decide(row,"CANCEL")}
-       className="min-h-11 rounded border border-border px-3 text-error">Cancel</button>
+       className="min-h-11 rounded border border-border px-3 text-error focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Cancel</button>
      </>:<span className="text-body">Recorded</span>}
     </div></td>
    </tr>)}</tbody>
@@ -121,36 +121,36 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   <Dialog open={show} onOpenChange={next=>{if(!next&&!busy)setShow(false);}} title={editing?"Edit interview":"Schedule interview"} dismissible={!busy}>
     <h3 className="text-lg font-semibold">{editing?"Edit interview":"Schedule interview"}</h3>
     <label className="grid gap-1 text-sm">Round<select value={roundId} disabled={Boolean(editing)}
-     onChange={e=>setRoundId(e.target.value)} className="min-h-11 rounded border border-border bg-surface px-3">
+     onChange={e=>setRoundId(e.target.value)} className="min-h-11 rounded border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
      {available.map(r=><option key={r.id} value={r.id}>{r.name}</option>)}
     </select></label>
     <label className="grid gap-1 text-sm">Candidate<select value={applicationId} disabled={Boolean(editing)}
-     onChange={e=>setApplicationId(e.target.value)} className="min-h-11 rounded border border-border bg-surface px-3">
+     onChange={e=>setApplicationId(e.target.value)} className="min-h-11 rounded border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
      {candidates.map(c=><option key={c.applicationId} value={c.applicationId}>{c.name??"Learner"} · {c.screening}</option>)}
     </select></label>
     <div className="grid gap-3 sm:grid-cols-2">
      <label className="grid gap-1 text-sm">Date & time (IST)<input type="datetime-local" required value={start}
-      onChange={e=>setStart(e.target.value)} className="min-h-11 rounded border border-border bg-surface px-3"/></label>
+      onChange={e=>setStart(e.target.value)} className="min-h-11 rounded border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm"/></label>
      <label className="grid gap-1 text-sm">Duration (minutes)<input type="number" min={5} max={480} value={duration}
-      onChange={e=>setDuration(Number(e.target.value))} className="min-h-11 rounded border border-border bg-surface px-3"/></label>
+      onChange={e=>setDuration(Number(e.target.value))} className="min-h-11 rounded border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm"/></label>
     </div>
     <label className="grid gap-1 text-sm">Mode<select value={mode} onChange={e=>setMode(e.target.value as "ON_CAMPUS"|"VIRTUAL")}
-     className="min-h-11 rounded border border-border bg-surface px-3">
+     className="min-h-11 rounded border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
      <option value="ON_CAMPUS">On campus</option><option value="VIRTUAL">Virtual</option></select></label>
     <label className="grid gap-1 text-sm">{mode==="VIRTUAL"?"Secure meeting URL":"Interview location"}
      <input value={mode==="VIRTUAL"?meetingUrl:venue} onChange={e=>mode==="VIRTUAL"?setMeetingUrl(e.target.value):setVenue(e.target.value)}
-      className="min-h-11 rounded border border-border bg-surface px-3"/></label>
+      className="min-h-11 rounded border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm"/></label>
     <label className="grid gap-1 text-sm">Interviewer (optional)<input value={interviewer}
-     onChange={e=>setInterviewer(e.target.value)} className="min-h-11 rounded border border-border bg-surface px-3"/></label>
+     onChange={e=>setInterviewer(e.target.value)} className="min-h-11 rounded border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm"/></label>
     {editing?<label className="grid gap-1 text-sm">Reason for change<textarea rows={2} value={reason}
-     onChange={e=>setReason(e.target.value)} className="rounded border border-border bg-surface p-3"/></label>:null}
+     onChange={e=>setReason(e.target.value)} className="rounded border border-border bg-surface p-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm"/></label>:null}
     {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
     <div className="flex flex-wrap gap-3">
      <button type="button" disabled={busy||!start||(Boolean(editing)&&reason.trim().length<3)}
-      onClick={()=>void save()} className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+      onClick={()=>void save()} className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       {busy?"Saving…":editing?"Save interview":"Schedule and notify"}</button>
      <button type="button" disabled={busy} onClick={()=>setShow(false)}
-      className="min-h-11 rounded border border-border px-4">Cancel</button>
+      className="min-h-11 rounded border border-border px-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Cancel</button>
     </div>
   </Dialog>
   <ConfirmDialog open={decision!==null} onOpenChange={open=>{if(!open&&!busy)setDecision(null);}}
@@ -160,7 +160,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
    onConfirm={()=>void confirmDecision()}>
    <label className="grid gap-1 text-sm font-semibold">Reason or outcome note
     <textarea rows={3} value={decisionReason} onChange={e=>setDecisionReason(e.target.value)}
-     className="rounded border border-border bg-surface p-3" /></label>
+     className="rounded border border-border bg-surface p-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm" /></label>
   </ConfirmDialog>
  </section>;
 }
