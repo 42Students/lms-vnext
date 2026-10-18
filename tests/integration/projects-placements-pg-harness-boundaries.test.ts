@@ -172,6 +172,19 @@ describe("PROJ-HARNESS role/tenancy and concurrent PostgreSQL fixture boundaries
     });
   });
 
+  it("PROJ-HARNESS-36 an active learner from same college cannot impersonate meeting coordinator",async()=>{
+    await withProjectPg(pool,async db=>{
+      const f=await actors(db);
+      const otherLearner=await createPrincipal(db,f.own,["LEARNER"]);
+      const before=await count(db,"project_meetings");
+      await expect(createMeeting(db,f.project,f.learner,otherLearner))
+        .rejects.toThrow(/actor role/);
+      expect(await count(db,"project_meetings")).toBe(before);
+      await expect(createMeeting(db,f.project,f.learner,f.author)).resolves.toBeTruthy();
+      expect(await count(db,"project_meetings")).toBe(before+1);
+    });
+  });
+
   it("PROJ-HARNESS-26 independent sessions contend for the same transaction advisory lock", async () => {
     const key = BigInt("0x" + randomUUID().replaceAll("-", "").slice(0, 15)).toString();
     await withTwoPgSessions(pool, async (first, second) => {

@@ -58,6 +58,9 @@
 | src/modules/placements/super-admin-hr-validation.ts — effectiveSuperAdminHrStatus, assertSuperAdminHrCompanyMatch and strict validation schemas | Disabled and archived differentiation, foreign company IDs, malformed/overlong admin filters, grants | SA-HR-VALIDATION-01 in same test plus SA-HR-SEARCH-01 | Runtime pure-model tests authored |
 | src/modules/placements/super-admin-placement-nav-model.ts — primary and supplemental navigation definitions | Unique routes, full menu of at least 12 admin placement control links, nonempty visible labels | SA-PLACEMENT-NAV-01 in same test | Runtime pure-model assertions authored |
 
+| `src/modules/projects/workspace-brief-model.ts` — `parseWorkspaceBrief`, strict schemas | Malformed stored JSON, per-request fallback isolation, bounded arrays and fields, ISO optimistic timestamp | `PROJ-BREAK-SA-23/24` in `PROJ-BREAK-SA-workspace-brief-isolation.test.ts` | Pure behaviour suite authored; awaiting CI |
+| `src/modules/projects/admin-projects-query-model.ts` — `parseAdminProjectsQuery` | Legacy `search` vs new `q` naming parity, refuse conflicting aliases and duplicate values without losing trim semantics | `PROJ-BREAK-SA-19/25` in `PROJ-BREAK-SA-state-matrix-and-queries.test.ts` | Pure filter parser regression authored; awaiting CI |
+
 ## Defects
 
 - **SA-COMPANY-SCOPE-01:** `listSuperAdminCompanyDirectory` previously scoped directory rows to the selected organization/college but computed `companyCollegeCount` across the whole database. Scoped this aggregate with the same selected college/organization to prevent leaking relationship counts across tenants.

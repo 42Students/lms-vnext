@@ -112,3 +112,84 @@ describe("HR-BREAK-chat15-round-service-03: transactional recruiter round change
   expect(mocks.notify).not.toHaveBeenCalled();
  });
 });
+
+describe("HR-ROUND-AUTH-04: denied, duplicate and replay-resistant recruiter stages",()=>{
+ beforeEach(()=>{
+  vi.clearAllMocks();
+  mocks.rows=[[job],[ownRound],[],[]];
+  mocks.getDb.mockReturnValue({transaction:(fn:(db:typeof tx)=>unknown)=>fn(tx)});
+  mocks.can.mockReturnValue(true);
+  mocks.notify.mockResolvedValue(undefined);
+  mocks.insert.mockImplementation(()=>({values:()=>Promise.resolve([])}));
+  mocks.update.mockImplementation(()=>({
+   set(){return this;},where(){return this;},
+   returning:()=>Promise.resolve([{id:roundId}]),
+  }));
+ });
+ it("HR-ROUND-INPUT-01 rejects malformed job IDs and cross-scope payload fields before SQL",async()=>{
+  for(const [jobId,payload] of [
+   ["not-a-uuid",input(version.toISOString())],
+   [id,{...input(version.toISOString()),collegeId:college}],
+   [id,{action:"CREATE",kind:"INTERVIEW",name:" " }],
+   [id,{action:"REMOVE",roundId,expectedUpdatedAt:version.toISOString(),name:"sneaky"}],
+   [id,{action:"UPDATE",roundId,expectedUpdatedAt:"stale",name:"Changed"}],
+  ] as const){
+   await expect(editHrJobRound(context as never,jobId,payload)).rejects.toThrow();
+  }
+  expect(mocks.getDb).not.toHaveBeenCalled();
+  expect(mocks.insert).not.toHaveBeenCalled();
+  expect(mocks.update).not.toHaveBeenCalled();
+ });
+ it("HR-ROUND-CREATE-01 adds only a recruiter-owned round, one event and one TPO notification",async()=>{
+  mocks.rows=[[job],[]];
+  mocks.insert.mockImplementationOnce(()=>({values:()=>({
+   returning:()=>Promise.resolve([{id:roundId}]),
+  })})).mockImplementationOnce(()=>({values:()=>Promise.resolve([])}));
+  await expect(editHrJobRound(context as never,id,{
+   action:"CREATE",kind:"INTERVIEW",name:"Technical panel",
+   mode:"VIRTUAL",durationMinutes:30,
+  })).resolves.toEqual({id:roundId,action:"CREATED"});
+  expect(mocks.insert).toHaveBeenCalledTimes(2);
+  expect(mocks.notify).toHaveBeenCalledTimes(1);
+  expect(mocks.update).not.toHaveBeenCalled();
+ });
+ it("HR-ROUND-CREATE-02 rejects canonical duplicate names and the 12-stage limit without side effects",async()=>{
+  mocks.rows=[[job],[{...ownRound,name:"Technical"}]];
+  await expect(editHrJobRound(context as never,id,{
+   action:"CREATE",kind:"INTERVIEW",name:"  TECHNICAL  ",
+  })).rejects.toMatchObject({code:"PLACEMENT_ROUND_NOT_EDITABLE"});
+  expect(mocks.insert).not.toHaveBeenCalled();
+  expect(mocks.notify).not.toHaveBeenCalled();
+  const rows=Array.from({length:12},(_,index)=>({
+   ...ownRound,id:String(index),name:"Round "+index,sequence:index+1,
+  }));
+  mocks.rows=[[job],rows];
+  await expect(editHrJobRound(context as never,id,{
+   action:"CREATE",kind:"INTERVIEW",name:"Extra",
+  })).rejects.toMatchObject({code:"PLACEMENT_ROUND_NOT_EDITABLE"});
+  expect(mocks.insert).not.toHaveBeenCalled();
+  expect(mocks.notify).not.toHaveBeenCalled();
+ });
+ it("HR-ROUND-REMOVE-01 cancels a pending owned round and emits one notification",async()=>{
+  await expect(editHrJobRound(context as never,id,{
+   action:"REMOVE",roundId,expectedUpdatedAt:version.toISOString(),
+  })).resolves.toEqual({id:roundId,action:"REMOVED"});
+  expect(mocks.update).toHaveBeenCalledTimes(1);
+  expect(mocks.insert).toHaveBeenCalledTimes(1);
+  expect(mocks.notify).toHaveBeenCalledTimes(1);
+ });
+ it("HR-ROUND-REMOVE-02 refuses cancellation after a slot or result attaches",async()=>{
+  for(const rows of [
+   [[job],[ownRound],[{id:roundId}],[]],
+   [[job],[ownRound],[],[{id:roundId}]],
+  ]){
+   mocks.rows=rows;
+   await expect(editHrJobRound(context as never,id,{
+    action:"REMOVE",roundId,expectedUpdatedAt:version.toISOString(),
+   })).rejects.toMatchObject({code:"PLACEMENT_ROUND_STALE"});
+  }
+  expect(mocks.update).not.toHaveBeenCalled();
+  expect(mocks.insert).not.toHaveBeenCalled();
+  expect(mocks.notify).not.toHaveBeenCalled();
+ });
+});
