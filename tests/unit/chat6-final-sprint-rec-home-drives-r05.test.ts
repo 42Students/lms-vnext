@@ -23,7 +23,7 @@ describe("Final sprint recruiter applicant review accessibility", () => {
     // HTMLDialogElement.showModal() makes the browser confine Tab/Shift+Tab
     // to the active modal; focus restoration occurs on both close paths.
     expect(drawer).toContain("useRef<HTMLDialogElement>(null)");
-    expect(drawer).toContain('<dialog data-slot="drawer" ref={ref}');
+    expect(drawer).toContain('<dialog ref={ref} data-slot="drawer"');
     expect(drawer).toContain("aria-labelledby={titleId}");
     expect(drawer).toContain("modal.showModal()");
     expect(drawer).toContain("opener.current = document.activeElement");
