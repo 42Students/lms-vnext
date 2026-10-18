@@ -93,3 +93,14 @@ The Super Admin Assignments and Quizzes pages now render the existing full Colle
 | ID | Status | Evidence |
 |---|---|---|
 | SA-academics-people-60 | BLOCKED | Private object storage and an SSRF-resistant server-side media ingestion/scanner pathway are not provisioned. Do not fetch arbitrary external video URLs server-side or present a link as a completed binary import. Existing signed-grant upload path and safe YouTube/link authoring remain intact; `tests/unit/chat9-final-named-gap-verification.test.ts` → `SA-academics-people-60 BLOCKED: refuses fake remote video ingestion before private scanner exists`. |
+
+
+## Chat-7 supplementary remediation (source committed; CI pending)
+
+| ID | Status | New evidence |
+|---|---|---|
+| SA-academics-people-52 | DONE in source; runtime pending | Failed-course IDs now derive from exact failed content/lesson results; the client Retry failed does not replay successfully updated courses. `tests/unit/chat7-final-sprint-superadmin-course-visibility.test.ts` — `SA-academics-people-52 sends only failed courses on retry instead of reapplying successful changes`. |
+| SA-academics-people-53 | PARTIAL | The same failed-course mapping remains scoped to selected courses and the acting college, but a native whole-course visibility bit remains separate. `tests/unit/chat7-final-sprint-superadmin-course-visibility.test.ts`. |
+| SA-academics-people-62 | PARTIAL | Legacy public HTTPS link previews are now revalidated at render before creating a third-party link; test `SA-academics-people-62 imported content links fail closed` in `tests/unit/chat7-superadmin-content-public-link-safety.test.ts`. Private material previews and scanner remain blocked. |
+
+No TypeScript, Vitest, browser or PostgreSQL execution was performed by chat-7. Existing infrastructure and release blockers remain unchanged.

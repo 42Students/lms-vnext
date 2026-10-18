@@ -33,10 +33,12 @@ export default async function CollegeBrandingPage() {
       </p>
       <CollegeLogoUploader collegeId={membership.collegeId} currentUrl={branding.uploadedLogoUrl} canEdit={canEdit}/>
       <CollegeBrandingForm
+        key={membership.collegeId}
         collegeId={membership.collegeId}
         collegeName={branding.collegeName}
         canEdit={canEdit}
         uploadedLogoUrl={branding.uploadedLogoUrl}
+        initialVersion={branding.version}
         initial={{
           logoUrl: branding.logoUrl,
           faviconUrl: branding.faviconUrl,

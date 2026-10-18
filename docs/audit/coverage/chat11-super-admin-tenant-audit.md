@@ -28,6 +28,8 @@ Source inspection: 2026-10-18. Branch: `chatgpt/chat-11-b`. **Partial, source-re
 | SA-tenants-modules-BRAND-03 / BRAND-04 | College branding write and preview | Transaction locks persisted Super Admin permission and ACTIVE college before mutating branding; unsaved image preview suppresses unsafe signed-token/credential URLs | `tests/unit/chat11-super-admin-branding-save-adversarial.test.ts` | PostgreSQL concurrent admin revocation and visual preview still needed |
 | SA-tenants-modules-BRAND-05 | `POST /api/colleges/[collegeId]/branding/logo`, `readCollegeLogoForm` | Auth and CSRF before parsing; 3 MiB stream cap, MIME/boundary validation, duplicate multipart field rejection, 400/413, signed object write delegated to existing uploader | `tests/unit/chat11-super-admin-logo-boundary.test.ts` | Live storage E2E and malware/format scanner |
 
+| SA-tenants-modules-BRAND-CAS-01 | `saveCollegeBranding`, `collegeBrandingSaveSchema`, `sameCollegeBranding`, College Branding form and PUT | Strict expectedVersion 0/new record, exactly one actor-scoped write/audit, identical retry without new event, changed stale request 409, live college/system-role locks, 16 KiB bounded JSON, form preserves edits and refreshes token on success | `tests/unit/chat11-super-admin-branding-cas.test.ts` and `tests/integration/chat11-super-admin-branding-cas.test.ts` | Cloud CI and real-browser save after refresh |
+
 ## Audit disposition
 
 - **Source-level blockers found and patched:** unauthorized malformed-filter route bypass across three administrative pages.

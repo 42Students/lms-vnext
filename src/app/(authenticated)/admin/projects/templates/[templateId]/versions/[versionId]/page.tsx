@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { ErrorState } from "@/components/ui/error-state";
 import { ProjectTemplateView } from "@/components/projects/project-template-view";
 import {SuperAdminTemplateRollbackControl} from "@/components/projects/super-admin-template-rollback-control";
 import {can} from "@/modules/permissions/policy";
@@ -15,12 +16,26 @@ export default async function TemplateVersionComparisonPage({ params }: {
   const context = await getCurrentRequestContext();
   const ids = templateVersionComparisonParamsSchema.safeParse(await params);
   if (!ids.success) notFound();
+  if (!can(context,"project-template.read")) {
+    return <div className="min-w-0 space-y-5">
+      <PageHeader eyebrow="Super Admin · Projects" title="Template version comparison"/>
+      <ErrorState title="Template history access denied"
+        description="Only an authorized administrator can read global template version snapshots."
+        action={<Link href="/admin/projects/templates" className="font-semibold text-[var(--lms-teal-deep)]">Back to template catalogue</Link>}/>
+    </div>;
+  }
   let detail;
   try { detail = await getSuperAdminTemplateVersionComparison(context, ids.data); }
   catch (error) {
     if (error instanceof ProjectsServiceError &&
       (error.code === "PROJECT_TEMPLATE_NOT_FOUND" || error.code === "PROJECT_TEMPLATE_VERSION_NOT_FOUND")) notFound();
-    throw error;
+    return <div className="min-w-0 space-y-5">
+      <PageHeader eyebrow="Super Admin · Projects" title="Template version comparison"/>
+      <ErrorState title="Template history unavailable"
+        description="The version comparison could not be loaded. No private version content is shown."
+        action={<Link href={"/admin/projects/templates/"+encodeURIComponent(ids.data.templateId)+"/versions"}
+          className="font-semibold text-[var(--lms-teal-deep)]">Back to version history</Link>}/>
+    </div>;
   }
   return <div className="min-w-0 space-y-6">
     <Link href={`/admin/projects/templates/${detail.template.id}/versions`}
