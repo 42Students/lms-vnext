@@ -160,9 +160,9 @@ A regression in `tests/integration/projects-placements-pg-harness-rollback.test.
 The managed wildcard domain guard is separate from the PostgreSQL harness. It validates the configured suffix directly, including shorthand IPv4 spellings that appear DNS-like when a fake subdomain is prepended; see `WEAK-tenant-managed-20`. This additional application guard does not alter fixture DB setup.
 
 
-### PROJ-HARNESS-48: realistic ACTIVE state and future fixture dates
+### PROJ-HARNESS-48: active default, faithfully preserved PLANNED semantics, future dates
 
-The shared graph now explicitly creates an `ACTIVE` project (not an implicit `PLANNED` project with an already-active sprint). Write helpers accept only `ACTIVE` projects, rejecting pre-launch `PLANNED` as well as `COMPLETED` and `ARCHIVED` for task submissions, final drafts/transitions, and meetings. `PROJ-HARNESS-48` verifies both denial and successful activation on real rollback-only PostgreSQL. Meetings and placement seasons use deterministic year-2099 test timestamps instead of near-expiring 2026/2027 fixtures. The source-only `PROJ-HARNESS-GUARD-09` guards these fixture invariants. Requires CI; not claimed passing.
+The shared graph explicitly creates an `ACTIVE` project for an in-progress customer workspace. Production task, final-delivery and meeting services also permit `PLANNED` projects (provided the respective sprint, permissions and status guards pass), while refusing `COMPLETED` and `ARCHIVED`. The fixture helper mirrors that terminal-only rule; `PROJ-HARNESS-48` verifies the positive PLANNED paths and `43/46` cover terminal denial. Meeting and placement-season fixtures use year-2099 dates instead of expiring 2026/2027 positive fixtures. `PROJ-HARNESS-GUARD-09` checks source invariants. A proposed stricter PLANNED prohibition requires a product-lane decision, not fixture divergence. Cloud PostgreSQL CI remains pending.
 
 ### PROJ-HARNESS-PLACEMENTS-13/14: real application-ready fixture
 
@@ -175,3 +175,7 @@ The harness checks canonical migration tables in `public` before beginning each 
 ### PROJ-HARNESS-51: coherent published workspace lineage
 
 The fixture now publishes version 1 of its template before assigning it to the college, and creates an `IN_PROGRESS` release for the `ACTIVE` project and its `ACTIVE` sprint. `PROJ-HARNESS-51` checks the template/version/project/release/sprint state chain on real PostgreSQL. Source-only `PROJ-HARNESS-GUARD-12` catches a reversion to mismatched defaults. Does not replace the product's separate template-publishing permission and concurrency checks; cloud CI remains pending.
+
+### PROJ-HARNESS-GUARD-13: stable negative date invariants
+
+The sprint date-order CHECK witness now uses 2099-10-22 > 2099-10-21, and the duplicate ACTIVE placement season uses a deterministic 2099 interval. These avoid fixture drift as the 2026/2027 calendar passes while preserving the exact SQLSTATE assertions. The fixed 2020 application deadline in `PLACEMENTS-13` is intentional **expired input** for a negative authorization test, not a positive fixture. `PROJ-HARNESS-GUARD-13` guards against reintroducing near-future test dates.
