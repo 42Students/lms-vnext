@@ -244,3 +244,8 @@ Every dedicated recruiter API route now has an inventory assertion in `tests/uni
 ## Chat-15 HR-RECORDED-QUERY-51 — outside-platform drives
 
 The retired/external recruiter drive page rejects ambiguous duplicate `collegeId` and `saved` parameters before it reads an authorized college's choices or displays a saved receipt. Actual SSR evidence: `tests/unit/chat15-hr-recorded-outside-page-51.test.tsx`, covering active/revoked actor, one/multiple grants, foreign/malformed college, repeated keys and independently verified saving. The page never presents an outside-drive historical record as a published learner-visible job. CI and browser run pending.
+
+
+## HR-PARITY-54 / HR-PARITY-55 source audit — 2026-10-18
+
+The two legacy inventory-B recruiter entries previously flagged UNKNOWN have source mappings: `/recruiter/drives?tab=closed` reaches `/hr/drives` CLOSED-filter logic, and `/recruiter/drives/[jobId]?tab=requests` reaches the company-only Requests tab via authorized `getHrJobRead` and `getDriveChangeRequests`. `tests/unit/chat15-hr-legacy-parity-54-55.test.ts` contains named coverage; `docs/audit/legacy-vs-vnext-tpo-hr-gaps.md` records remaining live parity and PostgreSQL acceptance. No claim of actual-browser parity or CI execution.
