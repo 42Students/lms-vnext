@@ -1,3 +1,4 @@
+import {Select} from "@/components/ui/select";
 "use client";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
@@ -65,9 +66,9 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
  return <div className="mt-3 space-y-2 border-t border-border pt-3">
   {ancestorLocked?<p className="text-xs text-warning-text">Locked by a broader policy. Only Inherit is available for cleanup.</p>:null}
   <label className="grid gap-1 text-xs font-semibold text-body">College stored value
-   <select className="min-h-10 rounded-md border border-border bg-surface px-2 text-foreground" value={choice} disabled={busy} onChange={e=>setChoice(e.target.value as CollegeChoice)}>
+   <Select className="min-h-11 rounded-md border border-border bg-surface px-2 text-foreground" value={choice} disabled={busy} onChange={e=>setChoice(e.target.value as CollegeChoice)}>
     <option value="INHERIT">Inherit</option><option value="ON" disabled={ancestorLocked}>On</option><option value="OFF" disabled={ancestorLocked}>Off</option>
-   </select>
+   </Select>
   </label>
   <label className="flex items-center gap-2 text-xs text-body"><input type="checkbox" checked={locked} disabled={busy||ancestorLocked||choice==="INHERIT"} onChange={e=>setLocked(e.target.checked)}/>Lock this college rule</label>
   <div className="flex flex-wrap gap-2"><Button size="sm" variant="secondary" disabled={disabled||impactBusy} onClick={()=>{void reviewChange();}}>Review policy change</Button><Button size="sm" variant="ghost" disabled={busy} onClick={()=>{void recheck();}}>Recheck stored rule</Button></div>
