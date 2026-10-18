@@ -58,3 +58,16 @@
 | `learner-assignment-materials-service.ts` | `assignmentMaterialTableReady` | Not individually linked in this inventory |
 | `learner-assignment-materials-service.ts` | `listOwnLearnerAssignmentMaterialLinks` | Not individually linked in this inventory |
 | `learner-assignment-materials-service.ts` | `commandFacultyAssignmentMaterialLink` | Not individually linked in this inventory |
+| `learner-assignment-methods-service.ts` | `getLearnerAssignmentMethods` | Not individually linked in this inventory |
+| `learner-assignment-mobile-model.ts` | `learnerAssignmentMobileState` | Not individually linked in this inventory |
+| `learner-assignment-notification-model.ts` | `learnerAssignmentPublishedNotice` | Not individually linked in this inventory |
+| `learner-course-about-model.ts` | `learnerCourseAboutSource` | Not individually linked in this inventory |
+| `learner-course-active-filters-model.ts` | `LearnerCourseActiveFilters` | Not individually linked in this inventory |
+| `learner-course-active-filters-model.ts` | `learnerCourseHasActiveFilters` | Authored direct model regression, unrun |
+| `learner-course-announcements-service.ts` | `listLearnerCourseClassAnnouncements` | Not individually linked in this inventory |
+| `learner-course-card-date-model.ts` | `learnerCourseCardDate` | Not individually linked in this inventory |
+| `learner-course-card-due-label-model.ts` | `learnerCourseCardDueLabel` | Not individually linked in this inventory |
+| `learner-course-card-media-model.ts` | `learnerCourseCardMedia` | Not individually linked in this inventory |
+| `learner-course-card-media-model.ts` | `learnerCourseFallbackMedia` | Not individually linked in this inventory |
+| `learner-course-card-media-model.ts` | `learnerCourseCardMediaAfterError` | Not individually linked in this inventory |
+| `learner-course-card-next-label-model.ts` | `learnerCourseCardNextLabel` | Not individually linked in this inventory |
