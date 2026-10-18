@@ -175,3 +175,6 @@ Full Super Admin parity for membershipless submission locks requires the schema/
 
 
 | SA-ADMIN-CSV-05 | S1 / Unicode spreadsheet formula prefix in two remaining Super Admin CSVs | Employer directory and scoped record CSV neutralizers ignored leading `Cc` controls and `Me` enclosing marks; spreadsheet applications can strip formatting before interpreting operators. The existing tests covered `Cf/Mn` only. | Added `Cc/Me` to both guards in the same order as analytics CSV; behavior and innocent quoted values tested. Awaiting unit/Excel/LibreOffice CSV importer verification. | `tests/unit/chat13-all-admin-csv-hidden-control-matrix.test.ts` |
+
+
+| SA-REPORT-PACKAGE-08/09 | S1 / false placement compensation analytics | `bestAcceptedFullTimePackages` and detailed accepted full-time CTC selection checked `ACCEPTED` status and `FULL_TIME` job but **not** persisted offer kind. `placement_offers.kind` permits `LOI` and `OFFER`; the established placed predicate explicitly excludes LOI, yet a high LOI amount skewed summary/branch/company CTC and detailed CTC bands. | Filter actual `kind: OFFER` (or legacy omitted kind) before package calculations and detailed CTC; leave total offer records and event history intact. Authored source + two behavioral tests, unexecuted. | `tests/unit/chat13-placement-offer-vs-loi-compensation.test.ts` |
