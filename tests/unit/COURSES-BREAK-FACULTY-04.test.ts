@@ -71,6 +71,18 @@ describe("COURSES-BREAK-FACULTY-04 hostile spreadsheet input, bounded exports an
    courseName:"Course",sectionName:"A",eligible:10,responded:8,pending:2,averagePercent:80}]);
   expect(result).toContain("'=IMPORTXML(1)");
   expect(result).toContain("Response rate");
+  for(const invalid of [
+    {eligible:NaN,responded:1,pending:0},
+    {eligible:5,responded:6,pending:0},
+    {eligible:5,responded:1,pending:6},
+    {eligible:5,responded:-1,pending:4},
+    {eligible:5,responded:1.5,pending:3},
+  ]){
+    expect(()=>facultyResultsPageCsv([{
+      kind:"QUIZ",status:"PUBLISHED",title:"A",courseName:"Course",
+      sectionName:"A",averagePercent:null,...invalid,
+    }])).toThrow("INVALID_FACULTY_RESULT_CSV_COUNTS");
+  }
   const hiddenPrefix=String.fromCharCode(0x200b)+"=HYPERLINK(A1)";
   const hiddenResult=facultyResultsPageCsv([{kind:"QUIZ",status:"PUBLISHED",
    title:hiddenPrefix,courseName:"Course",sectionName:"A",
