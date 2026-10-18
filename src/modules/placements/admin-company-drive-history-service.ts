@@ -63,7 +63,7 @@ export async function listSuperAdminCompanyDriveHistory(context: RequestContext,
   const items=visibleJobs.map(job=>({...job,applicants:byApplications.get(job.id)??0,
     hired:byJoined.get(job.id)??0}));
   return {company,items,totals:{
-    drives:jobs.length,
+    drives:visibleJobs.length,
     applicants:items.reduce((sum,row)=>sum+row.applicants,0),
     hired:items.reduce((sum,row)=>sum+row.hired,0),
   },truncated:jobs.length>500};
