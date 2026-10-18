@@ -65,7 +65,7 @@ export default async function PublicPlacementSettingsPage({
     </div>
    </section>
    <TpoPublicPlacementContentEditor initial={content}/>
-   <Link href="/placements" className="mt-4 inline-block text-sm text-[var(--lms-teal-deep)] underline">
+   <Link href="/placements" className="mt-4 inline-block text-sm text-[var(--lms-link-text)] underline">
      Open public placements page
    </Link>
   </section>
