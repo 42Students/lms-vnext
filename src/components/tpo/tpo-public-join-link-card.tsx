@@ -26,6 +26,7 @@ export function TpoPublicJoinLinkCard({
 
   async function makeLink() {
     const action = status.link ? "REPLACE" : "CREATE";
+    if(action==="REPLACE"&&!status.link?.id){setFeedback("Refresh the join link status and try again.");return;}
     if(actionInFlight.current)return;
     actionInFlight.current=true;
     setFeedback("");
@@ -74,6 +75,7 @@ export function TpoPublicJoinLinkCard({
       if(!response.ok)throw new Error("Couldn't load the company link");
       const state=await response.json() as TpoPublicJoinLinkStatus;
       setStatus(state);
+      setFreshUrl("");
     }catch{setFeedback("Couldn't load the company link");}
     finally{actionInFlight.current=false;setBusy(false);}
   }
@@ -96,6 +98,7 @@ export function TpoPublicJoinLinkCard({
   }
   async function toggleLink() {
     if(!status.link||actionInFlight.current)return;
+    if(!status.link.id){setFeedback("Refresh the join link status and try again.");return;}
     actionInFlight.current=true;
     setBusy(true);setFeedback("");
     try{
