@@ -18,7 +18,7 @@ export default async function HrRoundRemovalConfirm({params}:{
  catch(error){if(error instanceof PlacementsServiceError&&error.code==="PLACEMENT_JOB_NOT_FOUND")notFound();throw error;}
  const round=rounds.find(row=>row.id===roundId);
  if(!round||!round.editable)notFound();
- return <main className="space-y-5">
+ return <div className="min-w-0 max-w-full space-y-5">
   <PageHeader eyebrow="Recruiter · Hiring rounds" title="Confirm unused round removal"
    description="Only an unused, pending recruiter-created round can be cancelled. The record remains in audit history."/>
   <div className="rounded-xl border border-border bg-surface p-5">
@@ -37,5 +37,5 @@ export default async function HrRoundRemovalConfirm({params}:{
     </button>
    </form>
   </div>
- </main>;
+ </div>;
 }
