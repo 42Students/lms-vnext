@@ -61,6 +61,8 @@ import {
   type PlacementScopeDecision,
 } from "./batch-eligibility-policy";
 import { requirePlacementManageScope } from "./scope";
+import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
+import {AuthorizationError} from "@/modules/permissions/policy";
 import { placementTableExists } from "./staged-tables";
 import {
   TPO_STUDENT_JOURNEY_STATES,
@@ -74,6 +76,12 @@ import {
   type TpoStudentRoundSignal,
   type TpoStudentSource,
 } from "./tpo-students-model";
+
+/** A signed-in TPO snapshot is not proof of a still-active placement-team role. */
+async function requireLiveTpoStudentActor(context:RequestContext,collegeId:string){
+ const liveCollegeId=await requireTpoBatchActor(context);
+ if(liveCollegeId!==collegeId)throw new AuthorizationError("placements.manage");
+}
 
 const uuid = z.string().uuid();
 /** Route filter strings are re-parsed by the service after URL validation. */
@@ -242,6 +250,7 @@ export async function getTpoStudentsIntelligence(
       context,
       input.collegeId,
     );
+  await requireLiveTpoStudentActor(context,input.collegeId);
 
   const db = getDb();
 
@@ -1059,6 +1068,7 @@ export async function listTpoStudentRequests(
       context,
       input.collegeId,
     );
+  await requireLiveTpoStudentActor(context,input.collegeId);
 
   const asOf=new Date();
   const rows = await getDb()

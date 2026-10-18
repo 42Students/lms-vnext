@@ -135,3 +135,15 @@ No outbound network or test runner was invoked in this lane. These tests are aut
 The typecheck report explicitly labels production typecheck and lint PASS. Its one chat-16 test-file error in `tests/unit/chat16-public-recruiter-join-pages-26.test.ts` arose from mocking a non-existent public readiness message. The test now asserts exact current copy, uses real `"READY"`/`"UNAVAILABLE"` preview shapes and the `null`/`"RATE_TABLE_MISSING"` readiness contract, without `as never` placeholders.
 
 `src/app/company-join/[token]/page.tsx` and `src/app/college-join/[token]/page.tsx` now preserve preview failure recovery and fail closed when the independent readiness probe throws. They skip the readiness probe entirely for invalid/expired/revoked preview, leaving the existing safe invalid-link UI. New `UX-public-join-04` and `UX-public-join-05` cases cover both COMPANY and COLLEGE pages. All CI verification remains pending; no tests were run locally and no success is claimed before the next report.
+
+### Public unsubscribe SSR routes — direct tests
+
+`tests/unit/chat16-campaign-unsubscribe-ssr-pages-16.test.ts` invokes the actual `/campaign-unsubscribe/[token]` and `/campaign-unsubscribe/confirmed` server pages with the read-only token verifier mocked. Cases `UX-campaign-unsubscribe-page-16`–`20` cover global vs placement-cell suppression scope, explicit POST-only confirmation, invalid/expired token no-form state, transient verifier outage Retry with no secret leakage and scoped confirmation display. Tests are unexecuted pending CI. No GET-side persistence was added.
+
+### Legacy authentication alias and recruiter invitation page execution
+
+`tests/unit/chat16-legacy-auth-invite-alias-pages-16.test.ts` invokes all four actual legacy server page exports: `/superadmin-login`, `/e2e/superadmin-login`, `/auth/handoff`, and `/hr-invite/[token]`. Cases `UX-chat16-legacy-auth-alias-16`–`19` enforce redirect-only retirement of test/privileged sign-in bypasses, the visible handoff-retired recovery code, scoped opaque HR invite token redirect and Not Found before redirect for path traversal, external schemes, separators, escapes and short/oversized tokens. Next navigation is mocked; browser/session validation is pending cloud CI.
+
+### Global and placement-cell unsubscribe POST route execution
+
+`tests/unit/chat16-campaign-unsubscribe-post-route-16.test.ts` calls the actual `POST /api/public/campaign-unsubscribe` handler with FormData Requests and mocked token/signature, table registration and TPO recipient mutation collaborators. `campaign-unsubscribe-route-16`–`21` cover same-origin denial before token inspection, missing/unsigned/oversized links, purpose-bound placement-cell scoped redirect, revoked/invalid locked recipient response, unavailable global storage 503 rather than false completion, and signed opaque-key global suppression redirect. Provider and PostgreSQL callbacks are mocked; these tests do not assert physical DB commit or full cross-request races. They are authored pending cloud CI.

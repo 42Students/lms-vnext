@@ -57,20 +57,20 @@ function actor(
   };
 }
 
-function repositoryFixture() {
+function repositoryFixture(target: PersonMembershipView = person) {
   const calls: string[] = [];
   const repository: MembershipManagementRepository = {
     async loadMembershipDetail(id) {
       calls.push("read:" + id);
-      return id === membershipId ? person : null;
+      return id === membershipId ? target : null;
     },
     async addMembershipRole(id, role) {
       calls.push("add:" + id + ":" + role);
-      return [...person.membership.roles, role];
+      return [...target.membership.roles, role];
     },
     async removeMembershipRole(id, role) {
       calls.push("remove:" + id + ":" + role);
-      return person.membership.roles.filter((current) => current !== role);
+      return target.membership.roles.filter((current) => current !== role);
     },
     async transitionMembershipLifecycle() {
       throw new Error("Unexpected lifecycle mutation");
@@ -132,13 +132,20 @@ describe("COL-people-20 persisted role mutation authorization", () => {
     const context = actor([], ["SUPER_ADMIN"], {
       adminScope: { organizationId, collegeId },
     });
-    const { repository, calls } = repositoryFixture();
-    await expect(addMembershipRole(context, membershipId, { role: "COLLEGE_ADMIN" }, repository))
+    const created = repositoryFixture();
+    await expect(addMembershipRole(context, membershipId, { role: "COLLEGE_ADMIN" }, created.repository))
       .resolves.toEqual(["FACULTY", "LEARNER", "COLLEGE_ADMIN"]);
-    await expect(removeMembershipRole(context, membershipId, { role: "COLLEGE_ADMIN" }, repository))
-      .resolves.toEqual(["FACULTY", "LEARNER"]);
-    expect(calls).toEqual([
+    expect(created.calls).toEqual([
       "read:" + membershipId, "add:" + membershipId + ":COLLEGE_ADMIN",
+    ]);
+    const existing: PersonMembershipView = {
+      ...person,
+      membership: { ...person.membership, roles: ["FACULTY", "LEARNER", "COLLEGE_ADMIN"] },
+    };
+    const removed = repositoryFixture(existing);
+    await expect(removeMembershipRole(context, membershipId, { role: "COLLEGE_ADMIN" }, removed.repository))
+      .resolves.toEqual(["FACULTY", "LEARNER"]);
+    expect(removed.calls).toEqual([
       "read:" + membershipId, "remove:" + membershipId + ":COLLEGE_ADMIN",
     ]);
   });

@@ -54,6 +54,8 @@ This is the **tested-function ledger for the focused model suite**, not a claim 
 | `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizMetadataIssue` | `tests/unit/chat3-faculty-quiz-exhaustive-r1.test.ts` | FAC-QUIZ-11 | metadata length validation |
 | `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizSavedFromCommand` | `tests/unit/chat3-faculty-quiz-exhaustive-r1.test.ts` | FAC-QUIZ-11 | strict persisted response guards |
 
+| `src/modules/courses/faculty-gradebook-service.ts` | `getFacultyPublishedGradebook` | `tests/unit/chat3-faculty-gradebook-service-permissions.test.ts` | FAC-GRADE-SERVICE-01..05,07 | actual service mocked collaborators: wrong-role/disabled/suspended denial before reads, strict path input, roster-only published assignment and quiz score privacy, 101-assessment boundary |
+| `src/modules/courses/faculty-gradebook-service.ts` | `getFacultyPublishedGradebookLearner` | `tests/unit/chat3-faculty-gradebook-service-permissions.test.ts` | FAC-GRADE-SERVICE-06 | exact roster membership, foreign-learner private error, source-visible scores only |
 ## Role/security matrix
 
 - FAC-SCOPE-01/02: Faculty allowed only after central `courses.read` and active teaching role; Learner, Mentor, College Admin, Super Admin, missing membership and foreign tenant denied in unit-model mock contract.
