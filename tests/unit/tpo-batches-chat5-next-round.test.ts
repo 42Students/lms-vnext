@@ -67,7 +67,8 @@ describe("TPO Batches next-round source and behavioral gap closure",()=>{
   expect(ui).toContain("apiFetch");
   expect(ui).toContain("useGuardedAction");
   expect(ui).not.toContain("data.error??");
-  expect(ui).toContain("min-h-10");
+  expect(ui).toContain("min-h-11");
+  expect(ui).not.toContain("min-h-10");
  });
  it("GR-04 GR-30 GR-32 prevent raw errors and double submissions in batch decision editor",()=>{
   const ui=source("src/components/tpo/tpo-batch-inline-decision.tsx");
