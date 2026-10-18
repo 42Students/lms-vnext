@@ -242,3 +242,6 @@ A published drive may outlive an archived global company or archived college-com
 
 ### PROJ-HARNESS-PLACEMENTS-34: duplicate candidate retries
 The canonical role-option/membership unique index guards duplicate applications; a repeated candidate fixture attempt now exercises the entire multi-write savepoint, confirms the original screening/result/offer graph was not changed and then successfully creates a different learner's candidate in the same still-usable PostgreSQL transaction. This test guards harness isolation; the application API is separately responsible for friendly idempotent retry UX.
+
+### PROJ-HARNESS-MEETING-35: explicit UTC↔IST round trip
+The fixture meeting uses UTC timestamps with the Asia/Kolkata label. A real PostgreSQL witness converts both instants using `AT TIME ZONE 'Asia/Kolkata'` and asserts 10:00–10:30 IST plus exactly 1,800 seconds duration, preventing accidental timezone-label-only tests or DST-based shifts in a South India customer workflow.
