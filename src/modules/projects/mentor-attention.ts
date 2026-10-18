@@ -42,12 +42,12 @@ export function deriveMentorProjectAttention(
         occurredAt:project.submission.submittedAt.toISOString(),
       });
     }
-    // Projects become eligible for inactivity alerts only after activation.
-    // A planned project has no execution activity to stall, even after seven days.
-    // Keep the trustworthy last-event fallback for ACTIVE projects.
+    // MEN-projects-meetings-73: legacy flags idle planned and active work.
+    // Use the latest recorded activity (or persisted project update), but
+    // never flag blocked, completed or archived projects as stalled.
     const last=project.lastActivityAt ?? project.projectUpdatedAt;
     const lastMillis=last.getTime();
-    const stalled=project.projectStatus==="ACTIVE" &&
+    const stalled=(project.projectStatus==="ACTIVE"||project.projectStatus==="PLANNED") &&
       Number.isFinite(lastMillis) && timestamp-lastMillis >= 7*24*60*60*1000;
     if (stalled) alerts.push({
       projectId:project.projectId,
