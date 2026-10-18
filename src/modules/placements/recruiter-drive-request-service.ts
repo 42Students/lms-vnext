@@ -195,7 +195,8 @@ export async function updateOwnRecruiterDriveRequest(context:RequestContext,raw:
   const [updated]=await tx.update(placementRecruiterDriveRequests).set({
    status:input.action==="CANCEL"?"CANCELLED":"REQUEST",
    ...(input.draft?{draft:input.draft}:{}),
-   decisionNote:null,decidedAt:null,decidedByUserId:null,updatedAt:new Date(),
+   decisionNote:null,decidedAt:null,decidedByUserId:null,
+   updatedAt:sql`greatest(clock_timestamp(), ${placementRecruiterDriveRequests.updatedAt} + interval '1 millisecond')`,
   }).where(eq(placementRecruiterDriveRequests.id,original.id)).returning();
   if(!updated)throw new RecruiterDriveRequestError("STALE");
   // A cancelled request must leave an audit/bell trail as well as an updated row.
