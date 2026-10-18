@@ -28,6 +28,9 @@ describe("SA-COMPANY-HISTORY-04 scoped visible company-history aggregates", () =
     expect(service).toContain("eq(placementCompanyRelationships.collegeId, acting.collegeId)");
     expect(service).toContain("eq(placementJobs.collegeId, acting.collegeId)");
     expect(service).toContain("eq(collegeMemberships.collegeId,acting.collegeId)");
+    expect(service).toContain('eq(placementOffers.status,"ACCEPTED")');
+    expect(service).toContain('eq(placementJoiningOutcomes.status,"JOINED")');
+    expect(service).toContain("total:countDistinct(placementApplications.id)");
     expect(page).toContain("Showing first 500 drives. More historical records may exist.");
     expect(page).toContain("Totals above cover the displayed drives only.");
   });

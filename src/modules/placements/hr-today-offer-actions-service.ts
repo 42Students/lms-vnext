@@ -3,6 +3,7 @@ import {and,eq,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,placementApplications,placementApplicationScreenings,
  placementJobs,placementOffers,users} from "@/db/schema";
+import {prioritizeRecruiterOfferFollowups} from "./hr-today-offer-followup-model";
 
 /** REC-home-drives-01: count offer follow-ups on the college-shared
  * applicant population only; never disclose unshared learner identities. */
@@ -29,6 +30,7 @@ export async function listRecruiterTodayOfferActions(collegeId:string,
    eq(placementApplicationScreenings.status,"SHORTLISTED"),
    inArray(placementOffers.status,["ISSUED","ACCEPTED","DECLINED"])))
   .groupBy(placementJobs.id,placementJobs.title,placementOffers.status);
- return rows.map(row=>({...row,count:Number(row.count)}))
-  .filter(row=>row.count>0).slice(0,30);
+ return prioritizeRecruiterOfferFollowups(
+  rows.map(row=>({...row,count:Number(row.count)})),
+ );
 }

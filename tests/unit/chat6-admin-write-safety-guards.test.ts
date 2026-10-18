@@ -12,7 +12,9 @@ describe("GR-31 + GR-09 Super Admin write safety",()=>{
   expect(code).toContain("} catch {");
   expect(code).toContain("Could not save branding. Check your connection and try again.");
   expect(code).toContain("disabled={saving}");
-  expect(code).toContain("JSON.stringify(clean(values))");
+  expect(code).toContain("JSON.stringify({...clean(values),expectedVersion:version})");
+  expect(code).toContain("setVersion(data.branding.version)");
+  expect(code).toContain("Your edits are preserved. Refresh before saving again.");
  });
  it("SA-academics-people-batch-01 prevents double move, keeps row-state errors friendly and checks capacity",()=>{
   const code=source("src/components/admin/super-admin-batch-roster-manager.tsx");
