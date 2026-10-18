@@ -510,3 +510,8 @@ The same persisted actor/project Mentor grant recheck now protects meeting decis
 ### FAC-QUIZ-015 — persisted Faculty result publication gate
 
 `src/modules/courses/faculty-persisted-teaching-guard.ts` exports `assertPersistedFacultyTeachingMutation`, backed by `tests/unit/COURSES-BREAK-FACULTY-12.test.ts`. `commandFacultyQuizResults` in `faculty-quiz-results-command-service.ts` invokes the helper in the same locked transaction (`COURSES-BREAK-FACULTY-03.test.ts` checks zero writes on mid-flight revocation). Real PostgreSQL simultaneous revoke/publish and user-facing recovery remain **GAP**.
+
+
+### FAC-QUIZ-016 — distribution versus grading count consistency
+
+`getFacultyQuizReport` now excludes nonfinite score/maxScore pairs from the histogram exactly as it does from the score summary; `COURSES-BREAK-FACULTY-06.test.ts` covers NaN/Infinity. A real PostgreSQL score-integrity constraint check and actual CI run remain open.
