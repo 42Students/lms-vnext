@@ -10,7 +10,7 @@ export async function readBoundedRecruiterInboundBody(
   throw new Error("INVALID_INBOUND_LIMIT");
  if(!request.body)return {kind:"OK",body:""};
  const reader=request.body.getReader();
- const decoder=new TextDecoder("utf-8",{fatal:true});
+ const decoder=new TextDecoder("utf-8",{fatal:true,ignoreBOM:true});
  let total=0;
  let body="";
  try{
