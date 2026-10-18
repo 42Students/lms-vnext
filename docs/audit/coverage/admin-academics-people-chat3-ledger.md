@@ -41,6 +41,11 @@ Snapshot: 2026-10-18, source branch `chatgpt/chat-3-b`. Role-journal and code-ba
 - `getSuperAdminPeopleFilterOptions` now applies this organization/college ownership join in all four department, program, cohort and class facet readers. `tests/unit/chat3-sa-people-facets-organization-scope.test.ts` compiles every real Drizzle join predicate and rejects wrong-role/disabled accounts before reads.
 - These are SQL-scoping unit contracts, not an assertion that an incorrectly paired college/organization was exercised on a real database. The PostgreSQL isolation journey and CI are pending.
 
+## SA-ACADEMICS-SECTION-01 — explicit platform role on Super Admin Section detail
+
+- `resolveSuperAdminSectionDetail` now requires an **active SUPER_ADMIN system role** before generic `academics.read` permission. The latter is also available to Faculty, Mentor and Learner in their own college; a stale or injected `adminScope` may never upgrade those actors into Super Admin Section pages.
+- `tests/unit/chat3-sa-academics-section-platform-role.test.ts` exercises the real entry point against selected same-college Section, foreign organization/college, invalid IDs, missing selection, disabled Super Admin and wrong-role contexts. It also verifies unexpected database errors propagate to the error boundary rather than hiding as 404. Cloud CI and authenticated browser tests pending.
+
 ## Targeted repairs and further release gates
 
 - `COL-people-24`: exact legacy mentor-reassignment confirmation description restored at `src/components/projects/project-admin-reassign-mentor-page.tsx`; must rerun its failing test, and real keyboard/retry browser checks remain.
