@@ -12,7 +12,6 @@ import {
   sql,
   type SQL,
 } from "drizzle-orm";
-import { z } from "zod";
 
 import { getDb } from "@/db/client";
 import {
@@ -37,26 +36,12 @@ import {
 import type {
   ModuleAccessRule,
 } from "./service";
-import {adminModuleOverrideFilterSchema} from "./admin-override-filter-model";
+import {adminModuleDetailQuerySchema} from "./admin-module-detail-query";
 
 export {adminFeatureQuerySchema} from "./admin-feature-query";
 import {adminFeatureQuerySchema,featureRuleCutoff,boundedAdminFeaturePage} from "./admin-feature-query";
 
-const detailQuerySchema = z.object({
-  module: adminModuleOverrideFilterSchema,
-  scope: z.enum(["DEPARTMENT","PROGRAM","COHORT","SECTION","MEMBERSHIP"]).optional(),
-  locks: z.enum(["ALL","LOCKED"]).default("ALL"),
-  storedState: z.enum(["ALL","ON","OFF"]).default("ALL"),
-  scopeId: z.uuid().optional(),
-  page: z.coerce
-    .number()
-    .int()
-    .min(1)
-    .max(10000)
-    .default(1),
-}).strict().superRefine((input,ctx)=>{
-  if(input.scopeId && !input.scope)ctx.addIssue({code:"custom",path:["scope"],message:"Specify a scope type with scope ID"});
-});
+
 
 const COLLEGE_PAGE_SIZE = 20;
 const OVERRIDE_PAGE_SIZE = 30;
@@ -425,7 +410,7 @@ export async function getSuperAdminCollegeModuleAccess(
 
   const collegeId =
     collegeIdSchema.parse(rawCollegeId);
-  const query = detailQuerySchema.parse(
+  const query = adminModuleDetailQuerySchema.parse(
     rawQuery,
   );
 
