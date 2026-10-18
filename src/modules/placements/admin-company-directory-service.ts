@@ -90,7 +90,15 @@ export async function listSuperAdminCompanyDirectory(context: RequestContext, ra
       from placement_company_domains d where d.company_id=${placementCompanies.id})`,
     aliases:sql<string[]>`(select coalesce(array_agg(a.alias order by a.alias),array[]::text[])
       from placement_company_aliases a where a.company_id=${placementCompanies.id})`,
-    companyCollegeCount:sql<number>`(select count(*)::integer from placement_company_relationships cr where cr.company_id = ${placementCompanies.id})`.mapWith(Number),
+    // SA-company scope: a selected college or organization must not disclose
+    // the count of company relationships in other tenants.
+    companyCollegeCount:sql<number>`(select count(*)::integer
+      from placement_company_relationships cr
+      inner join colleges linked_college on linked_college.id = cr.college_id
+      where cr.company_id = ${placementCompanies.id}
+      ${selected?.collegeId ? sql`and cr.college_id = ${selected.collegeId}`
+        : selected?.organizationId ? sql`and linked_college.organization_id = ${selected.organizationId}`
+        : sql``})`.mapWith(Number),
     driveCount:sql<number>`(select count(*)::integer from placement_jobs j where j.company_relationship_id = ${placementCompanyRelationships.id} and j.status != 'ARCHIVED')`.mapWith(Number),
     lastActiveAt:sql<Date|null>`(select max(j.updated_at) from placement_jobs j where j.company_relationship_id = ${placementCompanyRelationships.id})`,
     createdAt:placementCompanies.createdAt,
