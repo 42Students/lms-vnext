@@ -249,10 +249,11 @@ describe("chat-3 Drives round 4",()=>{
  it("TPO-drives-45 automatically applies 11:59 PM IST once, then preserves user edits and restored drafts",()=>{
   const form=source("src/components/placements/placement-job-create-form.tsx");
   expect(form).toContain("const deadlineTimeChosen=useRef(false)");
-  expect(form).toContain("if(event.currentTarget.value)deadlineTimeChosen.current=true");
+  expect(form).toContain("if(!deadlineTimeChosen.current&&");
+   expect(form).toContain('if(typeof saved.values.applicationDeadline==="string"&&saved.values.applicationDeadline.trim()){');
   expect(form).toContain("field.value=driveDeadlineIstEndOfDay(field.value);deadlineTimeChosen.current=true");
   expect(form).toContain("A newly selected date defaults to 11:59 PM; you can change the time.");
-  expect(form).toContain("deadlineTimeChosen.current=true;\n                  clearedBackup.current=false;");
+  expect(form).toContain("deadlineTimeChosen.current=true;\n        }\n        markDirty();");
  });
  it("TPO-drives-45 choosing end-of-day in IST stores 23:59 and preserves drafts",()=>{
   expect(driveDeadlineIstEndOfDay("2099-11-05T00:00")).toBe("2099-11-05T23:59");
