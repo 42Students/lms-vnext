@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { PermissionAction } from "@/components/ui/permission-action";
 import { ownsOverlayHistoryEntry } from "@/components/ui/use-overlay-webview";
-import { DataTable } from "@/components/ui/data-table";
+import { DataTable, isSafeDataTableHref } from "@/components/ui/data-table";
 import { fileMatchesAccept, fileSizeIsValid } from "@/components/ui/file-upload";
 import { clearEvictedToastTimers, enqueueToast, ToastStack, type ToastItem } from "@/components/ui/toast";
 import type { RequestContext } from "@/modules/identity/context";
@@ -107,6 +107,25 @@ describe("UX-kit-HARDEN-23 authorization boundaries and WebView history", () => 
     expect(html).toContain('data-slot="scroll-cue"');
     const scrollSource=readFileSync(join(process.cwd(),"src/components/ui/data-table.tsx"),"utf8");
     expect(scrollSource).toContain('caption+" scrollable columns"');
+  });
+
+  it("UX-kit-HARDEN-30 rejects encoded slash/backslash row links before Next navigation", () => {
+    for (const href of [
+      "https://attacker.test", "//attacker.test", "/\\\\attacker.test",
+      "/%2Fattacker.test", "/%5Cattacker.test", "/%252Fattacker.test",
+      "/%255Cattacker.test", "/%2f%2fattacker.test", " /college/projects",
+      "/college/projects\\\\attacker.test", "/college/projects\u000a",
+    ]) expect(isSafeDataTableHref(href)).toBe(false);
+    for (const href of ["/college/projects", "/college/projects?id=7", "/learn/projects#tasks"]) {
+      expect(isSafeDataTableHref(href)).toBe(true);
+    }
+    const columns=[{key:"project",header:"Project",mobilePriority:"primary" as const,
+      cell:(row:{id:string,name:string})=>row.name}];
+    const html=render(<DataTable columns={columns}
+      rows={[{id:"1",name:"Alpha"}]} getRowKey={r=>r.id} empty="No projects"
+      rowHref={()=>"/%2fattacker.test"} />);
+    expect(html).toContain("Alpha");
+    expect(html).not.toContain("View details");
   });
 
   it("UX-kit-HARDEN-28 upload prechecks fail closed for invalid sizes and untrusted types", () => {
