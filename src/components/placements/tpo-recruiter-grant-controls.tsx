@@ -76,7 +76,9 @@ export function TpoRecruiterGrantForm({ companies }: {
         title="Review and confirm grant"
         description="Grant the existing user recruiter access to this college/company? This changes real recruiter permissions."
         confirmLabel="Grant recruiter college access" confirmVariant="primary" pending={busy}
-        onConfirm={()=>void save()}/>
+        onConfirm={()=>void save()}>
+        {error?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
+      </ConfirmDialog>
     </section>
   );
 }
@@ -115,7 +117,9 @@ export function TpoRecruiterRevoke({ grantId, expectedUpdatedAt, displayName }: 
     <ConfirmDialog open={confirmOpen} onOpenChange={value=>{if(!busy)setConfirmOpen(value);}}
       title={"Remove "+displayName+"\'s access?"}
       description="They will no longer be able to use this college\'s recruiter workspace."
-      confirmLabel="Revoke access" pending={busy} onConfirm={()=>void revoke()}/>
+      confirmLabel="Revoke access" pending={busy} onConfirm={()=>void revoke()}>
+      {error?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
+    </ConfirmDialog>
   </div>;
 }
 
@@ -156,6 +160,8 @@ export function TpoRecruiterExtend({grantId,expectedUpdatedAt,displayName,ended=
   <ConfirmDialog open={confirmOpen} onOpenChange={value=>{if(!busy)setConfirmOpen(value);}}
     title={"Extend "+displayName+"\'s access by "+months+" months?"}
     confirmLabel={ended?"Give access again":"Extend"} confirmVariant="primary"
-    pending={busy} onConfirm={()=>void extend()}/>
+    pending={busy} onConfirm={()=>void extend()}>
+    {error?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
+  </ConfirmDialog>
  </div>;
 }
