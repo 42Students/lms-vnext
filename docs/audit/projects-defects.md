@@ -30,6 +30,8 @@ Every item below was reproduced by code-path review and has a source repair on `
 
 | PROJ-DEF-009-23 | S2 Input/reliability | `parseAdminProjectsQuery` accepted exotic numeric URL encodings through `z.coerce.number()` and ignored unknown URL fields, unlike the stricter College Projects equivalent; malformed links could silently change paging interpretation. | `admin-projects-query-model.ts`: decimal-only bounded integers, unknown-key rejection, preserve legacy search alias and non-fatal UI error path. | `PROJ-BREAK-admin-input-22/23` | Behavioural parser unit tests authored; CI pending |
 
+| PROJ-DEF-009-24 | S2 Availability / Super Admin | The selected-college Project workspaces route could throw a raw server read exception on a primary workspace directory query; optional-template fetch already degraded independently but the essential read lacked a recoverable page state. | `src/app/(authenticated)/admin/projects/page.tsx`: catch the list read separately, render a friendly retry that retains validated search, status, view and page controls. | `PROJ-BREAK-admin-resilience-24/25`, `PROJ-BREAK-admin-idor-26`, `PROJ-BREAK-admin-input-27` | SSR mocked behavior authored; next CI, authenticated browser and real DB outage pending |
+
 ## Explicit outstanding acceptance / limits
 
 - **Tests not executed** in this GitHub-connector-only lane: Vitest unit suite, TypeScript strict typecheck, lint, PostgreSQL transaction/deadline tests, migrations on realistic tenant fixtures, race stress, file storage and antivirus verification, signed URL expiry, load tests (1,000+ workspaces), actual export spreadsheet import, all seven-role UI journeys, keyboard/mobile AT tests.
