@@ -22,7 +22,7 @@ export async function readProjectReadinessOverride(db:ReadableDb,projectId:strin
     .orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id)).limit(1);
   const value=row?.metadata?.state;
   const state:ReadinessOverrideState|null=value==="FORCE_UNLOCK"||value==="FORCE_BLOCK"||value==="CLEAR"?value:null;
-  return {state, note:state==="CLEAR"?null:typeof row?.metadata?.note==="string"?row.metadata.note:null,
+  return {state, note:state&&state!=="CLEAR"&&typeof row?.metadata?.note==="string"?row.metadata.note:null,
     occurredAt:row?.occurredAt??null,overriddenBy:row?.overriddenBy??null};
 }
 
