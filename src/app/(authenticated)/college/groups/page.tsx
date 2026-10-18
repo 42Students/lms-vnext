@@ -9,7 +9,7 @@ import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Button } from "@/components/ui/button";
 import { requirePermission } from "@/modules/permissions/policy";
-import { collegeGroupsDirectoryHref, parseCollegeGroupsDirectoryParams } from "@/modules/groups/college-group-directory-query-model";
+import { canonicalCollegeGroupsOffset, collegeGroupsDirectoryHref, parseCollegeGroupsDirectoryParams } from "@/modules/groups/college-group-directory-query-model";
 import { CollegeGroupActions } from "@/components/groups/college-group-actions";
 import {
   GROUP_STATUSES,
@@ -67,6 +67,8 @@ export default async function CollegeGroupsPage({
   });
 
   const { limit, total } = result.pagination;
+  const canonicalOffset = canonicalCollegeGroupsOffset(offset,total,limit);
+  if (canonicalOffset !== offset) redirect(collegeGroupsDirectoryHref({kind,status,offset:canonicalOffset}));
   const query = (next: number) => collegeGroupsDirectoryHref({
     kind, status, offset: next,
   });
