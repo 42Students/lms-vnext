@@ -47,7 +47,7 @@ describe("chat-4 College Admin export boundaries", () => {
   it("COL-export-05 rejects unsafe internal job page sizes and caps before reading data", async () => {
     let called=0;
     const read=async (_page:number)=>{called+=1;return {items:[1],total:1,totalPages:1};};
-    for (const [pageSize,cap] of [[0,100],[-1,100],[1001,100],[1,0],[1,1001],[1,1.5],[1,Infinity]]) {
+    for (const [pageSize,cap] of [[0,100],[-1,100],[1001,100],[1,0],[1,1001],[1,1.5],[1,Infinity]] as const) {
       await expect(collectCollegeExportRows(read,pageSize,cap)).rejects.toThrow(RangeError);
     }
     expect(called).toBe(0);
