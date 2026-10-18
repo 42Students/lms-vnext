@@ -46,14 +46,6 @@ type SearchParams = {
   q?: string | string[];
 };
 
-function first(
-  value: string | string[] | undefined,
-) {
-  return Array.isArray(value)
-    ? value[0]
-    : value;
-}
-
 export default async function TpoRecruiterAccessPage({
   searchParams,
 }: {
@@ -71,13 +63,14 @@ export default async function TpoRecruiterAccessPage({
 
   const params = await searchParams;
 
-  const parsed =
-    tpoRecruiterAccessQuerySchema.safeParse({
-      status:
-        first(params.status) || undefined,
-      q: first(params.q) || "",
-      page:
-        first(params.page) || undefined,
+  // Duplicate query keys are ambiguous; do not silently prefer the first
+  // attacker-supplied value for a TPO college-grant directory.
+  const parsed = Object.values(params).some(Array.isArray)
+    ? {success:false as const}
+    : tpoRecruiterAccessQuerySchema.safeParse({
+      status:params.status || undefined,
+      q:params.q || "",
+      page:params.page || undefined,
     });
 
   if (!parsed.success) {
