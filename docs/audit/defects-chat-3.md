@@ -79,3 +79,8 @@ The published `docs/orchestrator/unit-failures-latest.md` identifies three chat-
 ### PROJ-FAC-ROLE-013 — stale Mentor grant across sprint create or transition (S1)
 
 `createMentorProjectSprint` and `transitionMentorProjectSprint` both performed Project Mentor access checks before beginning the write transaction, allowing an already-deactivated Mentor or ended project grant to race the write after project locking. Both now call `assertPersistedProjectMutationActor` under the same transaction/locked project row before releasing any new Sprint, changing status or emitting activity. Unit regression `tests/unit/PROJ-BREAK-FACULTY-09.test.ts` verifies role revocation and terminal Project states produce no inserts, updates or activity. Cloud CI and independent review are pending; real multi-session PostgreSQL concurrency is not yet proven.
+
+
+### FAC-METHODS-014 — ambiguous Faculty assignment methods selector (S2)
+
+A Faculty `GET /api/courses/faculty/assignments/[deliveryId]/methods` used `new URL(request.url).searchParams.get("assignmentId")` without rejecting duplicate or unrelated selectors. Two conflicting `assignmentId` keys could silently select the first, making the request's actual target ambiguous during stale-tab and cross-Section checks. This now uses a strict `parseFacultyAssignmentMethodsQuery` requiring exactly one UUID `assignmentId` and no extra parameters before session read. The service still independently requires the same currently authorized Section. New adversarial test `tests/unit/COURSES-BREAK-FACULTY-11.test.ts` covers duplicate/conflicting selectors, extra forged college keys, malformed UUIDs, no-store headers and safe failures. Code/tests committed but CI pending.
