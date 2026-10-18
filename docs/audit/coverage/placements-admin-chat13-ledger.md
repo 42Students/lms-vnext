@@ -40,6 +40,12 @@
 | `src/modules/placements/super-admin-company-verification-model.ts` — `companyGlobalVerificationSchema`, `canVerifyGlobalCompany` | Global scope only, rejects rogue keys | `SA-COMPANY-COLLEGE-01` in same test | Pure role/scope test authored |
 | `src/modules/placements/super-admin-hr-search-model.ts` — `superAdminHrLiteralSearchPattern`; `super-admin-hr-validation.ts` — `parseSuperAdminHrPageParams` | SQL LIKE wildcard literal escaping, unknown URL keys, arrays, invalid pages | `SA-HR-SEARCH-01` in same test | Pure search-model test authored |
 
+| src/modules/placements/admin-company-merge-model.ts — companyMergeInputSchema | Distinct company IDs, explicit confirmation, no unauthorized extras | SA-COMPANY-MERGE-02 in chat13-super-admin-placements-command-matrix.test.ts | Runtime model regression authored; DB rollback open |
+| src/modules/placements/super-admin-published-drive-edit-model.ts — superAdminPublishedDriveEditSchema | Duplicate locations, strict CTC/deadline/version, forbidden fields | SA-PUBLISHED-DRIVE-EDIT-02 in same file | Runtime model; PostgreSQL transaction open |
+| src/modules/placements/super-admin-drive-archive-service.ts — archiveSuperAdminDrive | Offer locks before impact, accepted-offer veto, action ordering | SA-DRIVE-ARCHIVE-03 in same file | Source contract; two-writer PostgreSQL race remains |
+| 13 Super Admin Projects/Placements/company mutation routes + 4 CSV GET routes | Same-origin before JSON parsing, session guard, no GET writes | SA-ADMIN-ROUTE-01 in chat13-super-admin-mutation-routes-guard.test.ts | Source contract; expired-browser journey pending |
+| src/modules/projects/admin-unsubmitted-query-model.ts — bounded schema, literal search | Reject input abuse and retain tenant-scoped NOT EXISTS | PROJ-BREAK-SA-20..22 in PROJ-BREAK-SA-unsubmitted-search.test.ts | Runtime model tests authored; PostgreSQL tenant fixture pending |
+
 ## Defects
 
 - **SA-COMPANY-SCOPE-01:** `listSuperAdminCompanyDirectory` previously scoped directory rows to the selected organization/college but computed `companyCollegeCount` across the whole database. Scoped this aggregate with the same selected college/organization to prevent leaking relationship counts across tenants.
