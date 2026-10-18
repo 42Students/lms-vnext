@@ -9,6 +9,7 @@ import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {LEGACY_TENANT_SETTING_MAP,LEGACY_TENANT_SETTING_SPECS} from "./legacy-setting-specs";
+import {PLACEMENT_POLICY_FIELDS,placementPolicyValidate} from "@/modules/placements/platform-placement-policy-model";
 
 const entry=z.strictObject({key:z.string().min(1).max(120),value:z.string().max(4096),
  expectedVersion:z.number().int().nonnegative()});
@@ -93,7 +94,13 @@ export async function saveAdminTenantSettings(ctx:RequestContext,raw:unknown){
    seen.add(change.key);
    if(spec.dangerous&&!parsed.confirmedHighImpact)throw new TenantSettingEditorError("INVALID_SETTING");
    const value=canonical(spec,change.value);
+   const placementPolicy=parsed.scopeType==="GLOBAL"?PLACEMENT_POLICY_FIELDS.find(field=>field.key===spec.key):undefined;
+   if(placementPolicy&&value!==null&&!placementPolicyValidate(placementPolicy.key,Number(value)))
+    throw new TenantSettingEditorError("INVALID_SETTING");
    const outcome=await getDb().transaction(async tx=>{
+    // The dedicated placement editor shares this exact advisory lock; without
+    // it simultaneous edits through the two administrator screens race.
+    if(placementPolicy)await tx.execute(sql`select pg_advisory_xact_lock(42, 130038)`);
     await assertPersistedPlatformPermission(tx,ctx,
      target.collegeId?"college.manage":"admin-scope.select",
      target.collegeId?{collegeId:target.collegeId,organizationId:target.organizationId!}:undefined);
@@ -104,6 +111,20 @@ export async function saveAdminTenantSettings(ctx:RequestContext,raw:unknown){
      .for("update").limit(1);
     if((current?.version??0)!==change.expectedVersion)
      throw new TenantSettingEditorError("SETTING_STALE");
+    if(spec.key==="interview.durationMinMinutes"||spec.key==="interview.durationMaxMinutes"){
+     const otherKey=spec.key==="interview.durationMinMinutes"?"interview.durationMaxMinutes":"interview.durationMinMinutes";
+     const [other]=await tx.select({value:platformSettingOverrides.value}).from(platformSettingOverrides)
+      .where(and(eq(platformSettingOverrides.scopeType,"GLOBAL"),eq(platformSettingOverrides.scopeId,"GLOBAL"),
+       eq(platformSettingOverrides.key,otherKey))).limit(1);
+     const otherDefault=PLACEMENT_POLICY_FIELDS.find(field=>field.key===otherKey)!.defaultValue;
+     const selfDefault=PLACEMENT_POLICY_FIELDS.find(field=>field.key===spec.key)!.defaultValue;
+     const thisValue=value===null?selfDefault:Number(value);
+     const otherValue=other?Number(other.value):otherDefault;
+     const minimum=spec.key==="interview.durationMinMinutes"?thisValue:otherValue;
+     const maximum=spec.key==="interview.durationMaxMinutes"?thisValue:otherValue;
+     if(!Number.isFinite(minimum)||!Number.isFinite(maximum)||minimum>maximum)
+      throw new TenantSettingEditorError("INVALID_SETTING");
+    }
     let version=current?.version??0;
     if(value===null){
      await tx.delete(platformSettingOverrides).where(and(eq(platformSettingOverrides.scopeType,parsed.scopeType),
