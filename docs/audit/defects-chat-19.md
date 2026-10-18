@@ -618,3 +618,13 @@ No SQL execution, CI, or browser check was run locally.
 | HR-BREAK-APPLICANT-LINK-51 | SECURITY | Recruiter-view learner profile link projection rejected loopback, RFC1918 and link-local addresses but omitted the IPv6 unspecified host `[::]` (a non-public address). Block it explicitly before displaying a learner-supplied URL. Added adversarial public/private link tests for HTTPS-only, credentials, private IP ranges, GitHub hostname exactness, fragment removal and size limit. No learner document or resume permission was widened. | `tests/unit/HR-BREAK-chat19-applicant-links.test.ts` |
 
 No runtime browser or CI run performed.
+
+
+## 2026-10-19 independent HR private-rating and conversation-read receipt hardening
+
+| ID | Before-fix severity | Cross-audit finding and source | Fix | Direct evidence |
+|---|---|---|---|---|
+| HR-BREAK-PRIVATE-RECEIPT-52 | MAJOR | `src/components/hr/recruiter-private-rating-editor.tsx` previously treated any 2xx JSON as a saved private rating; malformed/redirected login responses could corrupt the candidate editor and falsely clear pending changes. | Validate exact `rating`, bounded `note`, strict ISO `updatedAt`; require the persisted version and submitted normalized values on PATCH; reject redirected responses; leave drafts available for retry. `src/modules/placements/recruiter-private-rating-receipt-model.ts`. | `tests/unit/HR-BREAK-chat19-private-rating-receipt.test.ts` validates invalid payloads, unset versions, redirect defense, exact requested value and source ordering. |
+| HR-BREAK-CONVO-ACK-53 | MAJOR | `src/components/hr/recruiter-conversation-read-control.tsx` marked unread TPO messages as acknowledged on any `response.ok` during on-open POST; manually clicked updates trusted a redirected 200 to the page. Either could be a stale login fallback with no stored read state. | `src/app/api/placements/recruiter/conversations/[threadId]/acknowledge/route.ts` emits an exact thread-scoped JSON acknowledgement **after** the authorized transaction for JSON clients, preserving native 303. Both client paths require this receipt; accept count 0 for genuinely idempotent retries. `src/modules/placements/recruiter-thread-ack-receipt-model.ts`. | `tests/unit/HR-BREAK-chat19-conversation-ack-receipt.test.ts` directly invokes origin, role, invalid ID, persisted receipt and native fallback cases. |
+
+**Verification boundary:** These are source-authored changes on `chatgpt/chat-19-b`; Vitest, TypeScript, PostgreSQL and real browsers were not run by chat-19. On-device accessibility, transient network failures, and integration replay remain part of the final cloud acceptance pass. No on-hold shared one-canvas restyling was attempted.
