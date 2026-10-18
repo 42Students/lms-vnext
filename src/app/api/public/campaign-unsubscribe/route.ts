@@ -2,13 +2,23 @@ import {NextResponse} from "next/server";
 import {sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {isSameOriginRequest} from "@/auth/origin";
+import {readBoundedUtf8Body} from "@/lib/bounded-utf8-body";
 import {verifyUnsubscribeToken} from "@/modules/messaging/unsubscribe-model";
 import {verifyTpoCampaignRecipientToken,resolveTpoCampaignRecipientSecret} from "@/modules/messaging/tpo-campaign-recipient-token";
 import {CampaignUnsubscribeInvalid,unsubscribeTpoCampaignRecipient} from "@/modules/messaging/tpo-campaign-unsubscribe-service";
 export const runtime="nodejs";
 export async function POST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- const form=await request.formData().catch(()=>null);
+ // A public POST must not parse an unbounded multipart or URL-encoded body.
+ // Reconstruct only the bounded UTF-8 bytes for the same native form parser.
+ const body=await readBoundedUtf8Body(request,8192);
+ if(body.kind==="TOO_LARGE")return NextResponse.json({error:"INVALID_OR_EXPIRED_LINK"},
+  {status:413,headers:{"Cache-Control":"no-store"}});
+ if(body.kind!=="OK")return NextResponse.json({error:"INVALID_OR_EXPIRED_LINK"},
+  {status:400,headers:{"Cache-Control":"no-store"}});
+ const input=new Request(request.url,{method:"POST",body:body.body,
+  headers:{"content-type":request.headers.get("content-type")??""}});
+ const form=await input.formData().catch(()=>null);
  const rawToken=form?.get("token");
  if(typeof rawToken!=="string"||rawToken.length>2048)
   return NextResponse.json({error:"INVALID_OR_EXPIRED_LINK"},{status:400});

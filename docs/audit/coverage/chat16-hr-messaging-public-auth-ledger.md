@@ -406,3 +406,50 @@ All cases are **authored but unexecuted**. Existing tests are retained. No actua
 | `deliverBatch` (initial policy failure branch) | `tests/unit/chat16-messaging-initial-policy-outage-14.test.ts` (`MSG-POLICY-INITIAL-14`, `MSG-POLICY-INITIAL-15`) | A failing initial authorization/suppression policy read records `FAILED/policy-read-failed` with opaque recipient key before any send. A later eligible contact can still send and complete aggregate audit; an all-recipient policy outage leaves no queued/unconfirmed sends and records exact failed totals. Errors and recipient addresses are not copied to receipts. |
 
 Fix `src/modules/messaging/service.ts`: the previous unhandled initial `policyFor` exception could abort a partially-sent batch before calling `repository.auditBatch`, even when the preceding recipient had already been accepted by the provider. The new fail-closed branch continues the remaining recipients and emits complete receipt counts. Existing retryless provider POST and secondary live-policy recheck stay unchanged. This is unit-level test authorship, **not executed**; multi-worker PostgreSQL concurrency still needs acceptance.
+
+
+### 2026-10-19 continued: public recruitment and code API hardened against oversized and partial failures
+
+| Boundary | Behavioral tests | Cases |
+|---|---|---|
+| `POST /api/public/recruit-from-us/send-code` | `tests/unit/chat16-public-recruit-enquiry-route-guards-16.test.ts` (`PUBLIC-ENQUIRY-FAIL-16..21`, `PUBLIC-ENQUIRY-SIZE-24/25`) | Deny cross-origin before private lookup, unknown college 404, tenant DB/provider 503 with no private stack, normal success, trustworthy IP only when proxy verified, status 429/503, invalid UTF-8/JSON 400, UTF-8 byte cap 413 before sending |
+| `POST /api/public/recruit-from-us/recruit` | same | Same-origin, active verified tenant, 404/503/error mapping, no untrusted proxy IP, bounded POST before enquiry transaction |
+| `readPublicRecruitEnquiryBody` | same (route-through tests) | 8,192-byte UTF-8 body guard, parsed unknown JSON for existing strict Zod service schemas, invalid/oversized body never accesses storage or sends mail |
+| `readBoundedUtf8Body` / `readBoundedRecruiterInboundBody` | `tests/unit/chat16-recruiter-mail-body-bounds-01.test.ts`, route-through tests above | Single shared bounded streaming implementation handles signed internal 20 KB and anonymous 8 KB ingress; raw signed bytes (including BOM) are preserved |
+
+Bug fixes: both public recruitment POST routes previously let unexpected tenancy or service exceptions bubble as unhandled request errors, and read anonymous JSON with unbounded `request.json()`. They now return a cache-disabled, generic no-private-data error on dependency failure and reject oversized/malformed payloads before recruiter onboarding service work. This is authored source only; browser/provider and PostgreSQL runtime verification remain **not run**.
+
+
+### 2026-10-19: campaign opt-out and college/company join anonymous body caps
+
+| Public boundary | Behavioral tests | Outcomes |
+|---|---|---|
+| `POST /api/public/campaign-unsubscribe` | `tests/unit/chat16-public-campaign-unsubscribe-body-bounds-26.test.ts` (`PUBLIC-UNSUB-SIZE-26..29`) | Strict 8 KB streamed form cap, malformed UTF-8/absent token denied before HMAC or DB, multipart signed campaign recipient still redirects with 303, cross-origin denied before body parse |
+| `POST /api/public/company-join/send-code` and `/college-join/send-code` | `tests/unit/chat16-public-join-route-stream-guards-30.test.ts` (`PUBLIC-JOIN-SIZE-30..33`) | Origin, byte limit, invalid JSON, company versus college scope, trusted-proxy IP condition, no delivery call before valid bounded input |
+| `POST /api/public/company-join/join` and `/college-join/join` | same | Duplicate four-route boundary matrix, verified IP authority, original successful response shape |
+| `readBoundedJsonBody` | same, plus `tests/unit/chat16-public-recruit-enquiry-route-guards-16.test.ts` | Shared strict UTF-8 + 8 KB JSON parser, fail closed before downstream service or rate-limit read |
+| `readPublicRecruitEnquiryBody` | `tests/unit/chat16-public-recruit-enquiry-route-guards-16.test.ts` | Named compatibility export preserves the public recruitment route contract through shared parser |
+
+These routes previously parsed unbounded anonymous JSON or form-data bodies; all now reject oversize payloads at the stream boundary and keep their original business validation and response copy. Sources and tests are **authored but not executed**; upstream reverse proxy caps and real provider/PostgreSQL behaviour remain to be independently verified.
+
+
+### 2026-10-19: recruiter OTP acceptance under an anonymous body cap
+
+| Boundary | Authored direct test | Behaviour |
+|---|---|---|
+| `POST /api/public/recruiter-invite/[token]/accept` | `tests/unit/chat16-public-recruiter-invite-accept-byte-cap-34.test.ts` (`PUBLIC-INVITE-SIZE-34..36`) | unauthenticated 8 KB stream cap before Zod/identity mutation, malformed body and forbidden caller-field injection refused, same-origin first, readiness gate retains 503, valid six-digit OTP delegates only code and parsed name before no-store success |
+| `readBoundedJsonBody` | above and `tests/unit/chat16-public-join-route-stream-guards-30.test.ts` | shared validated JSON primitive prevents the public recruiter invite, college join, company join and enquiry endpoints from buffering unbounded request bodies |
+
+The strict credential HMAC/one-time-code, tenant and real database-commit guards remain owned by the downstream services; these tests do not substitute real disposable PostgreSQL transaction or provider execution. All added tests are authored but unexecuted.
+
+
+### 2026-10-19: anonymous recruiter invitation route methods and nonmutation
+
+| Handler | Direct regression test | Cases |
+|---|---|---|
+| `GET /api/public/recruiter-invite/[token]` | `tests/unit/chat16-public-recruiter-invite-route-matrix-37.test.ts` (`PUBLIC-INVITE-ROUTE-37/40`) | Preview returns published invite only and never performs first-open/decision writes; disabled DB09 gate returns 503 before a preview lookup |
+| `POST /api/public/recruiter-invite/[token]/opened` | same (`PUBLIC-INVITE-ROUTE-38..40`) | same-origin denial, dedicated first-open method returns persisted `recorded:false` idempotency, disabled deployment denies |
+| `POST /api/public/recruiter-invite/[token]/not-hiring` and `unsubscribe` | same | POST-only decision handlers preserve exact non-hiring/unsubscribe outcomes; cross-origin and disabled gates prevent service calls |
+| `POST /api/public/recruiter-invite/[token]/send-code` | same (`PUBLIC-INVITE-ROUTE-38/40/41`) | cross-origin denial, disabled OTP gate, malformed token rejected without revealing grant identity or sending mail |
+
+Method-level tests mock external service writes, do not verify the real transactional lock/idempotency or delivery provider. No CI/TS/runtime suite was run in chat-16.

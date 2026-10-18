@@ -78,3 +78,17 @@ All fixes are source-authored and committed. No local CI/real DB/browser run is 
 
 
 | PROJ-BREAK-SA-37 | Admin workspace card age now accounts for ended membership transitions via a single grouped MAX timestamp query, while name projection stays restricted to active actor and college | `src/modules/projects/admin-insights-service.ts`, `tests/unit/chat13-project-admin-member-tenant-isolation.test.ts`; load/performance and database execution pending |
+
+
+## 2026-10-19 adversarial continuation (source-authored, tests unrun)
+
+- **PROJ-BREAK-SA-38:** project admin risk badges reject NaN, infinity, fractional and unsafe-integer inactivity ages without hiding valid independent blocker/review warnings; `tests/unit/PROJ-BREAK-SA-38-39-risk-activity-guards.test.ts`.
+- **PROJ-BREAK-SA-39:** highest submission version rather than SQL ordering is used to decide pending review; completed/archived projects remain non-actionable; same named test.
+- **PROJ-BREAK-SA-40:** a PLANNED restored project cannot display `Pending review` merely because an old version remains SUBMITTED; state predicate matches `canAdminSettleDelivery`; `tests/unit/PROJ-BREAK-SA-40-planned-submission-risk.test.ts`.
+- **SA-DRIVE-ARCHIVE-04/05:** destructive drive archive explicitly denies malformed/unknown statuses, rather than assuming any non-ARCHIVED string can transition; `tests/unit/chat13-super-admin-archive-transition-matrix.test.ts`. This does not remove the two-session accepted-offer/new-offer race release gate.
+- **SA-REPORT-CSV-UNICODE-06/07 and SA-ADMIN-CSV-05:** Super Admin placements analytics/accreditation, company directory and scoped CSV exports apply consistent Unicode control/format/combining/enclosing-mark formula neutralization. Tests cover hostile value and whole CSV paths. Actual spreadsheet opening and authenticated download remain unverified.
+- **SA-REPORT-PACKAGE-08/09:** LOIs no longer inflate accepted full-time OFFER CTC summary, company/branch packages or detailed CTC band; raw LOI record history remains counted in offers. Tested by pure-model scenarios only; cross-report PostgreSQL reconciliation still required.
+
+**Review limitation:** source-authored tests, no local execution, A/B Postgres, browser review or independent release signoff. Existing 28 placements + 20 projects route inventory unchanged. All source changes were confined to `chatgpt/chat-13-b`, with commit prefix `[chat-13]`; latest `main` was merged into that branch while preserving other lanes' changes. The design/card directive remains on hold.
+
+- **PROJ-BREAK-SA-41:** `readiness-overrides-export-model.ts` now neutralizes spreadsheet formulas after Unicode combining/enclosing marks and C0 controls; full operator and benign-value matrix in `tests/unit/PROJ-BREAK-SA-41-readiness-export-formula-matrix.test.ts`. Authored without executing tests; Excel/LibreOffice import remains an acceptance check.

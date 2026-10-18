@@ -25,3 +25,41 @@ Bulk selection was kept in client state across acting-college, search/pagination
 - Keyboard focus, overlay scroll, 320/375px responsive navigation, reduced motion, slow/retry states, and storage upload security await browser testing.
 
 **Disposition: FAIL CLOSED for release until independent CI and DB review.**
+
+
+## 19 October 2026 — second Super Admin course-content source audit
+
+Scope expanded to all principal directory pages: `/admin/courses`,
+`/admin/lessons`, `/admin/videos`, `/admin/resources`,
+`/admin/live-classes`, `/admin/assignments`, `/admin/quizzes`,
+`/admin/course-progress`, and
+`/admin/course-progress/students`. Also examined shared directory,
+query and authoring models; no browser or database testing was performed.
+
+| Route / model | Defect and corrected trust/UX boundary | Regression / status |
+|---|---|---|
+| `/admin/courses` | Duplicate course query used a permissive 36-character hex/hyphen matcher; array/unknown URL inputs could be coerced or ignored. Replaced with strict `parseSuperAdminCourseQuery` and proper UUID validation. | `SA-COURSES-QUERY-18`, `tests/unit/chat7-admin-courses-content-hardening.test.ts`; source fix on branch, test not run |
+| `/admin/assignments` | Added explicit Super Admin denial to mirror quiz route; reject duplicated, unknown or quiz-only URL parameters. Assignment directory now loads separately from assignment-creation options. | `SA-COURSES-ASSESSMENT-16`, `tests/unit/chat7-admin-courses-assessment-boundaries.test.ts`; source fix, test not run |
+| `/admin/quizzes` | Re-audited quiz-specific result-publication filtering, role/no-college states and independently failed creation options. Existing `parseSuperAdminQuizQuery` remains unweakened. | Same test cross-check, DB role and result embargo still OPEN |
+| `/admin/videos`, `/admin/resources`, `/admin/live-classes` | Shared `SuperAdminContentDirectoryPage` previously let either optional authoring list or Section picker failure replace healthy selected-college content with a directory error. All three loads settle independently; directory failures still fail visibly, optional failures preserve content. | `SA-COURSES-CONTENT-17`, `tests/unit/chat7-admin-courses-content-hardening.test.ts`; source fix, tests not run |
+| `/admin/lessons` | Reject duplicated/bad browser page parameters with `parseSuperAdminLearningQuery`; separately settle lesson directory, course/cohort filter picker and available creation paths. Only a failed directory shows a list error; read results remain visible during picker outage. | `SA-COURSES-CONTENT-AUDIT-03`, `tests/unit/chat7-admin-learning-directory-resilience.test.ts`; source fix, tests not run |
+| `/admin/course-progress` | Same typed filter URL and independent course/cohort picker failure handling; statistics continue to disclose that per-offering distinct learner counts cannot be added. | `SA-COURSES-CONTENT-AUDIT-03` test; authored, not run |
+| `/admin/course-progress/students` | Rechecked duplicate offeringId rejection, selected-college scoped service read, authorization error state and unknown-denominator semantics; no changes. | Source reviewed, PostgreSQL two-college and 500-row sentinel still OPEN |
+| `effectiveCourseContentVisibleToStudents` | Rechecked published ancestry gate for content, lesson, learning path, offering and course; an unpublished ancestor reports Students Hidden. | `SA-COURSES-CONTENT-AUDIT-02` model regression |
+| `bulkSuperAdminCourseVisibility` | Batch only changes already-published/active content. It does **not** create a persisted, inherited course-level visibility policy, so newly authored content can still be published visible. | `SA-academics-people-53` remains PARTIAL / OPEN; do not call it complete |
+| `/admin/courses/offerings/[offeringId]` | Existing scope-checked offering builder navigation and central manage permission; course imagery upload and standalone grading modals remain incomplete. | `SA-academics-people-50/64/65` remain PARTIAL / OPEN |
+
+The `/admin` parent layout already redirects any non-Super-Admin actor;
+a child route gate is additional protection, not a replacement for persisted
+course/college authorization. In particular, preservation of already-authorized
+directory data must not be interpreted as permission to fall back to an
+unscoped tenant during any service outage.
+
+**Outstanding release and product blockers:** SA-50 scanned binary course imagery;
+SA-53 inherited per-course Show/Hide state; SA-60 private SSRF-resistant video
+ingestion; SA-64 submission grading and Publish all graded modal; SA-65 full quiz
+builder modal; admin 320/375px keyboard/browser walkthrough, stale acting-college
+switches, expired session, genuine two-tenant PostgreSQL fixtures, and strict
+TypeScript/Vitest execution. The owner has postponed execution until all lanes
+finish. Therefore this remains **SOURCE FIXED, NOT RUNTIME VERIFIED** and is
+not a sign-off of the whole section.
