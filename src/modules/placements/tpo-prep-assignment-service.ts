@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,inArray,isNull} from "drizzle-orm";
+import {and,eq,inArray,isNull,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,colleges,courseOfferings,courses,departments,
@@ -49,6 +49,19 @@ export async function assignTpoPrepCourse(ctx:RequestContext,raw:unknown){
  await hasPrepTable();
  const due=input.dueAt?new Date(input.dueAt):null;
  if(due!==null&&due.getTime()<=Date.now())throw new TpoPrepError("DUE_DATE_INVALID");
+ if(due===null){
+  // The new nullable schema is proposed until the orchestrator registers
+  // its migration. Fail cleanly instead of attempting a NOT NULL insert and
+  // returning a raw database error on an older dev deployment.
+  const nullable=await getDb().execute<{ready:boolean}>(sql`
+   SELECT EXISTS(
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema='public' AND table_name='placement_tpo_prep_assignments'
+      AND column_name='due_at' AND is_nullable='YES'
+   ) AS ready
+  `).then(result=>result.rows[0]?.ready===true).catch(()=>false);
+  if(!nullable)throw new TpoPrepError("UNAVAILABLE");
+ }
  return getDb().transaction(async tx=>{
   // Persisted team permission is locked throughout assignment, audit and notices.
   await requireTpoJobActor(tx,ctx);
