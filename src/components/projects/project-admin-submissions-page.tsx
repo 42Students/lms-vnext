@@ -69,18 +69,38 @@ export async function ProjectAdminSubmissionsPage({
   const query: ProjectAdminCollectionQuery = safeQuery;
   // An unsubmitted tab must not depend on unrelated final-delivery reads:
   // one optional summary failure cannot hide a separate valid workspace list.
-  const all = view==="ALL"?await Promise.all([
+  const all = view==="ALL"?await Promise.allSettled([
     listProjectAdminSubmissionQueue(context, collegeId, query),
     getProjectAdminSubmissionSummary(context, collegeId),
   ]):null;
-  const result=all?.[0];
-  const summary=all?.[1];
-  const queuePath =
-    basePath + "/submissions";
-  const renderedAt = new Date();
-  const unsubmitted=view==="NOT_SUBMITTED"?await listProjectAdminUnsubmitted(context,collegeId,{
-    q:query.q,status:query.status,page:query.page,pageSize:query.pageSize,
-  }):null;
+  const result=all?.[0]?.status==="fulfilled"?all[0].value:null;
+  const summary=all?.[1]?.status==="fulfilled"?all[1].value:null;
+  const queuePath=basePath+"/submissions";
+  const renderedAt=new Date();
+  const unsubmittedResult=view==="NOT_SUBMITTED"
+    ? await listProjectAdminUnsubmitted(context,collegeId,{
+        q:query.q,status:query.status,page:query.page,pageSize:query.pageSize,
+      }).then(value=>({ok:true as const,value})).catch(()=>({ok:false as const}))
+    : null;
+  const unsubmitted=unsubmittedResult?.ok?unsubmittedResult.value:null;
+  if(view==="ALL"&&!result){
+    const params=new URLSearchParams();
+    if(query.q)params.set("q",query.q);
+    if(query.status)params.set("status",query.status);
+    if(query.submissionStatus)params.set("submissionStatus",query.submissionStatus);
+    if(query.page&&query.page>1)params.set("page",String(query.page));
+    if(query.pageSize)params.set("pageSize",String(query.pageSize));
+    const suffix=params.toString();
+    return <div className="space-y-6">
+      <ProjectAdminNav basePath={basePath} active="submissions"/>
+      <PageHeader eyebrow={eyebrow} title="Submissions dashboard"
+        description="Final project deliverables across all workspaces."/>
+      <ErrorState title="Submissions unavailable"
+        description="The submissions list could not be loaded. Your filters have not changed."
+        action={<Link href={queuePath+(suffix?"?"+suffix:"")}
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry loading submissions</Link>}/>
+    </div>;
+  }
 
   return (
     <div className="space-y-6">
@@ -117,6 +137,11 @@ export async function ProjectAdminSubmissionsPage({
           Draft (revising)
         </Link>
       </nav>
+      {view==="NOT_SUBMITTED"&&!unsubmitted?<ErrorState
+        title="Unsubmitted workspaces unavailable"
+        description="The unsubmitted workspace list could not be loaded. Your filters have not changed."
+        action={<Link href={projectAdminUnsubmittedHref(queuePath,query,query.page)}
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry loading workspaces</Link>}/>:null}
       {unsubmitted?<section className="space-y-3 rounded-xl border border-border bg-surface p-4">
         <ProjectAdminFilters query={query} filterView="NOT_SUBMITTED"/>
         <h2 className="font-semibold">Not submitted · {unsubmitted.total} workspaces</h2>
@@ -144,8 +169,8 @@ export async function ProjectAdminSubmissionsPage({
            className="text-primary-text underline">Next</Link>:null}
         </div>
       </section>:null}
-      {view==="ALL" && result && summary ? <>
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      {view==="ALL" && result ? <>
+      {summary?<div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {([
           ["Active workspaces", summary.activeWorkspaces, "status", "ACTIVE"],
           ["Pending review", summary.pendingReview, "submissionStatus", "SUBMITTED"],
@@ -160,7 +185,9 @@ export async function ProjectAdminSubmissionsPage({
             <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
           </Link>;
         })}
-      </div>
+      </div>:<p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
+        Submission totals are temporarily unavailable. The filtered submissions below are still visible.
+      </p>}
       <ProjectAdminFilters
         query={query}
         includeSubmissionStatus
