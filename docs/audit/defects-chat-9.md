@@ -49,6 +49,8 @@ Branch: `chatgpt/chat-9-b`. Owner: chat-9. These are observed source-level findi
 
 | PROJ9-029 · PROJ-BREAK-scale-25 / ux-40/41 | Low | Super Admin template page-count model returned `NaN` or `Infinity` for malformed/non-finite upstream totals; pagination consumers could render broken controls rather than a safe first page. The page-count helper now returns one for invalid or negative totals; direct tests cover 20-row boundary, strict URL filters and safe search query encoding. | `36d591f` | `tests/unit/PROJ-BREAK-chat9-template-directory-query.test.ts` (`ad619d8`); browser acceptance OPEN |
 
+| PROJ9-026 · PROJ-BREAK-ux-30/31/32/33 | Medium | The Super Admin Project templates directory awaited DB results directly without a denied-state gate or recovery. A disabled role, database outage or failing directory service could render a raw route error instead of an actionable page. Added access gate before read, outage fallback retaining validated query filters, and explicit return/retry links. Existing malformed-input and empty-catalogue states remain. | `26a44f0` | Server page React-tree behaviors in `tests/unit/PROJ-BREAK-chat9-template-directory-page.test.tsx` (`9d3dba5`) cover denied, failure, malformed query and empty state; browser/client acceptance OPEN |
+
 ## Outstanding release gates (not yet closed)
 
 - Live PostgreSQL integration tests for wrong-tenant IDs, serializable races, rollback and event/notification dedupe; chat-17 owns shared fixtures. Static service assertions alone cannot establish real DB behavior.
