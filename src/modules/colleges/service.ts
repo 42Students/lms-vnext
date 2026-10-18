@@ -595,6 +595,9 @@ export async function archiveCollege(
 
   const archivedAt = new Date();
   return getDb().transaction(async tx=>{
+    await assertPersistedPlatformPermission(tx,context,"college.manage",{
+      collegeId,organizationId:college.organizationId,
+    });
     const [archived]=await tx.update(colleges)
       .set({status:"ARCHIVED",updatedAt:archivedAt})
       .where(and(eq(colleges.id,collegeId),eq(colleges.status,"ACTIVE")))
@@ -628,6 +631,13 @@ export async function restoreCollege(context:RequestContext,rawId:unknown){
  if(candidate.organizationStatus!=="ACTIVE")
   throw new CollegeServiceError("ORGANIZATION_NOT_FOUND");
  return db.transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,context,"college.manage",{
+   collegeId,organizationId:candidate.organizationId,
+  });
+  const [parent]=await tx.select({id:organizations.id}).from(organizations)
+   .where(and(eq(organizations.id,candidate.organizationId),eq(organizations.status,"ACTIVE")))
+   .for("share").limit(1);
+  if(!parent)throw new CollegeServiceError("ORGANIZATION_NOT_FOUND");
   const [restored]=await tx.update(colleges)
    .set({status:"ACTIVE",updatedAt:new Date()})
    .where(and(eq(colleges.id,collegeId),eq(colleges.status,"ARCHIVED"),
