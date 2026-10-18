@@ -72,3 +72,5 @@ These branch-level tests are authored, not executed; fixture timestamps use 2099
 | HR recruiter decision notification read mutation | HR-BREAK-DECISION-READ-46 | `tests/unit/HR-BREAK-chat19-decision-read.test.ts` | Read receipt identity and timestamp, failed response, redirect guard, double-submit and 44px |
 
 | HR unsent drive browser draft discard | UX-HR-DRAFT-CLEAR-47 | `tests/unit/UX-HR-chat19-draft-clear.test.ts` | Confirm dialog, both storage stores, failed deletion preservation, 44px targets |
+
+| Recruiter notifications Mark as read | HR-BREAK-READ-RECEIPT-48 | `tests/unit/HR-BREAK-chat19-read-receipt.test.ts` | Server origin protection, exact persisted receipt, HTML redirect/foreign notification refusal, single-flight gating |
