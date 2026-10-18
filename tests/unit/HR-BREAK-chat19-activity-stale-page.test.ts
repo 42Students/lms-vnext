@@ -23,6 +23,20 @@ describe("HR-BREAK-ACTIVITY-PAGE-13: stale HR activity page and scoped count",()
   expect(hrActivityHasNext(41,40)).toBe(true);
   expect(hrActivityHasNext(40,40)).toBe(false);
  });
+ it.each(["1e3","0x10","+2"," 2 ","2.5","Infinity","NaN","-1"])(
+  "rejects nondecimal or ambiguous activity page %j",value=>{
+   expect(hrActivityQuerySchema.safeParse({page:value}).success).toBe(false);
+   expect(hrActivityQuerySchema.safeParse({limit:value}).success).toBe(false);
+  },
+ );
+ it("accepts canonical decimal URL page and limit plus typed internal numeric values",()=>{
+  expect(hrActivityQuerySchema.safeParse({page:"003",limit:"40"})).toMatchObject({
+   success:true,data:{page:3,limit:40},
+  });
+  expect(hrActivityQuerySchema.safeParse({page:3,limit:40})).toMatchObject({
+   success:true,data:{page:3,limit:40},
+  });
+ });
  it("treats NaN, unsafe counts and invalid limits as a bounded first page",()=>{
   expect(clampHrActivityPage(Infinity,41,40)).toBe(1);
   expect(clampHrActivityPage(-100,41,40)).toBe(1);
