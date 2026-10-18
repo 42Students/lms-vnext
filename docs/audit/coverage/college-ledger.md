@@ -88,3 +88,13 @@ The coverage still is **not exhaustive**: module-wide service and handler invent
 | `src/modules/academics/college-directory-export-model.ts`, `src/modules/colleges/admin-history-export-model.ts` | Academic and admin history CSV encoding | `tests/unit/chat4-college-admin-export-boundaries.test.ts` (`COL-export-08/09`): Unicode format controls and combining marks cannot hide spreadsheet formulas. A doubled regex-escape defect discovered by read-through was corrected in both source files; CI has not been rerun on these corrections |
 
 No route/page has been marked release-complete merely because its module export now has a named source contract. PostgreSQL concurrency, corrupt joins, and full tenant/journey role matrices remain separate, open gates.
+
+## College sign-in policy paths
+
+| Export | Behavioral test | Boundaries and still-open evidence |
+| --- | --- | --- |
+| `src/modules/colleges/public-signin-policy-service.ts` `effectiveCollegeSignInMethod` and `effectiveCollegeSignInCapabilities` | `tests/unit/chat4-college-public-signin-policy-read.test.ts` (`COL-tenant-public-signin-01`) | Null host college does not open DB; pending staged table and absent row use documented dual-channel defaults; configured EMAIL_ONLY and PHONE_ONLY exclude other channel; malformed stored value fails closed instead of enabling forbidden sign-in. Host-based tenant resolution is an upstream assumption to verify separately |
+| `src/modules/colleges/admin-signin-policy-service.ts` `saveAdminCollegeSignInPolicy` / `CollegeSignInPolicyError` | `tests/unit/chat4-superadmin-college-signin-service-cas.test.ts` (`SA-colleges-signin-01`) | Non-SA, disabled actor, wrong selected college, malformed method/version/unknown keys, migration-not-ready, in-transaction persisted revocation, inactive target, no-op retry, stale CAS, increment+single tenant audit. These exercise mocked transactions, **not** a simultaneous PostgreSQL write/revoke race |
+| `src/modules/colleges/admin-signin-policy-service.ts` `readAdminCollegeSignInPolicy` | Not yet behavior-tested in a real database | Persisted scope lock, migration-absent policy state, missing and corrupted row, admin scope changes need integration coverage |
+
+All newly added test cases are authored, **not executed** by this lane.
