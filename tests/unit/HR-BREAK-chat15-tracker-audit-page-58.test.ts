@@ -83,8 +83,10 @@ describe("HR-TRACKER-PAGE-58: admin-only findings route resilient states",()=>{
  it("reports an unavailable backend honestly and never substitutes bug reports",async()=>{
   mocks.ready.mockReturnValue(false);
   const result=await page();
-  expect(visibleText(result)).toContain("Audit findings are unavailable");
+  expect(visibleText(result)).toContain("Audit findings are temporarily unavailable");
+  expect(visibleText(result)).toContain("Please contact your platform administrator");
   expect(visibleText(result)).toContain("Bug reports are not substituted");
+  expect(visibleText(result)).not.toContain("DB10_AUDIT_FINDINGS_READY");
   expect(mocks.list).not.toHaveBeenCalled();
  });
  it("reads only after admin authorization and exposes an explicit empty result",async()=>{
