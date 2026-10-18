@@ -54,3 +54,7 @@ The earlier `docs/audit/coverage/admin-first-chat13.md` already inventories the 
 
 - `SA-BOOKED-INTERVIEWS-04`: registered BOOKED slots whose application belongs to another job/college now fail an INNER JOIN rather than appearing with missing candidate data. A/B disposable PostgreSQL witness authored and added to harness script; runner evidence pending.
 - `SA-PLACEMENT-POLICY-08`: corrupt persisted global policy overrides no longer silently affect displayed limits or duration counterpart comparisons. Bounded canonical numeric parser and adversarial test authored; runner evidence pending.
+
+
+- `SA-DRIVE-ARCHIVE-NOTIFY-05`: archive notification recipients now require the selected college's persisted membership, rather than any application membership. Source regression added; no external delivery executed.
+- `SA-HIRING-REPORT-SCOPE-03`, `SA-PIPELINE-TENANT-02`: Super Admin hiring and funnel counts now exclude forged foreign-college applicant memberships before counting; SQL A/B fixture added alongside source and pure model assertions. Tests not run.
