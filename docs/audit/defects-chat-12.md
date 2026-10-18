@@ -37,6 +37,12 @@ Scope: TPO Projects read journey, TPO Students and Companies bulk operations, fi
 | D12-23 | MAJOR | Student notes service previously allowed notes for same-college suspended learners and disabled users, including fetching private archived notes through direct ID. The POST endpoint buffered arbitrary-size JSON before Zod limits, and the client relied on asynchronous state for double-submit protection. | Active learner/role filters on both read and write; bounded stream parser before mutations; synchronous note-submit latch. | `c515ee9f`, `38196f62`, `345c7255`, `PROJ-BREAK-TPO-PANEL-01.test.ts`. |
 | D12-24 | MODERATE | Roster `hasProfileLinks` facet reported a valid link when learner profile contained only unsafe `javascript:`, HTTP, or credential-bearing URLs, even though rendered links were suppressed. | Use existing `safeHttps` policy for both link presence facet and displayed links. | `e435e4ce`, `PROJ-BREAK-TPO-03`. |
 
+## 2026-10-18 unit-failure triage (TOP PRIORITY)
+
+- Recorded source `docs/orchestrator/unit-failures-latest.md` still identifies `chat12-round41-undo-guarded.test.ts` / TPO-students-16 under old CI `ff6819dd` / cloud `698eb9dd`.
+- Audited the current test against the exact `tpo-bulk-action-panel.tsx` source on main: **all four recorded assertions are present**. `undoLastRun` owns a synchronous `actionInFlightRef` independently of `runGuarded`, and releases it in `finally`; the guarded button only invokes the hook. Thus the stale result does not justify removing the second lock or weakening the test.
+- Strengthened the test at `c7e6fea2` to inspect the actual undo function boundaries, lock ordering, separate button guard, API endpoint and safe failure. Cloud CI has not rerun this commit yet; **do not claim green solely from source inspection**.
+
 ## Verification status
 
 The rolling `docs/orchestrator/unit-failures-latest.md` explicitly reports two `chat-12` failures (TPO-students-51); their stale selectors were repaired but remain **unverified in CI**. The branch was fast-forwarded to main `a172b146ede1992a428dbe3e74a6d87dd3a12985` before these changes. No direct commits to main.
