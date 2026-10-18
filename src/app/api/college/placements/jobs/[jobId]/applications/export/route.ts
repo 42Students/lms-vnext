@@ -10,6 +10,11 @@ export async function GET(request: Request, {params}: {params:Promise<{jobId:str
     q:search.get("q") ?? undefined,
     status:search.get("status") ?? undefined,
     screening:search.get("screening") ?? undefined,
+    source:search.get("source") ?? undefined,
+    stage:search.get("stage") ?? undefined,
+    departmentId:search.get("departmentId") ?? undefined,
+    programId:search.get("programId") ?? undefined,
+    cohortId:search.get("cohortId") ?? undefined,
   });
   if (!query) return new Response("Invalid export filters",{status:400});
   try {
