@@ -1,3 +1,6 @@
+import {Drawer} from "@/components/ui/drawer";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 "use client";
 import {useEffect,useRef,useState} from "react";
 import Link from "next/link";
@@ -21,10 +24,8 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
  const [loading,setLoading]=useState(false);
  const [message,setMessage]=useState("");
  const seq=useRef(0),timeout=useRef<ReturnType<typeof setTimeout>|null>(null);
- const closeButton=useRef<HTMLButtonElement>(null);
  const endpoint="/api/admin/features/"+encodeURIComponent(collegeId)+"/trace";
  useEffect(()=>()=>{seq.current++;if(timeout.current)clearTimeout(timeout.current);},[]);
- useEffect(()=>{if(detail)closeButton.current?.focus();},[detail]);
  async function lookup(query:string,memberId?:string){
   const requestId=++seq.current;
   setLoading(true);setMessage("");
@@ -52,7 +53,7 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
   <h2 className="font-semibold">Why can&apos;t a student see a module?</h2>
   <label className="mt-3 grid gap-1 text-sm font-semibold text-body">
    Why can&apos;t a student see a module? Search…
-   <input type="search" maxLength={100} value={search} onChange={event=>change(event.target.value)}
+   <Input type="search" maxLength={100} value={search} onChange={event=>change(event.target.value)}
     placeholder="Name or roll number" autoComplete="off"
     className="min-h-11 w-full rounded-md border border-border bg-background px-3"/>
   </label>
@@ -61,24 +62,20 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
    <p className="mt-2 text-xs text-body">No matching learners in this college.</p>:null}
   {suggestions.length>0?<ul aria-label="Matching learners" className="mt-2 max-h-60 overflow-auto rounded-md border border-border">
    {suggestions.map(student=><li key={student.membershipId} className="border-b border-border last:border-0">
-    <button type="button" onClick={()=>void lookup(search,student.membershipId)}
+    <Button type="button" variant="ghost" onClick={()=>void lookup(search,student.membershipId)}
      className="min-h-11 w-full px-3 py-2 text-left text-sm hover:bg-primary-subtle">
      {student.displayName||"Unnamed learner"} · {student.rollNumber||"No roll number"}
-    </button>
+    </Button>
    </li>)}
   </ul>:null}
   {message?<p role="alert" className="mt-2 text-sm text-error">{message}</p>:null}
-  {detail?<div className="fixed inset-0 z-50 flex justify-end bg-black/50">
-   <button type="button" className="absolute inset-0 cursor-default" aria-label="Close student explanation overlay" onClick={close}/>
-   <aside role="dialog" aria-modal="true" aria-label="Student module access explanation"
-    onKeyDown={event=>{if(event.key==="Escape")close();}}
-    className="relative h-full w-full max-w-xl space-y-4 overflow-auto border-l border-border bg-surface p-5 shadow-xl">
+  <Drawer open={detail!==null} onOpenChange={open=>{if(!open)close();}} title="Student module access explanation">
+   {detail?<div className="space-y-4">
     <div className="flex items-start justify-between gap-3">
      <div><h3 className="text-lg font-semibold">{detail.displayName||"Unnamed learner"}</h3>
       <p className="text-sm text-body">{detail.rollNumber||"No roll number"}</p>
      </div>
-     <button type="button" ref={closeButton} onClick={close} aria-label="Close student explanation"
-      className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold">Close</button>
+     <Button type="button" variant="secondary" onClick={close} aria-label="Close student explanation">Close</Button>
     </div>
     <section aria-label="Placement participation" className="rounded-md border border-border p-3 text-sm">
      <h4 className="font-semibold">Placement cell decision</h4>
@@ -99,16 +96,16 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
         membershipId={detail.membershipId} module={rule.module} stored={rule.stored}
         locked={rule.locked} blocked={rule.blocked}/>)}
      </article>)}</div>
-    <button type="button" className="min-h-11 rounded-md border border-border px-4 text-sm"
+    <Button type="button" variant="secondary"
      onClick={()=>void lookup(search,detail.membershipId)} disabled={loading}>
      Recheck access after a change
-    </button>
+    </Button>
     <p className="text-xs text-body">This reads persisted learner access. It does not sign in as the student.</p>
-    <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline"
+    <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline"
      href={"/admin/features/"+encodeURIComponent(collegeId)+"/trace?membershipId="+encodeURIComponent(detail.membershipId)}>
      Open full access trace →
     </Link>
-   </aside>
-  </div>:null}
+   </div>:null}
+  </Drawer>
  </section>;
 }
