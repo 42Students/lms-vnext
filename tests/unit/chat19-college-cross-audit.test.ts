@@ -10,6 +10,16 @@ vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:models.context})
 vi.mock("@/modules/projects/admin-college-scope",()=>({getProjectAdminCollegeId:models.college}));
 vi.mock("@/modules/projects/admin-insights-service",()=>({listProjectAdminSnapshots:models.snapshots}));
 vi.mock("@/modules/projects/template-service",()=>({listAssignedProjectTemplates:models.templates}));
+vi.mock("@/components/projects/project-admin-collection-controls",()=>({
+  ProjectAdminFilters:()=>null,ProjectAdminPagination:()=>null,
+}));
+vi.mock("@/components/projects/project-admin-nav",()=>({ProjectAdminNav:()=>null}));
+vi.mock("@/components/projects/project-admin-workspace-list",()=>({
+  ProjectAdminWorkspaceList:()=>null,
+}));
+vi.mock("@/components/projects/project-admin-workspace-page-export",()=>({
+  ProjectAdminWorkspacePageExport:()=>null,
+}));
 import CollegeProjectsPage from "@/app/(authenticated)/college/projects/page";
 
 function nestedText(node:ReactNode):string {

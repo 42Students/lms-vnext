@@ -1,14 +1,19 @@
 "use client";
-import {useState} from "react";
+import {useRef,useState} from "react";
+import {createHrBellMutationGate} from "@/modules/placements/hr-recruiter-bell-model";
+import {hrNotificationReadError} from "@/modules/placements/hr-notification-read-feedback-model";
 import {useRouter} from "next/navigation";
 export function HrNotificationReadButton({notificationId,expectedCreatedAt}:{
  notificationId:string;expectedCreatedAt:string;
 }){
  const router=useRouter();
  const [saving,setSaving]=useState(false);
+ const [complete,setComplete]=useState(false);
+ const completeRef=useRef(false);
+ const gate=useRef(createHrBellMutationGate());
  const [message,setMessage]=useState("");
  async function markRead(){
-  if(saving)return;
+  if(completeRef.current || !gate.current.tryBegin())return;
   setSaving(true);setMessage("");
   try{
    const res=await fetch("/api/placements/recruiter/notifications/"+
@@ -17,15 +22,15 @@ export function HrNotificationReadButton({notificationId,expectedCreatedAt}:{
     headers:{"content-type":"application/json"},
     body:JSON.stringify({expectedCreatedAt}),
    });
-   if(res.ok){router.refresh();return;}
-   setMessage(res.status===409?"This notification changed. Refresh the inbox.":"Unable to mark read.");
+   if(res.ok){completeRef.current=true;setComplete(true);router.refresh();return;}
+   setMessage(hrNotificationReadError(res.status));
   }catch{setMessage("Network error. Try again.");}
-  finally{setSaving(false);}
+  finally{gate.current.end();setSaving(false);}
  }
  return <div className="mt-3 flex flex-wrap items-center gap-2">
-  <button type="button" disabled={saving} onClick={()=>void markRead()}
-   className="min-h-10 rounded-md border border-border px-3 text-sm text-primary-text disabled:opacity-60">
-   {saving?"Saving…":"Mark as read"}
+  <button type="button" disabled={saving||complete} onClick={()=>void markRead()}
+   className="min-h-11 rounded-md border border-border px-3 text-sm text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] disabled:opacity-60">
+   {complete?"Marked as read":saving?"Saving…":"Mark as read"}
   </button>
   {message?<span role="status" className="text-xs text-body">{message}</span>:null}
  </div>;
