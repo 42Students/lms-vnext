@@ -81,3 +81,10 @@ No CI green or database-side multi-session verification is claimed for these aut
 | CH2-024 | High | TPO-campaigns-public-12 | Recipient planner deduplicated email only, not CRM lead identity; the same lead with different address evidence could be included twice. Snapshot matching checked only live consent, not historical unsubscribed/bounced/not-now evidence. Both now fail closed. | `2f32dd4`, `9109b92`, `ccb79d6` | `tests/unit/chat2-campaign-recipient-snapshot-boundaries.test.ts` |
 | CH2-025 | Medium | TPO-settings-audit-55 | CAS version schema accepted offset-aware ISO dates but the service compared against UTC `.toISOString()`, rejecting an equivalent token in IST. Normalize validated timestamps at Zod boundary. | `1fd83f6`, `6aef78d` | `tests/unit/chat2-settings-people-trusted-links-cas.test.ts` |
 | CH2-026 | Medium | TPO-settings-audit-55 | Public join-link create/toggle and recruiter grant POST routes called unbounded `request.json()`. Reused existing 8192-byte streaming JSON boundary; same-origin remains first, mapping 400/413 without raw internals. | `4345d87`, `eaa2410`, `2ccdc26` | `tests/unit/chat2-tpo-public-link-bounded-json.test.ts` |
+
+## Campaign route resilience defects (2026-10-18)
+
+| ID | Severity | Gap | Finding | Fix commit(s) | Test |
+| --- | --- | --- | --- | --- | --- |
+| CH2-027 | Medium | TPO-campaigns-public-12 | Draft and selected-recipient preview POST handlers parsed arbitrarily large JSON bodies using `request.json()`. A shared streamed parser now enforces an 8KiB selection limit and separate 64KiB Unicode-friendly authored draft limit, including requests with absent Content-Length. | `ce0fddb`, `4e3a80e`, `ef86288` | `tests/unit/chat2-campaign-bounded-json.test.ts` |
+| CH2-028 | Medium | TPO-campaigns-public-12 | Private campaign receipt CSV silently selected the first `purpose` value and ignored unknown keys. Repeated/smuggled query keys now return 400; CSV explicitly disables content sniffing. | `30a9e4a` | `tests/unit/chat2-campaign-history-export-route.test.ts` |

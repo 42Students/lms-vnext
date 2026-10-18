@@ -1,6 +1,7 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { getTpoDriveOfferRegisterCsv } from "@/modules/placements/tpo-drive-offer-register-service";
+import {tpoReportHasRepeatedSearchParams} from "@/modules/placements/tpo-report-url-guard";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 export async function GET(request:Request,{params}:{
@@ -9,8 +10,14 @@ export async function GET(request:Request,{params}:{
  try{
   const {jobId}=await params;
   const url=new URL(request.url);
+  // The path jobId is authoritative. A query parameter must never select a
+  // different drive for an export than the page the TPO is reviewing.
+  if(url.searchParams.has("jobId")||tpoReportHasRepeatedSearchParams(url.searchParams))
+    return Response.json({error:"INVALID_REPORT_FILTERS"},{
+      status:400,headers:{"Cache-Control":"private, no-store, max-age=0"},
+    });
   const result=await getTpoDriveOfferRegisterCsv(await getCurrentRequestContext(),
-   {jobId,...Object.fromEntries(url.searchParams.entries())});
+   {...Object.fromEntries(url.searchParams.entries()),jobId});
   return new Response("\uFEFF"+result.csv,{status:200,headers:{
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="tpo-drive-offers.csv"',

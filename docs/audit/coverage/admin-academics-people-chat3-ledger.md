@@ -84,6 +84,11 @@ Snapshot: 2026-10-18, source branch `chatgpt/chat-3-b`. Role-journal and code-ba
 - `listProgramContents` now requires `academics.manage`, not generic `academics.read`. Delete-readiness counts of semesters, batches and classes are an administrative capability and should not be returned to ordinary Faculty, Mentor or Learner callers who know program IDs. `tests/unit/chat3-sa-program-dependency-count-roles.test.ts` exercises the real service and three Drizzle tenant predicates, maps dependent totals and denies wrong roles/tenant.
 - No new database schema and no migration. Real PostgreSQL capacity and 1,000+ cohort scale acceptance remains pending.
 
+## SA-ACADEMICS-SECTION-OPS-01 — privileged Section operations service
+
+- `getSectionOperationsWorkspace` now denies Faculty, Mentor, Learner and inactive/nonadministrative principals **before** resolving a potentially private Section ID, while still requiring the persisted selected college's `academics.manage` permission afterward.
+- `tests/unit/chat3-sa-section-workspace-permission-matrix.test.ts` invokes the real workspace service, checks period-college SQL, all dependent roster/assignment/schedule reads, malformed IDs, disabled actors, wrong tenant and foreign academic-period denial. Cloud CI and PostgreSQL foreign-period fixture pending.
+
 ## Targeted repairs and further release gates
 
 - `COL-people-24`: exact legacy mentor-reassignment confirmation description restored at `src/components/projects/project-admin-reassign-mentor-page.tsx`; must rerun its failing test, and real keyboard/retry browser checks remain.

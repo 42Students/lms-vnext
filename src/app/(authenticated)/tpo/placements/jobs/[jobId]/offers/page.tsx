@@ -6,10 +6,13 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getTpoDriveOfferRegister} from "@/modules/placements/tpo-drive-offer-register-service";
 import {offerRegisterQuery} from "@/modules/placements/tpo-drive-offer-register-model";
+import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
+import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
 export default async function OffersPage({params,searchParams}:{params:Promise<{jobId:string}>,searchParams:Promise<{status?:string|string[];page?:string|string[];q?:string|string[];joining?:string|string[];kind?:string|string[];expiry?:string|string[];minCtcLpa?:string|string[];maxCtcLpa?:string|string[]}>}){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const [p,q]=await Promise.all([params,searchParams]);
+ if(tpoReportHasAmbiguousFilters(q))return <TpoReportInvalidFilters path={"/tpo/placements/jobs/"+encodeURIComponent(p.jobId)+"/offers"}/>;
  const raw=Array.isArray(q.status)?q.status[0]:q.status;
  const page=Array.isArray(q.page)?q.page[0]:q.page;
  const qterm=Array.isArray(q.q)?q.q[0]:q.q;
