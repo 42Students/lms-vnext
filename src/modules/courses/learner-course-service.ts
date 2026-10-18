@@ -17,6 +17,7 @@ import {
   assignmentSubmissions,
   courseAssignments,
   collegeMemberships,
+  membershipRoles,
   courseLearningPaths,
   courseLessons,
   courseOfferings,
@@ -357,6 +358,10 @@ export async function listLearnerCourseInstructors(
       users,
       eq(users.id, collegeMemberships.userId),
     )
+    .innerJoin(membershipRoles,and(
+      eq(membershipRoles.membershipId,collegeMemberships.id),
+      eq(membershipRoles.role,"FACULTY"),
+    ))
     .where(
       and(
         eq(
