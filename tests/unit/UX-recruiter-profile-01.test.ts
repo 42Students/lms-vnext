@@ -7,7 +7,8 @@ describe("UX-recruiter-profile-01",()=>{
   const source=read("src/app/(authenticated)/recruiter/profile/page.tsx");
   expect(source).toContain("@/app/(authenticated)/hr/profile/page");
   expect(source).toMatch(/export\s*\{\s*default\s*\}/);
-  expect(read("src/app/(authenticated)/hr/profile/page.tsx")).toMatch(/export\s+default|export\s*\{\s*default/);
+  const canonical=read("src/app/(authenticated)/hr/profile/page.tsx");
+  expect(canonical).toMatch(/export\s+default|export\s*\{\s*default/);
   expect(read("src/app/(authenticated)/recruiter/profile/loading.tsx")).toContain("GracefulPageLoading");
   expect(read("src/app/(authenticated)/recruiter/profile/error.tsx")).toContain("GracefulErrorBoundary");
   expect(canonical).toContain("PageHeader");

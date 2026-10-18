@@ -7,7 +7,8 @@ describe("UX-recruiter-drives-jobId-rounds-editor-remove-roundId-01",()=>{
   const source=read("src/app/(authenticated)/recruiter/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx");
   expect(source).toContain("@/app/(authenticated)/hr/drives/[jobId]/rounds/editor/remove/[roundId]/page");
   expect(source).toMatch(/export\s*\{\s*default\s*\}/);
-  expect(read("src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx")).toMatch(/export\s+default|export\s*\{\s*default/);
+  const canonical=read("src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx");
+  expect(canonical).toMatch(/export\s+default|export\s*\{\s*default/);
   expect(read("src/app/(authenticated)/recruiter/drives/[jobId]/rounds/editor/remove/[roundId]/loading.tsx")).toContain("GracefulPageLoading");
   expect(read("src/app/(authenticated)/recruiter/drives/[jobId]/rounds/editor/remove/[roundId]/error.tsx")).toContain("GracefulErrorBoundary");
   expect(canonical).toContain("PageHeader");
