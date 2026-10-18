@@ -19,7 +19,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
   <section className="space-y-2 rounded-xl border border-border bg-surface p-5">
    <h2 className="font-semibold">{job.title}</h2>
    <p className="text-sm text-body">Status: {job.status}</p>
-   <p className="text-sm text-body">Application deadline: {job.applicationDeadline?.toISOString().slice(0,10)??"Not configured"}</p>
+   <p className="text-sm text-body">Application deadline (IST): {job.applicationDeadline ? new Intl.DateTimeFormat("en-IN", {dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(job.applicationDeadline) : "Not configured"}</p>
    <p className="text-sm text-muted-foreground">The existing drive workspace enforces deadline, eligibility and publication state transitions.</p>
    <Link href={base} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Open drive controls →</Link>
   </section>
