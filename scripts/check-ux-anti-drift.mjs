@@ -4,6 +4,7 @@
  * Existing unaudited legacy pages are tracked separately, not silently passed.
  */
 import { readFileSync, readdirSync } from "node:fs";
+import { execFileSync } from "node:child_process";
 import { join, relative } from "node:path";
 import ts from "typescript";
 
@@ -14,6 +15,12 @@ const audited = [
   "src/app/(authenticated)/tpo/students/page.tsx",
   "src/components/tpo/tpo-students-spreadsheet.tsx",
   "src/components/tpo/tpo-spreadsheet-grid.tsx",
+  "src/app/(authenticated)/mentor/calendar/page.tsx",
+  "src/app/(authenticated)/tpo/messages/page.tsx",
+  "src/app/(authenticated)/admin/module-access/page.tsx",
+  "src/app/(authenticated)/college/contacts/page.tsx",
+  "src/components/shell/app-shell.tsx",
+  "src/components/hr/recruiter-applicant-review-drawer.tsx",
   "src/app/(authenticated)/learn/allAssignments/[assignmentId]/page.tsx",
   "src/components/placements/placement-drive-workspace.tsx",
   "src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx",
@@ -37,6 +44,16 @@ function walk(target) {
     }
   } catch { if (/[.]tsx?$/.test(target)) sources.push(target); }
 }
+// Audit every changed TypeScript route/component, not only the fixed allowlist.
+// CI checks the branch against origin/main; local checkout still gets critical coverage.
+try {
+  const changes = execFileSync("git", ["diff", "--name-only", "origin/main...HEAD"], { encoding:"utf8", cwd });
+  for (const path of changes.trim().split("\n").filter(Boolean)) {
+    if (/^src\/(app|components)\/.*[.]tsx?$/.test(path)) audited.push(path);
+  }
+} catch {
+  // An exported source archive has no Git refs; always inspect named high-risk paths.
+}
 for (const path of audited) walk(path);
 const failures=[];
 for (const path of [...new Set(sources)]) {
@@ -55,7 +72,9 @@ for (const path of [...new Set(sources)]) {
     }
     if (ts.isJsxAttribute(node)) {
       if(node.name.text==="target" && node.initializer &&
-        ts.isStringLiteral(node.initializer) && node.initializer.text==="_blank") {
+        (ts.isStringLiteral(node.initializer) && node.initializer.text==="_blank" ||
+          ts.isJsxExpression(node.initializer) && node.initializer.expression &&
+          ts.isStringLiteral(node.initializer.expression) && node.initializer.expression.text==="_blank")) {
         fail(node,"new-window link");
       }
       if (node.name.text==="className" && node.initializer) {
@@ -78,5 +97,5 @@ if (failures.length) {
   process.stderr.write("UX anti-drift violations:\n"+failures.join("\n")+"\n");
   process.exitCode=1;
 } else {
-  process.stdout.write(`UX anti-drift source guard passed (${sources.length} files). Browser/AT checks remain separate.\n`);
+  process.stdout.write(`UX anti-drift source guard passed (${[...new Set(sources)].length} files, including changed routes). Browser/AT checks remain separate.\n`);
 }
