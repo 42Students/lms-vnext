@@ -38,13 +38,18 @@ describe("chat-14 mentor and HR UX critical page contracts",()=>{
   const src=read("src/app/(authenticated)/hr/profile/page.tsx");
   expect(src).toContain("RecruiterProfileDetailsEditor");
   expect(src).toContain("RecruiterProfileAccess");
-  expect(src).toContain("overflow-x-auto");
+  expect(src).toContain("<DataTable");
+  expect(src).toContain('caption="Current college access"');
+  expect(src).toContain('mobilePriority:"primary"');
+  expect(src).toContain('hasActiveRecruiter(context)');
   expect(src).toContain("PageHeader");
  });
  it("UX-hr-company-reports-02 preserves phone cards and accessible desktop data reports",()=>{
   const src=read("src/app/(authenticated)/hr/company/reports/page.tsx");
-  expect(src).toContain("md:block");
-  expect(src).toContain('aria-label="Company Reports table"');
+  expect(src).toContain("<DataTable");
+  expect(src).toContain('caption="Company Reports table"');
+  expect(src).toContain('mobilePriority:"primary"');
+  expect(src).toContain("recruiterCompanyReportsQuerySchema.safeParse");
   expect(src).toContain("EmptyState");
   expect(src).toContain("PageHeader");
  });
