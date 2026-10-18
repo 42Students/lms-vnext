@@ -9,6 +9,9 @@ export async function getRecruiterDriveConversations(context:RequestContext,rawJ
  const jobId=z.string().uuid().parse(rawJobId);
  const workspace=await getRecruiterPlacementWorkspace(context,jobId);
  const all=await listMessageThreads(context,workspace.college.id);
- const threads=recruiterDriveThreads(all,workspace.job.id,context.user.id);
+ // Defense in depth: neither a returned thread's recruiter identity nor
+ // its college may be inferred from the job title or the nested list response.
+ const ownedCollege=all.filter(thread=>thread.collegeId===workspace.college.id);
+ const threads=recruiterDriveThreads(ownedCollege,workspace.job.id,context.user.id);
  return {workspace,threads};
 }

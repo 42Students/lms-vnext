@@ -1,7 +1,10 @@
 /** SA-tenants-modules-17: formula-safe, bounded, currently visible admin history. */
 export type AdminHistoryExportRow={occurredAt:Date;eventType:string;summary:string};
 function cell(input:string){
- const safe=/^\s*[=+\-@\t\r]/.test(input)?"'"+input:input;
+ // Spreadsheet importers can strip invisible format and combining marks
+ // before deciding whether a value starts with a formula operator.
+ const visible=input.replace(/^[\\s\\p{Cf}\\p{Mn}]*/u,"");
+ const safe= (/^[\\t\\r]/u.test(input)||/^[=+\\-@]/u.test(visible))?"'"+input:input;
  return '"'+safe.replaceAll('"','""')+'"';
 }
 export const MAX_ADMIN_HISTORY_EXPORT_ROWS=100;

@@ -19,10 +19,9 @@ function first(value: string | string[] | undefined) {
 export function parseAdminProjectsQuery(
   params: Record<string, string | string[] | undefined>,
 ) {
-  // Legacy Next searchParams may deliver repeated search/status values.
-  // Only their first (validated) value is authoritative. Pagination and
-  // display mode must be singular to prevent ambiguous/high-cost offsets.
-  if ([params.page, params.pageSize, params.view].some(Array.isArray))
+  // Duplicate values are ambiguous for every filter, including legacy
+  // `search` and modern `q`. Fail closed before querying tenant data.
+  if (Object.values(params).some(Array.isArray))
     return schema.safeParse(null);
   // Legacy `search` and current `q` are aliases, not independently
   // selectable filters. Reject conflicts rather than silently preferring one.

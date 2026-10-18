@@ -1,11 +1,12 @@
 # Chat-9 Projects admin/college breaker ledger (IIT Dharwad)
 
-Date: 2026-10-18. **Targeted inventory: 58 exported functions/route handlers/pages** across admin/college services; **not** the full Projects module. Chat-14 is explicitly the lead for `docs/audit/coverage/projects-ledger.md` and must merge this inventory into the full per-export ledger. Nothing in this file claims 90%+ branch coverage or passing integration tests.
+Date: 2026-10-18. **Targeted inventory: 59 exported functions/route handlers/pages** across admin/college services; **not** the full Projects module. Chat-14 is explicitly the lead for `docs/audit/coverage/projects-ledger.md` and must merge this inventory into the full per-export ledger. Nothing in this file claims 90%+ branch coverage or passing integration tests.
 
 **Evidence category**: PURE BEHAVIOR means a unit test directly calls the exported function with hostile values. SOURCE means an adversarial source/route invariant asserts scoped filters, locks, CSRF, archiving, notification dedupe etc.; database-backed role matrix, idempotency, stale-version and failure replay are **outstanding** for that entry, not implicitly waived. A row points to its related tests and has an honest unresolved item instead of a fake passed status.
 
 | File | Export/route/page | Regression cases (`tests/unit/proj-break-chat9-*.test.ts`) | Depth and remaining acceptance |
 |---|---|---|---|
+| `src/modules/projects/template-metadata-edit-service.ts` | `editSuperAdminTemplateMetadata` | `PROJ-BREAK-idor-14; PROJ-BREAK-races-08/09` | SOURCE: transactional persisted-actor check, PURE BEHAVIOR: CAS/state/schema; DB revoke-race pending |
 | `src/modules/projects/template-service.ts` | `listProjectTemplates` | `PROJ-BREAK-races-05` | SOURCE: publication CAS / permission; DB matrix pending |
 | `src/modules/projects/template-service.ts` | `getProjectTemplateDetail` | `PROJ-BREAK-races-05` | SOURCE: publication CAS / permission; DB matrix pending |
 | `src/modules/projects/template-service.ts` | `getAssignedProjectTemplateDetail` | `PROJ-BREAK-races-05` | SOURCE: publication CAS / permission; DB matrix pending |

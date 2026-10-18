@@ -5,7 +5,9 @@ describe("Super Admin placement lookup",()=>{
  it("SA-placements-projects-09 supports tenant-scoped name, roll, email search and application outcomes",()=>{
   const page=read("src/app/(authenticated)/admin/placements/student-lookup/page.tsx");
   const service=read("src/modules/placements/college-placement-student-lookup-service.ts");
-  for(const v of ["lookupCollegeStudentPlacement(ctx,q)","ctx.adminScope?.collegeId","Name, roll number or email","Application","Joining"])expect(page).toContain(v);
+  for(const v of ["lookupCollegeStudentPlacement(ctx,query)","ctx.adminScope?.collegeId","Name, roll number or email","Application","Joining"])expect(page).toContain(v);
+  expect(page).toContain("parseSuperAdminPlacementStudentSearch(params)");
+  expect(page).toContain("query&&ctx.adminScope?.collegeId?await lookupCollegeStudentPlacement(ctx,query):null");
   expect(service).toContain("requireCollegePlacementAdmin");
   expect(service).toContain("eq(collegeMemberships.collegeId,collegeId)");
   for(const p of ["src/app/(authenticated)/admin/placements/page.tsx","src/app/(authenticated)/admin/placements/drives/page.tsx"])expect(read(p)).toContain("/admin/placements/student-lookup");
