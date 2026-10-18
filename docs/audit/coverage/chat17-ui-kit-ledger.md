@@ -135,3 +135,5 @@ The **generated** `docs/audit/ux/COVERAGE-MATRIX.md` currently lists five Projec
 - **UX-kit-HARDEN-55:** Interactive Tabs motion is now disabled under `prefers-reduced-motion` without changing legacy labels, role=tab, ARIA selection or focus navigation. The shared Buttons/Input/Select/Textarea were already motion-safe; tab indicator was the missing transition exception.
 
 - **UX-kit-HARDEN-56:** Loading Button's actual busy/disabled semantics can no longer be overwritten by a caller's stale `aria-busy={false}`; explicit non-loading ARIA busy values still pass through. This fixes misleading screen-reader state while guarded saves run.
+
+- **UX-kit-HARDEN-57:** Inline success notices no longer vanish while the app is backgrounded. Their dismissal timer pauses when `document.hidden` and restarts when the tab becomes visible. Error/info notices retain their original persistence and no component text changes. Source/SSR state test added; browser visibility-event behavior awaits final acceptance.

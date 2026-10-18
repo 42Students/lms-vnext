@@ -123,3 +123,5 @@ All newly authored tests remain pending cloud execution; migration retains the p
 | UX-kit-HARDEN-55 | S2 (motion a11y) | Shared interactive Tabs used a color transition even when the user requested reduced motion. | Adds `motion-reduce:transition-none` and ARIA-preserving tab regression HARDEN-55. | Authored; final browser gate pending |
 
 | UX-kit-HARDEN-56 | S2 (pending state a11y) | `Button` rendered `aria-busy` before `...props`, allowing a stale caller-provided false value to override its actual loading state. | `aria-busy` is now derived after spreading native props; regression HARDEN-56 covers loading and idle. | Authored; final CI pending |
+
+| UX-kit-HARDEN-57 | S2 (feedback resilience) | A success notice could auto-dismiss entirely while the operator switched browser tabs, leaving no acknowledgment on return. | `InlineNotice` schedules timeout only on visible documents, resets on visibility change and cleans up listener; HARDEN-57 test. | Authored; browser gate pending |
