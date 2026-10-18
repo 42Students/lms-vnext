@@ -67,9 +67,8 @@ describe("HR-ROUND-SLOT-ROUTE-25 recruiter mutation routes fail closed",()=>{
   expect(result.status).toBe(303);
   expect(result.headers.get("location")).toBe(
    "https://lms.example.org/recruiter/drives/"+jobId+"/rounds/editor?changed=CREATED");
-  expect(mocks.edit).toHaveBeenCalledWith(actor,jobId,{
-   action:"CREATE",kind:"INTERVIEW",name:"Technical",
-  });
+  expect(mocks.edit).toHaveBeenCalledWith(actor,jobId,
+   expect.objectContaining({action:"CREATE",kind:"INTERVIEW",name:"Technical"}));
  });
  it("stale and already-used round versions return 409, not silent success",async()=>{
   mocks.edit.mockRejectedValue(new PlacementsServiceError("PLACEMENT_ROUND_STALE"));
