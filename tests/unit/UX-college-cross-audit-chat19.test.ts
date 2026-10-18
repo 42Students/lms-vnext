@@ -41,7 +41,7 @@ describe("College cross-audit fixes (independent chat-19)",()=>{
   it("COL-XA-03 "+(route||"index")+" retains mobile identity cards and sticky desktop columns",()=>{
    const source=page(route);
    expect(source,route).toContain("<DataTable");
-   expect(source,route).toMatch(/mobilePriority:\\s*["']primary["']/);
+   expect(source,route).toMatch(/mobilePriority:\s*["']primary["']/);
    expect(source,route).not.toContain("<table");
    const shared=readFileSync(join(process.cwd(),"src/components/ui/data-table.tsx"),"utf8");
    expect(shared).toContain("sm:first:sticky");

@@ -1,5 +1,5 @@
-import {ScrollCue} from "@/components/ui/scroll-cue";
 "use client";
+import {ScrollCue} from "@/components/ui/scroll-cue";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {Dialog} from "@/components/ui/dialog";

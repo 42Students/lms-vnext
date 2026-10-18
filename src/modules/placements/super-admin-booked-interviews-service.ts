@@ -7,16 +7,16 @@ import {placementRoundCandidateSlots} from "@/db/schema/placement-round-candidat
 import type {RequestContext} from "@/modules/identity/context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import type {SuperAdminCalendarRound} from "@/modules/admin-ui/super-admin-interview-operations-model";
+import {superAdminBookedInterviewWindow} from "./super-admin-booked-interviews-range";
 
 /** Registered candidate-slot bookings, not round-only calendar approximations. */
 export async function listSuperAdminBookedInterviews(
  context:RequestContext,from:string,to:string,
 ):Promise<{events:SuperAdminCalendarRound[];truncated:boolean}> {
  const scope=requireSuperAdminSelectedCollege(context,"placements.read");
- const fromDate=new Date(from+"T00:00:00+05:30");
- const toDate=new Date(new Date(to+"T00:00:00+05:30").getTime()+86400000);
- if(!Number.isFinite(fromDate.getTime())||!Number.isFinite(toDate.getTime())||
-   toDate.getTime()<=fromDate.getTime())return {events:[],truncated:false};
+ const window=superAdminBookedInterviewWindow(from,to);
+ if(!window)return {events:[],truncated:false};
+ const {fromDate,toDate}=window;
  const s=placementRoundCandidateSlots;
  const rows=await getDb().select({
   id:s.id,roundId:s.roundId,jobId:s.jobId,applicationId:s.applicationId,
@@ -27,10 +27,10 @@ export async function listSuperAdminBookedInterviews(
   roundKind:placementJobRounds.kind,companyName:placementCompanies.name,
  }).from(s)
  .innerJoin(placementJobs,and(eq(placementJobs.id,s.jobId),eq(placementJobs.collegeId,scope.collegeId)))
- .innerJoin(placementJobRounds,eq(placementJobRounds.id,s.roundId))
- .innerJoin(placementCompanyRelationships,eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId))
+ .innerJoin(placementJobRounds,and(eq(placementJobRounds.id,s.roundId),eq(placementJobRounds.jobId,s.jobId)))
+ .innerJoin(placementCompanyRelationships,and(eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),eq(placementCompanyRelationships.collegeId,scope.collegeId)))
  .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
- .leftJoin(placementApplications,eq(placementApplications.id,s.applicationId))
+ .leftJoin(placementApplications,and(eq(placementApplications.id,s.applicationId),eq(placementApplications.jobId,s.jobId)))
  .leftJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),eq(collegeMemberships.collegeId,scope.collegeId)))
  .leftJoin(users,eq(users.id,collegeMemberships.userId))
  .leftJoin(learnerProgramEnrollments,and(eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),eq(learnerProgramEnrollments.status,"ACTIVE")))

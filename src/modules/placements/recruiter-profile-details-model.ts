@@ -17,3 +17,12 @@ export const recruiterProfileDetailsPatchSchema=z.strictObject({
    !(digits.length===10||(digits.length===12&&digits.startsWith("91")))))
   ctx.addIssue({code:"custom",path:["phone"],message:"Enter a valid 10-digit mobile number, or leave it blank"});
 });
+
+/** Safe, actionable save feedback; never echo server error details or discard the form. */
+export function hrProfileSaveErrorFeedback(status:number):string{
+ if(status===409)return "Your profile changed. Refresh before saving; your edits are still here.";
+ if(status===401)return "Your session has expired. Sign in again to save; your edits are still here.";
+ if(status===403)return "Your recruiter access has ended. Ask the placement cell to restore it; your edits are still here.";
+ if(status===429)return "Too many save attempts. Try again shortly; your edits are still here.";
+ return "Could not save your profile. Your changes are still here; try again.";
+}

@@ -9,6 +9,15 @@ describe("TPO-students-02 roster student deep link and drawer",()=>{
   expect(tpoStudentUrlError({student:[id,id]})).not.toBeNull();
   expect(tpoStudentUrlError({unsupported:id})).not.toBeNull();
  });
+ it("TPO-students-02 keeps learner panel data isolated after quick next/previous navigation",()=>{
+  const panel=readFileSync("src/components/tpo/tpo-student-quick-panel.tsx","utf8");
+  expect(panel.startsWith('"use client";')).toBe(true);
+  expect(panel).toContain("storedDetail?.studentId===student.membershipId");
+  expect(panel).toContain("activeLoad.current?.abort()");
+  expect(panel).toContain("signal:controller.signal");
+  expect(panel).toContain("activeLoad.current!==controller");
+  expect(panel).toContain("if(!controller.signal.aborted&&activeLoad.current===controller)");
+ });
  it("renders five panel tabs with safe detailed navigation",()=>{
   const page=readFileSync("src/components/tpo/tpo-students-spreadsheet.tsx","utf8");
   const modal=readFileSync("src/components/tpo/tpo-student-quick-panel.tsx","utf8");

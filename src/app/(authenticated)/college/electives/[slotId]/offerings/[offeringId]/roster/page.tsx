@@ -1,3 +1,4 @@
+"use server";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { and, eq, isNull } from "drizzle-orm";
@@ -67,7 +68,6 @@ export default async function ElectiveRoster({
   const targets = options.filter(item => item.offeringId !== offering.id);
   const back = href(slotId, offeringId);
   async function mutate(form: FormData) {
-    "use server";
     if (form.get("confirm") !== "yes") redirect(back + "?error=Please%20confirm");
     const { context, slot, offering } = await scoped(slotId, offeringId);
     if (slot.status !== "ACTIVE" || offering.status !== "ACTIVE")
