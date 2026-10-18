@@ -1,3 +1,4 @@
+import authStyles from "@/components/public/public-auth-skin.module.css";
 "use client";
 
 import Link from "next/link";
@@ -116,7 +117,7 @@ export function PublicRecruiterJoinForm({
   }
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-xl min-w-0 flex-col justify-center px-4 py-8 sm:py-12">
+    <main className={`${authStyles.page} mx-auto flex min-h-dvh w-full max-w-xl min-w-0 flex-col justify-center px-4 py-8 sm:py-12`}>
       <Card as="section" className="w-full">
         {preview.kind !== "READY" ? (
           <>
@@ -136,7 +137,7 @@ export function PublicRecruiterJoinForm({
                 ? "You already have an account. Sign in on "+college+"'s placement address with "+signInEmail+"."
                 : "Sign in with your work email, "+signInEmail+". We'll email you a code each time."}
             </p>
-            <Link href="/login" className="mt-4 inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Sign in</Link>
+            <Link href="/login" className="mt-4 inline-flex min-h-11 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Sign in</Link>
           </>
         ) : (
           <>
