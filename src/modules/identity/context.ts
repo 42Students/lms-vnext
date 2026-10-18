@@ -62,7 +62,8 @@ export function hasMembershipRole(
   role: MembershipRole,
 ) {
   return Boolean(
-    context?.membership?.status === "ACTIVE" &&
+    context?.user.platformStatus === "ACTIVE" &&
+      context.membership?.status === "ACTIVE" &&
       context.membership.roles.includes(role),
   );
 }
