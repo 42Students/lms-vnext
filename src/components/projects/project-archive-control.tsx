@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
@@ -22,14 +22,20 @@ export function ProjectArchiveControl({
   const { showToast } = useToast();
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
+  const inFlight=useRef(false);
+  const onDialogOpenChange=(value:boolean)=>{if(!inFlight.current)setOpen(value);};
 
 
   async function archive() {
+    // Two clicks before the next React paint are still a single mutation.
+    if(inFlight.current)return;
+    inFlight.current=true;
     setPending(true);
     try {
       await projectMutation(
-        `/api/projects/${projectId}/archive`,
+        `/api/projects/${encodeURIComponent(projectId)}/archive`,
         "POST",
+        {expectedUpdatedAt},
       );
       setOpen(false);
       showToast({
@@ -39,21 +45,21 @@ export function ProjectArchiveControl({
           "The workspace remains available for review.",
       });
       router.refresh();
-    } catch (error) {
+    } catch {
       showToast({
         tone: "error",
         title: "Could not archive project",
-        description:
-          error instanceof Error
-            ? error.message
-            : "The request could not be completed.",
+        description: "This changed while you were working. Refresh and try again.",
       });
     } finally {
+      inFlight.current=false;
       setPending(false);
     }
   }
 
   async function restore() {
+    if(inFlight.current)return;
+    inFlight.current=true;
     setPending(true);
     try {
       await projectMutation(
@@ -67,6 +73,7 @@ export function ProjectArchiveControl({
     } catch {
       showToast({ tone: "error", title: "Failed to restore workspace" });
     } finally {
+      inFlight.current=false;
       setPending(false);
     }
   }
@@ -79,12 +86,12 @@ export function ProjectArchiveControl({
         </Button>
         <Dialog
           open={open}
-          onOpenChange={setOpen}
+          onOpenChange={onDialogOpenChange}
           title="Restore this workspace?"
           description="Restore workspace, members, meetings, tasks, sprints and resources with their edits."
           footer={
             <>
-              <Button variant="secondary" disabled={pending} onClick={() => setOpen(false)}>Cancel</Button>
+              <Button variant="secondary" disabled={pending} onClick={() => onDialogOpenChange(false)}>Cancel</Button>
               <Button disabled={pending} onClick={() => void restore()}>Restore</Button>
             </>
           }
@@ -108,7 +115,7 @@ export function ProjectArchiveControl({
       </Button>
       <Dialog
         open={open}
-        onOpenChange={setOpen}
+        onOpenChange={onDialogOpenChange}
         title="Archive project?"
         description={`${projectTitle} will be marked archived. The workspace remains accessible for review, but execution mutations are blocked.`}
         footer={
@@ -116,7 +123,7 @@ export function ProjectArchiveControl({
             <Button
               variant="secondary"
               disabled={pending}
-              onClick={() => setOpen(false)}
+              onClick={() => onDialogOpenChange(false)}
             >
               Cancel
             </Button>
