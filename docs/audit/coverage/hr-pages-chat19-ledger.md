@@ -111,3 +111,10 @@ The receipt-history service had no previous direct test reference in the generat
 | UX-SPILL-TPO-CLIP-01 | `requestRowsTsv` in `src/components/placements/tpo-request-page-clipboard.tsx` | `tests/unit/UX-SPILL-chat19-tpo-request-clipboard.test.ts` | Selected visible-column projection, default all-column compatibility, empty selection blocked, Unicode/formula injection, TSV delimiter/row forgery, omitted hidden employer/roll values |
 
 This is an independent TPO/HR workflow review; real clipboard permission denial, selection state changes and mobile browser behavior still need interactive acceptance.
+
+## TPO request mobile component cross-audit
+
+| ID | Component | Direct behavioural evidence | Cases |
+|---|---|---|---|
+
+| UX-SPILL-TPO-CLIP-02 | `TpoRequestPageClipboard` component | `tests/unit/UX-SPILL-chat19-tpo-request-responsive.test.tsx` | SSR verifies responsive DataTable cards, request status, employer/name, record selector, empty state and disabled copy; original copy/export model unaffected |
