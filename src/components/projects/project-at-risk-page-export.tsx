@@ -1,5 +1,6 @@
 "use client";
 import {Button} from "@/components/ui/button";
+import {projectAdminCsv} from "@/modules/projects/project-admin-csv-model";
 
 type Row={
  id:string; title:string; mentorName:string|null; inactiveDays:number;
@@ -8,17 +9,13 @@ type Row={
 /** SA-placements-projects-63: export exactly the visible, tenant-scoped page. */
 export function ProjectAtRiskPageExport({rows,collegeId}:{rows:Row[];collegeId:string}){
  function save(){
-  const cells=(values:(string|number|null)[])=>values.map(value=>{
-   const text=String(value??"");
-   const safe=/^[\s]*[=+@-]/.test(text)?"'"+text:text;
-   return '"'+safe.replaceAll('"','""')+'"';
-  }).join(",");
-  const header=cells(["Workspace ID","Workspace","Mentor","Severity","Risk reasons",
-   "Inactive days","Blocker","Last activity (UTC)"]);
-  const csv=[header,...rows.map(row=>cells([row.id,row.title,row.mentorName,
+  const headings=["Workspace ID","Workspace","Mentor","Severity","Risk reasons",
+   "Inactive days","Blocker","Last activity (UTC)"];
+  const data=rows.map(row=>[row.id,row.title,row.mentorName,
    row.riskReasons.length>1||row.blockerReason?"Risk":"Watch",
-   row.riskReasons.join("; "),row.inactiveDays,row.blockerReason,row.lastActivityAt]))].join("\r\n")+"\r\n";
-  const blob=new Blob(["\uFEFF",csv],{type:"text/csv;charset=utf-8"});
+   row.riskReasons.join("; "),row.inactiveDays,row.blockerReason,row.lastActivityAt]);
+  const csv=projectAdminCsv([headings,...data]);
+  const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
   const url=URL.createObjectURL(blob);
   const anchor=document.createElement("a");
   anchor.href=url;anchor.download="at-risk-projects-college-"+collegeId+"-"+new Date().toISOString().slice(0,10)+".csv";

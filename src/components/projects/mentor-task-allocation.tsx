@@ -2,6 +2,7 @@
 import {useEffect,useMemo,useState} from "react";
 import Link from "next/link";
 import {DataTable} from "@/components/ui/data-table";
+import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import {useRouter,useSearchParams} from "next/navigation";
 import {projectMutation} from "./project-api";
 type Task={id:string;title:string;sprintId:string|null;carriedFromSprintId?:string|null;assigneeMembershipId:string|null;
@@ -12,6 +13,7 @@ type Release={id:string;title:string};
 export function MentorTaskAllocation({projectId,initialTasks,members,sprints,releases,readOnly=false}:{
  projectId:string;initialTasks:Task[];members:Member[];sprints:Sprint[];releases:Release[];readOnly?:boolean;
 }){
+ const {askConfirm,dialog}=useConfirmFlow();
  const router=useRouter(),searchParams=useSearchParams();
  const [tasks,setTasks]=useState(initialTasks),
    [release,setRelease]=useState(searchParams.get("release")??""),
@@ -68,6 +70,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
   if(id)void assign(id,membershipId);
  }
  return <section className="space-y-5">
+  {dialog}
   <div className="flex flex-wrap items-center justify-between gap-3">
    <div><Link href={"/mentor/projects/"+encodeURIComponent(projectId)}
     className="text-sm font-semibold text-primary-text underline">Back to project</Link>
@@ -80,9 +83,9 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
    </div>
   </div>
   {!readOnly?<button type="button" disabled={busy||projectUnassigned===0||!learners.length}
-     className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground disabled:opacity-50"
+     className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground disabled:opacity-50"
      onClick={async()=>{
-       if(!window.confirm("Auto-assign unassigned tasks to learners with the fewest open tasks?"))return;
+       if(!await askConfirm("Auto-assign unassigned tasks to learners with the fewest open tasks?"))return;
        setBusy(true);setError("");setNotice("");
        try{
         const result=await projectMutation("/api/projects/"+encodeURIComponent(projectId)+
@@ -94,7 +97,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
   <button type="button" aria-expanded={filtersOpen}
     aria-controls={filtersOpen?"mentor-allocation-filters":undefined}
     onClick={()=>setFiltersOpen(open=>!open)}
-    className="min-h-10 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+    className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
     Filters{activeFilterCount?" ("+activeFilterCount+")":""}
   </button>
   {filtersOpen?<div id="mentor-allocation-filters"
@@ -102,14 +105,14 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
    <label className="text-sm font-semibold">Release
     <select value={release} onChange={e=>{setRelease(e.target.value);setSprint("");
       remember("release",e.target.value);remember("sprint","");}}
-      className="ml-2 min-h-10 rounded-md border border-border bg-background p-2">
+      className="ml-2 min-h-11 rounded-md border border-border bg-background p-2">
      <option value="">All releases</option>
      {releases.map(item=><option key={item.id} value={item.id}>{item.title}</option>)}
     </select>
    </label>
    <label className="text-sm font-semibold">Sprint
     <select value={sprint} onChange={e=>{setSprint(e.target.value);remember("sprint",e.target.value);}}
-      className="ml-2 min-h-10 rounded-md border border-border bg-background p-2">
+      className="ml-2 min-h-11 rounded-md border border-border bg-background p-2">
      <option value="">All sprints</option>
      {sprints.filter(item=>!release||item.releaseId===release).map(item=>
       <option key={item.id} value={item.id}>{item.title}</option>)}
@@ -117,14 +120,14 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
    </label>
    <label className="text-sm font-semibold">Priority
     <select value={priority} onChange={e=>{setPriority(e.target.value);remember("priority",e.target.value);}}
-      className="ml-2 min-h-10 rounded-md border border-border bg-background p-2">
+      className="ml-2 min-h-11 rounded-md border border-border bg-background p-2">
      <option value="">All priorities</option>
      {["LOW","MEDIUM","HIGH","CRITICAL"].map(value=><option key={value} value={value}>{value}</option>)}
     </select>
    </label>
    <label className="text-sm font-semibold">Status
     <select value={status} onChange={e=>{setStatus(e.target.value);remember("status",e.target.value);}}
-      className="ml-2 min-h-10 rounded-md border border-border bg-background p-2">
+      className="ml-2 min-h-11 rounded-md border border-border bg-background p-2">
      <option value="">All statuses</option>
      {["TODO","IN_PROGRESS","IN_REVIEW","BLOCKED","DONE"].map(value=>
       <option key={value} value={value}>{value.replaceAll("_"," ")}</option>)}
@@ -133,7 +136,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
    <label className="text-sm font-semibold">Assignment
     <select value={assignmentScope}
       onChange={e=>{setAssignmentScope(e.target.value);remember("assignment",e.target.value);}}
-      className="ml-2 min-h-10 rounded-md border border-border bg-background p-2">
+      className="ml-2 min-h-11 rounded-md border border-border bg-background p-2">
      <option value="">Everyone</option>
      <option value="UNASSIGNED">Unassigned</option>
      <option value="ASSIGNED">Assigned</option>
@@ -144,7 +147,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
    <button type="button" onClick={()=>{
     setRelease("");setSprint("");setPriority("");setStatus("");setAssignmentScope("");
     ["release","sprint","priority","status","assignment"].forEach(key=>remember(key,""));
-   }} className="min-h-10 text-sm font-semibold text-primary-text underline">Clear all</button>
+   }} className="min-h-11 text-sm font-semibold text-primary-text underline">Clear all</button>
   </div>:null}
   {activeFilterCount>0?<p role="status" className="text-xs text-body">
     {activeFilterCount} active {activeFilterCount===1?"filter":"filters"} ·
@@ -220,7 +223,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
         <select aria-label={"Reassign "+task.title} disabled={busy||["DONE","IN_REVIEW"].includes(task.status)}
          value={task.assigneeMembershipId??""}
          onChange={event=>void assign(task.id,event.target.value||null)}
-         className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-2 text-sm">
+         className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-2 text-sm">
          <option value="">Unassigned</option>
          {task.assigneeMembershipId&&!activeMemberIds.has(task.assigneeMembershipId)?
            <option value={task.assigneeMembershipId} disabled>Former member (reassign)</option>:null}
