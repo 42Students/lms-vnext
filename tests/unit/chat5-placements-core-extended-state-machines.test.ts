@@ -2,7 +2,7 @@ import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {recordSelectionsSchema,releaseSelectionsSchema,summarizeSelectionRelease,isExactTpoSelectionReplay} from "@/modules/placements/tpo-drive-selection-model";
 import {tpoWaitlistPromotionSchema,waitlistPreviewToken,decideWaitlistReleaseSettlement,canonicalWaitlistPreviewCollections} from "@/modules/placements/tpo-waitlist-promotion-model";
-import {canRecordTpoActualJoiningDate,canRecordTpoOfferAction,tpoOfferLifecycleInputSchema,TPO_OFFER_ACTIONS} from "@/modules/placements/tpo-offer-lifecycle-model";
+import {canRecordTpoActualJoiningDate,canRecordTpoOfferAction,parseTpoOfferExpiryIstInput,tpoOfferLifecycleInputSchema,TPO_OFFER_ACTIONS} from "@/modules/placements/tpo-offer-lifecycle-model";
 import {evaluateTpoDriveCancellation,isIssuedOfferCancelable,tpoDriveCancelSchema} from "@/modules/placements/tpo-drive-cancel-model";
 import {projectTpoJoiningTracker} from "@/modules/placements/tpo-joining-tracker-model";
 
@@ -81,6 +81,20 @@ describe("chat-5 placements core — offer state transition matrix",()=>{
     }
    }
   }
+ });
+ it("PLACEMENTS-OFFER-IST-09 binds TPO local expiry to IST, not browser timezone",()=>{
+  expect(parseTpoOfferExpiryIstInput("2099-10-18T10:00")).toBe("2099-10-18T04:30:00.000Z");
+  expect(parseTpoOfferExpiryIstInput("2099-01-01T00:00")).toBe("2098-12-31T18:30:00.000Z");
+  expect(parseTpoOfferExpiryIstInput("2099-12-31T23:59")).toBe("2099-12-31T18:29:00.000Z");
+  for(const invalid of ["","2099-02-30T10:00","2099-13-01T10:00","2099-10-18T24:00",
+    "2099-10-18T10:60","2099-10-18","2099-10-18T10:00Z","2099-10-18T10:00+05:30"])
+    expect(parseTpoOfferExpiryIstInput(invalid),invalid).toBeNull();
+  const source=readFileSync("src/components/placements/tpo-offer-lifecycle-panel.tsx","utf8");
+  expect(source).toContain("parseTpoOfferExpiryIstInput(expiresAt)");
+  expect(source).toContain('(action !== "EXTEND" || parsedExpiry !== null)');
+  expect(source).toContain("expiresAt: parsedExpiry,");
+  expect(source).toContain("New expiry (IST)");
+  expect(source).not.toContain("new Date(expiresAt).toISOString()");
  });
  it("PLACEMENTS-OFFER-SM-08 refuses every issued-offer transition carrying contradictory joining evidence",()=>{
   for(const status of ["PENDING","DEFERRED","JOINED","DID_NOT_JOIN"]){
