@@ -26,17 +26,17 @@ export default async function FacultyCourseAssessmentHealthPage({
   });
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid Section report filters</h1>
-    <Link href="/teacher/courses" className="text-primary-text underline">Back to courses</Link>
+    <Link href="/teacher/courses" className="text-[var(--lms-teal-deep)] underline">Back to courses</Link>
   </section>;
   const context = await getCurrentRequestContext();
   const data = await getFacultyCourseAssessmentHealth(context,parsed.data);
   const back = "/teacher/courses/" + encodeURIComponent(data.delivery.deliveryId);
-  return <div className="space-y-6">
+  return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Faculty · Course Report" title="Section assessment health"
       description={[data.delivery.courseName,data.delivery.sectionName,
         data.delivery.academicPeriodName].join(" · ")}
       actions={<Link href={back + "/students"}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Section students
       </Link>} />
     <section className="rounded-xl border border-border bg-surface p-5">
@@ -56,9 +56,9 @@ export default async function FacultyCourseAssessmentHealthPage({
           <option value="QUIZ">Quizzes</option>
         </select>
       </label>
-      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
+      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Filter</button>
       <Link href={facultyCourseHealthHref({...data.query,kind:"ALL",page:1})}
-        className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-primary-text">Clear</Link>
+        className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-[var(--lms-teal-deep)]">Clear</Link>
     </form>
     <p className="text-sm text-body">
       {data.total} published assessment{data.total === 1 ? "" : "s"} in this Section
@@ -91,7 +91,7 @@ export default async function FacultyCourseAssessmentHealthPage({
             ? "Unknown" : item.averagePercent + "%"}.
         </p>
         <Link href={item.href}
-          className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
+          className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
           Open exact Section report →
         </Link>
       </article>)}</div>}
@@ -100,9 +100,9 @@ export default async function FacultyCourseAssessmentHealthPage({
       <span className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</span>
       <div className="flex gap-3">
         {data.page > 1 && <Link href={facultyCourseHealthHref({...data.query,page:data.page-1})}
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Previous</Link>}
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">Previous</Link>}
         {data.page < data.totalPages && <Link href={facultyCourseHealthHref({...data.query,page:data.page+1})}
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Next</Link>}
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">Next</Link>}
       </div>
     </nav>
     <p className="text-xs leading-5 text-muted-foreground">

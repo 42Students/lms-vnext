@@ -26,7 +26,7 @@ export default async function NewTpoCampaignPage({searchParams}:{searchParams:Pr
  </div>;
  const ready=await tpoCampaignDraftStorageReady();
  const deliveryReady=ready&&await tpoCampaignDispatchReady();
- return <main className="space-y-5">
+ return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Engage · Campaigns" title="New email campaign"
    description="Reach recruiter leads in your college with a saved and auditable audience snapshot."/>
   <Link href="/tpo/recruiters/campaigns" className="text-sm text-[var(--lms-teal-deep)] underline">← Campaign history</Link>
@@ -34,5 +34,5 @@ export default async function NewTpoCampaignPage({searchParams}:{searchParams:Pr
    <p role="alert" className="rounded-lg border border-border bg-surface p-5 text-sm text-body">
     {CAMPAIGN_DRAFT_UNAVAILABLE}
    </p>}
- </main>;
+ </div>;
 }

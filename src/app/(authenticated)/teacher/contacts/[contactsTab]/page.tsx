@@ -49,7 +49,7 @@ export default async function FacultyContactsPage({
   if(!filters)return <section role="alert" className="space-y-3 p-5">
     <h1 className="text-lg font-semibold">Invalid directory filters</h1>
     <Link href={"/teacher/contacts/"+contactsTab}
-      className="inline-flex min-h-10 items-center text-primary-text underline">
+      className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">
       Return to Contacts
     </Link>
   </section>;
@@ -69,7 +69,7 @@ export default async function FacultyContactsPage({
     `/teacher/contacts/${contactsTab}`;
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 max-w-full space-y-6">
       <PageHeader
         title={selected.label}
       />
@@ -90,8 +90,8 @@ export default async function FacultyContactsPage({
                 }
                 className={
                   active
-                    ? "inline-flex min-h-11 items-center rounded-full focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary"
-                    : "inline-flex min-h-11 items-center rounded-full focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:border-primary hover:text-primary-text"
+                    ? "inline-flex min-h-11 items-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] border border-primary bg-primary px-4 text-sm font-semibold text-foreground"
+                    : "inline-flex min-h-11 items-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:border-primary hover:text-[var(--lms-teal-deep)]"
                 }
               >
                 {tab.label}
@@ -141,7 +141,7 @@ export default async function FacultyContactsPage({
             </label>
             <button
               type="submit"
-              className="inline-flex min-h-11 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover"
+              className="inline-flex min-h-11 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-foreground hover:bg-primary-hover"
             >
               Search
             </button>
@@ -154,7 +154,7 @@ export default async function FacultyContactsPage({
             </span>
             <Link
               href={baseHref}
-              className="font-semibold text-primary-text hover:underline"
+              className="font-semibold text-[var(--lms-teal-deep)] hover:underline"
             >
               Clear search
             </Link>
