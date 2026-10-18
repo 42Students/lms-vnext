@@ -135,3 +135,4 @@ Requests grid refreshed-failure trio: `chat12-requests-grid-round6.test.ts`, `ch
 
 All evidence above is authored but unexecuted, and no green CI/typecheck result is claimed.
 - `getTpoRecruiterLeadStages`, `listTpoCompanies` and `getTpoCompanyMemory`: `tests/unit/chat12-tpo-company-memory-live-actor.test.ts` verifies persisted actor role revocation and wrong-college denial before the shared CRM/lead query. This is a mocked service test, not a real-PostgreSQL concurrency proof (TPO-BREAK-company-memory-actor-04).
+- `tpoCompanyKey`, `resolveRecruiterLeadRelationship`, `deriveOwnRecruiterLeadStage` and `deriveTpoRecruiterLeadStage`: `tests/unit/chat12-tpo-company-lead-stage-facts.test.ts` asserts relationship-bound offer facts, archived/draft exclusion, unique normalized-name resolution and exact legacy stage precedence (TPO-companies-lead-facts-01). Named behavioral pure-policy coverage; PostgreSQL relationship join still pending.
