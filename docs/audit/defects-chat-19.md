@@ -121,3 +121,12 @@ The matrix `docs/audit/ux/COVERAGE-MATRIX.md` is a generated snapshot and is not
 | PROJ-BREAK-EXPORT-02 | COVERAGE | Same `ProjectAdminWorkspacePageExport` button | Added direct SSR assertions that export is disabled for zero visible authorized workspaces and enabled for a nonempty page, including keyboard-sized button contract. | Behavioural component tests. | `21328196` | `tests/unit/PROJ-BREAK-chat19-project-workspace-export-ui.test.tsx` |
 
 **Remaining risk:** Browser download behavior, real Excel formula handling, and independently verified college-scoped DB list must pass orchestrator/integration tests. This lane has authored source and test regressions, not claimed production readiness.
+
+## Unowned follow-on: recruiter report resilience and College Admin placement mobile
+
+| ID | Before-fix severity | Evidence | Defect/fix | Commits | Test |
+|---|---|---|---|---|---|
+| UX-SPILL-HR-04 | MAJOR | `src/components/placements/report-interactive-table.tsx` CSV export: single click + immediate URL revoke, no browser-restriction failure state | Download could be blocked or URL revoked before consumption, while UI still claimed export had completed. `trySaveReportCsv` now models browser failures, safely disposes temporary anchors and revokes URLs after click; message says download started rather than confirming a saved file. | `0fc28a5a`, `57438140`, `444c699d`, `6513ac68` | `tests/unit/chat19-report-download-lifecycle.test.ts` (`5aafda1c`) |
+| UX-SPILL-COL-FUNNEL-01 | MAJOR | `src/components/placements/college-hiring-funnel.tsx`, fixed `min-w-[72rem]` company performance table | 320px college users had no readable company-stage context without extensive sideways scrolling; converted to DataTable card rows with all nine stages reachable through accessible disclosure, kept counts and a separate totals panel and the same authorized CSV link. | `3a5713b7` | `tests/unit/chat19-college-hiring-funnel-mobile.test.tsx` (`8991b118`) |
+
+Generated `docs/audit/ux/COVERAGE-MATRIX.md` should be refreshed after orchestrator merge, not directly patched. These contributions eliminate two more owner-listed raw-table components at the source level but do not certify real-browser visual layout. No database permission logic was broadened.
