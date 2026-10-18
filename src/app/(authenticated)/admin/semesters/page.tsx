@@ -1,6 +1,7 @@
 import { AcademicSetupSteps } from "@/components/admin/academic-setup-steps";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {isSuperAdmin} from "@/modules/identity/context";
 import { CollegeSemesterCreateForm, CollegeSemesterRowActions } from "@/components/academics/college-semester-management";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
@@ -31,6 +32,15 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
   searchParams: Promise<Search>;
 }) {
   const context = await getCurrentRequestContext();
+  // The admin shell cannot substitute for a live role check on deep links.
+  if(!isSuperAdmin(context)){
+    return <div className="space-y-4">
+      <PageHeader title="Semesters" />
+      <ErrorState title="Semester access denied"
+        description="Your account cannot access Super Admin semesters."
+        action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
+    </div>;
+  }
   if (!context.adminScope?.collegeId) {
     return <div className="space-y-4">
       <PageHeader  title="Semesters" />
@@ -50,7 +60,19 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
     </div>;
   }
 
-  const data = await listCollegeSemesters(context, parsed.data);
+  const result=await listCollegeSemesters(context,parsed.data)
+    .then(value=>({ok:true as const,value}))
+    .catch(()=>({ok:false as const}));
+  if(!result.ok){
+    return <div className="space-y-4">
+      <PageHeader title="Semesters" />
+      <ErrorState title="Semesters unavailable"
+        description="The semester directory could not be loaded. Your filters were not changed."
+        action={<Link href={pageHref(parsed.data)}
+          className="font-semibold text-primary-text underline">Retry loading semesters</Link>}/>
+    </div>;
+  }
+  const data=result.value;
   return <div className="min-w-0 space-y-6">
       <AcademicSetupSteps step={3} />
     <PageHeader  title="Semesters"

@@ -32,6 +32,9 @@ describe("learner assignment private-file boundary", () => {
     expect(learnerAssignmentUploadHeadersSafe({})).toBe(false);
     expect(learnerAssignmentUploadHeadersSafe({ "content-type": "application/pdf" })).toBe(false);
     expect(learnerAssignmentUploadHeadersSafe({ ...grant.requiredHeaders, "x-amz-meta-malware-scan-status": "CLEAN" })).toBe(false);
+    // LEARNER-FILE-GRANT-05: no attacker-controlled additional object metadata.
+    expect(learnerAssignmentUploadHeadersSafe({ ...grant.requiredHeaders, "x-amz-meta-debug": "customer-secret" })).toBe(false);
+    expect(learnerAssignmentUploadHeadersSafe({ ...grant.requiredHeaders, "x-amz-meta-malware-scan-status": "PENDING", "x-amz-meta-owner-scope": "other-college" })).toBe(false);
     expect(learnerAssignmentUploadHeadersSafe({ ...grant.requiredHeaders, "x-amz-meta-expected-size": "0" })).toBe(false);
     expect(learnerAssignmentUploadHeadersSafe({ ...grant.requiredHeaders, "x-amz-meta-expected-size": "52428801" })).toBe(false);
     const badHeaders: Record<string, string>[] = [{ authorization: "Bearer secret" }, { "content-type": "application/pdf\r\nX-Test: 1" }, { cookie: "session=secret" }];

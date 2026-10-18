@@ -56,6 +56,7 @@ describe("SA-academics-people-53 bulk course/lesson visibility never alters futu
  it("limits bulk visibility SQL to published content under active parents and a published path",()=>{
   const source=readFileSync("src/modules/courses/super-admin-lesson-bulk-visibility.ts","utf8");
   for(const condition of [
+   'eq(lessonContents.status,"PUBLISHED")',
    'eq(courseLearningPaths.status,"PUBLISHED")',
    'eq(courseLessons.status,"ACTIVE")',
    'eq(courseOfferings.status,"ACTIVE")',

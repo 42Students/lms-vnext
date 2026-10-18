@@ -10,6 +10,7 @@ import { logError, writeStructuredLog } from "@/observability/logger";
 import { AuthConfigError } from "./config";
 import { LoginError } from "./login-service";
 import { resolveRequestTenant } from "./request-tenant";
+import {readBoundedAuthJson,AuthRequestBodyTooLarge} from "./bounded-json";
 
 /** Short one-way tag so repeated activity can be correlated without storing the address. */
 export function ipTag(ip: string) {
@@ -110,13 +111,14 @@ export async function guardLoginRequest<T extends z.ZodTypeAny>(
 
   let json: unknown;
   try {
-    json = await request.json();
-  } catch {
+    json = await readBoundedAuthJson(request);
+  } catch(error) {
+    const tooLarge=error instanceof AuthRequestBodyTooLarge;
     return {
       ok: false,
       response: privateAuthJson(
-        { error: "INVALID_REQUEST" },
-        { status: 400 },
+        { error: tooLarge?"REQUEST_TOO_LARGE":"INVALID_REQUEST" },
+        { status: tooLarge?413:400 },
       ),
     };
   }

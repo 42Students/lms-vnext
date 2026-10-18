@@ -87,3 +87,14 @@ The owner explicitly deferred all CI/test-failure triage until the end. This rou
 Relevant defects and source-test traceability: `docs/audit/defects-chat-13.md`, `docs/audit/coverage/chat13-superadmin-placements-projects-page-audit.md`, `docs/audit/coverage/admin-first-chat13.md`, and `docs/audit/coverage/placements-admin-chat13-ledger.md`. All writes target `chatgpt/chat-13-b` only.
 
 **Unresolved release/coverage gates:** A separate lane must independently review Projects fixes. Full browser/phone, PostgreSQL A/B and role-race execution, full route-handler behavioral coverage, 90%+ Projects branch coverage and final CI are still **not verified**. They are not marked DONE as runtime evidence; the owner has postponed those CI and deploy stages. Live published-drive audience retargeting with transactional applicant notices remains intentionally fail-closed rather than asserted complete.
+
+
+## Additional Super Admin reporting/export source review (owner defer-CI priority)
+
+- `SA-DIRECTORY-QUERY-12`: `src/modules/admin-ui/super-admin-read-directory-model.ts` now rejects hex/exponent numeric inputs, duplicated or unrecognized URL keys, invalid candidate/college facets and invalid sizes before page reads; page-count helper remains finite for malformed internal totals. `tests/unit/chat13-admin-directory-query-hardening.test.ts` exercises parser, URL round-trip and boundary arithmetic.
+- `SA-HIRING-REPORT-MODEL-10`: `tests/unit/chat13-super-admin-hiring-report-model-behavior.test.ts` covers invalid dates/UUIDs, same-name but distinct employer IDs, all report stage sums, zero-row output and stable input.
+- `SA-HIRING-EXPORT-13`: `GET /api/admin/placements/hiring-report/export` now rejects repeated job/date/academic filters instead of silently allowing `Object.fromEntries` last-key-wins behavior; `tests/unit/chat13-super-admin-hiring-export-route.test.ts` covers invalid filters before data access, valid private CSV headers and no-store response.
+- `PROJ-BREAK-SA-34`: runtime lock tests now additionally cover idempotent same-actor exact-reason replay and changed-reason conflict; neither writes a duplicate event.
+- `SA-JOINING-ANOMALY-09`: the joining detail service now shows the same persisted offer-status inconsistency warning as its directory, while preserving full selected-college and organization predicates.
+
+All corresponding code and tests are committed to `chatgpt/chat-13-b`. The latest source-level delimiter and newline-before-as-cast inspection of this batch found no flagged mismatch; **this does not substitute for compilation or CI**. An independent Projects reviewer, PostgreSQL role races, browser/phone checks and final full-suite execution are still release prerequisites under the owner's no-CI-until-finished plan.

@@ -32,6 +32,7 @@ function UIKitTestSurface() {
   const [fileStatus, setFileStatus] = useState("No file selected");
   const [pickerDisabled, setPickerDisabled] = useState(false);
   const [wideScroll, setWideScroll] = useState(true);
+  const [secondWide, setSecondWide] = useState(false);
   const [inlineSaved, setInlineSaved] = useState(false);
   const { showToast } = useToast();
 
@@ -107,6 +108,16 @@ function UIKitTestSurface() {
           </div>
         </ScrollCue>
       </div>
+    </section>
+
+    <section aria-label="Secondary child scroll fixture" className="w-56 space-y-2">
+      <Button variant="secondary" onClick={()=>setSecondWide(value=>!value)}>
+        {secondWide ? "Shrink second child" : "Grow second child"}
+      </Button>
+      <ScrollCue axis="x" label="Second child resize overflow">
+        <div className="w-20">First child remains small</div>
+        <div data-testid="second-overflow-child" style={{width:secondWide?800:80}}>Changing second child</div>
+      </ScrollCue>
     </section>
 
     <FilterBar title="Task filters" activeCount={1}
