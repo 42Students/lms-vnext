@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { templateAssignmentRevocationNotice } from "@/modules/projects/template-college-availability-model";
+import {projectTemplateGlobalActions} from "@/modules/projects/template-global-actions-model";
 import { projectMutation } from "./project-api";
 
 export function CreateProjectTemplateControl() {
@@ -297,6 +298,7 @@ export function ProjectTemplateActions({
   assignedToSelectedCollege: boolean;
   allowGlobalActions?: boolean;
 }) {
+  const lifecycle=projectTemplateGlobalActions(status);
   const router = useRouter();
   const { showToast } = useToast();
   const [pending, setPending] =
@@ -386,30 +388,23 @@ export function ProjectTemplateActions({
   return (
     <>
       <div className="flex flex-wrap gap-2">
-        {allowGlobalActions ? (status !== "PUBLISHED" ? (
+        {allowGlobalActions && lifecycle.canPublish ? (
           <Button
             size="sm"
             disabled={pending !== null}
             onClick={() =>
               void mutate(
-                status === "ARCHIVED"
-                  ? "Republish template"
-                  : "Publish template",
-                "/api/projects/templates/" +
-                  templateId +
-                  "/publish",
+                "Publish template",
+                "/api/projects/templates/" + templateId + "/publish",
                 "POST",
               )
             }
           >
-            {pending === "Publish template" ||
-            pending === "Republish template"
-              ? "Publishing…"
-              : status === "ARCHIVED"
-                ? "Republish"
-                : "Publish"}
+            {pending === "Publish template" ? "Publishing…" : "Publish"}
           </Button>
-        ) : (
+        ) : null}
+
+        {allowGlobalActions && lifecycle.canUnpublish ? (
           <Button
             size="sm"
             variant="secondary"
@@ -417,39 +412,22 @@ export function ProjectTemplateActions({
             onClick={() =>
               void mutate(
                 "Unpublish template",
-                "/api/projects/templates/" +
-                  templateId +
-                  "/unpublish",
+                "/api/projects/templates/" + templateId + "/unpublish",
                 "POST",
               )
             }
           >
-            {pending === "Unpublish template"
-              ? "Unpublishing…"
-              : "Unpublish"}
-          </Button>
-        )) : null}
-
-        {allowGlobalActions && status === "ARCHIVED" ? (
-          <Button
-            size="sm"
-            variant="secondary"
-            disabled={pending !== null}
-            onClick={() =>
-              void mutate(
-                "Return template to draft",
-                "/api/projects/templates/" +
-                  templateId +
-                  "/unpublish",
-                "POST",
-              )
-            }
-          >
-            Return to draft
+            {pending === "Unpublish template" ? "Unpublishing…" : "Unpublish"}
           </Button>
         ) : null}
 
-        {allowGlobalActions ? <Button
+        {allowGlobalActions && status === "ARCHIVED" ? (
+          <span role="status" className="text-xs text-muted-foreground">
+            Archived templates are read-only. Duplicate to start a new draft.
+          </span>
+        ) : null}
+
+        {allowGlobalActions && lifecycle.canDuplicate ? <Button
           size="sm"
           variant="secondary"
           disabled={pending !== null}
@@ -478,7 +456,7 @@ export function ProjectTemplateActions({
           </Button>
         ) : null}
 
-        {allowGlobalActions && status !== "ARCHIVED" ? (
+        {allowGlobalActions && lifecycle.canArchive ? (
           <Button
             size="sm"
             variant="secondary"

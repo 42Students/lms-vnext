@@ -10,6 +10,7 @@ const state=vi.hoisted(()=>({
  projectStatus:"ACTIVE",submissionStatus:"SUBMITTED",
  lockedAt:null as Date|null,found:true,checks:0,allowed:true,
  updates:0,deliveryEvents:0,activityEvents:0,
+ previousReason:null as string|null,previousActor:null as string|null,
 }));
 vi.mock("@/modules/projects/access",()=>({
  requireProjectManageAccess:async()=>({
@@ -34,9 +35,10 @@ vi.mock("@/db/client",()=>({
     select:()=>{
      const step=reads++;
      const rows=step===0?[{status:state.projectStatus}]:
-      state.found?[{id:submissionId,projectId,status:state.submissionStatus,
-       lockedAt:state.lockedAt,version:2}]:[];
-     const q={from:()=>q,where:()=>q,for:()=>q,limit:async()=>rows};
+      step===1?(state.found?[{id:submissionId,projectId,status:state.submissionStatus,
+       lockedAt:state.lockedAt,version:2}]:[]):
+      state.previousReason?[{reason:state.previousReason,actorMembershipId:state.previousActor}]:[];
+     const q={from:()=>q,where:()=>q,for:()=>q,orderBy:()=>q,limit:async()=>rows};
      return q;
     },
     update:()=>({set:(value:{lockedAt:Date})=>({
@@ -46,7 +48,10 @@ vi.mock("@/db/client",()=>({
        lockedAt:state.lockedAt,version:2}];
      }}),
     })}),
-    insert:()=>({values:async()=>{state.deliveryEvents+=1;}}),
+    insert:()=>({values:async(v:{reason:string;actorMembershipId:string})=>{
+     state.previousReason=v.reason;state.previousActor=v.actorMembershipId;
+     state.deliveryEvents+=1;
+    }}),
    };
    return run(tx);
   },
@@ -63,6 +68,7 @@ beforeEach(()=>{
  state.projectStatus="ACTIVE";state.submissionStatus="SUBMITTED";state.lockedAt=null;
  state.found=true;state.checks=0;state.allowed=true;
  state.updates=0;state.deliveryEvents=0;state.activityEvents=0;
+ state.previousReason=null;state.previousActor=null;
 });
 describe("IIT Dharwad College Admin delivery final lock transaction",()=>{
  it("PROJ-BREAK-races-18 duplicate lock returns the winner without another delivery/activity event",async()=>{
@@ -75,6 +81,18 @@ describe("IIT Dharwad College Admin delivery final lock transaction",()=>{
   expect(state.deliveryEvents).toBe(1);
   expect(state.activityEvents).toBe(1);
   expect(state.checks).toBe(2);
+ });
+ it("PROJ-BREAK-races-19 altered reason or different College Admin cannot claim an earlier lock",async()=>{
+  await lockAdminProjectSubmission(actor(),projectId,submissionId,{reason:"Final review"});
+  await expect(lockAdminProjectSubmission(actor(),projectId,submissionId,{reason:"Different reason"}))
+   .rejects.toThrow("PROJECT_SUBMISSION_CONFLICT");
+  const other=actor();
+  await expect(lockAdminProjectSubmission({...other,membership:{...other.membership!,
+   id:"77777777-7777-4777-8777-777777777777"}},projectId,submissionId,{reason:"Final review"}))
+   .rejects.toThrow("PROJECT_SUBMISSION_CONFLICT");
+  expect(state.updates).toBe(1);
+  expect(state.deliveryEvents).toBe(1);
+  expect(state.activityEvents).toBe(1);
  });
  it("PROJ-BREAK-state-26 archived project cannot lock or retry an existing final lock",async()=>{
   state.projectStatus="ARCHIVED";

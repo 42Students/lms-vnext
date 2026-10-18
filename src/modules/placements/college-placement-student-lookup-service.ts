@@ -32,8 +32,12 @@ export async function lookupCollegeStudentPlacement(ctx:RequestContext,raw:unkno
   }).from(placementApplications)
    .innerJoin(placementJobs,and(eq(placementJobs.id,placementApplications.jobId),
     eq(placementJobs.collegeId,collegeId)))
+   // Both the job and its company relationship must belong to this college.
+   // An incorrect cross-tenant relationship FK must never disclose another
+   // college's company account through the selected-college lookup.
    .innerJoin(placementCompanyRelationships,
-    eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId))
+    and(eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
+      eq(placementCompanyRelationships.collegeId,collegeId)))
    .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
    .leftJoin(placementOffers,eq(placementOffers.applicationId,placementApplications.id))
    .leftJoin(placementJoiningOutcomes,eq(placementJoiningOutcomes.offerId,placementOffers.id))
