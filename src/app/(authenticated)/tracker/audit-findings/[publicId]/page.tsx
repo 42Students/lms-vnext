@@ -24,7 +24,7 @@ export default async function IndependentFindingDetailPage({params}:{params:Prom
   ["Actual",finding.actual],["Evidence",finding.evidence],["Suggested fix",finding.suggestedFix],
  ];
  return <div className="min-w-0 space-y-5">
-  <Link href="/tracker/audit-findings" className="font-semibold text-primary-text">← Back to audit findings</Link>
+  <Link href="/tracker/audit-findings" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">← Back to audit findings</Link>
   <PageHeader title={finding.title} description={finding.externalId+" · "+finding.area+" · "+finding.kind}/>
   <div className="flex flex-wrap gap-2"><StatusBadge>{finding.severity}</StatusBadge><StatusBadge>{finding.status}</StatusBadge>
    <StatusBadge>{finding.assignee??"Unassigned"}</StatusBadge></div>

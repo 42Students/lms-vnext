@@ -10,6 +10,7 @@ import {
 } from "@/components/tracker/tracker-workflow-panel";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { TrackerAdminError } from "@/modules/bug-tracker/admin-errors";
 import { getBugTrackerIssueForAdmin } from "@/modules/bug-tracker/admin-service";
 import { trackerAdminRuntimeEnabled } from "@/modules/bug-tracker/readiness";
@@ -116,8 +117,7 @@ export default async function TrackerIssueDetailPage({
         {issue.evidenceLink ? (
           <p className="text-sm">
             Evidence: {/^(https:\/\/)[^\s]+$/i.test(issue.evidenceLink) ?
-              <a href={issue.evidenceLink} target="_blank" rel="noopener noreferrer"
-                className="break-all font-semibold text-primary-text underline">Open linked evidence ↗</a>:
+              <ThirdPartyLink href={issue.evidenceLink} label="Open linked evidence ↗" />:
               <span className="break-all text-body">{issue.evidenceLink}</span>}
           </p>
         ) : null}
