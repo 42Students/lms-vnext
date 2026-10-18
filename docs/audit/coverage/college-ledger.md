@@ -276,3 +276,10 @@ All cases are authored, not executed. Remaining project acceptance gates: concur
 | `src/components/projects/project-archive-control.tsx` | Same test and source | Now sends the exact timestamp in the confirmation, URL-encodes project ID, and displays refresh/try-again message on failure. |
 
 PostgreSQL concurrent archive/edit and exactly-once event/notification assertions remain final integration gates. Tests authored, deliberately not executed per owner.
+
+## Further College Admin Projects and curriculum resilience
+
+| Export/surface | Behavioral evidence | Scope |
+| --- | --- | --- |
+| `src/components/projects/project-archive-control.tsx` `ProjectArchiveControl` | `tests/unit/chat4-project-archive-dialog-guard.test.tsx` (`PROJ-BREAK-COLLEGE-04-ARCHIVE-08`) | A synchronous ref prevents double POST before React paints, blocks dialog dismissal during the pending archive/restore, uses CAS timestamp for both; state-specific Archive/Restore SSR coverage. Browser click-race still pending. |
+| `src/components/academics/college-term-mapping-manager.tsx` `CollegeTermMappingManager`; `src/modules/academics/college-term-mapping-model.ts` `reorderTermCourseIds`, `collegeTermCourseUpdateSchema`, `collegeTermMappingErrorMessage` | `tests/unit/chat4-college-term-mapping-phone-actions.test.tsx` (`COL-UX-TERM-MAPPINGS-04`) | Existing drag and keyboard arrow reordering, Edit/Remove, credits and status, exact legacy mapping columns and confirmations preserved in responsive `DataTable`. Single-flight mutations; unsafe backend strings replaced by friendly messages; ordering bounds/rejections asserted. Still pending real mobile and postgres concurrent reorder. |
