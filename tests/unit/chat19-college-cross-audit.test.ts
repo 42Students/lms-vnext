@@ -49,8 +49,10 @@ describe("chat-19 college UX cross-audit", () => {
 
   it("COL-XA-09 keeps workspaces visible when optional template labels fail", () => {
     const page = read("src/app/(authenticated)/college/projects/page.tsx");
-    expect(page).toContain("listProjectAdminSnapshots(context, membership.collegeId, query)");
-    expect(page).toContain("listAssignedProjectTemplates(context, membership.collegeId)");
+    expect(page).toContain("const collegeId = getProjectAdminCollegeId(context)");
+    expect(page).toContain("if (!collegeId)");
+    expect(page).toContain("listProjectAdminSnapshots(context, collegeId, query)");
+    expect(page).toContain("listAssignedProjectTemplates(context, collegeId)");
     expect(page).toMatch(/\.catch\(\(\) => \(\{ ok: false as const \}\)\)/);
     expect(page).toContain("Workspaces are still listed");
     expect(page).toContain("const templateTitles = new Map(");

@@ -43,7 +43,8 @@ export default async function RecruiterConversationDetail({params,searchParams}:
  }
  const ownDrives=result.thread.jobId ? await listOwnRecruiterPlacementJobs(context,result.thread.collegeId) : [];
  const matchingDrive=result.thread.jobId
-  ? ownDrives.find(item=>item.job.id===result.thread.jobId&&item.collegeId===result.thread.collegeId)
+  ? ownDrives.find(item=>item.job.id===result.thread.jobId&&item.collegeId===result.thread.collegeId&&
+     item.companyId===context.recruiter?.companyId)
   : null;
  const conversationSubject=result.thread.jobId ? matchingDrive?.job.title??"Drive unavailable" : "General";
  const changeRequests=matchingDrive?
