@@ -15,6 +15,10 @@
 | `src/components/placements/placement-calendar-workspace.tsx` — /admin/placements/calendar | Horizontal 7-day calendar, desktop | Right-edge mask and `overscroll-x-contain`; labelled calendar section receives `tabIndex=0`. Agenda remains the phone-safe layout. | 07 |
 | `src/components/placements/college-application-pipeline-controls.tsx` — /admin/placements/jobs/[jobId]/applications | Register and two bounded modal lists | Removed separate 70rem raw table and duplicate mobile card subtree in favor of the shared responsive `DataTable`, explicit empty copy and all 13 preserved columns/actions. Selected learners and outcome entries use separate bounded `overscroll-contain` areas with bottom-edge masks, screen-reader labels, focus and continuation text when long. | 17 |
 
+| `src/components/placements/college-application-detail-drawer.tsx` — application details opened from the pipeline register | Bounded internal-notes history inside native Dialog | Visible “More internal notes below ↓” for long note sets; labelled and focusable region; `overflow-y-auto overscroll-contain` and bottom-edge mask while retaining secure note correction. | 20 |
+| `src/components/placements/super-admin-drive-duplicate.tsx` — /admin/placements/jobs/[jobId]/settings | Destructive-style duplicate confirmation | `ConfirmDialog` with exact consequence wording, Escape/focus return through shared kit, 44px action and synchronous write lock; friendly failed-write feedback. | 21 |
+| `src/components/placements/super-admin-drive-deadline.tsx` — same settings route | Deadline form confirmation | Native-safe `ConfirmDialog` with the original consequence, draft retained while modal opens and on save failure, synchronous mutation guard and mobile 16px datetime input. | 22 |
+
 ## Overlay/widget coverage and motion
 
 Registry-derived or imported overlays: `inbound-mail-list` (Drawer), `lecture-hall-manager` (Dialog, ConfirmDialog, DataTable), `organization-actions` (Dialog + ConfirmDialog), `person-membership-actions` (Dialog/ConfirmDialog), `person-onboard-dialog` (Dialog), `person-profile-dialog` (Dialog), `college-interview-appointments` (Dialog/ConfirmDialog + DataTable), `super-admin-bulk-drive-actions` (new ConfirmDialog), and the shared DataTable/Drawer paths. These delegates are tested by named-file source assertions, not merely by the presence of the route file.
@@ -23,7 +27,7 @@ No new arbitrary durations, easing or layout-affecting animations were introduce
 
 ## Verification boundary and count
 
-- 37/37 assigned pages mapped; 8 source files updated for the scroll pass (four shared scroll primitives and four placement widgets). One additional widget confirmation flow changed without altering the legacy confirmation text.
-- 19 source regression tests in `tests/unit/UX-admin-scroll-motion-chat6.test.ts`; 37 exact-route behavioral source tests remain in `tests/unit/ux-admin-chat6-middle-third.test.ts`.
-- Source-level check: all 16 targeted component source blocks, the dynamic ScrollCue contract, global CSS tokens and the eight-file motion-timing contract matched the branch content at verification time. No TypeScript, Vitest, lint, real wheel/touch/keyboard, 320/360/390px, VoiceOver/TalkBack, or native WebView execution was available here. These are pending orchestrator acceptance, not asserted as passing.
+- 37/37 assigned pages mapped; 11 source files updated for the scroll pass (four shared scroll primitives and seven placement widgets). Three placement-widget confirmation flows changed without altering the legacy confirmation text.
+- 22 source regression tests in `tests/unit/UX-admin-scroll-motion-chat6.test.ts`; 37 exact-route behavioral source tests remain in `tests/unit/ux-admin-chat6-middle-third.test.ts`.
+- Source-level check: all 19 targeted component source blocks, the dynamic ScrollCue contract, global CSS tokens and the eight-file motion-timing contract matched the branch content at verification time. No TypeScript, Vitest, lint, real wheel/touch/keyboard, 320/360/390px, VoiceOver/TalkBack, or native WebView execution was available here. These are pending orchestrator acceptance, not asserted as passing.
 - The overlay was already covered by shared Dialog/Drawer native `showModal`/Escape/focus-return behavior; the changes only modified the scrollers and cues.
