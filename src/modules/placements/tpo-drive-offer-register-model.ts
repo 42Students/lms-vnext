@@ -23,6 +23,19 @@ export function offerRulesCheck(status:string,kind:string){
  if(status==="WITHDRAWN")return "Withdrawn · not held";
  return "Not verified against the current rules";
 }
+/** Malformed optional timestamps must not throw from a TPO page or export.
+ * An unavailable expiry is not evidence that an offer remains open. */
+export function optionalOfferInstantIso(value:Date|null|undefined):string|null{
+ return value&&Number.isFinite(value.getTime())?value.toISOString():null;
+}
+export function offerResponseHoursRemaining(
+ status:string,expiresAt:Date|null|undefined,asOf:Date,
+):number|null{
+ const expires=expiresAt?.getTime(),now=asOf.getTime();
+ if(status!=="ISSUED"||expires===undefined||
+   !Number.isFinite(expires)||!Number.isFinite(now))return null;
+ return Math.max(0,Math.ceil((expires-now)/3600000));
+}
 export const OFFER_REGISTER_PAGE_SIZE=25;
 export function offerExpiryIndicator(status:string,expiresAt:Date|null|undefined,asOf:Date):"EXPIRED"|"DUE_SOON"|"OPEN"|"UNKNOWN"|"NOT_APPLICABLE"{
  if(status!=="ISSUED")return "NOT_APPLICABLE";
@@ -60,9 +73,9 @@ export function projectOfferRegister(facts:readonly OfferRegisterFact[],status:z
  const page=Math.max(1,Math.min(requestedPage,totalPages));
  const start=(page-1)*OFFER_REGISTER_PAGE_SIZE;
  return {counts,totalMatching:match.length,page,pageSize:OFFER_REGISTER_PAGE_SIZE,totalPages,rows:match.slice(start,start+OFFER_REGISTER_PAGE_SIZE).map(({offer,candidate,joining})=>({
-  id:offer.id,name:candidate.displayName?.trim()||"Unnamed learner",membershipId:candidate.membershipId,email:candidate.email??null,phone:candidate.phone??null,rollNumber:candidate.rollNumber??null,batch:candidate.batch??null,branch:candidate.branch??null,role:offer.roleTitle,kind:offer.kind,annualCtcInr:offer.annualCtcInr,fixedLpa:offer.fixedLpa??null,variableLpa:offer.variableLpa??null,joiningBonusLpa:offer.joiningBonusLpa??null,bondMonths:offer.bondMonths??null,bondAmount:offer.bondAmount??null,acceptanceChannel:offer.acceptanceChannel??null,acceptedDisputableUntil:offer.acceptedDisputableUntil?.toISOString()??null,status:offer.status,ruleCheck:offerRulesCheck(offer.status,offer.kind),
-  issued:offer.issuedAt.toISOString(),responded:offer.respondedAt?.toISOString()??null,
-  expires:offer.expiresAt?.toISOString()??null,respondByHours:offer.status==="ISSUED"&&offer.expiresAt?Math.max(0,Math.ceil((offer.expiresAt.getTime()-asOf.getTime())/3600000)):null,expiryIndicator:offerExpiryIndicator(offer.status,offer.expiresAt,asOf),
+  id:offer.id,name:candidate.displayName?.trim()||"Unnamed learner",membershipId:candidate.membershipId,email:candidate.email??null,phone:candidate.phone??null,rollNumber:candidate.rollNumber??null,batch:candidate.batch??null,branch:candidate.branch??null,role:offer.roleTitle,kind:offer.kind,annualCtcInr:offer.annualCtcInr,fixedLpa:offer.fixedLpa??null,variableLpa:offer.variableLpa??null,joiningBonusLpa:offer.joiningBonusLpa??null,bondMonths:offer.bondMonths??null,bondAmount:offer.bondAmount??null,acceptanceChannel:offer.acceptanceChannel??null,acceptedDisputableUntil:optionalOfferInstantIso(offer.acceptedDisputableUntil),status:offer.status,ruleCheck:offerRulesCheck(offer.status,offer.kind),
+  issued:offer.issuedAt.toISOString(),responded:optionalOfferInstantIso(offer.respondedAt),
+  expires:optionalOfferInstantIso(offer.expiresAt),respondByHours:offerResponseHoursRemaining(offer.status,offer.expiresAt,asOf),expiryIndicator:offerExpiryIndicator(offer.status,offer.expiresAt,asOf),
   joining:offer.status==="ACCEPTED"?(joining?.status??"PENDING"):null,
  }))};
 }
@@ -75,7 +88,7 @@ export function tpoDriveOfferRegisterCsv(
 ){
  const asOf=new Date();
  const matches=selectOfferRegisterFacts(facts,filters.status,filters.q,filters.joining,filters.kind,filters.expiry,asOf,filters.minCtcLpa,filters.maxCtcLpa);
- const csvDate=(date:Date|null|undefined)=>date?
+ const csvDate=(date:Date|null|undefined)=>date&&Number.isFinite(date.getTime())?
   new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(date)+" IST":"Not recorded";
  const rows:(string|number|null)[][]=matches.slice(0,TPO_DRIVE_OFFERS_CSV_LIMIT).map(f=>[
   f.offer.id,f.candidate.displayName?.trim()||"Unnamed learner",f.offer.roleTitle,
@@ -85,8 +98,7 @@ export function tpoDriveOfferRegisterCsv(
   csvDate(f.offer.issuedAt),csvDate(f.offer.respondedAt),csvDate(f.offer.expiresAt),f.offer.acceptanceChannel??null,csvDate(f.offer.acceptedDisputableUntil),
   offerRulesCheck(f.offer.status,f.offer.kind),
   offerExpiryIndicator(f.offer.status,f.offer.expiresAt,asOf),
-  f.offer.status==="ISSUED"&&f.offer.expiresAt
-    ? Math.max(0,Math.ceil((f.offer.expiresAt.getTime()-asOf.getTime())/3600000)) : null,
+  offerResponseHoursRemaining(f.offer.status,f.offer.expiresAt,asOf),
  ]);
  rows.push(["Methodology","Every row is a persisted offer version; no final selection or joining evidence inferred.",...Array(23).fill("")]);
  const truncated=matches.length>TPO_DRIVE_OFFERS_CSV_LIMIT;
