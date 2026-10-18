@@ -1,93 +1,151 @@
 "use client";
-import {useEffect,useState} from "react";
+import {useCallback,useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
-type View={name:string;kind:string;from:string;to:string;q:string;who:string;pinned:boolean;usedAt:number};
-function safeViews(value:unknown):View[]{
- if(!Array.isArray(value))return [];
- return value.slice(0,12).flatMap(row=>{
-  if(!row||typeof row!=="object")return [];
-  const x=row as Record<string,unknown>;
-  if(typeof x.name!=="string"||typeof x.kind!=="string"||typeof x.q!=="string"||
-   typeof x.from!=="string"||typeof x.to!=="string")return [];
-  return [{name:x.name.slice(0,50),kind:x.kind.slice(0,40),q:x.q.slice(0,120),who:typeof x.who==="string"?x.who.slice(0,100):"",
-   from:x.from.slice(0,10),to:x.to.slice(0,10),pinned:x.pinned===true,
-   usedAt:typeof x.usedAt==="number"&&Number.isFinite(x.usedAt)?x.usedAt:0}];
- });
-}
-export function TpoAuditSavedViews({collegeId,userId,filters}:{collegeId:string;userId:string;filters:{
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
+import {
+ tpoAuditSavedFiltersSchema,tpoAuditSavedViewHref,
+ type TpoAuditSavedFilters,type TpoAuditSavedView,type TpoAuditSavedViewCommand,
+} from "@/modules/placements/tpo-audit-saved-view-model";
+
+const endpoint="/api/placements/tpo/audit/saved-views";
+type Result={ready:boolean;views:TpoAuditSavedView[]};
+type MutationResult={id:string;filters?:TpoAuditSavedFilters};
+export function TpoAuditSavedViews({filters}:{filters:{
  kind:string;from?:string;to?:string;q:string;who?:string;
 }}){
  const router=useRouter();
- const key="lms.tpo.audit.views."+collegeId+"."+userId;
- const [views,setViews]=useState<View[]>([]);
+ const [views,setViews]=useState<TpoAuditSavedView[]>([]);
+ const [ready,setReady]=useState(false);
+ const [loading,setLoading]=useState(true);
+ const [busy,setBusy]=useState(false);
  const [name,setName]=useState("");
  const [selected,setSelected]=useState("");
  const [message,setMessage]=useState("");
+ const [error,setError]=useState("");
+ const inFlight=useRef(false);
+ const selectedView=views.find(view=>view.id===selected);
+ const load=useCallback(async(signal?:AbortSignal)=>{
+  const response=await apiFetch<Result>(endpoint,{credentials:"same-origin",signal});
+  setReady(response.ready);
+  setViews(response.views);
+  return response;
+ },[]);
  useEffect(()=>{
-  let live=true;
-  void Promise.resolve().then(()=>{
-   if(!live)return;
-   try{setViews(safeViews(JSON.parse(localStorage.getItem(key)??"[]")));}catch{setViews([]);}
+  const controller=new AbortController();
+  void load(controller.signal).catch(()=>{
+   if(!controller.signal.aborted)setError("Could not load saved audit views. Refresh to try again.");
+  }).finally(()=>{
+   if(!controller.signal.aborted)setLoading(false);
   });
-  return ()=>{live=false;};
- },[key]);
- function persist(next:View[]){
-  try{localStorage.setItem(key,JSON.stringify(next));setViews(next);return true;}
-  catch{setMessage("This browser cannot store saved audit views.");return false;}
+  return ()=>controller.abort();
+ },[load]);
+ async function mutate(command:TpoAuditSavedViewCommand,confirmation:string):Promise<MutationResult|null>{
+  if(inFlight.current||!ready)return null;
+  inFlight.current=true;setBusy(true);setError("");setMessage("");
+  try{
+   const changed=await apiFetch<MutationResult>(endpoint,{
+    method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(command),
+   });
+   await load();
+   setSelected(command.action==="DELETE"?"":changed.id);
+   setMessage(confirmation);
+   return changed;
+  }catch(cause){
+   if(cause instanceof FriendlyFetchError&&[0,499,504].includes(cause.status)){
+    // The first mutation may already have committed. Reconcile with server;
+    // never blindly retry a create, delete or pin after losing its reply.
+    try{await load();}catch{}
+    setError("The result of this change is uncertain. Review saved views before trying again.");
+   }else if(cause instanceof FriendlyFetchError){
+    const code=cause.code;
+    setError(code==="VIEW_LIMIT"?"Maximum 12 saved audit views.":
+     code==="PIN_LIMIT"?"Maximum five pinned audit views.":
+     code==="DUPLICATE_NAME"?"That saved view name already exists.":
+     code==="VIEW_STALE"?"This view changed elsewhere. Refresh and apply your edits again.":
+     code==="VIEW_NOT_FOUND"?"This view is no longer available. Refresh the list.":
+     code==="STORAGE_PENDING"?"Saved audit view storage is not available yet.":
+     cause.status===401?"Your session expired. Sign in again.":
+     cause.status===403?"You no longer have permission to change saved views.":
+     "Could not save this view. Refresh and try again.");
+   }else setError("Could not save this view. Refresh and try again.");
+   return null;
+  }finally{inFlight.current=false;setBusy(false);}
  }
- function save(){
-  const title=name.trim();if(!title||title.length>50){setMessage("Name must be 1–50 characters.");return;}
-  const existing=views.find(v=>v.name.toLocaleLowerCase("en-IN")===title.toLocaleLowerCase("en-IN"));
-  if(views.length>=12&&!existing){setMessage("Maximum 12 saved audit views.");return;}
-  if(persist([...views.filter(v=>v.name!==title),{...filters,from:filters.from??"",to:filters.to??"",who:filters.who??"",
-   name:title,pinned:existing?.pinned??false,usedAt:Date.now()}])){setSelected(title);setName("");setMessage("Audit view saved in this browser.");}
+ async function save(){
+  const title=name.trim();
+  if(!title||title.length>50){setError("Name must be 1–50 characters.");return;}
+  const parsed=tpoAuditSavedFiltersSchema.safeParse({
+   kind:filters.kind,from:filters.from??"",to:filters.to??"",
+   q:filters.q,who:filters.who??"",
+  });
+  if(!parsed.success){setError("Current audit filters are invalid. Clear filters and try again.");return;}
+  const saved=await mutate({action:"CREATE",name:title,filters:parsed.data},
+   "Audit view saved to your account.");
+  if(saved)setName("");
  }
- function apply(){
-  const view=views.find(v=>v.name===selected);if(!view)return;
-  const params=new URLSearchParams();
-  if(view.kind&&view.kind!=="ALL")params.set("kind",view.kind);
-  if(view.from)params.set("from",view.from);
-  if(view.to)params.set("to",view.to);
-  if(view.q)params.set("q",view.q);
-  if(view.who)params.set("who",view.who);
-  persist(views.map(v=>v.name===view.name?{...v,usedAt:Date.now()}:v));
-  router.push("/tpo/audit"+(params.size?"?"+params:""));
+ async function open(){
+  if(!selectedView)return;
+  const result=await mutate({action:"OPEN",id:selectedView.id},"Audit view opened.");
+  if(result?.filters)router.push(tpoAuditSavedViewHref(result.filters));
  }
- function pin(){
-  const current=views.find(v=>v.name===selected);if(!current)return;
-  if(!current.pinned&&views.filter(v=>v.pinned).length>=5){setMessage("Maximum five pinned audit views.");return;}
-  persist(views.map(v=>v.name===selected?{...v,pinned:!v.pinned}:v));
+ async function pin(){
+  if(!selectedView)return;
+  await mutate({action:"PIN",id:selectedView.id,expectedRevision:selectedView.revision,
+   pinned:!selectedView.pinned},"Saved view updated.");
  }
- function rename(){
-  const title=name.trim();if(!selected||!title||title.length>50)return;
-  if(views.some(v=>v.name.toLocaleLowerCase("en-IN")===title.toLocaleLowerCase("en-IN")&&v.name!==selected)){setMessage("That name already exists.");return;}
-  if(persist(views.map(v=>v.name===selected?{...v,name:title}:v))){setSelected(title);setName("");}
+ async function rename(){
+  if(!selectedView)return;
+  const title=name.trim();
+  if(!title||title.length>50){setError("Name must be 1–50 characters.");return;}
+  if(title===selectedView.name)return;
+  const result=await mutate({action:"RENAME",id:selectedView.id,
+   expectedRevision:selectedView.revision,name:title},"Saved view renamed.");
+  if(result)setName("");
+ }
+ async function remove(){
+  if(!selectedView||!window.confirm("Delete this saved audit view?"))return;
+  await mutate({action:"DELETE",id:selectedView.id,
+   expectedRevision:selectedView.revision},"Saved view deleted.");
  }
  return <details className="rounded-xl border border-border bg-surface p-4">
   <summary className="cursor-pointer font-semibold">Saved audit views ({views.length}/12)</summary>
-  <p className="mt-1 text-xs text-muted-foreground">Views are stored only in this browser for your TPO account and this college. Server-wide syncing and sharing are not enabled.</p>
+  <p className="mt-1 text-xs text-muted-foreground">
+   {ready?"Saved audit views sync across your signed-in devices, privately for your TPO account and college.":
+    loading?"Loading your saved audit views…":
+    "Saved audit view storage is unavailable. Your current audit filters still work."}
+  </p>
   <div className="mt-3 flex flex-wrap items-end gap-2">
    <label className="grid min-w-44 flex-1 gap-1 text-xs">View name
-    <input value={name} maxLength={50} onChange={e=>setName(e.target.value)}
-     className="min-h-10 rounded border border-border px-2 text-sm"/>
+    <input value={name} maxLength={50} disabled={!ready||busy}
+     onChange={event=>setName(event.target.value)}
+     className="min-h-11 rounded border border-border px-2 text-sm"/>
    </label>
-   <button type="button" onClick={save} disabled={!name.trim()} className="min-h-10 rounded border border-border px-3 text-sm disabled:opacity-50">Save current</button>
+   <button type="button" onClick={()=>void save()} disabled={!ready||busy||!name.trim()}
+    className="min-h-11 rounded border border-border px-3 text-sm disabled:opacity-50">Save current</button>
   </div>
   {views.length?<div className="mt-3 flex flex-wrap gap-2">
    <label className="grid min-w-40 flex-1 gap-1 text-xs">Saved view
-    <select value={selected} onChange={e=>setSelected(e.target.value)}
-     className="min-h-10 rounded border border-border px-2 text-sm">
+    <select value={selected} onChange={event=>setSelected(event.target.value)}
+     disabled={!ready||busy} className="min-h-11 rounded border border-border px-2 text-sm">
      <option value="">Select a view</option>
-     {[...views].sort((a,b)=>Number(b.pinned)-Number(a.pinned)||b.usedAt-a.usedAt)
-      .map(v=><option key={v.name} value={v.name}>{v.pinned?"★ ":""}{v.name}</option>)}
+     {views.map(view=><option key={view.id} value={view.id}>
+      {view.pinned?"★ ":""}{view.name}
+     </option>)}
     </select>
    </label>
-   <button type="button" disabled={!selected} onClick={apply} className="min-h-10 rounded border px-3 text-xs disabled:opacity-50">Open</button>
-   <button type="button" disabled={!selected} onClick={pin} className="min-h-10 rounded border px-3 text-xs disabled:opacity-50">{views.find(v=>v.name===selected)?.pinned?"Unpin":"Pin"}</button>
-   <button type="button" disabled={!selected||!name.trim()} onClick={rename} className="min-h-10 rounded border px-3 text-xs disabled:opacity-50">Rename</button>
-   <button type="button" disabled={!selected} onClick={()=>{if(persist(views.filter(v=>v.name!==selected)))setSelected("");}}
-    className="min-h-10 rounded border px-3 text-xs disabled:opacity-50">Delete</button>
+   <button type="button" disabled={!selectedView||busy} onClick={()=>void open()}
+    className="min-h-11 rounded border px-3 text-xs disabled:opacity-50">Open</button>
+   <button type="button" disabled={!selectedView||busy} onClick={()=>void pin()}
+    className="min-h-11 rounded border px-3 text-xs disabled:opacity-50">
+    {selectedView?.pinned?"Unpin":"Pin"}
+   </button>
+   <button type="button" disabled={!selectedView||busy||!name.trim()} onClick={()=>void rename()}
+    className="min-h-11 rounded border px-3 text-xs disabled:opacity-50">Rename</button>
+   <button type="button" disabled={!selectedView||busy} onClick={()=>void remove()}
+    className="min-h-11 rounded border px-3 text-xs disabled:opacity-50">Delete</button>
   </div>:null}
-  {message?<p role="status" className="mt-2 text-xs">{message}</p>:null}
+  {error?<p role="alert" className="mt-2 text-sm text-error">{error}</p>:null}
+  {message?<p role="status" className="mt-2 text-sm">{message}</p>:null}
  </details>;
 }
