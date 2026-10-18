@@ -91,16 +91,29 @@ export function withCollegeElectiveCreditsCheck<T extends z.ZodType<{
 export const collegeElectiveQuerySchema = withCollegeElectiveCreditsCheck(collegeElectiveBaseQuerySchema);
 export type CollegeElectiveQuery = z.infer<typeof collegeElectiveQuerySchema>;
 
+/** Preserve the entire URL query for the page-specific strict Zod schema.
+ * Silently dropping unknown keys makes a forged bookmark appear to apply
+ * filters it never applied, and can unintentionally broaden an export/list.
+ * Empty optional selectors are omitted for HTML form compatibility. */
+const optionalEmptyStructureKeys = new Set([
+  "programCode", "className", "cohortName", "periodStartsOnOrAfter",
+  "periodEndsOnOrBefore", "departmentCode", "slotName",
+  "minimumRequiredPicks", "maximumAllowedPicks", "semesterFrom",
+  "semesterThrough", "programId", "cohortCode", "classCode",
+  "periodCode", "minimumCapacity", "maximumCapacity", "semesterNumber",
+  "minimumCredits", "maximumCredits",
+]);
+
 export function readCollegeStructureParams(
   values: Record<string, string | string[] | undefined>,
 ): Record<string, string> | null {
   const result: Record<string, string> = {};
-  for (const key of ["q", "programId", "status", "cohortCode", "capacityState", "minimumCapacity", "maximumCapacity", "semesterNumber", "minimumCredits", "maximumCredits", "cohortStatus", "programStatus", "periodState", "periodCode", "classCode", "choiceMode", "offeringState", "academicYearState", "periodLifecycle", "programCode", "className", "cohortName", "schedulePresence", "facultyCoverage", "deliveryPresence", "periodStartsOnOrAfter", "periodEndsOnOrBefore", "departmentCode", "slotName", "programCode", "departmentCode", "minimumRequiredPicks", "maximumAllowedPicks", "semesterFrom", "semesterThrough", "periodLifecycle", "descriptionPresence", "page", "pageSize"] as const) {
-    const value = values[key];
+  for (const [key, value] of Object.entries(values)) {
     if (Array.isArray(value)) return null;
-    if (typeof value === "string" && !((key === "programCode" || key === "className" || key === "cohortName" || key === "periodStartsOnOrAfter" || key === "periodEndsOnOrBefore" || key === "departmentCode" || key === "slotName" || key === "minimumRequiredPicks" || key === "maximumAllowedPicks" || key === "semesterFrom" || key === "semesterThrough" || key === "programId" || key === "cohortCode" || key === "classCode" || key === "periodCode" || key === "minimumCapacity" || key === "maximumCapacity" || key === "semesterNumber" || key === "minimumCredits" || key === "maximumCredits") && !value)) {
-      result[key] = value;
-    }
+    if (value === undefined) continue;
+    if (typeof value !== "string") return null;
+    if (value === "" && optionalEmptyStructureKeys.has(key)) continue;
+    result[key] = value;
   }
   return result;
 }
