@@ -65,3 +65,9 @@ The original chat-9 CI failure list also flagged `SA-placements-projects-102` (q
 2. Execute every create/update/delete/export for each permitted role with duplicate submits, stale token, cross-tenant IDs and denied origin. Validate real PostgreSQL serialization, rollback and audit/notification single delivery.
 3. Test mobile and keyboard paths including dialogs/drawers, visible horizontal scroll cues, focus restoration, reduced motion, print/export equivalence. The source-only route inventory is not this proof.
 4. Obtain passing TypeScript and Vitest run and independent breaker review. No CI workflow was available to this session, so no pass claim is made.
+
+### Chat-9 additional Projects strict-parser and invalid-date checks (CI pending)
+
+- `/admin/projects`: `PROJ-BREAK-ux-22` detects the regression where the visible cards/table `view` key was passed through a newly strict backend service parser. Both the Super Admin and College Admin pages now project only status/search/page/rows for database access while preserving the view toggle and retry query. `tests/unit/PROJ-BREAK-chat9-admin-view-filter-boundary.test.ts` uses direct schema behavior plus source-level route wiring; authenticated browser remains OPEN.
+- `/admin/projects/at-risk` and `/admin/projects/submissions`: `PROJ-BREAK-resilience-21` makes valid IST activity dates consistent and corrupt persisted timestamps display `Date unavailable` rather than crashing page/CSV rendering. `tests/unit/PROJ-BREAK-chat9-admin-export-date-resilience.test.ts` covers pure date helpers and source wiring. Browser and real corrupted-data DB fixtures remain OPEN.
+- `/admin/projects/audit`: `PROJ-BREAK-ux-21` unknown query keys trigger the existing invalid-filter warning without entering tenant-scoped activity query predicates. `tests/unit/PROJ-BREAK-chat9-admin-audit-filter-boundary.test.ts` exercises valid cursors and forged filters; full role/PG/browser checks remain OPEN.
