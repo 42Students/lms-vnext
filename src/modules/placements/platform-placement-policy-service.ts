@@ -45,7 +45,9 @@ export async function setPlatformPlacementPolicy(context:RequestContext,raw:unkn
   // edited row permits concurrent min/max updates to violate their invariant.
   await tx.execute(sql`select pg_advisory_xact_lock(42, 130038)`);
   // The RequestContext can be stale after user deactivation or role revocation.
-  await assertPersistedPlatformPermission(tx,context,"placements.manage");
+  // Admin scope may legitimately be college-selected while this policy remains
+  // global; admin-scope.select proves the current persisted SUPER_ADMIN role.
+  await assertPersistedPlatformPermission(tx,context,"admin-scope.select");
   const [existing]=await tx.select().from(platformSettingOverrides).where(identity(input.key)).for("update").limit(1);
   if((existing?.version??0)!==input.expectedVersion)throw new PlatformPlacementPolicyConflict();
   if(input.key==="interview.durationMinMinutes"||input.key==="interview.durationMaxMinutes") {
