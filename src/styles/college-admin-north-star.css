@@ -1,0 +1,35 @@
+/* Portal-only north-star alignment; global tokens and shared UI are owned by chat-17.
+ * The wrapper is display:contents so the authenticated shell owns the ONE white canvas. */
+.lms-college-portal {
+  display: contents;
+  --college-control-radius: var(--lms-control-radius, 9px);
+  --college-title-ink: var(--lms-page-title-color, #172033);
+}
+.lms-college-portal h1 {
+  color: var(--college-title-ink);
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.025em;
+}
+.lms-college-portal :is(
+  input[type="text"], input[type="search"], input[type="email"],
+  input[type="number"], input[type="date"], input[type="tel"],
+  input[type="url"], input[type="password"], select, textarea
+) {
+  border-radius: var(--college-control-radius);
+}
+.lms-college-portal :is(a, button)[class*="rounded-md"] {
+  border-radius: var(--college-control-radius);
+}
+.lms-college-portal :is(a, button)[class*="bg-primary"] {
+  color: var(--lms-on-primary, #fff);
+}
+@media (min-width: 768px) {
+  .lms-college-portal :is(a, button)[class*="min-h-11"] {
+    min-height: var(--lms-control-height, 36px);
+  }
+}
+@media (max-width: 767px) {
+  .lms-college-portal h1 { font-size: clamp(24px, 6vw, 30px); }
+}

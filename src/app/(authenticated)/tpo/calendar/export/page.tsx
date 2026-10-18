@@ -37,21 +37,21 @@ export default async function TpoCalendarExportPage({
     : null;
   const params = parsed.success ? new URLSearchParams(parsed.data) : null;
   return <div className="space-y-6">
-    <Link href="/tpo/calendar" className="font-semibold text-[var(--lms-teal-deep)] hover:underline">
+    <Link href="/tpo/calendar" className="font-semibold text-[var(--lms-link-text)] hover:underline">
       ← TPO calendar
     </Link>
     <PageHeader eyebrow="TPO · Calendar" title="Export upcoming placement rounds"
       description="Download a formula-safe CSV from migrated scheduled round records. Date filters use IST calendar days; no ICS or external calendar sync." />
-    <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-5">
+    <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
       <label className="text-sm font-semibold text-foreground">From (IST)
         <Input type="date" name="from" required defaultValue={first(query.from) ?? today}
-          className="mt-2 block min-h-11 rounded-md border border-border bg-surface px-3" />
+          className="mt-2 block min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-3" />
       </label>
       <label className="text-sm font-semibold text-foreground">Through (IST)
         <Input type="date" name="to" required defaultValue={first(query.to) ?? nextWeek}
-          className="mt-2 block min-h-11 rounded-md border border-border bg-surface px-3" />
+          className="mt-2 block min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-3" />
       </label>
-      <Button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">
+      <Button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-white">
         Preview range
       </Button>
     </form>
@@ -69,7 +69,7 @@ export default async function TpoCalendarExportPage({
         Unscheduled, cancelled, completed and non-published drives are not inferred.
       </p> : null}
       <a href={"/api/placements/tpo/calendar/export?" + params?.toString()}
-        className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-foreground">
+        className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] bg-primary px-4 text-sm font-semibold text-white">
         Download rounds CSV
       </a>
     </section> : null}

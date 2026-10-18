@@ -54,7 +54,7 @@ export default async function CollegeBatchPromotionPage({
       description="Server-verified eligibility preview. Promotion rechecks blockers and closes prior-term-only teaching assignments."
       actions={<Link href="/college/batches"
         className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)]">Batches</Link>} />
-    <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+    <section className="- sm: border-t border-border pt-4">
       <form method="get" action="/college/batch-promotion" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <label className="grid gap-1 text-sm font-semibold text-body">
           Program
@@ -91,14 +91,14 @@ export default async function CollegeBatchPromotionPage({
       </form>
     </section>
     {!preview ? (
-      <section className="rounded-xl border border-border bg-surface p-6">
+      <section className="- border-t border-border pt-6">
         <p className="text-sm text-body">
           Select a batch to calculate a preview from saved progression, semester and enrollment records.
         </p>
       </section>
     ) : (
       <>
-        <section className="space-y-3 rounded-xl border border-border bg-surface p-5" aria-label="Promotion preview">
+        <section className="space-y-3 - border-t border-border pt-5" aria-label="Promotion preview">
           <h2 className="text-lg font-semibold text-foreground">{preview.batch.name}</h2>
           <p className="text-sm text-body">Program: {preview.batch.programName} · Batch status: {preview.batch.status}</p>
           <p className="text-sm text-body">

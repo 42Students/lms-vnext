@@ -32,7 +32,7 @@ export default async function CollegeActivityDetailPage({
       <div><dt className="font-semibold text-muted-foreground">Entity reference</dt>
         <dd className="mt-1 break-all text-body">{event.subjectLabel ?? event.subjectId}</dd></div>
     </dl>
-    <section className="rounded-xl border border-border bg-surface p-5">
+    <section className="- border-t border-border pt-5">
       <h2 className="m-0 text-base font-semibold text-foreground">Sanitized event metadata</h2>
       <pre className="mt-3 overflow-x-auto overscroll-x-contain whitespace-pre-wrap break-words rounded-lg bg-muted p-4 text-xs text-body">
         {JSON.stringify(event.metadata, null, 2)}
