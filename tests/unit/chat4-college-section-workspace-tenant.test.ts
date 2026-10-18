@@ -83,6 +83,12 @@ describe("College Admin class operations workspace isolation and composite data"
  it("COL-classes-tenant-03 orphaned/corrupt section period cannot expose a foreign college academic period",async()=>{
   const s=readFileSync("src/modules/academics/section-workspace.ts","utf8");
   expect(s).toContain("eq(academicPeriods.collegeId, scope.collegeId)");
+  const central=readFileSync("src/modules/academics/scope.ts","utf8");
+  const sectionScope=central.slice(central.indexOf("export async function loadSectionScope("));
+  expect(sectionScope).toContain("eq(academicPeriods.id, sections.academicPeriodId)");
+  expect(sectionScope).toContain("eq(academicPeriods.collegeId, departments.collegeId)");
+  expect(sectionScope).toContain('throw new AcademicsServiceError(');
+  expect(sectionScope).toContain('"SECTION_NOT_FOUND"');
   expect(s).toContain("loadSectionScope(sectionId)");
   expect(s).toContain('requirePermission(context, "academics.read"');
   mock.scope.mockResolvedValue({id:section,collegeId:college,organizationId:org});
