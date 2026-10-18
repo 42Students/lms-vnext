@@ -15,7 +15,12 @@ export async function POST(request:Request,{params}:{params:Promise<{threadId:st
   const context=await getCurrentRequestContext();
   if(!hasActiveRecruiter(context))
    return NextResponse.json({error:"FORBIDDEN"},{status:403});
-  await acknowledgeRecruiterThread(context,id.data);
+  const receipt=await acknowledgeRecruiterThread(context,id.data);
+  // Native form submissions retain their 303. Fetch clients request a
+  // persisted, thread-scoped JSON receipt before claiming read completion.
+  if(request.headers.get("accept")?.includes("application/json"))
+   return NextResponse.json({saved:true,threadId:id.data,acknowledged:receipt.acknowledged},
+    {headers:{"Cache-Control":"private, no-store"}});
   return NextResponse.redirect(new URL("/hr/conversations/"+id.data,request.url),303);
  }catch(error){
   if(error instanceof TpoMessagingError)

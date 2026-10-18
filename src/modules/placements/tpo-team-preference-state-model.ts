@@ -1,4 +1,9 @@
-export type TpoThreadPreferenceAction="FOLLOW"|"UNFOLLOW"|"MUTE"|"UNMUTE";
+import {z} from "zod";
+export const tpoTeamPreferenceActionSchema=z.strictObject({
+ threadId:z.string().uuid(),
+ action:z.enum(["FOLLOW","UNFOLLOW","MUTE","UNMUTE"]),
+});
+export type TpoThreadPreferenceAction=z.infer<typeof tpoTeamPreferenceActionSchema>["action"];
 export type TpoThreadPreferenceState={following:boolean;mutedAt:Date|null};
 
 /** Defaults live only in the read model; don't insert a row for a no-op.

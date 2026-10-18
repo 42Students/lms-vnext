@@ -9,6 +9,7 @@ const state=vi.hoisted(()=>({
  moduleEnabled:true,scopeCalls:0,projectLocks:0,meetingReads:0,
  persistedChecks:0,mentorDenied:true,learnerChecks:0,learnerDenied:true,
  access:"MENTOR",meetingStatus:"SCHEDULED",windowChecks:0,expiresAfterLock:false,
+ supplyExisting:false,existingStatus:"SCHEDULED",advisoryLocks:0,
  writes:0,audits:0,notices:0,lockConditions:"",
 }));
 const projectId="11111111-1111-4111-8111-111111111111";
@@ -92,12 +93,24 @@ vi.mock("@/db/client",()=>({
           return [{status:"ACTIVE",updatedAt:new Date("2099-01-01T00:00:00.000Z")}];
          }
          state.meetingReads++;
+         if(state.supplyExisting)return [{
+          id:meetingId,projectId,status:state.existingStatus,
+          updatedAt:new Date("2099-01-01T00:00:00.000Z"),
+          title:"Mentor review",startsAt:new Date("2099-01-01T10:00:00.000Z"),
+          endsAt:new Date("2099-01-01T10:30:00.000Z"),
+          timeZone:"Asia/Kolkata",meetingType:"GENERAL",
+          meetingUrl:"https://meet.example.org/review",
+          scheduledByUserId:"mentor",scheduledByMembershipId:"mentor-member",
+          linkedSprintId:null,linkedTaskId:null,facilitation:{},
+          outcome:null,agenda:null,
+         }];
          throw new Error("Read meeting after revoked grant");
         },
        }),
       }),
      }),
     }),
+    execute:async()=>{state.advisoryLocks++;throw new Error("AFTER_STATE_GATE");},
     insert:()=>{state.writes++;throw new Error("Unexpected insert");},
     update:()=>{state.writes++;throw new Error("Unexpected update");},
    };
@@ -111,6 +124,7 @@ beforeEach(()=>{
  state.learnerChecks=0;state.learnerDenied=true;
  state.access="MENTOR";state.meetingStatus="SCHEDULED";
  state.windowChecks=0;state.expiresAfterLock=false;
+ state.supplyExisting=false;state.existingStatus="SCHEDULED";state.advisoryLocks=0;
  state.writes=0;state.audits=0;state.notices=0;state.lockConditions="";
 });
 const draft={
@@ -197,6 +211,39 @@ describe("Mentor meeting writes and direct read permissions",()=>{
    .rejects.toMatchObject({code:"PROJECT_MEETING_INVALID_STATE"});
   expect(state.windowChecks).toBe(2);
   expect(state.projectLocks).toBe(1);
+  expect(state.writes+state.audits+state.notices).toBe(0);
+ });
+
+ it.each([
+  ["SCHEDULED","SCHEDULED",true],
+  ["DRAFT","RESCHEDULED",true],
+  ["REQUESTED","RESCHEDULED",true],
+  ["RESCHEDULED","SCHEDULED",true],
+  ["SCHEDULED","RESCHEDULED",false],
+ ] as const)("PROJ-BREAK-MENTOR-357 rejects forbidden %s to %s (changed %s) before side effects",async(
+  current,next,changed,
+ )=>{
+  state.mentorDenied=false;state.supplyExisting=true;state.existingStatus=current;
+  const startsAt=changed?"2099-01-01T11:00:00.000Z":"2099-01-01T10:00:00.000Z";
+  const endsAt=changed?"2099-01-01T11:30:00.000Z":"2099-01-01T10:30:00.000Z";
+  await expect(scheduleProjectMeeting(context,projectId,meetingId,{
+   title:"Mentor review",startsAt,endsAt,timeZone:"Asia/Kolkata",
+   status:next,expectedUpdatedAt:"2099-01-01T00:00:00.000Z",
+   meetingUrl:"https://meet.example.org/review",
+  })).rejects.toMatchObject({code:"PROJECT_MEETING_INVALID_STATE"});
+  expect(state.persistedChecks).toBe(1);
+  expect(state.projectLocks).toBe(1);
+  expect(state.advisoryLocks+state.writes+state.audits+state.notices).toBe(0);
+ });
+ it("PROJ-BREAK-MENTOR-358 permits a changed SCHEDULED meeting only as RESCHEDULED",async()=>{
+  state.mentorDenied=false;state.supplyExisting=true;state.existingStatus="SCHEDULED";
+  await expect(scheduleProjectMeeting(context,projectId,meetingId,{
+   title:"Mentor review",startsAt:"2099-01-01T11:00:00.000Z",
+   endsAt:"2099-01-01T11:30:00.000Z",timeZone:"Asia/Kolkata",
+   status:"RESCHEDULED",expectedUpdatedAt:"2099-01-01T00:00:00.000Z",
+   meetingUrl:"https://meet.example.org/review",
+  })).rejects.toThrow("AFTER_STATE_GATE");
+  expect(state.advisoryLocks).toBe(1);
   expect(state.writes+state.audits+state.notices).toBe(0);
  });
 

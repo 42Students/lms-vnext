@@ -173,3 +173,21 @@ The other half of the admin coverage boundary lives in `src/modules/admin-ui/`, 
 
 
 | `src/modules/admin-ui/super-admin-hiring-report-filters-service.ts` — `getSuperAdminHiringReportFilters` | Validate selected-college parent against selected organization before loading jobs, departments, programs or cohorts | `SA-HIRING-FILTER-ORG-21` `tests/unit/chat13-hiring-filters-selected-org.test.ts` | Executable mismatch denial and scope source contract authored; SQL/CI deferred |
+
+## 2026-10-19 — strict URL paging (chat-13 follow-up; not executed)
+
+| Entrypoint | Adversarial behavior / disposition | Named test |
+|---|---|---|
+| `src/modules/placements/admin-drive-directory-model.ts` — `adminDriveDirectoryQuerySchema` | **SA-ADMIN-DRIVE-03**, DONE in source: only unsigned canonical base-10 page / rows-per-page values or direct integer values accepted; reject URL arrays, hexadecimal, exponent, whitespace, blank, leading zero, Boolean and unexpected filter keys. Canonical valid filter links round-trip through `adminDriveDirectoryHref`. | `tests/unit/chat13-admin-directory-strict-url-paging.test.ts` / `SA-ADMIN-DRIVE-03` |
+| `src/modules/placements/admin-company-directory-model.ts` — `adminCompaniesQuerySchema` | **SA-COMPANY-DIRECTORY-03**, DONE in source: same strict canonical page values for selected-college relationship search, with original 10,000 page cap and all existing scope/relationship filters retained. | `tests/unit/chat13-admin-directory-strict-url-paging.test.ts` / `SA-COMPANY-DIRECTORY-03` |
+
+The reader pages already use `safeParse` and a recoverable invalid-filter UI. These are behavioural unit regressions authored against the parser and href, **not** executed browser/DB tests. Super Admin placement service coverage remains incomplete until every route, query, multi-session race and CSV report is exercised in PostgreSQL.
+
+
+| `src/modules/placements/super-admin-drive-archive-model.ts` — `canArchiveDriveWithImpact`, `sameArchiveImpact`, `superAdminArchiveCommandSchema` | **SA-DRIVE-ARCHIVE-04/05**: complete five persisted status matrix (four eligible + terminal ARCHIVED), reject unknown/corrupt status, count-gated accepted offers, preview drift in each field, and malformed command bodies. This is a pure-model guard, not proof of transactional archive-versus-acceptance race safety. | `tests/unit/chat13-super-admin-archive-transition-matrix.test.ts` / `SA-DRIVE-ARCHIVE-04/05`; authored but unrun |
+
+
+| `src/modules/placements/report-model.ts` — `placementReportCsvCell`, `placementReportCsv` and accreditation CSV consumers | **SA-REPORT-CSV-UNICODE-06/07**, DONE in source: Unicode format controls, combining/enclosing marks, ASCII control and whitespace preceding `=+`/`-@` are prefixed before quoted CSV serialization. Preserves safe cell content, escaping of quotes and CRLF rows. | `tests/unit/chat13-placement-analytics-unicode-csv.test.ts` / `SA-REPORT-CSV-UNICODE-06/07` ; authored not run; spreadsheet parser parity and downloadable endpoint integration pending |
+
+
+| `src/modules/placements/admin-company-directory-export-model.ts` / `superAdminCompanyCsv` and `src/modules/admin-ui/super-admin-scoped-csv-model.ts` / `buildSuperAdminScopedCsv` | **SA-ADMIN-CSV-05**: closes `Cc/Me` category holes not in prior `Cf/Mn` escaping, preserves safe Unicode/quotes, cap and BOM. Shared behavior with `placementReportCsvCell`; two exported report families must reject the same malicious input. | `tests/unit/chat13-all-admin-csv-hidden-control-matrix.test.ts` / `SA-ADMIN-CSV-05`; authored, not executed |
