@@ -3,6 +3,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
+import {readRecruiterJsonBody,RecruiterJsonBodyError} from "@/modules/placements/recruiter-json-request";
 import {placementTableExists} from "@/modules/placements/staged-tables";
 import {readRecruiterPrivateReview,writeRecruiterPrivateReview,
  RecruiterPrivateReviewConflict} from "@/modules/placements/recruiter-private-rating-service";
@@ -32,9 +33,12 @@ export async function PATCH(request:Request,{params}:Params){
   if(!await placementTableExists("placement_recruiter_private_reviews"))
    return NextResponse.json({error:"SERVICE_UNAVAILABLE"},{status:503,headers});
   const body=await writeRecruiterPrivateReview(context,
-   jobId,applicationId,await request.json());
+   jobId,applicationId,await readRecruiterJsonBody(request,16*1024));
   return NextResponse.json(body,{headers});
  }catch(error){
+  if(error instanceof RecruiterJsonBodyError)
+   return NextResponse.json({error:"INVALID_REQUEST"},
+    {status:error.kind==="TOO_LARGE"?413:400,headers});
   if(error instanceof RecruiterPrivateReviewConflict)
    return NextResponse.json({error:"CONFLICT"},{status:409,headers});
   return apiErrorResponse(error);
