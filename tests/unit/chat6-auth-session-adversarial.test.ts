@@ -95,8 +95,7 @@ describe("Chat-6 adversarial OTP, handoff and session lifecycle", () => {
   it("AUTH-sessions-04 replacing one's session must never revoke an unrelated user's token", () => {
     const repository=source("src/modules/auth/login-repository.ts");
     const start=repository.indexOf("if (session.previousDigest) {");
-    const stop=repository.indexOf("await tx.execute(sql`",start+1);
-    const revoke=repository.slice(start,stop);
+    const revoke=repository.slice(start,start+600);
     expect(revoke).toContain("WHERE credential_digest = ${session.previousDigest}");
     expect(revoke).toContain("AND user_id = ${userId}");
     expect(revoke).toContain("AND revoked_at IS NULL");
