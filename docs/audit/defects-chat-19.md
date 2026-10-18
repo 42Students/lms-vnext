@@ -594,3 +594,11 @@ CI/browser execution pending; no tests were run.
 | UX-HR-TEAM-PAGINATION-49 | UX/MAJOR | The authorized Team roster left `teamPage=9000` unchanged after a filter narrowed results to one page, displaying no members and misleading the recruiter that the roster was empty. Clamp requested page to the last actual page after the roster is scoped and filtered; empty total remains an explicitly empty roster. No new source reads and no change to tenant constraints. | `tests/unit/UX-HR-chat19-team-pagination.test.ts` checks paginated boundary, stale page recovery, bad input and company-page wiring. |
 
 No runtime or CI execution claimed.
+
+## HR Company overview duplicate recruiter grant rows
+
+| Gap ID | Severity | Finding and fix | Regression |
+|---|---|---|---|
+| HR-BREAK-COMPANY-COUNTS-50 | MAJOR | The Company & Team overview counted raw recruiter job rows; if a join or multi-grant authorization delivered the same visible drive more than once, active/closed totals and the three recent drive links could double-count it. Deduplicate by persisted job ID only **after** exact employer relationship and college authorization, archive/status filtering; retain stable first-seen order. | `tests/unit/HR-BREAK-chat19-company-counts.test.ts` covers duplicate joins, wrong-tenant/relationship exclusion, archived jobs, capped recent list and empty state. |
+
+No database CI or browser execution was performed.
