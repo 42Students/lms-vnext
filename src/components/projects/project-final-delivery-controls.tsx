@@ -20,6 +20,7 @@ import { FriendlyFetchError } from "@/lib/api-fetch";
 import { friendlyApiError } from "@/lib/friendly-error";
 import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import {ProjectDeliveryFileUploader} from "./project-delivery-file-uploader";
+import {savedDeliverySubmissionReadiness} from "@/modules/projects/saved-delivery-submission-readiness";
 
 type Submission = {
   id: string;
@@ -207,19 +208,13 @@ export function LearnerFinalDeliveryControl({
 
   async function submitDraft(confirmed=false) {
     if (!draft || pendingRef.current) return;
-    // The server props may be stale after a successful autosave but before a
-    // router refresh. The saved snapshot represents the last acknowledged
-    // persisted version; never submit an unsaved edit or trust local-only data.
-    if(JSON.stringify(currentPayload())!==lastSavedSnapshot.current){
+    // Server-acknowledged values can be newer than RSC props after autosave.
+    const readiness=savedDeliverySubmissionReadiness(currentPayload(),lastSavedSnapshot.current);
+    if(readiness==="UNSAVED"){
       showToast({tone:"error",title:"Save your latest changes before submitting."});
       return;
     }
-    const saved=JSON.parse(lastSavedSnapshot.current) as {
-      summary:string;sourceUrl?:string;demoUrl?:string;attachments?:DeliveryAttachment[];
-    };
-    const hasEvidence=Boolean(saved.sourceUrl||saved.demoUrl||
-      saved.attachments?.some(item=>item.kind==="FILE"));
-    if(!saved.summary.trim()||!hasEvidence){
+    if(readiness==="MISSING_EVIDENCE"){
       showToast({tone:"error",title:"Add at least one attachment and a summary before submitting."});
       return;
     }
