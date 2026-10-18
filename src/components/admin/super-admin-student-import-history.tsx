@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { DataTable } from "@/components/ui/data-table";
 
 type Run = {when:string;students:number;created:number;failed:number};
 
@@ -19,20 +20,18 @@ export function SuperAdminStudentImportHistory({runs}:{runs:readonly Run[]}) {
         <button type="button" onClick={()=>dialogRef.current?.close()}
           className="min-h-11 rounded border border-border px-4 font-semibold">Close</button>
       </div>
-      {runs.length ? <div role="region" aria-label="Bulk import history records" tabIndex={0} className="mt-4 overflow-x-auto overscroll-x-contain [mask-image:linear-gradient(to_right,black_90%,transparent_100%)] focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]">
-        <table className="w-full text-left text-sm">
-          <thead><tr className="border-b border-border">
-            <th scope="col" className="p-2">When</th>
-            <th scope="col" className="p-2">Students</th>
-            <th scope="col" className="p-2">Created</th>
-            <th scope="col" className="p-2">Failed</th>
-          </tr></thead>
-          <tbody>{runs.map((run,index)=><tr key={index} className="border-b border-border">
-            <td className="p-2">{run.when}</td><td className="p-2">{run.students}</td>
-            <td className="p-2">{run.created}</td><td className="p-2">{run.failed}</td>
-          </tr>)}</tbody>
-        </table>
-      </div>:<p role="status" className="mt-4 text-sm text-body">No bulk imports on file for this college.</p>}
+      <div className="mt-4 max-h-[60dvh] overflow-y-auto">
+        <DataTable caption="Bulk import history records"
+          rows={runs.map((run,index)=>({...run,index}))}
+          getRowKey={run=>String(run.index)}
+          empty={<p role="status" className="text-sm text-body">No bulk imports on file for this college.</p>}
+          columns={[
+            {key:"when",header:"When",mobilePriority:"primary",cell:run=>run.when},
+            {key:"students",header:"Students",mobilePriority:"secondary",cell:run=>run.students},
+            {key:"created",header:"Created",mobilePriority:"secondary",cell:run=>run.created},
+            {key:"failed",header:"Failed",mobilePriority:"secondary",cell:run=>run.failed},
+          ]}/>
+      </div>
     </dialog>
   </>;
 }
