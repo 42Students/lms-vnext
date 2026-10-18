@@ -2,6 +2,7 @@ import { and, asc, eq, gt, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   colleges,
+  organizations,
   placementCompanies,
   placementCompanyRelationships,
   placementRecruiterCollegeGrants,
@@ -67,6 +68,10 @@ export async function getRecruiterCompanyTeam(
       and(eq(colleges.id,placementCompanyRelationships.collegeId),
         eq(colleges.status,"ACTIVE")),
     )
+    .innerJoin(organizations,and(
+      eq(organizations.id,colleges.organizationId),
+      eq(organizations.status,"ACTIVE"),
+    ))
     .innerJoin(
       placementCompanies,
       eq(placementCompanies.id, placementCompanyRelationships.companyId),
