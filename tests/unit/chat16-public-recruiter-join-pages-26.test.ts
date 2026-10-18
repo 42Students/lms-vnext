@@ -33,9 +33,9 @@ const token = "a".repeat(48);
 const params = { params: Promise.resolve({ token }) };
 beforeEach(() => {
   vi.resetAllMocks();
-  vi.mocked(publicJoinUnavailable).mockResolvedValue(false as never);
-  vi.mocked(publicJoinUnavailableCopy).mockReturnValue(null as never);
-  vi.mocked(getPublicJoinPreview).mockResolvedValue({ displayName: "Company" } as never);
+  vi.mocked(publicJoinUnavailable).mockResolvedValue(null);
+  vi.mocked(publicJoinUnavailableCopy).mockReturnValue(null);
+  vi.mocked(getPublicJoinPreview).mockResolvedValue({kind:"READY",collegeName:"Example College",companyDomain:"example.org",companyName:"Company"});
 });
 
 describe("chat-16 real public recruiter join page SSR and invitation failure recovery", () => {
@@ -71,13 +71,46 @@ describe("chat-16 real public recruiter join page SSR and invitation failure rec
     },
   );
 
+  it.each([
+    ["COMPANY", CompanyJoinPage],
+    ["COLLEGE", CollegeJoinPage],
+  ] as const)(
+    "UX-public-join-04 %s readiness outage fails closed even when invitation preview loads",
+    async (scope, render) => {
+      vi.mocked(publicJoinUnavailable).mockRejectedValue(new Error("private provider secret"));
+      const explanation =
+        "Recruiter verification is temporarily unavailable. The placement cell must enable verified client networking, email-code delivery and public join storage before recruiters can join.";
+      vi.mocked(publicJoinUnavailableCopy).mockReturnValue(explanation);
+      const html = renderToStaticMarkup(await render(params));
+      expect(publicJoinUnavailableCopy).toHaveBeenCalledWith("RATE_TABLE_MISSING");
+      expect(html).toContain(explanation);
+      expect(html).toContain('data-scope="' + scope + '"');
+      expect(html).not.toContain("private provider secret");
+    },
+  );
+
+  it.each([
+    ["COMPANY", CompanyJoinPage],
+    ["COLLEGE", CollegeJoinPage],
+  ] as const)(
+    "UX-public-join-05 %s invalid or revoked invitation never probes email/provider readiness",
+    async (scope, render) => {
+      vi.mocked(getPublicJoinPreview).mockResolvedValue({kind:"UNAVAILABLE"});
+      const html = renderToStaticMarkup(await render(params));
+      expect(html).toContain('data-join-form="true"');
+      expect(html).toContain('data-scope="' + scope + '"');
+      expect(publicJoinUnavailable).not.toHaveBeenCalled();
+      expect(publicJoinUnavailableCopy).not.toHaveBeenCalled();
+    },
+  );
+
   it("UX-public-join-03 unavailable campaign is explicitly blocked instead of falsely accepting applications", async () => {
-    vi.mocked(publicJoinUnavailable).mockResolvedValue(true as never);
+    vi.mocked(publicJoinUnavailable).mockResolvedValue("RATE_TABLE_MISSING");
     vi.mocked(publicJoinUnavailableCopy).mockReturnValue(
-      "Recruiter invitations are temporarily unavailable.",
+      "Recruiter verification is temporarily unavailable. The placement cell must enable verified client networking, email-code delivery and public join storage before recruiters can join.",
     );
     const html = renderToStaticMarkup(await CollegeJoinPage(params));
-    expect(html).toContain("Recruiter invitations are temporarily unavailable.");
+    expect(html).toContain("Recruiter verification is temporarily unavailable. The placement cell must enable verified client networking, email-code delivery and public join storage before recruiters can join.");
     expect(html).toContain('data-scope="COLLEGE"');
     expect(html).not.toContain("private-database-error");
   });
