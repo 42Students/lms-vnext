@@ -80,7 +80,9 @@ export function parseTpoRoundImport(bytes:Buffer,filename:string){
   return {line:i+2,identity:value(app)||value(company)||value(email)||value(roll),
    applicationId:value(app),email:value(email),roll:value(roll),companyId:value(company),name:value(name),
    outcome:result,invalidRank:rankText!==""&&(result!=="HOLD"||!rankTextValid),
-   rank:rankValue,
+   // A rank is actionable only for a waitlisted learner; never carry a
+   // numerically valid rank from a PASS, FAIL or ABSENT import row.
+   rank:result==="HOLD"?rankValue:null,
    message:value(message)||null};
  });
  return rows;

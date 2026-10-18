@@ -16,7 +16,7 @@ const headings = ["Workspace","Mentor","Status","Progress %","Members","Last cha
 export function projectWorkspaceCsvCell(value: string | number | null): string {
   const raw = value === null ? "" : String(value);
   const safe = typeof value === "string" &&
-    /^[\p{Cc}\p{Cf}\p{Zs}\p{Zl}\p{Zp}]*[=+\-@]/u.test(value)
+    /^[\p{Cc}\p{Cf}\p{M}\p{Zs}\p{Zl}\p{Zp}]*[=+\-@]/u.test(value)
     ? "'" + raw
     : raw;
   return '"' + safe.replaceAll('"','""') + '"';
