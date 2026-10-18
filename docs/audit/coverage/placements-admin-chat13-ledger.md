@@ -137,3 +137,6 @@ The other half of the admin coverage boundary lives in `src/modules/admin-ui/`, 
 
 
 | `src/modules/placements/admin-company-drive-history-service.ts` — accepted-offer joined outcome aggregate | Company history hired totals must count only uniquely joined applications with an ACCEPTED offer, excluding inconsistent ISSUED/DECLINED/WITHDRAWN offer histories | `SA-COMPANY-HISTORY-PLACED-07` appended to `tests/unit/chat13-company-drive-history-visible-totals.test.ts` | Source and contract authored; malformed PostgreSQL record fixture pending |
+
+
+| `src/modules/placements/super-admin-published-drive-edit-service.ts` + `super-admin-published-drive-edit-feedback.ts` — typed optimistic conflict recovery | For selected-college PUBLISHED metadata edits, compare equivalent instants rather than string offsets; detect stale DB CAS as HTTP 409 and show friendly next step while preserving input | `SA-placements-projects-13-409` in `tests/unit/chat13-published-drive-edit.test.ts` | Source/feedback tests authored; actual concurrent UI/DB transaction test outstanding |
