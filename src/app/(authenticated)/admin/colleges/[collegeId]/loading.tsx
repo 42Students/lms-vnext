@@ -1,4 +1,4 @@
-import { LoadingState } from "@/components/ui/loading-state";
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 export default function TenantDetailLoading() {
-  return <LoadingState label="Loading tenant identity and lifecycle in the current safety scope…" />;
+  return <GracefulPageLoading label="Loading tenant identity and lifecycle in the current safety scope…" />;
 }
