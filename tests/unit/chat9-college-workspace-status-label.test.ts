@@ -22,8 +22,9 @@ describe("College Admin legacy workspace listing parity",()=>{
   expect(list).toContain("No template — attach one");
   expect(list).toContain("collegeWorkspaceStatusLabel(item.status,item.riskReasons)");
   expect(controls).toContain("[10, 20, 25, 50, 100]");
-  expect(csv).toContain("collegeWorkspaceStatusLabel(item.status,item.riskReasons)");
-  expect(csv).toContain("items.map(");
+  expect(csv).toContain("projectWorkspacePageCsv(items)");
+  expect(source("src/modules/projects/admin-workspace-page-export-model.ts")).toContain("collegeWorkspaceStatusLabel(item.status,item.riskReasons)");
+  expect(source("src/modules/projects/admin-workspace-page-export-model.ts")).toContain("items.map(");
   expect(csv).toContain("project-workspaces-page.csv");
  });
 });

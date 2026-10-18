@@ -18,6 +18,7 @@ import { AuthorizationError, can, requirePermission } from "@/modules/permission
 import { PlacementsServiceError } from "./errors";
 import { requirePlacementManageScope } from "./scope";
 import {
+  canRecordTpoActualJoiningDate,
   canRecordTpoOfferAction,
   tpoOfferLifecycleInputSchema,
 } from "./tpo-offer-lifecycle-model";
@@ -106,6 +107,10 @@ export async function recordTpoOfferLifecycle(
         .for("update").limit(1);
       if (!canRecordTpoOfferAction(input.action, offer.status, currentJoining?.status ?? null)) {
         throw new PlacementsServiceError("PLACEMENT_OFFER_INVALID_TRANSITION");
+      }
+      if (input.action === "RECORD_JOINED" &&
+          !canRecordTpoActualJoiningDate(input.joiningDate!, now)) {
+        throw new PlacementsServiceError("PLACEMENT_JOINING_NOT_READY");
       }
       if(input.action==="RECORD_ACCEPTED"){
         const membershipId=membershipByOffer.get(offer.id)!;

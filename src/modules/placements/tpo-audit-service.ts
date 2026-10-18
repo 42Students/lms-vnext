@@ -25,6 +25,7 @@ import {
   type TpoAuditKind,
 } from "./tpo-audit-model";
 import { requirePlacementManageScope } from "./scope";
+import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 import {tpoAuditEntityHref} from "./tpo-audit-entity-link-model";
 import { placementTableExists } from "./staged-tables";
 
@@ -454,6 +455,11 @@ export async function getTpoAuditLog(
     context,
     collegeId,
   );
+  // The audit includes private company and student activity. A TPO cookie
+  // remains valid after role removal, so check the persisted active actor
+  // before probing tables or executing any history UNION arm.
+  const liveCollegeId=await requireTpoBatchActor(context);
+  if(liveCollegeId!==collegeId)throw new AuthorizationError("placements.manage");
 
   const [shareEventsExists, shareLinksExist] =
     await Promise.all([
