@@ -23,18 +23,20 @@ vi.mock("@/db/client", () => ({
         const phone = projection.phoneE164 as { sql: SQL };
         state.emailMask = dialect.sqlToQuery(email.sql);
         state.phoneMask = dialect.sqlToQuery(phone.sql);
-        const source = {
-          innerJoin: () => source,
-          where: (expression: SQL | undefined) => {
+        class SourceQuery {
+          innerJoin() { return this; }
+          where(expression: SQL | undefined) {
             state.scope = expression ? dialect.sqlToQuery(expression) : null;
-            return source;
-          },
-          as: () => ({
-            displayName: projection.displayName,
-            membershipId: projection.membershipId,
-          }),
-        };
-        return { from: () => source };
+            return this;
+          }
+          as() {
+            return {
+              displayName: projection.displayName,
+              membershipId: projection.membershipId,
+            };
+          }
+        }
+        return { from: () => new SourceQuery() };
       }
       if (projection && "n" in projection) {
         return { from: async () => [{ n: state.count }] };
