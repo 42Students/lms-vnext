@@ -1,9 +1,16 @@
 import { z } from "zod";
+
+// These controls can arrive as untrusted URL query values. Coercion of arrays,
+// booleans, hexadecimal and exponents silently changes the operator's filters.
+const decimalSelection = z.union([
+ z.number().int(),
+ z.string().regex(/^[0-9]+$/).transform(Number).pipe(z.number().int()),
+]);
 export const adminDriveDirectoryQuerySchema=z.object({
  q:z.string().trim().max(100).default(""),
  status:z.enum(["ALL","DRAFT","ACTIVE","CLOSED"]).default("ALL"),
- page:z.coerce.number().int().min(1).max(100000).default(1),
- pageSize:z.coerce.number().int().refine(n=>[10,20,50,100].includes(n)).default(10),
+ page:decimalSelection.refine(n=>n>=1&&n<=100000).default(1),
+ pageSize:decimalSelection.refine(n=>[10,20,50,100].includes(n)).default(10),
 }).strict();
 type Drive={job:{id:string;title:string;status:string;applicationDeadline:Date|null};company?:{name:string}};
 export function filterAdminDriveDirectory<T extends Drive>(rows:readonly T[],
