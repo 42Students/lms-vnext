@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
+import { DataTable } from "@/components/ui/data-table";
 import { getFacultyStudentDetail } from "@/modules/courses/faculty-student-detail-service";
 
 function dateText(value: string) {
@@ -61,46 +62,23 @@ export default async function FacultyStudentDetailPage({
       {data.sessions.length === 0
         ? <EmptyState title="No scheduled sessions"
             description="No scheduled class sessions exist for this Course delivery." />
-        : <div className="space-y-3">
-          <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface md:block">
-          <table className="w-full min-w-[38rem] text-left text-sm">
-            <thead className="bg-surface-subtle"><tr>
-              <th scope="col" className="px-4 py-3">Session</th>
-              <th scope="col" className="px-4 py-3">Scheduled</th>
-              <th scope="col" className="px-4 py-3">Attendance</th>
-              <th scope="col" className="px-4 py-3">Recorded</th>
-            </tr></thead>
-            <tbody>{data.sessions.map(row => <tr key={row.id} className="border-t border-border">
-              <td className="px-4 py-3 font-medium">
-                {row.title}
-                {row.note ? <p className="mt-1 max-w-sm whitespace-pre-wrap text-xs font-normal text-body">Note: {row.note}</p> : null}
-              </td>
-              <td className="px-4 py-3">{dateText(row.startsAt)}</td>
-              <td className="px-4 py-3">{row.label}</td>
-              <td className="px-4 py-3">{row.markedAt ? dateText(row.markedAt) : "Not recorded"}</td>
-            </tr>)}</tbody>
-          </table>
-          </div>
-          <ol aria-label="Mobile session history" className="grid gap-3 md:hidden">
-            {data.sessions.map(row => (
-              <li key={row.id} className="rounded-xl border border-border bg-surface p-4">
-                <div className="flex flex-wrap items-start justify-between gap-2">
-                  <h3 className="font-semibold text-foreground">{row.title}</h3>
-                  <span className="rounded-md bg-surface-subtle px-2 py-1 text-xs font-semibold text-body">
-                    {row.label}
-                  </span>
-                </div>
-                <p className="mt-2 text-sm text-body">{dateText(row.startsAt)}</p>
-                <p className="mt-2 text-xs text-muted-foreground">
-                  {row.markedAt ? "Recorded " + dateText(row.markedAt) : "Attendance not recorded"}
-                </p>
-                {row.note ? (
-                  <p className="mt-2 whitespace-pre-wrap text-sm text-body">Note: {row.note}</p>
-                ) : null}
-              </li>
-            ))}
-          </ol>
-        </div>}
+        : <DataTable caption="Session history" rows={data.sessions} getRowKey={row=>row.id}
+            empty={<EmptyState title="No scheduled sessions"
+              description="No scheduled class sessions exist for this Course delivery."/>}
+            columns={[
+              { key:"session", header:"Session", mobileLabel:"Session",
+                mobilePriority:"primary" as const,
+                cell:row=><div className="min-w-0 font-medium text-foreground">{row.title}
+                  {row.note?<p className="mt-1 max-w-sm whitespace-pre-wrap break-words text-xs font-normal text-body">Note: {row.note}</p>:null}
+                </div> },
+              { key:"scheduled", header:"Scheduled", mobileLabel:"Scheduled",
+                mobilePriority:"secondary" as const, cell:row=>dateText(row.startsAt) },
+              { key:"attendance", header:"Attendance", mobileLabel:"Attendance",
+                mobilePriority:"secondary" as const, cell:row=>row.label },
+              { key:"recorded", header:"Recorded", mobileLabel:"Recorded",
+                mobilePriority:"secondary" as const,
+                cell:row=>row.markedAt?dateText(row.markedAt):"Not recorded" },
+            ]}/>
       <Link href={root + "/attendanceDetail"}
         className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         View monthly class attendance →
