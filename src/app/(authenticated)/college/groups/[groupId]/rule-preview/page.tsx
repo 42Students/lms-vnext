@@ -58,7 +58,7 @@ export default async function CollegeGroupRulePreviewPage({
         </div>
       ))}
     </section>
-    <section aria-label="Configured criteria" className="space-y-3 rounded-xl border border-border bg-surface p-5">
+    <section aria-label="Configured criteria" className="space-y-3 - border-t border-border pt-5">
       <h2 className="text-lg font-semibold text-foreground">Persisted rule criteria</h2>
       <dl className="grid gap-3 sm:grid-cols-2">
         <div><dt className="text-xs text-muted-foreground">Programs allowed</dt>

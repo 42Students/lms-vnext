@@ -58,7 +58,7 @@ export default async function CollegeHallAvailabilityPage({ params, searchParams
       : !result ? <p className="rounded-xl border border-border bg-surface p-6 text-sm text-body">
         Select an IST date range to inspect persisted sessions and configured capacity.
       </p> : <>
-        <section className="grid gap-3 rounded-xl border border-border bg-surface p-5 sm:grid-cols-3">
+        <section className="grid gap-3 - sm:grid-cols-3 border-t border-border pt-5">
           <p className="text-sm text-body"><span className="font-semibold">Capacity:</span> {result.hall.capacity} seats</p>
           <p className="text-sm text-body"><span className="font-semibold">Status:</span> {result.hall.status}</p>
           <p className="text-sm text-body"><span className="font-semibold">Scheduled:</span> {result.sessions.length}{result.truncated ? "+" : ""} sessions</p>

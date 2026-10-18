@@ -94,7 +94,7 @@ export default async function CollegeGroupDetailPage({
         }
       />
 
-      <section className="grid gap-4 rounded-xl border border-border bg-surface p-5 sm:grid-cols-2 lg:grid-cols-5">
+      <section className="grid gap-4 - sm:grid-cols-2 lg:grid-cols-5 border-t border-border pt-5">
         <Stat title="Type" value={label(group.kind)} />
         <div>
           <p className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -119,7 +119,7 @@ export default async function CollegeGroupDetailPage({
       </section>
 
       {group.selfJoinOpenFrom || rule ? (
-        <section className="grid gap-4 rounded-xl border border-border bg-surface p-5 sm:grid-cols-3">
+        <section className="grid gap-4 - sm:grid-cols-3 border-t border-border pt-5">
           <Stat
             title="Self-join window"
             value={
@@ -144,7 +144,7 @@ export default async function CollegeGroupDetailPage({
       ) : null}
 
       {rule ? (
-        <section className="rounded-xl border border-border bg-surface p-4">
+        <section className="- border-t border-border pt-4">
           <Link href={"/college/groups/" + encodeURIComponent(group.id) + "/rule-preview"}
             className="font-semibold text-[var(--lms-teal-deep)] hover:underline">
             Preview persisted membership rule (read-only)
