@@ -1,13 +1,16 @@
 "use client";
 import {useState} from "react";
 import {projectAdminCsv} from "@/modules/projects/project-admin-csv-model";
-type Item={id:string;title:string;status:string;mentorName:string|null;memberCount:number;progressPercent:number;updatedAt:Date};
+import {collegeWorkspaceStatusLabel} from "@/modules/projects/college-workspace-status-label";
+import {formatProjectAdminUpdatedDateIst} from "@/modules/projects/project-admin-date-model";
+type Item={id:string;title:string;status:string;mentorName:string|null;memberCount:number;progressPercent:number;updatedAt:Date;riskReasons?:readonly string[]};
 export function ProjectWorkspacePageExport({items}:{items:Item[]}){
  const [notice,setNotice]=useState("");
  function exportCsv(){
-  const columns=["Workspace ID","Workspace","Mentor","Status","Progress %","Members","Updated at"];
-  const body=items.map(r=>[r.id,r.title,r.mentorName,r.status,r.progressPercent,r.memberCount,
-    new Date(r.updatedAt).toISOString()]);
+  const columns=["Workspace ID","Workspace","Mentor","Status","Progress %","Members","Updated at (IST)"];
+  const body=items.map(r=>[r.id,r.title,r.mentorName,
+    collegeWorkspaceStatusLabel(r.status,r.riskReasons),r.progressPercent,r.memberCount,
+    formatProjectAdminUpdatedDateIst(r.updatedAt)]);
   const csv=projectAdminCsv([columns,...body]);
   const file=new Blob([csv],{type:"text/csv;charset=utf-8"});
   const url=URL.createObjectURL(file);const link=document.createElement("a");

@@ -19,19 +19,32 @@ export async function getTpoCommunicationSettings(context:RequestContext){
  const collegeId=await requireTpoBatchActor(context);
  if(!await placementTableExists("placement_tpo_college_settings"))
   return {ready:false as const,smsMonthlyCap:500,emailSignature:"",recruiterAccessMonths:6,prepThresholdPct:60,notifyDriveOpenEmail:true,notifyResultApplied:true,notifyNudges:true,notifyPrepAssigned:true,version:null};
- const [row]=await getDb().select({smsMonthlyCap:placementTpoCollegeSettings.smsMonthlyCap,
-  emailSignature:placementTpoCollegeSettings.emailSignature,recruiterAccessMonths:placementTpoCollegeSettings.recruiterAccessMonths,prepThresholdPct:placementTpoCollegeSettings.prepThresholdPct,
-  notifyDriveOpenEmail:placementTpoCollegeSettings.notifyDriveOpenEmail,
-  notifyResultApplied:placementTpoCollegeSettings.notifyResultApplied,
-  notifyNudges:placementTpoCollegeSettings.notifyNudges,
-  notifyPrepAssigned:placementTpoCollegeSettings.notifyPrepAssigned,updatedAt:placementTpoCollegeSettings.updatedAt})
-  .from(placementTpoCollegeSettings).where(eq(placementTpoCollegeSettings.collegeId,collegeId)).limit(1);
- return {ready:true as const,smsMonthlyCap:row?.smsMonthlyCap??500,
-  emailSignature:row?.emailSignature??"",recruiterAccessMonths:row?.recruiterAccessMonths??6,prepThresholdPct:row?.prepThresholdPct??60,
-  notifyDriveOpenEmail:row?.notifyDriveOpenEmail??true,
-  notifyResultApplied:row?.notifyResultApplied??true,
-  notifyNudges:row?.notifyNudges??true,
-  notifyPrepAssigned:row?.notifyPrepAssigned??true,version:row?.updatedAt.toISOString()??null};
+ // Read private college delivery settings only after checking persisted
+ // account and membership permissions inside the same transaction. Otherwise
+ // a demoted officer can still receive an in-flight response after revocation.
+ return getDb().transaction(async tx=>{
+  const [college]=await tx.select({
+   organizationId:colleges.organizationId,status:colleges.status,
+  }).from(colleges).where(eq(colleges.id,collegeId)).limit(1);
+  if(!college||college.status!=="ACTIVE")
+   throw new TpoCommunicationSettingsError("TPO_SETTINGS_NOT_FOUND");
+  await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+   collegeId,organizationId:college.organizationId,
+  });
+  const [row]=await tx.select({smsMonthlyCap:placementTpoCollegeSettings.smsMonthlyCap,
+   emailSignature:placementTpoCollegeSettings.emailSignature,recruiterAccessMonths:placementTpoCollegeSettings.recruiterAccessMonths,prepThresholdPct:placementTpoCollegeSettings.prepThresholdPct,
+   notifyDriveOpenEmail:placementTpoCollegeSettings.notifyDriveOpenEmail,
+   notifyResultApplied:placementTpoCollegeSettings.notifyResultApplied,
+   notifyNudges:placementTpoCollegeSettings.notifyNudges,
+   notifyPrepAssigned:placementTpoCollegeSettings.notifyPrepAssigned,updatedAt:placementTpoCollegeSettings.updatedAt})
+   .from(placementTpoCollegeSettings).where(eq(placementTpoCollegeSettings.collegeId,collegeId)).limit(1);
+  return {ready:true as const,smsMonthlyCap:row?.smsMonthlyCap??500,
+   emailSignature:row?.emailSignature??"",recruiterAccessMonths:row?.recruiterAccessMonths??6,prepThresholdPct:row?.prepThresholdPct??60,
+   notifyDriveOpenEmail:row?.notifyDriveOpenEmail??true,
+   notifyResultApplied:row?.notifyResultApplied??true,
+   notifyNudges:row?.notifyNudges??true,
+   notifyPrepAssigned:row?.notifyPrepAssigned??true,version:row?.updatedAt.toISOString()??null};
+ });
 }
 
 export async function updateTpoCommunicationSettings(context:RequestContext,raw:unknown){

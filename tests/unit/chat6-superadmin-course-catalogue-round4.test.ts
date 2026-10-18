@@ -85,7 +85,10 @@ describe("chat-6 Super Admin selected-college course directory parity",()=>{
     expect(page).toContain("Students {studentContentVisible(item)?");
     expect(page).toContain("Order within lesson:");
     expect(page).toContain("Linked materials:");
-    expect(page).toContain('return url.protocol==="https:"?url.toString():null');
+    expect(page).toContain("return safePublicCourseContentUrl(value)");
+    const urlPolicy=read("src/modules/courses/super-admin-content-public-link-model.ts");
+    expect(urlPolicy).toContain('url.protocol!=="https:"||url.username||url.password||url.hash');
+    expect(urlPolicy).toContain("return url.toString()");
     expect(page).toContain('<ThirdPartyLink href={publicHttpsHref(item.externalUrl)!} label="Open public link"/>');
     const safeLink=read("src/components/ui/third-party-link.tsx");
     expect(safeLink).toContain('url.protocol === "https:" && !url.username && !url.password');

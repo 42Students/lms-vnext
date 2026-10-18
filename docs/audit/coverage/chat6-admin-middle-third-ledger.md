@@ -76,3 +76,7 @@ Admin-college administrator session revocation uses a synchronous single-flight 
 ## SA-admin-middle-inventory-01..03 all 37 route entrypoint regression
 
 `tests/unit/chat6-super-admin-middle-third-entrypoints.test.ts` enumerates and statically checks every one of the 37 specified `/admin` entrypoints against accidental removal of authenticated request context (with an explicit authenticated delegated-render exception for Live classes), requires no direct DB access and not-found denial on seven foreign-ID detail pages, and verifies eight placement list pages still use the bounded `AdminScopedReadPage` scaffold. Each route's current source entrypoint was retrieved during this review. This is a **source contract**, deliberately not described as an authenticated browser or tenant-database test. CI remains pending. The separate behavioral page tests for application history and membership contact masking are documented above.
+
+## SA-admin-middle-drives-IST-01 directory deadline and posting dates
+
+The Super Admin `/admin/placements/drives` table previously used `toISOString().slice(0,10)` for both the application deadline and publication date, giving incorrect days for UTC-evening instants in India. Both fields now format through `adminDriveIstDate` with `Asia/Kolkata`, null and invalid date fallback, and a unit test at the date boundary in `tests/unit/chat6-superadmin-middle-drive-ist-date.test.ts`. Authored, not locally executed; authenticated browser review remains outstanding.

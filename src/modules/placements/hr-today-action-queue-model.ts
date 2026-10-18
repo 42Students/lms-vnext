@@ -79,7 +79,7 @@ export function buildRecruiterActionQueue(input:{
  const notices=input.unread>0?[{key:"notifications", tone:"SOON" as const, at:null as Date|null,
    label:"Read "+input.unread+" unread notifications",
    description:"Open your college-scoped drive notification inbox.",
-   href:recruiterTodayHref({kind:"MESSAGES"})+"?collegeId="+encodeURIComponent(input.collegeId)+"&unreadOnly=true"}]:[];
+   href:"/hr/notifications?collegeId="+encodeURIComponent(input.collegeId)+"&unreadOnly=true"}]:[];
  const actions=[...changeRequests,...returned,...slots,...offers,...conversations,...due,...deadlines,...reviews,...notices];
  const priority={URGENT:0,SOON:1,FINE:2};
  return actions.sort((a,b)=>{

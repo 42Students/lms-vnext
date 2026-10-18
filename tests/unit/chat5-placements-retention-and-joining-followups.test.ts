@@ -14,6 +14,19 @@ const base:JoiningFollowupFact={
  candidateName:"=2+2",roleTitle:"Engineer",offerStatus:"ACCEPTED",
  joiningStatus:null,scheduledDate:null,
 };
+describe("TPO prep derived reader compile and tenant isolation contract",()=>{
+ it("TPO-PREP-TSC-01 binds the actual cohorts table, not a local cohort-id string array",()=>{
+  const source=src("src/modules/placements/tpo-prep-readiness-derived-service.ts");
+  expect(source).toContain("cohorts as cohortTable");
+  expect(source).toContain(".innerJoin(cohortTable,eq(cohortTable.id,learnerProgramEnrollments.cohortId))");
+  expect(source).toContain("eq(cohortTable.programId,programs.id)");
+  expect(source).not.toMatch(/const\s+cohorts\s*=/);
+  expect(source).toContain("eq(collegeMemberships.collegeId,collegeId)");
+  expect(source).toContain("eq(departments.collegeId,collegeId)");
+  expect(source).toContain('eq(users.platformStatus,"ACTIVE")');
+  expect(source).toContain("hasEveryScopedTpoPrepLearner(learners,enrolled)");
+ });
+});
 describe("PLACEMENTS-RETENTION-01 read-only application retention boundary",()=>{
  it("uses exactly the 180-day lookback and refuses malformed clocks",()=>{
   expect(COLLEGE_APPLICATION_RETENTION_DAYS).toBe(180);
@@ -66,6 +79,21 @@ describe("PLACEMENTS-JOINING-FOLLOWUP-01 real-status/date-driven evidence",()=>{
   expect(tpoJoiningFollowupQuerySchema.safeParse({state:"DATE_MISSING"}).success).toBe(true);
   expect(tpoJoiningFollowupQuerySchema.safeParse({state:"DUE",seasonId:"not-a-uuid"}).success).toBe(false);
   expect(tpoJoiningFollowupQuerySchema.safeParse({state:"PENDING",collegeId:"other"}).success).toBe(false);
+ });
+ it("PLACEMENTS-JOINING-TRUNC-11 tells the truth when source accepted-offer history was capped",()=>{
+  const sample=projectTpoJoiningFollowups(rows,today,"ALL");
+  const sourceLimited=tpoJoiningFollowupCsv({...sample,truncated:true},"Large season");
+  expect(sourceLimited.truncated).toBe(true);
+  expect(sourceLimited.csv).toContain("SOURCE_TRUNCATED");
+  expect(sourceLimited.csv).toContain("Summary totals are incomplete");
+  expect(sourceLimited.csv).toContain("Only the first 500 accepted offer versions");
+  const full=tpoJoiningFollowupCsv(sample,"Small season");
+  expect(full.truncated).toBe(false);
+  expect(full.csv).not.toContain("SOURCE_TRUNCATED");
+  const service=src("src/modules/placements/tpo-joining-followup-service.ts");
+  expect(service).toContain("truncated:offers.length>500");
+  const route=src("src/app/api/placements/reports/joining-followups/route.ts");
+  expect(route).toContain("tpoJoiningFollowupCsv(report,report.season.name)");
  });
  it("never infers JOINED in export, uses formula-neutralized cells and marks large CSV truncation",()=>{
   const projected=projectTpoJoiningFollowups(rows,today,"ALL");
