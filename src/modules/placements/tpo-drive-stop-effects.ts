@@ -11,8 +11,9 @@ import type {RequestContext} from "@/modules/identity/context";
 type Tx=Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
 /**
  * TPO-requests-verification-07: an outstanding self-withdraw request cannot
- * remain pending when its drive is stopped. Reuse APPROVED (registered CHECK),
- * recording the legacy auto-approval consequence in the note/audit metadata.
+ * remain pending when its drive is stopped. An open application's
+ * withdrawal is approved, while a withdrawal conflicting with an accepted
+ * official offer is rejected without altering the offer. Both are audited.
  *
  * Caller holds the job row lock; the service does not mutate accepted offers.
  */
