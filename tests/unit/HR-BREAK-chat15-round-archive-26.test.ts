@@ -58,6 +58,8 @@ describe("HR-ROUND-ARCHIVE-26 archived drives cannot expose editable rounds",()=
     'eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED")',
     'gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`)',
    ])expect(body).toContain(required);
+   expect(body).toContain('eq(users.id,context.user.id)');
+   expect(body).toContain('eq(users.platformStatus,"ACTIVE")');
   }
  });
 
