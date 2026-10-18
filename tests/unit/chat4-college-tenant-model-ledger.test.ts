@@ -13,7 +13,7 @@ import {join} from "node:path";
 describe("college/tenant directory module coverage ledger",()=>{
   it("adminDirectoryQuerySchema accepts legitimate search and rejects overlong, fractional and foreign filters",()=>{
     expect(adminDirectoryQuerySchema.safeParse({}).success).toBe(true);
-    expect(adminDirectoryQuerySchema.safeParse({q:" Campus ",page:"2",pageSize:"50"}).data).toEqual({q:"Campus",page:2,pageSize:50});
+    expect(adminDirectoryQuerySchema.parse({q:" Campus ",page:"2",pageSize:"50"})).toEqual({q:"Campus",page:2,pageSize:50});
     for(const bad of [{q:"x".repeat(101)},{page:0},{page:2.5},{pageSize:20},{organizationId:"foreign"},{collegeId:"foreign"}]){
       expect(adminDirectoryQuerySchema.safeParse(bad).success).toBe(false);
     }
