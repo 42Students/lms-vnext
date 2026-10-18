@@ -82,3 +82,5 @@ Cloud results from the next merge must confirm new tests. Real route rendering f
 
 The previous raw report `<table>` is now rendered via the shared, audited `DataTable`. This component was listed in generated `docs/audit/ux/COVERAGE-MATRIX.md` under raw tables and is not a chat-15/chat-16-owned service; this is an explicit unowned spillover pickup.
 | UX-SPILL-COL-FUNNEL-01 | `src/components/placements/college-hiring-funnel.tsx`: `CollegeHiringFunnel` | `tests/unit/chat19-college-hiring-funnel-mobile.test.tsx` | Direct SSR of all nine stages, company/job/total, accessible mobile cards, summary totals, authorized empty state and original CSV link | 320/360/390px actual browsers and backend scoping are release integration gates |
+
+| UX-SPILL-DRIVE-DAY-01 | `src/components/placements/placement-drive-day-overview.tsx`: `PlacementDriveDayOverview` | `tests/unit/chat19-drive-day-candidates-mobile.test.tsx` | Direct SSR of candidate name, employer-visible role/contact, membership, schedule exception, applied outcome and empty rounds; no raw 42rem table | Device/keyboard integration and service-level scoping pending |
