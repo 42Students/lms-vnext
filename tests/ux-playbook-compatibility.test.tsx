@@ -41,7 +41,7 @@ describe("UX-PLAYBOOK compatibility and accessibility",()=>{
   it("UX-PLAYBOOK-15 original DataTable props still work",()=>{
     const html=renderToStaticMarkup(<DataTable columns={[{key:"label",header:"Label",cell:(row:{id:string})=>row.id}]} rows={[{id:"A"}]} getRowKey={row=>row.id} empty={<p>No entries</p>}/>);
     expect(html).toContain("<table");
-    expect(html).toContain('role="list"');
+    expect(html).toContain('sm:table-row');
   });
   it("UX-PLAYBOOK-16 FormField pairs label, helper and error with ARIA",()=>{
     const html=renderToStaticMarkup(<FormField id="id" label="Name" helper="Example" error="Required">
