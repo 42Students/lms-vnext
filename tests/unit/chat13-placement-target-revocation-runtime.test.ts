@@ -38,7 +38,8 @@ describe("SA-TARGET-REVOKE-07 rechecks persisted actor inside draft audience tra
  it("rejects a Super Admin whose system role was revoked after request authentication without touching targets",async()=>{
   const deleting=vi.fn(),inserting=vi.fn(),selecting=vi.fn();
   const tx={delete:deleting,insert:inserting,select:selecting};
-  const transaction=vi.fn(async(handler:(tx:typeof tx)=>Promise<unknown>)=>handler(tx));
+  type TxStub=typeof tx;
+  const transaction=vi.fn(async(handler:(connection:TxStub)=>Promise<unknown>)=>handler(tx));
   mocks.getDb.mockReturnValue({transaction});
   mocks.assertPersistedPlatformPermission.mockRejectedValue(new Error("FORBIDDEN"));
 
