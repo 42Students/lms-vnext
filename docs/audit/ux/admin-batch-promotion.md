@@ -8,3 +8,6 @@
 ## Follow-up responsive queue closure
 - Replaced the fixed `min-w-[44rem]` Batch Promotion table with shared `DataTable`; preserved the exact Batch/Semester/Academic Year/Students/Status/Action labels and Preview query parameters. The legacy empty message is passed as required `empty`; row actions stay visible at 320px.
 - See `UX-admin-batch-promotion-02`.
+
+## Bounded loading and retry
+- Replaced the indefinite loading pulse with the shared `GracefulPageLoading`, preserving “Loading batch promotion preview”. It provides a semantic reduced-motion skeleton and a recovery control after a slow network response. Tests: `UX-admin-batch-promotion-03`.
