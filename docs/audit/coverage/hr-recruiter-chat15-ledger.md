@@ -95,3 +95,7 @@ The Weak Areas generated report also names `recruiter-selection-staged-schema.ts
 | `HR-BELL-WRONG-DESTINATION` | Recruiter notification bell footer opened conversations instead of its notifications inbox | `12f0cb6` | `UX-chat15-overlays-second-pass` |
 
 **Gate remains open:** Unit tests added but not executed in this environment; real HR PostgreSQL fixtures and browser journey testing are required before claiming the complete HR module or its 2,300+ placements exports exhaustively covered.
+
+| `hrDriveDraftSchema`, `hrDriveDraftQuerySchema`, `hrDraftFromAuthorizedJob` | `HR-BREAK-drive-payload-01.test.ts` | TPO-review-safe hire-again, off-campus HTTPS only, deny credentials/scripts, salary parts and internship stipend, invalid duplicate rounds/CGPA/bond/branches, URL mode clashes, prevent conflicting edit/copy/fix | Database-side compensation policy and concurrent proposal reconciliation |
+
+**Working rule:** A test source reference alone is not counted as closed here. The new `HR-BREAK-*.test.ts` test cases invoke the actual function or page directly. Assertions which mock the database do not substitute for transaction, uniqueness, tenant or audit guarantees on real PostgreSQL.
