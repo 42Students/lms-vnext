@@ -12,6 +12,8 @@ import { AuthorizationError, can, requirePermission } from "@/modules/permission
 import { requirePlacementManageScope } from "./scope";
 import { companyContactChangeNote, companyContactPersonSchema } from "./tpo-company-person-model";
 import { TpoCrmError } from "./tpo-crm-service";
+import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
+import {requireTpoJobActor} from "./tpo-job-write-base";
 
 export class TpoCompanyPersonStale extends Error {
   constructor() { super("TPO_COMPANY_PERSON_STALE"); this.name = "TpoCompanyPersonStale"; }
@@ -27,6 +29,10 @@ async function authorize(context: RequestContext) {
     throw new AuthorizationError("placements.manage");
   }
   requirePermission(context, "placements.manage", { collegeId });
+  // Do not let a cached TPO role enumerate private contact emails after
+  // membership revocation or use an old session to target another college.
+  const liveCollegeId=await requireTpoBatchActor(context);
+  if(liveCollegeId!==collegeId)throw new AuthorizationError("placements.manage");
   await requirePlacementManageScope(context, collegeId);
   return { collegeId, actorUserId: context.user.id, ownerMembershipId: membership.id };
 }
@@ -77,6 +83,9 @@ export async function saveTpoCompanyPerson(
   const db = getDb();
   try {
     return await db.transaction(async tx => {
+    // Hold the persisted team role lock until contact changes and immutable
+    // lead activity both commit (or roll back).
+    await requireTpoJobActor(tx,context);
     const [relationship] = await tx.select({
       id: placementCompanyRelationships.id,
     }).from(placementCompanyRelationships).where(and(

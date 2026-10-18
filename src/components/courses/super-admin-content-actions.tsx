@@ -3,22 +3,17 @@ import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {facultyContentExternalHref} from "@/modules/courses/faculty-content-preview-model";
+import {parseAdminContentLocalMoment,type AdminContentTimeZone} from "@/modules/courses/super-admin-content-datetime-model";
 
 type Content={id:string;title:string;contentType:string;status:string;sequence:number;notes?:string|null;
  durationSeconds:number|null;startsAt:Date|null;endsAt:Date|null};
-type MeetingZone="Asia/Kolkata"|"UTC";
+type MeetingZone=AdminContentTimeZone;
 function localDate(value:Date|null,zone:MeetingZone="Asia/Kolkata"){
  if(!value)return "";
  return new Intl.DateTimeFormat("sv-SE",{
   timeZone:zone,year:"numeric",month:"2-digit",day:"2-digit",
   hour:"2-digit",minute:"2-digit",hourCycle:"h23",
  }).format(new Date(value)).replace(" ","T");
-}
-function toInstant(value:string,zone:MeetingZone="Asia/Kolkata"){
- if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value))throw Error("Enter a valid date and time.");
- const time=new Date(value+":00"+(zone==="UTC"?"+00:00":"+05:30"));
- if(!Number.isFinite(time.getTime()))throw Error("Enter a valid date and time.");
- return time.toISOString();
 }
 export function SuperAdminContentActions({item}:{item:Content}){
  const router=useRouter();
@@ -72,13 +67,10 @@ export function SuperAdminContentActions({item}:{item:Content}){
       !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(endsAt)){
     setError("Enter a valid date and time.");return;
    }
-   const offset=timeZone==="UTC"?"+00:00":"+05:30";
-   const startTime=new Date(startsAt+":00"+offset),endTime=new Date(endsAt+":00"+offset);
-   if(!Number.isFinite(startTime.getTime())||!Number.isFinite(endTime.getTime())){
-    setError("Enter a valid date and time.");return;
-   }
-   if(endTime.getTime()<=startTime.getTime()){setError("End time must be after start time");return;}
-   const start=toInstant(startsAt,timeZone),end=toInstant(endsAt,timeZone);
+   const start=parseAdminContentLocalMoment(startsAt,timeZone);
+   const end=parseAdminContentLocalMoment(endsAt,timeZone);
+   if(!start||!end){setError("Enter a valid date and time.");return;}
+   if(Date.parse(end)<=Date.parse(start)){setError("End time must be after start time");return;}
    changes={...changes,startsAt:start,endsAt:end};
   }
   if(!window.confirm("Save changes?"))return;
@@ -122,25 +114,25 @@ export function SuperAdminContentActions({item}:{item:Content}){
  return <div className="space-y-2">
   <div className="flex flex-wrap gap-2">
    <button type="button" disabled={busy} onClick={toggleEditor}
-    className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-primary-text">Edit</button>
+    className="min-h-11 rounded border border-border px-3 text-xs font-semibold text-primary-text">Edit</button>
    {item.status==="DRAFT"?<button type="button" disabled={busy} onClick={()=>void transition("PUBLISH")}
-    className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-primary-text">Publish</button>:null}
+    className="min-h-11 rounded border border-border px-3 text-xs font-semibold text-primary-text">Publish</button>:null}
    <button type="button" disabled={busy} onClick={()=>void transition("ARCHIVE")}
-    className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-error">Delete</button>
+    className="min-h-11 rounded border border-border px-3 text-xs font-semibold text-error">Delete</button>
   </div>
   {editing?<fieldset disabled={busy} className="grid gap-2 rounded border border-border p-3">
    <p className="text-xs text-muted-foreground">Edit saved metadata or replace a link.
     Private files and existing published URLs are not exposed in this form.</p>
    <label className="grid gap-1 text-xs font-semibold">Title
     <input value={title} maxLength={255} onChange={e=>setTitle(e.target.value)}
-     className="min-h-10 rounded border border-border bg-background p-2"/></label>
+     className="min-h-11 rounded border border-border bg-background p-2"/></label>
    <label className="grid gap-1 text-xs font-semibold">Order
     <input type="number" min={1} max={10001} value={order} onChange={e=>setOrder(e.target.value)}
-     className="min-h-10 rounded border border-border bg-background p-2"/></label>
+     className="min-h-11 rounded border border-border bg-background p-2"/></label>
    {["YOUTUBE","LIVE_CLASS","RESOURCE"].includes(item.contentType)?
     <label className="grid gap-1 text-xs font-semibold">{item.contentType==="LIVE_CLASS"?"Meeting Link":item.contentType==="YOUTUBE"?"YouTube URL":"Resource HTTPS link"}
      <input type="url" maxLength={2048} value={replacementUrl} onChange={e=>setReplacementUrl(e.target.value)}
-      placeholder="New HTTPS link (blank keeps saved link)" className="min-h-10 rounded border border-border bg-background p-2"/>
+      placeholder="New HTTPS link (blank keeps saved link)" className="min-h-11 rounded border border-border bg-background p-2"/>
     </label>:null}
    {item.contentType==="RESOURCE"?<label className="grid gap-1 text-xs font-semibold">Notes
     <textarea rows={3} maxLength={5000} value={notes} onChange={e=>setNotes(e.target.value)}
@@ -148,10 +140,10 @@ export function SuperAdminContentActions({item}:{item:Content}){
    </label>:null}
    {item.contentType==="YOUTUBE"?<label className="grid gap-1 text-xs font-semibold">Video length (seconds)
     <input type="number" min={1} max={86400} value={duration} onChange={e=>setDuration(e.target.value)}
-     className="min-h-10 rounded border border-border bg-background p-2"/></label>:null}
+     className="min-h-11 rounded border border-border bg-background p-2"/></label>:null}
    {item.contentType==="LIVE_CLASS"?<>
     <label className="grid gap-1 text-xs font-semibold">Time Zone
-     <select className="min-h-10 rounded border border-border bg-background p-2" value={timeZone}
+     <select className="min-h-11 rounded border border-border bg-background p-2" value={timeZone}
       onChange={e=>{
        const zone=e.target.value as MeetingZone;
        if((startsAt!==localDate(item.startsAt,timeZone)||endsAt!==localDate(item.endsAt,timeZone))&&
@@ -163,13 +155,13 @@ export function SuperAdminContentActions({item}:{item:Content}){
     </label>
     <label className="grid gap-1 text-xs font-semibold">Start Date and Time
      <input type="datetime-local" value={startsAt} onChange={e=>setStartsAt(e.target.value)}
-      className="min-h-10 rounded border border-border bg-background p-2"/></label>
+      className="min-h-11 rounded border border-border bg-background p-2"/></label>
     <label className="grid gap-1 text-xs font-semibold">End Date and Time
      <input type="datetime-local" value={endsAt} onChange={e=>setEndsAt(e.target.value)}
-      className="min-h-10 rounded border border-border bg-background p-2"/></label>
+      className="min-h-11 rounded border border-border bg-background p-2"/></label>
    </>:null}
    <button type="button" disabled={busy} onClick={()=>void save()}
-    className="min-h-10 rounded bg-primary px-3 text-xs font-semibold text-on-primary">
+    className="min-h-11 rounded bg-primary px-3 text-xs font-semibold text-on-primary">
     {busy?"Saving…":"Save"}</button>
   </fieldset>:null}
   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}

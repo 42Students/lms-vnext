@@ -36,6 +36,16 @@ describe("AUTH-tenant-cache-15 bounded tenant-domain resolution",()=>{
   await expect(resolveRequestTenant("south.example.test")).resolves.toMatchObject({kind:"college",collegeId:"south"});
   expect(lookup).toHaveBeenCalledTimes(after);
  });
+ it("sustained 600-host negative-cache flood cannot displace an early verified tenant",async()=>{
+  lookup.mockImplementation(async host=>host==="early.example.test"?{
+   domainId:"early",host,collegeId:"early",organizationId:"org",
+  } as never:null);
+  await expect(resolveRequestTenant("early.example.test")).resolves.toMatchObject({kind:"college",collegeId:"early"});
+  for(let i=0;i<620;i++)await resolveRequestTenant("attacker-"+i+".example.test");
+  const reads=lookup.mock.calls.length;
+  await expect(resolveRequestTenant("early.example.test")).resolves.toMatchObject({kind:"college",collegeId:"early"});
+  expect(lookup).toHaveBeenCalledTimes(reads);
+ });
  it("retains fail-closed unknown and unavailable outcomes independently of cache pressure",async()=>{
   lookup.mockRejectedValueOnce(new Error("tenant DB temporarily down"));
   await expect(resolveRequestTenant("secure.example.test")).resolves.toMatchObject({kind:"unavailable"});
