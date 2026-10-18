@@ -9,5 +9,5 @@ export const mentorMeetingNotesWriteSchema=z.object({
 }).strict();
 /** Migrated project_meetings.outcome is the only authoritative post-meeting note. */
 export function meetingNotesEditable(projectStatus:string,meetingStatus:string){
-  return projectStatus!=="ARCHIVED" && meetingStatus==="COMPLETED";
+  return projectStatus==="ACTIVE" && meetingStatus==="COMPLETED";
 }

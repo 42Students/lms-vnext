@@ -18,12 +18,14 @@ export function mentorPortfolioActivityCsv(
   hour:"2-digit",minute:"2-digit",hourCycle:"h23",
  });
  const lines=["Event ID,Project,Recorded event,Importance,Occurred (IST)"];
- for(const row of rows){
+ const limited=rows.slice(0,200);
+ for(const row of limited){
   const recorded=Number.isFinite(row.occurredAt.getTime())
    ?date.format(row.occurredAt)+" IST":"Unknown";
   lines.push([row.id,row.projectTitle,row.label,row.importance,recorded].map(csvSafeCell).join(","));
  }
- if(omitted>0)lines.push(["","Truncated",omitted+" additional matching events","",""]
+ const hidden=(Number.isSafeInteger(omitted)&&omitted>0?omitted:0)+Math.max(0,rows.length-limited.length);
+ if(hidden>0)lines.push(["","Truncated",hidden+" additional matching events","",""]
   .map(csvSafeCell).join(","));
  return "\uFEFF"+lines.join("\r\n")+"\r\n";
 }

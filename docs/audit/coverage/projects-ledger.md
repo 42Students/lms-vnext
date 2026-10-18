@@ -244,19 +244,19 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/modules/projects/mentor-final-delivery-decision-model.ts` | `mentorFinalDeliveryCanReview` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-final-delivery-decision-model.ts` | `mentorFinalDeliveryDecisionSchema` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-final-delivery-decision-service.ts` | `decideMentorFinalDelivery` | `tests/unit/projects-mentor-service-guards-chat14.test.ts` | Static/source only, behavioural pending |
-| `src/modules/projects/mentor-latest-review-model.ts` | `currentPendingMentorSubmissions` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-latest-review-model.ts` | `currentPendingMentorSubmissions` | `tests/unit/PROJ-BREAK-chat14-mentor-lead-hardening.test.ts` | Behavioural regression authored (currentPendingMentorSubmissions); **not run**; service / tenant / PostgreSQL acceptance remains open |
 | `src/modules/projects/mentor-meeting-decision-model.ts` | `mentorMeetingDecisionStatus` | `tests/unit/projects-mentor-policy-matrix-chat14.test.ts` | Runtime authored, unrun |
 | `src/modules/projects/mentor-meeting-decision-model.ts` | `mentorMeetingDecisionSchema` | `tests/unit/projects-mentor-policy-matrix-chat14.test.ts` | Runtime authored, unrun |
 | `src/modules/projects/mentor-meeting-decision-service.ts` | `decideMentorProjectMeeting` | `tests/unit/projects-mentor-service-guards-chat14.test.ts` | Static/source only, behavioural pending |
 | `src/modules/projects/mentor-meeting-display-status.ts` | `mentorMeetingDisplayStatus` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-meeting-facilitation-model.ts` | `mentorMeetingFacilitationSchema` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-meeting-facilitation-model.ts` | `emptyMentorMeetingFacilitation` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-meeting-facilitation-model.ts` | `mentorMeetingFacilitationSchema` | `tests/unit/PROJ-BREAK-chat14-mentor-lead-hardening.test.ts` | Behavioural regression authored (mentorMeetingFacilitationSchema); **not run**; service / tenant / PostgreSQL acceptance remains open |
+| `src/modules/projects/mentor-meeting-facilitation-model.ts` | `emptyMentorMeetingFacilitation` | `tests/unit/PROJ-BREAK-chat14-mentor-lead-hardening.test.ts` | Behavioural regression authored (emptyMentorMeetingFacilitation); **not run**; service / tenant / PostgreSQL acceptance remains open |
 | `src/modules/projects/mentor-meeting-form-model.ts` | `mentorMeetingCeremonyLabel` | `tests/unit/projects-mentor-attention-risk-chat14.test.ts` | Runtime authored, unrun |
 | `src/modules/projects/mentor-meeting-form-model.ts` | `mentorMeetingHttpUrl` | `tests/unit/projects-mentor-attention-risk-chat14.test.ts` | Runtime authored, unrun |
 | `src/modules/projects/mentor-meeting-form-model.ts` | `mentorMeetingScheduleError` | `tests/unit/projects-mentor-attention-risk-chat14.test.ts` | Runtime authored, unrun |
-| `src/modules/projects/mentor-meeting-notes-model.ts` | `meetingNotesEditable` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-meeting-notes-model.ts` | `mentorMeetingNotesParamsSchema` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-meeting-notes-model.ts` | `mentorMeetingNotesWriteSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-meeting-notes-model.ts` | `meetingNotesEditable` | `tests/unit/PROJ-BREAK-chat14-mentor-lead-hardening.test.ts` | Behavioural regression authored (meetingNotesEditable); **not run**; service / tenant / PostgreSQL acceptance remains open |
+| `src/modules/projects/mentor-meeting-notes-model.ts` | `mentorMeetingNotesParamsSchema` | `tests/unit/PROJ-BREAK-chat14-mentor-lead-hardening.test.ts` | Behavioural regression authored (mentorMeetingNotesParamsSchema); **not run**; service / tenant / PostgreSQL acceptance remains open |
+| `src/modules/projects/mentor-meeting-notes-model.ts` | `mentorMeetingNotesWriteSchema` | `tests/unit/PROJ-BREAK-chat14-mentor-lead-hardening.test.ts` | Behavioural regression authored (mentorMeetingNotesWriteSchema); **not run**; service / tenant / PostgreSQL acceptance remains open |
 | `src/modules/projects/mentor-meeting-notes-service.ts` | `getMentorMeetingNotes` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-meeting-notes-service.ts` | `updateMentorMeetingNotes` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-meeting-reschedule-model.ts` | `mentorMeetingCanReschedule` | `tests/unit/projects-mentor-sprint-resource-coverage-chat14.test.ts` | Runtime authored, unrun |
@@ -269,15 +269,15 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/modules/projects/mentor-meeting-status-model.ts` | `mentorScheduleStatusFromMeeting` | `tests/unit/projects-mentor-attention-risk-chat14.test.ts` | Runtime authored, unrun |
 | `src/modules/projects/mentor-overload-model.ts` | `projectMentorWorkloadAverage` | `tests/unit/projects-mentor-attention-risk-chat14.test.ts` | Runtime authored, unrun |
 | `src/modules/projects/mentor-overload-model.ts` | `isProjectMentorOverloaded` | `tests/unit/projects-mentor-attention-risk-chat14.test.ts` | Runtime authored, unrun |
-| `src/modules/projects/mentor-overview-edit-model.ts` | `mentorOverviewEditSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-overview-edit-model.ts` | `mentorOverviewEditSchema` | `tests/unit/PROJ-BREAK-chat14-mentor-lead-hardening.test.ts` | Behavioural regression authored (mentorOverviewEditSchema); **not run**; service / tenant / PostgreSQL acceptance remains open |
 | `src/modules/projects/mentor-overview-edit-service.ts` | `updateMentorProjectOverview` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-overview-presenter.ts` | `mentorReviewSubmissionHref` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-overview-presenter.ts` | `mentorAuthoredBrief` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-overview-presenter.ts` | `mentorReviewSubmissionHref` | `tests/unit/PROJ-BREAK-chat14-mentor-lead-hardening.test.ts` | Behavioural regression authored (mentorReviewSubmissionHref); **not run**; service / tenant / PostgreSQL acceptance remains open |
+| `src/modules/projects/mentor-overview-presenter.ts` | `mentorAuthoredBrief` | `tests/unit/PROJ-BREAK-chat14-mentor-lead-hardening.test.ts` | Behavioural regression authored (mentorAuthoredBrief); **not run**; service / tenant / PostgreSQL acceptance remains open |
 | `src/modules/projects/mentor-paged-project-list-model.ts` | `canPageMentorProjectList` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-paged-project-list-service.ts` | `listPagedMentorProjects` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-pending-task-review-export.ts` | `mentorPendingTaskReviewCsv` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-portfolio-activity-export-model.ts` | `mentorPortfolioActivityExportHref` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-portfolio-activity-export-model.ts` | `mentorPortfolioActivityCsv` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-pending-task-review-export.ts` | `mentorPendingTaskReviewCsv` | `tests/unit/PROJ-BREAK-chat14-mentor-lead-hardening.test.ts` | Behavioural regression authored (mentorPendingTaskReviewCsv); **not run**; service / tenant / PostgreSQL acceptance remains open |
+| `src/modules/projects/mentor-portfolio-activity-export-model.ts` | `mentorPortfolioActivityExportHref` | `tests/unit/PROJ-BREAK-chat14-mentor-lead-hardening.test.ts` | Behavioural regression authored (mentorPortfolioActivityExportHref); **not run**; service / tenant / PostgreSQL acceptance remains open |
+| `src/modules/projects/mentor-portfolio-activity-export-model.ts` | `mentorPortfolioActivityCsv` | `tests/unit/PROJ-BREAK-chat14-mentor-lead-hardening.test.ts` | Behavioural regression authored (mentorPortfolioActivityCsv); **not run**; service / tenant / PostgreSQL acceptance remains open |
 | `src/modules/projects/mentor-portfolio-model.ts` | `pageMentorPortfolio` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-portfolio-model.ts` | `selectMentorReviewQueue` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-portfolio-model.ts` | `safeMentorProjectEventLabel` | **GAP** | **GAP — behaviour untested** |
@@ -294,16 +294,16 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/modules/projects/mentor-portfolio-service.ts` | `getMentorPortfolioActivity` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-project-activity-export-model.ts` | `mentorActivityCsv` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-project-activity-model.ts` | `mentorProjectActivityEventTypes` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-project-activity-model.ts` | `mentorProjectActivityPage` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-project-activity-model.ts` | `mentorProjectActivityPage` | `tests/unit/PROJ-BREAK-chat14-mentor-lead-hardening.test.ts` | Behavioural regression authored (mentorProjectActivityPage); **not run**; service / tenant / PostgreSQL acceptance remains open |
 | `src/modules/projects/mentor-project-activity-model.ts` | `mentorProjectActivitySince` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-project-activity-model.ts` | `mentorProjectActivityHref` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-project-activity-model.ts` | `mentorProjectActivityQuerySchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-project-activity-model.ts` | `mentorProjectActivityQuerySchema` | `tests/unit/PROJ-BREAK-chat14-mentor-lead-hardening.test.ts` | Behavioural regression authored (mentorProjectActivityQuerySchema); **not run**; service / tenant / PostgreSQL acceptance remains open |
 | `src/modules/projects/mentor-project-activity-model.ts` | `mentorProjectActivityMobileLayout` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-project-activity-model.ts` | `mentorProjectActivityMobileFilters` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-project-activity-service.ts` | `getMentorProjectActivityHistory` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-project-assignment-filter-model.ts` | `matchesMentorProjectAssignment` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-project-assignment-filter-model.ts` | `matchesMentorProjectAssignment` | `tests/unit/PROJ-BREAK-chat14-mentor-lead-hardening.test.ts` | Behavioural regression authored (matchesMentorProjectAssignment); **not run**; service / tenant / PostgreSQL acceptance remains open |
 | `src/modules/projects/mentor-project-attention-filter-model.ts` | `matchesMentorProjectAttention` | `tests/unit/projects-mentor-attention-risk-chat14.test.ts` | Runtime authored, unrun |
-| `src/modules/projects/mentor-project-event-attribution.ts` | `resolveMentorActivityProjectId` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-project-event-attribution.ts` | `resolveMentorActivityProjectId` | `tests/unit/PROJ-BREAK-chat14-mentor-lead-hardening.test.ts` | Behavioural regression authored (resolveMentorActivityProjectId); **not run**; service / tenant / PostgreSQL acceptance remains open |
 | `src/modules/projects/mentor-project-list-query.ts` | `mentorProjectListQuerySchema` | `tests/unit/projects-mentor-policy-matrix-chat14.test.ts` | Runtime authored, unrun |
 | `src/modules/projects/mentor-project-order-model.ts` | `compareMentorProjects` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-project-order-model.ts` | `compareMentorProjectsByProgress` | **GAP** | **GAP — behaviour untested** |
@@ -337,10 +337,10 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/modules/projects/mentor-resource-directory-model.ts` | `parseMentorResourceDirectorySearch` | `tests/unit/projects-mentor-sprint-resource-coverage-chat14.test.ts` | Runtime authored, unrun |
 | `src/modules/projects/mentor-resource-directory-model.ts` | `mentorResourceDirectoryQuerySchema` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-resource-directory-service.ts` | `getMentorResourceDirectory` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-review-completeness-model.ts` | `projectReviewCompleteness` | `tests/unit/projects-mentor-sprint-resource-coverage-chat14.test.ts` | Runtime authored, unrun |
-| `src/modules/projects/mentor-review-completeness-model.ts` | `reviewCompletenessPage` | `tests/unit/projects-mentor-sprint-resource-coverage-chat14.test.ts` | Runtime authored, unrun |
+| `src/modules/projects/mentor-review-completeness-model.ts` | `projectReviewCompleteness` | `tests/unit/PROJ-BREAK-chat14-mentor-lead-hardening.test.ts` | Behavioural regression authored (projectReviewCompleteness); **not run**; service / tenant / PostgreSQL acceptance remains open |
+| `src/modules/projects/mentor-review-completeness-model.ts` | `reviewCompletenessPage` | `tests/unit/PROJ-BREAK-chat14-mentor-lead-hardening.test.ts` | Behavioural regression authored (reviewCompletenessPage); **not run**; service / tenant / PostgreSQL acceptance remains open |
 | `src/modules/projects/mentor-review-completeness-model.ts` | `mentorReviewCompletenessHref` | `tests/unit/projects-mentor-sprint-resource-coverage-chat14.test.ts` | Runtime authored, unrun |
-| `src/modules/projects/mentor-review-completeness-model.ts` | `mentorReviewCompletenessQuerySchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-review-completeness-model.ts` | `mentorReviewCompletenessQuerySchema` | `tests/unit/PROJ-BREAK-chat14-mentor-lead-hardening.test.ts` | Behavioural regression authored (mentorReviewCompletenessQuerySchema); **not run**; service / tenant / PostgreSQL acceptance remains open |
 | `src/modules/projects/mentor-review-completeness-service.ts` | `getMentorProjectReviewCompleteness` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-review-export-model.ts` | `mentorReviewExportHref` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-review-export-model.ts` | `mentorReviewExportCsv` | **GAP** | **GAP — behaviour untested** |
@@ -668,7 +668,7 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/app/(authenticated)/mentor/projects/[projectId]/board-review/page.tsx` | **GAP — source test mapping pending** | loading, empty, error, denied, partial, mobile, keyboard |
 | `src/app/(authenticated)/mentor/projects/[projectId]/closeout/page.tsx` | **GAP — source test mapping pending** | loading, empty, error, denied, partial, mobile, keyboard |
 | `src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/page.tsx` | **GAP — source test mapping pending** | loading, empty, error, denied, partial, mobile, keyboard |
-| `src/app/(authenticated)/mentor/projects/[projectId]/meetings/[meetingId]/notes/page.tsx` | **GAP — source test mapping pending** | loading, empty, error, denied, partial, mobile, keyboard |
+| `src/app/(authenticated)/mentor/projects/[projectId]/meetings/[meetingId]/notes/page.tsx` | `tests/unit/PROJ-BREAK-chat14-mentor-notes-page.test.tsx` | Authored rendered state / denied propagation / empty and action visibility; loading, phone keyboard, genuine request auth & browser tests **GAP** |
 | `src/app/(authenticated)/mentor/projects/[projectId]/page.tsx` | **GAP — source test mapping pending** | loading, empty, error, denied, partial, mobile, keyboard |
 | `src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/page.tsx` | **GAP — source test mapping pending** | loading, empty, error, denied, partial, mobile, keyboard |
 | `src/app/(authenticated)/mentor/projects/[projectId]/review-completeness/page.tsx` | **GAP — source test mapping pending** | loading, empty, error, denied, partial, mobile, keyboard |
@@ -698,6 +698,16 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | Super Admin | Explicit acting-college scope | No global union | Persisted platform role; audited actor | No mistaken College Admin impersonation |
 | TPO | Read only permitted project fields | Deny | No Mentor actions | Bounded bulk and exports |
 | HR/Recruiter | Only explicitly granted project context | Deny | Revoked grant denies reads | No cross-college replay |
+
+
+## Lead behavioural delta — 2026-10-18
+
+- `PROJ-BREAK-MENTOR-05`: completed-project meeting outcome edits fail closed in both server guard and page, preserving the completed meeting record.
+- `PROJ-BREAK-MENTOR-06`: pagination helper rejects malformed/negative offsets defensively even before its strict request schema.
+- `PROJ-BREAK-MENTOR-07`: CSV exporter additionally bounds direct invocation to 200 events and counts omitted records; route already queried at most 200.
+- `PROJ-BREAK-MENTOR-08..12`: latest-version delivery review, source-identity attribution, persisted review completeness, write validation, and formula-safe exports exercised by authored runtime assertions.
+- `PROJ-BREAK-MENTOR-13..15`: rendered meeting-notes page assertions for project/meeting states, empty content and access-denied propagation.
+- **Verification state:** These are test source additions, not passing CI. No PostgreSQL, actual HTTP, device, independent review or full role matrix run. Uncovered exports and routes remain explicitly GAP.
 
 ## Known release blockers / unverified gates
 
