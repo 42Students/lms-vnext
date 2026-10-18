@@ -99,3 +99,17 @@ Source-scan inventory of the assigned module directories; **PENDING is not verif
 | `src/modules/academics/college-period-lifecycle-service.ts` | `CollegePeriodLifecycleError`, `changeCollegePeriodLifecycle` | PENDING |
 | `src/modules/academics/college-program-mutation-model.ts` | `createCollegeProgramSchema`, `updateCollegeProgramSchema`, `archiveCollegeProgramSchema`, `collegeProgramIdSchema`, `restoreCollegeProgramSchema`, `hasUnsavedCollegeProgramEdit`, `canReduceProgramDuration` | PENDING |
 | `src/modules/academics/college-program-mutation-service.ts` | `CollegeProgramMutationErrorCode`, `CollegeProgramMutationError`, `createCollegeProgram`, `updateCollegeProgram`, `archiveCollegeProgram`, `restoreCollegeProgram`, `listArchivedCollegePrograms` | PENDING |
+| `src/modules/academics/college-promotion-faculty-readiness.ts` | `summarizePromotionFacultyReadiness`, `getPromotionFacultyReadiness` | PENDING |
+| `src/modules/academics/college-recurring-execute-model.ts` | `collegeRecurringExecuteSchema`, `CollegeRecurringExecuteInput`, `recurringExecutionSummary` | PENDING |
+| `src/modules/academics/college-recurring-execute-service.ts` | `CollegeRecurringExecutionError`, `executeCollegeRecurringSchedule` | PENDING |
+| `src/modules/academics/college-recurring-preview-model.ts` | `recurringPreviewSchema`, `RecurringPreviewInput`, `PreviewConflict`, `RecurringSlot`, `ScheduledEvent`, `expandIstSessions`, `findPreviewConflicts` | PENDING |
+| `src/modules/academics/college-recurring-preview-service.ts` | `RecurringPreviewNotFoundError`, `previewCollegeRecurringSchedule`, `listRecurringPreviewOptions` | PENDING |
+| `src/modules/academics/college-recurring-preview-ui-model.ts` | `collegePreviewErrorLabel` | PENDING |
+| `src/modules/academics/college-section-lifecycle-model.ts` | `collegeSectionLifecycleSchema`, `classLifecyclePrompt` | PENDING |
+| `src/modules/academics/college-section-lifecycle-service.ts` | `CollegeSectionLifecycleError`, `changeCollegeSectionLifecycle` | PENDING |
+| `src/modules/academics/college-section-mutation-model.ts` | `collegeSectionIdSchema`, `createCollegeSectionSchema`, `updateCollegeSectionSchema`, `sectionIdentityChanged`, `sectionCapacityAllows`, `sectionPeriodWithinCohort` | PENDING |
+| `src/modules/academics/college-section-mutation-service.ts` | `CollegeSectionErrorCode`, `CollegeSectionError`, `createCollegeSection`, `updateCollegeSection`, `listCollegeSectionOptions` | PENDING |
+| `src/modules/academics/college-structure-directory-model.ts` | `COLLEGE_STRUCTURE_PAGE_SIZE`, `CollegeStructureKind`, `collegeStructureQuerySchema`, `CollegeStructureQuery`, `collegeClassBaseQuerySchema`, `withCollegeClassCapacityCheck`, `collegeClassQuerySchema`, `CollegeClassQuery`, `collegeElectiveBaseQuerySchema`, `withCollegeElectiveCreditsCheck`, `collegeElectiveQuerySchema`, `CollegeElectiveQuery`, `readCollegeStructureParams`, `collegeStructureHref`, `collegeStructureTotalPages`, `classCapacityLabel`, `electiveSelectionLabel` | PENDING |
+| `src/modules/academics/college-structure-directory-service.ts` | `listCollegeClasses`, `listCollegeElectives` | PENDING |
+| `src/modules/academics/college-student-section-move-model.ts` | `studentSectionMemberIdSchema`, `studentSectionMoveSchema`, `requiresStudentSectionMove`, `studentSectionMoveMessage` | PENDING |
+| `src/modules/academics/college-student-section-move-service.ts` | `CollegeStudentSectionMoveError`, `collegeStudentSectionOptions`, `moveCollegeStudentSection` | PENDING |
