@@ -682,3 +682,5 @@ All new checks are **authored but not executed** by this lane. Previously report
 | HR-ROUND-RESULTS-15 | `tests/unit/HR-BREAK-chat15-round-results-15.test.ts`: selected-round-only participant projection, anonymized unnamed learners, one-per-outcome counts, invalid job/round/query denied, encoded deep links | PostgreSQL staging vs APPLIED release authorizations, cross-college/expired grant HTTP |
 
 **State:** Coverage inventory is broader, but many exported functions and routes still need independent service-level behaviour, real PostgreSQL tenancy/concurrency, and interactive page checks. This ledger remains OPEN, not release-certified.
+
+| HR-TENANT-ID-16 | `tests/unit/HR-BREAK-chat15-tenant-identity-04.test.ts`: mismatched recruiter grant/session user and null employer denied even when mocked permission returns true; matching active user remains allowed. | Real multi-user revoked session and persistent employer mismatches require DB integration and CI. |
