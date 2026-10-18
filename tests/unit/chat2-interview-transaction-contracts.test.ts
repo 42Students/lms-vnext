@@ -71,6 +71,29 @@ describe("chat-2 TPO round and interview transaction boundaries",()=>{
   expect(results.indexOf(gate)).toBeGreaterThan(results.indexOf("const ready=scope.jobStatus"));
   expect(slots).toContain("eq(collegeMemberships.status,\"ACTIVE\")");
  });
+ it("TPO-drive-workspace-42 locks drive, round, principal and shortlist before applying a decision",()=>{
+  const c=source("result-service.ts");
+  const apply=c.slice(c.indexOf("export async function applyPlacementRoundResult("));
+  const lockedJob=apply.indexOf("const [lockedJob] = await tx.select");
+  const lockedRound=apply.indexOf("const [lockedRound] = await tx.select");
+  const persistedActor=apply.indexOf("await assertPersistedPlatformPermission(tx,context");
+  const lockedApplication=apply.indexOf("const [lockedApplication] = await tx");
+  const lockedScreening=apply.indexOf("const [lockedScreening] = await tx.select");
+  const lockedResult=apply.indexOf("const [lockedResult] = await tx");
+  const audit=apply.indexOf("recordActivityEventInTransaction(");
+  expect([lockedJob,lockedRound,persistedActor,lockedApplication,lockedScreening,lockedResult,audit]
+   .every(value=>value>=0)).toBe(true);
+  expect(lockedJob).toBeLessThan(lockedRound);
+  expect(lockedRound).toBeLessThan(persistedActor);
+  expect(persistedActor).toBeLessThan(lockedApplication);
+  expect(lockedApplication).toBeLessThan(lockedScreening);
+  expect(lockedScreening).toBeLessThan(lockedResult);
+  expect(lockedResult).toBeLessThan(audit);
+  expect(apply).toContain("assertTpoRoundApplyJobState(lockedJob?.status??null)");
+  expect(apply).toContain("assertTpoRoundApplyRoundState(lockedRound?.status??null,lockedRound?.kind??null)");
+  expect(apply).toContain('lockedScreening.status!=="SHORTLISTED"');
+  expect(apply).toContain('lockedResult.version !== expectedVersion');
+ });
  it("TPO-drive-workspace-40 result imports are college-scoped and matched against the persisted roster",()=>{
   const s=source("tpo-round-import-service.ts");
   expect(s).toContain("await requireTpoJobCollege(context)");
