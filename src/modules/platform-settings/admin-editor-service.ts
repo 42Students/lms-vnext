@@ -122,7 +122,8 @@ export async function saveAdminTenantSettings(ctx:RequestContext,raw:unknown){
      const otherValue=other?Number(other.value):otherDefault;
      const minimum=spec.key==="interview.durationMinMinutes"?thisValue:otherValue;
      const maximum=spec.key==="interview.durationMaxMinutes"?thisValue:otherValue;
-     if(!Number.isFinite(minimum)||!Number.isFinite(maximum)||minimum>maximum)
+     if(!placementPolicyValidate("interview.durationMinMinutes",minimum)||
+        !placementPolicyValidate("interview.durationMaxMinutes",maximum)||minimum>maximum)
       throw new TenantSettingEditorError("INVALID_SETTING");
     }
     let version=current?.version??0;
