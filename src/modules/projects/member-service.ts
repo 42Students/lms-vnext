@@ -613,6 +613,11 @@ export async function bulkReassignProjectMentor(
     bulkProjectMentorReassignmentInputSchema.parse(
       rawInput,
     );
+  // The caller's chosen tenant must match the selected college before any
+  // college/project existence lookup. Individual projects remain checked
+  // again inside their own locked and persistently authorized transactions.
+  if(getProjectAdminCollegeId(context)!==input.collegeId)
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const college =
     await loadProjectCollegeScope(
       input.collegeId,
