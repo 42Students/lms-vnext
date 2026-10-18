@@ -38,7 +38,7 @@ function when(value: Date) {return new Intl.DateTimeFormat("en-IN",{timeZone:"As
 
 export default async function HrHomePage({searchParams}: {searchParams:Promise<{collegeId?:string | string[]}>}) {
   const context = await getCurrentRequestContext();
-  if (!hasActiveRecruiter(context) || !context.recruiter) redirect("/dashboard");
+  if (!hasActiveRecruiter(context) || !context.recruiter || context.recruiter.userId !== context.user.id) redirect("/dashboard");
   const parsed = querySchema.safeParse({collegeId:(await searchParams).collegeId});
   if (!parsed.success) return <div className="min-w-0 max-w-full space-y-5"><PageHeader eyebrow="Recruiter" title="Today" />
     <ErrorState title="Invalid college selection" description="The selected college ID is invalid."
