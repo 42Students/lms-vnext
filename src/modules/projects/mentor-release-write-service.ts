@@ -8,6 +8,7 @@ import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireProjectLifecycleMutationAccess} from "./access";
+import {assertPersistedProjectMutationActor} from "./persisted-mentor-mutation";
 import {ProjectsServiceError} from "./errors";
 import {mentorReleaseDeleteSchema,mentorReleaseVersionMatches,nextMentorReleaseUpdateAt} from "./mentor-release-version-model";
 
@@ -32,6 +33,8 @@ export async function writeMentorProjectRelease(
    .for("update").limit(1);
   if(!project||project.status!=="ACTIVE"&&project.status!=="PLANNED")
    throw new ProjectsServiceError("PROJECT_LIFECYCLE_INVALID_STATE");
+  // Prevent a stale tab from publishing release changes after Mentor grant revocation.
+  await assertPersistedProjectMutationActor(tx,context,scope);
   const [existing]=releaseId?await tx.select().from(projectReleases).where(and(
    eq(projectReleases.id,releaseId),eq(projectReleases.projectId,projectId)
   )).for("update").limit(1):[null];

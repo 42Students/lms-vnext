@@ -18,6 +18,8 @@ export const superAdminReadQuerySchema = z.strictObject({
 export type SuperAdminReadQuery = z.infer<typeof superAdminReadQuerySchema>;
 export type SuperAdminReadRow = {
  id:string; title:string; subtitle:string; details:readonly string[];
+ /** Server-issued optimistic token for editable directory rows. */
+ revision?:string;
  status:string; href?:string;secondaryHref?:string;secondaryLabel?:string;
 };
 export type SuperAdminReadResult = {
