@@ -35,7 +35,7 @@ vi.mock("@/db/client",()=>({getDb:()=>({
     state.where.push({sql:query.sql,params:query.params});
     return this;
    }
-   orderBy(){return this;}
+   async orderBy(){return [];}
    async limit(){return section&&state.section?[state.section]:[];}
   }
   return new Query();
