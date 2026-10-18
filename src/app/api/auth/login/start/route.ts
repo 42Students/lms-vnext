@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import {privateAuthResponse} from "@/modules/auth/private-response";
 import {
   guardLoginRequest,
   auditLogin,
@@ -10,7 +11,7 @@ import { startLoginWithRuntime } from "@/modules/auth/runtime";
 
 export const runtime = "nodejs";
 
-const schema = z.object({
+const schema = z.strictObject({
   channel: z.enum(["PHONE", "EMAIL"]),
   contact: z.string().min(3).max(254),
 });
@@ -35,7 +36,7 @@ export async function POST(request: Request) {
       channel: result.channel,
       requiresSecondFactor: result.requiresSecondFactor,
     });
-    return NextResponse.json(result);
+    return privateAuthResponse(NextResponse.json(result));
   } catch (error) {
     return loginErrorResponse(error, { route: "login-start", ip: guarded.ip });
   }

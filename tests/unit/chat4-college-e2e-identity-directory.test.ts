@@ -42,6 +42,12 @@ describe("COL-people-e2e-identity-01 deterministic fixture identity isolation",(
   expect(first.uid).not.toContain("9876543210");
   expect(mocks.select).not.toHaveBeenCalled();
  });
+ it("never maps unrelated missing-contact users onto the same deterministic identity UID",async()=>{
+  await expect(e2eIdentityDirectory.createUser({displayName:"Person without contacts"}))
+   .rejects.toMatchObject({code:"IDENTITY_CONTACT_REQUIRED"});
+  expect(mocks.select).not.toHaveBeenCalled();
+ });
+
  it("normalizes the email SQL parameter and projects only directory attributes",async()=>{
   mocks.rows.push([stored]);
   const result=await e2eIdentityDirectory.findByEmail(" Student@Example.EDU ");
