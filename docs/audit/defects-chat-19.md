@@ -578,3 +578,11 @@ No CI/runtime/browser execution was performed.
 | HR-BREAK-PROFILE-RECEIPT-48 | MAJOR | Client accepted any 200 JSON with a `profile` object, then overwrote the unsent profile draft and optimistic versions without validating its shape; a redirected sign-in fallback or partially malformed response could incorrectly claim success or crash. Require a nonredirected response matching the complete server projection (validated name, contact digits, changed flag, ISO versions), then update saved state and tokens. Preserve draft and friendly failure copy on unconfirmed results. | `tests/unit/HR-BREAK-chat19-profile-receipt.test.ts` covers actual/no-op service receipts, malformed/sign-in data and state update ordering. |
 
 No tests or browser were executed in this lane.
+
+## Recruiter reply verified completion
+
+| Gap ID | Severity | Cross-audit fix | Direct evidence |
+|---|---|---|---|
+| HR-BREAK-CONVO-RECEIPT-49 | MAJOR | Previously any successful redirect to the conversation thread could count as a sent message; a login/HTML fallback may imitate it. The origin-guarded, authorized POST now returns explicit persisted message and thread IDs for JSON requests, and the client verifies both before clearing a draft or showing Sent. Keep the existing native POST 303 redirect. | `tests/unit/HR-BREAK-chat19-conversation-receipt.test.ts` covers authorized response, rejected principal/origin, native form and unverified receipts. |
+
+CI/browser execution pending; no tests were run.
