@@ -149,6 +149,10 @@ export function CreateProjectControl({
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (submitLock.current) return;
+    if (initialStatus === "ACTIVE" && !mentorMembershipId) {
+      setError("Assign a Mentor before making this Project active.");
+      return;
+    }
     // A disabled Submit button is not an authorization or freshness gate:
     // pressing Enter can submit the form before a new class roster renders.
     // Never reuse the previous class's learner selection during a slow fetch.
