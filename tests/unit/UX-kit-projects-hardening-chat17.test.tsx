@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import type { ReactNode } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { renderToStaticMarkup } from "react-dom/server";
@@ -28,7 +29,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { Textarea } from "@/components/ui/textarea";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { InfoPopover } from "@/components/ui/tooltip";
-import { ToastStack, enqueueToast } from "@/components/ui/toast";
+import { ToastStack, enqueueToast, type ToastItem } from "@/components/ui/toast";
 import { LoadingState } from "@/components/ui/loading-state";
 import { Disclosure } from "@/components/ui/disclosure";
 import { DataTable } from "@/components/ui/data-table";
@@ -40,7 +41,7 @@ import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 
 const source = (name: string) => readFileSync(join(process.cwd(),"src/components/ui",name+".tsx"),"utf8");
-const render = (node: React.ReactNode) => renderToStaticMarkup(<>{node}</>);
+const render = (node: ReactNode) => renderToStaticMarkup(<>{node}</>);
 
 describe("UX-kit-HARDEN-01 shared primitives: a11y, validation, phone and failure states",()=>{
   it("UX-kit-HARDEN-01 button pending/danger/disabled statuses expose semantics and 44px target",()=>{
@@ -165,7 +166,7 @@ describe("UX-kit-HARDEN-01 shared primitives: a11y, validation, phone and failur
     expect(html).not.toContain('target="_blank"');
   });
   it("UX-kit-HARDEN-15 8+ persistent errors remain separately dismissible while timed entries cap",()=>{
-    const errors=Array.from({length:9},(_,i)=>({id:String(i),title:"Error "+i,tone:"error" as const}));
+    const errors: ToastItem[]=Array.from({length:9},(_,i)=>({id:String(i),title:"Error "+i,tone:"error" as const}));
     let current=errors;
     for(let i=0;i<6;i++)current=enqueueToast(current,{id:"timed-"+i,title:"Info "+i,tone:"info"}).items;
     expect(current.filter(e=>e.tone==="error")).toHaveLength(9);
