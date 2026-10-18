@@ -67,6 +67,23 @@ describe("PROJ-HARNESS-ROLLBACK real PostgreSQL: nested rollback and FK integrit
      expect((await db.query("select id from project_tasks where id=$1",[f.graph.taskId]))).toHaveLength(1);
    });
  });
+ it("PROJ-HARNESS-ROLLBACK-06 both harness entrypoints force public as the fixture schema",async()=>{
+   await withProjectPg(pool,async db=>{
+     const path=await db.query<{schema:string}>("select current_schema() as schema");
+     expect(path[0]?.schema).toBe("public");
+     const tenant=await createTenant(db,"Search-path isolation fixture");
+     expect(tenant.collegeId).toBeTruthy();
+   });
+   await withTwoPgSessions(pool,async(a,b)=>{
+     const [first,second]=await Promise.all([
+       a.query<{schema:string}>("select current_schema() as schema"),
+       b.query<{schema:string}>("select current_schema() as schema"),
+     ]);
+     expect(first.rows[0]?.schema).toBe("public");
+     expect(second.rows[0]?.schema).toBe("public");
+   });
+ });
+
  it("PROJ-HARNESS-ROLLBACK-05 both concurrent sessions roll back independently after callback failure",async()=>{
    const tag=randomUUID();
    const first="Harness concurrent rollback a "+tag;

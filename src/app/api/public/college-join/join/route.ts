@@ -10,7 +10,7 @@ export async function POST(request: Request) {
   const trusted = process.env.PUBLIC_JOIN_TRUSTED_PROXY_READY === "VERIFIED";
   const ip = trusted ? request.headers.get("x-public-verified-client-ip") : null;
   try {
-    const result = await acceptPublicRecruiterJoin("COLLEGE", await request.json(), ip);
+    const result = await acceptPublicRecruiterJoin("COLLEGE", await request.json().catch(() => null), ip);
     return NextResponse.json(result, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     if (error instanceof PublicJoinAcceptError) {
@@ -24,6 +24,8 @@ export async function POST(request: Request) {
       }, { status: unready ? 503 : error.code === "RATE_LIMITED" ? 429 : 400,
         headers: { "Cache-Control": "no-store" } });
     }
-    throw error;
+    // Do not expose provider, database or account-identifying failures on this public endpoint.
+    return NextResponse.json({error:"SERVICE_UNAVAILABLE"},
+      {status:503,headers:{"Cache-Control":"no-store"}});
   }
 }
