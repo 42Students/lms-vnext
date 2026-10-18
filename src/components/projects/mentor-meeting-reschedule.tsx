@@ -6,6 +6,9 @@ import {Dialog} from "@/components/ui/dialog";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useToast} from "@/components/ui/toast";
 import {projectMutation} from "./project-api";
+import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
+import {FriendlyFetchError} from "@/lib/api-fetch";
+import {friendlyApiError} from "@/lib/friendly-error";
 import {fromIstLocalInput,toIstLocalInput,mentorMeetingRescheduleSchema}
   from "@/modules/projects/mentor-meeting-reschedule-model";
 
@@ -25,9 +28,11 @@ export function MentorMeetingReschedule(props:{
     expectedUpdatedAt:props.updatedAt,confirmed:true as const,
   };
   const parsed=mentorMeetingRescheduleSchema.safeParse(payload);
+  const dirty=start!==toIstLocalInput(props.startsAt)||end!==toIstLocalInput(props.endsAt);
+  const guard=useProjectEditorDiscardGuard(open||confirm,dirty,pending,()=>{setOpen(false);setConfirm(false);setError(null);});
   const changed=payload.startsAt!==props.startsAt||payload.endsAt!==props.endsAt;
   async function save(){
-    if(!parsed.success||!changed)return;
+    if(!parsed.success||!changed||pending)return;
     setPending(true);setError(null);
     try{
       await projectMutation("/api/projects/"+encodeURIComponent(props.projectId)+
@@ -37,7 +42,7 @@ export function MentorMeetingReschedule(props:{
       showToast({tone:"success",title:"Meeting rescheduled"});
       router.refresh();
     }catch(caught){
-      const message=caught instanceof Error?caught.message:"Meeting update failed";
+      const message=caught instanceof FriendlyFetchError?caught.message:friendlyApiError({});
       setError(message);
       showToast({tone:"error",title:"Meeting not rescheduled",description:message});
     }finally{setPending(false);}
@@ -47,7 +52,7 @@ export function MentorMeetingReschedule(props:{
       setStart(toIstLocalInput(props.startsAt));
       setEnd(toIstLocalInput(props.endsAt));setError(null);setOpen(true);
     }}>Reschedule</Button>
-    <Dialog open={open} onOpenChange={setOpen} title="Reschedule meeting"
+    <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}} title="Reschedule meeting"
       description="Times are in Indian Standard Time (IST). The link and existing agenda stay unchanged.">
       <form onSubmit={event=>{
         event.preventDefault();if(parsed.success&&changed){setOpen(false);setConfirm(true);}
@@ -55,29 +60,32 @@ export function MentorMeetingReschedule(props:{
         <label className="grid gap-1 text-sm font-semibold text-body">Start (IST)
           <input type="datetime-local" required value={start}
             onChange={event=>setStart(event.target.value)}
-            className="min-h-10 rounded-md border border-border bg-background px-3"/>
+            className="min-h-11 rounded-md border border-border bg-background px-3"/>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">End (IST)
           <input type="datetime-local" required value={end}
             onChange={event=>setEnd(event.target.value)}
-            className="min-h-10 rounded-md border border-border bg-background px-3"/>
+            className="min-h-11 rounded-md border border-border bg-background px-3"/>
         </label>
         {!parsed.success?<p role="alert" className="text-sm text-error">
           Select valid start/end times, with a duration up to 12 hours.</p>:null}
         {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
         <div className="flex flex-wrap justify-end gap-2">
-          <Button type="button" variant="secondary" onClick={()=>setOpen(false)}>Cancel</Button>
+          <Button type="button" variant="secondary" onClick={guard.requestClose}>Cancel</Button>
           <Button type="submit" disabled={!parsed.success||!changed||pending}>
             Review reschedule</Button>
         </div>
       </form>
     </Dialog>
-    <ConfirmDialog open={confirm} onOpenChange={setConfirm}
+    <ConfirmDialog open={confirm} onOpenChange={next=>{setConfirm(next);if(!next&&!pending)setOpen(true);}}
       title="Confirm meeting reschedule?" confirmLabel="Confirm reschedule"
       description="Your new IST time will be checked against this project's scheduled meetings. No external message is sent."
       pending={pending} onConfirm={save}>
       <p className="text-sm text-body">{start.replace("T"," ")} – {end.replace("T"," ")} IST</p>
       {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
     </ConfirmDialog>
+    <ConfirmDialog open={guard.discardOpen} onOpenChange={guard.setDiscardOpen}
+      title="Discard reschedule changes?" description="You have unsaved project changes. Leave this page and discard them?"
+      confirmLabel="Discard changes" pending={pending} onConfirm={guard.confirmDiscard}/>
   </>;
 }

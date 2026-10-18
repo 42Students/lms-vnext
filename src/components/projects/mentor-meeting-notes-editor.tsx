@@ -6,6 +6,9 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Dialog} from "@/components/ui/dialog";
 import {useToast} from "@/components/ui/toast";
 import {projectMutation} from "./project-api";
+import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
+import {FriendlyFetchError} from "@/lib/api-fetch";
+import {friendlyApiError} from "@/lib/friendly-error";
 export function MentorMeetingNotesEditor(props:{
   projectId:string;meetingId:string;updatedAt:string;initialNotes:string|null;
 }){
@@ -16,10 +19,12 @@ export function MentorMeetingNotesEditor(props:{
   const [confirm,setConfirm]=useState(false);
   const [pending,setPending]=useState(false);
   const [error,setError]=useState<string|null>(null);
+  const changed=notes.trim()!==(props.initialNotes??"").trim();
+  const guard=useProjectEditorDiscardGuard(open||confirm,changed,pending,()=>{setOpen(false);setConfirm(false);setError(null);});
   const valid=notes.trim().length>0&&notes.trim().length<=4000&&
     notes.trim()!==(props.initialNotes??"").trim();
   async function submit(){
-    if(!valid)return;
+    if(!valid||pending)return;
     setPending(true);setError(null);
     try{
       await projectMutation("/api/projects/"+encodeURIComponent(props.projectId)+
@@ -30,7 +35,7 @@ export function MentorMeetingNotesEditor(props:{
       showToast({tone:"success",title:"Meeting notes saved"});
       router.refresh();
     }catch(caught){
-      const message=caught instanceof Error?caught.message:"Saving notes failed";
+      const message=caught instanceof FriendlyFetchError?caught.message:friendlyApiError({});
       setError(message);
       showToast({tone:"error",title:"Meeting notes not saved",description:message});
     }finally{setPending(false);}
@@ -39,7 +44,7 @@ export function MentorMeetingNotesEditor(props:{
     <Button variant="secondary" onClick={()=>{
       setNotes(props.initialNotes??"");setError(null);setOpen(true);
     }}>{props.initialNotes?"Edit outcome notes":"Record outcome notes"}</Button>
-    <Dialog open={open} onOpenChange={setOpen} title="Meeting outcome notes"
+    <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}} title="Meeting outcome notes"
       description="Record the outcome for this completed meeting. Changes replace the current text; an audit event records the edit, not the old text.">
       <form onSubmit={event=>{event.preventDefault();if(valid){setOpen(false);setConfirm(true);}}}
         className="grid gap-3">
@@ -51,12 +56,12 @@ export function MentorMeetingNotesEditor(props:{
         <p className="text-xs text-muted-foreground">{notes.trim().length}/4000 characters</p>
         {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
         <div className="flex flex-wrap justify-end gap-2">
-          <Button type="button" variant="secondary" onClick={()=>setOpen(false)}>Cancel</Button>
+          <Button type="button" variant="secondary" onClick={guard.requestClose}>Cancel</Button>
           <Button type="submit" disabled={!valid||pending}>Review notes</Button>
         </div>
       </form>
     </Dialog>
-    <ConfirmDialog open={confirm} onOpenChange={setConfirm}
+    <ConfirmDialog open={confirm} onOpenChange={next=>{setConfirm(next);if(!next&&!pending)setOpen(true);}}
       title="Save meeting outcome notes?" confirmLabel="Save notes"
       description="The current outcome will be replaced for this meeting. The change is audited without exposing note contents in activity history."
       pending={pending} onConfirm={submit}>
@@ -64,5 +69,8 @@ export function MentorMeetingNotesEditor(props:{
         {notes.trim()}</p>
       {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
     </ConfirmDialog>
+    <ConfirmDialog open={guard.discardOpen} onOpenChange={guard.setDiscardOpen}
+      title="Discard meeting notes?" description="You have unsaved project changes. Leave this page and discard them?"
+      confirmLabel="Discard changes" pending={pending} onConfirm={guard.confirmDiscard}/>
   </>;
 }

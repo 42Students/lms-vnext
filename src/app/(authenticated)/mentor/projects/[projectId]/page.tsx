@@ -23,7 +23,7 @@ export default async function MentorProjectPage({
 }) {
   const context = await getCurrentRequestContext();
   const available = await resolveOptionalModuleAccess(context).catch(() => null);
-  if (available?.projects.enabled !== true) return <MentorProjectsUnavailable />;
+  if (available?.projects.enabled !== true) return <MentorProjectsUnavailable loadFailed={available===null} />;
   const { projectId } = await params;
   const { tab } = await searchParams;
   const selectedTab = tab === "tasks" ? "board" : tab === "meetings" ? "team" : tab;
@@ -60,7 +60,7 @@ export default async function MentorProjectPage({
     );
 
   return (
-    <div className="min-w-0 max-w-full min-w-0 space-y-6">
+    <div className="min-w-0 max-w-full space-y-6">
       <Breadcrumbs items={[{label:"Projects",href:"/mentor/projects"},{label:breadcrumbTab[selectedTab ?? "overview"] ?? "Overview"}]} />
       {(selectedTab==="board"||selectedTab==="performance") ?
         <PageHeader title={workspace.project.title} /> : null}

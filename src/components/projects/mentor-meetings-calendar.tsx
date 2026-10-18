@@ -7,6 +7,7 @@ import {
   type MentorMeetingCalendarItem,
 } from "@/modules/projects/mentor-calendar-view";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { safeProjectExternalHref } from "@/modules/projects/mentor-workspace-evidence-model";
 
 const PAST_PREVIEW = 20;
 const prettyDate = (iso: string) => {
@@ -50,9 +51,9 @@ function MeetingRow({
         <p className="mt-2 text-xs text-muted-foreground">Archived project · Read-only</p>
       ) : null}
       <div className="mt-3 flex flex-wrap items-center gap-4 text-sm">
-        {href ? <a className="font-medium text-primary-text underline" href={href}
+        {safeProjectExternalHref(href) ? <a className="inline-flex min-h-11 items-center font-medium text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" href={safeProjectExternalHref(href)!}
           target="_blank" rel="noopener noreferrer">Join link</a> : null}
-        <Link className="font-medium text-primary-text underline"
+        <Link className="inline-flex min-h-11 items-center font-medium text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
           href={"/mentor/projects/" + encodeURIComponent(meeting.projectId) + "?tab=team"}>
           Open project
         </Link>
@@ -105,7 +106,7 @@ export function MentorMeetingsCalendar({
             No past meetings yet.
           </p>}
       {past.length > PAST_PREVIEW ? (
-        <button type="button" className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+        <button type="button" className="inline-flex min-h-11 items-center rounded-lg border border-border px-4 py-2 text-sm font-medium text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
           onClick={() => setExpanded(value => !value)}
           aria-expanded={expanded}>
           {expanded ? "Show fewer" : "Show all " + past.length + " past meetings"}
