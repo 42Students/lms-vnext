@@ -2,7 +2,7 @@
 
 import { learnerCourseAttendanceMonthShortcutVisible } from "@/modules/attendance/learner-course-attendance-month-shortcut-model";
 import { learnerCourseAttendanceSameIstMonth } from "@/modules/attendance/learner-course-attendance-ist-model";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import {usePathname,useRouter} from "next/navigation";
 import { learnerCourseAttendanceTone } from "@/modules/attendance/learner-course-attendance-tone-model";
 import { learnerCourseAttendanceSummary, learnerCourseAttendanceThresholdReached } from "@/modules/attendance/learner-course-attendance-summary-model";
@@ -144,12 +144,12 @@ export function LearnerCourseAttendance({
   defaultMonth: string;
   currentMonth?: string;
 }) {
-  const [month] = useState(
-    () => {
-      const [year,month]=defaultMonth.split("-").map(Number);
-      return new Date(year,month-1,1);
-    },
-  );
+  // Search-parameter navigation must update the visible month when the
+  // server sends fresh props; state initializers run only on first mount.
+  const month = useMemo(() => {
+    const [year, selectedMonth] = defaultMonth.split("-").map(Number);
+    return new Date(year, selectedMonth - 1, 1);
+  }, [defaultMonth]);
 
   const router=useRouter(),pathname=usePathname();
   function navigateMonth(next:Date){
