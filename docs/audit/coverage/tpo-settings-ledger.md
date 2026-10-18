@@ -135,3 +135,9 @@ These are named and scope-specific tests, but full per-export coverage of all se
 | Export/page | Checked behaviour | Test | Pending |
 |---|---|---|---|
 | `getTpoPrepSelectionState`, `TpoPrepReadinessEditor` | Selected courses missing from live active same-college catalog are surfaced rather than dropped, no save until resolved; 0–40 unique choices, finite integer threshold, dirty check against last saved policy, ref latch before React state, conflict preserves edits, successful response updates CAS token | `tests/unit/chat11-tpo-prep-editor-lost-response.test.ts` — TPO-settings-audit-PREP-UI-03, commits `5bbd2b6`, `16f726d`, `bba8201`, `4a56e13`, `5371c42` | Browser rapid-click/slow network, DB stale token replay |
+
+## College notice settings evidence (2026-10-18)
+
+| Service/UI | Implemented contract | Test | Pending |
+|---|---|---|---|
+| `tpoStudentNoticesOverview`, `/tpo/settings/notices`, `listTpoPlacementAnnouncements` | Status card uses true college-scoped notices instead of the signed-in officer's author-only history; counts distinguish exact values from at-least totals when page-capped; absent relation says unavailable, not zero or delivered | `tests/unit/chat11-tpo-notices-college-count.test.ts` — TPO-settings-audit-NOTICES-04; commits `9b953eb`, `e7e6f25`, `61e31bd` | PostgreSQL 101/102 notices, notices by multiple TPOs, live sender audience E2E |

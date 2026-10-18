@@ -219,3 +219,8 @@ No runtime, database or responsive browser results were claimed; retain these as
 ## Chat-15 team directory revocation (2026-10-18)
 
 **HR-TEAM-COLLEGE-33:** `getRecruiterCompanyTeam` now requires an ACTIVE college alongside ACTIVE relationship, company, acting recruiter profile, grant and platform user before exposing team contact emails. Evidence: `tests/unit/recruiter-company-team-scope.test.ts` (added college invariant). CI and real college deactivation acceptance remain outstanding.
+
+
+## Chat-15 HR protected page and state checks
+
+`UX-CHAT15-ROUTES-41` verifies 20 canonical HR page role gates, 13 recruiter alias routes, detail 404 and invalid-filter state text, and tracker role isolation. `HR-CHANGE-REQUESTS-PAGE-40` renders own-company, foreign-job denied, cross-party denied and storage-unavailable states. `HR-STATE-MACHINE-43` covers review-round, interview-slot and drive request transitions including stale versions, duplicate names and capacity. All are authored source/unit tests; user-browser acceptance and cloud execution are outstanding.

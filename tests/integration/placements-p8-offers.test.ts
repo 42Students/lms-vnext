@@ -36,6 +36,7 @@ import { decidePlacementScreening } from "@/modules/placements/screening-service
 import { recordTpoDriveSelections,verifyAndReleaseTpoSelections } from "@/modules/placements/tpo-drive-selection-service";
 import {getTpoDriveClosePreview,closeTpoDriveWithPreview} from "@/modules/placements/tpo-drive-close-preview-service";
 import {recordTpoOfferLifecycle} from "@/modules/placements/tpo-offer-lifecycle-service";
+import {getTpoWaitlistPreview,offerToNextWaitlisted} from "@/modules/placements/tpo-waitlist-promotion-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { enableSeedLearnerPlacementAccess } from "../support/w04-placement-access-fixture";
 
@@ -399,6 +400,42 @@ describe("Placement P8 offers and joining", () => {
     const stillOne=await pool.query<{count:number}>(
       "select count(*)::integer as count from placement_drive_selections where job_id = $1",[job.id]);
     expect(stillOne.rows[0]?.count).toBe(1);
+  });
+
+  it("PLACEMENTS-WAIT-SEASON-05 DB denies waitlist promotion and seat creation after season closure",async()=>{
+    const {job,application,round}=await preparePassedApplication();
+    await pool.query(
+      "update placement_round_results set outcome='HOLD',waitlist_rank=1 where application_id=$1 and round_id=$2",
+      [application.id,round.id],
+    );
+    const closed=await pool.query<{id:string}>(`
+      insert into placement_seasons(
+        college_id,name,code,start_date,end_date,status,
+        created_by_user_id,closed_by_user_id,closed_at
+      ) values($1,$2,$3,'2026-01-01','2026-10-17','CLOSED',$4,$4,now())
+      returning id`,[
+        SEED_IDS.collegeA,"Closed season for waitlist evidence",
+        "chat5-wait-"+job.id.slice(0,8),SEED_IDS.facultyUser,
+      ]);
+    const seasonId=closed.rows[0]!.id;
+    try{
+      await pool.query("update placement_jobs set season_id=$1 where id=$2",[seasonId,job.id]);
+      const preview=await getTpoWaitlistPreview(tpo,job.id);
+      expect(preview.job.seasonStatus).toBe("CLOSED");
+      expect(preview.next).toBeNull();
+      expect(preview.rows).toHaveLength(1);
+      expect(preview.rows[0]?.reasons).toContain("Placement season is not active");
+      await expect(offerToNextWaitlisted(tpo,job.id,{
+        action:"OFFER_NEXT",confirmed:true,expectedPreviewToken:preview.previewToken,
+        reason:"Attempted release after the placement season ended",
+      })).rejects.toMatchObject({code:"PLACEMENT_OFFER_NOT_READY"});
+      const seats=await pool.query<{count:number}>(
+        "select count(*)::int as count from placement_waitlist_promotions where job_id=$1",[job.id]);
+      expect(seats.rows[0]?.count).toBe(0);
+    }finally{
+      await pool.query("update placement_jobs set season_id=$1 where id=$2",[job.seasonId,job.id]);
+      await pool.query("delete from placement_seasons where id=$1",[seasonId]);
+    }
   });
 
   it("PLACEMENTS-SELECTION-CAS-06 DB releases a versioned selection with an equivalent IST offset exactly once",async()=>{
