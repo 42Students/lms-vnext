@@ -232,10 +232,18 @@ export async function completeProjectFileUpload(
 
   if (plan.kind === "WAIT") {
     if (row.uploadExpiresAt.getTime() + 60_000 < Date.now()) {
-      await getDb()
-        .update(projectResourceFiles)
-        .set({ status: "FAILED", failureCode: "STORAGE_UPLOAD_EXPIRED", updatedAt: new Date() })
-        .where(and(eq(projectResourceFiles.id, row.id), eq(projectResourceFiles.status, row.status)));
+      await getDb().transaction(async tx=>{
+        const [liveProject] = await tx.select({status:projectInstances.status})
+          .from(projectInstances).where(eq(projectInstances.id,scope.project.id))
+          .for("share").limit(1);
+        if(!liveProject)throw new StorageFileError("STORAGE_NOT_FOUND");
+        requireOpenProject(liveProject.status);
+        await tx.update(projectResourceFiles)
+          .set({status:"FAILED",failureCode:"STORAGE_UPLOAD_EXPIRED",updatedAt:new Date()})
+          .where(and(eq(projectResourceFiles.id,row.id),
+            eq(projectResourceFiles.projectId,scope.project.id),
+            eq(projectResourceFiles.status,row.status)));
+      });
       throw new StorageFileError("STORAGE_UPLOAD_EXPIRED");
     }
     throw new StorageFileError("STORAGE_UPLOAD_NOT_FOUND");
