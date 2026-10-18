@@ -28,3 +28,15 @@ Source-scan inventory of the assigned module directories; **PENDING is not verif
 | `src/modules/colleges/admin-tenant-setup-model.ts` | `tenantSetupQuerySchema`, `tenantSetupPresentation` | PENDING |
 | `src/modules/colleges/admin-tenant-setup-status.ts` | `summarizeTenantSetupReadiness` | PENDING |
 | `src/modules/colleges/admin-today-attention-model.ts` | `istDayBounds`, `SuperAdminTodayMetrics`, `SUPER_ADMIN_TODAY_LABELS` | PENDING |
+| `src/modules/colleges/admin-today-attention-service.ts` | `getSuperAdminTodayBoard` | PENDING |
+| `src/modules/colleges/archive-policy.ts` | `CollegeUsage`, `CollegeHasDependenciesError`, `hasCollegeDependencies`, `assertCollegeCanArchive` | PENDING |
+| `src/modules/colleges/branding-service.ts` | `CollegeBrandingView`, `EMPTY_BRANDING`, `CollegeBrandingNotFoundError`, `CollegeBrandingVersionError`, `getPublicCollegeBranding`, `getCollegeBranding`, `saveCollegeBranding` | PENDING |
+| `src/modules/colleges/branding.ts` | `collegeBrandingInputSchema`, `CollegeBrandingInput`, `collegeBrandingSaveSchema`, `sameCollegeBranding`, `hexToRgb`, `rgbToHex`, `contrastRatio`, `BrandTokens`, `deriveBrandTokens`, `brandStyleVariables` | PENDING |
+| `src/modules/colleges/bulk-import-confirmation-model.ts` | `canApplyConfirmedCollegeBulkImport` | PENDING |
+| `src/modules/colleges/bulk-import-feedback-model.ts` | `CollegeImportResult`, `collegeBulkImportToast` | PENDING |
+| `src/modules/colleges/bulk-import-model.ts` | `MAX_COLLEGE_IMPORT_ROWS`, `collegeImportInputSchema`, `CollegeImportRow`, `parseCollegeImportCsv` | PENDING |
+| `src/modules/colleges/bulk-import-service.ts` | `bulkImportColleges` | PENDING |
+| `src/modules/colleges/college-contact-profile-model.ts` | `collegeContactProfileInputSchema`, `CollegeContactProfileInput`, `collegeContactProfileChanged` | PENDING |
+| `src/modules/colleges/college-contact-profile-service.ts` | `CollegeContactProfileError`, `getOwnCollegeContactProfile`, `updateOwnCollegeContactProfile` | PENDING |
+| `src/modules/colleges/college-logo-request-body.ts` | `CollegeLogoRequestError`, `readCollegeLogoForm` | PENDING |
+| `src/modules/colleges/logo-png-chunks.ts` | `verifyCollegeLogoPngChunks` | PENDING |
