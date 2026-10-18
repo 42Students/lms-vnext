@@ -10,7 +10,7 @@ import {listOwnRecruiterPlacementJobs} from "./recruiter-service";
 import {hrConversationQuerySchema,filterRecruiterConversations,HR_CONVERSATION_PAGE_SIZE,hrConversationPageBounds,onlyUnreadRecruiterThreads,orderRecruiterConversations,scopeRecruiterConversations} from "./hr-conversation-inbox-model";
 export async function listHrConversations(context:RequestContext,raw:unknown={}){
  const query=hrConversationQuerySchema.parse(raw);
- if(!hasActiveRecruiter(context)||!context.recruiter)throw new AuthorizationError("placements.recruiter.read");
+ if(!hasActiveRecruiter(context)||!context.recruiter||context.recruiter.userId!==context.user.id)throw new AuthorizationError("placements.recruiter.read");
  const grants=context.recruiter.grants;
  if(query.collegeId&&!grants.some(g=>g.collegeId===query.collegeId))
   throw new AuthorizationError("placements.recruiter.read");

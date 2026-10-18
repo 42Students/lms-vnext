@@ -1,6 +1,6 @@
 import {readFileSync} from "node:fs";
 import {describe,expect,it} from "vitest";
-import {hasAvailablePlacementOfferSeat} from "@/modules/placements/offer-seat-capacity-policy";
+import {hasAvailablePlacementOfferSeat,isPlacementIssuanceConcurrencyError} from "@/modules/placements/offer-seat-capacity-policy";
 
 const src=(path:string)=>readFileSync(new URL("../../"+path,import.meta.url),"utf8");
 
@@ -24,6 +24,23 @@ describe("PLACEMENTS-CAPACITY-01: active official offers and pending waitlist re
   expect(hasAvailablePlacementOfferSeat({openings:2,activeOfferCount:1,otherPendingReservations:0})).toBe(true);
   expect(hasAvailablePlacementOfferSeat({openings:3,activeOfferCount:1,otherPendingReservations:1})).toBe(true);
   expect(hasAvailablePlacementOfferSeat({openings:3,activeOfferCount:2,otherPendingReservations:1})).toBe(false);
+ });
+ it("PLACEMENTS-CAPACITY-03 interprets nested serialization and deadlock errors without revealing SQL",()=>{
+  for(const code of ["40001","40P01"]){
+    expect(isPlacementIssuanceConcurrencyError({code})).toBe(true);
+    expect(isPlacementIssuanceConcurrencyError(new Error("query failed",{cause:{code}}))).toBe(true);
+    expect(isPlacementIssuanceConcurrencyError({cause:{cause:{code}}})).toBe(true);
+  }
+  for(const input of [{code:"23505"},{code:"28000"},{message:"SQL statement failed"},new Error("40001"),null,undefined]){
+    expect(isPlacementIssuanceConcurrencyError(input)).toBe(false);
+  }
+  const cycle:{cause?:unknown}={};cycle.cause=cycle;
+  expect(isPlacementIssuanceConcurrencyError(cycle)).toBe(false);
+  const issuer=src("src/modules/placements/offer-service.ts");
+  const issue=issuer.slice(issuer.indexOf("export async function issuePlacementOffer"),issuer.indexOf("export async function actOnPlacementOffer"));
+  expect(issue).toContain('isPlacementIssuanceConcurrencyError(error)');
+  expect(issue).toContain('throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE")');
+  expect(issue).toContain('throw error;');
  });
  it("locks the scoped job before reading capacity and inserting any new official offer",()=>{
   const code=src("src/modules/placements/offer-service.ts");
