@@ -25,6 +25,7 @@ import {
 import { placementJobIdSchema } from "./validation";
 import {requireTpoJobActor} from "./tpo-job-write-base";
 import {cascadeTpoRecordedAcceptance} from "./tpo-offer-acceptance-cascade";
+import {deliverRecordedLearnerPlacementEvent} from "./learner-placement-event-delivery";
 
 /**
  * All-or-nothing and locked in offer UUID order to avoid duplicate updates
@@ -215,7 +216,7 @@ export async function recordTpoOfferLifecycle(
             .values({ offerId: offer.id }).onConflictDoNothing();
         }
       }
-      await recordActivityEventInTransaction(tx, context, {
+      const lifecycleEvent=await recordActivityEventInTransaction(tx, context, {
         eventType: input.action === "RECORD_JOINED"
           ? ACTIVITY_EVENT_TYPES.PLACEMENTS_JOINING_RECORDED
           : ACTIVITY_EVENT_TYPES.PLACEMENTS_OFFER_RESPONDED,
@@ -237,6 +238,19 @@ export async function recordTpoOfferLifecycle(
           withdrawnApplicationCount:cascade?.withdrawnApplicationCount??0,
         },
         groupKey: "placement-job:" + jobId + ":offers",
+      });
+      // One persisted event is the dedupe anchor for the learner notice.
+      // The same transaction keeps the status, audit and notification
+      // consistent; learner preferences and active membership are rechecked.
+      await deliverRecordedLearnerPlacementEvent(tx,{
+        eventId:lifecycleEvent.id,collegeId,
+        membershipId:membershipByOffer.get(offer.id)!,
+        kind:"APPLICATION_STATUS_CHANGED",
+        subject:input.action==="RECORD_JOINED"
+          ? "Joining confirmed for "+job.title
+          : input.action==="EXTEND"
+            ? "Offer deadline extended for "+job.title
+            : "Employer offer decision updated for "+job.title,
       });
       items.push({ offerId: offer.id, action: input.action, status: nextStatus });
     }

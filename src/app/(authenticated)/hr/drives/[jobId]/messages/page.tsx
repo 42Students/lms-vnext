@@ -9,7 +9,7 @@ import {getRecruiterDriveConversations} from "@/modules/placements/hr-drive-conv
 import {TpoMessagingError} from "@/modules/placements/tpo-messaging-service";
 export default async function DriveConversationsPage({params}:{params:Promise<{jobId:string}>}){
  const context=await getCurrentRequestContext();
- if(!hasActiveRecruiter(context))redirect("/dashboard");
+ if(!hasActiveRecruiter(context) || context.recruiter?.userId !== context.user.id)redirect("/dashboard");
  const {jobId}=await params;
  if(!z.string().uuid().safeParse(jobId).success)notFound();
  let result:Awaited<ReturnType<typeof getRecruiterDriveConversations>>;

@@ -121,7 +121,8 @@ export async function commitTpoAcademicImport(context: RequestContext, raw: unkn
        snapshot:placementApplications.eligibilitySnapshot,
       }).from(placementApplications).innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
        .where(and(eq(placementApplications.membershipId,row.studentCode),
-        eq(placementApplications.status,"SUBMITTED"),eq(placementJobs.collegeId,college.id)));
+        eq(placementApplications.status,"SUBMITTED"),eq(placementJobs.collegeId,college.id)))
+       .for("update",{of:placementApplications});
       const oldStatuses=await Promise.all(applications.map(app=>
        evaluatePlacementEligibility(context,app.jobId,row.studentCode,tx).then(result=>result.status)));
       const evidence = {
@@ -154,13 +155,16 @@ export async function commitTpoAcademicImport(context: RequestContext, raw: unkn
         throw new Error("ACADEMIC_IMPORT_INVALID_APPLICATION_SNAPSHOT");
        const learnerUserId=studentUsers.get(row.studentCode);
        if(!learnerUserId)throw new Error("ACADEMIC_IMPORT_MEMBER_CHANGED");
-       await tx.update(placementApplications).set({
+       const [flagged]=await tx.update(placementApplications).set({
         eligibilitySnapshot:{...application.snapshot,
          academicImportReview:{newlyIneligible:true,at:now.toISOString(),
           reason:"VERIFIED_ACADEMIC_EVIDENCE_CHANGED"}},
         updatedAt:now,
        }).where(and(eq(placementApplications.id,application.id),
-        eq(placementApplications.membershipId,row.studentCode)));
+        eq(placementApplications.membershipId,row.studentCode),
+        eq(placementApplications.status,"SUBMITTED")))
+        .returning({id:placementApplications.id});
+       if(!flagged)throw new Error("ACADEMIC_IMPORT_APPLICATION_CHANGED");
        const [event]=await tx.insert(activityEvents).values({
         organizationId:college.organizationId,collegeId:college.id,
         actorUserId:context.user.id,actorMembershipId:context.membership!.id,
