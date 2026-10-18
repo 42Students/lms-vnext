@@ -441,3 +441,11 @@ All 20 non-alias recruiter pages from `docs/orchestrator/ui-ux/pages-hr.md` were
 | HR-BREAK-BELL-RACE-30 | MAJOR | `RecruiterNotificationBell` reused the previously authorized notification drawer when a later refresh failed (including after recruiter grant revocation). Out-of-order requests from two college selections could also overwrite the current college view with an earlier response. Introduced a monotonic request gate, invalidated old in-flight requests on college change/unmount, cleared stale data on failure, and rejected mismatched college responses. Updated bell targets to 44px/focus-visible without changing wording. | `tests/unit/HR-BREAK-chat19-bell-race.test.tsx` exercises request ordering, invalidation and source response-discard guard, and SSR trigger. |
 
 Cloud browser/network/CI execution is outstanding; no test was run locally.
+
+## Independent HR hiring round false-success check
+
+| ID | Severity | Before fix and after | Direct evidence |
+|---|---|---|---|
+| HR-BREAK-ROUND-RECEIPT-31 | MAJOR | Inline recruiter round editor treated any HTTP 200 (including unrelated HTML/session fallback) or opaque redirected POST as proof of a saved round. Require an exact JSON receipt from the existing origin-guarded, authorized route: persisted id, matching action and, on update/delete, original round id. The native form's legacy 303 redirect remains unchanged. A fake receipt or sign-in redirect leaves the form open with recovery text and no success claim. | `tests/unit/HR-BREAK-chat19-round-receipt.test.ts` exercises response parser, both handler response formats, malformed receipts, foreign IDs, cross-origin refusal and UI wiring. |
+
+No CI/unit/browser run was performed here, per owner priority.
