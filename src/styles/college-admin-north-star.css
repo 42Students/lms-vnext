@@ -24,6 +24,9 @@
 }
 .lms-college-portal :is(a, button)[class*="bg-primary"] {
   color: var(--lms-on-primary, #fff);
+  background-color: var(--lms-button-primary, #0a7c88);
+  font-weight: 650;
+  font-size: 14px;
 }
 @media (min-width: 768px) {
   .lms-college-portal :is(a, button)[class*="min-h-11"] {
@@ -31,5 +34,8 @@
   }
 }
 @media (max-width: 767px) {
+  .lms-college-portal :is(a, button)[class*="bg-primary"] {
+    min-height: 44px;
+  }
   .lms-college-portal h1 { font-size: clamp(24px, 6vw, 30px); }
 }
