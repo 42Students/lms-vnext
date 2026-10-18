@@ -1,7 +1,7 @@
 # UX review: /college/electives/[slotId]/offerings/[offeringId]/roster
 
-- Route: `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx`, owned by chat-4 first-half College rollout.
-- Exact legacy labels and all authorized mutations preserved.
-- Improvements: accessible primary controls; accessible link contrast; bounded table region; overflow containment.
-- Guardrails: existing tenant membership, module-off/error notices and read-only flows remain intact. No direct DataTable; delegated control provides states.
-- Test authored: `tests/unit/UX-college-college-electives-slot-id-offerings-offering-id-roster-01.test.ts`; CI/browser/device evidence outstanding, so list not prematurely checked.
+- Route: `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx`; owner chat-4, first-half College UX rollout.
+- Legacy copy, persisted data, mutation endpoints and permission checks unchanged.
+- Source improvements: Keyboard-scrolling wide roster with sticky student names, semantic headers, 44px move/remove actions and contrast-safe destructive action text.
+- Empty/error and pending states: existing copy retained. Wide tables remain desktop semantic tables, with an explicit keyboard-focusable scroll region on phones; sticky identity or selection column prevents context loss.
+- Regression: `tests/unit/UX-college-college-electives-slot-id-offerings-offering-id-roster-01.test.ts`, written but not executed. WebView, real-device and screen-reader validation pending.

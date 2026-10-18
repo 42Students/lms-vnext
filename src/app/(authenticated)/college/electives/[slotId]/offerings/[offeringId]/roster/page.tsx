@@ -152,14 +152,14 @@ export default async function ElectiveRoster({
         </button>
       </form>}
     </section>
-    <div className="overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-surface">
+    <div role="region" aria-label="Elective offering roster" tabIndex={0} className="overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       <table className="w-full min-w-[780px] text-left text-sm">
         <thead className="sticky top-0 z-10 bg-surface"><tr className="border-b border-border">
-          {["Student", "State", "Source", "Since", "Actions"].map(x=><th key={x} className="p-3">{x}</th>)}
+          {["Student", "State", "Source", "Since", "Actions"].map(x=><th key={x} scope="col" className={x==="Student"?"sticky left-0 z-20 bg-surface p-3":"p-3"}>{x}</th>)}
         </tr></thead>
         <tbody>{detail.members.map(member=><tr key={member.membershipId}
           className="border-b border-border align-top">
-          <td className="p-3 font-semibold">{member.displayName ?? member.membershipId}</td>
+          <th scope="row" className="sticky left-0 z-10 bg-surface p-3 text-left font-semibold">{member.displayName ?? member.membershipId}</th>
           <td className="p-3">{member.state}{member.waitlistPosition ? " #"+member.waitlistPosition : ""}</td>
           <td className="p-3">{member.source}</td>
           <td className="p-3">{member.joinedAt?.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }) ?? "—"}</td>
@@ -176,13 +176,13 @@ export default async function ElectiveRoster({
                     {t.courseName} ({t.courseCode})</option>)}
                 </select>
                 <label><input type="checkbox" name="confirm" value="yes" required /> Confirm</label>
-                <button className="rounded border border-border px-3 text-[var(--lms-teal-deep)]">Move</button>
+                <button className="min-h-11 rounded border border-border px-3 text-[var(--lms-teal-deep)]">Move</button>
               </form>}
               <form action={mutate} className="flex flex-wrap gap-2">
                 <input type="hidden" name="action" value="REMOVE" />
                 <input type="hidden" name="membershipId" value={member.membershipId} />
                 <label><input type="checkbox" name="confirm" value="yes" required /> Confirm removal</label>
-                <button className="rounded border border-border px-3 text-error">Remove</button>
+                <button className="min-h-11 rounded border border-border px-3 text-foreground">Remove</button>
               </form>
             </div>: "—"}</td>
         </tr>)}</tbody>
