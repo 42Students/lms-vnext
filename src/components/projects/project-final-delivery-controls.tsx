@@ -103,17 +103,10 @@ export function LearnerFinalDeliveryControl({
   }));
   const lastSavedSnapshot=useRef(savedSnapshot);
   const lastSavedUpdatedAt=useRef(draft?.updatedAt ? new Date(draft.updatedAt).toISOString() : null);
-  const trackedDraftId=useRef(draft?.id??null);
-  // React may preserve this component when POST creates a draft and an RSC
-  // refresh replaces null props with the newly persisted draft. Adopt that
-  // draft's revision, without adopting later background changes to the same
-  // draft (which must still conflict instead of overwriting teammate edits).
-  useEffect(()=>{
-    if(draft?.id && trackedDraftId.current!==draft.id){
-      trackedDraftId.current=draft.id;
-      lastSavedUpdatedAt.current=new Date(draft.updatedAt).toISOString();
-    }
-  },[draft?.id,draft?.updatedAt]);
+  // Only a server response to THIS client's own save advances the token.
+  // A router refresh may introduce another teammate's new draft; adopting its
+  // timestamp would incorrectly let stale local inputs overwrite their work.
+  // In that case the missing token requires an explicit page reload instead.
   function markSaved(snapshot:string){lastSavedSnapshot.current=snapshot;setSavedSnapshot(snapshot);}
   function acknowledgedDraftRevision(result:unknown):string {
     const submission=result&&typeof result==="object"&&"submission" in result
