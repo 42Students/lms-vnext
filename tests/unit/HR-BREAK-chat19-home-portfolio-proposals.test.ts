@@ -46,6 +46,14 @@ describe("HR-BREAK-chat19-home-portfolio-proposals: no inferred tenant or false 
   expect(m.proposals).not.toHaveBeenCalled();
   expect(m.grants).not.toHaveBeenCalled();
  });
+ it("refuses a mismatched recruiter identity before any personalized dashboard read",async()=>{
+  m.ctx.mockResolvedValue({...actor,recruiter:{...actor.recruiter!,userId:"other-account"}});
+  await expect(home()).rejects.toThrow("REDIRECT");
+  expect(m.redirect).toHaveBeenCalledWith("/dashboard");
+  expect(m.jobs).not.toHaveBeenCalled();
+  expect(m.grants).not.toHaveBeenCalled();
+  expect(m.proposals).not.toHaveBeenCalled();
+ });
  it("wrong-tenant selection is rejected on Today before portfolio, calendar or profile reads",async()=>{
   await expect(home({collegeId:other})).rejects.toThrow("NOT_FOUND");
   expect(m.jobs).not.toHaveBeenCalled();
@@ -55,6 +63,17 @@ describe("HR-BREAK-chat19-home-portfolio-proposals: no inferred tenant or false 
   const result=await home({collegeId:"../admin"});
   expect(textOf(result)).toContain("Invalid college selection");
   expect(m.jobs).not.toHaveBeenCalled();
+ });
+ it.each([
+  {collegeId:[college,other]},
+  {collegeId:[other,college]},
+  {collegeId:[college,college]},
+ ])("rejects duplicate collegeId query parameter %j before tenant reads",async query=>{
+  const result=await home(query);
+  expect(textOf(result)).toContain("Invalid college selection");
+  expect(m.jobs).not.toHaveBeenCalled();
+  expect(m.grants).not.toHaveBeenCalled();
+  expect(m.proposals).not.toHaveBeenCalled();
  });
  it("zero-grant dashboard displays a recovery action instead of querying a global job list",async()=>{
   m.ctx.mockResolvedValue({...actor,recruiter:{...actor.recruiter!,grants:[]}});
@@ -67,6 +86,19 @@ describe("HR-BREAK-chat19-home-portfolio-proposals: no inferred tenant or false 
   "proposal filters %j reject before any persisted discussion is read",async bad=>{
    await expect(proposals(bad)).rejects.toThrow("NOT_FOUND");
    expect(m.proposals).not.toHaveBeenCalled();
+ });
+ it.each([
+  {collegeId:[college,other]},{collegeId:[other,college]},
+  {q:["role","forged"]},{page:["1","9999"]},
+  {sort:["LATEST","OLDEST"]},
+ ])("rejects repeated drive-proposal URL keys %j before reading private discussion",async raw=>{
+  await expect(proposals(raw)).rejects.toThrow("NOT_FOUND");
+  expect(m.proposals).not.toHaveBeenCalled();
+ });
+ it("proposal history rejects a recruiter profile belonging to a different logged-in person",async()=>{
+  m.ctx.mockResolvedValue({...actor,recruiter:{...actor.recruiter!,userId:"other-person"}});
+  await expect(proposals()).rejects.toThrow("REDIRECT");
+  expect(m.proposals).not.toHaveBeenCalled();
  });
  it("proposal no-access never claims requests were sent or approved",async()=>{
   const result=await proposals();

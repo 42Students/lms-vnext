@@ -34,13 +34,12 @@ import {HrUnsentDriveAlert} from "@/components/hr/hr-unsent-drive-alert";
 import {hrDriveSessionStorageKey} from "@/modules/placements/hr-unsent-draft-storage-model";
 
 const querySchema = z.object({collegeId: z.string().uuid().optional()}).strict();
-function first(value: string | string[] | undefined) {return Array.isArray(value) ? value[0] : value;}
 function when(value: Date) {return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(value);}
 
 export default async function HrHomePage({searchParams}: {searchParams:Promise<{collegeId?:string | string[]}>}) {
   const context = await getCurrentRequestContext();
-  if (!hasActiveRecruiter(context) || !context.recruiter) redirect("/dashboard");
-  const parsed = querySchema.safeParse({collegeId:first((await searchParams).collegeId)});
+  if (!hasActiveRecruiter(context) || !context.recruiter || context.recruiter.userId !== context.user.id) redirect("/dashboard");
+  const parsed = querySchema.safeParse({collegeId:(await searchParams).collegeId});
   if (!parsed.success) return <div className="min-w-0 max-w-full space-y-5"><PageHeader eyebrow="Recruiter" title="Today" />
     <ErrorState title="Invalid college selection" description="The selected college ID is invalid."
       action={<Link href="/hr/home" className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Choose again</Link>} /></div>;

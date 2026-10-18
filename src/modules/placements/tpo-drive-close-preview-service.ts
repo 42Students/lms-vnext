@@ -3,6 +3,7 @@ import {and,count,eq,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementApplications,placementJobRounds,placementJobs,placementOffers,placementSeasons} from "@/db/schema";
 import {placementDriveSelections} from "@/db/schema/placement-drive-selections";
+import {placementWaitlistPromotions} from "@/db/schema/placement-waitlist-promotions";
 import type {RequestContext} from "@/modules/identity/context";
 import {PlacementsServiceError} from "./errors";
 import {endDriveApplicants,settleDriveWithdrawalRequests,tellRecruiterDriveStopped} from "./tpo-drive-stop-effects";
@@ -14,6 +15,11 @@ async function unreleasedSelections(tx:TpoJobTx,jobId:string){
   .where(and(eq(placementDriveSelections.jobId,jobId),
    inArray(placementDriveSelections.status,["SELECTED","VERIFIED"])));
  return entry?.n??0;
+}
+async function pendingWaitlistReservations(tx:TpoJobTx,jobId:string){
+ const [row]=await tx.select({n:count()}).from(placementWaitlistPromotions)
+  .where(and(eq(placementWaitlistPromotions.jobId,jobId),eq(placementWaitlistPromotions.status,"PENDING")));
+ return row?.n??0;
 }
 async function impact(tx:TpoJobTx,jobId:string){
  const [applications,rounds,offers]=await Promise.all([
@@ -40,9 +46,10 @@ export async function getTpoDriveClosePreview(context:RequestContext,rawJobId:un
    .where(and(eq(placementApplications.jobId,job.id),eq(placementOffers.status,"ISSUED")));
   const issuedOffers=unreleased?.n??0;
   const pendingSelections=await unreleasedSelections(tx,job.id);
+  const pendingPromotions=await pendingWaitlistReservations(tx,job.id);
   return {id:job.id,title:job.title,status:job.status,expectedUpdatedAt:job.updatedAt.toISOString(),
-   canClose:job.status==="PUBLISHED"&&Boolean(season)&&issuedOffers===0&&pendingSelections===0,
-   issuedOffers,pendingSelections,counts:await impact(tx,job.id)};
+   canClose:job.status==="PUBLISHED"&&Boolean(season)&&issuedOffers===0&&pendingSelections===0&&pendingPromotions===0,
+   issuedOffers,pendingSelections,pendingPromotions,counts:await impact(tx,job.id)};
  });
 }
 export async function closeTpoDriveWithPreview(context:RequestContext,rawJobId:unknown,raw:unknown){
@@ -60,8 +67,12 @@ export async function closeTpoDriveWithPreview(context:RequestContext,rawJobId:u
    .where(and(eq(placementSeasons.id,job.seasonId),eq(placementSeasons.collegeId,collegeId))).limit(1);
   const counts=await impact(tx,job.id);
   const pendingSelections=await unreleasedSelections(tx,job.id);
+  // A waitlist seat can be PENDING between its reservation and canonical
+  // offer issuance. Closing now would strand that reservation permanently.
+  // The job row lock above serializes this check with reservation creation.
+  const pendingPromotions=await pendingWaitlistReservations(tx,job.id);
   const decision=evaluateTpoDriveClosure(job.status,season?.status??null,
-   counts,input.expectedCounts,pendingSelections);
+   counts,input.expectedCounts,pendingSelections+pendingPromotions);
   if(decision==="PREVIEW_STALE")throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
   if(decision==="UNRELEASED_SELECTIONS")throw new PlacementsServiceError("PLACEMENT_JOB_NOT_CLOSABLE");
   if(decision!=="ALLOW")throw new PlacementsServiceError("PLACEMENT_JOB_NOT_CLOSABLE");

@@ -173,3 +173,12 @@ These are named and scope-specific tests, but full per-export coverage of all se
 | Endpoint/service | Added invariant | Test | Pending |
 |---|---|---|---|
 | `changeTpoRecruiterGrant` (GRANT, EXTEND, REVOKE, already-active no-op) | A request-scoped TPO may have become a College Admin after preflight; college `placements.manage` alone cannot authorize this TPO-only workflow. Transaction now reconstructs persisted actor, requires exact TPO role and matching selected college/organization **before** first settings-row insert, grant lookup, optimistic version check or audit | `tests/unit/chat11-tpo-recruiter-grant-live-role.test.ts` — TPO-settings-audit-GRANT-REVOCATION-09; commits `132e0a4`, `a9336c3` | Real dual-session revocation and concurrent grant/extend/revoke PG tests |
+
+## Current-role authorization for settings reads — 2026-10-18
+
+| Settings surface | Contract | Gap-named test | Remaining |
+|---|---|---|---|
+| `getTpoCommunicationSettings` | A private email signature, notification delivery choices, recruiter grant period and readiness threshold are fetched **inside** a transaction that first validates an ACTIVE college and persisted `placements.manage` actor. Role changes after request preflight do not permit a successful sensitive read based only on request snapshot. | `tests/unit/chat11-tpo-communication-read-revocation.test.ts` — `TPO-settings-audit-COMM-READ-10` | Real revoked-role PostgreSQL race and college deactivation test |
+| `getTpoJobTypes`, `getTpoBlockedDates`, `getTpoPrepReadiness`, `listTpoPrepCourses` | Every configured/absent-table read re-authorizes the persisted actor and ACTIVE college before returning saved choices or readiness course catalog; college scoping and archived department exclusion retained. | `tests/unit/chat11-tpo-settings-config-read-revocation.test.ts` — `TPO-settings-audit-CONFIG-READ-11` | Real role-revocation interleaving and database race E2E |
+
+Cloud typecheck, unit, PostgreSQL and browser checks are pending; these are source/contract regressions only.

@@ -98,3 +98,14 @@ The final-sprint audit labels were **WRONG** because the corresponding legacy ca
 | FAC-assessments-25 | NOT-A-GAP | `faculty-assessment-overview.tsx` includes Course, Lesson, Needs due date, Draft · hidden from students and Created; `FAC-assessments-25 NOT-A-GAP` test. |
 | FAC-assessments-26 | NOT-A-GAP | `faculty-assignment-review.tsx` shows draft zero-submission review with its publish guidance; `FAC-assessments-26 NOT-A-GAP` test. |
 | FAC-assessments-28 | NOT-A-GAP | Quiz and assignment reports expose legacy section labels and incomplete-report PDF confirmation; `FAC-assessments-28 NOT-A-GAP` test. |
+
+### chat-3 assessment publication, export and privacy hardening
+
+| ID | Status | Verification evidence |
+|---|---|---|
+| FAC-assessments-05 / FAC-assessments-08 / FAC-QUIZ-RESULTS-STATE-01 | DONE (source/test authored; CI pending) | `tests/unit/chat3-faculty-assessment-publication-state-matrix.test.ts` verifies quiz publication requires closed state or passed deadline, explicit confirmation, nonduplicate release/hide and strict JSON command scope. |
+| FAC-assessments-06 / FAC-assessments-07 / FAC-ASSIGNMENT-GRADE-STATE-01 | DONE (source/test authored; CI pending) | Same test file verifies grading bounds, empty score never becoming zero, no repeat grade release and publication only from saved GRADED values. |
+| FAC-QUIZ-PII-01 | DONE (source/test authored; CI pending) | `src/modules/courses/faculty-quiz-attempts-service.ts` no longer displays the learner's email as a missing name fallback; `tests/unit/chat3-faculty-quiz-attempts-privacy-service.test.ts` checks actual service projection, role scope and private answer fields. |
+| FAC-QUIZ-CSV-SERVICE-01 | DONE (source/test authored; CI pending) | `tests/unit/chat3-faculty-quiz-question-csv-service.test.ts` verifies strict quiz/delivery scope, 500-row omission and CSV formula neutralization via the actual download service. |
+
+Cloud CI, persisted role revocation and browser privacy checks have not been run by this builder.
