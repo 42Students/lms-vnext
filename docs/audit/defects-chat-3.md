@@ -176,6 +176,12 @@ The Faculty Section health model filtered assessment rows to `status === "PUBLIS
 
 **Fix:** Include `status === "CLOSED"` **only for quizzes** in the Section-scoped health selector. Draft and archived quizzes and non-published assignments remain excluded. `tests/unit/chat3-faculty-course-health-closed-quiz-model.test.ts` checks the state matrix, exact delivery, five-row page cap and invalid selector, and `tests/unit/chat3-faculty-course-health-service-permissions.test.ts` now exercises a CLOSED quiz through the actual service. Tests authored only; cloud CI and browser historical-quiz checks pending.
 
+### SA-ACADEMICS-ROOT-031 — administrative Academics and People pages delegated role separation only to layout (S1)
+
+The root `/admin/academics` page read the selected college workspace without a local platform-role gate, relying on the shared route layout to stop an ordinary user reaching it. `/admin/people` similarly relied on layout and deeper membership permission checks. Generic `academics.read` is valid for Faculty and Learner memberships within their own college; it must not accidentally authorize a platform-admin page when a stale session carries an `adminScope`.
+
+**Fix:** Both root pages now check `isSuperAdmin(context)` before any tenant data fetch and redirect nonadministrators to `/dashboard`. The no-college selected-scope prompt for genuine Super Admins remains intact. `tests/unit/chat3-sa-academics-people-root-platform-roles.test.ts` asserts the guard placement and actor role matrix. Requires current CI and authenticated browser checks.
+
 ### SA-ACADEMICS-SECTION-030 — generic academic read permission on Super Admin Section page (S1)
 
 The `resolveSuperAdminSectionDetail` service checked `academics.read` and a selected `adminScope`, but that permission is also granted to active nonadministrative Faculty, Mentor and Learner memberships for their own college. With an inconsistent or accidentally propagated admin scope, such a principal could pass the initial service permission check into the Super Admin Section detail path. The page layer's separate authorization should not be relied upon as the only boundary.
