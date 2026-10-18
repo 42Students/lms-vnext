@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,eq,inArray,sql} from "drizzle-orm";
+import {and,asc,eq,inArray,ne,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {projectInstances,projectReleases,projectSprints,projectTasks} from "@/db/schema";
@@ -11,7 +11,7 @@ export async function listCollegeReadinessWorkspaceChoices(context:RequestContex
  const college=await loadProjectCollegeScope(z.string().uuid().parse(collegeId));
  requirePermission(context,"projects.manage",{organizationId:college.organizationId,collegeId:college.id});
  return getDb().select({id:projectInstances.id,title:projectInstances.title,status:projectInstances.status})
-  .from(projectInstances).where(eq(projectInstances.collegeId,college.id))
+  .from(projectInstances).where(and(eq(projectInstances.collegeId,college.id),ne(projectInstances.status,"ARCHIVED")))
   .orderBy(asc(projectInstances.title),asc(projectInstances.id)).limit(1000);
 }
 
@@ -21,7 +21,8 @@ export async function listCollegeReadinessReleases(context:RequestContext,colleg
  requirePermission(context,"projects.manage",{organizationId:college.organizationId,collegeId:college.id});
  const id=z.string().uuid().parse(projectId);
  const [owned]=await getDb().select({id:projectInstances.id}).from(projectInstances)
-  .where(and(eq(projectInstances.id,id),eq(projectInstances.collegeId,college.id))).limit(1);
+  .where(and(eq(projectInstances.id,id),eq(projectInstances.collegeId,college.id),
+   ne(projectInstances.status,"ARCHIVED"))).limit(1);
  if(!owned)return [];
  const db=getDb();
  const releases=await db.select({id:projectReleases.id,title:projectReleases.title,

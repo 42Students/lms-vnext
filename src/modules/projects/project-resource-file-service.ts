@@ -213,6 +213,8 @@ export async function completeProjectFileUpload(
     scope.project.status!=="ACTIVE"))
     throw new StorageFileError("STORAGE_NOT_FOUND");
   if (row.status === "READY") return toProjectFileDto(row);
+  // A manager cannot finalize an in-flight upload after the workspace is archived.
+  requireOpenProject(scope.project.status);
   if (row.status !== "UPLOADING" && row.status !== "VERIFYING") {
     throw new StorageFileError("STORAGE_INVALID_STATE");
   }
@@ -240,6 +242,10 @@ export async function completeProjectFileUpload(
   }
 
   const updated = await getDb().transaction(async (tx) => {
+    const [liveProject] = await tx.select({ status: projectInstances.status }).from(projectInstances)
+      .where(eq(projectInstances.id, scope.project.id)).for("share").limit(1);
+    if (!liveProject) throw new StorageFileError("STORAGE_NOT_FOUND");
+    requireOpenProject(liveProject.status);
     const [next] = await tx
       .update(projectResourceFiles)
       .set({ status: plan.status, ...plan.fields, sha256Hex: plan.sha256Hex, updatedAt: new Date() })
@@ -310,6 +316,10 @@ export async function updateProjectFileDetails(
   const row = await loadFile(scope.project.id, fileIdInput);
   if (row.status === "DELETED") throw new StorageFileError("STORAGE_NOT_FOUND");
   const updated = await getDb().transaction(async (tx) => {
+    const [liveProject] = await tx.select({ status: projectInstances.status }).from(projectInstances)
+      .where(eq(projectInstances.id, scope.project.id)).for("share").limit(1);
+    if (!liveProject) throw new StorageFileError("STORAGE_NOT_FOUND");
+    requireOpenProject(liveProject.status);
     const [next] = await tx
       .update(projectResourceFiles)
       .set({
@@ -342,6 +352,10 @@ export async function removeProjectFile(
   const row = await loadFile(scope.project.id, fileIdInput);
   if (row.status === "DELETED") return toProjectFileDto(row);
   const updated = await getDb().transaction(async (tx) => {
+    const [liveProject] = await tx.select({ status: projectInstances.status }).from(projectInstances)
+      .where(eq(projectInstances.id, scope.project.id)).for("share").limit(1);
+    if (!liveProject) throw new StorageFileError("STORAGE_NOT_FOUND");
+    requireOpenProject(liveProject.status);
     const [next] = await tx
       .update(projectResourceFiles)
       .set({ status: "DELETED", deletedAt: new Date(), deletedByUserId: context.user.id, updatedAt: new Date() })

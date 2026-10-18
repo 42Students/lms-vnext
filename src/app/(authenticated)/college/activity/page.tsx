@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { DataTable } from "@/components/ui/data-table";
 import { activitySearchParams, collegeActivityHref, collegeActivityQuerySchema, collegeActivityRecentHref, collegeActivityTodayHref, collegeActivityAllTimeHref } from "@/modules/activity/college-activity-model";
 import { listCollegeActivity } from "@/modules/activity/college-activity-service";
 import { ACTIVITY_IMPORTANCE, ACTIVITY_MODULES } from "@/modules/activity/taxonomy";
@@ -169,39 +170,23 @@ export default async function CollegeActivityPage({
         </div>
       </form>
     </section>
-    <section className="overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-surface" aria-label="College activity events">
-      {data.items.length === 0 ? (
-        <p className="p-6 text-sm text-body">
+    <section className="min-w-0 rounded-xl border border-border bg-surface" aria-label="College activity events">
+      <DataTable rows={data.items} getRowKey={item=>item.event.id} caption="College activity events"
+        columns={[
+          {key:"occurred",header:"Occurred (IST)",mobilePriority:"secondary",cell:item=>when(item.event.occurredAt)},
+          {key:"actor",header:"Actor",mobilePriority:"primary",cell:item=>collegeActivityActor(item.actor)},
+          {key:"event",header:"Event / entity",mobilePriority:"secondary",cell:item=><>
+            <p className="font-semibold text-foreground">{item.event.summary}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{collegeActivityAction(item.event.eventType)} · {item.event.subjectType}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{collegeActivityItem(item.event)}</p>
+          </>},
+          {key:"details",header:"Details",mobilePriority:"action",cell:item=>
+            <Link href={"/college/activity/" + encodeURIComponent(item.event.id)}
+              className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">View event</Link>},
+        ]}
+        empty={<p className="p-2 text-sm text-body">
           No persisted activity events match these filters. This is not a statement that no changes have ever occurred.
-        </p>
-      ) : <table className="w-full min-w-[47rem] text-left text-sm [&_th:first-child]:sticky [&_th:first-child]:left-0 [&_th:first-child]:z-10 [&_th:first-child]:bg-surface [&_td:first-child]:sticky [&_td:first-child]:left-0 [&_td:first-child]:z-10 [&_td:first-child]:bg-surface">
-        <thead className="bg-muted text-muted-foreground"><tr>
-          <th scope="col" className="px-4 py-3">Occurred (IST)</th>
-          <th scope="col" className="px-4 py-3">Actor</th>
-          <th scope="col" className="px-4 py-3">Event / entity</th>
-          <th scope="col" className="px-4 py-3">Details</th>
-        </tr></thead>
-        <tbody>{data.items.map(({event,actor})=>(
-          <tr key={event.id} className="border-t border-border align-top">
-            <td className="px-4 py-4 text-body">{when(event.occurredAt)}</td>
-            <td className="px-4 py-4 text-body">
-              <span className="font-semibold text-foreground">{collegeActivityActor(actor)}</span>
-
-            </td>
-            <td className="px-4 py-4">
-              <p className="font-semibold text-foreground">{event.summary}</p>
-              <p className="mt-1 text-xs text-muted-foreground">{collegeActivityAction(event.eventType)} · {event.subjectType}</p>
-              <p className="mt-1 text-xs text-muted-foreground">{collegeActivityItem(event)}</p>
-            </td>
-            <td className="px-4 py-4">
-              <Link href={"/college/activity/" + encodeURIComponent(event.id)}
-                className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
-                View event
-              </Link>
-            </td>
-          </tr>
-        ))}</tbody>
-      </table>}
+        </p>}/>
     </section>
     <nav aria-label="Activity history pagination" className="flex items-center justify-between gap-3 text-sm">
       <p className="text-muted-foreground">Up to {data.query.pageSize ?? "25"} events per page</p>

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
+import { ScrollCue } from "@/components/ui/scroll-cue";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { StudentClassMoveAction } from "@/components/college/student-class-move-action";
@@ -351,7 +352,7 @@ export async function CollegeRoleDirectoryWorkspace({
         </form>
       </section>
 
-      <section aria-label={title + " results"} className="overflow-x-auto rounded-xl border border-border bg-surface">
+      <section aria-label={title + " results"} className="rounded-xl border border-border bg-surface">
         <p className="border-b border-border px-4 py-3 text-sm text-muted-foreground">
           {result.total} matching {kind === "FACULTY" ? "faculty" : "learner"} membership{result.total === 1 ? "" : "s"}
         </p>
@@ -402,6 +403,7 @@ export async function CollegeRoleDirectoryWorkspace({
               </li>
             ))}
           </ul>
+          <ScrollCue axis="x" label={title + " scrollable results columns"}>
           <table className="hidden w-full min-w-[45rem] text-left text-sm md:table">
             <thead className="bg-muted text-muted-foreground">
               <tr>
@@ -461,6 +463,7 @@ export async function CollegeRoleDirectoryWorkspace({
               ))}
             </tbody>
           </table>
+          </ScrollCue>
           </>
         )}
       </section>
