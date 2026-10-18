@@ -179,3 +179,6 @@ The fixture now publishes version 1 of its template before assigning it to the c
 ### PROJ-HARNESS-GUARD-13: stable negative date invariants
 
 The sprint date-order CHECK witness now uses 2099-10-22 > 2099-10-21, and the duplicate ACTIVE placement season uses a deterministic 2099 interval. These avoid fixture drift as the 2026/2027 calendar passes while preserving the exact SQLSTATE assertions. The fixed 2020 application deadline in `PLACEMENTS-13` is intentional **expired input** for a negative authorization test, not a positive fixture. `PROJ-HARNESS-GUARD-13` guards against reintroducing near-future test dates.
+
+### PROJ-HARNESS-PLACEMENTS-15/16: mandatory role-option ancestry
+The registered placement application schema requires non-null `role_option_id`, a detail the original helper omitted. Published job fixtures now create an ACTIVE primary `placement_job_role_options` row and pass its ID through `PlacementFixture`; candidate insert supplies this field. The builder looks up its active role with exact `job_id` before any application write, rejecting a forged role from another drive and an archived role. Tests -15/-16 exercise real PostgreSQL ancestry and refusal. `PROJ-HARNESS-GUARD-14` protects the builder's source contract. The harness preflight checks the registered role-options table. Database CI is pending.

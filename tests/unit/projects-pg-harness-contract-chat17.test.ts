@@ -115,6 +115,14 @@ describe("PROJ-HARNESS source and environment guard",()=>{
    expect(placementExamples).not.toContain("2027-06-30");
  });
 
+ it("PROJ-HARNESS-GUARD-14 role option linkage is required for published drives and candidates",()=>{
+   expect(helper).toContain('"placement_job_role_options"');
+   expect(helper).toContain("insert into placement_job_role_options");
+   expect(helper).toContain("role_option_id,membership_id");
+   expect(helper).toContain("role.job_id=j.id and role.id=$3");
+   expect(helper).toContain("supplied role option is not active on this drive");
+ });
+
  it("PROJ-HARNESS-GUARD-05 always rolls back transaction and savepoint errors",()=>{
    expect(helper).toContain('if (begun) await client.query("ROLLBACK")');
    expect(helper).toContain("client.release()");
