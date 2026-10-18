@@ -6,6 +6,8 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
+import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {notifyActiveProjectMembers} from "./project-notification-service";
 import {projectResourceAuditInput} from "./mentor-resource-audit-model";
 import {randomUUID} from "node:crypto";
@@ -18,9 +20,10 @@ import {
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import {
-  requireProjectLifecycleAccess,
+  requireProjectLifecycleMutationAccess,
   requireProjectReadAccess,
 } from "./access";
+import {assertPersistedProjectMutationActor} from "./persisted-mentor-mutation";
 import {
   ProjectsServiceError,
   postgresConstraintName,
@@ -61,6 +64,9 @@ export async function listProjectResources(
   context: RequestContext,
   projectIdInput: string,
 ) {
+  // Disabled tenant feature flags must deny before loading supplied project IDs.
+  if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const scope =
     await requireProjectReadAccess(
       context,
@@ -88,6 +94,9 @@ export async function createProjectResource(
   projectIdInput: string,
   rawInput: CreateProjectResourceInput,
 ) {
+  // Disabled tenant feature flags must deny before loading supplied project IDs.
+  if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const scope =
     await requireProjectReadAccess(
       context,
@@ -108,7 +117,8 @@ export async function createProjectResource(
       const [project] = await tx
         .select({ status: projectInstances.status })
         .from(projectInstances)
-        .where(eq(projectInstances.id, scope.project.id))
+        .where(and(eq(projectInstances.id, scope.project.id),
+          eq(projectInstances.collegeId,scope.collegeId)))
         .for("update")
         .limit(1);
 
@@ -116,6 +126,8 @@ export async function createProjectResource(
         throw new ProjectsServiceError("PROJECT_NOT_FOUND");
       }
       ensureMutableProject(project.status);
+      if(scope.access==="ADMIN"||scope.access==="MENTOR")
+        await assertPersistedProjectMutationActor(tx,context,scope);
       if(scope.access==="LEARNER" && project.status!=="ACTIVE")
         throw new ProjectsServiceError("PROJECT_RESOURCE_INVALID_STATE");
 
@@ -193,7 +205,7 @@ export async function updateProjectResource(
   rawInput: UpdateProjectResourceInput,
 ) {
   const scope =
-    await requireProjectLifecycleAccess(
+    await requireProjectLifecycleMutationAccess(
       context,
       projectIdInput,
     );
@@ -209,7 +221,8 @@ export async function updateProjectResource(
     const [project] = await tx
       .select({ status: projectInstances.status })
       .from(projectInstances)
-      .where(eq(projectInstances.id, scope.project.id))
+      .where(and(eq(projectInstances.id, scope.project.id),
+        eq(projectInstances.collegeId,scope.collegeId)))
       .for("update")
       .limit(1);
 
@@ -217,6 +230,7 @@ export async function updateProjectResource(
       throw new ProjectsServiceError("PROJECT_NOT_FOUND");
     }
     ensureMutableProject(project.status);
+    await assertPersistedProjectMutationActor(tx,context,scope);
 
     const [resource] = await tx
       .select()
@@ -338,7 +352,7 @@ export async function archiveProjectResource(
   rawInput: unknown = {},
 ) {
   const scope =
-    await requireProjectLifecycleAccess(
+    await requireProjectLifecycleMutationAccess(
       context,
       projectIdInput,
     );
@@ -353,7 +367,8 @@ export async function archiveProjectResource(
     const [project] = await tx
       .select({ status: projectInstances.status })
       .from(projectInstances)
-      .where(eq(projectInstances.id, scope.project.id))
+      .where(and(eq(projectInstances.id, scope.project.id),
+        eq(projectInstances.collegeId,scope.collegeId)))
       .for("update")
       .limit(1);
 
@@ -361,6 +376,7 @@ export async function archiveProjectResource(
       throw new ProjectsServiceError("PROJECT_NOT_FOUND");
     }
     ensureMutableProject(project.status);
+    await assertPersistedProjectMutationActor(tx,context,scope);
 
     const [resource] = await tx
       .select({ id: projectResources.id, updatedAt:projectResources.updatedAt })
@@ -424,14 +440,16 @@ export const projectResourceReorderSchema=z.strictObject({
 export async function reorderProjectResources(
   context:RequestContext,projectIdInput:string,rawInput:unknown,
 ){
-  const scope=await requireProjectLifecycleAccess(context,projectIdInput);
+  const scope=await requireProjectLifecycleMutationAccess(context,projectIdInput);
   const {orderIds}=projectResourceReorderSchema.parse(rawInput);
   return getDb().transaction(async tx=>{
     const [project]=await tx.select({status:projectInstances.status})
-      .from(projectInstances).where(eq(projectInstances.id,scope.project.id))
+      .from(projectInstances).where(and(eq(projectInstances.id,scope.project.id),
+        eq(projectInstances.collegeId,scope.collegeId)))
       .for("update").limit(1);
     if(!project)throw new ProjectsServiceError("PROJECT_NOT_FOUND");
     ensureMutableProject(project.status);
+    await assertPersistedProjectMutationActor(tx,context,scope);
     const all=await tx.select({id:projectResources.id,sequence:projectResources.sequence,
       status:projectResources.status}).from(projectResources)
       .where(eq(projectResources.projectId,scope.project.id))
@@ -459,6 +477,14 @@ export async function reorderProjectResources(
         .set({sequence:active[i]!.sequence,updatedAt:new Date()})
         .where(and(eq(projectResources.id,orderIds[i]!),eq(projectResources.projectId,scope.project.id)));
     }
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.PROJECTS_RESOURCE_UPDATED,
+      collegeId:scope.collegeId,organizationId:scope.organizationId,
+      subjectType:"project_instance",subjectId:scope.project.id,
+      summary:"Project resources reordered",
+      metadata:{projectId:scope.project.id,reordered:true,count:active.length},
+      groupKey:"project:"+scope.project.id+":resources",
+    });
     return {changed:true,count:active.length};
   });
 }

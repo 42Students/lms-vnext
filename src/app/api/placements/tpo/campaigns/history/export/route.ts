@@ -7,6 +7,11 @@ export const runtime="nodejs";
 export async function GET(request:Request){
  const context=await getCurrentRequestContext();
  const raw=new URL(request.url).searchParams;
+ // Do not silently accept duplicated filters or unrecognized selectors on
+ // a private export. The downloaded scope must match the visible request.
+ const keys=[...raw.keys()];
+ if(keys.length!==new Set(keys).size||keys.some(key=>key!=="purpose"))
+  return NextResponse.json({error:"INVALID_QUERY"},{status:400,headers:{"Cache-Control":"private, no-store"}});
  const parsed=z.object({purpose:z.string().trim().max(160).optional()}).strict().safeParse({
    purpose:raw.get("purpose")||undefined,
  });
@@ -26,6 +31,7 @@ export async function GET(request:Request){
   "Content-Type":"text/csv; charset=utf-8",
   "Content-Disposition":'attachment; filename="tpo-campaign-batches.csv"',
   "Cache-Control":"private, no-store",
+  "X-Content-Type-Options":"nosniff",
   "X-Export-Scope":"All filtered batches",
  }});
 }

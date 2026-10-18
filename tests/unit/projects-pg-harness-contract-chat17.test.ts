@@ -115,6 +115,43 @@ describe("PROJ-HARNESS source and environment guard",()=>{
    expect(placementExamples).not.toContain("2027-06-30");
  });
 
+ it("PROJ-HARNESS-GUARD-14 role option linkage is required for published drives and candidates",()=>{
+   expect(helper).toContain('"placement_job_role_options"');
+   expect(helper).toContain("insert into placement_job_role_options");
+   expect(helper).toContain("role_option_id,membership_id");
+   expect(helper).toContain("role.job_id=j.id and role.id=$3");
+   expect(helper).toContain("supplied role option is not active on this drive");
+ });
+
+ it("PROJ-HARNESS-GUARD-15 creates a true sibling-college fixture without reusing a membership",()=>{
+   expect(helper).toContain("export async function createSiblingCollege");
+   expect(helper).toContain("parent.organizationId,name");
+   expect(helper).toContain("organizationId:parent.organizationId, collegeId:row!.id");
+ });
+
+ it("PROJ-HARNESS-GUARD-16 closed seasons cannot inject applications into an otherwise published drive",()=>{
+   expect(helper).toContain("join placement_seasons season on season.id=j.season_id and season.college_id=j.college_id");
+   expect(helper).toContain("season.status='ACTIVE'");
+ });
+
+ it("PROJ-HARNESS-GUARD-17 cancelled round is checked against persisted status",()=>{
+   expect(helper).toContain("r.status as round_status");
+   expect(helper).toContain('job.round_status === "CANCELLED"');
+ });
+
+ it("PROJ-HARNESS-PREFLIGHT-19 refuses partially migrated role, publication and lifecycle columns",()=>{
+   for(const pair of [
+     '["placement_job_role_options", "is_primary"]',
+     '["placement_applications", "role_option_id"]',
+     '["placement_jobs", "application_deadline"]',
+     '["placement_jobs", "minimum_annual_ctc_inr"]',
+     '["project_templates", "published_version"]',
+     '["project_releases", "status"]',
+   ])expect(helper).toContain(pair);
+   expect(helper).toContain("information_schema.columns");
+   expect(helper).toContain("registered migration columns missing");
+ });
+
  it("PROJ-HARNESS-GUARD-05 always rolls back transaction and savepoint errors",()=>{
    expect(helper).toContain('if (begun) await client.query("ROLLBACK")');
    expect(helper).toContain("client.release()");

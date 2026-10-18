@@ -328,3 +328,40 @@ Four scoped TPO endpoints now call the existing streaming `readTpoBulkRequestBod
 ### PLACEMENTS-TPO-CASCADE-17 — canonical sibling effects for administrative acceptance
 
 TPO-recorded `RECORD_ACCEPTED` now invokes `cascadeTpoRecordedAcceptance` inside the same offer transaction with the active learner membership mutex, college scope, role/employment-type internship exemptions, dream and salary uplift rules. Ineligible sibling offers are declined with correlated status history and submitted sibling applications are withdrawn with correlated application history. All history and audit metadata identify the **TPO actor**, not a synthetic learner response; the employer evidence reason remains in the activity event while the canonical accepted history carries `cascade:<uuid>` for undo correspondence. Source `src/modules/placements/tpo-offer-acceptance-cascade.ts`, integration `tpo-offer-lifecycle-service.ts`. Named tests: `tests/unit/chat5-placements-core-extended-state-machines.test.ts` and `tests/integration/placements-p8-offers.test.ts` (real job plus same-learner second submitted application, correlated withdrawal and audit). **Cloud PostgreSQL execution is pending**. Concurrent TPO batches, undo CAS and notification exact-once still need live acceptance.
+
+
+### New owner-priority core hardening (2026-10-18, CI intentionally deferred)
+
+| Case | Source-level behavior | Test evidence | Pending |
+|---|---|---|---|
+| PLACEMENTS-TPO-NOTICE-18 | `recordTpoOfferLifecycle` delivers to the active college-scoped learner in the same transaction as the persisted activity event; one event is the dedupe anchor, so neither GET nor a retry creates another notification | `tests/integration/placements-p8-offers.test.ts` — accepted evidence, one scoped recipient, rejection of repeated mutation | PostgreSQL execution |
+| PLACEMENTS-TPO-NOTICE-19 | The delivery helper honors `notifyApplicationUpdates=false` for TPO-recorded decline without dropping audit/history | `tests/integration/placements-p8-offers.test.ts` — opt-out test with preference restoration and no notification | PostgreSQL execution |
+| PLACEMENTS-TPO-ESCALATE-20 | `tpoWithdrawalEscalationWindow` rejects invalid date and derives an exact UTC 24-hour window; escalation errors returned to callers use fixed safe text, never SQLSTATE/provider exception messages | `tests/unit/chat5-tpo-withdrawal-escalation-edge.test.ts` — pure date behavior and scoped input/lock/dedupe contract | Cloud behavioral execution |
+| PLACEMENTS-TPO-ESCALATE-21 | Withdrawal decision reminder stays PENDING, not auto-approved, and creates at most one durable deduped TPO event and notice for a next-round window | `tests/integration/placements-p8-offers.test.ts` — seeded request with a near round, role-scoped notification, repeat call, persisted state | PostgreSQL execution |
+
+No CI/tests/TypeScript commands were run under the owner's new no-CI-until-final-pass directive. The core placements module remains partially audited, not exhaustive and not release certified.
+
+
+### Owner no-CI sprint: additional behavioural hardening
+
+| Case | Source | Behavioral coverage added | Certification status |
+|---|---|---|---|
+| PLACEMENTS-TPO-ESCALATE-26 | `tpo-withdrawal-escalation-service.ts` rejects a scheduler time whose 24h endpoint overflows JavaScript Date, filters inactive colleges, returns bounded friendly errors | `tests/unit/chat5-tpo-withdrawal-escalation-edge.test.ts` checks 24h IST crossing, overflow, active-college/role scope and dedupe | Source-only, CI deferred |
+| PLACEMENTS-DRIVE-STOP-SM-24 | `tpo-drive-cancel-model.ts`, `tpo-drive-cancel-service.ts` keep already accepted offers, revoke outstanding issued offers, reject stale state | `tests/unit/chat5-tpo-closure-ux-boundary.test.ts` runs the decision matrix and source transaction guards | Source-only, CI deferred |
+| PLACEMENTS-DRIVE-CLOSE-SM-25 | `tpo-drive-close-preview-model.ts` supports close after season end, blocks pending selected or waitlist seats | Same new test runs allowed/blocked state and revision cases | Source-only, CI deferred |
+| UX-PLACEMENTS-CLOSE-22 | `tpo-drive-close-preview-form.tsx` uses safe `apiFetch`, a synchronous `useGuardedAction` lock, 35s timeout, preserved confirmation reason, safe conflict/retry message | `tests/unit/chat5-tpo-closure-ux-boundary.test.ts` checks guard, fields, confirmation and bounded fetch | Browser journey still required |
+| UX-PLACEMENTS-JOINING-23 | `tpo-joining-update-form.tsx` guards duplicate PUT, uses bounded `apiFetch`, keeps date/correction reason on rejection, requires dialog for actual/corrected outcome | Same unit-contract suite | Browser journey still required |
+| UX-PLACEMENTS-REPORT-SCROLL-27 | `report-interactive-table.tsx` column and filter sheets expose named keyboard scroll regions, hidden-bar edge cues and safe-area-aware closures | `tests/unit/chat5-placements-ux-workflows.test.ts`, `docs/audit/ux/scroll-motion-placements.md` | Mobile device acceptance pending |
+| PLACEMENTS-RETENTION-ACTIVE-28 | `getCollegeApplicationRetentionReport` excludes any old withdrawn or rejected application still carrying `ISSUED` or `ACCEPTED` official offer; tenant joins and date cutoff remain | `tests/unit/chat5-placements-retention-and-joining-followups.test.ts` enforces correlated anti-join and no mutations | PostgreSQL integration pending |
+
+No build/test runner was invoked per owner's directive. The comprehensive core function-by-function and all second-third TPO page coverage work remains open.
+
+
+### Expiry-sweep audit/notification parity (PLACEMENTS-EXPIRY-NOTIFY-30/31)
+
+`sweepExpiredPlacementOffers` now locks offer rows only using `FOR UPDATE SKIP LOCKED`, scopes each record through application → job → college, persists one `EXPIRED` transition and one deduped activity event, and (for active colleges only) delivers a preference-aware learner notification in the same transaction. Suspended colleges still record expiry but receive no fresh delivery. A repeated sweep cannot create a second expiry event or duplicate notification; the actor is the persisted scheduler user and the learner is the subject, never a forged impersonation. Tests: `tests/unit/chat5-placement-offer-capacity.test.ts` and two real-PostgreSQL scenarios in `tests/integration/placements-p8-offers.test.ts` (exact expiry, repeated sweep, event dedupe, recipient, opted-out delivery). The 15-minute cron schedule is an external deployment obligation, not claimed as implemented; cloud CI execution is deferred by owner.
+
+
+### Offer register screen/export parity — TPO-OFFERS-URL-32 and TPO-OFFERS-EXPORT-33
+
+The `/tpo/placements/jobs/[jobId]/offers` page now refuses repeated URL filter values rather than silently picking the first. A shared `TpoReportInvalidFilters` response explains the invalid snapshot and links to the scoped page with cleared filters. The sibling `/api/placements/tpo/jobs/[jobId]/offers/export` GET refuses repeated query keys and a query-supplied `jobId` override, so the path job remains authoritative. The CSV still routes through the same strict, college-scoped register schema and retains no-store download headers. `tests/unit/chat5-tpo-offer-url-integrity.test.ts` tests all duplicated field classes, invalid selectors, path-vs-query override denial, and both route preflights. Real browser/network acceptance remains pending under owner's no-CI directive.

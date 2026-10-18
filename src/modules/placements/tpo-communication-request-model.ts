@@ -2,6 +2,7 @@
  * cannot bypass the per-request memory cap. The five settings sections need
  * well below this limit even with Unicode signature text. */
 const MAX_SETTINGS_BODY_BYTES=8192;
+const MAX_CAMPAIGN_BODY_BYTES=65536;
 
 export class TpoCommunicationBodyError extends Error{
  constructor(readonly code:"BODY_TOO_LARGE"|"INVALID_JSON"){
@@ -9,14 +10,14 @@ export class TpoCommunicationBodyError extends Error{
  }
 }
 
-export async function readTpoCommunicationBody(request:Request):Promise<unknown>{
+export async function readTpoCommunicationBody(request:Request,maxBytes:8192|65536=MAX_SETTINGS_BODY_BYTES):Promise<unknown>{
  const contentType=request.headers.get("content-type")??"";
  if(!/^application\/json(?:\s*;|\s*$)/i.test(contentType))
   throw new TpoCommunicationBodyError("INVALID_JSON");
  const length=request.headers.get("content-length");
  if(length!==null){
   if(!/^[0-9]+$/.test(length))throw new TpoCommunicationBodyError("INVALID_JSON");
-  if(Number(length)>MAX_SETTINGS_BODY_BYTES)throw new TpoCommunicationBodyError("BODY_TOO_LARGE");
+  if(Number(length)>maxBytes)throw new TpoCommunicationBodyError("BODY_TOO_LARGE");
  }
  if(!request.body)throw new TpoCommunicationBodyError("INVALID_JSON");
  const reader=request.body.getReader();
@@ -27,7 +28,7 @@ export async function readTpoCommunicationBody(request:Request):Promise<unknown>
    const {done,value}=await reader.read();
    if(done)break;
    total+=value.byteLength;
-   if(total>MAX_SETTINGS_BODY_BYTES){
+   if(total>maxBytes){
     await reader.cancel();
     throw new TpoCommunicationBodyError("BODY_TOO_LARGE");
    }
@@ -52,3 +53,6 @@ export async function readTpoCommunicationBody(request:Request):Promise<unknown>
 
 /** Shared settings request boundary, including personal preferences and college policies. */
 export const readTpoSettingsBody=readTpoCommunicationBody;
+/** The authored campaign body allows 10,000 characters; UTF-8 payloads may
+ * exceed the tighter settings cap, but are still strictly stream-bounded. */
+export const readTpoCampaignBody=(request:Request)=>readTpoCommunicationBody(request,MAX_CAMPAIGN_BODY_BYTES);

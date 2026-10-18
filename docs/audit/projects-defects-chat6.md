@@ -1,0 +1,20 @@
+# Chat-6 Projects breaker findings — IIT Dharwad
+
+Scope: adversarial client and permission review. This is a supplemental lane defect record; `docs/audit/projects-defects.md` remains owned by chat-14.
+
+| ID | Severity | Defect and evidence | Fix | Validation remaining |
+|---|---|---|---|---|
+| PROJ-BREAK-resilience-16 | S2 | Final delivery save, submit and project evaluation previously displayed arbitrary `Error.message`; when a dependency rejects unexpectedly, developer/provider text could appear to the user. Submit callback could also act after a later readiness change while a confirmation was already open. | `src/components/projects/project-final-delivery-controls.tsx`: show only shared friendly network/API errors or two explicit local recovery messages; recheck `canSubmitDraft` for both click and confirmation. | Behavioural browser probes for unexpected throws, expired session, stale-tab submit and unready project |
+| PROJ-BREAK-reviews-17 | S2 | Review action used React `pending` state alone. Two rapid confirmation events before rerender could dispatch duplicate review mutations. | Added synchronous `reviewInFlight` ref lock, reset in `finally` on success and failure. | Authenticated double-click/slow-network role journey and persisted notification dedupe |
+| PROJ-BREAK-evaluation-18 | S2 | Scoring form checked validation but not an in-flight ref; parallel submits could duplicate evaluation requests before React disabled the button. | Added synchronous `evaluationInFlight` lock, reset in `finally`, retaining all entered rubric rows after failure. | PostgreSQL same-submission race and rubric uniqueness rollback test |
+| SA-academics-people-101 | S2 | Batch Super Admin faculty assignments could fetch foreign delivery/faculty identities before checking a selected platform-admin scope, and permit stale actor roles from an earlier request context. | `src/modules/courses/teaching-assignment-batch-service.ts` now verifies the exact selected admin college before lookups, locks sorted delivery rows, rechecks tenant/section/period/faculty membership and persisted platform permission inside one transaction. | Real multi-admin, cross-college and revoke-while-saving integration checks |
+
+Behaviour and source-contract coverage authored: `tests/unit/chat6-proj-break-final-delivery-errors-16.test.ts` (approved errors, raw-throw redaction, session/conflict/outage), `tests/unit/chat6-proj-break-final-delivery-flight-17-18.test.ts` (synchronous lock placement, finally release, editable rubric preservation). These are pending the owner's consolidated test gate; no local execution claimed.
+
+Source code authored; owner priority postpones CI, browser and database execution until the final consolidated gate. Do not treat these findings as runtime-certified.
+
+## PROJ-BREAK-reviews-19 — revoked reviewer authorization during final-delivery review
+
+- **Severity:** S1 authorization/race. The final-delivery `reviewProjectSubmission` checked lifecycle access before its write transaction, then locked the project and submission but did not recheck whether the administrator or mentor still had a current persisted role and active project membership. A role revocation racing a slow review could allow a result and learner notifications to commit from stale session context.
+- **Fix:** `src/modules/projects/submission-service.ts` now invokes the existing persisted-actor permission guard (`assertCurrentEvaluationActor`, exported from `evaluation-service.ts`) inside the review transaction, after locking submission state and before inserting the review, activity or notifications. Admin path uses persisted user/system/membership permissions; mentor path uses active college membership, active platform user, MENTOR role and active project grant under SHARE locks.
+- **Coverage:** `tests/unit/chat6-proj-break-review-revoked-actor-19.test.ts` checks source enforcement order and both role predicates. Runtime PostgreSQL revocation-vs-review interleavings remain unverified until the owner’s consolidated gate.

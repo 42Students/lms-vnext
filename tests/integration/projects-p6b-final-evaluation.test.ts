@@ -365,7 +365,7 @@ afterAll(async () => {
 });
 
 describe("Projects P6B final delivery and evaluation", () => {
-  it("supports draft editing but gates final submit on completed execution", async () => {
+  it("PROJ-BREAK-submissions-10 supports draft editing, gates readiness and enforces exact saved revision", async () => {
     const project = await createProject();
 
     const draft =
@@ -392,6 +392,7 @@ describe("Projects P6B final delivery and evaluation", () => {
             "https://example.com/source",
           demoUrl:
             "https://example.com/demo",
+          expectedUpdatedAt:draft.updatedAt.toISOString(),
         },
       );
     expect(updated.sourceUrl).toBe(
@@ -403,6 +404,7 @@ describe("Projects P6B final delivery and evaluation", () => {
         learner,
         project.id,
         draft.id,
+        {expectedUpdatedAt:updated.updatedAt.toISOString()},
       ),
     ).rejects.toMatchObject({
       code: "PROJECT_SUBMISSION_INVALID_STATE",
@@ -410,11 +412,18 @@ describe("Projects P6B final delivery and evaluation", () => {
 
     await finishExecution(project.id);
 
+    // A stale browser must never submit an edited revision from a second
+    // session, even when the project execution readiness has become complete.
+    await expect(submitProjectSubmission(learner,project.id,draft.id,{
+      expectedUpdatedAt:"2099-01-01T00:00:00.000Z",
+    })).rejects.toMatchObject({code:"PROJECT_SUBMISSION_CONFLICT"});
+
     await expect(
       submitProjectSubmission(
         learner,
         project.id,
         draft.id,
+        {expectedUpdatedAt:updated.updatedAt.toISOString()},
       ),
     ).resolves.toMatchObject({
       status: "SUBMITTED",
@@ -441,6 +450,7 @@ describe("Projects P6B final delivery and evaluation", () => {
       learner,
       project.id,
       first.id,
+      {expectedUpdatedAt:first.updatedAt.toISOString()},
     );
 
     const changes =
@@ -474,6 +484,7 @@ describe("Projects P6B final delivery and evaluation", () => {
       learner,
       project.id,
       second.id,
+      {expectedUpdatedAt:second.updatedAt.toISOString()},
     );
 
     const approved =
@@ -541,7 +552,7 @@ describe("Projects P6B final delivery and evaluation", () => {
     const draft=await createProjectSubmissionDraft(learner,project.id,{
       summary:"Initial accepted delivery",sourceUrl:"https://example.com/final-approved",
     });
-    const submitted=await submitProjectSubmission(learner,project.id,draft.id);
+    const submitted=await submitProjectSubmission(learner,project.id,draft.id,{expectedUpdatedAt:draft.updatedAt.toISOString()});
     const outcome=await reviewProjectSubmission(mentor,project.id,submitted.id,{
       decision:"APPROVED",
     });
@@ -591,6 +602,7 @@ describe("Projects P6B final delivery and evaluation", () => {
     expect(draft.attachments).toEqual([link]);
     const updated=await updateProjectSubmissionDraft(learner,project.id,draft.id,{
       summary:"Updated links",attachments:[{...link,url:"https://example.com/revised"}],
+      expectedUpdatedAt:draft.updatedAt.toISOString(),
     });
     expect(updated.attachments).toHaveLength(1);
     const rows=await pool.query<{event_type:string}>(`
@@ -621,6 +633,7 @@ describe("Projects P6B final delivery and evaluation", () => {
       learner,
       project.id,
       draft.id,
+      {expectedUpdatedAt:draft.updatedAt.toISOString()},
     );
 
     await expect(

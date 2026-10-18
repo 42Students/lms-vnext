@@ -103,3 +103,47 @@ The Weak Areas generated report also names `recruiter-selection-staged-schema.ts
 | `hrDriveDraftSchema`, `hrDriveDraftQuerySchema`, `hrDraftFromAuthorizedJob` | `HR-BREAK-drive-payload-01.test.ts` | TPO-review-safe hire-again, off-campus HTTPS only, deny credentials/scripts, salary parts and internship stipend, invalid duplicate rounds/CGPA/bond/branches, URL mode clashes, prevent conflicting edit/copy/fix | Database-side compensation policy and concurrent proposal reconciliation |
 
 **Working rule:** A test source reference alone is not counted as closed here. The new `HR-BREAK-*.test.ts` test cases invoke the actual function or page directly. Assertions which mock the database do not substitute for transaction, uniqueness, tenant or audit guarantees on real PostgreSQL.
+
+
+## Chat-15 October 18 current-branch hardening (HR-COV-15 continuation)
+
+This section records source/test evidence only, **not executed or PostgreSQL-verified**. Source changes and tests were pushed exclusively to `chatgpt/chat-15-b`.
+
+| Export / route | Behavioural test | Newly checked invariants | Remaining certification |
+|---|---|---|---|
+| `recruiterTeamAttributedDriveCounts`, new `attributeRecruiterTeamJobs` (`src/modules/placements/recruiter-team-drive-count-service.ts`) | `tests/unit/HR-BREAK-chat15-team-attribution-50.test.ts` (`HR-TEAM-ATTR-50`) | Duplicate authorized job rows credited once; conflicting approved request owners fall back to job creator regardless of query order; orphan/nonmatching job request rows excluded; denied college and missing permission do not query DB; exact relationship-scoped allowlist | PostgreSQL conflicting historical approved request fixtures; query plan and actual revoked-grant request must be exercised by CI |
+| `hrDriveAttention` (`src/modules/placements/hr-drive-attention-model.ts`) | `tests/unit/HR-BREAK-chat15-drive-attention-51.test.ts` (`HR-DRIVE-ATTENTION-51`) | Fix `slice(-0)` exposing every overdue row for zero limit; negative/nonfinite limit returns empty; upper bound 50; invalid persisted deadline skipped; future/overdue sorted, exact 7-day boundary, archived/draft/foreign college excluded | Browser Today attention-card rendering and CI run |
+| `requireProjectReadAccess` / `requireProjectLifecycleAccess` (`src/modules/projects/access.ts`, source unchanged) | `tests/unit/PROJ-BREAK-HR-01.test.ts` (`PROJ-BREAK-HR-01`, `PROJ-BREAK-HR-ORG-03`) | TPO-only role denied *before* project ID query; stale assertions updated to expect no SQL instead of allowing object-existence probe; separately test active MENTOR with foreign organization or college has only scope read, no member query | Unit suite and real two-college PostgreSQL role journey |
+| `/tracker/audit-findings` server page | `tests/unit/HR-BREAK-chat15-tracker-audit-page-58.test.ts` (`HR-TRACKER-PAGE-58`) | Actually invokes page with mocked auth and persistence: role/disabled/acting-college denial before SQL; central-permission denial; invalid/multi-valued filters; unavailable datastore; admin empty results; persisted row projection | Live 320px/keyboard flow, genuine admin auth, database outage and CI |
+ 
+The full HR/recruiter/tracker module remains **OPEN for exhaustive certification**: every unlisted service export and API route still requires its own row and role/validation/concurrency/notification tests. Neither existing test names nor the new mocked-boundary suites constitute production confirmation.
+
+
+## HR depth priority change — source and test traceability (2026-10-18)
+
+CI was explicitly deferred by the owner. Every line below is **authored but unexecuted**; do not interpret it as PostgreSQL or browser certification.
+
+| Export, handler, or page | New behavioral test (named contract) | Cases covered by authored test | Remaining verification |
+|---|---|---|---|
+| `hrSelectionReadyApplicationIds`, `buildHrOfferOverview` | `tests/unit/HR-BREAK-chat15-selection-ambiguity-60.test.ts` (HR-OFFER-DEPTH-60) | Exactly one APPLIED PASS per round; duplicate/concurrent conflicting results fail closed; TALK-only/incomplete outcomes excluded; offer expiry boundary | Real HR round-result table uniqueness, TPO release and offer notification |
+| `filterRecruiterDrives`, `isHrDriveDeadlineToday`, `sortRecruiterDrives` | `tests/unit/HR-BREAK-chat15-job-date-61.test.ts` (HR-JOBS-DEPTH-61) | Persisted invalid dates cannot crash filtering/sorting; IST today; private/draft/archived entries remain excluded | Job list 1k rows, live responsive page and PostgreSQL |
+| `buildHrApplicantDrawer` | `tests/unit/HR-BREAK-chat15-applicant-detail-62.test.ts` (HR-APPLICANTS-DEPTH-62) | Conflicting duplicate joined application IDs disclose nothing; withdrawn/unshared denial; valid singleton and null masking | SQL duplicate join and stale/open drawer browser replay |
+| `listHrConversations` | `tests/unit/HR-BREAK-chat15-messaging-63.test.ts` (HR-MESSAGING-DEPTH-63) | Unread lookup only reaches thread IDs from employer + college + recruiter allowlist; zero authorized threads never touch body table; revoked/wrong account | Actual SQL tenant predicate, receipts and multi-tab replay |
+| `hrRoundFormSchema`, `canRecruiterEditRound`, `matchesRecruiterRoundVersion`, `duplicateRecruiterRoundName` | `tests/unit/HR-BREAK-chat15-round-depth-64.test.ts` (HR-ROUND-DEPTH-64) | Live author-only editing; immutable results/slots; stale ms token; normalized name collisions; strict bounded command | PostgreSQL concurrent CREATE/UPDATE/REMOVE, rollback and exactly-once TPO notice |
+| `buildRecruiterCalendarEvents`, `buildRecruiterResultsDueItems`, `hrNextCalendarEvent` | `tests/unit/HR-BREAK-chat15-calendar-depth-65.test.ts` (HR-CALENDAR-DEPTH-65) | Exclusive IST next-midnight boundary, sanctioned statuses/jobs, aggregate slot privacy, no forged results due or future events | Calendar pagination, external-drive data and browser date-format acceptance |
+| `markHrNotificationRead` | `tests/unit/HR-BREAK-chat15-notification-retry-66.test.ts`, `tests/integration/hr-notification-read.test.ts` (HR-NOTIFY-DEPTH-66) | Same token/owner retry is read-only success, stale version and foreign principal denied; PostgreSQL verifies unchanged readAt | Concurrent POSTs on disposable DB, middleware rate limit, browser status |
+| `/tracker/issues`, `/tracker/logs` | `tests/unit/HR-BREAK-chat15-superadmin-tracker-scope-67.test.ts` (SA-TRACKER-AUDIT-67) | Global Tracker refuses acting-college/org, inactive Super Admin, and recruiter-only principals before DB | Admin E2E and tenant-scoped browser navigation |
+| `/recruiter/drives/[jobId]/change-requests` | `tests/unit/HR-BREAK-chat15-recruiter-change-requests-page-68.test.tsx` (HR-RECRUITER-PAGE-68) | TPO party denied, foreign job non-enumeration, registered/unready states, authenticated employer detail and back link | Browser form race, persistence on authorized role and timeout |
+| 14 legacy `/recruiter/**` server aliases; two legacy redirects | `tests/unit/HR-BREAK-chat15-recruiter-alias-pages-69.test.ts` (HR-RECRUITER-PAGES-69) | Actual server page export identity with secure canonical HR routes; legacy entrypoints redirect to Today | End-to-end navigation, loading/error states and responsive screens |
+
+The overall `HR-COV-15` work remains **OPEN**: remaining exported functions and HTTP route handlers still need individually documented success/validation/security/concurrency cases and real PostgreSQL run. None of these edits touches production or replaces central authorization.
+
+
+## Subsequent HR export and API failure-mode coverage
+
+| Export / route | Named behavioral evidence | Invariants | Still missing |
+|---|---|---|---|
+| `buildHrApplicantCsv` (`src/modules/placements/hr-applicant-export-model.ts`) | `tests/unit/HR-BREAK-chat15-applicant-export-70.test.ts` (HR-APPLICANT-EXPORT-70) | CSV formula injection guarded, private contact masked, 200-row cap, malformed persisted date does not crash export, invalid aggregate totals do not print NaN/Infinity | Real SQL export counts agree with visible recruiter shortlist, Excel and 1k-row database fixtures |
+| `/api/placements/recruiter/drives/requests` GET/POST/PATCH; shared unexpected-error handler | `tests/unit/HR-BREAK-chat15-request-api-71.test.ts` (HR-DRIVE-API-71) | Cross-origin POST/PATCH rejected before service, valid vs replay status, exact GET college validation and no writes, unexpected service outage produces sanitized request-id response | Genuine logged-in HTTP cookie/CSRF, database write rollback, parallel nonce conflict and rate limits |
+
+Tests were authored only, not executed. No CI run was requested; HR release certification remains open.

@@ -176,11 +176,75 @@ The Faculty Section health model filtered assessment rows to `status === "PUBLIS
 
 **Fix:** Include `status === "CLOSED"` **only for quizzes** in the Section-scoped health selector. Draft and archived quizzes and non-published assignments remain excluded. `tests/unit/chat3-faculty-course-health-closed-quiz-model.test.ts` checks the state matrix, exact delivery, five-row page cap and invalid selector, and `tests/unit/chat3-faculty-course-health-service-permissions.test.ts` now exercises a CLOSED quiz through the actual service. Tests authored only; cloud CI and browser historical-quiz checks pending.
 
+### SA3-PEOPLE-CLASS-033 — learner class name subquery ignored selected college and enrollment relationships (S1)
+
+The selected-college People directory uses an inline learner class name subquery. It previously joined `section_enrollments`, `learner_program_enrollments` and `sections` by independent identifiers but never checked the Section's cohort, academic period, program, or owning college. A malformed transferred learner assignment could disclose the name of a Section from another college in a superficially authorized Learner row.
+
+**Fix:** The class projection now verifies Section-to-enrollment cohort and academic-period equality, joins the cohort's own program and department, matches the learner enrollment's program and requires department college ID to equal the selected college. The correlated membership check and newest-class order remain. `tests/unit/chat3-superadmin-scoped-people-pagination.test.ts` has a `SA3-PEOPLE-CLASS-01` compiled SQL projection test. Database cross-college/transfer fixtures and cloud CI pending.
+
+### SA-PEOPLE-ROOT-032 — selected People and Faculty assignment pages lacked page-level Super Admin role gate (S2)
+
+The selected `/admin/faculty-assignment`, `/admin/people/directory`, and global `/admin/people/unassigned` pages relied on shared layouts or service authorization alone. With a stale or inconsistent session, those pages could render partial privileged UI or load administrative workspace services before their own platform role preflight. Defense in depth requires a local active Super Admin check.
+
+**Fix:** Each entrypoint now redirects non-Super-Admin actors before the list data load. Existing central permission service checks remain in force. `tests/unit/chat3-sa-academics-people-root-platform-roles.test.ts` explicitly verifies `SA-PEOPLE-ROOT-02`. Tests authored, not run; browser and CI checks pending.
+
+### SA-ACADEMICS-SECTION-OPS-039 — Faculty could probe private Section identifiers before administrative role denial (S1)
+
+`getSectionOperationsWorkspace` fetched `loadSectionScope(sectionId)` before its `academics.manage` check. Ordinary Faculty, Mentor and Learner principals lacked permission to manage a Section but could still cause a Section lookup and distinguish internal scope failures from privileged-access denial when supplying arbitrary IDs.
+
+**Fix:** Explicitly require active `COLLEGE_ADMIN` or `SUPER_ADMIN` actor role before the Section ID lookup, then preserve the existing resource-specific `academics.manage` authorization. Direct behavioral `tests/unit/chat3-sa-section-workspace-permission-matrix.test.ts` checks wrong-role no-read, selected-college period SQL, authorized child views and foreign-period fail-closed behavior. CI/database tests pending.
+
+### SA-ACADEMICS-PROGRAM-READ-038 — college program deletion-readiness counts exposed to ordinary academic readers (S2)
+
+`listProgramContents` returns counts of program semesters, batches and classes for future deletion safety. It required only `academics.read`, which is also granted to active Faculty, Mentor and Learner in the same college and was insufficient as a service boundary for privileged bulk program lifecycle controls.
+
+**Fix:** Require `academics.manage` for same-college dependent counts. College Admin and scoped Super Admin can still view, Faculty/Mentor/Learner and wrong-tenant admins are denied before the three aggregate SQL reads. `tests/unit/chat3-sa-program-dependency-count-roles.test.ts` tests actual service SQL/roles and zero-program guard. No CI/DB execution performed.
+
+### SA-LEARNING-FILTER-ROLE-037 — Faculty teaching read permission leaked full-college Super Admin filter options (S1)
+
+The Super Admin learning filter service called `resolveActingCollege(context, "courses.read")` directly. Since this permission also allows regular Faculty/Learner accounts to read courses inside their college, a future direct request or shared call path could expose all course and cohort names as selectable administrative filters despite no active Super Admin system role.
+
+**Fix:** Reject non-`SUPER_ADMIN` or disabled contexts before scoped college resolution and SQL. Persisted selected-college predicates and 2,000-row caps remain. Behavioural test `tests/unit/chat3-sa-learning-facets-platform-role.test.ts`, SA-LEARNING-FILTER-ROLE-01. Browser/CI verification pending.
+
+### SA-ACADEMICS-ROLE-035 — Super Admin batch and Student Register service allowed College Admin role fallback (S1)
+
+Both the batch census and Student Register options services delegated directly to `resolveActingCollege`. This helper intentionally permits active College Admins to act inside their own college, but it is not an appropriate sole actor guard for **Super Admin-only** service entry points. Calling these exported functions from a future API or action would inherit that broader authorization despite the page naming.
+
+**Fix:** Both services now explicitly deny principals lacking active `SUPER_ADMIN` system role before even resolving a college scope. No College Admin service was changed. Direct service tests: `tests/unit/chat3-sa-academics-batch-roster-privacy.test.ts` and `tests/unit/chat3-sa-student-register-options-role-scope.test.ts`, case SA-ACADEMICS-ROLE-01. Cloud CI, signed-in Super Admin and College Admin browser journeys pending.
+
+### SA-ACADEMICS-BATCH-COUNT-033 — disabled account included in class occupancy but absent from roster (S1)
+
+In the selected-college Super Admin batch detail, class occupancy counted `college_memberships.id` for an active program and Section enrollment. The detailed roster instead joins `users.platform_status = ACTIVE`. A suspended platform user with a still-active membership could inflate a classroom's occupancy and capacity warning while never appearing in the roster or CSV.
+
+**Fix:** Left-join active users into the occupancy query and count `users.id`, retaining cohort, class and college restrictions. `tests/unit/chat3-sa-academics-batch-roster-privacy.test.ts` asserts the compiled Drizzle predicates, legitimate query and authorization guard. PostgreSQL mismatched-account fixtures and browser counts remain unverified.
+
+### SA-ACADEMICS-BATCH-CSV-034 — invisible-prefix CSV formula injection in batch roster export (S2)
+
+Batch roster CSV encoding neutralized formulas after ordinary whitespace and ASCII controls, but not U+200B, U+2066, U+FEFF and bidirectional controls. Spreadsheet imports may interpret a concealed `=+` expression after stripping these characters. The batch CSV model now neutralizes those prefixes, preserving standard quoting/BOM and all four fields; `tests/unit/chat3-sa-batch-roster-csv-formula-protection.test.ts` exercises direct behavioral serialization. CI and spreadsheet-app import verification pending.
+
+### SA-ACADEMICS-ROOT-031 — administrative Academics and People pages delegated role separation only to layout (S1)
+
+The root `/admin/academics` page read the selected college workspace without a local platform-role gate, relying on the shared route layout to stop an ordinary user reaching it. `/admin/people` similarly relied on layout and deeper membership permission checks. Generic `academics.read` is valid for Faculty and Learner memberships within their own college; it must not accidentally authorize a platform-admin page when a stale session carries an `adminScope`.
+
+**Fix:** Both root pages now check `isSuperAdmin(context)` before any tenant data fetch and redirect nonadministrators to `/dashboard`. The no-college selected-scope prompt for genuine Super Admins remains intact. `tests/unit/chat3-sa-academics-people-root-platform-roles.test.ts` asserts the guard placement and actor role matrix. Requires current CI and authenticated browser checks.
+
 ### SA-ACADEMICS-SECTION-030 — generic academic read permission on Super Admin Section page (S1)
 
 The `resolveSuperAdminSectionDetail` service checked `academics.read` and a selected `adminScope`, but that permission is also granted to active nonadministrative Faculty, Mentor and Learner memberships for their own college. With an inconsistent or accidentally propagated admin scope, such a principal could pass the initial service permission check into the Super Admin Section detail path. The page layer's separate authorization should not be relied upon as the only boundary.
 
 **Fix:** Require `isSuperAdmin(context)` up front and raise the canonical `AuthorizationError("academics.read")` before scoped database reads. Preserve the Super Admin no-college prompt (null) and private foreign/not-found behavior. `tests/unit/chat3-sa-academics-section-platform-role.test.ts` covers active and disabled principals, forged role/adminScope combinations, correct and foreign Section records and database failures. CI and authenticated page tests pending.
+
+### UX-teacher-notices-redirect-036 — malformed legacy Notices URL surfaced an uncaught validation error (S2)
+
+The retired Faculty notices bookmark path used `facultyNoticeParamsSchema.parse(await params)` without a safe-parse or private not-found mapping. A mistyped/hostile delivery ID therefore surfaced as an unhandled Zod error rather than the standard private 404 used by the other Faculty Section legacy aliases.
+
+**Fix:** `safeParse` and `notFound()` before any request context or Section read; still call `getFacultySectionNotices` before redirect on valid IDs, so revoked teaching assignments cannot be bypassed. `tests/unit/UX-teacher-redirect-no-shared-route-journey.test.tsx` verifies this and three additional alias routes. Runtime/browser acceptance pending.
+
+### FAC-GRADEBOOK-UX-032 — repeated page key bypassed strict Faculty query rules (S2)
+
+The Faculty gradebook only verified allowed query-key **names**, not that Next.js had received exactly one value per key. For example `?page=1&page=999` becomes `page: ["1","999"]`; the Zod `coerce.number` path can also accept an array of one value. This silently accepts an ambiguous deep link despite the code's intended strict filter validation.
+
+**Fix:** Explicitly reject all array-valued query keys before the gradebook view schema or any current-teaching report read. Preserve the existing invalid-link recovery and exact Section scope. Direct SSR tests in `tests/unit/UX-teacher-gradebook-strict-query-journey.test.tsx` cover forged, duplicated, malformed, empty and filtered states. Browser/CI acceptance pending.
 
 ### FAC-HTTP-BODY-021 — unbounded live-class and attendance scheduling commands (S1)
 

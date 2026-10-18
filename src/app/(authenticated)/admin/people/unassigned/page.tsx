@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { redirect } from "next/navigation";
+import { isSuperAdmin } from "@/modules/identity/context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -14,6 +16,7 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const context = await getCurrentRequestContext();
+  if (!isSuperAdmin(context)) redirect("/dashboard");
   if (!unassignedIdentityScopeAllowed(context.adminScope)) return <div className="space-y-4">
     <PageHeader eyebrow="Super Admin" title="Users without college memberships" />
     <EmptyState title="Clear the admin scope" description="These users have no college membership. Clear the organization and college selection in the header to inspect global identities." />

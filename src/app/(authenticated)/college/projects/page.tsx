@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {redirect} from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
@@ -11,7 +12,7 @@ import { ProjectAdminWorkspaceList } from "@/components/projects/project-admin-w
 import {ProjectAdminWorkspacePageExport} from "@/components/projects/project-admin-workspace-page-export";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
-import { parseCollegeProjectsQuery } from "@/modules/projects/college-projects-query-model";
+import {parseCollegeProjectsQuery,canonicalCollegeProjectsPageHref} from "@/modules/projects/college-projects-query-model";
 import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
 import { listProjectAdminSnapshots } from "@/modules/projects/admin-insights-service";
 import { listAssignedProjectTemplates } from "@/modules/projects/template-service";
@@ -49,13 +50,39 @@ export default async function CollegeProjectsPage({
     </div>;
   }
   const query: ProjectAdminCollectionQuery = parsed.data;
-  // Failure to read optional template labels must not hide the actual projects.
-  const [result, templatesResult] = await Promise.all([
-    listProjectAdminSnapshots(context, collegeId, query),
+  // The strict service schema accepts database filters only, not the
+  // presentational view toggle. Keep cards/table navigation in the UI.
+  const serviceQuery = {
+    q: query.q, status: query.status, page: query.page, pageSize: query.pageSize,
+  };
+  // Optional labels may fail independently, but an essential workspace read
+  // must show a true retry state rather than throw or display a false empty list.
+  const [snapshotsResult, templatesResult] = await Promise.all([
+    listProjectAdminSnapshots(context, collegeId, serviceQuery)
+      .then(value => ({ ok: true as const, value }))
+      .catch(() => ({ ok: false as const })),
     listAssignedProjectTemplates(context, collegeId)
       .then(value => ({ ok: true as const, value }))
       .catch(() => ({ ok: false as const })),
   ]);
+  if(!snapshotsResult.ok){
+    const retry=new URLSearchParams();
+    if(query.q)retry.set("q",query.q);
+    if(query.status)retry.set("status",query.status);
+    if(query.page)retry.set("page",String(query.page));
+    if(query.pageSize)retry.set("pageSize",String(query.pageSize));
+    if(query.view)retry.set("view",query.view);
+    const suffix=retry.toString();
+    return <div className="min-w-0 space-y-6">
+      <PageHeader title="Workspaces"
+        description="Live projects, each run by a mentor with a team of students."/>
+      <ErrorState title="Project workspaces unavailable"
+        description="The workspace list could not be loaded. Your search and filters were not changed."
+        action={<Link href={"/college/projects"+(suffix?"?"+suffix:"")}
+          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Retry loading workspaces</Link>}/>
+    </div>;
+  }
+  const result=snapshotsResult.value;
   const templateTitles = new Map(
     (templatesResult.ok ? templatesResult.value : []).map(template => [template.templateId, template.title]),
   );

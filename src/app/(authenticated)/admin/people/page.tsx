@@ -2,6 +2,7 @@ import Link from "next/link";
 import { SuperAdminPeopleCsvControl } from "@/components/admin/super-admin-people-csv-control";
 import { superAdminPeopleExportHref } from "@/modules/people/admin-users-export-model";
 import { redirect } from "next/navigation";
+import { isSuperAdmin } from "@/modules/identity/context";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PersonMembershipActions } from "@/components/admin/person-membership-actions";
 import { PersonOnboardDialog } from "@/components/admin/person-onboard-dialog";
@@ -97,6 +98,7 @@ export default async function SuperAdminPeoplePage({
   const href=(target:number)=>"/admin/people?"+new URLSearchParams({...Object.fromEntries(base),...(target>1?{page:String(target)}:{})}).toString();
   const requestedPage = parsePeoplePage(one(pageParam));
   const context = await getCurrentRequestContext();
+  if (!isSuperAdmin(context)) redirect("/dashboard");
   const collegeId = context.adminScope?.collegeId ?? null;
 
   if (!collegeId) {
