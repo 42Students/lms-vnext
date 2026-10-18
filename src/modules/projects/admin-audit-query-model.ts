@@ -29,7 +29,12 @@ function validCursor(value: string): boolean {
 /** Accept only values the activity service can safely parse.
  * A manually edited audit link is not allowed to throw a server-side Zod error. */
 export function parseProjectAdminAuditQuery(params: ProjectAdminAuditSearchParams) {
-  let ignoredInvalidFilters = false;
+  // Unknown URL keys are never applied to the activity query. Surface an
+  // explicit recovery warning instead of silently pretending they were used.
+  let ignoredInvalidFilters = Object.keys(params).some(key=>![
+    "action","status","eventType","importance","subjectType","subjectId",
+    "from","to","beforeOccurredAt","beforeId",
+  ].includes(key));
   const read = (key: string): string | undefined => {
     const raw = params[key];
     // Duplicated URL values are ambiguous. Never select the attacker-chosen
