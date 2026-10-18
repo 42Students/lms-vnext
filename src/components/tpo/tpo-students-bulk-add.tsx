@@ -91,9 +91,10 @@ export function TpoStudentsBulkAdd({
   }
 
   async function preview(){
-    if(busy||!driveId||!roleOptionId||!pageSelected.length||pageSelected.length>200)return;
+    if(busy||guardedPending||!driveId||!roleOptionId||!pageSelected.length||pageSelected.length>200)return;
     setBusy(true);setError("");setAlreadyAppliedCount(null);
     try{
+     await runGuarded(async()=>{
      const response=await apiFetch<{alreadyAppliedCount:number;totalChecked:number}>(
       "/api/placements/jobs/"+encodeURIComponent(driveId)+"/bulk-add/preflight",{
        method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
@@ -102,11 +103,12 @@ export function TpoStudentsBulkAdd({
      if(response.totalChecked!==pageSelected.length)
       throw new Error("Selection changed during review");
      setAlreadyAppliedCount(response.alreadyAppliedCount);setReviewedSelection(selectionFingerprint);setConfirmOpen(true);
+     });
     }catch{setError("Could not check existing applications. Your selection remains for retry.");}
     finally{setBusy(false);}
   }
   async function submit() {
-    if (busy || !driveId || !roleOptionId || pageSelected.length === 0 || pageSelected.length>200 ||
+    if (busy || guardedPending || !driveId || !roleOptionId || pageSelected.length === 0 || pageSelected.length>200 ||
         includeIneligible && overrideReason.trim().length<3) return;
     if(reviewedSelection!==selectionFingerprint){
      setError("Your selected learners or drive changed. Review existing applications again before confirming.");
@@ -134,6 +136,7 @@ export function TpoStudentsBulkAdd({
     setError("");
     setResults([]);
     try {
+      await runGuarded(async()=>{
       const body=await apiFetch<{results:BulkDriveResult[]}>(
         "/api/placements/jobs/"+encodeURIComponent(driveId)+"/bulk-add",{
           method:"POST",credentials:"same-origin",
@@ -146,6 +149,7 @@ export function TpoStudentsBulkAdd({
       setSelected(ids=>ids.filter(id=>!body.results.some(result=>result.membershipId===id&&
        (result.status==="added"||result.status==="already-added"))));
       router.refresh();
+      });
     } catch (cause) {
       setError(
         cause instanceof Error ? cause.message :
