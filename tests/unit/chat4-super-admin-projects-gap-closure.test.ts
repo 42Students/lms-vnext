@@ -50,7 +50,13 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
  it("SA-placements-projects-63 retains the verified Projects behavior",()=>{
   const file=source("src/components/projects/project-admin-at-risk-page.tsx");
   expect(file).toContain("ProjectAtRiskPageExport");
-  expect(file).toContain("need attention (stalled, blocked, or waiting for review)");
+  expect(file).toContain('title="At-risk projects"');
+  expect(file).toContain("Workspaces with no recent activity, an active blocker, or a pending review.");
+  for(const bucket of ['"STALLED"','"BLOCKER"','"REVIEW"']){
+    expect(file).toContain(bucket);
+  }
+  expect(file).toContain("blockerSignalSupported");
+  expect(file).toContain("Workspace blocker data is unavailable.");
  });
  it("SA-placements-projects-64 retains the verified Projects behavior",()=>{
   const file=source("src/components/projects/project-admin-readiness-page.tsx");

@@ -8,5 +8,5 @@ export const mentorFinalDeliveryDecisionSchema=z.object({
  message:"Explain the required changes",path:["feedback"],
 });
 export function mentorFinalDeliveryCanReview(status:string,projectStatus:string){
- return status==="SUBMITTED"&&projectStatus!=="ARCHIVED";
+ return status==="SUBMITTED"&&projectStatus==="ACTIVE";
 }

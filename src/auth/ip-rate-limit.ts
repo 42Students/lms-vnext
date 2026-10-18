@@ -7,6 +7,8 @@
 type Window = { start: number; count: number };
 
 const windows = new Map<string, Window>();
+const MAX_WINDOWS = 50_000;
+let nextExpiredSweepAt = 0;
 
 export function allowRequest(
   key: string,
@@ -14,7 +16,19 @@ export function allowRequest(
   windowMs = 60_000,
   now = Date.now(),
 ) {
-  if (windows.size > 50_000) windows.clear();
+  // Never clear live buckets on capacity: otherwise an attacker can rotate
+  // 50,001 spoofed client keys to reset every active throttling budget.
+  // Reclaim expired windows infrequently; when saturated, fail closed for
+  // unknown keys without denying legitimate existing buckets a fair count.
+  if (windows.size >= MAX_WINDOWS && !windows.has(key)) {
+    if (now >= nextExpiredSweepAt) {
+      for (const [existingKey, window] of windows) {
+        if (now - window.start >= windowMs) windows.delete(existingKey);
+      }
+      nextExpiredSweepAt = now + Math.max(1_000, Math.trunc(windowMs / 4));
+    }
+    if (windows.size >= MAX_WINDOWS) return false;
+  }
 
   const current = windows.get(key);
   if (!current || now - current.start >= windowMs) {
@@ -46,4 +60,5 @@ export function clientIp(request: Request) {
 /** For tests only. */
 export function resetIpRateLimitForTests() {
   windows.clear();
+  nextExpiredSweepAt = 0;
 }
