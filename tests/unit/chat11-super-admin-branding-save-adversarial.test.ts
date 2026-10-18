@@ -17,7 +17,7 @@ describe("SA-tenants-modules-BRAND-03 branding writes require current scoped Sup
   expect(can(root,"college.manage",resource)).toBe(true);
   for(const ctx of [
    {...root,user:{...root.user,platformStatus:"DISABLED" as const}},
-   {...root,user:{...root.user,systemRoles:[] as const}},
+   {...root,user:{...root.user,systemRoles:[]}},
    {...root,adminScope:{organizationId:org,collegeId:foreign}},
    {...root,adminScope:{organizationId:foreign}},
   ]){
