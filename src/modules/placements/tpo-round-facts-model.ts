@@ -13,10 +13,11 @@ function istDate(iso:string|null):string{
 export function projectTpoRoundFacts(round:TpoRoundFactInput){
  const staged=round.participants.filter(p=>p.result?.status==="STAGED").length;
  const applied=round.participants.filter(p=>p.result?.status==="APPLIED").length;
- const status=({
+ const labels=({
   PENDING:"Not run yet",SCHEDULED:"Scheduled",RUNNING:"Running",
   IN_PROGRESS:"Running",COMPLETED:"Done",CANCELLED:"Cancelled",
- } as Record<string,string>)[round.status]??"Not run yet";
+ } as Record<string,string>);
+ const status=Object.prototype.hasOwnProperty.call(labels,round.status)?labels[round.status]:"Not run yet";
  return {
   status,
   when:istDate(round.scheduledAt),

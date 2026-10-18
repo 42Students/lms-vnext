@@ -93,3 +93,28 @@
 | Five legacy `/college` redirect routes and `components/college` responsive lists | `chat4-college-ux-redirect-coverage.test.ts`: canonical destinations, encoded URL parameters, downstream authorization, labelled scroll cue | Actual browser keyboard/focus/screen-reader tests pending |
 
 The College, academics, groups and people exported-function inventory remains **incomplete**. This section records newly covered symbols without claiming that the master-queue's exhaustive coverage requirement is satisfied. A dedicated PostgreSQL fixture run is required before release.
+
+
+## Pass B / IIT Dharwad additional verified source invariants — 2026-10-18
+
+| Function or route | Adversarial/behavioural test | Open integration work |
+|---|---|---|
+| `updateCollegeProjectSummary` | `PROJ-BREAK-chat4-college-persisted-actor.test.ts`: role/tenant policy and SQL order; locked persisted-actor check before stale/no-op retry, write, audit and notifications | Transactional PostgreSQL revoked-role race not yet executed |
+| `replaceCollegeProjectLearners` | same: stale role check before no-op and member writes, college-bound learner set, revoked account | PostgreSQL concurrent roster replace and rollback |
+| `createClassTeamWorkspaces` | same: assert persisted permission inside SERIALIZABLE transaction before any group insert; channel attribution rebuilt from locked actor | Actual serializable retry and 2000-learner fixture |
+| `exportVisibleCollegePeople` | `chat4-college-academics-people-weak-area.test.ts`: locked reauthorization between directory read and private phone/profile enrichment; college-ID and selected-membership intersections | Connection-level revocation and snapshot consistency |
+| `requireActiveAcademicMembership`, `requireAcademicRole` | same: ACTIVE/ENDED/SUSPENDED, exact FACULTY/LEARNER authorization and typed denial codes | End-to-end membership switches |
+| `renderBatchCsv`, `renderSemesterCsv`, `academicExportHref`, `ACADEMIC_EXPORT_CAP` | same: recorded counts, CSV formula neutralization, blank credits/year, 1000-row limit, encoded search | 1000+ row paginated DB export |
+| `exportCollegeAcademicDirectory` | same: strict semester/batch filter parser before page reads and matching renderer | Full PostgreSQL export result equal to screen |
+| `parseCollegeRoleDirectorySearchParams`, `assertCompatibleCollegeRoleDirectoryFilters`, `collegeRoleDirectoryFilterMessage` | same: duplicated/unknown/bad date filters, wrong role, error copy cannot expose raw SQL detail | Browser filters and permission error route |
+| `roleDirectoryDateWindowValid`, `roleDirectoryIstDayStart`, `roleDirectoryNextIstDayStart` | same: inclusive IST start and exclusive next-day midnight | DST-independent date edge integration |
+| `describeCollegeDirectoryContext`, `selectedDirectoryValueNotListed` | same: deduped sorted section names, no fabricated course teaching counts, bookmarked missing option | Rendered directory UI |
+
+These rows establish tests for listed exports only. **Not exhaustive**: 319 academics + 323 people + 94 colleges + 48 groups exports need individually accounted for, with PostgreSQL and page journeys before closing the lane.
+
+
+## College groups / persisted-actor test (chat-4)
+
+| Export | Test and outcomes |
+|---|---|
+| `assertPersistedGroupActor` (`src/modules/groups/actor-access.ts`) | `tests/unit/chat4-college-group-persisted-authority.test.ts`: real function executed against deterministic transactional query adapter; active College Admin lock sequence, revoked/disabled actor, wrong college, forged user, missing member, missing role, SELF learner role and membership matching, Super Admin persisted role removal. **Not yet** tested against PostgreSQL lock races. |

@@ -19,3 +19,16 @@ Scope is the IIT Dharwad College Admin Projects entry, creation, team preview, a
 | `GET/POST /api/projects` and `POST /api/projects/reassign-mentor` | Same-origin POST, principal lookup and safe error response | `tests/unit/chat11-college-projects-role-journeys.test.ts` — `PROJ-COL-ORIGIN-01` | Integration/HTTP 401, 403, 409 and denial for revoked membership |
 
 **Status:** Specific regressions authored and pushed to chat-11; **all newly authored tests require CI**. Not exhaustive Projects or 90% branch coverage. Remaining per-route 401/403, exact state machine, signed files, deadline and 1000+ item scale tests must be covered by owning squad and PostgreSQL harness before IIT Dharwad acceptance.
+
+
+## Next hardening pass — 18 October (source and authored tests; cloud CI pending)
+
+| Export / entrypoint | Threat and verified behaviour | Named regression | Remaining verification |
+|---|---|---|---|
+| `parseCollegeProjectsQuery` | Avoid the permissive `Number()` coercion that turned `0x10`, `1e2`, whitespace and signed values into accepted page numbers; retain canonical decimal values and bounds | `tests/unit/chat11-college-projects-role-journeys.test.ts`: `PROJ-COL-QUERY-03` | Page browser history/deep links |
+| `CreateProjectControl` | Guard the form's Enter-key route independently of the disabled Submit button; reject class mismatches, aborted/unloaded roster, wrong selected learner; suppress candidate fetch responses after abort | `tests/unit/chat11-college-projects-role-journeys.test.ts`: `PROJ-COL-STALE-05` | Slow-network and React click E2E |
+| `collegeProjectSummaryPatch`, `collegeProjectStatusChangeAllowed`, `collegeProjectSummaryMatchesCurrent`, `updateCollegeProjectSummary` | Strict title/dates/percent/CAS shape; all five status transition pairs and mentor/delivery gate truth table; repeated exact state vs altered fields; service source checks row lock, tenant join, activity event and member notifications | `tests/unit/chat11-college-project-summary-state.test.ts`: `PROJ-BREAK-COL-SUMMARY-01` | PostgreSQL concurrency and 401/403/409 assertions |
+| `replaceCollegeProjectLearners` | Two concurrent identical writes commit exactly one learner, one notification, and return one changed and one no-op result; wrong tenant, inactive actor, wrong role, unscoped SA, other-college SA cannot mutate roster | `tests/integration/chat11-college-project-roster-retry.test.ts`: `PROJ-COL-DOUBLE-02`, `PROJ-COL-TENANT-02` | Running PostgreSQL and verifying audit count |
+| `verifyClassTeamPreview`, `classTeamPreviewSchema`, `previewVersion`, `assertPreviewVersion`, `mayBeginClassTeamCreation` | Exactly-once learner partitions, Unicode-equivalent duplicate team names, cross-tenant/malformed UUIDs, oversized teams, stale preview and double-submit rejection | `tests/unit/chat11-projects-preview-adversarial.test.ts`: `PROJ-BREAK-COL-TEAM-01` | Server integration against a changed live class roster |
+
+This remains the **College Admin role-journey supplement**; it does not replace the Project lead's full per-export ledger, independent review, and 90% branch-coverage gate.

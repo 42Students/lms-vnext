@@ -161,7 +161,8 @@ describe("chat-7 learner assessment and discussion guard exhaustive source-model
   expect(learnerAssessmentMatchesState(quiz({attemptsUsed:1}),"COMPLETED",now)).toBe(true);
   expect(learnerAssessmentMatchesState(quiz({attemptsUsed:1}),"PENDING",now)).toBe(false);
   expect(learnerAssessmentMatchesState(quiz({attemptsUsed:1,resultsPublished:true}),"RESULTS",now)).toBe(false);
-  expect(learnerAssessmentMatchesState(quiz({attemptsUsed:1,resultsPublished:true,status:"CLOSED"}),"RESULTS",now)).toBe(true);
+  expect(learnerAssessmentMatchesState(quiz({attemptsUsed:1,resultsPublished:true,status:"CLOSED"}),"RESULTS",now)).toBe(false);
+  expect(learnerAssessmentMatchesState(quiz({attemptsUsed:1,resultsPublished:true,status:"CLOSED",dueAt:iso(now-hour)}),"RESULTS",now)).toBe(true);
   expect(learnerAssessmentMatchesState(quiz({attemptsUsed:1,resultsPublished:false}),"RESULTS",now)).toBe(false);
   expect(learnerAssessmentMatchesState(quiz({dueAt:null}),"DUE_SOON",now)).toBe(false);
   expect(learnerAssessmentMatchesState(quiz({dueAt:null}),"PENDING",now)).toBe(true);
