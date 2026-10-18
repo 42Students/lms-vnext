@@ -162,3 +162,7 @@ Page-state coverage is still PARTIAL; these additions do not certify the remaini
 | `tpo/settings/team`, `tpo/settings/public-link` | `tests/unit/chat2-tpo-last-third-runtime-settings-pages.test.tsx` | Direct server component invocation, TPO role denial before data query, real rendering empty/partial and safe link readiness, mobile classes and no leaked team contact fields. Browser journeys pending. |
 
 All other campaign, people and link service rows remain partial until real PostgreSQL isolation/rollback and provider/browser verification. No CI was run by this lane.
+
+## 2026-10-19 direct campaign service denial tests
+
+`tests/unit/chat2-campaign-draft-dispatch-service-denial.test.ts` invokes actual `createTpoCampaignDraft`, `listTpoCampaignDrafts`, `getTpoCampaignDraft`, `listTpoCampaignRecipientStatuses`, `dispatchTpoCampaign`, and `tpoCampaignDispatchReady` with mocked runtime boundaries. It covers wrong role, revoked/disabled/missing membership, malformed campaign IDs, tenant-field injection, duplicate/empty lead selection, auth/OTP template rejection, unregistered draft storage, disabled provider configuration, and no database/provider call on those denied paths. These are **direct behavioural unit tests written, not executed**. Sender acceptance/failure, external provider network, two-session draft claim, real DB CAS and audit still require integration testing. No claim of complete campaign delivery.
