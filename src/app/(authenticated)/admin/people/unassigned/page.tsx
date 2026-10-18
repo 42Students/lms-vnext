@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { redirect } from "next/navigation";
 import { isSuperAdmin } from "@/modules/identity/context";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -31,7 +32,23 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
     :{invalid:true});
   if (!parsed.success) return <ErrorState title="Invalid user filters" description="Review search, status, role and page."
     action={<Link href="/admin/people/unassigned">Clear filters</Link>} />;
-  const data = await listSuperAdminUnassignedUsers(context, parsed.data);
+  const loaded = await listSuperAdminUnassignedUsers(context, parsed.data)
+    .then(value => ({ok:true as const,value}))
+    .catch(error => ({ok:false as const,denied:error instanceof AuthorizationError}));
+  if (!loaded.ok) return <div className="min-w-0 space-y-4">
+    <PageHeader eyebrow="Super Admin" title="Users without college memberships" />
+    <ErrorState
+      title={loaded.denied ? "Directory access denied" : "Unassigned users unavailable"}
+      description={loaded.denied
+        ? "Your account can no longer view global identities."
+        : "These users could not be loaded. Your validated filters were preserved."}
+      action={<Link href={loaded.denied ? "/dashboard" : adminUnassignedUsersHref(parsed.data)}
+        className="font-semibold text-[var(--lms-teal-deep)] underline">
+        {loaded.denied ? "Back to dashboard" : "Retry loading users"}
+      </Link>}
+    />
+  </div>;
+  const data = loaded.value;
   const statuses = ["ALL", "ACTIVE", "DISABLED"] as const;
   const roles = ["ALL", "SUPER_ADMIN", "NONE"] as const;
   return <div className="min-w-0 space-y-5">
