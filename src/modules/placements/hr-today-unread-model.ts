@@ -5,6 +5,6 @@ export function hrTodayUnreadAction(input:{
  return {
   label:"Unread notifications",
   value:input.unread,
-  url:"/hr/messages?collegeId="+encodeURIComponent(input.collegeId)+"&unreadOnly=true",
+  url:"/hr/notifications?collegeId="+encodeURIComponent(input.collegeId)+"&unreadOnly=true",
  };
 }
