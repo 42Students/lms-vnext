@@ -9,6 +9,10 @@ export const runtime="nodejs";
 export async function GET(request:Request){
  try{
   const params=new URL(request.url).searchParams;
+  const allowed=["collegeId","view","q","employment","mode","deadline","sort"];
+  if([...params.keys()].some(key=>!allowed.includes(key))||
+     allowed.some(key=>params.getAll(key).length>1))
+   return NextResponse.json({error:"INVALID_QUERY"},{status:400});
   const query=recruiterDriveListQuerySchema.parse({
    collegeId:params.get("collegeId")??undefined,view:params.get("view")??undefined,
    q:params.get("q")??undefined,employment:params.get("employment")??undefined,
@@ -16,7 +20,8 @@ export async function GET(request:Request){
    sort:params.get("sort")??undefined,page:1,
   });
   const context=await getCurrentRequestContext();
-  if(!hasActiveRecruiter(context)||!context.recruiter)
+  if(!hasActiveRecruiter(context)||!context.recruiter||
+     context.recruiter.userId!==context.user.id)
    return NextResponse.json({error:"NOT_FOUND"},{status:404});
   const collegeId=query.collegeId??(context.recruiter.grants.length===1?
     context.recruiter.grants[0]!.collegeId:null);
