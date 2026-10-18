@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { TpoCompanyLifecycleEditor } from "@/components/placements/tpo-company-lifecycle-editor";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -13,6 +14,7 @@ export default async function TpoManageCompanyPage({
   if (!context.membership || !hasMembershipRole(context, "TPO")) {
     redirect("/dashboard");
   }
+  await requireTpoBatchActor(context);
   const { companyId } = await params;
   const company = await getTpoCompanyLifecycle(context, companyId);
   if (!company) notFound();
