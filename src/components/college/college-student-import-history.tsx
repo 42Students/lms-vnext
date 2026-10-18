@@ -34,9 +34,9 @@ export function CollegeStudentImportHistory(){
    if(!response.ok||!Array.isArray(body?.items))throw Error("Import history unavailable.");
    if(version!==requestVersion.current)return;
    setRows(body.items as Receipt[]);setPage(next);setHasNext(body.hasNext===true);
-  }catch(e){
+  }catch{
    if(version===requestVersion.current && !controller.signal.aborted)
-    setError(e instanceof Error?e.message:"Import history unavailable.");
+    setError("Import history unavailable. Please try again.");
   }finally{
    if(version===requestVersion.current){
     setBusy(false);
