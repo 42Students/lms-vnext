@@ -25,6 +25,10 @@ Snapshot: 2026-10-18, source branch `chatgpt/chat-3-b`. Role-journal and code-ba
 - `COL-people-20` permission protection and `TPO-drives-51` create-route authority appeared source-correct in the current snapshot; the published unit-failure report may be stale. Neither test was weakened or deleted.
 - Remaining: full click/action matrix, authenticated wrong-tenant/expired-session browser journeys, current on-screen/CSV reconciliation, responsive keyboard/phone tests, and real PostgreSQL tenancy checks.
 
+## COL-people-20 service-level behavioral permission matrix (new, CI pending)
+
+- `tests/unit/chat3-col-people-20-role-authorization.test.ts` invokes both real service functions using an injected repository, rather than relying only on source-string presence: College Admin, Faculty, Mentor and Learner cannot grant or revoke `COLLEGE_ADMIN` even before a target lookup; disabled Super Admin also fails before lookup; foreign selected scope fails before a write; active, correctly scoped Super Admin can grant and revoke existing privileged membership roles while retaining other roles.
+- The existing `college-people-gap-closure.test.ts` `COL-people-20` source assertions all match the current implementation; the published failure entry needs a fresh CI run to confirm the outcome. No test was weakened, skipped or removed.
 ## Membership UI failure resilience (SA-PEOPLE-BREAK-01)
 
 - The Super Admin / College Admin membership controls now require validated, action-specific mutation receipts before updating role checkboxes, changing the lifecycle badge, dismissing confirmation dialogs, or erasing a typed suspension reason.
