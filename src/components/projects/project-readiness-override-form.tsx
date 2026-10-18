@@ -1,4 +1,6 @@
 "use client";
+import { Textarea } from "@/components/ui/textarea";
+import { Select } from "@/components/ui/select";
 
 import { useRouter } from "next/navigation";
 import { useRef, useState, type FormEvent } from "react";
@@ -71,7 +73,7 @@ export function ProjectReadinessOverrideForm({
           </p>
         ) : null}
         <label className="block text-sm font-medium" htmlFor="project-readiness-override">{copy.stateLabel}</label>
-        <select
+        <Select
           id="project-readiness-override"
           className="w-full rounded border border-border bg-surface p-2"
           value={state}
@@ -85,11 +87,11 @@ export function ProjectReadinessOverrideForm({
           <option value="FORCE_UNLOCK">{copy.unlock}</option>
           <option value="FORCE_BLOCK">{copy.block}</option>
           <option value="CLEAR">{copy.clear}</option>
-        </select>
+        </Select>
         {state !== "CLEAR" ? (
           <>
             <label className="block text-sm font-medium" htmlFor="project-readiness-note">{copy.note}</label>
-            <textarea
+            <Textarea
               id="project-readiness-note"
               value={note}
               disabled={pending}
