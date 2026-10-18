@@ -59,6 +59,7 @@ describe("/admin second third: inbound mail and People directory behavioral boun
   it("CHAT6-ADMIN-PEOPLE-02 refuses forged page and role parameters before directory access", () => {
     for (const bad of [
       { page: 0 }, { page: -1 }, { page: 100001 }, { page: ["1", "2"] },
+      { page: ["2"] }, { page: "1e2" }, { page: "0x10" }, { page: "1.0" }, { page: true },
       { tab: "SUPER_ADMIN" }, { role: "SUPER_ADMIN" }, { q: "a".repeat(101) },
       { status: "ACTIVE" }, { collegeId: validId },
     ]) expect(adminUsersQuerySchema.safeParse(bad).success, JSON.stringify(bad)).toBe(false);
@@ -88,7 +89,8 @@ describe("/admin second third: inbound mail and People directory behavioral boun
     for (const bad of [
       { role: "LEARNER" }, { platformStatus: "SUSPENDED" },
       { q: "q".repeat(101) }, { page: 0 }, { page: 1001 },
-      { page: ["1", "2"] }, { collegeId: validId },
+      { page: ["1", "2"] }, { page: ["2"] }, { page: "1e2" }, { page: "0x10" },
+      { page: "1.0" }, { page: true }, { collegeId: validId },
     ]) expect(adminUnassignedUsersQuerySchema.safeParse(bad).success, JSON.stringify(bad)).toBe(false);
     expect(unassignedIdentityPage(1, 50)).toMatchObject({ page: 1, totalPages: 1, offset: 0 });
     expect(unassignedIdentityPage(61, 3)).toMatchObject({ page: 3, totalPages: 3, offset: 60 });
