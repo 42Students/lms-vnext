@@ -680,6 +680,11 @@ export async function assignProjectTemplateToCollege(
         .where(and(eq(projectTemplateCollegeAssignments.templateId,templateId),
           eq(projectTemplateCollegeAssignments.collegeId,collegeId),
           isNull(projectTemplateCollegeAssignments.revokedAt))).for("update").limit(1);
+      // A browser retry or a second tab assigning the same published version
+      // is a no-op. Do not change who assigned it, reset the assignment date,
+      // or write a second activity/notification event. The template row lock
+      // serializes this decision with parallel assignments and publication.
+      if(existing?.templateVersionId===version.id)return existing;
       const now=new Date();
       const [saved]=existing?
         await tx.update(projectTemplateCollegeAssignments).set({
