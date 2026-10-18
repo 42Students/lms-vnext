@@ -26,6 +26,7 @@ import {
   requirePermission,
 } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
+import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 import {
   projectTpoStudentPlacementHistory,
   tpoStudentHistoryQuerySchema,
@@ -51,6 +52,10 @@ export async function getTpoStudentPlacementHistory(
   requirePermission(context, "placements.manage", { collegeId });
   const query = tpoStudentHistoryQuerySchema.parse(rawQuery);
   const college = await requirePlacementManageScope(context, collegeId);
+  // Revocation after session issuance must take effect before opening any
+  // learner application/offer history, even when the URL holds a valid UUID.
+  const liveCollegeId=await requireTpoBatchActor(context);
+  if(liveCollegeId!==college.id)throw new AuthorizationError("placements.manage");
   const db = getDb();
 
   const [learner] = await db.select({
