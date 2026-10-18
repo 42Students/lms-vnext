@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,inArray,sql} from "drizzle-orm";
+import {and,eq,inArray,isNull,sql} from "drizzle-orm";
 import {tpoPrepReadinessSaveSchema,tpoPrepReadinessSamePolicy} from "./tpo-prep-readiness-save-model";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {getDb} from "@/db/client";
@@ -17,9 +17,9 @@ export async function setTpoPrepReadiness(context:RequestContext,raw:unknown){
  const input=tpoPrepReadinessSaveSchema.parse(raw),collegeId=await requireTpoBatchActor(context);
  if(!await placementTableExists("placement_tpo_prep_readiness"))throw new PrepReadinessError("PREP_STORAGE_PENDING");
  return getDb().transaction(async tx=>{
-  const [college]=await tx.select({id:colleges.id,organizationId:colleges.organizationId})
+  const [college]=await tx.select({id:colleges.id,organizationId:colleges.organizationId,status:colleges.status})
    .from(colleges).where(eq(colleges.id,collegeId)).for("update").limit(1);
-  if(!college)throw new PrepReadinessError("PREP_COLLEGE_NOT_FOUND");
+  if(!college||college.status!=="ACTIVE")throw new PrepReadinessError("PREP_COLLEGE_NOT_FOUND");
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{
    collegeId,organizationId:college.organizationId,
   });
@@ -35,7 +35,8 @@ export async function setTpoPrepReadiness(context:RequestContext,raw:unknown){
   if(input.courseIds.length){
    const available=await tx.select({id:courses.id}).from(courses)
     .innerJoin(departments,eq(departments.id,courses.departmentId))
-    .where(and(eq(departments.collegeId,collegeId),eq(courses.status,"ACTIVE"),inArray(courses.id,input.courseIds)));
+    .where(and(eq(departments.collegeId,collegeId),isNull(departments.archivedAt),
+     eq(courses.status,"ACTIVE"),inArray(courses.id,input.courseIds)));
    if(new Set(available.map(row=>row.id)).size!==input.courseIds.length)
     throw new PrepReadinessError("PREP_INVALID_COURSE");
   }

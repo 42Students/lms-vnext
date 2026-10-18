@@ -13,6 +13,7 @@ vi.mock("@/modules/placements/tpo-my-notification-preferences-write",()=>{
 });
 import {PUT} from "@/app/api/placements/tpo/my-notification-preferences/route";
 import {TpoPreferenceSaveError} from "@/modules/placements/tpo-my-notification-preferences-write";
+import {tpoNotificationPreferenceSaveSchema} from "@/modules/placements/tpo-my-notification-preferences-model";
 
 const actor={user:{id:"11111111-1111-4111-8111-111111111111"},membership:null};
 const data={
@@ -61,10 +62,13 @@ describe("TPO-settings-audit-PREF-HTTP-08 personal preferences HTTP boundary",()
  });
  it("preserves the strict service's rejection of a forged college or user",async()=>{
   const forged={...data,userId:"hijacked",collegeId:"foreign"};
+  expect(tpoNotificationPreferenceSaveSchema.safeParse(forged).success).toBe(false);
+  mocks.save.mockImplementationOnce(async (_actor:unknown,input:unknown)=>
+   tpoNotificationPreferenceSaveSchema.parse(input));
   const response=await PUT(make(JSON.stringify(forged)));
-  expect(response.status).toBe(200);
-  // The HTTP boundary is intentionally generic JSON. It must preserve the
-  // unknown body unchanged so the service's strict schema rejects forged IDs.
+  expect(response.status).toBe(403);
+  expect(await response.json()).toEqual({error:"DENIED"});
+  // The HTTP boundary must not overwrite service-validated, own-account fields.
   expect(mocks.save).toHaveBeenCalledWith(actor,forged);
  });
  it("uses 409 for stale CAS, 503 for unavailable storage and no internal exception text",async()=>{
