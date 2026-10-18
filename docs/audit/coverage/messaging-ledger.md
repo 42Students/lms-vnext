@@ -363,3 +363,18 @@ The latest authored source and tests add further direct service coverage:
 - `src/app/enterprises/page.tsx` and `src/app/universities/page.tsx`: removed remaining false marketing claims of active AI functionality, keeping navigation and demo CTAs. The existing real SSR marketing suite asserts the replacement headings.
 
 These are authored and pushed to the lane branch. **CI runs after these specific commits are not yet complete**, so database locks, provider delivery and full browser behavior remain separate release gates.
+
+## 2026-10-19 chat-16 direct route and state witnesses
+
+| Export / route | Test case IDs | Test file |
+|---|---|---|
+| `readBoundedRecruiterInboundBody` | `HR-MAIL-INBOUND-01..05`: byte cap, malformed UTF-8, exact decoded bytes including BOM, invalid bound | `tests/unit/chat16-recruiter-mail-body-bounds-01.test.ts` |
+| `POST /api/internal/placements/recruiter-message-inbound` | `HR-MAIL-ROUTE-01..05`: origin denial, size denial, malformed UTF-8 denial, signed payload forwarding, generic failure | `tests/unit/chat16-recruiter-mail-inbound-route-01.test.ts` |
+| `POST /api/internal/placements/recruiter-message-reminders` | `HR-MAIL-REMINDERS-01..05`: bearer/same-origin validation, blank/quoted secret fail closed, dispatch, outage | `tests/unit/chat16-recruiter-mail-reminder-route-02.test.ts` |
+| `campaignRecipientStillMatchesSnapshot`; `issueTpoCampaignEmailRecipientKey`; `matchesTpoCampaignEmailRecipientKey`; `resolveTpoCampaignRecipientSecret` | `HR-CAMPAIGN-SNAPSHOT-01..03`, `HR-CAMPAIGN-HMAC-04`, `HR-CAMPAIGN-SECRET-05`: consent and snapshot safety | `tests/unit/chat16-campaign-snapshot-consent-matrix-02.test.ts` |
+| `tpoCampaignUnsubscribeEvent` | `HR-CAMPAIGN-UNSUB-NAME-06`: bounded Unicode-safe CRM display name | same |
+| `inboundMailStatusTransitionAllowed`; `inboundMailStatusActions`; `createInboundMailTriageGate`; `inboundMailMetadataSchema`; `inboundMailListQuerySchema`; `safeInboundPreview` | `INBOUND-TRIAGE-01..05`: exhaustive state transitions, duplicate guard, schema and preview | `tests/unit/chat16-inbound-triage-state-matrix-02.test.ts` |
+| `ownsHrNotificationActor`; `hrNotificationReadSchema`; `hrNotificationVersionMatches`; `summarizeRecruiterUnread`; `safeRecruiterEmailAddressName` | `HR-NOTIFICATION-IDENTITY/VERSION/UNREAD/MAIL-NAME-01..04`: identity, tokens, corrupted cached counts and header safety | `tests/unit/chat16-hr-notification-identity-matrix-02.test.ts` |
+| `PublicPlacementsPage` | `UX-chat16-public-placements-*-01..06`: tenant 404, unpublished, displayed aggregate, three partial/outage paths | `tests/unit/chat16-public-placement-page-states-03.test.tsx` |
+
+The two email endpoints now bound request bytes and reject unsafe worker configurations before side effects. These tests are **authored but unexecuted**. Direct provider acceptance, real PostgreSQL race behaviour, mobile/browser a11y and system-level code coverage certification remain separate deployment gates.

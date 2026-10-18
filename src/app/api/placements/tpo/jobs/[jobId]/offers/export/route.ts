@@ -13,8 +13,14 @@ export async function GET(request:Request,{params}:{
   // The path jobId is authoritative. A query parameter must never select a
   // different drive for an export than the page the TPO is reviewing.
   if(url.searchParams.has("jobId")||tpoReportHasRepeatedSearchParams(url.searchParams))
-    return Response.json({error:"INVALID_REPORT_FILTERS"},{
-      status:400,headers:{"Cache-Control":"private, no-store, max-age=0"},
+    return Response.json({
+      error:"Invalid report filters. Clear the filters and try again.",
+    },{
+      status:400,headers:{
+        "Cache-Control":"private, no-store, max-age=0",
+        "X-Content-Type-Options":"nosniff",
+        Vary:"Cookie",
+      },
     });
   const result=await getTpoDriveOfferRegisterCsv(await getCurrentRequestContext(),
    {...Object.fromEntries(url.searchParams.entries()),jobId});

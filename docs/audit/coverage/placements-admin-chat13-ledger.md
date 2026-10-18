@@ -170,3 +170,6 @@ The other half of the admin coverage boundary lives in `src/modules/admin-ui/`, 
 
 
 | `src/lib/bounded-json-request.ts` — `readBoundedJsonRequest`; `src/app/api/admin/students/module-access/bulk/route.ts` — `POST` | Stream byte limits, malformed JSON, fabricated lengths, origin before authentication and no oversized module access write | `SA-ADMIN-BODY-19` `tests/unit/chat13-shared-bounded-json-request.test.ts`, `tests/unit/chat13-student-bulk-stale-roster.test.ts` | Shared helper reused across Projects and placements admin mutation routes, CI deferred |
+
+
+| `src/modules/admin-ui/super-admin-hiring-report-filters-service.ts` — `getSuperAdminHiringReportFilters` | Validate selected-college parent against selected organization before loading jobs, departments, programs or cohorts | `SA-HIRING-FILTER-ORG-21` `tests/unit/chat13-hiring-filters-selected-org.test.ts` | Executable mismatch denial and scope source contract authored; SQL/CI deferred |
