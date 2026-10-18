@@ -83,7 +83,7 @@ export function CollegeCohortCreateForm({ programs, periods }: {
     });
   }
 
-  return <section aria-label="Create batch" className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+  return <section aria-label="Create batch" className="- sm: border-t border-border pt-4">
     <h2 className="m-0 text-lg font-semibold text-foreground">Create batch</h2>
     {programs.length === 0 || periods.length === 0
       ? <p role="status" className="mt-2 text-sm text-muted-foreground">

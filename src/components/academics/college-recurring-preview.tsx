@@ -126,7 +126,7 @@ export function CollegeRecurringPreview({
           No active classes are registered for this college. Create a class before previewing a schedule.
         </p>
       ) : (
-        <form onSubmit={preview} className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-6">
+        <form onSubmit={preview} className="space-y-4 - sm: border-t border-border pt-4">
           <label className="grid gap-1 text-sm font-semibold text-body">Session title
             <input required maxLength={160} value={title} onChange={e=>setTitle(e.target.value)}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>

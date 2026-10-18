@@ -10,7 +10,7 @@ export function CollegeArchivedPrograms({ programs }: {
   const [open, setOpen] = useState(false);
   const [busy, start] = useTransition();
   const [error, setError] = useState("");
-  return <section className="rounded-xl border border-border bg-surface p-4">
+  return <section className="- border-t border-border pt-4">
     <button type="button" onClick={() => setOpen(value => !value)}
       className="font-semibold text-primary-text">
       {open ? "Hide archived programs" : "Show archived programs"} ({programs.length}{programs.length === 100 ? "+" : ""})
