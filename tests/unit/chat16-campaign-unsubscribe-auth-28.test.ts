@@ -54,4 +54,48 @@ describe("chat-16 purpose-bound unsubscribe gate before storage access", () => {
     await expect(unsubscribeTpoCampaignRecipient(issueTpoCampaignRecipientToken(claim, secret)))
       .rejects.toThrow("temporary database outage");
   });
+  it("T-S2-04-UNSUB-04 already unsubscribed recipient is idempotent and never issues another write", async () => {
+    const limit = vi.fn(async () => [{
+      id: claim.recipientId, campaignId: claim.campaignId,
+      collegeId: claim.collegeId, unsubscribedAt: new Date(),
+    }]);
+    const where = vi.fn(() => ({ for: vi.fn(() => ({ limit })) }));
+    const tx = {
+      select: vi.fn(() => ({ from: vi.fn(() => ({ where })) })),
+      update: vi.fn(),
+      insert: vi.fn(),
+    };
+    const execute = vi.fn(async () => ({ rows: [{ ready: true }] }));
+    const transaction = vi.fn(async (operation: (value: typeof tx) => Promise<unknown>) =>
+      operation(tx));
+    vi.mocked(getDb).mockReturnValue({ execute, transaction } as never);
+    const result = await unsubscribeTpoCampaignRecipient(
+      issueTpoCampaignRecipientToken(claim, secret),
+    );
+    expect(result).toEqual({ unsubscribed: true });
+    expect(limit).toHaveBeenCalledWith(1);
+    expect(tx.update).not.toHaveBeenCalled();
+    expect(tx.insert).not.toHaveBeenCalled();
+  });
+
+  it("T-S2-04-UNSUB-05 forged cross-college recipient ID fails without updating or revealing identity", async () => {
+    const limit = vi.fn(async () => []);
+    const tx = {
+      select: vi.fn(() => ({ from: vi.fn(() => ({
+        where: vi.fn(() => ({ for: vi.fn(() => ({ limit })) })),
+      })) })),
+      update: vi.fn(),
+      insert: vi.fn(),
+    };
+    vi.mocked(getDb).mockReturnValue({
+      execute: vi.fn(async () => ({ rows: [{ ready: true }] })),
+      transaction: vi.fn(async (operation: (value: typeof tx) => Promise<unknown>) =>
+        operation(tx)),
+    } as never);
+    await expect(unsubscribeTpoCampaignRecipient(issueTpoCampaignRecipientToken(claim, secret)))
+      .rejects.toBeInstanceOf(CampaignUnsubscribeInvalid);
+    expect(tx.update).not.toHaveBeenCalled();
+    expect(tx.insert).not.toHaveBeenCalled();
+  });
+
 });
