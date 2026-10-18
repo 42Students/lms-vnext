@@ -350,6 +350,16 @@ describe("UX-kit-STATES: semantic SSR states and accessible fallbacks", () => {
     expect(source).toContain('error ? `${id}-error` : null');
   });
 
+  it("UX-kit-HARDEN-50 availability transition clears obsolete file validation state",()=>{
+    const source=moduleSource("file-upload");
+    expect(source).toContain("if (pickerUnavailable || disabled) setError(null)");
+    expect(source).toContain("selectedRef.current = false");
+    expect(source).toContain("onFilesRef.current(null)");
+    expect(source).toContain('aria-invalid={error ? true : undefined}');
+    // Unit SSR alone cannot model FileList + effect transitions; the same
+    // journey is covered in chat17-ui-kit-interactions.spec.ts.
+  });
+
   it("UX-kit-HARDEN-47 disabled file picker must not be called invalid by assistive tech",()=>{
     const disabled=render(<FileUpload id="proof-doc" label="Project proof"
       disabled helper="PDF only" onFiles={()=>{}}/>);
