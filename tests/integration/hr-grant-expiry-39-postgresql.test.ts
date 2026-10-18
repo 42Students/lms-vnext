@@ -46,7 +46,7 @@ describe("HR-GRANT-EXPIRE-39 persisted recruiter grant and relationship gates",(
       on u.id=g.recruiter_user_id and u.platform_status='ACTIVE'
     where g.recruiter_user_id=$1 and g.company_relationship_id=$2
       and g.status='ACTIVE' and g.verification_status='VERIFIED'
-      and g.valid_until>now() and 'DRIVES'=ANY(g.capabilities)
+      and g.valid_until>clock_timestamp() and 'DRIVES'=ANY(g.capabilities)
    `,[recruiter.userId,job.relationshipId]);
 
    expect((await authorized()).map(row=>row.id)).toEqual([grant!.id]);
