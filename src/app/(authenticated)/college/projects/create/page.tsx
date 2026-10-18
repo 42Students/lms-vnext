@@ -9,15 +9,15 @@ import {getProjectAdminCollegeId} from "@/modules/projects/admin-college-scope";
 export default async function CollegeCreateProjectPage() {
   const context=await getCurrentRequestContext();
   const collegeId=getProjectAdminCollegeId(context);
-  if(!collegeId)return <main className="space-y-4">
+  if(!collegeId)return <div className="space-y-4">
     <PageHeader title="Create workspace" description="Select a college to continue."/>
     <p role="alert" className="rounded-xl border border-border bg-surface p-4 text-sm">
       Choose a college from the account switcher before creating a workspace.
     </p>
     <Link href="/college/projects" className="text-primary-text underline">Back to workspaces</Link>
-  </main>;
+  </div>;
   const templates=await listAssignedProjectTemplates(context,collegeId);
-  return <main className="space-y-6">
+  return <div className="space-y-6">
     <ProjectAdminNav basePath="/college/projects" active="workspaces"/>
     <PageHeader eyebrow="College Admin · Projects" title="Create workspace"
       description="Choose the published template and learners for this workspace."/>
@@ -28,5 +28,5 @@ export default async function CollegeCreateProjectPage() {
       templates={templates.map(template=>({
         templateId:template.templateId,title:template.title,version:template.version,summary:template.summary,
       }))}/>
-  </main>;
+  </div>;
 }
