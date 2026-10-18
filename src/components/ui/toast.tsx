@@ -56,7 +56,7 @@ export function ToastStack({ toasts, onDismiss, viewport }: {
     aria-live="polite" aria-relevant="additions"
     tabIndex={toasts.length > 0 ? 0 : -1}
     style={bounds}
-    className="pointer-events-auto fixed inset-x-4 z-50 flex min-w-0 max-w-sm flex-col gap-2 overflow-y-auto overscroll-contain rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] sm:inset-x-auto sm:right-4">
+    className="lms-toast-scroll-cue pointer-events-auto fixed inset-x-4 z-50 flex min-w-0 max-w-sm flex-col gap-2 overflow-y-auto overscroll-contain rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] sm:inset-x-auto sm:right-4">
     {toasts.map(toast => <section key={toast.id} role={toast.tone === "error" ? "alert" : "status"}
       className={cx("min-w-0 shrink-0 rounded-lg border border-l-4 bg-surface p-3 text-foreground shadow-lg", toneClasses[toast.tone])}>
       <div className="flex items-start gap-3">
