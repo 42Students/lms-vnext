@@ -32,7 +32,9 @@ export async function bulkSuperAdminLessonVisibility(context:RequestContext,raw:
  if(rows.length>500)throw new Error("LESSON_CONTENT_BULK_TOO_LARGE");
  const changed:string[]=[],failures:{id:string;lessonId:string;reason:string}[]=[];
  for(const row of rows){
-  if(row.status==="ARCHIVED"||row.visible===input.visibleToStudents)continue;
+  // Bulk course/lesson Show/Hide applies to currently published content only.
+  // Draft and archived content retain their authored visibility for a later publication.
+  if(row.status!=="PUBLISHED"||row.visible===input.visibleToStudents)continue;
   try{
    await updateCollegeContentStudentVisibility(context,{
     lessonContentId:row.id,visibleToStudents:input.visibleToStudents,
