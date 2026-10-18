@@ -396,7 +396,7 @@ export function RecruiterLeadDetailWorkspace({
         <p role="status" className="rounded-lg border border-border bg-surface p-6">Loading recruiter details…</p>
       ) : phase === "error" || !lead ? (
         <div role="alert" className="space-y-3 rounded-lg border border-border bg-surface p-6">
-          <h1 className="text-lg font-semibold">This recruiter isn&apos;t in Engage</h1>
+          <h1 className="text-[30px] font-semibold leading-9 text-[#172033]">This recruiter isn&apos;t in Engage</h1>
           <p>{error || "The recruiter contact could not be found or loaded."}</p>
           <Link href="/tpo/recruiters" className="inline-flex min-h-11 items-center text-primary-text underline">
             Go to Engage
