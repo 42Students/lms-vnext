@@ -28,8 +28,10 @@ describe("UX-HR-DRAFT-CLEAR-47 pending unsent recruiter form cannot vanish on fa
  it("uses accessible confirm, retains draft after failed delete, and keeps 44px actions",()=>{
   const src=readFileSync("src/components/hr/hr-unsent-drive-alert.tsx","utf8");
   expect(src).toContain('<ConfirmActionDialog open={confirmDiscard}');
-  expect(src).toContain('if(!clearHrUnsentDraftStores(');
-  const guard=src.indexOf('if(!clearHrUnsentDraftStores(');
+  expect(src).toContain('cleared=clearHrUnsentDraftStores(');
+  expect(src).toContain('if(!cleared){');
+  expect(src).toContain('}catch{/* Browsers can throw even while accessing storage properties. */}');
+  const guard=src.indexOf('if(!cleared){');
   const hide=src.indexOf("setHasDraft(false);setConfirmDiscard(false)");
   expect(hide).toBeGreaterThan(guard);
   expect(src).toContain("Could not clear this saved draft. Try again or continue editing.");

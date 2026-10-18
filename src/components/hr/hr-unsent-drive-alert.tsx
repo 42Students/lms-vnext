@@ -41,8 +41,12 @@ export function HrUnsentDriveAlert({storageKey,collegeId}:{storageKey:string;col
     confirmLabel="Discard saved draft"
     onCancel={()=>setConfirmDiscard(false)}
     onConfirm={()=>{
-      if(!clearHrUnsentDraftStores(
-       [window.localStorage,window.sessionStorage],storageKey)){
+      let cleared=false;
+      try{
+        cleared=clearHrUnsentDraftStores(
+         [window.localStorage,window.sessionStorage],storageKey);
+      }catch{/* Browsers can throw even while accessing storage properties. */}
+      if(!cleared){
         setError("Could not clear this saved draft. Try again or continue editing.");
         setConfirmDiscard(false);return;
       }
