@@ -85,7 +85,7 @@ vi.mock("@/db/client",()=>({
       return query;
      },
     }),
-    update:(table:unknown)=>({
+    update:(_table:unknown)=>({
      set:(values:Record<string,unknown>)=>({
       where:()=>{
        state.updates++;
