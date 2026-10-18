@@ -196,6 +196,19 @@ describe("IIT Dharwad College Admin Projects role journeys", () => {
     expect(control).toContain("Retry loading it before creating the Project");
   });
 
+  it("PROJ-COL-STALE-06 prevents mentorless activation after a Mentor selection is cleared",()=>{
+    const control=readFileSync("src/components/projects/project-create-control.tsx","utf8");
+    const validation=control.indexOf('if (initialStatus === "ACTIVE" && !mentorMembershipId)');
+    const submit=control.indexOf("submitLock.current = true");
+    expect(validation).toBeGreaterThan(0);
+    expect(validation).toBeLessThan(submit);
+    expect(control).toContain("Assign a Mentor before making this Project active.");
+    expect(createProjectInstanceInputSchema.safeParse({
+      collegeId:COLLEGE,templateId:TEMPLATE,slug:"a",title:"Team A",
+      initialStatus:"ACTIVE",learnerMembershipIds:[],
+    }).success).toBe(false);
+  });
+
   it("PROJ-COL-STALE-02 rejects stale timestamps and repeated roster members", () => {
     const valid = { learnerMembershipIds: [STUDENT],
       expectedUpdatedAt: "2099-04-01T12:00:00.000+05:30" };
@@ -210,6 +223,20 @@ describe("IIT Dharwad College Admin Projects role journeys", () => {
     expect(source).toContain('for("update")');
     expect(source).toContain('PROJECT_MEMBER_CONFLICT');
     expect(source).toContain("getDb().transaction(");
+  });
+
+  it("PROJ-COL-REVOKE-01 authenticates persisted creator under the project materialization transaction",()=>{
+    const source=readFileSync("src/modules/projects/instance-service.ts","utf8");
+    const begin=source.indexOf("return await db.transaction(async (tx) => {");
+    const actor=source.indexOf('assertPersistedPlatformPermission(tx,context,"projects.manage"');
+    const insert=source.indexOf(".insert(projectInstances)");
+    expect(begin).toBeGreaterThan(0);
+    expect(actor).toBeGreaterThan(begin);
+    expect(actor).toBeLessThan(insert);
+    expect(source).toContain("collegeId:college.id,organizationId:college.organizationId");
+    expect(source).toContain("mapInstanceConstraint(error)");
+    expect(source).toContain("recordActivityEventInTransaction(");
+    expect(source).toContain("notifyProjectMemberships(tx,createdEvent.id");
   });
 
   it("PROJ-COL-ORIGIN-01 protects project creation and mentor reassignment from cross-origin POSTs", () => {

@@ -37,7 +37,7 @@ export function mentorRiskReadiness(facts:MentorRiskReadinessFacts,
     detail:string,href:string)=>{
     items.push({category,key,title,detail,href});
   };
-  const active=facts.projectStatus!=="ARCHIVED"&&facts.projectStatus!=="COMPLETED";
+  const active=facts.projectStatus==="PLANNED"||facts.projectStatus==="ACTIVE";
   const priorityTasks=facts.tasks.filter(task=>
     query.taskPriority==="ALL"||task.priority===query.taskPriority);
   const incompleteTasks=facts.tasks.filter(task=>task.status!=="DONE");

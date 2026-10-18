@@ -34,6 +34,24 @@ describe("tenant-domain validation", () => {
     }
   });
 
+  it("WEAK-tenant-domains-06 rejects slash-like and control-contaminated domain claims", () => {
+    for(const host of [
+      "college.example.edu\\other.example.edu",
+      "college.example.edu\\@other.example.edu",
+      "college.example.edu\t.evil.test",
+      "college.example.edu\n.evil.test",
+      "college.example.edu\r.evil.test",
+      "college.example.edu\u007f.evil.test",
+    ]) {
+      expect(() => normalizeTenantHost(host)).toThrow();
+      expect(() => normalizeRequestHost(host)).toThrow();
+      expect(createTenantDomainInputSchema.safeParse({
+        collegeId:"11111111-1111-4111-8111-111111111111",host,
+      }).success).toBe(false);
+    }
+    expect(normalizeRequestHost("COLLEGE.Example.edu:8443")).toBe("college.example.edu");
+  });
+
   it("normalizes an incoming Host header while ignoring its port", () => {
     expect(normalizeRequestHost("College.Example.edu:443")).toBe(
       "college.example.edu",

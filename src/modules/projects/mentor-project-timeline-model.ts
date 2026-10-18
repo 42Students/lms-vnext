@@ -22,7 +22,7 @@ export function mentorProjectTimeline(
     .sort((a,b)=>a.sequence-b.sequence||a.id.localeCompare(b.id));
   const total=filtered.length,pageSize=10;
   const totalPages=Math.max(1,Math.ceil(total/pageSize));
-  const page=Math.min(query.page,totalPages);
+  const page=Number.isSafeInteger(query.page)?Math.max(1,Math.min(query.page,totalPages)):1;
   const shown=filtered.slice((page-1)*pageSize,page*pageSize);
   return {
     total,page,pageSize,totalPages,
