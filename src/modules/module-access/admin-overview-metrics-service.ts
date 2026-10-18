@@ -4,6 +4,7 @@ import {getDb} from "@/db/client";
 import {collegeMemberships,membershipRoles,moduleAccessRules,colleges,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requirePermission} from "@/modules/permissions/policy";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {parseModuleMetricsCollegeIds,assertModuleMetricsCollegeScopes} from "./admin-overview-metrics-scope";
 
 /** SA-tenants-modules-R01: only persisted, authorized colleges in this
@@ -14,15 +15,18 @@ export async function getModuleAccessOverviewMetrics(
  requirePermission(context,"admin-scope.select");
  const ids=parseModuleMetricsCollegeIds(visibleCollegeIds);
  if(!ids.length)return {largestLearnerScope:0,studentOverrides:0};
- const db=getDb();
- // Do not trust the caller-selected IDs. Load the college and its persisted
+ return getDb().transaction(async tx=>{
+  // Admin roles may be revoked after the request context was loaded. Keep
+  // the persisted actor locks until all tenant metrics have been fetched.
+  await assertPersistedPlatformPermission(tx,context,"admin-scope.select");
+  // Do not trust the caller-selected IDs. Load the college and its persisted
  // organization, then reject missing, archived or out-of-scope colleges.
- const visible=await db.select({
+ const visible=await tx.select({
   id:colleges.id,organizationId:colleges.organizationId,status:colleges.status,
  }).from(colleges).where(inArray(colleges.id,ids));
  assertModuleMetricsCollegeScopes(context,ids,visible);
  const [learners,overrides]=await Promise.all([
-  db.select({collegeId:collegeMemberships.collegeId,total:countDistinct(collegeMemberships.id)})
+  tx.select({collegeId:collegeMemberships.collegeId,total:countDistinct(collegeMemberships.id)})
     .from(collegeMemberships)
     .innerJoin(membershipRoles,and(
       eq(membershipRoles.membershipId,collegeMemberships.id),
@@ -32,7 +36,7 @@ export async function getModuleAccessOverviewMetrics(
     .where(and(inArray(collegeMemberships.collegeId,ids),
       eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")))
     .groupBy(collegeMemberships.collegeId),
-  db.select({total:countDistinct(moduleAccessRules.id)}).from(moduleAccessRules)
+  tx.select({total:countDistinct(moduleAccessRules.id)}).from(moduleAccessRules)
     .innerJoin(collegeMemberships,eq(moduleAccessRules.scopeId,collegeMemberships.id))
     .innerJoin(membershipRoles,and(
       eq(membershipRoles.membershipId,collegeMemberships.id),
@@ -45,4 +49,5 @@ export async function getModuleAccessOverviewMetrics(
  ]);
  return {largestLearnerScope:Math.max(0,...learners.map(row=>row.total)),
   studentOverrides:overrides[0]?.total??0};
+ });
 }

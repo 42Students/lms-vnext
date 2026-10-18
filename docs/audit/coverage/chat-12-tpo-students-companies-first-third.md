@@ -108,3 +108,9 @@ See `docs/audit/coverage/tpo-students-companies-chat12-ledger.md` for a **50-exp
 - Run real 320/360/390px keyboard/screen-reader passes for 42 TPO routes: **not executed**.
 - Finish outstanding OPEN items in `docs/orchestrator/queues/gap-closure-chat-12.md`, especially schema and request effects (TPO-requests-verification-01, -37, -38) and Students -06/-07/-10/-12/-14/-34: **not closed by these tests**.
 - Do not equate profile-derived project counts with the IIS Dharwad Projects module's canonical state.
+
+## 2026-10-18 additional first-third behavioral page evidence
+
+- `/tpo/requests`: `tests/unit/chat12-tpo-requests-page-role-and-empty.test.tsx` directly calls the server page and renders its actual React element to HTML with mocked downstream services (UX-tpo-first-third-requests-01). It asserts Learner and Faculty role denial before request or job reads; three malformed filters return explicit alert/recovery without data access; and an empty authorized queue includes legacy Waiting/Last 30 days/All history and truthful no-results status. This is an SSR mock, not a browser/E2E test; no PostgreSQL requests or live session revocation exercised.
+- Remaining: execute all source/unit/SSR suites in cloud CI, add PostgreSQL TPO role-revocation read checks, check all 42 pages in keyboard/narrow-view/device runs. No local execution performed.
+- `/tpo/requests` request/drive chooser race is now guarded by persisted TPO membership before parsing URL filters or issuing parallel service reads (TPO-requests-verification-33); the same direct server page SSR suite covers revoked role and no private fetch, in addition to invalid query and empty states. Database and browser tests remain open.

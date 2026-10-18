@@ -69,8 +69,9 @@ export async function setTpoJobTypeActive(context:RequestContext,raw:unknown){
    eq(placementTpoJobTypes.id,input.jobTypeId),eq(placementTpoJobTypes.collegeId,collegeId))).limit(1);
   if(!current)throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
   if(current.isBuiltin||isTpoBuiltinJobType(current.label))throw new TpoConfigError("TPO_JOB_TYPE_BUILTIN");
-  if(current.updatedAt.toISOString()!==input.expectedVersion)throw new TpoConfigError("TPO_SETTINGS_STALE");
+  // A successful save retried with the old token is a harmless no-op.
   if(current.active===input.active)return {changed:false,updatedAt:current.updatedAt.toISOString()};
+  if(current.updatedAt.toISOString()!==input.expectedVersion)throw new TpoConfigError("TPO_SETTINGS_STALE");
   if(!input.active){
    const all=await tx.select({label:placementTpoJobTypes.label,active:placementTpoJobTypes.active})
     .from(placementTpoJobTypes).where(eq(placementTpoJobTypes.collegeId,collegeId));
@@ -79,7 +80,9 @@ export async function setTpoJobTypeActive(context:RequestContext,raw:unknown){
     all.find(row=>row.label===fixed.label)?.active??true).length;
    if(activeCustom+activeFixed<=1)throw new TpoConfigError("TPO_JOB_TYPE_LAST_ACTIVE");
   }
-  const [updated]=await tx.update(placementTpoJobTypes).set({active:input.active,updatedAt:new Date()})
+  const [updated]=await tx.update(placementTpoJobTypes).set({active:input.active,
+   updatedAt:sql`greatest(clock_timestamp(),date_trunc('milliseconds',${placementTpoJobTypes.updatedAt}) + interval '1 millisecond')`,
+  })
    .where(and(eq(placementTpoJobTypes.id,current.id),eq(placementTpoJobTypes.collegeId,collegeId))).returning();
   if(!updated)throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
   await tx.insert(activityEvents).values({
@@ -113,13 +116,14 @@ export async function renameTpoJobType(ctx:RequestContext,raw:unknown){
    .for("update").limit(1);
   if(!current)throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
   if(current.isBuiltin||isTpoBuiltinJobType(current.label))throw new TpoConfigError("TPO_JOB_TYPE_BUILTIN");
+  if(current.label===input.label)return {changed:false,updatedAt:current.updatedAt.toISOString()};
   if(current.updatedAt.toISOString()!==input.expectedVersion)throw new TpoConfigError("TPO_SETTINGS_STALE");
   const [existing]=await tx.select({id:placementTpoJobTypes.id}).from(placementTpoJobTypes)
    .where(and(eq(placementTpoJobTypes.collegeId,collegeId),
     sql`lower(${placementTpoJobTypes.label}) = lower(${input.label}::text)`)).limit(1);
   if(existing&&existing.id!==current.id)throw new TpoConfigError("TPO_JOB_TYPE_EXISTS");
-  if(current.label===input.label)return {changed:false,updatedAt:current.updatedAt.toISOString()};
-  const [updated]=await tx.update(placementTpoJobTypes).set({label:input.label,updatedAt:new Date()})
+  const [updated]=await tx.update(placementTpoJobTypes).set({label:input.label,
+   updatedAt:sql`greatest(clock_timestamp(),date_trunc('milliseconds',${placementTpoJobTypes.updatedAt}) + interval '1 millisecond')`})
    .where(and(eq(placementTpoJobTypes.id,current.id),eq(placementTpoJobTypes.collegeId,collegeId),
     eq(placementTpoJobTypes.updatedAt,current.updatedAt))).returning();
   if(!updated)throw new TpoConfigError("TPO_SETTINGS_STALE");
@@ -153,6 +157,9 @@ export async function setTpoBuiltinJobTypeActive(ctx:RequestContext,raw:unknown)
   const rows=await tx.select().from(placementTpoJobTypes)
    .where(eq(placementTpoJobTypes.collegeId,collegeId));
   const current=rows.find(row=>row.label.toLocaleLowerCase("en-IN")===fixed.label.toLocaleLowerCase("en-IN"));
+  // Persisted built-in overrides are safe to retry without another audit.
+  if(current?.active===input.active&&current.isBuiltin)return {changed:false,updatedAt:current.updatedAt.toISOString()};
+  if(!current&&input.active&&input.expectedVersion==="none")return {changed:false,updatedAt:"none"};
   if((current?.updatedAt.toISOString()??"none")!==input.expectedVersion)
    throw new TpoConfigError("TPO_SETTINGS_STALE");
   if(!input.active){
@@ -162,11 +169,9 @@ export async function setTpoBuiltinJobTypeActive(ctx:RequestContext,raw:unknown)
    const targetActive=current?.active??true;
    if(targetActive&&builtinActive+customActive<=1)throw new TpoConfigError("TPO_JOB_TYPE_LAST_ACTIVE");
   }
-  if(!current&&input.active)return {changed:false,updatedAt:"none"};
-  if(current?.active===input.active&&current.isBuiltin)return {changed:false,updatedAt:current.updatedAt.toISOString()};
-  const now=new Date();
   const [saved]=current?await tx.update(placementTpoJobTypes).set({
-   active:input.active,countsAsPlaced:fixed.countsAsPlaced,isBuiltin:true,updatedAt:now,
+   active:input.active,countsAsPlaced:fixed.countsAsPlaced,isBuiltin:true,
+   updatedAt:sql`greatest(clock_timestamp(),date_trunc('milliseconds',${placementTpoJobTypes.updatedAt}) + interval '1 millisecond')`,
   }).where(and(eq(placementTpoJobTypes.id,current.id),eq(placementTpoJobTypes.collegeId,collegeId)))
    .returning():await tx.insert(placementTpoJobTypes).values({
     collegeId,label:fixed.label,active:input.active,countsAsPlaced:fixed.countsAsPlaced,isBuiltin:true,
@@ -200,9 +205,11 @@ export async function setTpoJobTypeCountsAsPlaced(ctx:RequestContext,raw:unknown
    .for("update").limit(1);
   if(!current)throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
   if(current.isBuiltin||isTpoBuiltinJobType(current.label))throw new TpoConfigError("TPO_JOB_TYPE_BUILTIN");
-  if(current.updatedAt.toISOString()!==input.expectedVersion)throw new TpoConfigError("TPO_SETTINGS_STALE");
   if(current.countsAsPlaced===input.countsAsPlaced)return {changed:false,updatedAt:current.updatedAt.toISOString()};
-  const [saved]=await tx.update(placementTpoJobTypes).set({countsAsPlaced:input.countsAsPlaced,updatedAt:new Date()})
+  if(current.updatedAt.toISOString()!==input.expectedVersion)throw new TpoConfigError("TPO_SETTINGS_STALE");
+  const [saved]=await tx.update(placementTpoJobTypes).set({countsAsPlaced:input.countsAsPlaced,
+   updatedAt:sql`greatest(clock_timestamp(),date_trunc('milliseconds',${placementTpoJobTypes.updatedAt}) + interval '1 millisecond')`,
+  })
    .where(and(eq(placementTpoJobTypes.id,current.id),eq(placementTpoJobTypes.collegeId,collegeId),
     eq(placementTpoJobTypes.updatedAt,current.updatedAt))).returning();
   if(!saved)throw new TpoConfigError("TPO_SETTINGS_STALE");

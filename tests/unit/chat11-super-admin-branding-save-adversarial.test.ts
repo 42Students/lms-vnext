@@ -35,12 +35,13 @@ describe("SA-tenants-modules-BRAND-03 branding writes require current scoped Sup
   const resource={collegeId:college,organizationId:org};
   expect(isSuperAdmin(root)).toBe(true);
   expect(can(root,"college.manage",resource)).toBe(true);
-  for(const ctx of [
-   {...root,user:{...root.user,platformStatus:"DISABLED" as const}},
+  const deniedContexts:RequestContext[]=[
+   {...root,user:{...root.user,platformStatus:"DISABLED"}},
    {...root,user:{...root.user,systemRoles:[]}},
    {...root,adminScope:{organizationId:org,collegeId:foreign}},
    {...root,adminScope:{organizationId:foreign,collegeId:null}},
-  ]){
+  ];
+  for(const ctx of deniedContexts){
    expect(isSuperAdmin(ctx)&&can(ctx,"college.manage",resource)).toBe(false);
   }
   const collegeAdmin:RequestContext={...root,user:{...root.user,systemRoles:[]},

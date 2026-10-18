@@ -210,10 +210,16 @@ export default async function TpoRecruiterAccessPage({
           <h2 className="text-lg font-semibold text-foreground">
             Grant records
           </h2>
-          <a href={tpoRecruiterGrantExportHref(query)}
-            className="inline-flex min-h-11 items-center rounded border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
-            Export filtered grants CSV
-          </a>
+          <div className="flex flex-wrap gap-2">
+            <a href={tpoRecruiterGrantExportHref(query)}
+              className="inline-flex min-h-11 items-center rounded border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+              Export filtered grants CSV
+            </a>
+            <a href={tpoRecruiterGrantExportHref(query,"xlsx")}
+              className="inline-flex min-h-11 items-center rounded border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+              Export filtered grants Excel
+            </a>
+          </div>
 
           <p className="text-sm text-muted-foreground">
             {total === 0
