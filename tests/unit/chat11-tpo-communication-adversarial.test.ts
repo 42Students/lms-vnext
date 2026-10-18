@@ -65,6 +65,25 @@ describe("TPO-settings-audit-CAS-01 section changes are validated and idempotent
  });
 });
 
+describe("TPO-settings-audit-PREP-02 threshold preference retries",()=>{
+ it("blocks immediate duplicate actions, preserves the accepted version and renders safe errors",()=>{
+  const source=readFileSync("src/components/tpo/tpo-prep-percentage-editor.tsx","utf8");
+  expect(source).toContain("inFlight.current=true");
+  expect(source).toContain("if(!Number.isInteger(percent)||percent<0||percent>100||percent===saved||inFlight.current)return");
+  expect(source).toContain("inFlight.current=false");
+  expect(source).toContain("expectedVersion:currentVersion");
+  expect(source).toContain("setCurrentVersion(result.version??currentVersion)");
+  expect(source).toContain("setSaved(percent)");
+  expect(source).toContain('e.target.value===""?-1:Number(e.target.value)');
+  expect(source).toContain("response.status===401");
+  expect(source).toContain("response.status===403");
+  expect(source).toContain("response.status===409");
+  expect(source).toContain("response.status===503");
+  expect(source).not.toContain("throw Error(result.error");
+  expect(source).toContain('role="alert"');
+ });
+});
+
 describe("TPO-settings-audit-EMAIL-01 graceful, duplicate-safe optional email controls",()=>{
  it("latches synchronously, maps known statuses, never renders an untrusted API error",()=>{
   const source=readFileSync("src/components/tpo/tpo-optional-emails-editor.tsx","utf8");
