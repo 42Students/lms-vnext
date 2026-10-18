@@ -55,7 +55,7 @@ export function TpoApplicationsSpreadsheet({rows,jobId,jobStatus}:{rows:readonly
       previousId={rows.findIndex(candidate=>candidate.id===row.id)>0?
         rows[rows.findIndex(candidate=>candidate.id===row.id)-1]?.id:undefined}
       nextId={rows[rows.findIndex(candidate=>candidate.id===row.id)+1]?.id}/>
-    <Link href={"/tpo/placements/jobs/"+jobId+"/applicants/"+row.id} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Open applicant</Link>
+    <Link href={"/tpo/placements/jobs/"+jobId+"/applicants/"+row.id} className="inline-flex min-h-11 md:min-h-9 items-center text-[var(--lms-teal-deep)] underline">Open applicant</Link>
    </div>}/>
  </div>;
 }

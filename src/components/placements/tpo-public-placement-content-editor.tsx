@@ -59,7 +59,7 @@ export function TpoPublicPlacementContentEditor({initial}:{initial:{
   <fieldset className="space-y-3">
    <legend className="font-semibold">Numbers to show</legend>
    <p className="text-xs text-muted-foreground">Choose the public numbers and their order. Small or unavailable values stay hidden.</p>
-   {ALL.map(key=><label key={key} className="flex min-h-10 items-center gap-2 text-sm">
+   {ALL.map(key=><label key={key} className="flex min-h-11 md:min-h-9 items-center gap-2 text-sm">
     <input type="checkbox" checked={metricKeys.includes(key)} disabled={!initial.ready||busy}
      onChange={()=>toggle(key)}/>{PUBLIC_METRIC_LABELS[key]}
    </label>)}
@@ -76,7 +76,7 @@ export function TpoPublicPlacementContentEditor({initial}:{initial:{
   {dirty?<p role="status">Unsaved changes</p>:null}
   {!initial.ready?<p role="status">Page content editing is temporarily unavailable until storage is ready.</p>:null}
   <button type="button" disabled={busy||!initial.ready||!dirty}
-   className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50"
+   className="min-h-11 md:min-h-9 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50"
    onClick={()=>void save()}>{busy?"Saving…":"Save"}</button>
   {message?<p role="status" className="text-sm">{message}</p>:null}
  </section>;
