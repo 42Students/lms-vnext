@@ -49,3 +49,6 @@ export async function readTpoCommunicationBody(request:Request):Promise<unknown>
   throw new TpoCommunicationBodyError("INVALID_JSON");
  }
 }
+
+/** Shared settings request boundary, including personal preferences and college policies. */
+export const readTpoSettingsBody=readTpoCommunicationBody;
