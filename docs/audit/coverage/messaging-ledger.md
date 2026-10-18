@@ -191,3 +191,5 @@ These HTTP cases complement the existing `hrConversationQuerySchema`/tenant scop
 | Same, real PostgreSQL | Current active recruiter/TPO membership fixture delivers once and replay returns `{notified:0}`, with exactly one activity event under the dedupe key and one recipient bell | `tests/integration/recruiter-message-tpo-notifications.test.ts` | Conditional disposable-DB integration, unrun |
 
 The current `unit-failures-latest.md` chat-16 entries refer to an older CI snapshot, while the current queue+canonical gap-register sources satisfy each recorded assertion. We preserved the original 32-ID historical invariant. CI rerun, role-revocation race and actual PostgreSQL lock contention remain open gates.
+
+| `src/modules/messaging/tpo-campaign-send-policy.ts:campaignRecipientDisposition,planTpoCampaignRecipients` | Shared normalized validator rejects malformed, whitespace-only and dot-invalid email recipients before planning a recipient list, preserving the live suppressed counts and avoiding accidental outbound calls | `tests/unit/chat16-messaging-model-matrix-16.test.ts`, `tests/unit/t-s2-04-campaign-send-policy.test.ts` | Authored, cloud CI pending |
