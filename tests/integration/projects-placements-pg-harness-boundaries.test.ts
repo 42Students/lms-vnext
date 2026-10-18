@@ -218,6 +218,21 @@ describe("PROJ-HARNESS role/tenancy and concurrent PostgreSQL fixture boundaries
     });
   });
 
+  it("PROJ-HARNESS-40 two same-college workspaces cannot mix task and project IDs", async () => {
+    await withProjectPg(pool, async db => {
+      const f = await actors(db);
+      const second = await createProjectFixture(db,f.own,f.author,f.mentor,f.learner);
+      const before = await count(db,"project_task_submissions");
+      await expect(createTaskSubmission(db,{...f.project,taskId:second.taskId},f.learner))
+        .rejects.toThrow(/task does not belong to this project/);
+      expect(await count(db,"project_task_submissions")).toBe(before);
+      const id = await createTaskSubmission(db,f.project,f.learner);
+      const rows = await db.query<{project_id:string; task_id:string}>(
+        "select project_id,task_id from project_task_submissions where id=$1",[id]);
+      expect(rows).toEqual([{project_id:f.project.projectId,task_id:f.project.taskId}]);
+    });
+  });
+
   it("PROJ-HARNESS-26 independent sessions contend for the same transaction advisory lock", async () => {
     const key = BigInt("0x" + randomUUID().replaceAll("-", "").slice(0, 15)).toString();
     await withTwoPgSessions(pool, async (first, second) => {
