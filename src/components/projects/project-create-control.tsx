@@ -44,6 +44,8 @@ export function CreateProjectControl({
   const [mentorsLoading, setMentorsLoading] = useState(false);
   const [mentorsError, setMentorsError] = useState<string | null>(null);
   const [classes,setClasses]=useState<{id:string;name:string;code:string}[]>([]);
+  const [classesError,setClassesError]=useState(false);
+  const [classesRetry,setClassesRetry]=useState(0);
   const [sectionId,setSectionId]=useState("");
   const [roster,setRoster]=useState<{membershipId:string;displayName:string;rollNumber:string}[]>([]);
   const [loadedRosterSectionId,setLoadedRosterSectionId]=useState<string|null>(null);
@@ -62,7 +64,7 @@ export function CreateProjectControl({
     setSummary("");
     setMentorMembershipId("");
     setSectionId("");setRoster([]);setLearnerMembershipIds([]);setInitialStatus("PLANNED");
-    setLoadedRosterSectionId(null);setRosterError(false);
+    setLoadedRosterSectionId(null);setRosterError(false);setClassesError(false);
     setMentorsError(null);
     setMentorsLoading(true);
     setMentors([]);
@@ -123,10 +125,10 @@ export function CreateProjectControl({
     const ctl=new AbortController();
     void fetch("/api/projects/class-team-classes?collegeId="+encodeURIComponent(collegeId),{signal:ctl.signal})
      .then(r=>r.ok?r.json():Promise.reject(Error("Classes unavailable")))
-     .then((v:{classes:typeof classes})=>{if(!ctl.signal.aborted)setClasses(v.classes)})
-     .catch(()=>{if(!ctl.signal.aborted)setClasses([])});
+     .then((v:{classes:typeof classes})=>{if(!ctl.signal.aborted){setClasses(v.classes);setClassesError(false);}})
+     .catch(()=>{if(!ctl.signal.aborted){setClasses([]);setClassesError(true);}});
     return ()=>ctl.abort();
-  },[open,collegeId]);
+  },[open,collegeId,classesRetry]);
   const rosterActive=Boolean(open&&sectionId);
   const [prevRosterActive,setPrevRosterActive]=useState(rosterActive);
   if(prevRosterActive!==rosterActive){
@@ -300,6 +302,7 @@ export function CreateProjectControl({
               {classes.map(item=><option key={item.id} value={item.id}>{item.name} · {item.code}</option>)}
             </select>
           </label>
+          {classesError?<p role="alert" className="text-sm text-error">Classes could not load. <button type="button" className="min-h-11 underline" onClick={()=>{setClassesError(false);setClassesRetry(value=>value+1);}}>Try again</button></p>:null}
           <label className="grid gap-1 text-sm font-semibold">Status
             <select value={initialStatus} onChange={e=>setInitialStatus(e.target.value as "PLANNED"|"ACTIVE")}
               className="min-h-11 rounded-md border border-border bg-background px-3">
