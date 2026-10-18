@@ -45,7 +45,7 @@ describe("UX-mentor-legacy-navigation-01 bookmark compatibility",()=>{
       expect(source).toContain('import {redirect} from "next/navigation"');
       expect(source).toContain(`redirect("${destination}")`);
       expect(source).not.toContain("dangerouslySetInnerHTML");
-      expect(source).not.toMatch(/fetch\\s*\\(/);
+      expect(source).not.toMatch(/fetch\s*\(/);
     });
   }
   it("keeps exactly one audited destination for each legacy bookmark",()=>{
