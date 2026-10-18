@@ -46,7 +46,7 @@ Tests are in:
 | `status-badge.tsx` | `StatusBadge` | STATES-08; HARDEN-10 | five tones/readable labels |
 | `tabs.tsx` | `Tabs, tabNextEnabled` | STATES-10; HARDEN-18 | zero/all disabled, skip disabled and selected panel |
 | `textarea.tsx` | `Textarea` | STATES-02; HARDEN-02 | disabled, invalid |
-| `third-party-link.tsx` | `ThirdPartyLink` | STATES-14; HARDEN-14 | reject HTTP/js/credentials; same-tab/copy fallback |
+| `third-party-link.tsx` | `ThirdPartyLink` | STATES-14; HARDEN-14; HARDEN-32 | reject HTTP/js/credentials/backslash/controls; same-tab/copy fallback |
 | `toast.tsx` | `enqueueToast, clearEvictedToastTimers, ToastStack, ToastProvider, useToast` | HARDEN-15; HARDEN-29 | persistent errors, bounded info, timer cleanup, viewport |
 | `tooltip.tsx` | `InfoPopover, Tooltip` | STATES-12; HARDEN-12 | summary keyboard and info content |
 | `use-confirm-flow.tsx` | `useConfirmFlow` | HARDEN-20 | cancel/unmount resolver source contracts |

@@ -620,10 +620,8 @@ export async function closePlacementJob(
   const current = await loadJob(jobId);
   await requirePlacementManageScope(context, current.collegeId);
 
-  await requirePlacementJobSeasonActive(
-    current,
-  );
-
+  // Closing a published drive remains available after the placement season
+  // ends; otherwise unreconciled applications/offers can be stranded.
   if (current.status !== "PUBLISHED") {
     throw new PlacementsServiceError("PLACEMENT_JOB_NOT_CLOSABLE");
   }

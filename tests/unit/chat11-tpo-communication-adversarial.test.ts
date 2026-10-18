@@ -48,6 +48,20 @@ describe("TPO-settings-audit-CAS-01 section changes are validated and idempotent
    JSON.stringify(value)).toBe(false);
   expect(tpoCommunicationChangeSchema.safeParse({...cases[0],expectedVersion:null}).success).toBe(true);
  });
+ it("TPO-settings-audit-REVOKE-01 rechecks live staff role and session in the write transaction",()=>{
+  const source=readFileSync("src/modules/placements/tpo-communication-settings-service.ts","utf8");
+  const persisted=readFileSync("src/modules/permissions/persisted-actor.ts","utf8");
+  const collegeLock=source.indexOf('.for("update")');
+  const authorization=source.indexOf('assertPersistedPlatformPermission(tx,context,"placements.manage"');
+  const version=source.indexOf("tpoCommunicationUpdateAlreadyApplied(current,changes)");
+  expect(collegeLock).toBeGreaterThan(0);
+  expect(authorization).toBeGreaterThan(collegeLock);
+  expect(authorization).toBeLessThan(version);
+  expect(source).toContain("organizationId:college.organizationId");
+  expect(persisted).toContain('.for("share")');
+  expect(persisted).toContain("persistedMembershipRoles");
+  expect(persisted).toContain("requirePermission(");
+ });
  it("only a changed write passes CAS, audits changes and never no-op notifies",()=>{
   const source=readFileSync("src/modules/placements/tpo-communication-settings-service.ts","utf8");
   const lock=source.indexOf('.for("update")');
