@@ -54,3 +54,22 @@
 | `collegePersonDetailQuerySchema`, `collegeStudentEnrollmentQuerySchema`, `recordedAttendanceSummary`, `CollegePersonNotFoundError` | `college-person-detail-model.ts` | strict filters, explicit denominator, zero unknown |
 | `collegeFacultyLifecycleSchema`, `facultyLifecycleConfirmation` | `college-faculty-lifecycle-model.ts` | guardian and confirmation lifecycle |
 | `studentCsvRequestSchema`, `tokenizeStudentCsv`, `parseStudentCsv`, `neutralStudentCsvCell`, `studentImportReportCsv` | `college-student-csv-model.ts` | rows, strict structure, duplicate phone, formula neutralization |
+
+
+## College Admin Projects role journeys — IIT Dharwad hardening
+
+**Scope:** targeted new break-it tests added in chat-4, not a claim that the overall Projects ledger is complete (chat-14 owns `projects-ledger.md`).
+
+| Export or route | Tests and behavioural cases |
+|---|---|
+| `collegeProjectSummaryPatch` | `PROJ-BREAK-chat4-college-summary.test.ts`: valid state, malformed versions and dates, unknown keys, invalid numeric progress, invalid tenant identifiers |
+| `collegeProjectSummaryMatchesCurrent` | same: identical no-op retries plus each of fourteen independently modified fields cannot bypass CAS |
+| `collegeProjectStatusChangeAllowed` | same: planned→active mentor guard; active→completed approval guard; forbidden archive/reopen/historical states |
+| `updateCollegeProjectSummary` | same: transaction/row-lock/CAS ordering, tenant/section restriction, per-write audit and notifications (source guard; PostgreSQL integration outstanding) |
+| `getProjectAdminCollegeId` | `PROJ-BREAK-chat4-college-create-scope.test.ts`: wrong tenant, missing membership, suspended/ended membership, wrong role, disabled user and unscoped/organization-only Super Admin |
+| `requireTeamCreationAuthority` | same: selected-college gate before mutable service access, persisted user/membership and college checks (source guard; PostgreSQL integration outstanding) |
+| `createClassTeamWorkspacesSchema` | same: valid request; unknown organization field, hostile slug, invalid team member list, malformed preview token, limits |
+| `createClassTeamWorkspaces` | same: serializable transaction, optimistic roster/preview guards, duplicate-slug mapping, atomic activity (source guard; PostgreSQL integration outstanding) |
+| `POST /api/projects/class-team-workspaces` | same: CSRF/same-origin check before reading the JSON body and friendly API failure routing (source guard; full HTTP integration outstanding) |
+
+**Pending:** real PostgreSQL integration for persisted membership revocation, concurrent writes, interrupted audit/notification transactions, 1000+ roster rows and query plans; comprehensive per-export coverage across colleges, academics, groups, people; all College pages and Super Admin tenancy pages. Do not mark master-queue chat-4 complete until these are exercised.

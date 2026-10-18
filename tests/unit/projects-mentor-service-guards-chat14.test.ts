@@ -77,7 +77,9 @@ describe("chat-14 mentor project service boundaries (source compliance)",()=>{
     expect(s).toContain("requireProjectLifecycleMutationAccess");
     expect(s).toContain('operation==="DELETE"');
     expect(s).toContain('existing.status==="SHIPPED"');
-    expect(s).toContain("existing.updatedAt.toISOString()!==input?.expectedUpdatedAt");
+    expect(s).toContain("mentorReleaseVersionMatches(existing.updatedAt,input.expectedUpdatedAt)");
+    expect(s).toContain("mentorReleaseDeleteSchema.parse(raw)");
+    expect(s).toContain("!mentorReleaseVersionMatches(existing.updatedAt,input.expectedUpdatedAt!)");
     expect(s).toContain("recordActivityEventInTransaction(tx,context");
   });
   it("final delivery mentor decision preserves version, project scope, and assigned member notification",()=>{

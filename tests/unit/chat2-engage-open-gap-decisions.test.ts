@@ -26,7 +26,13 @@ describe("Engage remaining safe and reachable controls",()=>{
   expect(s).toContain('role="region" aria-label="Recruiter stage board"');
   expect(s).toContain("overflow-x-auto");
   expect(s).toContain("Move to… / Actions");
-  expect(edit).toContain("function keepRecruiterDialogFocus");
-  expect(edit).toContain('role="dialog" aria-modal="true"');
+  const dialog=src("src/components/ui/dialog.tsx");
+  expect(edit).toContain("<Dialog open={editing}");
+  expect(edit).toContain("dismissible={!saving}");
+  expect(dialog).toContain("modal.showModal()");
+  expect(dialog).toContain("onCancel={event =>");
+  expect(dialog).toContain("onOpenChange(false)");
+  expect(dialog).toContain("opener.current?.focus()");
+  expect(dialog).toContain("<dialog data-slot=\"dialog\"");
  });
 });

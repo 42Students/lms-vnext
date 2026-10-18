@@ -47,7 +47,8 @@ describe("Final sprint recruiter profile/company verification",()=>{
  });
  it("REC-calendar-messages-profile-35 distinguishes verified report status buckets and never counts withdrawals as offers",()=>{
   const page=src("src/app/(authenticated)/hr/company/reports/page.tsx");
-  expect(page).toContain('["Applied",job.applications]');
+  expect(page).toContain('key:"applied",header:"Applications"');
+  expect(page).toContain("cell:(job)=>job.applications");
   expect(page).toContain('"Offered"');
   expect(page).toContain("job.outstandingOffers+job.acceptedOffers+job.declinedOffers");
   expect(page).toContain("job.acceptedOffers");
@@ -66,7 +67,8 @@ describe("Final sprint recruiter profile/company verification",()=>{
   const ui=src("src/components/tpo/recruiter-invite-landing.tsx");
   expect(ui).toContain("You can request placement drives and review the students who apply.");
   expect(ui).toContain("Contact details are shared only as the placement cell allows.");
-  expect(ui).toContain('<input type="email" readOnly value={invite.contactEmail??""}');
+  expect(ui).toContain('<Input type="email" readOnly value={invite.contactEmail??""}');
+  expect(src("src/components/ui/input.tsx")).toContain('<input data-slot="input"');
   expect(ui).toContain('{"From your invitation. You\'ll sign in with it."}');
  });
  it("REC-calendar-messages-profile-26 independent final-sprint acceptance regression",()=>{

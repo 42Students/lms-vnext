@@ -136,10 +136,16 @@ describe("chat-4 College Course Tabs gap closure",()=>{
   expect(directory).toMatch(/<\/>(\s*)\)\s*:\s*\(\s*<>/);
   expect(directory).toContain("collegeLessonVisibilityLabel(item)");
   expect(directory).toContain("collegeProgressDescription(item)");
-  expect(directory).toContain('className="hidden overflow-x-auto md:block"');
+  expect(directory).toContain('className="hidden min-w-0 md:block"');
+  expect(directory).toContain("<DataTable");
   const assessment=source("src/components/courses/college-assessment-aggregate.tsx");
   expect(assessment).toContain('className="divide-y divide-border sm:hidden"');
-  expect(assessment).toContain('className="hidden overflow-x-auto sm:block"');
+  expect(assessment).toContain('className="hidden min-w-0 sm:block"');
+  expect(assessment).toContain("<DataTable");
+  const responsiveTable=source("src/components/ui/data-table.tsx");
+  expect(responsiveTable).toContain('<ScrollCue axis="x"');
+  expect(responsiveTable).toContain('className="block w-full border-separate');
+  expect(responsiveTable).toContain('sm:table-row');
   expect(assessment).toContain("data.items.map(item=><article");
   expect(assessment).toContain("<CollegeAssignmentActions assignment={item}/>");
   expect(assessment).toContain("<CollegeQuizAttempts quizId={item.id}");

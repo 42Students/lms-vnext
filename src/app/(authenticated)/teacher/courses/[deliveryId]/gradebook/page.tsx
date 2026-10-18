@@ -10,6 +10,7 @@ import {
   facultyGradebookViewHref,
 } from "@/modules/courses/faculty-gradebook-model";
 import {getFacultyPublishedGradebook} from "@/modules/courses/faculty-gradebook-service";
+import {CoursesServiceError} from "@/modules/courses/errors";
 
 type SearchParams={search?:string|string[];page?:string|string[]};
 
@@ -33,7 +34,26 @@ export default async function FacultyGradebookPage({
     </Link>
   </section>;
   const context=await getCurrentRequestContext();
-  const data=await getFacultyPublishedGradebook(context,parsed.data);
+  let data:Awaited<ReturnType<typeof getFacultyPublishedGradebook>>;
+  try {
+    data=await getFacultyPublishedGradebook(context,parsed.data);
+  } catch(error) {
+    if(error instanceof CoursesServiceError &&
+       error.code==="FACULTY_GRADEBOOK_TOO_MANY_ASSESSMENTS") {
+      return <section role="alert" className="space-y-3 rounded-xl border border-border bg-surface p-6">
+        <h1 className="text-xl font-semibold text-foreground">Gradebook report limit</h1>
+        <p className="text-sm text-body">
+          This Section has more than 100 published assessments. Contact your college
+          administrator to request a gradebook report. No grades have been changed.
+        </p>
+        <Link href={"/teacher/courses/"+encodeURIComponent(parsed.data.deliveryId)}
+          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">
+          Return to your course
+        </Link>
+      </section>;
+    }
+    throw error;
+  }
   const filtered=paginateFacultyGradebookRows(data.rows,view.data);
   const base={...view.data};
   const csv="/api/courses/faculty/gradebook/"+encodeURIComponent(parsed.data.deliveryId)+"/csv";

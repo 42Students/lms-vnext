@@ -12,9 +12,11 @@ describe("College Admin drive UI and graceful failure",()=>{
  it("COL-placements-25 renders selectable action-capable mobile application and drive cards",()=>{
   const applications=source("src/components/placements/college-application-pipeline-controls.tsx");
   const drives=source("src/app/(authenticated)/college/placements/drives/page.tsx");
-  expect(applications).toContain('aria-label="Application mobile cards"');
-  expect(applications).toContain("sm:hidden");
-  expect(applications).toContain("sm:table");
+  expect(applications).toContain("DataTable");
+  expect(applications).toContain('caption="Applications pipeline"');
+  expect(applications).toContain('mobilePriority:"primary"');
+  expect(applications).toContain('mobilePriority:"action"');
+  expect(applications).toContain("CollegeApplicationDetailDrawer");
   expect(applications).toContain("onChange={()=>toggle(row.id)}");
   // The approved UX rollout replaced duplicate mobile/desktop markup
   // with the shared DataTable, retaining row lifecycle and detail actions.
