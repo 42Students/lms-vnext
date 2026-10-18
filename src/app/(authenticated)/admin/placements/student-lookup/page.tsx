@@ -7,12 +7,18 @@ import {Button} from "@/components/ui/button";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {EmptyState} from "@/components/ui/empty-state";
 import {lookupCollegeStudentPlacement} from "@/modules/placements/college-placement-student-lookup-service";
+import {parseSuperAdminPlacementStudentSearch} from "@/modules/admin-ui/super-admin-placement-student-search-model";
+import {ErrorState} from "@/components/ui/error-state";
 export default async function SuperAdminPlacementStudentLookup({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }){
  const ctx=await getCurrentRequestContext();
- const params=await searchParams,q=typeof params.q==="string"?params.q.trim():"";
- const data=q.length>=3?ctx.adminScope?.collegeId?await lookupCollegeStudentPlacement(ctx,q):null:null;
+ const params=await searchParams;
+ const {query,invalid}=parseSuperAdminPlacementStudentSearch(params);
+ // Invalid lengths/duplicate query keys are recoverable and NEVER passed to
+ // strict service validation, which would otherwise throw from a hostile URL.
+ const q=query??"";
+ const data=query&&ctx.adminScope?.collegeId?await lookupCollegeStudentPlacement(ctx,query):null;
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Placements" title="Student placement lookup"
    actions={<Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Analytics</Link>}/>
@@ -24,6 +30,9 @@ export default async function SuperAdminPlacementStudentLookup({searchParams}:{
    </label>
    <Button type="submit" className="mt-3" disabled={!ctx.adminScope?.collegeId}>Search students</Button>
   </form>
+  {invalid?<ErrorState title="Invalid student search"
+   description="Enter 3 to 150 characters in a single search to find students in the selected college."
+   action={<Link href="/admin/placements/student-lookup" className="font-semibold text-[var(--lms-teal-deep)]">Clear search</Link>}/>:null}
   {!ctx.adminScope?.collegeId?<p id="placement-student-scope-hint" role="status" className="rounded-xl border border-border bg-surface p-4 sm:p-6">Select a college to continue. Choose a college in the header above to look up student placements.</p>:null}
   {data&&!data.students.length?<EmptyState title="No matching college students." description="Name, roll number or email" />:null}
   {data?.students.map(person=><section key={person.membershipId} className="min-w-0 space-y-3 rounded-xl border border-border bg-surface p-4 sm:p-6">
