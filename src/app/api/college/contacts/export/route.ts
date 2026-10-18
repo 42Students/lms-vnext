@@ -17,7 +17,10 @@ export async function GET(request:Request){
   }});
  }catch(error){
   if(error instanceof Error&&error.message==="INVALID_CONTACT_EXPORT")
-   return NextResponse.json({error:"INVALID_CONTACT_EXPORT"},{status:400});
+   return NextResponse.json({
+    error:"INVALID_CONTACT_EXPORT",
+    message:"Contact export filters are invalid. Clear the filters and try again.",
+   },{status:400,headers:{"Cache-Control":"private, no-store",Vary:"Cookie"}});
   return apiErrorResponse(error);
  }
 }
