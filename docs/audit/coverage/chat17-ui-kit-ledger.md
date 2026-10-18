@@ -137,3 +137,5 @@ The **generated** `docs/audit/ux/COVERAGE-MATRIX.md` currently lists five Projec
 - **UX-kit-HARDEN-56:** Loading Button's actual busy/disabled semantics can no longer be overwritten by a caller's stale `aria-busy={false}`; explicit non-loading ARIA busy values still pass through. This fixes misleading screen-reader state while guarded saves run.
 
 - **UX-kit-HARDEN-57:** Inline success notices no longer vanish while the app is backgrounded. Their dismissal timer pauses when `document.hidden` and restarts when the tab becomes visible. Error/info notices retain their original persistence and no component text changes. Source/SSR state test added; browser visibility-event behavior awaits final acceptance.
+
+- **UX-kit-E2E-07/08/09:** Development-only Chromium fixtures now exercise focus on the disabled-reason wrapper and its associated description, a hidden-tab success notice that remains readable until return, FileUpload merging external help with built-in help, and actual reduced-motion Tabs transition duration. These complement static unit contracts; browser CI deferred by owner until full task queue completion.
