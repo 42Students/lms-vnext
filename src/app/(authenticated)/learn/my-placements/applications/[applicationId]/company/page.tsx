@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -75,14 +76,7 @@ export default async function LearnerApplicationCompanyPage({
             <dt className="font-semibold text-muted-foreground">Official website</dt>
             <dd className="mt-1 break-words text-foreground">
               {company.websiteUrl ? (
-                <a
-                  href={company.websiteUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline"
-                >
-                  Visit employer website ↗
-                </a>
+                <ThirdPartyLink href={company.websiteUrl} label="Visit employer website ↗" />
               ) : (
                 "No verified-safe public website URL is available."
               )}
