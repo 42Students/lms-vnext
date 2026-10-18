@@ -23,13 +23,13 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
   }));
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid activity filters</h1>
-    <Link href="/mentor/activity" className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
+    <Link href="/mentor/activity" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
   </section>;
   const data = await getMentorPortfolioActivity(context, parsed.data);
   return <div className="min-w-0 max-w-full space-y-6 overflow-x-clip">
     <PageHeader eyebrow="Mentor · Projects" title="Project activity"
       description="Recorded activity in your currently assigned projects. Raw summaries and metadata are omitted."
-      actions={<Link href="/mentor/projects" className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Projects</Link>} />
+      actions={<Link href="/mentor/projects" className="inline-flex min-h-11 items-center rounded-lg border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Projects</Link>} />
     {!data.enabled ? <div role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
       Projects access is disabled. No activity was loaded.
     </div> : <>
@@ -89,7 +89,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
           </select>
         </label>
         <Button type="submit" variant="primary">Apply</Button>
-        <Link href="/mentor/activity" className="px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
+        <Link href="/mentor/activity" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
       </form>
       <div className="flex flex-wrap items-center gap-3">
         <p className="text-sm text-body">{data.total} recorded project event{data.total === 1 ? "" : "s"}</p>
@@ -110,7 +110,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
               <span className="text-xs text-muted-foreground">{mentorActivityImportanceLabel(event.importance)}</span>
             </div>
             <Link href={`/mentor/projects/${encodeURIComponent(event.projectId)}?tab=activity`}
-              className="mt-1 block break-words text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+              className="min-h-11 mt-1 block break-words text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
               {event.projectTitle} →
             </Link>
             <time dateTime={event.occurredAt.toISOString()} className="mt-2 block text-xs text-muted-foreground">
@@ -121,9 +121,9 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
         <span className="text-sm text-body">Page {data.page} of {data.totalPages}</span>
         <div className="flex gap-3">
           {data.page > 1 && <Link href={mentorPortfolioHref("activity",{...data.query,page:data.page-1})}
-            className="text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>}
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>}
           {data.page < data.totalPages && <Link href={mentorPortfolioHref("activity",{...data.query,page:data.page+1})}
-            className="text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>}
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>}
         </div>
       </nav>
     </>}
