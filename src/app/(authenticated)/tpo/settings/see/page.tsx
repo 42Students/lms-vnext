@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import { redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -46,9 +47,7 @@ export default async function TpoWhatCompaniesSeePage() {
       <TpoSettingsNav active="see" />
 
       <section className="space-y-2">
-        <h2 className="m-0 text-xl font-semibold text-foreground">
-          What Companies See
-        </h2>
+        <PageHeader eyebrow="TPO · Settings" title="What Companies See" />
         <p className="text-sm leading-6 text-body">
           Review the data-sharing permissions configured
           for recruiters viewing learner information
