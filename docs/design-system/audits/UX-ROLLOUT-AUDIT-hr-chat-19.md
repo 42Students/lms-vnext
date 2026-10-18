@@ -20,7 +20,7 @@ Only a subset of nested HR components, drawer behavior, server permissions and w
 | /hr/drives | HR-XA-03 | MAJOR | `src/app/(authenticated)/hr/drives/error.tsx:8` | Small error retry touch target; shared 44px Button | FIXED |
 | /hr/placements/jobs/[jobId] | HR-XA-04 | MAJOR | `src/app/(authenticated)/hr/placements/jobs/[jobId]/error.tsx:15` | Back link lacked readable focus affordance; apply deep-teal focus styles | FIXED |
 
-**Counts:** 0 BLOCKER, 4 MAJOR, 0 MINOR, 0 NIT found and addressed in this review. Code commits `86d4e58a`, `2c21cb71`, `8f859ed4`, `f150fa86`, `56742618`. Test file: `tests/unit/chat19-hr-page-contracts.test.ts`.
+**Counts:** 0 BLOCKER, 6 MAJOR, 0 MINOR, 0 NIT found and addressed in this review. Code commits `86d4e58a`, `2c21cb71`, `8f859ed4`, `f150fa86`, `56742618`, `8a8df46e`, `c9ead3e5`, `1eaae5e9`, `3de439aa`. Test file: `tests/unit/chat19-hr-page-contracts.test.ts`.
 
 ## HR pages reviewed
 
@@ -55,4 +55,4 @@ Employer-facing project data is surfaced inside shortlisted applicant reviews, n
 
 ## Acceptance decision
 
-**FAIL pending executable and device validation; source-level MAJOR findings fixed (4/4).** No claim that prior authors' HR workflow integration is exhaustive. Before release, run Vitest/tsc, browser flows at 320/360/390px, keyboard focus/return on drawers, employer cross-college URL tampering, expired session read, stale tabs and double-submit behavior against PostgreSQL. Missing checked artifacts must be filed back to the responsible HR service owner. Do not treat an unexecuted source assertion as authorization proof.
+**FAIL pending executable and device validation; source-level MAJOR findings fixed (6/6).** No claim that prior authors' HR workflow integration is exhaustive. Before release, run Vitest/tsc, browser flows at 320/360/390px, keyboard focus/return on drawers, employer cross-college URL tampering, expired session read, stale tabs and double-submit behavior against PostgreSQL. Missing checked artifacts must be filed back to the responsible HR service owner. Do not treat an unexecuted source assertion as authorization proof.
