@@ -18,8 +18,13 @@ describe("Chat-5 delegated decisions: safe behavior and remaining boundaries",()
   expect(docs).toContain("expiry no longer prevents a consent withdrawal");
  });
  it("TPO-campaigns-public-25 keeps public join links explicitly revocable instead of perpetual access",()=>{
-  expect(tpoPublicJoinLinkToggleSchema.safeParse({scope:"COLLEGE",enabled:false}).success).toBe(true);
-  expect(tpoPublicJoinLinkToggleSchema.safeParse({scope:"COMPANY",companyId:"11111111-1111-4111-8111-111111111111",enabled:false}).success).toBe(true);
+  const linkId="22222222-2222-4222-8222-222222222222";
+  expect(tpoPublicJoinLinkToggleSchema.safeParse({scope:"COLLEGE",expectedLinkId:linkId,enabled:false}).success).toBe(true);
+  expect(tpoPublicJoinLinkToggleSchema.safeParse({scope:"COMPANY",companyId:"11111111-1111-4111-8111-111111111111",expectedLinkId:linkId,enabled:false}).success).toBe(true);
+  // Never toggle a link without the current link ID; stale tabs must fail closed.
+  expect(tpoPublicJoinLinkToggleSchema.safeParse({scope:"COLLEGE",enabled:false}).success).toBe(false);
+  expect(tpoPublicJoinLinkToggleSchema.safeParse({scope:"COMPANY",companyId:"11111111-1111-4111-8111-111111111111",enabled:false}).success).toBe(false);
+  expect(tpoPublicJoinLinkToggleSchema.safeParse({scope:"COLLEGE",expectedLinkId:"not-a-uuid",enabled:true}).success).toBe(false);
   expect(tpoPublicJoinLinkToggleSchema.safeParse({scope:"COMPANY",enabled:true}).success).toBe(false);
   expect(publicJoinLinkPath("COMPANY","secret")).toContain("/company-join/");
   expect(source("src/modules/placements/tpo-public-join-link-service.ts")).toContain("revokedAt");

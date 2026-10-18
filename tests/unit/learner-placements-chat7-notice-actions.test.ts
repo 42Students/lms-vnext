@@ -21,7 +21,11 @@ describe("Chat-7 learner notice action and audience parity", () => {
     expect(learnerPlacementNoticeFeed([{ ...base, buttonUrl: "data:text/html,unsafe" }])[0]).not.toHaveProperty("buttonUrl");
     const page = source("src/app/(authenticated)/learn/my-placements/announcements/page.tsx");
     expect(page).toContain("notice.buttonUrl && notice.buttonLabel");
-    expect(page).toContain('rel="noopener noreferrer"');
+    // All external destinations use the HTTPS-only WebView-safe shared control.
+    expect(page).toContain("<ThirdPartyLink");
+    const external = source("src/components/ui/third-party-link.tsx");
+    expect(external).toContain('url.protocol === "https:" && !url.username && !url.password');
+    expect(external).toContain("Copy link");
   });
 
   it("LEARNER-placements-49 preserves scoped TPO producer to learner reader wiring", () => {
