@@ -19,7 +19,10 @@ describe("UX-tpo-scroll-motion: invisible scrollbars must never hide available c
     expect(source).toContain("No built-in job types available.");
     expect(source).toContain('mobilePriority:"primary"');
     expect(source).toContain('mobilePriority:"action"');
-    expect(source).toContain("window.confirm(");
+    expect(source).toContain("useConfirmFlow");
+    expect(source).toContain("await askConfirm(");
+    expect(source).toContain("{dialog}");
+    expect(source).not.toContain("window.confirm(");
     expect(source).toContain("activeCount<=1");
     expect(source).not.toMatch(/<table(?:\s|>)/);
   });

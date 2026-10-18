@@ -241,20 +241,22 @@ export async function updatePlacementRound(
   }
 
   const db = getDb();
+  // If another officer edits the same PENDING round after our scoped read,
+  // preserve their change rather than silently overwriting it. PostgreSQL
+  // timestamps can carry microseconds, while JS Date tokens are milliseconds.
+  const expectedUpdatedAt = current.round.updatedAt.toISOString();
   return db.transaction(async (tx) => {
     const [updated] = await tx
       .update(placementJobRounds)
       .set({
         ...input,
-        updatedAt: new Date(),
+        updatedAt: sql`greatest(clock_timestamp(),date_trunc('milliseconds',${placementJobRounds.updatedAt}) + interval '1 millisecond')`,
       })
       .where(
         and(
           eq(placementJobRounds.id, roundId),
-          eq(
-            placementJobRounds.status,
-            "PENDING",
-          ),
+          eq(placementJobRounds.status, "PENDING"),
+          sql`date_trunc('milliseconds',${placementJobRounds.updatedAt}) = ${expectedUpdatedAt}::timestamptz`,
         ),
       )
       .returning();
