@@ -1,5 +1,5 @@
-import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
 "use client";
+import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
 
 import { FACULTY_ASSIGNMENT_COPY, FACULTY_ASSIGNMENT_ROLE_LABELS } from "@/modules/courses/college-courses-copy";
 import {apiFetch} from "@/lib/api-fetch";

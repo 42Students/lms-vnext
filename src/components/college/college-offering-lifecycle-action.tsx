@@ -1,5 +1,5 @@
-import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
 "use client";
+import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
 import {useState,useTransition} from "react";
 import {useRouter} from "next/navigation";
 import {offeringLifecycleConfirmation} from "@/modules/courses/college-offering-lifecycle-model";

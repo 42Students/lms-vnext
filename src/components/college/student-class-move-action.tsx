@@ -39,8 +39,7 @@ export function StudentClassMoveAction({ membershipId, name }: {
   const canMove = loaded && selected && selected.id !== loaded.current.sectionId;
   const moveConfirmation=selected?studentSectionMoveMessage(name,selected.name):"";
   function submit() {
-    if (!loaded || !canMove || !selected ||
-      false) return;
+    if (!loaded || !canMove || !selected) return;
     setError("");
     start(async () => {
       try {
