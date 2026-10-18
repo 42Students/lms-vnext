@@ -208,7 +208,7 @@ export function TpoRoundResultRecorder({
             type="button"
             disabled={busy}
             onClick={() => void submitStage()}
-            className="min-h-9 rounded bg-primary px-3 font-semibold text-on-primary disabled:opacity-50"
+            className="min-h-9 rounded-[9px] bg-primary px-3 font-semibold text-on-primary disabled:opacity-50"
           >
             {busy ? "Saving..." : "Confirm staged result"}
           </button>
