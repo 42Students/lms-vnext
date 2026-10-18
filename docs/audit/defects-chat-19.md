@@ -227,3 +227,9 @@ This is an independent unowned responsive UX pickup for the critical TPO/HR plac
 | ID | Before-fix severity | Source | Problem and fix | Commits | Direct regression |
 |---|---|---|---|---|---|
 | HR-BREAK-REPORTS-02 | MAJOR | `src/modules/placements/recruiter-company-reports-service.ts` | A saved HR report link with a now-out-of-range page (after status filters or drive counts changed) returned zero drives and a misleading empty state. Count the exact authorized employer-college/status portfolio first, clamp the requested page, then apply that page to SQL offset and rendered page metadata. Preserve tenant/company permission checks and 1–10000/1–50 request schema. | `406c9f52`, `55095c1b` | `tests/unit/HR-BREAK-chat19-company-report-stale-page.test.ts` (`2f9fa839`) |
+
+## Projects class team CSV export
+
+| ID | Severity | Source | Finding and fix | Commit | Regression |
+|---|---|---|---|---|---|
+| PROJ-BREAK-TEAM-CSV-02 | MAJOR | `src/modules/projects/class-team-csv-export.ts` | CSV spreadsheet formula defense stripped only a manually enumerated set of invisible prefixes and could miss Unicode format controls such as U+034F/U+180E. Defuse leading formulas behind any Unicode control, format, spacing, line or paragraph separator while preserving team IDs, CSV quoting, and authorized visible rows. | `c77b3822` | `tests/unit/PROJ-BREAK-chat19-class-team-csv-unicode.test.ts` (`8ea27868`) |
