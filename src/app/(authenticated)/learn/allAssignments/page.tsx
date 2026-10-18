@@ -60,7 +60,7 @@ export default async function LearnerAssignmentsPage({searchParams}:{searchParam
     );
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         title="All Assignments"
       />
