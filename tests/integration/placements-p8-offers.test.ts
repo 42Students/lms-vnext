@@ -278,6 +278,40 @@ afterAll(async () => {
 });
 
 describe("Placement P8 offers and joining", () => {
+  it("PLACEMENTS-EXPIRY-RACE-05 DB serializes sweep versus same-offer learner acceptance into one terminal outcome",async()=>{
+    const {application}=await preparePassedApplication();
+    const expiry=new Date("2099-10-19T18:29:59.000Z");
+    const issued=await issuePlacementOffer(tpo,application.id,{
+      roleTitle:"Offer expiry concurrency engineer",annualCtcInr:900_000,
+      expiresAt:expiry,
+    });
+    const responseInstant=new Date(expiry.getTime()-1);
+    const outcomes=await Promise.allSettled([
+      sweepExpiredPlacementOffers(SEED_IDS.facultyUser,expiry,100),
+      actOnPlacementOffer(learner,issued.id,{action:"ACCEPT"},responseInstant),
+    ]);
+    expect(outcomes.some(outcome=>outcome.status==="fulfilled")).toBe(true);
+    const persisted=await pool.query<{status:string}>(
+      "select status from placement_offers where id=$1",[issued.id]);
+    expect(["ACCEPTED","EXPIRED"]).toContain(persisted.rows[0]?.status);
+    const terminalHistory=await pool.query<{to_status:string;count:number}>(
+      `select to_status,count(*)::integer as count from placement_offer_status_history
+       where offer_id=$1 and to_status in ('ACCEPTED','EXPIRED')
+       group by to_status`,[issued.id],
+    );
+    expect(terminalHistory.rows.reduce((total,row)=>total+row.count,0)).toBe(1);
+    expect(terminalHistory.rows[0]?.to_status).toBe(persisted.rows[0]?.status);
+    if(persisted.rows[0]?.status==="ACCEPTED"){
+      expect(outcomes[1]?.status).toBe("fulfilled");
+      expect(outcomes[0]?.status).toBe("fulfilled");
+      if(outcomes[0]?.status==="fulfilled")expect(outcomes[0].value).toBe(0);
+    }else{
+      expect(outcomes[0]?.status).toBe("fulfilled");
+      if(outcomes[0]?.status==="fulfilled")expect(outcomes[0].value).toBe(1);
+      expect(outcomes[1]?.status).toBe("rejected");
+    }
+  });
+
   it("PLACEMENTS-EXPIRY-SM-04 DB entrypoint rejects an invalid sweep clock or unsafe batch limit before any writes",async()=>{
     await expect(sweepExpiredPlacementOffers(SEED_IDS.facultyUser,new Date(Number.NaN)))
       .rejects.toThrow("Invalid offer sweep reference date");
