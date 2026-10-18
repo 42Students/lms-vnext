@@ -9,7 +9,7 @@ import {PlacementsServiceError} from "./errors";
 import {issuePlacementOffer} from "./offer-service";
 import {requireTpoJobCollege,requireTpoJobActor,auditTpoJobChange} from "./tpo-job-write-base";
 import {placementJobIdSchema} from "./validation";
-import {tpoWaitlistPromotionSchema,waitlistPreviewToken,decideWaitlistReleaseSettlement} from "./tpo-waitlist-promotion-model";
+import {tpoWaitlistPromotionSchema,waitlistPreviewToken,decideWaitlistReleaseSettlement,canonicalWaitlistPreviewCollections} from "./tpo-waitlist-promotion-model";
 
 export async function getTpoWaitlistPreview(context:RequestContext,rawJobId:unknown){
  const collegeId=await requireTpoJobCollege(context),jobId=placementJobIdSchema.parse(rawJobId);
