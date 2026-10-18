@@ -120,3 +120,9 @@ This is an independent TPO/HR workflow review; real clipboard permission denial,
 | UX-SPILL-TPO-CLIP-02 | `TpoRequestPageClipboard` component | `tests/unit/UX-SPILL-chat19-tpo-request-responsive.test.tsx` | SSR verifies responsive DataTable cards, request status, employer/name, record selector, empty state and disabled copy; original copy/export model unaffected |
 
 | UX-SPILL-TPO-CLIP-03 | `sortRequestClipboardRows` and `selectedRequestClipboardRows` in request clipboard model | `tests/unit/UX-SPILL-chat19-tpo-request-clipboard.test.ts` | Immutable newest/oldest sorting, decided-null ordering, exact visible-page subset, no stale prior-page selection leakage |
+
+## HR notification stale-tab boundary
+
+| ID | Export and route | Behavioral evidence | Remaining |
+|---|---|---|---|
+| HR-BREAK-NOTIFICATIONS-02 | `clampHrInboxPage` in `hr-notifications-model.ts` and `listHrNotifications` | Direct boundary tests: empty inbox, stale page 9999, multi-page 26/51 records, malformed/overflow numeric page, strict query schema and unchanged raw bounds helper. Database-backed `tests/integration/hr-notifications.test.ts` checks a real stale page URL returns the authorized record rather than a false empty state. | Cloud CI/database gate verifies run; no browser keyboard claim |
