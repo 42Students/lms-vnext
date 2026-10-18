@@ -52,6 +52,12 @@ The refreshed cloud report (`docs/orchestrator/unit-failures-latest.md`, CI `372
 
 `docs/orchestrator/unit-failures-latest.md` lists four additional chat-13 failures in academic scroll, class-capacity source formatting, native Drawer modal semantics and legacy academic status whitespace. Their assertions were updated to preserve the exact safety/UX invariants while accepting the current implementations. The newer file supersedes the older `r9` report, which lists `PUB-auth-public-53` in `chat13-final-sprint-public-share.test.ts` and `SA-academics-people-36` in `chat13-super-admin-academic-copy.test.ts`. On the current `main` source, the DataTable maps the selected approved columns to `tableColumns` and uses the same `result.rows`; `legacyAcademicStatus` is called with the expected boolean on batches and cohorts. The reported failures may refer to an older source revision. Do **not** mark them green without the orchestrator rerunning Vitest.
 
+## Newest lane-unit and typecheck report reconciliation
+
+The refreshed files on `main` no longer contain a `## chat-13` failure section. The two earlier lane failures were `SA-PLACEMENT-POLICY-03` and `UX-cross-tpo-second-C13-026-22`. Current production source and test are aligned after commits `9bf3a6c6` (field-aware strict policy schema) and `61ade3fd` (exact `Loading TPO reports` text). These are **source-level reconciliations**, not a claim of fresh green CI.
+
+The report still lists `PROJ-BREAK-SA-16` under the shared `chat-2` section. Re-read its test and current source: the required dynamic page components use `getCurrentRequestContext` and `requireProjectManageAccess`, global template subview validates `projectTemplateIdSchema`, and every literal assertion in that test is present in `src/modules/projects/access.ts` and its delegates. Thus the reported failure refers to an earlier main snapshot or unavailable detailed failure information. Keep the security assertions intact; obtain a newer CI trace before changing behavior. Current typecheck report lists no chat-13 files.
+
 ## Remaining hardening obligations
 
 Full Super Admin parity for membershipless submission locks requires the schema/audit migration above. Real PostgreSQL multi-tenant tests, expired-session/browser tests, 1,000-project scale, telemetry, all selected-college role journey matrix, and device/screen-reader checks remain unverified here. Neither Vitest, TypeScript, lint nor a browser/PostgreSQL environment was run by this lane.
