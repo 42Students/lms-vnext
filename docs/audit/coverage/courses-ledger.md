@@ -80,3 +80,18 @@ The orchestrator should commit the deterministic generated ledger after executio
 | `PROJ-BREAK-LEARNER-91..94` project role journey | `tests/unit/PROJ-BREAK-chat7-learner-role-journey.test.ts` | Source and pure-model adversarial tests exercise forged learner ownership, forbidden completion, nonactive/archived role-state guards, tenant IDOR suppression and persisted actor enforcement. Not a substitute for transactional PostgreSQL concurrency tests. |
 
 All prior failing unit tests are retained. The snapshot's failing cases have not been executed in this session; no release closure is asserted.
+
+## Learner assessment and Projects HTTP route breaker batch (2026-10-18)
+
+| Surface / handler | New direct route test | Observed contract and remediation | Status |
+|---|---|---|---|
+| POST `/api/courses/quizzes/[quizId]/submit` | `tests/unit/chat7-learner-assessment-route-boundaries.test.ts` — `COURSES7-07 prevents cross-origin quiz mutation before context, decoding, or submission` | CSRF denial precedes auth and service; server-derived actor and path ID forwarded exactly | Authored, not executed |
+| POST `/api/courses/assignments/[assignmentId]/submit` | Same file — `COURSES7-08 prevents cross-origin assignment mutation before context or submission` | CSRF denial precedes auth and service; route does not trust an actor from the JSON body | Authored, not executed |
+| GET `/api/courses/quizzes/[quizId]/my-attempts` | Same file — `COURSES7-07 and COURSES7-08 read only authenticated own results for the supplied delivery` | Added explicit `Cache-Control: private, no-store` to prohibit retention of released answer keys on shared caches | Source fixed, CI pending |
+| GET `/api/courses/assignments/[assignmentId]/my-submission` | Same file — own results test | Added explicit `Cache-Control: private, no-store` to protect graded feedback and submission history | Source fixed, CI pending |
+| GET `/api/courses/learner/workspace` | Same file — `COURSES7-08 learner workspace GET keeps private course progress uncached` | Added `Cache-Control: private, no-store`; service remains the scope and enrollment authorization boundary | Source fixed, CI pending |
+| DELETE `/api/projects/[projectId]/tasks/[taskId]/learner-own` | `tests/unit/PROJ-BREAK-chat7-learner-task-route-boundaries.test.ts` — `PROJ-BREAK-LEARNER-95`, `98` | Cross-origin denied before actor/service, exact scoped ID delegated, response no-store | Authored, not executed |
+| PATCH `/api/projects/[projectId]/tasks/[taskId]/learner-progress` | Same file — `PROJ-BREAK-LEARNER-96`, `99` | Cross-origin denied before service, authenticated actor and path-bound version payload forwarded | Authored, not executed |
+| POST `/api/projects/[projectId]/tasks/[taskId]/learner-status` | Same file — `PROJ-BREAK-LEARNER-97`, `100`, `101` | CSRF, actor identity, denied status, error mapping via centralized helper; service remains persisted-role gate | Authored, not executed |
+
+Remaining: real PostgreSQL concurrency cases, live role revocation between preflight and transaction, the other Courses API routes, Super Admin UI page-level browser checks, all Learner certificates and discussion transitions. Do not infer execution or passing coverage from authored tests alone.
