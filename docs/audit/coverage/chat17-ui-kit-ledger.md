@@ -141,3 +141,5 @@ The **generated** `docs/audit/ux/COVERAGE-MATRIX.md` currently lists five Projec
 - **UX-kit-E2E-07/08/09:** Development-only Chromium fixtures now exercise focus on the disabled-reason wrapper and its associated description, a hidden-tab success notice that remains readable until return, FileUpload merging external help with built-in help, and actual reduced-motion Tabs transition duration. These complement static unit contracts; browser CI deferred by owner until full task queue completion.
 
 - **UX-kit-E2E-10:** ScrollCue observes the viewport and **all direct children** for `ResizeObserver` changes. A second sibling changing width now updates overflow cues without relying on the first element resizing; a development-only Playwright resize witness checks both directions.
+
+- **UX-kit-E2E-11:** Timed success/info toast timers pause on background-tab visibility and resume on foreground return, while error toasts remain persistent. The browser case checks a success notice after more than its original timeout while hidden and verifies dismissal after foreground resume; evicted timers and duration metadata are removed together.
