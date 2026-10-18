@@ -69,7 +69,7 @@ export default async function TpoMyNotificationsPage({
           action={
             <Link
               href="/tpo/settings/notifications"
-              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
+              className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-link-text)]"
             >
               Clear filters
             </Link>
@@ -147,7 +147,7 @@ export default async function TpoMyNotificationsPage({
         ))}
       </section>
 
-      <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <section className="border-t border-border pt-4 sm:p-5">
         <h2 className="text-lg font-semibold text-foreground">
           My notification history
         </h2>
@@ -169,7 +169,7 @@ export default async function TpoMyNotificationsPage({
             <select
               name="view"
               defaultValue={query.view}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground"
+              className="min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground"
             >
               {TPO_NOTIFICATION_VIEWS.map((view) => (
                 <option key={view} value={view}>
@@ -188,7 +188,7 @@ export default async function TpoMyNotificationsPage({
             <select
               name="pageSize"
               defaultValue={String(pageSize)}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground"
+              className="min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground"
             >
               <option value="25">25</option>
               <option value="50">50</option>
@@ -198,14 +198,14 @@ export default async function TpoMyNotificationsPage({
 
           <button
             type="submit"
-            className="inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-5 text-sm font-semibold text-on-primary hover:bg-primary-hover"
+            className="inline-flex min-h-11 sm:min-h-9 items-center justify-center rounded-[9px] bg-primary px-5 text-sm font-semibold text-on-primary hover:bg-primary-hover"
           >
             Apply
           </button>
 
           <Link
             href="/tpo/settings/notifications"
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
+            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-link-text)]"
           >
             Clear filters
           </Link>
@@ -287,7 +287,7 @@ export default async function TpoMyNotificationsPage({
                   pageSize,
                   page: page - 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
+                className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-link-text)]"
               >
                 Previous
               </Link>
@@ -300,7 +300,7 @@ export default async function TpoMyNotificationsPage({
                   pageSize,
                   page: page + 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
+                className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-link-text)]"
               >
                 Next
               </Link>
@@ -309,7 +309,7 @@ export default async function TpoMyNotificationsPage({
         </nav>
       </section>
 
-      <section className="rounded-xl border border-border bg-surface">
+      <section className="border-t border-border">
         <div className="flex flex-wrap items-start justify-between gap-3 border-b border-border px-5 py-4">
           <div>
             <h2 className="text-lg font-semibold text-foreground">

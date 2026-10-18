@@ -91,7 +91,7 @@ export default async function TpoPlacementRulesSettingsPage({
           description="The requested job page is invalid. No placement job records were loaded."
           action={
             <Link href="/tpo/settings/rules"
-              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+              className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)]">
               Clear filters
             </Link>
           }
@@ -120,7 +120,7 @@ export default async function TpoPlacementRulesSettingsPage({
         </p>
       </section>
 
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="border-t border-border pt-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h3 className="m-0 text-lg font-semibold text-foreground">
             College-wide offer policy
@@ -204,7 +204,7 @@ export default async function TpoPlacementRulesSettingsPage({
               <p className="mt-2 text-xs leading-5 text-muted-foreground">
                 {note.detail}
               </p>
-              <p className="mt-2 text-xs font-semibold text-[var(--lms-teal-deep)]">
+              <p className="mt-2 text-xs font-semibold text-[var(--lms-link-text)]">
                 {note.source}
               </p>
             </article>
@@ -355,7 +355,7 @@ export default async function TpoPlacementRulesSettingsPage({
                       "/tpo/placements/jobs/" +
                       encodeURIComponent(job.id)
                     }
-                    className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline"
+                    className="text-sm font-semibold text-[var(--lms-link-text)] hover:underline"
                   >
                     View job →
                   </Link>
@@ -381,7 +381,7 @@ export default async function TpoPlacementRulesSettingsPage({
                     ? "/tpo/settings/rules"
                     : `/tpo/settings/rules?page=${result.page - 1}`
                 }
-                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
+                className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-link-text)]"
               >
                 ← Previous
               </Link>
@@ -389,7 +389,7 @@ export default async function TpoPlacementRulesSettingsPage({
             {result.page < result.totalPages ? (
               <Link
                 href={`/tpo/settings/rules?page=${result.page + 1}`}
-                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
+                className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-link-text)]"
               >
                 Next →
               </Link>
