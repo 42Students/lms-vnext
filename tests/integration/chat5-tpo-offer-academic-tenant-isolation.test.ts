@@ -69,6 +69,7 @@ describe("PLACEMENTS-OFFERS-IDOR-07: academic enrichment cannot leak a foreign c
     [localProgram,wrongPeriodCohort,member]);
    const foreignPeriodResult=await enrichTpoOfferFacts(fake,SEED_IDS.collegeA);
    expect(foreignPeriodResult[0]?.candidate.batch).toBeNull();
+   expect(foreignPeriodResult[0]?.candidate.branch).toBeNull();
    expect(JSON.stringify(foreignPeriodResult)).not.toContain("WRONG COLLEGE START PERIOD");
 
    await pool.query("insert into cohorts(id,program_id,name,code,start_period_id) values($1,$2,$3,$4,$5)",
