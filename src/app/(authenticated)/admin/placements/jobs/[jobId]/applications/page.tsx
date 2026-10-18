@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { DataTable } from "@/components/ui/data-table";
 import { driveApplicationsHref, driveApplicationsParams, DRIVE_APPLICATION_EXPORT_CAP } from "@/modules/placements/college-drive-applications-model";
 import { getCollegeApplicationPipeline } from "@/modules/placements/college-application-stage-service";
 import { CollegeApplicationPipelineControls } from "@/components/placements/college-application-pipeline-controls";
@@ -96,19 +97,14 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
       <p role="status" className="rounded border border-border bg-surface p-5 text-sm">
         Application stage actions are awaiting migration registration. You can still review the scoped applicant register.
       </p>
-      <div className="overflow-x-auto rounded-xl border border-border bg-surface">
-       <table className="min-w-full text-left text-sm">
-        <thead><tr className="border-b border-border bg-muted"><th className="p-3">Student</th><th className="p-3">Roll</th><th className="p-3">Role</th><th className="p-3">Application</th><th className="p-3">Screening</th></tr></thead>
-        <tbody>{data.items.map(row=><tr key={row.id} className="border-b border-border">
-         <td className="p-3">{row.name??"Unnamed learner"}</td>
-         <td className="p-3">{row.rollNumber??"Not recorded"}</td>
-         <td className="p-3">{row.roleTitle}</td>
-         <td className="p-3">{row.status}</td>
-         <td className="p-3">{row.screening??"Not recorded"}</td>
-        </tr>)}</tbody>
-       </table>
-      </div>
-      {!data.items.length?<p className="text-sm text-body">No applications match these filters.</p>:null}
+      <DataTable<(typeof data.items)[number]> rows={data.items} getRowKey={row=>row.id}
+       caption="Drive applications" columns={[
+        {key:"student",header:"Student",mobilePriority:"primary",cell:row=>row.name??"Unnamed learner"},
+        {key:"roll",header:"Roll",mobilePriority:"secondary",cell:row=>row.rollNumber??"Not recorded"},
+        {key:"role",header:"Role",mobilePriority:"secondary",cell:row=>row.roleTitle},
+        {key:"application",header:"Application",mobilePriority:"secondary",cell:row=>row.status},
+        {key:"screening",header:"Screening",mobilePriority:"secondary",cell:row=>row.screening??"Not recorded"},
+       ]} empty={<p role="status" className="text-sm text-body">No applications match these filters.</p>}/>
      </section>:
      <CollegeApplicationPipelineControls jobId={jobId} rows={data.items} total={data.total} query={query} basePath="/admin/placements"/>}
     <nav aria-label="Application pagination" className="flex justify-between gap-3 text-sm">
