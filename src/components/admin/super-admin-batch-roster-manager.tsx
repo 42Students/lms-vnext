@@ -1,5 +1,5 @@
 "use client";
-import {useMemo,useState} from "react";
+import {useMemo,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
@@ -12,12 +12,15 @@ export function SuperAdminBatchRosterManager({students,classes}:{students:readon
  const router=useRouter(),[search,setSearch]=useState(""),[source,setSource]=useState("ALL");
  const [moving,setMoving]=useState<string|null>(null),[destinations,setDestinations]=useState<Record<string,string>>({});
  const [pendingRow,setPendingRow]=useState<Student|null>(null);
+ // A synchronous lock guards against duplicate confirmation clicks before React rerenders.
+ const pendingRef=useRef(false);
  const [error,setError]=useState<string|null>(null),[notice,setNotice]=useState<string|null>(null);
  const options=classes.filter(c=>c.status==="ACTIVE");
  const found=useMemo(()=>students.filter(student=>(source==="ALL"||student.classId===source||(source==="UNASSIGNED"&&!student.classId))&&
   [student.name,student.roll,student.email].some(val=>(val??"").toLowerCase().includes(search.toLowerCase().trim()))),[students,search,source]);
  const labels=new Map(classes.map(c=>[c.id,c.name]));
  async function assign(row:Student) {
+  if(pendingRef.current)return;
   const id=destinations[row.learnerEnrollmentId];
   if(!id||id===row.classId)return;
   const target=classes.find(c=>c.id===id);
@@ -25,6 +28,7 @@ export function SuperAdminBatchRosterManager({students,classes}:{students:readon
   if(current&&target&&current.academicPeriodId!==target.academicPeriodId){setError("Use Batch Promotion to move a learner to another academic period.");return;}
   if(!target||target.status!=="ACTIVE"){setError("Choose an active destination class.");return;}
   if(target.capacity!==null&&target.learnerCount>=target.capacity){setError("Destination class is full.");return;}
+  pendingRef.current=true;
   setMoving(row.learnerEnrollmentId);setError(null);setNotice(null);
   try{
    const response=await fetch("/api/academics/section-enrollments",{
@@ -32,10 +36,10 @@ export function SuperAdminBatchRosterManager({students,classes}:{students:readon
     body:JSON.stringify({learnerEnrollmentId:row.learnerEnrollmentId,sectionId:id}),
    });
    const json=await response.json().catch(()=>null);
-   if(!response.ok)throw new Error(json?.error==="SECTION_CAPACITY_REACHED"?"Destination class is full.":json?.error??"Unable to move student.");
+   if(!response.ok)throw new Error(json?.error==="SECTION_CAPACITY_REACHED"?"Destination class is full.":"Unable to move student. Check your access and retry.");
    setPendingRow(null);setNotice("Class assignment saved. The active cohort roster will refresh.");router.refresh();
   }catch(error){setError(error instanceof Error?error.message:"Class move failed.");}
-  finally{setMoving(null);}
+  finally{pendingRef.current=false;setMoving(null);}
  }
  return <section className="space-y-4 rounded-xl border border-border bg-surface p-4" aria-label="Batch student roster">
   <div className="grid gap-3 sm:grid-cols-2">
