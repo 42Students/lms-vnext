@@ -25,6 +25,8 @@ import {
 } from "./company-drive-facts-policy";
 import { deriveTpoRecruiterLeadStage } from "./tpo-recruiter-lead-policy";
 import { requirePlacementManageScope } from "./scope";
+import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
+import {AuthorizationError} from "@/modules/permissions/policy";
 import { tpoCrmCollegeIdSchema } from "./tpo-crm-validation";
 import {listCompanyShareHistory} from "./company-share/company-history-service";
 import {getCompanyDriveCounts} from "./tpo-company-drive-counts-service";
@@ -117,6 +119,8 @@ async function loadCompanySourceRows(
 ) {
   const collegeId = tpoCrmCollegeIdSchema.parse(rawCollegeId);
   await requirePlacementManageScope(context, collegeId);
+  const liveCollegeId=await requireTpoBatchActor(context);
+  if(liveCollegeId!==collegeId)throw new AuthorizationError("placements.manage");
   const db = getDb();
 
   const [leads, jobs] = await Promise.all([
