@@ -27,7 +27,8 @@ export function resolveRecruiterCompanyScope(
   context: RequestContext,
   requestedCollegeId?: string | null,
 ): RecruiterCompanyScope {
-  if (!hasActiveRecruiter(context) || !context.recruiter) {
+  if (!hasActiveRecruiter(context) || !context.recruiter ||
+      context.recruiter.userId !== context.user.id) {
     throw new AuthorizationError("placements.recruiter.read");
   }
   const choices = context.recruiter.grants;
