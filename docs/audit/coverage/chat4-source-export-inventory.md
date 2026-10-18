@@ -85,3 +85,17 @@ Source-scan inventory of the assigned module directories; **PENDING is not verif
 | `src/modules/academics/college-hall-availability-model.ts` | `collegeHallAvailabilitySchema`, `istWindow`, `HallScheduledRow`, `collegeHallAvailabilityProjection` | PENDING |
 | `src/modules/academics/college-hall-availability-service.ts` | `CollegeHallAvailabilityNotFoundError`, `getCollegeHallAvailability` | PENDING |
 | `src/modules/academics/college-hall-booking-model.ts` | `collegeHallBookingSchema`, `hallBookingWindow`, `hallCanFitClass`, `hallFacultyIsEligible` | PENDING |
+| `src/modules/academics/college-hall-booking-service.ts` | `CollegeHallBookingError`, `createCollegeHallBooking` | PENDING |
+| `src/modules/academics/college-hall-cancel-model.ts` | `collegeHallCancelSchema`, `hallCancellationPrompt` | PENDING |
+| `src/modules/academics/college-hall-cancel-service.ts` | `CollegeHallCancelError`, `cancelCollegeHallBooking` | PENDING |
+| `src/modules/academics/college-lecture-hall-directory-model.ts` | `COLLEGE_LECTURE_HALL_PAGE_SIZE`, `collegeLectureHallFiltersBaseSchema`, `withCollegeLectureHallCapacityCheck`, `collegeLectureHallFiltersSchema`, `CollegeLectureHallFilters`, `parseCollegeLectureHallSearchParams`, `collegeLectureHallHref`, `collegeLectureHallTotalPages`, `hasCollegeLectureHallFilters` | PENDING |
+| `src/modules/academics/college-lecture-halls-export-model.ts` | `LECTURE_HALLS_EXPORT_CAP`, `lectureHallsCsvSchema`, `exportParams`, `lectureHallsCsvHref`, `renderLectureHallsCsv`, `renderSuperAdminLectureHallsCsv` | PENDING |
+| `src/modules/academics/college-lecture-halls-export-service.ts` | `exportCollegeLectureHalls` | PENDING |
+| `src/modules/academics/college-mapping-export-model.ts` | `OFFERING_MAPPING_EXPORT_CAP`, `offeringMappingCsvSchema`, `exportParams`, `offeringMappingCsvHref`, `renderOfferingMappingCsv` | PENDING |
+| `src/modules/academics/college-mapping-export-service.ts` | `exportCollegeOfferingMappings` | PENDING |
+| `src/modules/academics/college-mapping-model.ts` | `COLLEGE_MAPPING_PAGE_SIZE`, `semesterCourseQuerySchema`, `facultyAssignmentQuerySchema`, `SemesterCourseQuery`, `FacultyAssignmentQuery`, `facultyAssignmentState`, `mappingPageCount`, `collegeMappingHref` | PENDING |
+| `src/modules/academics/college-mapping-service.ts` | `listCollegeSemesterCourseMappings`, `listCollegeFacultyAssignments` | PENDING |
+| `src/modules/academics/college-period-lifecycle-model.ts` | `collegePeriodLifecycleSchema`, `CollegePeriodLifecycleAction`, `PeriodLifecycleGuardCounts`, `periodLifecycleBlocker` | PENDING |
+| `src/modules/academics/college-period-lifecycle-service.ts` | `CollegePeriodLifecycleError`, `changeCollegePeriodLifecycle` | PENDING |
+| `src/modules/academics/college-program-mutation-model.ts` | `createCollegeProgramSchema`, `updateCollegeProgramSchema`, `archiveCollegeProgramSchema`, `collegeProgramIdSchema`, `restoreCollegeProgramSchema`, `hasUnsavedCollegeProgramEdit`, `canReduceProgramDuration` | PENDING |
+| `src/modules/academics/college-program-mutation-service.ts` | `CollegeProgramMutationErrorCode`, `CollegeProgramMutationError`, `createCollegeProgram`, `updateCollegeProgram`, `archiveCollegeProgram`, `restoreCollegeProgram`, `listArchivedCollegePrograms` | PENDING |
