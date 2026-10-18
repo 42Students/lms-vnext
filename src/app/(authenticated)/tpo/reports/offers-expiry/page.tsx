@@ -33,7 +33,7 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
           CSV export is unavailable until the DB09 verification gate is enabled.
         </p>
       ) : null}
-      <Link href="/tpo/reports" className="text-sm font-semibold text-primary-text hover:underline">
+      <Link href="/tpo/reports" className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
         ← Reports
       </Link>
       <form action="/tpo/reports/offers-expiry" method="get"
@@ -72,12 +72,12 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
                   <p className="mt-1 text-sm text-body">
                     {row.jobTitle} · {row.candidateName ?? "Student name not recorded"}
                   </p>
-                  <p className="mt-1 text-sm font-semibold text-primary-text">
+                  <p className="mt-1 text-sm font-semibold text-[var(--lms-teal-deep)]">
                     Expires on {row.expiryDayIst} IST
                   </p>
                 </div>
                 <Link href={"/tpo/placements/jobs/" + row.jobId}
-                  className="inline-flex min-h-11 items-center justify-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text hover:underline">
+                  className="inline-flex min-h-11 items-center justify-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
                   Open drive
                 </Link>
               </div>
