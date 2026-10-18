@@ -46,7 +46,7 @@ describe("HR-TENANT-ID-04: deny forged empty employer, college and relationship 
    {companyId:company,relationshipId:"different",collegeId:college},
   ])expect(isExactRecruiterEmployerRow(employer,altered)).toBe(false);
   const forged={companyId:" ",grants:[
-   {...employer.grants[0],collegeId:" ",companyRelationshipId:" "},
+   {...employer.grants[0]!,collegeId:" ",companyRelationshipId:" "},
   ]};
   expect(isExactRecruiterEmployerRow(forged,{
    companyId:" ",collegeId:" ",relationshipId:" ",
