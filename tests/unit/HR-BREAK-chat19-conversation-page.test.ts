@@ -46,8 +46,8 @@ function textOf(node:ReactNode):string {
  if(Array.isArray(node))return node.map(textOf).join(" ");
  if(typeof node==="string"||typeof node==="number")return String(node);
  if(!isValidElement(node))return "";
- const p=node.props as {children?:ReactNode,title?:string,description?:string};
- return [p.title??"",p.description??"",textOf(p.children)].join(" ");
+ const p=node.props as {children?:ReactNode,title?:string,description?:string,action?:ReactNode};
+ return [p.title??"",p.description??"",textOf(p.children),textOf(p.action)].join(" ");
 }
 
 describe("HR-BREAK-chat19-conversation-page: actual async role, IDOR and recovery boundary",()=>{

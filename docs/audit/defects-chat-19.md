@@ -157,3 +157,15 @@ The published `docs/orchestrator/unit-failures-latest.md` still references CI `f
 | UX-college-source-coverage-02 | Page navigation already calls `getProjectAdminCollegeId` before scoped reads; exact required strings currently match. Reintroducing direct `membership.collegeId` as older tests demanded would weaken Super Admin acting-college security. | Retain route/source checks; additionally invoke the actual resolver with College Admin permission allowed and denied, and with recruiter grant but no college membership. Assert no recruiter grant privilege escalation. | `fb918d83` |
 
 No test was skipped, deleted, or made weaker. The two reported failures require a fresh orchestrator cloud run before their current pass status can be stated.
+
+## Rolling CI dd44f0f2 / new chat-19 unit failures
+
+The latest orchestrator unit report named seven additional failed assertions, all in three chat-19-authored tests. The reviewed application sources already produce the intended behavior; these failures were introduced by test helpers, not by weakening the underlying authorization or recovery flows.
+
+| Gap IDs | Failure count | Source/test diagnosis | Correction | Branch commit |
+|---|---:|---|---|---|
+| HR-BREAK-CALENDAR-01 | 1 | `placementCalendarWindow` provides ISO `YYYY-MM-DD` strings. The test accidentally used `/\\\\d/`, matching a literal backslash instead of a decimal digit. | Correct the regex to real `/\\d/` character classes, retaining bounded date checks and invalid input. | `63893f08` |
+| HR-BREAK-CONVO-01 | 1 | Page returns an `ErrorState` with a safe `action` React element linking to Today, but the test's recursive text walker ignored the `action` prop and falsely concluded the link was missing. | Traverse `action` as well as `children/title/description`. Retain forbidden-message redaction assertions. | `3a527874` |
+| HR-BREAK-JOB-02 | 5 | All malformed recruiter filters use a safe `ErrorState` with `action={<Link>Clear filters</Link>}`. The test text walker omitted `action`, incorrectly reporting five separate missing recovery actions. | Read `action` React content; leave all five invalid-filter and no-redirect assertions in place. | `00488860` |
+
+These are evidence-based test corrections against current source. The next cloud CI round determines confirmed pass/fail; no test was skipped or removed.
