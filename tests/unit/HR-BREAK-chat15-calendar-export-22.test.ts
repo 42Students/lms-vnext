@@ -3,7 +3,7 @@ import {buildHrCalendarCsv,HR_CALENDAR_EXPORT_CAP}
  from "@/modules/placements/hr-calendar-export-model";
 
 const first=new Date("2099-01-01T18:30:00.000Z");
-const later=new Date("2099-01-02T18:29:59.999Z");
+const later=new Date("2099-01-02T18:30:00.000Z");
 const events=[
  {kind:"ROUND",title:"=HYPERLINK(\"https://example.invalid\")",
   jobTitle:"+SUM(1,2)",startsAt:first,status:"SCHEDULED",jobId:"job-a"},
@@ -27,7 +27,11 @@ describe("HR-CALENDAR-EXPORT-22 authorized employer CSV and client safety",()=>{
    ["DEADLINES",1],["RESULTS_DUE",1]] as const){
    const subset=buildHrCalendarCsv(events,due,kind);
    expect(subset.exported).toBe(count);
-   expect(subset.csv).not.toContain('"' + (kind==="ROUNDS"?"INTERVIEW_SLOT":"=FORGED") + '"');
+   const kept={ROUNDS:"ROUND",SLOTS:"INTERVIEW_SLOT",
+    DEADLINES:"APPLICATION_DEADLINE",RESULTS_DUE:"RESULTS_DUE"}[kind];
+   expect(subset.csv).toContain('"' + kept + '"');
+   for(const excluded of ["ROUND","INTERVIEW_SLOT","APPLICATION_DEADLINE","RESULTS_DUE"])
+    if(excluded!==kept)expect(subset.csv).not.toContain('"' + excluded + '"');
   }
   const dueOnly=buildHrCalendarCsv(events,due,"RESULTS_DUE");
   expect(dueOnly.csv).toContain('"RESULTS_DUE"');
