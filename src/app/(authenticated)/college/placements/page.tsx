@@ -25,7 +25,7 @@ export default async function CollegePlacementsPage() {
         actions={
           <Link
             href="/college/placements/new"
-            className="inline-flex min-h-11 items-center justify-center rounded-md border border-primary bg-primary px-3 text-sm font-semibold text-on-primary motion-safe:transition-colors hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+            className="inline-flex min-h-11 items-center justify-center rounded-md border border-primary bg-primary px-3 text-sm font-semibold text-foreground motion-safe:transition-colors hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
           >
             New drive
           </Link>
