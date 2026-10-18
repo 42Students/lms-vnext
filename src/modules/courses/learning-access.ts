@@ -125,8 +125,24 @@ async function hasLearnerDeliveryAccess(
         sectionEnrollments.learnerEnrollmentId,
       ),
     )
+    .innerJoin(collegeMemberships,and(
+      eq(collegeMemberships.id,learnerProgramEnrollments.membershipId),
+      eq(collegeMemberships.id,context.membership.id),
+      eq(collegeMemberships.userId,context.user.id),
+      eq(collegeMemberships.collegeId,delivery.collegeId),
+      eq(collegeMemberships.status,"ACTIVE"),
+    ))
+    .innerJoin(users,and(
+      eq(users.id,collegeMemberships.userId),
+      eq(users.platformStatus,"ACTIVE"),
+    ))
+    .innerJoin(membershipRoles,and(
+      eq(membershipRoles.membershipId,collegeMemberships.id),
+      eq(membershipRoles.role,"LEARNER"),
+    ))
     .where(
       and(
+        eq(learnerProgramEnrollments.cohortId,delivery.cohortId),
         eq(
           learnerProgramEnrollments.membershipId,
           context.membership.id,
