@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import {PageHeader} from "@/components/ui/page-header";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { requirePermission } from "@/modules/permissions/policy";
 import { CollegeBrandingPreview } from "@/components/admin/college-branding-preview";
 import {CollegeBrandingForm} from "@/components/admin/college-branding-form";
 import {CollegeLogoUploader} from "@/components/admin/college-logo-uploader";
@@ -16,12 +17,14 @@ export default async function SuperAdminCollegeBrandingPage({
 }: {
   params: Promise<{ collegeId: string }>;
 }) {
+  const context=await getCurrentRequestContext();
+  requirePermission(context,"admin-scope.select");
   const { collegeId } = await params;
   if (!collegeIdSchema.safeParse(collegeId).success) {
     notFound();
   }
 
-  const context = await getCurrentRequestContext();
+
   const branding = await getSuperAdminCollegeBrandingPreview(context, collegeId);
   if (!branding) notFound();
   const [persisted,tenant]=await Promise.all([getCollegeBranding(context,collegeId),getSuperAdminTenantLifecycleDetail(context,collegeId)]);

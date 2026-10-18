@@ -38,10 +38,25 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
   collegeId:result.collegeId,q:"",page:1,unreadOnly:"false",sort:"LATEST",scope:"GENERAL",
  }):null;
  const generalThread=generalResult?.status==="READY" ? generalResult.items.find(row=>!row.jobId)??null:null;
- const generalHistory=generalThread?await readRecruiterThreadMessages(context,generalThread.id,1):null;
+ // The general-thread preview and decision bell are optional enrichments.
+ // A stale grant or downstream failure must never resurrect cached message text
+ // or make the rest of an authorized conversation directory disappear.
+ const generalHistoryResult=generalThread
+  ?await readRecruiterThreadMessages(context,generalThread.id,1)
+    .then(value=>({ok:true as const,value}))
+    .catch(()=>({ok:false as const}))
+  :null;
+ const generalHistory=generalHistoryResult?.ok?generalHistoryResult.value:null;
  const displayNow=new Date();
- const decisionNotices=result.status==="READY"
-  ? await listOwnRecruiterDecisionNotices(context,result.collegeId):[];
+ const decisionNoticeResult=result.status==="READY"
+  ?await listOwnRecruiterDecisionNotices(context,result.collegeId)
+    .then(value=>({ok:true as const,value}))
+    .catch(()=>({ok:false as const}))
+  :null;
+ const decisionNotices=decisionNoticeResult?.ok?decisionNoticeResult.value:[];
+ const visibleRows=generalHistoryResult && !generalHistoryResult.ok && generalThread
+  ?result.items.map(row=>row.id===generalThread.id?{...row,preview:null}:row)
+  :result.items;
  return <div className="min-w-0 max-w-full space-y-5">
   <RecruiterConversationLiveRefresh/>
   <PageHeader eyebrow="Recruiter · Messages" title="Messages"
@@ -54,6 +69,10 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
    {result.choices.map(g=><Link key={g.id} href={"/hr/conversations?collegeId="+g.collegeId}
     className="block rounded-md border border-border p-3 text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] min-h-11">{g.collegeName}</Link>)}
   </section>:<>
+   {decisionNoticeResult && !decisionNoticeResult.ok?
+     <p role="status" className="rounded-md border border-border bg-surface p-3 text-sm text-body">
+       Drive request decisions are temporarily unavailable. Conversations are still accessible; refresh to try again.
+     </p>:null}
    {decisionNotices.length>0?<section aria-label="Drive request decisions"
      className="rounded-xl border border-border bg-surface p-4">
     <h2 className="font-semibold text-foreground">Drive request decisions</h2>
@@ -79,9 +98,13 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     {generalThread?<details className="mt-3 rounded-lg border border-border p-3">
       <summary className="cursor-pointer text-sm font-semibold text-[var(--lms-teal-deep)]">Message the placement cell · General</summary>
       <p className="mt-2 text-sm text-body">Placement cell · General</p>
-      {generalThread.preview&&!generalHistory?<p className="mt-2 whitespace-pre-wrap text-sm text-body">
+      {generalThread.preview&&!generalHistory&&!generalHistoryResult?<p className="mt-2 whitespace-pre-wrap text-sm text-body">
         {generalThread.preview!.text}
       </p>:null}
+      {generalHistoryResult && !generalHistoryResult.ok?
+        <p role="status" className="mt-2 text-sm text-body">
+          General message history is unavailable right now. Refresh or contact the placement cell if access was removed.
+        </p>:null}
       {generalHistory?<ScrollCue axis="y" label="General placement-cell messages" className="mt-3" viewportClassName="max-h-72"><ol aria-label="General placement-cell messages" className="space-y-2">
         {[...generalHistory.messages].reverse().map(message=><li key={message.id}
           className="rounded-lg border border-border bg-surface-subtle p-3 text-sm">
@@ -91,7 +114,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
           <p className="whitespace-pre-wrap break-words text-body">{message.body}</p>
         </li>)}
       </ol></ScrollCue>:null}
-      <div className="mt-3"><RecruiterConversationReplyForm threadId={generalThread.id}/></div>
+      {generalHistoryResult?.ok?<div className="mt-3"><RecruiterConversationReplyForm threadId={generalThread.id}/></div>:null}
       <Link href={"/hr/conversations/"+generalThread.id}
         className="mt-3 inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Open full conversation</Link>
     </details>:null}
@@ -153,7 +176,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     </form>:null}
    <p className="text-sm text-body">Showing {result.first}–{result.last} of {result.total} conversations</p>
    {result.items.length?<ol className="space-y-3">
-    {result.items.map(row=><li key={row.id} className="rounded-xl border border-border bg-surface p-4">
+    {visibleRows.map(row=><li key={row.id} className="rounded-xl border border-border bg-surface p-4">
      <Link href={"/hr/conversations/"+row.id}
       className="block break-words font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] min-h-11">{row.jobId ? (context.recruiter?.companyName??"Company")+" · "+row.jobTitle : "General"}</Link>
      {row.unread>0?<span aria-label={row.unread+" unread messages"}

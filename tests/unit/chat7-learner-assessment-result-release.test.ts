@@ -38,7 +38,7 @@ const assignment=(gradePublished:boolean)=>({
 });
 const quiz=(status:"PUBLISHED"|"CLOSED",resultsPublished:boolean)=>({
  deliveryId,lessonId:"l1",lessonName:"Week 1",id:"q1",title:"Review quiz",
- description:null,dueAt:new Date(now+86400000),createdAt:new Date(now-86400000),
+ description:null,dueAt:new Date(now-1000),createdAt:new Date(now-86400000),
  maxAttempts:2,totalPoints:10,sequence:0,status,resultsPublished,
  attemptsUsed:1,firstSubmittedAt:new Date(now-3600000),
 });

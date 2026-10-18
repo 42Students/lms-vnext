@@ -36,3 +36,19 @@
 ## Uncovered hardening dimensions requiring DB/browser authority
 
 Full 14-category module matrix, 82 project API handlers, 1000+ task EXPLAIN/index checks, migration-up on realistic data, session-expiry role journeys, storage object generation/expiry, channel exactly-once under retries and device-level UX are **not certified** here. The above tests must be executed and independently reviewed before any release PASS.
+
+
+## Chat-6 Projects breaker extension — 18 October 2026
+
+| Source | Export / handler | Adversarial cases | Test evidence | Remaining integration obligation |
+|---|---|---|---|---|
+| `src/modules/projects/project-resource-file-service.ts` | `listProjectFiles` | PROJ-BREAK-file-08: archived/draft/mentor-only/orphaned resource links excluded for learners | `tests/unit/PROJ-BREAK-chat6-delivery-grade-notices.test.ts` | Database fixture covering file visibility after concurrent archive |
+| Same | `completeProjectFileUpload` | PROJ-BREAK-file-09: repeat completion when another request wins CAS; no duplicate SCAN_ATTESTED | same | PostgreSQL parallel requests, object-store WAIT/READY race and event-count assertion |
+| Same | `removeProjectFile` | PROJ-BREAK-file-10: duplicate soft delete returns DELETED, no second event/object delete | same | PostgreSQL parallel requests and storage outage |
+| `src/modules/projects/evaluation-service.ts` | `createProjectEvaluation` | PROJ-BREAK-grading-03/04: completed projects immutable, bounded integer rubric, duplicate criterion | same | Concurrent lock/regrade proof and persisted audit assertions |
+| `src/modules/projects/submission-service.ts` | `createProjectSubmissionDraft`, `updateProjectSubmissionDraft`, `submitProjectSubmission` | PROJ-BREAK-submissions-06: forged attachment IDs and unsafe URL schemes, scoped READY evidence | same | **Open:** stale draft writes have no server-enforced expectedUpdatedAt; end-to-end client/API protocol fix required |
+| `src/modules/projects/mentor-final-delivery-decision-model.ts` | `mentorFinalDeliveryCanReview` | PROJ-BREAK-state-04: only SUBMITTED and ACTIVE | same | Validate every role UI affordance against server rejection |
+| `src/modules/projects/project-notification-service.ts` | `notifyActiveProjectMembers` | PROJ-BREAK-notifications-01/02: active college recipient/role scoping and no PII in notice copy | same | Exactly-once retries and partial notification delivery fault injection |
+| `src/app/(authenticated)/college/projects/page.tsx` + `src/modules/projects/admin-college-scope.ts` | `CollegeProjectsPage`, `getProjectAdminCollegeId` | PROJ-BREAK-pages-02: central `can(projects.manage)` guard precedes snapshot access and rejects missing college | `tests/unit/PROJ-BREAK-chat6-role-journeys.test.ts` | Role/college database-backed impersonation denial |
+
+Tests described as source contracts must **not** be counted as PostgreSQL behavioural coverage or release PASS.
