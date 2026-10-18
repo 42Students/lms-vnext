@@ -16,7 +16,7 @@ function TpoGeneralRequestFacts({kind,payload}:{kind:string;payload:Record<strin
     <dd className="break-words font-medium">{item.value}</dd>
    </div>)}</dl>:null}
   {detail.proofUrl?<a href={detail.proofUrl} target="_blank" rel="noopener noreferrer"
-   className="inline-flex min-h-10 items-center text-primary-text underline">Review submitted proof link</a>:
+   className="inline-flex min-h-11 items-center text-primary-text underline">Review submitted proof link</a>:
    detail.requiresProof?<p role="alert" className="text-warning-text">No proof attached</p>:null}
  </div>;
 }
@@ -52,17 +52,17 @@ export function TpoGeneralRequestsPanel(){
  return <section aria-label="Other student requests" className="space-y-3 rounded-xl border border-border p-4">
   <h2 className="font-semibold">Other student requests · {pendingRows.length} waiting</h2>
   <p className="text-sm">Off-campus offers, registration changes, attendance disputes, profile corrections, and requests after placement. Approval is enabled only where the database effect is fully supported; the others require a separate specialist workflow.</p>
-  <button type="button" onClick={()=>void load()} className="min-h-10 rounded border border-border px-3 text-sm">Refresh other requests</button>
+  <button type="button" onClick={()=>void load()} className="min-h-11 rounded border border-border px-3 text-sm">Refresh other requests</button>
   {error?<p role="alert" className="text-error">{error}</p>:null}
   {message?<p role="status">{message}</p>:null}
   {!rows.length?<p role="status" className="text-sm">No other requests to review.</p>:
-   <ul className="max-h-[700px] space-y-2 overflow-y-auto">{rows.map(row=><li key={row.id} className="rounded border border-border p-3 text-sm">
+   <ul tabIndex={0} aria-label="Student requests, scroll for more" className="max-h-[700px] min-h-0 space-y-2 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_90%,transparent_100%)]">{rows.map(row=><li key={row.id} className="rounded border border-border p-3 text-sm">
     <h3 className="font-semibold">{row.studentName??"Student"} · {row.kind.replaceAll("_"," ").toLowerCase()}</h3>
     <p className="break-words">{row.reason}</p>
     <p className="text-xs">{row.status.replaceAll("_"," ")}</p>
     <TpoGeneralRequestFacts kind={row.kind} payload={row.payload}/>
     {row.decisionNote?<p>Decision: {row.decisionNote}</p>:null}
-    {row.status==="PENDING"?<button type="button" disabled={pending} className="mt-2 min-h-10 rounded border border-border px-3 font-semibold text-primary-text"
+    {row.status==="PENDING"?<button type="button" disabled={pending} className="mt-2 min-h-11 rounded border border-border px-3 font-semibold text-primary-text"
       onClick={()=>{setSelection(row);setNote("");setAction("REJECT");}}>Review request</button>:null}
    </li>)}</ul>}
   <Dialog open={selection!==null} onOpenChange={open=>{if(!open&&!pending)setSelection(null);}}

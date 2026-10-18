@@ -84,7 +84,7 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
  return <section aria-label="Bulk request decisions" className="space-y-3 rounded-xl border border-border bg-surface p-4">
   <h2 className="font-semibold">Act on selected requests</h2>
   <p className="text-xs text-muted-foreground">Choose up to {MAX_BULK_REQUESTS} waiting requests of one kind on this page. Each decision is rechecked and saved separately; a failure never approves the next request.</p>
-  <div className="max-h-64 space-y-1 overflow-y-auto">
+  <div tabIndex={0} role="group" aria-label="Waiting requests, scroll for more" className="max-h-64 min-h-0 space-y-1 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
    {rows.map(row=><label key={row.id} className="flex min-h-11 items-center gap-2 rounded border border-border p-2 text-sm">
     <input type="checkbox" checked={selected.includes(row.id)}
      disabled={pending||(!selected.includes(row.id)&&(selected.length>=MAX_BULK_REQUESTS||
@@ -119,7 +119,7 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
      {pending?"Saving decisions…":"Confirm decisions"}
     </Button></>}>
    <p className="text-sm">Review {chosen.length} {chosenKind?.replaceAll("_"," ").toLowerCase()} request(s) one by one.</p>
-   <ul className="max-h-40 list-disc overflow-auto pl-5 text-sm">
+   <ul tabIndex={0} aria-label="Selected request names, scroll for more" className="max-h-40 min-h-0 list-disc overflow-auto overscroll-contain pl-5 text-sm [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
     {chosen.map(row=><li key={row.id}>{row.studentName}</li>)}
    </ul>
    <label className="mt-3 flex items-start gap-2 text-sm">
@@ -135,7 +135,7 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
    </li>)}</ul>
    {outcomes.some(row=>row.status==="failed")?<div className="space-y-2">
     <p role="alert">Some requests were not decided. Recheck them before retrying.</p>
-    <button type="button" onClick={()=>void copyFailed()} className="min-h-10 rounded border border-border px-3 font-semibold text-primary-text">Copy failed</button>
+    <button type="button" onClick={()=>void copyFailed()} className="min-h-11 rounded border border-border px-3 font-semibold text-primary-text">Copy failed</button>
    </div>:null}
   </div>:null}
   {error?<p role="alert" className="text-error">{error}</p>:null}
