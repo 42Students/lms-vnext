@@ -94,7 +94,7 @@ export async function ProjectAdminAtRiskPage({
       <ProjectAdminFilters query={query} includeRiskSort />
 
       {!result.items.length ? (
-        <section className="rounded-xl border border-border bg-surface p-6 text-sm text-muted-foreground">
+        <section className="border-b border-border py-6 text-sm text-muted-foreground">
           No at-risk project workspaces match these filters.
         </section>
       ) : (
