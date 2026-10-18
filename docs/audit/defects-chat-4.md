@@ -85,3 +85,6 @@ Validation: source review and committed behavioural/source-guard tests; cloud te
 
 
 | COL-classes-tenant-05 | S1 least privilege | Section Operations previously accepted broad `academics.read`, granted to Faculty/Learner roles, while composing full college learner/faculty pickers and administrative schedule/assignment data. Restricts this combined operations workspace to `academics.manage` (College Admin), leaving role-specific learner/faculty views to dedicated scoped services. | `chat4-college-section-workspace-tenant.test.ts` | Full route journey CI pending |
+
+
+| SA-tenants-lifecycle-ACTOR-01 | S1 tenant isolation | Tenant directory, detail and CSV export trusted a previously captured Super Admin role at service preflight, so disabling the user or revoking the system role before the actual read could still expose tenant names and organization data. Added transaction-local `assertPersistedPlatformPermission` before each SELECT with SHARE locks held through the scoped read. Organization filter choices are loaded before the transaction to avoid deadlock on one-connection pools; the persisted denial still prevents returning them. | `chat4-superadmin-tenant-lifecycle-actor.test.ts` | PostgreSQL role race and long-running connection verification pending |

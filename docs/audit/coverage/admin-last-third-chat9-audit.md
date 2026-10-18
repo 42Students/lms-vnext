@@ -12,7 +12,7 @@ Scope: 37 routes (positions 75–111) of `docs/orchestrator/ui-ux/pages-admin.md
 | `/admin/programs` | `UX-admin-programs-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/projects` | `UX-admin-projects-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/projects/[projectId]` | `UX-admin-projects-project-id-01` | **OPEN** — no live/browser or full service-role journey confirmation |
-| `/admin/projects/[projectId]/[section]` | `UX-admin-projects-project-id-section-01` | **OPEN** — no live/browser or full service-role journey confirmation |
+| `/admin/projects/[projectId]/[section]` | `UX-admin-projects-project-id-section-01`, `PROJ-BREAK-ux-38/39`, `PROJ-BREAK-idor-55` | Unknown sections 404 before service calls; unauthorized tenant fails before workspace fetch; breadcrumbs whitelist referrals/reasons and encode query navigation. `tests/unit/PROJ-BREAK-chat9-admin-project-sections.test.tsx`. Live browser/role matrix still OPEN. |
 | `/admin/projects/[projectId]/readiness` | `UX-admin-projects-project-id-readiness-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/projects/at-risk` | `UX-admin-projects-at-risk-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/projects/audit` | `UX-admin-projects-audit-01` + `PROJ-BREAK-ux-22..26` + `PROJ-BREAK-idor-24..26` | Invalid URL recovery, global Super Admin-only template activity, selected-scope isolation, actual remaining-page counter. **OPEN** — no live/browser or full service-role journey confirmation |
