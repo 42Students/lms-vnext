@@ -1,3 +1,5 @@
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -27,10 +29,10 @@ export default async function TpoRoundCalendarPage({searchParams}:{
       description="Schedule an existing pending drive round, reschedule an active one or cancel it. All times are IST." />
     <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border p-4">
      <label className="grid min-w-56 flex-1 gap-1 text-sm font-semibold">Find rounds
-      <input type="search" name="q" maxLength={100} defaultValue={result.q}
+      <Input type="search" name="q" maxLength={100} defaultValue={result.q}
        placeholder="Company, drive or round name" className="min-h-11 rounded border border-border px-3"/>
      </label>
-     <button type="submit" className="min-h-11 rounded bg-primary px-4 font-semibold text-foreground">Find</button>
+     <Button type="submit" className="min-h-11 rounded bg-primary px-4 font-semibold text-foreground">Find</Button>
      <Link href="/tpo/calendar/rounds" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Clear</Link>
     </form>
     <p role="status" className="text-sm">Page {result.page}: {result.rows.length} rounds{result.limited?" · more available":""}</p>
