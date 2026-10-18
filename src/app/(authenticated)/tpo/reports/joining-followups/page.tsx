@@ -30,7 +30,7 @@ export default async function TpoJoiningFollowupsPage({searchParams}:{searchPara
    actions={report.season?<a href={"/api/placements/reports/joining-followups?"+params.toString()}
     className="inline-flex min-h-11 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">
     Export CSV</a>:null}/>
-  <Link href="/tpo/reports/joining-status" className="text-sm font-semibold text-primary-text hover:underline">← Joining outcomes</Link>
+  <Link href="/tpo/reports/joining-status" className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">← Joining outcomes</Link>
   <form action="/tpo/reports/joining-followups" method="get"
    className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
     <label className="min-w-40 flex-1 text-sm font-semibold text-body">Season
@@ -70,7 +70,7 @@ export default async function TpoJoiningFollowupsPage({searchParams}:{searchPara
        <p className="mt-1 text-sm text-body">{o.candidateName??"Name not recorded"} · {o.jobTitle}</p>
        <p className="mt-1 text-sm text-body">{o.joiningStatus??"PENDING"} · Joining date: {o.scheduledDate??"Not recorded"}</p>
        <Link href={"/tpo/placements/jobs/"+o.jobId+"/joining"}
-         className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
+         className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
          Open drive joining records →</Link>
      </article>)}</section>}
   </>}
