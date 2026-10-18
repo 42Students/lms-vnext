@@ -70,8 +70,10 @@ describe("PROJ-BREAK-submissions-10 concurrent learner draft revisions",()=>{
     const learner=source.slice(source.indexOf("export function LearnerFinalDeliveryControl"),
       source.indexOf("export function FinalReviewControl"));
     expect(learner).toContain("const lastSavedUpdatedAt=useRef(");
-    expect(learner).toContain("trackedDraftId.current!==draft.id");
-    expect(learner).toContain("lastSavedUpdatedAt.current=new Date(draft.updatedAt).toISOString()");
+    // Background router refresh must NOT adopt a new teammate's timestamp
+    // as if this tab had saved it: only a successful HTTP response may advance.
+    expect(learner).not.toContain("trackedDraftId.current");
+    expect(learner).not.toContain("lastSavedUpdatedAt.current=new Date(draft.updatedAt).toISOString()");
     expect(learner).toContain("expectedUpdatedAt:lastSavedUpdatedAt.current");
     expect(learner).toContain("lastSavedUpdatedAt.current=acknowledgedDraftRevision(result)");
     expect(learner).toContain("Could not confirm the draft revision. Refresh before editing again.");
