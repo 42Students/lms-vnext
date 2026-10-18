@@ -44,4 +44,23 @@ describe("HR-ROUND-ARCHIVE-26 archived drives cannot expose editable rounds",()=
    {action:"REMOVE",roundId:round,expectedUpdatedAt:"2099-01-01T00:00:00.000Z",kind:"INTERVIEW"},
   ])expect(hrRoundFormSchema.safeParse(input).success).toBe(false);
  });
+ it("HR-ROUND-TENANT-46 both job round operations reject disabled colleges and employers before round data",()=>{
+  const source=readFileSync("src/modules/placements/hr-round-editor-service.ts","utf8");
+  const edit=source.slice(source.indexOf("export async function editHrJobRound"),
+   source.indexOf("export async function listHrRoundEditorRows"));
+  const list=source.slice(source.indexOf("export async function listHrRoundEditorRows"));
+  for(const body of [edit,list]){
+   for(const required of [
+    'eq(placementCompanies.id,placementCompanyRelationships.companyId)',
+    'eq(placementCompanies.status,"ACTIVE")',
+    'eq(colleges.status,"ACTIVE")',
+    'eq(placementRecruiterCollegeGrants.status,"ACTIVE")',
+    'eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED")',
+    'gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`)',
+   ])expect(body).toContain(required);
+   expect(body).toContain('eq(users.id,context.user.id)');
+   expect(body).toContain('eq(users.platformStatus,"ACTIVE")');
+  }
+ });
+
 });

@@ -1,5 +1,6 @@
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
+import {issueTpoCampaignEmailRecipientKey,matchesTpoCampaignEmailRecipientKey} from "@/modules/messaging/tpo-campaign-recipient-token";
 import {
  campaignRecipientStillMatchesSnapshot,
  type CampaignRecipientFact,
@@ -16,6 +17,27 @@ describe("chat-16 TPO campaign live recipient recheck",()=>{
   expect(campaignRecipientStillMatchesSnapshot(ready,{...ready,unsubscribedAt:now})).toBe(false);
   expect(campaignRecipientStillMatchesSnapshot(ready,{...ready,inviteBouncedAt:now})).toBe(false);
   expect(campaignRecipientStillMatchesSnapshot(ready,{...ready,manualStage:"NOT_NOW"})).toBe(false);
+ });
+ it("TPO-campaigns-public-12 binds every queued send to its original opaque recipient email HMAC",()=>{
+  const secret="s".repeat(64);
+  const key=issueTpoCampaignEmailRecipientKey("  Placement@Example.ORG  ",secret);
+  expect(key).toMatch(/^[0-9a-f]{64}$/);
+  expect(matchesTpoCampaignEmailRecipientKey(key,"placement@example.org",secret)).toBe(true);
+  expect(matchesTpoCampaignEmailRecipientKey(key,"new-contact@example.org",secret)).toBe(false);
+  expect(matchesTpoCampaignEmailRecipientKey(key,"placement@example.org","x".repeat(64))).toBe(false);
+  expect(matchesTpoCampaignEmailRecipientKey("not-a-key","placement@example.org",secret)).toBe(false);
+  expect(matchesTpoCampaignEmailRecipientKey(key,null,secret)).toBe(false);
+  expect(()=>issueTpoCampaignEmailRecipientKey("placement@example.org","short")).toThrow();
+ });
+ it("TPO-campaigns-public-12 validates stored draft HMAC before claiming a recipient for provider delivery",()=>{
+  const source=readFileSync("src/modules/messaging/tpo-campaign-dispatch-service.ts","utf8");
+  const draftKey=source.indexOf("matchesTpoCampaignEmailRecipientKey(row.recipientKey,row.email,config.key)");
+  const claim=source.indexOf("const [claimedRecipient]=await db.update(");
+  const send=source.indexOf("const result=await outbound.send(");
+  expect(draftKey).toBeGreaterThan(-1);
+  expect(claim).toBeGreaterThan(draftKey);
+  expect(send).toBeGreaterThan(claim);
+  expect(source).toContain("recipientKey:placementTpoEmailCampaignRecipients.recipientKey");
  });
  it("TPO-campaigns-public-12 never sends to the old address after a live contact change",()=>{
   expect(campaignRecipientStillMatchesSnapshot(ready,{...ready,emailNorm:"different@example.org"})).toBe(false);

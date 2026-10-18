@@ -19,7 +19,7 @@ const row={id:"batch-1",purpose:"TPO email: welcome",total:5,queued:1,sent:3,fai
 beforeEach(()=>{
  vi.clearAllMocks();
  vi.mocked(requirePlacementManageScope).mockResolvedValue({id:"college-u",organizationId:"org-u"} as Awaited<ReturnType<typeof requirePlacementManageScope>>);
- vi.mocked(assertPersistedPlatformPermission).mockResolvedValue(undefined);
+ vi.mocked(assertPersistedPlatformPermission).mockResolvedValue(officer);
 });
 
 describe("chat-16 TPO aggregate outbound receipt authorization and privacy",()=>{

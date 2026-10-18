@@ -28,8 +28,12 @@ describe("Super Admin placement interview operations",()=>{
  });
  it("GR-39 long names remain inside a horizontally scrollable table",()=>{
   const view=read("src/components/admin/super-admin-interview-operations.tsx");
-  expect(view).toContain("overflow-x-auto");
-  expect(view).toContain('min-w-[55rem]');
+  expect(view).toContain("<DataTable<SuperAdminCalendarRound>");
+  const table=read("src/components/ui/data-table.tsx");
+  const cue=read("src/components/ui/scroll-cue.tsx");
+  expect(table).toContain('<ScrollCue axis="x"');
+  expect(cue).toContain("overflow-x-auto overscroll-x-contain");
+  expect(cue).toContain("data-scroll-end");
  });
  it("GR-71 a failed filter has a filtered-empty state and clear action",()=>{
   const view=read("src/components/admin/super-admin-interview-operations.tsx");

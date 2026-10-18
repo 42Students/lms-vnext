@@ -6,13 +6,22 @@ import {
 
 const base:TpoStudentRow={
  membershipId:"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+ displayName:"Example Learner",email:null,rollNumber:null,registrationNumber:null,
  branchId:"bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
- branchName:"Computer",registrationOpen:false,registeredForPlacements:false,
+ branchName:"Computer",programId:"cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+ programName:"B.Tech",cohortId:"dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+ cohortName:"2099",classIds:[],registrationChoice:null,
+ registrationOpen:false,registeredForPlacements:false,
  participationStatus:"ELIGIBLE",debarred:false,
  verification:{status:"VERIFIED",waitingSections:[],verifiedSections:[]},
+ preferencesPresent:false,cgpa:null,activeBacklogs:0,pastBacklogs:0,
+ applicationCount:0,activeApplicationCount:0,offerCount:0,
+ acceptedOfferCount:0,verifiedExternalOfferCount:0,
  offersAwaitingAnswer:0,ambiguousSection:false,
+ journeyState:"NOT_REGISTERED",bestSoFar:"Not applied",
+ maximumAppliedRoundSequence:null,
  readinessSignal:"PARTICIPATION_ELIGIBLE_EVIDENCE_PRESENT",placed:false,
-} as TpoStudentRow;
+};
 
 describe("TPO-students-18/23 legacy stage flags are orthogonal to journey state",()=>{
  it("covers all five legacy-stage filters, including explicitly false flags",()=>{

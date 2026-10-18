@@ -10,8 +10,7 @@ export async function GET(request:Request){
   const result=await getSuperAdminStudentCourseProgress(await getCurrentRequestContext(),{offeringId:id});
   const rows=result.rows.map(row=>[row.studentName,
    row.videos,row.assignments,row.quizzes,
-   studentCourseCompletion({...row,totalVideos:result.totals.videos,
-    totalAssignments:result.totals.assignments,totalQuizzes:result.totals.quizzes})] as const);
+   studentCourseCompletion(row)] as const);
   const csv=placementReportCsv(["Student","Videos","Assignments","Quizzes","Progress (%)"],rows);
   return new Response("\uFEFF"+csv,{
    headers:{"Content-Type":"text/csv; charset=utf-8",
