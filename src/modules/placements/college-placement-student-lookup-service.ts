@@ -1,5 +1,5 @@
 import "server-only";
-import {and,desc,eq,ilike,or} from "drizzle-orm";
+import {and,desc,eq,ilike,inArray,or} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {collegeMemberships,learnerProfiles,membershipRoles,users,
@@ -23,7 +23,26 @@ export async function lookupCollegeStudentPlacement(ctx:RequestContext,raw:unkno
    eq(learnerProfiles.rollNumber,q),eq(users.email,q))))
  .limit(STUDENT_LOOKUP_CAP+1);
  if(!people.length)return{students:[],truncated:false};
- const result=await Promise.all(capStudentLookupRows(people,STUDENT_LOOKUP_CAP).items.map(async person=>{
+ const visiblePeople=capStudentLookupRows(people,STUDENT_LOOKUP_CAP).items;
+ // Joining can have happened on an older drive beyond the 100-row detail cap.
+ // Query that fact separately for all visible learner memberships, scoped to
+ // the selected college's jobs AND employer relationships.
+ const joinedRows=await db.selectDistinct({membershipId:placementApplications.membershipId})
+   .from(placementApplications)
+   .innerJoin(placementJobs,and(eq(placementJobs.id,placementApplications.jobId),
+    eq(placementJobs.collegeId,collegeId)))
+   .innerJoin(placementCompanyRelationships,and(
+    eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
+    eq(placementCompanyRelationships.collegeId,collegeId)))
+   .innerJoin(placementOffers,and(
+    eq(placementOffers.applicationId,placementApplications.id),
+    eq(placementOffers.status,"ACCEPTED")))
+   .innerJoin(placementJoiningOutcomes,and(
+    eq(placementJoiningOutcomes.offerId,placementOffers.id),
+    eq(placementJoiningOutcomes.status,"JOINED")))
+   .where(inArray(placementApplications.membershipId,visiblePeople.map(person=>person.membershipId)));
+ const joinedMemberships=new Set(joinedRows.map(row=>row.membershipId));
+ const result=await Promise.all(visiblePeople.map(async person=>{
   const rows=await db.select({jobId:placementJobs.id,job:placementJobs.title,
    company:placementCompanies.name,
    submittedAt:placementApplications.submittedAt,
@@ -46,7 +65,7 @@ export async function lookupCollegeStudentPlacement(ctx:RequestContext,raw:unkno
    .orderBy(desc(placementApplications.submittedAt),desc(placementApplications.id),desc(placementOffers.id)).limit(STUDENT_LOOKUP_APPLICATION_CAP+1);
   const applications=capStudentLookupRows(rows,STUDENT_LOOKUP_APPLICATION_CAP);
   return{...person,applications:applications.items,
-   placed:applications.items.some(row=>row.offerStatus==="ACCEPTED"&&row.joining==="JOINED"),
+   placed:joinedMemberships.has(person.membershipId),
    truncated:applications.truncated};
  }));
  return{students:result,truncated:people.length>STUDENT_LOOKUP_CAP};
