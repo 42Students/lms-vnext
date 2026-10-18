@@ -2,38 +2,38 @@ import {describe,it,expect} from "vitest";
 import {readFileSync} from "node:fs";
 const source=(path:string)=>readFileSync(path,"utf8");
 describe("UX admin scroll and motion after invisible scrollbar owner decision",()=>{
- it("UX-admin-scroll-motion-01 desktop DataTable shows horizontal cue and keyboard region (src/components/ui/data-table.tsx)",()=>{
+ it("UX-admin-scroll-motion-01 DataTable delegates adaptive horizontal fades and keyboard focus to ScrollCue (src/components/ui/data-table.tsx)",()=>{
   const code=source("src/components/ui/data-table.tsx");
-  expect(code).toContain("Scroll sideways for more columns");
-  expect(code).toContain("sm:overscroll-x-contain");
-  expect(code).toContain("role=\"region\"");
-  expect(code).toContain("tabIndex={0}");
-  expect(code).toContain("[mask-image:linear-gradient");
+  expect(code).toContain("<ScrollCue axis=\"x\"");
+  expect(code).toContain("Scrollable table columns");
+  expect(code).toContain("sm:rounded-xl");
+  expect(code).toContain("<table");
+  expect(code).toContain("More details");
   expect(code).not.toContain("transition-all");
  });
- it("UX-admin-scroll-motion-02 native Dialog keeps one masked overflow body and fixed header footer (src/components/ui/dialog.tsx)",()=>{
+ it("UX-admin-scroll-motion-02 Dialog delegates one scrollable content pane and sticky header footer to ScrollCue (src/components/ui/dialog.tsx)",()=>{
   const code=source("src/components/ui/dialog.tsx");
-  expect(code).toContain("flex-1 overflow-y-auto overscroll-contain");
+  expect(code).toContain("<ScrollCue axis=\"y\"");
+  expect(code).toContain("dialog content");
   expect(code).toContain("overflow-hidden");
-  expect(code).toContain("[mask-image:linear-gradient");
   expect(code).toContain("env(safe-area-inset-bottom)");
   expect(code).toContain("availableHeight");
   expect(code).not.toContain("transition-all");
  });
- it("UX-admin-scroll-motion-03 native Drawer avoids nested scroll and scrolls within visual viewport (src/components/ui/drawer.tsx)",()=>{
+ it("UX-admin-scroll-motion-03 Drawer preserves one visual viewport scroller and focus return (src/components/ui/drawer.tsx)",()=>{
   const code=source("src/components/ui/drawer.tsx");
+  expect(code).toContain("<ScrollCue axis=\"y\"");
+  expect(code).toContain("drawer content");
   expect(code).toContain("flex h-full min-h-0 flex-col overflow-hidden");
-  expect(code).toContain("overflow-y-auto overscroll-contain");
-  expect(code).toContain("[mask-image:linear-gradient");
   expect(code).toContain("availableHeight");
   expect(code).toContain("env(safe-area-inset-bottom)");
   expect(code).not.toContain("transition-all");
  });
- it("UX-admin-scroll-motion-04 BottomSheet scrolls once inside safe-area constrained content (src/components/ui/bottom-sheet.tsx)",()=>{
+ it("UX-admin-scroll-motion-04 BottomSheet delegates focusable vertical scrolling to adaptive ScrollCue (src/components/ui/bottom-sheet.tsx)",()=>{
   const code=source("src/components/ui/bottom-sheet.tsx");
+  expect(code).toContain("<ScrollCue axis=\"y\"");
+  expect(code).toContain("sheet content");
   expect(code).toContain("overflow-hidden");
-  expect(code).toContain("overflow-y-auto overscroll-contain");
-  expect(code).toContain("[mask-image:linear-gradient");
   expect(code).toContain("availableHeight");
   expect(code).toContain("safe-area-inset-bottom");
   expect(code).not.toContain("transition-all");
@@ -164,6 +164,52 @@ describe("UX admin scroll and motion after invisible scrollbar owner decision",(
     const code=source(file);
     expect(code,file).not.toMatch(/duration-\d+|transition-all|animate-\[|transition-\[(?:width|height|top|left)/);
   }
+ });
+
+ it("UX-admin-scroll-motion-19 ScrollCue dynamically announces scrollable regions and shows non-blocking edge fades",()=>{
+  const cue=source("src/components/ui/scroll-cue.tsx");
+  expect(cue).toContain("ResizeObserver");
+  expect(cue).toContain("MutationObserver");
+  expect(cue).toContain("node.addEventListener");
+  expect(cue).toContain("scrollable: max > 2");
+  expect(cue).toContain('role={edges.scrollable ? "region" : undefined}');
+  expect(cue).toContain("tabIndex={edges.scrollable ? 0 : -1}");
+  expect(cue).toContain('data-scroll-fade="start"');
+  expect(cue).toContain('data-scroll-fade="end"');
+  expect(cue).toContain("pointer-events-none");
+  expect(cue).toContain("overscroll-contain");
+ });
+
+ it("UX-admin-scroll-motion-20 application notes Drawer scroll is labelled, masked and keyboard reachable",()=>{
+  const code=source("src/components/placements/college-application-detail-drawer.tsx");
+  expect(code).toContain('title="Application Details"');
+  expect(code).toContain("More internal notes below");
+  expect(code).toContain('aria-label="Internal notes history"');
+  expect(code).toContain("tabIndex={0}");
+  expect(code).toContain("overflow-y-auto overscroll-contain");
+  expect(code).toContain("[mask-image:linear-gradient");
+  expect(code).not.toContain("max-h-48 space-y-2 overflow-auto");
+ });
+ it("UX-admin-scroll-motion-21 duplicate-drive confirmation preserves consequence, 44px action and pending guard",()=>{
+  const code=source("src/components/placements/super-admin-drive-duplicate.tsx");
+  expect(code).toContain("<ConfirmDialog open={confirmOpen}");
+  expect(code).toContain("Dates, applications, interview rounds, offers, and candidate decisions will not be copied.");
+  expect(code).toContain("min-h-11");
+  expect(code).toContain("inFlightRef.current=true");
+  expect(code).toContain("inFlightRef.current=false");
+  expect(code).not.toContain("window.confirm");
+  expect(code).not.toContain("result?.error");
+ });
+ it("UX-admin-scroll-motion-22 deadline confirmation keeps form values and blocks duplicate writes",()=>{
+  const code=source("src/components/placements/super-admin-drive-deadline.tsx");
+  expect(code).toContain("<form onSubmit={review}");
+  expect(code).toContain("<ConfirmDialog open={pendingIso!==null}");
+  expect(code).toContain("Extend the published application deadline? This affects when students can apply.");
+  expect(code).toContain("inFlightRef.current=true");
+  expect(code).toContain("inFlightRef.current=false");
+  expect(code).toContain("text-base sm:text-sm");
+  expect(code).not.toContain("window.confirm");
+  expect(code).not.toContain("data?.error");
  });
 
 });
