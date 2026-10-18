@@ -19,6 +19,7 @@ import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {hasMembershipRole} from "@/modules/identity/context";
+import {requirePersistedTpoMembership} from "@/modules/placements/tpo-persisted-actor-service";
 import {placementTableExists} from "@/modules/placements/staged-tables";
 import {listTpoPlacementAnnouncements,countUnreadTpo42Announcements} from "@/modules/announcements/tpo-placement-read-service";
 import {previewTpoCollegeAnnouncementVisibility,previewTpoPlacementAudience} from "@/modules/announcements/tpo-audience-preview-service";
@@ -28,7 +29,11 @@ type Props={searchParams:Promise<{tab?:string|string[];audience?:string|string[]
 export default async function TpoAnnouncements({searchParams}:Props){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ await requirePersistedTpoMembership(context,context.membership.collegeId);
  const raw=await searchParams;
+ const scalarKeys=["tab","page","mine","audience","targetId"] as const;
+ if(scalarKeys.some(key=>Array.isArray(raw[key])))
+  return <div role="alert" className="p-5">Invalid announcement filters. <Link href="/tpo/announcements">Return to announcements</Link></div>;
  const t=Array.isArray(raw.tab)?raw.tab[0]:raw.tab;
  const legacyTab=t==="from42"?"from-42":t==="students"?"yours":t;
  const tab=tpoAnnouncementTabSchema.safeParse(legacyTab??"yours");
