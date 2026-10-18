@@ -57,7 +57,8 @@ describe("PROJ-BREAK-HR-01: HR/Recruiter cannot traverse college project member 
  it("denies wrong-tenant membership before querying project members",async()=>{
   await expect(requireProjectReadAccess({...tpo,membership:{...tpo.membership,collegeId:otherCollege}} as never,projectId))
    .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
-  expect(mocks.select).toHaveBeenCalledTimes(1);
+  // A TPO-only role is rejected ahead of any project existence probe.
+  expect(mocks.select).not.toHaveBeenCalled();
  });
  it("PROJ-BREAK-HR-ORG-02 denies mismatched organization context before project-member SQL",async()=>{
   const forged={...tpo,membership:{...tpo.membership,
