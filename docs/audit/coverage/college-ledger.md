@@ -211,3 +211,7 @@ Tests were authored but not executed. On no account should a staged adapter be p
 | `/admin/organizations` | `tests/unit/chat4-superadmin-organizations-page-journey.test.tsx` (`SA-organizations-page-01`) | Super Admin permission before invalid URL errors, duplicate/unknown/invalid pagination, truthful page 2 of 2 from twelve scoped records, archived organization restore choices, create action and empty scope without fabrication |
 
 These SSR mock journeys supplement, not replace, persisted actor authorization in the respective services and PostgreSQL tenant-scope fixtures. They are authored and **not run**.
+
+### Synthetic E2E identity missing-contact collision prevention
+
+`src/modules/people/e2e-identity-directory.ts` now rejects direct `createUser` invocations with neither phone nor email via `IDENTITY_CONTACT_REQUIRED`. Its old deterministic `e2eUid("missing-contact")` branch could map unrelated fixture users onto the same synthetic UID if bypassing the outer identity resolver. `tests/unit/chat4-college-e2e-identity-directory.test.ts` now includes `COL-people-e2e-identity-02` with no database read. Cloud CI pending.
