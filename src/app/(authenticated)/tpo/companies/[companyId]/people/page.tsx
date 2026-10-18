@@ -1,3 +1,4 @@
+import {PageHeader} from "@/components/ui/page-header";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -19,10 +20,7 @@ export default async function TpoCompanyPeoplePage({
         href={"/tpo/companies/" + encodeURIComponent(companyId)}>
         ← Back to company
       </Link>
-      <header>
-        <h1 className="text-2xl font-bold text-foreground">{company.name} · Contact people</h1>
-        <p className="mt-2 text-sm text-body">Persisted linked recruiter leads only, not an independent contacts directory.</p>
-      </header>
+      <PageHeader eyebrow="TPO · Companies" title={company.name+" · Contact people"} description="Persisted linked recruiter leads only, not an independent contacts directory."/>
       {process.env.DB09_TPO_API_READY === "DB09_VERIFIED" ? (
         <TpoCompanyPersonEditor companyId={companyId} contacts={company.contacts}/>
       ) : <p role="status" className="rounded-lg border p-4">DB09 contact writes are unavailable.</p>}
