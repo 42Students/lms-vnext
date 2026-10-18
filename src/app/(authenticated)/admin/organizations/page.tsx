@@ -9,6 +9,10 @@ import {
 } from "@/components/ui/data-table";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Pagination } from "@/components/ui/pagination";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { can } from "@/modules/permissions/policy";
 import { listOrganizations,listArchivedOrganizations } from "@/modules/organizations/service";
 
@@ -42,6 +46,7 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
     {
       key: "name",
       header: "Name",
+      mobilePriority: "primary",
       cell: (organization) => (
         <span className="font-semibold text-foreground">
           {organization.name}
@@ -57,6 +62,7 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
     {
       key: "actions",
       header: <span className="sr-only">Actions</span>,
+      mobilePriority: "action",
       className: "text-right",
       cell: (organization) =>
         can(context, "organization.manage", {
@@ -71,7 +77,7 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         eyebrow="Super Admin"
         title="Organizations"
@@ -98,37 +104,23 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
       </details>:null}
       <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
        <label className="flex min-w-48 flex-1 flex-col gap-1 text-sm font-semibold text-body">Search organizations
-        <input name="q" defaultValue={q} maxLength={100} placeholder="Search organizations"
+        <Input name="q" defaultValue={q} maxLength={100} placeholder="Search organizations"
          className="min-h-11 rounded border border-border bg-surface px-3 text-foreground" />
        </label>
        <label className="flex flex-col gap-1 text-sm font-semibold text-body">Rows per page
-        <select name="pageSize" defaultValue={String(pageSize)} className="min-h-11 rounded border border-border bg-surface px-3">
+        <Select name="pageSize" defaultValue={String(pageSize)} className="min-h-11 rounded border border-border bg-surface px-3">
          {[10,25,50,100].map(size=><option key={size} value={size}>{size}</option>)}
-        </select>
+        </Select>
        </label>
-       <button className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-foreground">Search</button>
+       <Button type="submit">Search</Button>
        <Link href="/admin/organizations" className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] underline">Clear search</Link>
        <Link href={href(page)} className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] underline">Refresh</Link>
       </form>
       <p role="status" className="text-sm text-body">{q?matching.length+" of "+organizations.length:organizations.length} organizations · Page {page} of {totalPages}</p>
       {organizations.length===0 ? <EmptyState title="No organizations in this scope" description="There are no active organizations visible under the current Super Admin safety scope. Create one only when your role and scope permit it."/> : null}
-      <div className="grid min-w-0 gap-3 lg:hidden" aria-label="Organization cards">
-        {visible.map((organization) => (
-          <article key={organization.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
-            <h2 className="break-words text-base font-semibold text-foreground">{organization.name}</h2>
-            <p className="mt-2 text-xs text-muted-foreground">Created {organization.createdAt.toISOString().slice(0,10)}</p>
-            {can(context,"organization.manage",{organizationId:organization.id}) ?
-              <div className="mt-3 flex flex-wrap"><OrganizationActions organizationId={organization.id} name={organization.name}/></div> : null}
-          </article>
-        ))}
-      </div>
-      <div className="hidden min-w-0 lg:block">
-        <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>} columns={columns} rows={visible} getRowKey={(organization)=>organization.id}/>
-      </div>
-      <nav aria-label="Organization pages" className="flex flex-wrap gap-3 text-sm">
-       {page>1?<Link href={href(page-1)} className="min-h-11 rounded border border-border px-3 py-2">Previous</Link>:null}
-       {page<totalPages?<Link href={href(page+1)} className="min-h-11 rounded border border-border px-3 py-2">Next</Link>:null}
-      </nav>
+      <DataTable caption="Existing Organizations" empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
+        columns={columns} rows={visible} getRowKey={organization=>organization.id}/>
+      <Pagination label="Organization pages" page={page} pageCount={totalPages} hrefForPage={href}/>
     </div>
   );
 }
