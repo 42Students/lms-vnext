@@ -93,7 +93,9 @@ This is the **tested-function ledger for the focused model suite**, not a claim 
 
 | `src/modules/attendance/faculty-service.ts` | `getFacultyAttendanceWorkspace` | `tests/unit/chat3-faculty-attendance-workspace-tenant-boundary.test.ts` | FAC-attendance-grades-18 / FAC-WORKSPACE-TENANT-01 | actual Drizzle query binds records to active own-college membership, active account and current enrolled Section roster; empty roster skips historical record read; revoked teaching and invalid delivery fail before queries |
 
-| `src/modules/courses/faculty-course-health-model.ts`, `faculty-course-health-service.ts` | `selectFacultyCourseHealthCandidates`, `getFacultyCourseAssessmentHealth` | `tests/unit/chat3-faculty-course-health-closed-quiz-model.test.ts`, `tests/unit/chat3-faculty-course-health-service-permissions.test.ts` | FAC-HEALTH-CLOSED-02 | include CLOSED published quizzes in current Section historical reporting without exposing draft/archived/foreign rows; five-row cap and stale-page clamp |
+| `src/modules/courses/faculty-course-health-model.ts`, `faculty-course-health-service.ts` | `selectFacultyCourseHealthCandidates`, `responseCoverage`, `getFacultyCourseAssessmentHealth` | `tests/unit/chat3-faculty-course-health-closed-quiz-model.test.ts`, `tests/unit/chat3-faculty-course-health-service-permissions.test.ts` | FAC-HEALTH-CLOSED-02 / FAC-HEALTH-RATE-03 | include CLOSED published quizzes in current Section historical reporting without exposing draft/archived/foreign rows; five-row cap and stale-page clamp |
+
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/page.tsx` | default `FacultyGradebookPage` | `tests/unit/UX-teacher-gradebook-strict-query-journey.test.tsx` | FAC-GRADEBOOK-UX-01 | SSR rejects duplicated page/search query keys and forged tenant filters before Faculty context fetch, renders authorized empty Section and filtered misses with truthfulness |
 
 ## Role/security matrix
 

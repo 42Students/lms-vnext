@@ -166,11 +166,45 @@ The Faculty teaching-assignment class picker and four People filter-option SQL r
 
 **Fix:** Calculate the verified current delivery roster before querying records. Skip historical record reads for empty rosters; constrain the record SQL by both authorized event IDs and currently enrolled membership IDs and enforce active same-college memberships/users. `tests/unit/chat3-faculty-attendance-workspace-tenant-boundary.test.ts` compiles the actual Drizzle WHERE predicate and checks empty/unauthorized no-read paths. The separate grade/submission mutation ownership and historical audit retention remain unchanged. Real PostgreSQL malformed-record and college-transfer fixtures, UI attendance comparison and CI are still outstanding.
 
+### FAC-HEALTH-RATE-029 — corrupt assessment response totals produce misleading percentages (S2)
+
+`responseCoverage` previously clamped negative or overcounted submissions into plausible 0% or 100%, and could emit `NaN` for nonfinite inputs. Since the report reflects actual persisted response state, impossible numerator/denominator values are integrity defects, not evidence of completion. The model now returns `null` for noninteger/nonfinite/negative/overcounted values, while preserving 0–100% for valid scores. Test: `tests/unit/chat3-faculty-course-health-closed-quiz-model.test.ts`, `FAC-HEALTH-RATE-03` (authored; CI pending).
+
 ### FAC-HEALTH-CLOSED-028 — completed quizzes silently absent from Faculty Section health (S2)
 
 The Faculty Section health model filtered assessment rows to `status === "PUBLISHED"` only. A quiz becomes `CLOSED` after its deadline or results release while remaining legitimate teaching evidence; both the Faculty results and reports-hub models already include closed quizzes. The health page therefore dropped completed quizzes from its count, response coverage and drilldown, misleading instructors about earlier assessments.
 
 **Fix:** Include `status === "CLOSED"` **only for quizzes** in the Section-scoped health selector. Draft and archived quizzes and non-published assignments remain excluded. `tests/unit/chat3-faculty-course-health-closed-quiz-model.test.ts` checks the state matrix, exact delivery, five-row page cap and invalid selector, and `tests/unit/chat3-faculty-course-health-service-permissions.test.ts` now exercises a CLOSED quiz through the actual service. Tests authored only; cloud CI and browser historical-quiz checks pending.
+
+### SA3-PEOPLE-CLASS-033 — learner class name subquery ignored selected college and enrollment relationships (S1)
+
+The selected-college People directory uses an inline learner class name subquery. It previously joined `section_enrollments`, `learner_program_enrollments` and `sections` by independent identifiers but never checked the Section's cohort, academic period, program, or owning college. A malformed transferred learner assignment could disclose the name of a Section from another college in a superficially authorized Learner row.
+
+**Fix:** The class projection now verifies Section-to-enrollment cohort and academic-period equality, joins the cohort's own program and department, matches the learner enrollment's program and requires department college ID to equal the selected college. The correlated membership check and newest-class order remain. `tests/unit/chat3-superadmin-scoped-people-pagination.test.ts` has a `SA3-PEOPLE-CLASS-01` compiled SQL projection test. Database cross-college/transfer fixtures and cloud CI pending.
+
+### SA-PEOPLE-ROOT-032 — selected People and Faculty assignment pages lacked page-level Super Admin role gate (S2)
+
+The selected `/admin/faculty-assignment`, `/admin/people/directory`, and global `/admin/people/unassigned` pages relied on shared layouts or service authorization alone. With a stale or inconsistent session, those pages could render partial privileged UI or load administrative workspace services before their own platform role preflight. Defense in depth requires a local active Super Admin check.
+
+**Fix:** Each entrypoint now redirects non-Super-Admin actors before the list data load. Existing central permission service checks remain in force. `tests/unit/chat3-sa-academics-people-root-platform-roles.test.ts` explicitly verifies `SA-PEOPLE-ROOT-02`. Tests authored, not run; browser and CI checks pending.
+
+### SA-ACADEMICS-ROOT-031 — administrative Academics and People pages delegated role separation only to layout (S1)
+
+The root `/admin/academics` page read the selected college workspace without a local platform-role gate, relying on the shared route layout to stop an ordinary user reaching it. `/admin/people` similarly relied on layout and deeper membership permission checks. Generic `academics.read` is valid for Faculty and Learner memberships within their own college; it must not accidentally authorize a platform-admin page when a stale session carries an `adminScope`.
+
+**Fix:** Both root pages now check `isSuperAdmin(context)` before any tenant data fetch and redirect nonadministrators to `/dashboard`. The no-college selected-scope prompt for genuine Super Admins remains intact. `tests/unit/chat3-sa-academics-people-root-platform-roles.test.ts` asserts the guard placement and actor role matrix. Requires current CI and authenticated browser checks.
+
+### SA-ACADEMICS-SECTION-030 — generic academic read permission on Super Admin Section page (S1)
+
+The `resolveSuperAdminSectionDetail` service checked `academics.read` and a selected `adminScope`, but that permission is also granted to active nonadministrative Faculty, Mentor and Learner memberships for their own college. With an inconsistent or accidentally propagated admin scope, such a principal could pass the initial service permission check into the Super Admin Section detail path. The page layer's separate authorization should not be relied upon as the only boundary.
+
+**Fix:** Require `isSuperAdmin(context)` up front and raise the canonical `AuthorizationError("academics.read")` before scoped database reads. Preserve the Super Admin no-college prompt (null) and private foreign/not-found behavior. `tests/unit/chat3-sa-academics-section-platform-role.test.ts` covers active and disabled principals, forged role/adminScope combinations, correct and foreign Section records and database failures. CI and authenticated page tests pending.
+
+### FAC-GRADEBOOK-UX-032 — repeated page key bypassed strict Faculty query rules (S2)
+
+The Faculty gradebook only verified allowed query-key **names**, not that Next.js had received exactly one value per key. For example `?page=1&page=999` becomes `page: ["1","999"]`; the Zod `coerce.number` path can also accept an array of one value. This silently accepts an ambiguous deep link despite the code's intended strict filter validation.
+
+**Fix:** Explicitly reject all array-valued query keys before the gradebook view schema or any current-teaching report read. Preserve the existing invalid-link recovery and exact Section scope. Direct SSR tests in `tests/unit/UX-teacher-gradebook-strict-query-journey.test.tsx` cover forged, duplicated, malformed, empty and filtered states. Browser/CI acceptance pending.
 
 ### FAC-HTTP-BODY-021 — unbounded live-class and attendance scheduling commands (S1)
 
