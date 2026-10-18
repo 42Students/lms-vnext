@@ -11,7 +11,7 @@ export function FacultyCourseFilterAutoSubmit(){
  useEffect(()=>{
   const form=anchor.current?.closest("form");
   if(!form)return;
-  let pending:ReturnType<typeof setTimeout>|null=null;
+  let pending:number|null=null;
   function changed(event:Event){
    const target=event.target;
    if(!(target instanceof HTMLInputElement||target instanceof HTMLSelectElement))return;
