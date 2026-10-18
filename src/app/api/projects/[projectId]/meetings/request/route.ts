@@ -4,7 +4,6 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import {readMentorProjectCommandBody,MentorProjectCommandBodyError,mentorProjectBodyFailureMessage}
  from "@/modules/projects/mentor-command-body";
-import {requestProjectMeetingInputSchema} from "@/modules/projects/validation";
 import {
   requestProjectMeeting,
 } from "@/modules/projects/meeting-service";
@@ -29,7 +28,7 @@ export async function POST(
   try {
     const context = await getCurrentRequestContext();
     const { projectId } = await params;
-    const body = requestProjectMeetingInputSchema.parse(await readMentorProjectCommandBody(request));
+    const body = readMentorProjectCommandBody(request);
     const meeting = await requestProjectMeeting(
       context,
       projectId,
