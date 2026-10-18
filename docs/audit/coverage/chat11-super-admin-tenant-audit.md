@@ -44,3 +44,9 @@ Source inspection: 2026-10-18. Branch: `chatgpt/chat-11-b`. **Partial, source-re
 | ID | Surface | New threat/fix | Regression | Runtime evidence missing |
 |---|---|---|---|---|
 | SA-tenants-modules-R01 | Module Access aggregate cards | Previous request-context-only `admin-scope.select` could authorize counts if the Super Admin role was revoked after request authentication, including returning success for empty lists. `db34e73` and `df3d5e4` move all aggregation and the empty shortcut behind persisted active-actor locks inside one transaction. | `tests/unit/chat11-super-admin-module-metrics-revoked-role.test.ts` — SA-tenants-modules-R01 | Two-session PostgreSQL revocation proof and large-tenant performance |
+
+## Final-read authorization on readiness (chat-11)
+
+| ID | Surface | New hardening | Regression | Remaining |
+|---|---|---|---|---|
+| SA-tenants-modules-READY-03 | `getSuperAdminCollegeReadiness` | Rebuild active actor/system-role and selected college/organization permission from persisted rows in a transaction after async readiness counters finish but before emitting tenant counts. A revoked role cannot receive a successful completed response based solely on a stale request snapshot. | `tests/unit/chat11-super-admin-readiness-revocation.test.ts`; `f015d0f`, `5909380` | True two-session role-revocation/SQL transaction E2E and runtime domain checks |
