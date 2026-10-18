@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getCurrentDeviceSession } from "@/auth/current-session";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import {privateAuthResponse} from "@/modules/auth/private-response";
 import { revokeOwnSession } from "@/modules/auth/session-service";
 
 export const runtime = "nodejs";
@@ -16,7 +17,7 @@ type RouteContext = { params: Promise<{ sessionId: string }> };
  */
 export async function DELETE(request: Request, { params }: RouteContext) {
   if (!isSameOriginRequest(request)) {
-    return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
+    return privateAuthResponse(NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 }));
   }
 
   try {
@@ -24,11 +25,11 @@ export async function DELETE(request: Request, { params }: RouteContext) {
     const sessionId = z.string().uuid().parse((await params).sessionId);
 
     if (!(await revokeOwnSession(sessionId, session.userId))) {
-      return NextResponse.json({ error: "SESSION_NOT_FOUND" }, { status: 404 });
+      return privateAuthResponse(NextResponse.json({ error: "SESSION_NOT_FOUND" }, { status: 404 }));
     }
 
     return NextResponse.json({ ok: true }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
-    return apiErrorResponse(error);
+    return privateAuthResponse(apiErrorResponse(error));
   }
 }

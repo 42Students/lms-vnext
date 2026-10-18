@@ -19,6 +19,8 @@ vi.mock("@/modules/placements/tpo-company-team-service",()=>({
 vi.mock("@/lib/api-error",()=>({apiErrorResponse:stubs.apiError}));
 vi.mock("@/lib/request-id",()=>({createRequestId:()=>"chat3reqid"}));
 import {POST} from "@/app/api/placements/tpo/company-team/[companyId]/route";
+import {TpoCompanyTeamError} from "@/modules/placements/tpo-company-team-service";
+import {ZodError} from "zod";
 
 const companyId="11111111-1111-4111-8111-111111111111";
 const url="https://college.example/api/placements/tpo/company-team/"+companyId;
@@ -87,6 +89,34 @@ describe("TPO-companies-05 Company Team bounded request and replay safety",()=>{
    expect(await response.json()).toMatchObject({message:row.message,requestId:"chat3reqid"});
   }
   expect(stubs.mutate).not.toHaveBeenCalled();
+ });
+ it("maps persisted company, stale revision, closed storage and role denials into friendly errors",async()=>{
+  const cases=[
+   {code:"NOT_FOUND",status:404,message:"This company discussion is unavailable."},
+   {code:"STALE",status:409,message:"This message changed. Reload the discussion and retry."},
+   {code:"NOT_AUTHORIZED",status:403,message:"You do not have permission to change this message."},
+   {code:"STORAGE_PENDING",status:503,
+    message:"Company Team messages are temporarily unavailable. Retry later."},
+   {code:"BAD_ACTION",status:422,message:"Check the Team message details and try again."},
+  ];
+  for(const entry of cases){
+   stubs.mutate.mockRejectedValueOnce(new TpoCompanyTeamError(entry.code));
+   const response=await POST(request(JSON.stringify({action:"SEND",body:"Question"})),params);
+   expect(response.status).toBe(entry.status);
+   expect(response.headers.get("x-request-id")).toBe("chat3reqid");
+   expect(await response.json()).toMatchObject({error:entry.code,
+    message:entry.message,requestId:"chat3reqid"});
+  }
+  expect(stubs.mutate).toHaveBeenCalledTimes(cases.length);
+ });
+ it("returns a friendly validation error for malformed domain input",async()=>{
+  stubs.mutate.mockRejectedValueOnce(new ZodError([]));
+  const response=await POST(request("{}"),params);
+  expect(response.status).toBe(400);
+  expect(await response.json()).toMatchObject({
+   error:"INVALID_REQUEST",message:"Check the Team message details and try again.",
+   requestId:"chat3reqid",
+  });
  });
  it("passes a valid post with the signed-in actor and exact company path",async()=>{
   const input={action:"SEND",body:"New discussion",decision:false,
