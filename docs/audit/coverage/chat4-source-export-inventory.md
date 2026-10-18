@@ -16,3 +16,15 @@ Source-scan inventory of the assigned module directories; **PENDING is not verif
 | `src/modules/colleges/admin-readiness-export-model.ts` | `buildSuperAdminReadinessCsv` | PENDING |
 | `src/modules/colleges/admin-readiness-filter.ts` | `superAdminReadinessQuerySchema`, `SuperAdminReadinessQuery`, `visibleReadinessChecks`, `parseSuperAdminReadinessParams` | PENDING |
 | `src/modules/colleges/admin-session-query-model.ts` | `adminSessionHistoryPageSchema`, `parseAdminSessionHistoryPage` | PENDING |
+| `src/modules/colleges/admin-session-service.ts` | `listCollegeAdminSessionTargets`, `listCollegeAdminSessions`, `revokeCollegeAdminSessions`, `listCollegeAdminHistory` | PENDING |
+| `src/modules/colleges/admin-signin-policy-service.ts` | `readAdminCollegeSignInPolicy`, `CollegeSignInPolicyError`, `saveAdminCollegeSignInPolicy` | PENDING |
+| `src/modules/colleges/admin-signin-request-body.ts` | `AdminSignInRequestError`, `readAdminSignInRequestBody` | PENDING |
+| `src/modules/colleges/admin-tenant-create-handoff.ts` | `tenantCreationScopeRequest` | PENDING |
+| `src/modules/colleges/admin-tenant-export-model.ts` | `TENANT_DIRECTORY_CSV_CAP`, `tenantDirectoryExportQuerySchema`, `TenantDirectoryExportRow`, `tenantDirectoryCsvCell`, `buildTenantDirectoryCsv`, `tenantDirectoryExportHref`, `readTenantDirectoryExportParams` | PENDING |
+| `src/modules/colleges/admin-tenant-lifecycle-model.ts` | `tenantLifecycleQuerySchema`, `parseTenantLifecycleSearchParams`, `TENANT_LIFECYCLE_PAGE_SIZE`, `tenantLifecyclePaging`, `tenantLifecycleHref`, `tenantSetupLinksAvailable` | PENDING |
+| `src/modules/colleges/admin-tenant-lifecycle-service.ts` | `getSuperAdminTenantLifecycleDirectory`, `getSuperAdminTenantLifecycleDetail`, `exportSuperAdminTenantDirectory` | PENDING |
+| `src/modules/colleges/admin-tenant-organization-step.ts` | `createdOrganizationStepHref`, `preferredNewTenantOrganization` | PENDING |
+| `src/modules/colleges/admin-tenant-setup-journey.ts` | `superAdminTenantSetupSteps` | PENDING |
+| `src/modules/colleges/admin-tenant-setup-model.ts` | `tenantSetupQuerySchema`, `tenantSetupPresentation` | PENDING |
+| `src/modules/colleges/admin-tenant-setup-status.ts` | `summarizeTenantSetupReadiness` | PENDING |
+| `src/modules/colleges/admin-today-attention-model.ts` | `istDayBounds`, `SuperAdminTodayMetrics`, `SUPER_ADMIN_TODAY_LABELS` | PENDING |
