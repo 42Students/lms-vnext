@@ -28,9 +28,14 @@ describe("chat-9 College Projects template catalogue", () => {
     const page = file("src/app/(authenticated)/college/projects/page.tsx");
     const workspace = file("src/components/projects/project-admin-workspace-list.tsx");
     const service = file("src/modules/projects/admin-insights-service.ts");
-    expect(page).toContain("templateTitle:templates.find");
+    expect(page).toContain("listAssignedProjectTemplates(context, collegeId)");
+    expect(page).toContain("templateTitles.get(project.templateId)");
+    expect(page).toContain("templateTitle:project.templateId ?");
+    expect(page).toContain("templatesResult.ok");
+    expect(page).toContain("Template names are unavailable right now.");
     expect(service).toContain("templateId: projectInstances.templateId");
-    expect(workspace).toContain("Template: ");
+    expect(workspace).toContain('item.templateTitle ? "Template: " + item.templateTitle');
+    expect(workspace).toContain('item.templateTitle??"No template — attach one"');
     expect(workspace).toContain("No template — attach one");
   });
 });
