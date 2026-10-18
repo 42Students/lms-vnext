@@ -406,3 +406,35 @@ These paths require one test row **per exported function** after parsing each fi
 | `src/modules/placements/hr-offer-selection-read-model.ts` | `buildHrOfferOverview` | **OPEN** — test and role matrix not verified |
 | `src/modules/placements/hr-offer-selection-read-model.ts` | `hrSelectionReadyApplicationIds` | **OPEN** — test and role matrix not verified |
 | `src/modules/placements/hr-proposal-message-marker-model.ts` | `recruiterProposalMessageMarker` | **OPEN** — test and role matrix not verified |
+
+## Exported functions inventory offset 60 (16 files; 26 functions)
+
+| Source | Exported function | Test closure |
+|---|---|---|
+| `src/modules/placements/hr-recruiter-bell-model.ts` | `relativeHrBellTime` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-recruiter-bell-model.ts` | `createHrBellMutationGate` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-recruiter-bell-service.ts` | `readHrRecruiterBell` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-recruiter-bell-service.ts` | `markHrRecruiterBellRead` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-recruiter-grant-navigation-model.ts` | `hrRecruiterGrantLinks` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-recruiter-name-fields-model.ts` | `splitHrRecruiterName` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-recruiter-name-fields-model.ts` | `joinHrRecruiterName` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-recruiter-name-fields-model.ts` | `sameHrNameVersion` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-recruiter-name-fields-model.ts` | `hrRecruiterNameFieldsSchema` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-recruiter-open-change-counts-service.ts` | `countRecruiterAnswerableDriveRequests` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-report-page-signals-model.ts` | `hrCompanyReportPageSignals` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-result-deadline-urgency-model.ts` | `hrResultDeadlineUrgency` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-review-note-model.ts` | (no direct function export) | Review schemas/re-exports |
+| `src/modules/placements/hr-round-editor-model.ts` | `canRecruiterEditRound` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-round-editor-model.ts` | `duplicateRecruiterRoundName` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-round-editor-model.ts` | `matchesRecruiterRoundVersion` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-round-editor-model.ts` | `hrRoundFormSchema` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-round-editor-service.ts` | `editHrJobRound` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-round-editor-service.ts` | `listHrRoundEditorRows` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-round-schedule-model.ts` | `hrScheduledRoundRows` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-round-schedule-model.ts` | `hrRoundConflictLabels` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-round-schedule-model.ts` | `hrRoundConflictLinks` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-team-csv-model.ts` | `buildHrTeamCsv` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-team-pagination-model.ts` | `hrTeamPage` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-team-roster-message-model.ts` | `hrTeamRosterMessage` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-team-search-model.ts` | `searchHrTeam` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-today-action-queue-model.ts` | `buildRecruiterActionQueue` | **OPEN** — test and role matrix not verified |
