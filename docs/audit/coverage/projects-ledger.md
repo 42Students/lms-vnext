@@ -258,7 +258,7 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/modules/projects/mentor-meeting-notes-model.ts` | `mentorMeetingNotesParamsSchema` | `tests/unit/PROJ-BREAK-chat14-mentor-lead-hardening.test.ts` | Behavioural regression authored (mentorMeetingNotesParamsSchema); **not run**; service / tenant / PostgreSQL acceptance remains open |
 | `src/modules/projects/mentor-meeting-notes-model.ts` | `mentorMeetingNotesWriteSchema` | `tests/unit/PROJ-BREAK-chat14-mentor-lead-hardening.test.ts` | Behavioural regression authored (mentorMeetingNotesWriteSchema); **not run**; service / tenant / PostgreSQL acceptance remains open |
 | `src/modules/projects/mentor-meeting-notes-service.ts` | `getMentorMeetingNotes` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-meeting-notes-service.ts` | `updateMentorMeetingNotes` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-meeting-notes-service.ts` | `updateMentorMeetingNotes` | `tests/unit/PROJ-BREAK-chat14-mentor-notes-service.test.ts` | Mocked transactional behavior: valid update, project/meeting locks, status matrix, stale version, wrong role/tenant, missing records, no duplicate audit on rejection; **unrun**; live PG concurrency GAP |
 | `src/modules/projects/mentor-meeting-reschedule-model.ts` | `mentorMeetingCanReschedule` | `tests/unit/projects-mentor-sprint-resource-coverage-chat14.test.ts` | Runtime authored, unrun |
 | `src/modules/projects/mentor-meeting-reschedule-model.ts` | `toIstLocalInput` | `tests/unit/projects-mentor-sprint-resource-coverage-chat14.test.ts` | Runtime authored, unrun |
 | `src/modules/projects/mentor-meeting-reschedule-model.ts` | `fromIstLocalInput` | `tests/unit/projects-mentor-sprint-resource-coverage-chat14.test.ts` | Runtime authored, unrun |
@@ -707,6 +707,7 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 - `PROJ-BREAK-MENTOR-07`: CSV exporter additionally bounds direct invocation to 200 events and counts omitted records; route already queried at most 200.
 - `PROJ-BREAK-MENTOR-08..12`: latest-version delivery review, source-identity attribution, persisted review completeness, write validation, and formula-safe exports exercised by authored runtime assertions.
 - `PROJ-BREAK-MENTOR-13..15`: rendered meeting-notes page assertions for project/meeting states, empty content and access-denied propagation.
+- `PROJ-BREAK-MENTOR-16..20`: mocked service-level transaction assertions for lock/check order, stale edit, revoked membership, wrong role or tenant and audit-on-success-only.
 - **Verification state:** These are test source additions, not passing CI. No PostgreSQL, actual HTTP, device, independent review or full role matrix run. Uncovered exports and routes remain explicitly GAP.
 
 ## Known release blockers / unverified gates
