@@ -496,6 +496,29 @@ describe("Placement P8 offers and joining", () => {
     expect(stillOne.rows[0]?.count).toBe(1);
   });
 
+  it("PLACEMENTS-CLOSE-WAIT-12 DB cannot close between waitlist seat reservation and offer issuance",async()=>{
+    const {job,application,round}=await preparePassedApplication();
+    await pool.query(`
+      insert into placement_waitlist_promotions(
+        job_id,round_id,application_id,seat_number,waitlist_rank,reason,promoted_by_user_id
+      ) values($1,$2,$3,1,1,'TPO reserved the next available offer seat',$4)`,[
+        job.id,round.id,application.id,SEED_IDS.facultyUser,
+      ]);
+    const preview=await getTpoDriveClosePreview(tpo,job.id);
+    expect(preview.pendingSelections).toBe(0);
+    expect(preview.pendingPromotions).toBe(1);
+    expect(preview.issuedOffers).toBe(0);
+    expect(preview.canClose).toBe(false);
+    await expect(closeTpoDriveWithPreview(tpo,job.id,{
+      action:"CLOSE",confirmed:true,expectedUpdatedAt:preview.expectedUpdatedAt,
+      expectedCounts:preview.counts,
+      reason:"An unissued waitlist offer must prevent premature closure",
+    })).rejects.toMatchObject({code:"PLACEMENT_JOB_NOT_CLOSABLE"});
+    const stored=await pool.query<{status:string}>(
+      "select status from placement_jobs where id=$1",[job.id]);
+    expect(stored.rows).toEqual([{status:"PUBLISHED"}]);
+  });
+
   it("PLACEMENTS-WAIT-RACE-06 DB never releases two offers for concurrent identical waitlist previews",async()=>{
     const {job,application,round}=await preparePassedApplication();
     await pool.query(
