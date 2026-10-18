@@ -23,9 +23,18 @@ export default async function SuperAdminCompaniesPage({
   searchParams,
 }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const params = await searchParams;
-  const parsed = adminCompaniesQuerySchema.safeParse({
-    q: params.q, owner: params.owner, website: params.website, changedWithin: params.changedWithin, status: params.status, companyStatus: params.companyStatus, trust: params.trust, verified: params.verified, sort: params.sort, searchField: params.searchField, page: params.page, collegeId: params.collegeId === "" ? undefined : params.collegeId, companyId: params.companyId,
-  });
+  // Parse every URL key, not a stripped whitelist: a forged scope selector or
+  // duplicate company filter must render the recoverable invalid-search state.
+  // The legacy view tab is separate from the relationship filters.
+  const validView = params.view === undefined || params.view === "GLOBAL" ||
+    params.view === "COLLEGE";
+  const filters = Object.fromEntries(
+    Object.entries(params).filter(([key]) => key !== "view"),
+  );
+  if (filters.collegeId === "") delete filters.collegeId;
+  const parsed = adminCompaniesQuerySchema.safeParse(
+    validView ? filters : {...filters, view: params.view},
+  );
   if (!parsed.success) return <div className="min-w-0 space-y-4">
     <PageHeader eyebrow="Super Admin · Placements" title="Companies" />
     <ErrorState title="Invalid company search" description="Check search text or relationship status."
