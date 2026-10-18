@@ -1,5 +1,5 @@
 "use client";
-import {useState} from "react";
+import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 type Decision="ELIGIBLE"|"INELIGIBLE"|"NOT_DECIDED";
@@ -10,6 +10,7 @@ export function TpoBatchClassDecision({batchId,classId,initial,expectedVersion,f
   initial==="ELIGIBLE"?"ELIGIBLE":initial==="INELIGIBLE"?"INELIGIBLE":"NOT_DECIDED");
  const [reason,setReason]=useState(""),[busy,setBusy]=useState(false),[error,setError]=useState("");
  const [confirmOpen,setConfirmOpen]=useState(false);
+ const inFlightRef=useRef(false);
  const changed=choice!==initial;
  function review(){
   if(busy||!changed||finished)return;
@@ -17,7 +18,8 @@ export function TpoBatchClassDecision({batchId,classId,initial,expectedVersion,f
   setConfirmOpen(true);
  }
  async function submit(){
-  if(busy||!changed||finished)return;
+  if(inFlightRef.current||busy||!changed||finished)return;
+  inFlightRef.current=true;
   setBusy(true);setError("");
   try{
    const response=await fetch("/api/placements/tpo/batches/"+encodeURIComponent(batchId)+"/classes/"+encodeURIComponent(classId)+"/decision",{
@@ -28,7 +30,7 @@ export function TpoBatchClassDecision({batchId,classId,initial,expectedVersion,f
    if(!response.ok)throw new Error(response.status===409?"Class decision changed; refresh and retry.":"Could not save class decision.");
    setConfirmOpen(false);router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Class decision failed.");}
-  finally{setBusy(false);}
+  finally{inFlightRef.current=false;setBusy(false);}
  }
  return <div className="space-y-2">
   <div className="flex flex-wrap items-end gap-2">
