@@ -5,7 +5,7 @@ import {
  collegeBrandingSaveSchema,sameCollegeBranding,type CollegeBrandingInput,
 } from "@/modules/colleges/branding";
 
-const mocks=vi.hoisted(()=>({origin:vi.fn(),context:vi.fn(),save:vi.fn(),error:vi.fn()}));
+const mocks=vi.hoisted(()=>({origin:vi.fn(),context:vi.fn(),save:vi.fn(),read:vi.fn(),error:vi.fn()}));
 vi.mock("@/auth/origin",()=>({isSameOriginRequest:mocks.origin}));
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:mocks.context}));
 vi.mock("@/lib/api-error",()=>({apiErrorResponse:mocks.error}));
@@ -14,10 +14,10 @@ vi.mock("@/modules/colleges/branding-service",()=>{
  class CollegeBrandingVersionError extends Error{}
  return {
   CollegeBrandingNotFoundError,CollegeBrandingVersionError,
-  getCollegeBranding:vi.fn(),saveCollegeBranding:mocks.save,
+  getCollegeBranding:mocks.read,saveCollegeBranding:mocks.save,
  };
 });
-import {PUT} from "@/app/api/colleges/[collegeId]/branding/route";
+import {GET,PUT} from "@/app/api/colleges/[collegeId]/branding/route";
 import {CollegeBrandingVersionError} from "@/modules/colleges/branding-service";
 
 const collegeId="11111111-1111-4111-8111-111111111111";
@@ -40,6 +40,7 @@ beforeEach(()=>{
  mocks.origin.mockReturnValue(true);
  mocks.context.mockResolvedValue(actor);
  mocks.save.mockResolvedValue({collegeName:"Test",...original,version:4});
+ mocks.read.mockResolvedValue({collegeName:"Test",...original,version:4});
  mocks.error.mockImplementation(()=>NextResponse.json({error:"DENIED"},{status:403}));
 });
 
@@ -55,6 +56,21 @@ describe("SA-tenants-modules-BRAND-CAS-01 optimistic college branding saves",()=
   expect(sameCollegeBranding(original,{...original,primaryColor:"#AABBCC"})).toBe(false);
   expect(sameCollegeBranding(original,{...original,logoUrl:null})).toBe(false);
  });
+ it("GET is read-only, authenticated and returns scoped, versioned persisted details",async()=>{
+  const response=await GET(new Request("https://example.edu/api/colleges/"+collegeId+"/branding"),params);
+  expect(response.status).toBe(200);
+  expect((await response.json()).branding.version).toBe(4);
+  expect(mocks.read).toHaveBeenCalledWith(actor,collegeId);
+  expect(mocks.save).not.toHaveBeenCalled();
+ });
+ it("GET refuses an expired session without reading the college record or writing",async()=>{
+  mocks.context.mockRejectedValueOnce(new Error("expired session"));
+  const response=await GET(new Request("https://example.edu/api/colleges/"+collegeId+"/branding"),params);
+  expect(response.status).toBe(403);
+  expect(mocks.read).not.toHaveBeenCalled();
+  expect(mocks.save).not.toHaveBeenCalled();
+ });
+
  it("rejects cross-origin writes before authentication or parsing",async()=>{
   mocks.origin.mockReturnValueOnce(false);
   const result=await PUT(req(JSON.stringify(payload)),params);
