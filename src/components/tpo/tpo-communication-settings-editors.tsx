@@ -27,7 +27,7 @@ export function TpoSmsCapEditor({initial,version}: {initial:number;version:strin
    setSaved(value);setCurrentVersion(body.version??null);setNotice("Saved");router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Settings were not saved.");}finally{inFlight.current=false;setBusy(false);}
  }
- return <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
+ return <section className="space-y-4 border-t border-border pt-5">
   <h2 className="text-lg font-semibold">SMS</h2>
   <p className="font-semibold text-sm">Always sent (email and SMS), never counted against the limit</p>
   <div className="flex flex-wrap gap-2">{[
@@ -37,11 +37,11 @@ export function TpoSmsCapEditor({initial,version}: {initial:number;version:strin
   <label className="block text-sm font-semibold">Monthly limit on optional SMS
    <input type="number" min={0} max={100000} step={1} value={value} disabled={busy}
     onChange={event=>setValue(event.target.value===""?-1:Number(event.target.value))}
-    className="mt-2 block min-h-11 w-40 rounded-md border border-border bg-surface px-3 text-foreground"/>
+    className="mt-2 block min-h-11 sm:min-h-9 w-40 rounded-[9px] border border-border bg-surface px-3 text-foreground"/>
   </label>
   <p className="text-xs text-muted-foreground">SMS used this month: unavailable until delivery usage is connected. Saving a limit does not enable SMS delivery.</p>
   <button type="button" onClick={()=>void save()} disabled={busy||saved===value||value<0||value>100000||!Number.isInteger(value)}
-   className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">Save</button>
+   className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">Save</button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
  </section>;
@@ -65,7 +65,7 @@ export function TpoEmailSignatureEditor({initial,version}:{initial:string;versio
    setSaved(value);setCurrentVersion(body.version??null);setNotice("Saved");router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Settings were not saved.");}finally{inFlight.current=false;setBusy(false);}
  }
- return <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
+ return <section className="space-y-4 border-t border-border pt-5">
   <label className="block text-sm font-semibold">Email signature
    <textarea rows={3} maxLength={300} value={value} disabled={busy}
     placeholder={"Training and Placement Cell\nYour college's name"}
@@ -79,7 +79,7 @@ export function TpoEmailSignatureEditor({initial,version}:{initial:string;versio
   </div>
   <p className="text-xs text-muted-foreground">Saved signature is available for future invite and placement email templates. Sending requires configured email delivery.</p>
   <button type="button" onClick={()=>void save()} disabled={busy||saved===value}
-   className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">Save</button>
+   className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">Save</button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
  </section>;
@@ -106,18 +106,18 @@ export function TpoRecruiterDurationEditor({initial,version}:{initial:number;ver
   }catch(caught){setError(caught instanceof Error?caught.message:"Settings were not saved.");}
   finally{inFlight.current=false;setBusy(false);}
  }
- return <section className="space-y-3 rounded-xl border border-border bg-surface p-5">
+ return <section className="space-y-3 border-t border-border pt-5">
   <h2 className="font-semibold">Recruiter access lasts</h2>
   <label className="block text-sm">Access granted to a recruiter lasts
    <select value={[3,6,12,24].includes(months)?months:6}
     onChange={event=>setMonths(Number(event.target.value))} disabled={busy}
-    className="mt-2 block min-h-11 rounded-md border border-border bg-surface px-3">
+    className="mt-2 block min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-3">
     {[3,6,12,24].map(value=><option key={value} value={value}>{value} months</option>)}
    </select>
   </label>
   <p className="text-xs text-muted-foreground">This duration is applied to new recruiter grants. Existing access expires on its recorded date. No end date is unavailable until a corresponding grant-expiry policy is approved.</p>
   <button type="button" onClick={()=>void save()} disabled={busy||saved===months}
-   className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">Save</button>
+   className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">Save</button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
  </section>;

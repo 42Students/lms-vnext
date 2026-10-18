@@ -42,7 +42,7 @@ function AskActions({threadId,ask,ownId}:{threadId:string;ask:Ask;ownId:string})
    </label>:null}
    {error?<p role="alert" className="text-xs text-danger">{error}</p>:null}
    <button type="button" disabled={busy} onClick={()=>void submit()}
-    className="min-h-10 rounded bg-primary px-3 text-xs text-on-primary">
+    className="min-h-10 rounded-[9px] bg-primary px-3 text-xs text-on-primary">
     {busy?"Saving…":confirmation==="DONE"?"Mark done":"Cancel the ask"}</button>
    <button type="button" disabled={busy} onClick={()=>setConfirmation(null)}
     className="ml-2 min-h-10 text-xs underline">{confirmation==="CANCEL"?"Keep it":"Not now"}</button>
@@ -87,16 +87,16 @@ export function TpoTeamAskPanel({threadId,actorId,recipientId,recipientName,reci
    <label className="grid gap-1 text-sm">What needs doing?
     <input required maxLength={200} disabled={busy} value={title}
      onChange={event=>{setTitle(event.target.value);key.current=null;}}
-     className="min-h-11 rounded border border-border bg-surface px-3"/>
+     className="min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-3"/>
    </label>
    <label className="grid gap-1 text-sm">By (optional, IST)
     <input type="datetime-local" disabled={busy} value={due}
      onChange={event=>{setDue(event.target.value);key.current=null;}}
-     className="min-h-11 rounded border border-border bg-surface px-3"/>
+     className="min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-3"/>
    </label>
    {error?<p role="alert" className="text-xs text-danger">{error}</p>:null}
    <button type="submit" disabled={busy||!title.trim()||!recipientId}
-    className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+    className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
     {busy?"Sending…":"Ask someone"}</button>
   </form>
   <ul className="space-y-2">{items.map(ask=>{
