@@ -133,15 +133,15 @@ describe("IIT Dharwad Projects: mentor reassignment workload tenant and input sa
     await listCollegeProjectMentorWorkload(admin(),collegeId);
     const row=state.selectFields.find(fields=>"atRisk" in fields);
     expect(row).toBeDefined();
-    const rendered=new PgDialect().sqlToQuery(row!.atRisk as SQL).sql.replace(/\\s+/g," ");
+    const rendered=new PgDialect().sqlToQuery(row!.atRisk as SQL).sql.replace(/\s+/g," ");
     for(const child of [
       "project_tasks","project_sprints","project_releases","project_submissions",
       "project_task_submissions","project_meetings","project_resources","project_members",
     ]){
       expect(rendered).toContain("from "+child);
-      expect(rendered).toContain("project_id = \\"project_instances\\".\\"id\\"".replaceAll("\\\\"","\\\""));
     }
-    expect(rendered).not.toContain("project_id = \\"id\\"".replaceAll("\\\\"","\\\""));
+    expect(rendered).toContain('project_id = "project_instances"."id"');
+    expect(rendered).not.toContain('project_id = "id"');
   });
   it("PROJ-BREAK-mentor-90 authorized workload remains scoped, archived-free and read-only",async()=>{
     const result=await listCollegeProjectMentorWorkload(admin(),collegeId);
