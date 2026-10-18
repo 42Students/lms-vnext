@@ -25,6 +25,10 @@ describe("Super Admin not-submitted Projects directory abuse",()=>{
   const s=source("src/modules/projects/admin-insights-service.ts");
   const found=s.split('const searchPattern=adminUnsubmittedLiteralSearchPattern(query.q??"");').length-1;
   expect(found).toBe(3);
+  // Each workspace view must search a persisted UUID as well as literal
+  // title and slug text, without widening the college predicate.
+  expect(s.split('projectInstances.id}::text ilike ${searchPattern}').length-1).toBe(3);
+  expect(s.split('eq(projectInstances.collegeId, college.id)').length-1).toBeGreaterThanOrEqual(3);
   expect(s).toContain('import {adminUnsubmittedLiteralSearchPattern} from "./admin-unsubmitted-query-model"');
   expect(s).not.toContain('`%'+ '${query.q}' + '%`');
   expect(s).not.toContain('"%"+query.q+"%"');
