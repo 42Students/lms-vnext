@@ -52,3 +52,128 @@ Source-scan inventory of the assigned module directories; **PENDING is not verif
 | `src/modules/colleges/super-admin-directory-service.ts` | `getAdminTenantDirectory`, `getAdminTenantDetail` | PENDING |
 | `src/modules/colleges/super-admin-tenant-model.ts` | `tenantReadQuerySchema`, `tenantPage` | PENDING |
 | `src/modules/colleges/validation.ts` | `collegeIdSchema`, `collegeOrganizationIdSchema`, `collegeNameSchema`, `collegeCodeSchema`, `createCollegeInputSchema`, `updateCollegeInputSchema`, `CreateCollegeInput`, `UpdateCollegeInput` | PENDING |
+
+## Academic modules — source inventory
+
+| Source file | Statically matched public symbols | Per-export test/PG status |
+| --- | --- | --- |
+| `src/modules/academics/a2-scope.ts` | `loadAcademicsMembership`, `requireActiveAcademicMembership`, `requireAcademicRole`, `loadLearnerEnrollmentScope`, `loadSectionEnrollmentScope`, `loadFacultyAssignmentScope`, `loadScheduleEventScope` | PENDING |
+| `src/modules/academics/academic-setup-error-copy.ts` | `ACADEMIC_SETUP_GENERIC_ERROR`, `isMachineErrorCode`, `academicSetupErrorMessage` | PENDING |
+| `src/modules/academics/admin-batch-promotion-read-model.ts` | `adminPromotionQuerySchema`, `AdminPromotionQuery`, `readAdminPromotionParams`, `summarizeAdminPromotion` | PENDING |
+| `src/modules/academics/cohort-service.ts` | `listCohorts`, `createCohort`, `updateCohort`, `transitionCohort` | PENDING |
+| `src/modules/academics/college-academic-directory-model.ts` | `COLLEGE_ACADEMIC_PAGE_SIZE`, `collegeSemesterDirectoryBaseSchema`, `withCollegeSemesterCreditCheck`, `collegeSemesterDirectorySchema`, `collegeBatchDirectoryBaseSchema`, `withCollegeBatchFilterCheck`, `collegeBatchDirectorySchema`, `CollegeSemesterDirectoryQuery`, `CollegeBatchDirectoryQuery`, `CollegeDirectoryKind`, `academicDirectoryHref`, `academicDirectoryPageCount`, `academicDirectorySearchParams`, `batchProgressLabel` | PENDING |
+| `src/modules/academics/college-academic-directory-service.ts` | `listCollegeSemesters`, `listCollegeBatches` | PENDING |
+| `src/modules/academics/college-academic-export-model.ts` | `ACADEMIC_EXPORT_CAP`, `semesterCsvSchema`, `batchCsvSchema`, `AcademicCsvKind`, `academicExportHref`, `exportParams`, `renderBatchCsv`, `renderSemesterCsv` | PENDING |
+| `src/modules/academics/college-academic-export-service.ts` | `exportCollegeAcademicDirectory` | PENDING |
+| `src/modules/academics/college-batch-graduation-service.ts` | `CollegeBatchGraduationError`, `markCollegeBatchGraduated` | PENDING |
+| `src/modules/academics/college-batch-promotion-copy.ts` | `BATCH_PROMOTION_COPY`, `promotionImpactMessage` | PENDING |
+| `src/modules/academics/college-batch-promotion-execute.ts` | `CollegePromotionExecuteError`, `executeCollegeBatchPromotion` | PENDING |
+| `src/modules/academics/college-batch-promotion-model.ts` | `formatPromotionAcademicYear`, `collegePromotionQuerySchema`, `CollegePromotionQuery`, `PromotionBlocker`, `batchPromotionPlan`, `promotionLearnerBlockers`, `collegePromotionExecuteSchema`, `promotionReady`, `promotionPreviewMatches` | PENDING |
+| `src/modules/academics/college-batch-promotion-service.ts` | `CollegePromotionPreviewError`, `listCollegePromotionOptions`, `previewCollegeBatchPromotion`, `previewCollegeBatchPromotionInTransaction` | PENDING |
+| `src/modules/academics/college-batch-retire-model.ts` | `collegeBatchRetireSchema`, `collegeBatchRetireIdSchema`, `batchRetirementPrompt` | PENDING |
+| `src/modules/academics/college-batch-retire-service.ts` | `CollegeBatchRetireError`, `retireCollegeBatch` | PENDING |
+| `src/modules/academics/college-classes-export-model.ts` | `CLASSES_EXPORT_CAP`, `collegeClassesExportSchema`, `ClassExportRow`, `classesExportHref`, `renderCollegeClassesCsv`, `readClassesExportParams` | PENDING |
+| `src/modules/academics/college-classes-export-service.ts` | `exportCollegeClasses` | PENDING |
+| `src/modules/academics/college-cohort-mutation-model.ts` | `createCollegeCohortSchema`, `updateCollegeCohortSchema`, `collegeCohortIdSchema`, `hasUnsavedCollegeCohortEdit`, `validCohortPeriodRange`, `batchAcademicYearFromDates` | PENDING |
+| `src/modules/academics/college-cohort-mutation-service.ts` | `CollegeCohortMutationCode`, `CollegeCohortMutationError`, `createCollegeCohort`, `updateCollegeCohort` | PENDING |
+| `src/modules/academics/college-directory-export-model.ts` | `exportParams`, `buildCollegeDirectoryCsv`, `collectCollegeExportRows` | PENDING |
+| `src/modules/academics/college-directory-validation.ts` | `collegeDirectoryValidationMessage` | PENDING |
+| `src/modules/academics/college-elective-export-model.ts` | `ELECTIVES_EXPORT_CAP`, `electiveCsvSchema`, `exportParams`, `electiveCsvHref`, `renderElectivesCsv` | PENDING |
+| `src/modules/academics/college-elective-export-service.ts` | `exportCollegeElectives` | PENDING |
+| `src/modules/academics/college-faculty-assignment-export-model.ts` | `FACULTY_ASSIGNMENT_EXPORT_CAP`, `facultyAssignmentCsvSchema`, `exportParams`, `facultyAssignmentCsvHref`, `renderFacultyAssignmentCsv` | PENDING |
+| `src/modules/academics/college-faculty-assignment-export-service.ts` | `exportCollegeFacultyAssignments` | PENDING |
+| `src/modules/academics/college-hall-availability-model.ts` | `collegeHallAvailabilitySchema`, `istWindow`, `HallScheduledRow`, `collegeHallAvailabilityProjection` | PENDING |
+| `src/modules/academics/college-hall-availability-service.ts` | `CollegeHallAvailabilityNotFoundError`, `getCollegeHallAvailability` | PENDING |
+| `src/modules/academics/college-hall-booking-model.ts` | `collegeHallBookingSchema`, `hallBookingWindow`, `hallCanFitClass`, `hallFacultyIsEligible` | PENDING |
+| `src/modules/academics/college-hall-booking-service.ts` | `CollegeHallBookingError`, `createCollegeHallBooking` | PENDING |
+| `src/modules/academics/college-hall-cancel-model.ts` | `collegeHallCancelSchema`, `hallCancellationPrompt` | PENDING |
+| `src/modules/academics/college-hall-cancel-service.ts` | `CollegeHallCancelError`, `cancelCollegeHallBooking` | PENDING |
+| `src/modules/academics/college-lecture-hall-directory-model.ts` | `COLLEGE_LECTURE_HALL_PAGE_SIZE`, `collegeLectureHallFiltersBaseSchema`, `withCollegeLectureHallCapacityCheck`, `collegeLectureHallFiltersSchema`, `CollegeLectureHallFilters`, `parseCollegeLectureHallSearchParams`, `collegeLectureHallHref`, `collegeLectureHallTotalPages`, `hasCollegeLectureHallFilters` | PENDING |
+| `src/modules/academics/college-lecture-halls-export-model.ts` | `LECTURE_HALLS_EXPORT_CAP`, `lectureHallsCsvSchema`, `exportParams`, `lectureHallsCsvHref`, `renderLectureHallsCsv`, `renderSuperAdminLectureHallsCsv` | PENDING |
+| `src/modules/academics/college-lecture-halls-export-service.ts` | `exportCollegeLectureHalls` | PENDING |
+| `src/modules/academics/college-mapping-export-model.ts` | `OFFERING_MAPPING_EXPORT_CAP`, `offeringMappingCsvSchema`, `exportParams`, `offeringMappingCsvHref`, `renderOfferingMappingCsv` | PENDING |
+| `src/modules/academics/college-mapping-export-service.ts` | `exportCollegeOfferingMappings` | PENDING |
+| `src/modules/academics/college-mapping-model.ts` | `COLLEGE_MAPPING_PAGE_SIZE`, `semesterCourseQuerySchema`, `facultyAssignmentQuerySchema`, `SemesterCourseQuery`, `FacultyAssignmentQuery`, `facultyAssignmentState`, `mappingPageCount`, `collegeMappingHref` | PENDING |
+| `src/modules/academics/college-mapping-service.ts` | `listCollegeSemesterCourseMappings`, `listCollegeFacultyAssignments` | PENDING |
+| `src/modules/academics/college-period-lifecycle-model.ts` | `collegePeriodLifecycleSchema`, `CollegePeriodLifecycleAction`, `PeriodLifecycleGuardCounts`, `periodLifecycleBlocker` | PENDING |
+| `src/modules/academics/college-period-lifecycle-service.ts` | `CollegePeriodLifecycleError`, `changeCollegePeriodLifecycle` | PENDING |
+| `src/modules/academics/college-program-mutation-model.ts` | `createCollegeProgramSchema`, `updateCollegeProgramSchema`, `archiveCollegeProgramSchema`, `collegeProgramIdSchema`, `restoreCollegeProgramSchema`, `hasUnsavedCollegeProgramEdit`, `canReduceProgramDuration` | PENDING |
+| `src/modules/academics/college-program-mutation-service.ts` | `CollegeProgramMutationErrorCode`, `CollegeProgramMutationError`, `createCollegeProgram`, `updateCollegeProgram`, `archiveCollegeProgram`, `restoreCollegeProgram`, `listArchivedCollegePrograms` | PENDING |
+| `src/modules/academics/college-promotion-faculty-readiness.ts` | `summarizePromotionFacultyReadiness`, `getPromotionFacultyReadiness` | PENDING |
+| `src/modules/academics/college-recurring-execute-model.ts` | `collegeRecurringExecuteSchema`, `CollegeRecurringExecuteInput`, `recurringExecutionSummary` | PENDING |
+| `src/modules/academics/college-recurring-execute-service.ts` | `CollegeRecurringExecutionError`, `executeCollegeRecurringSchedule` | PENDING |
+| `src/modules/academics/college-recurring-preview-model.ts` | `recurringPreviewSchema`, `RecurringPreviewInput`, `PreviewConflict`, `RecurringSlot`, `ScheduledEvent`, `expandIstSessions`, `findPreviewConflicts` | PENDING |
+| `src/modules/academics/college-recurring-preview-service.ts` | `RecurringPreviewNotFoundError`, `previewCollegeRecurringSchedule`, `listRecurringPreviewOptions` | PENDING |
+| `src/modules/academics/college-recurring-preview-ui-model.ts` | `collegePreviewErrorLabel` | PENDING |
+| `src/modules/academics/college-section-lifecycle-model.ts` | `collegeSectionLifecycleSchema`, `classLifecyclePrompt` | PENDING |
+| `src/modules/academics/college-section-lifecycle-service.ts` | `CollegeSectionLifecycleError`, `changeCollegeSectionLifecycle` | PENDING |
+| `src/modules/academics/college-section-mutation-model.ts` | `collegeSectionIdSchema`, `createCollegeSectionSchema`, `updateCollegeSectionSchema`, `sectionIdentityChanged`, `sectionCapacityAllows`, `sectionPeriodWithinCohort` | PENDING |
+| `src/modules/academics/college-section-mutation-service.ts` | `CollegeSectionErrorCode`, `CollegeSectionError`, `createCollegeSection`, `updateCollegeSection`, `listCollegeSectionOptions` | PENDING |
+| `src/modules/academics/college-structure-directory-model.ts` | `COLLEGE_STRUCTURE_PAGE_SIZE`, `CollegeStructureKind`, `collegeStructureQuerySchema`, `CollegeStructureQuery`, `collegeClassBaseQuerySchema`, `withCollegeClassCapacityCheck`, `collegeClassQuerySchema`, `CollegeClassQuery`, `collegeElectiveBaseQuerySchema`, `withCollegeElectiveCreditsCheck`, `collegeElectiveQuerySchema`, `CollegeElectiveQuery`, `readCollegeStructureParams`, `collegeStructureHref`, `collegeStructureTotalPages`, `classCapacityLabel`, `electiveSelectionLabel` | PENDING |
+| `src/modules/academics/college-structure-directory-service.ts` | `listCollegeClasses`, `listCollegeElectives` | PENDING |
+| `src/modules/academics/college-student-section-move-model.ts` | `studentSectionMemberIdSchema`, `studentSectionMoveSchema`, `requiresStudentSectionMove`, `studentSectionMoveMessage` | PENDING |
+| `src/modules/academics/college-student-section-move-service.ts` | `CollegeStudentSectionMoveError`, `collegeStudentSectionOptions`, `moveCollegeStudentSection` | PENDING |
+| `src/modules/academics/college-term-mapping-model.ts` | `collegeTermCourseAddSchema`, `collegeTermCourseUpdateSchema`, `reorderTermCourseIds`, `collegeTermCourseUnmapSchema`, `collegeTermCourseIdSchema`, `nextTermCourseOrder`, `collegeTermMappingErrorMessage`, `TERM_MAPPING_COPY` | PENDING |
+| `src/modules/academics/college-term-mapping-service.ts` | `CollegeTermMappingError`, `listCollegeTermMappings`, `addCollegeTermMapping`, `updateCollegeTermMapping`, `removeCollegeTermMapping`, `addCollegeTermMappings` | PENDING |
+| `src/modules/academics/constants.ts` | `PROGRAM_STATUSES`, `ProgramStatus`, `ACADEMIC_PERIOD_STATUSES`, `AcademicPeriodStatus`, `COHORT_STATUSES`, `CohortStatus`, `SECTION_STATUSES`, `SectionStatus`, `LEARNER_PROGRAM_ENROLLMENT_STATUSES`, `LearnerProgramEnrollmentStatus`, `SECTION_ENROLLMENT_STATUSES`, `SectionEnrollmentStatus`, `SECTION_FACULTY_ROLES`, `SectionFacultyRole`, `SCHEDULE_EVENT_STATUSES`, `ScheduleEventStatus` | PENDING |
+| `src/modules/academics/enrollment-service.ts` | `listLearnerProgramEnrollments`, `createLearnerProgramEnrollment`, `transitionLearnerProgramEnrollment` | PENDING |
+| `src/modules/academics/errors.ts` | `AcademicsServiceErrorCode`, `AcademicsServiceError`, `postgresConstraintName` | PENDING |
+| `src/modules/academics/faculty-assignment-service.ts` | `listSectionFacultyAssignments`, `createSectionFacultyAssignment`, `endSectionFacultyAssignment` | PENDING |
+| `src/modules/academics/learner-calendar-filter-model.ts` | `learnerCalendarQuerySchema`, `resolveOwnLearnerCalendarFilters` | PENDING |
+| `src/modules/academics/learner-calendar-window-model.ts` | `learnerCalendarVisibleWindow` | PENDING |
+| `src/modules/academics/learner-ist-schedule-model.ts` | `learnerScheduleIstDay`, `learnerScheduleDateFromDay`, `learnerIstScheduleToday`, `eventsForLearnerIstScheduleDay` | PENDING |
+| `src/modules/academics/learner-schedule-clock-model.ts` | `learnerScheduleClock` | PENDING |
+| `src/modules/academics/learner-schedule-day-ics-model.ts` | `learnerScheduleDayIcs` | PENDING |
+| `src/modules/academics/learner-schedule-filter-reset-model.ts` | `learnerScheduleResetFilters` | PENDING |
+| `src/modules/academics/learner-schedule-kind-filter-model.ts` | `LearnerScheduleKind`, `filterLearnerScheduleByKind` | PENDING |
+| `src/modules/academics/learner-schedule-search-model.ts` | `filterLearnerScheduleBySearch` | PENDING |
+| `src/modules/academics/learner-schedule-section-filter-model.ts` | `filterLearnerScheduleSections` | PENDING |
+| `src/modules/academics/learner-schedule-selected-deliveries-model.ts` | `learnerScheduleSelectedDeliveries` | PENDING |
+| `src/modules/academics/learner-schedule-service.ts` | `getLearnerClassSchedule` | PENDING |
+| `src/modules/academics/learner-schedule-shift-day-model.ts` | `learnerScheduleDayAfterShift` | PENDING |
+| `src/modules/academics/learner-schedule-today-day-model.ts` | `learnerScheduleTodayDay` | PENDING |
+| `src/modules/academics/learner-schedule-upcoming-model.ts` | `filterLearnerScheduleUpcoming` | PENDING |
+| `src/modules/academics/learner-schedule-view-anchor-model.ts` | `learnerScheduleAnchorForView` | PENDING |
+| `src/modules/academics/learner-schedule-weekday-export-model.ts` | `learnerScheduleWeekdayExportAvailable` | PENDING |
+| `src/modules/academics/learner-session-detail-model.ts` | `learnerClassSessionNotes` | PENDING |
+| `src/modules/academics/lecture-hall-conflict-model.ts` | `lectureHallScheduledConflict` | PENDING |
+| `src/modules/academics/lecture-hall-copy.ts` | `ROOM_TYPE_LABELS`, `LECTURE_HALL_COPY` | PENDING |
+| `src/modules/academics/lecture-hall-service.ts` | `ROOM_TYPES`, `RoomType`, `LectureHallErrorCode`, `LectureHallError`, `createLectureHallSchema`, `updateLectureHallSchema`, `listLectureHallsSchema`, `listLectureHalls`, `createLectureHall`, `updateLectureHall` | PENDING |
+| `src/modules/academics/legacy-academic-status.ts` | `legacyAcademicStatus` | PENDING |
+| `src/modules/academics/optimistic-timestamp-model.ts` | `timestampTokenIso` | PENDING |
+| `src/modules/academics/period-service.ts` | `listAcademicPeriods`, `createAcademicPeriod`, `updateAcademicPeriod`, `transitionAcademicPeriod` | PENDING |
+| `src/modules/academics/program-service.ts` | `normalizeProgramDurationTerms`, `programDurationYears`, `listPrograms`, `createProgram`, `updateProgram`, `archiveProgram` | PENDING |
+| `src/modules/academics/roster-service.ts` | `listSectionRoster`, `listLearnerSectionHistory`, `assignLearnerToSection`, `transitionSectionEnrollment` | PENDING |
+| `src/modules/academics/schedule-service.ts` | `listSectionScheduleCourseChoices`, `listSectionScheduleEvents`, `createSectionScheduleEvent`, `updateSectionScheduleEvent`, `cancelSectionScheduleEvent` | PENDING |
+| `src/modules/academics/scope.ts` | `loadAcademicCollegeScope`, `loadAcademicDepartmentScope`, `loadProgramScope`, `loadAcademicPeriodScope`, `loadCohortScope`, `loadSectionScope` | PENDING |
+| `src/modules/academics/section-service.ts` | `listSections`, `createSection`, `updateSection`, `archiveSection` | PENDING |
+| `src/modules/academics/section-workspace.ts` | `getSectionOperationsWorkspace` | PENDING |
+| `src/modules/academics/semester-copy.ts` | `SEMESTER_COPY`, `semesterShortLabel` | PENDING |
+| `src/modules/academics/semester-mutation-model.ts` | `createCollegeSemesterSchema`, `updateCollegeSemesterSchema`, `deleteCollegeSemesterSchema`, `semesterIdSchema`, `canCreateSemesterTerm`, `CreateCollegeSemesterInput`, `UpdateCollegeSemesterInput` | PENDING |
+| `src/modules/academics/semester-mutation-service.ts` | `SemesterMutationErrorCode`, `SemesterMutationError`, `createCollegeSemester`, `updateCollegeSemester`, `deleteCollegeSemester` | PENDING |
+| `src/modules/academics/super-admin-lecture-hall-directory-model.ts` | `superAdminLectureHallFiltersSchema`, `SuperAdminLectureHallFilters`, `parseSuperAdminLectureHallFilters`, `superAdminLectureHallHref`, `superAdminLectureHallPages` | PENDING |
+| `src/modules/academics/validation.ts` | `collegeIdSchema`, `departmentIdSchema`, `programIdSchema`, `academicPeriodIdSchema`, `cohortIdSchema`, `sectionIdSchema`, `academicNameSchema`, `academicCodeSchema`, `academicDateSchema`, `createProgramInputSchema`, `updateProgramInputSchema`, `createAcademicPeriodInputSchema`, `updateAcademicPeriodInputSchema`, `academicPeriodTransitionSchema`, `createCohortInputSchema`, `updateCohortInputSchema`, `cohortTransitionSchema`, `createSectionInputSchema`, `updateSectionInputSchema`, `membershipIdSchema`, `learnerEnrollmentIdSchema`, `sectionEnrollmentIdSchema`, `facultyAssignmentIdSchema`, `scheduleEventIdSchema`, `createLearnerProgramEnrollmentInputSchema`, `learnerProgramEnrollmentTransitionSchema`, `assignLearnerSectionInputSchema`, `sectionEnrollmentTransitionSchema`, `createSectionFacultyAssignmentInputSchema`, `scheduleDateTimeSchema`, `createSectionScheduleEventInputSchema`, `updateSectionScheduleEventInputSchema`, `scheduleEventTransitionSchema`, `CreateProgramInput`, `UpdateProgramInput`, `CreateAcademicPeriodInput`, `UpdateAcademicPeriodInput`, `CreateCohortInput`, `UpdateCohortInput`, `CreateSectionInput`, `UpdateSectionInput`, `CreateLearnerProgramEnrollmentInput`, `AssignLearnerSectionInput`, `CreateSectionFacultyAssignmentInput`, `CreateSectionScheduleEventInput`, `UpdateSectionScheduleEventInput` | PENDING |
+| `src/modules/academics/workspace.ts` | `mapAcademicWorkspaceInBatches`, `getAcademicsWorkspace` | PENDING |
+
+## Group modules — source inventory
+
+| Source file | Statically matched public symbols | Per-export test/PG status |
+| --- | --- | --- |
+| `src/modules/groups/actor-access.ts` | `GroupActorAccessError`, `assertPersistedGroupActor` | PENDING |
+| `src/modules/groups/admin-read-service.ts` | `GroupReadError`, `GROUP_STATUSES`, `groupListQuerySchema`, `GroupListRow`, `listCollegeGroups`, `getCollegeGroupDetail` | PENDING |
+| `src/modules/groups/college-group-csv-preview-model.ts` | `GROUP_IMPORT_MAX_ROWS`, `GROUP_IMPORT_MAX_CHARACTERS`, `collegeGroupCsvPreviewSchema`, `GroupImportRow`, `parseMemberEmailCsv`, `neutralCsvCell`, `groupPreviewErrorCsv` | PENDING |
+| `src/modules/groups/college-group-csv-preview-service.ts` | `GroupCsvPreviewNotFoundError`, `previewCollegeGroupCsv` | PENDING |
+| `src/modules/groups/college-group-detail-write-model.ts` | `collegeGroupDetailWriteSchema`, `collegeGroupDetailIdSchema`, `collegeWaitlistPromotionBlocker`, `collegeGroupDetailActionLabel` | PENDING |
+| `src/modules/groups/college-group-detail-write-service.ts` | `CollegeGroupDetailWriteError`, `writeCollegeGroupDetail` | PENDING |
+| `src/modules/groups/college-group-directory-query-model.ts` | `collegeGroupsDirectoryQuerySchema`, `CollegeGroupsDirectoryQuery`, `parseCollegeGroupsDirectoryParams`, `collegeGroupsDirectoryHref`, `canonicalCollegeGroupsOffset` | PENDING |
+| `src/modules/groups/college-group-management-model.ts` | `collegeStudyGroupCreateSchema`, `collegeStudyGroupChangeSchema`, `collegeGroupIdSchema`, `CollegeStudyGroupCreate`, `CollegeStudyGroupChange`, `studyGroupNextStatus`, `studyGroupConflictMessage` | PENDING |
+| `src/modules/groups/college-group-management-service.ts` | `CollegeGroupManagementError`, `createCollegeStudyGroup`, `changeCollegeStudyGroup` | PENDING |
+| `src/modules/groups/college-member-management-model.ts` | `collegeStudyMemberSchema`, `CollegeStudyMemberAction`, `collegeStudyMemberLabel` | PENDING |
+| `src/modules/groups/college-member-management-service.ts` | `manageCollegeStudyMember` | PENDING |
+| `src/modules/groups/college-rule-preview-model.ts` | `collegeRulePreviewInputSchema`, `GROUP_RULE_PREVIEW_MAX_CANDIDATES`, `RulePreviewCandidate`, `projectCollegeGroupRulePreview` | PENDING |
+| `src/modules/groups/college-rule-preview-service.ts` | `CollegeRulePreviewError`, `previewCollegeGroupRule` | PENDING |
+| `src/modules/groups/elective-eligibility.ts` | `hasElectiveAcademicEligibility` | PENDING |
+| `src/modules/groups/roster-access.ts` | `listActiveElectiveDeliveryIds`, `hasActiveElectiveDeliveryAccess`, `isElectiveBackedDelivery`, `listBoundElectiveDeliveryIds` | PENDING |
+| `src/modules/groups/rule-evaluator.ts` | `groupRuleCriteriaSchema`, `GroupRuleCriteria`, `GroupRuleCandidate`, `matchesGroupRuleCandidate` | PENDING |
+| `src/modules/groups/rules-service.ts` | `GroupRuleServiceError`, `upsertGroupRule`, `refreshGroupRule` | PENDING |
+| `src/modules/groups/service.ts` | `GroupServiceError`, `createGroup`, `joinGroup`, `leaveGroup`, `transitionGroup`, `attachProjectTeamGroup`, `moveElectiveMember`, `removeAndLockCollegeStudyMember`, `setCollegeStudyMemberLock` | PENDING |
