@@ -159,3 +159,9 @@ These are named and scope-specific tests, but full per-export coverage of all se
 | Export | Behaviour and negative cases | Test evidence | Runtime remainder |
 |---|---|---|---|
 | `listTpoPrepCourses`, `readTpoLearnerPrepOutcomes` | An archived department is excluded from active college preparation choices and from learner published-content readiness evidence; missing eligible published content is UNAVAILABLE, not NEEDS_PREP or READY; stored selections absent from active catalog remain unresolved for correction | `tests/unit/chat11-tpo-prep-archived-catalog.test.ts` — TPO-settings-audit-PREP-CATALOG-07, commits `a329efb`, `a483080`, `5a42456` | PostgreSQL archived department / old offering, role and course completion integration |
+
+## Personal preference HTTP adversarial coverage
+
+| API | Behavioural test | Evidence | Remaining |
+|---|---|---|---|
+| `PUT /api/placements/tpo/my-notification-preferences` | Actual mocked HTTP route rejects foreign origin before actor lookup, invalid JSON/media type (400), streamed oversized body (413), maps stale 409 and storage unavailable 503; successful own-account response private no-store; denied session mapped through central error boundary; strict service model separately denies any `userId`/`collegeId` keys | `tests/unit/chat11-tpo-preferences-http-security.test.ts` — TPO-settings-audit-PREF-HTTP-08, commit `20f4314`; plus `chat11-tpo-personal-preferences-editor-cas.test.ts` | Real PostgreSQL RLS-equivalent cross-tenant and expired session tests |
