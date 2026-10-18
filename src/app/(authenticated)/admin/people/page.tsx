@@ -84,16 +84,19 @@ const columns: DataTableColumn<PersonMembershipView>[] = [
 export default async function SuperAdminPeoplePage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string;q?:string;role?:string;status?:string;pageSize?:string }>;
+  searchParams: Promise<{ page?: string|string[];q?:string|string[];role?:string|string[];status?:string|string[];pageSize?:string|string[] }>;
 }) {
   const { page: pageParam,q:rawQ,role:rawRole,status:rawStatus,pageSize:rawPageSize } = await searchParams;
-  const q=(rawQ??"").trim().slice(0,100);
-  const role=["ALL","LEARNER","FACULTY","MENTOR","TPO","HR","COLLEGE_ADMIN"].includes(rawRole??"ALL")?rawRole??"ALL":"ALL";
-  const status=["ALL","ACTIVE","SUSPENDED","ENDED"].includes(rawStatus??"ALL")?rawStatus??"ALL":"ALL";
-  const pageSize=[10,20,50].includes(Number(rawPageSize))?Number(rawPageSize):10;
+  // Next.js may supply repeated query keys as arrays; normalize before string operations.
+  const one=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
+  const normalizedRole=one(rawRole),normalizedStatus=one(rawStatus);
+  const q=(one(rawQ)??"").trim().slice(0,100);
+  const role=["ALL","LEARNER","FACULTY","MENTOR","TPO","HR","COLLEGE_ADMIN"].includes(normalizedRole??"ALL")?normalizedRole??"ALL":"ALL";
+  const status=["ALL","ACTIVE","SUSPENDED","ENDED"].includes(normalizedStatus??"ALL")?normalizedStatus??"ALL":"ALL";
+  const pageSize=[10,20,50].includes(Number(one(rawPageSize)))?Number(rawPageSize):10;
   const base=new URLSearchParams({...q?{q}:{},...role!=="ALL"?{role}:{},...status!=="ALL"?{status}:{},...(pageSize!==10?{pageSize:String(pageSize)}:{})});
   const href=(target:number)=>"/admin/people?"+new URLSearchParams({...Object.fromEntries(base),...(target>1?{page:String(target)}:{})}).toString();
-  const requestedPage = parsePeoplePage(pageParam);
+  const requestedPage = parsePeoplePage(one(pageParam));
   const context = await getCurrentRequestContext();
   const collegeId = context.adminScope?.collegeId ?? null;
 
