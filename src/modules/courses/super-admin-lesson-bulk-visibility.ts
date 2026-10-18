@@ -26,6 +26,12 @@ export async function bulkSuperAdminLessonVisibility(context:RequestContext,raw:
  .innerJoin(departments,eq(departments.id,courses.departmentId))
  .innerJoin(academicPeriods,eq(academicPeriods.id,courseOfferings.academicPeriodId))
  .where(and(inArray(lessonContents.lessonId,input.lessonIds),
+   // An item under a draft path or archived ancestor is not currently
+   // student-published: retain its authored visibility until published.
+   eq(courseLearningPaths.status,"PUBLISHED"),
+   eq(courseLessons.status,"ACTIVE"),
+   eq(courseOfferings.status,"ACTIVE"),
+   eq(courses.status,"ACTIVE"),
    eq(departments.collegeId,acting.collegeId),
    eq(academicPeriods.collegeId,acting.collegeId)))
  .limit(501);
