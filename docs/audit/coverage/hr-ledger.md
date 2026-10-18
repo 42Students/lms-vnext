@@ -643,3 +643,11 @@ No HR/Recruiter account obtains Projects access merely through employer/drive gr
 | UX-TRACKER-ERROR-06 | Source update of `src/app/(authenticated)/tracker/page.tsx` removes operator-only migration and environment names; same UX test checks friendly unavailable copy and suppressed admin-only known-error ID | Manual outage browser run |
 
 The stale CI snapshot in `docs/orchestrator/unit-failures-latest.md` lists `chat15-missed-quiz-release.test.ts` and `learner-assessment-state-filter-model.test.ts`. Their current content has already been corrected to exercise deadline-gated release semantics, and `HR-BREAK-chat15-round-service-03.test.ts` no longer uses a self-referential tx argument. Do not mark those green without a new CI run; keep current assertions intact.
+
+
+## HR request mutation and calendar authorization (2026-10-18, authored/not executed)
+
+| Coverage ID | Authored behavior evidence | Remaining acceptance |
+|---|---|---|
+| HR-REQUEST-CANCEL-INTEGRITY-07 | `recruiterRequestUpdateSchema` rejects CANCEL with any draft (prevents historical terms overwrite) and requires validated draft on EDIT and RESUBMIT. `HR-BREAK-chat15-request-cancel-integrity-07.test.ts` checks all three paths, stale/foreign IDs and parse-before-transaction order | End-to-end HTTP 409/400, concurrent cancellation and request audit history in PostgreSQL |
+| HR-CALENDAR-SCOPE-08 | `HR-BREAK-chat15-calendar-08.test.ts` validates one-day 00:00 through 23:59 IST, foreign job and slot exclusion, calendar query 366-day bound, no SQL when no authorized jobs | Real PostgreSQL slot/round calendar role matrix, event/CSV equality, 320px and keyboard UX |
