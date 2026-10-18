@@ -84,6 +84,21 @@ describe("SA-ACADEMICS-BATCH-COUNT-01 scoped active batch learner census",()=>{
   expect(state.scope).not.toHaveBeenCalled();
   expect(state.queries).toBe(0);
  });
+ it("SA-ACADEMICS-ROLE-01 denies Faculty, Mentor, Learner, College Admin and disabled Super Admin before resolving college",async()=>{
+  const blocked:RequestContext[]=[
+   {...actor,user:{...actor.user,platformStatus:"DISABLED"}},
+   ...(["FACULTY","MENTOR","LEARNER","COLLEGE_ADMIN"] as const).map(role=>({
+    ...actor,user:{...actor.user,systemRoles:[]},
+    membership:{id:"member",collegeId,organizationId:orgId,
+     status:"ACTIVE" as const,roles:[role]},
+   })),
+  ];
+  for(const principal of blocked)
+   await expect(getSuperAdminBatchRosterOverview(principal,batchId))
+    .rejects.toThrow("Missing permission: academics.read");
+  expect(state.scope).not.toHaveBeenCalled();
+  expect(state.queries).toBe(0);
+ });
  it("requires an authorized selected college before executing batch queries",async()=>{
   state.scope.mockRejectedValueOnce(new Error("Missing permission: academics.read"));
   await expect(getSuperAdminBatchRosterOverview(actor,batchId))
