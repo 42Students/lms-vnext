@@ -26,7 +26,7 @@ export default async function SuperAdminModuleAccessPage({
     <PageHeader eyebrow="Super Admin" title="Module Access"/>
     <ErrorState title="Invalid feature filters"
       description="The search or page value is invalid."
-      action={<Link href="/admin/module-access" className="font-semibold text-primary-text">Clear filters</Link>}/>
+      action={<Link href="/admin/module-access" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)]">Clear filters</Link>}/>
   </div>;
   const result=await listSuperAdminFeatureControls(context,parsed);
   const scopeMetrics=await getModuleAccessOverviewMetrics(context,result.items.map(item=>item.id));
@@ -51,7 +51,7 @@ export default async function SuperAdminModuleAccessPage({
           className="min-h-11 rounded-md border border-border bg-surface px-3"/>
       </label>
       <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
-      <Link className="min-h-11 px-3 py-3 text-sm font-semibold text-primary-text"
+      <Link className="inline-flex min-h-11 items-center px-3 py-3 text-sm font-semibold text-primary-text"
         href="/admin/module-access">Clear filters</Link>
     </form>
     <p role="status" className="text-sm text-body">
@@ -65,14 +65,14 @@ export default async function SuperAdminModuleAccessPage({
           <h2 className="font-semibold text-foreground">{college.name}</h2>
           <p className="mt-1 text-sm text-body">{college.code}</p>
           <Link href={"/admin/features/"+encodeURIComponent(college.id)}
-            className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">
+            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">
             Module Access →
           </Link>
         </article>)}
       </div>}
     <nav aria-label="Module Access pages" className="flex flex-wrap items-center gap-4 text-sm">
-      {result.page>1?<Link href={pageHref(result.q,result.page-1)}>Previous</Link>:null}
-      {result.page<result.totalPages?<Link href={pageHref(result.q,result.page+1)}>Next</Link>:null}
+      {result.page>1?<Link className="inline-flex min-h-11 items-center" href={pageHref(result.q,result.page-1)}>Previous</Link>:null}
+      {result.page<result.totalPages?<Link className="inline-flex min-h-11 items-center" href={pageHref(result.q,result.page+1)}>Next</Link>:null}
     </nav>
   </div>;
 }

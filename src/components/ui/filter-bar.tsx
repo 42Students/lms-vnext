@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode, type CSSProperties } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode, type CSSProperties } from "react";
 import { useOverlayWebview } from "@/components/ui/use-overlay-webview";
 import { Button } from "@/components/ui/button";
 import { cx } from "@/lib/class-names";
@@ -21,6 +21,7 @@ const FOCUSABLE = 'a[href],button:not([disabled]),input:not([disabled]),select:n
 
 export function FilterBar({ title = "Filters", activeCount = 0, search, filters, children, action, className }: FilterBarProps) {
   const [open, setOpen] = useState(false);
+  const panelId = useId();
   const { availableHeight } = useOverlayWebview({ open, dismissible: true, onDismiss: () => setOpen(false) });
   const launcher = useRef<HTMLButtonElement>(null);
   const panel = useRef<HTMLDivElement>(null);
@@ -58,14 +59,14 @@ export function FilterBar({ title = "Filters", activeCount = 0, search, filters,
     <div className="flex min-w-0 flex-wrap items-end gap-3">
       {search ? <div className="min-w-0 flex-1 basis-40 sm:basis-48">{search}</div> : null}
       <div className="sm:hidden">
-        <Button ref={launcher} variant="secondary" aria-expanded={open} aria-controls="lms-filter-panel"
+        <Button ref={launcher} variant="secondary" aria-expanded={open} aria-controls={panelId}
           onClick={() => setOpen(true)}>{title} ({count})</Button>
       </div>
       {action}
     </div>
     {open ? <button type="button" aria-label="Close filters" onClick={() => setOpen(false)}
       className="fixed inset-0 z-30 bg-foreground/30 sm:hidden"/> : null}
-    <div id="lms-filter-panel" ref={panel} style={{ "--lms-visual-height": availableHeight ?? "100dvh" } as CSSProperties} role={open ? "dialog" : undefined} aria-modal={open ? true : undefined}
+    <div id={panelId} ref={panel} style={{ "--lms-visual-height": availableHeight ?? "100dvh" } as CSSProperties} role={open ? "dialog" : undefined} aria-modal={open ? true : undefined}
       aria-label={open ? title : undefined}
       className={cx("min-w-0 rounded-xl border border-border bg-surface p-4 sm:static sm:z-auto sm:block sm:max-h-none sm:w-full sm:rounded-xl sm:shadow-none",
         open ? "fixed inset-0 z-40 block max-h-[var(--lms-visual-height)] w-full overflow-y-auto overscroll-contain pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] shadow-lg" : "hidden sm:block")}>
