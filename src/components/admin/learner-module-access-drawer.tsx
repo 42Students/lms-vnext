@@ -1,7 +1,8 @@
+"use client";
 import {Drawer} from "@/components/ui/drawer";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-"use client";
+
 import {useEffect,useRef,useState} from "react";
 import Link from "next/link";
 import {StudentRuleEditor} from "@/components/admin/student-rule-editor";

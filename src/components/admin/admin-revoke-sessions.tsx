@@ -1,6 +1,7 @@
+"use client";
 import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
-"use client";
+
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 export function AdminRevokeSessions({collegeId,userId,count}:{collegeId:string;userId:string;count:number}){
