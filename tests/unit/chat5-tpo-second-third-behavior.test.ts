@@ -39,6 +39,19 @@ describe("TPO bounded mutation request contracts",()=>{
    expect(post,route).not.toMatch(/await (?:req|request)\.json\(\)/);
   }
  });
+ it("PLACEMENTS-JOINING-BODY-43 caps all joining corrections before parsing untrusted request data",()=>{
+  const route=src("src/app/api/placements/offers/[offerId]/joining/route.ts");
+  const put=route.slice(route.indexOf("export async function PUT("));
+  const origin=put.indexOf("isSameOriginRequest(request)");
+  const decode=put.indexOf("readTpoBulkRequestBody(request)");
+  expect(origin).toBeGreaterThanOrEqual(0);
+  expect(decode).toBeGreaterThan(origin);
+  expect(put).toContain("recordPlacementJoiningOutcome(");
+  expect(put).toContain("error instanceof TpoBulkBodyError");
+  expect(put).toContain("status:error.status");
+  expect(put).not.toContain("request.json()");
+  expect(route).toContain('"Cache-Control":"private, no-store"');
+ });
  it("PLACEMENTS-SELECTION-BODY-41 maps parser failure on POST, not in the read-only GET route",()=>{
   const source=src("src/app/api/placements/tpo/jobs/[jobId]/selections/route.ts");
   const get=source.slice(source.indexOf("export async function GET("),
