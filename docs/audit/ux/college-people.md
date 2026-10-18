@@ -1,7 +1,5 @@
-# UX review: /college/people
+# UX /college/people
 
-- Route: `src/app/(authenticated)/college/people/page.tsx` under the chat-4 College Admin first-half slice.
-- Existing legacy words, exact authorization and mutation/navigation flows maintained.
-- Source changes: intentional existing redirect to `/college/contacts` remains; introducing a redundant page would damage navigation.
-- States: No direct DataTable; delegated shared content owns its empty/error states. No invalid fabricated status or new APIs.
-- Named source-contract test: `tests/unit/UX-college-college-people-01.test.ts` created; CI and browser checks unexecuted.
+- **Before / action:** Audited intentional People Directory redirect to the college Contacts surface; no duplicate directory UI added. Exact canonical route remains.
+- **Preserved:** Legacy route labels/identifiers, backend permission checks and error boundaries. No browser/device/AT sign-off claimed.
+- **Tests authored:** UX-college-people-01, UX-college-people-02. Not executed in this connector.

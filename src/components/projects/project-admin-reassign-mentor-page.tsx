@@ -76,7 +76,7 @@ export async function ProjectAdminReassignMentorPage({
         title="Bulk mentor reassignment"
         description="Move selected non-archived project workspaces to a new primary mentor."
       />
-      <Link className="inline-flex min-h-10 items-center rounded-md border border-border px-3 py-2 text-sm font-semibold" href={basePath}>Back to workspaces</Link>
+      <Link className="inline-flex min-h-11 items-center rounded-md border border-border px-3 py-2 text-sm font-semibold" href={basePath}>Back to workspaces</Link>
       <section className="rounded-xl border border-border bg-surface p-5">
         <h2 className="text-base font-semibold">Mentor workload</h2>
         <div className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
@@ -85,7 +85,7 @@ export async function ProjectAdminReassignMentorPage({
             const filter = row.mentorMembershipId ?? "UNASSIGNED";
             return <Link key={filter}
               href={basePath + "/reassign-mentor?fromMentorId=" + encodeURIComponent(filter)}
-              className="rounded-lg border border-border p-3 hover:border-primary">
+              className="block min-h-11 rounded-lg border border-border p-3 hover:border-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
               <p className="font-semibold">{row.mentorName ?? mentor?.displayName ?? mentor?.email ?? (row.mentorMembershipId?"Mentor":"Unassigned")}</p>
               <p className="text-sm">{row.activeWorkspaces} active workspaces</p>
               <p className="text-sm">{row.atRisk} at risk</p>
@@ -118,7 +118,7 @@ export async function ProjectAdminReassignMentorPage({
         <label className="grid gap-1 text-sm font-semibold">
           Filter by current mentor
           <select name="fromMentorId" defaultValue={fromMentorId ?? ""}
-            className="min-h-10 rounded-lg border border-border bg-background px-3 py-2">
+            className="min-h-11 rounded-lg border border-border bg-background px-3 py-2">
             <option value="">All mentors</option>
             <option value="UNASSIGNED">Unassigned</option>
             {mentors.map(mentor => <option key={mentor.membershipId} value={mentor.membershipId}>
@@ -126,7 +126,7 @@ export async function ProjectAdminReassignMentorPage({
             </option>)}
           </select>
         </label>
-        <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground">
+        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground">
           Apply mentor filter
         </button>
       </form>
