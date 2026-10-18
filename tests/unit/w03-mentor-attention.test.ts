@@ -52,14 +52,19 @@ describe("W03 mentor notification attention parity",()=>{
     })],now);
     expect(alerts).toEqual([]);
   });
-  it("avoids stalled alerts for missing genuine activity or nonactive projects",()=>{
+  it("avoids stalled alerts after recent activity, and includes idle planned work per MEN-projects-meetings-73",()=>{
     const old=new Date("2026-09-01T00:00:00Z");
     expect(deriveMentorProjectAttention([project({
       projectUpdatedAt:old,lastActivityAt:now,
     })],now).some(x=>x.kind==="STALLED")).toBe(false);
     expect(deriveMentorProjectAttention([project({
       projectStatus:"PLANNED",projectUpdatedAt:old,
-    })],now).some(x=>x.kind==="STALLED")).toBe(false);
+    })],now).some(x=>x.kind==="STALLED")).toBe(true);
+    for(const status of ["BLOCKED","COMPLETED","ARCHIVED"]){
+      expect(deriveMentorProjectAttention([project({
+        projectStatus:status,projectUpdatedAt:old,
+      })],now).some(x=>x.kind==="STALLED")).toBe(false);
+    }
   });
   it("shows stalled after 7 days of real inactivity, not before",()=>{
     const alerts=deriveMentorProjectAttention([project({
