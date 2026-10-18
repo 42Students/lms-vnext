@@ -7,6 +7,7 @@ import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {useTpoStudentsSelection} from "./tpo-students-selection";
 import {tpoDriveVisibilitySelection,tpoDriveVisibilityValid} from "@/modules/placements/tpo-drive-visibility-bulk-model";
+import {mapTpoBulkBounded} from "@/modules/placements/tpo-bulk-bounded-execution";
 type Learner={id:string;name:string};
 type Drive={id:string;name:string;status:string};
 type Outcome={id:string;name:string;status:"saved"|"failed";action:"INCLUDE"|"EXCLUDE"|"CLEAR";overrideId?:string};
@@ -20,35 +21,42 @@ export function TpoStudentsDriveVisibility({learners,drives}:{learners:readonly 
  const [results,setResults]=useState<Outcome[]>([]);
  const [lastActionJobId,setLastActionJobId]=useState("");
  const {run,pending}=useGuardedAction({timeoutMs:120000});
- const picked=tpoDriveVisibilitySelection(selection?.selected??[],learners,25);
+ const picked=tpoDriveVisibilitySelection(selection?.selected??[],learners,200);
  const valid=tpoDriveVisibilityValid({jobId,decision,reason,count:picked.length});
  async function submit(){
   if(!valid||pending)return;
   setError("");setResults([]);
   try{
    await run(async()=>{
-    const outcomes:Outcome[]=[];
     setLastActionJobId(jobId);
-    for(const learner of picked){
+    const outcomes=await mapTpoBulkBounded(picked,async(learner):Promise<Outcome>=>{
      try{
-      const endpoint="/api/placements/jobs/"+encodeURIComponent(jobId)+"/eligibility/"+encodeURIComponent(learner.id);
-
+      const endpoint="/api/placements/jobs/"+encodeURIComponent(jobId)+
+       "/eligibility/"+encodeURIComponent(learner.id);
+      const current=await apiFetch<{eligibility:{override:{id:string}|null}}>(
+       endpoint,{cache:"no-store"});
+      const expectedOverrideId=current.eligibility.override?.id??null;
       let data:{override:{id:string}};
       if(decision==="CLEAR"){
-       const current=await apiFetch<{eligibility:{override:{id:string}|null}}>(endpoint,{cache:"no-store"});
-       if(!current.eligibility.override)throw new Error("No current override to clear");
-       data=await apiFetch<{override:{id:string}}>(endpoint,{method:"DELETE",credentials:"same-origin",
+       if(!expectedOverrideId)throw new Error("No current override to clear");
+       data=await apiFetch<{override:{id:string}}>(endpoint,{
+        method:"DELETE",credentials:"same-origin",
         headers:{"content-type":"application/json"},
-        body:JSON.stringify({expectedOverrideId:current.eligibility.override.id,reason:reason.trim()})});
+        body:JSON.stringify({expectedOverrideId,reason:reason.trim()}),
+       });
       }else{
-       data=await apiFetch<{override:{id:string}}>(endpoint,{method:"PUT",credentials:"same-origin",
-        headers:{"content-type":"application/json"},body:JSON.stringify({decision,reason:reason.trim()})});
+       data=await apiFetch<{override:{id:string}}>(endpoint,{
+        method:"PUT",credentials:"same-origin",
+        headers:{"content-type":"application/json"},
+        body:JSON.stringify({decision,reason:reason.trim(),expectedOverrideId}),
+       });
       }
-      outcomes.push({id:learner.id,name:learner.name,status:"saved",action:decision,overrideId:data.override.id});
+      return {id:learner.id,name:learner.name,status:"saved",
+       action:decision,overrideId:data.override.id};
      }catch{
-      outcomes.push({id:learner.id,name:learner.name,status:"failed",action:decision});
+      return {id:learner.id,name:learner.name,status:"failed",action:decision};
      }
-    }
+    },5);
     setResults(outcomes);setConfirm(false);
     if(outcomes.some(item=>item.status==="saved"))router.refresh();
    });
@@ -59,24 +67,27 @@ export function TpoStudentsDriveVisibility({learners,drives}:{learners:readonly 
   const restorable=results.filter(row=>row.status==="saved"&&row.action!=="CLEAR"&&row.overrideId);
   try{
    await run(async()=>{
-    const next:Outcome[]=[];
-    for(const row of restorable){
+    const next=await mapTpoBulkBounded(restorable,async(row):Promise<Outcome>=>{
      try{
-      await apiFetch("/api/placements/jobs/"+encodeURIComponent(lastActionJobId)+"/eligibility/"+encodeURIComponent(row.id),{
+      await apiFetch("/api/placements/jobs/"+encodeURIComponent(lastActionJobId)+
+       "/eligibility/"+encodeURIComponent(row.id),{
        method:"DELETE",credentials:"same-origin",headers:{"content-type":"application/json"},
-       body:JSON.stringify({expectedOverrideId:row.overrideId,reason:"Undo previous TPO bulk change"}),
+       body:JSON.stringify({expectedOverrideId:row.overrideId,
+        reason:"Undo previous TPO bulk change"}),
       });
-      next.push({...row,status:"saved",action:"CLEAR"});
-     }catch{next.push({...row,status:"failed"});}
-    }
+      return {...row,status:"saved",action:"CLEAR"};
+     }catch{
+      return {...row,status:"failed"};
+     }
+    },5);
     setResults(next);if(next.some(row=>row.status==="saved"))router.refresh();
    });
   }catch{setError("Undo could not finish. Review the current override before trying again.");}
  }
  return <section aria-label="Show or hide a drive for selected students" className="space-y-3 rounded-xl border border-border bg-surface p-4">
   <h2 className="font-semibold">Show or hide a drive for selected students</h2>
-  <p className="text-sm text-body">Apply an individual include or exclude decision with a reason. The eligibility rules still protect college and cohort targeting. Existing applications are preserved.</p>
-  <p role="status">{picked.length} selected on this visible roster page (up to 25 per review).</p>
+  <p className="text-sm text-body">Apply an individual include or exclude decision with a reason. The eligibility rules still protect college and cohort targeting. Existing applications are preserved. Each selected override is version-checked so another officer’s newer decision is not overwritten.</p>
+  <p role="status">{picked.length} selected from the current filtered roster (up to 200 per review).</p>
   {drives.length===0?<p>No draft or published drives can be changed here.</p>:null}
   <div className="flex flex-wrap gap-3">
    <label className="grid gap-1 text-sm">Drive

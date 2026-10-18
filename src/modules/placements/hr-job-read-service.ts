@@ -6,6 +6,7 @@ import { collegeMemberships, placementApplications, placementApplicationScreenin
   learnerProfiles,placementCompanyRelationships,profileVerificationAcademicMarks,profileVerifications,placementDriveSelections,placementRoundCandidateSlots,learnerProgramEnrollments,programs,departments,placementCompanyVisibilitySettings } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import {projectRecruiterProfileLinks} from "./recruiter-applicant-shared-links-model";
+import {uniqueHrVerifiedAcademicMarks} from "./hr-verified-marks-model";
 import { findRecruiterScopedGrant } from "./recruiter-grant-selection-model";
 import { getRecruiterPlacementWorkspace } from "./recruiter-workspace-service";
 import { hrApplicantFilterSchema, HR_APPLICANT_PAGE_SIZE, projectSharedApplicants, hrApplicantPageBounds, HR_OFFER_PAGE_SIZE, hrOfferPageBounds,type HrApplicantStage } from "./hr-job-applicants-model";
@@ -219,7 +220,6 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
   };
   // REC-home-drives-38: read only already-verified academic marks for
   // this authorized 25-row page. Raw learner JSON is never sent to employers.
-  type AcademicLevel="UG"|"10TH"|"12TH"|"DIPLOMA";
   const memberIds=[...new Set(applications.map(row=>row.membershipId))];
   const grades=(memberIds.length&&(shareUg||shareTenth||shareTwelfth))
    ?await db.select({
@@ -234,14 +234,9 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
      .where(and(inArray(profileVerificationAcademicMarks.learnerMembershipId,memberIds),
       inArray(profileVerificationAcademicMarks.level,["UG","10TH","12TH","DIPLOMA"])))
    :[];
-  const byMember=new Map<string,Partial<Record<AcademicLevel,number>>>();
-  for(const mark of grades){
-   if(mark.percentage===null)continue;
-   if(mark.level!=="UG"&&mark.level!=="10TH"&&mark.level!=="12TH"&&mark.level!=="DIPLOMA")continue;
-   const row=byMember.get(mark.membershipId)??{};
-   row[mark.level]=mark.percentage;
-   byMember.set(mark.membershipId,row);
-  }
+  // Conflicting verified-history rows are not an employer disclosure grant.
+  // A single historical duplicate must never win by undefined SQL row order.
+  const byMember=uniqueHrVerifiedAcademicMarks(grades);
   // A branch is derived from the college's active program enrollment, never
   // unverified learner-supplied profile JSON. Ambiguous multiple branches fail closed.
   const activeBranches=(memberIds.length&&shareBranch)
