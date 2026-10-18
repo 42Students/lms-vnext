@@ -25,6 +25,28 @@ describe("Super Admin Projects activity ledger hostile URL handling",()=>{
   expect(conflicting.subjectId).toBeUndefined();
   expect(conflicting.from).toBeUndefined();
  });
+ it("PROJ-BREAK-SA-29 preserves legacy event aliases but rejects conflicting values",()=>{
+  const event=ACTIVITY_EVENT_TYPES.PROJECTS_READINESS_OVERRIDDEN;
+  for(const alias of ["action","status","eventType"]){
+   const read=parseProjectAdminAuditQuery({[alias]:event});
+   expect(read.eventType,alias).toBe(event);
+   expect(read.ignoredInvalidFilters,alias).toBe(false);
+  }
+  const same=parseProjectAdminAuditQuery({action:event,status:event,eventType:event});
+  expect(same.eventType).toBe(event);
+  expect(same.ignoredInvalidFilters).toBe(false);
+  const conflict=parseProjectAdminAuditQuery({
+    action:event,status:"projects.unknown",
+  });
+  expect(conflict.eventType).toBeUndefined();
+  expect(conflict.ignoredInvalidFilters).toBe(true);
+  const conflict2=parseProjectAdminAuditQuery({
+    action:event,eventType:"projects.other",
+  });
+  expect(conflict2.eventType).toBeUndefined();
+  expect(conflict2.ignoredInvalidFilters).toBe(true);
+ });
+
  it("PROJ-BREAK-SA-28 refuses rolled-over days and malformed cursor pairs",()=>{
   for(const invalid of ["2026-02-31","2026-13-01","2025-02-29","not-a-date"]){
    const parsed=parseProjectAdminAuditQuery({from:invalid});

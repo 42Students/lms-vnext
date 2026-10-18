@@ -438,7 +438,7 @@ export function LearnerFinalDeliveryControl({
       </Dialog>
       <ConfirmDialog open={submitConfirmation}
         onOpenChange={next=>{if(!next&&!pending)setSubmitConfirmation(false);}}
-        title="Submit final delivery for mentor review?"
+        title="Submit on behalf of your team?"
         description="The final delivery is shared with your project team and cannot be edited while it awaits review."
         confirmLabel="Submit final work" pending={pending}
         onConfirm={()=>{void submitDraft(true);}} />
