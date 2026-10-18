@@ -49,9 +49,9 @@ export async function saveTpoOutcomeLabels(context:RequestContext,raw:unknown){
  if(!await placementTableExists("placement_tpo_college_settings"))
   throw new TpoOutcomeLabelError("TPO_SETTINGS_PENDING");
  return getDb().transaction(async tx=>{
-  const [college]=await tx.select({organizationId:colleges.organizationId})
+  const [college]=await tx.select({organizationId:colleges.organizationId,status:colleges.status})
    .from(colleges).where(eq(colleges.id,collegeId)).for("update").limit(1);
-  if(!college)throw new TpoOutcomeLabelError("TPO_SETTINGS_NOT_FOUND");
+  if(!college||college.status!=="ACTIVE")throw new TpoOutcomeLabelError("TPO_SETTINGS_NOT_FOUND");
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{
    collegeId,organizationId:college.organizationId,
   });
