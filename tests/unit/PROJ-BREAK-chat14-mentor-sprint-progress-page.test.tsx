@@ -92,7 +92,7 @@ describe("Mentor sprint progress role/page journey",()=>{
  it("PROJ-BREAK-MENTOR-369 authorized empty and partial states preserve counts and scoped links",async()=>{
   const empty=await renderPage({});
   expect(empty).toContain("No persisted sprint progress");
-  expect(empty).toContain("Unknown (no tasks)"=== "No persisted sprint progress"? "Unknown" : "No sprints matched");
+  expect(empty).toContain("No sprints matched the selected state");
   state.total=105;
   state.items=[{id:sprintId,title:"Iteration <script>",projectId,projectTitle:"Atlas",
    status:"ACTIVE",releaseTitle:"Release A",releaseStatus:"IN_PROGRESS",
