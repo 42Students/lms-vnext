@@ -17,12 +17,25 @@ function safeError(error:unknown){
   return NextResponse.json({error:error.code,message,requestId},{status:error.status,
    headers:{"Cache-Control":"no-store","x-request-id":requestId}});
  }
- if(error instanceof TpoCompanyTeamError)return NextResponse.json({error:error.code},{
-  status:error.code==="STORAGE_PENDING"?503:error.code==="BAD_ACTION"?422:
-   error.code==="STALE"?409:error.code==="NOT_AUTHORIZED"?403:404,
-  headers:{"Cache-Control":"no-store"},
- });
- if(error instanceof ZodError)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+ if(error instanceof TpoCompanyTeamError){
+  const requestId=createRequestId();
+  const status=error.code==="STORAGE_PENDING"?503:error.code==="BAD_ACTION"?422:
+   error.code==="STALE"?409:error.code==="NOT_AUTHORIZED"?403:404;
+  const message=error.code==="STORAGE_PENDING"
+   ?"Company Team messages are temporarily unavailable. Retry later."
+   :error.code==="STALE"?"This message changed. Reload the discussion and retry."
+   :error.code==="NOT_AUTHORIZED"?"You do not have permission to change this message."
+   :error.code==="NOT_FOUND"?"This company discussion is unavailable."
+   :"Check the Team message details and try again.";
+  return NextResponse.json({error:error.code,message,requestId},{status,
+   headers:{"Cache-Control":"no-store","x-request-id":requestId}});
+ }
+ if(error instanceof ZodError){
+  const requestId=createRequestId();
+  return NextResponse.json({error:"INVALID_REQUEST",
+   message:"Check the Team message details and try again.",requestId},{
+   status:400,headers:{"Cache-Control":"no-store","x-request-id":requestId}});
+ }
  return apiErrorResponse(error);
 }
 export async function GET(_request:Request,{params}:Params){
@@ -33,7 +46,12 @@ export async function GET(_request:Request,{params}:Params){
  }catch(error){return safeError(error);}
 }
 export async function POST(request:Request,{params}:Params){
- if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
+ if(!isSameOriginRequest(request)){
+  const requestId=createRequestId();
+  return NextResponse.json({error:"INVALID_ORIGIN",
+   message:"This Team update could not be verified. Reload and try again.",requestId},{
+   status:403,headers:{"Cache-Control":"no-store","x-request-id":requestId}});
+ }
  try{
   const {companyId}=await params;
   const result=await mutateTpoCompanyTeam(await getCurrentRequestContext(),companyId,await readTpoCompanyTeamBody(request));
