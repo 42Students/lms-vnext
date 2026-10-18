@@ -6,6 +6,7 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
+import {Checkbox} from "@/components/ui/selection-controls";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {FacultyAssignmentMethodPicker} from "./faculty-assignment-method-picker";
@@ -171,11 +172,8 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
   {success?<p role="status" className="text-sm text-body">{success}</p>:null}
   <div className="flex flex-wrap gap-2">
    {!existing?<div className="flex flex-wrap items-center gap-3">
-    <label className="flex min-h-11 items-center gap-2 text-sm">
-      <Input type="checkbox" checked={publishNow} disabled={pending}
-        onChange={event=>setPublishNow(event.target.checked)}/>
-      Publish now
-    </label>
+    <Checkbox label="Publish now" checked={publishNow} disabled={pending}
+      onChange={event=>setPublishNow(event.target.checked)} />
     <Button type="button" disabled={pending||!lessonId}
     onClick={()=>void submit("CREATE")} variant="primary">{publishNow?"Create and publish":"Create draft"}</Button>
    </div>
