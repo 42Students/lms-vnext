@@ -29,9 +29,9 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
  if(!hasActiveRecruiter(context))redirect("/dashboard");
  const raw=await searchParams;
  const parsed=hrConversationQuerySchema.safeParse({collegeId:first(raw.collegeId),q:first(raw.q),page:first(raw.page),unreadOnly:first(raw.unreadOnly),sort:first(raw.sort),scope:first(raw.scope)});
- if(!parsed.success)return <main role="alert" className="space-y-3 p-5">
+ if(!parsed.success)return <div role="alert" className="space-y-3 p-5">
   <PageHeader eyebrow="Recruiter" title="Conversations"/>
-  <p>Invalid conversation filters.</p><Link href="/hr/conversations" className="text-primary-text">Reset</Link></main>;
+  <p>Invalid conversation filters.</p><Link href="/hr/conversations" className="text-primary-text">Reset</Link></div>;
  const result=await listHrConversations(context,parsed.data);
  const generalResult=result.status==="READY"?await listHrConversations(context,{
   collegeId:result.collegeId,q:"",page:1,unreadOnly:"false",sort:"LATEST",scope:"GENERAL",
@@ -41,7 +41,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
  const displayNow=new Date();
  const decisionNotices=result.status==="READY"
   ? await listOwnRecruiterDecisionNotices(context,result.collegeId):[];
- return <main className="space-y-5">
+ return <div className="min-w-0 max-w-full space-y-5">
   <RecruiterConversationLiveRefresh/>
   <PageHeader eyebrow="Recruiter · Messages" title="Messages"
    description={result.status==="READY"
@@ -62,7 +62,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       <p className="font-semibold text-foreground">{item.title}{item.unread?" · New":""}</p>
       <p className="mt-1 whitespace-pre-wrap text-sm text-body">{item.body}</p>
       <p className="mt-1 text-xs text-muted-foreground">{when(item.createdAt)} IST</p>
-      <Link href={item.href} className="mt-2 inline-flex min-h-10 items-center text-primary-text underline">
+      <Link href={item.href} className="mt-2 inline-flex min-h-11 items-center text-primary-text underline">
        View your drive request
       </Link>
       {item.unread?<RecruiterDecisionReadButton id={item.id}/>:null}
@@ -92,7 +92,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       </ol>:null}
       <div className="mt-3"><RecruiterConversationReplyForm threadId={generalThread.id}/></div>
       <Link href={"/hr/conversations/"+generalThread.id}
-        className="mt-3 inline-flex min-h-10 items-center text-primary-text underline">Open full conversation</Link>
+        className="mt-3 inline-flex min-h-11 items-center text-primary-text underline">Open full conversation</Link>
     </details>:null}
     {!generalThread?<form method="post" action="/api/placements/recruiter/conversations/open" className="mt-3">
       <input name="collegeId" type="hidden" value={result.collegeId}/>
@@ -172,5 +172,5 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Next</Link>:null}
    </nav>
   </>}
- </main>;
+ </div>;
 }

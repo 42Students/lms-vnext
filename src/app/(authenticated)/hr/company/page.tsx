@@ -32,7 +32,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
 
   const query = await searchParams;
   const collegeQuery = z.string().uuid().optional().safeParse(one(query.collegeId));
-  if (!collegeQuery.success) return <div className="space-y-5"><PageHeader eyebrow="Recruiter" title="Company & Team" />
+  if (!collegeQuery.success) return <div className="min-w-0 max-w-full space-y-5"><PageHeader eyebrow="Recruiter" title="Company & Team" />
     <ErrorState title="Invalid college selection" description="Choose a college from your authorized access list."
       action={<Link href="/hr/company" className="text-primary-text underline">Choose college</Link>} /></div>;
   const requestedCollegeId = collegeQuery.data ?? null;
@@ -50,14 +50,14 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
   }
 
   const tab = requestedTab === "team" ? "team" : "company";
-  if (!teamQuery.success || !teamPage.success) return <div className="space-y-4"><PageHeader eyebrow="Recruiter" title="Company & Team" />
+  if (!teamQuery.success || !teamPage.success) return <div className="min-w-0 max-w-full space-y-4"><PageHeader eyebrow="Recruiter" title="Company & Team" />
     <ErrorState title="Invalid team filter" description="Search must be 120 characters or fewer."
       action={<Link href="/hr/company?tab=team" className="text-primary-text">Clear search</Link>} /></div>;
   const result = await getRecruiterCompanyTeam(context, requestedCollegeId);
 
   if (result.status !== "READY") {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 max-w-full space-y-6">
         <PageHeader
           eyebrow="Recruiter"
           title="Company & Team"
@@ -97,7 +97,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
   const teamPageResult = hrTeamPage(matchingTeam,teamPage.data);
   const base = "/hr/company?collegeId=" + encodeURIComponent(result.grant.collegeId);
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 max-w-full space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <PageHeader
           eyebrow="Recruiter"
