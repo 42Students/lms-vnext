@@ -116,7 +116,9 @@ describe("TPO-companies-10 client component and duplicate-submit regression", ()
   });
   it("requires an explicit create confirmation, locks repeat submits and preserves form fields on failure", () => {
     const file = source("src/components/tpo/tpo-company-create-form.tsx");
-    expect(file).toContain("if (pending) return;");
+    expect(file).toContain("if (pending || submittingRef.current) return;");
+    expect(file).toContain("submittingRef.current = true;");
+    expect(file).toContain("submittingRef.current = false;");
     expect(file).toContain("if(!reviewing)");
     expect(file).toContain("setPending(true)");
     expect(file).toContain("confirmed: true");
