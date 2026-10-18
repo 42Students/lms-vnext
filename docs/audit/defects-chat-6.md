@@ -81,3 +81,10 @@ The global `GR-09/GR-31` unit gate remains unverified: additional offenders may 
 ### Compatibility and release gate
 
 Final-delivery clients must send the most recent `updatedAt` returned by the server on each write; old clients are intentionally rejected rather than silently overwriting team data. HTTP PATCH/submit routes remain same-origin and server-authorized. The stale-write error is `PROJECT_SUBMISSION_CONFLICT`; friendly error mapping and wrong-college behavior require cloud regression. Independent PostgreSQL reviewer approval remains necessary before IIT Dharwad release.
+
+### Teammate-created draft conflict
+
+| ID | Severity | Evidence | Fix | Regression | Validation |
+|---|---|---|---|---|---|
+
+| PROJ-BREAK-submissions-12 | S1 | A router refresh could introduce a draft created by a different team member while this tab held unsaved local inputs. Automatically adopting its `updatedAt` would turn an unauthorized stale edit into an apparently current PATCH. | Do **not** advance any draft revision from refreshed props after mount. Only the response to this tab's successful POST/PATCH may advance the token; otherwise the user receives an explicit refresh-first error instead of overwriting teammate work (`bdcf057`). | `tests/unit/PROJ-BREAK-chat6-draft-revision-race.test.ts` (`7605b1a`) | Cloud CI + two-client integration required |
