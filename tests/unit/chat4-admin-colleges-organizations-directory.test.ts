@@ -40,11 +40,16 @@ describe("Super Admin colleges and organizations directory contracts (chat-4)", 
       { page: "0" },
       { page: "-1" },
       { page: "1.5" },
+      { page: "1e2" },
+      { page: "0x10" },
+      { page: " 2 " },
       { page: "Infinity" },
       { page: "1001" },
       { pageSize: "5" },
       { pageSize: "200" },
       { pageSize: "1.5" },
+      { pageSize: "1e2" },
+      { pageSize: "0x19" },
     ]) {
       expect(parseAdminDirectorySearchParams(query)).toBeNull();
     }
