@@ -1,3 +1,4 @@
+import {readFileSync} from "node:fs";
 import {describe,expect,it} from "vitest";
 import {planInterviewDay,sameInterviewRoom,tpoInterviewSlotActionSchema} from "@/modules/placements/tpo-interview-slot-model";
 import {overlappingInterviewVenue,validInterviewWindow} from "@/modules/placements/tpo-interview-reschedule-model";
@@ -37,6 +38,17 @@ describe("TPO-BREAK-interview-01 day planner and venue safety",()=>{
   expect(sameInterviewRoom("Ｒｏｏｍ　Ａ","Room A")).toBe(true);
   expect(sameInterviewRoom("Room B","Room A")).toBe(false);
   expect(()=>planInterviewDay({...input,rooms:null} as unknown as typeof input)).toThrow("Invalid interview day configuration");
+ });
+ it("TPO-drive-workspace-44 assignment checks Unicode-equivalent occupied rooms before writing",()=>{
+  expect(sameInterviewRoom("Ｒｏｏｍ　Ａ"," room a ")).toBe(true);
+  expect(sameInterviewRoom("Café Hall","Café Hall")).toBe(true);
+
+  const service=readFileSync("src/modules/placements/tpo-interview-slot-service.ts","utf8");
+  const section=service.slice(service.indexOf('if(input.action==="ASSIGN_ROOM")'));
+  expect(section).toContain("sameInterviewRoom(other.room,input.room)");
+  expect(section).toContain("other.startsAt<slot.endsAt&&other.endsAt>slot.startsAt");
+  expect(section).toContain("collisions.length>1000");
+  expect(section).toContain("That room is already in use at this time.");
  });
  it("rejects slots that run past 23:59 IST instead of silently crossing college days",()=>{
   expect(()=>planInterviewDay({...input,startsAt:"2026-10-20T23:40:00+05:30",durationMinutes:30,slotsPerRoom:1}))

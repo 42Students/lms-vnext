@@ -292,15 +292,20 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
    // An unchanged room is not a new edit: no version bump and no duplicate notice.
    if(sameInterviewRoom(slot.room,input.room))
     return {changed:0};
-   const collisions=await tx.select({id:placementRoundCandidateSlots.id})
-    .from(placementRoundCandidateSlots).where(and(
-     eq(placementRoundCandidateSlots.roundId,info.round.id),
-     ne(placementRoundCandidateSlots.id,slot.id),
-     ne(placementRoundCandidateSlots.status,"CANCELLED"),
-     sql`lower(trim(${placementRoundCandidateSlots.room})) = lower(trim(${input.room}))`,
-     sql`${placementRoundCandidateSlots.startsAt} < ${slot.endsAt}`,
-     sql`${placementRoundCandidateSlots.endsAt} > ${slot.startsAt}`)).limit(1);
-   if(collisions.length)throw Error("That room is already in use at this time.");
+   // Match the same NFKC/trim/case-folded room semantics as the day
+   // planner and bulk-room editor. SQL lower(trim()) alone misses e.g.
+   // full-width names and canonically equivalent Unicode spellings.
+   const collisions=await tx.select({
+    room:placementRoundCandidateSlots.room,
+    startsAt:placementRoundCandidateSlots.startsAt,endsAt:placementRoundCandidateSlots.endsAt,
+   }).from(placementRoundCandidateSlots).where(and(
+    eq(placementRoundCandidateSlots.roundId,info.round.id),
+    ne(placementRoundCandidateSlots.id,slot.id),
+    ne(placementRoundCandidateSlots.status,"CANCELLED"))).limit(1001);
+   if(collisions.length>1000||collisions.some(other=>
+    sameInterviewRoom(other.room,input.room)&&
+    other.startsAt<slot.endsAt&&other.endsAt>slot.startsAt))
+    throw Error("That room is already in use at this time.");
    await tx.update(placementRoundCandidateSlots).set({
     room:input.room,updatedAt:new Date(),version:slot.version+1,
    }).where(eq(placementRoundCandidateSlots.id,id));

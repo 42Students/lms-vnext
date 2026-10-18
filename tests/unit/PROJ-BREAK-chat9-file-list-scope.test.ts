@@ -41,7 +41,7 @@ vi.mock("@/db/client",()=>({
 const actor:RequestContext={
  user:{id:"33333333-3333-4333-8333-333333333333",identityUid:"admin",
   platformStatus:"ACTIVE",systemRoles:["SUPER_ADMIN"]},
- membership:null,adminScope:{collegeId},
+ membership:null,adminScope:{collegeId,organizationId:null},
 };
 const dialect=new PgDialect();
 const render=(part:unknown)=>dialect.sqlToQuery(part as SQL);

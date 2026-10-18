@@ -80,7 +80,7 @@ describe("Super Admin Projects global template catalogue and assignment read bou
     expect(all).toHaveLength(1);
     state.selects = 0;
     state.filters = [];
-    const row = await getProjectTemplateDetail(context({ organizationId }), templateId);
+    const row = await getProjectTemplateDetail(context({ organizationId, collegeId: null }), templateId);
     expect(row.template.id).toBe(templateId);
     expect(row.currentVersion?.version).toBe(2);
     const filter = rendered(state.filters[state.filters.length - 1]);

@@ -1,3 +1,5 @@
+import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
+import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
 import { Skeleton } from "@/components/ui/skeleton";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
@@ -21,6 +23,7 @@ export default async function TpoSeasonPipelinePage({
   const context = await getCurrentRequestContext();
   if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
   const raw = await searchParams;
+  if(tpoReportHasAmbiguousFilters(raw))return <TpoReportInvalidFilters path="/tpo/reports/season-pipeline"/>;
   const report = await getTpoSeasonPipeline(context, {
     ...(first(raw.seasonId) ? { seasonId: first(raw.seasonId) } : {}),
     ...(first(raw.jobId) ? { jobId: first(raw.jobId) } : {}),
