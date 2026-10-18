@@ -89,7 +89,7 @@ No page UI/UX restyling was introduced.
 
 ## chat-5 (15)
 
-- FAC-courses-02 [OPEN] faculty/courses
+- FAC-courses-02 [BLOCKED] faculty/courses (bundled fallback DONE; private scanned image storage needed for authored thumbnails)
 - FAC-courses-07 [DONE] faculty/courses
 - FAC-courses-10 [DONE] faculty/courses
 - FAC-courses-17 [NOT-A-GAP] faculty/courses

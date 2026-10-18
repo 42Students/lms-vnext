@@ -138,6 +138,22 @@ The selected-college `listAdminScopedPeople` service used `offset((query.page-1)
 
 **Fix:** Join Section only when both its cohort and academic period match the teaching delivery's offering. Resolve the cohort program's department through a distinct Drizzle alias and require it belongs to the current Faculty college; require the academic period also belongs to that college. The original active status, membership, Faculty role and persisted teaching grant filters remain in force. Test `tests/unit/chat3-faculty-course-roster-cross-tenant-joins.test.ts` (FAC-TENANT-COURSES-01) compiles the real join predicates through PgDialect and rejects wrong-role/inactive callers before DB queries. Full PostgreSQL cross-college fixtures, EXPLAIN and current CI remain release gates.
 
+### SA3-FAC-ASSIGNMENTS-023 — mismatched Faculty Section/term joins and stale assignment page (S1/S2)
+
+The selected-college Super Admin Faculty assignment directory joined course offerings, Sections and cohorts by independent foreign keys. It did not require `sections.cohort_id = course_offerings.cohort_id` or `sections.academic_period_id = course_offerings.academic_period_id`. Malformed cross-Section teaching deliveries could appear authoritative in the assignment roster. Its page query also used an un-clamped deep-link offset, producing false empty pages after removal.
+
+**Fix:** Match offering and Section's cohort and term in the inner joins; maintain college/organization scope; count and clamp the requested page before rows. The class selector requires a selected-college academic period. `tests/unit/chat3-sa-faculty-assignments-tenant-pages.test.ts` checks compiled joins and role denial. PostgreSQL fixtures and CI remain outstanding.
+
+### SA3-PEOPLE-ORG-025 — Super Admin selected-college facets did not verify organization ownership (S1)
+
+The Faculty teaching-assignment class picker and four People filter-option SQL readers enforced the selected `college_id`, but did not join the `colleges` table to establish that the selected college belongs to the selected `organization_id`. Since `requireSuperAdminSelectedCollege` compares the request to the already selected scope without querying the owning tenant row, a stale or inconsistent selected organization+college pair could expose class, cohort, program and department facet names from the wrong organization.
+
+**Fix:** Require the persisted college row and matching `colleges.organization_id` in the Faculty classes picker and all four People facet queries. Keep the existing department, academic term, count limits and active Super Admin selected-scope checks. Tests: `tests/unit/chat3-sa-faculty-assignments-tenant-pages.test.ts` (SA3-FAC-ORG-01) and `tests/unit/chat3-sa-people-facets-organization-scope.test.ts` (SA3-PEOPLE-ORG-01). Requires CI and PostgreSQL mismatch fixtures before claiming runtime acceptance.
+
+### SA3-FAC-EXPORT-024 — duplicate Faculty export filters silently overwritten (S2)
+
+`Object.fromEntries(searchParams)` dropped duplicate `status`, `page`, or `q` selectors before validation, allowing a request with ambiguous selection to download a different CSV than its visible filters suggested. The export now rejects duplicate keys with a 400 response and preserves the existing 300-row cap and safe cache headers. `tests/unit/chat3-sa-faculty-assignments-csv-http.test.ts` exercises actual HTTP behavior. CI pending.
+
 ### FAC-HTTP-BODY-021 — unbounded live-class and attendance scheduling commands (S1)
 
 Both Faculty live-class and attendance scheduling POST routes previously called `request.json()` directly. The Zod/authorization service subsequently rejected bad fields, but the HTTP input body had already been fully buffered, permitting oversized metadata requests to waste memory in a stale or malicious session.
