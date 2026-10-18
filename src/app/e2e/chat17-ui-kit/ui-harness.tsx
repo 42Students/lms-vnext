@@ -48,7 +48,7 @@ function UIKitTestSurface() {
         <ScrollCue axis="x" label="Harness horizontal overflow">
           <div className={wideScroll ? "w-[1200px] whitespace-nowrap p-3" : "w-28 whitespace-nowrap p-3"}>
             <span>Scroll position: first</span>
-            <span className={wideScroll ? "ml-[850px]" : "ml-2"}>{wideScroll ? "Scroll position: last" : "End"}</span>
+            {wideScroll ? <span className="ml-[850px]">Scroll position: last</span> : null}
           </div>
         </ScrollCue>
       </div>
