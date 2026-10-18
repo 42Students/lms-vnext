@@ -55,7 +55,7 @@ describe("chat-16 public placements page role and safe-unavailability journeys",
   vi.mocked(getPublicPlacementStatistics).mockRejectedValue(new Error("private-db-credentials"));
   const html=renderToStaticMarkup(await PublicPlacementsPage());
   expect(html).toContain("Public placement statistics are temporarily unavailable");
-  expect(html).toContain("Individual student information is shown.");
+  expect(html).toContain("No individual student information is shown.");
   expect(html).not.toContain("private-db-credentials");
   expect(html).toContain('data-recruit-enabled="false"');
   expect(html).toContain("Example College");
