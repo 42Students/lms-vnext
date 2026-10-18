@@ -18,7 +18,8 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
   ?exists(db.select({id:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
     .innerJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
     .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,selected.collegeId)))
-    .innerJoin(cohorts,eq(cohorts.id,learnerProgramEnrollments.cohortId))
+    .innerJoin(cohorts,and(eq(cohorts.id,learnerProgramEnrollments.cohortId),
+      eq(cohorts.programId,learnerProgramEnrollments.programId)))
     .where(and(eq(learnerProgramEnrollments.membershipId,placementApplications.membershipId),
       eq(learnerProgramEnrollments.status,"ACTIVE"),
       query.departmentId?eq(departments.id,query.departmentId):undefined,
