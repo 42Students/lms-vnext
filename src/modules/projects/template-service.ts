@@ -501,6 +501,7 @@ export async function unpublishProjectTemplate(
       .limit(1);
 
     if (!template)throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_FOUND");
+    await assertPersistedPlatformPermission(tx,context,"project-template.manage");
     if(template.status==="ARCHIVED")
       throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_PUBLISHED");
     if(template.status==="DRAFT")return template;
@@ -570,6 +571,9 @@ export async function duplicateProjectTemplate(
 
   try {
     return await db.transaction(async (tx) => {
+      // The source snapshot was loaded before the transaction. Never trust
+      // that the caller's global management role is still active at insert.
+      await assertPersistedPlatformPermission(tx,context,"project-template.manage");
       const [template] = await tx
         .insert(projectTemplates)
         .values({
@@ -632,6 +636,7 @@ export async function archiveProjectTemplate(
     const [template]=await tx.select().from(projectTemplates)
       .where(eq(projectTemplates.id,templateId)).for("update").limit(1);
     if(!template)throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_FOUND");
+    await assertPersistedPlatformPermission(tx,context,"project-template.manage");
     if(template.status==="ARCHIVED")return template;
     // Lock before dependency check: a competing college assignment must not
     // silently slip into the archive transaction.

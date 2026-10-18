@@ -71,11 +71,15 @@ export function useOverlayWebview({
     resize();
     window.addEventListener("lms:native-back", hostBack);
     window.addEventListener("popstate", popstate);
+    // Embedded WebViews without visualViewport still resize on rotation and
+    // when the browser chrome/soft keyboard changes the usable height.
+    window.addEventListener("resize", resize);
     window.visualViewport?.addEventListener("resize", resize);
     window.visualViewport?.addEventListener("scroll", resize);
     return () => {
       window.removeEventListener("lms:native-back", hostBack);
       window.removeEventListener("popstate", popstate);
+      window.removeEventListener("resize", resize);
       window.visualViewport?.removeEventListener("resize", resize);
       window.visualViewport?.removeEventListener("scroll", resize);
       const index = activeOverlayStack.lastIndexOf(marker);

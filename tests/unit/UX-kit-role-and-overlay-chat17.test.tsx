@@ -95,6 +95,17 @@ describe("UX-kit-HARDEN-23 authorization boundaries and WebView history", () => 
     expect(source).toContain("activeOverlayStack.splice(index, 1)");
   });
 
+  it("UX-kit-HARDEN-39 overlay viewport sizing updates without visualViewport on orientation changes",()=>{
+    const source=readFileSync(join(process.cwd(),"src/components/ui/use-overlay-webview.ts"),"utf8");
+    expect(source).toContain('const height = viewport?.height ?? window.innerHeight');
+    expect(source).toContain('window.addEventListener("resize", resize)');
+    expect(source).toContain('window.removeEventListener("resize", resize)');
+    expect(source).toContain('window.visualViewport?.addEventListener("resize", resize)');
+    expect(source).toContain('window.visualViewport?.removeEventListener("resize", resize)');
+    expect(source).toContain('setAvailableHeight');
+    expect(source).toContain('setViewportBottom');
+  });
+
   it("UX-kit-HARDEN-27 table cells render once per row and redacts unsafe rowHref navigation", () => {
     const called = vi.fn((row:{id:string,title:string})=>row.title);
     const columns = [{key:"title",header:"Project",mobilePriority:"primary" as const,cell:called}];
@@ -233,6 +244,21 @@ describe("UX-kit-HARDEN-23 authorization boundaries and WebView history", () => 
     expect(fileMatchesAccept({name:"proof.jpeg",type:"image/jpeg"}, ".pdf, image/*")).toBe(true);
     expect(fileMatchesAccept({name:"payload.exe",type:"application/x-msdownload"},".pdf, image/*")).toBe(false);
     expect(fileMatchesAccept({name:"proof.pdf",type:"application/pdf"},".pdf")).toBe(true);
+  });
+
+  it("UX-kit-HARDEN-38 toast provider uses unique local keys without requiring WebView crypto APIs",()=>{
+    const source=readFileSync(join(process.cwd(),"src/components/ui/toast.tsx"),"utf8");
+    expect(source).toContain("const nextToastOrdinal = useRef(0)");
+    expect(source).toContain('const id = "toast-" + ++nextToastOrdinal.current');
+    expect(source).not.toContain("crypto.randomUUID()");
+    const notices:ToastItem[]=[
+      {id:"toast-1",title:"Saved successfully",tone:"success"},
+      {id:"toast-2",title:"Request failed",tone:"error"},
+    ];
+    expect(enqueueToast([],notices[0]!).items).toEqual([notices[0]]);
+    const {items}=enqueueToast([notices[0]!],notices[1]!);
+    expect(new Set(items.map(row=>row.id)).size).toBe(2);
+    expect(render(<ToastStack toasts={items} onDismiss={()=>{}}/>)).toContain("Request failed");
   });
 
   it("UX-kit-HARDEN-29 persistent errors never evict and timed toast timers are cleaned up", () => {

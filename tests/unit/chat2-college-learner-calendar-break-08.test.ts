@@ -54,6 +54,12 @@ describe("TPO-BREAK-calendar-08 query access, ICS injection, scheduled dates and
   expect(ics).toContain("SUMMARY:Interview\\nATTENDEE:attacker");
   expect(ics).not.toContain("\r\nATTENDEE:attacker");
   expect(ics).not.toContain("\r\nORGANIZER:attacker");
+
+  const bareCr=collegeInterviewIcs({...base,title:"Interview\rATTENDEE:attacker",
+    location:"Hall A\rORGANIZER:attacker"});
+  expect(bareCr).toContain("SUMMARY:Interview\\nATTENDEE:attacker");
+  expect(bareCr).not.toContain("\rATTENDEE:attacker");
+  expect(bareCr).not.toContain("\rORGANIZER:attacker");
   expect(ics).toContain("END:VCALENDAR");
  });
  it("Super Admin date bounds use IST midnight, exclude next-day records and reject normalized invalid dates",()=>{

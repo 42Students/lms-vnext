@@ -9,7 +9,7 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireProjectLifecycleMutationAccess} from "./access";
 import {ProjectsServiceError} from "./errors";
-import {mentorReleaseDeleteSchema,mentorReleaseVersionMatches} from "./mentor-release-version-model";
+import {mentorReleaseDeleteSchema,mentorReleaseVersionMatches,nextMentorReleaseUpdateAt} from "./mentor-release-version-model";
 
 const uuid=z.string().uuid();
 const body=z.strictObject({
@@ -50,8 +50,12 @@ export async function writeMentorProjectRelease(
    if(!existing||existing.status==="SHIPPED"||
       (!input?.expectedUpdatedAt||!mentorReleaseVersionMatches(existing.updatedAt,input.expectedUpdatedAt)))
     throw new ProjectsServiceError("PROJECT_LIFECYCLE_INVALID_STATE");
+   const updatedAt=nextMentorReleaseUpdateAt(existing.updatedAt,new Date());
+   if(!updatedAt)throw new ProjectsServiceError("PROJECT_LIFECYCLE_INVALID_STATE");
    const [row]=await tx.update(projectReleases).set({
-    title:(input as {title:string;description?:string|null}).title,description:(input as {title:string;description?:string|null}).description??null,updatedAt:new Date(),
+    title:(input as {title:string;description?:string|null}).title,
+    description:(input as {title:string;description?:string|null}).description??null,
+    updatedAt,
    }).where(and(eq(projectReleases.id,existing.id),eq(projectReleases.projectId,projectId))).returning();
    result=row??null;change="UPDATED";
   }else{
