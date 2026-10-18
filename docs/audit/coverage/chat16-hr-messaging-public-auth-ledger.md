@@ -99,3 +99,11 @@ The in-app opt-out event now replaces control characters, collapses whitespace a
 ### Campaign draft history/detail persisted-grant defect and regression
 
 `src/modules/messaging/tpo-campaign-draft-service.ts` previously checked the request-context TPO role on `listTpoCampaignDrafts` and `getTpoCampaignDraft`, but unlike draft creation and recipient-status reads, did not check persisted actor permissions inside the read transaction. Those two reads now call `assertPersistedPlatformPermission(tx, context, "placements.manage", {organizationId, collegeId})` **before** executing a scoped query. This prevents a stale session with a revoked database grant from continuing to read campaign titles, subject lines or bodies. `tests/unit/chat16-tpo-campaign-draft-live-role-16.test.ts` covers `campaign-draft-read-16`–`19`: inactive or wrong role, current persisted permission, revocation before a query and invalid ID denial. Real PostgreSQL revocation/race and CI remain pending.
+
+### New outbound execution and provider-adapter tests (chat-16)
+
+- `tests/unit/chat16-outbound-batch-service-16.test.ts`: `messaging-batch-execution-01`–`07` directly execute `deliverBatch` and `validOutboundBatchId` with in-memory repository/provider fakes, asserting full-batch validation before side effects, opaque recipient-key records, live opt-out rechecks, policy fetch failure recovery, cumulative per-recipient caps, case-insensitive deduplication and nonproduction allowlisting.
+- `tests/unit/chat16-outbound-provider-adapters-16.test.ts`: `messaging-provider-16`–`22` directly execute `createOutboundProvider` with an injected non-network transport. They cover unknown/OTP templates, safe ZeptoMail endpoint and payload, failed 429/no retry, strict nonproduction recipient list, Exotel DLT declarations and provider acceptance SID/status, and canonical email delivery addresses.
+- `src/modules/messaging/providers.ts` now uses the successfully parsed request and `normalizeRecipient` before composing a provider request. Previously validation could accept a trimmed address but send the untrimmed input; `messaging-provider-22` tests this repaired source bug.
+
+All tests are **written, not run**. Live provider/DLT and PostgreSQL concurrency checks are not claimed.
