@@ -25,6 +25,10 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
    payload.set("file",file);payload.set("action",action);
    if(action==="STAGE_IMPORT"){
     if(!preview)throw Error("Preview the file before confirming.");
+    // These flags are sent only from the explicit review confirmation flow.
+    payload.set("confirmed","true");
+    if(missingPolicy==="MARK_NOT_CLEARED"&&confirmMissingFailure)
+     payload.set("confirmMissingFailure","true");
     payload.set("previewToken",preview.previewToken);
     payload.set("missingPolicy",missingPolicy);
     payload.set("overrides",JSON.stringify(Object.entries(overrides).filter(([,id])=>Boolean(id))

@@ -40,7 +40,8 @@ describe("IIT Dharwad learner final-delivery concurrency and unsaved-input break
   expect(learner).toContain("savedDeliverySubmissionReadiness(currentPayload(),lastSavedSnapshot.current)");
   expect(learner).toContain("const persisted=JSON.parse(lastSavedSnapshot.current)");
   expect(learner).not.toContain("window.confirm(");
-  expect(learner).toContain("title=\"Submit final delivery for mentor review?\"");
+  expect(learner).toContain("title=\"Submit on behalf of your team?\"");
+  expect(learner).toContain("The final delivery is shared with your project team and cannot be edited while it awaits review.");
   expect(learner).toContain("onConfirm={()=>{void submitDraft(true);}}");
   expect(learner).toContain("onClick={()=>{void submitDraft();}}");
  });
