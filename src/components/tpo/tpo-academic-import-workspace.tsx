@@ -1,3 +1,4 @@
+import {DataTable} from "@/components/ui/data-table";
 "use client";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {Dialog} from "@/components/ui/dialog";
@@ -130,27 +131,22 @@ export function TpoAcademicImportWorkspace() {
           {preview.filter(row => row.match === "WILL_UPDATE").length} will update;
           {" "}{preview.filter(row => row.match === "CANT_MATCH").length} can&apos;t match.
         </p>
-        <div className="max-h-80 overflow-auto rounded border border-border">
-          <table className="w-full min-w-[760px] text-left text-sm">
-            <thead><tr className="border-b border-border">
-              {["Include", "Student ID", "Student", "CGPA", "Backlogs", "Result"].map(title =>
-                <th key={title} className="p-2">{title}</th>)}
-            </tr></thead>
-            <tbody>{preview.map(row => <tr key={row.studentCode} className="border-b border-border">
-              <td className="p-2"><input type="checkbox" aria-label={"Include " + row.studentCode}
+        <DataTable rows={preview} getRowKey={row=>row.studentCode}
+          caption="Academic import preview"
+          empty={<p>No students were found in the import preview.</p>}
+          columns={[
+            {key:"include",header:"Include",mobilePriority:"action",cell:row=>
+              <input type="checkbox" aria-label={"Include "+row.studentCode}
                 checked={!excluded.includes(row.studentCode)}
-                disabled={row.match !== "WILL_UPDATE"}
-                onChange={event => setExcluded(current => event.target.checked
-                  ? current.filter(id => id !== row.studentCode)
-                  : [...current, row.studentCode])} /></td>
-              <td className="p-2 font-mono text-xs">{row.studentCode}</td>
-              <td className="p-2">{row.name ?? "—"}</td>
-              <td className="p-2">{row.oldCgpa ?? "—"} → {row.cgpa}</td>
-              <td className="p-2">{row.oldBacklogs ?? "—"} → {row.activeBacklogs}</td>
-              <td className="p-2">{row.match === "WILL_UPDATE" ? "Will update" : "Can't match"}</td>
-            </tr>)}</tbody>
-          </table>
-        </div>
+                disabled={row.match!=="WILL_UPDATE"}
+                onChange={event=>setExcluded(current=>event.target.checked
+                  ?current.filter(id=>id!==row.studentCode):[...current,row.studentCode])}/>},
+            {key:"id",header:"Student ID",mobilePriority:"primary",cell:row=><span className="break-all font-mono text-xs">{row.studentCode}</span>},
+            {key:"name",header:"Student",mobilePriority:"secondary",cell:row=>row.name??"—"},
+            {key:"cgpa",header:"CGPA",mobilePriority:"secondary",cell:row=><span>{row.oldCgpa??"—"} → {row.cgpa}</span>},
+            {key:"backlogs",header:"Backlogs",mobilePriority:"secondary",cell:row=><span>{row.oldBacklogs??"—"} → {row.activeBacklogs}</span>},
+            {key:"result",header:"Result",mobilePriority:"secondary",cell:row=>row.match==="WILL_UPDATE"?"Will update":"Can't match"},
+          ]}/>
         <label className="flex items-center gap-2 text-sm">
           <input type="checkbox" checked={preview.filter(row => row.match === "WILL_UPDATE")
             .every(row => !excluded.includes(row.studentCode))}
