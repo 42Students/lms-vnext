@@ -9,7 +9,7 @@ import {PlacementsServiceError} from "./errors";
 import {confirmTpoRoundResult} from "./tpo-confirmed-round-result-service";
 import {requireTpoJobCollege} from "./tpo-job-write-base";
 import {placementJobIdSchema,placementRoundIdSchema} from "./validation";
-import {parseTpoRoundImport,roundImportActionSchema,tpoRoundImportPreviewToken,uniqueTpoRoundImportRoster,type ImportRow} from "./tpo-round-import-model";
+import {parseTpoRoundImport,roundImportActionSchema,tpoRoundImportPreviewToken,matchTpoRoundImportRoster,uniqueTpoRoundImportRoster,type ImportRow} from "./tpo-round-import-model";
 
 type Roster=Awaited<ReturnType<typeof readRoster>>["roster"][number];
 async function readRoster(context:RequestContext,rawJobId:unknown,rawRoundId:unknown){
@@ -40,19 +40,8 @@ async function readRoster(context:RequestContext,rawJobId:unknown,rawRoundId:unk
  const roster=uniqueTpoRoundImportRoster(rows);
  return {round,roster,jobId,roundId};
 }
-function matchSource(row:ImportRow,roster:readonly Roster[]){
- // Every supplied known identity must agree. A correct application ID paired
- // with another learner's email/roll must never silently assign their outcome.
- const methods=[
-  row.applicationId?roster.filter(r=>r.applicationId.toLowerCase()===row.applicationId.toLowerCase()):null,
-  // Company portal IDs are not persisted and are not trusted for auto-match.
-  row.email?roster.filter(r=>r.email?.toLowerCase()===row.email.toLowerCase()):null,
-  row.roll?roster.filter(r=>r.roll?.toLowerCase()===row.roll.toLowerCase()):null,
- ].filter((rows):rows is Roster[]=>rows!==null);
- if(!methods.length)return [];
- return methods[0]!.filter(candidate=>methods.every(list=>list.some(
-  row=>row.applicationId===candidate.applicationId)));
-}
+const matchSource=matchTpoRoundImportRoster;
+
 function suggested(row:ImportRow,roster:readonly Roster[]){
  const token=(row.name||row.email||row.roll||row.identity).toLowerCase();
  if(token.length<3)return [];
