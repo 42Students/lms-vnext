@@ -101,6 +101,15 @@ export async function listOwnTpoPrepAssignments(ctx:RequestContext){
  const member=ctx.membership;
  if(!member||!hasMembershipRole(ctx,"LEARNER")||member.status!=="ACTIVE"||ctx.user.platformStatus!=="ACTIVE")
   throw new AuthorizationError("placements.read");
+ // Do not trust a cached LEARNER role after account suspension or college
+ // unenrollment. Prove the same currently active person and college first.
+ const [live]=await getDb().select({id:collegeMemberships.id}).from(collegeMemberships)
+  .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
+  .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+   eq(membershipRoles.role,"LEARNER")))
+  .where(and(eq(collegeMemberships.id,member.id),eq(collegeMemberships.userId,ctx.user.id),
+   eq(collegeMemberships.collegeId,member.collegeId),eq(collegeMemberships.status,"ACTIVE"))).limit(1);
+ if(!live)throw new AuthorizationError("placements.read");
  await hasPrepTable();
  const rows=await getDb().select({id:placementTpoPrepAssignments.id,dueAt:placementTpoPrepAssignments.dueAt,
   offeringId:placementTpoPrepAssignments.offeringId,title:courses.name,courseCode:courses.code,
