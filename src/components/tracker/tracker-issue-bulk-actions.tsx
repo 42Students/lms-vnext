@@ -3,6 +3,7 @@
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {BUG_STATUSES,type BugStatus} from "@/modules/bug-tracker/workflow";
 
 type Row={publicId:string;version:number;status:string};
@@ -13,13 +14,15 @@ export function TrackerIssueBulkActions({rows}:{rows:readonly Row[]}){
   const [selected,setSelected]=useState<string[]>([]);
   const [status,setStatus]=useState<BugStatus>("CHECKING");
   const [busy,setBusy]=useState(false);
+  const [confirmOpen,setConfirmOpen]=useState(false);
   const [failed,setFailed]=useState<string[]>([]);
   const [success,setSuccess]=useState(0);
   const [notice,setNotice]=useState("");
   function toggle(id:string){setSelected(current=>current.includes(id)?
     current.filter(item=>item!==id):[...current,id]);setFailed([]);setSuccess(0);}
-  async function apply(){
+  async function apply(confirmed=false){
     if(lock.current||!selected.length)return;
+    if(!confirmed){setConfirmOpen(true);return;}
     lock.current=true;setBusy(true);setFailed([]);setSuccess(0);setNotice("");
     const failures:string[]=[];let completed=0;
     try{
@@ -46,7 +49,7 @@ export function TrackerIssueBulkActions({rows}:{rows:readonly Row[]}){
         setSelected([]);
         setNotice(completed+" issues updated.");
       }
-    }finally{lock.current=false;setBusy(false);}
+    }finally{lock.current=false;setBusy(false);setConfirmOpen(false);}
   }
   return <section aria-label="Bulk issue status" className="space-y-3 rounded-xl border border-border bg-surface p-4">
     <div className="flex flex-wrap items-center gap-3">
@@ -85,5 +88,12 @@ export function TrackerIssueBulkActions({rows}:{rows:readonly Row[]}){
     </div>:null}
     {notice?<p role={failed.length?"alert":"status"} className="text-sm text-body">{notice}</p>:null}
     {failed.length?<p role="alert" className="text-sm text-error">Failed IDs: {failed.join(", ")}. {success} other issues were processed.</p>:null}
+    <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
+      title={"Apply to "+selected.length+" selected"}
+      description={"Set status to… "+status.replaceAll("_"," ")}
+      confirmLabel={"Apply to "+selected.length+" selected"} confirmVariant="primary" pending={busy}
+      onConfirm={()=>void apply(true)}>
+      {notice?<p role="alert" className="text-sm text-body">{notice}</p>:null}
+    </ConfirmDialog>
   </section>;
 }
