@@ -4,7 +4,7 @@ import {getDb} from "@/db/client";
 import {
  courses,departments,courseOfferings,courseLearningPaths,courseLessons,
  lessonContents,learnerContentProgress,collegeMemberships,membershipRoles,users,
- learnerProgramEnrollments,cohorts,programs,
+ learnerProgramEnrollments,cohorts as cohortTable,programs,
 } from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {getTpoPrepReadiness} from "./tpo-configuration-read-service";
@@ -44,9 +44,9 @@ export async function readTpoLearnerPrepOutcomes(
    eq(membershipRoles.membershipId,collegeMemberships.id),
    eq(membershipRoles.role,"LEARNER"),
   ))
-  .innerJoin(cohorts,eq(cohorts.id,learnerProgramEnrollments.cohortId))
+  .innerJoin(cohortTable,eq(cohortTable.id,learnerProgramEnrollments.cohortId))
   .innerJoin(programs,and(eq(programs.id,learnerProgramEnrollments.programId),
-   eq(cohorts.programId,programs.id)))
+   eq(cohortTable.programId,programs.id)))
   .innerJoin(departments,eq(departments.id,programs.departmentId))
   .where(and(
    eq(collegeMemberships.collegeId,collegeId),

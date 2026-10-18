@@ -90,6 +90,8 @@ export async function resolveSession(
     UPDATE identity_device_sessions
     SET last_seen_at = now()
     WHERE id = ${row.session_id as string}
+      AND revoked_at IS NULL
+      AND expires_at > now()
       AND last_seen_at < now() - interval '60 seconds'
   `);
 

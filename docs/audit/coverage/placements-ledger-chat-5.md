@@ -298,3 +298,18 @@ The branch was reconciled with the then-current `origin/main` using a two-parent
 - **PLACEMENTS-OFFER-SM-08:** an ISSUED offer with any already persisted joining state is internally contradictory and is rejected by all TPO administrative status actions. Acceptance and offer extension require no joining record. Model: `tpo-offer-lifecycle-model.ts`; test: `chat5-placements-core-extended-state-machines.test.ts` (entire matrix plus contradictory-state cases).
 
 These are source-level changes with new Vitest assertions, not evidence of a successful CI or PostgreSQL run. The canonical acceptance-cascade parity between learner and TPO-recorded decisions remains a separate high-risk integration task.
+
+
+## Additional TPO UI state-machine boundaries (branch, cloud checks pending)
+
+| Case | Scope | Evidence | Still outstanding |
+|---|---|---|---|
+| PLACEMENTS-OFFER-IST-09 | `tpo-offer-lifecycle-model.ts`, `tpo-offer-lifecycle-panel.tsx` | `chat5-placements-core-extended-state-machines.test.ts` verifies browser-independent IST parsing of `datetime-local` including year rollover, calendar-invalid input rejection, and TPO form preflight | Browser timezone simulation, authoritative server clock expiry competition |
+| PLACEMENTS-WAIT-UI-10 | `tpo-waitlist-promotion-control.tsx` | `chat5-tpo-second-third-behavior.test.ts` checks synchronous `useRef` double-submit exclusion, bounded `apiFetch` timeout, safe HTML/non-JSON errors and positive integer seat evidence | Rapid double click browser test, lost HTTP reply recovery against PostgreSQL |
+
+These fixes do not weaken existing confirmations, selection limits or legacy copy. The final-sprint Faculty Courses source changes `FAC-courses-07` (soft GET navigation) and `FAC-courses-02` (safe bundled fallback; authored photo storage blocked) are tracked in `docs/audit/acceptance/faculty-courses-verification.md`. Tests/typecheck were **not run** by chat-5.
+
+
+### CI triage: derived TPO preparation + bounded joining export
+- **TPO-PREP-TSC-01** — `src/modules/placements/tpo-prep-readiness-derived-service.ts` now consistently aliases the Drizzle `cohorts` table as `cohortTable`, avoiding the reported CI shadowing/type ambiguity; existing college, active membership and enrollment joins are preserved. `tests/unit/chat5-placements-retention-and-joining-followups.test.ts` checks the table reference, role gates and every requested scoped cohort pair. This is a source-level fix; cloud typecheck still pending.
+- **PLACEMENTS-JOINING-TRUNC-11** — joining-followup CSV detects upstream source truncation (first 500 accepted offers) separately from its own 200-row export cap, adds a `SOURCE_TRUNCATED` disclosure and never represents sample counts as full-season totals. `tests/unit/chat5-placements-retention-and-joining-followups.test.ts` verifies both bounded and unbounded cases; `tpo/reports/joining-followups` already warns when source counts are partial.
