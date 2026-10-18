@@ -91,7 +91,7 @@ describe("chat-16 messaging audience, history and token model contracts", () => 
 
   it("MESSAGING-UNSUB-NOTICE-16 strips control characters and exposes only scoped legacy copy", () => {
     const event = tpoCampaignUnsubscribeEvent(
-      " \\n  Recruiter\\t Person  ", "thread/../../admin",
+      " \n  Recruiter\t Person  ", "thread/../../admin",
     );
     expect(event.eventType).toBe("PLACEMENTS_RECRUITER_UNSUBSCRIBED");
     expect(event.summary).toBe("Recruiter Person unsubscribed from emails");
@@ -101,7 +101,7 @@ describe("chat-16 messaging audience, history and token model contracts", () => 
       actionHref: "/tpo/recruiters/thread%2F..%2F..%2Fadmin",
     });
     expect(event.timeline).toBe("Unsubscribed from emails");
-    expect(tpoCampaignUnsubscribeEvent(" \\t ", "lead").summary)
+    expect(tpoCampaignUnsubscribeEvent(" \t ", "lead").summary)
       .toBe("Recruiter unsubscribed from emails");
   });
 
@@ -118,7 +118,7 @@ describe("chat-16 messaging audience, history and token model contracts", () => 
       canConfirm: false, willUnsubscribeOnView: false,
     });
     for (const forged of [
-      "not-a-token", token + ".", token.replace(/.$/, "A"),
+      "not-a-token", token + ".", token.slice(0, -1) + (token.endsWith("A") ? "B" : "A"),
       token.replace(".", ".."), "x".repeat(2049),
     ]) expect(verifyUnsubscribeToken(forged, secret, 1999)).toBeNull();
     expect(verifyUnsubscribeToken(token, "wrong-but-still-very-long-signature-secret", 1999))
