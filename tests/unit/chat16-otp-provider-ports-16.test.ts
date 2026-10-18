@@ -47,6 +47,8 @@ describe("chat-16 transactional OTP provider ports (mock network only)",()=>{
   const [url,options]=vi.mocked(outboundFetch).mock.calls[0]!;
   expect(url).toBe(emailConfig.apiUrl);
   expect(options).toMatchObject({method:"POST",maxAttempts:1,timeoutMs:10000});
+  expect(options).toBeDefined();
+  if(!options)throw new Error("Expected mail provider request options");
   const body=JSON.parse(String(options.body)) as {
    template_key:string;to:Array<{email_address:{address:string}}>;
    merge_info:{otp:string;expiryMinutes:string};
@@ -90,6 +92,8 @@ describe("chat-16 transactional OTP provider ports (mock network only)",()=>{
   expect(outboundFetch).toHaveBeenCalledTimes(3);
   const [,options]=vi.mocked(outboundFetch).mock.calls[0]!;
   expect(options).toMatchObject({method:"POST",maxAttempts:1,timeoutMs:10000});
+  expect(options).toBeDefined();
+  if(!options)throw new Error("Expected SMS provider request options");
   const form=options.body as URLSearchParams;
   expect(form.get("DltEntityId")).toBe(smsConfig.dltEntityId);
   expect(form.get("DltTemplateId")).toBe(smsConfig.otpDltTemplateId);

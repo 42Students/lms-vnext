@@ -114,6 +114,9 @@ export async function withProjectPg<T>(pool: Pool, action: (db: PgHarness) => Pr
     await assertHarnessSchema(client);
     await client.query("BEGIN");
     begun = true;
+    // A connection-string options=search_path setting must not redirect
+    // fixture writes to another schema after validating public tables.
+    await client.query("SET LOCAL search_path = public, pg_temp");
     const db: PgHarness = {
       client, runId: randomUUID(),
       async query<T extends QueryResultRow>(sql: string, values?: unknown[]) {
@@ -169,6 +172,8 @@ export async function withTwoPgSessions<T>(
     await assertHarnessSchema(b);
     await a.query("BEGIN"); aStarted = true;
     await b.query("BEGIN"); bStarted = true;
+    await a.query("SET LOCAL search_path = public, pg_temp");
+    await b.query("SET LOCAL search_path = public, pg_temp");
     await a.query("SET LOCAL lock_timeout = '1500ms'");
     await b.query("SET LOCAL lock_timeout = '1500ms'");
     return await run(a,b);
@@ -268,6 +273,11 @@ export async function createProjectFixture(db: PgHarness, tenant: TenantFixture,
     insert into project_template_versions (template_id,version,title,blueprint,created_by_user_id)
     values ($1,1,$2,$3::jsonb,$4) returning id`,
     [template!.id,"Harness version",JSON.stringify({overview:{goal:"Harness",deliverables:["Proof"]},releases:[],sprints:[],tasks:[],resources:[]}),author.userId]);
+  // College assignment of a DRAFT template would skip the template's
+  // publication gate; make the fixture version visible before assigning.
+  await db.query(
+    "update project_templates set status='PUBLISHED',published_version=1 where id=$1",
+    [template!.id]);
   const [assignment] = await db.query<{id:string}>(`
     insert into project_template_college_assignments
       (template_id,template_version_id,college_id,assigned_by_user_id)
@@ -279,8 +289,8 @@ export async function createProjectFixture(db: PgHarness, tenant: TenantFixture,
     values ($1,$2,$3,$4,$5,'ACTIVE',$6) returning id`,
     [tenant.collegeId,template!.id,version!.id,"ph-workspace-"+suffix,"Harness workspace",author.userId]);
   const [release] = await db.query<{id:string}>(`
-    insert into project_releases (project_id,template_key,title,sequence)
-    values ($1,'release-1','Harness release',0) returning id`,[project!.id]);
+    insert into project_releases (project_id,template_key,title,sequence,status)
+    values ($1,'release-1','Harness release',0,'IN_PROGRESS') returning id`,[project!.id]);
   const [sprint] = await db.query<{id:string}>(`
     insert into project_sprints (project_id,release_id,template_key,title,sequence,status)
     values ($1,$2,'sprint-1','Harness sprint',0,'ACTIVE') returning id`,[project!.id,release!.id]);

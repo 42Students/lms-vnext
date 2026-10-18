@@ -176,3 +176,18 @@ New tests have not been executed.
 | Export | Behavioral test | Test coverage and boundary |
 | --- | --- | --- |
 | `src/modules/people/faculty-bulk-import-service.ts` `importFacultyCsv` | `tests/unit/chat4-college-faculty-bulk-service.test.ts` (`COL-people-faculty-bulk-01`) | Strict confirmation and shape, selected College Admin college must match request, Indian E.164 normalization, duplicate mobile skip, faculty role only, 500-row parser safety, collision/unknown exception mapped to safe per-row FAILED, later valid rows continue. No PostgreSQL identity index race executed. |
+
+## Academic contacts filtering and strict role directory paging
+
+| Export / route | Coverage evidence | Security claim / unfinished work |
+| --- | --- | --- |
+| `src/modules/people/college-role-directory-model.ts` `collegeRoleDirectoryQuerySchema`, `parseCollegeRoleDirectorySearchParams` | `tests/unit/chat4-college-role-directory-decimal-page.test.ts` (`COL-people-directory-PAGE-01`) | Supports existing 10/25/50 page sizes and bounded pages while rejecting hex, exponent, fractional, whitespace, duplicate and explicit blank numeric parameters; canonically preserves authorized filters and page size |
+| `src/modules/people/college-contacts-academic-scope.ts` `inProgram`, `activeEnrollment` | `tests/integration/chat4-college-academic-cross-tenant-pg.test.ts` (`COL-contacts-scope-PG-01`) | The filters now require a learner enrollment's declared program and cohort to agree before counting same-college academic participation. Disposable PostgreSQL fixtures exercise a separate synthetic learner with only a foreign cohort while the valid local learner remains visible; cloud CI not run |
+
+No in-memory preview may be considered tenant proof without the persisted membership/context and PostgreSQL fixture. Integration execution is still pending.
+
+## College student import placement: coherent program, cohort and college
+
+| Source | Tests | Required integrity |
+| --- | --- | --- |
+| `src/modules/people/college-student-import-placement.ts` `placeImportedLearnerInSection` | `tests/unit/chat4-college-student-import-placement-integrity.test.ts` (`COL-student-import-placement-tenant-01`); `tests/integration/chat4-college-academic-cross-tenant-pg.test.ts` (`COL-student-import-placement-tenant-PG-01`) | The section's program, academic period, cohort start period and learner member must all belong to the same college; learner enrollment's declared program must actually own its referenced cohort before the locked capacity check, membership insert, and single audit. Disposable DB fixture for a College A member with a College B declared program and College A cohort expects CLASS_BATCH_MISMATCH and zero inserted class memberships. CI/test execution pending. |

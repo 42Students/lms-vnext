@@ -18,6 +18,8 @@ import { type RequestContext } from "@/modules/identity/context";
 import { isDebarmentActive } from "./batch-registration-policy";
 import { requirePlacementManageScope } from "./scope";
 import { requireTpoBatchActor } from "./tpo-batch-workspace-read-service";
+import {requireTpoJobActor} from "./tpo-job-write-base";
+import {AuthorizationError} from "@/modules/permissions/policy";
 
 const uuid = z.string().uuid();
 const dateString = z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
@@ -32,7 +34,16 @@ const createInput = z.object({
   reason: z.string().trim().min(1).max(500),
   untilDate: dateString.nullable().optional(),
   untilDrives: z.number().int().min(1).max(10_000).nullable().optional(),
-}).strict();
+}).strict().superRefine((value,ctx)=>{
+  const hasDate=value.untilDate!=null;
+  const hasDriveCount=value.untilDrives!=null;
+  // The legacy MANUAL duration leaves both null until an explicit lift.
+  // Reject conflicting date and drive-count windows; do not choose silently.
+  if(hasDate&&hasDriveCount)ctx.addIssue({
+    code:"custom",path:["untilDate"],
+    message:"Choose an end date or a number of drives, not both",
+  });
+});
 const liftInput = z.object({
   debarmentId: uuid,
   reason: z.string().trim().min(1).max(500),
@@ -142,6 +153,8 @@ export async function createPlacementDebarment(
   raw: unknown,
 ) {
   const input = createInput.parse(raw);
+  const liveCollegeId=await requireTpoBatchActor(context);
+  if(liveCollegeId!==input.collegeId)throw new AuthorizationError("placements.manage");
   await requirePlacementManageScope(context, input.collegeId);
   const date = input.untilDate ?? null;
   const today = collegeLocalDate();
@@ -149,6 +162,9 @@ export async function createPlacementDebarment(
     throw new PlacementDebarmentError("DB08_DEBARMENT_INVALID_DURATION");
   }
   return getDb().transaction(async tx => {
+    // Hold the persisted placement-team SHARE lock across debar, notification
+    // and history creation. A concurrent role revoke cannot race the write.
+    await requireTpoJobActor(tx,context);
     const college=await lockCollege(tx, input.collegeId);
     const learner=await requireLearner(tx, input.collegeId, input.membershipId);
     const existing=await tx.select({
@@ -178,8 +194,10 @@ async function loadManagedDebarment(
   context: RequestContext,
   id: string,
 ) {
+  const collegeId=await requireTpoBatchActor(context);
+  // Bind the guessed ID to the current college before any record is returned.
   const [current] = await getDb().select().from(placementDebarments)
-    .where(eq(placementDebarments.id, id)).limit(1);
+    .where(and(eq(placementDebarments.id,id),eq(placementDebarments.collegeId,collegeId))).limit(1);
   if (!current) throw new PlacementDebarmentError("DB08_DEBARMENT_NOT_FOUND");
   await requirePlacementManageScope(context, current.collegeId);
   return current;
@@ -192,6 +210,7 @@ export async function liftPlacementDebarment(
   const input = liftInput.parse(raw);
   const current = await loadManagedDebarment(context, input.debarmentId);
   return getDb().transaction(async tx => {
+    await requireTpoJobActor(tx,context);
     const college=await lockCollege(tx, current.collegeId);
     const [locked] = await tx.select().from(placementDebarments)
       .where(and(
@@ -230,6 +249,7 @@ export async function countDebarredPlacementDrive(
   const input = countInput.parse(raw);
   const current = await loadManagedDebarment(context, input.debarmentId);
   return getDb().transaction(async tx => {
+    await requireTpoJobActor(tx,context);
     await lockCollege(tx, current.collegeId);
     const [debarment] = await tx.select().from(placementDebarments)
       .where(and(

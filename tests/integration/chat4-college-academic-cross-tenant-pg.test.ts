@@ -5,6 +5,7 @@ import { closeDatabaseConnection, getDb } from "@/db/client";
 import { and, eq } from "drizzle-orm";
 import { collegeMemberships } from "@/db/schema";
 import {collegeContactAcademicScope} from "@/modules/people/college-contacts-academic-scope";
+import {placeImportedLearnerInSection} from "@/modules/people/college-student-import-placement";
 import type { RequestContext } from "@/modules/identity/context";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
@@ -24,8 +25,8 @@ const ids={
  periodA:uid(),periodB:uid(),programA:uid(),programB:uid(),
  cohortA:uid(),cohortB:uid(),sectionA:uid(),sectionB:uid(),
  wrongPeriodSection:uid(),membershipA:uid(),userA:uid(),membershipB:uid(),userB:uid(),
- membershipC:uid(),userC:uid(),
- enrollmentA:uid(),enrollmentB:uid(),wrongProgramEnrollment:uid(),
+ membershipC:uid(),userC:uid(),membershipD:uid(),userD:uid(),
+ enrollmentA:uid(),enrollmentB:uid(),wrongProgramEnrollment:uid(),wrongPlacementEnrollment:uid(),
  good:uid(),foreignSection:uid(),foreignLearner:uid(),
  facultyAssignment:uid(),event:uid(),
 };
@@ -78,6 +79,7 @@ describe.skipIf(!enabled)("COL-academics-scope-tenant-PG-01 forged but FK-valid 
    [ids.membershipA,ids.userA,SEED_IDS.collegeA,"a"],
    [ids.membershipB,ids.userB,SEED_IDS.collegeB,"b"],
    [ids.membershipC,ids.userC,SEED_IDS.collegeA,"c"],
+   [ids.membershipD,ids.userD,SEED_IDS.collegeA,"d"],
   ]){
    await pool.query("insert into users(id,identity_uid,display_name) values($1,$2,$3)",
     [user,tag+"-student-"+suffix,tag+" student "+suffix]);
@@ -100,6 +102,12 @@ describe.skipIf(!enabled)("COL-academics-scope-tenant-PG-01 forged but FK-valid 
   await pool.query(
    "insert into learner_program_enrollments(id,membership_id,program_id,cohort_id) values($1,$2,$3,$4)",
    [ids.wrongProgramEnrollment,ids.membershipC,ids.programA,ids.cohortB],
+  );
+  // The cohort matches a College A section but the declared program is
+  // College B's. This may pass a cohort-only placement check.
+  await pool.query(
+   "insert into learner_program_enrollments(id,membership_id,program_id,cohort_id) values($1,$2,$3,$4)",
+   [ids.wrongPlacementEnrollment,ids.membershipD,ids.programB,ids.cohortA],
   );
   for(const [placement,enrollment,section,period] of [
    [ids.good,ids.enrollmentA,ids.sectionA,ids.periodA],
@@ -130,7 +138,7 @@ describe.skipIf(!enabled)("COL-academics-scope-tenant-PG-01 forged but FK-valid 
      [ids.good,ids.foreignSection,ids.foreignLearner],
     ]);
     await pool.query("delete from learner_program_enrollments where id=any($1::uuid[])",[
-     [ids.enrollmentA,ids.enrollmentB,ids.wrongProgramEnrollment],
+     [ids.enrollmentA,ids.enrollmentB,ids.wrongProgramEnrollment,ids.wrongPlacementEnrollment],
     ]);
     await pool.query("delete from sections where id=any($1::uuid[])",[
      [ids.sectionA,ids.sectionB,ids.wrongPeriodSection],
@@ -139,12 +147,12 @@ describe.skipIf(!enabled)("COL-academics-scope-tenant-PG-01 forged but FK-valid 
     await pool.query("delete from programs where id=any($1::uuid[])",[[ids.programA,ids.programB]]);
     await pool.query("delete from academic_periods where id=any($1::uuid[])",[[ids.periodA,ids.periodB]]);
     await pool.query("delete from membership_roles where membership_id=any($1::uuid[])",[
-     [ids.membershipA,ids.membershipB,ids.membershipC],
+     [ids.membershipA,ids.membershipB,ids.membershipC,ids.membershipD],
     ]);
     await pool.query("delete from college_memberships where id=any($1::uuid[])",[
-     [ids.membershipA,ids.membershipB,ids.membershipC],
+     [ids.membershipA,ids.membershipB,ids.membershipC,ids.membershipD],
     ]);
-    await pool.query("delete from users where id=any($1::uuid[])",[[ids.userA,ids.userB,ids.userC]]);
+    await pool.query("delete from users where id=any($1::uuid[])",[[ids.userA,ids.userB,ids.userC,ids.userD]]);
    }
   }finally{
    await pool?.end();
@@ -187,6 +195,16 @@ describe.skipIf(!enabled)("COL-academics-scope-tenant-PG-01 forged but FK-valid 
   expect((await active(ids.membershipA)).map(row=>row.id)).toContain(ids.membershipA);
   expect(await program(ids.membershipC)).toEqual([]);
   expect(await active(ids.membershipC)).toEqual([]);
+ });
+
+ it("COL-student-import-placement-tenant-PG-01 foreign declared program never becomes a local section enrollment",async()=>{
+  await expect(placeImportedLearnerInSection(actor,ids.wrongPlacementEnrollment,ids.sectionA))
+   .rejects.toMatchObject({code:"CLASS_BATCH_MISMATCH"});
+  const rows=await pool!.query(
+   "select id from section_enrollments where learner_enrollment_id=$1",
+   [ids.wrongPlacementEnrollment],
+  );
+  expect(rows.rows).toEqual([]);
  });
 
  it("COL-academics-scope-tenant-03 foreign faculty membership or period never authorize assignment/event",async()=>{

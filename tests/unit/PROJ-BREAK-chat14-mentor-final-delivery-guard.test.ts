@@ -7,6 +7,7 @@ const state=vi.hoisted(()=>({
  moduleEnabled:true,role:"MENTOR",active:true,canRead:true,
  status:"SUBMITTED",projectStatus:"ACTIVE",locked:false,isLatest:true,
  selectCalls:0,mutations:0,audits:0,notices:0,
+ persistedChecks:0,persistedAllowed:true,
 }));
 const projectId="11111111-1111-4111-8111-111111111111";
 const submissionId="22222222-2222-4222-8222-222222222222";
@@ -27,6 +28,12 @@ vi.mock("@/modules/projects/access",()=>({
  requireProjectLifecycleMutationAccess:async (_:unknown,id:string)=>{
   if(!state.moduleEnabled||id!==projectId)throw {code:"PROJECT_LIFECYCLE_ACCESS_DENIED"};
   return {access:"MENTOR",collegeId:"college-a",organizationId:"org-a",project:{id:projectId}};
+ },
+}));
+vi.mock("@/modules/projects/persisted-mentor-mutation",()=>({
+ assertPersistedProjectMutationActor:async()=>{
+  state.persistedChecks++;
+  if(!state.persistedAllowed)throw {code:"PROJECT_LIFECYCLE_ACCESS_DENIED"};
  },
 }));
 vi.mock("@/modules/activity/service",()=>({
@@ -71,6 +78,7 @@ beforeEach(()=>{
  state.moduleEnabled=true;state.role="MENTOR";state.active=true;state.canRead=true;
  state.status="SUBMITTED";state.projectStatus="ACTIVE";state.locked=false;state.isLatest=true;
  state.selectCalls=0;state.mutations=0;state.audits=0;state.notices=0;
+ state.persistedChecks=0;state.persistedAllowed=true;
 });
 
 describe("PROJ-BREAK-MENTOR-117..121 final-delivery review hardening",()=>{
@@ -107,11 +115,20 @@ describe("PROJ-BREAK-MENTOR-117..121 final-delivery review hardening",()=>{
   }
   expect(state.mutations+state.audits+state.notices).toBe(0);
  });
+ it("PROJ-BREAK-MENTOR-216 rescinded persisted grant stops delivery lookup and leaves audit untouched",async()=>{
+  state.persistedAllowed=false;
+  await expect(decideMentorFinalDelivery(actor,projectId,submissionId,body))
+   .rejects.toMatchObject(invalidState("PROJECT_LIFECYCLE_ACCESS_DENIED"));
+  expect(state.selectCalls).toBe(1);
+  expect(state.persistedChecks).toBe(1);
+  expect(state.mutations+state.audits+state.notices).toBe(0);
+ });
  it("PROJ-BREAK-MENTOR-121 latest, unlocked and active delivery writes once with one review notice",async()=>{
   const result=await decideMentorFinalDelivery(actor,projectId,submissionId,body);
   expect(result.submission.status).toBe("CHANGES_REQUESTED");
   expect(result.review.id).toBe("review-id");
   expect(state.selectCalls).toBe(3);
+  expect(state.persistedChecks).toBe(1);
   expect(state.mutations).toBe(1);
   expect(state.audits).toBe(1);
   expect(state.notices).toBe(1);
