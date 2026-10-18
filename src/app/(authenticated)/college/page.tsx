@@ -195,7 +195,7 @@ export default async function CollegeOverviewPage() {
         {lowAttendance.rows.length === 0
           ? <p className="text-sm text-muted-foreground">No learners below the attendance threshold.</p>
           : <div className="max-h-72 overflow-auto">
-            <table className="w-full text-left text-sm">
+            <table className="w-full text-left text-sm [&_th:first-child]:sticky [&_th:first-child]:left-0 [&_th:first-child]:z-10 [&_th:first-child]:bg-surface [&_td:first-child]:sticky [&_td:first-child]:left-0 [&_td:first-child]:z-10 [&_td:first-child]:bg-surface">
               <thead className="sticky top-0 z-10 bg-surface"><tr className="border-b border-border">
                 <th scope="col" className="py-2">Student</th>
                 <th scope="col" className="py-2">Attendance</th>

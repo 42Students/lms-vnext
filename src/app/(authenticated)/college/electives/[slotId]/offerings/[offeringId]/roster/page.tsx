@@ -153,7 +153,7 @@ export default async function ElectiveRoster({
       </form>}
     </section>
     <div role="region" aria-label="Elective offering roster" tabIndex={0} className="overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
-      <table className="w-full min-w-[780px] text-left text-sm">
+      <table className="w-full min-w-[780px] text-left text-sm [&_th:first-child]:sticky [&_th:first-child]:left-0 [&_th:first-child]:z-10 [&_th:first-child]:bg-surface [&_td:first-child]:sticky [&_td:first-child]:left-0 [&_td:first-child]:z-10 [&_td:first-child]:bg-surface">
         <thead className="sticky top-0 z-10 bg-surface"><tr className="border-b border-border">
           {["Student", "State", "Source", "Since", "Actions"].map(x=><th key={x} scope="col" className={x==="Student"?"sticky left-0 z-20 bg-surface p-3":"p-3"}>{x}</th>)}
         </tr></thead>

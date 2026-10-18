@@ -69,7 +69,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
       </p>
       {data.assignments.length === 0
         ? <p className="mt-4 text-sm text-muted-foreground">No college-scoped teaching assignments recorded.</p>
-        : <div className="mt-4 overflow-x-auto overscroll-x-contain"><table className="w-full min-w-[42rem] text-left text-sm">
+        : <div className="mt-4 overflow-x-auto overscroll-x-contain"><table className="w-full min-w-[42rem] text-left text-sm [&_th:first-child]:sticky [&_th:first-child]:left-0 [&_th:first-child]:z-10 [&_th:first-child]:bg-surface [&_td:first-child]:sticky [&_td:first-child]:left-0 [&_td:first-child]:z-10 [&_td:first-child]:bg-surface">
           <thead className="bg-muted"><tr>
             <th scope="col" className="p-3">Course</th>
             <th scope="col" className="p-3">Class / cohort</th>

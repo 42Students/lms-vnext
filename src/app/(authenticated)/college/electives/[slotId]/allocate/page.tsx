@@ -178,7 +178,7 @@ export default async function CollegeElectiveAllocatePage({
       {offerings.length === 0 && <p className="text-sm text-muted-foreground">
         Add a course offering to this slot before allocating learners.</p>}
       <div role="region" aria-label="Eligible students for allocation" tabIndex={0} className="max-h-80 overflow-auto overscroll-contain rounded-md border border-border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
-        <table className="w-full min-w-[560px] text-left text-sm">
+        <table className="w-full min-w-[560px] text-left text-sm [&_th:first-child]:sticky [&_th:first-child]:left-0 [&_th:first-child]:z-10 [&_th:first-child]:bg-surface [&_td:first-child]:sticky [&_td:first-child]:left-0 [&_td:first-child]:z-10 [&_td:first-child]:bg-surface">
           <thead className="sticky top-0 z-10 bg-surface"><tr className="border-b border-border">
             <th scope="col" className="sticky left-0 z-20 bg-surface p-2">Select</th><th scope="col" className="p-2">Student</th>
             <th className="p-2">Roll No.</th><th className="p-2">Section</th>
