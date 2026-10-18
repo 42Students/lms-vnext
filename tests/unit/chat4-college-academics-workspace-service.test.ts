@@ -71,7 +71,7 @@ describe("COL-academics-workspace-01 bounded academic workspace composition",()=
    {id:"p2",name:"Mechanical",code:"ME"},
   ]);
   mocks.cohorts.mockImplementation(async (_context:RequestContext,id:string)=>
-   [{id:id+"-cohort",name:"Batch",code:id+"C"}]);
+   [{id:id+"-cohort",name:"Batch",code:id+"C",programId:id}]);
   mocks.sections.mockImplementation(async (_context:RequestContext,id:string)=>
    [{id:id+"-section",name:"Section A",code:"A",
      academicPeriodId:id.startsWith("p1")?periodB:periodA}]);
@@ -98,7 +98,7 @@ describe("COL-academics-workspace-01 bounded academic workspace composition",()=
   mocks.departments.mockResolvedValue([]);
   mocks.periods.mockResolvedValue([]);
   mocks.programs.mockResolvedValue([{id:"p1",name:"Computing",code:"CSE"}]);
-  mocks.cohorts.mockResolvedValue([{id:"c1",name:"Batch",code:"C"}]);
+  mocks.cohorts.mockResolvedValue([{id:"c1",name:"Batch",code:"C",programId:"p1"}]);
   mocks.sections.mockResolvedValue([{id:"s1",academicPeriodId:"foreign-id"}]);
   const result=await getAcademicsWorkspace(actor,collegeId);
   expect(result.sections[0]).toMatchObject({

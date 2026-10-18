@@ -308,6 +308,20 @@ export async function loadFacultyAssignmentScope(
       eq(departments.id, programs.departmentId),
     )
     .innerJoin(
+      academicPeriods,
+      and(
+        eq(academicPeriods.id, sections.academicPeriodId),
+        eq(academicPeriods.collegeId, departments.collegeId),
+      ),
+    )
+    .innerJoin(
+      collegeMemberships,
+      and(
+        eq(collegeMemberships.id, sectionFacultyAssignments.membershipId),
+        eq(collegeMemberships.collegeId, departments.collegeId),
+      ),
+    )
+    .innerJoin(
       colleges,
       eq(colleges.id, departments.collegeId),
     )
@@ -372,6 +386,13 @@ export async function loadScheduleEventScope(
     .innerJoin(
       departments,
       eq(departments.id, programs.departmentId),
+    )
+    .innerJoin(
+      academicPeriods,
+      and(
+        eq(academicPeriods.id, sections.academicPeriodId),
+        eq(academicPeriods.collegeId, departments.collegeId),
+      ),
     )
     .innerJoin(
       colleges,
