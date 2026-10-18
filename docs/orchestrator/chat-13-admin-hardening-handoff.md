@@ -65,3 +65,25 @@ Unit-failure report `ff6819dd/698eb9dd` and typecheck report `39270260` remain o
 - `SA-RETENTION-STALENESS-08`: the Super Admin retention reader now displays, filters and sorts with **the same latest application/stage activity timestamp**, so the oldest 200 actual stale entries are selected before the 201st-row overflow notice, rather than sorting by obsolete application timestamps.
 
 The latest available `docs/orchestrator/unit-failures-latest.md` still refers to CI `ff6819dd/698eb9dd`, and test-typecheck `007415ee` predates the source/test corrections. Static test text and SQL contracts were inspected; **no** cloud Vitest/TypeScript/PostgreSQL/browser pass has been observed. This lane cannot certify rollout until the orchestrator's complete CI and A/B database suite pass. Published-drive audience edits remain intentionally fail-closed pending an integrated migration and transactional applicant notifications.
+
+
+## Priority-change continuation — Projects breakers, Super Admin depth, UX (2026-10-18)
+
+The owner explicitly deferred all CI/test-failure triage until the end. This round therefore focused on the chat-13 master-queue item order and added source fixes + independently named behavioral tests, without running CI or touching failing-unit lists.
+
+**Projects / IIT Dharwad first:**
+- `PROJ-BREAK-SA-33`: strict direct-service project filters and paging in `admin-insights-service.ts`, with adversarial numeric, shape and foreign-key inputs rejected before scope/DB work (`tests/unit/PROJ-BREAK-SA-service-query-boundaries-chat13.test.ts`).
+- `PROJ-BREAK-SA-34`: persisted College Admin lock identity checked before project/submission row locks; stale roles, changed membership, invalid reason, exact replay idempotency and altered-reason conflict cases in `tests/unit/PROJ-BREAK-SA-34-admin-lock-role-revocation.test.ts`.
+- `PROJ-BREAK-SA-35`: legacy `/admin/projects/[projectId]` route now authorizes active Super Admin, validates UUID and checks persisted project/college ownership before redirect; `tests/unit/PROJ-BREAK-SA-35-legacy-project-redirect.test.ts`.
+- `PROJ-BREAK-SA-36/37`: active mentor display denies disabled users; separate one-row-per-project aggregate includes ended mentor changes in staleness without exposing their names. Source and `tests/unit/chat13-project-admin-member-tenant-isolation.test.ts`; rollback-only PostgreSQL `tests/integration/chat13-proj-break-disabled-mentor.test.ts` is wired to `test:db:projects-harness`.
+
+**Admin placements and UX next:**
+- `SA-JOINING-ANOMALY-09`: directory and detail show an explicit review warning when persisted JOINED outcome contradicts a non-ACCEPTED offer. Pure matrix and scoped list/detail source cases: `tests/unit/chat13-super-admin-joining-integrity.test.ts`.
+- `SA-HIRING-REPORT-MODEL-10`: strict date/UUID parsing, employer-ID grouping, duplicate labels, all stage sums, empty and immutable input in `tests/unit/chat13-super-admin-hiring-report-model-behavior.test.ts`.
+- `SA-ADMIN-SELECTED-COLLEGE-11`: active/disabled, wrong role, no college and dual-role scope matrix in `tests/unit/chat13-super-admin-selected-college-role-matrix.test.ts`.
+- `SA-ADMIN-HISTORY-MODAL-10`: first-third Super Admin import-history overlay has focus restoration and a single bounded vertical scroller; UX contracts in `tests/unit/chat13-super-admin-history-modal-ux.test.ts`.
+- `SA-DIRECTORY-QUERY-12`: shared directory filters reject hex/exponent/array/unknown URL keys and invalid UUID/status; page arithmetic remains finite and outbound URLs preserve scoped facets. `tests/unit/chat13-admin-directory-query-hardening.test.ts`.
+
+Relevant defects and source-test traceability: `docs/audit/defects-chat-13.md`, `docs/audit/coverage/chat13-superadmin-placements-projects-page-audit.md`, `docs/audit/coverage/admin-first-chat13.md`, and `docs/audit/coverage/placements-admin-chat13-ledger.md`. All writes target `chatgpt/chat-13-b` only.
+
+**Unresolved release/coverage gates:** A separate lane must independently review Projects fixes. Full browser/phone, PostgreSQL A/B and role-race execution, full route-handler behavioral coverage, 90%+ Projects branch coverage and final CI are still **not verified**. They are not marked DONE as runtime evidence; the owner has postponed those CI and deploy stages. Live published-drive audience retargeting with transactional applicant notices remains intentionally fail-closed rather than asserted complete.
