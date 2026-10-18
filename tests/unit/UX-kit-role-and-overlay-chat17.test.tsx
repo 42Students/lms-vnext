@@ -114,10 +114,12 @@ describe("UX-kit-HARDEN-23 authorization boundaries and WebView history", () => 
     for (const href of [
       "https://attacker.test", "//attacker.test", "/\\\\attacker.test",
       "/%2Fattacker.test", "/%5Cattacker.test", "/%252Fattacker.test",
-      "/%255Cattacker.test", "/%2f%2fattacker.test", " /college/projects",
+      "/%255Cattacker.test", "/%2f%2fattacker.test",
+      "/%2525252fattacker.test", "/%2525255cattacker.test", " /college/projects",
       "/college/projects\\\\attacker.test", "/college/projects\u000a",
     ]) expect(isSafeDataTableHref(href)).toBe(false);
-    for (const href of ["/college/projects", "/college/projects?id=7", "/learn/projects#tasks"]) {
+    for (const href of ["/college/projects", "/college/projects?id=7",
+      "/learn/projects#tasks", "/college/projects?q=100%25", "/learn/files/%20proof"]) {
       expect(isSafeDataTableHref(href)).toBe(true);
     }
     const columns=[{key:"project",header:"Project",mobilePriority:"primary" as const,
