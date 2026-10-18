@@ -1,13 +1,15 @@
 "use client";
 import {Dialog} from "@/components/ui/dialog";
 
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 
 export function TpoCompanyCreateForm() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
+  // Synchronous latch closes the double-click window before React re-renders.
+  const submittingRef = useRef(false);
   const [error, setError] = useState("");
   const [reviewing,setReviewing]=useState(false);
   function close(){
@@ -19,12 +21,13 @@ export function TpoCompanyCreateForm() {
   });
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (pending) return;
+    if (pending || submittingRef.current) return;
     if (form.name.trim().length < 2) {
       setError("Enter a company name with at least two characters.");
       return;
     }
     if(!reviewing){setReviewing(true);setError("");return;}
+    submittingRef.current = true;
     setPending(true);
     setError("");
     try {
@@ -51,6 +54,7 @@ export function TpoCompanyCreateForm() {
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Company creation failed.");
     } finally {
+      submittingRef.current = false;
       setPending(false);
     }
   }
