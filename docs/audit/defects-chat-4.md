@@ -193,3 +193,11 @@ The Super Admin college verification page passed `page`/`pageSize` directly to a
 ## COL-promotion-faculty-ACTOR-03 — stale actor academic readiness reads
 
 `getPromotionFacultyReadiness` previously authorized only against the in-memory `RequestContext` via `resolveActingCollege`, then read cohort, target courses, and eligible active faculty over separate non-transactional queries. A user whose college role was revoked after session issuance could still read the readiness advisory. The service now holds persisted actor row locks for the entire read transaction. The unit mock verifies denial before the first read; concurrency/postgres CI pending.
+
+## PROJ-BREAK-COLLEGE-04-READ-01/02/03/04 and IDOR-05 — S1 stale-role and private ID existence
+
+College Admin Projects insights were built from `RequestContext` `requirePermission` only, then read project count/page, at-risk, submissions and rollup details on separate DB queries. A revoked College Admin or Super Admin could still access private project summaries until their session refreshed. All four `admin-insights-service` exports now reauthorize `projects.manage` in one database transaction and hold persisted actor SHARE locks through the entire read. Before looking up a caller-provided College ID, they now check the actor's exact selected college via `getProjectAdminCollegeId`; foreign IDs cannot be used to distinguish a hidden tenant from a nonexistent one. Tests `chat4-project-admin-directory-persisted-actor.test.ts` and `chat4-project-admin-risk-submissions-live-actor.test.ts` cover denied/valid contexts and no private query on revoked actors; real PG races pending.
+
+## COL-people-import-history-RACE-02 — S2 closed dialog and stale page overwrite
+
+Bulk import history previously left concurrent GET responses unversioned. After fast next/previous clicks, close/reopen or a slow network, an old page could overwrite a newly selected page, including error text from the outdated request. The College import-history dialog now aborts the prior request, advances a request token on next load and close, applies data/errors only for the latest non-aborted token, checks array response shape and hides raw upstream error strings. `isCurrentCollegeImportHistoryRequest` is tested for out-of-order completions and cancellation; browser integration pending.

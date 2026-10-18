@@ -35,7 +35,7 @@ export function SuperAdminCourseBulkVisibility({courses}:{courses:readonly Cours
  }
  return <section aria-label="Bulk course visibility" className="space-y-3 rounded-lg border border-border p-4">
   <h3 className="font-semibold text-foreground">Students see it</h3>
-  <p className="text-sm text-body">Show to students or hide from students across published lesson content in selected courses. Archived or unpublished content remains unchanged.</p>
+  <p className="text-sm text-body">Show to students or hide from students across currently published lesson content in selected courses. Archived or unpublished content remains unchanged. New content keeps its own student visibility setting.</p>
   <label className="flex min-h-11 items-center gap-2 text-sm">
    <input type="checkbox" checked={courses.length>0&&selectedInScope.length===courses.length}
     disabled={pending||!courses.length}

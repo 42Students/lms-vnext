@@ -21,6 +21,7 @@ import { friendlyApiError } from "@/lib/friendly-error";
 import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import {ProjectDeliveryFileUploader} from "./project-delivery-file-uploader";
 import {savedDeliverySubmissionReadiness} from "@/modules/projects/saved-delivery-submission-readiness";
+import {finalDeliveryUserError} from "@/modules/projects/final-delivery-user-error";
 
 type Submission = {
   id: string;
@@ -35,17 +36,6 @@ type Submission = {
 };
 
 type DeliveryAttachment={kind:"FILE"|"LINK";name:string;fileId:string|null;url:string|null};
-function finalDeliveryUserError(caught:unknown):string {
-  if(caught instanceof FriendlyFetchError)return caught.message;
-  // Local validation failures are authored, actionable copy. Never render an
-  // arbitrary Error.message from a plugin, browser or unexpected exception.
-  if(caught instanceof Error&&[
-    "Refresh this final draft to get its latest revision before saving.",
-    "Could not confirm the draft revision. Refresh before editing again.",
-  ].includes(caught.message))return caught.message;
-  return friendlyApiError({});
-}
-
 function safeDraftAttachments(items:unknown[]|undefined):DeliveryAttachment[]{
   return (items??[]).filter((item):item is DeliveryAttachment=>{
     if(!item||typeof item!=="object")return false;

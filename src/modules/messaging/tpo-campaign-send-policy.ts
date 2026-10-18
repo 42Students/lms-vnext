@@ -34,13 +34,15 @@ export function planTpoCampaignRecipients<T extends CampaignRecipientFact & {id:
   // A roster with 600 unsubscribed contacts and 1 eligible lead is sendable.
   const suppressed={NO_EMAIL:0,UNSUBSCRIBED:0,BOUNCED:0,NOT_NOW:0,DUPLICATE:0};
   const seen=new Set<string>();
+  const seenIds=new Set<string>();
   const recipientIds:string[]=[];
   for(const row of candidates){
     const state=campaignRecipientDisposition(row);
     if(state!=="ELIGIBLE"){suppressed[state]++;continue;}
     const email=row.emailNorm!.trim().toLowerCase();
-    if(seen.has(email)){suppressed.DUPLICATE++;continue;}
+    if(seen.has(email)||seenIds.has(row.id)){suppressed.DUPLICATE++;continue;}
     seen.add(email);
+    seenIds.add(row.id);
     assertCampaignRecipientCap(recipientIds.length+1);
     recipientIds.push(row.id);
   }
@@ -53,7 +55,8 @@ export function planTpoCampaignRecipients<T extends CampaignRecipientFact & {id:
 export function campaignRecipientStillMatchesSnapshot(
  snapshot:CampaignRecipientFact,live:CampaignRecipientFact|null|undefined,
 ):boolean{
- if(!live||campaignRecipientDisposition(live)!=="ELIGIBLE")return false;
+ if(campaignRecipientDisposition(snapshot)!=="ELIGIBLE"||
+    !live||campaignRecipientDisposition(live)!=="ELIGIBLE")return false;
  const before=snapshot.emailNorm?.trim().toLowerCase();
  const now=live.emailNorm?.trim().toLowerCase();
  return Boolean(before&&now&&before===now);
