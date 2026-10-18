@@ -416,6 +416,40 @@ describe("Placement P8 offers and joining", () => {
     expect(job.collegeId).toBe(SEED_IDS.collegeA);
   });
 
+  it("PLACEMENTS-TPO-NOTICE-18 DB issues exactly one preference-scoped learner notice per durable TPO decision",async()=>{
+    const {job,application}=await preparePassedApplication();
+    const offer=await issuePlacementOffer(tpo,application.id,{
+      roleTitle:"Notification parity engineer",annualCtcInr:900_000,
+    });
+    const before=await pool.query<{count:number}>(`
+      select count(*)::int as count from in_app_notifications n
+      join activity_events e on e.id=n.event_id
+      where e.subject_id=$1 and e.event_type='placements.offer.responded'`,[offer.id]);
+    expect(before.rows[0]?.count).toBe(0);
+    const accepted=await recordTpoOfferLifecycle(tpo,job.id,{
+      confirmed:true,action:"RECORD_ACCEPTED",offerIds:[offer.id],
+      expectedStatus:"ISSUED",
+      reason:"Written employer confirmation of learner acceptance",
+    });
+    expect(accepted.updated).toBe(1);
+    const notices=await pool.query<{user_id:string;event_id:string}>(`
+      select n.user_id,n.event_id from in_app_notifications n
+      join activity_events e on e.id=n.event_id
+      where e.subject_id=$1 and e.event_type='placements.offer.responded'`,[offer.id]);
+    expect(notices.rows).toHaveLength(1);
+    expect(notices.rows[0]?.user_id).toBe(SEED_IDS.learnerUser);
+    await expect(recordTpoOfferLifecycle(tpo,job.id,{
+      confirmed:true,action:"RECORD_ACCEPTED",offerIds:[offer.id],
+      expectedStatus:"ISSUED",
+      reason:"Repeated employer spreadsheet after accepted status was persisted",
+    })).rejects.toMatchObject({code:"PLACEMENT_OFFER_INVALID_TRANSITION"});
+    const stable=await pool.query<{count:number}>(`
+      select count(*)::int as count from in_app_notifications n
+      join activity_events e on e.id=n.event_id
+      where e.subject_id=$1 and e.event_type='placements.offer.responded'`,[offer.id]);
+    expect(stable.rows[0]?.count).toBe(1);
+  });
+
   it("PLACEMENTS-JOIN-SM-04 DB refuses future joining evidence without a partial history write",async()=>{
     const {job,application}=await preparePassedApplication();
     const issued=await issuePlacementOffer(tpo,application.id,{
