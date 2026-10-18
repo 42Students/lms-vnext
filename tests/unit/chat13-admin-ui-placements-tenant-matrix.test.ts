@@ -24,7 +24,7 @@ describe("SA-ADMIN-PLACEMENT-SERVICE-MATRIX-01 all Super Admin placement directo
    const s=read(file);
    expect(s).toContain('requireSuperAdminSelectedCollege(context,"placements.read")');
    expect(s).toContain("getDb()");
-   expect(s).toContain("selected.collegeId".replace("selected",s.includes("selected.collegeId")?"selected":"scope").replace("scope",s.includes("scope.collegeId")?"scope":"selected"));
+   expect(s.includes("selected.collegeId")||s.includes("scope.collegeId"),file).toBe(true);
   });
  }
  it("SA-ADMIN-PLACEMENT-SERVICE-MATRIX-02 audits the edge services' own authentication gates",()=>{
@@ -51,8 +51,7 @@ describe("SA-ADMIN-PLACEMENT-SERVICE-MATRIX-01 all Super Admin placement directo
    const s=read(file);
    expect(s,file).toContain("eq(collegeMemberships.collegeId,");
    expect(s,file).toContain("eq(placementJobs.collegeId,");
-   expect(s,file).toContain("getCurrentRequestContext".replace("getCurrentRequestContext",
-      'requireSuperAdminSelectedCollege(context,"placements.read")'));
+   expect(s,file).toContain('requireSuperAdminSelectedCollege(context,"placements.read")');
   }
   const hiring=read("super-admin-placement-hiring-service.ts");
   expect(hiring).toContain("count(${collegeMemberships.id})");
