@@ -21,7 +21,7 @@ export default async function FacultyCalendarPage({
   });
   if(!input.success)return <section role="alert" className="space-y-3">
     <h1 className="text-lg font-semibold">Invalid month or Section filter</h1>
-    <Link href="/teacher/calendar" className="font-semibold text-primary-text underline">
+    <Link href="/teacher/calendar" className="font-semibold text-[var(--lms-teal-deep)] underline">
       Clear filters
     </Link>
   </section>;
@@ -37,11 +37,11 @@ export default async function FacultyCalendarPage({
   }));
   const names=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
   const selected=grid.query.deliveryId;
-  return <div className="space-y-6">
+  return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="Class Schedule" />
     <div className="flex justify-end">
       <Link href="/teacher/live-classes"
-        className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
         View live classes
       </Link>
     </div>
@@ -53,29 +53,29 @@ export default async function FacultyCalendarPage({
         </h2>
         <div className="flex flex-wrap gap-3 text-sm font-semibold">
           <Link href={facultyMonthHref({...grid.query,month:shiftMonth(grid.query.month,-1)})}
-            className="inline-flex min-h-11 items-center rounded-md px-2 text-primary-text hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">Previous month</Link>
+            className="inline-flex min-h-11 items-center rounded-md px-2 text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous month</Link>
           <Link href={facultyMonthHref({...grid.query,month:currentIstMonth(new Date())})}
-            className="inline-flex min-h-11 items-center rounded-md px-2 text-primary-text hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">Current month</Link>
+            className="inline-flex min-h-11 items-center rounded-md px-2 text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Current month</Link>
           <Link href={facultyMonthHref({...grid.query,month:shiftMonth(grid.query.month,1)})}
-            className="inline-flex min-h-11 items-center rounded-md px-2 text-primary-text hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">Next month</Link>
+            className="inline-flex min-h-11 items-center rounded-md px-2 text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next month</Link>
         </div>
       </div>
       <form method="get" action="/teacher/calendar" className="mt-4 flex flex-wrap items-end gap-3">
         <label className="grid gap-1 text-sm font-semibold text-body">Month (IST)
           <input type="month" name="month" required defaultValue={grid.query.month}
             min="1900-01" max="2099-12"
-            className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground" />
+            className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Teaching Section
           <select name="deliveryId" defaultValue={selected??""}
-            className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+            className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
             <option value="">All my Sections</option>
             {schedule.courses.map(course=><option key={course.deliveryId} value={course.deliveryId}>
               {course.courseCode} · {course.courseName}
             </option>)}
           </select>
         </label>
-        <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">
           Apply
         </button>
       </form>
@@ -84,7 +84,7 @@ export default async function FacultyCalendarPage({
       </p>:grid.days.every(day=>day.events.length===0)?<p className="mt-5 text-sm text-body">
         No persisted scheduled sessions in this IST month for the selected teaching Sections.
       </p>:null}
-      <div className="mt-4 overflow-x-auto rounded-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]" role="region" aria-label="IST month schedule grid; scroll horizontally for all weekdays" tabIndex={0}>
+      <div className="mt-4 overflow-x-auto rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" role="region" aria-label="IST month schedule grid; scroll horizontally for all weekdays" tabIndex={0}>
         <div className="grid min-w-[44rem] grid-cols-7 gap-px rounded-lg border border-border bg-border">
           {names.map(name=><div key={name} className="bg-surface-subtle p-2 text-center text-xs font-semibold">{name}</div>)}
           {grid.days.map(day=><section key={day.key}
@@ -103,7 +103,7 @@ export default async function FacultyCalendarPage({
                 </p>
                 {event.deliveryId?<Link
                   href={"/teacher/courses/"+encodeURIComponent(event.deliveryId)+"/home"}
-                  className="text-xs font-semibold text-primary-text hover:underline">Course Section</Link>
+                  className="text-xs font-semibold text-[var(--lms-teal-deep)] hover:underline">Course Section</Link>
                 :<span className="text-xs text-muted-foreground">Section-wide session</span>}
               </article>)}
             </div>
