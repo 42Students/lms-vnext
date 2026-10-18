@@ -13,6 +13,7 @@ export default async function MentorReportsPage({searchParams}:{
   searchParams:Promise<Search>;
 }){
   const params=await searchParams;
+  const duplicated=Object.values(params).some(value=>Array.isArray(value)&&value.length!==1);
   const parsed=mentorReportsQuerySchema.safeParse({
     taskCoverage:first(params.taskCoverage)??undefined,
     status:first(params.status)??undefined,attention:first(params.attention)??undefined,
@@ -20,7 +21,7 @@ export default async function MentorReportsPage({searchParams}:{
     order:first(params.order)??undefined,
     search:first(params.search)??undefined,page:first(params.page)??undefined,
   });
-  if(!parsed.success)return <section role="alert" className="space-y-3">
+  if(duplicated||!parsed.success)return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid Mentor report filters</h1>
     <Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
   </section>;

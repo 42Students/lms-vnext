@@ -1,0 +1,19 @@
+# Chat-17 independent defects — shared UI kit, tenant access and PostgreSQL harness
+
+**Scope:** `42Students/lms-vnext`, lane `chatgpt/chat-17-b`. This ledger contains findings with code/test evidence; it does not certify complete browser or real-PostgreSQL execution.
+
+| Finding | Severity | Evidence and failure mode | Fix / regression evidence | Status |
+|---|---|---|---|---|
+| UX-kit-HARDEN-27 | S2 (test) | Server-side markup cannot know whether a `ScrollCue` element overflows. Original shared table test incorrectly required the overflow-region aria label before hydration; cloud unit report listed this failure. | Test checks accessible caption and initial neutral scroll-cue state, with overflow label checked against rendering source. Commit `1c34daad`. | Authored; confirm next cloud unit run |
+| UX-kit-HARDEN-30 | S1 (navigation integrity) | DataTable `rowHref` and `mobileDetail.href` previously rejected only raw `//`. Encoded initial slash/backslash and slash-like URL spellings could be browser-normalized into unsafe off-site navigation if future callers supply untrusted hrefs. | `isSafeDataTableHref` rejects encoded or protocol-relative candidates; shared table uses it for both row and mobile-detail paths. Unit case `UX-kit-HARDEN-30`. Commits `205e8843`, `9acbcb29`. | Fix pushed; cloud execution pending |
+| UX-kit-HARDEN-31 | S2 (resilience) | Pagination normalized `paginationWindow` but displayed an unbounded `Infinity` page count in `Pagination`. Malformed backend pagination metadata could show impossible page state. | `normalizedPageCount` used consistently; test `UX-kit-HARDEN-31` checks NaN/infinite/zero and 10k valid pages. Commits `d6578f43`, `7d7ad642`. | Fix pushed; cloud execution pending |
+| WEAK-tenant-domains-06 | S1 (host normalization) | URL parsing of literal backslash or embedded control in Host / configured DNS claim can reinterpret or silently strip separators, accepting a different hostname than the presented input. | Reject backslash/ASCII controls before URL parse in `normalizeTenantHost` and `normalizeRequestHost`; test `WEAK-tenant-domains-06`. Commits `b4e22bf4`, `679e407b`. | Fix pushed; cloud execution pending |
+| WEAK-auth-tenant-access-06/07 | S1 (tenant access) | `isTenantAccessAllowed` compared cached college UUIDs without confirming active user or current membership; a disabled account or ended/suspended membership can still pass the pure tenant host check if a stale context is supplied. | Uses `hasActiveMembership` / `hasActiveRecruiter`, requires active platform status, then checks tenant UUID. Tests `WEAK-auth-tenant-access-06/07`. Commits `154f5ba0`, `5694d9a2`. | Fix pushed; cloud execution pending |
+
+| UX-kit-HARDEN-32 | S2 (external URL integrity) | Browser URL normalization silently treats raw backslashes as slashes and strips tab/newline characters, potentially opening an unintended link presented as a saved external evidence destination. | `ThirdPartyLink` rejects ambiguous raw characters and whitespace before HTTPS parsing. Unit `UX-kit-HARDEN-32`. Commits `05bbd841`, `2085706b`. | Fix pushed; cloud execution pending |
+
+## Integration fixture hardening
+
+- `PROJ-HARNESS-22..28`: explicit current college, project roster, active user and `can_mutate` checks protect example SQL fixtures against accidental incorrect cross-tenant writes. This is fixture integrity, not proof of product route authorization.
+- `PROJ-HARNESS-29..32`: real PostgreSQL index catalogue, restricted deletion semantics, `EXPLAIN (FORMAT JSON)` and savepoint rollback examples in `tests/integration/projects-placements-pg-harness-relations-chat17.test.ts`.
+- **Unverified:** actual cloud execution of this new suite and browser keyboard/focus/visual viewport tests. Run `npm run test:db:projects-harness` on a migrated disposable `TEST_DATABASE_URL` and `npm run test:ux:kit:hardening` in CI; never report a suite as green merely because tests are checked in.

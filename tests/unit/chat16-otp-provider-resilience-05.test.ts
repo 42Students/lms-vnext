@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { outboundFetch } from "@/lib/outbound";
 import { writeStructuredLog } from "@/observability/logger";
 import { createExotelSmsProvider, type ExotelConfig } from "@/modules/notifications/exotel-sms";
-import { createZeptoMailEmailProvider, type ZeptoMailConfig } from "@/modules/notifications/zeptomail-email";
+import { createZeptoMailEmailProvider, isSecureMailProviderEndpoint, type ZeptoMailConfig } from "@/modules/notifications/zeptomail-email";
 
 vi.mock("@/lib/outbound", () => ({ outboundFetch: vi.fn() }));
 vi.mock("@/observability/logger", () => ({ writeStructuredLog: vi.fn() }));
@@ -99,4 +99,22 @@ describe("chat-16 OTP channel acceptance, validation and graceful failure", () =
     expect(options).toMatchObject({ method: "POST", maxAttempts: 1 });
     expect(JSON.parse(String(options?.body)).to[0]?.email_address?.address).toBe("learner@example.org");
   });
+  it("AUTH-OTP-DELIVERY-03 never posts OTPs to plaintext, credentialed or invalid endpoints", async () => {
+    expect(isSecureMailProviderEndpoint("https://api.zeptomail.in/v1.1/email/template")).toBe(true);
+    expect(isSecureMailProviderEndpoint("http://localhost:1234/collect")).toBe(false);
+    expect(isSecureMailProviderEndpoint("https://username:password@api.zeptomail.in/private")).toBe(false);
+    expect(isSecureMailProviderEndpoint("not-a-url")).toBe(false);
+    for (const apiUrl of [
+      "http://localhost:1234/collect",
+      "https://username:password@api.zeptomail.in/private",
+      "not-a-url",
+    ]) {
+      const provider = createZeptoMailEmailProvider({ ...emailConfig, apiUrl });
+      expect(await provider.sendOtpEmail({
+        toEmail: "learner@example.org", code: "123456", displayName: "Learner",
+      })).toBe(false);
+    }
+    expect(outboundFetch).not.toHaveBeenCalled();
+  });
+
 });

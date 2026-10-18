@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {notFound} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
+import { requirePermission } from "@/modules/permissions/policy";
 import {PageHeader} from "@/components/ui/page-header";
 import {CollegeServiceError} from "@/modules/colleges/service";
 import {readAdminCollegeSignInPolicy} from "@/modules/colleges/admin-signin-policy-service";
@@ -8,9 +9,11 @@ import {CollegeSigninMethodForm} from "@/components/admin/college-signin-method-
 import {collegeIdSchema} from "@/modules/colleges/validation";
 
 export default async function CollegeSignInMethods({params}:{params:Promise<{collegeId:string}>}){
+  const context=await getCurrentRequestContext();
+  requirePermission(context,"admin-scope.select");
  const {collegeId}=await params;
  if(!collegeIdSchema.safeParse(collegeId).success)notFound();
- const context=await getCurrentRequestContext();
+
  let result:Awaited<ReturnType<typeof readAdminCollegeSignInPolicy>>;
  try {result=await readAdminCollegeSignInPolicy(context,collegeId);}
  catch(error){if(error instanceof CollegeServiceError&&error.code==="COLLEGE_NOT_FOUND")notFound();throw error;}
