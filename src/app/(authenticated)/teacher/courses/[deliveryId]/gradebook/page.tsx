@@ -27,7 +27,7 @@ export default async function FacultyGradebookPage({
     <h1 className="text-xl font-semibold text-foreground">Invalid gradebook link or filters</h1>
     <Link href={parsed.success?
       facultyGradebookViewHref(parsed.data.deliveryId,{search:"",page:1}):
-      "/teacher/courses"} className="text-[var(--lms-teal-deep)] underline">
+      "/teacher/courses"} className="text-[var(--lms-teal-deep)] underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       Return to the gradebook
     </Link>
   </section>;
@@ -51,13 +51,13 @@ export default async function FacultyGradebookPage({
         Find learner
         <input type="search" name="search" defaultValue={view.data.search}
           maxLength={120} placeholder="Name, roll number or email"
-          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground" />
+          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" />
       </label>
       <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">
         Search
       </button>
       <Link href={facultyGradebookViewHref(parsed.data.deliveryId,{search:"",page:1})}
-        className="inline-flex min-h-11 items-center px-2 text-sm font-semibold text-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 items-center px-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Clear
       </Link>
     </form>
@@ -81,7 +81,7 @@ export default async function FacultyGradebookPage({
         </p>
         <Link href={"/teacher/courses/"+encodeURIComponent(parsed.data.deliveryId)+
           "/gradebook/"+encodeURIComponent(row.membershipId)}
-          className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">
+          className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           View published score breakdown →
         </Link>
         <div className="mt-3 grid gap-2 sm:grid-cols-3">
@@ -106,11 +106,11 @@ export default async function FacultyGradebookPage({
       </span>
       <div className="flex gap-3">
         {filtered.page>1&&<Link href={facultyGradebookViewHref(parsed.data.deliveryId,{
-          ...base,page:filtered.page-1})} className="text-sm font-semibold text-[var(--lms-teal-deep)]">
+          ...base,page:filtered.page-1})} className="text-sm font-semibold text-[var(--lms-teal-deep)] inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           Previous
         </Link>}
         {filtered.page<filtered.totalPages&&<Link href={facultyGradebookViewHref(parsed.data.deliveryId,{
-          ...base,page:filtered.page+1})} className="text-sm font-semibold text-[var(--lms-teal-deep)]">
+          ...base,page:filtered.page+1})} className="text-sm font-semibold text-[var(--lms-teal-deep)] inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           Next
         </Link>}
       </div>
