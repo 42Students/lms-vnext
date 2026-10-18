@@ -314,7 +314,7 @@ export function LearnerAttendanceWorkspace({
               Jump to month
               <input
                 type="month"
-                className="mt-1.5 min-h-9 rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"
+                className="mt-1.5 min-h-11 rounded-md border border-border bg-surface px-3 text-base text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"
                 value={monthKey(month)}
                 onChange={(event) =>
                   changeMonth(

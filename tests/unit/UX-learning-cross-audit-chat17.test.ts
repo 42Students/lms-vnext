@@ -108,4 +108,69 @@ describe("chat-17 confirmed BLOCKER/MAJOR learning cross-audit fixes", () => {
     expect(p).toContain("Destination URL");
     expect(p).not.toContain('target="_blank"');
   });
+  it("UX-learn-profile-confirm-03 protects seven dirty/delete flows with shared confirmation (LX-10)", () => {
+    const p = readComponent("profile/learner-profile-workspace.tsx");
+    expect(p).not.toContain("window.confirm");
+    expect(p).toContain("async function closeDetails()");
+    expect(p).toContain("async function removeItem(");
+    expect(p).toContain("askConfirm(");
+    expect(p).toContain("Discard profile changes?");
+    expect(p).toContain("Discard contact changes?");
+    expect(p).toContain("Delete this award?");
+    expect(p).toContain("<ConfirmDialog");
+    expect(p).toContain('<ThirdPartyLink href={entry.url} label="View link" />');
+  });
+  it("UX-learn-course-discussion-03 preserves draft navigation and destructive action confirmation (LX-11)", () => {
+    const p = readComponent("courses/learner-course-discussion.tsx");
+    expect(p).not.toContain("window.confirm");
+    expect(p).toContain("setLeaveHref(destination.pathname+destination.search+destination.hash)");
+    expect(p).toContain('title="Discard your unsent discussion message?"');
+    expect(p).toContain('title="Delete this message?"');
+    expect((p.match(/<ConfirmDialog/g)??[]).length).toBe(2);
+    expect(p).toContain("setDraft(\"\")");
+    expect(p).not.toContain('role="dialog"');
+    expect(p).toContain("min-h-11");
+    expect(p).toContain("text-base text-foreground");
+  });
+  it("UX-learn-live-class-03 disables expired meeting but uses WebView-safe join (LX-12)", () => {
+    const p=readComponent("courses/learner-live-class-link.tsx");
+    expect(p).toContain("if(ended)return");
+    expect(p).toContain('<ThirdPartyLink href={href} label="Join Meeting" />');
+    expect(p).toContain("Copy meeting link");
+    expect(p).not.toContain('target="_blank"');
+    expect(p).not.toContain("min-h-10");
+  });
+  it("UX-learn-assessment-overview-03 retains shared submitted URL and minimum action sizes (LX-13)", () => {
+    const p=readComponent("courses/learner-assessment-overview.tsx");
+    expect(p).toContain("learnerAssessmentSubmittedLinkHref");
+    expect(p).toContain("<ThirdPartyLink");
+    expect(p).not.toContain('target="_blank"');
+    expect(p).not.toContain("min-h-10");
+    expect(p).not.toContain("sm:min-h-9");
+  });
+  it("UX-learn-offers-03 opens own offer letter in same tab without losing label (LX-14)", () => {
+    const p=readComponent("placements/learner-placement-offers.tsx");
+    expect(p).toContain("item.letterHref");
+    expect(p).toContain("View offer letter");
+    expect(p).not.toContain('target="_blank"');
+  });
+  it("UX-learn-attendance-03 gives mobile history input 44px and 16px type (LX-15)", () => {
+    const p=readComponent("attendance/learner-attendance-workspace.tsx");
+    expect(p).toContain("min-h-11 rounded-md border border-border bg-surface px-3 text-base");
+    expect(p).not.toContain("min-h-9");
+  });
+  it("UX-learn-schedule-03 guards reschedule actions with 44px targets (LX-16)", () => {
+    const p=readComponent("placements/learner-schedule-reschedule.tsx");
+    expect(p).toContain("Ask to reschedule");
+    expect(p).toContain("min-h-11");
+    expect(p).not.toContain("min-h-10");
+  });
+  it("UX-notifications-toolbar-03 preserves unread filtering and 44px tabs (LX-17)", () => {
+    const p=readComponent("activity/notification-toolbar.tsx");
+    expect(p).toContain('view === "all"');
+    expect(p).toContain('view === "unread"');
+    expect(p).not.toContain("min-h-10");
+    expect(p).toContain("min-h-11");
+  });
+
 });
