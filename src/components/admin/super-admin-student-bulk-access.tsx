@@ -55,14 +55,14 @@ export function SuperAdminStudentBulkAccess({learners}:{learners:readonly Learne
   </div>
   <div className="flex flex-wrap items-end gap-3 text-sm">
    <label className="grid gap-1 font-semibold">Module<Select value={module} disabled={busy} onChange={e=>setModule(e.target.value as typeof module)}
-    className="min-h-11 rounded border border-border bg-background px-3">
+    className="w-full">
     <option value="projects">Projects</option><option value="electives">Electives</option></Select></label>
    <label className="grid gap-1 font-semibold">Access<Select value={action} disabled={busy} onChange={e=>setAction(e.target.value as typeof action)}
-    className="min-h-11 rounded border border-border bg-background px-3">
+    className="w-full">
     <option value="ENABLE">Enable</option><option value="DISABLE">Disable</option>
     <option value="INHERIT">Clear override / Inherit</option></Select></label>
    <Button variant="primary" type="button" disabled={busy||!selected.length} onClick={()=>void submit()}
-    className="min-h-11 rounded bg-primary px-4 font-semibold text-foreground disabled:opacity-50">{busy?"Saving…":"Apply to selected"}</Button>
+    className="">{busy?"Saving…":"Apply to selected"}</Button>
   </div>
   {error?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
   {report?<div role="status" className="space-y-1 text-sm">
