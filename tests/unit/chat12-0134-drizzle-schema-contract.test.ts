@@ -29,10 +29,12 @@ describe("registered migration 0134 Drizzle schema parity",()=>{
   expect(fields.requestId.notNull).toBe(true);
   expect(read("src/db/schema/placement-general-requests.ts")).toContain("placement_general_request_events_parent_idx");
  });
- it("TPO-students-10 exports the registered prep assignments, including college-scoped membership FK",()=>{
+ it("TPO-students-10 exports effective 0136 prep assignments, preserving college-scoped membership FK",()=>{
   const fields=getTableColumns(placementTpoPrepAssignments);
   expect(getTableName(placementTpoPrepAssignments)).toBe("placement_tpo_prep_assignments");
-  expect(fields.dueAt.notNull).toBe(true);
+  expect(fields.dueAt.notNull).toBe(false);
+  expect(read("drizzle/0134_lanes_round_2.sql")).toContain("due_at timestamptz not null");
+  expect(read("drizzle/0136_tpo_prep_optional_due_date.sql")).toContain("ALTER COLUMN due_at DROP NOT NULL");
   expect(fields.offeringId.notNull).toBe(true);
   const src=read("src/db/schema/placement-tpo-prep-assignments.ts");
   expect(src).toContain('name:"tpo_prep_member_college_fk"');
