@@ -239,8 +239,8 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/modules/projects/mentor-estimation-unit-model.ts` | `mentorEstimationUnit` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-estimation-unit-model.ts` | `mentorEstimateOptions` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-estimation-unit-model.ts` | `mentorEstimateLabel` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-filter-query.ts` | `singleValueMentorFilters` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-filter-query.ts` | `singleValueMentorExportFilters` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-filter-query.ts` | `singleValueMentorFilters` | `tests/unit/PROJ-BREAK-chat14-mentor-delivery-meetings.test.ts` | Runtime state/validation/privacy and bounded export cases; **authored/unrun**; DB concurrency and HTTP authorization remain GAP |
+| `src/modules/projects/mentor-filter-query.ts` | `singleValueMentorExportFilters` | `tests/unit/PROJ-BREAK-chat14-mentor-delivery-meetings.test.ts` | Runtime state/validation/privacy and bounded export cases; **authored/unrun**; DB concurrency and HTTP authorization remain GAP |
 | `src/modules/projects/mentor-final-delivery-decision-model.ts` | `mentorFinalDeliveryCanReview` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-final-delivery-decision-model.ts` | `mentorFinalDeliveryDecisionSchema` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-final-delivery-decision-service.ts` | `decideMentorFinalDelivery` | `tests/unit/projects-mentor-service-guards-chat14.test.ts` | Static/source only, behavioural pending |
@@ -350,11 +350,11 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/modules/projects/mentor-review-history-model.ts` | `mentorReviewHistoryHref` | `tests/unit/PROJ-BREAK-chat14-mentor-time-history.test.ts` | Runtime behavioural cases for mentorReviewHistoryHref; authored, **unrun**; full tenant / DB / device acceptance open |
 | `src/modules/projects/mentor-review-history-model.ts` | `mentorReviewHistoryQuerySchema` | `tests/unit/PROJ-BREAK-chat14-mentor-time-history.test.ts` | Runtime behavioural cases for mentorReviewHistoryQuerySchema; authored, **unrun**; full tenant / DB / device acceptance open |
 | `src/modules/projects/mentor-review-history-service.ts` | `getMentorReviewHistory` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-review-overview-model.ts` | `mentorReviewOverviewHref` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-review-overview-model.ts` | `classifyMentorDeliveryReview` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-review-overview-model.ts` | `mentorDeliveryReviewCounts` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-review-overview-model.ts` | `mentorDeliveryReviewCsv` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-review-overview-model.ts` | `mentorReviewOverviewSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-review-overview-model.ts` | `mentorReviewOverviewHref` | `tests/unit/PROJ-BREAK-chat14-mentor-delivery-meetings.test.ts` | Runtime state/validation/privacy and bounded export cases; **authored/unrun**; DB concurrency and HTTP authorization remain GAP |
+| `src/modules/projects/mentor-review-overview-model.ts` | `classifyMentorDeliveryReview` | `tests/unit/PROJ-BREAK-chat14-mentor-delivery-meetings.test.ts` | Runtime state/validation/privacy and bounded export cases; **authored/unrun**; DB concurrency and HTTP authorization remain GAP |
+| `src/modules/projects/mentor-review-overview-model.ts` | `mentorDeliveryReviewCounts` | `tests/unit/PROJ-BREAK-chat14-mentor-delivery-meetings.test.ts` | Runtime state/validation/privacy and bounded export cases; **authored/unrun**; DB concurrency and HTTP authorization remain GAP |
+| `src/modules/projects/mentor-review-overview-model.ts` | `mentorDeliveryReviewCsv` | `tests/unit/PROJ-BREAK-chat14-mentor-delivery-meetings.test.ts` | Runtime state/validation/privacy and bounded export cases; **authored/unrun**; DB concurrency and HTTP authorization remain GAP |
+| `src/modules/projects/mentor-review-overview-model.ts` | `mentorReviewOverviewSchema` | `tests/unit/PROJ-BREAK-chat14-mentor-delivery-meetings.test.ts` | Runtime state/validation/privacy and bounded export cases; **authored/unrun**; DB concurrency and HTTP authorization remain GAP |
 | `src/modules/projects/mentor-review-overview-service.ts` | `getMentorDeliveryReviewOverview` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-risk-readiness-model.ts` | `mentorRiskReadiness` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-risk-readiness-model.ts` | `mentorRiskReadinessHref` | **GAP** | **GAP — behaviour untested** |
@@ -422,10 +422,10 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/modules/projects/mentor-team-history-model.ts` | `mentorTeamHistoryPage` | `tests/unit/PROJ-BREAK-chat14-mentor-time-history.test.ts` | Runtime behavioural cases for mentorTeamHistoryPage; authored, **unrun**; full tenant / DB / device acceptance open |
 | `src/modules/projects/mentor-team-history-model.ts` | `mentorTeamHistoryQuerySchema` | `tests/unit/PROJ-BREAK-chat14-mentor-time-history.test.ts` | Runtime behavioural cases for mentorTeamHistoryQuerySchema; authored, **unrun**; full tenant / DB / device acceptance open |
 | `src/modules/projects/mentor-team-history-service.ts` | `getMentorTeamHistory` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-team-meetings-model.ts` | `escapeMentorMeetingSearch` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-team-meetings-model.ts` | `mentorTeamMeetingsPage` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-team-meetings-model.ts` | `mentorTeamMeetingsHref` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-team-meetings-model.ts` | `mentorTeamMeetingsQuerySchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-team-meetings-model.ts` | `escapeMentorMeetingSearch` | `tests/unit/PROJ-BREAK-chat14-mentor-delivery-meetings.test.ts` | Runtime state/validation/privacy and bounded export cases; **authored/unrun**; DB concurrency and HTTP authorization remain GAP |
+| `src/modules/projects/mentor-team-meetings-model.ts` | `mentorTeamMeetingsPage` | `tests/unit/PROJ-BREAK-chat14-mentor-delivery-meetings.test.ts` | Runtime state/validation/privacy and bounded export cases; **authored/unrun**; DB concurrency and HTTP authorization remain GAP |
+| `src/modules/projects/mentor-team-meetings-model.ts` | `mentorTeamMeetingsHref` | `tests/unit/PROJ-BREAK-chat14-mentor-delivery-meetings.test.ts` | Runtime state/validation/privacy and bounded export cases; **authored/unrun**; DB concurrency and HTTP authorization remain GAP |
+| `src/modules/projects/mentor-team-meetings-model.ts` | `mentorTeamMeetingsQuerySchema` | `tests/unit/PROJ-BREAK-chat14-mentor-delivery-meetings.test.ts` | Runtime state/validation/privacy and bounded export cases; **authored/unrun**; DB concurrency and HTTP authorization remain GAP |
 | `src/modules/projects/mentor-team-meetings-service.ts` | `getMentorTeamMeetings` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-workspace-evidence-model.ts` | `safeProjectExternalHref` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-workspace-evidence-model.ts` | `showMentorTaskCriteria` | **GAP** | **GAP — behaviour untested** |
