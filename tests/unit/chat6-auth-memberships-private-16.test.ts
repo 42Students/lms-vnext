@@ -54,6 +54,15 @@ describe("AUTH-handoff-16 scoped membership cookies and no-store",()=>{
    identityUid:"identity-1",activeMembershipId:ownMembership,
   });
  });
+ it("AUTH-handoff-18 distinguishes temporary domain outage from invalid or revoked session",async()=>{
+  vi.mocked(resolveRequestTenant).mockResolvedValue({kind:"unavailable",host:"campus.example"});
+  const response=await GET();
+  expect(response.status).toBe(503);
+  expect(response.headers.get("Cache-Control")).toBe("private, no-store");
+  expect(await response.json()).toEqual({error:"TENANT_LOOKUP_UNAVAILABLE"});
+  expect(resolveRequestContext).not.toHaveBeenCalled();
+  expect(listMembershipChoices).not.toHaveBeenCalled();
+ });
  it("rejects wrong-tenant host and does not serialize private memberships on failure",async()=>{
   vi.mocked(isTenantAccessAllowed).mockReturnValue(false);
   const response=await GET();
