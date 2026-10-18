@@ -39,7 +39,8 @@ export function mentorTeamHistoryHref(
 }
 
 export function mentorTeamHistoryPage(total: number, requestedPage: number, size = 20) {
-  const totalPages = Math.max(1, Math.ceil(total / size));
-  const page = Math.min(requestedPage, totalPages);
-  return { total, page, totalPages, pageSize: size };
+  const pageSize=Number.isSafeInteger(size)&&size>=1&&size<=100?size:20;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const page = Number.isSafeInteger(requestedPage)?Math.max(1,Math.min(requestedPage,totalPages)):1;
+  return { total, page, totalPages, pageSize };
 }

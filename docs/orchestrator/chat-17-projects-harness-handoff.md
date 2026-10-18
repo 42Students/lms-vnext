@@ -42,3 +42,11 @@ npm run test:db:projects-harness
 ## Honest verification / handoff
 
 This environment has a connected GitHub source workflow, but no runnable local checkout or PostgreSQL. **All tests are authored, not claimed green.** Verify typecheck, lint, UI unit suite and the real PG suite in the orchestrator's disposable runner. Attach execution results to `docs/audit/coverage/projects-ledger.md` (chat-14 lead) and log any real defect in `docs/audit/projects-defects.md`. A failed SQL witness must prompt a production fix/review, not a skipped assertion.
+
+## Addendum: adversarial fixture boundaries (PROJ-HARNESS-22..28; UX-kit-HARDEN-23..29)
+
+- `tests/integration/projects-placements-pg-harness-boundaries.test.ts` now tests foreign-college and non-rostered learners, duplicate/stale final-submission retry, foreign meeting coordinators, suspended college memberships, disabled user accounts, ended project roster memberships, read-only project memberships, and real two-session advisory-lock contention. Tests run on registered PostgreSQL tables with full outer rollbacks, not mock objects.
+- The fixture helper now checks current college membership, unended `project_members` entry, and `can_mutate=true` before creating task/final submissions or meetings; final submit verifies the persisted project rather than trusting the caller's stale project context. These are guardrails for **test fixtures** only. Product service authorization and session expiry still require separate end-to-end tests.
+- `tests/unit/UX-kit-role-and-overlay-chat17.test.tsx` tests `PermissionAction` own/foreign-tenant, disabled and ended actors, global versus selected-scope Super Admin, native WebView marker identity, table cell-call count, upload prechecks, and persistent toast cleanup.
+- `UX-learn-my-placements-announcements-01` new-window notice links now use the existing same-tab, HTTPS-validated `ThirdPartyLink` fallback, addressing the reported chat-17 unit regression.
+- Added both suites to `test:db:projects-harness` and `test:ux:kit:hardening`. **Not executed in this connector-only environment**; PostgreSQL, node_modules and running a full typecheck remain runner-side acceptance gates. No success claim without CI evidence.

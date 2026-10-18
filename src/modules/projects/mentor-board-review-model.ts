@@ -93,9 +93,11 @@ export function mentorBoardExportCsv(
   omitted:number,
 ){
   const lines=["Task ID,Title,Status,Priority,Sprint"];
-  for(const row of rows)lines.push(
+  const limited=rows.slice(0,500);
+  for(const row of limited)lines.push(
     [row.id,row.title,row.status,row.priority,row.sprintTitle].map(csvSafeCell).join(","));
-  if(omitted>0)lines.push(["","Export truncated",omitted+" additional matching tasks","",""]
+  const hidden=(Number.isSafeInteger(omitted)&&omitted>0?omitted:0)+Math.max(0,rows.length-limited.length);
+  if(hidden>0)lines.push(["","Export truncated",hidden+" additional matching tasks","",""]
     .map(csvSafeCell).join(","));
   return "\uFEFF"+lines.join("\r\n")+"\r\n";
 }
@@ -106,12 +108,14 @@ export function mentorSprintSummaryCsv(rows:readonly {
   done:number;blocked:number;awaitingReview:number;matchingDonePercent:number|null;
 }[],omitted:number){
   const lines=["Sprint ID,Sprint,Registered tasks,Matching tasks,Done,Blocked,Awaiting review,Matching Done %"];
-  for(const row of rows){
+  const limited=rows.slice(0,100);
+  for(const row of limited){
     lines.push([row.id,row.title,row.registeredTasks,row.matchingTasks,row.done,
       row.blocked,row.awaitingReview,row.matchingDonePercent??"Unknown"]
       .map(csvSafeCell).join(","));
   }
-  if(omitted>0)lines.push(["","Export truncated",omitted+" additional matching Sprints","","","","",""]
+  const hidden=(Number.isSafeInteger(omitted)&&omitted>0?omitted:0)+Math.max(0,rows.length-limited.length);
+  if(hidden>0)lines.push(["","Export truncated",hidden+" additional matching Sprints","","","","",""]
     .map(csvSafeCell).join(","));
   return "\uFEFF"+lines.join("\r\n")+"\r\n";
 }

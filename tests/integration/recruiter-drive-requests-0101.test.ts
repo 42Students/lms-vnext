@@ -101,6 +101,9 @@ describe.skipIf(!enabled)("REC-home-drives-21/12/22 recruiter requests on real m
    draft:{...draft,title:"Graduate Data Analyst II"},
   });
   expect(edited.status).toBe("REQUEST");
+  // Postgres can execute two writes within one millisecond. Every accepted edit
+  // must advance the version so a stale browser cannot reuse its old token.
+  expect(edited.updatedAt.getTime()).toBeGreaterThan(first.request.updatedAt.getTime());
   expect((edited.draft as {title:string}).title).toBe("Graduate Data Analyst II");
   await expect(updateOwnRecruiterDriveRequest(recruiter,{
    requestId:id.request,collegeId:SEED_IDS.collegeA,action:"EDIT",
@@ -118,6 +121,7 @@ describe.skipIf(!enabled)("REC-home-drives-21/12/22 recruiter requests on real m
    draft:{...draft,title:"Data Analyst"},
   });
   expect(updated.status).toBe("REQUEST");
+  expect(updated.updatedAt.getTime()).toBeGreaterThan(sentBack.updatedAt.getTime());
   expect((updated.draft as {title:string}).title).toBe("Data Analyst");
   await expect(updateOwnRecruiterDriveRequest(recruiter,{
    requestId:id.request,collegeId:SEED_IDS.collegeA,action:"CANCEL",

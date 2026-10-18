@@ -100,6 +100,6 @@ describe("chat-13 Super Admin /admin first-third route source audit", () => {
     expect(legacyAcademicStatus("ARCHIVED",true)).toBe("Inactive");
     expect(legacyAcademicStatus("COMPLETED",true)).toBe("Completed");
     const page=read("src/app/(authenticated)/admin/batches/page.tsx");
-    expect(page).toContain("legacyAcademicStatus(row.status, true)");
+    expect(page).toMatch(/legacyAcademicStatus\(row\.status,\s*true\)/);
   });
 });

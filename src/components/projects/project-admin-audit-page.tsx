@@ -13,9 +13,8 @@ import {
   ACTIVITY_IMPORTANCE,
   ACTIVITY_EVENT_TYPES,
 } from "@/modules/activity/taxonomy";
-import {
-  isSuperAdmin,
-} from "@/modules/identity/context";
+import { parseProjectAdminAuditQuery } from "@/modules/projects/admin-audit-query-model";
+import { mayReadGlobalProjectAudit } from "@/modules/projects/admin-audit-access-model";
 
 
 /** Wall-clock read kept out of render bodies (React purity rule). */
@@ -25,14 +24,6 @@ type SearchParams = Record<
   string,
   string | string[] | undefined
 >;
-
-function one(
-  value: string | string[] | undefined,
-) {
-  return Array.isArray(value)
-    ? value[0]
-    : value;
-}
 
 function istDate(date:Date){
  const parts=Intl.DateTimeFormat("en-US",{
@@ -58,40 +49,24 @@ export async function ProjectAdminAuditPage({
 
   // A global Super Admin must be able to inspect template events that have no
   // college scope. The activity service itself enforces platform permissions.
-  const globalTemplateAudit=isSuperAdmin(context)&&!context.adminScope?.collegeId;
+  const globalTemplateAudit = mayReadGlobalProjectAudit(context);
 
-  const eventType =
-    one(searchParams.action) ||
-    one(searchParams.status) ||
-    one(searchParams.eventType) || undefined;
-  const importance =
-    one(searchParams.importance)||undefined;
-  const subjectType =
-    one(searchParams.subjectType)||undefined;
-  const subjectId=one(searchParams.subjectId)||undefined;
-  const from = one(searchParams.from)||undefined;
-  const to = one(searchParams.to)||undefined;
+  const filters = parseProjectAdminAuditQuery(searchParams);
+  const { eventType, importance, subjectType, subjectId, from, to } = filters;
 
   const result =
     await listActivityEvents(
       context,
       {
         module: "PROJECTS",
-        importance:
-          importance as
-            | (typeof ACTIVITY_IMPORTANCE)[number]
-            | undefined,
+        importance,
         eventType,
         subjectType,
         subjectId,
         from,
         to,
-        beforeOccurredAt:
-          one(
-            searchParams.beforeOccurredAt,
-          ),
-        beforeId:
-          one(searchParams.beforeId),
+        beforeOccurredAt: filters.beforeOccurredAt,
+        beforeId: filters.beforeId,
         limit: 40,
       },
     );
@@ -177,6 +152,12 @@ export async function ProjectAdminAuditPage({
         title="Project audit"
         description={globalTemplateAudit?"Platform-wide Projects activity includes global template changes.":"Who changed what, and when — check daily for anything unexpected."}
       />
+
+      {filters.ignoredInvalidFilters ? (
+        <p role="alert" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
+          Some audit filters were invalid and have been ignored. Review the filters below and apply them again.
+        </p>
+      ) : null}
 
       <div className="flex flex-wrap gap-2">
         <a href={basePath + "/audit"} className="inline-flex min-h-10 items-center rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">Refresh</a>
@@ -315,7 +296,7 @@ export async function ProjectAdminAuditPage({
       }))}/>
       <ActivityCenter
         groups={groups}
-        nextRemaining={0}
+        nextRemaining={result.remainingCount}
         nextHref={
           result.nextCursor
             ? basePath +

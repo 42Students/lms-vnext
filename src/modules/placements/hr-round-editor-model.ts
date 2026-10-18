@@ -25,7 +25,8 @@ export const hrRoundFormSchema=z.strictObject({
 export function canRecruiterEditRound(input:{
  status:string;createdByUserId:string;recruiterUserId:string;hasResults:boolean;hasSlots?:boolean;
 }):boolean{
- return input.status==="PENDING"&&input.createdByUserId===input.recruiterUserId&&
+ return input.status==="PENDING"&&Boolean(input.createdByUserId.trim())&&
+  Boolean(input.recruiterUserId.trim())&&input.createdByUserId===input.recruiterUserId&&
   !input.hasResults&&!input.hasSlots;
 }
 export function duplicateRecruiterRoundName(
@@ -38,4 +39,10 @@ export function duplicateRecruiterRoundName(
 
 function canonicalRecruiterRoundName(name:string):string{
  return name.normalize("NFKC").trim().replace(/\s+/g," ").toLocaleLowerCase("en");
+}
+
+/** ISO timestamps with different UTC offsets represent the same optimistic version. */
+export function matchesRecruiterRoundVersion(stored:Date,expected:string|undefined):boolean{
+ const parsed=expected===undefined?Number.NaN:Date.parse(expected);
+ return Number.isFinite(parsed)&&Number.isFinite(stored.getTime())&&stored.getTime()===parsed;
 }

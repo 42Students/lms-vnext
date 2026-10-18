@@ -5,9 +5,10 @@ import {collegeMemberships,placementApplications,placementApplicationScreenings,
  placementJobs,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
+import {collegeApplicationRetentionCutoff,COLLEGE_APPLICATION_RETENTION_DAYS} from "./college-retention-report-policy";
 export async function getCollegeApplicationRetentionReport(ctx:RequestContext){
  const collegeId=await requireCollegePlacementAdmin(ctx);
- const db=getDb(),cutoff=new Date(Date.now()-180*86400000);
+ const db=getDb(),cutoff=collegeApplicationRetentionCutoff(new Date());
  const predicate=and(eq(placementJobs.collegeId,collegeId),
   eq(collegeMemberships.collegeId,collegeId),
   or(eq(placementApplications.status,"WITHDRAWN"),
@@ -30,6 +31,6 @@ export async function getCollegeApplicationRetentionReport(ctx:RequestContext){
   db.select({total:count()}).from(from),
   db.select().from(from).orderBy(desc(from.lastChange),desc(from.id)).limit(200),
  ]);
- return{cutoff,days:180,total:total[0]?.total??0,rows,truncated:(total[0]?.total??0)>200,
+ return{cutoff,days:COLLEGE_APPLICATION_RETENTION_DAYS,total:total[0]?.total??0,rows,truncated:(total[0]?.total??0)>200,
   note:"Review candidates for applicable retention policy. This read-only report never removes application, offer, audit or student records."};
 }
