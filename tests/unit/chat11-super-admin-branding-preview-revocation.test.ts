@@ -39,7 +39,7 @@ describe("SA-tenants-modules-BRAND-READ-02 public and private branding preview",
    college:{id:collegeId,name:"Example",code:"EX",status:"ACTIVE"},
    branding:null,
   });
-  expect(result.collegeName).toBe("Example");
+  expect(result.college.name).toBe("Example");
   expect(result.brandingStored).toBe(false);
  });
 });
