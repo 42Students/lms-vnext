@@ -18,6 +18,7 @@ import { AuthorizationError, can, requirePermission } from "@/modules/permission
 import { PlacementsServiceError } from "./errors";
 import { requirePlacementManageScope } from "./scope";
 import {
+  canRecordTpoActualJoiningDate,
   canRecordTpoOfferAction,
   tpoOfferLifecycleInputSchema,
 } from "./tpo-offer-lifecycle-model";
