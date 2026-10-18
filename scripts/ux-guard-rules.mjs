@@ -59,11 +59,11 @@ export function scanUxSource(path, source) {
       if(node.name.text==="className" && node.initializer) {
         const classes=node.initializer.getText(parsed);
         const variants=staticAlternatives(node.initializer);
-        if([classes,...variants].some(value=>/\\bmin-h-10\\b/.test(value)))
+        if([classes,...variants].some(value=>/\bmin-h-10\b/.test(value)))
           add(node,"small-touch-target");
         else if(/min-h-/.test(classes) && !variants.length)
           add(node,"unverified-touch-class"); // Dynamic value may resolve to 40px.
-        if([classes,...variants].some(value=>/\\bbg-primary\\b/.test(value)&&/\\btext-white\\b/.test(value)))
+        if([classes,...variants].some(value=>/\bbg-primary\b/.test(value)&&/\btext-white\b/.test(value)))
           add(node,"white-on-teal");
       }
     }
