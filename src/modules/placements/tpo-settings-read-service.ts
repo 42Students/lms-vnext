@@ -31,12 +31,11 @@ import {
 
 const rulesPageSchema = z
   .object({
-    page: z.coerce
-      .number()
-      .int()
-      .min(1)
-      .max(10000)
-      .default(1),
+    page: z.union([
+      z.number().int().min(1).max(10000),
+      z.string().regex(/^[1-9][0-9]*$/)
+        .transform(Number).pipe(z.number().int().min(1).max(10000)),
+    ]).default(1),
   })
   .strict();
 

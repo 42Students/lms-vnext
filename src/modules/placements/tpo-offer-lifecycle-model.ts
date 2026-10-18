@@ -42,6 +42,20 @@ export const tpoOfferLifecycleInputSchema = z.object({
   }
 });
 
+/** A TPO records an actual joining, not a scheduled future event.
+ * Date-only decisions use the college's IST day, not the server locale.
+ */
+export function canRecordTpoActualJoiningDate(date: string, now: Date): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !Number.isFinite(now.getTime())) return false;
+  const parsed = new Date(date + "T00:00:00Z");
+  if (!Number.isFinite(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== date) return false;
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit",
+  }).formatToParts(now);
+  const local = Object.fromEntries(parts.map(part=>[part.type, part.value]));
+  return date <= local.year + "-" + local.month + "-" + local.day;
+}
+
 export function canRecordTpoOfferAction(
   action: TpoOfferAction,
   status: string,

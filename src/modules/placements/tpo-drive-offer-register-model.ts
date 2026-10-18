@@ -1,6 +1,6 @@
 import {z} from "zod";
 import {placementReportCsv} from "./report-model";
-export const offerRegisterQuery=z.object({jobId:z.string().uuid(),status:z.enum(["ALL","ISSUED","ACCEPTED","DECLINED","WITHDRAWN"]).default("ALL"),page:z.coerce.number().int().min(1).max(10000).default(1),q:z.string().trim().max(100).default(""),joining:z.enum(["ALL","PENDING","JOINED","DEFERRED","DID_NOT_JOIN"]).default("ALL"),kind:z.enum(["ALL","OFFER","LOI"]).default("ALL"),expiry:z.enum(["ALL","EXPIRED","DUE_SOON","OPEN","UNKNOWN"]).default("ALL"),
+export const offerRegisterQuery=z.object({jobId:z.string().uuid(),status:z.enum(["ALL","ISSUED","ACCEPTED","DECLINED","WITHDRAWN","EXPIRED"]).default("ALL"),page:z.coerce.number().int().min(1).max(10000).default(1),q:z.string().trim().max(100).default(""),joining:z.enum(["ALL","PENDING","JOINED","DEFERRED","DID_NOT_JOIN"]).default("ALL"),kind:z.enum(["ALL","OFFER","LOI"]).default("ALL"),expiry:z.enum(["ALL","EXPIRED","DUE_SOON","OPEN","UNKNOWN"]).default("ALL"),
  minCtcLpa:z.coerce.number().min(0).max(1000).optional(),
  maxCtcLpa:z.coerce.number().min(0).max(1000).optional(),
 }).strict().superRefine((input,ctx)=>{
@@ -21,8 +21,12 @@ export const OFFER_REGISTER_PAGE_SIZE=25;
 export function offerExpiryIndicator(status:string,expiresAt:Date|null|undefined,asOf:Date):"EXPIRED"|"DUE_SOON"|"OPEN"|"UNKNOWN"|"NOT_APPLICABLE"{
  if(status!=="ISSUED")return "NOT_APPLICABLE";
  if(!expiresAt)return "UNKNOWN";
- if(expiresAt.getTime()<=asOf.getTime())return "EXPIRED";
- return expiresAt.getTime()-asOf.getTime()<=7*86400000?"DUE_SOON":"OPEN";
+  const expiryMs=expiresAt.getTime(),referenceMs=asOf.getTime();
+  // A malformed persisted date must never be labelled "OPEN" by NaN
+  // comparison, which would misleadingly imply a valid response window.
+  if(!Number.isFinite(expiryMs)||!Number.isFinite(referenceMs))return "UNKNOWN";
+  if(expiryMs<=referenceMs)return "EXPIRED";
+  return expiryMs-referenceMs<=7*86400000?"DUE_SOON":"OPEN";
 }
 export function selectOfferRegisterFacts(facts:readonly OfferRegisterFact[],status:z.infer<typeof offerRegisterQuery>["status"],search="",joiningState:z.infer<typeof offerRegisterQuery>["joining"]="ALL",kind:z.infer<typeof offerRegisterQuery>["kind"]="ALL",
  expiry:z.infer<typeof offerRegisterQuery>["expiry"]="ALL",asOf=new Date(),minCtcLpa?:number,maxCtcLpa?:number){
@@ -37,12 +41,13 @@ export function selectOfferRegisterFacts(facts:readonly OfferRegisterFact[],stat
 }
 export function projectOfferRegister(facts:readonly OfferRegisterFact[],status:z.infer<typeof offerRegisterQuery>["status"],requestedPage=1,search="",joiningState:"ALL"|"PENDING"|"JOINED"|"DEFERRED"|"DID_NOT_JOIN"="ALL",asOf=new Date(),kind:"ALL"|"OFFER"|"LOI"="ALL",
  expiry:"ALL"|"EXPIRED"|"DUE_SOON"|"OPEN"|"UNKNOWN"="ALL",minCtcLpa?:number,maxCtcLpa?:number){
- const counts={all:facts.length,issued:0,accepted:0,declined:0,withdrawn:0};
+ const counts={all:facts.length,issued:0,accepted:0,declined:0,withdrawn:0,expired:0};
  for(const f of facts){
   if(f.offer.status==="ISSUED")counts.issued++;
   if(f.offer.status==="ACCEPTED")counts.accepted++;
   if(f.offer.status==="DECLINED")counts.declined++;
   if(f.offer.status==="WITHDRAWN")counts.withdrawn++;
+  if(f.offer.status==="EXPIRED")counts.expired++;
  }
  const match=selectOfferRegisterFacts(facts,status,search,joiningState,kind,expiry,asOf,minCtcLpa,maxCtcLpa);
  const totalPages=Math.max(1,Math.ceil(match.length/OFFER_REGISTER_PAGE_SIZE));

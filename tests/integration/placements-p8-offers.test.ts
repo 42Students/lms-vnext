@@ -36,6 +36,7 @@ import { decidePlacementScreening } from "@/modules/placements/screening-service
 import { recordTpoDriveSelections,verifyAndReleaseTpoSelections } from "@/modules/placements/tpo-drive-selection-service";
 import {getTpoDriveClosePreview,closeTpoDriveWithPreview} from "@/modules/placements/tpo-drive-close-preview-service";
 import {recordTpoOfferLifecycle} from "@/modules/placements/tpo-offer-lifecycle-service";
+import {getTpoWaitlistPreview,offerToNextWaitlisted} from "@/modules/placements/tpo-waitlist-promotion-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { enableSeedLearnerPlacementAccess } from "../support/w04-placement-access-fixture";
 
@@ -216,7 +217,7 @@ async function preparePassedApplication() {
     {
       action: "SCHEDULE",
       scheduledAt: new Date(
-        "2026-10-24T04:30:00.000Z",
+        "2099-10-24T04:30:00.000Z",
       ),
       timezone: "Asia/Kolkata",
       mode: "VIRTUAL",
@@ -321,6 +322,53 @@ describe("Placement P8 offers and joining", () => {
     expect(job.collegeId).toBe(SEED_IDS.collegeA);
   });
 
+  it("PLACEMENTS-JOIN-SM-04 DB refuses future joining evidence without a partial history write",async()=>{
+    const {job,application}=await preparePassedApplication();
+    const issued=await issuePlacementOffer(tpo,application.id,{
+      roleTitle:"Graduate engineer",annualCtcInr:900_000,
+    });
+    await recordTpoOfferLifecycle(tpo,job.id,{
+      action:"RECORD_ACCEPTED",confirmed:true,offerIds:[issued.id],
+      expectedStatus:"ISSUED",reason:"Written candidate acceptance received from employer",
+    });
+    const futureDay=new Date(Date.now()+7*86_400_000).toISOString().slice(0,10);
+    await expect(recordTpoOfferLifecycle(tpo,job.id,{
+      action:"RECORD_JOINED",confirmed:true,offerIds:[issued.id],
+      expectedStatus:"ACCEPTED",joiningDate:futureDay,
+      reason:"Employer supplied a future planned joining date, not a completed joining",
+    })).rejects.toMatchObject({code:"PLACEMENT_JOINING_NOT_READY"});
+    const before=await pool.query<{status:string;joining_date:string|null}>(
+      "select status, joining_date::text as joining_date from placement_joining_outcomes where offer_id=$1",
+      [issued.id],
+    );
+    expect(before.rows).toEqual([{status:"PENDING",joining_date:null}]);
+    const historyBefore=await pool.query<{count:number}>(
+      "select count(*)::int as count from placement_joining_history where offer_id=$1",[issued.id]);
+    expect(historyBefore.rows[0]?.count).toBe(0);
+
+    const dayParts=new Intl.DateTimeFormat("en-GB",{
+      timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+    }).formatToParts(new Date());
+    const fields=Object.fromEntries(dayParts.map(part=>[part.type,part.value]));
+    const actualDay=fields.year+"-"+fields.month+"-"+fields.day;
+    const completed=await recordTpoOfferLifecycle(tpo,job.id,{
+      action:"RECORD_JOINED",confirmed:true,offerIds:[issued.id],
+      expectedStatus:"ACCEPTED",joiningDate:actualDay,
+      reason:"Employer confirmed the learner attended and joined on the recorded date",
+    });
+    expect(completed.updated).toBe(1);
+    const final=await pool.query<{status:string;joining_date:string}>(
+      "select status, joining_date::text as joining_date from placement_joining_outcomes where offer_id=$1",
+      [issued.id],
+    );
+    expect(final.rows).toEqual([{status:"JOINED",joining_date:actualDay}]);
+    const historyAfter=await pool.query<{count:number}>(
+      "select count(*)::int as count from placement_joining_history where offer_id=$1 and to_status='JOINED'",
+      [issued.id],
+    );
+    expect(historyAfter.rows[0]?.count).toBe(1);
+  });
+
   it("PLACEMENTS-SELECTION-IDEMP-DB-01 retries an identical selection without a second audit or timestamp change",async()=>{
     const {job,application}=await preparePassedApplication();
     const request={action:"RECORD" as const,entries:[{
@@ -352,6 +400,76 @@ describe("Placement P8 offers and joining", () => {
     const stillOne=await pool.query<{count:number}>(
       "select count(*)::integer as count from placement_drive_selections where job_id = $1",[job.id]);
     expect(stillOne.rows[0]?.count).toBe(1);
+  });
+
+  it("PLACEMENTS-WAIT-SEASON-05 DB denies waitlist promotion and seat creation after season closure",async()=>{
+    const {job,application,round}=await preparePassedApplication();
+    await pool.query(
+      "update placement_round_results set outcome='HOLD',waitlist_rank=1 where application_id=$1 and round_id=$2",
+      [application.id,round.id],
+    );
+    const closed=await pool.query<{id:string}>(`
+      insert into placement_seasons(
+        college_id,name,code,start_date,end_date,status,
+        created_by_user_id,closed_by_user_id,closed_at
+      ) values($1,$2,$3,'2026-01-01','2026-10-17','CLOSED',$4,$4,now())
+      returning id`,[
+        SEED_IDS.collegeA,"Closed season for waitlist evidence",
+        "chat5-wait-"+job.id.slice(0,8),SEED_IDS.facultyUser,
+      ]);
+    const seasonId=closed.rows[0]!.id;
+    try{
+      await pool.query("update placement_jobs set season_id=$1 where id=$2",[seasonId,job.id]);
+      const preview=await getTpoWaitlistPreview(tpo,job.id);
+      expect(preview.job.seasonStatus).toBe("CLOSED");
+      expect(preview.next).toBeNull();
+      expect(preview.rows).toHaveLength(1);
+      expect(preview.rows[0]?.reasons).toContain("Placement season is not active");
+      await expect(offerToNextWaitlisted(tpo,job.id,{
+        action:"OFFER_NEXT",confirmed:true,expectedPreviewToken:preview.previewToken,
+        reason:"Attempted release after the placement season ended",
+      })).rejects.toMatchObject({code:"PLACEMENT_OFFER_NOT_READY"});
+      const seats=await pool.query<{count:number}>(
+        "select count(*)::int as count from placement_waitlist_promotions where job_id=$1",[job.id]);
+      expect(seats.rows[0]?.count).toBe(0);
+    }finally{
+      await pool.query("update placement_jobs set season_id=$1 where id=$2",[job.seasonId,job.id]);
+      await pool.query("delete from placement_seasons where id=$1",[seasonId]);
+    }
+  });
+
+  it("PLACEMENTS-SELECTION-CAS-06 DB releases a versioned selection with an equivalent IST offset exactly once",async()=>{
+    const {job,application}=await preparePassedApplication();
+    const selected=await recordTpoDriveSelections(tpo,job.id,{
+      action:"RECORD",entries:[{
+        applicationId:application.id,roleTitle:"Offer engineer",annualCtcInr:900_000,
+      }],
+    });
+    const selectionId=selected.selectionIds[0]!;
+    const saved=await pool.query<{recorded_at:Date}>(
+      "select recorded_at from placement_drive_selections where id=$1",[selectionId]);
+    expect(saved.rows).toHaveLength(1);
+    const instant=saved.rows[0]!.recorded_at;
+    const wall=new Date(instant.getTime()+330*60_000);
+    const istRevision=wall.toISOString().replace(/Z$/,"+05:30");
+    const payload={
+      action:"VERIFY_AND_RELEASE" as const,confirmed:true,
+      selectionIds:[selectionId],expectedRecordedAt:{[selectionId]:istRevision},
+    };
+    const first=await verifyAndReleaseTpoSelections(tpo,job.id,payload);
+    expect(first).toMatchObject({released:1,skipped:0});
+    const retry=await verifyAndReleaseTpoSelections(tpo,job.id,payload);
+    expect(retry).toMatchObject({released:1,skipped:0});
+    const rows=await pool.query<{status:string;released_offer_id:string}>(
+      "select status,released_offer_id from placement_drive_selections where id=$1",[selectionId]);
+    expect(rows.rows[0]?.status).toBe("RELEASED");
+    expect(rows.rows[0]?.released_offer_id).toBe(first.results[0]?.offerId);
+    const events=await pool.query<{event_type:string;count:number}>(
+      "select event_type,count(*)::int as count from activity_events where subject_id=$1 and event_type in ('PLACEMENTS_TPO_SELECTION_VERIFIED','PLACEMENTS_TPO_SELECTION_RELEASED') group by event_type",
+      [job.id],
+    );
+    expect(Object.fromEntries(events.rows.map(item=>[item.event_type,item.count])))
+      .toEqual({PLACEMENTS_TPO_SELECTION_VERIFIED:1,PLACEMENTS_TPO_SELECTION_RELEASED:1});
   });
 
   it("PLACEMENTS-SELECTION-RACE-DB-01 concurrent exact selection submits create one row and one audit",async()=>{
@@ -684,7 +802,7 @@ describe("Placement P8 offers and joining", () => {
           annualCtcInr: 1_200_000,
           joiningDate: "2027-01-10",
           expiresAt: new Date(
-            "2026-11-01T18:29:59.000Z",
+            "2099-11-01T18:29:59.000Z",
           ),
         },
       );
@@ -707,7 +825,7 @@ describe("Placement P8 offers and joining", () => {
           annualCtcInr: 1_200_000,
           joiningDate: "2027-01-10",
           expiresAt: new Date(
-            "2026-11-01T18:29:59.000Z",
+            "2099-11-01T18:29:59.000Z",
           ),
         },
       );
@@ -1031,7 +1149,7 @@ describe("Placement P8 offers and joining", () => {
         {
           roleTitle: "Engineer",
           expiresAt: new Date(
-            "2026-11-01T00:00:00.000Z",
+            "2099-11-01T00:00:00.000Z",
           ),
         },
       );
@@ -1042,7 +1160,7 @@ describe("Placement P8 offers and joining", () => {
         expired.id,
         { action: "ACCEPT" },
         new Date(
-          "2026-11-02T00:00:00.000Z",
+          "2099-11-02T00:00:00.000Z",
         ),
       ),
     ).rejects.toMatchObject({
