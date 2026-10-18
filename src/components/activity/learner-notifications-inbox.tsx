@@ -197,7 +197,7 @@ export function LearnerNotificationsInbox({
           } />
           {filtered ? (
             <button type="button" onClick={resetFilters}
-              className="min-h-10 text-sm font-semibold text-primary-text hover:underline">
+              className="min-h-11 text-sm font-semibold text-primary-text hover:underline">
               View all
             </button>
           ) : null}
