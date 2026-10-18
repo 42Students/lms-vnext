@@ -52,3 +52,18 @@ Full 14-category module matrix, 82 project API handlers, 1000+ task EXPLAIN/inde
 | `src/app/(authenticated)/college/projects/page.tsx` + `src/modules/projects/admin-college-scope.ts` | `CollegeProjectsPage`, `getProjectAdminCollegeId` | PROJ-BREAK-pages-02: central `can(projects.manage)` guard precedes snapshot access and rejects missing college | `tests/unit/PROJ-BREAK-chat6-role-journeys.test.ts` | Role/college database-backed impersonation denial |
 
 Tests described as source contracts must **not** be counted as PostgreSQL behavioural coverage or release PASS.
+
+
+## Multi-device final-delivery concurrency (PROJ-BREAK-submissions-10/11)
+
+| Executable boundary | Happy path | Hostile path | Regression |
+| --- | --- | --- | --- |
+| `projectSubmissionDraftInputSchema` / `updateProjectSubmissionDraftInputSchema` | POST creation without a revision; PATCH with an ISO server revision | Absent, forged, malformed, or extra-college attributes denied | `tests/unit/PROJ-BREAK-chat6-draft-revision-race.test.ts` |
+| `projectDraftRevisionMatches` and `nextProjectDraftUpdatedAt` | Current revision accepted; new timestamp strictly after old | Stale tab rejected, including same-millisecond races, invalid clocks | Same |
+| `updateProjectSubmissionDraft` | Saved edits persist within project lock and atomically emit history | Wrong revision rejected prior to attachment/audit writes, independent of other tab's state | Same; PostgreSQL concurrency integration still required |
+| `submitProjectSubmission` | Exact saved draft can finalize after project-readiness checks | Old tab or missing token cannot submit teammate edits | Same |
+| `PATCH /api/projects/[projectId]/submissions/[submissionId]` | Same-origin, authenticated request forwards revision | Foreign origin rejected; stale validation reaches mapped response | `tests/unit/PROJ-BREAK-chat6-submission-http-race.test.ts` |
+| `POST /api/projects/[projectId]/submissions/[submissionId]/submit` | Same-origin, authenticated request forwards persisted revision | Foreign origin denied before DB calls; malformed body does not transition | Same |
+| `LearnerFinalDeliveryControl` | Manual save, autosave, reopen and submit retain server-acknowledged content and newest token | Double clicks serialized, unacknowledged or stale drafts not submitted, new draft ID read from refresh | Both regressions above and `tests/unit/PROJ-BREAK-chat6-saved-delivery-ui.test.ts` |
+
+These are source-policy and mocked route tests. CI, real PostgreSQL parallel writes and authenticated browser multi-device behaviour remain unverified. The server intentionally refuses old clients that do not include `expectedUpdatedAt`; this prioritizes correctness over a silent data loss fallback.
