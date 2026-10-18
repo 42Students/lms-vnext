@@ -7,9 +7,15 @@ describe("UX-college-projects-create-01 /college/projects/create",()=>{
   it("keeps college membership scope before fetching assigned templates or showing creation",()=>{
     const page=read(route);
     expect(page).toContain("await getCurrentRequestContext()");
-    expect(page).toContain("if(!context.membership)");
-    expect(page.indexOf("if(!context.membership)")).toBeLessThan(page.indexOf("listAssignedProjectTemplates(context,collegeId)"));
-    expect(page).toContain("const collegeId=context.membership.collegeId");
+    expect(page).toContain("const collegeId=getProjectAdminCollegeId(context)");
+    expect(page).toContain("if(!collegeId)");
+    expect(page.indexOf("if(!collegeId)")).toBeLessThan(page.indexOf("listAssignedProjectTemplates(context,collegeId)"));
+    const guard=read("src/modules/projects/admin-college-scope.ts");
+    expect(guard).toContain("isSuperAdmin(context)");
+    expect(guard).toContain("context.adminScope?.collegeId ?? null");
+    expect(guard).toContain("context.membership?.collegeId ?? null");
+    expect(guard).toContain('can(context, "projects.manage"');
+    expect(guard).toContain("organizationId,");
     expect(page).toContain("listAssignedProjectTemplates(context,collegeId)");
   });
   it("renders accessible recovery for missing membership and preserves a real creation form",()=>{
