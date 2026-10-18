@@ -209,6 +209,19 @@ describe("UX-kit-HARDEN-23 authorization boundaries and WebView history", () => 
     expect(html).not.toContain("View details");
   });
 
+  it("UX-kit-HARDEN-52 huge finite page counts retain distinct safe integer links", () => {
+    expect(normalizedPageCount(1e100)).toBe(Number.MAX_SAFE_INTEGER);
+    const pages=paginationWindow(1e100,1e100);
+    expect(pages).toHaveLength(5);
+    expect(new Set(pages).size).toBe(5);
+    expect(pages[4]).toBe(Number.MAX_SAFE_INTEGER);
+    expect(pages.every(page=>Number.isSafeInteger(page))).toBe(true);
+    const html=render(<Pagination page={1e100} pageCount={1e100}
+      hrefForPage={page=>"/projects?page="+page}/>);
+    expect(html).not.toContain("1e+");
+    expect(html).toContain("9007199254740991");
+  });
+
   it("UX-kit-HARDEN-31 NaN/Infinity pager inputs cannot yield links to non-finite pages", () => {
     for (const invalid of [Infinity, -Infinity, NaN, 0, -5]) {
       expect(normalizedPageCount(invalid)).toBe(1);

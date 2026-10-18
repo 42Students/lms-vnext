@@ -39,6 +39,15 @@ export async function placeImportedLearnerInSection(context: RequestContext, enr
     });
     const [enrollment] = await tx.select({id:learnerProgramEnrollments.id,cohortId:learnerProgramEnrollments.cohortId})
       .from(learnerProgramEnrollments)
+      // A learner can have independently FK-valid but inconsistent program
+      // and cohort IDs. Never admit a forged enrollment into a real class.
+      .innerJoin(cohorts,and(
+        eq(cohorts.id,learnerProgramEnrollments.cohortId),
+        eq(cohorts.programId,learnerProgramEnrollments.programId)))
+      .innerJoin(programs,eq(programs.id,cohorts.programId))
+      .innerJoin(departments,and(
+        eq(departments.id,programs.departmentId),
+        eq(departments.collegeId,member.collegeId)))
       .innerJoin(collegeMemberships,eq(collegeMemberships.id,learnerProgramEnrollments.membershipId))
       .innerJoin(users,eq(users.id,collegeMemberships.userId))
       .innerJoin(membershipRoles,and(
