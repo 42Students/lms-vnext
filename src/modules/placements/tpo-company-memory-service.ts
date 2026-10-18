@@ -257,6 +257,16 @@ function matchingCompanies(
   return groups;
 }
 
+/** A single scoped facts query can supply every employer without N+1 database reads. */
+export function groupTpoDriveFactsByJob<T extends {jobId:string}>(rows:readonly T[]){
+ const facts=new Map<string,T[]>();
+ for(const row of rows){
+  const group=facts.get(row.jobId);
+  if(group)group.push(row);else facts.set(row.jobId,[row]);
+ }
+ return facts;
+}
+
 export async function listTpoCompanies(
   context: RequestContext,
   collegeIdInput: string,
@@ -267,9 +277,15 @@ export async function listTpoCompanies(
   const collegeRules=await getDb().select({placedAt:placementCollegeRules.countsAsPlacedAt})
    .from(placementCollegeRules).where(eq(placementCollegeRules.collegeId,rows.collegeId)).limit(1);
   const placedAt=(collegeRules[0]?.placedAt??"OFFER_RELEASED") as CountsAsPlacedPolicy;
+  // The old per-company query was O(number of employers) SQL round trips.
+  // Load only this college's relationship-bound job IDs once and partition in
+  // memory; retain each offer and joining row for accurate placed counts.
+  const factsByJob=groupTpoDriveFactsByJob(await loadDriveFacts(
+    rows.jobs.map(row=>row.job.id),
+  ));
 
   for (const group of groups.values()) {
-    const driveRows = await loadDriveFacts(group.jobs.map((row) => row.job.id));
+    const driveRows=group.jobs.flatMap(row=>factsByJob.get(row.job.id)??[]);
     const facts = deriveCompanyDriveFacts(driveRows);
     const linkedJobs = group.jobs.map((row) => ({
       jobId: row.job.id, relationshipId: row.relationshipId,companyName:row.companyName,
