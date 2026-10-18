@@ -60,7 +60,7 @@ vi.mock("@/db/client",()=>({
       where:()=>({
        for:()=>({
         limit:async()=>{
-         if(table==="project.id"){
+         if(table && typeof table==="object" && "collegeId" in table){
           state.projectLocks++;
           return state.projectPresent?[{status:"ACTIVE"}]:[];
          }
