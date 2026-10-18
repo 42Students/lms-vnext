@@ -4,6 +4,7 @@ import {
   desc,
   eq,
   inArray,
+  isNull,
 } from "drizzle-orm";
 import { equalsIgnoreCase } from "@/lib/sql-match";
 import { getDb } from "@/db/client";
@@ -459,6 +460,9 @@ export async function listOwnRecruiterPlacementJobs(
           "PUBLISHED",
           "CLOSED",
         ]),
+        // An archived drive is not part of the active employer portfolio.
+        // This allowlist feeds the dashboard, notifications, reports and calendar.
+        isNull(placementJobs.archivedAt),
         eq(
           placementCompanyRelationships.status,
           "ACTIVE",
