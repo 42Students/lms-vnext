@@ -189,7 +189,17 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
    if(collator.compare(input.fromRoll,input.toRoll)>0)throw Error("Invalid roll range.");
    const rows=await tx.select({slot:placementRoundCandidateSlots,roll:learnerProfiles.rollNumber})
     .from(placementRoundCandidateSlots)
-    .innerJoin(placementApplications,eq(placementApplications.id,placementRoundCandidateSlots.applicationId))
+    .innerJoin(placementApplications,and(
+     eq(placementApplications.id,placementRoundCandidateSlots.applicationId),
+     eq(placementApplications.jobId,job.id),
+     eq(placementApplications.status,"SUBMITTED")))
+    .innerJoin(collegeMemberships,and(
+     eq(collegeMemberships.id,placementApplications.membershipId),
+     eq(collegeMemberships.collegeId,info.collegeId),
+     eq(collegeMemberships.status,"ACTIVE")))
+    .innerJoin(users,and(
+     eq(users.id,collegeMemberships.userId),
+     eq(users.platformStatus,"ACTIVE")))
     .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,placementApplications.membershipId))
     .where(and(eq(placementRoundCandidateSlots.roundId,info.round.id),
      eq(placementRoundCandidateSlots.status,"BOOKED")));

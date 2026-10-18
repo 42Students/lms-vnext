@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {FacultyCourseFilterAutoSubmit} from "./faculty-course-filter-auto-submit";
 import { facultyCourseListHref, type FacultyCourseListQuery } from "@/modules/courses/faculty-course-list-model";
 import { COURSE_TEACHING_ROLES } from "@/modules/courses/constants";
@@ -134,8 +135,9 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
           className="group flex min-h-64 flex-col rounded-xl border border-border bg-surface p-5 transition hover:border-primary hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
         >
           <div className="flex items-start justify-between gap-3">
-            <span aria-hidden="true" className="grid size-16 shrink-0 place-items-center rounded-lg border border-border bg-primary-subtle text-xl font-bold text-[var(--lms-teal-deep)]">
-              {course.courseName.trim().slice(0,2).toUpperCase()||"CS"}
+            <span aria-hidden="true" className="grid size-16 shrink-0 place-items-center rounded-lg border border-border bg-primary-subtle">
+              <Image src="/assets/images/common/course.svg" alt="" width={64} height={64}
+                className="size-full rounded-lg object-contain" />
             </span>
             <div className="min-w-0">
               <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-[var(--lms-teal-deep)]">

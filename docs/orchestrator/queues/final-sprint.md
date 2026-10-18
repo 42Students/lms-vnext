@@ -90,7 +90,7 @@ No page UI/UX restyling was introduced.
 ## chat-5 (15)
 
 - FAC-courses-02 [OPEN] faculty/courses
-- FAC-courses-07 [OPEN] faculty/courses
+- FAC-courses-07 [DONE] faculty/courses
 - FAC-courses-10 [DONE] faculty/courses
 - FAC-courses-17 [NOT-A-GAP] faculty/courses
 - FAC-courses-28 [NOT-A-GAP] faculty/courses
