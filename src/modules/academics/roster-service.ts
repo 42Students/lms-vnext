@@ -164,6 +164,13 @@ export async function listLearnerSectionHistory(
         eq(sections.academicPeriodId, sectionEnrollments.academicPeriodId),
       ),
     )
+    .innerJoin(
+      academicPeriods,
+      and(
+        eq(academicPeriods.id, sectionEnrollments.academicPeriodId),
+        eq(academicPeriods.collegeId, enrollment.collegeId),
+      ),
+    )
     .where(
       eq(
         sectionEnrollments.learnerEnrollmentId,
