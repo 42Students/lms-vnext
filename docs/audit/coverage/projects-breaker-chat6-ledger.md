@@ -27,6 +27,12 @@
 | `src/modules/projects/project-notification-service.ts` | `notifyActiveProjectMembers,notifyProjectMemberships,projectNoticeHref` | `PROJ-BREAK-notification-01` | active same college recipient constraints; delivery integration pending |
 | `src/app/api/projects/[projectId]/submissions/[submissionId]/evaluation/route.ts` | `GET,POST` | `PROJ-BREAK-grading-02,PROJ-BREAK-security-01` | GET scope and POST same-origin guards; integration pending |
 
+| `src/app/(authenticated)/admin/projects/page.tsx` | SuperAdminProjectsPage | `PROJ-BREAK-pages-01` | Acting-college gate, permission-scoped snapshots, no-college recovery. |
+| `src/app/(authenticated)/college/projects/page.tsx` | CollegeProjectsPage | `PROJ-BREAK-pages-02` | Missing membership recovery, tenant-derived list and pagination. |
+| `src/app/(authenticated)/mentor/projects/page.tsx` | MentorProjectsPage | `PROJ-BREAK-pages-03` | Wrong role, module disabled, invalid filter recovery and paging. |
+| `src/app/(authenticated)/mentor/projects/[projectId]/page.tsx` | MentorProjectPage | `PROJ-BREAK-pages-03` | Explicit project read access, rejected wrong-member bookmark, safe redirect. |
+| `src/app/(authenticated)/learn/projects/page.tsx` | LearnerProjectsPage | `PROJ-BREAK-pages-04`, `PROJ-BREAK-pages-05` | LEARNER membership, disabled module denial, bounded page options and friendly empty state. |
+
 ## Uncovered hardening dimensions requiring DB/browser authority
 
 Full 14-category module matrix, 82 project API handlers, 1000+ task EXPLAIN/index checks, migration-up on realistic data, session-expiry role journeys, storage object generation/expiry, channel exactly-once under retries and device-level UX are **not certified** here. The above tests must be executed and independently reviewed before any release PASS.

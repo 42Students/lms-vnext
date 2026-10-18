@@ -14,6 +14,19 @@
 | `src/modules/auth/session-service.ts` | `resolveSession` | AUTH-session-01 | Disabled platform user now rejected before mutating last_seen; expired/revoked cases source-reviewed. DB execution pending. |
 | `src/modules/auth/session-service.ts` | `revokeOwnSession`, `revokeOtherSessions`, `revokeAllSessionsForUser`, `revokeSessionByToken` | AUTH-session-02 | Owner-bound rows, current device exclusion, idempotent revocation SQL structure. DB race pending. |
 
+## Behavioral denial matrix — `tests/unit/chat6-auth-account-denials.test.ts`
+
+| Case | Actor | Tenant | Expected guard |
+|---|---|---|---|
+| AUTH-role-01 | Disabled user with formerly active membership | College and platform | `ACCOUNT_DISABLED` before delivery |
+| AUTH-role-02 | User with ended membership only | Platform | `NO_ACCOUNT_FOR_DOMAIN` |
+| AUTH-role-03 | Active member of college A | College B | `NO_ACCOUNT_FOR_DOMAIN` |
+| AUTH-role-04 | Suspended college member | Same college | `ACCOUNT_SUSPENDED` |
+| AUTH-role-05 | Super Admin without independent email | Platform | `SECOND_FACTOR_UNAVAILABLE` |
+| AUTH-role-06 | Unknown contact | College | `NOT_REGISTERED` |
+
+Tests call `startLogin` with a deliberately adversarial repository fake; they assert actual denial behavior, not just that source strings exist. Provider delivery and database effects must still be exercised in the PostgreSQL integration harness.
+
 ## Defect AUTH-session-01
 
 **Severity:** BLOCKER for deactivated-account access. The persisted session resolver accepted device tokens for disabled users and returned `ok:true` with `platformStatus:"DISABLED"`, relying on later UI/permission checks. Source fix `710e217b` refuses disabled users as `SESSION_REVOKED` before updating last-seen time. The test source checks the ordering. Separate service/API integration must verify the disabled user has no usable routes.
