@@ -15,6 +15,8 @@ import { parseAdminProjectsQuery } from "@/modules/projects/admin-projects-query
 import { PageHeader } from "@/components/ui/page-header";
 import { listProjectAdminSnapshots } from "@/modules/projects/admin-insights-service";
 import { listAssignedProjectTemplates } from "@/modules/projects/template-service";
+import { isSuperAdmin } from "@/modules/identity/context";
+import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
 
 export default async function SuperAdminProjectsPage({
   searchParams,
@@ -27,8 +29,18 @@ export default async function SuperAdminProjectsPage({
   >;
 }) {
   const context = await getCurrentRequestContext();
-  const collegeId =
-    context.adminScope?.collegeId ?? null;
+  // The /admin layout is not an authorization substitute. Reject a disabled
+  // or non-Super-Admin actor before any project or template service call.
+  if (!isSuperAdmin(context)) {
+    return <div className="min-w-0 space-y-6">
+      <PageHeader eyebrow="Super Admin" title="Project workspaces" />
+      <ErrorState title="Project access denied"
+        description="Your account cannot access Super Admin project workspaces."
+        action={<Link href="/dashboard" className="font-semibold text-[var(--lms-teal-deep)] underline">Back to dashboard</Link>}
+      />
+    </div>;
+  }
+  const collegeId = getProjectAdminCollegeId(context);
 
   if (!collegeId) {
     return (
@@ -63,19 +75,47 @@ export default async function SuperAdminProjectsPage({
   }
   const query: ProjectAdminCollectionQuery = parsed.data;
   const view = parsed.data.view;
+  const viewHref = (targetView:"table"|"cards") => {
+    const params=new URLSearchParams();
+    params.set("view",targetView);
+    if(query.q)params.set("search",query.q);
+    if(query.status)params.set("status",query.status);
+    if(query.page && query.page>1)params.set("page",String(query.page));
+    if(query.pageSize && query.pageSize!==20)params.set("pageSize",String(query.pageSize));
+    return "/admin/projects?"+params.toString();
+  };
 
-  // Template discovery is optional to listing scoped project workspaces.
-  // Keep the workspace page usable during a transient template-store failure.
-  const [result, templatesResult] = await Promise.all([
-    listProjectAdminSnapshots(
-      context,
-      collegeId,
-      query,
-    ),
+  // Both independent reads are settled. A template outage must not hide the
+  // authorized workspace rows; a workspace outage must not masquerade as an
+  // empty directory (or leak a database exception to the customer).
+  const [snapshotsResult, templatesResult] = await Promise.all([
+    listProjectAdminSnapshots(context, collegeId, query)
+      .then(value => ({ok:true as const,value}))
+      .catch(() => ({ok:false as const})),
     listAssignedProjectTemplates(context, collegeId)
       .then(value => ({ok:true as const,value}))
       .catch(() => ({ok:false as const})),
   ]);
+  if (!snapshotsResult.ok) {
+    const retryParams = new URLSearchParams();
+    if (query.q) retryParams.set("search", query.q);
+    if (query.status) retryParams.set("status", query.status);
+    if (query.view) retryParams.set("view", query.view);
+    if (query.page) retryParams.set("page", String(query.page));
+    if (query.pageSize) retryParams.set("pageSize", String(query.pageSize));
+    const suffix = retryParams.toString();
+    return <div className="min-w-0 space-y-6">
+      <ProjectAdminNav basePath="/admin/projects" active="workspaces" />
+      <PageHeader eyebrow="Super Admin" title="Project workspaces"
+        description="Live projects, each run by a mentor with a team of students." />
+      <ErrorState title="Project workspaces unavailable"
+        description="The workspace list could not be loaded. Your search and filters were not changed."
+        action={<Link href={"/admin/projects"+(suffix?"?"+suffix:"")}
+          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Retry loading workspaces</Link>}
+      />
+    </div>;
+  }
+  const result=snapshotsResult.value;
   const templates=templatesResult.ok?templatesResult.value:[];
 
   return (
@@ -113,11 +153,9 @@ export default async function SuperAdminProjectsPage({
       <ProjectAdminFilters query={query} legacyWorkspaces />
 
       <nav className="flex gap-2 text-sm font-semibold" aria-label="Workspace display mode">
-        <Link href={"/admin/projects?view=table"+(query.q?"&q="+encodeURIComponent(query.q):"")+
-          (query.status?"&status="+query.status:"")} aria-current={view==="table"?"page":undefined}
+        <Link href={viewHref("table")} aria-current={view==="table"?"page":undefined}
           className="min-h-11 rounded border border-border px-3 py-2 text-[var(--lms-teal-deep)]">Table</Link>
-        <Link href={"/admin/projects?view=cards"+(query.q?"&q="+encodeURIComponent(query.q):"")+
-          (query.status?"&status="+query.status:"")} aria-current={view==="cards"?"page":undefined}
+        <Link href={viewHref("cards")} aria-current={view==="cards"?"page":undefined}
           className="min-h-11 rounded border border-border px-3 py-2 text-[var(--lms-teal-deep)]">Cards</Link>
       </nav>
       <ProjectWorkspacePageExport items={result.items.map(item=>({

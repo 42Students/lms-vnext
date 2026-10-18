@@ -37,4 +37,19 @@ describe("TPO-settings-audit-PREP-CATALOG-07 archive-safe preparation courses",(
   expect(evidence).toContain('inArray(courseOfferings.cohortId,requestedCohortIds)');
   expect(derived).toContain("hasEveryScopedTpoPrepLearner(learners,enrolled)");
  });
+ it("rejects an archived department or archived college even when the client submits a valid course UUID",()=>{
+  const writer=readFileSync("src/modules/placements/tpo-prep-readiness-write-service.ts","utf8");
+  const lock=writer.indexOf('.for("update")');
+  const active=writer.indexOf('college.status!=="ACTIVE"',lock);
+  const permission=writer.indexOf('assertPersistedPlatformPermission(tx,context,"placements.manage"',lock);
+  const course=writer.indexOf('inArray(courses.id,input.courseIds)',permission);
+  const insert=writer.indexOf('.onConflictDoUpdate(',course);
+  expect(lock).toBeGreaterThan(0);
+  expect(active).toBeGreaterThan(lock);
+  expect(permission).toBeGreaterThan(active);
+  expect(course).toBeGreaterThan(permission);
+  expect(insert).toBeGreaterThan(course);
+  expect(writer.slice(permission,insert)).toContain("isNull(departments.archivedAt)");
+  expect(writer.slice(permission,insert)).toContain("PREP_INVALID_COURSE");
+ });
 });

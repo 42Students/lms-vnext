@@ -29,3 +29,19 @@
 - Provider/DLT SMS activation, manual audited GitHub findings synchronization, private malware-scanned storage and inbound mail credentials remain separate operational dependencies in `docs/orchestrator/queues/gap-closure-chat-13.md`. Those dependencies are **not** marked production-ready by this service audit.
 
 All source changes were committed/pushed only to the named chat-13 branch. This file does not assert cloud CI green, 90% branch coverage, deployed schema or production readiness.
+
+
+## Latest chat-13 follow-up: refreshed CI report `ff6819dd / 698eb9dd`
+
+The refreshed unit-failure report lists three chat-13 tests. Each was reconciled against current implementation, retaining behavioral guarantees instead of deleting or skipping tests:
+
+| Failure ID | Repair | Evidence |
+|---|---|---|
+| `SA-placements-projects-56` | `ClassTeamWorkspaceCreator` now delegates per-learner rows to `DataTable` and exports via `classTeamCreationOutcomeCsv`; assertions updated to follow both source paths, then extended with an actual CSV projection verifying exact CREATED/ALREADY_COVERED rows, formula safety and CRLF line endings. | `tests/unit/chat13-cohort-creation-outcomes-gap56.test.ts`; source `src/components/projects/class-team-workspace-creator.tsx`, `src/modules/projects/class-team-creation-outcome-export.ts` |
+| `SA-STUDENT-LOOKUP-CAP-01` | Service reuses `visiblePeople` instead of repeating the earlier `capStudentLookupRows(...).items.map` expression. Source regression now checks the bounded assignment and actual use, including order by display name/membership ID before the 16th-row probe (`SA-STUDENT-LOOKUP-STABLE-06`). | `tests/unit/chat13-student-placement-lookup-cap.test.ts` |
+| `GR-39` | Responsive table is delegated to `DataTable` and its keyboard-accessible horizontal `ScrollCue` instead of a hardcoded `min-w-[55rem]` class on the page. Assertions now check actual shared scroll container and fade visibility. | `tests/unit/chat13-superadmin-interview-operations.test.ts` |
+| `SA-PLACEMENT-POLICY-07` (test-file TS2367) | A deliberately impossible string literal compared to a finite union of keys generated a TypeScript warning. Typed assertion now verifies that no returned key serializes to the unrelated stored setting without misleading impossible literal equality. | `tests/unit/chat13-platform-placement-policy-read-service.test.ts` |
+
+Additional remaining master-queue defect `SA-TARGET-REVOKE-07` was fixed by persisted authorization inside the atomic DRAFT cohort retarget transaction; `tests/unit/chat13-placement-target-stale-role.test.ts` asserts the permission and scope ordering. Published audience changes are deliberately denied, not claimed complete: safe applicant notices/outbox plus registered schema are still absent. `SA-placements-projects-13` therefore remains **PARTIAL** beyond published descriptive field edits.
+
+Static pre-push review of this lane's changed TS/TSX sources reported balanced delimiters in a comment/string-aware scan and no newline inserted immediately before an `as` cast. This is not an AST parse, TypeScript build, runtime unit or PostgreSQL verification. CI still uses the older report; no latest passing result has been received.

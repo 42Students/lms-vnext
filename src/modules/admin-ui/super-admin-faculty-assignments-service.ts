@@ -30,9 +30,16 @@ export async function listAdminFacultyAssignments(context:RequestContext,raw:unk
  .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
  .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
  .innerJoin(departments,and(eq(departments.id,courses.departmentId),eq(departments.collegeId,selected.collegeId)))
- .innerJoin(sections,eq(sections.id,courseSectionDeliveries.sectionId))
+ .innerJoin(sections,and(
+  eq(sections.id,courseSectionDeliveries.sectionId),
+  eq(sections.cohortId,courseOfferings.cohortId),
+  eq(sections.academicPeriodId,courseOfferings.academicPeriodId),
+ ))
  .innerJoin(academicPeriods,and(eq(academicPeriods.id,sections.academicPeriodId),eq(academicPeriods.collegeId,selected.collegeId)))
- .innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
+ .innerJoin(cohorts,and(
+  eq(cohorts.id,sections.cohortId),
+  eq(cohorts.id,courseOfferings.cohortId),
+ ))
  .innerJoin(programs,eq(programs.id,cohorts.programId))
  .innerJoin(sectionDepartment,and(eq(sectionDepartment.id,programs.departmentId),eq(sectionDepartment.collegeId,selected.collegeId)))
  .innerJoin(colleges,and(eq(colleges.id,departments.collegeId),
@@ -46,14 +53,17 @@ export async function listAdminFacultyAssignments(context:RequestContext,raw:unk
   query.sectionId?eq(sections.id,query.sectionId):undefined,
   query.q?or(ilike(users.displayName,scopedSearchLike(query.q)),ilike(courses.name,scopedSearchLike(query.q)),ilike(sections.name,scopedSearchLike(query.q))):undefined,
  )).as("admin_faculty_assignment_directory");
- const [counts,rows]=await Promise.all([
-  db.select({total:count()}).from(source),
-  db.select().from(source).orderBy(asc(source.teacherName),asc(source.courseName),asc(source.id))
-   .limit(query.pageSize).offset((query.page-1)*query.pageSize),
- ]);
- const total=counts[0]?.total??0;
+ const [countRow]=await db.select({total:count()}).from(source);
+ const total=countRow?.total??0;
+ const totalPages=superAdminReadPages(total,query.pageSize);
+ // A removed teaching grant can invalidate a bookmarked deep link. Return
+ // the last real page instead of an empty page with an impossible label.
+ const page=Math.min(query.page,totalPages);
+ const rows=await db.select().from(source)
+  .orderBy(asc(source.teacherName),asc(source.courseName),asc(source.id))
+  .limit(query.pageSize).offset((page-1)*query.pageSize);
  const format=(value:Date)=>new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(value)+" IST";
- return {query,total,totalPages:superAdminReadPages(total,query.pageSize),items:rows.map(row=>({
+ return {query:{...query,page},total,totalPages,items:rows.map(row=>({
   id:row.id,title:row.teacherName||"Unnamed faculty",subtitle:row.courseName+" ("+row.courseCode+")",
   status:row.teachingEnded||row.deliveryEnded?"ENDED":"ACTIVE",
   details:["Class: "+row.sectionName,"Semester: "+row.periodName,"Year: "+row.periodYear.slice(0,4),
@@ -67,6 +77,10 @@ export async function getSuperAdminFacultyAssignmentClasses(context:RequestConte
  return db.select({id:sections.id,name:sections.name}).from(sections)
   .innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
   .innerJoin(programs,eq(programs.id,cohorts.programId))
+  .innerJoin(academicPeriods,and(eq(academicPeriods.id,sections.academicPeriodId),
+    eq(academicPeriods.collegeId,selected.collegeId)))
   .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,selected.collegeId)))
+  .innerJoin(colleges,and(eq(colleges.id,departments.collegeId),
+    selected.organizationId?eq(colleges.organizationId,selected.organizationId):undefined))
   .orderBy(asc(sections.name),asc(sections.id)).limit(2000);
 }
