@@ -200,3 +200,6 @@ Coverage-only without a new defect claim: HR-CALENDAR-SERVICE-107 and HR-TRACKER
 | HR-APPLICANT-NOTES-117 | S2 abuse/resilience | Employer-private applicant note POST also used unbounded `request.json()`. It now bounds at 16KiB and maps invalid/malformed request consistently without touching note storage. | `HR-BREAK-chat15-applicant-notes-api-117.test.ts` | Actual chunked HTTP, own/foreign job and withdrawn candidate E2E |
 
 Tests authored only, not executed, per owner directive.
+
+
+| HR-DRIVES-EXPORT-118 | S2 employer privacy | Recruiter drives CSV silently chose the first query value when duplicated college/filter fields were supplied, and its route only checked an active recruiter profile without asserting the cached recruiter principal matches the authenticated user. It now rejects ambiguous/unknown query keys before data reads and identity mismatch before job search, retaining no-store CSV and exact company grant scoping. | `HR-BREAK-chat15-drive-export-api-118.test.ts` | Real cross-college/organization grants, browser and PostgreSQL pending |
