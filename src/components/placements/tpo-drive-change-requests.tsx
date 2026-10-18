@@ -1,6 +1,7 @@
 "use client";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 type Party="TPO"|"COMPANY";
 type Item={id:string;proposerParty:string;targetParty:string;mode:string;field:string;
  proposedValue:string;reason:string;status:string;createdByUserId:string;createdAt:string;updatedAt:string;
@@ -12,6 +13,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
  const [value,setValue]=useState("");const [reason,setReason]=useState("");
  const [notes,setNotes]=useState<Record<string,string>>({});
  const [busy,setBusy]=useState(false);const [error,setError]=useState("");const [success,setSuccess]=useState("");
+ const [confirmation,setConfirmation]=useState<{action:"ACCEPT"|"DECLINE"|"WITHDRAW";requestId:string;expectedUpdatedAt:string;note:string}|null>(null);
  async function send(body:Record<string,unknown>){
   if(busy)return;
   setBusy(true);setError("");setSuccess("");
@@ -20,13 +22,16 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
     method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
     body:JSON.stringify(body),
    });
-   const payload=await response.json() as {error?:string;issues?:Array<{message:string}>;status?:string};
-   if(!response.ok)throw Error(payload.issues?.[0]?.message??payload.error??"Could not save change request.");
-   setSuccess("Change request "+(payload.status??"updated").toLowerCase()+".");
+   const payload=await response.json().catch(()=>null) as {status?:string}|null;
+   if(!response.ok)throw Error("Could not save change request.");
+   const publicStatus=payload?.status&&/^(OPEN|ACCEPTED|ANSWERED|DECLINED|WITHDRAWN|CANCELLED)$/i.test(payload.status)
+     ?payload.status.toLowerCase():"updated";
+   setSuccess("Change request "+publicStatus+".");
+   setConfirmation(null);
    if(body.action==="CREATE"){setValue("");setReason("");}
    if(typeof body.requestId==="string")setNotes(previous=>({...previous,[body.requestId as string]:""}));
    router.refresh();
-  }catch(e){setError(e instanceof Error?e.message:"Request failed");}finally{setBusy(false);}
+  }catch{setError("Could not save change request.");}finally{setBusy(false);}
  }
  return <div className="space-y-6">
   <section className="space-y-3 rounded-xl border border-border bg-surface p-5">
@@ -35,21 +40,21 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
    <div className="grid gap-3 sm:grid-cols-2">
     <label className="grid gap-1 text-sm">Request type
      <select value={mode} onChange={e=>setMode(e.target.value as "SUGGEST"|"ASK")}
-      className="min-h-11 rounded border border-border bg-surface px-3"><option value="SUGGEST">Suggest a change</option><option value="ASK">Ask a question</option></select></label>
+      className="min-h-11 rounded border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"><option value="SUGGEST">Suggest a change</option><option value="ASK">Ask a question</option></select></label>
     <label className="grid gap-1 text-sm">Field
      <select value={field} onChange={e=>setField(e.target.value as typeof field)}
-      className="min-h-11 rounded border border-border bg-surface px-3">
+      className="min-h-11 rounded border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       {fields.map(([id,label])=><option key={id} value={id}>{label}</option>)}</select></label>
    </div>
    <label className="grid gap-1 text-sm">Change or question
     <textarea value={value} onChange={e=>setValue(e.target.value)} minLength={2} maxLength={2000} rows={3}
-     className="rounded border border-border bg-surface p-3"/></label>
+     className="rounded border border-border bg-surface p-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/></label>
    <label className="grid gap-1 text-sm">Why is this needed?
     <textarea value={reason} onChange={e=>setReason(e.target.value)} minLength={3} maxLength={1000} rows={2}
-     className="rounded border border-border bg-surface p-3"/></label>
+     className="rounded border border-border bg-surface p-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/></label>
    <button type="button" disabled={busy||value.trim().length<2||reason.trim().length<3}
     onClick={()=>void send({action:"CREATE",field,mode,proposedValue:value.trim(),reason:reason.trim()})}
-    className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+    className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
     {busy?"Saving…":"Send to "+(party==="TPO"?"company":"placement cell")}</button>
   </section>
   <section className="space-y-3">
@@ -71,28 +76,36 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
       </p>)}
       <label className="grid gap-1 text-sm">Reply or decision explanation
        <textarea maxLength={2000} value={notes[item.id]??""} onChange={e=>setNotes(p=>({...p,[item.id]:e.target.value}))}
-        rows={2} className="rounded border border-border bg-surface p-3"/></label>
+        rows={2} className="rounded border border-border bg-surface p-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/></label>
       <div className="flex flex-wrap gap-2">
        <button type="button" disabled={busy||!(notes[item.id]??"").trim()}
         onClick={()=>void send({action:"COMMENT",requestId:item.id,body:(notes[item.id]??"").trim()})}
-        className="min-h-10 rounded border border-border px-3 text-sm font-semibold disabled:opacity-50">Reply</button>
+        className="min-h-11 rounded border border-border px-3 text-sm font-semibold disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Reply</button>
        {item.status==="OPEN"&&item.targetParty===party?(
         ["ACCEPT","ANSWER","DECLINE"] as const).map(action=>
          <button key={action} type="button" disabled={busy||(notes[item.id]??"").trim().length<3}
-          onClick={()=>void send({action,requestId:item.id,expectedUpdatedAt:item.updatedAt,
-           note:(notes[item.id]??"").trim()})}
-          className="min-h-10 rounded border border-primary px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+          onClick={()=>action==="ANSWER"?void send({action,requestId:item.id,expectedUpdatedAt:item.updatedAt,note:(notes[item.id]??"").trim()}):
+           setConfirmation({action,requestId:item.id,expectedUpdatedAt:item.updatedAt,note:(notes[item.id]??"").trim()})}
+          className="min-h-11 rounded border border-primary px-3 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           {action==="ACCEPT"?"Accept":action==="ANSWER"?"Answer":"Decline"}</button>):null}
        {item.status==="OPEN"&&item.proposerParty===party&&item.createdByUserId===userId?
         <button type="button" disabled={busy||(notes[item.id]??"").trim().length<3}
-         onClick={()=>void send({action:"WITHDRAW",requestId:item.id,expectedUpdatedAt:item.updatedAt,
-          note:(notes[item.id]??"").trim()})}
-         className="min-h-10 rounded border border-border px-3 text-sm disabled:opacity-50">Withdraw</button>:null}
+         onClick={()=>setConfirmation({action:"WITHDRAW",requestId:item.id,expectedUpdatedAt:item.updatedAt,note:(notes[item.id]??"").trim()})}
+         className="min-h-11 rounded border border-border px-3 text-sm disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Withdraw</button>:null}
       </div>
      </div>
     </article>)}
   </section>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {success?<p role="status" className="text-sm text-body">{success}</p>:null}
+  <ConfirmDialog open={confirmation!==null} onOpenChange={open=>{if(!open&&!busy)setConfirmation(null);}}
+   title={confirmation?.action==="ACCEPT"?"Accept":confirmation?.action==="DECLINE"?"Decline":"Withdraw"}
+   confirmLabel={confirmation?.action==="ACCEPT"?"Accept":confirmation?.action==="DECLINE"?"Decline":"Withdraw"}
+   confirmVariant={confirmation?.action==="ACCEPT"?"primary":"danger"} pending={busy}
+   onConfirm={()=>{if(confirmation)void send({action:confirmation.action,requestId:confirmation.requestId,
+     expectedUpdatedAt:confirmation.expectedUpdatedAt,note:confirmation.note});}}>
+   <p className="text-sm text-body">Acceptance records agreement; the placement team must separately update the drive using the authorized edit action.</p>
+   {error?<p role="alert" className="mt-2 text-sm text-foreground">{error}</p>:null}
+  </ConfirmDialog>
  </div>;
 }
