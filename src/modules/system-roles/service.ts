@@ -26,7 +26,7 @@ export const bootstrapSuperAdminInputSchema = z.object({
 export const assignSystemRoleInputSchema = z.object({
   userId: z.string().uuid(),
   role: z.enum(SYSTEM_ROLES),
-});
+}).strict();
 
 export type BootstrapSuperAdminInput = z.infer<
   typeof bootstrapSuperAdminInputSchema
@@ -56,7 +56,7 @@ export interface SystemRoleRepository {
   loadUser(
     userId: string,
   ): Promise<{ id: string; platformStatus: UserPlatformStatus } | null>;
-  assignRole(userId: string, role: SystemRole): Promise<SystemRole[]>;
+  assignRole(userId: string, role: SystemRole, context: RequestContext): Promise<SystemRole[]>;
 }
 
 export type SystemRoleServiceErrorCode =
@@ -125,5 +125,5 @@ export async function assignSystemRole(
     throw new SystemRoleServiceError("USER_DISABLED");
   }
 
-  return repository.assignRole(user.id, input.role);
+  return repository.assignRole(user.id, input.role, context);
 }
