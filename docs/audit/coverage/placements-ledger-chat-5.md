@@ -134,3 +134,11 @@ The central project ledger is managed by chat-14, so chat-5's narrowly scoped TP
 | PLACEMENTS-SHARE-PAGE-01/02 | `recoverCompanyShareLinkPage`, `clampCompanyShareLinksPage`, `companySharePreviewSearchState`, `prependCompanyShareLink` | Independent link history pagination, invalid query recovery, cap 25, deduplicated newly issued share. |
 
 **Remaining:** routes' live 401/403/404/error and mobile browser states, correlated POST route actual origin checks, and PostgreSQL shared-link history/read isolation must run before closing this TPO page group.
+
+
+### Previously unreferenced placement model coverage: adversarial CSV/identity
+
+- **TPO-AUDIT-CSV-01:** `tpoAuditCsv` now neutralizes spreadsheet formulas after leading whitespace, not just in the first character. `tests/unit/chat5-placements-weak-audit-export-and-bulk-ids.test.ts` covers leading spaces/tab/quote, escaped multiline and output delimiters.
+- **TPO-STUDENTS-BULK-AMBIG-01:** `matchTpoStudentRolls` was a last-wins map, potentially selecting the **wrong membership** for a duplicated or case-folded roll or registration ID. It now treats shared identifiers as unresolved rather than picking any learner; the same test covers cross-field duplicate, repeated same membership, dedupe and normal case-insensitive matches.
+- The same test covers `roundApplyPreviewCsv`, `roundApplyReportCsv`, `tpoRoundFailureCsv` and its query schema, `tpoIndiaCalendarDay` at 18:30 UTC IST midnight, and `tpoStudentClipboardCell`/`tpoStudentClipboardTsv`.
+- **State:** unit tests authored, not executed. The TPO student bulk UI should present ambiguous rolls as unresolved so staff can correct identifiers; no automatic learner assignment is permitted. Live user journey and all 100 other previously-unreferenced placement source paths remain part of the backlog.
