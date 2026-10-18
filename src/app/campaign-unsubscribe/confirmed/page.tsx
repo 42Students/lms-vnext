@@ -1,20 +1,22 @@
 import Link from "next/link";
+import { Card } from "@/components/ui/card";
+import { PageHeader } from "@/components/ui/page-header";
 
 export default async function Unsubscribed({
   searchParams,
 }: { searchParams: Promise<{ scope?: string }> }) {
   const cell = (await searchParams).scope === "placement-cell";
   return (
-    <main className="mx-auto max-w-lg space-y-4 p-6">
-      <h1 className="text-xl font-semibold text-foreground">
-        {cell ? "You're unsubscribed" : "Email preference updated"}
-      </h1>
-      <p className="text-sm text-body">
-        {cell
-          ? "This placement cell will not email you again."
-          : "Your address has been suppressed from campaign email. Transactional account messages may use separate preferences."}
-      </p>
-      <Link href="/" className="text-primary-text">Return home</Link>
+    <main className="mx-auto flex min-h-dvh w-full max-w-lg min-w-0 flex-col justify-center gap-5 px-4 py-8 sm:py-12">
+      <PageHeader title={cell ? "You're unsubscribed" : "Email preference updated"} />
+      <Card as="section">
+        <p role="status" className="text-base leading-6 text-body">
+          {cell
+            ? "This placement cell will not email you again."
+            : "Your address has been suppressed from campaign email. Transactional account messages may use separate preferences."}
+        </p>
+      </Card>
+      <Link href="/" className="inline-flex min-h-11 items-center self-start rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Return home</Link>
     </main>
   );
 }

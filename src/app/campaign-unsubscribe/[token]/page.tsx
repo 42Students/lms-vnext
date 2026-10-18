@@ -1,5 +1,6 @@
 import { campaignUnsubscribeTokenKind } from "@/modules/placements/public-unsubscribe-preview-service";
 import { PageHeader } from "@/components/ui/page-header";
+import { Card } from "@/components/ui/card";
 import {CampaignUnsubscribeConfirm} from "@/components/placements/campaign-unsubscribe-confirm";
 
 export default async function CampaignUnsubscribe({
@@ -9,14 +10,14 @@ export default async function CampaignUnsubscribe({
   const kind = await campaignUnsubscribeTokenKind(token);
   const cell = kind === "PLACEMENT_CELL";
   return (
-    <main className="mx-auto max-w-lg space-y-6 px-4 py-10">
+    <main className="mx-auto flex min-h-dvh w-full max-w-lg min-w-0 flex-col justify-center gap-6 px-4 py-8 sm:py-12">
       <PageHeader eyebrow="42Students" title={cell ? "Stop these emails?" : "Campaign email preferences"} />
       {!kind ? (
-        <p role="alert" className="text-sm text-body">
-          This confirmation link is invalid or expired. No preference was changed.
-        </p>
+        <Card as="section" role="alert">
+          <p className="text-base leading-6 text-body">This confirmation link is invalid or expired. No preference was changed.</p>
+        </Card>
       ) : (
-        <section className="rounded-xl border border-border bg-surface p-5">
+        <Card as="section">
           <h2 className="font-semibold text-foreground">
             {cell ? "Stop these emails?" : "Stop campaign emails?"}
           </h2>
@@ -26,7 +27,7 @@ export default async function CampaignUnsubscribe({
               : "Opening this link does not unsubscribe you. Confirm to add this address to the global email suppression list."}
           </p>
           <CampaignUnsubscribeConfirm token={token} cell={cell}/>
-        </section>
+        </Card>
       )}
     </main>
   );

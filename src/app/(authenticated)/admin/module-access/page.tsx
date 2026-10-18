@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import {Pagination} from "@/components/ui/pagination";
 import {ErrorState} from "@/components/ui/error-state";
 import {EmptyState} from "@/components/ui/empty-state";
 import {parseAdminFeaturePageParams} from "@/modules/module-access/admin-feature-query";
@@ -34,7 +35,7 @@ export default async function SuperAdminModuleAccessPage({
   return <div className="space-y-6">
     <PageHeader eyebrow="Super Admin" title="Module Access"
       description="Select a college to inspect the existing inherited module access rules."
-      actions={<Link href="/admin/features" className="font-semibold text-[var(--lms-teal-deep)]">Feature Controls</Link>}/>
+      actions={<Link href="/admin/features" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Feature Controls</Link>}/>
     <section aria-label="Module Access overview" className="rounded-xl border border-border bg-surface p-4">
       <p className="text-sm font-semibold">Effective access · {scopeLabel}</p>
       <h2 className="mt-1 text-base font-semibold">Optional module access hierarchy</h2>
@@ -44,11 +45,11 @@ export default async function SuperAdminModuleAccessPage({
         <div><dt>Student overrides</dt><dd className="font-semibold">{scopeMetrics.studentOverrides} stored membership rules in the visible colleges</dd></div>
       </dl>
     </section>
-    <form method="get" className="flex flex-wrap items-end gap-3 rounded-lg border border-border p-4">
+    <form method="get" className="grid grid-cols-1 gap-3 rounded-lg border border-border bg-surface p-4 sm:grid-cols-[minmax(0,1fr)_auto_auto]">
       <label className="grid min-w-0 flex-1 gap-1 text-sm font-semibold text-body">
         College
         <input type="search" name="q" maxLength={100} defaultValue={result.q}
-          className="min-h-11 rounded-md border border-border bg-surface px-3"/>
+          className="min-h-11 w-full min-w-0 rounded-md border border-border bg-surface px-3"/>
       </label>
       <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Filter</button>
       <Link className="inline-flex min-h-11 items-center px-3 py-3 text-sm font-semibold text-[var(--lms-teal-deep)]"
@@ -70,9 +71,7 @@ export default async function SuperAdminModuleAccessPage({
           </Link>
         </article>)}
       </div>}
-    <nav aria-label="Module Access pages" className="flex flex-wrap items-center gap-4 text-sm">
-      {result.page>1?<Link className="inline-flex min-h-11 items-center" href={pageHref(result.q,result.page-1)}>Previous</Link>:null}
-      {result.page<result.totalPages?<Link className="inline-flex min-h-11 items-center" href={pageHref(result.q,result.page+1)}>Next</Link>:null}
-    </nav>
+    <Pagination page={result.page} pageCount={result.totalPages}
+      hrefForPage={page=>pageHref(result.q,page)} label="Module Access pages"/>
   </div>;
 }
