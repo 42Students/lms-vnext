@@ -167,3 +167,5 @@ All newly authored tests remain pending cloud execution; migration retains the p
 | PROJ-HARNESS-PLACEMENTS-32 | S1 (stale employer grants) | A published drive could still fabricate new applicants after its employer or college-company relationship was archived. | Persisted active company + active same-college relationship required by fixture; PG case -32 and GUARD-21. | Authored; final database gate pending |
 
 | PROJ-HARNESS-RECRUITER-33 | S1 (revoked HR identity fixture) | An ACTIVE grant alone can mislead role-journey tests into treating disabled, expired, unverified, archived, or revoked recruiter credentials as authorized. | Test-only persisted capability witness with full relational gates, real PG lifecycle test -33 and source GUARD-22. | Authored; final PostgreSQL gate deferred |
+
+| UX-kit-HARDEN-59 | S2 (idempotent notifications) | A repeated event ID supplied to the exported toast reducer could render two indistinguishable notices with duplicate React keys and independent dismiss controls. | Incoming item replaces matching current ID; invalid timed limit defaults to 3; behavioral test HARDEN-59. | Authored; final CI pending |
