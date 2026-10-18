@@ -37,7 +37,7 @@ export default async function TpoTrustedCompaniesPage() {
         actions={
           <Link
             href="/tpo/settings/team"
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
           >
             Placement Team
           </Link>
@@ -142,7 +142,7 @@ export default async function TpoTrustedCompaniesPage() {
                         href={`/tpo/companies/${encodeURIComponent(
                           company.companyId,
                         )}`}
-                        className="font-semibold text-primary-text hover:underline"
+                        className="font-semibold text-[var(--lms-teal-deep)] hover:underline"
                       >
                         {company.name}
                       </Link>
