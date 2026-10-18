@@ -18,6 +18,7 @@ import {
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
+import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import { collegeIdSchema } from "@/modules/academics/validation";
 import { loadProjectCollegeScope } from "./scope";
 import {
@@ -671,6 +672,12 @@ export async function assignProjectTemplateToCollege(
         .where(eq(projectTemplates.id,templateId)).for("update").limit(1);
       if(!template||template.status!=="PUBLISHED"||template.publishedVersion===null)
         throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_PUBLISHED");
+      // RequestContext was captured before the transaction. Re-check the
+      // persisted actor and system roles while holding SHARE locks so a
+      // revoked Super Admin cannot reassign college templates from a stale tab.
+      await assertPersistedPlatformPermission(tx,context,"project-template.assign",{
+        organizationId:college.organizationId,collegeId:college.id,
+      });
       const [version]=await tx.select({id:projectTemplateVersions.id})
         .from(projectTemplateVersions)
         .where(and(eq(projectTemplateVersions.templateId,templateId),
@@ -725,6 +732,9 @@ export async function revokeProjectTemplateFromCollege(
       .from(projectTemplates).where(eq(projectTemplates.id,templateId))
       .for("update").limit(1);
     if(!template)throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_FOUND");
+    await assertPersistedPlatformPermission(tx,context,"project-template.assign",{
+      organizationId:college.organizationId,collegeId:college.id,
+    });
     const [revoked]=await tx.update(projectTemplateCollegeAssignments)
       .set({revokedAt:new Date()})
       .where(and(eq(projectTemplateCollegeAssignments.templateId,templateId),
