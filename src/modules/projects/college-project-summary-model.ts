@@ -33,3 +33,22 @@ export function collegeProjectStatusChangeAllowed(from:string,to:string,hasMento
   if(from==="ACTIVE"&&to==="COMPLETED")return approvedDelivery;
   return false;
 }
+
+
+/** A retry that already achieved the exact requested state must not emit
+ * another activity event or notification. Compare persisted state rather than
+ * trusting the caller's stale expectedUpdatedAt token. */
+const collegeProjectSummaryFields = [
+  "title", "summary", "status", "progressPercent", "phase", "dueLabel",
+  "courseLabel", "sectionId", "blocker", "nextAction", "startDate",
+  "endDate", "sprintLengthWeeks", "estimationUnit",
+] as const;
+
+type SummaryState = Record<(typeof collegeProjectSummaryFields)[number], unknown>;
+
+export function collegeProjectSummaryMatchesCurrent(
+  current: SummaryState,
+  desired: SummaryState,
+): boolean {
+  return collegeProjectSummaryFields.every(field => current[field] === desired[field]);
+}
