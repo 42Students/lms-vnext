@@ -56,7 +56,7 @@ export default async function SuperAdminAttendancePage({
   const month = query.month || currentMonth();
   // UX-admin-attendance-01: reject hostile/stale month links before the
   // data service's strict India-month parser can throw an unhandled error.
-  if(typeof month!=="string" || !/^\\d{4}-(0[1-9]|1[0-2])$/.test(month)){
+  if(typeof month!=="string" || !/^\d{4}-(0[1-9]|1[0-2])$/.test(month)){
     return <div className="min-w-0 space-y-5">
       <PageHeader title="Attendance" description="Attendance oversight for the selected college."/>
       <ErrorState title="Invalid attendance month"
