@@ -33,7 +33,7 @@ export function Pagination({ page, pageCount, hrefForPage, label = "Pages", clas
   const previousHref = current > 1 ? hrefForPage(current - 1) : null;
   const nextHref = current < total ? hrefForPage(current + 1) : null;
   const pageLinks = paginationWindow(current, total).map(item=>({item,href:hrefForPage(item)}));
-  const buttonClass = "inline-flex min-h-11 min-w-11 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]";
+  const buttonClass = "inline-flex min-h-9 min-w-9 items-center justify-center rounded-[9px] border border-border bg-surface px-3 text-[14px] font-semibold leading-5 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]";
   return (
     <nav data-slot="pagination" aria-label={label} className={cx("flex min-w-0 flex-wrap items-center gap-2", className)}>
       {!previousHref || !isSafeInternalHref(previousHref) ?
@@ -44,7 +44,7 @@ export function Pagination({ page, pageCount, hrefForPage, label = "Pages", clas
         <Link key={item} href={href}
           aria-label={`Page ${item} of ${total}`}
           aria-current={item === current ? "page" : undefined}
-          className={cx(buttonClass, item === current ? "border-[var(--lms-teal-deep)] bg-primary-subtle" : "hover:bg-primary-subtle")}>
+          className={cx(buttonClass, item === current ? "border-[var(--lms-primary)] bg-primary-subtle text-primary-text" : "hover:bg-primary-subtle")}>
           {item}
         </Link> :
         <span key={item} aria-disabled="true" aria-label={`Page ${item} unavailable`}
