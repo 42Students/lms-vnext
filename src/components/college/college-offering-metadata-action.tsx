@@ -39,18 +39,18 @@ export function CollegeOfferingMetadataAction({offering}:{
         <h2 className="text-lg font-semibold text-foreground">Edit course offering</h2>
         <label className="grid gap-1 text-sm font-semibold text-body">Offering type
           <select value={type} onChange={e=>setType(e.target.value as "CORE"|"ELECTIVE")}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
             <option value="CORE">Core</option><option value="ELECTIVE">Elective</option>
           </select></label>
         <label className="grid gap-1 text-sm font-semibold text-body">Credits (optional)
           <input type="number" min={1} max={30} value={credits}
             onChange={e=>setCredits(e.target.value)}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm"/>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Display order
           <input type="number" min={0} max={10000} required value={displayOrder}
             onChange={e=>setDisplayOrder(e.target.value)}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm"/>
         </label>
         {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
         <div className="flex flex-wrap justify-end gap-2">

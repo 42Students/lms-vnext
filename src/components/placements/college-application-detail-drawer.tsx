@@ -1,4 +1,5 @@
 "use client";
+import {Dialog} from "@/components/ui/dialog";
 import {useEffect,useRef,useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 type Event={from:string|null;to:string;reason:string|null;when:string};
@@ -89,15 +90,13 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
   {label:"Screening history",rows:detail?.screeningHistory??[]},
   {label:"Application history",rows:detail?.history??[]},
  ];
- return <div className="fixed inset-0 z-50 flex justify-end bg-black/50" role="presentation">
-  <section role="dialog" aria-modal="true" aria-label="Application Details"
-    className="h-full w-full max-w-2xl overflow-y-auto bg-surface p-5 shadow-xl">
+ return <Dialog open={true} onOpenChange={open=>{if(!open)onClose();}} title="Application Details">
     <div className="flex items-center justify-between gap-3">
       <h2 className="text-lg font-semibold">Application Details</h2>
       <div className="flex gap-2">
        <button type="button" onClick={()=>void reload()} disabled={loading}
-        className="min-h-10 rounded border border-border px-3 focus-visible:ring-2 focus-visible:ring-primary">Refresh</button>
-       <button type="button" onClick={onClose} className="min-h-10 rounded border border-border px-3">Close</button>
+        className="min-h-11 rounded border border-border px-3 focus-visible:ring-2 focus-visible:ring-primary">Refresh</button>
+       <button type="button" onClick={onClose} className="min-h-11 rounded border border-border px-3">Close</button>
       </div>
     </div>
     {!detail&&!loading&&!error?<button type="button" onClick={()=>void reload()}
@@ -127,15 +126,15 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
        <h3 className="font-semibold">Resume and match score</h3>
        <p className="mt-2 text-sm text-body">{detail.resume.reason}</p>
        {detail.resume.available&&detail.resume.url?
-        <a href={detail.resume.url} target="_blank" rel="noopener noreferrer"
-          className="mt-2 inline-flex min-h-10 items-center rounded border border-border px-3 font-semibold text-primary-text">
+        <a href={detail.resume.url}  rel="noopener noreferrer"
+          className="mt-2 inline-flex min-h-11 items-center rounded border border-border px-3 font-semibold text-primary-text">
           Resume Preview · Open securely
         </a>:null}
        <p className="mt-2 text-sm text-body">{detail.scoring.reason}</p>
        <p className="text-xs text-muted-foreground">The private document endpoint checks access again. No fabricated public resume URL or match score is shown.</p>
        <button type="button" disabled={rescreening||detail.application.status!=="SUBMITTED"}
         onClick={()=>void rescreen()}
-        className="mt-3 min-h-10 rounded border border-border px-3 font-semibold text-primary-text disabled:opacity-50">
+        className="mt-3 min-h-11 rounded border border-border px-3 font-semibold text-primary-text disabled:opacity-50">
         {rescreening?"Re-screening…":"Re-screen"}
        </button>
        <p className="mt-1 text-xs text-muted-foreground">Re-screen checks recorded academic eligibility under current policy. It does not fabricate a match score or reverse an existing screening decision.</p>
@@ -152,11 +151,11 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
        <h3 className="font-semibold">Assessment Link</h3>
        {detail.rounds.filter(r=>r.testUrl?.startsWith("https://")).length?
         <div className="mt-3 space-y-2">{detail.rounds.filter(r=>r.testUrl?.startsWith("https://")).map(r=>
-          <p key={r.id} className="text-sm"><a href={r.testUrl!} target="_blank"
+          <p key={r.id} className="text-sm"><a href={r.testUrl!} 
             rel="noreferrer noopener" className="font-semibold text-primary-text underline">{r.name} · Open assessment</a>
             <span className="mt-1 block break-all text-xs text-muted-foreground">{r.testUrl}</span>
             <button type="button" onClick={async()=>{try{await navigator.clipboard.writeText(r.testUrl!);setLinkNotice("Assessment link copied.");}catch{setLinkNotice("Copy unavailable. Select and copy the link shown above.");}}}
-             className="mt-1 min-h-10 rounded border border-border px-3 font-semibold focus-visible:ring-2 focus-visible:ring-primary">Copy assessment link</button></p>)}</div>
+             className="mt-1 min-h-11 rounded border border-border px-3 font-semibold focus-visible:ring-2 focus-visible:ring-primary">Copy assessment link</button></p>)}</div>
         :<p className="mt-2 text-sm text-body">Link shared soon</p>}
       </section>
       {linkNotice?<p role="status" className="text-sm text-body">{linkNotice}</p>:null}
@@ -164,7 +163,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
        <h3 className="font-semibold">Interview scheduling</h3>
        <a href={basePath+"/jobs/"+encodeURIComponent(jobId)+
         (basePath==="/admin/placements"?"/schedule":"/interviews")+"?applicationId="+encodeURIComponent(applicationId)}
-        className="mt-2 inline-flex min-h-10 items-center rounded border border-border px-3 font-semibold text-primary-text">
+        className="mt-2 inline-flex min-h-11 items-center rounded border border-border px-3 font-semibold text-primary-text">
         Schedule or view candidate interviews
        </a>
       </section>
@@ -173,16 +172,16 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
        {detail.offers.length?<ul className="mt-2 space-y-3 text-sm">{detail.offers.map(o=>
         <li key={o.id} className="space-y-2 rounded border border-border p-2">
          <p>{o.status} · {when(o.issuedAt)}</p>
-         {o.offerLetterUrl?<a href={o.offerLetterUrl} target="_blank" rel="noreferrer noopener"
+         {o.offerLetterUrl?<a href={o.offerLetterUrl}  rel="noreferrer noopener"
            className="font-semibold text-primary-text underline">View offer letter</a>:null}
          {["ISSUED","ACCEPTED"].includes(o.status)?<div className="space-y-2">
           <label className="grid gap-1">Offer-letter HTTPS link
            <input type="url" placeholder="https://..." value={letterInput[o.id]??""}
             onChange={e=>setLetterInput(prev=>({...prev,[o.id]:e.target.value}))}
-            className="min-h-10 rounded border border-border bg-surface p-2"/>
+            className="min-h-11 rounded border border-border bg-surface p-2 text-base sm:text-sm"/>
           </label>
           <button type="button" disabled={savingLetter} onClick={()=>void attachLetter(o.id)}
-           className="min-h-10 rounded border border-border px-3 font-semibold text-primary-text disabled:opacity-50">
+           className="min-h-11 rounded border border-border px-3 font-semibold text-primary-text disabled:opacity-50">
            {savingLetter?"Saving…":"Attach Offer Letter"}</button>
          </div>:null}
         </li>)}</ul>:
@@ -195,19 +194,19 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
         <div key={n.id} className="rounded border border-border p-2 text-sm">
          <p>{n.body}</p><p className="mt-1 text-xs text-muted-foreground">{when(n.createdAt)}</p>
          <button type="button" onClick={()=>{setAmendsNoteId(n.id);setNote(n.body);setSuccess("");}}
-          className="mt-1 min-h-10 rounded border border-border px-2 font-semibold text-primary-text">
+          className="mt-1 min-h-11 rounded border border-border px-2 font-semibold text-primary-text">
           Edit Internal Notes
          </button>
         </div>)}</div>
        <label className="mt-3 grid gap-2 text-sm font-semibold">{amendsNoteId?"Correct internal note":"Add internal notes (visible only to admins)"}
         <textarea rows={3} maxLength={2000} value={note} onChange={e=>setNote(e.target.value)}
-         className="rounded border border-border bg-surface p-3"/></label>
+         className="rounded border border-border bg-surface p-3 text-base sm:text-sm"/></label>
        {success?<p role="status" className="text-sm text-body">{success}</p>:null}
        <button type="button" disabled={saving||!note.trim()} onClick={()=>void save()}
-        className="mt-3 min-h-10 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+        className="mt-3 min-h-11 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
          {saving?"Saving…":amendsNoteId?"Save correction":"Add note"}</button>
        {amendsNoteId?<button type="button" onClick={()=>{setAmendsNoteId(null);setNote("");}}
-         className="ml-2 min-h-10 rounded border border-border px-3">Cancel correction</button>:null}
+         className="ml-2 min-h-11 rounded border border-border px-3">Cancel correction</button>:null}
       </section>
       {sections.map(section=><section key={section.label} className="rounded-lg border border-border p-4">
         <h3 className="font-semibold">{section.label}</h3>
@@ -218,6 +217,5 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
           </li>)}</ol>:<p className="mt-2 text-sm text-body">No recorded events.</p>}
       </section>)}
     </div>:null}
-  </section>
- </div>;
+ </Dialog>;
 }
