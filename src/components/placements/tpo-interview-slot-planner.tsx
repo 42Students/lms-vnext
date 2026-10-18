@@ -1,6 +1,7 @@
 "use client";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 type Slot={id:string;startsAt:string;endsAt:string;room:string;panel:string|null;status:string;
  applicationId:string|null;version:number};
 type Learner={applicationId:string;name:string|null;roll:string|null};
@@ -19,6 +20,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
  const [venue,setVenue]=useState<Record<string,string>>({});
  const [requestTarget,setRequestTarget]=useState<Record<string,string>>({});
  const [requestReason,setRequestReason]=useState<Record<string,string>>({});
+ const [confirmRequest,setConfirmRequest]=useState<{title:string;description:string;body:Record<string,unknown>}|null>(null);
  const url="/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(roundId)+"/interview-slots";
  async function action(body:Record<string,unknown>){
   if(busy)return;
@@ -26,8 +28,8 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
   try{const response=await fetch(url,{method:"POST",credentials:"same-origin",
     headers:{"content-type":"application/json"},body:JSON.stringify({...body,confirmed:true})});
    const result=await response.json() as Record<string,unknown>&{error?:string;issues?:Array<{message:string}>};
-   if(!response.ok)throw Error(result.issues?.[0]?.message??result.error??"Could not update interview slots");
-   setMessage("Schedule updated. "+Object.entries(result).map(([k,v])=>k+": "+String(v)).join(", "));
+   if(!response.ok)throw Error("Could not update interview slots. Refresh and review the schedule.");
+   setMessage("Schedule updated.");
    router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Interview scheduling failed");}
   finally{setBusy(false);}
@@ -57,9 +59,9 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
     <button type="button" disabled={busy||!date||!rooms.trim()} onClick={()=>void action({
       action:"GENERATE_DAY",startsAt:new Date(date+"+05:30").toISOString(),durationMinutes:minutes,
       gapMinutes:gap,slotsPerRoom:count,rooms:rooms.split(",").map(v=>v.trim()).filter(Boolean),
-    })} className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+    })} className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50">
      Generate day</button>
-    <button type="button" disabled={busy||!free.length} onClick={()=>{if(window.confirm("Remove "+free.length+" unbooked interview slots? Existing bookings stay unchanged."))void action({action:"CLEAR_AVAILABLE"});}}
+    <button type="button" disabled={busy||!free.length} onClick={()=>setConfirmRequest({title:"Remove "+free.length+" unbooked interview slots?",description:"Existing bookings stay unchanged.",body:{action:"CLEAR_AVAILABLE"}})}
      className="min-h-11 rounded border border-border px-4 text-sm font-semibold disabled:opacity-50">
      Clear {free.length} unbooked slot(s)</button>
    </div>
@@ -75,14 +77,12 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
     <label className="grid gap-1 text-sm">New room<input value={bulkRoom} onChange={e=>setBulkRoom(e.target.value)}
      className="min-h-11 rounded border border-border bg-surface px-3"/></label>
    </div>
-   {fromRoll&&toRoll&&fromRoll.localeCompare(toRoll,"en",{numeric:true})>0?<p role="alert" className="mt-2 text-sm text-error">The ending roll must be after the starting roll.</p>:null}
+   {fromRoll&&toRoll&&fromRoll.localeCompare(toRoll,"en",{numeric:true})>0?<p role="alert" className="mt-2 text-sm text-foreground">The ending roll must be after the starting roll.</p>:null}
    {fromRoll&&toRoll?<p role="status" className="mt-3 text-sm">
     {roster.filter(r=>r.roll&&r.roll.localeCompare(fromRoll,"en",{numeric:true})>=0&&
      r.roll.localeCompare(toRoll,"en",{numeric:true})<=0&&taken.has(r.applicationId)).length} booked students in the requested roll range.
    </p>:null}
-   <button type="button" disabled={busy||!fromRoll||!toRoll||!bulkRoom||fromRoll.localeCompare(toRoll,"en",{numeric:true})>0} onClick={()=>{if(window.confirm("Change rooms for booked learners in roll range "+fromRoll+" to "+toRoll+"? Collision checks will skip blocked moves."))void action({
-    action:"ASSIGN_ROOMS_BY_ROLL",fromRoll,toRoll,room:bulkRoom,
-   });}} className="mt-3 min-h-11 rounded border border-primary px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+   <button type="button" disabled={busy||!fromRoll||!toRoll||!bulkRoom||fromRoll.localeCompare(toRoll,"en",{numeric:true})>0} onClick={()=>setConfirmRequest({title:"Change rooms for booked learners in roll range "+fromRoll+" to "+toRoll+"?",description:"Collision checks will skip blocked moves.",body:{action:"ASSIGN_ROOMS_BY_ROLL",fromRoll,toRoll,room:bulkRoom}})} className="mt-3 min-h-11 rounded border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
     Previewed · Assign room
    </button>
   </div>
@@ -106,7 +106,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
      <button type="button" disabled={busy||!requestTarget[req.id]||(requestReason[req.id]??"").trim().length<3}
       onClick={()=>void action({action:"MOVE_REQUEST",requestId:req.id,targetSlotId:requestTarget[req.id],
        reason:(requestReason[req.id]??"").trim()})}
-      className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">Move</button>
+      className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50">Move</button>
      <button type="button" disabled={busy||(requestReason[req.id]??"").trim().length<3}
       onClick={()=>void action({action:"KEEP_REQUEST",requestId:req.id,reason:(requestReason[req.id]??"").trim()})}
       className="min-h-11 rounded border border-border px-4 text-sm font-semibold disabled:opacity-50">Keep existing slot</button>
@@ -124,7 +124,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
     <button type="button" disabled={busy||!(venue[p.id]??p.meetingLocation??"").trim()}
      onClick={()=>void action({action:"CONFIRM_RECRUITER_PROPOSAL",proposalId:p.id,expectedVersion:p.version,
       venue:(venue[p.id]??p.meetingLocation??"").trim()})}
-     className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+     className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50">
      Confirm recruiter proposal
     </button>
    </div>)}
@@ -143,7 +143,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
         className="min-h-11 rounded border border-border bg-surface px-2 text-sm">
         <option value="">Choose student</option>{waiting.map(c=><option key={c.applicationId} value={c.applicationId}>{c.roll??""} {c.name??"Learner"}</option>)}
        </select>
-       <button type="button" disabled={busy||!pick[slot.id]} className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50"
+       <button type="button" disabled={busy||!pick[slot.id]} className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50"
         onClick={()=>void action({action:"BOOK",slotId:slot.id,expectedVersion:slot.version,applicationId:pick[slot.id]})}>Book</button>
       </div>:<div className="flex flex-wrap items-center gap-2">
        <select aria-label="Move to available slot" value={move[slot.id]??""}
@@ -152,23 +152,30 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
        </select>
        <button type="button" disabled={busy||!move[slot.id]} className="min-h-11 rounded border border-border px-3 text-sm disabled:opacity-50"
         onClick={()=>void action({action:"MOVE",slotId:slot.id,targetSlotId:move[slot.id],expectedVersion:slot.version,reason:"Rescheduled by placement cell"})}>Move</button>
-       <button type="button" disabled={busy} className="min-h-11 rounded border border-danger px-3 text-sm text-error disabled:opacity-50"
-        onClick={()=>void action({action:"CANCEL",slotId:slot.id,expectedVersion:slot.version,reason:"Cancelled by placement cell"})}>Cancel</button>
+       <button type="button" disabled={busy} className="min-h-11 rounded border border-danger px-3 text-sm text-foreground disabled:opacity-50"
+        onClick={()=>setConfirmRequest({title:"Cancel booked interview slot?",description:"Booking, changing or cancelling a student slot sends a placement notification and records an audit event.",body:{action:"CANCEL",slotId:slot.id,expectedVersion:slot.version,reason:"Cancelled by placement cell"}})}>Cancel</button>
       </div>}
      </div>
      <div className="flex flex-wrap items-center gap-2">
       <label className="text-sm">Change room
        <input value={roomChange[slot.id]??slot.room} onChange={e=>setRoomChange(p=>({...p,[slot.id]:e.target.value}))}
-        className="ml-2 min-h-10 rounded border border-border bg-surface px-2"/></label>
+        className="ml-2 min-h-11 rounded border border-border bg-surface px-2"/></label>
       <button type="button" disabled={busy||(roomChange[slot.id]??slot.room)===slot.room}
        onClick={()=>void action({action:"ASSIGN_ROOM",slotId:slot.id,expectedVersion:slot.version,room:roomChange[slot.id]})}
-       className="min-h-10 rounded border border-border px-3 text-sm disabled:opacity-50">Save room</button>
+       className="min-h-11 rounded border border-border px-3 text-sm disabled:opacity-50">Save room</button>
      </div>
     </article>;
    })}</div>
    {!slots.length?<p className="mt-3 text-sm text-body">No interview slots generated for this round yet.</p>:null}
   </div>
+  <ConfirmDialog open={confirmRequest!==null}
+    onOpenChange={next=>{if(!next&&!busy)setConfirmRequest(null);}}
+    pending={busy}
+    title={confirmRequest?.title??"Confirm schedule change"}
+    description={confirmRequest?.description}
+    confirmLabel="Confirm"
+    onConfirm={()=>{if(confirmRequest){const body=confirmRequest.body;setConfirmRequest(null);void action(body);}}}/>
   {message?<p role="status" className="text-sm text-body">{message}</p>:null}
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
  </section>;
 }

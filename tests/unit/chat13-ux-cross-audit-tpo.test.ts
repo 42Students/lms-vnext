@@ -139,4 +139,15 @@ describe("chat-13 TPO second-third cross-audit repairs",()=>{
   expect(s).not.toContain('role="dialog"');
   expect(s).not.toContain('window.confirm');
  });
+ it("UX-cross-tpo-second-C13-020 interview scheduling confirms all destructive operations accessibly",()=>{
+  const s=read("src/components/placements/tpo-interview-slot-planner.tsx");
+  expect(s).toContain("<ConfirmDialog");
+  expect(s).toContain('action:"CLEAR_AVAILABLE"');
+  expect(s).toContain('action:"ASSIGN_ROOMS_BY_ROLL"');
+  expect(s).toContain('action:"CANCEL"');
+  expect(s).toContain("setConfirmRequest(");
+  expect(s).not.toContain("window.confirm");
+  expect(s).not.toContain("min-h-10");
+  expect(s).not.toContain("result.issues?.[0]?.message");
+ });
 });
