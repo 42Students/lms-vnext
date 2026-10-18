@@ -22,6 +22,12 @@ describe("UX-SPILL-HR-02: responsive interactive report card and export controls
   expect(html).toContain('aria-label="Reverse sort direction"');
   expect(html).toContain("Export shown CSV");
   expect(html).toContain("Copy shown");
+  expect(html).toContain("Close filters");
+  expect(html).toContain("Close columns");
+  expect(html).toContain("bottom-0");
+  expect(html).toContain("max-h-[70dvh]");
+  expect(html).toContain("Sort Candidate");
+  expect(html).toContain('aria-pressed="false"');
   expect(html).toContain("Learner &lt;script&gt;alert(1)&lt;/script&gt;");
   expect(html).not.toContain("<script>alert(1)</script>");
   expect(html).not.toContain("min-w-max");
