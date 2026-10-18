@@ -54,6 +54,17 @@ describe("HR-DRIVE-API-71: recruiter requests preserve idempotence and friendly 
   expect(response.status).toBe(400);
   expect(m.list).not.toHaveBeenCalled();
  });
+ it("HR-DRIVE-REQUEST-121 duplicate or unexpected college filters cannot bypass tenant selection",async()=>{
+  const url="https://lms.example/api/placements/recruiter/drives/requests";
+  for(const query of ["collegeId="+collegeId+"&collegeId="+collegeId,
+   "collegeId="+collegeId+"&includeOtherCompanies=true"]){
+   const response=await GET(new Request(url+"?"+query));
+   expect(response.status).toBe(400);
+   expect(await response.json()).toMatchObject({error:"INVALID_REQUEST"});
+  }
+  expect(m.ctx).not.toHaveBeenCalled();
+  expect(m.list).not.toHaveBeenCalled();
+ });
  it("authorized GET is read-only and preserves the exact college filter",async()=>{
   await GET(new Request("https://lms.example/api/placements/recruiter/drives/requests?collegeId="+collegeId));
   expect(m.list).toHaveBeenCalledWith(actor,collegeId);
