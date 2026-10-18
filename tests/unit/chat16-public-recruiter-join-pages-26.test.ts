@@ -35,7 +35,7 @@ beforeEach(() => {
   vi.resetAllMocks();
   vi.mocked(publicJoinUnavailable).mockResolvedValue(false as never);
   vi.mocked(publicJoinUnavailableCopy).mockReturnValue(null as never);
-  vi.mocked(getPublicJoinPreview).mockResolvedValue({ displayName: "Company" } as never);
+  vi.mocked(getPublicJoinPreview).mockResolvedValue({kind:"READY",collegeName:"Example College",companyDomain:"example.org",companyName:"Company"});
 });
 
 describe("chat-16 real public recruiter join page SSR and invitation failure recovery", () => {
@@ -86,6 +86,21 @@ describe("chat-16 real public recruiter join page SSR and invitation failure rec
       expect(html).toContain(explanation);
       expect(html).toContain('data-scope="' + scope + '"');
       expect(html).not.toContain("private provider secret");
+    },
+  );
+
+  it.each([
+    ["COMPANY", CompanyJoinPage],
+    ["COLLEGE", CollegeJoinPage],
+  ] as const)(
+    "UX-public-join-05 %s invalid or revoked invitation never probes email/provider readiness",
+    async (scope, render) => {
+      vi.mocked(getPublicJoinPreview).mockResolvedValue({kind:"UNAVAILABLE"});
+      const html = renderToStaticMarkup(await render(params));
+      expect(html).toContain('data-join-form="true"');
+      expect(html).toContain('data-scope="' + scope + '"');
+      expect(publicJoinUnavailable).not.toHaveBeenCalled();
+      expect(publicJoinUnavailableCopy).not.toHaveBeenCalled();
     },
   );
 
