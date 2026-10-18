@@ -28,6 +28,17 @@ describe("TPO-settings-audit-TRUST-02 college-scoped company domain validation",
    expect(tpoTrustedCompanyDomainSchema.safeParse(invalid).success,invalid).toBe(false);
   }
  });
+
+ it("TPO-settings-audit-TRUST-03 bounds the trusted-domain HTTP mutation body before accepting changes",()=>{
+  const route=readFileSync("src/app/api/placements/tpo/trusted-domains/route.ts","utf8");
+  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toContain("getCurrentRequestContext()");
+  expect(route).toContain("readTpoSettingsBody(request)");
+  expect(route).toContain("TpoCommunicationBodyError");
+  expect(route).toContain('error:"INVALID_REQUEST"');
+  expect(route).toContain('status:error.code==="BODY_TOO_LARGE"?413:400');
+  expect(route).not.toContain("await request.json()");
+ });
  it("requires a strict client payload, persisted actor reauthorization, explicit college and auditable write",()=>{
   const service=readFileSync("src/modules/placements/tpo-trusted-domains-write-service.ts","utf8");
   expect(service).toContain("domain:tpoTrustedCompanyDomainSchema");
