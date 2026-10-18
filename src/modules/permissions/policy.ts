@@ -103,8 +103,9 @@ function hasRecruiterGrant(
 ) {
   if (
     !hasActiveRecruiter(context) ||
-    !resource.collegeId ||
-    !resource.placementCompanyRelationshipId
+    context.recruiter?.userId !== context.user.id ||
+    !resource.collegeId?.trim() ||
+    !resource.placementCompanyRelationshipId?.trim()
   ) {
     return false;
   }

@@ -25,6 +25,9 @@ Source inspection: 2026-10-18. Branch: `chatgpt/chat-11-b`. **Partial, source-re
 
 | SA-tenants-modules-MOD-02 | `adminFeatureQuerySchema`, `parseAdminFeaturePageParams`, `boundedAdminFeaturePage`, `/admin/module-access` | Bounded decimal page, rejects hex/exponents/whitespace/repeated keys and caller-selected college IDs before scoped service list; no-rule and rule-state combination validation; recovery link and authorization first | `tests/unit/chat11-super-admin-module-query-adversarial.test.ts` — `SA-tenants-modules-MOD-02` | Browser and PostgreSQL pagination E2E |
 
+| SA-tenants-modules-BRAND-03 / BRAND-04 | College branding write and preview | Transaction locks persisted Super Admin permission and ACTIVE college before mutating branding; unsaved image preview suppresses unsafe signed-token/credential URLs | `tests/unit/chat11-super-admin-branding-save-adversarial.test.ts` | PostgreSQL concurrent admin revocation and visual preview still needed |
+| SA-tenants-modules-BRAND-05 | `POST /api/colleges/[collegeId]/branding/logo`, `readCollegeLogoForm` | Auth and CSRF before parsing; 3 MiB stream cap, MIME/boundary validation, duplicate multipart field rejection, 400/413, signed object write delegated to existing uploader | `tests/unit/chat11-super-admin-logo-boundary.test.ts` | Live storage E2E and malware/format scanner |
+
 ## Audit disposition
 
 - **Source-level blockers found and patched:** unauthorized malformed-filter route bypass across three administrative pages.

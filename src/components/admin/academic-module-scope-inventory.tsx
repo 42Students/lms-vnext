@@ -19,6 +19,7 @@ export function AcademicModuleScopeInventory({scopes,page=1,baseHref}:{
  const [expanded,setExpanded]=useState(false);
  const visible=expanded?scopes:scopes.slice(0,15);
  const safePage=Number.isSafeInteger(page)&&page>=1?page:1;
+ const showPageStatus=Boolean(baseHref&&isSafeInternalHref(baseHref));
  const prevHref=baseHref&&safePage>1?academicScopePageHref(baseHref,safePage-1):null;
  const nextHref=baseHref&&scopes.length===500?academicScopePageHref(baseHref,safePage+1):null;
  const columns:DataTableColumn<AcademicModuleScope>[]=[
@@ -55,7 +56,7 @@ export function AcademicModuleScopeInventory({scopes,page=1,baseHref}:{
     caption="Academic hierarchy and effective module rules"
     empty={<p>No academic scopes found.</p>}/>
   </div>
-  {prevHref||nextHref?<nav aria-label="Academic scope pages" className="flex flex-wrap items-center gap-4 text-sm">
+  {showPageStatus?<nav aria-label="Academic scope pages" className="flex flex-wrap items-center gap-4 text-sm">
    <span>Academic hierarchy page {safePage} · {scopes.length} nodes on this page</span>
    {prevHref?<Link href={prevHref}
     className="inline-flex min-h-11 items-center text-primary-text underline">Previous hierarchy page</Link>:null}
