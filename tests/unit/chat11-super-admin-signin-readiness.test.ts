@@ -39,7 +39,10 @@ describe("SA-tenants-modules-LOGIN-01: per-college sign-in policy safety",()=>{
   const route=source("src/app/api/admin/colleges/[collegeId]/signin/route.ts");
   const service=source("src/modules/colleges/admin-signin-policy-service.ts");
   expect(route).toContain("isSameOriginRequest(request)");
-  expect(route).toContain("body?.collegeId!==collegeId");
+  expect(route).toContain('!("collegeId" in body)||body.collegeId!==collegeId');
+  expect(route.indexOf("getCurrentRequestContext()"))
+   .toBeLessThan(route.indexOf("readAdminSignInRequestBody(request)"));
+  expect(route).toContain("Array.isArray(body)");
   expect(service).toContain("if(!isSuperAdmin(context))throw new AuthorizationError");
   expect(service).toContain("assertPersistedPlatformPermission");
   expect(service).toContain('eq(colleges.status,"ACTIVE")');
