@@ -96,4 +96,15 @@ describe("Super Admin placement lookup — real service orchestration of bounded
     expect(result.students.every(student=>!student.truncated&&!student.placed)).toBe(true);
     expect(result.students.every(student=>student.applications.length===100)).toBe(true);
   });
+
+  it("SA-STUDENT-LOOKUP-ROLE-05 refuses invalid search and revoked actor before any personal data read",async()=>{
+    await expect(lookupCollegeStudentPlacement(admin,"x")).rejects.toThrow();
+    expect(mocks.requireCollegePlacementAdmin).not.toHaveBeenCalled();
+    expect(mocks.getDb).not.toHaveBeenCalled();
+
+    mocks.requireCollegePlacementAdmin.mockRejectedValueOnce(new Error("FORBIDDEN"));
+    await expect(lookupCollegeStudentPlacement(admin,"Alice")).rejects.toThrow("FORBIDDEN");
+    expect(mocks.requireCollegePlacementAdmin).toHaveBeenCalledTimes(1);
+    expect(mocks.getDb).not.toHaveBeenCalled();
+  });
 });
