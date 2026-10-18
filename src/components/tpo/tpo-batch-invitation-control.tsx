@@ -82,8 +82,10 @@ export function TpoBatchInvitationControl(props: Props) {
           errors[body.error ?? ""] ?? "Could not save the deadline.");
       setMessage(clear ? "Deadline removed" : "Deadline moved");
       router.refresh();
+      return true;
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Could not save the deadline.");
+      return false;
     } finally { setBusy(false); }
   }
   async function remind(){
@@ -148,7 +150,7 @@ export function TpoBatchInvitationControl(props: Props) {
       {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
       <ConfirmDialog open={confirmClear} onOpenChange={setConfirmClear}
        title="Remove the registration deadline?" confirmLabel="Remove" pending={busy}
-       onConfirm={()=>{void saveDeadline(true).then(()=>setConfirmClear(false));}}/>
+       onConfirm={()=>{void saveDeadline(true).then(saved=>{if(saved)setConfirmClear(false);});}}/>
     </section>;
   }
   return <section className="space-y-3 rounded border border-border bg-surface p-4" aria-label="Invite batch">
