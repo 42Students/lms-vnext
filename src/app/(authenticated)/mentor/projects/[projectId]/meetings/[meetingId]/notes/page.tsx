@@ -15,7 +15,7 @@ export default async function MentorMeetingNotesPage({params}:{
     <PageHeader eyebrow="Mentor · Project meeting" title={m.title}
       description={data.projectTitle+" · "+m.status}
       actions={<Link href={"/mentor/projects/"+encodeURIComponent(path.projectId)+"/team-meetings"}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Meeting history</Link>}/>
     <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
       <h2 className="font-semibold">Persisted meeting outcome</h2>

@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import { redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -26,9 +27,7 @@ export default async function TpoPlacementSeasonSettingsPage() {
       <TpoSettingsNav active="season" />
 
       <section className="space-y-2">
-        <h2 className="m-0 text-xl font-semibold text-foreground">
-          Placement Season
-        </h2>
+        <PageHeader eyebrow="TPO · Settings" title="Placement Season" />
         <p className="text-sm leading-6 text-body">
           College-specific placement seasons and their
           recorded dates and lifecycle status. A season

@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -15,8 +16,8 @@ export default async function TpoPreparationNudgePage({searchParams}:{searchPara
  const rows=tpoPreparationFocusRows(view.roster.items);
  const href=(page:number)=>"/tpo/students/preparation-prep?page="+page;
  return <main className="min-w-0 space-y-5">
-  <h1 className="text-xl font-semibold">Learners needing preparation support</h1>
-  <Link href="/tpo/students" className="text-primary-text underline">All students</Link>
+  <PageHeader eyebrow="TPO · Students" title="Learners needing preparation support" />
+  <Link href="/tpo/students" className="inline-flex min-h-11 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2">All students</Link>
   <Link href="/tpo/students/preparation-plan" className="ml-3 text-primary-text underline">View the college preparation course plan</Link>
   <p className="text-sm text-body">{rows.length} evidence-based candidates on the current 25-row page, from {view.roster.total} matching learner journeys. This is not a verified employability, course-assignment or contact/consent list.</p>
   {!view.definitions.registrationsAvailable?<p role="status" className="rounded border border-border p-4 text-sm">Placement registration records are unavailable; participation evidence may be incomplete.</p>:null}
@@ -27,8 +28,8 @@ export default async function TpoPreparationNudgePage({searchParams}:{searchPara
    <Link href={"/tpo/students/"+row.membershipId+"/history"} className="mt-2 inline-flex min-h-11 items-center text-primary-text underline">Review recorded placement history</Link>
   </li>)}</ul>}
   <nav aria-label="Preparation candidate pages" className="flex flex-wrap gap-3">
-   {view.roster.page>1?<Link href={href(view.roster.page-1)} className="text-primary-text underline">Previous page</Link>:null}
-   {view.roster.page<view.roster.totalPages?<Link href={href(view.roster.page+1)} className="text-primary-text underline">Next page</Link>:null}
+   {view.roster.page>1?<Link href={href(view.roster.page-1)} className="inline-flex min-h-11 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2">Previous page</Link>:null}
+   {view.roster.page<view.roster.totalPages?<Link href={href(view.roster.page+1)} className="inline-flex min-h-11 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2">Next page</Link>:null}
   </nav>
  </main>;
 }

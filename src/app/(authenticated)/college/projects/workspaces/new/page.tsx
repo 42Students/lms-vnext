@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ClassTeamWorkspaceCreator } from "@/components/projects/class-team-workspace-creator";
@@ -14,7 +15,10 @@ export default async function CollegeClassProjectWorkspacePage() {
   return (
     <main className="mx-auto w-full min-w-0 max-w-5xl space-y-6 px-3 py-4 sm:px-6">
       <PageHeader eyebrow="College Admin · Projects" title="Create workspaces from a class" description="Split active learners into balanced teams, review assignments, or add the whole class to a single Project workspace." />
-      {templates.length === 0 ? <p role="status">No published Project template is assigned to this college.</p> :
+      {templates.length === 0 ? <div role="status" className="space-y-3 rounded-xl border border-border bg-surface p-5">
+        <p className="text-sm text-body">No published Project template is assigned to this college.</p>
+        <Link href="/college/projects/templates" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Project templates</Link>
+      </div> :
         <ClassTeamWorkspaceCreator collegeId={collegeId} basePath="/college/projects" templates={templates.map(t => ({ templateId:t.templateId, title:t.title, version:t.version, summary:t.summary }))} />}
     </main>
   );

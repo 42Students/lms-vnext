@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { driveApplicationsHref, driveApplicationsParams, DRIVE_APPLICATION_EXPORT_CAP } from "@/modules/placements/college-drive-applications-model";
 import { getCollegeApplicationPipeline } from "@/modules/placements/college-application-stage-service";
 import { CollegeApplicationPipelineControls } from "@/components/placements/college-application-pipeline-controls";
@@ -21,31 +22,42 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
     getCollegeApplicationPipeline(context,jobId,query),
     listCollegeDriveApplicationFilters(context),
   ]);
+  const formatter = new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
+  const columns:DataTableColumn<(typeof data.items)[number]>[]=[
+    {key:"student",header:"Student",mobilePriority:"primary",cell:row=>row.name??"Unnamed learner"},
+    {key:"email",header:"Email",cell:row=>row.email??"Not provided"},
+    {key:"roll",header:"Roll",cell:row=>row.rollNumber??"Not recorded"},
+    {key:"role",header:"Role",cell:row=>row.roleTitle},
+    {key:"source",header:"Source",cell:row=>row.source},
+    {key:"applied",header:"Applied (IST)",cell:row=>formatter.format(new Date(row.submittedAt))},
+    {key:"application",header:"Application",cell:row=>row.status},
+    {key:"screening",header:"Screening",cell:row=>row.screening??"Not recorded"},
+  ];
   return <div className="space-y-6">
     <PageHeader eyebrow="College Admin · Placements" title={"Applications · " + data.drive.title}
       description="Review applications, move candidates through hiring stages and notify them about decisions."
       actions={<Link href={`/college/placements/jobs/${jobId}/overview`} className="text-primary-text underline">Drive overview</Link>} />
-    <form method="get" className="grid gap-3 rounded-xl border border-border p-4 sm:grid-cols-2 xl:grid-cols-4">
+    <form method="get" role="search" aria-label="Application filters" className="grid gap-3 rounded-xl border border-border p-4 sm:grid-cols-2 xl:grid-cols-4">
       <label className="grid gap-1 text-sm">Name, email, roll or role
-        <input name="q" defaultValue={query.q} maxLength={100} className="min-h-10 rounded-md border border-border px-2" />
+        <input name="q" defaultValue={query.q} maxLength={100} className="min-h-11 rounded-md border border-border px-2" />
       </label>
       <label className="grid gap-1 text-sm">Application
-        <select name="status" defaultValue={query.status} className="min-h-10 rounded-md border border-border px-2">
+        <select name="status" defaultValue={query.status} className="min-h-11 rounded-md border border-border px-2">
           {["ALL","SUBMITTED","WITHDRAWN"].map(s=><option key={s} value={s}>{s}</option>)}
         </select>
       </label>
       <label className="grid gap-1 text-sm">Screening
-        <select name="screening" defaultValue={query.screening} className="min-h-10 rounded-md border border-border px-2">
+        <select name="screening" defaultValue={query.screening} className="min-h-11 rounded-md border border-border px-2">
           {["ALL","PENDING","HOLD","SHORTLISTED","REJECTED","UNRECORDED"].map(s=><option key={s} value={s}>{s}</option>)}
         </select>
       </label>
       <label className="grid gap-1 text-sm">Source
-        <select name="source" defaultValue={query.source} className="min-h-10 rounded-md border border-border px-2">
+        <select name="source" defaultValue={query.source} className="min-h-11 rounded-md border border-border px-2">
           {["ALL","INTERNAL","EXTERNAL"].map(item=><option key={item} value={item}>{item==="ALL"?"All sources":item}</option>)}
         </select>
       </label>
       <label className="grid gap-1 text-sm">Department
-        <select name="departmentId" defaultValue={query.departmentId??""} className="min-h-10 rounded-md border border-border px-2">
+        <select name="departmentId" defaultValue={query.departmentId??""} className="min-h-11 rounded-md border border-border px-2">
           <option value="">All departments</option>
           {query.departmentId&&!filters.departments.some(item=>item.id===query.departmentId)&&
             <option value={query.departmentId}>Selected department</option>}
@@ -53,7 +65,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
         </select>
       </label>
       <label className="grid gap-1 text-sm">Program
-        <select name="programId" defaultValue={query.programId??""} className="min-h-10 rounded-md border border-border px-2">
+        <select name="programId" defaultValue={query.programId??""} className="min-h-11 rounded-md border border-border px-2">
           <option value="">All programs</option>
           {query.programId&&!filters.programs.some(item=>item.id===query.programId)&&
             <option value={query.programId}>Selected program</option>}
@@ -61,20 +73,20 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
         </select>
       </label>
       <label className="grid gap-1 text-sm">Batch
-        <select name="cohortId" defaultValue={query.cohortId??""} className="min-h-10 rounded-md border border-border px-2">
+        <select name="cohortId" defaultValue={query.cohortId??""} className="min-h-11 rounded-md border border-border px-2">
           <option value="">All batches</option>
           {query.cohortId&&!filters.cohorts.some(item=>item.id===query.cohortId)&&
             <option value={query.cohortId}>Selected batch</option>}
           {filters.cohorts.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
         </select>
       </label>
-      <button type="submit" className="min-h-10 self-end rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
+      <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
     </form>
     <nav aria-label="Application pipeline stages" className="flex flex-wrap gap-2">
       {(["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED","WITHDRAWN"] as const).map(stage=>
         <Link key={stage} href={driveApplicationsHref(jobId,{...query,stage,page:1})}
           aria-current={query.stage===stage?"page":undefined}
-          className={"inline-flex min-h-10 items-center gap-2 rounded-md border px-3 text-sm font-semibold "+
+          className={"inline-flex min-h-11 items-center gap-2 rounded-md border px-3 text-sm font-semibold "+
             (query.stage===stage?"border-primary bg-primary-subtle text-primary-text":"border-border text-body")}>
           {stage==="ALL"?"All":stage.charAt(0)+stage.slice(1).toLowerCase()}
           <span className="tabular-nums">{stage==="ALL"?
@@ -91,25 +103,12 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
       <p role="status" className="rounded border border-border bg-surface p-5 text-sm">
         Application stage actions are awaiting migration registration. You can still review the scoped applicant register.
       </p>
-      <div className="overflow-x-auto rounded-xl border border-border bg-surface">
-       <table className="min-w-full text-left text-sm">
-        <thead><tr className="border-b border-border bg-muted"><th className="p-3">Student</th><th className="p-3">Email</th><th className="p-3">Roll</th><th className="p-3">Role</th><th className="p-3">Source</th><th className="p-3">Applied (IST)</th><th className="p-3">Application</th><th className="p-3">Screening</th></tr></thead>
-        <tbody>{data.items.map(row=><tr key={row.id} className="border-b border-border">
-         <td className="p-3">{row.name??"Unnamed learner"}</td>
-         <td className="p-3">{row.email??"Not provided"}</td>
-         <td className="p-3">{row.rollNumber??"Not recorded"}</td>
-         <td className="p-3">{row.roleTitle}</td>
-         <td className="p-3">{row.source}</td>
-         <td className="p-3">{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(row.submittedAt))}</td>
-         <td className="p-3">{row.status}</td>
-         <td className="p-3">{row.screening??"Not recorded"}</td>
-        </tr>)}</tbody>
-       </table>
-      </div>
-      {!data.items.length?<p className="text-sm text-body">No applications match these filters.</p>:null}
+      <DataTable caption="College drive applicant register" columns={columns}
+        rows={data.items} getRowKey={row=>row.id}
+        empty={<p role="status" className="text-sm text-body">No applications match these filters.</p>} />
      </section>:
      <CollegeApplicationPipelineControls key={jobId+":"+JSON.stringify(query)} jobId={jobId} rows={data.items} total={data.total} query={query}/>}
-    <nav aria-label="Application pagination" className="flex justify-between gap-3 text-sm">
+    <nav aria-label="Application pagination" className="flex flex-wrap justify-between gap-3 text-sm">
       <span>Page {query.page} of {data.totalPages}</span><div className="flex gap-3">
         {query.page>1?<Link href={driveApplicationsHref(jobId,{...query,page:query.page-1})}>Previous</Link>:null}
         {query.page<data.totalPages?<Link href={driveApplicationsHref(jobId,{...query,page:query.page+1})}>Next</Link>:null}

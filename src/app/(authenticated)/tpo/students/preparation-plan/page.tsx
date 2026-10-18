@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {getTpoPrepReadiness,listTpoPrepCourses} from "@/modules/placements/tpo-configuration-read-service";
@@ -15,8 +16,8 @@ export default async function TpoPreparationCoursePlan(){
   courseIds:parsed.success?parsed.data.courseIds:[],minimumCompleted:parsed.success?parsed.data.minimumCompleted:0,catalog,
  });
  return <main className="min-w-0 space-y-5">
-  <h1 className="text-xl font-semibold">Preparation course plan</h1>
-  <Link href="/tpo/students/preparation-prep" className="text-primary-text underline">Back to learners needing support</Link>
+  <PageHeader eyebrow="TPO · Students" title="Preparation course plan" />
+  <Link href="/tpo/students/preparation-prep" className="inline-flex min-h-11 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2">Back to learners needing support</Link>
   <p className="text-sm text-body">This lists the college placement cell&apos;s recorded readiness-course selection. It is a planning preview, not a course enrollment, assignment, learner completion record, or outreach workflow.</p>
   {!plan.ready?<p role="status" className="rounded border border-border p-4">{!settings.ready?"Preparation settings storage is unavailable.":"Saved preparation settings could not be validated; ask an administrator to review them."}</p>:<>
     <p role="status" className="text-sm">Configured minimum completed courses: {plan.minimumCompleted}. {plan.courses.length} referenced courses are visible in the first 200 active course records.</p>

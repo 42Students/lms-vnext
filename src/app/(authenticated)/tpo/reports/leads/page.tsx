@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import {TPO_LEGACY_REPORT_COPY} from "@/modules/placements/tpo-legacy-report-copy";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
@@ -109,7 +110,7 @@ export default async function TpoLeadsReportPage({
         }
       />
 
-      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/leads" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
+      <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/leads" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <TpoReportPresentation />
       <ReportNavigation workspace={workspace} />
       <nav aria-label="Recruiter engagement cross-check" className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-surface p-4">
@@ -142,7 +143,7 @@ export default async function TpoLeadsReportPage({
         ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
         ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{}),
         ...(selectedCompanyId?{companyId:selectedCompanyId}:{}),
-       }).toString()} className="inline-flex min-h-10 items-center rounded border border-border px-4 text-sm font-semibold text-primary-text">Export company engagement CSV</a>
+       }).toString()} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm font-semibold text-primary-text">Export company engagement CSV</a>
        <ReportTable title="Engage and placement outcomes by company"
         headings={["Company","Contacts","Invited","Joined","Drives that ran","Students placed"]}
         rows={companyFilter.rows.map(row=>{

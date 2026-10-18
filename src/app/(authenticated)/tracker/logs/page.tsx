@@ -81,7 +81,7 @@ export default async function TrackerLogsPage({
     return (
       <div className="space-y-6">
         {header}
-        <ErrorState title="Invalid log environment." description="Invalid log environment."
+        <ErrorState title="Invalid log environment." description="Durable error signatures, recurrence and triage. Cloud Logging collection is an optional, separately configured backup."
           action={<Link href="/tracker/logs" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">
             Reset filter
           </Link>}/>
