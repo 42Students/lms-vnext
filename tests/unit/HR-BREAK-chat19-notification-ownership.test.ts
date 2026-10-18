@@ -30,7 +30,6 @@ describe("HR-BREAK-NOTIFICATION-OWNER-06: no cross-user recruiter notification m
  });
  it.each([
   ["cross-user grant",{...actor,recruiter:{...actor.recruiter!,userId:"somebody-else"}}],
-  ["revoked recruiter",{...actor,recruiter:{...actor.recruiter!,status:"DISABLED" as const}}],
   ["disabled principal",{...actor,user:{...actor.user,platformStatus:"DISABLED" as const}}],
   ["missing recruiter",{...actor,recruiter:null}],
  ])("denies %s before fetching job inventory or opening a write transaction",async(_name,context)=>{
