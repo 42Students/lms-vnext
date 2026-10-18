@@ -15,6 +15,11 @@ export function summarizeRoundApply(rows:readonly RoundApplyRow[]){
  return {staged:rows.filter(r=>r.status==="STAGED").length,
   applied:rows.filter(r=>r.status==="APPLIED").length,outcomes};
 }
+/** Never send PostgreSQL errors, credentials or permission internals in per-learner result reports. */
+export function roundApplyFailureReason(_error:unknown):string{
+ return "Result was not applied. Refresh this round and try again.";
+}
+
 export function roundApplyPreviewToken(roundId:string,rows:readonly RoundApplyRow[]){
  const identity=rows.map(x=>[x.resultId,x.applicationId,x.status,x.outcome,x.version]).sort((a,b)=>String(a[0]).localeCompare(String(b[0])));
  return createHash("sha256").update(JSON.stringify([roundId,identity])).digest("hex");
