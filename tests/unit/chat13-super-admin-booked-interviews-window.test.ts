@@ -46,6 +46,17 @@ describe("Super Admin booked interview calendar: verified IST window and tenant 
     expect(source).not.toContain(".leftJoin(departments,eq(departments.id,programs.departmentId))");
   });
 
+  it("SA-BOOKED-INTERVIEWS-FIXTURE-05 seeds valid role options and tests two distinct tenant candidates", () => {
+    const fixture=readFileSync("tests/integration/chat13-super-admin-booked-interviews-tenant.test.ts","utf8");
+    expect(fixture).toContain("insert into placement_job_role_options");
+    expect(fixture).toContain("(job_id,role_option_id,membership_id,channel,eligibility_status,");
+    expect(fixture).toContain("const candidateA=await candidate(driveA.jobId,learnerA.membershipId!,coordinatorA.userId)");
+    expect(fixture).toContain("const candidateB=await candidate(driveB.jobId,learnerB.membershipId!,coordinatorB.userId)");
+    expect(fixture).toContain("expect(naive).toHaveLength(2)");
+    expect(fixture).toContain("expect(scoped).toEqual([{id:valid!.id,membership_id:learnerB.membershipId}])");
+    expect(fixture).not.toContain("createPlacementCandidateFixture(");
+  });
+
   it("SA-BOOKED-INTERVIEWS-04 excludes booked slots with mismatched or foreign candidate links instead of emitting null candidate events", () => {
     const source = readFileSync("src/modules/placements/super-admin-booked-interviews-service.ts","utf8");
     // BOOKED rows always have application_id by a registered DB CHECK.
