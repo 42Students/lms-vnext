@@ -1,4 +1,7 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -35,40 +38,40 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries}:{
   }catch{setMessage("Connection failed. The stored setting was not confirmed.");}
   finally{setBusy(false);setPendingRemoval(null);}
  }
- return <section aria-label="Other stored keys" className="space-y-3 rounded-lg border border-border p-4">
+ return <section aria-label="Other stored keys" className="space-y-3 border-b border-border pb-5">
   <h3 className="font-semibold">Other stored keys</h3>
   <p className="text-sm text-body">These values are stored for reference. No runtime reader is activated by adding a key. Never enter passwords, credentials, tokens or secrets.</p>
   {others.length===0?<p className="text-sm text-body">No other stored keys at this scope.</p>:
    <ul className="space-y-2">
     {others.map(entry=>{
      const documented=LEGACY_TENANT_SETTING_MAP.get(entry.key);
-     return <li key={entry.key} className="flex min-w-0 flex-wrap items-start justify-between gap-3 rounded-md border border-border p-3 text-sm">
+     return <li key={entry.key} className="flex min-w-0 flex-wrap items-start justify-between gap-3 border-b border-border py-3 text-sm">
       <div className="min-w-0 flex-1">
        <strong className="break-all">{entry.key}</strong>
        {documented?<p className="text-xs text-warning-text">Never read here — this key is read at {documented.scope} scope.</p>:null}
        <p className="mt-1 break-all text-body">{entry.value==="[redacted]"?"[redacted]":entry.value}</p>
       </div>
-      <button type="button" disabled={!ready||busy} onClick={()=>setPendingRemoval(entry)}
+      <Button variant="primary" type="button" disabled={!ready||busy} onClick={()=>setPendingRemoval(entry)}
        className="min-h-10 rounded-md border border-border px-3 font-semibold text-primary-text disabled:opacity-50">
-       Remove</button>
+       Remove</Button>
      </li>;
     })}
    </ul>}
   <fieldset disabled={!ready||busy} className="space-y-2">
    <legend className="font-semibold">Add setting</legend>
    <label className="grid gap-1 text-sm">Key
-    <input value={key} onChange={event=>setKey(event.target.value)} maxLength={120}
+    <Input value={key} onChange={event=>setKey(event.target.value)} maxLength={120}
      placeholder="custom.settingName" autoComplete="off"
      className="min-h-11 rounded-md border border-border bg-background px-3"/>
    </label>
    <label className="grid gap-1 text-sm">Value
-    <textarea rows={2} value={value} onChange={event=>setValue(event.target.value)}
+    <Textarea rows={2} value={value} onChange={event=>setValue(event.target.value)}
      maxLength={4096} className="rounded-md border border-border bg-background p-3"/>
    </label>
    <p className="text-xs text-body">Use letters, digits, dots, dashes and underscores. Typos create unused keys. Documented settings must be edited in their section above.</p>
-   <button type="button" disabled={!ready||busy||!/^[A-Za-z][A-Za-z0-9._-]*$/.test(key)||!value.trim()}
+   <Button variant="primary" type="button" disabled={!ready||busy||!/^[A-Za-z][A-Za-z0-9._-]*$/.test(key)||!value.trim()}
     onClick={()=>void apply("POST")} className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
-    {busy?"Saving…":"Add setting"}</button>
+    {busy?"Saving…":"Add setting"}</Button>
   </fieldset>
   {message?<p role="status" className="text-sm text-body">{message}</p>:null}
   <ConfirmDialog open={pendingRemoval!==null} onOpenChange={open=>{if(!open)setPendingRemoval(null);}}
