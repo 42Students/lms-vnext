@@ -1,6 +1,6 @@
 # Chat-9 Projects admin/college breaker ledger (IIT Dharwad)
 
-Date: 2026-10-18. **Targeted inventory: 63 exported functions/route handlers/pages** across admin/college services; **not** the full Projects module. Chat-14 is explicitly the lead for `docs/audit/coverage/projects-ledger.md` and must merge this inventory into the full per-export ledger. Nothing in this file claims 90%+ branch coverage or passing integration tests.
+Date: 2026-10-18. **Targeted inventory: 64 exported functions/route handlers/pages** across admin/college services; **not** the full Projects module. Chat-14 is explicitly the lead for `docs/audit/coverage/projects-ledger.md` and must merge this inventory into the full per-export ledger. Nothing in this file claims 90%+ branch coverage or passing integration tests.
 
 **Evidence category**: PURE BEHAVIOR means a unit test directly calls the exported function with hostile values. SOURCE means an adversarial source/route invariant asserts scoped filters, locks, CSRF, archiving, notification dedupe etc.; database-backed role matrix, idempotency, stale-version and failure replay are **outstanding** for that entry, not implicitly waived. A row points to its related tests and has an honest unresolved item instead of a fake passed status.
 
@@ -78,3 +78,5 @@ Date: 2026-10-18. **Targeted inventory: 63 exported functions/route handlers/pag
 - Run `npm run typecheck`, `npm run lint`, `npx vitest run tests/unit/proj-break-chat9-*.test.ts` and connected DB suites. **Not executed here.**
 
 | `src/app/(authenticated)/admin/projects/workspaces/new/page.tsx` | `Page` | `PROJ-BREAK-ux-14` | SOURCE: college-scope guard, safe retry and denied state; browser outage/revocation journey pending |
+
+| `src/components/projects/super-admin-template-subview-page.tsx` | `SuperAdminTemplateSubviewPage` | `PROJ-BREAK-ux-15; PROJ-BREAK-scale-25` | SOURCE: 404 vs safe error fallback, history-page parser; server render/outage journey pending |
