@@ -102,4 +102,60 @@ describe("Super Admin UX first-third rollout",()=>{
   expect(page).toContain("No classes exist for this batch.");
   expect(page).toContain("<Breadcrumbs");
  });
+ it("UX-admin-colleges-01 preserves legacy routes with accessible layout",()=>{
+   const page=read("src/app/(authenticated)/admin/colleges/page.tsx");
+   expect(page).not.toContain("text-primary-text");
+   expect(page).not.toContain("min-h-10");
+   expect(page).not.toContain("<main");
+   expect(page).toContain("min-w-0");
+ });
+ it("UX-admin-colleges-collegeId-01 preserves legacy routes with accessible layout",()=>{
+   const page=read("src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx");
+   expect(page).not.toContain("text-primary-text");
+   expect(page).not.toContain("min-h-10");
+   expect(page).not.toContain("<main");
+   expect(page).toContain("min-w-0");
+ });
+ it("UX-admin-colleges-collegeId-branding-01 preserves legacy routes with accessible layout",()=>{
+   const page=read("src/app/(authenticated)/admin/colleges/[collegeId]/branding/page.tsx");
+   expect(page).not.toContain("text-primary-text");
+   expect(page).not.toContain("min-h-10");
+   expect(page).not.toContain("<main");
+   expect(page).toContain("min-w-0");
+ });
+ it("UX-admin-colleges-collegeId-readiness-01 preserves legacy routes with accessible layout",()=>{
+   const page=read("src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx");
+   expect(page).not.toContain("text-primary-text");
+   expect(page).not.toContain("min-h-10");
+   expect(page).not.toContain("<main");
+   expect(page).toContain("min-w-0");
+ });
+ it("UX-admin-colleges-collegeId-signin-01 preserves legacy routes with accessible layout",()=>{
+   const page=read("src/app/(authenticated)/admin/colleges/[collegeId]/signin/page.tsx");
+   expect(page).not.toContain("text-primary-text");
+   expect(page).not.toContain("min-h-10");
+   expect(page).not.toContain("<main");
+   expect(page).toContain("min-w-0");
+ });
+ it("UX-admin-colleges-collegeId-subdomain-01 preserves legacy routes with accessible layout",()=>{
+   const page=read("src/app/(authenticated)/admin/colleges/[collegeId]/subdomain/page.tsx");
+   expect(page).not.toContain("text-primary-text");
+   expect(page).not.toContain("min-h-10");
+   expect(page).not.toContain("<main");
+   expect(page).toContain("min-w-0");
+ });
+ it("UX-admin-colleges-collegeId-verification-01 preserves legacy routes with accessible layout",()=>{
+   const page=read("src/app/(authenticated)/admin/colleges/[collegeId]/verification/page.tsx");
+   expect(page).not.toContain("text-primary-text");
+   expect(page).not.toContain("min-h-10");
+   expect(page).not.toContain("<main");
+   expect(page).toContain("min-w-0");
+ });
+ it("UX-admin-companies-01 preserves legacy routes with accessible layout",()=>{
+   const page=read("src/app/(authenticated)/admin/companies/page.tsx");
+   expect(page).not.toContain("text-primary-text");
+   expect(page).not.toContain("min-h-10");
+   expect(page).not.toContain("<main");
+   expect(page).toContain("min-w-0");
+ });
 });
