@@ -12,6 +12,10 @@ import {
   type DataTableColumn,
 } from "@/components/ui/data-table";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Pagination } from "@/components/ui/pagination";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
@@ -23,6 +27,7 @@ const columns: DataTableColumn<PersonMembershipView>[] = [
   {
     key: "person",
     header: "Person",
+    mobilePriority: "primary",
     cell: (person) => (
       <div>
         <p className="m-0 font-semibold text-foreground">
@@ -62,6 +67,7 @@ const columns: DataTableColumn<PersonMembershipView>[] = [
   {
     key: "actions",
     header: <span className="sr-only">Actions</span>,
+    mobilePriority: "action",
     className: "text-right",
     cell: (person) => (
       <PersonMembershipActions
@@ -82,7 +88,7 @@ export default async function SuperAdminPeoplePage({
 }) {
   const { page: pageParam,q:rawQ,role:rawRole,status:rawStatus,pageSize:rawPageSize } = await searchParams;
   const q=(rawQ??"").trim().slice(0,100);
-  const role=["ALL","LEARNER","FACULTY","MENTOR","TPO","COLLEGE_ADMIN"].includes(rawRole??"ALL")?rawRole??"ALL":"ALL";
+  const role=["ALL","LEARNER","FACULTY","MENTOR","TPO","HR","COLLEGE_ADMIN"].includes(rawRole??"ALL")?rawRole??"ALL":"ALL";
   const status=["ALL","ACTIVE","SUSPENDED","ENDED"].includes(rawStatus??"ALL")?rawStatus??"ALL":"ALL";
   const pageSize=[10,20,50].includes(Number(rawPageSize))?Number(rawPageSize):10;
   const base=new URLSearchParams({...q?{q}:{},...role!=="ALL"?{role}:{},...status!=="ALL"?{status}:{},...(pageSize!==10?{pageSize:String(pageSize)}:{})});
@@ -93,7 +99,7 @@ export default async function SuperAdminPeoplePage({
 
   if (!collegeId) {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-6">
         <PageHeader
           eyebrow="Super Admin"
           title="People"
@@ -134,24 +140,24 @@ export default async function SuperAdminPeoplePage({
       <SuperAdminPeopleCsvControl href={superAdminPeopleExportHref({q,role,membershipStatus:status})} />
       <form method="get" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-4">
        <label className="grid gap-1 text-sm font-semibold">Search contacts
-        <input name="q" defaultValue={q} maxLength={100} placeholder="Search contacts..." className="min-h-11 rounded border border-border bg-background px-3"/>
+        <Input name="q" defaultValue={q} maxLength={100} placeholder="Search contacts..." className="min-h-11 rounded border border-border bg-background px-3"/>
        </label>
        <label className="grid gap-1 text-sm font-semibold">Role
-        <select name="role" defaultValue={role} className="min-h-11 rounded border border-border bg-background px-2">
+        <Select name="role" defaultValue={role} className="min-h-11 rounded border border-border bg-background px-2">
           {["ALL","LEARNER","FACULTY","MENTOR","TPO","HR","COLLEGE_ADMIN"].map(s=><option key={s} value={s}>{s}</option>)}
-        </select>
+        </Select>
        </label>
        <label className="grid gap-1 text-sm font-semibold">Status
-        <select name="status" defaultValue={status} className="min-h-11 rounded border border-border bg-background px-2">
+        <Select name="status" defaultValue={status} className="min-h-11 rounded border border-border bg-background px-2">
           {["ALL","ACTIVE","SUSPENDED","ENDED"].map(s=><option key={s} value={s}>{s}</option>)}
-        </select>
+        </Select>
        </label>
        <label className="grid gap-1 text-sm font-semibold">Rows per page
-        <select name="pageSize" defaultValue={pageSize} className="min-h-11 rounded border border-border bg-background px-2">
+        <Select name="pageSize" defaultValue={pageSize} className="min-h-11 rounded border border-border bg-background px-2">
           {[10,20,50].map(n=><option key={n} value={n}>{n}</option>)}
-        </select>
+        </Select>
        </label>
-       <button type="submit" className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-foreground">Search</button>
+       <Button type="submit">Search</Button>
        <Link href="/admin/people" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>
       </form>
       <p role="status" aria-live="polite" className="text-sm text-body">{people.pagination.total} matching contacts</p>
@@ -163,13 +169,8 @@ export default async function SuperAdminPeoplePage({
         rows={people.items}
         getRowKey={(person) => person.membership.id}
       />
-      <nav aria-label="People pages" className="flex flex-wrap items-center justify-between gap-4 text-sm">
-       <span>Page {pagination.page} of {pagination.pages} · {pagination.total} results</span>
-       <div className="flex gap-3">
-        {pagination.hasPrevious?<Link className="font-semibold text-[var(--lms-teal-deep)]" href={href(pagination.page-1)}>Previous</Link>:null}
-        {pagination.hasNext?<Link className="font-semibold text-[var(--lms-teal-deep)]" href={href(pagination.page+1)}>Next</Link>:null}
-       </div>
-      </nav>
+      <p className="text-sm text-muted-foreground">Page {pagination.page} of {pagination.pages} · {pagination.total} results</p>
+      <Pagination label="People pages" page={pagination.page} pageCount={pagination.pages} hrefForPage={href}/>
     </div>
   );
 }
