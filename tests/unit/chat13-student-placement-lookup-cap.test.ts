@@ -36,6 +36,7 @@ describe("SA-STUDENT-LOOKUP-CAP-01 truthful supervised placement lookup paging",
     expect(service).toContain(".limit(STUDENT_LOOKUP_CAP+1)");
     expect(service).toContain("capStudentLookupRows(people,STUDENT_LOOKUP_CAP).items.map");
     expect(service).toContain(".limit(STUDENT_LOOKUP_APPLICATION_CAP+1)");
+    expect(service).toContain(".orderBy(desc(placementApplications.submittedAt),desc(placementApplications.id),desc(placementOffers.id))");
     expect(service).toContain("capStudentLookupRows(rows,STUDENT_LOOKUP_APPLICATION_CAP)");
     expect(service).toContain("applications:applications.items");
     expect(service).toContain("truncated:applications.truncated");
