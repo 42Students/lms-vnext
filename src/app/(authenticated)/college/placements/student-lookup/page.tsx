@@ -4,7 +4,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {DataTable, type DataTableColumn} from "@/components/ui/data-table";
 import {lookupCollegeStudentPlacement} from "@/modules/placements/college-placement-student-lookup-service";
 type StudentApplication = NonNullable<Awaited<ReturnType<typeof lookupCollegeStudentPlacement>>>["students"][number]["applications"][number];
-const columns:DataTableColumn<StudentApplication>[]=[
+const columns:DataTableColumn<StudentApplication & {uiKey:string}>[]=[
   {key:"drive",header:"Company / drive",mobilePriority:"primary",cell:row=>row.company+" · "+row.job},
   {key:"application",header:"Application",cell:row=>row.applicationStatus},
   {key:"offer",header:"Offer",cell:row=>row.offerStatus??"None"},
