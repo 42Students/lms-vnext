@@ -17,10 +17,11 @@ export async function getMentorDeliveryVersion(context:RequestContext,raw:unknow
      !can(context,"projects.read",{
        collegeId:member.collegeId,organizationId:member.organizationId,
      }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  // Module-off must stop before any exact delivery/project enumeration.
+  if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const scope=await requireProjectReadAccess(context,params.projectId);
   if(scope.access!=="MENTOR"||scope.collegeId!==member.collegeId)
-    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
-  if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const [row]=await getDb().select({
     id:projectSubmissions.id,version:projectSubmissions.version,
