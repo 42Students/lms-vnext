@@ -197,7 +197,7 @@ export default async function CollegeReadinessPage({
         ))}
       </section>
 
-      <section aria-label="Must fix before launch" className="min-w-0 space-y-3 rounded-xl border border-border bg-surface p-5">
+      <section aria-label="Must fix before launch" className="min-w-0 space-y-3 border-t border-border pt-5">
         <h2 className="m-0 text-lg font-semibold text-foreground">Must fix before launch</h2>
         {mustFix.length===0
           ?<p role="status" className="text-sm text-body">All persisted readiness checks pass. Runtime DNS, login, teaching and placement verification are still required before launch.</p>
@@ -210,14 +210,14 @@ export default async function CollegeReadinessPage({
             </li>)}
           </ul>}
       </section>
-      <section aria-label="Recommended setup" className="rounded-xl border border-border bg-surface p-5">
+      <section aria-label="Recommended setup" className="border-t border-border pt-5">
         <h2 className="m-0 text-lg font-semibold text-foreground">Recommended setup</h2>
         {recommended.length?<ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-body">
           {recommended.map(item=><li key={item}>{item}</li>)}
         </ul>:<p role="status" className="mt-2 text-sm text-body">No additional configuration suggestions were detected from the two optional persisted sources.</p>}
         <p className="mt-2 text-xs text-muted-foreground">These suggestions are not extra checklist pass criteria. A runtime launch decision still requires separate operational verification.</p>
       </section>
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="border-t border-border pt-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="m-0 text-lg font-semibold text-foreground">
             Go-live checks
@@ -299,7 +299,7 @@ export default async function CollegeReadinessPage({
         </ol>
       </section>
 
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="border-t border-border pt-5">
         <h2 className="m-0 text-lg font-semibold text-foreground">
           Additional setup evidence
         </h2>
@@ -341,7 +341,7 @@ export default async function CollegeReadinessPage({
         </dl>
       </section>
 
-      <section className="rounded-xl border border-border bg-surface-subtle p-5">
+      <section className="border-t border-border pt-5">
         <h2 className="m-0 text-base font-semibold text-foreground">
           Readiness interpretation
         </h2>
