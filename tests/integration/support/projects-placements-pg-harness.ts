@@ -108,7 +108,7 @@ export async function withProjectPg<T>(pool: Pool, action: (db: PgHarness) => Pr
       },
       async expectSqlState(operation: () => Promise<unknown>, code: string) {
         let failed = false;
-        await this.savepoint(async () => {
+        await db.savepoint(async () => {
           try { await operation(); } catch (error) {
             failed = true;
             if ((error as {code?: string}).code !== code) {
@@ -265,6 +265,19 @@ export async function createFinalSubmission(db: PgHarness, project: ProjectFixtu
     values ($1,1,'DRAFT','Harness final proof',$2) returning id`,
     [project.projectId,learner.membershipId]);
   return row!.id;
+}
+/** Move a draft final submission into the persisted SUBMITTED shape.
+ * Deliberately uses the same actor membership as submission, not client time.
+ */
+export async function submitFinalSubmission(db: PgHarness, submissionId: string,
+  learner: PrincipalFixture): Promise<void> {
+  if (!learner.membershipId) throw new Error("PROJ-HARNESS: submission needs learner membership");
+  const rows = await db.query<{id:string}>(`
+    update project_submissions
+       set status='SUBMITTED',submitted_by_membership_id=$2,submitted_at=now(),updated_at=now()
+     where id=$1 and status='DRAFT'
+     returning id`, [submissionId,learner.membershipId]);
+  if (rows.length !== 1) throw new Error("PROJ-HARNESS: expected one draft final submission");
 }
 export async function createMeeting(db: PgHarness, project: ProjectFixture,
   learner: PrincipalFixture, author: PrincipalFixture): Promise<string> {

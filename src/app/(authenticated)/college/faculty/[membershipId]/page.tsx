@@ -1,3 +1,4 @@
+import {DataTable} from "@/components/ui/data-table";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -69,23 +70,15 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
       </p>
       {data.assignments.length === 0
         ? <p className="mt-4 text-sm text-muted-foreground">No college-scoped teaching assignments recorded.</p>
-        : <div className="mt-4 overflow-x-auto overscroll-x-contain"><table className="w-full min-w-[42rem] text-left text-sm [&_th:first-child]:sticky [&_th:first-child]:left-0 [&_th:first-child]:z-10 [&_th:first-child]:bg-surface [&_td:first-child]:sticky [&_td:first-child]:left-0 [&_td:first-child]:z-10 [&_td:first-child]:bg-surface">
-          <thead className="bg-muted"><tr>
-            <th scope="col" className="p-3">Course</th>
-            <th scope="col" className="p-3">Class / cohort</th>
-            <th scope="col" className="p-3">Role</th>
-            <th scope="col" className="p-3">Status</th>
-          </tr></thead>
-          <tbody>{data.assignments.map(item => <tr key={item.id} className="border-t border-border">
-            <td className="p-3"><Link href={`/college/courses/offerings/${item.offeringId}`}
-              className="font-semibold text-[var(--lms-teal-deep)] hover:underline">
-              {item.courseName} ({item.courseCode})
-            </Link></td>
-            <td className="p-3">{item.sectionName} · {item.cohortName} · {item.periodName}</td>
-            <td className="p-3">{item.role}</td>
-            <td className="p-3">{item.status}</td>
-          </tr>)}</tbody>
-        </table></div>}
+        : <div className="mt-4"><DataTable rows={data.assignments} getRowKey={item=>item.id}
+            caption="Faculty teaching assignments"
+            columns={[
+              {key:"course",header:"Course",mobilePriority:"primary",cell:item=><Link href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">{item.courseName} ({item.courseCode})</Link>},
+              {key:"class",header:"Class / cohort",mobilePriority:"secondary",cell:item=>item.sectionName+" · "+item.cohortName+" · "+item.periodName},
+              {key:"role",header:"Role",mobilePriority:"secondary",cell:item=>item.role},
+              {key:"status",header:"Status",mobilePriority:"secondary",cell:item=>item.status},
+            ]}
+            empty={<p className="text-sm text-muted-foreground">No college-scoped teaching assignments recorded.</p>}/></div>}
       {data.truncated ? <p className="mt-3 text-sm text-muted-foreground">
         Showing the first 100 matching assignment rows; summary totals include all assignment states.
       </p> : null}
