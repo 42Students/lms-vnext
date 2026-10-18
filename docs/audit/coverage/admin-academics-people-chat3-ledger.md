@@ -51,6 +51,11 @@ Snapshot: 2026-10-18, source branch `chatgpt/chat-3-b`. Role-journal and code-ba
 - `/admin/academics` and `/admin/people` now assert the active platform `SUPER_ADMIN` role immediately after obtaining the request context, **before** reading the academic workspace or college membership directory. Their selected-college prompt remains visible to authorized Super Admins without a selected college.
 - `tests/unit/chat3-sa-academics-people-root-platform-roles.test.ts` checks the ordering of the role guard relative to data reads and the actual `isSuperAdmin` permission behavior against Faculty, Mentor, Learner, College Admin, disabled and legitimate Super Admin contexts. Cloud CI and full authenticated browser routing remain outstanding.
 
+## SA-PEOPLE-ROOT-02 — Faculty assignments and People read-only root privilege
+
+- `/admin/faculty-assignment`, `/admin/people/directory`, and `/admin/people/unassigned` now explicitly reject active non-Super-Admin users before loading Faculty assignments, membership contact lists, or global unassigned identities. This supplements their service-layer checks and prevents a stale `adminScope` from turning generic academic reads into platform-admin pages.
+- `tests/unit/chat3-sa-academics-people-root-platform-roles.test.ts` includes `SA-PEOPLE-ROOT-02`, covering the preflight guard ordering relative to each service call. Cloud CI and browser role-switch tests remain necessary.
+
 ## Targeted repairs and further release gates
 
 - `COL-people-24`: exact legacy mentor-reassignment confirmation description restored at `src/components/projects/project-admin-reassign-mentor-page.tsx`; must rerun its failing test, and real keyboard/retry browser checks remain.
