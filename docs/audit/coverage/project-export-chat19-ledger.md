@@ -36,3 +36,9 @@ PostgreSQL concurrent team creation, persisted membership revocation and live br
 | PROJ-BREAK-BRIEF-01 | `PROJECT_TASK_COMMENT_KINDS`, `PROJECT_TASK_COMMENT_KIND_LABELS`, `projectTaskCommentKindLabel` in `task-comment-kind-staged.ts` | Same test | Persisted taxonomy, exact label mapping, unknown comment kinds excluded |
 
 These plug direct behavioral test gaps in the previous generated weak-areas snapshot. They are not substitutes for real database mutations, authorization, concurrency, browser or user acceptance.
+
+## Classroom team export adversarial review
+
+| ID | Source | Unit behavior | Browser/DB acceptance |
+|---|---|---|---|
+| PROJ-BREAK-TEAM-CSV-02 | `exportClassTeamsCsv` | `tests/unit/PROJ-BREAK-chat19-class-team-csv-unicode.test.ts`: invisible Unicode formula prefixes; malicious roll labels; quoted formulas; strict supplied roster only; no extra row lookup/mutation | Spreadsheet import execution and actual class-roster authorization remain integration checks |
