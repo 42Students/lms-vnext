@@ -8,7 +8,7 @@ export function TpoReportRecordLinks({
  companies:readonly TpoReportRecordLinkRow[];
 }){
  const data=projectTpoReportRecordLinks(drives,companies,kind);
- return <section aria-label="Report record drill-down" className="rounded-xl border border-border bg-surface p-5">
+ return <section aria-label="Report record drill-down" className="border-t border-border pt-5">
   <h2 className="font-semibold text-foreground">Open the underlying records</h2>
   <p className="mt-2 text-sm leading-6 text-body">Links open college-scoped recorded
    drives and company history. Company pages cover all seasons, not only this report filter.
