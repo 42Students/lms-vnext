@@ -5,7 +5,7 @@ import {collegeMemberships,placementApplications,placementJobRounds,placementJob
 import type {RequestContext} from "@/modules/identity/context";
 import {PlacementsServiceError} from "./errors";
 import {applyPlacementRoundResult} from "./result-service";
-import {requireTpoJobCollege} from "./tpo-job-write-base";
+import {requireTpoJobCollege,requireTpoJobActor} from "./tpo-job-write-base";
 import {placementJobIdSchema,placementRoundIdSchema} from "./validation";
 import {roundApplyInputSchema,roundApplyPreviewToken,summarizeRoundApply,roundApplyFailureReason} from "./tpo-round-apply-model";
 
