@@ -113,3 +113,17 @@ describe("chat-5 placement selection accessibility and recovery",()=>{
   expect(page).toContain("inline-flex min-h-11 items-center");
  });
 });
+
+describe("chat-5: report mobile overlay scroll",()=>{
+ it("UX-PLACEMENTS-REPORT-SCROLL-27 exposes keyboard, cue and safe-area for both report pickers",()=>{
+  const markup=source("src/components/placements/report-interactive-table.tsx");
+  expect(markup).toContain('aria-label="Report column filters, scroll for more"');
+  expect(markup).toContain('aria-label="Report columns, scroll for more"');
+  expect(markup.split("overscroll-contain").length-1).toBeGreaterThanOrEqual(2);
+  expect(markup.split("mask-image:linear-gradient(to_bottom").length-1).toBeGreaterThanOrEqual(2);
+  expect(markup.split("tabIndex={0}").length-1).toBeGreaterThanOrEqual(2);
+  expect(markup).toContain("safe-area-inset-bottom");
+  expect(markup).toContain('disclosure?.querySelector("summary")?.focus()');
+  expect(markup).toContain("<DataTable");
+ });
+});
