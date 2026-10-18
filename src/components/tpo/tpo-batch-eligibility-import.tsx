@@ -15,6 +15,8 @@ type Preview={rows:ImportRow[];ready:number;skipped:number;preview:{
 }[]};
 export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
  const fileInput=useRef<HTMLInputElement>(null);
+ // Synchronous lock prevents double submits before a React busy-state render.
+ const actionInFlight=useRef(false);
  const [importOpen,setImportOpen]=useState(false);
  const router=useRouter(),[csv,setCsv]=useState("studentCode,decision,reason\n");
  const [preview,setPreview]=useState<Preview|null>(null);
@@ -28,7 +30,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
  const [discardPending,setDiscardPending]=useState(false);
  const unresolved=preview?.preview.filter((row,index)=>row.status==="unusable"&&!skippedByUser.includes(index)).length??0;
  async function chooseFile(file:File|null){
-  if(!file)return;
+  if(!file||actionInFlight.current)return;
   setError("");setPreview(null);setNotice("");setLastActionId(null);setPreviewPage(1);setAcknowledged(false);setChosenName("");
   if(!file.name.toLowerCase().endsWith(".csv")) {
     setError("Choose a CSV export of the spreadsheet (.csv).");return;
@@ -38,7 +40,8 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
   catch{setError("Unable to read the selected CSV file.");}
  }
  async function previewChanges(){
-  if(busy)return;setBusy(true);setError("");setNotice("");setPreview(null);setSkippedByUser([]);setAcknowledged(false);
+  if(busy||actionInFlight.current)return;
+  actionInFlight.current=true;setBusy(true);setError("");setNotice("");setPreview(null);setSkippedByUser([]);setAcknowledged(false);
   try{
    const rows=parseTpoEligibilitySheetCsv(csv);
    const value=await apiFetch<Preview>("/api/placements/tpo/batches/"+encodeURIComponent(batchId)+"/import-preview",{
@@ -47,7 +50,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
    setPreview(value);setPreviewPage(1);
   }catch(e){setError(e instanceof FriendlyFetchError&&e.status===409?
     "This changed while you were working. Your import is still here; preview it again.":
-    e instanceof Error?e.message:friendlyApiError({}));}finally{setBusy(false);}
+    e instanceof FriendlyFetchError?e.message:friendlyApiError({}));}finally{actionInFlight.current=false;setBusy(false);}
  }
  async function copyPreview(){
   if(!preview||busy)return;
@@ -57,13 +60,13 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
   }catch{setError("Could not copy this preview. Review the result list instead.");}
  }
  async function commit(){
-  if(!preview||preview.ready===0||busy||!acknowledged)return;
+  if(!preview||preview.ready===0||busy||actionInFlight.current||!acknowledged)return;
   if(unresolved>0){setError(unresolved+" row(s) need attention before you can confirm. Pick a suggestion or skip the row.");return;}
   const selections=preview.preview.map((row,index)=>({row,index}))
     .filter(item=>!skippedByUser.includes(item.index));
   const selected=selections.filter(item=>item.row.status==="matched");
   if(!selected.length){setError("Select at least one matched row to import.");return;}
-  setBusy(true);setError("");setNotice("");
+  actionInFlight.current=true;setBusy(true);setError("");setNotice("");
   try{
    const versions=Object.fromEntries(selected.filter(({row})=>row.membershipId&&row.expectedVersion)
     .map(({row})=>[row.membershipId!,row.expectedVersion!]));
@@ -76,8 +79,8 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
    setPreview(null);setAcknowledged(false);router.refresh();
   }catch(e){setError(e instanceof FriendlyFetchError&&e.status===409?
     "This changed while you were working. Your import is still here; preview it again.":
-    e instanceof Error?e.message:friendlyApiError({}));}
-  finally{setBusy(false);}
+    e instanceof FriendlyFetchError?e.message:friendlyApiError({}));}
+  finally{actionInFlight.current=false;setBusy(false);}
  }
  return <section className="min-w-0 space-y-3 rounded-lg border border-border bg-surface p-4">
   <h2 className="font-semibold">Import eligibility</h2>
