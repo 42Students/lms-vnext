@@ -26,7 +26,10 @@ describe("chat-16 Round 3 canonical gap queue reconciliation",()=>{
  it("the 32 originally reassigned IDs remain one-to-one with the central register after review",()=>{
   const queue=read("docs/orchestrator/queues/gap-closure-chat-16.md");
   const register=read("docs/audit/gap-register.md");
-  const ids=queue.split("\n").flatMap(line=>{
+  // The first queue section is the original 32-gap rebalance. Appended
+  // work rounds may contain more gap IDs without invalidating its inventory.
+  const initialQueue=queue.split("## Chat-16 reassigned round checkpoints",1)[0]!;
+  const ids=initialQueue.split("\n").flatMap(line=>{
    const hit=line.match(/^- ((?:MEN-projects-meetings|SA-placements-projects)-\d+) \(S[1-4]\) — (DONE|NOT-A-GAP|BLOCKED)$/);
    return hit?[hit[1]!]:[];
   });
