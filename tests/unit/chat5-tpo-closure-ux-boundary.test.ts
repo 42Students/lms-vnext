@@ -24,6 +24,20 @@ describe("chat-5 TPO drive closure and correction journeys",()=>{
   expect(service).toContain("endDriveApplicants(");
   expect(service).toContain("tellRecruiterDriveStopped(");
  });
+ it("PLACEMENTS-DRIVE-STOP-REQUEST-47 never leaves accepted-offer withdrawal requests pending on closure or cancellation",()=>{
+  const source=src("src/modules/placements/tpo-drive-stop-effects.ts");
+  expect(source).toContain('const decision=protectedOffer?"REJECTED":"APPROVED"');
+  expect(source).toContain('const note=protectedOffer?rejectedNote:approvedNote');
+  expect(source).toContain('if(!protectedOffer&&entry.applicationStatus==="SUBMITTED")');
+  expect(source).toContain("if(protectedOffer)rejected++;else approved++");
+  expect(source).toContain("withdrawalsApproved:approved,withdrawalsRejected:rejected");
+  expect(source).toContain("Check Requests for the decision.");
+  expect(source).not.toContain("if(acceptedIds.has(entry.applicationId))continue");
+  expect(src("src/modules/placements/tpo-drive-cancel-service.ts"))
+    .toContain('settleDriveWithdrawalRequests(');
+  expect(src("src/modules/placements/tpo-drive-close-preview-service.ts"))
+    .toContain('settleDriveWithdrawalRequests(');
+ });
  it("PLACEMENTS-CANCEL-SEASON-40 uses a shared season lock after the exclusive job mutex",()=>{
   const service=src("src/modules/placements/tpo-drive-cancel-service.ts");
   const mutation=service.slice(service.indexOf("export async function cancelTpoDriveWithPreview"));
