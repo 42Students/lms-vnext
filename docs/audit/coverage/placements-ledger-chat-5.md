@@ -118,3 +118,19 @@ The central project ledger is managed by chat-14, so chat-5's narrowly scoped TP
 - Both reconciliation paths in `offerToNextWaitlisted` now lock the promotion row (`FOR UPDATE`) before deciding; a second waiter on an already released *same* canonical offer returns successfully without updating `releasedAt` or appending another audit.
 - **Test:** `tests/unit/chat5-waitlist-settlement-race.test.ts` validates the state/action matrix and transaction source ordering. **Execution pending.**
 - **Still S1 release blocked:** the reservation, canonical offer issuance and settlement are different database transactions. These changes do not make that workflow crash-atomic or guarantee offer capacity under every mixed issuer. PostgreSQL chaos/retry tests and an outbox/transaction redesign may still be necessary.
+
+
+## Further TPO second-third workflow coverage (model behaviour)
+
+`tests/unit/chat5-tpo-second-third-remaining-workflows.test.ts` adds executable model assertions, complementing existing source audits:
+
+| Cases | Concrete boundary | Covered states / preserved UX |
+|---|---|---|
+| PLACEMENTS-CLOSE-SM-02/03 | `evaluateTpoDriveClosure`, `tpoDriveCloseSchema`; `/tpo/placements/jobs/[jobId]/close-preview` | PUBLISHED+ACTIVE only, unreleased selections block closure, stale counts and invalid dates reject; blocked copy identifies selections/offers rather than hiding the action. |
+| PLACEMENTS-LETTERS-01 / TPO-2ND-PAGE-letters-02 | `projectOfferLetterEvidence`; letters page | Evidence is persisted offer status/date only, never invented letter-issued or acknowledged state; TPO, permission and college checks; explicit no-storage message and empty table. |
+| PLACEMENTS-SHARE-PREVIEW-01/02 | `projectRecruiterVisibleShortlist`, `tpoShareableShortlistQuerySchema`, `tpoShareableShortlistCsv` | Three approved identity fields only, formula-neutralized CSV, explicit 500-row cap, malformed/oversized query denied. |
+| TPO-2ND-PAGE-share-preview-03 | Shortlist share-preview page | Role and scoped service, read-only warning, separate independently paginated actual company shares, empty state and no claimed delivery. |
+| PLACEMENTS-SHORTLIST-01 | `projectTpoShortlist`, `tpoShortlistQuerySchema`, `tpoShortlistCsv` | Empty names/roll/time stay unknown; invalid page rejected; dates drawn only from persisted decision. |
+| PLACEMENTS-SHARE-PAGE-01/02 | `recoverCompanyShareLinkPage`, `clampCompanyShareLinksPage`, `companySharePreviewSearchState`, `prependCompanyShareLink` | Independent link history pagination, invalid query recovery, cap 25, deduplicated newly issued share. |
+
+**Remaining:** routes' live 401/403/404/error and mobile browser states, correlated POST route actual origin checks, and PostgreSQL shared-link history/read isolation must run before closing this TPO page group.
