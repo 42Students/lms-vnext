@@ -23,18 +23,18 @@ export default async function TpoPlacementsOverviewPage() {
         actions={
           <div className="flex flex-wrap gap-2">
             <Link href="/tpo/placements/lifecycle"
-              className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground">
+              className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[9px] border border-border bg-surface px-3 text-sm font-semibold text-foreground">
               Drive lifecycle
             </Link>
             <Link
               href="/tpo/placements/schedule-conflicts"
-              className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground"
+              className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[9px] border border-border bg-surface px-3 text-sm font-semibold text-foreground"
             >
               Review schedule conflicts
             </Link>
             <Link
               href="/tpo/placements/new"
-              className="inline-flex min-h-11 items-center justify-center rounded-[9px] border border-primary bg-primary px-3 text-sm font-semibold transition hover:border-primary-hover hover:bg-primary-hover text-primary-foreground"
+              className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[9px] border border-primary bg-primary px-3 text-sm font-semibold transition hover:border-primary-hover hover:bg-primary-hover text-primary-foreground"
             >
               New opportunity
             </Link>
