@@ -14,14 +14,15 @@ export function tpoStudentClipboardTsv(rows:readonly TpoStudentRow[]):string{
 }
 export function matchTpoStudentRolls(rows:readonly TpoStudentRow[],raw:string){
  const wanted=[...new Set(raw.split(/[\s,;]+/).map(x=>x.trim()).filter(Boolean))].slice(0,1000);
+ // Duplicate roll/registration numbers are ambiguous. Never silently choose
+ // the last membership in a multi-learner import or bulk action.
  const lookup=new Map<string,string|null>();
  for(const row of rows){
-  for(const key of new Set([row.rollNumber,row.registrationNumber].filter(
-   (value):value is string=>Boolean(value)).map(value=>value.trim().toLowerCase()))){
-   // Duplicate roll identifiers are ambiguous; never select the last learner.
-   const existing=lookup.get(key);
-   lookup.set(key,existing===undefined?row.membershipId:
-    existing===row.membershipId?existing:null);
+  for(const value of [row.rollNumber,row.registrationNumber]){
+   if(!value?.trim())continue;
+   const key=value.trim().toLowerCase();
+   if(lookup.has(key)&&lookup.get(key)!==row.membershipId)lookup.set(key,null);
+   else if(!lookup.has(key))lookup.set(key,row.membershipId);
   }
  }
  const found:string[]=[],missing:string[]=[];
