@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { Pool } from "pg";
 import {
-  createPlacementCandidateFixture, createPlacementFixture, createPrincipal,
+  createPlacementCandidateFixture, createPlacementFixture, createRecruiterFixture, createPrincipal,
   createTenant, newHarnessPool, withProjectPg,
   type PgHarness,
 } from "./support/projects-placements-pg-harness";
@@ -66,6 +66,41 @@ describe("PROJ-HARNESS-PLACEMENTS canonical real PostgreSQL fixtures", () => {
       expect(rows[0]?.n).toBe(1);
     });
   });
+  it("PROJ-HARNESS-RECRUITER-22 company-bound verified recruiter grant is not a college membership",async()=>{
+    await withPlacementCase(async({db,actor,drive,tenant})=>{
+      const recruiter=await createRecruiterFixture(db,drive,actor);
+      const rows=await db.query<{
+        status:string;verification_status:string;company_id:string;college_id:string;
+        valid:boolean;membership_count:number;
+      }>(`
+        select grant.status,grant.verification_status,profile.company_id,
+          rel.college_id,grant.valid_until>now() as valid,
+          (select count(*)::int from college_memberships cm where cm.user_id=profile.user_id)
+            as membership_count
+        from placement_recruiter_college_grants grant
+        join placement_recruiter_profiles profile on profile.user_id=grant.recruiter_user_id
+        join placement_company_relationships rel on rel.id=grant.company_relationship_id
+        where grant.id=$1`,[recruiter.grantId]);
+      expect(rows).toMatchObject([{
+        status:"ACTIVE",verification_status:"VERIFIED",
+        company_id:drive.companyId,college_id:tenant.collegeId,
+        valid:true,membership_count:0,
+      }]);
+    });
+  });
+  it("PROJ-HARNESS-RECRUITER-23 wrong-college coordinator cannot issue an HR grant",async()=>{
+    await withPlacementCase(async({db,outsiderTenant,drive})=>{
+      const foreignAdmin=await createPrincipal(db,outsiderTenant,["COLLEGE_ADMIN"]);
+      const before=await db.query<{n:number}>(`
+        select count(*)::int n from placement_recruiter_college_grants`);
+      await expect(createRecruiterFixture(db,drive,foreignAdmin))
+        .rejects.toThrow(/actor role or college|active member/);
+      const after=await db.query<{n:number}>(`
+        select count(*)::int n from placement_recruiter_college_grants`);
+      expect(after[0]?.n).toBe(before[0]?.n);
+    });
+  });
+
   it("PROJ-HARNESS-PLACEMENTS-03 application and screening enforce one candidate per drive and decision shape",async()=>{
     await withPlacementCase(async({db,learner,drive,candidate})=>{
       await db.expectSqlState(()=>db.query(`

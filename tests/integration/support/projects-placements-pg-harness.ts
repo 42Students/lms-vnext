@@ -34,6 +34,9 @@ export type ProjectFixture = {
 export type PlacementFixture = {
   companyId: string; relationshipId: string; seasonId: string; driveId: string; jobId: string; roundId: string; roleOptionId: string;
 };
+export type RecruiterFixture = {
+  userId: string; companyId: string; relationshipId: string; grantId: string;
+};
 
 const REQUIRED_TABLES = [
   "organizations","colleges","users","college_memberships","membership_roles","system_roles",
@@ -41,7 +44,8 @@ const REQUIRED_TABLES = [
   "project_instances","project_releases","project_sprints","project_tasks","project_resources",
   "project_members","project_task_submissions","project_submissions","project_delivery_events",
   "project_submission_reviews","project_evaluations","project_evaluation_items","project_meetings",
-  "placement_companies","placement_company_relationships","placement_seasons","placement_jobs","placement_job_role_options","placement_job_rounds",
+  "placement_companies","placement_company_relationships","placement_recruiter_profiles",
+  "placement_recruiter_college_grants","placement_seasons","placement_jobs","placement_job_role_options","placement_job_rounds",
   "placement_applications","placement_application_screenings","placement_round_results",
   "placement_offers","placement_joining_outcomes",
 ] as const;
@@ -531,6 +535,37 @@ export type PlacementCandidateFixture = {
   roundResultId: string;
   offerId: string;
 };
+
+/** Real HR/recruiter identity: NOT a fabricated COLLEGE_ADMIN membership.
+ * A recruiter is a global user with a company profile and a bounded,
+ * verified relationship grant, which downstream service tests must re-read.
+ */
+export async function createRecruiterFixture(
+  db: PgHarness, drive: PlacementFixture, actor: PrincipalFixture,
+): Promise<RecruiterFixture> {
+  const [row]=await db.query<{college_id:string;relationship_id:string;company_id:string}>(`
+    select j.college_id,rel.id as relationship_id,rel.company_id
+      from placement_jobs j
+      join placement_company_relationships rel
+        on rel.id=j.company_relationship_id and rel.college_id=j.college_id
+     where j.id=$1`,[drive.jobId]);
+  if (!row || row.company_id!==drive.companyId || row.relationship_id!==drive.relationshipId)
+    throw new Error("PROJ-HARNESS: recruiter company relationship does not match drive");
+  await requireFixtureCollegePrincipal(db,row.college_id,actor,["COLLEGE_ADMIN","TPO"]);
+  const user=await createPrincipal(db,null);
+  await db.query(`
+    insert into placement_recruiter_profiles(user_id,company_id,created_by_user_id)
+    values ($1,$2,$3)`,[user.userId,row.company_id,actor.userId]);
+  const [grant]=await db.query<{id:string}>(`
+    insert into placement_recruiter_college_grants
+      (recruiter_user_id,company_relationship_id,granted_by_user_id,valid_until,
+       verification_status,capabilities)
+    values ($1,$2,$3,'2099-12-31T23:59:00Z','VERIFIED',
+      ARRAY['DRIVES','INTERVIEWS','MESSAGES','APPLICANT_EXPORT']::text[]) returning id`,
+    [user.userId,row.relationship_id,actor.userId]);
+  return {userId:user.userId,companyId:row.company_id,
+    relationshipId:row.relationship_id,grantId:grant!.id};
+}
 
 export async function createPlacementCandidateFixture(
   db: PgHarness, drive: PlacementFixture, learner: PrincipalFixture,
