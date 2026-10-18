@@ -59,3 +59,15 @@ The lane brief explicitly says the builder cannot execute TypeScript, Vitest or 
 40. /tpo/placements/jobs/[jobId]/about
 41. /tpo/placements/jobs/[jobId]/applicants
 42. /tpo/placements/jobs/[jobId]/applicants-pipeline
+
+## Continuation — all remaining source-level UX work (2026-10-18)
+
+The lane re-reviewed **all 42 assigned routes** and continued beyond the initial source sweep. It retained the original seven canonical redirect routes and the delegated workspaces instead of cloning UI. The follow-up upgraded **15 distinct additional route files** (some routes received several focused improvements):
+
+- Shared Input, Select, Button, Textarea and PageHeader replaced local form/header patterns on announcement, audit, batch roster, calendars, company directory, applicant pipeline, drive day, follow-ups and messages surfaces. Filter name/default/GET semantics, hidden scope parameters and legacy strings were preserved.
+- New shared DataTables: contact log (1), company directory (1), company drive+offer history (2), messages inbox (1), placement drive about branch+role packages (2). These **7 additional instances** plus the first-pass actor audit and no-show report are **9 audited DataTable instances** across this slice; each supplies explicit caller-owned empty text, with visible mobile actions and detail access.
+- Removed forced new-tab handling from announcements' safe notice and HTTPS CTA links so native WebView navigation stays in-app and Back navigation works. Existing CTA copy and URL validation remain unchanged.
+- Added **19 more route-specific source tests** named `UX-tpo-*-04/05.test.ts`. The connected GitHub tree confirms **72 total UX-tpo source test files** on this branch, together with all previous 42 route-specific notes.
+- Audited the first 42 page sources again for `target="_blank"`, direct `window.open/history.back`, native fixed-width `<table>` and problematic small tap targets. The page-level sources have **zero occurrences of these patterns** at this source review (shared child components must still undergo their own device audit).
+
+**Orchestrator acceptance gate remains open.** GitHub only exposes the source and branch status here; no local checked-out project or runnable Vitest/Next toolchain is mounted. The 72 source tests, typecheck, lint, native WebView, screen reader and 320/360/390px browser checks have **not** been executed by this builder. The page list remains deliberately unchecked under the lane's explicit rule: tick only when the tests actually pass. The source scope is complete; do not interpret these source assertions as runtime acceptance.
