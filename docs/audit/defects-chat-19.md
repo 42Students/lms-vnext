@@ -187,3 +187,11 @@ Cloud verification of the newly authored service mocks is pending a post-merge C
 | PROJ-BREAK-COLLEGE-LOCK-01 | COVERAGE | `src/modules/projects/admin-submission-lock-policy.ts` | Exercised membership FK actor policy for active College Admin, disabled/suspended, wrong org/college, TPO, learner, recruiter grants and Super Admin acting-college denial. No source defect identified. | `f14fbeb2` | `tests/unit/PROJ-BREAK-chat19-admin-delivery-lock-role.test.ts` |
 
 The new planner guard is a source change; browser and PostgreSQL verification remain orchestrator gates.
+
+## Unowned TPO Drive Day responsive roster spillover
+
+| ID | Pre-fix severity | Affected surface | Defect and source correction | Commit | Behavioral regression |
+|---|---|---|---|---|---|
+| UX-SPILL-TPO-ROUND-01 | MAJOR | `src/components/placements/tpo-round-drive-day-read-only.tsx` — `Round applicant roster` | The critical check-in/result controls were inside a 46rem horizontally scrollable table, inaccessible at phone width without horizontal navigation. Converted to the shared `DataTable` with mobile identity and roll number and always-visible attendance and result action cells. Preserved status, eligibility, empty copy, audit warnings and server-controlled mutations; mobile controls are not hidden in `More details`. | `a0ed8a36` | `tests/unit/UX-SPILL-chat19-tpo-round-drive-day-responsive.test.tsx` (`2a27820d`) |
+
+This is an independent unowned responsive UX pickup for the critical TPO/HR placement workflow. A real 320/360/390px screen-reader/browser pass remains an acceptance gate; SSR test validates emitted controls and no wide-table requirement.
