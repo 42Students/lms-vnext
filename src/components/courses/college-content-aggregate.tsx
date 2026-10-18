@@ -3,6 +3,7 @@ import {lessonContentOrderRuntimeEnabled} from "@/modules/courses/lesson-content
 import { COLLEGE_COURSE_TAB_COPY } from "@/modules/courses/college-course-tabs-copy";
 import { CollegeStudentVisibilityControl } from "./college-student-visibility-control";
 import { PageHeader } from "@/components/ui/page-header";
+import { DataTable } from "@/components/ui/data-table";
 import {CollegeContentCsvExport} from "./college-content-csv-export";
 import {CollegeContentPreview} from "./college-content-preview";
 import {
@@ -208,54 +209,50 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
                 </article>
               ))}
             </div>
-            <div className="hidden overflow-x-auto sm:block">
-              <table className="w-full min-w-[50rem] text-left text-sm">
-            <thead className="bg-muted text-muted-foreground">
-              <tr>
-                <th scope="col" className="px-4 py-3">Content</th>
-                <th scope="col" className="px-4 py-3">Course / cohort</th>
-                <th scope="col" className="px-4 py-3">Lesson / learning path</th>
-                {!videos?<th scope="col" className="px-4 py-3">Materials</th>:null}
-                <th scope="col" className="px-4 py-3">Scope</th>
-                <th scope="col" className="px-4 py-3">State</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.items.map((item) => (
-                <tr key={item.id} className="border-t border-border align-top">
-                  <td className="px-4 py-4">
-                    <p className="font-semibold text-foreground">{item.title}</p>
-                     <CollegeContentPreview data={{title:item.title,course:item.courseName,lesson:item.lessonName,
-                      type:item.contentType,status:item.status,scope:collegeContentScopeLabel(item.deliveryId),
-                      visible:item.visibleToStudents,details:videos?collegeContentDuration(item.durationSeconds):
-                       "Materials: "+(item.materialsCount??"Unavailable")}}/>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      {item.contentType}{videos ? " · " + collegeContentDuration(item.durationSeconds) : ""}
-                    </p>
-                  </td>
-                  <td className="px-4 py-4">
-                    <Link href={"/college/courses/offerings/" + encodeURIComponent(item.offeringId)}
-                      className="font-semibold text-primary-text hover:underline">
-                      {item.courseName} ({item.courseCode})
-                    </Link>
-                    <p className="mt-1 text-xs text-muted-foreground">{item.cohortName} · {item.periodName}</p>
-                  </td>
-                  <td className="px-4 py-4 text-body">
-                    {item.lessonName}
-                    <p className="mt-1 text-xs text-muted-foreground">{item.learningPathTitle} ({item.learningPathStatus})</p>
-                  </td>
-                  {!videos?<td className="px-4 py-4 text-body">{item.materialsCount===null?"—":item.materialsCount}</td>:null}
-                  <td className="px-4 py-4 text-body">
-                    {collegeContentScopeLabel(item.deliveryId)}
-                    <p className="mt-1 text-xs">{item.visibleToStudents ? "Visible to students" : "Hidden from students"}</p>
-                  </td>
-                  <td className="px-4 py-4 text-body">{item.status}
-                    {item.status !== "ARCHIVED" ? <CollegeStudentVisibilityControl contentId={item.id} initialVisible={item.visibleToStudents} initialUpdatedAt={item.updatedAt.toISOString()} /> : null}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-              </table>
+            <div className="hidden min-w-0 sm:block">
+              <DataTable
+                caption={title+" catalogue"}
+                rows={data.items}
+                getRowKey={item=>item.id}
+                empty={<p className="p-4 text-sm text-body">No persisted content records match these filters. This does not imply missing storage or unavailable lessons.</p>}
+                columns={[
+                  {key:"content",header:"Content",mobilePriority:"primary" as const,
+                    cell:(item)=><div className="min-w-0">
+                      <p className="break-words font-semibold text-foreground">{item.title}</p>
+                      <CollegeContentPreview data={{title:item.title,course:item.courseName,lesson:item.lessonName,
+                        type:item.contentType,status:item.status,scope:collegeContentScopeLabel(item.deliveryId),
+                        visible:item.visibleToStudents,details:videos?collegeContentDuration(item.durationSeconds):
+                        "Materials: "+(item.materialsCount??"Unavailable")}}/>
+                      <p className="text-xs text-muted-foreground">
+                        {item.contentType}{videos?" · "+collegeContentDuration(item.durationSeconds):""}
+                      </p>
+                    </div>},
+                  {key:"course",header:"Course / cohort",mobilePriority:"secondary" as const,
+                    cell:(item)=><div className="min-w-0">
+                      <Link href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}
+                        className="inline-flex min-h-11 items-center break-words font-semibold text-primary-text hover:underline">
+                        {item.courseName} ({item.courseCode})
+                      </Link>
+                      <p className="text-xs text-muted-foreground">{item.cohortName} · {item.periodName}</p>
+                    </div>},
+                  {key:"lesson",header:"Lesson / learning path",mobilePriority:"secondary" as const,
+                    cell:(item)=><span>{item.lessonName}
+                      <span className="block text-xs text-muted-foreground">{item.learningPathTitle} ({item.learningPathStatus})</span>
+                    </span>},
+                  ...(!videos?[{key:"materials",header:"Materials",mobilePriority:"secondary" as const,
+                    cell:(item:(typeof data.items)[number])=>item.materialsCount===null?"—":item.materialsCount}]:[]),
+                  {key:"scope",header:"Scope",mobilePriority:"secondary" as const,
+                    cell:(item)=><span>{collegeContentScopeLabel(item.deliveryId)}
+                      <span className="block text-xs">{item.visibleToStudents?"Visible to students":"Hidden from students"}</span>
+                    </span>},
+                  {key:"state",header:"State",mobilePriority:"action" as const,
+                    cell:(item)=><div className="space-y-2">
+                      <p className="text-body">{item.status}</p>
+                      {item.status!=="ARCHIVED"?<CollegeStudentVisibilityControl contentId={item.id}
+                        initialVisible={item.visibleToStudents} initialUpdatedAt={item.updatedAt.toISOString()}/>:null}
+                    </div>},
+                ]}
+              />
             </div>
           </>
         )}
