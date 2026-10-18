@@ -15,3 +15,20 @@
 | `learner-assessment-date-label-model.ts` | `learnerAssessmentDateLabel` | Not individually linked in this inventory |
 | `learner-assessment-drawer-scope-model.ts` | `learnerAssessmentDrawerSelectionAllowed` | Not individually linked in this inventory |
 | `learner-assessment-empty-model.ts` | `learnerAssessmentEmptyMessage` | Not individually linked in this inventory |
+| `learner-assessment-filters-active-model.ts` | `learnerAssessmentFiltersActive` | Not individually linked in this inventory |
+| `learner-assessment-flat-query.ts` | `listOwnLearnerAssessmentRows` | Not individually linked in this inventory |
+| `learner-assessment-page-summary-model.ts` | `learnerAssessmentPageSummary` | Authored direct model regression, unrun |
+| `learner-assessment-quick-counts-model.ts` | `LEARNER_ASSESSMENT_QUICK_STATES` | Not individually linked in this inventory |
+| `learner-assessment-quick-counts-model.ts` | `LearnerAssessmentQuickState` | Not individually linked in this inventory |
+| `learner-assessment-quick-counts-model.ts` | `learnerAssessmentQuickCounts` | Authored direct model regression, unrun |
+| `learner-assessment-scope-attention-model.ts` | `learnerAssessmentScopedItems` | Not individually linked in this inventory |
+| `learner-assessment-search-model.ts` | `normalizeLearnerAssessmentSearch` | Authored direct model regression, unrun |
+| `learner-assessment-search-model.ts` | `learnerAssessmentMatchesSearch` | Authored direct model regression, unrun |
+| `learner-assessment-service.ts` | `getLearnerAssessmentOverview` | Not individually linked in this inventory |
+| `learner-assessment-sort-model.ts` | `LEARNER_ASSESSMENT_SORT_OPTIONS` | Not individually linked in this inventory |
+| `learner-assessment-sort-model.ts` | `LearnerAssessmentSort` | Not individually linked in this inventory |
+| `learner-assessment-sort-model.ts` | `learnerAssessmentSort` | Authored direct model regression, unrun |
+| `learner-assessment-state-filter-model.ts` | `LEARNER_ASSESSMENT_STATE_OPTIONS` | Not individually linked in this inventory |
+| `learner-assessment-state-filter-model.ts` | `LearnerAssessmentStateFilter` | Not individually linked in this inventory |
+| `learner-assessment-state-filter-model.ts` | `learnerAssessmentMatchesState` | Not individually linked in this inventory |
+| `learner-assessment-submitted-link-model.ts` | `learnerAssessmentSubmittedLinkHref` | Authored direct model regression, unrun |
