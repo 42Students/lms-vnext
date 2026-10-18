@@ -1,0 +1,154 @@
+// =============================================================================
+// _accessibility.scss — Global accessibility foundation
+// Covers: focus-visible system, skip link, sr-only utility, prefers-reduced-motion
+// =============================================================================
+@import "./variables";
+
+// -----------------------------------------------------------------------------
+// 1. Focus system
+//    - Removes distracting browser-default on click (:focus without keyboard)
+//    - Restores clear brand-teal ring for keyboard navigation (:focus-visible)
+// -----------------------------------------------------------------------------
+
+// Remove default outline on mouse clicks only (not on keyboard focus)
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+// Brand-teal keyboard focus ring — applied to all interactive elements
+:focus-visible {
+  outline: 2px solid $teal-text;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+// Elevated focus ring for card-style interactive elements (jobs, interviews, applications)
+[role="button"]:focus-visible,
+.learn-jobs-row-card:focus-visible,
+.learn-interviews-row-card:focus-visible,
+.learn-applications-row-card:focus-visible,
+.learn-assessments-row-card:focus-visible,
+.learn-placements-stat-card:focus-visible,
+.learner-dash-continue:focus-visible {
+  outline: 2px solid $teal-text;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba($teal-text, 0.12);
+  border-radius: 12px;
+}
+
+// Remove focus on the phone-prefix input (legitimate UX: has its own border indicator)
+.login-num:focus {
+  outline: none;
+}
+
+// -----------------------------------------------------------------------------
+// 1b. Touch feedback — :active state for tappable cards on mobile
+//     Provides visual response on tap (hover states don't fire on touch devices)
+// -----------------------------------------------------------------------------
+
+@media (hover: none) {
+  // Any card or tappable surface with role="button" gets a subtle scale-down on tap
+  .learn-jobs-row-card:active,
+  .learn-interviews-row-card:active,
+  .learn-applications-row-card:active,
+  .learn-assessments-row-card:active,
+  .learn-course-card:active,
+  [role="button"]:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+    transition: transform 0.05s ease, opacity 0.05s ease;
+  }
+}
+
+// Save/bookmark button focus ring
+.learn-job-detail-save-btn:focus-visible {
+  outline: 2px solid $teal-text;
+  outline-offset: 4px;
+  border-radius: 50%;
+}
+
+// Sidebar link focus ring
+.fl-module-link:focus-visible {
+  outline: 2px solid $teal-text;
+  outline-offset: -2px;
+  border-radius: 9px;
+}
+
+// -----------------------------------------------------------------------------
+// 2. Skip link — first focusable element in the layout
+//    Slides into view from the top when keyboard-focused
+// -----------------------------------------------------------------------------
+
+// -----------------------------------------------------------------------------
+// 3. Screen-reader-only utility (.sr-only)
+//    Hides element visually but keeps it accessible to assistive technology
+// -----------------------------------------------------------------------------
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+// Combine with focusable for skip links that should be visible on focus
+.sr-only-focusable:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: inherit;
+  margin: inherit;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+// -----------------------------------------------------------------------------
+// 4. Reduced motion — respect user's system accessibility preference
+//    WCAG 2.1 SC 2.3.3 (Level AA)
+// -----------------------------------------------------------------------------
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Touch feedback for course cards
+   ---------------------------------------------------------------------------
+   The rules above key off [role="button"]; the course map/priority cards are native <button>
+   elements without it, and their only feedback was a :hover transform that never fires on touch.
+   Also aligns the focus ring radius with the card radius — the global ring is 4px while these
+   cards are 12px, so the ring cut across every rounded corner. */
+@media (hover: none) {
+  .learn-course-home-map__card:active,
+  .learn-course-home-priorities__card:active,
+  .learn-roadmap__item:active,
+  .learn-roadmap__toggle:active {
+    background-color: rgba(38, 186, 199, 0.08);
+  }
+}
+
+.learn-course-home-map__card:focus-visible,
+.learn-course-home-priorities__card:focus-visible {
+  border-radius: 12px;
+}
+
+.learn-roadmap__item:focus-visible {
+  border-radius: 18px;
+}
+
+.learn-roadmap__card:focus-within {
+  border-radius: 20px;
+}

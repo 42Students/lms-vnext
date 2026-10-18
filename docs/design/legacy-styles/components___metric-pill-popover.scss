@@ -1,0 +1,253 @@
+@import "./variables.scss";
+
+$mp-border: $neutral-200;
+$mp-text: $neutral-900;
+$mp-text-muted: $neutral-500;
+$mp-text-subtle: $neutral-400;
+$mp-radius: 8px;
+
+// ---------------------------------------------------------------------------
+// Clickable pill state
+// ---------------------------------------------------------------------------
+.metric-pill--clickable {
+  cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.07);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $clrThird;
+    outline-offset: 2px;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Popover overlay
+// ---------------------------------------------------------------------------
+.metric-pill-popover {
+  // On mobile, constrain popover within viewport with 16px margin each side
+  @media (max-width: 767px) {
+    &.ant-popover {
+      max-width: calc(100vw - 32px);
+    }
+  }
+
+  .ant-popover-inner {
+    border-radius: $mp-radius;
+    padding: 0;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+    max-width: 320px;
+    min-width: 200px;
+
+    @media (max-width: 767px) {
+      max-width: calc(100vw - 32px);
+      min-width: 0;
+    }
+  }
+
+  .ant-popover-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: $mp-text;
+    padding: 10px 14px 6px;
+    border-bottom: none;
+    margin: 0;
+  }
+
+  .ant-popover-inner-content {
+    padding: 0;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Popover body
+// ---------------------------------------------------------------------------
+.metric-pill-popover__body {
+  padding: 6px 14px 12px;
+  max-height: 280px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+// ---------------------------------------------------------------------------
+// Popover list — reusable for all pill popovers
+// ---------------------------------------------------------------------------
+.metric-popover-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.metric-popover-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  font-size: 13px;
+  line-height: 1.4;
+  color: $mp-text;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &__name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__value {
+    flex-shrink: 0;
+    font-weight: 500;
+    color: $mp-text-muted;
+    font-size: 12px;
+  }
+
+  &__status {
+    flex-shrink: 0;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  &__status--present {
+    color: $status-success;
+  }
+
+  &__status--absent {
+    color: #ef4444;
+  }
+}
+
+// Clickable item variant
+a.metric-popover-item,
+button.metric-popover-item {
+  text-decoration: none;
+  background: none;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.12s ease;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.03);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Summary row (e.g. "Total: 18 Credits")
+// ---------------------------------------------------------------------------
+.metric-popover-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0 4px;
+  margin-top: 4px;
+  border-top: 1px solid $mp-border;
+  font-size: 13px;
+  font-weight: 600;
+  color: $mp-text;
+}
+
+// ---------------------------------------------------------------------------
+// Info-only text (no list)
+// ---------------------------------------------------------------------------
+.metric-popover-info {
+  font-size: 13px;
+  line-height: 1.5;
+  color: $mp-text-muted;
+
+  strong {
+    color: $mp-text;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0 0 4px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Filters button + panel — a standalone control (currently just a Courses-page
+// semester filter, but built as a general panel so more filter rows can be
+// added later without restructuring). Separate from the read-only metric pills
+// above; opened via its own Popover, same trigger="click" pattern as MetricPill.
+// ---------------------------------------------------------------------------
+.learn-courses-filters-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.learn-courses-filters-popover {
+  .ant-popover-inner {
+    border-radius: $mp-radius;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  .ant-popover-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: $mp-text;
+    padding: 10px 14px 6px;
+    border-bottom: none;
+    margin: 0;
+  }
+}
+
+.learn-courses-filters-panel {
+  padding: 4px 14px 12px;
+  min-width: 240px;
+
+  &__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  &__label {
+    font-size: 13px;
+    font-weight: 600;
+    color: $mp-text;
+    flex-shrink: 0;
+  }
+
+  .ant-select {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Progress bar (for course home progress pill)
+// ---------------------------------------------------------------------------
+.metric-popover-progress {
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.06);
+  margin: 8px 0 4px;
+  overflow: hidden;
+
+  &__fill {
+    height: 100%;
+    width: 100%;
+    border-radius: 3px;
+    background: $clrThird;
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+}

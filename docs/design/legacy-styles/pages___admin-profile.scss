@@ -1,0 +1,188 @@
+@import "../components/variables.scss";
+
+// ---------------------------------------------------------------------------
+// Connected header — profile page merges with navbar (same pattern as
+// Courses, Quizzes, Attendance, Assignments, Class Schedule pages)
+// ---------------------------------------------------------------------------
+.learn-profile-page .learn-placements-dashboard__card {
+  background: $white;
+  border: 1px solid $neutral-200;
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+@media (max-width: 767px) {
+  .learn-profile-page .learn-placements-dashboard__body {
+    padding: 16px;
+    padding-bottom: calc(4rem + 24px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Admin profile page: same UI/UX as learner and faculty profile.
+// Overrides admin-layout-main rules that cause profile content to appear centered
+// (e.g. .ant-space as inline-flex) so sections use full width.
+// Mobile: match learner profile (16px horizontal, touch targets, compact cards).
+
+$admin-profile-mobile-bp: 767px;
+$admin-profile-mobile-pad: 16px; // match $learn-mobile-pad
+$admin-profile-mobile-pad-right: 12px; // slightly less so right gap matches left (scrollbar can add space on right)
+
+.admin-layout-main .learn-profile-page {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  /* Layout already has px-3; avoid double horizontal padding */
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+
+  .learn-profile-content {
+    width: 100%;
+    max-width: 100%;
+    // Desktop: reduce left/right gap (page uses px-4 on top of layout px-3)
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  // Full-width scroll area so content isn't centered
+  .scroll-container.scroll-container--courselanding {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+  }
+
+  // Rows and cols span full width
+  .scroll-container .ant-row {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .scroll-container .ant-row .ant-col {
+    max-width: 100%;
+  }
+
+  // Override admin-layout-main .ant-space (inline-flex) so profile cards
+  // (e.g. UserInfo with image + description) use full width instead of
+  // shrinking to content and appearing in the middle
+  .ant-card-body .ant-space {
+    display: flex !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    align-items: flex-start;
+  }
+
+  .ant-card-body .ant-space-item {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  // Card bodies full width
+  .ant-card-body {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Mobile: full-width cards (fix 50-60% width), same padding as learner, touch-friendly.
+// Audit: Row gutter + flex can constrain content; Row/Col forced to 100%, margin reset.
+// ---------------------------------------------------------------------------
+@media (max-width: $admin-profile-mobile-bp) {
+  .admin-layout-main {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .admin-layout-main .learn-profile-page {
+    // Cancel layout’s horizontal padding so we control one consistent 16px (like learner)
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin-left: -$admin-profile-mobile-pad !important;
+    margin-right: -$admin-profile-mobile-pad !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
+
+  .admin-layout-main .learn-profile-page .learn-profile-page__head {
+    padding-left: $admin-profile-mobile-pad !important;
+    padding-right: $admin-profile-mobile-pad-right !important;
+    padding-top: 12px !important;
+    padding-bottom: 16px !important;
+  }
+
+  .admin-layout-main .learn-profile-page .learn-profile-content {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    padding-left: $admin-profile-mobile-pad !important;
+    padding-right: $admin-profile-mobile-pad-right !important;
+    padding-top: 24px !important;
+    box-sizing: border-box;
+  }
+
+  .admin-layout-main .learn-profile-page .scroll-container.scroll-container--courselanding {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
+
+  // Row: full width, no negative margin so content is not pushed to ~50%
+  .admin-layout-main .learn-profile-page .scroll-container .ant-row {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box;
+  }
+
+  // Col: full width so cards span entire content area (no empty right side)
+  .admin-layout-main .learn-profile-page .scroll-container .ant-row .ant-col {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    box-sizing: border-box;
+    margin-bottom: 16px;
+  }
+  .admin-layout-main .learn-profile-page .scroll-container .ant-row .ant-col:last-child {
+    margin-bottom: 0;
+  }
+
+  // Card: full width
+  .admin-layout-main .learn-profile-page .ant-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+  }
+
+  .admin-layout-main .learn-profile-page .ant-card-body {
+    width: 100% !important;
+    padding: 16px $admin-profile-mobile-pad-right 16px $admin-profile-mobile-pad !important; // top, right, bottom, left — right smaller so gap matches left
+    box-sizing: border-box;
+  }
+
+  // Touch targets (44px) for profile buttons
+  .admin-layout-main .learn-profile-page .ant-card .ant-card-head .ant-btn,
+  .admin-layout-main .learn-profile-page .ant-card .ant-card-head-wrapper .ant-btn,
+  .admin-layout-main .learn-profile-page .ant-card-body .ant-btn,
+  .admin-layout-main .learn-profile-page .ant-card .ant-upload .ant-btn {
+    min-height: 44px !important;
+    min-width: 44px !important;
+    padding: 12px 16px !important;
+  }
+
+  .admin-layout-main .learn-profile-page .ant-card .ant-btn-link {
+    min-height: 44px !important;
+    padding: 12px 16px !important;
+  }
+}

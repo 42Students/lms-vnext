@@ -1,0 +1,496 @@
+/**
+ * Notification Drawer / Dropdown
+ * Desktop: dropdown panel, Mobile: full-width slide-in drawer
+ * Touch targets 44px, safe areas, consistent with _learn-mobile.scss
+ */
+@import "./variables.scss";
+
+// Subtle, soft palette — warm neutrals
+$nd-primary: $neutral-700;
+$nd-accent: $neutral-500;
+$nd-text: $neutral-900;
+$nd-text-muted: $neutral-500;
+$nd-text-subtle: $neutral-400;
+$nd-bg: $white;
+$nd-bg-card: $white;
+$nd-bg-subtle: $neutral-50;
+$nd-border: $neutral-200;
+$nd-hover: rgba(0, 0, 0, 0.035);
+$nd-hover-strong: rgba(0, 0, 0, 0.06);
+$nd-radius: 12px;
+$nd-radius-sm: 8px;
+$nd-touch-min: 44px;
+$nd-mobile-pad: 16px;
+$nd-mobile-bp: 767px;
+
+// Trigger button — accessible, touch-friendly
+.ln-notification-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: $nd-touch-min;
+  min-height: $nd-touch-min;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  color: inherit;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: $nd-hover;
+  }
+
+  &:active {
+    background: $nd-hover-strong;
+  }
+}
+
+.ln-head-notif {
+  .ant-badge {
+    .ant-badge-count {
+      font-size: 10px;
+      line-height: 1.2;
+      min-width: 16px;
+      height: 16px;
+      padding: 0 4px;
+    }
+  }
+}
+
+// Root wrapper
+.ln-notification-dropdown-root {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+// Portal container for desktop overlay
+.ln-notification-dropdown-portal {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  pointer-events: none;
+
+  > * {
+    pointer-events: auto;
+  }
+}
+
+// Subtle backdrop — click to close
+.ln-notification-dropdown-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.08);
+  z-index: 1050;
+
+  @media (prefers-reduced-motion: no-preference) {
+    animation: ln-notification-backdrop-in 0.15s ease-out;
+  }
+}
+
+@keyframes ln-notification-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Hide desktop dropdown on mobile (JS already handles this, CSS safety net)
+@media (max-width: $nd-mobile-bp) {
+  .ln-notification-dropdown-portal,
+  .ln-notification-dropdown-backdrop {
+    display: none !important;
+  }
+}
+
+// Desktop dropdown panel — custom overlay (no Ant Design Dropdown)
+.ln-notification-dropdown-panel {
+  background: $nd-bg-card;
+  border-radius: $nd-radius;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+  border: 1px solid $nd-border;
+  overflow: hidden;
+  min-width: 360px;
+  max-width: min(420px, calc(100vw - 24px));
+  max-height: min(520px, calc(100vh - 120px));
+  display: flex;
+  flex-direction: column;
+
+  @media (prefers-reduced-motion: no-preference) {
+    animation: ln-notification-panel-in 0.2s ease-out;
+  }
+
+  &--visible {
+    opacity: 1;
+  }
+}
+
+@keyframes ln-notification-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Shared panel content (dropdown + drawer)
+.ln-notification-drawer-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+}
+
+.ln-notification-drawer__header {
+  flex-shrink: 0;
+  padding: 16px 20px;
+  border-bottom: 1px solid $nd-border;
+  background: $nd-bg-subtle;
+  border-radius: $nd-radius $nd-radius 0 0;
+}
+
+.ln-notification-drawer__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: $nd-text;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+.ln-notification-drawer__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 12px 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+.ln-notification-drawer__list {
+  list-style: none;
+  margin: 0;
+  padding: 0 12px;
+}
+
+.ln-notification-drawer__item {
+  margin-bottom: 6px;
+  border-radius: $nd-radius-sm;
+  overflow: hidden;
+}
+
+.ln-notification-drawer__item-inner {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  cursor: pointer;
+  border: 1px solid rgba($nd-border, 0.6);
+  background: $nd-bg-card;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  border-radius: $nd-radius-sm;
+
+  &:hover {
+    background: $nd-bg-subtle;
+    border-color: $nd-border;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+
+  &:active {
+    background: $nd-hover-strong;
+    box-shadow: none;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    outline: 1px solid $nd-accent;
+    outline-offset: 1px;
+  }
+}
+
+.ln-notification-drawer__item-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ln-notification-drawer__item-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: $nd-text;
+  line-height: 1.4;
+}
+
+.ln-notification-drawer__item-snippet {
+  font-size: 14px;
+  color: $nd-text-muted;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ln-notification-drawer__item-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.ln-notification-drawer__item-date {
+  font-size: 12px;
+  color: $nd-text-subtle;
+}
+
+.ln-notification-drawer__item-meta .ant-tag {
+  margin: 0;
+  font-size: 12px;
+  padding: 2px 8px;
+  line-height: 1.3;
+  border: none;
+  opacity: 0.9;
+}
+
+// Loading / Error / Empty
+.ln-notification-drawer__loading,
+.ln-notification-drawer__error,
+.ln-notification-drawer__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px;
+  text-align: center;
+}
+
+.ln-notification-drawer__loading {
+  gap: 12px;
+
+  span {
+    font-size: 14px;
+    color: $nd-text-muted;
+  }
+}
+
+.ln-notification-drawer__error {
+  p {
+    margin: 0;
+    font-size: 14px;
+    color: $nd-text-muted;
+  }
+}
+
+.ln-notification-drawer__empty {
+  gap: 12px;
+
+  .ln-notification-drawer__empty-icon {
+    font-size: 36px;
+    color: rgba($nd-text-subtle, 0.6);
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: $nd-text-muted;
+  }
+
+  span {
+    font-size: 14px;
+    color: $nd-text-subtle;
+    max-width: 260px;
+  }
+}
+
+.ln-notification-drawer__footer {
+  flex-shrink: 0;
+  padding: 12px 20px;
+  border-top: 1px solid $nd-border;
+  background: $nd-bg-subtle;
+}
+
+.ln-notification-drawer__view-all {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 44px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: $nd-accent;
+  text-decoration: none;
+  padding: 12px 16px;
+  border-radius: 8px;
+  transition: background 0.2s ease, color 0.2s ease;
+
+  &:hover {
+    background: $nd-hover-strong;
+    color: $nd-text;
+  }
+
+  &:active {
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  &:focus-visible {
+    outline: 1px solid $nd-accent;
+    outline-offset: 1px;
+  }
+}
+
+// Detail modal (when clicking a notification)
+.ln-notification-detail__title {
+  font-size: 18px;
+  font-weight: 600;
+  color: $nd-text;
+}
+
+.ln-notification-detail__body {
+  padding: 8px 0;
+}
+
+.ln-notification-detail__message {
+  font-size: 14px;
+  color: $nd-text;
+  line-height: 1.6;
+}
+
+.ln-notification-detail__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+.ln-notification-detail__context {
+  font-weight: 500;
+  color: $nd-text-muted;
+}
+
+.ln-notification-detail__date {
+  font-size: 12px;
+  color: $nd-text-subtle;
+  margin-top: 8px;
+}
+
+// ---------------------------------------------------------------------------
+// Mobile drawer
+// ---------------------------------------------------------------------------
+@media (max-width: $nd-mobile-bp) {
+  .ln-notification-drawer--mobile {
+    .ant-drawer-content-wrapper {
+      width: 100% !important;
+      max-width: 100%;
+      box-shadow: -4px 0 24px rgba(0, 0, 0, 0.12);
+    }
+
+    .ant-drawer-header {
+      padding: calc(16px + env(safe-area-inset-top, 0px)) $nd-mobile-pad 16px;
+      border-bottom: 1px solid $nd-border;
+      min-height: $nd-touch-min;
+      display: flex;
+      align-items: center;
+    }
+
+    .ant-drawer-header-title {
+      flex-wrap: nowrap !important;
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .ant-drawer-close {
+      flex: 0 0 auto !important;
+      margin: 0 !important;
+      padding: 0;
+      min-width: $nd-touch-min;
+      min-height: $nd-touch-min;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      order: 2;
+    }
+
+    .ant-drawer-content {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .ant-drawer-body {
+      padding: 0;
+      padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+    }
+  }
+
+  .ln-notification-drawer-panel {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .ln-notification-drawer__header {
+    padding: calc(12px + env(safe-area-inset-top, 0px)) $nd-mobile-pad 12px;
+    padding-top: 0;
+  }
+
+  .ln-notification-drawer__body {
+    padding: 12px $nd-mobile-pad;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .ln-notification-drawer__list {
+    padding: 0;
+  }
+
+  .ln-notification-drawer__item-inner {
+    padding: $nd-mobile-pad;
+    min-height: $nd-touch-min;
+    display: flex;
+    align-items: center;
+  }
+
+  .ln-notification-drawer__footer {
+    padding: 16px $nd-mobile-pad;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .ln-notification-drawer__view-all {
+    min-height: $nd-touch-min;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px $nd-mobile-pad;
+  }
+}

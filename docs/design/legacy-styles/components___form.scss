@@ -1,0 +1,195 @@
+// Ant Form fields
+
+.ant-select-selector {
+  font-family: $font-latoReg !important;
+}
+
+.ln-input-search {
+  .ant-select-selection-search-input {
+    background: url("../../../public/assets/images/common/search.svg") no-repeat !important;
+    background-position: 100% 50% !important;
+  }
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
+// Custom form
+// :focus (not :focus-visible) fires on every focus, including a mouse click — this rule
+// intended to hide that "ugly" default ring, but as written it also strips the ring on
+// keyboard (Tab) focus, which is the ONLY visual feedback a keyboard-only user gets and is
+// required for accessible navigation. :focus-visible keeps the same "no ring on mouse click"
+// behavior while restoring it for keyboard focus, which is the modern equivalent of what this
+// rule was actually trying to do.
+input:focus:not(:focus-visible),
+select:focus:not(:focus-visible),
+textarea:focus:not(:focus-visible),
+button:focus:not(:focus-visible) {
+  outline: none !important;
+  appearance: none !important;
+  box-shadow: none !important;
+}
+
+.ln-g-search {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid $neutral-100;
+  border-radius: 12px;
+  padding: 0 15px;
+  width: clamp(180px, 20vw, 280px);
+  position: relative;
+
+  input {
+    border: 0;
+    outline: 0;
+    background: none;
+    appearance: none;
+    padding: 12px 15px 12px 0;
+    font-size: 14px;
+    color: $black517;
+
+    &::placeholder {
+      color: $neutral-400;
+      font-size: 14px;
+    }
+  }
+}
+
+.ln-g-searchDropdown {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  top: calc(100% + 5px);
+  z-index: 9;
+  min-height: 120px;
+  max-height: 200px;
+  overflow-y: auto;
+  background: #ffffff;
+  box-shadow: 0px 14px 16px rgba(0, 0, 0, 0.04);
+  padding-top: 5px;
+  border-radius: 12px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar { display: none; }
+
+  li {
+    transition: background-color 0.2s ease-in-out;
+    padding: 5px 10px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #d1f1f1 !important;
+    }
+  }
+
+  &__No-results {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    img {
+      width: 25px;
+      height: 25px;
+      object-fit: contain;
+      margin-top: 10px;
+    }
+  }
+}
+
+.ln-lb2 {
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 16px;
+  color: $neutral-400;
+}
+
+.ln-in2 {
+  padding: 15px 10px;
+  background-color: $grayCFD;
+  border-radius: 10px;
+  outline: 0 !important;
+  border: 0 !important;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.2px;
+  color: #0a0517;
+  transition: box-shadow 0.2s ease;
+
+  &:focus {
+    outline: 0;
+    appearance: none;
+    box-shadow: 0 0 0 2px rgba($clrThird, 0.15);
+  }
+
+  &.error {
+    border: 1px solid $status-error !important;
+    background-color: rgba($status-error, 0.06);
+
+    &:focus {
+      border-color: $status-error !important;
+      box-shadow: 0 0 0 2px rgba($status-error, 0.2);
+    }
+  }
+}
+
+.ln-ques-select {
+  background-color: $grayCFD;
+}
+
+.ln-exmee-search {
+  padding: 5px 10px 5px 8px;
+  background-color: $neutral-100;
+  border: none;
+  border-radius: 10px;
+
+  input {
+    outline: 0 !important;
+    border: 0 !important;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0.2px;
+    color: $black517;
+    background-color: $neutral-100;
+  }
+}
+
+// .Login-Section {
+//   height: calc(100vh - 136px);
+//   overflow: hidden;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+// }
+
+.ln-login-input {
+  padding: 15px 10px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  outline: 0 !important;
+  border: 1px solid #e9eff9;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.2px;
+  color: #0a0517;
+  appearance: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:focus {
+    border-color: $clrThird;
+    box-shadow: 0 0 0 2px rgba($clrThird, 0.15);
+  }
+}

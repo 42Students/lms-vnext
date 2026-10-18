@@ -1,0 +1,127 @@
+.fnt-38 {
+  // Mobile default — no rule existed before; default to readable size
+  font-size  : 20px !important;
+  line-height: 28px !important;
+
+  @media (min-width: $sm) {
+    font-size  : 20px !important;
+    line-height: 30px !important;
+  }
+
+  @media (min-width: $md) {
+    font-size  : 38px !important;
+    line-height: 48px !important;
+  }
+}
+
+.fnt-30 {
+  font-size  : 20px !important;
+  line-height: 30px !important;
+
+  @media (min-width: $sm) {
+    font-size  : 16px !important;
+    line-height: 24px !important;
+  }
+
+  @media (min-width: $md) {
+    font-size  : 30px !important;
+    line-height: 50px !important;
+  }
+}
+
+.fnt-26 {
+  // Mobile default
+  font-size  : 18px;
+  line-height: 26px;
+
+  @media (min-width: $sm) {
+    font-size  : 20px;
+    line-height: 30px;
+  }
+
+  @media (min-width: $md) {
+    font-size  : 26px;
+    line-height: 36px;
+  }
+}
+
+.fnt-24 {
+  // Mobile default
+  font-size  : 18px;
+  line-height: 26px;
+
+  @media (min-width: $sm) {
+    font-size  : 20px;
+    line-height: 30px;
+  }
+
+  @media (min-width: $md) {
+    font-size  : 24px;
+    line-height: 34px;
+  }
+}
+
+
+.fnt-20 {
+  @media (min-width: $sm) {
+    font-size  : 16px !important;
+    line-height: 24px;
+  }
+
+  @media (min-width: $md) {
+    font-size  : 18px !important;
+    line-height: 26px;
+  }
+
+  @media (min-width: $lg) {
+    font-size  : 20px !important;
+    line-height: 26px;
+  }
+}
+
+.fnt-18 {
+  @media (min-width: $sm) {
+    font-size  : 16px !important;
+    line-height: 24px !important;
+  }
+
+  @media (min-width: $md) {
+    font-size  : 18px !important;
+    line-height: 26px !important;
+  }
+}
+
+.fnt-16 {
+  font-size  : 16px !important;
+  line-height: 24px !important;
+}
+
+.fnt-15 {
+  font-size  : 15px !important;
+  line-height: 24px !important;
+}
+
+.fnt-13 {
+  font-size  : 13px !important;
+  line-height: 22px !important;
+}
+
+
+.fnt-14 {
+  font-size  : 14px !important;
+  line-height: 22px !important;
+}
+
+.fnt-12 {
+  font-size  : 12px !important;
+  line-height: 20px !important;
+}
+
+.fnt-10 {
+  font-size  : rem(10px);
+  line-height: rem(12px);
+}
+
+.fw-600 {
+  font-weight: $fnt-semi;
+}
