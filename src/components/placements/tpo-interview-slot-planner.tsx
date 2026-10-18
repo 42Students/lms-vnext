@@ -40,7 +40,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
  const waiting=roster.filter(r=>!taken.has(r.applicationId));
  const format=(iso:string)=>new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(iso))+" IST";
  return <section className="space-y-5">
-  <div className="rounded-xl border border-border bg-surface p-5">
+  <div className="border-t border-border pt-5">
    <h2 className="font-semibold text-foreground">Generate interview day</h2>
    <p className="mt-1 text-sm text-body">Create unassigned start-time slots in each room. Existing bookings stay unchanged; overlapping room times are refused.</p>
    <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">

@@ -31,7 +31,7 @@ export function TpoCampaignSendControl({campaignId,ready,recipients,status}:{
  if(status!=="DRAFT")return <p className="text-sm text-body">
   This campaign is {status.toLowerCase()}. Provider acceptance does not prove inbox delivery.
  </p>;
- return <section className="space-y-3 rounded-lg border border-border p-4" aria-label="Campaign send">
+ return <section className="space-y-3 border-t border-border pt-4" aria-label="Campaign send">
   <h2 className="font-semibold">Send this campaign</h2>
   {!ready?<p role="alert" className="text-sm text-body">
    Campaign email is not set up yet, so nothing can be sent. Ask 42 to switch it on.
