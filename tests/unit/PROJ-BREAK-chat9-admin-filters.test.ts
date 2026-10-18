@@ -40,12 +40,10 @@ describe("IIT Dharwad Projects: Super Admin URL and pagination resilience", () =
 
   it("PROJ-BREAK-ux-12 array-valued URL params never bypass the same validation", () => {
     expect(parseAdminProjectsQuery({ page: ["Infinity", "1"] }).success).toBe(false);
-    expect(parseAdminProjectsQuery({ status: ["ARCHIVED", "ACTIVE"] })).toMatchObject({
-      success: true, data: { status: "ARCHIVED" },
-    });
-    expect(parseAdminProjectsQuery({ search: ["IIT Dharwad", "other"] })).toMatchObject({
-      success: true, data: { q: "IIT Dharwad" },
-    });
+    // Never select only the first value of a duplicated tenant filter:
+    // a crafted second status or search token must be rejected as ambiguous.
+    expect(parseAdminProjectsQuery({ status: ["ARCHIVED", "ACTIVE"] }).success).toBe(false);
+    expect(parseAdminProjectsQuery({ search: ["IIT Dharwad", "other"] }).success).toBe(false);
   });
 
   it("PROJ-BREAK-ux-13 the admin boundary shows a safe recovery link without querying on invalid input", () => {

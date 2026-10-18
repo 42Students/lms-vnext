@@ -66,6 +66,31 @@ describe("chat-16 TPO aggregate outbound receipt authorization and privacy",()=>
    organizationId:"org-u",collegeId:"college-u",
   });
  });
+ it("messaging-receipt-history-20 exports only bounded college aggregate results with confirmed provider acceptance",async()=>{
+  const exported=[{...row,finalizedAt:new Date("2099-01-01T00:10:00Z")}];
+  const limit=vi.fn(async()=>exported);
+  const tx={select:vi.fn(()=>({from:()=>({where:()=>({orderBy:()=>({limit})})})}))};
+  const db={transaction:vi.fn(async(action:(input:typeof tx)=>Promise<unknown>)=>action(tx))};
+  vi.mocked(getDb).mockReturnValue(db as unknown as ReturnType<typeof getDb>);
+  const result=await exportTpoMessagingHistory(officer,{purpose:"TPO email: welcome"});
+  expect(result).toMatchObject([{
+   id:"batch-1",acceptedByProvider:3,total:5,failed:1,suppressed:0,
+  }]);
+  expect(limit).toHaveBeenCalledWith(2001);
+  expect(assertPersistedPlatformPermission).toHaveBeenCalledWith(tx,officer,"placements.manage",{
+   organizationId:"org-u",collegeId:"college-u",
+  });
+  expect(JSON.stringify(result)).not.toContain("recipientKey");
+  expect(JSON.stringify(result)).not.toContain("recipientEmail");
+ });
+ it("messaging-receipt-history-21 fails closed if an export exceeds the 2000 row bound",async()=>{
+  const limit=vi.fn(async()=>Array.from({length:2001},()=>row));
+  const tx={select:vi.fn(()=>({from:()=>({where:()=>({orderBy:()=>({limit})})})}))};
+  const db={transaction:vi.fn(async(action:(input:typeof tx)=>Promise<unknown>)=>action(tx))};
+  vi.mocked(getDb).mockReturnValue(db as unknown as ReturnType<typeof getDb>);
+  await expect(exportTpoMessagingHistory(officer,{})).rejects.toThrow("CAMPAIGN_EXPORT_TOO_LARGE");
+  expect(limit).toHaveBeenCalledExactlyOnceWith(2001);
+ });
  it("messaging-receipt-history-19 never reads aggregate history after a revoked persisted grant",async()=>{
   const tx={select:vi.fn()};
   const db={transaction:vi.fn(async (action:(input:typeof tx)=>Promise<unknown>)=>action(tx))};
