@@ -106,3 +106,13 @@ All 37 routes defined by the second third of `docs/orchestrator/ui-ux/pages-admi
 Adversarial `PROJ-BREAK-backlog-12/13` and `PROJ-BREAK-readiness-12/13` test cases were added to cover forged task/sprint IDs, strict optimistic revision, selected-college permission, locked writes, current memberships, readiness event precedence and selected-tenant audit. They are source-contract plus Zod tests, **not** a real PostgreSQL race demonstration. Source review did not justify a new Projects defect row; a real replay of stale-user revocation, cross-college selector changes and simultaneous sprint pulls is still required.
 
 **Release status:** not signed off. Strict TypeScript, Vitest, PostgreSQL integration, browser/mobile focus and screen-reader journeys remain unexecuted per current no-CI builder directive. Do not equate authored tests with PASS.
+
+
+### 2026-10-19 Super Admin second-third filter hardening
+
+| ID | Priority | Reproduction/source flaw | Correction | Regression | Verification |
+|---|---|---|---|---|---|
+| SA-admin-middle-drive-query-02 | S2 filter interpretation | `adminDriveDirectoryQuerySchema` used `z.coerce.number()` on URL `page` and `pageSize`. It silently accepted singleton arrays, boolean `true`, `0x10` and `1e2` as valid positions/sizes. Such selectors are rejected by other protected admin directories. | Strict unsigned decimal-or-number parser, preserving 10/20/50/100 row options and 1–100,000 page bounds. Commit `dcc761f6`. | `tests/unit/chat6-admin-second-third-placements.test.ts` extended in `b5ee3dce`. | Pure regression authored, not executed; forged multi-value URL browser replay pending |
+| SA-admin-middle-lecture-paging-01 | S2 filter/pagination | Super Admin lecture hall `page` inherited numeric coercion and `pageSize` used numeric coercion, accepting hex/exponent strings. Its paging helper could emit `NaN` or infinite page counts for corrupt DB totals. | Override `page` and `pageSize` with strict decimal-or-number selectors; make page count finite with safe fallback. Commit `48fb4cd8`. | `tests/unit/chat6-admin-second-third-academic-scopes.test.ts` extended in `26b2e971`. | Pure regression authored, not executed; backend fixture and pagination replay pending |
+
+The stricter filter contracts intentionally display the existing invalid-filters recovery state instead of silently interpreting a forged URL, without weakening tests or changing customer wording. These are source fixes only until CI executes.
