@@ -20,6 +20,18 @@ describe("HR-BREAK-calendar-01: IST deadlines, category and CSV robustness",()=>
   expect(()=>parseIstLocalSlot("2026-02-29T00:00")).toThrow();
   expect(()=>parseIstLocalSlot("2026-10-19T24:00")).toThrow();
  });
+ it("calendar day cards preserve authorized kind filters but never mislabel results-due as interview slots",()=>{
+  const input=[{day:"2026-10-19",events:events as never,resultsDue:dues as never}];
+  const slots=filterHrCalendarDays(input,"SLOTS");
+  expect(slots[0]?.events).toHaveLength(1);
+  expect(slots[0]?.resultsDue).toHaveLength(0);
+  const deadline=filterHrCalendarDays(input,"DEADLINES");
+  expect(deadline[0]?.events).toHaveLength(1);
+  expect(deadline[0]?.resultsDue).toHaveLength(0);
+  const results=filterHrCalendarDays(input,"RESULTS_DUE");
+  expect(results[0]?.events).toHaveLength(0);
+  expect(results[0]?.resultsDue).toHaveLength(1);
+ });
  it("exports only selected category and does not confuse interview slots with rounds",()=>{
   const all=buildHrCalendarCsv(events,dues,"ALL");
   expect(all.exported).toBe(4);
