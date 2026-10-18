@@ -22,6 +22,7 @@ import { requirePermission } from "@/modules/permissions/policy";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { teachingAssignmentConflict } from "./teaching-assignment-guard";
+import {teachingAssignmentRevisionMatches,nextTeachingAssignmentRevision} from "./teaching-assignment-revision";
 import {
   CoursesServiceError,
   postgresConstraintName,
@@ -427,8 +428,7 @@ export async function changeCourseTeachingAssignmentRole(
       if(!locked)throw new CoursesServiceError("TEACHING_ASSIGNMENT_NOT_FOUND");
       // Compare while holding FOR UPDATE, before role changes and audit writes.
       // A monotonic revision protects against two writes within one millisecond.
-      if(!Number.isFinite(locked.updatedAt.getTime())||
-         locked.updatedAt.getTime()!==Date.parse(expectedUpdatedAt))
+      if(!teachingAssignmentRevisionMatches(locked.updatedAt,expectedUpdatedAt))
         throw new CoursesServiceError("TEACHING_ASSIGNMENT_CONFLICT");
       // Tenant ancestry is rechecked inside the same transaction after the
       // initial authorization; a transferred delivery cannot be mutated.
@@ -470,7 +470,7 @@ export async function changeCourseTeachingAssignmentRole(
       const conflict=teachingAssignmentConflict({membershipId:locked.membershipId,role},
         peers.filter(item=>item.membershipId!==locked.membershipId));
       if(conflict)throw new CoursesServiceError(conflict);
-      const nextUpdatedAt=new Date(Math.max(Date.now(),locked.updatedAt.getTime()+1));
+      const nextUpdatedAt=nextTeachingAssignmentRevision(locked.updatedAt);
       const [updated]=await tx.update(courseTeachingAssignments)
         .set({role,updatedAt:nextUpdatedAt})
         .where(and(

@@ -40,11 +40,12 @@ beforeEach(()=>{
 describe("chat-16 TPO messaging receipt-detail service",()=>{
  it("messaging-detail-16 rejects malformed batch ID and revoked role before querying",async()=>{
   await expect(getTpoMessagingBatch(ctx,"../other-college")).rejects.toThrow();
-  for(const bad of [
+  const deniedContexts:RequestContext[]=[
    {...ctx,membership:null},
    {...ctx,membership:{...ctx.membership!,roles:["LEARNER"]}},
    {...ctx,membership:{...ctx.membership!,status:"SUSPENDED"}},
-  ]){
+  ];
+  for(const bad of deniedContexts){
    await expect(getTpoMessagingBatch(bad,batchId)).rejects.toThrow();
   }
   expect(getDb).not.toHaveBeenCalled();

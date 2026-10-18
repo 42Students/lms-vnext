@@ -14,21 +14,21 @@ vi.mock("@/db/client", () => ({
     select: () => {
       state.selects++;
       const dialect = new PgDialect();
-      const chain = {
-        from: () => chain,
-        innerJoin: (_table: unknown, condition: SQL) => {
+      class Query {
+        from() { return this; }
+        innerJoin(_table: unknown, condition: SQL) {
           const query = dialect.sqlToQuery(condition);
           state.joins.push({ sql: query.sql, params: query.params });
-          return chain;
-        },
-        where: () => chain,
-        orderBy: () => chain,
-        limit: async (n: number) => {
+          return this;
+        }
+        where() { return this; }
+        orderBy() { return this; }
+        async limit(n: number) {
           state.limits.push(n);
           return [];
-        },
-      };
-      return chain;
+        }
+      }
+      return new Query();
     },
   }),
 }));

@@ -180,3 +180,8 @@ Tests are registered in `test:ux:kit:hardening` and `test:db:projects-harness`. 
 - `UX-kit-HARDEN-51` protects users requesting reduced motion from animated Switch `::after` thumb movement; component-level unit assertions added. UX kit ledger has 39 rows for all 39 current `src/components/ui` files; existing real client interaction tests are registered, but source inventory does not substitute for browser acceptance.
 - `PROJ-HARNESS-ROLLBACK-04/05` adds real PostgreSQL witness cases for SQLSTATE mismatch recovery within SAVEPOINT and cross-session visibility plus rollback on callback failure. No fixtures commit or target application DB connections.
 - The latest checked-in typecheck report names no chat-17-owned compile error. This is not a claim that the new branch passes typecheck, unit, browser or PostgreSQL tests. Run `npm run typecheck`, `npm run test:ux:kit:hardening`, `npm run test:chat17:weak`, `npm run test:e2e:chat17:kit`, and `npm run test:db:projects-harness` using a migrated disposable `TEST_DATABASE_URL`. Continue to treat the rest of the project/placement suites as a release gate.
+
+
+## Chat-17 renewed stale-unit audit
+
+The latest checked-in `unit-failures-latest.md` still lists `UX-/tpo/verification-coverage-02`, but every expected source fragment for all 18 route cases now exists at the current branch; its TPO case checks `parseTpoVerificationParams` rather than the obsolete direct schema import. Behavioral case `UX-/tpo/verification-coverage-03` additionally exercises strict parsing, duplicate filter rejection and stable integer pagination values without database access. No claim of a green Vitest run: the report refers to older CI SHAs.

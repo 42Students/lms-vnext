@@ -10,9 +10,14 @@ export type PaginationProps = {
   className?: string;
 };
 
-/** Reject NaN/Infinity rather than exposing impossible pagination links. */
+/** Reject nonfinite and unsafe-integer pagination counts before creating links.
+ * Above MAX_SAFE_INTEGER, adjacent page numbers collapse to the same JS number
+ * and create duplicate React keys or unsafe navigation URLs.
+ */
 export function normalizedPageCount(count: number): number {
-  return Number.isFinite(count) ? Math.max(1, Math.trunc(count)) : 1;
+  return Number.isFinite(count)
+    ? Math.max(1, Math.min(Number.MAX_SAFE_INTEGER, Math.trunc(count)))
+    : 1;
 }
 
 export function paginationWindow(page: number, pageCount: number): number[] {

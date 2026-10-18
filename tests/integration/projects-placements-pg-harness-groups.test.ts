@@ -87,6 +87,26 @@ describe("PROJ-HARNESS real PostgreSQL schema group examples", () => {
     });
   });
 
+  it("PROJ-HARNESS-51 published template and in-progress release form an active workspace",async()=>{
+    await fixture(async(db,f)=>{
+      const rows=await db.query<{
+        template_status:string;published_version:number;
+        project_status:string;release_status:string;sprint_status:string;
+      }>(`
+        select t.status as template_status,t.published_version,
+          p.status as project_status,r.status as release_status,s.status as sprint_status
+          from project_instances p
+          join project_templates t on t.id=p.template_id
+          join project_releases r on r.project_id=p.id
+          join project_sprints s on s.project_id=p.id and s.release_id=r.id
+         where p.id=$1`,[f.project.projectId]);
+      expect(rows).toMatchObject([{
+        template_status:"PUBLISHED",published_version:1,
+        project_status:"ACTIVE",release_status:"IN_PROGRESS",sprint_status:"ACTIVE",
+      }]);
+    });
+  });
+
   it("PROJ-HARNESS-05 release group prevents duplicate keys and negative sequences",async()=>{
     await fixture(async(db,f)=>{
       await db.expectSqlState(()=>db.query(`
@@ -106,7 +126,7 @@ describe("PROJ-HARNESS real PostgreSQL schema group examples", () => {
         values ($1,$2,'sprint-2','Double active',1,'ACTIVE')`,
         [f.project.projectId,f.project.releaseId]),"23505");
       await db.expectSqlState(()=>db.query(`
-        update project_sprints set start_date='2026-10-22',end_date='2026-10-21' where id=$1`,
+        update project_sprints set start_date='2099-10-22',end_date='2099-10-21' where id=$1`,
         [f.project.sprintId]),"23514");
     });
   });

@@ -25,6 +25,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: unavailable ? "SERVICE_NOT_READY" : limited ? "TOO_MANY_CODES" : noMx?"EMAIL_NO_MX":dnsUnavailable?"EMAIL_MX_UNAVAILABLE":"COULD_NOT_SEND_CODE" },
         { status: unavailable||dnsUnavailable ? 503 : limited ? 429 : 400, headers: { "Cache-Control": "no-store" } });
     }
-    throw error;
+    // Do not expose provider, database or account-identifying failures on this public endpoint.
+    return NextResponse.json({error:"SERVICE_UNAVAILABLE"},
+      {status:503,headers:{"Cache-Control":"no-store"}});
   }
 }

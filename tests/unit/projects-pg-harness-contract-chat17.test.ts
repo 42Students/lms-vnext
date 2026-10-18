@@ -5,6 +5,7 @@ import { disposableDatabaseUrl, newHarnessPool } from "../integration/support/pr
 
 const helper=readFileSync(join(process.cwd(),"tests/integration/support/projects-placements-pg-harness.ts"),"utf8");
 const examples=readFileSync(join(process.cwd(),"tests/integration/projects-placements-pg-harness-groups.test.ts"),"utf8");
+const placementExamples=readFileSync(join(process.cwd(),"tests/integration/projects-placements-pg-harness-placements.test.ts"),"utf8");
 const withUrl=async<T>(url:string|undefined,run:()=>Promise<T>|T)=>{
  const previous=process.env.TEST_DATABASE_URL;
  try{
@@ -71,7 +72,7 @@ describe("PROJ-HARNESS source and environment guard",()=>{
    expect(helper).toContain('"final delivery"');
    expect(helper).toContain('"task submissions"');
    expect(helper).toContain('"meetings"');
-   expect(helper).toContain("where id=$1 and status='ACTIVE'");
+   expect(helper).toContain("status not in ('ARCHIVED','COMPLETED')");
    expect(helper).toContain("where id=$1 and status='DRAFT'");
    expect(helper).not.toContain("where id=$1 and created_by_membership_id=$2 and status='DRAFT'");
  });
@@ -79,7 +80,7 @@ describe("PROJ-HARNESS source and environment guard",()=>{
  it("PROJ-HARNESS-GUARD-09 active projects and durable future dates match production lifecycle",()=>{
    expect(helper).toContain("(college_id,template_id,template_version_id,slug,title,status,created_by_user_id)");
    expect(helper).toContain("'ACTIVE',$6");
-   expect(helper).toContain("where id=$1 and status='ACTIVE'");
+   expect(helper).toContain("status not in ('ARCHIVED','COMPLETED')");
    expect(helper).toContain('"2099-10-20T04:30:00Z"');
    expect(helper).toContain('"2099-10-01"');
    expect(helper).not.toContain('"2026-10-20T04:30:00Z"');
@@ -91,6 +92,27 @@ describe("PROJ-HARNESS source and environment guard",()=>{
    expect(helper).toContain("j.status='PUBLISHED' and j.published_at is not null");
    expect(helper).toContain("j.application_deadline>now()");
    expect(helper).toContain("drive is not open for applications");
+ });
+
+ it("PROJ-HARNESS-GUARD-11 fixture writes cannot inherit connection-string search_path",()=>{
+   expect(helper).toContain('SET LOCAL search_path = public, pg_temp');
+   expect(helper).toContain("await assertHarnessSchema(client)");
+   expect(helper).toContain('await client.query("BEGIN")');
+   expect(helper.indexOf('await client.query("BEGIN")')).toBeLessThan(
+     helper.indexOf('await client.query("SET LOCAL search_path = public, pg_temp")'));
+ });
+
+ it("PROJ-HARNESS-GUARD-12 published template and active release are explicit in fixture graph",()=>{
+   expect(helper).toContain("set status='PUBLISHED',published_version=1");
+   expect(helper).toContain("values ($1,'release-1','Harness release',0,'IN_PROGRESS')");
+   expect(helper).toContain("values ($1,$2,'sprint-1','Harness sprint',0,'ACTIVE')");
+ });
+
+ it("PROJ-HARNESS-GUARD-13 fixture constraint dates do not expire with the current sprint",()=>{
+   expect(examples).toContain("2099-10-22");
+   expect(placementExamples).toContain("2099-06-30");
+   expect(examples).not.toContain("2026-10-22");
+   expect(placementExamples).not.toContain("2027-06-30");
  });
 
  it("PROJ-HARNESS-GUARD-05 always rolls back transaction and savepoint errors",()=>{
