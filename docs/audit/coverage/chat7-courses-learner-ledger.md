@@ -219,3 +219,25 @@ This is *additional direct regression evidence*, not exhaustive coverage: remain
 Super Admin course builders, certificate integrations, real PostgreSQL role/tenant/concurrency
 tests, and device testing are still outstanding. All tests are written but **not run** under the
 owner's deferred-CI directive; no claim of successful execution is made.
+
+
+## Learner course/assignment/discussion/certification model matrix — 19 October 2026, continuation
+
+| Export / group | Tested invariant | Authored evidence / source correction |
+|---|---|---|
+| `learnerAssignmentPublishedGradeLabel` | A published zero remains a legitimate zero; missing, nonfinite and negative scores display unavailable, never fabricated scored marks | `tests/unit/chat7-learner-assessment-discussion-policy-matrix.test.ts` — `COURSES-LEARNER-ASSESSMENTS-02`; source `75e413f` |
+| `learnerCourseResultSummary`, `learnerAssessmentPageSummary` | Respect current page and published/filtered denominators, fail safely on NaN/Infinity and invalid page metadata | Same regression; fixes `47a4679`, `416a739` |
+| `learnerDueSoonNotices`, `learnerAssessmentQuickCounts`, `learnerAssignmentFinalConfirmation` | Only unsubmitted, in-window, deduplicated Section due notices; quick counts share persisted-state policy; final responses warn about immutability | Same regression |
+| `learnerDiscussionDraftValid`, `learnerDiscussionMayPost`, `learnerDiscussionListResponse`, `formatDiscussionReply` | Enforce 3,900-char cap and UI duplicate-submission lock, expose only authorized service response subset including pinned posts and cursor | `tests/unit/chat7-learner-assessment-discussion-policy-matrix.test.ts` — `COURSES-LEARNER-DISCUSSIONS-02` |
+| `learnerProfileDocumentSchema.shape.certifications` | Bounded 50 credentials, independent optional issue/expiry dates and valid schema, forged owner/college fields forbidden; now requires **unique certificate IDs**, avoiding ambiguous edit/delete identity | `tests/unit/chat7-learner-certificates-role-and-input-matrix.test.ts` — `COURSES-LEARNER-CERTIFICATES-01`; source fix `6a653e9`, test `58d67e7` |
+| `learnerCourseHasContinueAction`, `learnerCourseNextItemHref`, `learnerCourseCardProgress`, `learnerCourseHomeCompletion` | Deny historical/unpublished path continuation and malformed UUID deep links; percentages require positive finite denominators | `tests/unit/chat7-learner-course-home-assessments-model-matrix.test.ts` — `COURSES-LEARNER-COURSE-HOME-03`; source fix `7bfc574` |
+| `selectLearnerOverdueAssignment`, `learnerCourseFilteredEmptyTitle`, `learnerCourseHasActiveFilters` | Overdue state begins exactly at closed due instant, excludes submitted/future work; selected semester remains unchanged when clearing filters | Same named test; deadline fix `c2b72a4` |
+| `learnerAssessmentSubmittedLinkHref`, `normalizeLearnerAssessmentSearch`, `learnerAssessmentMatchesSearch`, `learnerAssessmentSort` | Only revalidated HTTPS links exposed, input search capped, stable immutable scoped input sorting and malformed due dates last | `tests/unit/chat7-learner-course-home-assessments-model-matrix.test.ts` — `COURSES-LEARNER-ASSESSMENT-LISTS-03` |
+| `parseSuperAdminLearningQuery`, `/admin/lessons`, `/admin/course-progress` | Reject hostile repeated/unknown URL filters; independently handle optional filter or lesson-create picker outage without suppressing authorized read results | `tests/unit/chat7-admin-learning-directory-resilience.test.ts` — `SA-COURSES-CONTENT-AUDIT-03`; fixes `1c28a79`, `f14ff6e`, `be80f37` |
+
+**Remaining coverage is not complete.** Many service and route symbols in the ~350-file Courses module
+lack a directly mapped behavioural test; this matrix covers the tested entries only.
+Existing imported source/read-unit tests do not replace two-college database isolation,
+learner-vs-faculty-vs-mentor role transitions, 320px browser checks, or no-CI-deferred
+Vitest/strict TypeScript runs. Credential entry in learner profile must not be confused
+with automatic course-completion certificate issuance, which is not implemented here.
