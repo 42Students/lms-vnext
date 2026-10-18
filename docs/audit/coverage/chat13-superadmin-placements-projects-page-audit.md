@@ -23,6 +23,7 @@ No audited route source uses raw `<table>`, `window.confirm()`, `target="_blank"
 - `PROJ-BREAK-SA-15`: test discovers **all 48 page sources** from filesystem, verifies every direct page uses current request context or an explicit server-authenticated delegate; disallows native confirmation/raw unresponsive table/untrusted new tabs/raw error JSON.
 - `PROJ-BREAK-SA-16`: persists scoped project ownership before dynamic route rendering, including template ID parse.
 - `SA-PLACEMENT-POLICY-01..04`: transaction-persisted active global SA, serialization of global min/max settings, finite input bounds, and corrected operation when a Super Admin has selected a college.
+- `SA-PLACEMENT-POLICY-05`: **S1 fixed** — global placement policy modifications now emit a high-importance audit event inside their write transaction with previous/next value and version; absent-key reset emits no event. Database rollback/audit-read integration remains open.
 - `SA-BOOKED-INTERVIEWS-01/02`: strict calendar-day parsing, scoped booking/round/application/company relationships, 2000-row cap. No live DB fixture was run.
 
 **Test files:** `tests/unit/PROJ-BREAK-SA-security-and-resilience.test.ts` (existing 01–08), `tests/unit/PROJ-BREAK-SA-state-matrix-and-queries.test.ts` (09–13), `tests/unit/PROJ-BREAK-SA-admin-pages-and-scope.test.ts` (14–16), `tests/unit/chat13-platform-placement-policy-adversarial.test.ts`, and `tests/unit/chat13-super-admin-booked-interviews-window.test.ts`.
