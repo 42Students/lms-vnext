@@ -24,6 +24,20 @@ describe("chat-5 TPO drive closure and correction journeys",()=>{
   expect(service).toContain("endDriveApplicants(");
   expect(service).toContain("tellRecruiterDriveStopped(");
  });
+ it("PLACEMENTS-CANCEL-WAIT-34 requires settling pending waitlist reservations before cancellation",()=>{
+  const service=src("src/modules/placements/tpo-drive-cancel-service.ts");
+  const page=src("src/app/(authenticated)/tpo/placements/jobs/[jobId]/cancel-preview/page.tsx");
+  expect(service).toContain('eq(placementWaitlistPromotions.status,"PENDING")');
+  expect(service).toContain("pendingPromotions===0");
+  expect(service).toContain("if(pendingPromotions>0)");
+  expect(service).toContain('throw new PlacementsServiceError("PLACEMENT_JOB_NOT_CLOSABLE")');
+  const locked=service.indexOf('from(placementJobs)\n      .where(and(eq(placementJobs.id, jobId)');
+  const check=service.lastIndexOf("if(pendingPromotions>0)");
+  expect(locked).toBeGreaterThanOrEqual(0);
+  expect(check).toBeGreaterThan(locked);
+  expect(page).toContain("preview.pendingPromotions>0");
+  expect(page).toContain("Finish the waitlist offer before cancelling this drive.");
+ });
  it("PLACEMENTS-DRIVE-CLOSE-SM-25 permits legitimate season-ended closure but blocks unissued selections and reserved seats",()=>{
   expect(evaluateTpoDriveClosure("PUBLISHED","CLOSED",counts,counts)).toBe("ALLOW");
   expect(evaluateTpoDriveClosure("PUBLISHED","ACTIVE",counts,counts,1)).toBe("UNRELEASED_SELECTIONS");

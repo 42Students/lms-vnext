@@ -66,6 +66,7 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
     .from(placementJoiningOutcomes)
     .innerJoin(placementOffers,eq(placementOffers.id,placementJoiningOutcomes.offerId))
     .where(and(eq(placementOffers.applicationId,placementApplications.id),
+     eq(placementOffers.status,"ACCEPTED"),
      eq(placementJoiningOutcomes.status,"JOINED"))));
   const stageConditions:Record<Exclude<HrApplicantStage,"ALL">,ReturnType<typeof eq>|ReturnType<typeof exists>>={
    APPLIED:eq(placementApplications.status,"SUBMITTED"),
@@ -76,7 +77,12 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
    REJECTED:roundMilestone(["TEST","VENDOR_TEST","GD","INTERVIEW"],"FAIL"),
    WITHDRAWN:eq(placementApplications.status,"WITHDRAWN"),
   };
-  const stageCondition=and(where,filters.stage==="ALL"?undefined:stageConditions[filters.stage]);
+  // A previously shortlisted applicant may withdraw after passing a round.
+  // Keep historical status in ALL/WITHDRAWN, but never surface it as an active
+  // assessment, interview, offer, hire or rejection pipeline candidate.
+  const activeMilestoneStage=["ASSESSMENT","INTERVIEW","OFFERED","HIRED","REJECTED"].includes(filters.stage);
+  const stageCondition=and(where,filters.stage==="ALL"?undefined:stageConditions[filters.stage],
+   activeMilestoneStage?eq(placementApplications.status,"SUBMITTED"):undefined);
   const selectionOnly=["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState);
   const offerCondition=filters.offerState === "ALL"
     ? where
@@ -87,11 +93,11 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
       total: sql<number>`count(*)::integer`,
       active: sql<number>`count(*) filter (where ${placementApplications.status} = 'SUBMITTED')::integer`,
       withdrawn: sql<number>`count(*) filter (where ${placementApplications.status} = 'WITHDRAWN')::integer`,
-      assessment:sql<number>`count(*) filter (where ${stageConditions.ASSESSMENT})::integer`,
-      interview:sql<number>`count(*) filter (where ${stageConditions.INTERVIEW})::integer`,
-      offered:sql<number>`count(*) filter (where ${stageConditions.OFFERED})::integer`,
-      hired:sql<number>`count(*) filter (where ${stageConditions.HIRED})::integer`,
-      rejected:sql<number>`count(*) filter (where ${stageConditions.REJECTED})::integer`,
+      assessment:sql<number>`count(*) filter (where ${placementApplications.status} = 'SUBMITTED' and ${stageConditions.ASSESSMENT})::integer`,
+      interview:sql<number>`count(*) filter (where ${placementApplications.status} = 'SUBMITTED' and ${stageConditions.INTERVIEW})::integer`,
+      offered:sql<number>`count(*) filter (where ${placementApplications.status} = 'SUBMITTED' and ${stageConditions.OFFERED})::integer`,
+      hired:sql<number>`count(*) filter (where ${placementApplications.status} = 'SUBMITTED' and ${stageConditions.HIRED})::integer`,
+      rejected:sql<number>`count(*) filter (where ${placementApplications.status} = 'SUBMITTED' and ${stageConditions.REJECTED})::integer`,
     }).from(placementApplications)
       .innerJoin(placementApplicationScreenings, eq(placementApplicationScreenings.applicationId, placementApplications.id))
       .innerJoin(collegeMemberships, eq(collegeMemberships.id, placementApplications.membershipId))

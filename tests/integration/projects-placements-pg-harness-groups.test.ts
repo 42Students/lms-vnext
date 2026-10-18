@@ -248,6 +248,21 @@ describe("PROJ-HARNESS real PostgreSQL schema group examples", () => {
     });
   });
 
+  it("PROJ-HARNESS-MEETING-35 meeting fixture round-trips UTC to IST without losing the 30-minute duration",async()=>{
+    await fixture(async(db,f)=>{
+      const id=await createMeeting(db,f.project,f.learner,f.author);
+      const rows=await db.query<{start_ist:string;end_ist:string;seconds:number;time_zone:string}>(`
+        select to_char(starts_at at time zone 'Asia/Kolkata','YYYY-MM-DD HH24:MI') as start_ist,
+          to_char(ends_at at time zone 'Asia/Kolkata','YYYY-MM-DD HH24:MI') as end_ist,
+          extract(epoch from ends_at-starts_at)::int as seconds,time_zone
+        from project_meetings where id=$1`,[id]);
+      expect(rows).toEqual([{
+        start_ist:"2099-10-20 10:00",end_ist:"2099-10-20 10:30",
+        seconds:1800,time_zone:"Asia/Kolkata",
+      }]);
+    });
+  });
+
   it("PROJ-HARNESS-15 project deletion is RESTRICTed with dependent work; no silent cascade",async()=>{
     await fixture(async(db,f)=>{
       await db.expectSqlState(()=>db.query("delete from project_instances where id=$1",[f.project.projectId]),"23503");
