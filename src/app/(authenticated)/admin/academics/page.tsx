@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { isSuperAdmin } from "@/modules/identity/context";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { AcademicsOverview } from "@/components/academics/academics-overview";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -7,6 +9,7 @@ import { getAcademicsWorkspace } from "@/modules/academics/workspace";
 
 export default async function SuperAdminAcademicsPage() {
   const context = await getCurrentRequestContext();
+  if (!isSuperAdmin(context)) redirect("/dashboard");
   const collegeId =
     context.adminScope?.collegeId ?? null;
 
