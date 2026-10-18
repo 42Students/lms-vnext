@@ -283,7 +283,8 @@ export async function listProjectAdminSnapshots(
     )
       .innerJoin(
         users,
-        eq(users.id, collegeMemberships.userId),
+        and(eq(users.id, collegeMemberships.userId),
+          eq(users.platformStatus, "ACTIVE")),
       )
       .where(
         and(
@@ -648,7 +649,8 @@ export async function listProjectAdminRiskQueue(
     )
     .innerJoin(
       users,
-      eq(users.id, collegeMemberships.userId),
+      and(eq(users.id, collegeMemberships.userId),
+        eq(users.platformStatus, "ACTIVE")),
     )
     .where(
       and(
