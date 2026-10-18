@@ -1,0 +1,60 @@
+# HR page coverage ledger — chat-19
+
+Date: 2026-10-18. Branch: `chatgpt/chat-19-b`.
+Inventory authority: `docs/orchestrator/ui-ux/pages-hr.md` (22 /hr routes).
+Scope: independently reviewed HR/recruiter page entry points and chat-15/chat-16 contributions. No live browser or PostgreSQL run is claimed by this lane; cloud CI is run and reported by orchestrator.
+
+## Evidence levels
+**Source** tests assert declared route permissions, vocabulary, responsive classes, loading/error boundaries, and no insecure page rendering. **Direct** tests invoke an async server page with role/service mocks or invoke a model with hostile inputs. **Integration needed** means source or mocked tests do not establish persistence, network, or actual browser behavior. A source test is never counted as end-to-end verification.
+
+## Per-page ledger
+
+| Route | Source | Source test | Behavioral test beyond source | Evidence / remaining work |
+|---|---|---|---|---|
+| `/hr/activity` | `src/app/(authenticated)/hr/activity/page.tsx` | `tests/unit/ux-hr-rollout.test.ts`, `tests/unit/chat19-hr-page-contracts.test.ts` | — | Source contracts; nested page-state integration outstanding |
+| `/hr/calendar` | `src/app/(authenticated)/hr/calendar/page.tsx` | `tests/unit/ux-hr-rollout.test.ts`, `tests/unit/chat19-hr-page-contracts.test.ts` | — | Source contracts; nested page-state integration outstanding |
+| `/hr/colleges` | `src/app/(authenticated)/hr/colleges/page.tsx` | `tests/unit/ux-hr-rollout.test.ts`, `tests/unit/chat19-hr-page-contracts.test.ts` | `tests/unit/chat19-hr-page-contracts.test.ts` (redirect source) | Source contracts; nested page-state integration outstanding |
+| `/hr/company` | `src/app/(authenticated)/hr/company/page.tsx` | `tests/unit/ux-hr-rollout.test.ts`, `tests/unit/chat19-hr-page-contracts.test.ts` | — | Source contracts; nested page-state integration outstanding |
+| `/hr/company/reports` | `src/app/(authenticated)/hr/company/reports/page.tsx` | `tests/unit/ux-hr-rollout.test.ts`, `tests/unit/chat19-hr-page-contracts.test.ts` | — | Source contracts; nested page-state integration outstanding |
+| `/hr/conversations` | `src/app/(authenticated)/hr/conversations/page.tsx` | `tests/unit/ux-hr-rollout.test.ts`, `tests/unit/chat19-hr-page-contracts.test.ts` | — | Source contracts; nested page-state integration outstanding |
+| `/hr/conversations/[threadId]` | `src/app/(authenticated)/hr/conversations/[threadId]/page.tsx` | `tests/unit/ux-hr-rollout.test.ts`, `tests/unit/chat19-hr-page-contracts.test.ts` | `tests/unit/HR-BREAK-chat19-conversation-page.test.ts` | Direct server-page boundary plus source checks |
+| `/hr/drives` | `src/app/(authenticated)/hr/drives/page.tsx` | `tests/unit/ux-hr-rollout.test.ts`, `tests/unit/chat19-hr-page-contracts.test.ts` | — | Source contracts; nested page-state integration outstanding |
+| `/hr/drives/[jobId]/interview-slots` | `src/app/(authenticated)/hr/drives/[jobId]/interview-slots/page.tsx` | `tests/unit/ux-hr-rollout.test.ts`, `tests/unit/chat19-hr-page-contracts.test.ts` | — | Source contracts; nested page-state integration outstanding |
+| `/hr/drives/[jobId]/messages` | `src/app/(authenticated)/hr/drives/[jobId]/messages/page.tsx` | `tests/unit/ux-hr-rollout.test.ts`, `tests/unit/chat19-hr-page-contracts.test.ts` | — | Source contracts; nested page-state integration outstanding |
+| `/hr/drives/[jobId]/rounds/editor` | `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/page.tsx` | `tests/unit/ux-hr-rollout.test.ts`, `tests/unit/chat19-hr-page-contracts.test.ts` | — | Source contracts; nested page-state integration outstanding |
+| `/hr/drives/[jobId]/rounds/editor/remove/[roundId]` | `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx` | `tests/unit/ux-hr-rollout.test.ts`, `tests/unit/chat19-hr-page-contracts.test.ts` | — | Source contracts; nested page-state integration outstanding |
+| `/hr/drives/new` | `src/app/(authenticated)/hr/drives/new/page.tsx` | `tests/unit/ux-hr-rollout.test.ts`, `tests/unit/chat19-hr-page-contracts.test.ts` | `tests/unit/HR-BREAK-request-drive-page-01.test.ts` | Direct server-page boundary plus source checks |
+| `/hr/drives/proposals` | `src/app/(authenticated)/hr/drives/proposals/page.tsx` | `tests/unit/ux-hr-rollout.test.ts`, `tests/unit/chat19-hr-page-contracts.test.ts` | — | Source contracts; nested page-state integration outstanding |
+| `/hr/drives/recorded-outside` | `src/app/(authenticated)/hr/drives/recorded-outside/page.tsx` | `tests/unit/ux-hr-rollout.test.ts`, `tests/unit/chat19-hr-page-contracts.test.ts` | — | Source contracts; nested page-state integration outstanding |
+| `/hr/home` | `src/app/(authenticated)/hr/home/page.tsx` | `tests/unit/ux-hr-rollout.test.ts`, `tests/unit/chat19-hr-page-contracts.test.ts` | — | Source contracts; nested page-state integration outstanding |
+| `/hr/messages` | `src/app/(authenticated)/hr/messages/page.tsx` | `tests/unit/ux-hr-rollout.test.ts`, `tests/unit/chat19-hr-page-contracts.test.ts` | `tests/unit/chat19-hr-page-contracts.test.ts` (alias source) | Source contracts; nested page-state integration outstanding |
+| `/hr/notifications` | `src/app/(authenticated)/hr/notifications/page.tsx` | `tests/unit/ux-hr-rollout.test.ts`, `tests/unit/chat19-hr-page-contracts.test.ts` | `tests/unit/HR-BREAK-chat19-notifications-page.test.ts` | Direct server-page boundary plus source checks |
+| `/hr/placements` | `src/app/(authenticated)/hr/placements/page.tsx` | `tests/unit/ux-hr-rollout.test.ts`, `tests/unit/chat19-hr-page-contracts.test.ts` | — | Source contracts; nested page-state integration outstanding |
+| `/hr/placements/jobs/[jobId]` | `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx` | `tests/unit/ux-hr-rollout.test.ts`, `tests/unit/chat19-hr-page-contracts.test.ts` | `tests/unit/chat19-projects-recruiter-role-journey.test.ts` (policy/model), `tests/unit/HR-BREAK-applicants-01.test.ts` (filter model) | Source contracts; nested page-state integration outstanding |
+| `/hr/profile` | `src/app/(authenticated)/hr/profile/page.tsx` | `tests/unit/ux-hr-rollout.test.ts`, `tests/unit/chat19-hr-page-contracts.test.ts` | `tests/unit/HR-BREAK-chat19-profile-page.test.ts` | Direct server-page boundary plus source checks |
+| `/hr/round-results` | `src/app/(authenticated)/hr/round-results/page.tsx` | `tests/unit/ux-hr-rollout.test.ts`, `tests/unit/chat19-hr-page-contracts.test.ts` | — | Source contracts; nested page-state integration outstanding |
+
+## HR and Projects role journey contracts
+
+| ID | Boundary | Test | Outcomes |
+|---|---|---|---|
+| PROJ-HR-01/02/03/04/05/07/08 | authorized recruiter sees only TPO-shortlisted learner project links under same college and employer, never unsafe URLs | `tests/unit/chat19-projects-recruiter-role-journey.test.ts` | Direct data-projection policy tests + source assertions. PostgreSQL grant revocation during requests outstanding |
+| HR-BREAK-CONVO-01/02/03 | recruiter conversation detail page, wrong-role and expired sessions, malformed IDs/pages, revoked thread, contaminated company job row, auxiliary service failure | `tests/unit/HR-BREAK-chat19-conversation-page.test.ts` | Direct async page tests, defense-in-depth company check, safe degraded state |
+| HR-BREAK-NOTIFICATIONS-01 | notifications page 401/invalid filters/no grant/multicollege/empty tenant-scope | `tests/unit/HR-BREAK-chat19-notifications-page.test.ts` | Direct async page tests; notification DB reading and CSV download still integration scope |
+| HR-BREAK-PROFILE-PAGE-01 | profile page session expiry, removed recruiter, private identity and profile read failure | `tests/unit/HR-BREAK-chat19-profile-page.test.ts` | Direct async page tests, separate profile update service concurrency and CAS tests needed |
+| HR-BREAK-profile-01/02 | profile edits and tenant-level visibility | `tests/unit/HR-BREAK-profile-01.test.ts` | Model invalid inputs and copy recovery; DB CAS remains integration scope |
+| HR-BREAK-drive-payload-01 | off-campus recruiter external application link policy | `tests/unit/HR-BREAK-drive-payload-01.test.ts` | Reject local address, malformed HTTPS, invalid compensation and round presets |
+| HR-BREAK-double-submit-01 | draft request retries | `tests/unit/HR-BREAK-double-submit-01.test.ts` | Model key persistence and source synchronous guard; browser rapid click and DB persistence are not simulated |
+| COL-XA-03/08/09 | college Project listing scope, malformed filters, template outage, mobile tables | `tests/unit/chat19-college-cross-audit.test.ts`, `tests/unit/chat19-college-source-coverage.test.ts` | Source plus real filter-model validation; central `getProjectAdminCollegeId` verified in code |
+
+## Cross-audit boundaries and handoff
+
+- Chat-15 owns HR services, placement job transitions and the full HR ledger. Chat-16 owns messaging, email bridge, notification and inbound-mail services. This ledger does not duplicate ownership or claim their unrun coverage.
+- Additional source-level finding HR-BREAK-CONVO-02: a contaminated job service row bearing another employer's companyId must not create a drive link; page now checks companyId alongside jobId/collegeId. Regression direct page test is in the conversation suite.
+- Additional source-level finding HR-BREAK-CONVO-03: failure of optional drive change-request retrieval must not lose a legitimate, authorized conversation. This now shows an actionable soft-failure state; test asserts message survives and raw error stays hidden.
+- `docs/design-system/audits/UX-ROLLOUT-AUDIT-college-chat-19.md` already records the 85 college page-source survey and follow-up limits. Source-level complete is not a browser accessibility PASS.
+- The orchestrator's latest `typecheck-errors-latest.md` lists no chat-19 source failures. The recent `unit-failures-latest.md` named COL-XA-09 and source-coverage-02 and this lane updated their stale assumptions to assert actual current central college scope, without removing their fail-soft/tenant-scope requirements.
+
+## Remaining quality gates
+
+Cloud results from the next merge must confirm new tests. Real route rendering for each page at 320/360/390px, keyboard, screen-reader, modal escape/focus return, service latency and PostgreSQL transactional races remain acceptance gates. All 22 have source contracts; four also have directly invoked page behavior tests in this ledger. No 90%+ branch coverage or exhaustive end-to-end acceptance is claimed.
