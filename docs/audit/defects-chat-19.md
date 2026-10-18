@@ -261,3 +261,9 @@ This is an independent unowned responsive UX pickup for the critical TPO/HR plac
 | HR-BREAK-INBOX-SEARCH-07 | MAJOR | `src/modules/placements/hr-conversation-inbox-service.ts` and `hr-conversation-inbox-model.ts` | Message search selected a maximum 1000 distinct thread IDs after per-recruiter scoping, silently hiding matches at position 1001+ for large employers. The per-tenant set of authorized thread IDs already supplies the exact maximum possible distinct matches. Bound by this cardinality instead of an arbitrary global cutoff, without widening SQL scope. | `tests/unit/HR-BREAK-chat19-inbox-search-boundary.test.ts`: 1205 matches, ownership exclusions, last page and SQL scope |
 
 Cloud CI, real database tenant-isolation and scale benchmarks remain pending, and no passing run is asserted.
+
+## HR Today unread-notification misnavigation
+
+| Gap | Severity | Affected source | Wrong behaviour, correction and tests |
+|---|---|---|---|
+| HR-BREAK-TODAY-UNREAD-08 | MAJOR | `src/modules/placements/hr-today-unread-model.ts`, `src/app/(authenticated)/hr/messages/page.tsx` | The unread **notifications** action incorrectly opened `/hr/messages?unreadOnly=true`. The legacy Messages route now correctly aliases recruiter **conversations**, so this sent the recruiter to a different inbox and failed to show the expected system-notification list. Route the action to `/hr/notifications?collegeId=…&unreadOnly=true`, preserving college grant and unread filtering. Update the stale, incorrect URL expectation and add explicit regression in `tests/unit/hr-today-unread-model.test.ts`. |
