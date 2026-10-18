@@ -47,7 +47,7 @@ describe("PROJ-COL-REVOKE-03 member/mentor mutation safety",()=>{
    expect(check,name).toBeGreaterThan(lock);
    expect(future,name).toBeGreaterThan(check);
    expect(action,name).toContain("collegeId:scope.collegeId,organizationId:scope.organizationId");
-   expect(action,name).toContain('project.status==="ARCHIVED"');
+   expect(action,name).toMatch(/project\.status\s*===\s*"ARCHIVED"/);
   }
   expect(src).toContain("recordActivityEventInTransaction(");
   expect(src).toContain("notifyProjectMemberships(tx");
