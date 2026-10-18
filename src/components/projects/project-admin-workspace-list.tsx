@@ -168,7 +168,7 @@ export function ProjectAdminWorkspaceList({
                 "/" +
                 item.id
               }
-              className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text hover:bg-muted"
+              className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-muted"
             >
               Open workspace
             </Link>
