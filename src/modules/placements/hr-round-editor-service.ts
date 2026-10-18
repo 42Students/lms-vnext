@@ -89,7 +89,7 @@ export async function editHrJobRound(context:RequestContext,rawJobId:unknown,raw
     durationMinutes:input.durationMinutes,
     updatedAt:sql`greatest(clock_timestamp(),${placementJobRounds.updatedAt} + interval '1 millisecond')`})
    .where(and(eq(placementJobRounds.id,target.id),eq(placementJobRounds.status,"PENDING"),
-    eq(placementJobRounds.updatedAt,target.updatedAt))).returning({id:placementJobRounds.id});
+    sql`date_trunc('milliseconds', ${placementJobRounds.updatedAt}) = ${target.updatedAt.toISOString()}::timestamptz`)).returning({id:placementJobRounds.id});
   if(!updated)throw new PlacementsServiceError("PLACEMENT_ROUND_STALE");
   await tx.insert(placementJobRoundEvents).values({
    roundId:target.id,eventType:input.action==="REMOVE"?"CANCELLED":"UPDATED",
