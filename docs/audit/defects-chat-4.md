@@ -161,3 +161,11 @@ The College student import history service used `z.coerce.number()` for page inp
 ## SA-people-audit-ACTOR-01 — S1 sensitive read after actor revocation
 
 `listSuperAdminPersonAudit` previously fetched the person's selected-college membership, then independently selected private identity and platform audit records without another persisted Super Admin authorization. A session's role could be revoked between these reads. Now the final audit query runs in a transaction with `assertPersistedPlatformPermission(tx,context,"people.manage",{collegeId,organizationId})`, holding the actor lock until the event data is read. `tests/unit/chat4-superadmin-person-audit-actor.test.ts` covers stale-role rejection, no global fallback, missing target, audit query bounds. **Source committed; CI and PostgreSQL race pending.**
+
+## COL-contacts-scope-01 — S1 cross-program contacts predicate
+
+`collegeContactAcademicScope.inProgram` and `activeEnrollment` previously matched the independently referenced `learner_program_enrollments.program_id` without verifying that its `cohort_id` belongs to that same program. A foreign-key-valid forged learner/cohort association could make a college contact appear academically enrolled in the wrong program. Both predicates now join through `cohorts` and require `cohorts.program_id = learner_program_enrollments.program_id`. The `COL-contacts-scope-PG-01` disposable Postgres fixture uses a separate synthetic College A learner with only an invalid College B cohort to detect any false inclusion. Authored, not run.
+
+## COL-people-directory-PAGE-01 — malformed list pagination
+
+The College People roster's `z.coerce.number()` accepted unambiguous but non-URL-decimal inputs such as `0x19` and `2.5e1`. Replaced with strict decimal-string parsing (retaining validated numeric internal callers), explicit blank-page rejection, and `chat4-college-role-directory-decimal-page.test.ts` covering canonical query round trips. Authored, not run.
