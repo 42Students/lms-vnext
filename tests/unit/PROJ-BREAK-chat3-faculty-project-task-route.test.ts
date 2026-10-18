@@ -46,6 +46,13 @@ describe("PROJ-BREAK-chat3-FACULTY-04 mentor/learner task create dispatch",()=>{
   expect(state.mentor).not.toHaveBeenCalled();
   expect(state.learner).not.toHaveBeenCalled();
  });
+ it("does not route an administrative project view through a Mentor-only task writer",async()=>{
+  state.scope.mockResolvedValueOnce({access:"ADMIN"});
+  const response=await POST(post(JSON.stringify({title:"Try privileged task"})),params);
+  expect(response.status).toBe(403);
+  expect(state.mentor).not.toHaveBeenCalled();
+  expect(state.learner).not.toHaveBeenCalled();
+ });
  it("keeps Faculty-only project authorization denied without attempting a Mentor write",async()=>{
   state.scope.mockRejectedValueOnce(new Error("PROJECT_ACCESS_DENIED"));
   const response=await POST(post(JSON.stringify({title:"Not permitted"})),params);
