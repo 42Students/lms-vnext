@@ -123,7 +123,7 @@ export default async function TpoPlacementTeamPage() {
         ))}
       </section>
 
-      <section className="rounded-xl border border-border bg-surface">
+      <section className="border-t border-border">
         <div className="border-b border-border px-5 py-4">
           <h2 className="text-lg font-semibold text-foreground">
             Active team memberships
