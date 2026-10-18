@@ -8,6 +8,7 @@ export const COLLEGE_LEGACY_GROUPS: readonly CollegeLegacyGroup[] = [
   {title:"Academic Setup",tabs:[
     {label:"Departments",href:"/college/departments"},
     {label:"Programs",href:"/college/programs"},
+    {label:"Academic periods",href:"/college/academics"},
     {label:"Semesters",href:"/college/semesters"},
     {label:"Semester–Course Mapping",href:"/college/semester-courses"},
     {label:"Batches",href:"/college/batches"},
@@ -95,8 +96,8 @@ export function collegeProjectWorkspaceOwnsTabs(pathname:string):boolean {
 /** COL-academic-setup-13: six guided setup steps, separate from later utility tabs. */
 export function collegeAcademicSetupStep(pathname:string){
  const group=COLLEGE_LEGACY_GROUPS.find(g=>g.title==="Academic Setup");
- // Academic periods remains accessible from Departments, outside the six legacy tabs.
- const steps=group?.tabs.slice(0,6)??[];
+ // The extra vNext prerequisite must not replace one of the six legacy setup steps.
+ const steps=group?.tabs.filter(tab=>tab.href!=="/college/academics").slice(0,6)??[];
  const step=steps.findIndex(t=>pathname===t.href||pathname.startsWith(t.href+"/"));
  if(step<0)return null;
  return {index:step+1,total:steps.length,title:steps[step]!.label,
