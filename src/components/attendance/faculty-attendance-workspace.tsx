@@ -1,4 +1,5 @@
 "use client";
+import { ScrollCue } from "@/components/ui/scroll-cue";
 
 import {
   type FormEvent,
@@ -702,7 +703,7 @@ export function FacultyAttendanceWorkspace({
               description="Choose another month or schedule a class for this Course."
             />
           ) : (
-            <section className="overflow-x-auto rounded-xl border border-border bg-surface p-4">
+            <section className="rounded-xl border border-border bg-surface p-4"><ScrollCue axis="x" label="Monthly learner attendance by class date">
               <table className="w-full min-w-[48rem] border-collapse text-left text-sm">
                 <thead className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
                   <tr>
@@ -807,7 +808,7 @@ export function FacultyAttendanceWorkspace({
                     </tr>
                   ))}
                 </tbody>
-              </table>
+              </table></ScrollCue>
               <p className="mt-4 text-xs leading-5 text-muted-foreground">
                 P = Present · A = Absent · — = Not marked yet · ✖ = No class · S = future class · x/y = present sessions / all sessions that day.
               </p>

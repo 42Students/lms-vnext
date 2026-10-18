@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { ScrollCue } from "@/components/ui/scroll-cue";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
@@ -187,7 +188,7 @@ export function FacultyCourseRoster({
         />
       ) : (
         <>
-          <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface md:block">
+          <div className="hidden md:block"><ScrollCue axis="x" label="Student roster contact table" className="rounded-xl border border-border bg-surface">
             <table className="w-full min-w-[48rem] border-collapse text-left text-sm">
               <thead className="bg-surface-subtle text-xs uppercase tracking-[0.06em] text-muted-foreground">
                 <tr>
@@ -269,7 +270,7 @@ export function FacultyCourseRoster({
                   );
                 })}
               </tbody>
-            </table>
+            </table></ScrollCue>
           </div>
 
           <div className="space-y-3 md:hidden">
