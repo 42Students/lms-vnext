@@ -38,10 +38,10 @@ export function BottomSheet({ open, onOpenChange, title, description, children, 
       onClose={() => { if (open) onOpenChange(false); opener.current?.focus(); }}
       onClick={event => { if (event.target === ref.current && dismissible) onOpenChange(false); }}
       style={{ "--lms-visual-height": availableHeight ?? "100dvh", "--lms-visual-top": viewportTop ?? "0px", "--lms-visual-bottom": viewportBottom ?? "0px" } as CSSProperties}
-      className="fixed inset-x-0 bottom-[var(--lms-visual-bottom)] top-auto m-0 max-h-[var(--lms-visual-height)] min-h-0 w-full max-w-none rounded-t-xl border border-border bg-surface p-0 text-foreground shadow-lg backdrop:bg-foreground/30 sm:inset-auto sm:left-1/2 sm:top-1/2 sm:w-[min(36rem,calc(100%-2rem))] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-xl">
+      className="fixed inset-x-0 bottom-[var(--lms-visual-bottom)] top-auto m-0 max-h-[var(--lms-visual-height)] min-h-0 w-full max-w-none rounded-t-[12px] border border-border bg-surface p-0 text-foreground shadow-[var(--lms-overlay-shadow)] backdrop:bg-foreground/30 sm:inset-auto sm:left-1/2 sm:top-1/2 sm:w-[min(36rem,calc(100%-2rem))] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-[12px]">
       <div className="flex max-h-[var(--lms-visual-height)] min-h-0 flex-col overflow-hidden pt-[env(safe-area-inset-top)]">
         <header className="flex shrink-0 items-start justify-between gap-4 border-b border-border p-4">
-          <div className="min-w-0"><h2 id={titleId} className="text-lg font-semibold leading-7">{title}</h2>
+          <div className="min-w-0"><h2 id={titleId} className="text-lg font-semibold leading-[1.35] text-[#172033]">{title}</h2>
             {description ? <p id={descriptionId} className="mt-1 text-sm text-body">{description}</p> : null}</div>
           {dismissible ? <Button variant="ghost" aria-label="Close sheet" onClick={() => onOpenChange(false)}>×</Button> : null}
         </header>
