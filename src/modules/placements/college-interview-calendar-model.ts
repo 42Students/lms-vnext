@@ -1,6 +1,6 @@
 /** RFC5545 download for one booked candidate interview, no private attendee details. */
 function isoUtc(value:Date){return value.toISOString().replace(/[-:]/g,"").replace(/\.\d{3}Z$/,"Z");}
-function escapeIcs(value:string){return value.replace(/\\/g,"\\\\").replace(/\r?\n/g,"\\n")
+function escapeIcs(value:string){return value.replace(/\\/g,"\\\\").replace(/\r\n|\r|\n/g,"\\n")
  .replace(/,/g,"\\,").replace(/;/g,"\\;");}
 export function collegeInterviewIcs(input:{
  id:string;title:string;date:string;durationMinutes:number;location:string|null;
