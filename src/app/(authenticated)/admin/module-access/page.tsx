@@ -34,7 +34,7 @@ export default async function SuperAdminModuleAccessPage({
   return <div className="space-y-6">
     <PageHeader eyebrow="Super Admin" title="Module Access"
       description="Select a college to inspect the existing inherited module access rules."
-      actions={<Link href="/admin/features" className="font-semibold text-primary-text">Feature Controls</Link>}/>
+      actions={<Link href="/admin/features" className="font-semibold text-[var(--lms-teal-deep)]">Feature Controls</Link>}/>
     <section aria-label="Module Access overview" className="rounded-xl border border-border bg-surface p-4">
       <p className="text-sm font-semibold">Effective access · {scopeLabel}</p>
       <h2 className="mt-1 text-base font-semibold">Optional module access hierarchy</h2>
@@ -50,8 +50,8 @@ export default async function SuperAdminModuleAccessPage({
         <input type="search" name="q" maxLength={100} defaultValue={result.q}
           className="min-h-11 rounded-md border border-border bg-surface px-3"/>
       </label>
-      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
-      <Link className="inline-flex min-h-11 items-center px-3 py-3 text-sm font-semibold text-primary-text"
+      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Filter</button>
+      <Link className="inline-flex min-h-11 items-center px-3 py-3 text-sm font-semibold text-[var(--lms-teal-deep)]"
         href="/admin/module-access">Clear filters</Link>
     </form>
     <p role="status" className="text-sm text-body">
@@ -65,7 +65,7 @@ export default async function SuperAdminModuleAccessPage({
           <h2 className="font-semibold text-foreground">{college.name}</h2>
           <p className="mt-1 text-sm text-body">{college.code}</p>
           <Link href={"/admin/features/"+encodeURIComponent(college.id)}
-            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">
+            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">
             Module Access →
           </Link>
         </article>)}
