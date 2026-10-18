@@ -443,6 +443,10 @@ export async function createPlacementCandidateFixture(
   if (job?.college_id !== learner.collegeId) {
     throw new Error("PROJ-HARNESS: applicant and drive have different colleges");
   }
+  // Roles held in fixture objects are insufficient evidence; the real
+  // memberships and both users must still be active in the drive's college.
+  await requireFixtureCollegePrincipal(db, job.college_id, learner, ["LEARNER"]);
+  await requireFixtureCollegePrincipal(db, job.college_id, actor, ["COLLEGE_ADMIN", "TPO"]);
   const [application] = await db.query<{id:string}>(`
     insert into placement_applications
       (job_id,membership_id,channel,eligibility_status,eligibility_snapshot,submitted_by_user_id)
