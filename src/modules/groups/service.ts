@@ -204,7 +204,18 @@ export async function createGroup(context: RequestContext, raw: unknown) {
     createdByUserId: context.user.id,
     createdByType: actorType(context),
   }).returning();
-    return created!;
+    if(!created)throw new GroupServiceError("GROUP_CREATE_FAILED");
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_GROUP_CREATED,
+      collegeId:created.collegeId??undefined,
+      subjectType:"lms_group",subjectId:created.id,subjectLabel:created.name,
+      summary:"Group "+created.name+" created",
+      metadata:{groupId:created.id,kind:created.kind,ownerScope:created.ownerScope,
+        status:created.status,capacity:created.capacity},
+      groupKey:"academics:group:"+created.id,
+      dedupeKey:"academics:group:"+created.id+":created",
+    });
+    return created;
   });
 }
 
