@@ -1,0 +1,87 @@
+import {describe,expect,it} from "vitest";
+import {readFileSync} from "node:fs";
+const read=(p:string)=>readFileSync(new URL("../../"+p,import.meta.url),"utf8");
+describe("UX-admin-courses-content-audit-01 Super Admin scoped courses and content",()=>{
+ const home=read("src/app/(authenticated)/admin/courses/page.tsx");
+ const offering=read("src/app/(authenticated)/admin/courses/offerings/[offeringId]/page.tsx");
+ const offeringView=read("src/components/courses/admin-offering-learning-page.tsx");
+ const courses=read("src/components/courses/admin-course-overview.tsx");
+ it("SA-academics-people-77 /admin/courses rejects invalid filters and requires selected college before data fetch",()=>{
+  expect(home).toContain("collegeCourseCatalogueQuerySchema.safeParse");
+  expect(home).toContain("if (!collegeId)");
+  expect(home).toContain("Select a college to continue");
+  expect(home).toContain("<ErrorState");
+  expect(home).toContain("getAdminCourseWorkspace(context,collegeId)");
+  for(const href of ["/admin/lessons","/admin/videos","/admin/resources","/admin/live-classes",
+    "/admin/course-progress","/admin/assignments","/admin/quizzes"]){
+    expect(home).toContain(href);
+  }
+ });
+ it("UX-admin-courses-actions-01 keeps every course lifecycle action visible on phone rather than collapsed",()=>{
+  const matches=courses.match(/key: "actions",\s*mobilePriority: "action"/g)??[];
+  expect(matches).toHaveLength(4);
+  expect(courses).toContain("<DataTable");
+  expect(courses).toContain("CourseActions");
+  expect(courses).toContain("OfferingActions");
+  expect(courses).toContain("DeliveryActions");
+  expect(courses).toContain("TeachingAssignmentActions");
+  expect(courses).toContain('empty={<p');
+ });
+ it("UX-admin-courses-offering-touch-01 /admin/courses/offerings/[offeringId] denies cross-college invalid detail and uses 44px tabs",()=>{
+  expect(offering).toContain("resolveSuperAdminOfferingDetail(context, offeringId)");
+  expect(offering).toContain("notFound()");
+  expect(offering).toContain('redirect("/admin/courses")');
+  expect(offeringView).toContain('aria-label="Course detail tabs"');
+  expect(offeringView).toContain('href="#course-syllabus"');
+  expect(offeringView).toContain('href="#who-teaches-it"');
+  expect(offeringView).toContain('href="#section-content"');
+  expect(offeringView).not.toMatch(/min-h-(?:9|10)\b/);
+  expect((offeringView.match(/min-h-11/g)??[]).length).toBeGreaterThanOrEqual(5);
+  expect(offeringView).toContain("<AdminOfferingLearningOverview");
+ });
+ const directories=[
+  ["videos","VIDEOS"],["resources","RESOURCES"],["live-classes","LIVE_CLASSES"],
+ ] as const;
+ for(const [path,kind] of directories)it(`UX-admin-content-${path}-01 scopes /admin/${path} through one guarded directory`,()=>{
+  const route=read(`src/app/(authenticated)/admin/${path}/page.tsx`);
+  expect(route).toContain(`kind="${kind}"`);
+  expect(route).toContain("SuperAdminContentDirectoryPage");
+  const shared=read("src/components/courses/super-admin-content-directory-page.tsx");
+  expect(shared).toContain("adminContentQuerySchema.safeParse");
+  expect(shared).toContain("if(!context.adminScope?.collegeId)");
+  expect(shared).toContain("<ErrorState");
+  expect(shared).toContain("<EmptyState");
+  expect(shared).toContain("listSuperAdminContentDirectory(context,kind,parsed.data)");
+  expect(shared).toContain("SuperAdminContentAuthoring");
+  expect(shared).toContain("min-h-11");
+ });
+ it("UX-admin-assignments-quizzes-01 requires scoped college and preserves builder/editor and failure states",()=>{
+  for(const [path,kind] of [["assignments","ASSIGNMENT"],["quizzes","QUIZ"]] as const){
+   const src=read(`src/app/(authenticated)/admin/${path}/page.tsx`);
+   expect(src).toContain("adminAssessmentQuerySchema.safeParse");
+   expect(src).toContain("if (!context.adminScope?.collegeId)");
+   expect(src).toContain("<EmptyState");
+   expect(src).toContain("<ErrorState");
+   expect(src).toContain(`listCollegeAssessmentAggregate(context, "${kind}"`);
+   expect(src).toContain("AdminAssessmentDirectory");
+  }
+  const ui=read("src/components/courses/admin-assessment-read-directory.tsx");
+  expect(ui).toContain("Open offering builder / submissions");
+  expect(ui).toContain("AdminQuizResultsActions");
+  expect(ui).toContain("CollegeAssignmentReview");
+  expect(ui).toContain("CollegeQuizAttempts");
+ });
+ it("UX-admin-course-progress-01 distinguishes measured activity from fabricated completion",()=>{
+  const overview=read("src/app/(authenticated)/admin/course-progress/page.tsx");
+  const students=read("src/app/(authenticated)/admin/course-progress/students/page.tsx");
+  expect(overview).toContain("adminLearningQuerySchema.safeParse");
+  expect(overview).toContain("Select a college to continue");
+  expect(overview).toContain("not a completion rate");
+  expect(students).toContain("studentCourseCompletion");
+  expect(students).toContain("No completion percentage is inferred");
+  expect(students).toContain("<DataTable");
+  expect(students).toContain('mobilePriority:"primary"');
+  expect(students).toContain("No students are enrolled");
+  expect(students).toContain("Showing the first 500 students");
+ });
+});

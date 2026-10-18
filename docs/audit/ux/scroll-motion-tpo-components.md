@@ -19,6 +19,9 @@ Global scrollbars are hidden; do not restore them. Shared `ScrollCue` detects ac
 | `src/components/tpo/tpo-bulk-action-panel.tsx` | Selection and link-review list | two labelled vertical ScrollCues |
 | `src/components/tpo/tpo-students-drive-visibility.tsx` | Confirmation list | remove inner scroll; single Dialog content scroll |
 | `src/components/tpo/tpo-batch-eligibility-import.tsx` | Drawer preview list | remove inner paged scroller; Drawer owns scroll |
+| `src/components/tpo/recruiter-lead-csv-import.tsx` | Import preview and result tables + modal | Shared Dialog, two DataTables and separate labelled vertical ScrollCues; includes group empty copy, row opt-in, 44px targets |
 | `src/components/tpo/recruiter-lead-detail-workspace.tsx` | Edit and Not-now modals | replace two bespoke overlays with shared Dialog; discard guards intact |
 
 Regression tests: `tests/unit/chat2-UX-tpo-scroll-motion-01.test.ts`, `tests/unit/chat2-UX-tpo-overlay-01.test.ts`, `tests/unit/chat2-UX-tpo-overlay-coverage.test.ts`. Pending: dedicated browser tests for scroll detection, focus and motion; regression suite not runnable through this GitHub connection.
+
+**Specialized table exception to evaluate with the shared-kit owner:** `src/components/tpo/tpo-spreadsheet-grid.tsx` retains a semantic desktop `<table>` to preserve adjustable pinned columns and select/open interactions. It now uses labelled horizontal `ScrollCue` edge fades and a distinct small-screen card list. Replacing its table directly with `DataTable` would remove pinned-column behavior; no permission to waive the raw-table policy is assumed.
