@@ -3,7 +3,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { Pool } from "pg";
 import {
   newHarnessPool, withProjectPg, withTwoPgSessions, createTenant, createPrincipal,
-  createProjectFixture, createTaskSubmission, createFinalSubmission,
+  createProjectFixture, createTaskSubmission, createFinalSubmission, submitFinalSubmission,
   createMeeting, createPlacementFixture, type PgHarness,
 } from "./support/projects-placements-pg-harness";
 
@@ -179,6 +179,7 @@ describe("PROJ-HARNESS real PostgreSQL schema group examples", () => {
   it("PROJ-HARNESS-12 reviews reject missing changes-requested rationale",async()=>{
     await fixture(async(db,f)=>{
       const finalId=await createFinalSubmission(db,f.project,f.learner);
+      await submitFinalSubmission(db,finalId,f.learner);
       await db.expectSqlState(()=>db.query(`
         insert into project_submission_reviews
           (project_id,submission_id,decision,reviewed_by_user_id)
@@ -195,6 +196,7 @@ describe("PROJ-HARNESS real PostgreSQL schema group examples", () => {
   it("PROJ-HARNESS-13 evaluations enforce rubric bounds, sequence and one evaluation/submission",async()=>{
     await fixture(async(db,f)=>{
       const finalId=await createFinalSubmission(db,f.project,f.learner);
+      await submitFinalSubmission(db,finalId,f.learner);
       await db.expectSqlState(()=>db.query(`
         insert into project_evaluations(project_id,submission_id,evaluator_user_id,total_score,max_score)
         values ($1,$2,$3,101,100)`,[f.project.projectId,finalId,f.mentor.userId]),"23514");
@@ -294,6 +296,7 @@ describe("PROJ-HARNESS real PostgreSQL schema group examples", () => {
   it("PROJ-HARNESS-20 delivery events enforce nonempty reason and composite project/submission ancestry",async()=>{
     await fixture(async(db,f)=>{
       const submission=await createFinalSubmission(db,f.project,f.learner);
+      await submitFinalSubmission(db,submission,f.learner);
       await db.expectSqlState(()=>db.query(`
         insert into project_delivery_events(project_id,submission_id,event_type,actor_membership_id,reason)
         values ($1,$2,'LOCKED',$3,'')`,
@@ -307,6 +310,7 @@ describe("PROJ-HARNESS real PostgreSQL schema group examples", () => {
       const otherLearner=await createPrincipal(db,f.other,["LEARNER"]);
       const otherProject=await createProjectFixture(db,f.other,otherAdmin,otherMentor,otherLearner);
       const otherSubmission=await createFinalSubmission(db,otherProject,otherLearner);
+      await submitFinalSubmission(db,otherSubmission,otherLearner);
       await db.expectSqlState(()=>db.query(`
         insert into project_delivery_events(project_id,submission_id,event_type,actor_membership_id,reason)
         values ($1,$2,'REOPENED',$3,'Wrong project')`,
