@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { RequestContext } from "@/modules/identity/context";
 
 const mocks=vi.hoisted(()=>({
- lifecycle:vi.fn(),persisted:vi.fn(),ready:vi.fn(),transaction:vi.fn(),
+ lifecycle:vi.fn(),persisted:vi.fn(),ready:vi.fn(),txExecute:vi.fn(),transaction:vi.fn(),
  select:vi.fn(),insert:vi.fn(),update:vi.fn(),values:vi.fn(),set:vi.fn(),
  rows:[] as Array<Array<Record<string,unknown>>>,
  result:[] as Array<Record<string,unknown>>,
@@ -18,7 +18,7 @@ vi.mock("@/modules/permissions/persisted-actor",()=>({
 }));
 
 import {
- saveAdminCollegeSignInPolicy, CollegeSignInPolicyError,
+ saveAdminCollegeSignInPolicy, readAdminCollegeSignInPolicy, CollegeSignInPolicyError,
 } from "@/modules/colleges/admin-signin-policy-service";
 
 const collegeId="11111111-1111-4111-8111-111111111111";
@@ -42,6 +42,7 @@ beforeEach(()=>{
  mocks.lifecycle.mockResolvedValue({id:collegeId,organizationId,status:"ACTIVE"});
  mocks.persisted.mockResolvedValue(undefined);
  mocks.ready.mockResolvedValue({rows:[{ready:true}]});
+ mocks.txExecute.mockResolvedValue({rows:[{found:true}]});
  mocks.values.mockResolvedValue(undefined);
  const selectBuilder={
   from(){return this;},where(){return this;},for(){return this;},
@@ -54,7 +55,7 @@ beforeEach(()=>{
  mocks.select.mockImplementation(()=>selectBuilder);
  mocks.insert.mockImplementation(()=>({values:(value:unknown)=>mocks.values(value),returning:()=>Promise.resolve(mocks.result)}));
  mocks.update.mockImplementation(()=>updateBuilder);
- const tx={select:mocks.select,update:mocks.update,insert:mocks.insert};
+ const tx={select:mocks.select,update:mocks.update,insert:mocks.insert,execute:mocks.txExecute};
  mocks.transaction.mockImplementation(async(fn:(transaction:typeof tx)=>Promise<unknown>)=>fn(tx));
 });
 
@@ -135,5 +136,46 @@ describe("SA-colleges-signin-01 sign-in policy write CAS and actor revocation",(
  });
  it("keeps the typed failure distinct from a successful no-op",()=>{
   expect(new CollegeSignInPolicyError("SIGNIN_POLICY_STALE").code).toBe("SIGNIN_POLICY_STALE");
+ });
+});
+
+describe("SA-colleges-signin-02 authorized policy reads and unconfigured states",()=>{
+ it("returns migration-pending when the table does not exist without querying staged policies",async()=>{
+  mocks.txExecute.mockResolvedValue({rows:[{found:false}]});
+  const result=await readAdminCollegeSignInPolicy(actor,collegeId);
+  expect(result.policy).toEqual({kind:"MIGRATION_PENDING",method:null});
+  expect(result.college.id).toBe(collegeId);
+  expect(mocks.select).not.toHaveBeenCalled();
+  expect(mocks.persisted).toHaveBeenCalledWith(
+   expect.anything(),actor,"college.read",{collegeId,organizationId},
+  );
+ });
+ it("distinguishes unconfigured, valid and corrupted stored policies",async()=>{
+  for(const [rows,expected] of [
+   [[],{kind:"NOT_CONFIGURED",method:null}],
+   [[{method:"EMAIL_ONLY",version:3,updatedAt:new Date("2099-01-01T00:00:00Z")}],
+    {kind:"CONFIGURED",method:"EMAIL_ONLY"}],
+   [[{method:"UNKNOWN",version:3}],{kind:"INVALID_POLICY",method:null}],
+  ] as const){
+   mocks.rows.push([...rows]);
+   const result=await readAdminCollegeSignInPolicy(actor,collegeId);
+   expect(result.policy).toEqual(expected);
+  }
+  expect(mocks.select).toHaveBeenCalledTimes(3);
+ });
+ it("does not reveal policy after persisted Super Admin role revocation",async()=>{
+  mocks.persisted.mockRejectedValueOnce(new Error("REVOKED"));
+  await expect(readAdminCollegeSignInPolicy(actor,collegeId)).rejects.toThrow("REVOKED");
+  expect(mocks.txExecute).not.toHaveBeenCalled();
+  expect(mocks.select).not.toHaveBeenCalled();
+ });
+ it("rejects disabled actors and wrong selected tenant before read transaction",async()=>{
+  for(const bad of [
+   {...actor,user:{...actor.user,platformStatus:"DISABLED" as const}},
+   {...actor,adminScope:{collegeId:"33333333-3333-4333-8333-333333333333",organizationId}},
+  ]){
+   await expect(readAdminCollegeSignInPolicy(bad,collegeId)).rejects.toBeDefined();
+  }
+  expect(mocks.transaction).not.toHaveBeenCalled();
  });
 });
