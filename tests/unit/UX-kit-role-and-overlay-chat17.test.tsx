@@ -111,7 +111,7 @@ describe("UX-kit-HARDEN-23 authorization boundaries and WebView history", () => 
     expect(html).not.toContain("View details");
     // SSR does not know whether a table actually overflows. A caption must
     // describe it while ScrollCue exposes no false scroll region until measured.
-    expect(html).toMatch(/<caption\\b[^>]*class="sr-only"[^>]*>College projects<\\/caption>/);
+    expect(html).toMatch(/<caption\b[^>]*class="sr-only"[^>]*>College projects<\/caption>/);
     expect(html).toContain('data-slot="scroll-cue"');
     expect(html).not.toMatch(/role="region"[^>]*aria-label="College projects scrollable columns"/);
     const scrollSource=readFileSync(join(process.cwd(),"src/components/ui/data-table.tsx"),"utf8");
