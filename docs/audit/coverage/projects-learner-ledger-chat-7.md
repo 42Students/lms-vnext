@@ -66,3 +66,16 @@ Generated against chatgpt/chat-7-b October 18, 2026. Every named exported symbol
 | `src/modules/projects/learner-project-board-model.ts` | `LearnerBoardEmptyState` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
 | `src/modules/projects/learner-project-board-model.ts` | `learnerBoardEmptyState` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
 | `src/modules/projects/learner-project-board-model.ts` | `learnerBoardActiveFilterCount` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-project-detail-error-model.ts` | `learnerProjectReadFailureDisposition` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-project-due-service.ts` | `listMyLearnerProjectDueStates` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-project-goals-model.ts` | `LearnerProjectGoalSummary` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-project-goals-model.ts` | `learnerProjectGoalSummary` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-project-goals-service.ts` | `getLearnerProjectGoals` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-project-list-empty-model.ts` | `LearnerProjectListEmptyState` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-project-list-empty-model.ts` | `learnerProjectListEmptyState` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-project-mobile-filter-model.ts` | `LearnerProjectMobileFilterSummary` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-project-mobile-filter-model.ts` | `learnerProjectMobileFilterSummary` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-project-progress-model.ts` | `LearnerProjectTaskStatus` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-project-progress-model.ts` | `LearnerProjectProgress` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-project-progress-model.ts` | `summarizeLearnerProjectProgress` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-project-progress-service.ts` | `listMyLearnerProjectProgress` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
