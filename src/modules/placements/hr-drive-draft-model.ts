@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { safeRecruiterExternalLink } from "./recruiter-applicant-shared-links-model";
 
 export const hrDriveDraftQuerySchema = z.strictObject({
   collegeId: z.string().uuid().optional(),
@@ -21,11 +22,9 @@ export const hrDriveDraftSchema = z.strictObject({
   employmentType: z.enum(["FULL_TIME", "INTERNSHIP", "INTERNSHIP_FULL_TIME", "CONTRACT"]),
   workMode: z.enum(["ONSITE", "HYBRID", "REMOTE", "NO_PREFERENCE"]),
   driveMode: z.enum(["ON_CAMPUS","OFF_CAMPUS"]).default("ON_CAMPUS"),
-  externalApplicationUrl: z.string().trim().max(2000).refine(value=>{
-    if(!value)return true;
-    try{const url=new URL(value);return url.protocol==="https:"&&Boolean(url.hostname)&&!url.username&&!url.password;}
-    catch{return false;}
-  },"Enter a valid https application link").default(""),
+  externalApplicationUrl: z.string().trim().max(2000).refine(value=>
+    !value || safeRecruiterExternalLink(value)!==null,
+  "Enter a public HTTPS application link").default(""),
   ctcLpa: z.string().regex(/^(?:|\d{1,4}(?:\.\d{1,2})?)$/).default(""),
   fixedLpa: z.string().regex(/^(?:|\d{1,4}(?:\.\d{1,2})?)$/).default(""),
   variableLpa: z.string().regex(/^(?:|\d{1,4}(?:\.\d{1,2})?)$/).default(""),
@@ -119,13 +118,7 @@ export function hrDraftFromAuthorizedJob(job: {
   minimumAnnualCtcInr: number | null; maximumAnnualCtcInr: number | null;
 }, rounds: readonly { kind: string; name: string }[]): HrDriveDraft {
   const base = emptyHrDriveDraft();
-  const safeExternalLink=(()=>{
-    try{
-      const candidate=new URL(job.externalApplicationUrl??"");
-      return candidate.protocol==="https:"&&Boolean(candidate.hostname)&&
-        !candidate.username&&!candidate.password?candidate.toString():"";
-    }catch{return "";}
-  })();
+  const safeExternalLink=safeRecruiterExternalLink(job.externalApplicationUrl)??"";
   const type = z.enum(["FULL_TIME", "INTERNSHIP", "INTERNSHIP_FULL_TIME", "CONTRACT"]).safeParse(job.employmentType);
   const mode = z.enum(["ONSITE", "HYBRID", "REMOTE", "NO_PREFERENCE"]).safeParse(job.workMode);
   const allowedRoundKinds = z.enum(["TALK", "TEST", "VENDOR_TEST", "GD", "INTERVIEW"]);
