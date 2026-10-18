@@ -3,8 +3,8 @@ import { escapeActivityCsvCell } from "@/modules/activity/college-activity-expor
  * The common CSV serializer handles ordinary formulas; this guard also covers
  * invisible prefixes that some spreadsheet engines silently strip. */
 function safeCollegeCsvCell(value:string):string {
- const visible=value.replace(/^[\\s\\p{Cf}\\p{Mn}]*/u,"");
- return escapeActivityCsvCell(/^[=+\\-@]/u.test(visible)?"'"+value:value);
+ const visible=value.replace(/^[\s\p{Cf}\p{Mn}]*/u,"");
+ return escapeActivityCsvCell(/^[=+@-]/u.test(visible)?"'"+value:value);
 }
 
 export function exportParams(params:URLSearchParams):Record<string,string>|null {
