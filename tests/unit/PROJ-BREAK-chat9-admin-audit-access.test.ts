@@ -39,6 +39,7 @@ describe("IIT Dharwad Projects: global audit authorization", () => {
     }
     const page = readFileSync("src/components/projects/project-admin-audit-page.tsx", "utf8");
     expect(page).toContain("const globalTemplateAudit = mayReadGlobalProjectAudit(context)");
+    expect(page).toContain("nextRemaining={result.remainingCount}");
   });
 
   it("PROJ-BREAK-idor-26 a disabled Super Admin or active College Admin cannot see platform audit", () => {
