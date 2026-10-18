@@ -65,3 +65,7 @@ Validation: source review and committed behavioural/source-guard tests; cloud te
 
 
 | COL-faculty-reassign-ROLE-RACE-01 | S1 concurrency | Faculty reassignment originally locked only membership records, not joined replacement user or role rows. A concurrent account disable or FACULTY role revocation could race assignment after eligibility was read. Changed SELECT to FOR SHARE on joined membership, user and role rows until transaction commit. | `chat4-college-faculty-schedule-hardening.test.ts` | PostgreSQL concurrent revocation race still required |
+
+
+| SA-tenants-signin-READ-01 | S1 tenant information isolation | Admin college sign-in policy details were fetched using an in-memory Super Admin snapshot after tenant preflight, with no persisted check in the read operation. Added same-transaction persisted permission check before either migration/table state or policy row query. | `chat4-super-admin-signin-and-history-guard.test.ts` | PG concurrent disable test pending |
+| SA-tenants-admin-history-CSV-01 | S2 export bounds | Admin history CSV builder accepted arbitrarily many rows although its caller displays a max 100. Enforced defensive 100-event cap and a clear truncated footer; retained existing <=100 CSV cells and legacy header text unchanged. | `chat4-super-admin-signin-and-history-guard.test.ts` | Browser CSV delivery pending |

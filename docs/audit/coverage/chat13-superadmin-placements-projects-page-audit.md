@@ -37,6 +37,8 @@ No audited route source uses raw `<table>`, `window.confirm()`, `target="_blank"
 
 - `PROJ-BREAK-SA-26`: normalized a second Project admin search path: snapshot, risk queue, and submissions all use the same literal-ILIKE helper used by the unsubmitted directory, with a three-function regression contract. Database-side query plan tests remain open.
 
+- `PROJ-BREAK-SA-27..29`: activity log duplicate filters, malformed date/cursor pairs, and contradictory legacy `action/status/eventType` aliases now fail closed while preserving legacy alias names and recoverable invalid-filter copy. Pure behavioral tests authored; database-backed event-filter integrity pending.
+
 ## Not cleared for IIT Dharwad release
 
 1. Two-session PostgreSQL adversarial harness: race archived project vs delivery-lock review, accepted offer vs drive archive, policy min/max concurrent writes, rechecked membership changes during action and cross-tenant joined data.

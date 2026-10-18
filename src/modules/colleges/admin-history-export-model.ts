@@ -4,11 +4,15 @@ function cell(input:string){
  const safe=/^\s*[=+\-@\t\r]/.test(input)?"'"+input:input;
  return '"'+safe.replaceAll('"','""')+'"';
 }
+export const MAX_ADMIN_HISTORY_EXPORT_ROWS=100;
 export function collegeAdminHistoryCsv(rows:readonly AdminHistoryExportRow[]){
  const head=["When (IST)","Event type","Summary"];
- const out=rows.map(row=>[
+ const out=rows.slice(0,MAX_ADMIN_HISTORY_EXPORT_ROWS).map(row=>[
   new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(row.occurredAt),
   row.eventType,row.summary,
  ]);
+ if(rows.length>MAX_ADMIN_HISTORY_EXPORT_ROWS)
+  out.push(["","EXPORT TRUNCATED",
+   "Only the first 100 visible administrator history events were exported."]);
  return "\uFEFF"+[head,...out].map(record=>record.map(cell).join(",")).join("\r\n")+"\r\n";
 }
