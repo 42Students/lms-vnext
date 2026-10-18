@@ -2,7 +2,7 @@ import "server-only";
 import {and,eq,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,learnerProfiles,learnerProgramEnrollments,
- cohorts,programs,departments,users} from "@/db/schema";
+ cohorts,programs,departments,academicPeriods,users} from "@/db/schema";
 import type {listPlacementJobOffers} from "./offer-service";
 
 /** TPO-drive-workspace-49: one identical academic projection for grid and CSV. */
@@ -18,7 +18,7 @@ export async function enrichTpoOfferFacts(
   // The membership is tenant-scoped, but an invalid cross-college
  // enrollment must not leak another college's cohort name. The joined
  // department proves both the cohort and program belong to this college.
- batch:sql<string|null>`case when ${departments.id} is not null then ${cohorts.name} else null end`,
+ batch:sql<string|null>`case when ${departments.id} is not null and ${academicPeriods.id} is not null then ${cohorts.name} else null end`,
  branch:departments.name,phone:users.phoneE164,
  }).from(collegeMemberships)
  .innerJoin(users,eq(users.id,collegeMemberships.userId))
@@ -26,10 +26,13 @@ export async function enrichTpoOfferFacts(
  .leftJoin(learnerProgramEnrollments,and(
   eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),
   eq(learnerProgramEnrollments.status,"ACTIVE")))
- .leftJoin(cohorts,eq(cohorts.id,learnerProgramEnrollments.cohortId))
+ .leftJoin(cohorts,and(eq(cohorts.id,learnerProgramEnrollments.cohortId),
+   eq(cohorts.programId,learnerProgramEnrollments.programId)))
  .leftJoin(programs,eq(programs.id,cohorts.programId))
  .leftJoin(departments,and(eq(departments.id,programs.departmentId),
   eq(departments.collegeId,collegeId)))
+ .leftJoin(academicPeriods,and(eq(academicPeriods.id,cohorts.startPeriodId),
+  eq(academicPeriods.collegeId,collegeId)))
  .where(and(inArray(collegeMemberships.id,membershipIds),
   eq(collegeMemberships.collegeId,collegeId)));
  const academics=new Map<string,(typeof academic)[number]>();
