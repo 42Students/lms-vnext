@@ -137,6 +137,31 @@ describe("IIT Dharwad: adversarial file, submission, grading and notification ru
     expect(grant).toContain('linked.status!=="ACTIVE"||linked.visibility!=="TEAM"');
   });
 
+  it("PROJ-BREAK-file-09 double completion returns the READY winner without repeating SCAN_ATTESTED", () => {
+    const code=source("src/modules/projects/project-resource-file-service.ts");
+    const finish=code.slice(code.indexOf("export async function completeProjectFileUpload("),
+      code.indexOf("export async function listProjectFiles("));
+    expect(finish).toContain('if (raced.status === "READY") return toProjectFileDto(raced)');
+    expect(finish).toContain('inArray(projectResourceFiles.status, ["UPLOADING", "VERIFYING"])');
+    expect(finish).toContain('if (winner?.status === "READY") return {row:winner, changed:false}');
+    expect(finish).toContain("if (!updated.changed) return toProjectFileDto(updated.row)");
+    expect(finish).toContain('eventType: "SCAN_ATTESTED"');
+    expect(finish).toContain("recordStorageFileEvent(tx, context");
+    expect(finish).toContain('if (plan.status === "QUARANTINED")');
+  });
+
+  it("PROJ-BREAK-file-10 double soft-delete does not double audit or surface a false storage failure", () => {
+    const code=source("src/modules/projects/project-resource-file-service.ts");
+    const remove=code.slice(code.indexOf("export async function removeProjectFile("),
+      code.indexOf("export async function issueProjectFileDownloadGrant("));
+    expect(remove).toContain('if (row.status === "DELETED") return toProjectFileDto(row)');
+    expect(remove).toContain('ne(projectResourceFiles.status, "DELETED")');
+    expect(remove).toContain('if (winner?.status === "DELETED") return {row:winner, changed:false}');
+    expect(remove).toContain('if (!updated.changed) return toProjectFileDto(updated.row)');
+    expect(remove).toContain('eventType: "DELETED"');
+    expect(remove).toContain("catch { /* A retrying storage janitor can remove the orphaned object. */ }");
+  });
+
   it("PROJ-BREAK-file-07 only ready and scanned objects can receive short-lived signed read URLs", () => {
     const service = source("src/modules/projects/project-resource-file-service.ts");
     const start = service.indexOf("export async function issueProjectFileDownloadGrant(");
