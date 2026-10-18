@@ -99,13 +99,13 @@ export function TpoRoundDriveDayReadOnly({
       />
 
       <nav aria-label="Round operational actions" className="flex flex-wrap gap-3">
-        <Link href={destinations.results} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">Review round results →</Link>
-        <Link href={destinations.schedule} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">Candidate schedule →</Link>
+        <Link href={destinations.results} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border px-3 text-sm font-semibold text-primary-text">Review round results →</Link>
+        <Link href={destinations.schedule} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border px-3 text-sm font-semibold text-primary-text">Candidate schedule →</Link>
       </nav>
       <p className="text-sm text-body">
         <a
           href={"/api/placements/drive-day/" + encodeURIComponent(data.round.id) + "/attendance/export"}
-          className="inline-flex min-h-10 items-center rounded-md border border-primary bg-primary px-4 font-semibold text-on-primary hover:bg-primary-hover"
+          className="inline-flex min-h-10 items-center rounded-[9px] border border-primary bg-primary px-4 font-semibold text-on-primary hover:bg-primary-hover"
         >
           Export round attendance (CSV)
         </a>
@@ -120,7 +120,7 @@ export function TpoRoundDriveDayReadOnly({
         </Link>
       </p>
 
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="border-t border-border pt-5">
         <h2 className="text-base font-semibold text-foreground">
           Round details
         </h2>
@@ -236,7 +236,7 @@ export function TpoRoundDriveDayReadOnly({
 
       <section
         aria-label="Round applicant roster"
-        className="overflow-hidden rounded-xl border border-border bg-surface"
+        className="overflow-hidden border-t border-border"
       >
         <div className="border-b border-border p-5">
           <h2 className="text-base font-semibold text-foreground">
