@@ -203,3 +203,16 @@ Source authored on the chat-16 branch; run unit/PostgreSQL concurrency/provider 
 ### Refreshed test-file typecheck triage — CI 39270260
 
 The refreshed `docs/orchestrator/typecheck-errors-latest.md` now identifies two chat-16 errors: `chat16-messaging-receipt-history-service-16.test.ts:22` and `chat16-tpo-campaign-draft-live-role-16.test.ts:31`. Both used `vi.mocked(assertPersistedPlatformPermission).mockResolvedValue(undefined)` after that API's return type became `RequestContext`. Both mocks were corrected to return their actual TPO fixture context, preserving the persisted-role assertion. Three newer chat-16 service suites (`chat16-messaging-batch-detail-service-16`, `chat16-engage-audience-service-16`, `chat16-tpo-campaign-draft-create-16`) were proactively corrected in the same manner. No tests were skipped, deleted or weakened. These edits are authored and pushed; the next CI test-file typecheck must verify them.
+
+### Campaign identity, recruiter digest and notification writer additions
+
+The latest authored source and tests add further direct service coverage:
+
+- `src/modules/messaging/tpo-campaign-recipient-token.ts`: `issueTpoCampaignEmailRecipientKey` and `matchesTpoCampaignEmailRecipientKey` are shared by draft persistence and dispatch. The stored purpose-specific HMAC is now verified against the current lead email before claiming a recipient, so a change between **draft creation and dispatch** cannot redirect email to an unselected address. `tests/unit/chat16-tpo-campaign-live-consent-recheck-16.test.ts` directly tests both functions and guards claim-before-send order.
+- `src/modules/placements/recruiter-message-email-dispatch-service.ts`: within the locked send transaction, a SQL `exists` check re-verifies active recruiter user/profile, active verified `DRIVES` grant with valid date, same college/company relationship, active college/company, job relationship and unchanged recipient email. `tests/unit/chat16-recruiter-email-digest-live-grant-16.test.ts` tests feature-disabled, weak-key and revoked-grant fail-closed paths without external sends.
+- `src/modules/placements/hr-tpo-notification-service.ts`: `tests/unit/chat16-hr-tpo-notification-writer-16.test.ts` exercises missing college, scoped event+notification writes, slot href and empty-recipient no-op using the caller's mocked transaction.
+- `src/modules/placements/tpo-my-notification-preferences-write.ts`: `tests/unit/chat16-tpo-notification-preferences-write-16.test.ts` covers global actor, unregistered storage, persisted live TPO role, stale optimistic versions, audit writes and idempotent no-op retries.
+- `src/modules/placements/tpo-my-notifications-service.ts`: `tests/unit/chat16-tpo-personal-notification-read-16.test.ts` covers role, strict filters, own-college fixed-label projection and final persisted-role authorization after list queries.
+- `src/app/enterprises/page.tsx` and `src/app/universities/page.tsx`: removed remaining false marketing claims of active AI functionality, keeping navigation and demo CTAs. The existing real SSR marketing suite asserts the replacement headings.
+
+These are authored and pushed to the lane branch. **CI runs after these specific commits are not yet complete**, so database locks, provider delivery and full browser behavior remain separate release gates.

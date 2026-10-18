@@ -76,3 +76,9 @@ Source inspection: 2026-10-18. Branch: `chatgpt/chat-11-b`. **Partial, source-re
 | ID | Surface | Verification and corrected behaviour | Test | Remaining |
 |---|---|---|---|---|
 | SA-tenants-modules-MOD-BULK-07 | `updateSuperAdminStudentRulesInBulk` | Per-student mutation returning null no longer counts as applied; raw exception messages no longer leak credentials/SQL to page; known stale CAS/ancestor locks provide next-step messages; per-learner successful writes still audited; absent successes skip misleading bulk summary | `tests/unit/chat11-super-admin-bulk-module-safety.test.ts` actual mocked service cases for null/no-op, raw error, conflict, audit recovery and revoked system role; commits `a14b3e2`, `f4a2a13` | Two-session PostgreSQL, bulk partial success browser testing |
+
+## College sign-in editor CAS after successful commits
+
+| ID | Surface | Corrected state | Test | Pending |
+|---|---|---|---|---|
+| SA-tenants-modules-LOGIN-CAS-03 | `CollegeSigninMethodForm` | Successful API response is checked for supported channel and safe integer policy version before showing saved; local committed method/token replace stale initial prop on subsequent edits; invalid successful response remains non-success with safe error, existing confirm/role guards preserved | `tests/unit/chat11-super-admin-signin-editor-cas.test.ts`; commits `209ec08`, `8d02a4d` | Browser two back-to-back saves during route refresh and PostgreSQL optimistic concurrency |
