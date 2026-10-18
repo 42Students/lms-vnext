@@ -86,6 +86,13 @@ describe("chat-4 final sprint TPO recruiter gaps A",()=>{
   expect(roster).toContain('const contacts=[...new Set([form.email.trim(),form.phone.trim()].filter(Boolean))]');
   expect(roster).toContain("This contact is already a recruiter. Open the existing recruiter instead.");
   expect(roster).toContain('href={"/tpo/recruiters/" + duplicate.id}');
-  expect(roster).toContain('role="dialog" aria-modal="true"');
+  expect(roster).toContain('<Dialog open={adding}');
+  expect(roster).toContain('dismissible={!saving} title="Add recruiter lead"');
+  expect(roster).toContain('<ConfirmDialog open={confirmation!==null}');
+  const dialog=source("src/components/ui/dialog.tsx");
+  expect(dialog).toContain("modal.showModal()");
+  expect(dialog).toContain("modal.close()");
+  expect(dialog).toContain("onCancel={event => {");
+  expect(dialog).toContain('aria-labelledby={titleId}');
  });
 });
