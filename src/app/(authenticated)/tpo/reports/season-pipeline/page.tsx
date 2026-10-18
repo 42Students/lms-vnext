@@ -49,7 +49,7 @@ export default async function TpoSeasonPipelinePage({
             Export funnel CSV
           </a>
         ) : null} />
-      <Link href="/tpo/reports" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
+      <Link href="/tpo/reports" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
         ← All reports
       </Link>
       <form action="/tpo/reports/season-pipeline" method="get"
