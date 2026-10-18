@@ -37,3 +37,13 @@ Source-reviewed `start`, `email`, `verify` login routes; keyed code MAC verifica
 ### Validation gate
 
 This connected GitHub session supports source fetches and commits but cannot run `tsc`, `vitest`, E2E tests, PostgreSQL or object-store fault injection. No claim is made that these additions pass CI, or that the IIT Dharwad hardening brief is entirely satisfied. The final branch requires cloud CI and independent review before merging.
+
+## Latest concurrency findings
+
+| ID | Severity | Evidence | Correction | Regression | Validation |
+| --- | --- | --- | --- | --- | --- |
+
+| PROJ-BREAK-file-09 | S1 | Two parallel upload-completion requests can both verify a pending object. Previously the loser of the database compare-and-swap threw `STORAGE_INVALID_STATE`, even if the winner had already moved the object to `READY`. A WAIT response racing the same successful completion was also a false upload-not-found. | Re-read the winner after CAS loss and treat `READY` as successful idempotent completion; skip duplicate `SCAN_ATTESTED` and storage cleanup on that path. Recheck READY on verification WAIT. Commit `4b3d242`. | `tests/unit/PROJ-BREAK-chat6-delivery-grade-notices.test.ts` `60a7553` | Source contract only; concurrent PostgreSQL integration pending |
+| PROJ-BREAK-file-10 | S1 | Two parallel delete requests can read an active file, one soft-delete and the second get `STORAGE_INVALID_STATE` despite successful deletion; retry could show misleading failure. | On CAS loss, return the already `DELETED` row without duplicate audit event/object cleanup. Commit `6fd83eb`. | `tests/unit/PROJ-BREAK-chat6-delivery-grade-notices.test.ts` `60a7553` | Source contract only; concurrent PostgreSQL integration pending |
+
+**Open hardening lead follow-up:** Submission draft updates currently have no client-supplied optimistic edit token, so concurrent team-member edits may use last-writer-wins. This needs coordinated client/API/DB validation by the Projects lead before release; do not count this as resolved.
