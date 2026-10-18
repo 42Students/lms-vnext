@@ -16,7 +16,7 @@ export default async function CollegeFacultyImportPage(){
     <PageHeader eyebrow="College Admin · Faculty" title="Import faculty"
       description="Validate and register faculty using the legacy CSV template."
       actions={<Link href="/college/faculty"
-        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)]">Back to Faculty</Link>}/>
+        className="rounded-[var(--lms-control-radius,9px)] border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)]">Back to Faculty</Link>}/>
     <CollegeFacultyCsvImport/>
   </div>;
 }
