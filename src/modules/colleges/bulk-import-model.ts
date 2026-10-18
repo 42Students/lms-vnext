@@ -33,7 +33,9 @@ export function parseCollegeImportCsv(raw:string):CollegeImportRow[]{
  const withHeader=header.includes("name")&&header.includes("code");
  const keys=["name","code","city","state","country"];
  const positions=withHeader?keys.map(k=>header.indexOf(k)):[0,1,2,3,4];
+ if(withHeader&&new Set(header).size!==header.length)throw Error("Duplicate CSV heading.");
  const data=withHeader?records.slice(1):records;
+ if(data.length===0)throw Error("Paste at least one college.");
  if(data.length>MAX_COLLEGE_IMPORT_ROWS)throw Error("Bulk Import accepts at most 200 colleges.");
  const codes=new Set<string>();
  return data.map((row,index)=>{

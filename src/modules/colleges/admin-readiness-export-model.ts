@@ -2,7 +2,8 @@ import type {CollegeReadinessEvaluation} from "./readiness-model";
 /** Read-only persisted evidence export, never a runtime/production launch approval. */
 export function buildSuperAdminReadinessCsv(college:{name:string;code:string},evaluation:CollegeReadinessEvaluation):string{
  const safe=(value:string)=>{
-  const neutralized=["=","+","-","@"].includes(value.trimStart().charAt(0)) ? "'"+value : value;
+  const firstVisible=value.replace(/^[\s\p{Cc}\p{Cf}\p{Mn}]*/u,"");
+  const neutralized=/^[=+@-]/u.test(firstVisible) ? "'"+value : value;
   return '"'+neutralized.replace(/"/g,'""')+'"';
  };
  const lines=[

@@ -225,3 +225,28 @@ No claim of green cloud CI is made. Test-file TypeScript verification, isolated 
 
 
 | `placeImportedLearnerInSection` race/error mapping | `tests/unit/chat4-college-student-placement-conflict-errors.test.ts` | Executes real service with rejected transaction representing `section_enrollments_active_period_uq`: maps to typed `ALREADY_PLACED_IN_PERIOD` and customer-safe API 409; expected class errors are typed, nonunique SQL failures pass through unchanged; PG parallel writes pending |
+
+
+## Pass B continuation — hardened contact, group, academic and tenant contracts (2026-10-19)
+
+This table records only exports with a specific named regression. These are **authored tests, not run tests**. Earlier ledger items and the unaccounted exports remain open, so this is not exhaustive coverage.
+
+| Function / route | Test and behavior asserted | Remaining gates |
+| --- | --- | --- |
+| `collegeContactsQuerySchema`, `parseCollegeContactsSearchParams` | `tests/unit/chat4-college-contacts-and-groups-input-hardening.test.ts`, `COL-CONTACTS-BOUNDARY-01`: positive decimal pagination, duplicate/foreign rejection, hex/exponent/whitespace/signed/fractional denial, numeric internal callers | HTTP invalid-query render and PostgreSQL pagination fixture |
+| `contactRoleAudienceCompatible`, `contactDateWindowValid`, `contactAcademicFiltersCompatible` | Same, `COL-CONTACTS-BOUNDARY-02`: contradictory role, academic and date filters never silently broaden | DB service matching under combined filters |
+| `collegeContactLiteralPattern`, `activeCollegeContactFilterCount` | Same, `COL-CONTACTS-BOUNDARY-02`: escaped wildcard literals and filter counter excludes paging/tab/sort | Browser facet keyboard and URL tests |
+| `maskedEmail`, `maskedPhone`, `visibleContactDetails` | Same, `COL-CONTACTS-PRIVACY-01`: learner fields masked, invalid/absent input never printed, faculty email only when not a learner | Contact service live dual-role and export privacy |
+| `neutralizeContactCell`, `renderCollegeContactCsv` | Same, `COL-CONTACTS-CSV-01`: quote escaping, Unicode invisible/C0-hidden formula neutralization, learner-safe output | PostgreSQL exported role projection |
+| `parseCollegeContactsExportParams`, `appendUniqueContactExportRows` | Same, `COL-CONTACTS-CSV-01`: reject duplicate and page filter, never duplicate a membership | Concurrent-changing 1,000-row database export |
+| `neutralCsvCell`, `groupPreviewErrorCsv`, `parseMemberEmailCsv` | Same, `COL-GROUP-CSV-01`: hidden Unicode formulas, quote escaping, CSV header and unterminated quotes | 500-row import and persisted-membership conflict in PostgreSQL |
+| `collegeStructureQuerySchema`, `collegeClassQuerySchema`, `collegeElectiveQuerySchema`, `readCollegeStructureParams` | `tests/unit/chat4-college-structure-decimal-query.test.ts`, `COL-STRUCTURE-DECIMAL-01/02/03`: exact decimal filter parsing, range conflicts, duplicate URL keys | Full route/render and database materialized facets |
+| `collegeStructureHref`, `collegeStructureTotalPages`, `classCapacityLabel`, `electiveSelectionLabel` | Same, `COL-STRUCTURE-PAGE-01`: stable links, filtered pagination, empty total and capacity/choice copy | Browser filter reset + mobile |
+| `tenantDirectoryCsvCell`, `buildTenantDirectoryCsv` | `tests/unit/chat4-superadmin-tenant-export-guard.test.ts`, `COL-TENANT-CSV-01/03`: C0/format/combining guard, quoting, IST and visible 1,000-row truncation | Actual export route auth, DB tenant data isolation |
+| `tenantDirectoryExportHref`, `readTenantDirectoryExportParams` | Same, `COL-TENANT-CSV-02`: duplicate/unknown key rejection; canonical export links preserve status and query | API read-only/no-cache response verification |
+| `/admin/colleges`, `/admin/organizations` | `tests/unit/chat4-superadmin-college-one-canvas-audit.test.ts`, `UX-COL-ONE-CANVAS-01`: unboxed search area, permissions before filter parsing, invalid/empty/pagination state and responsive targets | React render, keyboard/phone browser |
+| `/admin/colleges/[collegeId]` | Same, `UX-COL-ONE-CANVAS-02`: scope read, read-only tenant facts, archived parent gates, setup navigation | Actual scoped HTTP render |
+| `/admin/colleges/[collegeId]/admins` | Same, `UX-COL-ONE-CANVAS-03`: admin/TPO controls, capped directory warning, empty role and device/history links | 500+ dataset and browser |
+| `/admin/colleges/[collegeId]/readiness` | Same, `UX-COL-ONE-CANVAS-04`: single continuous section rhythm, unknown and no-match evidence not hidden, filter and export path | Browser + persisted-readiness fixture |
+
+No CI, TypeScript, Vitest or PostgreSQL tests were executed in this lane. Do not label these as executed acceptance or release-ready. The master-queue per-export/route ledger remains **incomplete** until every module export and every page/route has behavioral and database evidence.
