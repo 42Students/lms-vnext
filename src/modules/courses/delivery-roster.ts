@@ -4,6 +4,8 @@ import { and, asc, eq, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships,
+  courseOfferings,
+  courseSectionDeliveries,
   electiveOfferings,
   electiveSlots,
   learnerProfiles,
@@ -12,6 +14,7 @@ import {
   lmsGroups,
   membershipRoles,
   sectionEnrollments,
+  sections,
   users,
 } from "@/db/schema";
 
@@ -35,6 +38,14 @@ export async function listActiveDeliveryLearners(
     .select({ groupId: electiveOfferings.groupId })
     .from(electiveOfferings)
     .innerJoin(
+      courseSectionDeliveries,
+      eq(courseSectionDeliveries.id, electiveOfferings.backedDeliveryId),
+    )
+    .innerJoin(
+      courseOfferings,
+      eq(courseOfferings.id, courseSectionDeliveries.offeringId),
+    )
+    .innerJoin(
       electiveSlots,
       eq(electiveSlots.id, electiveOfferings.slotId),
     )
@@ -45,6 +56,9 @@ export async function listActiveDeliveryLearners(
     .where(
       and(
         eq(electiveOfferings.backedDeliveryId, scope.deliveryId),
+        eq(courseSectionDeliveries.sectionId, scope.sectionId),
+        isNull(courseSectionDeliveries.endedAt),
+        eq(courseOfferings.academicPeriodId, scope.academicPeriodId),
         eq(electiveOfferings.status, "ACTIVE"),
         isNull(electiveOfferings.deletedAt),
         eq(electiveSlots.collegeId, scope.collegeId),
@@ -107,6 +121,18 @@ export async function listActiveDeliveryLearners(
     .select(projection)
     .from(sectionEnrollments)
     .innerJoin(
+      courseSectionDeliveries,
+      eq(courseSectionDeliveries.sectionId, sectionEnrollments.sectionId),
+    )
+    .innerJoin(
+      courseOfferings,
+      eq(courseOfferings.id, courseSectionDeliveries.offeringId),
+    )
+    .innerJoin(
+      sections,
+      eq(sections.id, sectionEnrollments.sectionId),
+    )
+    .innerJoin(
       learnerProgramEnrollments,
       eq(
         learnerProgramEnrollments.id,
@@ -135,6 +161,13 @@ export async function listActiveDeliveryLearners(
     .where(
       and(
         eq(sectionEnrollments.sectionId, scope.sectionId),
+        eq(courseSectionDeliveries.id, scope.deliveryId),
+        isNull(courseSectionDeliveries.endedAt),
+        eq(courseOfferings.academicPeriodId, scope.academicPeriodId),
+        eq(sections.cohortId, courseOfferings.cohortId),
+        eq(sections.academicPeriodId, courseOfferings.academicPeriodId),
+        eq(sections.status, "ACTIVE"),
+        eq(learnerProgramEnrollments.cohortId, courseOfferings.cohortId),
         eq(
           sectionEnrollments.academicPeriodId,
           scope.academicPeriodId,
