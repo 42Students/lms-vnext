@@ -7,6 +7,7 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import { confirmTpoRoundResult } from "@/modules/placements/tpo-confirmed-round-result-service";
 import { confirmTpoBulkRoundResults } from "@/modules/placements/tpo-bulk-round-result-service";
 import { applyPlacementRoundResult } from "@/modules/placements/result-service";
+import { getTpoRoundApplyPreview, applyTpoWholeRound } from "@/modules/placements/tpo-round-apply-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 
@@ -287,6 +288,46 @@ describe.skipIf(!enabled)("confirmed TPO round-result PostgreSQL", () => {
       .rejects.toMatchObject({ code: "PLACEMENT_ROUND_NOT_FOUND" });
     expect(await stagedRows(f)).toHaveLength(0);
     expect(await auditRows(f)).toHaveLength(0);
+  });
+
+  it("TPO-round-apply-SVC-01 previews, rejects a forged CAS snapshot, applies once and idempotently replays", async () => {
+    if (!pool) throw new Error("Disposable PostgreSQL is required");
+    const f=await fixture();
+    const staged=await confirmTpoRoundResult(tpo,f.roundId,body(f));
+    await pool.query(
+      "UPDATE placement_job_rounds SET status='COMPLETED', completed_at=now(), updated_at=now() WHERE id=$1",
+      [f.roundId],
+    );
+    const preview=await getTpoRoundApplyPreview(tpo,f.jobId,f.roundId);
+    expect(preview.ready).toBe(true);
+    expect(preview.rows).toMatchObject([{
+      resultId:staged.id,applicationId:f.applicationId,status:"STAGED",outcome:"PASS",
+    }]);
+    expect(preview.previewToken).toMatch(/^[a-f0-9]{64}$/);
+    await expect(applyTpoWholeRound(tpo,f.jobId,f.roundId,{
+      confirmed:true,expectedPreviewToken:"0".repeat(64),
+    })).rejects.toMatchObject({code:"PLACEMENT_JOB_PREVIEW_STALE"});
+    expect(await stagedRows(f)).toMatchObject([{
+      id:staged.id,status:"STAGED",outcome:"PASS",
+    }]);
+    const first=await applyTpoWholeRound(tpo,f.jobId,f.roundId,{
+      confirmed:true,expectedPreviewToken:preview.previewToken,
+    });
+    expect(first).toMatchObject({total:1,previouslyApplied:0,applied:1,skipped:0,unchanged:0});
+    const afterApply=await stagedRows(f);
+    expect(afterApply).toMatchObject([{id:staged.id,status:"APPLIED",outcome:"PASS"}]);
+    const audits=(await auditRows(f)).filter(event=>event.event_type==="placements.result.applied");
+    expect(audits).toHaveLength(1);
+    await expect(applyTpoWholeRound(tpo,f.jobId,f.roundId,{
+      confirmed:true,expectedPreviewToken:preview.previewToken,
+    })).rejects.toMatchObject({code:"PLACEMENT_JOB_PREVIEW_STALE"});
+    const replayPreview=await getTpoRoundApplyPreview(tpo,f.jobId,f.roundId);
+    const replay=await applyTpoWholeRound(tpo,f.jobId,f.roundId,{
+      confirmed:true,expectedPreviewToken:replayPreview.previewToken,
+    });
+    expect(replay).toMatchObject({total:1,previouslyApplied:1,applied:0,skipped:0,unchanged:1});
+    expect((await auditRows(f)).filter(event=>event.event_type==="placements.result.applied"))
+      .toHaveLength(1);
   });
 
   it("rejects a stale null snapshot while retaining the original result and audit", async () => {
