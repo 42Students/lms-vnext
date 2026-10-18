@@ -282,3 +282,13 @@ All test cases are authored, not executed; user-mandated final CI is deferred. T
 | `listRecruiterJobActivity` / `listHrNotifications` cross-role additions | `tests/unit/HR-BREAK-chat15-activity-service-105.test.ts`; `tests/unit/HR-BREAK-chat15-notifications-service-106.test.ts` | TPO-only and acting-college Super Admin cannot borrow employer recruiter permissions; no private job or notification reads before authorization | Real dual-role account and session revocation |
 
 No CI or database executed. Test cases are source-authored pending the final integrated run.
+
+
+## HR applicant writing boundary and final CSV route follow-up — 19 October
+
+| Entrypoint | Behavioral evidence | Source-level contract exercised | Pending |
+|---|---|---|---|
+| `PATCH /api/placements/recruiter/jobs/[jobId]/applicants/[applicationId]/private-rating` | `tests/unit/HR-BREAK-chat15-private-rating-body-116.test.ts` | Same origin before JSON parsing, 16KiB bound for a private rating, malformed JSON 400, overlimit 413, swapped employer 404 before schema lookup, valid record-scoped write | Real PostgreSQL stale CAS, two sessions, row ownership |
+| `POST /api/placements/recruiter/jobs/[jobId]/applicants/[applicationId]/notes` | `tests/unit/HR-BREAK-chat15-applicant-notes-api-117.test.ts` | Cross-origin forbidden before principal lookup, 16KiB parser cap, invalid/oversized JSON friendly 400/413, authorized job/application note service, revoked private candidate failure does not claim success | Real notes ownership, withdrawn-after-shortlist, audit/event exactly once |
+
+Both cases remain **authored but not executed**. Do not equate mocked behavior with production acceptance.
