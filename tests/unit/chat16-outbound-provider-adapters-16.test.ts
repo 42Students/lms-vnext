@@ -66,6 +66,16 @@ describe("chat-16 isolated outbound provider adapters",()=>{
   expect(body.merge_info).toEqual({body:"Invitation"});
   expect(body.to[0]?.email_address.address).toBe(email.recipient);
  });
+ it("messaging-provider-22 sends normalized recipient addresses rather than caller-supplied whitespace or case",async()=>{
+  const fetchMock=emailFetch();
+  const provider=createOutboundProvider(config,fetchMock as unknown as typeof fetch,production);
+  await expect(provider.send({...email,recipient:"  LEAD@Example.ORG  "})).resolves.toBe(true);
+  const [,options]=fetchMock.mock.calls[0] as unknown as [string,RequestInit];
+  const payload=JSON.parse(String(options.body)) as {
+   to:Array<{email_address:{address:string}}>;
+  };
+  expect(payload.to[0]?.email_address.address).toBe("lead@example.org");
+ });
  it("messaging-provider-18 never sends unapproved nonproduction recipients, even with valid provider config",async()=>{
   const fetchMock=emailFetch();
   const provider=createOutboundProvider(config,fetchMock as unknown as typeof fetch,{
