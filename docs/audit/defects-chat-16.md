@@ -125,3 +125,16 @@ Source only: new direct tests and TypeScript remain unexecuted per no-CI directi
 | MSG-POLICY-INITIAL-14/15 | S2 | An initial policy repository read error used to reject `deliverBatch` after some earlier recipients had already been sent; `auditBatch` was skipped and the provider could have accepted side effects without final aggregate status. Record a per-recipient fail-closed `FAILED` receipt and continue safely, then audit the complete batch. | `tests/unit/chat16-messaging-initial-policy-outage-14.test.ts` (authored, unrun) | `713ae457f910` |
 
 The initial-policy failure branch deliberately never contacts the provider for that recipient. This does not claim exactly-once delivery across worker crashes or transactional persistence.
+
+
+| PUBLIC-ENQUIRY-FAIL-16..21 | S2 | Public code/enquiry POST routes allowed unexpected tenant registry or recruitment provider errors to bubble without controlled JSON/503 and no-cache protection. Both now fail closed with generic safe error, while preserving cross-origin denial, unpublished 404, rate-limits and successful response shape. | `tests/unit/chat16-public-recruit-enquiry-route-guards-16.test.ts` (authored, unrun) | `e95dc2fd7a9e`, `b79f1fc63bff` |
+| PUBLIC-ENQUIRY-SIZE-22..25 | S2 | Both anonymous endpoints used unbounded `request.json()`; large UTF-8 uploads could allocate the entire body before Zod validation and rate-limits. They now use a shared incremental UTF-8 decoder, 8 KB hard cap, and no-store 413/400 refusal before service work. The signed internal recruiter-mail route retains its separate 20 KB cap via the same stream primitive. | same, `tests/unit/chat16-recruiter-mail-body-bounds-01.test.ts` | `5188bf21103b`, `f1b17089d462`, `0884765c9618`, `875bdbbfb16e` |
+
+No real anonymous provider calls or browser traffic were issued, and these lines do not certify readiness.
+
+
+| PUBLIC-UNSUB-SIZE-26..29 | S2 | Anonymous public opt-out used unbounded `request.formData()`; maliciously large multipart/URL-encoded inputs could allocate before signed-token validation. Parse only within 8 KB, preserve native multipart and 303 verified consent completion. | `tests/unit/chat16-public-campaign-unsubscribe-body-bounds-26.test.ts` (unrun) | `90e60cc563ef` |
+| PUBLIC-JOIN-SIZE-30..33 | S2 | Public college/company join and OTP send endpoints used unbounded `request.json()` before authentication or network-rate checks. All four now fail with no-store 413 for over-cap UTF-8, 400 for invalid JSON, using `readBoundedJsonBody` and existing downstream Zod. | `tests/unit/chat16-public-join-route-stream-guards-30.test.ts` (unrun) | `49a9dae8af33`, `52e4e5022ec6`, `43f37b9f9397`, `078388185f3d`, `59190b170fb3` |
+| PUBLIC-INVITE-SIZE-34..36 | S2 | Public recruiter invite OTP acceptance parsed arbitrary-size JSON before validating a six-digit code. Shared UTF-8 byte guard now protects grant-creation service from oversized anonymous payloads; normal code and readiness behaviour stays unchanged. | `tests/unit/chat16-public-recruiter-invite-accept-byte-cap-34.test.ts` (unrun) | `6b2ef651d6f0` |
+
+These are source/test edits without execution, as required by the owner’s no-CI-gating priority.

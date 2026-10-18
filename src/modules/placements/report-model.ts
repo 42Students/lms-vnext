@@ -130,6 +130,18 @@ export type PlacementReportSummary = {
   byCompany: PlacementReportCompanyRow[];
 };
 
+function groupPlacementRowsByJob<T extends { jobId: string }>(
+  rows: readonly T[],
+): Map<string, T[]> {
+  const byJob = new Map<string, T[]>();
+  for (const row of rows) {
+    const existing = byJob.get(row.jobId);
+    if (existing) existing.push(row);
+    else byJob.set(row.jobId, [row]);
+  }
+  return byJob;
+}
+
 function distinct<T>(items: readonly T[]): T[] {
   return [...new Set(items)];
 }
@@ -184,6 +196,7 @@ function bestAcceptedFullTimePackages(
   for (const offer of offers) {
     if (
       offer.status !== "ACCEPTED" ||
+      (offer.kind ?? "OFFER") !== "OFFER" ||
       jobsById.get(offer.jobId)?.employmentType !== "FULL_TIME"
     ) {
       continue;
@@ -249,6 +262,17 @@ export function summarizePlacementReports(
       .filter((offer) => jobsById.has(offer.jobId))
       .map((offer) => [offer.id, offer]),
   ).values()];
+
+  // Index the scoped facts once; repeatedly filtering all applications for
+  // every drive/employer makes a 1,000-drive campus report quadratic.
+  const applicationsByJob = groupPlacementRowsByJob(applications);
+  const offersByJob = groupPlacementRowsByJob(offers);
+  const jobsByCompany = new Map<string, PlacementReportJob[]>();
+  for (const job of jobs) {
+    const existing = jobsByCompany.get(job.companyId);
+    if (existing) existing.push(job);
+    else jobsByCompany.set(job.companyId, [job]);
+  }
 
   const registrations = distinct(
     input.registrations.map((registration) => registration.membershipId),
@@ -417,12 +441,8 @@ export function summarizePlacementReports(
     );
 
   const byDrive: PlacementReportDriveRow[] = jobs.map((job) => {
-    const jobApplications = applications.filter(
-      (application) => application.jobId === job.id,
-    );
-    const jobOffers = offers.filter(
-      (offer) => offer.jobId === job.id,
-    );
+    const jobApplications = applicationsByJob.get(job.id) ?? [];
+    const jobOffers = offersByJob.get(job.id) ?? [];
 
     return {
       jobId: job.id,
@@ -463,15 +483,12 @@ export function summarizePlacementReports(
     ).values(),
   ]
     .map((company) => {
-      const companyJobs = jobs.filter(
-        (job) => job.companyId === company.companyId,
+      const companyJobs = jobsByCompany.get(company.companyId) ?? [];
+      const companyApplications = companyJobs.flatMap(
+        (job) => applicationsByJob.get(job.id) ?? [],
       );
-      const jobIds = new Set(companyJobs.map((job) => job.id));
-      const companyApplications = applications.filter(
-        (application) => jobIds.has(application.jobId),
-      );
-      const companyOffers = offers.filter(
-        (offer) => jobIds.has(offer.jobId),
+      const companyOffers = companyJobs.flatMap(
+        (job) => offersByJob.get(job.id) ?? [],
       );
       const companyAccepted = companyOffers.filter(
         (offer) => offer.status === "ACCEPTED",
@@ -755,6 +772,7 @@ export function summarizePlacementReportDetails(input: {
   const acceptedFullTime = offers.filter(
     (offer) =>
       offer.status === "ACCEPTED" &&
+      (offer.kind ?? "OFFER") === "OFFER" &&
       offer.employmentType === "FULL_TIME",
   );
 

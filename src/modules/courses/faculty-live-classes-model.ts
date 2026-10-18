@@ -3,7 +3,10 @@ import {z} from "zod";
 export const facultyLiveClassesQuerySchema=z.object({
  view:z.enum(["UPCOMING","PAST","ALL"]).default("UPCOMING"),
  deliveryId:z.string().uuid().optional(),
- page:z.coerce.number().int().min(1).max(10000).default(1),
+ page:z.union([
+    z.number().int(),
+    z.string().regex(/^[1-9]\d{0,4}$/).transform(Number),
+  ]).pipe(z.number().int().min(1).max(10000)).default(1),
 }).strict();
 export type FacultyLiveClassesQuery=z.infer<typeof facultyLiveClassesQuerySchema>;
 
@@ -29,8 +32,15 @@ export function pageFacultyLiveClasses(
   (query.view==="ALL"||
    (query.view==="UPCOMING"&&s.endsAt.getTime()>=now.getTime())||
    (query.view==="PAST"&&s.endsAt.getTime()<now.getTime()))
- ).sort((a,b)=>query.view==="PAST"?
-   b.startsAt.getTime()-a.startsAt.getTime():a.startsAt.getTime()-b.startsAt.getTime());
+ ).sort((a,b)=>{
+   const safeTime = (date: Date) => {
+     const value = date.getTime();
+     return Number.isFinite(value) ? value : 0;
+   };
+   const diff=query.view==="PAST"?
+     safeTime(b.startsAt)-safeTime(a.startsAt):safeTime(a.startsAt)-safeTime(b.startsAt);
+   return diff || a.id.localeCompare(b.id);
+ });
  const total=filtered.length,pageSize=20,totalPages=Math.max(1,Math.ceil(total/pageSize));
  const page=Math.min(query.page,totalPages);
  return {total,page,pageSize,totalPages,items:filtered.slice((page-1)*pageSize,page*pageSize)};

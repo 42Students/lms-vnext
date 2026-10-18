@@ -19,9 +19,9 @@ export default async function SuperAdminDrivesPage({searchParams}:{
   <EmptyState title="Choose a college" description="Select a college in the Super Admin scope selector to manage its drives."/>
  </div>;
  requireSuperAdminSelectedCollege(ctx,"placements.manage");
- const parsed=adminDriveDirectoryQuerySchema.safeParse({
-  q:raw.q,status:raw.status,page:raw.page,pageSize:raw.pageSize,
- });
+ // Parse the whole query: dropping unknown keys would quietly accept
+ // forged college/scope selectors and contradictory link parameters.
+ const parsed=adminDriveDirectoryQuerySchema.safeParse(raw);
  if(!parsed.success)return <div className="min-w-0 space-y-4">
   <PageHeader eyebrow="Super Admin · Placements" title="All drives"/>
   <ErrorState title="Invalid drive filters" description="Choose valid filters and page number."

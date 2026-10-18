@@ -13,7 +13,8 @@ export async function GET(_request:Request,{params}:Params){
  try{
   const {jobId,applicationId}=await params;
   const context=await getCurrentRequestContext();
-  if(!hasActiveRecruiter(context))return NextResponse.json({error:"NOT_FOUND"},{status:404,headers});
+  if(!hasActiveRecruiter(context)||context.recruiter?.userId!==context.user.id)
+   return NextResponse.json({error:"NOT_FOUND"},{status:404,headers});
   if(!await placementTableExists("placement_recruiter_private_reviews"))
    return NextResponse.json({error:"SERVICE_UNAVAILABLE"},{status:503,headers});
   const body=await readRecruiterPrivateReview(context,jobId,applicationId);
@@ -26,7 +27,8 @@ export async function PATCH(request:Request,{params}:Params){
  try{
   const {jobId,applicationId}=await params;
   const context=await getCurrentRequestContext();
-  if(!hasActiveRecruiter(context))return NextResponse.json({error:"NOT_FOUND"},{status:404,headers});
+  if(!hasActiveRecruiter(context)||context.recruiter?.userId!==context.user.id)
+   return NextResponse.json({error:"NOT_FOUND"},{status:404,headers});
   if(!await placementTableExists("placement_recruiter_private_reviews"))
    return NextResponse.json({error:"SERVICE_UNAVAILABLE"},{status:503,headers});
   const body=await writeRecruiterPrivateReview(context,

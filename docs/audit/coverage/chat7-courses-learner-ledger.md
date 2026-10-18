@@ -199,3 +199,45 @@ These are source-authored, not CI-green. The owner deferred test and browser gat
 | Export | Behavior covered | Test |
 |---|---|---|
 | `learnerCourseCardMedia`, `learnerCourseCardMediaAfterError`, `learnerCourseFallbackMedia` | Only credential-free, fragment-free, public HTTPS authored thumbnails; no localhost/loopback/RFC1918/metadata hosts; missing or failed authored image uses trusted bundled fallback and never retries an unsafe URL | `tests/unit/learner-course-card-media-model.test.ts` — `LEARNER-THUMBNAIL-15` extended hostile-host matrix (authored, CI pending) |
+
+
+## 2026-10-19 learner quiz score, review and Super Admin courses/content deep audit
+
+| Export / page | Behavioral invariant and adversarial case | Test evidence |
+|---|---|---|
+| `learnerQuizHistoryQuerySchema`, `ownQuizHistorySelection` | Only a server-authorized quiz+delivery pair is selectable; forged tenant, injected fields and malformed IDs rejected | `tests/unit/chat7-learner-quiz-history-grade-hardening.test.ts` — `COURSES-LEARNER-QUIZ-HISTORY-01` |
+| `learnerAttemptResultLabel`, `learnerQuizQuestionAwardLabel` | Unreleased, missing, nonfinite or negative numeric grades are never represented as scored attempts | Same named test; source fix `4fae8ad` |
+| `learnerQuizSelectedAnswerMessage`, `learnerQuizReviewRows` | Historical multiple-selection review warns when **any** selected option disappeared, even when another remains; visible selection counts include only current option IDs | Same named test; source fix `4fae8ad` |
+| `selectLearnerLatestQuizAttempt`, `learnerQuizReviewQuestionNotice`, `learnerQuizAttemptDateLabel` | Persisted attempt number wins over array order, unavailable published questions do not erase prior attempt history, dates display in IST | Same named test |
+| `parseSuperAdminAssignmentQuery`, `/admin/assignments`, `/admin/quizzes` | Reject duplicate/array page params, forged request selectors and assignment-only unsupported states; quiz results publishing filters retained | `tests/unit/chat7-admin-courses-assessment-boundaries.test.ts` — `SA-COURSES-CONTENT-AUDIT-01` |
+| `/admin/assignments` | Explicit Super Admin role gate; authoring-options failures never hide the authorized assignment directory; directory failures show retry without raw server errors | Same named test; fixes `f6f7b6a`, `2fa14b2` |
+| `parseSuperAdminCourseQuery`, `/admin/courses`, `paginateCollegeCourses` | Strict UUID duplicate ID, known query keys only, numeric page strings only; rejects array coercion, unknown tenant and invalid page sizes | `tests/unit/chat7-admin-courses-content-hardening.test.ts` — `SA-COURSES-CONTENT-AUDIT-02` |
+| `SuperAdminContentDirectoryPage` | Authorized directory remains readable when either lesson-authoring choices or section-filter options fail; display explicit degraded-state notices | Same named test; fix `7bfb40a` |
+| `effectiveCourseContentVisibleToStudents`, `safePublicCourseContentUrl`, `adminContentQuerySchema`, `contentTypesForKind`, `adminContentHref` | All published ancestors required for learner visibility; HTTPS previews without credentials/fragments; strict URL paging and preserved filters | Same named test |
+
+This is *additional direct regression evidence*, not exhaustive coverage: remaining learner-course exports and
+Super Admin course builders, certificate integrations, real PostgreSQL role/tenant/concurrency
+tests, and device testing are still outstanding. All tests are written but **not run** under the
+owner's deferred-CI directive; no claim of successful execution is made.
+
+
+## Learner course/assignment/discussion/certification model matrix — 19 October 2026, continuation
+
+| Export / group | Tested invariant | Authored evidence / source correction |
+|---|---|---|
+| `learnerAssignmentPublishedGradeLabel` | A published zero remains a legitimate zero; missing, nonfinite and negative scores display unavailable, never fabricated scored marks | `tests/unit/chat7-learner-assessment-discussion-policy-matrix.test.ts` — `COURSES-LEARNER-ASSESSMENTS-02`; source `75e413f` |
+| `learnerCourseResultSummary`, `learnerAssessmentPageSummary` | Respect current page and published/filtered denominators, fail safely on NaN/Infinity and invalid page metadata | Same regression; fixes `47a4679`, `416a739` |
+| `learnerDueSoonNotices`, `learnerAssessmentQuickCounts`, `learnerAssignmentFinalConfirmation` | Only unsubmitted, in-window, deduplicated Section due notices; quick counts share persisted-state policy; final responses warn about immutability | Same regression |
+| `learnerDiscussionDraftValid`, `learnerDiscussionMayPost`, `learnerDiscussionListResponse`, `formatDiscussionReply` | Enforce 3,900-char cap and UI duplicate-submission lock, expose only authorized service response subset including pinned posts and cursor | `tests/unit/chat7-learner-assessment-discussion-policy-matrix.test.ts` — `COURSES-LEARNER-DISCUSSIONS-02` |
+| `learnerProfileDocumentSchema.shape.certifications` | Bounded 50 credentials, independent optional issue/expiry dates and valid schema, forged owner/college fields forbidden; now requires **unique certificate IDs**, avoiding ambiguous edit/delete identity | `tests/unit/chat7-learner-certificates-role-and-input-matrix.test.ts` — `COURSES-LEARNER-CERTIFICATES-01`; source fix `6a653e9`, test `58d67e7` |
+| `learnerCourseHasContinueAction`, `learnerCourseNextItemHref`, `learnerCourseCardProgress`, `learnerCourseHomeCompletion` | Deny historical/unpublished path continuation and malformed UUID deep links; percentages require positive finite denominators | `tests/unit/chat7-learner-course-home-assessments-model-matrix.test.ts` — `COURSES-LEARNER-COURSE-HOME-03`; source fix `7bfc574` |
+| `selectLearnerOverdueAssignment`, `learnerCourseFilteredEmptyTitle`, `learnerCourseHasActiveFilters` | Overdue state begins exactly at closed due instant, excludes submitted/future work; selected semester remains unchanged when clearing filters | Same named test; deadline fix `c2b72a4` |
+| `learnerAssessmentSubmittedLinkHref`, `normalizeLearnerAssessmentSearch`, `learnerAssessmentMatchesSearch`, `learnerAssessmentSort` | Only revalidated HTTPS links exposed, input search capped, stable immutable scoped input sorting and malformed due dates last | `tests/unit/chat7-learner-course-home-assessments-model-matrix.test.ts` — `COURSES-LEARNER-ASSESSMENT-LISTS-03` |
+| `parseSuperAdminLearningQuery`, `/admin/lessons`, `/admin/course-progress` | Reject hostile repeated/unknown URL filters; independently handle optional filter or lesson-create picker outage without suppressing authorized read results | `tests/unit/chat7-admin-learning-directory-resilience.test.ts` — `SA-COURSES-CONTENT-AUDIT-03`; fixes `1c28a79`, `f14ff6e`, `be80f37` |
+
+**Remaining coverage is not complete.** Many service and route symbols in the ~350-file Courses module
+lack a directly mapped behavioural test; this matrix covers the tested entries only.
+Existing imported source/read-unit tests do not replace two-college database isolation,
+learner-vs-faculty-vs-mentor role transitions, 320px browser checks, or no-CI-deferred
+Vitest/strict TypeScript runs. Credential entry in learner profile must not be confused
+with automatic course-completion certificate issuance, which is not implemented here.

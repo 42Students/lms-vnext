@@ -2,7 +2,10 @@ import { z } from "zod";
 
 export const facultyProfileTeachingQuerySchema = z.object({
   search: z.string().trim().max(120).default(""),
-  page: z.coerce.number().int().min(1).max(10000).default(1),
+  page: z.union([
+    z.number().int(),
+    z.string().regex(/^[1-9]\d{0,4}$/).transform(Number),
+  ]).pipe(z.number().int().min(1).max(10000)).default(1),
 }).strict();
 
 export type FacultyProfileTeachingQuery = z.infer<typeof facultyProfileTeachingQuerySchema>;

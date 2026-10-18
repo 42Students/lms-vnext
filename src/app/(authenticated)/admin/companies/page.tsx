@@ -13,7 +13,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { adminCompaniesQuerySchema } from "@/modules/placements/admin-company-directory-model";
+import { parseAdminCompanyDirectoryParams } from "@/modules/placements/admin-company-directory-model";
 import { listSuperAdminCompanyDirectory } from "@/modules/placements/admin-company-directory-service";
 import { findPossibleCompanyDuplicates } from "@/modules/placements/company-curation-candidates-model";
 import {listColleges} from "@/modules/colleges/service";
@@ -23,9 +23,7 @@ export default async function SuperAdminCompaniesPage({
   searchParams,
 }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const params = await searchParams;
-  const parsed = adminCompaniesQuerySchema.safeParse({
-    q: params.q, owner: params.owner, website: params.website, changedWithin: params.changedWithin, status: params.status, companyStatus: params.companyStatus, trust: params.trust, verified: params.verified, sort: params.sort, searchField: params.searchField, page: params.page, collegeId: params.collegeId === "" ? undefined : params.collegeId, companyId: params.companyId,
-  });
+  const parsed = parseAdminCompanyDirectoryParams(params);
   if (!parsed.success) return <div className="min-w-0 space-y-4">
     <PageHeader eyebrow="Super Admin · Placements" title="Companies" />
     <ErrorState title="Invalid company search" description="Check search text or relationship status."
