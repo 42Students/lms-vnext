@@ -6,6 +6,9 @@ import {
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import {ProjectAuditPageExport} from "@/components/projects/project-audit-page-export";
 import { PageHeader } from "@/components/ui/page-header";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import {
   listActivityEvents,
 } from "@/modules/activity/service";
@@ -32,8 +35,7 @@ function istDate(date:Date){
  const part=(type:string)=>parts.find(p=>p.type===type)?.value??"";
  return part("year")+"-"+part("month")+"-"+part("day");
 }
-const inputClass =
-  "min-h-11 w-full rounded-md border border-border bg-surface px-3 text-base text-foreground outline-none motion-safe:transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]";
+const inputClass = "w-full";
 
 export async function ProjectAdminAuditPage({
   basePath,
@@ -188,14 +190,14 @@ export async function ProjectAdminAuditPage({
           <span className="mb-1 block text-xs font-semibold text-body">
             Action
           </span>
-          <select className={inputClass} name="action" defaultValue={eventType??""}>
+          <Select className={inputClass} name="action" defaultValue={eventType??""}>
             <option value="">All actions</option>
             {(Object.values(ACTIVITY_EVENT_TYPES) as string[]).filter(value=>
               value.startsWith("projects."))
               .sort().map(value=><option key={value} value={value}>
                 {value.replace(/^projects\./,"").replaceAll("."," · ").replaceAll("_"," ")}
               </option>)}
-          </select>
+          </Select>
         </label>
         <label>
           <span className="mb-1 block text-xs font-semibold text-body">
@@ -219,7 +221,7 @@ export async function ProjectAdminAuditPage({
                 </option>
               ),
             )}
-          </select>
+          </Select>
         </label>
         <label>
           <span className="mb-1 block text-xs font-semibold text-body">
@@ -234,7 +236,7 @@ export async function ProjectAdminAuditPage({
         </label>
         <label>
           <span className="mb-1 block text-xs font-semibold text-body">Entity ID</span>
-          <input className={inputClass} name="subjectId" defaultValue={subjectId??""}
+          <Input className={inputClass} name="subjectId" defaultValue={subjectId??""}
             placeholder="Exact project or task UUID"/>
         </label>
         <label>
@@ -260,12 +262,12 @@ export async function ProjectAdminAuditPage({
           />
         </label>
         <div className="flex flex-wrap items-end gap-2 sm:col-span-2 xl:col-span-5">
-          <button
+          <Button
             type="submit"
             className="inline-flex min-h-10 items-center justify-center rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover"
           >
             Apply filters
-          </button>
+          </Button>
           <a
             href={basePath + "/audit"}
             className="inline-flex min-h-10 items-center justify-center rounded-md border border-border px-3 text-sm font-semibold text-foreground"
