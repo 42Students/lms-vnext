@@ -92,6 +92,7 @@ async function cleanup() {
     "delete from activity_events",
   );
   await pool.query("delete from placement_drive_selections");
+  await pool.query("delete from placement_waitlist_promotions");
   await pool.query(
     "delete from placement_joining_history",
   );
@@ -463,6 +464,61 @@ describe("Placement P8 offers and joining", () => {
       [job.id,"placements.job.closed"],
     );
     expect(closedEvents.rows[0]?.n).toBe(0);
+  });
+
+  it("PLACEMENTS-CAPACITY-PG-01 respects pending waitlist seats without double-counting its own reservation",async()=>{
+    const {job,round,application}=await preparePassedApplication();
+    await pool.query("update placement_jobs set openings=1 where id=$1",[job.id]);
+    const role=await pool.query<{role_option_id:string}>(
+      "select role_option_id from placement_applications where id=$1",[application.id]);
+    const alternate=await pool.query<{id:string}>(`
+      insert into placement_job_role_options(job_id,title,employment_type,work_mode)
+      select job_id,title||' second seat',employment_type,work_mode
+      from placement_job_role_options where id=$1 returning id`,[role.rows[0]!.role_option_id]);
+    const otherApplication=await pool.query<{id:string}>(`
+      insert into placement_applications(
+        job_id,role_option_id,membership_id,channel,status,
+        eligibility_status,eligibility_snapshot,submitted_by_user_id
+      ) select job_id,$2,membership_id,channel,status,
+          eligibility_status,eligibility_snapshot,submitted_by_user_id
+        from placement_applications where id=$1 returning id
+    `,[application.id,alternate.rows[0]!.id]);
+    const reservation=await pool.query<{id:string}>(`
+      insert into placement_waitlist_promotions(
+        job_id,round_id,application_id,seat_number,waitlist_rank,
+        reason,promoted_by_user_id
+      ) values($1,$2,$3,1,1,$4,$5) returning id`,[
+        job.id,round.id,otherApplication.rows[0]!.id,
+        "Reserved the final waitlisted placement opening",SEED_IDS.facultyUser,
+      ]);
+    const input={kind:"OFFER" as const,roleTitle:"Offer engineer",annualCtcInr:900_000};
+    await expect(issuePlacementOffer(tpo,application.id,input))
+      .rejects.toMatchObject({code:"PLACEMENT_OFFER_NOT_READY"});
+    const noOffers=await pool.query<{n:number}>(`
+      select count(*)::integer as n from placement_offers po
+      inner join placement_applications pa on pa.id=po.application_id
+      where pa.job_id=$1`,[job.id]);
+    expect(noOffers.rows[0]?.n).toBe(0);
+
+    // A valid promotion must consume its own reserved opening once, not twice.
+    await pool.query("delete from placement_waitlist_promotions where id=$1",[reservation.rows[0]!.id]);
+    await pool.query(`
+      insert into placement_waitlist_promotions(
+        job_id,round_id,application_id,seat_number,waitlist_rank,
+        reason,promoted_by_user_id
+      ) values($1,$2,$3,1,1,$4,$5)`,[
+        job.id,round.id,application.id,
+        "Reserved for the current qualified applicant",SEED_IDS.facultyUser,
+      ]);
+    const issued=await issuePlacementOffer(tpo,application.id,input);
+    expect(issued.status).toBe("ISSUED");
+    const retry=await issuePlacementOffer(tpo,application.id,input);
+    expect(retry.id).toBe(issued.id);
+    const confirmed=await pool.query<{n:number}>(`
+      select count(*)::integer as n from placement_offers po
+      inner join placement_applications pa on pa.id=po.application_id
+      where pa.job_id=$1 and po.status in ('ISSUED','ACCEPTED') and po.kind='OFFER'`,[job.id]);
+    expect(confirmed.rows[0]?.n).toBe(1);
   });
 
   it("issues an idempotent offer, lets the learner accept, and preserves corrected joining history", async () => {
