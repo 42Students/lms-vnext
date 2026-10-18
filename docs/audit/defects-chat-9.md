@@ -39,6 +39,8 @@ Branch: `chatgpt/chat-9-b`. Owner: chat-9. These are observed source-level findi
 
 | PROJ9-025 · PROJ-BREAK-reports-10 | High | Projects submissions overview counted the latest SUBMITTED and CHANGES_REQUESTED deliveries from COMPLETED and ARCHIVED workspaces as presently actionable, although administrators cannot review submissions outside ACTIVE workspaces. This misrepresented pending workload on Super/College Admin dashboards. Both actionable counters now require persisted ACTIVE project status; reviewed historical totals remain visible. | `30dc665` | Rendered-PostgreSQL SQL regression `tests/unit/PROJ-BREAK-chat9-admin-correlations.test.ts` (`f3afbbb`); real fixture count comparison OPEN |
 
+| PROJ9-026 · PROJ-BREAK-scale-22/23/24 / idor-29 | Medium | Paged admin snapshots re-filtered every task, sprint, release, submission, meeting, resource and membership collection per workspace, and the risk queue re-filtered mentors per project. With many rows per project, CPU scaled with project count multiplied by total child rows. Replaced with one `Map` index per query result (linear in total child records plus visible page), preserving submission order, tenant-key partitioning and present/absent row defaults. | `6825e90`, `6f5c644` | `tests/unit/PROJ-BREAK-chat9-admin-grouping.test.ts` (`f55e057`); 20k row deterministic behavior, malicious map keys and source use. PostgreSQL query EXPLAIN and large live tenant workload OPEN |
+
 ## Outstanding release gates (not yet closed)
 
 - Live PostgreSQL integration tests for wrong-tenant IDs, serializable races, rollback and event/notification dedupe; chat-17 owns shared fixtures. Static service assertions alone cannot establish real DB behavior.
