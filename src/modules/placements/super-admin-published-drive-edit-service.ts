@@ -9,6 +9,7 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {placementJobIdSchema} from "./validation";
+import {PlacementsServiceError} from "./errors";
 import {superAdminPublishedDriveEditSchema} from "./super-admin-published-drive-edit-model";
 import {isLegacyAssessmentDeadlineAfterApplication} from "./placement-legacy-posting-model";
 
@@ -27,28 +28,29 @@ export async function editSuperAdminPublishedDrive(context:RequestContext,rawJob
   const [job]=await tx.select().from(placementJobs)
    .where(and(eq(placementJobs.id,jobId),eq(placementJobs.collegeId,acting.collegeId)))
    .for("update").limit(1);
-  if(!job||job.status!=="PUBLISHED")throw new Error("Only published drives can be edited here.");
-  if(job.updatedAt.toISOString()!==cmd.expectedUpdatedAt)
-   throw new Error("Drive changed. Reload the current details before saving.");
+  if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
+  if(job.status!=="PUBLISHED")throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
+  if(job.updatedAt.getTime()!==Date.parse(cmd.expectedUpdatedAt))
+   throw new PlacementsServiceError("PLACEMENT_JOB_STALE");
   const deadline=new Date(cmd.applicationDeadline);
-  if(deadline.getTime()<=Date.now())throw new Error("Application deadline must be in the future.");
+  if(deadline.getTime()<=Date.now())throw new PlacementsServiceError("PLACEMENT_JOB_INVALID_DEADLINE");
   if(!isLegacyAssessmentDeadlineAfterApplication(job.legacyPostingDetails?.assessmentDeadline,deadline))
-   throw new Error("Assessment deadline must be after application deadline.");
+   throw new PlacementsServiceError("PLACEMENT_JOB_INVALID_DEADLINE");
   const [season]=await tx.select({status:placementSeasons.status}).from(placementSeasons)
    .where(and(eq(placementSeasons.id,job.seasonId),
     eq(placementSeasons.collegeId,acting.collegeId))).limit(1);
-  if(season?.status!=="ACTIVE")throw new Error("An inactive season cannot be edited.");
+  if(season?.status!=="ACTIVE")throw new PlacementsServiceError("PLACEMENT_SEASON_NOT_ACTIVE");
   const [primary]=await tx.select({id:placementJobRoleOptions.id}).from(placementJobRoleOptions)
    .where(and(eq(placementJobRoleOptions.jobId,job.id),
     eq(placementJobRoleOptions.isPrimary,true),eq(placementJobRoleOptions.status,"ACTIVE")))
    .for("update").limit(1);
-  if(!primary)throw new Error("A primary job role is required.");
+  if(!primary)throw new PlacementsServiceError("PLACEMENT_ROLE_OPTION_PRIMARY_REQUIRED");
   const [duplicate]=await tx.select({id:placementJobRoleOptions.id}).from(placementJobRoleOptions)
    .where(and(eq(placementJobRoleOptions.jobId,job.id),
     eq(placementJobRoleOptions.isPrimary,false),
     eq(placementJobRoleOptions.status,"ACTIVE"),
     eq(placementJobRoleOptions.title,cmd.title))).limit(1);
-  if(duplicate)throw new Error("Another active role already uses this title.");
+  if(duplicate)throw new PlacementsServiceError("PLACEMENT_ROLE_OPTION_DUPLICATE");
   const [saved]=await tx.update(placementJobs).set({
    title:cmd.title,description:cmd.description,locations:cmd.locations,
    applicationDeadline:deadline,
@@ -60,7 +62,7 @@ export async function editSuperAdminPublishedDrive(context:RequestContext,rawJob
    eq(placementJobs.collegeId,acting.collegeId),
    sql`date_trunc('milliseconds',${placementJobs.updatedAt})=${cmd.expectedUpdatedAt}::timestamptz`))
    .returning({id:placementJobs.id,updatedAt:placementJobs.updatedAt});
-  if(!saved)throw new Error("Drive changed. Reload before saving.");
+  if(!saved)throw new PlacementsServiceError("PLACEMENT_JOB_STALE");
   await tx.update(placementJobRoleOptions).set({
    title:cmd.title,locations:cmd.locations,openings:cmd.openings,
    minimumAnnualCtcInr:cmd.minimumAnnualCtcInr,
