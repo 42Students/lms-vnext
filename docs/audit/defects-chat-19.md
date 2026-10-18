@@ -53,3 +53,62 @@ These checks are implemented in `tests/unit/chat19-projects-recruiter-role-journ
 | HR-BREAK-profile-02 | MAJOR | `src/components/hr/recruiter-profile-details-editor.tsx` | Session expiry, revoked access and request throttling all showed the same retry prompt, which could encourage repeated failed saves | Centralized actionable, non-leaking recovery for HTTP 401/403/409/429, preserving unsaved form data | `30a76a40`, `55426556`, `b0cb8597` | `tests/unit/HR-BREAK-profile-01.test.ts` (`96dc1f82`) |
 
 **Verification status:** These commits were written through the connected GitHub API, not a local checkout. Vitest, typecheck, Postgres integration tests and browser/dev-site checks were **not executed** in this run; status remains pending CI and interactive acceptance. No release-ready assertion follows from source-level checks. The new double-click guard is source-tested and request-key behavior is exercised; a browser concurrency test and server/database idempotency verification remain mandatory.
+
+## 2026-10-18 second continuation — cloud-queue regressions and independent HR page audit
+
+| ID | Severity before fix | Evidence | Issue / corrective action | Branch commit | Direct regression |
+|---|---|---|---|---|---|
+| COL-XA-09 | UNIT FAILURE / compatibility | `tests/unit/chat19-college-cross-audit.test.ts`, `src/app/(authenticated)/college/projects/page.tsx` | College project scope was deliberately consolidated to `getProjectAdminCollegeId(context)`; regression still demanded an obsolete membership variable. Preserved fail-soft optional template loading and required central scope for both snapshots and templates. | `8988c4c4` | Same existing unit test (repaired expectations) |
+| UX-college-source-coverage-02 | UNIT FAILURE / compatibility | `tests/unit/chat19-college-source-coverage.test.ts` | Existing source assertion assumed `membership.collegeId` even when central helper now checks permission and the active SA college scope. Verify both reads derive exclusively from authorized `collegeId`. | `96b56b8d` | Same existing unit test (repaired expectations) |
+| HR-BREAK-CONVO-02 | MAJOR | `src/app/(authenticated)/hr/conversations/[threadId]/page.tsx` matching drive read | A contaminated upstream recruiter job list row with the correct job/college but an unrelated company could be shown as a drive link; require all three: job ID, college ID and company ID. | `ea7428f0` | `tests/unit/HR-BREAK-chat19-conversation-page.test.ts` (`26b1b997`) |
+| HR-BREAK-CONVO-03 | MAJOR | Same conversation page, `getDriveChangeRequests()` | Optional change-request read failure crashed an otherwise accessible conversation and lost reply UI. Fail softly with a status/retry hint and keep messages, no private exception text. | `5f2ad9c8` | `tests/unit/HR-BREAK-chat19-conversation-page.test.ts` (`1493fd53`) |
+| HR-BREAK-NOTIFICATIONS-01 | COVERAGE | `src/app/(authenticated)/hr/notifications/page.tsx` | No independent chat-19 direct page invocation for malicious query, session expiry, removed grants, empty states, multi-college chooser. | `c23fac1b` | `tests/unit/HR-BREAK-chat19-notifications-page.test.ts` |
+| HR-BREAK-PROFILE-PAGE-01 | COVERAGE | `src/app/(authenticated)/hr/profile/page.tsx` | Missing independent direct server-page tests for revoked session and failed self-profile read. | `6fbc51bd` | `tests/unit/HR-BREAK-chat19-profile-page.test.ts` |
+| HR-BREAK-CONVO-01 | COVERAGE | `src/app/(authenticated)/hr/conversations/[threadId]/page.tsx` | Added direct page-level tests for role denial, malicious deep links, pagination caps, typed forbidden response and authorized conversation visibility. | `22c7ef70`, `18a0036e` | `tests/unit/HR-BREAK-chat19-conversation-page.test.ts` |
+
+**Execution note:** no local run is required from this lane. The owner orchestrator runs cloud typecheck/lint/Vitest after merges; this pass updates source/tests and does not label unavailable local execution a task blocker. New failing assertions, if any, are to be fixed from the orchestrator's rolling diagnostics. Independent source changes are not yet a claim of green cloud CI.
+
+## 2026-10-18 final /hr page-level pass and cross-audit continuation
+
+| Finding ID | Severity | Evidence | Remedy | Commit(s) | Regression |
+|---|---|---|---|---|---|
+| HR-BREAK-CONVO-04 | MAJOR | `src/app/(authenticated)/hr/conversations/page.tsx`, general preview and notification enrichment | A second grant/authorization failure in a general-thread read or ancillary decision notice fetch could turn a previously authorized list into a 500. An available but potentially stale message preview also risked displaying after revoked access. Contain optional failures; suppress general message preview and inline reply after failed re-read; preserve safe scoped page filters without exposing provider errors. | `1d118d48`, `5f5d053f` | `tests/unit/HR-BREAK-chat19-conversation-inbox-page.test.ts` (`34a0891a`) |
+| HR-BREAK-ROUNDS-01/02 | COVERAGE | `/hr/drives/[jobId]/messages`, `/hr/drives/[jobId]/rounds/editor`, removal, interview slots pages | Directly invoked role deny, noneditable stale round, version token, malformed IDs, empty slots/threads and explicit permission boundary tests. | `c73106e7`, `d9a3d269` | `tests/unit/HR-BREAK-chat19-drive-pages.test.ts` |
+| HR-BREAK-REPORTS-01 | COVERAGE | Company reports and historical outside-drive pages | Directly verify filter validation before reports, college selector and forged success query handling. | `49dfd887` | `tests/unit/HR-BREAK-chat19-scope-pages.test.ts` |
+| HR-BREAK-CALENDAR-01 | COVERAGE | Calendar and Company & Team pages | Directly verify session denial, calendar date fallback, team filters, zero college grants and report redirect. | `fd59ebbb` | `tests/unit/HR-BREAK-chat19-calendar-company-pages.test.ts` |
+| HR-BREAK-ACTIVITY-01 | COVERAGE | Activity and Round Results pages | Verify denied sessions, invalid college/round filters, empty results, stale UUID. | `a559c041` | `tests/unit/HR-BREAK-chat19-activity-results-pages.test.ts` |
+| HR-BREAK-DRIVES-01 | COVERAGE | HR Drive list page | Deny forged college, bad lifecycle/pagination, empty grants and multiple-grant implicit selection. | `65bd49fe` | `tests/unit/HR-BREAK-chat19-drive-list-page.test.ts` |
+| HR-BREAK-HOME-01 | COVERAGE | Today, portfolio and discussion proposal-history pages | Deny expired session, wrong college, bad proposal filter and false published status. | `650a6341` | `tests/unit/HR-BREAK-chat19-home-portfolio-proposals.test.ts` |
+| HR-BREAK-JOB-01 | COVERAGE | Job details, historical Messages and retired Colleges aliases | Block invalid IDs, wrong recruiter/tenant, expired session; authorize original job *before* any legacy messages redirect; verify aliases. | `6e289232` | `tests/unit/HR-BREAK-chat19-legacy-job-aliases.test.ts` |
+| PROJ-BREAK-HR-COLLEGE-01 | COVERAGE | `src/modules/projects/admin-college-scope.ts` | Directly exercise recruiter without membership, College Admin own-college, Super Admin acting-college, denied permission, disabled SA. | `3cac2156` | `tests/unit/PROJ-BREAK-chat19-admin-college-scope.test.ts` |
+
+The dedicated `docs/audit/coverage/hr-pages-chat19-ledger.md` enumerates all 22 `/hr` entrypoints and distinguishes direct mocked route execution from source contracts and full PostgreSQL/browser integration. The two alias routes are tested as executed redirect/re-export, not a separate private data render. CI ownership remains with the cloud orchestrator, so no lack-of-local-execution task blockade is recorded.
+
+
+### Additional recoverable recruiter deep-link defect
+
+| Finding ID | Before-fix severity | Source | Issue | Fix | Commit | Direct regression |
+|---|---|---|---|---|---|---|
+| HR-BREAK-JOB-02 | MAJOR | `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx` | A valid authorized-looking job UUID with a malformed page, stage, applicant, offer or outcome filter made the underlying strict Zod parse throw to the page error boundary rather than provide actionable recovery. | Added inline recruiter-safe `ErrorState` with clear-filters action, retaining 404 for malformed job UUID, no private applicant payload or raw validation stack. | `13765dd3` | `tests/unit/HR-BREAK-chat19-legacy-job-aliases.test.ts` (`b23e24e4`) |
+
+### Navigation loop found by independent HR UX review
+
+| Finding ID | Severity | Source evidence | Defect | Fix | Commit | Regression |
+|---|---|---|---|---|---|---|
+| HR-XA-09 | MAJOR | `src/app/(authenticated)/hr/conversations/page.tsx` Notification inbox link | `/hr/messages` aliases the current `/hr/conversations` inbox. Its `Notification inbox` action therefore reopened the same page, not notifications. | Target `/hr/notifications` while keeping the legacy Messages alias. | `c4f07f41` | `tests/unit/HR-BREAK-chat19-conversation-inbox-page.test.ts` (`67f37ff5`) |
+
+### College report reconciliation
+
+| Finding ID | Severity | Evidence | Defect | Fix | Commit | Test |
+|---|---|---|---|---|---|---|
+| COL-XA-AUDIT-01 | MAJOR (audit integrity) | `docs/design-system/audits/UX-ROLLOUT-AUDIT-college-chat-19.md` group counts | Source audit grouped 85 routes with broken concatenated numerals (e.g. 14 placement paths displayed as fourteen `1` characters), obscuring the true page count. | Recomputed every functional group from `docs/orchestrator/ui-ux/pages-college.md`; made the root `/college` the dashboard group; asserted 85 total. | `215bbab1` | `tests/unit/chat19-college-source-coverage.test.ts` (`2436943f`, `3d0e7f39`) |
+
+## Unowned UX spillover: reusable interactive HR / placement report
+
+| Finding ID | Before-fix severity | Evidence | Failure mode / fix | Commits | Behavioural regression |
+|---|---|---|---|---|---|
+| UX-SPILL-HR-01 | BLOCKER (unsafe data export) | `src/components/placements/report-interactive-table.tsx`, old `copy()` joined raw untrusted cell values by tab and newline | Attacker-controlled candidate/role labels could begin a spreadsheet formula or forge pasted cells/rows. Extracted a typed export model: Unicode-aware formula neutralization, quote escaping for CSV, delimiter stripping for TSV, numeric negative preservation, and bounded download names. | `c15ba4a2`, `7239a6c6` | `tests/unit/chat19-report-table-export-security.test.ts` (`ee3c62db`, `5229b46c`) |
+| UX-SPILL-HR-02 | MAJOR (phone + a11y) | Same component: raw fixed-width `<table className="w-full min-w-max">`, `aria-sort` incorrectly applied to header button and 40px controls | Converted rows to shared `DataTable`, which renders accessible phone cards + expandable detail fields; added dedicated mobile sort control and labelled pressed sorting, preserved filters, ordering and displayed-columns-only exports; increased interaction targets to 44px. | `3f4641b1` | `tests/unit/chat19-report-interactive-table-render.test.tsx` (`be32df73`) |
+| UX-SPILL-HR-03 | MAJOR (mobile overflow) | Report column/filter `<details>` absolute dropdowns min-width 16rem/12rem at far-right anchors | Made phone disclosures bottom-anchored responsive sheets, bounded height with safe-area padding, added visible dismiss control that returns focus to summary. Desktop popover mode retained. | `70a97cff` | `tests/unit/chat19-report-interactive-table-render.test.tsx` (`6657055e`) |
+
+The matrix `docs/audit/ux/COVERAGE-MATRIX.md` is a generated snapshot and is not hand-edited. Regenerate it after the cloud merge; the former `src/components/placements/report-interactive-table.tsx` raw table entry should disappear. Server page and real browser/clipboard tests are still required by release CI; the new model and SSR tests are authored but not executed in this GitHub-only lane.

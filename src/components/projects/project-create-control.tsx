@@ -95,12 +95,12 @@ export function CreateProjectControl({
             email: string;
           }[];
         };
-        setMentors(body.mentors ?? []);
+        if (!controller.signal.aborted) setMentors(body.mentors ?? []);
       })
       .catch((caught: unknown) => {
         if (
-          caught instanceof DOMException &&
-          caught.name === "AbortError"
+          controller.signal.aborted ||
+          (caught instanceof DOMException && caught.name === "AbortError")
         ) {
           return;
         }
@@ -149,6 +149,23 @@ export function CreateProjectControl({
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (submitLock.current) return;
+    if (initialStatus === "ACTIVE" && !mentorMembershipId) {
+      setError("Assign a Mentor before making this Project active.");
+      return;
+    }
+    // A disabled Submit button is not an authorization or freshness gate:
+    // pressing Enter can submit the form before a new class roster renders.
+    // Never reuse the previous class's learner selection during a slow fetch.
+    if (sectionId && (
+      classesError ||
+      !classes.some(item => item.id === sectionId) ||
+      rosterError ||
+      loadedRosterSectionId !== sectionId ||
+      learnerMembershipIds.some(id => !roster.some(row => row.membershipId === id))
+    )) {
+      setError("The selected class roster is not ready. Retry loading it before creating the Project.");
+      return;
+    }
     submitLock.current = true;
     setPending(true);
     setError(null);

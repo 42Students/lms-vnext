@@ -107,6 +107,53 @@ describe("IIT Dharwad College Admin roster retries and concurrent tabs (PostgreS
       .toEqual([SEED_IDS.learnerCollegeAMembership]);
   });
 
+  it("PROJ-COL-DOUBLE-02 duplicate concurrent admin writes converge on one learner and one audit/notification", async () => {
+    const project=await createProject();
+    const token=project.updatedAt.toISOString();
+    const payload={learnerMembershipIds:[SEED_IDS.learnerCollegeAMembership],expectedUpdatedAt:token};
+    const results=await Promise.all([
+      replaceCollegeProjectLearners(admin,project.id,payload),
+      replaceCollegeProjectLearners(admin,project.id,payload),
+    ]);
+    expect(results.map(row=>row.added).sort()).toEqual([0,1]);
+    const learners=(await listProjectMembers(admin,project.id)).filter(row=>row.role==="LEARNER");
+    expect(learners.map(row=>row.membershipId)).toEqual([SEED_IDS.learnerCollegeAMembership]);
+    const notifications=await pool.query<{count:string}>(
+      `select count(*)::text as count from in_app_notifications
+        where event_id in (select id from activity_events where metadata->>'projectId'=$1)`,
+      [project.id],
+    );
+    expect(Number(notifications.rows[0]?.count??"0")).toBe(1);
+  });
+
+  it("PROJ-COL-TENANT-02 refuses revoked and wrong-college actors while retaining platform-wide Super Admin access", async () => {
+    const project=await createProject();
+    const payload={learnerMembershipIds:[SEED_IDS.learnerCollegeAMembership],
+      expectedUpdatedAt:project.updatedAt.toISOString()};
+    const contexts:RequestContext[]=[
+      {...admin,membership:{...admin.membership!,collegeId:SEED_IDS.collegeB}},
+      {...admin,membership:{...admin.membership!,status:"SUSPENDED"}},
+      {...admin,user:{...admin.user,platformStatus:"DISABLED"}},
+      {...admin,membership:{...admin.membership!,roles:["LEARNER"]}},
+      {...superAdmin,adminScope:{organizationId:SEED_IDS.organization,collegeId:SEED_IDS.collegeB}},
+    ];
+    for(const actor of contexts){
+      await expect(replaceCollegeProjectLearners(actor,project.id,payload))
+        .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
+    }
+    expect((await listProjectMembers(admin,project.id)).filter(row=>row.role==="LEARNER"))
+      .toHaveLength(0);
+    const rows=await pool.query<{count:string}>(
+      "select count(*)::text as count from project_members where project_id=$1 and role='LEARNER' and ended_at is null",
+      [project.id],
+    );
+    expect(Number(rows.rows[0]?.count??"0")).toBe(0);
+    // Platform-wide Super Admin is a valid service actor even without an
+    // acting-college UI selection; navigation intentionally requires selection.
+    const globalWrite=await replaceCollegeProjectLearners(superAdmin,project.id,payload);
+    expect(globalWrite).toMatchObject({added:1,removed:0});
+  });
+
   it("PROJ-COL-TENANT-01 refuses a wrong-tenant learner without modifying the roster", async () => {
     const project = await createProject();
     await expect(replaceCollegeProjectLearners(admin, project.id, {

@@ -29,6 +29,23 @@ describe("SA-tenants-modules-SEC-01: never render admin filter recovery before a
    expect(()=>requirePermission(context,"admin-scope.select")).toThrow(AuthorizationError);
   }
  });
+ it("SA-tenants-modules-SEC-02 blocks roleless and expired users before any college-specific detail lookup",()=>{
+  const guarded=[
+   "src/app/(authenticated)/admin/colleges/[collegeId]/signin/page.tsx",
+   "src/app/(authenticated)/admin/colleges/[collegeId]/branding/page.tsx",
+   "src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx",
+  ];
+  for(const path of guarded){
+   const source=readFileSync(path,"utf8");
+   const auth=source.indexOf('requirePermission(context,"admin-scope.select")');
+   const params=source.indexOf("await params");
+   const parsed=source.indexOf("collegeIdSchema.safeParse(collegeId)");
+   expect(auth,path).toBeGreaterThan(0);
+   expect(auth,path).toBeLessThan(params);
+   expect(auth,path).toBeLessThan(parsed);
+   expect(source,path).toContain("getCurrentRequestContext()");
+  }
+ });
  it("authenticates every route before handling hostile and repeated query parameters",()=>{
   for(const file of pages){
    const source=readFileSync(file,"utf8");

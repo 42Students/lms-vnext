@@ -23,8 +23,7 @@ const sprintId="33333333-3333-4333-8333-333333333333";
 const releaseId="44444444-4444-4444-8444-444444444444";
 const memberId="55555555-5555-4555-8555-555555555555";
 const actor={user:{id:"66666666-6666-4666-8666-666666666666",platformStatus:"ACTIVE"},
- membership:{id:memberId,status:"ACTIVE",roles:["LEARNER"]}}
- as unknown as Parameters<typeof pullOwnBacklogTask>[0];
+ membership:{id:memberId,status:"ACTIVE",roles:["LEARNER"]}} as unknown as Parameters<typeof pullOwnBacklogTask>[0];
 const command={taskId,sprintId,expectedUpdatedAt:"2026-10-18T05:30:00.123Z"};
 
 function fakeTx(){

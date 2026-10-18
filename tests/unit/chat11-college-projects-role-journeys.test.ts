@@ -41,6 +41,23 @@ describe("IIT Dharwad College Admin Projects role journeys", () => {
     expect(page).toContain("if (!parsed.success)");
   });
 
+  it("PROJ-COL-QUERY-03 refuses number-coercion bypasses and retains canonical decimal navigation", () => {
+    for (const hostile of ["1e2", "0x10", "0b101", " 2", "2 ", "1.0", "+2", "-0", "Infinity", "NaN"]) {
+      expect(parseCollegeProjectsQuery({page: hostile}).success, hostile).toBe(false);
+      expect(parseCollegeProjectsQuery({pageSize: hostile}).success, hostile).toBe(false);
+    }
+    expect(parseCollegeProjectsQuery({page: "100001"}).success).toBe(false);
+    expect(parseCollegeProjectsQuery({pageSize: "9"}).success).toBe(false);
+    for (const valid of [{page:"1",pageSize:"10"},{page:"0002",pageSize:"025"},{page:"100000",pageSize:"100"}]) {
+      const parsed=parseCollegeProjectsQuery(valid);
+      expect(parsed.success,JSON.stringify(valid)).toBe(true);
+      if(parsed.success) {
+        expect(parsed.data.page).toBe(Number(valid.page));
+        expect(parsed.data.pageSize).toBe(Number(valid.pageSize));
+      }
+    }
+  });
+
   it("PROJ-COL-QUERY-02 retains valid filters and pagination across navigation", () => {
     const valid = parseCollegeProjectsQuery({
       view: ["table", "cards"], status: "ARCHIVED", page: "2", pageSize: "50", q: "  Sprint ",
@@ -161,6 +178,37 @@ describe("IIT Dharwad College Admin Projects role journeys", () => {
     expect(control).toContain("if (submitLock.current) return");
   });
 
+  it("PROJ-COL-STALE-05 refuses Enter-key submit with a pending/wrong class roster and ignores aborted candidates", () => {
+    const control=readFileSync("src/components/projects/project-create-control.tsx","utf8");
+    expect(control).toContain("if (!controller.signal.aborted) setMentors(body.mentors ?? [])");
+    expect(control).toContain("controller.signal.aborted ||");
+    expect(control).toContain("classesError ||");
+    expect(control).toContain("!classes.some(item => item.id === sectionId)");
+    expect(control).toContain("rosterError ||");
+    expect(control).toContain("loadedRosterSectionId !== sectionId");
+    expect(control).toContain("learnerMembershipIds.some(id => !roster.some(row => row.membershipId === id))");
+    const guard=control.indexOf("if (sectionId && (");
+    const locked=control.indexOf("submitLock.current = true");
+    const mutation=control.indexOf("await projectMutation(");
+    expect(guard).toBeGreaterThan(0);
+    expect(guard).toBeLessThan(locked);
+    expect(locked).toBeLessThan(mutation);
+    expect(control).toContain("Retry loading it before creating the Project");
+  });
+
+  it("PROJ-COL-STALE-06 prevents mentorless activation after a Mentor selection is cleared",()=>{
+    const control=readFileSync("src/components/projects/project-create-control.tsx","utf8");
+    const validation=control.indexOf('if (initialStatus === "ACTIVE" && !mentorMembershipId)');
+    const submit=control.indexOf("submitLock.current = true");
+    expect(validation).toBeGreaterThan(0);
+    expect(validation).toBeLessThan(submit);
+    expect(control).toContain("Assign a Mentor before making this Project active.");
+    expect(createProjectInstanceInputSchema.safeParse({
+      collegeId:COLLEGE,templateId:TEMPLATE,slug:"a",title:"Team A",
+      initialStatus:"ACTIVE",learnerMembershipIds:[],
+    }).success).toBe(false);
+  });
+
   it("PROJ-COL-STALE-02 rejects stale timestamps and repeated roster members", () => {
     const valid = { learnerMembershipIds: [STUDENT],
       expectedUpdatedAt: "2099-04-01T12:00:00.000+05:30" };
@@ -175,6 +223,20 @@ describe("IIT Dharwad College Admin Projects role journeys", () => {
     expect(source).toContain('for("update")');
     expect(source).toContain('PROJECT_MEMBER_CONFLICT');
     expect(source).toContain("getDb().transaction(");
+  });
+
+  it("PROJ-COL-REVOKE-01 authenticates persisted creator under the project materialization transaction",()=>{
+    const source=readFileSync("src/modules/projects/instance-service.ts","utf8");
+    const begin=source.indexOf("return await db.transaction(async (tx) => {");
+    const actor=source.indexOf('assertPersistedPlatformPermission(tx,context,"projects.manage"');
+    const insert=source.indexOf(".insert(projectInstances)");
+    expect(begin).toBeGreaterThan(0);
+    expect(actor).toBeGreaterThan(begin);
+    expect(actor).toBeLessThan(insert);
+    expect(source).toContain("collegeId:college.id,organizationId:college.organizationId");
+    expect(source).toContain("mapInstanceConstraint(error)");
+    expect(source).toContain("recordActivityEventInTransaction(");
+    expect(source).toContain("notifyProjectMemberships(tx,createdEvent.id");
   });
 
   it("PROJ-COL-ORIGIN-01 protects project creation and mentor reassignment from cross-origin POSTs", () => {

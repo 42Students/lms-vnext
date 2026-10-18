@@ -1,5 +1,5 @@
 import "server-only";
-import { and, eq, inArray, count } from "drizzle-orm";
+import { and, asc, eq, inArray, count } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { placementApplications, placementJobs, placementOffers } from "@/db/schema";
 import { placementDriveSelections } from "@/db/schema/placement-drive-selections";
@@ -9,7 +9,7 @@ import { issuePlacementOffer, listPlacementOfferCandidates } from "./offer-servi
 import {listPlacementRoleOptions} from "./role-option-service";
 import { auditTpoJobChange, requireTpoJobActor, requireTpoJobCollege } from "./tpo-job-write-base";
 import { placementJobIdSchema } from "./validation";
-import { recordSelectionsSchema, releaseSelectionsSchema, summarizeSelectionRelease } from "./tpo-drive-selection-model";
+import { recordSelectionsSchema, releaseSelectionsSchema, summarizeSelectionRelease, tpoSelectionReleaseFailureMessage, isExactTpoSelectionReplay } from "./tpo-drive-selection-model";
 
 const pendingCode = null;
 
@@ -96,13 +96,20 @@ export async function recordTpoDriveSelections(context: RequestContext, rawJobId
     const applications = await tx.select({id:placementApplications.id}).from(placementApplications)
       .where(and(eq(placementApplications.jobId, job.id),
         inArray(placementApplications.id,input.entries.map(e=>e.applicationId)),
-        eq(placementApplications.status,"SUBMITTED"))).for("update");
+        eq(placementApplications.status,"SUBMITTED")))
+      .orderBy(asc(placementApplications.id)).for("update");
     if (applications.length !== input.entries.length) throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
     const existing = await tx.select().from(placementDriveSelections)
       .where(inArray(placementDriveSelections.applicationId,input.entries.map(e=>e.applicationId)))
-      .for("update");
+      .orderBy(asc(placementDriveSelections.applicationId)).for("update");
     if (existing.some(row => row.jobId !== job.id || row.status !== "SELECTED")) {
       throw new PlacementsServiceError("PLACEMENT_OFFER_ACTIVE_EXISTS");
+    }
+    // Lost HTTP replies and double-click retries should not move the version
+    // or create another audit event. Compare persisted fields under the locks.
+    if(isExactTpoSelectionReplay(existing,input.entries)){
+      return {recorded:input.entries.length,selectionIds:input.entries.map(entry=>
+        existing.find(row=>row.applicationId===entry.applicationId)!.id)};
     }
     const now=new Date();
     const recorded=[];
@@ -184,7 +191,7 @@ export async function verifyAndReleaseTpoSelections(context:RequestContext,rawJo
         results.push({selectionId:id,applicationId:selection.applicationId,status:"released",offerId});
       }catch(error){
         results.push({selectionId:id,applicationId:selection.applicationId,status:"skipped",
-          reason:error instanceof Error?error.message:"Offer release reconciliation failed"});
+          reason:tpoSelectionReleaseFailureMessage(error)});
       }
       continue;
     }
@@ -201,7 +208,7 @@ export async function verifyAndReleaseTpoSelections(context:RequestContext,rawJo
           .where(and(eq(placementDriveSelections.id,id),eq(placementDriveSelections.jobId,job.id)))
           .for("update").limit(1);
         if(!locked||locked.recordedAt.toISOString()!==input.expectedRecordedAt[id]||
-          !["SELECTED","VERIFIED"].includes(locked.status))throw new Error("Selection changed");
+          !["SELECTED","VERIFIED"].includes(locked.status))throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
         if(locked.status==="SELECTED"){
           await tx.update(placementDriveSelections).set({
             status:"VERIFIED",verifiedAt:new Date(),verifiedByUserId:context.user.id,updatedAt:new Date(),
@@ -222,7 +229,7 @@ export async function verifyAndReleaseTpoSelections(context:RequestContext,rawJo
           eq(placementDriveSelections.jobId,job.id),
           eq(placementDriveSelections.status,"VERIFIED")))
           .returning({id:placementDriveSelections.id});
-        if(!updated)throw new Error("Offer issued but selection status needs reconciliation");
+        if(!updated)throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
         await auditTpoJobChange(tx,context,job,"PLACEMENTS_TPO_SELECTION_RELEASED","released a verified selection for",{
           selectionId:id,applicationId:selection.applicationId,offerId:offer.id,
         });
@@ -230,7 +237,7 @@ export async function verifyAndReleaseTpoSelections(context:RequestContext,rawJo
       results.push({selectionId:id,applicationId:selection.applicationId,status:"released",offerId:offer.id});
     }catch(error){
       results.push({selectionId:id,applicationId:selection.applicationId,status:"skipped",
-        reason:error instanceof Error?error.message:"Offer could not be released"});
+        reason:tpoSelectionReleaseFailureMessage(error)});
     }
   }
   return {...summarizeSelectionRelease(results),results};

@@ -29,6 +29,28 @@ export type DataTableProps<Row> = {
   rowHref?: (row: Row) => string;
 };
 
+/** Never let row URLs cross origin through slash/backslash URL ambiguity.
+ * Encoded initial slashes and backslashes are browser-normalized differently
+ * by different hosts; only unambiguous same-app absolute paths are allowed.
+ */
+export function isSafeDataTableHref(href: string): boolean {
+  if (!href.startsWith("/") || href !== href.trim() || /[\\\x00-\x1f\x7f]/.test(href)) {
+    return false;
+  }
+  // Work only on the initial path prefix: percent escapes in later query
+  // values are not origins, but nested URL-encoded separators can be.
+  let prefix = href.split(/[?#]/, 1)[0]!.slice(0, 128);
+  for (let depth = 0; depth < 16; depth++) {
+    if (prefix.startsWith("//") || prefix.startsWith("/\\")) return false;
+    const decoded = prefix.replace(/%2f/gi, "/").replace(/%5c/gi, "\\")
+      .replace(/%25/gi, "%");
+    if (decoded === prefix) return true;
+    prefix = decoded;
+  }
+  // Extreme nested encoding is ambiguous and never needed for app routes.
+  return false;
+}
+
 export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHref }: DataTableProps<Row>) {
   if(rows.length===0) return <div className="rounded-xl border border-border bg-surface p-4 sm:p-6">{empty}</div>;
   const primary=columns.find(col=>col.mobilePriority==="primary") ??
@@ -39,7 +61,7 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
     rows.every(row=>{
       if(!col.mobileDetail?.canView(row))return false;
       const href=col.mobileDetail.href(row);
-      return href.startsWith("/") && !href.startsWith("//") && href.length>1;
+      return isSafeDataTableHref(href) && href.length>1;
     });
   const recoverable=columns.filter(mapped);
   const secondary=columns.filter(col=>col.key!==primary?.key &&
@@ -55,7 +77,7 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
     key:getRowKey(row),row,
     detailHref:(()=>{
       const href=rowHref?.(row);
-      return href && href.startsWith("/") && !href.startsWith("//") ? href : null;
+      return href && isSafeDataTableHref(href) ? href : null;
     })(),
     cells:new Map(columns.map(col=>[col.key,col.cell(row)] as const)),
   }));

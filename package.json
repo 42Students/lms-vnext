@@ -22,8 +22,8 @@
     "db:reset": "tsx scripts/db-reset.ts",
     "db:test:prepare": "tsx scripts/db-test-prepare.ts",
     "test:db": "vitest run --config vitest.db.config.ts",
-    "test:db:projects-harness": "vitest run --config vitest.db.config.ts tests/integration/projects-placements-pg-harness-groups.test.ts tests/integration/projects-placements-pg-harness-placements.test.ts tests/integration/projects-placements-pg-harness-rollback.test.ts tests/integration/projects-placements-pg-harness-boundaries.test.ts",
-    "test:ux:kit:hardening": "vitest run tests/unit/UX-kit-scroll-motion-01.test.tsx tests/unit/UX-kit-projects-hardening-chat17.test.tsx tests/unit/projects-pg-harness-contract-chat17.test.ts tests/unit/UX-kit-role-and-overlay-chat17.test.tsx",
+    "test:db:projects-harness": "vitest run --config vitest.db.config.ts tests/integration/projects-placements-pg-harness-groups.test.ts tests/integration/projects-placements-pg-harness-placements.test.ts tests/integration/projects-placements-pg-harness-rollback.test.ts tests/integration/projects-placements-pg-harness-boundaries.test.ts tests/integration/projects-placements-pg-harness-relations-chat17.test.ts",
+    "test:ux:kit:hardening": "vitest run tests/unit/UX-kit-scroll-motion-01.test.tsx tests/unit/UX-kit-projects-hardening-chat17.test.tsx tests/unit/projects-pg-harness-contract-chat17.test.ts tests/unit/UX-kit-role-and-overlay-chat17.test.tsx tests/unit/UX-kit-states-chat17.test.tsx tests/unit/PROJ-BREAK-MENTOR-40-chat17.test.ts",
     "smoke:public": "node scripts/smoke-public.mjs",
     "db:e2e:prepare": "node --conditions=react-server ./node_modules/tsx/dist/cli.mjs scripts/db-e2e-prepare.ts",
     "test:load:reads": "tsx scripts/load-read.ts",
@@ -52,7 +52,8 @@
     "ux:capture": "node scripts/ux-capture-references.mjs",
     "ux:audit:verify": "npm run typecheck && npm run lint && npm run ux:audit:source && npm run ux:audit:unit",
     "ux:callsites": "node scripts/ux-callsite-audit.mjs",
-    "ux:callsite:capture": "node scripts/ux-capture-affected-callsites.mjs"
+    "ux:callsite:capture": "node scripts/ux-capture-affected-callsites.mjs",
+    "test:chat17:weak": "vitest run tests/unit/chat17-auth-crypto-hardening.test.ts tests/unit/chat17-auth-http-hardening.test.ts tests/unit/chat17-auth-tenant-branding.test.ts tests/unit/chat17-auth-config-retention-network.test.ts tests/unit/auth-tenant-access.test.ts tests/unit/chat17-identity-system-roles-hardening.test.ts tests/unit/chat17-identity-portal-matrix.test.ts tests/unit/chat17-tenant-dns-verifier.test.ts tests/unit/tenant-domain-validation.test.ts tests/unit/chat17-system-bootstrap-race.test.ts tests/unit/chat17-tenant-domain-service-journeys.test.ts tests/unit/chat17-managed-domains-model.test.ts"
   },
   "dependencies": {
     "drizzle-orm": "0.45.3",

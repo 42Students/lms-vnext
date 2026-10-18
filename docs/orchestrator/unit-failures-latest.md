@@ -21,11 +21,7 @@ Fix YOUR section: read the test, read the source it checks. Usually a merge drop
   - HR-BREAK-round-results-page-01 recruiter job and shared candidate privacy > invalid job/round/outcome filter renders reset instead of issuin
 - tests/unit/HR-BREAK-tracker-pages-01.test.ts
   - HR-BREAK-tracker-pages-01: reporter-owned routes and recovery > detail view shows own report, non-secret severity and return path
-- tests/unit/PROJ-BREAK-LEARNER-ROUTES-01.test.ts
-  - PROJ-BREAK-LEARNER-ROUTES-01 actual Next.js Learner task route actions > maps simulated expired/stale/cross-tenant backlog pull failure to f
-  - PROJ-BREAK-LEARNER-ROUTES-01 actual Next.js Learner task route actions > maps simulated expired/stale/cross-tenant own-task deletion failure
-  - PROJ-BREAK-LEARNER-ROUTES-01 actual Next.js Learner task route actions > maps simulated expired/stale/cross-tenant task progress failure to 
-  - PROJ-BREAK-LEARNER-ROUTES-01 actual Next.js Learner task route actions > maps simulated expired/stale/cross-tenant task status failure to fr
+  - HR-BREAK-tracker-pages-01: reporter-owned routes and recovery > malformed or other reporter's IDs cannot fetch report detail by guessing URL
 - tests/unit/PROJ-BREAK-SA-admin-pages-and-scope.test.ts
   - Super Admin Projects and Placements page routes ? independent security and UX audit > PROJ-BREAK-SA-16 delegates dynamic project IDs to pers
 - tests/unit/UX-attendance-calendar-scroll-01.test.ts
@@ -98,6 +94,12 @@ Fix YOUR section: read the test, read the source it checks. Usually a merge drop
 ## chat-6
 - tests/unit/PROJ-BREAK-chat6-role-journeys.test.ts
   - Projects IIT Dharwad ? cross-account navigation and denial breaker > PROJ-BREAK-pages-02 College Admin without an active selected membership
+- tests/unit/chat6-college-placements-round2-verified.test.ts
+  - College placement verified operational parity > COL-placements-11 retention report and college student placement lookup are accessible
+- tests/unit/chat6-faculty-quiz-report-header-r06.test.ts
+  - Faculty quiz report legacy header > FAC-assessments-R06 shows the legacy Back link and Submitted, Average score, Questions and Due date metr
+- tests/unit/chat6-final-sprint-rec-home-drives-r05.test.ts
+  - Final sprint recruiter applicant review accessibility > REC-home-drives-R05 traps focus in the native Drawer and closes with Escape before r
 - tests/unit/graceful-raw-error-scan.test.ts
   - new raw-error and mutation regression gate > GR-09 rejects new renderings of API codes or internal error messages
   - new raw-error and mutation regression gate > GR-31 inventories newly changed unguarded mutating components
@@ -106,24 +108,16 @@ Fix YOUR section: read the test, read the source it checks. Usually a merge drop
 - tests/unit/chat7-college-assessment-export-service-weak.test.ts
   - COURSES-WEAK-EXPORT-SERVICE-01 account-scoped export query and cap > cannot silently export more than 1000 rows, labels truncated set and ne
   - COURSES-WEAK-EXPORT-SERVICE-01 account-scoped export query and cap > reads paginated results using the same current context/kind, returns qu
-- tests/unit/chat7-college-project-legacy-one-tab.test.ts
-  - College Admin Projects legacy Workspaces and one tab strip > shows legacy Projects group and single Workspaces page heading
 - tests/unit/chat7-course-delivery-roster-weak.test.ts
   - COURSES-WEAK-DELIVERY-ROSTER-01 exact College, Section and Elective enrolment gates > source query guards both paths by persisted ACTIVE use
 - tests/unit/chat7-course-resource-materials-weak.test.ts
   - COURSES-WEAK-RESOURCE-MATERIALS-01 real resource lifecycle validation > permits only titled, credential-free HTTPS resources without fragmen
-- tests/unit/chat7-legacy-faculty-quiz-report-copy.test.ts
-  - Faculty QuizReportContent.jsx dev legacy headings and empty states > preserves dynamic report title and exact legacy section names
-- tests/unit/chat7-round3-mentor-basics.test.ts
-  - chat-7 round 3 mentor access and state > MEN-projects-meetings-02 mentor workspace advertises pending loading
 - tests/unit/learner-placements-chat7-notice-actions.test.ts
   - Chat-7 learner notice action and audience parity > LEARNER-placements-47 renders only safe persisted TPO action links
-- tests/unit/learner-placements-chat7-schedule-surface.test.ts
-  - Chat-7 schedule parity > LEARNER-placements-41 exposes online assessments without pretending schedule is attendance
-- tests/unit/recruiter-home-drives-chat7-acceptance.test.ts
-  - Recruiter Home Drives source contracts > REC-home-drives-42 uses the native modal drawer for URL-selected applicant review
 
 ## chat-9
+- tests/unit/chat9-college-projects-round4-evidence.test.ts
+  - College Projects gap closure round 4 > COL-projects-19 restores workspace, submissions and template page labels
 - tests/unit/chat9-college-projects-template-catalogue.test.ts
   - chat-9 College Projects template catalogue > COL-projects-08 renders template tags in both list and cards without introducing a new status
 - tests/unit/chat9-phase2-college-group-tabs.test.ts
@@ -131,6 +125,8 @@ Fix YOUR section: read the test, read the source it checks. Usually a merge drop
   - college group tabs exact legacy navigation labels > renders academic section labels in exact dev-legacy order
 - tests/unit/chat9-round6-calendar-settings.test.ts
   - chat-9 round 6 calendar and settings > TPO-settings-audit-03 uses the original Settings section names in the grouped navigation
+- tests/unit/chat9-round6-college-projects-parity.test.ts
+  - College Admin Projects round 6 > COL-projects-19 displays the exact Workspaces, Templates, Submission and Audit headings plus the legacy ris
 - tests/unit/chat9-super-admin-navigation-reachability.test.ts
   - Super Admin 13-row sidebar grouped page reachability > every grouped tab is a real vNext Super Admin page with unique active state
 - tests/unit/chat9-tpo-settings-legacy-graceful.test.ts
@@ -140,6 +136,7 @@ Fix YOUR section: read the test, read the source it checks. Usually a merge drop
   - IIT Dharwad Projects adversarial service and route contracts > PROJ-BREAK-races-05 version publish serializes concurrent archives and reassi
   - IIT Dharwad Projects adversarial service and route contracts > PROJ-BREAK-resilience-01 object-store cleanup failure cannot reverse committe
   - IIT Dharwad Projects adversarial service and route contracts > PROJ-BREAK-routing-01 all sampled project write routes reject foreign origins
+  - IIT Dharwad Projects adversarial service and route contracts > PROJ-BREAK-ux-01 admin and college Project screens preserve explicit empty/de
 - tests/unit/ux-admin-chat9-coverage-closure.test.ts
   - chat-9 route coverage and native DataTable closure > UX-admin-route-coverage-04 every /admin last-third route has a named source contract an
 - tests/unit/ux-admin-chat9-round9-legacy.test.ts
@@ -162,24 +159,12 @@ Fix YOUR section: read the test, read the source it checks. Usually a merge drop
   - UX-cross-tpo-second-C13-026-22 slow loading and recovery
 
 ## chat-14
-- tests/unit/recruiter-chat14-resume-access.test.ts
-  - REC-home-drives-38 employer-shared private resume grants > REC-home-drives-38 avoids server-rendering object keys and requests signed link o
-- tests/unit/recruiter-chat14-round3.test.ts
-  - chat-14 recruiter reassigned batch 3 > REC-home-drives-50 uses readable, scoped offer columns and employment outcomes
-- tests/unit/recruiter-chat14-round4-ownership-private-review.test.ts
-  - chat-14 recruiter ownership and private review gap closure > REC-home-drives-38 never exposes roll number or email without an active relatio
-  - chat-14 recruiter ownership and private review gap closure > REC-home-drives-38 only projects verified college-authorized academic marks
-  - chat-14 recruiter ownership and private review gap closure > REC-home-drives-38 shares enrolled branch/phone only when college columns allow
-- tests/unit/ux-chat14-high-risk-contracts.test.ts
-  - chat-14 mentor and HR UX critical page contracts > UX-hr-placements-jobs-jobId-02 distinguishes authorized applicant review, selection and o
-- tests/unit/ux-chat14-hr-02.test.ts
-  - chat-14 HR UX rollout batch 02 > UX-hr-hr-placements-jobs-jobId-01 guards recruiter responsive page source
-- tests/unit/UX-college-projects-create-01.test.ts
-  - UX-college-projects-create-01 /college/projects/create > keeps college membership scope before fetching assigned templates or showing creati
 - tests/unit/projects-phase2-file-visibility-guard.test.ts
   - PR-S2-11 no private resource file downloads > restricts list and direct signed grants independently
-- tests/unit/w03-project-admin-surfaces.test.ts
-  - W03 project admin daily-use surface parity > keeps workspace search, status and pagination on both admin accounts
+
+## chat-15
+- tests/unit/learner-assessment-state-filter-model.test.ts
+  - learner assessment state filters > distinguishes submission from published feedback
 
 ## chat-16
 - tests/unit/chat16-gap-register-reconciliation-r7.test.ts
