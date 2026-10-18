@@ -1,4 +1,6 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -36,24 +38,24 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
   }catch{setMessage("Attendance settings could not be saved. Try again.");setFailed(true);}
   finally{setSaving(false);}
  }
- return <section aria-label="Attendance policy" className="space-y-3 rounded-xl border border-border bg-surface p-4">
+ return <section aria-label="Attendance policy" className="space-y-3 border-b border-border pb-5">
   <h2 className="font-semibold">Attendance policy</h2>
   <div className="grid gap-4 sm:grid-cols-2">
    <label className="grid gap-1 text-sm font-semibold">Late marking allowed for
-    <input type="number" min={1} max={maxCorrectionHours} step={1} value={hours}
+    <Input type="number" min={1} max={maxCorrectionHours} step={1} value={hours}
      onChange={e=>setHours(e.target.value)} aria-describedby="late-marking-help"
      className="min-h-11 rounded border border-border bg-background px-3"/>
     <span id="late-marking-help" className="text-xs font-normal text-muted-foreground">How long after a class ends attendance can be marked or corrected. (hours)</span>
    </label>
    <label className="grid gap-1 text-sm font-semibold">Minimum attendance
-    <input type="number" min={1} max={100} step={1} value={threshold}
+    <Input type="number" min={1} max={100} step={1} value={threshold}
      onChange={e=>setThreshold(e.target.value)} aria-describedby="minimum-attendance-help"
      className="min-h-11 rounded border border-border bg-background px-3"/>
     <span id="minimum-attendance-help" className="text-xs font-normal text-muted-foreground">Shown to students, and used here to flag students below it. It does not block anyone from exams. (%)</span>
    </label>
   </div>
-  <button type="button" disabled={saving} onClick={requestSave}
-   className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-primary">{saving?"Saving…":"Save attendance policy"}</button>
+  <Button variant="primary" type="button" disabled={saving} onClick={requestSave}
+   className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-primary">{saving?"Saving…":"Save attendance policy"}</Button>
   {message?<p role={failed?"alert":"status"} className="text-sm text-body">{message}</p>:null}
   <ConfirmDialog open={confirming} onOpenChange={setConfirming} title="Save attendance settings for this college?"
    description="Changes apply to the selected college." confirmVariant="primary" confirmLabel="Save settings"
