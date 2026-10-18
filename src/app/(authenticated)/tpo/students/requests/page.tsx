@@ -7,6 +7,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { TpoRequestDecisionControl } from "@/components/placements/tpo-request-decision-control";
 import {tpoStudentRequestShortcutFilters} from "@/modules/placements/tpo-student-request-shortcut-model";
+import {tpoStudentRequestsHasInvalidUrlFilters} from "@/modules/placements/tpo-student-requests-url-model";
 import {
   listTpoStudentRequests,
   tpoStudentRequestsQuerySchema,
@@ -107,7 +108,7 @@ export default async function TpoStudentRequestsPage({
     pageSize: first(raw.pageSize) || undefined,
   });
 
-  if (!parsed.success) {
+  if (tpoStudentRequestsHasInvalidUrlFilters(raw) || !parsed.success) {
     return (
       <div className="space-y-6">
         <PageHeader
