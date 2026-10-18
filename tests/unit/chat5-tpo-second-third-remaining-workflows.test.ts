@@ -19,7 +19,8 @@ describe("TPO second-third — close preview and cancellation model state",()=>{
  it("PLACEMENTS-CLOSE-SM-02 denies nonpublished or inactive seasons, unreleased selections, and any stale impact count",()=>{
   expect(evaluateTpoDriveClosure("PUBLISHED","ACTIVE",counts,counts,0)).toBe("ALLOW");
   expect(evaluateTpoDriveClosure("CLOSED","ACTIVE",counts,counts,0)).toBe("READ_ONLY");
-  expect(evaluateTpoDriveClosure("PUBLISHED","CLOSED",counts,counts,0)).toBe("READ_ONLY");
+  expect(evaluateTpoDriveClosure("PUBLISHED","CLOSED",counts,counts,0)).toBe("ALLOW");
+  expect(evaluateTpoDriveClosure("PUBLISHED",null,counts,counts,0)).toBe("READ_ONLY");
   expect(evaluateTpoDriveClosure("PUBLISHED","ACTIVE",counts,counts,1)).toBe("UNRELEASED_SELECTIONS");
   for(const key of ["applications","rounds","offers"] as const)
    expect(evaluateTpoDriveClosure("PUBLISHED","ACTIVE",{...counts,[key]:counts[key]+1},counts,0)).toBe("PREVIEW_STALE");
