@@ -40,3 +40,15 @@ Source-scan inventory of the assigned module directories; **PENDING is not verif
 | `src/modules/colleges/college-contact-profile-service.ts` | `CollegeContactProfileError`, `getOwnCollegeContactProfile`, `updateOwnCollegeContactProfile` | PENDING |
 | `src/modules/colleges/college-logo-request-body.ts` | `CollegeLogoRequestError`, `readCollegeLogoForm` | PENDING |
 | `src/modules/colleges/logo-png-chunks.ts` | `verifyCollegeLogoPngChunks` | PENDING |
+| `src/modules/colleges/public-branding-model.ts` | `sanitizePublicCollegeBranding` | PENDING |
+| `src/modules/colleges/public-signin-policy-service.ts` | `effectiveCollegeSignInMethod`, `effectiveCollegeSignInCapabilities` | PENDING |
+| `src/modules/colleges/readiness-model.ts` | `CollegeReadinessStatus`, `CollegeReadinessOverall`, `CollegeReadinessCheckId`, `CollegeReadinessFacts`, `CollegeReadinessCheck`, `CollegeReadinessEvaluation`, `evaluateCollegeReadiness` | PENDING |
+| `src/modules/colleges/readiness-remediation-links.ts` | `readinessRemediationLink` | PENDING |
+| `src/modules/colleges/readiness-service.ts` | `getSuperAdminCollegeReadiness` | PENDING |
+| `src/modules/colleges/service.ts` | `CollegeServiceErrorCode`, `CollegeServiceError`, `listColleges`, `resolveCollegeUsage`, `createCollege`, `updateCollege`, `archiveCollege`, `restoreCollege` | PENDING |
+| `src/modules/colleges/signin-methods-model.ts` | `collegeSignInMethodSchema`, `updateCollegeSignInSchema`, `signInCapabilities` | PENDING |
+| `src/modules/colleges/signin-policy-read-model.ts` | `signInPolicyReadState` | PENDING |
+| `src/modules/colleges/staged-schema.ts` | `collegeSignInPoliciesStaged` | PENDING |
+| `src/modules/colleges/super-admin-directory-service.ts` | `getAdminTenantDirectory`, `getAdminTenantDetail` | PENDING |
+| `src/modules/colleges/super-admin-tenant-model.ts` | `tenantReadQuerySchema`, `tenantPage` | PENDING |
+| `src/modules/colleges/validation.ts` | `collegeIdSchema`, `collegeOrganizationIdSchema`, `collegeNameSchema`, `collegeCodeSchema`, `createCollegeInputSchema`, `updateCollegeInputSchema`, `CreateCollegeInput`, `UpdateCollegeInput` | PENDING |
