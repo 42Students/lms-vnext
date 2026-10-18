@@ -111,6 +111,26 @@ describe("IIT Dharwad Projects Admin unsubmitted workspaces service permissions 
     expect(state.selects).toBe(0);
     expect(state.offsetValues).toHaveLength(0);
   });
+  it("PROJ-BREAK-submissions-42 filters both count and page by actual workspace status without resurrecting archives",async()=>{
+    const result=await listProjectAdminUnsubmitted(admin(),collegeId,{
+      q:"100%_cohort",status:"ACTIVE",page:2,pageSize:10,
+    });
+    expect(result.page).toBe(2);
+    const predicates=state.filters.map(render).filter(row=>row.sql.includes('"project_instances"."college_id"'));
+    expect(predicates.length).toBe(2);
+    for(const predicate of predicates){
+      expect(predicate.sql).toContain('"project_instances"."status"');
+      expect(predicate.params).toContain("ARCHIVED");
+      expect(predicate.params).toContain("ACTIVE");
+      expect(predicate.params).toContain("%100\\\\%\\\\_cohort%");
+      expect(predicate.sql.toLowerCase()).toContain("not exists");
+    }
+    expect(state.limitValues).toContain(10);
+    expect(state.offsetValues).toContain(10);
+    expect(adminUnsubmittedQuerySchema.safeParse({status:"ARCHIVED"}).success).toBe(true);
+    expect(adminUnsubmittedQuerySchema.safeParse({status:"OTHER_TENANT"}).success).toBe(false);
+    expect(state.readOnly).toBe(true);
+  });
   it("PROJ-BREAK-input-38 LIKE wildcards match literal text rather than broadening the tenant query",()=>{
     expect(adminUnsubmittedLiteralSearchPattern("100%_team"))
       .toBe("%100\\%\\_team%");
