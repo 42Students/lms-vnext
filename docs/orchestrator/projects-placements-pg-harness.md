@@ -115,3 +115,7 @@ Shared kit regression additions: `tests/unit/UX-kit-role-and-overlay-chat17.test
 4. Failed task and workspace deletions leave their submission and final-delivery descendants intact; each SQLSTATE `23503` is isolated by a SAVEPOINT and the entire transaction rolls back.
 
 A separate high-volume seeded disposable database and `EXPLAIN ANALYZE` are required before claiming 1,000+ project/task query performance. Do not use these rollback-only fixtures as a throughput benchmark. CI must verify all examples on the currently registered Drizzle journal, and any failing constraint witness is a release bug, not a reason to skip the test.
+
+## Actor-role fixture anti-forgery (PROJ-HARNESS-33..35)
+
+`createProjectFixture` now verifies that its author holds an active `COLLEGE_ADMIN` membership, mentor has an active `MENTOR` membership, and learner has an active `LEARNER` membership in the same **active college**, including current user account state. `createPlacementFixture` likewise requires an active `COLLEGE_ADMIN` or `TPO` membership. The check joins `users`, `college_memberships`, `membership_roles` and `colleges` on the same PostgreSQL transaction before the fixture inserts a template, drive or company. User-supplied fixture role arrays alone are never authoritative. Negative cases cover role spoofing, suspended/disabled project authors, and suspended TPO initiators with zero writes. These are test-fixture integrity guardrails and must not be mistaken for route-level business authorization.
