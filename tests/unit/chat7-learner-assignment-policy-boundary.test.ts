@@ -14,7 +14,7 @@ import {getLearnerAssignmentMethods} from "@/modules/courses/learner-assignment-
 const id="11111111-1111-4111-8111-111111111111";
 const delivery="22222222-2222-4222-8222-222222222222";
 const offering="33333333-3333-4333-8333-333333333333";
-const context={membership:{roles:["LEARNER"]}} as RequestContext;
+const context={membership:{roles:["LEARNER"]}} as unknown as RequestContext;
 beforeEach(()=>{
  state.scope.mockReset();state.access.mockReset();state.select.mockReset();
  state.scope.mockResolvedValue({status:"PUBLISHED",lessonVisibleToStudents:true,
@@ -47,7 +47,7 @@ describe("LEARNER-ASSIGNMENT-METHODS-01 published policy for an authorized learn
   state.access.mockResolvedValue("FACULTY");
   await expect(getLearnerAssignmentMethods(context,id,delivery)).rejects.toThrow();
   state.access.mockResolvedValue("LEARNER");
-  await expect(getLearnerAssignmentMethods({membership:{roles:["MENTOR"]}} as RequestContext,id,delivery)).rejects.toThrow();
+  await expect(getLearnerAssignmentMethods({membership:{roles:["MENTOR"]}} as unknown as RequestContext,id,delivery)).rejects.toThrow();
   expect(state.select).not.toHaveBeenCalled();
  });
  it("returns exactly the live authored methods after scoped delivery authorization",async()=>{
