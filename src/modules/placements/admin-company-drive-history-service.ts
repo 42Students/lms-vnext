@@ -53,7 +53,8 @@ export async function listSuperAdminCompanyDriveHistory(context: RequestContext,
       .from(placementApplications)
       .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
         eq(collegeMemberships.collegeId,acting.collegeId)))
-      .innerJoin(placementOffers,eq(placementOffers.applicationId,placementApplications.id))
+      .innerJoin(placementOffers,and(eq(placementOffers.applicationId,placementApplications.id),
+        eq(placementOffers.status,"ACCEPTED")))
       .innerJoin(placementJoiningOutcomes,and(eq(placementJoiningOutcomes.offerId,placementOffers.id),
         eq(placementJoiningOutcomes.status,"JOINED")))
       .where(inArray(placementApplications.jobId,ids))
