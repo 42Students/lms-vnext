@@ -176,4 +176,14 @@ describe("chat-13 TPO second-third cross-audit repairs",()=>{
   expect(s).not.toContain('aria-modal="false"');
   expect(s).not.toContain('value.error??');
  });
+ it("UX-cross-tpo-second-C13-025 recruiter board and invitations use accessible confirmations and focus trap",()=>{
+  const s=read("src/components/tpo/recruiter-leads-workspace.tsx");
+  expect(s).toContain('<Dialog open={adding}');
+  expect(s).toContain('<ConfirmDialog open={confirmation!==null}');
+  expect(s).toContain('moveBoardLeadToContacted(target.leadId,true)');
+  expect(s).toContain('createInviteLink(lead,true)');
+  expect(s).toContain('closeAddDialog(true)');
+  expect(s).not.toContain('window.confirm');
+  expect(s).not.toContain('min-h-10');
+ });
 });
