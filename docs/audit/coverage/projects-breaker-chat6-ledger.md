@@ -67,3 +67,12 @@ Tests described as source contracts must **not** be counted as PostgreSQL behavi
 | `LearnerFinalDeliveryControl` | Manual save, autosave, reopen and submit retain server-acknowledged content and newest token | Double clicks serialized, unacknowledged or stale drafts not submitted, new draft ID read from refresh | Both regressions above and `tests/unit/PROJ-BREAK-chat6-saved-delivery-ui.test.ts` |
 
 These are source-policy and mocked route tests. CI, real PostgreSQL parallel writes and authenticated browser multi-device behaviour remain unverified. The server intentionally refuses old clients that do not include `expectedUpdatedAt`; this prioritizes correctness over a silent data loss fallback.
+
+## Super Admin Projects audit and tenant boundary (PROJ-BREAK-SA-17/18/19)
+
+| Executable boundary | Attack | Test | Integration remaining |
+| --- | --- | --- | --- |
+| `getProjectAdminCollegeId` / `can(projects.manage)` | Dual-role Super Admin switching organizations; unselected college; suspended/disabled membership; unrelated learner and mentor | `tests/unit/PROJ-BREAK-chat6-super-admin-audit-scope.test.ts` | Real database records asserting the requested college belongs to the selected organization |
+| `mayReadGlobalProjectAudit` | College/org-scoped Super Admin attempting the global activity stream, non-platform user or disabled user attempting escalation | Same | Live HTTP route with foreign tenant audit IDs and page/CSV consistency |
+
+The test executes the permission model, not a mocked or stubbed assertion. It does not verify actual PostgreSQL ownership joins; continue to treat the database-backed IDOR/security pass as **pending** until CI and integration testing execute it.
