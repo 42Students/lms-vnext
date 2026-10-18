@@ -26,11 +26,11 @@ export function TpoTeamFollowControls({threadId,following,muted,ready}:{
  }
  return <section className="flex flex-wrap items-center gap-2" aria-label="Conversation preferences">
   <button type="button" disabled={busy||!ready} onClick={()=>void change(state.following?"UNFOLLOW":"FOLLOW")}
-   className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+   className="min-h-11 sm:min-h-9 rounded-[9px] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
    {state.following?"Stop following":"Follow"}
   </button>
   <button type="button" disabled={busy||!ready} onClick={()=>void change(state.muted?"UNMUTE":"MUTE")}
-   className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+   className="min-h-11 sm:min-h-9 rounded-[9px] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
    {state.muted?"Unmute":"Mute"}
   </button>
   {!ready?<p role="status" className="text-xs text-muted-foreground">
