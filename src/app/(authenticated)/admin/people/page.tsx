@@ -112,7 +112,7 @@ export default async function SuperAdminPeoplePage({
           description="Use the Super Admin scope selector in the top bar to choose a college before viewing membership data."
         />
         <Link href="/admin/people/directory"
-          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           Browse all permitted Users &amp; Roles without selecting a college →
         </Link>
       </div>
@@ -160,10 +160,10 @@ export default async function SuperAdminPeoplePage({
         </Select>
        </label>
        <Button type="submit">Search</Button>
-       <Link href="/admin/people" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>
+       <Link href="/admin/people" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
       </form>
       <p role="status" aria-live="polite" className="text-sm text-body">{people.pagination.total} matching contacts</p>
-      <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+      <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Browse platform users & roles →
       </Link>
       <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
