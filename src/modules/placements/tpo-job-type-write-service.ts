@@ -7,6 +7,7 @@ import {placementTpoJobTypes} from "@/db/schema/tpo-configuration";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 import {placementTableExists} from "./staged-tables";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {tpoJobTypeNameSchema} from "./tpo-configuration-model";
 import {TPO_BUILTIN_JOB_TYPES,isTpoBuiltinJobType} from "./tpo-builtin-job-types";
 const createSchema=z.object({label:tpoJobTypeNameSchema,countsAsPlaced:z.boolean()}).strict();
@@ -23,6 +24,11 @@ export async function createTpoJobType(context:RequestContext,raw:unknown){
   const [college]=await tx.select({id:colleges.id,organizationId:colleges.organizationId})
    .from(colleges).where(eq(colleges.id,collegeId)).for("update").limit(1);
   if(!college)throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
+  // A stale request snapshot cannot authorize a write after role revocation.
+  // The persisted actor SHARE locks remain held through the settings mutation.
+  await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+   collegeId,organizationId:college.organizationId,
+  });
   const [existing]=await tx.select({id:placementTpoJobTypes.id}).from(placementTpoJobTypes)
    .where(and(eq(placementTpoJobTypes.collegeId,collegeId),
     sql`lower(${placementTpoJobTypes.label}) = lower(${input.label}::text)`)).limit(1);
@@ -54,6 +60,11 @@ export async function setTpoJobTypeActive(context:RequestContext,raw:unknown){
   const [college]=await tx.select({id:colleges.id,organizationId:colleges.organizationId})
    .from(colleges).where(eq(colleges.id,collegeId)).for("update").limit(1);
   if(!college)throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
+  // A stale request snapshot cannot authorize a write after role revocation.
+  // The persisted actor SHARE locks remain held through the settings mutation.
+  await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+   collegeId,organizationId:college.organizationId,
+  });
   const [current]=await tx.select().from(placementTpoJobTypes).where(and(
    eq(placementTpoJobTypes.id,input.jobTypeId),eq(placementTpoJobTypes.collegeId,collegeId))).limit(1);
   if(!current)throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
@@ -92,6 +103,11 @@ export async function renameTpoJobType(ctx:RequestContext,raw:unknown){
   const [college]=await tx.select({organizationId:colleges.organizationId}).from(colleges)
    .where(eq(colleges.id,collegeId)).for("update").limit(1);
   if(!college)throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
+  // A stale request snapshot cannot authorize a write after role revocation.
+  // The persisted actor SHARE locks remain held through the settings mutation.
+  await assertPersistedPlatformPermission(tx,ctx,"placements.manage",{
+   collegeId,organizationId:college.organizationId,
+  });
   const [current]=await tx.select().from(placementTpoJobTypes).where(and(
    eq(placementTpoJobTypes.collegeId,collegeId),eq(placementTpoJobTypes.id,input.jobTypeId)))
    .for("update").limit(1);
@@ -129,6 +145,11 @@ export async function setTpoBuiltinJobTypeActive(ctx:RequestContext,raw:unknown)
   const [college]=await tx.select({organizationId:colleges.organizationId}).from(colleges)
    .where(eq(colleges.id,collegeId)).for("update").limit(1);
   if(!college)throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
+  // A stale request snapshot cannot authorize a write after role revocation.
+  // The persisted actor SHARE locks remain held through the settings mutation.
+  await assertPersistedPlatformPermission(tx,ctx,"placements.manage",{
+   collegeId,organizationId:college.organizationId,
+  });
   const rows=await tx.select().from(placementTpoJobTypes)
    .where(eq(placementTpoJobTypes.collegeId,collegeId));
   const current=rows.find(row=>row.label.toLocaleLowerCase("en-IN")===fixed.label.toLocaleLowerCase("en-IN"));
@@ -169,6 +190,11 @@ export async function setTpoJobTypeCountsAsPlaced(ctx:RequestContext,raw:unknown
   const [college]=await tx.select({organizationId:colleges.organizationId}).from(colleges)
    .where(eq(colleges.id,collegeId)).for("update").limit(1);
   if(!college)throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
+  // A stale request snapshot cannot authorize a write after role revocation.
+  // The persisted actor SHARE locks remain held through the settings mutation.
+  await assertPersistedPlatformPermission(tx,ctx,"placements.manage",{
+   collegeId,organizationId:college.organizationId,
+  });
   const [current]=await tx.select().from(placementTpoJobTypes).where(and(
    eq(placementTpoJobTypes.collegeId,collegeId),eq(placementTpoJobTypes.id,input.jobTypeId)))
    .for("update").limit(1);
