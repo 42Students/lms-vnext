@@ -89,7 +89,7 @@ export function CollegeCreateForm({
   return (
     <form
       onSubmit={submit}
-      className="grid gap-3 rounded-xl border border-border bg-surface p-4 lg:grid-cols-[1fr_1fr_12rem_auto] lg:items-end"
+      className="grid gap-3 - lg:grid-cols-[1fr_1fr_12rem_auto] lg:items-end border-t border-border pt-4"
     >
       <div>
         <label
