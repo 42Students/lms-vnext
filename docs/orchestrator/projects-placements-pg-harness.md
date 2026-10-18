@@ -188,3 +188,6 @@ The registered placement application schema requires non-null `role_option_id`, 
 
 ### PROJ-HARNESS-PLACEMENTS-17: active-season gate
 A published drive may still belong to a season explicitly CLOSED by the TPO. Candidate fixture checks the persisted season status as well as job publication/deadline and rejects attempts to add an application to a closed season. PostgreSQL case 17 closes the season with audit actor/time, then proves zero additional applications; GUARD-16 verifies a same-college season join, not a client-supplied flag. Service-layer tests must independently verify this product rule; fixture tests cannot certify the actual HTTP API.
+
+### PROJ-HARNESS-PLACEMENTS-18: cancelled round denial
+The placement results fixture reads the selected round's persisted status and refuses candidate results if it is CANCELLED (the registered lifecycle check requires `cancelled_at`). PG case 18 first transitions the round to the valid cancelled shape, then asserts no new results; source guard 17 requires the status read. This is a fixture sanity check, not a substitute for the product round-results service permission/state gate.
