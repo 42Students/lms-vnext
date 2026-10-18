@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {friendlyApiError} from "@/lib/friendly-error";
-import { canRecordTpoOfferAction, TPO_OFFER_ACTIONS, type TpoOfferAction } from "@/modules/placements/tpo-offer-lifecycle-model";
+import { canRecordTpoOfferAction, parseTpoOfferExpiryIstInput, TPO_OFFER_ACTIONS, type TpoOfferAction } from "@/modules/placements/tpo-offer-lifecycle-model";
 
 type CandidateOffer = {
   id: string;
@@ -36,10 +36,11 @@ export function TpoOfferLifecyclePanel({
   );
   const selected = eligible.filter((choice) => ids.includes(choice.id));
   const statuses = [...new Set(selected.map((item) => item.status))];
+  const parsedExpiry = parseTpoOfferExpiryIstInput(expiresAt);
   const valid = selected.length > 0 && selected.length === ids.length &&
     selected.length <= 200 && statuses.length === 1 &&
     reason.trim().length >= 10 &&
-    (action !== "EXTEND" || Boolean(expiresAt)) &&
+    (action !== "EXTEND" || parsedExpiry !== null) &&
     (action !== "RECORD_JOINED" || Boolean(joiningDate));
 
   function select(id: string, checked: boolean) {
@@ -69,7 +70,7 @@ export function TpoOfferLifecyclePanel({
             expectedStatus: statuses[0],
             reason: reason.trim(),
             ...(action === "EXTEND" ? {
-              expiresAt: new Date(expiresAt).toISOString(),
+              expiresAt: parsedExpiry,
             } : {}),
             ...(action === "RECORD_JOINED" ? { joiningDate } : {}),
           }),
@@ -140,7 +141,7 @@ export function TpoOfferLifecyclePanel({
       )}
       {action === "EXTEND" ? (
         <label className="block text-sm font-semibold">
-          New expiry (local time)
+          New expiry (IST)
           <input
             type="datetime-local"
             value={expiresAt}
