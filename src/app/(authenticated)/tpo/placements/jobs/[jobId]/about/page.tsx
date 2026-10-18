@@ -35,9 +35,9 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
   <PageHeader eyebrow="TPO · Drive workspace" title={data.job.title+" · About this drive"}
    description="Eligibility, reach, packages, employer details, closed summary and the most recent audit activity."/>
   <nav className="flex flex-wrap gap-4 text-sm font-semibold">
-   <Link className="text-primary-text underline" href={root+"/applicants-pipeline"}>Applicants</Link>
-   <Link className="text-primary-text underline" href={root+"/selections"}>Selections</Link>
-   <Link className="text-primary-text underline" href={root+"/change-requests"}>Company change requests</Link>
+   <Link className="text-[var(--lms-teal-deep)] underline" href={root+"/applicants-pipeline"}>Applicants</Link>
+   <Link className="text-[var(--lms-teal-deep)] underline" href={root+"/selections"}>Selections</Link>
+   <Link className="text-[var(--lms-teal-deep)] underline" href={root+"/change-requests"}>Company change requests</Link>
   </nav>
   <section className="rounded-xl border border-border bg-surface p-5">
    <h2 className="text-lg font-semibold">Eligibility and reach</h2>
@@ -91,7 +91,7 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
     <h3 className="font-semibold">Related company requests</h3>
     {data.previousRequests.length?<ul className="mt-2 divide-y divide-border text-sm">
       {data.previousRequests.map(request=><li key={request.id} className="py-3">
-       <Link className="font-semibold text-primary-text underline"
+       <Link className="font-semibold text-[var(--lms-teal-deep)] underline"
          href={"/tpo/placements/requests?requestId="+encodeURIComponent(request.id)}>
          {request.proposedTitle??"Recruiter drive request"}</Link>
        <span className="ml-2 text-body">{request.status} · {when(request.createdAt)}</span>
@@ -112,7 +112,7 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
   {["CLOSED","CANCELLED"].includes(data.job.status)?<section className="rounded-xl border border-border bg-surface p-5">
    <h2 className="font-semibold">Closed drive summary</h2>
    <p className="mt-2 text-sm">{data.closeSummary.applications} recorded applications · {data.closeSummary.offers} offer versions.</p>
-   <Link className="mt-2 inline-flex min-h-10 items-center text-primary-text underline" href={root+"/closeout"}>See the close-out report</Link>
+   <Link className="mt-2 inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline" href={root+"/closeout"}>See the close-out report</Link>
   </section>:null}
   <section id="activity" aria-label="Drive activity" className="scroll-mt-24 rounded-xl border border-border bg-surface p-5">
    <h2 className="font-semibold">Recent activity · last {data.feed.length} (maximum 100)</h2>
