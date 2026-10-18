@@ -22,6 +22,8 @@ describe("TPO-requests-verification-R02 truthful recruiter access ended review w
   expect(lifecycle).toContain("Nothing that we compare changed.");
   expect(lifecycle).toContain("Open recruiter");
   expect(service).toContain("recruiterPlatformStatus:users.platformStatus");
+  expect(service).toContain("relationshipStatus:placementCompanyRelationships.status");
+  expect(service).toContain('accessEnded:row.relationshipStatus!=="ACTIVE"||');
   expect(service).toContain("capabilities:placementRecruiterCollegeGrants.capabilities");
   expect(service).toContain("tpoRecruiterRequestAccessEnded(grant??null,row.recruiterPlatformStatus,now)");
  });
