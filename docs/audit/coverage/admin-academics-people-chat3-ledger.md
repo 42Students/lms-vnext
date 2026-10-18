@@ -73,6 +73,11 @@ Snapshot: 2026-10-18, source branch `chatgpt/chat-3-b`. Role-journal and code-ba
 - `tests/unit/chat3-sa-academics-batch-roster-privacy.test.ts` covers wrong-role/disabled early denial plus active same-college cohort census. `tests/unit/chat3-sa-student-register-options-role-scope.test.ts` invokes the real registration-options service, compiles all three persisted-college Drizzle joins, and checks every wrong-role/disabled actor and an invalid selected college.
 - No change to College Admin's own Student Register endpoints. PostgreSQL fixture and page acceptance pending.
 
+## SA-LEARNING-FILTER-ROLE-01 — college-wide teaching filter authority
+
+- `getSuperAdminLearningFilterOptions` now explicitly requires an active platform `SUPER_ADMIN` role before calling `resolveActingCollege`. Ordinary Faculty receive college-scoped `courses.read` for their **own assigned courses**, which is not authority to enumerate every college course and cohort through Super Admin filter controls.
+- `tests/unit/chat3-sa-learning-facets-platform-role.test.ts` executes the actual service with Drizzle join compilation, verifies two bounded 2,000-row same-college queries, and denies Faculty/Mentor/Learner/College Admin/disabled platform actors before any database access. Cloud CI and authenticated page tests pending.
+
 ## Targeted repairs and further release gates
 
 - `COL-people-24`: exact legacy mentor-reassignment confirmation description restored at `src/components/projects/project-admin-reassign-mentor-page.tsx`; must rerun its failing test, and real keyboard/retry browser checks remain.

@@ -23,7 +23,8 @@ export async function listProgramContents(
   scopedProgramIds: readonly string[],
 ): Promise<Map<string, ProgramContents>> {
   const college = await loadAcademicCollegeScope(collegeId);
-  requirePermission(context, "academics.read", {
+  // Program deletion readiness is an administrative view, not Faculty course metadata.
+  requirePermission(context, "academics.manage", {
     collegeId,
     organizationId: college.organizationId,
   });
