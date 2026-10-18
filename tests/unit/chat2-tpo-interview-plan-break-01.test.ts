@@ -1,3 +1,4 @@
+import {readFileSync} from "node:fs";
 import {describe,expect,it} from "vitest";
 import {planInterviewDay,sameInterviewRoom,tpoInterviewSlotActionSchema} from "@/modules/placements/tpo-interview-slot-model";
 import {overlappingInterviewVenue,validInterviewWindow} from "@/modules/placements/tpo-interview-reschedule-model";
@@ -40,8 +41,8 @@ describe("TPO-BREAK-interview-01 day planner and venue safety",()=>{
  });
  it("TPO-drive-workspace-44 assignment checks Unicode-equivalent occupied rooms before writing",()=>{
   expect(sameInterviewRoom("Ｒｏｏｍ　Ａ"," room a ")).toBe(true);
-  expect(sameInterviewRoom("Cafe\\u0301 Hall","Caf\\u00e9 Hall")).toBe(true);
-  const {readFileSync}=require("node:fs") as typeof import("node:fs");
+  expect(sameInterviewRoom("Café Hall","Café Hall")).toBe(true);
+
   const service=readFileSync("src/modules/placements/tpo-interview-slot-service.ts","utf8");
   const section=service.slice(service.indexOf('if(input.action==="ASSIGN_ROOM")'));
   expect(section).toContain("sameInterviewRoom(other.room,input.room)");
