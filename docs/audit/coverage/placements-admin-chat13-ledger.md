@@ -167,3 +167,6 @@ The other half of the admin coverage boundary lives in `src/modules/admin-ui/`, 
 
 
 | `src/modules/placements/admin-request-body-model.ts` — `readAdminPlacementJson`; Super Admin published-drive PATCH and platform-policy PUT | Actual streamed byte cap, valid JSON, invalid length, malformed UTF-8/JSON, same-origin first and no authentication for invalid bodies | `SA-ADMIN-BODY-16` `tests/unit/chat13-admin-placement-body-guard.test.ts` | Behavioral parser and route-source guard authored; HTTP integration pending |
+
+
+| `src/lib/bounded-json-request.ts` — `readBoundedJsonRequest`; `src/app/api/admin/students/module-access/bulk/route.ts` — `POST` | Stream byte limits, malformed JSON, fabricated lengths, origin before authentication and no oversized module access write | `SA-ADMIN-BODY-19` `tests/unit/chat13-shared-bounded-json-request.test.ts`, `tests/unit/chat13-student-bulk-stale-roster.test.ts` | Shared helper reused across Projects and placements admin mutation routes, CI deferred |
