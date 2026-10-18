@@ -214,3 +214,8 @@ Unit tests authored but not executed locally; no claim of CI pass or production 
 ## Chat-15 source verification (2026-10-18)
 
 **HR-TODAY-ARCHIVE-34:** Today interview slot proposal and offer follow-up listings require same-college PUBLISHED jobs that have not been archived. Empty job allowlists return without SQL. Source proof: `tests/unit/HR-BREAK-chat15-today-archive-34.test.ts`. Test authored; database/provider/browser execution remains pending.
+
+
+## Chat-15 HR employer portfolio visibility — 2026-10-18
+
+**HR-PORTFOLIO-ARCHIVE-36** excludes archived jobs from the canonical recruiter job portfolio, preventing them from appearing in dependent dashboard, calendar, activity and notification lists. **HR-PORTFOLIO-REVOKE-37** rechecks the acting recruiter's persisted ACTIVE grant and profile on each list query; session grants alone never keep employer data visible after revocation. Evidence: `tests/unit/HR-BREAK-chat15-portfolio-owner-24.test.ts`. The test was authored but not run; multi-session PostgreSQL replay is outstanding.
