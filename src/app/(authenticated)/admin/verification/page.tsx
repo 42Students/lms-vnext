@@ -32,7 +32,7 @@ export default async function AdminVerificationEntry() {
         title="Profile verification"
         description="Students' education and identity, checked against their documents."
       />
-      <section role="status" className="rounded-xl border border-border bg-surface p-4 sm:p-6">
+      <section role="status" className="border-b border-border py-5">
         <h2 className="text-base font-semibold text-foreground">Choose a college first</h2>
         <p className="mt-2 text-sm text-body">
           Choose a college at the top to see its students waiting for verification.
