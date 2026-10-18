@@ -99,3 +99,20 @@
 | `learner-course-overview-mobile-model.ts` | `learnerCourseOverviewJumps` | Not individually linked in this inventory |
 | `learner-course-overview-model.ts` | `CourseOverviewLesson` | Not individually linked in this inventory |
 | `learner-course-overview-model.ts` | `learnerCourseListSignals` | Not individually linked in this inventory |
+| `learner-course-path-preview-model.ts` | `LearnerPathPreviewInput` | Not individually linked in this inventory |
+| `learner-course-path-preview-model.ts` | `learnerCoursePathPreview` | Not individually linked in this inventory |
+| `learner-course-preferred-period-model.ts` | `learnerCoursePreferredPeriod` | Not individually linked in this inventory |
+| `learner-course-progress-filter-model.ts` | `LearnerCourseProgressFilter` | Not individually linked in this inventory |
+| `learner-course-progress-filter-model.ts` | `learnerCourseMatchesProgress` | Not individually linked in this inventory |
+| `learner-course-result-summary-model.ts` | `learnerCourseResultSummary` | Authored direct model regression, unrun |
+| `learner-course-semester-filter-model.ts` | `learnerCourseSemesterFilterReset` | Not individually linked in this inventory |
+| `learner-course-service.ts` | `listLearnerCourseDeliveries` | Not individually linked in this inventory |
+| `learner-course-service.ts` | `listLearnerCourseInstructors` | Not individually linked in this inventory |
+| `learner-course-service.ts` | `getLearnerCourseWorkspace` | Not individually linked in this inventory |
+| `learner-course-setup-copy.ts` | `LearnerCourseSetupStatus` | Not individually linked in this inventory |
+| `learner-course-setup-copy.ts` | `learnerCourseSetupCopy` | Not individually linked in this inventory |
+| `learner-course-setup-service.ts` | `getLearnerCourseSetupStatus` | Not individually linked in this inventory |
+| `learner-course-setup-service.ts` | `listLearnerProgramSemesters` | Not individually linked in this inventory |
+| `learner-course-sort-model.ts` | `LearnerCourseSortMode` | Not individually linked in this inventory |
+| `learner-course-sort-model.ts` | `sortLearnerCourseCards` | Not individually linked in this inventory |
+| `learner-course-tab-context-model.ts` | `learnerCourseTabPersistentQuery` | Not individually linked in this inventory |
