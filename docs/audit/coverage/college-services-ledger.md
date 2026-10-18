@@ -219,3 +219,6 @@ No claim of green cloud CI is made. Test-file TypeScript verification, isolated 
 
 
 | `listCollegeStudentImportOptions` cohort start-period tenant guard | `chat4-college-student-import-options-hardening.test.ts` | Confirms cohort start period same-college FK and preserves historical CLOSED start periods; class period still requires current non-CLOSED and same-college status |
+
+
+| `placeImportedLearnerInSection` cohort start-period direct API guard | `tests/unit/chat4-college-import-placement-authorization.test.ts` | In addition to membership, role, section/current-period ownership, the locked target query now joins the batch's independent `startPeriodId` as a separate alias and verifies it belongs to the same college. Direct calls cannot bypass chooser's validation. PG corrupt-FK fixture still pending |
