@@ -26,7 +26,7 @@ export default async function HrProfilePage() {
         <h2 className="text-base font-semibold text-foreground">Your details</h2>
         <p className="mt-2 text-sm text-body">These details identify you to the placement cell.</p>
         <dl className="mt-4 grid gap-4 sm:grid-cols-2">
-          <RecruiterProfileDetailsEditor initialName={profile.displayName}
+          <RecruiterProfileDetailsEditor key={context.user.id} initialName={profile.displayName}
             initialTitle={profile.title} initialPhone={profile.contactPhoneDigits}
             contactReady={profile.contactReady} userUpdatedAt={profile.userUpdatedAt.toISOString()}
             profileUpdatedAt={profile.profileUpdatedAt.toISOString()} />
@@ -145,6 +145,7 @@ export default async function HrProfilePage() {
       </section>
 
       <RecruiterProfileAccess
+        key={context.user.id+":"+profile.grants.map(grant=>grant.id).join(",")}
         grants={profile.grants.map((grant) => ({
           id: grant.id,
           collegeId: grant.collegeId,

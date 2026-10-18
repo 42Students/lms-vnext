@@ -134,8 +134,10 @@ export async function changeTpoRecruiterGrant(context: RequestContext, raw: unkn
       const base=record.grant.validUntil&&record.grant.validUntil>now
         ?record.grant.validUntil:now;
       const validUntil=recruiterGrantValidUntil(base,input.months);
+      // Advance the browser revision even for two changes in one millisecond.
+      // Otherwise the same stale tab can extend a grant twice.
       const [extended]=await tx.update(placementRecruiterCollegeGrants).set({
-        validUntil,updatedAt:now,
+        validUntil,updatedAt: sql`greatest(clock_timestamp(),date_trunc('milliseconds',${placementRecruiterCollegeGrants.updatedAt}) + interval '1 millisecond')`,
       }).where(and(eq(placementRecruiterCollegeGrants.id,input.grantId),
         eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
         eq(placementRecruiterCollegeGrants.updatedAt,record.grant.updatedAt))).returning();
@@ -154,7 +156,7 @@ export async function changeTpoRecruiterGrant(context: RequestContext, raw: unkn
     const now = new Date();
     const [revoked] = await tx.update(placementRecruiterCollegeGrants).set({
       status: "REVOKED", revokedByUserId: actorUserId,
-      revokedAt: now, updatedAt: now,
+      revokedAt: now, updatedAt: sql`greatest(clock_timestamp(),date_trunc('milliseconds',${placementRecruiterCollegeGrants.updatedAt}) + interval '1 millisecond')`,
     }).where(and(eq(placementRecruiterCollegeGrants.id, input.grantId),
       eq(placementRecruiterCollegeGrants.status, "ACTIVE"))).returning();
     if (!revoked) throw new TpoRecruiterGrantConflict();
