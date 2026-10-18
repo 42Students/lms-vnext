@@ -20,13 +20,13 @@ export default async function CollegeCorrectionReadPage({searchParams}:{searchPa
     <PageHeader eyebrow="College Admin · Attendance" title="Correction windows"/>
     <ErrorState title="Invalid date range"
       description="Enter both valid IST calendar dates, up to 31 days, without duplicate or unrelated filters."
-      action={<Link href="/college/attendance/corrections" className="font-semibold text-primary-text">Reset filters</Link>}/>
+      action={<Link href="/college/attendance/corrections" className="font-semibold text-[var(--lms-teal-deep)]">Reset filters</Link>}/>
   </div>;
   const data=await getCollegeCorrectionRead(await getCurrentRequestContext(),query.data);
-  return <div className="min-w-0 space-y-6">
+  return <div className="min-w-0 overflow-x-clip space-y-6">
     <PageHeader eyebrow="College Admin · Attendance" title="Attendance correction windows"
       description={"Persisted scheduled sessions and the current college policy for "+data.collegeName+"."}
-      actions={<Link href="/college/attendance/settings" className="text-sm font-semibold text-primary-text">Policy settings</Link>}/>
+      actions={<Link href="/college/attendance/settings" className="text-sm font-semibold text-[var(--lms-teal-deep)]">Policy settings</Link>}/>
     <section className="rounded-xl border border-border bg-surface p-5">
       <h2 className="font-semibold text-foreground">Policy evidence</h2>
       <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-3">
@@ -48,7 +48,7 @@ export default async function CollegeCorrectionReadPage({searchParams}:{searchPa
         <input name="to" type="date" required defaultValue={data.query.to??""}
           className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
       </label>
-      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">View sessions</button>
+      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">View sessions</button>
     </form>
     {!data.queried?<p className="rounded-xl border border-border bg-surface p-6 text-sm text-body">
       Select an IST date range to inspect recorded sessions and their Faculty marking windows.
@@ -56,7 +56,7 @@ export default async function CollegeCorrectionReadPage({searchParams}:{searchPa
       {data.truncated?<p role="status" className="text-sm text-warning">More than 250 sessions match. Results are truncated; narrow the date range.</p>:null}
       {data.items.length===0?<p className="rounded-xl border border-border bg-surface p-6 text-sm text-body">
         No persisted scheduled sessions overlap this date range. This does not mean no attendance corrections occurred.
-      </p>:<div className="overflow-x-auto rounded-xl border border-border bg-surface">
+      </p>:<div className="overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-surface">
         <table className="w-full min-w-[45rem] text-left text-sm">
           <thead className="sticky top-0 z-10 bg-surface"><tr><th className="p-3" scope="col">Session / class</th>
             <th className="p-3" scope="col">Time (IST)</th>
