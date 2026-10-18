@@ -34,6 +34,7 @@ import {
 import { decidePlacementScreening } from "@/modules/placements/screening-service";
 import { recordTpoDriveSelections } from "@/modules/placements/tpo-drive-selection-service";
 import {getTpoDriveClosePreview,closeTpoDriveWithPreview} from "@/modules/placements/tpo-drive-close-preview-service";
+import {recordTpoOfferLifecycle} from "@/modules/placements/tpo-offer-lifecycle-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { enableSeedLearnerPlacementAccess } from "../support/w04-placement-access-fixture";
 
@@ -545,6 +546,31 @@ describe("Placement P8 offers and joining", () => {
     expect(before.rows[0]?.n).toBe(0);
     const issued=await issuePlacementOffer(tpo,application.id,terms);
     expect(issued.status).toBe("ISSUED");
+  });
+
+  it("PLACEMENTS-TPO-REVOKED-DB-01 refuses stale-credential TPO offer mutation after persisted role removal",async()=>{
+    const {job,application}=await preparePassedApplication();
+    const offer=await issuePlacementOffer(tpo,application.id,{
+      kind:"OFFER",roleTitle:"Engineer",annualCtcInr:900_000,
+    });
+    const request={
+      confirmed:true,action:"EXTEND" as const,offerIds:[offer.id],
+      expectedStatus:"ISSUED" as const,reason:"Recruiter formally extended the response deadline",
+      expiresAt:new Date(Date.now()+1000*60*60*24*7).toISOString(),
+    };
+    try{
+      await pool.query("delete from membership_roles where membership_id=$1 and role='TPO'",
+        [SEED_IDS.facultyCollegeAMembership]);
+      await expect(recordTpoOfferLifecycle(tpo,job.id,request))
+        .rejects.toBeInstanceOf(AuthorizationError);
+      const persisted=await pool.query<{expires_at:Date|null}>(
+        "select expires_at from placement_offers where id=$1",[offer.id]);
+      expect(persisted.rows[0]?.expires_at?.getTime()).toBe(offer.expiresAt?.getTime());
+    }finally{
+      await pool.query(
+        "insert into membership_roles(membership_id,role) values($1,'TPO') on conflict do nothing",
+        [SEED_IDS.facultyCollegeAMembership]);
+    }
   });
 
   it("issues an idempotent offer, lets the learner accept, and preserves corrected joining history", async () => {
