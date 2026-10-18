@@ -9,12 +9,52 @@ import {
  type OfferRegisterFact,
 } from "@/modules/placements/tpo-drive-offer-register-model";
 import {tpoOfferEvidenceQuery,projectOfferEvidence} from "@/modules/placements/tpo-offer-evidence-model";
+import {readTpoBulkRequestBody,TpoBulkBodyError,TPO_BULK_BODY_MAX_BYTES} from "@/modules/placements/tpo-bulk-request-body";
 
 const src=(path:string)=>readFileSync(new URL("../../"+path,import.meta.url),"utf8");
 const uuid="11111111-1111-4111-8111-111111111111";
 const job="/tpo/placements/jobs/[jobId]/";
 const page=(fragment:string)=>src("src/app/(authenticated)"+job+fragment+"/page.tsx");
 const at=new Date("2099-10-18T10:00:00Z");
+
+describe("TPO bounded mutation request contracts",()=>{
+ it("PLACEMENTS-SELECTION-BODY-13 PLACEMENTS-WAIT-BODY-14 PLACEMENTS-OFFER-BODY-15 PLACEMENTS-CLOSE-BODY-16 protect origin before parsing",()=>{
+  const routes=[
+   "src/app/api/placements/tpo/jobs/[jobId]/selections/route.ts",
+   "src/app/api/placements/tpo/jobs/[jobId]/waitlist-promote/route.ts",
+   "src/app/api/placements/jobs/[jobId]/offers/lifecycle/route.ts",
+   "src/app/api/placements/tpo/jobs/[jobId]/close-preview/route.ts",
+  ];
+  for(const route of routes){
+   const code=src(route);
+   const post=code.slice(code.indexOf("export async function POST("));
+   const origin=post.indexOf("isSameOriginRequest(");
+   const decode=post.indexOf("readTpoBulkRequestBody(");
+   expect(origin,route).toBeGreaterThanOrEqual(0);
+   expect(decode,route).toBeGreaterThan(origin);
+   expect(post,route).toContain("TpoBulkBodyError");
+   expect(post,route).toContain("apiErrorResponse(");
+   expect(post,route).not.toMatch(/await (?:req|request)\.json\(\)/);
+  }
+ });
+ it("PLACEMENTS-SELECTION-BODY-13 rejects chunked excess, invalid media and malformed JSON without unbounded parsing",async()=>{
+  const request=(payload:string,contentType="application/json")=>new Request(
+   "https://campus.example/api/placements/tpo/jobs/id/selections",{
+    method:"POST",headers:{"content-type":contentType},body:payload,
+   });
+  const accepted=await readTpoBulkRequestBody(request('{"action":"RECORD","entries":[]}'));
+  expect(accepted).toMatchObject({action:"RECORD"});
+  for(const [body,type,status] of [
+   ['{"action":"RECORD"}',"text/plain",415],
+   ['{"action":"RECORD"',"application/json",400],
+   ["x".repeat(TPO_BULK_BODY_MAX_BYTES+1),"application/json",413],
+  ] as const){
+   await expect(readTpoBulkRequestBody(request(body,type))).rejects.toMatchObject({
+    status,
+   } satisfies Pick<TpoBulkBodyError,"status">);
+  }
+ });
+});
 
 describe("chat-5 TPO second-third: direct route authorization, negative and empty states",()=>{
  const routes=[
