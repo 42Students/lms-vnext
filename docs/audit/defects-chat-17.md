@@ -26,6 +26,8 @@
 
 | UX-project-workspaces-42 | S2 (grading/report fidelity) | Invalid project progress percentages, including NaN/Infinity or beyond 100, were passed directly into `aria-valuenow`, CSS width and screen text. | `safeProjectProgressPercent` keeps valid percentages and displays `Progress unavailable` rather than a false number; test `UX-project-workspaces-42`, commits `e77e0160` / `18fb353d`. | Fix pushed; cloud pending |
 
+| UX-kit-HARDEN-36 | S1 (navigation integrity) | StatTile, navigation Tabs, and Pagination previously passed any caller-supplied string into Next Link; encoded or external destinations could navigate off-site. | Use `isSafeInternalHref`; disallowed targets become inert and labeled. Unit `UX-kit-HARDEN-36`, commits `e8ad2a65`, `33b571f8`, `c8ed765e`, `5bea28ad`. | Fix pushed; cloud pending |
+
 ## Integration fixture hardening
 
 - `PROJ-HARNESS-22..28`: explicit current college, project roster, active user and `can_mutate` checks protect example SQL fixtures against accidental incorrect cross-tenant writes. This is fixture integrity, not proof of product route authorization.
