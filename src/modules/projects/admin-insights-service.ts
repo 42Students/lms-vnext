@@ -764,6 +764,10 @@ export async function listProjectAdminSubmissionQueue(
     organizationId: college.organizationId,
     collegeId: college.id,
   });
+  return getDb().transaction(async db=>{
+    await assertPersistedPlatformPermission(db,context,"projects.manage",{
+      collegeId:college.id,organizationId:college.organizationId,
+    });
   // Keep the outer project ID qualified inside the mentor subquery.
   const instanceId = sql.raw('"project_instances"."id"');
   const searchPattern=adminUnsubmittedLiteralSearchPattern(query.q??"");
@@ -796,7 +800,6 @@ export async function listProjectAdminSubmissionQueue(
     query.submissionStatus?eq(projectSubmissions.status,query.submissionStatus):undefined,
     search,
   );
-  const db = getDb();
   const [totalRow, rows] =
     await Promise.all([
       db
@@ -869,4 +872,5 @@ export async function listProjectAdminSubmissionQueue(
       Math.ceil(total / query.pageSize),
     ),
   };
+  });
 }
