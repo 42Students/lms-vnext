@@ -29,6 +29,14 @@ describe("TPO-drive-workspace-40/44 round import and scheduling ledger",()=>{
   expect(result[0]?.invalidRank).toBe(true);
   expect(result[1]?.invalidRank).toBe(true);
  });
+ it("rejects spreadsheet-notated or out-of-range waitlist ranks without silently normalizing them",()=>{
+  for(const rank of ["1e2","0x10","1.5","0","100001","001","-1"]){
+   const rows=parseTpoRoundImport(csv("Application ID,Result,Rank\\n"+uuid+",HOLD,"+rank+"\\n"),"results.csv");
+   expect(rows[0]).toMatchObject({invalidRank:true,rank:null});
+  }
+  const valid=parseTpoRoundImport(csv("Application ID,Result,Rank\\n"+uuid+",HOLD,100\\n"),"results.csv");
+  expect(valid[0]).toMatchObject({invalidRank:false,rank:100});
+ });
  it("review command requires one explicit decision per source line and unique student identity",()=>{
   const action={action:"STAGE_IMPORT",confirmed:true,previewToken:token,missingPolicy:"LEAVE_PENDING",overrides:[{line:2,applicationId:uuid}],skippedLines:[3]};
   expect(roundImportActionSchema.safeParse(action).success).toBe(true);

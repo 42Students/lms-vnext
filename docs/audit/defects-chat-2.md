@@ -19,6 +19,11 @@ Scope: lane chat-2, branch `chatgpt/chat-2-b`. Severity reflects exposure if the
 | CH2-012 | Medium | TPO-drive-workspace-44 | Slot creation/clearing and unassigned room changes/cancellations were persistent mutations without their own audit events. | `f14d201` | Source regression only; DB service integration still required |
 | CH2-013 | High | TPO-drive-workspace-44 | Room collision comparisons were inconsistent across create, room-assignment and roll-range assignment. Whitespace/case/compatibility Unicode could split a logical room. | `d1ae6c6`, `9cdf249` | `tests/unit/chat2-tpo-interview-plan-break-01.test.ts` and slot DB constraints |
 
+| CH2-014 | High | TPO-campaigns-public-16 | GET unsubscribe token preview used the old HMAC alias while POST/dispatch used canonical resolver, so a valid canonical-key campaign unsubscribe link was shown as invalid before confirmation. | `a7e17a9` | `tests/unit/chat2-unsubscribe-graceful.test.ts` (+ preview source contract pending) |
+| CH2-015 | Medium | TPO-drive-workspace-44 | Interview readiness model included CANCELLED interviews and accepted NaN/noninteger windows or invalid durations, risking invented upcoming/active sessions. | `285abe3` | `tests/unit/chat2-tpo-round-model-break-02.test.ts` |
+| CH2-016 | Medium | TPO-drive-workspace-40 | Round facts status displayed inherited JS prototype members for unexpected persisted status strings. | `fd4d3f9` | `tests/unit/chat2-tpo-round-model-break-02.test.ts` |
+| CH2-017 | High | TPO-drive-workspace-40/41 | Drive Day projections counted duplicated roster application IDs or overwrote conflicting details; bulk pasted tokens could allocate unboundedly when bypassing UI limits. | `55e45f4`, `2cab016` | `tests/unit/chat2-tpo-round-model-break-02.test.ts` |
+
 ## Test-contract repairs — not feature removals
 
 Shared `Dialog`, `Input`, and `DataTable` components replaced hand-written dialog focus handlers, raw `<input>` tags, and duplicate mobile/desktop roster markup. Several older source-assertion tests demanded removed implementation details even though the new shared components implement the same controls. Their assertions now verify shared native modal focus/Escape restoration, accessible titles, responsive company row data, report metrics and read-only email behavior. No test case was deleted.
