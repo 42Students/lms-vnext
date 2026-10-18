@@ -125,6 +125,7 @@ export async function ProjectAdminReassignMentorPage({
         collegeId={collegeId}
         initialProjectId={initialProjectId}
         matchingWorkspaces={projects.matchingWorkspaces}
+        matchingCapped={projects.matchingCapped}
         workspaces={projects.items
           .filter(
             (project) =>
