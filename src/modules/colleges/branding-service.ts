@@ -7,7 +7,8 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {
-  collegeBrandingInputSchema,
+  collegeBrandingSaveSchema,
+  sameCollegeBranding,
   type CollegeBrandingInput,
 } from "./branding";
 
@@ -33,6 +34,12 @@ export class CollegeBrandingNotFoundError extends Error {
     super("COLLEGE_NOT_FOUND");
     this.name = "CollegeBrandingNotFoundError";
   }
+}
+export class CollegeBrandingVersionError extends Error {
+ constructor(){
+  super("BRANDING_STALE");
+  this.name="CollegeBrandingVersionError";
+ }
 }
 
 async function loadCollege(collegeId: string) {
@@ -118,7 +125,7 @@ export async function saveCollegeBranding(
   collegeId: string,
   rawInput: unknown,
 ) {
-  const input = collegeBrandingInputSchema.parse(rawInput);
+  const {expectedVersion,...input}=collegeBrandingSaveSchema.parse(rawInput);
   const college = await loadCollege(collegeId);
 
   if(!isSuperAdmin(context))throw new AuthorizationError("college.manage");
@@ -137,18 +144,19 @@ export async function saveCollegeBranding(
     .where(and(eq(colleges.id,college.id),eq(colleges.status,"ACTIVE")))
     .for("update").limit(1);
    if(!active)throw new CollegeBrandingNotFoundError();
-   const [row] = await tx
-    .insert(collegeBranding)
-    .values({ collegeId, ...input })
-    .onConflictDoUpdate({
-      target: collegeBranding.collegeId,
-      set: {
-        ...input,
-        version: sql`${collegeBranding.version} + 1`,
-        updatedAt: new Date(),
-      },
-    })
-    .returning();
+   const [stored]=await tx.select().from(collegeBranding)
+    .where(eq(collegeBranding.collegeId,college.id)).for("update").limit(1);
+   const previous=toView(stored??null);
+   // An already-applied retry is safe. Do not advance version or emit a
+   // duplicate activity event merely because the response was lost.
+   if(sameCollegeBranding(previous,input))
+    return {collegeName:college.name,...previous};
+   if(previous.version!==expectedVersion)throw new CollegeBrandingVersionError();
+   const [row]=stored
+    ?await tx.update(collegeBranding).set({
+      ...input,version:sql`${collegeBranding.version} + 1`,updatedAt:new Date(),
+     }).where(eq(collegeBranding.collegeId,college.id)).returning()
+    :await tx.insert(collegeBranding).values({collegeId:college.id,...input}).returning();
 
    if (!row) throw new Error("BRANDING_SAVE_FAILED");
    await recordActivityEventInTransaction(tx, context, {
