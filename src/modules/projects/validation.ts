@@ -356,7 +356,11 @@ export const projectMemberCandidateQuerySchema = z
   .object({
     role: z.enum(PROJECT_MEMBER_ROLES),
     q: z.string().trim().max(120).default(""),
-    limit: z.coerce.number().int().min(1).max(50).default(20),
+    limit: z.union([
+      z.number().int().min(1).max(50),
+      z.string().regex(/^[0-9]+$/).transform(Number)
+        .pipe(z.number().int().min(1).max(50)),
+    ]).default(20),
   })
   .strict();
 

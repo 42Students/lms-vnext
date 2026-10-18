@@ -3,6 +3,7 @@ import {
   templateDirectoryHref,
   templateDirectoryPages,
   templateDirectoryQuerySchema,
+  parseSuperAdminTemplateDirectoryQuery,
   TEMPLATE_DIRECTORY_PAGE_SIZE,
 } from "@/modules/projects/super-admin-template-directory-model";
 
@@ -24,6 +25,19 @@ describe("IIT Dharwad Projects: Super Admin template catalogue query resilience"
     expect(templateDirectoryQuerySchema.parse({})).toEqual({
       q: "", status: "ALL", page: 1,
     });
+  });
+
+  it("PROJ-BREAK-templates-107 forged, repeated and contradictory admin catalogue URL fields are rejected",()=>{
+    expect(parseSuperAdminTemplateDirectoryQuery({q:"  Dharwad  ",status:"PUBLISHED",page:"2"}))
+      .toMatchObject({success:true,data:{q:"Dharwad",status:"PUBLISHED",page:2}});
+    for(const invalid of [
+      {q:["own","other"]},{status:["PUBLISHED","ARCHIVED"]},
+      {page:["1","2"]},{page:"0x10"},{page:"1e2"},
+      {page:""},{page:" "},{page:"1001"},
+      {collegeId:"other-tenant"},{sort:"secret"},{status:"PUBLISHED",force:"true"},
+    ]){
+      expect(parseSuperAdminTemplateDirectoryQuery(invalid).success,JSON.stringify(invalid)).toBe(false);
+    }
   });
 
   it("PROJ-BREAK-scale-25 pagination never emits NaN, Infinity, zero or negative page counts", () => {

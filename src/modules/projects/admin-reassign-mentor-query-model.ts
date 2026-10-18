@@ -29,3 +29,22 @@ export function parseProjectAdminReassignMentorQuery(
     value!==undefined&&(value!==""||key==="page"||key==="pageSize")));
   return schema.safeParse(entries);
 }
+
+/** Retry a failed mentor-management directory without broadening its scope.
+ * Every accepted filter is encoded as a separate value, never raw-concatenated.
+ */
+export function projectAdminReassignMentorHref(
+  basePath:string,
+  query:z.output<typeof schema>,
+):string {
+  const params=new URLSearchParams();
+  if(query.fromMentorId)params.set("fromMentorId",query.fromMentorId);
+  if(query.projectId)params.set("projectId",query.projectId);
+  if(query.mentorSearch)params.set("mentorSearch",query.mentorSearch);
+  if(query.q)params.set("q",query.q);
+  if(query.status)params.set("status",query.status);
+  if(query.page>1)params.set("page",String(query.page));
+  if(query.pageSize!==25)params.set("pageSize",String(query.pageSize));
+  const suffix=params.toString();
+  return basePath+"/reassign-mentor"+(suffix?"?"+suffix:"");
+}
