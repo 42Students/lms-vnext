@@ -52,3 +52,6 @@ These are named and scope-specific tests, but full per-export coverage of all se
 
 
 | `updateTpoCommunicationSettings` and `assertPersistedPlatformPermission` | A user disabled, role revoked, college reassigned or membership suspended between request authentication and DB mutation fails under persisted user/role SHARE locks inside the same transaction | `tests/unit/chat11-tpo-communication-adversarial.test.ts`, `TPO-settings-audit-REVOKE-01`; `7e931c3` | Actual concurrent PostgreSQL role-revocation test |
+
+
+| `readTpoCommunicationBody`, `TpoCommunicationBodyError`, `PATCH /api/placements/tpo/settings/communication` | 8 KiB streamed body bound even without Content-Length, safe UTF-8/JSON parsing, exact JSON media-type gate, stable 400/413 without raw payload, same-origin and separate authenticated write | `tests/unit/chat11-tpo-communication-request-body.test.ts`, `TPO-settings-audit-BODY-01` | Live chunked slow-client / timeout and HTTP 401/403 E2E |
