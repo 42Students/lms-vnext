@@ -9,3 +9,7 @@
 **States:** No success, empty, denied or partial branch was suppressed. Existing guard and persisted-result semantics are unchanged. Phone browser, keyboard and screen reader evidence are pending.
 
 **Test:** `tests/unit/UX-tpo-companies-companyid-01.test.ts`. No fixture data is invented. **Acceptance:** source contract prepared; TypeScript/Vitest/browser orchestrator run pending. Keep unchecked until verified.
+
+## Employer detail responsive histories
+
+Replaced separate phone card + desktop table render trees for recorded placement drives and offer history with two shared DataTable views, each with exact existing zero-state copy, phone primary field and persistent Open drive action. Preserved hiring statuses, company privacy boundaries, employment type, IST labels and all existing company metrics. Test `tests/unit/UX-tpo-companies-companyid-05.test.ts`; full TypeScript/Vitest/mobile tests pending orchestrator.

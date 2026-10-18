@@ -8,5 +8,8 @@ describe("UX-recruiter-home-01",()=>{
   expect(source).toContain("@/app/(authenticated)/hr/home/page");
   expect(source).toMatch(/export\s*\{\s*default\s*\}/);
   expect(read("src/app/(authenticated)/hr/home/page.tsx")).toMatch(/export\s+default|export\s*\{\s*default/);
+  expect(read("src/app/(authenticated)/recruiter/home/loading.tsx")).toContain("GracefulPageLoading");
+  expect(read("src/app/(authenticated)/recruiter/home/error.tsx")).toContain("GracefulErrorBoundary");
+  expect(canonical).toContain("PageHeader");
  });
 });

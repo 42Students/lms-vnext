@@ -169,12 +169,12 @@ export default async function TpoAnnouncements({searchParams}:Props){
       <p role="status" className="mt-2 text-sm font-semibold text-muted-foreground">Ended</p>:null}
     <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">
      {tpoNoticeTextParts(row.message).map((part,index)=>part.kind==="link"?
-      <a key={index} href={part.value} target="_blank" rel="noopener noreferrer"
+      <a key={index} href={part.value}
        className="font-semibold text-[var(--lms-teal-deep)] underline underline-offset-2">{part.value}</a>:
       <span key={index}>{part.value}</span>)}
     </p>
     {row.buttonUrl?.startsWith("https://")&&row.buttonLabel?<a href={row.buttonUrl}
-      target="_blank" rel="noopener noreferrer"
+     
       className="mt-3 inline-flex min-h-11 items-center rounded-md border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">
       {row.buttonLabel} ↗
     </a>:null}

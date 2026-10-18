@@ -15,3 +15,7 @@
 Replaced page-local controls with shared `Input`, `Textarea`, `Button` where applicable. Form field names, labels, default values, GET URL filtering, safe post actions, required validation and legacy copy are unchanged. Shared controls supply 16px phone input text, a 44px target and visible keyboard focus. Existing authorization checks, error branches and mobile navigation remain in place.
 
 Source contract: `tests/unit/UX-tpo-announcements-04.test.ts`. Browser, TypeScript and unit execution remain orchestrator acceptance tasks, not claimed passing here.
+
+## WebView-safe announcement links
+
+Removed forced new-tab targets from safe detected notice links and authorized HTTPS CTA links. Existing exact button label, URL validation and external link semantics are preserved while mobile WebView navigation remains in the same tab (Back can return to the notice). Source regression: `tests/unit/UX-tpo-announcements-05.test.ts`. Native host Back testing remains pending orchestrator acceptance.
