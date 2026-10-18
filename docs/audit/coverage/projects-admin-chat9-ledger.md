@@ -81,3 +81,13 @@ The 37 routes in `docs/orchestrator/ui-ux/pages-admin.md` positions 75–111 hav
 **Missing release-blocking tests:** independent Super Admin/College Admin route access across tenant and organization boundaries, CSRF and unauthenticated/expired sessions on every mutating handler, valid/invalid/parallel PostgreSQL transactions, audit dedupe and exact-once notifications, full file-size/type/virus failures, signed grant expiration, evaluation private-vs-released grading, end-of-day IST deadlines, huge list EXPLAIN, archive restore conflicts, and working responsive interaction.
 
 The Projects squad lead (chat-14) must reconcile these missing exports and route handlers in its canonical ledger. Never interpret a source-level assertion or this document as 90%+ branch coverage.
+
+
+## Latest chat-9 CI and direct server-render contract additions
+
+| Exported module | Exported function | Evidence tier | Test file / cases / remaining gap |
+| --- | --- | --- | --- |
+| `admin-unsubmitted-query-model.ts` | `adminUnsubmittedQuerySchema` | BEHAVIOR | `PROJ-BREAK-scale-21` rejects hostile/coerced pagination (hexadecimal, exponents, repeats, unknown fields) before DB; `tests/unit/PROJ-BREAK-chat9-admin-unsubmitted-service.test.ts`. PostgreSQL replay OPEN. |
+| `admin-projects-query-model.ts` | `parseAdminProjectsQuery` | BEHAVIOR | `PROJ-BREAK-admin-input-22/23/27`: decimal-only paging, ambiguous legacy search and unsupported filter rejection; `tests/unit/PROJ-BREAK-chat9-admin-query-boundaries.test.ts`, `PROJ-BREAK-chat9-admin-project-list-page.test.tsx`. |
+| `src/app/(authenticated)/admin/projects/page.tsx` | `SuperAdminProjectsPage` | MOCK SSR BEHAVIOR | `PROJ-BREAK-admin-resilience-24/25`, `PROJ-BREAK-admin-idor-26`, `PROJ-BREAK-admin-input-27`: DB outage, optional template read failure, unscoped actor and malformed GET; mocked element-tree only, authenticated browser OPEN. |
+
