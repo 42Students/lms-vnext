@@ -7,7 +7,7 @@ Generated against chatgpt/chat-7-b October 18, 2026. Every named exported symbol
 | `src/modules/projects/learner-attention-service.ts` | `LearnerProjectAttention` | **OPEN — NO DIRECT TEST LINKED**; exercise wrong tenant, revoked member, stale version, state transition |
 | `src/modules/projects/learner-attention-service.ts` | `listMyLearnerProjectAttention` | **OPEN — NO DIRECT TEST LINKED**; exercise wrong tenant, revoked member, stale version, state transition |
 | `src/modules/projects/learner-backlog-pull-service.ts` | `learnerBacklogPullInputSchema` | **OPEN — NO DIRECT TEST LINKED**; exercise wrong tenant, revoked member, stale version, state transition |
-| `src/modules/projects/learner-backlog-pull-service.ts` | `pullOwnBacklogTask` | **OPEN — NO DIRECT TEST LINKED**; exercise wrong tenant, revoked member, stale version, state transition |
+| `src/modules/projects/learner-backlog-pull-service.ts` | `pullOwnBacklogTask` | **TEST AUTHORED — NOT CI-VERIFIED:** `tests/unit/PROJ-BREAK-LEARNER-BACKLOG-01.test.ts` and `tests/unit/PROJ-BREAK-LEARNER-BACKLOG-03.test.ts` |
 | `src/modules/projects/learner-board-card-model.ts` | `LearnerBoardCardTask` | **OPEN — NO DIRECT TEST LINKED**; exercise wrong tenant, revoked member, stale version, state transition |
 | `src/modules/projects/learner-board-card-model.ts` | `learnerBoardCardMetadata` | **OPEN — NO DIRECT TEST LINKED**; exercise wrong tenant, revoked member, stale version, state transition |
 | `src/modules/projects/learner-board-lanes-model.ts` | `LEARNER_BOARD_LANES` | **OPEN — NO DIRECT TEST LINKED**; exercise wrong tenant, revoked member, stale version, state transition |
