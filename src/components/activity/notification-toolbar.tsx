@@ -54,14 +54,14 @@ export function NotificationToolbar({
         <Link
           href={baseHref + "?view=all"}
           aria-current={view === "all" ? "page" : undefined}
-          className={`inline-flex min-h-10 items-center rounded-md border px-4 text-sm font-semibold transition ${view === "all" ? "border-primary bg-primary-subtle text-primary-text" : "border-border text-foreground hover:border-primary"}`}
+          className={`inline-flex min-h-11 items-center rounded-md border px-4 text-sm font-semibold transition ${view === "all" ? "border-primary bg-primary-subtle text-primary-text" : "border-border text-foreground hover:border-primary"}`}
         >
           {allLabel}
         </Link>
         <Link
           href={baseHref + "?view=unread"}
           aria-current={view === "unread" ? "page" : undefined}
-          className={`inline-flex min-h-10 items-center rounded-md border px-4 text-sm font-semibold transition ${view === "unread" ? "border-primary bg-primary-subtle text-primary-text" : "border-border text-foreground hover:border-primary"}`}
+          className={`inline-flex min-h-11 items-center rounded-md border px-4 text-sm font-semibold transition ${view === "unread" ? "border-primary bg-primary-subtle text-primary-text" : "border-border text-foreground hover:border-primary"}`}
         >
           Unread ({unreadCount})
         </Link>
