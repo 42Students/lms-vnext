@@ -35,6 +35,12 @@ export default async function IndependentFindingsPage({searchParams}:{
   </p></div>;
  const [data,sync]=await Promise.all([listIndependentAuditFindings(ctx,parsed),readIndependentFindingSyncState(ctx)]);
  const selectClass="min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground";
+ const refusedColumns:DataTableColumn<NonNullable<typeof sync>["refusedFiles"][number]>[]=[
+  {key:"path",header:"Source file",mobilePriority:"primary",cell:item=>
+    <span className="block min-w-0 break-all font-mono text-xs">{item.path||"Unknown file"}</span>},
+  {key:"reason",header:"Refusal reason",mobilePriority:"secondary",cell:item=>
+    <span className="break-words">{item.reason||"Reason not recorded"}</span>},
+ ];
  const findingColumns:DataTableColumn<(typeof data.items)[number]>[]=[
   {key:"finding",header:"Finding",mobilePriority:"primary",cell:item=><div className="min-w-0">
     <Link href={"/tracker/audit-findings/"+encodeURIComponent(item.externalId)}
@@ -61,14 +67,9 @@ export default async function IndependentFindingsPage({searchParams}:{
    <p className="mt-1 text-xs text-muted-foreground">A manual sync is unavailable until the findings repository is accessible and import credentials are verified. No sync was performed by opening this page.</p>
    {sync?.refusedCount ? <section aria-label="Files the importer refused or flagged" className="mt-4 space-y-2">
     <h3 className="font-semibold">Files the importer refused or flagged ({sync.refusedCount})</h3>
-    <div className="overflow-x-auto"><table className="w-full min-w-[28rem] text-left text-xs">
-     <thead><tr className="border-b border-border"><th scope="col" className="p-2">Source file</th>
-      <th scope="col" className="p-2">Refusal reason</th></tr></thead>
-     <tbody>{sync.refusedFiles.map((item,index)=><tr key={index} className="border-b border-border">
-      <td className="max-w-xs break-all p-2 font-mono">{item.path||"Unknown file"}</td>
-      <td className="break-words p-2">{item.reason||"Reason not recorded"}</td>
-     </tr>)}</tbody>
-    </table></div>
+    <DataTable columns={refusedColumns} rows={sync.refusedFiles}
+     getRowKey={item=>item.path+" · "+item.reason} caption="Files the importer refused or flagged"
+     empty={<p role="status" className="text-sm text-body">Review importer logs for the remaining details.</p>}/>
     {sync.refusedCount>sync.refusedFiles.length?<p role="status" className="text-xs text-muted-foreground">
      Showing the first {sync.refusedFiles.length} of {sync.refusedCount} refused files. Review importer logs for the remaining details.
     </p>:null}
