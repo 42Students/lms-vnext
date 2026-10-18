@@ -39,19 +39,19 @@ export default async function TpoCandidateSchedulePage({
     <Link href={"/tpo/placements/jobs/" + encodeURIComponent(drive.job.id)}
       className="text-sm font-semibold text-[var(--lms-teal-deep)]">← Back to drive</Link>
     <header>
-      <h1 className="text-2xl font-bold text-foreground">{drive.job.title} · Candidate round schedule</h1>
+      <h1 className="text-[30px] font-semibold text-[#172033]">{drive.job.title} · Candidate round schedule</h1>
       <p className="mt-2 text-sm text-body">
         Review shared round schedules and open the interview slots workspace for candidate-specific bookings, room assignment and changes.
       </p>
     </header>
-    <section role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+    <section role="status" className="text-sm text-body border-b border-border pb-6">
       {slotsReady ? "Candidate-specific slot booking is available from each interview round. Room-time conflicts are checked at assignment." :
       "Candidate-specific interview slots are pending migration registration. Open an interview round to see the setup status."}
       <Link href="/tpo/calendar/rounds" className="ml-2 font-semibold text-[var(--lms-teal-deep)]">
         Edit existing shared round schedules →
       </Link>
     </section>
-    <section className="rounded-xl border border-border bg-surface p-5">
+    <section className="border-b border-border pb-6">
       <h2 className="font-semibold text-foreground">Persisted venue collision assessment</h2>
       {warning.state === "UNAVAILABLE" ?
         <p className="mt-2 text-sm text-body">Assessment unavailable; no conflict-free claim is made.</p>

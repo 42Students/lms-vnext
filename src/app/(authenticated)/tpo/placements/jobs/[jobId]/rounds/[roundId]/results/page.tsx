@@ -42,7 +42,7 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
   <TpoRoundApplyControl jobId={jobId} roundId={roundId}/>
   <p className="text-sm text-body">Staging results records a version and immutable audit. Applying staged outcomes to candidate progression requires a separate confirmed action. Applied outcomes are read-only here.</p>
   {data.truncated?<p role="status" className="text-sm text-body">Source capped at 500 application records; counts may be incomplete.</p>:null}
-  <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+  <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
    <label className="min-w-0 flex-1 text-sm">Student or role
     <input name="q" type="search" maxLength={100} defaultValue={selected.data.q} className="mt-1 block min-h-11 w-full rounded border border-border bg-surface px-3"/>
    </label>
@@ -51,7 +51,7 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
      <option value="ALL">All</option><option value="NOT_RECORDED">Not recorded</option><option value="STAGED">Staged</option><option value="APPLIED">Applied</option>
     </select>
    </label>
-   <button type="submit" className="min-h-11 rounded bg-primary px-4 text-foreground">Filter</button>
+   <button type="submit" className="min-h-11 rounded bg-primary px-4 text-primary-foreground">Filter</button>
   </form>
   <p role="status" className="text-sm text-body">{visibleRows.length} of {data.rows.length} eligible applications match these filters. Totals above describe the full round.</p>
   {visibleRows.length===0?<p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">No eligible shortlisted submitted applicants match this round result filter.</p>:
