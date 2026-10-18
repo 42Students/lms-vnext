@@ -102,6 +102,8 @@ This is the **tested-function ledger for the focused model suite**, not a claim 
 | `src/modules/courses/faculty-live-classes-model.ts` / `faculty-live-classes-service.ts` | `mapFacultyLiveWorkspacesInBatches`, `getFacultyLiveClasses` | `tests/unit/chat3-faculty-live-classes-scaled-service.test.ts` | FAC-LIVE-SCALE-01 | bounded 8-concurrent workspaces, stable order, malformed/foreign delivery and non-Faculty denial, no unsafe partial recovery |
 | `src/modules/courses/faculty-gradebook-report-batch.ts`, `faculty-gradebook-service.ts` | `mapFacultyGradebookReportBatch`, `getFacultyPublishedGradebook` | `tests/unit/chat3-faculty-gradebook-bounded-report-batch.test.ts`, `tests/unit/chat3-faculty-gradebook-service-journey.test.ts` | FAC-GRADEBOOK-SCALE-02 | deterministic 6-concurrent read pool, abort later batches on first report failure, no fabricated points, original 100-assessment cap |
 
+| `src/app/(authenticated)/teacher/calendar/page.tsx` | default `FacultyCalendarPage` | `tests/unit/UX-teacher-calendar-strict-scope-query.test.tsx` | FAC-CALENDAR-QUERY-01 | actual SSR strict duplicate/unknown month and Section URL shape, selected calendar, empty schedule, foreign-grant errors without fallback |
+
 ## Role/security matrix
 
 - FAC-SCOPE-01/02: Faculty allowed only after central `courses.read` and active teaching role; Learner, Mentor, College Admin, Super Admin, missing membership and foreign tenant denied in unit-model mock contract.
