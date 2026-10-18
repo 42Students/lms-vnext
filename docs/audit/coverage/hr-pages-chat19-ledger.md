@@ -223,3 +223,9 @@ This is an independent TPO/HR workflow review; real clipboard permission denial,
 | Gap | Scope and source | Behavioral evidence | Safety property |
 |---|---|---|---|
 | HR-BREAK-TODAY-NOTICES-17 | `buildRecruiterActionQueue` → notification card | `tests/unit/hr-today-action-queue-scoped.test.ts` | System notifications link to `/hr/notifications?collegeId=...&unreadOnly=true`, not `/recruiter/messages`. Conversations retain their own authorized thread deeplinks. |
+
+## Large-portfolio HR Today offer follow-up priority
+
+| ID | Source | Direct test | Cases and remaining integration |
+|---|---|---|---|
+| HR-BREAK-TODAY-OFFERS-18 | `prioritizeRecruiterOfferFollowups` and `listRecruiterTodayOfferActions` | `tests/unit/HR-BREAK-chat19-today-offer-priority.test.ts` | ISSUED priority over 40 history groups, exact 30-row cap, stable ordering, zero/NaN exclusion, no mutation, shortlist/college/job scoped SQL; full PostgreSQL fanout still requires cloud CI |
