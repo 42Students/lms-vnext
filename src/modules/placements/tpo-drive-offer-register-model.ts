@@ -1,11 +1,13 @@
 import {z} from "zod";
 import {placementReportCsv} from "./report-model";
 export const offerRegisterQuery=z.object({jobId:z.string().uuid(),status:z.enum(["ALL","ISSUED","ACCEPTED","DECLINED","WITHDRAWN","EXPIRED"]).default("ALL"),page:z.coerce.number().int().min(1).max(10000).default(1),q:z.string().trim().max(100).default(""),joining:z.enum(["ALL","PENDING","JOINED","DEFERRED","DID_NOT_JOIN"]).default("ALL"),kind:z.enum(["ALL","OFFER","LOI"]).default("ALL"),expiry:z.enum(["ALL","EXPIRED","DUE_SOON","OPEN","UNKNOWN"]).default("ALL"),
- // Direct GET/CSV requests may include blank HTML numeric fields.
- // Blank means no limit, never an implicit zero-package filter.
- minCtcLpa:z.preprocess(value=>value===""?undefined:value,
+ // Direct GET/CSV requests may include blank HTML or nullable JSON
+ // numeric fields; absent means unbounded, not a zero-package filter.
+ minCtcLpa:z.preprocess(value=>value==null||
+  typeof value==="string"&&value.trim()===""?undefined:value,
   z.coerce.number().min(0).max(1000).optional()),
- maxCtcLpa:z.preprocess(value=>value===""?undefined:value,
+ maxCtcLpa:z.preprocess(value=>value==null||
+  typeof value==="string"&&value.trim()===""?undefined:value,
   z.coerce.number().min(0).max(1000).optional()),
 }).strict().superRefine((input,ctx)=>{
  if(input.minCtcLpa!==undefined&&input.maxCtcLpa!==undefined&&input.maxCtcLpa<input.minCtcLpa)
