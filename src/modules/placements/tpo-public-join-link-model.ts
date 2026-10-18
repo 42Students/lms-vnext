@@ -3,6 +3,9 @@ import { z } from "zod";
 const change = z.object({
   action: z.enum(["CREATE", "REPLACE"]),
   confirmed: z.literal(true),
+  // TPO-settings-audit-55: same-looking stale tabs must never rotate a new
+  // one-time token issued by somebody else. IDs are never bearer secrets.
+  expectedLinkId: z.string().uuid().optional(),
 });
 
 export const tpoPublicJoinLinkChangeSchema = z.discriminatedUnion("scope", [
@@ -11,12 +14,19 @@ export const tpoPublicJoinLinkChangeSchema = z.discriminatedUnion("scope", [
     scope: z.literal("COMPANY"),
     companyId: z.string().uuid(),
   }).strict(),
-]);
+]).superRefine((input,ctx)=>{
+  if(input.action==="REPLACE"&&!input.expectedLinkId)ctx.addIssue({
+    code:"custom",path:["expectedLinkId"],message:"Refresh the current join link before replacing it",
+  });
+  if(input.action==="CREATE"&&input.expectedLinkId)ctx.addIssue({
+    code:"custom",path:["expectedLinkId"],message:"New join links must not claim an existing link",
+  });
+});
 
 export type TpoPublicJoinLinkStatus = {
   ready: boolean;
   domain: string | null;
-  link: { createdAt: string;opensCount:number;joinsCount:number;enabled:boolean } | null;
+  link: { id:string;createdAt: string;opensCount:number;joinsCount:number;enabled:boolean } | null;
 };
 
 export function publicJoinLinkPath(scope: "COLLEGE" | "COMPANY", token: string) {
@@ -38,6 +48,6 @@ export const PUBLIC_JOIN_LINK_COPY = {
 } as const;
 
 export const tpoPublicJoinLinkToggleSchema=z.discriminatedUnion("scope", [
- z.strictObject({scope:z.literal("COLLEGE"),enabled:z.boolean()}),
- z.strictObject({scope:z.literal("COMPANY"),companyId:z.string().uuid(),enabled:z.boolean()}),
+ z.strictObject({scope:z.literal("COLLEGE"),expectedLinkId:z.string().uuid(),enabled:z.boolean()}),
+ z.strictObject({scope:z.literal("COMPANY"),companyId:z.string().uuid(),expectedLinkId:z.string().uuid(),enabled:z.boolean()}),
 ]);
