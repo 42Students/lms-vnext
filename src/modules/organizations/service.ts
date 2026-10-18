@@ -1,5 +1,6 @@
 import { and, asc, eq, ne, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import { colleges, organizations } from "@/db/schema";
@@ -202,6 +203,7 @@ export async function createOrganization(
 
   try {
     return await db.transaction(async tx=>{
+      await assertPersistedPlatformPermission(tx,context,"organization.manage");
       const [created]=await tx.insert(organizations).values({name:input.name})
        .returning({id:organizations.id,name:organizations.name,createdAt:organizations.createdAt,
         updatedAt:organizations.updatedAt});
@@ -241,6 +243,11 @@ export async function renameOrganization(
 
   try {
     return await db.transaction(async tx=>{
+      await assertPersistedPlatformPermission(tx,context,"organization.manage",{organizationId});
+      const [locked]=await tx.select({id:organizations.id}).from(organizations)
+        .where(and(eq(organizations.id,organizationId),eq(organizations.status,"ACTIVE")))
+        .for("update").limit(1);
+      if(!locked)throw new OrganizationServiceError("ORGANIZATION_NOT_FOUND");
       const [updated]=await tx.update(organizations).set({name:input.name,updatedAt:new Date()})
        .where(and(eq(organizations.id,organizationId),eq(organizations.status,"ACTIVE")))
        .returning({id:organizations.id,name:organizations.name,createdAt:organizations.createdAt,
@@ -275,23 +282,19 @@ export async function archiveOrganization(
   });
 
   const db = getDb();
-
-  const [activeCollege] = await db
-    .select({ id: colleges.id })
-    .from(colleges)
-    .where(
-      and(
-        eq(colleges.organizationId, organizationId),
-        eq(colleges.status, "ACTIVE"),
-      ),
-    )
-    .limit(1);
-
-  if (activeCollege) {
-    throw new OrganizationServiceError("ORGANIZATION_HAS_COLLEGES");
-  }
-
   return db.transaction(async tx=>{
+    await assertPersistedPlatformPermission(tx,context,"organization.manage",{organizationId});
+    // Lock the parent before checking for children; a concurrent college
+    // insert requires a FK SHARE lock on this row and cannot sneak in
+    // between the zero-child check and archival.
+    const [activeParent]=await tx.select({id:organizations.id}).from(organizations)
+      .where(and(eq(organizations.id,organizationId),eq(organizations.status,"ACTIVE")))
+      .for("update").limit(1);
+    if(!activeParent)throw new OrganizationServiceError("ORGANIZATION_NOT_FOUND");
+    const [activeCollege] = await tx.select({id:colleges.id}).from(colleges)
+      .where(and(eq(colleges.organizationId,organizationId),eq(colleges.status,"ACTIVE")))
+      .limit(1);
+    if(activeCollege)throw new OrganizationServiceError("ORGANIZATION_HAS_COLLEGES");
     const [archived]=await tx.update(organizations).set({status:"ARCHIVED",updatedAt:new Date()})
      .where(and(eq(organizations.id,organizationId),eq(organizations.status,"ACTIVE")))
      .returning({id:organizations.id,name:organizations.name,status:organizations.status});
@@ -319,6 +322,11 @@ export async function restoreOrganization(context:RequestContext, rawId:unknown)
  await assertUniqueActiveName(candidate.name,organizationId);
  try{
   return await db.transaction(async tx=>{
+   await assertPersistedPlatformPermission(tx,context,"organization.manage",{organizationId});
+   const [parent]=await tx.select({id:organizations.id}).from(organizations)
+    .where(and(eq(organizations.id,organizationId),eq(organizations.status,"ARCHIVED")))
+    .for("update").limit(1);
+   if(!parent)throw new OrganizationServiceError("ORGANIZATION_NOT_FOUND");
    const [restored]=await tx.update(organizations)
     .set({status:"ACTIVE",updatedAt:new Date()})
     .where(and(eq(organizations.id,organizationId),eq(organizations.status,"ARCHIVED")))
@@ -340,14 +348,29 @@ export async function restoreOrganization(context:RequestContext, rawId:unknown)
 }
 export async function listArchivedOrganizations(context:RequestContext){
  if(!isSuperAdmin(context))requirePermission(context,"admin-scope.select");
+ const selectedCollegeId=context.adminScope?.collegeId??null;
+ let organizationId=context.adminScope?.organizationId??null;
  requirePermission(context,"organization.manage",{
-  organizationId:context.adminScope?.organizationId??undefined,
-  collegeId:context.adminScope?.collegeId??undefined,
+  organizationId:organizationId??undefined,collegeId:selectedCollegeId??undefined,
  });
- return getDb().select({
-  id:organizations.id,name:organizations.name,createdAt:organizations.createdAt,
- }).from(organizations).where(and(
-  eq(organizations.status,"ARCHIVED"),
-  context.adminScope?.organizationId?eq(organizations.id,context.adminScope.organizationId):undefined,
- )).orderBy(asc(organizations.name)).limit(200);
+ return getDb().transaction(async tx=>{
+  // A college-scoped Super Admin cannot enumerate every archived parent when
+  // the selected organization is missing from the request context.
+  if(selectedCollegeId){
+   const [selected]=await tx.select({organizationId:colleges.organizationId})
+    .from(colleges).where(eq(colleges.id,selectedCollegeId)).for("share").limit(1);
+   if(!selected||(organizationId&&organizationId!==selected.organizationId))
+    throw new OrganizationServiceError("ORGANIZATION_NOT_FOUND");
+   organizationId=selected.organizationId;
+  }
+  await assertPersistedPlatformPermission(tx,context,"organization.manage",{
+   organizationId:organizationId??undefined,collegeId:selectedCollegeId??undefined,
+  });
+  return tx.select({
+   id:organizations.id,name:organizations.name,createdAt:organizations.createdAt,
+  }).from(organizations).where(and(
+   eq(organizations.status,"ARCHIVED"),
+   organizationId?eq(organizations.id,organizationId):undefined,
+  )).orderBy(asc(organizations.name)).limit(200);
+ });
 }

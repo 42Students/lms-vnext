@@ -16,6 +16,7 @@ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted
 import {
   activityEvents,
   inAppNotifications,
+  colleges,
 } from "@/db/schema";
 import {
   placementTpoUserPreferences,
@@ -212,8 +213,12 @@ export async function getTpoMyNotifications(
   // Recheck the active persisted TPO role at the response boundary; it is not
   // enough for a stale request context to have once held placements.manage.
   await db.transaction(async tx=>{
+    const [college]=await tx.select({organizationId:colleges.organizationId,status:colleges.status})
+      .from(colleges).where(eq(colleges.id,collegeId)).for("share").limit(1);
+    if(!college||college.status!=="ACTIVE"||college.organizationId!==organizationId)
+      throw new AuthorizationError("placements.manage");
     const persisted=await assertPersistedPlatformPermission(tx,context,"placements.manage",{
-      collegeId,organizationId,
+      collegeId,organizationId:college.organizationId,
     });
     if(!hasMembershipRole(persisted,"TPO"))
       throw new AuthorizationError("placements.manage");
