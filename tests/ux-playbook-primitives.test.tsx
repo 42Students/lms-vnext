@@ -34,7 +34,7 @@ describe("UX playbook shared behaviour", () => {
       { key: "name", header: "Name", mobilePriority: "primary", cell: (row: { name: string; status: string }) => row.name },
       { key: "status", header: "Status", mobilePriority: "secondary", cell: (row: { name: string; status: string }) => row.status },
     ]} rows={[{ name: "Example", status: "Active" }]} getRowKey={row => row.name} caption="People" empty={<p>No people</p>} />);
-    expect(markup).toContain('role="list"');
+    expect(markup).toContain('sm:table-row');
     expect(markup).toContain("<table");
     expect(markup).toContain('scope="col"');
     expect(markup).toContain("People");
