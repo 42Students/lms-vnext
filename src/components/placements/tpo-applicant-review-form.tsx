@@ -56,7 +56,7 @@ export function TpoApplicantReviewForm({jobId, applicationId, expectedUpdatedAt}
     className="space-y-4 border-b border-border pb-5">
     <h2 className="font-semibold text-foreground">Review application</h2>
     <label className="block text-sm text-body">Decision
-      <select name="decision" value={decision} disabled={pending||saved} onChange={event=>{setDecision(event.target.value as "SHORTLISTED"|"REJECTED");setReviewed(false);}} className="mt-1 min-h-11 w-full rounded-[9px] border border-border bg-surface p-2">
+      <select name="decision" value={decision} disabled={pending||saved} onChange={event=>{setDecision(event.target.value as "SHORTLISTED"|"REJECTED");setReviewed(false);}} className="mt-1 min-h-11 md:min-h-9 w-full rounded-[9px] border border-border bg-surface p-2">
         <option value="SHORTLISTED">Shortlist</option>
         <option value="REJECTED">Reject</option>
       </select>
@@ -71,7 +71,7 @@ export function TpoApplicantReviewForm({jobId, applicationId, expectedUpdatedAt}
         {["Did not meet criteria","Application incomplete","Company screening decision","Other"].map(preset=>
           <button type="button" key={preset} disabled={pending||saved}
             onClick={()=>{setInternalReason(preset==="Other"?"":preset);setReviewed(false);}}
-            className="min-h-10 rounded border border-border px-3 text-primary-text">{preset}</button>)}
+            className="min-h-11 md:min-h-9 rounded border border-border px-3 text-primary-text">{preset}</button>)}
       </div>
       <label className="block text-sm">Internal not-selected reason (not shown to the learner)
         <textarea value={internalReason} maxLength={500} rows={2}
@@ -90,7 +90,7 @@ export function TpoApplicantReviewForm({jobId, applicationId, expectedUpdatedAt}
     {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
     {saved ? <p role="status" className="text-sm text-body">Decision saved. Refresh the applicant list to see its current stage.</p> : null}
     <button type="submit" disabled={pending || saved || !reviewed || note.trim().length<10}
-      className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+      className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
       {pending ? "Saving…" : saved ? "Decision saved" : "Review and confirm decision"}
     </button>
   </form>;

@@ -32,7 +32,7 @@ export function TpoRemindNonApplicants({jobId}:{jobId:string}){
  }
  return <div className="inline-flex flex-col gap-1">
   <button type="button" disabled={busy} onClick={()=>void previewReminder()}
-   className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+   className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
    {busy?"Checking…":"Remind students who haven't applied"}</button>
   {outcome?<span role="status" className="text-xs text-body">{outcome}</span>:null}
   {error&&!open?<span role="alert" className="text-xs text-error">{error}</span>:null}
@@ -50,10 +50,10 @@ export function TpoRemindNonApplicants({jobId}:{jobId:string}){
     {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
     <div className="flex flex-wrap gap-3">
      <button type="button" disabled={!confirmed||busy||!preview.allowed||preview.alreadySent||!preview.count}
-      onClick={()=>void send()} className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50 text-primary-foreground">
+      onClick={()=>void send()} className="min-h-11 md:min-h-9 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50 text-primary-foreground">
       {busy?"Sending…":"Remind "+preview.count+" students"}</button>
      <button type="button" disabled={busy} onClick={()=>{setOpen(false);setError("");}}
-      className="min-h-11 rounded border border-border px-4">Cancel</button>
+      className="min-h-11 md:min-h-9 rounded border border-border px-4">Cancel</button>
     </div>
    </div>
   </div>:null}
