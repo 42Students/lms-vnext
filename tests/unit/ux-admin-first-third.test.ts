@@ -323,4 +323,9 @@ describe("Super Admin UX first-third rollout",()=>{
   expect(page).not.toContain("min-w-[42rem]");
   expect(page).not.toContain("min-w-[38rem]");
  });
+ it("UX-admin-colleges-04 has one empty state without duplicate alerts",()=>{
+  const page=read("src/app/(authenticated)/admin/colleges/page.tsx");
+  expect((page.match(/No active colleges in this scope/g)??[]).length).toBe(1);
+  expect(page).toContain("DataTable columns={columns}");
+ });
 });

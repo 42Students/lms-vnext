@@ -8,3 +8,6 @@
 ## Follow-up responsive directory closure
 - Removed duplicate phone cards and desktop-only table: the shared `DataTable` now renders one row DOM and keeps Tenant setup, Readiness, Branding, Edit and Archive actions on phone. Added explicit `mobilePriority` and the shared `Pagination` with preserved search/page-size URL state.
 - Search label and all legacy buttons/messages remain unchanged. See `UX-admin-colleges-02`.
+
+## Single truthful empty state
+- Removed the redundant scope-empty panel that appeared above the responsive `DataTable.empty` rendering. The existing college-empty wording now appears only once, including on 320px screens. Test `UX-admin-colleges-04`.
