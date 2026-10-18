@@ -103,4 +103,10 @@ export function parseTpoRoundImport(bytes:Buffer,filename:string){
  });
  return rows;
 }
+/** Database/provider errors must not enter a row-level report, which is
+ * rendered in the TPO workspace and may be downloaded as a CSV. */
+export function tpoRoundImportStageFailureReason(_error:unknown):string{
+ return "Could not stage this learner result. Refresh the round and try again.";
+}
+
 export const ROUND_IMPORT_TEMPLATE="Application ID,Email,Roll number,Result,Waitlist rank,Student message\n";
