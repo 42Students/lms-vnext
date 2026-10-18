@@ -37,7 +37,7 @@ import {
 /** A rubric is permanent academic evidence. The initial request context may
  * become stale while a reviewer is completing a score sheet: reauthorize with
  * persisted rows and SHARE locks inside the write transaction. */
-async function assertCurrentEvaluationActor(
+export async function assertCurrentEvaluationActor(
   tx: PermissionTransaction,
   context: RequestContext,
   scope: { project: {id:string}; collegeId:string; organizationId:string; access:"ADMIN"|"MENTOR" },
