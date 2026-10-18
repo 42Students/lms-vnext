@@ -1,5 +1,16 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import type {RequestContext} from "@/modules/identity/context";
+import {can} from "@/modules/permissions/policy";
+
+const mocks=vi.hoisted(()=>({
+ getDb:vi.fn(),select:vi.fn(),college:vi.fn(),moduleAccess:vi.fn(),
+ rows:[] as unknown[][],
+}));
+vi.mock("@/db/client",()=>({getDb:mocks.getDb}));
+vi.mock("@/modules/projects/scope",()=>({loadProjectCollegeScope:mocks.college}));
+vi.mock("@/modules/module-access/service",()=>({resolveOptionalModuleAccess:mocks.moduleAccess}));
+import {requireProjectReadAccess,requireProjectManageAccess,requireProjectLifecycleAccess}
+ from "@/modules/projects/access";
 
 const college="11111111-1111-4111-8111-111111111111";
 const other="22222222-2222-4222-8222-222222222222";
@@ -11,6 +22,11 @@ const actor=(roles:("TPO"|"COLLEGE_ADMIN"|"MENTOR"|"LEARNER")[],opts:{
  user:{id:"55555555-5555-4555-8555-555555555555",identityUid:"actor",platformStatus:opts.platform??"ACTIVE",systemRoles:opts.superAdmin?["SUPER_ADMIN"]:[]},
  membership:{id:"66666666-6666-4666-8666-666666666666",collegeId:opts.collegeId??college,organizationId:opts.orgId??org,status:opts.status??"ACTIVE",roles},
 });
+const PROJECT="77777777-7777-4777-8777-777777777777";
+const COLLEGE=college, ORG=org, FOREIGN=other;
+const tpo=(overrides:Partial<RequestContext>={}):RequestContext=>({
+ ...actor(["TPO"]),...overrides,
+});
 const query=(rows:unknown[])=>({from(){return this;},where(){return this;},
  innerJoin(){return this;},limit(){return Promise.resolve(rows);}});
 
@@ -21,13 +37,12 @@ describe("PROJ-BREAK-TPO-01 Projects are NOT accessible from roster visibility a
   mocks.select.mockImplementation(()=>query(mocks.rows.shift()??[]));
   mocks.getDb.mockReturnValue({select:mocks.select});
   mocks.college.mockResolvedValue({id:COLLEGE,organizationId:ORG});
-  mocks.can.mockReturnValue(false);
   mocks.moduleAccess.mockResolvedValue({projects:{enabled:true}});
  });
  it("TPO student-directory permission does not expose unassigned project workspace",async()=>{
   const context=tpo();
   await expect(requireProjectReadAccess(context,PROJECT)).rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
-  expect(mocks.can).toHaveBeenCalledWith(context,"projects.manage",{organizationId:ORG,collegeId:COLLEGE});
+  expect(can(context,"projects.manage",{organizationId:ORG,collegeId:COLLEGE})).toBe(false);
   expect(mocks.select).toHaveBeenCalledTimes(2);
   expect(mocks.moduleAccess).not.toHaveBeenCalled();
  });
@@ -41,13 +56,14 @@ describe("PROJ-BREAK-TPO-01 Projects are NOT accessible from roster visibility a
  it("foreign college and foreign organization cannot infer assigned project-membership records",async()=>{
   for(const member of [
    {...tpo().membership!,collegeId:FOREIGN},
+   {...tpo().membership!,organizationId:FOREIGN,collegeId:COLLEGE},
    {...tpo().membership!,organizationId:FOREIGN,collegeId:FOREIGN},
   ]){
    mocks.rows=[[{id:PROJECT,collegeId:COLLEGE}]];
    await expect(requireProjectReadAccess(tpo({membership:member}),PROJECT))
     .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
   }
-  expect(mocks.select).toHaveBeenCalledTimes(2);
+  expect(mocks.select).toHaveBeenCalledTimes(3);
  });
  it("PROJ-BREAK-TPO-02 denies projects and placement data from any wrong college OR organization",()=>{
   const tpo=actor(["TPO"]);
@@ -65,7 +81,7 @@ describe("PROJ-BREAK-TPO-01 Projects are NOT accessible from roster visibility a
    for(const permission of ["projects.read","projects.manage","placements.read","placements.manage"] as const)
     expect(can(tpo,permission,valid)).toBe(false);
   }
-  expect(mocks.select).toHaveBeenCalledTimes(3);
+  expect(mocks.select).not.toHaveBeenCalled();
  });
  it("repeated stale-tab lifecycle and manage mutations are refused regardless of a known project ID",async()=>{
   for(let attempt=0;attempt<3;attempt++){
@@ -91,10 +107,8 @@ describe("PROJ-BREAK-TPO-02 truthful self-reported portfolio counts",()=>{
   const {resolve}=await import("node:path");
   const grid=readFileSync(resolve(process.cwd(),"src/components/tpo/tpo-students-spreadsheet.tsx"),"utf8");
   const page=readFileSync(resolve(process.cwd(),"src/app/(authenticated)/tpo/students/page.tsx"),"utf8");
-  expect(grid).toContain('key:"projects",label:"Projects"');
-  expect(grid).toContain("Self-reported learner profile entries; not verified Projects workspace outcomes");
-  expect(page).toContain('["minProjects","Projects"]');
-  expect(page).toContain("not verified Projects workspace outcomes or released grades.");
+  expect(grid).toContain('key:"projects",label:"Profile projects (self-reported)"');
+  expect(page).toContain('["minProjects","Profile project entries (self-reported)"]');
   expect(grid).not.toContain('key:"projects",label:"Verified Projects"');
   const {tpoStudentProfileFacts}=await import("@/modules/placements/tpo-student-profile-facts");
   const facts=tpoStudentProfileFacts({projects:[{title:"Claim without approval"},

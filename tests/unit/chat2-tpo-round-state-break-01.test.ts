@@ -1,6 +1,6 @@
 import {describe,expect,it} from "vitest";
 import {roundReorderLockMessage,moveRound} from "@/modules/placements/tpo-round-reorder-model";
-import {roundApplyInputSchema,summarizeRoundApply,roundApplyPreviewToken} from "@/modules/placements/tpo-round-apply-model";
+import {roundApplyInputSchema,summarizeRoundApply,roundApplyPreviewToken,roundApplyFailureReason} from "@/modules/placements/tpo-round-apply-model";
 
 const a={resultId:"a",applicationId:"learner-a",student:"Student A",
  outcome:"PASS",status:"STAGED",version:1};
@@ -49,6 +49,18 @@ describe("TPO-BREAK-round-01 outcome integrity and reorder guards",()=>{
   expect(roundApplyPreviewToken("round-1",[{...a,version:2},b])).not.toBe(token);
   expect(roundApplyPreviewToken("round-1",[{...a,status:"APPLIED"},b])).not.toBe(token);
   expect(roundApplyPreviewToken("round-1",[{...a,outcome:"HOLD"},b])).not.toBe(token);
+ });
+ it("TPO-BREAK-round-42 masks SQL, provider and session secrets in skipped-result reports",()=>{
+  const problems=[
+    new Error("password=secret host=postgres.internal"),
+    new Error("duplicate key violates unique constraint \"placement_result_application_key\""),
+    "access_token=private",null,undefined,
+  ];
+  for(const error of problems){
+    const message=roundApplyFailureReason(error);
+    expect(message).toContain("Refresh this round");
+    expect(message).not.toMatch(/password|postgres|secret|duplicate key|constraint|access_token/i);
+  }
  });
  it("round apply requires exact 64-character preview token and an explicit confirm",()=>{
   expect(roundApplyInputSchema.safeParse({confirmed:true,expectedPreviewToken:"a".repeat(64)}).success).toBe(true);
