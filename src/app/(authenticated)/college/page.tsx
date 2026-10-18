@@ -64,7 +64,7 @@ export default async function CollegeOverviewPage() {
   const closingQuizzes=closingResult.status==="fulfilled"?closingResult.value:null;
 
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 overflow-x-clip space-y-6">
       <PageHeader
         title={COLLEGE_LEGACY_PAGE_TITLES.dashboard}
         description={`${college.name} · ${formatCollegeHeaderDate(new Date())}`}
@@ -84,7 +84,7 @@ export default async function CollegeOverviewPage() {
             </Link>
             <Link
               href="/college/branding"
-              className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+              className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-[var(--lms-teal-deep)]"
             >
               Branding
             </Link>
@@ -142,7 +142,7 @@ export default async function CollegeOverviewPage() {
           ].map(item => <div key={item.label}
             className="rounded-xl border border-border bg-surface p-4">
             <p className="text-sm text-muted-foreground">{item.label}</p>
-            <p className="mt-2 text-2xl font-semibold tabular-nums text-primary-text">
+            <p className="mt-2 text-2xl font-semibold tabular-nums text-[var(--lms-teal-deep)]">
               {item.value.toLocaleString("en-IN")}
             </p>
           </div>)}
@@ -159,7 +159,7 @@ export default async function CollegeOverviewPage() {
             </p>
           </div>
           <Link href="/college/attendance"
-            className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
             Open attendance
           </Link>
         </div>
@@ -173,7 +173,7 @@ export default async function CollegeOverviewPage() {
                 <p className="text-muted-foreground">{event.faculty} · {new Date(event.when).toLocaleString("en-IN", {timeZone:"Asia/Kolkata"})}</p>
               </div>
               <Link href="/college/attendance"
-                className="font-semibold text-primary-text hover:underline">Open attendance</Link>
+                className="font-semibold text-[var(--lms-teal-deep)] hover:underline">Open attendance</Link>
             </li>)}
           </ul>}
         {attendance.unattendedCount > attendance.unattended.length &&
@@ -187,7 +187,7 @@ export default async function CollegeOverviewPage() {
             Under {lowAttendance.threshold}% attendance
           </h2>
           <Link href="/college/attendance"
-            className="font-semibold text-primary-text hover:underline">Review attendance</Link>
+            className="font-semibold text-[var(--lms-teal-deep)] hover:underline">Review attendance</Link>
         </div>
         <p className="text-sm text-muted-foreground">
           Last 30 days · marked sessions only · {lowAttendance.rows.length} learner(s) shown
@@ -217,7 +217,7 @@ export default async function CollegeOverviewPage() {
       <section aria-label="Courses with no teacher" className="space-y-3 rounded-xl border border-border bg-surface p-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-lg font-semibold text-foreground">Courses with no teacher</h2>
-          <Link href="/college/faculty-assignment" className="font-semibold text-primary-text hover:underline">
+          <Link href="/college/faculty-assignment" className="font-semibold text-[var(--lms-teal-deep)] hover:underline">
             Manage faculty
           </Link>
         </div>
@@ -234,7 +234,7 @@ export default async function CollegeOverviewPage() {
               <p className="text-muted-foreground">{course.sections.length} unstaffed class(es): {course.sections.join(", ")}</p>
             </div>
             <Link href="/college/faculty-assignment"
-              className="font-semibold text-primary-text hover:underline">Assign faculty</Link>
+              className="font-semibold text-[var(--lms-teal-deep)] hover:underline">Assign faculty</Link>
           </li>)}
         </ul>}
       </section>
@@ -243,7 +243,7 @@ export default async function CollegeOverviewPage() {
       <section aria-label="Waiting to be graded" className="space-y-3 rounded-xl border border-border bg-surface p-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-lg font-semibold text-foreground">Waiting to be graded</h2>
-          <Link href="/college/assignments" className="font-semibold text-primary-text hover:underline">
+          <Link href="/college/assignments" className="font-semibold text-[var(--lms-teal-deep)] hover:underline">
             Review assignments
           </Link>
         </div>
@@ -257,7 +257,7 @@ export default async function CollegeOverviewPage() {
                   {item.pending} submission(s) · Oldest: {item.oldest?.toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" }) ?? "—"}
                 </p>
               </div>
-              <Link href="/college/assignments" className="font-semibold text-primary-text hover:underline">Review</Link>
+              <Link href="/college/assignments" className="font-semibold text-[var(--lms-teal-deep)] hover:underline">Review</Link>
             </li>)}
           </ul>}
       </section>
@@ -271,7 +271,7 @@ export default async function CollegeOverviewPage() {
             className="rounded-lg border border-border p-4 hover:border-primary">
             <p className="text-sm text-muted-foreground">{item.label}</p>
             <p className="mt-2 text-xl font-semibold tabular-nums">{item.count}</p>
-            <span className="text-xs font-semibold text-primary-text">Review →</span>
+            <span className="text-xs font-semibold text-[var(--lms-teal-deep)]">Review →</span>
           </Link>)}
         </div>
         {setupGaps.every(item => item.count === 0) && <p role="status" className="text-sm text-muted-foreground">
