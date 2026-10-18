@@ -89,6 +89,8 @@ This is the **tested-function ledger for the focused model suite**, not a claim 
 | `src/modules/courses/faculty-reports-hub-service.ts` | `getFacultyReportsHub` | `tests/unit/chat3-faculty-session-and-reports-hub-services.test.ts` | FAC-REPORTS-HUB-SERVICE-01 | role and selected Section scope, closed quiz report count, attendance summary, revoked teaching grant fails closed |
 | `src/modules/courses/faculty-session-coverage-service.ts` | `getFacultySessionCoverage` | `tests/unit/chat3-faculty-session-and-reports-hub-services.test.ts` | FAC-SESSION-COVERAGE-SERVICE-01 | actual bounded session summary, forty-row cap, exact Section, wrong role and malformed path refusal |
 
+| `src/modules/courses/faculty-quiz-results-command-model.ts`, `faculty-assignment-grading-policy.ts`, `faculty-grade-editor-model.ts`, `faculty-grade-noop-model.ts` | `facultyQuizResultsCommandSchema`, `facultyQuizResultsTransition`, `facultyAssignmentGradingAllowed`, `facultyAssignmentGradePublicationAllowed`, `facultyGradeEditorState`, `facultyGradeHasChanges` | `tests/unit/chat3-faculty-assessment-publication-state-matrix.test.ts` | FAC-QUIZ-RESULTS-STATE-01 / FAC-ASSIGNMENT-GRADE-STATE-01 | closed/deadline-only quiz release and hide, no-op denial, strict confirmed transport, scored boundary, null score not zero and saved-grade-only publication |
+
 ## Role/security matrix
 
 - FAC-SCOPE-01/02: Faculty allowed only after central `courses.read` and active teaching role; Learner, Mentor, College Admin, Super Admin, missing membership and foreign tenant denied in unit-model mock contract.
