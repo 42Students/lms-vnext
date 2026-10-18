@@ -9,8 +9,8 @@
 | Same component > bulk selection actions | Text-only tiny hitboxes | 44px high `min-h-11` focusable Select matching / Clear selection actions | `UX-placements-selection-targets-01` |
 | TPO offer register / joining / waitlist / selections / offer evidence / round results | Short back links were below mobile touch target height | Apply `inline-flex min-h-11 items-center` without changing navigation or legacy copy | `UX-tpo-placements-jobs-jobid-*-02` tests |
 
-The selection dialog is rendered using the shared `Dialog` and nested `ConfirmDialog`; no custom animation or one-off duration was introduced. The shared dialogs own focus containment, backdrop/body lock, and reduced-motion behaviour. Do not call this a browser accessibility pass without testing 320/360/390px, native keyboard focus, wheel/touch, reduced-motion and saved draft behaviour under network failure.
-
 | TPO bulk round-results recorder > Select first 25 unmarked | Undersized text-only selection shortcut | `min-h-11` full action hitbox, no changed stage/apply semantics | `UX-placements-bulk-round-targets-01` |
+
+The selection dialog is rendered using the shared `Dialog` and nested `ConfirmDialog`; no custom animation or one-off duration was introduced. The shared dialogs own focus containment, backdrop/body lock, and reduced-motion behaviour. Do not call this a browser accessibility pass without testing 320/360/390px, native keyboard focus, wheel/touch, reduced-motion and saved draft behaviour under network failure.
 
 **Open follow-up:** Inventory remaining scrolling/overlay elements in `src/components/placements` against `docs/audit/ui-surfaces/UI-SURFACES.md` and verify each at mobile breakpoints. Only the containers above were modified and source-checked in this round.
