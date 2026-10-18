@@ -99,3 +99,16 @@ Updated 2026-10-18; source branch `chatgpt/chat-16-b`. This is an **in-progress 
 - TPO campaign dispatcher, receipts and inbound mail: production PostgreSQL unique constraints, transaction rollback, concurrent provider callbacks and cross-college object access need real DB harness (chat-17 fixture dependencies).
 - Email gateway: upstream signature authentication, dedupe across tenant-scoped message IDs, replay expiration and in-app bell atomicity require provider + DB integration, not source text checks.
 - Full exported-function and route-handler inventory across `src/modules/messaging`, `src/modules/notifications`, `src/modules/inbound-mail`, placement email/notification handlers and `src/app/api` remains OPEN. No >90% branch-coverage assertion.
+
+## Public/auth direct route and page coverage added to this branch
+
+| Route or source | Export | Security/error/UX behaviour under test | Test |
+|---|---|---|---|
+| `src/app/page.tsx` | `HomePage` | Actual React SSR output: OTP entry, email-only college, expired-session alert, unknown/unavailable tenant, platform marketing redirect, active session safe return URL, college branding | `tests/unit/chat16-public-login-page-render-08.test.ts` |
+| `src/app/page.tsx` | `generateMetadata` | Host-resolved college title instead of untrusted search content | `tests/unit/chat16-public-login-page-render-08.test.ts` |
+| `src/app/login/page.tsx` | `default`, `generateMetadata` aliases | Shared root page direct import plus existing alias source-contract check | `tests/unit/chat16-public-login-page-render-08.test.ts`, `tests/unit/chat16-public-auth-role-journeys-02.test.ts` |
+| `src/app/api/auth/login/start/route.ts` | `POST` | Pre-handler guard rejection cannot send OTP, authenticated tenant injected from guard, no client college overrides, safe start audit | `tests/unit/chat16-otp-route-tenant-session-09.test.ts` |
+| `src/app/api/auth/login/verify/route.ts` | `POST` | Expired/wrong OTP error emits no new session; successful sign-in rotates cookie, clears previous admin scope and membership; multi-college login does not auto-select | `tests/unit/chat16-otp-route-tenant-session-09.test.ts` |
+| `src/app/api/auth/login/email/route.ts` | `POST` | Rate-limit rejection cannot resend; email fallback calls only server-scoped tenant attempt | `tests/unit/chat16-otp-route-tenant-session-09.test.ts` |
+
+**Still pending:** Execute those direct route/page tests under Vitest and a real Next.js browser; test actual OTP form keyboard actions, interrupted network, rapid double-POST, browser back/forward state, 2FA, mobile focus, session expiry and cookie replay under PostgreSQL. No test execution or full route coverage is asserted by these authored additions.

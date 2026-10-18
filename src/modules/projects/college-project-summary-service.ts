@@ -1,6 +1,7 @@
 import "server-only";
 import {and,eq,isNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {projectInstances,projectMembers,projectSubmissions,sections,cohorts,programs,departments} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {ProjectsServiceError} from "./errors";
@@ -17,6 +18,12 @@ export async function updateCollegeProjectSummary(context:RequestContext,project
    .where(and(eq(projectInstances.id,scope.project.id),
     eq(projectInstances.collegeId,scope.collegeId))).for("update").limit(1);
   if(!row||row.status==="ARCHIVED")throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
+  // Re-authorize while holding the locked project row. Context is a snapshot:
+  // membership/role revocation or a disabled user between request start and
+  // mutation must abort both no-op retries and real writes.
+  await assertPersistedPlatformPermission(tx,context,"projects.manage",{
+   collegeId:scope.collegeId,organizationId:scope.organizationId,
+  });
   // A completed request can be retried after its response was lost. Only
   // exact equality of *all* persisted fields is an idempotent no-op; every
   // actual change still requires the caller's original optimistic token.
