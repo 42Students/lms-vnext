@@ -1,5 +1,17 @@
 import {createHash} from "node:crypto";
 import {z} from "zod";
+import {PlacementsServiceError} from "./errors";
+
+/** Authoritative state gate evaluated on row-locked PostgreSQL evidence,
+ * never on a stale preview snapshot from an earlier page render. */
+export function assertTpoRoundApplyJobState(status:string|null):void{
+ if(status!=="PUBLISHED")throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
+}
+export function assertTpoRoundApplyRoundState(status:string|null,kind:string|null):void{
+ if(status!=="COMPLETED")throw new PlacementsServiceError("PLACEMENT_RESULT_ROUND_NOT_READY");
+ if(kind==="TALK")throw new PlacementsServiceError("PLACEMENT_RESULT_INVALID_ROUND_TYPE");
+}
+
 export const roundApplyInputSchema=z.object({
  confirmed:z.literal(true),
  expectedPreviewToken:z.string().regex(/^[0-9a-f]{64}$/, "Invalid round preview token"),

@@ -17,6 +17,16 @@ describe("SA-JOINING-ANOMALY-09 Super Admin persisted offer and joining integrit
       }
     }
   });
+  it("places the same integrity anomaly on the selected-college joining detail page",()=>{
+    const source=readFileSync("src/modules/admin-ui/super-admin-joining-detail-service.ts","utf8");
+    expect(source).toContain("superAdminJoiningIntegrityNote(r.status,r.offerStatus)");
+    expect(source).toContain('...(integrityNote?[{label:"Review",value:integrityNote}]:[])');
+    expect(source).toContain("eq(placementJobs.collegeId,scope.collegeId)");
+    expect(source).toContain("eq(collegeMemberships.collegeId,scope.collegeId)");
+    expect(source).toContain('requireSuperAdminSelectedCollege(context,"placements.read")');
+    expect(source).toContain("readSuperAdminPlacementId(rawId)");
+    expect(source).toContain("if(!id)return null");
+  });
   it("retains tenant restriction, status filtering and audit copy in joining list",()=>{
     const source=readFileSync("src/modules/admin-ui/super-admin-placement-joining-service.ts","utf8");
     expect(source).toContain('requireSuperAdminSelectedCollege(context,"placements.read")');

@@ -1,5 +1,5 @@
 import {describe,expect,it} from "vitest";
-import {roundApplyInputSchema,roundApplyPreviewToken,roundApplyFailureReason,summarizeRoundApply} from "@/modules/placements/tpo-round-apply-model";
+import {roundApplyInputSchema,roundApplyPreviewToken,roundApplyFailureReason,summarizeRoundApply,assertTpoRoundApplyJobState,assertTpoRoundApplyRoundState} from "@/modules/placements/tpo-round-apply-model";
 import {roundReorderLockMessage,moveRound} from "@/modules/placements/tpo-round-reorder-model";
 import {tpoInterviewSlotActionSchema,sameInterviewRoom,overlapsInterviewRoom,planInterviewDay} from "@/modules/placements/tpo-interview-slot-model";
 import {tpoLiveRoundTiming} from "@/modules/placements/tpo-live-round-timing-model";
@@ -22,6 +22,19 @@ describe("chat-2 interview, round and slot behavioural hardening",()=>{
   }
   expect(roundApplyInputSchema.safeParse({confirmed:false,expectedPreviewToken:"a".repeat(64)}).success).toBe(false);
   expect(roundApplyInputSchema.safeParse({confirmed:true,expectedPreviewToken:"a".repeat(64),collegeId:id(1)}).success).toBe(false);
+ });
+ it("TPO-drive-workspace-42 locked job/round gates refuse all forbidden and unknown states",()=>{
+  expect(()=>assertTpoRoundApplyJobState("PUBLISHED")).not.toThrow();
+  for(const status of [null,"DRAFT","CLOSED","CANCELLED","ARCHIVED","PUBLISHING","UNKNOWN"]){
+   expect(()=>assertTpoRoundApplyJobState(status)).toThrow("PLACEMENT_JOB_READ_ONLY");
+  }
+  expect(()=>assertTpoRoundApplyRoundState("COMPLETED","INTERVIEW")).not.toThrow();
+  expect(()=>assertTpoRoundApplyRoundState("COMPLETED","GD")).not.toThrow();
+  expect(()=>assertTpoRoundApplyRoundState("COMPLETED","VENDOR_TEST")).not.toThrow();
+  for(const status of [null,"PENDING","SCHEDULED","RUNNING","CANCELLED","UNKNOWN"]){
+   expect(()=>assertTpoRoundApplyRoundState(status,"INTERVIEW")).toThrow("PLACEMENT_RESULT_ROUND_NOT_READY");
+  }
+  expect(()=>assertTpoRoundApplyRoundState("COMPLETED","TALK")).toThrow("PLACEMENT_RESULT_INVALID_ROUND_TYPE");
  });
  it("TPO-drive-workspace-42 binds apply approval to row versions, states, identities and round",()=>{
   const first=roundApplyPreviewToken(id(9),resultRows);

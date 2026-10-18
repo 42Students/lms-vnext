@@ -117,9 +117,11 @@ async function loadCompanySourceRows(
   rawCollegeId: string,
 ) {
   const collegeId = tpoCrmCollegeIdSchema.parse(rawCollegeId);
-  await requirePlacementManageScope(context, collegeId);
+  // Verify the current persisted officer and college before any tenant-scope
+  // or CRM query can become an existence oracle to a revoked session.
   const liveCollegeId=await requireTpoBatchActor(context);
   if(liveCollegeId!==collegeId)throw new AuthorizationError("placements.manage");
+  await requirePlacementManageScope(context, collegeId);
   const db = getDb();
 
   const [leads, jobs] = await Promise.all([
