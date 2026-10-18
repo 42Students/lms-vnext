@@ -231,6 +231,9 @@ export async function completeProjectFileUpload(
   const plan = planCompletion(outcome, new Date());
 
   if (plan.kind === "WAIT") {
+    // Another completion may have won after this request read its stale row.
+    const raced = await loadFile(scope.project.id, row.id);
+    if (raced.status === "READY") return toProjectFileDto(raced);
     if (row.uploadExpiresAt.getTime() + 60_000 < Date.now()) {
       await getDb().transaction(async tx=>{
         const [liveProject] = await tx.select({status:projectInstances.status})
@@ -261,7 +264,15 @@ export async function completeProjectFileUpload(
         and(eq(projectResourceFiles.id, row.id), inArray(projectResourceFiles.status, ["UPLOADING", "VERIFYING"])),
       )
       .returning();
-    if (!next) throw new StorageFileError("STORAGE_INVALID_STATE");
+    if (!next) {
+      // The row-level compare-and-swap prevents a second completion from
+      // writing another audit event. A READY winner is an idempotent success.
+      const [winner] = await tx.select().from(projectResourceFiles).where(and(
+        eq(projectResourceFiles.id,row.id),eq(projectResourceFiles.projectId,scope.project.id),
+      )).limit(1);
+      if (winner?.status === "READY") return {row:winner, changed:false};
+      throw new StorageFileError("STORAGE_INVALID_STATE");
+    }
     await recordStorageFileEvent(tx, context, {
       collegeId: row.collegeId,
       subjectKind: "PROJECT_RESOURCE_FILE",
@@ -278,8 +289,9 @@ export async function completeProjectFileUpload(
         detail: { attestedBy: plan.fields.scanAttestedBy },
       });
     }
-    return next;
+    return {row:next, changed:true};
   });
+  if (!updated.changed) return toProjectFileDto(updated.row);
   if (plan.deleteObject) {
     // The transaction has already persisted QUARANTINED/FAILED. Preserve
     // that non-readable state even when object-store cleanup is unavailable.
@@ -288,7 +300,7 @@ export async function completeProjectFileUpload(
   }
   if (plan.status === "QUARANTINED") throw new StorageFileError("STORAGE_CONTENT_REJECTED");
   if (plan.status === "FAILED") throw new StorageFileError("STORAGE_UPLOAD_MISMATCH");
-  return toProjectFileDto(updated);
+  return toProjectFileDto(updated.row);
 }
 
 /**
@@ -378,21 +390,28 @@ export async function removeProjectFile(
       .set({ status: "DELETED", deletedAt: new Date(), deletedByUserId: context.user.id, updatedAt: new Date() })
       .where(and(eq(projectResourceFiles.id, row.id), eq(projectResourceFiles.projectId,scope.project.id), ne(projectResourceFiles.status, "DELETED")))
       .returning();
-    if (!next) throw new StorageFileError("STORAGE_INVALID_STATE");
+    if (!next) {
+      const [winner] = await tx.select().from(projectResourceFiles).where(and(
+        eq(projectResourceFiles.id,row.id),eq(projectResourceFiles.projectId,scope.project.id),
+      )).limit(1);
+      if (winner?.status === "DELETED") return {row:winner, changed:false};
+      throw new StorageFileError("STORAGE_INVALID_STATE");
+    }
     await recordStorageFileEvent(tx, context, {
       collegeId: row.collegeId,
       subjectKind: "PROJECT_RESOURCE_FILE",
       subjectId: row.id,
       eventType: "DELETED",
     });
-    return next;
+    return {row:next, changed:true};
   });
+  if (!updated.changed) return toProjectFileDto(updated.row);
   // The soft-delete transaction already revoked application download access.
   // Object-store outages must not turn that committed, idempotent deletion
   // into a false failed response; retain the deleted row for cleanup/audit.
   try { await removeStoredObject(row.objectKey); }
   catch { /* A retrying storage janitor can remove the orphaned object. */ }
-  return toProjectFileDto(updated);
+  return toProjectFileDto(updated.row);
 }
 
 /** Download grant for any project member (or admin) who can read the project. POST because it audits. */
