@@ -1,10 +1,17 @@
 import { z } from "zod";
 export const SUPER_ADMIN_READ_PAGE_SIZE = 25;
+// Directory handlers are called from URLs and trusted internal code. Admit
+// ordinary integers/decimal strings, never hex, exponent, blank or arrays.
+const strictDecimal=(min:number,max:number,fallback:number)=>z.union([
+ z.number().int().min(min).max(max),
+ z.string().regex(/^[0-9]+$/).transform(Number)
+   .pipe(z.number().int().min(min).max(max)),
+]).default(fallback);
 export const superAdminReadQuerySchema = z.strictObject({
  q: z.string().trim().max(100).default(""),
  status: z.enum(["ALL","ACTIVE","INACTIVE","PLANNED","COMPLETED","ARCHIVED","ENDED","SUSPENDED","SUBMITTED","WITHDRAWN","PENDING","SCHEDULED","CANCELLED","HOLD","SHORTLISTED","REJECTED","ISSUED","ACCEPTED","DECLINED","JOINED","DID_NOT_JOIN","DEFERRED","CLOSED","DRAFT","PUBLISHED"]).default("ALL"),
- page: z.coerce.number().int().min(1).max(1000).default(1),
- pageSize: z.coerce.number().int().refine(n=>[10,25,50,100].includes(n)).default(25),
+ page: strictDecimal(1,1000,1),
+ pageSize: strictDecimal(10,100,25).refine(n=>[10,25,50,100].includes(n)),
  jobId: z.string().uuid().optional(),
  source:z.enum(["ALL","INTERNAL","EXTERNAL"]).default("ALL"),
  channel:z.enum(["ALL","INTERNAL","EXTERNAL"]).default("ALL"),
