@@ -123,3 +123,13 @@ Tests authored, not executed. This copy correction does not satisfy the unfinish
 | SA-academics-people-65 | PARTIAL; filtered CSV contract now correct | Admin Quizzes CSV also preserves results-release filter and audience/course constraints; no request-supplied college ID is accepted by URL helper. Same regression suite — `SA-academics-people-65 quiz CSV carries published-results state but cannot emit stale pagination`. |
 
 Tests authored, not run. These are export-URL/scope correctness repairs, not proof of full legacy export Excel parity, grading lifecycle or Postgres tenant isolation.
+
+## Chat-7 role and error hardening (2026-10-18, CI pending)
+
+| ID | Status | Evidence |
+|---|---|---|
+| SA-academics-people-67 | DONE in source; CI/PostgreSQL pending | `src/modules/courses/super-admin-student-course-progress.ts` now restricts the roster to an ACTIVE learner role, non-ended offering delivery, matching Section/cohort/academic period and the selected college; a 501st sentinel row prevents falsely labelling exactly 500 results truncated. `tests/unit/chat7-superadmin-progress-roster-security.test.ts` — `SA-academics-people-67 uses only active LEARNER membership in the exact offering cohort, period and section`, `SA-academics-people-67 fetches a sentinel row before marking the 500-row export/page as truncated`, `SA-academics-people-67 never invents a 0% completion rate for a course with no measurable content`. |
+| SA-academics-people-64 | PARTIAL (friendly failures fixed; lifecycle verification open) | `src/components/courses/college-assignment-actions.tsx` retains a visible, actionable message on unknown save/read errors instead of rendering raw internal API codes. `tests/unit/chat7-superadmin-assessment-friendly-errors.test.ts` — `SA-academics-people-64 does not expose unexpected API error identifiers while editing and reviewing assignments`. |
+| SA-academics-people-65 | PARTIAL (friendly failures fixed; lifecycle verification open) | `src/components/courses/college-quiz-actions.tsx` and `college-quiz-attempts.tsx` replace raw server codes in the error fallback while preserving known stale-version guidance. `tests/unit/chat7-superadmin-assessment-friendly-errors.test.ts` — `SA-academics-people-65 renders friendly failure text for quiz updates and submissions without leaking internal errors`. |
+
+These are source and authored-test changes, not a claim of a green CI run, browser verification or a completed entire lane queue. The `SA-academics-people-50` image and `-60` URL video importer remain blocked on private scanned storage. 
