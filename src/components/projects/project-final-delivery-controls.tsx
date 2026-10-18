@@ -510,6 +510,7 @@ export function FinalReviewControl({
     useState("");
   const [pending, setPending] =
     useState(false);
+  const reviewInFlight=useRef(false);
   function discardDraft(){
     setOpen(false);setFeedback("");setDecision("APPROVED");setStaleReview(false);
   }
@@ -519,7 +520,7 @@ export function FinalReviewControl({
 
   async function review() {
     // A failed optimistic version check must be refreshed before either action.
-    if (pending || staleReview) return;
+    if (pending || reviewInFlight.current || staleReview) return;
     if (
       decision === "CHANGES_REQUESTED" &&
       !feedback.trim()
@@ -527,6 +528,7 @@ export function FinalReviewControl({
       return;
     }
 
+    reviewInFlight.current=true;
     setPending(true);
     try {
       await projectMutation(
@@ -562,6 +564,7 @@ export function FinalReviewControl({
         description: caught instanceof FriendlyFetchError?caught.message:friendlyApiError({}),
       });
     } finally {
+      reviewInFlight.current=false;
       setPending(false);
     }
   }
