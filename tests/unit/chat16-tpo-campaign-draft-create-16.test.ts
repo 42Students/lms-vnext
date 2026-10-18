@@ -20,9 +20,11 @@ const tpo:RequestContext={
 const draft={title:"Campus opportunities",subject:"Hiring notice",body:"Hello {name}",
  segment:"ALL_ELIGIBLE",templateKey:"campaign.recruiter",selectedLeadIds:[lead]};
 const envOriginal={ready:process.env.DB09_TPO_API_READY,secret:process.env.TPO_CAMPAIGN_RECIPIENT_TOKEN_SECRET};
-const contact={id:lead,emailNorm:"LEAD@Example.ORG",unsubscribedAt:null,inviteBouncedAt:null,
+type Contact={id:string;emailNorm:string|null;unsubscribedAt:Date|null;
+ inviteBouncedAt:Date|null;manualStage:string;ownerMembershipId:string|null};
+const contact:Contact={id:lead,emailNorm:"LEAD@Example.ORG",unsubscribedAt:null,inviteBouncedAt:null,
  manualStage:"NEW",ownerMembershipId:null};
-function mockStorage(contacts:readonly typeof contact[]){
+function mockStorage(contacts:readonly Contact[]){
  const recipientValues=vi.fn(async(_input:unknown)=>undefined);
  const campaignValues=vi.fn(()=>({returning:vi.fn(async()=>[{id:campaign}])}));
  const insert=vi.fn().mockReturnValueOnce({values:campaignValues})
