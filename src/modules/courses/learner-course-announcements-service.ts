@@ -1,23 +1,32 @@
 import "server-only";
 import {and,desc,eq,inArray,isNull,lte,gt,or} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {db10Announcements,learnerProgramEnrollments,sectionEnrollments,users} from "@/db/schema";
+import {db10Announcements,learnerProgramEnrollments,sectionEnrollments,sections,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {placementTableExists} from "@/modules/placements/staged-tables";
-import {CoursesServiceError} from "./errors";
+import {requireOwnCourseLearnerRead} from "./learner-access-guard";
 /** LEARNER-home-courses-14: official class-targeted announcements only.
  * Discussion posts are never reclassified as notices; no course-only
  * audience may be inferred from a class-wide announcement. */
 export async function listLearnerCourseClassAnnouncements(
  context:RequestContext,sectionId:string,now:Date=new Date(),
 ){
- const member=context.membership;
- if(!member||member.status!=="ACTIVE"||!member.roles.includes("LEARNER")||
-    context.user.platformStatus!=="ACTIVE")throw new CoursesServiceError("LEARNER_PROGRESS_ACCESS_DENIED");
+ const member=await requireOwnCourseLearnerRead(context);
   const [section]=await getDb().select({id:sectionEnrollments.id})
    .from(sectionEnrollments)
    .innerJoin(learnerProgramEnrollments,eq(learnerProgramEnrollments.id,sectionEnrollments.learnerEnrollmentId))
-   .where(and(eq(learnerProgramEnrollments.membershipId,member.id),eq(sectionEnrollments.sectionId,sectionId)))
+   .innerJoin(sections,and(
+    eq(sections.id,sectionEnrollments.sectionId),
+    eq(sections.cohortId,learnerProgramEnrollments.cohortId),
+    eq(sections.academicPeriodId,sectionEnrollments.academicPeriodId),
+    eq(sections.status,"ACTIVE"),
+   ))
+   .where(and(
+    eq(learnerProgramEnrollments.membershipId,member.id),
+    eq(learnerProgramEnrollments.status,"ACTIVE"),
+    eq(sectionEnrollments.sectionId,sectionId),
+    eq(sectionEnrollments.status,"ACTIVE"),
+   ))
    .limit(1);
  if(!section||!await placementTableExists("announcements"))return [];
  return getDb().select({
