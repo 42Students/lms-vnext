@@ -95,12 +95,10 @@ vi.mock("@/db/client",()=>({
      }),
     }),
     insert:()=>({
-     values:()=>({
-      returning:async()=>{
-       state.writes++;
-       return [{id:"33333333-3333-4333-8333-333333333333"}];
-      },
-     }),
+     values:()=>{
+      state.writes++;
+      return {returning:async()=>[{id:"33333333-3333-4333-8333-333333333333"}]};
+     },
     }),
    };
    return run(tx);
@@ -136,7 +134,7 @@ describe("mentor final review persisted permission race",()=>{
   expect(state.projectLocks).toBe(1);
   expect(state.persistedChecks).toBe(1);
   expect(state.submissionReads).toBe(1);
-  expect(state.writes).toBe(2);
+  expect(state.writes).toBe(3);
   expect(state.events).toBe(2);
   expect(state.notices).toBe(1);
  });
