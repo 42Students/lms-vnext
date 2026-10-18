@@ -73,3 +73,22 @@ export function campaignUnsubscribeDecision(
   if(!matchesCampaignRecipient(claim,persisted))return "DENY";
   return persisted.unsubscribedAt ? "ALREADY" : "APPLY";
 }
+
+/** The saved draft recipient address is a purpose-bound, opaque HMAC.
+ * Do not dispatch a queued campaign to an email added or changed later.
+ * Share this exact calculation between draft persistence and dispatch.
+ */
+export function issueTpoCampaignEmailRecipientKey(email:string,secret:string):string{
+ if(Buffer.byteLength(secret,"utf8")<32)throw new Error("CAMPAIGN_RECIPIENT_SECRET_UNAVAILABLE");
+ return createHmac("sha256",secret).update("tpo-campaign-email-v1:")
+  .update(email.trim().toLowerCase()).digest("hex");
+}
+export function matchesTpoCampaignEmailRecipientKey(
+ storedKey:string,email:string|null|undefined,secret:string,
+):boolean{
+ if(!email||!/^[0-9a-f]{64}$/.test(storedKey))return false;
+ try{
+  const expected=issueTpoCampaignEmailRecipientKey(email,secret);
+  return timingSafeEqual(Buffer.from(storedKey,"hex"),Buffer.from(expected,"hex"));
+ }catch{return false;}
+}
