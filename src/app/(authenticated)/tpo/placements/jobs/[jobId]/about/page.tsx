@@ -122,7 +122,7 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
   {["CLOSED","CANCELLED"].includes(data.job.status)?<section className="border-b border-border pb-6">
    <h2 className="font-semibold">Closed drive summary</h2>
    <p className="mt-2 text-sm">{data.closeSummary.applications} recorded applications · {data.closeSummary.offers} offer versions.</p>
-   <Link className="mt-2 inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline" href={root+"/closeout"}>See the close-out report</Link>
+   <Link className="mt-2 inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline md:min-h-9" href={root+"/closeout"}>See the close-out report</Link>
   </section>:null}
   <section id="activity" aria-label="Drive activity" className="scroll-mt-24 border-b border-border pb-6">
    <h2 className="font-semibold">Recent activity · last {data.feed.length} (maximum 100)</h2>
