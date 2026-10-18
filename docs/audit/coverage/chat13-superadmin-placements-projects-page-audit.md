@@ -17,6 +17,7 @@ No audited route source uses raw `<table>`, `window.confirm()`, `target="_blank"
 ## High-risk adversarial regressions
 
 - `PROJ-BREAK-SA-09`: **S1 fixed** — escaped newline in `admin-submission-review-model.ts` made archived/locked guard part of a `//` comment. Verified corrected source, authored 144-state transition matrix (4 project states × 6 delivery states × 2 lock states × 3 actions).
+- `PROJ-BREAK-SA-17`: **S2 fixed** — runtime unrecognized delivery action accidentally resolved as a reviewable action; explicit three-action whitelist now rejects malformed operation codes, with executable negative cases.
 - `PROJ-BREAK-SA-10..13`: forged/oversized URL filters, restore CAS, wrong project/submission pairing, audit and archive impact safety.
 - `PROJ-BREAK-SA-14`: executable request-context matrix: active SA scoped to A, dual-role SA with membership B, revoked/disabled SA, membership-only B college admin, non-admin learner. B cannot be read via selected A on valid permission requests.
 - `PROJ-BREAK-SA-15`: test discovers **all 48 page sources** from filesystem, verifies every direct page uses current request context or an explicit server-authenticated delegate; disallows native confirmation/raw unresponsive table/untrusted new tabs/raw error JSON.
