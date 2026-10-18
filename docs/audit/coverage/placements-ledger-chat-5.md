@@ -365,3 +365,17 @@ No build/test runner was invoked per owner's directive. The comprehensive core f
 ### Offer register screen/export parity — TPO-OFFERS-URL-32 and TPO-OFFERS-EXPORT-33
 
 The `/tpo/placements/jobs/[jobId]/offers` page now refuses repeated URL filter values rather than silently picking the first. A shared `TpoReportInvalidFilters` response explains the invalid snapshot and links to the scoped page with cleared filters. The sibling `/api/placements/tpo/jobs/[jobId]/offers/export` GET refuses repeated query keys and a query-supplied `jobId` override, so the path job remains authoritative. The CSV still routes through the same strict, college-scoped register schema and retains no-store download headers. `tests/unit/chat5-tpo-offer-url-integrity.test.ts` tests all duplicated field classes, invalid selectors, path-vs-query override denial, and both route preflights. Real browser/network acceptance remains pending under owner's no-CI directive.
+
+
+### Second-third TPO pages, eight-screen parity slice and cancellation gap closure
+
+| Case | Page/service | Coverage authored | Pending |
+|---|---|---|---|
+| PLACEMENTS-CANCEL-WAIT-34 | `tpo-drive-cancel-service.ts`, cancel preview | A pending durable waitlist seat blocks both the preview action and the job-row-locked cancellation; TPO sees the specific action needed rather than an unsafe cancellation. `tests/integration/db09-tpo-drive-cancel.test.ts` verifies the job/offer/seat all stay unchanged on direct POST; `tests/unit/chat5-tpo-closure-ux-boundary.test.ts` checks interlock. | Cloud DB execution |
+| TPO-JOIN-TRACKER-DB-35 | `getTpoJoiningTracker` | `tests/integration/placements-p8-offers.test.ts` checks ISSUED not JOINED, accepted-but-pending exactly one, actual JOINED status and foreign-college denial | Cloud DB execution |
+| TPO-OFFERS-URL-36 | offers page and export route | Query `jobId` override rejected by page and CSV, duplicate filters rejected, CSV returns safe actionable HTTP 400 text with no-store/no-sniff headers. `tests/unit/chat5-tpo-offer-url-integrity.test.ts` | HTTP/runtime execution |
+| UX-TPO-DRIVE-STOP-37 | close/cancel preview | Return links increased to 44px keyboard/touch targets, blocked cases clearly surfaced. `tests/unit/chat5-tpo-second-third-page-journeys.test.ts` | Phone and keyboard browser |
+| TPO-JOIN-PAGE-38 | joining page/model | Pure projection tests for issued vs accepted vs pending vs joined and visible form binding | Browser states |
+| TPO-2ND-PAGE-SCOPE-39 | offers, selections, waitlist, joining, close-preview, cancel-preview, rounds, drive-day | Each page contracts TPO role guard, scoped domain read, shared heading, mobile min width, and no raw HTML injection in `tests/unit/chat5-tpo-second-third-page-journeys.test.ts`. These are source-level contracts, not full React render tests | Full loading/error/partial render and alternate role matrix |
+
+This ledger is not yet the requested one-row-per-all-exports exhaustive matrix. Source commits were pushed to `chatgpt/chat-5-b`, with main reconciliation where safe. No CI was run under the owner's directive.
