@@ -149,3 +149,7 @@ Cloud CI needs to rerun the changed test files before any of these entries can b
 | COL-export-08/09 | S1 spreadsheet safety | Newly added Unicode formula guard had incorrectly doubled regex backslashes, so format/combining marks were not processed as intended. Corrected literal character-class escapes and formula-operator class in both academic and administrator-history CSV exporters; retained existing named payload tests. | `src/modules/academics/college-directory-export-model.ts`, `src/modules/colleges/admin-history-export-model.ts`, `tests/unit/chat4-college-admin-export-boundaries.test.ts` | Source corrected; CI pending |
 
 Exports `exportCollegeAcademicDirectory`, `mapAcademicWorkspaceInBatches` and `getAcademicsWorkspace` also have new behavior tests; see `docs/audit/coverage/college-ledger.md`. No test run or PostgreSQL verification was performed in this lane.
+
+### Disposable integration evidence added
+
+The three `COL-academics-scope-tenant-PG-01` cases in `tests/integration/chat4-college-academic-cross-tenant-pg.test.ts` now encode the cross-college enrollment/roster/faculty/academic-period defects above against independently created, foreign-key-valid PostgreSQL data. Standard `DB03_ISOLATED_TEST_DATABASE` guard protects against use of a non-disposable DB. **Authored only** — execution, schema migration compatibility, cleanup, and assertions must be independently verified by cloud CI. No S1 defect should be declared production-certified solely from source or authored fixtures.
