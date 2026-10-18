@@ -15,6 +15,22 @@
 
 ## Remaining / ownership
 
+**Estimated post-merge gap balance, measured against the starting matrix (requires regeneration):**
+
+| Gap category | Starting gaps | This branch addresses | Expected remaining |
+|---|---:|---:|---:|
+| Routes lacking UX test mention | 57 | 57 | 0 |
+| Untested shared UI primitives | 4 | 4 | 0 |
+| Unsafe target=_blank without noopener | 4 | 4 | 0 |
+| Raw HTML tables outside shared DataTable | 66 | 1 | 65 |
+| Routes with no direct shared-kit import | 62 | 0 | 62 |
+| Overlays with no UX test/note | 127 | 0 | 127 |
+| No note / no loading / no error | 0 | 0 | 0 |
+
+**The full project-wide matrix is not yet at zero.** The remaining 254 structural heuristic gaps require their owner lanes to convert genuine surfaces or an explicitly owner-approved waiver where the heuristic does not apply (for example redirect-only pages). Chat-17 has not filed any unapproved waiver or claimed these are closed.
+
+
+
 For the final 18 route gaps, `tests/unit/UX-coverage-closure-leftovers-chat17.test.ts` verifies each actual destination/permission/recovery contract without editing other owners’ route code. These regression tests were added to `ux:audit:unit` together with the first 39.
 
 The baseline matrix includes raw tables in colleges, TPO, attendance, projects, HR, and other role-owned components; and 127 overlay components without notes/tests. Chat-17 did **not** falsely mark these covered by adding only filenames to tests. They remain for their owner lanes or independently reviewed followups. Redirect-only pages counted as "no shared component" by the generator are correctly handled as server redirects; avoid adding fake markup solely to trick the heuristic. The 57 targeted route entries and four UI primitive fixes will only be reflected when the orchestrator regenerates the matrix with `node scripts/audit/ux-coverage.mjs`.
