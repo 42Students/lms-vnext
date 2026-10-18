@@ -40,6 +40,7 @@ describe("HR-NOTIFY-SCOPE-09 recruiter inbox privacy, expired roles and tenant b
  it("denies missing or deactivated recruiter before listing private notifications",async()=>{
   for(const ctx of [
    {...recruiter,recruiter:null},
+   {...recruiter,recruiter:{...recruiter.recruiter,userId:"another-recruiter"}},
    {...recruiter,user:{...recruiter.user,platformStatus:"SUSPENDED"}},
   ]){
    await expect(listHrNotifications(ctx as never,{})).rejects.toThrow();
