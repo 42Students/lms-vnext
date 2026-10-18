@@ -272,7 +272,12 @@ export async function completeProjectFileUpload(
     }
     return next;
   });
-  if (plan.deleteObject) await removeStoredObject(row.objectKey);
+  if (plan.deleteObject) {
+    // The transaction has already persisted QUARANTINED/FAILED. Preserve
+    // that non-readable state even when object-store cleanup is unavailable.
+    try { await removeStoredObject(row.objectKey); }
+    catch { /* Unreadable DB state is authoritative; retry cleanup separately. */ }
+  }
   if (plan.status === "QUARANTINED") throw new StorageFileError("STORAGE_CONTENT_REJECTED");
   if (plan.status === "FAILED") throw new StorageFileError("STORAGE_UPLOAD_MISMATCH");
   return toProjectFileDto(updated);
@@ -370,7 +375,11 @@ export async function removeProjectFile(
     });
     return next;
   });
-  await removeStoredObject(row.objectKey);
+  // The soft-delete transaction already revoked application download access.
+  // Object-store outages must not turn that committed, idempotent deletion
+  // into a false failed response; retain the deleted row for cleanup/audit.
+  try { await removeStoredObject(row.objectKey); }
+  catch { /* A retrying storage janitor can remove the orphaned object. */ }
   return toProjectFileDto(updated);
 }
 
