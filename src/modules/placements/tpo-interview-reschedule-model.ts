@@ -32,7 +32,7 @@ export function overlappingInterviewVenue(
     durationMinutes>1440||!Number.isFinite(end))return true;
  return existing.some(item=>{
   if(item.durationMinutes===null||!Number.isSafeInteger(item.durationMinutes)||
-     item.durationMinutes<=0)return true;
+     item.durationMinutes<=0||item.durationMinutes>1440)return true;
   const existingStart=item.start.getTime();
   if(!Number.isFinite(existingStart))return true;
   return existingStart<end&&start<existingStart+item.durationMinutes*60_000;
