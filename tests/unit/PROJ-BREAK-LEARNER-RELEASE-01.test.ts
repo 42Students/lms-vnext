@@ -1,11 +1,12 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 
 const state=vi.hoisted(()=>({
- access:vi.fn(),transaction:vi.fn(),activity:vi.fn(),notify:vi.fn(),
+ access:vi.fn(),guard:vi.fn(),transaction:vi.fn(),activity:vi.fn(),notify:vi.fn(),
  deleted:vi.fn(),reads:0,status:"ACTIVE",taskStatus:"TODO",sprintStatus:"ACTIVE",
  releaseStatus:"SHIPPED",comment:null as {id:string}|null,submission:null as {id:string}|null,
 }));
 vi.mock("@/modules/projects/access",()=>({requireProjectReadAccess:state.access}));
+vi.mock("@/modules/projects/learner-mutation-guard",()=>({assertPersistedLearnerProjectMutation:state.guard}));
 vi.mock("@/modules/activity/service",()=>({recordActivityEventInTransaction:state.activity}));
 vi.mock("@/modules/projects/project-notification-service",()=>({notifyActiveProjectMembers:state.notify}));
 vi.mock("@/db/client",()=>({
@@ -48,12 +49,13 @@ beforeEach(()=>{
  state.reads=0;state.status="ACTIVE";state.taskStatus="TODO";
  state.sprintStatus="ACTIVE";state.releaseStatus="SHIPPED";
  state.comment=null;state.submission=null;
- for(const mock of [state.access,state.transaction,state.activity,state.notify,state.deleted])mock.mockReset();
+ for(const mock of [state.access,state.guard,state.transaction,state.activity,state.notify,state.deleted])mock.mockReset();
  state.access.mockResolvedValue({
   access:"LEARNER",collegeId:"77777777-7777-4777-8777-777777777777",
   organizationId:"88888888-8888-4888-8888-888888888888",project:{id:projectId},
  });
  state.transaction.mockImplementation(async(fn:(tx:ReturnType<typeof makeTx>)=>Promise<unknown>)=>fn(makeTx()));
+ state.guard.mockResolvedValue(undefined);
  state.activity.mockResolvedValue({id:"event-1"});
  state.notify.mockResolvedValue(undefined);
 });
@@ -93,6 +95,7 @@ describe("PROJ-BREAK-LEARNER-RELEASE-01 task deletion across lifecycle and autho
  it("deletes only own unreviewed TODO task on an ACTIVE release with an activity and mentor notification",async()=>{
   state.releaseStatus="IN_PROGRESS";
   await expect(deleteLearnerOwnTask(actor,{projectId},taskId)).resolves.toEqual({deleted:true});
+  expect(state.guard).toHaveBeenCalledOnce();
   expect(state.deleted).toHaveBeenCalledOnce();
   expect(state.activity).toHaveBeenCalledOnce();
   expect(state.notify).toHaveBeenCalledOnce();
