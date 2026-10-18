@@ -99,6 +99,8 @@ New tests are **authored, not executed**. The row for a route/model does not imp
 
 See `docs/audit/coverage/tpo-students-companies-chat12-ledger.md` for a **50-export audited subset**, including explicit OPEN/MOCKED/SOURCE statuses. It is not exhaustive across the 1,000+ Placements module files.
 
+- `tests/e2e/chat12-tpo-company-deep-link-denial.spec.ts` adds eight browser journeys ensuring LEARNER cannot open Students, the Companies directory, archived companies or private employer detail/people/contact/feedback/manage deep links with forged UUIDs. Requires disposable E2E sessions; authored, not executed. These verify role denial but not genuine revoked-cookie sessions or two-college DB isolation.
+
 ## Release gates
 
 - Run Vitest on the new unit files and typecheck: **not executed**.
