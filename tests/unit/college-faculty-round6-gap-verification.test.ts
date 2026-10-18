@@ -9,7 +9,11 @@ describe("chat-11 College roster and Faculty attendance source parity",()=>{
   const roster=src("src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx");
   expect(roster).toContain('learnerProgramEnrollments.cohortId, batch.id');
   expect(roster).toContain('ilike(learnerProfiles.rollNumber');
-  expect(roster).toContain('className="overflow-x-auto');
+  expect(roster).toContain('<DataTable');
+  expect(roster).toContain('caption="Students in this batch"');
+  expect(roster).toContain('header: "Current class"');
+  const table=src("src/components/ui/data-table.tsx");
+  expect(table).toContain("ScrollCue");
   expect(roster).toContain("StudentClassMoveAction");
   expect(roster).toContain("sectionId");
   const move=src("src/components/college/student-class-move-action.tsx");
