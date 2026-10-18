@@ -57,7 +57,7 @@ export async function applyTpoWholeRound(context:RequestContext,rawJobId:unknown
  const results:Array<{resultId:string;applicationId:string;student:string;outcome:string;status:"applied"|"skipped";reason?:string}>=[];
  for(const row of preview.rows.filter(r=>r.status==="STAGED")){
   try{
-   await applyPlacementRoundResult(context,row.resultId);
+   await applyPlacementRoundResult(context,row.resultId,row.version);
    results.push({...row,status:"applied"});
   }catch(error){
    results.push({...row,status:"skipped",reason:roundApplyFailureReason(error)});
