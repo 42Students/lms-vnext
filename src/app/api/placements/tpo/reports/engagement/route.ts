@@ -1,5 +1,6 @@
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
+import {tpoReportHasRepeatedSearchParams} from "@/modules/placements/tpo-report-url-guard";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {getPlacementReportWorkspace} from "@/modules/placements/report-service";
 import {getPlacementLeadsReport} from "@/modules/placements/report-extra-service";
@@ -15,7 +16,11 @@ export async function GET(request:Request){
   const context=await getCurrentRequestContext();
   if(!context.membership||!hasMembershipRole(context,"TPO"))
    return NextResponse.json({error:"UNAUTHORIZED"},{status:403});
-  const input=companyEngagementCsvQuerySchema.parse(Object.fromEntries(new URL(request.url).searchParams.entries()));
+  const params=new URL(request.url).searchParams;
+  if(tpoReportHasRepeatedSearchParams(params))return NextResponse.json({error:"INVALID_QUERY"},{
+   status:400,headers:{"Cache-Control":"private, no-store"},
+  });
+  const input=companyEngagementCsvQuerySchema.parse(Object.fromEntries(params.entries()));
   const collegeId=context.membership.collegeId;
   const [report,leads]=await Promise.all([
    getPlacementReportWorkspace(context,{collegeId,seasonId:input.seasonId,jobId:input.jobId}),

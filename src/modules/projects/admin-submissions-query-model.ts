@@ -33,3 +33,20 @@ export function parseProjectAdminSubmissionsQuery(params: Record<string,string|s
     Object.entries(entries).filter(([key,value])=>value!==undefined&&(value!=="" || key==="page" || key==="pageSize")),
   ));
 }
+
+/** Keep the same authorized filters when browsing unsubmitted workspaces.
+ * This view has a separate bounded workspace query and no submission-status
+ * filter; never carry one across as though it were applied. */
+export function projectAdminUnsubmittedHref(
+  basePath:string,
+  query:{q?:string;status?:"PLANNED"|"ACTIVE"|"COMPLETED"|"ARCHIVED";pageSize?:number},
+  page=1,
+):string {
+  const params=new URLSearchParams();
+  params.set("view","NOT_SUBMITTED");
+  if(query.q)params.set("q",query.q);
+  if(query.status)params.set("status",query.status);
+  if(query.pageSize)params.set("pageSize",String(query.pageSize));
+  if(page>1)params.set("page",String(page));
+  return basePath+"?"+params.toString();
+}

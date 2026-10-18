@@ -1,4 +1,5 @@
 import {describe,expect,it} from "vitest";
+import {readFileSync} from "node:fs";
 import {summarizeTpoPrepAssignment} from "@/modules/placements/tpo-prep-assignment-result-model";
 
 describe("chat-11 TPO preparation course assignment retry receipts",()=>{
@@ -21,6 +22,21 @@ describe("chat-11 TPO preparation course assignment retry receipts",()=>{
   expect(original.counts).toEqual({assigned:3,duplicate:0,skipped:1});
   expect(retry.counts).toEqual({assigned:0,duplicate:3,skipped:1});
   expect(retry.results.every(row=>row.status!=="assigned")).toBe(true);
+ });
+ it("TPO-settings-audit-PREP-ASSIGN-COHORT-04 rejects archived/foreign academic targets in list and save",()=>{
+  const source=readFileSync("src/modules/placements/tpo-prep-assignment-service.ts","utf8");
+  expect(source).toContain("function activeCollegeOfferingCohort(collegeId:string)");
+  for(const required of [
+   "target_cohort.status<>'ARCHIVED'",
+   "target_program.status='ACTIVE'",
+   "target_department.college_id=",
+   "target_department.archived_at is null",
+  ])expect(source).toContain(required);
+  const first=source.indexOf("activeCollegeOfferingCohort(college.id)");
+  const second=source.indexOf("activeCollegeOfferingCohort(college.id)",first+1);
+  expect(first).toBeGreaterThan(0);
+  expect(second).toBeGreaterThan(first);
+  expect(second).toBeLessThan(source.indexOf("const learners=await tx.select(",second));
  });
  it("TPO-settings-audit-PREP-ASSIGN-RETRY-03 handles zero eligible and empty selection deterministically",()=>{
   expect(summarizeTpoPrepAssignment(selected,new Set(),new Set()).counts)
