@@ -32,7 +32,8 @@ export async function getFacultyScheduleReassignOptions(ctx:RequestContext,rawId
  .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
   eq(membershipRoles.role,"FACULTY")))
  .where(and(eq(collegeMemberships.collegeId,m.collegeId),
-  eq(collegeMemberships.status,"ACTIVE"),ne(collegeMemberships.id,id)))
+  eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"),
+  ne(collegeMemberships.id,id)))
  .orderBy(asc(users.displayName)).limit(200);
  const slots=await db.select({id:sectionScheduleEvents.id})
  .from(sectionScheduleEvents)
@@ -51,14 +52,17 @@ export async function reassignFacultyUpcomingSchedules(ctx:RequestContext,rawId:
  if(old===input.replacementMembershipId)throw Error("Choose a different faculty member.");
  const db=getDb(),now=new Date();
  return db.transaction(async tx=>{
-  const principals=await tx.select({id:collegeMemberships.id,status:collegeMemberships.status})
-   .from(collegeMemberships).innerJoin(membershipRoles,
+  const principals=await tx.select({id:collegeMemberships.id,status:collegeMemberships.status,
+   userStatus:users.platformStatus})
+   .from(collegeMemberships)
+   .innerJoin(users,eq(users.id,collegeMemberships.userId))
+   .innerJoin(membershipRoles,
      and(eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"FACULTY")))
    .where(and(eq(collegeMemberships.collegeId,m.collegeId),
      or(eq(collegeMemberships.id,old),eq(collegeMemberships.id,input.replacementMembershipId))))
    .for("share",{of:collegeMemberships});
   if(!principals.some(p=>p.id===old)||
-     !principals.some(p=>p.id===input.replacementMembershipId&&p.status==="ACTIVE"))
+     !principals.some(p=>p.id===input.replacementMembershipId&&p.status==="ACTIVE"&&p.userStatus==="ACTIVE"))
     throw Error("Source or replacement faculty not available in this college.");
   await assertPersistedPlatformPermission(tx,ctx,"academics.manage",{
    collegeId:m.collegeId,organizationId:m.organizationId,
