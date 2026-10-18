@@ -62,6 +62,15 @@ export async function archiveSuperAdminDrive(context:RequestContext,rawJobId:unk
   if(!job)throw new Error("Drive no longer exists in this college.");
   if(job.updatedAt.toISOString()!==input.expectedUpdatedAt)
    throw new Error("Drive changed. Refresh the impact preview.");
+  // Lock existing offers before measuring impact. Without this, a concurrent
+  // acceptance can turn ISSUED into ACCEPTED after the impact check but before
+  // the issued-offer withdrawal, leaving an archived drive with an accepted offer.
+  // The parent job row is already locked above; writers must preserve the same
+  // lock order for full protection against concurrent *new* offers.
+  await tx.select({id:placementOffers.id}).from(placementOffers)
+   .innerJoin(placementApplications,eq(placementOffers.applicationId,placementApplications.id))
+   .where(eq(placementApplications.jobId,jobId))
+   .for("update",{of:placementOffers});
   const current=await getImpact(tx,jobId);
   if(!sameArchiveImpact(current,input.expectedImpact))
    throw new Error("Drive applications or interviews changed. Refresh the impact preview.");

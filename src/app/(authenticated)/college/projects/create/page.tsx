@@ -4,17 +4,18 @@ import {CreateProjectControl} from "@/components/projects/project-create-control
 import {ProjectAdminNav} from "@/components/projects/project-admin-nav";
 import {PageHeader} from "@/components/ui/page-header";
 import {listAssignedProjectTemplates} from "@/modules/projects/template-service";
+import {getProjectAdminCollegeId} from "@/modules/projects/admin-college-scope";
 
 export default async function CollegeCreateProjectPage() {
   const context=await getCurrentRequestContext();
-  if(!context.membership)return <main className="space-y-4">
+  const collegeId=getProjectAdminCollegeId(context);
+  if(!collegeId)return <main className="space-y-4">
     <PageHeader title="Create workspace" description="Select a college to continue."/>
     <p role="alert" className="rounded-xl border border-border bg-surface p-4 text-sm">
       Choose a college from the account switcher before creating a workspace.
     </p>
     <Link href="/college/projects" className="text-primary-text underline">Back to workspaces</Link>
   </main>;
-  const collegeId=context.membership.collegeId;
   const templates=await listAssignedProjectTemplates(context,collegeId);
   return <main className="space-y-6">
     <ProjectAdminNav basePath="/college/projects" active="workspaces"/>

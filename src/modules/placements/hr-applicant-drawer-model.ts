@@ -4,7 +4,9 @@ export function buildHrApplicantDrawer(
   applicantId: string | undefined,
 ) {
   if (!applicantId) return null;
-  const selected = rows.find(row => row.id === applicantId && row.screening === "SHORTLISTED");
+  // A withdrawn application may remain historically SHORTLISTED. Do not let an
+  // already-open applicant URL retain access to private project or contact details.
+  const selected = rows.find(row => row.id === applicantId && row.screening === "SHORTLISTED" && row.status === "SUBMITTED");
   if (!selected) return null;
   return {
     id:selected.id,

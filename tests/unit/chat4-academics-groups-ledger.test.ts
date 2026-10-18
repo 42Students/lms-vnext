@@ -158,7 +158,7 @@ describe("chat-4 college academics and group models: state, validation, concurre
     expect(collegeGroupDetailActionLabel("SAVE_RULE")).toContain("does not immediately refresh members");
   });
   it("collegeStudyMemberSchema and label cover guarded removal/locking and wrong action",()=>{
-    const add={action:"ADD",membershipId:a};
+    const add={action:"ADD" as const,membershipId:a};
     expect(collegeStudyMemberSchema.safeParse(add).success).toBe(true);
     expect(collegeStudyMemberSchema.safeParse({action:"REMOVE_AND_LOCK",membershipId:a,expectedVersion:1,confirm:true}).success).toBe(true);
     expect(collegeStudyMemberSchema.safeParse({action:"REMOVE_AND_LOCK",membershipId:a,expectedVersion:1}).success).toBe(false);

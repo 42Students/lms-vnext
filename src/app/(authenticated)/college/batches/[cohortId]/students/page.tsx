@@ -10,6 +10,7 @@ import {
 } from "@/db/schema";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { DataTable } from "@/components/ui/data-table";
 import { StudentClassMoveAction } from "@/components/college/student-class-move-action";
 import { requirePermission } from "@/modules/permissions/policy";
 
@@ -26,7 +27,9 @@ export default async function CollegeBatchStudentsPage({
     organizationId: context.membership.organizationId,
   });
   const { cohortId: rawId } = await params;
-  const cohortId = z.string().uuid().parse(rawId);
+  const checkedId = z.string().uuid().safeParse(rawId);
+  if (!checkedId.success) notFound();
+  const cohortId = checkedId.data;
   const input = await searchParams;
   const q = typeof input.q === "string" ? input.q.trim().slice(0, 100) : "";
   const sectionId = z.string().uuid().safeParse(input.sectionId).success ? input.sectionId : null;
@@ -83,19 +86,24 @@ export default async function CollegeBatchStudentsPage({
       </label>
       <button className="min-h-11 rounded bg-primary px-4 font-semibold text-foreground">Search</button>
     </form>
-    <section aria-label="Students in this batch" className="min-w-0 rounded-xl border border-border bg-surface">
-      <p className="p-3 text-xs text-muted-foreground">Showing up to 500 matching students in this batch.</p>
-      <DataTable rows={students} getRowKey={item=>item.membershipId} caption="Students in this batch"
+    <section aria-label="Students in this batch" className="min-w-0 space-y-3">
+      <p className="text-xs text-muted-foreground">Showing up to 500 matching students in this batch.</p>
+      <DataTable
+        caption="Students in this batch"
+        rows={students}
+        getRowKey={item => item.membershipId}
+        empty={<p className="text-sm text-muted-foreground">No matching students.</p>}
         columns={[
-          {key:"name",header:"Name",mobilePriority:"primary",cell:item=>item.name??item.membershipId},
-          {key:"roll",header:"Roll Number",mobilePriority:"secondary",cell:item=>item.roll??"—"},
-          {key:"email",header:"Email",mobilePriority:"secondary",cell:item=><span className="break-all">{item.email??"—"}</span>},
-          {key:"class",header:"Current class",mobilePriority:"secondary",cell:item=>item.sectionName??"Not in a class"},
-          {key:"action",header:"Action",mobilePriority:"action",cell:item=>item.sectionId
-            ? <StudentClassMoveAction membershipId={item.membershipId} name={item.name??item.roll??"student"}/>
-            : <span className="text-muted-foreground">No active class to move from</span>},
+          { key: "name", header: "Name", mobilePriority: "primary", cell: item => item.name ?? item.membershipId },
+          { key: "roll", header: "Roll Number", mobilePriority: "secondary", cell: item => item.roll ?? "—" },
+          { key: "email", header: "Email", mobilePriority: "secondary", cell: item => item.email ?? "—" },
+          { key: "class", header: "Current class", mobilePriority: "secondary", cell: item => item.sectionName ?? "Not in a class" },
+          { key: "action", header: "Action", mobilePriority: "action", cell: item => item.sectionId
+            ? <StudentClassMoveAction membershipId={item.membershipId}
+                name={item.name ?? item.roll ?? "student"} />
+            : <span className="text-muted-foreground">No active class to move from</span> },
         ]}
-        empty={<p className="text-sm text-muted-foreground">No matching students.</p>}/>
+      />
     </section>
   </main>;
 }

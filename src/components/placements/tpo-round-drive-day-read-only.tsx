@@ -258,7 +258,7 @@ export function TpoRoundDriveDayReadOnly({
             this round&apos;s roster.
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div tabIndex={0} role="region" aria-label="Drive-day candidate roster, scroll horizontally for more columns" className="overflow-x-auto overscroll-x-contain [mask-image:linear-gradient(to_right,black_0%,black_95%,transparent_100%)]">
             <table className="w-full min-w-[46rem] text-left text-sm">
               <thead className="bg-surface-secondary text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 <tr>

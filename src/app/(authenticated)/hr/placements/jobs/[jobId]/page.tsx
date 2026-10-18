@@ -1,3 +1,4 @@
+import { ScrollCue } from "@/components/ui/scroll-cue";
 import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
 import { PlacementsServiceError } from "@/modules/placements/errors";
@@ -7,6 +8,7 @@ import { RecruiterApplicantReviewDrawer } from "@/components/hr/recruiter-applic
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { RecruiterResultControls } from "@/components/placements/recruiter-result-controls";
 import { PageHeader } from "@/components/ui/page-header";
+import { DataTable } from "@/components/ui/data-table";
 import { RecruiterDriveFocusRefresh } from "@/components/hr/recruiter-drive-focus-refresh";
 import {RecruiterRoundInlineEditor} from "@/components/hr/recruiter-round-inline-editor";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -466,7 +468,7 @@ export default async function HrPlacementJobPage({
           </div>:null}
         {threadMessages?<div className="space-y-3">
           <p className="text-xs text-muted-foreground">{threadMessages.total} recorded messages</p>
-          <ol aria-label="Drive discussion history" className="max-h-[36rem] space-y-2 overflow-y-auto">
+          <ScrollCue axis="y" label="Drive discussion history" viewportClassName="max-h-[36rem]"><ol aria-label="Drive discussion history" className="space-y-2">
             {[...threadMessages.messages].reverse().map(message=><li key={message.id}
               className="rounded-lg border border-border bg-surface-subtle p-3">
               <p className="text-xs font-semibold text-muted-foreground">
@@ -475,7 +477,7 @@ export default async function HrPlacementJobPage({
               </p>
               <p className="mt-1 whitespace-pre-wrap break-words text-sm text-body">{message.body}</p>
             </li>)}
-          </ol>
+          </ol></ScrollCue>
           <RecruiterConversationReplyForm threadId={selectedThread!.id}/>
           <Link href={"/hr/conversations/"+selectedThread!.id}
             className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Browse full conversation history</Link>
@@ -666,22 +668,21 @@ export default async function HrPlacementJobPage({
             <section aria-label="Placement-cell selection history" className="space-y-3 rounded-lg border border-border bg-surface-secondary p-4">
               <h3 className="font-semibold text-foreground">Selection history · placement-cell records</h3>
               <p className="text-sm text-body">Selections are not issued offers. Verified selections still await formal release by the placement cell. Cancelled selections do not imply a revoked offer.</p>
-              {selectionRows.length?<div className="overflow-x-auto">
-               <div role="region" aria-label="Placement-cell selection history table" tabIndex={0} className="max-w-full overflow-x-auto overscroll-x-contain"><table className="w-full min-w-[34rem] text-left text-sm">
-                <thead><tr><th scope="col" className="px-3 py-2">Candidate</th>
-                 <th scope="col" className="px-3 py-2">Role</th>
-                 <th scope="col" className="px-3 py-2">CTC (LPA)</th>
-                 <th scope="col" className="px-3 py-2">Status</th></tr></thead>
-                <tbody>{selectionRows.map(item=><tr key={item.id} className="border-t border-border">
-                  <td className="px-3 py-2">{item.name??"Unnamed applicant"}</td>
-                  <td className="px-3 py-2">{item.role}</td>
-                  <td className="px-3 py-2">{item.annualCtcInr==null?"—":
-                    (item.annualCtcInr/100000).toLocaleString("en-IN",{maximumFractionDigits:2})}</td>
-                  <td className="px-3 py-2"><StatusBadge>{item.status==="SELECTED"?"With the placement cell":
-                    item.status==="VERIFIED"?"Verified, awaiting release":"Selection cancelled"}</StatusBadge></td>
-                </tr>)}</tbody>
-               </table></div>
-              </div>:<p role="status" className="text-sm text-muted-foreground">No selections have been recorded in this status.</p>}
+                            <DataTable
+                caption="Placement-cell selection history"
+                rows={selectionRows}
+                getRowKey={item => item.id}
+                empty={<p role="status" className="text-sm text-muted-foreground">No selections have been recorded in this status.</p>}
+                columns={[
+                  { key: "candidate", header: "Candidate", mobilePriority: "primary", cell: item => item.name ?? "Unnamed applicant" },
+                  { key: "role", header: "Role", mobilePriority: "secondary", cell: item => item.role },
+                  { key: "ctc", header: "CTC (LPA)", mobilePriority: "secondary", cell: item => item.annualCtcInr == null ? "—" :
+                    (item.annualCtcInr / 100000).toLocaleString("en-IN", { maximumFractionDigits: 2 }) },
+                  { key: "status", header: "Status", mobilePriority: "secondary", cell: item =>
+                    <StatusBadge>{item.status === "SELECTED" ? "With the placement cell" :
+                      item.status === "VERIFIED" ? "Verified, awaiting release" : "Selection cancelled"}</StatusBadge> },
+                ]}
+              />
               <p className="text-xs text-muted-foreground">
                {selectionPage.first===0?"No selection rows":`Showing ${selectionPage.first}–${selectionPage.last}`} of {selectionTotal}
               </p>
@@ -692,40 +693,27 @@ export default async function HrPlacementJobPage({
                 className="text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next selections</Link>:null}
               </nav>
             </section>:null}
-          {offers.length ? <div className="overflow-x-auto rounded-lg border border-border">
-            <div role="region" aria-label="Issued offers table" tabIndex={0} className="max-w-full overflow-x-auto overscroll-x-contain"><table className="w-full min-w-[56rem] text-left text-sm">
-              <caption className="sr-only">Offers for shared applicants at this college</caption>
-              <thead className="bg-surface-secondary text-xs font-semibold text-foreground">
-                <tr>
-                  <th scope="col" className="px-3 py-3">Candidate</th>
-                  <th scope="col" className="px-3 py-3">Type</th>
-                  <th scope="col" className="px-3 py-3">CTC (LPA)</th>
-                  <th scope="col" className="px-3 py-3">Status</th>
-                  <th scope="col" className="px-3 py-3">Reply by</th>
-                  <th scope="col" className="px-3 py-3">Joining</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {offers.map(offer=><tr key={offer.id}>
-                  <td className="px-3 py-3 font-semibold text-foreground">{offer.name||"Unnamed applicant"}
-                    <span className="block text-xs font-normal text-muted-foreground">{offer.role}</span></td>
-                  <td className="px-3 py-3 text-body">{offer.kind==="LOI"?"Letter of intent":"Offer"}</td>
-                  <td className="px-3 py-3 text-body">{offer.annualCtcInr==null?"—":
-                    (offer.annualCtcInr/100000).toLocaleString("en-IN",{maximumFractionDigits:2})}</td>
-                  <td className="px-3 py-3"><StatusBadge>{recruiterOfferStatusLabel(offer.status)}</StatusBadge></td>
-                  <td className="px-3 py-3 text-body">{offer.expiresAt?
-                    new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(offer.expiresAt):
-                    "Not set"}</td>
-                  <td className="px-3 py-3 text-body">
-                    {offer.joiningStatus==="JOINED"?"Joined":
-                     offer.joiningStatus==="DEFERRED"?"Deferred":
-                     offer.joiningStatus==="DID_NOT_JOIN"?"Did not join":"Not recorded"}
-                    <span className="block text-xs text-muted-foreground">{offer.joiningDate??"Date not set"}</span>
-                  </td>
-                </tr>)}
-              </tbody>
-            </table></div>
-          </div> : filters.offerState==="ALL"||!["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState)?<p className="text-sm text-muted-foreground">No offers yet. The placement cell will issue offers after selection verification.</p>:null}
+          {offers.length ? <DataTable
+            caption="Offers for shared applicants at this college"
+            rows={offers}
+            getRowKey={offer => offer.id}
+            empty={<p className="text-sm text-muted-foreground">No offers yet. The placement cell will issue offers after selection verification.</p>}
+            columns={[
+              { key: "candidate", header: "Candidate", mobilePriority: "primary", cell: offer =>
+                <>{offer.name || "Unnamed applicant"}<span className="block text-xs font-normal text-muted-foreground">{offer.role}</span></> },
+              { key: "kind", header: "Type", mobilePriority: "secondary", cell: offer => offer.kind === "LOI" ? "Letter of intent" : "Offer" },
+              { key: "ctc", header: "CTC (LPA)", mobilePriority: "secondary", cell: offer => offer.annualCtcInr == null ? "—" :
+                (offer.annualCtcInr / 100000).toLocaleString("en-IN", { maximumFractionDigits: 2 }) },
+              { key: "status", header: "Status", mobilePriority: "secondary", cell: offer => <StatusBadge>{recruiterOfferStatusLabel(offer.status)}</StatusBadge> },
+              { key: "deadline", header: "Reply by", mobilePriority: "secondary", cell: offer => offer.expiresAt ?
+                new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" }).format(offer.expiresAt) : "Not set" },
+              { key: "joining", header: "Joining", mobilePriority: "secondary", cell: offer =>
+                <>{offer.joiningStatus === "JOINED" ? "Joined" :
+                  offer.joiningStatus === "DEFERRED" ? "Deferred" :
+                  offer.joiningStatus === "DID_NOT_JOIN" ? "Did not join" : "Not recorded"}
+                  <span className="block text-xs text-muted-foreground">{offer.joiningDate ?? "Date not set"}</span></> },
+            ]}
+          /> : filters.offerState==="ALL"||!["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState)?<p className="text-sm text-muted-foreground">No offers yet. The placement cell will issue offers after selection verification.</p>:null}
           {!["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState)?<nav aria-label="Offer pages" className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
             <span className="text-xs text-muted-foreground">
               {offersPage.first===0 ? "No rows on this page" : "Showing "+offersPage.first+"–"+offersPage.last}

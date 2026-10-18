@@ -1,3 +1,4 @@
+import { ScrollCue } from "@/components/ui/scroll-cue";
 import Link from "next/link";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -81,7 +82,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       {generalThread.preview&&!generalHistory?<p className="mt-2 whitespace-pre-wrap text-sm text-body">
         {generalThread.preview!.text}
       </p>:null}
-      {generalHistory?<ol aria-label="General placement-cell messages" className="mt-3 max-h-72 space-y-2 overflow-y-auto">
+      {generalHistory?<ScrollCue axis="y" label="General placement-cell messages" className="mt-3" viewportClassName="max-h-72"><ol aria-label="General placement-cell messages" className="space-y-2">
         {[...generalHistory.messages].reverse().map(message=><li key={message.id}
           className="rounded-lg border border-border bg-surface-subtle p-3 text-sm">
           <p className="mb-1 text-xs font-semibold text-muted-foreground">
@@ -89,7 +90,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
           </p>
           <p className="whitespace-pre-wrap break-words text-body">{message.body}</p>
         </li>)}
-      </ol>:null}
+      </ol></ScrollCue>:null}
       <div className="mt-3"><RecruiterConversationReplyForm threadId={generalThread.id}/></div>
       <Link href={"/hr/conversations/"+generalThread.id}
         className="mt-3 inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Open full conversation</Link>

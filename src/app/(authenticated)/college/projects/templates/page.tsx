@@ -6,6 +6,7 @@ import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { listAssignedProjectTemplates } from "@/modules/projects/template-service";
+import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
 import { ProjectTemplateCatalogueExport } from "@/components/projects/project-template-catalogue-export";
 import { projectTemplateSectionCounts } from "@/modules/projects/project-template-catalogue-model";
 
@@ -15,7 +16,7 @@ export default async function CollegeProjectTemplatesPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const context = await getCurrentRequestContext();
-  const collegeId = context.membership?.collegeId;
+  const collegeId = getProjectAdminCollegeId(context);
   if (!collegeId) return <ProjectAdminMissingCollege/>;
 
   const templates =
