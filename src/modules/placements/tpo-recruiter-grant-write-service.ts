@@ -136,11 +136,13 @@ export async function changeTpoRecruiterGrant(context: RequestContext, raw: unkn
       const validUntil=recruiterGrantValidUntil(base,input.months);
       // Advance the browser revision even for two changes in one millisecond.
       // Otherwise the same stale tab can extend a grant twice.
+      // Compare truncated revisions because PostgreSQL stores microseconds,
+      // while the browser and JS Date expose only milliseconds.
       const [extended]=await tx.update(placementRecruiterCollegeGrants).set({
-        validUntil,updatedAt: sql`greatest(clock_timestamp(),date_trunc('milliseconds',${placementRecruiterCollegeGrants.updatedAt}) + interval '1 millisecond')`,
+        validUntil,updatedAt: sql`greatest(date_trunc('milliseconds',clock_timestamp()),date_trunc('milliseconds',${placementRecruiterCollegeGrants.updatedAt}) + interval '1 millisecond')`,
       }).where(and(eq(placementRecruiterCollegeGrants.id,input.grantId),
         eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
-        eq(placementRecruiterCollegeGrants.updatedAt,record.grant.updatedAt))).returning();
+        sql`date_trunc('milliseconds',${placementRecruiterCollegeGrants.updatedAt}) = ${record.grant.updatedAt.toISOString()}::timestamptz`)).returning();
       if(!extended)throw new TpoRecruiterGrantConflict();
       await tx.insert(activityEvents).values({
         organizationId:college.organizationId,collegeId,actorUserId,actorMembershipId,
@@ -156,7 +158,7 @@ export async function changeTpoRecruiterGrant(context: RequestContext, raw: unkn
     const now = new Date();
     const [revoked] = await tx.update(placementRecruiterCollegeGrants).set({
       status: "REVOKED", revokedByUserId: actorUserId,
-      revokedAt: now, updatedAt: sql`greatest(clock_timestamp(),date_trunc('milliseconds',${placementRecruiterCollegeGrants.updatedAt}) + interval '1 millisecond')`,
+      revokedAt: now, updatedAt: sql`greatest(date_trunc('milliseconds',clock_timestamp()),date_trunc('milliseconds',${placementRecruiterCollegeGrants.updatedAt}) + interval '1 millisecond')`,
     }).where(and(eq(placementRecruiterCollegeGrants.id, input.grantId),
       eq(placementRecruiterCollegeGrants.status, "ACTIVE"))).returning();
     if (!revoked) throw new TpoRecruiterGrantConflict();
