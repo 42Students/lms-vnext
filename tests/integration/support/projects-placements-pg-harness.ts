@@ -347,6 +347,15 @@ async function requireProjectCollegeActor(db: PgHarness, projectId: string,
 export async function createTaskSubmission(db: PgHarness, project: ProjectFixture,
   learner: PrincipalFixture): Promise<string> {
   await requireProjectLearner(db, project.projectId, learner);
+  // The schema has separate task_id and project_id foreign keys. Neither
+  // alone proves that a task belongs to the selected workspace.
+  const tasks = await db.query<{id:string}>(
+    "select id from project_tasks where id=$1 and project_id=$2",
+    [project.taskId, project.projectId],
+  );
+  if (tasks.length !== 1) {
+    throw new Error("PROJ-HARNESS: task does not belong to this project");
+  }
   const [row] = await db.query<{id:string}>(`
     insert into project_task_submissions
       (project_id,task_id,version,submitted_by_membership_id,submission_url)
