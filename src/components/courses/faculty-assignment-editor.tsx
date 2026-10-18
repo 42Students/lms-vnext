@@ -43,6 +43,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
  const [allowedMethods,setAllowedMethods]=useState<AssignmentMethod[]>(ALL_ASSIGNMENT_METHODS);
  const [methodsDirty,setMethodsDirty]=useState(false);
  const [methodsLoaded,setMethodsLoaded]=useState(true);
+ const [methodsLoading,setMethodsLoading]=useState(false);
  const existing=assignments.find(x=>x.id===selected);
  function choose(id:string,confirmed=false){
   if(pending||mutationLock.current)return;
@@ -57,6 +58,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
   setConfirmed(false);setError(null);setSuccess(null);
   setAllowedMethods(ALL_ASSIGNMENT_METHODS);setMethodsDirty(false);
   setMethodsLoaded(!methodsEnabled||!row);
+  setMethodsLoading(Boolean(methodsEnabled&&row));
   if(methodsEnabled&&row){
    void fetch("/api/courses/faculty/assignments/"+encodeURIComponent(deliveryId)+
      "/methods?assignmentId="+encodeURIComponent(row.id),{cache:"no-store"})
@@ -67,10 +69,10 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
       if(!methodsLoadVersion.current.isCurrent(requestVersion))return;
       const confirmed=verifiedFacultyAssignmentMethodsResponse(data);
       if(!confirmed)throw new Error("Invalid assignment methods response");
-      setAllowedMethods(confirmed);setMethodsLoaded(true);
+      setAllowedMethods(confirmed);setMethodsLoaded(true);setMethodsLoading(false);
     }).catch(()=>{
       if(!methodsLoadVersion.current.isCurrent(requestVersion))return;
-      setMethodsLoaded(false);
+      setMethodsLoaded(false);setMethodsLoading(false);
       setError("Unable to load permitted submission methods. Re-select this assignment to retry.");
     });
   }
@@ -179,7 +181,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
   {methodsEnabled?<FacultyAssignmentMethodPicker methods={allowedMethods}
    disabled={pending||!methodsLoaded||existing?.status==="ARCHIVED"}
    onChange={next=>{setAllowedMethods(next);setMethodsDirty(true);setConfirmed(false);}}/>:null}
-  {methodsEnabled&&!methodsLoaded?<p role="status" className="text-xs">Loading allowed methods…</p>:null}
+  {methodsEnabled&&methodsLoading?<p role="status" className="text-xs">Loading allowed methods…</p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {success?<p role="status" className="text-sm text-body">{success}</p>:null}
   <div className="flex flex-wrap gap-2">
