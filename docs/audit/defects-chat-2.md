@@ -57,7 +57,7 @@ Files updated: `chat2-company-memory-gap-parity.test.ts`, `chat2-company-trust-a
 | ID | Severity | Gap | Defect | Fix commit | Test |
 | --- | --- | --- | --- | --- | --- |
 | CH2-022 | Medium | TPO-settings-audit-55 | Public join-link status GET silently selected first `scope` or `companyId` and ignored injected `collegeId`; ambiguous URLs could mask attempted tenant-selector spoofing. Explicit single-scope and allowed-key enforcement now rejects these with 400 before identity lookup. | `c1ef04f` | `chat2-tpo-public-link-route-journeys-break-05.test.ts` |
-| CH2-023 | Medium | TPO-settings-audit-55 | Recruiter college-grant directory accepted duplicated status/page filters by silently choosing the first, so its filter UI could disagree with the requested URL. Repeated selectors now show a scoped, actionable invalid-filter state. | `492313a` | `chat2-tpo-public-link-settings.test.ts` |
+| CH2-023 | Medium | TPO-settings-audit-55 | Recruiter college-grant directory previously accepted duplicated status/page filters by silently choosing the first. The merged shared `parseTpoRecruiterAccessParams` model on `main` now rejects duplicated/foreign selectors, with actionable invalid-filter recovery. | Shared model on `main`; reconciliation `ce039fe`; behavioral test `f2a4736` | `chat2-tpo-public-link-settings.test.ts` |
 
 No CI green or database-side multi-session verification is claimed for these authored tests.
 
