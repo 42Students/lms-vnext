@@ -63,13 +63,13 @@ export default async function TpoNoShowReportPage({
           <div className="flex flex-wrap gap-2">
             <a
               href={"/api/placements/drive-day/" + encodeURIComponent(data.round.id) + "/no-shows/export"}
-              className="inline-flex min-h-11 items-center rounded-[9px] bg-primary px-4 text-sm font-semibold text-primary-foreground"
+              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[9px] bg-primary px-4 text-sm font-semibold text-primary-foreground"
             >
               Export explicit no-shows CSV
             </a>
             <a
               href={"/api/placements/drive-day/" + encodeURIComponent(data.round.id) + "/attendance/export"}
-              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:bg-surface-secondary"
+              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:bg-surface-secondary"
             >
               Export complete attendance CSV
             </a>

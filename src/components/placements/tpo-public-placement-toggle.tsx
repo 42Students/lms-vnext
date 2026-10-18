@@ -33,7 +33,7 @@ export function TpoPublicPlacementToggle({enabled,canEnable}:{enabled:boolean;ca
  }
  return <div className="mt-4 space-y-2">
   <button type="button" disabled={busy||(!enabled&&!canEnable)} onClick={()=>void save()}
-    className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+    className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
     {enabled?"Turn placements page off":"Turn placements page on"}
   </button>
   {message?<p role="status" className="text-sm text-body">{message}</p>:null}

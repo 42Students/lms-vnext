@@ -48,7 +48,7 @@ export function TpoDriveRequestActions({requestId,status}:{
           setAction(option.value);setError("");setMessage("");
           setReason(option.value==="APPROVE_LATER"?"Approved for later":"");
         }}
-        className="min-h-10 rounded border border-border px-3 text-sm font-semibold">
+        className="min-h-11 md:min-h-9 rounded border border-border px-3 text-sm font-semibold">
         {option.label}</button>)}
     </div>
     {action?<div role="group" aria-label={actions.find(x=>x.value===action)?.label}
@@ -66,10 +66,10 @@ export function TpoDriveRequestActions({requestId,status}:{
       <p className="text-xs text-body">The recruiter is notified in the app. Email delivery is not enabled.</p>
       <div className="flex gap-2">
         <button type="button" onClick={()=>void runGuarded(submit)} disabled={busy||guardedPending||reason.trim().length<3}
-          className="min-h-10 rounded bg-primary px-3 text-sm text-on-primary disabled:opacity-50">
+          className="min-h-11 md:min-h-9 rounded bg-primary px-3 text-sm text-on-primary disabled:opacity-50">
           {busy?"Saving…":"Confirm"}</button>
         <button type="button" disabled={busy} onClick={()=>setAction(null)}
-          className="min-h-10 rounded border border-border px-3 text-sm">Cancel</button>
+          className="min-h-11 md:min-h-9 rounded border border-border px-3 text-sm">Cancel</button>
       </div>
     </div>:null}
     {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
