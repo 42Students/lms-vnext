@@ -1,3 +1,5 @@
+import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
+import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
 import { Skeleton } from "@/components/ui/skeleton";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
@@ -15,6 +17,7 @@ export default async function TpoJoiningFollowupsPage({searchParams}:{searchPara
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const query=await searchParams;
+  if(tpoReportHasAmbiguousFilters(query))return <TpoReportInvalidFilters path="/tpo/reports/joining-followups"/>;
  const report=await getTpoJoiningFollowups(context,{
   ...(first(query.seasonId)?{seasonId:first(query.seasonId)}:{}),
   ...(first(query.state)?{state:first(query.state)}:{}),

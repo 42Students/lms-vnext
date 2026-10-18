@@ -8,13 +8,13 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {PlacementsServiceError} from "./errors";
 import {listOwnRecruiterPlacementJobs} from "./recruiter-service";
 import {HR_NOTIFICATION_EVENTS} from "./hr-notifications-model";
-import {hrNotificationReadSchema,hrNotificationVersionMatches} from "./hr-notification-read-model";
+import {hrNotificationReadSchema,hrNotificationVersionMatches,ownsHrNotificationActor} from "./hr-notification-read-model";
 export async function markHrNotificationRead(
  context:RequestContext,idInput:unknown,raw:unknown
 ){
  const id=z.string().uuid().parse(idInput);
  const input=hrNotificationReadSchema.parse(raw);
- if(!hasActiveRecruiter(context)||!context.recruiter)
+ if(!hasActiveRecruiter(context)||!context.recruiter||!ownsHrNotificationActor(context))
   throw new AuthorizationError("placements.recruiter.read");
  const allowed=await listOwnRecruiterPlacementJobs(context);
  const jobIds=allowed.filter(row=>row.companyId===context.recruiter!.companyId)

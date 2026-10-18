@@ -1,6 +1,7 @@
 import {readFileSync} from "node:fs";
 import {describe,expect,it} from "vitest";
 import {tpoStudentRequestsHasInvalidUrlFilters} from "@/modules/placements/tpo-student-requests-url-model";
+import {tpoStudentRequestsQuerySchema} from "@/modules/placements/tpo-students-service";
 
 const collegeId="11111111-1111-4111-8111-111111111111";
 describe("UX-tpo-LAST-THIRD-01 /tpo/students/requests preserves one college's authorized filter set",()=>{
@@ -20,6 +21,9 @@ describe("UX-tpo-LAST-THIRD-01 /tpo/students/requests preserves one college's au
   expect(page).toContain("No requests were loaded because one or more filters");
   expect(page).toContain("tpoStudentRequestsQuerySchema.safeParse");
   expect(page).toContain("collegeId: context.membership.collegeId");
+  const valid=tpoStudentRequestsQuerySchema.safeParse({collegeId,status:"PENDING",search:"Ada",page:2,pageSize:25});
+  expect(valid.success).toBe(true);
+  expect(tpoStudentRequestsQuerySchema.safeParse({collegeId,status:"FORGED"}).success).toBe(false);
   const service=readFileSync("src/modules/placements/tpo-students-service.ts","utf8");
   expect(service).toContain("tpoStudentRequestsQuerySchema");
  });

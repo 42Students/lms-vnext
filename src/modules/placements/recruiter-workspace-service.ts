@@ -78,6 +78,9 @@ export async function getRecruiterPlacementWorkspace(
       and(
         eq(placementJobs.id, jobId),
         recruiterOwnJobPredicate(context.user.id),
+        eq(placementCompanyRelationships.status, "ACTIVE"),
+        eq(placementCompanies.status, "ACTIVE"),
+        eq(colleges.status, "ACTIVE"),
         eq(
           placementCompanyRelationships.collegeId,
           placementJobs.collegeId,

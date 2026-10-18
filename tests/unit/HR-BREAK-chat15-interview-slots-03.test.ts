@@ -1,4 +1,6 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
+import {readFileSync} from "node:fs";
+import {join} from "node:path";
 
 const mocks=vi.hoisted(()=>({
  getDb:vi.fn(),can:vi.fn(),notify:vi.fn(),insert:vi.fn(),update:vi.fn(),
@@ -51,6 +53,22 @@ describe("HR-SLOT-SERVICE-03 recruiter slot authorization and stale-window write
    set(){return this;},where(){return this;},
    returning:()=>Promise.resolve([{id:slotId}]),
   }));
+ });
+ it("HR-SLOT-ARCHIVE-27 scopes both job authorization and the slot transaction to active tenant records",()=>{
+  const source=readFileSync(join(process.cwd(),
+   "src/modules/placements/hr-interview-slot-service.ts"),"utf8");
+  const scope=source.slice(source.indexOf("async function verifyRecruiterSlotJob"),
+   source.indexOf("export async function listHrInterviewSlots"));
+  for(const requirement of [
+   'isNull(placementJobs.archivedAt)',
+   'eq(placementCompanies.status,"ACTIVE")',
+   'eq(colleges.status,"ACTIVE")',
+   'eq(placementCompanyRelationships.status,"ACTIVE")',
+   'eq(placementRecruiterProfiles.status,"ACTIVE")',
+   'eq(placementRecruiterCollegeGrants.status,"ACTIVE")',
+  ])expect(scope).toContain(requirement);
+  expect(source).toContain("const job=await verifyRecruiterSlotJob(tx,context,jobId)");
+  expect(source.split("const job=await verifyRecruiterSlotJob(tx,context,jobId)").length-1).toBe(2);
  });
  it("HR-SLOT-SCOPE-01 rejects revoked recruiter and wrong college job before slot reads",async()=>{
   await expect(writeHrInterviewSlot(

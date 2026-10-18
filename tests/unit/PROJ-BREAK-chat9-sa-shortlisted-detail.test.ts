@@ -48,7 +48,7 @@ describe("Super Admin last-third shortlisted applicant detail role, tenant and p
     const result=await getSuperAdminShortlistedDetail(actor(),applicationId);
     expect(result?.title).toBe("IIT Student");
     expect(result?.status).toBe("SHORTLISTED");
-    expect(result?.related.href).toBe("/admin/placements/applications/"+applicationId);
+    expect(result?.related?.href).toBe("/admin/placements/applications/"+applicationId);
     const sql=state.joinFilters.map(render);
     const college=sql.find(item=>item.sql.includes('"placement_jobs"."college_id"'));
     expect(college?.params).toContain(collegeId);
