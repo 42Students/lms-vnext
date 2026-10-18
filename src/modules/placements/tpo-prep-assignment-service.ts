@@ -31,13 +31,23 @@ async function hasPrepTable(){
 export async function listTpoPrepCourseOptions(ctx:RequestContext){
  const college=await requireTpo(ctx);
  await hasPrepTable();
- return getDb().select({id:courseOfferings.id,courseId:courses.id,name:courses.name,
+ const rows=await getDb().select({id:courseOfferings.id,courseId:courses.id,name:courses.name,
   code:courses.code,cohortId:courseOfferings.cohortId}).from(courseOfferings)
   .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
   .innerJoin(departments,and(eq(departments.id,courses.departmentId),
    eq(departments.collegeId,college.id),isNull(departments.archivedAt)))
   .where(and(eq(courseOfferings.status,"ACTIVE"),eq(courses.status,"ACTIVE")))
   .orderBy(courses.name,courses.code).limit(300);
+ await getDb().transaction(async tx=>{
+  const [active]=await tx.select({status:colleges.status}).from(colleges)
+   .where(eq(colleges.id,college.id)).for("share").limit(1);
+  if(!active||active.status!=="ACTIVE")throw new AuthorizationError("placements.manage");
+  const current=await assertPersistedPlatformPermission(tx,ctx,"placements.manage",{
+   collegeId:college.id,organizationId:college.organizationId,
+  });
+  if(!hasMembershipRole(current,"TPO"))throw new AuthorizationError("placements.manage");
+ });
+ return rows;
 }
 export async function assignTpoPrepCourse(ctx:RequestContext,raw:unknown){
  const college=await requireTpo(ctx),input=inputSchema.parse(raw);
@@ -67,6 +77,7 @@ export async function assignTpoPrepCourse(ctx:RequestContext,raw:unknown){
    collegeId:college.id,organizationId:college.organizationId,
   });
   if(!hasMembershipRole(persisted,"TPO"))throw new AuthorizationError("placements.manage");
+  if(due&&due.getTime()<=Date.now())throw new TpoPrepError("DUE_DATE_INVALID");
   const [offering]=await tx.select({id:courseOfferings.id,cohortId:courseOfferings.cohortId,
    title:courses.name}).from(courseOfferings)
    .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
