@@ -305,20 +305,37 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/modules/projects/mentor-project-attention-filter-model.ts` | `matchesMentorProjectAttention` | `tests/unit/projects-mentor-attention-risk-chat14.test.ts` | Runtime authored, unrun |
 | `src/modules/projects/mentor-project-event-attribution.ts` | `resolveMentorActivityProjectId` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-project-list-query.ts` | `mentorProjectListQuerySchema` | `tests/unit/projects-mentor-policy-matrix-chat14.test.ts` | Runtime authored, unrun |
-| `src/modules/projects/mentor-project-order-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-project-team-size-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-project-timeline-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-project-timeline-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-project-work-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-project-work-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-reassignment-workload-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-release-version-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-release-write-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-reports-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-reports-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-resource-audit-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-resource-directory-layout-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-resource-directory-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
+| `src/modules/projects/mentor-project-order-model.ts` | `compareMentorProjects` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-project-order-model.ts` | `compareMentorProjectsByProgress` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-project-order-model.ts` | `compareMentorProjectsByMostProgress` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-project-order-model.ts` | `compareMentorProjectsByOpenTasks` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-project-order-model.ts` | `compareMentorProjectsByTeamSize` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-project-team-size-service.ts` | `getMentorProjectTeamSizes` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-project-timeline-model.ts` | `mentorProjectTimeline` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-project-timeline-model.ts` | `mentorTimelineHref` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-project-timeline-model.ts` | `mentorTimelineQuerySchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-project-timeline-service.ts` | `getMentorProjectTimeline` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-project-work-model.ts` | `matchesMentorProjectWork` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-project-work-model.ts` | `mentorTaskProgress` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-project-work-service.ts` | `getMentorProjectWorkCounts` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-reassignment-workload-service.ts` | `listCollegeProjectMentorWorkload` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-reassignment-workload-service.ts` | `listCollegeReassignmentWorkspaces` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-release-version-model.ts` | `mentorReleaseVersionMatches` | `tests/unit/PROJ-BREAK-mentor-release-cas-chat14.test.ts` | Static/source only, behavioural pending |
+| `src/modules/projects/mentor-release-version-model.ts` | `mentorReleaseDeleteSchema` | `tests/unit/PROJ-BREAK-mentor-release-cas-chat14.test.ts` | Static/source only, behavioural pending |
+| `src/modules/projects/mentor-release-write-service.ts` | `writeMentorProjectRelease` | `tests/unit/projects-mentor-service-guards-chat14.test.ts` | Static/source only, behavioural pending |
+| `src/modules/projects/mentor-reports-model.ts` | `mentorReportsOverview` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-reports-model.ts` | `mentorReportsHref` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-reports-model.ts` | `mentorReportsCsv` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-reports-model.ts` | `mentorReportsQuerySchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-reports-service.ts` | `getMentorReports` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-resource-audit-model.ts` | `projectResourceAuditInput` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-resource-directory-layout-model.ts` | `mentorResourceDirectoryFilterLayout` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-resource-directory-model.ts` | `safeHttpsResourceUrl` | `tests/unit/projects-mentor-sprint-resource-coverage-chat14.test.ts` | Runtime authored, unrun |
+| `src/modules/projects/mentor-resource-directory-model.ts` | `mentorResourceDirectory` | `tests/unit/projects-mentor-sprint-resource-coverage-chat14.test.ts` | Runtime authored, unrun |
+| `src/modules/projects/mentor-resource-directory-model.ts` | `mentorResourceDirectoryHref` | `tests/unit/projects-mentor-sprint-resource-coverage-chat14.test.ts` | Runtime authored, unrun |
+| `src/modules/projects/mentor-resource-directory-model.ts` | `mentorResourceDirectoryCsv` | `tests/unit/projects-mentor-sprint-resource-coverage-chat14.test.ts` | Runtime authored, unrun |
+| `src/modules/projects/mentor-resource-directory-model.ts` | `parseMentorResourceDirectorySearch` | `tests/unit/projects-mentor-sprint-resource-coverage-chat14.test.ts` | Runtime authored, unrun |
+| `src/modules/projects/mentor-resource-directory-model.ts` | `mentorResourceDirectoryQuerySchema` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-resource-directory-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
 | `src/modules/projects/mentor-review-completeness-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
 | `src/modules/projects/mentor-review-completeness-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
