@@ -86,7 +86,7 @@ export default async function MentorNotificationsPage({
   }));
   const nextHref = inbox?.page.nextCursor
     ? mentorInboxPageHref(inbox.query.view,inbox.page.nextCursor) : null;
-  return <div className="space-y-8">
+  return <div className="min-w-0 max-w-full space-y-8">
     <PageHeader title="Notifications"
       description="Announcements, submissions waiting for review, stalled projects, and meetings coming up soon." />
     {failedSources.length ? <div role="alert" className="rounded-xl border border-border bg-surface p-4">
@@ -95,7 +95,7 @@ export default async function MentorNotificationsPage({
         Could not load: {failedSources.join(", ")}. Everything else below is current, but this page may be incomplete.
       </p>
       <Link href={MENTOR_INBOX}
-        className="mt-3 inline-flex min-h-10 items-center font-semibold text-primary-text underline">Retry sources</Link>
+        className="mt-3 inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry sources</Link>
     </div> : null}
     <AnnouncementFeed enabled={announcementsEnabled}
       items={announcements.map(item=>({
@@ -111,28 +111,28 @@ export default async function MentorNotificationsPage({
         className="flex flex-wrap items-end gap-3 rounded-lg border border-border p-3">
         <label className="grid gap-1 text-sm font-semibold">Project with recorded attention
           <select name="projectId" defaultValue={projectId.data??""}
-            className="min-h-10 max-w-full rounded-md border border-border bg-background px-3">
+            className="min-h-11 max-w-full rounded-md border border-border bg-background px-3">
             <option value="">All assigned Projects</option>
             {projectOptions.map(({id,title})=><option key={id} value={id}>{title}</option>)}
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold">Attention order
           <select name="attentionOrder" defaultValue={attentionOrder.data}
-            className="min-h-10 rounded-md border border-border bg-background px-3">
+            className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="RECENT">Most recent recorded first</option>
             <option value="REVIEW_FIRST">Reviews and requests first</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold">Attention type
           <select name="kind" defaultValue={kind.data}
-            className="min-h-10 rounded-md border border-border bg-background px-3">
+            className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="ALL">All</option><option value="REVIEW">Reviews</option>
             <option value="STALLED">Stalled</option>
             <option value="REQUESTED">Meeting requests</option>
             <option value="MEETING_SOON">Meetings soon</option>
           </select>
         </label>
-        <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
           Filter attention
         </button>
         <Link href={MENTOR_INBOX} className="text-sm text-primary-text underline">Clear</Link>
@@ -180,7 +180,7 @@ export default async function MentorNotificationsPage({
               emptyText={!inbox ? "Personal notifications are temporarily unavailable." : inbox.query.view === "unread" ? "No unread notifications." : "No personal notifications yet."} />
             {nextHref ? <div className="flex justify-center">
               <Link href={nextHref}
-                className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle">
+                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle">
                 Older notifications
               </Link>
             </div> : null}

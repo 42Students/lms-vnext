@@ -7,10 +7,10 @@ import { getCandidatePreferences } from "@/modules/placements/candidate-preferen
 export default async function LearnerPlacementNotificationPreferencesPage(){
   const context=await getCurrentRequestContext();
   const preferences=await getCandidatePreferences(context);
-  return <main className="space-y-6">
+  return <div className="min-w-0 space-y-6">
     <PageHeader eyebrow="Learner · My Placements" title="Placement notifications"
       description="Manage the two registered placement notification preferences for your active Learner membership." />
-    <Link href="/learn/my-placements" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
+    <Link href="/learn/my-placements" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
       ← Back to My Placements
     </Link>
     <LearnerPlacementNotificationSettings key={preferences.updatedAt?.toISOString()??"defaults"}
@@ -18,5 +18,5 @@ export default async function LearnerPlacementNotificationPreferencesPage(){
         notifyMatchingJobs:preferences.notifyMatchingJobs,
         notifyApplicationUpdates:preferences.notifyApplicationUpdates,
       }} />
-  </main>;
+  </div>;
 }

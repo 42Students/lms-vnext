@@ -19,7 +19,7 @@ export default async function CollegeAcademicsPage() {
   );
 
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 overflow-x-clip space-y-6">
       <PageHeader
         eyebrow="College Admin"
         title="Academics"
@@ -28,7 +28,7 @@ export default async function CollegeAcademicsPage() {
       <div>
         <Link
           href="/college/programs"
-          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle"
+          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:border-primary hover:bg-primary-subtle"
         >
           Open Programs directory
         </Link>

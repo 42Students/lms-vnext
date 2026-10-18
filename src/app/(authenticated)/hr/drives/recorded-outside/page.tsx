@@ -14,21 +14,21 @@ export default async function HrRecordedOutsidePage({searchParams}:{
  const q=await searchParams;
  const raw=Array.isArray(q.collegeId)?q.collegeId[0]:q.collegeId;
  const collegeId=raw??(context.recruiter.grants.length===1?context.recruiter.grants[0]?.collegeId:undefined);
- if(!collegeId)return <main className="space-y-4">
+ if(!collegeId)return <div className="min-w-0 max-w-full space-y-4">
   <PageHeader eyebrow="Recruiter · Drive creation" title="Choose a college for the external drive"/>
   {context.recruiter.grants.map(g=><Link key={g.id}
    href={"/hr/drives/recorded-outside?collegeId="+g.collegeId}
    className="block min-h-11 rounded-md border border-border p-3 text-primary-text">{g.collegeName}</Link>)}
- </main>;
+ </div>;
  if(!z.string().uuid().safeParse(collegeId).success||!context.recruiter.grants.some(g=>g.collegeId===collegeId))notFound();
  const result=await recordedOutsideChoices(context,collegeId);
  const savedId=Array.isArray(q.saved)?q.saved[0]:q.saved;
  const saved=savedId?await verifyRecordedOutsideConfirmation(context,collegeId,savedId):false;
- return <main className="space-y-5">
+ return <div className="min-w-0 max-w-full space-y-5">
   <PageHeader eyebrow="Recruiter · Drive creation" title="Record an outside-platform drive"
    description="Historical employer-college record only. This cannot publish a student-visible job."/>
   <Link href={"/hr/drives/new?collegeId="+collegeId} className="inline-flex min-h-11 items-center text-primary-text">Back to drive request</Link>
   {saved?<p role="status" className="rounded-md border border-border p-3 text-sm text-body">External drive record saved. It was not published as a job.</p>:null}
   <RecordedOutsideForm collegeId={collegeId} choices={result.choices}/>
- </main>;
+ </div>;
 }

@@ -20,7 +20,7 @@ export default async function MentorReviewOverviewPage({
  <Link href="/mentor/projects" className="text-primary-text underline">Projects</Link>
  </section>;
  const data=await getMentorDeliveryReviewOverview(await getCurrentRequestContext(),parsed.data);
- return <div className="space-y-6">
+ return <div className="min-w-0 max-w-full space-y-6">
  <PageHeader eyebrow="Mentor · Project" title="Delivery review overview"
  description={data.project.title+" · "+data.project.status}
  actions={<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
@@ -30,14 +30,14 @@ export default async function MentorReviewOverviewPage({
  className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
   <label className="grid gap-1 text-sm font-semibold text-body">Delivery status
    <select name="status" defaultValue={data.query.status}
-    className="min-h-10 rounded-md border border-border bg-background px-3">
+    className="min-h-11 rounded-md border border-border bg-background px-3">
     {(["ALL","DRAFT","SUBMITTED","APPROVED","CHANGES_REQUESTED"] as const).map(status=>
      <option key={status} value={status}>{status.replaceAll("_"," ")}</option>)}
    </select>
   </label>
   <label className="grid gap-1 text-sm font-semibold text-body">Written feedback
    <select name="feedback" defaultValue={data.query.feedback}
-    className="min-h-10 rounded-md border border-border bg-background px-3">
+    className="min-h-11 rounded-md border border-border bg-background px-3">
     <option value="ALL">Any</option>
     <option value="WITH">Recorded</option>
     <option value="WITHOUT">Not recorded</option>
@@ -46,9 +46,9 @@ export default async function MentorReviewOverviewPage({
   <label className="grid gap-1 text-sm font-semibold text-body">Exact delivery version
    <input type="number" name="version" min={1} max={1000000}
     defaultValue={data.query.version??""}
-    placeholder="All versions" className="min-h-10 rounded-md border border-border bg-background px-3"/>
+    placeholder="All versions" className="min-h-11 rounded-md border border-border bg-background px-3"/>
   </label>
-  <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+  <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
    Filter
   </button>
   <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"}
@@ -58,7 +58,7 @@ export default async function MentorReviewOverviewPage({
   <Link href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-delivery-review-export?"+
    new URLSearchParams({status:data.query.status,feedback:data.query.feedback,
     ...(data.query.version===undefined?{}:{version:String(data.query.version)})}).toString()}
-   download className="inline-flex min-h-10 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
+   download className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
    Export filtered delivery review CSV (max 200)
   </Link>
   {data.total>200?<p role="status">CSV omits {data.total-200} versions beyond the cap.</p>:null}
@@ -82,7 +82,7 @@ export default async function MentorReviewOverviewPage({
  <p className="mt-2 text-sm text-body">{item.reviewLabel}</p>
  <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+
   "/deliveries/"+encodeURIComponent(item.id)+"/review"}
-  className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+  className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
   View recorded review details
  </Link>
  <p className="mt-1 text-xs text-muted-foreground">

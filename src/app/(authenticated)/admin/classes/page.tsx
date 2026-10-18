@@ -1,5 +1,7 @@
 import { AcademicSetupSteps } from "@/components/admin/academic-setup-steps";
 import Link from "next/link";
+import {PageHeader} from "@/components/ui/page-header";
+import {DataTable} from "@/components/ui/data-table";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeClassCreate, CollegeClassRowActions } from "@/components/academics/college-section-management";
 import { listCollegeClasses } from "@/modules/academics/college-structure-directory-service";
@@ -24,62 +26,65 @@ export default async function SuperAdminClassesPage({ searchParams }: {
         listCollegeSectionOptions(context),
       ])
     : [null, null];
-  return <div className="space-y-6">
+  return <div className="min-w-0 space-y-6">
+    <PageHeader eyebrow="Super Admin · Academic Setup" title="Classes"/>
       {data ? <AcademicSetupSteps step={6} /> : null}
     {!selected ? <p role="status" className="rounded-xl border border-border bg-surface p-5">Select a college to continue. Choose a college in the header above to see its classes.</p> : null}
     {data && options ? <>
       <CollegeClassCreate cohorts={options.cohorts} periods={options.periods} />
       <section aria-label="Filter managed classes" className="rounded-xl border border-border bg-surface p-4">
         <form method="get" action="/admin/classes" className="flex flex-wrap items-end gap-3">
-          <label className="grid min-w-44 gap-1 text-sm font-semibold text-body">Program
+          <label className="grid min-w-0 w-full sm:min-w-44 gap-1 text-sm font-semibold text-body">Program
             <select name="programId" defaultValue={data.query.programId ?? ""}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="">All programs</option>
               {data.programs.map(program => <option key={program.id} value={program.id}>{program.name}</option>)}
             </select>
           </label>
-          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">Batch code
+          <label className="grid min-w-0 w-full sm:min-w-40 gap-1 text-sm font-semibold text-body">Batch code
             <input name="cohortCode" defaultValue={data.query.cohortCode ?? ""} placeholder="Search batch code"
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
           </label>
-          <label className="grid min-w-44 flex-1 gap-1 text-sm font-semibold text-body">Search class, program or batch
+          <label className="grid min-w-0 w-full sm:min-w-44 flex-1 gap-1 text-sm font-semibold text-body">Search class, program or batch
             <input name="q" type="search" defaultValue={data.query.q}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
           </label>
-          <label className="grid min-w-32 gap-1 text-sm font-semibold text-body">Status
+          <label className="grid min-w-0 w-full sm:min-w-32 gap-1 text-sm font-semibold text-body">Status
             <select name="status" defaultValue={data.query.status} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               {statuses.map(status=><option key={status} value={status}>{status==="ALL"?"All statuses":status}</option>)}
             </select>
           </label>
-          <label className="grid min-w-32 gap-1 text-sm font-semibold text-body">Rows per page
+          <label className="grid min-w-0 w-full sm:min-w-32 gap-1 text-sm font-semibold text-body">Rows per page
             <select name="pageSize" defaultValue={data.query.pageSize} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               {[10,25,50,100].map(n=><option key={n} value={n}>{n}</option>)}
             </select>
           </label>
-          <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
-          <button type="submit" className="min-h-11 rounded-md border border-border px-4 font-semibold text-primary-text">Refresh</button>
-          <Link href="/admin/classes" className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear filters</Link>
+          <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-foreground">Filter</button>
+          <button type="submit" className="min-h-11 rounded-md border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">Refresh</button>
+          <Link href="/admin/classes" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>
         </form>
       </section>
       <section aria-label="Manage classes" className="space-y-3 rounded-xl border border-border bg-surface p-4">
         <h2 className="text-lg font-semibold">Manage classes</h2>
         <p className="text-sm text-muted-foreground">Edit class names, codes and capacities within the selected college.</p>
-        {data.items.length === 0 ? <p>No matching classes on this page.</p> :
-          <div className="overflow-x-auto"><table className="w-full min-w-[38rem] text-left text-sm">
-            <thead><tr><th className="p-2">Class</th><th className="p-2">Program</th><th className="p-2">Batch</th>
-              <th className="p-2">Description</th><th className="p-2">Students</th><th className="p-2">Max Students</th><th className="p-2">Actions</th></tr></thead>
-            <tbody>{data.items.map(row => <tr key={row.id} className="border-t border-border">
-              <td className="p-2">{row.name} ({row.code})
-                <Link href={`/admin/academics/sections/${encodeURIComponent(row.id)}`} className="mt-1 block text-xs font-semibold text-primary-text">Manage students →</Link>
-                <Link href={`/admin/academics/sections/${encodeURIComponent(row.id)}#section-schedule`} className="mt-1 block text-xs font-semibold text-primary-text">Schedule →</Link></td>
-              <td className="p-2">{row.programName}</td>
-              <td className="p-2">{row.cohortName}</td>
-              <td className="p-2">{row.description?.trim() || "—"}</td>
-              <td className="p-2">{row.activeLearners}{row.capacity!==null && row.activeLearners>=row.capacity ? <span className="ml-2 rounded border border-border px-2 text-xs font-semibold text-error" title="Class is full; learners cannot be moved into it.">Class full</span> : null}</td>
-              <td className="p-2">{row.capacity ?? "—"}</td>
-              <td className="p-2"><CollegeClassRowActions row={row} /></td>
-            </tr>)}</tbody>
-          </table></div>}
+        <DataTable<(typeof data.items)[number]> caption="Manage classes" rows={data.items} getRowKey={row=>row.id}
+          empty={<p role="status">No matching classes on this page.</p>}
+          columns={[
+            {key:"class",header:"Class",mobilePriority:"primary",cell:row=><div className="min-w-0">
+              <span className="font-semibold">{row.name} ({row.code})</span>
+              <Link href={`/admin/academics/sections/${encodeURIComponent(row.id)}`} className="mt-1 inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Manage students →</Link>
+              <Link href={`/admin/academics/sections/${encodeURIComponent(row.id)}#section-schedule`} className="mt-1 inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Schedule →</Link>
+            </div>},
+            {key:"program",header:"Program",mobilePriority:"secondary",cell:row=>row.programName},
+            {key:"batch",header:"Batch",mobilePriority:"secondary",cell:row=>row.cohortName},
+            {key:"description",header:"Description",mobilePriority:"secondary",cell:row=>row.description?.trim()||"—"},
+            {key:"students",header:"Students",mobilePriority:"secondary",cell:row=><>
+              {row.activeLearners}{row.capacity!==null&&row.activeLearners>=row.capacity?
+                <span className="ml-2 rounded border border-border px-2 text-xs font-semibold text-foreground" title="Class is full; learners cannot be moved into it.">Class full</span>:null}
+            </>},
+            {key:"capacity",header:"Max Students",mobilePriority:"secondary",cell:row=>row.capacity??"—"},
+            {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><CollegeClassRowActions row={row}/>},
+          ]} />
         <nav aria-label="Class pages" className="flex items-center justify-between gap-3 text-sm">
           <span role="status" aria-live="polite">{data.items.length} of {data.total} results · Page {data.query.page} of {data.totalPages}</span>
           <div className="flex gap-3">
@@ -87,7 +92,7 @@ export default async function SuperAdminClassesPage({ searchParams }: {
             {data.query.page<data.totalPages?<Link href={pageUrl({...data.query,page:data.query.page+1})}>Next</Link>:null}
           </div>
         </nav>
-        <Link href="/admin/batch-promotion" className="inline-flex min-h-10 items-center font-semibold text-primary-text">
+        <Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">
           Batch Promotion →
         </Link>
       </section>

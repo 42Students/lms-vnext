@@ -28,7 +28,7 @@ export default async function CollegeBatchesPage({
       <PageHeader eyebrow="College Admin · Academic Setup" title="Batches" />
       <ErrorState title="Invalid batch filters"
         description={collegeDirectoryValidationMessage(parsed.error)}
-        action={<Link href="/college/batches" className="font-semibold text-primary-text">Clear filters</Link>} />
+        action={<Link href="/college/batches" className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>} />
     </div>;
   }
   const [directory, periods] = await Promise.all([
@@ -38,11 +38,11 @@ export default async function CollegeBatchesPage({
   const periodChoices = periods.filter(period => period.status !== "CLOSED").map(period => ({
     id: period.id, name: period.name, code: period.code,
   }));
-  return <div className="min-w-0 space-y-6">
+  return <div className="min-w-0 overflow-x-clip space-y-6">
     <CollegeCohortCreateForm programs={directory.programs.filter(p => p.status === "ACTIVE")} periods={periodChoices} />
     <div className="flex flex-wrap items-center gap-3">
     <Link prefetch={false} download href={academicExportHref("BATCHES",directory.query)}
-      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
       Export CSV
     </Link>
     <p className="text-xs text-muted-foreground">Exports up to {ACADEMIC_EXPORT_CAP} matching batches; the CSV records when results are truncated. Filters and college scope also apply to the download.</p>

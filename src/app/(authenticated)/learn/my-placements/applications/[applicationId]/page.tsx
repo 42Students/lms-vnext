@@ -24,9 +24,9 @@ export default async function LearnerApplicationDetailPage({params}:{
   const requiresRequest=!scheduled.available || scheduled.value.rounds.some(
     round=>round.applicationId===applicationId,
   );
-  return <div className="space-y-6">
+  return <div className="min-w-0 space-y-6">
     <Link href="/learn/my-placements/applications"
-      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">← Applications</Link>
+      className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">← Applications</Link>
     <PageHeader eyebrow="My Placements" title={record.roleTitle}
       description={record.companyName+" · Own application status and timeline"}
       actions={<StatusBadge>{record.currentStatus.replaceAll("_"," ")}</StatusBadge>}/>
@@ -41,7 +41,7 @@ export default async function LearnerApplicationDetailPage({params}:{
         {requiresRequest?"A booked round requires the placement cell to review your withdrawal request. Your application stays active until approved.":"Withdrawing requires a reason and confirmation. Only a successful response updates your status."}
       </p>
       <Link href={"/learn/my-placements/applications/"+encodeURIComponent(record.applicationId)+"/company"}
-        className="mt-4 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">
+        className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">
         View recorded company details →
       </Link>
     </section>

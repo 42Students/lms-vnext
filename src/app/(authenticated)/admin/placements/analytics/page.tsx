@@ -4,6 +4,7 @@ import {getSuperAdminCompanyHiringReport} from "@/modules/admin-ui/super-admin-h
 import {getSuperAdminHiringReportFilters} from "@/modules/admin-ui/super-admin-hiring-report-filters-service";
 import {superAdminHiringReportQuery,hiringCompanyRollups,COMPANY_HIRING_COLUMNS} from "@/modules/admin-ui/super-admin-hiring-report-model";
 import {PageHeader} from "@/components/ui/page-header";
+import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
 import {hiringFunnel, hiringMetricLabel} from "@/modules/admin-ui/super-admin-hiring-funnel-model";
 export default async function SuperAdminPlacementAnalytics({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
@@ -16,7 +17,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
  });
  if(!parsed.success)return <div className="space-y-4"><PageHeader eyebrow="Super Admin · Placements" title="Analytics"/>
   <p role="alert">Invalid analytics filters. Check the selected dates or filters.</p>
-  <Link href="/admin/placements/analytics" className="text-primary-text underline">Clear all</Link></div>;
+  <Link href="/admin/placements/analytics" className="text-[var(--lms-teal-deep)] underline">Clear all</Link></div>;
  const context=await getCurrentRequestContext();
  const [data,filters]=await Promise.all([
   getSuperAdminCompanyHiringReport(context,parsed.data),
@@ -36,12 +37,25 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   withdrawn:out.withdrawn+row.withdrawn,waitlisted:out.waitlisted+row.waitlisted,
  }),{totalApplications:0,applied:0,shortlisted:0,assessment:0,interview:0,offered:0,hired:0,rejected:0,withdrawn:0,waitlisted:0});
  const funnel=hiringFunnel(totals);
+ const metricKeys=["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const;
+ type Row=(typeof data.rows)[number];
+ const columns:DataTableColumn<Row>[]=[
+  {key:"company",header:COMPANY_HIRING_COLUMNS[0]??"Company",mobilePriority:"primary",cell:row=>row.companyName},
+  {key:"drive",header:COMPANY_HIRING_COLUMNS[1]??"Drive",mobilePriority:"secondary",cell:row=>
+   <Link href={"/admin/placements/jobs/"+encodeURIComponent(row.jobId)}
+    className="inline-flex min-h-11 items-center break-words font-semibold text-[var(--lms-teal-deep)] underline">
+     {row.jobTitle}</Link>},
+  ...metricKeys.map((key,index)=>({
+    key,header:COMPANY_HIRING_COLUMNS[index+2]??key,mobilePriority:"secondary" as const,
+    cell:(row:Row)=><span className="tabular-nums">{row[key]}</span>,
+  })),
+ ];
  const select=(key:"jobId"|"departmentId"|"programId"|"cohortId",label:string,values:readonly {id:string;name:string}[])=>(
   <label className="grid gap-1 text-sm font-semibold">{label}<select name={key} defaultValue={q[key]??""}
    className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-2">
    <option value="">All {label.toLowerCase()}</option>{values.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
  );
- return <main className="space-y-5">
+ return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Placements" title="Placement Analytics"
    description="Track the hiring funnel, conversion and company performance for the selected college. Filters apply consistently to the headline metrics, funnel and company report below."/>
   <form method="get" action="/admin/placements/analytics" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -55,14 +69,14 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
     <input type="date" name="appliedFrom" defaultValue={q.appliedFrom??""} className="min-h-11 rounded-md border border-border bg-surface px-2"/></label>
    <label className="grid gap-1 text-sm font-semibold">Applied through
     <input type="date" name="appliedTo" defaultValue={q.appliedTo??""} className="min-h-11 rounded-md border border-border bg-surface px-2"/></label>
-   <div className="flex flex-wrap items-end gap-3"><button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Refresh</button>
-    <Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Clear all</Link></div>
+   <div className="flex flex-wrap items-end gap-3"><button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-foreground">Refresh</button>
+    <Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Clear all</Link></div>
   </form>
   {params.size?<p className="text-sm text-body">Active filters: {[...params.entries()].map(([key,value])=>key+" = "+value).join(" · ")}</p>:null}
   <div className="flex flex-wrap items-center justify-between gap-3">
    <p role="status" className="text-sm text-body">{data.rows.length} matching drives across {groups.length} companies{data.truncated?" · Capped at 5,000 drives":""}</p>
    <a href={"/api/admin/placements/hiring-report/export?"+params.toString()}
-    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-primary-text">Export report (CSV) →</a>
+    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">Export report (CSV) →</a>
   </div>
   <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">{(["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const).map(key=>
    <div key={key} className="rounded-xl border border-border bg-surface p-4"><dt className="text-sm capitalize text-muted-foreground">{hiringMetricLabel(key)}</dt>
@@ -84,21 +98,25 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
     </li>)}</ol>
   </section>
   <p className="text-sm text-muted-foreground">Avg. time to shortlist: Not recorded. Stage-transition timestamps are required for an accurate duration.</p>
-  <section className="overflow-x-auto rounded-xl border border-border bg-surface">
-   <table className="w-full min-w-[55rem] text-left text-sm">
-    <thead><tr className="border-b border-border bg-muted">{COMPANY_HIRING_COLUMNS.map(name=><th key={name} scope="col" className="p-3">{name}</th>)}</tr></thead>
-    <tbody>{data.rows.map(row=><tr key={row.jobId} className="border-b border-border">
-     <td className="p-3">{row.companyName}</td>
-     <td className="p-3"><Link href={"/admin/placements/jobs/"+encodeURIComponent(row.jobId)} className="text-primary-text underline">{row.jobTitle}</Link></td>
-     {(["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const).map(key=><td key={key} className="p-3 tabular-nums">{row[key]}</td>)}
-    </tr>)}</tbody>
-    <tfoot>{groups.map(row=><tr key={row.companyName} className="border-t border-border bg-muted font-semibold">
-     <th className="p-3 text-left" scope="row">{row.companyName}</th><td className="p-3">Company total</td>
-     {(["applied","shortlisted","assessment","interview","offered","hired","rejected"] as const).map(key=><td key={key} className="p-3 tabular-nums">{row[key]}</td>)}
-    </tr>)}</tfoot>
-   </table>
+  <section aria-label="Company hiring results" className="min-w-0 space-y-4">
+   <h2 className="text-lg font-semibold">Company hiring results</h2>
+   <DataTable columns={columns} rows={data.rows} getRowKey={row=>row.jobId}
+     caption="Company hiring report" empty={<p role="status" className="text-sm text-body">
+       No hiring results match these filters.</p>}/>
   </section>
-  {!data.rows.length?<p role="status" className="text-sm text-body">No hiring results match these filters.</p>:null}
+  {groups.length?<section aria-label="Company totals" className="space-y-3">
+   <h2 className="text-lg font-semibold">Company totals</h2>
+   <div className="grid min-w-0 gap-3 lg:grid-cols-2">{groups.map(group=>
+     <article key={group.companyName} className="min-w-0 rounded-xl border border-border bg-surface p-4">
+      <h3 className="break-words text-base font-semibold">{group.companyName}</h3>
+      <dl className="mt-3 grid grid-cols-2 gap-3 text-sm">
+       {metricKeys.map(key=><div key={key} className="min-w-0">
+        <dt className="break-words text-body">{hiringMetricLabel(key)}</dt>
+        <dd className="tabular-nums font-semibold text-foreground">{group[key]}</dd>
+       </div>)}
+      </dl>
+     </article>)}</div>
+  </section>:null}
   <p className="text-xs text-muted-foreground">Stage counts are current persisted application stages, not historical transitions. Hired stage is not a substitute for confirmed joining. This report does not infer match scores or private candidate contacts.</p>
- </main>;
+ </div>;
 }

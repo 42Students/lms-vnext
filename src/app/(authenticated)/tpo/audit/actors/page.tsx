@@ -1,3 +1,7 @@
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
+import {DataTable} from "@/components/ui/data-table";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -40,7 +44,7 @@ export default async function TpoActorAuditPage({
   if (!parsed.success) {
     return <section role="alert" className="rounded-xl border border-border bg-surface p-6">
       <h1 className="text-lg font-semibold text-foreground">Invalid audit filters</h1>
-      <Link className="mt-2 inline-block text-primary-text underline" href="/tpo/audit/actors">
+      <Link className="mt-2 inline-block text-[var(--lms-teal-deep)] underline" href="/tpo/audit/actors">
         Clear filters
       </Link>
     </section>;
@@ -60,13 +64,13 @@ export default async function TpoActorAuditPage({
     dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
   });
   return <div className="space-y-6">
-    <Link href="/tpo/audit" className="text-sm font-semibold text-primary-text hover:underline">
+    <Link href="/tpo/audit" className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
       ← All audit sources
     </Link>
     <PageHeader eyebrow="TPO · Oversight" title="Actor and entity audit"
       description="Canonical placement activity events with exact persisted actor, entity and IST date filters."
       actions={<a href={exportHref}
-        className="inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+        className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-foreground">
         Export matching CSV (first 2,000)
       </a>} />
     <p className="text-sm leading-6 text-body">
@@ -83,34 +87,32 @@ export default async function TpoActorAuditPage({
       ] as const).map(([name, label, placeholder]) => <label key={name}
         className="grid gap-1 text-sm font-semibold text-foreground">
         {label}
-        <input name={name} defaultValue={parsed.data[name] ?? ""} placeholder={placeholder}
-          className="min-h-10 rounded-md border border-border bg-surface px-3 text-sm font-normal text-foreground"/>
+        <Input name={name} defaultValue={parsed.data[name] ?? ""} placeholder={placeholder}
+          className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm font-normal text-foreground"/>
       </label>)}
       {(["from", "to"] as const).map((name) => <label key={name}
         className="grid gap-1 text-sm font-semibold text-foreground">
         {name === "from" ? "From (IST)" : "Through (IST)"}
-        <input type="date" name={name} defaultValue={parsed.data[name] ?? ""}
-          className="min-h-10 rounded-md border border-border bg-surface px-3 text-sm font-normal text-foreground"/>
+        <Input type="date" name={name} defaultValue={parsed.data[name] ?? ""}
+          className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm font-normal text-foreground"/>
       </label>)}
       <label className="grid gap-1 text-sm font-semibold text-foreground">
        Sort date
-       <select name="sort" defaultValue={parsed.data.sort}
-        className="min-h-10 rounded-md border border-border bg-surface px-3">
+       <Select name="sort" defaultValue={parsed.data.sort}
+        className="min-h-11 rounded-md border border-border bg-surface px-3">
         <option value="NEWEST">Newest first</option><option value="OLDEST">Oldest first</option>
-       </select>
+       </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-foreground">
         Page size
-        <select name="pageSize" defaultValue={String(parsed.data.pageSize)}
-          className="min-h-10 rounded-md border border-border bg-surface px-3 text-sm font-normal text-foreground">
+        <Select name="pageSize" defaultValue={String(parsed.data.pageSize)}
+          className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm font-normal text-foreground">
           {[25, 50, 100].map((size) => <option key={size} value={size}>{size}</option>)}
-        </select>
+        </Select>
       </label>
       <div className="flex flex-wrap items-end gap-3 sm:col-span-2 lg:col-span-3">
-        <button type="submit" className="min-h-10 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">
-          Apply filters
-        </button>
-        <Link href="/tpo/audit/actors" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">
+        <Button type="submit">Apply filters</Button>
+        <Link href="/tpo/audit/actors" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">
           Reset filters
         </Link>
       </div>
@@ -119,41 +121,40 @@ export default async function TpoActorAuditPage({
       <h2 className="text-lg font-semibold text-foreground">
         {data.total} matching canonical record(s)
       </h2>
-      {data.rows.length === 0 ? (
-        <p role="status" className="rounded-xl border border-border bg-surface p-6 text-sm text-body">
-          {data.total === 0
-            ? "No canonical placement events match these exact filters."
-            : "This page is outside the available records. Choose an earlier page."}
-        </p>
-      ) : (
-        <div className="overflow-x-auto rounded-xl border border-border bg-surface">
-          <table className="w-full min-w-[56rem] text-left text-sm">
-            <thead className="bg-surface-subtle">
-              <tr>{["Recorded (IST)", "Actor", "Action", "Entity type", "Entity ID"].map(
-                (heading) => <th key={heading} scope="col" className="border-b border-border p-3">{heading}</th>,
-              )}</tr>
-            </thead>
-            <tbody>{data.rows.map((row) => <tr key={row.id} className="border-b border-border last:border-0">
-              <td className="p-3"><time dateTime={row.occurredAt}>
-                {dateTime.format(new Date(row.occurredAt))}
-              </time></td>
-              <td className="p-3 text-sm">{row.actorName?.trim()||"System / unknown"}</td>
-              <td className="p-3">{row.eventType}</td>
-              <td className="p-3">{row.entityType}</td>
-              <td className="p-3 font-mono text-xs">{tpoAuditEntityHref(row.entityType,row.entityId)?
-                <Link href={tpoAuditEntityHref(row.entityType,row.entityId)!} className="font-semibold text-primary-text underline">Open {row.entityType.replaceAll("_"," ")} →</Link>:
-                <span title="No safe direct page is registered for this entity type">{row.entityId}</span>}</td>
-            </tr>)}</tbody>
-          </table>
-        </div>
-      )}
+      <DataTable
+        caption="Matching canonical placement audit records"
+        rows={data.rows}
+        getRowKey={(row)=>row.id}
+        empty={<p role="status" className="text-sm text-body">
+          {data.total===0
+            ?"No canonical placement events match these exact filters."
+            :"This page is outside the available records. Choose an earlier page."}
+        </p>}
+        columns={[
+          {key:"when",header:"Recorded (IST)",mobileLabel:"Recorded (IST)",mobilePriority:"secondary",
+           cell:(row)=><time dateTime={row.occurredAt}>{dateTime.format(new Date(row.occurredAt))}</time>},
+          {key:"actor",header:"Actor",mobileLabel:"Actor",mobilePriority:"secondary",
+           cell:(row)=>row.actorName?.trim()||"System / unknown"},
+          {key:"action",header:"Action",mobileLabel:"Action",mobilePriority:"primary",
+           cell:(row)=>row.eventType},
+          {key:"type",header:"Entity type",mobileLabel:"Entity type",mobilePriority:"secondary",
+           cell:(row)=>row.entityType},
+          {key:"entity",header:"Entity ID",mobileLabel:"Entity ID",mobilePriority:"action",
+           cell:(row)=>tpoAuditEntityHref(row.entityType,row.entityId)?
+            <Link href={tpoAuditEntityHref(row.entityType,row.entityId)!}
+             className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">
+             Open {row.entityType.replaceAll("_"," ")} →
+            </Link>:
+            <span title="No safe direct page is registered for this entity type">{row.entityId}</span>},
+        ]}
+      />
       <nav aria-label="Actor audit pagination" className="flex items-center justify-between gap-3 text-sm">
         <span>Page {data.page} of {data.totalPages}</span>
         <div className="flex gap-4">
           {data.page > 1 && <Link href={urlForPage(data.page - 1)}
-            className="font-semibold text-primary-text">← Previous</Link>}
+            className="font-semibold text-[var(--lms-teal-deep)]">← Previous</Link>}
           {data.page < data.totalPages && <Link href={urlForPage(data.page + 1)}
-            className="font-semibold text-primary-text">Next →</Link>}
+            className="font-semibold text-[var(--lms-teal-deep)]">Next →</Link>}
         </div>
       </nav>
     </section>

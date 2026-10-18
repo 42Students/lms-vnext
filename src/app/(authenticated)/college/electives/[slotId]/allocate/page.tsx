@@ -145,26 +145,26 @@ export default async function CollegeElectiveAllocatePage({
       (reason ? "&reason=" + encodeURIComponent(reason) : ""));
   }
 
-  return <main className="min-w-0 space-y-6">
+  return <main className="min-w-0 overflow-x-clip space-y-6">
     <PageHeader eyebrow="College Admin · Academic Setup" title="Eligible students"
       description={"Allocate eligible learners to " + slot.name + ". Existing capacity, waitlist and maximum-choice rules are enforced."}
-      actions={<Link href="/college/electives" className="font-semibold text-primary-text">Back to Electives</Link>} />
+      actions={<Link href="/college/electives" className="font-semibold text-[var(--lms-teal-deep)]">Back to Electives</Link>} />
     {input.added !== undefined && <p role="status" className="rounded-md border border-border p-3">
       Processed {input.added} learner(s); {input.failed ?? "0"} failed.
       {input.reason ? " " + input.reason : ""}
     </p>}
     <form method="get" className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-surface p-4">
-      <label className="grid min-w-52 flex-1 gap-1 text-sm font-semibold">Class/Section
+      <label className="grid min-w-0 sm:min-w-52 flex-1 gap-1 text-sm font-semibold">Class/Section
         <select name="section" className={fieldStyle} defaultValue={input.section ?? ""}>
           <option value="">All sections</option>
           {allSections.map(s => <option key={s.id} value={s.id}>{s.name} ({s.code})</option>)}
         </select>
       </label>
-      <label className="grid min-w-52 flex-1 gap-1 text-sm font-semibold">Name, roll number or learner ID
+      <label className="grid min-w-0 sm:min-w-52 flex-1 gap-1 text-sm font-semibold">Name, roll number or learner ID
         <input name="q" type="search" maxLength={128} defaultValue={input.q ?? ""}
           className={fieldStyle} placeholder="Search eligible students" />
       </label>
-      <button className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Search</button>
+      <button className="min-h-11 rounded-md bg-primary px-4 font-semibold text-foreground">Search</button>
     </form>
     <form action={allocate} className="space-y-4 rounded-lg border border-border bg-surface p-4">
       <label className="grid gap-1 text-sm font-semibold">Allocate selected to…
@@ -177,14 +177,14 @@ export default async function CollegeElectiveAllocatePage({
       </label>
       {offerings.length === 0 && <p className="text-sm text-muted-foreground">
         Add a course offering to this slot before allocating learners.</p>}
-      <div className="max-h-80 overflow-auto rounded-md border border-border">
-        <table className="w-full text-left text-sm">
+      <div role="region" aria-label="Eligible students for allocation" tabIndex={0} className="max-h-80 overflow-auto overscroll-contain rounded-md border border-border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        <table className="w-full min-w-[560px] text-left text-sm">
           <thead className="sticky top-0 z-10 bg-surface"><tr className="border-b border-border">
-            <th className="p-2">Select</th><th className="p-2">Student</th>
+            <th scope="col" className="sticky left-0 z-20 bg-surface p-2">Select</th><th scope="col" className="p-2">Student</th>
             <th className="p-2">Roll No.</th><th className="p-2">Section</th>
           </tr></thead>
           <tbody>{students.map(s => <tr key={s.membershipId} className="border-b border-border">
-            <td className="p-2"><input type="checkbox" name="membershipId" value={s.membershipId} /></td>
+            <td className="sticky left-0 z-10 bg-surface p-2"><label className="flex min-h-11 min-w-11 items-center justify-center"><input type="checkbox" aria-label={"Select "+(s.name??s.rollNumber??"student")+" for allocation"} name="membershipId" value={s.membershipId} /></label></td>
             <td className="p-2">{s.name ?? s.membershipId}</td>
             <td className="p-2">{s.rollNumber ?? "—"}</td>
             <td className="p-2">{s.sectionName}</td>
@@ -198,7 +198,7 @@ export default async function CollegeElectiveAllocatePage({
           placeholder="One roll number or membership ID per line, comma separated also supported" />
       </label>
       <button type="submit" disabled={!offerings.length}
-        className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+        className="min-h-11 rounded-md bg-primary px-4 font-semibold text-foreground disabled:opacity-50">
         Allocate selected to…
       </button>
     </form>

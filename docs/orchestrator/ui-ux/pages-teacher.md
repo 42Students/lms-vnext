@@ -2,6 +2,8 @@
 
 Tick a page only after its UX note exists at docs/audit/ux/<route-with-dashes>.md and its tests pass.
 
+**Source implementation status (chat-3, 2026-10-18):** all 36 routes have source-level UX notes and ID-named tests. CI, 320/360/390 browser checks, keyboard and AT evidence have not run. Keep acceptance checkboxes empty until verified.
+
 - [ ] `/teacher/allAssignments` (src/app/(authenticated)/teacher/allAssignments/page.tsx)
 - [ ] `/teacher/allQuizzes` (src/app/(authenticated)/teacher/allQuizzes/page.tsx)
 - [ ] `/teacher/calendar` (src/app/(authenticated)/teacher/calendar/page.tsx)

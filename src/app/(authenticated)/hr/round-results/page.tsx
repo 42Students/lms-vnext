@@ -19,12 +19,12 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
  const raw=await searchParams;
  const query=recruiterResultTableQuerySchema.safeParse({jobId:first(raw.jobId)||undefined,
    roundId:first(raw.roundId)||undefined,outcome:first(raw.outcome)||undefined});
- if(!query.success) return <div className="space-y-5"><PageHeader eyebrow="Employer Recruiter" title="Round Results" />
+ if(!query.success) return <div className="min-w-0 max-w-full space-y-5"><PageHeader eyebrow="Employer Recruiter" title="Round Results" />
    <ErrorState title="Invalid round filters" description="Choose a valid hiring drive, round and outcome filter."
     action={<Link href="/hr/round-results" className="text-primary-text underline">Clear filters</Link>}/></div>;
  if(!query.data.jobId) {
    const jobs=(await listOwnRecruiterPlacementJobs(context)).filter(item=>item.job.archivedAt===null);
-   return <div className="space-y-6"><PageHeader eyebrow="Employer Recruiter" title="Round Results"
+   return <div className="min-w-0 max-w-full space-y-6"><PageHeader eyebrow="Employer Recruiter" title="Round Results"
      description="Choose one of your employer's authorized published or closed hiring drives. Private college applications are never listed." />
     {jobs.length?<section className="grid gap-3 sm:grid-cols-2">{jobs.map(item=>
      <Link key={item.job.id} href={recruiterResultTableHref({jobId:item.job.id})}
@@ -52,7 +52,7 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
   ALL:counts?.all??0,RECORDED:counts?.recorded??0,UNRECORDED:counts?.unrecorded??0,
   PASS:counts?.pass??0,FAIL:counts?.fail??0,HOLD:counts?.hold??0,ABSENT:counts?.absent??0,
  };
- return <div className="space-y-6">
+ return <div className="min-w-0 max-w-full space-y-6">
    <PageHeader eyebrow="Employer Recruiter" title="Round Results"
     description={workspace.company.name+" · "+workspace.college.name+" · "+workspace.job.title} />
    <nav aria-label="Round review navigation" className="flex flex-wrap gap-4 text-sm">

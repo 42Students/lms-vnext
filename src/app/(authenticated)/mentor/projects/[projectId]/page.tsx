@@ -60,7 +60,7 @@ export default async function MentorProjectPage({
     );
 
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 max-w-full min-w-0 space-y-6">
       <Breadcrumbs items={[{label:"Projects",href:"/mentor/projects"},{label:breadcrumbTab[selectedTab ?? "overview"] ?? "Overview"}]} />
       {(selectedTab==="board"||selectedTab==="performance") ?
         <PageHeader title={workspace.project.title} /> : null}

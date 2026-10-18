@@ -11,8 +11,8 @@ export default async function LearnerSupportHistory({searchParams}:{
   const data=await getOwnLearnerSupportRequests(await getCurrentRequestContext(),query);
   const choices=["ALL","PENDING","APPROVED","REJECTED","CANCELLED"] as const;
   const requestTypes=["ALL","APPLICATION_WITHDRAWAL","ROUND_RESCHEDULE","OFFER_EXTENSION"] as const;
-  return <div className="space-y-6">
-    <Link href="/learn/my-placements/placement" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">← Placement Cell</Link>
+  return <div className="min-w-0 space-y-6">
+    <Link href="/learn/my-placements/placement" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">← Placement Cell</Link>
     <PageHeader eyebrow="My Placements" title="My support requests"
       description="Your application withdrawal, round rescheduling and offer-extension requests from your college placement team." />
     <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
@@ -25,8 +25,8 @@ export default async function LearnerSupportHistory({searchParams}:{
       {choices.map(status=><Link key={status}
         aria-current={data.status===status?"page":undefined}
         href={learnerSupportHistoryHref({status,type:data.type})}
-        className={"inline-flex min-h-10 items-center rounded-lg border px-3 text-xs font-semibold "+
-          (data.status===status?"border-primary bg-primary-subtle text-primary-text":"border-border bg-surface text-foreground")}>
+        className={"inline-flex min-h-11 items-center rounded-lg border px-3 text-xs font-semibold "+
+          (data.status===status?"border-primary bg-primary-subtle text-[var(--lms-teal-deep)]":"border-border bg-surface text-foreground")}>
         {status==="ALL"?"All requests":status.charAt(0)+status.slice(1).toLowerCase()}
       </Link>)}
     </nav>
@@ -35,7 +35,7 @@ export default async function LearnerSupportHistory({searchParams}:{
         aria-current={data.type===type?"page":undefined}
         href={learnerSupportHistoryHref({status:data.status,type})}
         className={"inline-flex min-h-11 items-center rounded-lg border px-3 text-xs font-semibold "+
-          (data.type===type?"border-primary bg-primary-subtle text-primary-text":"border-border bg-surface text-foreground")}>
+          (data.type===type?"border-primary bg-primary-subtle text-[var(--lms-teal-deep)]":"border-border bg-surface text-foreground")}>
         {type==="ALL"?"All types":placementRequestTypeLabel(type)}
       </Link>)}
     </nav>
@@ -71,11 +71,11 @@ export default async function LearnerSupportHistory({searchParams}:{
     </ol>}
     <nav aria-label="Request history pages" className="flex flex-wrap gap-3">
       {data.hasPrevious?<Link href={learnerSupportHistoryHref({status:data.status,type:data.type,page:data.page-1})}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
         ← Newer requests
       </Link>:null}
       {data.hasMore?<Link href={learnerSupportHistoryHref({status:data.status,type:data.type,page:data.page+1})}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
         Older requests →
       </Link>:null}
     </nav>

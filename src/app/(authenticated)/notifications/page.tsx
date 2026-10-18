@@ -62,7 +62,7 @@ export default async function NotificationsPage({
     );
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         eyebrow="Inbox"
         title="Notifications"
@@ -72,7 +72,7 @@ export default async function NotificationsPage({
       {parsedCursor.invalid ? (
         <div role="alert" className="rounded-xl border border-border bg-surface p-4 text-sm text-foreground">
           The notification page link is invalid.{" "}
-          <Link href={view === "unread" ? "/notifications?view=unread" : "/notifications?view=all"} className="font-semibold text-primary-text underline">
+          <Link href={view === "unread" ? "/notifications?view=unread" : "/notifications?view=all"} className="font-semibold text-[var(--lms-teal-deep)] underline">
             Return to the newest notifications
           </Link>
         </div>
@@ -84,7 +84,7 @@ export default async function NotificationsPage({
           />
           {nextHref ? (
             <div className="flex justify-center">
-              <Link href={nextHref} className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle">
+              <Link href={nextHref} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle">
                 Older notifications
               </Link>
             </div>

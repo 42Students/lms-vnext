@@ -24,7 +24,7 @@ export default async function TemplateVersionComparisonPage({ params }: {
   }
   return <div className="min-w-0 space-y-6">
     <Link href={`/admin/projects/templates/${detail.template.id}/versions`}
-      className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">← Version history</Link>
+      className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">← Version history</Link>
     <PageHeader eyebrow="Super Admin · Read-only version comparison" title={detail.template.title}
       description={`Version ${detail.selected.version} compared with current version ${detail.current.version}. Existing workspaces retain their pinned snapshots.`} />
     <p className="text-sm text-muted-foreground">This snapshot is read-only. Publication state and college assignments are managed separately.</p>
