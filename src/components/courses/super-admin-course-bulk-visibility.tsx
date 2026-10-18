@@ -1,5 +1,6 @@
 "use client";
 import {useState} from "react";
+import {ScrollCue} from "@/components/ui/scroll-cue";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 type Course={id:string;name:string};
@@ -31,28 +32,28 @@ export function SuperAdminCourseBulkVisibility({courses}:{courses:readonly Cours
  return <section aria-label="Bulk course visibility" className="space-y-3 rounded-lg border border-border p-4">
   <h3 className="font-semibold text-foreground">Students see it</h3>
   <p className="text-sm text-body">Show to students or hide from students across published lesson content in selected courses. Archived or unpublished content remains unchanged.</p>
-  <label className="flex min-h-10 items-center gap-2 text-sm">
+  <label className="flex min-h-11 items-center gap-2 text-sm">
    <input type="checkbox" checked={courses.length>0&&selected.length===courses.length}
     disabled={pending||!courses.length}
     onChange={e=>setSelected(e.target.checked?courses.map(course=>course.id):[])}/>
    Select all courses on this page
   </label>
-  <div className="grid max-h-48 gap-2 overflow-auto sm:grid-cols-2">
-   {courses.map(course=><label key={course.id} className="flex min-h-10 items-center gap-2 text-sm">
+  <ScrollCue axis="y" label="Bulk course selection" viewportClassName="max-h-48"><div className="grid gap-2 sm:grid-cols-2">
+   {courses.map(course=><label key={course.id} className="flex min-h-11 items-center gap-2 text-sm">
     <input type="checkbox" checked={selected.includes(course.id)} disabled={pending}
      onChange={e=>setSelected(ids=>e.target.checked?[...ids,course.id]:ids.filter(id=>id!==course.id))}/>
     <span>{course.name}</span>
    </label>)}
-  </div>
+  </div></ScrollCue>
   <p className="text-xs text-muted-foreground" role="status">{selected.length} selected</p>
   <div className="flex flex-wrap gap-2">
    <button type="button" disabled={!selected.length||pending}
     onClick={()=>void apply(true)}
-    className="min-h-10 rounded-md border border-border px-4 font-semibold disabled:opacity-50">
+    className="min-h-11 rounded-md border border-border px-4 font-semibold disabled:opacity-50">
     {pending?"Updating…":"Show to students"}</button>
    <button type="button" disabled={!selected.length||pending}
     onClick={()=>void apply(false)}
-    className="min-h-10 rounded-md border border-border px-4 font-semibold disabled:opacity-50">
+    className="min-h-11 rounded-md border border-border px-4 font-semibold disabled:opacity-50">
     Hide from students</button>
   </div>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
@@ -60,7 +61,7 @@ export function SuperAdminCourseBulkVisibility({courses}:{courses:readonly Cours
    <p>{report.changed} updated · {report.unchanged} unchanged · {report.failures.length} failed</p>
    {report.failures.length?<button type="button" disabled={pending||lastAction===null}
     onClick={()=>lastAction!==null?void apply(lastAction):undefined}
-    className="min-h-10 rounded-md border border-border px-3 font-semibold">
+    className="min-h-11 rounded-md border border-border px-3 font-semibold">
     Retry failed
    </button>:null}
    {report.matchedLessons===0?<p>No published lesson content is available for the selected courses.</p>:null}
