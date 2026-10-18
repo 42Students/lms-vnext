@@ -42,27 +42,9 @@ import {
 } from "./risk-signals";
 import { loadProjectCollegeScope } from "./scope";
 import {adminUnsubmittedLiteralSearchPattern} from "./admin-unsubmitted-query-model";
+import {projectAdminServiceQuerySchema} from "./admin-service-query-model";
 
-const projectAdminQuerySchema = z.object({
-  riskBucket: z.enum(["STALLED", "BLOCKER", "REVIEW"]).optional(),
-  riskSort: z.enum(["INACTIVE","WORKSPACE","SEVERITY"]).optional(),
-  q: z.string().trim().max(120).optional(),
-  status: z
-    .enum([
-      "PLANNED",
-      "ACTIVE",
-      "COMPLETED",
-      "ARCHIVED",
-    ])
-    .optional(),
-  page: z.coerce.number().int().min(1).max(100000).default(1),
-  pageSize: z.coerce
-    .number()
-    .int()
-    .min(10)
-    .max(100)
-    .default(25),
-});
+const projectAdminQuerySchema = projectAdminServiceQuerySchema;
 
 export type ProjectAdminQuery = z.input<
   typeof projectAdminQuerySchema
