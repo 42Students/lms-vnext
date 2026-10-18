@@ -6,6 +6,10 @@ Updated 2026-10-18 on `chatgpt/chat-4-b`. **In progress; not exhaustive or CI ce
 
 | Source | Export | Test and behavioral cases |
 | --- | --- | --- |
+| `src/modules/colleges/admin-session-query-model.ts` | `parseAdminSessionHistoryPage` | `tests/unit/chat4-admin-college-session-history-journey.test.ts`: SA-colleges-admins-R01; valid page, rejected duplicates/foreign filters and nondecimal coercion |
+| `src/modules/colleges/admin-readiness-filter.ts` | `parseSuperAdminReadinessParams`, `visibleReadinessChecks` | `tests/unit/chat4-admin-college-readiness-journey.test.ts`: SA-colleges-readiness-R01; invalid URL rejection, persisted-filter classification by area/status |
+| `src/modules/colleges/readiness-model.ts` | `evaluateCollegeReadiness` | Same test: fail on zero, unknown when source unavailable, READY only with all ten passed; no runtime sign-off |
+| `src/modules/colleges/readiness-remediation-links.ts` | `readinessRemediationLink` | Same test: domain link stays inside exact college; faculty/program remediation routes |
 | `src/modules/colleges/admin-directory-query-model.ts` | `parseAdminDirectorySearchParams` | `tests/unit/chat4-admin-colleges-organizations-directory.test.ts`: SA-colleges-directory-01/02; trims q, preserves supported page sizes, rejects repeated, foreign/empty, out-of-range and malformed keys |
 | `src/modules/colleges/admin-directory-query-model.ts` | `adminDirectoryQuerySchema` | Same tests through its public parser; edge inputs validated without a database read |
 | `src/modules/colleges/admin-tenant-lifecycle-model.ts` | `tenantLifecycleQuerySchema`, `parseTenantLifecycleSearchParams`, `TENANT_LIFECYCLE_PAGE_SIZE`, `tenantLifecyclePaging`, `tenantLifecycleHref`, `tenantSetupLinksAvailable` | `tests/unit/chat4-tenant-lifecycle-signin-archive-policy.test.ts`: SA-colleges-directory-08/09/10; decimal-only URL pages, capped pagination, canonical href and archived parent/child setup restrictions |
@@ -27,6 +31,8 @@ Updated 2026-10-18 on `chatgpt/chat-4-b`. **In progress; not exhaustive or CI ce
 
 | Page | Test | Cases |
 | --- | --- | --- |
+| `/admin/colleges/[collegeId]/readiness` | `chat4-admin-college-readiness-journey.test.ts` | SA-colleges-readiness-R01; invalid filters rejected before expensive scoped service read, ten-check go-live assessment and remediation |
+| `/admin/colleges/[collegeId]/admins/[userId]/history` | `chat4-admin-college-session-history-journey.test.ts` | SA-colleges-admins-R01; hostile/ambiguous page rejection before persisted authorized history read; retry-safe revoke service source contract (not database execution) |
 | `/admin/colleges` | `chat4-admin-colleges-organizations-directory.test.ts` | SA-colleges-directory-06/07; Super Admin gate before filter parsing, invalid/empty states, scope-aware mutation controls, create/import links, paging |
 | `/admin/organizations` | Same | SA-colleges-directory-06/07; guard, create and restore, invalid/empty, paging |
 | `/college/projects` | `chat4-college-admin-project-route-journey.test.ts` | PROJ-BREAK-COLLEGE-04-11–13; authorized college before read, invalid URL recovery, optional template service failure, archival navigation |
