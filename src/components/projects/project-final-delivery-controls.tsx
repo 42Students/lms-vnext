@@ -35,6 +35,17 @@ type Submission = {
 };
 
 type DeliveryAttachment={kind:"FILE"|"LINK";name:string;fileId:string|null;url:string|null};
+function finalDeliveryUserError(caught:unknown):string {
+  if(caught instanceof FriendlyFetchError)return caught.message;
+  // Local validation failures are authored, actionable copy. Never render an
+  // arbitrary Error.message from a plugin, browser or unexpected exception.
+  if(caught instanceof Error&&[
+    "Refresh this final draft to get its latest revision before saving.",
+    "Could not confirm the draft revision. Refresh before editing again.",
+  ].includes(caught.message))return caught.message;
+  return friendlyApiError({});
+}
+
 function safeDraftAttachments(items:unknown[]|undefined):DeliveryAttachment[]{
   return (items??[]).filter((item):item is DeliveryAttachment=>{
     if(!item||typeof item!=="object")return false;
@@ -187,11 +198,7 @@ export function LearnerFinalDeliveryControl({
       });
       router.refresh();
     } catch (caught) {
-      setError(
-        caught instanceof Error
-          ? caught.message
-          : "Could not save the final draft.",
-      );
+      setError(finalDeliveryUserError(caught));
     } finally {
       pendingRef.current = false;
       setPending(false);
@@ -236,6 +243,10 @@ export function LearnerFinalDeliveryControl({
 
   async function submitDraft(confirmed=false) {
     if (!draft || pendingRef.current) return;
+    if(!canSubmitDraft){
+      showToast({tone:"error",title:"Complete the project checklist before submitting final work."});
+      return;
+    }
     if(!lastSavedUpdatedAt.current){
       showToast({tone:"error",title:"Refresh this final draft before submitting."});
       return;
@@ -269,10 +280,7 @@ export function LearnerFinalDeliveryControl({
       showToast({
         tone: "error",
         title: "Could not submit final delivery",
-        description:
-          caught instanceof Error
-            ? caught.message
-            : undefined,
+        description:finalDeliveryUserError(caught),
       });
     } finally {
       pendingRef.current=false;
@@ -755,11 +763,7 @@ export function ProjectEvaluationControl({
       });
       router.refresh();
     } catch (caught) {
-      setError(
-        caught instanceof Error
-          ? caught.message
-          : "Could not save the evaluation.",
-      );
+      setError(finalDeliveryUserError(caught));
     } finally {
       setPending(false);
     }
