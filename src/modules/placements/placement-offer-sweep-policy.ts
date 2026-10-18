@@ -9,8 +9,9 @@ export function isIssuedPlacementOfferDue(input: {
   expiresAt: Date | null;
 }, now: Date): boolean {
   const expires = input.expiresAt?.getTime();
+  const reference = now.getTime();
   return input.status === "ISSUED" && expires !== undefined &&
-    Number.isFinite(expires) && expires <= now.getTime();
+    Number.isFinite(expires) && Number.isFinite(reference) && expires <= reference;
 }
 
 export function selectDuePlacementOfferIds(
