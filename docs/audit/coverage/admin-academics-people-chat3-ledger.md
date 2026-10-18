@@ -29,6 +29,12 @@ Snapshot: 2026-10-18, source branch `chatgpt/chat-3-b`. Role-journal and code-ba
 - `tests/unit/chat3-superadmin-people-directory-query-scope.test.ts` executes the real `listSuperAdminUsers` service with a query-capturing collaborator and compiles its Drizzle predicates. It verifies exact organization+college filters are present before contact visibility, and that **global** email and phone fields are generated as `CASE ... ELSE NULL` SQL expressions, not merely hidden in the rendered component.
 - Disabled Super Admin, Learner, Mentor and Faculty contexts fail before database reads; injected URL college filters and invalid query shape fail before the query. This is a source/model unit regression, not a substitute for a PostgreSQL-backed account-role walkthrough.
 
+## SA3-FAC-ASSIGNMENTS-01 and SA3-FAC-EXPORT-02 — Faculty assignment roster and CSV
+
+- `src/modules/admin-ui/super-admin-faculty-assignments-service.ts` now joins course offerings and Sections by the **same cohort and academic period**, requires the Section's term and cohort-program department to match the selected college, and clamps stale deep-link pages before fetching rows.
+- `src/modules/admin-ui/super-admin-faculty-assignments-csv-service.ts` rejects repeated `status`, `page`, or `q` selectors before `Object.fromEntries` can silently choose the last value.
+- `tests/unit/chat3-sa-faculty-assignments-tenant-pages.test.ts` compiles actual Drizzle join predicates and checks role/scope refusal and bounded page recovery. `tests/unit/chat3-sa-faculty-assignments-csv-http.test.ts` exercises the export entry point, 300-row truncation, duplicate filters, private errors and no-store headers. Cloud CI and PostgreSQL verification pending.
+
 ## Targeted repairs and further release gates
 
 - `COL-people-24`: exact legacy mentor-reassignment confirmation description restored at `src/components/projects/project-admin-reassign-mentor-page.tsx`; must rerun its failing test, and real keyboard/retry browser checks remain.
