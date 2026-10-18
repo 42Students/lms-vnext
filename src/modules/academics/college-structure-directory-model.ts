@@ -1,14 +1,20 @@
 import { z } from "zod";
 
 export const COLLEGE_STRUCTURE_PAGE_SIZE = 25;
+// Academic directory URL controls must accept decimal integers only.
+// Coercion permits exponents, hexadecimal, and whitespace in forged filters.
+const urlDecimalInt = (min: number, max: number) => z.union([
+  z.number(),
+  z.string().regex(/^[0-9]+$/).transform(Number),
+]).pipe(z.number().int().min(min).max(max));
 export type CollegeStructureKind = "CLASSES" | "ELECTIVES";
 
 export const collegeStructureQuerySchema = z.object({
   q: z.string().trim().max(100).default(""),
   programId: z.string().uuid().optional(),
   status: z.enum(["ALL", "ACTIVE", "ARCHIVED"]).default("ACTIVE"),
-  page: z.coerce.number().int().min(1).max(1000).default(1),
-  pageSize: z.coerce.number().int().refine(n => [10,25,50,100].includes(n)).default(10),
+  page: urlDecimalInt(1,1000).default(1),
+  pageSize: urlDecimalInt(10,100).refine(n => [10,25,50,100].includes(n)).default(10),
 }).strict();
 export type CollegeStructureQuery = z.infer<typeof collegeStructureQuerySchema>;
 export const collegeClassBaseQuerySchema = collegeStructureQuerySchema.extend({
@@ -29,8 +35,8 @@ export const collegeClassBaseQuerySchema = collegeStructureQuerySchema.extend({
   periodCode: z.string().trim().min(1).max(64).optional(),
 
   capacityState: z.enum(["ALL","CONFIGURED","UNSET"]).default("ALL"),
-  minimumCapacity: z.coerce.number().int().min(1).max(100000).optional(),
-  maximumCapacity: z.coerce.number().int().min(1).max(100000).optional(),
+  minimumCapacity: urlDecimalInt(1,100000).optional(),
+  maximumCapacity: urlDecimalInt(1,100000).optional(),
 });
 
 export function withCollegeClassCapacityCheck<T extends z.ZodType<{minimumCapacity?:number;maximumCapacity?:number;capacityState:"ALL"|"CONFIGURED"|"UNSET";periodStartsOnOrAfter?:string;periodEndsOnOrBefore?:string}>>(schema:T){
@@ -48,10 +54,10 @@ export const collegeElectiveBaseQuerySchema = collegeStructureQuerySchema.extend
   periodStartsOnOrAfter: z.iso.date().optional(),
   descriptionPresence: z.enum(["ALL","RECORDED","MISSING"]).default("ALL"),
   periodLifecycle: z.enum(["ALL","PLANNED","ACTIVE","CLOSED"]).default("ALL"),
-  semesterThrough: z.coerce.number().int().min(1).max(24).optional(),
-  semesterFrom: z.coerce.number().int().min(1).max(24).optional(),
-  maximumAllowedPicks: z.coerce.number().int().min(1).max(1000).optional(),
-  minimumRequiredPicks: z.coerce.number().int().min(0).max(1000).optional(),
+  semesterThrough: urlDecimalInt(1,24).optional(),
+  semesterFrom: urlDecimalInt(1,24).optional(),
+  maximumAllowedPicks: urlDecimalInt(1,1000).optional(),
+  minimumRequiredPicks: urlDecimalInt(0,1000).optional(),
   departmentCode: z.string().trim().min(1).max(64).optional(),
   programCode: z.string().trim().min(1).max(64).optional(),
   slotName: z.string().trim().min(1).max(150).optional(),
@@ -60,10 +66,10 @@ export const collegeElectiveBaseQuerySchema = collegeStructureQuerySchema.extend
   offeringState: z.enum(["ALL","HAS_ACTIVE","NONE_ACTIVE"]).optional(),
   academicYearState: z.enum(["ALL","RECORDED","MISSING"]).optional(),
   periodCode: z.string().trim().min(1).max(64).optional(),
-  semesterNumber: z.coerce.number().int().min(1).max(24).optional(),
+  semesterNumber: urlDecimalInt(1,24).optional(),
   programStatus: z.enum(["ALL","ACTIVE","ARCHIVED"]).optional(),
-  minimumCredits: z.coerce.number().int().min(1).max(500).optional(),
-  maximumCredits: z.coerce.number().int().min(1).max(500).optional(),
+  minimumCredits: urlDecimalInt(1,500).optional(),
+  maximumCredits: urlDecimalInt(1,500).optional(),
 });
 
 export function withCollegeElectiveCreditsCheck<T extends z.ZodType<{
