@@ -333,3 +333,9 @@ These fixes are committed on chat-19; live provider, PostgreSQL revocation races
 |---|---|---|---|
 | HR-BREAK-MAIL-DIGEST-15 | COVERAGE | Previously unreferenced recruiter digest email provider was a high-risk outgoing PII/token boundary. No verified source defect was found in reviewed path. | Added direct injected-provider tests for runtime recipient allowlist, non-OTP template isolation, secure endpoint, Reply-To ownership, exact three bounded escaped excerpts, no redirects/retries for non-idempotent POST, and fail-closed provider denial or exception; `tests/unit/HR-BREAK-chat19-mail-digest-provider.test.ts`. |
 | HR-BREAK-ACTIVITY-QUERY-14 | MAJOR | `hrActivityQuerySchema` used `z.coerce.number()` for URL page and limit: strings `1e3` and `0x10` unexpectedly became valid navigation indices. | Use strict decimal-only URL string parsing alongside typed internal numeric inputs; reject noncanonical syntax and preserve valid pagination and recovery. `tests/unit/HR-BREAK-chat19-activity-stale-page.test.ts`. |
+
+## Recruiter email recipient display-name header sanitization
+
+| ID | Severity | Source | Defect, remediation, evidence |
+|---|---|---|---|
+| HR-BREAK-DIGEST-HEADER-16 | MAJOR | `src/modules/placements/recruiter-message-email-provider.ts`, `recruiter-message-email-model.ts` | Digest merge variable text was HTML-escaped, but the raw `digest.recipientName` was forwarded unchanged as the ZeptoMail recipient display name. Control characters such as CR/LF and Unicode bidi overrides could create malformed display headers or visually spoof a different recipient. Added bounded plain-text display-name sanitization at the provider boundary, preserving the validated recipient address. Direct `tests/unit/HR-BREAK-chat19-mail-digest-provider.test.ts` checks CRLF, bidi overrides, length 160 and correct safe recipient name; the existing non-OTP, no-redirect, provider denial guards remain intact. |

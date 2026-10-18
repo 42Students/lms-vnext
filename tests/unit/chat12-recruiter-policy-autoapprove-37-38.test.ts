@@ -2,7 +2,7 @@ import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {recruiterAutoApprovalReason} from "@/modules/placements/recruiter-request-autoapproval-policy";
 import {initialRecruiterRequestStatus} from "@/modules/placements/recruiter-drive-request-model";
-import {recruiterDriveApprovalPolicy} from "@/modules/placements/recruiter-drive-autoapproval-policy";
+import {recruiterDriveApprovalPolicy,recruiterAutoApprovalExplanation} from "@/modules/placements/recruiter-drive-autoapproval-policy";
 const src=(s:string)=>readFileSync(new URL("../../"+s,import.meta.url),"utf8");
 describe("Trust-policy recruiter REQUEST autoapproval",()=>{
  it("TPO-requests-verification-37 prevents pending verification from taking any autoapprove shortcut",()=>{
@@ -45,6 +45,16 @@ describe("Trust-policy recruiter REQUEST autoapproval",()=>{
   expect(code).toContain("recruiterDriveNeedsApproval");
   expect(code).toContain("placementTpoTrustedDomains");
   expect(code).toContain("pg_advisory_xact_lock");
+ });
+ it("TPO-requests-verification-R03 tells the TPO the actual approval rule, never invents public-link verification",()=>{
+  expect(recruiterAutoApprovalExplanation("TRUSTED_COMPANY")).toBe("trusted company");
+  expect(recruiterAutoApprovalExplanation("TRUSTED_DOMAIN")).toBe("trusted recruiter email domain");
+  expect(recruiterAutoApprovalExplanation("APPROVAL_OFF")).toBe("approval is switched off in Settings");
+  expect(recruiterAutoApprovalExplanation("UNKNOWN")).toBe("college approval rule");
+  const code=src("src/modules/placements/recruiter-drive-request-service.ts");
+  expect(code).toContain("recruiterAutoApprovalExplanation(autoApproval?.reason)");
+  expect(code).toContain("A verified recruiter request met this college");
+  expect(code).not.toContain("joined through your public link");
  });
  it("TPO-requests-verification-38 emits distinct new-request and autoapproved TPO signals and recruiter confirmation",()=>{
   const code=src("src/modules/placements/recruiter-drive-request-service.ts");
