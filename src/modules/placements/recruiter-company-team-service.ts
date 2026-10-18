@@ -1,6 +1,7 @@
 import { and, asc, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
+  colleges,
   placementCompanies,
   placementCompanyRelationships,
   placementRecruiterCollegeGrants,
@@ -61,6 +62,11 @@ export async function getRecruiterCompanyTeam(
       trusted: placementCompanyRelationships.isTrusted,
     })
     .from(placementCompanyRelationships)
+    .innerJoin(
+      colleges,
+      and(eq(colleges.id,placementCompanyRelationships.collegeId),
+        eq(colleges.status,"ACTIVE")),
+    )
     .innerJoin(
       placementCompanies,
       eq(placementCompanies.id, placementCompanyRelationships.companyId),
