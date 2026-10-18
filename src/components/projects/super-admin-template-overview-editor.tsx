@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -45,10 +46,10 @@ export function SuperAdminTemplateOverviewEditor({templateId,title,summary,versi
   finally{setPending(false);}
  }
  return <section className="space-y-3 border-b border-border pb-5">
-  <button type="button" onClick={()=>setOpen(x=>!x)}
+  <Button type="button" variant="secondary" onClick={()=>setOpen(x=>!x)}
    className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold">
    {open?"Close Overview editor":"Edit Overview"}
-  </button>
+  </Button>
   {open?<div className="grid gap-3 sm:grid-cols-2">
    <label className="text-sm font-semibold">Course label
     <Input className={field} maxLength={160} value={courseLabel} onChange={e=>setCourseLabel(e.target.value)}/></label>
@@ -71,9 +72,9 @@ export function SuperAdminTemplateOverviewEditor({templateId,title,summary,versi
    <label className="text-sm font-semibold sm:col-span-2">Submission instructions
     <Textarea className={field+" min-h-20"} maxLength={4000} value={instructions}
      onChange={e=>setInstructions(e.target.value)}/></label>
-   <div className="sm:col-span-2"><button type="button" disabled={pending}
+   <div className="sm:col-span-2"><Button type="button" variant="primary" disabled={pending}
      onClick={()=>void save()} className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-primary-foreground">
-     {pending?"Saving…":"Save as new version"}</button></div>
+     {pending?"Saving…":"Save as new version"}</Button></div>
   </div>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {message?<p role="status" className="text-sm text-success">{message}</p>:null}
