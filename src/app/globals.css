@@ -224,6 +224,9 @@ details > summary + * {
     transform: none;
   }
 }
+/* Scrollable error stacks need a visible edge cue even though scrollbar chrome is hidden. */
+.lms-toast-scroll-cue { mask-image: linear-gradient(to bottom, transparent 0, black 0.75rem, black calc(100% - 0.75rem), transparent 100%); }
+
 /* Scroll/motion kit. Duration and easing come from the signed-off tokens.
  * These transform/opacity animations do not animate layout or scroll positions. */
 dialog[data-slot="drawer"][open] {
