@@ -81,3 +81,12 @@
 `tests/unit/chat6-auth-session-service-behaviour.test.ts` exercises actual exported service functions with a mocked PostgreSQL adapter (not just source text): active login resolution, unknown tokens, revoked sessions, expired sessions, disabled platform users, session creation and DB failure, logout failure propagation, all-device revocation, owner-scoped per-device revoke, other-device count, and own-session device list. No mock claims to provide PostgreSQL transaction isolation, query-plan verification, or an authenticated browser. The existing `AUTH-sessions-04` login handoff and `AUTH-sessions-05` truthful logout regressions remain separately covered.
 
 Outstanding DB acceptance: inject a real concurrent revoke between authentication and a mutation to confirm the latter rejects the stale session; replay the same opaque token across two devices; verify `identity_device_sessions` indexes, foreign keys and expiry purge under realistic retention. Existing source-level permission guards do not substitute for those tests.
+
+## AUTH-sessions-07 administrative revocation double-submit and recovery (2026-10-18)
+
+| Entry point | Test | Coverage | Still required |
+| --- | --- | --- | --- |
+| `src/components/admin/admin-revoke-sessions.tsx` | `tests/unit/chat6-auth-revoke-admin-flight-and-errors.test.ts` | Synchronous `useGuardedAction` protects against repeated modal confirmation, server POST retains exact owner and college identifiers, failures keep a retryable notice inside the confirmation dialog, successful revocation refreshes the admin list | Authenticated browser with simultaneous Enter/click and server-revocation races |
+| `src/lib/api-fetch.ts` used by session revoke | same | Mocked 503 HTML and thrown network error never expose private proxy or SQL exception text | Cloud CI and actual edge proxy fault injection |
+
+No source under `src/auth` or `src/security` was changed; this lane's UI edit is restricted to the administrator session-revoke component. Existing unit-failure snapshot from CI dd44f0f2 is historical and is not a replacement for a fresh CI run.
