@@ -7,12 +7,6 @@ vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:mocks.context}))
 vi.mock("@/modules/people/college-role-directory-service",()=>({
  listCollegeRoleDirectory:mocks.directory,
 }));
-const fake=(label:string,attribute:string)=>(async()=>{
- const {createElement}=await import("react");
- return {default:(props:{membershipId:string})=>createElement("button",{
-  type:"button",[attribute]:props.membershipId,
- },label)};
-});
 vi.mock("@/components/college/student-class-move-action",async()=>{
  const {createElement}=await import("react");
  return {StudentClassMoveAction:(p:{membershipId:string})=>
