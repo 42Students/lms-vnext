@@ -1,5 +1,5 @@
 import "server-only";
-import {eq} from "drizzle-orm";
+import {eq,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents,colleges,placementTpoCollegeSettings} from "@/db/schema";
@@ -61,7 +61,7 @@ export async function updateTpoCommunicationSettings(context:RequestContext,raw:
     notifyDriveOpenEmail:input.notifyDriveOpenEmail,notifyResultApplied:input.notifyResultApplied,
     notifyNudges:input.notifyNudges,notifyPrepAssigned:input.notifyPrepAssigned}:
    {recruiterAccessMonths:input.recruiterAccessMonths};
-  const [updated]=await tx.update(placementTpoCollegeSettings).set({...changes,updatedAt:new Date()})
+  const [updated]=await tx.update(placementTpoCollegeSettings).set({...changes,updatedAt:sql`greatest(clock_timestamp(),date_trunc('milliseconds',${placementTpoCollegeSettings.updatedAt}) + interval '1 millisecond')`})
    .where(eq(placementTpoCollegeSettings.collegeId,collegeId))
    .returning({updatedAt:placementTpoCollegeSettings.updatedAt});
   if(!updated)throw new TpoCommunicationSettingsError("TPO_SETTINGS_NOT_FOUND");
