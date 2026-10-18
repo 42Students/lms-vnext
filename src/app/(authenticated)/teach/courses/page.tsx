@@ -2,9 +2,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { FacultyCourseList } from "@/components/courses/faculty-course-list";
 import { getFacultyCourseList } from "@/modules/courses/faculty-course-list-service";
 import { PageHeader } from "@/components/ui/page-header";
-import {
-  getFacultyCourseWorkspace,
-} from "@/modules/courses/faculty-course-service";
+import { listFacultyCourseCardSummaries } from "@/modules/courses/faculty-course-card-summary-service";
 
 export default async function FacultyCoursesPage({searchParams}: {
   searchParams: Promise<Record<string,string|string[]|undefined>>;
@@ -12,19 +10,15 @@ export default async function FacultyCoursesPage({searchParams}: {
   const context =
     await getCurrentRequestContext();
   const list = await getFacultyCourseList(context, await searchParams);
-  const rows = await Promise.all(
-    list.items.map(async (course) => ({
-      course,
-      workspace:
-        await getFacultyCourseWorkspace(
-          context,
-          course.deliveryId,
-        ),
-    })),
-  );
+  // UX-teach-courses-01: one scoped, batched summary read avoids per-course workspace N+1 queries.
+  const summaries = await listFacultyCourseCardSummaries(list.items);
+  const rows = list.items.flatMap(course => {
+    const workspace = summaries.get(course.deliveryId);
+    return workspace ? [{ course, workspace }] : [];
+  });
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 max-w-full space-y-6">
       <PageHeader
         eyebrow="Faculty"
         title="My Teaching Courses"
