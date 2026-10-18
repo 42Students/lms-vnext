@@ -12,14 +12,15 @@ import {requirePermission,AuthorizationError} from "@/modules/permissions/policy
  * college; private applications and screening decisions never enter this count. */
 export async function recruiterVisiblePortfolioCounts(context:RequestContext,
  collegeId:string,authorizedJobIds:readonly string[]){
- const activeGrant=context.recruiter?.grants.find(g=>g.collegeId===collegeId);
- if(!hasActiveRecruiter(context)||context.recruiter?.userId!==context.user.id||!activeGrant)
+ const recruiter=context.recruiter;
+ const activeGrant=recruiter?.grants.find(g=>g.collegeId===collegeId);
+ if(!hasActiveRecruiter(context)||!recruiter||recruiter.userId!==context.user.id||!activeGrant)
   throw new AuthorizationError("placements.recruiter.read");
  const ids=[...new Set(authorizedJobIds)].slice(0,20);
  if(ids.length===0)return {} as Record<string,{sharedApplicants:number;offers:number}>;
  // A provided job ID cannot enlarge the employer's granted college/relationship.
  // Preserve all active relationships for a multi-grant recruiter within the college.
- const relationshipIds=[...new Set(context.recruiter.grants
+ const relationshipIds=[...new Set(recruiter.grants
    .filter(grant=>grant.collegeId===collegeId&&grant.companyRelationshipId.trim())
    .map(grant=>grant.companyRelationshipId))];
  const db=getDb();
