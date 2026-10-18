@@ -57,6 +57,7 @@ describe("HR-BREAK-chat19-notifications-page: recruiter-scoped page behavior",()
   {collegeId:"../admin"},{collegeId:"invalid"},
   {page:"0"},{page:"100000000"},{page:"1.5"},
   {q:"x".repeat(121)},{unreadOnly:"neither"},
+  {collegeId:[college,other]},{page:["1","2"]},{q:["A","B"]},
  ])("invalid filter %j renders recoverable error without reading a tenant inbox",async raw=>{
   const output=await view(raw);
   expect(renderText(output)).toContain("Invalid inbox filter.");
