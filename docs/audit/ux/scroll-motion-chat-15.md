@@ -13,6 +13,10 @@
 
 The global invisible scrollbar rule remains unchanged. Native Drawer owns body locking and reduced-motion handling.
 
+| src/components/hr/recruiter-round-inline-editor.tsx | Replaced custom role=dialog overlay with native shared Dialog: focus trap and restoration, Escape/backdrop dismissal blocked while submitting, conditional vertical scroll cues; enlarged inline round controls to 44px. | UX-hr-round-editor-chat15-01 |
+| src/app/(authenticated)/hr/profile/page.tsx | Replaced nested 2x horizontal table scroller with responsive DataTable/ScrollCue, 44px accessible access listing, original grant wording. | UX-hr-data-tables-chat15-01 |
+| src/app/(authenticated)/hr/company/reports/page.tsx | Replaced duplicated mobile cards / nested desktop raw table with one shared DataTable, preserves all 10 metrics, mobile disclosures, responsive cues. | UX-hr-data-tables-chat15-01 |
+
 ## Still pending
 
 Other HR, tracker, activity and verification surfaces in docs/audit/ui-surfaces/UI-SURFACES.md require individual scroll and motion verification. Shell source remains owned by chat-9; only non-mutating coverage is planned here. Unreviewed components are not waived.
