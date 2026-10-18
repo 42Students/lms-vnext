@@ -12,7 +12,7 @@ export function sortFacultyRosterByRollThenName<T extends RosterName>(learners:r
  });
 }
 export function facultyRosterMetrics<T extends RosterName>(learners:readonly T[]){
- const contacts=learners.filter(row=>Boolean(row.phoneE164||row.email)).length;
+ const contacts=learners.filter(row=>Boolean(row.phoneE164?.trim()||row.email?.trim())).length;
  const missingRoll=learners.filter(row=>!row.rollNumber?.trim()).length;
  return {contacts,missingRoll,
   contactLabel:contacts+" contacts",
@@ -23,6 +23,6 @@ export function facultyRosterMetrics<T extends RosterName>(learners:readonly T[]
 export function facultyRosterPhotoPreview(source:unknown):string|null{
  if(typeof source!=="string" || source.length>400)return null;
  // Only authorized, same-origin download endpoints may be surfaced.
- if(!/^\/api\/files\/([0-9a-f-]{36})\/download(?:\?[a-zA-Z0-9_=&%-]+)?$/i.test(source))return null;
+ if(!/^\/api\/files\/[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}\/download(?:\?[a-zA-Z0-9_=&%-]+)?$/i.test(source))return null;
  return source;
 }
