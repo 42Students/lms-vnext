@@ -1,6 +1,7 @@
 import "server-only";
 
-import { NextResponse } from "next/server";
+import type { NextResponse } from "next/server";
+import {privateAuthJson} from "./private-response";
 import { z } from "zod";
 import { isSameOriginRequest } from "@/auth/origin";
 import { allowRequest, clientIp } from "@/auth/ip-rate-limit";
@@ -44,7 +45,7 @@ export function loginErrorResponse(
         code: error.code,
       });
     }
-    return NextResponse.json(
+    return privateAuthJson(
       {
         error: error.code,
         ...(error.retryAfterSeconds
@@ -62,14 +63,14 @@ export function loginErrorResponse(
 
   if (error instanceof AuthConfigError) {
     logError("auth.not_configured", error);
-    return NextResponse.json(
+    return privateAuthJson(
       { error: "AUTH_NOT_CONFIGURED" },
       { status: 503 },
     );
   }
 
   logError("auth.unexpected_error", error);
-  return NextResponse.json({ error: "INTERNAL_ERROR" }, { status: 500 });
+  return privateAuthJson({ error: "INTERNAL_ERROR" }, { status: 500 });
 }
 
 type Guarded<T> =
@@ -89,7 +90,7 @@ export async function guardLoginRequest<T extends z.ZodTypeAny>(
   if (!isSameOriginRequest(request)) {
     return {
       ok: false,
-      response: NextResponse.json(
+      response: privateAuthJson(
         { error: "INVALID_ORIGIN" },
         { status: 403 },
       ),
@@ -100,7 +101,7 @@ export async function guardLoginRequest<T extends z.ZodTypeAny>(
   if (!allowRequest(`${route}:${ip}`, perMinute)) {
     return {
       ok: false,
-      response: NextResponse.json(
+      response: privateAuthJson(
         { error: "TOO_MANY_REQUESTS", retryAfterSeconds: 60 },
         { status: 429, headers: { "Retry-After": "60" } },
       ),
@@ -113,7 +114,7 @@ export async function guardLoginRequest<T extends z.ZodTypeAny>(
   } catch {
     return {
       ok: false,
-      response: NextResponse.json(
+      response: privateAuthJson(
         { error: "INVALID_REQUEST" },
         { status: 400 },
       ),
@@ -124,7 +125,7 @@ export async function guardLoginRequest<T extends z.ZodTypeAny>(
   if (!parsed.success) {
     return {
       ok: false,
-      response: NextResponse.json(
+      response: privateAuthJson(
         { error: "INVALID_REQUEST" },
         { status: 400 },
       ),
@@ -135,7 +136,7 @@ export async function guardLoginRequest<T extends z.ZodTypeAny>(
   if (tenant.kind === "unknown") {
     return {
       ok: false,
-      response: NextResponse.json(
+      response: privateAuthJson(
         { error: "UNKNOWN_TENANT_HOST" },
         { status: 404 },
       ),
@@ -146,7 +147,7 @@ export async function guardLoginRequest<T extends z.ZodTypeAny>(
     // as a platform-host login with unrestricted tenant selection.
     return {
       ok: false,
-      response: NextResponse.json(
+      response: privateAuthJson(
         { error: "TENANT_LOOKUP_UNAVAILABLE" },
         { status: 503, headers: { "Cache-Control": "no-store", "Retry-After": "30" } },
       ),
