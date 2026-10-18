@@ -17,7 +17,12 @@ function errorResponse(error:unknown){
  return apiErrorResponse(error);
 }
 export async function GET(request:Request){
- try{const url=new URL(request.url);const collegeId=z.string().uuid().parse(url.searchParams.get("collegeId"));
+ try{const url=new URL(request.url);
+  const allowed=["collegeId"];
+  if([...url.searchParams.keys()].some(key=>!allowed.includes(key))||
+     allowed.some(key=>url.searchParams.getAll(key).length>1))
+   return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+  const collegeId=z.string().uuid().parse(url.searchParams.get("collegeId"));
   const requests=await listOwnRecruiterDriveRequests(await getCurrentRequestContext(),collegeId);
   return NextResponse.json({requests});}catch(e){return errorResponse(e);}
 }
