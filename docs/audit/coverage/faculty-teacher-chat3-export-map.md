@@ -90,3 +90,15 @@ GitHub source declaration review, October 19, 2026. **This is a symbol map, not 
 | `src/modules/courses/faculty-quiz-request-body.ts` | `FACULTY_QUIZ_COMMAND_LIMIT_BYTES`, `FacultyQuizBodyError`, `facultyQuizAcceptsContentType`, `readFacultyQuizCommandBody` | — | 50 | Declared; behavioral verification pending |
 | `src/modules/courses/faculty-quiz-results-command-model.ts` | `facultyQuizResultsCommandSchema`, `facultyQuizResultsTransition` | — | 16 | Declared; behavioral verification pending |
 | `src/modules/courses/faculty-quiz-results-command-service.ts` | `commandFacultyQuizResults` | — | 57 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-quiz-results-legacy-model.ts` | `legacyQuizResultsWriteAllowed` | — | 7 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-regrade-feedback-model.ts` | `facultyRegradeFeedbackAllowed` | — | 5 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-report-completeness.ts` | `facultyReportIsIncomplete` | — | 17 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-report-csv-request.ts` | `facultyReportCsvRequestSchema`, `facultyReportCsvHref`, `parseFacultyCsvDownloadUrl`, `facultyCsvAttachmentHeaders` | — | 55 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-report-csv-service.ts` | `getFacultyReportCsvForDownload` | — | 110 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-report-csv.ts` | `facultyReportCsvSchema`, `neutralizeFacultyCsvCell`, `facultyReportCsv`, `facultyReportCsvFilename`, `facultyCsvIstTimestamp`, `FACULTY_REPORT_CSV_MAX_ROWS`, `capFacultyReportCsvRows`, `facultyCsvLearnerLabel` | `FacultyReportCsvInput` | 70 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-report-pdf.ts` | `buildFacultyReportPdf` | `FacultyReportPdfInput` | 107 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-report-students.ts` | `FACULTY_REPORT_PAGE_SIZE`, `facultyReportStudentPage`, `facultyReportLearnerName` | `FacultyReportStudentRow` | 46 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-report-time.ts` | `facultyReportIstTimestamp` | — | 10 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-reports-hub-model.ts` | `facultyReportsHubQuerySchema`, `facultyReportHubHref`, `publishedReportBreakdown`, `attendanceReportCounts`, `parseFacultyReportsHubLocation` | `FacultyReportsHubQuery` | 38 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-reports-hub-service.ts` | `getFacultyReportsHub` | — | 27 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-response-followup-model.ts` | `facultyResponseFollowUpQuerySchema`, `selectPastDueAssessments`, `facultyResponseFollowUpPage`, `facultyResponseFollowUpHref`, `limitedMissingLearners`, `parseFacultyFollowUpSearchParams`, `facultyFollowupEmptyState` | `FacultyResponseFollowUpQuery`, `FacultyResponseCandidate` | 99 | Declared; behavioral verification pending |
