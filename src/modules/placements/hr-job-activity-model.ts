@@ -19,6 +19,7 @@ export function projectHrJobActivity(
 ) {
  const names=new Map(jobs.map(job=>[job.id,job.title]));
  return events.filter(e=>names.has(e.subjectId)&&
+  Number.isFinite(e.occurredAt.getTime())&&
   HR_JOB_EVENT_TYPES.some(type=>type===e.eventType)).map(e=>({
   id:e.id,jobId:e.subjectId,title:names.get(e.subjectId)!,
   status:e.eventType===HR_JOB_EVENT_TYPES[0]?"Published":"Closed",occurredAt:e.occurredAt,
