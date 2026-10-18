@@ -41,7 +41,7 @@ export function selectOfferRegisterFacts(facts:readonly OfferRegisterFact[],stat
 }
 export function projectOfferRegister(facts:readonly OfferRegisterFact[],status:z.infer<typeof offerRegisterQuery>["status"],requestedPage=1,search="",joiningState:"ALL"|"PENDING"|"JOINED"|"DEFERRED"|"DID_NOT_JOIN"="ALL",asOf=new Date(),kind:"ALL"|"OFFER"|"LOI"="ALL",
  expiry:"ALL"|"EXPIRED"|"DUE_SOON"|"OPEN"|"UNKNOWN"="ALL",minCtcLpa?:number,maxCtcLpa?:number){
- const counts={all:facts.length,issued:0,accepted:0,declined:0,withdrawn:0};
+ const counts={all:facts.length,issued:0,accepted:0,declined:0,withdrawn:0,expired:0};
  for(const f of facts){
   if(f.offer.status==="ISSUED")counts.issued++;
   if(f.offer.status==="ACCEPTED")counts.accepted++;
