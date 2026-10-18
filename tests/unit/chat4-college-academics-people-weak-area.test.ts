@@ -39,6 +39,13 @@ describe("College academics/people weak-area behavioural ledger",()=>{
 
  it("COL-academics-CSV-01 uses neutralized formula cells, fixed field order, declared row cap and recorded data only",()=>{
   expect(ACADEMIC_EXPORT_CAP).toBe(1000);
+  expect(semesterCsvSchema.safeParse({minimumCredits:10,maximumCredits:9}).success).toBe(false);
+  expect(semesterCsvSchema.safeParse({creditState:"UNSET",minimumCredits:10}).success).toBe(false);
+  expect(semesterCsvSchema.safeParse({minimumCredits:9,maximumCredits:10}).success).toBe(true);
+  expect(batchCsvSchema.safeParse({startOnOrAfter:"2026-10-19",startOnOrBefore:"2026-10-18"}).success).toBe(false);
+  expect(batchCsvSchema.safeParse({progression:"MISSING",currentTerm:2}).success).toBe(false);
+  expect(batchCsvSchema.safeParse({progression:"MISSING",yearStart:2026}).success).toBe(false);
+  expect(batchCsvSchema.safeParse({progression:"RECORDED",currentTerm:2}).success).toBe(true);
   const batches=renderBatchCsv([{
    name:"=IMPORTXML(1)",code:"B-1",status:"ACTIVE",programName:"B.Tech",
    programCode:"CS",currentTermNumber:null,currentAcademicYearStart:null,
