@@ -1,3 +1,5 @@
+import {Button} from "@/components/ui/button";
+import {Select} from "@/components/ui/select";
 import {TpoBatchUndoControl} from "@/components/tpo/tpo-batch-undo-control";
 import {listTpoBatchRecentCohortActions} from "@/modules/placements/tpo-batch-recent-decision-service";
 import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
@@ -90,13 +92,13 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
    </p>:null}
   <form className="flex flex-wrap gap-2" action="/tpo/batches" method="get">
    <TpoBatchInstantSearch key={parsed.data.q??""} value={parsed.data.q??""}/>
-   <label className="text-sm">State<select name="state" defaultValue={parsed.data.state} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">All</option><option value="IN_PLACEMENTS">In placements</option><option value="NOT_STARTED">Not started</option><option value="FINISHED">Finished</option></select></label>
-   <label className="text-sm">Program<select name="program" defaultValue={programParsed.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="">All programs</option>{programs.map(p=><option key={p} value={p}>{p}</option>)}</select></label>
-   <label className="text-sm">Department<select name="department" defaultValue={departmentParsed.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="">All departments</option>{departments.map(d=><option key={d} value={d}>{d}</option>)}</select></label>
-   <label className="text-sm">Deadline<select name="deadline" defaultValue={deadlineParsed.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">All deadlines</option><option value="NEXT_7_DAYS">Due in next 7 days</option><option value="PAST_DUE">Past due</option><option value="NO_DEADLINE">No deadline recorded</option></select></label>
-   <label className="text-sm">Sort<select name="sort" defaultValue={sortParsed.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="WORKING_SET">Recommended order</option><option value="NAME_ASC">Name A–Z</option><option value="NAME_DESC">Name Z–A</option><option value="DEADLINE_ASC">Deadline earliest</option><option value="DEADLINE_DESC">Deadline latest</option></select></label>
-   <label className="text-sm">Page size<select name="pageSize" defaultValue={String(pageParsed.data.pageSize)} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="12">12</option><option value="24">24</option><option value="48">48</option></select></label>
-   <button type="submit" className="min-h-11 self-end rounded bg-primary px-4 text-foreground">Search</button>
+   <label className="text-sm">State<Select name="state" defaultValue={parsed.data.state} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">All</option><option value="IN_PLACEMENTS">In placements</option><option value="NOT_STARTED">Not started</option><option value="FINISHED">Finished</option></Select></label>
+   <label className="text-sm">Program<Select name="program" defaultValue={programParsed.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="">All programs</option>{programs.map(p=><option key={p} value={p}>{p}</option>)}</Select></label>
+   <label className="text-sm">Department<Select name="department" defaultValue={departmentParsed.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="">All departments</option>{departments.map(d=><option key={d} value={d}>{d}</option>)}</Select></label>
+   <label className="text-sm">Deadline<Select name="deadline" defaultValue={deadlineParsed.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">All deadlines</option><option value="NEXT_7_DAYS">Due in next 7 days</option><option value="PAST_DUE">Past due</option><option value="NO_DEADLINE">No deadline recorded</option></Select></label>
+   <label className="text-sm">Sort<Select name="sort" defaultValue={sortParsed.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="WORKING_SET">Recommended order</option><option value="NAME_ASC">Name A–Z</option><option value="NAME_DESC">Name Z–A</option><option value="DEADLINE_ASC">Deadline earliest</option><option value="DEADLINE_DESC">Deadline latest</option></Select></label>
+   <label className="text-sm">Page size<Select name="pageSize" defaultValue={String(pageParsed.data.pageSize)} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="12">12</option><option value="24">24</option><option value="48">48</option></Select></label>
+   <Button type="submit" className="min-h-11 self-end rounded bg-primary px-4 text-foreground">Search</Button>
   </form>
   {unassigned!==null&&unassigned>0?<p role="status" className="rounded-md border border-warning bg-surface p-3 text-sm text-warning">
     {unassigned} {unassigned===1?"student is":"students are"} not in any active class. Assign their academic classes before deciding placement eligibility.
