@@ -101,11 +101,11 @@ describe("HR-BREAK-MAIL-DIGEST-15: provider boundary, recipient privacy and non-
   expect(parsed.merge_info.college).toContain("College &lt;A&gt;");
  });
  it("flattens forged mail headers, bidi overrides and long provider recipient-name controls",async()=>{
-  const malicious={...input,recipientName:"Alice\\r\\nBcc: stolen@example.test\\u202e".repeat(40)};
+  const malicious={...input,recipientName:"Alice\r\nBcc: stolen@example.test\u202e".repeat(40)};
   expect(await sendRecruiterMessageDigest(malicious,options)).toBe(true);
   const payload=JSON.parse(deps.fetch.mock.calls[0]![1].body);
   const safe=payload.to[0].email_address.name as string;
-  expect(safe).not.toMatch(/[\\r\\n\\u202e]/);
+  expect(safe).not.toMatch(/[\r\n\u202e]/);
   expect(safe.length).toBeLessThanOrEqual(160);
   expect(safe).toContain("Alice Bcc: stolen@example.test");
  });
