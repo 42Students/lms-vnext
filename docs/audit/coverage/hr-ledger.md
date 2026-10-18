@@ -8,7 +8,7 @@
 |---|---|---|---|
 | HR-ROUND-ROLE-01 | `canRecruiterEditRound` in `hr-round-editor-model.ts` | `hr-recruiter-exhaustive-chat15-01.test.ts`; new `HR-BREAK-chat15-round-versions-02.test.ts` (including blank/mismatched actors, PENDING, results, slots) | Real DB authorization and race |
 | HR-ROUND-STALENESS-01 | `matchesRecruiterRoundVersion` in `hr-round-editor-model.ts` | New `HR-BREAK-chat15-round-versions-02.test.ts`: offsets, ms mismatch, malformed/absent versions | DB round edit end-to-end |
-| HR-ROUND-CAS-02 | `editHrJobRound` in `hr-round-editor-service.ts` | `hr-round-editor-concurrency.test.ts` and version-model tests | Parallel PostgreSQL UPDATE/REMOVE, audit exactly once |
+| HR-ROUND-CAS-02 | `editHrJobRound` in `hr-round-editor-service.ts` | `hr-round-editor-concurrency.test.ts`, `HR-BREAK-chat15-round-service-03.test.ts` (transactional role, version, event), and version-model tests | Real PostgreSQL parallel UPDATE/REMOVE and rollback |
 | HR-ROUND-CAS-02 | `listHrRoundEditorRows` | `hr-recruiter-exhaustive-chat15-01.test.ts` covers pure eligibility; service read still untested | Revoked grant, wrong tenant, TPO-only role |
 | HR-ROUND-NAMES-01 | `duplicateRecruiterRoundName` | `hr-recruiter-exhaustive-chat15-01.test.ts` (NFKC, whitespace, cancelled/self) | Race on simultaneous inserts |
 | HR-ROUND-NAMES-01 | `hrRoundFormSchema` | `hr-round-command-validation.test.ts`, `HR-BREAK-chat15-round-versions-02.test.ts` | Integration error mapping |
