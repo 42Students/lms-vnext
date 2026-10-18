@@ -14,7 +14,7 @@ import {projectRecruiterRoundResults,recruiterResultTableHref,recruiterResultTab
 type Search={jobId?:string|string[];roundId?:string|string[];outcome?:string|string[]};
 export default async function HrRoundResultsPage({searchParams}:{searchParams:Promise<Search>}) {
  const context=await getCurrentRequestContext();
- if(!hasActiveRecruiter(context)) redirect("/dashboard");
+ if(!hasActiveRecruiter(context) || context.recruiter?.userId !== context.user.id) redirect("/dashboard");
  const raw=await searchParams;
  const query=recruiterResultTableQuerySchema.safeParse({jobId:raw.jobId||undefined,
    roundId:raw.roundId||undefined,outcome:raw.outcome||undefined});
@@ -55,8 +55,8 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
    <PageHeader eyebrow="Employer Recruiter" title="Round Results"
     description={workspace.company.name+" · "+workspace.college.name+" · "+workspace.job.title} />
    <nav aria-label="Round review navigation" className="flex flex-wrap gap-4 text-sm">
-     <Link href="/hr/round-results" className="text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Choose another drive</Link>
-     <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=rounds"} className="text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Open hiring rounds & staging</Link>
+     <Link href="/hr/round-results" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Choose another drive</Link>
+     <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=rounds"} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Open hiring rounds & staging</Link>
    </nav>
    {rounds.length===0?<EmptyState title="No rounds yet" description="The placement cell has not configured any non-cancelled rounds for this drive."/>:<>
     <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
@@ -64,7 +64,7 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
       <nav aria-label="Hiring rounds" className="mt-3 flex flex-wrap gap-2">{rounds.map(round=>
        <Link key={round.id} href={recruiterResultTableHref({jobId:workspace.job.id,roundId:round.id})}
          aria-current={round.id===selectedRound?.id?"page":undefined}
-         className={round.id===selectedRound?.id?"rounded-md bg-primary px-3 py-2 text-sm text-on-primary":"rounded-md border border-border px-3 py-2 text-sm text-body"}>
+         className={round.id===selectedRound?.id?"inline-flex min-h-11 items-center rounded-md bg-primary px-3 py-2 text-sm text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]":"inline-flex min-h-11 items-center rounded-md border border-border px-3 py-2 text-sm text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"}>
         {round.sequence}. {round.name}</Link>)}</nav>
     </section>
     {results?<section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
@@ -77,7 +77,7 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
        <nav aria-label="Outcome" className="flex flex-wrap gap-2">{filters.map(filter=>
         <Link key={filter} href={recruiterResultTableHref({jobId:workspace.job.id,roundId:results.round.id,outcome:filter})}
           aria-current={query.data.outcome===filter?"page":undefined}
-          className={query.data.outcome===filter?"rounded-full bg-primary px-3 py-2 text-xs text-on-primary":"rounded-full border border-border px-3 py-2 text-xs text-body"}>
+          className={query.data.outcome===filter?"inline-flex min-h-11 items-center rounded-full bg-primary px-3 py-2 text-xs text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]":"inline-flex min-h-11 items-center rounded-full border border-border px-3 py-2 text-xs text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"}>
           {filter.replaceAll("_"," ")} ({countValues[filter]})</Link>)}</nav>
        {results.rows.length?<div className="grid gap-3 md:grid-cols-2">
          {results.rows.map(row=><article key={row.key} className="min-w-0 rounded-lg border border-border bg-surface-secondary p-4">

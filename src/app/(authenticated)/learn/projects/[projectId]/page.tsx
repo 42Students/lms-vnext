@@ -20,6 +20,7 @@ import { LearnerBoardTaskDetailDialog } from "@/components/projects/learner-boar
 import { findOwnLearnerBoardTask } from "@/modules/projects/learner-board-task-detail-model";
 import { learnerBoardTaskSelectionNotice } from "@/modules/projects/learner-board-selection-notice-model";
 import Link from "next/link";
+import {ErrorState} from "@/components/ui/error-state";
 import { learnerBoardTaskHref } from "@/modules/projects/learner-board-task-detail-model";
 import { filterLearnerBoardTasks, learnerBoardSearchSchema, learnerBoardPrioritySchema, learnerBoardStatusSchema, learnerBoardSprintSchema, learnerBoardReleaseSchema } from "@/modules/projects/learner-project-board-model";
 import { requireProjectReadAccess } from "@/modules/projects/access";
@@ -62,6 +63,29 @@ export default async function LearnerProjectPage({
 
   if (access.access !== "LEARNER") {
     redirect("/learn/projects");
+  }
+
+  // Malformed/stale Board filters must not silently become "show every task".
+  // Resolve the project grant first so foreign identifiers never reveal detail.
+  const invalidBoardFilters = activeSection === "tasks" && [
+    taskSearch !== undefined && (typeof taskSearch !== "string" || taskSearch.length > 100),
+    priorityInput !== undefined && priorityInput !== "" && !learnerBoardPrioritySchema.safeParse(priorityInput).success,
+    taskStatusInput !== undefined && taskStatusInput !== "" && !learnerBoardStatusSchema.safeParse(taskStatusInput).success,
+    taskSortInput !== undefined && !learnerBoardSortSchema.safeParse(taskSortInput).success,
+    sprintInput !== undefined && sprintInput !== "" && !learnerBoardSprintSchema.safeParse(sprintInput).success,
+    releaseInput !== undefined && releaseInput !== "" && !learnerBoardReleaseSchema.safeParse(releaseInput).success,
+    assigneeInput !== undefined && assigneeInput !== "" && assigneeInput !== "mine",
+  ].some(Boolean);
+  if (invalidBoardFilters) {
+    return <div className="min-w-0 space-y-6">
+      <LearnerProjectTabs projectId={projectId}/>
+      <ErrorState title="Invalid Board filters"
+        description="One or more Board filters are no longer valid. Clear filters to see current tasks."
+        action={<Link href={"/learn/projects/"+encodeURIComponent(projectId)+"?tab=board"}
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text">
+          Clear filters
+        </Link>}/>
+    </div>;
   }
 
   const workspace = await getProjectWorkspaceView(
