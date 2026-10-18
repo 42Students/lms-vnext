@@ -404,3 +404,15 @@ The files were reviewed but no tests, typecheck or browser run was executed loca
 | UX-hr-round-results-02 | UX | Same page | The outcomes and round filter pills, plus heading navigation links, had only small `py-2` touch areas, with no explicit visible keyboard focus on the filter pills. Use `inline-flex min-h-11 items-center` and focus-visible outlines on both selected and unselected links. | Same server-page test inspects real rendered action properties, invalid query recovery, authorized result, no-drives state and phone targets. |
 
 No code or tests were executed locally. Interactive focus, viewport and CI verification are pending.
+
+
+## Independent recruiter page-identity cross-audit (2026-10-18)
+
+| Gap ID | Severity | Route | Fix and regression |
+|---|---|---|---|
+| HR-BREAK-PORTFOLIO-PRINCIPAL-27 | MAJOR | `/hr/placements` | Reject mismatched signed-in user / active recruiter profile before employer job list. `tests/unit/HR-BREAK-chat19-home-portfolio-proposals.test.ts`. |
+| HR-BREAK-JOB-PRINCIPAL-27 | MAJOR | `/hr/placements/jobs/[jobId]` | Reject mismatched recruiter before private hiring job read and legacy redirects. `tests/unit/HR-BREAK-chat19-legacy-job-aliases.test.ts`. |
+| HR-BREAK-REPORT-PRINCIPAL-27 | MAJOR | `/hr/company/reports` | Reject mismatched recruiter before reports or grant data; validate repeated filter rejection, disabled actor and empty state. `tests/unit/HR-BREAK-chat19-company-reports-principal.test.ts`. |
+| HR-BREAK-DRIVE-PRINCIPAL-27 | MAJOR | `/hr/drives/[jobId]/messages`, `/rounds/editor`, `/rounds/editor/remove/[roundId]`, `/interview-slots` | Reject mismatched recruiter before job/thread/slot/round reads. `tests/unit/HR-BREAK-chat19-drive-pages.test.ts`. |
+
+Seven source page guards, real page invocation tests and a companion UX note are authored. Existing legacy UI wording and service authorization remain intact. Cloud CI and interactive validation still pending; no local test execution.
