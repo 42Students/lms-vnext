@@ -32,7 +32,7 @@ export function TpoDriveSavedViews({scopeKey}:{scopeKey:string}){
   try{localStorage.setItem(key,JSON.stringify(next));setViews(next);setError("");}
   catch{setError("Browser storage is unavailable.");}
  }
- return <section aria-label="Saved drive views" className="rounded-xl border border-border bg-surface p-4">
+ return <section aria-label="Saved drive views" className="border-b border-border pb-6">
   <h2 className="font-semibold">My saved views</h2>
   <p className="mt-1 text-xs text-body">Save up to {MAX} named filter links in this browser for your college account. They do not change records or share filters with colleagues.</p>
   <div className="mt-3 flex flex-wrap gap-2">

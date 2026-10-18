@@ -80,7 +80,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   }
  }
  const cls="mt-2 min-h-11 w-full rounded-md border border-border bg-surface px-3 py-2 text-foreground";
- return <><form onSubmit={submit} className="space-y-4 rounded-xl border border-border bg-surface p-5">
+ return <><form onSubmit={submit} className="space-y-4 border-b border-border pb-5">
   <label className="block text-sm font-semibold text-body">Title<input required name="title" defaultValue={job.title} minLength={2} maxLength={200} className={cls}/></label>
   <label className="block text-sm font-semibold text-body">Description<textarea required name="description" defaultValue={job.description} maxLength={20000} rows={5} className={cls}/></label>
   <label className="block text-sm font-semibold text-body">Locations (comma-separated)<input name="locations" defaultValue={job.locations.join(", ")} className={cls}/></label>
@@ -114,7 +114,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
     <label className="block text-sm font-semibold text-body">Reason for edit (audited)<textarea required name="reason" minLength={10} maxLength={1000} rows={2} className={cls}/></label>
   <p className="text-xs text-body">Active-season draft and live drives can be edited. Live changes are audited; choose whether to notify existing applicants. A changed version must be refreshed before another save.</p>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  <button type="submit" disabled={pending} className="min-h-11 rounded-md bg-primary px-5 font-semibold text-on-primary disabled:opacity-50">{pending?"Saving…":"Save changes"}</button>
+  <button type="submit" disabled={pending} className="min-h-11 rounded-[9px] bg-primary px-5 font-semibold text-on-primary disabled:opacity-50 text-primary-foreground">{pending?"Saving…":"Save changes"}</button>
   <Link className="ml-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline"
    href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)}>Open drive page</Link>
  </form>

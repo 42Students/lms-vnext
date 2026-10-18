@@ -18,7 +18,7 @@ export function TpoDriveWorkspaceNav({ jobId }: { jobId: string }) {
       <label className="grid gap-1 text-sm font-semibold sm:hidden">Workspace section
         <select aria-label="Drive workspace section" value={selected}
           onChange={event=>router.push(event.target.value)}
-          className="min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+          className="min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 text-foreground">
           {tabs.map(tab=><option key={tab.href} value={tab.href}>{tab.label}</option>)}
         </select>
       </label>

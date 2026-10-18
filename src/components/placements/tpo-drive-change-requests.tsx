@@ -37,7 +37,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
   }catch{setError("Could not save change request.");}finally{setBusy(false);}
  }
  return <div className="space-y-6">
-  <section className="space-y-3 rounded-xl border border-border bg-surface p-5">
+  <section className="space-y-3 border-b border-border pb-6">
    <h2 className="text-lg font-semibold">Suggest a change or ask the {party==="TPO"?"company":"placement cell"}</h2>
    <p className="text-sm text-body">Both sides can discuss, accept, answer or decline. Acceptance records agreement; the placement team must separately update the drive using the authorized edit action.</p>
    <div className="grid gap-3 sm:grid-cols-2">

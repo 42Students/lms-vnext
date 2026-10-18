@@ -68,7 +68,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
   }
 
   return (
-    <form onSubmit={(e) => void submit(e)} className="space-y-4 rounded-xl border border-border bg-surface p-5">
+    <form onSubmit={(e) => void submit(e)} className="space-y-4 border-b border-border pb-5">
       <h2 className="text-lg font-semibold text-foreground">Review consequences</h2>
       <p className="text-sm text-body">
         Cancelling stops new applications. Open applicants are marked Not selected and notified, pending or scheduled rounds are cancelled, and issued offers are withdrawn. Pending withdrawal requests are settled, the recruiter is notified when linked, and accepted offers remain valid. History is retained.
@@ -110,7 +110,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
                 maxLength={1000}
                 rows={3}
                 disabled={pending}
-                className="mt-2 w-full rounded-md border border-border bg-surface p-3 text-foreground"
+                className="mt-2 w-full rounded-[9px] border border-border bg-surface p-3 text-foreground"
               />
             </label>
             <p className="text-xs text-body">Students see the reason. You can choose a reason above or write your own.</p>
@@ -123,7 +123,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
             I reviewed the affected applications, rounds and offers. I understand cancellation
             will notify affected learners and cannot be silently undone.
           </label>
-          <button type="submit" disabled={pending || !reviewed} className="min-h-11 rounded-md bg-primary px-5 font-semibold text-foreground disabled:opacity-50">
+          <button type="submit" disabled={pending || !reviewed} className="min-h-11 rounded-[9px] bg-primary px-5 font-semibold disabled:opacity-50 text-primary-foreground">
             {pending ? "Cancelling…" : "Review and cancel drive"}
           </button>
     </form>
