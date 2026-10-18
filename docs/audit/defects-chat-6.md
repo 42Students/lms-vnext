@@ -70,3 +70,14 @@ The global `GR-09/GR-31` unit gate remains unverified: additional offenders may 
 | PROJ-BREAK-submissions-09 | S1 | Reopen after successful autosave could reset inputs to stale initial server props despite a newer acknowledged save, risking user-visible data loss. | Reset from latest persisted success snapshot, never old draft prop (`014d52d`). | `tests/unit/PROJ-BREAK-chat6-saved-delivery-ui.test.ts` | Full prop-refresh and multi-tab concurrency acceptance |
 
 **Explicit outstanding S1:** Final-delivery PATCH still has no server-mandatory optimistic version token. The client-only lock prevents same-tab overlap but cannot stop **two different devices** writing stale drafts. The Projects lead must coordinate the API/schema/UI version protocol and PostgreSQL race coverage before any IIT Dharwad release sign-off.
+
+## Shared final-delivery multi-device version protection
+
+| ID | Severity | Root cause | Correction | Evidence/test | Validation |
+| --- | --- | --- | --- | --- | --- |
+| PROJ-BREAK-submissions-10 | S1 | Multiple learner clients could PATCH the same team draft with no optimistic token, silently overwriting the earlier writer despite transaction locks. | Distinct strict create vs update schemas; PATCH requires `expectedUpdatedAt`. Check token on locked submission row before attachments/activity. Revision strictly increases by at least 1 millisecond even in same-ms concurrent edits. Manual/autosave transmit the last acknowledged server timestamp and refuse an acknowledgement without a new revision. | `tests/unit/PROJ-BREAK-chat6-draft-revision-race.test.ts` | Source + pure policy assertions; concurrent PostgreSQL integration and CI remain required |
+| PROJ-BREAK-submissions-11 | S1 | A stale tab could finalize a teammate's newer draft without noticing changes. | POST /submit now demands `expectedUpdatedAt` from the current saved snapshot and rejects a stale timestamp while holding the submission lock, before advancing to SUBMITTED or notifying the mentor. | Same test plus request-origin and route assertions | CI and parallel-tab browser workflow remain required |
+
+### Compatibility and release gate
+
+Final-delivery clients must send the most recent `updatedAt` returned by the server on each write; old clients are intentionally rejected rather than silently overwriting team data. HTTP PATCH/submit routes remain same-origin and server-authorized. The stale-write error is `PROJECT_SUBMISSION_CONFLICT`; friendly error mapping and wrong-college behavior require cloud regression. Independent PostgreSQL reviewer approval remains necessary before IIT Dharwad release.
