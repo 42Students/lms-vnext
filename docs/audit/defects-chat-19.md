@@ -130,3 +130,11 @@ The matrix `docs/audit/ux/COVERAGE-MATRIX.md` is a generated snapshot and is not
 | UX-SPILL-COL-FUNNEL-01 | MAJOR | `src/components/placements/college-hiring-funnel.tsx`, fixed `min-w-[72rem]` company performance table | 320px college users had no readable company-stage context without extensive sideways scrolling; converted to DataTable card rows with all nine stages reachable through accessible disclosure, kept counts and a separate totals panel and the same authorized CSV link. | `3a5713b7` | `tests/unit/chat19-college-hiring-funnel-mobile.test.tsx` (`8991b118`) |
 
 Generated `docs/audit/ux/COVERAGE-MATRIX.md` should be refreshed after orchestrator merge, not directly patched. These contributions eliminate two more owner-listed raw-table components at the source level but do not certify real-browser visual layout. No database permission logic was broadened.
+
+### Round candidate list UX spillover
+
+| Finding ID | Before-fix severity | Evidence | Fix | Commit | Regression |
+|---|---|---|---|---|---|
+| UX-SPILL-DRIVE-DAY-01 | MAJOR | `src/components/placements/placement-drive-day-overview.tsx` candidate table forced `min-w-[42rem]` and sticky desktop columns | Migrate to `DataTable` responsive cards preserving the four original fields: Candidate (role/contact), Membership, Schedule exception, Result. No change to authorized data or statuses. | `d7053e49` | `tests/unit/chat19-drive-day-candidates-mobile.test.tsx` (`a2f9df02`) |
+
+Requires actual 320/360/390px and keyboard browser acceptance; only source/SSR contracts were authored on this branch.
