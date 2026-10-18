@@ -11,7 +11,8 @@ import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {DataTable} from "@/components/ui/data-table";
-import {requirePermission} from "@/modules/permissions/policy";
+import {can} from "@/modules/permissions/policy";
+import {isSuperAdmin} from "@/modules/identity/context";
 import {adminControlScopeTag} from "@/modules/module-access/admin-control-overview-model";
 import {
   formatPlatformSettingValue,
@@ -27,20 +28,46 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
   const context =
     await getCurrentRequestContext();
 
-  requirePermission(context,"admin-scope.select");
+  if(!isSuperAdmin(context)||!can(context,"admin-scope.select"))
+    return <div className="min-w-0 space-y-6">
+      <PageHeader eyebrow="Super Admin · Platform" title="Tenant Settings"/>
+      <ErrorState title="Tenant settings access denied"
+        description="Your account cannot access privileged tenant settings."
+        action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
+    </div>;
   const raw=await searchParams;
   const parsed=parseAdminInventoryQuery(raw);
   if(!parsed) return <ErrorState title="Invalid setting filter" description="Use a valid section or search query." action={<Link href="/admin/settings">Clear filters</Link>}/>;
-  const { selectedCollegeName, sections: allSections } =
-    await getSuperAdminPlatformSettings(context);
+  const retryParams=new URLSearchParams();
+  if(parsed.q)retryParams.set("q",parsed.q);
+  if(parsed.section!=="ALL")retryParams.set("section",parsed.section);
+  const retrySuffix=retryParams.toString();
+  const platform=await getSuperAdminPlatformSettings(context)
+    .then(value=>({ok:true as const,value}))
+    .catch(()=>({ok:false as const}));
+  if(!platform.ok)
+    return <div className="min-w-0 space-y-6">
+      <PageHeader eyebrow="Super Admin · Platform" title="Tenant Settings"/>
+      <ErrorState title="Tenant settings unavailable"
+        description="The settings inventory could not be loaded. Your filters have not changed."
+        action={<Link href={"/admin/settings"+(retrySuffix?"?"+retrySuffix:"")} className="font-semibold text-primary-text underline">Retry loading settings</Link>}/>
+    </div>;
+  const {selectedCollegeName,sections:allSections}=platform.value;
   const sections=filterPlatformInventory(allSections,parsed);
   const editorScope=context.adminScope?.collegeId?"COLLEGE":"GLOBAL";
-  const editorData=editorScope==="COLLEGE"&&context.adminScope?.collegeId
+  const editorResult=editorScope==="COLLEGE"&&context.adminScope?.collegeId
    ?await listAdminTenantSettings(context,"COLLEGE",context.adminScope.collegeId)
+     .then(value=>({ok:true as const,value})).catch(()=>({ok:false as const}))
    :editorScope==="GLOBAL"&&!context.adminScope?.organizationId
-    ?await listAdminTenantSettings(context,"GLOBAL"):null;
-  const attendancePolicy=context.adminScope?.collegeId
-    ?await getCollegeAttendancePolicy(context,context.adminScope.collegeId):null;
+    ?await listAdminTenantSettings(context,"GLOBAL")
+      .then(value=>({ok:true as const,value})).catch(()=>({ok:false as const}))
+    :null;
+  const editorData=editorResult?.ok?editorResult.value:null;
+  const attendanceResult=context.adminScope?.collegeId
+    ?await getCollegeAttendancePolicy(context,context.adminScope.collegeId)
+      .then(value=>({ok:true as const,value})).catch(()=>({ok:false as const}))
+    :null;
+  const attendancePolicy=attendanceResult?.ok?attendanceResult.value:null;
   const scopeLabel=adminControlScopeTag(context.adminScope);
   const documentedControls=allSections.reduce((sum,section)=>sum+section.items.length,0);
 
@@ -83,8 +110,14 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
        collegeId={context.adminScope?.collegeId??undefined}
        ready={editorData.ready} entries={editorData.entries}/>:(
        <p role="status" className="rounded-xl border border-border p-4 text-sm text-body">
-        Clear the Super Admin safety scope to access global setting overrides, or select an individual college to edit its scoped settings.
+        {editorResult&&!editorResult.ok
+          ?"Tenant settings editor is temporarily unavailable. Existing settings were not changed."
+          :"Clear the Super Admin safety scope to access global setting overrides, or select an individual college to edit its scoped settings."}
        </p>)}
+      {attendanceResult&&!attendanceResult.ok?
+        <p role="status" className="rounded-xl border border-border p-4 text-sm text-body">
+          Attendance policy is temporarily unavailable. Existing settings were not changed.
+        </p>:null}
       {attendancePolicy?<SuperAdminAttendanceSettingsEditor
         collegeId={attendancePolicy.college.id}
         eligibilityThresholdPercent={attendancePolicy.policy.eligibilityThresholdPercent}

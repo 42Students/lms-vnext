@@ -61,6 +61,10 @@ Snapshot: 2026-10-18, source branch `chatgpt/chat-3-b`. Role-journal and code-ba
 - `src/modules/admin-ui/super-admin-scoped-people-service.ts` previously selected a learner's latest Section name through raw `section_enrollments` and `sections` joins with no college or cohort/academic-period consistency check. The correlated class display now validates that Section cohort/term match the current program enrollment, and the cohort's program department belongs to the selected college.
 - `tests/unit/chat3-superadmin-scoped-people-pagination.test.ts` compiles the actual class label SQL via `PgDialect`, checks the scoped program/cohort/term and selected college predicates, and retains the original page and role matrix. PostgreSQL mismatched-FK fixtures and browser acceptance remain pending.
 
+### SA-ACADEMICS-BATCH-COUNT-02 — duplicate enrollment safety
+
+`getSuperAdminBatchRosterOverview` uses `countDistinct(users.id)` for active Section occupancy, so anomalous duplicate learner-program enrollment joins cannot overcount available seats. `tests/unit/chat3-sa-academics-batch-roster-privacy.test.ts` compiles the actual COUNT DISTINCT expression and the authorized active-college/active-account predicates. PostgreSQL duplicate-join fixture still required.
+
 ## SA-ACADEMICS-BATCH-COUNT-01 / SA-ACADEMICS-BATCH-CSV-02 — roster and export integrity
 
 - `getSuperAdminBatchRosterOverview` now counts **active platform users** rather than just active memberships in its Section occupancy aggregate. This aligns displayed Section counts with its active, same-college roster query, avoiding disabled accounts inflating capacity numbers. `tests/unit/chat3-sa-academics-batch-roster-privacy.test.ts` compiles the Drizzle count and active account/membership predicates while checking missing cohort and permission-denied no-read paths.
@@ -97,6 +101,11 @@ Snapshot: 2026-10-18, source branch `chatgpt/chat-3-b`. Role-journal and code-ba
 
 - The canonical `/admin/hr` handler, also exported by `/admin/recruiters`, now keeps a successfully scoped recruiter directory usable if the independent account-status summary query fails. The UI displays **Unavailable**, a concise explanation and a Retry totals action instead of fabricated `0` accounts.
 - `tests/unit/chat3-sa-recruiter-directory-partial-service.test.tsx` exercises actual server-page props and legacy alias, service outage states, and wrong/disabled-role denial before private queries. CI and browser React client error flow remain pending.
+
+## SA-PEOPLE-UNASSIGNED-URL-01 — global no-membership identities
+
+- `/admin/people/unassigned` now rejects extra URL keys and repeated query fields before parsing the global identity directory's page/status/role selectors. Real Super Admin role and **cleared organization/college scope** remain prerequisites for this intentionally limited no-contact view.
+- `tests/unit/chat3-sa-unassigned-global-identity-ssr.test.tsx` checks actual server rendering for forged selectors, global/selected scopes, Faculty/Mentor/Learner/disabled Super Admin denial, and empty text. No live CI or browser execution yet.
 
 ## Targeted repairs and further release gates
 

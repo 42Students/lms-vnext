@@ -139,3 +139,9 @@ The tenant resolver previously `cache.clear()`ed all verified and unverified hos
 - **AUTH-tenant-cache-15 (extended):** Preserve verified college mappings during a sustained stream of unknown tenant names by preferentially evicting negative cache entries. Stress check: `tests/unit/chat6-auth-tenant-cache-15.test.ts`.
 
 All code and tests were authored only; the owner deferred CI, PostgreSQL, live OTP and real CDN/browser execution until the consolidated final validation pass. No source contract alone is a database race guarantee.
+
+## AUTH-system-role-22: no stale Super Admin grants
+
+System role grants previously passed an in-memory Super Admin permission check before loading the target user and then issued a separate role insert. The platform actor could lose their system role or become disabled between those operations, yet the insert still succeeded. The hardened flow carries the **authenticated context** into the repository and re-authorizes against persisted user/system-role and membership rows under SHARE locks in the **same transaction** as the target status read, role insertion and activity audit. Target status is rechecked under a SHARE lock, preventing a disabled target from being granted a role during a concurrent status transition. `INSERT ON CONFLICT DO NOTHING ... RETURNING` makes repeats idempotent, and `platform.system_role.assigned` is recorded as a critical platform activity only for genuinely new grants. The strict input schema rejects caller-supplied tenant fields.
+
+Evidence: `src/modules/system-roles/service.ts`, `src/modules/system-roles/repository.ts`, `src/modules/activity/taxonomy.ts`; fake-repository role journey and transaction source checks in `tests/unit/chat6-auth-system-role-22.test.ts`. Outstanding: PostgreSQL two-admin concurrent role reversal, platform suspension races and audit rollback verification; owner has deferred all CI/integration gates.

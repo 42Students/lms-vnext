@@ -4,12 +4,36 @@ import {getProjectReadiness} from "@/modules/projects/readiness-service";
 import {projectReadinessLegacyCopy as copy} from "@/modules/projects/readiness-override-copy";
 import {ProjectReadinessOverrideForm} from "./project-readiness-override-form";
 import {PageHeader} from "@/components/ui/page-header";
+import {ErrorState} from "@/components/ui/error-state";
+import {formatProjectAdminActivityDateIst} from "@/modules/projects/project-admin-date-model";
+import {z} from "zod";
 import Link from "next/link";
 import {ProjectAdminNav} from "./project-admin-nav";
 export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:string;basePath:string}){
+  // A forged project UUID, expired role or interrupted DB read must never
+  // produce a raw server error or expose another college's readiness values.
+  if(!z.string().uuid().safeParse(projectId).success)
+    return <div className="space-y-6">
+      <PageHeader title={copy.title} eyebrow="Projects"/>
+      <ErrorState title="Workspace readiness unavailable"
+        description="Return to workspaces and open an authorized workspace to try again."
+        action={<Link href={basePath}
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Back to workspaces</Link>}/>
+    </div>;
   const context=await getCurrentRequestContext();
-  await requireProjectManageAccess(context,projectId);
-  const readiness=await getProjectReadiness(context,projectId);
+  const result=await (async()=>{
+    await requireProjectManageAccess(context,projectId);
+    return getProjectReadiness(context,projectId);
+  })().then(value=>({ok:true as const,value})).catch(()=>({ok:false as const}));
+  if(!result.ok)
+    return <div className="space-y-6">
+      <PageHeader title={copy.title} eyebrow="Projects"/>
+      <ErrorState title="Workspace readiness unavailable"
+        description="Return to workspaces and open an authorized workspace to try again."
+        action={<Link href={basePath}
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Back to workspaces</Link>}/>
+    </div>;
+  const readiness=result.value;
   return <div className="space-y-6">
     <ProjectAdminNav basePath={basePath} active="readiness" />
     <Link href={basePath} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">← Back to workspaces</Link>
@@ -43,8 +67,7 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
       </dl>
       {readiness.readinessOverride.overriddenBy ? <p className="mt-3 text-xs text-muted-foreground">Overridden by {readiness.readinessOverride.overriddenBy}</p> : null}
       {readiness.readinessOverride.occurredAt?<p className="mt-3 text-xs text-muted-foreground">
-        Override recorded {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"})
-          .format(readiness.readinessOverride.occurredAt)}
+        Override recorded {formatProjectAdminActivityDateIst(readiness.readinessOverride.occurredAt)}
       </p>:null}
       {([
         {name:"Tasks",done:readiness.execution.tasks.done,total:readiness.execution.tasks.total},
