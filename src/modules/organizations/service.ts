@@ -322,6 +322,11 @@ export async function restoreOrganization(context:RequestContext, rawId:unknown)
  await assertUniqueActiveName(candidate.name,organizationId);
  try{
   return await db.transaction(async tx=>{
+   await assertPersistedPlatformPermission(tx,context,"organization.manage",{organizationId});
+   const [parent]=await tx.select({id:organizations.id}).from(organizations)
+    .where(and(eq(organizations.id,organizationId),eq(organizations.status,"ARCHIVED")))
+    .for("update").limit(1);
+   if(!parent)throw new OrganizationServiceError("ORGANIZATION_NOT_FOUND");
    const [restored]=await tx.update(organizations)
     .set({status:"ACTIVE",updatedAt:new Date()})
     .where(and(eq(organizations.id,organizationId),eq(organizations.status,"ARCHIVED")))
