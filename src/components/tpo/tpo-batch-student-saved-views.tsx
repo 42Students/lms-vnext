@@ -1,5 +1,5 @@
 "use client";
-import {useState} from "react";
+import {useRef,useState} from "react";
 import {useRouter,useSearchParams} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {tpoBatchViewUrl,type TpoBatchSavedFilter} from "@/modules/placements/tpo-batch-saved-view-model";
@@ -14,6 +14,7 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
  const [views,setViews]=useState<View[]>([]);
  const [selected,setSelected]=useState("");
  const [deleteTarget,setDeleteTarget]=useState<View|null>(null);
+ const inFlightRef=useRef(false);
  const [name,setName]=useState("");
  const [pinned,setPinned]=useState(false);
  const [error,setError]=useState(""),[notice,setNotice]=useState("");
@@ -31,7 +32,8 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
   setViews(result);
  }
  async function action(payload:Record<string,unknown>){
-  if(busy||guarded)return null;
+  if(busy||guarded||inFlightRef.current)return null;
+  inFlightRef.current=true;
   setBusy(true);setError("");setNotice("");
   try{
    const response=await apiFetch<{id?:string;query?:TpoBatchSavedFilter}>(api,{
@@ -40,7 +42,7 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
    await load();setNotice("Saved batch views updated.");router.refresh();
    return response;
   }catch{setError("Could not save the batch view. Check the name and filters, then try again.");return null;}
-  finally{setBusy(false);}
+  finally{inFlightRef.current=false;setBusy(false);}
  }
  async function openSaved(view:View){
   const response=await action({action:"OPEN",id:view.id});
