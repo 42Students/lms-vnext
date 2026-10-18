@@ -99,6 +99,9 @@ This is the **tested-function ledger for the focused model suite**, not a claim 
 
 | `src/app/(authenticated)/teacher/contacts/page.tsx`, `courses/[deliveryId]/page.tsx`, `courses/[deliveryId]/attendance-corrections/page.tsx`, `courses/[deliveryId]/notices/page.tsx` | four default redirect-only route pages | `tests/unit/UX-teacher-redirect-no-shared-route-journey.test.tsx` | UX-teacher-no-shared-01 | valid deep-link redirect, malformed ID 404, existing persisted Section scope before redirect and revoked teaching denial; no phantom UI/scrollbars |
 
+| `src/modules/courses/faculty-live-classes-model.ts` / `faculty-live-classes-service.ts` | `mapFacultyLiveWorkspacesInBatches`, `getFacultyLiveClasses` | `tests/unit/chat3-faculty-live-classes-scaled-service.test.ts` | FAC-LIVE-SCALE-01 | bounded 8-concurrent workspaces, stable order, malformed/foreign delivery and non-Faculty denial, no unsafe partial recovery |
+| `src/modules/courses/faculty-gradebook-report-batch.ts`, `faculty-gradebook-service.ts` | `mapFacultyGradebookReportBatch`, `getFacultyPublishedGradebook` | `tests/unit/chat3-faculty-gradebook-bounded-report-batch.test.ts`, `tests/unit/chat3-faculty-gradebook-service-journey.test.ts` | FAC-GRADEBOOK-SCALE-02 | deterministic 6-concurrent read pool, abort later batches on first report failure, no fabricated points, original 100-assessment cap |
+
 ## Role/security matrix
 
 - FAC-SCOPE-01/02: Faculty allowed only after central `courses.read` and active teaching role; Learner, Mentor, College Admin, Super Admin, missing membership and foreign tenant denied in unit-model mock contract.
