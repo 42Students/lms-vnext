@@ -32,33 +32,33 @@ export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
     e instanceof Error?e.message:"Job types were not saved.");}
   finally{setBusy(false);}
  }
- return <section className="min-w-0 space-y-4 rounded-xl border border-border bg-surface p-4">
+ return <section className="min-w-0 space-y-4 border-t border-border pt-4">
   <h3 className="font-semibold">Manage job types</h3>
   <form className="flex flex-wrap items-end gap-2" onSubmit={event=>{
    event.preventDefault();if(label.trim().length<2||countsAsPlaced===null||atLimit||busy)return;
    void send("/api/placements/tpo/settings/job-types","POST",{label:label.trim(),countsAsPlaced});
   }}>
    <label className="min-w-0 flex-1 text-sm">New job type
-    <input className="mt-1 min-h-11 w-full rounded border border-border bg-surface px-3"
+    <input className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3"
      maxLength={40} minLength={2} value={label} disabled={busy} onChange={event=>setLabel(event.target.value)}/>
    </label>
    <fieldset className="space-x-3 text-sm"><legend>Does an offer of this type count as placed?</legend>
     <label><input name="placed" type="radio" checked={countsAsPlaced===true} onChange={()=>setCountsAsPlaced(true)}/> Yes</label>
     <label><input name="placed" type="radio" checked={countsAsPlaced===false} onChange={()=>setCountsAsPlaced(false)}/> No</label>
    </fieldset>
-   <button type="submit" disabled={label.trim().length<2||countsAsPlaced===null||atLimit||busy} className="min-h-11 rounded bg-primary px-4 text-sm text-on-primary disabled:opacity-50">Add job type</button>
+   <button type="submit" disabled={label.trim().length<2||countsAsPlaced===null||atLimit||busy} className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm text-on-primary disabled:opacity-50">Add job type</button>
   </form>
   <p className="text-sm text-muted-foreground">Custom job types are college-local configuration only; drive forms and reports use their own registered employment types until the integration is completed.</p>
   <p className="text-sm text-muted-foreground">2-40 letters, digits or simple punctuation · {types.length} of 30 custom types</p>
   <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
     <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Find job type
       <input type="search" value={search} maxLength={100} onChange={event=>setSearch(event.target.value)}
-        className="min-h-11 w-full rounded border border-border bg-surface px-3"
+        className="min-h-11 sm:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3"
         placeholder="Filter by name"/>
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">Status
       <select value={status} onChange={event=>setStatus(event.target.value as TpoJobTypeStatusFilter)}
-        className="min-h-11 rounded border border-border bg-surface px-3">
+        className="min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-3">
         <option value="ALL">All types</option><option value="ACTIVE">Active</option>
         <option value="INACTIVE">Inactive</option>
       </select>
