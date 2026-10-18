@@ -210,3 +210,6 @@ No claim of green cloud CI is made. Test-file TypeScript verification, isolated 
 
 
 | `getSuperAdminTenantLifecycleDirectory`, `getSuperAdminTenantLifecycleDetail`, `exportSuperAdminTenantDirectory` | `tests/unit/chat4-superadmin-tenant-lifecycle-actor.test.ts` | Real service called with deterministic transaction/DB adapter: source list, detail and export deny role-revoked actors before private SELECT; explicit admin college/organization scope, page counts, options, bad UUID, no-SQL denial and capped CSV. On PostgreSQL, revocation-after-first-SELECT interleaving still pending. |
+
+
+| `GET /api/admin/colleges/[collegeId]/sessions` query parsing | `chat4-superadmin-tenant-route-guards.test.ts` | Actual GET handler rejects duplicated `userId`, foreign/unknown query keys, missing ID and invalid UUID before calling the sensitive session listing service; valid single ID remains supported |
