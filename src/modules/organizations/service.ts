@@ -1,5 +1,6 @@
 import { and, asc, eq, ne, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import { colleges, organizations } from "@/db/schema";
@@ -275,23 +276,19 @@ export async function archiveOrganization(
   });
 
   const db = getDb();
-
-  const [activeCollege] = await db
-    .select({ id: colleges.id })
-    .from(colleges)
-    .where(
-      and(
-        eq(colleges.organizationId, organizationId),
-        eq(colleges.status, "ACTIVE"),
-      ),
-    )
-    .limit(1);
-
-  if (activeCollege) {
-    throw new OrganizationServiceError("ORGANIZATION_HAS_COLLEGES");
-  }
-
   return db.transaction(async tx=>{
+    await assertPersistedPlatformPermission(tx,context,"organization.manage",{organizationId});
+    // Lock the parent before checking for children; a concurrent college
+    // insert requires a FK SHARE lock on this row and cannot sneak in
+    // between the zero-child check and archival.
+    const [activeParent]=await tx.select({id:organizations.id}).from(organizations)
+      .where(and(eq(organizations.id,organizationId),eq(organizations.status,"ACTIVE")))
+      .for("update").limit(1);
+    if(!activeParent)throw new OrganizationServiceError("ORGANIZATION_NOT_FOUND");
+    const [activeCollege] = await tx.select({id:colleges.id}).from(colleges)
+      .where(and(eq(colleges.organizationId,organizationId),eq(colleges.status,"ACTIVE")))
+      .limit(1);
+    if(activeCollege)throw new OrganizationServiceError("ORGANIZATION_HAS_COLLEGES");
     const [archived]=await tx.update(organizations).set({status:"ARCHIVED",updatedAt:new Date()})
      .where(and(eq(organizations.id,organizationId),eq(organizations.status,"ACTIVE")))
      .returning({id:organizations.id,name:organizations.name,status:organizations.status});
