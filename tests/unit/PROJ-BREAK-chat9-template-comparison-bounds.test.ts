@@ -49,7 +49,7 @@ describe("Super Admin Projects: bounded history comparison and IDOR", () => {
     expect(result.changes.some(change => change.label === "tasks")).toBe(true);
     expect(state.readCount).toBe(2);
     expect(state.limits).toEqual([1, 2]);
-    const sql = new PgDialect().sqlToQuery(state.predicates[1]);
+    const sql = new PgDialect().sqlToQuery(state.predicates[1] as SQL);
     expect(sql.params).toContain(templateId);
     expect(sql.params).toContain(versionId);
     expect(sql.params).toContain(4);
@@ -67,7 +67,7 @@ describe("Super Admin Projects: bounded history comparison and IDOR", () => {
     expect(state.readCount).toBe(0);
   });
   it("PROJ-BREAK-idor-19 does not disclose a non-selected, missing or wrong-template version", async () => {
-    state.versionRows = [state.versionRows[1]];
+    state.versionRows = state.versionRows.slice(1);
     await expect(getSuperAdminTemplateVersionComparison(actor(), { templateId, versionId }))
       .rejects.toThrow("PROJECT_TEMPLATE_VERSION_NOT_FOUND");
     state.readCount = 0;
