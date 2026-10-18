@@ -153,3 +153,7 @@ Exports `exportCollegeAcademicDirectory`, `mapAcademicWorkspaceInBatches` and `g
 ### Disposable integration evidence added
 
 The three `COL-academics-scope-tenant-PG-01` cases in `tests/integration/chat4-college-academic-cross-tenant-pg.test.ts` now encode the cross-college enrollment/roster/faculty/academic-period defects above against independently created, foreign-key-valid PostgreSQL data. Standard `DB03_ISOLATED_TEST_DATABASE` guard protects against use of a non-disposable DB. **Authored only** — execution, schema migration compatibility, cleanup, and assertions must be independently verified by cloud CI. No S1 defect should be declared production-certified solely from source or authored fixtures.
+
+## COL-people-import-history-01 — invalid history page and metadata resilience
+
+The College student import history service used `z.coerce.number()` for page input, accepting scientific notation/hex/boolean coercion in direct calls, and passed corrupt negative/fractional/non-finite metadata counters to page statistics. Replaced with bounded decimal-only URL strings or already validated positive integer pages (1–500), plus `safeCount` requiring nonnegative safe integers. `tests/unit/chat4-college-student-import-history.test.ts` verifies input, role, persisted actor revocation, lookahead pagination and safe counts; **authored, not run**.
