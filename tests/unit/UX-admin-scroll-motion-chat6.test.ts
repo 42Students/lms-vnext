@@ -129,4 +129,25 @@ describe("UX admin scroll and motion after invisible scrollbar owner decision",(
   expect(css).toContain("scrollbar-width: none");
   expect(css).toContain("::-webkit-scrollbar");
  });
+ it("UX-admin-scroll-motion-16 bulk drive archive confirmation uses accessible native dialog and action lock",()=>{
+  const code=source("src/components/placements/super-admin-bulk-drive-actions.tsx");
+  expect(code).toContain("<ConfirmDialog");
+  expect(code).toContain('title={"Confirm "+action.toLowerCase()');
+  expect(code).toContain("inFlightRef.current=true");
+  expect(code).toContain("inFlightRef.current=false");
+  expect(code).not.toContain("window.confirm");
+ });
+ it("UX-admin-scroll-motion-17 application pipeline uses responsive DataTable and scroll-visible outcomes",()=>{
+  const code=source("src/components/placements/college-application-pipeline-controls.tsx");
+  expect(code).toContain('caption="Applications pipeline"');
+  expect(code).toContain('mobilePriority:"primary"');
+  expect(code).toContain('mobilePriority:"action"');
+  expect(code).toContain("More selected learners below");
+  expect(code).toContain("More outcomes below");
+  expect(code).toContain("overscroll-contain");
+  expect(code).toContain("No applications match these filters.");
+  expect(code).not.toContain("<table");
+  expect(code).not.toContain("overflow-x-auto");
+ });
+
 });
