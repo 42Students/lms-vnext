@@ -1,4 +1,5 @@
-import {beforeEach,describe,expect,it,vi} from "vitest";
+import {afterEach,beforeEach,describe,expect,it,vi} from "vitest";
+import {resetAuthConfigForTests} from "@/modules/auth/config";
 import {guardLoginRequest} from "@/modules/auth/http";
 import {startLoginWithRuntime,verifyLoginWithRuntime,sendEmailFallbackWithRuntime} from "@/modules/auth/runtime";
 import {POST as start} from "@/app/api/auth/login/start/route";
@@ -10,9 +11,6 @@ vi.mock("@/modules/auth/http",()=>({
 vi.mock("@/modules/auth/runtime",()=>({
  startLoginWithRuntime:vi.fn(),verifyLoginWithRuntime:vi.fn(),sendEmailFallbackWithRuntime:vi.fn(),
 }));
-vi.mock("@/modules/auth/config",()=>({
- getAuthConfig:()=>({sessionMaxAgeSeconds:3600}),
-}));
 const id="11111111-1111-4111-8111-111111111111";
 const membershipId="22222222-2222-4222-8222-222222222222";
 const req=(path:string)=>new Request("https://platform.example.test/api/auth/login/"+path,{
@@ -21,7 +19,8 @@ const req=(path:string)=>new Request("https://platform.example.test/api/auth/log
 const admit=(body:Record<string,unknown>)=>vi.mocked(guardLoginRequest).mockResolvedValue({
  ok:true,body,tenantCollegeId:null,ip:"203.0.113.40",
 } as never);
-beforeEach(()=>{vi.resetAllMocks();});
+beforeEach(()=>{vi.resetAllMocks();vi.stubEnv("AUTH_SECRET","unit-test-secret-unit-test-secret-unit-test");resetAuthConfigForTests();});
+afterEach(()=>{vi.unstubAllEnvs();resetAuthConfigForTests();});
 describe("AUTH-OTP-14 strict challenge inputs and noncacheable sign-in",()=>{
  it("rejects unknown body keys in start even when a caller supplies forged college and roles",async()=>{
   admit({channel:"EMAIL",contact:"learner@example.test"});
