@@ -59,7 +59,7 @@
 
 | Production path | Export | Test file | Evidence and missing cases | Status |
 |---|---|---|---|---|
-| `src/modules/placements/tpo-student-panel-detail-service.ts` | `getTpoStudentPanelDetail` | `tests/unit/PROJ-BREAK-TPO-PANEL-01.test.ts` | Source guard: TPO, active learner/actor, college-scoped apps, PLACEMENTS-only activity, 100/1000 capped history; real DB negative joins pending | **SOURCE** |
+| `src/modules/placements/tpo-student-panel-detail-service.ts` | `getTpoStudentPanelDetail` | `tests/unit/PROJ-BREAK-TPO-PANEL-auth-session-05.test.ts` | Real service with mocked persistence: revoked persisted role fails before data access, expired/disabled/wrong role denied, invalid UUID and missing learner handled; live DB joins still pending | **BEHAVIOURAL/MOCKED DB** |
 | `src/modules/placements/tpo-student-notes-service.ts` | `tpoStudentNotesInput` | `tests/unit/PROJ-BREAK-TPO-PANEL-01.test.ts` | Strict UUIDs, no duplicate rows, max 100 IDs, note nonempty/2K limit, tenant override rejected | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-student-notes-service.ts` | `addTpoStudentNotes` | `tests/unit/chat12-tpo-notes-authorization-behavior.test.ts` | Mocked transaction: persisted permission before reads, foreign ID skip, active saved row, audit write failure; actual DB atomicity/race pending | **BEHAVIOURAL/MOCKED DB** |
 | `src/modules/placements/tpo-student-notes-service.ts` | `listTpoStudentNotes` | `tests/unit/chat12-tpo-notes-authorization-behavior.test.ts` | Mocked disappeared learner returns null without leaking old notes; production SQL checks active learner/college and caps at 100; DB role/session race still pending | **BEHAVIOURAL/MOCKED DB** |
