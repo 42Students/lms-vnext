@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { cx } from "@/lib/class-names";
+import { isSafeInternalHref } from "@/lib/safe-internal-href";
 
 export type PaginationProps = {
   page: number;
@@ -24,22 +25,29 @@ export function paginationWindow(page: number, pageCount: number): number[] {
 export function Pagination({ page, pageCount, hrefForPage, label = "Pages", className }: PaginationProps) {
   const total = normalizedPageCount(pageCount);
   const current = Number.isFinite(page) ? Math.max(1, Math.min(total, Math.trunc(page))) : 1;
+  const previousHref = current > 1 ? hrefForPage(current - 1) : null;
+  const nextHref = current < total ? hrefForPage(current + 1) : null;
+  const pageLinks = paginationWindow(current, total).map(item=>({item,href:hrefForPage(item)}));
   const buttonClass = "inline-flex min-h-11 min-w-11 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]";
   return (
     <nav data-slot="pagination" aria-label={label} className={cx("flex min-w-0 flex-wrap items-center gap-2", className)}>
-      {current === 1 ? <span aria-disabled="true" className={cx(buttonClass, "opacity-50")}>Previous</span> :
-        <Link className={buttonClass} href={hrefForPage(current - 1)}>Previous</Link>}
+      {!previousHref || !isSafeInternalHref(previousHref) ?
+        <span aria-disabled="true" className={cx(buttonClass, "opacity-50")}>Previous</span> :
+        <Link className={buttonClass} href={previousHref}>Previous</Link>}
       <span className="sr-only" aria-label="Current page">Page {current} of {total}</span>
-      {paginationWindow(current, total).map(item => (
-        <Link key={item} href={hrefForPage(item)}
+      {pageLinks.map(({item,href}) => isSafeInternalHref(href) ?
+        <Link key={item} href={href}
           aria-label={`Page ${item} of ${total}`}
           aria-current={item === current ? "page" : undefined}
           className={cx(buttonClass, item === current ? "border-[var(--lms-teal-deep)] bg-primary-subtle" : "hover:bg-primary-subtle")}>
           {item}
-        </Link>
-      ))}
-      {current === total ? <span aria-disabled="true" className={cx(buttonClass, "opacity-50")}>Next</span> :
-        <Link className={buttonClass} href={hrefForPage(current + 1)}>Next</Link>}
+        </Link> :
+        <span key={item} aria-disabled="true" aria-label={`Page ${item} unavailable`}
+          className={cx(buttonClass, "opacity-50")}>{item}</span>
+      )}
+      {!nextHref || !isSafeInternalHref(nextHref) ?
+        <span aria-disabled="true" className={cx(buttonClass, "opacity-50")}>Next</span> :
+        <Link className={buttonClass} href={nextHref}>Next</Link>}
     </nav>
   );
 }
