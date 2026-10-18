@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { campaignRecipientDisposition } from "./tpo-campaign-send-policy";
 export const engageAudienceQuerySchema=z.object({
   segment:z.enum(["ALL_ELIGIBLE","UNASSIGNED","NEW"]).default("ALL_ELIGIBLE"),
 }).strict();
@@ -11,10 +12,13 @@ export function summarizeEngageAudience(contacts:readonly EngageContact[], segme
  for(const row of contacts){
   if(segment==="NEW"&&row.manualStage!=="NEW"||
     segment==="UNASSIGNED"&&row.ownerMembershipId!==null){outsideSegment++;continue;}
-  if(row.unsubscribedAt){unsubscribed++;continue;}
-  if(row.inviteBouncedAt){bounced++;continue;}
-  if(row.manualStage==="NOT_NOW"){notNow++;continue;}
-  if(!row.emailNorm){withoutEmail++;continue;}
+  // Preview must apply the same suppression precedence as dispatch planning.
+  // Empty/whitespace email addresses are never eligible recipients.
+  const disposition=campaignRecipientDisposition(row);
+  if(disposition==="UNSUBSCRIBED"){unsubscribed++;continue;}
+  if(disposition==="NO_EMAIL"){withoutEmail++;continue;}
+  if(disposition==="BOUNCED"){bounced++;continue;}
+  if(disposition==="NOT_NOW"){notNow++;continue;}
   eligible++;
  }
  return {total:contacts.length,eligible,withoutEmail,unsubscribed,bounced,notNow,outsideSegment};

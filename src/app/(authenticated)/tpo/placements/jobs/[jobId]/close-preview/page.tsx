@@ -25,7 +25,7 @@ export default async function TpoDriveClosePreviewPage({params}:{params:Promise<
       "Verify and release, or withdraw, all pending company selections before closing this drive.":
      preview.issuedOffers>0?
       "Release or withdraw outstanding offers before closing this drive.":
-      "Closure is available only for published drives in an active season. To cancel instead, use the Cancel drive preview."}
+      "Closure is available only for published drives with a recorded season. To cancel instead, use the Cancel drive preview."}
    </p>}
  </div>;
 }
