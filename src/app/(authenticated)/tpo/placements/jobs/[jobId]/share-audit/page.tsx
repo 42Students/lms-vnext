@@ -21,7 +21,7 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
  const parsed=parseCompanyShareAuditQuery({kind:rawKind,page:rawPage});
  const back="/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-preview";
  if(!parsed.success)return <section role="alert" className="space-y-3 rounded-xl border border-border bg-surface p-6">
-  <h1 className="text-lg font-semibold text-foreground">Invalid share-audit filters</h1>
+  <h1 className="text-lg font-semibold text-[30px] text-[#172033]">Invalid share-audit filters</h1>
   <p className="text-sm text-body">Choose a valid event kind and page number. No access history was loaded.</p>
   <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-audit"} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Clear filters</Link>
  </section>;
@@ -31,7 +31,7 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
   <Link href={back} className="text-sm font-semibold text-[var(--lms-teal-deep)] underline">
    Back to company-share preview
   </Link>
-  <h1 className="text-2xl font-semibold text-foreground">Company-share access history</h1>
+  <h1 className="font-semibold text-[30px] text-[#172033]">Company-share access history</h1>
   <nav aria-label="Company-share event filters" className="flex flex-wrap gap-3">
    {tpoCompanyAuditKindSchema.options.map(option=><Link key={option}
     href={tpoCompanyAuditHref(jobId,option)}
@@ -41,7 +41,7 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
    </Link>)}
   </nav>
   {result.ready?<a href={tpoCompanyAuditExportHref(jobId,kind)}
-    className="inline-flex min-h-11 items-center rounded bg-primary px-4 text-sm font-semibold text-foreground">
+    className="inline-flex min-h-11 items-center rounded bg-primary px-4 text-sm font-semibold text-primary-foreground">
     Export access history CSV
   </a>:null}
   {!result.ready?<p role="status" className="rounded border border-border p-5">

@@ -58,10 +58,10 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
         <PageHeader eyebrow="TPO · Drive Day" title="Live rounds"
           description="Rounds happening now, using recorded schedule and duration plus persisted attendance." />
         <form action="/tpo/drive-day" method="get" className="flex flex-wrap gap-3">
-          <label className="text-sm">Search live rounds<Input name="q" type="search" maxLength={100} defaultValue={search.data} placeholder="Company, job or round" className="mt-1 block min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-3"/></label>
-          <label className="text-sm">Attendance focus<Select name="issue" defaultValue={issue.data} className="mt-1 block min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-3"><option value="ALL">All live rounds</option><option value="NO_SHOWS">Recorded no-shows</option><option value="PENDING">Attendance pending</option><option value="UNKNOWN">Attendance not recorded</option><option value="UNRESOLVED">Pending or unrecorded</option><option value="ALL_UNRECORDED">No attendance entries recorded</option></Select></label>
-          <label className="text-sm">Prioritize<Select name="sort" defaultValue={sort.data} className="mt-1 block min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-3"><option value="RECENT">Most recent scheduled</option><option value="PENDING_DESC">Most pending first</option><option value="NO_SHOW_DESC">Most no-shows first</option><option value="UNRESOLVED_DESC">Most unresolved first</option></Select></label>
-          <Button type="submit" className="self-end min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-white">Apply</Button>
+          <label className="text-sm">Search live rounds<Input name="q" type="search" maxLength={100} defaultValue={search.data} placeholder="Company, job or round" className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"/></label>
+          <label className="text-sm">Attendance focus<Select name="issue" defaultValue={issue.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">All live rounds</option><option value="NO_SHOWS">Recorded no-shows</option><option value="PENDING">Attendance pending</option><option value="UNKNOWN">Attendance not recorded</option><option value="UNRESOLVED">Pending or unrecorded</option><option value="ALL_UNRECORDED">No attendance entries recorded</option></Select></label>
+          <label className="text-sm">Prioritize<Select name="sort" defaultValue={sort.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="RECENT">Most recent scheduled</option><option value="PENDING_DESC">Most pending first</option><option value="NO_SHOW_DESC">Most no-shows first</option><option value="UNRESOLVED_DESC">Most unresolved first</option></Select></label>
+          <Button type="submit" className="self-end min-h-11 rounded bg-primary px-4 text-primary-foreground">Apply</Button>
         </form>
         <div className="flex flex-wrap gap-3"><Link href={tpoLiveCsvHref({q:search.data,issue:issue.data,sort:sort.data})} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border px-4 text-sm text-[var(--lms-link-text)]">Export current live snapshot CSV</Link><Link href="/tpo/drive-day" className="inline-flex min-h-11 sm:min-h-9 items-center text-[var(--lms-link-text)] underline">Reset focus</Link></div>
         <dl aria-label="Current authorized live-round snapshot" className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">{[
@@ -181,7 +181,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
                     "/tpo/drive-day/" +
                     round.roundId
                   }
-                  className="inline-flex min-h-11 sm:min-h-9 items-center justify-center rounded-[9px] border border-primary bg-primary px-3 text-sm font-semibold text-white transition hover:border-primary-hover hover:bg-primary-hover"
+                  className="inline-flex min-h-11 items-center justify-center rounded-[9px] border border-primary bg-primary px-3 text-sm font-semibold transition hover:border-primary-hover hover:bg-primary-hover text-primary-foreground"
                 >
                   Open round
                 </Link>
