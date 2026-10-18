@@ -394,3 +394,13 @@ These fixes are committed on chat-19; live provider, PostgreSQL revocation races
 | COL-XA-08 | Current `college-projects-query-model.ts` already matches the failing test's bounded/default values and rejects duplicate keys, hexadecimal/scientific URL values. The latest failure register points to earlier CI. | No security weakening and no speculative production change; keep the existing real parser checks in `tests/unit/chat19-college-cross-audit.test.ts`. Needs fresh cloud CI to confirm. |
 
 The files were reviewed but no tests, typecheck or browser run was executed locally, per lane policy.
+
+
+## Independent HR Round Results page-level cross-audit (2026-10-18)
+
+| ID | Severity | Affected source | Finding / correction | Regression |
+|---|---|---|---|---|
+| HR-BREAK-ROUND-PRINCIPAL-26 | MAJOR | `src/app/(authenticated)/hr/round-results/page.tsx` | Page used `hasActiveRecruiter` without matching recruiter context ownership to the signed-in principal. Reject a mismatched active recruiter user ID before portfolio or workspace reads, alongside inactive accounts. | `tests/unit/HR-BREAK-chat19-round-results-principal.test.ts` checks mismatch and suspended principal, with no private reads. |
+| UX-hr-round-results-02 | UX | Same page | The outcomes and round filter pills, plus heading navigation links, had only small `py-2` touch areas, with no explicit visible keyboard focus on the filter pills. Use `inline-flex min-h-11 items-center` and focus-visible outlines on both selected and unselected links. | Same server-page test inspects real rendered action properties, invalid query recovery, authorized result, no-drives state and phone targets. |
+
+No code or tests were executed locally. Interactive focus, viewport and CI verification are pending.
