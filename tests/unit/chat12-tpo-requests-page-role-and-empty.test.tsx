@@ -1,6 +1,6 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {renderToStaticMarkup} from "react-dom/server";
-import type {RequestContext} from "@/modules/identity/context";
+import type {ActiveMembership,RequestContext} from "@/modules/identity/context";
 
 const mocks=vi.hoisted(()=>({
  context:vi.fn(),redirect:vi.fn(),inbox:vi.fn(),jobs:vi.fn(),
@@ -25,7 +25,7 @@ import GlobalTpoRequestsPage from "@/app/(authenticated)/tpo/requests/page";
 
 const COLLEGE="11111111-1111-4111-8111-111111111111";
 const ORG="22222222-2222-4222-8222-222222222222";
-const ctx=(roles:RequestContext["membership"] extends infer M ? M extends {roles:infer R}?R:never:never):RequestContext=>({
+const ctx=(roles:ActiveMembership["roles"]):RequestContext=>({
  user:{id:"33333333-3333-4333-8333-333333333333",identityUid:"tpo-request-page",platformStatus:"ACTIVE",systemRoles:[]},
  membership:{id:"44444444-4444-4444-8444-444444444444",collegeId:COLLEGE,
   organizationId:ORG,status:"ACTIVE",roles},
