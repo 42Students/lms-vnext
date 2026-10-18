@@ -9,12 +9,12 @@ import {
   colleges,
   projectTemplateCollegeAssignments,
   projectTemplateVersions,
+  projectTemplates,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
-import {
-  getProjectTemplateDetail,
-} from "./template-service";
+import { projectTemplateIdSchema } from "./validation";
+import { ProjectsServiceError } from "./errors";
 
 /**
  * Global Super Admin template inspection, with or without a selected safety scope.
@@ -35,10 +35,16 @@ export async function getSuperAdminTemplateSubview(
     "project-template.read",
   );
 
-  const detail = await getProjectTemplateDetail(
-    context,
-    templateId,
-  );
+  const id = projectTemplateIdSchema.parse(templateId);
+  const db = getDb();
+  const [template] = await db.select().from(projectTemplates)
+    .where(eq(projectTemplates.id, id)).limit(1);
+  if (!template) throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_FOUND");
+  // A non-history tab only needs the current blueprint. Historical versions
+  // can number in the thousands; never load them into every admin tab.
+  const [currentVersion] = await db.select().from(projectTemplateVersions)
+    .where(and(eq(projectTemplateVersions.templateId, id),
+      eq(projectTemplateVersions.version, template.currentVersion))).limit(1);
 
   const assignedColleges = includeColleges
     ? await getDb()
@@ -81,7 +87,7 @@ export async function getSuperAdminTemplateSubview(
           and(
             eq(
               projectTemplateCollegeAssignments.templateId,
-              detail.template.id,
+              template.id,
             ),
             isNull(projectTemplateCollegeAssignments.revokedAt),
             context.adminScope?.collegeId ? eq(colleges.id, context.adminScope.collegeId) : undefined,
@@ -95,7 +101,10 @@ export async function getSuperAdminTemplateSubview(
     : [];
 
   return {
-    ...detail,
+    template,
+    currentVersion: currentVersion ?? null,
+    versions: [],
+    assignments: [],
     assignedColleges,
   };
 }
