@@ -610,3 +610,11 @@ No database CI or browser execution was performed.
 | HR-BREAK-REPORT-JOINED-51 | MAJOR | Entire-portfolio hiring funnel counted a `JOINED` outcome from an offer regardless of the offer's persisted status; current-page report rows and displayed explanations require JOINED **on ACCEPTED offers**. Restrict funnel `hired` aggregate to both `j.status='JOINED'` and `o.status='ACCEPTED'`, retaining exact scoped jobs, shared applications and active memberships. | `tests/unit/HR-BREAK-chat19-report-joined.test.ts` checks SQL/pagination semantics and authorized report row projection. |
 
 No SQL execution, CI, or browser check was run locally.
+
+## Learner project/portfolio link safety in HR applicant review
+
+| ID | Severity | Defect and correction | Test |
+|---|---|---|---|
+| HR-BREAK-APPLICANT-LINK-51 | SECURITY | Recruiter-view learner profile link projection rejected loopback, RFC1918 and link-local addresses but omitted the IPv6 unspecified host `[::]` (a non-public address). Block it explicitly before displaying a learner-supplied URL. Added adversarial public/private link tests for HTTPS-only, credentials, private IP ranges, GitHub hostname exactness, fragment removal and size limit. No learner document or resume permission was widened. | `tests/unit/HR-BREAK-chat19-applicant-links.test.ts` |
+
+No runtime browser or CI run performed.
