@@ -57,3 +57,12 @@ No runtime checkout or authenticated app/CI runner is exposed in this session. E
 The rolling `docs/orchestrator/unit-failures-latest.md` listed seven failing chat-14 test files. This branch updated **assertions to preserve or strengthen the underlying safeguards rather than undoing the safer application code**: active `SUBMITTED` and column/college consent required before applicant PII or resume exposure; full verified-marks college visibility; `DataTable` mobile-priority/accessible `ScrollCue` semantics rather than removed local overflow markup; explicit `getProjectAdminCollegeId` scoped permission guard on create; parsed filters/error recovery and shared page controls for Projects admin surfaces. Fix test commits: `96986d6c`, `7d33e56f`, `5f7a99e1`, `df88f3bd`, `af6cc501`, `0ad65aca`, `d82e15ae`, `166f8296`. The cloud runner **has not verified these tests pass**; retain failure status until a new successful run.
 
 Release status remains **BLOCKED**: hundreds of ledger GAP symbols/pages/handlers still lack complete behavioural proof, PostgreSQL integration and cross-lane review are unavailable, and chat-6 draft update CAS and chat-13 membershipless Super Admin delivery lock actor migration remain unresolved.
+
+
+## Mentor board export direct-call defense
+
+| ID | Severity | Evidence | Change | Regression | CI |
+|---|---|---|---|---|---|
+| PROJ-DEF-014-07 / PROJ-BREAK-MENTOR-27 | S2 export resiliency | `mentorBoardReview` hands the current routes 500 tasks / 100 Sprints, but the exported `mentorBoardExportCsv` and `mentorSprintSummaryCsv` formatters previously trusted an unbounded caller array and inconsistent `omitted` values. Any future route/service bypass could generate oversized reports and erase the truncation indicator. | `12c97f77`: defensive 500 / 100 cap and internally computed excess, finite nonnegative omitted counts; caller-facing project headings unchanged. | `38b12afc`: 503-task/103-Sprint inputs, formula injection, stable status and sprint totals, hostile query, scoped export URLs. | Authored, **NOT run**; PostgreSQL and report UI comparison pending |
+
+The coverage ledger maps these six previously unmapped board-review exports to authored behavioural assertions but still contains many GAP entries. The independent review/CI/blocking release gates above remain unchanged.
