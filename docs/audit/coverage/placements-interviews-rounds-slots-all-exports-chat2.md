@@ -72,3 +72,42 @@ Scope: **all 71** `src/modules/placements/*interview*/*round*/*slot*` TypeScript
 | `src/modules/placements/learner-interview-withdrawal-model.ts` | `learnerInterviewWithdrawalTarget` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/learner-interview-withdrawal-service.ts` | `getOwnInterviewWithdrawalTargets` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/learner-interview-withdrawal-service.ts` | `requestOwnInterviewWithdrawal` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/learner-round-confirmation-readiness.ts` | `learnerRoundConfirmationReady` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/learner-round-confirmation-service.ts` | `confirmOwnPlacementRound` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/learner-round-search-query-model.ts` | `learnerRoundSearchQuerySchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/learner-round-search-query-model.ts` | `learnerRoundSearchFromQuery` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/learner-round-search-query-model.ts` | `learnerRoundSearchHref` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/learner-round-time-signal.ts` | `LearnerRoundTimeSignal` (type) | N/A (compile-time only) | TYPE ONLY |
+| `src/modules/placements/learner-round-time-signal.ts` | `learnerRoundTimeSignal` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/learner-round-time-signal.ts` | `learnerRoundTimeLabel` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/learner-round-visibility-policy.ts` | `CareerRoundView` (type) | N/A (compile-time only) | TYPE ONLY |
+| `src/modules/placements/learner-round-visibility-policy.ts` | `isCareerRoundVisible` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/learner-rounds-browse-model.ts` | `LearnerRoundBrowseSource` (type) | N/A (compile-time only) | TYPE ONLY |
+| `src/modules/placements/learner-rounds-browse-model.ts` | `LearnerRoundTimeBucket` (type) | N/A (compile-time only) | TYPE ONLY |
+| `src/modules/placements/learner-rounds-browse-model.ts` | `LearnerRoundBrowseFilters` (type) | N/A (compile-time only) | TYPE ONLY |
+| `src/modules/placements/learner-rounds-browse-model.ts` | `learnerRoundScheduledInstant` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/learner-rounds-browse-model.ts` | `learnerRoundUrgency` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/learner-rounds-browse-model.ts` | `browseLearnerCareerRounds` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/recruiter-round-results-read-model.ts` | `recruiterResultTableQuerySchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/recruiter-round-results-read-model.ts` | `RecruiterResultRound` (type) | N/A (compile-time only) | TYPE ONLY |
+| `src/modules/placements/recruiter-round-results-read-model.ts` | `projectRecruiterRoundResults` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/recruiter-round-results-read-model.ts` | `recruiterResultTableHref` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/round-service.ts` | `listPlacementRounds` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/round-service.ts` | `getPlacementRound` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/round-service.ts` | `createPlacementRound` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/round-service.ts` | `updatePlacementRound` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/round-service.ts` | `actOnPlacementRound` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/round-service.ts` | `getTpoRoundReorderReadiness` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/round-service.ts` | `reorderPlacementRounds` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/round-venue-booking-service.ts` | `requireAvailableRoundVenue` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/super-admin-booked-interviews-range.ts` | `superAdminBookedInterviewWindow` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/super-admin-booked-interviews-service.ts` | `listSuperAdminBookedInterviews` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-bulk-round-result-model.ts` | `bulkTpoRoundResultSchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-bulk-round-result-model.ts` | `TpoBulkRoundResultOutcome` (type) | N/A (compile-time only) | TYPE ONLY |
+| `src/modules/placements/tpo-bulk-round-result-model.ts` | `summarizeBulkRoundResults` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-bulk-round-result-model.ts` | `resolveBulkRoundLearnerTokens` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-bulk-round-result-service.ts` | `confirmTpoBulkRoundResults` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-confirmed-round-result-model.ts` | `confirmedTpoRoundResultSchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-confirmed-round-result-model.ts` | `TPO_RESULT_LABELS` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-confirmed-round-result-model.ts` | `canEditTpoRoundResult` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-confirmed-round-result-model.ts` | `canApplyTpoRoundResult` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
