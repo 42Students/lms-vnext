@@ -137,3 +137,6 @@ Additional **coverage without an independently established defect**: `HR-BREAK-c
 |---|---|---|---|---|
 | HR-MESSAGING-83 | S2 reliability | Optional general-conversation directory lookup was awaited without failure recovery, so a transient enrichment failure crashed the entire valid recruiter inbox. Now the main inbox remains available with explicit retry copy and the create-new form stays hidden while general-thread state is unknown. | `HR-BREAK-chat15-messaging-page-83.test.tsx` | Authenticated page/browser test not executed |
 | HR-MESSAGING-84 | S2 defense in depth | Recruiter open/reply HTTP handlers checked active role but did not preflight equality between cached recruiter principal and signed-in user before calling a sensitive service. Both now reject mismatched principal with 403 before persistence and retain same-origin guards. | `HR-BREAK-chat15-messaging-api-84.test.ts` | Actual HTTP, persistence and notification tests not executed |
+
+
+| HR-OFFERS-86 | S2 funnel correctness | HR Hired applicant-stage query trusted a JOINED outcome alone, even when its offer had subsequently been DECLINED, REVOKED, or WITHDRAWN. It now requires both the persisted ACCEPTED offer and JOINED outcome, consistent with offer overview counts. | `HR-BREAK-chat15-hired-offer-86.test.ts` | PostgreSQL history and CI not executed |
