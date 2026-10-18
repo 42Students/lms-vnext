@@ -291,4 +291,27 @@ describe("PROJ-HARNESS real PostgreSQL schema group examples", () => {
     const result=await pool.query("select id from colleges where id=$1",[savedId]);
     expect(result.rowCount).toBe(0);
   });
+  it("PROJ-HARNESS-20 delivery events enforce nonempty reason and composite project/submission ancestry",async()=>{
+    await fixture(async(db,f)=>{
+      const submission=await createFinalSubmission(db,f.project,f.learner);
+      await db.expectSqlState(()=>db.query(`
+        insert into project_delivery_events(project_id,submission_id,event_type,actor_membership_id,reason)
+        values ($1,$2,'LOCKED',$3,'')`,
+        [f.project.projectId,submission,f.mentor.membershipId]),"23514");
+      await db.query(`
+        insert into project_delivery_events(project_id,submission_id,event_type,actor_membership_id,reason)
+        values ($1,$2,'LOCKED',$3,'Confirmed by mentor')`,
+        [f.project.projectId,submission,f.mentor.membershipId]);
+      const otherAdmin=await createPrincipal(db,f.other,["COLLEGE_ADMIN"]);
+      const otherMentor=await createPrincipal(db,f.other,["MENTOR"]);
+      const otherLearner=await createPrincipal(db,f.other,["LEARNER"]);
+      const otherProject=await createProjectFixture(db,f.other,otherAdmin,otherMentor,otherLearner);
+      const otherSubmission=await createFinalSubmission(db,otherProject,otherLearner);
+      await db.expectSqlState(()=>db.query(`
+        insert into project_delivery_events(project_id,submission_id,event_type,actor_membership_id,reason)
+        values ($1,$2,'REOPENED',$3,'Wrong project')`,
+        [f.project.projectId,otherSubmission,f.mentor.membershipId]),"23503");
+    });
+  });
+
 });
