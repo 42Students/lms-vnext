@@ -6,8 +6,8 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {apiFetch} from "@/lib/api-fetch";
 import {adminDeliveryToast,canAdminSettleDelivery,type AdminDeliveryAction} from "@/modules/projects/admin-submission-review-model";
 
-export function ProjectAdminSubmissionReview({projectId,submissionId,status,locked,projectStatus,workspaceTitle}:{
- projectId:string;submissionId:string;status:string;locked:boolean;projectStatus:string;workspaceTitle?:string;
+export function ProjectAdminSubmissionReview({projectId,submissionId,status,locked,projectStatus,workspaceTitle,allowLock}:{
+ projectId:string;submissionId:string;status:string;locked:boolean;projectStatus:string;workspaceTitle?:string;allowLock:boolean;
 }){
  const router=useRouter();
  const [open,setOpen]=useState(false);
@@ -19,7 +19,7 @@ export function ProjectAdminSubmissionReview({projectId,submissionId,status,lock
  const [error,setError]=useState("");
 
  async function decide(action:AdminDeliveryAction){
-  if(pendingRef.current||!canAdminSettleDelivery(status,locked,projectStatus,action))return;
+  if(pendingRef.current||(action==="LOCK"&&!allowLock)||!canAdminSettleDelivery(status,locked,projectStatus,action))return;
   if(action==="CHANGES_REQUESTED"&&!feedback.trim()){
    setError("Add feedback explaining what needs to change before requesting changes.");return;
   }
@@ -39,10 +39,11 @@ export function ProjectAdminSubmissionReview({projectId,submissionId,status,lock
    setConfirmLock(false);
   }finally{pendingRef.current=false;setPending(false);}
  }
- if(!(["SUBMITTED","APPROVED"].includes(status))||locked||projectStatus==="ARCHIVED")return null;
+ if(!(["SUBMITTED","APPROVED"].includes(status))||locked||projectStatus==="ARCHIVED"||
+   (status==="APPROVED"&&!allowLock))return null;
  return <section aria-label="Review final submission" className="mt-3">
   <button type="button" onClick={()=>setOpen(true)}
-   className="min-h-10 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+   className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
    Review
   </button>
   {message?<p role="status" className="mt-2 text-sm">{message}</p>:null}
@@ -50,16 +51,16 @@ export function ProjectAdminSubmissionReview({projectId,submissionId,status,lock
    description="Review the current submission and record feedback for the learner."
    footer={<>
     <button type="button" disabled={pending} onClick={()=>setOpen(false)}
-     className="min-h-10 rounded-md border border-border px-3 py-2 text-sm">Cancel</button>
+     className="min-h-11 rounded-md border border-border px-3 py-2 text-sm">Cancel</button>
     {canAdminSettleDelivery(status,locked,projectStatus,"CHANGES_REQUESTED")?
      <button type="button" disabled={pending||!feedback.trim()} onClick={()=>{void decide("CHANGES_REQUESTED")}}
-      className="min-h-10 rounded-md border border-border px-3 py-2 text-sm font-semibold">Request changes</button>:null}
+      className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold">Request changes</button>:null}
     {canAdminSettleDelivery(status,locked,projectStatus,"APPROVED")?
      <button type="button" disabled={pending} onClick={()=>{void decide("APPROVED")}}
-      className="min-h-10 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground">Accept submission</button>:null}
-    {canAdminSettleDelivery(status,locked,projectStatus,"LOCK")?
+      className="min-h-11 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground">Accept submission</button>:null}
+    {allowLock&&canAdminSettleDelivery(status,locked,projectStatus,"LOCK")?
      <button type="button" disabled={pending} onClick={()=>setConfirmLock(true)}
-      className="min-h-10 rounded-md border border-border px-3 py-2 text-sm font-semibold">Lock submission</button>:null}
+      className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold">Lock submission</button>:null}
    </>}>
    <label className="block text-sm font-medium">Feedback for the learner
     <textarea maxLength={6000} value={feedback} disabled={pending}
