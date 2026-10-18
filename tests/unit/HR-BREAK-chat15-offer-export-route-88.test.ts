@@ -13,6 +13,7 @@ const view=(offerState:string)=>GET(new Request(
 describe("HR-OFFER-EXPORT-88: issuer rows are not draft selection ledger entries",()=>{
  beforeEach(()=>{
   vi.clearAllMocks();m.ctx.mockResolvedValue(actor);
+  m.error.mockImplementation(()=>Response.json({error:"INVALID_REQUEST"},{status:400}));
   m.read.mockResolvedValue({offersPage:{total:1,pages:1,pageSize:15},
    offers:[{id:"offer-1",name:"Applicant",role:"Engineer",status:"ISSUED",
     annualCtcInr:900000,joiningDate:null,issuedAt:new Date("2099-01-01T00:00:00Z"),
