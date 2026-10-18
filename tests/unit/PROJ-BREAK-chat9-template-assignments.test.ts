@@ -28,6 +28,8 @@ const state = vi.hoisted(() => ({
   updates: 0,
   events: 0,
   lockCalls: 0,
+  persistedChecks: 0,
+  persistedAllowed: true,
 }));
 
 vi.mock("@/modules/projects/scope", () => ({
@@ -35,6 +37,13 @@ vi.mock("@/modules/projects/scope", () => ({
     id,
     organizationId: id === otherCollegeId ? otherOrganizationId : organizationId,
   }),
+}));
+
+vi.mock("@/modules/permissions/persisted-actor", () => ({
+  assertPersistedPlatformPermission: async () => {
+    state.persistedChecks += 1;
+    if (!state.persistedAllowed) throw new Error("Missing permission: project-template.assign");
+  },
 }));
 
 vi.mock("@/modules/activity/service", () => ({
@@ -121,6 +130,8 @@ beforeEach(() => {
   state.updates = 0;
   state.events = 0;
   state.lockCalls = 0;
+  state.persistedChecks = 0;
+  state.persistedAllowed = true;
 });
 
 describe("IIT Dharwad: Project template assignment retries and scope", () => {
@@ -173,6 +184,16 @@ describe("IIT Dharwad: Project template assignment retries and scope", () => {
       },
     }, templateId, collegeId)).rejects.toThrow("Missing permission: project-template.assign");
     expect(state.transactions).toBe(0);
+    expect(state.events).toBe(0);
+  });
+
+  it("PROJ-BREAK-idor-27 revocation after request authentication aborts before assignment or activity", async () => {
+    state.persistedAllowed = false;
+    await expect(assignProjectTemplateToCollege(superAdmin(), templateId, collegeId))
+      .rejects.toThrow("Missing permission: project-template.assign");
+    expect(state.persistedChecks).toBe(1);
+    expect(state.inserts).toBe(0);
+    expect(state.updates).toBe(0);
     expect(state.events).toBe(0);
   });
 
