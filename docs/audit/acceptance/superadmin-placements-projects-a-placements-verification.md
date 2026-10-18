@@ -106,3 +106,9 @@ Registered SQL confirmation: `tests/unit/chat13-superadmin-company-migration-013
 
 
 - `SA-placements-projects-09` follow-up: `tests/unit/chat13-student-placement-lookup-runtime.test.ts` (`SA-STUDENT-LOOKUP-PLACED-04`, `SA-STUDENT-LOOKUP-CAP-04`) now exercises actual service composition via mocked scoped database/authorization. A/B PostgreSQL and cloud CI remain required to verify joins and limits.
+
+
+## chat-13 follow-up: admin reporting breakers (source/test authoring, CI pending)
+- `SA-BOOKED-INTERVIEWS-04`: verified source path now excludes booked slots with foreign or mismatched candidate applications using compulsory INNER JOINs, and a two-college fixture witnesses this condition on registered PostgreSQL schema. See `tests/unit/chat13-super-admin-booked-interviews-window.test.ts` and `tests/integration/chat13-super-admin-booked-interviews-tenant.test.ts`. Real fixture has not been executed in this lane.
+- `SA-PLACEMENT-POLICY-08`: malformed global overrides now fall back to bounded field defaults on read and as the other duration inside the serialized write transaction. See `tests/unit/chat13-platform-policy-corrupt-override.test.ts` and `tests/unit/chat13-platform-placement-policy-read-service.test.ts`. Runner checks and database repair remain open.
+- `SA-COMPANY-HISTORY-04`: capped 500-row company-history totals now share the visible-row scope for drives/applications/hired and explicitly disclose the limit. See `tests/unit/chat13-company-drive-history-visible-totals.test.ts`. 501-row real DB fixture pending.
