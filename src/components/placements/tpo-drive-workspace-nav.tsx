@@ -18,7 +18,7 @@ export function TpoDriveWorkspaceNav({ jobId }: { jobId: string }) {
       <label className="grid gap-1 text-sm font-semibold sm:hidden">Workspace section
         <select aria-label="Drive workspace section" value={selected}
           onChange={event=>router.push(event.target.value)}
-          className="min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 text-foreground">
+          className="min-h-11 md:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3 text-foreground">
           {tabs.map(tab=><option key={tab.href} value={tab.href}>{tab.label}</option>)}
         </select>
       </label>
@@ -33,7 +33,7 @@ export function TpoDriveWorkspaceNav({ jobId }: { jobId: string }) {
         return (
           <Link key={tab.href} href={tab.href}
             aria-current={active ? "page" : undefined}
-            className={`inline-flex min-h-11 items-center rounded-md border px-3 text-sm font-semibold transition-colors ${active
+            className={`inline-flex min-h-11 md:min-h-9 items-center rounded-[9px] border px-3 text-sm font-semibold transition-colors ${active
               ? "border-primary bg-primary-subtle text-primary-text"
               : "border-border text-primary-text hover:bg-primary-subtle"}`}>
             {tab.label}
@@ -41,14 +41,14 @@ export function TpoDriveWorkspaceNav({ jobId }: { jobId: string }) {
         );
       })}
       <details className="relative min-w-fit">
-        <summary className="flex min-h-11 cursor-pointer list-none items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+        <summary className="flex min-h-11 md:min-h-9 cursor-pointer list-none items-center rounded-[9px] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
           More sections ▾
         </summary>
         <div className="absolute right-0 z-30 mt-1 grid min-w-52 gap-1 rounded-lg border border-border bg-surface p-2 shadow-lg">
           {tpoDriveMoreTabs(jobId).map(tab=>(
             <Link key={tab.href} href={tab.href}
               aria-current={pathname===tab.href.split("#")[0]?"page":undefined}
-              className="min-h-10 rounded-md px-3 py-2 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+              className="min-h-11 md:min-h-9 rounded-[9px] px-3 py-2 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
               {tab.label}
             </Link>
           ))}

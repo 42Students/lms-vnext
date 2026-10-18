@@ -26,7 +26,7 @@ export function TpoDeleteDraftAction({jobId,updatedAt}:{jobId:string;updatedAt:s
    }finally{setPending(false)}
   });
  }
- return <section className="space-y-2 rounded-md border border-border p-3" aria-label="Delete unpublished draft">
+ return <section className="space-y-2 rounded-[9px] border border-border p-3" aria-label="Delete unpublished draft">
   <h3 className="font-semibold">Delete this draft?</h3>
   <p className="text-sm text-body">It was never published, so no student has seen it. It is removed from your drives.</p>
   <label className="flex items-start gap-2 text-sm text-body"><input type="checkbox"
@@ -35,7 +35,7 @@ export function TpoDeleteDraftAction({jobId,updatedAt}:{jobId:string;updatedAt:s
    I reviewed this unpublished drive and understand it will leave the active list.
   </label>
   <button type="button" disabled={!reviewed||pending} onClick={()=>void archive()}
-   className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold disabled:opacity-50">
+   className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-4 text-sm font-semibold disabled:opacity-50">
    {pending?"Removing draft…":"Delete draft"}</button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
  </section>;

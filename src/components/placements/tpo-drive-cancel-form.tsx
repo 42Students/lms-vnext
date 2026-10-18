@@ -91,7 +91,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
                   disabled={pending}
                   aria-pressed={reason === preset}
                   onClick={() => setReason(preset)}
-                  className={`min-h-11 rounded-full border px-3 text-sm font-medium ${reason === preset
+                  className={`min-h-11 md:min-h-9 rounded-full border px-3 text-sm font-medium ${reason === preset
                     ? "border-primary bg-primary-soft text-foreground"
                     : "border-border bg-surface text-body hover:border-primary"}`}
                 >
@@ -123,7 +123,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
             I reviewed the affected applications, rounds and offers. I understand cancellation
             will notify affected learners and cannot be silently undone.
           </label>
-          <button type="submit" disabled={pending || !reviewed} className="min-h-11 rounded-[9px] bg-primary px-5 font-semibold disabled:opacity-50 text-primary-foreground">
+          <button type="submit" disabled={pending || !reviewed} className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-5 font-semibold disabled:opacity-50 text-primary-foreground">
             {pending ? "Cancelling…" : "Review and cancel drive"}
           </button>
     </form>
