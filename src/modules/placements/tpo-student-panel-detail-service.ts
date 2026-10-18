@@ -21,7 +21,8 @@ export async function getTpoStudentPanelDetail(ctx:RequestContext,raw:unknown){
   .innerJoin(users,eq(users.id,collegeMemberships.userId))
   .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
     eq(membershipRoles.role,"LEARNER")))
-  .where(and(eq(collegeMemberships.id,id),eq(collegeMemberships.collegeId,college.id)))
+  .where(and(eq(collegeMemberships.id,id),eq(collegeMemberships.collegeId,college.id),
+    eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")))
   .limit(1);
  if(!student)return null;
  const applications=await db.select({id:placementApplications.id,jobId:placementJobs.id,
@@ -34,7 +35,7 @@ export async function getTpoStudentPanelDetail(ctx:RequestContext,raw:unknown){
   summary:activityEvents.summary,occurredAt:activityEvents.occurredAt,
   subjectType:activityEvents.subjectType,actorUserId:activityEvents.actorUserId})
   .from(activityEvents).where(and(eq(activityEvents.collegeId,college.id),
-   eq(activityEvents.subjectId,id),inArray(activityEvents.module,["PLACEMENTS","IDENTITY","ACADEMICS"])))
+   eq(activityEvents.subjectId,id),eq(activityEvents.module,"PLACEMENTS")))
   .orderBy(desc(activityEvents.occurredAt)).limit(100);
  if(!applicationIds.length)return {student,applications,requests:[],notes:[],studentNotes:await listTpoStudentNotes(ctx,id),teamHistory,truncated:teamHistory.length===100};
  const [requests,notes,studentNotes]=await Promise.all([

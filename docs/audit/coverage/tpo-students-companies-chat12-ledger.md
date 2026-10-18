@@ -13,8 +13,8 @@
 | `src/modules/placements/tpo-students-model.ts` | `tpoStudentRegisteredForPlacements` | `tests/unit/chat12-tpo-roster-facets-behavioral.test.ts` | explicit selection vs application fallback | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-students-model.ts` | `tpoStudentMatchesLegacyStage` | `tests/unit/chat12-tpo-roster-facets-behavioral.test.ts` | verified vs waiting / legacy status | **PARTIAL** |
 | `src/modules/placements/tpo-students-model.ts` | `tpoStudentNeedsAttention` | `tests/unit/chat12-tpo-roster-facets-behavioral.test.ts` | offer pending and verification attention | **PARTIAL** |
-| `src/modules/placements/tpo-students-service.ts` | `tpoStudentsQuerySchema` | `tests/unit/chat12-tpo-company-directory-hardening.test.ts` | not covered here; strict schema checks still pending | **OPEN** |
-| `src/modules/placements/tpo-students-service.ts` | `tpoStudentRequestsQuerySchema` | **NO TARGETED TEST** | all request filters, wrong tenant, non-GET guards | **OPEN** |
+| `src/modules/placements/tpo-students-service.ts` | `tpoStudentsQuerySchema` | `tests/unit/chat12-tpo-query-schema-security.test.ts` | default bounds, tri-state booleans, inverted numeric ranges and strict unknown-key refusal; DB read permission still pending | **BEHAVIOURAL** |
+| `src/modules/placements/tpo-students-service.ts` | `tpoStudentRequestsQuerySchema` | `tests/unit/chat12-tpo-query-schema-security.test.ts` | all request filters, wrong tenant, non-GET guards | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-students-service.ts` | `getTpoStudentsIntelligence` | `tests/unit/chat12-tpo-students-contract.test.ts` | source assertions only; PostgreSQL authorisation and query count pending | **SOURCE** |
 | `src/modules/placements/tpo-students-service.ts` | `listTpoStudentRequests` | **NO TARGETED TEST** | query permission, cross-college IDOR, cursor and absence | **OPEN** |
 | `src/modules/placements/tpo-students-csv.ts` | `tpoStudentCsvCell` | `tests/unit/chat12-tpo-export-and-clipboard-security.test.ts` | malicious company cell formula, quoting and control chars | **BEHAVIOURAL** |
@@ -24,13 +24,13 @@
 | `src/modules/placements/tpo-student-clipboard-model.ts` | `matchTpoStudentRolls` | `tests/unit/chat12-tpo-export-and-clipboard-security.test.ts` | case fold, ambiguous duplicates, invalid IDs | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-student-history-model.ts` | `tpoStudentHistoryQuerySchema` | `tests/unit/chat12-tpo-history-team-and-sharing-behavior.test.ts` | invalid id/page/additional scope field | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-student-history-model.ts` | `projectTpoStudentPlacementHistory` | `tests/unit/chat12-tpo-history-team-and-sharing-behavior.test.ts` | persisted-only chronology and staged/applied separation | **BEHAVIOURAL** |
-| `src/modules/placements/tpo-participation-model.ts` | `tpoParticipationStatusSchema` | **NO TARGETED TEST** | all 3 states and rejects | **OPEN** |
-| `src/modules/placements/tpo-participation-model.ts` | `tpoMembershipDecisionSchema` | **NO TARGETED TEST** | unexpected/expired version values | **OPEN** |
-| `src/modules/placements/tpo-participation-model.ts` | `tpoParticipationChangeSchema` | **NO TARGETED TEST** | reason and trim requirements | **OPEN** |
-| `src/modules/placements/tpo-participation-model.ts` | `canonicalTpoParticipationChange` | **NO TARGETED TEST** | status normalization, source reasons | **OPEN** |
-| `src/modules/placements/tpo-participation-model.ts` | `snapshotTpoMembershipDecision` | **NO TARGETED TEST** | stale date resolution and null default | **OPEN** |
-| `src/modules/placements/tpo-participation-model.ts` | `isTpoDecisionSnapshotCurrent` | **NO TARGETED TEST** | CAS equality and null safety | **OPEN** |
-| `src/modules/placements/tpo-participation-model.ts` | `hasTpoDecisionChanged` | **NO TARGETED TEST** | idempotency and diff with null status | **OPEN** |
+| `src/modules/placements/tpo-participation-model.ts` | `tpoParticipationStatusSchema` | `tests/unit/chat12-tpo-participation-state-cas.test.ts` | all 3 states and rejects | **BEHAVIOURAL** |
+| `src/modules/placements/tpo-participation-model.ts` | `tpoMembershipDecisionSchema` | `tests/unit/chat12-tpo-participation-state-cas.test.ts` | unexpected/expired version values | **BEHAVIOURAL** |
+| `src/modules/placements/tpo-participation-model.ts` | `tpoParticipationChangeSchema` | `tests/unit/chat12-tpo-participation-state-cas.test.ts` | reason and trim requirements | **BEHAVIOURAL** |
+| `src/modules/placements/tpo-participation-model.ts` | `canonicalTpoParticipationChange` | `tests/unit/chat12-tpo-participation-state-cas.test.ts` | status normalization, source reasons | **BEHAVIOURAL** |
+| `src/modules/placements/tpo-participation-model.ts` | `snapshotTpoMembershipDecision` | `tests/unit/chat12-tpo-participation-state-cas.test.ts` | stale date resolution and null default | **BEHAVIOURAL** |
+| `src/modules/placements/tpo-participation-model.ts` | `isTpoDecisionSnapshotCurrent` | `tests/unit/chat12-tpo-participation-state-cas.test.ts` | CAS equality and null safety | **BEHAVIOURAL** |
+| `src/modules/placements/tpo-participation-model.ts` | `hasTpoDecisionChanged` | `tests/unit/chat12-tpo-participation-state-cas.test.ts` | idempotency and diff with null status | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-participation-service.ts` | `TpoParticipationConflictError` | `tests/unit/chat12-tpo-bulk-concurrency-and-authorization.test.ts` | caught on failed preview, not direct DB | **SOURCE** |
 | `src/modules/placements/tpo-participation-service.ts` | `getTpoLearnerParticipation` | `tests/unit/PROJ-BREAK-TPO-bulk-partial-audit-01.test.ts` | mocked under confirm; real active/tenant DB proof pending | **MOCKED** |
 | `src/modules/placements/tpo-participation-service.ts` | `decideTpoLearnerParticipation` | `tests/unit/PROJ-BREAK-TPO-bulk-partial-audit-01.test.ts` | mocked CAS: actual PostgreSQL row locks/audit pending | **MOCKED** |
@@ -65,4 +65,4 @@
 
 ## Projects priority
 
-`PROJ-BREAK-TPO-01.test.ts` exercises TPO role, IDOR, stale session, bogus mentor claim and read vs write denial on the actual project access service with mocked DB reads. `PROJ-BREAK-TPO-02` verifies unreviewed portfolio counts cannot be presented as approved Projects outcomes. No direct `project_instances`/enrollment reconciliation has been established. `PROJ-BREAK-TPO-bulk-partial-audit-01.test.ts` exercises the actual TPO bulk confirmation service and audit outage without a real PostgreSQL transaction. All are authored, not locally executed.
+`PROJ-BREAK-TPO-01.test.ts` exercises TPO role, IDOR, stale session, bogus mentor claim and read vs write denial on the actual project access service with mocked DB reads. `PROJ-BREAK-TPO-02` verifies unreviewed portfolio counts cannot be presented as approved Projects outcomes. No direct `project_instances`/enrollment reconciliation has been established. `PROJ-BREAK-TPO-bulk-partial-audit-01.test.ts` exercises the actual TPO bulk confirmation service and audit outage without a real PostgreSQL transaction. `tests/integration/PROJ-BREAK-TPO-DB-01.test.ts` adds a rollback-only PostgreSQL witness for unassigned TPO, foreign tenant and revoked project role joins; the harness cannot exercise the service's own connection with uncommitted fixtures, so HTTP authorization is still unproven. All are authored, not locally executed.

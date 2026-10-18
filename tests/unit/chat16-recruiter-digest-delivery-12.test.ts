@@ -1,8 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { outboundFetch } from "@/lib/outbound";
+import { getDb } from "@/db/client";
+import { dispatchRecruiterUnreadMessageDigests } from "@/modules/placements/recruiter-message-email-dispatch-service";
 import { sendRecruiterMessageDigest } from "@/modules/placements/recruiter-message-email-provider";
 
 vi.mock("@/lib/outbound", () => ({ outboundFetch: vi.fn() }));
+vi.mock("@/db/client", () => ({ getDb: vi.fn() }));
 const env = {
   APP_ENV: "production",
   RECRUITER_MESSAGE_EMAIL_BRIDGE_ENABLED: "true",
@@ -78,4 +81,25 @@ describe("chat-16 recruiter unread mail bridge fail-closed and privacy behaviors
     expect(await sendRecruiterMessageDigest(payload, env)).toBe(false);
     expect(outboundFetch).toHaveBeenCalledTimes(2);
   });
+  it("REC-MAIL-TEMPLATE-01 refuses authentication or password-reset template reuse for recruiter digest", async () => {
+    for (const key of ["login.otp", "password-reset", "mfa.verify", "magic-link"]) {
+      expect(await sendRecruiterMessageDigest(payload, {
+        ...env, RECRUITER_MESSAGE_DIGEST_TEMPLATE_KEY: key,
+      })).toBe(false);
+    }
+    expect(outboundFetch).not.toHaveBeenCalled();
+  });
+
+  it("REC-MAIL-TEMPLATE-02 invalid digest template disables worker before looking up private messages", async () => {
+    const result = await dispatchRecruiterUnreadMessageDigests({
+      ...env,
+      RECRUITER_MESSAGE_REPLY_TOKEN_SECRET: "r".repeat(64),
+      RECRUITER_MESSAGE_INBOUND_HMAC_SECRET: "i".repeat(64),
+      RECRUITER_MESSAGE_DIGEST_TEMPLATE_KEY: "login.otp",
+    }, new Date("2026-10-18T12:00:00.000Z"));
+    expect(result).toEqual({ examined: 0, sent: 0, enabled: false });
+    expect(getDb).not.toHaveBeenCalled();
+    expect(outboundFetch).not.toHaveBeenCalled();
+  });
+
 });
