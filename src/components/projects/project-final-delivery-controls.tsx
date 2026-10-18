@@ -112,20 +112,20 @@ export function LearnerFinalDeliveryControl({
   }
 
   function resetFromDraft() {
-    setSummary(draft?.summary ?? "");
-    setSourceUrl(draft?.sourceUrl ?? "");
-    setDemoUrl(draft?.demoUrl ?? "");
-    setNotes(draft?.notes ?? "");
-    setAttachments(safeDraftAttachments(draft?.attachments));
+    // Use the last acknowledged server write, which may be newer than props
+    // until router.refresh() finishes. Reopening must not discard autosaved work.
+    const persisted=JSON.parse(lastSavedSnapshot.current) as {
+      summary:string;sourceUrl?:string;demoUrl?:string;notes?:string;
+      attachments?:DeliveryAttachment[];
+    };
+    setSummary(persisted.summary??"");
+    setSourceUrl(persisted.sourceUrl??"");
+    setDemoUrl(persisted.demoUrl??"");
+    setNotes(persisted.notes??"");
+    setAttachments(safeDraftAttachments(persisted.attachments));
     setLinkName("");setLinkUrl("");setAutosaveStatus("idle");
     failedSnapshot.current=null;
-    markSaved(JSON.stringify({
-      summary:(draft?.summary??"").trim(),
-      sourceUrl:draft?.sourceUrl?.trim()||undefined,
-      demoUrl:draft?.demoUrl?.trim()||undefined,
-      notes:draft?.notes?.trim()||undefined,
-      attachments:safeDraftAttachments(draft?.attachments),
-    }));
+    markSaved(lastSavedSnapshot.current);
   }
 
   async function save(
