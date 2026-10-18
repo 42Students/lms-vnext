@@ -17,6 +17,7 @@ import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { can, requirePermission } from "@/modules/permissions/policy";
 import { listOrganizations,listArchivedOrganizations } from "@/modules/organizations/service";
+import {organizationCreatedIstDate} from "@/modules/organizations/organization-created-date-model";
 
 type OrganizationRow = Awaited<
   ReturnType<typeof listOrganizations>
@@ -63,7 +64,7 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
       key: "created",
       header: "Created",
       cell: (organization) =>
-        organization.createdAt.toISOString().slice(0, 10),
+        organizationCreatedIstDate(organization.createdAt),
     },
     {
       key: "actions",
