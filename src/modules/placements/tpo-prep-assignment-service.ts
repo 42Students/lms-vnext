@@ -1,6 +1,6 @@
 import "server-only";
 import {and,eq,inArray,isNull,sql} from "drizzle-orm";
-import {z} from "zod";
+import {tpoPrepAssignmentInputSchema} from "./tpo-prep-assignment-model";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,colleges,courseOfferings,courses,departments,
  inAppNotifications,learnerProgramEnrollments,membershipRoles,placementTpoPrepAssignments,
@@ -12,11 +12,6 @@ import {requirePlacementManageScope} from "./scope";
 import {requirePersistedTpoMembership} from "./tpo-persisted-actor-service";
 import {requireTpoJobActor} from "./tpo-job-write-base";
 import {placementTableExists} from "./staged-tables";
-const uuid=z.string().uuid();
-export const tpoPrepAssignmentInputSchema=z.strictObject({
- offeringId:uuid,dueAt:z.iso.datetime({offset:true}).nullable().optional(),membershipIds:z.array(uuid).min(1).max(100),
-}).refine(data=>new Set(data.membershipIds).size===data.membershipIds.length,
- {message:"Select each student only once",path:["membershipIds"]});
 const inputSchema=tpoPrepAssignmentInputSchema;
 export class TpoPrepError extends Error{
  constructor(readonly code:"UNAVAILABLE"|"NO_ACTIVE_OFFERING"|"DUE_DATE_INVALID"|"INVALID_SELECTION"){super(code);}
