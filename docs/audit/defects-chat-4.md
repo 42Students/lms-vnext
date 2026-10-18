@@ -72,3 +72,7 @@ Validation: source review and committed behavioural/source-guard tests; cloud te
 
 
 | SA-colleges-at-glance-01 | S2 accuracy / S1 stale access | Tenant summary counted learner/faculty memberships as active even when the user was disabled, and trusted a Super Admin session snapshot without persisted authorization while reading. Count now joins ACTIVE users and locks persisted `college.read` permission through the scoped queries. | `tests/unit/chat4-superadmin-at-glance-tenant.test.ts` | PostgreSQL offboarding/race verification pending |
+
+
+| COL-student-import-options-01 | S2 UX/security | Student CSV selector could offer batches of archived programs, classes of archived cohorts and classes in CLOSED/foreign academic periods, then fail on import; also read options with a stale admin RequestContext after role revocation. Filters now track import eligibility and check persisted authority in transaction before private query. | `chat4-college-student-import-options-hardening.test.ts` | PostgreSQL+browser acceptance pending |
+| COL-classes-tenant-01/04 | S1 IDOR/data isolation | A section's academicPeriodId references an independent FK; class workspace and central loadSectionScope derived tenant only through cohort/program and could expose/accept another college's academic period when referential data is malformed. Both scope and details now require academicPeriod.collegeId to equal persisted cohort/program department college. | `chat4-college-section-workspace-tenant.test.ts` | PostgreSQL corrupt-FK tenant fixture pending |
