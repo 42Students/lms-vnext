@@ -264,7 +264,7 @@ export async function ProjectAdminAuditPage({
         <div className="flex flex-wrap items-end gap-2 sm:col-span-2 xl:col-span-5">
           <Button
             type="submit"
-            className="inline-flex min-h-10 items-center justify-center rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover"
+            className="justify-center"
           >
             Apply filters
           </Button>
