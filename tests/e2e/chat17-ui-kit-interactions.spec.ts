@@ -85,6 +85,27 @@ test.describe("UX-kit-E2E-01 real browser shared UI states",()=>{
     await expect(open).toBeFocused();
   });
 
+  test("reduced-motion skeleton and native disclosure remain keyboard accessible",async({page})=>{
+    await page.emulateMedia({reducedMotion:"reduce"});
+    await page.goto(route);
+    const shimmer=page.locator('[data-slot="skeleton"] .lms-skeleton-shimmer').first();
+    await expect(shimmer).toBeAttached();
+    const duration=await shimmer.evaluate(element =>
+      Number.parseFloat(getComputedStyle(element,"::after").animationDuration));
+    expect(Number.isFinite(duration)).toBe(true);
+    expect(duration).toBeLessThanOrEqual(0.01);
+
+    const disclosure=page.locator('[data-slot="disclosure"]');
+    await expect(page.getByText("Disclosed workspace details")).toBeHidden();
+    const summary=disclosure.locator("summary");
+    await summary.focus();
+    await summary.press("Enter");
+    await expect(disclosure).toHaveAttribute("open","");
+    await expect(page.getByText("Disclosed workspace details")).toBeVisible();
+    await summary.press("Space");
+    await expect(page.getByText("Disclosed workspace details")).toBeHidden();
+  });
+
   test("upload validates real FileList and toasts work without randomUUID",async({page})=>{
     await page.goto(route);
     const upload=page.locator("#harness-proof");
