@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { NextResponse } from "next/server";
+import { ZodError } from "zod";
 import { getCurrentDeviceSession } from "@/auth/current-session";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
@@ -27,9 +28,11 @@ beforeEach(() => {
   vi.mocked(getCurrentDeviceSession).mockResolvedValue({
     userId, sessionId, identityUid: "identity-1", platformStatus: "ACTIVE",
   });
-  vi.mocked(apiErrorResponse).mockImplementation(() => NextResponse.json({
-    error: "INTERNAL_ERROR", message: "Please try again.", requestId: "test-ref",
-  }, { status: 503, headers: { "x-request-id": "test-ref" } }));
+  vi.mocked(apiErrorResponse).mockImplementation((error) => error instanceof ZodError
+    ? NextResponse.json({ error: "INVALID_REQUEST", message: "Please check the device identifier.",
+      requestId: "test-ref" }, { status: 400, headers: { "x-request-id": "test-ref" } })
+    : NextResponse.json({ error: "INTERNAL_ERROR", message: "Please try again.",
+      requestId: "test-ref" }, { status: 503, headers: { "x-request-id": "test-ref" } }));
 });
 
 describe("AUTH-sessions-10 device list and revocation HTTP hostile journeys", () => {
@@ -95,7 +98,8 @@ describe("AUTH-sessions-10 device list and revocation HTTP hostile journeys", ()
     expect(getCurrentDeviceSession).not.toHaveBeenCalled();
     vi.mocked(isSameOriginRequest).mockReturnValue(true);
     const malformed = await DELETE_ONE(request(deviceUrl + "/invalid-id"), route("invalid-id"));
-    expect(malformed.status).toBe(503);
+    expect(malformed.status).toBe(400);
+    expect((await malformed.json()).error).toBe("INVALID_REQUEST");
     expect(revokeOwnSession).not.toHaveBeenCalled();
     expect(getCurrentDeviceSession).toHaveBeenCalledOnce();
   });
