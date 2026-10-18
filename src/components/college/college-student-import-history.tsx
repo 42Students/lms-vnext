@@ -2,6 +2,7 @@
 import {DataTable} from "@/components/ui/data-table";
 import {Dialog} from "@/components/ui/dialog";
 import {useRef,useState} from "react";
+import {isCurrentCollegeImportHistoryRequest} from "@/modules/people/college-import-history-request-model";
 type Receipt={id:string;when:string;students:number;imported:number;partial:number;failed:number};
 export function CollegeStudentImportHistory(){
  const [open,setOpen]=useState(false);
@@ -32,10 +33,10 @@ export function CollegeStudentImportHistory(){
    const response=await fetch("/api/college/students/import-history?page="+next,{cache:"no-store",signal:controller.signal});
    const body=await response.json().catch(()=>null);
    if(!response.ok||!Array.isArray(body?.items))throw Error("Import history unavailable.");
-   if(version!==requestVersion.current)return;
+   if(!isCurrentCollegeImportHistoryRequest(version,requestVersion.current,controller.signal.aborted))return;
    setRows(body.items as Receipt[]);setPage(next);setHasNext(body.hasNext===true);
   }catch{
-   if(version===requestVersion.current && !controller.signal.aborted)
+   if(isCurrentCollegeImportHistoryRequest(version,requestVersion.current,controller.signal.aborted))
     setError("Import history unavailable. Please try again.");
   }finally{
    if(version===requestVersion.current){
