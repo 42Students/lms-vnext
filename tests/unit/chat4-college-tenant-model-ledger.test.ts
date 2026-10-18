@@ -101,6 +101,6 @@ describe("college/tenant directory module coverage ledger",()=>{
       expect(page).toContain("Pagination");
     }
     expect(read("colleges")).toContain('canManageCollegeDirectoryRow(context,college)');
-    expect(read("organizations")).toContain('can(context, "organization.manage"');
+    expect(read("organizations")).toMatch(/can\(\s*context,\s*"organization\.manage"/);
   });
 });
