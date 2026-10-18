@@ -8,7 +8,7 @@ Scope: 37 routes (positions 75–111) of `docs/orchestrator/ui-ux/pages-admin.md
 | --- | --- | --- |
 | `/admin/placements/shortlisted` | `UX-admin-placements-shortlisted-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/placements/shortlisted/[applicationId]` | `UX-admin-placements-shortlisted-application-id-01` | **OPEN** — no live/browser or full service-role journey confirmation |
-| `/admin/placements/student-lookup` | `UX-admin-placements-student-lookup-01`, `SA-placements-student-lookup-01/04` | Malformed/overlong/repeated queries show a safe reset, do not touch DB; valid 3–150 character selected-college searches only; absent college denies queries. `tests/unit/PROJ-BREAK-chat9-sa-student-lookup-recovery.test.tsx`. Browser/real tenant test still OPEN. |
+| `/admin/placements/student-lookup` | `UX-admin-placements-student-lookup-01`, `SA-placements-student-lookup-01/07` | Page rejects duplicate/overlong search before PII query, requires a selected college, and service SQL joins both jobs and company relationships to the current college. `tests/unit/PROJ-BREAK-chat9-sa-student-lookup-recovery.test.tsx`, `tests/unit/PROJ-BREAK-chat9-sa-student-lookup-tenant.test.ts`. PG/browser authorization pending. |
 | `/admin/programs` | `UX-admin-programs-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/projects` | `UX-admin-projects-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/projects/[projectId]` | `UX-admin-projects-project-id-01` | **OPEN** — no live/browser or full service-role journey confirmation |
