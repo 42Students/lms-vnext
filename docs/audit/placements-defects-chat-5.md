@@ -62,3 +62,7 @@ Coverage trace: docs/audit/coverage/placements-ledger-chat-5.md, tests/unit/chat
 | PLACEMENTS-SELECTION-ATOMIC-02 | S1 open | Selection release verifies one transaction, issues an offer in a second, and records RELEASED in a third. A crash or conflicting actor can separate those stages. | **OPEN**. Safe error copy and identical-record idempotency do not solve cross-transaction atomicity; require competing-release/worker test and durable outbox/recovery design. |
 
 All unit and PostgreSQL tests above are **authored but unexecuted** here; the cloud orchestrator must confirm their exact passing status. Do not declare these findings release-closed on source changes alone.
+
+
+| PLACEMENTS-WAIT-IDEMP-01 | S1 partial fix | Two waitlist requests can both reach the post-issuance status update; one writes RELEASED and the other previously surfaced a stale conflict even for the **same canonical offer**. | Added locked settlement state decision, allowing an exact same-offer no-op without another release audit; commits 37e6bca / 96faab9, unit test 6e9760d. The remaining cross-transaction atomicity defect is OPEN. |
+| PLACEMENTS-SELECTION-RACE-DB-01 | S1 test gap | Simultaneous identical Record Selections requests could race and double-audit/version. | Added `Promise.allSettled` PostgreSQL regression asserting both same-payload calls complete, exactly one row and one audit; commit 491e2e6. Requires cloud DB execution. |
