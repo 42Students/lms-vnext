@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api-fetch";
 type Drive = {id: string; title: string; status: string; companyName: string};
@@ -15,6 +16,8 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
   const [result, setResult] = useState<Result | null>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [confirmOpen,setConfirmOpen]=useState(false);
+  const inFlightRef=useRef(false);
   const eligible = drives.filter(d => action === "CLOSE"
     ? d.status === "PUBLISHED" : d.status === "CLOSED");
   function toggle(id: string) {
@@ -22,7 +25,8 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
     setPreview(null); setResult(null);
   }
   async function send(confirm: boolean) {
-    if (busy || !selected.length || selected.length > 25) return;
+    if (busy || inFlightRef.current || !selected.length || selected.length > 25) return;
+    inFlightRef.current=true;
     setBusy(true); setError("");
     try {
       const payload = await apiFetch<Preview | Result>("/api/admin/placements/drives/bulk", {
@@ -32,13 +36,13 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
       });
       if (confirm) {
         const response = payload as Result;
-        setResult(response); setPreview(null);
+        setResult(response); setPreview(null); setConfirmOpen(false);
         setSelected(response.results.filter(r => r.status === "SKIPPED").map(r => r.jobId));
         router.refresh();
       } else {setPreview(payload as Preview); setResult(null);}
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Unable to update drives. Please try again.");
-    } finally {setBusy(false);}
+    } finally {inFlightRef.current=false;setBusy(false);}
   }
   return <section className="space-y-3 rounded-xl border border-border bg-surface p-4"
     aria-label="Super Admin bulk drive actions">
@@ -86,10 +90,8 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
       <p>{action==="CLOSE"?
         `${preview.pendingLettersWithdrawn} issued offers may be withdrawn when these drives close.`:
         "Previously withdrawn offers will not be reissued."}</p>
-      <button type="button" disabled={busy || !preview.eligible} onClick={()=>{
-        if(window.confirm("Confirm "+action.toLowerCase()+" for "+preview.eligible+" drives?"))
-          void send(true);
-      }} className="min-h-11 rounded bg-primary px-3 font-semibold text-foreground disabled:opacity-50">
+      <button type="button" disabled={busy || !preview.eligible} onClick={()=>setConfirmOpen(true)}
+        className="min-h-11 rounded bg-primary px-3 font-semibold text-foreground disabled:opacity-50">
         Confirm {action.toLowerCase()}
       </button>
       <button type="button" disabled={busy} onClick={()=>setPreview(null)}
@@ -103,5 +105,14 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
         className="min-h-11 font-semibold text-[var(--lms-teal-deep)] underline">Preview failed drives for retry</button>:null}
     </div>:null}
     {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+    <ConfirmDialog open={confirmOpen&&preview!==null} pending={busy}
+      onOpenChange={next=>{if(!next&&!busy)setConfirmOpen(false);}}
+      title={"Confirm "+action.toLowerCase()+" for "+(preview?.eligible??0)+" drives?"}
+      description={action==="CLOSE"?
+       "Affected issued offers may be withdrawn when closing. Historical decisions remain.":
+       "Opening applies to closed drives only; draft publication requires the workspace preflight."}
+      confirmLabel={"Confirm "+action.toLowerCase()}
+      confirmVariant={action==="CLOSE"?"danger":"primary"}
+      onConfirm={()=>void send(true)}/>
   </section>;
 }
