@@ -28,7 +28,7 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
   return (
     <div className="space-y-6">
       <Link href="/tpo/recruiters"
-        className="text-sm font-semibold text-primary-text hover:underline">
+        className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
         ← Back to recruiter leads
       </Link>
       <PageHeader eyebrow="TPO · Recruiter relationships" title="Follow-ups due"
@@ -36,14 +36,14 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
       <nav aria-label="Follow-up ownership" className="flex flex-wrap gap-3">
         {FOLLOWUP_SCOPES.map(view=><Link key={view} href={tpoFollowupQueueHref({scope:view,window,q})}
           aria-current={view===scope?"page":undefined}
-          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
           {view==="MINE"?"My Work":"Placement Team"}
         </Link>)}
       </nav>
       <nav aria-label="Follow-up date window" className="flex flex-wrap gap-3">
         {FOLLOWUP_WINDOWS.map(view=><Link key={view} href={tpoFollowupQueueHref({scope,window:view,q})}
           aria-current={view===window?"page":undefined}
-          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
           {view==="DUE"?"Due now":"Next 7 days"}
         </Link>)}
       </nav>
@@ -52,18 +52,18 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
         <label className="min-w-0 flex-1 text-sm font-semibold text-body">Find recruiter or company
           <input type="search" name="q" maxLength={100} defaultValue={q} placeholder="Search recorded lead or company name"
             className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/>
-        </label><button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Search</button>
-        {q?<Link href={tpoFollowupQueueHref({scope,window})} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Clear</Link>:null}
+        </label><button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Search</button>
+        {q?<Link href={tpoFollowupQueueHref({scope,window})} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">Clear</Link>:null}
       </form>
       <p className="text-sm text-body">{scope==="MINE"?"Only open due follow-ups assigned to your persisted TPO membership.":"Open due follow-ups for the placement team; this includes all owners."}</p>
       {data ? <><a href={tpoFollowupQueueExportHref({scope,window,q})}
-          className="inline-flex min-h-10 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">
+          className="inline-flex min-h-11 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-foreground">
           Export filtered follow-ups CSV
         </a><TpoDueFollowupWorkspace data={data} />
         <nav aria-label="Follow-up pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
           <span className="text-body">Showing {data.total===0?0:(data.page-1)*data.pageSize+1}–{Math.min(data.total,data.page*data.pageSize)} of {data.total} matching tasks · page {data.page} of {data.totalPages}</span>
-          <div className="flex gap-4">{data.page>1?<Link href={tpoFollowupQueueHref({scope,window,q,page:data.page-1})} className="font-semibold text-primary-text">← Previous</Link>:null}
-            {data.page<data.totalPages?<Link href={tpoFollowupQueueHref({scope,window,q,page:data.page+1})} className="font-semibold text-primary-text">Next →</Link>:null}</div>
+          <div className="flex gap-4">{data.page>1?<Link href={tpoFollowupQueueHref({scope,window,q,page:data.page-1})} className="font-semibold text-[var(--lms-teal-deep)]">← Previous</Link>:null}
+            {data.page<data.totalPages?<Link href={tpoFollowupQueueHref({scope,window,q,page:data.page+1})} className="font-semibold text-[var(--lms-teal-deep)]">Next →</Link>:null}</div>
         </nav></> : (
         <section role="status" className="rounded-xl border border-border bg-surface p-6">
           <h2 className="font-semibold text-foreground">Recruiter follow-ups unavailable</h2>
