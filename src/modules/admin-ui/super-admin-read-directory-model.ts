@@ -33,7 +33,12 @@ export type SuperAdminReadResult = {
  query:SuperAdminReadQuery; total:number; totalPages:number; items:SuperAdminReadRow[];
 };
 export function superAdminReadPages(total:number,pageSize=SUPER_ADMIN_READ_PAGE_SIZE) {
- return Math.max(1,Math.ceil(total/pageSize));
+ // This helper is exported to internal callers as well as parsed routes.
+ // Never manufacture NaN/Infinity page counts from malformed counts or zero
+ // page sizes (which otherwise produce infinite "Next" navigation).
+ const rows=Number.isFinite(total)&&total>0?Math.floor(total):0;
+ const size=Number.isSafeInteger(pageSize)&&pageSize>0?pageSize:SUPER_ADMIN_READ_PAGE_SIZE;
+ return Math.max(1,Math.ceil(rows/size));
 }
 export function superAdminReadHref(path:string,query:SuperAdminReadQuery) {
  const params=new URLSearchParams();
