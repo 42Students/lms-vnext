@@ -67,7 +67,7 @@ export function CollegeFacultyLifecycleAction({ membershipId, name, status }: {
       </label> : <p className="text-xs text-body">Restore access for this faculty membership?</p>}
       {error ? <p role="alert" className="text-xs text-red-700">{error}</p> : null}
       <button type="button" onClick={submit} disabled={busy}
-        className="rounded-md bg-primary px-3 py-2 text-xs font-semibold text-on-primary">Confirm {action === "DEACTIVATE" ? "suspension" : "reactivation"}</button>
+        className="rounded-[var(--lms-control-radius,9px)] bg-primary px-3 py-2 text-xs font-semibold text-on-primary">Confirm {action === "DEACTIVATE" ? "suspension" : "reactivation"}</button>
       <button type="button" onClick={() => setEditing(false)}
         className="ml-2 rounded-md border border-border px-3 py-2 text-xs">Cancel</button>
     </div> : null}
