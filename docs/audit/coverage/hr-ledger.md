@@ -660,3 +660,13 @@ The stale CI snapshot in `docs/orchestrator/unit-failures-latest.md` lists `chat
 | HR-NOTIFY-SCOPE-09 | `HR-BREAK-chat15-notifications-09.test.ts`: inactive/revoked recruiter denied before DB; no grants yields NO_ACCESS; multi-college requires explicit choice; unauthorized subject and non-job notifications removed; invalid/foreign query blocked | PostgreSQL event/audience, notifications from concurrent employer changes and browser fetch |
 | HR-CONVERSATIONS-SCOPE-10 | `HR-BREAK-chat15-conversations-10.test.ts`: inactive account, foreign tenant, malformed query denied before messaging; multi-grant choice; foreign recruiter/college/unowned drive thread invisible; unread, general/drive, search and stable order | Real database unread update, concurrent replies and last-message race |
 | HR-APPLICANTS-EXPORT-11 | `HR-BREAK-chat15-applicant-export-11.test.ts`: formula injection and CRLF controls escaped; IST midnight; contacts, resume/skills/roll/branch excluded; 200 row cap with notice, withdrew vs submitted separation, bounded query and pagination | Direct HTTP download vs screen equality, revoked grant export denial, real CSV spreadsheet validation |
+
+
+## HR jobs and offer boundary — source-level test expansion (CI pending)
+
+| Requirement | New evidence | Remaining acceptance |
+|---|---|---|
+| HR-DRIVES-FILTER-12 | `tests/unit/HR-BREAK-chat15-drives-12.test.ts` validates authorized-scope portfolio filters, published vs closed vs waiting, excludes archived and unpublished jobs, IST deadline at 23:59:59.999 and following midnight, bounded 20-row pagination and deterministic title sort | Real DB authorized relationship changes and cursor/page consistency, page UX |
+| HR-ROLE-MATRIX-13 | `tests/unit/HR-BREAK-chat15-role-matrix-13.test.ts` directly exercises `can()` for recruiter own company relationship, wrong college/relationship, TPO placement management vs recruiter-only writes, college-admin, HR membership, deactivated actor, revoked membership, scoped Super Admin and forbidden recruiter impersonation | Live PostgreSQL grants and role changes mid-request, API 401/403/404 uniformity |
+
+All new checks are **authored but not executed** by this lane. Previously reported failures from `unit-failures-latest.md` and test-only TypeScript error snapshot are older than their source/test corrections; they still require fresh CI evidence before marking green. Continue outstanding HR jobs, offers, applicant export and messaging DB scenarios, plus 47-page interactive browser matrix.
