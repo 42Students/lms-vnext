@@ -38,9 +38,9 @@ export default async function TpoDriveJoiningPage({
   ] as const;
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <Link href={"/tpo/placements/jobs/" + encodeURIComponent(tracker.job.id)}
-        className="text-sm font-semibold text-primary-text hover:underline">
+        className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
         ← Back to drive workspace
       </Link>
       <PageHeader
@@ -72,7 +72,7 @@ export default async function TpoDriveJoiningPage({
                   <p className="mt-1 text-sm text-body">{item.roleTitle}</p>
                   <Link
                     href={"/tpo/students/" + encodeURIComponent(item.membershipId) + "/history"}
-                    className="mt-1 inline-block text-sm font-semibold text-primary-text hover:underline">
+                    className="mt-1 inline-block text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
                     Learner placement history →
                   </Link>
                 </div>

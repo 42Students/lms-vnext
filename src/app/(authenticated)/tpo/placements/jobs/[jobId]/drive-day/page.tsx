@@ -16,11 +16,11 @@ export default async function DriveDayForOneDrive({
   const { jobId } = await params;
   const drive = await getPlacementDriveDay(context, jobId);
   const root = "/tpo/placements/jobs/" + encodeURIComponent(jobId);
-  return <div className="space-y-6">
+  return <div className="min-w-0 space-y-6">
     <PageHeader eyebrow="TPO · Drive day" title={drive.job.title + " · Drive day"}
       description="The campus-day rounds, attendance and result readiness for this drive."
       actions={<Link href="/tpo/drive-day"
-        className="inline-flex min-h-10 items-center rounded-md border border-primary px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-md border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
         Open drive day / attendance
       </Link>} />
     {drive.rounds.length ? (
@@ -39,9 +39,9 @@ export default async function DriveDayForOneDrive({
               : "Date to be confirmed"}</p>
             <p className="mt-1 text-sm text-body">{round.venue || "Venue to be told"}</p>
             <div className="mt-3 flex flex-wrap gap-4 text-sm font-semibold">
-              <Link className="text-primary-text underline"
+              <Link className="text-[var(--lms-teal-deep)] underline"
                 href={root + "/rounds/" + encodeURIComponent(round.id) + "/results"}>See attendance and results</Link>
-              <Link className="text-primary-text underline" href="/tpo/drive-day">Open drive day</Link>
+              <Link className="text-[var(--lms-teal-deep)] underline" href="/tpo/drive-day">Open drive day</Link>
             </div>
           </article>;
         })}

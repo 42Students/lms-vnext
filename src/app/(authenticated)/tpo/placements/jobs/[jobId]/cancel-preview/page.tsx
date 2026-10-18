@@ -23,8 +23,8 @@ export default async function TpoDriveCancelPreviewPage({
     throw error;
   }
   return (
-    <div className="space-y-5">
-      <Link href={"/tpo/placements/jobs/" + preview.id} className="text-sm font-semibold text-primary-text hover:underline">
+    <div className="min-w-0 space-y-5">
+      <Link href={"/tpo/placements/jobs/" + preview.id} className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
         ← Drive workspace
       </Link>
       <PageHeader

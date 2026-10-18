@@ -15,8 +15,8 @@ export default async function TpoExtendDeadlinePage({params}:{params:Promise<{jo
   if(error instanceof PlacementsServiceError&&error.code==="PLACEMENT_JOB_NOT_FOUND")notFound();
   throw error;
  }
- return <div className="space-y-5">
-  <Link href={"/tpo/placements/jobs/"+job.id} className="text-sm font-semibold text-primary-text hover:underline">← Drive workspace</Link>
+ return <div className="min-w-0 space-y-5">
+  <Link href={"/tpo/placements/jobs/"+job.id} className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">← Drive workspace</Link>
   <PageHeader eyebrow="TPO · Drive deadline" title={job.title}
    description={job.applicationDeadline?"Extend a published application deadline with a validated IST date and immutable audit.":"Set the first application deadline on this published drive, with a validated IST date and immutable audit."}/>
   {job.extendable?<TpoDriveDeadlineForm job={job}/>:<p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
