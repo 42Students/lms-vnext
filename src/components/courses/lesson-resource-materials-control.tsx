@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect,useState} from "react";
+import {useEffect,useRef,useState} from "react";
 import {Button} from "@/components/ui/button";
 import {facultyContentExternalHref} from "@/modules/courses/faculty-content-preview-model";
 
@@ -20,24 +20,33 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
  const uri="/api/courses/lesson-contents/"+encodeURIComponent(contentId)+"/materials"+
   (deliveryId?"?deliveryId="+encodeURIComponent(deliveryId):"");
  const [prevUri,setPrevUri]=useState(uri);
- if(prevUri!==uri){setPrevUri(uri);setLoading(true);setError(null);}
+ const currentUriRef=useRef(uri);
+ currentUriRef.current=uri;
+ if(prevUri!==uri){
+  // An old Section or acting-college may have been visible on this mounted
+  // component. Never show those private materials while the new scope loads.
+  setPrevUri(uri);setLoading(true);setError(null);setNotice(null);
+  setMaterials([]);setDraft(blank);setEditing(null);setBusy(false);
+ }
  useEffect(()=>{
   const controller=new AbortController();
   void fetch(uri,{cache:"no-store",signal:controller.signal}).then(async response=>{
    if(!response.ok)throw new Error("Could not load resource materials.");
    return response.json();
   }).then(data=>{
-   if(!controller.signal.aborted)setMaterials(Array.isArray(data?.materials)?data.materials:[]);
+   if(!controller.signal.aborted&&currentUriRef.current===uri)
+    setMaterials(Array.isArray(data?.materials)?data.materials:[]);
   }).catch(cause=>{
-   if(!controller.signal.aborted)setError(cause instanceof Error?cause.message:"Could not load materials.");
-  }).finally(()=>{if(!controller.signal.aborted)setLoading(false);});
+   if(!controller.signal.aborted&&currentUriRef.current===uri)
+    setError(cause instanceof Error?cause.message:"Could not load materials.");
+  }).finally(()=>{if(!controller.signal.aborted&&currentUriRef.current===uri)setLoading(false);});
   return ()=>controller.abort();
  },[uri]);
  async function reload(){
   const response=await fetch(uri,{cache:"no-store"});
   if(!response.ok)throw new Error("Could not refresh resource materials.");
   const data=await response.json();
-  setMaterials(Array.isArray(data?.materials)?data.materials:[]);
+  if(currentUriRef.current===uri)setMaterials(Array.isArray(data?.materials)?data.materials:[]);
  }
  async function submit(action:"ADD_LINK"|"EDIT_LINK"|"REMOVE",id?:string){
   if(busy)return;
@@ -53,10 +62,14 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
      action==="EDIT_LINK"?{...trimmed,action,materialId:id}:{...trimmed,action})});
    if(!response.ok)throw new Error("Could not save resource material. Check your permissions and try again.");
    await reload();
+   if(currentUriRef.current!==uri)return;
    setDraft(blank);setEditing(null);
    setNotice(action==="REMOVE"?"Material removed.":action==="EDIT_LINK"?"Material updated.":"Material added.");
-  }catch(cause){setError(cause instanceof Error?cause.message:"Material change failed.");}
-  finally{setBusy(false);}
+  }catch(cause){
+   if(currentUriRef.current===uri)setError(cause instanceof Error?cause.message:"Material change failed.");
+  }finally{
+   if(currentUriRef.current===uri)setBusy(false);
+  }
  }
  return <section aria-label="Resource materials" className="mt-4 space-y-3 rounded-lg border border-border bg-surface-subtle p-3">
   <div className="flex items-center justify-between gap-2">
