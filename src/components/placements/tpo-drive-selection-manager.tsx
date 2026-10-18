@@ -102,7 +102,7 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
       </button>
       <button type="button" disabled={pending||!chosen.length} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]" onClick={()=>setChosen([])}>Clear selection</button>
     </div>
-    <fieldset className="max-h-60 space-y-1 overflow-auto rounded border border-border p-3">
+    <fieldset className="max-h-60 min-h-0 space-y-1 overflow-auto overscroll-contain rounded border border-border p-3 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
      <legend className="font-semibold">Students ({chosen.length} selected, maximum 100)</legend>
      {(mode==="RECORD"?visibleRecordable.map(c=>({id:c.applicationId,name:c.name,note:c.roleTitle})):
        visibleReleasable.map(s=>({id:s.id,name:s.name,note:s.roleTitle+(s.offerReady?"":" · Needs eligibility review")})))
@@ -112,7 +112,7 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
        </label>)}
     </fieldset>
     {error?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
-    {report.length?<div role="status" className="max-h-32 overflow-auto text-sm">
+    {report.length?<div role="status" tabIndex={0} aria-label="Selection release results, scroll for more" className="max-h-32 min-h-0 overflow-auto overscroll-contain rounded border border-border p-2 text-sm [mask-image:linear-gradient(to_bottom,black_0%,black_85%,transparent_100%)]">
      {report.map(x=><p key={x.selectionId}>{x.status}: {x.applicationId} {x.reason??""}</p>)}
     </div>:null}
     <div className="flex gap-3">
