@@ -31,6 +31,7 @@ import {
   can,
 } from "@/modules/permissions/policy";
 import { PlacementsServiceError } from "./errors";
+import {assertTpoRoundApplyJobState,assertTpoRoundApplyRoundState} from "./tpo-round-apply-model";
 import { requirePlacementManageScope } from "./scope";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
@@ -636,18 +637,14 @@ export async function applyPlacementRoundResult(
     const [lockedJob] = await tx.select({status:placementJobs.status})
       .from(placementJobs).where(eq(placementJobs.id,current.job.id))
       .for("update").limit(1);
-    if(!lockedJob || lockedJob.status!=="PUBLISHED")
-      throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
+    assertTpoRoundApplyJobState(lockedJob?.status??null);
     const [lockedRound] = await tx.select({
       status:placementJobRounds.status,kind:placementJobRounds.kind,
     }).from(placementJobRounds).where(and(
       eq(placementJobRounds.id,current.round.id),
       eq(placementJobRounds.jobId,current.job.id),
     )).for("update").limit(1);
-    if(!lockedRound || lockedRound.status!=="COMPLETED")
-      throw new PlacementsServiceError("PLACEMENT_RESULT_ROUND_NOT_READY");
-    if(lockedRound.kind==="TALK")
-      throw new PlacementsServiceError("PLACEMENT_RESULT_INVALID_ROUND_TYPE");
+    assertTpoRoundApplyRoundState(lockedRound?.status??null,lockedRound?.kind??null);
     // The HTTP request may outlive the officer's membership or system-role
     // grant. Keep actor SHARE locks through the result, audit and delivery.
     await assertPersistedPlatformPermission(tx,context,"placements.manage",{
