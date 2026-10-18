@@ -134,3 +134,18 @@ Use this ledger to assign next writes. Do not convert a GAP to complete based on
 ## Identity mapping and server-only preview-token split
 
 The all-column applicant matching function is now exported from the browser-safe round-import model and reused in both preview and staging. It rejects IDs whose email/roll data contradict the selected internal applicant and never trusts company portal IDs for identity. The SHA-256 `tpoRoundImportPreviewToken` lives in the **server-only** `tpo-round-import-preview-token.ts`, not the import parsing model; this avoids pulling Node crypto into a possible client import graph. Both helpers have direct named tests. They have not been executed, and parallel database writers still need integration tests.
+
+## Chat-2 follow-up: post-merge CI failure triage and slot/round coverage — 2026-10-18
+
+All evidence below is **authored source, not an executed pass**. The main CI report `docs/orchestrator/typecheck-errors-latest.md` presently lists production typecheck and lint PASS; its remaining errors refer to other lane test files. No tests or TypeScript checks were executed in this session.
+
+| Module and exported symbol | Direct behavioural evidence | Scope / remaining gate |
+| --- | --- | --- |
+| `tpo-interview-reschedule-model.ts` — `tpoInterviewRescheduleSchema` | `tests/unit/chat2-interview-reschedule-security.test.ts` — `TPO-drive-workspace-44 accepts only secure, credential-free virtual interview links`, `TPO-drive-workspace-44 rejects forged/partial reschedules and requires an on-campus venue` | HTTPS-only virtual meeting link, credential rejection, schema strictness; actual database reschedule races remain open |
+| `tpo-interview-reschedule-model.ts` — `validInterviewWindow`, `overlappingInterviewVenue` | `tests/unit/chat2-interview-reschedule-security.test.ts` — invalid durations, start instants and touching/overlapping bookings | Real PostgreSQL competing-slot transaction remains open |
+| `tpo-interview-slot-model.ts` — `tpoInterviewSlotActionSchema`, `planInterviewDay`, `sameInterviewRoom`, `overlapsInterviewRoom` | `tests/unit/chat2-tpo-interview-round-slot-ledger.test.ts` — `TPO-drive-workspace-44` schema, bounded planner, Unicode collisions | Generated room/day model only; service concurrent mutation remains open |
+| `tpo-round-reorder-model.ts` — `roundReorderLockMessage`, `moveRound` | `tests/unit/chat2-tpo-interview-round-slot-ledger.test.ts` — `TPO-drive-workspace-37 never reorders ended, live or artifact-bearing plans` | Mutating round-service PostgreSQL race remains open |
+| `tpo-live-round-timing-model.ts` — `tpoLiveRoundTiming` | `tests/unit/chat2-tpo-interview-round-slot-ledger.test.ts` — `UX-tpo-LAST-THIRD-01 never invents elapsed time for future or invalid clocks` | Model-only, not browser render verification |
+| `tpo-confirmed-round-result-model.ts` — `confirmedTpoRoundResultSchema` | `tests/unit/chat2-tpo-round-contracts-break-11.test.ts` — `single result requires an explicit confirm, current version and strictly validated learner decision` (corrected invalid unmessaged FAIL fixture) | Staging/apply transaction still awaits CI/DB |
+
+**Open:** direct live service role/tenant/revocation tests, transaction rollback, idempotent retries, notification exactly-once, and browser routes’ states. No completeness or CI-green claim is made.
