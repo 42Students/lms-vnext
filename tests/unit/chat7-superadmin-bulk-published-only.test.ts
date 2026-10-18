@@ -1,5 +1,6 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import type {RequestContext} from "@/modules/identity/context";
+import {readFileSync} from "node:fs";
 const state=vi.hoisted(()=>({
  rows:[] as Array<{id:string;lessonId:string;status:string;visible:boolean;updatedAt:Date}>,
  write:vi.fn(),acting:vi.fn(),select:vi.fn(),
@@ -51,6 +52,18 @@ describe("SA-academics-people-53 bulk course/lesson visibility never alters futu
   expect(result.failures[0]?.id).toBe("published-hidden");
   expect(result.failures[0]?.reason).not.toContain("SQL details");
   expect(state.write).toHaveBeenCalledTimes(1);
+ });
+ it("limits bulk visibility SQL to published content under active parents and a published path",()=>{
+  const source=readFileSync("src/modules/courses/super-admin-lesson-bulk-visibility.ts","utf8");
+  for(const condition of [
+   'eq(courseLearningPaths.status,"PUBLISHED")',
+   'eq(courseLessons.status,"ACTIVE")',
+   'eq(courseOfferings.status,"ACTIVE")',
+   'eq(courses.status,"ACTIVE")',
+   'eq(departments.collegeId,acting.collegeId)',
+   'eq(academicPeriods.collegeId,acting.collegeId)',
+   'row.status!=="PUBLISHED"',
+  ])expect(source).toContain(condition);
  });
  it("never opens database queries when the input is unconfirmed or exceeds the allowed lesson batch",async()=>{
   for(const input of [
