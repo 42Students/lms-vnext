@@ -1,0 +1,107 @@
+import { randomUUID } from "node:crypto";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import type { Pool } from "pg";
+import {
+  createFinalSubmission, createMeeting, createPrincipal, createProjectFixture,
+  createTaskSubmission, createTenant, newHarnessPool, submitFinalSubmission,
+  withProjectPg, withTwoPgSessions, type PgHarness,
+} from "./support/projects-placements-pg-harness";
+
+/**
+ * PROJ-HARNESS-22..26: real migrated PostgreSQL witnesses.
+ * Every fixture uses the same rollback-only transaction and never commits
+ * learner data. These checks guard the fixture API; HTTP IDOR is tested by
+ * its owning service lane independently.
+ */
+let pool: Pool;
+beforeAll(() => { pool = newHarnessPool(); });
+afterAll(async () => { if (pool) await pool.end(); });
+
+async function actors(db: PgHarness) {
+  const own = await createTenant(db, "Harness tenant one");
+  const foreign = await createTenant(db, "Harness tenant two");
+  const author = await createPrincipal(db, own, ["COLLEGE_ADMIN"]);
+  const mentor = await createPrincipal(db, own, ["MENTOR"]);
+  const learner = await createPrincipal(db, own, ["LEARNER"]);
+  const outsider = await createPrincipal(db, foreign, ["LEARNER"]);
+  const foreignAuthor = await createPrincipal(db, foreign, ["COLLEGE_ADMIN"]);
+  const notRosted = await createPrincipal(db, own, ["LEARNER"]);
+  const project = await createProjectFixture(db, own, author, mentor, learner);
+  return {own, foreign, author, mentor, learner, outsider, foreignAuthor, notRosted, project};
+}
+async function count(db: PgHarness, table: "project_task_submissions" | "project_submissions" | "project_meetings") {
+  const rows = await db.query<{n:number}>(`select count(*)::int as n from ${table}`);
+  return rows[0]!.n;
+}
+
+describe("PROJ-HARNESS role/tenancy and concurrent PostgreSQL fixture boundaries", () => {
+  it("PROJ-HARNESS-22 foreign college and unrostered learner cannot create task submissions", async () => {
+    await withProjectPg(pool, async db => {
+      const f = await actors(db);
+      const before = await count(db, "project_task_submissions");
+      await expect(createTaskSubmission(db, f.project, f.outsider)).rejects.toThrow(/active member/);
+      await expect(createTaskSubmission(db, f.project, f.notRosted)).rejects.toThrow(/active member/);
+      await expect(createTaskSubmission(db, f.project, f.mentor)).rejects.toThrow(/learner membership/);
+      expect(await count(db, "project_task_submissions")).toBe(before);
+      const id = await createTaskSubmission(db, f.project, f.learner);
+      expect(await db.query("select id from project_task_submissions where id=$1", [id])).toHaveLength(1);
+    });
+  });
+
+  it("PROJ-HARNESS-23 wrong learner cannot create OR submit a final delivery for another project", async () => {
+    await withProjectPg(pool, async db => {
+      const f = await actors(db);
+      const before = await count(db, "project_submissions");
+      await expect(createFinalSubmission(db, f.project, f.outsider)).rejects.toThrow(/active member/);
+      await expect(createFinalSubmission(db, f.project, f.notRosted)).rejects.toThrow(/active member/);
+      expect(await count(db, "project_submissions")).toBe(before);
+      const id = await createFinalSubmission(db, f.project, f.learner);
+      await expect(submitFinalSubmission(db, id, f.outsider)).rejects.toThrow(/active member/);
+      await expect(submitFinalSubmission(db, id, f.notRosted)).rejects.toThrow(/active member/);
+      expect((await db.query<{status:string}>(
+        "select status from project_submissions where id=$1", [id]))[0]?.status).toBe("DRAFT");
+      await submitFinalSubmission(db, id, f.learner);
+      expect((await db.query<{status:string}>(
+        "select status from project_submissions where id=$1", [id]))[0]?.status).toBe("SUBMITTED");
+      await expect(submitFinalSubmission(db, id, f.learner)).rejects.toThrow(/expected one draft/);
+    });
+  });
+
+  it("PROJ-HARNESS-24 meetings require an active project learner and a same-college author", async () => {
+    await withProjectPg(pool, async db => {
+      const f = await actors(db);
+      const before = await count(db, "project_meetings");
+      await expect(createMeeting(db, f.project, f.outsider, f.author)).rejects.toThrow(/active member/);
+      await expect(createMeeting(db, f.project, f.learner, f.foreignAuthor)).rejects.toThrow(/wrong college/);
+      expect(await count(db, "project_meetings")).toBe(before);
+      const meeting = await createMeeting(db, f.project, f.learner, f.author);
+      expect(await db.query("select id from project_meetings where id=$1", [meeting])).toHaveLength(1);
+    });
+  });
+
+  it("PROJ-HARNESS-25 suspended membership cannot submit from a stale tab", async () => {
+    await withProjectPg(pool, async db => {
+      const f = await actors(db);
+      await db.query("update college_memberships set status='SUSPENDED' where id=$1", [f.learner.membershipId]);
+      await expect(createTaskSubmission(db, f.project, f.learner)).rejects.toThrow(/active member/);
+      await expect(createFinalSubmission(db, f.project, f.learner)).rejects.toThrow(/active member/);
+      expect(await count(db, "project_submissions")).toBe(0);
+      expect(await count(db, "project_task_submissions")).toBe(0);
+    });
+  });
+
+  it("PROJ-HARNESS-26 independent sessions contend for the same transaction advisory lock", async () => {
+    const key = BigInt("0x" + randomUUID().replaceAll("-", "").slice(0, 15)).toString();
+    await withTwoPgSessions(pool, async (first, second) => {
+      await first.query("SAVEPOINT harness_lock_boundary");
+      await first.query("select pg_advisory_xact_lock($1::bigint)", [key]);
+      const blocked = await second.query<{available:boolean}>(
+        "select pg_try_advisory_xact_lock($1::bigint) as available", [key]);
+      expect(blocked.rows[0]?.available).toBe(false);
+      await first.query("ROLLBACK TO SAVEPOINT harness_lock_boundary");
+      const unlocked = await second.query<{available:boolean}>(
+        "select pg_try_advisory_xact_lock($1::bigint) as available", [key]);
+      expect(unlocked.rows[0]?.available).toBe(true);
+    });
+  });
+});
