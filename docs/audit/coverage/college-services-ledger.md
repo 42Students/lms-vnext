@@ -73,3 +73,23 @@
 | `POST /api/projects/class-team-workspaces` | same: CSRF/same-origin check before reading the JSON body and friendly API failure routing (source guard; full HTTP integration outstanding) |
 
 **Pending:** real PostgreSQL integration for persisted membership revocation, concurrent writes, interrupted audit/notification transactions, 1000+ roster rows and query plans; comprehensive per-export coverage across colleges, academics, groups, people; all College pages and Super Admin tenancy pages. Do not mark master-queue chat-4 complete until these are exercised.
+
+
+## Added College + Super Admin tenants coverage (chat-4, 2026-10-18)
+
+| Export/page | Behavioural / adversarial test | Known limitation |
+|---|---|---|
+| `listOrganizations(context)` | `PROJ-BREAK-chat4-superadmin-tenants.test.ts` SA-colleges-tenants-BREAK-02: selected college must join active persisted organization, restrict result to one, reject stale selected organization | SQL/source guard; database integration pending |
+| `listColleges(context, organizationId?)` | same, BREAK-03: selected college always intersects persisted organization, active parent and requested organization | SQL/source guard; DB integration pending |
+| `parseAdminDirectorySearchParams` | same, BREAK-01: duplicated, unauthorized, invalid page-size/query filters fail before DB call | Pure behavioural assertions |
+| `canManageCollegeDirectoryRow` | same, BREAK-04: disabled user, foreign college, foreign organization, wrong selected scope deny actions | Pure behavioural assertions |
+| `preferredNewTenantOrganization`, `createdOrganizationStepHref` | same, BREAK-05: only allowlisted UUIDs preselect; malformed response rejected | Pure behavioural assertions |
+| `tenantSetupLinksAvailable`, `tenantLifecycleHref` | same, BREAK-06: archived organization/college blocks setup and malformed states rejected | Pure behavioural assertions |
+| `saveAdminCollegeSignInPolicy`, `updateCollegeSignInSchema` | `chat4-college-export-signin-ledger.test.ts`: schema rejects tampering; unchanged retry under locks skips second audit; changed request still uses CAS | SQL/source guard; DB integration pending |
+| `effectiveCollegeSignInMethod`, `effectiveCollegeSignInCapabilities` | same: verified-host ID and corrupt-policy rejection source guards | Real provider flow pending |
+| `collegeAdminHistoryCsv`, `escapeRoleDirectoryCsvCell` | same: formula prefixes, embedded quotes, IST date, CSV line breaks | Pure behavioural assertions |
+| `exportParams`, `buildCollegeDirectoryCsv`, `collectCollegeExportRows` | same: duplicate filter rejection, cap/truncation, zero/NaN/infinite inputs rejected before any read | Pure behavioural assertions |
+| `/admin/colleges`, `/admin/organizations`, `/admin/colleges/[collegeId]` | `PROJ-BREAK-chat4-superadmin-tenants.test.ts`: bad-input fast-fail, safe row controls and active-parent restore | Server-render integration pending |
+| Five legacy `/college` redirect routes and `components/college` responsive lists | `chat4-college-ux-redirect-coverage.test.ts`: canonical destinations, encoded URL parameters, downstream authorization, labelled scroll cue | Actual browser keyboard/focus/screen-reader tests pending |
+
+The College, academics, groups and people exported-function inventory remains **incomplete**. This section records newly covered symbols without claiming that the master-queue's exhaustive coverage requirement is satisfied. A dedicated PostgreSQL fixture run is required before release.
