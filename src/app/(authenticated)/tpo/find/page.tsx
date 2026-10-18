@@ -1,6 +1,8 @@
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import Link from "next/link";
+import {redirect} from "next/navigation";
+import {hasMembershipRole} from "@/modules/identity/context";
 import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { getPlacementTpoOperations } from "@/modules/placements/tpo-operations-service";
@@ -16,6 +18,7 @@ export default async function TpoRecordFinder({searchParams}:{searchParams:Promi
  const invalid=parsed!==null&&!parsed.success;
  const text=parsed?.success?parsed.data.toLocaleLowerCase():"";
  const ctx=await getCurrentRequestContext();
+ if(!ctx.membership || !hasMembershipRole(ctx,"TPO")) redirect("/dashboard");
  const batches=await listTpoBatches(ctx);
  const operations=text?await getPlacementTpoOperations(ctx,ctx.membership!.collegeId):null;
  const foundBatches=text?batches.batches.filter(b=>[b.name,b.code,b.program,b.department].some(v=>v.toLocaleLowerCase().includes(text))).slice(0,5):[];

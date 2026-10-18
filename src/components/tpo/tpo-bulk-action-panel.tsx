@@ -1,7 +1,7 @@
 "use client";
 import {ScrollCue} from "@/components/ui/scroll-cue";
 
-import {useState} from "react";
+import {useRef,useState} from "react";
 import {useTpoStudentsSelection} from "./tpo-students-selection";
 import {apiFetch} from "@/lib/api-fetch";
 import {Dialog} from "@/components/ui/dialog";
@@ -44,6 +44,8 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
  const [undoNotice,setUndoNotice]=useState("");
  const [actionCounts,setActionCounts]=useState<TpoBulkActionCount[]>([]);
  const [busy,setBusy]=useState(false);
+ // React state updates are async: lock before the first network call so a rapid double-click cannot replay a mutation.
+ const actionInFlightRef=useRef(false);
  const {run:runGuarded,pending:guardedPending}=useGuardedAction();
  const [companyShareUrl,setCompanyShareUrl]=useState<string|null>(null);
  const [shareDays,setShareDays]=useState(2);
@@ -66,7 +68,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
   });
  }
  async function startPreview(choice:Action=action){
-  if(busy||safeSelected.length===0)return;
+  if(actionInFlightRef.current||busy||safeSelected.length===0)return;
   if(target==="APPLICATIONS"&&note.trim().length<10){
    setError("Provide at least 10 characters of screening context.");return;
   }
@@ -77,20 +79,20 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
     target,...(target==="APPLICATIONS"?{jobId}:{}),
     action:choice,note:target==="APPLICATIONS"||choice==="INELIGIBLE"?note.trim():"",ids:safeSelected.slice(0,TPO_BULK_UI_LIMIT),
   };
-  setBusy(true);invalidate();
+  actionInFlightRef.current=true;setBusy(true);invalidate();
   try{
    const result=await post("preview",next) as PreviewResponse;
    if(!Array.isArray(result.rows)||!result.previewToken)throw new Error("Could not read the preview. Please try again.");
    setAction(choice);setPreview(result);setPlan(next);
   }catch(cause){setError(cause instanceof Error?cause.message:"Preview unavailable. Refresh the roster and try again.");}
-  finally{setBusy(false);}
+  finally{actionInFlightRef.current=false;setBusy(false);}
  }
  async function compareActions(){
-  if(busy||safeSelected.length===0||safeSelected.length>TPO_BULK_UI_LIMIT)return;
+  if(actionInFlightRef.current||busy||safeSelected.length===0||safeSelected.length>TPO_BULK_UI_LIMIT)return;
   if(target==="APPLICATIONS"&&note.trim().length<10){
    setError("Provide at least 10 characters of screening context.");return;
   }
-  setBusy(true);invalidate();
+  actionInFlightRef.current=true;setBusy(true);invalidate();
   try{
    const checks=await Promise.all(options.filter(option=>option.value!=="INELIGIBLE"||note.trim().length>=3).map(async option=>{
     const result=await post("preview",{
@@ -104,11 +106,11 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
    }));
    setActionCounts(checks);
   }catch(cause){setError(cause instanceof Error?cause.message:"Action counts unavailable. Try again.");}
-  finally{setBusy(false);}
+  finally{actionInFlightRef.current=false;setBusy(false);}
  }
  async function shareSelected(){
-  if(busy||target!=="APPLICATIONS"||!jobId||safeSelected.length===0)return;
-  setBusy(true);setError("");setCompanyShareUrl(null);
+  if(actionInFlightRef.current||busy||target!=="APPLICATIONS"||!jobId||safeSelected.length===0)return;
+  actionInFlightRef.current=true;setBusy(true);setError("");setCompanyShareUrl(null);
   try{
    const data=await apiFetch<{token:string}>("/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/company-shares",{
     method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
@@ -118,12 +120,12 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
    setShareConfirmOpen(false);
    router.refresh();
   }catch(error){setError(error instanceof Error?error.message:"Could not share selected candidates.");}
-  finally{setBusy(false);}
+  finally{actionInFlightRef.current=false;setBusy(false);}
  }
  async function confirm(){
-  if(busy||!plan||!preview||preview.counts.ready===0||
+  if(actionInFlightRef.current||busy||!plan||!preview||preview.counts.ready===0||
      !isTpoBulkPreviewCurrent(plan.ids,[...permitted]))return;
-  setBusy(true);setError("");
+  actionInFlightRef.current=true;setBusy(true);setError("");
   try{
    const response=await post("confirm",{
      ...plan,selections:preview.rows.map(row=>({id:row.id,version:row.version})),
@@ -135,15 +137,15 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
    setSelected(current=>current.filter(id=>!plan.ids.includes(id)));
    router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Confirmation failed. Preview again before retrying.");setPreview(null);setPlan(null);}
-  finally{setBusy(false);}
+  finally{actionInFlightRef.current=false;setBusy(false);}
  }
  const options=target==="STUDENTS"
   ?([{value:"ELIGIBLE",label:"Mark eligible"},{value:"INELIGIBLE",label:"Make ineligible"},{value:"CLEAR_OVERRIDE",label:"Clear direct override"}] as const)
   :([{value:"SHORTLISTED",label:"Shortlist for review"},{value:"REJECTED",label:"Reject with candidate message"},{value:"ADD_NOTE",label:"Add a note"},{value:"SEND_MESSAGE",label:"Send a message"},{value:"MOVE_TEST",label:"Move to test"},{value:"MOVE_INTERVIEW",label:"Move to interview"}] as const);
  const suggested=suggestTpoBulkAction(actionCounts);
  async function undoLastRun(){
-  if(!runAuditId||busy)return;
-  setBusy(true);setUndoNotice("");setError("");
+  if(!runAuditId||busy||actionInFlightRef.current)return;
+  actionInFlightRef.current=true;setBusy(true);setUndoNotice("");setError("");
   try{
    const result=await apiFetch<{restored:number}>("/api/placements/tpo/bulk-actions/undo",{
     method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
@@ -153,7 +155,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
    setRunAuditId(null);router.refresh();
   }catch{
    setError("This batch cannot be undone. A decision may have changed or the undo window expired.");
-  }finally{setBusy(false);}
+  }finally{actionInFlightRef.current=false;setBusy(false);}
  }
  if(rows.length===0)return null;
  return <section aria-label={target==="STUDENTS"?"Bulk student actions":"Bulk application actions"}
