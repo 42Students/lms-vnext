@@ -19,6 +19,8 @@ function crc32(bytes:Uint8Array,start:number,end:number):number{
 export function verifyCollegeLogoPngChunks(bytes:Uint8Array):boolean{
  // Eight signature bytes, 25-byte IHDR (length+type+data+CRC), IDAT and IEND.
  if(bytes.length<57||bytes.length>2*1024*1024)return false;
+ if([137,80,78,71,13,10,26,10].some((value,index)=>bytes[index]!==value))
+  return false;
  const view=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);
  let offset=8;
  let ihdr=false,idat=false,iend=false,closedIdat=false;
@@ -74,7 +76,7 @@ export function verifyCollegeLogoPngChunks(bytes:Uint8Array):boolean{
   });
   if(decoded.length!==expandedLength)return false;
   for(let y=0;y<height;y++){
-   if(decoded[y*rowBytes]!>4)return false;
+   if((decoded[y*rowBytes]??255)>4)return false;
   }
   return true;
  }catch{return false;}
