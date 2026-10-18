@@ -1,9 +1,10 @@
 import "server-only";
 
-import { and, asc, eq, inArray } from "drizzle-orm";
+import { and, asc, eq, inArray, ne } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   placementApplications,
+  collegeMemberships,
   placementJobs,
   placementJoiningHistory,
   placementJoiningOutcomes,
@@ -21,6 +22,7 @@ import {
   tpoOfferLifecycleInputSchema,
 } from "./tpo-offer-lifecycle-model";
 import { placementJobIdSchema } from "./validation";
+import {requireTpoJobActor} from "./tpo-job-write-base";
 
 /**
  * All-or-nothing and locked in offer UUID order to avoid duplicate updates
@@ -56,7 +58,11 @@ export async function recordTpoOfferLifecycle(
 
   const db = getDb();
   return db.transaction(async (tx) => {
-    const scoped = await tx.select({ offerId: placementOffers.id })
+    // A stale TPO session must not be able to mutate offers after its
+    // membership/role was revoked between form preview and commit.
+    await requireTpoJobActor(tx,context);
+    const scoped = await tx.select({ offerId: placementOffers.id,
+      membershipId:placementApplications.membershipId })
       .from(placementOffers)
       .innerJoin(placementApplications, eq(
         placementApplications.id, placementOffers.applicationId,
@@ -70,6 +76,19 @@ export async function recordTpoOfferLifecycle(
     if (scoped.length !== input.offerIds.length) {
       throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_FOUND");
     }
+
+    // Canonical learner acceptance also takes membership before offer locks.
+    // All selected learner locks are acquired in UUID order to serialize
+    // multi-offer decisions without a deadlock or double acceptance.
+    const memberIds=[...new Set(scoped.map(row=>row.membershipId))].sort();
+    const lockedMembers=await tx.select({id:collegeMemberships.id})
+      .from(collegeMemberships)
+      .where(and(inArray(collegeMemberships.id,memberIds),
+        eq(collegeMemberships.collegeId,collegeId)))
+      .orderBy(asc(collegeMemberships.id)).for("update");
+    if(lockedMembers.length!==memberIds.length)
+      throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_FOUND");
+    const membershipByOffer=new Map(scoped.map(row=>[row.offerId,row.membershipId]));
 
     // Every current offer is locked and revalidated under the same transaction.
     const offers = await tx.select().from(placementOffers)
@@ -87,6 +106,25 @@ export async function recordTpoOfferLifecycle(
         .for("update").limit(1);
       if (!canRecordTpoOfferAction(input.action, offer.status, currentJoining?.status ?? null)) {
         throw new PlacementsServiceError("PLACEMENT_OFFER_INVALID_TRANSITION");
+      }
+      if(input.action==="RECORD_ACCEPTED"){
+        const membershipId=membershipByOffer.get(offer.id)!;
+        // Accepting through a TPO evidence record must not bypass the
+        // canonical one-accepted-offer-per-learner rule across drives.
+        // The membership lock above serializes this with learner decisions.
+        const [alreadyAccepted]=await tx.select({id:placementOffers.id})
+          .from(placementOffers)
+          .innerJoin(placementApplications,
+            eq(placementApplications.id,placementOffers.applicationId))
+          .innerJoin(placementJobs,
+            eq(placementJobs.id,placementApplications.jobId))
+          .where(and(
+            eq(placementApplications.membershipId,membershipId),
+            eq(placementJobs.collegeId,collegeId),
+            ne(placementOffers.id,offer.id),
+            eq(placementOffers.status,"ACCEPTED"),
+          )).limit(1);
+        if(alreadyAccepted)throw new PlacementsServiceError("PLACEMENT_OFFER_ACTIVE_EXISTS");
       }
       if ((input.action === "RECORD_ACCEPTED" ||
             input.action === "RECORD_DECLINED") &&

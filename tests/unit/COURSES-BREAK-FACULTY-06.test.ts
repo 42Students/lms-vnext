@@ -92,6 +92,21 @@ describe("COURSES-BREAK-FACULTY-06 current-roster report anti-IDOR and consisten
    missing:0,onTime:1,late:0,graded:1,gradePublished:1,averagePercent:50});
   expect(JSON.stringify(report)).not.toContain(foreignLearner);
  });
+ it("FAC-assessments-03 non-finite submitted scores cannot inflate the grade distribution",async()=>{
+  for(const [score,maxScore] of [
+   [5,Infinity],[NaN,10],[Infinity,10],[5,NaN],
+  ]){
+   state.attempts=[{
+    membershipId:learnerId,attemptNumber:1,submittedAt:at(9),
+    score,maxScore,answers:[{questionId,correct:false}],
+   }];
+   const report=await getFacultyQuizReport(actor,quizId,deliveryId);
+   expect(report.metrics).toMatchObject({
+    eligibleLearners:1,submittedLearners:1,graded:0,averagePercent:null,
+   });
+   expect(report.distribution.reduce((count,bucket)=>count+bucket.count,0)).toBe(0);
+  }
+ });
  it("FAC-assessments-01 count equality holds across malformed, duplicate and out-of-roster evidence",()=>{
   expect(facultyReportCurrentRosterRows([
    {membershipId:learnerId,score:1},{membershipId:foreignLearner,score:100},

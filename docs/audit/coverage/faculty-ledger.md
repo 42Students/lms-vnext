@@ -510,3 +510,18 @@ The same persisted actor/project Mentor grant recheck now protects meeting decis
 ### FAC-QUIZ-015 — persisted Faculty result publication gate
 
 `src/modules/courses/faculty-persisted-teaching-guard.ts` exports `assertPersistedFacultyTeachingMutation`, backed by `tests/unit/COURSES-BREAK-FACULTY-12.test.ts`. `commandFacultyQuizResults` in `faculty-quiz-results-command-service.ts` invokes the helper in the same locked transaction (`COURSES-BREAK-FACULTY-03.test.ts` checks zero writes on mid-flight revocation). Real PostgreSQL simultaneous revoke/publish and user-facing recovery remain **GAP**.
+
+
+### FAC-QUIZ-016 — distribution versus grading count consistency
+
+`getFacultyQuizReport` now excludes nonfinite score/maxScore pairs from the histogram exactly as it does from the score summary; `COURSES-BREAK-FACULTY-06.test.ts` covers NaN/Infinity. A real PostgreSQL score-integrity constraint check and actual CI run remain open.
+
+
+### FAC-METHODS-017 — assignment method async-switch validation
+
+`facultyAssignmentMethodsLoadVersion` and `verifiedFacultyAssignmentMethodsResponse` in `src/modules/courses/faculty-assignment-method-load-model.ts` have `COURSES-BREAK-FACULTY-13.test.ts` covering version invalidation, stale response reorder and malformed saved policy. `src/components/courses/faculty-assignment-editor.tsx` uses these on each `choose` fetch and disables edits when methods have not been verified. Full rendered/browser-network acceptance is still an open gate.
+
+
+### FAC-SCHEDULE-018 — schedule writes revalidate persisted teacher rights
+
+`commandFacultyAttendanceSchedule` now calls `assertPersistedFacultyTeachingMutation` after serializing the instructor and Section in its transaction, so a preflight cookie cannot bypass a later suspended role or ended teaching assignment. Behavioural evidence: `tests/unit/COURSES-BREAK-FACULTY-14.test.ts` (unexecuted); real PostgreSQL two-session test and browser recovery remain open.

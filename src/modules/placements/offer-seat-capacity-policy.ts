@@ -17,3 +17,19 @@ export function hasAvailablePlacementOfferSeat(input: {
   return Number.isSafeInteger(openings)&&openings>0&&
     activeOfferCount+otherPendingReservations<openings;
 }
+
+/** PostgreSQL can abort either contender of a serializable, job-row-locked
+ * offer issue. Surface a safe version conflict, not SQLSTATE/provider text.
+ */
+export function isPlacementIssuanceConcurrencyError(error:unknown):boolean {
+  const visited=new Set<unknown>();
+  let current:unknown=error;
+  for(let i=0;i<5&&current!==null&&typeof current==="object";i++){
+    if(visited.has(current))return false;
+    visited.add(current);
+    const code="code" in current?current.code:undefined;
+    if(code==="40001"||code==="40P01")return true;
+    current="cause" in current?current.cause:undefined;
+  }
+  return false;
+}
