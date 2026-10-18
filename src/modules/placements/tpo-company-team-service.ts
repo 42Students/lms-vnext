@@ -9,6 +9,7 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {hasPlacementTeamMembership} from "./placement-team-access-model";
 import {requirePlacementManageScope} from "./scope";
+import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 import {placementTableExists} from "./staged-tables";
 
 export const companyTeamCompanyIdSchema=z.string().uuid();
@@ -33,7 +34,10 @@ export class TpoCompanyTeamError extends Error {
 async function companyScope(context:RequestContext,companyId:string,allowArchivedRead=false){
  const membership=context.membership;
  if(!membership||!hasPlacementTeamMembership(context))throw new AuthorizationError("placements.manage");
- const college=await requirePlacementManageScope(context,membership.collegeId);
+ // Do not trust a still-valid session snapshot after membership/role revocation.
+ // All read and write entrypoints reach companyScope before exposing content.
+ const activeCollegeId=await requireTpoBatchActor(context);
+ const college=await requirePlacementManageScope(context,activeCollegeId);
  const [company]=await getDb().select({id:placementCompanies.id,name:placementCompanies.name,relationshipStatus:placementCompanyRelationships.status})
   .from(placementCompanyRelationships)
   .innerJoin(placementCompanies,and(eq(placementCompanies.id,placementCompanyRelationships.companyId),
