@@ -20,7 +20,16 @@
 | **LX-08** | **MAJOR** | `/learn/courses` | `src/components/courses/learner-course-list.tsx:508-513` | Show more courses progression button was 40px high. | Raise existing pagination/progression button to 44px, preserve loaded count and pagination logic. Commit `716012f0`. |
 | **LX-09** | **MAJOR** | `/quiz` | `src/components/courses/learner-quiz-attempt.tsx:372,453` | Quiz Back controls were text-sized without accessible touch bounds. | Keep current draft/confirmation handling and original Back labels; add >=44px target and focus indicator. Commit `ba145e49`. |
 
-**Unique confirmed source findings: 9 MAJOR, 0 BLOCKER, 0 MINOR, 0 NIT.** All 9 MAJOR items have source fixes on chat-17. Shared component repairs affect multiple consuming routes; findings are counted once, not multiplied for each route. Previously authored route-level tests were retained unchanged.
+| **LX-10** | **BLOCKER** | `/learn/profile` | `src/components/profile/learner-profile-workspace.tsx:302,309,319,327,407,433,507,710-711` | Seven native window.confirm calls blocked/fragilized native WebView edits, and showcase URLs opened new windows. | Uses shared ConfirmDialog for unsaved/danger prompts, await-to-continue semantics, and ThirdPartyLink for published links. Commit `a622cbff`. |
+| **LX-11** | **BLOCKER** | `/learn/courses/[deliveryId]/[...courseTab] and /teacher/courses/[deliveryId]/discussions` | `src/components/courses/learner-course-discussion.tsx:90,404-423,540-610` | Unsent draft navigation used window.confirm and message deletion used an unfocus-trapped inline faux dialog; several controls too small. | Capture intended same-origin href, preserve draft until shared ConfirmDialog resolves; shared deletion confirmation, 44px controls and 16px composer. Commit `a68336ef`. |
+| **LX-12** | **MAJOR** | `/learn/courses/[deliveryId]/[...courseTab]` | `src/components/courses/learner-live-class-link.tsx:31-32` | Live Join Meeting opened a new WebView window and copy button had a 40px target. | Shared HTTPS fallback keeps Join Meeting, copy and session expiry; 44px copy action. Commit `a711d881`. |
+| **LX-13** | **MAJOR** | `/learn/allAssignments, /learn/allQuizzes` | `src/components/courses/learner-assessment-overview.tsx:211,378,495,618-625,698-709` | Assessment submitted link opened new window; retry/pager controls 40px and responsive action shrank to 36px. | Shared ThirdPartyLink; preserve submitted URL and action copy; 44px targets across all breakpoints. Commit `6dd3642e`. |
+| **LX-14** | **MAJOR** | `/learn/my-placements/offers and /learn/my-placements/placement` | `src/components/placements/learner-placement-offers.tsx:341,398` | Offer letters depended on target=_blank, problematic for protected file URLs in native WebView; other links 40px. | Same-tab signed-letter link, identical label; 44px actions. Commit `66478386`. |
+| **LX-15** | **MAJOR** | `/learn/attendance` | `src/components/attendance/learner-attendance-workspace.tsx:315-318` | Native month/history field was 36px high with 14px type, risking input zoom and missed taps. | Raised to 44px and 16px type, preserving selected month/filter behavior. Commit `7973e61a`. |
+| **LX-16** | **MAJOR** | `/learn/my-placements/schedule` | `src/components/placements/learner-schedule-reschedule.tsx:28-29` | Reschedule disclosure was only 40px high. | 44px target without altering validation or mutation endpoint. Commit `65f6859d`. |
+| **LX-17** | **MAJOR** | `/notifications, /learn/notifications, /teacher/notifications` | `src/components/activity/notification-toolbar.tsx:57,64` | All/Unread notification filter controls were 40px high. | Raised tabs to 44px preserving URL/read selection semantics. Commit `8a2eeb1d`. |
+
+**Unique confirmed source findings: 17 total — 2 BLOCKER, 15 MAJOR, 0 MINOR, 0 NIT; all fixed in source on chat-17.** All 2 BLOCKER and 15 MAJOR items have source fixes on chat-17. Shared component repairs affect multiple consuming routes; findings are counted once, not multiplied for each route. Previously authored route-level tests were retained unchanged.
 
 ## Per-page ledger — complete 84-route inventory
 
@@ -43,7 +52,7 @@ Each page path was opened and checked for literal `target="_blank"`, native dial
 | `teacher` | `/teacher/courses/[deliveryId]/attendanceDetail` | **LX-05 fixed** |
 | `teacher` | `/teacher/courses/[deliveryId]/discussion-history` | **LX-05 fixed** |
 | `teacher` | `/teacher/courses/[deliveryId]/discussion-participation` | **LX-05 fixed** |
-| `teacher` | `/teacher/courses/[deliveryId]/discussions` | **LX-05 fixed** |
+| `teacher` | `/teacher/courses/[deliveryId]/discussions` | **LX-05 fixed**, **LX-11 fixed** |
 | `teacher` | `/teacher/courses/[deliveryId]/gradebook` | **LX-05 fixed** |
 | `teacher` | `/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]` | **LX-05 fixed** |
 | `teacher` | `/teacher/courses/[deliveryId]/notices` | **LX-05 fixed** |
@@ -53,7 +62,7 @@ Each page path was opened and checked for literal `target="_blank"`, native dial
 | `teacher` | `/teacher/courses/[deliveryId]/students` | **LX-05 fixed** |
 | `teacher` | `/teacher/courses/[deliveryId]/students/[membershipId]` | **LX-05 fixed** |
 | `teacher` | `/teacher/live-classes` | **LX-01 fixed** |
-| `teacher` | `/teacher/notifications` | **LX-07 fixed** |
+| `teacher` | `/teacher/notifications` | **LX-07 fixed**, **LX-17 fixed** |
 | `teacher` | `/teacher/profile` | — No new confirmed source-severity finding |
 | `teacher` | `/teacher/profile/contacts` | — No new confirmed source-severity finding |
 | `teacher` | `/teacher/profile/details` | — No new confirmed source-severity finding |
@@ -67,17 +76,17 @@ Each page path was opened and checked for literal `target="_blank"`, native dial
 | `teach` | `/teach/courses` | — No new confirmed source-severity finding |
 | `teach` | `/teach/courses/[deliveryId]` | **LX-05 fixed** |
 | `learn` | `/learn` | — No new confirmed source-severity finding |
-| `learn` | `/learn/allAssignments` | — No new confirmed source-severity finding |
+| `learn` | `/learn/allAssignments` | **LX-13 fixed** |
 | `learn` | `/learn/allAssignments/[assignmentId]` | — No new confirmed source-severity finding |
-| `learn` | `/learn/allQuizzes` | — No new confirmed source-severity finding |
+| `learn` | `/learn/allQuizzes` | **LX-13 fixed** |
 | `learn` | `/learn/allQuizzes/[quizId]` | — No new confirmed source-severity finding |
 | `learn` | `/learn/assignments` | — No new confirmed source-severity finding |
-| `learn` | `/learn/attendance` | — No new confirmed source-severity finding |
+| `learn` | `/learn/attendance` | **LX-15 fixed** |
 | `learn` | `/learn/attendance/calendar` | — No new confirmed source-severity finding |
 | `learn` | `/learn/calendar` | — No new confirmed source-severity finding |
 | `learn` | `/learn/courses` | **LX-08 fixed** |
 | `learn` | `/learn/courses/[deliveryId]` | **LX-06 fixed** |
-| `learn` | `/learn/courses/[deliveryId]/[...courseTab]` | **LX-06 fixed** |
+| `learn` | `/learn/courses/[deliveryId]/[...courseTab]` | **LX-06 fixed**, **LX-11 fixed**, **LX-12 fixed** |
 | `learn` | `/learn/courses/[deliveryId]/attendance-summary` | **LX-06 fixed** |
 | `learn` | `/learn/courses/[deliveryId]/progress` | **LX-06 fixed** |
 | `learn` | `/learn/my-placements` | — No new confirmed source-severity finding |
@@ -93,16 +102,16 @@ Each page path was opened and checked for literal `target="_blank"`, native dial
 | `learn` | `/learn/my-placements/jobs` | — No new confirmed source-severity finding |
 | `learn` | `/learn/my-placements/jobs/[jobId]` | — No new confirmed source-severity finding |
 | `learn` | `/learn/my-placements/notification-preferences` | — No new confirmed source-severity finding |
-| `learn` | `/learn/my-placements/offers` | — No new confirmed source-severity finding |
-| `learn` | `/learn/my-placements/placement` | — No new confirmed source-severity finding |
+| `learn` | `/learn/my-placements/offers` | **LX-14 fixed** |
+| `learn` | `/learn/my-placements/placement` | **LX-14 fixed** |
 | `learn` | `/learn/my-placements/preparation` | — No new confirmed source-severity finding |
 | `learn` | `/learn/my-placements/rules` | — No new confirmed source-severity finding |
-| `learn` | `/learn/my-placements/schedule` | **LX-02 fixed** |
+| `learn` | `/learn/my-placements/schedule` | **LX-02 fixed**, **LX-16 fixed** |
 | `learn` | `/learn/my-placements/support` | — No new confirmed source-severity finding |
-| `learn` | `/learn/notifications` | **LX-07 fixed** |
+| `learn` | `/learn/notifications` | **LX-07 fixed**, **LX-17 fixed** |
 | `learn` | `/learn/notifications/history` | **LX-07 fixed** |
 | `learn` | `/learn/placements` | — No new confirmed source-severity finding |
-| `learn` | `/learn/profile` | **LX-04 fixed** |
+| `learn` | `/learn/profile` | **LX-04 fixed**, **LX-10 fixed** |
 | `learn` | `/learn/profile/academic-record` | — No new confirmed source-severity finding |
 | `learn` | `/learn/profile/completeness` | — No new confirmed source-severity finding |
 | `learn` | `/learn/profile/verification` | — No new confirmed source-severity finding |
@@ -111,7 +120,7 @@ Each page path was opened and checked for literal `target="_blank"`, native dial
 | `learn` | `/learn/quizzes` | — No new confirmed source-severity finding |
 | `quiz` | `/quiz` | **LX-09 fixed** |
 | `dashboard` | `/dashboard` | — No new confirmed source-severity finding |
-| `notifications` | `/notifications` | **LX-07 fixed** |
+| `notifications` | `/notifications` | **LX-07 fixed**, **LX-17 fixed** |
 
 ## 21-point rubric and 10 excellence criteria crosswalk
 
@@ -129,7 +138,7 @@ Each page path was opened and checked for literal `target="_blank"`, native dial
 | 10 | Unsafe popups | 84 route-shell scan + targeted shared component assertions forbid native popup calls and literal blank targets. |
 | 11 | 320/360/390 phones | 44px target source remediations; real viewport overflow cannot be verified with connector-only source read. |
 | 12 | Cards/filters/dialogs | Verified major shared course/notifications samples; route-by-route hydrated details still require browser. |
-| 13 | Native WebView hazards | Nine blockers-to-mobile-navigation identified and fixed; same-tab HTTPS/destination/copy fallback implemented. |
+| 13 | Native WebView hazards | Seventeen source-level navigation, confirmation, and touch issues identified and fixed; same-tab HTTPS/destination/copy fallback implemented. |
 | 14 | Slow/offline | Route-level loading/error resources and partial service safeguards sampled, not executed under network fault. |
 | 15 | WCAG focus/navigation | 43+ shared screens sampled; critical Back/filter/curriculum/notification targets corrected. |
 | 16 | Announcements | Status/alert sections sampled; live screen-reader output unverified. |
@@ -143,23 +152,23 @@ Each page path was opened and checked for literal `target="_blank"`, native dial
 
 ### Controls and prevention
 
-- `tests/unit/UX-learning-cross-audit-chat17.test.ts`: one inventory-count test, **84 route-level** anti-popup/touch assertions, **9 named finding tests** and a shared WebView fallback regression assertion. Uses page lists as test data rather than tautological file-length checks.
+- `tests/unit/UX-learning-cross-audit-chat17.test.ts`: one inventory-count test, **84 route-level** anti-popup/touch assertions, **17 named finding tests** and a shared WebView fallback regression assertion. Uses page lists as test data rather than tautological file-length checks.
 - Added that test to the existing `npm run ux:audit:unit` gate; existing tests, copy catalogs, permissions and services are not modified.
 - Changed only scoped route files plus reused shared course, notification, quiz and ThirdPartyLink components. No production action or data migration.
 - No endpoints, auth helpers, same-origin middleware, GET/POST behavior, permission selectors or tenancy-scoping services were modified.
 
 ### Verdict by area
 
-| Area | Pages screened | Source BLOCKER open | Source MAJOR fixed (including inherited shared) | Source MAJOR still identified open | Verdict |
+| Area | Pages screened | BLOCKER fixed | MAJOR fixed (including inherited shared) | Source BLOCKER/MAJOR still identified open | Verdict |
 |---|---:|---:|---:|---:|---|
-| /teacher | 36 | 0 | 3 (LX-01, LX-05, LX-07) | 0 | PASS WITH FIXES — source only |
+| /teacher | 36 | 1 (LX-11 shared) | 4 (LX-01, LX-05, LX-07, LX-17 shared) | 0 | PASS WITH FIXES — source only |
 | /teach | 2 | 0 | 1 (LX-05 shared) | 0 | PASS WITH FIXES — source only |
-| /learn | 43 | 0 | 6 (LX-02, LX-03, LX-04, LX-06, LX-07, LX-08) | 0 | PASS WITH FIXES — source only |
+| /learn | 43 | 2 (LX-10, LX-11) | 11 (LX-02/03/04/06/07/08/12/13/14/15/16 and LX-17 where shared) | 0 | PASS WITH FIXES — source only |
 | /quiz | 1 | 0 | 1 (LX-09) | 0 | PASS WITH FIXES — source only |
 | /dashboard | 1 | 0 | 0 | 0 | PASS — source only |
-| /notifications | 1 | 0 | 1 (LX-07 shared) | 0 | PASS WITH FIXES — source only |
-| **Distinct total** | **84** | **0** | **9 unique** | **0 confirmed** | **PASS WITH FIXES — source only; conditional on CI** |
+| /notifications | 1 | 0 | 2 (LX-07, LX-17) | 0 | PASS WITH FIXES — source only |
+| **Distinct total** | **84** | **2** | **15** | **0 confirmed** | **PASS WITH FIXES — source only; conditional on CI** |
 
 **Highest-risk unverified areas:** (i) native WebView navigation/return, especially online assessments and private signed-file downloads, (ii) real 320/360/390px keyboard and focus geometry, (iii) authenticated and tenant-scoped backend fault injection and TypeScript/test CI outcomes. Treat failures from orchestrator tests as reopening the corresponding source finding, not evidence that testing was already done.
 
-**Sign-off scope:** Source-level **PASS WITH FIXES** for the nine confirmed defects. Browser/performance/screen-reader sign-off and compiler/unit-test success remain unverified; do not promote unchecked page inventories to accepted before the orchestrator gate runs.
+**Sign-off scope:** Source-level **PASS WITH FIXES** for the 17 confirmed defects. Browser/performance/screen-reader sign-off and compiler/unit-test success remain unverified; do not promote unchecked page inventories to accepted before the orchestrator gate runs.
