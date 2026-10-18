@@ -4,6 +4,7 @@ import {useRouter} from "next/navigation";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
 import {splitHrRecruiterName} from "@/modules/placements/hr-recruiter-name-fields-model";
+import {hrProfileSaveErrorFeedback} from "@/modules/placements/recruiter-profile-details-model";
 export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialPhone,
  userUpdatedAt,profileUpdatedAt,contactReady}:{
  initialName:string|null;initialTitle:string|null;initialPhone:string|null;
@@ -55,9 +56,7 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
      expectedProfileUpdatedAt:versions.profileUpdatedAt}),
    }));
    if(!response)throw new Error("PROFILE_REQUEST_UNCONFIRMED");
-   if(!response.ok){setFeedback(response.status===409?
-    "Your profile changed. Refresh before saving; your edits are still here.":
-    "Could not save your profile. Your changes are still here; try again.");return;}
+   if(!response.ok){setFeedback(hrProfileSaveErrorFeedback(response.status));return;}
    const body=await response.json() as {profile?:{
     displayName:string;title:string|null;phone:string;
     userUpdatedAt:string;profileUpdatedAt:string;
