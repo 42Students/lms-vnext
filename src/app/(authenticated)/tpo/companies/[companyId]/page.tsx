@@ -97,11 +97,11 @@ export default async function TpoCompanyDetailPage({
         actions={
           <div className="flex flex-wrap gap-2">
             <Link href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
-              className="inline-flex min-h-11 items-center rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary">
+              className="inline-flex min-h-11 items-center rounded-[9px]-[9px] bg-primary px-4 text-sm font-[650] text-on-primary">
               Create drive
             </Link>
             <Link href={"/tpo/recruiters?add=1&company="+encodeURIComponent(company.name)}
-              className="inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]">
+              className="inline-flex min-h-11 items-center rounded-[9px]-[9px] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]">
               Add contact
             </Link>
           </div>
@@ -132,30 +132,30 @@ export default async function TpoCompanyDetailPage({
 
       <nav aria-label="Company CRM views" className="flex flex-wrap gap-3">
         <Link href={"/tpo/companies/"+encodeURIComponent(route.companyId)+"/team"}
-         className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+         className="inline-flex min-h-11 items-center rounded-[9px]-[9px] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
          Open in Team · Company discussion
         </Link>
         <Link
           href={"/tpo/companies/" + encodeURIComponent(route.companyId) + "/manage"}
-          className="inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-foreground"
+          className="inline-flex min-h-11 items-center rounded-[9px]-[9px] border border-border bg-surface px-4 text-sm font-semibold text-foreground"
         >
           Edit / archive relationship
         </Link>
         <Link
           href={"/tpo/companies/" + encodeURIComponent(route.companyId) + "/people"}
-          className="inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-foreground"
+          className="inline-flex min-h-11 items-center rounded-[9px]-[9px] border border-border bg-surface px-4 text-sm font-semibold text-foreground"
         >
           Manage contact people
         </Link>
         <Link
           href={"/tpo/companies/" + encodeURIComponent(route.companyId) + "/contact-log"}
-          className="inline-flex min-h-11 items-center rounded-[9px] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover"
+          className="inline-flex min-h-11 items-center rounded-[9px]-[9px] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary hover:bg-primary-hover"
         >
           View contact activity log →
         </Link>
         <Link
           href={"/tpo/companies/" + encodeURIComponent(route.companyId) + "/feedback"}
-          className="inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-foreground"
+          className="inline-flex min-h-11 items-center rounded-[9px]-[9px] border border-border bg-surface px-4 text-sm font-semibold text-foreground"
         >
           Internal recruiter feedback
         </Link>
