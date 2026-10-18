@@ -156,3 +156,5 @@ A regression in `tests/integration/projects-placements-pg-harness-rollback.test.
 
 ### PROJ-HARNESS-ROLLBACK-05: two-connection failure isolation
 `tests/integration/projects-placements-pg-harness-rollback.test.ts` starts two separate real PostgreSQL transactions, inserts distinct organization rows, confirms each session cannot see the other's uncommitted rows, deliberately throws, and verifies that neither row survives. It validates rollback and pooled-connection reuse without committing or touching an existing account. Requires migrated disposable `TEST_DATABASE_URL`; PostgreSQL CI pending.
+
+The managed wildcard domain guard is separate from the PostgreSQL harness. It validates the configured suffix directly, including shorthand IPv4 spellings that appear DNS-like when a fake subdomain is prepended; see `WEAK-tenant-managed-20`. This additional application guard does not alter fixture DB setup.
