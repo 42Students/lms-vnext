@@ -38,6 +38,10 @@ describe.skipIf(!enabled)("HR in-app notification scopes",()=>{
      organizationId:SEED_IDS.organization,collegeName:"Fixture",companyRelationshipId:a.relationship.id}]}};
   const result=await listHrNotifications(ctx,{collegeId:SEED_IDS.collegeA});
   expect(result.rows.some(row=>row.jobId===job.id)).toBe(true);
+  const staleTab=await listHrNotifications(ctx,{collegeId:SEED_IDS.collegeA,page:9999});
+  expect(staleTab.page).toBe(1);
+  expect(staleTab.rows.some(row=>row.jobId===job.id)).toBe(true);
+  expect(staleTab.last).toBeGreaterThan(0);
   const matched=await listHrNotifications(ctx,{collegeId:SEED_IDS.collegeA,q:"Notif Job "+n});
   expect(matched.rows.some(row=>row.jobId===job.id)).toBe(true);
   const missing=await listHrNotifications(ctx,{collegeId:SEED_IDS.collegeA,q:"Not a matching job"});

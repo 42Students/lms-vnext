@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { brandStyleVariables } from "@/modules/colleges/branding";
+import {safeTpoBrandLogoUrl} from "@/modules/placements/tpo-branding-model";
 
 export type BrandingFormValues = {
   logoUrl: string | null;
@@ -72,6 +73,7 @@ export function CollegeBrandingForm({
       brandStyleVariables(validColor(values.primaryColor)) as React.CSSProperties,
     [values.primaryColor],
   );
+  const previewLogoUrl=uploadedLogoUrl||safeTpoBrandLogoUrl(values.logoUrl);
 
   function set(key: keyof BrandingFormValues, value: string) {
     setValues((current) => ({ ...current, [key]: value }));
@@ -212,10 +214,10 @@ export function CollegeBrandingForm({
           Sign-in preview
         </p>
         <div className="rounded-xl border border-border bg-surface p-5 shadow-sm">
-          {(uploadedLogoUrl || (values.logoUrl && /^https:\/\//.test(values.logoUrl))) ? (
+          {previewLogoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={uploadedLogoUrl||values.logoUrl||""}
+              src={previewLogoUrl}
               alt=""
               referrerPolicy="no-referrer"
               className="h-10 w-auto max-w-[180px] object-contain"

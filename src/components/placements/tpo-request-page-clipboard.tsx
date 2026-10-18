@@ -17,7 +17,7 @@ export function requestRowsTsv(
  const selected=allClipboardColumns.filter(column=>columns.includes(column));
  if(selected.length===0)throw new Error("At least one request column must be selected");
  const neutral=(v:string|null)=>{
-  const value=(v??"").replace(/[\t\r\n\u2028\u2029]+/g," ").trim();
+  const value=(v??"").replace(/[\p{Cc}\p{Zl}\p{Zp}]+/gu," ").trim();
   return /^[\p{Cc}\p{Cf}\p{Zs}\p{Zl}\p{Zp}]*[=+@-]/u.test(value)
    ?"'"+value:value;
  };

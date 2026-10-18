@@ -5,6 +5,7 @@ import { getDb } from "@/db/client";
 import { colleges, organizations } from "@/db/schema";
 import { isSuperAdmin, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import { listOrganizations } from "@/modules/organizations/service";
 import { TENANT_DIRECTORY_CSV_CAP, buildTenantDirectoryCsv, tenantDirectoryExportQuerySchema } from "./admin-tenant-export-model";
 import { CollegeServiceError } from "./service";
@@ -40,31 +41,50 @@ function scopedTenantSource(context: RequestContext, query?: z.output<typeof ten
   }).from(colleges).innerJoin(organizations, eq(organizations.id, colleges.organizationId))
     .where(and(...where)).as("admin_tenant_lifecycle_scope");
 }
+/** The caller snapshot authorizes only initial routing. A platform role revoked
+ * before this SELECT must deny the actual tenant rows and export. Holding
+ * persisted SHARE locks for the transaction prevents mid-read role removal. */
+function persistedTenantScope(context:RequestContext,organizationId?:string){
+ return {collegeId:context.adminScope?.collegeId,
+  organizationId:organizationId||context.adminScope?.organizationId};
+}
 export async function getSuperAdminTenantLifecycleDirectory(context: RequestContext, raw: unknown) {
-  const query = tenantLifecycleQuerySchema.parse(raw), source = scopedTenantSource(context, query), db = getDb();
-  const [totals] = await db.select({ total: count() }).from(source);
-  const paging = tenantLifecyclePaging(totals?.total ?? 0, query.page);
-  const [items, organizationOptions] = await Promise.all([
-    db.select().from(source).orderBy(asc(source.name), asc(source.id)).limit(TENANT_LIFECYCLE_PAGE_SIZE).offset(paging.offset),
-    listOrganizations(context),
-  ]);
-  return { query: { ...query, page: paging.page }, ...paging, items, organizations: organizationOptions };
+  const query = tenantLifecycleQuerySchema.parse(raw), source = scopedTenantSource(context, query);
+  return getDb().transaction(async tx=>{
+    await assertPersistedPlatformPermission(tx,context,"college.read",
+      persistedTenantScope(context,query.organizationId));
+    const [totals] = await tx.select({ total: count() }).from(source);
+    const paging = tenantLifecyclePaging(totals?.total ?? 0, query.page);
+    const [items, organizationOptions] = await Promise.all([
+      tx.select().from(source).orderBy(asc(source.name), asc(source.id))
+        .limit(TENANT_LIFECYCLE_PAGE_SIZE).offset(paging.offset),
+      listOrganizations(context),
+    ]);
+    return { query: { ...query, page: paging.page }, ...paging, items, organizations: organizationOptions };
+  });
 }
 export async function getSuperAdminTenantLifecycleDetail(context: RequestContext, rawId: unknown) {
-  const source = scopedTenantSource(context);
   const parsed = z.uuid().safeParse(rawId);
   if (!parsed.success) throw new CollegeServiceError("COLLEGE_NOT_FOUND");
-  const [row] = await getDb().select().from(source).where(eq(source.id, parsed.data)).limit(1);
-  if (!row) throw new CollegeServiceError("COLLEGE_NOT_FOUND");
-  return row;
+  const source = scopedTenantSource(context);
+  return getDb().transaction(async tx=>{
+    await assertPersistedPlatformPermission(tx,context,"college.read",persistedTenantScope(context));
+    const [row] = await tx.select().from(source).where(eq(source.id, parsed.data)).limit(1);
+    if (!row) throw new CollegeServiceError("COLLEGE_NOT_FOUND");
+    return row;
+  });
 }
 
 export async function exportSuperAdminTenantDirectory(context: RequestContext, raw: unknown) {
   const query = tenantDirectoryExportQuerySchema.parse(raw);
   const source = scopedTenantSource(context, { ...query, page: 1 });
-  const rows = await getDb().select().from(source).orderBy(asc(source.name), asc(source.id))
-    .limit(TENANT_DIRECTORY_CSV_CAP + 1);
-  const truncated = rows.length > TENANT_DIRECTORY_CSV_CAP;
-  return { csv: buildTenantDirectoryCsv(rows, truncated), truncated,
-    exported: Math.min(rows.length, TENANT_DIRECTORY_CSV_CAP), cap: TENANT_DIRECTORY_CSV_CAP };
+  return getDb().transaction(async tx=>{
+    await assertPersistedPlatformPermission(tx,context,"college.read",
+      persistedTenantScope(context,query.organizationId));
+    const rows = await tx.select().from(source).orderBy(asc(source.name), asc(source.id))
+      .limit(TENANT_DIRECTORY_CSV_CAP + 1);
+    const truncated = rows.length > TENANT_DIRECTORY_CSV_CAP;
+    return { csv: buildTenantDirectoryCsv(rows, truncated), truncated,
+      exported: Math.min(rows.length, TENANT_DIRECTORY_CSV_CAP), cap: TENANT_DIRECTORY_CSV_CAP };
+  });
 }

@@ -1,7 +1,12 @@
 import {z} from "zod";
 export const adminFeatureQuerySchema=z.strictObject({
  q:z.string().trim().max(100).default(""),
- page:z.coerce.number().int().min(1).max(10000).default(1),
+ // URL pagination must be decimal; coercion would interpret 0x10 and 1e2.
+ page:z.union([
+  z.number().int().min(1).max(10000),
+  z.string().regex(/^[0-9]+$/).transform(Number)
+   .pipe(z.number().int().min(1).max(10000)),
+ ]).default(1),
  sort:z.enum(["NAME","CODE","NAME_DESC","CODE_DESC"]).default("NAME"),
  module:z.union([z.enum(["projects","placements","electives"]),z.literal("")]).transform(value=>value===""?undefined:value).optional(),
  storedState:z.enum(["ALL","ON","OFF"]).default("ALL"),
