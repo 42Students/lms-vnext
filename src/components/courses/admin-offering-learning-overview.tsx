@@ -106,9 +106,9 @@ function ContentCard({
       {item.externalUrl ? (
         <a
           href={item.externalUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="mt-3 inline-flex text-sm font-semibold text-primary-text hover:text-primary-hover"
+          
+          rel="noopener noreferrer"
+          className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover"
         >
           Open link ↗
         </a>
