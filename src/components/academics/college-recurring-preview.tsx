@@ -3,6 +3,7 @@
 import { useState, useTransition, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { DataTable } from "@/components/ui/data-table";
 import {apiFetch} from "@/lib/api-fetch";
 
 type Option = { id: string; name: string };
@@ -11,6 +12,14 @@ type FacultyOption = { id: string; displayName: string | null };
 type DeliveryOption = { id: string; sectionId: string; name: string; code: string };
 type Result = { slots: Array<{ startsAt: string; endsAt: string; localDate: string; conflicts: string[] }>;
   ready: number; blocked: number; notice: string };
+
+/** Recurring preview is always displayed in IST regardless of device timezone. */
+export function recurringSlotTimeIst(slot: Pick<Result["slots"][number], "startsAt" | "endsAt">): string {
+  const format = new Intl.DateTimeFormat("en-IN", {
+    timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit",
+  });
+  return format.format(new Date(slot.startsAt))+" – "+format.format(new Date(slot.endsAt));
+}
 
 export function CollegeRecurringPreview({
   classes, halls, faculty, deliveries, defaultSectionId = "",
@@ -210,20 +219,20 @@ export function CollegeRecurringPreview({
         {result.blocked>0 ? <p className="text-xs text-error">Conflicting dates will be skipped; clear dates may still be created.</p> : null}
         {result.slots.length === 0 ? <p className="text-sm text-body">No selected weekdays match this date range.</p> : (
           <div className="max-h-[32rem] overflow-auto rounded-lg border border-border">
-            <table className="w-full min-w-[32rem] text-left text-sm">
-              <thead className="bg-muted"><tr><th className="px-3 py-2">Date (IST)</th>
-                <th className="px-3 py-2">Time (IST)</th><th className="px-3 py-2">Conflicts</th></tr></thead>
-              <tbody>{result.slots.map((slot) => <tr key={slot.startsAt} className="border-t border-border">
-                <td className="px-3 py-2">{slot.localDate}</td>
-                <td className="px-3 py-2">{new Intl.DateTimeFormat("en-IN", {
-                  timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit",
-                }).format(new Date(slot.startsAt))} – {new Intl.DateTimeFormat("en-IN", {
-                  timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit",
-                }).format(new Date(slot.endsAt))}</td>
-                <td className="px-3 py-2">{slot.conflicts.length
-                  ? slot.conflicts.map((c) => c.replaceAll("_", " ")).join(", ") : "None detected"}</td>
-              </tr>)}</tbody>
-            </table>
+            <DataTable<Result["slots"][number]>
+              caption="Recurring sessions preview"
+              rows={result.slots}
+              getRowKey={slot => slot.startsAt}
+              empty={<p className="p-3 text-sm text-body">No selected weekdays match this date range.</p>}
+              columns={[
+                {key:"date",header:"Date (IST)",mobilePriority:"primary",cell:slot=>slot.localDate},
+                {key:"time",header:"Time (IST)",mobilePriority:"secondary",cell:recurringSlotTimeIst},
+                {key:"conflicts",header:"Conflicts",mobilePriority:"secondary",cell:slot=>
+                  slot.conflicts.length ?
+                    slot.conflicts.map(reason=>reason.replaceAll("_"," ")).join(", ") :
+                    "None detected"},
+              ]}
+            />
           </div>
         )}
       </section> : null}

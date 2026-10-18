@@ -78,8 +78,16 @@ describe("Super Admin tenant API authenticated routes, origin and validation",()
  });
  it("SA-colleges-sessions-API-02 GET lists exactly a validated user target and never calls mutation",async()=>{
   const base="http://local/api/admin/colleges/"+college+"/sessions";
-  const invalid=await listSessions(new Request(base+"?userId=bad"),route);
-  expect(invalid.status).toBe(400);
+  for(const query of [
+   "?userId=bad",
+   "?userId="+adminUser+"&userId="+foreign,
+   "?userId="+adminUser+"&query=foreign",
+   "?targetUserId="+adminUser,
+   "",
+  ]){
+   const invalid=await listSessions(new Request(base+query),route);
+   expect(invalid.status).toBe(400);
+  }
   expect(mock.list).not.toHaveBeenCalled();
   mock.list.mockResolvedValue({devices:[],target:{userId:adminUser}});
   const ok=await listSessions(new Request(base+"?userId="+adminUser),route);

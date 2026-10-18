@@ -195,3 +195,11 @@ All 22 cases were checked against current branch source before insertion. Every 
 | REC-calendar-messages-profile-R02 | FIXED-ON-MAIN | [`f7aa98d8a`](https://github.com/42Students/lms-vnext/commit/f7aa98d8a4fae8dddfcde8189e7f879d7f5b7dad) | `tests/unit/chat2-final-sprint-recruiter-messages.test.ts` | Individual source-contract regression; existing gap acceptance details above |
 
 **Release gate:** Run Vitest and `tsc --noEmit` on the final merged commit; confirm recruiter-college authorization and real offer counts against PostgreSQL fixtures. This GitHub-connector-only lane did not run the suites. Legacy copy variations are recorded above with explicit least-privilege behavior choices rather than inferred verification, badges, grants or read-state changes.
+
+
+## chat-15 recruiter conversation and notifications identity boundary — 2026-10-18
+
+| ID | Status | Acceptance evidence and outstanding verification |
+|---|---|---|
+| HR-ACCOUNT-OWNER-17 | SOURCE FIX, CI PENDING | `hr-conversation-inbox-service.ts`, `hr-notifications-service.ts`; `tests/unit/HR-BREAK-chat15-conversations-10.test.ts` and `HR-BREAK-chat15-notifications-09.test.ts`. Private recruiter message and notification reads require the embedded recruiter user ID to match the authenticated session user, before accessing any college data. Multi-college users must choose scope. Verify revoked account and stale session against real DB. |
+| HR-TENANT-ID-16 | SOURCE FIX, CI PENDING | `recruiter-job-visibility-model.ts`, `tests/unit/HR-BREAK-chat15-tenant-identity-04.test.ts`. A borrowed relationship grant cannot make an unrelated session user an authorized job viewer. |
