@@ -85,7 +85,7 @@ export function mentorBoardReviewHref(query:MentorBoardReviewQuery){
 }
 export function csvSafeCell(value:string|number|null){
   const text=String(value??"");
-  const safe=/^[\s]*[=+@\-\t\r]/.test(text)?"'"+text:text;
+  const safe=/^[\s\u200B-\u200F\u2060\uFEFF\u202A-\u202E]*[=+@\-]/u.test(text)?"'"+text:text;
   return '"'+safe.replaceAll('"','""')+'"';
 }
 export function mentorBoardExportCsv(
