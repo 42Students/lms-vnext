@@ -184,3 +184,12 @@ Additional unexecuted test evidence:
 - `tests/unit/chat16-hr-notifications-service-16.test.ts`: actual recruiter inbox service with actor, employer grant, multi-college choice, no eligible jobs and scoped job-event projection; DB and grant fetch mocked.
 
 These are authored direct-test cases, not a claim of passed CI, full PostgreSQL concurrency or provider delivery. The source-level stage preserves exact existing role/UI copy except for removing unsupported public AI-agent claims.
+
+### Later CI reconciliation for the three published chat-16 failures
+
+The orchestrator's `docs/orchestrator/unit-failures-latest.md` header still references CI `ff6819dd` / cloud `698eb9dd`, but the newer, **completed** GitHub Actions unit job **117686252023**, run **39131096801** (commit `41f5729cb`), contains success records for:
+- `tests/unit/chat16-round3-two-unit-regressions.test.ts`: **3 passing tests**.
+- `tests/unit/chat16-gap-register-reconciliation-r7.test.ts`: **34 passing tests**.
+- `tests/unit/recruiter-drive-request-runtime-model.test.ts`: **4 passing tests**.
+
+This is direct cloud-log evidence that the **three historical named files** passed at that commit, not a fresh whole-repository green build. That workflow's overall unit job failed because other files failed; its separate typecheck job also failed on `report-interactive-table.tsx`, outside chat-16's scope. New chat-16 tests introduced after `41f5729cb` are still unverified and must not be labeled passing. The orchestrator report is owned by its CI refresh, not manually overwritten by this lane.
