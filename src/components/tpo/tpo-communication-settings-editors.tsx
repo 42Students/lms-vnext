@@ -1,6 +1,6 @@
 "use client";
 import {useRouter} from "next/navigation";
-import {useState} from "react";
+import {useRef,useState} from "react";
 
 type ResponseBody={error?:string;version?:string};
 function saveError(body:ResponseBody){
@@ -13,9 +13,10 @@ export function TpoSmsCapEditor({initial,version}: {initial:number;version:strin
  const [value,setValue]=useState(initial),[saved,setSaved]=useState(initial);
  const [currentVersion,setCurrentVersion]=useState(version);
  const [busy,setBusy]=useState(false),[notice,setNotice]=useState(""),[error,setError]=useState("");
+ const inFlight=useRef(false);
  async function save(){
-  if(busy||!Number.isInteger(value)||value<0||value>100000)return;
-  setBusy(true);setError("");setNotice("");
+  if(inFlight.current||busy||!Number.isInteger(value)||value<0||value>100000)return;
+  inFlight.current=true;setBusy(true);setError("");setNotice("");
   try{
    const response=await fetch("/api/placements/tpo/settings/communication",{
     method:"PATCH",credentials:"same-origin",headers:{"Content-Type":"application/json"},
@@ -24,7 +25,7 @@ export function TpoSmsCapEditor({initial,version}: {initial:number;version:strin
    const body=await response.json() as ResponseBody;
    if(!response.ok)throw Error(saveError(body));
    setSaved(value);setCurrentVersion(body.version??null);setNotice("Saved");router.refresh();
-  }catch(e){setError(e instanceof Error?e.message:"Settings were not saved.");}finally{setBusy(false);}
+  }catch(e){setError(e instanceof Error?e.message:"Settings were not saved.");}finally{inFlight.current=false;setBusy(false);}
  }
  return <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
   <h2 className="text-lg font-semibold">SMS</h2>
@@ -50,9 +51,10 @@ export function TpoEmailSignatureEditor({initial,version}:{initial:string;versio
  const [value,setValue]=useState(initial),[saved,setSaved]=useState(initial);
  const [currentVersion,setCurrentVersion]=useState(version);
  const [busy,setBusy]=useState(false),[notice,setNotice]=useState(""),[error,setError]=useState("");
+ const inFlight=useRef(false);
  async function save(){
-  if(busy||value.length>300)return;
-  setBusy(true);setError("");setNotice("");
+  if(inFlight.current||busy||value.length>300)return;
+  inFlight.current=true;setBusy(true);setError("");setNotice("");
   try{
    const response=await fetch("/api/placements/tpo/settings/communication",{
     method:"PATCH",credentials:"same-origin",headers:{"Content-Type":"application/json"},
@@ -61,7 +63,7 @@ export function TpoEmailSignatureEditor({initial,version}:{initial:string;versio
    const body=await response.json() as ResponseBody;
    if(!response.ok)throw Error(saveError(body));
    setSaved(value);setCurrentVersion(body.version??null);setNotice("Saved");router.refresh();
-  }catch(e){setError(e instanceof Error?e.message:"Settings were not saved.");}finally{setBusy(false);}
+  }catch(e){setError(e instanceof Error?e.message:"Settings were not saved.");}finally{inFlight.current=false;setBusy(false);}
  }
  return <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
   <label className="block text-sm font-semibold">Email signature
@@ -89,9 +91,10 @@ export function TpoRecruiterDurationEditor({initial,version}:{initial:number;ver
  const [months,setMonths]=useState(initial),[saved,setSaved]=useState(initial);
  const [currentVersion,setCurrentVersion]=useState(version);
  const [busy,setBusy]=useState(false),[notice,setNotice]=useState(""),[error,setError]=useState("");
+ const inFlight=useRef(false);
  async function save(){
-  if(busy||![3,6,12,24].includes(months))return;
-  setBusy(true);setError("");setNotice("");
+  if(inFlight.current||busy||![3,6,12,24].includes(months))return;
+  inFlight.current=true;setBusy(true);setError("");setNotice("");
   try{
    const response=await fetch("/api/placements/tpo/settings/communication",{
     method:"PATCH",credentials:"same-origin",headers:{"Content-Type":"application/json"},
@@ -101,7 +104,7 @@ export function TpoRecruiterDurationEditor({initial,version}:{initial:number;ver
    if(!response.ok)throw Error(saveError(data));
    setSaved(months);setCurrentVersion(data.version??null);setNotice("Saved");router.refresh();
   }catch(caught){setError(caught instanceof Error?caught.message:"Settings were not saved.");}
-  finally{setBusy(false);}
+  finally{inFlight.current=false;setBusy(false);}
  }
  return <section className="space-y-3 rounded-xl border border-border bg-surface p-5">
   <h2 className="font-semibold">Recruiter access lasts</h2>

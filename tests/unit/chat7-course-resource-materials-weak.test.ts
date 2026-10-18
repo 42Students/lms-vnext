@@ -34,9 +34,9 @@ describe("COURSES-WEAK-RESOURCE-MATERIALS-01 real resource lifecycle validation"
  });
  it("cannot write resource materials when deployment migration is not explicitly verified",()=>{
   for(const flag of ["",undefined,"DB05_STAGED","db05_verified","true"]){
-   const env:NodeJS.ProcessEnv=flag===undefined?{}:{DB05_RESOURCE_MATERIALS_READY:flag};
+   const env:NodeJS.ProcessEnv=flag===undefined?{...process.env,DB05_RESOURCE_MATERIALS_READY:undefined}:{...process.env,DB05_RESOURCE_MATERIALS_READY:flag};
    expect(resourceMaterialsWriteReady(env)).toBe(false);
   }
-  expect(resourceMaterialsWriteReady({DB05_RESOURCE_MATERIALS_READY:"DB05_VERIFIED"})).toBe(true);
+  expect(resourceMaterialsWriteReady({...process.env,DB05_RESOURCE_MATERIALS_READY:"DB05_VERIFIED"})).toBe(true);
  });
 });

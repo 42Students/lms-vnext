@@ -31,6 +31,14 @@ describe("PLACEMENTS-SELECTION-IDEMP-01 record retries",()=>{
   expect(recordSelectionsSchema.safeParse({action:"RECORD",entries:[entries[0],entries[0]]}).success).toBe(false);
   expect(recordSelectionsSchema.safeParse({action:"RECORD",entries:[{...entries[0],annualCtcInr:NaN}]}).success).toBe(false);
  });
+ it("PLACEMENTS-SELECTION-LOCK-01 serializes overlapping batches in stable database identifier order",()=>{
+  const code=src("src/modules/placements/tpo-drive-selection-service.ts");
+  const fn=code.slice(code.indexOf("export async function recordTpoDriveSelections"),code.indexOf("export async function verifyAndReleaseTpoSelections"));
+  expect(fn).toContain("orderBy(asc(placementApplications.id)).for(\"update\")");
+  expect(fn).toContain("orderBy(asc(placementDriveSelections.applicationId)).for(\"update\")");
+  expect(fn.indexOf("orderBy(asc(placementApplications.id))")).toBeLessThan(fn.indexOf("orderBy(asc(placementDriveSelections.applicationId))"));
+  expect(fn.indexOf("const applications = await tx.select")).toBeLessThan(fn.indexOf("const existing = await tx.select"));
+ });
  it("service checks persisted rows under locks and bypasses recordedAt/audit only on exact retry",()=>{
   const service=src("src/modules/placements/tpo-drive-selection-service.ts");
   const start=service.indexOf("const existing = await tx.select()");
