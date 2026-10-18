@@ -13,7 +13,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { adminCompaniesQuerySchema } from "@/modules/placements/admin-company-directory-model";
+import { parseAdminCompanyDirectoryParams } from "@/modules/placements/admin-company-directory-model";
 import { listSuperAdminCompanyDirectory } from "@/modules/placements/admin-company-directory-service";
 import { findPossibleCompanyDuplicates } from "@/modules/placements/company-curation-candidates-model";
 import {listColleges} from "@/modules/colleges/service";
@@ -23,18 +23,7 @@ export default async function SuperAdminCompaniesPage({
   searchParams,
 }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const params = await searchParams;
-  // Parse every URL key, not a stripped whitelist: a forged scope selector or
-  // duplicate company filter must render the recoverable invalid-search state.
-  // The legacy view tab is separate from the relationship filters.
-  const validView = params.view === undefined || params.view === "GLOBAL" ||
-    params.view === "COLLEGE";
-  const filters = Object.fromEntries(
-    Object.entries(params).filter(([key]) => key !== "view"),
-  );
-  if (filters.collegeId === "") delete filters.collegeId;
-  const parsed = adminCompaniesQuerySchema.safeParse(
-    validView ? filters : {...filters, view: params.view},
-  );
+  const parsed = parseAdminCompanyDirectoryParams(params);
   if (!parsed.success) return <div className="min-w-0 space-y-4">
     <PageHeader eyebrow="Super Admin · Placements" title="Companies" />
     <ErrorState title="Invalid company search" description="Check search text or relationship status."
