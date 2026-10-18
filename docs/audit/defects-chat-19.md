@@ -19,6 +19,9 @@ All fixes were authored on `chatgpt/chat-19-b` after synchronizing with `main` a
 | HR-XA-03 | MAJOR | `src/app/(authenticated)/hr/drives/page.tsx` | Retry button had undersized touch target | Shared accessible Button | `f150fa86` | `tests/unit/chat19-hr-page-contracts.test.ts` |
 | HR-XA-04 | MAJOR | `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx` | Back to Drives from error boundary used low-contrast link without focus cue | Deep teal and keyboard outline | `56742618` | `tests/unit/chat19-hr-page-contracts.test.ts` |
 
+| HR-XA-05 | MAJOR | `src/app/(authenticated)/hr/conversations/page.tsx`, `src/app/(authenticated)/hr/conversations/[threadId]/page.tsx`, `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx` | Hidden scrollbars gave long message/change-request histories no more-content affordance | Focusable named ScrollCue with truthful edge fades | `1eaae5e9` | `tests/unit/chat19-hr-page-contracts.test.ts` |
+| HR-XA-06 | MAJOR | `src/app/(authenticated)/hr/calendar/page.tsx` | Calendar day event overflow was invisible without scroll affordance | Named ScrollCue preserves max-height and more-content fade | `3de439aa` | `tests/unit/chat19-hr-page-contracts.test.ts` |
+
 ## Projects HR/Recruiter adversarial checks
 
 - **PROJ-HR-01:** learner project links are disclosed only if both the active college visibility setting and company relationship grant explicitly permit them; pure projection tests also deny project data if policy denies.
