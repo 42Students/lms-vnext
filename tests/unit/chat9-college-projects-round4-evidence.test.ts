@@ -85,7 +85,13 @@ describe("College Projects gap closure round 4",()=>{
  it("COL-projects-23 uses responsive wrappers but retains browser width acceptance as open",()=>{
   const cards=source("src/components/projects/project-admin-workspace-list.tsx");
   const nav=source("src/components/projects/project-admin-nav.tsx");
-  expect(cards).toContain("overflow-x-auto");
-  expect(nav).toContain("overflow-x-auto");
+  expect(cards).toContain('<DataTable');
+  expect(cards).toContain('caption="Project workspace table"');
+  expect(nav).toContain('if (basePath === "/college/projects" || basePath === "/admin/projects") return null;');
+  const table=source("src/components/ui/data-table.tsx");
+  const cue=source("src/components/ui/scroll-cue.tsx");
+  expect(table).toContain('<ScrollCue axis="x"');
+  expect(cue).toContain("overflow-x-auto overscroll-x-contain");
+  expect(cue).toContain('tabIndex={edges.scrollable ? 0 : -1}');
  });
 });
