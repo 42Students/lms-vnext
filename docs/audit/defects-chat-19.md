@@ -465,3 +465,11 @@ No live keyboard/browser simulation has been claimed.
 | HR-BREAK-DRIVE-RECEIPT-33 | UX | The new-drive form saved the verified success flash `Sent to the placement cell for review`, but the Drives receipt display accepted only `Sent for review.`; the success confirmation disappeared on navigation. Centralized an exact allowlist that includes the real producer wording, consumes the message once, and continues to reject untrusted session/URL strings as proof of submission. | `tests/unit/HR-BREAK-chat19-drive-receipt.test.ts` checks valid/invalid receipts and source producer/consumer handoff. |
 
 The exact legacy-facing copy was preserved; no code run or CI status is asserted.
+
+## Live recruiter shell bell: unwanted acknowledgement and stale authorization
+
+| Gap ID | Severity | Finding and fix | Regression |
+|---|---|---|---|
+| HR-BREAK-ACTIVE-BELL-34 | MAJOR | The **active shell bell** `HrRecruiterBell` marked all notifications read simply on opening its panel before the recruiter could inspect them. It also preserved previously visible, possibly now-revoked college notices after a denied refresh. Opening is now strictly read-only; Mark all read requires an explicit click, verified nonredirected JSON acknowledgement, guarded double submit and fresh read. Out-of-order GET responses cannot restore stale private data. Added keyboard dismissal/focus return, 44px targets and a labelled vertical ScrollCue to compensate for invisible scrollbars. | `tests/unit/HR-BREAK-chat19-active-bell.test.tsx` checks active-shell wiring, request generation, receipt verification, focus and SSR controls. |
+
+Cloud/browser execution remains pending.

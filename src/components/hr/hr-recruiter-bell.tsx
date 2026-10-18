@@ -1,66 +1,103 @@
 "use client";
 import Link from "next/link";
+import {ScrollCue} from "@/components/ui/scroll-cue";
+import {createRecruiterBellRequestGate} from "@/modules/placements/recruiter-bell-model";
 import {useCallback,useEffect,useRef,useState} from "react";
 import {HR_BELL_EMPTY,HR_BELL_EMPTY_HELP,relativeHrBellTime,createHrBellMutationGate,type HrBellResponse} from "@/modules/placements/hr-recruiter-bell-model";
+function isHrBellReadReceipt(value:unknown):value is {marked:number}{
+ if(!value||typeof value!=="object"||!("marked" in value))return false;
+ const count=(value as {marked:unknown}).marked;
+ return typeof count==="number"&&Number.isSafeInteger(count)&&count>=0;
+}
 export function HrRecruiterBell(){
  const [state,setState]=useState<HrBellResponse|null>(null),[open,setOpen]=useState(false),
  [loading,setLoading]=useState(false),[error,setError]=useState(""),[saveError,setSaveError]=useState("");
  const [now,setNow]=useState(()=>Date.now());
  const markAllGate=useRef(createHrBellMutationGate());
+ const loadGate=useRef(createRecruiterBellRequestGate());
+ const triggerRef=useRef<HTMLButtonElement>(null);
+ const panelRef=useRef<HTMLElement>(null);
  const load=useCallback(async()=>{
+  const request=loadGate.current.begin();
   try{
-   const res=await fetch("/api/placements/recruiter/bell",{cache:"no-store"});
+   const res=await fetch("/api/placements/recruiter/bell",{
+    cache:"no-store",credentials:"same-origin",redirect:"error",
+   });
    if(!res.ok)throw Error("Unable to load");
-   const data=await res.json() as HrBellResponse;setState(data);setError("");
-  }catch{setError("Couldn't refresh your notifications");}
-  finally{setNow(Date.now());}
+   const data=await res.json() as HrBellResponse;
+   if(!loadGate.current.isCurrent(request))return;
+   setState(data);setError("");
+  }catch{
+   if(!loadGate.current.isCurrent(request))return;
+   // A revoked/expired session cannot keep an old private feed on screen.
+   setState(null);setError("Couldn't refresh your notifications");
+  }finally{if(loadGate.current.isCurrent(request))setNow(Date.now());}
  },[]);
  useEffect(()=>{
   // eslint-disable-next-line react-hooks/set-state-in-effect -- initial and 30s polling load.
   void load();
   const id=setInterval(()=>{void load();},30000);
-  return ()=>clearInterval(id);
+  return ()=>{clearInterval(id);loadGate.current.invalidate();};
  },[load]);
  async function markAll(){
   if(!markAllGate.current.tryBegin())return;
   setLoading(true);setSaveError("");
   try{
    const res=await fetch("/api/placements/recruiter/bell",{method:"POST",
-    headers:{"Content-Type":"application/json"},body:"{}"});
+    credentials:"same-origin",redirect:"error",
+    headers:{"Content-Type":"application/json",Accept:"application/json"},body:"{}"});
    if(!res.ok)throw Error("Could not save");
+   const receipt:unknown=await res.json().catch(()=>null);
+   if(!isHrBellReadReceipt(receipt))throw Error("Could not confirm read status");
    await load();
-  }catch{setSaveError("Notifications loaded, but read status could not be saved");}
+  }catch{setState(null);setSaveError("Read status could not be confirmed. Reload notifications before retrying.");}
   finally{markAllGate.current.end();setLoading(false);}
  }
+ useEffect(()=>{
+  if(!open)return;
+  const onKey=(event:KeyboardEvent)=>{
+   if(event.key!=="Escape")return;
+   event.preventDefault();setOpen(false);triggerRef.current?.focus();
+  };
+  const onPointer=(event:PointerEvent)=>{
+   const target=event.target;
+   if(!(target instanceof Node)||panelRef.current?.contains(target)||
+      triggerRef.current?.contains(target))return;
+   setOpen(false);
+  };
+  document.addEventListener("keydown",onKey);
+  document.addEventListener("pointerdown",onPointer);
+  return ()=>{document.removeEventListener("keydown",onKey);
+   document.removeEventListener("pointerdown",onPointer);};
+ },[open]);
  const unread=state?.unread??0;
  return <div className="relative">
-  <button type="button" aria-label={"Notifications, "+unread+" new"} aria-expanded={open}
-   onClick={()=>{
-    if(!open && state?.status==="READY" && (state.unread??0)>0 &&
-       state.items.filter(item=>item.unread).length>=state.unread)void markAll();
-    setOpen(value=>!value);
-   }} className="relative min-h-10 rounded border border-border px-3 text-sm font-semibold text-foreground">
+  <button ref={triggerRef} type="button" aria-label={"Notifications, "+unread+" new"}
+   aria-expanded={open} aria-haspopup="dialog"
+   onClick={()=>setOpen(value=>!value)}
+   className="relative min-h-11 rounded border border-border px-3 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
    Notifications {unread>0?<span className="ml-1 rounded-full bg-primary px-1.5 text-xs text-on-primary">{unread}</span>:null}
   </button>
-  {open?<section aria-label="Recruiter notifications" className="absolute right-0 z-50 mt-2 w-[400px] max-w-[calc(100vw-2rem)] rounded-xl border border-border bg-surface p-4 shadow-lg">
+  {open?<section ref={panelRef} role="dialog" aria-modal="false" aria-label="Recruiter notifications" className="absolute right-0 z-50 mt-2 w-[400px] max-w-[calc(100vw-2rem)] rounded-xl border border-border bg-surface p-4 shadow-lg">
    <div className="flex items-center justify-between gap-2">
     <h2 className="font-semibold">Notifications</h2>
-    <button type="button" onClick={()=>setOpen(false)} className="text-sm text-primary-text">Close</button>
+    <button type="button" onClick={()=>{setOpen(false);triggerRef.current?.focus();}}
+     className="min-h-11 px-3 text-sm text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Close</button>
    </div>
    {error?<p role="alert" className="mt-3 text-sm text-error">{state?error:"Couldn't load your notifications"}</p>:null}
    {!state&&!error?<p role="status" className="mt-3 text-sm text-body">Loading notifications…</p>:
     state?.status!=="READY"?<p className="mt-3 text-sm text-body">{error?"Couldn't load your notifications":"Choose a college to view your notifications."}</p>:
     state.items.length===0?<div className="mt-3 text-sm"><p className="font-semibold">{HR_BELL_EMPTY}</p>
      <p className="text-muted-foreground">{HR_BELL_EMPTY_HELP}</p></div>:
-    <ul className="mt-3 max-h-80 divide-y divide-border overflow-auto">{state.items.map(item=><li key={item.id} className="py-2">
-     <Link href={item.href} onClick={()=>setOpen(false)} className="flex items-start gap-2 text-sm text-body hover:text-primary-text">
+    <ScrollCue axis="y" label="Recruiter notifications" className="mt-3" viewportClassName="max-h-80"><ul className="divide-y divide-border">{state.items.map(item=><li key={item.id} className="py-2">
+     <Link href={item.href} onClick={()=>setOpen(false)} className="flex min-h-11 items-start gap-2 text-sm text-body hover:text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       <span aria-hidden="true" className={item.unread?"mt-1.5 h-2 w-2 shrink-0 rounded-full bg-primary":"mt-1.5 h-2 w-2 shrink-0 rounded-full bg-muted"}/>
       <span className="flex-1">{item.label}</span><span className="text-xs text-muted-foreground">{relativeHrBellTime(item.at,now)}</span>
-     </Link></li>)}</ul>}
+     </Link></li>)}</ul></ScrollCue>}
    <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-    <Link href="/hr/notifications" onClick={()=>setOpen(false)} className="text-sm font-semibold text-primary-text underline">More</Link>
+    <Link href="/hr/notifications" onClick={()=>setOpen(false)} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">More</Link>
     {unread>0?<button type="button" disabled={loading} onClick={()=>void markAll()}
-      className="rounded border border-border px-3 py-2 text-sm disabled:opacity-50">{loading?"Saving…":"Mark all read"}</button>:null}
+      className="min-h-11 rounded border border-border px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] disabled:opacity-50">{loading?"Saving…":"Mark all read"}</button>:null}
    </div>
    {saveError?<p role="alert" className="mt-2 text-xs text-error">{saveError}</p>:null}
   </section>:null}
