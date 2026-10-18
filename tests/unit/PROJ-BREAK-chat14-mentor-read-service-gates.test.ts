@@ -11,6 +11,7 @@ import {getMentorProjectTimeline} from "@/modules/projects/mentor-project-timeli
 import {getMentorTeamHistory} from "@/modules/projects/mentor-team-history-service";
 import {getMentorTeamMeetings} from "@/modules/projects/mentor-team-meetings-service";
 import {getMentorSprintProgress} from "@/modules/projects/mentor-sprint-progress-service";
+import {getMentorDeliveryVersion} from "@/modules/projects/mentor-delivery-version-service";
 
 const state=vi.hoisted(()=>({
  active:true,role:true,permission:true,enabled:true,scopeAccess:"MENTOR",
@@ -74,6 +75,8 @@ const queries=[
  {name:"task review history",run:()=>getMentorTaskReviewHistory(context(),{})},
  {name:"team coverage",run:()=>getMentorTeamCoverage(context(),{})},
  {name:"sprint progress",run:()=>getMentorSprintProgress(context(),{})},
+ {name:"delivery version",run:()=>getMentorDeliveryVersion(context(),{
+   projectId,submissionId:"22222222-2222-4222-8222-222222222222"})},
 ] as const;
 beforeEach(()=>{
  state.active=true;state.role=true;state.permission=true;state.enabled=true;
@@ -110,6 +113,9 @@ describe("PROJ-BREAK-MENTOR-178..184 read-service access and disabled modules",(
   const team=await getMentorTeamCoverage(context(),{});
   const complete=await getMentorProjectReviewCompleteness(context(),{projectId});
   const progress=await getMentorSprintProgress(context(),{});
+  await expect(getMentorDeliveryVersion(context(),{
+   projectId,submissionId:"22222222-2222-4222-8222-222222222222",
+  })).rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
   expect(review).toMatchObject({enabled:false,items:[],projects:[]});
   expect(task).toMatchObject({enabled:false,items:[]});
   expect(team).toMatchObject({enabled:false,projectCount:0,items:[]});
@@ -163,11 +169,25 @@ describe("PROJ-BREAK-MENTOR-178..184 read-service access and disabled modules",(
    ()=>getMentorTaskReviewHistory(context(),{}),
    ()=>getMentorTeamCoverage(context(),{}),
    ()=>getMentorSprintProgress(context(),{}),
+   ()=>getMentorDeliveryVersion(context(),{
+    projectId,submissionId:"22222222-2222-4222-8222-222222222222",
+   }),
   ]){
    await expect(read()).rejects.toThrow("DB_READ_ATTEMPTED");
   }
   expect(state.readinessCalls).toBe(3);
-  expect(state.dbCalls).toBe(5);
+  expect(state.dbCalls).toBe(6);
+ });
+ it("PROJ-BREAK-MENTOR-195 invalid exact delivery version IDs reject before scope or database access",async()=>{
+  for(const bad of [
+   {projectId,submissionId:"../../foreign"},
+   {projectId:"invalid",submissionId:"22222222-2222-4222-8222-222222222222"},
+   {projectId,submissionId:"22222222-2222-4222-8222-222222222222",collegeId:"other"},
+  ]){
+   await expect(getMentorDeliveryVersion(context(),bad)).rejects.toThrow();
+  }
+  expect(state.scopedCalls).toBe(0);
+  expect(state.dbCalls).toBe(0);
  });
  it("PROJ-BREAK-MENTOR-190 disabled board, timeline, team history and meeting log reveal no project metadata",async()=>{
   state.enabled=false;
