@@ -27,7 +27,7 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
       <PageHeader eyebrow="TPO · Offers" title="Offer expiry watchlist"
         description="Currently issued offers expiring in an IST calendar-day window. No speculative expiry dates."
         actions={process.env.DB09_TPO_API_READY === "DB09_VERIFIED" ? <a href={"/api/placements/tpo/offers/expiry?days=" + data.days}
-          className="inline-flex min-h-11 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">
+          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">
           Export CSV
         </a> : null}
       />
@@ -36,19 +36,19 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
           CSV export is unavailable until the DB09 verification gate is enabled.
         </p>
       ) : null}
-      <Link href="/tpo/reports" className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
+      <Link href="/tpo/reports" className="text-sm font-semibold text-[var(--lms-link-text)] hover:underline">
         ← Reports
       </Link>
       <form action="/tpo/reports/offers-expiry" method="get"
-        className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+        className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
         <label className="text-sm font-semibold text-body">Expiring in the next N calendar days
           <select name="days" defaultValue={String(data.days)}
-            className="mt-2 block min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            className="mt-2 block min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-3 text-foreground">
             {[1, 3, 7, 14, 30, 60, 90].map((value) =>
               <option key={value} value={value}>{value} days</option>)}
           </select>
         </label>
-        <button type="submit" className="min-h-11 rounded-md border border-primary bg-primary px-4 font-semibold text-on-primary">
+        <button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] border border-primary bg-primary px-4 font-semibold text-on-primary">
           Apply window
         </button>
       </form>
@@ -75,12 +75,12 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
                   <p className="mt-1 text-sm text-body">
                     {row.jobTitle} · {row.candidateName ?? "Student name not recorded"}
                   </p>
-                  <p className="mt-1 text-sm font-semibold text-[var(--lms-teal-deep)]">
+                  <p className="mt-1 text-sm font-semibold text-[var(--lms-link-text)]">
                     Expires on {row.expiryDayIst} IST
                   </p>
                 </div>
                 <Link href={"/tpo/placements/jobs/" + row.jobId}
-                  className="inline-flex min-h-11 items-center justify-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
+                  className="inline-flex min-h-11 sm:min-h-9 items-center justify-center rounded-[9px] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:underline">
                   Open drive
                 </Link>
               </div>
