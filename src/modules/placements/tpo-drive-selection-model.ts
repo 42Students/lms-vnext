@@ -25,3 +25,28 @@ export function summarizeSelectionRelease(rows: readonly { status: "released" | 
   return { released: rows.filter(row => row.status === "released").length,
     skipped: rows.filter(row => row.status === "skipped").length };
 }
+
+
+/** Never return caught database, permission, or internal exception text to a
+ * TPO. A multi-selection release can report individual failures to the UI.
+ * Safe, bounded outcome copy is essential even if one candidate fails.
+ */
+export function tpoSelectionReleaseFailureMessage(error: unknown): string {
+  if(error instanceof Error && error.message === "PLACEMENT_JOB_PREVIEW_STALE")
+    return "This selection changed. Refresh before releasing.";
+  return "Could not release this selection. Refresh and try again or contact your administrator.";
+}
+
+/** A lost-response retry must not re-record identical selections: it would
+ * change recordedAt, invalidate other reviewers' previews, and double-audit.
+ * The caller first locks and scopes both job and application rows.
+ */
+export function isExactTpoSelectionReplay(
+  existing: readonly {applicationId:string;roleTitle:string;annualCtcInr:number|null;status:string}[],
+  entries: readonly {applicationId:string;roleTitle:string;annualCtcInr:number|null}[],
+): boolean {
+  return entries.length>0 && entries.length===existing.length &&
+    entries.every(entry=>existing.some(row=>row.applicationId===entry.applicationId &&
+      row.status==="SELECTED" && row.roleTitle===entry.roleTitle &&
+      row.annualCtcInr===entry.annualCtcInr));
+}

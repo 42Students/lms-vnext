@@ -55,6 +55,8 @@ Scope: 37 routes (positions 75–111) of `docs/orchestrator/ui-ux/pages-admin.md
 | `/admin/settings` | Source audits exist for DataTable, modal and scroll cues; not live verified. |
 | `/admin/students` | Source audits cover bulk selection and scroll cues; not live verified. |
 
+The source inventory test now parses nested `(authenticated)` route group paths rather than truncating at the first `)`. All 37 route IDs are still checked against existing source files; full browser role/phone proof is open.
+
 The original chat-9 CI failure list also flagged `SA-placements-projects-102` (quick-report drawer), `TPO-settings-audit-54/59` (confirmation flows) and `TPO-calendar-reports-53` (loading announcement). Tests now assert the shared native `Drawer`, `ConfirmDialog`, and `GracefulPageLoading` behaviors, rather than obsolete inline DOM controls. All changes are logged with commit SHA in `docs/audit/defects-chat-9.md`.
 
 ## Must complete before IIT Dharwad release
