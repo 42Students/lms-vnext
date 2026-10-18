@@ -72,6 +72,9 @@ export async function getTpoInterviewSlotWorkspace(context:RequestContext,jobId:
    eq(placementLearnerRequests.requestType,"ROUND_RESCHEDULE"),
    eq(placementLearnerRequests.status,"PENDING")));
  const booked=new Set(slots.map(s=>s.applicationId).filter(Boolean));
+ // An officer may be revoked while the roster and slot reads are in flight.
+ // Fail closed before returning candidate names and work email addresses.
+ await getDb().transaction(async tx=>{await requireTpoJobActor(tx,context);});
  return {...info,storageReady,roster,unassigned:roster.filter(r=>!booked.has(r.applicationId)),
   recruiterProposals:recruiterProposals.map(row=>({...row,startsAt:row.startsAt.toISOString(),endsAt:row.endsAt.toISOString()})),
   reschedules:reschedules.map(row=>({...row,requestedAt:row.requestedAt.toISOString()})),
