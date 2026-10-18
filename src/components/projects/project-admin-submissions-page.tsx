@@ -209,7 +209,7 @@ export async function ProjectAdminSubmissionsPage({
       }))}/>
 
       {!result.items.length ? (
-        <section className="rounded-xl border border-border bg-surface p-6 text-sm text-muted-foreground">
+        <section className="border-b border-border py-6 text-sm text-muted-foreground">
           No final-delivery versions match these filters.
         </section>
       ) : (
