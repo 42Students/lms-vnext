@@ -24,13 +24,13 @@
 | `src/modules/placements/tpo-student-clipboard-model.ts` | `matchTpoStudentRolls` | `tests/unit/chat12-tpo-export-and-clipboard-security.test.ts` | case fold, ambiguous duplicates, invalid IDs | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-student-history-model.ts` | `tpoStudentHistoryQuerySchema` | `tests/unit/chat12-tpo-history-team-and-sharing-behavior.test.ts` | invalid id/page/additional scope field | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-student-history-model.ts` | `projectTpoStudentPlacementHistory` | `tests/unit/chat12-tpo-history-team-and-sharing-behavior.test.ts` | persisted-only chronology and staged/applied separation | **BEHAVIOURAL** |
-| `src/modules/placements/tpo-participation-model.ts` | `tpoParticipationStatusSchema` | **NO TARGETED TEST** | all 3 states and rejects | **OPEN** |
-| `src/modules/placements/tpo-participation-model.ts` | `tpoMembershipDecisionSchema` | **NO TARGETED TEST** | unexpected/expired version values | **OPEN** |
-| `src/modules/placements/tpo-participation-model.ts` | `tpoParticipationChangeSchema` | **NO TARGETED TEST** | reason and trim requirements | **OPEN** |
-| `src/modules/placements/tpo-participation-model.ts` | `canonicalTpoParticipationChange` | **NO TARGETED TEST** | status normalization, source reasons | **OPEN** |
-| `src/modules/placements/tpo-participation-model.ts` | `snapshotTpoMembershipDecision` | **NO TARGETED TEST** | stale date resolution and null default | **OPEN** |
-| `src/modules/placements/tpo-participation-model.ts` | `isTpoDecisionSnapshotCurrent` | **NO TARGETED TEST** | CAS equality and null safety | **OPEN** |
-| `src/modules/placements/tpo-participation-model.ts` | `hasTpoDecisionChanged` | **NO TARGETED TEST** | idempotency and diff with null status | **OPEN** |
+| `src/modules/placements/tpo-participation-model.ts` | `tpoParticipationStatusSchema` | `tests/unit/chat12-tpo-participation-state-cas.test.ts` | all 3 states and rejects | **BEHAVIOURAL** |
+| `src/modules/placements/tpo-participation-model.ts` | `tpoMembershipDecisionSchema` | `tests/unit/chat12-tpo-participation-state-cas.test.ts` | unexpected/expired version values | **BEHAVIOURAL** |
+| `src/modules/placements/tpo-participation-model.ts` | `tpoParticipationChangeSchema` | `tests/unit/chat12-tpo-participation-state-cas.test.ts` | reason and trim requirements | **BEHAVIOURAL** |
+| `src/modules/placements/tpo-participation-model.ts` | `canonicalTpoParticipationChange` | `tests/unit/chat12-tpo-participation-state-cas.test.ts` | status normalization, source reasons | **BEHAVIOURAL** |
+| `src/modules/placements/tpo-participation-model.ts` | `snapshotTpoMembershipDecision` | `tests/unit/chat12-tpo-participation-state-cas.test.ts` | stale date resolution and null default | **BEHAVIOURAL** |
+| `src/modules/placements/tpo-participation-model.ts` | `isTpoDecisionSnapshotCurrent` | `tests/unit/chat12-tpo-participation-state-cas.test.ts` | CAS equality and null safety | **BEHAVIOURAL** |
+| `src/modules/placements/tpo-participation-model.ts` | `hasTpoDecisionChanged` | `tests/unit/chat12-tpo-participation-state-cas.test.ts` | idempotency and diff with null status | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-participation-service.ts` | `TpoParticipationConflictError` | `tests/unit/chat12-tpo-bulk-concurrency-and-authorization.test.ts` | caught on failed preview, not direct DB | **SOURCE** |
 | `src/modules/placements/tpo-participation-service.ts` | `getTpoLearnerParticipation` | `tests/unit/PROJ-BREAK-TPO-bulk-partial-audit-01.test.ts` | mocked under confirm; real active/tenant DB proof pending | **MOCKED** |
 | `src/modules/placements/tpo-participation-service.ts` | `decideTpoLearnerParticipation` | `tests/unit/PROJ-BREAK-TPO-bulk-partial-audit-01.test.ts` | mocked CAS: actual PostgreSQL row locks/audit pending | **MOCKED** |
