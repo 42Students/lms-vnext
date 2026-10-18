@@ -667,7 +667,7 @@ export default async function HrPlacementJobPage({
               <h3 className="font-semibold text-foreground">Selection history · placement-cell records</h3>
               <p className="text-sm text-body">Selections are not issued offers. Verified selections still await formal release by the placement cell. Cancelled selections do not imply a revoked offer.</p>
               {selectionRows.length?<div className="overflow-x-auto">
-               <div role="region" aria-label="Records table" tabIndex={0} className="max-w-full overflow-x-auto overscroll-x-contain"><table className="w-full min-w-[34rem] text-left text-sm">
+               <div role="region" aria-label="Placement-cell selection history table" tabIndex={0} className="max-w-full overflow-x-auto overscroll-x-contain"><table className="w-full min-w-[34rem] text-left text-sm">
                 <thead><tr><th scope="col" className="px-3 py-2">Candidate</th>
                  <th scope="col" className="px-3 py-2">Role</th>
                  <th scope="col" className="px-3 py-2">CTC (LPA)</th>
@@ -693,7 +693,7 @@ export default async function HrPlacementJobPage({
               </nav>
             </section>:null}
           {offers.length ? <div className="overflow-x-auto rounded-lg border border-border">
-            <div role="region" aria-label="Records table" tabIndex={0} className="max-w-full overflow-x-auto overscroll-x-contain"><table className="w-full min-w-[56rem] text-left text-sm">
+            <div role="region" aria-label="Issued offers table" tabIndex={0} className="max-w-full overflow-x-auto overscroll-x-contain"><table className="w-full min-w-[56rem] text-left text-sm">
               <caption className="sr-only">Offers for shared applicants at this college</caption>
               <thead className="bg-surface-secondary text-xs font-semibold text-foreground">
                 <tr>
