@@ -20,7 +20,7 @@ describe("IIT Dharwad College Projects membership and Super Admin tenant scope",
   expect(getProjectAdminCollegeId(context)).toBe(collegeId);
   const learner:RequestContext={...context,membership:{...context.membership!,roles:["LEARNER"]}};
   const tpo:RequestContext={...context,membership:{...context.membership!,roles:["TPO"]}};
-  const inactive:RequestContext={...context,membership:{...context.membership!,status:"DISABLED"}};
+  const inactive:RequestContext={...context,membership:{...context.membership!,status:"SUSPENDED"}};
   const removed:RequestContext={...context,membership:null};
   const disabled:RequestContext={...context,user:{...context.user,platformStatus:"DISABLED"}};
   for(const candidate of [learner,tpo,inactive,removed,disabled]){
@@ -44,7 +44,7 @@ describe("IIT Dharwad College Projects membership and Super Admin tenant scope",
   expect(mayRecordCollegeAdminDeliveryLock(context,collegeId,organizationId)).toBe(true);
   expect(mayRecordCollegeAdminDeliveryLock(context,otherCollegeId,organizationId)).toBe(false);
   expect(mayRecordCollegeAdminDeliveryLock(context,collegeId,otherOrganizationId)).toBe(false);
-  const stale:RequestContext={...context,membership:{...context.membership!,status:"DISABLED"}};
+  const stale:RequestContext={...context,membership:{...context.membership!,status:"SUSPENDED"}};
   const wrongRole:RequestContext={...context,membership:{...context.membership!,roles:["MENTOR"]}};
   const disabled:RequestContext={...context,user:{...context.user,platformStatus:"DISABLED"}};
   const scopedSa:RequestContext={...context,user:{...context.user,systemRoles:["SUPER_ADMIN"]},
