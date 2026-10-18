@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {DataTable} from "@/components/ui/data-table";
 import {collegeHiringAnalyticsHref} from "@/modules/placements/college-hiring-analytics-model";
 import type {getCollegeHiringFunnel} from "@/modules/placements/college-hiring-funnel-service";
 
@@ -91,20 +92,34 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
    </div>}
    <p className="text-xs text-muted-foreground">Counts show current pipeline stages, not cumulative conversion. A candidate can occupy only one current stage.</p>
   </section>
-  <section className="overflow-x-auto rounded-xl border border-border bg-surface p-5">
-   <h2 className="mb-4 text-lg font-semibold">Company-wise Hiring Report</h2>
-   {data.companyRows.length?<table className="w-full min-w-[72rem] text-left text-sm [&_th:first-child]:sticky [&_th:first-child]:left-0 [&_th:first-child]:z-10 [&_th:first-child]:bg-surface [&_td:first-child]:sticky [&_td:first-child]:left-0 [&_td:first-child]:z-10 [&_td:first-child]:bg-surface">
-    <thead><tr className="border-b border-border bg-muted"><th className="p-2">Company</th><th className="p-2">Job</th>
-     <th className="p-2">Total</th>{order.map(s=><th key={s} className="p-2">{label(s)}</th>)}</tr></thead>
-    <tbody>{data.companyRows.map(row=><tr key={row.jobId} className="border-b border-border">
-     <td className="p-2">{row.company}</td><td className="p-2">{row.job}</td>
-     <td className="p-2 tabular-nums">{row.total}</td>
-     {order.map(stage=><td key={stage} className="p-2 tabular-nums">{row.byStage[stage]??0}</td>)}
-    </tr>)}
-    <tr className="font-semibold"><td className="p-2">Total</td><td className="p-2">All drives</td>
-     <td className="p-2 tabular-nums">{data.totalApplications}</td>
-     {order.map(s=><td key={s} className="p-2 tabular-nums">{data.totals[s]??0}</td>)}</tr></tbody>
-   </table>:<p className="text-body">No data for the selected filters</p>}
+  <section className="min-w-0 space-y-4 rounded-xl border border-border bg-surface p-5">
+   <h2 className="text-lg font-semibold">Company-wise Hiring Report</h2>
+   <DataTable
+    caption="Company-wise hiring report"
+    rows={data.companyRows}
+    getRowKey={row=>row.jobId}
+    columns={[
+     {key:"company",header:"Company",mobilePriority:"primary",cell:row=>row.company},
+     {key:"job",header:"Job",mobilePriority:"secondary",cell:row=>row.job},
+     {key:"total",header:"Total",mobilePriority:"secondary",cell:row=>row.total},
+     ...order.map(stage=>({
+       key:stage,header:label(stage),mobilePriority:"secondary" as const,
+       cell:(row:(typeof data.companyRows)[number])=>row.byStage[stage]??0,
+     })),
+    ]}
+    empty={<p role="status" className="text-body">No data for the selected filters</p>}
+   />
+   {data.companyRows.length>0?
+    <section aria-label="Company-wise report totals" className="rounded-lg border border-border bg-surface-secondary p-4">
+     <h3 className="font-semibold text-foreground">All drives · Totals</h3>
+     <dl className="mt-3 grid grid-cols-2 gap-3 text-sm sm:grid-cols-3 lg:grid-cols-5">
+      {[["Total",data.totalApplications] as const,...order.map(stage=>[label(stage),data.totals[stage]??0] as const)]
+       .map(([name,value])=><div key={name} className="min-w-0">
+        <dt className="text-body">{name}</dt>
+        <dd className="font-semibold tabular-nums text-foreground">{value.toLocaleString("en-IN")}</dd>
+       </div>)}
+     </dl>
+    </section>:null}
   </section>
  </div>;
 }
