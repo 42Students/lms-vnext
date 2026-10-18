@@ -89,6 +89,15 @@ describe("IIT Dharwad Super Admin Projects workspace page privacy and failure re
     expect(state.listReads).toBe(0);
     expect(state.templateReads).toBe(0);
   });
+  it("PROJ-BREAK-admin-ux-29 table/card switch keeps authorized search, status, page and row count",async()=>{
+    const content=visibleProps(await render({
+      search:"IIT Dharwad",status:"ACTIVE",view:"cards",page:"3",pageSize:"50",
+    })).join(" ");
+    expect(content).toContain("/admin/projects?view=table&search=IIT+Dharwad&status=ACTIVE&page=3&pageSize=50");
+    expect(content).toContain("/admin/projects?view=cards&search=IIT+Dharwad&status=ACTIVE&page=3&pageSize=50");
+    expect(state.listReads).toBe(1);
+    expect(state.templateReads).toBe(1);
+  });
   it("PROJ-BREAK-admin-input-27 duplicate, non-decimal and unknown query values fail before SQL",async()=>{
     for(const query of [
       {page:"0x10"},{page:"1e4"},{page:["1","2"]},

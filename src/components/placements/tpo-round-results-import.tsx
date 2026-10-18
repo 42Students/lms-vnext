@@ -36,8 +36,12 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
     payload.set("skippedLines",JSON.stringify(skips));
    }
    const response=await fetch(url,{method:"POST",credentials:"same-origin",body:payload});
-   const result=await response.json() as (Preview&Report&{error?:string;issues?:Array<{message:string}>});
-   if(!response.ok)throw Error(result.issues?.[0]?.message??result.error??"Import failed");
+   const result=await response.json() as (Preview&Report&{message?:string});
+   // The server's sanitized message is the only error text allowed in UI.
+   // Raw error codes, database details and arbitrary validation internals
+   // are not safe to echo to the person staging a company's results.
+   if(!response.ok)throw Error(typeof result.message==="string"&&result.message.length<=300?
+    result.message:"Import failed. Review the file and try again.");
    if(action==="PREVIEW"){setPreview(result);setReport(null);setOverrides({});setSkips([]);setConfirmMissingFailure(false);}
    else {setReport(result);setPreview(null);router.refresh();}
   }catch(e){setError(e instanceof Error?e.message:"Import failed");}
