@@ -3,7 +3,7 @@ import { MarketingLayout, MarketingHero, MarketingFeatureGrid, MarketingCta } fr
 export const metadata: Metadata = {title:"Platform | 42 LMS",description:"One connected platform for learning, projects and placements."};
 export default function PlatformMarketingPage() {
  return <MarketingLayout>
-  <MarketingHero eyebrow="42 LMS platform" title="One autonomous AI platform for talent and workforce development"
+  <MarketingHero eyebrow="42 LMS platform" title="One connected platform for learning, projects and placements."
     description="A connected place for learning, guided projects, assessments, recruitment, and workforce development."/>
   <MarketingFeatureGrid title="Every role has a purpose-built workspace" items={[
    {title:"Learner workspace",description:"Courses, skills, assessments, career planning and project work."},
