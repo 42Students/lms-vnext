@@ -102,13 +102,13 @@ Scope: **all 71** `src/modules/placements/*interview*/*round*/*slot*` TypeScript
 | `src/modules/placements/round-venue-booking-service.ts` | `requireAvailableRoundVenue` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/super-admin-booked-interviews-range.ts` | `superAdminBookedInterviewWindow` (function) | \`tests/unit/chat2-college-learner-calendar-break-08.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/super-admin-booked-interviews-service.ts` | `listSuperAdminBookedInterviews` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-bulk-round-result-model.ts` | `bulkTpoRoundResultSchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-bulk-round-result-model.ts` | `bulkTpoRoundResultSchema` (const) | `tests/unit/chat2-tpo-round-contracts-break-11.test.ts` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-bulk-round-result-model.ts` | `TpoBulkRoundResultOutcome` (type) | N/A (compile-time only) | TYPE ONLY |
 | `src/modules/placements/tpo-bulk-round-result-model.ts` | `summarizeBulkRoundResults` (function) | \`tests/unit/chat2-tpo-round-model-break-02.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-bulk-round-result-model.ts` | `resolveBulkRoundLearnerTokens` (function) | \`tests/unit/chat2-tpo-round-model-break-02.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-bulk-round-result-service.ts` | `confirmTpoBulkRoundResults` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-confirmed-round-result-model.ts` | `confirmedTpoRoundResultSchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-confirmed-round-result-model.ts` | `TPO_RESULT_LABELS` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-confirmed-round-result-model.ts` | `confirmedTpoRoundResultSchema` (const) | `tests/unit/chat2-tpo-round-contracts-break-11.test.ts` (CI pending) | TEST AUTHORED |
+| `src/modules/placements/tpo-confirmed-round-result-model.ts` | `TPO_RESULT_LABELS` (const) | `tests/unit/chat2-tpo-round-contracts-break-11.test.ts` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-confirmed-round-result-model.ts` | `canEditTpoRoundResult` (function) | \`tests/unit/chat2-tpo-round-csv-and-lifecycle-break-03.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-confirmed-round-result-model.ts` | `canApplyTpoRoundResult` (function) | \`tests/unit/chat2-tpo-round-csv-and-lifecycle-break-03.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-confirmed-round-result-service.ts` | `confirmTpoRoundResult` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
@@ -151,7 +151,7 @@ Scope: **all 71** `src/modules/placements/*interview*/*round*/*slot*` TypeScript
 | `src/modules/placements/tpo-round-calendar-model.ts` | `parseIstRoundLocalTime` (function) | \`tests/unit/chat2-ledger-round-import-and-scheduling.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-round-calendar-service.ts` | `listTpoCalendarRoundChoices` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/tpo-round-calendar-service.ts` | `decideTpoCalendarRound` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-round-drive-day-model.ts` | `TPO_ROUND_ATTENDANCE_STATES` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-drive-day-model.ts` | `TPO_ROUND_ATTENDANCE_STATES` (const) | `tests/unit/chat2-tpo-round-contracts-break-11.test.ts` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-round-drive-day-model.ts` | `TpoRoundAttendanceState` (type) | N/A (compile-time only) | TYPE ONLY |
 | `src/modules/placements/tpo-round-drive-day-model.ts` | `TpoRoundRosterSourceStudent` (type) | N/A (compile-time only) | TYPE ONLY |
 | `src/modules/placements/tpo-round-drive-day-model.ts` | `TpoRoundApplicationDetail` (type) | N/A (compile-time only) | TYPE ONLY |
@@ -160,7 +160,7 @@ Scope: **all 71** `src/modules/placements/*interview*/*round*/*slot*` TypeScript
 | `src/modules/placements/tpo-round-drive-day-service.ts` | `getTpoRoundDriveDay` (function) | `tests/unit/chat2-tpo-read-service-denial-break-10.test.ts` (entrypoint denial only; DB tests pending) | PARTIAL |
 | `src/modules/placements/tpo-round-facts-model.ts` | `TpoRoundFactInput` (type) | N/A (compile-time only) | TYPE ONLY |
 | `src/modules/placements/tpo-round-facts-model.ts` | `projectTpoRoundFacts` (function) | \`tests/unit/chat2-tpo-round-model-break-02.test.ts\` (CI pending) | TEST AUTHORED |
-| `src/modules/placements/tpo-round-failure-csv-model.ts` | `tpoRoundFailureCsvQuerySchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-failure-csv-model.ts` | `tpoRoundFailureCsvQuerySchema` (const) | `tests/unit/chat2-tpo-round-contracts-break-11.test.ts` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-round-failure-csv-model.ts` | `TpoRoundFailureCsvRow` (type) | N/A (compile-time only) | TYPE ONLY |
 | `src/modules/placements/tpo-round-failure-csv-model.ts` | `tpoRoundFailureCsv` (function) | \`tests/unit/chat2-tpo-round-model-break-02.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-round-import-model.ts` | `roundImportActionSchema` (const) | \`tests/unit/chat2-ledger-round-import-and-scheduling.test.ts\` (CI pending) | TEST AUTHORED |
@@ -172,7 +172,7 @@ Scope: **all 71** `src/modules/placements/*interview*/*round*/*slot*` TypeScript
 | `src/modules/placements/tpo-round-reorder-model.ts` | `roundReorderLockMessage` (function) | \`tests/unit/chat2-tpo-round-state-break-01.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-round-reorder-model.ts` | `moveRound` (function) | \`tests/unit/chat2-tpo-round-state-break-01.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-round-result-entry-model.ts` | `tpoRoundResultEntryFormSchema` (const) | \`tests/unit/chat2-tpo-round-csv-and-lifecycle-break-03.test.ts\` (CI pending) | TEST AUTHORED |
-| `src/modules/placements/tpo-round-result-table-model.ts` | `tpoRoundResultTableQuerySchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-result-table-model.ts` | `tpoRoundResultTableQuerySchema` (const) | `tests/unit/chat2-tpo-round-contracts-break-11.test.ts` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-round-result-table-model.ts` | `RoundResultEntry` (type) | N/A (compile-time only) | TYPE ONLY |
 | `src/modules/placements/tpo-round-result-table-model.ts` | `projectTpoRoundResultTable` (function) | \`tests/unit/chat2-tpo-round-model-break-02.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-round-result-table-model.ts` | `tpoRoundResultViewSchema` (const) | \`tests/unit/chat2-tpo-round-model-break-02.test.ts\` (CI pending) | TEST AUTHORED |
