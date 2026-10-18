@@ -1,1 +1,6 @@
-export default function Loading(){return <p role="status" className="rounded border border-border bg-surface p-6">Loading offer evidence…</p>}
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
+
+/** Scoped offer loading: stable card geometry, reduced motion and a slow-network recovery. */
+export default function Loading(){
+ return <GracefulPageLoading label="Loading(){return"/>;
+}
