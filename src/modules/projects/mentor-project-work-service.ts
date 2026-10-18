@@ -3,17 +3,24 @@ import { count, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { projectTasks } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
-import { hasMembershipRole } from "@/modules/identity/context";
+import { hasActiveMembership,hasMembershipRole } from "@/modules/identity/context";
+import {can} from "@/modules/permissions/policy";
 import { ProjectsServiceError } from "./errors";
 import { listMyProjectInstances } from "./member-service";
 
 export async function getMentorProjectWorkCounts(context: RequestContext,
  verifiedRows?:readonly Awaited<ReturnType<typeof listMyProjectInstances>>[number][]) {
-  if (!hasMembershipRole(context,"MENTOR") || context.user.platformStatus!=="ACTIVE") {
+  const membership=context.membership;
+  if (!membership || !hasActiveMembership(context) ||
+      !hasMembershipRole(context,"MENTOR") || context.user.platformStatus!=="ACTIVE" ||
+      !can(context,"projects.read",{
+        collegeId:membership.collegeId,organizationId:membership.organizationId,
+      })) {
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   }
   // Re-read persisted memberships and active role grants, never trust caller-supplied project IDs.
-  const projects=(verifiedRows??await listMyProjectInstances(context)).filter(row=>row.memberRole==="MENTOR");
+  const projects=(verifiedRows??await listMyProjectInstances(context)).filter(row=>
+    row.memberRole==="MENTOR"&&row.project.collegeId===membership.collegeId);
   const ids=projects.map(row=>row.project.id);
   const counts=new Map<string,{total:number;open:number}>();
   if(!ids.length)return counts;

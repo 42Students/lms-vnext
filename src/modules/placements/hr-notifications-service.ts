@@ -8,7 +8,7 @@ import {listOwnRecruiterPlacementJobs} from "./recruiter-service";
 import {hrNotificationsQuerySchema,HR_NOTIFICATION_EVENTS,HR_INBOX_PAGE_SIZE,hrInboxPageBounds,clampHrInboxPage,filterHrNotificationJobs,projectHrNotifications} from "./hr-notifications-model";
 export async function listHrNotifications(context:RequestContext,raw:unknown={}) {
  const query=hrNotificationsQuerySchema.parse(raw);
- if(!hasActiveRecruiter(context)||!context.recruiter)
+ if(!hasActiveRecruiter(context)||!context.recruiter||context.recruiter.userId!==context.user.id)
   throw new AuthorizationError("placements.recruiter.read");
  const grants=context.recruiter.grants;
  if(query.collegeId&&!grants.some(g=>g.collegeId===query.collegeId))

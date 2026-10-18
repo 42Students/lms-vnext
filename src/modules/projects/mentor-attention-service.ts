@@ -8,6 +8,7 @@ import {
 } from "@/db/schema";
 import { hasActiveMembership, hasMembershipRole, type RequestContext } from
   "@/modules/identity/context";
+import {can} from "@/modules/permissions/policy";
 import { listMyProjectInstances } from "./member-service";
 import { ProjectsServiceError } from "./errors";
 import { deriveMentorProjectAttention } from "./mentor-attention";
@@ -20,12 +21,15 @@ export async function listMyMentorProjectAttention(
   context: RequestContext, now: Date = new Date(),
   verifiedRows?:readonly Awaited<ReturnType<typeof listMyProjectInstances>>[number][],
 ) {
-  if (!hasActiveMembership(context) || !hasMembershipRole(context,"MENTOR") || !context.membership) {
+  if (!hasActiveMembership(context) || !hasMembershipRole(context,"MENTOR") || !context.membership ||
+      context.user.platformStatus!=="ACTIVE" || !can(context,"projects.read",{
+        collegeId:context.membership.collegeId,organizationId:context.membership.organizationId,
+      })) {
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   }
   const membership=context.membership!;
   const rows=(verifiedRows??await listMyProjectInstances(context))
-    .filter(row=>row.memberRole==="MENTOR");
+    .filter(row=>row.memberRole==="MENTOR"&&row.project.collegeId===membership.collegeId);
   if (!rows.length) return [];
   const ids=rows.map(row=>row.project.id);
   const [
