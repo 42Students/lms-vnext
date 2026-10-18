@@ -35,7 +35,7 @@ export function TpoRoundReorder({jobId,readiness}:{jobId:string;readiness:{
   }catch(e){setError(e instanceof Error?e.message:"Could not reorder rounds.");}
   finally{setBusy(false);}
  }
- return <section aria-label="Reorder rounds" className="rounded-xl border border-border bg-surface p-5">
+ return <section aria-label="Reorder rounds" className="border-t border-border pt-5">
   <h2 className="text-base font-semibold text-foreground">Round order</h2>
   <p className="mt-1 text-sm text-body">Drag by the handle or use Move up / Move down. Save the order before you continue.</p>
   {!readiness.allowed?<p role="status" className="mt-2 text-sm text-body">{readiness.reason}</p>:null}
@@ -60,7 +60,7 @@ export function TpoRoundReorder({jobId,readiness}:{jobId:string;readiness:{
   {changed?<p role="status" className="mt-2 text-sm text-warning-text">Unsaved round order changes. Save or undo before leaving this page.</p>:null}
   <div className="mt-3 flex flex-wrap gap-2">
    <button type="button" disabled={!readiness.allowed||busy||!changed} onClick={()=>void save()}
-    className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+    className="min-h-10 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
     {busy?"Saving…":"Save round order"}</button>
    <button type="button" disabled={busy||!changed} onClick={()=>{setIds(readiness.rounds.map(round=>round.id));clearDirty();setError(null);}}
     className="min-h-10 rounded border border-border px-4 text-sm disabled:opacity-50">Undo</button>
