@@ -62,6 +62,15 @@ describe("LEARNER-RESOURCE-QUERY-09 learner and authoring material route audienc
   }
   expect(state.write).not.toHaveBeenCalled();
  });
+ it("maps oversized or non-object material bodies to 400 without calling any writer",async()=>{
+  for(const body of ["x".repeat(16_385),"[]","null","{invalid"]){
+   const response=await POST(new Request(url(""),{
+    method:"POST",headers:{"Content-Type":"application/json"},body,
+   }),params);
+   expect(response.status).toBe(400);
+  }
+  expect(state.write).not.toHaveBeenCalled();
+ });
  it("passes one validated active Section scope into the authorized POST mutation service",async()=>{
   const result=await post("?deliveryId="+deliveryId);
   expect(result.status).toBe(201);
