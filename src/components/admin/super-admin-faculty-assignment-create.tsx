@@ -73,7 +73,7 @@ export function SuperAdminFacultyAssignmentCreate({
      </select>
     </label>
     {selected?<fieldset className="grid gap-2 rounded-md border border-border p-3 sm:col-span-2">
-      <legend className="px-1 text-sm font-semibold">Course(s) · select several courses in this class</legend>
+      <legend className="px-1 text-sm font-semibold">Course(s)</legend>
       <p className="text-xs text-body">The chosen course is always included. Select up to 9 additional courses for the same class and semester.</p>
       <div role="region" aria-label="Available courses in the selected class" tabIndex={0}
         className="grid max-h-48 gap-2 overflow-y-auto overscroll-contain sm:grid-cols-2 [mask-image:linear-gradient(to_bottom,black_90%,transparent)]">
