@@ -27,6 +27,10 @@
 
 Tests call `startLogin` with a deliberately adversarial repository fake; they assert actual denial behavior, not just that source strings exist. Provider delivery and database effects must still be exercised in the PostgreSQL integration harness.
 
+## OTP verification adversarial transactions — `tests/unit/chat6-auth-otp-verify-breaker.test.ts`
+
+Nine behavioral tests call `verifyLogin` against a stateful fake repository: database-authoritative expiry, foreign-tenant challenge refusal, consumed-code replay, missing second factor without spending a guess, wrong-code budget, valid dual-factor consume, concurrent double submit with a single successful consume, deactivated account after issuing the challenge, and refused verification budget. These tests exercise service behavior and call ordering; they do **not** replace the PostgreSQL transactional single-winner integration tests.
+
 ## Defect AUTH-session-01
 
 **Severity:** BLOCKER for deactivated-account access. The persisted session resolver accepted device tokens for disabled users and returned `ok:true` with `platformStatus:"DISABLED"`, relying on later UI/permission checks. Source fix `710e217b` refuses disabled users as `SESSION_REVOKED` before updating last-seen time. The test source checks the ordering. Separate service/API integration must verify the disabled user has no usable routes.
