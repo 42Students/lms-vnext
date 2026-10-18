@@ -209,7 +209,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
     {mode==="INDIVIDUAL"&&currentPreflight?<section aria-label="Before creating: one workspace per student" className="rounded-lg border border-border p-3 text-sm">
       <h2 className="font-semibold">Before creating: one workspace per student</h2>
       <p>{currentPreflight.toCreate} to create · {currentPreflight.alreadyCovered} already covered · {currentPreflight.duplicates} duplicates · {currentPreflight.eligible} eligible</p>
-      <div className="max-h-72 overflow-y-auto rounded-md border" role="region" aria-label="Learner creation preflight details" tabIndex={0}>
+      <div className="max-h-72 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] rounded-md border focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]" role="region" aria-label="Learner creation preflight details" tabIndex={0}>
         <table className="w-full text-left text-xs">
           <thead><tr><th scope="col" className="p-2">Learner</th><th scope="col" className="p-2">Decision</th></tr></thead>
           <tbody>{currentPreflight.items.map((row,index)=>{
@@ -265,7 +265,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
         : outcome.created.length<outcome.requested-outcome.alreadyCovered
           ? outcome.created.length+" workspace(s) created; "+(outcome.requested-outcome.alreadyCovered-outcome.created.length)+" student(s) failed. Review or export the report below before retrying."
           : "Created "+outcome.created.length+" workspace(s) for the class roster."}</p>
-      <div className="max-h-72 overflow-auto" role="region" aria-label="Per-learner creation results" tabIndex={0}>
+      <div className="max-h-72 overflow-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]" role="region" aria-label="Per-learner creation results" tabIndex={0}>
         <table className="w-full text-left text-sm"><thead><tr><th scope="col">Learner</th><th scope="col">Result</th><th scope="col">Workspace</th></tr></thead>
          <tbody>{outcome.individualResults.map(row=><tr key={row.membershipId}>
           <td>{names.get(row.membershipId)?.displayName??row.membershipId}</td>
