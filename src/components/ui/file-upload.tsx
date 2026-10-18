@@ -38,7 +38,7 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
   const inputRef = useRef<HTMLInputElement | null>(null);
   const selectedRef = useRef(false);
   const onFilesRef = useRef(onFiles);
-  onFilesRef.current = onFiles;
+  useEffect(() => { onFilesRef.current = onFiles; }, [onFiles]);
   // Clearing after a picker is disabled is necessary even if the DOM input
   // unmounts: the form's parent must never retain a previously approved file.
   useEffect(() => {
@@ -46,7 +46,8 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
     selectedRef.current = false;
     if (inputRef.current) inputRef.current.value = "";
     onFilesRef.current(null);
-    setError("File selection is unavailable. Choose a file again when it is enabled.");
+    // The unavailable/disabled alert is rendered by the component; no stale
+    // file or DOM input value remains for a submit before re-enablement.
   }, [pickerUnavailable, disabled]);
   function bindInput(node: HTMLInputElement | null) {
     inputRef.current = node;
@@ -78,6 +79,6 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
     {helper ? <p id={`${id}-help`} className="text-sm leading-6 text-body">{helper}</p> : null}
     {error ? <p id={`${id}-error`} role="alert" className="text-sm text-foreground">{error}</p> : null}
     {fallback ? <div className="min-w-0 space-y-2">{fallback}</div> : null}
-    {pickerUnavailable && !fallback ? <p role="alert" className="text-sm text-body">This upload cannot continue in the current app view.</p> : null}
+    {(pickerUnavailable || disabled) && !fallback ? <p role="alert" className="text-sm text-body">This upload cannot continue in the current app view.</p> : null}
   </div>;
 }
