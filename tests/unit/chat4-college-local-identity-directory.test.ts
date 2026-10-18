@@ -47,6 +47,12 @@ describe("COL-people-local-identity-01 safe directory read and create contracts"
   mocks.rows.push([stored]);
   expect((await localIdentityDirectory.findByEmail("student@example.edu"))?.uid).toBe("lms-existing");
  });
+ it("rejects direct account creation without a recoverable login contact",async()=>{
+  await expect(localIdentityDirectory.createUser({displayName:"No contact"}))
+   .rejects.toMatchObject({code:"IDENTITY_CONTACT_REQUIRED"});
+  expect(mocks.select).not.toHaveBeenCalled();
+ });
+
  it("allocates opaque fresh local identity UIDs without writing outside the caller's transaction",async()=>{
   const first=await localIdentityDirectory.createUser({displayName:"New",email:"new@example.edu"});
   const second=await localIdentityDirectory.createUser({displayName:"New",email:"new@example.edu"});
