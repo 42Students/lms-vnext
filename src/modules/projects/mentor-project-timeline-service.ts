@@ -16,16 +16,16 @@ export async function getMentorProjectTimeline(context:RequestContext,raw:unknow
     !can(context,"projects.read",{
       collegeId:membership.collegeId,organizationId:membership.organizationId,
     }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  const enabled=(await resolveOptionalModuleAccess(context)).projects.enabled;
+  if(!enabled){
+    return {enabled:false as const,projectTitle:"",projectStatus:"",
+      query,...mentorProjectTimeline([],[],[],query)};
+  }
   const scope=await requireProjectReadAccess(context,query.projectId);
   if(scope.access!=="MENTOR"||scope.collegeId!==membership.collegeId||
     !can(context,"projects.read",{
       collegeId:scope.collegeId,organizationId:scope.organizationId,
     }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
-  const enabled=(await resolveOptionalModuleAccess(context)).projects.enabled;
-  if(!enabled){
-    return {enabled:false as const,projectTitle:scope.project.title,
-      query,...mentorProjectTimeline([],[],[],query)};
-  }
   const workspace=await getProjectInstanceWorkspace(context,scope.project.id);
   return {
     enabled:true as const,projectTitle:workspace.project.title,

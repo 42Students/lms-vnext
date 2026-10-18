@@ -1,3 +1,4 @@
+import {alias} from "drizzle-orm/pg-core";
 import {
   and,
   asc,
@@ -16,6 +17,7 @@ import {
   courseSectionDeliveries,
   courseTeachingAssignments,
   departments,
+  programs,
   courses,
   sections,
 } from "@/db/schema";
@@ -35,6 +37,8 @@ import {
 import {
   loadCourseSectionDeliveryScope,
 } from "./scope";
+
+const cohortDepartments=alias(departments,"faculty_cohort_departments");
 
 function requireFacultyMembership(
   context: RequestContext,
@@ -149,21 +153,27 @@ export async function listFacultyCourseDeliveries(
         eq(departments.collegeId, membership.collegeId),
       ),
     )
-    .innerJoin(
-      sections,
-      eq(
-        sections.id,
-        courseSectionDeliveries.sectionId,
-      ),
-    )
-    .innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
-    .innerJoin(
-      academicPeriods,
-      eq(
-        academicPeriods.id,
-        courseOfferings.academicPeriodId,
-      ),
-    )
+    // The teaching-grant membership is authoritative, but FK relationships
+    // alone do not establish same-college course/Section/term ownership.
+    .innerJoin(sections,and(
+      eq(sections.id,courseSectionDeliveries.sectionId),
+      eq(sections.cohortId,courseOfferings.cohortId),
+      eq(sections.academicPeriodId,courseOfferings.academicPeriodId),
+    ))
+    .innerJoin(cohorts,and(
+      eq(cohorts.id,sections.cohortId),
+      eq(cohorts.id,courseOfferings.cohortId),
+    ))
+    .innerJoin(programs,eq(programs.id,cohorts.programId))
+    .innerJoin(cohortDepartments,and(
+      eq(cohortDepartments.id,programs.departmentId),
+      eq(cohortDepartments.collegeId,membership.collegeId),
+    ))
+    .innerJoin(academicPeriods,and(
+      eq(academicPeriods.id,courseOfferings.academicPeriodId),
+      eq(academicPeriods.id,sections.academicPeriodId),
+      eq(academicPeriods.collegeId,membership.collegeId),
+    ))
     .where(
       and(
         eq(

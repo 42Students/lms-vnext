@@ -59,7 +59,7 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
       "Students have submitted this assignment. Refresh; editing is no longer allowed.":
      data?.error==="FACULTY_ASSIGNMENT_STALE_VERSION"?
       "Another author edited the assignment. Close this form and reopen it before saving.":
-     typeof data?.error==="string"?data.error:"Could not update assignment.");
+     "Could not update assignment. Check the form and try again.");
    setEditing(false);setNotice(action==="SAVE"?"Assignment updated.":action==="ARCHIVE"?
     "Assignment deleted.":"Assignment published.");
    router.refresh();
@@ -77,7 +77,7 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
        const response=await fetch("/api/courses/assignments/"+encodeURIComponent(assignment.id),{cache:"no-store"});
        const data=await response.json().catch(()=>null);
        if(!response.ok||data?.assignment?.id!==assignment.id)throw Error(
-        data?.error??"Could not load assignment settings.");
+        "Could not load assignment settings. Refresh this page and try again.");
        setTitle(data.assignment.title);setPoints(String(data.assignment.maxPoints));
        setDueAt(istInput(data.assignment.dueAt));
        setExpectedUpdatedAt(data.assignment.updatedAt);

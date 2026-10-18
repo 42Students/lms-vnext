@@ -35,4 +35,19 @@ describe("HR-REPORT-ARCHIVE-31 published/closed company report portfolio parity"
   expect(clampRecruiterCompanyReportPage(5,1,25)).toBe(1);
   expect(recruiterCompanyReportsQuerySchema.safeParse({status:"ARCHIVED"}).success).toBe(false);
  });
+ it("HR-REPORT-MEMBER-42 counts only shortlisted ACTIVE college members with ACTIVE student accounts",()=>{
+  const source=readFileSync("src/modules/placements/recruiter-company-reports-service.ts","utf8");
+  const aggregation=source.slice(source.indexOf("const reportCounts"),
+   source.indexOf("const summaryRecord"));
+  expect(aggregation).toContain('eq(collegeMemberships.collegeId,');
+  expect(aggregation).toContain('eq(collegeMemberships.status,"ACTIVE")');
+  expect(aggregation).toContain('eq(users.id,collegeMemberships.userId)');
+  expect(aggregation).toContain('eq(users.platformStatus,"ACTIVE")');
+  expect(aggregation).toContain('eq(placementApplicationScreenings.status,"SHORTLISTED")');
+  const funnel=source.slice(source.indexOf("const funnelRows="));
+  expect(funnel).toContain("and m.college_id=${collegeId}::uuid and m.status='ACTIVE'");
+  expect(funnel).toContain("join users u on u.id=m.user_id and u.platform_status='ACTIVE'");
+  expect(funnel).toContain("sc.application_id=a.id and sc.status='SHORTLISTED'");
+  expect(source).toContain("matchedTotal = selectedTotal");
+ });
 });

@@ -2,6 +2,7 @@ import "server-only";
 
 import { eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import { collegeBranding, colleges } from "@/db/schema";
 import {
   isSuperAdmin,
@@ -67,6 +68,15 @@ export async function getSuperAdminCollegeBrandingPreview(
     .from(collegeBranding)
     .where(eq(collegeBranding.collegeId, college.id))
     .limit(1);
+
+  // Authorization performed before the first select is only a request
+  // snapshot. A revoked platform administrator must not receive branding
+  // details after the DB work finishes.
+  await db.transaction(async tx=>{
+    await assertPersistedPlatformPermission(tx,context,"college.read",{
+      collegeId:college.id,organizationId:college.organizationId,
+    });
+  });
 
   const result=describeAdminCollegeBranding({
     college: {

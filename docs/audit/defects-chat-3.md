@@ -126,6 +126,18 @@ The Quiz POST route already bounded streams, but silently ignored non-decimal Co
 
 **Tests:** `tests/unit/chat3-faculty-quiz-transport-errors.test.ts` FAC-QUIZ-TRANSPORT-01/02; static authoring only, pending cloud CI.
 
+### SA3-PEOPLE-09 — stale scoped People directory deep link displays false empty page (S2)
+
+The selected-college `listAdminScopedPeople` service used `offset((query.page-1)*pageSize)` before knowing the current number of matching Faculty/Learner memberships. An old bookmarked page could produce “page 999 of 1” and an incorrect no-matches state after a role revocation, status/filter change or removal. Unlike the global Super Admin directory, the selected-college directory did not clamp pagination.
+
+**Fix:** Count under the server-selected organization/college SQL scope, compute `totalPages`, clamp `page`, then issue the row query with the corrected offset. Return corrected query state so existing navigation can render truthful page numbers. `tests/unit/chat3-superadmin-scoped-people-pagination.test.ts` (SA-people-scoped-01) includes service-level role/tenant preflight, bounded pages, stale page and empty results. CI and live PG verification pending.
+
+### FAC-TENANT-COURSES-022 — Faculty assigned-deliveries list omitted Section/cohort/term tenant consistency joins (S1)
+
+`listFacultyCourseDeliveries` verified the assigned Faculty's active membership and selected course department college, but then joined the Section by its ID and the cohort/academic period by other IDs without asserting they matched the course offering and selected college. Foreign/corrupt cross-college Section/cohort links could therefore appear as plausible Faculty teaching deliveries even though the deeper `loadCourseSectionDeliveryScope` path would reject them. This is a preexisting defense gap at the primary Faculty course list.
+
+**Fix:** Join Section only when both its cohort and academic period match the teaching delivery's offering. Resolve the cohort program's department through a distinct Drizzle alias and require it belongs to the current Faculty college; require the academic period also belongs to that college. The original active status, membership, Faculty role and persisted teaching grant filters remain in force. Test `tests/unit/chat3-faculty-course-roster-cross-tenant-joins.test.ts` (FAC-TENANT-COURSES-01) compiles the real join predicates through PgDialect and rejects wrong-role/inactive callers before DB queries. Full PostgreSQL cross-college fixtures, EXPLAIN and current CI remain release gates.
+
 ### FAC-HTTP-BODY-021 — unbounded live-class and attendance scheduling commands (S1)
 
 Both Faculty live-class and attendance scheduling POST routes previously called `request.json()` directly. The Zod/authorization service subsequently rejected bad fields, but the HTTP input body had already been fully buffered, permitting oversized metadata requests to waste memory in a stale or malicious session.

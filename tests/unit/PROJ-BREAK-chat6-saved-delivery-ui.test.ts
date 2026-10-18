@@ -28,6 +28,24 @@ describe("IIT Dharwad learner final-delivery concurrency and unsaved-input break
   const demo={...base,sourceUrl:undefined,demoUrl:"https://example.org/demo"};
   expect(savedDeliverySubmissionReadiness(demo,snapshot(demo))).toBe("READY");
  });
+ it("PROJ-BREAK-submissions-07 refuses phantom persisted evidence from legacy or forged payloads",()=>{
+  const summary={...base,sourceUrl:undefined};
+  for(const attachments of [
+    [{kind:"FILE"}],
+    [{kind:"FILE",fileId:null}],
+    [{kind:"FILE",fileId:"foreign"}],
+    [{kind:"FILE",fileId:"11111111-1111-4111-8111-111111111111",url:"https://example.org/bait"}],
+  ]){
+    const value={...summary,attachments};
+    expect(savedDeliverySubmissionReadiness(value,snapshot(value))).toBe("MISSING_EVIDENCE");
+  }
+  for(const sourceUrl of ["javascript:alert(1)","file:///etc/passwd","data:text/html,attack","not-a-url"]){
+    const value={...summary,sourceUrl};
+    expect(savedDeliverySubmissionReadiness(value,snapshot(value))).toBe("MISSING_EVIDENCE");
+  }
+  const valid={...summary,sourceUrl:"https://git.example.org/release"};
+  expect(savedDeliverySubmissionReadiness(valid,snapshot(valid))).toBe("READY");
+ });
  it("PROJ-BREAK-submissions-08/09 coordinates manual save, autosave and final submission behind one ref lock",()=>{
   const source=readFileSync("src/components/projects/project-final-delivery-controls.tsx","utf8");
   const learner=source.slice(0,source.indexOf("export function FinalReviewControl"));
@@ -40,7 +58,8 @@ describe("IIT Dharwad learner final-delivery concurrency and unsaved-input break
   expect(learner).toContain("savedDeliverySubmissionReadiness(currentPayload(),lastSavedSnapshot.current)");
   expect(learner).toContain("const persisted=JSON.parse(lastSavedSnapshot.current)");
   expect(learner).not.toContain("window.confirm(");
-  expect(learner).toContain("title=\"Submit final delivery for mentor review?\"");
+  expect(learner).toContain("title=\"Submit on behalf of your team?\"");
+  expect(learner).toContain("The final delivery is shared with your project team and cannot be edited while it awaits review.");
   expect(learner).toContain("onConfirm={()=>{void submitDraft(true);}}");
   expect(learner).toContain("onClick={()=>{void submitDraft();}}");
  });
