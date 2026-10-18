@@ -50,3 +50,12 @@ The source-hardening helpers use the central notification writer's recipient-sco
 | AUTH-OTP-DELIVERY-03 / MSG-ENDPOINT-01 / REC-JOIN-CODE-ENDPOINT-01 | S2, insecure delivery endpoint | The shared OTP email, outbound campaign and public join-code adapters accepted a configured `http://` URL or an HTTPS URL with embedded username/password, risking plaintext delivery or accidental credential-bearing URL use. | `7e939510d0e82435804b8e4657ed287029836071`, `b013dd2398129dbd5f6bb99cdf08528015cc836f`, `d9f14ffeefa6a0af20c7d39a0ac31560174d0752` | `tests/unit/chat16-otp-provider-resilience-05.test.ts` and `tests/unit/chat16-provider-channel-boundaries-07.test.ts` | Authored, cloud validation pending |
 
 The provider endpoint restriction validates HTTPS and absence of embedded URL credentials. It does **not** perform runtime DNS pinning or prove a configured URL is owned by the expected provider; operational configuration allowlisting remains important.
+
+## HR/Recruiter conversation and campaign-preview adversarial repairs
+
+| ID | Severity | Failure mode | Fix / regression | Test execution |
+|---|---|---|---|---|
+| HR-BREAK-SESSION-09/10 | S2, error recovery | Recruiter open-thread and acknowledge POST handlers resolved `getCurrentRequestContext()` **outside** their try/catch. An expired session, revoked login, or DB identity error rejected the handler instead of passing through the central safe 401/403 error mapper. Other unrecognized service errors were rethrown as raw Next.js route failures. | `0507cade35c86b7d37749b46418038763ddc2e99`, `969f19623354e1b92294ba74dd80a87cb2a97261`; `tests/unit/chat16-recruiter-conversation-route-18.test.ts` | Authored, unrun |
+| T-S2-04 | S2, wrong campaign preview counts | `summarizeEngageAudience` accepted a whitespace-only email address as eligible and applied bounce/NOT_NOW suppression before the absent-email rule, while `planTpoCampaignRecipients` rejected those contacts with `NO_EMAIL`. TPO could see contradictory planned versus actual suppressed counts. | `446162e18c84b1075e05ef5ab6c5cb0c9d57b31e`; `tests/unit/chat16-messaging-model-matrix-16.test.ts` | Authored, unrun |
+
+Route-level tests specifically cover cross-origin rejection before reading an account, expired sessions, missing recruiter role, invalid thread IDs, authenticated internal redirects and external return-target denial. The actual PostgreSQL role/grant evaluation remains separate and unverified by these mocked HTTP tests.
