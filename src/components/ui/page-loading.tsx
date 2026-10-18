@@ -8,7 +8,11 @@ export type PageLoadingProps = { label: string; variant: SkeletonProps["variant"
 
 export function PageLoading({ label, variant, count = 3 }: PageLoadingProps) {
   const [slow, setSlow] = useState(false);
-  useEffect(() => { const timer = setTimeout(() => setSlow(true), 12_000); return () => clearTimeout(timer); }, []);
+  useEffect(() => {
+    setSlow(false);
+    const timer = setTimeout(() => setSlow(true), 12_000);
+    return () => clearTimeout(timer);
+  }, [label, variant, count]);
   return <section data-slot="page-loading" className="min-w-0 space-y-4">
     <Skeleton variant={variant} count={count} label={label} />
     {slow ? <div role="status" aria-live="polite" className="space-y-3 rounded-xl border border-border bg-surface p-4">
