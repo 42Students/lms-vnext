@@ -722,3 +722,16 @@ All new checks are **authored but not executed** by this lane. Previously report
 | HR-PORTFOLIO-REVOKE-37 | The same authoritative job allowlist now joins ACTIVE persisted `placementRecruiterCollegeGrants` and ACTIVE `placementRecruiterProfiles`, keyed to the authenticated user and exact employer relationship. The named test checks all joining predicates. | Real PostgreSQL revoked-grant request races and developer-account browser checks still required. |
 
 | HR-PORTFOLIO-EXPIRY-38 | `src/modules/placements/recruiter-service.ts` now enforces the established `recruiterGrantEffectiveAt` invariants at the persisted SQL boundary for all recruiter job consumers: ACTIVE profile/grant, VERIFIED status, `valid_until > now()`, and `DRIVES` capability. `tests/unit/HR-BREAK-chat15-portfolio-owner-24.test.ts` asserts SQL policy parity and boundary denial on null/exact expiry, pending verification, revoked grant and wrong capabilities. | CI test/typecheck and PostgreSQL multi-session expiry/revocation integration pending. |
+
+
+## Chat-15 continuation: live grant validation and account-page behaviour (CI pending)
+
+| ID | Implemented source and named behavioural regression | Acceptance outstanding |
+|---|---|---|
+| HR-GRANT-EXPIRE-39 | `getRecruiterPlacementWorkspace`, `editHrJobRound`, `listHrRoundEditorRows`, `verifyRecruiterSlotJob`, `getRecruiterCompanyTeam` and both recruiter portfolio count queries recheck VERIFIED, unexpired persisted grants and DRIVES capability on job/slot/round paths. `tests/unit/HR-BREAK-chat15-expired-grants-39.test.ts` verifies the expiry boundary and these SQL predicates; `tests/integration/hr-grant-expiry-39-postgresql.test.ts` adds a rollback-only PostgreSQL grant lifecycle matrix. | Cloud CI/DB execution, concurrent revoke+read, each route HTTP-denial state |
+| HR-CHANGE-REQUESTS-PAGE-40 | `tests/unit/HR-BREAK-chat15-recruiter-change-requests-page-40.test.tsx` SSR-tests own-company change requests, TPO-party denial, foreign-job 404 and unavailable storage status without writable controls. | Browser small-screen focus and real database TPO/recruiter actor swap |
+| UX-CHAT15-ROUTES-41 | `tests/unit/chat15-recruiter-tracker-route-matrix-41.test.ts` checks the active-role gate for 20 canonical HR pages, 13 recruiter aliases, detail identifier 404s, invalid-filter recovery and tracker reporter/admin separation. | Functional browser loading/empty/error/partial matrix for every page (not yet complete) |
+| HR-REPORT-MEMBER-42 | `recruiter-company-reports-service.ts` now restricts both report row aggregates and its funnel CTE to ACTIVE members and ACTIVE learner accounts; `tests/unit/HR-BREAK-chat15-company-report-archive-31.test.ts` contains HR-REPORT-MEMBER-42 assertions. | Real PostgreSQL deactivated-member report counts and TPO truth comparison |
+| HR-STATE-MACHINE-43 | `tests/unit/HR-BREAK-chat15-state-transitions-43.test.ts` exercises round schema, owner/version/Unicode duplicate guards, slot overlap and capacity CAS, 8-hour upper bound, and drive request resubmit/approval lifecycle. | Real parallel booking and round revision transaction tests |
+
+These are source changes and tests **written, not run**. No claim of production, browser or cloud CI success. The full exhaustive HR-service/function inventory remains OPEN.

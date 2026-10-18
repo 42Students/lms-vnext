@@ -116,7 +116,8 @@ export async function archiveSuperAdminDrive(context:RequestContext,rawJobId:unk
     cancelledRounds:cancelledRounds.length,issuedOffersWithdrawn:issued.length},
   });
   const recipients=await tx.select({userId:collegeMemberships.userId}).from(placementApplications)
-   .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
+   .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
+    eq(collegeMemberships.collegeId,acting.collegeId)))
    .where(eq(placementApplications.jobId,jobId));
   const distinct=[...new Set(recipients.map(r=>r.userId))];
   for(let i=0;i<distinct.length;i+=200){

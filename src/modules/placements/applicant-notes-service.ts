@@ -195,9 +195,14 @@ export async function listTpoApplicantNotes(
   const collegeId = await requireTpoJobCollege(context);
   const jobId = placementJobIdSchema.parse(rawJobId);
   const applicationId = placementApplicationIdSchema.parse(rawApplicationId);
-  const db = getDb();
-  const scope = await resolveTpoScope(db, collegeId, jobId, applicationId);
-  return readNotes(db, scope, context.user.id);
+  // A session's TPO claim is not enough: keep the persisted actor's
+  // SHARE lock until the private notes snapshot is fully read. Revocation
+  // cannot race a read between an authorization check and the final query.
+  return getDb().transaction(async (tx) => {
+    await requireTpoJobActor(tx, context);
+    const scope = await resolveTpoScope(tx, collegeId, jobId, applicationId);
+    return readNotes(tx, scope, context.user.id);
+  });
 }
 
 export async function listRecruiterApplicantNotes(
