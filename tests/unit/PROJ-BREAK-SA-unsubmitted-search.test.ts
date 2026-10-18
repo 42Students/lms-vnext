@@ -21,6 +21,17 @@ describe("Super Admin not-submitted Projects directory abuse",()=>{
    {collegeId:"foreign"},{status:"ARCHIVED"},{page:1,extra:"bypass"},
   ])expect(adminUnsubmittedQuerySchema.safeParse(raw).success,JSON.stringify(raw)).toBe(false);
  });
+ it("PROJ-BREAK-SA-26 applies literal ILIKE escaping to all three Super Admin project list views",()=>{
+  const s=source("src/modules/projects/admin-insights-service.ts");
+  const found=s.split('const searchPattern=adminUnsubmittedLiteralSearchPattern(query.q??"");').length-1;
+  expect(found).toBe(3);
+  expect(s).toContain('import {adminUnsubmittedLiteralSearchPattern} from "./admin-unsubmitted-query-model"');
+  expect(s).not.toContain('`%'+ '${query.q}' + '%`');
+  expect(s).not.toContain('"%"+query.q+"%"');
+  expect(s).toContain('projectInstances.title,\n          searchPattern,');
+  expect(s).toContain('projectInstances.slug,\n          searchPattern,');
+  expect(s).toContain('projectInstances.id}::text ilike ${searchPattern}');
+ });
  it("PROJ-BREAK-SA-22 keeps selected-college authorization, archive exclusion and SQL NOT EXISTS on the query itself",()=>{
   const s=source("src/modules/projects/admin-unsubmitted-service.ts");
   expect(s).toContain("loadProjectCollegeScope(collegeId)");
