@@ -6,7 +6,11 @@ describe("chat-5 final sprint faculty course list and core lesson contracts",()=
  it("FAC-courses-02 keeps an accessible non-upload initial fallback while real thumbnail persistence remains unavailable",()=>{
   const list=src("src/components/courses/faculty-course-list.tsx");
   const card=src("src/components/courses/learner-course-card-image.tsx");
-  expect(list).toContain("course.courseName.trim().slice(0,2).toUpperCase()");
+  expect(list).toContain('import Image from "next/image"');
+  expect(list).toContain('src="/assets/images/common/course.svg"');
+  expect(list).toContain('alt="" width={64} height={64}');
+  expect(list).toContain('aria-hidden="true"');
+  expect(list).not.toContain('course.courseName.trim().slice(0,2).toUpperCase()');
   expect(card).toContain("learnerCourseCardMediaAfterError(thumbnailUrl,failed)");
   expect(card).toContain('alt=""');
   // No persisted faculty thumbnail exists; do NOT claim full legacy image parity.
