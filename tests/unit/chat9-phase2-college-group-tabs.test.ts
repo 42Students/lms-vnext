@@ -1,4 +1,6 @@
 import {describe,expect,it} from "vitest";
+import {readFileSync} from "node:fs";
+import {join} from "node:path";
 import {COLLEGE_LEGACY_GROUPS,collegeLegacyGroupForPath,collegeLegacyTabActive} from
   "@/modules/people/college-legacy-tabs-model";
 
@@ -46,5 +48,12 @@ describe("college group tabs exact legacy navigation labels",()=>{
   it("never exposes foreign-scope Companies routes as a college tab",()=>{
     expect(COLLEGE_LEGACY_GROUPS.flatMap(g=>g.tabs).every(t=>t.href.startsWith("/college/"))).toBe(true);
     expect(COLLEGE_LEGACY_GROUPS[3]?.tabs.map(t=>t.label)).toEqual(["Drives","Companies","Interviews","Analytics"]);
+  });
+  it("COL-academic-setup-13 keeps the academic-period overview reachable without inventing a legacy tab",()=>{
+    expect(COLLEGE_LEGACY_GROUPS[0]?.tabs.some(tab=>tab.href==="/college/academics")).toBe(false);
+    const college=readFileSync(join(process.cwd(),"src/app/(authenticated)/college/departments/page.tsx"),"utf8");
+    const admin=readFileSync(join(process.cwd(),"src/app/(authenticated)/admin/departments/page.tsx"),"utf8");
+    expect(college).toContain('href="/college/academics"');
+    expect(admin).toContain('href="/admin/academics"');
   });
 });

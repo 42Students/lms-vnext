@@ -11,7 +11,7 @@ export default function LearnerCalendarError({
   return (
     <section className="rounded-xl border border-border bg-surface px-6 py-10 text-center">
       <h1 className="text-lg font-semibold text-foreground">
-        Unable to load class schedule
+        Unable to load class schedule. Please try again.
       </h1>
       <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-body">
         Calendar events may be incomplete. Please try refreshing the page.
