@@ -75,3 +75,6 @@ Full Super Admin parity for membershipless submission locks requires the schema/
 
 
 | SA-ADMIN-CSV-04 | S1 / spreadsheet formula injection | `admin-company-directory-export-model.ts` and `super-admin-scoped-csv-model.ts` allowed formulas prefixed by combining marks outside their hand-enumerated format-code ranges (e.g., U+034F plus `=`). Excel-like consumers can ignore invisible leading characters. | **Fixed** `c7bca430`, `4fa85596`: reject formula prefixes after the full Unicode format and nonspacing-mark classes while preserving original data via a quoted, apostrophe-neutralized CSV cell. | `chat13-admin-export-unicode-formula.test.ts` (`SA-ADMIN-CSV-04`), written but not executed. |
+
+
+| SA-STUDENT-LOOKUP-CAP-01/02 | S2 / incorrect export/list notices and unstable result boundaries | `lookupCollegeStudentPlacement` flagged exactly 15 students / 100 application-offer records as truncated without confirming any additional row. Rows with identical application timestamps lacked stable tie-breaking. | **Fixed**: probe 16th/101st row, return only authorized 15/100, and sort by submission timestamp plus stored application and offer IDs. Source stays selected-college scoped. | `tests/unit/chat13-student-placement-lookup-cap.test.ts`; no PG/CI execution in this lane. |
