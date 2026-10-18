@@ -182,3 +182,12 @@ The direct HTTP tests use mocked persisted services; PostgreSQL tenant-grant che
 | `src/app/api/placements/recruiter/conversations/[threadId]/acknowledge/route.ts:POST` | Same-origin, UUID validation, safe 401 on expired actor, service call with authenticated actor only, redirect to first-party thread | Same | Authored, unrun |
 
 These HTTP cases complement the existing `hrConversationQuerySchema`/tenant scope tests, but real-DB multi-college grant expiry, concurrent read receipts and message-send notification outbox recovery remain pending.
+
+## Direct persistent recruiter TPO notification claims (2026-10-18)
+
+| Export | Required security/idempotency contract | Evidence | State |
+|---|---|---|---|
+| `notifyTpoOfRecruiterMessage` | Sender, persisted message, thread recruiter and college must all match before reading body or inserting event; duplicate message ID is a single globally unique activity dedupe key; a replay does not insert more recipient bells; originating sender excluded | `tests/unit/chat16-recruiter-tpo-notice-once-20.test.ts` | Authored, unrun |
+| Same, real PostgreSQL | Current active recruiter/TPO membership fixture delivers once and replay returns `{notified:0}`, with exactly one activity event under the dedupe key and one recipient bell | `tests/integration/recruiter-message-tpo-notifications.test.ts` | Conditional disposable-DB integration, unrun |
+
+The current `unit-failures-latest.md` chat-16 entries refer to an older CI snapshot, while the current queue+canonical gap-register sources satisfy each recorded assertion. We preserved the original 32-ID historical invariant. CI rerun, role-revocation race and actual PostgreSQL lock contention remain open gates.
