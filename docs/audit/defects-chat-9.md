@@ -74,6 +74,8 @@ Branch: `chatgpt/chat-9-b`. Owner: chat-9. These are observed source-level findi
 
 | PROJ9-043 · PROJ-BREAK-state-28/30 | Medium | The global template actions UI offered “Republish” and “Return to draft” for ARCHIVED templates even though both backend publish/unpublish functions reject an archived template. These dead actions always produced errors and misrepresented the immutable archive state. Controls now follow the exact lifecycle action matrix: DRAFT publish, PUBLISHED unpublish, ARCHIVED duplicate-only; unknown states disable all global lifecycle mutations. | `77dbf6f`, `675c36f` | `tests/unit/PROJ-BREAK-chat9-template-action-states.test.ts` (`ff8a32c`) exercises all states and wiring; browser click-flow verification OPEN |
 
+| PROJ9-044 · PROJ-BREAK-ux-34/37 | High | Super Admin template college-availability page rendered a raw route error whenever the availability service failed, and could not show an explicit denied state before querying. Errors are not empty/available colleges: added permission denial before the read, safe outage recovery that retains validated search/status/page, and distinct empty/no-matches UI. | `6735a62` | `tests/unit/PROJ-BREAK-chat9-template-college-page.test.tsx` (`8b42594`) covers authorization, malformed URL, empty and failure without disclosure; live browser/PG integration OPEN |
+
 ## Outstanding release gates (not yet closed)
 
 - Live PostgreSQL integration tests for wrong-tenant IDs, serializable races, rollback and event/notification dedupe; chat-17 owns shared fixtures. Static service assertions alone cannot establish real DB behavior.
