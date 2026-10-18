@@ -84,3 +84,7 @@ The Super Admin `/admin/placements/drives` table previously used `toISOString().
 ## SA-admin-middle-organizations-IST-02 tenant creation date correctness
 
 `/admin/organizations` formerly displayed the UTC calendar day from `createdAt.toISOString().slice(0,10)`, violating the product-wide India Standard Time rule for evening UTC timestamps. `organizationCreatedIstDate` now presents the IST date, handles invalid timestamps without crashing, and is covered by `tests/unit/chat6-superadmin-organizations-ist.test.ts` including the near-midnight boundary and permission-scoped create actions. Source/test changes authored on the lane branch; CI and browser acceptance are still outstanding.
+
+## SA-admin-middle-new-drive-auth-03 early Super Admin permission gate
+
+`/admin/placements/new` formerly checked only that a college identifier existed in the request's selected scope before rendering a workspace which performs multiple directory reads. It now calls the central `requireSuperAdminSelectedCollege(context,"placements.manage")` before rendering the form. `tests/unit/chat6-superadmin-new-drive-auth.test.tsx` invokes the actual page for forged learner scope, disabled platform admin, missing selected college and valid same-college role journeys; no database option lookup should happen for denied actors. This defends the page entrypoint in addition to the child services' existing permission checks. Authored, not CI-validated.
