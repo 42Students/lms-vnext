@@ -5,6 +5,7 @@ import {aliasedColumn} from "@/db/aliased-column";
 import {colleges,collegeMemberships,placementApplications,placementJobs,placementOffers,placementJoiningOutcomes,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireSuperAdminSelectedCollege} from "./super-admin-selected-college";
+import {superAdminJoiningIntegrityNote} from "./super-admin-joining-integrity-model";
 import {scopedSearchLike,superAdminReadPages,superAdminReadQuerySchema,SUPER_ADMIN_READ_PAGE_SIZE,type SuperAdminReadResult} from "./super-admin-read-directory-model";
 export async function listSuperAdminJoining(context:RequestContext,raw:unknown):Promise<SuperAdminReadResult>{
  const query=superAdminReadQuerySchema.parse(raw),scope=requireSuperAdminSelectedCollege(context,"placements.read"),db=getDb();
@@ -40,8 +41,8 @@ export async function listSuperAdminJoining(context:RequestContext,raw:unknown):
   status:r.status,details:["Offer status: "+r.offerStatus,
    "Joining date: "+(r.joiningDate??"Not recorded"),
    "Outcome recorded: "+(r.recordedAt?fmt.format(r.recordedAt)+" IST":"Not recorded"),
-   ...(r.status==="JOINED"&&r.offerStatus!=="ACCEPTED"
-     ? ["Review required: joining is recorded without an accepted offer."] : []),
+   ...(superAdminJoiningIntegrityNote(r.status,r.offerStatus)
+     ? [superAdminJoiningIntegrityNote(r.status,r.offerStatus)!] : []),
    "Only persisted joining outcomes are shown; missing records are not counted as pending."],
   href:`/admin/placements/joining/${encodeURIComponent(r.id)}`,
  }))};
