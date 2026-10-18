@@ -449,3 +449,11 @@ Cloud browser/network/CI execution is outstanding; no test was run locally.
 | HR-BREAK-ROUND-RECEIPT-31 | MAJOR | Inline recruiter round editor treated any HTTP 200 (including unrelated HTML/session fallback) or opaque redirected POST as proof of a saved round. Require an exact JSON receipt from the existing origin-guarded, authorized route: persisted id, matching action and, on update/delete, original round id. The native form's legacy 303 redirect remains unchanged. A fake receipt or sign-in redirect leaves the form open with recovery text and no success claim. | `tests/unit/HR-BREAK-chat19-round-receipt.test.ts` exercises response parser, both handler response formats, malformed receipts, foreign IDs, cross-origin refusal and UI wiring. |
 
 No CI/unit/browser run was performed here, per owner priority.
+
+## HR rounds editor unsaved-change protection
+
+| ID | Severity | Finding and correction | Test |
+|---|---|---|---|
+| UX-HR-ROUND-UNSAVED-32 | UX/MAJOR | The recruiter inline Add/Change round dialog discarded nonempty name/type/location fields immediately on Escape, backdrop click or Cancel. Preserve partially edited values until explicit confirmation; untouched forms close freely. The destructive Remove confirmation remains independent. | `tests/unit/UX-HR-chat19-round-unsaved.test.ts` runs the real dirty-state model with empty/changed/same drafts and checks dialog/Cancel wiring. |
+
+No live keyboard/browser simulation has been claimed.
