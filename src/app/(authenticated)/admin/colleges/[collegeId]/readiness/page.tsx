@@ -6,6 +6,7 @@ import {ErrorState} from "@/components/ui/error-state";
 import { notFound } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { requirePermission } from "@/modules/permissions/policy";
 import { PageHeader } from "@/components/ui/page-header";
 import {readinessRemediationLink} from "@/modules/colleges/readiness-remediation-links";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -68,6 +69,8 @@ export default async function CollegeReadinessPage({
   params: Promise<{ collegeId: string }>;
   searchParams: Promise<Record<string,string|string[]|undefined>>;
 }) {
+  const context=await getCurrentRequestContext();
+  requirePermission(context,"admin-scope.select");
   const { collegeId } = await params;
 
   if (
@@ -78,8 +81,7 @@ export default async function CollegeReadinessPage({
 
   const raw=await searchParams;
   const parsed=parseSuperAdminReadinessParams(raw);
-  const context =
-    await getCurrentRequestContext();
+
 
   const result =
     await getSuperAdminCollegeReadiness(

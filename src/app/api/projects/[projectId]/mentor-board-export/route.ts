@@ -1,6 +1,7 @@
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
+import {singleValueMentorExportFilters} from "@/modules/projects/mentor-filter-query";
 import {getMentorBoardReview} from "@/modules/projects/mentor-board-review-service";
 import {mentorBoardExportCsv,mentorBoardReviewQuerySchema}
   from "@/modules/projects/mentor-board-review-model";
@@ -10,12 +11,11 @@ export async function GET(request:Request,{params}:RouteContext){
   try{
     const {projectId}=await params;
     const url=new URL(request.url);
-    const query=mentorBoardReviewQuerySchema.parse({
-      projectId,status:url.searchParams.get("status")??undefined,
-      priority:url.searchParams.get("priority")??undefined,
-      sprintId:url.searchParams.get("sprintId")??undefined,
-      search:url.searchParams.get("search")??undefined,page:1,
-    });
+    const filters=singleValueMentorExportFilters(url.searchParams,
+      ["status","priority","sprintId","search"]);
+    if(!filters)return NextResponse.json({error:"INVALID_QUERY"},{status:400,
+      headers:{"Cache-Control":"private, no-store"}});
+    const query=mentorBoardReviewQuerySchema.parse({projectId,...filters,page:1});
     const data=await getMentorBoardReview(await getCurrentRequestContext(),query);
     if(!data.enabled)return NextResponse.json({error:"PROJECT_ACCESS_DENIED"},{status:403});
     return new Response(mentorBoardExportCsv(data.exportItems,data.exportOmitted),{

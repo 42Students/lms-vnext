@@ -33,8 +33,9 @@ export function classifyMentorDeliveryReview(value:{
 export function mentorDeliveryReviewCounts(
  values:readonly {decision:string|null;feedbackPresent:boolean}[],
 ){
- return {reviewed:values.filter(x=>x.decision!==null).length,
-  withFeedback:values.filter(x=>x.decision!==null&&x.feedbackPresent).length};
+ const reviewed=(decision:string|null)=>decision==="APPROVED"||decision==="CHANGES_REQUESTED";
+ return {reviewed:values.filter(x=>reviewed(x.decision)).length,
+  withFeedback:values.filter(x=>reviewed(x.decision)&&x.feedbackPresent).length};
 }
 export function mentorDeliveryReviewCsv(rows:readonly {
   id:string;version:number;status:string;reviewLabel:string;
@@ -43,12 +44,14 @@ export function mentorDeliveryReviewCsv(rows:readonly {
   const format=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",
     day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit",
     hourCycle:"h23"});
-  const date=(value:Date|null)=>value?format.format(value)+" IST":"Not recorded";
+  const date=(value:Date|null)=>value&&Number.isFinite(value.getTime())?format.format(value)+" IST":"Not recorded";
   const lines=["Submission ID,Version,Status,Decision,Submitted (IST),Reviewed (IST),Written feedback recorded"];
-  for(const row of rows)lines.push([row.id,row.version,row.status,row.reviewLabel,
+  const limited=rows.slice(0,200);
+  for(const row of limited)lines.push([row.id,row.version,row.status,row.reviewLabel,
     date(row.submittedAt),date(row.reviewedAt),row.feedbackPresent?"Yes":"No"]
     .map(csvSafeCell).join(","));
-  if(omitted>0)lines.push(["","Truncated",omitted+" additional matching versions","","","",""]
+  const hidden=(Number.isSafeInteger(omitted)&&omitted>0?omitted:0)+Math.max(0,rows.length-limited.length);
+  if(hidden>0)lines.push(["","Truncated",hidden+" additional matching versions","","","",""]
     .map(csvSafeCell).join(","));
   return "\uFEFF"+lines.join("\r\n")+"\r\n";
 }
