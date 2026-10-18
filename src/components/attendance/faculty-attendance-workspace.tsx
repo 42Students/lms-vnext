@@ -126,7 +126,8 @@ async function errorMessage(
     if (body?.error === "SCHEDULE_EVENT_CONFLICT") {
       return "Another class overlaps this time in the Section. Choose a different time.";
     }
-    return body?.message || body?.error || fallback;
+    // UX-teacher-attendanceDetail-07: never render unrecognized API errors or internals.
+    return fallback;
   } catch {
     return fallback;
   }
