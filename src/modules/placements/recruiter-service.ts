@@ -443,6 +443,17 @@ export async function listOwnRecruiterPlacementJobs(
         placementJobs.collegeId,
       ),
     )
+    // Cached session grants must not survive persisted revocation or profile suspension.
+    .innerJoin(placementRecruiterCollegeGrants,and(
+      eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
+      eq(placementRecruiterCollegeGrants.companyRelationshipId,placementCompanyRelationships.id),
+      eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
+    ))
+    .innerJoin(placementRecruiterProfiles,and(
+      eq(placementRecruiterProfiles.userId,context.user.id),
+      eq(placementRecruiterProfiles.companyId,placementCompanies.id),
+      eq(placementRecruiterProfiles.status,"ACTIVE"),
+    ))
     .where(
       and(
         inArray(
