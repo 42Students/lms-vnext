@@ -12,7 +12,7 @@ const releaseId="123e4567-e89b-42d3-a456-426614174001";
 const instant="2099-01-01T00:00:00.000Z";
 const task={title:"Audit login",description:null,acceptanceCriteria:null,priority:"HIGH",sprintId:null,expectedSprintUpdatedAt:null};
 const sprint={releaseId,title:"Sprint 1",description:null,goal:null,definitionOfDone:null,startDate:"2099-01-01",endDate:"2099-01-02",dueDate:null};
-const details={title:"Task",description:null,acceptanceCriteria:null,priority:"HIGH",expectedUpdatedAt:instant};
+const details={title:"Task",description:null,acceptanceCriteria:null,priority:"HIGH" as const,expectedUpdatedAt:instant};
 const resource=(id:string,title:string,required:boolean,url:string|null,description:string|null,sequence:number)=>({id,title,required,url,description,sequence});
 
 describe("chat-14 mentor sprint, task and resource behaviour ledger",()=>{
