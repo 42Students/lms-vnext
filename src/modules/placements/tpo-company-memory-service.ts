@@ -304,6 +304,7 @@ export async function listTpoCompanies(
     const facts = deriveCompanyDriveFacts(driveRows);
     const linkedJobs = group.jobs.map((row) => ({
       jobId: row.job.id, relationshipId: row.relationshipId,companyName:row.companyName,
+      createdByUserId:row.job.createdByUserId,
     }));
     out.push({
       key: group.key,
@@ -351,6 +352,7 @@ export async function getTpoCompanyMemory(
   const placedAt=(collegeRules[0]?.placedAt??"OFFER_RELEASED") as CountsAsPlacedPolicy;
   const linkedJobs = group.jobs.map((row) => ({
     jobId: row.job.id, relationshipId: row.relationshipId,companyName:row.companyName,
+    createdByUserId:row.job.createdByUserId,
   }));
   const linkedRelationshipId=group.leads.find(lead=>lead.companyRelationshipId)?.companyRelationshipId;
   const [relatedCompany]=linkedRelationshipId?await getDb().select({
