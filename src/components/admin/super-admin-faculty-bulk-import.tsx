@@ -10,6 +10,7 @@ type Result={row:number;name:string;status:"CREATED"|"FAILED"|"SKIPPED";message:
 export function SuperAdminFacultyBulkImport({collegeId}:{collegeId:string}){
  const router=useRouter();
  const fileVersion=useRef(0);
+ const submissionInProgress=useRef(false);
  const {askConfirm,dialog}=useConfirmFlow();
  const [csv,setCsv]=useState("");
  const [filename,setFilename]=useState("");
@@ -35,6 +36,7 @@ export function SuperAdminFacultyBulkImport({collegeId}:{collegeId:string}){
   }
  }
  async function submit(){
+  if(submissionInProgress.current)return;
   const version=fileVersion.current;
   const inputCsv=csv;
   const allowed=()=>canSubmitFacultyBulkImport({
@@ -42,18 +44,24 @@ export function SuperAdminFacultyBulkImport({collegeId}:{collegeId:string}){
    currentVersion:fileVersion.current,
   });
   if(!allowed())return;
-  if(!(await askConfirm("Onboard "+count+" faculty from this file?"))||!allowed())return;
-  setBusy(true);setError("");setResults([]);
+  // React state updates do not synchronously disable the button. Reserve
+  // the action through confirmation and the network call to reject double
+  // clicks, while allowing cancel or a different file to release the guard.
+  submissionInProgress.current=true;
   try{
-   const response=await fetch("/api/admin/faculty/bulk-import",{
-    method:"POST",headers:{"content-type":"application/json"},
-    body:JSON.stringify({collegeId,csv:inputCsv,confirmed:true}),
-   });
-   const result=await response.json() as {results?:Result[];error?:string};
-   if(!response.ok)throw new Error(result.error??"Bulk onboarding failed");
-   setResults(result.results??[]);router.refresh();
-  }catch(cause){setError(cause instanceof Error?cause.message:"Bulk import failed.");}
-  finally{setBusy(false);}
+   if(!(await askConfirm("Onboard "+count+" faculty from this file?"))||!allowed())return;
+   setBusy(true);setError("");setResults([]);
+   try{
+    const response=await fetch("/api/admin/faculty/bulk-import",{
+     method:"POST",headers:{"content-type":"application/json"},
+     body:JSON.stringify({collegeId,csv:inputCsv,confirmed:true}),
+    });
+    const result=await response.json() as {results?:Result[];error?:string};
+    if(!response.ok)throw new Error(result.error??"Bulk onboarding failed");
+    setResults(result.results??[]);router.refresh();
+   }catch(cause){setError(cause instanceof Error?cause.message:"Bulk import failed.");}
+   finally{setBusy(false);}
+  }finally{submissionInProgress.current=false;}
  }
  const downloadSample=()=>{
   const sample="First Name,Last Name,Mobile Number,Email\r\nAnjali,Sharma,9876543210,anjali@example.edu\r\n";
