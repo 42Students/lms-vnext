@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { safeProjectExternalHref } from "@/modules/projects/mentor-workspace-evidence-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {mayRecordCollegeAdminDeliveryLock} from "@/modules/projects/admin-submission-lock-policy";
 import {
   ProjectAdminFilters,
   ProjectAdminPagination,
@@ -65,6 +66,8 @@ export async function ProjectAdminSubmissionsPage({
   >;
 }) {
   const context = await getCurrentRequestContext();
+  const allowLock = mayRecordCollegeAdminDeliveryLock(context,collegeId,
+    context.adminScope?.organizationId ?? context.membership?.organizationId ?? "");
   const view=one(searchParams.view)==="NOT_SUBMITTED"?"NOT_SUBMITTED":"ALL";
   const query: ProjectAdminCollectionQuery = {
     q: one(searchParams.q),
@@ -258,7 +261,7 @@ export async function ProjectAdminSubmissionsPage({
                 projectId={submission.projectId} submissionId={submission.id}
                 workspaceTitle={submission.projectTitle}
                 status={submission.status} locked={!!submission.lockedAt}
-                projectStatus={submission.projectStatus} />
+                projectStatus={submission.projectStatus} allowLock={allowLock} />
               <div className="mt-3 flex flex-wrap gap-4 text-sm font-semibold">
                 <Link href={basePath+"/"+submission.projectId+
                   "/delivery?from=submissions&reason="+encodeURIComponent(
