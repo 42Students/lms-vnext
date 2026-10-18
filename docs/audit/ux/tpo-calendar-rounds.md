@@ -9,3 +9,9 @@
 **States:** Existing loading, ready, empty, invalid, partial and denied branches were preserved where present. No data or error state was fabricated. Local source review is not device evidence.
 
 **Test:** `tests/unit/UX-tpo-calendar-rounds-01.test.ts` (source contract). **Acceptance:** TypeScript, Vitest and browser/AT pending orchestrator; leave route unticked until acceptance passes.
+
+## UX form-component follow-up (chat-12)
+
+Replaced page-local controls with shared `Input`, `Button` where applicable. Form field names, labels, default values, GET URL filtering, safe post actions, required validation and legacy copy are unchanged. Shared controls supply 16px phone input text, a 44px target and visible keyboard focus. Existing authorization checks, error branches and mobile navigation remain in place.
+
+Source contract: `tests/unit/UX-tpo-calendar-rounds-04.test.ts`. Browser, TypeScript and unit execution remain orchestrator acceptance tasks, not claimed passing here.

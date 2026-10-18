@@ -1,3 +1,4 @@
+import {DataTable} from "@/components/ui/data-table";
 import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -43,12 +44,16 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
    <h2 className="text-lg font-semibold">Eligibility and reach</h2>
    <p className="mt-2 text-2xl font-semibold tabular-nums">{data.reach.eligible} students meet the current notification and eligibility rules</p>
    <p className="mt-1 text-sm text-body">{data.reach.excluded} excluded or not notified, out of {data.reach.considered} registered learners considered. Counts come from current registration, opt-in, debarment and academic evidence.</p>
-   <div className="mt-4 overflow-x-auto"><table className="min-w-full text-left text-sm">
-    <thead><tr className="border-b border-border"><th className="p-2">Branch</th><th className="p-2">Eligible</th><th className="p-2">Applied</th></tr></thead>
-    <tbody>{data.byBranch.map(row=><tr key={row.branch} className="border-b border-border">
-     <td className="p-2">{row.branch}</td><td className="p-2">{row.eligible}</td><td className="p-2">{row.applied}</td></tr>)}</tbody>
-   </table></div>
-   {data.byBranch.length===0?<p className="mt-2 text-sm text-body">No active academic branch enrollments are recorded.</p>:null}
+   <div className="mt-4">
+    <DataTable caption="Eligible and applied learners by branch"
+     rows={data.byBranch} getRowKey={row=>row.branch}
+     empty={<p role="status" className="text-sm text-body">No active academic branch enrollments are recorded.</p>}
+     columns={[
+      {key:"branch",header:"Branch",mobileLabel:"Branch",mobilePriority:"primary",cell:row=>row.branch},
+      {key:"eligible",header:"Eligible",mobileLabel:"Eligible",mobilePriority:"secondary",cell:row=>row.eligible},
+      {key:"applied",header:"Applied",mobileLabel:"Applied",mobilePriority:"secondary",cell:row=>row.applied},
+     ]}/>
+   </div>
   </section>
   <section className="rounded-xl border border-border bg-surface p-5">
    <h2 className="font-semibold">Why learners were excluded</h2>
@@ -102,12 +107,17 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
   </section>
   <section className="rounded-xl border border-border bg-surface p-5">
    <h2 className="font-semibold">Role packages</h2>
-   <div className="mt-3 overflow-x-auto"><table className="min-w-full text-left text-sm">
-    <thead><tr><th className="p-2">Role</th><th className="p-2">CTC range</th><th className="p-2">Fixed / variable / bonus (LPA)</th></tr></thead>
-    <tbody>{data.packages.map(pkg=><tr key={pkg.id} className="border-t border-border">
-     <td className="p-2">{pkg.title}</td><td className="p-2">{format(pkg.minimumAnnualCtcInr)} – {format(pkg.maximumAnnualCtcInr)}</td>
-     <td className="p-2">{pkg.fixedLpa??"—"} / {pkg.variableLpa??"—"} / {pkg.joiningBonusLpa??"—"}</td></tr>)}</tbody>
-   </table></div>
+   <div className="mt-3">
+    <DataTable caption="Role packages and compensation" rows={data.packages} getRowKey={pkg=>pkg.id}
+     empty={<p role="status" className="text-sm text-body">No role packages are recorded for this drive.</p>}
+     columns={[
+      {key:"role",header:"Role",mobileLabel:"Role",mobilePriority:"primary",cell:pkg=>pkg.title},
+      {key:"ctc",header:"CTC range",mobileLabel:"CTC range",mobilePriority:"secondary",
+       cell:pkg=>format(pkg.minimumAnnualCtcInr)+" – "+format(pkg.maximumAnnualCtcInr)},
+      {key:"details",header:"Fixed / variable / bonus (LPA)",mobileLabel:"Fixed / variable / bonus (LPA)",mobilePriority:"secondary",
+       cell:pkg=>(pkg.fixedLpa??"—")+" / "+(pkg.variableLpa??"—")+" / "+(pkg.joiningBonusLpa??"—")},
+     ]}/>
+   </div>
   </section>
   {["CLOSED","CANCELLED"].includes(data.job.status)?<section className="rounded-xl border border-border bg-surface p-5">
    <h2 className="font-semibold">Closed drive summary</h2>
