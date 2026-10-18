@@ -39,7 +39,10 @@ describe("chat-4 Super Admin Tenants and Modules verified source contracts",()=>
   const s=source("src/modules/inbound-mail/admin-service.ts");
   expect(s).toContain("isSuperAdmin(context)");
   expect(s).toContain("admin-scope.select");
-  expect(s).not.toContain("context.adminScope?.collegeId");
+  expect(s).toContain("context.adminScope?.collegeId||context.adminScope?.organizationId");
+  expect(s).toContain('throw new AuthorizationError("admin-scope.select")');
+  expect(s.indexOf("context.adminScope?.collegeId||context.adminScope?.organizationId"))
+    .toBeLessThan(s.indexOf("repository.tableExists()"));
  });
  it("SA-tenants-modules-56 preserves the audited admin workflow",()=>{
   const s=source("src/modules/inbound-mail/admin-service.ts");
