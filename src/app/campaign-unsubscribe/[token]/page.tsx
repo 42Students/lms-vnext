@@ -1,3 +1,4 @@
+import authStyles from "@/components/public/public-auth-skin.module.css";
 import Link from "next/link";
 import { campaignUnsubscribeTokenKind } from "@/modules/placements/public-unsubscribe-preview-service";
 import { PageHeader } from "@/components/ui/page-header";
@@ -19,7 +20,7 @@ export default async function CampaignUnsubscribe({
   }
   const cell = kind === "PLACEMENT_CELL";
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-lg min-w-0 flex-col justify-center gap-6 px-4 py-8 sm:py-12">
+    <main className={`${authStyles.page} mx-auto flex min-h-dvh w-full max-w-lg min-w-0 flex-col justify-center gap-6 px-4 py-8 sm:py-12`}>
       <PageHeader eyebrow="42Students" title={cell ? "Stop these emails?" : "Campaign email preferences"} />
       {unavailable ? (
         <Card as="section" role="alert">
