@@ -36,7 +36,7 @@ export function TpoStudentClipboardActions({rows,selected,onSelect}:{
     <textarea rows={3} maxLength={15000} value={text} onChange={e=>setText(e.target.value)}
      className="rounded border border-border bg-surface p-3"/></label>
    <button type="button" disabled={!text.trim()} onClick={paste}
-    className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+    className="min-h-10 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">
     Select matching students on this page
    </button>
    {missing.length?<p role="alert" className="text-sm text-warning">Not on this page: {missing.slice(0,30).join(", ")}{missing.length>30?" and "+(missing.length-30)+" more":""}.</p>:null}
