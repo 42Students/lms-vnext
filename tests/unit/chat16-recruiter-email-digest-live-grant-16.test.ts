@@ -1,4 +1,6 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
+import {readFileSync} from "node:fs";
+const requireSource=()=>readFileSync("src/modules/placements/recruiter-message-email-dispatch-service.ts","utf8");
 import {getDb} from "@/db/client";
 import {readZeptoMailConfig} from "@/modules/notifications/zeptomail-email";
 import {sendRecruiterMessageDigest} from "@/modules/placements/recruiter-message-email-provider";
@@ -78,6 +80,14 @@ describe("chat-16 recruiter digest scheduler live authorization",()=>{
   expect(f.grant).toHaveBeenCalledOnce();
   expect(f.tx.select).toHaveBeenCalledTimes(1);
   expect(sendRecruiterMessageDigest).not.toHaveBeenCalled();
+ });
+ it("email-bridge-digest-worker-20 checks grant expiration at actual send time, not a stale scheduler timestamp",()=>{
+  const source=requireSource();
+  const recheck=source.slice(source.indexOf("const grant=await tx.execute"),source.indexOf("if(grant.rows[0]?.allowed!==true)"));
+  expect(recheck).toContain("g.valid_until > clock_timestamp()");
+  expect(recheck).toContain("lower(u.email)=lower(");
+  expect(recheck).toContain("placement_companies co");
+  expect(recheck).toContain("placement_jobs j");
  });
  it("email-bridge-digest-worker-19 does not retrieve message body before in-transaction current grant check",async()=>{
   const f=mockDb(false);
