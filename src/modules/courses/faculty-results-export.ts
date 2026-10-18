@@ -1,4 +1,5 @@
 import {facultyResultsHref,facultyRecordedResponseRate,type FacultyResultsQuery} from "./faculty-results-model";
+import {neutralizeFacultyCsvCell} from "./faculty-report-csv";
 export type FacultyExportRow={
  kind:string;status:string;title:string;courseName:string;sectionName:string;
  eligible:number;responded:number;pending:number;averagePercent:number|null;
@@ -6,7 +7,7 @@ export type FacultyExportRow={
 /** Prevent formula execution even when a persisted assessment title starts with = or @. */
 export function facultyResultsCsvCell(value:string|number|null):string{
  const text=String(value??"").replace(/[\u0000-\u001f\u007f-\u009f]/g," ");
- const safe=/^\s*[=+@-]/.test(text)?"'"+text:text;
+ const safe=neutralizeFacultyCsvCell(text);
  return '"'+safe.replaceAll('"','""')+'"';
 }
 export function facultyResultExportAverage(value:number|null):string{
