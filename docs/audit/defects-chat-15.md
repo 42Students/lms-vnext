@@ -206,3 +206,6 @@ Tests authored only, not executed, per owner directive.
 
 
 | HR-JOBS-API-119 | S2 employer-private caching | `GET /api/placements/recruiter/jobs` returned recruiter-owned job rows without an explicit `Cache-Control: private, no-store` header. The response now prohibits intermediary/browser caching of an authenticated recruiter portfolio, while preserving the central exact-grant job lookup and sanitized error mapping. | `HR-BREAK-chat15-jobs-api-119.test.ts` | Actual response headers and cross-session cache behavior in browser/production proxy pending |
+
+
+| HR-DRIVES-CSV-120 | S3 export resilience | Recruiter drive CSV attempted to format a corrupted persisted deadline without checking validity, causing an entire otherwise authorized export to fail. It now renders a truthful unavailable placeholder for corrupt dates while preserving an intentionally absent deadline as empty. | `HR-BREAK-chat15-drive-csv-120.test.ts` | Real database/browser spreadsheet viewer test pending |
