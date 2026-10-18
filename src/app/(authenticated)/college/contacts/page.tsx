@@ -32,18 +32,18 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="College Admin · People" title="Contacts"
    description="Read-only college contacts. Student contact details are masked; account management is separate."
-   actions={<div className="flex flex-wrap gap-2"><Link href="/college/students" className="rounded-md border px-3 py-2 text-sm font-semibold">Student accounts</Link><Link href="/college/faculty" className="rounded-md border px-3 py-2 text-sm font-semibold">Faculty accounts</Link><Link href="/college/faculty-assignment" className="rounded-md border px-3 py-2 text-sm font-semibold">Teaching assignments</Link></div>}/>
+   actions={<div className="flex flex-wrap gap-2"><Link href="/college/students" className="inline-flex min-h-11 items-center rounded-md border px-3 py-2 text-sm font-semibold">Student accounts</Link><Link href="/college/faculty" className="inline-flex min-h-11 items-center rounded-md border px-3 py-2 text-sm font-semibold">Faculty accounts</Link><Link href="/college/faculty-assignment" className="inline-flex min-h-11 items-center rounded-md border px-3 py-2 text-sm font-semibold">Teaching assignments</Link></div>}/>
   <nav aria-label="Contacts categories" className="flex flex-wrap gap-2">
    <Link href={collegeContactsTabHref(filter,"ALL")} aria-current={filter.tab==="ALL"?"page":undefined}
-     className="rounded-md border px-3 py-2 text-sm">All contacts</Link>
+     className="inline-flex min-h-11 items-center rounded-md border px-3 py-2 text-sm">All contacts</Link>
    <Link href={collegeContactsTabHref(filter,"FACULTY")} aria-current={filter.tab==="FACULTY"?"page":undefined}
-     className="rounded-md border px-3 py-2 text-sm">Faculty contacts</Link>
+     className="inline-flex min-h-11 items-center rounded-md border px-3 py-2 text-sm">Faculty contacts</Link>
    <Link href={collegeContactsTabHref(filter,"STUDENT")} aria-current={filter.tab==="STUDENT"?"page":undefined}
-     className="rounded-md border px-3 py-2 text-sm">Student contacts</Link>
+     className="inline-flex min-h-11 items-center rounded-md border px-3 py-2 text-sm">Student contacts</Link>
   </nav>
   {filter.membershipId&&<div role="status" className="flex flex-wrap items-center gap-3 rounded-lg border bg-surface p-3 text-sm">
    <span>Showing the bookmarked contact record only.</span>
-   <Link href={collegeContactsWithoutMemberHref(filter)} className="font-semibold text-primary-text underline">Show matching contact directory</Link>
+   <Link href={collegeContactsWithoutMemberHref(filter)} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline">Show matching contact directory</Link>
   </div>}
   <p role="status" className="text-xs text-muted-foreground">{activeCollegeContactFilterCount(filter)} applied directory filters. Pagination, sort and selected tab are not counted.</p>
   <p className="text-xs text-muted-foreground">Join-date range uses Asia/Kolkata calendar days. The start must not be after the end.</p>
