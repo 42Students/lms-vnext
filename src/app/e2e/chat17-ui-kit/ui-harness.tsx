@@ -13,6 +13,7 @@ import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { FileUpload } from "@/components/ui/file-upload";
 import { FilterBar } from "@/components/ui/filter-bar";
 import { Input } from "@/components/ui/input";
+import { FormField } from "@/components/ui/form-field";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 import { Tabs } from "@/components/ui/tabs";
 import { ToastProvider, useToast } from "@/components/ui/toast";
@@ -73,6 +74,13 @@ function UIKitTestSurface() {
         <p>Sheet content is nested above the workspace drawer.</p>
         <Button onClick={() => setSheetOpen(false)}>Close nested sheet</Button>
       </BottomSheet>
+    </section>
+
+    <section aria-label="Required field fixture">
+      <FormField id="harness-roll" label="Learner roll number" required
+        helper="Enter a value before continuing.">
+        {()=> <Input placeholder="Learner roll number"/>}
+      </FormField>
     </section>
 
     <section aria-label="Tabs fixture">
