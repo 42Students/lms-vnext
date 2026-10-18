@@ -56,6 +56,8 @@ This is the **tested-function ledger for the focused model suite**, not a claim 
 
 | `src/modules/courses/faculty-gradebook-service.ts` | `getFacultyPublishedGradebook` | `tests/unit/chat3-faculty-gradebook-service-permissions.test.ts` | FAC-GRADE-SERVICE-01..05,07 | actual service mocked collaborators: wrong-role/disabled/suspended denial before reads, strict path input, roster-only published assignment and quiz score privacy, 101-assessment boundary |
 | `src/modules/courses/faculty-gradebook-service.ts` | `getFacultyPublishedGradebookLearner` | `tests/unit/chat3-faculty-gradebook-service-permissions.test.ts` | FAC-GRADE-SERVICE-06 | exact roster membership, foreign-learner private error, source-visible scores only |
+| `src/modules/courses/faculty-assignment-request-body.ts` | `facultyAssignmentAcceptsContentType`, `readFacultyAssignmentCommandBody`, `FacultyAssignmentBodyError` | `tests/unit/chat3-faculty-assignment-body-route.test.ts` | FAC-assignment-body-01 | actual bounded UTF-8 streaming/declared length, JSON media type, malicious oversized/invalid/empty payload, safe typed errors |
+| `src/app/api/courses/faculty/assignments/[deliveryId]/command/route.ts` | `POST` | `tests/unit/chat3-faculty-assignment-body-route.test.ts` | FAC-assignment-body-02 | same-origin checked before auth, authenticated context forwarded, bounded JSON before mutation, user-safe 400/413/415, unexpected service exceptions handled centrally |
 ## Role/security matrix
 
 - FAC-SCOPE-01/02: Faculty allowed only after central `courses.read` and active teaching role; Learner, Mentor, College Admin, Super Admin, missing membership and foreign tenant denied in unit-model mock contract.
