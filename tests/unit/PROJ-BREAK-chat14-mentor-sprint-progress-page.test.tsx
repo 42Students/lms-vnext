@@ -2,6 +2,8 @@ import {beforeEach,describe,expect,it,vi} from "vitest";
 import {renderToStaticMarkup} from "react-dom/server";
 import type {ReactNode} from "react";
 import MentorSprintProgressPage from "@/app/(authenticated)/mentor/sprint-progress/page";
+import SprintProgressLoading from "@/app/(authenticated)/mentor/sprint-progress/loading";
+import SprintProgressError from "@/app/(authenticated)/mentor/sprint-progress/error";
 
 const projectId="11111111-1111-4111-8111-111111111111";
 const sprintId="22222222-2222-4222-8222-222222222222";
@@ -112,4 +114,21 @@ describe("Mentor sprint progress role/page journey",()=>{
   await expect(renderPage({})).rejects.toThrow("PROJECT_ACCESS_DENIED");
   expect(state.calls).toBe(1);
  });
+ it("PROJ-BREAK-MENTOR-371 loading state is busy, labeled and does not reveal private projects",()=>{
+  const html=renderToStaticMarkup(<SprintProgressLoading />);
+  expect(html).toContain('aria-busy="true"');
+  expect(html).toContain("Loading Mentor sprint progress");
+  expect(html).not.toContain(projectId);
+ });
+ it("PROJ-BREAK-MENTOR-372 error state gives a retry without exposing SQL or exception details",()=>{
+  const html=renderToStaticMarkup(<SprintProgressError
+   error={new Error("SQLSTATE 23505: PRIVATE_TENANT_RECORD")}
+   reset={()=>{}} />);
+  expect(html).toContain('role="alert"');
+  expect(html).toContain("Unable to load Mentor sprint progress");
+  expect(html).toContain("Retry");
+  expect(html).not.toContain("SQLSTATE");
+  expect(html).not.toContain("PRIVATE_TENANT_RECORD");
+ });
+
 });
