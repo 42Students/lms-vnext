@@ -670,6 +670,17 @@ export async function applyPlacementRoundResult(
       );
     }
 
+    // Screening can be changed by a second operator while the first one is
+    // reviewing a preview. A result for a no-longer-shortlisted learner must
+    // not be applied or notified.
+    const [lockedScreening] = await tx.select({
+      status:placementApplicationScreenings.status,
+    }).from(placementApplicationScreenings)
+      .where(eq(placementApplicationScreenings.applicationId,current.application.id))
+      .for("share").limit(1);
+    if(!lockedScreening || lockedScreening.status!=="SHORTLISTED")
+      throw new PlacementsServiceError("PLACEMENT_RESULT_SCREENING_NOT_SHORTLISTED");
+
     const [lockedResult] = await tx
       .select()
       .from(placementRoundResults)
