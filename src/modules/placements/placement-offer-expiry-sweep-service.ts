@@ -38,8 +38,10 @@ export async function sweepExpiredPlacementOffers(
       roleTitle:placementOffers.roleTitle,
       membershipId:placementApplications.membershipId,
       collegeId:placementJobs.collegeId,
+      jobId:placementJobs.id,
       jobTitle:placementJobs.title,
       organizationId:colleges.organizationId,
+      collegeStatus:colleges.status,
     }).from(placementOffers)
       .innerJoin(placementApplications,
         eq(placementApplications.id,placementOffers.applicationId))
@@ -83,10 +85,12 @@ export async function sweepExpiredPlacementOffers(
         summary:"Offer expired for "+row.jobTitle,
         metadata:{offerId:row.id,jobTitle:row.jobTitle,
           expiryAt:row.expiresAt?.toISOString()??null},
-        groupKey:"placement-job:"+row.collegeId+":offers",
+        groupKey:"placement-job:"+row.jobId+":offers",
         dedupeKey:"placement-offer-expired:"+row.id,
       }).onConflictDoNothing().returning({id:activityEvents.id});
-      if(event)await deliverRecordedLearnerPlacementEvent(tx,{
+      // Historical expiry remains auditable after college suspension, but
+      // a stopped tenant must not receive a fresh notification.
+      if(event&&row.collegeStatus==="ACTIVE")await deliverRecordedLearnerPlacementEvent(tx,{
         eventId:event.id,collegeId:row.collegeId,
         membershipId:row.membershipId,
         kind:"APPLICATION_STATUS_CHANGED",
