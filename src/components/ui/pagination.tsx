@@ -44,11 +44,11 @@ export function Pagination({ page, pageCount, hrefForPage, label = "Pages", clas
         <Link key={item} href={href}
           aria-label={`Page ${item} of ${total}`}
           aria-current={item === current ? "page" : undefined}
-          className={cx(buttonClass, item === current ? "border-[var(--lms-primary)] bg-primary-subtle text-primary-text" : "hover:bg-primary-subtle")}>
+          className={cx(buttonClass, item === current ? "border-[var(--lms-primary)] bg-primary-subtle text-primary-text" : "hidden md:inline-flex hover:bg-primary-subtle")}>
           {item}
         </Link> :
         <span key={item} aria-disabled="true" aria-label={`Page ${item} unavailable`}
-          className={cx(buttonClass, "opacity-50")}>{item}</span>
+          className={cx(buttonClass, "hidden opacity-50 md:inline-flex")}>{item}</span>
       )}
       {!nextHref || !isSafeInternalHref(nextHref) ?
         <span aria-disabled="true" className={cx(buttonClass, "opacity-50")}>Next</span> :
