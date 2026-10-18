@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
+import { can } from "@/modules/permissions/policy";
+import type { RequestContext } from "@/modules/identity/context";
 import {
   PLACEMENT_POLICY_FIELDS, placementPolicyValidate, platformPlacementPolicyInput,
 } from "@/modules/placements/platform-placement-policy-model";
@@ -12,13 +14,29 @@ describe("Super Admin placement policy adversarial boundaries", () => {
     const start = service.indexOf("export async function setPlatformPlacementPolicy(");
     const body = service.slice(start);
     const tx = body.indexOf("return db.transaction(async tx=>{");
-    const persisted = body.indexOf("await assertPersistedPlatformPermission(tx,context,\"placements.manage\")");
+    const persisted = body.indexOf("await assertPersistedPlatformPermission(tx,context,\"admin-scope.select\")");
     const rowAccess = body.indexOf("const [existing]=await tx.select()");
     expect(start).toBeGreaterThanOrEqual(0);
     expect(tx).toBeGreaterThanOrEqual(0);
     expect(persisted).toBeGreaterThan(tx);
     expect(rowAccess).toBeGreaterThan(persisted);
     expect(service).toContain('requirePlatformAdministrator(context)');
+  });
+
+  it("SA-PLACEMENT-POLICY-04 allows selected-college Super Admin global policy while denying stale or lower roles", () => {
+    const context: RequestContext = {
+      user: { id: "sa", identityUid: "sa-id", platformStatus: "ACTIVE", systemRoles: ["SUPER_ADMIN"] },
+      membership: null,
+      adminScope: { collegeId: "college-b", organizationId: "org-b" },
+    };
+    expect(can(context, "admin-scope.select")).toBe(true);
+    expect(can(context, "placements.manage")).toBe(false);
+    const sourceText = source();
+    expect(sourceText).toContain('assertPersistedPlatformPermission(tx,context,"admin-scope.select")');
+    const suspended: RequestContext = { ...context, user: { ...context.user, platformStatus: "DISABLED" } };
+    expect(can(suspended, "admin-scope.select")).toBe(false);
+    const wrongRole: RequestContext = { ...context, user: { ...context.user, systemRoles: [] } };
+    expect(can(wrongRole, "admin-scope.select")).toBe(false);
   });
 
   it("SA-PLACEMENT-POLICY-02 serializes edits to distinct duration keys before checking their coupled limits", () => {
