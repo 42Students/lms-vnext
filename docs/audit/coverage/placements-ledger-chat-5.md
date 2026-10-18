@@ -134,3 +134,18 @@ The central project ledger is managed by chat-14, so chat-5's narrowly scoped TP
 | PLACEMENTS-SHARE-PAGE-01/02 | `recoverCompanyShareLinkPage`, `clampCompanyShareLinksPage`, `companySharePreviewSearchState`, `prependCompanyShareLink` | Independent link history pagination, invalid query recovery, cap 25, deduplicated newly issued share. |
 
 **Remaining:** routes' live 401/403/404/error and mobile browser states, correlated POST route actual origin checks, and PostgreSQL shared-link history/read isolation must run before closing this TPO page group.
+
+
+### Previously unreferenced placement model coverage: adversarial CSV/identity
+
+- **TPO-AUDIT-CSV-01:** `tpoAuditCsv` now neutralizes spreadsheet formulas after leading whitespace, not just in the first character. `tests/unit/chat5-placements-weak-audit-export-and-bulk-ids.test.ts` covers leading spaces/tab/quote, escaped multiline and output delimiters.
+- **TPO-STUDENTS-BULK-AMBIG-01:** `matchTpoStudentRolls` was a last-wins map, potentially selecting the **wrong membership** for a duplicated or case-folded roll or registration ID. It now treats shared identifiers as unresolved rather than picking any learner; the same test covers cross-field duplicate, repeated same membership, dedupe and normal case-insensitive matches.
+- The same test covers `roundApplyPreviewCsv`, `roundApplyReportCsv`, `tpoRoundFailureCsv` and its query schema, `tpoIndiaCalendarDay` at 18:30 UTC IST midnight, and `tpoStudentClipboardCell`/`tpoStudentClipboardTsv`.
+- **State:** unit tests authored, not executed. The TPO student bulk UI should present ambiguous rolls as unresolved so staff can correct identifiers; no automatic learner assignment is permitted. Live user journey and all 100 other previously-unreferenced placement source paths remain part of the backlog.
+
+
+### PLACEMENTS-CLOSE-ENDED-01 — cross-service lifecycle reconciliation
+
+A published drive could be closed by the `evaluateTpoDriveLifecycle` policy after its placement season ended, but both the canonical `closePlacementJob` path and the more carefully versioned `closeTpoDriveWithPreview` path refused it because they required `ACTIVE` season status. That prevented late closeout, application withdrawal settlement, recruiter notices and final audit for a real-ended season. The canonical close service no longer blocks on season ACTIVE; the preview model and preview read permit `PUBLISHED` with a **registered** CLOSED season while still requiring zero issued offers, zero unreleased selections, exact persisted impact counts, expectedUpdatedAt CAS, audited transaction and all withdrawal/applicant effects. Missing season still fails closed. The page now describes this accurately without claiming seasons must be ACTIVE.
+
+`tests/unit/chat5-tpo-second-third-remaining-workflows.test.ts` checks the actual close-policy states and the source-level two-service contract and blocked copy. The full PostgreSQL ended-season fixture and race tests are **not executed**. A separate canonical `closePlacementJob` race/cancel regression is still required.

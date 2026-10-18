@@ -17,7 +17,9 @@ export function evaluateTpoDriveClosure(
  current:TpoDriveImpactCounts,expected:TpoDriveImpactCounts,
  unreleasedSelections=0,
 ){
- if(status!=="PUBLISHED"||seasonStatus!=="ACTIVE")return "READ_ONLY" as const;
+ // Closing an already published drive must remain possible after its season ends.
+ // Issuance, applying and reopening still require an active season.
+ if(status!=="PUBLISHED"||seasonStatus===null)return "READ_ONLY" as const;
  if(unreleasedSelections>0)return "UNRELEASED_SELECTIONS" as const;
  if(current.applications!==expected.applications||current.rounds!==expected.rounds||
   current.offers!==expected.offers)return "PREVIEW_STALE" as const;

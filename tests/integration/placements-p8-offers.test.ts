@@ -32,6 +32,7 @@ import {
 } from "@/modules/placements/result-service";
 import { decidePlacementScreening } from "@/modules/placements/screening-service";
 import { recordTpoDriveSelections } from "@/modules/placements/tpo-drive-selection-service";
+import {getTpoDriveClosePreview,closeTpoDriveWithPreview} from "@/modules/placements/tpo-drive-close-preview-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { enableSeedLearnerPlacementAccess } from "../support/w04-placement-access-fixture";
 
@@ -360,6 +361,47 @@ describe("Placement P8 offers and joining", () => {
     for(const outcome of settled)if(outcome.status==="fulfilled"){
       expect(outcome.value.selectionIds).toEqual([rows.rows[0]?.id]);
       expect(outcome.value.recorded).toBe(1);
+    }
+  });
+
+  it("PLACEMENTS-CLOSE-ENDED-DB-01 closes a published drive after its season ends with complete persisted reconciliation",async()=>{
+    const {job,application}=await preparePassedApplication();
+    const before=await pool.query<{season_id:string}>(
+      "select season_id from placement_jobs where id = $1",[job.id]);
+    const originalSeason=before.rows[0]?.season_id;
+    expect(originalSeason).toBeTruthy();
+    const closedSeason=await pool.query<{id:string}>(`
+      insert into placement_seasons (
+        college_id,name,code,start_date,end_date,status,
+        created_by_user_id,closed_by_user_id,closed_at
+      ) values ($1,$2,$3,'2026-01-01','2026-10-17','CLOSED',$4,$4,now())
+      returning id`,[
+        SEED_IDS.collegeA,"Ended season closeout regression","chat5-closed-"+job.id.slice(0,8),
+        SEED_IDS.facultyUser,
+      ]);
+    const closedSeasonId=closedSeason.rows[0]!.id;
+    try {
+      await pool.query("update placement_jobs set season_id=$1 where id=$2",[closedSeasonId,job.id]);
+      const preview=await getTpoDriveClosePreview(tpo,job.id);
+      expect(preview).toMatchObject({status:"PUBLISHED",canClose:true,issuedOffers:0,pendingSelections:0});
+      const result=await closeTpoDriveWithPreview(tpo,job.id,{
+        action:"CLOSE",confirmed:true,expectedUpdatedAt:preview.expectedUpdatedAt,
+        expectedCounts:preview.counts,reason:"Final recruitment finished and season already ended",
+      });
+      expect(result.status).toBe("CLOSED");
+      const persisted=await pool.query<{status:string}>(
+        "select status from placement_jobs where id=$1",[job.id]);
+      expect(persisted.rows[0]?.status).toBe("CLOSED");
+      const screening=await pool.query<{status:string}>(
+        "select status from placement_application_screenings where application_id=$1",[application.id]);
+      expect(screening.rows[0]?.status).toBe("REJECTED");
+      const closedAudit=await pool.query<{total:number}>(
+        "select count(*)::integer as total from activity_events where subject_id=$1 and event_type=$2",
+        [job.id,"PLACEMENTS_TPO_DRIVE_CLOSED_WITH_PREVIEW"]);
+      expect(closedAudit.rows[0]?.total).toBe(1);
+    } finally {
+      await pool.query("update placement_jobs set season_id=$1 where id=$2",[originalSeason,job.id]);
+      await pool.query("delete from placement_seasons where id=$1",[closedSeasonId]);
     }
   });
 
