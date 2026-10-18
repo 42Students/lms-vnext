@@ -33,11 +33,11 @@ export default async function InternalThread({params,searchParams}:{params:Promi
  if(!parsedPage.success)notFound();
  const result=await readTpoInternalConversation(context,parsed.data,parsedPage.data);
  if(result.status==="NOT_FOUND")notFound();
- if(result.status==="NOT_REGISTERED")return <main className="space-y-4 p-5">
+ if(result.status==="NOT_REGISTERED")return <div className="space-y-4 p-5">
    <PageHeader eyebrow="TPO · Team" title="Conversations unavailable"/>
    <p role="status">Private messaging tables are not registered.</p>
-   <Link href="/tpo/team" className="text-primary-text">Back to team</Link>
- </main>;
+   <Link href="/tpo/team" className="text-[var(--lms-teal-deep)]">Back to team</Link>
+ </div>;
  const preferences=await getTpoTeamThreadPreferences(context,parsed.data);
  const asks=await listTpoTeamAsks(context,parsed.data).catch(()=>({status:"FAILED" as const,items:[]}));
  const otherMembershipId=result.thread.startedByMembershipId===context.membership?.id?
@@ -50,11 +50,11 @@ export default async function InternalThread({params,searchParams}:{params:Promi
  const rawAsk=Array.isArray(query.ask)?query.ask[0]:query.ask;
  const highlightAskId=rawAsk&&tpoThreadIdSchema.safeParse(rawAsk).success?rawAsk:undefined;
  const serverNow=new Date();
- return <main className="space-y-5">
+ return <div className="space-y-5">
   <TpoLiveRefresh intervalMs={30000}/>
   <PageHeader eyebrow="TPO · Team" title={result.thread.topic}
    description={"With "+result.thread.counterpartName+" · Private placement-team conversation."}/>
-  <Link href="/tpo/team?tab=conversations" className="inline-flex min-h-11 items-center text-primary-text">All conversations</Link>
+  <Link href="/tpo/team?tab=conversations" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)]">All conversations</Link>
   <TpoTeamOpenRead threadId={result.thread.id}/>
   <TpoTeamRename threadId={result.thread.id} currentTopic={result.thread.topic}/>
   <TpoTeamThreadDetails threadId={result.thread.id} topic={result.thread.topic}
@@ -75,7 +75,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
    muted={preferences.muted} ready={preferences.status==="READY"}/>
   <form method="post" action={"/api/placements/tpo/team/threads/"+result.thread.id+"/acknowledge"}>
    <button type="submit"
-    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
     Mark this conversation&apos;s alerts as read
    </button>
   </form>
@@ -84,7 +84,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
     <h2 className="text-sm font-semibold">Decided:</h2>
     {result.messages.filter(message=>message.decision&&!message.removed).slice(-5).map(message=>
      <Link key={message.id} href={"#team-message-"+message.id}
-      className="block truncate text-sm text-primary-text underline">{message.body}</Link>)}
+      className="block truncate text-sm text-[var(--lms-teal-deep)] underline">{message.body}</Link>)}
    </aside>:null}
   <ol role="log" aria-live="polite" aria-busy={false} aria-label="Private team messages" className="space-y-3">
    {result.messages.map((message,index)=>{
@@ -122,17 +122,17 @@ export default async function InternalThread({params,searchParams}:{params:Promi
    <span className="text-body">Page {result.page} of {result.pages}</span>
    {result.page < result.pages ? <Link
     href={"/tpo/team/"+result.thread.id+"?page="+(result.page+1)}
-    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">
+    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-[var(--lms-teal-deep)]">
     Older messages
    </Link> : null}
    {result.page > 1 ? <Link
     href={"/tpo/team/"+result.thread.id+"?page="+(result.page-1)}
-    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">
+    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-[var(--lms-teal-deep)]">
     Newer messages
    </Link> : null}
   </nav>
   <TpoTeamReplyComposer threadId={result.thread.id} actorUserId={context.user.id}/>
   {!result.messages.length?<p role="status" className="rounded-xl border border-border p-5 text-sm text-body">No messages in this thread yet.</p>:null}
 
- </main>;
+ </div>;
 }

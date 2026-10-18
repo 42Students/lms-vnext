@@ -160,7 +160,7 @@ export default async function TrackerIssuesPage({
                     <StatusBadge>{issue.environment}</StatusBadge>
                   </div>
                   <h2 className="mt-3 text-base font-semibold text-foreground">
-                    <Link className="hover:text-[var(--lms-teal-deep)]" href={`/tracker/issues/${encodeURIComponent(issue.publicId)}`}>
+                    <Link className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" href={`/tracker/issues/${encodeURIComponent(issue.publicId)}`}>
                       {issue.publicId} · {issue.issueType}
                     </Link>
                   </h2>

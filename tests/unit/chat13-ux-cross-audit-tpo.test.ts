@@ -186,4 +186,14 @@ describe("chat-13 TPO second-third cross-audit repairs",()=>{
   expect(s).not.toContain('window.confirm');
   expect(s).not.toContain('min-h-10');
  });
+ it("UX-cross-tpo-second-C13-027 recruiter directory and company communication remain accessible across viewports",()=>{
+  const s=read("src/components/tpo/recruiter-leads-workspace.tsx");
+  expect(s).toContain('<DataTable<(typeof visibleCompanies)[number]>');
+  expect(s).toContain('<DataTable<(typeof sortedVisible)[number]>');
+  expect(s).toContain('mobilePriority:"action"');
+  expect(s).toContain('Select all visible recruiters');
+  expect(s).toContain('RecruiterRosterDisplayControls');
+  expect(s).toContain('visibleColumns.includes(column.key as EngageColumn)');
+  expect(s).not.toContain('<table');
+ });
 });

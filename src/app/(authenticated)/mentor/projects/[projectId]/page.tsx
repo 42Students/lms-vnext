@@ -23,13 +23,13 @@ export default async function MentorProjectPage({
 }) {
   const context = await getCurrentRequestContext();
   const available = await resolveOptionalModuleAccess(context).catch(() => null);
-  if (available?.projects.enabled !== true) return <MentorProjectsUnavailable />;
+  if (available?.projects.enabled !== true) return <MentorProjectsUnavailable loadFailed={available===null} />;
   const { projectId } = await params;
   const { tab } = await searchParams;
   const selectedTab = tab === "tasks" ? "board" : tab === "meetings" ? "team" : tab;
   const breadcrumbTab: Record<string, string> = {
     overview: "Overview", team: "People & Meetings", sprints: "Releases and Sprints",
-    board: "Board", performance: "Task Allocation", resources: "Resources",
+    board: "Board", performance: "Task Allocation", resources: "Resources", delivery: "Delivery",
     activity: "Activity",
   };
   const activeSection =
@@ -60,12 +60,12 @@ export default async function MentorProjectPage({
     );
 
   return (
-    <div className="min-w-0 max-w-full min-w-0 space-y-6">
+    <div className="min-w-0 max-w-full space-y-6">
       <Breadcrumbs items={[{label:"Projects",href:"/mentor/projects"},{label:breadcrumbTab[selectedTab ?? "overview"] ?? "Overview"}]} />
       {(selectedTab==="board"||selectedTab==="performance") ?
         <PageHeader title={workspace.project.title} /> : null}
       <MentorProjectTabs projectId={projectId}/>
-      {access.access === "MENTOR" ? <Card><details className="min-w-0"><summary className="cursor-pointer text-sm font-semibold text-[var(--lms-teal-deep)]">Additional project tools</summary><div className="mt-3 flex flex-wrap gap-3">
+      {access.access === "MENTOR" ? <Card><details className="min-w-0"><summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Additional project tools</summary><div className="mt-3 flex flex-wrap gap-3">
         <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/board-review"}
           className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           Task board status

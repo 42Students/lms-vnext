@@ -35,7 +35,7 @@ export default async function TpoPlacedByBranchPage({ searchParams }: { searchPa
           Download CSV
         </a> : null}
       />
-      <Link href="/tpo/reports" className="text-sm font-semibold text-primary-text hover:underline">← Reports</Link>
+      <Link href="/tpo/reports" className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">← Reports</Link>
       <form action="/tpo/reports/placed-branch" method="get"
         className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2">
         <label className="text-sm font-semibold text-body">Season

@@ -25,6 +25,7 @@ import {tpoCompanyDirectoryCsv} from "@/modules/placements/tpo-company-directory
 import {deriveLegacyCompanyCommunication} from "@/modules/placements/tpo-company-communication-legacy-model";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {Dialog} from "@/components/ui/dialog";
+import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 
 type Lead = {
@@ -923,54 +924,54 @@ export function RecruiterLeadsWorkspace({
                   No companies match the current filters.
                 </p>
               ) : (
-                <div className="overflow-x-auto rounded-lg border border-border bg-surface">
-                  <table className="w-full text-left text-sm">
-                    <thead className="border-b border-border bg-surface-secondary text-muted-foreground">
-                      <tr>{["Company","Communication","People","Drives that ran","Accepted-offer drives","Students placed"].map(label=>
-                        <th key={label} scope="col" className="px-4 py-3">{label}</th>)}</tr>
-                    </thead>
-                    <tbody>{visibleCompanies.map(company=>(
-                      <tr key={company.key} className="border-b border-border last:border-0">
-                        <td className="px-4 py-3">
-                          <Link className="text-[var(--lms-teal-deep)] underline" href={"/tpo/companies?name="+encodeURIComponent(company.name)}>{company.name}</Link>
-                          {company.aliases.length?<p className="text-xs text-muted-foreground"><span title={company.aliases.join(", ")}>Also {company.aliases.length} other spellings</span></p>:null}
-                        </td>
-                        <td className="px-4 py-3">
-                          <select aria-label={"Communication for "+company.name}
-                            className="min-h-11 rounded-md border border-border bg-surface px-2 text-sm"
-                            value={communication[company.key]??deriveLegacyCompanyCommunication(company.drivesRan,
-                              rows.filter(row=>company.people.some(p=>p.id===row.id)))}
-                            disabled={!communicationReady}
-                            onChange={e=>void changeCompanyCommunication(company.key,e.target.value)}>
-                            <option value="NOT_CONTACTED">Not contacted</option>
-                            <option value="EMAILED">Emailed</option>
-                            <option value="REPLIED">Replied</option>
-                            <option value="MEETING_SET">Meeting set</option>
-                            <option value="NOT_INTERESTED">Not interested</option>
-                          </select>
-                        </td>
-                        <td className="px-4 py-3">
-                          {company.people?.length?company.people.map(person=>
-                            <Link key={person.id} className="mr-2 text-[var(--lms-teal-deep)] underline"
-                              href={"/tpo/recruiters/"+encodeURIComponent(person.id)}>{person.name}</Link>):
-                            <button type="button" className="text-[var(--lms-teal-deep)] underline"
-                              onClick={()=>{setForm({...EMPTY,companyName:company.name});setAdding(true);}}>Add a contact</button>}
-                        </td>
-                        <td className="px-4 py-3">{company.drivesRan}</td>
-                        <td className="px-4 py-3">{company.acceptedOfferDrives}</td>
-                        <td className="px-4 py-3">{company.studentsPlaced??"Not enough data yet"}</td>
-                      </tr>
-                    ))}</tbody>
-                  </table>
-                </div>
+                <DataTable<(typeof visibleCompanies)[number]> caption="Company contacts and communication"
+                  rows={visibleCompanies} getRowKey={company=>company.key}
+                  empty={<p role="status">No companies match the current filters.</p>}
+                  columns={[
+                    {key:"Company",header:"Company",mobilePriority:"primary",cell:company=><div className="min-w-0">
+                      <Link href={"/tpo/companies?name="+encodeURIComponent(company.name)}
+                        className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">{company.name}</Link>
+                      {company.aliases.length?<p className="text-xs text-muted-foreground" title={company.aliases.join(", ")}>
+                        Also {company.aliases.length} other spellings</p>:null}
+                    </div>},
+                    {key:"Communication",header:"Communication",mobilePriority:"action",cell:company=>
+                      <select aria-label={"Communication for "+company.name}
+                        className="min-h-11 rounded-md border border-border bg-surface px-2 text-base"
+                        value={communication[company.key]??deriveLegacyCompanyCommunication(company.drivesRan,
+                          rows.filter(row=>company.people.some(person=>person.id===row.id)))}
+                        disabled={!communicationReady}
+                        onChange={e=>void changeCompanyCommunication(company.key,e.target.value)}>
+                        <option value="NOT_CONTACTED">Not contacted</option><option value="EMAILED">Emailed</option>
+                        <option value="REPLIED">Replied</option><option value="MEETING_SET">Meeting set</option>
+                        <option value="NOT_INTERESTED">Not interested</option>
+                      </select>},
+                    {key:"People",header:"People",mobilePriority:"secondary",cell:company=><div className="flex flex-wrap gap-2">
+                      {company.people?.length?company.people.map(person=>
+                        <Link key={person.id} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline"
+                          href={"/tpo/recruiters/"+encodeURIComponent(person.id)}>{person.name}</Link>):
+                        <button type="button" className="min-h-11 text-[var(--lms-teal-deep)] underline"
+                          onClick={()=>{setForm({...EMPTY,companyName:company.name});setAdding(true);}}>Add a contact</button>}
+                    </div>},
+                    {key:"Drives that ran",header:"Drives that ran",mobilePriority:"secondary",cell:company=>company.drivesRan},
+                    {key:"Accepted-offer drives",header:"Accepted-offer drives",mobilePriority:"secondary",cell:company=>company.acceptedOfferDrives},
+                    {key:"Students placed",header:"Students placed",mobilePriority:"secondary",cell:company=>company.studentsPlaced??"Not enough data yet"},
+                  ]}/>
+
               )}
             </section>
           ) : view === "table" ? (
             <div className="space-y-3">
               <RecruiterRosterDisplayControls columns={visibleColumns} onColumns={changeVisibleColumns}
                 sort={rosterSort} onSort={changeRosterSort} ascending={sortAscending} onAscending={changeSortAscending}/>
-              <div className="overflow-x-auto rounded-lg border border-border bg-surface">
-              <table className="w-full text-left text-sm" tabIndex={0}
+              <label className="inline-flex min-h-11 items-center gap-2 text-sm">
+                <input type="checkbox" aria-label="Select all visible recruiters"
+                  checked={visible.length>0&&visible.every(row=>selectedIds.includes(row.id))}
+                  onChange={event=>setSelectedIds(current=>event.target.checked
+                    ?[...new Set([...current,...visible.map(row=>row.id)])]
+                    :current.filter(id=>!visible.some(row=>row.id===id)))}/>
+                Select all visible recruiters
+              </label>
+              <div className="min-w-0" role="region" aria-label="Recruiter roster" tabIndex={0}
                 onKeyDown={event=>{
                   if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==="c"&&selectedIds.length){
                     const target=event.target;
@@ -978,66 +979,49 @@ export function RecruiterLeadsWorkspace({
                     event.preventDefault();void copyRows();
                   }
                 }}>
-                <thead className="border-b border-border bg-surface-secondary text-muted-foreground">
-                  <tr>
-                    <th scope="col" className="px-4 py-3">
-                      <input type="checkbox" aria-label="Select all visible recruiters"
-                        checked={visible.length>0&&visible.every(row=>selectedIds.includes(row.id))}
-                        onChange={event=>setSelectedIds(current=>event.target.checked?
-                          [...new Set([...current,...visible.map(row=>row.id)])]:
-                          current.filter(id=>!visible.some(row=>row.id===id)))}/>
-                    </th>
-                    {["Contact", "Company", "Status", "Stage", "Owner", "Last activity", "Next follow-up", "Company drives", "Invite", "Added", "Flags", "Source", "Email", "Phone", "Actions"].filter(x=>visibleColumns.includes(x as EngageColumn)).map(x =>
-                    <th key={x} scope="col" className="px-4 py-3 font-semibold">{x}</th>)}</tr>
-                </thead>
-                <tbody>
-                  {sortedVisible.map(lead => (
-                    <tr key={lead.id} className="border-b border-border last:border-0">
-                      <td className="px-4 py-3">
+                <DataTable<(typeof sortedVisible)[number]> caption="Recruiter roster"
+                  rows={sortedVisible} getRowKey={lead=>lead.id}
+                  empty={<p role="status">{rows.length?"No leads match your filters.":"No recruiters yet. Add a company contact to start tracking outreach."}</p>}
+                  columns={([
+                    {key:"Select",header:"Select",mobilePriority:"action",cell:lead=>
+                      <label className="inline-flex min-h-11 items-center gap-2 text-sm">
                         <input type="checkbox" aria-label={"Select "+lead.name}
                           checked={selectedIds.includes(lead.id)}
-                          onChange={event=>setSelectedIds(current=>event.target.checked?
-                            [...new Set([...current,lead.id])]:current.filter(id=>id!==lead.id))}/>
-                      </td>
-                      <td style={{display:visibleColumns.includes("Contact")?undefined:"none"}} className="px-4 py-3 font-medium">
-                        <Link className="text-[var(--lms-teal-deep)] underline-offset-2 hover:underline"
-                          href={"/tpo/recruiters/" + encodeURIComponent(lead.id)}>{lead.name||"Unnamed contact"}</Link>
-                         {lead.designation?<p className="mt-1 text-xs font-normal text-muted-foreground">{lead.designation}</p>:null}
-                      </td>
-                      <td style={{display:visibleColumns.includes("Company")?undefined:"none"}} className="px-4 py-3">{lead.companyName || "—"}</td>
-                      <td style={{display:visibleColumns.includes("Status")?undefined:"none"}} className="px-4 py-3">{lead.recruiterUserId?"Joined":lead.unsubscribedAt?"Unsubscribed":"Not joined"}</td>
-                       <td style={{display:visibleColumns.includes("Stage")?undefined:"none"}} className="px-4 py-3"><RecruiterInlineStage lead={lead} onUpdated={()=>void load()}/></td>
-                       <td style={{display:visibleColumns.includes("Owner")?undefined:"none"}} className="px-4 py-3"><RecruiterInlineOwner lead={lead} onUpdated={()=>void load()}/></td>
-                       <td style={{display:visibleColumns.includes("Last activity")?undefined:"none"}} className="px-4 py-3">{lead.lastActivityAt?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(lead.lastActivityAt)):"—"}</td>
-                       <td style={{display:visibleColumns.includes("Next follow-up")?undefined:"none"}} className="px-4 py-3">{lead.nextFollowupAt?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(lead.nextFollowupAt)):"—"}</td>
-                       <td style={{display:visibleColumns.includes("Company drives")?undefined:"none"}} className="px-4 py-3">{lead.drivesRan??"—"}</td>
-                       <td style={{display:visibleColumns.includes("Invite")?undefined:"none"}} className="px-4 py-3">{lead.inviteStatus.replaceAll("_"," ")}</td>
-                       <td style={{display:visibleColumns.includes("Added")?undefined:"none"}} className="px-4 py-3">{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(lead.createdAt))}</td>
-                      <td style={{display:visibleColumns.includes("Flags")?undefined:"none"}} className="px-4 py-3">
-                        {lead.chips?.map(chip => (
-                          <span key={chip} className="mr-1 inline-block rounded border border-border px-1.5 py-0.5 text-xs">
-                            {chip === "QUIET" ? `Quiet ${lead.quietDays}d` : RECRUITER_ATTENTION_LABELS[chip]}
-                          </span>
-                        ))}
-                      </td>
-                      <td style={{display:visibleColumns.includes("Source")?undefined:"none"}} className="px-4 py-3">{lead.source || "Manual"}</td>
-                      <td style={{display:visibleColumns.includes("Email")?undefined:"none"}} className="px-4 py-3">{lead.emailNorm || "—"}</td>
-                      <td style={{display:visibleColumns.includes("Phone")?undefined:"none"}} className="px-4 py-3">{lead.phoneNorm || "—"}</td>
-                      <td style={{display:visibleColumns.includes("Actions")?undefined:"none"}} className="px-4 py-3">
-                        {!lead.recruiterUserId?(
-                          <button type="button" className={buttonStyle}
-                            disabled={Boolean(invitingId)||!lead.emailNorm||!lead.companyRelationshipId||Boolean(lead.unsubscribedAt)}
-                            title={!lead.emailNorm||!lead.companyRelationshipId?"Add a work email and link a company before inviting.":undefined}
-                            onClick={()=>void createInviteLink(lead)}>
-                            {lead.inviteSentAt?"Resend invite":"Invite"}
-                          </button>
-                        ):<span className="text-xs text-muted-foreground">Joined</span>}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                          onChange={event=>setSelectedIds(current=>event.target.checked
+                            ?[...new Set([...current,lead.id])]:current.filter(id=>id!==lead.id))}/>
+                        <span className="sm:hidden">Select</span>
+                      </label>},
+                    {key:"Contact",header:"Contact",mobilePriority:"primary",cell:lead=><div className="min-w-0">
+                      <Link className="inline-flex min-h-11 items-center break-words font-semibold text-[var(--lms-teal-deep)] underline"
+                        href={"/tpo/recruiters/"+encodeURIComponent(lead.id)}>{lead.name||"Unnamed contact"}</Link>
+                      {lead.designation?<p className="text-xs text-muted-foreground">{lead.designation}</p>:null}
+                    </div>},
+                    {key:"Company",header:"Company",mobilePriority:"secondary",cell:lead=>lead.companyName||"—"},
+                    {key:"Status",header:"Status",mobilePriority:"secondary",cell:lead=>lead.recruiterUserId?"Joined":lead.unsubscribedAt?"Unsubscribed":"Not joined"},
+                    {key:"Stage",header:"Stage",mobilePriority:"action",cell:lead=><RecruiterInlineStage lead={lead} onUpdated={()=>void load()}/>},
+                    {key:"Owner",header:"Owner",mobilePriority:"action",cell:lead=><RecruiterInlineOwner lead={lead} onUpdated={()=>void load()}/>},
+                    {key:"Last activity",header:"Last activity",mobilePriority:"secondary",cell:lead=>lead.lastActivityAt?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(lead.lastActivityAt)):"—"},
+                    {key:"Next follow-up",header:"Next follow-up",mobilePriority:"secondary",cell:lead=>lead.nextFollowupAt?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(lead.nextFollowupAt)):"—"},
+                    {key:"Company drives",header:"Company drives",mobilePriority:"secondary",cell:lead=>lead.drivesRan??"—"},
+                    {key:"Invite",header:"Invite",mobilePriority:"secondary",cell:lead=>lead.inviteStatus.replaceAll("_"," ")},
+                    {key:"Added",header:"Added",mobilePriority:"secondary",cell:lead=>new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(lead.createdAt))},
+                    {key:"Flags",header:"Flags",mobilePriority:"secondary",cell:lead=><>
+                      {lead.chips?.map(chip=><span key={chip} className="mr-1 inline-block rounded border border-border px-1.5 py-0.5 text-xs">
+                        {chip==="QUIET"?`Quiet ${lead.quietDays}d`:RECRUITER_ATTENTION_LABELS[chip]}</span>)}
+                    </>},
+                    {key:"Source",header:"Source",mobilePriority:"secondary",cell:lead=>lead.source||"Manual"},
+                    {key:"Email",header:"Email",mobilePriority:"secondary",cell:lead=><span className="break-all">{lead.emailNorm||"—"}</span>},
+                    {key:"Phone",header:"Phone",mobilePriority:"secondary",cell:lead=>lead.phoneNorm||"—"},
+                    {key:"Actions",header:"Actions",mobilePriority:"action",cell:lead=>!lead.recruiterUserId
+                      ?<button type="button" className={buttonStyle}
+                        disabled={Boolean(invitingId)||!lead.emailNorm||!lead.companyRelationshipId||Boolean(lead.unsubscribedAt)}
+                        title={!lead.emailNorm||!lead.companyRelationshipId?"Add a work email and link a company before inviting.":undefined}
+                        onClick={()=>void createInviteLink(lead)}>
+                        {lead.inviteSentAt?"Resend invite":"Invite"}</button>
+                      :<span className="text-xs text-muted-foreground">Joined</span>},
+                  ] satisfies DataTableColumn<(typeof sortedVisible)[number]>[])
+                   .filter(column=>column.key==="Select"||visibleColumns.includes(column.key as EngageColumn))}/>
+              </div>
 
             </div>
           ) : (
@@ -1114,7 +1098,7 @@ export function RecruiterLeadsWorkspace({
             className="min-w-0 space-y-4">
             <div className="flex items-center justify-between gap-4">
               <h2 className="text-xl font-semibold">Add recruiter lead</h2>
-              <button type="button" className={buttonStyle} onClick={closeAddDialog} disabled={saving}>Close</button>
+              <button type="button" className={buttonStyle} onClick={()=>closeAddDialog()} disabled={saving}>Close</button>
             </div>
             <label className="block text-sm">Name *<input ref={createNameRef} className={inputStyle + " mt-1"} required maxLength={150}
               value={form.name} onChange={e => field("name", e.target.value)} /></label>

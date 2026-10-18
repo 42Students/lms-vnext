@@ -18,7 +18,7 @@ export default async function PrepSettings(){
  const courses=coursesResult.rows;
  const parsed=tpoPrepConfigSchema.safeParse(data.config??{courseIds:[],minimumCompleted:0});
  const initial=parsed.success?parsed.data:{courseIds:[],minimumCompleted:0};
- return <main className="min-w-0 space-y-4"><TpoSettingsNav active="prep-readiness"/>
+ return <div className="min-w-0 space-y-4"><TpoSettingsNav active="prep-readiness"/>
   <PageHeader eyebrow="TPO · Settings" title="Prep readiness" />
   {communication.ready?<TpoPrepPercentageEditor initial={communication.prepThresholdPct} version={communication.version}/>:
    <p role="status">Readiness percentage storage is unavailable.</p>}
@@ -31,5 +31,5 @@ export default async function PrepSettings(){
    {parsed.success&&coursesResult.ok?<TpoPrepReadinessEditor choices={courses} initial={{courseIds:initial.courseIds,minimumCompleted:initial.minimumCompleted}}
     expectedVersion={data.updatedAt?.toISOString()??"none"}/>:null}
   </>}
- </main>;
+ </div>;
 }

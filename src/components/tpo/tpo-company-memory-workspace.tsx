@@ -58,7 +58,7 @@ type CompanyMemory = {
 type Phase = "loading" | "ready" | "error" | "migration-pending" | "not-found";
 
 const buttonStyle =
-  "inline-flex min-h-10 items-center justify-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground hover:bg-surface-secondary";
+  "inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground hover:bg-surface-secondary";
 
 function dateLabel(value: string) {
   const date = new Date(value);
@@ -184,7 +184,7 @@ export function TpoCompanyMemoryWorkspace({
     <section className="space-y-5" aria-label={"Company Memory for " + company.name}>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <Link className="text-sm text-primary-text hover:underline" href="/tpo/recruiters?view=companies">
+          <Link className="text-sm text-[var(--lms-teal-deep)] hover:underline" href="/tpo/recruiters?view=companies">
             ← Companies
           </Link>
           <h1 className="mt-1 text-2xl font-semibold text-foreground">{company.name}</h1>
@@ -203,12 +203,12 @@ export function TpoCompanyMemoryWorkspace({
            <nav aria-label={"New work for "+company.name}
             className="absolute right-0 z-20 mt-1 w-60 space-y-1 rounded-md border border-border bg-surface p-2 shadow-lg">
             <Link href={"/tpo/recruiters?add=1&company="+encodeURIComponent(company.name)}
-             className="block rounded px-2 py-3 text-sm text-primary-text hover:bg-primary-subtle">New recruiter lead for {company.name}</Link>
+             className="block rounded px-2 py-3 text-sm text-[var(--lms-teal-deep)] hover:bg-primary-subtle">New recruiter lead for {company.name}</Link>
             <Link href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
-             className="block rounded px-2 py-3 text-sm text-primary-text hover:bg-primary-subtle">New drive for {company.name}</Link>
+             className="block rounded px-2 py-3 text-sm text-[var(--lms-teal-deep)] hover:bg-primary-subtle">New drive for {company.name}</Link>
             <div role="separator" className="border-t border-border"/>
             <Link href={"/tpo/calendar?company="+encodeURIComponent(company.name)}
-             className="block rounded px-2 py-3 text-sm text-primary-text hover:bg-primary-subtle">Follow-up</Link>
+             className="block rounded px-2 py-3 text-sm text-[var(--lms-teal-deep)] hover:bg-primary-subtle">Follow-up</Link>
            </nav>
           </details>
           {company.canonicalCompanyId?<Link className={buttonStyle}
@@ -282,7 +282,7 @@ export function TpoCompanyMemoryWorkspace({
                 {company.people.map(person => (
                   <div key={person.id} className="flex items-center justify-between gap-3 py-3">
                     <div>
-                      <Link className="font-medium text-primary-text hover:underline"
+                      <Link className="font-medium text-[var(--lms-teal-deep)] hover:underline"
                         href={"/tpo/recruiters/" + encodeURIComponent(person.id)}>
                         {person.name}
                       </Link>
@@ -316,7 +316,7 @@ export function TpoCompanyMemoryWorkspace({
                 {company.documents.map(doc=><li key={doc.id} className="py-3">
                   <p className="text-sm text-body">Applicant list shared {dateLabel(doc.createdAt)}</p>
                   <p className="text-xs text-muted-foreground">{doc.jobTitle} · {doc.selectedCount>0?doc.selectedCount+" selected applicants":"Current shortlist"}{doc.revokedAt?" · Link withdrawn":new Date(doc.expiresAt).getTime()<currentTimeMs()?" · Link expired":" · Expires "+dateLabel(doc.expiresAt)}</p>
-                  <Link className="text-sm text-primary-text underline"
+                  <Link className="text-sm text-[var(--lms-teal-deep)] underline"
                     href={"/tpo/placements/jobs/"+encodeURIComponent(doc.jobId)}>Open drive</Link>
                 </li>)}
               </ul>}
@@ -339,7 +339,7 @@ export function TpoCompanyMemoryWorkspace({
               Export drives CSV
             </button>
             <label className="mt-3 block text-sm text-body">Search drives
-              <input className="mt-1 min-h-10 w-full rounded-md border border-border bg-surface px-3"
+              <input className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3"
                 type="search" value={driveSearch} onChange={e=>setDriveSearch(e.target.value)}
                 placeholder="Search role, status or year"/>
             </label>
@@ -355,7 +355,7 @@ export function TpoCompanyMemoryWorkspace({
                     {visibleDrives.map(drive => (
                       <tr className="border-b border-border last:border-0" key={drive.id}>
                         <td className="py-3">
-                          <Link className="text-primary-text hover:underline"
+                          <Link className="text-[var(--lms-teal-deep)] hover:underline"
                             href={"/tpo/placements/jobs/" + encodeURIComponent(drive.id)}>
                             {drive.jobTitle}
                           </Link>

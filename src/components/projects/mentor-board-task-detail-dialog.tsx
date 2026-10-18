@@ -3,6 +3,7 @@ import {useEffect,useRef} from "react";
 import Link from "next/link";
 import {ProjectTaskComments} from "./project-task-comments";
 import {projectTaskDueState} from "@/modules/projects/project-task-visible-facts-model";
+import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evidence-model";
 type Task={
  id:string;title:string;status:string;description:string|null;approach:string|null;acceptanceCriteria:string|null;
  priority:string;createdAt?:Date;updatedAt:Date;assigneeMembershipId:string|null;blockerReason:string|null;
@@ -16,10 +17,12 @@ export function MentorBoardTaskDetailDialog({projectId,task,sprintTitle,members,
  submissions:Submission[];activity:Event[];onClose:()=>void;readOnly:boolean;
 }){
  const ref=useRef<HTMLDialogElement>(null);
+ const opener=useRef<HTMLElement|null>(null);
  useEffect(()=>{
   const el=ref.current;if(!el)return;
+  opener.current=document.activeElement instanceof HTMLElement?document.activeElement:null;
   if(!el.open)el.showModal();
-  return ()=>{if(el.open)el.close()};
+  return ()=>{if(el.open)el.close();opener.current?.focus();};
  },[task.id]);
  const author=members.find(m=>m.membershipId===task.assigneeMembershipId)?.displayName??"Unassigned";
  const recent=activity.filter(event=>event.subjectId===task.id);
@@ -28,12 +31,13 @@ export function MentorBoardTaskDetailDialog({projectId,task,sprintTitle,members,
    .sort((a,b)=>new Date(b.occurredAt).getTime()-new Date(a.occurredAt).getTime())[0]?.actorDisplayName;
  const attempts=submissions.filter(row=>row.taskId===task.id);
  return <dialog ref={ref} aria-labelledby="mentor-board-task-title" onClose={onClose}
+  onCancel={event=>{event.preventDefault();ref.current?.close();}}
   className="fixed inset-0 m-auto max-h-[90dvh] w-[min(95vw,42rem)] overflow-y-auto rounded-xl border border-border bg-surface p-5 text-foreground shadow-xl backdrop:bg-black/50">
   <div className="flex items-start justify-between gap-3">
    <div><p className="text-xs font-semibold uppercase text-muted-foreground">Mentor · Task details</p>
     <h2 id="mentor-board-task-title" className="text-lg font-semibold">{task.title}</h2></div>
    <button type="button" onClick={()=>ref.current?.close()}
-    className="min-h-10 rounded border border-border px-3 text-sm font-semibold">Close</button>
+    className="min-h-11 rounded border border-border px-3 text-sm font-semibold">Close</button>
   </div>
   <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
    {([{label:"Status",value:task.status},{label:"Priority",value:task.priority},
@@ -46,9 +50,9 @@ export function MentorBoardTaskDetailDialog({projectId,task,sprintTitle,members,
   </dl>
   <dl className="mt-4 grid gap-3 text-xs text-body sm:grid-cols-2">
     {task.createdAt ? <div><dt className="font-semibold">Created</dt>
-      <dd>{creator ? "Created by "+creator+" · " : ""}{new Date(task.createdAt).toLocaleString("en-IN")}</dd></div> : null}
+      <dd>{creator ? "Created by "+creator+" · " : ""}{new Date(task.createdAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}</dd></div> : null}
     <div><dt className="font-semibold">Last edited</dt>
-      <dd>{editor ? "Last edited by "+editor+" · " : ""}{new Date(task.updatedAt).toLocaleString("en-IN")}</dd></div>
+      <dd>{editor ? "Last edited by "+editor+" · " : ""}{new Date(task.updatedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}</dd></div>
   </dl>
   <section className="mt-4"><h3 className="font-semibold">Description / Approach</h3>
     <p className="mt-1 whitespace-pre-wrap text-sm">{task.description||"No description recorded"}</p></section>
@@ -65,20 +69,20 @@ export function MentorBoardTaskDetailDialog({projectId,task,sprintTitle,members,
    <h3 className="font-semibold">Submissions · {attempts.length}</h3>
    {attempts.length?<ul className="mt-2 space-y-2">{attempts.map(row=>
     <li key={row.id} className="rounded border border-border p-2 text-xs">
-     Version {row.version} · {row.status} · {new Date(row.createdAt).toLocaleDateString("en-IN")}
+     Version {row.version} · {row.status} · {new Date(row.createdAt).toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}
      {row.submittedByMembershipId ? " · Submitted by "+(members.find(member=>member.membershipId===row.submittedByMembershipId)?.displayName??"Project member") : ""}
-     {/^(https?:)\/\//i.test(row.submissionUrl)?
-      <a href={row.submissionUrl} target="_blank" rel="noopener noreferrer"
-       className="ml-2 text-primary-text underline">Open submitted evidence</a>:null}
+     {safeProjectExternalHref(row.submissionUrl)?
+      <a href={safeProjectExternalHref(row.submissionUrl)!} target="_blank" rel="noopener noreferrer"
+       className="ml-2 inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Open submitted evidence</a>:null}
     </li>)}</ul>:<p className="text-xs text-muted-foreground">No submissions yet</p>}
    <Link href={"/mentor/projects/"+projectId+"?tab=delivery"}
-    className="mt-2 inline-block text-sm font-semibold text-primary-text underline">Open delivery review</Link>
+    className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Open delivery review</Link>
   </section>
   <section className="mt-4"><h3 className="font-semibold">Activity</h3>
    {recent.length?<ol className="mt-2 space-y-2">{recent.slice(0,20).map(item=>
     <li key={item.id} className="border-l-2 border-border pl-2 text-xs">{item.summary} ·
       {" "+(item.actorDisplayName??"System")} ·
-      {" "+new Date(item.occurredAt).toLocaleString("en-IN")}</li>)}</ol>:
+      {" "+new Date(item.occurredAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}</li>)}</ol>:
     <p className="text-xs text-muted-foreground">No activity for this task.</p>}
   </section>
   <section className="mt-4"><h3 className="font-semibold">Comments</h3>
