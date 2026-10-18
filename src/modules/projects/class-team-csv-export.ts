@@ -4,7 +4,7 @@ import type {ProjectTeam} from "./class-team-split-model";
  * Defuse formulas even behind Unicode format/control/spacing characters.
  */
 function safeCsv(value:string):string{
- const formula=/^[\p{Cc}\p{Cf}\p{Zs}\p{Zl}\p{Zp}]*[=+@-]/u.test(value);
+ const formula=/^[\p{Cc}\p{Cf}\p{M}\p{Zs}\p{Zl}\p{Zp}]*[=+@-]/u.test(value);
  const safe=formula?"'"+value:value;
  return '"'+safe.replaceAll('"','""')+'"';
 }
