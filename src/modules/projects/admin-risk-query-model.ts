@@ -12,6 +12,7 @@ const first = (value: string | string[] | undefined) => Array.isArray(value) ? v
 
 /** Fail safely on forged or out-of-range risk URLs, without hiding their filters. */
 export function parseProjectAdminRiskQuery(params: Record<string,string|string[]|undefined>) {
+  if (Object.values(params).some(Array.isArray)) return schema.safeParse(null);
   const entries = {
     riskBucket: first(params.riskBucket), riskSort: first(params.riskSort),
     q: first(params.q), status: first(params.status),

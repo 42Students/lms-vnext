@@ -14,6 +14,7 @@ const schema = z.strictObject({
 const first = (value: string | string[] | undefined) => Array.isArray(value) ? value[0] : value;
 
 export function parseProjectAdminSubmissionsQuery(params: Record<string,string|string[]|undefined>) {
+  if (Object.values(params).some(Array.isArray)) return schema.safeParse(null);
   const entries = {
     view:first(params.view),q:first(params.q),status:first(params.status),
     submissionStatus:first(params.submissionStatus),
