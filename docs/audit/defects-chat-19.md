@@ -473,3 +473,11 @@ The exact legacy-facing copy was preserved; no code run or CI status is asserted
 | HR-BREAK-ACTIVE-BELL-34 | MAJOR | The **active shell bell** `HrRecruiterBell` marked all notifications read simply on opening its panel before the recruiter could inspect them. It also preserved previously visible, possibly now-revoked college notices after a denied refresh. Opening is now strictly read-only; Mark all read requires an explicit click, verified nonredirected JSON acknowledgement, guarded double submit and fresh read. Out-of-order GET responses cannot restore stale private data. Added keyboard dismissal/focus return, 44px targets and a labelled vertical ScrollCue to compensate for invisible scrollbars. | `tests/unit/HR-BREAK-chat19-active-bell.test.tsx` checks active-shell wiring, request generation, receipt verification, focus and SSR controls. |
 
 Cloud/browser execution remains pending.
+
+## Live recruiter bell payload validation
+
+| ID | Severity | Finding / fix | Behavioral regression |
+|---|---|---|---|
+| HR-BREAK-BELL-PAYLOAD-35 | MAJOR | The long-lived HR shell bell trusted any HTTP 200 JSON as a complete `HrBellResponse`. A malformed payload could crash when `state.items.length` was accessed; a returned link could also leave the recruiter's permitted drive route. Parse finite unread counts, bounded notice rows, valid dates and same-route job UUID links before displaying the response. Fail closed and surface a recoverable error if invalid. | `tests/unit/HR-BREAK-chat19-bell-payload.test.ts` executes successful and hostile shapes and checks guarded rendering. |
+
+No CI or runtime test was run during this priority phase.

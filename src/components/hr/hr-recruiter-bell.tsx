@@ -3,7 +3,7 @@ import Link from "next/link";
 import {ScrollCue} from "@/components/ui/scroll-cue";
 import {createRecruiterBellRequestGate} from "@/modules/placements/recruiter-bell-model";
 import {useCallback,useEffect,useRef,useState} from "react";
-import {HR_BELL_EMPTY,HR_BELL_EMPTY_HELP,relativeHrBellTime,createHrBellMutationGate,type HrBellResponse} from "@/modules/placements/hr-recruiter-bell-model";
+import {HR_BELL_EMPTY,HR_BELL_EMPTY_HELP,relativeHrBellTime,createHrBellMutationGate,parseHrBellResponse,type HrBellResponse} from "@/modules/placements/hr-recruiter-bell-model";
 function isHrBellReadReceipt(value:unknown):value is {marked:number}{
  if(!value||typeof value!=="object"||!("marked" in value))return false;
  const count=(value as {marked:unknown}).marked;
@@ -24,7 +24,9 @@ export function HrRecruiterBell(){
     cache:"no-store",credentials:"same-origin",redirect:"error",
    });
    if(!res.ok)throw Error("Unable to load");
-   const data=await res.json() as HrBellResponse;
+   const payload:unknown=await res.json();
+   const data=parseHrBellResponse(payload);
+   if(!data)throw Error("INVALID_BELL_RESPONSE");
    if(!loadGate.current.isCurrent(request))return;
    setState(data);setError("");
   }catch{
