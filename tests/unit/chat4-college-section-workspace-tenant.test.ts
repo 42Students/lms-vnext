@@ -50,6 +50,20 @@ describe("College Admin class operations workspace isolation and composite data"
   expect(mock.select).not.toHaveBeenCalled();
   await expect(getSectionOperationsWorkspace(actor,"forged-section-id")).rejects.toBeDefined();
  });
+ it("COL-classes-tenant-05 an ordinary learner or faculty with academics.read cannot enumerate all class operations",async()=>{
+  mock.scope.mockResolvedValue({id:section,collegeId:college,organizationId:org});
+  for(const role of ["LEARNER","FACULTY","MENTOR"] as const){
+   const downgraded:RequestContext={
+    ...actor,membership:{...actor.membership!,roles:[role]},
+   };
+   await expect(getSectionOperationsWorkspace(downgraded,section))
+    .rejects.toMatchObject({name:"AuthorizationError"});
+  }
+  expect(mock.select).not.toHaveBeenCalled();
+  expect(mock.roster).not.toHaveBeenCalled();
+  expect(mock.faculty).not.toHaveBeenCalled();
+ });
+
  it("COL-classes-tenant-02 composes only selected section's data and all dependent queries with same acting context",async()=>{
   mock.scope.mockResolvedValue({id:section,collegeId:college,organizationId:org});
   const current={id:section,name:"A",code:"A",programId:program,cohortId:cohort,
@@ -90,7 +104,7 @@ describe("College Admin class operations workspace isolation and composite data"
   expect(sectionScope).toContain('throw new AcademicsServiceError(');
   expect(sectionScope).toContain('"SECTION_NOT_FOUND"');
   expect(s).toContain("loadSectionScope(sectionId)");
-  expect(s).toContain('requirePermission(context, "academics.read"');
+  expect(s).toContain('requirePermission(context, "academics.manage"');
   mock.scope.mockResolvedValue({id:section,collegeId:college,organizationId:org});
   mock.rows.push([]);
   await expect(getSectionOperationsWorkspace(actor,section))
