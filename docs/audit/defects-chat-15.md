@@ -105,3 +105,7 @@ Scope: `chatgpt/chat-15-b`. Findings are source-reviewed; **test execution is pe
 | SA-TRACKER-AUDIT-67 | S1 cross-scope security | Global Tracker Issues and Logs allowed a Super Admin in acting-college/organization mode; global services must only be reached outside impersonated tenant scopes. Both pages now redirect before private reads. | `tracker/issues/page.tsx`, `tracker/logs/page.tsx`, `HR-BREAK-chat15-superadmin-tracker-scope-67.test.ts` | Not run; browser role impersonation check pending |
 
 No tests, migrations or CI were executed. `HR-ROUND-DEPTH-64`, `HR-CALENDAR-DEPTH-65`, `HR-RECRUITER-PAGE-68` and `HR-RECRUITER-PAGES-69` add behavioral coverage without claiming a new production defect.
+
+
+| HR-APPLICANT-EXPORT-70 | S3 resilience | A malformed persisted submission timestamp could abort the entire recruiter export; invalid totals could print NaN. The CSV now renders a clear unavailable date and bounded totals without changing contact masking or caps. | `hr-applicant-export-model.ts`, `HR-BREAK-chat15-applicant-export-70.test.ts` | Unit and PostgreSQL exports not run |
+| HR-DRIVE-API-71 | S2 graceful failure | Unexpected recruiter drive request service failures were rethrown from GET/POST/PATCH, leaving an unstructured HTTP exception instead of a safe response. The route now delegates those cases to the common sanitized API error handler. | `api/placements/recruiter/drives/requests/route.ts`, `HR-BREAK-chat15-request-api-71.test.ts` | HTTP and cloud CI not run |
