@@ -5,7 +5,7 @@ import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
   placementCompanies, placementCompanyRelationships, placementJobs,
-  placementApplications, placementOffers, placementJoiningOutcomes,
+  placementApplications, placementOffers, placementJoiningOutcomes, collegeMemberships,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { isSuperAdmin } from "@/modules/identity/context";
@@ -41,11 +41,16 @@ export async function listSuperAdminCompanyDriveHistory(context: RequestContext,
   const ids=jobs.map(job=>job.id);
   const [applications, joined] = await Promise.all([
     ids.length ? db.select({jobId:placementApplications.jobId,total:count()})
-      .from(placementApplications).where(inArray(placementApplications.jobId,ids))
+      .from(placementApplications)
+      .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
+        eq(collegeMemberships.collegeId,acting.collegeId)))
+      .where(inArray(placementApplications.jobId,ids))
       .groupBy(placementApplications.jobId) : Promise.resolve([]),
     ids.length ? db.select({jobId:placementApplications.jobId,
       total:countDistinct(placementApplications.id)})
       .from(placementApplications)
+      .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
+        eq(collegeMemberships.collegeId,acting.collegeId)))
       .innerJoin(placementOffers,eq(placementOffers.applicationId,placementApplications.id))
       .innerJoin(placementJoiningOutcomes,and(eq(placementJoiningOutcomes.offerId,placementOffers.id),
         eq(placementJoiningOutcomes.status,"JOINED")))
