@@ -1,3 +1,4 @@
+import {DataTable} from "@/components/ui/data-table";
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { and, asc, eq, ilike, inArray, isNull, or } from "drizzle-orm";
@@ -177,20 +178,19 @@ export default async function CollegeElectiveAllocatePage({
       </label>
       {offerings.length === 0 && <p className="text-sm text-muted-foreground">
         Add a course offering to this slot before allocating learners.</p>}
-      <div role="region" aria-label="Eligible students for allocation" tabIndex={0} className="max-h-80 overflow-auto overscroll-contain rounded-md border border-border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
-        <table className="w-full min-w-[560px] text-left text-sm [&_th:first-child]:sticky [&_th:first-child]:left-0 [&_th:first-child]:z-10 [&_th:first-child]:bg-surface [&_td:first-child]:sticky [&_td:first-child]:left-0 [&_td:first-child]:z-10 [&_td:first-child]:bg-surface">
-          <thead className="sticky top-0 z-10 bg-surface"><tr className="border-b border-border">
-            <th scope="col" className="sticky left-0 z-20 bg-surface p-2">Select</th><th scope="col" className="p-2">Student</th>
-            <th className="p-2">Roll No.</th><th className="p-2">Section</th>
-          </tr></thead>
-          <tbody>{students.map(s => <tr key={s.membershipId} className="border-b border-border">
-            <td className="sticky left-0 z-10 bg-surface p-2"><label className="flex min-h-11 min-w-11 items-center justify-center"><input type="checkbox" aria-label={"Select "+(s.name??s.rollNumber??"student")+" for allocation"} name="membershipId" value={s.membershipId} /></label></td>
-            <td className="p-2">{s.name ?? s.membershipId}</td>
-            <td className="p-2">{s.rollNumber ?? "—"}</td>
-            <td className="p-2">{s.sectionName}</td>
-          </tr>)}</tbody>
-        </table>
-      </div>
+      <DataTable rows={students} getRowKey={s=>s.membershipId}
+        caption="Eligible students for allocation"
+        columns={[
+          {key:"select",header:"Select",mobilePriority:"action",cell:s=>
+            <label className="inline-flex min-h-11 min-w-11 items-center justify-center">
+              <input type="checkbox" aria-label={"Select "+(s.name??s.rollNumber??"student")+" for allocation"}
+                name="membershipId" value={s.membershipId}/>
+            </label>},
+          {key:"student",header:"Student",mobilePriority:"primary",cell:s=>s.name??s.membershipId},
+          {key:"roll",header:"Roll No.",mobilePriority:"secondary",cell:s=>s.rollNumber??"—"},
+          {key:"section",header:"Section",mobilePriority:"secondary",cell:s=>s.sectionName},
+        ]}
+        empty={<p className="text-sm text-muted-foreground">No matching eligible students. Adjust the filters or paste membership IDs.</p>}/>
       <p className="text-xs text-muted-foreground">
         Showing up to 500 matching active learners. Filter by section or search for a smaller list.</p>
       <label className="grid gap-1 text-sm font-semibold">Or paste roll numbers / learner membership IDs
