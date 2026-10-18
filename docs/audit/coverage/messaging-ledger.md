@@ -173,3 +173,12 @@ Remaining integration: actual PostgreSQL query-plan/index verification for 2,000
 | `src/modules/placements/recruiter-message-email-dispatch-service.ts:dispatchRecruiterUnreadMessageDigests` | Same | Invalid digest-template purpose disables worker before reading database messages or contacting mail provider | Authored, unrun |
 
 The direct HTTP tests use mocked persisted services; PostgreSQL tenant-grant checks, actual mail-provider acceptance, web session expiry and browser redirect behavior must still pass independently. Every exposed failure should remain a safe status/code, never raw private message contents.
+
+### Individual recruiter thread POST routes: additional direct tests
+
+| Route/handler | Adversarial assertions | Direct test | Status |
+|---|---|---|---|
+| `src/app/api/placements/recruiter/conversations/[threadId]/reply/route.ts:POST` | Same-origin before actor lookup, bounded nonempty reply schema, expired-session safe 401 and no write; central safe error mapping for unexpected failures | `tests/unit/chat16-recruiter-conversation-route-18.test.ts` | Authored, unrun |
+| `src/app/api/placements/recruiter/conversations/[threadId]/acknowledge/route.ts:POST` | Same-origin, UUID validation, safe 401 on expired actor, service call with authenticated actor only, redirect to first-party thread | Same | Authored, unrun |
+
+These HTTP cases complement the existing `hrConversationQuerySchema`/tenant scope tests, but real-DB multi-college grant expiry, concurrent read receipts and message-send notification outbox recovery remain pending.
