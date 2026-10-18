@@ -20,6 +20,8 @@ const state=vi.hoisted(()=>({
   missingSprint:false,
   missingRelease:false,
   casConflict:false,
+  actorRevoked:false,
+  actorLocks:0,
   reads:0,
   writes:0,
   activity:0,
@@ -30,6 +32,14 @@ vi.mock("@/modules/projects/access",()=>({
     project:{id:projectId,status:state.projectStatus},
     collegeId,organizationId,
   }),
+}));
+vi.mock("@/modules/projects/persisted-mentor-mutation",()=>({
+  assertPersistedProjectMutationActor:async()=>{
+    state.actorLocks++;
+    if(state.actorRevoked)throw Object.assign(new Error("Access removed"),{
+      code:"PROJECT_LIFECYCLE_ACCESS_DENIED",
+    });
+  },
 }));
 vi.mock("@/modules/activity/service",()=>({
   recordActivityEventInTransaction:async()=>{state.activity++;},
@@ -99,6 +109,7 @@ describe("PROJ-BREAK-FACULTY-03 Mentor task state machine and stale submissions"
     state.releaseStatus="IN_PROGRESS";state.reads=0;state.writes=0;state.activity=0;
     state.missingTask=false;state.missingSprint=false;state.missingRelease=false;
     state.casConflict=false;
+    state.actorRevoked=false;state.actorLocks=0;
   });
 
   const execute=(status:string,expectedUpdatedAt:string,blockerReason?:string)=>(
@@ -139,6 +150,13 @@ describe("PROJ-BREAK-FACULTY-03 Mentor task state machine and stale submissions"
         .rejects.toMatchObject({code:"PROJECT_TASK_INVALID_STATE"});
       expect(state.writes).toBe(0);
     }
+  });
+
+  it("PROJ-BREAK-FACULTY-03-07 checks persisted actor after project lock but before task reads or mutation",async()=>{
+    state.actorRevoked=true;
+    await expect(execute("IN_PROGRESS",stamp))
+      .rejects.toMatchObject({code:"PROJECT_LIFECYCLE_ACCESS_DENIED"});
+    expect(state).toMatchObject({actorLocks:1,reads:1,writes:0,activity:0,status:"TODO"});
   });
 
   it("PROJ-BREAK-FACULTY-03-05 database CAS losing a parallel version race emits no success or activity",async()=>{

@@ -74,7 +74,7 @@ describe("HR-BREAK-MESSAGING-HISTORY-01: persisted TPO/HR boundary and immutable
       userId:"tpo",companyId:"company",companyName:"Employer",
       title:null,status:"ACTIVE" as const,grants:[],
     }}],
-    ["wrong membership role",{...tpo,membership:{...tpo.membership!,roles:["HR" as const]}}],
+    ["wrong membership role",{...tpo,membership:{...tpo.membership!,roles:["COLLEGE_ADMIN" as const]}}],
     ["revoked membership",{...tpo,membership:{...tpo.membership!,status:"SUSPENDED" as const}}],
     ["disabled user",{...tpo,user:{...tpo.user,platformStatus:"DISABLED" as const}}],
   ])("denies %s before DB and export",async(_label,actor)=>{

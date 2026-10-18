@@ -1,5 +1,6 @@
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
+import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import {apiErrorResponse} from "@/lib/api-error";
 import {exportTpoCompanyDirectory,tpoCompaniesQuerySchema} from "@/modules/placements/tpo-companies-view-service";
 import {tpoStudentCsvCell} from "@/modules/placements/tpo-students-csv";
@@ -17,6 +18,7 @@ export async function GET(request:Request) {
  try {
   const url=new URL(request.url);
   const context=await getCurrentRequestContext();
+  await requireTpoBatchActor(context);
   const collegeId=context.membership?.collegeId??"";
   const parsed=tpoCompaniesQuerySchema.safeParse({
    collegeId,search:url.searchParams.get("search")||undefined,
