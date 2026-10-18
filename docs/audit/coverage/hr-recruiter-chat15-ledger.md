@@ -223,3 +223,17 @@ These are source changes with tests authored only. The source-level and PostgreS
 | `/tracker/mine` page (HR-reporter journey) | `tests/unit/HR-BREAK-chat15-tracker-mine-page-98.test.tsx` | Expired session, disabled readiness, DB error hides SQL and offers retry, empty state, own persisted report link | Real user session and PostgreSQL reporter isolation |
 
 Owner's **NO CI** directive remains in force; all behavioral tests were written but not run. Exhaustive per-export and HTTP-role matrix completion remains open.
+
+
+## HR-depth CSV and route defenses — 2026-10-19 (source and behavioral tests, not run)
+
+| Export / API | Behavioral test | Cases covered by authored test | Remaining |
+|---|---|---|---|
+| `hrDriveProposalHistoryCsv` | `tests/unit/HR-BREAK-chat15-proposal-csv-99.test.ts` | Metadata-only DISCUSSION_ONLY export, whitespace-prefixed CSV formulas neutralized, invalid historical UTC date cannot throw, empty header-only export | Open in spreadsheet viewer and real authorized TPO conversation |
+| `buildHrCalendarCsv` | `tests/unit/HR-BREAK-chat15-calendar-csv-100.test.ts` | Ignore corrupt event/results due dates before IST formatting, distinct category exports, formula-safe job and event, 200-record cap | Real recruiter calendar, nested venue/time and role matrix |
+| `GET /api/placements/recruiter/drives/proposals/export` | `tests/unit/HR-BREAK-chat15-proposal-export-api-101.test.ts` | Principal equality, disabled actor, unexpected/duplicate filter denial, scope changed, 20-record CURRENT_PAGE export/no-store, private SQL failure maps to sanitized response | Real 2-college grant, PostgreSQL, browser download |
+| `buildHrActivityCsv` | `tests/unit/HR-BREAK-chat15-activity-csv-102.test.ts` | Corrupt dates cannot crash download, over-cap emits visible capped footer even without extra-page signal, formula-safe title | Database page 1/2 consistency, final CI |
+| `buildHrInboxCsv` | `tests/unit/HR-BREAK-chat15-notification-csv-103.test.ts` | Invalid date and corrupt aggregate total cannot corrupt output; 200 cap; separate read/unread status and CSV injection denial | Real notifications persisted and privacy policy |
+| `GET /api/placements/recruiter/activity/export`; `GET /api/placements/recruiter/notifications/export`; `GET /api/placements/recruiter/calendar/export`; `GET /api/placements/recruiter/jobs/[jobId]/applicants/export`; `GET /api/placements/recruiter/jobs/[jobId]/offers/export` | `tests/unit/HR-BREAK-chat15-export-query-104.test.ts` | Each real route refuses duplicated sensitive parameters and unknown parameter keys before access to any private employer reader; this closes silent first-of-many filter ambiguity | Authenticated GET valid/invalid origin rules (read only), CSV download UI, PostgreSQL role matrix |
+
+These are written source/tests only; **no tests, CI, typecheck, or database commands were run**. Full HR/recruiter/tracker exhaustive certification remains OPEN.
