@@ -299,9 +299,17 @@ export async function getFacultyAttendanceWorkspace(
       asc(sectionScheduleEvents.id),
     );
 
+  // Attendance records are historical data. An ID in a class event is
+  // never authority to disclose a departed or foreign learner's contact/note.
+  // Build the exact current, active delivery audience before fetching records.
+  const roster = await currentDeliveryRoster(
+    delivery,
+    context.membership.collegeId,
+  );
+  const eligibleIds = [...new Set(roster.map((row) => row.membershipId))];
   const eventIds = sessions.map((session) => session.id);
   const records =
-    eventIds.length === 0
+    eventIds.length === 0 || eligibleIds.length === 0
       ? []
       : await getDb()
           .select({
@@ -338,20 +346,18 @@ export async function getFacultyAttendanceWorkspace(
             ),
           )
           .where(
-            inArray(
-              attendanceRecords.scheduleEventId,
-              eventIds,
+            and(
+              inArray(attendanceRecords.scheduleEventId, eventIds),
+              inArray(attendanceRecords.membershipId, eligibleIds),
+              eq(collegeMemberships.collegeId, context.membership.collegeId),
+              eq(collegeMemberships.status, "ACTIVE"),
+              eq(users.platformStatus, "ACTIVE"),
             ),
           )
           .orderBy(
             asc(users.displayName),
             asc(attendanceRecords.scheduleEventId),
           );
-
-  const roster = await currentDeliveryRoster(
-    delivery,
-    context.membership.collegeId,
-  );
 
   return {
     course: delivery,
