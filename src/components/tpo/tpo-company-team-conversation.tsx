@@ -27,7 +27,7 @@ function formatTokens(body:string,members:TeamPayload["members"]){
   .map((chunk,i)=>{
     if(chunk.startsWith("@member:")){
       const name=members.find(m=>m.membershipId.toLowerCase()===chunk.slice(8).toLowerCase())?.name;
-      return <span key={i} className="rounded bg-primary-subtle px-1 font-semibold">@{name??"team member"}</span>;
+      return <span key={i} className="rounded bg-primary-subtle px-1 font-[650]">@{name??"team member"}</span>;
     }
     if(chunk.startsWith("#drive:"))return <Link key={i} className="text-primary-text underline"
       href={"/tpo/placements/jobs/"+encodeURIComponent(chunk.slice(7))}>{chunk}</Link>;
@@ -36,7 +36,7 @@ function formatTokens(body:string,members:TeamPayload["members"]){
     if(chunk.startsWith("#student:"))return <Link key={i} className="text-primary-text underline"
       href={"/tpo/students/"+encodeURIComponent(chunk.slice(9))+"/participation"}>{chunk}</Link>;
     if(chunk.startsWith("@")||chunk.startsWith("#"))
-      return <span key={i} className="rounded bg-primary-subtle px-1 font-semibold">{chunk}</span>;
+      return <span key={i} className="rounded bg-primary-subtle px-1 font-[650]">{chunk}</span>;
     return chunk;
   });
 }
@@ -195,7 +195,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
        </div>:null}
        {editing===m.id?<form className="mt-2 space-y-2" onSubmit={event=>{event.preventDefault();
           void mutate({action:"EDIT",messageId:m.id,body:editBody}).then(ok=>{if(ok)setEditing(null);});}}>
-        <textarea required maxLength={4000} rows={3} className="w-full rounded border border-border p-2"
+        <textarea required maxLength={4000} rows={3} className="w-full rounded-[9px] border border-border p-2"
           value={editBody} onChange={event=>setEditBody(event.target.value)}/>
         <button type="submit" disabled={busy||!editBody.trim()} className="text-primary-text underline">Save edit</button>
         <button type="button" className="ml-3 text-primary-text underline" onClick={()=>setEditing(null)}>Cancel</button>
@@ -213,7 +213,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
        className="rounded border border-border bg-surface p-3"/>
     </label>
     <label className="grid gap-1 text-sm">Mention a teammate
-      <select disabled={busy} defaultValue="" className="min-h-10 rounded border border-border bg-surface px-2"
+      <select disabled={busy} defaultValue="" className="min-h-10 rounded-[9px] border border-border bg-surface px-2"
         onChange={event=>{if(event.target.value){
           updateDraft({body:(body.trimEnd()+" @member:"+event.target.value+" ").slice(0,4000),decision,assignee,dueAt});
           event.currentTarget.value="";
@@ -245,7 +245,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
     <div className="flex items-center justify-between gap-3">
      <span className="text-xs text-muted-foreground">{body.length}/4000</span>
      <button type="submit" disabled={busy||!body.trim()}
-      className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+      className="min-h-10 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary">
        {busy?"Sending…":"Send"}
      </button>
     </div>
