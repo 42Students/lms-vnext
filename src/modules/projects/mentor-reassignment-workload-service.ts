@@ -10,6 +10,7 @@ import {ProjectsServiceError} from "./errors";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 
 const mentorId = z.union([z.string().uuid(), z.literal("UNASSIGNED")]);
+const MAX_REASSIGNMENT_SELECTION=1000;
 const decimalPage=(min:number,max:number,fallback:number)=>z.union([
   z.number().int().min(min).max(max),
   z.string().regex(/^[0-9]+$/).transform(Number)
@@ -137,10 +138,12 @@ export async function listCollegeReassignmentWorkspaces(
     mentorMembershipId: projectMembers.membershipId,
   }).from(projectInstances).leftJoin(projectMembers, and(
     eq(projectMembers.projectId, projectInstances.id), activePrimaryMentor,
-  )).where(where).orderBy(asc(projectInstances.id));
+  )).where(where).orderBy(asc(projectInstances.id))
+    .limit(MAX_REASSIGNMENT_SELECTION);
   return {
     items: rows,
     matchingWorkspaces,
+    matchingCapped:total>MAX_REASSIGNMENT_SELECTION,
     total, page: query.page, pageSize: query.pageSize,
     totalPages: Math.max(1, Math.ceil(total / query.pageSize)),
   };
