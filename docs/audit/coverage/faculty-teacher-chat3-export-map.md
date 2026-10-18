@@ -102,3 +102,15 @@ GitHub source declaration review, October 19, 2026. **This is a symbol map, not 
 | `src/modules/courses/faculty-reports-hub-model.ts` | `facultyReportsHubQuerySchema`, `facultyReportHubHref`, `publishedReportBreakdown`, `attendanceReportCounts`, `parseFacultyReportsHubLocation` | `FacultyReportsHubQuery` | 38 | Declared; behavioral verification pending |
 | `src/modules/courses/faculty-reports-hub-service.ts` | `getFacultyReportsHub` | — | 27 | Declared; behavioral verification pending |
 | `src/modules/courses/faculty-response-followup-model.ts` | `facultyResponseFollowUpQuerySchema`, `selectPastDueAssessments`, `facultyResponseFollowUpPage`, `facultyResponseFollowUpHref`, `limitedMissingLearners`, `parseFacultyFollowUpSearchParams`, `facultyFollowupEmptyState` | `FacultyResponseFollowUpQuery`, `FacultyResponseCandidate` | 99 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-response-followup-service.ts` | `getFacultyResponseFollowUps` | — | 91 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-results-export.ts` | `facultyResultsCsvCell`, `facultyResultExportAverage`, `facultyResultsPageCsv`, `facultyResultsCsvHref` | `FacultyExportRow` | 34 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-results-model.ts` | `facultyResultsQuerySchema`, `safeFacultyDueTime`, `filterFacultyResultCandidates`, `paginateFacultyResults`, `facultyResultsHref`, `facultyRecordedResponseRate`, `parseFacultyResultsSearchParams`, `facultyResultsEmptyState` | `FacultyResultsQuery`, `FacultyResultCandidate` | 114 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-results-service.ts` | `getFacultyAssessmentResults` | — | 79 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-roster-display-model.ts` | `facultyRosterDisplayName`, `sortFacultyRosterByRollThenName`, `facultyRosterMetrics`, `facultyRosterPhotoPreview` | — | 29 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-roster-export.ts` | `facultyRosterCsv`, `facultyRosterFileName` | `FacultyRosterCsvLearner` | 36 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-route-access-model.ts` | `canAccessFacultyRoute` | — | 17 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-schedule-service.ts` | `getFacultyClassSchedule` | — | 102 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-session-coverage-model.ts` | `facultySessionCoverageSchema`, `facultySessionCoverage` | `FacultySessionRow` | 23 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-session-coverage-service.ts` | `getFacultySessionCoverage` | — | 24 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-student-detail-model.ts` | `facultyStudentDetailParamsSchema`, `findAuthorizedFacultyStudent`, `summarizeFacultyStudentAttendance` | — | 27 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-student-detail-service.ts` | `getFacultyStudentDetail` | — | 65 | Declared; behavioral verification pending |
