@@ -97,7 +97,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
       <p className="text-xs text-muted-foreground">{student.cohortName} · {tpoStudentDisplayLabel(student.journeyState)}</p>
       <p className="mt-2 text-sm font-semibold">After college: {afterCollegeDisplay(recordedOutcome)}</p>
     </div>
-    <button type="button" autoFocus className="min-h-11 rounded border border-border px-3" onClick={onClose}>
+    <button type="button" autoFocus className="min-h-11 rounded-[9px] border border-border px-3" onClick={onClose}>
       Close panel
     </button>
    </section>
@@ -173,7 +173,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
     </>:null}
     {loading&&(tab==="Requests"||tab==="Notes"||tab==="History"||tab==="Placement")?<p role="status">Loading student records…</p>:null}
     {error?<div role="alert" className="space-y-2 text-error"><p>{error}</p>
-     <button type="button" className="min-h-11 rounded border border-border px-3 text-sm font-semibold text-primary-text" onClick={()=>void fetchDetail()}>Retry loading student details</button></div>:null}
+     <button type="button" className="min-h-11 rounded-[9px] border border-border px-3 text-sm font-semibold text-primary-text" onClick={()=>void fetchDetail()}>Retry loading student details</button></div>:null}
     {tab==="Requests"?<>
       <h3 className="font-semibold">Requests</h3>
       {detail&&!detail.requests.length?<p>No placement requests recorded for this student.</p>:null}
