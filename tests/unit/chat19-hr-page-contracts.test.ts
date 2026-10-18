@@ -127,7 +127,8 @@ describe("HR page-level access, recovery and mobile contracts", () => {
   it("UX-hr-scroll-motion-02 uses one motion system without extra hard-coded duration", () => {
     for (const route of ["conversations", "conversations/[threadId]", "calendar", "placements/jobs/[jobId]"]) {
       const source = load(root + route + "/page.tsx");
-      expect(source).not.toMatch(/duration-\\d{2,4}|transition-\\[\\d+ms\\]/);
+      expect(source).not.toMatch(/duration-[0-9]{2,4}/);
+      expect(source).not.toContain("transition-[");
     }
   });
 
