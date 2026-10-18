@@ -121,3 +121,20 @@ The following entries are source commits on `chatgpt/chat-4-b`. Tests were autho
 | COL-tenant-signin-01/02/03 | Coverage gap | No sign-in mutation or runtime channel change; exercise code-only valid policy, strict CAS update validation, and missing/corrupt persisted policy read states. | `chat4-tenant-lifecycle-signin-archive-policy.test.ts` | Signed host, provider, source-of-truth CAS integration |
 
 The two lane failures still listed in `docs/orchestrator/unit-failures-latest.md` (`COL-academic-setup-R03` and `SA-placements-projects-58`) were re-read against current `main` source. Both requested behaviors appear already present; **no assertion was deleted or weakened**. `chat4-college-admin-projects-role-journey.test.ts` additionally exercises the real six-step map and the exact mentor-overload threshold. Need a fresh CI trace before claiming either preexisting failure has cleared. The lane's refreshed typecheck document lists no chat-4-owned compile errors.
+
+## Post-CI 834983cc continuation — chat-4 source corrections
+
+All entries below are committed to `chatgpt/chat-4-b`; they are **not** claims of a passing CI run.
+
+| ID | Severity | Symptom and source of truth | Resolution and verification |
+| --- | --- | --- | --- |
+| COL-faculty-reassign-03 | Stale test, transaction ordering | Test scanned the *first* transaction in the file, which was the read-only options lookup. The actual reassignment write already SHARE-locks the source/replacement faculty, rechecks persisted `academics.manage`, advisory-locks replacement and audits only successful changes. | Scoped test search to `reassignFacultyUpcomingSchedules` transaction, preserving all existing lock and audit assertions. |
+| COL-classes-tenant-02 | Stale test mock | The section workspace calls `listRoleChoices` with a Drizzle thenable `ORDER BY` query, but test mock's `orderBy` returned a non-Promise object. | Added Promise-like behavior in the unit mock; its tenant/role and all downstream service assertions stay unchanged. |
+| SA-placements-projects-55 | Outdated test contract | Legacy `search` is retained, but contrasting simultaneous `search` and `q` must fail closed, not silently choose the first alias. | Updated the existing test to require conflict rejection and confirm matching aliases still work; source was already correct. |
+| SA-placements-projects-58 | Outdated copy assertion | Reassignment page accurately covers selected non-archived workspaces; old test demanded an outdated active-only sentence. | Test now asserts current safe copy and retains dynamic >150% overload check. |
+| SA-placements-projects-71 | Outdated helper assertion | CSV exporter moved to the shared `projectAdminCsv`, which neutralizes formula operators. | Test now proves shared encoding and retains header/export/UI checks rather than demanding removed `csvField`. |
+| COL-export-08/09 | S1 spreadsheet-injection defense | Both College Admin history and academic-directory exports missed dangerous spreadsheet operators following Unicode format/combining prefixes. | Encoding neutralizes those prefixes, named regression vectors authored in `chat4-college-admin-export-boundaries.test.ts`. |
+| SA-colleges-directory-02 | S2 malformed pagination | Explicit empty `page=` and `pageSize=` were dropped, silently reverting to default page/size. | Kept blank keys for strict Zod rejection, updated `chat4-admin-colleges-organizations-directory.test.ts`. |
+| SA-colleges-admins-R01/R02 | S2 malformed and duplicated CSV export query | Admin session history UI had strict validation, but its CSV route called `URLSearchParams.get("page")`, silently ignoring duplicate, unknown and scientific-number params. | Route now validates the entire multimap via the same parser; `chat4-admin-history-export-route.test.ts` covers 9 rejection forms, early no-DB exit, successful scoped IST CSV with no-store. Explicit empty page rejected in model too. |
+
+Cloud CI needs to rerun the changed test files before any of these entries can be closed as verified.
