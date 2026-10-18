@@ -34,9 +34,11 @@ function legacyDriveTab(value:string|undefined){
 
 export default async function HrDrivesPage({ searchParams }: { searchParams: Promise<Params> }) {
   const context = await getCurrentRequestContext();
-  if (!hasActiveRecruiter(context) || !context.recruiter) redirect("/dashboard");
+  if (!hasActiveRecruiter(context) || !context.recruiter || context.recruiter.userId !== context.user.id) redirect("/dashboard");
   const raw = await searchParams;
-  const query = recruiterDriveListQuerySchema.safeParse({
+  const query = Object.values(raw).some(Array.isArray)
+    ? recruiterDriveListQuerySchema.safeParse(null)
+    : recruiterDriveListQuerySchema.safeParse({
     collegeId: first(raw.collegeId) || undefined,
     view: first(raw.view) || legacyDriveTab(first(raw.tab)), q: first(raw.q) || undefined,
     employment:first(raw.employment)||undefined,mode:first(raw.mode)||undefined,
