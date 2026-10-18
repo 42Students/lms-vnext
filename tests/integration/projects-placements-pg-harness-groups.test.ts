@@ -40,7 +40,7 @@ describe("PROJ-HARNESS real PostgreSQL schema group examples", () => {
          where c.id=any($1::uuid[])`,[[f.owner.collegeId,f.other.collegeId]]);
       expect(rows).toHaveLength(2);
       expect(new Set(rows.map(x=>x.organization_id)).size).toBe(2);
-      expect(f.outsider.collegeId).not.toBe(f.project.projectId);
+      expect(f.outsider.collegeId).not.toBe(f.owner.collegeId);
       const roles=await db.query("select role from membership_roles where membership_id=$1",
         [f.mentor.membershipId]);
       expect(roles.map(r=>r.role).sort()).toEqual(["FACULTY","MENTOR"]);
