@@ -165,3 +165,16 @@ Tests were authored only, not executed. No CI run was requested; HR release cert
 | `requireProjectLifecycleMutationAccess` (HR-restricted Projects entry) | `tests/unit/PROJ-BREAK-HR-77.test.ts` | HR-only, TPO, learner, faculty, disabled/suspended/revoked mentor never query private project or module settings; authorized mentor still honors feature-disabled gate | IIT Dharwad real-tenant role journey, 2-session concurrency and separate lane reviewer |
 
 No suites were executed or disabled. The HR-first continuation remains open for full per-export, per-route, PostgreSQL and page-level certification.
+
+
+## HR-depth continuation — applicant validation and actual page-level journeys
+
+| Export or authenticated page | Behavioral test | Covered account and failure transitions | Remaining gates |
+|---|---|---|---|
+| `uniqueHrVerifiedAcademicMarks` used by `getHrJobRead` | `tests/unit/HR-BREAK-chat15-verified-marks-78.test.ts` | Conflicting academic records for the same member/level no longer arbitrarily disclose whichever historical row wins query order; identical duplicates are safe; invalid percentages fail closed; cross-member/level boundaries are preserved | PostgreSQL mixed `VERIFIED`/`UPDATE_PENDING` fixtures, view policy, real released grade display |
+| `/hr/drives/new` and `/recruiter/drives/new` page | `tests/unit/HR-BREAK-chat15-drive-new-page-79.test.tsx` | Direct page invocation for revoked actor, conflicting `edit/fix/from` parameters, wrong-college 404, multi-college chooser, missing grants, stale editing request and authorized form | Browser form draft/restoration and disabled React client states |
+| `/hr/drives/proposals` and recruiter alias | `tests/unit/HR-BREAK-chat15-proposals-page-80.test.tsx` | Actual page: revoked role, duplicate filters, college chooser, no-access/empty, persisted list, export link; discussion proposals cannot claim a hiring approval | Real TPO thread history from DB and pagination comparison |
+| `/tracker` report intake | `tests/unit/HR-BREAK-chat15-tracker-report-page-81.test.tsx` | Recruiter versus Super Admin known-error disclosure, disabled user redirect, backend unavailable state, repeated/oversized query inputs | Browser/keyboard, live auth, actual persisted own report |
+| `hrDriveDraftSchema` / `hrDriveDraftQuerySchema` | `tests/unit/HR-BREAK-chat15-drive-round-82.test.ts` | Control characters in round labels refused; Unicode NFKC+whitespace lookalike duplicate rounds rejected; supported names and single-action query retained | PostgreSQL proposal submission and TPO round import checks |
+
+All evidence above is **authored but not executed** under the owner's no-CI direction. Every item retains the full end-to-end and database acceptance gate.

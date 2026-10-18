@@ -55,17 +55,31 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
   // responsive subtree. Only collapsed secondary fields are repeated in
   // the accessible More details disclosure where the phone requires them.
   const prepared=rows.map(row=>{
-    const detailAccess=new Map(columns.filter(col=>col.mobileDetail).map(col=>
-      [col.key, col.mobileDetail!.canView(row)] as const));
+    const detailAccess=new Map(columns.filter(col=>col.mobileDetail).map(col=>{
+      // Permission resolvers must fail closed, not crash a whole tenant list or
+      // accidentally permit a hidden formatter after throwing.
+      let permitted=false;
+      try { permitted=col.mobileDetail!.canView(row)===true; }
+      catch { permitted=false; }
+      return [col.key, permitted] as const;
+    }));
     const detailLinks=new Map(recoverable.map(col=>{
-      const href=detailAccess.get(col.key) ? col.mobileDetail!.href(row) : null;
-      return [col.key, href && isSafeInternalHref(href) && href.length>1 ? href : null] as const;
+      let href:string|null=null;
+      if(detailAccess.get(col.key)){
+        try {
+          const candidate=col.mobileDetail!.href(row);
+          if(isSafeInternalHref(candidate) && candidate.length>1) href=candidate;
+        } catch { href=null; }
+      }
+      return [col.key,href] as const;
     }));
     return {
       key:getRowKey(row),row,detailLinks,
       detailHref:(()=>{
-        const href=rowHref?.(row);
-        return href && isSafeInternalHref(href) ? href : null;
+        try {
+          const href=rowHref?.(row);
+          return href && isSafeInternalHref(href) ? href : null;
+        } catch { return null; }
       })(),
       // Never evaluate or serialize a hidden restricted formatter for an
       // actor who cannot view the linked field.

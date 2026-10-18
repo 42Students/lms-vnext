@@ -90,6 +90,12 @@ The 15-item final-sprint assignment belongs to faculty/courses in `docs/orchestr
 | FAC-courses-R07 | DONE (source/model verified) | `facultyLiveEditorCommand` now exposes the first specific Zod issue; `facultyLiveMutationSchema` validates provider HTTPS, title, end-after-start and twelve-hour limit. `tests/unit/chat5-final-faculty-courses-c.test.ts` — `FAC-courses-R07 returns specific invalid meeting URL...`. |
 | FAC-courses-R08 | DONE (intentional policy) | `facultyLiveWindow` treats college academic periods as metadata, not a scheduling restriction; invalid/reversed time still fails. This is the deliberate safe choice relative to legacy and is already implemented. `tests/unit/chat5-final-faculty-courses-c.test.ts` — `FAC-courses-R08 retains a future/safe meeting time...`. |
 
+### Chat-3 elective-roster data isolation follow-up
+
+| Case | Source and test | Status |
+| --- | --- | --- |
+| FAC-DELIVERY-ROSTER-ELECTIVE-04 | `src/modules/courses/delivery-roster.ts` prevents invalid, deleted or foreign elective-backed deliveries from incorrectly falling back to a full Section learner roster. `tests/unit/chat3-faculty-delivery-roster-elective-fallback.test.ts` checks both ordinary and elective behavior; real PostgreSQL constraints and cross-college fixtures must still be run. | Source/test authored; CI pending |
+
 ### Chat-3 Faculty Calendar strict-link follow-up
 
 | Case | Source and test | Status |

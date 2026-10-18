@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,count,eq,ilike,ne,notExists,or} from "drizzle-orm";
+import {and,asc,count,eq,ilike,ne,notExists,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {projectInstances,projectSubmissions} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
@@ -24,11 +24,14 @@ export async function listProjectAdminUnsubmitted(context:RequestContext,college
    organizationId:college.organizationId,collegeId:college.id,
   });
  const searchPattern=adminUnsubmittedLiteralSearchPattern(q.q??"");
+ // The subquery must reference the parent project's qualified ID. Plain
+ // column interpolation inside nested SQL can resolve to an inner "id".
+ const parentProjectId=sql.raw('"project_instances"."id"');
  const where=and(eq(projectInstances.collegeId,college.id),
   ne(projectInstances.status,"ARCHIVED"),
   q.status?eq(projectInstances.status,q.status):undefined,
   notExists(db.select({id:projectSubmissions.id}).from(projectSubmissions)
-   .where(eq(projectSubmissions.projectId,projectInstances.id))),
+   .where(eq(projectSubmissions.projectId,parentProjectId))),
   q.q?or(ilike(projectInstances.title,searchPattern),
    ilike(projectInstances.slug,searchPattern)):undefined);
  const [totalRows,items]=await Promise.all([

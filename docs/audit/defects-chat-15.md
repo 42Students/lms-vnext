@@ -119,3 +119,13 @@ No tests, migrations or CI were executed. `HR-ROUND-DEPTH-64`, `HR-CALENDAR-DEPT
 | HR-CALENDAR-75 | S2 | The HR Today results-due projection accepted any round status when its date/job looked valid; stale canceled and pending dates could appear as actionable employer deadlines. Now only SCHEDULED/COMPLETED results are projected. | `HR-BREAK-chat15-calendar-state-75.test.ts` | Tests authored, not run |
 | HR-PROFILE-76 | S3 | Recruiter first/last name validation accepted embedded control characters in identity data. Input now rejects CR/LF/tab/NUL without prohibiting normal Unicode names. | `HR-BREAK-chat15-profile-name-76.test.ts` | Tests authored, not run |
 | PROJ-BREAK-HR-77 | S1 | `requireProjectLifecycleMutationAccess` loaded feature settings before checking whether a recruiter, TPO or learner may ever mutate Projects. Such roles now fail early, before private module config or project ID lookups. | `PROJ-BREAK-HR-77.test.ts` | Tests authored, not run; external Projects reviewer and real tenant DB pending |
+
+
+## HR-role page and data integrity follow-up — 19 October 2026
+
+| ID | Severity | Impact and corrective behavior | Regression evidence | Remaining verification |
+|---|---|---|---|---|
+| HR-APPLICANTS-78 | S2 accuracy/privacy | Verified academic mark records for a given learner and level could contain conflicting historical values. `getHrJobRead` previously overwrote earlier values depending on unordered SQL delivery, disclosing an arbitrary grade. `uniqueHrVerifiedAcademicMarks` now omits ambiguous or corrupt marks, preserving independent valid levels and learners. | `HR-BREAK-chat15-verified-marks-78.test.ts` | Real PostgreSQL mixed verification history, CI and authorized employer rendering |
+| HR-DRIVES-82 | S2 workflow correctness | Recruiter draft hiring round labels accepted internal CR/LF/control characters and visually identical full-width Unicode names as distinct. New validation rejects control chars and compares Unicode-NFKC canonical names before sending to the placement cell. | `HR-BREAK-chat15-drive-round-82.test.ts` | TPO import and browser draft form acceptance |
+
+Additional **coverage without an independently established defect**: `HR-BREAK-chat15-drive-new-page-79.test.tsx`, `HR-BREAK-chat15-proposals-page-80.test.tsx`, `HR-BREAK-chat15-tracker-report-page-81.test.tsx`. None was run; no release readiness is asserted.

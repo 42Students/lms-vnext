@@ -31,3 +31,29 @@ Scope: 22 entries from `docs/orchestrator/ui-ux/pages-hr.md`. All have existing 
 
 - Existing UX tests assert copy, contrast utility, focus styles and shared layout components. These are source contracts, not evidence of real 320px/browser/screen-reader operation or computed tap target sizes; Round Results also has directly inspected 44px link-property tests.
 - Cloud CI typecheck/unit suite, PostgreSQL permission/revocation concurrency, external provider failures, mobile and assistive-technology walkthroughs remain to be verified by the orchestrator. No unit test was weakened, deleted or run; no numbered migration or schema change was made.
+
+## Deeper chat-19 HR/action second-pass evidence
+
+| Surface / action | Gap ID | Test | Covered behavior |
+|---|---|---|---|
+| Active HR shell notification bell | HR-BREAK-ACTIVE-BELL-34 | `tests/unit/HR-BREAK-chat19-active-bell.test.tsx` | No auto-read on open, explicit read receipt, revocation, ScrollCue/focus |
+| Bell JSON validation | HR-BREAK-BELL-PAYLOAD-35 | `tests/unit/HR-BREAK-chat19-bell-payload.test.ts` | Invalid URL/count/payload refused; authorized job cards |
+| Alternate recruiter bell college selector | HR-BREAK-BELL-RACE-30 | `tests/unit/HR-BREAK-chat19-bell-race.test.tsx` | Out-of-order async response and cached revoked feed |
+| Inline hiring round mutation | HR-BREAK-ROUND-RECEIPT-31 | `tests/unit/HR-BREAK-chat19-round-receipt.test.ts` | JSON persisted receipt, legacy native redirect, cross-origin, wrong round/action |
+| Round draft dialog closure | UX-HR-ROUND-UNSAVED-32 | `tests/unit/UX-HR-chat19-round-unsaved.test.ts` | Dirty/clean state, Escape/backdrop/Cancel confirmation |
+| Drive request saved receipt | HR-BREAK-DRIVE-RECEIPT-33 | `tests/unit/HR-BREAK-chat19-drive-receipt.test.ts` | Exact producer/consumer confirmation and forged-message denial |
+| Candidate private rating | HR-BREAK-PRIVATE-RATING-36 | `tests/unit/HR-BREAK-chat19-private-rating-scope.test.tsx` | Per-applicant and per-job state keys, initial disabled state |
+| Conversation reply and acknowledgement | HR-BREAK-CONVO-THREAD-SCOPE-37 | `tests/unit/HR-BREAK-chat19-conversation-thread-scope.test.tsx` | Thread-specific draft/read state and cleanup |
+| New/Copy/Edit/Fix drive form | HR-BREAK-DRIVE-DRAFT-SCOPE-38 | `tests/unit/HR-BREAK-chat19-drive-draft-scope.test.ts` | Principal, college, mode and source-isolated state and storage |
+
+All entries are **authored, not locally executed**. PostgreSQL/provider, real responsive screen readers and keyboard navigation remain orchestrator acceptance gates; no test was weakened or removed.
+
+## Additional weak-area HR pure model branch coverage
+
+| Model functions | Evidence | Tested cases |
+|---|---|---|
+| `recruiterTodayWaitingRequests` | `tests/unit/HR-BREAK-chat19-today-waiting-progress.test.ts` | Formal statuses only, chronological ordering, 8-item cap, untouched source, malformed draft fallback |
+| `recruiterDriveProgressSteps` | Same test | Exact stage copy; not claiming unshared rounds/offers/joining complete |
+| `recruiterDriveNextAction` | Same test | Closed, issued offer, no applicants, active rounds, default next action |
+
+These branch-level tests are authored, not executed; fixture timestamps use 2099.
