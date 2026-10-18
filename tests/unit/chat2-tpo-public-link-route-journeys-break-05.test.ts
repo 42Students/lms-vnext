@@ -61,6 +61,21 @@ describe("TPO-BREAK-public-link-05 actual route authorization and stale-token pr
    expect(state.error).toHaveBeenCalledTimes(1);
   });
  }
+ it("GET denies duplicated and smuggled status selectors before loading the TPO identity",async()=>{
+  for(const query of [
+   "scope=COLLEGE&scope=COMPANY",
+   "scope=COLLEGE&companyId="+id,
+   "scope=COMPANY&companyId="+id+"&companyId="+id,
+   "scope=COLLEGE&collegeId="+id,
+   "scope=COLLEGE&unexpected=1",
+  ]){
+   const response=await read(new Request("https://college.example/api/placements/tpo/public-join-links/status?"+query));
+   expect(response.status,query).toBe(400);
+   expect(await response.json()).toEqual({error:"INVALID_QUERY"});
+   expect(state.context).not.toHaveBeenCalled();
+   expect(state.status).not.toHaveBeenCalled();
+  }
+ });
  it("rejects arbitrary status read scopes and returns no secret bearer token",async()=>{
   const invalid=await read(new Request("https://college.example/api/placements/tpo/public-join-links/status?scope=FORGED"));
   expect(invalid.status).toBe(400);

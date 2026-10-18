@@ -59,6 +59,18 @@ describe("TPO-BREAK-session-01 / TPO-BREAK-tenant-01",()=>{
    'eq(users.platformStatus,"ACTIVE")'])
    expect(guard).toContain(clause);
  });
+ it("PLACEMENTS-TPO-REVOKE-RACE-02 keeps the user's current persisted TPO grant locked throughout destructive transactions",()=>{
+  const guard=source("src/modules/placements/tpo-job-write-base.ts");
+  const actor=guard.slice(guard.indexOf("export async function requireTpoJobActor"),guard.indexOf("export async function auditTpoJobChange"));
+  expect(actor).toContain('inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"])');
+  expect(actor).toContain('eq(collegeMemberships.status,"ACTIVE")');
+  expect(actor).toContain('eq(users.platformStatus,"ACTIVE")');
+  expect(actor).toContain('.for("share").limit(1)');
+  const lifecycle=source("src/modules/placements/tpo-offer-lifecycle-service.ts");
+  expect(lifecycle).toContain('await requireTpoJobActor(tx,context);');
+  expect(lifecycle.indexOf("await requireTpoJobActor(tx,context)"))
+    .toBeLessThan(lifecycle.indexOf("const scoped = await tx.select"));
+ });
  it("TPO-BREAK-origin-01 verifies same-origin, context and matching-row versions on both batch import writes",()=>{
   const preview=source("src/app/api/placements/tpo/batches/[batchId]/import-preview/route.ts");
   const commit=source("src/app/api/placements/tpo/batches/[batchId]/import-commit/route.ts");
