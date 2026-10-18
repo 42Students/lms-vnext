@@ -12,6 +12,15 @@ export function canReleaseAnotherHeldOffer(input: {
   annualCtcInr: number | null;
   isDreamDrive: boolean;
 }): boolean {
+  // Stored rules and salary figures can predate today's validation rules.
+  // A malformed limit or CTC is never a reason to waive the held-offer cap.
+  const validMoney=(value:number|null)=>value===null||
+    Number.isSafeInteger(value)&&value>=0;
+  if(!Number.isSafeInteger(input.maxHeldOffers)||input.maxHeldOffers<1||
+     !Number.isSafeInteger(input.upliftPct)||input.upliftPct<0||
+     input.upliftPct>1000||!validMoney(input.annualCtcInr)||
+     input.heldOffers.some(offer=>!validMoney(offer.annualCtcInr)))
+    return false;
   if (input.isDreamDrive) return true;
   if (input.heldOffers.length < input.maxHeldOffers) return true;
   const best = Math.max(
