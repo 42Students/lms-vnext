@@ -183,3 +183,7 @@ These unit/source checks are committed but unexecuted. HTTP session revocation a
 | `hr-drive-round-presets.ts`, `hr-inline-round-results-model.ts`, `hr-round-schedule-model.ts` exports | `tests/unit/chat2-round-uncovered-pure-models.test.ts` | Clone-safe presets, valid URLs, overlap and touching intervals, filter counts |
 
 **Not complete:** all PostgreSQL service role/tenant/race tests and all TPO page state cases remain open. Source-contract assertions do not prove runtime transaction isolation.
+
+## 2026-10-19 direct PostgreSQL round-action integration
+
+`tests/integration/chat2-round-action-locking-postgres.test.ts` (written, **not run**) exercises actual `actOnPlacementRound`, `getPlacementRound`, `updatePlacementRound` against a seeded disposable DB09 PostgreSQL connection: schedule and reschedule; stale COMPLETE and CANCEL both denied without round events; successful completion with one activity audit; late duplicate completion rejected; wrong-college caller denied; direct closed-job edit/cancel denied, no events. Tests use isolated test database guard and clean fixture-owned rows. This closes the **direct-service-test-absent** part of the round-action row only for these cases. It does not cover all permissions, transaction faults, simultaneous sessions, venues, reorders or slots.
