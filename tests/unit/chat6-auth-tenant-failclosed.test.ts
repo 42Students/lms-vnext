@@ -27,6 +27,7 @@ describe("AUTH-tenant-failclosed-01 college host domain outage",()=>{
   expect(outcome.ok).toBe(false);
   if(outcome.ok)throw new Error("Unexpected sign-in admission");
   expect(outcome.response.status).toBe(503);
+  expect(outcome.response.headers.get("Cache-Control")).toBe("no-store");
   expect(await outcome.response.json()).toEqual({error:"TENANT_LOOKUP_UNAVAILABLE"});
   expect(outcome.response.headers.get("Cache-Control")).toBe("no-store");
   expect(outcome.response.headers.get("Retry-After")).toBe("30");
@@ -37,7 +38,38 @@ describe("AUTH-tenant-failclosed-01 college host domain outage",()=>{
   expect(outcome.ok).toBe(false);
   if(outcome.ok)throw new Error("Unexpected sign-in admission");
   expect(outcome.response.status).toBe(404);
+  expect(outcome.response.headers.get("Cache-Control")).toBe("private, no-store");
   expect(await outcome.response.json()).toEqual({error:"UNKNOWN_TENANT_HOST"});
+ });
+ it("AUTH-OTP-14 rejects forged login scope fields before tenant lookup and never caches 400",async()=>{
+  const strict=z.object({contact:z.string()}).strict();
+  const request=new Request("https://college.test/api/auth/login/start",{
+    method:"POST",headers:{"host":"college.test","Content-Type":"application/json"},
+    body:JSON.stringify({contact:"learner@example.test",collegeId:"forged"}),
+  });
+  const outcome=await guardLoginRequest(request,strict,"login-start",10);
+  expect(outcome.ok).toBe(false);
+  if(outcome.ok)throw new Error("Forged scope unexpectedly accepted");
+  expect(outcome.response.status).toBe(400);
+  expect(outcome.response.headers.get("Cache-Control")).toBe("private, no-store");
+  expect(resolveRequestTenant).not.toHaveBeenCalled();
+ });
+ it("AUTH-OTP-14 rejects foreign-origin and throttled requests with uncached recoverable responses",async()=>{
+  vi.mocked(isSameOriginRequest).mockReturnValue(false);
+  const blocked=await guardLoginRequest(req(),schema,"login-start",10);
+  expect(blocked.ok).toBe(false);
+  if(blocked.ok)throw new Error("Unexpected origin admission");
+  expect(blocked.response.status).toBe(403);
+  expect(blocked.response.headers.get("Cache-Control")).toBe("private, no-store");
+  expect(allowRequest).not.toHaveBeenCalled();
+  vi.mocked(isSameOriginRequest).mockReturnValue(true);
+  vi.mocked(allowRequest).mockReturnValue(false);
+  const throttled=await guardLoginRequest(req(),schema,"login-start",10);
+  expect(throttled.ok).toBe(false);
+  if(throttled.ok)throw new Error("Unexpected rate-limit admission");
+  expect(throttled.response.status).toBe(429);
+  expect(throttled.response.headers.get("Cache-Control")).toBe("private, no-store");
+  expect(throttled.response.headers.get("Retry-After")).toBe("60");
  });
  it("only explicitly configured platform hosts may use null tenantCollegeId",async()=>{
   vi.mocked(resolveRequestTenant).mockResolvedValue({kind:"platform",host:"platform.test"});
