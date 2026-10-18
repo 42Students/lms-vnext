@@ -19,10 +19,10 @@ export default async function TpoRecordedOutsidePage({searchParams}:{searchParam
  const recorded=await listTpoOutsideDriveRecords(context);
  const savedId=(await searchParams).saved;
  const saved=savedId?await verifyRecordedOutsideConfirmation(context,collegeId,savedId):false;
- return <main className="space-y-5">
+ return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="TPO · Drive creation" title="Record an outside-platform drive"
    description="Document a drive that already happened outside LMS without publishing any job or learners."/>
-  <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center text-primary-text">Back to platform drive creation</Link>
+  <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)]">Back to platform drive creation</Link>
   {saved?<p role="status" className="rounded-md border border-border p-3 text-sm text-body">
    External drive record saved. It was not published as a job.
   </p>:null}
@@ -33,11 +33,11 @@ export default async function TpoRecordedOutsidePage({searchParams}:{searchParam
    {recorded.length?<ul className="space-y-2">
     {recorded.map(item=><li key={item.id} className="flex flex-wrap items-center justify-between gap-2 border-b border-border py-2 text-sm">
      <span>{item.company} · {item.title} · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(item.occurredAt)} · Recorded outside LMS</span>
-     <Link href={"/tpo/placements/recorded-outside/"+item.id} className="font-semibold text-primary-text underline">
+     <Link href={"/tpo/placements/recorded-outside/"+item.id} className="font-semibold text-[var(--lms-teal-deep)] underline">
       Add students and results
      </Link>
     </li>)}
    </ul>:<p role="status" className="text-sm text-muted-foreground">No outside-platform drives have been recorded yet.</p>}
   </section>
- </main>;
+ </div>;
 }
