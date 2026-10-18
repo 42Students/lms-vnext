@@ -43,6 +43,10 @@ describe("Super Admin tenant sessions adversarial management",()=>{
   expect(s).toContain("eq(collegeMemberships.userId,userId)");
   expect(s).toContain('inArray(membershipRoles.role,["COLLEGE_ADMIN","TPO"])');
   expect(s).toContain('if(!isSuperAdmin(ctx))throw new AuthorizationError("college.manage")');
+  // Disabling the target's account is NOT permission to leave live
+  // sessions lingering: an ACTIVE acting Super Admin may still revoke them.
+  expect(s).toContain(".innerJoin(users,eq(users.id,collegeMemberships.userId))");
+  expect(s).not.toContain('eq(users.platformStatus,"ACTIVE")');
  });
 
  it("SA-colleges-sessions-READ-01 all sensitive session/target/history readers check the persisted platform role",()=>{
