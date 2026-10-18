@@ -10,3 +10,7 @@
 
 ## Unified module inheritance + override directories
 - Replaced duplicated phone-card and desktop-table DOM trees with two shared `DataTable` instances, one for the module inheritance matrix and one for paged persisted descendant rules. Preserved original columns, state labels, the existing no-override messages, URLs, privacy (no contact details) and backend permission boundaries. All fields are exposed on narrow screens through labelled cards and the shared “More details” disclosure. Test `UX-admin-features-collegeId-02`.
+
+## Cross-audit chat-12 — MAJOR form control correction
+
+The features-collegeId read-only filter surface still used raw browser selects/search or action button markup. These bypass the audited shared 16px and 44px focus contract at 320/360/390; some text-form controls inherited 14px iOS zoom behavior. Replaced `Input`×1, `Select`×4, `Button`×1 with shared UI primitives, retaining query parameter names, labels, defaults, scope, and service behavior. Test: `tests/unit/UX-admin-features-collegeId-12-01.test.ts`. No edit/delete behavior changed; runtime/AT validation pending.

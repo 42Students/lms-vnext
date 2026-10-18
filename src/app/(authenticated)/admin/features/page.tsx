@@ -1,3 +1,6 @@
+import {Button} from "@/components/ui/button";
+import {Select} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import {CollegeFeatureRuleEditor} from "@/components/admin/college-feature-rule-editor";
 
@@ -138,56 +141,56 @@ export default async function SuperAdminFeaturesPage({
         >
           <label className="grid min-w-60 flex-1 gap-2 text-sm font-semibold text-body">
             Find college
-            <input
+            <Input
               name="q"
               type="search"
               maxLength={100}
               defaultValue={result.q}
               placeholder="College name or code"
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground"
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-base text-foreground"
             />
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">Sort colleges
-            <select name="sort" defaultValue={result.sort} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <Select name="sort" defaultValue={result.sort} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="NAME">Name A–Z</option><option value="NAME_DESC">Name Z–A</option><option value="CODE">Code A–Z</option><option value="CODE_DESC">Code Z–A</option>
-            </select>
+            </Select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">Explicit college rule for
-            <select name="module" defaultValue={result.moduleFilter ?? ""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <Select name="module" defaultValue={result.moduleFilter ?? ""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="">Any college</option><option value="projects">Projects</option><option value="placements">Placements</option><option value="electives">Electives</option>
-            </select>
+            </Select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">Stored college value
-            <select name="storedState" defaultValue={result.stateFilter} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <Select name="storedState" defaultValue={result.stateFilter} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="ALL">Any value</option><option value="ON">Stored On</option><option value="OFF">Stored Off</option>
-            </select>
+            </Select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">College rule lock
-            <select name="locks" defaultValue={result.lockFilter} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <Select name="locks" defaultValue={result.lockFilter} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="ALL">Any lock</option><option value="LOCKED">Stored locked only</option>
-            </select>
+            </Select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">College rule presence
-            <select name="presence" defaultValue={result.presenceFilter} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <Select name="presence" defaultValue={result.presenceFilter} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="ANY">Any college</option><option value="HAS_RULE">Has stored rule</option><option value="NO_RULE">No stored rule</option>
-            </select>
+            </Select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">Stored rule last updated
-            <select name="recent" defaultValue={result.recentFilter} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <Select name="recent" defaultValue={result.recentFilter} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="ALL">Any date</option><option value="7D">Last 7 days</option><option value="30D">Last 30 days</option><option value="90D">Last 90 days</option>
-            </select>
+            </Select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">Search in
-            <select name="searchField" defaultValue={result.searchField} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <Select name="searchField" defaultValue={result.searchField} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="ALL">Name and code</option><option value="NAME">College name</option><option value="CODE">College code</option>
-            </select>
+            </Select>
           </label>
-          <button
+          <Button
             type="submit"
             className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-foreground hover:bg-primary-hover"
           >
             Search
-          </button>
+          </Button>
           <Link
             href="/admin/features"
             className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
