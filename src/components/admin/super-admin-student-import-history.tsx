@@ -23,7 +23,7 @@ export function SuperAdminStudentImportHistory({runs}:{runs:readonly Run[]}) {
           className="min-h-11 rounded border border-border px-4 font-semibold">Close</button>
       </div>
       <div role="region" aria-label="Bulk import history records" tabIndex={0}
-        className="mt-4 min-h-0 flex-1 overflow-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_92%,transparent_100%)]">
+        className="mt-4 min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain [mask-image:linear-gradient(to_bottom,black_92%,transparent_100%)]">
         <DataTable caption="Bulk import history records"
           rows={runs.map((run,index)=>({...run,index}))}
           getRowKey={run=>String(run.index)}
