@@ -68,6 +68,8 @@ Branch: `chatgpt/chat-9-b`. Owner: chat-9. These are observed source-level findi
 
 | PROJ9-040 · PROJ-BREAK-idor-54 / state-27 | High | Project archive restoration authorized against the original RequestContext only. A college administrator removed after loading the archived workspace could use a stale browser tab to restore it and notify members. Restoration now requires a persisted projects.manage recheck in the locked transaction before any changes, while retaining strict archived-only and optimistic-version gates. | `cbdfd23` | `tests/unit/PROJ-BREAK-chat9-project-restore-auth.test.ts` (`a2f2f22`), role revocation, wrong state, invalid CAS and disabled module. Real concurrent PostgreSQL changes and notification delivery OPEN |
 
+| PROJ9-041 · SA-placements-student-lookup-01/04 | High | The Super Admin /admin/placements/student-lookup page trusted its browser input maxLength=150 but allowed forged GET searches larger than 150 (or arrays) directly into strict Zod service validation, resulting in an uncaught page error rather than a recoverable search. Added a single-value bounded parser and an inline invalid-search reset; invalid requests never reach the PII query and a selected-college scope is required before a valid search. | `c3ae380`, `066f421` | `tests/unit/PROJ-BREAK-chat9-sa-student-lookup-recovery.test.tsx` (`5cfcdc6`), valid/invalid URL and no college; live browser/DB denial OPEN |
+
 ## Outstanding release gates (not yet closed)
 
 - Live PostgreSQL integration tests for wrong-tenant IDs, serializable races, rollback and event/notification dedupe; chat-17 owns shared fixtures. Static service assertions alone cannot establish real DB behavior.
