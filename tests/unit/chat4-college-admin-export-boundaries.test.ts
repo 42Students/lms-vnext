@@ -64,6 +64,19 @@ describe("chat-4 College Admin export boundaries", () => {
     expect(csv.endsWith("\r\n")).toBe(true);
   });
 
+  it("COL-export-08 neutralizes invisible prefix and combining-mark formula payloads in history", () => {
+    const csv=collegeAdminHistoryCsv([
+      {occurredAt:new Date("2099-10-18T00:00:00.000Z"),eventType:"\\u200B=1+1",summary:"\\u2066@IMPORTDATA(1)"},
+      {occurredAt:new Date("2099-10-18T00:00:00.000Z"),eventType:"\\u0301+SUM(1)",summary:"\\t=BAD"},
+      {occurredAt:new Date("2099-10-18T00:00:00.000Z"),eventType:"safe",summary:"Just text"},
+    ]);
+    expect(csv).toContain('"\\'\\u200B=1+1"');
+    expect(csv).toContain('"\\'\\u2066@IMPORTDATA(1)"');
+    expect(csv).toContain('"\\'\\u0301+SUM(1)"');
+    expect(csv).toContain('"\\'\\t=BAD"');
+    expect(csv).toContain('"Just text"');
+  });
+
   it("COL-export-07 caps history at 100 rows and visibly reports truncation", () => {
     const rows=Array.from({length:MAX_ADMIN_HISTORY_EXPORT_ROWS+1},(_,i)=>({
       occurredAt:new Date("2099-10-18T00:00:00.000Z"),
