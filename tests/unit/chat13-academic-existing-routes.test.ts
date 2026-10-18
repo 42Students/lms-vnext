@@ -38,7 +38,8 @@ describe("Chat13 Academic existing route and mutation contracts",()=>{
   });
   it("SA-academics-people-39 academic tables have narrow screen horizontal scrolling",()=>{
     const content=read("src/components/ui/data-table.tsx");
-    expect(content).toContain("overflow-x-auto");
+    expect(content).toContain('<ScrollCue axis="x"');
+    expect(read("src/components/ui/scroll-cue.tsx")).toContain("overflow-x-auto");
     expect(content).toContain("border-collapse");
   });
 });
