@@ -96,9 +96,25 @@ All prior failing unit tests are retained. The snapshot's failing cases have not
 
 Remaining: real PostgreSQL concurrency cases, live role revocation between preflight and transaction, the other Courses API routes, Super Admin UI page-level browser checks, all Learner certificates and discussion transitions. Do not infer execution or passing coverage from authored tests alone.
 
+## Super Admin assignments/quizzes CSV export service (2026-10-18)
+
+`SA-academics-people-64/65` previously offered CSV links that dropped the visible selected course, audience and quiz-results filters. `adminAssessmentExportHref` now derives the export link from the strict directory query (without pagination). `tests/unit/chat7-superadmin-assessment-export-filter-parity.test.ts` exercises default, filtered assignment and quiz URLs, preservation of search/course/scope/result parameters, and no stale page/tenant ID injection. `tests/unit/chat7-superadmin-learning-export-service-behavior.test.ts` mocks the authorized reader and validates actor context, per-page filter continuity, formula-safe CSV, private no-store output, and 500-row/20-page truncation. Tests authored, **not executed**. Real Postgres tenant/role behavior and export vs on-screen totals remain independent open checks.
+
+## Latest unit-failure inventory triage (2026-10-18)
+
+The published unit-failure list still names CI `ff6819dd` (cloud `698eb9dd`) and has not been refreshed for this branch. Test and source reviews were performed without running Vitest:
+
+- `chat7-legacy-faculty-quiz-report-copy.test.ts`: a real stale generic `Back` label in `/teacher/report/quiz/[quizId]` was corrected to exact legacy `← My Quizzes`. All other listed copy assertions are present.
+- `chat7-course-delivery-roster-weak.test.ts`: the current `listActiveDeliveryLearners` uses the exact scoped `ACTIVE` section enrollment predicate, ELECTIVE backing constraints, persisted ACTIVE membership/user and LEARNER role. Both mocked branches select a row only from the appropriate roster. The previously reported source-grep assertion is expected to match current source; runtime confirmation remains pending.
+- `chat7-college-assessment-export-service-weak.test.ts`: current service passes the same context/kind and page to every reader call, uses a 25-row page with 1000-row/40-page cap, and marks truncated CSV. Both reported pagination cases appear satisfied in source. Unit-failure list may be stale; do not mark green until new CI is available.
+
+The production typecheck section lists no chat-7 errors and reports PASS at the documented CI snapshot. These are review findings, not passing test claims.
+
 ## Learner assignment grade, submission and reminder integrity (2026-10-18)
 
 Fixed `src/modules/courses/learner-assignment-display.ts`: previously `gradePublished && pointsAwarded === null` fabricated a scored zero, contradicting the learner-grade visibility model. The overview now delegates to `learnerAssignmentPublishedGradeLabel`, showing "Graded · score unavailable" while keeping a genuine numeric zero distinct. `tests/unit/chat7-learner-assignment-display-and-upload-guards.test.ts` exercises that defect plus persisted submitted/late/deadline state, due-soon reminders that exclude already-submitted and expired records, rejecting malformed/oversized upload selection before signed-grant request, and historical read-only course filtering. Includes `COURSES7-06`, `COURSES7-08`, `COURSES7-09`, `LEARNER-learning-misc-05`. Tests authored, **not executed**; real PostgreSQL release/cross-tenant and upload infrastructure checks remain open.
+
+Due-soon reminder projection also now discards malformed/nonfinite windows and deduplicates repeated course-assignment/delivery rows before rendering, retaining the earliest due notice. Regression cases are added in the same `LEARNER-learning-misc-05` test. Delivery/push exactly-once is still outside this read-projection test; no notification-delivery guarantee is claimed.
 
 ## Learner assessment directory model batch (2026-10-18)
 

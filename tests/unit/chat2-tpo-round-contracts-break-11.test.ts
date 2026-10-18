@@ -20,7 +20,7 @@ describe("TPO-BREAK-round-contracts-11 validation and state evidence, no tenant 
   for(const malformed of [
    {...valid,confirmed:false},{...valid,expectedCurrentResultId:"bad"},
    {...valid,companyId:id(2)}, {...valid,result:{...valid.result,collegeId:id(2)}},
-   {...valid,result:result(1,"HOLD")},{...valid,result:result(1,"FAIL")},
+   {...valid,result:result(1,"HOLD")},{...valid,result:{applicationId:id(1),outcome:"FAIL"}},
    {...valid,result:result(1,"PASS",3)},{...valid,result:result(1,"HOLD",0)},
   ])expect(confirmedTpoRoundResultSchema.safeParse(malformed).success).toBe(false);
   expect(confirmedTpoRoundResultSchema.safeParse({
@@ -29,6 +29,8 @@ describe("TPO-BREAK-round-contracts-11 validation and state evidence, no tenant 
   expect(confirmedTpoRoundResultSchema.safeParse({
    ...valid,expectedCurrentResultId:id(2),
   }).success).toBe(true);
+  // A fully explained FAIL is valid; only unexplained non-PASS results are rejected.
+  expect(confirmedTpoRoundResultSchema.safeParse({...valid,result:result(1,"FAIL")}).success).toBe(true);
  });
  it("bulk staging cannot accept duplicated applicants, repeated hold ranks or oversized payloads",()=>{
   const valid={confirmed:true,entries:[entry(1),entry(2,"HOLD",4)]};

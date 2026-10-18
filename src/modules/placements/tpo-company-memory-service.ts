@@ -91,15 +91,14 @@ export function deriveOwnRecruiterLeadStage(
   jobs: readonly { jobId: string; relationshipId: string;companyName?:string|null;createdByUserId?:string|null }[],
   driveRows: readonly DriveFactRow[],
 ) {
-  // Legacy groups the employer by normalized name, even when multiple
-  // persisted company relationships share that name. A recruiter-owned
-  // drive also counts when it is not attached to the lead's relationship.
-  const companyKey=tpoCompanyKey(lead.companyName);
+  // Distinct college company relationships can share the same normalized
+  // name. An unlinked CRM lead must not inherit a stranger's hiring facts
+  // when the name is ambiguous; a uniquely linked employer is safe.
+  // Recruiter-owned jobs remain attributable by the persisted creator ID.
+  const relationshipId=resolveRecruiterLeadRelationship(lead,jobs);
   const ownJobIds=new Set(jobs.filter(row=>
     (lead.recruiterUserId!==null && row.createdByUserId===lead.recruiterUserId) ||
-    (lead.companyRelationshipId!==null
-      ?row.relationshipId===lead.companyRelationshipId
-      :Boolean(companyKey)&&tpoCompanyKey(row.companyName)===companyKey),
+    (relationshipId!==null && row.relationshipId===relationshipId),
   ).map(row=>row.jobId));
   const facts = deriveCompanyDriveFacts(
     driveRows.filter((row) => ownJobIds.has(row.jobId)),

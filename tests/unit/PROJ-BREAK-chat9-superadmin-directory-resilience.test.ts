@@ -21,7 +21,7 @@ describe("IIT Dharwad Projects: Super Admin template scale and graceful college 
     })).toEqual({ releases: 1, sprints: 2, tasks: 3, resources: 0 });
   });
   it("PROJ-BREAK-scale-23 rejects an unbounded or malformed Super Admin template page", () => {
-    for (const page of [0, -1, 1001, 1.5, "Infinity", "NaN"]) {
+    for (const page of [0, -1, 1001, 1.5, "Infinity", "NaN", "0x10", "1e2", " 2 ", ["1"]]) {
       expect(templateDirectoryQuerySchema.safeParse({page}).success).toBe(false);
     }
     expect(templateDirectoryQuerySchema.safeParse({page:1000}).success).toBe(true);

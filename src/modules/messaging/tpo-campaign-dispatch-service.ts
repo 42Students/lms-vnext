@@ -13,7 +13,7 @@ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted
 import {readOutboundProviderConfig,createOutboundProvider} from "./providers";
 import {readZeptoMailConfig,isSecureMailProviderEndpoint} from "@/modules/notifications/zeptomail-email";
 import {issueTpoCampaignRecipientToken,resolveTpoCampaignRecipientSecret} from "./tpo-campaign-recipient-token";
-import {campaignRecipientDisposition} from "./tpo-campaign-send-policy";
+import {campaignRecipientDisposition,campaignRecipientStillMatchesSnapshot} from "./tpo-campaign-send-policy";
 import {tpoCampaignDraftStorageReady,getTpoCampaignDraft} from "./tpo-campaign-draft-service";
 import {previewTpoCampaignText} from "./tpo-campaign-draft-model";
 import {isCampaignTemplateKey} from "./template-boundary-model";
@@ -116,6 +116,37 @@ export async function dispatchTpoCampaign(context:RequestContext,rawId:unknown){
    .returning({id:placementTpoEmailCampaignRecipients.id});
   if(!claimedRecipient)continue;
   if(skipped){totals.skipped++;continue;}
+  // A queued snapshot is not live consent. Recheck the college-scoped lead
+  // immediately before an external send, including address changes since draft.
+  // Missing or modified leads are suppressed, never silently rerouted.
+  const [live]=await db.select({
+   emailNorm:placementTpoLeads.emailNorm,
+   unsubscribedAt:placementTpoLeads.unsubscribedAt,
+   inviteBouncedAt:placementTpoLeads.inviteBouncedAt,
+   manualStage:placementTpoLeads.manualStage,
+  }).from(placementTpoLeads).where(and(
+   eq(placementTpoLeads.id,row.leadId),
+   eq(placementTpoLeads.collegeId,college.id),
+  )).limit(1);
+  const liveFact=live?{
+   emailNorm:live.emailNorm,unsubscribedAt:live.unsubscribedAt,
+   inviteBouncedAt:live.inviteBouncedAt,manualStage:live.manualStage,
+  }:null;
+  const matched=campaignRecipientStillMatchesSnapshot({
+   emailNorm:row.email,unsubscribedAt:row.unsubscribedAt,
+   inviteBouncedAt:row.bouncedAt,manualStage:row.manualStage,
+  },liveFact);
+  if(!matched||!canContactRecipientAtRuntime("EMAIL",liveFact?.emailNorm??"")){
+   const skipStatus=liveFact&&campaignRecipientDisposition(liveFact)==="NO_EMAIL"
+    ?"SKIPPED_NO_EMAIL" as const:"SKIPPED_UNSUBSCRIBED" as const;
+   await db.update(placementTpoEmailCampaignRecipients).set({status:skipStatus})
+    .where(and(eq(placementTpoEmailCampaignRecipients.id,row.id),
+     eq(placementTpoEmailCampaignRecipients.campaignId,id),
+     eq(placementTpoEmailCampaignRecipients.collegeId,college.id),
+     eq(placementTpoEmailCampaignRecipients.status,"QUEUED")));
+   totals.skipped++;
+   continue;
+  }
   const token=issueTpoCampaignRecipientToken({
    v:1,collegeId:college.id,campaignId:id,recipientId:row.id,
    expiresAt:Date.now()+180*24*60*60*1000,

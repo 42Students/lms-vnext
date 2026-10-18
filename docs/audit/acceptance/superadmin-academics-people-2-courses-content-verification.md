@@ -104,3 +104,22 @@ The Super Admin Assignments and Quizzes pages now render the existing full Colle
 | SA-academics-people-62 | PARTIAL | Legacy public HTTPS link previews are now revalidated at render before creating a third-party link; test `SA-academics-people-62 imported content links fail closed` in `tests/unit/chat7-superadmin-content-public-link-safety.test.ts`. Private material previews and scanner remain blocked. |
 
 No TypeScript, Vitest, browser or PostgreSQL execution was performed by chat-7. Existing infrastructure and release blockers remain unchanged.
+
+## Chat-7 actionable catalogue copy correction (2026-10-18)
+
+| ID | Status | Evidence |
+|---|---|---|
+| SA-academics-people-56 | PARTIAL; corrected misleading directory copy | The Super Admin Lessons page no longer claims to be "Read-only" while presenting create, edit, archive and reorder. `tests/unit/chat7-superadmin-course-catalogue-actionable-copy.test.ts` — `SA-academics-people-56 does not describe an actionable Lessons directory as read-only`. |
+| SA-academics-people-64 | PARTIAL; corrected misleading directory copy | Assignment directory now states its scope without claiming read-only; create, review and grade actions remain surfaced. `tests/unit/chat7-superadmin-course-catalogue-actionable-copy.test.ts`. |
+| SA-academics-people-65 | PARTIAL; corrected misleading directory copy | Quiz directory now states its scope without claiming read-only; create, attempts and result-release actions remain surfaced. `tests/unit/chat7-superadmin-course-catalogue-actionable-copy.test.ts`. |
+
+Tests authored, not executed. This copy correction does not satisfy the unfinished full legacy authoring/grade publication matrix or PostgreSQL tenant/scope verification.
+
+## Chat-7 export-filter parity — source remediation (2026-10-18)
+
+| ID | Status | Evidence |
+|---|---|---|
+| SA-academics-people-64 | PARTIAL; filtered CSV contract now correct | Admin Assignments export previously discarded selected course-code and audience scope (kept only search and status). `src/modules/courses/admin-assessment-directory-model.ts:adminAssessmentExportHref` now projects the exact directory filter schema without a page number; `src/app/(authenticated)/admin/assignments/page.tsx` uses it. `tests/unit/chat7-superadmin-assessment-export-filter-parity.test.ts` — `SA-academics-people-64 assignment CSV keeps the exact active course and audience filters, without paging`. |
+| SA-academics-people-65 | PARTIAL; filtered CSV contract now correct | Admin Quizzes CSV also preserves results-release filter and audience/course constraints; no request-supplied college ID is accepted by URL helper. Same regression suite — `SA-academics-people-65 quiz CSV carries published-results state but cannot emit stale pagination`. |
+
+Tests authored, not run. These are export-URL/scope correctness repairs, not proof of full legacy export Excel parity, grading lifecycle or Postgres tenant isolation.
