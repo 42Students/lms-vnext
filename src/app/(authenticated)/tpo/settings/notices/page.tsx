@@ -27,16 +27,16 @@ export default async function TpoStudentNoticesSettings(){
   <TpoSettingsNav active="notices"/>
   <h1 className="text-xl font-semibold">Student Notices &amp; Preparation</h1>
   <p className="text-sm text-body">Use registered placement announcements and preparation settings. This page does not enable email/SMS delivery, bulk learner targeting or unregistered configuration switches.</p>
-  <section className="space-y-3 rounded-xl border border-border bg-surface p-5">
+  <section className="space-y-3 border-t border-border pt-5">
    <h2 className="font-semibold">College placement notices</h2>
    <p className="text-sm" role="status">{view.publishedSummary}</p>
    <p className="text-xs text-muted-foreground">The count describes only the current announcements reader result, not confirmed individual delivery or read receipts.</p>
-   <Link href={view.noticeHref} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Manage actual placement announcements</Link>
+   <Link href={view.noticeHref} className="inline-flex min-h-11 sm:min-h-9 items-center text-[var(--lms-link-text)] underline">Manage actual placement announcements</Link>
   </section>
-  <section className="space-y-3 rounded-xl border border-border bg-surface p-5">
+  <section className="space-y-3 border-t border-border pt-5">
    <h2 className="font-semibold">Preparation &amp; readiness</h2>
    <p role="status" className="text-sm">{view.prepSummary}</p>
-   <Link href={view.prepHref} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Configure available preparation courses</Link>
+   <Link href={view.prepHref} className="inline-flex min-h-11 sm:min-h-9 items-center text-[var(--lms-link-text)] underline">Configure available preparation courses</Link>
   </section>
   {communication.ready?<TpoSmsCapEditor key={ctx.membership?.collegeId??"unscoped"} initial={communication.smsMonthlyCap} version={communication.version}/>:
    <p role="status" className="rounded-lg border border-border p-4 text-sm">Communication settings are not available in this database.</p>}
@@ -45,7 +45,7 @@ export default async function TpoStudentNoticesSettings(){
     notifyResultApplied:communication.notifyResultApplied,
     notifyNudges:communication.notifyNudges,notifyPrepAssigned:communication.notifyPrepAssigned,
    }} version={communication.version}/>:null}
-   <section className="space-y-2 rounded-xl border border-border bg-surface p-5">
+   <section className="space-y-2 border-t border-border pt-5">
     <h2 className="font-semibold">SMS</h2>
     <p className="text-sm font-medium">Always sent (email and SMS), never counted against the limit</p>
     <div className="flex flex-wrap gap-2">{["Round scheduled or changed",
@@ -54,15 +54,15 @@ export default async function TpoStudentNoticesSettings(){
      <span key={label} className="rounded-full border border-border px-3 py-1 text-xs">{label}</span>)}</div>
     <p className="text-xs text-muted-foreground">These are legacy notification categories. Actual email/SMS delivery is not certified without provider status.</p>
    </section>
-  <section className="space-y-2 rounded-xl border border-border bg-surface p-5">
+  <section className="space-y-2 border-t border-border pt-5">
    <h2 className="text-lg font-semibold">Emails switched on</h2>
    <p role="status" className="text-sm text-warning-text">Couldn&apos;t check which emails are switched on.</p>
    <p className="text-xs text-muted-foreground">Mail delivery configuration and provider template status are not available to this reader. In-app notices remain available.</p>
-   <Link href="/tpo/settings/templates" className="inline-flex min-h-11 text-sm text-[var(--lms-teal-deep)] underline">View available message templates</Link>
+   <Link href="/tpo/settings/templates" className="inline-flex min-h-11 sm:min-h-9 text-sm text-[var(--lms-link-text)] underline">View available message templates</Link>
   </section>
   <nav aria-label="Notice and notification destinations" className="flex flex-wrap gap-4 text-sm">
-    <Link href={destinations.inbox} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Open personal notifications inbox</Link>
-    <Link href={destinations.preferences} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Review notification preferences</Link>
+    <Link href={destinations.inbox} className="inline-flex min-h-11 sm:min-h-9 items-center text-[var(--lms-link-text)] underline">Open personal notifications inbox</Link>
+    <Link href={destinations.preferences} className="inline-flex min-h-11 sm:min-h-9 items-center text-[var(--lms-link-text)] underline">Review notification preferences</Link>
   </nav>
  </div>;
 }

@@ -57,7 +57,7 @@ export default async function TpoPlacementSeasonSettingsPage() {
         ].map((metric) => (
           <section
             key={metric.label}
-            className="rounded-xl border border-border bg-surface p-5"
+            className="border-t border-border pt-5"
           >
             <p className="m-0 text-xs font-semibold text-muted-foreground">
               {metric.label}
