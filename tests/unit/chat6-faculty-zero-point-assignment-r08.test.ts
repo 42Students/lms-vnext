@@ -11,7 +11,8 @@ describe("Faculty zero-point participation assignments",()=>{
   expect(createCourseAssignmentInputSchema.safeParse(base).success).toBe(true);
   expect(updateCourseAssignmentInputSchema.safeParse({maxPoints:0}).success).toBe(true);
   // deliveryId is a route parameter; the strict Faculty command body must not duplicate it.
-  const {deliveryId: _routeDeliveryId,...facultyBody}=base;
+  const {deliveryId,...facultyBody}=base;
+  expect(deliveryId).toBe(id);
   expect(facultyAssignmentCommandSchema.safeParse({...facultyBody,action:"CREATE",confirmed:true}).success).toBe(true);
   expect(facultyAssignmentCommandSchema.safeParse({...base,action:"CREATE",confirmed:true}).success).toBe(false);
   expect(facultyAssignmentDraftIssue({title:"Participation",description:"Review",maxPoints:0})).toBeNull();
