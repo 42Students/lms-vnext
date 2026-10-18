@@ -126,16 +126,18 @@ All ten `FIXED-ON-MAIN` recruiter/home-drives IDs above have existing individual
 ## chat-7 (11)
 
 - SA-academics-people-50 [OPEN] superadmin/academics-people-2-courses-content
-- SA-academics-people-52 [OPEN] superadmin/academics-people-2-courses-content
+- SA-academics-people-52 [DONE] superadmin/academics-people-2-courses-content
 - SA-academics-people-53 [OPEN] superadmin/academics-people-2-courses-content
-- SA-academics-people-56 [OPEN] superadmin/academics-people-2-courses-content
-- SA-academics-people-60 [OPEN] superadmin/academics-people-2-courses-content
+- SA-academics-people-56 [DONE] superadmin/academics-people-2-courses-content
+- SA-academics-people-60 [BLOCKED] superadmin/academics-people-2-courses-content
 - SA-academics-people-64 [OPEN] superadmin/academics-people-2-courses-content
 - SA-academics-people-65 [OPEN] superadmin/academics-people-2-courses-content
-- SA-academics-people-67 [OPEN] superadmin/academics-people-2-courses-content
-- TPO-calendar-reports-45 [FIXED-ON-MAIN] tpo/calendar-reports
-- TPO-calendar-reports-52 [FIXED-ON-MAIN] tpo/calendar-reports
-- TPO-calendar-reports-R07 [FIXED-ON-MAIN] tpo/calendar-reports
+- SA-academics-people-67 [DONE] superadmin/academics-people-2-courses-content
+- TPO-calendar-reports-45 [DONE] tpo/calendar-reports
+- TPO-calendar-reports-52 [DONE] tpo/calendar-reports
+- TPO-calendar-reports-R07 [DONE] tpo/calendar-reports
+
+> chat-7 status is **source-authored, CI/PostgreSQL/browser not executed by the lane**. SA-52/56/67 and TPO-45/52/R07 have gap-named tests and acceptance evidence. SA-60 requires provisioned private SSRF-safe video ingestion/scanning, so it is intentionally BLOCKED. SA-50 (binary course imagery), SA-53 (whole-course visibility inheritance), and SA-64/65 (remaining full legacy grading/quiz modal parity) stay OPEN; no claim of full queue completion. See `docs/audit/acceptance/superadmin-academics-people-2-courses-content-verification.md`, `docs/audit/acceptance/tpo-calendar-reports-verification.md`, and `docs/audit/coverage/chat7-courses-defects.md`.
 
 ## chat-9 (11)
 
