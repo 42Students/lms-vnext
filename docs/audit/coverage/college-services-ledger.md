@@ -199,3 +199,8 @@ No claim of green cloud CI is made. Test-file TypeScript verification, isolated 
 
 
 | `parseTenantLifecycleSearchParams`, `tenantLifecycleHref`, `tenantLifecyclePaging` | `tests/unit/chat4-superadmin-tenant-directory-query.test.ts` | Real strict query parser rejects repeated/array/unknown filters and overlong search; preserves selected organization/status and bounded page sizes; `/admin/tenants` validates before data access with recovery UI |
+
+
+| `PUT /api/admin/colleges/[collegeId]/signin` | `tests/unit/chat4-superadmin-tenant-route-guards.test.ts` | Real handler with service mock: mismatched path/body college, cross-site mutation blocked, validated success and private no-store policy |
+| `GET/POST /api/admin/colleges/[collegeId]/sessions` | same | Real handlers: GET validates userId and does not call revocation, POST enforces same-origin, exact user ID, literal confirmation, unknown-key rejection and private response |
+| `GET /api/admin/tenants/export` | same | Real handler: duplicate/unrecognized filters and forged organization rejected before read, private no-store and nosniff CSV headers, row-cap/truncation metadata and no mutation |
