@@ -23,6 +23,36 @@ The shared `assertPersistedLearnerProjectMutation` already provides ACTIVE user,
 |---|---|---|
 | `meeting-service.ts:scheduleProjectMeeting` | `tests/unit/PROJ-BREAK-chat14-mentor-meeting-races.test.ts` (`PROJ-BREAK-MENTOR-357/358`) | Now enforces shared `maySaveMentorMeetingStatus` after loading the locked meeting. Rejects SCHEDULED→SCHEDULED when clock window changes, DRAFT/REQUESTED→RESCHEDULED, RESCHEDULED→SCHEDULED, and RESCHEDULED with unchanged window from SCHEDULED. Allows SCHEDULED→RESCHEDULED with changed window. Tests authored, **not executed**; real PostgreSQL and HTTP UI/form parity remain GAP. |
 
+## Legacy meeting HTTP bounded decoder — PROJ-BREAK-MENTOR-359..363 (2026-10-19)
+| Route handler / export | Test | Coverage and pending work |
+|---|---|---|
+| `POST /api/projects/[projectId]/meetings` | `tests/unit/PROJ-BREAK-chat14-mentor-meeting-body-routes.test.ts` | Hostile origin before auth; declared or streamed size >128 KiB; unsupported MIME; malformed/negative length; forwarded decoded body and exact project ID |
+| `PATCH /api/projects/[projectId]/meetings/[meetingId]` | Same test | Same matrix plus exact meeting ID and unchanged service validation |
+| `POST /api/projects/[projectId]/meetings/request` | Same test | Same matrix, learner request service receives unknown body for Zod validation |
+| `POST /api/projects/[projectId]/meetings/[meetingId]/transition` | Same test | Same matrix, legacy complete/cancel body remains strictly validated by service |
+| `meeting-service.ts:requestProjectMeeting/scheduleProjectMeeting/transitionProjectMeeting` | Existing behavioral service regressions and same HTTP suite | Signatures accept `unknown` only at the external boundary and parse validated schemas inside the service; never cast untrusted bytes to a typed command |
+
+All four now reuse `readMentorProjectCommandBody` with recoverable 400/413/415 messages and no partial service invocation. Existing `PROJ-BREAK-MENTOR-337` malformed-body route matrix was strengthened to assert explicit 400 for meeting routes. Tests authored but **not executed**; raw HTTP stream cancellation, real session expiry, public API backward compatibility and PostgreSQL acceptance remain GAP.
+
+## Mentor sprint progress page state and role matrix — PROJ-BREAK-MENTOR-365..372 (2026-10-19)
+| Page or boundary | Behavioral test file | Cases / acceptance |
+|---|---|---|
+| `src/app/(authenticated)/mentor/sprint-progress/page.tsx` | `tests/unit/PROJ-BREAK-chat14-mentor-sprint-progress-page.test.tsx` | `365` duplicate filters, `366` malformed/foreign selectors, `367` wrong-role redirect pre-service, `368` disabled module non-disclosure, `369` honest empty and populated escaped HTML/export/pagination, `370` service denial propagates |
+| `src/app/(authenticated)/mentor/sprint-progress/loading.tsx` | Same file | `371` accessible busy state, no project identity |
+| `src/app/(authenticated)/mentor/sprint-progress/error.tsx` | Same file | `372` friendly retry and no raw SQL/exception disclosure |
+
+**Unverified:** these tests are authored but **not executed**; actual responsive phone width, keyboard navigation, live role/session/tenant grants, PostgreSQL pagination and browser network failures remain GAP. No design-kit changes: owner's one-canvas directive remains ON HOLD.
+
+## Sprint progress numerical and service permission boundaries — PROJ-BREAK-MENTOR-373..382 (2026-10-19)
+| Export | Behavioral test | Cases and open acceptance |
+|---|---|---|
+| `mentor-sprint-progress-model.ts:mentorSprintProgressQuerySchema / mentorSprintProgressPage` | `tests/unit/PROJ-BREAK-chat14-mentor-sprint-pagination.test.ts` | `373` decimal-only page tokens, rejects exotic URL numbers; `374` NaN/infinite/negative/fractional persisted aggregates or page requests sanitize without invalid offsets |
+| `mentor-sprint-progress-model.ts:mentorSprintProgressHref / summarizeSprintTasks` | Same test | `375` authorized deep link only includes approved filters; `376` no-task total remains unknown, honest completed/review/block counters |
+| `mentor-sprint-progress-service.ts:getMentorSprintProgress` | `tests/unit/PROJ-BREAK-chat14-mentor-sprint-service-permissions.test.ts` | `377` disabled user, `378` inactive/wrong-role/permission, `379` disabled module, `380` injected other-college, learner or archived roster, `381` foreign project filter, `382` valid assigned Mentor advances to scoped DB query |
+
+Source fixes: `af9179c` and `99db146`. Tests are **authored, not run**; database joins, query plans, true scope invalidation and 1k+ sprint pagination need independent PostgreSQL/HTTP verification. This does not waive the S1 meeting version/ABA release gate.
+
+
 ## CI failure triage (refreshed inventory ff6819dd, 2026-10-18)
 - `projects-mentor-service-guards-chat14.test.ts` final-delivery boundary assertion: the current service still contains every checked guard, version token, audited notification and scoped mutation gate. This appears to be a stale snapshot; do not change code or weaken the check without a new failing trace.
 - `recruiter-chat14-message-email-bridge-contract.test.ts`: the expectation referred to the raw email string, but the provider now normalizes the recipient *before* applying the allowlist; updated the test to assert both normalization and the runtime allowlist, preserving the stronger safety invariant.
