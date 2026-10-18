@@ -599,7 +599,7 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/modules/projects/resource-file-status-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
 | `src/modules/projects/resource-file-upload-session-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
 | `src/modules/projects/resource-file-upload-state.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/resource-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
+| `src/modules/projects/resource-service.ts` | **Whole-module resource policy audit** | `tests/unit/PROJ-BREAK-chat14-mentor-resource-races.test.ts` | Six named resource exports have separate rows and mocked authorization/ordering tests. This summary is not a function export; learner creation, concurrency, true PostgreSQL and full release acceptance remain GAP |
 | `src/modules/projects/resource-visibility-policy.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
 | `src/modules/projects/risk-signals.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
 | `src/modules/projects/scope.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
