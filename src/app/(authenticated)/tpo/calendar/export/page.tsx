@@ -32,7 +32,7 @@ export default async function TpoCalendarExportPage({
     : null;
   const params = parsed.success ? new URLSearchParams(parsed.data) : null;
   return <div className="space-y-6">
-    <Link href="/tpo/calendar" className="font-semibold text-primary-text hover:underline">
+    <Link href="/tpo/calendar" className="font-semibold text-[var(--lms-teal-deep)] hover:underline">
       ← TPO calendar
     </Link>
     <PageHeader eyebrow="TPO · Calendar" title="Export upcoming placement rounds"
@@ -40,13 +40,13 @@ export default async function TpoCalendarExportPage({
     <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-5">
       <label className="text-sm font-semibold text-foreground">From (IST)
         <input type="date" name="from" required defaultValue={first(query.from) ?? today}
-          className="mt-2 block min-h-10 rounded-md border border-border bg-surface px-3" />
+          className="mt-2 block min-h-11 rounded-md border border-border bg-surface px-3" />
       </label>
       <label className="text-sm font-semibold text-foreground">Through (IST)
         <input type="date" name="to" required defaultValue={first(query.to) ?? nextWeek}
-          className="mt-2 block min-h-10 rounded-md border border-border bg-surface px-3" />
+          className="mt-2 block min-h-11 rounded-md border border-border bg-surface px-3" />
       </label>
-      <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">
         Preview range
       </button>
     </form>
@@ -64,7 +64,7 @@ export default async function TpoCalendarExportPage({
         Unscheduled, cancelled, completed and non-published drives are not inferred.
       </p> : null}
       <a href={"/api/placements/tpo/calendar/export?" + params?.toString()}
-        className="inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+        className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-foreground">
         Download rounds CSV
       </a>
     </section> : null}
