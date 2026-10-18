@@ -365,7 +365,7 @@ afterAll(async () => {
 });
 
 describe("Projects P6B final delivery and evaluation", () => {
-  it("supports draft editing but gates final submit on completed execution", async () => {
+  it("PROJ-BREAK-submissions-10 supports draft editing, gates readiness and enforces exact saved revision", async () => {
     const project = await createProject();
 
     const draft =
@@ -411,6 +411,12 @@ describe("Projects P6B final delivery and evaluation", () => {
     });
 
     await finishExecution(project.id);
+
+    // A stale browser must never submit an edited revision from a second
+    // session, even when the project execution readiness has become complete.
+    await expect(submitProjectSubmission(learner,project.id,draft.id,{
+      expectedUpdatedAt:"2099-01-01T00:00:00.000Z",
+    })).rejects.toMatchObject({code:"PROJECT_SUBMISSION_CONFLICT"});
 
     await expect(
       submitProjectSubmission(

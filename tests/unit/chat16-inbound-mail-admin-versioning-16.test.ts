@@ -44,7 +44,8 @@ describe("chat-16 inbound mail admin versioned triage service",()=>{
    {...mutation,id:"not-a-uuid"},
    {...mutation,expectedVersion:-1},
    {...mutation,expectedVersion:1.5},
-   {...mutation,status:"TRIAGED"},
+   {...mutation,status:"NEW"},
+   {...mutation,status:"INVALID"},
    {...mutation,arbitraryRecipient:"victim@example.org"},
   ];
   for(const input of invalid){
@@ -64,6 +65,18 @@ describe("chat-16 inbound mail admin versioned triage service",()=>{
   expect(mocks.update).toHaveBeenCalledTimes(1);
   expect(mocks.set).toHaveBeenCalledWith(expect.objectContaining({status:"RESOLVED"}));
   expect(mocks.where).toHaveBeenCalledTimes(1);
+ });
+ it("inbound-mail-write-21 allows NEW to TRIAGED with optimistic version lock",async()=>{
+  const mocks=updateDb([{id,status:"TRIAGED",version:3}]);
+  await expect(changeInboundMailStatusForAdmin(admin,{...mutation,status:"TRIAGED"}))
+   .resolves.toEqual({kind:"UPDATED",id,status:"TRIAGED",version:3});
+  expect(mocks.set).toHaveBeenCalledWith(expect.objectContaining({status:"TRIAGED"}));
+ });
+ it("inbound-mail-write-22 rejects RESOLVED to TRIAGED without reopening",async()=>{
+  await expect(changeInboundMailStatusForAdmin(admin,{
+    ...mutation,expectedStatus:"RESOLVED",status:"TRIAGED",
+  })).rejects.toThrow("Unsupported inbound mail transition");
+  expect(drizzleInboundMailAdminRepository.tableExists).not.toHaveBeenCalled();
  });
  it("inbound-mail-write-20 returns the persisted state and version after a guarded update",async()=>{
   const mocks=updateDb([{id,status:"RESOLVED",version:3}]);

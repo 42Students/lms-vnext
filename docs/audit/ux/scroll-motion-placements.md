@@ -23,3 +23,8 @@
 The selection dialog is rendered using the shared `Dialog` and nested `ConfirmDialog`; no custom animation or one-off duration was introduced. The shared dialogs own focus containment, backdrop/body lock, and reduced-motion behaviour. Do not call this a browser accessibility pass without testing 320/360/390px, native keyboard focus, wheel/touch, reduced-motion and saved draft behaviour under network failure.
 
 **Open follow-up:** Reconcile all remaining `src/components/placements` surfaces with `docs/audit/ui-surfaces/UI-SURFACES.md` at mobile breakpoints. The calendar and drive workspace already had source-level masks/overscroll containment before this round; validate those and every listed surface in a browser before claiming production UX acceptance.
+
+
+### Chat-5 report filter and column overlays (UX-PLACEMENTS-REPORT-SCROLL-27)
+
+`src/components/placements/report-interactive-table.tsx`: the two mobile/desktop expandable report option pickers (Column filters and Columns) now expose named keyboard-reachable vertical scroll regions; the hidden scrollbar is complemented by a vertical bottom mask, `overscroll-contain`, small-screen viewport height capping, and safe-area inset padding. The native `details/summary` widgets still return focus to the disclosure on the Close action. Actual report rows remain in shared `DataTable` with horizontal `ScrollCue`; the data is not rendered twice on phones. Regression: `tests/unit/chat5-placements-ux-workflows.test.ts` `UX-PLACEMENTS-REPORT-SCROLL-27`. Cloud browser keyboard, reduced-motion and overflow-size acceptance is deferred until final CI.
