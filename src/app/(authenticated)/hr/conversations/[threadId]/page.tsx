@@ -1,3 +1,4 @@
+import { ScrollCue } from "@/components/ui/scroll-cue";
 import Link from "next/link";
 import {RecruiterConversationReplyForm} from "@/components/hr/recruiter-conversation-reply-form";
 import {RecruiterConversationReadControl} from "@/components/hr/recruiter-conversation-read-control";
@@ -67,7 +68,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
     <section aria-label="Drive change request updates" className="rounded-xl border border-border bg-surface p-4">
       <h2 className="text-sm font-semibold text-foreground">Change requests · {changeRequests.requests.length}</h2>
       <p className="mt-1 text-xs text-muted-foreground">Recorded change requests for this hiring drive. Decisions are controlled by the placement cell.</p>
-      <ol className="mt-3 max-h-56 space-y-2 overflow-y-auto">
+      <ScrollCue axis="y" label="Drive change request updates" className="mt-3" viewportClassName="max-h-56"><ol className="space-y-2">
         {changeRequests.requests.slice(0,8).map(request=><li key={request.id}
           className="rounded-md border border-border bg-surface-subtle p-3 text-sm">
           <span className="font-semibold text-foreground">
@@ -83,7 +84,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
             {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(request.createdAt))}
           </p>
         </li>)}
-      </ol>
+      </ol></ScrollCue>
       <Link href={"/recruiter/drives/"+encodeURIComponent(result.thread.jobId!)+"?tab=requests"}
         className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Review requests, answers and decisions
