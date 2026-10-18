@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { ScrollCue } from "@/components/ui/scroll-cue";
 import { cx } from "@/lib/class-names";
 
 export type DataTableColumn<Row> = {
@@ -59,7 +60,9 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
   }));
   const cell=(item:(typeof prepared)[number],col:DataTableColumn<Row>)=>item.cells.get(col.key);
   return <div data-slot="data-table" className="min-w-0">
-    <div className="min-w-0 sm:overflow-x-auto sm:rounded-xl sm:border sm:border-border">
+    <ScrollCue axis="x" label={`${caption ?? "Records"} table, scroll horizontally to view more columns`}
+      className="sm:rounded-xl sm:border sm:border-border"
+      viewportClassName="overflow-x-visible sm:overflow-x-auto">
       <table className="block w-full border-separate border-spacing-0 text-left text-sm leading-5 sm:table sm:border-collapse">
         <caption className="sr-only">{caption ?? "Records"}</caption>
         <thead className="hidden sm:table-header-group sm:bg-muted">
@@ -106,6 +109,6 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
           </tr>)}
         </tbody>
       </table>
-    </div>
+    </ScrollCue>
   </div>;
 }
