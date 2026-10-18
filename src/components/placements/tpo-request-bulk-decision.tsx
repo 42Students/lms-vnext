@@ -88,14 +88,12 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
     // database statuses, never a client-supplied success count; failure to
     // record summary does not pretend those decisions were rolled back.
     const batchAudit={runId,action,requestIds:chosen.map(row=>row.id)};
-    let auditRecorded=true;
     try{
      await apiFetch("/api/placements/tpo/requests/bulk-audit",{
       method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
       body:JSON.stringify(batchAudit),
      });
     }catch{
-     auditRecorded=false;
      setAuditRetry(batchAudit);
      setError("Decisions were processed, but the batch audit could not be confirmed. Check the request history.");
     }
