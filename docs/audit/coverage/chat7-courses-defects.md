@@ -64,3 +64,16 @@ The underlying **SA-academics-people-53 persisted future-course visibility** rem
 | LEARNER-CERT-EXPIRY-01 | S2 | Learner profile certification validation accepted expiry dates equal to or earlier than issue date despite explicit legacy warning | `34710259` enforces strict issue/expiry ordering, including exact calendar date handling, `tests/unit/chat7-learner-certification-date-parity.test.ts`. |
 
 All regressions are *authored, not yet run* under the owner’s no-CI-until-final directive. Remaining debt includes real PostgreSQL race tests, scanner/object-store integration, final 320px/keyboard walkthrough and native future whole-course visibility inheritance.
+
+## Learner course resource URL audit (2026-10-18)
+
+**LEARNER-RESOURCE-LINK-08 — S2:** Prior `resourceMaterialLinkSchema` allowed credential-free HTTPS URLs to loopback and private-network targets, and `listLessonResourceMaterials` returned historical stored LINK `externalUrl` values without a safe read projection. Even without a server-side fetch, a learner clicking those links could target their own private network or cloud metadata endpoints. `b19c9c0b` rejects localhost and private IPv4/loopback IPv6 destinations during authoring and adds `safeLearnerResourceMaterialHref`; `14fd0b04` sanitizes historic LINK values before API response. `tests/unit/chat7-learner-resource-material-link-boundary.test.ts` asserts valid HTTPS, private-network denial, strict command payloads, feature readiness and server read sanitization. **Authored, CI/PG/browser pending;** no actual HTTP request to a private URL occurred.
+
+## HTTP and stale-client scope safety — follow-up
+
+| ID | Severity / cause | Source fix | Regression |
+|---|---|---|---|
+| LEARNER-RESOURCE-QUERY-09 | S2 repeated or unexpected `deliveryId` query parameters were accepted via `URLSearchParams.get`, leaving ambiguous audience scope | `9b890045` strict one-scope query schema for GET/POST with 400 on invalid values | `tests/unit/chat7-learner-resource-material-query-route.test.ts`; authored, not run |
+| LEARNER-RESOURCE-POST-11 | S2 material mutation parsed arbitrarily large HTTP JSON bodies before schema validation | `b7e69ed5`, `f9ed4238`: 16 KiB true UTF-8 streaming cap, malformed/nonobject body 400, same-origin route guard unchanged | `tests/unit/chat7-resource-material-json-boundary.test.ts`, route test; authored, not run |
+| LEARNER-RESOURCE-SCOPE-12 | S1 mounted client material list retained the old Section's private rows and could be overwritten by stale completed fetches after an acting-college switch | `b9d5fbf9` clears prior material/draft/edit state on URI change and guards async fetch, reload, error and notice completion against the active URI | `tests/unit/UX-chat7-resource-scope-privacy.test.ts`; real browser two-scope navigation still pending |
+| UX-LEARN-RESOURCE-10 | S3 resource links, Save/Remove/Edit controls and input targets could be below the 44px mobile target | `53888b69` raises all direct material controls to 44px | `tests/unit/UX-chat7-resource-material-touch-10.test.ts`; device signoff pending |

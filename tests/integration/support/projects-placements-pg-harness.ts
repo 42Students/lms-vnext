@@ -520,7 +520,7 @@ export async function createPlacementFixture(db: PgHarness, tenant: TenantFixtur
     const season = existing[0] ?? (await db.query<{id:string}>(`
       insert into placement_seasons (college_id,name,code,start_date,end_date,created_by_user_id)
       values ($1,$2,$3,$4,$5,$6) returning id`,
-      [tenant.collegeId,"Harness "+suffix,"PH-"+suffix,"2098-10-01","2099-06-30",author.userId]))[0]!;
+      [tenant.collegeId,"Harness "+suffix,"PH-"+suffix,"2020-10-01","2099-06-30",author.userId]))[0]!;
     const [job] = await db.query<{id:string}>(`
       insert into placement_jobs (college_id,company_relationship_id,season_id,title,description,
         employment_type,work_mode,openings,minimum_annual_ctc_inr,application_deadline,
@@ -588,6 +588,30 @@ export async function createRecruiterFixture(
   });
 }
 
+/** Fixture-only persisted witness for HR grant state. Product authorization
+ * lives in the recruiter services; never import this helper into an app route.
+ */
+export async function fixtureRecruiterCanAccess(
+  db: PgHarness, recruiter: RecruiterFixture,
+  capability: "DRIVES" | "INTERVIEWS" | "MESSAGES" | "APPLICANT_EXPORT",
+): Promise<boolean> {
+  const rows=await db.query<{id:string}>(`
+    select g.id from placement_recruiter_college_grants g
+      join placement_recruiter_profiles p
+        on p.user_id=g.recruiter_user_id and p.company_id=$4 and p.status='ACTIVE'
+      join users u on u.id=p.user_id and u.platform_status='ACTIVE'
+      join placement_company_relationships rel
+        on rel.id=g.company_relationship_id and rel.company_id=p.company_id and rel.status='ACTIVE'
+      join placement_companies company on company.id=p.company_id and company.status='ACTIVE'
+      join colleges college on college.id=rel.college_id and college.status='ACTIVE'
+      join organizations org on org.id=college.organization_id and org.status='ACTIVE'
+     where g.id=$1 and g.recruiter_user_id=$2 and g.company_relationship_id=$3
+       and g.status='ACTIVE' and g.verification_status='VERIFIED'
+       and g.valid_until>now() and $5=any(g.capabilities)
+     limit 1`,[recruiter.grantId,recruiter.userId,recruiter.relationshipId,recruiter.companyId,capability]);
+  return rows.length===1;
+}
+
 export async function createPlacementCandidateFixture(
   db: PgHarness, drive: PlacementFixture, learner: PrincipalFixture,
   actor: PrincipalFixture,
@@ -602,9 +626,13 @@ export async function createPlacementCandidateFixture(
     select j.college_id,r.id as round_id,r.status as round_status,
         role.id as role_option_id,
         (j.status='PUBLISHED' and j.published_at is not null
-          and j.application_deadline>now() and season.status='ACTIVE') as accepting_applications
+          and j.application_deadline>now() and season.status='ACTIVE'
+          and rel.status='ACTIVE' and company.status='ACTIVE') as accepting_applications
       from placement_jobs j
       join placement_seasons season on season.id=j.season_id and season.college_id=j.college_id
+      join placement_company_relationships rel
+        on rel.id=j.company_relationship_id and rel.college_id=j.college_id
+      join placement_companies company on company.id=rel.company_id
       left join placement_job_rounds r
         on r.job_id=j.id and r.id=$2
       left join placement_job_role_options role

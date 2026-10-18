@@ -36,3 +36,7 @@ Run tests, typecheck and Postgres integration with A/B tenant, dual-role SA, ina
 
 ## Responsive overlay correction — SA-ADMIN-HISTORY-MODAL-10
 The first-third Super Admin import-history overlay in `src/components/admin/super-admin-student-import-history.tsx` now returns focus to the Import History button when native dialog closes, including Escape, and uses a stationary header with one bounded vertical records scroller. Shared DataTable owns horizontal scrolling. `tests/unit/chat13-super-admin-history-modal-ux.test.ts` verifies the authored source contract; real browser/mobile inspection is still required.
+
+
+## Faculty bulk import replacement-file fix — SA-FACULTY-CSV-17
+On the first-third faculty pages, `SuperAdminFacultyBulkImport` clears an old selection when a new file is invalid or slow to read, rejects stale async text completions, revalidates the selection after the destructive confirm dialog and blocks duplicate submissions synchronously. `canSubmitFacultyBulkImport` behavior plus component constraints are covered by `tests/unit/chat13-faculty-bulk-stale-file-guard.test.ts`. Phone and real session acceptance remain pending.

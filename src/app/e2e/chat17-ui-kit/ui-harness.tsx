@@ -14,6 +14,7 @@ import { FileUpload } from "@/components/ui/file-upload";
 import { FilterBar } from "@/components/ui/filter-bar";
 import { Input } from "@/components/ui/input";
 import { FormField } from "@/components/ui/form-field";
+import { PageLoading } from "@/components/ui/page-loading";
 import { DisabledReason } from "@/components/ui/disabled-reason";
 import { InlineNotice } from "@/components/ui/inline-notice";
 import { ScrollCue } from "@/components/ui/scroll-cue";
@@ -30,6 +31,7 @@ function UIKitTestSurface() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [tab, setTab] = useState("overview");
   const [fileStatus, setFileStatus] = useState("No file selected");
+  const [loadingLabel, setLoadingLabel] = useState("Loading projects A");
   const [pickerDisabled, setPickerDisabled] = useState(false);
   const [wideScroll, setWideScroll] = useState(true);
   const [secondWide, setSecondWide] = useState(false);
@@ -165,6 +167,20 @@ function UIKitTestSurface() {
         ]}/>
     </section>
 
+    <section aria-label="Fail closed table fixture">
+      <DataTable caption="Restricted workspace security" empty="No projects"
+        rows={[{id:"secure",name:"Secure workspace",review:"NEVER_SERIALIZE_PRIVATE_REVIEW"}]}
+        getRowKey={row=>row.id} rowHref={()=>{throw new Error("detail route unavailable");}}
+        columns={[
+          {key:"name",header:"Workspace",mobilePriority:"primary",cell:row=>row.name},
+          {key:"review",header:"Private review",mobilePriority:"hidden",
+            mobileHiddenReason:"Review access denied",
+            mobileDetail:{fieldKey:"review",canView:()=>{throw new Error("permission service unavailable");},
+              href:()=>"/mentor/projects/secure/review"},
+            cell:row=>row.review},
+        ]}/>
+    </section>
+
     <section aria-label="Interview grid fixture">
       <SuperAdminInterviewOperations today="2026-10-18" events={[
         {id:"interview-a",roundId:null,jobId:null,jobTitle:"Engineer",title:"Technical interview",
@@ -178,6 +194,14 @@ function UIKitTestSurface() {
           venue:"Room 101",candidateName:"Student Beta",departmentName:"Design",
           interviewer:"Mentor Two",mode:"On campus"},
       ]}/>
+    </section>
+
+    <section aria-label="Loading timeout reset fixture" className="space-y-2">
+      <Button onClick={()=>setLoadingLabel(current=>
+        current==="Loading projects A" ? "Loading projects B" : "Loading projects A")}>
+        Switch loading request
+      </Button>
+      <PageLoading label={loadingLabel} variant="card"/>
     </section>
 
     <section aria-label="Loading and disclosure fixture" className="space-y-3">

@@ -218,6 +218,22 @@ Both the batch census and Student Register options services delegated directly t
 
 **Fix:** Both services now explicitly deny principals lacking active `SUPER_ADMIN` system role before even resolving a college scope. No College Admin service was changed. Direct service tests: `tests/unit/chat3-sa-academics-batch-roster-privacy.test.ts` and `tests/unit/chat3-sa-student-register-options-role-scope.test.ts`, case SA-ACADEMICS-ROLE-01. Cloud CI, signed-in Super Admin and College Admin browser journeys pending.
 
+### SA-ACADEMICS-BATCH-PERIOD-052 — stale class enrollment from another period counted as current (S1)
+
+The Super Admin batch overview originally counted any `ACTIVE` Section enrollment for a batch Section and displayed `sectionEnrollments.sectionId` without verifying `sectionEnrollments.academicPeriodId` matched the Section's persisted academic period. An inconsistent post-promotion row could thus inflate active occupancy and mislabel a learner's current class in the selected batch. The class count now joins matching period IDs; the roster's class projection comes from a matched selected-cohort Section join. `tests/unit/chat3-sa-academics-batch-roster-privacy.test.ts` verifies the actual predicates. PostgreSQL post-promotion fixtures and CI pending.
+
+### SA-ACADEMICS-BATCH-ROLE-051 — batch roster exposed non-learner memberships from inconsistent imports (S1)
+
+The Super Admin batch roster joined learner-program enrollments to active college memberships and platform users but **did not verify a persisted LEARNER membership role**. If bad import/history left a Faculty, Mentor or TPO account referenced by a learner enrollment, it could appear in the student roster with contact fields and inflate class occupancy. The service now joins `membershipRoles` with the explicit `LEARNER` role for both the roster and class-count projections; `countDistinct(users.id)` avoids multiplying records. Compiled query regression: `tests/unit/chat3-sa-academics-batch-roster-privacy.test.ts`, SA-ACADEMICS-BATCH-ROLE-04. Cloud CI and dirty-row PostgreSQL fixture pending.
+
+### SA-ACADEMICS-BATCH-EMPTY-050 — empty batch still queried personal learner roster (S2)
+
+Even when a selected academic cohort contained zero authorized classes, the batch overview constructed the active learner roster query with an impossible fallback Section UUID. It did not return data under a normal schema but wasted a sensitive contact-data read and left the edge case dependent on a coincidental identifier mismatch. The service now returns `{batch,classes:[],roster:[]}` immediately for empty class selections, without touching membership PII. Test: `tests/unit/chat3-sa-academics-batch-roster-privacy.test.ts`, SA-ACADEMICS-BATCH-EMPTY-03. CI/DB verification pending.
+
+### SA-ACADEMICS-BATCH-COUNT-049 — duplicate enrollment joins inflate seat counts (S2)
+
+Super Admin batch-detail class occupancy originally used `count(users.id)` after joining active Section enrollments, program enrollments and membership roles. If inconsistent historic/duplicate join rows survived migration, a single active learner would be counted more than once, causing erroneous class capacity warnings even though the authorized roster is keyed by learner identity. The aggregate now uses `countDistinct(users.id)` while retaining tenant, status and period restrictions. `tests/unit/chat3-sa-academics-batch-roster-privacy.test.ts` asserts the actual SQL form; PostgreSQL dirty-history fixture and CI remain pending.
+
 ### SA-ACADEMICS-BATCH-COUNT-033 — disabled account included in class occupancy but absent from roster (S1)
 
 In the selected-college Super Admin batch detail, class occupancy counted `college_memberships.id` for an active program and Section enrollment. The detailed roster instead joins `users.platform_status = ACTIVE`. A suspended platform user with a still-active membership could inflate a classroom's occupancy and capacity warning while never appearing in the roster or CSV.
@@ -250,6 +266,10 @@ The retired Faculty notices bookmark path used `facultyNoticeParamsSchema.parse(
 
 The Super Admin recruiter index correctly caught failures of its main account list, but fetched summary counts afterward with no recovery. A summary-only DB outage therefore made the whole page fail despite the available account list. The page now returns the scoped list and a nullable summary; its client component displays **Unavailable** plus Retry totals, never fake `0` counts. The role gate remains before both queries. Direct page behavior test: `tests/unit/chat3-sa-recruiter-directory-partial-service.test.tsx`, SA-RECRUITERS-PARTIAL-01 (authored; cloud CI not yet run).
 
+### SA-PEOPLE-UNASSIGNED-URL-048 — duplicated global People filters silently normalized (S2)
+
+The Super Admin unassigned identity page used a picked-object Zod parse of `q`, `page`, `role` and `platformStatus`, silently ignoring unrecognized selectors and accepting some single-element arrays through number coercion. This global-only directory should reject ambiguous URL input instead of proceeding with a query that differs from a shared bookmark. The page now enforces **only recognized single-valued URL keys** before any global identity service call, retaining explicit recovery copy and the cleared-scope restriction. `tests/unit/chat3-sa-unassigned-global-identity-ssr.test.tsx` covers actual SSR valid/invalid/denied/empty paths. Runtime CI pending.
+
 ### SA-PEOPLE-DIRECTORY-QUERY-041 — ambiguous or injected people directory filters silently ignored (S2)
 
 The Super Admin directory extracted only six known URL fields, ignoring arbitrary selectors and passing potential array-valued query keys to Zod coercion. A bookmarked `?page=1&page=999` or injected `collegeId` could be ambiguously processed rather than returning the explicit invalid-filter recovery. The directory now requires exact recognized single-valued URL keys before parsing and before privileged roster reads. `tests/unit/chat3-sa-people-directory-strict-url-ssr.test.tsx` checks duplicate/forged/invalid state, genuine empty and wrong role. Source/test authored, runtime CI pending.
@@ -257,6 +277,12 @@ The Super Admin directory extracted only six known URL fields, ignoring arbitrar
 ### FAC-CALENDAR-QUERY-045 — ambiguous duplicate Faculty calendar filter accepted as first value (S2)
 
 The Faculty calendar applied `first(raw.month)` and `first(raw.deliveryId)`, silently accepting duplicated URL parameters and ignoring unrecognized tenant selectors. This could mislead users about which Section/month had actually been requested and undermine auditability of copied links. The SSR route now rejects array-valued or unknown query selectors outright with the existing **Invalid month or Section filter** clear-filters recovery. `tests/unit/UX-teacher-calendar-strict-scope-query.test.tsx` exercises invalid/valid/foreign deep links. Runtime and mobile-browser acceptance pending.
+
+### FAC-DELIVERY-ROSTER-ELECTIVE-047 — malformed elective backing disclosed entire Section roster (S1)
+
+The Faculty delivery roster resolved active elective backing with tenant-joined slot/group rows. When a backed elective existed but its group/slot association was missing, archived or in a foreign college, the inner join could return no row, causing the service to incorrectly assume an ordinary Section delivery and read **every** active Section learner. This violates the elective audience boundary even when the Faculty is authorized to teach the Section.
+
+**Fix:** On a missing fully scoped elective row, explicitly check whether any elective is backed by that delivery. If it is, fail closed with an empty roster instead of executing the Section fallback; only genuinely non-elective deliveries use the Section roster. Direct service test `tests/unit/chat3-faculty-delivery-roster-elective-fallback.test.ts` covers active group, deleted/disabled group, broken/cross-college backing and real non-elective fallback. Database foreign-key/cascade and role-browser integration checks remain unrun.
 
 ### FAC-ASSESSMENT-SCALE-046 — very large Faculty lessons overflow next-position calculation (S2)
 

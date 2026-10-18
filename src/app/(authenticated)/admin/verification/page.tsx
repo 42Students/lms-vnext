@@ -2,7 +2,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
-import { requirePermission } from "@/modules/permissions/policy";
+import {can} from "@/modules/permissions/policy";
+import {isSuperAdmin} from "@/modules/identity/context";
+import {ErrorState} from "@/components/ui/error-state";
 
 /**
  * Safe Super Admin entry point for the college-scoped verification workspace.
@@ -10,7 +12,13 @@ import { requirePermission } from "@/modules/permissions/policy";
  */
 export default async function AdminVerificationEntry() {
   const context = await getCurrentRequestContext();
-  requirePermission(context, "admin-scope.select");
+  if(!isSuperAdmin(context)||!can(context,"admin-scope.select"))
+    return <div className="min-w-0 space-y-6">
+      <PageHeader eyebrow="Super Admin" title="Profile verification"/>
+      <ErrorState title="Verification access denied"
+        description="Your account cannot access Super Admin verification."
+        action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
+    </div>;
 
   const collegeId = context.adminScope?.collegeId;
   if (collegeId) {
