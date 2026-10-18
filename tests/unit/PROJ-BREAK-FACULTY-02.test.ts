@@ -61,7 +61,7 @@ describe("PROJ-BREAK-FACULTY-02 assigned faculty: access and stale-session break
   it("PROJ-BREAK-FACULTY-02-01 Faculty-only display role cannot become a project Mentor",async()=>{
     await expect(requireProjectReadAccess(faculty(["FACULTY"]),projectId))
       .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
-    expect(store.reads).toBe(2);
+    expect(store.reads).toBe(0); // A Faculty-only actor is rejected before any object lookup.
   });
 
   it("PROJ-BREAK-FACULTY-02-02 persisted Mentor grant with matching role and active college can edit",async()=>{
@@ -86,14 +86,14 @@ describe("PROJ-BREAK-FACULTY-02 assigned faculty: access and stale-session break
       store.reads=0;
       await expect(requireProjectReadAccess(context,projectId))
         .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
-      expect(store.reads).toBe(1);
+      expect(store.reads).toBe(0); // Revoked memberships cannot probe project existence.
     }
     const expired=faculty();
     expired.user={...expired.user,platformStatus:"DISABLED"};
     store.reads=0;
     await expect(requireProjectReadAccess(expired,projectId))
       .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
-    expect(store.reads).toBe(1);
+    expect(store.reads).toBe(0); // Expired principals are denied before scope loading.
   });
 
   it("PROJ-BREAK-FACULTY-02-05 reviewer and read-only Mentor never acquire mutation via display role",async()=>{

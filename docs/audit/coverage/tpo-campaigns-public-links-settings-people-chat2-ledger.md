@@ -140,3 +140,10 @@ The 42-route source matrix is complemented by **direct async server-page behavio
 | `/tpo/reports/ctc` | `tests/unit/chat2-tpo-reports-server-page-states.test.ts` | repeated selectors denied before private CTC report lookup; learner denied before read |
 
 **Remaining:** 38 other pages require equivalent executable per-page states; the existing 42-route inventory/source matrix is not a substitute. Loading/error boundary, mobile/browser and database integration remain pending CI. This table records authored tests only, not passed coverage.
+
+### Additional staff-directory server-page tests
+
+- `tests/unit/chat2-tpo-settings-team-trusted-page-behavior.test.ts`: `UX-tpo-LAST-THIRD-01` validates direct TPO-only role gates before querying team and trusted company relationships; verifies distinct unavailable faculty/student coordinator sources and trustworthy no-team empty state; verifies explicit trusted-domain storage failure stays distinct from company relationship flags.
+- `tests/unit/chat2-tpo-reports-server-page-states.test.ts`: role/duplicated-filter protection and the honest no-season state for TPO branch and CTC reports.
+
+Page-state coverage is still PARTIAL; these additions do not certify the remaining last-third pages or accessible real-browser behavior. Cloud CI has not yet executed the new tests.
