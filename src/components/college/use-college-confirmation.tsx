@@ -3,7 +3,7 @@
 import {useCallback,useEffect,useRef,useState} from "react";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 
-/** Native WebViews need real focus-managed confirmation, never window.confirm(). */
+/** Native WebViews need real focus-managed confirmation, never blocking native browser prompts. */
 export function useCollegeConfirmation(){
  const [message,setMessage]=useState<string|null>(null);
  const resolver=useRef<((answer:boolean)=>void)|null>(null);
