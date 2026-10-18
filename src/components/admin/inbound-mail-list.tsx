@@ -5,6 +5,7 @@ import {Drawer} from "@/components/ui/drawer";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {safeInboundPreview} from "@/modules/inbound-mail/message-model";
 import {createInboundMailTriageGate} from "@/modules/inbound-mail/triage-submit-model";
+import {inboundMailStatusActions,type InboundMailStatus} from "@/modules/inbound-mail/triage-transition-model";
 export type InboundMailRow={
  id:string;receivedAt:string;fromAddress:string;toAddress:string;
  subject:string;bodyPlain:string;status:string;version:number;
@@ -16,7 +17,7 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
  const [busy,setBusy]=useState(false);
  const triageGate=useRef(createInboundMailTriageGate());
  const [message,setMessage]=useState("");
- async function change(row:InboundMailRow,status:"NEW"|"RESOLVED"){
+ async function change(row:InboundMailRow,status:InboundMailStatus){
   if(!triageGate.current.tryBegin())return;
   const current=overrides[row.id]??row;
   setBusy(true);setMessage("");
@@ -28,7 +29,7 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
    if(!response.ok)throw Error(response.status===409?"Message was changed elsewhere. Refresh before retrying.":"Could not update message status.");
    const saved=await response.json() as {status:string;version:number};
    setOverrides(previous=>({...previous,[row.id]:{status:saved.status,version:saved.version}}));
-   setMessage(status==="RESOLVED"?"Message marked done.":"Message moved back to To read.");
+   setMessage(status==="RESOLVED"?"Message marked done.":status==="TRIAGED"?"Message marked being handled.":"Message moved back to To read.");
    router.refresh();
   }catch(error){setMessage(error instanceof Error?error.message:"Could not update message status.");}
   finally{triageGate.current.end();setBusy(false);}
@@ -58,15 +59,11 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
      <div><dt className="font-semibold">Received</dt><dd className="m-0">{new Date(selected.receivedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</dd></div>
     </dl>
     <div className="mt-4 flex flex-wrap gap-2">
-     {(overrides[selected.id]?.status??selected.status)!=="RESOLVED"?
-      <button type="button" disabled={busy} onClick={()=>void change(selected,"RESOLVED")}
-       className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50">
-       {busy?"Saving…":"Mark done"}
-      </button>:
-      <button type="button" disabled={busy} onClick={()=>void change(selected,"NEW")}
-       className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
-       {busy?"Saving…":"Move back to To read"}
-      </button>}
+     {inboundMailStatusActions(overrides[selected.id]?.status??selected.status).map(action=>
+      <button key={action.status} type="button" disabled={busy} onClick={()=>void change(selected,action.status)}
+       className={action.status==="RESOLVED"?"min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50":"min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50"}>
+       {busy?"Saving…":action.label}
+      </button>)}
     </div>
     {message?<p role="status" className="mt-3 text-sm text-body">{message}</p>:null}
     <section className="mt-5 min-w-0 rounded-md border border-border p-4">

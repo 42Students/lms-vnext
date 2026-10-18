@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
-import { ScrollCue } from "@/components/ui/scroll-cue";
+import { DataTable } from "@/components/ui/data-table";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { StudentClassMoveAction } from "@/components/college/student-class-move-action";
@@ -403,67 +403,59 @@ export async function CollegeRoleDirectoryWorkspace({
               </li>
             ))}
           </ul>
-          <ScrollCue axis="x" label={title + " scrollable results columns"}>
-          <table className="hidden w-full min-w-[45rem] text-left text-sm md:table">
-            <thead className="bg-muted text-muted-foreground">
-              <tr>
-                <th scope="col" className="px-4 py-3">Person</th>
-                <th scope="col" className="px-4 py-3">Membership</th>
-                <th scope="col" className="px-4 py-3">
-                  {kind === "FACULTY" ? "Teaching assignments" : "Program · Batch · Class"}
-                </th>
-                <th scope="col" className="px-4 py-3">Joined</th>
-              </tr>
-            </thead>
-            <tbody>
-              {result.items.map((item) => (
-                <tr key={item.membershipId} className="border-t border-border align-top">
-                  <td className="px-4 py-4">
-                    <Link href={kind === "LEARNER" ? `/college/students/${item.membershipId}` : `/college/faculty/${item.membershipId}`}
-                      className="font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{item.name}</Link>
-                    <p className="mt-1 text-xs text-muted-foreground">{item.email ?? "No email recorded"}</p>
-                    <Link href={collegeRoleContactHref(item.membershipId)} className="mt-1 inline-flex min-h-11 items-center text-xs font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">View contact card</Link>
-                    {kind==="LEARNER"&&<Link href={collegeLearnerVerificationHref(item.membershipId)} className="ml-3 inline-flex min-h-11 items-center text-xs font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Profile verification</Link>}
-                  </td>
-                  <td className="px-4 py-4">
-                    <StatusBadge tone={item.membershipStatus === "ACTIVE" && item.userStatus === "ACTIVE" ? "success" : "warning"}>
-                      {item.membershipStatus}
-                    </StatusBadge>
-                    {item.userStatus !== "ACTIVE" ? (
-                      <p className="mt-1 text-xs text-warning">Platform account: {item.userStatus}</p>
-                    ) : null}
-                  </td>
-                  <td className="px-4 py-4 text-body">
-                    {describeCollegeDirectoryContext(kind, item)}
-                    {kind === "LEARNER" && item.membershipStatus === "ACTIVE" &&
-                      item.userStatus === "ACTIVE" && item.cohort !== null ?
+          <div className="hidden md:block">
+            <DataTable
+              caption={title+" directory"}
+              rows={result.items}
+              getRowKey={item=>item.membershipId}
+              empty={<p>No role memberships match the selected filters.</p>}
+              columns={[
+                {key:"person",header:"Person",mobilePriority:"primary",cell:item=><>
+                  <Link href={kind==="LEARNER"?"/college/students/"+item.membershipId:"/college/faculty/"+item.membershipId}
+                    className="font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+                    {item.name}
+                  </Link>
+                  <p className="mt-1 text-xs text-muted-foreground">{item.email??"No email recorded"}</p>
+                  <Link href={collegeRoleContactHref(item.membershipId)}
+                    className="mt-1 inline-flex min-h-11 items-center text-xs font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+                    View contact card
+                  </Link>
+                  {kind==="LEARNER"?<Link href={collegeLearnerVerificationHref(item.membershipId)}
+                    className="ml-3 inline-flex min-h-11 items-center text-xs font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+                    Profile verification
+                  </Link>:null}
+                </>},
+                {key:"membership",header:"Membership",mobilePriority:"secondary",cell:item=><>
+                  <StatusBadge tone={item.membershipStatus==="ACTIVE"&&item.userStatus==="ACTIVE"?"success":"warning"}>
+                    {item.membershipStatus}
+                  </StatusBadge>
+                  {item.userStatus!=="ACTIVE"?<p className="mt-1 text-xs text-warning">
+                    Platform account: {item.userStatus}
+                  </p>:null}
+                </>},
+                {key:"context",header:kind==="FACULTY"?"Teaching assignments":"Program · Batch · Class",
+                  mobilePriority:"secondary",cell:item=><>
+                    {describeCollegeDirectoryContext(kind,item)}
+                    {kind==="LEARNER"&&item.membershipStatus==="ACTIVE"&&
+                      item.userStatus==="ACTIVE"&&item.cohort!==null?
                       <div className="mt-2">
-                        <StudentClassMoveAction membershipId={item.membershipId} name={item.name} />
-                      </div> : null}
+                        <StudentClassMoveAction membershipId={item.membershipId} name={item.name}/>
+                      </div>:null}
                     <div className="mt-2 flex flex-wrap items-center gap-2">
                       <CollegePersonAuditModal membershipId={item.membershipId} name={item.name} kind={kind}/>
-                <CollegePersonProfileOverviewModal membershipId={item.membershipId} name={item.name} kind={kind}/>
+                      <CollegePersonProfileOverviewModal membershipId={item.membershipId} name={item.name} kind={kind}/>
                       <CollegePersonEditAction membershipId={item.membershipId} kind={kind}
                         departments={kind==="FACULTY"?result.departmentOptions:[]}/>
                     </div>
-                    {kind === "FACULTY" ?
-                      <CollegeFacultyLifecycleAction
-                        membershipId={item.membershipId}
-                        name={item.name}
-                        status={item.membershipStatus}
-                      /> : null}
-                    {kind === "LEARNER" ?
-                      <CollegeStudentLifecycleAction membershipId={item.membershipId}
-                        name={item.name} status={item.membershipStatus} /> : null}
-                  </td>
-                  <td className="px-4 py-4 text-body">
-                    {joinedLabel(item.joinedAt)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          </ScrollCue>
+                    {kind==="FACULTY"?<CollegeFacultyLifecycleAction membershipId={item.membershipId}
+                      name={item.name} status={item.membershipStatus}/>:null}
+                    {kind==="LEARNER"?<CollegeStudentLifecycleAction membershipId={item.membershipId}
+                      name={item.name} status={item.membershipStatus}/>:null}
+                </>},
+                {key:"joined",header:"Joined",mobilePriority:"secondary",cell:item=>joinedLabel(item.joinedAt)},
+              ]}
+            />
+          </div>
           </>
         )}
       </section>

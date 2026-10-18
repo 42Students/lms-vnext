@@ -1,6 +1,7 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import type {RequestContext} from "@/modules/identity/context";
 import {CoursesServiceError} from "@/modules/courses/errors";
+import {apiErrorResponse} from "@/lib/api-error";
 
 const state=vi.hoisted(()=>({
  selected:[] as Array<{id:string}>,
@@ -80,6 +81,20 @@ describe("SA-academics-people-53 scoped bulk course visibility and recoverable i
    await expect(bulkSuperAdminCourseVisibility(context,invalid)).rejects.toThrow();
   }
   expect(state.acting).not.toHaveBeenCalled();
+ });
+ it("maps huge visibility requests to friendly HTTP 400 and foreign course IDs to HTTP 404",async()=>{
+  for(const [code,status] of [
+   ["COURSE_VISIBILITY_BULK_TOO_LARGE",400],
+   ["COURSE_NOT_FOUND",404],
+  ] as const){
+   const response=apiErrorResponse(new CoursesServiceError(code));
+   expect(response.status).toBe(status);
+   expect(response.headers.get("x-request-id")).toBeTruthy();
+   const body=await response.json();
+   expect(body.error).toBe(code);
+   expect(typeof body.message).toBe("string");
+   expect(body.message.length).toBeGreaterThan(0);
+  }
  });
  it("keeps typed limit errors in the standard customer-safe API mapper",()=>{
   expect(new CoursesServiceError("COURSE_VISIBILITY_BULK_TOO_LARGE").code)

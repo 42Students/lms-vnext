@@ -6,6 +6,7 @@ import {AuthorizationError,requirePermission} from "@/modules/permissions/policy
 import {inboundMailListQuerySchema} from "./message-model";
 import {z} from "zod";
 import {inboundMailMessagesStaged} from "./staged-schema";
+import {inboundMailStatusTransitionAllowed} from "./triage-transition-model";
 
 export type InboundMailItem={
  id:string;receivedAt:Date;fromAddress:string;toAddress:string;
@@ -82,7 +83,7 @@ export async function changeInboundMailStatusForAdmin(
   expectedVersion:z.number().int().min(0),
   status:z.enum(["NEW","TRIAGED","RESOLVED"]),
  }).parse(raw);
- if(input.status!== "NEW" && input.status!=="RESOLVED")
+ if(!inboundMailStatusTransitionAllowed(input.expectedStatus,input.status))
   throw new Error("Unsupported inbound mail transition");
  if(!await drizzleInboundMailAdminRepository.tableExists())
   return {kind:"UNAVAILABLE" as const};

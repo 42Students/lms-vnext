@@ -34,3 +34,12 @@ Status: **partial Pass B coverage; runtime CI, PostgreSQL and browser tests not 
 ## Next remaining work
 
 Continue full route and function inventory (including draft/history/dispatch endpoints and the recruiter grant service). The rows above satisfy **named source/model tests only**, not the queue's complete role matrix, friendly-error browser checks, PostgreSQL constraint and rollback cases, or full property-based abuse cases. Do not represent the queue as finished.
+
+## Campaign route input and export follow-up
+
+| Export / route | Coverage evidence | Cases | Pending |
+| --- | --- | --- | --- |
+| `readTpoCampaignBody` | `tests/unit/chat2-campaign-bounded-json.test.ts` | Accept 10k multibyte authored body within 64KiB, reject oversized no-length stream | Nested content shape still enforced by draft schema |
+| `POST /api/placements/tpo/campaigns/drafts` | Same file — source contract | Origin checked before streaming capped JSON, malformed 400, oversized 413 | Persisted actor + DB race |
+| `POST /api/placements/tpo/campaigns/preview-selected` | Same file — source contract | Origin checked before capped 8KiB JSON, malformed 400, oversized 413 | Audience execution integration |
+| `GET /api/placements/tpo/campaigns/history/export` | `tests/unit/chat2-campaign-history-export-route.test.ts` — real route with mocked authorized data service | Duplicate/unknown query denial, 160-char bound, selected purpose, private CSV, nosniff, friendly 413 | Real tenant/role DB matrix |

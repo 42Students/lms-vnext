@@ -56,6 +56,22 @@ describe("PLACEMENTS-CAPACITY-01: active official offers and pending waitlist re
   expect(issue).toContain('return db.transaction(async (tx) =>');
   expect(issue).toContain('isolationLevel: "serializable"');
  });
+ it("PLACEMENTS-EXPIRY-NOTIFY-30/31 ties SKIP LOCKED expiry history to exactly one college-scoped preference-aware notice",()=>{
+  const code=src("src/modules/placements/placement-offer-expiry-sweep-service.ts");
+  expect(code).toContain('eq(placementOffers.status, "ISSUED")');
+  expect(code).toContain("lte(placementOffers.expiresAt, now)");
+  expect(code).toContain('.for("update",{of:placementOffers,skipLocked:true})');
+  expect(code).toContain('eq(placementJobs.id,placementApplications.jobId)');
+  expect(code).toContain('eq(colleges.id,placementJobs.collegeId)');
+  expect(code).toContain('dedupeKey:"placement-offer-expired:"+row.id');
+  expect(code).toContain('eventType:"PLACEMENTS_OFFER_EXPIRED"');
+  expect(code).toContain('if(event&&row.collegeStatus==="ACTIVE")');
+  expect(code).toContain("deliverRecordedLearnerPlacementEvent(tx,{");
+  expect(code).toContain("membershipId:row.membershipId");
+  expect(code).toContain('kind:"APPLICATION_STATUS_CHANGED"');
+  expect(code.indexOf('.insert(placementOfferStatusHistory)')).toBeLessThan(
+    code.indexOf('deliverRecordedLearnerPlacementEvent(tx,{'));
+ });
  it("waitlist preview counts only official OFFER kind in available-seat arithmetic, retaining all held applications",()=>{
   const service=src("src/modules/placements/tpo-waitlist-promotion-service.ts");
   expect(service).toContain('const occupiedOfferSeats=activeOffers.filter(offer=>offer.kind==="OFFER").length');
