@@ -104,9 +104,9 @@ export async function ProjectAdminReassignMentorPage({
         <label className="grid flex-1 gap-1 text-sm font-semibold">
           Search eligible mentors by name or email (across the college)
           <Input type="search" name="mentorSearch" maxLength={100} defaultValue={mentorSearch}
-            placeholder="Enter mentor name or email" className="min-h-11 rounded-[9px] border border-border p-3"/>
+            placeholder="Enter mentor name or email" className="w-full"/>
         </label>
-        <Button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Find mentor</Button>
+        <Button type="submit" className="">Find mentor</Button>
         {mentorSearch?<Link href={basePath+"/reassign-mentor"} className="min-h-11 rounded-md border px-4 py-3 text-sm">Clear mentor search</Link>:null}
         <p className="w-full text-xs text-muted-foreground">Showing up to 100 matching eligible mentors. Narrow the search to reach any mentor beyond the first page.</p>
       </form>
@@ -118,7 +118,7 @@ export async function ProjectAdminReassignMentorPage({
         <label className="grid gap-1 text-sm font-semibold">
           Filter by current mentor
           <Select name="fromMentorId" defaultValue={fromMentorId ?? ""}
-            className="min-h-11 rounded-lg border border-border bg-background px-3 py-2">
+            className="w-full">
             <option value="">All mentors</option>
             <option value="UNASSIGNED">Unassigned</option>
             {mentors.map(mentor => <option key={mentor.membershipId} value={mentor.membershipId}>
@@ -126,7 +126,7 @@ export async function ProjectAdminReassignMentorPage({
             </option>)}
           </Select>
         </label>
-        <Button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground">
+        <Button type="submit" className="">
           Apply mentor filter
         </Button>
       </form>
