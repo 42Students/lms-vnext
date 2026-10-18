@@ -79,11 +79,11 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
       <form action="/college/people/manage" method="get" role="search" className="flex flex-wrap items-end gap-3">
         <label className="grid min-w-44 flex-1 gap-1 text-sm font-semibold text-body">Name, email or phone
           <input name="q" type="search" maxLength={100} defaultValue={filter.q}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
         </label>
         <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Role
           <select name="role" defaultValue={filter.role}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
             <option value="ALL">All roles</option>
             <option value="LEARNER">Learner</option>
             <option value="FACULTY">Faculty</option>
@@ -94,7 +94,7 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
         </label>
         <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Membership
           <select name="status" defaultValue={filter.status}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
             <option value="ALL">All statuses</option>
             <option value="ACTIVE">Active</option>
             <option value="SUSPENDED">Suspended</option>

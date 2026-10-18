@@ -14,7 +14,7 @@ import { requirePermission } from "@/modules/permissions/policy";
 import { joinGroup } from "@/modules/groups/service";
 
 const uuid = z.string().uuid();
-const fieldStyle = "min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground";
+const fieldStyle = "min-h-11 w-full rounded-md border border-border bg-surface px-3 text-base sm:text-sm text-foreground";
 const base = (id: string) => "/college/electives/" + encodeURIComponent(id) + "/allocate";
 
 async function scopedSlot(slotId: string) {
