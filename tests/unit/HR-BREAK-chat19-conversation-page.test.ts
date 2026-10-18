@@ -99,13 +99,26 @@ describe("HR-BREAK-chat19-conversation-page: actual async role, IDOR and recover
   expect(content).not.toContain("Welcome to your authorized conversation");
   expect(m.jobs).not.toHaveBeenCalled();
  });
- it("unavailable or wrong-company drives never render an unverified job title/link",async()=>{
+ it.each([
+  {collegeId:"different-college",companyId:"company-a"},
+  {collegeId:college,companyId:"company-b"},
+ ])("rejects contaminated job rows from other college/company (%j)",async invalid=>{
   m.read.mockResolvedValue({...data,thread:{...data.thread,jobId:id}});
-  m.jobs.mockResolvedValue([{collegeId:"different-college",job:{id,title:"Private drive"}}]);
+  m.jobs.mockResolvedValue([{...invalid,job:{id,title:"Private drive"}}]);
   const rendered=await page();
   const content=textOf(rendered);
   expect(content).toContain("Drive unavailable");
   expect(content).not.toContain("Private drive");
   expect(m.changes).not.toHaveBeenCalled();
+ });
+ it("links only the current employer's current college drive",async()=>{
+  m.read.mockResolvedValue({...data,thread:{...data.thread,jobId:id}});
+  m.jobs.mockResolvedValue([{
+   collegeId:college,companyId:"company-a",job:{id,title:"Authorized drive"},
+  }]);
+  m.changes.mockResolvedValue({party:"COMPANY",requests:[]});
+  const rendered=await page();
+  expect(textOf(rendered)).toContain("Authorized drive");
+  expect(m.changes).toHaveBeenCalledWith(context,id);
  });
 });
