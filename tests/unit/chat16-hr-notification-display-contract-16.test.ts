@@ -59,6 +59,6 @@ describe("chat-16 recruiter notification presentation behaviour", () => {
     expect(recruiterMessageTpoHref("../admin?impersonate=true")).toBe("/tpo/messages");
     expect(RECRUITER_MESSAGE_TPO_TITLE).toBe("New message from a recruiter");
     expect(recruiterMessageTpoPreview(" 🌐".repeat(121)).endsWith("…")).toBe(true);
-    expect(Array.from(recruiterMessageTpoPreview("🌐".repeat(121))).toHaveLength(121);
+    expect(Array.from(recruiterMessageTpoPreview("🌐".repeat(121)))).toHaveLength(121);
   });
 });
