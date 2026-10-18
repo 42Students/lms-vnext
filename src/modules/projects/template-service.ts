@@ -252,6 +252,9 @@ export async function createProjectTemplate(
 
   try {
     return await db.transaction(async (tx) => {
+      // Authentication is a request snapshot; verify the persisted platform
+      // role under transactional locks before any global template is created.
+      await assertPersistedPlatformPermission(tx,context,"project-template.manage");
       const [template] = await tx
         .insert(projectTemplates)
         .values({
@@ -317,6 +320,9 @@ export async function reviseProjectTemplate(
       }).from(projectTemplates).where(eq(projectTemplates.id, templateId))
         .for("update").limit(1);
       if (!locked) throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_FOUND");
+      // A revoked/disabled platform administrator must not update history
+      // from a stale browser tab after the parent template has been locked.
+      await assertPersistedPlatformPermission(tx,context,"project-template.manage");
       if (locked.status === "ARCHIVED" ||
           locked.currentVersion !== input.expectedVersion) {
         throw new ProjectsServiceError("PROJECT_TEMPLATE_STALE_VERSION");
@@ -394,6 +400,7 @@ export async function publishProjectTemplate(
     if (!template) {
       throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_FOUND");
     }
+    await assertPersistedPlatformPermission(tx,context,"project-template.manage");
     if (template.status==="ARCHIVED")
       throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_PUBLISHED");
     if (template.status==="PUBLISHED" &&
