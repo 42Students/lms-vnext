@@ -5,6 +5,9 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {Textarea} from "@/components/ui/textarea";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
+import {Checkbox} from "@/components/ui/selection-controls";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {authoringLocalDateTime,authoringDueInstant}
@@ -200,50 +203,44 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
  return <section className="min-w-0 w-full max-w-full space-y-4 rounded-xl border border-border bg-surface p-5">
   <h2 className="text-lg font-semibold">Choice-question quiz builder</h2>
   <label className="grid min-w-0 gap-1 text-sm">Find a quiz
-   <input type="search" value={quizSearch} onChange={e=>setQuizSearch(e.target.value)}
+   <Input type="search" value={quizSearch} onChange={e=>setQuizSearch(e.target.value)}
     placeholder="Title or state" className="min-h-11 min-w-0 max-w-full rounded border border-border p-2 text-base"/>
   </label>
   <label className="grid min-w-0 gap-1 text-sm">Quiz
-   <select value={selected} disabled={pending} onChange={e=>chooseWithDraftProtection(e.target.value)}
+   <Select value={selected} disabled={pending} onChange={e=>chooseWithDraftProtection(e.target.value)}
     className="min-h-11 min-w-0 max-w-full rounded border border-border p-2 text-base">
     <option value="">Create new draft</option>
     {visibleQuizzes.map(q=><option key={q.id} value={q.id}>{q.title} ({q.status})</option>)}
-   </select></label>
+   </Select></label>
   {quizSearch.trim()&&visibleQuizzes.length===0?<p role="status" className="text-sm text-body">No matching quizzes. Clear the search to see all Section quizzes.</p>:null}
   {chosen?<p className="text-xs text-body">State: {chosen.status}; published quizzes and attempted quizzes cannot change their questions.</p>:null}
   {facultyQuizCanCopyToDraft(chosen?.status,questions.length>0,pending,detailsFailed)?
-   <button type="button" onClick={()=>copyToNewDraft()} className="min-h-11 rounded border border-border px-3 py-2 text-sm font-semibold">Copy as new draft</button>:null}
+   <Button variant="secondary" type="button" onClick={()=>copyToNewDraft()} className="min-h-11 rounded border border-border px-3 py-2 text-sm font-semibold">Copy as new draft</Button>:null}
   {!chosen?<label className="grid min-w-0 gap-1 text-sm">Lesson
-   <select value={lessonId} onChange={e=>{setConfirmed(false);setDirtyDraft(true);setLessonId(e.target.value);}}
+   <Select value={lessonId} onChange={e=>{setConfirmed(false);setDirtyDraft(true);setLessonId(e.target.value);}}
     className="min-h-11 min-w-0 max-w-full rounded border border-border p-2 text-base">
     {lessons.map(l=><option key={l.id} value={l.id}>{l.name}</option>)}
-   </select></label>:null}
+   </Select></label>:null}
   <label className="grid min-w-0 gap-1 text-sm">Quiz title
-   <input value={title} disabled={!metadataEditable} maxLength={255} onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,title,e.target.value));setDirtyDraft(true);setTitle(e.target.value);}}
+   <Input value={title} disabled={!metadataEditable} maxLength={255} onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,title,e.target.value));setDirtyDraft(true);setTitle(e.target.value);}}
     className="min-h-11 min-w-0 max-w-full rounded border border-border p-2 text-base"/></label>
   <label className="grid min-w-0 gap-1 text-sm">Instructions
-   <textarea value={description} disabled={!metadataEditable} maxLength={10000} rows={2}
+   <Textarea value={description} disabled={!metadataEditable} maxLength={10000} rows={2}
     onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,description,e.target.value));setDirtyDraft(true);setDescription(e.target.value);}}
     className="min-w-0 max-w-full rounded border border-border p-2 text-base"/></label>
   <label className="grid min-w-0 gap-1 text-sm">Due date (IST, required before publishing)
-   <input type="datetime-local" disabled={!metadataEditable} value={dueAt} onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,dueAt,e.target.value));setDirtyDraft(true);setDueAt(e.target.value);}}
+   <Input type="datetime-local" disabled={!metadataEditable} value={dueAt} onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,dueAt,e.target.value));setDirtyDraft(true);setDueAt(e.target.value);}}
     className="min-h-11 min-w-0 max-w-full rounded border border-border p-2 text-base"/></label>
   <label className="grid min-w-0 gap-1 text-sm">Maximum attempts
-   <input type="number" disabled={!editable} min={1} max={20} value={maxAttempts}
+   <Input type="number" disabled={!editable} min={1} max={20} value={maxAttempts}
     onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,maxAttempts,Number(e.target.value)));setDirtyDraft(true);setMaxAttempts(Number(e.target.value));}}
     className="min-h-11 min-w-0 max-w-full rounded border border-border p-2 text-base"/></label>
   <fieldset disabled={!editable} className="space-y-2 rounded-md border border-border p-3">
     <legend className="text-sm font-semibold">Quiz order</legend>
-    <label className="flex items-center gap-2 text-sm">
-      <input type="checkbox" checked={shuffleQuestions}
-        onChange={e=>{setConfirmed(false);setDirtyDraft(true);setShuffleQuestions(e.target.checked);}}/>
-      Shuffle question order per learner
-    </label>
-    <label className="flex items-center gap-2 text-sm">
-      <input type="checkbox" checked={shuffleOptions}
-        onChange={e=>{setConfirmed(false);setDirtyDraft(true);setShuffleOptions(e.target.checked);}}/>
-      Shuffle answer options per learner
-    </label>
+    <Checkbox label="Shuffle question order per learner" checked={shuffleQuestions}
+         onChange={e=>{setConfirmed(false);setDirtyDraft(true);setShuffleQuestions(e.target.checked);}}/>
+    <Checkbox label="Shuffle answer options per learner" checked={shuffleOptions}
+         onChange={e=>{setConfirmed(false);setDirtyDraft(true);setShuffleOptions(e.target.checked);}}/>
   </fieldset>
   <section aria-label="Quiz preview" className="rounded-lg border border-border bg-surface-subtle p-3">
    <div className="flex flex-wrap items-center justify-between gap-3">
@@ -251,18 +248,15 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
      <h3 className="text-sm font-semibold text-foreground">Preview Quiz</h3>
      <p className="text-xs text-muted-foreground">Read-only learner-style preview of the current questions. No answers are submitted.</p>
     </div>
-    <button type="button" onClick={()=>setPreviewOpen(open=>!open)}
+    <Button variant="secondary" type="button" onClick={()=>setPreviewOpen(open=>!open)}
      aria-expanded={previewOpen} aria-controls="faculty-quiz-preview"
      className="min-h-11 rounded border border-border px-3 text-sm font-semibold">
      {previewOpen?"Hide preview":"Preview Quiz"}
-    </button>
+    </Button>
    </div>
    {previewOpen?<div id="faculty-quiz-preview" className="mt-3 space-y-4">
-    <label className="flex items-center gap-2 text-sm">
-     <input type="checkbox" checked={previewAnswers}
-      onChange={e=>setPreviewAnswers(e.target.checked)}/>
-     Show answer key to faculty
-    </label>
+    <Checkbox label="Show answer key to faculty" checked={previewAnswers}
+       onChange={e=>setPreviewAnswers(e.target.checked)}/>
     {!questions.length?<p role="status" className="text-sm">No questions yet.</p>:null}
     {questions.map((question,index)=><fieldset key={index}
      className="space-y-2 rounded-lg border border-border bg-surface p-3">
@@ -279,11 +273,11 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    </div>:null}
   </section>
   <label className="grid min-w-0 gap-1 text-sm">Find a question
-   <input type="search" value={questionSearch} onChange={e=>setQuestionSearch(e.target.value)}
+   <Input type="search" value={questionSearch} onChange={e=>setQuestionSearch(e.target.value)}
     placeholder="Question number, prompt, or option" className="min-h-11 min-w-0 max-w-full rounded border border-border p-2 text-base"/>
   </label>
-  <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={invalidOnly}
-    onChange={e=>setInvalidOnly(e.target.checked)}/>Show only questions needing correction</label>
+  <Checkbox label="Show only questions needing correction" checked={invalidOnly}
+     onChange={e=>setInvalidOnly(e.target.checked)}/>
   {matchingQuestions.length===0?<p role="status" className="text-sm text-body">No questions match these review filters. Clear the search or invalid-only filter to view the entire bank.</p>:null}
   {matchingQuestions.map(({q,i})=><fieldset key={i} disabled={!editable}
    className="min-w-0 max-w-full space-y-3 rounded-lg border border-border p-4">
@@ -291,82 +285,79 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    {facultyQuizQuestionIssue(q)?<p role="status" className="text-xs text-error">Review question {i+1}: {facultyQuizQuestionIssue(q)}</p>:
     <p className="text-xs text-body">Question {i+1} is ready to save.</p>}
    <label className="grid min-w-0 gap-1 text-sm">Prompt
-    <textarea value={q.prompt} maxLength={5000} rows={2}
+    <Textarea value={q.prompt} maxLength={5000} rows={2}
      onChange={e=>updateQuestion(i,old=>({...old,prompt:e.target.value}))}
      className="min-w-0 max-w-full rounded border border-border p-2 text-base"/></label>
    <div className="flex flex-wrap gap-3">
     <label className="grid min-w-0 gap-1 text-sm">Type
-     <select value={q.type}
+     <Select value={q.type}
       onChange={e=>updateQuestion(i,old=>({...old,...facultyChangeQuizChoiceType(old,e.target.value as Question["type"])}))}
       className="min-h-11 min-w-0 max-w-full rounded border border-border p-2 text-base">
       <option value="SINGLE_CHOICE">Single choice</option>
       <option value="MULTIPLE_CHOICE">Multiple choice</option>
-     </select></label>
+     </Select></label>
     <label className="grid min-w-0 gap-1 text-sm">Points
-     <input type="number" min={1} max={100} value={q.points}
+     <Input type="number" min={1} max={100} value={q.points}
       onChange={e=>updateQuestion(i,old=>({...old,points:Number(e.target.value)}))}
       className="min-h-11 w-24 rounded border border-border p-2 text-base"/></label>
    </div>
    <p className="text-xs text-body" role="status">{facultyQuizAnswerSummary(q)}</p>
    {q.options.map((o,j)=><div key={j} className="flex flex-wrap items-center gap-2">
     <label className="min-w-0 flex-[1_1_12rem] text-sm">Option {j+1}
-     <input value={o.text} maxLength={2000}
+     <Input value={o.text} maxLength={2000}
       onChange={e=>updateQuestion(i,old=>({...old,options:old.options.map((x,k)=>k===j?{...x,text:e.target.value}:x)}))}
       className="mt-1 block min-h-11 min-w-0 w-full max-w-full rounded border border-border p-2 text-base"/></label>
-    <label className="flex items-center gap-1 text-xs">
-     <input type="checkbox" checked={o.correct}
-      onChange={e=>updateQuestion(i,old=>({...old,options:facultyToggleQuizAnswer(old,j,e.target.checked)}))}/>
-     Correct
-    </label>
-    <button type="button" disabled={j===0} onClick={()=>updateQuestion(i,old=>({...old,options:facultyMoveQuizOption(old.options,j,j-1)}))}
-     aria-label={"Move answer "+(j+1)+" up in question "+(i+1)} className="min-h-11 rounded border border-border px-2 py-1 text-xs">↑</button>
-    <button type="button" disabled={j===q.options.length-1} onClick={()=>updateQuestion(i,old=>({...old,options:facultyMoveQuizOption(old.options,j,j+1)}))}
-     aria-label={"Move answer "+(j+1)+" down in question "+(i+1)} className="min-h-11 rounded border border-border px-2 py-1 text-xs">↓</button>
-    <button type="button" disabled={q.options.length>=20}
+    <Checkbox label="Correct" checked={o.correct}
+       onChange={e=>updateQuestion(i,old=>({...old,options:facultyToggleQuizAnswer(old,j,e.target.checked)}))}/>
+    <Button variant="secondary" type="button" disabled={j===0} onClick={()=>updateQuestion(i,old=>({...old,options:facultyMoveQuizOption(old.options,j,j-1)}))}
+     aria-label={"Move answer "+(j+1)+" up in question "+(i+1)} className="min-h-11 rounded border border-border px-2 py-1 text-xs">↑</Button>
+    <Button variant="secondary" type="button" disabled={j===q.options.length-1} onClick={()=>updateQuestion(i,old=>({...old,options:facultyMoveQuizOption(old.options,j,j+1)}))}
+     aria-label={"Move answer "+(j+1)+" down in question "+(i+1)} className="min-h-11 rounded border border-border px-2 py-1 text-xs">↓</Button>
+    <Button variant="secondary" type="button" disabled={q.options.length>=20}
      onClick={()=>updateQuestion(i,old=>({...old,options:facultyInsertQuizOptionAfter(old.options,j,{text:"",correct:false,sequence:j+1})}))}
-     aria-label={"Insert answer after "+(j+1)+" in question "+(i+1)} className="min-h-11 rounded border border-border px-2 py-1 text-xs">Insert below</button>
-    <button type="button" disabled={q.options.length>=20}
+     aria-label={"Insert answer after "+(j+1)+" in question "+(i+1)} className="min-h-11 rounded border border-border px-2 py-1 text-xs">Insert below</Button>
+    <Button variant="secondary" type="button" disabled={q.options.length>=20}
      onClick={()=>updateQuestion(i,old=>({...old,options:facultyDuplicateQuizOption(old.options,j)}))}
-     aria-label={"Duplicate answer "+(j+1)+" in question "+(i+1)} className="min-h-11 rounded border border-border px-2 py-1 text-xs">Duplicate</button>
-    <button type="button" disabled={q.options.length<=2}
+     aria-label={"Duplicate answer "+(j+1)+" in question "+(i+1)} className="min-h-11 rounded border border-border px-2 py-1 text-xs">Duplicate</Button>
+    <Button variant="secondary" type="button" disabled={q.options.length<=2}
      onClick={()=>{if(facultyQuizOptionRemovalNeedsConfirmation(q.options,j)){
        askConfirm(facultyQuizOptionRemovalPrompt(q.type,q.options,i,j),
          ()=>updateQuestion(i,old=>({...old,options:facultyRemoveQuizOption(old,j)})));return;
       }
       updateQuestion(i,old=>({...old,options:facultyRemoveQuizOption(old,j)}));}}
-      className="min-h-11 rounded border border-border px-2 py-1 text-xs">Remove</button>
+      className="min-h-11 rounded border border-border px-2 py-1 text-xs">Remove</Button>
    </div>)}
-   <button type="button" disabled={q.options.length>=20}
+   <Button variant="secondary" type="button" disabled={q.options.length>=20}
     onClick={()=>{setPasteQuestionIndex(i);setPastedChoices("");setError(null);}}
-    className="min-h-11 rounded border border-border px-3 py-2 text-sm">Paste choices</button>
-   <button type="button" disabled={q.options.length>=20}
+    className="min-h-11 rounded border border-border px-3 py-2 text-sm">Paste choices</Button>
+   <Button variant="secondary" type="button" disabled={q.options.length>=20}
     onClick={()=>updateQuestion(i,old=>({...old,options:[...old.options,{text:"",correct:false,sequence:old.options.length}]}))}
-    className="min-h-11 rounded border border-border px-3 py-2 text-sm">Add option</button>
+    className="min-h-11 rounded border border-border px-3 py-2 text-sm">Add option</Button>
    <div className="flex flex-wrap gap-2">
-    <button type="button" disabled={i===0} onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyMoveQuizQuestionToEdge(old,i,"FIRST"));}}
-     className="min-h-11 rounded border border-border px-3 py-2 text-sm" aria-label={"Move question "+(i+1)+" to first"}>First</button>
-    <button type="button" disabled={i===0} onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyMoveQuizQuestion(old,i,i-1));}}
-     className="min-h-11 rounded border border-border px-3 py-2 text-sm" aria-label={"Move question "+(i+1)+" up"}>Move up</button>
-    <button type="button" disabled={i===questions.length-1} onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyMoveQuizQuestion(old,i,i+1));}}
-     className="min-h-11 rounded border border-border px-3 py-2 text-sm" aria-label={"Move question "+(i+1)+" down"}>Move down</button>
-    <button type="button" disabled={i===questions.length-1} onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyMoveQuizQuestionToEdge(old,i,"LAST"));}}
-     className="min-h-11 rounded border border-border px-3 py-2 text-sm" aria-label={"Move question "+(i+1)+" to last"}>Last</button>
+    <Button variant="secondary" type="button" disabled={i===0} onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyMoveQuizQuestionToEdge(old,i,"FIRST"));}}
+     className="min-h-11 rounded border border-border px-3 py-2 text-sm" aria-label={"Move question "+(i+1)+" to first"}>First</Button>
+    <Button variant="secondary" type="button" disabled={i===0} onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyMoveQuizQuestion(old,i,i-1));}}
+     className="min-h-11 rounded border border-border px-3 py-2 text-sm" aria-label={"Move question "+(i+1)+" up"}>Move up</Button>
+    <Button variant="secondary" type="button" disabled={i===questions.length-1} onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyMoveQuizQuestion(old,i,i+1));}}
+     className="min-h-11 rounded border border-border px-3 py-2 text-sm" aria-label={"Move question "+(i+1)+" down"}>Move down</Button>
+    <Button variant="secondary" type="button" disabled={i===questions.length-1} onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyMoveQuizQuestionToEdge(old,i,"LAST"));}}
+     className="min-h-11 rounded border border-border px-3 py-2 text-sm" aria-label={"Move question "+(i+1)+" to last"}>Last</Button>
    </div>
-   <button type="button" disabled={questions.length>=100}
+   <Button variant="secondary" type="button" disabled={questions.length>=100}
     onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyInsertQuizQuestionAfter(old,i,{...fresh(),sequence:i+1}));}}
-    className="min-h-11 rounded border border-border px-3 py-2 text-sm" aria-label={"Insert question after "+(i+1)}>Insert below</button>
-   <button type="button" disabled={questions.length>=100}
+    className="min-h-11 rounded border border-border px-3 py-2 text-sm" aria-label={"Insert question after "+(i+1)}>Insert below</Button>
+   <Button variant="secondary" type="button" disabled={questions.length>=100}
     onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyDuplicateQuizQuestion(old,i));}}
-    className="min-h-11 rounded border border-border px-3 py-2 text-sm" aria-label={"Duplicate question "+(i+1)}>Duplicate question</button>
-   <button type="button" disabled={questions.length<=1}
+    className="min-h-11 rounded border border-border px-3 py-2 text-sm" aria-label={"Duplicate question "+(i+1)}>Duplicate question</Button>
+   <Button variant="secondary" type="button" disabled={questions.length<=1}
     onClick={()=>askConfirm(facultyQuizQuestionRemovalPrompt(i,q.prompt),()=>{
       setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyRemoveQuizQuestion(old,i));
      })}
-     className="ml-2 min-h-11 rounded border border-border px-3 py-2 text-sm">Remove question</button>
+     className="ml-2 min-h-11 rounded border border-border px-3 py-2 text-sm">Remove question</Button>
   </fieldset>)}
-  <button type="button" disabled={!editable||questions.length>=100}
+  <Button variant="secondary" type="button" disabled={!editable||questions.length>=100}
    onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyAppendQuizQuestion(old,{...fresh(),sequence:old.length}));}}
-   className="min-h-11 rounded border border-border px-4 py-2 text-sm">Add question</button>
+   className="min-h-11 rounded border border-border px-4 py-2 text-sm">Add question</Button>
   <div role="status" aria-live="polite" className="space-y-1 rounded-lg border border-border bg-background p-3 text-sm">
    <p className="font-semibold">Draft review: {review.questionCount} questions · {review.optionCount} options · {review.totalPoints} total points</p>
    <p>{review.missingCorrect===0?"Every question has a correct answer selected.":review.missingCorrect+" question(s) need a correct answer."}</p>
@@ -378,43 +369,40 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
     <p role="status" className="text-sm text-body">You have unsaved changes. Save the draft before publishing.</p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {facultyQuizCanRetryDetails(detailsFailed,chosen?.id,pending) ?
-    <button type="button" onClick={()=>{if(facultyQuizRetryNeedsConfirmation(dirtyDraft,pending)){
+    <Button variant="secondary" type="button" onClick={()=>{if(facultyQuizRetryNeedsConfirmation(dirtyDraft,pending)){
        askConfirm("Discard unsaved Quiz metadata and retry loading the saved question bank?",()=>void choose(selected));return;
       }
       void choose(selected);}}
       className="inline-flex min-h-11 items-center rounded border border-border px-3 py-2 text-sm font-semibold text-primary-text">
       Reload Quiz questions
-    </button> : null}
+    </Button> : null}
   {success?<p role="status" className="text-sm text-body">{success}</p>:null}
   <div className="flex flex-wrap gap-3">
-   {facultyQuizMayResetDraft(dirtyDraft,pending)?<button type="button" onClick={resetDraft}
-    className="min-h-11 rounded border border-border px-4 py-2 text-sm">Discard unsaved edits</button>:null}
+   {facultyQuizMayResetDraft(dirtyDraft,pending)?<Button variant="secondary" type="button" onClick={resetDraft}
+    className="min-h-11 rounded border border-border px-4 py-2 text-sm">Discard unsaved edits</Button>:null}
    {!chosen?<div className="flex flex-wrap items-center gap-3">
-    <label className="flex min-h-11 items-center gap-2 text-sm">
-      <input type="checkbox" checked={publishNow} disabled={pending}
+    <Checkbox label="Publish now" checked={publishNow} disabled={pending}
         onChange={event=>setPublishNow(event.target.checked)}/>
-      Publish now
-    </label>
-    <button type="button" disabled={pending||!lessonId}
-    onClick={()=>void submit("CREATE")} className="min-h-11 rounded bg-primary px-4 py-2 text-foreground">{publishNow?"Create and publish":"Create draft"}</button>
+    <Button variant="primary" type="button" disabled={pending||!lessonId}
+    onClick={()=>void submit("CREATE")} className="min-h-11 rounded bg-primary px-4 py-2 text-foreground">{publishNow?"Create and publish":"Create draft"}</Button>
    </div>:
     <>
-    <button type="button" disabled={!facultyQuizCanSaveChanges(chosen.status,dirtyDraft,detailsFailed,pending)}
-     onClick={()=>void submit("EDIT")} className="min-h-11 rounded border border-border px-4 py-2">{chosen.status==="DRAFT"?"Save draft":"Save metadata"}</button>
-    <button type="button" disabled={pending||!facultyQuizReadyToPublish(chosen.status,dirtyDraft,detailsFailed,questions)}
-     onClick={()=>void submit("PUBLISH")} className="min-h-11 rounded bg-primary px-4 py-2 text-foreground">Publish</button>
+    <Button variant="secondary" type="button" disabled={!facultyQuizCanSaveChanges(chosen.status,dirtyDraft,detailsFailed,pending)}
+     onClick={()=>void submit("EDIT")} className="min-h-11 rounded border border-border px-4 py-2">{chosen.status==="DRAFT"?"Save draft":"Save metadata"}</Button>
+    <Button variant="primary" type="button" disabled={pending||!facultyQuizReadyToPublish(chosen.status,dirtyDraft,detailsFailed,questions)}
+     onClick={()=>void submit("PUBLISH")} className="min-h-11 rounded bg-primary px-4 py-2 text-foreground">Publish</Button>
     {chosen.status==="PUBLISHED"&&
-     <button type="button" disabled={pending}
+     <Button variant="secondary" type="button" disabled={pending}
       onClick={()=>void submit("CLOSE")}
       className="min-h-11 rounded border border-border px-4 py-2">
       Close quiz
-     </button>}
+     </Button>}
     {["DRAFT","PUBLISHED","CLOSED"].includes(chosen.status)&&
-     <button type="button" disabled={pending}
+     <Button variant="secondary" type="button" disabled={pending}
       onClick={()=>void submit("ARCHIVE")}
       className="min-h-11 rounded border border-error px-4 py-2 text-error">
       Archive quiz
-     </button>}
+     </Button>}
     </>}
   </div>
   <p className="text-xs text-muted-foreground">
