@@ -3,17 +3,23 @@ import {
   asc,
   eq,
   inArray,
+  isNull,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
+  collegeMemberships,
+  membershipRoles,
+  projectMembers,
+  users,
   projectEvaluationItems,
   projectEvaluations,
   projectInstances,
   projectSubmissions,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
+import { assertPersistedPlatformPermission, type PermissionTransaction } from "@/modules/permissions/persisted-actor";
 import {
   requireProjectLifecycleAccess,
   requireProjectReadAccess,
@@ -27,6 +33,50 @@ import {
   projectSubmissionIdSchema,
   type CreateProjectEvaluationInput,
 } from "./validation";
+
+/** A rubric is permanent academic evidence. The initial request context may
+ * become stale while a reviewer is completing a score sheet: reauthorize with
+ * persisted rows and SHARE locks inside the write transaction. */
+async function assertCurrentEvaluationActor(
+  tx: PermissionTransaction,
+  context: RequestContext,
+  scope: { project: {id:string}; collegeId:string; organizationId:string; access:"ADMIN"|"MENTOR" },
+) {
+  if (scope.access === "ADMIN") {
+    await assertPersistedPlatformPermission(tx,context,"projects.manage",{
+      collegeId:scope.collegeId,organizationId:scope.organizationId,
+    });
+    return;
+  }
+  const membership=context.membership;
+  if (!membership || membership.collegeId!==scope.collegeId ||
+      membership.organizationId!==scope.organizationId) {
+    throw new ProjectsServiceError("PROJECT_LIFECYCLE_ACCESS_DENIED");
+  }
+  const [persistedMentor]=await tx.select({id:projectMembers.id})
+    .from(projectMembers)
+    .innerJoin(collegeMemberships,and(
+      eq(collegeMemberships.id,projectMembers.membershipId),
+      eq(collegeMemberships.collegeId,scope.collegeId),
+      eq(collegeMemberships.userId,context.user.id),
+      eq(collegeMemberships.status,"ACTIVE"),
+    ))
+    .innerJoin(users,and(
+      eq(users.id,collegeMemberships.userId),
+      eq(users.platformStatus,"ACTIVE"),
+    ))
+    .innerJoin(membershipRoles,and(
+      eq(membershipRoles.membershipId,collegeMemberships.id),
+      eq(membershipRoles.role,"MENTOR"),
+    ))
+    .where(and(
+      eq(projectMembers.projectId,scope.project.id),
+      eq(projectMembers.membershipId,membership.id),
+      eq(projectMembers.role,"MENTOR"),
+      isNull(projectMembers.endedAt),
+    )).for("share").limit(1);
+  if(!persistedMentor)throw new ProjectsServiceError("PROJECT_LIFECYCLE_ACCESS_DENIED");
+}
 
 function mapEvaluationConstraint(error: unknown) {
   if (
@@ -84,6 +134,7 @@ export async function createProjectEvaluation(
           "PROJECT_EVALUATION_INVALID_STATE",
         );
       }
+      await assertCurrentEvaluationActor(tx,context,scope);
 
       const [submission] = await tx
         .select({
