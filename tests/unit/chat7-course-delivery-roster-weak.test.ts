@@ -73,8 +73,8 @@ describe("COURSES-WEAK-DELIVERY-ROSTER-01 exact College, Section and Elective en
   expect(text).toContain('eq(lmsGroups.collegeId, scope.collegeId)');
   expect(text).toContain('eq(electiveOfferings.backedDeliveryId, scope.deliveryId)');
   expect(text).toContain('eq(sectionEnrollments.sectionId, scope.sectionId)');
-  // Whitespace-insensitive but still requires equality with this delivery's period.
-  expect(text).toMatch(/eq\(\s*sectionEnrollments\.academicPeriodId\s*,\s*scope\.academicPeriodId\s*\)/);
+  // Whitespace- and trailing-comma-insensitive, but requires equality to this delivery's period.
+  expect(text).toMatch(/eq\(\s*sectionEnrollments\.academicPeriodId\s*,\s*scope\.academicPeriodId\s*,?\s*\)/);
   expect(text).toContain('eq(sectionEnrollments.status, "ACTIVE")');
  });
 });
