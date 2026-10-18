@@ -21,7 +21,7 @@ describe("HR recruiter route security chat-15",()=>{
   const code=get(file);
   expect(code).toMatch(/export async function (POST|PATCH)\(/);
   const origin=code.indexOf("isSameOriginRequest(request)");
-  const firstWrite=code.search(/await (?:createOwn|updateOwn|writeHr|editHr|sendRecruiter|acknowledgeRecruiter|markHr)/);
+  const firstWrite=code.search(/await (?:createOwn|updateOwn|writeHr|editHr|sendRecruiter|openRecruiter|acknowledgeRecruiter|markHr)/);
   expect(origin).toBeGreaterThanOrEqual(0);
   expect(firstWrite).toBeGreaterThan(origin);
   expect(code).toContain("getCurrentRequestContext");
