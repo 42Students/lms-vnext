@@ -20,7 +20,7 @@ const uid=()=>randomUUID();
 const ids={
  periodA:uid(),periodB:uid(),programA:uid(),programB:uid(),
  cohortA:uid(),cohortB:uid(),sectionA:uid(),sectionB:uid(),
- wrongPeriodSection:uid(),membershipB:uid(),userB:uid(),
+ wrongPeriodSection:uid(),membershipA:uid(),userA:uid(),membershipB:uid(),userB:uid(),
  enrollmentA:uid(),enrollmentB:uid(),wrongProgramEnrollment:uid(),
  good:uid(),foreignSection:uid(),foreignLearner:uid(),
  facultyAssignment:uid(),event:uid(),
@@ -70,15 +70,20 @@ describe.skipIf(!enabled)("COL-academics-scope-tenant-PG-01 forged but FK-valid 
     [section,cohort,period,tag+"-"+suffix],
    );
   }
-  await pool.query("insert into users(id,identity_uid,display_name) values($1,$2,$3)",
-   [ids.userB,tag+"-student-b",tag+" student B"]);
-  await pool.query("insert into college_memberships(id,user_id,college_id) values($1,$2,$3)",
-   [ids.membershipB,ids.userB,SEED_IDS.collegeB]);
-  await pool.query("insert into membership_roles(membership_id,role) values($1,'LEARNER')",
-   [ids.membershipB]);
+  for(const [member,user,college,suffix] of [
+   [ids.membershipA,ids.userA,SEED_IDS.collegeA,"a"],
+   [ids.membershipB,ids.userB,SEED_IDS.collegeB,"b"],
+  ]){
+   await pool.query("insert into users(id,identity_uid,display_name) values($1,$2,$3)",
+    [user,tag+"-student-"+suffix,tag+" student "+suffix]);
+   await pool.query("insert into college_memberships(id,user_id,college_id) values($1,$2,$3)",
+    [member,user,college]);
+   await pool.query("insert into membership_roles(membership_id,role) values($1,'LEARNER')",
+    [member]);
+  }
   await pool.query(
    "insert into learner_program_enrollments(id,membership_id,program_id,cohort_id) values($1,$2,$3,$4)",
-   [ids.enrollmentA,SEED_IDS.learnerCollegeAMembership,ids.programA,ids.cohortA],
+   [ids.enrollmentA,ids.membershipA,ids.programA,ids.cohortA],
   );
   await pool.query(
    "insert into learner_program_enrollments(id,membership_id,program_id,cohort_id) values($1,$2,$3,$4)",
@@ -88,7 +93,7 @@ describe.skipIf(!enabled)("COL-academics-scope-tenant-PG-01 forged but FK-valid 
   // allow the invalid program/cohort relationship; readers must reject it.
   await pool.query(
    "insert into learner_program_enrollments(id,membership_id,program_id,cohort_id,status,completed_at) values($1,$2,$3,$4,'COMPLETED',now())",
-   [ids.wrongProgramEnrollment,SEED_IDS.learnerCollegeAMembership,ids.programA,ids.cohortB],
+   [ids.wrongProgramEnrollment,ids.membershipA,ids.programA,ids.cohortB],
   );
   for(const [placement,enrollment,section,period] of [
    [ids.good,ids.enrollmentA,ids.sectionA,ids.periodA],
@@ -127,9 +132,13 @@ describe.skipIf(!enabled)("COL-academics-scope-tenant-PG-01 forged but FK-valid 
     await pool.query("delete from cohorts where id=any($1::uuid[])",[[ids.cohortA,ids.cohortB]]);
     await pool.query("delete from programs where id=any($1::uuid[])",[[ids.programA,ids.programB]]);
     await pool.query("delete from academic_periods where id=any($1::uuid[])",[[ids.periodA,ids.periodB]]);
-    await pool.query("delete from membership_roles where membership_id=$1",[ids.membershipB]);
-    await pool.query("delete from college_memberships where id=$1",[ids.membershipB]);
-    await pool.query("delete from users where id=$1",[ids.userB]);
+    await pool.query("delete from membership_roles where membership_id=any($1::uuid[])",[
+     [ids.membershipA,ids.membershipB],
+    ]);
+    await pool.query("delete from college_memberships where id=any($1::uuid[])",[
+     [ids.membershipA,ids.membershipB],
+    ]);
+    await pool.query("delete from users where id=any($1::uuid[])",[[ids.userA,ids.userB]]);
    }
   }finally{
    await pool?.end();
