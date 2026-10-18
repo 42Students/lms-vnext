@@ -9,7 +9,10 @@ export const adminContentQuerySchema = z.strictObject({
  lessonId:z.preprocess(value=>value===""?undefined:value,z.string().uuid().optional()),
  deliveryId:z.preprocess(value=>value===""?undefined:value,z.string().uuid().optional()),
  scope:z.enum(["ALL","SHARED","SECTION"]).default("ALL"),
- page:z.coerce.number().int().min(1).max(1000).default(1),
+ page:z.union([
+  z.number().int().min(1).max(1000),
+  z.string().regex(/^[0-9]+$/).transform(Number).pipe(z.number().int().min(1).max(1000)),
+ ]).default(1),
 });
 export function contentTypesForKind(kind:AdminContentKind) {
  return kind==="VIDEOS"?["VIDEO","YOUTUBE"] as const:
