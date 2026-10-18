@@ -20,7 +20,7 @@ export function superAdminScopedCsvHref(path:string,query:SuperAdminReadQuery){
  return path+(params.size?"?"+params.toString():"");
 }
 function csvCell(value:string){
- const neutral=/^[\s\u200B-\u200F\u2060\u2066-\u2069\uFEFF\u202A-\u202E]*[=+@\-]/u.test(value)?"'"+value:value;
+ const neutral=/^[\s\p{Cf}\p{Mn}]*[=+@-]/u.test(value)?"'"+value:value;
  return '"'+neutral.replaceAll('"','""')+'"';
 }
 export function buildSuperAdminScopedCsv(rows:readonly SuperAdminReadRow[],truncated:boolean){

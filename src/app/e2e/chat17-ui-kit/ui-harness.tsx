@@ -17,6 +17,7 @@ import { FormField } from "@/components/ui/form-field";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 import { Tabs } from "@/components/ui/tabs";
 import { ToastProvider, useToast } from "@/components/ui/toast";
+import { SuperAdminInterviewOperations } from "@/components/admin/super-admin-interview-operations";
 
 function UIKitTestSurface() {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -135,6 +136,21 @@ function UIKitTestSurface() {
           {key:"secret",header:"Private desktop-only feedback",mobilePriority:"hidden",
             cell:row=>row.secret},
         ]}/>
+    </section>
+
+    <section aria-label="Interview grid fixture">
+      <SuperAdminInterviewOperations today="2026-10-18" events={[
+        {id:"interview-a",roundId:null,jobId:null,jobTitle:"Engineer",title:"Technical interview",
+          companyName:"Demo Company A",status:"SCHEDULED",kind:"TECHNICAL",
+          startsAt:"2026-10-18T04:00:00Z",endsAt:"2026-10-18T05:00:00Z",
+          venue:"Room 101",candidateName:"Student Alpha",departmentName:"Computer Science",
+          interviewer:"Mentor One",mode:"On campus"},
+        {id:"interview-b",roundId:null,jobId:null,jobTitle:"Designer",title:"Portfolio interview",
+          companyName:"Demo Company B",status:"SCHEDULED",kind:"PORTFOLIO",
+          startsAt:"2026-10-18T04:30:00Z",endsAt:"2026-10-18T05:30:00Z",
+          venue:"Room 101",candidateName:"Student Beta",departmentName:"Design",
+          interviewer:"Mentor Two",mode:"On campus"},
+      ]}/>
     </section>
 
     <section aria-label="Loading and disclosure fixture" className="space-y-3">
