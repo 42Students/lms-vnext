@@ -50,7 +50,8 @@ describe("TPO-students-12 200-learner show/hide and stale visibility CAS",()=>{
   expect(ui).toContain("tpoDriveVisibilitySelection(selection?.selected??[],learners,200)");
   expect(ui).toContain("mapTpoBulkBounded(picked,async(learner)");
   expect(ui).toContain("mapTpoBulkBounded(restorable,async(row)");
-  expect(ui).toContain("expectedOverrideId:current.eligibility.override?.id");
+  expect(ui).toContain("const expectedOverrideId=current.eligibility.override?.id??null");
+  expect(ui).toContain("body:JSON.stringify({decision,reason:reason.trim(),expectedOverrideId})");
   expect(ui).toContain("expectedOverrideId:row.overrideId");
   expect(ui).toContain('method:"PUT",credentials:"same-origin"');
   expect(ui).toContain('method:"DELETE",credentials:"same-origin"');
