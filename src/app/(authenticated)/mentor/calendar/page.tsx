@@ -30,7 +30,7 @@ export default async function MentorCalendarPage({searchParams}:{
   </section>;
   const context=await getCurrentRequestContext();
   const access=await resolveOptionalModuleAccess(context).catch(()=>null);
-  if(access?.projects.enabled!==true)return <MentorProjectsUnavailable/>;
+  if(access?.projects.enabled!==true)return <MentorProjectsUnavailable loadFailed={access===null}/>;
   const meetings=await listMyMentorCalendarMeetings(context).catch(()=>null);
   if(meetings===null)return <div className="min-w-0 max-w-full space-y-5">
     <PageHeader title="Meetings" description="Every scheduled meeting across your assigned projects, in one place."/>
