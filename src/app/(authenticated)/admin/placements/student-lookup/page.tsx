@@ -15,16 +15,16 @@ export default async function SuperAdminPlacementStudentLookup({searchParams}:{
  const data=q.length>=3?ctx.adminScope?.collegeId?await lookupCollegeStudentPlacement(ctx,q):null:null;
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Placements" title="Student placement lookup"
-   actions={<Link href="/admin/placements/analytics" className="font-semibold text-[var(--lms-teal-deep)] underline">Analytics</Link>}/>
+   actions={<Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Analytics</Link>}/>
   <form action="/admin/placements/student-lookup" role="search" className="min-w-0 rounded-xl border border-border bg-surface p-4 sm:p-6">
    <label className="grid max-w-xl gap-2 text-sm font-semibold">Name, roll number or email
-    <Input type="search" name="q" minLength={3} maxLength={150} required defaultValue={q}
+    <Input type="search" name="q" minLength={3} maxLength={150} required disabled={!ctx.adminScope?.collegeId} aria-describedby={!ctx.adminScope?.collegeId?"placement-student-scope-hint":undefined} defaultValue={q}
       placeholder="Find one student in this college"
       className="w-full"/>
    </label>
-   <Button type="submit" className="mt-3">Search students</Button>
+   <Button type="submit" className="mt-3" disabled={!ctx.adminScope?.collegeId}>Search students</Button>
   </form>
-  {!ctx.adminScope?.collegeId?<p role="status" className="rounded-xl border border-border bg-surface p-4 sm:p-6">Select a college to continue. Choose a college in the header above to look up student placements.</p>:null}
+  {!ctx.adminScope?.collegeId?<p id="placement-student-scope-hint" role="status" className="rounded-xl border border-border bg-surface p-4 sm:p-6">Select a college to continue. Choose a college in the header above to look up student placements.</p>:null}
   {data&&!data.students.length?<EmptyState title="No matching college students." description="Name, roll number or email" />:null}
   {data?.students.map(person=><section key={person.membershipId} className="min-w-0 space-y-3 rounded-xl border border-border bg-surface p-4 sm:p-6">
    <div className="flex flex-wrap items-center justify-between gap-2">
