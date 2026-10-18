@@ -11,7 +11,8 @@ describe("chat-14 recruiter ownership and private review gap closure",()=>{
    expect(service).toContain('eq(learnerProgramEnrollments.status,"ACTIVE")');
    expect(service).toContain("eq(departments.collegeId,workspace.college.id)");
    expect(service).toContain("branchSet.get(membershipId)?.size===1");
-   expect(service).toContain("phone:sharePhone?row.phone:null");
+   expect(service).toContain("phone:active && sharePhone?row.phone:null");
+   expect(service).toContain('const active = row.status === "SUBMITTED"');
    expect(page).toContain("selectedApplicant.branch");
    expect(page).toContain("selectedApplicant.phone");
  });
@@ -119,8 +120,9 @@ describe("chat-14 recruiter ownership and private review gap closure",()=>{
   expect(code).toContain('eq(placementCompanyRelationships.status,"ACTIVE")');
   expect(code).toContain('share?.columns?.includes("roll")');
   expect(code).toContain('share?.columns?.includes("email")');
-  expect(code).toContain("rollNumber:shareRoll?row.rollNumber:null");
-  expect(code).toContain("email:shareEmail?row.email:null");
+  expect(code).toContain("rollNumber:active && shareRoll?row.rollNumber:null");
+  expect(code).toContain("email:active && shareEmail?row.email:null");
+  expect(code).toContain('eq(placementCompanyRelationships.collegeId,workspace.college.id)');
   expect(code).toContain('eq(placementApplicationScreenings.status, "SHORTLISTED")');
  });
  it("REC-home-drives-38 only projects verified college-authorized academic marks",()=>{
@@ -131,9 +133,12 @@ describe("chat-14 recruiter ownership and private review gap closure",()=>{
   expect(sourceCode).toContain("profileVerificationAcademicMarks");
   expect(sourceCode).toContain('eq(profileVerifications.section,"EDUCATION")');
   expect(sourceCode).toContain('inArray(profileVerifications.status,["VERIFIED","UPDATE_PENDING"])');
-  expect(sourceCode).toContain("ugPercentage:shareUg?percentage(");
-  expect(sourceCode).toContain("tenthPercentage:shareTenth?percentage(");
-  expect(sourceCode).toContain("twelfthOrDiplomaPercentage:shareTwelfth?");
+  expect(sourceCode).toContain("ugPercentage:active && shareUg?percentage(");
+  expect(sourceCode).toContain('share?.columns?.includes("cgpa") && visibility?.cgpa');
+  expect(sourceCode).toContain("tenthPercentage:active && shareTenth?percentage(");
+  expect(sourceCode).toContain('share?.columns?.includes("tenth") && visibility?.academic');
+  expect(sourceCode).toContain("twelfthOrDiplomaPercentage:active && shareTwelfth?");
+  expect(sourceCode).toContain('share?.columns?.includes("twelfth") && visibility?.academic');
   expect(sourceCode).toContain("projectRecruiterProfileLinks(profileDocument");
   expect(sourceCode).toContain("applications.map(({membershipId,profileDocument,...row})");
   expect(sourceCode).toContain("placementCompanyVisibilitySettings.showCgpaExact");
