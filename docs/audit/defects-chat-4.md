@@ -173,3 +173,7 @@ The College People roster's `z.coerce.number()` accepted unambiguous but non-URL
 ## COL-student-import-placement-tenant-01 — S1 foreign program admission defect
 
 The College Admin CSV student-placement service previously checked that `learner_program_enrollments.cohort_id = target section cohort_id`, but not that `learner_program_enrollments.program_id` actually owned that cohort. Because these are independent PostgreSQL FKs, a learner membership in College A referencing a College B program and College A cohort could be admitted to a College A section. The enrollment read now INNER JOINs `cohorts` with both `cohort.id` and `cohort.program_id` constraints, and checks the program's department college before class capacity, insert and audit. A real disposable PG negative case `COL-student-import-placement-tenant-PG-01` and source-order test are authored; not run.
+
+## COL-people-e2e-identity-02 — deterministic UID collision without contact
+
+The E2E identity adapter used a literal `"missing-contact"` hash fallback when called directly without phone/email, which would generate the same UID for unrelated people and could cause test-fixture identity aliasing. It now fails with `PeopleServiceError("IDENTITY_CONTACT_REQUIRED")`, matching the production identity resolver's required-contact invariant. A behavioral negative case was appended to `chat4-college-e2e-identity-directory.test.ts`; **not run**.
