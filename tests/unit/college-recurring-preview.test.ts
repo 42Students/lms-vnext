@@ -44,7 +44,9 @@ describe("College recurring preview is IST-safe and bounded", () => {
     }])).toEqual([]);
   });
   it("truncates displayed error payloads", () => {
-    expect(collegePreviewErrorLabel({ error: "x".repeat(200) })).toHaveLength(150);
-    expect(collegePreviewErrorLabel({ detail: "ignored" })).toContain("could not");
+    const hostile = collegePreviewErrorLabel({ error: "x".repeat(200) });
+    expect(hostile).toBe("The schedule preview could not be loaded");
+    expect(hostile).not.toContain("x".repeat(10));
+    expect(collegePreviewErrorLabel({ detail: "provider secret" })).toBe(hostile);
   });
 });
