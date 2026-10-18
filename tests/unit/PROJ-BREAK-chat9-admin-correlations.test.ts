@@ -96,6 +96,19 @@ describe("IIT Dharwad Projects: admin submission correlated SQL and tenancy", ()
     }
   });
 
+  it("PROJ-BREAK-reports-10 completed and archived submissions do not inflate actionable review counters", async () => {
+    await getProjectAdminSubmissionSummary(actor(), collegeId);
+    const selected = state.selected.find((fields) => "pendingReview" in fields);
+    expect(selected).toBeDefined();
+    for (const key of ["pendingReview", "needsStudentAction"]) {
+      const rendered = render(selected![key]);
+      expect(rendered).toContain("filter (where ");
+      expect(rendered).toContain("'ACTIVE'");
+      expect(rendered).toContain('sub.project_id = "project_instances"."id"');
+    }
+    expect(render(selected!.reviewed)).not.toContain("'ACTIVE'");
+  });
+
   it("PROJ-BREAK-reports-09 mentor lookups correlate to their own workspace and not the inner member ID", async () => {
     const result = await listProjectAdminSubmissionQueue(actor(), collegeId, {});
     expect(result.total).toBe(0);
