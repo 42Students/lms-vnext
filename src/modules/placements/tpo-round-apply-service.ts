@@ -5,7 +5,7 @@ import {collegeMemberships,placementApplications,placementJobRounds,placementJob
 import type {RequestContext} from "@/modules/identity/context";
 import {PlacementsServiceError} from "./errors";
 import {applyPlacementRoundResult} from "./result-service";
-import {requireTpoJobCollege} from "./tpo-job-write-base";
+import {requireTpoJobCollege,requireTpoJobActor} from "./tpo-job-write-base";
 import {placementJobIdSchema,placementRoundIdSchema} from "./validation";
 import {roundApplyInputSchema,roundApplyPreviewToken,summarizeRoundApply,roundApplyFailureReason} from "./tpo-round-apply-model";
 
@@ -44,6 +44,9 @@ export async function getTpoRoundApplyPreview(context:RequestContext,rawJobId:un
   destination:x.outcome==="PASS"?passDestination:x.outcome==="FAIL"?"Not cleared":
    x.outcome==="HOLD"?"Waitlisted":"Absent"}));
  const ready=scope.jobStatus==="PUBLISHED"&&scope.roundStatus==="COMPLETED"&&scope.roundKind!=="TALK";
+ // Recheck active officer membership after async student-result reads; stale
+ // sessions must not receive a previously authorized result export.
+ await getDb().transaction(async tx=>{await requireTpoJobActor(tx,context);});
  return {scope,ready,rows,destinations:{PASS:passDestination,FAIL:"Not cleared",
    HOLD:"Waitlisted",ABSENT:"Absent"},...summarizeRoundApply(rows),
   previewToken:roundApplyPreviewToken(roundId,rows),
