@@ -4,18 +4,20 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {EmptyState} from "@/components/ui/empty-state";
 import {PageHeader} from "@/components/ui/page-header";
 import {mentorReviewOverviewSchema,mentorReviewOverviewHref} from "@/modules/projects/mentor-review-overview-model";
+import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
 import {getMentorDeliveryReviewOverview} from "@/modules/projects/mentor-review-overview-service";
 type Search={status?:string|string[];feedback?:string|string[];version?:string|string[];page?:string|string[]};
 export default async function MentorReviewOverviewPage({
  params,searchParams,
 }:{params:Promise<{projectId:string}>;searchParams:Promise<Search>}){
  const [{projectId},query]=await Promise.all([params,searchParams]);
- const parsed=mentorReviewOverviewSchema.safeParse({
-  projectId,page:Array.isArray(query.page)?query.page[0]:query.page,
-  status:Array.isArray(query.status)?query.status[0]:query.status,
-  feedback:Array.isArray(query.feedback)?query.feedback[0]:query.feedback,
-  version:Array.isArray(query.version)?query.version[0]:query.version,
+ const filters=singleValueMentorFilters({
+  page:query.page,status:query.status,feedback:query.feedback,version:query.version,
  });
+ // Duplicate query parameters must not silently select an attacker-chosen filter.
+ const parsed=mentorReviewOverviewSchema.safeParse(
+  filters?{projectId,...filters}:null,
+ );
  if(!parsed.success)return <section role="alert">
  <h1 className="text-xl font-semibold">Invalid project review filters</h1>
  <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Projects</Link>
