@@ -113,6 +113,28 @@ describe("chat-16 public recruiter company and college OTP HTTP security",()=>{
   expect(await repeated.json()).toEqual({error:"EMAIL_NO_MX"});
   expect(repeated.headers.get("Cache-Control")).toBe("no-store");
  });
+ it.each(scopeRoutes)("REC-JOIN-HTTP-23 $scope never exposes a database error from public code or join endpoints",async route=>{
+  vi.mocked(requestPublicJoinCode).mockRejectedValue(new Error("private provider token recruiter@example.org"));
+  vi.mocked(acceptPublicRecruiterJoin).mockRejectedValue(new Error("private database credentials"));
+  const sent=await route.send(req(route.path,"send-code"));
+  const accepted=await route.join(req(route.path,"join"));
+  expect(sent.status).toBe(503);
+  expect(accepted.status).toBe(503);
+  expect(await sent.json()).toEqual({error:"SERVICE_UNAVAILABLE"});
+  expect(await accepted.json()).toEqual({error:"SERVICE_UNAVAILABLE"});
+  expect(sent.headers.get("Cache-Control")).toBe("no-store");
+  expect(accepted.headers.get("Cache-Control")).toBe("no-store");
+ });
+ it.each(scopeRoutes)("REC-JOIN-HTTP-24 $scope parses malformed JSON as invalid input rather than a server crash",async route=>{
+  vi.mocked(acceptPublicRecruiterJoin).mockRejectedValue(new PublicJoinAcceptError("INVALID"));
+  const request=new Request("https://42lms.com/api/public/"+route.path+"-join/join",{
+   method:"POST",headers:{"Content-Type":"application/json"},body:"{broken",
+  });
+  const response=await route.join(request);
+  expect(response.status).toBe(400);
+  expect(await response.json()).toEqual({error:"COULD_NOT_JOIN"});
+  expect(acceptPublicRecruiterJoin).toHaveBeenCalledWith(route.scope,null,null);
+ });
  it.each(scopeRoutes)("REC-JOIN-HTTP-22 $scope preserves explicit persisted join rejection",async route=>{
   vi.mocked(acceptPublicRecruiterJoin).mockRejectedValue(new PublicJoinAcceptError("PHONE_STORAGE_NOT_READY"));
   const response=await route.join(req(route.path,"join"));
