@@ -57,7 +57,7 @@ export default async function SuperAdminProjectsPage({
         description="Live projects, each run by a mentor with a team of students." />
       <ErrorState title="Invalid project filters"
         description="Check the search, status, page and rows filters, or clear them to continue."
-        action={<Link href="/admin/projects" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Clear filters</Link>}
+        action={<Link href="/admin/projects" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Clear filters</Link>}
       />
     </div>;
   }
