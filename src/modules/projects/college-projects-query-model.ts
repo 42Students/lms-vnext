@@ -1,31 +1,32 @@
-import type { ProjectAdminCollectionQuery } from "@/components/projects/project-admin-collection-controls";
+import { z } from "zod";
 
-/**
- * College Projects URLs are untrusted: an old tab or pasted link must never
- * cause the workspace index to throw because page, size or status is invalid.
- * Service-side Zod validation remains the authoritative boundary.
- */
-export function collegeProjectsQueryFromParams(
+const statuses = ["PLANNED", "ACTIVE", "COMPLETED", "ARCHIVED"] as const;
+const schema = z.object({
+  q: z.string().trim().max(120).optional(),
+  status: z.enum(statuses).optional(),
+  view: z.enum(["cards", "table"]).default("cards"),
+  page: z.coerce.number().int().min(1).max(100000).default(1),
+  pageSize: z.coerce.number().int().min(10).max(100).default(25),
+});
+
+function first(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+/** Invalid or hostile URL filters must produce a recoverable UI, not a 500. */
+export function parseCollegeProjectsQuery(
   params: Record<string, string | string[] | undefined>,
-): ProjectAdminCollectionQuery {
-  const first = (key: string): string | undefined => {
-    const value = params[key];
-    return Array.isArray(value) ? value[0] : value;
-  };
-  const positivePage = Number(first("page") ?? "1");
-  const page = Number.isSafeInteger(positivePage) && positivePage >= 1 &&
-    positivePage <= 10_000 ? positivePage : 1;
-  const size = Number(first("pageSize") ?? "25");
-  const pageSize = [10, 20, 25, 50, 100].includes(size) ? size : 25;
-  const rawStatus = first("status");
-  const status = rawStatus === "PLANNED" || rawStatus === "ACTIVE" ||
-    rawStatus === "COMPLETED" || rawStatus === "ARCHIVED" ? rawStatus : undefined;
-  const q = first("q")?.trim().slice(0, 120) || undefined;
-  return {
-    q,
-    view: first("view") === "table" ? "table" : "cards",
-    status,
-    page,
-    pageSize,
-  };
+) {
+  const q = first(params.q);
+  const status = first(params.status);
+  const view = first(params.view);
+  const page = first(params.page);
+  const pageSize = first(params.pageSize);
+  return schema.safeParse({
+    ...(q ? { q } : {}),
+    ...(status ? { status } : {}),
+    ...(view ? { view } : {}),
+    ...(page !== undefined ? { page } : {}),
+    ...(pageSize !== undefined ? { pageSize } : {}),
+  });
 }
