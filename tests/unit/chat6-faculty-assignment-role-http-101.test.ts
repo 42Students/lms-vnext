@@ -1,5 +1,4 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
-import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {changeCourseTeachingAssignmentRole} from "@/modules/courses/teaching-assignment-service";
@@ -48,6 +47,7 @@ describe("SA-academics-people-101 teaching-role PATCH HTTP boundary",()=>{
   const response=await PATCH(request(body),params);
   expect(response.status).toBe(200);
   expect(await response.json()).toEqual({assignment:{id:assignmentId,role:"CO_TEACHER"}});
-  expect(changeCourseTeachingAssignmentRole).toHaveBeenCalledExactlyOnceWith(context,assignmentId,body);
+  expect(changeCourseTeachingAssignmentRole).toHaveBeenCalledOnce();
+  expect(changeCourseTeachingAssignmentRole).toHaveBeenCalledWith(context,assignmentId,body);
  });
 });
