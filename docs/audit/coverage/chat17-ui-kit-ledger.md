@@ -19,7 +19,7 @@ Tests are in:
 | `card.tsx` | `Card` | STATES-12; HARDEN-10 | heading, semantic article, footer action |
 | `confirm-action-dialog.tsx` | `ConfirmActionDialog` | STATES-04; HARDEN-16 | pending disables action; consequences and cancel |
 | `confirm-dialog.tsx` | `ConfirmDialog` | STATES-04; HARDEN-16 | pending/disabled destructive action, no dismiss |
-| `data-table.tsx` | `DataTable, isSafeDataTableHref` | HARDEN-17; HARDEN-27; HARDEN-30; HARDEN-35 | empty, formatted cell once, mobile, shared guarded row links |
+| `data-table.tsx` | `DataTable, isSafeDataTableHref` | HARDEN-17; HARDEN-27; HARDEN-30; HARDEN-35; HARDEN-36 | empty, formatted cell once, mobile, shared guarded row links |
 | `dialog.tsx` | `Dialog` | STATES-05; HARDEN-16 | nondismissible title, safe viewport, scroll |
 | `disabled-reason.tsx` | `DisabledReason` | HARDEN-07 | reason associated with disabled control |
 | `disclosure.tsx` | `Disclosure` | STATES-12; HARDEN-12 | semantic details/summary and defaultOpen |
@@ -71,3 +71,6 @@ Tests are in:
 - **Browser witness:** `tests/e2e/ux-safe-internal-href-chat17.spec.ts` transpiles the production `isSafeInternalHref` function and tests hostile encodings and legitimate URLs against Chromium's own URL origin resolver. Execute with `npx playwright test tests/e2e/ux-safe-internal-href-chat17.spec.ts`. This covers navigation parsing only; it is not proof of authenticated Projects end-to-end permission safety.
 
 - **UX-kit-HARDEN-36:** `StatTile`, navigation-style `Tabs`, and `Pagination` now use `isSafeInternalHref` just like `Breadcrumbs`/`DataTable`. Invalid targets become inert labeled states; all are tested in `tests/unit/UX-kit-states-chat17.test.tsx`.
+
+- **UX-kit-HARDEN-27:** the single listed chat-17 unit regression was re-read against `DataTable` and `ScrollCue`. It preserves **exactly one** formatter call per row, rejects unsafe row links and renders an accessible caption while SSR lacks physical overflow. Its brittle implementation-string assertion was replaced with semantic caption/scroll-label patterns, and ordered formatter calls are now explicitly asserted. Requires a refreshed cloud runner to confirm passing; the published report is from an older commit.
+- **UX-kit-HARDEN-36:** hidden field detail authorization is **per-row**, not global to the table. Rows without `mobileDetail.canView(row)` do not run or serialize the sensitive cell formatter, disclose a fallback value on mobile, or render an unauthorized detail link. Mixed-permission assertions cover the leak and authorized row continuity.
