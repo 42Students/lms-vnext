@@ -160,6 +160,21 @@ describe("chat-5 placements core — cancellation, waitlist and joining",()=>{
   const service=readFileSync("src/modules/placements/tpo-waitlist-promotion-service.ts","utf8");
   expect(service).toContain("...canonicalWaitlistPreviewCollections(promotions,activeOffers)");
  });
+ it("PLACEMENTS-WAIT-SEASON-05 checks persisted season twice, with a share lock before reserving seats",()=>{
+  const service=readFileSync("src/modules/placements/tpo-waitlist-promotion-service.ts","utf8");
+  expect(service).toContain("seasonStatus:placementSeasons.status");
+  expect(service).toContain('if(job.seasonStatus!=="ACTIVE")reasons.push("Placement season is not active")');
+  const reserve=service.slice(service.indexOf("export async function offerToNextWaitlisted"));
+  const jobLock=reserve.indexOf('from(placementJobs).where(eq(placementJobs.id,preview.job.id)).for("update")');
+  const seasonLock=reserve.indexOf('.from(placementSeasons).innerJoin(placementJobs');
+  const seatRead=reserve.indexOf('const used=await tx.select');
+  expect(jobLock).toBeGreaterThanOrEqual(0);
+  expect(seasonLock).toBeGreaterThan(jobLock);
+  expect(seatRead).toBeGreaterThan(seasonLock);
+  expect(reserve).toContain('if(liveSeason?.status!=="ACTIVE")throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY")');
+  expect(reserve.slice(seasonLock,seatRead)).toContain('.for("share").limit(1)');
+  expect(reserve.slice(seasonLock,seatRead)).toContain('eq(placementSeasons.collegeId,context.membership!.collegeId)');
+ });
  it("PLACEMENTS-WAIT-SM-03 settles exactly once under row lock and rejects conflicting terminal histories",()=>{
   const issuedOffer=a;
   expect(decideWaitlistReleaseSettlement("PENDING",null,issuedOffer)).toBe("WRITE");
