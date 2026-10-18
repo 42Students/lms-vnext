@@ -297,3 +297,27 @@ These paths require one test row **per exported function** after parsing each fi
 - `src/modules/placements/recruiter-today-waiting-model.ts`
 - `src/modules/placements/recruiter-today-week-events-model.ts`
 - `src/modules/placements/recruiter-workspace-service.ts`
+
+## Exported functions inventory batch 1 (12 files; 19 functions)
+
+| Source | Exported function | Test closure |
+|---|---|---|
+| `src/modules/placements/hr-activity-csv-model.ts` | `buildHrActivityCsv` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-applicant-drawer-model.ts` | `buildHrApplicantDrawer` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-applicant-export-model.ts` | `buildHrApplicantCsv` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-calendar-category-model.ts` | `filterHrCalendarDays` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-calendar-day-model.ts` | `combineHrCalendarDays` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-calendar-day-model.ts` | `hrResultsDueHref` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-calendar-day-model.ts` | `selectHrMobileCalendarDays` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-calendar-export-model.ts` | `buildHrCalendarCsv` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-calendar-next-event-model.ts` | `hrNextCalendarEvent` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-company-report-export-model.ts` | `buildHrCompanyReportCsv` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-conversation-detail-links-model.ts` | `hrConversationDetailHref` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-conversation-detail-pagination-model.ts` | `hrConversationDetailPageWindow` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-conversation-inbox-model.ts` | `filterRecruiterConversations` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-conversation-inbox-model.ts` | `hrConversationPageBounds` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-conversation-inbox-model.ts` | `onlyUnreadRecruiterThreads` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-conversation-inbox-model.ts` | `orderRecruiterConversations` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-conversation-inbox-model.ts` | `scopeRecruiterConversations` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-conversation-inbox-model.ts` | `countScopedConversations` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-conversation-inbox-service.ts` | `listHrConversations` | **OPEN** — exact behavioural test and role matrix pending |
