@@ -38,3 +38,9 @@ Source inspection: 2026-10-18. Branch: `chatgpt/chat-11-b`. **Partial, source-re
 - **Other source behaviours inspected:** sign-in idempotency/CAS, active tenant, readiness unknown versus failed, tenant-specific branding and module-access scoping.
 - **Not audited exhaustively:** every exported function and route handler under `src/modules/colleges`, `src/modules/module-access`, `src/modules/tenant-domains`, and every Admin tenant UI state. Thus this document **does not satisfy** the master queue's exhaustive-coverage definition.
 - **Execution blocked:** the connected GitHub surface can read/write and push commits but has no repository checkout, package runner, PostgreSQL or browser. No green test, high branch-coverage number, or production release approval is claimed.
+
+## Super Admin read under role-revocation concurrency (2026-10-18)
+
+| ID | Surface | New threat/fix | Regression | Runtime evidence missing |
+|---|---|---|---|---|
+| SA-tenants-modules-R01 | Module Access aggregate cards | Previous request-context-only `admin-scope.select` could authorize counts if the Super Admin role was revoked after request authentication, including returning success for empty lists. `db34e73` and `df3d5e4` move all aggregation and the empty shortcut behind persisted active-actor locks inside one transaction. | `tests/unit/chat11-super-admin-module-metrics-revoked-role.test.ts` — SA-tenants-modules-R01 | Two-session PostgreSQL revocation proof and large-tenant performance |

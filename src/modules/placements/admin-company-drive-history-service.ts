@@ -11,6 +11,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { resolveActingCollege } from "@/modules/permissions/acting-college";
 import { AuthorizationError } from "@/modules/permissions/policy";
+import { summarizeVisibleCompanyDriveHistory } from "./admin-company-drive-history-model";
 
 /** Scopes every company-history row to the persisted selected college. */
 export async function listSuperAdminCompanyDriveHistory(context: RequestContext, rawCompanyId: string) {
@@ -62,9 +63,6 @@ export async function listSuperAdminCompanyDriveHistory(context: RequestContext,
   const byJoined=new Map(joined.map(row=>[row.jobId,row.total]));
   const items=visibleJobs.map(job=>({...job,applicants:byApplications.get(job.id)??0,
     hired:byJoined.get(job.id)??0}));
-  return {company,items,totals:{
-    drives:jobs.length,
-    applicants:items.reduce((sum,row)=>sum+row.applicants,0),
-    hired:items.reduce((sum,row)=>sum+row.hired,0),
-  },truncated:jobs.length>500};
+  return {company,items,totals:summarizeVisibleCompanyDriveHistory(items),
+    truncated:jobs.length>500};
 }
