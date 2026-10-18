@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {requirePermission} from "@/modules/permissions/policy";
 import {PageHeader} from "@/components/ui/page-header";
@@ -51,8 +52,8 @@ export default async function SuperAdminModuleAccessPage({
     <form method="get" className="grid grid-cols-1 gap-3 border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto]">
       <label className="grid min-w-0 flex-1 gap-1 text-sm font-semibold text-body">
         College
-        <input type="search" name="q" maxLength={100} defaultValue={result.q}
-          className="min-h-11 w-full min-w-0 rounded-md border border-border bg-surface px-3"/>
+        <Input type="search" name="q" maxLength={100} defaultValue={result.q}
+          className="w-full"/>
       </label>
       <Button type="submit">Filter</Button>
       <Link className="inline-flex min-h-11 items-center px-3 py-3 text-sm font-semibold text-[var(--lms-teal-deep)]"
