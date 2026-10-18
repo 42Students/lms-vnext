@@ -39,8 +39,8 @@ describe("TPO-settings-audit-55 bounded recruiter and public join-link write bou
    expect(s,path).toContain("readTpoSettingsBody(request)");
    expect(s,path).toContain("TpoCommunicationBodyError");
    expect(s,path).toContain("BODY_TOO_LARGE");
-   expect(s,path).toContain("status:403");
-   expect(s,path).toContain("status:400");
+   expect(s,path).toMatch(/status:\\s*403/);
+   expect(s,path).toMatch(/status:\\s*400/);
    expect(s,path).toContain("413");
    expect(s.indexOf("isSameOriginRequest(request)"),path).toBeLessThan(s.indexOf("readTpoSettingsBody(request)"));
    expect(s,path).not.toContain("await request.json()");
