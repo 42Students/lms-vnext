@@ -16,7 +16,7 @@ describe("FAC assignment, live class, grades: mutation and privacy rules",()=>{
   expect(facultyAssignmentCommandSchema.safeParse({...input,confirmed:false}).success).toBe(false);
   expect(facultyAssignmentCommandSchema.safeParse({...input,maxPoints:1001}).success).toBe(false);
   expect(facultyAssignmentCommandSchema.safeParse({...input,extra:"unsafe"}).success).toBe(false);
-  expect(facultyAssignmentCommandSchema.safeParse({...input,action:"EDIT",assignmentId:id,expectedUpdatedAt:future}).success).toBe(true);
+  expect(facultyAssignmentCommandSchema.safeParse({action:"EDIT",title:"Homework",description:null,dueAt:null,maxPoints:100,assignmentId:id,expectedUpdatedAt:future,confirmed:true}).success).toBe(true);
   expect(facultyAssignmentCommandSchema.safeParse({...input,action:"PUBLISH",assignmentId:id,expectedUpdatedAt:future}).success).toBe(false);
   expect(facultyAssignmentCommandSchema.safeParse({action:"PUBLISH",assignmentId:id,expectedUpdatedAt:future,confirmed:true}).success).toBe(true);
  });
