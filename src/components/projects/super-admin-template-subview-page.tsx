@@ -164,7 +164,7 @@ export async function SuperAdminTemplateSubviewPage({
 
       <Link
         href="/admin/projects/templates"
-        className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:text-primary-hover"
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:text-primary-hover"
       >
         ← Template catalogue
       </Link>
@@ -200,7 +200,7 @@ export async function SuperAdminTemplateSubviewPage({
 
       {detail.template.status==="PUBLISHED"?
         <Link href={"/admin/projects/workspaces/new?templateId="+encodeURIComponent(detail.template.id)}
-          className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)]">
           Use this template · Create workspace →
         </Link>:null}
       <SuperAdminTemplateTabs
@@ -498,7 +498,7 @@ export async function SuperAdminTemplateSubviewPage({
                       href={resource.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-4 inline-flex min-h-10 items-center break-all text-sm font-semibold text-primary-text hover:underline"
+                      className="mt-4 inline-flex min-h-11 items-center break-all text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline"
                     >
                       Open resource →
                     </a>
@@ -533,7 +533,7 @@ export async function SuperAdminTemplateSubviewPage({
               </StatusBadge>
             </div>
 
-            <div className="overflow-x-auto rounded-xl border border-border bg-surface">
+            <div role="region" aria-label="Project template records table" tabIndex={0} className="overflow-x-auto overscroll-x-contain [mask-image:linear-gradient(to_right,black_90%,transparent_100%)] rounded-xl border border-border bg-surface focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]">
               <table className="w-full border-collapse text-left text-sm">
                 <thead className="bg-muted text-body">
                   <tr>
@@ -686,7 +686,7 @@ export async function SuperAdminTemplateSubviewPage({
                   </div>
 
                   <Link href={templateVersionComparisonHref(detail.template.id, version.id)}
-                    className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">
+                    className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">
                     Compare changes and inspect snapshot →
                   </Link>
 
@@ -724,9 +724,9 @@ export async function SuperAdminTemplateSubviewPage({
             })}
             {historyPaging ? <nav aria-label="Template version pages" className="flex flex-wrap items-center gap-4 text-sm">
               <span className="text-muted-foreground">Page {historyPaging.page} of {historyPaging.totalPages} · 25 per page</span>
-              {historyPaging.page > 1 ? <Link className="inline-flex min-h-10 items-center font-semibold text-primary-text"
+              {historyPaging.page > 1 ? <Link className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]"
                 href={templateVersionHistoryHref(templateId, historyPaging.page - 1)}>Previous</Link> : null}
-              {historyPaging.page < historyPaging.totalPages ? <Link className="inline-flex min-h-10 items-center font-semibold text-primary-text"
+              {historyPaging.page < historyPaging.totalPages ? <Link className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]"
                 href={templateVersionHistoryHref(templateId, historyPaging.page + 1)}>Next</Link> : null}
             </nav> : null}
           </section>
