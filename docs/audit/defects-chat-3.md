@@ -84,3 +84,12 @@ The published `docs/orchestrator/unit-failures-latest.md` identifies three chat-
 ### FAC-METHODS-014 — ambiguous Faculty assignment methods selector (S2)
 
 A Faculty `GET /api/courses/faculty/assignments/[deliveryId]/methods` used `new URL(request.url).searchParams.get("assignmentId")` without rejecting duplicate or unrelated selectors. Two conflicting `assignmentId` keys could silently select the first, making the request's actual target ambiguous during stale-tab and cross-Section checks. This now uses a strict `parseFacultyAssignmentMethodsQuery` requiring exactly one UUID `assignmentId` and no extra parameters before session read. The service still independently requires the same currently authorized Section. New adversarial test `tests/unit/COURSES-BREAK-FACULTY-11.test.ts` covers duplicate/conflicting selectors, extra forged college keys, malformed UUIDs, no-store headers and safe failures. Code/tests committed but CI pending.
+
+
+### FAC-QUIZ-015 — role revocation between quiz page load and result publication (S1)
+
+`commandFacultyQuizResults` checked `requireDeliveryContentMutation` before opening the transaction, then updated the quiz and logged activity under a quiz row lock. A concurrently disabled user, suspended college membership, removed Faculty role, or ended teaching assignment could publish/hide results using a stale request. The quiz was scoped, but the actor's persisted permissions were not reconstructed in the write transaction.
+
+**Fix:** `assertPersistedFacultyTeachingMutation` (`src/modules/courses/faculty-persisted-teaching-guard.ts`) rechecks the persisted actor, active membership and Faculty role, college/organization and live teaching assignment under SHARE locks in the quiz publication transaction. The check runs after the quiz is locked and before a write/audit. Existing CAS and legacy wording remain unchanged.
+
+**Tests:** `tests/unit/COURSES-BREAK-FACULTY-03.test.ts` checks mid-transaction revocation causes zero writes/activity; `tests/unit/COURSES-BREAK-FACULTY-12.test.ts` checks revoked actor, changed membership, other tenant, suspended/ended member, removed Faculty role and ended teaching grant. **Open:** fresh CI and real two-session PostgreSQL race / independent reviewer.
