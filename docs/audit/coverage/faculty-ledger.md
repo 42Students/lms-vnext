@@ -505,3 +505,8 @@ The same persisted actor/project Mentor grant recheck now protects meeting decis
 
 ### FAC-courses-02 — assignment submission methods query safety
 `src/modules/courses/faculty-assignment-methods-query.ts` now validates exactly one UUID selector and fails closed on duplicates, forged keys or missing IDs. `src/app/api/courses/faculty/assignments/[deliveryId]/methods/route.ts` uses it before obtaining the Faculty identity; `getFacultyAssignmentMethods` retains persisted Section and assignment ownership enforcement. `tests/unit/COURSES-BREAK-FACULTY-11.test.ts` covers the actual GET handler plus parser. Browser and real database tests remain to run.
+
+
+### FAC-QUIZ-015 — persisted Faculty result publication gate
+
+`src/modules/courses/faculty-persisted-teaching-guard.ts` exports `assertPersistedFacultyTeachingMutation`, backed by `tests/unit/COURSES-BREAK-FACULTY-12.test.ts`. `commandFacultyQuizResults` in `faculty-quiz-results-command-service.ts` invokes the helper in the same locked transaction (`COURSES-BREAK-FACULTY-03.test.ts` checks zero writes on mid-flight revocation). Real PostgreSQL simultaneous revoke/publish and user-facing recovery remain **GAP**.
