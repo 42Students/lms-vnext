@@ -350,11 +350,13 @@ describe("Placement P8 offers and joining", () => {
   });
 
   it("TPO-2ND-PAGE-OFFER-EVIDENCE-DB-02 rejects a real offer ID paired with a different drive",async()=>{
+    // Create both ready drives before issuing an offer; the second learner
+    // application must not be blocked by the first job's held-offer policy.
     const first=await preparePassedApplication();
+    const second=await preparePassedApplication();
     const issued=await issuePlacementOffer(tpo,first.application.id,{
       roleTitle:"Offer provenance engineer",annualCtcInr:800_000,
     });
-    const second=await preparePassedApplication();
     const correct=await getTpoOfferEvidence(tpo,{jobId:first.job.id,offerId:issued.id});
     expect(correct.offer.id).toBe(issued.id);
     await expect(getTpoOfferEvidence(tpo,{jobId:second.job.id,offerId:issued.id}))
