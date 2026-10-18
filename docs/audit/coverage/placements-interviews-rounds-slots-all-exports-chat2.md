@@ -139,3 +139,42 @@ Scope: **all 71** `src/modules/placements/*interview*/*round*/*slot*` TypeScript
 | `src/modules/placements/tpo-live-round-timing-model.ts` | `tpoLiveRoundTiming` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/tpo-live-round-venue-model.ts` | `tpoLiveRoundVenueLabel` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/tpo-recruiter-slot-review-service.ts` | `listTpoRecruiterProposedSlots` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-apply-csv-model.ts` | `roundApplyPreviewCsv` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-apply-csv-model.ts` | `roundApplyReportCsv` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-apply-model.ts` | `roundApplyInputSchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-apply-model.ts` | `RoundApplyRow` (type) | N/A (compile-time only) | TYPE ONLY |
+| `src/modules/placements/tpo-round-apply-model.ts` | `summarizeRoundApply` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-apply-model.ts` | `roundApplyPreviewToken` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-apply-service.ts` | `getTpoRoundApplyPreview` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-apply-service.ts` | `applyTpoWholeRound` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-calendar-model.ts` | `tpoRoundCalendarMutationSchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-calendar-model.ts` | `parseIstRoundLocalTime` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-calendar-service.ts` | `listTpoCalendarRoundChoices` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-calendar-service.ts` | `decideTpoCalendarRound` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-drive-day-model.ts` | `TPO_ROUND_ATTENDANCE_STATES` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-drive-day-model.ts` | `TpoRoundAttendanceState` (type) | N/A (compile-time only) | TYPE ONLY |
+| `src/modules/placements/tpo-round-drive-day-model.ts` | `TpoRoundRosterSourceStudent` (type) | N/A (compile-time only) | TYPE ONLY |
+| `src/modules/placements/tpo-round-drive-day-model.ts` | `TpoRoundApplicationDetail` (type) | N/A (compile-time only) | TYPE ONLY |
+| `src/modules/placements/tpo-round-drive-day-model.ts` | `TpoRoundRosterRow` (type) | N/A (compile-time only) | TYPE ONLY |
+| `src/modules/placements/tpo-round-drive-day-model.ts` | `buildTpoRoundDriveDayRoster` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-drive-day-service.ts` | `getTpoRoundDriveDay` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-facts-model.ts` | `TpoRoundFactInput` (type) | N/A (compile-time only) | TYPE ONLY |
+| `src/modules/placements/tpo-round-facts-model.ts` | `projectTpoRoundFacts` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-failure-csv-model.ts` | `tpoRoundFailureCsvQuerySchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-failure-csv-model.ts` | `TpoRoundFailureCsvRow` (type) | N/A (compile-time only) | TYPE ONLY |
+| `src/modules/placements/tpo-round-failure-csv-model.ts` | `tpoRoundFailureCsv` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-import-model.ts` | `roundImportActionSchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-import-model.ts` | `ImportRow` (type) | N/A (compile-time only) | TYPE ONLY |
+| `src/modules/placements/tpo-round-import-model.ts` | `parseTpoRoundImport` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-import-model.ts` | `ROUND_IMPORT_TEMPLATE` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-import-service.ts` | `previewTpoRoundImport` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-import-service.ts` | `stageTpoRoundImport` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-reorder-model.ts` | `roundReorderLockMessage` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-reorder-model.ts` | `moveRound` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-result-entry-model.ts` | `tpoRoundResultEntryFormSchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-result-table-model.ts` | `tpoRoundResultTableQuerySchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-result-table-model.ts` | `RoundResultEntry` (type) | N/A (compile-time only) | TYPE ONLY |
+| `src/modules/placements/tpo-round-result-table-model.ts` | `projectTpoRoundResultTable` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-result-table-model.ts` | `tpoRoundResultViewSchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-result-table-model.ts` | `filterTpoRoundResultRows` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-result-table-service.ts` | `getTpoRoundResultTable` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
