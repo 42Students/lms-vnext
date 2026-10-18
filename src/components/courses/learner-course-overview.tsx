@@ -126,7 +126,7 @@ export function LearnerCourseOverview({
           (item) =>
             item.progress.status !== "COMPLETED" &&
             Boolean(item.dueAt) &&
-            item.dueAt!.getTime() >= now &&
+            item.dueAt!.getTime() > now &&
             item.dueAt!.getTime() <= activityCutoff,
         )
         .map((item) => ({
@@ -177,25 +177,15 @@ export function LearnerCourseOverview({
   // cap to hide an assessment when picking the next action.
   const activity = allUpcomingActivity.slice(0, 6);
   const recentLearnerActivity=learnerRecentCourseActivity(workspace.lessons,now).slice(0,2);
-  // Late submissions remain actionable for published assignments. They must
-  // not be hidden merely because the upcoming feed only covers future dates.
-  const overdueAssignmentActions = workspace.lessons.flatMap((lesson) =>
-    lesson.assignments
-      .filter((item) => item.progress.status !== "COMPLETED" &&
-        item.dueAt && Number.isFinite(item.dueAt.getTime()) && item.dueAt.getTime() < now)
-      .map((item) => ({
-        id: item.id, lessonId: lesson.id, title: item.title,
-        type: "Assignment" as const, when: item.dueAt,
-        filter: "assessments", priority: item.dueAt!.getTime(), overdue: true,
-      })),
-  );
+  // Match the locked server submission policy: assignments at or after the
+  // deadline cannot be submitted, so never promote them as actionable links.
   const priorityActivity = readOnly
     ? null
-    : selectPriorityLearnerActivity([...overdueAssignmentActions, ...allUpcomingActivity]);
+    : selectPriorityLearnerActivity(allUpcomingActivity);
   const nextAction = readOnly ? null : priorityActivity
     ? {
         title: priorityActivity.title,
-        detail: `${("overdue" in priorityActivity && priorityActivity.overdue) ? "Overdue · late submission available" : priorityActivity.type}${priorityActivity.when ? ` · ${formatWhen(priorityActivity.when)}` : ""}`,
+        detail: `${priorityActivity.type}${priorityActivity.when ? ` · ${formatWhen(priorityActivity.when)}` : ""}`,
         href: `/learn/courses/${deliveryId}/roadmap?filter=${priorityActivity.filter}&lesson=${encodeURIComponent(priorityActivity.lessonId)}&content=${encodeURIComponent(priorityActivity.id)}`,
       }
     : nextContent
