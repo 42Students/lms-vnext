@@ -130,4 +130,13 @@ describe("chat-13 TPO second-third cross-audit repairs",()=>{
   expect(s).not.toContain("window.confirm");
   expect(s).not.toContain("min-h-10");
  });
+ it("UX-cross-tpo-second-C13-019 selection recording traps focus and release has separate confirmation",()=>{
+  const s=read("src/components/placements/tpo-drive-selection-manager.tsx");
+  expect(s).toContain("<Dialog open={mode!==null}");
+  expect(s).toContain("<ConfirmDialog");
+  expect(s).toContain('submit(true)');
+  expect(s).toContain("<DataTable");
+  expect(s).not.toContain('role="dialog"');
+  expect(s).not.toContain('window.confirm');
+ });
 });
