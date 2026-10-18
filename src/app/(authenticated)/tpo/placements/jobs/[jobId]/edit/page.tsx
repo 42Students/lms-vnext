@@ -22,7 +22,7 @@ export default async function TpoDriveEditPage({params}:{params:Promise<{jobId:s
    <p>{job.status==="CLOSED"||job.status==="CANCELLED"
     ?"This drive is closed: nothing here can be changed. To run it again, open Create drive and pick it under Clone a past drive."
     :"This drive is not editable. The saved details are preserved. Open the drive workspace to review them."}</p>
-   <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">Create drive</Link>
+   <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9">Create drive</Link>
   </section>}
  </div>;
 }

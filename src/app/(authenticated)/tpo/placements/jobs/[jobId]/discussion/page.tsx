@@ -16,13 +16,13 @@ export default async function TpoDriveDiscussion({params}:{
  return <div className="min-w-0 space-y-4">
   <PageHeader eyebrow="TPO · Drive" title={data.job.title+" · Discussion"}
     description="Conversations with recruiters attached to this drive. Private team notes are not shared with recruiters."/>
-  <Link href={root} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">← Back to drive</Link>
+  <Link href={root} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9">← Back to drive</Link>
   {!data.available?<p role="status" className="rounded-md border border-border p-4 text-sm">
     Recruiter conversation records are unavailable right now. Other drive work is still available. Try again later.
    </p>:data.threads.length===0?<section role="status" className="rounded-md border border-border p-4 text-sm">
     No recruiter conversation is attached to this drive yet.
     <p className="mt-2">Use Recruiter Messages to begin or find a recruiter conversation.</p>
-    <Link href="/tpo/messages" className="mt-2 inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Open Recruiter Messages</Link>
+    <Link href="/tpo/messages" className="mt-2 inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline md:min-h-9">Open Recruiter Messages</Link>
    </section>:<section aria-label="Recruiter conversations" className="space-y-3">
    <p role="status" className="text-sm text-body">{data.threads.length} recruiter conversation(s) attached to this drive.</p>
    <ul className="space-y-3">{data.threads.map(thread=><li key={thread.id} className="min-w-0 rounded-lg border border-border bg-surface p-4">
@@ -33,7 +33,7 @@ export default async function TpoDriveDiscussion({params}:{
      new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(thread.latestAt)+" IST":
      "No messages yet"}</p>
     <Link href={"/tpo/messages/"+encodeURIComponent(thread.id)}
-      className="mt-2 inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Open conversation</Link>
+      className="mt-2 inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9">Open conversation</Link>
    </li>)}</ul>
    </section>}
   <p className="text-xs text-muted-foreground">Recruiter messages and internal team notes are separate. Only recorded messages appear here.</p>

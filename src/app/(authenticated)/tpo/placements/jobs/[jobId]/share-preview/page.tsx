@@ -51,14 +51,14 @@ export default async function TpoShortlistSharePreviewPage({
   return <div className="min-w-0 space-y-5">
     <Link
       href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id) + "/shortlist"}
-      className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline hover:underline">
+      className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline hover:underline md:min-h-9">
       ← Current internal shortlist
     </Link>
     <PageHeader eyebrow="TPO · Placements"
       title={data.job.title + " · Recruiter-visible shortlist preview"}
       description="Read-only, current submitted/shortlisted candidates. This is a TPO report, not a sent share or authorization for an external recipient."
       actions={<a href={tpoFilteredSharePreviewExportHref(data.job.id,parsed.data.q)}
-        className="inline-flex min-h-11 items-center rounded-[9px] bg-primary px-4 text-sm font-semibold text-primary-foreground">
+        className="inline-flex min-h-11 items-center rounded-[9px] bg-primary px-4 text-sm font-semibold text-primary-foreground md:min-h-9">
         Export capped CSV
       </a>}
     />
@@ -67,12 +67,12 @@ export default async function TpoShortlistSharePreviewPage({
       {preservedHistory.sharePage?<input type="hidden" name="sharePage" value={preservedHistory.sharePage}/>:null}
       <label className="grid gap-2 text-sm font-semibold text-body">Search shortlisted learner
         <input type="search" name="q" defaultValue={parsed.data.q} maxLength={80}
-          placeholder="Learner name" className="min-h-11 rounded border border-border bg-surface px-3"/>
+          placeholder="Learner name" className="min-h-11 rounded-[9px] border border-border bg-surface px-3 md:min-h-9"/>
       </label>
-      <button type="submit" className="min-h-11 rounded bg-primary px-4 font-semibold text-primary-foreground">
+      <button type="submit" className="min-h-11 rounded-[9px] bg-primary px-4 font-semibold text-primary-foreground md:min-h-9">
         Search
       </button>
-      <Link href={path} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">Clear</Link>
+      <Link href={path} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9">Clear</Link>
     </form>
     <p className="text-sm text-body">
       {data.total} currently shortlisted application(s) in this drive.
@@ -89,14 +89,14 @@ export default async function TpoShortlistSharePreviewPage({
         {key:"email",header:"Email",mobilePriority:"secondary",cell:item=><span className="break-all">{item.email??"Not recorded"}</span>},
       ]}/>
     <Link href={"/tpo/placements/jobs/"+encodeURIComponent(data.job.id)+"/share-audit"}
-     className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">
+     className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9">
      View company-share access history
     </Link>
     <nav aria-label="Company-share link status filters"
       className="flex flex-wrap gap-3 text-sm">
       {companyShareStatusSchema.options.map(status=><Link key={status}
        aria-current={shareStatus===status?"page":undefined}
-       className="inline-flex min-h-11 items-center rounded border border-border px-3 py-2 font-semibold text-[var(--lms-teal-deep)]"
+       className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-3 py-2 font-semibold text-[var(--lms-teal-deep)] md:min-h-9"
        href={companyShareLinksHref(data.job.id,status,1,parsed.data.q,data.page)}>
        {companyShareStatusLabel(status)}
       </Link>)}
@@ -114,7 +114,7 @@ export default async function TpoShortlistSharePreviewPage({
     <nav aria-label="Company-share link pages" className="flex flex-wrap items-center gap-3 text-sm">
       <span>{shares.total} matching link(s) · Page {shares.page} of {shares.totalPages}</span>
       {shares.page>1?<Link href={companyShareLinksHref(data.job.id,shareStatus,shares.page-1,parsed.data.q,data.page)}
-        className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Previous links</Link>:null}
+        className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9">Previous links</Link>:null}
       {shares.page<shares.totalPages?<Link href={companyShareLinksHref(data.job.id,shareStatus,shares.page+1,parsed.data.q,data.page)}
         className="font-semibold text-[var(--lms-teal-deep)] underline">Next links</Link>:null}
     </nav>
@@ -123,7 +123,7 @@ export default async function TpoShortlistSharePreviewPage({
       <span>Page {data.page} of {data.totalPages}</span>
       <div className="flex gap-4">
         {data.page > 1 ? <Link href={path + "?" + new URLSearchParams({page:String(data.page-1),...(parsed.data.q?{q:parsed.data.q}:{}),shareStatus})}
-          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline hover:underline">← Previous</Link> : null}
+          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline hover:underline md:min-h-9">← Previous</Link> : null}
         {data.page < data.totalPages ? <Link href={path + "?" + new URLSearchParams({page:String(data.page+1),...(parsed.data.q?{q:parsed.data.q}:{}),shareStatus})}
           className="font-semibold text-[var(--lms-teal-deep)] hover:underline">Next →</Link> : null}
       </div>
