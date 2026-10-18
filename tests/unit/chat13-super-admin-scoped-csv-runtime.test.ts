@@ -5,6 +5,8 @@ vi.mock("@/auth/request-context",()=>({
  getCurrentRequestContext:mocks.getCurrentRequestContext,
 }));
 import {exportSuperAdminScopedDirectory} from "@/modules/admin-ui/super-admin-scoped-csv-service";
+import type {RequestContext} from "@/modules/identity/context";
+import type {SuperAdminReadQuery,SuperAdminReadResult} from "@/modules/admin-ui/super-admin-read-directory-model";
 
 const actor={
  user:{id:"administrator",identityUid:"super-admin",platformStatus:"ACTIVE",systemRoles:["SUPER_ADMIN"]},
@@ -25,7 +27,7 @@ describe("SA-ADMIN-CSV-23 scoped export page cap and CSV injection controls",()=
    subtitle:"Own college",status:"ISSUED",
    details:["Persisted row "+i],
   }));
-  const loader=vi.fn(async(_context:unknown,query:{page:number;pageSize:number})=>({
+  const loader=vi.fn(async(_context:RequestContext,query:SuperAdminReadQuery):Promise<SuperAdminReadResult>=>({
    query,total:records.length,totalPages:11,
    items:records.slice((query.page-1)*query.pageSize,query.page*query.pageSize),
   }));
