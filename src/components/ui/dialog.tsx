@@ -39,11 +39,11 @@ export function Dialog({ open, onOpenChange, title, description, children, foote
     onClose={() => { if (open) onOpenChange(false); opener.current?.focus(); }}
     onClick={event => { if (event.target === ref.current && dismissible) onOpenChange(false); }}
     style={{ "--lms-visual-height": availableHeight ?? "100dvh", "--lms-visual-top": viewportTop ?? "0px" } as CSSProperties}
-    className="fixed inset-x-0 top-[var(--lms-visual-top)] m-0 h-[var(--lms-visual-height)] max-h-none w-full max-w-none border-0 bg-surface p-0 text-foreground backdrop:bg-foreground/30 sm:m-auto sm:h-auto sm:max-h-[var(--lms-visual-height)] sm:w-[min(36rem,calc(100%-2rem))] sm:rounded-xl sm:border sm:border-border sm:shadow-lg">
+    className="fixed inset-x-0 top-[var(--lms-visual-top)] m-0 h-[var(--lms-visual-height)] max-h-none w-full max-w-none border-0 bg-surface p-0 text-foreground backdrop:bg-foreground/30 sm:m-auto sm:h-auto sm:max-h-[var(--lms-visual-height)] sm:w-[min(36rem,calc(100%-2rem))] sm:rounded-[12px] sm:border sm:border-border sm:shadow-[var(--lms-overlay-shadow)]">
     <div className="flex h-full max-h-[var(--lms-visual-height)] min-h-0 flex-col overflow-hidden sm:max-h-[var(--lms-visual-height)]">
       <div className="flex shrink-0 items-start justify-between gap-4 border-b border-border p-4 pt-[max(1rem,env(safe-area-inset-top))] sm:px-6">
         <div className="min-w-0">
-          <h2 id={titleId} className="m-0 break-words text-lg font-semibold leading-7 text-foreground">{title}</h2>
+          <h2 id={titleId} className="m-0 break-words text-lg font-semibold leading-[1.35] text-[#172033]">{title}</h2>
           {description ? <p id={descriptionId} className="mt-1 text-sm leading-6 text-body">{description}</p> : null}
         </div>
         {dismissible ? <Button variant="ghost" aria-label="Close dialog" onClick={() => onOpenChange(false)}>×</Button> : null}
