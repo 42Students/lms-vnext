@@ -1,4 +1,7 @@
 import Link from "next/link";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {requirePermission} from "@/modules/permissions/policy";
@@ -34,7 +37,7 @@ export default async function IndependentFindingsPage({searchParams}:{
    Bug reports are not substituted for independent audit findings.
   </p></div>;
  const [data,sync]=await Promise.all([listIndependentAuditFindings(ctx,parsed),readIndependentFindingSyncState(ctx)]);
- const selectClass="min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground";
+ const selectClass="min-h-11 w-full rounded-md border border-border bg-surface px-3 text-base text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]";
  const refusedColumns:DataTableColumn<NonNullable<typeof sync>["refusedFiles"][number]>[]=[
   {key:"path",header:"Source file",mobilePriority:"primary",cell:item=>
     <span className="block min-w-0 break-all font-mono text-xs">{item.path||"Unknown file"}</span>},
@@ -86,30 +89,30 @@ export default async function IndependentFindingsPage({searchParams}:{
    <p className="font-semibold">Critical open: {data.criticalOpen}</p>
    {FINDING_STATUSES.map(status=><Link key={status}
     href={independentFindingHref({...parsed,statuses:[status],page:1})}
-    className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-[var(--lms-teal-deep)]">
+    className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
     {status.replaceAll("_"," ")}: {data.statusCounts[status]??0}
    </Link>)}
   </section>
   <form method="get" className="grid min-w-0 gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 lg:grid-cols-3">
    <input type="hidden" name="view" value={parsed.view}/>
    <label className="text-sm font-semibold">Search
-    <input name="q" defaultValue={parsed.q} maxLength={120} className={selectClass} placeholder="ID, title or summary"/></label>
+    <Input name="q" defaultValue={parsed.q} maxLength={120} className={selectClass} placeholder="ID, title or summary"/></label>
    <label className="text-sm font-semibold">Area
-    <input name="area" defaultValue={parsed.area} maxLength={80} className={selectClass} placeholder="All areas"/></label>
+    <Input name="area" defaultValue={parsed.area} maxLength={80} className={selectClass} placeholder="All areas"/></label>
    <label className="text-sm font-semibold">Status (multiple)
-    <select name="status" multiple size={4} defaultValue={parsed.statuses} className={selectClass}>
+    <Select name="status" multiple size={4} defaultValue={parsed.statuses} className={selectClass}>
      {FINDING_STATUSES.map(v=><option key={v} value={v}>{v.replaceAll("_"," ")}</option>)}
-    </select></label>
+    </Select></label>
    <label className="text-sm font-semibold">Severity (multiple)
-    <select name="severity" multiple size={4} defaultValue={parsed.severities} className={selectClass}>
+    <Select name="severity" multiple size={4} defaultValue={parsed.severities} className={selectClass}>
      {FINDING_SEVERITIES.map(v=><option key={v} value={v}>{v}</option>)}
-    </select></label>
+    </Select></label>
    <label className="text-sm font-semibold">Kind (multiple)
-    <select name="kind" multiple size={4} defaultValue={parsed.kinds} className={selectClass}>
+    <Select name="kind" multiple size={4} defaultValue={parsed.kinds} className={selectClass}>
      {FINDING_KINDS.map(v=><option key={v} value={v}>{v}</option>)}
-    </select></label>
+    </Select></label>
    <div className="flex items-end gap-3">
-    <button type="submit" className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary">Apply filters</button>
+    <Button type="submit" variant="primary">Apply filters</Button>
     <Link href="/tracker/audit-findings?view=OPEN" className="min-h-11 inline-flex items-center font-semibold text-[var(--lms-teal-deep)]">Clear</Link>
    </div>
   </form>
@@ -120,8 +123,8 @@ export default async function IndependentFindingsPage({searchParams}:{
    caption="Independent audit findings"
    empty={<p role="status" className="text-sm text-body">No independent audit findings match these filters.</p>}/>
   <nav aria-label="Audit findings pages" className="flex justify-between gap-4">
-   {data.page>1?<Link href={independentFindingHref(parsed,data.page-1)} className="font-semibold text-[var(--lms-teal-deep)]">Previous</Link>:<span/>}
-   {data.page<data.pages?<Link href={independentFindingHref(parsed,data.page+1)} className="font-semibold text-[var(--lms-teal-deep)]">Next</Link>:null}
+   {data.page>1?<Link href={independentFindingHref(parsed,data.page-1)} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>:<span/>}
+   {data.page<data.pages?<Link href={independentFindingHref(parsed,data.page+1)} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>:null}
   </nav>
  </div>;
 }

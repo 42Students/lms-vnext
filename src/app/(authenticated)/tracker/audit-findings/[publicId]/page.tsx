@@ -39,7 +39,7 @@ export default async function IndependentFindingDetailPage({params}:{params:Prom
      <ul className="list-disc pl-5 text-sm">{values.map(value=><li key={value} className="break-all">{value}</li>)}</ul></div>)}
   </section>
   <Link href={"/tracker/audit-findings?q="+encodeURIComponent(finding.title.slice(0,100))}
-   className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Looks similar</Link>
+   className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Looks similar</Link>
   <IndependentFindingCopyAction finding={{
    id:finding.externalId,title:finding.title,summary:finding.summary,steps:finding.steps,
    expected:finding.expected,actual:finding.actual,sourceRepo:finding.sourceRepo,
