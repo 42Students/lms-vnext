@@ -4,6 +4,7 @@ import { ProjectsServiceError } from "@/modules/projects/errors";
 import { projectTemplateIdSchema } from "@/modules/projects/validation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { ErrorState } from "@/components/ui/error-state";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { SuperAdminTemplateTabs } from "@/components/projects/super-admin-template-tabs";
 import { ProjectTemplateView } from "@/components/projects/project-template-view";
@@ -22,12 +23,26 @@ export default async function SuperAdminProjectTemplateDetailPage({
   const { templateId } = await params;
   const id = projectTemplateIdSchema.safeParse(templateId);
   if (!id.success) notFound();
+  if (!can(context,"project-template.read")) {
+    return <div className="min-w-0 space-y-5">
+      <PageHeader eyebrow="Super Admin · Projects" title="Project template"/>
+      <ErrorState title="Project template access denied"
+        description="The active administrator does not have permission to view global project templates."
+        action={<Link href="/admin/projects/templates" className="font-semibold text-[var(--lms-teal-deep)]">Back to template catalogue</Link>}/>
+    </div>;
+  }
   let detail: Awaited<ReturnType<typeof getProjectTemplateDetail>>;
   try {
     detail = await getProjectTemplateDetail(context, id.data);
   } catch (error) {
     if (error instanceof ProjectsServiceError && error.code === "PROJECT_TEMPLATE_NOT_FOUND") notFound();
-    throw error;
+    return <div className="min-w-0 space-y-5">
+      <PageHeader eyebrow="Super Admin · Projects" title="Project template"/>
+      <ErrorState title="Project template unavailable"
+        description="This template could not be loaded. No version or college assignment details are shown."
+        action={<Link href={"/admin/projects/templates/"+encodeURIComponent(id.data)}
+          className="font-semibold text-[var(--lms-teal-deep)]">Retry template details</Link>}/>
+    </div>;
   }
 
   return (
