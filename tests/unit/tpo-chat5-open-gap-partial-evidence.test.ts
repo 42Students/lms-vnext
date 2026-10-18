@@ -18,7 +18,11 @@ describe("chat-5 OPEN gap regression baselines",()=>{
   expect(file("src/modules/placements/tpo-bulk-action-model.ts")).toContain("canExactUndo");
  });
  it("TPO-drive-workspace-27 partial baseline — further implementation required",()=>{
-  expect(file("src/components/placements/tpo-applicant-review-drawer.tsx")).toContain("<dialog");
+  const ui=file("src/components/placements/tpo-applicant-review-drawer.tsx");
+  expect(ui).toContain('<Drawer open={open} onOpenChange={setOpen}');
+  expect(ui).toContain('applicantDrawerReviewable(jobStatus,app)');
+  expect(ui).toContain('expectedUpdatedAt={app.screeningUpdatedAt}');
+  expect(ui).toContain('This application is read-only.');
  });
  it("TPO-drive-workspace-38 partial baseline — further implementation required",()=>{
   expect(file("src/modules/placements/tpo-drive-schedule-warnings-model.ts")).toContain("UNAVAILABLE");
