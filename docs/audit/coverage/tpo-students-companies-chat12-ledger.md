@@ -101,6 +101,12 @@
 | `loadTpoBulkApplicationStages` | `tests/unit/PROJ-BREAK-TPO-applicant-stage-revocation-10.test.ts` | Real reader rejects removed persisted role before stage rows or migration probes; DB access mocked, no PostgreSQL concurrency witness yet | **BEHAVIOURAL/MOCKED DB** |
 | `moveTpoBulkApplicationStage` | same test | Revoked actor fails inside serialized transaction before application query; wrong/unknown application denied, unavailable registered schema refuses; real two-session race pending | **BEHAVIOURAL/MOCKED DB** |
 
+### Company applicant-share history
+
+| Production export | Test file | Evidence / remaining acceptance | Status |
+|---|---|---|---|
+| `src/modules/placements/company-share/company-history-service.ts` — `listCompanyShareHistory` | `tests/unit/chat12-tpo-company-share-history-behavior.test.ts` | Actual reader mocked DB: zero jobs return without queries, missing migration reports `ready:false`, persisted revocation/expiry/selection counts returned, static tenant join and 100-row limit; authentic tenant authorization is delegated to callers and needs end-to-end PostgreSQL proof | **BEHAVIOURAL/MOCKED DB** |
+
 ## Critical outstanding integration tests
 
 - Actual `getTpoStudentsIntelligence`, `listTpoStudentRequests`, and `getTpoCompaniesView` against a disposable migrated PostgreSQL database, with a wrong-college actor and a disabled TPO membership. Model-level tests are **not** these service tests.
