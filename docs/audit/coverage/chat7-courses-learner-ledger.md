@@ -129,3 +129,11 @@ These are unit-authored rather than CI-green. No live R2/storage object was touc
 | `selectLearnerAssignmentFile` | Clearing the selected file leaves no error; malformed delivery ID drops file before upload-grant request | `tests/unit/chat7-learner-course-material-link-safety.test.ts` — `LEARNER-ASSIGNMENT-MATERIALS-04` |
 
 Release safety note: `getLearnerCourseFileReference` newly denies SCHEDULED content using DB `now()` even when the learner is enrolled; the client hidden-key presentation by itself never suffices as authorization. All test evidence here was authored without CI/PG execution per owner priority.
+
+## Super Admin live-class authoring — calendar-exact validation
+
+| Function and component | Boundary and behavior | Named regression |
+|---|---|---|
+| `parseAdminContentLocalMoment`, `SuperAdminContentActions` | Browser `datetime-local` values are calendar-validated in IST and UTC before mutation, rejecting invalid leap dates, overflow days and clock values; End must be later than Start; no silent Date normalization to another meeting day. Existing unsaved edit and confirmation flow remains. Controls use 44px minimum touch height. | `tests/unit/chat7-superadmin-content-live-datetime-parity.test.ts` — `SA-academics-people-58 live meeting IST/UTC calendar integrity` (authored; CI/browser pending) |
+
+This is **link-based live content metadata** hardening only. It does not bypass blocked scanned binary video import/storage, nor create a private resource upload capability.
