@@ -224,3 +224,13 @@ No runtime, database or responsive browser results were claimed; retain these as
 ## Chat-15 HR protected page and state checks
 
 `UX-CHAT15-ROUTES-41` verifies 20 canonical HR page role gates, 13 recruiter alias routes, detail 404 and invalid-filter state text, and tracker role isolation. `HR-CHANGE-REQUESTS-PAGE-40` renders own-company, foreign-job denied, cross-party denied and storage-unavailable states. `HR-STATE-MACHINE-43` covers review-round, interview-slot and drive request transitions including stale versions, duplicate names and capacity. All are authored source/unit tests; user-browser acceptance and cloud execution are outstanding.
+
+
+### HR-TEAM-RECIPIENT-45
+
+The company directory revalidates the current actor and each returned colleague: both must have ACTIVE profiles/users plus VERIFIED, unexpired college grants; an inactive colleague must not expose their email in the roster. `tests/unit/recruiter-company-team-scope.test.ts` asserts the separate recipient scope. CI and real database recipient-revocation tests remain open.
+
+
+### HR-ACTOR-STATUS-48 account-level revoke boundary
+
+Job listing, hiring rounds, private candidates and interview blocks now use persisted ACTIVE actor checks in addition to identity/relationship/expiry/capability checks. `tests/unit/HR-BREAK-chat15-persisted-user-48.test.ts` verifies disabled and cross-session actors as well as each SQL guard. The tests are unexecuted; real session-revocation workflow remains open.

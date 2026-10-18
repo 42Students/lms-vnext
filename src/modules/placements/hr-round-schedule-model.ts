@@ -6,10 +6,10 @@ export function hrScheduledRoundRows(rows:readonly RoundScheduleRow[]){
  return scheduled.map(row=>{
   const start=row.scheduledAt!;
   const length=row.durationMinutes;
-  const end=length!==null&&length>0&&length<=1440?new Date(start.getTime()+length*60000):null;
+  const end=length!==null&&Number.isSafeInteger(length)&&length>0&&length<=1440?new Date(start.getTime()+length*60000):null;
   const conflicts=end?scheduled.filter(other=>{
    if(other.id===row.id||!other.scheduledAt||!other.durationMinutes||
-     other.durationMinutes<=0||other.durationMinutes>1440)return false;
+     !Number.isSafeInteger(other.durationMinutes)||other.durationMinutes<=0||other.durationMinutes>1440)return false;
    return start.getTime()<other.scheduledAt.getTime()+other.durationMinutes*60000 &&
      other.scheduledAt.getTime()<end.getTime();
   }).map(other=>other.id):[];

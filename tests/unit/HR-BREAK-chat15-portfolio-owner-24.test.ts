@@ -59,6 +59,8 @@ describe("HR-PORTFOLIO-OWNER-24 no unauthorized employer portfolio enumeration",
   expect(portfolio).toContain('eq(placementCompanies.status, "ACTIVE")');
   expect(portfolio).toContain('eq(colleges.status, "ACTIVE")');
   expect(portfolio).toContain('recruiterOwnJobPredicate(context.user.id)');
+  expect(portfolio).toContain('eq(users.id,context.user.id)');
+  expect(portfolio).toContain('eq(users.platformStatus,"ACTIVE")');
   // HR-PORTFOLIO-REVOKE-37: check persisted authorization on every read,
   // rather than trusting a session grant cached before revocation.
   for(const condition of [

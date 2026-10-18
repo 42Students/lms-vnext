@@ -65,6 +65,8 @@ describe("HR-SLOT-SERVICE-03 recruiter slot authorization and stale-window write
    'eq(colleges.status,"ACTIVE")',
    'eq(placementCompanyRelationships.status,"ACTIVE")',
    'eq(placementRecruiterProfiles.status,"ACTIVE")',
+   'eq(users.id,context.user.id)',
+   'eq(users.platformStatus,"ACTIVE")',
    'eq(placementRecruiterCollegeGrants.status,"ACTIVE")',
   ])expect(scope).toContain(requirement);
   expect(source).toContain("const job=await verifyRecruiterSlotJob(tx,context,jobId)");

@@ -40,21 +40,19 @@ describe("PROJ-BREAK-HR-01: HR/Recruiter cannot traverse college project member 
  it("denies a recruiter with an active hiring grant but no college project membership",async()=>{
   await expect(requireProjectReadAccess(recruiter as never,projectId))
    .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
-  expect(mocks.select).toHaveBeenCalledTimes(1);
+  expect(mocks.getDb).not.toHaveBeenCalled();
   expect(mocks.moduleAccess).not.toHaveBeenCalled();
  });
  it("does not let an HR recruiter grant become a project lifecycle permission",async()=>{
   await expect(requireProjectLifecycleAccess(recruiter as never,projectId))
    .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
-  expect(mocks.can).toHaveBeenCalledWith(recruiter,"projects.manage",{
-   organizationId,collegeId,
-  });
+  expect(mocks.can).not.toHaveBeenCalled(); // Recruiter-only identity is rejected ahead of object lookup.
  });
  it("denies a TPO account with no assigned project member record",async()=>{
   mocks.queries=[[jobProject],[]];
   await expect(requireProjectReadAccess(tpo as never,projectId))
    .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
-  expect(mocks.select).toHaveBeenCalledTimes(2);
+  expect(mocks.getDb).not.toHaveBeenCalled();
  });
  it("denies wrong-tenant membership before querying project members",async()=>{
   await expect(requireProjectReadAccess({...tpo,membership:{...tpo.membership,collegeId:otherCollege}} as never,projectId))
@@ -66,7 +64,7 @@ describe("PROJ-BREAK-HR-01: HR/Recruiter cannot traverse college project member 
    organizationId:"123e4567-e89b-42d3-a456-426614174099"}};
   await expect(requireProjectReadAccess(forged as never,projectId))
    .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
-  expect(mocks.select).toHaveBeenCalledTimes(1);
+  expect(mocks.getDb).not.toHaveBeenCalled();
   expect(mocks.moduleAccess).not.toHaveBeenCalled();
  });
  it("denies inactive or removed college memberships before member table access",async()=>{

@@ -49,7 +49,7 @@ describe("chat-19 college UX cross-audit", () => {
       expect(defaults.data).toEqual({ view: "cards", page: 1, pageSize: 25 });
     }
     const filtered = parseCollegeProjectsQuery({
-      q: [" Team  ", "ignored"], status: "ARCHIVED", view: "table",
+      q: " Team  ", status: "ARCHIVED", view: "table",
       page: "3", pageSize: "50",
     });
     expect(filtered.success).toBe(true);
@@ -57,6 +57,17 @@ describe("chat-19 college UX cross-audit", () => {
       expect(filtered.data).toMatchObject({
         q: "Team", status: "ARCHIVED", view: "table", page: 3, pageSize: 50,
       });
+    }
+    // Current production rejects duplicate query keys instead of choosing
+    // one conflicting college/status/search value. Preserve that security
+    // boundary explicitly rather than weakening the parser to satisfy a
+    // stale first-value test.
+    for (const duplicated of [
+      {q: [" Team  ", "ignored"]},
+      {page: ["3", "50"]},
+      {status: ["ARCHIVED", "ACTIVE"]},
+    ]) {
+      expect(parseCollegeProjectsQuery(duplicated).success).toBe(false);
     }
   });
 

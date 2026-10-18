@@ -82,9 +82,21 @@ describe("chat-14 mentor project service boundaries (source compliance)",()=>{
     expect(s).toContain("!mentorReleaseVersionMatches(existing.updatedAt,input.expectedUpdatedAt!)");
     expect(s).toContain("recordActivityEventInTransaction(tx,context");
   });
+  it("PROJ-BREAK-MENTOR-204 backlog CAS uses millisecond token and rechecks persisted grants",()=>{
+    const backlog=service("mentor-backlog");
+    const auto=service("mentor-auto-assign");
+    expect(backlog).toContain("date_trunc('milliseconds'");
+    expect(backlog).not.toContain("eq(projectTasks.updatedAt,task.updatedAt)");
+    expect(backlog).toContain("await assertPersistedProjectMutationActor(tx,context,scope)");
+    expect(auto).toContain("await assertPersistedProjectMutationActor(tx,context,scope)");
+  });
   it("final delivery mentor decision preserves version, project scope, and assigned member notification",()=>{
     const s=service("mentor-final-delivery-decision");
-    expect(s).toContain("requireProjectReadAccess");
+    // A Mentor final-delivery review is a mutation, not a read-only route;
+    // the lifecycle mutation gate is deliberately stronger than read access.
+    expect(s).toContain("requireProjectLifecycleMutationAccess");
+    expect(s).toContain('scope.access!=="MENTOR"');
+    expect(s).toContain('hasMembershipRole(context,"MENTOR")');
     expect(s).toContain("date_trunc('milliseconds'");
     expect(s).toContain("notifyActiveProjectMembers(tx,reviewedEvent.id");
     expect(s).toContain("recordActivityEventInTransaction(tx,context");
