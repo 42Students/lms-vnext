@@ -21,8 +21,6 @@ export async function replaceCollegeProjectLearners(context:RequestContext,proje
   }).from(projectInstances).where(eq(projectInstances.id,scope.project.id)).for("update").limit(1);
   if(!project||project.teamGroupId||project.status==="ARCHIVED")
    throw new ProjectsServiceError("PROJECT_INVALID_STATE");
-  if(project.updatedAt.getTime()!==Date.parse(input.expectedUpdatedAt))
-   throw new ProjectsServiceError("PROJECT_MEMBER_CONFLICT");
   const existing=await tx.select().from(projectMembers)
    .where(and(eq(projectMembers.projectId,scope.project.id),isNull(projectMembers.endedAt)))
    .for("update");
@@ -44,7 +42,11 @@ export async function replaceCollegeProjectLearners(context:RequestContext,proje
    if(new Set(eligible.map(x=>x.id)).size!==toAdd.length)
     throw new ProjectsServiceError("PROJECT_MEMBER_ROLE_REQUIRED");
   }
+  // A completed request retried after a timeout is a no-op, even if its
+  // original optimistic token is now stale. No notifications are repeated.
   if(toAdd.length===0&&toRemove.length===0)return {added:0,removed:0,updatedAt:project.updatedAt.toISOString()};
+  if(project.updatedAt.getTime()!==Date.parse(input.expectedUpdatedAt))
+   throw new ProjectsServiceError("PROJECT_MEMBER_CONFLICT");
   const now=new Date(Math.max(Date.now(),project.updatedAt.getTime()+1));
   for(const member of toRemove){
    const [ended]=await tx.update(projectMembers).set({endedAt:now,isPrimary:false,updatedAt:now})
