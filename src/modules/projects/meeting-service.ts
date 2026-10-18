@@ -37,9 +37,6 @@ import {
   projectMeetingTransitionInputSchema,
   requestProjectMeetingInputSchema,
   scheduleProjectMeetingInputSchema,
-  type ProjectMeetingTransitionInput,
-  type RequestProjectMeetingInput,
-  type ScheduleProjectMeetingInput,
 } from "./validation";
 
 function ensureMeetingProjectMutable(
@@ -188,7 +185,7 @@ export async function listProjectMeetings(
 export async function requestProjectMeeting(
   context: RequestContext,
   projectIdInput: string,
-  rawInput: RequestProjectMeetingInput,
+  rawInput: unknown,
 ) {
   if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
     throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
@@ -261,7 +258,7 @@ export async function scheduleProjectMeeting(
   context: RequestContext,
   projectIdInput: string,
   meetingIdInput: string | null,
-  rawInput: ScheduleProjectMeetingInput,
+  rawInput: unknown,
 ) {
   const scope = await requireProjectLifecycleMutationAccess(context, projectIdInput);
   ensureMeetingProjectMutable(scope.project.status);
@@ -436,7 +433,7 @@ export async function transitionProjectMeeting(
   context: RequestContext,
   projectIdInput: string,
   meetingIdInput: string,
-  rawInput: ProjectMeetingTransitionInput,
+  rawInput: unknown,
 ) {
   if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
     throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
