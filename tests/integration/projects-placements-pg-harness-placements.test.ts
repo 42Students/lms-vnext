@@ -200,6 +200,33 @@ describe("PROJ-HARNESS-PLACEMENTS canonical real PostgreSQL fixtures", () => {
     });
   });
 
+  it("PROJ-HARNESS-PLACEMENTS-36 PostgreSQL EXPLAIN accepts tenant-bounded drive and applicant lists",async()=>{
+    await withPlacementCase(async({db,tenant,drive,candidate})=>{
+      const queries=[
+        db.query<{"QUERY PLAN":unknown}>(`
+          explain (format json) select id from placement_jobs
+          where college_id=$1 and status='PUBLISHED'
+          order by created_at desc limit 20`,[tenant.collegeId]),
+        db.query<{"QUERY PLAN":unknown}>(`
+          explain (format json) select a.id from placement_applications a
+          join placement_jobs j on j.id=a.job_id
+          where j.college_id=$1 and j.id=$2 and a.status='SUBMITTED'
+          order by a.submitted_at desc limit 20`,[tenant.collegeId,drive.jobId]),
+      ];
+      for(const result of await Promise.all(queries)){
+        const plans=result[0]?.["QUERY PLAN"];
+        expect(Array.isArray(plans)).toBe(true);
+        expect((plans as Array<{Plan?:{"Node Type"?:string}}>)[0]?.Plan?.["Node Type"]).toBeTruthy();
+      }
+      const actual=await db.query<{id:string}>(`
+        select a.id from placement_applications a
+        join placement_jobs j on j.id=a.job_id
+        where j.college_id=$1 and j.id=$2`,[tenant.collegeId,drive.jobId]);
+      expect(actual.map(x=>x.id)).toContain(candidate.applicationId);
+      // A one-row fixture does NOT prove index selection or production latency.
+    });
+  });
+
   it("PROJ-HARNESS-PLACEMENTS-34 duplicate applicant retry leaves complete original graph and usable transaction",async()=>{
     await withPlacementCase(async({db,drive,learner,actor,candidate,tenant})=>{
       const counts=async()=>db.query<{applications:number;screenings:number;results:number;offers:number}>(`
