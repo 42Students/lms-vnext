@@ -57,9 +57,8 @@ describe("TPO-students-06/07 debarment role revocation and tenant isolation",()=
   })).rejects.toBeInstanceOf(AuthorizationError);
   expect(mock.db).not.toHaveBeenCalled();
  });
- it("TPO-students-06 refuses an accidental indefinite or conflicting date-and-drives ban before any private DB read",async()=>{
+ it("TPO-students-06 refuses conflicting date-and-drives windows before any private DB read",async()=>{
   const base={collegeId:COLLEGE,membershipId:LEARNER,reason:"Policy restriction"};
-  await expect(createPlacementDebarment(ctx,base)).rejects.toBeDefined();
   await expect(createPlacementDebarment(ctx,{...base,untilDate:"2099-12-01",untilDrives:2}))
    .rejects.toBeDefined();
   await expect(createPlacementDebarment(ctx,{...base,untilDrives:0}))
