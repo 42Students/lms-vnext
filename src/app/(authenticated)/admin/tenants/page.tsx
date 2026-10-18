@@ -2,7 +2,8 @@ import Link from "next/link";
 import { TenantDirectoryCsvControl } from "@/components/admin/tenant-directory-csv-control";
 import { tenantDirectoryExportHref } from "@/modules/colleges/admin-tenant-export-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import { requirePermission } from "@/modules/permissions/policy";
+import {can} from "@/modules/permissions/policy";
+import {isSuperAdmin} from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -17,7 +18,13 @@ export default async function TenantDirectory({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }) {
  const context=await getCurrentRequestContext();
- requirePermission(context,"admin-scope.select");
+ if(!isSuperAdmin(context)||!can(context,"admin-scope.select"))
+  return <div className="min-w-0 space-y-4">
+   <PageHeader eyebrow="Super Admin · Platform" title="Tenant Setup"/>
+   <ErrorState title="Tenant directory access denied"
+    description="Your account cannot view platform tenant records."
+    action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
+  </div>;
  const raw=await searchParams;
  const parsed=parseTenantLifecycleSearchParams(raw);
  if(!parsed) return <div className="space-y-4">
