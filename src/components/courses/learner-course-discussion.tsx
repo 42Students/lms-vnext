@@ -104,6 +104,7 @@ export function LearnerCourseDiscussion({
   const [moderationError, setModerationError] = useState<string | null>(null);
   const [pinningId, setPinningId] = useState<string | null>(null);
   const [atBottom, setAtBottom] = useState(true);
+  const [scrollEdges,setScrollEdges] = useState({top:false,bottom:false});
   const [unseenCount, setUnseenCount] = useState(0);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
@@ -212,6 +213,7 @@ export function LearnerCourseDiscussion({
   );
 
   const scrollToBottom = useCallback((behavior: ScrollBehavior = "smooth") => {
+    if(typeof window!=="undefined"&&window.matchMedia("(prefers-reduced-motion: reduce)").matches)behavior="auto";
     bottomRef.current?.scrollIntoView({
       block: "end",
       behavior,
@@ -229,9 +231,23 @@ export function LearnerCourseDiscussion({
       element.scrollTop -
       element.clientHeight;
     const nextAtBottom = distance < 80;
+    setScrollEdges({top:element.scrollTop>1,bottom:distance>1});
     setAtBottom(nextAtBottom);
     if (nextAtBottom) setUnseenCount(0);
   }, []);
+
+  useEffect(()=>{
+    const node=scrollRef.current;
+    if(!node)return;
+    const update=()=>setScrollEdges({
+      top:node.scrollTop>1,
+      bottom:node.scrollHeight-node.scrollTop-node.clientHeight>1,
+    });
+    update();
+    const observer=typeof ResizeObserver==="undefined"?null:new ResizeObserver(update);
+    observer?.observe(node);
+    return()=>observer?.disconnect();
+  },[messages,loading,olderCursor]);
 
   useEffect(() => {
     if (messages.length === 0) {
@@ -440,12 +456,13 @@ export function LearnerCourseDiscussion({
         <div
           ref={scrollRef}
           onScroll={handleScroll}
-          className="max-h-[52dvh] min-h-56 overflow-y-auto overscroll-contain p-3 sm:max-h-[34rem] sm:min-h-80 sm:p-5"
+          role="region" aria-label="Course discussion messages" tabIndex={0}
+          className="max-h-[52dvh] min-h-56 overflow-y-auto overscroll-contain p-3 sm:max-h-[34rem] sm:min-h-80 sm:p-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
         >
           {loading ? (
             <div className="space-y-4" aria-busy="true">
               {[1, 2, 3].map((item) => (
-                <div key={item} className="animate-pulse rounded-lg border border-border p-4">
+                <div key={item} className="motion-safe:animate-pulse rounded-lg border border-border p-4">
                   <div className="h-3 w-32 rounded bg-muted" />
                   <div className="mt-3 h-4 w-4/5 rounded bg-muted" />
                 </div>
@@ -592,6 +609,10 @@ export function LearnerCourseDiscussion({
           )}
         </div>
 
+        {scrollEdges.top?<span aria-hidden="true" data-scroll-fade="top"
+          className="pointer-events-none absolute inset-x-0 top-0 z-10 h-5 bg-gradient-to-b from-surface to-transparent"/>:null}
+        {scrollEdges.bottom?<span aria-hidden="true" data-scroll-fade="bottom"
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-5 bg-gradient-to-t from-surface to-transparent"/>:null}
         {learnerDiscussionMobileJumpVisible(atBottom,unseenCount,messages.length) ? (
           <button type="button" onClick={()=>scrollToBottom()}
             className="absolute bottom-[10.5rem] left-1/2 z-10 min-h-11 -translate-x-1/2 rounded-full border border-border bg-surface px-4 text-xs font-semibold text-primary-text shadow-lg sm:hidden">
