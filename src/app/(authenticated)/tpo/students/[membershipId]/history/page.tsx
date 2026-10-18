@@ -47,7 +47,7 @@ export default async function TpoLearnerPlacementHistoryPage({
 
   return (
     <div className="space-y-6">
-      <Link href="/tpo/students" className="text-sm font-semibold text-primary-text hover:underline">
+      <Link href="/tpo/students" className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
         ← Back to Students
       </Link>
       <PageHeader
@@ -102,7 +102,7 @@ export default async function TpoLearnerPlacementHistoryPage({
                   </p>
                   {item.addedByCollege?<p className="mt-1 text-sm font-semibold">Added by the college</p>:null}
                   {item.jobId?<Link href={"/tpo/placements/jobs/"+encodeURIComponent(item.jobId)}
-                    className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline">Open drive</Link>:null}
+                    className="mt-2 inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Open drive</Link>:null}
                 </div>
                 <span className="rounded-md border border-border bg-surface-subtle px-3 py-1 text-xs font-semibold text-foreground">
                   {item.applicationStatus}
@@ -221,12 +221,12 @@ export default async function TpoLearnerPlacementHistoryPage({
         <span>Page {history.page} of {history.totalPages} · {history.total} application(s)</span>
         <div className="flex gap-4">
           {history.page > 1 ? (
-            <Link href={href(history.page - 1)} className="font-semibold text-primary-text hover:underline">
+            <Link href={href(history.page - 1)} className="font-semibold text-[var(--lms-teal-deep)] hover:underline">
               ← Previous
             </Link>
           ) : null}
           {history.page < history.totalPages ? (
-            <Link href={href(history.page + 1)} className="font-semibold text-primary-text hover:underline">
+            <Link href={href(history.page + 1)} className="font-semibold text-[var(--lms-teal-deep)] hover:underline">
               Next →
             </Link>
           ) : null}
