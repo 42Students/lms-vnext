@@ -10,6 +10,7 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {requirePlacementManageScope} from "@/modules/placements/scope";
 import {planTpoCampaignRecipients} from "./tpo-campaign-send-policy";
+import {resolveTpoCampaignRecipientSecret} from "./tpo-campaign-recipient-token";
 import {tpoCampaignDraftSchema} from "./tpo-campaign-draft-model";
 
 export class TpoCampaignDraftError extends Error{
@@ -34,7 +35,7 @@ export async function createTpoCampaignDraft(context:RequestContext,raw:unknown)
  const input=tpoCampaignDraftSchema.parse(raw);
  const college=await scope(context);
  if(!await tpoCampaignDraftStorageReady())throw new TpoCampaignDraftError("NOT_READY");
- const key=process.env.TPO_CAMPAIGN_RECIPIENT_HMAC_SECRET??"";
+ const key=resolveTpoCampaignRecipientSecret(process.env);
  if(Buffer.byteLength(key,"utf8")<32)throw new TpoCampaignDraftError("NOT_READY");
  return getDb().transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{
