@@ -1,6 +1,8 @@
 "use client";
 import {Dialog} from "@/components/ui/dialog";
 import {DataTable} from "@/components/ui/data-table";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
@@ -129,27 +131,27 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   {error&&!show?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
   <Dialog open={show} onOpenChange={next=>{if(!next&&!busy)setShow(false);}} title={editing?"Edit interview":"Schedule interview"} dismissible={!busy}>
     <h3 className="text-lg font-semibold">{editing?"Edit interview":"Schedule interview"}</h3>
-    <label className="grid gap-1 text-sm">Round<select value={roundId} disabled={Boolean(editing)}
+    <label className="grid gap-1 text-sm">Round<Select value={roundId} disabled={Boolean(editing)}
      onChange={e=>setRoundId(e.target.value)} className="min-h-11 rounded border border-border bg-surface px-3">
      {available.map(r=><option key={r.id} value={r.id}>{r.name}</option>)}
-    </select></label>
-    <label className="grid gap-1 text-sm">Candidate<select value={applicationId} disabled={Boolean(editing)}
+    </Select></label>
+    <label className="grid gap-1 text-sm">Candidate<Select value={applicationId} disabled={Boolean(editing)}
      onChange={e=>setApplicationId(e.target.value)} className="min-h-11 rounded border border-border bg-surface px-3">
      {candidates.map(c=><option key={c.applicationId} value={c.applicationId}>{c.name??"Learner"} · {c.screening}</option>)}
-    </select></label>
+    </Select></label>
     <div className="grid gap-3 sm:grid-cols-2">
-     <label className="grid gap-1 text-sm">Date & time (IST)<input type="datetime-local" required value={start}
+     <label className="grid gap-1 text-sm">Date & time (IST)<Input type="datetime-local" required value={start}
       onChange={e=>setStart(e.target.value)} className="min-h-11 rounded border border-border bg-surface px-3"/></label>
-     <label className="grid gap-1 text-sm">Duration (minutes)<input type="number" min={5} max={480} value={duration}
+     <label className="grid gap-1 text-sm">Duration (minutes)<Input type="number" min={5} max={480} value={duration}
       onChange={e=>setDuration(Number(e.target.value))} className="min-h-11 rounded border border-border bg-surface px-3"/></label>
     </div>
     <label className="grid gap-1 text-sm">Mode<select value={mode} onChange={e=>setMode(e.target.value as "ON_CAMPUS"|"VIRTUAL")}
      className="min-h-11 rounded border border-border bg-surface px-3">
-     <option value="ON_CAMPUS">On campus</option><option value="VIRTUAL">Virtual</option></select></label>
+     <option value="ON_CAMPUS">On campus</option><option value="VIRTUAL">Virtual</option></Select></label>
     <label className="grid gap-1 text-sm">{mode==="VIRTUAL"?"Secure meeting URL":"Interview location"}
      <input value={mode==="VIRTUAL"?meetingUrl:venue} onChange={e=>mode==="VIRTUAL"?setMeetingUrl(e.target.value):setVenue(e.target.value)}
       className="min-h-11 rounded border border-border bg-surface px-3"/></label>
-    <label className="grid gap-1 text-sm">Interviewer (optional)<input value={interviewer}
+    <label className="grid gap-1 text-sm">Interviewer (optional)<Input value={interviewer}
      onChange={e=>setInterviewer(e.target.value)} className="min-h-11 rounded border border-border bg-surface px-3"/></label>
     {editing?<label className="grid gap-1 text-sm">Reason for change<textarea rows={2} value={reason}
      onChange={e=>setReason(e.target.value)} className="rounded border border-border bg-surface p-3"/></label>:null}
