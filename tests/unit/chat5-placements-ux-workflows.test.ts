@@ -73,6 +73,25 @@ describe("chat-5 placement selection accessibility and recovery",()=>{
   expect(page).toContain("This page does not verify letter delivery");
   expect(page).toContain("inline-flex min-h-11 items-center");
  });
+ it("PLACEMENTS-JOINING-CONFIRM-01 does not mutate before confirmation, and retains corrected draft",()=>{
+  const form=source("src/components/placements/tpo-joining-update-form.tsx");
+  const gate=form.indexOf("if (!confirmed)");
+  const mutation=form.indexOf("await fetch(");
+  expect(gate).toBeGreaterThan(0);
+  expect(mutation).toBeGreaterThan(gate);
+  expect(form).toContain("setConfirmOpen(true)");
+  expect(form).toContain("onConfirm={()=>void save(true)}");
+  expect(form).toContain("onOpenChange={setConfirmOpen}");
+  expect(form).toContain("correctionReason: corrected ? correctionReason.trim() : null");
+  expect(form).toContain('method: "PUT"');
+  expect(form).toContain("if (busy) return");
+ });
+ it("UX-placements-bulk-round-targets-01 makes mass-selection a full touch target",()=>{
+  const bulk=source("src/components/placements/tpo-bulk-round-result-recorder.tsx");
+  expect(bulk).toContain('className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Select first 25 unmarked');
+  expect(bulk).toContain("pendingTotal > 25");
+  expect(bulk).toContain("if(!confirmed){setConfirmOpen(true);return;}");
+ });
  it("UX-tpo-placements-jobs-jobid-joining-02 records only scoped accepted offers, not guessed joins",()=>{
   const page=source(root+"/joining/page.tsx");
   expect(page).toContain('hasMembershipRole(context, "TPO")');

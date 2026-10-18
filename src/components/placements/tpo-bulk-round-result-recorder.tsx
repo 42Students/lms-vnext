@@ -154,7 +154,7 @@ export function TpoBulkRoundResultRecorder({
             </label>
             <div className="flex flex-wrap gap-3 text-sm">
               <button type="button" disabled={busy} onClick={()=>setSelected(visible.slice(0,25).map(row=>row.applicationId))}
-                className="font-semibold text-[var(--lms-teal-deep)]">Select first 25 unmarked</button>
+                className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Select first 25 unmarked</button>
               <button type="button" disabled={busy||selected.length===0} onClick={()=>setSelected([])}
                 className="font-semibold text-[var(--lms-teal-deep)]">Clear selection</button>
             </div>
