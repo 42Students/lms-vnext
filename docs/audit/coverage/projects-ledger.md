@@ -8,6 +8,9 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 - `PROJ-BREAK-MENTOR-205`: `getMentorMeetingNotes` and `updateMentorMeetingNotes` reject a disabled Projects tenant **before** calling `requireProjectReadAccess`; behavioural test counts project-scope resolutions, meeting reads, locks and audit writes in `tests/unit/PROJ-BREAK-chat14-mentor-notes-service.test.ts`. No DB/browser execution claim.
 - `PROJ-BREAK-MENTOR-206`: `decideMentorFinalDelivery` locks the scoped college/project row, then rechecks persisted user, membership and Mentor project grant before reading submission or changing state; regression in `tests/unit/PROJ-BREAK-chat14-mentor-final-review-revocation.test.ts`.
 - `PROJ-BREAK-MENTOR-207`: missing/wrong-tenant project is rejected before submission lookup, audit, or notification, via the same mock-transaction regression file.
+- `PROJ-BREAK-MENTOR-208..209`: mock-transaction acceptance now exercises successful approved final review (version, audit, learner notification) and stale-token rollback before side effects, in `tests/unit/PROJ-BREAK-chat14-mentor-final-review-revocation.test.ts`.
+- `PROJ-BREAK-MENTOR-210`: `writeMentorProjectRelease` reauthorizes the persisted actor and project Mentor grant under project-row lock before fetching or changing releases, with revoked-actor mock in `tests/unit/PROJ-BREAK-chat14-mentor-release-meeting-revocation.test.ts`.
+- `PROJ-BREAK-MENTOR-211`: `decideMentorProjectMeeting` denies Projects-disabled tenants before scope resolution; the same test file asserts no lookup or persistence on denial.
 - Behavioural tests are authored only, not executed. CI strict typecheck, Vitest and concurrent PostgreSQL revocation tests remain release gates.
 
 ## Chat-14 repair and coverage update — 2026-10-18
