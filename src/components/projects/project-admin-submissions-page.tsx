@@ -10,7 +10,7 @@ import {
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
-import { parseProjectAdminSubmissionsQuery } from "@/modules/projects/admin-submissions-query-model";
+import { parseProjectAdminSubmissionsQuery,projectAdminUnsubmittedHref } from "@/modules/projects/admin-submissions-query-model";
 import {ProjectAdminSubmissionReview} from "@/components/projects/project-admin-submission-review";
 import {ProjectSubmissionsPageExport} from "@/components/projects/project-submissions-page-export";
 import {listProjectAdminUnsubmitted} from "@/modules/projects/admin-unsubmitted-service";
@@ -67,10 +67,14 @@ export async function ProjectAdminSubmissionsPage({
   }
   const { view, ...safeQuery } = parsed.data;
   const query: ProjectAdminCollectionQuery = safeQuery;
-  const [result, summary] = await Promise.all([
+  // An unsubmitted tab must not depend on unrelated final-delivery reads:
+  // one optional summary failure cannot hide a separate valid workspace list.
+  const all = view==="ALL"?await Promise.all([
     listProjectAdminSubmissionQueue(context, collegeId, query),
     getProjectAdminSubmissionSummary(context, collegeId),
-  ]);
+  ]):null;
+  const result=all?.[0];
+  const summary=all?.[1];
   const queuePath =
     basePath + "/submissions";
   const renderedAt = new Date();
@@ -132,14 +136,14 @@ export async function ProjectAdminSubmissionsPage({
           empty={<p className="text-sm text-muted-foreground">All matching workspaces have a submission.</p>}
         />
         <div className="flex flex-wrap gap-3 text-sm">
-          {unsubmitted.page>1?<Link href={queuePath+"?view=NOT_SUBMITTED&page="+(unsubmitted.page-1)}
+          {unsubmitted.page>1?<Link href={projectAdminUnsubmittedHref(queuePath,query,unsubmitted.page-1)}
            className="text-primary-text underline">Previous</Link>:null}
           <span>Page {unsubmitted.page} of {unsubmitted.totalPages}</span>
-          {unsubmitted.page<unsubmitted.totalPages?<Link href={queuePath+"?view=NOT_SUBMITTED&page="+(unsubmitted.page+1)}
+          {unsubmitted.page<unsubmitted.totalPages?<Link href={projectAdminUnsubmittedHref(queuePath,query,unsubmitted.page+1)}
            className="text-primary-text underline">Next</Link>:null}
         </div>
       </section>:null}
-      {view==="ALL"?<>
+      {view==="ALL" && result && summary ? <>
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {([
           ["Active workspaces", summary.activeWorkspaces, "status", "ACTIVE"],
