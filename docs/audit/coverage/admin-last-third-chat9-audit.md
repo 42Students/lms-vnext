@@ -32,7 +32,7 @@ Scope: 37 routes (positions 75–111) of `docs/orchestrator/ui-ux/pages-admin.md
 | `/admin/projects/workspaces/new` | `UX-admin-projects-workspaces-new-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/quizzes` | `UX-admin-quizzes-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/recruiters` | `UX-admin-recruiters-01` | **OPEN** — no live/browser or full service-role journey confirmation |
-| `/admin/resources` | `UX-admin-resources-01` | **OPEN** — no live/browser or full service-role journey confirmation |
+| `/admin/resources` | `UX-admin-resources-01`, `SA-content-admin-01/02/03/04` | Direct mocked server-component tests enforce ACTIVE Super Admin role, exact college scope, invalid and repeated URL filters before private queries, and safe retry preserving filters on directory/lesson/section failures. `tests/unit/PROJ-BREAK-chat9-admin-content-last-third.test.tsx`. Browser, live role grants and PostgreSQL still **OPEN**. |
 | `/admin/semester-courses` | `UX-admin-semester-courses-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/semesters` | `UX-admin-semesters-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/settings` | `UX-admin-settings-01` | **OPEN** — no live/browser or full service-role journey confirmation |
@@ -42,7 +42,7 @@ Scope: 37 routes (positions 75–111) of `docs/orchestrator/ui-ux/pages-admin.md
 | `/admin/tenants/create` | `UX-admin-tenants-create-01`, `SA-tenants-create-08/11` | Authorized organizations are the sole college-creation destinations; forged/array preferred IDs cannot select another tenant. Directory outage disables creation and provides retry; disabled Super Admin denied before list. `tests/unit/PROJ-BREAK-chat9-sa-tenant-create-page.test.tsx`. Live browser/write integration OPEN. |
 | `/admin/tenants/setup` | `UX-admin-tenants-setup-01`, `SA-tenants-setup-12/16` | Structure or launch readiness fetch failures return a safe retry before organization/college controls render; explicit no-college and disabled Super Admin role states. `tests/unit/PROJ-BREAK-chat9-sa-tenant-setup-page.test.tsx`. Real browser/readiness and source validation OPEN. |
 | `/admin/verification` | `UX-admin-verification-01` | **OPEN** — no live/browser or full service-role journey confirmation |
-| `/admin/videos` | `UX-admin-videos-01` | **OPEN** — no live/browser or full service-role journey confirmation |
+| `/admin/videos` | `UX-admin-videos-01`, `SA-content-admin-01/02/03/04` | Direct mocked server-component tests enforce ACTIVE Super Admin role, exact college scope, invalid and repeated URL filters before private queries, and safe retry preserving filters on directory/lesson/section failures. `tests/unit/PROJ-BREAK-chat9-admin-content-last-third.test.tsx`. Browser, live role grants and PostgreSQL still **OPEN**. |
 
 ## Findings and remediation in this lane
 
