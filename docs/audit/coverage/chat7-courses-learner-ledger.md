@@ -66,3 +66,15 @@ Caveats: the unit test snapshot in `docs/orchestrator/unit-failures-latest.md` s
 | Entry | Required behavior | Test |
 |---|---|---|
 | `listSuperAdminContentDirectory`, `effectiveCourseContentVisibleToStudents`, `SuperAdminContentDirectoryPage` | An active Course and Offering, PUBLISHED learning path and content, ACTIVE Lesson, and per-content visible flag must all hold before the admin says "Students Visible". Legacy published content under an unpublished path must say "Students Hidden". | `tests/unit/chat7-superadmin-effective-content-visibility.test.ts` — `SA-academics-people-62`; authored, CI pending |
+
+## Learner media and quiz-answer non-disclosure — round 4
+
+| Exported entry | Invariant | Test |
+|---|---|---|
+| `shuffleQuizForLearner` | Exact per-learner deterministic question IDs and option order, but no `correct`, `secret` or other DB/authored properties in client display objects, shuffled or unshuffled | `tests/unit/chat7-learner-quiz-answer-key-leak.test.ts` — `LEARNER-QUIZ-KEY-01` |
+| `learnerVisibleContentExternalUrl`, `learnerSafeExternalContentHref` | Scheduled LIVE_CLASS HTTPS meeting links may be offered before start, ended meeting links denied, unsafe old DB URLs sanitized before learner read output | `tests/unit/chat7-learner-media-notice-boundary.test.ts` — `LEARNER-LIVE-LINK-01` |
+| `resumePositionForGrant`, `playbackGrantRefreshDelay` | Finite nonnegative playback positions, intentionally preserved seek on renewal, refresh before expiry, invalid/expired URLs have zero delay | `tests/unit/chat7-learner-media-notice-boundary.test.ts` — `LEARNER-VIDEO-GRANT-01` |
+| `learnerDueSoonNotices` | Only distinct not-yet-submitted assignments within due-soon window, scoped links carry Section delivery | `tests/unit/chat7-learner-media-notice-boundary.test.ts` — `LEARNER-ASSIGNMENT-REMINDER-01` |
+| `learnerDiscussionDraftValid` | Trimmed, nonempty, shared 3,900-character maximum | `tests/unit/chat7-learner-media-notice-boundary.test.ts` — `LEARNER-DISCUSSION-LIMIT-01` |
+
+Authoring note: no tests were executed in this lane. CI and PostgreSQL/browser verification are not claimed complete. Certificates and the remaining non-audited learner course exports are still outside this incremental test matrix.
