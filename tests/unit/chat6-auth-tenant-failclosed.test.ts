@@ -27,9 +27,8 @@ describe("AUTH-tenant-failclosed-01 college host domain outage",()=>{
   expect(outcome.ok).toBe(false);
   if(outcome.ok)throw new Error("Unexpected sign-in admission");
   expect(outcome.response.status).toBe(503);
-  expect(outcome.response.headers.get("Cache-Control")).toBe("no-store");
+  expect(outcome.response.headers.get("Cache-Control")).toBe("private, no-store");
   expect(await outcome.response.json()).toEqual({error:"TENANT_LOOKUP_UNAVAILABLE"});
-  expect(outcome.response.headers.get("Cache-Control")).toBe("no-store");
   expect(outcome.response.headers.get("Retry-After")).toBe("30");
  });
  it("does not turn genuinely unknown college hosts into platform sign-in",async()=>{
