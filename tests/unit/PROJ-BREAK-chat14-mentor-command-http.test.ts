@@ -1,5 +1,4 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
-import {NextResponse} from "next/server";
 import {POST as decideMeeting} from "@/app/api/projects/[projectId]/meetings/[meetingId]/mentor-decision/route";
 import {PATCH as rescheduleMeeting} from "@/app/api/projects/[projectId]/meetings/[meetingId]/mentor-reschedule/route";
 import {POST as transitionSprint} from "@/app/api/projects/[projectId]/sprints/[sprintId]/mentor-transition/route";
@@ -14,7 +13,7 @@ vi.mock("@/auth/request-context",()=>({
  getCurrentRequestContext:async()=>{state.contexts++;return {user:{id:"mentor"}};},
 }));
 vi.mock("@/lib/api-error",()=>({
- apiErrorResponse:(_error:unknown)=>NextResponse.json({
+ apiErrorResponse:(_error:unknown)=>Response.json({
   error:"PROJECT_WRITE_UNAVAILABLE",message:"Please retry your change."
  },{status:409}),
 }));
