@@ -19,6 +19,20 @@ export const roundImportActionSchema=z.object({
 });
 export type ImportRow={line:number;identity:string;applicationId:string;email:string;roll:string;companyId:string;name:string;
  outcome:"PASS"|"FAIL"|"HOLD"|"ABSENT"|null;rank:number|null;invalidRank:boolean;message:string|null};
+/** TPO-drive-workspace-40: collapse identical JOIN duplicates, but never
+ * choose a winner when identity, screening or current-result evidence differs.
+ * A corrupt/ambiguous row cannot be staged for a different applicant.
+ */
+export function uniqueTpoRoundImportRoster<T extends {applicationId:string}>(rows:readonly T[]):T[]{
+ const byId=new Map<string,T>(),conflicts=new Set<string>();
+ for(const row of rows){
+  const previous=byId.get(row.applicationId);
+  if(previous&&JSON.stringify(previous)!==JSON.stringify(row))
+   conflicts.add(row.applicationId);
+  else if(!previous)byId.set(row.applicationId,row);
+ }
+ return [...byId].filter(([id])=>!conflicts.has(id)).map(([,row])=>row);
+}
 function outcome(value:string):ImportRow["outcome"]{
  const token=value.toUpperCase().replace(/[^A-Z]/g,"");
  if(["PASS","PASSED","CLEAR","CLEARED","SELECTED","SHORTLISTED"].includes(token))return "PASS";
