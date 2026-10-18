@@ -24,7 +24,9 @@ export function facultyAttendanceMarkingWindow(input: {
   ) {
     return "WINDOW_EXPIRED";
   }
+  const endOfCorrection = end + correctionWindowHours * 3_600_000;
+  if (!Number.isFinite(endOfCorrection)) return "WINDOW_EXPIRED";
   if (current < start) return "NOT_STARTED";
-  if (current > end + correctionWindowHours * 3_600_000) return "WINDOW_EXPIRED";
+  if (current > endOfCorrection) return "WINDOW_EXPIRED";
   return "OPEN";
 }
