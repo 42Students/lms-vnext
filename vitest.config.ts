@@ -26,7 +26,13 @@ export default defineConfig({
   }],
   test: {
     environment: "node",
-    include: ["tests/unit/**/*.test.ts"],
+    include: [
+      "tests/unit/**/*.test.ts",
+      "tests/unit/**/*.test.tsx",
+      "tests/ux-playbook-primitives.test.tsx",
+      "tests/ux-playbook-compatibility.test.tsx",
+      "tests/ux-color-contrast.test.ts",
+    ],
   },
   resolve: {
     alias: {
