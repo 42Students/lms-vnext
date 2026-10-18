@@ -79,7 +79,7 @@ export async function editHrJobRound(context:RequestContext,rawJobId:unknown,raw
    .where(and(eq(hrInterviewSlots.roundId,target.id),eq(hrInterviewSlots.jobId,job.id))).limit(1);
   if(!canRecruiterEditRound({status:target.status,createdByUserId:target.createdByUserId,
    recruiterUserId:context.user.id,hasResults:Boolean(result),hasSlots:Boolean(attachedSlot)}) ||
-   target.updatedAt.toISOString()!==input.expectedUpdatedAt)
+   target.updatedAt.getTime()!==Date.parse(input.expectedUpdatedAt!))
    throw new PlacementsServiceError("PLACEMENT_ROUND_STALE");
   if(input.name&&duplicateRecruiterRoundName(active,input.name,target.id))
    throw new PlacementsServiceError("PLACEMENT_ROUND_NOT_EDITABLE");
