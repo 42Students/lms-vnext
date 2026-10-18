@@ -2,25 +2,33 @@ import {beforeEach,describe,expect,it,vi} from "vitest";
 import type {RequestContext} from "@/modules/identity/context";
 
 const mocks=vi.hoisted(()=>({
- scope:vi.fn(),select:vi.fn(),
+ scope:vi.fn(),select:vi.fn(),guard:vi.fn(),transaction:vi.fn(),
  rows:[] as Array<Array<Record<string,unknown>>>,
 }));
 vi.mock("@/modules/permissions/acting-college",()=>({
  resolveActingCollege:mocks.scope,
 }));
+vi.mock("@/modules/permissions/persisted-actor",()=>({
+ assertPersistedPlatformPermission:mocks.guard,
+}));
 vi.mock("@/db/client",()=>({
  getDb:()=>({
-  select:()=>{
-   mocks.select();
-   return {
-    from(){return this;},innerJoin(){return this;},where(){return this;},
-    limit:()=>Promise.resolve(mocks.rows.shift()??[]),
-    groupBy:()=>Promise.resolve(mocks.rows.shift()??[]),
-    // A Drizzle SELECT is awaitable even without .limit / .groupBy.
-    then(resolve:(rows:Record<string,unknown>[])=>unknown,reject:(error:unknown)=>unknown){
-     return Promise.resolve(mocks.rows.shift()??[]).then(resolve,reject);
+  transaction:async(fn:(db:unknown)=>Promise<unknown>)=>{
+   mocks.transaction();
+   const db={
+    select:()=>{
+     mocks.select();
+     return {
+      from(){return this;},innerJoin(){return this;},where(){return this;},
+      limit:()=>Promise.resolve(mocks.rows.shift()??[]),
+      groupBy:()=>Promise.resolve(mocks.rows.shift()??[]),
+      then(resolve:(rows:Record<string,unknown>[])=>unknown,reject:(error:unknown)=>unknown){
+       return Promise.resolve(mocks.rows.shift()??[]).then(resolve,reject);
+      },
+     };
     },
    };
+   return fn(db);
   },
  }),
 }));
@@ -35,7 +43,9 @@ const actor:RequestContext={
 const program="22222222-2222-4222-8222-222222222222";
 const cohort="33333333-3333-4333-8333-333333333333";
 beforeEach(()=>{
- mocks.scope.mockReset();mocks.select.mockReset();mocks.rows.length=0;
+ for(const fn of [mocks.scope,mocks.select,mocks.guard,mocks.transaction])fn.mockReset();
+ mocks.rows.length=0;
+ mocks.guard.mockResolvedValue(undefined);
  mocks.scope.mockResolvedValue({
   collegeId:actor.membership!.collegeId,
   organizationId:actor.membership!.organizationId,
@@ -46,6 +56,17 @@ describe("COL-promotion-faculty-02 persisted target-term advisory behavior",()=>
   mocks.scope.mockRejectedValueOnce(new Error("ACTOR_REVOKED"));
   await expect(getPromotionFacultyReadiness(actor,program,cohort,4))
    .rejects.toThrow("ACTOR_REVOKED");
+  expect(mocks.select).not.toHaveBeenCalled();
+ });
+ it("blocks a stale College Admin session before querying a target course, even after scope preflight",async()=>{
+  mocks.guard.mockRejectedValueOnce(new Error("ROLE_REVOKED"));
+  await expect(getPromotionFacultyReadiness(actor,program,cohort,4))
+   .rejects.toThrow("ROLE_REVOKED");
+  expect(mocks.transaction).toHaveBeenCalledOnce();
+  expect(mocks.guard).toHaveBeenCalledWith(expect.anything(),actor,"academics.read",{
+   collegeId:actor.membership!.collegeId,
+   organizationId:actor.membership!.organizationId,
+  });
   expect(mocks.select).not.toHaveBeenCalled();
  });
  it("does not look up a foreign or missing cohort's courses",async()=>{
