@@ -10,5 +10,8 @@ describe("UX-recruiter-calendar-01",()=>{
   expect(source).toMatch(/export\s*\{\s*default\s*\}/);
   const canonical=read("src/app/(authenticated)/hr/calendar/page.tsx");
   expect(canonical).toMatch(/export\s+default|export\s*\{\s*default/);
+  expect(read("src/app/(authenticated)/recruiter/calendar/loading.tsx")).toContain("GracefulPageLoading");
+  expect(read("src/app/(authenticated)/recruiter/calendar/error.tsx")).toContain("GracefulErrorBoundary");
+  expect(canonical).toContain("PageHeader");
  });
 });

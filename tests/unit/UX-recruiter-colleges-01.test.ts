@@ -8,5 +8,8 @@ describe("UX-recruiter-colleges-01",()=>{
   const source=read("src/app/(authenticated)/recruiter/colleges/page.tsx");
   expect(source).toContain("redirect(\"/hr/home\")");
   expect(source).not.toContain("window.open");
+  expect(read("src/app/(authenticated)/recruiter/colleges/loading.tsx")).toContain("GracefulPageLoading");
+  expect(read("src/app/(authenticated)/recruiter/colleges/error.tsx")).toContain("GracefulErrorBoundary");
+  expect(read("src/app/(authenticated)/hr/home/page.tsx")).toContain("PageHeader");
  });
 });
