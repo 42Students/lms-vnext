@@ -224,3 +224,8 @@ Unit tests authored but not executed locally; no claim of CI pass or production 
 ## HR-PORTFOLIO-EXPIRY-38 live grant expiry safety (2026-10-18)
 
 The recruiter job-list SQL now rechecks all persisted grant-validity invariants: recruiter and grant ACTIVE, grant VERIFIED, non-null future validity, and `DRIVES` capability. This prevents a previously issued context from continuing to enumerate employer drives after expiry or capability removal. `tests/unit/HR-BREAK-chat15-portfolio-owner-24.test.ts` covers the precise expiry boundary and source predicate. CI and real PostgreSQL authorization remain outstanding.
+
+
+## HR-GRANT-EXPIRE-39: persisted authorization (source-reviewed)
+
+Employer drive, round, slot and candidate reads now independently check `verification_status='VERIFIED'`, `valid_until > now()`, and `DRIVES` capability in persisted grant SQL. A company team directory also refuses an unverified or expired grant. Unit tests `HR-BREAK-chat15-expired-grants-39.test.ts` and PostgreSQL lifecycle tests `tests/integration/hr-grant-expiry-39-postgresql.test.ts` are authored but not executed; live revocation race still open.

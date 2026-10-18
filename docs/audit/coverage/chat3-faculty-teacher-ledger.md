@@ -73,6 +73,8 @@ This is the **tested-function ledger for the focused model suite**, not a claim 
 
 | `src/modules/courses/faculty-discussion-reply-service.ts` | `postFacultyDiscussionReply` | `tests/unit/chat3-faculty-discussion-reply-permissions.test.ts` | FAC-DISCUSSION-SERVICE-01 | actual service role matrix, malformed input before scope, foreign college/organization, teaching revocation before write and exact authenticated command |
 
+| `src/modules/courses/faculty-assessment-report-service.ts` | `getFacultyAssignmentReport`, `getFacultyQuizReport` | `tests/unit/chat3-faculty-assessment-report-service-scope.test.ts` | FAC-REPORT-SERVICE-01 | current enrolled Section roster only, foreign learners excluded from metrics and responses, ambiguous Section denied, latest retake precedence, invalid grade safety and revoked report source failure |
+
 ## Role/security matrix
 
 - FAC-SCOPE-01/02: Faculty allowed only after central `courses.read` and active teaching role; Learner, Mentor, College Admin, Super Admin, missing membership and foreign tenant denied in unit-model mock contract.

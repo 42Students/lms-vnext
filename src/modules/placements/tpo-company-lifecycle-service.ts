@@ -10,6 +10,7 @@ import {
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
+import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 import { decideTpoCompanyLifecycle, tpoCompanyLifecycleSchema } from "./tpo-company-lifecycle-model";
 
 export class TpoCompanyLifecycleError extends Error {
@@ -29,6 +30,8 @@ async function companyScope(context: RequestContext) {
   }
   requirePermission(context, "placements.manage", { collegeId });
   const college = await requirePlacementManageScope(context, collegeId);
+  const liveCollegeId=await requireTpoBatchActor(context);
+  if(liveCollegeId!==college.id)throw new AuthorizationError("placements.manage");
   return { collegeId, organizationId: college.organizationId,
     actorUserId: context.user.id, actorMembershipId: membership.id };
 }
