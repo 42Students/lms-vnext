@@ -696,6 +696,7 @@ export function ProjectEvaluationControl({
   >([emptyEvaluationRow()]);
   const [pending, setPending] =
     useState(false);
+  const evaluationInFlight=useRef(false);
   const [error, setError] =
     useState<string | null>(null);
   const dirty=Boolean(summary.trim())||rows.length!==1||
@@ -740,8 +741,9 @@ export function ProjectEvaluationControl({
     event: FormEvent<HTMLFormElement>,
   ) {
     event.preventDefault();
-    if (!valid) return;
+    if (!valid || evaluationInFlight.current) return;
 
+    evaluationInFlight.current=true;
     setPending(true);
     setError(null);
     try {
@@ -768,6 +770,7 @@ export function ProjectEvaluationControl({
     } catch (caught) {
       setError(finalDeliveryUserError(caught));
     } finally {
+      evaluationInFlight.current=false;
       setPending(false);
     }
   }
