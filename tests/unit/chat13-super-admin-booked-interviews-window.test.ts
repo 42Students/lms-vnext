@@ -1,0 +1,35 @@
+import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
+import { superAdminBookedInterviewWindow } from "@/modules/placements/super-admin-booked-interviews-range";
+
+describe("Super Admin booked interview calendar: verified IST window and tenant boundary", () => {
+  it("SA-BOOKED-INTERVIEWS-01 rejects impossible dates, malformed input and reversed ranges", () => {
+    for (const [from, to] of [
+      ["2026-02-31","2026-03-05"], ["2025-02-29","2025-03-01"],
+      ["2026-13-01","2026-13-05"], ["2026-00-01","2026-03-05"],
+      ["2026-10-01T00:00:00","2026-10-03"], ["2026/10/01","2026-10-03"],
+      ["2026-10-20","2026-10-19"], ["2026-10-01","garbage"], ["",""],
+    ]) expect(superAdminBookedInterviewWindow(from,to), from + " - " + to).toBeNull();
+    const singleDay = superAdminBookedInterviewWindow("2026-10-18","2026-10-18");
+    expect(singleDay?.fromDate.toISOString()).toBe("2026-10-17T18:30:00.000Z");
+    expect(singleDay?.toDate.toISOString()).toBe("2026-10-18T18:30:00.000Z");
+    const leap = superAdminBookedInterviewWindow("2024-02-29","2024-03-01");
+    expect(leap?.fromDate.toISOString()).toBe("2024-02-28T18:30:00.000Z");
+    expect(leap?.toDate.toISOString()).toBe("2024-03-01T18:30:00.000Z");
+  });
+
+  it("SA-BOOKED-INTERVIEWS-02 refuses foreign rounds, applications or employer relationships in the selected college", () => {
+    const source = readFileSync("src/modules/placements/super-admin-booked-interviews-service.ts","utf8");
+    expect(source).toContain('requireSuperAdminSelectedCollege(context,"placements.read")');
+    expect(source).toContain("superAdminBookedInterviewWindow(from,to)");
+    expect(source).toContain("eq(placementJobs.collegeId,scope.collegeId)");
+    expect(source).toContain("eq(placementJobRounds.jobId,s.jobId)");
+    expect(source).toContain("eq(placementCompanyRelationships.collegeId,scope.collegeId)");
+    expect(source).toContain("eq(placementApplications.jobId,s.jobId)");
+    expect(source).toContain('eq(collegeMemberships.collegeId,scope.collegeId)');
+    expect(source).toContain('eq(s.status,"BOOKED")');
+    expect(source).toContain(".limit(2001)");
+    expect(source).toContain("rows.slice(0,2000)");
+    expect(source).toContain("truncated:rows.length>2000");
+  });
+});
