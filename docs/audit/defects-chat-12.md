@@ -23,6 +23,9 @@ Scope: TPO Projects read journey, TPO Students and Companies bulk operations, fi
 
 | D12-15 | MAJOR | `/admin/attendance?month=bad` passed unvalidated search parameters to `indiaAttendanceMonthWindow`, whose parser throws a raw error, crashing a scoped attendance page rather than showing recovery. | Fixed: validate YYYY-MM before grid query and offer a scoped reset `ErrorState`; corrected escaped regex immediately during source review. | `588f0542`, `8291149a`; `chat12-admin-first-third-cross-audit.test.ts`; browser execution pending. |
 
+| D12-16 | MODERATE | Public company-share access-code validation passed a malformed persisted salt to `hashCompanyShareAccessCode`, which throws instead of denying a challenge. | Fixed by validating the challenge salt before computing the constant-time expected hash. | `051fd697`; `chat12-tpo-company-share-adversarial.test.ts`. |
+| D12-17 | MINOR | Public company-share pager returned `NaN` for a malformed/untrusted requested page; UI could receive invalid pagination state even if higher layers parse most inputs. | Fixed finite safe-integer clamp to page 1. | `38c952a3`; `chat12-tpo-company-share-adversarial.test.ts`. |
+
 ## Verification status
 
 The rolling `docs/orchestrator/unit-failures-latest.md` explicitly reports two `chat-12` failures (TPO-students-51); their stale selectors were repaired but remain **unverified in CI**. The branch was fast-forwarded to main `a172b146ede1992a428dbe3e74a6d87dd3a12985` before these changes. No direct commits to main.
