@@ -304,3 +304,19 @@ A further defensive check keeps an unexpected status from crashing the React dra
 `tests/integration/chat16-inbound-mail-triage-cas-pg.test.ts` adds `INBOUND-TRIAGE-PG-16`–`18` against an explicitly isolated PostgreSQL database (requires matching `TEST_DATABASE_URL`/`DATABASE_URL` plus `DB03_ISOLATED_TEST_DATABASE=1` and the disposable-target guard). Two concurrent genuine `changeInboundMailStatusForAdmin` attempts must result in one UPDATED, one STALE and a single version increment; completed items require reopening before TRIAGED; wrong role, suspended platform and acting-college scope cannot read or mutate. Every generated row is deleted after the suite. This **test is authored, not run**; no claim that the PostgreSQL race has passed and no production database is accessed.
 
 The inbound triage client also bounds its private PATCH with a 15-second AbortController, clears the timeout and releases its synchronous submit gate in `finally`, and treats an ambiguous timeout as a reason to **refresh before retrying** rather than claiming failure or submitting a duplicate. `inbound-mail-double-submit-18` now statically verifies timeout wiring along with optimistic concurrency and same-origin credentials. No actual network calls were made.
+
+### Messaging pure-export coverage reconciliation (chat-16)
+
+New direct model suite `tests/unit/chat16-messaging-remaining-model-exports-16.test.ts` covers previously unlisted exports without mocking their core decisions. Each matrix row names the exported function or schema and the named cases; this is authored source, **not executed**.
+
+| Source | Export / function | Direct behavioral witness |
+|---|---|---|
+| `campaign-filter-model.ts` | `campaignFilterSchema`, `campaignFilterHref` | `MESSAGING-FILTER-16`: defaults, encoded query, unknown state, overflow, forged tenant selector |
+| `campaign-source-model.ts` | `campaignSourceSchema` | `MESSAGING-SOURCE-16`: allowed referral/other; forbidden missing OTHER detail, unknown source, excess fields |
+| `engage-audience-model.ts` | `engageAudienceQuerySchema`, `summarizeEngageAudience` | `MESSAGING-AUDIENCE-16`: strict segment enums and identical suppression precedence for eligible/empty/opt-out/bounce/NOT_NOW |
+| `template-boundary-model.ts` | `isCampaignTemplateKey` | `MESSAGING-TEMPLATE-16`: auth/OTP/recovery keys suppressed, legal campaign templates accepted |
+| `tpo-campaign-history-copy.ts` | `tpoCampaignHistoryTime`, `tpoCampaignHistoryStatus` | `MESSAGING-HISTORY-16`: exact IST time, safe legacy labels and unknown-status fallback |
+| `tpo-campaign-unsubscribe-notification-model.ts` | `tpoCampaignUnsubscribeEvent` | `MESSAGING-UNSUB-NOTICE-16`: sanitized personal names, preserved timeline, encoded lead hyperlink |
+| `unsubscribe-model.ts` | `issueUnsubscribeToken`, `verifyUnsubscribeToken`, `unsubscribeConfirmation` | `MESSAGING-UNSUB-TOKEN-16`: HMAC binding, expiry boundary, noncanonical/forged input, GET read-only semantics |
+
+Types/interfaces are compile-time contracts rather than runnable exports; they are represented by the values and functions above. Other exported service functions are covered in the prior ledger sections or need additional verification, and this suite does not claim network or real database execution.
