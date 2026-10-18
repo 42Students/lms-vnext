@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,isNull} from "drizzle-orm";
+import {and,eq,isNull,ne} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {projectInstances,projectMembers,projectSubmissions,sections,cohorts,programs,departments} from "@/db/schema";
@@ -45,7 +45,9 @@ export async function updateCollegeProjectSummary(context:RequestContext,project
       .innerJoin(programs,eq(programs.id,cohorts.programId))
       .innerJoin(departments,eq(departments.id,programs.departmentId))
       .where(and(eq(sections.id,input.sectionId),
-        eq(departments.collegeId,scope.collegeId),eq(sections.status,"ACTIVE"))).limit(1);
+        eq(departments.collegeId,scope.collegeId),
+        isNull(departments.archivedAt),eq(programs.status,"ACTIVE"),
+        ne(cohorts.status,"ARCHIVED"),eq(sections.status,"ACTIVE"))).limit(1);
     if(!valid)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   }
   const [updated]=await tx.update(projectInstances).set({

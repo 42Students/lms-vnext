@@ -7,7 +7,7 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {COURSE_TEACHING_ROLES,type CourseTeachingRole} from "@/modules/courses/constants";
 import {facultyAssignmentRoleLabel} from "@/modules/courses/college-courses-copy";
 
-type Delivery={id:string;courseCode:string;courseName:string;sectionName:string;
+type Delivery={id:string;sectionId:string;courseCode:string;courseName:string;sectionName:string;
   cohortName:string;academicPeriodName:string;endedAt:Date|null};
 type Faculty={membershipId:string;displayName:string};
 
@@ -17,27 +17,33 @@ export function SuperAdminFacultyAssignmentCreate({
  const router=useRouter();
  const [open,setOpen]=useState(false);
  const [deliveryId,setDeliveryId]=useState("");
+ const [otherDeliveryIds,setOtherDeliveryIds]=useState<string[]>([]);
  const [membershipId,setMembershipId]=useState("");
  const [role,setRole]=useState<CourseTeachingRole>("PRIMARY");
  const [error,setError]=useState("");
  const [notice,setNotice]=useState("");
  const {pending,run}=useGuardedAction({timeoutMs:20000});
  const available=deliveries.filter(item=>!item.endedAt);
+ const selected=available.find(item=>item.id===deliveryId);
+ const sameClass=selected?available.filter(item=>item.sectionId===selected.sectionId):[];
+ const deliveryIds=[deliveryId,...otherDeliveryIds.filter(id=>id!==deliveryId)];
  async function submit(e:FormEvent<HTMLFormElement>) {
   e.preventDefault();
-  if(pending||!available.some(d=>d.id===deliveryId)||
+  if(pending||!selected||deliveryIds.length>10||
+     !deliveryIds.every(id=>sameClass.some(d=>d.id===id))||
      !faculty.some(f=>f.membershipId===membershipId)) {
     setError("Choose an active class delivery and faculty member.");return;
   }
   await run(async()=>{
    setError("");setNotice("");
    try{
-    await apiFetch("/api/courses/teaching-assignments",{
+    await apiFetch("/api/admin/faculty-assignment/batch",{
      method:"POST",headers:{"content-type":"application/json"},
-     body:JSON.stringify({deliveryId,membershipId,role}),
+     body:JSON.stringify({deliveryIds,membershipId,role}),
     });
-    setOpen(false);setDeliveryId("");setMembershipId("");setRole("PRIMARY");
-    setNotice("Teaching assignment created.");
+    setOpen(false);setDeliveryId("");setOtherDeliveryIds([]);setMembershipId("");setRole("PRIMARY");
+    setNotice(deliveryIds.length===1?"Teaching assignment created.":
+      "Created "+deliveryIds.length+" teaching assignments for this class.");
     router.refresh();
    }catch(caught){
     setError(caught instanceof FriendlyFetchError?caught.message:
@@ -59,13 +65,26 @@ export function SuperAdminFacultyAssignmentCreate({
    {open?<form onSubmit={e=>void submit(e)} className="grid gap-3 rounded-lg border border-border bg-surface p-4 sm:grid-cols-2">
     <p className="sm:col-span-2 text-sm text-body">Select a course and class in the current college. Only active faculty can be assigned.</p>
     <label className="grid gap-1 text-sm font-semibold">Course / Class / Semester
-     <select required className={inputClass} value={deliveryId} onChange={e=>setDeliveryId(e.target.value)}>
+     <select required className={inputClass} value={deliveryId} onChange={e=>{setDeliveryId(e.target.value);setOtherDeliveryIds([]);}}>
       <option value="">Choose an active class</option>
       {available.map(item=><option key={item.id} value={item.id}>
        {item.courseCode} · {item.courseName} · {item.cohortName} · {item.sectionName} · {item.academicPeriodName}
       </option>)}
      </select>
     </label>
+    {selected?<fieldset className="grid gap-2 rounded-md border border-border p-3 sm:col-span-2">
+      <legend className="px-1 text-sm font-semibold">Course(s)</legend>
+      <p className="text-xs text-body">The chosen course is always included. Select up to 9 additional courses for the same class and semester.</p>
+      <div role="region" aria-label="Available courses in the selected class" tabIndex={0}
+        className="grid max-h-48 gap-2 overflow-y-auto overscroll-contain sm:grid-cols-2 [mask-image:linear-gradient(to_bottom,black_90%,transparent)]">
+        {sameClass.map(item=><label key={item.id} className="flex min-h-11 items-center gap-2 text-sm">
+          <input type="checkbox" checked={item.id===deliveryId||otherDeliveryIds.includes(item.id)}
+            disabled={pending||item.id===deliveryId||(!otherDeliveryIds.includes(item.id)&&deliveryIds.length>=10)}
+            onChange={e=>setOtherDeliveryIds(values=>e.target.checked?[...values,item.id]:values.filter(id=>id!==item.id))}/>
+          {item.courseCode} · {item.courseName}
+        </label>)}
+      </div>
+    </fieldset>:null}
     <label className="grid gap-1 text-sm font-semibold">Faculty
      <select required className={inputClass} value={membershipId} onChange={e=>setMembershipId(e.target.value)}>
       <option value="">Choose faculty</option>

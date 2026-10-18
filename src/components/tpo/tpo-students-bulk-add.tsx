@@ -261,7 +261,7 @@ export function TpoStudentsBulkAdd({
           "Ineligible learners will not be added.")+" Existing applications are preserved."}
         footer={<><Button variant="secondary" disabled={busy} onClick={()=>setConfirmOpen(false)}>Cancel</Button>
           <Button disabled={busy||guardedPending||!pageSelected.length||pageSelected.length>200||!roleOptionId||
-            includeIneligible&&overrideReason.trim().length<3||reviewedSelection!==selectionFingerprint} onClick={()=>void runGuarded(submit)}>
+            includeIneligible&&overrideReason.trim().length<3||reviewedSelection!==selectionFingerprint} onClick={()=>void submit()}>
             {busy?"Checking learners…":"Confirm add selected"}
           </Button></>}>
         <p role="status" className="text-sm">{alreadyAppliedCount===null?

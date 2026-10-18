@@ -34,8 +34,12 @@ export async function markHrNotificationRead(
     inArray(activityEvents.collegeId,[...new Set(allowed.map(row=>row.collegeId))]),
    )).for("update").limit(1);
   if(!current)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
-  if(current.readAt||!hrNotificationVersionMatches(current.createdAt,input.expectedCreatedAt))
+  if(!hrNotificationVersionMatches(current.createdAt,input.expectedCreatedAt))
    throw new PlacementsServiceError("PLACEMENT_RECRUITER_NOTIFICATION_STALE");
+  // A lost HTTP response must not turn a successful mark-read retry into an
+  // apparent conflict. Scope and the original version have already been
+  // rechecked inside this transaction; repeat acknowledgments do no writes.
+  if(current.readAt)return {id:current.id,readAt:current.readAt.toISOString()};
   const [updated]=await tx.update(inAppNotifications).set({readAt:new Date()})
    .where(and(eq(inAppNotifications.id,id),eq(inAppNotifications.userId,context.user.id),
     isNull(inAppNotifications.readAt),

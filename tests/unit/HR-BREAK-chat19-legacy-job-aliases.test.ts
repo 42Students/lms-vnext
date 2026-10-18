@@ -79,4 +79,10 @@ describe("HR-BREAK-chat19-legacy-navigation-job-page: authorize then redirect",(
  it("legacy /hr/messages exports the recruiter conversation inbox, not notification bell",()=>{
   expect(HrMessagesAlias).toBe(m.alias);
  });
+ it("HR-BREAK-JOB-PRINCIPAL-27 rejects wrong-user recruiter before job reads",async()=>{
+  m.ctx.mockResolvedValue({...actor,recruiter:{...actor.recruiter!,userId:"other-account"}});
+  await expect(page()).rejects.toThrow("REDIRECT");
+  expect(m.redirect).toHaveBeenCalledWith("/dashboard");
+  expect(m.read).not.toHaveBeenCalled();
+ });
 });
