@@ -28,10 +28,10 @@ function AskActions({threadId,ask,ownId}:{threadId:string;ask:Ask;ownId:string})
  }
  return <div className="mt-2 flex flex-wrap gap-2">
   {canDone?<button type="button" disabled={busy}
-   className="min-h-10 rounded border border-border px-3 text-xs"
+   className="min-h-10 rounded-[9px] border border-border px-3 text-xs"
    onClick={()=>setConfirmation("DONE")}>Mark done</button>:null}
   {canCancel?<button type="button" disabled={busy}
-   className="min-h-10 rounded border border-border px-3 text-xs"
+   className="min-h-10 rounded-[9px] border border-border px-3 text-xs"
    onClick={()=>setConfirmation("CANCEL")}>Cancel ask</button>:null}
   {confirmation?<div role="alertdialog" aria-label={confirmation==="DONE"?"Mark the ask done":"Cancel this ask?"}
    className="w-full space-y-2 rounded border border-border p-3 text-sm">
@@ -96,7 +96,7 @@ export function TpoTeamAskPanel({threadId,actorId,recipientId,recipientName,reci
    </label>
    {error?<p role="alert" className="text-xs text-danger">{error}</p>:null}
    <button type="submit" disabled={busy||!title.trim()||!recipientId}
-    className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+    className="min-h-11 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">
     {busy?"Sending…":"Ask someone"}</button>
   </form>
   <ul className="space-y-2">{items.map(ask=>{
