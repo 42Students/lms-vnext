@@ -118,3 +118,12 @@ The main failure snapshot predated the shared ZeptoMail provider configuration a
 | `recruiter-job-visibility-model.ts`: `isRecruiterJobVisible` | Active grant AND central policy AND exact authenticated recruiter user ID; denies impersonation, wrong college/relationship | `tests/unit/HR-BREAK-authorization-01.test.ts` |
 
 **Not verified:** production provider calls, DB integration and competing writers, browser last-third pages’ loading/partial/error/phone states. All tests authored, not run. Do not interpret `UNIT WRITTEN` as CI passed.
+
+## 2026-10-18 direct service behavior follow-up
+
+| Entry point | Unit evidence added | Remaining gate |
+| --- | --- | --- |
+| `getTpoPublicJoinLinkStatus`, `changeTpoPublicJoinLink`, `setTpoPublicJoinLinkEnabled` | `tests/unit/chat2-public-link-service-security-races.test.ts`: tenant/role/disabled-session denial before DB, fail-closed unavailable storage, strict company/link CAS IDs, scoped college-admin read | Token rotation competing DB writers, real audit and one-time display |
+| `getTpoCommunicationSettings`, `updateTpoCommunicationSettings` | `tests/unit/chat2-tpo-communication-settings-service-cas.test.ts`: strict shape, actor denied, unregistered storage, revocation before mutation, stale CAS, identical retry no-op, successful audit | PostgreSQL transaction/rollback and real session integration |
+
+All tests authored and committed; **not executed**. Existing partial ledger rows stay PARTIAL until full database, role and UI verification.
