@@ -40,7 +40,9 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
     method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},body:JSON.stringify(body),
    });
    const payload=await response.json().catch(()=>null) as {error?:string;issues?:Array<{message:string}>;results?:Result[]}|null;
-   if(!response.ok)throw Error(payload?.issues?.[0]?.message??payload?.error??"Selection action failed");
+   if(!response.ok)throw Error(response.status===409
+    ?"Selections changed while you were reviewing. Refresh and check the selected students before retrying."
+    :"Could not complete the selection action. Your selected students are preserved; try again.");
    setReport(payload?.results??[]);setChosen([]);
    if(mode==="RECORD"){setLastRecorded(chosen.length);setMode(null);}
    router.refresh();
