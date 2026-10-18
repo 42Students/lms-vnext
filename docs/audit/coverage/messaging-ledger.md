@@ -159,3 +159,17 @@ Source-verified test authoring only. The cloud CI report `docs/orchestrator/unit
 | `getTpoMessagingBatch` | UUID validation, wrong-role denial, scoped college+organization detail lookup, no receipt drillthrough for unowned batch; return only aggregate statuses | Same | Authored, unrun |
 
 Remaining integration: actual PostgreSQL query-plan/index verification for 2,000 receipts, snapshot consistency between aggregate batch and receipt rows, race on receipt updates, tamper/cross-college IDOR at HTTP routes, strict same-origin on exporting writes (GET reads must remain side-effect-free).
+
+## 2026-10-18 account-journey and template-purpose gate follow-up
+
+| Export / route | New direct regression | Purpose and failure modes covered | Execution |
+|---|---|---|---|
+| `src/modules/messaging/engage-audience-model.ts:summarizeEngageAudience` | `tests/unit/chat16-messaging-model-matrix-16.test.ts` | Source-level correction: whitespace and multiply-suppressed leads now use the exact send-policy disposition precedence; preview counts match suppression facts | Authored, unrun |
+| `src/app/api/placements/recruiter/conversations/open/route.ts:POST` | `tests/unit/chat16-recruiter-conversation-route-18.test.ts` | Origin before identity; malformed body; expired session friendly response; missing recruiter; safe same-host thread redirect | Authored, unrun |
+| `src/app/api/placements/recruiter/conversations/acknowledge/route.ts:POST` | Same | Origin before identity; expired session friendly response; missing recruiter; forged external return URL cannot redirect externally | Authored, unrun |
+| `src/app/api/placements/recruiter/bell/route.ts:GET` | `tests/unit/chat16-hr-bell-http-19.test.ts` | Private no-store response; service outage maps to safe error; GET never acknowledges anything | Authored, unrun |
+| `src/app/api/placements/recruiter/bell/route.ts:POST` | Same | Same-origin CSRF guard; caller context; idempotent zero-updated acknowledgment; revoked session denied | Authored, unrun |
+| `src/modules/placements/recruiter-message-email-provider.ts:sendRecruiterMessageDigest` | `tests/unit/chat16-recruiter-digest-delivery-12.test.ts` | Reject authentication, OTP, password-reset, MFA and magic-link template keys even when not equal to currently provisioned OTP key | Authored, unrun |
+| `src/modules/placements/recruiter-message-email-dispatch-service.ts:dispatchRecruiterUnreadMessageDigests` | Same | Invalid digest-template purpose disables worker before reading database messages or contacting mail provider | Authored, unrun |
+
+The direct HTTP tests use mocked persisted services; PostgreSQL tenant-grant checks, actual mail-provider acceptance, web session expiry and browser redirect behavior must still pass independently. Every exposed failure should remain a safe status/code, never raw private message contents.
