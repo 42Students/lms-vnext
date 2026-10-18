@@ -355,3 +355,8 @@ No CI/tests/TypeScript commands were run under the owner's new no-CI-until-final
 | PLACEMENTS-RETENTION-ACTIVE-28 | `getCollegeApplicationRetentionReport` excludes any old withdrawn or rejected application still carrying `ISSUED` or `ACCEPTED` official offer; tenant joins and date cutoff remain | `tests/unit/chat5-placements-retention-and-joining-followups.test.ts` enforces correlated anti-join and no mutations | PostgreSQL integration pending |
 
 No build/test runner was invoked per owner's directive. The comprehensive core function-by-function and all second-third TPO page coverage work remains open.
+
+
+### Expiry-sweep audit/notification parity (PLACEMENTS-EXPIRY-NOTIFY-30/31)
+
+`sweepExpiredPlacementOffers` now locks offer rows only using `FOR UPDATE SKIP LOCKED`, scopes each record through application → job → college, persists one `EXPIRED` transition and one deduped activity event, and (for active colleges only) delivers a preference-aware learner notification in the same transaction. Suspended colleges still record expiry but receive no fresh delivery. A repeated sweep cannot create a second expiry event or duplicate notification; the actor is the persisted scheduler user and the learner is the subject, never a forged impersonation. Tests: `tests/unit/chat5-placement-offer-capacity.test.ts` and two real-PostgreSQL scenarios in `tests/integration/placements-p8-offers.test.ts` (exact expiry, repeated sweep, event dedupe, recipient, opted-out delivery). The 15-minute cron schedule is an external deployment obligation, not claimed as implemented; cloud CI execution is deferred by owner.
