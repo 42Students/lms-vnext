@@ -51,7 +51,7 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
  return <section className="space-y-4">
   <div className="flex flex-wrap gap-3">
    <button type="button" onClick={()=>open("RECORD")} disabled={!recordable.length}
-    className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50">Record a selection</button>
+    className="min-h-11 rounded bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">Record a selection</button>
    <button type="button" onClick={()=>open("VERIFY_AND_RELEASE")} disabled={!releasable.length}
     className="min-h-11 rounded border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
     Verify and release ({releasable.length})</button>
@@ -119,7 +119,7 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
     </div>:null}
     <div className="flex gap-3">
      <button type="button" disabled={pending||!chosen.length||(mode==="RECORD"&&!role.trim())}
-      onClick={()=>void submit()} className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50">
+      onClick={()=>void submit()} className="min-h-11 rounded bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
       {pending?"Saving…":mode==="RECORD"?"Record "+chosen.length+" selection(s)":"Verify and release "+chosen.length+" offer(s)"}</button>
      <button type="button" disabled={pending} onClick={()=>{setMode(null);setError("");}}
       className="min-h-11 rounded border border-border px-4 text-sm">Close</button>
