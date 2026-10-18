@@ -6,6 +6,9 @@ import {
   type ActivityCenterGroup,
 } from "@/components/activity/activity-center";
 import { PageHeader } from "@/components/ui/page-header";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import {sanitizeActivityMetadata} from "@/modules/activity/metadata-sanitizer";
 import {
   hasMembershipRole,
@@ -39,8 +42,7 @@ function one(
     : value;
 }
 
-const inputClass =
-  "min-h-10 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]";
+const inputClass = "w-full min-w-0";
 
 export default async function ActivityPage({
   searchParams,
@@ -210,7 +212,7 @@ export default async function ActivityPage({
         actions={isSuperAdmin(context) || hasMembershipRole(context, "COLLEGE_ADMIN") ? (
           <a href={(isSuperAdmin(context) ? "/api/activity/admin-export" : "/api/activity/college-export") +
             (exportParams.size ? "?" + exportParams.toString() : "")}
-            className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
             Export
           </a>
         ) : undefined}
@@ -229,7 +231,7 @@ export default async function ActivityPage({
       </Link> : null}
       {isSuperAdmin(context)?<nav aria-label="Activity Log category presets" className="space-y-2">
        <div className="flex flex-wrap gap-2">{presetLinks.map(link=><Link key={link.name} href={link.href}
-        className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">{link.name}</Link>)}</div>
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{link.name}</Link>)}</div>
        <p className="text-xs text-muted-foreground">Choose a preset, then narrow by college, actor or dates. Important activity shows high-priority events.</p>
        <div className="flex flex-wrap gap-2">{[
         {label:"Today",href:quick(today,today)},
@@ -237,25 +239,25 @@ export default async function ActivityPage({
         {label:"30 days",href:quick(ago(29),today)},
         {label:"All time",href:quick()},
        ].map(link=><Link key={link.label} href={link.href}
-        className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm text-primary-text">{link.label}</Link>)}</div>
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{link.label}</Link>)}</div>
       </nav>:null}
-      <form className="grid gap-3 rounded-xl border border-border bg-surface p-5 sm:grid-cols-2 xl:grid-cols-4">
+      <form className="grid min-w-0 grid-cols-1 gap-4 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 sm:p-6 xl:grid-cols-4">
         {isSuperAdmin(context) ? (
           <label>
             <span className="mb-1 block text-xs font-semibold text-body">College</span>
-            <select name="collegeId" defaultValue={one(params.collegeId) ?? ""} className={inputClass}>
+            <Select name="collegeId" defaultValue={one(params.collegeId) ?? ""} className={inputClass}>
               <option value="">Current admin safety scope</option>
               {collegeOptions.map(college => <option key={college.id} value={college.id}>
                 {college.name} ({college.code})
               </option>)}
-            </select>
+            </Select>
           </label>
         ) : null}
         <label>
           <span className="mb-1 block text-xs font-semibold text-body">
             Module
           </span>
-          <select
+          <Select
             className={inputClass}
             name="module"
             defaultValue={
@@ -275,13 +277,13 @@ export default async function ActivityPage({
                 </option>
               ),
             )}
-          </select>
+          </Select>
         </label>
         <label>
           <span className="mb-1 block text-xs font-semibold text-body">
             Importance
           </span>
-          <select
+          <Select
             className={inputClass}
             name="importance"
             defaultValue={
@@ -301,13 +303,13 @@ export default async function ActivityPage({
                 </option>
               ),
             )}
-          </select>
+          </Select>
         </label>
         <label>
           <span className="mb-1 block text-xs font-semibold text-body">
             From (IST)
           </span>
-          <input
+          <Input
             className={inputClass}
             name="from"
             type="date"
@@ -318,7 +320,7 @@ export default async function ActivityPage({
           <span className="mb-1 block text-xs font-semibold text-body">
             To (IST)
           </span>
-          <input
+          <Input
             className={inputClass}
             name="to"
             type="date"
@@ -329,7 +331,7 @@ export default async function ActivityPage({
           <span className="mb-1 block text-xs font-semibold text-body">
             Event type
           </span>
-          <input
+          <Input
             className={inputClass}
             name="eventType"
             defaultValue={one(
@@ -342,7 +344,7 @@ export default async function ActivityPage({
           <span className="mb-1 block text-xs font-semibold text-body">
             Subject type
           </span>
-          <input
+          <Input
             className={inputClass}
             name="subjectType"
             defaultValue={one(
@@ -353,22 +355,22 @@ export default async function ActivityPage({
         </label>
         <label>
           <span className="mb-1 block text-xs font-semibold text-body">Subject / entity ID</span>
-          <input className={inputClass} name="subjectId" maxLength={500}
+          <Input className={inputClass} name="subjectId" maxLength={500}
             defaultValue={one(params.subjectId)} placeholder="Exact entity ID" />
         </label>
         {isSuperAdmin(context) ? <>
           <label><span className="mb-1 block text-xs font-semibold text-body">Actor name</span>
-            <input type="search" className={inputClass} name="actorName" maxLength={100}
+            <Input type="search" className={inputClass} name="actorName" maxLength={100}
               defaultValue={one(params.actorName)} placeholder="Name contains…" /></label>
           <label><span className="mb-1 block text-xs font-semibold text-body">Event / entity search</span>
-            <input type="search" className={inputClass} name="q" maxLength={100}
+            <Input type="search" className={inputClass} name="q" maxLength={100}
               defaultValue={one(params.q)} placeholder="Summary, event or entity contains…" /></label>
         </> : null}
         <label>
           <span className="mb-1 block text-xs font-semibold text-body">
             Actor user ID
           </span>
-          <input
+          <Input
             className={inputClass}
             name="actorUserId"
             defaultValue={one(
@@ -377,16 +379,11 @@ export default async function ActivityPage({
             placeholder="Optional UUID"
           />
         </label>
-        <div className="flex items-end gap-2">
-          <button
-            type="submit"
-            className="inline-flex min-h-10 items-center justify-center rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover"
-          >
-            Apply filters
-          </button>
+        <div className="flex min-w-0 flex-wrap items-end gap-2">
+          <Button type="submit">Apply filters</Button>
           <Link
             href="/activity"
-            className="inline-flex min-h-10 items-center justify-center rounded-md border border-border px-3 text-sm font-semibold text-foreground"
+            className="inline-flex min-h-11 items-center justify-center rounded-md border border-border px-3 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
           >
             Reset
           </Link>
