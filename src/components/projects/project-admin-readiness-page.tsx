@@ -150,7 +150,7 @@ export async function ProjectAdminReadinessPage({
       <ProjectAdminFilters query={query} />
 
       {!result.items.length ? (
-        <section className="rounded-xl border border-border bg-surface p-6 text-sm text-muted-foreground">
+        <section className="border-b border-border py-6 text-sm text-muted-foreground">
           No project workspaces match these filters.
         </section>
       ) : (
