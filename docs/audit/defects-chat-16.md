@@ -125,3 +125,9 @@ Source only: new direct tests and TypeScript remain unexecuted per no-CI directi
 | MSG-POLICY-INITIAL-14/15 | S2 | An initial policy repository read error used to reject `deliverBatch` after some earlier recipients had already been sent; `auditBatch` was skipped and the provider could have accepted side effects without final aggregate status. Record a per-recipient fail-closed `FAILED` receipt and continue safely, then audit the complete batch. | `tests/unit/chat16-messaging-initial-policy-outage-14.test.ts` (authored, unrun) | `713ae457f910` |
 
 The initial-policy failure branch deliberately never contacts the provider for that recipient. This does not claim exactly-once delivery across worker crashes or transactional persistence.
+
+
+| PUBLIC-ENQUIRY-FAIL-16..21 | S2 | Public code/enquiry POST routes allowed unexpected tenant registry or recruitment provider errors to bubble without controlled JSON/503 and no-cache protection. Both now fail closed with generic safe error, while preserving cross-origin denial, unpublished 404, rate-limits and successful response shape. | `tests/unit/chat16-public-recruit-enquiry-route-guards-16.test.ts` (authored, unrun) | `e95dc2fd7a9e`, `b79f1fc63bff` |
+| PUBLIC-ENQUIRY-SIZE-22..25 | S2 | Both anonymous endpoints used unbounded `request.json()`; large UTF-8 uploads could allocate the entire body before Zod validation and rate-limits. They now use a shared incremental UTF-8 decoder, 8 KB hard cap, and no-store 413/400 refusal before service work. The signed internal recruiter-mail route retains its separate 20 KB cap via the same stream primitive. | same, `tests/unit/chat16-recruiter-mail-body-bounds-01.test.ts` | `5188bf21103b`, `f1b17089d462`, `0884765c9618`, `875bdbbfb16e` |
+
+No real anonymous provider calls or browser traffic were issued, and these lines do not certify readiness.
