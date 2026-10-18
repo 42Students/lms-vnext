@@ -145,3 +145,5 @@ The **generated** `docs/audit/ux/COVERAGE-MATRIX.md` currently lists five Projec
 - **UX-kit-E2E-11:** Timed success/info toast timers pause on background-tab visibility and resume on foreground return, while error toasts remain persistent. The browser case checks a success notice after more than its original timeout while hidden and verifies dismissal after foreground resume; evicted timers and duration metadata are removed together.
 
 - **UX-kit-HARDEN-58:** DataTable treats exceptions from per-row hidden-column permission and optional mobile-detail navigation callbacks as **deny/no-link**, not a crash or implicit access grant. A denied formatter is not evaluated, and an authorized cell remains visible even when its optional detail link fails. Unit behavior case 58 covers both.
+
+- **UX-kit-E2E-12:** PageLoading and GracefulPageLoading now restart their 12-second slow-recovery timer when the request identity/shape changes, rather than displaying a stale timeout from the previous request. Playwright's clock tests the PageLoading handoff at 11+2+11 seconds without real waiting. Source uses effect cleanup on label/variant/count and label/shape respectively.
