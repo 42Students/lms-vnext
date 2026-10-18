@@ -98,6 +98,8 @@ Branch: `chatgpt/chat-9-b`. Owner: chat-9. These are observed source-level findi
 
 | PROJ9-055 · SA-students-ux-17/19 | High | Super Admin student registration loaded college people filters, program/batch/class choices and import history as separate awaited reads; a failure crashed the entire roster or could leave scope-sensitive actions with incomplete data. It now fetches them as one authorized presentation boundary and fails closed, without rendering register or bulk import controls, whenever any selected-college read fails. Global-scope page performs no college-private reads. | `ab10d14` | `tests/unit/PROJ-BREAK-chat9-sa-students-page.test.tsx` (`00d3207`): each read failure, no-college and complete scope. Live permissions and bulk-import execution OPEN |
 
+| PROJ9-056 · PROJ-BREAK-idor-59/60 | Medium | Super Admin bulk mentor reassignment previously passed any selected college directly to the server view without a page-level projects.manage check. The scoped mutation service remains authoritative, but the route could expose management affordances to an expired or read-only selection. It now denies before rendering the mentor-assignment component unless the active account may manage that exact college, and still refuses unscoped assignments. | `709c410` | `tests/unit/PROJ-BREAK-chat9-sa-mentor-reassignment-page.test.tsx` (`2fce53d`, `fb254cd`); real membership race/SQL/multi-tenant browser proof OPEN |
+
 ## Outstanding release gates (not yet closed)
 
 - Live PostgreSQL integration tests for wrong-tenant IDs, serializable races, rollback and event/notification dedupe; chat-17 owns shared fixtures. Static service assertions alone cannot establish real DB behavior.
