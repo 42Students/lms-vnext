@@ -145,3 +145,21 @@ All code and tests were authored only; the owner deferred CI, PostgreSQL, live O
 System role grants previously passed an in-memory Super Admin permission check before loading the target user and then issued a separate role insert. The platform actor could lose their system role or become disabled between those operations, yet the insert still succeeded. The hardened flow carries the **authenticated context** into the repository and re-authorizes against persisted user/system-role and membership rows under SHARE locks in the **same transaction** as the target status read, role insertion and activity audit. Target status is rechecked under a SHARE lock, preventing a disabled target from being granted a role during a concurrent status transition. `INSERT ON CONFLICT DO NOTHING ... RETURNING` makes repeats idempotent, and `platform.system_role.assigned` is recorded as a critical platform activity only for genuinely new grants. The strict input schema rejects caller-supplied tenant fields.
 
 Evidence: `src/modules/system-roles/service.ts`, `src/modules/system-roles/repository.ts`, `src/modules/activity/taxonomy.ts`; fake-repository role journey and transaction source checks in `tests/unit/chat6-auth-system-role-22.test.ts`. Outstanding: PostgreSQL two-admin concurrent role reversal, platform suspension races and audit rollback verification; owner has deferred all CI/integration gates.
+
+
+## 2026-10-19 second-pair-of-eyes auth and sessions hardening
+
+| Executable boundary | Attack / failure | Added regression | Remaining obligation |
+|---|---|---|---|
+| `crypto.ts` MAC, codes, tokens and masked contact | Purpose collision, malformed digest, code/token shape, contact hint exposure | `tests/unit/chat6-auth-crypto-boundaries.test.ts` | Production RNG/HSM and secret rotation replay |
+| `http.ts` guard, audit and errors | Spoofed audit `component/route/ipTag`, forged IP, foreign origin, size overflow, unknown/outage tenant | `tests/unit/chat6-auth-http-guard.test.ts` | Structured-log redaction and real gateway/WAF |
+| `session-service.ts` seven operations | Revoked/expired session replay, changed actor status, session token storage, ownership, revoke-other count | `tests/unit/chat6-auth-session-ledger.test.ts` | Real PostgreSQL race and storage lifetime |
+| `device-label.ts`, security page and device-list | Malformed persisted `created_at` or `last_seen_at` crashes the whole revocation screen | `tests/unit/chat6-auth-device-date-resilience.test.ts` | Browser visual/accessibility replay |
+| `ip-rate-limit.ts`, `bounded-json.ts` | Route budget exhaustion, spoofed X-Forwarded-For prefix, forged Content-Length, invalid UTF-8 | `tests/unit/chat6-auth-rate-limit-bounded-json.test.ts` | Distributed ingress + DB budget fault injection |
+| `/api/auth/devices` and `/api/auth/devices/[sessionId]` | Cross-origin sign-out, foreign-owner UUID, API output cache, DB refusal | `tests/unit/chat6-auth-device-routes.test.ts` | Cross-device read and revoke race replay |
+| `/api/auth/login/verify` | Old session not revoked, stale membership cookie, Super Admin factor forwarding, failed OTP issuing cookie | `tests/unit/chat6-auth-otp-verify-route.test.ts` | Live phone/email two-factor, provider outage and atomic consume |
+| `/auth/handoff` | Legacy token or unverified cross-domain credential exchange | Retired redirect-only route inspected; existing `UX-auth-handoff-01` and `PUB-auth-public-37` regressions | Validate host-bound fresh OTP in browser; do not resurrect old handoff |
+
+**Repairs, not just coverage:** `src/modules/auth/http.ts` now builds security-owned audit fields **after** untrusted event fields, so event-specific metadata cannot forge the canonical `auth-audit` component, route, or hashed IP tag. The device-security list now accepts only parsable persisted timestamps through `deviceTimestampIso`; a malformed imported row shows `Time unavailable` without preventing users from revoking the device.
+
+The above tests were **authored and committed but not executed**. No baseline failing unit suite was chased, no CI gating was used, no `src/auth` or `src/security` source was edited. These checks supplement existing tests and do not replace real concurrent PostgreSQL replay or manual end-to-end account journeys.

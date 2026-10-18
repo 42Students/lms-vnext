@@ -1,12 +1,13 @@
 # IIT Dharwad Projects hardening — adversarial defect register
 
-**Owner lane:** chat-9, breaker (chat-14 owns the full module-wide function coverage ledger). **Date:** 2026-10-18.
+**Owner:** chat-14 for the module-wide Projects defect register and coverage ledger; chat-9 retains attribution for its admin/college breaker findings. **Dates:** 2026-10-18 through 2026-10-19.
 Every item below was reproduced by code-path review and has a source repair on `chatgpt/chat-9-b`; adversarial regressions are authored but **Vitest/PostgreSQL/browser runs and cross-lane review are still required**. These are release blockers until those checks pass.
 ## Chat-14 meeting hardening findings (2026-10-19)
 
 | ID | Severity | Evidence / invariant | Fix on `chatgpt/chat-14-b` | Regression | Outstanding verification |
 |---|---|---|---|---|---|
 | PROJ-DEF-014-42 | S2 Pagination resilience | `mentorSprintProgressPage` allowed negative, NaN, Infinity, noninteger totals and requested pages to produce invalid pagination; URL schema `z.coerce.number()` accepted hexadecimal and scientific notation. | `af9179c`: strict decimal page parsing and finite, safe page/total normalization. | `PROJ-BREAK-MENTOR-373/374` | Authored, no Vitest/browser CI or cross-review yet |
+| PROJ-DEF-014-44 | S2 Review evidence pagination | `mentorReviewCompletenessQuerySchema` used coercive number parsing and `reviewCompletenessPage` allowed malformed persisted counts or requested pages to create NaN/negative display offsets. | `3f025d6`: decimal page validator and finite nonnegative total/offset guards. | `PROJ-BREAK-MENTOR-383..386` | Pure regression cases authored, not run; real PostgreSQL and independent review remain pending |
 | PROJ-DEF-014-43 | S1 Direct service permission / tenant isolation | `getMentorSprintProgress` relied solely on higher-level policy and roster producer, without an explicit platform-disabled rejection or same-college filter over provided roster entries; downstream SQL only checked an `IN` list from that projection. | `99db146`: pre-roster ACTIVE user guard and same-college Mentor projection. | `PROJ-BREAK-MENTOR-377..382` | Mocked denial and foreign row tests authored, real DB/HTTP session revocation pending |
 
 | PROJ-DEF-014-41 | S1 Abuse/availability | Four meeting mutation routes called unbounded `request.json()` before Project service Zod parsing, allowing oversized/malformed UTF-8 requests to allocate memory and emit generic failure handling. | `1eb8b9d`–`4fe131a` with `c3e729b`: bounded strict UTF-8 reader, supported JSON MIME, 400/413/415 friendly messages; services validate `unknown` input. | `PROJ-BREAK-MENTOR-359..363`, `PROJ-BREAK-MENTOR-337` | Tests authored, unrun; real HTTP bytes/role matrix and independent review outstanding |
