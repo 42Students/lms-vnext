@@ -52,11 +52,18 @@ describe("HR-PORTFOLIO-SCOPE-29 no cross-employer applicant or offer aggregates"
    "inArray(placementJobs.companyRelationshipId,relationshipIds)",
    'inArray(placementJobs.status,["PUBLISHED","CLOSED"])',
    "isNull(placementJobs.archivedAt)",
+   'eq(placementCompanyRelationships.status,"ACTIVE")',
+   'eq(placementCompanies.id,recruiter.companyId)',
+   'eq(placementCompanies.status,"ACTIVE")',
+   'eq(colleges.status,"ACTIVE")',
    "eq(collegeMemberships.collegeId,collegeId)",
    'eq(placementApplicationScreenings.status,"SHORTLISTED")',
    "recruiterOwnJobPredicate(context.user.id)",
   ])expect(source).toContain(clause);
   expect(source).toContain("requirePermission(context");
+  // Both aggregate queries must independently enforce live DB tenancy.
+  expect(source.split('eq(placementCompanyRelationships.status,"ACTIVE")').length-1).toBe(2);
+  expect(source.split('eq(placementCompanies.status,"ACTIVE")').length-1).toBe(2);
   expect(source).toContain("const ids=[...new Set(authorizedJobIds)].slice(0,20)");
  });
 });
