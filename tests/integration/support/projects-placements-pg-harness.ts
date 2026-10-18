@@ -205,6 +205,19 @@ export async function createTenant(db: PgHarness, name = "College"): Promise<Ten
   return { organizationId: org[0]!.id, collegeId: college[0]!.id };
 }
 
+/** Two colleges in one organization must still be isolated; this fixture
+ * intentionally reuses only the parent organization, never memberships.
+ */
+export async function createSiblingCollege(db: PgHarness, parent: TenantFixture,
+  name = "Sibling test college"): Promise<TenantFixture> {
+  const suffix = randomUUID().slice(0, 12);
+  const [row] = await db.query<{id:string}>(`
+    insert into colleges (organization_id,name,code)
+    values ($1,$2,$3) returning id`,
+    [parent.organizationId,name,"PHS-"+suffix]);
+  return { organizationId:parent.organizationId, collegeId:row!.id };
+}
+
 export async function createPrincipal(db: PgHarness, tenant: TenantFixture | null,
   roles: readonly ("COLLEGE_ADMIN"|"MENTOR"|"LEARNER"|"FACULTY"|"TPO")[] = [],
   systemRole = false): Promise<PrincipalFixture> {
