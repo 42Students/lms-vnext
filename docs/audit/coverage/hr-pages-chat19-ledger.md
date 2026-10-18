@@ -158,3 +158,11 @@ This is an independent TPO/HR workflow review; real clipboard permission denial,
 | Gap | Route and source | Direct regression | Navigation contract |
 |---|---|---|---|
 | HR-BREAK-TODAY-UNREAD-08 | `hrTodayUnreadAction` from `hr-today-unread-model.ts` | `tests/unit/hr-today-unread-model.test.ts` | The unread system-notification card opens `/hr/notifications` scoped to the selected college and unread-only view; it never opens `/hr/messages` (the conversation alias). Existing no-access exclusion retained. |
+
+## CI 834983cc and HR drive thread composition follow-up
+
+| Gap | Source / direct test | Verified contract at test-authoring level | Pending |
+|---|---|---|---|
+| PROJ-BREAK-EXPORT-02 | `tests/unit/PROJ-BREAK-chat19-project-workspace-export-ui.test.tsx` | Real SSR button disabled **attribute** represents action availability, ignoring Tailwind disabled CSS classes | Cloud CI, actual download |
+| COL-XA-14 | `src/app/(authenticated)/college/faculty/[membershipId]/page.tsx`, `tests/unit/chat19-college-cross-audit.test.ts` | Faculty history shared `DataTable` retains accessible `Persisted teaching assignments` caption with no raw wide table | Cloud CI, screen reader |
+| HR-BREAK-DRIVE-THREAD-09 | `getRecruiterDriveConversations`, `tests/unit/HR-BREAK-chat19-drive-conversation-service.test.ts` | Invalid UUID rejected before services, workspace authorization precedes thread reads, independent same-college/same-recruiter/same-job filter; raw foreign threads excluded | PostgreSQL role-revocation and browser navigation integration |
