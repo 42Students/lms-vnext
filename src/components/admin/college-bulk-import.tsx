@@ -2,7 +2,6 @@
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 import {DataTable} from "@/components/ui/data-table";
@@ -69,6 +68,7 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
       {key:"details",header:"Details",mobileLabel:"Details",mobilePriority:"secondary",cell:row=>row.message},
      ]}/>
    </div>:null}
+  </div>:null}
   <ConfirmDialog open={confirmImport} onOpenChange={setConfirmImport} title={"Create "+valid+" colleges?"} description="Existing codes will be skipped." confirmLabel="Import colleges" pending={busy} confirmDisabled={!valid||!organizationId} onConfirm={()=>void submit()}>
    {(error||validation)?<p role="alert" className="text-sm text-foreground">{error||validation}</p>:null}
   </ConfirmDialog>
