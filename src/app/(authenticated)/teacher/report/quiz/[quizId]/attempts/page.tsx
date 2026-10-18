@@ -84,7 +84,7 @@ export default async function FacultyQuizAttemptPage({
       <label className="grid min-w-0 flex-1 basis-56 gap-1 text-sm font-semibold text-body">
         Search learner attempts
         <input type="search" name="q" defaultValue={data.query.q} maxLength={120}
-          placeholder="Learner name" className="min-h-11 w-full rounded-md border border-border bg-background px-3 text-body text-base sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" />
+          placeholder="Learner name" className="min-h-11 w-full rounded-md border border-border bg-background px-3 text-body text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" />
       </label>
       <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Search</button>
       <Link href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,1,data.query.order,"",data.query.view)}
