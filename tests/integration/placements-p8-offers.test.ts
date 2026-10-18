@@ -416,6 +416,51 @@ describe("Placement P8 offers and joining", () => {
     expect(job.collegeId).toBe(SEED_IDS.collegeA);
   });
 
+  it("PLACEMENTS-TPO-NOTICE-19 DB preference opt-out suppresses TPO notice without dropping audited decision",async()=>{
+    const previous=await pool.query<{notify_application_updates:boolean}>(`
+      select notify_application_updates from placement_candidate_preferences
+      where membership_id=$1`,[SEED_IDS.learnerCollegeAMembership]);
+    await pool.query(`
+      insert into placement_candidate_preferences(membership_id,notify_application_updates)
+      values($1,false)
+      on conflict(membership_id) do update set notify_application_updates=false`,
+      [SEED_IDS.learnerCollegeAMembership]);
+    try{
+      const {job,application}=await preparePassedApplication();
+      const offer=await issuePlacementOffer(tpo,application.id,{
+        roleTitle:"Opt-out respect engineer",annualCtcInr:900_000,
+      });
+      const result=await recordTpoOfferLifecycle(tpo,job.id,{
+        action:"RECORD_DECLINED",confirmed:true,offerIds:[offer.id],
+        expectedStatus:"ISSUED",
+        reason:"Employer confirmed the learner declined this offer independently",
+      });
+      expect(result.updated).toBe(1);
+      const recorded=await pool.query<{status:string}>(
+        "select status from placement_offers where id=$1",[offer.id]);
+      expect(recorded.rows).toEqual([{status:"DECLINED"}]);
+      const event=await pool.query<{id:string}>(`
+        select id from activity_events where event_type='placements.offer.responded'
+        and subject_id=$1`,[offer.id]);
+      expect(event.rows).toHaveLength(1);
+      const notices=await pool.query<{count:number}>(`
+        select count(*)::int as count from in_app_notifications where event_id=$1`,
+        [event.rows[0]!.id]);
+      expect(notices.rows[0]?.count).toBe(0);
+    }finally{
+      if(previous.rows.length){
+        await pool.query(`
+          update placement_candidate_preferences set notify_application_updates=$2
+          where membership_id=$1`,[
+          SEED_IDS.learnerCollegeAMembership,previous.rows[0]!.notify_application_updates,
+        ]);
+      }else{
+        await pool.query("delete from placement_candidate_preferences where membership_id=$1",
+          [SEED_IDS.learnerCollegeAMembership]);
+      }
+    }
+  });
+
   it("PLACEMENTS-TPO-NOTICE-18 DB issues exactly one preference-scoped learner notice per durable TPO decision",async()=>{
     const {job,application}=await preparePassedApplication();
     const offer=await issuePlacementOffer(tpo,application.id,{
