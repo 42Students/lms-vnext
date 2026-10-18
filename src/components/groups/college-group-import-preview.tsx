@@ -1,6 +1,7 @@
 "use client";
 import { useState, useTransition, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
+import { DataTable } from "@/components/ui/data-table";
 
 type Result = {
   groupId: string; status: string; total: number; ready: number; blocked: number;
@@ -84,18 +85,15 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
       </a>
       {result.rows.length === 0 ? <p className="text-sm text-body">No learner rows were supplied.</p> : (
         <div className="max-h-[35rem] overflow-auto rounded-xl border border-border">
-          <table className="w-full min-w-[30rem] text-left text-sm">
-            <thead className="bg-muted"><tr>
-              <th scope="col" className="px-3 py-2">Row</th>
-              <th scope="col" className="px-3 py-2">Email</th>
-              <th scope="col" className="px-3 py-2">Validation</th>
-            </tr></thead>
-            <tbody>{result.rows.map((row) => <tr key={row.rowNumber} className="border-t border-border">
-              <td className="px-3 py-2">{row.rowNumber}</td>
-              <td className="px-3 py-2 break-all">{row.email}</td>
-              <td className="px-3 py-2">{row.status.replaceAll("_", " ")}</td>
-            </tr>)}</tbody>
-          </table>
+          <DataTable<Result["rows"][number]>
+            caption="Group import preview validation"
+            rows={result.rows} getRowKey={row=>String(row.rowNumber)}
+            empty={<p>No learner rows were supplied.</p>}
+            columns={[
+              {key:"row",header:"Row",mobilePriority:"primary",cell:row=>row.rowNumber},
+              {key:"email",header:"Email",mobilePriority:"secondary",cell:row=><span className="break-all">{row.email}</span>},
+              {key:"validation",header:"Validation",mobilePriority:"secondary",cell:row=>row.status.replaceAll("_"," ")},
+            ]}/>
         </div>
       )}
     </section> : null}
