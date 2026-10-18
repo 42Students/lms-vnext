@@ -49,7 +49,7 @@ export default async function FacultyContactsPage({
   if(!filters)return <section role="alert" className="space-y-3 p-5">
     <h1 className="text-lg font-semibold">Invalid directory filters</h1>
     <Link href={"/teacher/contacts/"+contactsTab}
-      className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">
+      className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       Return to Contacts
     </Link>
   </section>;
@@ -133,7 +133,7 @@ export default async function FacultyContactsPage({
               Contacts per page
               <select name="pageSize" aria-label="Contacts per page"
                 defaultValue={String(result.pageSize)}
-                className="mt-1.5 block min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground">
+                className="mt-1.5 block min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground text-base sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
                 <option value="10">10</option>
                 <option value="20">20</option>
                 <option value="50">50</option>
@@ -154,7 +154,7 @@ export default async function FacultyContactsPage({
             </span>
             <Link
               href={baseHref}
-              className="font-semibold text-[var(--lms-teal-deep)] hover:underline"
+              className="font-semibold text-[var(--lms-teal-deep)] hover:underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
             >
               Clear search
             </Link>

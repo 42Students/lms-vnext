@@ -21,7 +21,7 @@ export default async function FacultyCalendarPage({
   });
   if(!input.success)return <section role="alert" className="space-y-3">
     <h1 className="text-lg font-semibold">Invalid month or Section filter</h1>
-    <Link href="/teacher/calendar" className="font-semibold text-[var(--lms-teal-deep)] underline">
+    <Link href="/teacher/calendar" className="font-semibold text-[var(--lms-teal-deep)] underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       Clear filters
     </Link>
   </section>;
@@ -41,7 +41,7 @@ export default async function FacultyCalendarPage({
     <PageHeader title="Class Schedule" />
     <div className="flex justify-end">
       <Link href="/teacher/live-classes"
-        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         View live classes
       </Link>
     </div>
@@ -64,11 +64,11 @@ export default async function FacultyCalendarPage({
         <label className="grid gap-1 text-sm font-semibold text-body">Month (IST)
           <input type="month" name="month" required defaultValue={grid.query.month}
             min="1900-01" max="2099-12"
-            className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground" />
+            className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Teaching Section
           <select name="deliveryId" defaultValue={selected??""}
-            className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+            className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
             <option value="">All my Sections</option>
             {schedule.courses.map(course=><option key={course.deliveryId} value={course.deliveryId}>
               {course.courseCode} · {course.courseName}
@@ -103,7 +103,7 @@ export default async function FacultyCalendarPage({
                 </p>
                 {event.deliveryId?<Link
                   href={"/teacher/courses/"+encodeURIComponent(event.deliveryId)+"/home"}
-                  className="text-xs font-semibold text-[var(--lms-teal-deep)] hover:underline">Course Section</Link>
+                  className="text-xs font-semibold text-[var(--lms-teal-deep)] hover:underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Course Section</Link>
                 :<span className="text-xs text-muted-foreground">Section-wide session</span>}
               </article>)}
             </div>
