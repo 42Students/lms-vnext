@@ -1,6 +1,6 @@
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
-import {superAdminCourseBulkSchema} from "@/modules/courses/super-admin-course-bulk-model";
+import {superAdminCourseBulkSchema} from "@/modules/courses/super-admin-course-bulk-visibility";
 
 const source=(path:string)=>readFileSync(path,"utf8");
 const id1="11111111-1111-4111-8111-111111111111";
