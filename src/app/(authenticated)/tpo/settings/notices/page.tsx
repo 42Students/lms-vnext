@@ -14,10 +14,15 @@ export default async function TpoStudentNoticesSettings(){
  const ctx=await getCurrentRequestContext();
  await requireTpoBatchActor(ctx);
  const [announcements,prep,communication]=await Promise.all([
-  listTpoPlacementAnnouncements(ctx,"yours"),getTpoPrepReadiness(ctx),getTpoCommunicationSettings(ctx),
+  // This Settings summary is college-wide, not only notices authored by
+  // the currently signed-in officer. The source reader caps each page at 100.
+  listTpoPlacementAnnouncements(ctx,"yours",new Date(),1,"COLLEGE"),
+  getTpoPrepReadiness(ctx),getTpoCommunicationSettings(ctx),
  ]);
  const destinations=tpoStudentNoticeNavigation();
- const view=tpoStudentNoticesOverview({announcementsReady:announcements.status==="READY",noticeCount:announcements.items.length,prepReady:prep.ready});
+ const view=tpoStudentNoticesOverview({announcementsReady:announcements.status==="READY",
+  noticeCount:announcements.items.length,prepReady:prep.ready,
+  hasMore:announcements.status==="READY"&&announcements.hasMore});
  return <div className="min-w-0 space-y-5">
   <TpoSettingsNav active="notices"/>
   <h1 className="text-xl font-semibold">Student Notices &amp; Preparation</h1>

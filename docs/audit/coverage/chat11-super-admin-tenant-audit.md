@@ -44,3 +44,29 @@ Source inspection: 2026-10-18. Branch: `chatgpt/chat-11-b`. **Partial, source-re
 | ID | Surface | New threat/fix | Regression | Runtime evidence missing |
 |---|---|---|---|---|
 | SA-tenants-modules-R01 | Module Access aggregate cards | Previous request-context-only `admin-scope.select` could authorize counts if the Super Admin role was revoked after request authentication, including returning success for empty lists. `db34e73` and `df3d5e4` move all aggregation and the empty shortcut behind persisted active-actor locks inside one transaction. | `tests/unit/chat11-super-admin-module-metrics-revoked-role.test.ts` — SA-tenants-modules-R01 | Two-session PostgreSQL revocation proof and large-tenant performance |
+
+## Final-read authorization on readiness (chat-11)
+
+| ID | Surface | New hardening | Regression | Remaining |
+|---|---|---|---|---|
+| SA-tenants-modules-READY-03 | `getSuperAdminCollegeReadiness` | Rebuild active actor/system-role and selected college/organization permission from persisted rows in a transaction after async readiness counters finish but before emitting tenant counts. A revoked role cannot receive a successful completed response based solely on a stale request snapshot. | `tests/unit/chat11-super-admin-readiness-revocation.test.ts`; `f015d0f`, `5909380` | True two-session role-revocation/SQL transaction E2E and runtime domain checks |
+
+## Tenant and module controls — additional persistently authorized paths
+
+| ID | Surface | Protection | Regression | Remaining |
+|---|---|---|---|---|
+| SA-tenants-modules-BRAND-READ-02 | College branding preview service | Rebuild persisted active Super Admin authority and selected college/organization scope after private branding record read, before returning public preview to caller; don't disclose private object key | `tests/unit/chat11-super-admin-branding-preview-revocation.test.ts`, commits `f5d70ce`, `e348cf1`, `310eeae` | Two-session role revocation E2E |
+| SA-tenants-modules-MOD-RACE-03 | Student member override mutation | Lock ACTIVE college and persisted platform permission in transaction before member lock, ancestor locks, no-op or mutating/audit; test stale, wrong role, wrong tenant, strict input, ancestor locks | `tests/unit/chat11-super-admin-student-rule-role-revocation.test.ts`, commits `40c285f`, `c753c54` | Postgres concurrency between new ancestor lock insert and member override; browser conflict recovery |
+
+## College-specific module filters and guarded reads
+
+| ID | Surface | Security/accuracy | Test | Live gap |
+|---|---|---|---|---|
+| SA-tenants-modules-MOD-FILTER-04 | `/admin/features/[collegeId]`, `adminModuleDetailQuerySchema` | Authenticate SA before parsing tenant path/query; reject repeated values, unknown identity/scope keys, hex/exponent/whitespace pages, invalid nested scopes, academic pagination beyond 10000; show recoverable clear-filters state before loading rules | `tests/unit/chat11-super-admin-module-detail-filters.test.ts`; `56b97bc`, `ad2c55e`, `76775c0`, `89eb8cd` | Browser route role matrix and malformed URLs |
+| SA-tenants-modules-MOD-READ-05 | `listSuperAdminFeatureControls`, `getSuperAdminCollegeModuleAccess` | After reading college/rules, persisted active SA-role and selected-college scope rechecked under transaction-held SHARE locks before emitting organization, college and descendant membership-rule data | `tests/unit/chat11-super-admin-module-reads-revocation.test.ts`; `c86ea38`, `b1be86c` | Postgres role revocation and role-scoped multi-college perf |
+
+## Ancestor / academic module mutation authorization
+
+| ID | Surface | Guard | Test | CI missing |
+|---|---|---|---|---|
+| SA-tenants-modules-MOD-WRITE-06 | `writeSuperAdminCollegeRule`, `writeDescendantRule` | Existing college `for update` serialization now followed by persisted active Super Admin `college.manage` SHARE lock, before expected-version, no-op, ancestor-lock evaluation, write and audit. Both levels reject tenant and session revocation between initial form read and commit. | `tests/unit/chat11-super-admin-module-writes-revocation.test.ts` (two ID-named handler cases plus role matrix), commits `7c47f0b`, `4a923db`, `c7abfe4` | PostgreSQL two-session revocation, ancestor-lock introduction race with global admin and E2E |

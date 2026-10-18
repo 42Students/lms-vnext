@@ -2,6 +2,7 @@ import "server-only";
 import {and,eq,inArray,isNull,or,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {activityEvents,colleges,moduleAccessRules} from "@/db/schema";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
@@ -144,6 +145,9 @@ export async function writeDescendantRule(ctx:RequestContext,collegeInput:string
   const [lockedCollege]=await tx.select({id:colleges.id}).from(colleges)
    .where(and(eq(colleges.id,college.id),eq(colleges.status,"ACTIVE"))).for("update").limit(1);
   if(!lockedCollege)return null;
+  await assertPersistedPlatformPermission(tx,ctx,"college.manage",{
+   collegeId:college.id,organizationId:college.organizationId,
+  });
   const scope=await resolveScope(tx,college.id,input.scopeType,input.scopeId);
   if(!scope)return null;
   const predicate=and(eq(moduleAccessRules.scopeType,input.scopeType),eq(moduleAccessRules.scopeId,input.scopeId),eq(moduleAccessRules.module,input.module));

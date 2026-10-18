@@ -28,7 +28,8 @@ describe("College Projects gap closure round 4",()=>{
   const page=source("src/app/(authenticated)/college/projects/page.tsx");
   const controls=source("src/components/projects/project-admin-collection-controls.tsx");
   expect(exportPage).toContain('project-workspaces-page.csv');
-  expect(exportPage).toContain('items.map(');
+  expect(exportPage).toContain('projectWorkspacePageCsv(items)');
+  expect(source("src/modules/projects/admin-workspace-page-export-model.ts")).toContain("items.map(");
   expect(page).toContain('view={query.view}');
   expect(controls).toContain('[10, 20, 25, 50, 100]');
  });
@@ -62,7 +63,7 @@ describe("College Projects gap closure round 4",()=>{
   expect(list).toContain("Clear filters");
  });
  it("COL-projects-19 restores workspace, submissions and template page labels",()=>{
-  expect(source("src/app/(authenticated)/college/projects/page.tsx")).toContain('title="Project workspaces"');
+  expect(source("src/app/(authenticated)/college/projects/page.tsx")).toContain('title="Workspaces"');
   expect(source("src/components/projects/project-admin-submissions-page.tsx")).toContain('title="Submissions dashboard"');
   expect(source("src/app/(authenticated)/college/projects/templates/page.tsx")).toContain('title="Project templates"');
  });

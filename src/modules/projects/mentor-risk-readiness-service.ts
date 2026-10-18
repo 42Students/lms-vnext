@@ -19,18 +19,23 @@ export async function getMentorRiskReadiness(context:RequestContext,raw:unknown)
     !can(context,"projects.read",{
       collegeId:membership.collegeId,organizationId:membership.organizationId,
     }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  // Module-off is an authorization boundary, not merely an empty response.
+  // Do not resolve a project UUID or return its title/status while disabled.
+  const enabled=(await resolveOptionalModuleAccess(context)).projects.enabled;
+  if(!enabled)return {
+    enabled:false as const,query,projectTitle:"",projectStatus:"",
+    counts:{blockedTasks:0,reviewTasks:0,pendingMeetings:0,
+      scheduledPastDay:0,incompleteTasks:0,totalTasks:0,
+      unshippedReleases:0,incompleteSprints:0},
+    riskCount:0,readinessGapCount:0,latestSubmissionStatus:null,
+    total:0,page:1,pageSize:20,totalPages:1,
+    items:[] as ReturnType<typeof mentorRiskReadiness>["items"],
+  };
   const scope=await requireProjectReadAccess(context,query.projectId);
   if(scope.access!=="MENTOR"||scope.collegeId!==membership.collegeId||
      !can(context,"projects.read",{
        collegeId:scope.collegeId,organizationId:scope.organizationId,
      }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
-  const enabled=(await resolveOptionalModuleAccess(context)).projects.enabled;
-  if(!enabled)return {enabled:false as const,query,projectTitle:scope.project.title,
-    ...mentorRiskReadiness({
-      projectId:scope.project.id,projectStatus:scope.project.status,
-      releases:[],sprints:[],tasks:[],meetings:[],
-      latestSubmissionStatus:null,finalApproved:false,evaluationRecorded:false,
-    },query)};
   const [workspace,readiness,meetings]=await Promise.all([
     getProjectInstanceWorkspace(context,scope.project.id),
     getProjectReadiness(context,scope.project.id),

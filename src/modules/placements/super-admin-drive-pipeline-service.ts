@@ -1,7 +1,7 @@
 import "server-only";
 import { and, eq, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { placementApplications, placementApplicationScreenings } from "@/db/schema";
+import { collegeMemberships, placementApplications, placementApplicationScreenings } from "@/db/schema";
 import { placementCollegeApplicationStages } from "@/db/schema/placement-college-application-stages";
 import type { RequestContext } from "@/modules/identity/context";
 import { getPlacementJob } from "./job-service";
@@ -18,6 +18,13 @@ export async function getSuperAdminDrivePipeline(context: RequestContext, jobId:
     stage,
     total: sql<number>`count(*)::integer`.mapWith(Number),
   }).from(placementApplications)
+    // An application FK alone does not prove that its learner belongs to
+    // the selected job's college. Exclude malformed cross-college imports
+    // BEFORE counting pipeline stages.
+    .innerJoin(collegeMemberships,and(
+      eq(collegeMemberships.id,placementApplications.membershipId),
+      eq(collegeMemberships.collegeId,job.collegeId),
+    ))
     .leftJoin(placementApplicationScreenings,
       eq(placementApplicationScreenings.applicationId, placementApplications.id))
     .leftJoin(placementCollegeApplicationStages,
