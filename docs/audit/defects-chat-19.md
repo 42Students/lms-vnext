@@ -233,3 +233,10 @@ This is an independent unowned responsive UX pickup for the critical TPO/HR plac
 | ID | Severity | Source | Finding and fix | Commit | Regression |
 |---|---|---|---|---|---|
 | PROJ-BREAK-TEAM-CSV-02 | MAJOR | `src/modules/projects/class-team-csv-export.ts` | CSV spreadsheet formula defense stripped only a manually enumerated set of invisible prefixes and could miss Unicode format controls such as U+034F/U+180E. Defuse leading formulas behind any Unicode control, format, spacing, line or paragraph separator while preserving team IDs, CSV quoting, and authorized visible rows. | `c77b3822` | `tests/unit/PROJ-BREAK-chat19-class-team-csv-unicode.test.ts` (`8ea27868`) |
+
+## Unicode spreadsheet mark and final clipboard accessibility hardening
+
+| ID | Severity | Source | Finding and correction | Test |
+|---|---|---|---|---|
+| HR/PROJ-CSV-UNICODE-03 | MAJOR | `class-team-csv-export.ts`, `admin-workspace-page-export-model.ts`, `report-interactive-table-export-model.ts`, `receipt-history-export-model.ts`, `tpo-request-page-clipboard.tsx` | Unicode combining marks, e.g. U+034F before an equals sign, were omitted from existing control/format/space prefixes and could bypass formula neutralization across Projects and placement exports. Include Unicode Mark category before formula characters; also sanitize NEL/vertical-tab in report clipboard TSV. | `tests/unit/chat19-invisible-mark-export-matrix.test.ts` |
+| UX-SPILL-TPO-CLIP-05 | MAJOR | `TpoRequestPageClipboard` | Request sorting, column chooser, reset button and option touch targets were as short as 40px or less, with missing visible keyboard-focus treatment. Set 44px minima and focus outlines without changing filter/sort semantics. | `tests/unit/UX-SPILL-chat19-tpo-request-responsive.test.tsx` |
