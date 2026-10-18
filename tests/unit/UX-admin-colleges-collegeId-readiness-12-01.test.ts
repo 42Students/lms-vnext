@@ -6,7 +6,7 @@ describe("UX-admin-colleges-collegeId-readiness-12-01",()=>{
   expect(source).toContain("<Select");
   expect(source).toContain("<Button");
   expect(source).not.toContain("<select");
-  expect(source).not.toMatch(/<input\\b(?:(?!>).)*type="(?:search|number|date|text|email)"/s);
+  expect(source).not.toMatch(/<input\b[^>]*type="(?:search|number|date|text|email)"/s);
   expect(source).toContain('method="get"');
   expect(source).toContain("<PageHeader");
  });

@@ -226,7 +226,7 @@ export default async function CollegeReadinessPage({
           </StatusBadge>
         </div>
 
-        <form className="mt-4 flex flex-wrap items-end gap-3">
+        <form method="get" className="mt-4 flex flex-wrap items-end gap-3">
           <label className="grid gap-1 text-sm font-semibold text-body">Show checks
             <Select name="status" defaultValue={parsed.status} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="ALL">All ten checks</option><option value="NEEDS_ATTENTION">Needs attention</option><option value="FAIL">Failed</option><option value="UNKNOWN">Unknown source</option><option value="PASS">Passed</option>
