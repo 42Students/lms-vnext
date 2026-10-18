@@ -8,6 +8,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {isSuperAdmin} from "@/modules/identity/context";
 import { readAdminQuery, superAdminReadHref, type SuperAdminReadResult, type SuperAdminReadRow } from "@/modules/admin-ui/super-admin-read-directory-model";
 export async function AdminScopedReadPage({title,path,description,statuses,searchParams,loader,exportPath,exportFilename,renderRowActions,renderBulkActions,peopleFilters,classOptions,applicationFilters}:{
  title:string;path:string;description:string;
@@ -26,18 +27,40 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   <ErrorState title="Invalid directory filters" description="Check the search, status or page."
    action={<Link href={path} className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>}/></div>;
  const context=await getCurrentRequestContext();
+ if(!isSuperAdmin(context))return <div className="space-y-5">
+  <PageHeader eyebrow="Super Admin" title={title}/>
+  <ErrorState title="Directory access denied"
+   description="Your account cannot access Super Admin directory records."
+   action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
+ </div>;
  if(!context.adminScope?.collegeId)return <div className="space-y-5">
   <PageHeader eyebrow="Super Admin" title={title}/>
   <EmptyState title="Select a college to continue" description={"Choose a college in the header above to see its "+(title==="Faculty"?"faculty":title==="Students"?"students":title==="Faculty Assignment"?"faculty assignments":"people directory")+"."}/>
  </div>;
- const data=await loader(parsed.data);
- const peopleSummary=peopleFilters?await Promise.all([
+ const directory=await loader(parsed.data)
+  .then(value=>({ok:true as const,value}))
+  .catch(()=>({ok:false as const}));
+ if(!directory.ok)return <div className="space-y-5">
+  <PageHeader eyebrow="Super Admin" title={title}/>
+  <ErrorState title="Directory unavailable"
+   description="The selected college's directory could not be loaded. Your filters have not changed."
+   action={<Link href={superAdminReadHref(path,parsed.data)}
+    className="font-semibold text-primary-text underline">Retry loading directory</Link>}/>
+ </div>;
+ const data=directory.value;
+ const summaries=peopleFilters?await Promise.allSettled([
   loader({...parsed.data,status:"ALL",page:1}),
   loader({...parsed.data,status:"ACTIVE",page:1}),
   loader({...parsed.data,status:"SUSPENDED",page:1}),
  ]):null;
+ const peopleSummary=summaries&&summaries[0].status==="fulfilled"&&
+  summaries[1].status==="fulfilled"&&summaries[2].status==="fulfilled"
+  ?[summaries[0].value,summaries[1].value,summaries[2].value]:null;
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow={peopleFilters?"People":"Super Admin · Read-only"} title={title} description={description}/>
+  {peopleFilters&&!peopleSummary?<p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
+   Directory totals are temporarily unavailable. The filtered records below remain visible.
+  </p>:null}
   {peopleSummary?<section aria-label={title+" overview"} className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
    {[
     {label:peopleFilters?.kind==="FACULTY"?"Faculty":"Students",value:peopleSummary[0].total},
