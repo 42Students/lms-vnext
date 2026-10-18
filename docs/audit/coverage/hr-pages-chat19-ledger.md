@@ -11,7 +11,7 @@ Scope: independently reviewed HR/recruiter page entry points and chat-15/chat-16
 
 | Route | Source | Source test | Behavioral test beyond source | Evidence / remaining work |
 |---|---|---|---|---|
-| `/hr/activity` | `src/app/(authenticated)/hr/activity/page.tsx` | `tests/unit/ux-hr-rollout.test.ts`, `tests/unit/chat19-hr-page-contracts.test.ts` | — | Source contracts; nested page-state integration outstanding |
+| `/hr/activity` | `src/app/(authenticated)/hr/activity/page.tsx` | `tests/unit/ux-hr-rollout.test.ts`, `tests/unit/chat19-hr-page-contracts.test.ts` | `tests/unit/HR-BREAK-chat19-activity-results-pages.test.ts` | Direct server-page boundary plus source checks |
 | `/hr/calendar` | `src/app/(authenticated)/hr/calendar/page.tsx` | `tests/unit/ux-hr-rollout.test.ts`, `tests/unit/chat19-hr-page-contracts.test.ts` | — | Source contracts; nested page-state integration outstanding |
 | `/hr/colleges` | `src/app/(authenticated)/hr/colleges/page.tsx` | `tests/unit/ux-hr-rollout.test.ts`, `tests/unit/chat19-hr-page-contracts.test.ts` | `tests/unit/chat19-hr-page-contracts.test.ts` (redirect source) | Source contracts; nested page-state integration outstanding |
 | `/hr/company` | `src/app/(authenticated)/hr/company/page.tsx` | `tests/unit/ux-hr-rollout.test.ts`, `tests/unit/chat19-hr-page-contracts.test.ts` | — | Source contracts; nested page-state integration outstanding |
@@ -32,13 +32,14 @@ Scope: independently reviewed HR/recruiter page entry points and chat-15/chat-16
 | `/hr/placements` | `src/app/(authenticated)/hr/placements/page.tsx` | `tests/unit/ux-hr-rollout.test.ts`, `tests/unit/chat19-hr-page-contracts.test.ts` | — | Source contracts; nested page-state integration outstanding |
 | `/hr/placements/jobs/[jobId]` | `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx` | `tests/unit/ux-hr-rollout.test.ts`, `tests/unit/chat19-hr-page-contracts.test.ts` | `tests/unit/chat19-projects-recruiter-role-journey.test.ts` (policy/model), `tests/unit/HR-BREAK-applicants-01.test.ts` (filter model) | Source contracts; nested page-state integration outstanding |
 | `/hr/profile` | `src/app/(authenticated)/hr/profile/page.tsx` | `tests/unit/ux-hr-rollout.test.ts`, `tests/unit/chat19-hr-page-contracts.test.ts` | `tests/unit/HR-BREAK-chat19-profile-page.test.ts` | Direct server-page boundary plus source checks |
-| `/hr/round-results` | `src/app/(authenticated)/hr/round-results/page.tsx` | `tests/unit/ux-hr-rollout.test.ts`, `tests/unit/chat19-hr-page-contracts.test.ts` | — | Source contracts; nested page-state integration outstanding |
+| `/hr/round-results` | `src/app/(authenticated)/hr/round-results/page.tsx` | `tests/unit/ux-hr-rollout.test.ts`, `tests/unit/chat19-hr-page-contracts.test.ts` | `tests/unit/HR-BREAK-chat19-activity-results-pages.test.ts` | Direct server-page boundary plus source checks |
 
 ## HR and Projects role journey contracts
 
 | ID | Boundary | Test | Outcomes |
 |---|---|---|---|
 | PROJ-HR-01/02/03/04/05/07/08 | authorized recruiter sees only TPO-shortlisted learner project links under same college and employer, never unsafe URLs | `tests/unit/chat19-projects-recruiter-role-journey.test.ts` | Direct data-projection policy tests + source assertions. PostgreSQL grant revocation during requests outstanding |
+| HR-BREAK-ACTIVITY-01 | activity and round-result route denial, bad filters, stale round and zero-result page | `tests/unit/HR-BREAK-chat19-activity-results-pages.test.ts` | Direct service-mocked page tests; safe college selection and no guessed round |
 | HR-BREAK-ROUNDS-01 | authorized drive conversation and stale round removal actions | `tests/unit/HR-BREAK-chat19-drive-pages.test.ts` | Direct role, invalid identifier, noneditable round, hidden optimistic version, empty drive thread |
 | HR-BREAK-REPORTS-01 | company reports and historical external drive page | `tests/unit/HR-BREAK-chat19-scope-pages.test.ts` | Direct report filters, expired session, college-selection scope, forged save confirmation |
 | HR-BREAK-CONVO-01/02/03 | recruiter conversation detail page, wrong-role and expired sessions, malformed IDs/pages, revoked thread, contaminated company job row, auxiliary service failure | `tests/unit/HR-BREAK-chat19-conversation-page.test.ts` | Direct async page tests, defense-in-depth company check, safe degraded state |
@@ -60,4 +61,4 @@ Scope: independently reviewed HR/recruiter page entry points and chat-15/chat-16
 
 ## Remaining quality gates
 
-Cloud results from the next merge must confirm new tests. Real route rendering for each page at 320/360/390px, keyboard, screen-reader, modal escape/focus return, service latency and PostgreSQL transactional races remain acceptance gates. All 22 have source contracts; eight also have directly invoked page behavior tests in this ledger. No 90%+ branch coverage or exhaustive end-to-end acceptance is claimed.
+Cloud results from the next merge must confirm new tests. Real route rendering for each page at 320/360/390px, keyboard, screen-reader, modal escape/focus return, service latency and PostgreSQL transactional races remain acceptance gates. All 22 have source contracts; ten also have directly invoked page behavior tests in this ledger. No 90%+ branch coverage or exhaustive end-to-end acceptance is claimed.
