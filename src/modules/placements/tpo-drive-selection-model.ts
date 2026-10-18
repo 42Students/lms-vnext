@@ -65,8 +65,14 @@ export function matchesTpoSelectionReleaseRevision(
   },
   expectedRecordedAt:string,
 ):boolean{
-  return Number.isFinite(current.recordedAt.getTime()) &&
-    current.recordedAt.toISOString()===expectedRecordedAt &&
+  // The API accepts offset-aware ISO dates. A +05:30 token and a Z token
+  // for the same instant describe the same persisted revision; textual ISO
+  // equality would incorrectly reject a valid, still-current selection.
+  const persistedInstant = current.recordedAt.getTime();
+  const expectedInstant = Date.parse(expectedRecordedAt);
+  return Number.isFinite(persistedInstant) &&
+    Number.isFinite(expectedInstant) &&
+    persistedInstant === expectedInstant &&
     current.applicationId===displayed.applicationId &&
     current.roleTitle===displayed.roleTitle &&
     current.annualCtcInr===displayed.annualCtcInr;
