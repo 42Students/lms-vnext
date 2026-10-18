@@ -31,6 +31,8 @@ import {
   stagePlacementRoundResult,
 } from "@/modules/placements/result-service";
 import { decidePlacementScreening } from "@/modules/placements/screening-service";
+import { recordTpoDriveSelections } from "@/modules/placements/tpo-drive-selection-service";
+import {getTpoDriveClosePreview,closeTpoDriveWithPreview} from "@/modules/placements/tpo-drive-close-preview-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { enableSeedLearnerPlacementAccess } from "../support/w04-placement-access-fixture";
 
@@ -88,6 +90,7 @@ async function cleanup() {
   await pool.query(
     "delete from activity_events",
   );
+  await pool.query("delete from placement_drive_selections");
   await pool.query(
     "delete from placement_joining_history",
   );
@@ -303,6 +306,103 @@ describe("Placement P8 offers and joining", () => {
     );
     expect(rows.rows).toEqual([{status:"ISSUED"}]);
     expect(job.collegeId).toBe(SEED_IDS.collegeA);
+  });
+
+  it("PLACEMENTS-SELECTION-IDEMP-DB-01 retries an identical selection without a second audit or timestamp change",async()=>{
+    const {job,application}=await preparePassedApplication();
+    const request={action:"RECORD" as const,entries:[{
+      applicationId:application.id,roleTitle:"Offer engineer",annualCtcInr:900_000,
+    }]};
+    const first=await recordTpoDriveSelections(tpo,job.id,request);
+    expect(first.recorded).toBe(1);
+    expect(first.selectionIds).toHaveLength(1);
+    const before=await pool.query<{
+      recorded_at:string;
+    }>("select recorded_at::text from placement_drive_selections where id = $1",[first.selectionIds[0]]);
+    expect(before.rowCount).toBe(1);
+    const repeated=await recordTpoDriveSelections(tpo,job.id,request);
+    expect(repeated).toEqual(first);
+    const after=await pool.query<{
+      recorded_at:string;
+    }>("select recorded_at::text from placement_drive_selections where id = $1",[first.selectionIds[0]]);
+    expect(after.rows).toEqual(before.rows);
+    const audits=await pool.query<{count:number}>(
+      "select count(*)::integer as count from activity_events where event_type = $1 and subject_id = $2",
+      ["PLACEMENTS_TPO_SELECTION_RECORDED",job.id],
+    );
+    expect(audits.rows[0]?.count).toBe(1);
+
+    const foreignTpo:RequestContext={...tpo,membership:{...tpo.membership!,
+      id:SEED_IDS.facultyCollegeBMembership,collegeId:SEED_IDS.collegeB}};
+    await expect(recordTpoDriveSelections(foreignTpo,job.id,request)).rejects.toBeInstanceOf(AuthorizationError);
+    await expect(recordTpoDriveSelections(learner,job.id,request)).rejects.toBeInstanceOf(AuthorizationError);
+    const stillOne=await pool.query<{count:number}>(
+      "select count(*)::integer as count from placement_drive_selections where job_id = $1",[job.id]);
+    expect(stillOne.rows[0]?.count).toBe(1);
+  });
+
+  it("PLACEMENTS-SELECTION-RACE-DB-01 concurrent exact selection submits create one row and one audit",async()=>{
+    const {job,application}=await preparePassedApplication();
+    const request={action:"RECORD" as const,entries:[{
+      applicationId:application.id,roleTitle:"Offer engineer",annualCtcInr:900_000,
+    }]};
+    const settled=await Promise.allSettled([
+      recordTpoDriveSelections(tpo,job.id,request),
+      recordTpoDriveSelections(tpo,job.id,request),
+    ]);
+    expect(settled.map(result=>result.status)).toEqual(["fulfilled","fulfilled"]);
+    const rows=await pool.query<{id:string}>(
+      "select id from placement_drive_selections where job_id = $1",[job.id]);
+    expect(rows.rows).toHaveLength(1);
+    const audit=await pool.query<{count:number}>(
+      "select count(*)::integer as count from activity_events where subject_id = $1 and event_type = $2",
+      [job.id,"PLACEMENTS_TPO_SELECTION_RECORDED"]);
+    expect(audit.rows[0]?.count).toBe(1);
+    for(const outcome of settled)if(outcome.status==="fulfilled"){
+      expect(outcome.value.selectionIds).toEqual([rows.rows[0]?.id]);
+      expect(outcome.value.recorded).toBe(1);
+    }
+  });
+
+  it("PLACEMENTS-CLOSE-ENDED-DB-01 closes a published drive after its season ends with complete persisted reconciliation",async()=>{
+    const {job,application}=await preparePassedApplication();
+    const before=await pool.query<{season_id:string}>(
+      "select season_id from placement_jobs where id = $1",[job.id]);
+    const originalSeason=before.rows[0]?.season_id;
+    expect(originalSeason).toBeTruthy();
+    const closedSeason=await pool.query<{id:string}>(`
+      insert into placement_seasons (
+        college_id,name,code,start_date,end_date,status,
+        created_by_user_id,closed_by_user_id,closed_at
+      ) values ($1,$2,$3,'2026-01-01','2026-10-17','CLOSED',$4,$4,now())
+      returning id`,[
+        SEED_IDS.collegeA,"Ended season closeout regression","chat5-closed-"+job.id.slice(0,8),
+        SEED_IDS.facultyUser,
+      ]);
+    const closedSeasonId=closedSeason.rows[0]!.id;
+    try {
+      await pool.query("update placement_jobs set season_id=$1 where id=$2",[closedSeasonId,job.id]);
+      const preview=await getTpoDriveClosePreview(tpo,job.id);
+      expect(preview).toMatchObject({status:"PUBLISHED",canClose:true,issuedOffers:0,pendingSelections:0});
+      const result=await closeTpoDriveWithPreview(tpo,job.id,{
+        action:"CLOSE",confirmed:true,expectedUpdatedAt:preview.expectedUpdatedAt,
+        expectedCounts:preview.counts,reason:"Final recruitment finished and season already ended",
+      });
+      expect(result.status).toBe("CLOSED");
+      const persisted=await pool.query<{status:string}>(
+        "select status from placement_jobs where id=$1",[job.id]);
+      expect(persisted.rows[0]?.status).toBe("CLOSED");
+      const screening=await pool.query<{status:string}>(
+        "select status from placement_application_screenings where application_id=$1",[application.id]);
+      expect(screening.rows[0]?.status).toBe("REJECTED");
+      const closedAudit=await pool.query<{total:number}>(
+        "select count(*)::integer as total from activity_events where subject_id=$1 and event_type=$2",
+        [job.id,"PLACEMENTS_TPO_DRIVE_CLOSED_WITH_PREVIEW"]);
+      expect(closedAudit.rows[0]?.total).toBe(1);
+    } finally {
+      await pool.query("update placement_jobs set season_id=$1 where id=$2",[originalSeason,job.id]);
+      await pool.query("delete from placement_seasons where id=$1",[closedSeasonId]);
+    }
   });
 
   it("issues an idempotent offer, lets the learner accept, and preserves corrected joining history", async () => {

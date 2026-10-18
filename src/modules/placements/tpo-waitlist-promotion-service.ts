@@ -9,7 +9,7 @@ import {PlacementsServiceError} from "./errors";
 import {issuePlacementOffer} from "./offer-service";
 import {requireTpoJobCollege,requireTpoJobActor,auditTpoJobChange} from "./tpo-job-write-base";
 import {placementJobIdSchema} from "./validation";
-import {tpoWaitlistPromotionSchema,waitlistPreviewToken} from "./tpo-waitlist-promotion-model";
+import {tpoWaitlistPromotionSchema,waitlistPreviewToken,decideWaitlistReleaseSettlement} from "./tpo-waitlist-promotion-model";
 
 export async function getTpoWaitlistPreview(context:RequestContext,rawJobId:unknown){
  const collegeId=await requireTpoJobCollege(context),jobId=placementJobIdSchema.parse(rawJobId);
@@ -156,6 +156,13 @@ export async function offerToNextWaitlisted(context:RequestContext,rawJobId:unkn
   if(!found)throw new PlacementsServiceError("PLACEMENT_OFFER_ACTIVE_EXISTS");
   await getDb().transaction(async tx=>{
    await requireTpoJobActor(tx,context);
+   const [settling]=await tx.select({
+    status:placementWaitlistPromotions.status,offerId:placementWaitlistPromotions.offerId,
+   }).from(placementWaitlistPromotions).where(eq(placementWaitlistPromotions.id,existing.id))
+    .for("update").limit(1);
+   const decision=decideWaitlistReleaseSettlement(settling?.status??"",settling?.offerId??null,found.id);
+   if(decision==="STALE")throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
+   if(decision==="IDEMPOTENT")return;
    const [saved]=await tx.update(placementWaitlistPromotions).set({
     status:"RELEASED",offerId:found.id,releasedAt:new Date(),
    }).where(and(eq(placementWaitlistPromotions.id,existing.id),
@@ -173,6 +180,13 @@ export async function offerToNextWaitlisted(context:RequestContext,rawJobId:unkn
  });
  await getDb().transaction(async tx=>{
   await requireTpoJobActor(tx,context);
+  const [settling]=await tx.select({
+   status:placementWaitlistPromotions.status,offerId:placementWaitlistPromotions.offerId,
+  }).from(placementWaitlistPromotions).where(eq(placementWaitlistPromotions.id,existing.id))
+   .for("update").limit(1);
+  const decision=decideWaitlistReleaseSettlement(settling?.status??"",settling?.offerId??null,offer.id);
+  if(decision==="STALE")throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
+  if(decision==="IDEMPOTENT")return;
   const [saved]=await tx.update(placementWaitlistPromotions).set({
    status:"RELEASED",offerId:offer.id,releasedAt:new Date(),
   }).where(and(eq(placementWaitlistPromotions.id,existing.id),

@@ -18,7 +18,9 @@ export function learnerAssessmentMatchesState(
   if(filter==="ALL")return true;
   const completed=item.kind==="ASSIGNMENT" ? Boolean(item.submittedAt) : item.attemptsUsed>0;
   if(filter==="COMPLETED")return completed;
-  if(filter==="RESULTS")return completed && (item.kind==="ASSIGNMENT" ? item.gradePublished : item.status==="CLOSED" && item.resultsPublished);
+  if(filter==="RESULTS")return completed && (item.kind==="ASSIGNMENT" ? item.gradePublished :
+    item.status==="CLOSED" && item.resultsPublished && Boolean(item.dueAt) &&
+    Number.isFinite(Date.parse(item.dueAt!)) && Date.parse(item.dueAt!)<=snapshotNowMs);
   if(filter==="OVERDUE"){
     if(completed)return false;
     const due=item.dueAt?Date.parse(item.dueAt):Number.NaN;

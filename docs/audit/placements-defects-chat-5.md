@@ -48,3 +48,27 @@ Pure policy and source-level Vitest tests were committed; one existing PostgreSQ
 Wrong-college and revoked-role TPO service IDOR; simultaneous release of same selection; two TPOs competing for last waitlist seat; expiry sweep versus acceptance; repeated Import Commit after lost response; session expiration between preview/commit; duplicate roll numbers and remapped membership; and retention/CTC/Joining evidence provenance. **This run did not execute those PostgreSQL/browser scenarios.** Do not treat written source contracts or these fixes as release certification.
 
 Coverage trace: docs/audit/coverage/placements-ledger-chat-5.md, tests/unit/chat5-placements-core-extended-state-machines.test.ts, tests/unit/chat5-tpo-account-breakit.test.ts, tests/unit/chat5-tpo-second-third-behavior.test.ts.
+
+
+## Continuation findings — October 18
+
+| ID | Severity | Reproduction / evidence | Source fix and executable regression (run pending) |
+|---|---|---|---|
+| TPO-campaigns-public-25 | S2 test drift | A previous source test asserted a public join toggle succeeds without the now-required `expectedLinkId`, contradicting stale-tab protection. | Updated `chat5-delegated-policy-decisions.test.ts` to require current UUID and deny missing/malformed link ID; commit a5379fd. |
+| PROJ-BREAK-TPO-01..04 | S1 cross-module coverage gap | Placements TPO privileges must never grant project management or cross-college project reads. | New actual permission-policy matrix `chat5-PROJ-BREAK-TPO-role-boundaries.test.ts`, including suspended/disabled and scoped Super Admin contexts; commit 201f1b2. DB/browser not run. |
+| PROJ-BREAK-TPO-06 | S2 input safety | `projectNoticeHref` concatenated an unchecked identifier into a learner/mentor route, allowing reserved path bytes to alter the destination. | `encodeURIComponent(projectId)` and hostile-ID regression; commits 040d1af and e936887. |
+| PLACEMENTS-SELECTION-ERROR-02 | S1 data exposure | `verifyAndReleaseTpoSelections` returned `error.message` to each failed candidate result, potentially displaying SQL error text or internal authorization details on the TPO screen. | Safe fixed-copy model function, use for **both** release/reconciliation catches, typed stale conflict instead of raw throw; commits cbf6ae6 / e1630e3. Test ab7fd28. |
+| PLACEMENTS-SELECTION-IDEMP-01 | S1 duplicate audit/version drift | Replaying the same `recordTpoDriveSelections` payload after a lost response updated `recordedAt` again and appended another audit event, invalidating concurrent selection preview tokens. | Exact already-recorded payload bypass under application/selection locks, preserving row IDs/timestamps; commits 51cff0f/be373d5. Behavioral matrix 8cf65af, PostgreSQL regression 0fc1bf7. |
+| PLACEMENTS-SELECTION-ATOMIC-02 | S1 open | Selection release verifies one transaction, issues an offer in a second, and records RELEASED in a third. A crash or conflicting actor can separate those stages. | **OPEN**. Safe error copy and identical-record idempotency do not solve cross-transaction atomicity; require competing-release/worker test and durable outbox/recovery design. |
+
+All unit and PostgreSQL tests above are **authored but unexecuted** here; the cloud orchestrator must confirm their exact passing status. Do not declare these findings release-closed on source changes alone.
+
+
+| PLACEMENTS-WAIT-IDEMP-01 | S1 partial fix | Two waitlist requests can both reach the post-issuance status update; one writes RELEASED and the other previously surfaced a stale conflict even for the **same canonical offer**. | Added locked settlement state decision, allowing an exact same-offer no-op without another release audit; commits 37e6bca / 96faab9, unit test 6e9760d. The remaining cross-transaction atomicity defect is OPEN. |
+| PLACEMENTS-SELECTION-RACE-DB-01 | S1 test gap | Simultaneous identical Record Selections requests could race and double-audit/version. | Added `Promise.allSettled` PostgreSQL regression asserting both same-payload calls complete, exactly one row and one audit; commit 491e2e6. Requires cloud DB execution. |
+
+
+| TPO-AUDIT-CSV-01 | S1 export security | Audit CSV formula sanitizer only matched [=+@-] at character zero, allowing leading spaces/tabs before spreadsheet-executable expressions. | **Source fixed:** leading whitespace-aware neutralizer in tpo-audit-csv-model; commit 358316d. Added adversarial CSV test e258dc0, CI execution pending. |
+| TPO-STUDENTS-BULK-AMBIG-01 | S1 wrong-learner selection | `matchTpoStudentRolls` previously built Map from every roll or registration number; the last row silently overwrote ambiguous identifiers, allowing bulk target mutation of the wrong learner. | **Source fixed:** conflict keys map to null/unmatched and same-membership duplicates do not broaden selection; commit c7f57cf. New ambiguity, case, cross-field and duplicate tests e258dc0; runtime confirmation pending. |
+
+| PLACEMENTS-CLOSE-ENDED-01 | S1 policy inconsistency | Published drives in a CLOSED season could pass `evaluateTpoDriveLifecycle(CLOSE)`, but the canonical close service and TPO preview both blocked on season ACTIVE. Late closeout left applicant/request/offer reconciliation stranded. | **Source fixed**: allow PUBLISHED with recorded closed season, preserve issued-offer/selection blockers, preview CAS/audit, correct page copy. Commits 667ab81, dc9d4ed, 2a30c23, 049c9f4, c719f1a, 1c77554, 138cf61; regression 6bb4cec. PostgreSQL run pending. |

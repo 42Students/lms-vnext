@@ -32,6 +32,16 @@ export function readZeptoMailConfig(
   };
 }
 
+/** Reject plaintext, embedded URL credentials and malformed provider endpoints. */
+export function isSecureMailProviderEndpoint(value: string): boolean {
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" && !url.username && !url.password;
+  } catch {
+    return false;
+  }
+}
+
 export function createZeptoMailEmailProvider(
   config: ZeptoMailConfig = readZeptoMailConfig(),
   fetchImpl: typeof fetch = fetch,
@@ -40,6 +50,7 @@ export function createZeptoMailEmailProvider(
     async sendOtpEmail(message) {
       if (
         !config.token.trim() ||
+        !isSecureMailProviderEndpoint(config.apiUrl) ||
         !config.otpTemplateKey ||
         !isValidRecipient("EMAIL", message.toEmail) ||
         !/^[0-9]{4,8}$/.test(message.code)

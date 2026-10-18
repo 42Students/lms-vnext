@@ -9,21 +9,19 @@ export const TPO_NOTIFICATION_VIEWS = [
 export type TpoNotificationView =
   (typeof TPO_NOTIFICATION_VIEWS)[number];
 
+// Reject hexadecimal, scientific notation, signed values and whitespace:
+// Number() would otherwise interpret them as valid page numbers.
+const decimalPage = (max:number,defaultValue:number) =>
+  z.union([
+    z.number().int().min(1).max(max),
+    z.string().regex(/^[0-9]+$/).transform(Number).pipe(z.number().int().min(1).max(max)),
+  ]).default(defaultValue);
+
 export const tpoMyNotificationsQuerySchema = z
   .object({
     view: z.enum(TPO_NOTIFICATION_VIEWS).default("ALL"),
-    page: z.coerce
-      .number()
-      .int()
-      .min(1)
-      .max(10000)
-      .default(1),
-    pageSize: z.coerce
-      .number()
-      .int()
-      .min(1)
-      .max(100)
-      .default(25),
+    page: decimalPage(10000,1),
+    pageSize: decimalPage(100,25),
   })
   .strict();
 

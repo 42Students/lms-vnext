@@ -47,6 +47,18 @@ describe("chat-13 Super Admin Placements service boundary tests", () => {
     expect(csv).not.toContain("authToken");
   });
 
+  it("SA-COMPANY-CSV-02 guards hidden directional and zero-width spreadsheet formula prefixes",()=>{
+    const payloads=["\u200B=1+2","\u202E@SUM(1,1)","\u2060-HYPERLINK()","  +99","\t=1+1"];
+    for(const name of payloads){
+      const csv=superAdminCompanyCsv([company(name)]);
+      expect(csv).toContain('"'+"'" + name.replace(/"/g,'""')+'"');
+      expect(csv).not.toContain('"'+name+'"');
+    }
+    const benign=superAdminCompanyCsv([company("Acme safe company")]);
+    expect(benign).toContain('"Acme safe company"');
+    expect(benign).not.toContain('"\'Acme safe company"');
+  });
+
   it("SA-COMPANY-QUERY-01 fails closed on unknown sort, rogue college selector, invalid page and long search", () => {
     expect(adminCompaniesQuerySchema.safeParse({status:"ACTIVE",page:1}).success).toBe(true);
     for (const invalid of [

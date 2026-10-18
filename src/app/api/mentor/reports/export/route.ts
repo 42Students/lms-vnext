@@ -1,6 +1,7 @@
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
+import {singleValueMentorExportFilters} from "@/modules/projects/mentor-filter-query";
 import {getMentorReports} from "@/modules/projects/mentor-reports-service";
 import {mentorReportsQuerySchema,mentorReportsCsv}
   from "@/modules/projects/mentor-reports-model";
@@ -9,14 +10,11 @@ export const runtime="nodejs";
 export async function GET(request:Request){
   try{
     const url=new URL(request.url);
-    const query=mentorReportsQuerySchema.parse({
-      taskCoverage:url.searchParams.get("taskCoverage")??undefined,
-      status:url.searchParams.get("status")??undefined,
-      attention:url.searchParams.get("attention")??undefined,
-      assignment:url.searchParams.get("assignment")??undefined,
-      order:url.searchParams.get("order")??undefined,
-      search:url.searchParams.get("search")??undefined,page:1,
-    });
+    const filters=singleValueMentorExportFilters(url.searchParams,
+      ["taskCoverage","status","attention","assignment","order","search"]);
+    if(!filters)return NextResponse.json({error:"INVALID_QUERY"},{status:400,
+      headers:{"Cache-Control":"private, no-store"}});
+    const query=mentorReportsQuerySchema.parse({...filters,page:1});
     const report=await getMentorReports(await getCurrentRequestContext(),query);
     if(!report.enabled)
       return NextResponse.json({error:"PROJECT_ACCESS_DENIED"},{status:403});
