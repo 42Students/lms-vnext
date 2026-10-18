@@ -80,5 +80,7 @@ export async function getSuperAdminFacultyAssignmentClasses(context:RequestConte
   .innerJoin(academicPeriods,and(eq(academicPeriods.id,sections.academicPeriodId),
     eq(academicPeriods.collegeId,selected.collegeId)))
   .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,selected.collegeId)))
+  .innerJoin(colleges,and(eq(colleges.id,departments.collegeId),
+    selected.organizationId?eq(colleges.organizationId,selected.organizationId):undefined))
   .orderBy(asc(sections.name),asc(sections.id)).limit(2000);
 }
