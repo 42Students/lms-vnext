@@ -63,7 +63,7 @@ describe("UX-tpo-first-third-42 route scope and navigation inventory",()=>{
    if(delegate.has(route)){
     // All batch reads delegate to requireTpoBatchActor (persisted actor,
     // active membership, tenant/org and role) in the workspace services.
-    expect(source).toMatch(/(?:getTpoBatch|listTpoBatch|listTpoBatches)\w*\(/);
+    expect(source).toMatch(/(?:getTpoBatch|listTpoBatch|listTpoBatches|getTpoLearnerRegistrationHistory)\w*\(/);
    }else if(route==="/tpo/home"){
     expect(source).toContain("hasTpoTooling(ctx)");
    }else{
