@@ -78,7 +78,7 @@ describe("HR-BREAK-tracker-pages-01: reporter-owned routes and recovery",()=>{
  it("detail view shows own report, non-secret severity and return path",async()=>{
   const page=await MyTrackerReportDetail({params:Promise.resolve({publicId:"LMS-1234"})});
   expect(text(page)).toMatch(/Status:\s+OPEN/);
-  expect(text(page)).toContain("Severity: HIGH");
+  expect(text(page)).toMatch(/Severity:\s+HIGH/);
   expect(hrefs(page)).toContain("/tracker/mine");
   expect(mock.get).toHaveBeenCalledWith({user:{platformStatus:"ACTIVE"}},"LMS-1234");
  });
