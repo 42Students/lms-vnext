@@ -1,6 +1,6 @@
 import "server-only";
 
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { colleges } from "@/db/schema";
 
@@ -9,7 +9,7 @@ export async function getCollegeSignInName(collegeId: string) {
   const [row] = await getDb()
     .select({ name: colleges.name })
     .from(colleges)
-    .where(eq(colleges.id, collegeId))
+    .where(and(eq(colleges.id, collegeId),eq(colleges.status,"ACTIVE")))
     .limit(1);
 
   return row?.name ?? null;

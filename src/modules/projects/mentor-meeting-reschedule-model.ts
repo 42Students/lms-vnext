@@ -29,8 +29,17 @@ export function toIstLocalInput(iso:string){
   return get("year")+"-"+get("month")+"-"+get("day")+"T"+get("hour")+":"+get("minute");
 }
 export function fromIstLocalInput(local:string){
+  // Calendar-exact: Date.parse accepts and normalizes impossible dates
+  // such as 30 February. Never reschedule a meeting on an unintended day.
   if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(local))return null;
-  const iso=local+":00+05:30";
-  const millis=Date.parse(iso);
-  return Number.isFinite(millis)?new Date(millis).toISOString():null;
+  const year=Number(local.slice(0,4)),month=Number(local.slice(5,7));
+  const day=Number(local.slice(8,10)),hour=Number(local.slice(11,13));
+  const minute=Number(local.slice(14,16));
+  if(year<2000||year>9999||month<1||month>12||day<1||day>31||
+    hour>23||minute>59)return null;
+  const normalized=new Date(Date.UTC(year,month-1,day,hour,minute));
+  if(normalized.getUTCFullYear()!==year||normalized.getUTCMonth()+1!==month||
+    normalized.getUTCDate()!==day||normalized.getUTCHours()!==hour||
+    normalized.getUTCMinutes()!==minute)return null;
+  return new Date(normalized.getTime()-330*60_000).toISOString();
 }

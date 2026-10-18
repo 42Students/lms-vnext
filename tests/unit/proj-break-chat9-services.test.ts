@@ -2,12 +2,12 @@ import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {join} from "node:path";
 const source=(path:string)=>readFileSync(join(process.cwd(),path),"utf8");
-const module=(name:string)=>source("src/modules/projects/"+name+".ts");
+const moduleSource=(name:string)=>source("src/modules/projects/"+name+".ts");
 const api=(route:string)=>source("src/app/api/projects/"+route+"/route.ts");
 
 describe("IIT Dharwad Projects adversarial service and route contracts",()=>{
  it("PROJ-BREAK-idor-11 prevents guessed project UUIDs from bypassing college and membership scoping",()=>{
-  const access=module("access");
+  const access=moduleSource("access");
   expect(access).toContain("loadProjectCollegeScope(project.collegeId)");
   expect(access).toContain('can(context, "projects.manage"');
   expect(access).toContain("membership.collegeId !== scope.collegeId");
@@ -15,14 +15,14 @@ describe("IIT Dharwad Projects adversarial service and route contracts",()=>{
   expect(access).toContain('eq(users.platformStatus,"ACTIVE")');
  });
  it("PROJ-BREAK-idor-12 cannot attach a removed or academically inactive learner to a project",()=>{
-  const page=module("instance-service");
+  const page=moduleSource("instance-service");
   expect(page).toContain('eq(learnerProgramEnrollments.status,"ACTIVE")');
   expect(page).toContain('eq(sectionEnrollments.status,"ACTIVE")');
   expect(page).toContain('eq(collegeMemberships.status,"ACTIVE")');
   expect(page).toContain("new Set(members.map(row=>row.id)).size!==input.learnerMembershipIds.length");
  });
  it("PROJ-BREAK-idor-13 bulk class-team creation fails closed for cross-college roles and spoofed rosters",()=>{
-  const page=module("class-team-workspace-service");
+  const page=moduleSource("class-team-workspace-service");
   expect(page).toContain("requireTeamCreationAuthority(context, input.collegeId)");
   expect(page).toContain("eq(departments.collegeId,scope.id)");
   expect(page).toContain('eq(learnerProgramEnrollments.status,"ACTIVE")');
@@ -30,14 +30,14 @@ describe("IIT Dharwad Projects adversarial service and route contracts",()=>{
   expect(page).toContain('isolationLevel:"serializable"');
  });
  it("PROJ-BREAK-races-04 admin status edits serialize stale tabs before changing any child rows",()=>{
-  const page=module("college-project-summary-service");
+  const page=moduleSource("college-project-summary-service");
   expect(page).toContain('for("update")');
   expect(page).toContain("row.updatedAt.toISOString()!==input.expectedUpdatedAt");
   expect(page).toContain("PROJECT_SUBMISSION_CONFLICT");
   expect(page).toContain("recordActivityEventInTransaction(tx,context");
  });
  it("PROJ-BREAK-races-05 version publish serializes concurrent archives and reassigns atomically",()=>{
-  const page=module("template-service");
+  const page=moduleSource("template-service");
   expect(page).toContain('for("update")');
   expect(page).toContain("getDb()");
   expect(page).toContain("tx\n      .update(\n        projectTemplateCollegeAssignments");
@@ -45,27 +45,27 @@ describe("IIT Dharwad Projects adversarial service and route contracts",()=>{
   expect(page).toContain("PROJECT_TEMPLATE_STALE_VERSION");
  });
  it("PROJ-BREAK-archive-01 archived projects never enter active override counts or result exports",()=>{
-  const page=module("admin-readiness-overrides-service");
+  const page=moduleSource("admin-readiness-overrides-service");
   expect(page).toContain('ne(projectInstances.status, "ARCHIVED")');
   const exportRoute=api("readiness-overrides/export");
   expect(exportRoute).toContain("listCollegeActiveReadinessOverrides");
   expect(exportRoute).toContain("projectReadinessOverrideCsvCell");
  });
  it("PROJ-BREAK-archive-02 archived project IDs cannot be selected for readiness releases",()=>{
-  const page=module("college-readiness-releases-service");
+  const page=moduleSource("college-readiness-releases-service");
   expect(page.match(/ne\(projectInstances.status,"ARCHIVED"\)/g)?.length).toBe(2);
   expect(page).toContain("eq(projectInstances.collegeId,college.id)");
   expect(page).toContain("requirePermission(context");
  });
  it("PROJ-BREAK-archive-03 archived workspaces cannot masquerade as unsubmitted active projects",()=>{
-  const page=module("admin-unsubmitted-service");
+  const page=moduleSource("admin-unsubmitted-service");
   expect(page).toContain('ne(projectInstances.status,"ARCHIVED")');
   expect(page).toContain("notExists(");
   expect(page).toContain('q.pageSize');
   expect(page).toContain("requirePermission(context");
  });
  it("PROJ-BREAK-files-01 in-flight upload cannot finalize on a newly archived project",()=>{
-  const page=module("project-resource-file-service");
+  const page=moduleSource("project-resource-file-service");
   const start=page.indexOf("export async function completeProjectFileUpload");
   const end=page.indexOf("export async function listProjectFiles",start);
   const segment=page.slice(start,end);
@@ -75,7 +75,7 @@ describe("IIT Dharwad Projects adversarial service and route contracts",()=>{
   expect(segment).toContain('row.status === "READY"');
  });
  it("PROJ-BREAK-files-02 metadata edit and file removal lock parent project so archive race cannot cross",()=>{
-  const page=module("project-resource-file-service");
+  const page=moduleSource("project-resource-file-service");
   for(const [start,end]of [["updateProjectFileDetails","removeProjectFile"],["removeProjectFile","issueProjectFileDownloadGrant"]]){
    const part=page.slice(page.indexOf("export async function "+start),page.indexOf("export async function "+end));
    expect(part).toContain('for("share")');
@@ -84,7 +84,7 @@ describe("IIT Dharwad Projects adversarial service and route contracts",()=>{
   }
  });
  it("PROJ-BREAK-files-03 download grant requires project read permission and rejects mentor-only leaked UUID",()=>{
-  const page=module("project-resource-file-service");
+  const page=moduleSource("project-resource-file-service");
   const part=page.slice(page.indexOf("export async function issueProjectFileDownloadGrant"));
   expect(part).toContain("requireProjectReadAccess(context, projectIdInput)");
   expect(part).toContain('linked.visibility!=="TEAM"');
@@ -92,7 +92,7 @@ describe("IIT Dharwad Projects adversarial service and route contracts",()=>{
   expect(part).toContain("FILE_READ_TTL_SECONDS");
  });
  it("PROJ-BREAK-files-04 file quota and content verification are enforced server-side, not browser-only",()=>{
-  const page=module("project-resource-file-service");
+  const page=moduleSource("project-resource-file-service");
   expect(page).toContain('validateStorageDeclaration("project-resource", input)');
   expect(page).toContain("MAX_PROJECT_FILES_PER_PROJECT");
   expect(page).toContain("pg_advisory_xact_lock");
@@ -100,7 +100,7 @@ describe("IIT Dharwad Projects adversarial service and route contracts",()=>{
   expect(page).toContain('plan.status === "QUARANTINED"');
  });
  it("PROJ-BREAK-grading-01 only an approved submission can receive one audited rubric evaluation",()=>{
-  const page=module("evaluation-service");
+  const page=moduleSource("evaluation-service");
   expect(page).toContain('submission.status !== "APPROVED"');
   expect(page).toContain("PROJECT_EVALUATION_INVALID_STATE");
   expect(page).toContain('for("update")');
@@ -111,7 +111,7 @@ describe("IIT Dharwad Projects adversarial service and route contracts",()=>{
   expect(schema).toContain("project_evaluation_items_score_ck");
  });
  it("PROJ-BREAK-notifications-01 recipient selection rejects cross-tenant or inactive memberships and dedupes",()=>{
-  const page=module("project-notification-service");
+  const page=moduleSource("project-notification-service");
   expect(page).toContain("eq(collegeMemberships.collegeId, notice.collegeId)");
   expect(page).toContain('eq(collegeMemberships.status, "ACTIVE")');
   expect(page).toContain('eq(users.platformStatus, "ACTIVE")');
@@ -125,7 +125,7 @@ describe("IIT Dharwad Projects adversarial service and route contracts",()=>{
   expect(route).toContain('content-type": "text/csv; charset=utf-8"');
  });
  it("PROJ-BREAK-restore-01 restore requires stale-token CAS, surviving mentor and immutable audit",()=>{
-  const page=module("instance-restore-service");
+  const page=moduleSource("instance-restore-service");
   expect(page).toContain('project.status!=="ARCHIVED"');
   expect(page).toContain("project.updatedAt.getTime()!==Date.parse(input.expectedUpdatedAt)");
   expect(page).toContain("eq(collegeMemberships.collegeId,scope.collegeId)");
@@ -144,10 +144,10 @@ describe("IIT Dharwad Projects adversarial service and route contracts",()=>{
   }
  });
  it("PROJ-BREAK-performance-01 admin pages bound list size and publish authoring has size caps",()=>{
-  const page=module("admin-unsubmitted-service");
+  const page=moduleSource("admin-unsubmitted-service");
   expect(page).toContain(".max(100)");
   expect(page).toContain(".limit(q.pageSize)");
-  const blueprint=module("validation");
+  const blueprint=moduleSource("validation");
   for(const bound of [".max(50)",".max(200)",".max(2000)"])expect(blueprint).toContain(bound);
  });
  it("PROJ-BREAK-ux-01 admin and college Project screens preserve explicit empty/denied UX, no raw crash",()=>{
@@ -159,7 +159,7 @@ describe("IIT Dharwad Projects adversarial service and route contracts",()=>{
   expect(collegePage).toContain('title="Project workspaces"');
  });
  it("PROJ-BREAK-resilience-01 object-store cleanup failure cannot reverse committed soft deletion or quarantine",()=>{
-  const page=module("project-resource-file-service");
+  const page=moduleSource("project-resource-file-service");
   const remove=page.slice(page.indexOf("export async function removeProjectFile"),page.indexOf("export async function issueProjectFileDownloadGrant"));
   expect(remove).toContain('"DELETED"');
   expect(remove).toContain("recordStorageFileEvent(tx, context");
@@ -171,7 +171,7 @@ describe("IIT Dharwad Projects adversarial service and route contracts",()=>{
  });
 
  it("PROJ-BREAK-races-07 concurrent cohort creates retry serializable conflicts with a bounded loop and fresh coverage checks",()=>{
-  const page=module("class-team-workspace-service");
+  const page=moduleSource("class-team-workspace-service");
   expect(page).toContain("for (let attempt = 0; attempt < 3; attempt += 1)");
   expect(page).toContain('isolationLevel:"serializable"');
   expect(page).toContain("isRetryableProjectTransactionError(error)");

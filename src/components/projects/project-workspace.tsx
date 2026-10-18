@@ -1382,7 +1382,7 @@ export function ProjectWorkspace({
                       <ProjectAdminSubmissionReview projectId={workspace.project.id}
                         submissionId={submission.id} status={submission.status}
                         locked={Boolean(submission.lockedAt)}
-                        projectStatus={workspace.project.status}/>
+                        projectStatus={workspace.project.status} allowLock={false}/>
                     ) : null}
                     {mode==="MENTOR"&&!readOnly?<MentorDeliveryLockControl
                       projectId={workspace.project.id} submissionId={submission.id}

@@ -1,0 +1,54 @@
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import type { Pool } from "pg";
+import { createTenant, createPrincipal, createProjectFixture,
+  newHarnessPool, withProjectPg, type PgHarness } from "./support/projects-placements-pg-harness";
+
+let pool:Pool;
+beforeAll(()=>{pool=newHarnessPool();});
+afterAll(async()=>{if(pool)await pool.end();});
+
+async function prepared(db:PgHarness) {
+ const tenant=await createTenant(db,"Rollback test campus");
+ const owner=await createPrincipal(db,tenant,["COLLEGE_ADMIN"]);
+ const mentor=await createPrincipal(db,tenant,["MENTOR"]);
+ const learner=await createPrincipal(db,tenant,["LEARNER"]);
+ const graph=await createProjectFixture(db,tenant,owner,mentor,learner);
+ return {tenant,owner,mentor,learner,graph};
+}
+
+describe("PROJ-HARNESS-ROLLBACK real PostgreSQL: nested rollback and FK integrity",()=>{
+ it("PROJ-HARNESS-ROLLBACK-01 failed callback rolls back entire fixture, not only successful callback",async()=>{
+   let leaked: string|null=null;
+   await expect(withProjectPg(pool,async db=>{
+     const f=await prepared(db);
+     leaked=f.graph.projectId;
+     expect((await db.query("select id from project_instances where id=$1",[leaked]))).toHaveLength(1);
+     throw new Error("intentional business process failure");
+   })).rejects.toThrow("intentional business process failure");
+   expect(leaked).not.toBeNull();
+   expect((await pool.query("select id from project_instances where id=$1",[leaked])).rowCount).toBe(0);
+ });
+ it("PROJ-HARNESS-ROLLBACK-02 savepoint discard restores previous value without aborting transaction",async()=>{
+   await withProjectPg(pool,async db=>{
+     const f=await prepared(db);
+     await db.savepoint(async()=>{
+       await db.query("update project_tasks set status='IN_PROGRESS' where id=$1",[f.graph.taskId]);
+       expect((await db.query<{status:string}>("select status from project_tasks where id=$1",
+         [f.graph.taskId]))[0]?.status).toBe("IN_PROGRESS");
+     },true);
+     expect((await db.query<{status:string}>("select status from project_tasks where id=$1",
+       [f.graph.taskId]))[0]?.status).toBe("TODO");
+   });
+ });
+ it("PROJ-HARNESS-ROLLBACK-03 project template version deletion is RESTRICT, preserving assigned lineage",async()=>{
+   await withProjectPg(pool,async db=>{
+     const f=await prepared(db);
+     await db.expectSqlState(()=>db.query(
+       "delete from project_template_versions where id=$1",[f.graph.versionId]),"23503");
+     expect((await db.query("select id from project_template_versions where id=$1",
+       [f.graph.versionId]))).toHaveLength(1);
+     expect((await db.query("select id from project_instances where id=$1",
+       [f.graph.projectId]))).toHaveLength(1);
+   });
+ });
+});
