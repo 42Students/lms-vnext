@@ -152,6 +152,20 @@ describe("PROJ-HARNESS source and environment guard",()=>{
    expect(helper).toContain("registered migration columns missing");
  });
 
+ it("PROJ-HARNESS-GUARD-18 task submission and task state transition share one savepoint",()=>{
+   expect(helper).toContain("return db.savepoint(async()=>");
+   expect(helper).toContain("update project_tasks set status='IN_REVIEW'");
+   expect(helper).toContain("task state changed while submitting");
+ });
+
+ it("PROJ-HARNESS-GUARD-20 recruiter fixture uses persisted company grant, not a college role",()=>{
+   expect(helper).toContain("export async function createRecruiterFixture");
+   expect(helper).toContain("insert into placement_recruiter_profiles");
+   expect(helper).toContain("insert into placement_recruiter_college_grants");
+   expect(helper).toContain("'VERIFIED'");
+   expect(helper).toContain("await createPrincipal(db,null)");
+ });
+
  it("PROJ-HARNESS-GUARD-05 always rolls back transaction and savepoint errors",()=>{
    expect(helper).toContain('if (begun) await client.query("ROLLBACK")');
    expect(helper).toContain("client.release()");
