@@ -91,6 +91,13 @@ Catalogues checked: `docs/audit/legacy-copy-A.md` and `docs/audit/legacy-copy-B.
 | Request/college scope carried from query alone | Server re-check active recruiter grant and permissions |
 | Long lists or tables overflow phone | Use DataTable mobile field mapping or named scroll region with keyboard focus |
 
+## Security and regression evidence
+
+- Tracker independent findings: `src/modules/bug-tracker/independent-audit-findings-service.ts:16-18` enforces global Super Admin scope and `requirePermission(context,"admin-scope.select")` before all detail/list/mutation service operations; `:54` bounds lists to a page, `:130` bounds history to 100 events.
+- Recruiter drive change requests: `src/modules/placements/tpo-drive-change-request-service.ts:24-37` scopes jobs to the current college and recruiter relationship; `:99-146` enforces actual proposer/target party and ownership on writes. The UI confirmation supplements, not replaces, those API checks.
+- DataTable: `src/components/ui/data-table.tsx:25,32-47` requires explicit caller-provided empty copy and maps a primary/action/secondary mobile presentation. The Tracker caller has an explicit `empty` result.
+- Regression file: `tests/unit/UX-cross-audit-recruiter-tracker-chat3.test.ts` has nine targeted source contract cases covering draft persistence, consequence dialogs, API errors, 44px/focus patterns and optimistic tokens. The 38 literal source assertions were checked against the branch files; **this is not a Vitest, typecheck, lint or browser run**.
+
 ## Verdicts and counts
 
 | Area | Routes | BLOCKER | MAJOR | MINOR | NIT | MAJOR fixed | Verdict |
