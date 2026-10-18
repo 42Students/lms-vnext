@@ -128,4 +128,14 @@ describe("chat-16 OTP channel acceptance, validation and graceful failure", () =
     expect(outboundFetch).not.toHaveBeenCalled();
   });
 
+  it("AUTH-OTP-ZEPTO-05 never sends email with blank configured OTP template", async () => {
+    const provider = createZeptoMailEmailProvider({
+      ...emailConfig, otpTemplateKey: " \t ",
+    });
+    expect(await provider.sendOtpEmail({
+      toEmail: "learner@example.org", displayName: "Learner", code: "123456",
+    })).toBe(false);
+    expect(outboundFetch).not.toHaveBeenCalled();
+  });
+
 });
