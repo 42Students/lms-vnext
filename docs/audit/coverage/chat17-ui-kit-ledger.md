@@ -153,3 +153,5 @@ The **generated** `docs/audit/ux/COVERAGE-MATRIX.md` currently lists five Projec
 - **UX-kit-E2E-13:** The development-only browser fixture intentionally throws from `DataTable.mobileDetail.canView` and `rowHref`. A restricted private cell must never be mounted or serialized while the authorized row label remains usable; Playwright covers this failure mode beyond SSR contracts.
 
 - **UX-kit-E2E-14:** Vertical `ScrollCue` in mobile Drawer and BottomSheet is now exercised against genuinely long content in the development harness, checking measured bottom/top edge fades and scrollability even with nested overlays. The header and footer remain separate from the scrollable viewport.
+
+- **UX-kit-scroll-motion-09/10:** The shared scroll-motion test suite now explicitly checks observation of every direct scroll child and reduced-motion gates on both switch thumb/track and Tabs; the browser suite exercises actual edge fades and computed styles.
