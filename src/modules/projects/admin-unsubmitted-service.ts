@@ -5,18 +5,10 @@ import {projectInstances,projectSubmissions} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requirePermission} from "@/modules/permissions/policy";
 import {loadProjectCollegeScope} from "./scope";
-import {z} from "zod";
-const querySchema=z.strictObject({
- q:z.string().trim().max(120).optional(),page:z.coerce.number().int().min(1).max(100000).default(1),
- pageSize:z.coerce.number().int().min(10).max(100).default(25),
-});
-export const adminUnsubmittedQuerySchema=querySchema;
-export function adminUnsubmittedLiteralSearchPattern(raw:string){
- return "%"+raw.replace(/[\\%_]/g,char=>"\\"+char)+"%";
-}
+import {adminUnsubmittedQuerySchema,adminUnsubmittedLiteralSearchPattern} from "./admin-unsubmitted-query-model";
 /** SA-placements-projects-69: scoped, paged workspaces with no submission versions. */
 export async function listProjectAdminUnsubmitted(context:RequestContext,collegeId:string,raw:unknown){
- const q=querySchema.parse(raw),college=await loadProjectCollegeScope(collegeId);
+ const q=adminUnsubmittedQuerySchema.parse(raw),college=await loadProjectCollegeScope(collegeId);
  requirePermission(context,"projects.manage",{organizationId:college.organizationId,collegeId:college.id});
  const db=getDb();
  const searchPattern=adminUnsubmittedLiteralSearchPattern(q.q??"");
