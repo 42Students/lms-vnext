@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import {privateAuthJson} from "@/modules/auth/private-response";
 import {
   ADMIN_SCOPE_COOKIE_NAME,
   encodeAdminScopeCookie,
@@ -19,7 +19,7 @@ export async function GET() {
     const context = await getCurrentRequestContext();
     const choices = await listAdminScopeChoices(context);
 
-    return NextResponse.json({
+    return privateAuthJson({
       scope: context.adminScope ?? null,
       choices,
     });
@@ -30,7 +30,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
+    return privateAuthJson(
       { error: "INVALID_ORIGIN" },
       { status: 403 },
     );
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
     try {
       body = await request.json();
     } catch {
-      return NextResponse.json(
+      return privateAuthJson(
         { error: "INVALID_REQUEST" },
         { status: 400 },
       );
@@ -53,7 +53,7 @@ export async function POST(request: Request) {
       context,
       body,
     );
-    const response = NextResponse.json({
+    const response = privateAuthJson({
       ok: true,
       scope,
     });
@@ -78,7 +78,7 @@ export async function POST(request: Request) {
 
 export async function DELETE(request: Request) {
   if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
+    return privateAuthJson(
       { error: "INVALID_ORIGIN" },
       { status: 403 },
     );
@@ -88,7 +88,7 @@ export async function DELETE(request: Request) {
     const context = await getCurrentRequestContext();
     await listAdminScopeChoices(context);
 
-    const response = NextResponse.json({
+    const response = privateAuthJson({
       ok: true,
       scope: null,
     });
