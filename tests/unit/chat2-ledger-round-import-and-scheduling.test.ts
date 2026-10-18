@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { parseTpoRoundImport, roundImportActionSchema, ROUND_IMPORT_TEMPLATE, tpoRoundImportPreviewToken, uniqueTpoRoundImportRoster } from "@/modules/placements/tpo-round-import-model";
+import { parseTpoRoundImport, roundImportActionSchema, ROUND_IMPORT_TEMPLATE, matchTpoRoundImportRoster, uniqueTpoRoundImportRoster } from "@/modules/placements/tpo-round-import-model";
+import {tpoRoundImportPreviewToken} from "@/modules/placements/tpo-round-import-preview-token";
 import { parseIstRoundLocalTime, tpoRoundCalendarMutationSchema } from "@/modules/placements/tpo-round-calendar-model";
 import { tpoInterviewRescheduleSchema, validInterviewWindow, overlappingInterviewVenue } from "@/modules/placements/tpo-interview-reschedule-model";
 
@@ -72,6 +73,27 @@ describe("TPO-drive-workspace-40/44 round import and scheduling ledger",()=>{
   const forged=[...source,{...source[2]!,roll:"other-learner"}];
   expect(uniqueTpoRoundImportRoster(forged).map(row=>row.applicationId)).toEqual([uuid]);
   expect(uniqueTpoRoundImportRoster([])).toEqual([]);
+ });
+ it("TPO-drive-workspace-40 never stages a learner from contradictory ID, email or roll identities",()=>{
+  const roster=[
+   {applicationId:uuid,email:"ada@example.test",roll:"A001"},
+   {applicationId:other,email:"bob@example.test",roll:"B002"},
+  ];
+  expect(matchTpoRoundImportRoster({applicationId:uuid,email:"ada@example.test",roll:"A001"},roster))
+   .toEqual([roster[0]]);
+  expect(matchTpoRoundImportRoster({applicationId:uuid,email:"bob@example.test",roll:"A001"},roster))
+   .toEqual([]);
+  expect(matchTpoRoundImportRoster({applicationId:uuid,email:"ada@example.test",roll:"B002"},roster))
+   .toEqual([]);
+  expect(matchTpoRoundImportRoster({applicationId:"",email:"",roll:""},roster))
+   .toEqual([]);
+  expect(matchTpoRoundImportRoster({applicationId:"",email:"BOB@EXAMPLE.TEST",roll:""},roster))
+   .toEqual([roster[1]]);
+  const duplicate=[...roster,{applicationId:other+"-forged",email:"bob@example.test",roll:"B003"}];
+  expect(matchTpoRoundImportRoster({applicationId:"",email:"bob@example.test",roll:""},duplicate))
+   .toHaveLength(2);
+  const source=readFileSync("src/modules/placements/tpo-round-import-service.ts","utf8");
+  expect(source).toContain("const matchSource=matchTpoRoundImportRoster;");
  });
  it("review command requires one explicit decision per source line and unique student identity",()=>{
   const action={action:"STAGE_IMPORT",confirmed:true,previewToken:token,missingPolicy:"LEAVE_PENDING",overrides:[{line:2,applicationId:uuid}],skippedLines:[3]};
