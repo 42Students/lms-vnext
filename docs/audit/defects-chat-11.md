@@ -37,6 +37,8 @@ Scope: IIT Dharwad College Admin Projects role journeys, TPO Settings final-spri
 
 | CHAT11-PROJ-09 | MAJOR | Create-workspace Status option disables ACTIVE when no Mentor is selected, but an already chosen ACTIVE state can survive clearing the Mentor; Enter/form submit would then send a known-invalid request. | `f3a88f7`, `7c17829`: imperative submit guard and direct Zod regression. | `PROJ-COL-STALE-06` | Browser form state test pending |
 
+| CHAT11-TPO-11 | MAJOR | Communication PATCH route used unbounded `request.json()`: an attacker could omit Content-Length and force arbitrarily large in-memory JSON parsing before schema rejection. | `58ab9f5`, `921f42e`, `99ecdcf`: 8 KiB streaming cap and stable 400/413; preserve same-origin validation. | `TPO-settings-audit-BODY-01` | Load/slow-stream route E2E pending |
+
 ## Latest r9 unit-failure disposition
 
 `tests/unit/company-share-mobile-cards.test.ts` is the only chat-11 entry in `docs/orchestrator/unit-failures-r9.md`. On the synchronized main baseline, the tested `src/app/company-share/[token]/page.tsx`, shared DataTable mobile/desktop branches, and `projectCompanyShareRows` match the listed selected-field assertions. This appears fixed by subsequent main changes. **Do not delete or loosen this privacy test**; require the orchestrator to rerun it on the updated branch.
