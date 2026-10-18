@@ -121,3 +121,10 @@ Use this ledger to assign next writes. Do not convert a GAP to complete based on
 - `tests/unit/chat2-ledger-round-import-and-scheduling.test.ts` now additionally rejects scientific, hexadecimal, fractional, zero and overflow waitlist ranks.
 - `tests/unit/PROJ-BREAK-TPO-ROLE-01.test.ts` protects IIT Dharwad Projects role isolation: TPO scoped read only, no project mutations, deny wrong college/organization and inactive sessions, recruiter grant does not imply Projects access.
 - **OPEN:** direct DB-backed role/service journey coverage for remaining exported services, cloud typecheck+unit+PG integration execution, and phone/browser route state validation.
+
+## Follow-up: round result CSV review race (2026-10-18)
+
+- `TPO-drive-workspace-40`: `tpoRoundImportPreviewToken` now binds the uploaded bytes, round identity, current applicant list, current result IDs/statuses, email, roll and name into a deterministic SHA-256 review token; reordering an unchanged roster does not stale it.
+- `stageTpoRoundImport` re-reads the actor-scoped roster and round state **after** preview validation and refuses to write if the source/roster token or scheduling eligibility changed between the two reads. This closes one avoidable preview-to-stage time-of-check/time-of-use window. Per-result optimistic checks remain in `confirmTpoRoundResult`.
+- `parseTpoRoundImport` clears rank on PASS, FAIL and ABSENT rows, even when an unexpected numeric rank was supplied; the row continues to be flagged invalid for explicit officer review.
+- Regression evidence: `tests/unit/chat2-ledger-round-import-and-scheduling.test.ts`, including `TPO-drive-workspace-40 refuses a stale review when the file, roster, or persisted result changes`. Tests were authored, **not executed**. Real two-actor PostgreSQL races and cloud CI remain required; this is not a complete integration proof.
