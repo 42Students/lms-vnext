@@ -12,6 +12,8 @@ This is the independent chat-3 log. The hardening brief treats data integrity, a
 
 | FAC-CSV-005 | S1 spreadsheet-injection risk | Faculty results and follow-up exports | Both aggregate CSV serializers used `/^\\s*[=+@-]/`, which misses zero-width U+200B and BOM U+FEFF before a spreadsheet formula. A malicious persisted assessment title could survive CSV quoting as a formula when imported by a spreadsheet. | Shared `neutralizeFacultyCsvCell` is now used after control-byte stripping in both exports; commits `116c5c061cab0c5acf745fa7a36e1beb8f6678f5` and `fbf067979485a27fed28d6ced6a211e665be7d9a`. | `tests/unit/COURSES-BREAK-FACULTY-04.test.ts` includes U+200B prefixed formulas in both serializers (commit `39b749d92b38cac2749b4df1b893102d83e3d192`). | Code and tests committed; execution remains unverified. |
 
+| FAC-CSV-006 | S2 report integrity | Faculty results aggregate CSV | The results export accepted negative, fractional, NaN, or greater-than-eligible response counts, making report numbers inconsistent or unparsable even after spreadsheet escaping. | Reject unsafe counts before serialization, never fabricate totals. Commit `78bbe80dfc8fdf3f1a0ff69de74b256d136d0530`. | `tests/unit/COURSES-BREAK-FACULTY-04.test.ts` invalid-count matrix (`51ecd0dff3d3071941453587a243b9423393ca5e`). | Commit pushed; unexecuted until Vitest. |
+
 ## Adversarial journeys added
 
 - `PROJ-BREAK-FACULTY-03-01..04`: mocked transactional state machine checks a single audit emission per valid edit, stale/double submit rejection without additional writes, and denial for terminal project, closed sprint and shipped release. PostgreSQL serializability and actual WHERE-clause CAS are **not** established by this mock.
