@@ -5,8 +5,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PersonMembershipActions } from "@/components/admin/person-membership-actions";
 import { PersonOnboardDialog } from "@/components/admin/person-onboard-dialog";
-import { PeoplePagination } from "@/components/admin/people-pagination";
-import { parsePeoplePage, peoplePageState, PEOPLE_PAGE_SIZE } from "@/modules/admin-ui/people-pagination";
+import { parsePeoplePage, peoplePageState } from "@/modules/admin-ui/people-pagination";
 import {
   DataTable,
   type DataTableColumn,

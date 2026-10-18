@@ -7,6 +7,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
+import {EmptyState} from "@/components/ui/empty-state";
 import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
 import {hiringFunnel, hiringMetricLabel} from "@/modules/admin-ui/super-admin-hiring-funnel-model";
 export default async function SuperAdminPlacementAnalytics({searchParams}:{
@@ -20,8 +21,13 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
  });
  if(!parsed.success)return <div className="space-y-4"><PageHeader eyebrow="Super Admin · Placements" title="Analytics"/>
   <p role="alert">Invalid analytics filters. Check the selected dates or filters.</p>
-  <Link href="/admin/placements/analytics" className="text-[var(--lms-teal-deep)] underline">Clear all</Link></div>;
+  <Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Clear all</Link></div>;
  const context=await getCurrentRequestContext();
+ if(!context.adminScope?.collegeId)return <div className="min-w-0 space-y-5">
+  <PageHeader eyebrow="Super Admin · Placements" title="Placement Analytics"
+   description="Track the hiring funnel, conversion and company performance for the selected college. Filters apply consistently to the headline metrics, funnel and company report below."/>
+  <EmptyState title="Select a college to continue" description="Choose a college in the Super Admin scope selector before reviewing placement analytics."/>
+ </div>;
  const [data,filters]=await Promise.all([
   getSuperAdminCompanyHiringReport(context,parsed.data),
   getSuperAdminHiringReportFilters(context),

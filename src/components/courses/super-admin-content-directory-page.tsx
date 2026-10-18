@@ -6,6 +6,8 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { ThirdPartyLink } from "@/components/ui/third-party-link";
+import { Pagination } from "@/components/ui/pagination";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
  ADMIN_CONTENT_LABELS,adminContentHref,adminContentQuerySchema,
@@ -37,7 +39,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
  if(!parsed.success)return <div className="space-y-5">
   <PageHeader eyebrow="Super Admin · Courses" title={title}/>
   <ErrorState title="Invalid content filters" description="Review search, status and page."
-   action={<Link href={adminContentHref(kind,{})} className="font-semibold text-primary-text">Clear filters</Link>}/>
+   action={<Link href={adminContentHref(kind,{})} className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>}/>
  </div>;
  const context=await getCurrentRequestContext();
  if(!context.adminScope?.collegeId)return <div className="space-y-5">
@@ -99,8 +101,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
       <span className="text-xs text-muted-foreground">Order within lesson: {item.sequence+1}</span>
       {item.contentType==="RESOURCE"?<span className="text-xs text-muted-foreground">Linked materials: {publicHttpsHref(item.externalUrl)?1:0}</span>:null}
     </div>
-    {publicHttpsHref(item.externalUrl)?<a href={publicHttpsHref(item.externalUrl)??"#"} target="_blank" rel="noopener noreferrer"
-      className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">Open public link</a>:null}
+    {publicHttpsHref(item.externalUrl)?<ThirdPartyLink href={publicHttpsHref(item.externalUrl)!} label="Open public link"/>:null}
     {item.durationSeconds!==null?<p className="text-sm text-body">Duration: {Math.ceil(item.durationSeconds/60)} minutes</p>:null}
     {item.startsAt?<p className="text-sm text-body">Starts: {ist(item.startsAt)}</p>:null}
     {item.endsAt?<p className="text-sm text-body">Ends: {ist(item.endsAt)}</p>:null}
@@ -109,16 +110,11 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
      <SuperAdminContentActions item={item}/>:
      <p className="text-xs text-muted-foreground">Content editing is unavailable for an inactive offering or lesson.</p>}
     {item.offeringStatus==="ACTIVE"&&item.lessonStatus==="ACTIVE"?<Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}`}
-     className="inline-flex min-h-10 items-center font-semibold text-primary-text">Edit, publish or archive →</Link>:null}
+     className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Edit, publish or archive →</Link>:null}
    </article>)}
   </div>:<EmptyState title="No content found." description="Select a course and lesson to view content."/>}
-  <nav aria-label={title+" pages"} className="flex flex-wrap items-center justify-between gap-3 text-sm">
-   <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages}</span>
-   <div className="flex gap-3">
-    {data.query.page>1?<Link href={adminContentHref(kind,{...data.query,page:data.query.page-1})} className="font-semibold text-primary-text">Previous</Link>:null}
-    {data.query.page<data.totalPages?<Link href={adminContentHref(kind,{...data.query,page:data.query.page+1})} className="font-semibold text-primary-text">Next</Link>:null}
-   </div>
-  </nav>
-  <Link href="/admin/courses" className="inline-flex min-h-10 items-center font-semibold text-primary-text">← Courses</Link>
+  <Pagination label={title+" pages"} page={data.query.page} pageCount={data.totalPages}
+    hrefForPage={page=>adminContentHref(kind,{...data.query,page})}/>
+  <Link href="/admin/courses" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">← Courses</Link>
  </div>;
 }
