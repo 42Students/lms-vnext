@@ -1,3 +1,4 @@
+import authStyles from "@/components/public/public-auth-skin.module.css";
 "use client";
 
 import Link from "next/link";
@@ -20,7 +21,7 @@ type Invite = {
 };
 type State = "loading" | "ready" | "invalid" | "load_error" | "declined" | "joined";
 
-const actionLink="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-primary bg-primary px-4 py-2 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]";
+const actionLink="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-primary bg-primary px-4 py-2 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
 export function RecruiterInviteLanding({ token }: { token: string }) {
   const [state, setState] = useState<State>("loading");
@@ -121,7 +122,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
   }
 
   const shell = (children: React.ReactNode) => (
-    <main className="flex min-h-dvh min-w-0 items-center justify-center bg-surface-secondary px-4 py-8 sm:py-12">
+    <main className={`${authStyles.page} flex min-h-dvh min-w-0 items-center justify-center  px-4 py-8 sm:py-12`}>
       <Card as="section" className="w-full max-w-md">
         {children}
       </Card>
@@ -247,7 +248,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
       </div>
 
       <p className="mt-5 text-center text-xs text-muted-foreground">
-        Already have an account? <Link className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" href="/login">Sign in</Link>
+        Already have an account? <Link className="inline-flex min-h-11 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href="/login">Sign in</Link>
       </p>
     </>,
   );
