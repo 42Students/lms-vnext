@@ -25,19 +25,23 @@ describe("SA-tenants-modules-READY-03 tenant readiness security",()=>{
   expect(can(actor,"college.read",{organizationId,collegeId:organizationId})).toBe(false);
   expect(can(actor,"college.read",{organizationId:collegeId,collegeId})).toBe(false);
  });
- it("rechecks persisted permission after count queries but before returning tenant evidence",()=>{
+ it("rechecks persisted permission and freshest college lifecycle after count queries",()=>{
   const service=readFileSync("src/modules/colleges/readiness-service.ts","utf8");
   const count=service.indexOf("] = await Promise.all([");
   const facts=service.indexOf("const facts: CollegeReadinessFacts");
-  const tx=service.indexOf("await db.transaction(async tx=>",facts);
-  const guard=service.indexOf('assertPersistedPlatformPermission(tx,context,"college.read"',tx);
-  const result=service.indexOf("return {\n    college,\n    evaluation:",guard);
+  const tx=service.indexOf("const currentCollege=await db.transaction(async tx=>",facts);
+  const lock=service.indexOf('.for("share").limit(1)',tx);
+  const guard=service.indexOf('assertPersistedPlatformPermission(tx,context,"college.read"',lock);
+  const version=service.indexOf("facts.collegeStatus=currentCollege.status",guard);
+  const result=service.indexOf("evaluateCollegeReadiness(facts)",version);
   expect(count).toBeGreaterThan(0);
   expect(facts).toBeGreaterThan(count);
   expect(tx).toBeGreaterThan(facts);
-  expect(guard).toBeGreaterThan(tx);
-  expect(result).toBeGreaterThan(guard);
-  expect(service.slice(guard,result)).toContain("collegeId:college.id,organizationId:college.organizationId");
+  expect(lock).toBeGreaterThan(tx);
+  expect(guard).toBeGreaterThan(lock);
+  expect(version).toBeGreaterThan(guard);
+  expect(result).toBeGreaterThan(version);
+  expect(service.slice(guard,version)).toContain("collegeId:college.id,organizationId:latest.organizationId");
   expect(service).toContain("requirePermission(context, \"college.read\"");
  });
  it("never interprets an unknown domain or missing source as production readiness",()=>{

@@ -10,6 +10,7 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {readLearnerPlaybackSettings} from "./learner-playback-settings";
+import {learnerQuizResultsReleased} from "./learner-quiz-result-release-policy";
 import {learnerVisibleContentExternalUrl} from "./learner-live-link-availability-model";
 import {
   academicPeriods,
@@ -1055,8 +1056,10 @@ export async function getLearnerCourseWorkspace(
           row.status === "CLOSED"
             ? "CLOSED"
             : "PUBLISHED",
+        // The authoring flag alone must not disclose answer availability.
+        // Match the attempt-service embargo: closed, published, deadline elapsed.
         resultsPublished:
-          row.resultsPublished,
+          learnerQuizResultsReleased(row,snapshotNowMs),
         attemptsUsed: attempts.length,
         attemptsRemaining:
           row.status === "PUBLISHED"

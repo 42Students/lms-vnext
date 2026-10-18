@@ -184,7 +184,8 @@ export async function mutateTpoCompanyTeam(context:RequestContext,rawCompanyId:u
       decision:input.decision,bodyLength:input.body.length},
    }).returning({id:activityEvents.id});
    const subscribers=await tx.select({membershipId:follows.membershipId})
-     .from(follows).where(and(eq(follows.collegeId,college.id),eq(follows.companyId,companyId)));
+     .from(follows).where(and(eq(follows.collegeId,college.id),eq(follows.companyId,companyId)))
+     .orderBy(asc(follows.membershipId)).limit(250);
    const explicitMentions:string[]=[];
    // Explicit @member:<UUID> is an unambiguous, scoped person mention.
    // Recipient membership and college status are still verified below.

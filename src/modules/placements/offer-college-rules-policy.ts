@@ -29,8 +29,11 @@ export function canReleaseAnotherHeldOffer(input: {
   );
   // Unknown CTC cannot prove the required upgrade over a held offer.
   if (best <= 0 || input.annualCtcInr === null) return false;
-  return input.annualCtcInr >=
-    Math.ceil(best * (100 + input.upliftPct) / 100);
+  // Compare in integer paise-free INR arithmetic; multiplying a large,
+  // individually safe CTC by an uplift factor may exceed JS safe precision.
+  // BigInt guarantees the exact inclusive threshold at every boundary.
+  return BigInt(input.annualCtcInr) * 100n >=
+    BigInt(best) * BigInt(100 + input.upliftPct);
 }
 
 /** Legacy's minimum-response clock skips Sunday in Asia/Kolkata. */

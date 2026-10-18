@@ -11,5 +11,5 @@ export function resumePositionForGrant(
 export function playbackGrantRefreshDelay(expiresAt: string, now: number) {
   const remaining = Date.parse(expiresAt) - now;
   if (!Number.isFinite(remaining) || remaining <= 0) return 0;
-  return Math.max(1000, remaining - 30_000);
+  return Math.max(0, remaining - 30_000);
 }
