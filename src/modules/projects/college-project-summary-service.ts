@@ -23,7 +23,7 @@ export async function updateCollegeProjectSummary(context:RequestContext,project
   // This check must remain inside the project row lock and after the
   // archived-state gate so it cannot resurrect an archived project.
   if(collegeProjectSummaryMatchesCurrent(row,input))return row;
-  if(row.title!==input.expectedTitle||row.summary!==input.expectedSummary||row.status!==input.expectedStatus||row.updatedAt.toISOString()!==input.expectedUpdatedAt)
+  if(row.title!==input.expectedTitle||row.summary!==input.expectedSummary||row.status!==input.expectedStatus||row.updatedAt.getTime()!==Date.parse(input.expectedUpdatedAt))
    throw new ProjectsServiceError("PROJECT_SUBMISSION_CONFLICT");
   const [mentor]=await tx.select({id:projectMembers.id}).from(projectMembers)
    .where(and(eq(projectMembers.projectId,row.id),eq(projectMembers.role,"MENTOR"),
