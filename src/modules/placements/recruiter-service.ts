@@ -3,8 +3,10 @@ import {
   asc,
   desc,
   eq,
+  gt,
   inArray,
   isNull,
+  sql,
 } from "drizzle-orm";
 import { equalsIgnoreCase } from "@/lib/sql-match";
 import { getDb } from "@/db/client";
@@ -448,6 +450,10 @@ export async function listOwnRecruiterPlacementJobs(
       eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
       eq(placementRecruiterCollegeGrants.companyRelationshipId,placementCompanyRelationships.id),
       eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
+      eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
+      // T-S1-01: null or expired grants are never effective, even if ACTIVE.
+      gt(placementRecruiterCollegeGrants.validUntil,sql`now()`),
+      sql<boolean>`'DRIVES' = ANY(${placementRecruiterCollegeGrants.capabilities})`,
     ))
     .innerJoin(placementRecruiterProfiles,and(
       eq(placementRecruiterProfiles.userId,context.user.id),
