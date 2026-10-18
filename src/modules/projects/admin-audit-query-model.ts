@@ -32,7 +32,13 @@ export function parseProjectAdminAuditQuery(params: ProjectAdminAuditSearchParam
   let ignoredInvalidFilters = false;
   const read = (key: string): string | undefined => {
     const raw = params[key];
-    const value = (Array.isArray(raw) ? raw[0] : raw)?.trim();
+    // Duplicated URL values are ambiguous. Never select the attacker-chosen
+    // first value, even if the rest contain valid filter or cursor tokens.
+    if(Array.isArray(raw)){
+      ignoredInvalidFilters=true;
+      return undefined;
+    }
+    const value=raw?.trim();
     return value || undefined;
   };
   const allow = (key: string, predicate: (value: string) => boolean) => {
