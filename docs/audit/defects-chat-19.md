@@ -363,3 +363,9 @@ These fixes are committed on chat-19; live provider, PostgreSQL revocation races
 | ID | Severity | Source | Correction | Test |
 |---|---|---|---|---|
 | HR-BREAK-HOME-IDENTITY-20 | MAJOR | `src/app/(authenticated)/hr/home/page.tsx` | Page previously verified `hasActiveRecruiter` and a recruiter context, but not that `recruiter.userId` matched the signed-in user. Match both before querying employer portfolio, college grants or private action cues. Same ownership rule already applies to profile and notification mutation. | `tests/unit/HR-BREAK-chat19-home-portfolio-proposals.test.ts`: denies forged principal with redirect and no downstream calls. |
+
+## HR persisted drive proposal URL and principal hardening
+
+| ID | Severity | Source | Finding, correction, evidence |
+|---|---|---|---|
+| HR-BREAK-PROPOSALS-QUERY-21 | MAJOR | `src/app/(authenticated)/hr/drives/proposals/page.tsx` | Page silently selected the first element of repeated `collegeId/page/q/sort` query keys before Zod parsing, allowing ambiguous employer/grant selection and mismatched user-visible filter state. Pass raw values directly to the strict schema and retain `notFound()` recovery for invalid arrays. Also check recruiter.userId matches signed-in user before private proposal history. `tests/unit/HR-BREAK-chat19-home-portfolio-proposals.test.ts` verifies five repeated-filter variants, wrong identity denial and no discussion-reader call. |
