@@ -121,7 +121,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
    <h2 className="font-semibold">Week · 7 AM to 9 PM IST</h2>
    <label className="text-sm">Find an event
     <input type="search" value={filter} onChange={e=>setFilter(e.target.value)} maxLength={100}
-     className="ml-2 min-h-10 rounded border border-border bg-surface px-2" placeholder="Company or event"/>
+     className="ml-2 min-h-11 md:min-h-9 rounded border border-border bg-surface px-2" placeholder="Company or event"/>
    </label>
   </div>
   <p className="text-xs text-muted-foreground">Click an empty hour to add a recruiter follow-up, or drag an existing follow-up onto another hour to move it. Events with an unknown duration use a 30-minute visual marker; it is not a booked time range. Overlapping events share their time lane.</p>
@@ -191,7 +191,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
       <h2 className="text-lg font-semibold">Move follow-up</h2>
       <TpoCalendarMoveFollowup followupId={move.id} currentIst={move.currentIst} />
       <button type="button" onClick={()=>setMove(null)}
-        className="mt-3 min-h-10 rounded-md border border-border px-4 text-sm">Close</button>
+        className="mt-3 min-h-11 md:min-h-9 rounded-[9px] border border-border px-4 text-sm">Close</button>
     </section>
    </div>:null}
   {!slot&&message?<p role="alert" className="rounded border border-border p-3 text-sm text-warning-text">{message}</p>:null}
@@ -202,12 +202,12 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
     {!blockedDatesAvailable?<p role="status" className="text-xs text-muted-foreground">Blocked-date settings could not be loaded. Scheduling is not confirmed conflict-free.</p>:null}
     <label className="grid gap-1 text-sm">Date and time (IST)
      <input type="datetime-local" value={slot} onChange={e=>setSlot(e.target.value)}
-      className="min-h-11 sm:min-h-9 rounded-[9px] border border-border px-3"/></label>
+      className="min-h-11 md:min-h-9 rounded border border-border px-3"/></label>
     <label className="grid gap-1 text-sm">Search recruiter lead
      <input value={leadQuery} onChange={e=>{setLeadQuery(e.target.value);setLeadId("");}}
-      className="min-h-11 sm:min-h-9 rounded-[9px] border border-border px-3" maxLength={120}/>
+      className="min-h-11 md:min-h-9 rounded border border-border px-3" maxLength={120}/>
      <select value={leadId} disabled={loadingLeads} required onChange={e=>setLeadId(e.target.value)}
-      className="min-h-11 sm:min-h-9 rounded-[9px] border border-border px-3">
+      className="min-h-11 md:min-h-9 rounded border border-border px-3">
       <option value="">{loadingLeads?"Loading recruiters…":"Choose recruiter"}</option>
       {matches.map(lead=><option key={lead.id} value={lead.id}>{lead.name}{lead.companyName?" · "+lead.companyName:""}</option>)}
      </select></label>
@@ -217,9 +217,9 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
     {message?<p role="alert" className="text-sm text-warning-text">{message}</p>:null}
     <div className="flex justify-end gap-2">
      <button type="button" disabled={saving} onClick={cancelDraft}
-      className="min-h-11 sm:min-h-9 rounded-[9px] border border-border px-4 text-sm">Cancel</button>
+      className="min-h-11 md:min-h-9 rounded border border-border px-4 text-sm">Cancel</button>
      <button type="button" disabled={saving||loadingLeads||!leadId||!slot} onClick={()=>void save()}
-      className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50 text-primary-foreground">{saving?"Saving…":"Add follow-up"}</button>
+      className="min-h-11 md:min-h-9 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50 text-primary-foreground">{saving?"Saving…":"Add follow-up"}</button>
     </div>
    </div>
   </div>:null}

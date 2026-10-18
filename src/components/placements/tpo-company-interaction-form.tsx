@@ -85,7 +85,7 @@ export function TpoCompanyInteractionForm({
           Contact
           <select value={leadId} onChange={(event) => {setReviewing(false);setLeadId(event.target.value);}}
             disabled={busy}
-            className="mt-1 block min-h-10 w-full rounded-[9px] border border-border bg-surface px-3 font-normal">
+            className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3 font-normal">
             {contacts.map((contact) => (
               <option key={contact.id} value={contact.id}>{contact.name}</option>
             ))}
@@ -96,7 +96,7 @@ export function TpoCompanyInteractionForm({
           <select value={type}
             onChange={(event) => {setReviewing(false);setType(event.target.value as TpoCompanyInteractionKind);}}
             disabled={busy}
-            className="mt-1 block min-h-10 w-full rounded-[9px] border border-border bg-surface px-3 font-normal">
+            className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3 font-normal">
             {(["CALL", "EMAIL", "WHATSAPP", "MEETING", "NOTE"] as const).map((kind) => (
               <option key={kind} value={kind}>{kind}</option>
             ))}
@@ -107,7 +107,7 @@ export function TpoCompanyInteractionForm({
         Outcome (optional)
         <input value={outcome} onChange={(event) => {setReviewing(false);setOutcome(event.target.value);}}
           maxLength={30} disabled={busy}
-          className="mt-1 block min-h-10 w-full rounded-[9px] border border-border bg-surface px-3 font-normal" />
+          className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3 font-normal" />
       </label>
       <label className="block text-sm font-semibold text-foreground">
         Notes (required)
@@ -120,7 +120,7 @@ export function TpoCompanyInteractionForm({
         <button type="button" className="mt-2 text-primary-text underline" onClick={()=>setReviewing(false)}>Cancel review</button>
       </div>:null}
       <button type="button" onClick={() => void submit()} disabled={busy || !leadId || note.trim().length < 3}
-        className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+        className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
         {busy ? "Recording..." : reviewing?"Confirm activity":"Review and confirm activity"}
       </button>
       {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}

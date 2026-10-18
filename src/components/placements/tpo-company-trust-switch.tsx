@@ -29,7 +29,7 @@ export function TpoCompanyTrustSwitch({companyId,initialTrusted,updatedAt}:{comp
   finally{window.clearTimeout(timer);pending.current=false;setBusy(false);}
  }
  return <div className="mt-4 space-y-2">
-  <label className="flex min-h-11 items-center gap-3 text-sm font-semibold">
+  <label className="flex min-h-11 md:min-h-9 items-center gap-3 text-sm font-semibold">
    <input type="checkbox" checked={trusted} disabled={busy}
     onChange={()=>void toggle()} aria-label="Trusted company"/>
    Trusted

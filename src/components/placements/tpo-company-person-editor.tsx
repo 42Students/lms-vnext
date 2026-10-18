@@ -78,7 +78,7 @@ export function TpoCompanyPersonEditor({
       </p>
       <label className="block text-sm font-medium">Contact
         <select value={selected} onChange={event => select(event.target.value)}
-          className="mt-1 block min-h-10 w-full rounded-[9px] border border-border bg-surface p-2">
+          className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[9px] border border-border bg-surface p-2">
           <option value="NEW">Add new person</option>
           {contacts.filter(item => item.editable).map(item => (
             <option key={item.id} value={item.id}>{item.name}</option>
@@ -88,17 +88,17 @@ export function TpoCompanyPersonEditor({
       <div className="grid gap-3 md:grid-cols-2">
         <label className="text-sm font-medium">Name
           <input value={name} maxLength={150} onChange={event => {setReviewing(false);setName(event.target.value);}}
-            className="mt-1 block min-h-10 w-full rounded-[9px] border border-border bg-surface px-3" />
+            className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3" />
         </label>
         <label className="text-sm font-medium">Email
           <input type="email" value={email} maxLength={150}
             onChange={event => {setReviewing(false);setEmail(event.target.value);}}
-            className="mt-1 block min-h-10 w-full rounded-[9px] border border-border bg-surface px-3" />
+            className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3" />
         </label>
         <label className="text-sm font-medium">Designation (optional)
           <input value={designation} maxLength={100}
             onChange={event => {setReviewing(false);setDesignation(event.target.value);}}
-            className="mt-1 block min-h-10 w-full rounded-[9px] border border-border bg-surface px-3" />
+            className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3" />
         </label>
       </div>
       {reviewing?<p role="status" className="rounded-lg border border-border p-3 text-sm text-body">
@@ -108,7 +108,7 @@ export function TpoCompanyPersonEditor({
       </p>:null}
       <button type="button" onClick={() => void save()}
         disabled={busy || !name.trim() || !email.trim()}
-        className="min-h-10 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50 text-primary-foreground">
+        className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50 text-primary-foreground">
         {busy ? "Saving..." : reviewing?"Confirm contact save":current ? "Review and save changes" : "Review and add contact"}
       </button>
       {message ? <p role="status" className="text-sm text-body">{message}</p> : null}
