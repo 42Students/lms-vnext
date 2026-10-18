@@ -216,3 +216,16 @@ The latest authored source and tests add further direct service coverage:
 - `src/app/enterprises/page.tsx` and `src/app/universities/page.tsx`: removed remaining false marketing claims of active AI functionality, keeping navigation and demo CTAs. The existing real SSR marketing suite asserts the replacement headings.
 
 These are authored and pushed to the lane branch. **CI runs after these specific commits are not yet complete**, so database locks, provider delivery and full browser behavior remain separate release gates.
+
+### Internal recruiter mail HTTP and campaign send endpoint gates (chat-16)
+
+- `tests/unit/chat16-recruiter-mail-http-boundaries-16.test.ts`: tests actual `POST /api/internal/placements/recruiter-message-inbound` against wrong origin, 20 KiB body cap before HMAC, exact signed raw body, failed authentication, replay acknowledgment and redacted service failure; tests authenticated `POST /api/internal/placements/recruiter-message-reminders` against missing/weak or incorrect bearer, cross-origin request, accepted-but-zero-delivery result and sanitized worker failure. No provider webhook or scheduling network calls are made; mocked service methods remain the trusted boundary.
+- `tests/unit/chat16-tpo-campaign-dispatch-route-16.test.ts`: actual `POST /api/placements/tpo/campaigns/drafts/[campaignId]/send` tests origin rejection before resolving session, malformed UUID 422, NOT_READY 503, NOT_FOUND 404, ALREADY_STARTED 409, confirmed service counters without fabricated successful delivery, and safe fallback for unexpected errors.
+
+The above tests were authored and committed without execution; externally authenticated scheduling, real HMAC trust-chain integration, provider acceptance and database transactions still require cloud/integration verification.
+
+### Recruiter public invitation OTP HTTP journeys (chat-16)
+
+`tests/unit/chat16-recruiter-invite-otp-http-16.test.ts` exercises the actual two public mutation handlers `/api/public/recruiter-invite/[token]/send-code` and `/api/public/recruiter-invite/[token]/accept`. Named cases `REC-INVITE-HTTP-16`–`22` verify same-origin denial before any service, malformed opaque token denial, unverified DB/OTP delivery gates returning 503, code requests invoking the dedicated delivery adapter, uniform expired/used/throttled/unavailable result (no contact/address oracle), strict 6-digit body with no caller-claimed email/user ID, and server-confirmed join response. The underlying OTP, persisted grant and provider services are mocked; no real messages or identities are created.
+
+Syntax check of this and the preceding two new HTTP files confirmed balanced `()/[]/{}`, no line-break-before-`as` casts, and no test suppression comments. **Cloud CI has not run these new tests**.

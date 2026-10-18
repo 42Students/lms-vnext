@@ -351,3 +351,28 @@ These fixes are committed on chat-19; live provider, PostgreSQL revocation races
 | ID | Severity | Source | Failure and remediation | Regression |
 |---|---|---|---|---|
 | HR-BREAK-TODAY-OFFERS-18 | MAJOR | `src/modules/placements/hr-today-offer-actions-service.ts` | Grouped SQL offered no stable ordering, then truncated to 30 status/job rows. A recruiter with 40 historical accepted/declined groups could lose a later outstanding `ISSUED` offer follow-up from the Today action queue. Sort already college- and employer-authorized aggregated rows by urgency (ISSUED, ACCEPTED, DECLINED), with stable job-title/id ordering, **before** the 30-row cap. No candidate identities are exposed. | `tests/unit/HR-BREAK-chat19-today-offer-priority.test.ts`: 40 old groups plus 2 new ISSUED, stable order, zero counts, immutability, scoped query contract. |
+
+## Duplicate college-selection filters on recruiter Today
+
+| ID | Severity | Source | Finding / correction | Direct test |
+|---|---|---|---|---|
+| HR-BREAK-HOME-QUERY-19 | MAJOR | `src/app/(authenticated)/hr/home/page.tsx` | The Today route still used a `first()` helper on `collegeId:string|string[]`. A URL containing two contradictory college selections could silently select the first, unlike strict HR activity/notifications filters. Pass the original value to the existing strict Zod schema; repeated keys fail with the existing `Invalid college selection` UI without touching company, portfolio or placement-cell records. | `tests/unit/HR-BREAK-chat19-home-portfolio-proposals.test.ts`: conflicting, reversed and duplicated-same college values rejected before service access. |
+
+## Recruiter Today session identity consistency
+
+| ID | Severity | Source | Correction | Test |
+|---|---|---|---|---|
+| HR-BREAK-HOME-IDENTITY-20 | MAJOR | `src/app/(authenticated)/hr/home/page.tsx` | Page previously verified `hasActiveRecruiter` and a recruiter context, but not that `recruiter.userId` matched the signed-in user. Match both before querying employer portfolio, college grants or private action cues. Same ownership rule already applies to profile and notification mutation. | `tests/unit/HR-BREAK-chat19-home-portfolio-proposals.test.ts`: denies forged principal with redirect and no downstream calls. |
+
+## HR persisted drive proposal URL and principal hardening
+
+| ID | Severity | Source | Finding, correction, evidence |
+|---|---|---|---|
+| HR-BREAK-PROPOSALS-QUERY-21 | MAJOR | `src/app/(authenticated)/hr/drives/proposals/page.tsx` | Page silently selected the first element of repeated `collegeId/page/q/sort` query keys before Zod parsing, allowing ambiguous employer/grant selection and mismatched user-visible filter state. Pass raw values directly to the strict schema and retain `notFound()` recovery for invalid arrays. Also check recruiter.userId matches signed-in user before private proposal history. `tests/unit/HR-BREAK-chat19-home-portfolio-proposals.test.ts` verifies five repeated-filter variants, wrong identity denial and no discussion-reader call. |
+
+## HR drive listing and draft repeated-filter hardening
+
+| ID | Severity | Source | Findings, fixes, direct tests |
+|---|---|---|---|
+| HR-BREAK-DRIVES-QUERY-22 | MAJOR | `src/app/(authenticated)/hr/drives/page.tsx` | Repeated college, status/view, legacy tab, page or search fields were silently reduced to their first value. Require no arrays before parsing the otherwise unchanged strict drive query; preserve existing `Invalid drive filters` recovery. Explicitly deny a mismatched recruiter identity at page entry. `tests/unit/HR-BREAK-chat19-drive-list-page.test.ts` covers repeated keys, invalid account, and no service reads. |
+| HR-BREAK-DRIVE-DRAFT-QUERY-23 | MAJOR | `src/app/(authenticated)/hr/drives/new/page.tsx` | Repeated `from/fix/edit/copy/collegeId` IDs previously selected the first value, potentially opening the wrong source job/request or account. Pass raw values into strict Zod (which also rejects conflicting source modes), and deny cross-user recruiter principal before any read. `tests/unit/HR-BREAK-chat19-drive-draft-duplicate-query.test.ts` directly invokes invalid async page entries, asserting no workspace/request/branch reader runs. |
