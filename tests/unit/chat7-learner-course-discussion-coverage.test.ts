@@ -80,7 +80,7 @@ describe("chat-7 learner course Discussion capability and concurrency",()=>{
  });
  it("UX-learn-discussion-screen-09 wires capability, anti-race, reply, paging and empty/access semantics in actual reader",()=>{
   const component=readFileSync(new URL("../../src/components/courses/learner-course-discussion.tsx",import.meta.url),"utf8");
-  for(const token of ["learnerDiscussionCanPost","learnerDiscussionDraftValid","learnerDiscussionRefreshIsCurrent","learnerDiscussionScopeKey"]){
+  for(const token of ["learnerDiscussionCanPost","learnerDiscussionDraftValid","learnerDiscussionRefreshIsCurrent","learnerDiscussionMayPost"]){
    expect(component).toContain(token);
   }
   expect(component).toContain("aria-");
