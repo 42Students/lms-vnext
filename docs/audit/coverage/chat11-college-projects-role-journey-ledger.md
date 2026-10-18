@@ -10,3 +10,13 @@ Owner instruction: Projects is the primary release gate. This ledger is scoped t
 | `lockAdminProjectSubmission` — `src/modules/projects/admin-submission-review-service.ts` | Current College Admin persisted role, project/submission row locks, no archive unlock, idempotent only same actor and reason, expected lock events and separate activity writes. | Existing project delivery review integration suites | Dual admin lock race and rollback, reason mismatch and forbidden role transition |
 
 This is **not a green test report**. Under the 2026-10-18 owner no-CI direction, source changes were committed but the full PostgreSQL/browser matrix remains open.
+
+## IIT Dharwad transition and summary evidence added
+
+`tests/unit/chat11-college-projects-iit-dharwad-state-guards.test.ts` covers:
+- `PROJ-COL-STATE-01`: full PLANNED / ACTIVE / COMPLETED / ARCHIVED / UNKNOWN transition matrix, mentor gate and approved final delivery gate.
+- `PROJ-COL-STATE-02`: strict summary Zod limits, reversed dates, fractional progress, forged historical status and foreign tenant field.
+- `PROJ-COL-STATE-03`: full-field idempotent retry comparison; changing a tracked field cannot bypass CAS.
+- `PROJ-COL-HIERARCHY-04`: source contract for current active section/cohort/program/department and persisted scope before College Admin mutations. **A real database archive race is still required**.
+
+Tests are authored, not executed under the no-CI owner directive.

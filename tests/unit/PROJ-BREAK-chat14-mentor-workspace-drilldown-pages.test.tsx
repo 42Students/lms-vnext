@@ -75,7 +75,7 @@ const cases=[
  {id:"289",title:"activity",invalid:{importance:["HIGH","HIGH"]},alert:"Invalid activity filters",
   disabled:"Projects access is disabled. No private project activity was loaded.",
   fn:ActivityPage,calls:()=>state.activity},
-] as const;
+];
 const render=async(page:typeof cases[number],query:Filters={})=>
  renderToStaticMarkup(await page.fn({params,searchParams:Promise.resolve(query)}));
 beforeEach(()=>{

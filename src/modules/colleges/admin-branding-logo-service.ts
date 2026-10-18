@@ -1,5 +1,6 @@
 import "server-only";
 import {randomUUID} from "node:crypto";
+import {verifyCollegeLogoPngChunks} from "./logo-png-chunks";
 import {and,eq} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {colleges} from "@/db/schema";
@@ -49,6 +50,7 @@ export async function uploadCollegeLogo(ctx:RequestContext,rawId:unknown,file:Fi
   throw new CollegeLogoError("LOGO_INVALID");
  const bytes=new Uint8Array(await file.arrayBuffer());
  const {width}=validateCollegeLogoPng(bytes);
+ if(!verifyCollegeLogoPngChunks(bytes))throw new CollegeLogoError("LOGO_INVALID");
  const key="branding/"+college.id+"/logo-"+randomUUID()+".png";
  const config=getPrivateR2Config();
  const headers={"content-type":"image/png","x-amz-meta-college-id":college.id,
