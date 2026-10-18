@@ -10,7 +10,7 @@ import {listHrInterviewSlots} from "@/modules/placements/hr-interview-slot-servi
 import {getRecruiterPlacementWorkspace} from "@/modules/placements/recruiter-workspace-service";
 export default async function RecruiterInterviewSlots({params}:{params:Promise<{jobId:string}>}){
  const context=await getCurrentRequestContext();
- if(!hasActiveRecruiter(context))redirect("/dashboard");
+ if(!hasActiveRecruiter(context) || context.recruiter?.userId !== context.user.id)redirect("/dashboard");
  const {jobId}=await params;
  if(!z.string().uuid().safeParse(jobId).success)notFound();
  let slots:Awaited<ReturnType<typeof listHrInterviewSlots>>;
