@@ -2,7 +2,8 @@ import {z} from "zod";
 
 export const mentorReviewCompletenessQuerySchema=z.object({
   projectId:z.string().uuid(),
-  page:z.coerce.number().int().min(1).max(10000).default(1),
+  page:z.preprocess(v=>typeof v==="string"&&/^[1-9][0-9]{0,4}$/.test(v)
+    ?Number(v):v,z.number().int().min(1).max(10000).default(1)),
 }).strict();
 
 export type MentorReviewEvidence={
@@ -23,8 +24,11 @@ export function projectReviewCompleteness<T extends MentorReviewEvidence>(rows:r
 }
 
 export function reviewCompletenessPage(total:number,requested:number) {
-  const pageSize=10,totalPages=Math.max(1,Math.ceil(total/pageSize));
-  return {total,pageSize,totalPages,page:Math.min(requested,totalPages)};
+  const pageSize=10;
+  const boundedTotal=Number.isSafeInteger(total)&&total>=0?total:0;
+  const totalPages=Math.max(1,Math.ceil(boundedTotal/pageSize));
+  const safeRequested=Number.isSafeInteger(requested)&&requested>=1?requested:1;
+  return {total:boundedTotal,pageSize,totalPages,page:Math.min(safeRequested,totalPages)};
 }
 
 export function mentorReviewCompletenessHref(query:{projectId:string;page:number}) {
