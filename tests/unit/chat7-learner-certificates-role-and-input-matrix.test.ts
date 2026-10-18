@@ -45,8 +45,19 @@ describe("COURSES-LEARNER-CERTIFICATES-01 private credential authoring and revie
   ])expect(learnerProfileDocumentSchema.shape.certifications.safeParse([entry]).success).toBe(false);
  });
  it("caps saved certificate list at 50 without leaking unbounded user input",()=>{
-  const fifty=Array.from({length:50},(_,index)=>({...credential,id:index===0?id:second}));
+  const fifty=Array.from({length:50},(_,index)=>({
+   ...credential,id:`00000000-0000-4000-8000-${String(index+1).padStart(12,"0")}`,
+  }));
   expect(learnerProfileDocumentSchema.shape.certifications.safeParse(fifty).success).toBe(true);
   expect(learnerProfileDocumentSchema.shape.certifications.safeParse([...fifty,credential]).success).toBe(false);
+  const duplicated=learnerProfileDocumentSchema.shape.certifications.safeParse([
+   credential,{...credential,name:"An unrelated certificate with the same ID"},
+  ]);
+  expect(duplicated.success).toBe(false);
+  if(!duplicated.success)expect(duplicated.error.issues).toEqual(
+   expect.arrayContaining([expect.objectContaining({
+    path:[1,"id"],message:"Duplicate certification identifier",
+   })]),
+  );
  });
 });
