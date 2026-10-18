@@ -379,3 +379,26 @@ The `/tpo/placements/jobs/[jobId]/offers` page now refuses repeated URL filter v
 | TPO-2ND-PAGE-SCOPE-39 | offers, selections, waitlist, joining, close-preview, cancel-preview, rounds, drive-day | Each page contracts TPO role guard, scoped domain read, shared heading, mobile min width, and no raw HTML injection in `tests/unit/chat5-tpo-second-third-page-journeys.test.ts`. These are source-level contracts, not full React render tests | Full loading/error/partial render and alternate role matrix |
 
 This ledger is not yet the requested one-row-per-all-exports exhaustive matrix. Source commits were pushed to `chatgpt/chat-5-b`, with main reconciliation where safe. No CI was run under the owner's directive.
+
+
+### Route-handler JSON boundary ledger (chat-5 owner queue, no CI pass yet)
+
+Each row is an explicit mutation handler, not a blanket claim that all placement APIs are certified. They share `readTpoBulkRequestBody`'s streaming 64KiB limit, media-type checks, invalid/oversize HTTP responses, and same-origin preflight. GET routes were left read-only.
+
+| Case | Handler and permitted action | Behaviour asserted | Coverage file |
+|---|---|---|---|
+| PLACEMENTS-SELECTION-BODY-41 | `POST /api/placements/tpo/jobs/[jobId]/selections` record or verify/release | Origin denial before decoding, structured 400/413/415 on POST instead of the unreachable GET catch; GET performs only the scoped read | `tests/unit/chat5-tpo-second-third-behavior.test.ts` |
+| PLACEMENTS-CANCEL-BODY-42 | `POST /api/placements/tpo/jobs/[jobId]/cancel-preview` | Bounded body before `cancelTpoDriveWithPreview`, stale version and state checks remain service-owned; GET never cancels | Same |
+| PLACEMENTS-JOINING-BODY-43 | `PUT /api/placements/offers/[offerId]/joining` | Bounded body before real joining/correction writes; same-origin guard before parser, no provider text | Same |
+| PLACEMENTS-OFFER-REQUEST-44a | `POST /api/placements/applications/[applicationId]/offers` | Issue payload bounded before persisted eligibility/seat checks | Same |
+| PLACEMENTS-OFFER-REQUEST-44b | `POST /api/placements/offers/[offerId]/actions` | Learner acceptance/decline and admin withdrawal body bounded before status/membership locks | Same |
+| PLACEMENTS-OFFER-REQUEST-44c | `POST /api/placements/jobs/[jobId]/offers/bulk-withdraw` | Bulk list bounded before atomic withdrawal transaction | Same |
+| PLACEMENTS-CASCADE-UNDO-BODY-45 | `POST /api/placements/tpo/offers/[offerId]/cascade-undo` | Strict confirmation and cascade UUID after bounded read; ambiguous JSON never reaches the undo service | Same |
+| TPO-EXPIRY-CSV-46 | `GET /api/placements/tpo/offers/expiry` | Repeated `days` is invalid rather than silently taking the last; no-store CSV and safe clear-filter error | `tests/unit/chat5-tpo-offer-url-integrity.test.ts` |
+
+**PLACEMENTS-CANCEL-SEASON-40** also adds an explicit same-college `FOR SHARE` on the owning placement season after locking the job row. A competing season-close transaction cannot silently change the active-season decision while the cancellation writes. `tests/unit/chat5-tpo-closure-ux-boundary.test.ts` checks lock ordering and college scope; direct PostgreSQL race coverage remains pending. The complete service/export inventory and all route role matrices remain unfinished; no local tests, build, PostgreSQL or browser were run.
+
+
+### Drive-stop withdrawal request settlement — PLACEMENTS-DRIVE-STOP-REQUEST-47
+
+`settleDriveWithdrawalRequests` now closes every pending application-withdrawal request when its owning drive is cancelled or closed. An unplaced SUBMITTED learner's request is `APPROVED` with the normal application withdrawal and status history. A request linked to an accepted official offer is explicitly `REJECTED` and the offer/application remain intact, rather than leaving an unresolvable PENDING request in a stopped drive. The job-scoped event records `withdrawalsApproved` and `withdrawalsRejected` separately; recipients see a neutral decision-history message instead of a false blanket approval. `tests/integration/db09-tpo-drive-cancel.test.ts` covers the accepted-offer case and immutable history at PostgreSQL level. `tests/unit/chat5-tpo-closure-ux-boundary.test.ts` covers both cancellation and closure consumers. Cloud CI deferred; acceptance under concurrent manual decision still needs a live race test.

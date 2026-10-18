@@ -34,7 +34,8 @@ describe("TPO bounded mutation request contracts",()=>{
    expect(origin,route).toBeGreaterThanOrEqual(0);
    expect(decode,route).toBeGreaterThan(origin);
    expect(post,route).toContain("TpoBulkBodyError");
-   expect(post,route).toContain("error instanceof TpoBulkBodyError");
+   const catchName=route.includes("waitlist-promote")?"e":"error";
+   expect(post,route).toContain(catchName+" instanceof TpoBulkBodyError");
    expect(post,route).toContain("apiErrorResponse(");
    expect(post,route).not.toMatch(/await (?:req|request)\.json\(\)/);
   }
