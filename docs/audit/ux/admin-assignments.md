@@ -4,3 +4,6 @@
 - **Improvement:** Updated 1 short touch targets, 2 low-contrast link/label classes, and 0 nested main landmarks where present. Added phone-safe min-width containment without changing navigation or actions.
 - **States:** Existing permission/scope denial, list/empty conditions and service error handling remain; shared workspace and dialogs still own their mutation feedback. No fabricated empty/result copy.
 - **Test:** `tests/unit/ux-admin-first-third.test.ts` → `UX-admin-assignments-01`. Source assertion only; orchestrator device/keyboard/AT/browser run pending.
+
+## Bounded loading and retry
+- Replaced the indefinite loading pulse with the shared `GracefulPageLoading`, preserving “Loading assignments”. It provides a semantic reduced-motion skeleton and a recovery control after a slow network response. Tests: `UX-admin-assignments-03`.

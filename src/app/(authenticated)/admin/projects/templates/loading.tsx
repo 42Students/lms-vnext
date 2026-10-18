@@ -1,1 +1,6 @@
-export default function Loading(){return <div role="status" aria-label="Loading templates" className="animate-pulse space-y-4"><div className="h-10 rounded bg-muted"/><div className="h-48 rounded bg-muted"/></div>;}
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
+
+/** UX: bounded skeleton with a visible recovery action on slow networks. */
+export default function Loading() {
+  return <GracefulPageLoading label="Loading templates…" />;
+}

@@ -1,3 +1,6 @@
+import {Button} from "@/components/ui/button";
+import {Select} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
 import {TpoAuditSavedViews} from "@/components/tpo/tpo-audit-saved-views";
 import {tpoIndiaCalendarDay} from "@/modules/placements/tpo-local-date-model";
 import {TpoAuditGrid} from "@/components/tpo/tpo-audit-grid";
@@ -251,7 +254,7 @@ export default async function TpoAuditPage({
         >
           <label className="grid gap-1 text-sm font-semibold text-body">
             About
-            <select
+            <Select
               name="kind"
               defaultValue={query.kind}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
@@ -267,12 +270,12 @@ export default async function TpoAuditPage({
                   {TPO_AUDIT_KIND_LABELS[kind]}
                 </option>
               ))}
-            </select>
+            </Select>
           </label>
 
           <label className="grid gap-1 text-sm font-semibold text-body">
             From (IST)
-            <input
+            <Input
               type="date"
               name="from"
               defaultValue={query.from ?? ""}
@@ -282,7 +285,7 @@ export default async function TpoAuditPage({
 
           <label className="grid gap-1 text-sm font-semibold text-body">
             To (IST)
-            <input
+            <Input
               type="date"
               name="to"
               defaultValue={query.to ?? ""}
@@ -292,7 +295,7 @@ export default async function TpoAuditPage({
 
           <label className="grid gap-1 text-sm font-semibold text-body">
             Search
-            <input
+            <Input
               type="search"
               name="q"
               maxLength={120}
@@ -303,12 +306,12 @@ export default async function TpoAuditPage({
           </label>
 
           <label className="grid gap-1 text-sm font-semibold text-body">Who
-            <input type="search" name="who" maxLength={100} defaultValue={query.who}
+            <Input type="search" name="who" maxLength={100} defaultValue={query.who}
               placeholder="Actor name contains…" className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground"/>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">
             Rows per page
-            <select
+            <Select
               name="pageSize"
               defaultValue={String(pageSize)}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
@@ -316,16 +319,16 @@ export default async function TpoAuditPage({
               <option value="25">25</option>
               <option value="50">50</option>
               <option value="100">100</option>
-            </select>
+            </Select>
           </label>
 
           <div className="flex flex-wrap items-center gap-3 sm:col-span-2 xl:col-span-5">
-            <button
+            <Button
               type="submit"
               className="inline-flex min-h-11 items-center rounded-md bg-primary px-5 text-sm font-semibold text-foreground hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
             >
               Apply filters
-            </button>
+            </Button>
             <Link
               href="/tpo/audit"
               className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"

@@ -4,3 +4,6 @@
 - **After:** Existing hierarchy/logic preserved; changed 1 touch targets to 44px, 1 small teal text uses to deep-teal and inserted safe `min-w-0` where needed. No user-facing labels or privilege checks changed, and no bespoke UI controls were introduced.
 - **States:** Existing filtered empty, invalid query, missing record, cross-scope denial and mutation errors are still owned by the unchanged service/component branches. Device, focus-trap and SR evidence pending orchestrator.
 - **Test:** `tests/unit/ux-admin-first-third.test.ts` → `UX-admin-faculty-assignment-01`.
+
+## Bounded loading and retry
+- Upgraded the indefinite skeleton to `GracefulPageLoading` while retaining “Loading faculty assignments”. A reduced-motion loading shape and 12-second recovery control are provided; source test `UX-admin-faculty-assignment-03`.

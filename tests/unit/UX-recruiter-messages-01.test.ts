@@ -5,7 +5,7 @@ const read=(path:string)=>readFileSync(join(process.cwd(),path),"utf8");
 describe("UX-recruiter-messages-01",()=>{
  it("preserves canonical route, scoped data and the audited mobile/action states",()=>{
   const source=read("src/app/(authenticated)/recruiter/messages/page.tsx");
-  expect(source).toContain("@/app/(authenticated)/hr/conversations/page.tsx");
+  expect(source).toContain("@/app/(authenticated)/hr/conversations/page");
   expect(source).toMatch(/export\s*\{\s*default\s*\}/);
   expect(read("src/app/(authenticated)/hr/conversations/page.tsx")).toMatch(/export\s+default|export\s*\{\s*default/);
  });

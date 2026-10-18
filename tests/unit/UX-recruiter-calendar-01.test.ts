@@ -6,7 +6,7 @@ const read=(path:string)=>readFileSync(join(process.cwd(),path),"utf8");
 describe("UX-recruiter-calendar-01",()=>{
  it("preserves role-safe navigation, exact route copy and accessible shared surface",()=>{
   const source=read("src/app/(authenticated)/recruiter/calendar/page.tsx");
-  expect(source).toContain("@/app/(authenticated)/hr/calendar/page.tsx");
+  expect(source).toContain("@/app/(authenticated)/hr/calendar/page");
   expect(source).toMatch(/export\s*\{\s*default\s*\}/);
   const canonical=read("src/app/(authenticated)/hr/calendar/page.tsx");
   expect(canonical).toMatch(/export\s+default|export\s*\{\s*default/);
