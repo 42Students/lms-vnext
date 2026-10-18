@@ -146,3 +146,23 @@ test("RV-06 immutable baseline waivers, dynamic target detection across tracked 
   assert.match(rules,/isStaticSafeTarget/);
   assert.match(rules,/unsafe-target/);
 });
+
+test("R2-02 persistent error stack stays within visualViewport and safe area with scrollable dismissal",()=>{
+  const toast=read("src/components/ui/toast.tsx");
+  assert.match(toast,/export function ToastStack\(/);
+  assert.match(toast,/visual\?\.height/);
+  assert.match(toast,/visual\?\.offsetTop/);
+  assert.match(toast,/maxHeight:/);
+  assert.match(toast,/safe-area-inset-top/);
+  assert.match(toast,/safe-area-inset-bottom/);
+  assert.match(toast,/overflow-y-auto/);
+  assert.match(toast,/overscroll-contain/);
+  assert.match(toast,/tabIndex=\{toasts\.length > 0 \? 0 : -1\}/);
+  assert.match(toast,/onDismiss\(toast\.id\)/);
+  assert.match(toast,/Dismiss \$\{toast\.tone === "error"/);
+  assert.doesNotMatch(toast,/\.slice\(-3\)/);
+  const testSource=read("tests/unit/ux-audit2-toast-overflow.test.ts");
+  assert.match(testSource,/length:8|i<=8/);
+  assert.match(testSource,/role="alert"/);
+  assert.match(testSource,/Dismiss error: Notice/);
+});
