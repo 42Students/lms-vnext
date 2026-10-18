@@ -14,14 +14,14 @@ export const managedSubdomainRequest=z.strictObject({
 });
 export function managedBaseDomain(base:string|undefined,wildcardReady:boolean):string|null{
  if(!base||!wildcardReady)return null;
+ // Validate the configured suffix itself. Adding a fake subdomain before URL
+ // parsing can make a literal IP or malformed wildcard appear to be a DNS
+ // hostname. Do not silently punycode or reinterpret Unicode configuration.
+ if(!/^[a-z0-9.-]+$/i.test(base.trim()))return null;
  try{
-  const host=normalizeTenantHost("test."+base);
-  if(!host.startsWith("test."))return null;
-  const suffix=host.slice(5);
-  // Prefixing with "test." makes even a literal IPv4 address look like a
-  // valid DNS hostname to normalizeTenantHost. Reject the suffix itself.
-  if(suffix.split(".").length<2||suffix==="localhost"||isIP(suffix)!==0)return null;
-  return suffix;
+  const host=normalizeTenantHost(base);
+  if(host==="localhost"||host.endsWith(".localhost")||isIP(host)!==0)return null;
+  return host;
  }catch{return null;}
 }
 export function managedHost(label:string,base:string){

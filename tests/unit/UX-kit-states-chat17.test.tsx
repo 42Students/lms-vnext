@@ -83,6 +83,13 @@ describe("UX-kit-STATES: semantic SSR states and accessible fallbacks", () => {
     expect(enabled).not.toContain('disabled=""');
   });
 
+  it("UX-kit-HARDEN-51 Switch thumb and track never animate when reduced motion is requested",()=>{
+    const html=render(<Switch label="Notifications" defaultChecked/>);
+    expect(html).toContain("motion-reduce:transition-none");
+    expect(html).toContain("motion-reduce:after:transition-none");
+    expect(html).toContain('role="switch"');
+  });
+
   it("UX-kit-STATES-03 FormField merges descriptive IDs and does not silently lose errors", () => {
     const html = render(<FormField id="project" label="Project name" required helper="Student-visible"
       error="Required field">{()=><Input id="wrong" aria-describedby="external"/>}</FormField>);
