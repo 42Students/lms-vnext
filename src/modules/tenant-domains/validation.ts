@@ -9,6 +9,9 @@ export function normalizeTenantHost(rawValue: string) {
 
   if (
     trimmed.includes("://") ||
+    // URL canonicalization strips the default HTTPS port 443 before the
+    // parsed.port check; configured tenant domains must never include ports.
+    trimmed.includes(":") ||
     /[/?#@]/.test(trimmed) ||
     /[\\\x00-\x1f\x7f]/.test(trimmed)
   ) {
