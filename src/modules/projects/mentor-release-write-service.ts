@@ -43,7 +43,7 @@ export async function writeMentorProjectRelease(
     .where(eq(projectReleases.projectId,projectId)).orderBy(desc(projectReleases.sequence)).limit(1);
    const [row]=await tx.insert(projectReleases).values({
     projectId,templateKey:"custom-"+randomUUID(),sequence:(last?.sequence??-1)+1,
-    title:input!.title,description:input!.description??null,status:"PLANNED",
+    title:(input as {title:string;description?:string|null}).title,description:(input as {title:string;description?:string|null}).description??null,status:"PLANNED",
    }).returning();
    result=row??null;change="CREATED";
   }else if(operation==="PATCH"){
@@ -51,7 +51,7 @@ export async function writeMentorProjectRelease(
       (!input?.expectedUpdatedAt||!mentorReleaseVersionMatches(existing.updatedAt,input.expectedUpdatedAt)))
     throw new ProjectsServiceError("PROJECT_LIFECYCLE_INVALID_STATE");
    const [row]=await tx.update(projectReleases).set({
-    title:input!.title,description:input!.description??null,updatedAt:new Date(),
+    title:(input as {title:string;description?:string|null}).title,description:(input as {title:string;description?:string|null}).description??null,updatedAt:new Date(),
    }).where(and(eq(projectReleases.id,existing.id),eq(projectReleases.projectId,projectId))).returning();
    result=row??null;change="UPDATED";
   }else{

@@ -18,8 +18,9 @@ describe("Super Admin graduation and class capacity",()=>{
   const classes=read("src/app/(authenticated)/admin/classes/page.tsx");
   const roster=read("src/components/admin/super-admin-batch-roster-manager.tsx");
   expect(classes).toContain("Class full");
-  expect(classes).toContain("row.activeLearners>=row.capacity");
+  expect(classes).toMatch(/row\.activeLearners\s*>=\s*row\.capacity/);
   expect(roster).toContain('"Destination class is full."');
-  expect(roster).toContain("disabled={c.id!==row.classId&&c.capacity!==null&&c.learnerCount>=c.capacity}");
+  expect(roster).toMatch(/disabled=\{\s*choice\.id\s*!==\s*row\.classId\s*&&\s*choice\.capacity\s*!==\s*null\s*&&\s*choice\.learnerCount\s*>=\s*choice\.capacity\s*\}/);
+  expect(roster).toContain("target.learnerCount>=target.capacity");
  });
 });
