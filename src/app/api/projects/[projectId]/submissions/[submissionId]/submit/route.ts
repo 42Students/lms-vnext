@@ -30,11 +30,13 @@ export async function POST(
     const context = await getCurrentRequestContext();
     const { projectId, submissionId } =
       await params;
+    const body=await request.json();
     const submission =
       await submitProjectSubmission(
         context,
         projectId,
         submissionId,
+        body,
       );
 
     return NextResponse.json({ submission });

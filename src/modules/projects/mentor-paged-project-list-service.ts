@@ -3,18 +3,28 @@ import {and,asc,desc,eq,ilike,isNull,ne,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,membershipRoles,projectInstances,projectMembers,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
-import type {MentorProjectListQuery} from "./mentor-project-list-query";
+import {mentorProjectListQuerySchema,type MentorProjectListQuery} from "./mentor-project-list-query";
 import {containsLikePattern} from "@/lib/sql-match";
 import {ProjectsServiceError} from "./errors";
+import {can} from "@/modules/permissions/policy";
+import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 
 /** MEN-projects-meetings-10: DB-backed pagination for ordinary mentor list
  * filters; advanced attention/work sorts continue using their specific
  * rollup services until those filters are also SQL backed.
  */
 export async function listPagedMentorProjects(context:RequestContext,query:MentorProjectListQuery){
+ // Validate again at the exported service boundary: runtime callers need not
+ // have come through the Mentor page's strict URL schema.
+ query=mentorProjectListQuerySchema.parse(query);
  const membership=context.membership;
  if(!membership || membership.status!=="ACTIVE" ||
-   !membership.roles.includes("MENTOR")||context.user.platformStatus!=="ACTIVE")
+   !membership.roles.includes("MENTOR")||context.user.platformStatus!=="ACTIVE"||
+   !can(context,"projects.read",{
+     collegeId:membership.collegeId,organizationId:membership.organizationId,
+   }))
+   throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+ if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const conditions=[
    eq(projectMembers.membershipId,membership.id),
