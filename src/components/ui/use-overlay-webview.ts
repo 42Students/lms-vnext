@@ -7,6 +7,18 @@ const activeOverlayStack: string[] = [];
 let pendingCleanupPops = 0;
 const ignoredPopEvents = new WeakSet<Event>();
 
+/** Pure per-event consumption used by all mounted overlay listeners. */
+export function consumeOverlayCleanupPop(event: Event): boolean {
+  if (ignoredPopEvents.has(event)) return true;
+  if (pendingCleanupPops <= 0) return false;
+  pendingCleanupPops -= 1;
+  ignoredPopEvents.add(event);
+  return true;
+}
+export function queueOverlayCleanupPop(): void {
+  pendingCleanupPops += 1;
+}
+
 /**
  * Host: dispatch cancelable "lms:native-back" before route navigation.
  * If dispatchEvent returns false the overlay consumed Back. History markers
@@ -37,12 +49,7 @@ export function useOverlayWebview({
       if (dismissibleRef.current) callback.current();
     }
     function popstate(event: PopStateEvent) {
-      if (ignoredPopEvents.has(event)) return;
-      if (pendingCleanupPops > 0) {
-        pendingCleanupPops -= 1;
-        ignoredPopEvents.add(event);
-        return;
-      }
+      if (consumeOverlayCleanupPop(event)) return;
       if (historyMode === "route") return; // URL-selected detail: let browser history navigate naturally.
       if (activeOverlayStack[activeOverlayStack.length - 1] !== marker) return;
       if (dismissibleRef.current) callback.current();
@@ -74,7 +81,7 @@ export function useOverlayWebview({
       const latest = window.history.state as Record<string, unknown> | null;
       if (historyMode === "marker" && latest?.lmsOverlay === marker) {
         // The next popstate belongs to this explicit close, NOT to the parent.
-        pendingCleanupPops += 1;
+        queueOverlayCleanupPop();
         window.history.back();
       }
     };
