@@ -62,6 +62,9 @@ This is the **tested-function ledger for the focused model suite**, not a claim 
 
 | `src/modules/courses/faculty-quiz-request-body.ts` | `readFacultyQuizCommandBody` | `tests/unit/chat3-faculty-quiz-transport-errors.test.ts` | FAC-QUIZ-TRANSPORT-01 | strict decimal content-length, 16 MiB declared/stream cap and valid UTF-8 JSON |
 | `src/app/api/courses/faculty/quizzes/[deliveryId]/command/route.ts` | `POST` | `tests/unit/chat3-faculty-quiz-transport-errors.test.ts` | FAC-QUIZ-TRANSPORT-02 | CSRF before auth, 400/413/415 with safe action message/request-ID, no write on parser failure, safe business denial |
+| `src/modules/courses/faculty-authoring-request-body.ts` | `readFacultyAuthoringBody` | `tests/unit/chat3-faculty-authoring-body-routes.test.ts` | FAC-HTTP-BODY-01 | 128KiB streamed metadata, declared cap, strict JSON media/UTF-8, invalid/empty payload denial |
+| `src/app/api/courses/faculty/live-classes/[deliveryId]/command/route.ts` | `POST` | `tests/unit/chat3-faculty-authoring-body-routes.test.ts` | FAC-HTTP-BODY-02 | same-origin before context, authenticated delegated actor, bounded body, safe 400/413/415 and canonical service errors |
+| `src/app/api/courses/faculty/attendance/[deliveryId]/schedule/route.ts` | `POST` | `tests/unit/chat3-faculty-authoring-body-routes.test.ts` | FAC-HTTP-BODY-02 | same-origin before context, authenticated delegated actor, bounded body, safe 400/413/415 and canonical service errors |
 ## Role/security matrix
 
 - FAC-SCOPE-01/02: Faculty allowed only after central `courses.read` and active teaching role; Learner, Mentor, College Admin, Super Admin, missing membership and foreign tenant denied in unit-model mock contract.
