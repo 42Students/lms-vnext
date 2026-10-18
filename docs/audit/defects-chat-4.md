@@ -201,3 +201,7 @@ College Admin Projects insights were built from `RequestContext` `requirePermiss
 ## COL-people-import-history-RACE-02 — S2 closed dialog and stale page overwrite
 
 Bulk import history previously left concurrent GET responses unversioned. After fast next/previous clicks, close/reopen or a slow network, an old page could overwrite a newly selected page, including error text from the outdated request. The College import-history dialog now aborts the prior request, advances a request token on next load and close, applies data/errors only for the latest non-aborted token, checks array response shape and hides raw upstream error strings. `isCurrentCollegeImportHistoryRequest` is tested for out-of-order completions and cancellation; browser integration pending.
+
+## COL-UX-ACADEMIC-TABLE-01 — phone keyboard accessibility of academic directory
+
+The College Admin semesters/batches directory rendered a wide native `<table>` inside a horizontal scroller, requiring phone users to pan across 6–8 columns and find edit actions at the trailing edge. It now uses the shared `DataTable` with a labelled `ScrollCue`, semantic column captions, primary fields and actions visible on phones, and extra metadata in the accessible More details disclosure. Existing Actions and legacy labels remain. SSR tests cover both directory modes; not run, phone/browser audit pending.

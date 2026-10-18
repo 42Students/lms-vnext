@@ -7,8 +7,20 @@ export type InlineNoticeProps = { tone: "error" | "success" | "info"; message: s
 export function InlineNotice({ tone, message, onDismiss, successDismissMs = 5_000 }: InlineNoticeProps) {
   useEffect(() => {
     if (tone !== "success" || !onDismiss) return;
-    const timer = setTimeout(onDismiss, successDismissMs);
-    return () => clearTimeout(timer);
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    // A background tab should not erase a success announcement before the
+    // operator has had a chance to read it upon returning to the workspace.
+    function scheduleWhenVisible() {
+      if (timer !== undefined) clearTimeout(timer);
+      timer = undefined;
+      if (!document.hidden) timer = setTimeout(onDismiss!, successDismissMs);
+    }
+    document.addEventListener("visibilitychange", scheduleWhenVisible);
+    scheduleWhenVisible();
+    return () => {
+      if (timer !== undefined) clearTimeout(timer);
+      document.removeEventListener("visibilitychange", scheduleWhenVisible);
+    };
   }, [tone, message, onDismiss, successDismissMs]);
   return <div role={tone === "error" ? "alert" : "status"} aria-live={tone === "error" ? "assertive" : "polite"}
     className={tone === "error" ? "flex min-w-0 items-start gap-3 rounded-md border border-error bg-[var(--lms-error-subtle)] p-3 text-sm text-foreground" :
