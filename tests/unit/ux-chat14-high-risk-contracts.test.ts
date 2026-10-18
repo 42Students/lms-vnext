@@ -23,9 +23,16 @@ describe("chat-14 mentor and HR UX critical page contracts",()=>{
   expect(src).toContain("<RecruiterApplicantReviewDrawer");
   expect(src).toContain("<RecruiterPrivateRatingEditor");
   expect(src).toContain("ThirdPartyLink");
-  expect(src).toContain('aria-label="Placement-cell selection history table"');
-  expect(src).toContain('aria-label="Issued offers table"');
-  expect(src).toContain("tabIndex={0}");
+  expect(src).toContain('caption="Placement-cell selection history"');
+  expect(src).toContain('rows={selectionRows}');
+  expect(src).toContain('caption="Offers for shared applicants at this college"');
+  expect(src).toContain('mobilePriority: "primary"');
+  const table=read("src/components/ui/data-table.tsx");
+  const cue=read("src/components/ui/scroll-cue.tsx");
+  expect(table).toContain('<ScrollCue axis="x"');
+  expect(table).toContain('<caption className="sr-only">');
+  expect(cue).toContain('tabIndex={edges.scrollable ? 0 : -1}');
+  expect(cue).toContain("overflow-x-auto overscroll-x-contain");
  });
  it("UX-hr-conversations-threadId-02 retains the shared composer and safe failure state",()=>{
   const src=read("src/app/(authenticated)/hr/conversations/[threadId]/page.tsx");
