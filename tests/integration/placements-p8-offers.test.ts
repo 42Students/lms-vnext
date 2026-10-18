@@ -884,6 +884,54 @@ describe("Placement P8 offers and joining", () => {
     }
   });
 
+  it("PLACEMENTS-TPO-CASCADE-17 DB recorded acceptance withdraws ineligible sibling application with correlated history",async()=>{
+    const {job,application}=await preparePassedApplication();
+    const role=await pool.query<{role_option_id:string}>(
+      "select role_option_id from placement_applications where id=$1",[application.id]);
+    const siblingRole=await pool.query<{id:string}>(`
+      insert into placement_job_role_options(job_id,title,employment_type,work_mode)
+      select job_id,title||' sibling',employment_type,work_mode
+      from placement_job_role_options where id=$1 returning id`,[role.rows[0]!.role_option_id]);
+    const sibling=await pool.query<{id:string}>(`
+      insert into placement_applications(
+        job_id,role_option_id,membership_id,channel,status,
+        eligibility_status,eligibility_snapshot,submitted_by_user_id
+      ) select job_id,$2,membership_id,channel,status,
+        eligibility_status,eligibility_snapshot,submitted_by_user_id
+      from placement_applications where id=$1 returning id`,
+      [application.id,siblingRole.rows[0]!.id]);
+    const issued=await issuePlacementOffer(tpo,application.id,{
+      kind:"OFFER",roleTitle:"Evidence-backed full-time offer",annualCtcInr:900_000,
+    });
+    const response=await recordTpoOfferLifecycle(tpo,job.id,{
+      confirmed:true,action:"RECORD_ACCEPTED",offerIds:[issued.id],
+      expectedStatus:"ISSUED",reason:"Employer confirmed this learner accepted the official offer",
+    });
+    expect(response).toMatchObject({updated:1});
+    const acceptedHistory=await pool.query<{reason:string|null;cascade_id:string|null}>(
+      `select reason,cascade_id from placement_offer_status_history
+       where offer_id=$1 and to_status='ACCEPTED' order by created_at desc limit 1`,[issued.id]);
+    const cascadeId=acceptedHistory.rows[0]?.cascade_id;
+    expect(cascadeId).toMatch(/^[0-9a-f-]{36}$/);
+    expect(acceptedHistory.rows[0]?.reason).toBe("cascade:"+cascadeId);
+    const siblingState=await pool.query<{status:string}>(
+      "select status from placement_applications where id=$1",[sibling.rows[0]!.id]);
+    expect(siblingState.rows).toEqual([{status:"WITHDRAWN"}]);
+    const siblingHistory=await pool.query<{reason:string|null;cascade_id:string|null}>(
+      `select reason,cascade_id from placement_application_status_history
+       where application_id=$1 and to_status='WITHDRAWN'`,[sibling.rows[0]!.id]);
+    expect(siblingHistory.rows).toEqual([{reason:"placed elsewhere; cascade:"+cascadeId,cascade_id:cascadeId}]);
+    const accepted=await pool.query<{status:string}>(
+      "select status from placement_offers where id=$1",[issued.id]);
+    expect(accepted.rows).toEqual([{status:"ACCEPTED"}]);
+    const audit=await pool.query<{metadata:Record<string,unknown>}>(
+      `select metadata from activity_events where subject_id=$1 and event_type='PLACEMENTS_OFFER_RESPONDED'
+       order by occurred_at desc limit 1`,[issued.id]);
+    expect(audit.rows[0]?.metadata).toMatchObject({
+      actorRole:"TPO",cascadeId,withdrawnApplicationCount:1,
+    });
+  });
+
   it("PLACEMENTS-TPO-DUAL-ACCEPT-DB-01 rolls back a batch that accepts two official offers for one learner",async()=>{
     const {job,application}=await preparePassedApplication();
     const issued=await issuePlacementOffer(tpo,application.id,{
