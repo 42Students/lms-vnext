@@ -6,6 +6,7 @@ import {courseLessons,courseLearningPaths,courseOfferings,courses,departments} f
 import type {RequestContext} from "@/modules/identity/context";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {bulkSuperAdminLessonVisibility} from "./super-admin-lesson-bulk-visibility";
+import {safeCourseVisibilityFailure} from "./bulk-visibility-failure-model";
 
 export const superAdminCourseBulkSchema=z.strictObject({
  courseIds:z.array(z.uuid()).min(1).max(25).refine(ids=>new Set(ids).size===ids.length),
@@ -48,7 +49,7 @@ export async function bulkSuperAdminCourseVisibility(context:RequestContext,raw:
    changed+=report.changed;unchanged+=report.unchanged;
    failures.push(...report.failures);
   }catch(error){
-   const reason=error instanceof Error?error.message:"BULK_VISIBILITY_FAILED";
+   const reason=safeCourseVisibilityFailure(error);
    for(const id of slice)failures.push({id,reason});
   }
  }
