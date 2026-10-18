@@ -319,3 +319,53 @@ export async function createPlacementFixture(db: PgHarness, tenant: TenantFixtur
   return {companyId:company!.id,relationshipId:relationship!.id,seasonId:season!.id,
     driveId:job!.id,jobId:job!.id,roundId:round!.id};
 }
+
+/** Optional placement applicant, screening, round and offer fixtures.
+ * All actions share db.client's transaction and are always rolled back.
+ * Real job eligibility/application policy must still be tested through services.
+ */
+export type PlacementCandidateFixture = {
+  applicationId: string;
+  screeningApplicationId: string;
+  roundResultId: string;
+  offerId: string;
+};
+
+export async function createPlacementCandidateFixture(
+  db: PgHarness, drive: PlacementFixture, learner: PrincipalFixture,
+  actor: PrincipalFixture,
+): Promise<PlacementCandidateFixture> {
+  if (!learner.membershipId || learner.roles.indexOf("LEARNER") < 0) {
+    throw new Error("PROJ-HARNESS: placement applicant must have learner membership");
+  }
+  if (!actor.collegeId || actor.collegeId !== learner.collegeId) {
+    throw new Error("PROJ-HARNESS: applicant and coordinator must share a college");
+  }
+  const [job] = await db.query<{college_id:string}>(
+    "select college_id from placement_jobs where id=$1",[drive.jobId]);
+  if (job?.college_id !== learner.collegeId) {
+    throw new Error("PROJ-HARNESS: applicant and drive have different colleges");
+  }
+  const [application] = await db.query<{id:string}>(`
+    insert into placement_applications
+      (job_id,membership_id,channel,eligibility_status,eligibility_snapshot,submitted_by_user_id)
+    values ($1,$2,'INTERNAL','ELIGIBLE','{}'::jsonb,$3) returning id`,
+    [drive.jobId,learner.membershipId,learner.userId]);
+  await db.query(`
+    insert into placement_application_screenings(application_id) values ($1)
+    on conflict(application_id) do nothing`,[application!.id]);
+  const [result] = await db.query<{id:string}>(`
+    insert into placement_round_results
+      (round_id,application_id,version,outcome,source,status,submitted_by_user_id)
+    values ($1,$2,1,'PASS','TPO','STAGED',$3) returning id`,
+    [drive.roundId,application!.id,actor.userId]);
+  const [offer] = await db.query<{id:string}>(`
+    insert into placement_offers
+      (application_id,version,role_title,issued_by_user_id)
+    values ($1,1,'Software Engineer',$2) returning id`,
+    [application!.id,actor.userId]);
+  await db.query(`
+    insert into placement_joining_outcomes(offer_id) values ($1)`,[offer!.id]);
+  return {applicationId:application!.id,screeningApplicationId:application!.id,
+    roundResultId:result!.id,offerId:offer!.id};
+}
