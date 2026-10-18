@@ -191,3 +191,6 @@ The reader pages already use `safeParse` and a recoverable invalid-filter UI. Th
 
 
 | `src/modules/placements/admin-company-directory-export-model.ts` / `superAdminCompanyCsv` and `src/modules/admin-ui/super-admin-scoped-csv-model.ts` / `buildSuperAdminScopedCsv` | **SA-ADMIN-CSV-05**: closes `Cc/Me` category holes not in prior `Cf/Mn` escaping, preserves safe Unicode/quotes, cap and BOM. Shared behavior with `placementReportCsvCell`; two exported report families must reject the same malicious input. | `tests/unit/chat13-all-admin-csv-hidden-control-matrix.test.ts` / `SA-ADMIN-CSV-05`; authored, not executed |
+
+
+| `src/modules/placements/report-model.ts` — `summarizePlacementReports`, `summarizePlacementReportDetails` (best full-time CTC, per-branch/company CTC, distribution) | **SA-REPORT-PACKAGE-08/09**, source-fixed: a persisted accepted LOI is not an accepted full-time OFFER, and its CTC cannot inflate the package average, median, maximum or detailed CTC band. Raw offer-history counts remain inclusive and are labelled separately; the college's placed-learner predicate remains authoritative. | `tests/unit/chat13-placement-offer-vs-loi-compensation.test.ts` / `SA-REPORT-PACKAGE-08/09`; authored not run; whole-service DB and export reconciliation pending |
