@@ -60,3 +60,9 @@ Limitations: this is an incremental coverage slice, not a complete 345-file cour
 | `/admin/courses`, `/admin/lessons`, `/admin/videos`, `/admin/resources`, `/admin/live-classes`, `/admin/assignments`, `/admin/quizzes`, `/admin/course-progress`, `/admin/course-progress/students` | Source-verified no-college, filter error, authoring and legacy recovery affordances; detailed browser interaction remains unverified | `tests/unit/chat7-superadmin-courses-content-page-gates.test.ts` — `SA-academics-people-50/54/56/57/61/62/64/65/67` |
 
 Caveats: the unit test snapshot in `docs/orchestrator/unit-failures-latest.md` still predates these changes. The earlier delivery-roster source matcher was corrected to accept a semantically identical TypeScript trailing comma while retaining the academic-period equality assertion. Private scanned file/video imports and full Super Admin image management remain unavailable. This ledger is cumulative but still does not certify exhaustive module/page coverage.
+
+## Admin course content effective-visibility correction
+
+| Entry | Required behavior | Test |
+|---|---|---|
+| `listSuperAdminContentDirectory`, `effectiveCourseContentVisibleToStudents`, `SuperAdminContentDirectoryPage` | An active Course and Offering, PUBLISHED learning path and content, ACTIVE Lesson, and per-content visible flag must all hold before the admin says "Students Visible". Legacy published content under an unpublished path must say "Students Hidden". | `tests/unit/chat7-superadmin-effective-content-visibility.test.ts` — `SA-academics-people-62`; authored, CI pending |
