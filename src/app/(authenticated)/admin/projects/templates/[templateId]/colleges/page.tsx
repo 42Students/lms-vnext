@@ -60,7 +60,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
             status={data.template.status} selectedCollegeId={row.id} assignedToSelectedCollege={Boolean(row.assignment)} allowGlobalActions={false} /></div> : null}
       </article>)}
     </div> : <EmptyState title="No matching colleges" description="No active colleges match the filters in the current safety scope." />}
-    <nav aria-label="College availability pages" className="flex flex-wrap gap-4 text-sm font-semibold text-primary-text">
+    <nav aria-label="College availability pages" className="flex flex-wrap gap-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
       {data.query.page > 1 ? <Link href={templateCollegeAvailabilityHref(id.data, { ...data.query, page: data.query.page - 1 })}>Previous</Link> : null}
       {data.query.page < data.totalPages ? <Link href={templateCollegeAvailabilityHref(id.data, { ...data.query, page: data.query.page + 1 })}>Next</Link> : null}
     </nav>

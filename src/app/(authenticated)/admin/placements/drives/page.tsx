@@ -2,6 +2,8 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { getPlacementTpoOperations } from "@/modules/placements/tpo-operations-service";
 import { PageHeader } from "@/components/ui/page-header";
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
+import { Pagination } from "@/components/ui/pagination";
 import { SuperAdminBulkDriveActions } from "@/components/placements/super-admin-bulk-drive-actions";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
@@ -11,24 +13,41 @@ export default async function SuperAdminDrivesPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }){
  const ctx=await getCurrentRequestContext(), raw=await searchParams;
- if(!ctx.adminScope?.collegeId)return <main className="space-y-4">
+ if(!ctx.adminScope?.collegeId)return <div className="min-w-0 space-y-4">
   <PageHeader eyebrow="Super Admin · Placements" title="All drives"/>
   <EmptyState title="Choose a college" description="Select a college in the Super Admin scope selector to manage its drives."/>
- </main>;
+ </div>;
  const parsed=adminDriveDirectoryQuerySchema.safeParse({
   q:raw.q,status:raw.status,page:raw.page,pageSize:raw.pageSize,
  });
- if(!parsed.success)return <main className="space-y-4">
+ if(!parsed.success)return <div className="min-w-0 space-y-4">
   <PageHeader eyebrow="Super Admin · Placements" title="All drives"/>
   <ErrorState title="Invalid drive filters" description="Choose valid filters and page number."
    action={<Link href="/admin/placements/drives" className="text-primary-text">Clear filters</Link>}/>
- </main>;
+ </div>;
  const operations=await getPlacementTpoOperations(ctx,ctx.adminScope.collegeId);
  const rows=operations.jobs.map(row=>({job:row.job,company:row.job.company,metrics:row.metrics}));
  const data=filterAdminDriveDirectory(rows,parsed.data);
  const href=(page:number)=>adminDriveDirectoryHref({...parsed.data,page});
  const today=new Date();
- return <main className="space-y-5">
+ const columns:DataTableColumn<(typeof data.items)[number]>[]=[
+  {key:"job",header:"Job Title",mobileLabel:"Job Title",mobilePriority:"primary",
+   cell:row=><><strong className="break-words">{row.job.title}</strong>
+    <p className="mt-1 text-xs text-body">{row.company.name} · {adminDriveStatus(row.job,today)}</p></>},
+  {key:"type",header:"Type",mobilePriority:"secondary",cell:row=>row.job.employmentType.replaceAll("_"," ")},
+  {key:"location",header:"Location",mobilePriority:"secondary",cell:row=>row.job.locations.join(", ")||"Not specified"},
+  {key:"deadline",header:"Deadline",mobilePriority:"secondary",cell:row=>row.job.applicationDeadline?
+   <span className={row.job.applicationDeadline<today?"line-through text-muted-foreground":""}>
+    {row.job.applicationDeadline.toISOString().slice(0,10)}</span>:"—"},
+  {key:"posted",header:"Posted",mobilePriority:"secondary",cell:row=>row.job.publishedAt?.toISOString().slice(0,10)??"—"},
+  {key:"applicants",header:"Applicants",mobilePriority:"secondary",
+   cell:row=><span className="tabular-nums">{row.metrics.submittedApplications}</span>},
+  {key:"actions",header:"Actions",mobilePriority:"action",
+   cell:row=><Link href={"/admin/placements/jobs/"+encodeURIComponent(row.job.id)}
+    className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+    Open drive →</Link>},
+ ];
+ return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Placements" title="All drives"
    description="Review and open every persisted non-archived drive in the selected college." />
   <div className="flex flex-wrap gap-3">
@@ -55,36 +74,14 @@ export default async function SuperAdminDrivesPage({searchParams}:{
      {[10,20,50,100].map(n=><option key={n} value={n}>{n}</option>)}
     </select>
    </label>
-   <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-on-primary">Filter</button>
+   <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-foreground">Filter</button>
    <Link href="/admin/placements/drives" className="min-h-11 inline-flex items-center text-primary-text">Clear all</Link>
   </form>
   <SuperAdminBulkDriveActions drives={data.items.map(row=>({id:row.job.id,title:row.job.title,status:row.job.status,companyName:row.company.name}))} />
   <p role="status" className="text-sm text-muted-foreground">{data.total} matching drives · Page {data.page} of {data.totalPages}</p>
-  {data.items.length===0?<EmptyState title="No drives found" description="No drives match these filters."/>:
-   <div className="overflow-x-auto rounded-xl border border-border bg-surface">
-    <table className="w-full min-w-[55rem] text-left text-sm">
-     <thead><tr className="border-b border-border bg-muted">
-      <th className="p-3">Job Title</th><th className="p-3">Type</th><th className="p-3">Location</th>
-      <th className="p-3">Deadline</th><th className="p-3">Posted</th><th className="p-3">Applicants</th><th className="p-3">Actions</th>
-     </tr></thead>
-     <tbody>{data.items.map(row=><tr key={row.job.id} className="border-b border-border">
-      <td className="p-3"><strong>{row.job.title}</strong>
-       <p className="mt-1 text-xs">{row.company.name} · {adminDriveStatus(row.job,today)}</p></td>
-      <td className="p-3">{row.job.employmentType.replaceAll("_"," ")}</td>
-      <td className="p-3">{row.job.locations.join(", ")||"Not specified"}</td>
-      <td className="p-3">{row.job.applicationDeadline?
-       <span className={row.job.applicationDeadline<today?"line-through text-muted-foreground":""}>
-        {row.job.applicationDeadline.toISOString().slice(0,10)}</span>:"—"}</td>
-      <td className="p-3">{row.job.publishedAt?.toISOString().slice(0,10)??"—"}</td>
-      <td className="p-3 tabular-nums">{row.metrics.submittedApplications}</td>
-      <td className="p-3"><Link href={"/admin/placements/jobs/"+row.job.id}
-       className="font-semibold text-primary-text">Open drive →</Link></td>
-     </tr>)}</tbody>
-    </table>
-   </div>}
-  <nav aria-label="Drive list pages" className="flex gap-4 text-sm">
-   {data.page>1?<Link href={href(data.page-1)} className="font-semibold text-primary-text">Previous</Link>:null}
-   {data.page<data.totalPages?<Link href={href(data.page+1)} className="font-semibold text-primary-text">Next</Link>:null}
-  </nav>
- </main>;
+  <DataTable columns={columns} rows={data.items} getRowKey={row=>row.job.id}
+    caption="All drives" empty={<EmptyState title="No drives found" description="No drives match these filters."/>}/>
+  <Pagination page={data.page} pageCount={data.totalPages} hrefForPage={href} label="Drive list pages"/>
+
+ </div>;
 }
