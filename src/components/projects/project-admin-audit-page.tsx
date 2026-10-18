@@ -13,10 +13,8 @@ import {
   ACTIVITY_IMPORTANCE,
   ACTIVITY_EVENT_TYPES,
 } from "@/modules/activity/taxonomy";
-import {
-  isSuperAdmin,
-} from "@/modules/identity/context";
 import { parseProjectAdminAuditQuery } from "@/modules/projects/admin-audit-query-model";
+import { mayReadGlobalProjectAudit } from "@/modules/projects/admin-audit-access-model";
 
 
 /** Wall-clock read kept out of render bodies (React purity rule). */
@@ -51,7 +49,7 @@ export async function ProjectAdminAuditPage({
 
   // A global Super Admin must be able to inspect template events that have no
   // college scope. The activity service itself enforces platform permissions.
-  const globalTemplateAudit=isSuperAdmin(context)&&!context.adminScope?.collegeId;
+  const globalTemplateAudit = mayReadGlobalProjectAudit(context);
 
   const filters = parseProjectAdminAuditQuery(searchParams);
   const { eventType, importance, subjectType, subjectId, from, to } = filters;
