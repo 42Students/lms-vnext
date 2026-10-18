@@ -230,6 +230,11 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
      eq(placementRoundCandidateSlots.version,slot.version),
     )).returning({id:placementRoundCandidateSlots.id});
     if(!saved)throw new PlacementsServiceError("PLACEMENT_ROUND_STALE");
+    // Existing individual overrides must track a bulk physical-room change.
+    if(info.round.mode!=="VIRTUAL")await tx.update(placementApplicationRoundExceptions).set({
+     venue:input.room,updatedAt:new Date(),
+    }).where(and(eq(placementApplicationRoundExceptions.applicationId,slot.applicationId!),
+     eq(placementApplicationRoundExceptions.roundId,info.round.id)));
     await notice(tx,context,job,slot.applicationId!,"PLACEMENTS_TPO_INTERVIEW_ROOM_CHANGED",
      "Your interview room for "+job.title+" is now "+input.room+".");
     slot.room=input.room;
@@ -427,13 +432,22 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
     status:"BOOKED",applicationId:slot.applicationId,confirmedAt:new Date(),
     updatedAt:new Date(),version:target.version+1,
    }).where(eq(placementRoundCandidateSlots.id,target.id));
-   await tx.update(placementApplicationRoundExceptions).set({
+   // A first-time booking has no override. Every move creates or replaces
+   // its learner-specific schedule so calendar and slot state agree.
+   await tx.insert(placementApplicationRoundExceptions).values({
+    applicationId:slot.applicationId,roundId:info.round.id,
     scheduledAt:target.startsAt,timezone:"Asia/Kolkata",
+    mode:info.round.mode==="VIRTUAL"?"VIRTUAL":"ON_CAMPUS",
     venue:info.round.mode==="VIRTUAL"?null:target.room,
     meetingUrl:info.round.mode==="VIRTUAL"?info.round.meetingUrl:null,
-    updatedAt:new Date(),
-   }).where(and(eq(placementApplicationRoundExceptions.applicationId,slot.applicationId),
-    eq(placementApplicationRoundExceptions.roundId,info.round.id)));
+   }).onConflictDoUpdate({
+    target:[placementApplicationRoundExceptions.applicationId,placementApplicationRoundExceptions.roundId],
+    set:{scheduledAt:target.startsAt,timezone:"Asia/Kolkata",
+     mode:info.round.mode==="VIRTUAL"?"VIRTUAL":"ON_CAMPUS",
+     venue:info.round.mode==="VIRTUAL"?null:target.room,
+     meetingUrl:info.round.mode==="VIRTUAL"?info.round.meetingUrl:null,
+     updatedAt:new Date()},
+   });
    await notice(tx,context,job,slot.applicationId,"PLACEMENTS_TPO_INTERVIEW_MOVED",
     "Your interview for "+job.title+" was moved to "+target.startsAt.toISOString()+" ("+target.room+"). "+input.reason);
    return {moved:1};

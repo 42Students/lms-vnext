@@ -2,6 +2,8 @@ import Link from "next/link";
 import { SuperAdminPeopleCsvControl } from "@/components/admin/super-admin-people-csv-control";
 import { superAdminPeopleExportHref } from "@/modules/people/admin-users-export-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { redirect } from "next/navigation";
+import { isSuperAdmin } from "@/modules/identity/context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -24,6 +26,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
    action={<Link href="/admin/people/directory" className="font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>}/>
  </div>;
  const context=await getCurrentRequestContext();
+ if(!isSuperAdmin(context))redirect("/dashboard");
  const data=await listSuperAdminUsers(context,query.data);
  const tabs=[{id:"ALL",label:"All contacts"},{id:"FACULTY",label:"Faculty"},{id:"STUDENT",label:"Students"}] as const;
  const roleOptions = ["ALL", ...MEMBERSHIP_ROLES] as const;

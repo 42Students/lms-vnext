@@ -24,7 +24,10 @@ export default async function FacultyGradebookPage({
   const parsed=facultyGradebookParamsSchema.safeParse(raw);
   // Avoid accepting duplicate query fields or arbitrary tenant/role selectors.
   const knownKeys=Object.keys(rawSearch).every(key=>key==="search"||key==="page");
-  const view=facultyGradebookViewQuerySchema.safeParse(knownKeys?rawSearch:{invalid:true});
+  const noRepeatedKeys=Object.values(rawSearch).every(value=>!Array.isArray(value));
+  const view=facultyGradebookViewQuerySchema.safeParse(
+    knownKeys&&noRepeatedKeys?rawSearch:{invalid:true},
+  );
   if(!parsed.success||!view.success)return <section role="alert" className="space-y-3 p-6">
     <h1 className="text-xl font-semibold text-foreground">Invalid gradebook link or filters</h1>
     <Link href={parsed.success?

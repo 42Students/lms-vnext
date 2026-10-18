@@ -17,6 +17,7 @@ import {tpoBulkConfirmRequestSchema,tpoBulkPreviewRequestSchema,
   safeBulkActionFailure} from "./tpo-bulk-workflow-model";
 import {verifyTpoBulkPreview} from "./tpo-bulk-preview-token";
 import type {BulkOutcome} from "./tpo-bulk-action-model";
+import {mapTpoBulkBounded} from "./tpo-bulk-bounded-execution";
 
 export class TpoBulkPreviewError extends Error {
  constructor(){super("BULK_PREVIEW_EXPIRED_OR_CHANGED");this.name="TpoBulkPreviewError";}
@@ -33,63 +34,68 @@ export async function confirmTpoBulkAction(context:RequestContext,raw:unknown){
  if(!verifyTpoBulkPreview(getAuthConfig().secret,actor,plan,
      input.selections,input.previewToken))throw new TpoBulkPreviewError();
  const current=await loadTpoBulkCurrent(context,plan);
- const outcomes:BulkOutcome[]=[];
- const undoRows:{membershipId:string;actionId:string;afterUpdatedAt:string|null}[]=[];
- for(const selected of input.selections){
+ type RowResult={outcome:BulkOutcome;
+  undo:{membershipId:string;actionId:string;afterUpdatedAt:string|null}|null};
+ // Independent application/member IDs are unique by the request schema.
+ // Keep at most six concurrent DB writes; preserve selected order in both
+ // the UI results and the audited undo token regardless of completion order.
+ const completed=await mapTpoBulkBounded(input.selections,async(selected):Promise<RowResult>=>{
    const state=current.get(selected.id);
    if(!state?.ready||state.version!==selected.version){
-     outcomes.push({id:selected.id,status:"skipped",reason:safeBulkActionFailure()});
-     continue;
+     return {outcome:{id:selected.id,status:"skipped",reason:safeBulkActionFailure()},undo:null};
    }
    try{
      if(plan.target==="STUDENTS"){
        const record=await getTpoLearnerParticipation(context,selected.id);
        if(tpoBulkStudentVersion(record.direct)!==selected.version){
-         outcomes.push({id:selected.id,status:"skipped",reason:safeBulkActionFailure()});
-         continue;
+         return {outcome:{id:selected.id,status:"skipped",reason:safeBulkActionFailure()},undo:null};
        }
        const response=await decideTpoLearnerParticipation(context,selected.id,{
          status:plan.action==="ELIGIBLE"?"ELIGIBLE":plan.action==="INELIGIBLE"?"INELIGIBLE":"NOT_DECIDED",
          ...(plan.action==="INELIGIBLE"?{reason:plan.note}:{}),
          expected:record.direct,
        });
-       if(response.changed&&response.actionId)undoRows.push({membershipId:selected.id,
-        actionId:response.actionId,afterUpdatedAt:response.direct.updatedAt});
-       outcomes.push({id:selected.id,status:response.changed?"updated":"skipped",reason:null});
-     }else{
-       if(plan.action==="MOVE_TEST"||plan.action==="MOVE_INTERVIEW"){
-         await moveTpoBulkApplicationStage(context,plan.jobId!,selected.id,plan.action,selected.version);
-       }else if(plan.action==="ADD_NOTE"){
-         await addTpoApplicantNote(context,plan.jobId!,selected.id,{
-           body:plan.note,expectedLatestNoteId:selected.version==="none"?null:selected.version,
-         });
-       }else if(plan.action==="SEND_MESSAGE"){
-         await sendTpoBulkApplicationMessage(context,{
-           jobId:plan.jobId!,applicationId:selected.id,
-           expectedVersion:selected.version,body:plan.note,
-         });
-       }else{
-         if(plan.action!=="SHORTLISTED"&&plan.action!=="REJECTED")throw new TpoBulkPreviewError();
-         await reviewTpoApplicant(context,{jobId:plan.jobId,applicationId:selected.id},{
-           confirmed:true,expectedUpdatedAt:selected.version,
-           decision:plan.action,note:plan.note,
-         });
-       }
-       outcomes.push({id:selected.id,status:"updated",reason:null});
+       return {
+         outcome:{id:selected.id,status:response.changed?"updated":"skipped",reason:null},
+         undo:response.changed&&response.actionId?{
+           membershipId:selected.id,actionId:response.actionId,
+           afterUpdatedAt:response.direct.updatedAt,
+         }:null,
+       };
      }
+     if(plan.action==="MOVE_TEST"||plan.action==="MOVE_INTERVIEW"){
+       await moveTpoBulkApplicationStage(context,plan.jobId!,selected.id,plan.action,selected.version);
+     }else if(plan.action==="ADD_NOTE"){
+       await addTpoApplicantNote(context,plan.jobId!,selected.id,{
+         body:plan.note,expectedLatestNoteId:selected.version==="none"?null:selected.version,
+       });
+     }else if(plan.action==="SEND_MESSAGE"){
+       await sendTpoBulkApplicationMessage(context,{
+         jobId:plan.jobId!,applicationId:selected.id,
+         expectedVersion:selected.version,body:plan.note,
+       });
+     }else{
+       if(plan.action!=="SHORTLISTED"&&plan.action!=="REJECTED")throw new TpoBulkPreviewError();
+       await reviewTpoApplicant(context,{jobId:plan.jobId,applicationId:selected.id},{
+         confirmed:true,expectedUpdatedAt:selected.version,
+         decision:plan.action,note:plan.note,
+       });
+     }
+     return {outcome:{id:selected.id,status:"updated",reason:null},undo:null};
    }catch(error){
      if(error instanceof PlacementsServiceError||
         error instanceof TpoParticipationConflictError||
         error instanceof TpoBulkStageError||
         error instanceof AuthorizationError){
-       outcomes.push({id:selected.id,status:"skipped",reason:safeBulkActionFailure()});
-       continue;
+       return {outcome:{id:selected.id,status:"skipped",reason:safeBulkActionFailure()},undo:null};
      }
-     // Each earlier row has already committed: return a truthful partial result
-     // rather than prompting a blind replay after an unrecognized DB failure.
-     outcomes.push({id:selected.id,status:"failed",reason:safeBulkActionFailure()});
+     // A previously completed row already committed; preserve each result
+     // rather than suggesting an unsafe blind retry after a database outage.
+     return {outcome:{id:selected.id,status:"failed",reason:safeBulkActionFailure()},undo:null};
    }
- }
+ },6);
+ const outcomes=completed.map(row=>row.outcome);
+ const undoRows=completed.flatMap(row=>row.undo?[row.undo]:[]);
  const updated=outcomes.filter(item=>item.status==="updated").length;
  const skipped=outcomes.filter(item=>item.status==="skipped").length;
  const failed=outcomes.filter(item=>item.status==="failed").length;

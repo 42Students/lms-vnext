@@ -9,6 +9,7 @@ import {
 import { getDb } from "@/db/client";
 import {
   collegeMemberships,
+  colleges,
   membershipRoles,
   placementDriveDayCoordinatorAssignments,
   placementJobs,
@@ -24,6 +25,7 @@ import {
   type RequestContext,
 } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {hasPlacementTeamMembership} from "./placement-team-access-model";
 
 import { listPlacementCompanies } from "./company-service";
@@ -40,6 +42,20 @@ import {
 } from "./tpo-settings-read-model";
 
 export {tpoSettingsCollegeIdSchema} from "./tpo-settings-read-model";
+
+/** The member can be demoted or the college archived while directory joins
+ * are running. The final response must be authorized against persisted rows. */
+async function assertLiveTpoPeopleScope(context:RequestContext,collegeId:string){
+ await getDb().transaction(async tx=>{
+  const [college]=await tx.select({organizationId:colleges.organizationId,status:colleges.status})
+   .from(colleges).where(eq(colleges.id,collegeId)).for("share").limit(1);
+  if(!college||college.status!=="ACTIVE")throw new AuthorizationError("placements.manage");
+  const actor=await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+   collegeId,organizationId:college.organizationId,
+  });
+  if(!hasPlacementTeamMembership(actor))throw new AuthorizationError("placements.manage");
+ });
+}
 
 /**
  * Both checks are deliberate:
@@ -291,6 +307,8 @@ export async function getTpoPlacementTeam(
 
   const members = buildTpoTeamRoster(evidence);
 
+  await assertLiveTpoPeopleScope(context,collegeId);
+
   return {
     collegeId,
     members,
@@ -342,6 +360,8 @@ export async function getTpoTrustedCompanies(
           )
       : Promise.resolve([]),
   ]);
+
+  await assertLiveTpoPeopleScope(context,collegeId);
 
   const companies = buildTpoTrustedCompanies(
     companyRows.map((row) => ({

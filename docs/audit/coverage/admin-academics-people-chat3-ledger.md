@@ -46,6 +46,21 @@ Snapshot: 2026-10-18, source branch `chatgpt/chat-3-b`. Role-journal and code-ba
 - `resolveSuperAdminSectionDetail` now requires an **active SUPER_ADMIN system role** before generic `academics.read` permission. The latter is also available to Faculty, Mentor and Learner in their own college; a stale or injected `adminScope` may never upgrade those actors into Super Admin Section pages.
 - `tests/unit/chat3-sa-academics-section-platform-role.test.ts` exercises the real entry point against selected same-college Section, foreign organization/college, invalid IDs, missing selection, disabled Super Admin and wrong-role contexts. It also verifies unexpected database errors propagate to the error boundary rather than hiding as 404. Cloud CI and authenticated browser tests pending.
 
+## SA-ACADEMICS-ROOT-01 / SA-PEOPLE-ROOT-01 — explicit root page Super Admin role
+
+- `/admin/academics` and `/admin/people` now assert the active platform `SUPER_ADMIN` role immediately after obtaining the request context, **before** reading the academic workspace or college membership directory. Their selected-college prompt remains visible to authorized Super Admins without a selected college.
+- `tests/unit/chat3-sa-academics-people-root-platform-roles.test.ts` checks the ordering of the role guard relative to data reads and the actual `isSuperAdmin` permission behavior against Faculty, Mentor, Learner, College Admin, disabled and legitimate Super Admin contexts. Cloud CI and full authenticated browser routing remain outstanding.
+
+## SA-PEOPLE-ROOT-02 — Faculty assignments and People read-only root privilege
+
+- `/admin/faculty-assignment`, `/admin/people/directory`, and `/admin/people/unassigned` now explicitly reject active non-Super-Admin users before loading Faculty assignments, membership contact lists, or global unassigned identities. This supplements their service-layer checks and prevents a stale `adminScope` from turning generic academic reads into platform-admin pages.
+- `tests/unit/chat3-sa-academics-people-root-platform-roles.test.ts` includes `SA-PEOPLE-ROOT-02`, covering the preflight guard ordering relative to each service call. Cloud CI and browser role-switch tests remain necessary.
+
+## SA3-PEOPLE-CLASS-01 — learner class labels scoped to cohort, period and college
+
+- `src/modules/admin-ui/super-admin-scoped-people-service.ts` previously selected a learner's latest Section name through raw `section_enrollments` and `sections` joins with no college or cohort/academic-period consistency check. The correlated class display now validates that Section cohort/term match the current program enrollment, and the cohort's program department belongs to the selected college.
+- `tests/unit/chat3-superadmin-scoped-people-pagination.test.ts` compiles the actual class label SQL via `PgDialect`, checks the scoped program/cohort/term and selected college predicates, and retains the original page and role matrix. PostgreSQL mismatched-FK fixtures and browser acceptance remain pending.
+
 ## Targeted repairs and further release gates
 
 - `COL-people-24`: exact legacy mentor-reassignment confirmation description restored at `src/components/projects/project-admin-reassign-mentor-page.tsx`; must rerun its failing test, and real keyboard/retry browser checks remain.
