@@ -111,6 +111,22 @@ describe("PROJ-HARNESS role/tenancy and concurrent PostgreSQL fixture boundaries
     });
   });
 
+  it("PROJ-HARNESS-28 a deactivated user and deactivated meeting author fail closed", async () => {
+    await withProjectPg(pool, async db => {
+      const f = await actors(db);
+      await db.query("update users set platform_status='DISABLED' where id=$1", [f.learner.userId]);
+      await expect(createTaskSubmission(db, f.project, f.learner)).rejects.toThrow(/active member/);
+      await expect(createFinalSubmission(db, f.project, f.learner)).rejects.toThrow(/active member/);
+      expect(await count(db, "project_submissions")).toBe(0);
+    });
+    await withProjectPg(pool, async db => {
+      const f = await actors(db);
+      await db.query("update users set platform_status='DISABLED' where id=$1", [f.author.userId]);
+      await expect(createMeeting(db, f.project, f.learner, f.author)).rejects.toThrow(/wrong college/);
+      expect(await count(db, "project_meetings")).toBe(0);
+    });
+  });
+
   it("PROJ-HARNESS-26 independent sessions contend for the same transaction advisory lock", async () => {
     const key = BigInt("0x" + randomUUID().replaceAll("-", "").slice(0, 15)).toString();
     await withTwoPgSessions(pool, async (first, second) => {
