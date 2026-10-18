@@ -203,10 +203,10 @@ async function selectDriveFactRows(jobIds:string[]){
 /** Queries stay bounded even for a college with more than 500 employer drives. */
 async function loadDriveFacts(jobIds:string[]){
  const chunks=tpoDriveFactIdChunks(jobIds);
- if(!chunks.length)return [];
- const [first,...remaining]=chunks;
+ const first=chunks[0];
+ if(!first)return [];
  const rows=await selectDriveFactRows(first);
- for(const part of remaining)rows.push(...await selectDriveFactRows(part));
+ for(const part of chunks.slice(1))rows.push(...await selectDriveFactRows(part));
  return rows;
 }
 
