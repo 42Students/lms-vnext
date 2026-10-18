@@ -11,6 +11,11 @@ export type GradebookScore={
 export type GradebookLearner={
   membershipId:string;displayName:string|null;email:string|null;rollNumber:string|null;
 };
+/** Use one validity rule for Section totals, learner detail and CSV exports. */
+function validPublishedGradebookScore(score:GradebookScore):boolean {
+  return Number.isFinite(score.earned) && Number.isFinite(score.possible) &&
+    score.possible>0 && score.earned>=0 && score.earned<=score.possible;
+}
 export function facultyPublishedGradeRows(
   roster:readonly GradebookLearner[],scores:readonly GradebookScore[],
   publishedAssessments:number,
@@ -19,9 +24,7 @@ export function facultyPublishedGradeRows(
   const eligible=new Set(roster.map(r=>r.membershipId));
   for(const score of scores){
     // Malformed or private producer data must not produce plausible grade totals.
-    if(!eligible.has(score.membershipId) ||
-      !Number.isFinite(score.earned) || !Number.isFinite(score.possible) ||
-      score.possible<=0 || score.earned<0 || score.earned>score.possible)continue;
+    if(!eligible.has(score.membershipId) || !validPublishedGradebookScore(score))continue;
     const entries=byMember.get(score.membershipId)??[];
     if(!entries.some(e=>e.kind===score.kind&&e.assessmentId===score.assessmentId))
       entries.push(score);
@@ -72,9 +75,9 @@ export function facultyPublishedLearnerBreakdown(
 ) {
   return assessments.map(assessment=>{
     const score=scores.find(item=>item.membershipId===learnerMembershipId&&
-      item.assessmentId===assessment.assessmentId&&item.kind===assessment.kind);
-    if(!score||!Number.isFinite(score.earned)||!Number.isFinite(score.possible)||
-      score.possible<=0||score.earned<0||score.earned>score.possible){
+      item.assessmentId===assessment.assessmentId&&item.kind===assessment.kind&&
+      validPublishedGradebookScore(item));
+    if(!score){
       return {...assessment,earned:null,possible:null,percent:null,
         status:"UNKNOWN" as const};
     }
