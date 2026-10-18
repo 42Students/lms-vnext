@@ -30,6 +30,11 @@ beforeEach(()=>{
  });
 });
 describe("LEARNER-COURSE-NOTICES-01 active Section announcement visibility",()=>{
+ it("rejects malformed Section IDs before any permission check or database read",async()=>{
+  await expect(listLearnerCourseClassAnnouncements(context,"not-a-uuid",now)).rejects.toThrow();
+  expect(state.learnerGuard).not.toHaveBeenCalled();
+  expect(state.select).not.toHaveBeenCalled();
+ });
  it("denies revoked or foreign learner before any Section or announcement query",async()=>{
   state.learnerGuard.mockRejectedValueOnce(Error("revoked"));
   await expect(listLearnerCourseClassAnnouncements(context,section,now)).rejects.toThrow();
