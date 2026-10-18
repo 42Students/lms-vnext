@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, type FormEvent } from "react";
+import { useRef, useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,7 @@ type MappingRead = {
 export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
   const router = useRouter();
   const [pending, start] = useTransition();
+  const inFlight=useRef(false);
   const [programId, setProgramId] = useState("");
   const [termId, setTermId] = useState("");
   const [draftByTerm, setDraftByTerm] = useState<Record<string, string[]>>({});
@@ -30,7 +31,8 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
   const [draggedId, setDraggedId] = useState<string | null>(null);
 
   async function send() {
-    if (!confirm) return;
+    if (!confirm || inFlight.current) return;
+    inFlight.current=true;
     start(async () => {
       try {
         const create = confirm.type === "ADD";
@@ -54,7 +56,9 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
       } catch (cause) {
         setError(cause instanceof FriendlyFetchError && cause.code
           ? collegeTermMappingErrorMessage(cause.code)
-          : cause instanceof Error ? cause.message : "Unable to change mapping");
+          : "Unable to change mapping. Refresh and try again.");
+      }finally{
+        inFlight.current=false;
       }
     });
   }
@@ -81,6 +85,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
   }
 
   function updateMapping(id: string, creditsValue: string, position: number) {
+    if(inFlight.current)return;
     const parsed = collegeTermCourseUpdateSchema.safeParse({
       credits: creditsValue.trim() === "" ? 3 : Number(creditsValue), position,
     });
@@ -89,6 +94,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
       return;
     }
     setError(null);
+    inFlight.current=true;
     start(async () => {
       try {
         await apiFetch("/api/academics/semester-course-mappings/" + encodeURIComponent(id), {
@@ -104,7 +110,9 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
       } catch (cause) {
         setError(cause instanceof FriendlyFetchError && cause.code
           ? collegeTermMappingErrorMessage(cause.code)
-          : cause instanceof Error ? cause.message : "Unable to update mapping.");
+          : "Unable to update mapping. Refresh and try again.");
+      }finally{
+        inFlight.current=false;
       }
     });
   }
