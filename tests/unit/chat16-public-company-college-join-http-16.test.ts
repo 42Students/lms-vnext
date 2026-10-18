@@ -29,11 +29,12 @@ vi.mock("@/modules/messaging/public-join-code-delivery",()=>({
 }));
 
 const original=process.env.PUBLIC_JOIN_TRUSTED_PROXY_READY;
-const body={token:"a".repeat(64),email:"recruiter@example.org",code:"123456"};
+const sendBody={token:"a".repeat(64),email:"recruiter@example.org"};
+const joinBody={...sendBody,code:"123456",name:"Recruiter One",designation:"Hiring Manager",phone:"",companyName:"Example Inc"};
 const req=(scope:"company"|"college",action:"send-code"|"join")=>
  new Request("https://42lms.com/api/public/"+scope+"-join/"+action,{
   method:"POST",headers:{"Content-Type":"application/json",
-   "x-public-verified-client-ip":"198.51.100.21"},body:JSON.stringify(body),
+   "x-public-verified-client-ip":"198.51.100.21"},body:JSON.stringify(action==="send-code"?sendBody:joinBody),
  });
 const scopeRoutes=[
  {scope:"COMPANY" as const,path:"company" as const,send:companySendCode,join:companyJoin},
@@ -66,8 +67,8 @@ describe("chat-16 public recruiter company and college OTP HTTP security",()=>{
   });
   await route.send(req(route.path,"send-code"));
   await route.join(req(route.path,"join"));
-  expect(requestPublicJoinCode).toHaveBeenCalledWith(route.scope,body,null,deliverPublicRecruiterJoinCode);
-  expect(acceptPublicRecruiterJoin).toHaveBeenCalledWith(route.scope,body,null);
+  expect(requestPublicJoinCode).toHaveBeenCalledWith(route.scope,sendBody,null,deliverPublicRecruiterJoinCode);
+  expect(acceptPublicRecruiterJoin).toHaveBeenCalledWith(route.scope,joinBody,null);
  });
  it.each(scopeRoutes)("REC-JOIN-HTTP-18 $scope forwards only attested network identity to rate-limited services",async route=>{
   process.env.PUBLIC_JOIN_TRUSTED_PROXY_READY="VERIFIED";
@@ -86,10 +87,10 @@ describe("chat-16 public recruiter company and college OTP HTTP security",()=>{
    joined:true,outcome:"ALREADY_JOINED",signInEmail:"recruiter@example.org",
   });
   expect(requestPublicJoinCode).toHaveBeenCalledWith(
-   route.scope,body,"198.51.100.21",deliverPublicRecruiterJoinCode,
+   route.scope,sendBody,"198.51.100.21",deliverPublicRecruiterJoinCode,
   );
   expect(acceptPublicRecruiterJoin).toHaveBeenCalledWith(
-   route.scope,body,"198.51.100.21",
+   route.scope,joinBody,"198.51.100.21",
   );
  });
  it.each(scopeRoutes)("REC-JOIN-HTTP-19 $scope rejects missing network guard without falsely confirming OTP delivery",async route=>{
