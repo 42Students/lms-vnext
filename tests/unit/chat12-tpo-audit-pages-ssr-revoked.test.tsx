@@ -1,5 +1,6 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {renderToStaticMarkup} from "react-dom/server";
+import type {ReactNode} from "react";
 import type {ActiveMembership,RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 
@@ -13,7 +14,7 @@ vi.mock("@/modules/placements/tpo-batch-workspace-read-service",()=>({requireTpo
 vi.mock("@/db/client",()=>({getDb:mock.db}));
 vi.mock("@/components/ui/page-header",()=>({PageHeader:({title}:{title:string})=><h1>{title}</h1>}));
 vi.mock("@/components/ui/error-state",()=>({
- ErrorState:({title,description,action}:{title:string;description:string;action:React.ReactNode})=>
+ ErrorState:({title,description,action}:{title:string;description:string;action:ReactNode})=>
   <section role="alert"><h2>{title}</h2><p>{description}</p>{action}</section>,
 }));
 import TpoAuditPage from "@/app/(authenticated)/tpo/audit/page";
