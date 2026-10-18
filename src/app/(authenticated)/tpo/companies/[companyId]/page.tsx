@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { PageHeader } from "@/components/ui/page-header";
 import { TpoPublicJoinLinkCard } from "@/components/tpo/tpo-public-join-link-card";
 import {TpoCompanyTeamConversation} from "@/components/tpo/tpo-company-team-conversation";
@@ -48,6 +49,7 @@ export default async function TpoCompanyDetailPage({
     redirect("/dashboard");
   }
 
+  await requireTpoBatchActor(context);
   const route = await params;
 
   const parsed = tpoCompanyDetailQuerySchema.safeParse({

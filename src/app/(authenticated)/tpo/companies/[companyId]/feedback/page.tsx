@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { PageHeader } from "@/components/ui/page-header";
 import { TpoCompanyFeedbackForm } from "@/components/placements/tpo-company-feedback-form";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -23,6 +24,7 @@ export default async function TpoCompanyFeedbackPage({
 }) {
   const context = await getCurrentRequestContext();
   if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
+  await requireTpoBatchActor(context);
   const [{ companyId }, search] = await Promise.all([params, searchParams]);
   const parsed = tpoCompanyFeedbackQuerySchema.safeParse({
     companyId,
