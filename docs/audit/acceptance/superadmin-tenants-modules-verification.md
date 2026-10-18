@@ -64,3 +64,15 @@ New mutation tests check real typed request validation and current source contra
 | ID | Status | Source, test and acceptance |
 | --- | --- | --- |
 | SA-tenants-modules-R01 | DONE — source-level, DB acceptance pending | Feature Controls `src/app/(authenticated)/admin/features/page.tsx`, Module Access `src/app/(authenticated)/admin/module-access/page.tsx`, and Tenant Settings `src/app/(authenticated)/admin/settings/page.tsx` now display legacy scope headings and meaningful bounded counts. `src/modules/module-access/admin-control-overview-model.ts` computes scope label / page-module counts, `src/modules/module-access/admin-overview-metrics-service.ts` enforces Super Admin permission and computes membership counts only inside already-authorized visible colleges; shows page-only counts, never extrapolates hidden tenants. `tests/unit/chat11-final-SA-tenants-modules-R01.test.ts` — `SA-tenants-modules-R01 restores all three header-card contracts with truthful bounded counters`. |
+
+
+## Chat-11 Super Admin security and concurrency follow-up (source-authored, cloud CI pending)
+
+| Audit ID | Evidence | Verification status |
+|---|---|---|
+| SA-tenants-modules-BRAND-03 / BRAND-04 | `src/modules/colleges/branding-service.ts`, `src/components/admin/college-branding-form.tsx`, `tests/unit/chat11-super-admin-branding-save-adversarial.test.ts` | Persisted Super Admin actor and active college locked; unsafe unsaved preview URLs refused |
+| SA-tenants-modules-BRAND-05 | `src/modules/colleges/college-logo-request-body.ts`, `src/app/api/colleges/[collegeId]/branding/logo/route.ts`, `tests/unit/chat11-super-admin-logo-boundary.test.ts` | Auth and same-origin before 3 MiB multipart stream cap; no green upload/storage claim |
+| SA-tenants-modules-BRAND-CAS-01 | `src/modules/colleges/branding-service.ts`, `src/modules/colleges/branding.ts`, `tests/unit/chat11-super-admin-branding-cas.test.ts`, `tests/integration/chat11-super-admin-branding-cas.test.ts` | Expected-version conflict, harmless retry, one audit, preserved draft; PostgreSQL rerun needed |
+| SA-tenants-modules-BRAND-06 | `src/modules/colleges/public-branding-model.ts`, `tests/unit/chat11-super-admin-public-branding-safe.test.ts` | Public sign-in suppresses signed/credential-bearing stored image URLs and unsafe contact inputs |
+| SA-tenants-modules-R01 | `src/modules/module-access/admin-overview-metrics-scope.ts`, `tests/unit/chat11-super-admin-module-metrics-scope.test.ts` | Counts scoped active college learners and explicit membership overrides; live SQL verification needed |
+| SA-tenants-modules-LOGIN-02 | `src/modules/colleges/admin-signin-request-body.ts`, `tests/unit/chat11-super-admin-signin-route-adversarial.test.ts` | Sign-in policy PUT origin, 2 KiB cap, actor before parse, safe stale conflict |
