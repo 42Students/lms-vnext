@@ -378,3 +378,8 @@ The reminder worker route now enforces a nonblank, non-whitespace-quoted configu
 | `/platform`, `/quiz`, `/placements`, `/privacy-policy` error route components | same (`UX-chat16-public-route-errors-07..08`) | route-specific shared fallback and safe public recovery |
 
 These are newly authored SSR/mocked-boundary page tests; actual mobile viewport/focus/browser behaviour still needs the final browser suite. The newly authored tests and application changes remain **unexecuted** per owner priority: do not chase CI until the full task queue has been implemented.
+
+
+| `GET /health`, `GET /ready` | `tests/unit/chat16-public-health-readiness-http-06.test.ts` (`UX-chat16-public-health-route-01`, `UX-chat16-public-ready-route-02`, `UX-chat16-public-ready-outage-03`) | public liveness, readiness 200/503, no database credentials or stack details exposed |
+
+The public HTTP probes mock the system-readiness collaborators; they do not establish a successful disposable PostgreSQL connection. No automated runtime tests were run by chat-16.
