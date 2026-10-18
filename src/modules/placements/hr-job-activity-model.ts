@@ -1,9 +1,15 @@
 import {z} from "zod";
+const decimalPage=(maximum:number)=>
+ z.union([
+  z.number().int().min(1).max(maximum),
+  z.string().regex(/^[0-9]+$/).transform(Number)
+   .pipe(z.number().int().min(1).max(maximum)),
+ ]);
 export const hrActivityQuerySchema=z.strictObject({
   collegeId:z.string().uuid().optional(),
-  limit:z.coerce.number().int().min(1).max(100).default(40),
+  limit:decimalPage(100).default(40),
   kind:z.enum(["ALL","PUBLISHED","CLOSED"]).default("ALL"),
-  page:z.coerce.number().int().min(1).max(10000).default(1),
+  page:decimalPage(10000).default(1),
   q:z.string().trim().max(120).default(""),
 });
 export const HR_JOB_EVENT_TYPES=["placements.job.published","placements.job.closed"] as const;

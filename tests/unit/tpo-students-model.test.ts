@@ -69,6 +69,17 @@ function source(
 }
 
 describe("TPO Students journey derivation", () => {
+  it("TPO-students-31 does not infer missing resume or projects from absent learner-owned profile data",()=>{
+    const unknown=deriveTpoStudent(source("missing-profile",{profileDocument:null}),NOW);
+    const empty=deriveTpoStudent(source("empty-profile",{profileDocument:{}}),NOW);
+    const stored=deriveTpoStudent(source("saved-profile",{profileDocument:{
+      resumeDocumentId:"verified-receipt",projects:[{title:"Self-reported"}],
+    }}),NOW);
+    expect(unknown.profileFacts).toBeUndefined();
+    expect(empty.profileFacts).toMatchObject({resume:false,projects:0});
+    expect(stored.profileFacts).toMatchObject({resume:true,projects:1});
+    expect(unknown.journeyState).toBe("READY_NOT_APPLYING");
+  });
   it("classifies a registered eligible learner with evidence and no applications as ready-not-applying", () => {
     const result = deriveTpoStudent(source("ready"), NOW);
 
