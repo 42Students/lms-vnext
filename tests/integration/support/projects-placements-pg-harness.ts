@@ -523,8 +523,9 @@ export async function createPlacementCandidateFixture(
   if (!actor.collegeId || actor.collegeId !== learner.collegeId) {
     throw new Error("PROJ-HARNESS: applicant and coordinator must share a college");
   }
-  const [job] = await db.query<{college_id:string; round_id:string|null; role_option_id:string|null; accepting_applications:boolean}>(`
-    select j.college_id,r.id as round_id,role.id as role_option_id,
+  const [job] = await db.query<{college_id:string; round_id:string|null; round_status:string|null; role_option_id:string|null; accepting_applications:boolean}>(`
+    select j.college_id,r.id as round_id,r.status as round_status,
+        role.id as role_option_id,
         (j.status='PUBLISHED' and j.published_at is not null
           and j.application_deadline>now() and season.status='ACTIVE') as accepting_applications
       from placement_jobs j
@@ -539,6 +540,9 @@ export async function createPlacementCandidateFixture(
   }
   if (job.round_id !== drive.roundId) {
     throw new Error("PROJ-HARNESS: supplied round does not belong to this drive");
+  }
+  if (job.round_status === "CANCELLED") {
+    throw new Error("PROJ-HARNESS: cancelled round cannot accept candidate results");
   }
   if (!job.role_option_id) {
     throw new Error("PROJ-HARNESS: supplied role option is not active on this drive");

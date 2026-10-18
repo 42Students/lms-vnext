@@ -131,3 +131,7 @@ The **generated** `docs/audit/ux/COVERAGE-MATRIX.md` currently lists five Projec
 - **UX-kit-HARDEN-53:** `DisabledReason` now gives its wrapper a keyboard tab stop only if its single child action is disabled. The native disabled Button remains disabled, while the focusable group reads the visible reason and the Button retains pre-existing `aria-describedby` IDs. Enabled actions do not gain a redundant focus stop. Tested via SSR association/keyboard-focusability contract; real screen reader validation remains a final acceptance gate.
 
 - **UX-kit-HARDEN-54:** FileUpload merges caller-supplied `aria-describedby` targets with its own helper/error/unavailable IDs instead of overwriting them. Externally validated enabled fields keep `aria-invalid`; disabled pickers never claim to be invalid. SSR test checks both states and relationships; browser FileList and assistive technology acceptance remains pending.
+
+- **UX-kit-HARDEN-55:** Interactive Tabs motion is now disabled under `prefers-reduced-motion` without changing legacy labels, role=tab, ARIA selection or focus navigation. The shared Buttons/Input/Select/Textarea were already motion-safe; tab indicator was the missing transition exception.
+
+- **UX-kit-HARDEN-56:** Loading Button's actual busy/disabled semantics can no longer be overwritten by a caller's stale `aria-busy={false}`; explicit non-loading ARIA busy values still pass through. This fixes misleading screen-reader state while guarded saves run.

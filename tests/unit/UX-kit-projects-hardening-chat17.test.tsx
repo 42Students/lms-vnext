@@ -108,6 +108,15 @@ describe("UX-kit-HARDEN-01 shared primitives: a11y, validation, phone and failur
     expect(error).toContain('aria-label="Dismiss notice"');
     expect(error).toContain("min-h-11");
   });
+  it("UX-kit-HARDEN-56 loading Button keeps truthful aria-busy despite a stale caller override",()=>{
+    const loading=render(<Button loading aria-busy={false} type="submit">Save changes</Button>);
+    expect(loading).toContain('aria-busy="true"');
+    expect(loading).toContain('disabled=""');
+    const normal=render(<Button aria-busy={false}>Save</Button>);
+    expect(normal).toContain('aria-busy="false"');
+    expect(normal).not.toContain('disabled=""');
+  });
+
   it("UX-kit-HARDEN-53 disabled action reason has its own keyboard stop without duplicating enabled stops",()=>{
     const disabled=render(<DisabledReason reason="Add a student first">
       <Button disabled aria-describedby="existing-hint">Create project</Button>
