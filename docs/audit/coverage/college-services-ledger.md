@@ -135,3 +135,16 @@ These rows establish tests for listed exports only. **Not exhaustive**: 319 acad
 
 | `reassignFacultyUpcomingSchedules` concurrency | `COL-faculty-reassign-RACE-01` PostgreSQL integration adds two different source lecturers with the same future interval and simultaneously reassigns both to a single replacement. Exactly one wins, the other is skipped; retry does not change the outcome. Source guard verifies `pg_advisory_xact_lock(hashtext(replacementMembershipId))` before slot acquisition. | Requires disposable PostgreSQL CI |
 | `placeImportedLearnerInSection` database | `tests/integration/chat4-college-student-placement-tenant.test.ts`: foreign college enrollment with forged same cohort cannot be placed, authorized learner inserts once, duplicate is denied, removed College Admin role denies stale session. | Requires disposable PostgreSQL CI |
+
+
+
+## October 18 — Super Admin tenant/page security and import follow-through
+
+| Service export | Executable cases | Still open |
+|---|---|---|
+| `parseCollegeImportCsv`, `MAX_COLLEGE_IMPORT_ROWS`, `collegeImportInputSchema` — `src/modules/colleges/bulk-import-model.ts` | `tests/unit/chat4-super-admin-colleges-bulk-csv-hardening.test.ts`: BOM, CRLF, headerless CSV, quoted commas/double-quotes, malformed quote tails, duplicate case-insensitive codes, line number, malformed length, 200 limit, forged request fields | File upload/UI confirmation |
+| `bulkImportColleges` — `src/modules/colleges/bulk-import-service.ts` | `tests/unit/chat4-super-admin-colleges-bulk-service-behaviour.test.ts`: actual service with isolated DB and createCollege mocks, existing code/late unique conflict, partial error, scoped system admin, wrong role, disabled user, forged fields | PostgreSQL duplicate key, audit and retry |
+| `listCollegeAdminSessionTargets`, `listCollegeAdminSessions`, `listCollegeAdminHistory` — `src/modules/colleges/admin-session-service.ts` | `tests/unit/chat4-super-admin-session-hardening.test.ts`: tenant ID scoping, persisted current actor authorization within transaction before reading admin identities/device sessions and audit, 500/100/100-page caps; disabled *target* admins remain revocable | PostgreSQL revoked-Super Admin concurrent read |
+| `revokeCollegeAdminSessions` — same source | same: committed device revocation and audit in same transaction; zero-live-session retries no duplicate audit; scope/user/membership checked | Disposable PG session mutation race and audit FK |
+
+**Important:** The four chat-4 tests in the orchestrator's older `unit-failures-latest.md` were compared against the current `main` source and test assertions. The merged tests now assert real `DataTable` markup and the query parser's behaviour, rather than stale string formatting. The CI failures file may reflect an earlier run; no fresh green CI result was claimed.

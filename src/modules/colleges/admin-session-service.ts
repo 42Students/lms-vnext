@@ -17,7 +17,10 @@ async function authorizedTarget(ctx:RequestContext,collegeIdInput:unknown,userId
  requirePermission(ctx,"college.manage",{collegeId,organizationId:college.organizationId});
  const [member]=await getDb().select({id:collegeMemberships.id,name:users.displayName})
   .from(collegeMemberships)
-  .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
+  // Disabling a user must not make their remaining device sessions
+  // impossible to inspect or revoke. Target identity and role remain
+  // college-scoped, while the ACTING Super Admin must still be ACTIVE.
+  .innerJoin(users,eq(users.id,collegeMemberships.userId))
   .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
    inArray(membershipRoles.role,["COLLEGE_ADMIN","TPO"])))
   .where(and(eq(collegeMemberships.collegeId,collegeId),eq(collegeMemberships.userId,userId),
@@ -33,7 +36,11 @@ export async function listCollegeAdminSessionTargets(ctx:RequestContext,rawColle
  const collegeId=z.uuid().parse(rawCollegeId);
  const college=await getSuperAdminTenantLifecycleDetail(ctx,collegeId);
  requirePermission(ctx,"college.manage",{collegeId,organizationId:college.organizationId});
- const rows=await getDb().select({userId:users.id,name:users.displayName,email:users.email,
+ return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,ctx,"college.manage",{
+   organizationId:college.organizationId,collegeId:college.id,
+  });
+ const rows=await tx.select({userId:users.id,name:users.displayName,email:users.email,
   membershipId:collegeMemberships.id,status:collegeMemberships.status,
   role:membershipRoles.role}).from(collegeMemberships)
   .innerJoin(users,eq(users.id,collegeMemberships.userId))
@@ -48,7 +55,7 @@ export async function listCollegeAdminSessionTargets(ctx:RequestContext,rawColle
   map.set(item.userId,item);
  }
  if(map.size){
-  const allRoles=await getDb().select({membershipId:membershipRoles.membershipId,
+  const allRoles=await tx.select({membershipId:membershipRoles.membershipId,
    role:membershipRoles.role}).from(membershipRoles)
    .where(inArray(membershipRoles.membershipId,[...map.values()].map(item=>item.membershipId)));
   const byMembership=new Map([...map.values()].map(item=>[item.membershipId,item]));
@@ -58,18 +65,26 @@ export async function listCollegeAdminSessionTargets(ctx:RequestContext,rawColle
   }
  }
  return {college,items:[...map.values()],truncated:rows.length>500};
+ });
 }
 
 export async function listCollegeAdminSessions(ctx:RequestContext,collegeId:unknown,userId:unknown){
  const target=await authorizedTarget(ctx,collegeId,userId);
- const result=await getDb().execute(sql<{
-  id:string;device_name:string|null;user_agent:string|null;ip_address:string|null;
-  last_seen_at:Date;created_at:Date;expires_at:Date;
- }>`SELECT id,device_name,user_agent,ip_address,last_seen_at,created_at,expires_at
- FROM identity_device_sessions WHERE user_id=${target.userId}::uuid
- AND revoked_at IS NULL AND expires_at>now()
- ORDER BY last_seen_at DESC LIMIT 100`);
- return {target,devices:result.rows};
+ // A Super Admin's session scope/role can be revoked after resolving the
+ // target college. Hold the persisted actor locks while reading device data.
+ return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,ctx,"college.manage",{
+   organizationId:target.college.organizationId,collegeId:target.college.id,
+  });
+  const result=await tx.execute(sql<{
+   id:string;device_name:string|null;user_agent:string|null;ip_address:string|null;
+   last_seen_at:Date;created_at:Date;expires_at:Date;
+  }>`SELECT id,device_name,user_agent,ip_address,last_seen_at,created_at,expires_at
+   FROM identity_device_sessions WHERE user_id=${target.userId}::uuid
+   AND revoked_at IS NULL AND expires_at>now()
+   ORDER BY last_seen_at DESC LIMIT 100`);
+  return {target,devices:result.rows};
+ });
 }
 
 /** Revocation and audit commit in one database transaction. A compromised
@@ -106,14 +121,21 @@ export async function revokeCollegeAdminSessions(ctx:RequestContext,collegeId:un
 export async function listCollegeAdminHistory(ctx:RequestContext,collegeId:unknown,userId:unknown,rawPage:unknown=1){
  const page=z.coerce.number().int().min(1).max(10000).parse(rawPage);
  const target=await authorizedTarget(ctx,collegeId,userId);
- const rows=await getDb().select({
-  id:activityEvents.id,eventType:activityEvents.eventType,
-  occurredAt:activityEvents.occurredAt,summary:activityEvents.summary,
- }).from(activityEvents)
-  .where(and(eq(activityEvents.collegeId,target.college.id),
-   inArray(activityEvents.module,["IDENTITY","PLATFORM"]),
-   or(eq(activityEvents.subjectId,target.userId),
-    eq(activityEvents.subjectId,target.membershipId))))
-  .orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id)).limit(101).offset((page-1)*100);
- return {target,events:rows.slice(0,100),page,truncated:rows.length>100};
+ // Do not trust a Super Admin role captured before an expired session or
+ // role removal. Authorize under SHARE locks until sensitive event data loads.
+ return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,ctx,"college.manage",{
+   organizationId:target.college.organizationId,collegeId:target.college.id,
+  });
+  const rows=await tx.select({
+   id:activityEvents.id,eventType:activityEvents.eventType,
+   occurredAt:activityEvents.occurredAt,summary:activityEvents.summary,
+  }).from(activityEvents)
+   .where(and(eq(activityEvents.collegeId,target.college.id),
+    inArray(activityEvents.module,["IDENTITY","PLATFORM"]),
+    or(eq(activityEvents.subjectId,target.userId),
+     eq(activityEvents.subjectId,target.membershipId))))
+   .orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id)).limit(101).offset((page-1)*100);
+  return {target,events:rows.slice(0,100),page,truncated:rows.length>100};
+ });
 }
