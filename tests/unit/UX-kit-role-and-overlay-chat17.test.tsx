@@ -6,6 +6,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { PermissionAction } from "@/components/ui/permission-action";
 import { ownsOverlayHistoryEntry } from "@/components/ui/use-overlay-webview";
 import { DataTable, isSafeDataTableHref } from "@/components/ui/data-table";
+import { Pagination, normalizedPageCount, paginationWindow } from "@/components/ui/pagination";
 import { fileMatchesAccept, fileSizeIsValid } from "@/components/ui/file-upload";
 import { clearEvictedToastTimers, enqueueToast, ToastStack, type ToastItem } from "@/components/ui/toast";
 import type { RequestContext } from "@/modules/identity/context";
@@ -126,6 +127,20 @@ describe("UX-kit-HARDEN-23 authorization boundaries and WebView history", () => 
       rowHref={()=>"/%2fattacker.test"} />);
     expect(html).toContain("Alpha");
     expect(html).not.toContain("View details");
+  });
+
+  it("UX-kit-HARDEN-31 NaN/Infinity pager inputs cannot yield links to non-finite pages", () => {
+    for (const invalid of [Infinity, -Infinity, NaN, 0, -5]) {
+      expect(normalizedPageCount(invalid)).toBe(1);
+      expect(paginationWindow(20, invalid)).toEqual([1]);
+      const html=render(<Pagination page={invalid} pageCount={invalid}
+        hrefForPage={index=>"/mentor/projects?page="+index}/>);
+      expect(html).toContain('Page 1 of 1');
+      expect(html).not.toMatch(/href="[^"]*(?:Infinity|NaN)/);
+      expect(html).toContain('aria-disabled="true"');
+    }
+    expect(normalizedPageCount(10000)).toBe(10000);
+    expect(paginationWindow(10000,10000)).toEqual([9996,9997,9998,9999,10000]);
   });
 
   it("UX-kit-HARDEN-28 upload prechecks fail closed for invalid sizes and untrusted types", () => {
