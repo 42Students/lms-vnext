@@ -31,3 +31,11 @@ export function peoplePageState(
     hasNext: current < pages,
   };
 }
+
+/** Query keys can repeat in Next.js; normalize before numeric validation.
+ * Using Number(rawArray) produces NaN and can make a scoped DB LIMIT invalid. */
+export function parsePeoplePageSize(value:string|string[]|undefined):10|20|50 {
+ const first=Array.isArray(value)?value[0]:value;
+ const parsed=Number(first);
+ return parsed===20?20:parsed===50?50:10;
+}
