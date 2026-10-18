@@ -10,6 +10,7 @@ type Result={row:number;name:string;status:"CREATED"|"FAILED"|"SKIPPED";message:
 export function SuperAdminFacultyBulkImport({collegeId}:{collegeId:string}){
  const router=useRouter();
  const fileVersion=useRef(0);
+ const loadedCsv=useRef<{version:number;text:string}|null>(null);
  const submissionInProgress=useRef(false);
  const {askConfirm,dialog}=useConfirmFlow();
  const [csv,setCsv]=useState("");
@@ -22,6 +23,7 @@ export function SuperAdminFacultyBulkImport({collegeId}:{collegeId:string}){
  catch(cause){issue=cause instanceof Error?cause.message:"Invalid faculty file";}
  async function fileSelected(file:File|null){
   const version=++fileVersion.current;
+  loadedCsv.current=null;
   // Never let a rejected or slow replacement upload reuse the previously
   // validated CSV while displaying the new filename.
   setCsv("");setResults([]);setError("");setFilename(file?.name??"");
@@ -30,18 +32,22 @@ export function SuperAdminFacultyBulkImport({collegeId}:{collegeId:string}){
   if(file.size>1_500_000){setError("The CSV file exceeds 1.5 MB.");return;}
   try{
    const text=await file.text();
-   if(version===fileVersion.current)setCsv(text);
+   if(version===fileVersion.current){
+    loadedCsv.current={version,text};
+    setCsv(text);
+   }
   }catch{
    if(version===fileVersion.current)setError("Could not read the CSV file.");
   }
  }
  async function submit(){
   if(submissionInProgress.current)return;
-  const version=fileVersion.current;
-  const inputCsv=csv;
+  const loaded=loadedCsv.current;
+  const version=loaded?.version??-1;
+  const inputCsv=loaded?.text??"";
   const allowed=()=>canSubmitFacultyBulkImport({
    busy,count,issue,error,filename,snapshotVersion:version,
-   currentVersion:fileVersion.current,
+   currentVersion:fileVersion.current,csvMatchesLoaded:Boolean(loaded)&&inputCsv===csv,
   });
   if(!allowed())return;
   // React state updates do not synchronously disable the button. Reserve
