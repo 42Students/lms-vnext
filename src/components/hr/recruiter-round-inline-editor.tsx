@@ -4,6 +4,7 @@ import {useRouter} from "next/navigation";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
 import {Dialog} from "@/components/ui/dialog";
+import {isVerifiedHrRoundMutation} from "@/modules/placements/hr-round-editor-model";
 
 type Kind="TALK"|"TEST"|"VENDOR_TEST"|"GD"|"INTERVIEW";
 type Row={id:string;name:string;kind:string;mode:string|null;status:string;
@@ -52,12 +53,18 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
   try{
    await run(async()=>{
     const response=await fetch("/api/placements/recruiter/drives/"+
-     encodeURIComponent(jobId)+"/rounds",{method:"POST",body:form,redirect:"manual"});
-    if(!(response.type==="opaqueredirect"||response.status===303||response.ok)){
+     encodeURIComponent(jobId)+"/rounds",{
+      method:"POST",body:form,credentials:"same-origin",redirect:"error",
+      headers:{Accept:"application/json"},
+     });
+    if(!response.ok){
      throw new Error(response.status===409?
       "This round changed or has results or slots. Refresh and try again.":
       "Could not save this round. Try again.");
     }
+    const receipt:unknown=await response.json().catch(()=>null);
+    if(!isVerifiedHrRoundMutation(receipt,action,active?.id??null))
+     throw new Error("Could not verify this round was saved. Check the drive before retrying.");
     reset();setNotice(action==="CREATE"?
      "Round added. The placement cell will set its date.":
      action==="UPDATE"?"Round updated":"Round removed");
