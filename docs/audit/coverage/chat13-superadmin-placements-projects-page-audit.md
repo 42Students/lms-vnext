@@ -75,3 +75,6 @@ The earlier `docs/audit/coverage/admin-first-chat13.md` already inventories the 
 | PROJ-BREAK-SA-36 | Mentor name/ID no longer presented as active after user disable even if membership remains ACTIVE | `src/modules/projects/admin-insights-service.ts`, `tests/unit/chat13-project-admin-member-tenant-isolation.test.ts`, `tests/integration/chat13-proj-break-disabled-mentor.test.ts` |
 
 All fixes are source-authored and committed. No local CI/real DB/browser run is asserted, per the owner's defer-CI directive; actual verification and an independent different-lane review remain open.
+
+
+| PROJ-BREAK-SA-37 | Admin workspace card age now accounts for ended membership transitions via a single grouped MAX timestamp query, while name projection stays restricted to active actor and college | `src/modules/projects/admin-insights-service.ts`, `tests/unit/chat13-project-admin-member-tenant-isolation.test.ts`; load/performance and database execution pending |
