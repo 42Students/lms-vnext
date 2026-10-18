@@ -13,8 +13,15 @@ export function tpoComparableDriveSnapshot(raw:unknown):Record<string,string>{
  const result:Record<string,string>={};
  for(const [,keys] of FIELDS)for(const key of keys){
   const value=source[key];
+  // Recruiter draft amounts, CGPA and backlogs are often stored as numeric
+  // JSON, not strings. Dropping numbers concealed real pay/eligibility edits.
+  // Include finite primitive values only; never copy uploaded receipts,
+  // arbitrary object graphs or non-allowlisted identity properties.
   result[key]=typeof value==="string"?value.slice(0,5000):
-   Array.isArray(value)?value.filter((item):item is string=>typeof item==="string").slice(0,30).join(", ").slice(0,1000):"";
+   typeof value==="number"&&Number.isFinite(value)?String(value):
+   Array.isArray(value)?value.filter(item=>
+    typeof item==="string"||(typeof item==="number"&&Number.isFinite(item)))
+    .slice(0,30).map(item=>String(item)).join(", ").slice(0,1000):"";
  }
  return result;
 }
