@@ -13,6 +13,14 @@ type DeliveryOption = { id: string; sectionId: string; name: string; code: strin
 type Result = { slots: Array<{ startsAt: string; endsAt: string; localDate: string; conflicts: string[] }>;
   ready: number; blocked: number; notice: string };
 
+/** Recurring preview is always displayed in IST regardless of device timezone. */
+export function recurringSlotTimeIst(slot: Pick<Result["slots"][number], "startsAt" | "endsAt">): string {
+  const format = new Intl.DateTimeFormat("en-IN", {
+    timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit",
+  });
+  return format.format(new Date(slot.startsAt))+" – "+format.format(new Date(slot.endsAt));
+}
+
 export function CollegeRecurringPreview({
   classes, halls, faculty, deliveries, defaultSectionId = "",
 }: { classes: ClassOption[]; halls: Option[]; faculty: FacultyOption[]; deliveries: DeliveryOption[];
@@ -218,13 +226,7 @@ export function CollegeRecurringPreview({
               empty={<p className="p-3 text-sm text-body">No selected weekdays match this date range.</p>}
               columns={[
                 {key:"date",header:"Date (IST)",mobilePriority:"primary",cell:slot=>slot.localDate},
-                {key:"time",header:"Time (IST)",mobilePriority:"secondary",cell:slot=>
-                  new Intl.DateTimeFormat("en-IN", {
-                    timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit",
-                  }).format(new Date(slot.startsAt))+" – "+
-                  new Intl.DateTimeFormat("en-IN", {
-                    timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit",
-                  }).format(new Date(slot.endsAt))},
+                {key:"time",header:"Time (IST)",mobilePriority:"secondary",cell:recurringSlotTimeIst},
                 {key:"conflicts",header:"Conflicts",mobilePriority:"secondary",cell:slot=>
                   slot.conflicts.length ?
                     slot.conflicts.map(reason=>reason.replaceAll("_"," ")).join(", ") :
