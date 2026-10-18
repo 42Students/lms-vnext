@@ -50,14 +50,14 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
   <div className="flex flex-wrap gap-3 text-sm">
    <button type="button" disabled={pending||!allowed.length}
     onClick={()=>setSelected(allowed.map(row=>row.id))}
-    className="rounded-md border border-border px-3 py-2 disabled:opacity-50">Select all on page</button>
+    className="rounded-[9px] border border-border px-3 py-2 disabled:opacity-50">Select all on page</button>
    <button type="button" disabled={pending||!selected.length} onClick={()=>setSelected([])}
-    className="rounded-md border border-border px-3 py-2 disabled:opacity-50">Clear selection</button>
+    className="rounded-[9px] border border-border px-3 py-2 disabled:opacity-50">Clear selection</button>
    <span className="self-center">{selectedItems.length} selected</span>
   </div>
   <ul className="grid gap-2 sm:grid-cols-2">
    {colleges.map(college=><li key={college.id}>
-    <label className="flex min-h-10 items-center gap-2 rounded-md border border-border px-3 py-2 text-sm">
+    <label className="flex min-h-10 items-center gap-2 rounded-[9px] border border-border px-3 py-2 text-sm">
      <input type="checkbox" checked={selected.includes(college.id)} disabled={pending||!college.canAssign}
       onChange={e=>setSelected(current=>e.target.checked?[...current,college.id]:current.filter(id=>id!==college.id))}/>
      <span className="flex-1 truncate">{college.name}</span>
@@ -67,9 +67,9 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
   </ul>
   <div className="flex flex-wrap gap-2">
    <button type="button" disabled={pending||!published||!selectedItems.some(row=>!row.assigned)}
-    onClick={()=>setOperation("assign")} className="rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50">Assign selected</button>
+    onClick={()=>setOperation("assign")} className="rounded-[9px] bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50">Assign selected</button>
    <button type="button" disabled={pending||!selectedItems.some(row=>row.assigned)}
-    onClick={()=>setOperation("remove")} className="rounded-md border border-border px-3 py-2 text-sm font-semibold disabled:opacity-50">Remove selected</button>
+    onClick={()=>setOperation("remove")} className="rounded-[9px] border border-border px-3 py-2 text-sm font-semibold disabled:opacity-50">Remove selected</button>
   </div>
   {notice?<p role="status" className="text-sm text-body">{notice}</p>:null}
   <ConfirmDialog open={operation!==null} onOpenChange={open=>{if(!open)setOperation(null)}}
