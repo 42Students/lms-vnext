@@ -17,25 +17,21 @@ export default async function FacultyProfilePage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 max-w-full space-y-6">
       <PageHeader
         title="Profile"
       />
-      <div className="flex justify-end">
-        <Link href="/teacher/profile/details" className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">Edit About &amp; profile sections →</Link>
-      </div>
-      <div className="flex justify-end">
+      <nav aria-label="Profile shortcuts" className="flex flex-wrap items-center gap-3">
+        <Link href="/teacher/profile/details" className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Edit About &amp; profile sections →</Link>
         <Link href="/teacher/profile/teaching"
-          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline">
-          Current teaching assignments →
+        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
+        Current teaching assignments →
         </Link>
-      </div>
-      <div className="flex justify-end">
         <Link href="/teacher/profile/contacts"
-          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
-          Contact details and editing availability
+        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+        Contact details and editing availability
         </Link>
-      </div>
+      </nav>
       <section aria-label="Faculty profile details" className="rounded-xl border border-border bg-surface p-6">
         <h2 className="text-base font-semibold text-foreground">About</h2>
         <dl className="mt-5 grid gap-5 sm:grid-cols-2">
