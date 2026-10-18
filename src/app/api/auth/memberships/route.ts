@@ -24,7 +24,12 @@ const switchMembershipSchema = z.strictObject({
   membershipId: z.string().uuid(),
 });
 
+class MembershipTenantLookupUnavailable extends Error {}
+
 function authErrorResponse(error: unknown) {
+  if(error instanceof MembershipTenantLookupUnavailable){
+    return privateAuthJson({error:"TENANT_LOOKUP_UNAVAILABLE"},{status:503});
+  }
   if (error instanceof SessionAuthenticationError) {
     return privateAuthJson(
       { error: error.code },
@@ -60,6 +65,7 @@ async function hostCollegeScope(identityUid: string) {
   const tenant = await resolveRequestTenant(
     (await headers()).get("host"),
   );
+  if(tenant.kind==="unavailable")throw new MembershipTenantLookupUnavailable();
   const context = await resolveRequestContext({
     identityUid,
     activeMembershipId: null,
