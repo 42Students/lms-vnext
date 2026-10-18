@@ -27,7 +27,7 @@ export function TpoBuiltinJobTypesEditor({stored,customActive}:{stored:readonly 
    router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Unable to change type");}finally{setBusy(false);}
  }
- return <section className="space-y-3 rounded-xl border border-border bg-surface p-4">
+ return <section className="space-y-3 border-t border-border pt-4">
   {dialog}
   <h3 className="font-semibold">Built-in job types</h3>
   <p className="text-sm text-muted-foreground">Their names and counts-as-placed answers are fixed. Switching off a type hides it from the college&apos;s available choices; existing drives keep their type.</p>
@@ -36,7 +36,7 @@ export function TpoBuiltinJobTypesEditor({stored,customActive}:{stored:readonly 
    columns={[
     {key:"jobType",header:"Job type",mobilePriority:"primary",cell:row=><span className="font-medium">{row.label} <span className="text-xs text-muted-foreground">Built-in</span></span>},
     {key:"placed",header:"Counts as placed",mobilePriority:"secondary",cell:row=>row.countsAsPlaced?"Yes":"No"},
-    {key:"enabled",header:"In the drive form",mobilePriority:"action",cell:row=><label className="inline-flex min-h-11 items-center gap-2">
+    {key:"enabled",header:"In the drive form",mobilePriority:"action",cell:row=><label className="inline-flex min-h-11 sm:min-h-9 items-center gap-2">
      <input type="checkbox" checked={row.override?.active??true} disabled={busy||((row.override?.active??true)&&activeCount<=1)}
       aria-label={row.label+" in the drive form"} onChange={event=>void change(row.label,event.target.checked,row.override?.updatedAt??"none")}/>
      {(row.override?.active??true)?"On":"Off"}

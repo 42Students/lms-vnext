@@ -39,27 +39,27 @@ export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
    <label className="text-sm">From
     <input type="date" required min={today} value={startDay} disabled={busy}
      onChange={e=>{setStartDay(e.target.value);if(endDay&&endDay<e.target.value)setEndDay(e.target.value);}}
-     className="mt-1 min-h-11 w-full rounded border border-border bg-surface px-2"/></label>
+     className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[9px] border border-border bg-surface px-2"/></label>
    <label className="text-sm">Until
     <input type="date" required min={startDay||today} value={endDay} disabled={busy}
      onChange={e=>setEndDay(e.target.value)}
-     className="mt-1 min-h-11 w-full rounded border border-border bg-surface px-2"/></label>
+     className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[9px] border border-border bg-surface px-2"/></label>
    <label className="text-sm">Label (optional)
     <input value={reason} disabled={busy} maxLength={500} onChange={e=>setReason(e.target.value)}
-     placeholder="Blocked" className="mt-1 min-h-11 w-full rounded border border-border bg-surface px-3"/></label>
+     placeholder="Blocked" className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3"/></label>
    {reason.trim().length>0&&reason.trim().length<3?<p role="alert" className="self-end text-xs text-error">Use at least 3 characters for a label, or leave it blank.</p>:null}
-   <button type="submit" className="min-h-11 self-end rounded bg-primary px-4 text-sm text-on-primary disabled:opacity-50"
+   <button type="submit" className="min-h-11 sm:min-h-9 self-end rounded-[9px] bg-primary px-4 text-sm text-on-primary disabled:opacity-50"
     disabled={busy||!validRange||(reason.trim().length>0&&reason.trim().length<3)}>Block dates</button>
   </form>
   <div className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2">
     <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Filter by month
       <input type="month" value={month} onChange={e=>setMonth(e.target.value)}
-        className="min-h-11 w-full rounded border border-border bg-surface px-3"/>
+        className="min-h-11 sm:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3"/>
     </label>
     <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Search reasons
       <input type="search" maxLength={100} value={search} onChange={e=>setSearch(e.target.value)}
         placeholder="Reason or YYYY-MM-DD"
-        className="min-h-11 w-full rounded border border-border bg-surface px-3"/>
+        className="min-h-11 sm:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3"/>
     </label>
   </div>
   <p role="status" className="text-xs text-muted-foreground">Showing {visible.length} of {items.length} blocked days across {ranges.length} displayed ranges · Maximum 90 days per range</p>
