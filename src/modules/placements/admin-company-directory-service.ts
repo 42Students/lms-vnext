@@ -99,8 +99,8 @@ export async function listSuperAdminCompanyDirectory(context: RequestContext, ra
       ${selected?.collegeId ? sql`and cr.college_id = ${selected.collegeId}`
         : selected?.organizationId ? sql`and linked_college.organization_id = ${selected.organizationId}`
         : sql``})`.mapWith(Number),
-    driveCount:sql<number>`(select count(*)::integer from placement_jobs j where j.company_relationship_id = ${placementCompanyRelationships.id} and j.status != 'ARCHIVED')`.mapWith(Number),
-    lastActiveAt:sql<Date|null>`(select max(j.updated_at) from placement_jobs j where j.company_relationship_id = ${placementCompanyRelationships.id})`,
+    driveCount:sql<number>`(select count(*)::integer from placement_jobs j where j.company_relationship_id = ${placementCompanyRelationships.id} and j.college_id = ${colleges.id} and j.status != 'ARCHIVED')`.mapWith(Number),
+    lastActiveAt:sql<Date|null>`(select max(j.updated_at) from placement_jobs j where j.company_relationship_id = ${placementCompanyRelationships.id} and j.college_id = ${colleges.id})`,
     createdAt:placementCompanies.createdAt,
   }).from(placementCompanyRelationships)
     .innerJoin(placementCompanies, eq(placementCompanies.id, placementCompanyRelationships.companyId))
