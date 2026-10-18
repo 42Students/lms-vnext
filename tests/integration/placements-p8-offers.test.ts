@@ -1,3 +1,4 @@
+import {randomUUID} from "node:crypto";
 import { publishableJobTerms } from "../support/publishable-job-terms";
 import {
   afterAll,
@@ -52,6 +53,7 @@ const pool = new Pool({
   connectionString: databaseUrl,
   max: 1,
 });
+const testTpoRoleId=randomUUID();
 
 const tpo: RequestContext = {
   user: {
@@ -257,10 +259,18 @@ async function preparePassedApplication() {
 beforeEach(async () => {
   await cleanup();
   await enableSeedLearnerPlacementAccess(pool);
+  // Base seed intentionally grants FACULTY, not TPO. The placement suite
+  // explicitly provisions the persisted TPO role so actor revalidation checks
+  // cannot be bypassed by trusting only the RequestContext roles array.
+  await pool.query(
+    "insert into membership_roles(id,membership_id,role) values($1,$2,'TPO') on conflict(membership_id,role) do nothing",
+    [testTpoRoleId,SEED_IDS.facultyCollegeAMembership],
+  );
 });
 
 afterAll(async () => {
   await cleanup();
+  await pool.query("delete from membership_roles where id=$1",[testTpoRoleId]);
   await pool.end();
   await closeDatabaseConnection();
 });
@@ -559,8 +569,11 @@ describe("Placement P8 offers and joining", () => {
       expiresAt:new Date(Date.now()+1000*60*60*24*7).toISOString(),
     };
     try{
-      await pool.query("delete from membership_roles where membership_id=$1 and role='TPO'",
+      const storedRole=await pool.query<{id:string}>(
+        "select id from membership_roles where membership_id=$1 and role='TPO'",
         [SEED_IDS.facultyCollegeAMembership]);
+      expect(storedRole.rows).toHaveLength(1);
+      await pool.query("delete from membership_roles where id=$1",[storedRole.rows[0]!.id]);
       await expect(recordTpoOfferLifecycle(tpo,job.id,request))
         .rejects.toBeInstanceOf(AuthorizationError);
       const persisted=await pool.query<{expires_at:Date|null}>(
@@ -568,8 +581,8 @@ describe("Placement P8 offers and joining", () => {
       expect(persisted.rows[0]?.expires_at?.getTime()).toBe(offer.expiresAt?.getTime());
     }finally{
       await pool.query(
-        "insert into membership_roles(membership_id,role) values($1,'TPO') on conflict do nothing",
-        [SEED_IDS.facultyCollegeAMembership]);
+        "insert into membership_roles(id,membership_id,role) values($1,$2,'TPO') on conflict(membership_id,role) do nothing",
+        [testTpoRoleId,SEED_IDS.facultyCollegeAMembership]);
     }
   });
 
