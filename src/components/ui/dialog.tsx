@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, type ReactNode, type CSSProperties } from "react";
 import { Button } from "@/components/ui/button";
+import { ScrollCue } from "@/components/ui/scroll-cue";
 import { useOverlayWebview } from "@/components/ui/use-overlay-webview";
 
 export type DialogProps = {
@@ -33,13 +34,13 @@ export function Dialog({ open, onOpenChange, title, description, children, foote
     }
   }, [open]);
 
-  return <dialog ref={ref} aria-labelledby={titleId} aria-describedby={description ? descriptionId : undefined}
+  return <dialog data-slot="dialog" ref={ref} aria-labelledby={titleId} aria-describedby={description ? descriptionId : undefined}
     onCancel={event => { event.preventDefault(); if (dismissible) onOpenChange(false); }}
     onClose={() => { if (open) onOpenChange(false); opener.current?.focus(); }}
     onClick={event => { if (event.target === ref.current && dismissible) onOpenChange(false); }}
     style={{ "--lms-visual-height": availableHeight ?? "100dvh", "--lms-visual-top": viewportTop ?? "0px" } as CSSProperties}
     className="fixed inset-x-0 top-[var(--lms-visual-top)] m-0 h-[var(--lms-visual-height)] max-h-none w-full max-w-none border-0 bg-surface p-0 text-foreground backdrop:bg-foreground/30 sm:m-auto sm:h-auto sm:max-h-[var(--lms-visual-height)] sm:w-[min(36rem,calc(100%-2rem))] sm:rounded-xl sm:border sm:border-border sm:shadow-lg">
-    <div className="flex h-full max-h-[var(--lms-visual-height)] min-h-0 flex-col overflow-y-auto sm:max-h-[var(--lms-visual-height)]">
+    <div className="flex h-full max-h-[var(--lms-visual-height)] min-h-0 flex-col overflow-hidden sm:max-h-[var(--lms-visual-height)]">
       <div className="flex shrink-0 items-start justify-between gap-4 border-b border-border p-4 pt-[max(1rem,env(safe-area-inset-top))] sm:px-6">
         <div className="min-w-0">
           <h2 id={titleId} className="m-0 break-words text-lg font-semibold leading-7 text-foreground">{title}</h2>
@@ -47,7 +48,7 @@ export function Dialog({ open, onOpenChange, title, description, children, foote
         </div>
         {dismissible ? <Button variant="ghost" aria-label="Close dialog" onClick={() => onOpenChange(false)}>×</Button> : null}
       </div>
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4 sm:p-6">{children}</div>
+      <ScrollCue axis="y" label={`${title} dialog content`} className="min-h-0 flex-1" viewportClassName="h-full min-h-0 p-4 sm:p-6">{children}</ScrollCue>
       {footer ? <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 border-t border-border p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6">{footer}</div> : null}
     </div>
   </dialog>;

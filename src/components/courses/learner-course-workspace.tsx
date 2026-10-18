@@ -11,6 +11,7 @@ import { learnerSafeExternalContentHref } from "@/modules/courses/learner-extern
 import {LearnerLiveClassLink} from "./learner-live-class-link";
 import { assignmentFilesRuntimeEnabled,multipartAssignmentRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import Link from "next/link";
+import { ScrollCue } from "@/components/ui/scroll-cue";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { formatLearnerCourseMoment } from "@/modules/courses/learner-course-date-model";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -800,10 +801,8 @@ export function LearnerCourseWorkspace({
         />
       </div>
 
-      <nav
-        aria-label="Learning path content filter"
-        className="overflow-x-auto rounded-xl border border-border bg-surface p-2"
-      >
+      <ScrollCue axis="x" label="Learning path content filter" className="rounded-xl border border-border bg-surface" viewportClassName="p-2">
+      <nav aria-label="Learning path content filter">
         <div className="flex min-w-max gap-1">
           {filters.map((item) => (
             <Link
@@ -812,8 +811,8 @@ export function LearnerCourseWorkspace({
               aria-current={activeFilter === item.key ? "page" : undefined}
               className={
                 activeFilter === item.key
-                  ? "rounded-lg bg-primary-subtle px-3 py-2 text-sm font-semibold text-primary-text"
-                  : "rounded-lg px-3 py-2 text-sm font-semibold text-body hover:bg-muted hover:text-primary-text"
+                  ? "inline-flex min-h-11 items-center rounded-lg bg-primary-subtle px-3 py-2 text-sm font-semibold text-primary-text"
+                  : "inline-flex min-h-11 items-center rounded-lg px-3 py-2 text-sm font-semibold text-body hover:bg-muted hover:text-primary-text"
               }
             >
               {item.label}{" "}
@@ -823,7 +822,7 @@ export function LearnerCourseWorkspace({
             </Link>
           ))}
         </div>
-      </nav>
+      </nav></ScrollCue>
 
       <details className="rounded-xl border border-border bg-surface sm:hidden">
         <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-2 p-4 text-sm font-semibold text-primary-text">

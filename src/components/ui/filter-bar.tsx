@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState, type ReactNode, type CSSProperties } from "react";
 import { useOverlayWebview } from "@/components/ui/use-overlay-webview";
 import { Button } from "@/components/ui/button";
+import { ScrollCue } from "@/components/ui/scroll-cue";
 import { cx } from "@/lib/class-names";
 
 export type FilterBarProps = {
@@ -69,12 +70,13 @@ export function FilterBar({ title = "Filters", activeCount = 0, search, filters,
     <div id={panelId} ref={panel} style={{ "--lms-visual-height": availableHeight ?? "100dvh" } as CSSProperties} role={open ? "dialog" : undefined} aria-modal={open ? true : undefined}
       aria-label={open ? title : undefined}
       className={cx("min-w-0 rounded-xl border border-border bg-surface p-4 sm:static sm:z-auto sm:block sm:max-h-none sm:w-full sm:rounded-xl sm:shadow-none",
-        open ? "fixed inset-0 z-40 block max-h-[var(--lms-visual-height)] w-full overflow-y-auto overscroll-contain pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] shadow-lg" : "hidden sm:block")}>
-      <div className="mb-4 flex items-center justify-between gap-3 sm:hidden">
+        open ? "fixed inset-0 z-40 flex max-h-[var(--lms-visual-height)] min-h-0 w-full flex-col overflow-hidden pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] shadow-lg" : "hidden sm:block")}>
+      <div className="mb-4 flex shrink-0 items-center justify-between gap-3 sm:hidden">
         <h2 className="text-lg font-semibold">{title}</h2>
         <Button variant="ghost" aria-label="Close filters" onClick={() => setOpen(false)}>×</Button>
       </div>
-      {filters ?? children}
+      <ScrollCue axis="y" label={`${title} options`} className={open ? "min-h-0 flex-1" : undefined}
+        viewportClassName={open ? "h-full min-h-0 pb-4" : "overflow-visible"}>{filters ?? children}</ScrollCue>
     </div>
   </section>;
 }
