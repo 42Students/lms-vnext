@@ -1,11 +1,17 @@
-# Proposed UX coverage exceptions (awaiting owner approval)
+# UX coverage / raw-table waiver requests — pending owner decision
 
-These routes are intentional HTTP redirects with no rendered page, interaction target, overlay, card, table or button. The destination has the real shared-kit UI, loading/error boundaries and UX test coverage. Adding a decorative shared component before `redirect()` would have no runtime effect and could mislead the coverage scanner. **Owner approval: pending**; do not count as accepted waivers before signoff.
+**Status: PROPOSED, NOT APPROVED.** No item in this file may be counted closed unless the owner explicitly approves it. These are intentional exceptions to the standard shared-kit UI or DataTable policy, with test evidence.
 
-| Route/file | Reason | Owner approval |
-|---|---|---|
-| `/college/people` — `src/app/(authenticated)/college/people/page.tsx` | Redirect to `/college/contacts`; no independent UI | Pending |
-| `/college/projects/workspaces` — `src/app/(authenticated)/college/projects/workspaces/page.tsx` | Redirect to canonical `/college/projects` | Pending |
-| `/college/projects/workspaces/[workspaceId]` — `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/page.tsx` | URL-preserving redirect to canonical workspace detail | Pending |
-| `/college/projects/workspaces/[workspaceId]/[section]` — `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/[section]/page.tsx` | URL-preserving redirect to canonical workspace section | Pending |
-| `/college/projects/[projectId]` — `src/app/(authenticated)/college/projects/[projectId]/page.tsx` | Redirect to canonical workspace summary | Pending |
+| Requested waiver ID | Surface | Reason | Substitute behavioural evidence | Owner decision |
+|---|---|---|---|---|
+| UX-LEARN-ALIAS-01 | `/learn` | Next.js server redirect to canonical `/learn/courses`; renders no UI | `UX-learn-redirect-alias-coverage-01.test.ts` | Pending |
+| UX-LEARN-ALIAS-02 | `/learn/assignments` | Redirect to `/learn/allAssignments`; renders no UI | Same test | Pending |
+| UX-LEARN-ALIAS-03 | `/learn/quizzes` | Redirect to `/learn/allQuizzes`; renders no UI | Same test | Pending |
+| UX-LEARN-ALIAS-04 | `/learn/placements` | Redirect to `/learn/my-placements`; renders no UI | Same test | Pending |
+| UX-LEARN-ALIAS-05 | `/learn/courses/[deliveryId]` | Encoded dynamic redirect to canonical `/learn/courses/[deliveryId]/home`, no UI | Same test | Pending |
+| UX-ATTENDANCE-PIVOT-01 | `components/attendance/admin-attendance-workspace.tsx` | Semantic row-by-learner/column-by-calendar-day attendance pivot has variable dynamic columns and sticky learner column | `UX-attendance-calendar-scroll-01.test.ts`, shared `ScrollCue axis="x"` provides focus region, edge fades | Pending |
+| UX-ATTENDANCE-PIVOT-02 | `components/attendance/faculty-attendance-workspace.tsx` | Faculty session/calendar action matrix requires exact per-day cells, not a record-list DataTable | Same test; shared horizontal ScrollCue | Pending |
+
+The other nine raw `components/courses` and `components/attendance` record-list tables listed in the original coverage matrix were converted to shared DataTable. The `/learn/profile/data-access` real page has a dedicated UX test; these aliases have no UI and should not be represented as synthetic rendered pages.
+
+Approval is a product/UX policy decision; the current chat-7 builder has not represented any waiver as approved.

@@ -1,5 +1,5 @@
-import {ScrollCue} from "@/components/ui/scroll-cue";
 "use client";
+import {ScrollCue} from "@/components/ui/scroll-cue";
 
 import {useState} from "react";
 import {useTpoStudentsSelection} from "./tpo-students-selection";

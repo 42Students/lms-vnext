@@ -170,4 +170,15 @@ describe("IIT Dharwad Projects adversarial service and route contracts",()=>{
   expect(complete).toContain("catch { /* Unreadable DB state is authoritative");
  });
 
+ it("PROJ-BREAK-races-07 concurrent cohort creates retry serializable conflicts with a bounded loop and fresh coverage checks",()=>{
+  const page=module("class-team-workspace-service");
+  expect(page).toContain("for (let attempt = 0; attempt < 3; attempt += 1)");
+  expect(page).toContain('isolationLevel:"serializable"');
+  expect(page).toContain("isRetryableProjectTransactionError(error)");
+  expect(page).toContain("if(attempt < 2) continue");
+  expect(page).toContain('throw new ProjectsServiceError("PROJECT_CLASS_ROSTER_STALE")');
+  expect(page).toContain("const covered=input.cohortMode?");
+  expect(page).toContain("dedupeKey:\"project:\"+project.id+\":created\"");
+ });
+
 });

@@ -6,6 +6,7 @@ import { getDb } from "@/db/client";
 import { collegeMemberships, electiveOfferings, electiveSlots, membershipRoles, users } from "@/db/schema";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { DataTable } from "@/components/ui/data-table";
 import { getCollegeGroupDetail } from "@/modules/groups/admin-read-service";
 import { leaveGroup, moveElectiveMember } from "@/modules/groups/service";
 import { listElectiveOfferings } from "@/modules/electives/service";
@@ -24,12 +25,15 @@ async function scoped(slotId: string, offeringId: string) {
   requirePermission(context, "academics.manage", {
     collegeId: context.membership.collegeId, organizationId: context.membership.organizationId,
   });
+  const parsedSlot = uuid.safeParse(slotId);
+  const parsedOffering = uuid.safeParse(offeringId);
+  if (!parsedSlot.success || !parsedOffering.success) notFound();
   const [row] = await getDb().select({
     slot: electiveSlots, offering: electiveOfferings,
   }).from(electiveOfferings)
     .innerJoin(electiveSlots, eq(electiveSlots.id, electiveOfferings.slotId))
-    .where(and(eq(electiveSlots.id, uuid.parse(slotId)),
-      eq(electiveOfferings.id, uuid.parse(offeringId)),
+    .where(and(eq(electiveSlots.id, parsedSlot.data),
+      eq(electiveOfferings.id, parsedOffering.data),
       eq(electiveSlots.collegeId, context.membership.collegeId),
       isNull(electiveSlots.deletedAt), isNull(electiveOfferings.deletedAt)))
     .limit(1);
@@ -68,10 +72,10 @@ export default async function ElectiveRoster({
     const { context, slot, offering } = await scoped(slotId, offeringId);
     if (slot.status !== "ACTIVE" || offering.status !== "ACTIVE")
       redirect(back + "?error=Archived%20offerings%20are%20read-only");
-    const membershipId = uuid.parse(String(form.get("membershipId") ?? ""));
     const action = String(form.get("action") ?? "");
     let error = "";
     try {
+      const membershipId = uuid.parse(String(form.get("membershipId") ?? ""));
       if (action === "MOVE") {
         await moveElectiveMember(context, offering.id,
           uuid.parse(String(form.get("targetOfferingId") ?? "")), membershipId);
@@ -129,7 +133,7 @@ export default async function ElectiveRoster({
         {!archived && <form action={changeFaculty}>
           <input type="hidden" name="action" value="END" />
           <input type="hidden" name="assignmentId" value={item.id} />
-          <button className="rounded border border-border px-3 py-2 text-error">Remove faculty</button>
+          <button className="min-h-11 rounded border border-border px-3 py-2 text-error">Remove faculty</button>
         </form>}
       </div>)}
       {!archived && <form action={changeFaculty} className="flex flex-wrap items-end gap-3">
@@ -152,43 +156,51 @@ export default async function ElectiveRoster({
         </button>
       </form>}
     </section>
-    <div role="region" aria-label="Elective offering roster" tabIndex={0} className="overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
-      <table className="w-full min-w-[780px] text-left text-sm [&_th:first-child]:sticky [&_th:first-child]:left-0 [&_th:first-child]:z-10 [&_th:first-child]:bg-surface [&_td:first-child]:sticky [&_td:first-child]:left-0 [&_td:first-child]:z-10 [&_td:first-child]:bg-surface">
-        <thead className="sticky top-0 z-10 bg-surface"><tr className="border-b border-border">
-          {["Student", "State", "Source", "Since", "Actions"].map(x=><th key={x} scope="col" className={x==="Student"?"sticky left-0 z-20 bg-surface p-3":"p-3"}>{x}</th>)}
-        </tr></thead>
-        <tbody>{detail.members.map(member=><tr key={member.membershipId}
-          className="border-b border-border align-top">
-          <th scope="row" className="sticky left-0 z-10 bg-surface p-3 text-left font-semibold">{member.displayName ?? member.membershipId}</th>
-          <td className="p-3">{member.state}{member.waitlistPosition ? " #"+member.waitlistPosition : ""}</td>
-          <td className="p-3">{member.source}</td>
-          <td className="p-3">{member.joinedAt?.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }) ?? "—"}</td>
-          <td className="p-3">{!archived && ["ACTIVE", "WAITLISTED"].includes(member.state)
-            ? <div className="grid gap-2">
-              {targets.length>0 && <form action={mutate} className="flex flex-wrap gap-2">
-                <input type="hidden" name="action" value="MOVE" />
-                <input type="hidden" name="membershipId" value={member.membershipId} />
-                <select name="targetOfferingId" required defaultValue=""
-                  aria-label="Move to another offering"
-                  className="min-h-11 rounded border border-border bg-surface px-2 text-base sm:text-sm">
-                  <option value="" disabled>Move to another offering</option>
-                  {targets.map(t=><option key={t.offeringId} value={t.offeringId}>
-                    {t.courseName} ({t.courseCode})</option>)}
-                </select>
-                <label><input type="checkbox" name="confirm" value="yes" required /> Confirm</label>
-                <button className="min-h-11 rounded border border-border px-3 text-[var(--lms-teal-deep)]">Move</button>
-              </form>}
-              <form action={mutate} className="flex flex-wrap gap-2">
-                <input type="hidden" name="action" value="REMOVE" />
-                <input type="hidden" name="membershipId" value={member.membershipId} />
-                <label><input type="checkbox" name="confirm" value="yes" required /> Confirm removal</label>
-                <button className="min-h-11 rounded border border-border px-3 text-foreground">Remove</button>
-              </form>
-            </div>: "—"}</td>
-        </tr>)}</tbody>
-      </table>
-      {detail.members.length===0 && <p className="p-4 text-sm text-muted-foreground">No students allocated.</p>}
-      {detail.members.length>=500 && <p className="p-3 text-xs">Showing first 500 members.</p>}
-    </div>
+    <section className="min-w-0 space-y-3" aria-label="Elective offering roster">
+      <DataTable
+        caption="Elective offering roster"
+        rows={detail.members}
+        getRowKey={member => member.membershipId}
+        empty={<p className="text-sm text-muted-foreground">No students allocated.</p>}
+        columns={[
+          { key: "student", header: "Student", mobilePriority: "primary",
+            cell: member => member.displayName ?? member.membershipId },
+          { key: "state", header: "State", mobilePriority: "secondary",
+            cell: member => member.state + (member.waitlistPosition ? " #" + member.waitlistPosition : "") },
+          { key: "source", header: "Source", mobilePriority: "secondary",
+            cell: member => member.source },
+          { key: "since", header: "Since", mobilePriority: "secondary",
+            cell: member => member.joinedAt?.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }) ?? "—" },
+          { key: "actions", header: "Actions", mobilePriority: "action",
+            cell: member => !archived && ["ACTIVE", "WAITLISTED"].includes(member.state)
+              ? <div className="grid gap-2">
+                {targets.length > 0 && <form action={mutate} className="flex flex-wrap items-center gap-2">
+                  <input type="hidden" name="action" value="MOVE" />
+                  <input type="hidden" name="membershipId" value={member.membershipId} />
+                  <select name="targetOfferingId" required defaultValue=""
+                    aria-label="Move to another offering"
+                    className="min-h-11 rounded border border-border bg-surface px-2 text-base sm:text-sm">
+                    <option value="" disabled>Move to another offering</option>
+                    {targets.map(target => <option key={target.offeringId} value={target.offeringId}>
+                      {target.courseName} ({target.courseCode})</option>)}
+                  </select>
+                  <label className="inline-flex min-h-11 items-center gap-2">
+                    <input type="checkbox" name="confirm" value="yes" required /> Confirm
+                  </label>
+                  <button className="min-h-11 rounded border border-border px-3 text-[var(--lms-teal-deep)]">Move</button>
+                </form>}
+                <form action={mutate} className="flex flex-wrap items-center gap-2">
+                  <input type="hidden" name="action" value="REMOVE" />
+                  <input type="hidden" name="membershipId" value={member.membershipId} />
+                  <label className="inline-flex min-h-11 items-center gap-2">
+                    <input type="checkbox" name="confirm" value="yes" required /> Confirm removal
+                  </label>
+                  <button className="min-h-11 rounded border border-border px-3 text-foreground">Remove</button>
+                </form>
+              </div> : "—" },
+        ]}
+      />
+      {detail.members.length >= 500 && <p className="text-xs text-muted-foreground">Showing first 500 members.</p>}
+    </section>
   </main>;
 }

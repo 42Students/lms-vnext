@@ -12,7 +12,7 @@ export default function HrJobError({reset}:{
   </p>
   <div className="mt-5 flex flex-wrap justify-center gap-3">
    <Button onClick={reset}>Retry drive details</Button>
-   <Link href="/hr/drives" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm text-primary-text">Back to Drives</Link>
+   <Link href="/hr/drives" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Back to Drives</Link>
   </div>
  </section>;
 }

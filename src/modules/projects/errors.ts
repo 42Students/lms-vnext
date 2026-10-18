@@ -101,3 +101,17 @@ export function postgresConstraintName(
 
   return null;
 }
+
+/** Drizzle/postgres.js may wrap SQLSTATE in several cause objects. Restrict
+ * retries to transaction serialization/deadlock codes, never validation,
+ * authorization or unique-constraint failures. */
+export function isRetryableProjectTransactionError(error: unknown): boolean {
+  let current: unknown = error;
+  for (let depth = 0; depth < 6; depth += 1) {
+    if (!current || typeof current !== "object") return false;
+    const code = "code" in current ? (current as { code?: unknown }).code : undefined;
+    if (code === "40001" || code === "40P01") return true;
+    current = "cause" in current ? (current as { cause?: unknown }).cause : undefined;
+  }
+  return false;
+}

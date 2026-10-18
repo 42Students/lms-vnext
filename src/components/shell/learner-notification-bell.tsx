@@ -3,6 +3,7 @@ import Link from "next/link";
 import {useCallback,useEffect,useRef,useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import {ScrollCue} from "@/components/ui/scroll-cue";
 import {GracefulPageLoading} from "@/components/ui/graceful-page-loading";
 import {learnerNotificationTarget} from "@/modules/activity/learner-notification-inbox-model";
 type Due={key:string;title:string;body:string;href:string;dueAt:string};
@@ -16,6 +17,7 @@ export function LearnerNotificationBell(){
  const [loading,setLoading]=useState(true);
  const [everLoaded,setEverLoaded]=useState(false);
  const root=useRef<HTMLDivElement|null>(null);
+ const trigger=useRef<HTMLButtonElement|null>(null);
  const [count,setCount]=useState(0);
  const refreshDue=useCallback(async()=>{
   try{
@@ -40,17 +42,28 @@ export function LearnerNotificationBell(){
   return ()=>window.clearInterval(interval);
  },[refresh]);
  useEffect(()=>{
-  function clickOutside(event:MouseEvent){
+  function clickOutside(event:PointerEvent){
    if(root.current&&!root.current.contains(event.target as Node))setOpen(false);
   }
-  document.addEventListener("mousedown",clickOutside);
-  return ()=>document.removeEventListener("mousedown",clickOutside);
+  document.addEventListener("pointerdown",clickOutside);
+  return ()=>document.removeEventListener("pointerdown",clickOutside);
  },[]);
+ useEffect(()=>{
+  if(!open)return;
+  const escape=(event:KeyboardEvent)=>{
+   if(event.key!=="Escape")return;
+   event.preventDefault();
+   setOpen(false);
+   trigger.current?.focus();
+  };
+  document.addEventListener("keydown",escape);
+  return ()=>document.removeEventListener("keydown",escape);
+ },[open]);
  return <div className="relative shrink-0" ref={root}>
-  <button type="button" aria-label={count>0?"Notifications, "+count+" new":"Notifications"}
+  <button ref={trigger} type="button" aria-label={count>0?"Notifications, "+count+" new":"Notifications"}
     aria-haspopup="dialog" aria-expanded={open}
     onClick={()=>{setOpen(value=>!value);if(!open){void refresh();void refreshDue();}}}
-    className="relative inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-surface hover:bg-primary-subtle">
+    className="relative inline-flex h-11 w-11 items-center justify-center rounded-lg border border-border bg-surface hover:bg-primary-subtle">
     <span aria-hidden="true">🔔</span>
     {count>0?<span aria-hidden="true" className="absolute -right-1 -top-1 rounded-full bg-primary px-1 text-xs text-on-primary">
      {count>99?"99+":count}</span>:null}
@@ -59,11 +72,11 @@ export function LearnerNotificationBell(){
    className="absolute right-0 top-full z-50 mt-2 w-[min(25rem,92vw)] rounded-xl border border-border bg-surface p-4 shadow-xl">
    <div className="flex items-center justify-between">
     <h2 className="font-semibold text-foreground">Notifications</h2>
-    <button type="button" onClick={()=>setOpen(false)}
+    <button type="button" onClick={()=>{setOpen(false);trigger.current?.focus();}}
       className="min-h-11 px-2 text-sm text-primary-text">Close</button>
    </div>
    {error?<div className="mt-2 space-y-2"><InlineNotice tone="error" message={error} onDismiss={()=>setError("")}/>
-    <button type="button" className="min-h-10 text-sm text-primary-text underline" onClick={()=>void refresh()}>Retry notifications</button>
+    <button type="button" className="inline-flex min-h-11 items-center text-sm text-primary-text underline" onClick={()=>void refresh()}>Retry notifications</button>
    </div>:null}
    {loading&&!everLoaded?<GracefulPageLoading/>:null}
    {error&&everLoaded?<p className="mt-2 text-xs text-muted-foreground">Showing the last successful notifications.</p>:null}
@@ -73,7 +86,7 @@ export function LearnerNotificationBell(){
     <ul className="mt-2 space-y-2">
      {due.slice(0,3).map(item=><li key={item.key}>
       <Link href={item.href} onClick={()=>setOpen(false)}
-       className="block rounded-lg border border-warning p-3 text-sm text-body">
+       className="block min-h-11 rounded-lg border border-warning p-3 text-sm text-body">
        {item.body}
       </Link></li>)}
     </ul>
@@ -81,19 +94,19 @@ export function LearnerNotificationBell(){
      Live Course deadlines, not emailed or marked as read.
     </p>
    </section>:null}
-   <ul className="mt-3 max-h-[55vh] space-y-2 overflow-y-auto">
+   <ScrollCue axis="y" label="Learner notifications" className="mt-3" viewportClassName="max-h-[55vh]"><ul className="space-y-2">
     {items.slice(0,8).map(row=>{
      const target=learnerNotificationTarget(row.notification.actionHref)??"/learn/notifications";
      return <li key={row.notification.id}>
       <Link href={target} onClick={()=>setOpen(false)}
-        className="block rounded-lg border border-border px-3 py-2 text-sm text-body">
+        className="block min-h-11 rounded-lg border border-border p-3 text-sm text-body">
        <span className="block font-semibold text-foreground">{row.notification.title}
         {row.notification.readAt===null?" · New":""}</span>
        <span className="mt-1 block line-clamp-2">{row.notification.body}</span>
       </Link>
      </li>;
     })}
-   </ul>
+   </ul></ScrollCue>
    <Link href="/learn/notifications" onClick={()=>setOpen(false)}
      className="mt-3 inline-flex min-h-11 items-center font-semibold text-primary-text underline">
      See all notifications

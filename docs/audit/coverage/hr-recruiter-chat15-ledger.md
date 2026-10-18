@@ -26,4 +26,14 @@ Additional model functions covered by tests/unit/hr-recruiter-exhaustive-chat15-
 | hrRecruiterReplySchema, recruiterReviewNoteSchema, hrTeamSearchSchema, searchHrTeam | Validation limits, strict keys, ratings, search matching |
 | nextHrProposalAttempt, reorderHrDraftRound, duplicateHrDraftRound, hrDraftContainsWork | Idempotent proposal key, immutable ordering, duplicate limits, draft changes |
 
+Route entrypoint supplement (source guard coverage, not full database integration):
+
+| Route handlers | Test | Cases | Missing |
+|---|---|---|---|
+| /api/placements/recruiter/drives/requests GET/POST/PATCH; drives/proposal POST | hr-recruiter-route-security-chat15-01.test.ts; hr-recruiter-json-request-chat15-01.test.ts | same-origin mutations, scoped context, request body 128KiB cap, bad JSON 400, overlimit 413, idempotent replay status, GET read-only | live permissions/DB concurrency and side-effects |
+| /api/placements/recruiter/drives/[jobId]/interview-slots POST and rounds POST | hr-recruiter-route-security-chat15-01.test.ts | same-origin/source guard | PostgreSQL role/state transitions |
+| /api/placements/recruiter/conversations/[threadId]/reply POST, open POST, acknowledge POST | hr-recruiter-route-security-chat15-01.test.ts | same-origin/source guard | per-recipient grants, side-effect and replay |
+| /api/placements/recruiter/notifications/[notificationId]/read POST | hr-recruiter-route-security-chat15-01.test.ts; hr-recruiter-json-request-chat15-01.test.ts | source guard, bounded JSON, friendly invalid input | receipt/tenant integration |
+| /api/placements/recruiter/profile/details PATCH, profile PATCH | hr-recruiter-route-security-chat15-01.test.ts; hr-recruiter-json-request-chat15-01.test.ts | same-origin/source guard, bounded JSON | actual DB updates and role matrix |
+
 Not yet covered: all unlisted exported functions and handlers, unauthenticated/wrong-role/other-college integration cases, same-origin and body limit guards, rollback, audit/activity/notification effects, idempotency and duplicate concurrent requests. The user-requested full exhaustive ledger remains open.

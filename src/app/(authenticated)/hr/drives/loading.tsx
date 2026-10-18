@@ -1,1 +1,5 @@
-export default function Loading() {return <div role="status" className="animate-pulse space-y-4"><div className="h-9 w-56 rounded bg-muted" /><div className="h-16 rounded bg-muted" /><div className="h-36 rounded bg-muted" /></div>;}
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
+
+export default function Loading() {
+  return <GracefulPageLoading label="Loading hiring drives" shape="directory" />;
+}

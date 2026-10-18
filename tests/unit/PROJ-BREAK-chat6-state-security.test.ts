@@ -145,8 +145,12 @@ describe("IIT Dharwad Projects breaker — state, access, integrity, deadlines a
   expect(complete).toContain("requireOpenProject(scope.project.status)");
   expect(complete).toContain("requireOpenProject(liveProject.status)");
   expect(complete).toContain('.for("share")');
-  expect(complete.indexOf("requireOpenProject(liveProject.status)")).toBeLessThan(
-    complete.indexOf(".update(projectResourceFiles)"));
+  const committed=complete.slice(complete.indexOf("const updated = await getDb().transaction"));
+  expect(committed.indexOf("requireOpenProject(liveProject.status)")).toBeLessThan(
+    committed.indexOf(".update(projectResourceFiles)"));
+  const expired=complete.slice(complete.indexOf('if (plan.kind === "WAIT")'),complete.indexOf("const updated = await getDb().transaction"));
+  expect(expired).toContain('requireOpenProject(liveProject.status)');
+  expect(expired).toContain('eq(projectResourceFiles.projectId,scope.project.id)');
   expect(complete).toContain('inArray(projectResourceFiles.status, ["UPLOADING", "VERIFYING"])');
  });
 
@@ -161,6 +165,19 @@ describe("IIT Dharwad Projects breaker — state, access, integrity, deadlines a
     expect(body,name).toContain('.for("share")');
     expect(body,name).toContain('eq(projectResourceFiles.projectId,scope.project.id)');
   }
+ });
+
+ it("PROJ-BREAK-resilience-02 storage cleanup outage cannot resurrect a soft-deleted file or mark scan failed",()=>{
+  const code=src("src/modules/projects/project-resource-file-service.ts");
+  const remove=code.slice(code.indexOf("export async function removeProjectFile("),
+    code.indexOf("export async function issueProjectFileDownloadGrant("));
+  expect(remove).toContain('status: "DELETED"');
+  expect(remove).toContain("try { await removeStoredObject(row.objectKey); }");
+  expect(remove).toContain("catch {");
+  const complete=code.slice(code.indexOf("export async function completeProjectFileUpload("),
+    code.indexOf("export async function listProjectFiles("));
+  expect(complete).toContain("try { await removeStoredObject(row.objectKey); }");
+  expect(complete).toContain("STORAGE_CONTENT_REJECTED");
  });
 
 });
