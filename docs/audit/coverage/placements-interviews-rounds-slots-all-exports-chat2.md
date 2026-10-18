@@ -21,8 +21,8 @@ Scope: **all 71** `src/modules/placements/*interview*/*round*/*slot*` TypeScript
 | `src/modules/placements/college-interview-lifecycle-service.ts` | `finishCollegeInterview` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/college-round-slot-action-service.ts` | `getCollegeRoundSlotAppointments` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/college-round-slot-action-service.ts` | `mutateCollegeRoundSlotInterview` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/hr-draft-round-duplicate-model.ts` | `duplicateHrDraftRound` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/hr-draft-round-order-model.ts` | `reorderHrDraftRound` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/hr-draft-round-duplicate-model.ts` | `duplicateHrDraftRound` (function) | \`tests/unit/chat2-interview-hr-break-06.test.ts\` (CI pending) | TEST AUTHORED |
+| `src/modules/placements/hr-draft-round-order-model.ts` | `reorderHrDraftRound` (function) | \`tests/unit/chat2-interview-hr-break-06.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/hr-drive-round-presets.ts` | `HR_DRIVE_ROUND_PRESETS` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/hr-drive-round-presets.ts` | `HrRoundPresetId` (type) | N/A (compile-time only) | TYPE ONLY |
 | `src/modules/placements/hr-drive-round-presets.ts` | `applyHrRoundPreset` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
@@ -31,18 +31,18 @@ Scope: **all 71** `src/modules/placements/*interview*/*round*/*slot*` TypeScript
 | `src/modules/placements/hr-inline-round-results-model.ts` | `HrRoundCount` (type) | N/A (compile-time only) | TYPE ONLY |
 | `src/modules/placements/hr-inline-round-results-model.ts` | `hrInlineRoundResultFilters` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/hr-inline-round-results-model.ts` | `hrInlineRoundResultsHref` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/hr-interview-slot-model.ts` | `hrInterviewSlotCreateSchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/hr-interview-slot-model.ts` | `hrInterviewSlotActionSchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/hr-interview-slot-model.ts` | `slotTransitionAllowed` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/hr-interview-slot-model.ts` | `slotsOverlap` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/hr-interview-slot-model.ts` | `parseIstLocalSlot` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/hr-interview-slot-model.ts` | `canRecruiterMutateOwnSlot` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/hr-interview-slot-model.ts` | `hrInterviewSlotCreateSchema` (const) | \`tests/unit/chat2-interview-hr-break-06.test.ts\` (CI pending) | TEST AUTHORED |
+| `src/modules/placements/hr-interview-slot-model.ts` | `hrInterviewSlotActionSchema` (const) | \`tests/unit/chat2-interview-hr-break-06.test.ts\` (CI pending) | TEST AUTHORED |
+| `src/modules/placements/hr-interview-slot-model.ts` | `slotTransitionAllowed` (function) | \`tests/unit/chat2-interview-hr-break-06.test.ts\` (CI pending) | TEST AUTHORED |
+| `src/modules/placements/hr-interview-slot-model.ts` | `slotsOverlap` (function) | \`tests/unit/chat2-interview-hr-break-06.test.ts\` (CI pending) | TEST AUTHORED |
+| `src/modules/placements/hr-interview-slot-model.ts` | `parseIstLocalSlot` (function) | \`tests/unit/chat2-interview-hr-break-06.test.ts\` (CI pending) | TEST AUTHORED |
+| `src/modules/placements/hr-interview-slot-model.ts` | `canRecruiterMutateOwnSlot` (function) | \`tests/unit/chat2-interview-hr-break-06.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/hr-interview-slot-service.ts` | `listHrInterviewSlots` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/hr-interview-slot-service.ts` | `writeHrInterviewSlot` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/hr-round-editor-model.ts` | `hrRoundFormSchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/hr-round-editor-model.ts` | `canRecruiterEditRound` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/hr-round-editor-model.ts` | `duplicateRecruiterRoundName` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/hr-round-editor-model.ts` | `matchesRecruiterRoundVersion` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/hr-round-editor-model.ts` | `hrRoundFormSchema` (const) | \`tests/unit/chat2-interview-hr-break-06.test.ts\` (CI pending) | TEST AUTHORED |
+| `src/modules/placements/hr-round-editor-model.ts` | `canRecruiterEditRound` (function) | \`tests/unit/chat2-interview-hr-break-06.test.ts\` (CI pending) | TEST AUTHORED |
+| `src/modules/placements/hr-round-editor-model.ts` | `duplicateRecruiterRoundName` (function) | \`tests/unit/chat2-interview-hr-break-06.test.ts\` (CI pending) | TEST AUTHORED |
+| `src/modules/placements/hr-round-editor-model.ts` | `matchesRecruiterRoundVersion` (function) | \`tests/unit/chat2-interview-hr-break-06.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/hr-round-editor-service.ts` | `editHrJobRound` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/hr-round-editor-service.ts` | `listHrRoundEditorRows` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/hr-round-schedule-model.ts` | `RoundScheduleRow` (type) | N/A (compile-time only) | TYPE ONLY |
@@ -112,10 +112,10 @@ Scope: **all 71** `src/modules/placements/*interview*/*round*/*slot*` TypeScript
 | `src/modules/placements/tpo-confirmed-round-result-model.ts` | `canEditTpoRoundResult` (function) | \`tests/unit/chat2-tpo-round-csv-and-lifecycle-break-03.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-confirmed-round-result-model.ts` | `canApplyTpoRoundResult` (function) | \`tests/unit/chat2-tpo-round-csv-and-lifecycle-break-03.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-confirmed-round-result-service.ts` | `confirmTpoRoundResult` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-drive-round-presets.ts` | `TPO_DRIVE_ROUND_PRESETS` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-drive-round-presets.ts` | `TPO_DRIVE_ROUND_PRESETS` (const) | \`tests/unit/chat2-interview-hr-break-06.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-drive-round-presets.ts` | `TpoRoundPresetKey` (type) | N/A (compile-time only) | TYPE ONLY |
-| `src/modules/placements/tpo-drive-round-presets.ts` | `isTpoRoundPresetKey` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-drive-round-presets.ts` | `plannedTpoRoundRows` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-drive-round-presets.ts` | `isTpoRoundPresetKey` (function) | \`tests/unit/chat2-interview-hr-break-06.test.ts\` (CI pending) | TEST AUTHORED |
+| `src/modules/placements/tpo-drive-round-presets.ts` | `plannedTpoRoundRows` (function) | \`tests/unit/chat2-interview-hr-break-06.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-failure-round-share-model.ts` | `AppliedRoundDecision` (type) | N/A (compile-time only) | TYPE ONLY |
 | `src/modules/placements/tpo-failure-round-share-model.ts` | `summarizeFailedRoundShares` (function) | \`tests/unit/chat2-tpo-round-csv-and-lifecycle-break-03.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-failure-round-share-model.ts` | `AppliedRoundBranchDecision` (type) | N/A (compile-time only) | TYPE ONLY |
