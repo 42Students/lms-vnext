@@ -35,7 +35,7 @@ export default async function TpoOfferLettersPage({
     <Link href={"/tpo/placements/jobs/" + encodeURIComponent(job.id)}
       className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">← Back to drive</Link>
     <header>
-      <h1 className="text-[30px] font-semibold text-foreground font-semibold text-[var(--lms-page-title)]">{job.title} · Offer letter evidence</h1>
+      <h1 className="text-[30px] font-semibold text-[#172033]">{job.title} · Offer letter evidence</h1>
       <p className="mt-2 text-sm text-body">
         Persisted offer records are listed below. An issued offer is not proof
         that an offer letter was generated, sent, received or acknowledged.

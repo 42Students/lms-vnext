@@ -51,7 +51,7 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
      <option value="ALL">All</option><option value="NOT_RECORDED">Not recorded</option><option value="STAGED">Staged</option><option value="APPLIED">Applied</option>
     </select>
    </label>
-   <button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-white">Filter</button>
+   <button type="submit" className="min-h-11 rounded bg-primary px-4 text-primary-foreground">Filter</button>
   </form>
   <p role="status" className="text-sm text-body">{visibleRows.length} of {data.rows.length} eligible applications match these filters. Totals above describe the full round.</p>
   {visibleRows.length===0?<p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">No eligible shortlisted submitted applicants match this round result filter.</p>:

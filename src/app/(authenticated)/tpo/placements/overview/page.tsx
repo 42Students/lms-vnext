@@ -34,7 +34,7 @@ export default async function TpoPlacementsOverviewPage() {
             </Link>
             <Link
               href="/tpo/placements/new"
-              className="inline-flex min-h-11 items-center justify-center rounded-md border border-primary bg-primary px-3 text-sm font-semibold text-foreground transition hover:border-primary-hover hover:bg-primary-hover"
+              className="inline-flex min-h-11 items-center justify-center rounded-[9px] border border-primary bg-primary px-3 text-sm font-semibold transition hover:border-primary-hover hover:bg-primary-hover text-primary-foreground"
             >
               New opportunity
             </Link>
