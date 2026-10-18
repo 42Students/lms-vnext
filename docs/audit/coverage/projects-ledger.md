@@ -8,18 +8,27 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 
 | File | Exported symbol | Authored test | Evidence / outstanding cases |
 |---|---|---|---|
-| `src/modules/projects/access.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/activity-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/admin-college-scope.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/admin-insights-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/admin-readiness-overrides-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/admin-submission-lock-policy.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/admin-submission-review-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/admin-submission-review-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/admin-unsubmitted-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/class-team-audit.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/class-team-balanced-move.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/class-team-capacity.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
+| `src/modules/projects/access.ts` | `loadProjectScope` | **GAP** | **GAP — behavioural test missing** |
+| `src/modules/projects/access.ts` | `requireProjectManageAccess` | **GAP** | **GAP — behavioural test missing** |
+| `src/modules/projects/access.ts` | `requireProjectReadAccess` | **GAP** | **GAP — behavioural test missing** |
+| `src/modules/projects/access.ts` | `requireProjectLifecycleAccess` | **GAP** | **GAP — behavioural test missing** |
+| `src/modules/projects/access.ts` | `requireProjectLifecycleMutationAccess` | **GAP** | **GAP — behavioural test missing** |
+| `src/modules/projects/activity-service.ts` | `getProjectActivityPage` | **GAP** | **GAP — behavioural test missing** |
+| `src/modules/projects/activity-service.ts` | `listProjectActivity` | **GAP** | **GAP — behavioural test missing** |
+| `src/modules/projects/admin-college-scope.ts` | `getProjectAdminCollegeId` | **GAP** | **GAP — behavioural test missing** |
+| `src/modules/projects/admin-insights-service.ts` | `listProjectAdminSnapshots` | **GAP** | **GAP — behavioural test missing** |
+| `src/modules/projects/admin-insights-service.ts` | `listProjectAdminRiskQueue` | **GAP** | **GAP — behavioural test missing** |
+| `src/modules/projects/admin-insights-service.ts` | `getProjectAdminSubmissionSummary` | **GAP** | **GAP — behavioural test missing** |
+| `src/modules/projects/admin-insights-service.ts` | `listProjectAdminSubmissionQueue` | **GAP** | **GAP — behavioural test missing** |
+| `src/modules/projects/admin-readiness-overrides-service.ts` | `listCollegeActiveReadinessOverrides` | **GAP** | **GAP — behavioural test missing** |
+| `src/modules/projects/admin-submission-lock-policy.ts` | `mayRecordCollegeAdminDeliveryLock` | **GAP** | **GAP — behavioural test missing** |
+| `src/modules/projects/admin-submission-review-model.ts` | `canAdminSettleDelivery` | **GAP** | **GAP — behavioural test missing** |
+| `src/modules/projects/admin-submission-review-model.ts` | `adminDeliveryToast` | **GAP** | **GAP — behavioural test missing** |
+| `src/modules/projects/admin-submission-review-service.ts` | `lockAdminProjectSubmission` | **GAP** | **GAP — behavioural test missing** |
+| `src/modules/projects/admin-unsubmitted-service.ts` | `listProjectAdminUnsubmitted` | **GAP** | **GAP — behavioural test missing** |
+| `src/modules/projects/class-team-audit.ts` | `projectTeamCreateAudit` | **GAP** | **GAP — behavioural test missing** |
+| `src/modules/projects/class-team-balanced-move.ts` | `moveMemberBalanced` | **GAP** | **GAP — behavioural test missing** |
+| `src/modules/projects/class-team-capacity.ts` | `classTeamCapacity` | **GAP** | **GAP — behavioural test missing** |
 | `src/modules/projects/class-team-create-feedback-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
 | `src/modules/projects/class-team-create-once-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
 | `src/modules/projects/class-team-create-request.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
