@@ -9,3 +9,7 @@
 **States:** No success, empty, denied or partial branch was suppressed. Existing guard and persisted-result semantics are unchanged. Phone browser, keyboard and screen reader evidence are pending.
 
 **Test:** `tests/unit/UX-tpo-companies-companyid-contact-log-01.test.ts`. No fixture data is invented. **Acceptance:** source contract prepared; TypeScript/Vitest/browser orchestrator run pending. Keep unchecked until verified.
+
+## Shared form controls follow-up
+
+The GET filter form now uses the audited shared `Select`, `Button` controls, keeping source-specific labels, defaults, submitted URL parameter names, permission checks and all existing pagination/export behavior. Hidden URL-preservation fields remain native. Browser focus/native picker and TypeScript acceptance await orchestrator runs. **Test:** `tests/unit/UX-tpo-companies-companyid-contact-log-04.test.ts`.

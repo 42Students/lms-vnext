@@ -1,3 +1,6 @@
+import {Button} from "@/components/ui/button";
+import {Select} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import {TpoLiveRefresh} from "@/components/tpo/tpo-live-refresh";
 import { redirect } from "next/navigation";
@@ -283,7 +286,7 @@ export default async function TpoMessagesPage({
         >
           <label className="grid gap-1 text-sm font-semibold text-body">
             Status
-            <select
+            <Select
               name="status"
               defaultValue={query.status}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground"
@@ -302,12 +305,12 @@ export default async function TpoMessagesPage({
                     : labelStatus(status)}
                 </option>
               ))}
-            </select>
+            </Select>
           </label>
 
           <label className="grid gap-1 text-sm font-semibold text-body">
             From (IST)
-            <input
+            <Input
               type="date"
               name="from"
               defaultValue={query.from ?? ""}
@@ -317,7 +320,7 @@ export default async function TpoMessagesPage({
 
           <label className="grid gap-1 text-sm font-semibold text-body">
             To (IST)
-            <input
+            <Input
               type="date"
               name="to"
               defaultValue={query.to ?? ""}
@@ -329,14 +332,14 @@ export default async function TpoMessagesPage({
             Search
             {isRecruiterInbox?<TpoInboxSearch
               value={query.q} placeholder="Recruiter, subject or message"/>:
-              <input type="search" name="q" maxLength={120} defaultValue={query.q}
+              <Input type="search" name="q" maxLength={120} defaultValue={query.q}
                 placeholder="TPO name or event type"
                 className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground"/>}
           </label>
 
           <label className="grid gap-1 text-sm font-semibold text-body">
             Page size
-            <select
+            <Select
               name="pageSize"
               defaultValue={String(pageSize)}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground"
@@ -344,16 +347,16 @@ export default async function TpoMessagesPage({
               <option value="25">25</option>
               <option value="50">50</option>
               <option value="100">100</option>
-            </select>
+            </Select>
           </label>
 
           <div className="flex flex-wrap gap-3 sm:col-span-2 xl:col-span-5">
-            <button
+            <Button
               type="submit"
               className="inline-flex min-h-11 items-center rounded-md bg-primary px-5 text-sm font-semibold text-foreground hover:bg-primary-hover"
             >
               Apply filters
-            </button>
+            </Button>
 
             <Link
               href="/tpo/messages"
