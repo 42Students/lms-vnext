@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { Suspense } from "react";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerCareerCalendar } from "@/components/placements/learner-career-calendar";
@@ -69,8 +70,8 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
       <p>{row.roundKind.replaceAll("_"," ")} · {mode==="VIRTUAL"?"Online":mode==="ON_CAMPUS"?"On campus":mode} · {row.durationMinutes!=null?row.durationMinutes+" minutes":"Duration to be told"}</p>
       <p>{venue?"Venue: "+venue:"Venue to be told"}</p>
       <div className="flex flex-wrap gap-3">
-        {join&&/^https:\/\//i.test(join)?<a href={join} target="_blank" rel="noopener noreferrer" className="font-semibold text-[var(--lms-teal-deep)] underline">Join online round</a>:null}
-        {row.testUrl&&/^https:\/\//i.test(row.testUrl)?<a href={row.testUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-[var(--lms-teal-deep)] underline">Open test<span className="sr-only"> · Take online assessment</span></a>:null}
+        {join&&/^https:\/\//i.test(join)?<ThirdPartyLink href={join} label="Join online round" />:null}
+        {row.testUrl&&/^https:\/\//i.test(row.testUrl)?<ThirdPartyLink href={row.testUrl} label="Open test" />:null}
         {row.testUrl&&row.assessmentDueAt&&(row.roundKind==="TEST"||row.roundKind==="VENDOR_TEST")?<span className="font-semibold text-body">Take it by {fmt(row.assessmentDueAt)}</span>:null}
       </div>
       {row.exception ? (

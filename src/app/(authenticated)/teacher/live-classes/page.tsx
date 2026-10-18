@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {FacultyLiveClassEditor} from "@/components/courses/faculty-live-class-editor";
 import {PageHeader} from "@/components/ui/page-header";
@@ -62,10 +63,7 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
       dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
      }).format(s.startsAt)} IST
     </p>
-    {s.joinUrl?<a href={s.joinUrl} target="_blank" rel="noopener noreferrer"
-     className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
-     Open secure meeting link
-    </a>:<p className="text-xs text-muted-foreground">
+    {s.joinUrl?<ThirdPartyLink href={s.joinUrl} label="Open secure meeting link" />:<p className="text-xs text-muted-foreground">
      Secure meeting link unavailable. Only HTTPS links are exposed.
     </p>}
     <Link href={"/teacher/courses/"+encodeURIComponent(s.deliveryId)}

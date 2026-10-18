@@ -132,7 +132,7 @@ export function NotificationList({
                       <button
                         type="button"
                         onClick={() => onSelect(item)}
-                        className="min-h-10 text-left underline-offset-2 hover:text-primary-text hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                        className="inline-flex min-h-11 items-center text-left underline-offset-2 hover:text-primary-text hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
                         aria-label={`View notification: ${item.title}`}
                       >
                         {item.title}
