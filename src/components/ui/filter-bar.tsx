@@ -75,8 +75,8 @@ export function FilterBar({ title = "Filters", activeCount = 0, search, filters,
       className="fixed inset-0 z-30 bg-foreground/30 sm:hidden"/> : null}
     <div id={panelId} ref={panel} style={{ "--lms-visual-height": availableHeight ?? "100dvh" } as CSSProperties} role={open ? "dialog" : undefined} aria-modal={open ? true : undefined}
       aria-label={open ? title : undefined}
-      className={cx("min-w-0 rounded-xl border border-border bg-surface p-4 sm:static sm:z-auto sm:block sm:max-h-none sm:w-full sm:rounded-xl sm:shadow-none",
-        open ? "fixed inset-0 z-40 flex max-h-[var(--lms-visual-height)] min-h-0 w-full flex-col overflow-hidden pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] shadow-lg" : "hidden sm:block")}>
+      className={cx("min-w-0 rounded-[12px] border border-[#e5e9f0] bg-surface p-4 sm:static sm:z-auto sm:block sm:max-h-none sm:w-full sm:rounded-none sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none",
+        open ? "fixed inset-0 z-40 flex max-h-[var(--lms-visual-height)] min-h-0 w-full flex-col overflow-hidden pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] shadow-[var(--lms-overlay-shadow)]" : "hidden sm:block")}>
       <div className="mb-4 flex shrink-0 items-center justify-between gap-3 sm:hidden">
         <h2 className="text-lg font-semibold">{title}</h2>
         <Button variant="ghost" aria-label="Close filters" onClick={() => setOpen(false)}>×</Button>
