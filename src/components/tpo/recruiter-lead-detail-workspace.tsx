@@ -1,5 +1,6 @@
-import {Dialog} from "@/components/ui/dialog";
 "use client";
+
+import {Dialog} from "@/components/ui/dialog";
 
 import { formatDateTimeIst } from "@/lib/format-date";
 import {buildTpoRecruiterInviteMessage} from "@/modules/placements/tpo-recruiter-invite-message-model";

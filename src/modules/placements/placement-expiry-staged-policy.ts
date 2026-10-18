@@ -5,5 +5,6 @@
 export function isPlacementOfferExpiredAt(
   expiresAt: Date | null, now: Date,
 ): boolean {
-  return expiresAt !== null && now.getTime() >= expiresAt.getTime();
+  return expiresAt !== null && (!Number.isFinite(expiresAt.getTime()) ||
+    now.getTime() >= expiresAt.getTime());
 }
