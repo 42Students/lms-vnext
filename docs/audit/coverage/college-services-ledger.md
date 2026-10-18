@@ -179,3 +179,17 @@ These rows establish tests for listed exports only. **Not exhaustive**: 319 acad
 | `listCollegeStudentImportOptions` (`people/college-student-import-options.ts`) | `tests/unit/chat4-college-student-import-options-hardening.test.ts` | Actual service composed against a deterministic DB adapter, 500/2,000/3,000 bounds, suspended/wrong-role/disabled actors, transaction-local persisted guard before roster data, ACTIVE program / PLANNED or ACTIVE cohort / ACTIVE section / non-CLOSED college period; PostgreSQL foreign-period and race check pending |
 | `getSectionOperationsWorkspace` (`academics/section-workspace.ts`) | `tests/unit/chat4-college-section-workspace-tenant.test.ts` | Actual service with dependency doubles tests authorized college, failed cross-college and disabled session, missing section, seven component views and scoped roster choices, exact program/cohort delegation, independent academic period college restriction; real PostgreSQL integration pending |
 | `loadSectionScope` (`academics/scope.ts`) | same | Central section authorization joins the independent period FK to the SAME persisted college as cohort/program/department; corrupt cross-college academic periods return SECTION_NOT_FOUND to every caller; real malformed fixture pending |
+
+
+## CI dd44f0f2 chat-4 regression reconciliation
+
+The orchestrator's currently published `unit-failures-latest.md` still references two chat-4 test names from an older CI run, not a freshly executed result. The following source-backed repairs are pushed, with no tests disabled or deleted:
+
+| Gap | Test | Source contract / result |
+|---|---|---|
+| `COL-academic-setup-R03` | `tests/unit/chat4-college-academic-people-gap-closure.test.ts` | Replaced stale demand for a seventh College Admin legacy tab with stronger assertions: six exact legacy steps retained, `/college/academics` reachable by Departments, setup guide, batches and classes empty states |
+| `SA-placements-projects-58` | `tests/unit/chat4-super-admin-projects-gap-closure.test.ts` | Direct checks for mentor reassignment link, encoded mentor ID (including unassigned state), correct risk reason, queue data source and actual greater-than-150%-of-average overload model |
+| `COL-student-import-options-01` | `tests/unit/chat4-college-student-import-options-hardening.test.ts` | Dynamic service orchestration with mock DB: permission denied without reads, all three caps, exact active selection and persisted role checks; actual PostgreSQL query predicates still require integration |
+| `COL-classes-tenant-01/04` | `tests/unit/chat4-college-section-workspace-tenant.test.ts` | Dynamic section workspace with mocked dependencies: composite data and ownership, disabled role denial, missing section, central independent period FK same-college fence |
+
+No claim of green cloud CI is made. Test-file TypeScript verification, isolated PostgreSQL transaction races, and browser-focused authorization/error recovery remain open.
