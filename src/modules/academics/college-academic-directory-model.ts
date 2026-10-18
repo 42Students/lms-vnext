@@ -2,18 +2,26 @@ import { z } from "zod";
 
 export const COLLEGE_ACADEMIC_PAGE_SIZE = 25;
 
+// Browser query numbers must be decimal digits. z.coerce.number() would
+// silently accept exponent, hexadecimal, and whitespace forms.
+const directoryDecimal=(min:number,max:number)=>z.union([
+  z.number().int().min(min).max(max),
+  z.string().regex(/^[0-9]+$/).transform(Number)
+   .pipe(z.number().int().min(min).max(max)),
+]);
+
 const common = {
   q: z.string().trim().max(100).default(""),
   programId: z.string().uuid().optional(),
-  page: z.coerce.number().int().min(1).max(1000).default(1),
-  pageSize: z.coerce.number().int().refine(n => [10,25,50,100].includes(n)).default(10),
+  page: directoryDecimal(1,1000).default(1),
+  pageSize: directoryDecimal(10,100).refine(n => [10,25,50,100].includes(n)).default(10),
 };
 
 export const collegeSemesterDirectoryBaseSchema = z.object({
   ...common,
-  termNumber: z.coerce.number().int().min(1).max(24).optional(),
-  minimumCredits: z.coerce.number().int().min(0).max(500).optional(),
-  maximumCredits: z.coerce.number().int().min(0).max(500).optional(),
+  termNumber: directoryDecimal(1,24).optional(),
+  minimumCredits: directoryDecimal(0,500).optional(),
+  maximumCredits: directoryDecimal(0,500).optional(),
   creditState: z.enum(["ALL", "CONFIGURED", "UNSET"]).optional(),
   programStatus: z.enum(["ALL", "ACTIVE", "ARCHIVED"]).optional(),
   mappingState: z.enum(["ALL","MAPPED","UNMAPPED"]).optional(),
@@ -31,8 +39,8 @@ export const collegeSemesterDirectorySchema = withCollegeSemesterCreditCheck(col
 
 export const collegeBatchDirectoryBaseSchema = z.object({
   ...common,
-  yearStart: z.coerce.number().int().min(1900).max(9998).optional(),
-  currentTerm: z.coerce.number().int().min(1).max(24).optional(),
+  yearStart: directoryDecimal(1900,9998).optional(),
+  currentTerm: directoryDecimal(1,24).optional(),
   progression: z.enum(["ALL","RECORDED","MISSING"]).default("ALL"),
   programStatus: z.enum(["ALL","ACTIVE","ARCHIVED"]).optional(),
   expectedEndState: z.enum(["ALL","SET","UNSET"]).optional(),
@@ -94,7 +102,9 @@ export function academicDirectorySearchParams(
   params: Record<string, string | string[] | undefined>,
 ): Record<string, string> | null {
   const result: Record<string, string> = {};
-  for (const key of ["q", "programId", "termNumber", "minimumCredits", "maximumCredits", "yearStart","creditState",  "currentTerm", "progression", "status", "programStatus", "mappingState", "expectedEndState", "academicYearState", "startOnOrAfter", "startOnOrBefore", "activeClassState", "activeLearnerState", "page", "pageSize"] as const) {
+  const allowed=["q", "programId", "termNumber", "minimumCredits", "maximumCredits", "yearStart","creditState",  "currentTerm", "progression", "status", "programStatus", "mappingState", "expectedEndState", "academicYearState", "startOnOrAfter", "startOnOrBefore", "activeClassState", "activeLearnerState", "page", "pageSize"] as const;
+  if (Object.keys(params).some(key=>!(allowed as readonly string[]).includes(key)))return null;
+  for (const key of allowed) {
     const value = params[key];
     if (Array.isArray(value)) return null;
     if (typeof value === "string" && (key !== "startOnOrAfter" || value !== "") && (key !== "startOnOrBefore" || value !== "") && (key !== "programId" && key !== "termNumber" && key !== "minimumCredits" && key !== "maximumCredits" && key !== "yearStart" && key !== "currentTerm" || value !== "")) {
