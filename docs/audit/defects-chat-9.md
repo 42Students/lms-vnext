@@ -70,6 +70,8 @@ Branch: `chatgpt/chat-9-b`. Owner: chat-9. These are observed source-level findi
 
 | PROJ9-041 · SA-placements-student-lookup-01/04 | High | The Super Admin /admin/placements/student-lookup page trusted its browser input maxLength=150 but allowed forged GET searches larger than 150 (or arrays) directly into strict Zod service validation, resulting in an uncaught page error rather than a recoverable search. Added a single-value bounded parser and an inline invalid-search reset; invalid requests never reach the PII query and a selected-college scope is required before a valid search. | `c3ae380`, `066f421` | `tests/unit/PROJ-BREAK-chat9-sa-student-lookup-recovery.test.tsx` (`5cfcdc6`), valid/invalid URL and no college; live browser/DB denial OPEN |
 
+| PROJ9-042 · SA-placements-student-lookup-05/07 | High | The Super Admin selected-college placement history joined `placementCompanyRelationships` solely by relationship ID without independently asserting its `collegeId`. A malformed cross-tenant job→company relationship could allow a selected-college query to attach another college's company name. The join now enforces the same selected college as the job, while keeping the existing learner and job tenancy gates. | `64f3a5f` | `tests/unit/PROJ-BREAK-chat9-sa-student-lookup-tenant.test.ts` (`f7a57f0`), rendered join predicates + role/input denial; real FK-corruption/PG fixture pending |
+
 ## Outstanding release gates (not yet closed)
 
 - Live PostgreSQL integration tests for wrong-tenant IDs, serializable races, rollback and event/notification dedupe; chat-17 owns shared fixtures. Static service assertions alone cannot establish real DB behavior.
