@@ -1,5 +1,6 @@
 import { and, desc, eq, inArray, ne } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import { activityEvents, projectInstances, users } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
@@ -25,11 +26,19 @@ export async function listCollegeActiveReadinessOverrides(context: RequestContex
   const live = events.filter(row =>
     (row.metadata.state === "FORCE_UNLOCK" || row.metadata.state === "FORCE_BLOCK") &&
     z.string().uuid().safeParse(row.projectId).success);
-  if (!live.length) return [];
+  // A College Admin or Super Admin can be revoked while event history is
+  // loading. Even an empty result must not silently succeed with a stale role.
+  const requireLiveScope=async()=>db.transaction(async tx=>{
+    await assertPersistedPlatformPermission(tx,context,"projects.manage",{
+      collegeId:college.id,organizationId:college.organizationId,
+    });
+  });
+  if (!live.length){await requireLiveScope();return [];}
   const projects = await db.select({ id: projectInstances.id, title: projectInstances.title })
     .from(projectInstances).where(and(eq(projectInstances.collegeId, college.id),
       ne(projectInstances.status, "ARCHIVED"),
       inArray(projectInstances.id, live.map(row => row.projectId))));
+  await requireLiveScope();
   const titles = new Map(projects.map(row => [row.id, row.title]));
   return live.filter(row => titles.has(row.projectId)).map(row => ({
     projectId: row.projectId, workspace: titles.get(row.projectId) ?? "",

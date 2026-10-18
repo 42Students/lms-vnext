@@ -43,3 +43,31 @@ export function parseCollegeProjectsQuery(
     ...(pageSize !== undefined ? { pageSize } : {}),
   });
 }
+
+
+/** An old page bookmark can become empty after archiving or filtering.
+ * Return a canonical in-scope page without dropping the user's search,
+ * status, view or rows-per-page preferences.
+ */
+export function canonicalCollegeProjectsPageHref(
+  query: {
+    q?: string;
+    status?: (typeof statuses)[number];
+    view: "cards" | "table";
+    page: number;
+    pageSize: number;
+  },
+  totalPages: number,
+): string | null {
+  const lastPage = Number.isFinite(totalPages) ?
+    Math.max(1, Math.floor(totalPages)) : 1;
+  if (query.page <= lastPage) return null;
+  const params = new URLSearchParams();
+  if (query.q) params.set("q", query.q);
+  if (query.status) params.set("status", query.status);
+  if (query.view !== "cards") params.set("view", query.view);
+  if (query.pageSize !== 25) params.set("pageSize", String(query.pageSize));
+  if (lastPage > 1) params.set("page", String(lastPage));
+  const suffix = params.toString();
+  return "/college/projects" + (suffix ? "?" + suffix : "");
+}

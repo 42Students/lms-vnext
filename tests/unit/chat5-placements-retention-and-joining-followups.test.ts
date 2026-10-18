@@ -55,6 +55,20 @@ describe("PLACEMENTS-RETENTION-01 read-only application retention boundary",()=>
  });
 });
 
+describe("PLACEMENTS-RETENTION-ACTIVE-28 protected official commitments",()=>{
+ it("never classifies an old withdrawn/rejected application with issued or accepted offers as disposable",()=>{
+  const service=src("src/modules/placements/college-retention-report-service.ts");
+  expect(service).toContain("notExists(db.select({id:placementOffers.id}).from(placementOffers)");
+  expect(service).toContain("eq(placementOffers.applicationId,placementApplications.id)");
+  expect(service).toContain('inArray(placementOffers.status,["ISSUED","ACCEPTED"])');
+  expect(service).toContain("requireCollegePlacementAdmin(ctx)");
+  expect(service).toContain("eq(placementJobs.collegeId,collegeId)");
+  expect(service).toContain("eq(collegeMemberships.collegeId,collegeId)");
+  expect(service).not.toContain(".delete(");
+  expect(service).toContain("This read-only report never removes application, offer, audit or student records.");
+ });
+});
+
 describe("PLACEMENTS-JOINING-FOLLOWUP-01 real-status/date-driven evidence",()=>{
  const rows:JoiningFollowupFact[]=[
   base,

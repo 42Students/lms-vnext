@@ -7,6 +7,7 @@ import {
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {
@@ -498,6 +499,15 @@ export async function createCollege(
 
   try {
     return await db.transaction(async tx=>{
+      // A college cannot be created from a stale Super Admin tab after the
+      // parent was archived or the administrator's system role was removed.
+      await assertPersistedPlatformPermission(tx,context,"college.manage",{
+        organizationId:organization.id,
+      });
+      const [parent]=await tx.select({id:organizations.id}).from(organizations)
+        .where(and(eq(organizations.id,organization.id),eq(organizations.status,"ACTIVE")))
+        .for("share").limit(1);
+      if(!parent)throw new CollegeServiceError("ORGANIZATION_NOT_FOUND");
       const [created]=await tx.insert(colleges).values(input).returning();
       if(!created)throw new CollegeServiceError("COLLEGE_NOT_FOUND");
       await recordActivityEventInTransaction(tx,context,{
@@ -532,6 +542,13 @@ export async function updateCollege(
   });
 
   return getDb().transaction(async tx=>{
+    await assertPersistedPlatformPermission(tx,context,"college.manage",{
+      collegeId,organizationId:college.organizationId,
+    });
+    const [parent]=await tx.select({id:organizations.id}).from(organizations)
+      .where(and(eq(organizations.id,college.organizationId),eq(organizations.status,"ACTIVE")))
+      .for("share").limit(1);
+    if(!parent)throw new CollegeServiceError("ORGANIZATION_NOT_FOUND");
     const [updated]=await tx.update(colleges).set({
       ...input,updatedAt:new Date(),
     }).where(and(eq(colleges.id,collegeId),eq(colleges.status,"ACTIVE"))).returning();
@@ -578,6 +595,9 @@ export async function archiveCollege(
 
   const archivedAt = new Date();
   return getDb().transaction(async tx=>{
+    await assertPersistedPlatformPermission(tx,context,"college.manage",{
+      collegeId,organizationId:college.organizationId,
+    });
     const [archived]=await tx.update(colleges)
       .set({status:"ARCHIVED",updatedAt:archivedAt})
       .where(and(eq(colleges.id,collegeId),eq(colleges.status,"ACTIVE")))
@@ -611,6 +631,13 @@ export async function restoreCollege(context:RequestContext,rawId:unknown){
  if(candidate.organizationStatus!=="ACTIVE")
   throw new CollegeServiceError("ORGANIZATION_NOT_FOUND");
  return db.transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,context,"college.manage",{
+   collegeId,organizationId:candidate.organizationId,
+  });
+  const [parent]=await tx.select({id:organizations.id}).from(organizations)
+   .where(and(eq(organizations.id,candidate.organizationId),eq(organizations.status,"ACTIVE")))
+   .for("share").limit(1);
+  if(!parent)throw new CollegeServiceError("ORGANIZATION_NOT_FOUND");
   const [restored]=await tx.update(colleges)
    .set({status:"ACTIVE",updatedAt:new Date()})
    .where(and(eq(colleges.id,collegeId),eq(colleges.status,"ARCHIVED"),
