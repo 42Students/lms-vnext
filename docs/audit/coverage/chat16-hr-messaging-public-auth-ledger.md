@@ -418,3 +418,16 @@ Fix `src/modules/messaging/service.ts`: the previous unhandled initial `policyFo
 | `readBoundedUtf8Body` / `readBoundedRecruiterInboundBody` | `tests/unit/chat16-recruiter-mail-body-bounds-01.test.ts`, route-through tests above | Single shared bounded streaming implementation handles signed internal 20 KB and anonymous 8 KB ingress; raw signed bytes (including BOM) are preserved |
 
 Bug fixes: both public recruitment POST routes previously let unexpected tenancy or service exceptions bubble as unhandled request errors, and read anonymous JSON with unbounded `request.json()`. They now return a cache-disabled, generic no-private-data error on dependency failure and reject oversized/malformed payloads before recruiter onboarding service work. This is authored source only; browser/provider and PostgreSQL runtime verification remain **not run**.
+
+
+### 2026-10-19: campaign opt-out and college/company join anonymous body caps
+
+| Public boundary | Behavioral tests | Outcomes |
+|---|---|---|
+| `POST /api/public/campaign-unsubscribe` | `tests/unit/chat16-public-campaign-unsubscribe-body-bounds-26.test.ts` (`PUBLIC-UNSUB-SIZE-26..29`) | Strict 8 KB streamed form cap, malformed UTF-8/absent token denied before HMAC or DB, multipart signed campaign recipient still redirects with 303, cross-origin denied before body parse |
+| `POST /api/public/company-join/send-code` and `/college-join/send-code` | `tests/unit/chat16-public-join-route-stream-guards-30.test.ts` (`PUBLIC-JOIN-SIZE-30..33`) | Origin, byte limit, invalid JSON, company versus college scope, trusted-proxy IP condition, no delivery call before valid bounded input |
+| `POST /api/public/company-join/join` and `/college-join/join` | same | Duplicate four-route boundary matrix, verified IP authority, original successful response shape |
+| `readBoundedJsonBody` | same, plus `tests/unit/chat16-public-recruit-enquiry-route-guards-16.test.ts` | Shared strict UTF-8 + 8 KB JSON parser, fail closed before downstream service or rate-limit read |
+| `readPublicRecruitEnquiryBody` | `tests/unit/chat16-public-recruit-enquiry-route-guards-16.test.ts` | Named compatibility export preserves the public recruitment route contract through shared parser |
+
+These routes previously parsed unbounded anonymous JSON or form-data bodies; all now reject oversize payloads at the stream boundary and keep their original business validation and response copy. Sources and tests are **authored but not executed**; upstream reverse proxy caps and real provider/PostgreSQL behaviour remain to be independently verified.
