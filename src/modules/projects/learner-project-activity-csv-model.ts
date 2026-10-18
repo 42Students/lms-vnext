@@ -10,7 +10,8 @@ export function learnerProjectActivityCsv(rows:readonly {
 }[]):{content:string;truncated:boolean} {
  const selection=rows.slice(0,MAX_ROWS);
  const data=selection.map(row=>[
-  row.occurredAt.toISOString(),row.actorDisplayName??"System",row.subjectLabel??"",row.summary,
+  Number.isFinite(row.occurredAt?.getTime())?row.occurredAt.toISOString():"Unknown",
+  row.actorDisplayName??"System",row.subjectLabel??"",row.summary,
  ].map(csvCell).join(","));
  return {content:["UTC time,Actor,Subject,Summary",...data].join("\r\n")+"\r\n",
    truncated:rows.length>MAX_ROWS};
