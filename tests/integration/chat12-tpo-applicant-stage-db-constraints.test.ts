@@ -18,10 +18,12 @@ describe("PROJ-BREAK-TPO-10 PostgreSQL applicant-stage integrity",()=>{
    const other=await createTenant(db,"Foreign TPO stage tenant");
    const author=await createPrincipal(db,own,["TPO"]);
    const learner=await createPrincipal(db,own,["LEARNER"]);
+   const otherLearner=await createPrincipal(db,own,["LEARNER"]);
    const otherAuthor=await createPrincipal(db,other,["TPO"]);
    const ownDrive=await createPlacementFixture(db,own,author);
    const foreignDrive=await createPlacementFixture(db,other,otherAuthor);
    const candidate=await createPlacementCandidateFixture(db,ownDrive,learner,author);
+   const second=await createPlacementCandidateFixture(db,ownDrive,otherLearner,author);
    const values=[candidate.applicationId,ownDrive.jobId,ownDrive.roundId,author.userId];
    const insert=`
     insert into placement_tpo_application_stages
@@ -33,7 +35,7 @@ describe("PROJ-BREAK-TPO-10 PostgreSQL applicant-stage integrity",()=>{
      insert into placement_tpo_application_stages
        (application_id,job_id,round_id,changed_by_user_id,stage,version)
      values ($1,$2,$3,$4,'INTERVIEW',1)`,
-     [candidate.applicationId,foreignDrive.jobId,foreignDrive.roundId,author.userId]),"23505");
+     [second.applicationId,foreignDrive.jobId,foreignDrive.roundId,author.userId]),"23503");
    await db.expectSqlState(()=>db.query(`
      update placement_tpo_application_stages set stage='GRADUATED'
      where application_id=$1`,[candidate.applicationId]),"23514");
