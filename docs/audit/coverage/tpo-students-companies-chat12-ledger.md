@@ -36,8 +36,8 @@
 | `src/modules/placements/tpo-participation-service.ts` | `decideTpoLearnerParticipation` | `tests/unit/chat12-tpo-participation-persisted-role.test.ts` | Actual service stale actor denied before write; source assertions verify persisted SHARE-lock check inside college-lock transaction; real DB CAS/audit pending | **BEHAVIOURAL/MOCKED DB** |
 | `src/modules/placements/tpo-bulk-action-confirm-service.ts` | `TpoBulkPreviewError` | `tests/unit/PROJ-BREAK-TPO-bulk-partial-audit-01.test.ts` | rejects stale token and reordered IDs | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-bulk-action-confirm-service.ts` | `confirmTpoBulkAction` | `tests/unit/PROJ-BREAK-TPO-bulk-partial-audit-01.test.ts` | partial rows, audit outage, undo only with receipt, replay invalidation | **BEHAVIOURAL** |
-| `src/modules/placements/tpo-bulk-action-preview-service.ts` | `loadTpoBulkCurrent` | `tests/unit/PROJ-BREAK-TPO-bulk-partial-audit-01.test.ts` | mocked; database authorization still pending | **MOCKED** |
-| `src/modules/placements/tpo-bulk-action-preview-service.ts` | `previewTpoBulkAction` | `tests/unit/chat12-tpo-bulk-concurrency-and-authorization.test.ts` | signed preview model only; service integration pending | **SOURCE** |
+| `src/modules/placements/tpo-bulk-action-preview-service.ts` | `loadTpoBulkCurrent` | `tests/unit/chat12-tpo-bulk-preview-service-behavior.test.ts` | Actual service with mocked actor/DB: persisted role revoked before person reads, foreign learner skipped, source scoped actor; PostgreSQL + high-volume query count still pending | **BEHAVIOURAL/MOCKED DB** |
+| `src/modules/placements/tpo-bulk-action-preview-service.ts` | `previewTpoBulkAction` | `tests/unit/chat12-tpo-bulk-preview-service-behavior.test.ts` | Actual preview service signs exact authorized rows/order/versions, no-op rows skipped, forged action/IDs fail before I/O, stale role denied; PostgreSQL under concurrent actors pending | **BEHAVIOURAL/MOCKED DB** |
 | `src/modules/placements/tpo-companies-view-model.ts` | `buildTpoCompanyRows` | `tests/unit/chat12-tpo-company-directory-hardening.test.ts` | canonical IDs, duplicate offers, wrong relationship | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-companies-view-model.ts` | `filterTpoCompanyRows` | `tests/unit/chat12-tpo-company-directory-hardening.test.ts` | search and deterministic paging | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-companies-view-model.ts` | `buildTpoCompanyTimeline` | `tests/unit/chat12-tpo-company-directory-hardening.test.ts` | persisted events only, tie ordering | **BEHAVIOURAL** |
@@ -93,6 +93,13 @@
 | `src/modules/placements/tpo-company-team-model.ts` | `tpoCompanyTeamPostSchema` | `tests/unit/chat12-tpo-company-team-validation-and-archive.test.ts` | Accept/trim bounded private message, reject invalid idempotency key, extra scope or action, whitespace-only and 4001-byte body | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-company-team-model.ts` | `tpoCompanyTeamCompanyIdSchema` | same file | Canonical UUID accepts, malformed company path denies | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-company-team-model.ts` | `canPostToTpoCompanyTeam` | same file | ACTIVE only; ARCHIVED/SUSPENDED/DELETED/unknown denied, including casing confusion | **BEHAVIOURAL** |
+
+### Bulk application stage actor revocation (TPO-students-14)
+
+| Production export | Test file | Real versus mocked proof | Status |
+|---|---|---|---|
+| `loadTpoBulkApplicationStages` | `tests/unit/PROJ-BREAK-TPO-applicant-stage-revocation-10.test.ts` | Real reader rejects removed persisted role before stage rows or migration probes; DB access mocked, no PostgreSQL concurrency witness yet | **BEHAVIOURAL/MOCKED DB** |
+| `moveTpoBulkApplicationStage` | same test | Revoked actor fails inside serialized transaction before application query; wrong/unknown application denied, unavailable registered schema refuses; real two-session race pending | **BEHAVIOURAL/MOCKED DB** |
 
 ## Critical outstanding integration tests
 

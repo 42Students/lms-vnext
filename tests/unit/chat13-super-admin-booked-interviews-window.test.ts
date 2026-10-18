@@ -32,4 +32,17 @@ describe("Super Admin booked interview calendar: verified IST window and tenant 
     expect(source).toContain("rows.slice(0,2000)");
     expect(source).toContain("truncated:rows.length>2000");
   });
+
+  it("SA-BOOKED-INTERVIEWS-03 prevents department labels from an unrelated college leaking into a selected-college calendar", () => {
+    const source = readFileSync("src/modules/placements/super-admin-booked-interviews-service.ts","utf8");
+    // The application membership joins are scoped, but program foreign keys
+    // are not composite with college. The final department join must not
+    // expose a foreign-college department name if imports were malformed.
+    expect(source).toContain(
+      ".leftJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,scope.collegeId)))",
+    );
+    expect(source).toContain("eq(collegeMemberships.collegeId,scope.collegeId)");
+    expect(source).toContain("departmentName:row.departmentName");
+    expect(source).not.toContain(".leftJoin(departments,eq(departments.id,programs.departmentId))");
+  });
 });

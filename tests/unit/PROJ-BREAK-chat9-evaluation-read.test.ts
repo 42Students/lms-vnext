@@ -38,7 +38,7 @@ vi.mock("@/db/client",()=>({
 const actor:RequestContext={
   user:{id:"44444444-4444-4444-8444-444444444444",
     identityUid:"admin",platformStatus:"ACTIVE",systemRoles:["SUPER_ADMIN"]},
-  membership:null,adminScope:{collegeId:"55555555-5555-4555-8555-555555555555"},
+  membership:null,adminScope:{collegeId:"55555555-5555-4555-8555-555555555555",organizationId:null},
 };
 const render=(sql:unknown)=>new PgDialect().sqlToQuery(sql as SQL);
 beforeEach(()=>{state.access="ADMIN";state.denied=false;state.hasEvaluation=true;state.reads=0;state.conditions=[];});

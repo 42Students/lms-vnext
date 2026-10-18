@@ -5,7 +5,7 @@ import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 type Course={id:string;name:string};
 type Report={selectedCourses:number;matchedLessons:number;matchedContents:number;
- changed:number;unchanged:number;failures:{id:string;reason:string}[]};
+ changed:number;unchanged:number;failures:{id:string;reason:string}[];failedCourseIds:string[]};
 
 export function SuperAdminCourseBulkVisibility({courses}:{courses:readonly Course[]}){
  const router=useRouter();
@@ -66,8 +66,8 @@ export function SuperAdminCourseBulkVisibility({courses}:{courses:readonly Cours
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {report?<div role="status" className="space-y-2 text-sm">
    <p>{report.changed} updated · {report.unchanged} unchanged · {report.failures.length} failed</p>
-   {report.failures.length?<button type="button" disabled={pending||lastAction===null}
-    onClick={()=>lastAction!==null?void apply(lastAction):undefined}
+   {report.failures.length?<button type="button" disabled={pending||lastAction===null||!report.failedCourseIds.some(id=>currentIds.has(id))}
+    onClick={()=>lastAction!==null?void apply(lastAction,report.failedCourseIds):undefined}
     className="min-h-11 rounded-md border border-border px-3 font-semibold">
     Retry failed
    </button>:null}

@@ -251,3 +251,12 @@ These are newly authored cases, **not an executed green run**. Provider, databas
 ### Direct TPO messaging receipt-history service tests
 
 `tests/unit/chat16-messaging-receipt-history-service-16.test.ts` now invokes `listTpoMessagingHistory` and `exportTpoMessagingHistory` directly with an isolated mocked query builder. The four cases `messaging-receipt-history-16`–`19` enforce role and active-membership denials before any database access; strict bounded query filters; persisted-actor authorization before reading aggregate receipt counts; safe count pagination and honest `acceptedByProvider` semantics; and revoked-grant refusal. Transaction mocks are not equivalent to database race verification. Both services still need actual PostgreSQL tenant and concurrency acceptance; authored code remains unexecuted in this lane.
+
+### Admin inbound-mail and TPO draft security regressions — 2026-10-18
+
+- `tests/unit/chat16-inbound-mail-admin-page-16.test.tsx`: private page authorization invocation, invalid filters before data access, unavailable storage and page data projection.
+- `tests/unit/chat16-inbound-mail-admin-versioning-16.test.ts`: global Super Admin role, invalid mutation inputs, unavailable table, stale compare-and-swap, and confirmed version increment.
+- `tests/unit/chat16-inbound-mail-status-route-16.test.ts`: same-origin requirement, HTTP 409/503, private no-store success, shared safe error handler.
+- `tests/unit/chat16-tpo-campaign-draft-live-role-16.test.ts`: live persisted permission checks for campaign draft history and detail; source now executes both reads inside a scoped authorization transaction.
+
+All are authored **unit** cases and remain unexecuted until cloud CI; database concurrency and outbound provider delivery are not certified.

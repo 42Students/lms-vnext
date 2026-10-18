@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {safePublicCourseContentUrl} from "@/modules/courses/super-admin-content-public-link-model";
 import { SuperAdminContentAuthoring } from "@/components/courses/super-admin-content-authoring";
 import { SuperAdminContentActions } from "@/components/courses/super-admin-content-actions";
 import { listSuperAdminContentAuthoringLessons } from "@/modules/courses/super-admin-content-authoring-service";
@@ -16,11 +17,7 @@ import {
 import { listSuperAdminContentDirectory,listSuperAdminContentSectionOptions } from "@/modules/courses/super-admin-content-directory-service";
 
 function publicHttpsHref(value:string|null){
- if(!value)return null;
- try{
-  const url=new URL(value);
-  return url.protocol==="https:"?url.toString():null;
- }catch{return null;}
+ return safePublicCourseContentUrl(value);
 }
 function studentContentVisible(item:{status:string;visibleToStudents:boolean;lessonStatus:string;offeringStatus:string}){
  return item.status==="PUBLISHED"&&item.visibleToStudents&&item.lessonStatus==="ACTIVE"&&item.offeringStatus==="ACTIVE";
