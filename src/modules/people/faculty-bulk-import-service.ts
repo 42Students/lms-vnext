@@ -2,6 +2,7 @@ import "server-only";
 import { z } from "zod";
 import type { RequestContext } from "@/modules/identity/context";
 import { resolveActingCollege } from "@/modules/permissions/acting-college";
+import {AuthorizationError} from "@/modules/permissions/policy";
 import { onboardPersonWithRuntime } from "./runtime";
 import { parseFacultyBulkCsv } from "./faculty-bulk-import-model";
 
@@ -15,7 +16,7 @@ const schema = z.object({
 export async function importFacultyCsv(context: RequestContext, input: unknown) {
   const body = schema.parse(input);
   const actor = await resolveActingCollege(context, "people.manage");
-  if (actor.collegeId !== body.collegeId) throw new Error("COLLEGE_SCOPE_MISMATCH");
+  if (actor.collegeId !== body.collegeId) throw new AuthorizationError("people.manage");
   const rows = parseFacultyBulkCsv(body.csv);
   const seen = new Set<string>();
   const results: Array<{
