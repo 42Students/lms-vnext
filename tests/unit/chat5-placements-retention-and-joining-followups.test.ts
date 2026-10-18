@@ -14,6 +14,19 @@ const base:JoiningFollowupFact={
  candidateName:"=2+2",roleTitle:"Engineer",offerStatus:"ACCEPTED",
  joiningStatus:null,scheduledDate:null,
 };
+describe("TPO prep derived reader compile and tenant isolation contract",()=>{
+ it("TPO-PREP-TSC-01 binds the actual cohorts table, not a local cohort-id string array",()=>{
+  const source=src("src/modules/placements/tpo-prep-readiness-derived-service.ts");
+  expect(source).toContain("cohorts as cohortTable");
+  expect(source).toContain(".innerJoin(cohortTable,eq(cohortTable.id,learnerProgramEnrollments.cohortId))");
+  expect(source).toContain("eq(cohortTable.programId,programs.id)");
+  expect(source).not.toMatch(/const\s+cohorts\s*=/);
+  expect(source).toContain("eq(collegeMemberships.collegeId,collegeId)");
+  expect(source).toContain("eq(departments.collegeId,collegeId)");
+  expect(source).toContain('eq(users.platformStatus,"ACTIVE")');
+  expect(source).toContain("hasEveryScopedTpoPrepLearner(learners,enrolled)");
+ });
+});
 describe("PLACEMENTS-RETENTION-01 read-only application retention boundary",()=>{
  it("uses exactly the 180-day lookback and refuses malformed clocks",()=>{
   expect(COLLEGE_APPLICATION_RETENTION_DAYS).toBe(180);
