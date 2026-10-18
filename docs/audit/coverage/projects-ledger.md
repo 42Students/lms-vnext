@@ -244,20 +244,33 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/modules/projects/mentor-final-delivery-decision-model.ts` | `mentorFinalDeliveryCanReview` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-final-delivery-decision-model.ts` | `mentorFinalDeliveryDecisionSchema` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-final-delivery-decision-service.ts` | `decideMentorFinalDelivery` | `tests/unit/projects-mentor-service-guards-chat14.test.ts` | Static/source only, behavioural pending |
-| `src/modules/projects/mentor-latest-review-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-meeting-decision-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-meeting-decision-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-meeting-display-status.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-meeting-facilitation-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-meeting-form-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-meeting-notes-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-meeting-notes-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-meeting-reschedule-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-meeting-reschedule-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-meeting-status-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-overload-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-overview-edit-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-overview-edit-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
+| `src/modules/projects/mentor-latest-review-model.ts` | `currentPendingMentorSubmissions` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-meeting-decision-model.ts` | `mentorMeetingDecisionStatus` | `tests/unit/projects-mentor-policy-matrix-chat14.test.ts` | Runtime authored, unrun |
+| `src/modules/projects/mentor-meeting-decision-model.ts` | `mentorMeetingDecisionSchema` | `tests/unit/projects-mentor-policy-matrix-chat14.test.ts` | Runtime authored, unrun |
+| `src/modules/projects/mentor-meeting-decision-service.ts` | `decideMentorProjectMeeting` | `tests/unit/projects-mentor-service-guards-chat14.test.ts` | Static/source only, behavioural pending |
+| `src/modules/projects/mentor-meeting-display-status.ts` | `mentorMeetingDisplayStatus` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-meeting-facilitation-model.ts` | `mentorMeetingFacilitationSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-meeting-facilitation-model.ts` | `emptyMentorMeetingFacilitation` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-meeting-form-model.ts` | `mentorMeetingCeremonyLabel` | `tests/unit/projects-mentor-attention-risk-chat14.test.ts` | Runtime authored, unrun |
+| `src/modules/projects/mentor-meeting-form-model.ts` | `mentorMeetingHttpUrl` | `tests/unit/projects-mentor-attention-risk-chat14.test.ts` | Runtime authored, unrun |
+| `src/modules/projects/mentor-meeting-form-model.ts` | `mentorMeetingScheduleError` | `tests/unit/projects-mentor-attention-risk-chat14.test.ts` | Runtime authored, unrun |
+| `src/modules/projects/mentor-meeting-notes-model.ts` | `meetingNotesEditable` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-meeting-notes-model.ts` | `mentorMeetingNotesParamsSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-meeting-notes-model.ts` | `mentorMeetingNotesWriteSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-meeting-notes-service.ts` | `getMentorMeetingNotes` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-meeting-notes-service.ts` | `updateMentorMeetingNotes` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-meeting-reschedule-model.ts` | `mentorMeetingCanReschedule` | `tests/unit/projects-mentor-sprint-resource-coverage-chat14.test.ts` | Runtime authored, unrun |
+| `src/modules/projects/mentor-meeting-reschedule-model.ts` | `toIstLocalInput` | `tests/unit/projects-mentor-sprint-resource-coverage-chat14.test.ts` | Runtime authored, unrun |
+| `src/modules/projects/mentor-meeting-reschedule-model.ts` | `fromIstLocalInput` | `tests/unit/projects-mentor-sprint-resource-coverage-chat14.test.ts` | Runtime authored, unrun |
+| `src/modules/projects/mentor-meeting-reschedule-model.ts` | `mentorMeetingRescheduleParamsSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-meeting-reschedule-model.ts` | `mentorMeetingRescheduleSchema` | `tests/unit/projects-mentor-sprint-resource-coverage-chat14.test.ts` | Runtime authored, unrun |
+| `src/modules/projects/mentor-meeting-reschedule-service.ts` | `rescheduleMentorMeeting` | `tests/unit/projects-mentor-service-guards-chat14.test.ts` | Static/source only, behavioural pending |
+| `src/modules/projects/mentor-meeting-status-model.ts` | `maySaveMentorMeetingStatus` | `tests/unit/projects-mentor-attention-risk-chat14.test.ts` | Runtime authored, unrun |
+| `src/modules/projects/mentor-meeting-status-model.ts` | `mentorScheduleStatusFromMeeting` | `tests/unit/projects-mentor-attention-risk-chat14.test.ts` | Runtime authored, unrun |
+| `src/modules/projects/mentor-overload-model.ts` | `projectMentorWorkloadAverage` | `tests/unit/projects-mentor-attention-risk-chat14.test.ts` | Runtime authored, unrun |
+| `src/modules/projects/mentor-overload-model.ts` | `isProjectMentorOverloaded` | `tests/unit/projects-mentor-attention-risk-chat14.test.ts` | Runtime authored, unrun |
+| `src/modules/projects/mentor-overview-edit-model.ts` | `mentorOverviewEditSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-overview-edit-service.ts` | `updateMentorProjectOverview` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-overview-presenter.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
 | `src/modules/projects/mentor-paged-project-list-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
 | `src/modules/projects/mentor-paged-project-list-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
