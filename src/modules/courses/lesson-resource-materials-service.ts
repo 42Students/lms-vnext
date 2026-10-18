@@ -11,7 +11,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {requireDeliveryContentMutation,requireLearningReadAccess} from "./learning-access";
 import {loadLessonContentScope} from "./scope";
 import {CoursesServiceError} from "./errors";
-import {resourceMaterialCommandSchema,resourceMaterialsWriteReady} from "./lesson-resource-materials-model";
+import {resourceMaterialCommandSchema,resourceMaterialsWriteReady,safeLearnerResourceMaterialHref} from "./lesson-resource-materials-model";
 
 function ensureReady(){
  if(!resourceMaterialsWriteReady())throw new CoursesServiceError("CONTENT_TYPE_SHAPE_INVALID");
@@ -50,7 +50,11 @@ export async function listLessonResourceMaterials(
   .orderBy(asc(lessonContentMaterials.sequence)).limit(20);
  // FILE rows never disclose opaque object keys; a separate auth-scoped signed
  // download-grant endpoint will serve only verified/clean READY materials.
- return rows;
+ // Historical imported LINK rows bypassed today's authoring validation: never
+ // hand their unsafe raw href to a learner or staff client's navigation layer.
+ return rows.map(row=>row.kind==="LINK"
+  ? {...row,externalUrl:safeLearnerResourceMaterialHref(row.externalUrl)}
+  : row);
 }
 export async function commandLessonResourceMaterial(
  context:RequestContext,contentId:string,deliveryId:string|null,rawInput:unknown,
