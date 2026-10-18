@@ -25,8 +25,8 @@ vi.mock("@/db/client", () => ({
         state.phoneMask = dialect.sqlToQuery(phone.sql);
         const source = {
           innerJoin: () => source,
-          where: (expression: SQL) => {
-            state.scope = dialect.sqlToQuery(expression);
+          where: (expression: SQL | undefined) => {
+            state.scope = expression ? dialect.sqlToQuery(expression) : null;
             return source;
           },
           as: () => ({
