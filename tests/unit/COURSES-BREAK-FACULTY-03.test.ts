@@ -8,7 +8,7 @@ const collegeId="33333333-3333-4333-8333-333333333333";
 const organizationId="44444444-4444-4444-8444-444444444444";
 const timestamp="2026-10-18T04:35:00.000Z";
 const state=vi.hoisted(()=>({
- reads:0,writes:0,events:0,scopes:0,accesses:0,
+ reads:0,writes:0,events:0,scopes:0,accesses:0,guardCalls:0,guardRevoked:false,
  permit:true,teachingRole:"FACULTY",
  quiz:{
   id:"11111111-1111-4111-8111-111111111111",
@@ -32,6 +32,14 @@ vi.mock("@/modules/courses/learning-access",()=>({
  requireDeliveryContentMutation:async()=>{
   state.accesses++;
   return state.teachingRole;
+ },
+}));
+vi.mock("@/modules/courses/faculty-persisted-teaching-guard",()=>({
+ assertPersistedFacultyTeachingMutation:async()=>{
+  state.guardCalls++;
+  if(state.guardRevoked)throw Object.assign(new Error("Revoked Faculty"),{
+   code:"FACULTY_TEACHING_SCOPE_REQUIRED",
+  });
  },
 }));
 vi.mock("@/modules/activity/service",()=>({
@@ -73,7 +81,7 @@ const publish=(context:RequestContext=faculty(),at=timestamp,action:"PUBLISH"|"H
 describe("COURSES-BREAK-FACULTY-03 published-result write boundaries",()=>{
  beforeEach(()=>{
   state.reads=0;state.writes=0;state.events=0;state.scopes=0;state.accesses=0;
-  state.permit=true;state.teachingRole="FACULTY";
+  state.permit=true;state.teachingRole="FACULTY";state.guardCalls=0;state.guardRevoked=false;
   state.quiz={id:quizId,deliveryId,title:"Midterm",status:"CLOSED",
    resultsPublished:false,dueAt:null,updatedAt:new Date(timestamp)};
  });
@@ -136,6 +144,14 @@ describe("COURSES-BREAK-FACULTY-03 published-result write boundaries",()=>{
    deliveryId,action:"PUBLISH",expectedUpdatedAt:timestamp,confirmed:true,
   })).rejects.toThrow();
   expect(state).toMatchObject({scopes:0,reads:0,writes:0,events:0});
+ });
+ it("FAC-assessments quiz results: revoked user or teaching grant during transaction cannot publish or audit",async()=>{
+  state.guardRevoked=true;
+  await expect(publish()).rejects.toMatchObject({code:"FACULTY_TEACHING_SCOPE_REQUIRED"});
+  expect(state).toMatchObject({reads:1,guardCalls:1,writes:0,events:0});
+  state.guardRevoked=false;
+  await publish();
+  expect(state).toMatchObject({guardCalls:2,writes:1,events:1});
  });
  it("FAC-assessments quiz results: draft, archived and future-deadline quizzes cannot publish",async()=>{
   for(const status of ["DRAFT","ARCHIVED","PUBLISHED"]){

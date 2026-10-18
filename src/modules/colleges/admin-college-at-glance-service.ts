@@ -1,7 +1,8 @@
 import "server-only";
 import {and,countDistinct,eq} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {collegeMemberships,membershipRoles,courses,departments,colleges,placementJobs} from "@/db/schema";
+import {collegeMemberships,membershipRoles,courses,departments,colleges,placementJobs,users} from "@/db/schema";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {z} from "zod";
@@ -15,11 +16,15 @@ export async function getSuperAdminCollegeAtGlance(ctx:RequestContext,collegeRaw
   .from(colleges).where(and(eq(colleges.id,collegeId),eq(colleges.status,"ACTIVE"))).limit(1);
  if(!college)throw new AuthorizationError("college.read");
  requirePermission(ctx,"college.read",{collegeId,organizationId:college.organizationId});
- const db=getDb();
+ return getDb().transaction(async tx=>{
+ await assertPersistedPlatformPermission(tx,ctx,"college.read",{collegeId,organizationId:college.organizationId});
+ const db=tx;
  const byRole=async(role:"LEARNER"|"FACULTY")=>{
   const [row]=await db.select({n:countDistinct(collegeMemberships.id)})
-   .from(collegeMemberships).innerJoin(membershipRoles,eq(membershipRoles.membershipId,collegeMemberships.id))
-   .where(and(eq(collegeMemberships.collegeId,collegeId),eq(collegeMemberships.status,"ACTIVE"),eq(membershipRoles.role,role)));
+   .from(collegeMemberships)
+   .innerJoin(users,eq(users.id,collegeMemberships.userId))
+   .innerJoin(membershipRoles,eq(membershipRoles.membershipId,collegeMemberships.id))
+   .where(and(eq(collegeMemberships.collegeId,collegeId),eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"),eq(membershipRoles.role,role)));
   return row?.n??0;
  };
  const [students,faculty,courseRows,driveRows]=await Promise.all([
@@ -31,4 +36,5 @@ export async function getSuperAdminCollegeAtGlance(ctx:RequestContext,collegeRaw
    .where(and(eq(placementJobs.collegeId,collegeId),eq(placementJobs.status,"PUBLISHED"))),
  ]);
  return {students,faculty,courses:courseRows[0]?.n??0,activeDrives:driveRows[0]?.n??0};
+ });
 }
