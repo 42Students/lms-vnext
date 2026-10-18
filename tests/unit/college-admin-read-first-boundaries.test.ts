@@ -35,7 +35,20 @@ describe("College Admin read-first page boundaries", () => {
       }
       const loading = readFileSync(join(dir, "loading.tsx"), "utf8");
       const error = readFileSync(join(dir, "error.tsx"), "utf8");
-      expect(loading).toContain("aria-busy");
+      // Shared loading is announced via a labeled Skeleton role=status; the
+      // old direct aria-busy marker is no longer the only valid accessible pattern.
+      if (!loading.includes("aria-busy")) {
+        expect(loading).toContain("GracefulPageLoading");
+        const shared = readFileSync(join(process.cwd(),
+          "src/components/ui/graceful-page-loading.tsx"),"utf8");
+        const skeleton = readFileSync(join(process.cwd(),
+          "src/components/ui/skeleton.tsx"),"utf8");
+        expect(shared).toContain("<Skeleton label={label}");
+        expect(shared).toContain('role="status"');
+        expect(shared).toContain("Try again");
+        expect(skeleton).toContain('role="status" aria-live="polite"');
+        expect(skeleton).toContain('<span className="sr-only">{label}</span>');
+      }
       expect(error).toContain("reset");
       expect(error).toMatch(/ErrorState|role="alert"/);
     });

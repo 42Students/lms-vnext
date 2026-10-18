@@ -191,7 +191,7 @@ describe("College People legacy audited page contracts",()=>{
   const page=directory();
   expect(page).toContain("md:hidden");
   expect(page).toContain("md:table");
-  expect(page).toContain("overflow-x-auto");
+  expect(page).toContain('<ScrollCue axis="x" label={title + " scrollable results columns"}>');
   expect(page).toContain("min-w-0");
   expect(page).toContain("Advanced filters");
  });
