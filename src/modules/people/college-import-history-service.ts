@@ -2,6 +2,7 @@ import "server-only";
 import {and,desc,eq} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {activityEvents} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {hasMembershipRole} from "@/modules/identity/context";
@@ -12,7 +13,13 @@ export async function listCollegeStudentImportHistory(ctx:RequestContext,raw:unk
  if(!member||member.status!=="ACTIVE"||!hasMembershipRole(ctx,"COLLEGE_ADMIN"))
   throw new AuthorizationError("people.manage");
  requirePermission(ctx,"people.manage",{collegeId:member.collegeId,organizationId:member.organizationId});
- const rows=await getDb().select({
+ // History contains person import results; a stale session cannot read it
+ // after its College Admin membership or user has been revoked.
+ const rows=await getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,ctx,"people.manage",{
+   collegeId:member.collegeId,organizationId:member.organizationId,
+  });
+  return tx.select({
   id:activityEvents.id,when:activityEvents.occurredAt,
   summary:activityEvents.summary,metadata:activityEvents.metadata,
  }).from(activityEvents).where(and(
@@ -20,6 +27,7 @@ export async function listCollegeStudentImportHistory(ctx:RequestContext,raw:unk
   eq(activityEvents.eventType,"IDENTITY_COLLEGE_STUDENT_CSV_IMPORT")))
   .orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id))
   .limit(21).offset((page-1)*20);
+ });
  return{page,items:rows.slice(0,20).map(row=>({
   id:row.id,when:row.when,
   students:typeof row.metadata.count==="number"?row.metadata.count:0,
