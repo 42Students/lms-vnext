@@ -91,3 +91,6 @@ Validation: source review and committed behavioural/source-guard tests; cloud te
 
 
 | SA-colleges-sessions-QUERY-01 | S2 input ambiguity | GET device sessions relied on `URLSearchParams.get("userId")`, which silently accepted duplicate userId and unknown query keys. Replaced first-value parsing with strict one-element UUID array and unknown-key rejection using Zod before any private device read. | `chat4-superadmin-tenant-route-guards.test.ts` | Cloud test confirmation pending |
+
+
+| COL-people-contacts-PERIOD-01 | S1 privacy / tenant integrity | College contacts academic filter inferred class scope from the cohort/program's department but did not verify the independent `sections.academic_period_id` belonged to the same college. A corrupt cross-college period could satisfy class-presence and combined-placement predicates. Three predicates now join `academic_periods` with `college_id` equality. | `chat4-college-contacts-period-sql.test.ts` | Disposable PostgreSQL injected FK fixture pending |
