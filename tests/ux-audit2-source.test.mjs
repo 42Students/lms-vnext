@@ -85,7 +85,9 @@ test("UX-AUDIT2-A2-12/13/14 explicit empty state, named info and persistent erro
 });
 test("UX-AUDIT2-F-02 AST guard covers high-risk and branch-changed routes", () => {
   const guard=read("scripts/check-ux-anti-drift.mjs");
-  assert.match(guard,/origin\/main\.\.\.HEAD/);
+  assert.match(guard,/ls-files/);
+  assert.match(guard,/UX-GUARD-WAIVERS/);
+  assert.doesNotMatch(guard,/origin\/main\.\.\.HEAD/);
   assert.match(guard,/mentor\/calendar/);
   assert.match(guard,/tpo\/messages/);
   assert.match(guard,/module-access/);
@@ -99,4 +101,39 @@ test("UX-AUDIT2-E-01/E-04/F-03 screenshot commands require real state and affect
   assert.match(sites,/UX_AFFECTED_CALLSITES_MANIFEST/);
   assert.match(sites,/cases.length<30/);
   assert.match(sites,/keyboardFocusChecked/);
+});
+
+test("RV-01 and RV-05 enforce real roster actions and column-specific mobile detail recovery",()=>{
+  const roster=read("src/components/tpo/tpo-students-spreadsheet.tsx");
+  assert.doesNotMatch(roster,/<TpoSpreadsheetGrid mobileActionsCollapsible/);
+  const table=read("src/components/ui/data-table.tsx");
+  assert.match(table,/empty: ReactNode/);
+  assert.doesNotMatch(table,/No records to show/);
+  assert.match(table,/column\.mobileDetail/);
+  assert.match(table,/column\.mobileDetail\.canView/);
+});
+test("RV-02 protects multiple persistent errors from timed queue eviction",()=>{
+  const toast=read("src/components/ui/toast.tsx");
+  assert.match(toast,/enqueueToast/);
+  assert.doesNotMatch(toast,/current\.slice\(-3\)/);
+  assert.match(toast,/evictedIds/);
+});
+test("RV-03 clears parent on capability and disabled transitions",()=>{
+  const upload=read("src/components/ui/file-upload.tsx");
+  assert.match(upload,/\[pickerUnavailable, disabled\]/);
+  assert.match(upload,/onFilesRef\.current\(null\)/);
+});
+test("RV-04 marker specific Back handling and StrictMode safe effect",()=>{
+  const overlay=read("src/components/ui/use-overlay-webview.ts");
+  assert.match(overlay,/ownsOverlayHistoryEntry\(event\.state, marker\)/);
+  assert.doesNotMatch(overlay,/pendingCleanupPops|queueOverlayCleanupPop/);
+  assert.match(overlay,/previouslyOpen\.current/);
+});
+test("RV-06 immutable baseline waivers, dynamic target detection across tracked UI",()=>{
+  const guard=read("scripts/check-ux-anti-drift.mjs");
+  assert.match(guard,/ls-files/);
+  assert.match(guard,/waiver\.baselineCommit/);
+  const rules=read("scripts/ux-guard-rules.mjs");
+  assert.match(rules,/isStaticSafeTarget/);
+  assert.match(rules,/unsafe-target/);
 });
