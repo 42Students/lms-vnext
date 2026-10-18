@@ -40,7 +40,7 @@ describe("chat-16 OTP channel acceptance, validation and graceful failure", () =
       expect(await sendSms()).toBe(false);
     }
     vi.mocked(outboundFetch).mockResolvedValueOnce(response({
-      SMSMessage: { Sid: "SM\\n-42", Status: "sent" },
+      SMSMessage: { Sid: "SM\n-42", Status: "sent" },
     }));
     expect(await sendSms()).toBe(false);
     vi.mocked(outboundFetch).mockResolvedValueOnce(response({
@@ -68,8 +68,8 @@ describe("chat-16 OTP channel acceptance, validation and graceful failure", () =
   it("AUTH-OTP-DELIVERY-02 rejects spoofed, control-character and malformed email recipients", async () => {
     for (const email of [
       "user@@example.org", "user@example", "user@-bad.example.org",
-      "a..b@example.org", "user@example.org\\r\\nBcc:attacker@example.org",
-      "user@example.org\\n", "plain-text",
+      "a..b@example.org", "user@example.org\r\nBcc:attacker@example.org",
+      "user@example.org\n", "plain-text",
     ]) {
       expect(await sendEmail(email)).toBe(false);
     }
