@@ -28,7 +28,7 @@ export function Drawer({ open, onOpenChange, title, description, children, foote
     if (open && !modal.open) { opener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null; modal.showModal(); }
     else if (!open && modal.open) { modal.close(); opener.current?.focus(); }
   }, [open]);
-  return <dialog data-slot="drawer" ref={ref} aria-labelledby={titleId} aria-describedby={description ? descriptionId : undefined}
+  return <dialog ref={ref} data-slot="drawer" aria-labelledby={titleId} aria-describedby={description ? descriptionId : undefined}
     onCancel={event => { event.preventDefault(); if (dismissible) onOpenChange(false); }}
     onClose={() => { if (open) onOpenChange(false); opener.current?.focus(); }}
     onClick={event => { if (event.target === ref.current && dismissible) onOpenChange(false); }}
