@@ -166,3 +166,10 @@ This is an independent TPO/HR workflow review; real clipboard permission denial,
 | PROJ-BREAK-EXPORT-02 | `tests/unit/PROJ-BREAK-chat19-project-workspace-export-ui.test.tsx` | Real SSR button disabled **attribute** represents action availability, ignoring Tailwind disabled CSS classes | Cloud CI, actual download |
 | COL-XA-14 | `src/app/(authenticated)/college/faculty/[membershipId]/page.tsx`, `tests/unit/chat19-college-cross-audit.test.ts` | Faculty history shared `DataTable` retains accessible `Persisted teaching assignments` caption with no raw wide table | Cloud CI, screen reader |
 | HR-BREAK-DRIVE-THREAD-09 | `getRecruiterDriveConversations`, `tests/unit/HR-BREAK-chat19-drive-conversation-service.test.ts` | Invalid UUID rejected before services, workspace authorization precedes thread reads, independent same-college/same-recruiter/same-job filter; raw foreign threads excluded | PostgreSQL role-revocation and browser navigation integration |
+
+## Further HR profile independent model coverage
+
+| ID | Export | Behavioral tests | Scope |
+|---|---|---|---|
+| HR-BREAK-PROFILE-IDENTITY-10 | `ownRecruiterGrant`, `getRecruiterSelfProfile`, `leaveOwnRecruiterCollegeAccess` | `tests/unit/HR-BREAK-chat19-recruiter-profile-service-identity.test.ts`; `tests/unit/HR-BREAK-chat19-profile-page.test.ts` | Context recruiter must belong to the exact signed-in user; reject before any employer/grant read or write when IDs differ |
+| HR-BREAK-PROFILE-NAME-11 | `hrRecruiterNameFieldsSchema`, `splitHrRecruiterName`, `joinHrRecruiterName`, `sameHrNameVersion` | `tests/unit/HR-BREAK-chat19-profile-name-model.test.ts` | Multi-token name, Unicode whitespace, strict field validation and length caps, forbidden role/company input, millisecond CAS with IST/UTC equivalence |

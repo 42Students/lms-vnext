@@ -22,6 +22,8 @@ import {
 import type { RequestContext } from "@/modules/identity/context";
 import { listPlacementCompanies } from "./company-service";
 import { requirePlacementManageScope } from "./scope";
+import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
+import {AuthorizationError} from "@/modules/permissions/policy";
 import { placementTableExists } from "./staged-tables";
 import {
   buildTpoCompanyRows,
@@ -60,6 +62,8 @@ async function loadCompanySources(
   // The placement company service also performs this authorization.
   // Require it here before any optional CRM/table discovery reads.
   await requirePlacementManageScope(context, collegeId);
+  const liveCollegeId=await requireTpoBatchActor(context);
+  if(liveCollegeId!==collegeId)throw new AuthorizationError("placements.manage");
 
   const relationships = await listPlacementCompanies(
     context,
