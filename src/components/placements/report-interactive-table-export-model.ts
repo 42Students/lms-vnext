@@ -11,7 +11,7 @@ function neutralizeFormula(value: ReportCell): string {
   if (typeof value !== "string") return text;
   // Leading control/format/space Unicode may be discarded by spreadsheets
   // before interpreting the following =, +, -, or @ as a formula.
-  return /^[\p{Cc}\p{Cf}\p{Zs}]*[=+\-@]/u.test(text)
+  return /^[\p{Cc}\p{Cf}\p{Zs}\p{Zl}\p{Zp}]*[=+\-@]/u.test(text)
     ? "'" + text
     : text;
 }
