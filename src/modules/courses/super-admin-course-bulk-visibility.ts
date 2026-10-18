@@ -7,6 +7,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {bulkSuperAdminLessonVisibility} from "./super-admin-lesson-bulk-visibility";
 import {safeCourseVisibilityFailure} from "./bulk-visibility-failure-model";
+import {CoursesServiceError} from "./errors";
 
 export const superAdminCourseBulkSchema=z.strictObject({
  courseIds:z.array(z.uuid()).min(1).max(100).refine(ids=>new Set(ids).size===ids.length),
@@ -24,7 +25,7 @@ export async function bulkSuperAdminCourseVisibility(context:RequestContext,raw:
   .innerJoin(departments,eq(departments.id,courses.departmentId))
   .where(and(inArray(courses.id,input.courseIds),eq(departments.collegeId,acting.collegeId),
    eq(courses.status,"ACTIVE")));
- if(selected.length!==input.courseIds.length)throw new Error("COURSE_SCOPE_OR_STATE_INVALID");
+ if(selected.length!==input.courseIds.length)throw new CoursesServiceError("COURSE_NOT_FOUND");
  const lessons=await getDb().select({id:courseLessons.id,courseId:courses.id})
   .from(courseLessons)
   .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
@@ -35,7 +36,7 @@ export async function bulkSuperAdminCourseVisibility(context:RequestContext,raw:
    eq(courses.status,"ACTIVE"),eq(courseOfferings.status,"ACTIVE"),
    eq(courseLessons.status,"ACTIVE")))
   .limit(501);
- if(lessons.length>500)throw new Error("COURSE_VISIBILITY_BULK_TOO_LARGE");
+ if(lessons.length>500)throw new CoursesServiceError("COURSE_VISIBILITY_BULK_TOO_LARGE");
  const ids=[...new Set(lessons.map(row=>row.id))];
  const lessonCourseIds=new Map(lessons.map(row=>[row.id,row.courseId]));
  const failedCourses=new Set<string>();

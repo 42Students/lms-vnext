@@ -7,6 +7,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {updateCollegeContentStudentVisibility} from "./college-content-visibility-service";
 import {safeCourseVisibilityFailure} from "./bulk-visibility-failure-model";
+import {CoursesServiceError} from "./errors";
 
 const inputSchema=z.strictObject({
  lessonIds:z.array(z.uuid()).min(1).max(25).refine(ids=>new Set(ids).size===ids.length),
@@ -35,7 +36,7 @@ export async function bulkSuperAdminLessonVisibility(context:RequestContext,raw:
    eq(departments.collegeId,acting.collegeId),
    eq(academicPeriods.collegeId,acting.collegeId)))
  .limit(501);
- if(rows.length>500)throw new Error("LESSON_CONTENT_BULK_TOO_LARGE");
+ if(rows.length>500)throw new CoursesServiceError("COURSE_VISIBILITY_BULK_TOO_LARGE");
  const changed:string[]=[],failures:{id:string;lessonId:string;reason:string}[]=[];
  for(const row of rows){
   // Bulk course/lesson Show/Hide applies to currently published content only.
