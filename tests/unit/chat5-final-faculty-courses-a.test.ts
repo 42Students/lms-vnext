@@ -19,7 +19,10 @@ describe("chat-5 final sprint faculty course list and core lesson contracts",()=
   expect(list).toContain('placeholder="Course, code, Section or academic period"');
   expect(list).toContain('action="/teacher/courses" method="get"');
   expect(auto).toContain('target.name==="q"?350:0');
-  expect(auto).toContain("form.requestSubmit()");
+  expect(auto).toContain('router.replace("/teacher/courses"+(query?"?"+query:""),{scroll:false})');
+  expect(auto).toContain("new FormData(form)");
+  expect(auto).not.toContain("form.requestSubmit()");
+  expect(auto).toContain('if(!form?.isConnected)return');
   for(const name of ["q","period","section","role"])expect(auto).toContain('"'+name+'"');
  });
  it("FAC-courses-10 collapses the lesson blueprint into accessible native accordions with the first lesson initially expanded",()=>{
