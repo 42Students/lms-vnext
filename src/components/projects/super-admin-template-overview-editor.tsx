@@ -47,7 +47,7 @@ export function SuperAdminTemplateOverviewEditor({templateId,title,summary,versi
  }
  return <section className="space-y-3 border-b border-border pb-5">
   <Button type="button" variant="secondary" onClick={()=>setOpen(x=>!x)}
-   className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold">
+   className="">
    {open?"Close Overview editor":"Edit Overview"}
   </Button>
   {open?<div className="grid gap-3 sm:grid-cols-2">
@@ -73,7 +73,7 @@ export function SuperAdminTemplateOverviewEditor({templateId,title,summary,versi
     <Textarea className={field+" min-h-20"} maxLength={4000} value={instructions}
      onChange={e=>setInstructions(e.target.value)}/></label>
    <div className="sm:col-span-2"><Button type="button" variant="primary" disabled={pending}
-     onClick={()=>void save()} className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-primary-foreground">
+     onClick={()=>void save()} className="">
      {pending?"Saving…":"Save as new version"}</Button></div>
   </div>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
