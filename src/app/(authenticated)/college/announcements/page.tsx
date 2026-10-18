@@ -36,7 +36,7 @@ export default async function AnnouncementsPage({
           title="Announcements"
           description="Scheduling and audience management are staged, but DB10 announcement migrations are not verified yet."
         />
-      <section aria-label="Personal college notifications" className="space-y-3 rounded-xl border border-border bg-surface p-5">
+      <section aria-label="Personal college notifications" className="space-y-3 - border-t border-border pt-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="text-lg font-semibold text-foreground">Your college notifications</h2>
@@ -135,7 +135,7 @@ export default async function AnnouncementsPage({
           </Link>
         }
       />
-      <section aria-label="Personal college notifications" className="space-y-3 rounded-xl border border-border bg-surface p-5">
+      <section aria-label="Personal college notifications" className="space-y-3 - border-t border-border pt-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-lg font-semibold text-foreground">Your college notifications</h2>
           <Link href={unreadHref} className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)]">
