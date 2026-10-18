@@ -233,6 +233,25 @@ describe("PROJ-HARNESS role/tenancy and concurrent PostgreSQL fixture boundaries
     });
   });
 
+  it("PROJ-HARNESS-41 only an active project mentor or college admin can coordinate meetings", async () => {
+    await withProjectPg(pool,async db=>{
+      const f=await actors(db);
+      const outsideMentor=await createPrincipal(db,f.own,["MENTOR"]);
+      await expect(createMeeting(db,f.project,f.learner,outsideMentor))
+        .rejects.toThrow(/mentor is not active on this project/);
+      const allowed = await createMeeting(db,f.project,f.learner,f.mentor);
+      expect(await db.query("select id from project_meetings where id=$1",[allowed]))
+        .toHaveLength(1);
+      await db.query("update project_members set can_mutate=false where project_id=$1 and membership_id=$2",
+        [f.project.projectId,f.mentor.membershipId]);
+      await expect(createMeeting(db,f.project,f.learner,f.mentor))
+        .rejects.toThrow(/mentor is not active on this project/);
+      expect(await count(db,"project_meetings")).toBe(1);
+      await expect(createMeeting(db,f.project,f.learner,f.author)).resolves.toBeTruthy();
+      expect(await count(db,"project_meetings")).toBe(2);
+    });
+  });
+
   it("PROJ-HARNESS-26 independent sessions contend for the same transaction advisory lock", async () => {
     const key = BigInt("0x" + randomUUID().replaceAll("-", "").slice(0, 15)).toString();
     await withTwoPgSessions(pool, async (first, second) => {
