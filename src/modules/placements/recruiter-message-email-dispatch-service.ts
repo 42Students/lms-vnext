@@ -83,7 +83,7 @@ export async function dispatchRecruiterUnreadMessageDigests(
      join placement_recruiter_profiles p on p.user_id=u.id and p.status='ACTIVE'
      join placement_recruiter_college_grants g on g.recruiter_user_id=u.id
        and g.status='ACTIVE' and g.verification_status='VERIFIED'
-       and g.valid_until > ${now} and 'DRIVES'=any(g.capabilities)
+       and g.valid_until > clock_timestamp() and 'DRIVES'=any(g.capabilities)
      join placement_company_relationships r on r.id=g.company_relationship_id
        and r.company_id=p.company_id and r.college_id=t.college_id and r.status='ACTIVE'
      join placement_companies co on co.id=p.company_id and co.status='ACTIVE'
