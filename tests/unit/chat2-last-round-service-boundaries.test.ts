@@ -61,9 +61,10 @@ describe("chat-2 uncovered interview and round service direct boundaries",()=>{
 
   it("LNR-withdrawals-02 rejects malformed or forged application version before identity lookup",async()=>{
     for(const input of [
-      {applicationId:"../foreign",roundId,expectedUpdatedAt:"2026-10-20T04:30:00Z",reason:"Changed"},
-      {applicationId,roundId,reason:"Changed",expectedUpdatedAt:"bad-date"},
-      {applicationId,roundId,reason:"Changed",expectedUpdatedAt:"2026-10-20T04:30:00Z",collegeId},
+      {applicationId:"../foreign",roundId,expectedUpdatedAt:"2026-10-20T04:30:00Z",reason:"Changed",confirmed:true},
+      {applicationId,roundId,reason:"Changed",expectedUpdatedAt:"bad-date",confirmed:true},
+      {applicationId,roundId,reason:"Changed",expectedUpdatedAt:"2026-10-20T04:30:00Z",confirmed:true,collegeId},
+      {applicationId,roundId,reason:"Changed",expectedUpdatedAt:"2026-10-20T04:30:00Z",confirmed:false},
     ])await expect(requestOwnInterviewWithdrawal(actor,input)).rejects.toThrow();
     expect(state.learner).not.toHaveBeenCalled();
     expect(state.db).not.toHaveBeenCalled();
