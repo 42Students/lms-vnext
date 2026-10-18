@@ -3,6 +3,7 @@ import { resolveRequestTenant } from "@/modules/auth/request-tenant";
 import { isSameOriginRequest } from "@/auth/origin";
 import { submitPublicRecruitEnquiry } from "@/modules/placements/public-enquiry/recruit-service";
 import { PublicEnquiryError } from "@/modules/placements/public-enquiry/send-service";
+import {readPublicRecruitEnquiryBody} from "@/modules/placements/public-enquiry/body-model";
 export const runtime="nodejs";
 export async function POST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
@@ -11,10 +12,13 @@ export async function POST(request:Request){
  catch {return NextResponse.json({error:"SERVICE_UNAVAILABLE"},
   {status:503,headers:{"Cache-Control":"no-store"}});}
  if(tenant.kind!=="college")return NextResponse.json({error:"PAGE_UNAVAILABLE"},{status:404});
+ const body=await readPublicRecruitEnquiryBody(request);
+ if(body.kind!=="OK")return NextResponse.json({error:body.kind==="TOO_LARGE"?"REQUEST_TOO_LARGE":"COULD_NOT_SEND_ENQUIRY"},
+  {status:body.kind==="TOO_LARGE"?413:400,headers:{"Cache-Control":"no-store"}});
  const ip=process.env.PUBLIC_JOIN_TRUSTED_PROXY_READY==="VERIFIED"
   ?request.headers.get("x-public-verified-client-ip"):null;
  try{
-  const result=await submitPublicRecruitEnquiry(tenant.collegeId,await request.json().catch(()=>null),ip);
+  const result=await submitPublicRecruitEnquiry(tenant.collegeId,body.value,ip);
   return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
  }catch(error){
   if(error instanceof PublicEnquiryError)return NextResponse.json({
