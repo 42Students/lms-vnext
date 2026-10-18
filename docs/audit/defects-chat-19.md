@@ -246,3 +246,9 @@ This is an independent unowned responsive UX pickup for the critical TPO/HR plac
 | ID | Severity | Source | Defect / hardening | Regression |
 |---|---|---|---|---|
 | HR-BREAK-QUERY-05 | MAJOR | `/hr/notifications`, `/hr/conversations`, `/hr/activity` page entrypoints | Repeated query parameters (`collegeId=A&collegeId=B`, `page=1&page=2`, repeated search text) were silently reduced to the first value before Zod validation. This made a URL appear to contain one tenant/filter selection while the app acted on another. Pass raw query values to the strict schemas, rendering the existing recoverable invalid-filter state for ambiguous arrays; no private service read occurs. | `tests/unit/HR-BREAK-chat19-notifications-page.test.ts`, `tests/unit/HR-BREAK-chat19-conversation-inbox-page.test.ts`, `tests/unit/HR-BREAK-chat19-activity-results-pages.test.ts` |
+
+## IIT Dharwad class-team outcome report injection
+
+| ID | Severity | Source | Defect and fix | Unit evidence |
+|---|---|---|---|---|
+| PROJ-BREAK-OUTCOME-CSV-03 | MAJOR | `src/components/projects/class-team-workspace-creator.tsx` individual creation outcome export | The CSV download quoted untrusted learner display names and workspace titles but did not neutralize spreadsheet formulas (`=HYPERLINK`, invisible prefix, U+034F), allowing malicious cell values to be interpreted as spreadsheet commands. The previous download also revoked object URLs immediately, potentially racing browser Blob reading. Extracted pure, shared safely quoted/formula-neutralized serializer; export only authorized `outcome.individualResults` and roster names, preserve filename/IST page wording, defer blob cleanup and show recoverable error. | `tests/unit/PROJ-BREAK-chat19-class-team-outcome-csv.test.ts` |
