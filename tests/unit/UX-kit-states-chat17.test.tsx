@@ -325,6 +325,18 @@ describe("UX-kit-STATES: semantic SSR states and accessible fallbacks", () => {
     expect(source).toContain('error ? `${id}-error` : null');
   });
 
+  it("UX-kit-HARDEN-47 disabled file picker must not be called invalid by assistive tech",()=>{
+    const disabled=render(<FileUpload id="proof-doc" label="Project proof"
+      disabled helper="PDF only" onFiles={()=>{}}/>);
+    expect(disabled).toContain('disabled=""');
+    expect(disabled).not.toContain('aria-invalid="true"');
+    expect(disabled).toContain('aria-describedby="proof-doc-help proof-doc-unavailable"');
+    expect(disabled).toContain("This upload cannot continue");
+    const available=render(<FileUpload id="ready-doc" label="Project proof" onFiles={()=>{}}/>);
+    expect(available).not.toContain('aria-invalid="true"');
+    expect(available).not.toContain('disabled=""');
+  });
+
   it("UX-kit-STATES-14 HTTPS links display fallback; script, HTTP and credential-bearing URLs never link", () => {
     for (const href of ["javascript:alert(1)", "data:text/html,hi", "http://example.test",
       "https://user:pass@example.test", "not a URL"]) {
