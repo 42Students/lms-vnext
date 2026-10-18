@@ -229,3 +229,8 @@ The recruiter job-list SQL now rechecks all persisted grant-validity invariants:
 ## HR-GRANT-EXPIRE-39: persisted authorization (source-reviewed)
 
 Employer drive, round, slot and candidate reads now independently check `verification_status='VERIFIED'`, `valid_until > now()`, and `DRIVES` capability in persisted grant SQL. A company team directory also refuses an unverified or expired grant. Unit tests `HR-BREAK-chat15-expired-grants-39.test.ts` and PostgreSQL lifecycle tests `tests/integration/hr-grant-expiry-39-postgresql.test.ts` are authored but not executed; live revocation race still open.
+
+
+### HR-GRANT-EXPIRY-CLOCK-44 and HR-ROUND-TENANT-46
+
+Employer grant authorization uses a real PostgreSQL wall-clock expiry within potentially long-running transactions. Round list and writes require live ACTIVE college and company in addition to persisted grant, recruiter and drive. Unit contract: `HR-BREAK-chat15-round-archive-26.test.ts` and `HR-BREAK-chat15-expired-grants-39.test.ts`; database: `hr-grant-expiry-39-postgresql.test.ts`. Tests were authored, not run.
