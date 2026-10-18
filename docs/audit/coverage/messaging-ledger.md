@@ -197,3 +197,15 @@ The current `unit-failures-latest.md` chat-16 entries refer to an older CI snaps
 | `src/modules/auth/crypto.ts:mac,safeEqualHex,generateCode,generateToken,codeMac,contactFingerprint,sessionDigest,maskPhone,maskEmail` | Canonical 256-bit lowercase HMAC only, constant-time full-MAC comparison, purpose separation for OTP/contact/session, random code/token shape, masked personal contacts | `tests/unit/chat16-auth-crypto-boundaries-22.test.ts` | Authored, unrun |
 | `src/modules/auth/http.ts:guardLoginRequest,ipTag,auditLogin` | Real guard behavior for CSRF, IP throttle, invalid JSON/schema, unknown/unavailable college host, server-derived tenant, opaque audit IP tags | `tests/unit/chat16-auth-guard-tenant-behavior-21.test.ts` | Authored, unrun |
 | `src/modules/messaging/tpo-campaign-dispatch-service.ts:tpoCampaignDispatchReady,dispatchTpoCampaign` | Provider disabled on whitespace-only credentials, auth template aliases and invalid public origin; no DB claim while disabled | `tests/unit/chat16-tpo-campaign-config-gate-23.test.ts` | Authored, unrun |
+
+## Public and authentication page rendering (additional live component cases)
+
+| Page / source | Behavioural coverage added | Test | State |
+|---|---|---|---|
+| `src/modules/auth/tenant-branding.ts:getCollegeSignInName` | Exact active-college SQL scope, unknown/disabled college returns null, genuine storage outage propagates rather than presenting wrong name | `tests/unit/chat16-public-college-branding-24.test.ts` | Authored, unrun |
+| `src/app/home/page.tsx:HomeMarketingPage` | Real React SSR marketing cards, mobile navigation, links to login/demo/privacy and truthful no-AI capability descriptions | `tests/unit/chat16-public-marketing-tenant-25.test.ts` | Authored, unrun |
+| `src/app/company-join/[token]/page.tsx:CompanyJoinPage` | SSR correct COMPANY scope/token, preview outage recovery, no submission on read | `tests/unit/chat16-public-recruiter-join-pages-26.test.ts` | Authored, unrun |
+| `src/app/college-join/[token]/page.tsx:CollegeJoinPage` | SSR correct COLLEGE scope/token, preview outage recovery, unavailable registration explanation | Same | Authored, unrun |
+| `src/app/campaign-unsubscribe/[token]/page.tsx:CampaignUnsubscribe` | Distinct valid token, expired token and transient storage-outage render states; explicit POST-only opt-out and retry link | `tests/unit/chat16-public-unsubscribe-page-27.test.ts` | Authored, unrun |
+
+Remaining page E2E coverage: interactive keyboard focus, phone viewport and real links across hosts, signed token origin/session semantics, consent POST handling, and rendering with actual provider and PostgreSQL fixture state are still open.
