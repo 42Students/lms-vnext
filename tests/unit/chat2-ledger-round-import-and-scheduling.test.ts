@@ -42,7 +42,7 @@ describe("TPO-drive-workspace-40/44 round import and scheduling ledger",()=>{
   const learner={applicationId:uuid,currentResultId:null,currentStatus:null,
    name:"Ada",email:"ada@example.test",roll:"42"};
   const another={...learner,applicationId:other,name:"Bob",email:"bob@example.test",roll:"43"};
-  const file=csv("Application ID,Result\\n"+uuid+",HOLD\\n");
+  const file=csv("Application ID,Result\n"+uuid+",HOLD\n");
   const preview=tpoRoundImportPreviewToken(uuid,file,[learner,another]);
   expect(preview).toMatch(/^[a-f0-9]{64}$/);
   expect(tpoRoundImportPreviewToken(uuid,file,[another,learner])).toBe(preview);
