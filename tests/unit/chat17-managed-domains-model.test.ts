@@ -55,6 +55,8 @@ describe("WEAK-tenant-managed-20..25 wildcard and primary domain integrity",()=>
   it("WEAK-tenant-managed-23 managed-host recognition requires one exact label and suffix",()=>{
     expect(isManagedHost("iit.lms.example.edu","lms.example.edu")).toBe(true);
     for(const host of ["lms.example.edu","evil-lms.example.edu",
+      ".lms.example.edu","api.lms.example.edu","-bad.lms.example.edu",
+      "CAPITAL.lms.example.edu",
       "iit.branch.lms.example.edu","iit.lms.example.edu.attacker.test",
       "iit.other.example.edu"]){
       expect(isManagedHost(host,"lms.example.edu")).toBe(false);
