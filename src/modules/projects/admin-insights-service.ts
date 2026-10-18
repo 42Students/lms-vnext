@@ -15,6 +15,7 @@ import {
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import { projectCompletionPercent } from "./progress-percentage-policy";
+import { groupProjectAdminRows } from "./admin-insights-group-model";
 import {
   collegeMemberships,
   projectInstances,
@@ -37,6 +38,7 @@ import {
   latestProjectSubmission,
 } from "./risk-signals";
 import { loadProjectCollegeScope } from "./scope";
+import {adminUnsubmittedLiteralSearchPattern} from "./admin-unsubmitted-query-model";
 
 const projectAdminQuerySchema = z.object({
   riskBucket: z.enum(["STALLED", "BLOCKER", "REVIEW"]).optional(),
@@ -88,17 +90,18 @@ export async function listProjectAdminSnapshots(
     collegeId: college.id,
   });
 
+  const searchPattern=adminUnsubmittedLiteralSearchPattern(query.q??"");
   const search = query.q
     ? or(
         ilike(
           projectInstances.title,
-          `%${query.q}%`,
+          searchPattern,
         ),
         ilike(
           projectInstances.slug,
-          `%${query.q}%`,
+          searchPattern,
         ),
-        sql`${projectInstances.id}::text ilike ${"%"+query.q+"%"}`,
+        sql`${projectInstances.id}::text ilike ${searchPattern}`,
       )
     : undefined;
   const where = and(
@@ -272,25 +275,24 @@ export async function listProjectAdminSnapshots(
       ),
   ]);
 
+  // Index each result set once: at 100 visible projects, rescanning all
+  // task/submission rows per card becomes needlessly quadratic.
+  const tasksByProject = groupProjectAdminRows(tasks);
+  const sprintsByProject = groupProjectAdminRows(sprints);
+  const releasesByProject = groupProjectAdminRows(releases);
+  const submissionsByProject = groupProjectAdminRows(submissions);
+  const taskSubmissionsByProject = groupProjectAdminRows(taskSubmissions);
+  const meetingsByProject = groupProjectAdminRows(meetings);
+  const resourcesByProject = groupProjectAdminRows(resources);
+  const membersByProject = groupProjectAdminRows(members);
+
   const items = projects.map((project) => {
-    const projectTasksRows = tasks.filter(
-      (row) => row.projectId === project.id,
-    );
-    const projectSprintRows = sprints.filter(
-      (row) => row.projectId === project.id,
-    );
-    const projectReleaseRows = releases.filter(
-      (row) => row.projectId === project.id,
-    );
-    const projectSubmissionRows =
-      submissions.filter(
-        (row) => row.projectId === project.id,
-      );
-    const latestSubmission =
-      latestProjectSubmission(projectSubmissionRows);
-    const projectMembersRows = members.filter(
-      (row) => row.projectId === project.id,
-    );
+    const projectTasksRows = tasksByProject.get(project.id) ?? [];
+    const projectSprintRows = sprintsByProject.get(project.id) ?? [];
+    const projectReleaseRows = releasesByProject.get(project.id) ?? [];
+    const projectSubmissionRows = submissionsByProject.get(project.id) ?? [];
+    const latestSubmission = latestProjectSubmission(projectSubmissionRows);
+    const projectMembersRows = membersByProject.get(project.id) ?? [];
     const primaryMentor =
       projectMembersRows.find(
         (row) =>
@@ -354,10 +356,7 @@ export async function listProjectAdminSnapshots(
         row.submittedAt,
       );
     }
-    for (const row of taskSubmissions.filter(
-      (candidate) =>
-        candidate.projectId === project.id,
-    )) {
+    for (const row of taskSubmissionsByProject.get(project.id) ?? []) {
       lastActivityAt = latestDate(
         lastActivityAt,
         row.updatedAt,
@@ -371,19 +370,13 @@ export async function listProjectAdminSnapshots(
         row.reviewedAt,
       );
     }
-    for (const row of meetings.filter(
-      (candidate) =>
-        candidate.projectId === project.id,
-    )) {
+    for (const row of meetingsByProject.get(project.id) ?? []) {
       lastActivityAt = latestDate(
         lastActivityAt,
         row.updatedAt,
       );
     }
-    for (const row of resources.filter(
-      (candidate) =>
-        candidate.projectId === project.id,
-    )) {
+    for (const row of resourcesByProject.get(project.id) ?? []) {
       lastActivityAt = latestDate(
         lastActivityAt,
         row.updatedAt,
@@ -462,17 +455,18 @@ export async function listProjectAdminRiskQueue(
     collegeId: college.id,
   });
 
+  const searchPattern=adminUnsubmittedLiteralSearchPattern(query.q??"");
   const search = query.q
     ? or(
         ilike(
           projectInstances.title,
-          `%${query.q}%`,
+          searchPattern,
         ),
         ilike(
           projectInstances.slug,
-          `%${query.q}%`,
+          searchPattern,
         ),
-        sql`${projectInstances.id}::text ilike ${"%"+query.q+"%"}`,
+        sql`${projectInstances.id}::text ilike ${searchPattern}`,
       )
     : undefined;
   // Correlated subqueries below need a qualified outer reference: Drizzle
@@ -637,6 +631,7 @@ export async function listProjectAdminRiskQueue(
       ),
     );
 
+  const mentorsByProject = groupProjectAdminRows(mentors);
   return {
     items: projects.map((project) => {
       const inactivityDays = Math.max(
@@ -657,11 +652,7 @@ export async function listProjectAdminRiskQueue(
               : null,
           hasBlockedTask: project.blockedTask,
         });
-      const projectMentors =
-        mentors.filter(
-          (mentor) =>
-            mentor.projectId === project.id,
-        );
+      const projectMentors = mentorsByProject.get(project.id) ?? [];
       const mentor =
         projectMentors.find(
           (candidate) =>
@@ -724,8 +715,8 @@ export async function getProjectAdminSubmissionSummary(context: RequestContext, 
   )`;
   const [row] = await getDb().select({
     activeWorkspaces: sql<number>`count(*) filter (where ${projectInstances.status} = 'ACTIVE')`.mapWith(Number),
-    pendingReview: sql<number>`count(*) filter (where ${latestStatus} = 'SUBMITTED')`.mapWith(Number),
-    needsStudentAction: sql<number>`count(*) filter (where ${latestStatus} = 'CHANGES_REQUESTED')`.mapWith(Number),
+    pendingReview: sql<number>`count(*) filter (where ${projectInstances.status} = 'ACTIVE' and ${latestStatus} = 'SUBMITTED')`.mapWith(Number),
+    needsStudentAction: sql<number>`count(*) filter (where ${projectInstances.status} = 'ACTIVE' and ${latestStatus} = 'CHANGES_REQUESTED')`.mapWith(Number),
     reviewed: sql<number>`count(*) filter (where ${latestStatus} = 'APPROVED')`.mapWith(Number),
   }).from(projectInstances).where(eq(projectInstances.collegeId, college.id));
   return {
@@ -757,15 +748,16 @@ export async function listProjectAdminSubmissionQueue(
   });
   // Keep the outer project ID qualified inside the mentor subquery.
   const instanceId = sql.raw('"project_instances"."id"');
+  const searchPattern=adminUnsubmittedLiteralSearchPattern(query.q??"");
   const search = query.q
     ? or(
         ilike(
           projectInstances.title,
-          `%${query.q}%`,
+          searchPattern,
         ),
         ilike(
           projectInstances.slug,
-          `%${query.q}%`,
+          searchPattern,
         ),
       )
     : undefined;

@@ -7,6 +7,8 @@ import { PermissionAction } from "@/components/ui/permission-action";
 import { ownsOverlayHistoryEntry } from "@/components/ui/use-overlay-webview";
 import { DataTable, isSafeDataTableHref } from "@/components/ui/data-table";
 import { Pagination, normalizedPageCount, paginationWindow } from "@/components/ui/pagination";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { isSafeInternalHref } from "@/lib/safe-internal-href";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { fileMatchesAccept, fileSizeIsValid } from "@/components/ui/file-upload";
 import { clearEvictedToastTimers, enqueueToast, ToastStack, type ToastItem } from "@/components/ui/toast";
@@ -99,16 +101,56 @@ describe("UX-kit-HARDEN-23 authorization boundaries and WebView history", () => 
     const rows = [{id:"1",title:"Project North"},{id:"2",title:"Project South"}];
     const html=render(<DataTable columns={columns} rows={rows} getRowKey={row=>row.id}
       rowHref={()=>"//unsafe.example"} caption="College projects" empty={<p>No projects</p>}/>);
+    // The row's cell formatter must run exactly once even though DataTable
+    // renders responsive labels, details and a desktop table.
+    expect(called.mock.calls.map(([row]) => row.id)).toEqual(["1", "2"]);
     expect(called).toHaveBeenCalledTimes(2);
     expect(html).toContain("Project North");
     expect(html).toContain("Project South");
     expect(html).not.toContain('href="//unsafe.example"');
-    // ScrollCue only assigns a named region AFTER measuring real overflow in
-    // the client. SSR cannot truthfully claim it is scrollable.
-    expect(html).toContain('<caption class="sr-only">College projects</caption>');
+    expect(html).not.toContain("View details");
+    // SSR does not know whether a table actually overflows. A caption must
+    // describe it while ScrollCue exposes no false scroll region until measured.
+    expect(html).toMatch(/<caption\b[^>]*class="sr-only"[^>]*>College projects<\/caption>/);
     expect(html).toContain('data-slot="scroll-cue"');
+    expect(html).not.toMatch(/role="region"[^>]*aria-label="College projects scrollable columns"/);
     const scrollSource=readFileSync(join(process.cwd(),"src/components/ui/data-table.tsx"),"utf8");
-    expect(scrollSource).toContain('caption+" scrollable columns"');
+    expect(scrollSource).toMatch(/label=\{caption\s*\?\s*caption\s*\+\s*["'] scrollable columns["']/);
+  });
+
+  it("UX-kit-HARDEN-36 redacts mixed-permission hidden cells and never exposes denied detail links", () => {
+    type Row = { id: string; title: string; canView: boolean; secret: string };
+    const formatSecret=vi.fn((row:Row)=>row.secret);
+    const detailHref=vi.fn((row:Row)=>"/college/projects/"+row.id+"/details");
+    const columns=[
+      {key:"title",header:"Workspace",mobilePriority:"primary" as const,
+        cell:(row:Row)=>row.title},
+      {key:"secret",header:"Private review",mobilePriority:"hidden" as const,
+        mobileHiddenReason:"Review details require permission",
+        mobileDetail:{fieldKey:"secret",href:detailHref,canView:(row:Row)=>row.canView},
+        cell:formatSecret},
+    ];
+    const rows:Row[]=[
+      {id:"allowed",title:"Allowed workspace",canView:true,secret:"Visible review"},
+      {id:"denied",title:"Restricted workspace",canView:false,secret:"DO_NOT_RENDER_PRIVATE"},
+    ];
+    const html=render(<DataTable rows={rows} columns={columns}
+      getRowKey={row=>row.id} empty={<p>No projects</p>}/>);
+    expect(html).toContain("Allowed workspace");
+    expect(html).toContain("Restricted workspace");
+    expect(html).toContain("Visible review");
+    expect(html).not.toContain("DO_NOT_RENDER_PRIVATE");
+    expect(formatSecret).toHaveBeenCalledTimes(1);
+    expect(detailHref).toHaveBeenCalledTimes(1);
+    expect(html).toContain('href="/college/projects/allowed/details"');
+    expect(html).not.toContain('href="/college/projects/denied/details"');
+    expect((html.match(/· View details/g)??[])).toHaveLength(1);
+
+    const deniedOnly=render(<DataTable rows={[rows[1]!]} columns={columns}
+      getRowKey={row=>row.id} empty="Empty"/>);
+    expect(deniedOnly).not.toContain("DO_NOT_RENDER_PRIVATE");
+    expect(deniedOnly).not.toContain("Fields on detail page");
+    expect(deniedOnly).not.toContain("More details");
   });
 
   it("UX-kit-HARDEN-30 rejects encoded slash/backslash row links before Next navigation", () => {
@@ -161,6 +203,25 @@ describe("UX-kit-HARDEN-23 authorization boundaries and WebView history", () => 
     const valid=render(<ThirdPartyLink href="https://example.test/proof%20one" label="Evidence" />);
     expect(valid).toContain('href="https://example.test/proof%20one"');
     expect(valid).not.toContain('target="_blank"');
+  });
+
+  it("UX-kit-HARDEN-35 breadcrumbs and table share the same hardened internal path rule",()=>{
+    for(const value of ["//evil.test","/%2Fevil.test","/%252Fevil.test",
+      "/%5cevil.test","/%255cevil.test","/foo\\bar",
+      "javascript:alert(1)","https://evil.test", " /college/projects"]){
+      expect(isSafeInternalHref(value)).toBe(false);
+      expect(isSafeDataTableHref(value)).toBe(false);
+      const html=render(<Breadcrumbs items={[
+        {label:"Project",href:value},{label:"Members"}]}/>);
+      expect(html).toContain("Project");
+      expect(html).not.toContain('href=');
+    }
+    for(const href of ["/college/projects","/mentor/projects?q=abc%25","/learn/projects#history"]){
+      expect(isSafeInternalHref(href)).toBe(true);
+      const html=render(<Breadcrumbs items={[{label:"Projects",href},{label:"Current"}]}/>);
+      expect(html).toContain("href=");
+      expect(html).toContain('aria-current="page"');
+    }
   });
 
   it("UX-kit-HARDEN-28 upload prechecks fail closed for invalid sizes and untrusted types", () => {
