@@ -102,3 +102,14 @@ Cloud tests/typecheck and independent review remain required. These are authored
 | PROJ-BREAK-state-04 | S1 stale regression test | `mentor-final-delivery-decision-model.test.ts` still expected a Mentor to review a SUBMITTED final delivery on a COMPLETED project; current hardening policy correctly forbids this. Retained the ACTIVE success case and added explicit COMPLETED/PLANNED denials rather than reverting the fix. | `ee5ba6e8` | New cloud Vitest feedback pending |
 
 The canonical ledger additionally links existing inspected runtime assertions for 12 previously incorrectly unmapped portfolio, activity, export and work-filter symbols. Mapping a test is **not** proof of 90% branch coverage or a passing CI build.
+
+
+## Export GET and Mentor JSON mutation follow-up (2026-10-18)
+
+| ID | Severity | Reproduced source gap and correction | Fix and test | Verification |
+|---|---|---|---|---|
+| PROJ-BREAK-MENTOR-99..101 | S2 request ambiguity | Remaining sprint-progress and task-review-history CSV routes silently used the first repeated key from `URLSearchParams.get` and ignored unknown scope parameters; now reject duplicate/unrecognized controls with a no-store 400 and parse only explicit supported filters. | `44299cc8`, `50efb0ec`, `tests/unit/PROJ-BREAK-chat14-mentor-more-export-routes.test.ts` | Mocked route test authored/unrun, actual session/tenant/PG snapshot tests pending |
+| PROJ-BREAK-MENTOR-103..107 | S1 unbounded input and error UX | Mentor Project Overview PATCH and Final Delivery Lock POST called unbounded `request.json()` unlike other mentor mutation routes. Both now use strict UTF-8 `readMentorProjectCommandBody` (128 KiB cap, JSON content type, explicit 400/413/415 friendly errors) after same-origin guard. | `f6ba33e5`, `fdddf553`, `tests/unit/PROJ-BREAK-chat14-mentor-command-routes.test.ts` | Authored origin-first/malformed/over-limit/unsupported/valid-once tests, unrun; DB, server status/error mappings and revoked-session E2E pending |
+| PROJ-BREAK-MENTOR-83..98 | Coverage expansion | Rendered role-denied/disabled/invalid/partial Mentor Reviews/Task Reviews and service authorization matrices for assigned vs foreign project, role revocation and no read when module disabled. | `e2431ba5`, `5fd952d6`; mapped canonical ledger | Runtime assertions authored but not executed; underlying PostgreSQL permissions, exact tenancy race and browser keyboard remain open |
+
+The lead inspected existing PostgreSQL integration sources `mentor-project-closeout.test.ts`, `projects-p7b-meetings.test.ts`, `mentor-project-activity-export.test.ts` and mapped their four service exports to the ledger. These tests require a disposable `TEST_DATABASE_URL`; mapping them does not imply execution, transaction concurrency proof or IIT Dharwad release readiness.
