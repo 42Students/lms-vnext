@@ -17,6 +17,7 @@ describe("SA-RETENTION-STALENESS-08 consistent last-activity cutoff and first-20
   const source=readFileSync("src/modules/admin-ui/super-admin-placement-retention-service.ts","utf8");
   expect(source).toContain('requireSuperAdminSelectedCollege(context,"placements.read")');
   expect(source).toContain("eq(placementJobs.collegeId,selected.collegeId)");
+  expect(source).toContain("eq(colleges.organizationId,selected.organizationId)");
   expect(source).toContain("eq(collegeMemberships.collegeId,selected.collegeId)");
   expect(source).toContain("eq(placementCollegeApplicationStages.jobId,placementJobs.id)");
  });
