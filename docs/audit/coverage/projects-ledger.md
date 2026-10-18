@@ -53,6 +53,13 @@ All four now reuse `readMentorProjectCommandBody` with recoverable 400/413/415 m
 Source fixes: `af9179c` and `99db146`. Tests are **authored, not run**; database joins, query plans, true scope invalidation and 1k+ sprint pagination need independent PostgreSQL/HTTP verification. This does not waive the S1 meeting version/ABA release gate.
 
 
+## Mentor review-completeness pagination and evidence — PROJ-BREAK-MENTOR-383..386 (2026-10-19)
+| Exports | Regression | Cases / pending |
+|---|---|---|
+| `mentor-review-completeness-model.ts:mentorReviewCompletenessQuerySchema / reviewCompletenessPage` | `tests/unit/PROJ-BREAK-chat14-mentor-review-evidence-pagination.test.ts` | `383` strict decimal page token, rejects foreign URL fields; `384` corrupted counts and page values fall back to safe offset |
+| `mentor-review-completeness-model.ts:projectReviewCompleteness / mentorReviewCompletenessHref` | Same test | `385` only APPROVED/CHANGES_REQUESTED persisted decisions count, no hallucinated feedback; `386` exact project UUID/deep link |
+Source fix `3f025d6`; tests **authored but not run**. True DB review duplicate rows, concurrent updates, grade-release policy, and browser offset/phone acceptance remain open.
+
 ## CI failure triage (refreshed inventory ff6819dd, 2026-10-18)
 - `projects-mentor-service-guards-chat14.test.ts` final-delivery boundary assertion: the current service still contains every checked guard, version token, audited notification and scoped mutation gate. This appears to be a stale snapshot; do not change code or weaken the check without a new failing trace.
 - `recruiter-chat14-message-email-bridge-contract.test.ts`: the expectation referred to the raw email string, but the provider now normalizes the recipient *before* applying the allowlist; updated the test to assert both normalization and the runtime allowlist, preserving the stronger safety invariant.

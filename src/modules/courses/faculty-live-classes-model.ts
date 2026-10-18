@@ -3,7 +3,10 @@ import {z} from "zod";
 export const facultyLiveClassesQuerySchema=z.object({
  view:z.enum(["UPCOMING","PAST","ALL"]).default("UPCOMING"),
  deliveryId:z.string().uuid().optional(),
- page:z.coerce.number().int().min(1).max(10000).default(1),
+ page:z.union([
+    z.number().int(),
+    z.string().regex(/^[1-9]\d{0,4}$/).transform(Number),
+  ]).pipe(z.number().int().min(1).max(10000)).default(1),
 }).strict();
 export type FacultyLiveClassesQuery=z.infer<typeof facultyLiveClassesQuerySchema>;
 

@@ -10,10 +10,10 @@ type Params={params:Promise<{jobId:string;applicationId:string}>};
 export async function POST(request:Request,{params}:Params){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- const context=await getCurrentRequestContext();
- if(!hasActiveRecruiter(context))
-  return NextResponse.json({error:"NOT_FOUND"},{status:404});
  try{
+  const context=await getCurrentRequestContext();
+  if(!hasActiveRecruiter(context)||context.recruiter?.userId!==context.user.id)
+   return NextResponse.json({error:"NOT_FOUND"},{status:404});
   const {jobId,applicationId}=await params;
   const grant=await grantRecruiterSharedResume(context,jobId,applicationId);
   return NextResponse.json({grant},{headers:{"Cache-Control":"private, no-store"}});

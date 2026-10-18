@@ -51,6 +51,7 @@ describe("/admin second third: selected college academic and operations boundari
     for(const bad of [
       {collegeId:COLLEGE_B},{organizationId:ORG_B},{status:"DELETED"},{page:["1","2"]},
       {page:"0"},{page:"1001"},{pageSize:"500"},{minimumCapacity:"100",maximumCapacity:"20"},
+      {page:"1e2"},{page:"0x10"},{pageSize:"5e1"},{page:"1.0"},
       {departmentId:"forged"},{roomType:"UNSAFE"},{q:"x".repeat(101)},
     ]) expect(parseSuperAdminLectureHallFilters(bad),JSON.stringify(bad)).toBeNull();
     const valid = parseSuperAdminLectureHallFilters({q:" A & B ",status:"ARCHIVED",page:"3",pageSize:"50"});

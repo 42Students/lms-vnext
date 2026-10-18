@@ -4,9 +4,16 @@ import {
   withCollegeLectureHallCapacityCheck,
 } from "./college-lecture-hall-directory-model";
 
+// URL selectors must be decimal; z.coerce.number() also accepts hexadecimal,
+// exponent notation, and booleans (or singleton arrays via JavaScript coercion).
+const decimalSelection = z.union([
+  z.number().int(),
+  z.string().regex(/^[0-9]+$/).transform(Number).pipe(z.number().int()),
+]);
 export const superAdminLectureHallFiltersSchema = withCollegeLectureHallCapacityCheck(
   collegeLectureHallFiltersBaseSchema.extend({
-    pageSize: z.coerce.number().int().refine(value => [10,25,50,100].includes(value),
+    page: decimalSelection.refine(value => value >= 1 && value <= 1000).default(1),
+    pageSize: decimalSelection.refine(value => [10,25,50,100].includes(value),
       "Choose 10, 25, 50 or 100 rows").default(10),
   }),
 );
@@ -35,5 +42,7 @@ export function superAdminLectureHallHref(query: SuperAdminLectureHallFilters) {
 }
 
 export function superAdminLectureHallPages(total:number,pageSize:number) {
-  return Math.max(1,Math.ceil(total/pageSize));
+  const rows = Number.isFinite(total) && total > 0 ? Math.floor(total) : 0;
+  const size = Number.isSafeInteger(pageSize) && pageSize > 0 ? pageSize : 10;
+  return Math.max(1,Math.ceil(rows/size));
 }
