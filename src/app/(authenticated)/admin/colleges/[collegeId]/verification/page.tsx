@@ -15,7 +15,6 @@ import {verificationQueueFilters} from "@/modules/verification/queue-filters";
 import {requireSuperAdminVerificationCollege} from "@/modules/verification/super-admin-scope";
 
 export const dynamic="force-dynamic";
-const one=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
 export default async function AdminCollegeVerification({
  params,searchParams,
 }:{
@@ -31,14 +30,14 @@ export default async function AdminCollegeVerification({
  }catch(e){if(e instanceof CollegeServiceError&&e.code==="COLLEGE_NOT_FOUND")notFound();throw e;}
  const base=`/admin/colleges/${encodeURIComponent(college.id)}/verification`;
  const raw=await searchParams;
- const parsed=verificationQueueFilters.safeParse(Object.fromEntries(
-  Object.entries(raw).filter(([,v])=>v!==undefined&&v!=="").map(([k,v])=>[k,one(v)]),
+ const parsed=Object.values(raw).some(Array.isArray)?null:verificationQueueFilters.safeParse(Object.fromEntries(
+  Object.entries(raw).filter(([,v])=>v!==undefined&&v!==""),
  ));
  const header=<PageHeader eyebrow="Super Admin · Verification" title={college.name}
   description="College-scoped learner Education and Identity verification. Review only the currently selected college."/>;
- if(!parsed.success)return <div className="min-w-0 space-y-5">{header}
+ if(!parsed?.success)return <div className="min-w-0 space-y-5">{header}
   <div role="alert" className="rounded-xl border border-border p-5">Invalid verification filters.
-   <Link href={base} className="ml-2 text-[var(--lms-teal-deep)] underline">Reset</Link></div></div>;
+   <Link href={base} className="ml-2 inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Reset</Link></div></div>;
  let data:Awaited<ReturnType<typeof listCollegeVerificationQueue>>;
  try{data=await listCollegeVerificationQueue(context,parsed.data,college.id);}
  catch(e){
@@ -47,7 +46,7 @@ export default async function AdminCollegeVerification({
    <p role="alert" className="rounded-xl border border-border p-5">{e instanceof VerificationUnavailableError?
     "Verification storage is not yet available. No queue decisions can be made.":
     "The verification queue exceeds its safe scan cap. Narrow server-side filters before reviewing."}</p>
-   <Link className="text-[var(--lms-teal-deep)] underline" href={base}>Retry</Link>
+   <Link className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline" href={base}>Retry</Link>
   </div>;
  }
  const [policy]=await getDb().select({enabled:profileVerificationSettings.tpoCanVerifyProfiles})
