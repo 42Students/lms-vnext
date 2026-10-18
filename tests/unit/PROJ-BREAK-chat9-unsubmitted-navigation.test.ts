@@ -1,6 +1,6 @@
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
-import {projectAdminUnsubmittedHref} from "@/modules/projects/admin-submissions-query-model";
+import {projectAdminUnsubmittedHref,projectAdminSubmissionHref} from "@/modules/projects/admin-submissions-query-model";
 
 describe("IIT Dharwad Projects: unsubmitted page never loses its filters",()=>{
   it("PROJ-BREAK-submissions-40 exact query, status and row-size survive pagination and are encoded",()=>{
@@ -18,6 +18,25 @@ describe("IIT Dharwad Projects: unsubmitted page never loses its filters",()=>{
     expect(href).not.toContain("submissionStatus");
   });
 
+  it("PROJ-BREAK-submissions-47 changing tabs never resets search, workspace status or rows",()=>{
+    const scope={q:"IIT & nearby",status:"ACTIVE" as const,pageSize:50};
+    const all=projectAdminSubmissionHref("/admin/projects/submissions",scope);
+    const review=projectAdminSubmissionHref("/admin/projects/submissions",scope,"UNDER_REVIEW");
+    const unsubmitted=projectAdminUnsubmittedHref("/admin/projects/submissions",scope);
+    expect(Object.fromEntries(new URL(all,"https://example.invalid").searchParams)).toEqual({
+      q:"IIT & nearby",status:"ACTIVE",pageSize:"50",
+    });
+    expect(Object.fromEntries(new URL(review,"https://example.invalid").searchParams)).toEqual({
+      q:"IIT & nearby",status:"ACTIVE",pageSize:"50",submissionStatus:"UNDER_REVIEW",
+    });
+    expect(Object.fromEntries(new URL(unsubmitted,"https://example.invalid").searchParams)).toEqual({
+      view:"NOT_SUBMITTED",q:"IIT & nearby",status:"ACTIVE",pageSize:"50",
+    });
+    const code=readFileSync("src/components/projects/project-admin-submissions-page.tsx","utf8");
+    expect(code).toContain('projectAdminSubmissionHref(queuePath,query,"UNDER_REVIEW")');
+    expect(code).toContain('projectAdminSubmissionHref(queuePath,query,"LOCKED")');
+    expect(code).toContain('projectAdminSubmissionHref(queuePath,query,"DRAFT_REVISING")');
+  });
   it("PROJ-BREAK-submissions-41 the unsubmitted tab does not depend on summary or other delivery results",()=>{
     const source=readFileSync("src/components/projects/project-admin-submissions-page.tsx","utf8");
     expect(source).toContain('view==="ALL"?await Promise.all([');

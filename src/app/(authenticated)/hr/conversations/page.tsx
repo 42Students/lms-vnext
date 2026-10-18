@@ -34,9 +34,12 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
   <PageHeader eyebrow="Recruiter" title="Conversations"/>
   <p>Invalid conversation filters.</p><Link href="/hr/conversations" className="text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Reset</Link></div>;
  const result=await listHrConversations(context,parsed.data);
- const generalResult=result.status==="READY"?await listHrConversations(context,{
-  collegeId:result.collegeId,q:"",page:1,unreadOnly:"false",sort:"LATEST",scope:"GENERAL",
- }):null;
+ const generalLookup=result.status==="READY"
+  ?await listHrConversations(context,{
+    collegeId:result.collegeId,q:"",page:1,unreadOnly:"false",sort:"LATEST",scope:"GENERAL",
+   }).then(value=>({ok:true as const,value})).catch(()=>({ok:false as const}))
+  :null;
+ const generalResult=generalLookup?.ok?generalLookup.value:null;
  const generalThread=generalResult?.status==="READY" ? generalResult.items.find(row=>!row.jobId)??null:null;
  // The general-thread preview and decision bell are optional enrichments.
  // A stale grant or downstream failure must never resurrect cached message text
@@ -118,7 +121,11 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       <Link href={"/hr/conversations/"+generalThread.id}
         className="mt-3 inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Open full conversation</Link>
     </details>:null}
-    {!generalThread?<form method="post" action="/api/placements/recruiter/conversations/open" className="mt-3">
+    {generalLookup && !generalLookup.ok?
+      <p role="status" className="mt-3 text-sm text-body">
+        General conversation preview is temporarily unavailable. Refresh to try again; existing conversations remain accessible.
+      </p>:null}
+    {!generalThread && (!generalLookup || generalLookup.ok)?<form method="post" action="/api/placements/recruiter/conversations/open" className="mt-3">
       <input name="collegeId" type="hidden" value={result.collegeId}/>
       <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Open general conversation

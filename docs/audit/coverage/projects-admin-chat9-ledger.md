@@ -110,3 +110,5 @@ The Projects squad lead (chat-14) must reconcile these missing exports and route
 | `admin-unsubmitted-service.ts` | `listProjectAdminUnsubmitted` | RENDERED SQL + MOCK BEHAVIOR | `PROJ-BREAK-reports-66`: qualified outer project alias prevents wrong-table ID binding in correlated NOT EXISTS, scoped count and data query share the same predicate. `tests/unit/PROJ-BREAK-chat9-admin-unsubmitted-service.test.ts`; real PostgreSQL anti-join result comparison pending. |
 
 | `project-workspace-readiness.tsx` | `ProjectWorkspaceReadiness` | MOCK SSR BEHAVIOR | `PROJ-BREAK-readiness-67/68/69/70`: hostile UUID before context fetch, foreign/expired role before readiness read, DB timeout recovery, preserved legacy labels and corrupt IST date fallback. `tests/unit/PROJ-BREAK-chat9-readiness-page-guard.test.tsx`; browser and PostgreSQL read failure pending. |
+
+| `admin-submissions-query-model.ts` | `projectAdminSubmissionHref` | PURE BEHAVIOR | `PROJ-BREAK-submissions-47`: filter-preserving All and review status shortcuts, encoded search and reset page only; `tests/unit/PROJ-BREAK-chat9-unsubmitted-navigation.test.ts`; browser back navigation pending. |
