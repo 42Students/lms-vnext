@@ -29,7 +29,7 @@ export function AuditFindingStatusAction({publicId,current,version}:{publicId:st
  return <div className="flex flex-wrap items-end gap-2">
    <label className="grid gap-1 text-xs font-semibold text-body">Triage status
     <select value={status} disabled={pending} onChange={e=>setStatus(e.target.value as BugStatus)}
-     className="min-h-10 rounded-md border border-border bg-surface px-2 text-foreground">
+     className="min-h-11 rounded-md border border-border bg-surface px-2 text-foreground">
       {BUG_STATUSES.map(item=><option key={item} value={item}>{item}</option>)}
     </select>
    </label>
