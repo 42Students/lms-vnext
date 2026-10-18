@@ -46,6 +46,14 @@ describe("HR-BREAK-chat19-home-portfolio-proposals: no inferred tenant or false 
   expect(m.proposals).not.toHaveBeenCalled();
   expect(m.grants).not.toHaveBeenCalled();
  });
+ it("refuses a mismatched recruiter identity before any personalized dashboard read",async()=>{
+  m.ctx.mockResolvedValue({...actor,recruiter:{...actor.recruiter!,userId:"other-account"}});
+  await expect(home()).rejects.toThrow("REDIRECT");
+  expect(m.redirect).toHaveBeenCalledWith("/dashboard");
+  expect(m.jobs).not.toHaveBeenCalled();
+  expect(m.grants).not.toHaveBeenCalled();
+  expect(m.proposals).not.toHaveBeenCalled();
+ });
  it("wrong-tenant selection is rejected on Today before portfolio, calendar or profile reads",async()=>{
   await expect(home({collegeId:other})).rejects.toThrow("NOT_FOUND");
   expect(m.jobs).not.toHaveBeenCalled();
