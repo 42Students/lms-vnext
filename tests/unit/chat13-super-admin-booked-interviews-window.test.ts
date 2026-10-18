@@ -45,4 +45,18 @@ describe("Super Admin booked interview calendar: verified IST window and tenant 
     expect(source).toContain("departmentName:row.departmentName");
     expect(source).not.toContain(".leftJoin(departments,eq(departments.id,programs.departmentId))");
   });
+
+  it("SA-BOOKED-INTERVIEWS-04 excludes booked slots with mismatched or foreign candidate links instead of emitting null candidate events", () => {
+    const source = readFileSync("src/modules/placements/super-admin-booked-interviews-service.ts","utf8");
+    // BOOKED rows always have application_id by a registered DB CHECK.
+    // Nullable joins would allow a forged cross-job/cross-college booking to
+    // survive the results as a seemingly legitimate anonymous interview.
+    expect(source).toContain(".innerJoin(placementApplications,and(eq(placementApplications.id,s.applicationId),eq(placementApplications.jobId,s.jobId)))");
+    expect(source).toContain(".innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),eq(collegeMemberships.collegeId,scope.collegeId)))");
+    expect(source).toContain(".innerJoin(users,eq(users.id,collegeMemberships.userId))");
+    expect(source).not.toContain(".leftJoin(placementApplications,");
+    expect(source).not.toContain(".leftJoin(collegeMemberships,");
+    const schema=readFileSync("src/db/schema/placement-round-candidate-slots.ts","utf8");
+    expect(schema).toContain("${t.status} = 'BOOKED' and ${t.applicationId} is not null");
+  });
 });
