@@ -16,8 +16,6 @@ export async function GET(_request:Request,{params}:Props){
       headers:{"Cache-Control":"private, no-store"},
     });
   }catch(error){
-    if(error instanceof TpoBulkBodyError)return NextResponse.json({error:error.message},
-      {status:error.status,headers:{"Cache-Control":"private, no-store"}});
     return apiErrorResponse(error);
   }
 }
@@ -34,5 +32,9 @@ export async function POST(request:Request,{params}:Props){
         : null;
     if(!result)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
     return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
-  }catch(error){return apiErrorResponse(error);}
+  }catch(error){
+    if(error instanceof TpoBulkBodyError)return NextResponse.json({error:error.message},
+      {status:error.status,headers:{"Cache-Control":"private, no-store"}});
+    return apiErrorResponse(error);
+  }
 }

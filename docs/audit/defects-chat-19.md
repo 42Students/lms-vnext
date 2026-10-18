@@ -546,3 +546,35 @@ No browser session switch or CI run was performed in this lane.
 | HR-BREAK-PORTFOLIO-WITHDRAWN-45 | MAJOR | The employer Portfolio counts revalidated SHORTLISTED screening, membership and user but omitted the current `placement_applications.status`; a withdrawn applicant with historical shortlist/offer remained in recruiter-visible shared applicant and offer totals. Use `status=SUBMITTED` in the shared SQL scope for both aggregates, matching HR Today's authorized offer follow-up projection. Deny forged recruiter principals, foreign colleges and inactive users before DB access. | `tests/unit/HR-BREAK-chat19-portfolio-withdrawn.test.ts` checks access failures, no-IDs behavior and both aggregate SQL boundary predicates. |
 
 No PostgreSQL replay or CI execution here. Existing offers remain in persistence for audit; only employer-visible aggregate eligibility changes.
+
+## Recruiter decision notification acknowledgment, independent cross-audit
+
+| ID | Severity | Issue and fix | Regression |
+|---|---|---|---|
+| HR-BREAK-DECISION-READ-46 | MAJOR | The recruiter drive-decision Mark as read button accepted any `response.ok`, including a session sign-in fallback, and refreshed as though the read receipt had persisted. It had no synchronous double-submit lock or terminal success disable, with a sub-44px target. Require the returned `{notification:{id,readAt}}` to identify the exact notification and a persisted timestamp; fail safely on HTML/malformed responses, reject redirects, guard concurrent clicks and show 44px keyboard target. | `tests/unit/HR-BREAK-chat19-decision-read.test.ts` tests real receipt parsing, forged/error shapes and source gating. |
+
+Cloud CI, runtime and browser verification remain pending.
+
+## HR unsent drive draft destructive action hardening
+
+| ID | Severity | Finding and correction | Regression |
+|---|---|---|---|
+| UX-HR-DRAFT-CLEAR-47 | MAJOR/UX | The unsent request alert used native `window.confirm`; it called `setHasDraft(false)` even when browser storage deletion failed, falsely hiding a draft that still existed. Replace with accessible consequence dialog, delete both local and session copies and verify absence before concealing the alert. Keep the draft visible with actionable failure text when storage is blocked. Normalize Continue/Discard to 44px and focus-visible. | `tests/unit/UX-HR-chat19-draft-clear.test.ts` tests both storage copies, partial failures, empty key and UI completion order. |
+
+Browser-storage failures and mobile keyboard interactions require final interactive verification.
+
+## Recruiter notification read confirmation (cross-audit)
+
+| ID | Severity | Finding/fix | Evidence |
+|---|---|---|---|
+| HR-BREAK-READ-RECEIPT-48 | MAJOR | /hr/notifications mark-read accepted any successful HTTP status, including an expired-session HTML fallback or unrelated response. Require an exact persisted notification ID and ISO readAt receipt from the already own-user/own-company authorized service, reject redirects and malformed results, leave retry possible when unconfirmed. | `tests/unit/HR-BREAK-chat19-read-receipt.test.ts` exercises the direct route, cross-origin, malformed payloads and client confirmation order. |
+
+No CI/runtime/browser execution was performed.
+
+## HR profile persisted save confirmation
+
+| ID | Severity | Finding/fix | Regression |
+|---|---|---|---|
+| HR-BREAK-PROFILE-RECEIPT-48 | MAJOR | Client accepted any 200 JSON with a `profile` object, then overwrote the unsent profile draft and optimistic versions without validating its shape; a redirected sign-in fallback or partially malformed response could incorrectly claim success or crash. Require a nonredirected response matching the complete server projection (validated name, contact digits, changed flag, ISO versions), then update saved state and tokens. Preserve draft and friendly failure copy on unconfirmed results. | `tests/unit/HR-BREAK-chat19-profile-receipt.test.ts` covers actual/no-op service receipts, malformed/sign-in data and state update ordering. |
+
+No tests or browser were executed in this lane.
