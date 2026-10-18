@@ -55,7 +55,7 @@ Test references: **BEHAVIOR** = direct function assertions; **SOURCE** = source 
 | `project-resource-file-service.ts` | `updateProjectFileDetails` | SOURCE | PROJ-BREAK-files-02, storage failure OPEN. Evidence: tests/unit/proj-break-chat9-services.test.ts (source contract, NOT live database behavioral evidence) |
 | `project-resource-file-service.ts` | `removeProjectFile` | SOURCE | PROJ-BREAK-files-02/resilience-01, PG race OPEN. Evidence: tests/unit/proj-break-chat9-services.test.ts (source contract, NOT live database behavioral evidence) |
 | `project-resource-file-service.ts` | `issueProjectFileDownloadGrant` | SOURCE | PROJ-BREAK-files-03, signed URL expiry integration OPEN. Evidence: tests/unit/proj-break-chat9-services.test.ts (source contract, NOT live database behavioral evidence) |
-| `readiness-override-service.ts` | `readProjectReadinessOverride` | OPEN | Scoped read and cache OPEN. Evidence: **OPEN — missing adequate test** |
+| `readiness-override-service.ts` | `readProjectReadinessOverride` | MOCK BEHAVIOR + SQL SOURCE | PROJ-BREAK-readiness-30/31/32/33, PROJ-BREAK-idor-30: no-event, audited block/unlock, clear removes note, invalid state hides confidential note; project+college scoped SQL and latest ordering. `tests/unit/PROJ-BREAK-chat9-readiness-history.test.ts`. Real DB and cache checks OPEN. |
 | `readiness-override-service.ts` | `overrideProjectReadiness` | SOURCE | PROJ-BREAK-routing-01, transaction+audit OPEN. Evidence: tests/unit/proj-break-chat9-services.test.ts (source contract, NOT live database behavioral evidence) |
 | `super-admin-template-directory-service.ts` | `listSuperAdminTemplateDirectory` | OPEN | Search/page/scoping PG cases OPEN. Evidence: **OPEN — missing adequate test** |
 
