@@ -278,7 +278,7 @@ export function LearnerFinalDeliveryControl({
           disabled={
             pending || !canSubmitDraft
           }
-          onClick={submitDraft}
+          onClick={()=>{void submitDraft();}}
           aria-describedby={!canSubmitDraft ? "delivery-ready-reason-" + projectId : undefined}
         >
           {pending
