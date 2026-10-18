@@ -38,7 +38,7 @@ export default async function TpoBranchSeasonPage({
           <a
             href={"/api/placements/tpo/reports/branch-season/export?seasonId=" +
               encodeURIComponent(dashboard.season.id)}
-            className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary"
+            className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-foreground"
           >
             Export season CSV
           </a>
