@@ -357,7 +357,9 @@ export function deriveTpoStudent(
     placed,
     journeyState,
     bestSoFar,
-    profileFacts:tpoStudentProfileFacts(source.profileDocument),
+    // No stored profile document is unknown, not proof of no resume or links.
+    profileFacts:source.profileDocument && typeof source.profileDocument==="object" &&
+      !Array.isArray(source.profileDocument)?tpoStudentProfileFacts(source.profileDocument):undefined,
     hiddenSearchMatched:source.hiddenSearchMatched??false,
     skillNameMatched:source.skillNameMatched??false,
     bestDriveResults:[...source.applications].sort((a,b)=>{
