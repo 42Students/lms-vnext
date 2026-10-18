@@ -149,11 +149,8 @@ export async function listProjectMemberCandidates(
   projectIdInput: string,
   rawQuery: unknown,
 ) {
-  const scope = await requireProjectManageAccess(
-    context,
-    projectIdInput,
-  );
-  const query = projectMemberCandidateQuerySchema.parse(rawQuery);
+  const query=projectMemberCandidateQuerySchema.parse(rawQuery);
+  const scope=await requireProjectManageAccess(context,projectIdInput);
   const search = query.q
     ? or(
         ilike(users.displayName, containsLikePattern(query.q)),
@@ -161,8 +158,20 @@ export async function listProjectMemberCandidates(
       )
     : undefined;
 
-  return getDb()
-    .select({
+  return getDb().transaction(async tx=>{
+    await assertPersistedPlatformPermission(tx,context,"projects.manage",{
+      organizationId:scope.organizationId,collegeId:scope.collegeId,
+    });
+    // Serialize candidate reads with an archive; no invitation list may be
+    // acted on after its owning workspace becomes immutable.
+    const [liveProject]=await tx.select({status:projectInstances.status})
+      .from(projectInstances)
+      .where(and(eq(projectInstances.id,scope.project.id),
+        eq(projectInstances.collegeId,scope.collegeId)))
+      .for("share").limit(1);
+    if(!liveProject||liveProject.status==="ARCHIVED")
+      throw new ProjectsServiceError("PROJECT_INVALID_STATE");
+    return tx.select({
       membershipId: collegeMemberships.id,
       displayName: users.displayName,
       email: users.email,
@@ -195,6 +204,7 @@ export async function listProjectMemberCandidates(
     )
     .orderBy(asc(users.displayName), asc(collegeMemberships.id))
     .limit(query.limit);
+  });
 }
 
 export async function listProjectMentorCandidates(
