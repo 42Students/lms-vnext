@@ -15,9 +15,10 @@ export function facultyYouTubeEmbed(value:string|null){
  const href=facultyContentExternalHref("YOUTUBE",value);
  if(!href)return null;
  const url=new URL(href);
- const id=url.hostname==="youtu.be"?
-  url.pathname.split("/")[1]:url.pathname.startsWith("/shorts/")?
-  url.pathname.split("/")[2]:url.searchParams.get("v");
+ const segments=url.pathname.split("/");
+ const id=url.hostname==="youtu.be" ? segments[1] :
+  (["shorts","embed","live"].includes(segments[1] ?? "") ? segments[2] :
+   url.searchParams.get("v"));
  return id&&/^[A-Za-z0-9_-]{11}$/.test(id)?
   "https://www.youtube-nocookie.com/embed/"+id:null;
 }

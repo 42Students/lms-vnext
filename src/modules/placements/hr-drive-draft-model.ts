@@ -17,9 +17,11 @@ const round = z.strictObject({
    .refine(value=>!/[\x00-\x1f\x7f]/.test(value),{message:"Invalid round name"}),
 });
 export const hrDriveDraftSchema = z.strictObject({
-  title: z.string().trim().min(3,"Enter a role title").max(200),
+  title: z.string().trim().min(3,"Enter a role title").max(200)
+   .refine(value=>!/[\x00-\x1f\x7f]/.test(value),{message:"Invalid role title"}),
   description: z.string().trim().max(5000),
-  location: z.string().trim().max(180),
+  location: z.string().trim().max(180)
+   .refine(value=>!/[\x00-\x1f\x7f]/.test(value),{message:"Invalid location"}),
   employmentType: z.enum(["FULL_TIME", "INTERNSHIP", "INTERNSHIP_FULL_TIME", "CONTRACT"]),
   workMode: z.enum(["ONSITE", "HYBRID", "REMOTE", "NO_PREFERENCE"]),
   driveMode: z.enum(["ON_CAMPUS","OFF_CAMPUS"]).default("ON_CAMPUS"),
