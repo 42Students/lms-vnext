@@ -127,9 +127,14 @@ export function mentorPortfolioActivityCutoff(
  return new Date(now.getTime()-days*86400000);
 }
 export function mentorActivityPagination(total:number, requested:number, pageSize:number){
- const totalPages=Math.max(1,Math.ceil(total/pageSize));
- const page=Math.max(1,Math.min(requested,totalPages));
- return {page,pageSize,total,totalPages};
+ // The service normally passes schema-validated page numbers, but this
+ // exported presentation boundary must never emit NaN/Infinity into links
+ // when a caller receives malformed pagination metadata.
+ const safeTotal=Number.isSafeInteger(total)&&total>=0?total:0;
+ const safePageSize=Number.isSafeInteger(pageSize)&&pageSize>=1&&pageSize<=50?pageSize:20;
+ const totalPages=Math.max(1,Math.ceil(safeTotal/safePageSize));
+ const page=Number.isSafeInteger(requested)&&requested>=1?Math.min(requested,totalPages):1;
+ return {page,pageSize:safePageSize,total:safeTotal,totalPages};
 }
 
 /** Search only project titles from the live, persisted assigned-Mentor roster. */
