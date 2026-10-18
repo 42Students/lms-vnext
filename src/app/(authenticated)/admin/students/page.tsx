@@ -64,7 +64,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
     </Link>
   </div>:null}
   {choices?<section id="register-student" aria-labelledby="register-student-heading" className="min-w-0 scroll-mt-24 space-y-2"><h2 id="register-student-heading" className="text-lg font-semibold">Register New Student</h2><CollegeStudentRegisterForm choices={choices}/></section>:null}
-  {choices?<section aria-labelledby="bulk-register-students-heading" className="min-w-0 space-y-3 rounded-xl border border-border bg-surface p-4 sm:p-6">
+  {choices?<section aria-labelledby="bulk-register-students-heading" className="min-w-0 space-y-3 border-b border-border pb-5">
     <div className="flex flex-wrap items-center justify-between gap-3">
       <h2 id="bulk-register-students-heading" className="text-lg font-semibold">Bulk Register Students</h2>
       <SuperAdminStudentImportHistory runs={importRuns}/>
