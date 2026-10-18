@@ -78,7 +78,8 @@ describe("UX-kit-scroll-motion owner invisible-scrollbar contracts", () => {
     expect(html).toContain('data-axis="x"');
     expect(html).toContain("overscroll-x-contain");
     // aria-label is applied after overflow is measured in the browser, not during SSR.
-    expect(ui("data-table")).toContain("table, scroll horizontally to view more columns");
+    expect(ui("data-table")).toContain("caption+\" scrollable columns\"");
+    expect(ui("data-table")).toContain("Scrollable table columns");
     expect(ui("data-table")).toContain('title="More details"');
     expect(ui("data-table")).toContain("sm:sticky sm:top-0");
   });
