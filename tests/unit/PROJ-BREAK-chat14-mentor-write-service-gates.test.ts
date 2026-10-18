@@ -5,6 +5,7 @@ import {moveMentorBacklogTask,createMentorBacklogTask} from "@/modules/projects/
 import {deleteMentorProjectSprint} from "@/modules/projects/mentor-sprint-delete-service";
 import {deleteMentorProjectTask} from "@/modules/projects/mentor-task-delete-service";
 import {lockMentorFinalDelivery} from "@/modules/projects/mentor-delivery-lock-service";
+import {updateMentorProjectOverview} from "@/modules/projects/mentor-overview-edit-service";
 
 const state=vi.hoisted(()=>({authorized:false,scopeCalls:0,dbCalls:0}));
 vi.mock("server-only",()=>({}));
@@ -39,11 +40,14 @@ const commands:Array<{name:string;run:Runner}>= [
   expectedUpdatedAt:timestamp,confirm:true})},
  {name:"lock delivery",run:()=>lockMentorFinalDelivery(ctx,projectId,submissionId,{
   reason:"Reviewed delivery",expectedUpdatedAt:timestamp})},
+ {name:"mentor overview edit",run:()=>updateMentorProjectOverview(ctx,projectId,{
+  summary:"Sprint is underway",dueLabel:null,blocker:null,nextAction:null,
+  expectedUpdatedAt:timestamp})},
 ];
 beforeEach(()=>{state.authorized=false;state.scopeCalls=0;state.dbCalls=0;});
 
 describe("PROJ-BREAK-MENTOR-186..189 mentor write services fail closed",()=>{
- it("PROJ-BREAK-MENTOR-186 unauthorised project ID never starts transaction across six commands",async()=>{
+ it("PROJ-BREAK-MENTOR-186 unauthorised project ID never starts transaction across seven commands",async()=>{
   for(const command of commands){
    await expect(command.run(),command.name).rejects.toThrow("FORBIDDEN_SCOPE");
   }
@@ -69,6 +73,8 @@ describe("PROJ-BREAK-MENTOR-186..189 mentor write services fail closed",()=>{
      expectedUpdatedAt:timestamp,confirmUnlink:false}),
    ()=>deleteMentorProjectTask(ctx,projectId,taskId,{expectedUpdatedAt:timestamp}),
    ()=>lockMentorFinalDelivery(ctx,projectId,submissionId,{reason:"",expectedUpdatedAt:timestamp}),
+   ()=>updateMentorProjectOverview(ctx,projectId,{
+    summary:null,dueLabel:null,blocker:null,nextAction:null}),
   ];
   for(const run of invalid)await expect(run()).rejects.toThrow();
   expect(state.scopeCalls).toBe(0);

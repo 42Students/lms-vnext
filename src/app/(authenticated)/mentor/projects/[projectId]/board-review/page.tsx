@@ -6,18 +6,20 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {mentorBoardReviewHref,mentorBoardReviewQuerySchema}
   from "@/modules/projects/mentor-board-review-model";
 import {getMentorBoardReview} from "@/modules/projects/mentor-board-review-service";
+import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
 type Params={status?:string|string[];priority?:string|string[];
   sprintId?:string|string[];search?:string|string[];page?:string|string[]};
-const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
 export default async function MentorBoardReviewPage({
   params,searchParams,
 }:{params:Promise<{projectId:string}>;searchParams:Promise<Params>}){
   const [{projectId},raw]=await Promise.all([params,searchParams]);
-  const validated=mentorBoardReviewQuerySchema.safeParse({
-    projectId,status:first(raw.status)??undefined,
-    priority:first(raw.priority)??undefined,sprintId:first(raw.sprintId)??undefined,
-    search:first(raw.search)??undefined,page:first(raw.page)??undefined,
+  const normalized=singleValueMentorFilters({
+    status:raw.status,priority:raw.priority,sprintId:raw.sprintId,
+    search:raw.search,page:raw.page,
   });
+  const validated=mentorBoardReviewQuerySchema.safeParse(
+    normalized?{projectId,...normalized}:null,
+  );
   if(!validated.success)return <section role="alert" className="space-y-3">
     <h1>Invalid board filters</h1>
     <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Projects</Link>
