@@ -96,3 +96,9 @@ The dedicated `docs/audit/coverage/hr-pages-chat19-ledger.md` enumerates all 22 
 | Finding ID | Severity | Source evidence | Defect | Fix | Commit | Regression |
 |---|---|---|---|---|---|---|
 | HR-XA-09 | MAJOR | `src/app/(authenticated)/hr/conversations/page.tsx` Notification inbox link | `/hr/messages` aliases the current `/hr/conversations` inbox. Its `Notification inbox` action therefore reopened the same page, not notifications. | Target `/hr/notifications` while keeping the legacy Messages alias. | `c4f07f41` | `tests/unit/HR-BREAK-chat19-conversation-inbox-page.test.ts` (`67f37ff5`) |
+
+### College report reconciliation
+
+| Finding ID | Severity | Evidence | Defect | Fix | Commit | Test |
+|---|---|---|---|---|---|---|
+| COL-XA-AUDIT-01 | MAJOR (audit integrity) | `docs/design-system/audits/UX-ROLLOUT-AUDIT-college-chat-19.md` group counts | Source audit grouped 85 routes with broken concatenated numerals (e.g. 14 placement paths displayed as fourteen `1` characters), obscuring the true page count. | Recomputed every functional group from `docs/orchestrator/ui-ux/pages-college.md`; made the root `/college` the dashboard group; asserted 85 total. | `215bbab1` | `tests/unit/chat19-college-source-coverage.test.ts` (`2436943f`, `3d0e7f39`) |
