@@ -188,3 +188,6 @@ The reader pages already use `safeParse` and a recoverable invalid-filter UI. Th
 
 
 | `src/modules/placements/report-model.ts` — `placementReportCsvCell`, `placementReportCsv` and accreditation CSV consumers | **SA-REPORT-CSV-UNICODE-06/07**, DONE in source: Unicode format controls, combining/enclosing marks, ASCII control and whitespace preceding `=+`/`-@` are prefixed before quoted CSV serialization. Preserves safe cell content, escaping of quotes and CRLF rows. | `tests/unit/chat13-placement-analytics-unicode-csv.test.ts` / `SA-REPORT-CSV-UNICODE-06/07` ; authored not run; spreadsheet parser parity and downloadable endpoint integration pending |
+
+
+| `src/modules/placements/admin-company-directory-export-model.ts` / `superAdminCompanyCsv` and `src/modules/admin-ui/super-admin-scoped-csv-model.ts` / `buildSuperAdminScopedCsv` | **SA-ADMIN-CSV-05**: closes `Cc/Me` category holes not in prior `Cf/Mn` escaping, preserves safe Unicode/quotes, cap and BOM. Shared behavior with `placementReportCsvCell`; two exported report families must reject the same malicious input. | `tests/unit/chat13-all-admin-csv-hidden-control-matrix.test.ts` / `SA-ADMIN-CSV-05`; authored, not executed |
