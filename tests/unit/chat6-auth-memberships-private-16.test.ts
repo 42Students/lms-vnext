@@ -62,6 +62,17 @@ describe("AUTH-handoff-16 scoped membership cookies and no-store",()=>{
   expect((await response.text())).not.toContain(ownMembership);
   expect(listMembershipChoices).not.toHaveBeenCalled();
  });
+ it("rejects forged college and role properties rather than silently ignoring them",async()=>{
+  const response=await POST(request("POST",{
+   membershipId:ownMembership,collegeId:other,systemRole:"SUPER_ADMIN",
+  }));
+  expect(response.status).toBe(400);
+  expect(response.headers.get("Cache-Control")).toBe("private, no-store");
+  expect(response.cookies.get("lms_membership")).toBeUndefined();
+  expect(resolveRequestContext).not.toHaveBeenCalledWith({
+   identityUid:"identity-1",activeMembershipId:ownMembership,
+  });
+ });
  it("rejects cross-origin membership switches without touching identity state",async()=>{
   vi.mocked(isSameOriginRequest).mockReturnValue(false);
   const response=await POST(request("POST"));
