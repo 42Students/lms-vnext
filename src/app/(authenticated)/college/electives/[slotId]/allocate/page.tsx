@@ -10,6 +10,8 @@ import {
 } from "@/db/schema";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { DataTable } from "@/components/ui/data-table";
+import { ScrollCue } from "@/components/ui/scroll-cue";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import { joinGroup } from "@/modules/groups/service";
@@ -26,8 +28,10 @@ async function scopedSlot(slotId: string) {
     collegeId: context.membership.collegeId,
     organizationId: context.membership.organizationId,
   });
+  const checkedSlot = uuid.safeParse(slotId);
+  if (!checkedSlot.success) notFound();
   const [slot] = await getDb().select().from(electiveSlots).where(and(
-    eq(electiveSlots.id, uuid.parse(slotId)),
+    eq(electiveSlots.id, checkedSlot.data),
     eq(electiveSlots.collegeId, context.membership.collegeId),
     eq(electiveSlots.status, "ACTIVE"), isNull(electiveSlots.deletedAt),
   )).limit(1);
@@ -102,10 +106,12 @@ export default async function CollegeElectiveAllocatePage({
     "use server";
     const { context, slot: current } = await scopedSlot(slotId);
     const groupId = String(formData.get("offeringGroup") ?? "");
+    const checkedGroup = uuid.safeParse(groupId);
+    if (!checkedGroup.success) redirect(base(slotId) + "?failed=1&reason=Choose%20an%20elective%20offering.");
     const [target] = await getDb().select({ id: electiveOfferings.id })
       .from(electiveOfferings).where(and(
         eq(electiveOfferings.slotId, current.id),
-        eq(electiveOfferings.groupId, uuid.parse(groupId)),
+        eq(electiveOfferings.groupId, checkedGroup.data),
         eq(electiveOfferings.status, "ACTIVE"), isNull(electiveOfferings.deletedAt),
       )).limit(1);
     if (!target) notFound();
@@ -178,19 +184,26 @@ export default async function CollegeElectiveAllocatePage({
       </label>
       {offerings.length === 0 && <p className="text-sm text-muted-foreground">
         Add a course offering to this slot before allocating learners.</p>}
-      <DataTable rows={students} getRowKey={s=>s.membershipId}
-        caption="Eligible students for allocation"
-        columns={[
-          {key:"select",header:"Select",mobilePriority:"action",cell:s=>
-            <label className="inline-flex min-h-11 min-w-11 items-center justify-center">
-              <input type="checkbox" aria-label={"Select "+(s.name??s.rollNumber??"student")+" for allocation"}
-                name="membershipId" value={s.membershipId}/>
-            </label>},
-          {key:"student",header:"Student",mobilePriority:"primary",cell:s=>s.name??s.membershipId},
-          {key:"roll",header:"Roll No.",mobilePriority:"secondary",cell:s=>s.rollNumber??"—"},
-          {key:"section",header:"Section",mobilePriority:"secondary",cell:s=>s.sectionName},
-        ]}
-        empty={<p className="text-sm text-muted-foreground">No matching eligible students. Adjust the filters or paste membership IDs.</p>}/>
+      <ScrollCue axis="y" label="Eligible students for allocation"
+        className="min-w-0 rounded-md border border-border" viewportClassName="max-h-80">
+        <DataTable
+          caption="Eligible students for allocation"
+          rows={students}
+          getRowKey={student => student.membershipId}
+          empty={<p className="text-sm text-muted-foreground">No eligible students match these filters.</p>}
+          columns={[
+            { key: "select", header: "Select", mobilePriority: "action", cell: student =>
+              <label className="flex min-h-11 min-w-11 items-center justify-center">
+                <input type="checkbox"
+                  aria-label={"Select " + (student.name ?? student.rollNumber ?? "student") + " for allocation"}
+                  name="membershipId" value={student.membershipId} />
+              </label> },
+            { key: "name", header: "Student", mobilePriority: "primary", cell: student => student.name ?? student.membershipId },
+            { key: "roll", header: "Roll No.", mobilePriority: "secondary", cell: student => student.rollNumber ?? "—" },
+            { key: "section", header: "Section", mobilePriority: "secondary", cell: student => student.sectionName },
+          ]}
+        />
+      </ScrollCue>
       <p className="text-xs text-muted-foreground">
         Showing up to 500 matching active learners. Filter by section or search for a smaller list.</p>
       <label className="grid gap-1 text-sm font-semibold">Or paste roll numbers / learner membership IDs
