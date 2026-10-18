@@ -57,6 +57,16 @@ describe("HR-PORTFOLIO-OWNER-24 no unauthorized employer portfolio enumeration",
   expect(portfolio).toContain('eq(placementCompanies.status, "ACTIVE")');
   expect(portfolio).toContain('eq(colleges.status, "ACTIVE")');
   expect(portfolio).toContain('recruiterOwnJobPredicate(context.user.id)');
+  // HR-PORTFOLIO-REVOKE-37: check persisted authorization on every read,
+  // rather than trusting a session grant cached before revocation.
+  for(const condition of [
+   'eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id)',
+   'eq(placementRecruiterCollegeGrants.companyRelationshipId,placementCompanyRelationships.id)',
+   'eq(placementRecruiterCollegeGrants.status,"ACTIVE")',
+   'eq(placementRecruiterProfiles.userId,context.user.id)',
+   'eq(placementRecruiterProfiles.companyId,placementCompanies.id)',
+   'eq(placementRecruiterProfiles.status,"ACTIVE")',
+  ])expect(portfolio).toContain(condition);
   // The allowlist is shared by dashboard, activity, notifications and calendar.
   for(const reader of [
    "src/modules/placements/hr-job-activity-service.ts",
