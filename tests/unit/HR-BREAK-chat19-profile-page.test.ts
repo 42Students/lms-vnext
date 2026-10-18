@@ -71,3 +71,27 @@ describe("HR-BREAK-chat19-profile-page: active recruiter reads and session denia
   expect(m.grants).not.toHaveBeenCalled();
  });
 });
+
+describe("HR-BREAK-PROFILE-SCOPE-44 private profile state isolation",()=>{
+ beforeEach(()=>{
+  vi.clearAllMocks();m.ctx.mockResolvedValue(actor);
+  m.profile.mockResolvedValue(profile);
+  m.grants.mockResolvedValue({profileStatus:"ACTIVE",grants:[]});
+ });
+ it("changes client form identity between logged-in recruiters before reusing unsent private data",async()=>{
+  const source=await import("node:fs");
+  const code=source.readFileSync("src/app/(authenticated)/hr/profile/page.tsx","utf8");
+  expect(code).toContain('RecruiterProfileDetailsEditor key={context.user.id}');
+  expect(code).toContain('key={context.user.id+":"+profile.grants.map(grant=>grant.id).join(",")}');
+ });
+ it("the server does not expose the previous actor's profile on a newly authorized actor",async()=>{
+  const otherActor={...actor,user:{...actor.user,id:"other"},recruiter:{...actor.recruiter!,userId:"other"}};
+  const otherProfile={...profile,displayName:"Other Recruiter",email:"other@example.com",companyName:"Other employer"};
+  m.ctx.mockResolvedValue(otherActor);
+  m.profile.mockResolvedValue(otherProfile);
+  const result=await HrProfilePage();
+  expect(collect(result)).toContain("other@example.com");
+  expect(collect(result)).not.toContain("ananya@example.com");
+  expect(m.profile).toHaveBeenCalledWith(otherActor);
+ });
+});

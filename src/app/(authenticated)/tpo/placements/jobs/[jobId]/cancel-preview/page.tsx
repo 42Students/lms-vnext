@@ -24,7 +24,7 @@ export default async function TpoDriveCancelPreviewPage({
   }
   return (
     <div className="min-w-0 space-y-5">
-      <Link href={"/tpo/placements/jobs/" + preview.id} className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
+      <Link href={"/tpo/placements/jobs/" + preview.id} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
         ← Drive workspace
       </Link>
       <PageHeader
@@ -36,7 +36,9 @@ export default async function TpoDriveCancelPreviewPage({
         <TpoDriveCancelForm preview={preview} />
       ) : (
         <p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
-          Cancellation is available for drafts or published drives in an active season.
+          {preview.pendingPromotions>0
+            ? "A waitlisted learner's reserved offer is still pending. Finish the waitlist offer before cancelling this drive."
+            : "Cancellation is available for drafts or published drives in an active season."}
         </p>
       )}
     </div>

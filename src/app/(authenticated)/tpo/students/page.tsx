@@ -989,9 +989,11 @@ export default async function TpoStudentsPage({
            id:item.job.id,name:item.company.name+" · "+item.job.title,status:item.job.status,
           }))}/>:null}
         {manageAllowed&&(await placementTableExists("placement_tpo_prep_assignments"))?<TpoStudentsAssignPrep/>:null}
-        {manageAllowed?<TpoStudentsBulkDebar learners={roster.items.map(student=>({
-          id:student.membershipId,name:student.displayName,debarred:student.debarred===true
-        }))}/>:null}
+        {manageAllowed?<TpoStudentsBulkDebar learners={
+          (roster.total<=5000?data.exportRows??roster.items:roster.items).map(student=>({
+           id:student.membershipId,name:student.displayName,debarred:student.debarred===true,
+          }))
+        }/>:null}
         {manageAllowed ? (
           <TpoStudentsBulkAdd
             key={"bulk-add:"+query.batchId+":"+query.branchId+":"+roster.page+":"+query.pageSize+":"+query.search+":"+query.journeyState}

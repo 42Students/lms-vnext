@@ -10,12 +10,13 @@ import {
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
-import { parseProjectAdminSubmissionsQuery,projectAdminUnsubmittedHref } from "@/modules/projects/admin-submissions-query-model";
+import { parseProjectAdminSubmissionsQuery,projectAdminUnsubmittedHref,projectAdminSubmissionHref } from "@/modules/projects/admin-submissions-query-model";
 import {ProjectAdminSubmissionReview} from "@/components/projects/project-admin-submission-review";
 import {ProjectSubmissionsPageExport} from "@/components/projects/project-submissions-page-export";
 import {listProjectAdminUnsubmitted} from "@/modules/projects/admin-unsubmitted-service";
 import { StatusBadge } from "@/components/ui/status-badge";
-import {formatProjectAdminActivityDateIst as formatDate} from "@/modules/projects/project-admin-date-model";
+import {formatProjectAdminActivityDateIst as formatDate,safeProjectAdminUtcIso} from "@/modules/projects/project-admin-date-model";
+import {projectAdminElapsedDays} from "@/modules/projects/admin-submission-age-model";
 import { DataTable } from "@/components/ui/data-table";
 import {
   listProjectAdminSubmissionQueue,
@@ -73,8 +74,10 @@ export async function ProjectAdminSubmissionsPage({
     listProjectAdminSubmissionQueue(context, collegeId, query),
     getProjectAdminSubmissionSummary(context, collegeId),
   ]):null;
-  const result=all?.[0]?.status==="fulfilled"?all[0].value:null;
-  const summary=all?.[1]?.status==="fulfilled"?all[1].value:null;
+  const submissionsRead=all?.[0];
+  const summaryRead=all?.[1];
+  const result=submissionsRead?.status==="fulfilled"?submissionsRead.value:null;
+  const summary=summaryRead?.status==="fulfilled"?summaryRead.value:null;
   const queuePath=basePath+"/submissions";
   const renderedAt=new Date();
   const unsubmittedResult=view==="NOT_SUBMITTED"
@@ -115,23 +118,23 @@ export async function ProjectAdminSubmissionsPage({
       />
 
       <nav aria-label="Submission categories" className="flex flex-wrap gap-3 text-sm font-semibold">
-        <Link href={queuePath} aria-current={view==="ALL"?"page":undefined}
+        <Link href={projectAdminSubmissionHref(queuePath,query)} aria-current={view==="ALL"?"page":undefined}
           className="inline-flex min-h-11 items-center rounded border border-border px-3 py-2 text-primary-text">All submissions</Link>
-        <Link href={queuePath+"?view=NOT_SUBMITTED"} aria-current={view==="NOT_SUBMITTED"?"page":undefined}
+        <Link href={projectAdminUnsubmittedHref(queuePath,query)} aria-current={view==="NOT_SUBMITTED"?"page":undefined}
           className="inline-flex min-h-11 items-center rounded border border-border px-3 py-2 text-primary-text">Not submitted</Link>
       </nav>
       <nav aria-label="Review status shortcuts" className="flex flex-wrap gap-2 text-xs font-semibold">
-        <Link href={queuePath+"?submissionStatus=UNDER_REVIEW"}
+        <Link href={projectAdminSubmissionHref(queuePath,query,"UNDER_REVIEW")}
           aria-current={query.submissionStatus==="UNDER_REVIEW"?"page":undefined}
           className="inline-flex min-h-11 items-center rounded-md border border-border px-3 py-2 text-primary-text">
           Under Review
         </Link>
-        <Link href={queuePath+"?submissionStatus=LOCKED"}
+        <Link href={projectAdminSubmissionHref(queuePath,query,"LOCKED")}
           aria-current={query.submissionStatus==="LOCKED"?"page":undefined}
           className="inline-flex min-h-11 items-center rounded-md border border-border px-3 py-2 text-primary-text">
           Locked
         </Link>
-        <Link href={queuePath+"?submissionStatus=DRAFT_REVISING"}
+        <Link href={projectAdminSubmissionHref(queuePath,query,"DRAFT_REVISING")}
           aria-current={query.submissionStatus==="DRAFT_REVISING"?"page":undefined}
           className="inline-flex min-h-11 items-center rounded-md border border-border px-3 py-2 text-primary-text">
           Draft (revising)
@@ -154,7 +157,7 @@ export async function ProjectAdminSubmissionsPage({
             {key:"status",header:"Status",mobilePriority:"secondary",cell:row=>row.status},
             {key:"progress",header:"Progress",mobilePriority:"secondary",cell:row=>row.progressPercent+"%"},
             {key:"inactive",header:"Inactive",mobilePriority:"secondary",cell:row=>
-              Math.max(0,Math.floor((renderedAt.getTime()-row.updatedAt.getTime())/86400000))+" days"},
+              (projectAdminElapsedDays(row.updatedAt,renderedAt)===null?"—":projectAdminElapsedDays(row.updatedAt,renderedAt)+" days")},
             {key:"action",header:"Action",mobilePriority:"action",cell:row=>
               <Link href={basePath+"/"+row.id+"/delivery"}
                 className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Open</Link>},
@@ -197,8 +200,8 @@ export async function ProjectAdminSubmissionsPage({
         submissionType:submission.attachments.some(entry=>entry && typeof entry==="object" && "kind" in entry && entry.kind==="FILE")?"File upload":
           submission.sourceUrl||submission.demoUrl?"Link":"Text",
         pendingDays:submission.status==="SUBMITTED"&&submission.submittedAt?
-          Math.max(0,Math.floor((renderedAt.getTime()-submission.submittedAt.getTime())/86400000)):null,
-        submittedAt:submission.submittedAt?.toISOString()??null,
+          projectAdminElapsedDays(submission.submittedAt,renderedAt):null,
+        submittedAt:submission.submittedAt?safeProjectAdminUtcIso(submission.submittedAt):null,
         revisions:Math.max(0,submission.version-1),
         reviewedBy:submission.reviewedBy,
         sourceUrl:safeProjectExternalHref(submission.sourceUrl),
@@ -247,7 +250,7 @@ export async function ProjectAdminSubmissionsPage({
               <dl className="mt-3 grid gap-2 text-xs text-body sm:grid-cols-3">
                 <div><dt className="font-semibold">Pending</dt><dd>{
                   submission.status === "SUBMITTED" && submission.submittedAt
-                    ? Math.max(0, Math.floor((renderedAt.getTime() - submission.submittedAt.getTime()) / 86400000)) + " days"
+                    ? (projectAdminElapsedDays(submission.submittedAt,renderedAt)===null?"—":projectAdminElapsedDays(submission.submittedAt,renderedAt)+" days")
                     : "—"
                 }</dd></div>
                 <div><dt className="font-semibold">Revisions</dt>

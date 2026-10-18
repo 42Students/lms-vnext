@@ -639,10 +639,10 @@ export default async function HrPlacementJobPage({
         <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="m-0 text-lg font-semibold text-foreground">Job offers · read only</h2>
-            <Link href={"/api/placements/recruiter/jobs/"+workspace.job.id+"/offers/export?offerState="+filters.offerState}
+            {!["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState)?<Link href={"/api/placements/recruiter/jobs/"+workspace.job.id+"/offers/export?offerState="+filters.offerState}
               className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
               Export offers CSV
-            </Link>
+            </Link>:null}
           </div>
           <p className="text-sm text-body">Only offers for company-shared shortlisted applicants appear here. Counts include only issued offer records, and the table loads 15 at a time. Pre-issue selections appear separately below. Letters of intent issued by the placement team are labelled; the placement team issues and withdraws them.</p>
           <div className="grid gap-3 sm:grid-cols-3">
