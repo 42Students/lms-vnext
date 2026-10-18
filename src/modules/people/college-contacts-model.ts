@@ -1,6 +1,13 @@
 import { z } from "zod";
 import {COURSE_TEACHING_ROLES} from "@/modules/courses/constants";
 export const COLLEGE_CONTACTS_PAGE_SIZE=20;
+// URL pagination must be decimal digits; z.coerce.number also accepts
+// hexadecimal, exponent notation and whitespace supplied by a forged URL.
+const decimalContactInteger = (min: number, max: number) => z.union([
+  z.number().int().min(min).max(max),
+  z.string().regex(/^[0-9]+$/).transform(Number)
+    .pipe(z.number().int().min(min).max(max)),
+]);
 export const collegeContactsQuerySchema=z.strictObject({
   tab:z.enum(["ALL","FACULTY","STUDENT"]).default("ALL"),
   q:z.string().trim().max(100).default(""),
@@ -27,8 +34,8 @@ export const collegeContactsQuerySchema=z.strictObject({
   teachingRole:z.union([z.literal("ALL"),z.enum(COURSE_TEACHING_ROLES)]).default("ALL"),
   enrollment:z.enum(["ALL","ACTIVE","NONE"]).default("ALL"),
   sort:z.enum(["NAME","NAME_DESC","NEWEST","OLDEST"]).default("NAME"),
-  page:z.coerce.number().int().min(1).max(10000).default(1),
-  pageSize:z.coerce.number().int().refine(n=>[10,20,25,50].includes(n)).default(COLLEGE_CONTACTS_PAGE_SIZE),
+  page:decimalContactInteger(1,10000).default(1),
+  pageSize:decimalContactInteger(10,50).refine(n=>[10,20,25,50].includes(n)).default(COLLEGE_CONTACTS_PAGE_SIZE),
 });
 export type CollegeContactsQuery=z.infer<typeof collegeContactsQuerySchema>;
 export function contactRoleAudienceCompatible(filter:{tab:string;audience:string}):boolean {

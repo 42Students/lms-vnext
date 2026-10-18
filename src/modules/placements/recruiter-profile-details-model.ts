@@ -26,3 +26,16 @@ export function hrProfileSaveErrorFeedback(status:number):string{
  if(status===429)return "Too many save attempts. Try again shortly; your edits are still here.";
  return "Could not save your profile. Your changes are still here; try again.";
 }
+
+/** A successful HTTP status (including a sign-in fallback) is not a saved
+ * recruiter profile. Validate the exact server projection and CAS tokens. */
+export const hrProfileDetailsSaveReceiptSchema=z.strictObject({
+ profile:z.strictObject({
+  displayName:z.string().trim().min(2).max(160),
+  title:z.string().nullable(),
+  phone:z.string().regex(/^(?:[0-9]{10})?$/),
+  changed:z.boolean(),
+  userUpdatedAt:z.iso.datetime(),
+  profileUpdatedAt:z.iso.datetime(),
+ }),
+});

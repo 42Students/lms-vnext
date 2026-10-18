@@ -14,6 +14,7 @@ const mentorId="33333333-3333-4333-8333-333333333333";
 const state=vi.hoisted(()=>({
   scope:0,liveChecks:0,reads:0,revoked:false,filters:[] as unknown[],
   pages:[] as number[],offsets:[] as number[],total:1,
+  selectFields:[] as Record<string,unknown>[],
 }));
 vi.mock("@/modules/projects/scope",()=>({
   loadProjectCollegeScope:async(id:string)=>{
@@ -33,6 +34,7 @@ vi.mock("@/db/client",()=>({
     transaction:async<T>(fn:(tx:unknown)=>Promise<T>)=>{
       const select=(fields:Record<string,unknown>)=>{
         state.reads++;
+        state.selectFields.push(fields);
         const rows="total" in fields?[{total:state.total}]:
           "activeWorkspaces" in fields?[{mentorMembershipId:mentorId,mentorName:"Mentor",activeWorkspaces:1,atRisk:0}]:
           [{id:"55555555-5555-4555-8555-555555555555",title:"IIT Dharwad",status:"ACTIVE",
@@ -62,7 +64,7 @@ const admin=():RequestContext=>({
 });
 beforeEach(()=>{
   state.scope=0;state.liveChecks=0;state.reads=0;state.revoked=false;
-  state.filters=[];state.pages=[];state.offsets=[];state.total=1;
+  state.filters=[];state.pages=[];state.offsets=[];state.total=1;state.selectFields=[];
 });
 describe("IIT Dharwad Projects: mentor reassignment workload tenant and input safety",()=>{
   it("PROJ-BREAK-mentor-86 rejects hostile direct-service input before scope or DB lookup",async()=>{
@@ -126,6 +128,20 @@ describe("IIT Dharwad Projects: mentor reassignment workload tenant and input sa
     state.total=1000;
     const exactly=await listCollegeReassignmentWorkspaces(admin(),collegeId,{});
     expect(exactly.matchingCapped).toBe(false);
+  });
+  it("PROJ-BREAK-mentor-92 risk score subqueries correlate to workspace, not the child table's id",async()=>{
+    await listCollegeProjectMentorWorkload(admin(),collegeId);
+    const row=state.selectFields.find(fields=>"atRisk" in fields);
+    expect(row).toBeDefined();
+    const rendered=new PgDialect().sqlToQuery(row!.atRisk as SQL).sql.replace(/\s+/g," ");
+    for(const child of [
+      "project_tasks","project_sprints","project_releases","project_submissions",
+      "project_task_submissions","project_meetings","project_resources","project_members",
+    ]){
+      expect(rendered).toContain("from "+child);
+    }
+    expect(rendered).toContain('project_id = "project_instances"."id"');
+    expect(rendered).not.toContain('project_id = "id"');
   });
   it("PROJ-BREAK-mentor-90 authorized workload remains scoped, archived-free and read-only",async()=>{
     const result=await listCollegeProjectMentorWorkload(admin(),collegeId);

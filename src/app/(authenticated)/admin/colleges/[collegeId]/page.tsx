@@ -30,17 +30,17 @@ export default async function TenantDetail({params}:{params:Promise<{collegeId:s
    <Link href={`/api/activity/admin-export?collegeId=${encodeURIComponent(item.id)}`}
      className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Export activity CSV</Link>
   </nav>
-  <dl className="grid gap-4 rounded-xl border border-border bg-surface p-5 sm:grid-cols-2">
+  <dl className="grid gap-4 border-t border-border pt-4 sm:grid-cols-2">
    {fields.map(([label,value])=><div key={label}><dt className="text-xs font-semibold text-muted-foreground">{label}</dt>
     <dd className="mt-1 break-words text-sm text-body">{value}</dd></div>)}
   </dl>
   {item.status==="ARCHIVED"&&item.organizationStatus==="ACTIVE"?
-   <section aria-label="Restore archived college" className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-surface p-4">
+   <section aria-label="Restore archived college" className="flex flex-wrap items-center gap-3 border-t border-border pt-4">
     <p className="text-sm text-body">This college is archived. Restore only after checking the organization and its deployment readiness.</p>
     <TenantRestoreAction kind="college" id={item.id} name={item.name}/>
    </section>:null}
   {item.status==="ARCHIVED"&&item.organizationStatus!=="ACTIVE"?
-   <p role="status" className="rounded-xl border border-border p-4 text-sm text-body">
+   <p role="status" className="border-t border-border pt-4 text-sm text-body">
     Restore the parent organization before restoring this college.
    </p>:null}
   <div className="flex flex-wrap gap-3">

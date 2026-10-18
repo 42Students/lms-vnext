@@ -46,25 +46,26 @@ const activePrimaryMentor = and(
 );
 
 function riskExpression() {
+  const outerProjectId=sql.raw('"project_instances"."id"');
   const lastActivity = sql`greatest(
     ${projectInstances.updatedAt},
-    coalesce((select max(updated_at) from project_tasks where project_id = ${projectInstances.id}), 'epoch'::timestamptz),
-    coalesce((select max(updated_at) from project_sprints where project_id = ${projectInstances.id}), 'epoch'::timestamptz),
-    coalesce((select max(updated_at) from project_releases where project_id = ${projectInstances.id}), 'epoch'::timestamptz),
-    coalesce((select max(updated_at) from project_submissions where project_id = ${projectInstances.id}), 'epoch'::timestamptz),
-    coalesce((select max(updated_at) from project_task_submissions where project_id = ${projectInstances.id}), 'epoch'::timestamptz),
-    coalesce((select max(updated_at) from project_meetings where project_id = ${projectInstances.id}), 'epoch'::timestamptz),
-    coalesce((select max(updated_at) from project_resources where project_id = ${projectInstances.id}), 'epoch'::timestamptz),
-    coalesce((select max(updated_at) from project_members where project_id = ${projectInstances.id}), 'epoch'::timestamptz)
+    coalesce((select max(updated_at) from project_tasks where project_id = ${outerProjectId}), 'epoch'::timestamptz),
+    coalesce((select max(updated_at) from project_sprints where project_id = ${outerProjectId}), 'epoch'::timestamptz),
+    coalesce((select max(updated_at) from project_releases where project_id = ${outerProjectId}), 'epoch'::timestamptz),
+    coalesce((select max(updated_at) from project_submissions where project_id = ${outerProjectId}), 'epoch'::timestamptz),
+    coalesce((select max(updated_at) from project_task_submissions where project_id = ${outerProjectId}), 'epoch'::timestamptz),
+    coalesce((select max(updated_at) from project_meetings where project_id = ${outerProjectId}), 'epoch'::timestamptz),
+    coalesce((select max(updated_at) from project_resources where project_id = ${outerProjectId}), 'epoch'::timestamptz),
+    coalesce((select max(updated_at) from project_members where project_id = ${outerProjectId}), 'epoch'::timestamptz)
   )`;
   const cutoff = new Date(Date.now() - 7 * 86400000);
   return sql<boolean>`(
     nullif(trim(${projectInstances.blocker}), '') is not null
     or ${lastActivity} <= ${cutoff}
-    or exists (select 1 from project_tasks t where t.project_id = ${projectInstances.id} and t.status = 'BLOCKED'
+    or exists (select 1 from project_tasks t where t.project_id = ${outerProjectId} and t.status = 'BLOCKED'
       and nullif(trim(t.blocker_reason), '') is not null)
     or coalesce((select s.status = 'SUBMITTED' from project_submissions s
-      where s.project_id = ${projectInstances.id} order by s.version desc limit 1), false)
+      where s.project_id = ${outerProjectId} order by s.version desc limit 1), false)
   )`;
 }
 

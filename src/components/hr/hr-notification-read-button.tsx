@@ -2,6 +2,7 @@
 import {useRef,useState} from "react";
 import {createHrBellMutationGate} from "@/modules/placements/hr-recruiter-bell-model";
 import {hrNotificationReadError} from "@/modules/placements/hr-notification-read-feedback-model";
+import {isVerifiedRecruiterDecisionReadReceipt} from "@/modules/placements/recruiter-decision-read-model";
 import {useRouter} from "next/navigation";
 export function HrNotificationReadButton({notificationId,expectedCreatedAt}:{
  notificationId:string;expectedCreatedAt:string;
@@ -18,11 +19,18 @@ export function HrNotificationReadButton({notificationId,expectedCreatedAt}:{
   try{
    const res=await fetch("/api/placements/recruiter/notifications/"+
     encodeURIComponent(notificationId)+"/read",{
-    method:"POST",credentials:"same-origin",
-    headers:{"content-type":"application/json"},
+    method:"POST",credentials:"same-origin",redirect:"error",
+    headers:{"content-type":"application/json",Accept:"application/json"},
     body:JSON.stringify({expectedCreatedAt}),
    });
-   if(res.ok){completeRef.current=true;setComplete(true);router.refresh();return;}
+   if(res.ok){
+    const payload:unknown=await res.json().catch(()=>null);
+    if(!isVerifiedRecruiterDecisionReadReceipt(payload,notificationId)){
+     setMessage("Could not confirm read status. Refresh this page before retrying.");
+     return;
+    }
+    completeRef.current=true;setComplete(true);router.refresh();return;
+   }
    setMessage(hrNotificationReadError(res.status));
   }catch{setMessage("Network error. Try again.");}
   finally{gate.current.end();setSaving(false);}
