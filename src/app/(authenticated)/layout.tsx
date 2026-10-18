@@ -13,6 +13,7 @@ import {
   listMembershipChoices,
 } from "@/modules/identity/context-service";
 import { AppShell } from "@/components/shell/app-shell";
+import { PageCanvas } from "@/components/ui/page-canvas";
 import { MembershipRecovery } from "@/components/auth/membership-recovery";
 import { SessionResponseGuard } from "@/components/auth/session-response-guard";
 import { isSuperAdmin } from "@/modules/identity/context";
@@ -145,7 +146,7 @@ export default async function AuthenticatedLayout({
       <SessionResponseGuard />
       <Suspense fallback={null}><PortalAccessNotice/></Suspense>
       <ConnectionFailureNotice/>
-      {children}
+      <PageCanvas>{children}</PageCanvas>
     </AppShell>
   );
 }
