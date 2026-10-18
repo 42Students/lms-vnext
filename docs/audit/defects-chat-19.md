@@ -602,3 +602,11 @@ No runtime or CI execution claimed.
 | HR-BREAK-COMPANY-COUNTS-50 | MAJOR | The Company & Team overview counted raw recruiter job rows; if a join or multi-grant authorization delivered the same visible drive more than once, active/closed totals and the three recent drive links could double-count it. Deduplicate by persisted job ID only **after** exact employer relationship and college authorization, archive/status filtering; retain stable first-seen order. | `tests/unit/HR-BREAK-chat19-company-counts.test.ts` covers duplicate joins, wrong-tenant/relationship exclusion, archived jobs, capped recent list and empty state. |
 
 No database CI or browser execution was performed.
+
+## HR Company Reports accepted-offer joining consistency
+
+| ID | Severity | Finding/fix | Behavioral evidence |
+|---|---|---|---|
+| HR-BREAK-REPORT-JOINED-51 | MAJOR | Entire-portfolio hiring funnel counted a `JOINED` outcome from an offer regardless of the offer's persisted status; current-page report rows and displayed explanations require JOINED **on ACCEPTED offers**. Restrict funnel `hired` aggregate to both `j.status='JOINED'` and `o.status='ACCEPTED'`, retaining exact scoped jobs, shared applications and active memberships. | `tests/unit/HR-BREAK-chat19-report-joined.test.ts` checks SQL/pagination semantics and authorized report row projection. |
+
+No SQL execution, CI, or browser check was run locally.
