@@ -39,7 +39,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
           Academic workspace
         </Link>}
       />
-      <section aria-label={title + " filters"} className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <section aria-label={title + " filters"} className="- sm: border-t border-border pt-4">
         <form method="get" action={path} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <label className="grid gap-1 text-sm font-semibold text-body">
             {classes ? "Class, batch or program" : "Elective or program"}

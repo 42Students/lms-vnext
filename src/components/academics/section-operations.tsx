@@ -505,7 +505,7 @@ export function SectionOperations({
 
   return (
     <div className="space-y-8">
-      <section className="grid gap-4 rounded-xl border border-border bg-surface p-5 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="grid gap-4 - sm:grid-cols-2 lg:grid-cols-4 border-t border-border pt-5">
         <div>
           <p className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Program

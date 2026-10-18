@@ -447,7 +447,7 @@ export function LearnerClassSchedule({
 
       {upcoming.length > 0 ? (
         <section
-          className="rounded-xl border border-border bg-surface p-4"
+          className="- border-t border-border pt-4"
           aria-label="Next upcoming classes"
         >
           <div className="flex items-center justify-between gap-3">
@@ -470,7 +470,7 @@ export function LearnerClassSchedule({
         </section>
       ) : null}
 
-      <section className="rounded-xl border border-border bg-surface p-4">
+      <section className="- border-t border-border pt-4">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-center gap-2">
             <Button
@@ -673,7 +673,7 @@ export function LearnerClassSchedule({
                     </button>;
                   })}
                 </div>
-                <section className="rounded-xl border border-border bg-surface-subtle p-3 sm:p-4" aria-label="Selected day agenda">
+                <section className="- -subtle p-3 sm: border-t border-border pt-4" aria-label="Selected day agenda">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <h3 className="text-sm font-semibold text-foreground">
                       {chosenDay} · {agenda.length} {agenda.length===1?"class":"classes"}
@@ -807,7 +807,7 @@ export function LearnerClassSchedule({
                 .map(({ day, events: dayEvents }) => (
                   <section
                     key={localDayKey(day)}
-                    className="rounded-xl border border-border bg-surface-subtle p-4"
+                    className="- -subtle border-t border-border pt-4"
                   >
                     <h3 className="m-0 text-sm font-semibold text-foreground">
                       {dayHeading(day)}
