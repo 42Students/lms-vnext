@@ -201,3 +201,10 @@ This is an independent unowned responsive UX pickup for the critical TPO/HR plac
 | ID | Before-fix severity | Source | Defect and fix | Commits | Test |
 |---|---|---|---|---|---|
 | UX-SPILL-TPO-CLIP-01 | MAJOR | `src/components/placements/tpo-request-page-clipboard.tsx` | The Choose columns control hid columns visually, but Copy selected rows still exported **all** fields, including concealed employer/student-number data. TSV also allowed Unicode zero-width/paragraph prefixed spreadsheet formulas and copied rows in original rather than displayed sort order. Scope clipboard fields to selected visible columns, retain canonical headings, preserve displayed sort, neutralize Unicode formulas and strip row/column delimiters. | `a5d72407` | `tests/unit/UX-SPILL-chat19-tpo-request-clipboard.test.ts` (`41ceef55`, `3457acc4`) |
+
+## Further TPO request phone accessibility
+
+| ID | Severity | Source | Problem and correction | Commit | Test |
+|---|---|---|---|---|---|
+
+| UX-SPILL-TPO-CLIP-02 | MAJOR (mobile accessibility) | `src/components/placements/tpo-request-page-clipboard.tsx` | Desktop-only spreadsheet plus separate narrow phone selector showed only student/company, hiding request kind, decision and status on a phone. Replaced dual display with shared `DataTable` cards showing primary identity, additional fields via accessible More details, and selectable actions at every viewport. Kept Select visible page, sortable rows, chosen column controls and clipboard semantics. | `9aea98f0` | `tests/unit/UX-SPILL-chat19-tpo-request-responsive.test.tsx` (`cbc3cd33`) |
