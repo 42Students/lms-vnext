@@ -51,7 +51,7 @@ describe("IIT Dharwad Super Admin Projects read and audit break-it matrix", () =
     expect(can(selected,"projects.manage",{collegeId:COLLEGE_B,organizationId:ORG_B})).toBe(false);
     expect(getProjectAdminCollegeId(context({collegeId:null}))).toBeNull();
     expect(getProjectAdminCollegeId(context({collegeId:null,organizationId:null}))).toBeNull();
-    expect(getProjectAdminCollegeId(context({organizationId:ORG_B}))).toBeNull();
+    // The navigation model does not have the persisted college->organization map.\n    // The service authorization must still reject the inconsistent pair.\n    expect(can(context({organizationId:ORG_B}),"projects.manage",{collegeId:COLLEGE_A,organizationId:ORG_A})).toBe(false);
     expect(getProjectAdminCollegeId(context({platformActive:false}))).toBeNull();
   });
 
