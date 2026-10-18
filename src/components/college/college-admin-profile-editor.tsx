@@ -58,8 +58,8 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
         {/* The signed-in administrator supplied this HTTPS image URL. No private document URL is synthesized. */}
         <img src={profile.photoUrl} alt={profile.displayName+" profile photo"} referrerPolicy="no-referrer"
           className="h-16 w-16 rounded-full border border-border bg-muted object-cover"/>
-        <a href={profile.photoUrl} target="_blank" rel="noreferrer"
-          className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">View profile photo</a>
+        <a href={profile.photoUrl} rel="noreferrer"
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">View profile photo</a>
       </div>:null}
     </div>
     <nav aria-label="Profile sections" className="flex flex-wrap gap-2">
@@ -67,7 +67,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
         ["personal", "Personal Details"], ["social", "Social Profiles"],
         ["address", "Address"], ["contacts", "Contacts"],
       ].map(([key, label]) => <a key={key} href={"#" + key}
-        className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">{label}</a>)}
+        className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">{label}</a>)}
     </nav>
     <div className="grid gap-5 md:grid-cols-2">
       <section id="personal" className="scroll-mt-24 space-y-3 rounded-xl border border-border bg-surface p-5">

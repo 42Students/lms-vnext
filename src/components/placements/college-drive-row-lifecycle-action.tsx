@@ -33,16 +33,16 @@ export function CollegeDriveRowLifecycleAction({jobId,title,status}:{
  }
  return <div className="inline-flex flex-col gap-2 text-sm">
   {!preview?<button type="button" onClick={()=>void perform(false)} disabled={busy}
-    className="min-h-9 rounded border border-border px-3 font-semibold text-primary-text disabled:opacity-50">
+    className="min-h-11 rounded border border-border px-3 font-semibold text-primary-text disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
     {action==="CLOSE"?"Close":"Open"}</button>:<div role="group" aria-label={"Confirm "+action.toLowerCase()+" "+title}
     className="space-y-2 rounded border border-border bg-surface p-3">
    <p className="text-xs font-semibold">{action==="CLOSE"?"Close":"Reopen"} {title}?</p>
    {action==="CLOSE"?<p className="text-xs">{preview.pendingLettersWithdrawn} issued offers may be withdrawn. Audit and application history remain.</p>:
     <p className="text-xs">Previously withdrawn offers will not be reissued.</p>}
    <button type="button" disabled={busy||!preview.eligible} onClick={()=>void perform(true)}
-    className="rounded bg-primary px-3 py-2 font-semibold text-on-primary disabled:opacity-50">Confirm</button>
+    className="rounded bg-primary px-3 py-2 font-semibold text-on-primary disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Confirm</button>
    <button type="button" disabled={busy} onClick={()=>setPreview(null)}
-    className="ml-2 rounded border border-border px-3 py-2">Cancel</button>
+    className="ml-2 rounded border border-border px-3 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Cancel</button>
   </div>}
   {error?<p role="alert" className="max-w-48 text-xs text-error">{error}</p>:null}
   {message?<p role="status" className="text-xs">{message}</p>:null}

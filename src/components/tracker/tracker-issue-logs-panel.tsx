@@ -28,7 +28,7 @@ export function TrackerIssueLogsPanel({publicId}:{publicId:string}){
     <h2 className="text-lg font-semibold">Logs around this report</h2>
     <p className="text-sm text-body">Find warnings and errors from the ten minutes before and after the report.</p>
     <button type="button" disabled={busy} onClick={()=>void load()}
-      className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold disabled:opacity-50">
+      className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold disabled:opacity-50">
       {busy?"Loading nearby logs…":"Load warnings and errors from that moment"}
     </button>
     {notice?<p role="status" className="text-sm text-body">{notice}</p>:null}
@@ -38,7 +38,7 @@ export function TrackerIssueLogsPanel({publicId}:{publicId:string}){
         <p className="font-semibold">{entry.event} · {entry.time}</p>
         <p className="mt-1 text-body">{entry.message}</p>
         <p className="mt-1 text-xs text-muted-foreground">{entry.path}</p>
-        <Link className="mt-2 inline-flex font-semibold text-primary-text underline"
+        <Link className="mt-2 inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
           href={"/tracker/logs?query="+encodeURIComponent(entry.requestId??entry.event)}>
           Open in Logs
         </Link>

@@ -42,7 +42,7 @@ export function CollegeFacultyCsvImport(){
       </p>
       <p className="break-words font-mono text-xs">{header}</p>
       <a download="faculty-template.csv" href={"data:text/csv;charset=utf-8,"+encodeURIComponent(header+"\n")}
-        className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">
         Download CSV template
       </a>
       <label className="grid gap-2 text-sm font-semibold">Choose CSV
@@ -70,7 +70,7 @@ export function CollegeFacultyCsvImport(){
       {report.structuralErrors.length>0&&<p role="alert">{report.structuralErrors.join(", ")}</p>}
       <a download="faculty-import-report.csv"
         href={"data:text/csv;charset=utf-8,"+encodeURIComponent("row,status,detail,membershipId\r\n"+csvResult)}
-        className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">
         Download row report
       </a>
       <div className="max-h-[32rem] overflow-auto">

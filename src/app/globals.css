@@ -162,3 +162,75 @@ body {
   --lms-link-text: #75dce3;
   --lms-primary-subtle: #164e57;
 }
+
+/* Invisible scrollbars everywhere (owner decision): scrolling still works with wheel, touch, keyboard and
+   focus; only the bar chrome is hidden. Scrollable regions must still show an edge fade or cue per the UX playbook. */
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+*::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* Motion tokens and a consistent default transition for every interactive control (150ms). */
+:root {
+  --lms-motion-fast: 150ms;
+  --lms-motion-base: 200ms;
+  --lms-motion-ease: cubic-bezier(0.2, 0, 0, 1);
+}
+a,
+button,
+input,
+select,
+textarea,
+summary,
+[role="button"],
+[role="tab"],
+[role="switch"],
+[role="menuitem"],
+label {
+  transition-property: color, background-color, border-color, box-shadow, opacity, transform, outline-color;
+  transition-duration: var(--lms-motion-fast);
+  transition-timing-function: var(--lms-motion-ease);
+}
+dialog[open],
+[role="dialog"] {
+  animation: lms-overlay-in var(--lms-motion-base) var(--lms-motion-ease);
+}
+dialog::backdrop {
+  animation: lms-fade-in var(--lms-motion-base) var(--lms-motion-ease);
+}
+details > summary + * {
+  animation: lms-fade-in var(--lms-motion-base) var(--lms-motion-ease);
+}
+@keyframes lms-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes lms-overlay-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
