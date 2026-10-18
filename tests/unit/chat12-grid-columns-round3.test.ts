@@ -15,15 +15,20 @@ describe("chat-12 Students responsive grid and column preference",()=>{
   expect(chooser).toContain('aria-label={"Move "+column.label+" later"}');
   expect(chooser).toContain("onClick={()=>move(-1)}");
  });
- it("TPO-students-51 mobile rows collapse the action picker instead of stacking buttons permanently",()=>{
+ it("TPO-students-51 keeps mobile row actions always visible while preserving filters",()=>{
   const grid=src("src/components/tpo/tpo-spreadsheet-grid.tsx");
   const sheet=src("src/components/tpo/tpo-students-spreadsheet.tsx");
   expect(grid).toContain("mobileActionsCollapsible?");
   expect(grid).toContain("<summary");
-  expect(sheet).toContain("mobileActionsCollapsible mobilePrimaryKeys=");
+  expect(sheet).toContain("<TpoSpreadsheetGrid mobilePrimaryKeys=");
+  expect(sheet).not.toContain("<TpoSpreadsheetGrid mobileActionsCollapsible");
+  expect(sheet).toContain("rowActions={row=><div");
+  expect(sheet).toContain("<TpoGridFilterPanel fields={filters} mobileSheet/>");
   expect(sheet).toContain('storageKey="tpo-students-columns-v1"');
   expect(grid).toContain("mobileActionsCollapsible ?");
   expect(grid).toContain('aria-label="Row actions"');
+  expect(grid).toContain("mobileActionsCollapsible=false");
+  expect(grid).toContain('<div aria-label="Row actions" className="border-t border-border pt-3">{rowActions(row)}</div>');
   expect(sheet).toContain("rows={sortedRows}");
  });
  it("GR-39 uses break-words and min-width guards on narrow screen grid rows",()=>{
