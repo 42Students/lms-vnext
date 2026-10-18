@@ -175,7 +175,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
   <TpoAfterCollegeBulkEditor rows={rows} current={afterCollege} available={afterCollegeAvailable} />
   <TpoStudentClipboardActions rows={rows} selected={noteSelection} onSelect={setNoteSelection}/>
   <p role="status" aria-live="polite" className="text-xs text-muted-foreground">{selectedScoped.length} selected of {shared?.totalCount??rows.length} in the authorized view.</p>
-   {xlsxHref?<a href={xlsxHref} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)]">Export selected XLSX</a>:
+   {xlsxHref?<a href={xlsxHref} className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)]">Export selected XLSX</a>:
     selectedScoped.length>200?<p role="status" className="text-xs text-warning-text">Export up to 200 individually selected students or select all matching students.</p>:null}
   <button type="button" disabled={!noteSelection.some(id=>rows.some(row=>row.membershipId===id))}
     onClick={downloadSelection} className="min-h-11 rounded border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)] disabled:opacity-50">

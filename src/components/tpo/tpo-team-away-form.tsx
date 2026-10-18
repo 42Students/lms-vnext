@@ -31,8 +31,8 @@ export function TpoTeamAwayForm({until}:{until:string|null}){
   {error?<p role="alert" className="text-xs text-danger">{error}</p>:null}
   {notice?<p role="status" className="text-xs text-body">{notice}</p>:null}
   <div className="flex flex-wrap gap-2">
-   <button type="submit" disabled={busy||!date} className="min-h-11 rounded border border-border px-3 text-xs font-semibold">{busy?"Saving…":"Set away"}</button>
-   {until?<button type="button" disabled={busy} className="min-h-11 rounded border border-border px-3 text-xs font-semibold"
+   <button type="submit" disabled={busy||!date} className="min-h-11 rounded-[9px] border border-border px-3 text-xs font-semibold">{busy?"Saving…":"Set away"}</button>
+   {until?<button type="button" disabled={busy} className="min-h-11 rounded-[9px] border border-border px-3 text-xs font-semibold"
     onClick={()=>void submit(null)}>Back now</button>:null}
   </div>
  </form>;
