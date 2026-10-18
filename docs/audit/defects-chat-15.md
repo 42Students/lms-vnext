@@ -129,3 +129,11 @@ No tests, migrations or CI were executed. `HR-ROUND-DEPTH-64`, `HR-CALENDAR-DEPT
 | HR-DRIVES-82 | S2 workflow correctness | Recruiter draft hiring round labels accepted internal CR/LF/control characters and visually identical full-width Unicode names as distinct. New validation rejects control chars and compares Unicode-NFKC canonical names before sending to the placement cell. | `HR-BREAK-chat15-drive-round-82.test.ts` | TPO import and browser draft form acceptance |
 
 Additional **coverage without an independently established defect**: `HR-BREAK-chat15-drive-new-page-79.test.tsx`, `HR-BREAK-chat15-proposals-page-80.test.tsx`, `HR-BREAK-chat15-tracker-report-page-81.test.tsx`. None was run; no release readiness is asserted.
+
+
+## HR messaging retry and identity follow-up — 19 October 2026
+
+| Gap | Severity | Issue and fix | Test | Verification |
+|---|---|---|---|---|
+| HR-MESSAGING-83 | S2 reliability | Optional general-conversation directory lookup was awaited without failure recovery, so a transient enrichment failure crashed the entire valid recruiter inbox. Now the main inbox remains available with explicit retry copy and the create-new form stays hidden while general-thread state is unknown. | `HR-BREAK-chat15-messaging-page-83.test.tsx` | Authenticated page/browser test not executed |
+| HR-MESSAGING-84 | S2 defense in depth | Recruiter open/reply HTTP handlers checked active role but did not preflight equality between cached recruiter principal and signed-in user before calling a sensitive service. Both now reject mismatched principal with 403 before persistence and retain same-origin guards. | `HR-BREAK-chat15-messaging-api-84.test.ts` | Actual HTTP, persistence and notification tests not executed |
