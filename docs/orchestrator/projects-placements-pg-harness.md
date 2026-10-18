@@ -191,3 +191,6 @@ A published drive may still belong to a season explicitly CLOSED by the TPO. Can
 
 ### PROJ-HARNESS-PLACEMENTS-18: cancelled round denial
 The placement results fixture reads the selected round's persisted status and refuses candidate results if it is CANCELLED (the registered lifecycle check requires `cancelled_at`). PG case 18 first transitions the round to the valid cancelled shape, then asserts no new results; source guard 17 requires the status read. This is a fixture sanity check, not a substitute for the product round-results service permission/state gate.
+
+### PROJ-HARNESS-PREFLIGHT-19: schema-version clarity
+Before any fixture transaction begins, `assertHarnessSchema` now verifies registered publication, role-option, application ancestry and lifecycle columns (including `placement_applications.role_option_id`, `placement_job_role_options.is_primary`, publish/deadline/pay, and project template/release states) in addition to its 32+ canonical table check. Missing journal migrations cause an explicit table.column error rather than a late partial fixture insert. Unit source guard PREFLIGHT-19 protects mandatory columns, while the existing integration runner exercises actual preflight against the disposable PostgreSQL database.
