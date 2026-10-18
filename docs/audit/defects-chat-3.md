@@ -218,6 +218,10 @@ Both the batch census and Student Register options services delegated directly t
 
 **Fix:** Both services now explicitly deny principals lacking active `SUPER_ADMIN` system role before even resolving a college scope. No College Admin service was changed. Direct service tests: `tests/unit/chat3-sa-academics-batch-roster-privacy.test.ts` and `tests/unit/chat3-sa-student-register-options-role-scope.test.ts`, case SA-ACADEMICS-ROLE-01. Cloud CI, signed-in Super Admin and College Admin browser journeys pending.
 
+### SA-ACADEMICS-BATCH-ROLE-051 — batch roster exposed non-learner memberships from inconsistent imports (S1)
+
+The Super Admin batch roster joined learner-program enrollments to active college memberships and platform users but **did not verify a persisted LEARNER membership role**. If bad import/history left a Faculty, Mentor or TPO account referenced by a learner enrollment, it could appear in the student roster with contact fields and inflate class occupancy. The service now joins `membershipRoles` with the explicit `LEARNER` role for both the roster and class-count projections; `countDistinct(users.id)` avoids multiplying records. Compiled query regression: `tests/unit/chat3-sa-academics-batch-roster-privacy.test.ts`, SA-ACADEMICS-BATCH-ROLE-04. Cloud CI and dirty-row PostgreSQL fixture pending.
+
 ### SA-ACADEMICS-BATCH-EMPTY-050 — empty batch still queried personal learner roster (S2)
 
 Even when a selected academic cohort contained zero authorized classes, the batch overview constructed the active learner roster query with an impossible fallback Section UUID. It did not return data under a normal schema but wasted a sensitive contact-data read and left the edge case dependent on a coincidental identifier mismatch. The service now returns `{batch,classes:[],roster:[]}` immediately for empty class selections, without touching membership PII. Test: `tests/unit/chat3-sa-academics-batch-roster-privacy.test.ts`, SA-ACADEMICS-BATCH-EMPTY-03. CI/DB verification pending.
