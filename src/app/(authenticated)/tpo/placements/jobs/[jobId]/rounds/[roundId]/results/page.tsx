@@ -24,7 +24,7 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
  catch(error){if(error instanceof PlacementsServiceError&&error.code==="PLACEMENT_ROUND_NOT_FOUND")notFound();throw error;}
  const visibleRows=filterTpoRoundResultRows(data.rows,selected.data);
  return <div className="min-w-0 space-y-6">
-  <Link href={"/tpo/placements/jobs/"+jobId} className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">← Drive workspace</Link>
+  <Link href={"/tpo/placements/jobs/"+jobId} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">← Drive workspace</Link>
   <PageHeader eyebrow="TPO · Round results" title={data.round.name}
    description={data.round.jobTitle+" · Stage outcomes for eligible shortlisted submitted applications."}/>
   <section className="grid grid-cols-2 gap-3 sm:grid-cols-4" aria-label="Result counts">
