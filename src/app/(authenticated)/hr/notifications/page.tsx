@@ -13,9 +13,8 @@ export default async function HrMessagesPage({searchParams}:{
  const context=await getCurrentRequestContext();
  if(!hasActiveRecruiter(context))redirect("/dashboard");
  const raw=await searchParams;
- const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
  const query=hrNotificationsQuerySchema.safeParse({
-  collegeId:first(raw.collegeId),unreadOnly:first(raw.unreadOnly),page:first(raw.page),q:first(raw.q),
+  collegeId:raw.collegeId,unreadOnly:raw.unreadOnly,page:raw.page,q:raw.q,
  });
  if(!query.success)return <div className="min-w-0 max-w-full space-y-4">
   <PageHeader eyebrow="Recruiter" title="Notifications"/>
