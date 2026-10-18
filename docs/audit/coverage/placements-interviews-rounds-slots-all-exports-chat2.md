@@ -10,17 +10,17 @@ Scope: **72 files including `round-action-guards.ts`** matching `src/modules/pla
 | `src/modules/placements/college-drive-interviews-model.ts` | `driveInterviewsParams` (function) | \`tests/unit/chat2-college-learner-calendar-break-08.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/college-drive-interviews-model.ts` | `driveInterviewsHref` (function) | \`tests/unit/chat2-college-learner-calendar-break-08.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/college-drive-interviews-model.ts` | `driveRoundTime` (function) | \`tests/unit/chat2-college-learner-calendar-break-08.test.ts\` (CI pending) | TEST AUTHORED |
-| `src/modules/placements/college-drive-interviews-service.ts` | `listCollegeDriveInterviews` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/college-drive-interviews-service.ts` | `listCollegeDriveInterviews` (function) | `tests/unit/chat2-college-recruiter-interview-service-denials.test.ts` (denied/malformed paths; not run) | PARTIAL |
 | `src/modules/placements/college-interview-action-model.ts` | `collegeInterviewActionSchema` (const) | \`tests/unit/chat2-college-learner-calendar-break-08.test.ts\` (CI pending) | TEST AUTHORED |
-| `src/modules/placements/college-interview-action-service.ts` | `getCollegeInterviewAppointments` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/college-interview-action-service.ts` | `mutateCollegeInterview` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/college-interview-action-service.ts` | `getCollegeInterviewAppointments` (function) | `tests/unit/chat2-college-recruiter-interview-service-denials.test.ts` (denied/malformed paths; not run) | PARTIAL |
+| `src/modules/placements/college-interview-action-service.ts` | `mutateCollegeInterview` (function) | `tests/unit/chat2-college-recruiter-interview-service-denials.test.ts` (denied/malformed paths; not run) | PARTIAL |
 | `src/modules/placements/college-interview-calendar-model.ts` | `collegeInterviewIcs` (function) | \`tests/unit/chat2-college-learner-calendar-break-08.test.ts\` (CI pending) | TEST AUTHORED |
-| `src/modules/placements/college-interview-directory-service.ts` | `collegeInterviewFilters` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/college-interview-directory-service.ts` | `listCollegeInterviewDirectory` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/college-interview-lifecycle-service.ts` | `CollegeInterviewLifecycleError` (class) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/college-interview-lifecycle-service.ts` | `finishCollegeInterview` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/college-round-slot-action-service.ts` | `getCollegeRoundSlotAppointments` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/college-round-slot-action-service.ts` | `mutateCollegeRoundSlotInterview` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/college-interview-directory-service.ts` | `collegeInterviewFilters` (const) | `tests/unit/chat2-college-recruiter-interview-service-denials.test.ts` (denied/malformed paths; not run) | PARTIAL |
+| `src/modules/placements/college-interview-directory-service.ts` | `listCollegeInterviewDirectory` (function) | `tests/unit/chat2-college-recruiter-interview-service-denials.test.ts` (denied/malformed paths; not run) | PARTIAL |
+| `src/modules/placements/college-interview-lifecycle-service.ts` | `CollegeInterviewLifecycleError` (class) | `tests/unit/chat2-last-round-service-boundaries.test.ts` (direct denial/readiness; not run) | TEST AUTHORED |
+| `src/modules/placements/college-interview-lifecycle-service.ts` | `finishCollegeInterview` (function) | `tests/unit/chat2-college-recruiter-interview-service-denials.test.ts` (denied/malformed paths; not run) | PARTIAL |
+| `src/modules/placements/college-round-slot-action-service.ts` | `getCollegeRoundSlotAppointments` (function) | `tests/unit/chat2-college-recruiter-interview-service-denials.test.ts` (denied/malformed paths; not run) | PARTIAL |
+| `src/modules/placements/college-round-slot-action-service.ts` | `mutateCollegeRoundSlotInterview` (function) | `tests/unit/chat2-college-recruiter-interview-service-denials.test.ts` (denied/malformed paths; not run) | PARTIAL |
 | `src/modules/placements/hr-draft-round-duplicate-model.ts` | `duplicateHrDraftRound` (function) | \`tests/unit/chat2-interview-hr-break-06.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/hr-draft-round-order-model.ts` | `reorderHrDraftRound` (function) | \`tests/unit/chat2-interview-hr-break-06.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/hr-drive-round-presets.ts` | `HR_DRIVE_ROUND_PRESETS` (const) | `tests/unit/chat2-round-uncovered-pure-models.test.ts` (written; not run) | TEST AUTHORED |
@@ -37,19 +37,19 @@ Scope: **72 files including `round-action-guards.ts`** matching `src/modules/pla
 | `src/modules/placements/hr-interview-slot-model.ts` | `slotsOverlap` (function) | \`tests/unit/chat2-interview-hr-break-06.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/hr-interview-slot-model.ts` | `parseIstLocalSlot` (function) | \`tests/unit/chat2-interview-hr-break-06.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/hr-interview-slot-model.ts` | `canRecruiterMutateOwnSlot` (function) | \`tests/unit/chat2-interview-hr-break-06.test.ts\` (CI pending) | TEST AUTHORED |
-| `src/modules/placements/hr-interview-slot-service.ts` | `listHrInterviewSlots` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/hr-interview-slot-service.ts` | `writeHrInterviewSlot` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/hr-interview-slot-service.ts` | `listHrInterviewSlots` (function) | `tests/unit/chat2-college-recruiter-interview-service-denials.test.ts` (denied/malformed paths; not run) | PARTIAL |
+| `src/modules/placements/hr-interview-slot-service.ts` | `writeHrInterviewSlot` (function) | `tests/unit/chat2-college-recruiter-interview-service-denials.test.ts` (denied/malformed paths; not run) | PARTIAL |
 | `src/modules/placements/hr-round-editor-model.ts` | `hrRoundFormSchema` (const) | \`tests/unit/chat2-interview-hr-break-06.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/hr-round-editor-model.ts` | `canRecruiterEditRound` (function) | \`tests/unit/chat2-interview-hr-break-06.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/hr-round-editor-model.ts` | `duplicateRecruiterRoundName` (function) | \`tests/unit/chat2-interview-hr-break-06.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/hr-round-editor-model.ts` | `matchesRecruiterRoundVersion` (function) | \`tests/unit/chat2-interview-hr-break-06.test.ts\` (CI pending) | TEST AUTHORED |
-| `src/modules/placements/hr-round-editor-service.ts` | `editHrJobRound` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/hr-round-editor-service.ts` | `listHrRoundEditorRows` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/hr-round-editor-service.ts` | `editHrJobRound` (function) | `tests/unit/chat2-college-recruiter-interview-service-denials.test.ts` (denied/malformed paths; not run) | PARTIAL |
+| `src/modules/placements/hr-round-editor-service.ts` | `listHrRoundEditorRows` (function) | `tests/unit/chat2-college-recruiter-interview-service-denials.test.ts` (denied/malformed paths; not run) | PARTIAL |
 | `src/modules/placements/hr-round-schedule-model.ts` | `RoundScheduleRow` (type) | N/A (compile-time only) | TYPE ONLY |
 | `src/modules/placements/hr-round-schedule-model.ts` | `hrScheduledRoundRows` (function) | `tests/unit/chat2-round-uncovered-pure-models.test.ts` (written; not run) | TEST AUTHORED |
 | `src/modules/placements/hr-round-schedule-model.ts` | `hrRoundConflictLabels` (function) | `tests/unit/chat2-round-uncovered-pure-models.test.ts` (written; not run) | TEST AUTHORED |
 | `src/modules/placements/hr-round-schedule-model.ts` | `hrRoundConflictLinks` (function) | `tests/unit/chat2-round-uncovered-pure-models.test.ts` (written; not run) | TEST AUTHORED |
-| `src/modules/placements/hr-today-open-slots-service.ts` | `listRecruiterTodayRoundsNeedingSlots` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/hr-today-open-slots-service.ts` | `listRecruiterTodayRoundsNeedingSlots` (function) | `tests/unit/chat2-last-round-service-boundaries.test.ts` (direct denial/readiness; not run) | PARTIAL |
 | `src/modules/placements/learner-application-interview-links-model.ts` | `OwnApplicationInterviewRound` (type) | N/A (compile-time only) | TYPE ONLY |
 | `src/modules/placements/learner-application-interview-links-model.ts` | `OwnApplicationInterviewLink` (type) | N/A (compile-time only) | TYPE ONLY |
 | `src/modules/placements/learner-application-interview-links-model.ts` | `ownApplicationInterviewLinks` (function) | `tests/unit/chat2-learner-recruiter-round-uncovered-models.test.ts` (written; not run) | TEST AUTHORED |
@@ -70,10 +70,10 @@ Scope: **72 files including `round-action-guards.ts`** matching `src/modules/pla
 | `src/modules/placements/learner-interview-withdrawal-model.ts` | `learnerInterviewWithdrawalInputSchema` (const) | \`tests/unit/chat2-learner-interview-break-07.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/learner-interview-withdrawal-model.ts` | `LearnerInterviewWithdrawalTarget` (type) | N/A (compile-time only) | TYPE ONLY |
 | `src/modules/placements/learner-interview-withdrawal-model.ts` | `learnerInterviewWithdrawalTarget` (function) | \`tests/unit/chat2-learner-interview-break-07.test.ts\` (CI pending) | TEST AUTHORED |
-| `src/modules/placements/learner-interview-withdrawal-service.ts` | `getOwnInterviewWithdrawalTargets` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/learner-interview-withdrawal-service.ts` | `requestOwnInterviewWithdrawal` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/learner-round-confirmation-readiness.ts` | `learnerRoundConfirmationReady` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/learner-round-confirmation-service.ts` | `confirmOwnPlacementRound` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/learner-interview-withdrawal-service.ts` | `getOwnInterviewWithdrawalTargets` (function) | `tests/unit/chat2-last-round-service-boundaries.test.ts` (direct denial/readiness; not run) | PARTIAL |
+| `src/modules/placements/learner-interview-withdrawal-service.ts` | `requestOwnInterviewWithdrawal` (function) | `tests/unit/chat2-last-round-service-boundaries.test.ts` (direct denial/readiness; not run) | PARTIAL |
+| `src/modules/placements/learner-round-confirmation-readiness.ts` | `learnerRoundConfirmationReady` (function) | `tests/unit/chat2-last-round-service-boundaries.test.ts` (direct denial/readiness; not run) | TEST AUTHORED |
+| `src/modules/placements/learner-round-confirmation-service.ts` | `confirmOwnPlacementRound` (function) | `tests/unit/chat2-last-round-service-boundaries.test.ts` (direct denial/readiness; not run) | PARTIAL |
 | `src/modules/placements/learner-round-search-query-model.ts` | `learnerRoundSearchQuerySchema` (const) | \`tests/unit/chat2-learner-interview-break-07.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/learner-round-search-query-model.ts` | `learnerRoundSearchFromQuery` (function) | \`tests/unit/chat2-learner-interview-break-07.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/learner-round-search-query-model.ts` | `learnerRoundSearchHref` (function) | \`tests/unit/chat2-learner-interview-break-07.test.ts\` (CI pending) | TEST AUTHORED |
@@ -101,19 +101,19 @@ Scope: **72 files including `round-action-guards.ts`** matching `src/modules/pla
 | `src/modules/placements/round-service.ts` | `actOnPlacementRound` (function) | `tests/unit/chat2-tpo-round-service-scope-break-12.test.ts` (malformed ID and scope-denial only; CI pending) | PARTIAL |
 | `src/modules/placements/round-service.ts` | `getTpoRoundReorderReadiness` (function) | `tests/unit/chat2-tpo-round-service-scope-break-12.test.ts` (malformed ID and scope-denial only; CI pending) | PARTIAL |
 | `src/modules/placements/round-service.ts` | `reorderPlacementRounds` (function) | `tests/unit/chat2-tpo-round-service-scope-break-12.test.ts` (malformed ID and scope-denial only; CI pending) | PARTIAL |
-| `src/modules/placements/round-venue-booking-service.ts` | `requireAvailableRoundVenue` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/round-venue-booking-service.ts` | `requireAvailableRoundVenue` (function) | `tests/unit/chat2-round-venue-booking-service-transaction.test.ts` (mocked TX) + `tests/integration/chat2-tpo-round-venue-races.test.ts` (PostgreSQL advisory lock, not full service) | PARTIAL |
 | `src/modules/placements/super-admin-booked-interviews-range.ts` | `superAdminBookedInterviewWindow` (function) | \`tests/unit/chat2-college-learner-calendar-break-08.test.ts\` (CI pending) | TEST AUTHORED |
-| `src/modules/placements/super-admin-booked-interviews-service.ts` | `listSuperAdminBookedInterviews` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/super-admin-booked-interviews-service.ts` | `listSuperAdminBookedInterviews` (function) | `tests/unit/chat2-last-round-service-boundaries.test.ts` (direct denial/readiness; not run) | PARTIAL |
 | `src/modules/placements/tpo-bulk-round-result-model.ts` | `bulkTpoRoundResultSchema` (const) | `tests/unit/chat2-tpo-round-contracts-break-11.test.ts` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-bulk-round-result-model.ts` | `TpoBulkRoundResultOutcome` (type) | N/A (compile-time only) | TYPE ONLY |
 | `src/modules/placements/tpo-bulk-round-result-model.ts` | `summarizeBulkRoundResults` (function) | \`tests/unit/chat2-tpo-round-model-break-02.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-bulk-round-result-model.ts` | `resolveBulkRoundLearnerTokens` (function) | \`tests/unit/chat2-tpo-round-model-break-02.test.ts\` (CI pending) | TEST AUTHORED |
-| `src/modules/placements/tpo-bulk-round-result-service.ts` | `confirmTpoBulkRoundResults` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-bulk-round-result-service.ts` | `confirmTpoBulkRoundResults` (function) | `tests/unit/chat2-last-round-service-boundaries.test.ts` + `tests/integration/tpo-confirmed-round-result.test.ts` (PostgreSQL staging, role, foreign college, CAS and audit; not run) | PARTIAL |
 | `src/modules/placements/tpo-confirmed-round-result-model.ts` | `confirmedTpoRoundResultSchema` (const) | `tests/unit/chat2-tpo-round-contracts-break-11.test.ts` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-confirmed-round-result-model.ts` | `TPO_RESULT_LABELS` (const) | `tests/unit/chat2-tpo-round-contracts-break-11.test.ts` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-confirmed-round-result-model.ts` | `canEditTpoRoundResult` (function) | \`tests/unit/chat2-tpo-round-csv-and-lifecycle-break-03.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-confirmed-round-result-model.ts` | `canApplyTpoRoundResult` (function) | \`tests/unit/chat2-tpo-round-csv-and-lifecycle-break-03.test.ts\` (CI pending) | TEST AUTHORED |
-| `src/modules/placements/tpo-confirmed-round-result-service.ts` | `confirmTpoRoundResult` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-confirmed-round-result-service.ts` | `confirmTpoRoundResult` (function) | `tests/unit/chat2-last-round-service-boundaries.test.ts` + `tests/integration/tpo-confirmed-round-result.test.ts` (PostgreSQL staging, role, foreign college, CAS and audit; not run) | PARTIAL |
 | `src/modules/placements/tpo-drive-round-presets.ts` | `TPO_DRIVE_ROUND_PRESETS` (const) | \`tests/unit/chat2-interview-hr-break-06.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-drive-round-presets.ts` | `TpoRoundPresetKey` (type) | N/A (compile-time only) | TYPE ONLY |
 | `src/modules/placements/tpo-drive-round-presets.ts` | `isTpoRoundPresetKey` (function) | \`tests/unit/chat2-interview-hr-break-06.test.ts\` (CI pending) | TEST AUTHORED |
@@ -148,7 +148,7 @@ Scope: **72 files including `round-action-guards.ts`** matching `src/modules/pla
 | `src/modules/placements/tpo-round-apply-model.ts` | `summarizeRoundApply` (function) | \`tests/unit/chat2-tpo-round-state-break-01.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-round-apply-model.ts` | `roundApplyPreviewToken` (function) | \`tests/unit/chat2-tpo-round-state-break-01.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-round-apply-service.ts` | `getTpoRoundApplyPreview` (function) | `tests/unit/chat2-tpo-service-denial-break-09.test.ts` (**denial-only; DB flows missing**) | PARTIAL |
-| `src/modules/placements/tpo-round-apply-service.ts` | `applyTpoWholeRound` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-apply-service.ts` | `applyTpoWholeRound` (function) | `tests/unit/chat2-last-round-service-boundaries.test.ts` + `tests/integration/tpo-confirmed-round-result.test.ts` (PostgreSQL preview/STALE/apply-once/audit; not run) | PARTIAL |
 | `src/modules/placements/tpo-round-calendar-model.ts` | `tpoRoundCalendarMutationSchema` (const) | \`tests/unit/chat2-ledger-round-import-and-scheduling.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-round-calendar-model.ts` | `parseIstRoundLocalTime` (function) | \`tests/unit/chat2-ledger-round-import-and-scheduling.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-round-calendar-service.ts` | `listTpoCalendarRoundChoices` (function) | `tests/unit/chat2-tpo-calendar-scope-break-13.test.ts` (wrong roles, account status, tenant and invalid payload; CI pending) | PARTIAL |
@@ -198,3 +198,11 @@ These records supplement existing export rows; CI and integration results are st
 The two new round action guard exports are directly exercised by `tests/unit/chat2-round-action-concurrency.test.ts`, with source checks on schedule/complete/cancel job locks. `tests/integration/chat2-round-action-locking-postgres.test.ts` adds actual service scheduling, stale COMPLETE/CANCEL, foreign-college access, closed-job barriers, and persisted event/audit checks. **Authored only, not run.** Other incomplete service rows in this inventory remain OPEN/PARTIAL.
 
 Pure-model coverage advanced on 2026-10-19: direct tests now exercise date/exception precedence, IST time classification, company and role filters, encoded application links, HR round outcome count and suppression of unrecorded results, attendance/conflict scheduling and no-contact leakage. Model unit testing is not a substitute for tenant-scoped DB read services.
+
+Directly imported service denial tests: `chat2-college-recruiter-interview-service-denials.test.ts` tests 12 named college/HR service entry points' malformed IDs, invalid commands, unauthorized actor and no-read/no-write. The role mock tests do **not** cover successful persistence, audit, applicant notifications, capacity, overlapping room/time windows or simultaneous writers. Do not change their PARTIAL statuses to complete without DB tests.
+
+Venue-guard unit suite `chat2-round-venue-booking-service-transaction.test.ts` directly exercises the exported transaction function. It verifies malformed inputs rejected before locking, advisory lock preceding competitor query, half-open interval behavior, fail-closed null/invalid rival evidence and 1001-row capacity rejection. This complements the two-session advisory lock PostgreSQL test but does not yet invoke the full schedule service under a competing two-writer fixture. Written, not run.
+
+All formerly untested exported functions/classes in this inventory now have at least one directly imported, authored behavioural unit test **for a named boundary**, not necessarily a success path. In particular, `chat2-last-round-service-boundaries.test.ts` covers the ten remaining exports' authorization, malformed input, readiness, invalid window and empty authorized job list conditions. They remain PARTIAL where no real persisted success, rollback, tenant or audit test exists. The absence of the string `NO DIRECT BEHAVIOURAL TEST` does not mean full coverage.
+
+TPO stage/apply service DB evidence: existing `tpo-confirmed-round-result.test.ts` already invoked bulk and single confirmed staging, asserted persisted actors/audits, wrong role and foreign-college rejection, and replay CAS denial; the 2026-10-19 addition directly invokes `getTpoRoundApplyPreview`/`applyTpoWholeRound`, asserting tampered/stale SHA-256 preview rejected with no write, valid one-time apply and audit, then fresh-token replay unchanged with exactly one apply audit. **Not run**; tests do not model two simultaneous whole-round writers or multi-row mixed success outcomes.
