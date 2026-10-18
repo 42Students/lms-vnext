@@ -10,7 +10,7 @@ export type RoundApplyRow={
 };
 export function summarizeRoundApply(rows:readonly RoundApplyRow[]){
  const outcomes={PASS:0,FAIL:0,HOLD:0,ABSENT:0};
- for(const row of rows){if(row.status==="STAGED"&&row.outcome in outcomes)
+ for(const row of rows){if(row.status==="STAGED"&&Object.prototype.hasOwnProperty.call(outcomes,row.outcome))
    outcomes[row.outcome as keyof typeof outcomes]++;}
  return {staged:rows.filter(r=>r.status==="STAGED").length,
   applied:rows.filter(r=>r.status==="APPLIED").length,outcomes};
