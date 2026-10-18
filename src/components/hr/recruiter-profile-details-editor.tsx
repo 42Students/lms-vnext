@@ -4,7 +4,7 @@ import {useRouter} from "next/navigation";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
 import {splitHrRecruiterName} from "@/modules/placements/hr-recruiter-name-fields-model";
-import {hrProfileSaveErrorFeedback} from "@/modules/placements/recruiter-profile-details-model";
+import {hrProfileSaveErrorFeedback,hrProfileDetailsSaveReceiptSchema} from "@/modules/placements/recruiter-profile-details-model";
 export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialPhone,
  userUpdatedAt,profileUpdatedAt,contactReady}:{
  initialName:string|null;initialTitle:string|null;initialPhone:string|null;
@@ -50,22 +50,21 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
   const controller=new AbortController(),timeout=window.setTimeout(()=>controller.abort(),12000);
   try{
    const response=await runGuarded(()=>fetch("/api/placements/recruiter/profile/details",{
-    method:"PATCH",credentials:"same-origin",signal:controller.signal,
+    method:"PATCH",credentials:"same-origin",redirect:"error",signal:controller.signal,
     headers:{"content-type":"application/json"},
     body:JSON.stringify({...form,expectedUserUpdatedAt:versions.userUpdatedAt,
      expectedProfileUpdatedAt:versions.profileUpdatedAt}),
    }));
    if(!response)throw new Error("PROFILE_REQUEST_UNCONFIRMED");
    if(!response.ok){setFeedback(hrProfileSaveErrorFeedback(response.status));return;}
-   const body=await response.json() as {profile?:{
-    displayName:string;title:string|null;phone:string;
-    userUpdatedAt:string;profileUpdatedAt:string;
-   }};
-   if(!body.profile)throw new Error("NO_CONFIRMED_PROFILE");
-   const name=splitHrRecruiterName(body.profile.displayName);
-   const next={...name,title:body.profile.title??"",phone:body.profile.phone};
+   const responseBody:unknown=await response.json().catch(()=>null);
+   const receipt=hrProfileDetailsSaveReceiptSchema.safeParse(responseBody);
+   if(!receipt.success)throw new Error("NO_CONFIRMED_PROFILE");
+   const confirmed=receipt.data.profile;
+   const name=splitHrRecruiterName(confirmed.displayName);
+   const next={...name,title:confirmed.title??"",phone:confirmed.phone};
    setSaved(next);setForm(next);
-   setVersions({userUpdatedAt:body.profile.userUpdatedAt,profileUpdatedAt:body.profile.profileUpdatedAt});
+   setVersions({userUpdatedAt:confirmed.userUpdatedAt,profileUpdatedAt:confirmed.profileUpdatedAt});
    setFeedback("Profile saved");router.refresh();
   }catch{setFeedback("Could not save your profile. Your changes are still here; try again.");}
   finally{window.clearTimeout(timeout);busyRef.current=false;setBusy(false);}
