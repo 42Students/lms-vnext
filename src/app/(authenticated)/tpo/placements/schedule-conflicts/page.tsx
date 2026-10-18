@@ -63,7 +63,7 @@ export default async function TpoScheduleConflictsPage({
           </select>
         </label>
         <button type="submit"
-          className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">
+          className="min-h-11 rounded-[9px] bg-primary px-4 text-sm font-semibold text-primary-foreground">
           Apply
         </button>
       </form>

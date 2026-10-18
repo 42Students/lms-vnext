@@ -22,9 +22,9 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
   <PageHeader eyebrow="TPO · Export applicants" title={result.job.title+" · Applications"}
    description="Read-only college-scoped export preview without internal screening notes."
    actions={<a href={"/api/placements/tpo/jobs/"+jobId+"/applications/export?"+query} download
-    className="inline-flex min-h-11 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-foreground">
+    className="inline-flex min-h-11 items-center rounded-[9px] border border-primary bg-primary px-4 text-sm font-semibold text-primary-foreground">
      Download all matching CSV</a>}/>
-  <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+  <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
    <label className="min-w-40 flex-1 text-sm text-body">Stage
     <select name="stage" defaultValue={result.stage} className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface p-2">
      {stages.map(stage=><option key={stage} value={stage}>{stage}</option>)}
@@ -57,7 +57,7 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
      <option value="ALL">Any date</option><option value="LAST_7_DAYS">Last 7 × 24h</option>
      <option value="LAST_30_DAYS">Last 30 × 24h</option>
     </select></label>
-   <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Preview filters</button>
+   <button type="submit" className="min-h-11 rounded-[9px] bg-primary px-4 text-sm font-semibold text-primary-foreground">Preview filters</button>
   </form>
   <p className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
    {result.rows.length} application records shown in this preview.
