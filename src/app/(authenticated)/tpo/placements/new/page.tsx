@@ -17,11 +17,11 @@ export default async function TpoNewPlacementPage({searchParams}:{
     redirect("/dashboard");
   }
   return (
-    <div className="space-y-4">
-      <Link href="/tpo/placements/new/draft" className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary-text">
+    <div className="min-w-0 space-y-4">
+      <Link href="/tpo/placements/new/draft" className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)]">
         Quick draft: Step 1 →
       </Link>
-      <Link href="/tpo/placements/recorded-outside" className="ml-2 inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+      <Link href="/tpo/placements/recorded-outside" className="ml-2 inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
         Record a drive that happened outside LMS
       </Link>
       <PlacementJobCreateWorkspace
