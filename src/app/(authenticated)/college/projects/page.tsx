@@ -40,7 +40,7 @@ export default async function CollegeProjectsPage({
       Project workspaces are college-scoped. Choose an active college from the account switcher before opening this page.
      </p>
      <Link href="/dashboard" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Back to dashboard</Link>
-    </div;
+    </div>;
   }
 
   const params = await searchParams;
