@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentDeviceSession } from "@/auth/current-session";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import {privateAuthResponse} from "@/modules/auth/private-response";
 import {
   listActiveSessions,
   revokeOtherSessions,
@@ -27,14 +28,14 @@ export async function GET() {
       })),
     }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
-    return apiErrorResponse(error);
+    return privateAuthResponse(apiErrorResponse(error));
   }
 }
 
 /** "Sign out everywhere else": keeps only this device. */
 export async function DELETE(request: Request) {
   if (!isSameOriginRequest(request)) {
-    return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
+    return privateAuthResponse(NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 }));
   }
 
   try {
@@ -45,6 +46,6 @@ export async function DELETE(request: Request) {
     );
     return NextResponse.json({ ok: true, revoked }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
-    return apiErrorResponse(error);
+    return privateAuthResponse(apiErrorResponse(error));
   }
 }
