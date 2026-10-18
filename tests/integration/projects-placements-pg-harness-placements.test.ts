@@ -200,6 +200,25 @@ describe("PROJ-HARNESS-PLACEMENTS canonical real PostgreSQL fixtures", () => {
     });
   });
 
+  it("PROJ-HARNESS-PLACEMENTS-34 duplicate applicant retry leaves complete original graph and usable transaction",async()=>{
+    await withPlacementCase(async({db,drive,learner,actor,candidate,tenant})=>{
+      const counts=async()=>db.query<{applications:number;screenings:number;results:number;offers:number}>(`
+        select (select count(*)::int from placement_applications) as applications,
+          (select count(*)::int from placement_application_screenings) as screenings,
+          (select count(*)::int from placement_round_results) as results,
+          (select count(*)::int from placement_offers) as offers`);
+      const original=await counts();
+      await expect(createPlacementCandidateFixture(db,drive,learner,actor))
+        .rejects.toMatchObject({code:"23505"});
+      expect(await counts()).toEqual(original);
+      expect((await db.query("select id from placement_offers where id=$1",
+        [candidate.offerId]))).toHaveLength(1);
+      const teammate=await createPrincipal(db,tenant,["LEARNER"]);
+      await expect(createPlacementCandidateFixture(db,drive,teammate,actor))
+        .resolves.toHaveProperty("applicationId");
+    });
+  });
+
   it("PROJ-HARNESS-PLACEMENTS-26 failed offer insert rolls back application, screening and round",async()=>{
     await withPlacementCase(async({db,drive,actor,tenant})=>{
       const fresh=await createPrincipal(db,tenant,["LEARNER"]);
