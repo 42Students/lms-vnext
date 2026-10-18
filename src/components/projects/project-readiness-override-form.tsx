@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 
@@ -65,7 +66,7 @@ export function ProjectReadinessOverrideForm({
 
   return (
     <>
-      <form onSubmit={requestSave} className="space-y-3 rounded-xl border border-border bg-surface p-5">
+      <form onSubmit={requestSave} className="space-y-3 border-b border-border pb-5">
         <h2 className="text-lg font-semibold">{copy.overrideTitle}</h2>
         {hasSubmission && state !== "CLEAR" ? (
           <p role="status" className="text-sm text-warning-text">
@@ -104,9 +105,9 @@ export function ProjectReadinessOverrideForm({
             />
           </>
         ) : null}
-        <button type="submit" disabled={pending} className="rounded bg-primary px-4 py-2 text-primary-foreground disabled:opacity-50">
+        <Button type="submit" variant="primary" disabled={pending} className="rounded bg-primary px-4 py-2 text-primary-foreground disabled:opacity-50">
           {copy.submit}
-        </button>
+        </Button>
         {feedback ? <p role="status" className="text-sm text-body">{feedback}</p> : null}
       </form>
       <ConfirmDialog
