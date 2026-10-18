@@ -24,3 +24,5 @@ Explicitly outstanding: PostgreSQL persisted-role revocation races; all-college 
 | PROJ-BREAK-COLLEGE-LOCK-01 | `mayRecordCollegeAdminDeliveryLock` in `admin-submission-lock-policy.ts` | `tests/unit/PROJ-BREAK-chat19-admin-delivery-lock-role.test.ts` | Exact active College Admin membership; cross-college/org, suspended, disabled, TPO/learner, recruiter, SA acting-tenant denied |
 
 PostgreSQL concurrent team creation, persisted membership revocation and live browser planner drag-and-drop remain separate integration gates.
+
+| PROJ-BREAK-ROSTER-SNAPSHOT-01 | `classRosterSnapshotSchema`, `assertRosterStillCurrent` in `class-team-roster-snapshot.ts`; `classRosterRevision` in `class-team-roster-service.ts` | `tests/unit/PROJ-BREAK-chat19-roster-snapshot-staleness.test.ts` | Same college/class valid snapshot, changed member/roll/version, wrong tenant, duplicated membership, forged role and empty roster; deterministic revision |
