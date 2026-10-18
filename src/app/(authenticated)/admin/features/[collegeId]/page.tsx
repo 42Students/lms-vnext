@@ -6,10 +6,13 @@ import { notFound } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable } from "@/components/ui/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { collegeIdSchema } from "@/modules/colleges/validation";
+import { requirePermission } from "@/modules/permissions/policy";
+import {parseAdminModuleDetailPageParams} from "@/modules/module-access/admin-module-detail-query";
 import {
   ADMIN_MODULE_LABELS,
   MODULE_SCOPE_LABELS,
@@ -28,23 +31,7 @@ import {DescendantFeatureRuleEditor} from "@/components/admin/descendant-feature
 import {AcademicModuleScopeInventory} from "@/components/admin/academic-module-scope-inventory";
 import {listCollegeModuleScopeChoices} from "@/modules/module-access/admin-descendant-rule-write";
 
-type SearchParams = {
-  page?: string | string[];
-  module?: string | string[];
-  scope?: string | string[];
-  locks?: string | string[];
-  storedState?: string | string[];
-  scopeId?: string | string[];
-  academicPage?:string|string[];
-};
-
-function one(
-  value: string | string[] | undefined,
-) {
-  return Array.isArray(value)
-    ? value[0]
-    : value;
-}
+type SearchParams = Record<string,string|string[]|undefined>;
 
 export default async function SuperAdminCollegeModuleAccessPage({
   params,
@@ -53,37 +40,33 @@ export default async function SuperAdminCollegeModuleAccessPage({
   params: Promise<{ collegeId: string }>;
   searchParams: Promise<SearchParams>;
 }) {
+  const context = await getCurrentRequestContext();
+  requirePermission(context,"admin-scope.select");
   const { collegeId } = await params;
 
   if (!collegeIdSchema.safeParse(collegeId).success) {
     notFound();
   }
 
-  const query = await searchParams;
-  if (Array.isArray(query.module) || Array.isArray(query.scope) || Array.isArray(query.locks) || Array.isArray(query.storedState) || Array.isArray(query.scopeId)) notFound();
-  const context = await getCurrentRequestContext();
-
-  const result = await getSuperAdminCollegeModuleAccess(
-    context,
-    collegeId,
-    {
-      page: one(query.page) || undefined,
-      module: one(query.module) || undefined,
-      scope: one(query.scope) || undefined,
-      locks: one(query.locks) || undefined,
-      storedState: one(query.storedState) || undefined,
-      scopeId: one(query.scopeId) || undefined,
-    },
-  );
-
-  if (!result) {
-    notFound();
+  const parsed=parseAdminModuleDetailPageParams(await searchParams);
+  if (!parsed) {
+    return (
+      <div className="space-y-5">
+        <PageHeader eyebrow="Super Admin · Module Access" title="Module Access" />
+        <ErrorState title="Invalid module access filters"
+          description="The module, scope or requested page is invalid. No college module rules were loaded."
+          action={<Link href={"/admin/features/"+encodeURIComponent(collegeId)}
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">
+            Clear filters
+          </Link>} />
+      </div>
+    );
   }
+  const {academicPage,...filters}=parsed;
+  const result = await getSuperAdminCollegeModuleAccess(context,collegeId,filters);
+  if (!result) notFound();
 
   const { college, modules, ancestors } = result;
-  const requestedAcademicPage=Number(one(query.academicPage)??"1");
-  const academicPage=Number.isSafeInteger(requestedAcademicPage)?
-   Math.max(1,Math.min(10000,requestedAcademicPage)):1;
   const academicScopes=await listCollegeModuleScopeChoices(context,college.id,academicPage);
   const ancestorLevels = [
     "GLOBAL",

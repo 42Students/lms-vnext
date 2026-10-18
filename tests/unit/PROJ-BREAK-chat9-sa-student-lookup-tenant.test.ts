@@ -39,7 +39,7 @@ vi.mock("@/db/client",()=>({
 const ctx:RequestContext={
   user:{id:"33333333-3333-4333-8333-333333333333",identityUid:"admin",
     platformStatus:"ACTIVE",systemRoles:["SUPER_ADMIN"]},
-  membership:null,adminScope:{collegeId},
+  membership:null,adminScope:{collegeId,organizationId:null},
 };
 beforeEach(()=>{
   state.authorized=true;state.reads=0;state.joins=[];state.where=[];

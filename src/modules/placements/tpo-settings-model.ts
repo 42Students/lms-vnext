@@ -92,3 +92,19 @@ export const TPO_FIXED_PLACEMENT_RULE_NOTES = [
     source: "Source-configured participation behavior",
   },
 ] as const;
+
+/**
+ * Rules settings pagination is an untrusted URL boundary. Never coerce
+ * hexadecimal, exponents, whitespace or ambiguous repeated query keys into a
+ * valid page. A malformed filter must fail before fetching college job data.
+ */
+export function parseTpoRulesPageParams(
+ raw:Record<string,string|string[]|undefined>,
+):number|null{
+ if(Object.keys(raw).some(key=>key!=="page"))return null;
+ const candidate=raw.page;
+ if(candidate===undefined)return 1;
+ if(typeof candidate!=="string"||!/^[1-9][0-9]*$/.test(candidate))return null;
+ const value=Number(candidate);
+ return Number.isSafeInteger(value)&&value<=10000?value:null;
+}

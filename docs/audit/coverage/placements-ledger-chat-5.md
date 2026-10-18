@@ -245,3 +245,29 @@ An inconsistent PUBLISHED job can outlive its parent season. Closing it for reco
 | PLACEMENTS-WAIT-SM-03 | `src/modules/placements/tpo-waitlist-promotion-model.ts`; `tests/unit/chat5-placements-core-extended-state-machines.test.ts` | Enumerates PENDING→RELEASED, idempotent identical offer and forbidden conflicting/cancelled settlements; physical seat, notification and two-transaction crash recovery remain open. |
 
 Latest test-failure file: `docs/orchestrator/unit-failures-latest.md` (chat-5 had four UX assertions in one test file). The four obsolete source-shape assertions were replaced by shared-component behavior contracts; **no test suite or TypeScript compiler was run in this lane**, so CI outcome is still pending. Production typecheck and lint were reported as PASS in `docs/orchestrator/typecheck-errors-latest.md`; no chat-5 test-file type errors were listed. This is still a partial ledger, not exhaustive certification.
+
+
+## Additional state-machine and TPO page safeguards (current branch; CI pending)
+
+| Case | Source fix | Direct tests | Still missing |
+|---|---|---|---|
+| PLACEMENTS-EXPIRY-SM-04 | `placement-offer-expiry-sweep-service.ts` now rejects nonfinite scheduler time before SQL; `placement-offer-sweep-policy.ts` fails closed for invalid clocks | `chat5-placements-core-state-machines.test.ts` checks exact boundary, malformed expiry, invalid clock and terminal status | Actual concurrent sweep-versus-learner-response PostgreSQL test, scheduler invocation |
+| PLACEMENTS-JOIN-SM-04 | `tpo-offer-lifecycle-model.ts` requires actual joining date on or before current IST day; `tpo-offer-lifecycle-service.ts` enforces it inside the mutation transaction | `chat5-placements-core-extended-state-machines.test.ts` tests 23:59→00:00 IST, malformed calendar dates and future records | Actual TPO transaction and joining-history assertions |
+| PLACEMENTS-OFFERS-EXPIRY-04 | `tpo-drive-offer-register-model.ts` now represents invalid persisted expiry/reference timestamps as UNKNOWN rather than OPEN | `chat5-tpo-second-third-behavior.test.ts` checks exact expiry, seven-day boundary, terminal states and invalid dates | Browser rendering and on-screen/export snapshot consistency |
+| PLACEMENTS-SELECTION-CAS-06 | `tpo-drive-selection-service.ts` now calls `matchesTpoSelectionReleaseRevision` on the **verification row lock**, comparing application, role, CTC and normalized time rather than only ISO text; earlier preflight and settlement already use the same helper | `chat5-placement-selection-safe-results.test.ts` checks authorization/lock, exact revision guard, stale-date rejection | Two-reviewer race / mid-flight change in PostgreSQL |
+
+No TypeScript, Vitest or PostgreSQL execution was performed in this lane. The coordinator's `typecheck-errors-latest.md` lists no chat-5 compilation error. The earlier four chat-5 source-shape unit failures were addressed on the branch and require CI confirmation. This ledger remains **incomplete** by the master queue's exhaustive coverage criteria.
+
+
+## Waitlist fairness and TPO offers visibility, additional branch evidence
+
+| Case | Source | Tests written (not executed) | Operational implication |
+|---|---|---|---|
+| PLACEMENTS-WAIT-TOKEN-04 | `tpo-waitlist-promotion-model.ts` canonicalizes promotion and active-offer arrays; `tpo-waitlist-promotion-service.ts` uses sorted arrays in token | `chat5-placements-core-extended-state-machines.test.ts` checks permutation invariant and token changes on true state changes | Unordered PostgreSQL `SELECT` returns no longer yield false stale previews |
+| PLACEMENTS-WAIT-SEASON-05 | `getTpoWaitlistPreview` joins college-scoped season and blocks candidate promotion when not ACTIVE; `offerToNextWaitlisted` verifies ACTIVE season under shared lock, after job update lock and before reservation | `chat5-placements-core-extended-state-machines.test.ts` source guard + `placements-p8-offers.test.ts` PostgreSQL inactive-season/no-reservation case | Closing a season between preview and reservation may no longer strand a pending seat; cross-transaction offer/settlement crash risk remains |
+| PLACEMENTS-OFFERS-EXPIRED-05 | Offer register status filter, counts, on-page tabs, and CSV accept actual persisted EXPIRED status | `chat5-tpo-second-third-behavior.test.ts` checks issued-vs-expired distinction, persisted total, and matching CSV | TPO can filter truly expired offers without interpreting merely overdue ISSUED as persisted EXPIRED |
+| PLACEMENTS-P8-DATE-01 | Test fixture only | `placements-p8-offers.test.ts` near-term test schedule/expiry instants updated to 2099, including injected expiry comparison clock | Prevents calendar passage from breaking integration tests during later CI runs |
+| PLACEMENTS-SELECTION-CAS-06 | Selection verification row lock compares normalized instant **and** application, role, CTC | `placements-p8-offers.test.ts`: PostgreSQL IST-offset release then retry with one verification/release event each | Regression for client-offset timestamp form on real DB; not executed locally |
+| PLACEMENTS-JOIN-SM-04 | TPO actual joining date must not be a future IST day | `placements-p8-offers.test.ts`: rejected future joined record leaves persisted PENDING and no history, positive actual joining creates one history event | Requires cloud DB and membership-role fixture to confirm |
+
+The branch was reconciled with the then-current `origin/main` using a two-parent merge commit without overwriting newer unrelated lane files. **CI is still needed** to establish executable coverage and to verify new PostgreSQL integration tests. Hundreds of other placement exports and routes remain outside the ledger; the core module is **not** exhaustively certified or releasable from these source checks alone.

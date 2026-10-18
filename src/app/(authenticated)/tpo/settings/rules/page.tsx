@@ -6,18 +6,18 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { TpoSettingsNav } from "@/components/placements/tpo-settings-nav";
 import { TpoCollegeRulesControl } from "@/components/placements/tpo-college-rules-control";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {
   TPO_FIXED_PLACEMENT_RULE_NOTES,
   formatTpoEligibilityThreshold,
+  parseTpoRulesPageParams,
 } from "@/modules/placements/tpo-settings-model";
 import { getCollegePlacementRules } from "@/modules/placements/tpo-policy-service";
 import { getTpoPlacementRulesSettings } from "@/modules/placements/tpo-settings-read-service";
 
-type SearchParams = {
-  page?: string | string[];
-};
+type SearchParams = Record<string,string|string[]|undefined>;
 
 function settingSourceLabel(
   source: "PERSISTED" | "SOURCE_DEFAULT",
@@ -80,16 +80,27 @@ export default async function TpoPlacementRulesSettingsPage({
   }
 
   const params = await searchParams;
-  const pageValue = Array.isArray(params.page)
-    ? params.page[0]
-    : params.page;
+  const selectedPage = parseTpoRulesPageParams(params);
+  if (selectedPage === null) {
+    return (
+      <div className="space-y-6">
+        <TpoSettingsNav active="rules" />
+        <PageHeader eyebrow="TPO · Settings" title="Placement rules" />
+        <ErrorState
+          title="Invalid placement rules filters"
+          description="The requested job page is invalid. No placement job records were loaded."
+          action={
+            <Link href="/tpo/settings/rules"
+              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+              Clear filters
+            </Link>
+          }
+        />
+      </div>
+    );
+  }
 
-  const result = await getTpoPlacementRulesSettings(
-    context,
-    {
-      page: pageValue || undefined,
-    },
-  );
+  const result = await getTpoPlacementRulesSettings(context,{page:selectedPage});
 
   const rules = result.collegeRules;
   const rulesVersion = (await getCollegePlacementRules(context, context.membership.collegeId)).version;

@@ -65,14 +65,17 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
    role==="LEARNER"?ilike(learnerProfiles.rollNumber,scopedSearchLike(query.q)):undefined,
    ilike(users.phoneE164,scopedSearchLike(query.q))):undefined,
  )).as("super_admin_role_directory");
- const [counts,rows]=await Promise.all([
-  db.select({total:count()}).from(source),
-  db.select().from(source).orderBy(asc(source.name),asc(source.id))
-   .limit(query.pageSize).offset((query.page-1)*query.pageSize),
- ]);
- const total=counts[0]?.total??0;
+ const [countRow]=await db.select({total:count()}).from(source);
+ const total=countRow?.total??0;
+ // An old bookmarked page can exceed the filtered row count after a role
+ // revocation or a new search. Clamp before fetching rows, as in the main
+ // Super Admin directory, rather than reporting page 999 of 1 as empty.
+ const totalPages=superAdminReadPages(total,query.pageSize);
+ const page=Math.min(query.page,totalPages);
+ const rows=await db.select().from(source).orderBy(asc(source.name),asc(source.id))
+  .limit(query.pageSize).offset((page-1)*query.pageSize);
  const fmt=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
- return {query,total,totalPages:superAdminReadPages(total,query.pageSize),items:rows.map(row=>({
+ return {query:{...query,page},total,totalPages,items:rows.map(row=>({
   id:row.id,title:row.name||"Unnamed person",subtitle:row.collegeName+" · "+role,
   status:row.status,
   details:[
