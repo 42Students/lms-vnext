@@ -108,3 +108,5 @@ The Projects squad lead (chat-14) must reconcile these missing exports and route
 | `college-readiness-releases-service.ts` | `listCollegeReadinessReleases` | MOCK BEHAVIOR + SQL/PERMISSION | `PROJ-BREAK-readiness-62/63/64/65`: project SHARE lock, status/college guard, missing project early return, aggregate points, role revocation and guessed-college denial; same test; real PG race pending. |
 
 | `admin-unsubmitted-service.ts` | `listProjectAdminUnsubmitted` | RENDERED SQL + MOCK BEHAVIOR | `PROJ-BREAK-reports-66`: qualified outer project alias prevents wrong-table ID binding in correlated NOT EXISTS, scoped count and data query share the same predicate. `tests/unit/PROJ-BREAK-chat9-admin-unsubmitted-service.test.ts`; real PostgreSQL anti-join result comparison pending. |
+
+| `project-workspace-readiness.tsx` | `ProjectWorkspaceReadiness` | MOCK SSR BEHAVIOR | `PROJ-BREAK-readiness-67/68/69/70`: hostile UUID before context fetch, foreign/expired role before readiness read, DB timeout recovery, preserved legacy labels and corrupt IST date fallback. `tests/unit/PROJ-BREAK-chat9-readiness-page-guard.test.tsx`; browser and PostgreSQL read failure pending. |
