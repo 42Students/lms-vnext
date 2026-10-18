@@ -71,3 +71,19 @@
 | `learner-course-card-media-model.ts` | `learnerCourseFallbackMedia` | Not individually linked in this inventory |
 | `learner-course-card-media-model.ts` | `learnerCourseCardMediaAfterError` | Not individually linked in this inventory |
 | `learner-course-card-next-label-model.ts` | `learnerCourseCardNextLabel` | Not individually linked in this inventory |
+| `learner-course-card-progress-model.ts` | `learnerCourseCardProgress` | Authored direct model regression, unrun |
+| `learner-course-card-search-model.ts` | `learnerCourseMatchesSearch` | Not individually linked in this inventory |
+| `learner-course-continue-model.ts` | `learnerCourseHasContinueAction` | Authored direct model regression, unrun |
+| `learner-course-copy-model.ts` | `LEARNER_BACK_TO_COURSES` | Not individually linked in this inventory |
+| `learner-course-copy-model.ts` | `LEARNER_COURSE_SEARCH_PLACEHOLDER` | Not individually linked in this inventory |
+| `learner-course-credit-summary-model.ts` | `learnerCourseCreditSummary` | Not individually linked in this inventory |
+| `learner-course-current-period-model.ts` | `resolveLearnerCoursePeriod` | Not individually linked in this inventory |
+| `learner-course-date-model.ts` | `formatLearnerCourseMoment` | Not individually linked in this inventory |
+| `learner-course-drilldown-model.ts` | `learnerAttendanceMonthSchema` | Not individually linked in this inventory |
+| `learner-course-drilldown-model.ts` | `LearnerLessonProgressInput` | Not individually linked in this inventory |
+| `learner-course-drilldown-model.ts` | `buildLearnerLessonProgress` | Not individually linked in this inventory |
+| `learner-course-drilldown-model.ts` | `LearnerCourseAttendanceRecord` | Not individually linked in this inventory |
+| `learner-course-drilldown-model.ts` | `buildLearnerCourseAttendanceMonths` | Not individually linked in this inventory |
+| `learner-course-drilldown-service.ts` | `getOwnLearnerCourseProgressBreakdown` | Not individually linked in this inventory |
+| `learner-course-drilldown-service.ts` | `getOwnLearnerCourseAttendanceHistory` | Not individually linked in this inventory |
+| `learner-course-file-reference-service.ts` | `getLearnerCourseFileReference` | Not individually linked in this inventory |
