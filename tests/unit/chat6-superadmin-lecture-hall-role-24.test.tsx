@@ -67,7 +67,7 @@ describe("SA-middle-lecture-halls-24 platform role and selected college",()=>{
   expect(html).toContain("IIT Dharwad");
   expect(html).toContain("No lecture halls found");
   expect(listLectureHalls).toHaveBeenCalledWith(expect.anything(),
-    expect.objectContaining({collegeId,limit:25,offset:0}));
+    expect.objectContaining({collegeId,limit:10,offset:0}));
  });
  it("malformed date filters render safe recovery without any room booking query",async()=>{
   const html=renderToStaticMarkup(await detailPage({from:"2026-10-19",to:"yesterday"}));
