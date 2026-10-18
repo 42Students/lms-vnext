@@ -41,7 +41,7 @@ params:Promise<{deliveryId:string}>;searchParams:Promise<Search>}){
  </section></div>
  <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
  <label className="grid gap-1 text-sm font-semibold">Assessment type
- <select name="kind" defaultValue={data.query.kind} className="min-h-11 rounded-md border border-border bg-background px-3 text-base sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+ <select name="kind" defaultValue={data.query.kind} className="min-h-11 rounded-md border border-border bg-background px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
  <option value="ALL">All</option><option value="ASSIGNMENT">Assignments</option><option value="QUIZ">Quizzes</option>
  </select></label>
  <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Filter</button>
