@@ -42,4 +42,15 @@ describe("allowRequest", () => {
     expect(allowRequest("a", 1, 60_000, 1)).toBe(false);
     expect(allowRequest("b", 1, 60_000, 1)).toBe(true);
   });
+
+  it("AUTH-rate-limits-01 never resets existing quotas when 50,000 distinct keys fill memory", () => {
+    expect(allowRequest("protected-client", 1, 60_000, 1_000)).toBe(true);
+    for (let i = 0; i < 49_999; i += 1) {
+      expect(allowRequest("spray-" + i, 1, 60_000, 1_000)).toBe(true);
+    }
+    expect(allowRequest("new-spoofed-client", 1, 60_000, 1_001)).toBe(false);
+    expect(allowRequest("protected-client", 1, 60_000, 1_002)).toBe(false);
+    // Cleanup is expiry-bound, not a reset of still-active buckets.
+    expect(allowRequest("new-spoofed-client", 1, 60_000, 61_001)).toBe(true);
+  });
 });
