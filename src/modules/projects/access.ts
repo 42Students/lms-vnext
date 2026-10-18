@@ -85,6 +85,12 @@ export async function requireProjectReadAccess(
     !hasMembershipRole(context,"MENTOR")&&
     !hasMembershipRole(context,"LEARNER"))
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  // A revoked Mentor/Learner must not learn whether a private project ID
+  // exists. Preflight principal status before performing the object lookup.
+  if (!isSuperAdmin(context) && !hasMembershipRole(context,"COLLEGE_ADMIN") &&
+      (context.user.platformStatus !== "ACTIVE" ||
+       context.membership?.status !== "ACTIVE"))
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const scope =
     await loadProjectScope(projectIdInput);
 
@@ -196,9 +202,10 @@ export async function requireProjectLifecycleAccess(
 
 /** Shared mutation gate for the legacy Admin and Mentor project workspaces. */
 export async function requireProjectLifecycleMutationAccess(context: RequestContext, projectIdInput: string) {
-  const scope = await requireProjectLifecycleAccess(context, projectIdInput);
+  // Deny disabled modules before any project ID existence/tenant lookup.
+  // Callers retain their role and tenant checks through the lifecycle guard.
   if (!(await resolveOptionalModuleAccess(context)).projects.enabled) {
     throw new ProjectsServiceError("PROJECT_LIFECYCLE_ACCESS_DENIED");
   }
-  return scope;
+  return requireProjectLifecycleAccess(context, projectIdInput);
 }
