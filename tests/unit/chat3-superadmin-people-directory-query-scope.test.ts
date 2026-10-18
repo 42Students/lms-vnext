@@ -19,22 +19,25 @@ vi.mock("@/db/client", () => ({
       state.selects++;
       const dialect = new PgDialect();
       if (projection && "displayName" in projection && "membershipId" in projection) {
+        const fields = projection;
         const email = projection.email as { sql: SQL };
         const phone = projection.phoneE164 as { sql: SQL };
         state.emailMask = dialect.sqlToQuery(email.sql);
         state.phoneMask = dialect.sqlToQuery(phone.sql);
-        const source = {
-          innerJoin: () => source,
-          where: (expression: SQL | undefined) => {
+        class SourceQuery {
+          innerJoin() { return this; }
+          where(expression: SQL | undefined) {
             state.scope = expression ? dialect.sqlToQuery(expression) : null;
-            return source;
-          },
-          as: () => ({
-            displayName: projection.displayName,
-            membershipId: projection.membershipId,
-          }),
-        };
-        return { from: () => source };
+            return this;
+          }
+          as() {
+            return {
+              displayName: fields.displayName,
+              membershipId: fields.membershipId,
+            };
+          }
+        }
+        return { from: () => new SourceQuery() };
       }
       if (projection && "n" in projection) {
         return { from: async () => [{ n: state.count }] };

@@ -91,6 +91,10 @@ This is the **tested-function ledger for the focused model suite**, not a claim 
 
 | `src/modules/courses/faculty-quiz-results-command-model.ts`, `faculty-assignment-grading-policy.ts`, `faculty-grade-editor-model.ts`, `faculty-grade-noop-model.ts` | `facultyQuizResultsCommandSchema`, `facultyQuizResultsTransition`, `facultyAssignmentGradingAllowed`, `facultyAssignmentGradePublicationAllowed`, `facultyGradeEditorState`, `facultyGradeHasChanges` | `tests/unit/chat3-faculty-assessment-publication-state-matrix.test.ts` | FAC-QUIZ-RESULTS-STATE-01 / FAC-ASSIGNMENT-GRADE-STATE-01 | closed/deadline-only quiz release and hide, no-op denial, strict confirmed transport, scored boundary, null score not zero and saved-grade-only publication |
 
+| `src/modules/attendance/faculty-service.ts` | `getFacultyAttendanceWorkspace` | `tests/unit/chat3-faculty-attendance-workspace-tenant-boundary.test.ts` | FAC-attendance-grades-18 / FAC-WORKSPACE-TENANT-01 | actual Drizzle query binds records to active own-college membership, active account and current enrolled Section roster; empty roster skips historical record read; revoked teaching and invalid delivery fail before queries |
+
+| `src/modules/courses/faculty-course-health-model.ts`, `faculty-course-health-service.ts` | `selectFacultyCourseHealthCandidates`, `getFacultyCourseAssessmentHealth` | `tests/unit/chat3-faculty-course-health-closed-quiz-model.test.ts`, `tests/unit/chat3-faculty-course-health-service-permissions.test.ts` | FAC-HEALTH-CLOSED-02 | include CLOSED published quizzes in current Section historical reporting without exposing draft/archived/foreign rows; five-row cap and stale-page clamp |
+
 ## Role/security matrix
 
 - FAC-SCOPE-01/02: Faculty allowed only after central `courses.read` and active teaching role; Learner, Mentor, College Admin, Super Admin, missing membership and foreign tenant denied in unit-model mock contract.

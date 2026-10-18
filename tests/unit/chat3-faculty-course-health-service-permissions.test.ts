@@ -51,7 +51,7 @@ beforeEach(() => {
     assignments: [row("assignment1", "ASSIGNMENT"),
       row("privateDraft", "ASSIGNMENT", { status: "DRAFT" }),
       row("foreign", "ASSIGNMENT", { deliveryId: foreignDelivery })],
-    quizzes: [row("quiz1", "QUIZ", { dueAt: wrongDate })],
+    quizzes: [row("quiz1", "QUIZ", { dueAt: wrongDate, status: "CLOSED" })],
   });
   stubs.assignment.mockResolvedValue({
     metrics: { eligibleLearners: 2, submitted: 1, missing: 1, graded: 1, averagePercent: 75 },

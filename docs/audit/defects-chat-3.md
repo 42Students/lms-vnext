@@ -160,6 +160,18 @@ The Faculty teaching-assignment class picker and four People filter-option SQL r
 
 **Fix:** Use the trimmed display name or existing neutral `Learner` fallback; do not expose learner email as display copy. Preserve the exact current Section and persisted teaching checks and the existing question-result projection. Test `tests/unit/chat3-faculty-quiz-attempts-privacy-service.test.ts` (FAC-QUIZ-PII-01) covers absent names, email/answer-selection non-disclosure, wrong roles, invalid selectors and revoked assignment errors. CI and browser accessibility/PII checks pending.
 
+### FAC-WORKSPACE-TENANT-027 — historical attendance records could expose departed or foreign learner contacts (S1)
+
+`getFacultyAttendanceWorkspace` authorized the Faculty delivery and found the current Section sessions, but then selected **all** attendance-record memberships for those event IDs. The join had no `college_memberships.college_id`, current active membership, active platform user, or current enrolled delivery roster constraint. A historically valid but subsequently moved, disabled or departed learner record (or a malformed foreign membership reference) could therefore appear with `email`, `phoneE164`, `note` and `rollNumber` in a Faculty workspace outside the current audience.
+
+**Fix:** Calculate the verified current delivery roster before querying records. Skip historical record reads for empty rosters; constrain the record SQL by both authorized event IDs and currently enrolled membership IDs and enforce active same-college memberships/users. `tests/unit/chat3-faculty-attendance-workspace-tenant-boundary.test.ts` compiles the actual Drizzle WHERE predicate and checks empty/unauthorized no-read paths. The separate grade/submission mutation ownership and historical audit retention remain unchanged. Real PostgreSQL malformed-record and college-transfer fixtures, UI attendance comparison and CI are still outstanding.
+
+### FAC-HEALTH-CLOSED-028 — completed quizzes silently absent from Faculty Section health (S2)
+
+The Faculty Section health model filtered assessment rows to `status === "PUBLISHED"` only. A quiz becomes `CLOSED` after its deadline or results release while remaining legitimate teaching evidence; both the Faculty results and reports-hub models already include closed quizzes. The health page therefore dropped completed quizzes from its count, response coverage and drilldown, misleading instructors about earlier assessments.
+
+**Fix:** Include `status === "CLOSED"` **only for quizzes** in the Section-scoped health selector. Draft and archived quizzes and non-published assignments remain excluded. `tests/unit/chat3-faculty-course-health-closed-quiz-model.test.ts` checks the state matrix, exact delivery, five-row page cap and invalid selector, and `tests/unit/chat3-faculty-course-health-service-permissions.test.ts` now exercises a CLOSED quiz through the actual service. Tests authored only; cloud CI and browser historical-quiz checks pending.
+
 ### FAC-HTTP-BODY-021 — unbounded live-class and attendance scheduling commands (S1)
 
 Both Faculty live-class and attendance scheduling POST routes previously called `request.json()` directly. The Zod/authorization service subsequently rejected bad fields, but the HTTP input body had already been fully buffered, permitting oversized metadata requests to waste memory in a stale or malicious session.

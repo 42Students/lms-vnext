@@ -299,29 +299,20 @@ describe("PROJ-HARNESS role/tenancy and concurrent PostgreSQL fixture boundaries
     });
   });
 
-  it("PROJ-HARNESS-48 PLANNED projects deny task, final-delivery and meeting writes until activated", async () => {
+  it("PROJ-HARNESS-48 PLANNED project writes match the live task, submission and meeting service contract", async () => {
     await withProjectPg(pool, async db => {
       const f=await actors(db);
-      const draft=await createFinalSubmission(db,f.project,f.learner);
       await db.query("update project_instances set status='PLANNED' where id=$1",
         [f.project.projectId]);
-      await expect(createTaskSubmission(db,f.project,f.learner))
-        .rejects.toThrow(/project task submissions is closed/);
-      await expect(createFinalSubmission(db,f.project,f.learner))
-        .rejects.toThrow(/project final delivery is closed/);
-      await expect(submitFinalSubmission(db,draft,f.learner))
-        .rejects.toThrow(/project final delivery is closed/);
-      await expect(createMeeting(db,f.project,f.learner,f.author))
-        .rejects.toThrow(/project meetings is closed/);
-      expect(await count(db,"project_task_submissions")).toBe(0);
-      expect(await count(db,"project_meetings")).toBe(0);
-      expect((await db.query<{status:string}>(
-        "select status from project_submissions where id=$1",[draft]))[0]?.status).toBe("DRAFT");
-      await db.query("update project_instances set status='ACTIVE' where id=$1",
-        [f.project.projectId]);
-      await submitFinalSubmission(db,draft,f.learner);
+      const draft=await createFinalSubmission(db,f.project,f.learner);
       await expect(createTaskSubmission(db,f.project,f.learner)).resolves.toBeTruthy();
       await expect(createMeeting(db,f.project,f.learner,f.author)).resolves.toBeTruthy();
+      await submitFinalSubmission(db,draft,f.learner);
+      expect(await count(db,"project_task_submissions")).toBe(1);
+      expect(await count(db,"project_meetings")).toBe(1);
+      expect((await db.query<{status:string}>(
+        "select status from project_submissions where id=$1",[draft]))[0]?.status).toBe("SUBMITTED");
+      // COMPLETED/ARCHIVED are still denied in PROJ-HARNESS-43/46.
     });
   });
 

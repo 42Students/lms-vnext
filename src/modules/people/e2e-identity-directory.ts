@@ -8,6 +8,7 @@ import type {
   IdentityDirectory,
   IdentityDirectoryUser,
 } from "./identity";
+import {PeopleServiceError} from "./errors";
 
 function toDirectoryUser(row: {
   identityUid: string;
@@ -82,6 +83,10 @@ export const e2eIdentityDirectory: IdentityDirectory = {
   },
 
   async createUser(input) {
+    // Deterministic fixture IDs must not collapse every missing-contact person
+    // into one synthetic identity. The production resolver forbids this too.
+    if(!input.phoneNumber&&!input.email)
+      throw new PeopleServiceError("IDENTITY_CONTACT_REQUIRED");
     return {
       uid: e2eUid(
         input.phoneNumber ??
