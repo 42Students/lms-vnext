@@ -16,6 +16,10 @@ const state=vi.hoisted(()=>({
   projectStatus:"ACTIVE",
   sprintStatus:"ACTIVE",
   releaseStatus:"IN_PROGRESS",
+  missingTask:false,
+  missingSprint:false,
+  missingRelease:false,
+  casConflict:false,
   reads:0,
   writes:0,
   activity:0,
@@ -43,12 +47,12 @@ vi.mock("@/db/client",()=>({
                   readStep++;
                   state.reads++;
                   if(readStep===1)return [{status:state.projectStatus}];
-                  if(readStep===2)return [{
+                  if(readStep===2)return state.missingTask?[]:[{
                     id:taskId,projectId,sprintId:"55555555-5555-4555-8555-555555555555",
                     title:"Implement gradebook",status:state.status,
                     updatedAt:state.updatedAt,blockerReason:state.blockerReason,
                   }];
-                  if(readStep===3)return [{
+                  if(readStep===3)return state.missingSprint?[]:[{
                     status:state.sprintStatus,
                     releaseId:"66666666-6666-4666-8666-666666666666",
                   }];
@@ -56,7 +60,7 @@ vi.mock("@/db/client",()=>({
                 },
               }),
               // Releases do not need a FOR UPDATE; their current status is checked.
-              limit:async()=>{readStep++;state.reads++;return [{status:state.releaseStatus}];},
+              limit:async()=>{readStep++;state.reads++;return state.missingRelease?[]:[{status:state.releaseStatus}];},
             }),
           }),
         }),
@@ -64,6 +68,7 @@ vi.mock("@/db/client",()=>({
           set:(update:{status:string;updatedAt:Date;blockerReason:string|null})=>({
             where:()=>({
               returning:async()=>{
+                if(state.casConflict)return [];
                 state.writes++;
                 state.status=update.status;
                 state.updatedAt=update.updatedAt;
@@ -92,6 +97,8 @@ describe("PROJ-BREAK-FACULTY-03 Mentor task state machine and stale submissions"
     state.status="TODO";state.blockerReason=null;state.updatedAt=new Date(stamp);
     state.projectStatus="ACTIVE";state.sprintStatus="ACTIVE";
     state.releaseStatus="IN_PROGRESS";state.reads=0;state.writes=0;state.activity=0;
+    state.missingTask=false;state.missingSprint=false;state.missingRelease=false;
+    state.casConflict=false;
   });
 
   const execute=(status:string,expectedUpdatedAt:string,blockerReason?:string)=>(
@@ -131,6 +138,27 @@ describe("PROJ-BREAK-FACULTY-03 Mentor task state machine and stale submissions"
       await expect(execute("IN_PROGRESS",stamp))
         .rejects.toMatchObject({code:"PROJECT_TASK_INVALID_STATE"});
       expect(state.writes).toBe(0);
+    }
+  });
+
+  it("PROJ-BREAK-FACULTY-03-05 database CAS losing a parallel version race emits no success or activity",async()=>{
+    state.casConflict=true;
+    await expect(execute("IN_PROGRESS",stamp)).rejects.toMatchObject({
+      code:"PROJECT_TASK_INVALID_STATE",
+    });
+    expect(state).toMatchObject({reads:4,writes:0,activity:0,status:"TODO"});
+    expect(state.updatedAt.toISOString()).toBe(stamp);
+  });
+
+  it("PROJ-BREAK-FACULTY-03-06 deleted or forged task, sprint or release never transitions",async()=>{
+    for(const broken of ["missingTask","missingSprint","missingRelease"] as const){
+      state[broken]=true;
+      await expect(execute("IN_PROGRESS",stamp)).rejects.toMatchObject({
+        code:broken==="missingTask"?"PROJECT_TASK_NOT_FOUND":"PROJECT_TASK_INVALID_STATE",
+      });
+      expect(state.writes).toBe(0);
+      expect(state.activity).toBe(0);
+      state[broken]=false;
     }
   });
 
