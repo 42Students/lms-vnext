@@ -9,3 +9,7 @@
 **States:** Loading, empty, error, stale, partial and denied branches are unchanged where present. No fabricated state. TypeScript, Vitest, phone and WebView checks remain to be run.
 
 **Test:** `tests/unit/UX-tpo-messages-01.test.ts`; source acceptance only until orchestrator runs it. **Page list:** do not tick until tested.
+
+## Shared form controls follow-up
+
+The GET filter form now uses the audited shared `Input`, `Select`, `Button` controls, keeping source-specific labels, defaults, submitted URL parameter names, permission checks and all existing pagination/export behavior. Hidden URL-preservation fields remain native. Browser focus/native picker and TypeScript acceptance await orchestrator runs. **Test:** `tests/unit/UX-tpo-messages-04.test.ts`.

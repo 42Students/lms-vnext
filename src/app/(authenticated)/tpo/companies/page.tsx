@@ -1,3 +1,6 @@
+import {Button} from "@/components/ui/button";
+import {Select} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -186,7 +189,7 @@ export default async function TpoCompanyMemoryPage({
         >
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
             Search companies
-            <input
+            <Input
               type="search"
               name="search"
               maxLength={150}
@@ -198,17 +201,17 @@ export default async function TpoCompanyMemoryPage({
 
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
             Sort by
-            <select name="sort" defaultValue={query.sort}
+            <Select name="sort" defaultValue={query.sort}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground">
               <option value="NAME">Company name</option>
               <option value="CONTACTS">Most contacts</option>
               <option value="DRIVES">Most drives</option>
               <option value="JOINS">Most confirmed joins</option>
-            </select>
+            </Select>
           </label>
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
             Page size
-            <select
+            <Select
               name="pageSize"
               defaultValue={String(query.pageSize)}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground"
@@ -216,15 +219,15 @@ export default async function TpoCompanyMemoryPage({
               <option value="25">25</option>
               <option value="50">50</option>
               <option value="100">100</option>
-            </select>
+            </Select>
           </label>
 
-          <button
+          <Button
             type="submit"
             className="self-end inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-5 text-sm font-semibold text-foreground hover:bg-primary-hover"
           >
             Search
-          </button>
+          </Button>
         </form>
 
         <div className="flex flex-wrap items-center gap-3">

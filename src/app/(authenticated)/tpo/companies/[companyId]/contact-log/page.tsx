@@ -1,3 +1,5 @@
+import {Button} from "@/components/ui/button";
+import {Select} from "@/components/ui/select";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -86,7 +88,7 @@ export default async function TpoCompanyContactLogPage({
           <form method="get" action={path} className="flex flex-wrap items-end gap-3">
             <label className="text-sm font-semibold text-foreground">
               Interaction type
-              <select
+              <Select
                 name="type"
                 defaultValue={log.type}
                 className="mt-2 block min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground"
@@ -94,14 +96,14 @@ export default async function TpoCompanyContactLogPage({
                 {["ALL", "CALL", "WHATSAPP", "EMAIL", "MEETING", "NOTE", "SYSTEM"].map((type) => (
                   <option key={type} value={type}>{type === "ALL" ? "All types" : type}</option>
                 ))}
-              </select>
+              </Select>
             </label>
-            <button
+            <Button
               type="submit"
               className="min-h-11 rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]"
             >
               Filter
-            </button>
+            </Button>
           </form>
           <p className="text-sm text-body">
             {log.total} recorded interaction(s). Most recent first; 25 per page.
