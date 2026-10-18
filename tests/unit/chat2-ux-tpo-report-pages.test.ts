@@ -62,4 +62,24 @@ describe("TPO report route UX contracts", () => {
     expect(source).toContain('fallback={<Skeleton variant="form" />}>');
     expect(source).not.toContain("min-h-10");
   });
+  it("UX-tpo-tpo-reports-placed-branch-01 shows accessible loading while report filters resolve", () => {
+    const source = readFileSync(join(process.cwd(), "src/app/(authenticated)/tpo/reports/placed-branch/page.tsx"), "utf8");
+    expect(source).toContain('fallback={<Skeleton variant="form" />}>');
+    expect(source).not.toContain("min-h-10");
+  });
+  it("UX-tpo-tpo-reports-placement-summary-01 shows accessible loading while report filters resolve", () => {
+    const source = readFileSync(join(process.cwd(), "src/app/(authenticated)/tpo/reports/placement-summary/page.tsx"), "utf8");
+    expect(source).toContain('fallback={<Skeleton variant="form" />}>');
+    expect(source).not.toContain("min-h-10");
+  });
+  it("UX-tpo-tpo-reports-season-pipeline-01 shows accessible loading while report filters resolve", () => {
+    const source = readFileSync(join(process.cwd(), "src/app/(authenticated)/tpo/reports/season-pipeline/page.tsx"), "utf8");
+    expect(source).toContain('fallback={<Skeleton variant="form" />}>');
+    expect(source).not.toContain("min-h-10");
+  });
+  it("UX-tpo-tpo-reports-unplaced-01 shows accessible loading while report filters resolve", () => {
+    const source = readFileSync(join(process.cwd(), "src/app/(authenticated)/tpo/reports/unplaced/page.tsx"), "utf8");
+    expect(source).toContain('fallback={<Skeleton variant="form" />}>');
+    expect(source).not.toContain("min-h-10");
+  });
 });
