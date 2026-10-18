@@ -90,3 +90,7 @@ Outstanding DB acceptance: inject a real concurrent revoke between authenticatio
 | `src/lib/api-fetch.ts` used by session revoke | same | Mocked 503 HTML and thrown network error never expose private proxy or SQL exception text | Cloud CI and actual edge proxy fault injection |
 
 No source under `src/auth` or `src/security` was changed; this lane's UI edit is restricted to the administrator session-revoke component. Existing unit-failure snapshot from CI dd44f0f2 is historical and is not a replacement for a fresh CI run.
+
+## AUTH-sessions-08 persisted Super Admin session HTTP boundary
+
+`tests/unit/chat6-super-admin-session-route-breaker.test.ts` invokes the actual exported GET/POST route handlers for `/api/admin/colleges/[collegeId]/sessions`, mocking only origin/context/service dependencies, to cover origin-first denial, malformed/extra-property/no-confirmation rejection, exact route-college/user forwarding, zero-revoke idempotent retries, persistence-failure error redaction and request IDs, and private no-store GET. The persisted service is separately reviewed in `tests/unit/chat4-super-admin-session-hardening.test.ts`; real PostgreSQL transactions and browser revocation race are still required for full certification.
