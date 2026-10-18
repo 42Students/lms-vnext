@@ -401,6 +401,40 @@ describe("Placement P8 offers and joining", () => {
     expect(stillOne.rows[0]?.count).toBe(1);
   });
 
+  it("PLACEMENTS-SELECTION-CAS-06 DB releases a versioned selection with an equivalent IST offset exactly once",async()=>{
+    const {job,application}=await preparePassedApplication();
+    const selected=await recordTpoDriveSelections(tpo,job.id,{
+      action:"RECORD",entries:[{
+        applicationId:application.id,roleTitle:"Offer engineer",annualCtcInr:900_000,
+      }],
+    });
+    const selectionId=selected.selectionIds[0]!;
+    const saved=await pool.query<{recorded_at:Date}>(
+      "select recorded_at from placement_drive_selections where id=$1",[selectionId]);
+    expect(saved.rows).toHaveLength(1);
+    const instant=saved.rows[0]!.recorded_at;
+    const wall=new Date(instant.getTime()+330*60_000);
+    const istRevision=wall.toISOString().replace(/Z$/,"+05:30");
+    const payload={
+      action:"VERIFY_AND_RELEASE" as const,confirmed:true,
+      selectionIds:[selectionId],expectedRecordedAt:{[selectionId]:istRevision},
+    };
+    const first=await verifyAndReleaseTpoSelections(tpo,job.id,payload);
+    expect(first).toMatchObject({released:1,skipped:0});
+    const retry=await verifyAndReleaseTpoSelections(tpo,job.id,payload);
+    expect(retry).toMatchObject({released:1,skipped:0});
+    const rows=await pool.query<{status:string;released_offer_id:string}>(
+      "select status,released_offer_id from placement_drive_selections where id=$1",[selectionId]);
+    expect(rows.rows[0]?.status).toBe("RELEASED");
+    expect(rows.rows[0]?.released_offer_id).toBe(first.results[0]?.offerId);
+    const events=await pool.query<{event_type:string;count:number}>(
+      "select event_type,count(*)::int as count from activity_events where subject_id=$1 and event_type in ('PLACEMENTS_TPO_SELECTION_VERIFIED','PLACEMENTS_TPO_SELECTION_RELEASED') group by event_type",
+      [job.id],
+    );
+    expect(Object.fromEntries(events.rows.map(item=>[item.event_type,item.count])))
+      .toEqual({PLACEMENTS_TPO_SELECTION_VERIFIED:1,PLACEMENTS_TPO_SELECTION_RELEASED:1});
+  });
+
   it("PLACEMENTS-SELECTION-RACE-DB-01 concurrent exact selection submits create one row and one audit",async()=>{
     const {job,application}=await preparePassedApplication();
     const request={action:"RECORD" as const,entries:[{
