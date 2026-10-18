@@ -364,3 +364,17 @@ These rows establish direct unit behaviour only. Tests, TypeScript, database con
 | `tpoCampaignUnsubscribeEvent` | `tests/unit/chat16-campaign-snapshot-consent-matrix-02.test.ts` (`HR-CAMPAIGN-UNSUB-NAME-06`) | untrusted long emoji-bearing names never truncate into an invalid surrogate; existing normal legacy sentence unchanged |
 
 The reminder worker route now enforces a nonblank, non-whitespace-quoted configured credential and explicit Bearer syntax before it can invoke the job. These checks complement, not replace, the worker's real recipient-grant rechecks and provider/DB verification. `readBoundedRecruiterInboundBody` now also preserves UTF-8 BOM bytes in decoded signed input instead of silently dropping them; `HR-MAIL-INBOUND-04` covers that boundary. This ledger records **authored-only** direct tests; typecheck, Vitest, browser journeys, real PostgreSQL and upstream gateway signature acceptance remain unexecuted in chat-16.
+
+
+### 2026-10-19: public/auth fallback and quiz/platform page closure
+
+| Route / export | Direct page-level evidence | States asserted |
+|---|---|---|
+| `/quiz` default page | `tests/unit/chat16-public-quiz-platform-states-04.test.tsx` (`UX-chat16-public-quiz-page-01`) | quiz return navigation, tap-size, mobile layout and no session token in static shell |
+| `/platform` marketing page | same (`UX-chat16-public-platform-page-02`) | exact role offerings, lifecycle copy, published metadata |
+| `/placements` not-found | same (`UX-chat16-public-placement-404-03`) | safe unpublished explanation instead of database diagnostics |
+| `/platform`, `/quiz`, `/placements`, `/privacy-policy` loading route components | same (`UX-chat16-public-loading-04`) | each supplies shared loading boundary for recovery |
+| `/login` loading + error | `tests/unit/chat16-public-auth-error-states-05.test.tsx` (`UX-chat16-login-loading-05`, `UX-chat16-login-error-06`) | mobile width, loading state, public safe home recovery and no leaked provider exception |
+| `/platform`, `/quiz`, `/placements`, `/privacy-policy` error route components | same (`UX-chat16-public-route-errors-07..08`) | route-specific shared fallback and safe public recovery |
+
+These are newly authored SSR/mocked-boundary page tests; actual mobile viewport/focus/browser behaviour still needs the final browser suite. The newly authored tests and application changes remain **unexecuted** per owner priority: do not chase CI until the full task queue has been implemented.
