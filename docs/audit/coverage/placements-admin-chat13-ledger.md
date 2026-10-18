@@ -107,3 +107,26 @@ The biggest remaining admin-placement release gates are a real PostgreSQL two-se
 
 
 | `src/modules/admin-ui/super-admin-hiring-report-service.ts` — academic faceting of `getSuperAdminCompanyHiringReport` | When an enrollment's cohort references a different program than the enrollment, reject the foreign/contradictory cohort in the academic filter rather than treating its UUID as a match | `SA-HIRING-ACADEMIC-04` in `chat13-super-admin-hiring-report-tenant-aggregation.test.ts` | Cohort joins require `cohorts.programId = learnerProgramEnrollments.programId`; registered PostgreSQL corrupt-cohort fixture pending. |
+
+
+## Super Admin placement page read services (`src/modules/admin-ui/`)
+
+The other half of the admin coverage boundary lives in `src/modules/admin-ui/`, not only in `src/modules/placements/`. The shared `SA-ADMIN-PLACEMENT-SERVICE-MATRIX-01..03` source test enumerates the following server services and their central selected-college constraints. Each row remains subject to runtime A/B tenant tests and browser verification.
+
+| Service file / function | Boundary | Test evidence / status |
+|---|---|---|
+| `super-admin-placement-applications-service.ts` — `listAdminPlacementApplications` | Persisted job, role, learner membership; ACTIVE enrollment with same-program cohort | `SA-ADMIN-PLACEMENT-SERVICE-MATRIX-01/03`, `SA-APPLICATIONS-ACADEMIC-05` source guard; DB pending |
+| `super-admin-placement-hiring-service.ts` — `listSuperAdminHiringByJob` | Zero-application jobs retained; `count(collegeMemberships.id)` excludes foreign members | `SA-ADMIN-PLACEMENT-SERVICE-MATRIX-01/03` source guard; DB pending |
+| `super-admin-placement-interviews-service.ts` — `listSuperAdminInterviews` | Selected-college job and organization before round labels | `SA-ADMIN-PLACEMENT-SERVICE-MATRIX-01` source guard; DB pending |
+| `super-admin-placement-job-settings-service.ts` — `listSuperAdminJobSettings` | Scoped jobs and their eligibility policies | `SA-ADMIN-PLACEMENT-SERVICE-MATRIX-01` source guard; DB pending |
+| `super-admin-placement-joining-service.ts` — `listSuperAdminJoining` | Offer/application/job with selected-college learner | `SA-ADMIN-PLACEMENT-SERVICE-MATRIX-01/03` source guard; DB pending |
+| `super-admin-placement-offers-service.ts` — `listSuperAdminOffers` | Persisted college membership and job, scope before offer read | `SA-ADMIN-PLACEMENT-SERVICE-MATRIX-01/03` source guard; DB pending |
+| `super-admin-placement-retention-service.ts` — `getSuperAdminPlacementRetentionReport` | Selected-college applications and 200-row bounded old-data scan | `SA-ADMIN-PLACEMENT-SERVICE-MATRIX-02` source guard; DB pending |
+| `super-admin-placement-screenings-service.ts` — `listSuperAdminScreeningQueue` | Selected-college application and restricted review status | `SA-ADMIN-PLACEMENT-SERVICE-MATRIX-01/03` source guard; DB pending |
+| `super-admin-placement-seasons-service.ts` — `listSuperAdminPlacementSeasons` | College and organization season scope | `SA-ADMIN-PLACEMENT-SERVICE-MATRIX-01` source guard; DB pending |
+| `super-admin-placement-shortlisted-service.ts` — `listSuperAdminShortlisted` | Selected-college job, role option and learner membership | `SA-ADMIN-PLACEMENT-SERVICE-MATRIX-01/03` source guard; DB pending |
+| `super-admin-hiring-report-service.ts` — `getSuperAdminCompanyHiringReport` | Correlated selected-college application EXISTS, consistent cohort program | `SA-HIRING-REPORT-SCOPE-03`, `SA-HIRING-ACADEMIC-04`, real SQL witness authored; unexecuted |
+| `super-admin-hiring-report-filters-service.ts` — `getSuperAdminHiringReportFilters` | Scoped drive, department, program and cohort chooser rows | `SA-ADMIN-PLACEMENT-SERVICE-MATRIX-01` source guard; DB pending |
+| `super-admin-scoped-csv-service.ts` — `exportSuperAdminScopedDirectory` | Session, allowed status, unvarying 25-record fetch pages, 250 capped row export | `SA-SCOPED-CSV-CAP-05` mocked service runtime in `chat13-scoped-csv-export-page-size.test.ts`; unexecuted |
+
+`SA-ADMIN-LEDGER-01` in `tests/unit/chat13-placements-admin-coverage-registry.test.ts` dynamically audits all 38 dedicated `admin-*`, `super-admin-*`, `report-*`, `platform-placement-policy-*` source files under `src/modules/placements` against this ledger, and independently checks that the first-third 37 /admin route audit and 48 Projects/Placements route inventory remain linked. Runtime branch coverage and database concurrency have not been measured.
