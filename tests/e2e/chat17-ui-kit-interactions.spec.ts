@@ -165,6 +165,48 @@ test.describe("UX-kit-E2E-01 real browser shared UI states",()=>{
     await expect(page.getByText("Disclosed workspace details")).toBeHidden();
   });
 
+  test("UX-kit-E2E-07 disabled controls expose their reason to keyboard users",async({page})=>{
+    await page.goto(route);
+    const group=page.getByRole("group").filter({hasText:"Assign a learner before submitting."});
+    await group.focus();
+    await expect(group).toBeFocused();
+    const action=group.getByRole("button",{name:"Submit unassigned project"});
+    await expect(action).toBeDisabled();
+    const reasonId=await group.getAttribute("aria-describedby");
+    expect(reasonId).toBeTruthy();
+    await expect(group.locator('[id="'+reasonId+'"]')).toHaveText("Assign a learner before submitting.");
+  });
+
+  test("UX-kit-E2E-08 success notice waits until a hidden document is visible",async({page})=>{
+    await page.goto(route);
+    await page.evaluate(()=>{
+      Object.defineProperty(document,"hidden",{configurable:true,get:()=>true});
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+    await page.getByRole("button",{name:"Show inline saved notice"}).click();
+    const note=page.getByRole("status").filter({hasText:"Saved inline workspace update"});
+    await expect(note).toBeVisible();
+    await page.waitForTimeout(1000);
+    await expect(note).toBeVisible();
+    await page.evaluate(()=>{
+      Object.defineProperty(document,"hidden",{configurable:true,get:()=>false});
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+    await expect(note).toHaveCount(0,{timeout:3500});
+  });
+
+  test("UX-kit-E2E-09 upload retains external help and Tabs honor reduced motion",async({page})=>{
+    await page.emulateMedia({reducedMotion:"reduce"});
+    await page.goto(route);
+    const upload=page.locator("#harness-proof");
+    const descriptions=await upload.getAttribute("aria-describedby");
+    expect(descriptions?.split(/\s+/)).toContain("harness-external-help");
+    expect(descriptions?.split(/\s+/)).toContain("harness-proof-help");
+    const transition=await page.getByRole("tab",{name:"Overview"}).evaluate(el=>
+      getComputedStyle(el).transitionDuration);
+    expect(transition).toBe("0s");
+  });
+
   test("upload validates real FileList and toasts work without randomUUID",async({page})=>{
     await page.goto(route);
     const upload=page.locator("#harness-proof");
