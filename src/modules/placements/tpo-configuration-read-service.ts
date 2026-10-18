@@ -1,5 +1,5 @@
 import "server-only";
-import { asc, and, eq } from "drizzle-orm";
+import { asc, and, eq, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { courses, departments } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -38,6 +38,6 @@ export async function listTpoPrepCourses(ctx:RequestContext){
  const collegeId=await requireTpoBatchActor(ctx);
  return getDb().select({id:courses.id,name:courses.name,code:courses.code}).from(courses)
   .innerJoin(departments,eq(departments.id,courses.departmentId))
-  .where(and(eq(departments.collegeId,collegeId),eq(courses.status,"ACTIVE")))
+  .where(and(eq(departments.collegeId,collegeId),isNull(departments.archivedAt),eq(courses.status,"ACTIVE")))
   .orderBy(asc(courses.name),asc(courses.id));
 }

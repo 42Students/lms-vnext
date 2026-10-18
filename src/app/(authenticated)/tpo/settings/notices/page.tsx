@@ -38,9 +38,9 @@ export default async function TpoStudentNoticesSettings(){
    <p role="status" className="text-sm">{view.prepSummary}</p>
    <Link href={view.prepHref} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Configure available preparation courses</Link>
   </section>
-  {communication.ready?<TpoSmsCapEditor initial={communication.smsMonthlyCap} version={communication.version}/>:
+  {communication.ready?<TpoSmsCapEditor key={ctx.membership?.collegeId??"unscoped"} initial={communication.smsMonthlyCap} version={communication.version}/>:
    <p role="status" className="rounded-lg border border-border p-4 text-sm">Communication settings are not available in this database.</p>}
-  {communication.ready?<TpoOptionalEmailsEditor initial={{
+  {communication.ready?<TpoOptionalEmailsEditor key={ctx.membership?.collegeId??"unscoped"} initial={{
     notifyDriveOpenEmail:communication.notifyDriveOpenEmail,
     notifyResultApplied:communication.notifyResultApplied,
     notifyNudges:communication.notifyNudges,notifyPrepAssigned:communication.notifyPrepAssigned,

@@ -12,6 +12,7 @@ import { equalsIgnoreCase } from "@/lib/sql-match";
 import { getDb } from "@/db/client";
 import {
   colleges,
+  organizations,
   placementCompanies,
   placementCompanyRelationships,
   placementJobs,
@@ -445,6 +446,14 @@ export async function listOwnRecruiterPlacementJobs(
         placementJobs.collegeId,
       ),
     )
+    .innerJoin(organizations,and(
+      eq(organizations.id,colleges.organizationId),
+      eq(organizations.status,"ACTIVE"),
+    ))
+    .innerJoin(users,and(
+      eq(users.id,context.user.id),
+      eq(users.platformStatus,"ACTIVE"),
+    ))
     // Cached session grants must not survive persisted revocation or profile suspension.
     .innerJoin(placementRecruiterCollegeGrants,and(
       eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
