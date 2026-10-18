@@ -71,6 +71,8 @@ This is the **tested-function ledger for the focused model suite**, not a claim 
 | `src/modules/courses/faculty-quiz-question-csv.ts` | `facultyQuizQuestionAccuracyCsv` | `tests/unit/chat3-faculty-content-navigation-csv-boundaries.test.ts` | FAC-BOUNDS-04 | 500 question cap, formula neutralization and correct omission disclosure |
 | `src/modules/courses/faculty-report-csv-request.ts` | `facultyReportCsvHref`, `parseFacultyCsvDownloadUrl`, `facultyCsvAttachmentHeaders` | `tests/unit/chat3-faculty-content-navigation-csv-boundaries.test.ts` | FAC-BOUNDS-05 | strict query selectors, no extra/duplicate tenant filters, valid round-trip, safe attachment headers |
 
+| `src/modules/courses/faculty-discussion-reply-service.ts` | `postFacultyDiscussionReply` | `tests/unit/chat3-faculty-discussion-reply-permissions.test.ts` | FAC-DISCUSSION-SERVICE-01 | actual service role matrix, malformed input before scope, foreign college/organization, teaching revocation before write and exact authenticated command |
+
 ## Role/security matrix
 
 - FAC-SCOPE-01/02: Faculty allowed only after central `courses.read` and active teaching role; Learner, Mentor, College Admin, Super Admin, missing membership and foreign tenant denied in unit-model mock contract.
