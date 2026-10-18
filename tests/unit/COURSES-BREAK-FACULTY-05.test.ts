@@ -5,7 +5,7 @@ import {can} from "@/modules/permissions/policy";
 
 const collegeId="11111111-1111-4111-8111-111111111111";
 const organizationId="22222222-2222-4222-8222-222222222222";
-function actor(roles:RequestContext["membership"] extends infer T ? NonNullable<T>["roles"] : never=["FACULTY"]):RequestContext {
+function actor(roles:NonNullable<RequestContext["membership"]>["roles"]=["FACULTY"]):RequestContext {
  return {user:{id:"33333333-3333-4333-8333-333333333333",
    identityUid:"faculty",platformStatus:"ACTIVE",systemRoles:[]},
   membership:{id:"44444444-4444-4444-8444-444444444444",
