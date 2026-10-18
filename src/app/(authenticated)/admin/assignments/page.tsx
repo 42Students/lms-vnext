@@ -7,16 +7,16 @@ import { PageHeader } from "@/components/ui/page-header";
 import { AdminAssessmentDirectory } from "@/components/courses/admin-assessment-read-directory";
 import {CollegeAssignmentCreate} from "@/components/courses/college-assignment-create";
 import {getCollegeAssignmentAuthoringOptions} from "@/modules/courses/college-assignment-authoring-options";
-import { adminAssessmentExportHref, adminAssessmentQuerySchema } from "@/modules/courses/admin-assessment-directory-model";
+import { adminAssessmentExportHref } from "@/modules/courses/admin-assessment-directory-model";
+import {parseSuperAdminAssignmentQuery} from "@/modules/admin-ui/super-admin-quiz-query-model";
 import { listCollegeAssessmentAggregate } from "@/modules/courses/college-assessment-aggregate-service";
 
 export default async function SuperAdminAssignmentsPage({
   searchParams,
 }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const raw = await searchParams;
-  const query = adminAssessmentQuerySchema.safeParse({ q: raw.q, status: raw.status, page: raw.page,
-    courseCode:raw.courseCode,scope:raw.scope,results:raw.results });
-  if (!query.success || query.data.status === "CLOSED" || query.data.results !== "ALL") return <div className="min-w-0 space-y-4">
+  const query = parseSuperAdminAssignmentQuery(raw);
+  if (!query.success) return <div className="min-w-0 space-y-4">
     <PageHeader eyebrow="Super Admin · Courses" title="Assignments" />
     <ErrorState title="Invalid assignment filters" description="Check search, status and page."
       action={<Link href="/admin/assignments" className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>} />
