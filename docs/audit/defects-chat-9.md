@@ -94,6 +94,8 @@ Branch: `chatgpt/chat-9-b`. Owner: chat-9. These are observed source-level findi
 
 | PROJ9-053 · PROJ-BREAK-ux-40/43 | Medium | Global Super Admin template detail and historical version comparison pages previously delegated every GET to the backend and threw uncaught errors for stale permissions or database failure. They now fail closed before querying for denied administrators, preserve not-found handling for malformed/missing IDs and show retry navigation without exposing private version snapshots on service errors. | `ea69a0f`, `bbb3306` | `tests/unit/PROJ-BREAK-chat9-template-detail-pages.test.tsx` (`19b7598`): read denial, malformed UUID, unavailable service, authorized read. Live browser and PostgreSQL role checks OPEN |
 
+| PROJ9-054 · SA-tenants-setup-12/16 | High | Super Admin tenant Setup independently loaded organization, college lifecycle directory, selected college and launch readiness without safe transactional presentation on read failure. A partial response could crash or imply an authorized empty roster/ready college. It now renders creation and launch controls only after all required scoped reads succeed and displays a retry otherwise, preserving the selected stage and rejecting disabled permission before database work. | `8bf8e31` | `tests/unit/PROJ-BREAK-chat9-sa-tenant-setup-page.test.tsx` (`2aa1020`, `57f4b64`): org/readiness failures, disabled role and no college; browser and real readiness integration OPEN |
+
 ## Outstanding release gates (not yet closed)
 
 - Live PostgreSQL integration tests for wrong-tenant IDs, serializable races, rollback and event/notification dedupe; chat-17 owns shared fixtures. Static service assertions alone cannot establish real DB behavior.
