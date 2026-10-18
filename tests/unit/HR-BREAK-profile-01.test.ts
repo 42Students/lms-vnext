@@ -1,7 +1,7 @@
 import {describe,expect,it} from "vitest";
 import {hrRecruiterNameFieldsSchema,joinHrRecruiterName,splitHrRecruiterName,sameHrNameVersion}
  from "@/modules/placements/hr-recruiter-name-fields-model";
-import {recruiterProfileDetailsPatchSchema} from "@/modules/placements/recruiter-profile-details-model";
+import {recruiterProfileDetailsPatchSchema,hrProfileSaveErrorFeedback} from "@/modules/placements/recruiter-profile-details-model";
 import {isExactRecruiterEmployerRow} from "@/modules/placements/recruiter-own-company-policy";
 import {buildRecruiterCompanyOverview,recruiterCompanyOverviewQuerySchema}
  from "@/modules/placements/recruiter-company-overview-model";
@@ -59,5 +59,16 @@ describe("HR-BREAK-profile-01: employer profile, grants and wrong-tenant visibil
   expect(recruiterCompanyOverviewQuerySchema.safeParse({collegeId:otherCollege}).success).toBe(true);
   expect(recruiterCompanyOverviewQuerySchema.safeParse({collegeId:"not-uuid"}).success).toBe(false);
   expect(recruiterCompanyOverviewQuerySchema.safeParse({admin:true}).success).toBe(false);
+ });
+ it("HR-BREAK-profile-02 preserves form data and gives clear recovery after stale, expired, revoked or throttled saves",()=>{
+  expect(hrProfileSaveErrorFeedback(409)).toContain("Refresh before saving");
+  expect(hrProfileSaveErrorFeedback(401)).toContain("Sign in again");
+  expect(hrProfileSaveErrorFeedback(403)).toContain("Ask the placement cell");
+  expect(hrProfileSaveErrorFeedback(429)).toContain("Try again shortly");
+  for(const status of [400,401,403,409,429,500,503]){
+   const feedback=hrProfileSaveErrorFeedback(status);
+   expect(feedback).toMatch(/edits are still here|changes are still here/i);
+   expect(feedback).not.toMatch(/stack|trace|sql|exception|internal server/i);
+  }
  });
 });
