@@ -73,7 +73,9 @@ describe("PROJ-BREAK-MENTOR-55..59 real HTTP route handler input trust boundarie
    expect(response.status,route.id).toBe(200);
    expect(response.headers.get("content-type"),route.id).toContain("text/csv");
    expect(response.headers.get("cache-control"),route.id).toBe("private, no-store");
-   expect(await response.text()).toContain("IST");
+   const body=await response.text();
+   expect(body).toContain(route.id==="board"?"Task ID":
+     route.id==="sprint"?"Sprint ID":route.id==="report"?"Updated (IST)":"Submitted (IST)");
   }
   expect(state.calls.map(c=>c.kind)).toEqual(["board","board","report","review"]);
   for(const call of state.calls){
