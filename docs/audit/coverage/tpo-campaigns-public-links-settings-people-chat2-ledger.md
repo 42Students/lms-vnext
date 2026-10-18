@@ -147,3 +147,9 @@ The 42-route source matrix is complemented by **direct async server-page behavio
 - `tests/unit/chat2-tpo-reports-server-page-states.test.ts`: role/duplicated-filter protection and the honest no-season state for TPO branch and CTC reports.
 
 Page-state coverage is still PARTIAL; these additions do not certify the remaining last-third pages or accessible real-browser behavior. Cloud CI has not yet executed the new tests.
+
+### Whole final report slice: executable server denial states
+
+`tests/unit/chat2-tpo-report-all14-page-denial.test.ts` now imports and invokes the **14 actual TPO report server pages** listed in `chat2-tpo-reports-duplicate-params-break-15.test.ts`. For every one: missing membership, College Admin, Learner, disabled TPO identity, and duplicate season selectors are checked ahead of a report database call. Each page's rejected state is validated through the shared redirect or the returned `TpoReportInvalidFilters` route identity. This is **70 per-route behavioral cases**, plus inventory uniqueness. It complements the old static 14-route matrix; no report data fixtures or route were weakened. 
+
+**Still pending**: each report's successful populated/empty/partial/error/browser visual behavior, eventual post-merge CI execution and real database isolation. Server-only role tests do not certify those states.
