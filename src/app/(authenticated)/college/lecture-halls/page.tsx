@@ -48,13 +48,13 @@ export default async function CollegeLectureHallsPage({
   const query = parseCollegeLectureHallSearchParams(await searchParams);
   if (!query) {
     return (
-      <div className="min-w-0 space-y-6">
+      <div className="min-w-0 overflow-x-clip space-y-6">
         <PageHeader eyebrow="College Admin" title="Lecture Halls" />
         <ErrorState
           title="Invalid lecture hall filters"
           description="The room search, status, type, department or page is invalid. No records were loaded."
           action={
-            <Link href="/college/lecture-halls" className="font-semibold text-primary-text">
+            <Link href="/college/lecture-halls" className="font-semibold text-[var(--lms-teal-deep)]">
               Clear filters
             </Link>
           }
@@ -96,7 +96,7 @@ export default async function CollegeLectureHallsPage({
       />
 
       <Link prefetch={false} download href={lectureHallsCsvHref(query)}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
         Export CSV
       </Link>
       <section aria-label="Lecture hall filters" className="rounded-xl border border-border bg-surface p-4 sm:p-5">
@@ -157,11 +157,11 @@ export default async function CollegeLectureHallsPage({
           </label>
           <div className="flex items-end gap-2">
             <button type="submit"
-              className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+              className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">
               Filter
             </button>
             <Link href="/college/lecture-halls"
-              className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+              className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)]">
               Clear
             </Link>
           </div>
@@ -198,13 +198,13 @@ export default async function CollegeLectureHallsPage({
         <div className="flex gap-2">
           {query.page > 1 ? (
             <Link href={collegeLectureHallHref({ ...query, page: query.page - 1 })}
-              className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
+              className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">
               Previous
             </Link>
           ) : null}
           {query.page < totalPages ? (
             <Link href={collegeLectureHallHref({ ...query, page: query.page + 1 })}
-              className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
+              className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">
               Next
             </Link>
           ) : null}
