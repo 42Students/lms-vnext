@@ -93,6 +93,14 @@ describe("PROJ-HARNESS source and environment guard",()=>{
    expect(helper).toContain("drive is not open for applications");
  });
 
+ it("PROJ-HARNESS-GUARD-11 fixture writes cannot inherit connection-string search_path",()=>{
+   expect(helper).toContain('SET LOCAL search_path = public, pg_temp');
+   expect(helper).toContain("await assertHarnessSchema(client)");
+   expect(helper).toContain('await client.query("BEGIN")');
+   expect(helper.indexOf('await client.query("BEGIN")')).toBeLessThan(
+     helper.indexOf('await client.query("SET LOCAL search_path = public, pg_temp")'));
+ });
+
  it("PROJ-HARNESS-GUARD-05 always rolls back transaction and savepoint errors",()=>{
    expect(helper).toContain('if (begun) await client.query("ROLLBACK")');
    expect(helper).toContain("client.release()");
