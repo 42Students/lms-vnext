@@ -369,3 +369,17 @@ These fixes are committed on chat-19; live provider, PostgreSQL revocation races
 | ID | Severity | Source | Finding, correction, evidence |
 |---|---|---|---|
 | HR-BREAK-PROPOSALS-QUERY-21 | MAJOR | `src/app/(authenticated)/hr/drives/proposals/page.tsx` | Page silently selected the first element of repeated `collegeId/page/q/sort` query keys before Zod parsing, allowing ambiguous employer/grant selection and mismatched user-visible filter state. Pass raw values directly to the strict schema and retain `notFound()` recovery for invalid arrays. Also check recruiter.userId matches signed-in user before private proposal history. `tests/unit/HR-BREAK-chat19-home-portfolio-proposals.test.ts` verifies five repeated-filter variants, wrong identity denial and no discussion-reader call. |
+
+## HR drive listing and draft repeated-filter hardening
+
+| ID | Severity | Source | Findings, fixes, direct tests |
+|---|---|---|---|
+| HR-BREAK-DRIVES-QUERY-22 | MAJOR | `src/app/(authenticated)/hr/drives/page.tsx` | Repeated college, status/view, legacy tab, page or search fields were silently reduced to their first value. Require no arrays before parsing the otherwise unchanged strict drive query; preserve existing `Invalid drive filters` recovery. Explicitly deny a mismatched recruiter identity at page entry. `tests/unit/HR-BREAK-chat19-drive-list-page.test.ts` covers repeated keys, invalid account, and no service reads. |
+| HR-BREAK-DRIVE-DRAFT-QUERY-23 | MAJOR | `src/app/(authenticated)/hr/drives/new/page.tsx` | Repeated `from/fix/edit/copy/collegeId` IDs previously selected the first value, potentially opening the wrong source job/request or account. Pass raw values into strict Zod (which also rejects conflicting source modes), and deny cross-user recruiter principal before any read. `tests/unit/HR-BREAK-chat19-drive-draft-duplicate-query.test.ts` directly invokes invalid async page entries, asserting no workspace/request/branch reader runs. |
+
+## Recruiter calendar and company/team duplicate-query hardening
+
+| ID | Severity | Source | Finding and correction | Regression |
+|---|---|---|---|---|
+| HR-BREAK-CALENDAR-QUERY-24 | MAJOR | `src/app/(authenticated)/hr/calendar/page.tsx` | The calendar previously selected the first repeated date/view/category URL parameter, hiding contradictory values before calendar aggregation. Reject any array with a recoverable `Invalid calendar filters.` state and no event fetch; deny mismatched recruiter identity before events. Keep existing single invalid-date default behavior. | `tests/unit/HR-BREAK-chat19-calendar-company-pages.test.ts` |
+| HR-BREAK-COMPANY-QUERY-25 | MAJOR | `src/app/(authenticated)/hr/company/page.tsx` | Repeated college/tab/team-search/pagination parameters were silently reduced to first value. Deny repeated arrays before an authorized team roster or company read, preserve `Invalid college selection` recovery, and check recruiter principal equality early. | Same test suite: duplicate fields and cross-user actor, no team/job reads. |

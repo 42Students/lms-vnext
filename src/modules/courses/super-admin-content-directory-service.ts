@@ -59,7 +59,21 @@ export async function listSuperAdminContentDirectory(context:RequestContext,rawK
   .innerJoin(programs,eq(programs.id,cohorts.programId))
   .innerJoin(cohortDepartment,and(eq(cohortDepartment.id,programs.departmentId),eq(cohortDepartment.collegeId,collegeId)))
   .innerJoin(academicPeriods,and(eq(academicPeriods.id,courseOfferings.academicPeriodId),eq(academicPeriods.collegeId,collegeId)))
+  // A delivery ID is not evidence that the row belongs to the same course
+  // offering. Reject corrupt cross-offering links before projecting content.
+  .leftJoin(courseSectionDeliveries,and(
+    eq(courseSectionDeliveries.id,lessonContents.deliveryId),
+    eq(courseSectionDeliveries.offeringId,courseOfferings.id),
+  ))
+  .leftJoin(sections,and(
+    eq(sections.id,courseSectionDeliveries.sectionId),
+    eq(sections.cohortId,courseOfferings.cohortId),
+    eq(sections.academicPeriodId,courseOfferings.academicPeriodId),
+  ))
   .where(and(
+   // For section-targeted content, verify both the delivery's offering and
+   // its section. A dangling/foreign section never appears in the UI.
+   sql`${lessonContents.deliveryId} is null or ${sections.id} is not null`,
    inArray(lessonContents.contentType,[...contentTypesForKind(kind)]),
    query.status==="ALL"?undefined:eq(lessonContents.status,query.status),
    query.offeringId?eq(courseOfferings.id,query.offeringId):undefined,
@@ -92,7 +106,13 @@ export async function listSuperAdminContentSectionOptions(context:RequestContext
   .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
   .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
   .innerJoin(departments,eq(departments.id,courses.departmentId))
-  .innerJoin(sections,eq(sections.id,courseSectionDeliveries.sectionId))
+  // An imported delivery may point at a section from a foreign cohort or
+  // academic period. Both dimensions must match the selected offering.
+  .innerJoin(sections,and(
+    eq(sections.id,courseSectionDeliveries.sectionId),
+    eq(sections.cohortId,courseOfferings.cohortId),
+    eq(sections.academicPeriodId,courseOfferings.academicPeriodId),
+  ))
   .where(and(eq(departments.collegeId,collegeId),isNull(courseSectionDeliveries.endedAt)))
   .orderBy(asc(courses.name),asc(sections.name)).limit(1000);
 }
