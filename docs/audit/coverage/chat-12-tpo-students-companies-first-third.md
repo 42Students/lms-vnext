@@ -87,6 +87,18 @@ Date 2026-10-18, branch `chatgpt/chat-12-b`. Evidence is split between executabl
 
 New tests are **authored, not executed**. The row for a route/model does not imply all exported siblings are covered; this ledger is incomplete against the full exhaustive-coverage definition.
 
+## 2026-10-18 route and browser acceptance additions
+
+- `tests/unit/chat12-tpo-first-third-42-route-scope.test.ts` inventories exactly **42 first-third TPO route entrypoints** and distinguishes protected redirect-only aliases, explicitly TPO-guarded pages, and batch services whose authorization is delegated to `requireTpoBatchActor`. This is a **source-only** boundary regression, not a simulated authorization test.
+- `tests/e2e/chat12-tpo-mobile-ux-and-session.spec.ts` authors real browser checks for 320/360/390px Student filter bottom-sheet focus/Escape, 320/390px Company directory overflow, and learner wrong-role denial to a forged student deep link. Requires seeded E2E roles and `E2E_AUTH_ENABLED=true` + `E2E_AUTH_SECRET`. **Not executed**.
+- `tests/unit/chat12-tpo-export-and-clipboard-security.test.ts` demonstrates that pasted duplicate rolls are ambiguous rather than selecting the last matching learner, and exports guard control-character/zero-width spreadsheet formulas. Fixes D12-20 and D12-21.
+- `tests/unit/chat12-tpo-roster-facets-behavioral.test.ts` covers direct roster facet intersections, missing academic evidence, search, page stability and finished cohorts.
+- `tests/unit/chat12-tpo-participation-state-cas.test.ts` covers all three intents and seven exported pure decision-model contracts.
+- `tests/unit/chat12-tpo-query-schema-security.test.ts` exercises strict invalid query shapes and impossible ranges for both TPO Students and Requests.
+- `tests/integration/PROJ-BREAK-TPO-DB-01.test.ts` adds rollback-only real PostgreSQL witness of project member/college/role joins; it must still run through the disposable test-database harness. Does not certify same-connection services or role-based project API denial.
+
+See `docs/audit/coverage/tpo-students-companies-chat12-ledger.md` for a **50-export audited subset**, including explicit OPEN/MOCKED/SOURCE statuses. It is not exhaustive across the 1,000+ Placements module files.
+
 ## Release gates
 
 - Run Vitest on the new unit files and typecheck: **not executed**.

@@ -79,4 +79,22 @@ Source inspection of `/hr/conversations/[threadId]` found two more concrete issu
 
 The HR page ledger `docs/audit/coverage/hr-pages-chat19-ledger.md` enumerates all 22 `/hr` routes, distinguishes source assertions from directly invoked server-page tests, and records outstanding integration/device gates. The new tests directly invoke async `/hr/conversations/[threadId]`, `/hr/notifications`, and `/hr/profile` entry points with deliberately hostile/expired contexts and mocked service dependencies; they do not claim real browser or DB verification.
 
-**Revised source-audit findings:** 11 MAJOR found and source-fixed across the two HR passes (original six, subsequent three, and these two). **Acceptance verdict: FAIL pending the orchestrator's cloud green verification and browser/PostgreSQL acceptance**, not a reason for the builder lane to halt implementation.
+**Revised source-audit findings:** 12 MAJOR found and source-fixed across the two HR passes (original six, subsequent three, and these two). **Acceptance verdict: FAIL pending the orchestrator's cloud green verification and browser/PostgreSQL acceptance**, not a reason for the builder lane to halt implementation.
+
+## 2026-10-18 complete second-pair-of-eyes revisit
+
+The second HR page pass now has an explicit 22-entry route ledger at `docs/audit/coverage/hr-pages-chat19-ledger.md`. Tests directly invoke all 20 non-alias/non-retired server-page boundaries (with mocked services) or invoke and assert the two legacy redirect/alias boundaries. This is **page-entry/role-state test coverage**, not a declaration of complete nested dialogs, screens or real DB flows.
+
+| Page | Finding | Severity | Source evidence | Source correction and test |
+|---|---|---|---|---|
+| `/hr/conversations` | HR-BREAK-CONVO-04 | MAJOR | The `generalHistory` and `decisionNotices` awaits in `src/app/(authenticated)/hr/conversations/page.tsx` | Failed optional history/decision lookup no longer crashes entire authenticated inbox; stale general preview and inline reply are suppressed after second grant-check failure. `tests/unit/HR-BREAK-chat19-conversation-inbox-page.test.ts` asserts no raw server text is rendered. |
+| `/hr/drives/[jobId]/rounds/editor`, `/hr/drives/[jobId]/interview-slots`, `/hr/drives/[jobId]/rounds/editor/remove/[roundId]` | HR-BREAK-ROUNDS-01/02 | COVERAGE | Route-level validation, can-edit decisions, optimistic expectedUpdatedAt hidden field | `tests/unit/HR-BREAK-chat19-drive-pages.test.ts` directly asserts unauthorized/invalid/empty state and form-bound version. |
+| `/hr/drives/proposals`, `/hr/home`, `/hr/placements`, `/hr/placements/jobs/[jobId]` | HR-BREAK-HOME-01/JOB-01 | COVERAGE | Cross-company URL and legacy routing needs gate before redirect, no inferred tenant | `tests/unit/HR-BREAK-chat19-home-portfolio-proposals.test.ts` and `tests/unit/HR-BREAK-chat19-legacy-job-aliases.test.ts` invoke service-mocked pages with forged/expired identities, and verify authorized URL routing. |
+
+**Cross-audit final source finding count:** 12 previously existing or newly found MAJOR findings source-corrected across the HR passes, with `HR-BREAK-CONVO-04` accounting for the final addition; 0 newly documented unfixed source-level BLOCKER in this lane. Distinguish this from release acceptance. Cloud CI diagnostics and full PostgreSQL/device workflows are not executed by chat-19; orchestrator owns that gate, and any emitted chat-19 failures should be fixed from the rolling reports without stopping on absent local runtime.
+
+### HR-XA-09 — broken recruiter notification navigation (MAJOR; fixed)
+
+The recruiter Messages inbox had a `Notification inbox` link pointing to `/hr/messages`, which is itself a direct re-export of `/hr/conversations`. Clicking it reopened the same screen rather than the actual notification bell list. The independent cross-audit changed the destination to `/hr/notifications` in `src/app/(authenticated)/hr/conversations/page.tsx` (`c4f07f41`) and added a directly invoked page regression `tests/unit/HR-BREAK-chat19-conversation-inbox-page.test.ts` (`67f37ff5`) verifying no self-loop. Preserve the separate legacy `/hr/messages` alias for existing bookmarks.
+
+Source-level MAJOR finding count becomes **14**: original six, previously added five (HR-XA-07/08, profile-02, CONVO-02/03), CONVO-04, JOB-02, and this navigation defect. These are source fixes; release test truth comes from orchestrator CI and further browser work.

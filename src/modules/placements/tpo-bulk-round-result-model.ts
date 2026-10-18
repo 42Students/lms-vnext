@@ -39,6 +39,8 @@ export function resolveBulkRoundLearnerTokens(
  raw:string,roster:readonly {applicationId:string;rollNumber?:string|null}[],
  max=25,
 ){
+ if(!Number.isSafeInteger(max)||max<1||max>25||raw.length>8000)
+  return {ids:[] as string[],error:"Paste 1–25 application IDs or roll numbers."};
  const tokens=[...new Set(raw.split(/[\s,;]+/).map(v=>v.trim()).filter(Boolean))];
  if(tokens.length<1||tokens.length>max)return {ids:[] as string[],error:"Paste 1–"+max+" application IDs or roll numbers."};
  const ids:string[]=[];
