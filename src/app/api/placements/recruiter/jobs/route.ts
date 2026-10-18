@@ -13,7 +13,9 @@ export async function GET() {
       await listOwnRecruiterPlacementJobs(
         context,
       );
-    return NextResponse.json({ jobs });
+    return NextResponse.json({ jobs },{
+      headers:{"Cache-Control":"private, no-store"},
+    });
   } catch (error) {
     return apiErrorResponse(error);
   }
