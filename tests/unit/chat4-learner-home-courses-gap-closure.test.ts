@@ -127,7 +127,17 @@ describe("chat-4 learner Home and Courses gap closure",()=>{
 
  it("LEARNER-home-courses-19 uses an in-page Delete this message dialog",()=>{
   const s=source("src/components/courses/learner-course-discussion.tsx");
-  expect(s).toContain('role="dialog" aria-modal="true" aria-label="Delete this message?"');
+  expect(s).toContain('<ConfirmDialog open={deleteTarget!==null}');
+  expect(s).toContain('title="Delete this message?"');
+  expect(s).toContain('pending={deletingId!==null}');
+  expect(s).toContain('onConfirm={()=>{if(deleteTarget)void remove(deleteTarget);}}');
+  const confirm=source("src/components/ui/confirm-dialog.tsx");
+  expect(confirm).toContain("<Dialog open={open}");
+  expect(confirm).toContain("disabled={pending || confirmDisabled}");
+  const dialog=source("src/components/ui/dialog.tsx");
+  expect(dialog).toContain("modal.showModal()");
+  expect(dialog).toContain("modal.close()");
+  expect(dialog).toContain('aria-labelledby={titleId}');
   expect(s).toContain("This cannot be undone.");
   expect(s).toContain("setDeleteTarget");
   expect(s).not.toContain('window.confirm("Delete this message?")');
