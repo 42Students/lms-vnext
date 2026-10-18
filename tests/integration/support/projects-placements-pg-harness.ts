@@ -308,20 +308,23 @@ export async function createPlacementFixture(db: PgHarness, tenant: TenantFixtur
   const [relationship] = await db.query<{id:string}>(`
     insert into placement_company_relationships (college_id,company_id,created_by_user_id)
     values ($1,$2,$3) returning id`,[tenant.collegeId,company!.id,author.userId]);
-  const [season] = await db.query<{id:string}>(`
+  const existing = await db.query<{id:string}>(`
+    select id from placement_seasons where college_id=$1 and status='ACTIVE'
+    order by created_at,id limit 1`,[tenant.collegeId]);
+  const season = existing[0] ?? (await db.query<{id:string}>(`
     insert into placement_seasons (college_id,name,code,start_date,end_date,created_by_user_id)
     values ($1,$2,$3,$4,$5,$6) returning id`,
-    [tenant.collegeId,"Harness "+suffix,"PH-"+suffix,"2026-10-01","2027-06-30",author.userId]);
+    [tenant.collegeId,"Harness "+suffix,"PH-"+suffix,"2026-10-01","2027-06-30",author.userId]))[0]!;
   const [job] = await db.query<{id:string}>(`
     insert into placement_jobs (college_id,company_relationship_id,season_id,title,description,
       employment_type,work_mode,created_by_user_id)
     values ($1,$2,$3,'Harness drive','Fixture job','FULL_TIME','REMOTE',$4) returning id`,
-    [tenant.collegeId,relationship!.id,season!.id,author.userId]);
+    [tenant.collegeId,relationship!.id,season.id,author.userId]);
   const [round] = await db.query<{id:string}>(`
     insert into placement_job_rounds (job_id,sequence,kind,name,created_by_user_id)
     values ($1,1,'INTERVIEW','Harness interview',$2) returning id`,
     [job!.id,author.userId]);
-  return {companyId:company!.id,relationshipId:relationship!.id,seasonId:season!.id,
+  return {companyId:company!.id,relationshipId:relationship!.id,seasonId:season.id,
     driveId:job!.id,jobId:job!.id,roundId:round!.id};
 }
 

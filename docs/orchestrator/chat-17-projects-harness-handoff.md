@@ -10,7 +10,7 @@
 |---|---|---|
 | Transaction-safe PostgreSQL fixture module | `tests/integration/support/projects-placements-pg-harness.ts` | Dedicated TEST_DATABASE_URL, database-name and migration guards; one outer rollback per test; SAVEPOINT SQLSTATE checks; two independent rollback-only clients for committed-seed concurrency |
 | Canonical tenant/role/project/drive fixtures | same | organizations, colleges, users, memberships, system roles, project template/version/assignment, workspace instance, release, sprint, task, resource, mentor/learner roster, task and final submissions, meeting, placement company/relationship/drive/round |
-| Real database example suite | `tests/integration/projects-placements-pg-harness-groups.test.ts` | **21** cases: all main project table groups, placement drive, cross-organization SQL scoping, restrictive FK behavior, duplicate/invalid SQLSTATE, savepoint recovery, full rollback and two-session no-leak witness |
+| Real database example suite | `tests/integration/projects-placements-pg-harness-groups.test.ts` | **21** project group cases; **9** placement cases and **3** transaction/FK cases via the same test command: all main project table groups, placement drive, cross-organization SQL scoping, restrictive FK behavior, duplicate/invalid SQLSTATE, savepoint recovery, full rollback and two-session no-leak witness |
 | Guard test suite (unit, no PG connection) | `tests/unit/projects-pg-harness-contract-chat17.test.ts` | **7** assertions and multiple unsafe-URL variants; no production fallback |
 | Shared UI kit deep suite | `tests/unit/UX-kit-projects-hardening-chat17.test.tsx` | **21** direct behavior groups + a **38-element kit registry** checking popup/motion hygiene; includes form errors, file limits, cancel/pending, keyboard, sensitive links, persistent errors, table empty states and scroll cues |
 | Earlier shared kit motion suite | `tests/unit/UX-kit-scroll-motion-01.test.tsx` | **8** scroll/overlay/motion and four previously uncovered shared primitive examples retained |
@@ -33,7 +33,7 @@ npm run test:db:projects-harness
 
 ## Hardening scope and caveats
 
-- Guard runs **before BEGIN** and checks **26** canonical table names with `to_regclass` and the server's real `current_database()`. There is no fallback to `DATABASE_URL`, no `COMMIT`, no `TRUNCATE` and no cross-test persistent fixture.
+- Guard runs **before BEGIN** and checks **32** canonical table names with `to_regclass` and the server's real `current_database()`. There is no fallback to `DATABASE_URL`, no `COMMIT`, no `TRUNCATE` and no cross-test persistent fixture.
 - Projects table ancestry generally uses `ON DELETE RESTRICT` instead of cascading deletes. Witness `PROJ-HARNESS-15` asserts this protective FK behavior. Do not invent cascades.
 - Tenant-specific database queries are tested with separate organizations; these SQL queries alone are **not** proof of service IDOR policy. Other lanes must inject contexts and exercise routes/actions. The harness intentionally rejects cross-college actor fixtures.
 - `getDb()` services use independent PostgreSQL connections; they cannot read the private uncommitted rows. For request/session tests use a separate disposable provisioned fixture/cleanup lifecycle or dependency-injected DB transaction. No weakening of the isolation guard.

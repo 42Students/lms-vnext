@@ -15,7 +15,7 @@ export TEST_DATABASE_URL='postgresql://postgres:postgres@127.0.0.1:5432/lms_vnex
 npm run test:db:projects-harness
 ```
 
-The harness requires `TEST_DATABASE_URL` explicitly and **never** reads `DATABASE_URL`. It checks the URL's database name *and* `current_database()` on the connected server before writes, verifies 26 registered canonical table names, then starts a transaction. Every invocation calls `ROLLBACK` in a `finally` and releases its connection even if assertions fail. The pool is closed by each suite. Every test generates fresh IDs; it does **not** depend on mutable seed UUIDs.
+The harness requires `TEST_DATABASE_URL` explicitly and **never** reads `DATABASE_URL`. It checks the URL's database name *and* `current_database()` on the connected server before writes, verifies 32 registered canonical table names, then starts a transaction. Every invocation calls `ROLLBACK` in a `finally` and releases its connection even if assertions fail. The pool is closed by each suite. Every test generates fresh IDs; it does **not** depend on mutable seed UUIDs.
 
 Do not bypass the disposable-database-name guard; use a properly named test database. Remote developer CI must supply credentials as secrets, never include them in logs.
 
@@ -24,7 +24,7 @@ Do not bypass the disposable-database-name guard; use a properly named test data
 ```ts
 import { newHarnessPool, withProjectPg, createTenant, createPrincipal,
   createProjectFixture, createTaskSubmission, createFinalSubmission, submitFinalSubmission,
-  createMeeting, createPlacementFixture } from "./support/projects-placements-pg-harness";
+  createMeeting, createPlacementFixture, createPlacementCandidateFixture } from "./support/projects-placements-pg-harness";
 
 const pool = newHarnessPool();
 try {
@@ -41,13 +41,14 @@ try {
     await submitFinalSubmission(db, finalSubmissionId, learner);
     const meetingId = await createMeeting(db, project, learner, admin);
     const drive = await createPlacementFixture(db, tenant, admin);
+    const candidate = await createPlacementCandidateFixture(db, drive, learner, admin);
     // SELECT/query/UPDATE/etc. using db.query with parameter binding;
     // DB-backed service functions needing their own connection: see warning below.
     await db.expectSqlState(
       () => db.query("update project_tasks set sequence=-1 where id=$1",[project.taskId]),"23514",
     );
     // SAVEPOINT rolls back the invalid statement; the outer transaction is usable.
-    void { outsider,taskSubmissionId,finalSubmissionId,meetingId,drive };
+    void { outsider,taskSubmissionId,finalSubmissionId,meetingId,drive,candidate };
   });
 } finally { await pool.end(); }
 ```
@@ -77,14 +78,16 @@ try {
 | Final delivery | project_submissions, project_delivery_events | No duplicate draft/open submission, submit-state shape, reason text, tenant-safe project/submission composite FK |
 | Reviews / grading | project_submission_reviews, project_evaluations, project_evaluation_items | Changes-requested feedback, bounded rubric math, unique criteria order |
 | Meetings | project_meetings | End after start, server IST label, required schedule actor |
-| Placement companies / drives | placement_companies, placement_company_relationships, placement_jobs, placement_job_rounds | Unique company-college relationship, positive openings, published status shape, round sequence uniqueness |
+| Placement companies / drives | placement_companies, placement_company_relationships, placement_seasons, placement_jobs, placement_job_rounds | Unique company-college relationship, positive openings, published status shape, round sequence uniqueness |
 | Transactions / tenancy | all groups | Savepoint recovery after 23514, hard rollback with separate-connection proof, other-college rows excluded by explicit tenant predicates, two independent rollback-only sessions with a bounded lock wait |
 
 **Cascades vs deletion:** Canonical project ancestry uses `ON DELETE RESTRICT` for the core project rows, **not** `ON DELETE CASCADE`. The example expressly verifies deletion of an instance with dependent tasks is blocked (23503); never assert a cascade that the registered database does not specify. Other table-specific cascades, if any, need exact migration evidence.
 
 **Tenancy vs DB constraints:** The fixture refuses mismatched actor/college inputs and exercises tenant-scoped `WHERE college_id=$1` queries. It does not pretend that filtering alone proves route/service authorization. Candidate DB073/074/075 ancestry migrations have historically been staged; their separate tests use opt-in flags. Where those composite FKs are actually registered, `project_delivery_events(project_id,submission_id)` already has a registered composite FK and is tested here. Do not assert unregistered composites or silently accept a cross-project SQL write.
 
-**Release bar:** The 21 example tests are **authored**, not claimed passed. After a disposable migration replay, run the command and attach output to the project hardening ledger. Any failed constraint/tenancy witness is a defect, not a reason to weaken or skip a test. Request a different lane's review before describing IIT Dharwad readiness as verified.
+**Extended Placements examples:** `tests/integration/projects-placements-pg-harness-placements.test.ts` checks the registered season FK, second drive reusing the same active season, application uniqueness, screening lifecycle, round outcomes, offers, joining, restrict-on-delete, and fixture tenancy guard. `tests/integration/projects-placements-pg-harness-rollback.test.ts` checks rollback on thrown callbacks, savepoint discard, and restrictive template-version ancestry. The `test:db:projects-harness` command runs all three suites.
+
+**Release bar:** The 21 project-group example tests (plus 9 placement and 3 rollback tests) are **authored**, not claimed passed. After a disposable migration replay, run the command and attach output to the project hardening ledger. Any failed constraint/tenancy witness is a defect, not a reason to weaken or skip a test. Request a different lane's review before describing IIT Dharwad readiness as verified.
 
 ## For other lanes
 
