@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { RequestContext } from "@/modules/identity/context";
-import { assignProjectTemplateToCollege } from "@/modules/projects/template-service";
+import { assignProjectTemplateToCollege, revokeProjectTemplateFromCollege } from "@/modules/projects/template-service";
 
 const templateId = "11111111-1111-4111-8111-111111111111";
 const collegeId = "22222222-2222-4222-8222-222222222222";
@@ -193,6 +193,15 @@ describe("IIT Dharwad: Project template assignment retries and scope", () => {
       .rejects.toThrow("Missing permission: project-template.assign");
     expect(state.persistedChecks).toBe(1);
     expect(state.inserts).toBe(0);
+    expect(state.updates).toBe(0);
+    expect(state.events).toBe(0);
+  });
+
+  it("PROJ-BREAK-idor-28 revoked system role stops college assignment removal after cached authentication", async () => {
+    state.persistedAllowed = false;
+    await expect(revokeProjectTemplateFromCollege(superAdmin(), templateId, collegeId))
+      .rejects.toThrow("Missing permission: project-template.assign");
+    expect(state.persistedChecks).toBe(1);
     expect(state.updates).toBe(0);
     expect(state.events).toBe(0);
   });
