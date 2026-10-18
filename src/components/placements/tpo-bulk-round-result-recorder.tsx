@@ -127,7 +127,7 @@ export function TpoBulkRoundResultRecorder({
   }
 
   return (
-    <section aria-label="Bulk stage round results" className="space-y-4 rounded-xl border border-border bg-surface p-5">
+    <section aria-label="Bulk stage round results" className="space-y-4 border-b border-border pb-6">
       <div>
         <h2 className="text-base font-semibold text-foreground">Bulk stage round results</h2>
         <p className="mt-1 text-sm text-body">
@@ -191,7 +191,7 @@ export function TpoBulkRoundResultRecorder({
               value={outcome}
               onChange={(event) => setOutcome(event.target.value as "PASS" | "FAIL" | "HOLD" | "ABSENT")}
               disabled={busy}
-              className="mt-1 block min-h-11 w-full rounded-md border border-border bg-surface px-3 font-normal text-foreground"
+              className="mt-1 block min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 font-normal text-foreground"
             >
               <option value="PASS">Shortlisted for next round (PASS)</option>
               <option value="FAIL">Not selected (FAIL)</option>
@@ -219,7 +219,7 @@ export function TpoBulkRoundResultRecorder({
                 rows={2}
                 maxLength={1000}
                 disabled={busy}
-                className="mt-1 block w-full rounded-md border border-border bg-surface p-3 font-normal text-foreground"
+                className="mt-1 block w-full rounded-[9px] border border-border bg-surface p-3 font-normal text-foreground"
               />
             </label>
           ) : null}
