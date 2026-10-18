@@ -301,7 +301,8 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
             setError("Could not export outcome CSV. Review the displayed results and try again.");
           } finally {
             link?.remove();
-            if(url)window.setTimeout(()=>URL.revokeObjectURL(url),0);
+            const disposableUrl=url;
+            if(disposableUrl)window.setTimeout(()=>URL.revokeObjectURL(disposableUrl),0);
           }
         }}>Export outcome CSV</button>
     </section>:null}
