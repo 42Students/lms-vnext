@@ -99,3 +99,16 @@ describe("TPO-BREAK-bulk-rows-01 partially committed results and audit failure",
   expect(mocks.decide).not.toHaveBeenCalled();
  });
 });
+
+describe("TPO-BREAK-bulk-rows-02 partial confirmation does not discard retry-safe work",()=>{
+ it("retains failed and skipped row selection after successful rows are removed",async()=>{
+  const {readFileSync}=await import("node:fs");
+  const {resolve}=await import("node:path");
+  const source=readFileSync(resolve(process.cwd(),"src/components/tpo/tpo-bulk-action-panel.tsx"),"utf8");
+  expect(source).toContain('response.outcomes.filter(row=>row.status==="updated")');
+  expect(source).toContain("setSelected(current=>current.filter(id=>!completed.has(id)))");
+  expect(source).not.toContain("setSelected(current=>current.filter(id=>!plan.ids.includes(id)))");
+  expect(source).toContain("response.summaryRecorded===false");
+  expect(source).toContain("summaryWarning");
+ });
+});
