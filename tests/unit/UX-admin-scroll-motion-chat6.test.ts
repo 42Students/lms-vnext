@@ -150,4 +150,20 @@ describe("UX admin scroll and motion after invisible scrollbar owner decision",(
   expect(code).not.toContain("overflow-x-auto");
  });
 
+ it("UX-admin-scroll-motion-18 all changed scrollers use global motion defaults rather than hard-coded or layout animations",()=>{
+  for(const file of [
+    "src/components/ui/data-table.tsx",
+    "src/components/ui/dialog.tsx",
+    "src/components/ui/drawer.tsx",
+    "src/components/ui/bottom-sheet.tsx",
+    "src/components/placements/super-admin-bulk-drive-actions.tsx",
+    "src/components/placements/placement-drive-workspace.tsx",
+    "src/components/placements/placement-calendar-workspace.tsx",
+    "src/components/placements/college-application-pipeline-controls.tsx",
+  ]){
+    const code=source(file);
+    expect(code,file).not.toMatch(/duration-\d+|transition-all|animate-\[|transition-\[(?:width|height|top|left)/);
+  }
+ });
+
 });
