@@ -85,6 +85,26 @@ describe("PROJ-BREAK-FACULTY-04 actual Faculty / Mentor project API boundaries",
    expect(sent.some((arg:unknown)=>arg && typeof arg==="object" &&
     "expectedUpdatedAt" in arg && (arg as typeof body).userId==="attacker")).toBe(true);
   });
+  it(`PROJ-BREAK-FACULTY-04 ${spec.name} rejects malformed JSON before service mutations`,async()=>{
+   const response=await spec.handler(new Request("https://college.invalid/api/projects/mentor",{
+    method:spec.method,headers:{"content-type":"application/json"},body:"{",
+   }),ctx);
+   expect(response.status).toBe(400);
+   expect((await response.json()).error).toBe("INVALID_PROJECT_COMMAND_BODY");
+   expect(spec.service).not.toHaveBeenCalled();
+  });
+  it(`PROJ-BREAK-FACULTY-04 ${spec.name} rejects non-JSON and oversized streams before writes`,async()=>{
+   const unsupported=await spec.handler(new Request("https://college.invalid/api/projects/mentor",{
+    method:spec.method,headers:{"content-type":"text/plain"},body:"{}",
+   }),ctx);
+   expect(unsupported.status).toBe(415);
+   const huge=await spec.handler(new Request("https://college.invalid/api/projects/mentor",{
+    method:spec.method,headers:{"content-type":"application/json",
+     "content-length":String(128*1024+1)},body:"{}",
+   }),ctx);
+   expect(huge.status).toBe(413);
+   expect(spec.service).not.toHaveBeenCalled();
+  });
   it(`PROJ-BREAK-FACULTY-04 ${spec.name} converts stale/denied errors to a safe recovery`,async()=>{
    spec.service.mockRejectedValueOnce(new Error("internal db password=secret"));
    const response=await spec.handler(request(spec.method),ctx);

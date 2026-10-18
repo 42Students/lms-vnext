@@ -9,6 +9,16 @@ import { getFacultyDeliveryRoster } from "@/modules/attendance/faculty-service";
 
 const uuid = z.string().uuid();
 
+/** A report is authoritative only for the Faculty's current verified Section
+ * roster. Historical/foreign learner rows may exist in persisted attempts, but
+ * cannot affect counts, scores, questions, or the downloadable report. */
+export function facultyReportCurrentRosterRows<T extends {membershipId:string}>(
+  records:readonly T[],roster:readonly {membershipId:string}[],
+):T[] {
+  const permitted=new Set(roster.map(row=>row.membershipId));
+  return records.filter(row=>permitted.has(row.membershipId));
+}
+
 export type ScoreDistributionBucket = {
   label: "90-100%" | "80-89%" | "70-79%" | "60-69%" | "Below 60%";
   min: number;
@@ -218,8 +228,9 @@ export async function getFacultyQuizReport(
     ]);
   // Legacy report parity: retakes contribute only the learner's latest
   // attempt to standing, distribution and question accuracy.
+  const scopedAttempts=facultyReportCurrentRosterRows(attempts,rosterScope.roster);
   const latestAttempts =
-    latestQuizAttemptsByLearner(attempts);
+    latestQuizAttemptsByLearner(scopedAttempts);
   const learners = new Set(
     latestAttempts.map(
       (attempt) => attempt.membershipId,
@@ -248,7 +259,7 @@ export async function getFacultyQuizReport(
     scoreSummary(latestAttempts);
   return {
     quiz,
-    attempts,
+    attempts:scopedAttempts,
     latestAttempts,
     distribution:
       buildScoreDistribution(scored),
@@ -259,7 +270,7 @@ export async function getFacultyQuizReport(
     notAttemptedLearners,
     metrics: {
       ...latestScoreSummary,
-      totalAttempts: attempts.length,
+      totalAttempts: scopedAttempts.length,
       eligibleLearners:
         rosterScope.roster.length,
       uniqueLearners: learners.size,
@@ -300,8 +311,9 @@ export async function getFacultyAssignmentReport(
         assignment.deliveryId,
       ),
     ]);
+  const scopedSubmissions=facultyReportCurrentRosterRows(submissions,rosterScope.roster);
   const submittedMemberships = new Set(
-    submissions.map(
+    scopedSubmissions.map(
       (submission) => submission.membershipId,
     ),
   );
@@ -312,32 +324,32 @@ export async function getFacultyAssignmentReport(
           learner.membershipId,
         ),
     );
-  const graded = submissions.filter((submission) =>
+  const graded = scopedSubmissions.filter((submission) =>
     submission.gradingStatus === "GRADED",
   );
-  const late = submissions.filter((submission) =>
+  const late = scopedSubmissions.filter((submission) =>
     assignment.dueAt !== null &&
     submission.submittedAt.getTime() > assignment.dueAt.getTime(),
   );
   const scores = assignmentScoreSummary(
-    submissions,
+    scopedSubmissions,
     assignment.maxPoints,
   );
   return {
     assignment,
-    submissions,
+    submissions:scopedSubmissions,
     missingLearners,
     distribution: scores.distribution,
     metrics: {
       eligibleLearners:
         rosterScope.roster.length,
-      submitted: submissions.length,
+      submitted: scopedSubmissions.length,
       missing: missingLearners.length,
       onTime:
-        submissions.length - late.length,
+        scopedSubmissions.length - late.length,
       late: late.length,
       graded: graded.length,
-      gradePublished: submissions.filter(
+      gradePublished: scopedSubmissions.filter(
         (item) => item.gradePublished,
       ).length,
       averagePercent:

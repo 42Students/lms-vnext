@@ -28,6 +28,7 @@ import {
   postgresConstraintName,
 } from "./errors";
 import { loadCourseQuizScope } from "./quiz-scope";
+import {learnerQuizResultsReleased} from "./learner-quiz-result-release-policy";
 import {
   courseQuizIdSchema,
   submitQuizInputSchema,
@@ -446,11 +447,7 @@ function mayRevealLearnerResults(
   >,
   attemptsUsed: number,
 ) {
-  return (
-    quiz.status === "CLOSED" &&
-    quiz.resultsPublished &&
-    attemptsUsed > 0
-  );
+  return attemptsUsed>0 && learnerQuizResultsReleased(quiz,Date.now());
 }
 
 export async function getMyQuizAttempts(
