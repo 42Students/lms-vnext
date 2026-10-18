@@ -40,5 +40,7 @@ describe("chat-16 recruiter notification identity and presentation",()=>{
   expect(safeRecruiterEmailAddressName("A\r\nB\u202e C")).toBe("A B C");
   expect(safeRecruiterEmailAddressName("  Alice    Example  ")).toBe("Alice Example");
   expect(safeRecruiterEmailAddressName("X".repeat(200))).toHaveLength(160);
+  expect(safeRecruiterEmailAddressName("X".repeat(159)+"😀"+"more"))
+   .toBe("X".repeat(159));
  });
 });
