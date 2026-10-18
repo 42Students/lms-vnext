@@ -50,6 +50,7 @@ import {
   minimumOfferResponseDeadline,
   isPlacementOfferResponseExpired,
   placementOfferLockedDecisionTime,
+  canReplayFinalOfferResponseAfterExpiry,
 } from "./offer-college-rules-policy";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import { requirePlacementManageScope } from "./scope";
@@ -603,14 +604,8 @@ export async function actOnPlacementOffer(
     );
   }
 
-  if (
-    input.action !== "WITHDRAW" &&
-    isPlacementOfferResponseExpired(current.offer.expiresAt, now)
-  ) {
-    throw new PlacementsServiceError(
-      "PLACEMENT_OFFER_EXPIRED",
-    );
-  }
+  // The transactional guard below is authoritative. Reading the offer
+  // before a competing response commits must not deny an exact no-op retry.
 
   const db = getDb();
   return db.transaction(async (tx) => {
@@ -656,7 +651,11 @@ export async function actOnPlacementOffer(
 
     if (
       input.action !== "WITHDRAW" &&
-      isPlacementOfferResponseExpired(offer.expiresAt, lockedNow)
+      isPlacementOfferResponseExpired(offer.expiresAt, lockedNow) &&
+      !canReplayFinalOfferResponseAfterExpiry({
+        action: input.action, status: offer.status,
+        respondedByUserId: offer.respondedByUserId, actorUserId: context.user.id,
+      })
     ) {
       throw new PlacementsServiceError(
         "PLACEMENT_OFFER_EXPIRED",
