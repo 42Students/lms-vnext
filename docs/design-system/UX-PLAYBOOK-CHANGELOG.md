@@ -141,3 +141,58 @@ The `ux:capture` command requires approved **disposable/development** account fi
 - Synchronized the author branch to the current `main` before writing. Added an explicit 33/33 finding-to-rule table at `UX-PLAYBOOK.md` §18 and a **Playbook section** field beside each pre-existing source-remediation entry above. This pass deliberately **does not modify any page implementation**.
 - `docs/orchestrator/typecheck-errors.md` chat-17 lists six errors from the 02:35 CI snapshot. The missing `ACTIVITY_EVENT_TYPES.PLACEMENTS_JOB_CANCELLED` constant is **already present** in the current `src/modules/activity/taxonomy.ts` (retained, not duplicated); the five test calls now use an explicitly schema-typed drive edit fixture with active published-deadline and CGPA fields. No runtime behaviour was deleted.
 - The audit remains **BLOCKED for unexecuted device/browser/AT acceptance**. The source-remediation ledger is not a claim that 33 browser cases passed. `unit-failures-r2.md` contains no chat-17 section, so no unit-failure queue work was undertaken.
+
+## 2026-10-18 — Audit 2 source remediation (chat-17)
+
+**Source baseline:** [UX-AUDIT-2.md](audits/UX-AUDIT-2.md). **Audit verdict remains BLOCKED** until independently executed verification. This pass implements named source fixes but does not claim Android/iOS, Playwright, accessibility or CI outcomes. No unrelated page redesign.
+
+### New Audit 2 finding-to-fix crosswalk (14/14)
+
+| ID | Severity | Playbook rule | Changed source | Source fix |
+|---|---|---|---|---|
+| **A2-01** | BLOCKER | §19.1 / §15.4 | src/components/hr/recruiter-applicant-review-drawer.tsx; hr/placements/jobs/[jobId]/page.tsx; Drawer | Replaced unmanaged applicant modal with shared Drawer, URL-backed close/Back and 44px actions |
+| **A2-02** | BLOCKER | §19.2 / §15.4 | src/components/ui/use-overlay-webview.ts; tests/unit/ux-audit2-overlay-history.test.ts | Synthetic cleanup-pop ownership prevents nested parent dismissal; pending updates do not re-register hook |
+| **A2-03** | MAJOR | §19.3 / §6.2 | src/app/(authenticated)/mentor/calendar/page.tsx | Persistent FilterBar search and 16px/44px shared Input/Select controls |
+| **A2-04** | MAJOR | §19.3 / §6.5 | tpo/messages; admin/module-access; college/contacts | Replaced cited 40px targets with 44px links and buttons; enlarged guard coverage |
+| **A2-05** | MAJOR | §19.4 / §8 | src/components/ui/permission-action.tsx | Visible permission-denied reason by default, explicit hide-sensitive mode for audited cases |
+| **A2-06** | MAJOR | §19.3 / §3 | src/components/shell/app-shell.tsx | Use dvh for nested shell and safe-area padding for sticky header |
+| **A2-07** | MAJOR | §19.5 / §6.11 | src/components/ui/third-party-link.tsx | Reject HTTP and credential URLs; show vetted HTTPS destination before leaving |
+| **A2-08** | MAJOR | §19.6 / §15.5 | docs/design-system/UX-PLAYBOOK.md | Replace fake save with injected authorized versioned onSave, explicit error/conflict/live status |
+| **A2-09** | MAJOR | §19.3 / §6.5 | src/components/tpo/tpo-spreadsheet-grid.tsx | Give resize/pin buttons 44×44 bounds, focus treatment and 8px gaps |
+| **A2-10** | MAJOR | §19.2 / §15.4 | use-overlay-webview.ts; dialog.tsx; drawer.tsx; bottom-sheet.tsx | Remove 240px height clamp, account for visualViewport top, scroll action container |
+| **A2-11** | MINOR | §19.7 / §5.1 | src/components/ui/filter-bar.tsx | Generate per-instance useId for panel and aria-controls |
+| **A2-12** | MINOR | §19.7 / §8 | src/components/ui/data-table.tsx; admin/colleges; college/contacts; test fixtures | Require caller-supplied legacy-approved empty content rather than inventing generic copy |
+| **A2-13** | MINOR | §19.7 / §9 | src/components/ui/tooltip.tsx | Give icon disclosures accessible label and expose context label API |
+| **A2-14** | MINOR | §19.7 / §8 | src/components/ui/toast.tsx | Persist error messages until dismissed; length-aware timeout for other toasts |
+
+**Blockers addressed first:** A2-01 moved the recruiter applicant reviewer into a route-backed shared Drawer; A2-02 centralized cleanup-pop event consumption so explicit close of nested B cannot also close A. Added `tests/unit/ux-audit2-overlay-history.test.ts` and source checks, but physical host verification is still open.
+
+### Audit 1 re-verification disposition (5 reopened, 9 partial, 4 open-evidence)
+
+| Audit 1 ID | Audit 2 status | Source or acceptance site | Disposition after this pass |
+|---|---|---|---|
+| C-02 | REOPENED | tpo-students-spreadsheet.tsx | Removed mobileActionsCollapsible on actual roster so row actions remain visible |
+| C-03 | REOPENED | learner assignment page; placement-drive-workspace.tsx | Removed both popup-only destinations; updated mobile target |
+| C-05 | REOPENED | use-overlay-webview.ts; Drawer | Cleanup pop ownership, pending-stable hook, URL-backed recruiter route mode |
+| E-02 | REOPENED | tpo/home/page.tsx | Isolated independent Home fetch failures with null fallbacks and visible unavailable notice |
+| F-02 | REOPENED | check-ux-anti-drift.mjs; tests/ux-audit2-source.test.mjs | Widened named files + branch-changed routes guard, popup expressions, source regression checks |
+| A-03 | PARTIAL | file-upload.tsx; UX-PLAYBOOK §15.6 | Explicit picker-disabled guidance; typed component examples; entire caller sweep still pending |
+| A-04 | PARTIAL | UX-PLAYBOOK §15.5 | Replaced no-op mutation example with typed versioned authorized onSave contract |
+| B-02 | PARTIAL | data-table.tsx | Validate every hidden column recovery via actual internal row detail route; expose otherwise |
+| C-06 | PARTIAL | use-overlay-webview.ts; shared overlays | Actual visual viewport height/offset, no 240px clamp, scrollable footer |
+| C-07 | PARTIAL | mentor/calendar; tpo/messages; admin/module-access; college/contacts | Upgrade cited 40px controls; physical target measurement still pending |
+| C-08 | PARTIAL | file-upload.tsx | Unavailable chooser explicitly blocks progress or offers provided alternative; server/device tests pending |
+| D-02 | PARTIAL | form-field.tsx; UX-PLAYBOOK §15.5 | Typed FormField error relation used in canonical form; whole-route validation/AT sweep pending |
+| D-04 | PARTIAL | route-announcer.tsx; pagination.tsx | Existing route/query live announcer retained; native screen-reader focus proof pending |
+| E-05 | PARTIAL | data-table.tsx | Single formatter call and strict internal hidden-data recovery; 100-row DOM benchmark pending |
+| E-01 | OPEN-EVIDENCE | ux-capture-references.mjs | Source recipe exists; four role × eight state browser fixtures and owner-approved captures still needed |
+| E-03 | OPEN-EVIDENCE | package.json UX scripts; tests | Added Audit 2 source and overlay tests; same-commit CI/devices still required |
+| E-04 | OPEN-EVIDENCE | ux-callsite-audit.mjs | Affected-callsite inventory available; 30 interaction/visual baselines not available |
+| F-03 | OPEN-EVIDENCE | ux-capture-references.mjs; UX-PLAYBOOK §17 | Only real captured SHA256 files may be approved; no hashes fabricated |
+
+### Changed source, tests and limits
+
+- Popup survivors removed in learner assignment resources and employer drive portal: no `target="_blank"`; `ux:guard` now includes the cited routes, expanded critical surfaces and `origin/main...HEAD` changed TSX routes, with expression-based popup attributes covered.
+- C-02 roster actions, E-02 TPO Home independent read recovery, tablet resize targets, mentor filter sheet and form, notched shell, permission fallback, HTTPS links, duplicate FilterBar IDs, exact-empty call sites, icon-only label and persistent error toasts updated.
+- `npm run ux:audit:source` now runs both Audit 1 and Audit 2 source checks; `npm run ux:audit:unit` includes nested cleanup unit assertions.
+- **No results invented.** E-01, E-03, E-04 and F-03 still require actual seeded reference browser states, same-revision passing checks, 30 affected call-site behavioural snapshots and approved real screenshot hashes; mobile/AT acceptance for all other rows remains pending. Status wording in this ledger is *implementation disposition*, not a third-party audit PASS.
