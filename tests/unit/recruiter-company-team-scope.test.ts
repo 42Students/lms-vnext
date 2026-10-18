@@ -98,6 +98,20 @@ describe("W05 recruiter company college scope", () => {
       .toBeLessThan(source.indexOf("const team = await db"));
   });
 
+  it("HR-TEAM-RECIPIENT-45 returns only verified and unexpired colleague contact grants",()=>{
+    const source=readFileSync("src/modules/placements/recruiter-company-team-service.ts","utf8");
+    const roster=source.slice(source.indexOf("const team = await db"));
+    for(const clause of [
+      'eq(placementRecruiterCollegeGrants.companyRelationshipId, company.relationshipId)',
+      'eq(placementRecruiterCollegeGrants.status, "ACTIVE")',
+      'eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED")',
+      'gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`)',
+      'eq(placementRecruiterProfiles.status, "ACTIVE")',
+      'eq(users.platformStatus, "ACTIVE")',
+    ])expect(roster).toContain(clause);
+    expect(roster).not.toContain("select * from users");
+  });
+
   it("rejects a forged college id instead of falling back", () => {
     const a = grant("00000000-0000-4000-8000-000000000011", "00000000-0000-4000-8000-000000000021", "A");
     const context = { ...base, recruiter: { ...base.recruiter!, grants: [a] } };

@@ -76,3 +76,7 @@ These are source-policy and mocked route tests. CI, real PostgreSQL parallel wri
 | `mayReadGlobalProjectAudit` | College/org-scoped Super Admin attempting the global activity stream, non-platform user or disabled user attempting escalation | Same | Live HTTP route with foreign tenant audit IDs and page/CSV consistency |
 
 The test executes the permission model, not a mocked or stubbed assertion. It does not verify actual PostgreSQL ownership joins; continue to treat the database-backed IDOR/security pass as **pending** until CI and integration testing execute it.
+
+## PROJ-BREAK-submissions-07 persisted evidence validation (chat-6)
+
+`savedDeliverySubmissionReadiness` now rejects a nominal `FILE` row without a valid file UUID, any FILE claiming an external link, and unsafe or malformed primary/demo URLs. This closes a client readiness mismatch where a legacy/forged persisted attachment could display a submit-ready state despite the service refusing the evidence. `tests/unit/PROJ-BREAK-chat6-saved-delivery-ui.test.ts` adds negative cases for absent/null/forged IDs, conflicting FILE URL, unsafe schemes and a valid HTTPS control. The service still remains authoritative for READY status, college ownership and file-scanner attestation. Unit test authored, cloud CI **not yet executed**.

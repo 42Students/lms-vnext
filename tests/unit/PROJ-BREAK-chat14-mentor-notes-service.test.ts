@@ -8,6 +8,7 @@ const state=vi.hoisted(()=>({
  activeMembership:true,moduleEnabled:true,meetingPresent:true,
  currentOutcome:"Initial",updatedAt:"2026-10-18T10:00:00.123Z",
  events:0,updates:0,projectLocks:0,meetingLocks:0,reads:0,lastReadConditions:"",
+ persistedAllowed:true,persistedActorChecks:0,
 }));
 vi.mock("server-only",()=>({}));
 vi.mock("drizzle-orm",()=>({
@@ -35,6 +36,12 @@ vi.mock("@/modules/projects/access",()=>({
   access:state.access,collegeId:state.scopeCollegeId,organizationId:state.scopeOrganizationId,
   project:{id,title:"Atlas",status:state.projectStatus},
  }),
+}));
+vi.mock("@/modules/projects/persisted-mentor-mutation",()=>({
+ assertPersistedProjectMutationActor:async()=>{
+  state.persistedActorChecks++;
+  if(!state.persistedAllowed)throw new Error("PROJECT_LIFECYCLE_ACCESS_DENIED");
+ },
 }));
 vi.mock("@/modules/activity/taxonomy",()=>({
  ACTIVITY_EVENT_TYPES:{PROJECTS_MEETING_NOTES_UPDATED:"projects.meeting.notes_updated"},
@@ -110,6 +117,7 @@ beforeEach(()=>{
  state.activeMembership=true;state.moduleEnabled=true;state.meetingPresent=true;
  state.currentOutcome="Initial";state.updatedAt=input.expectedUpdatedAt;
  state.events=0;state.updates=0;state.projectLocks=0;state.meetingLocks=0;state.reads=0;state.lastReadConditions="";
+ state.persistedAllowed=true;state.persistedActorChecks=0;
 });
 
 describe("PROJ-BREAK-MENTOR-164..167 read-only meeting notes scope",()=>{
@@ -202,6 +210,16 @@ describe("PROJ-BREAK-MENTOR meeting notes service transactional authorization",(
  state.scopeOrganizationId="org-a";state.moduleEnabled=false;
   await expect(updateMentorMeetingNotes(context,ids,input))
    .rejects.toThrow("PROJECT_MEETING_ACCESS_DENIED");
+  expect(state.meetingLocks).toBe(0);
+  expect(state.updates).toBe(0);
+  expect(state.events).toBe(0);
+ });
+ it("PROJ-BREAK-MENTOR-201 revocation after page access but inside transaction aborts note writes",async()=>{
+  state.persistedAllowed=false;
+  await expect(updateMentorMeetingNotes(context,ids,input))
+   .rejects.toThrow("PROJECT_LIFECYCLE_ACCESS_DENIED");
+  expect(state.projectLocks).toBe(1);
+  expect(state.persistedActorChecks).toBe(1);
   expect(state.meetingLocks).toBe(0);
   expect(state.updates).toBe(0);
   expect(state.events).toBe(0);

@@ -176,7 +176,7 @@ describe("PROJ-BREAK-MENTOR-178..184 read-service access and disabled modules",(
    await expect(read()).rejects.toThrow("DB_READ_ATTEMPTED");
   }
   expect(state.readinessCalls).toBe(3);
-  expect(state.dbCalls).toBe(6);
+  expect(state.dbCalls).toBe(7);
  });
  it("PROJ-BREAK-MENTOR-195 invalid exact delivery version IDs reject before scope or database access",async()=>{
   for(const bad of [
