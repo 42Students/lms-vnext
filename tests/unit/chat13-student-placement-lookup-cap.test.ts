@@ -34,6 +34,7 @@ describe("SA-STUDENT-LOOKUP-CAP-01 truthful supervised placement lookup paging",
   it("probes an additional authorized database row and does not disclose it in output", () => {
     const service=readFileSync("src/modules/placements/college-placement-student-lookup-service.ts","utf8");
     expect(service).toContain(".limit(STUDENT_LOOKUP_CAP+1)");
+    expect(service).toContain(".orderBy(asc(users.displayName),asc(collegeMemberships.id))");
     expect(service).toContain("const visiblePeople=capStudentLookupRows(people,STUDENT_LOOKUP_CAP).items");
     expect(service).toContain("Promise.all(visiblePeople.map(async person=>");
     expect(service).toContain("inArray(placementApplications.membershipId,visiblePeople.map(person=>person.membershipId))");
