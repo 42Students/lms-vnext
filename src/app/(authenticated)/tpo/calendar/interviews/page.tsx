@@ -34,7 +34,7 @@ export default async function TpoInterviewReadinessPage({searchParams}:Props){
    <Button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] border border-primary bg-primary px-4 text-sm font-semibold text-white">Apply</Button>
   </form>
   <section aria-label="Interview readiness counts" className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-   {Object.entries(data.counts).map(([key,n])=><div key={key} className="rounded-xl border border-border bg-surface p-4">
+   {Object.entries(data.counts).map(([key,n])=><div key={key} className="py-4">
     <p className="text-xs text-body">{key.replaceAll(/([A-Z])/g," $1")}</p>
     <p className="text-xl font-semibold tabular-nums text-foreground">{n}</p>
    </div>)}
@@ -45,7 +45,7 @@ export default async function TpoInterviewReadinessPage({searchParams}:Props){
    {data.limited?<Link href={href(data.page+1)} className="min-h-11 sm:min-h-9 rounded-[9px] border border-border px-3 py-2 text-sm text-[var(--lms-link-text)]">Next 200</Link>:null}
   </nav>
   {data.rows.length===0?<EmptyState title="No interview rounds in this view" description="No persisted pending or relevant scheduled interview rounds were found."/>:
-   <section aria-label="Interview rounds" className="grid gap-3">
+   <section aria-label="Interview rounds" className="divide-y divide-border border-y border-border">
    {data.rows.map(r=><article key={r.id} className="rounded-xl border border-border bg-surface p-4">
     <h2 className="font-semibold text-foreground">{r.companyName} · {r.jobTitle}</h2>
     <p className="mt-1 text-sm text-body">{r.name} · {r.state.replaceAll("_"," ")} · {r.mode??"Mode not recorded"}</p>
