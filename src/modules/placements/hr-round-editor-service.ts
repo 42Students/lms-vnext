@@ -38,7 +38,7 @@ export async function editHrJobRound(context:RequestContext,rawJobId:unknown,raw
     eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
     eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
     eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
-    gt(placementRecruiterCollegeGrants.validUntil,sql`now()`),
+    gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`),
     sql<boolean>`'DRIVES' = ANY(${placementRecruiterCollegeGrants.capabilities})`,
    ))
    .where(and(eq(placementJobs.id,jobId),inArray(placementJobs.status,["DRAFT","PUBLISHED"]),
@@ -129,7 +129,7 @@ export async function listHrRoundEditorRows(context:RequestContext,jobIdInput:un
    eq(placementRecruiterCollegeGrants.companyRelationshipId,placementCompanyRelationships.id),
    eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
     eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
-    gt(placementRecruiterCollegeGrants.validUntil,sql`now()`),
+    gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`),
     sql<boolean>`'DRIVES' = ANY(${placementRecruiterCollegeGrants.capabilities})`))
   .where(and(eq(placementJobs.id,jobId),
    inArray(placementJobs.status,["DRAFT","PUBLISHED"]),
