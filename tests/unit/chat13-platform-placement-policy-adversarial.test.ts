@@ -53,6 +53,25 @@ describe("Super Admin placement policy adversarial boundaries", () => {
     expect(body).toContain('.for("update")');
   });
 
+  it("SA-PLACEMENT-POLICY-05 atomically audits every persisted global policy write without impersonating a college actor",()=>{
+    const svc=source();
+    const taxonomy=readFileSync("src/modules/activity/taxonomy.ts","utf8");
+    expect(taxonomy).toContain('PLACEMENTS_PLATFORM_POLICY_UPDATED: "placements.platform_policy.updated"');
+    expect(taxonomy).toContain("ACTIVITY_EVENT_TYPES.PLACEMENTS_PLATFORM_POLICY_UPDATED");
+    expect(svc).toContain('recordActivityEventInTransaction(tx,context,{');
+    expect(svc).toContain('eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_PLATFORM_POLICY_UPDATED');
+    expect(svc).toContain('subjectType:"platform_setting"');
+    expect(svc).toContain("previousVersion:existing?.version??0");
+    expect(svc).toContain("nextValue:input.value");
+    expect(svc).toContain('if(input.value!==null||existing)');
+    const body=svc.split("export async function setPlatformPlacementPolicy")[1]??"";
+    expect(body.indexOf("return db.transaction(async tx=>{")).toBeLessThan(
+      body.indexOf("recordActivityEventInTransaction(tx,context,{"));
+    expect(body.lastIndexOf("recordActivityEventInTransaction(tx,context,{")).toBeLessThan(
+      body.lastIndexOf("return {key:input.key"));
+    expect(body).not.toContain("actorMembershipId:context.membership");
+  });
+
   it("SA-PLACEMENT-POLICY-03 rejects NaN, infinite or fractional-integer values for every global policy field", () => {
     for (const field of PLACEMENT_POLICY_FIELDS) {
       expect(placementPolicyValidate(field.key,field.defaultValue), field.key).toBe(true);
