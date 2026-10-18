@@ -51,6 +51,8 @@ Scope: TPO Projects read journey, TPO Students and Companies bulk operations, fi
 
 | D12-28 | HIGH | TPO Students and Companies server pages and both CSV exports trusted request-context role snapshots. A role-revoked TPO could retrieve an authorized college's PII or company directory until that session refreshed, despite a persisted actor helper already existing for TPO Batches. | Enforce `requireTpoBatchActor` before parsing private query parameters or loading rows; helper checks current user status, college membership, persisted TPO/College Admin role and organization/permission. | `d41f3ae1`, `162fddc1`, `2e62b1c7`, `9c813735`, `chat12-tpo-persisted-private-read-boundaries.test.ts`. |
 
+| D12-29 | HIGH | Six nested TPO Companies pages (detail, contact log, feedback, management, people, archived relationships) only checked the active request-context role, allowing a revoked persisted TPO actor to continue seeing employer relationship history or contact data until their session refreshed. | Added `requireTpoBatchActor` after UI role gate and before each scoped private read, without changing legacy page labels or navigation. | `364a6990` through `ab8f99b3`, `chat12-tpo-company-persisted-detail-pages.test.ts`; live revoke acceptance pending. |
+
 ## Verification status
 
 The rolling `docs/orchestrator/unit-failures-latest.md` explicitly reports two `chat-12` failures (TPO-students-51); their stale selectors were repaired but remain **unverified in CI**. The branch was fast-forwarded to main `a172b146ede1992a428dbe3e74a6d87dd3a12985` before these changes. No direct commits to main.
