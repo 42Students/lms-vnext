@@ -78,6 +78,12 @@ Snapshot: 2026-10-18, source branch `chatgpt/chat-3-b`. Role-journal and code-ba
 - `getSuperAdminLearningFilterOptions` now explicitly requires an active platform `SUPER_ADMIN` role before calling `resolveActingCollege`. Ordinary Faculty receive college-scoped `courses.read` for their **own assigned courses**, which is not authority to enumerate every college course and cohort through Super Admin filter controls.
 - `tests/unit/chat3-sa-learning-facets-platform-role.test.ts` executes the actual service with Drizzle join compilation, verifies two bounded 2,000-row same-college queries, and denies Faculty/Mentor/Learner/College Admin/disabled platform actors before any database access. Cloud CI and authenticated page tests pending.
 
+## SA-ACADEMICS-SPACE-01 / SA-ACADEMICS-PROGRAM-READ-01 — large college workspace and program deletion previews
+
+- `tests/unit/chat3-sa-academics-workspace-bounded-concurrency.test.ts` directly exercises `mapAcademicWorkspaceInBatches` with out-of-order microtask completion, maximum concurrent reads, stable program ordering, validation of 1–32 workers, empty college and partial failure.
+- `listProgramContents` now requires `academics.manage`, not generic `academics.read`. Delete-readiness counts of semesters, batches and classes are an administrative capability and should not be returned to ordinary Faculty, Mentor or Learner callers who know program IDs. `tests/unit/chat3-sa-program-dependency-count-roles.test.ts` exercises the real service and three Drizzle tenant predicates, maps dependent totals and denies wrong roles/tenant.
+- No new database schema and no migration. Real PostgreSQL capacity and 1,000+ cohort scale acceptance remains pending.
+
 ## Targeted repairs and further release gates
 
 - `COL-people-24`: exact legacy mentor-reassignment confirmation description restored at `src/components/projects/project-admin-reassign-mentor-page.tsx`; must rerun its failing test, and real keyboard/retry browser checks remain.

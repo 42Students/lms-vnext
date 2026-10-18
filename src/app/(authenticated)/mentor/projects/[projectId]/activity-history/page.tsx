@@ -32,7 +32,7 @@ export default async function MentorProjectActivityHistoryPage({
   const data=await getMentorProjectActivityHistory(context,parsed.data);
   return <div className={mentorProjectActivityMobileLayout}>
     <PageHeader eyebrow="Mentor · Project Activity" title="Recorded project activity"
-      description={data.title+" · Events linked to this assigned project."}
+      description={data.enabled?data.title+" · Events linked to this assigned project.":"Projects access is disabled. No private project activity was loaded."}
       actions={<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=activity"}
         className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Project activity workspace

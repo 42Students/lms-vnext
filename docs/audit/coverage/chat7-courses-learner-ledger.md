@@ -96,3 +96,17 @@ The owner suspended iterative CI/test-failure triage until all lane queues finis
 | `/admin/assignments` | Reject a quiz-only result filter before session/DB reads; no-college fallback and direct in-page grading stay scoped | `tests/unit/chat7-superadmin-course-assessment-ux-boundaries.test.ts` — `SA-academics-people-64` |
 
 See `docs/audit/ux/scroll-motion-courses.md` for the changed containers. Backend PostgreSQL race/rollback coverage and visual phone verification remain unexecuted. No claim of exhaustive coverage of 345 course files is made.
+
+## Learner Projects services and safe Super Admin bulk errors — priority continuation
+
+| Export | Behavior asserted / documented | Behavioral regression |
+|---|---|---|
+| `listMyLearnerProjectDueStates` | Reject inactive/wrong role/invalid and oversized UUID lists; never enumerate foreign mentor projects; ignore completed task dates; per-project no-due fallback | `tests/unit/PROJ-BREAK-chat7-learner-due-and-progress-services.test.ts` — `PROJ-BREAK-LEARNER-99` |
+| `listMyLearnerProjectProgress`, `summarizeLearnerProjectProgress` | Only explicitly learner-accessible project IDs; duplicate IDs do not double count; zero-task project yields unknown completion `null`, not invented 0% | `tests/unit/PROJ-BREAK-chat7-learner-due-and-progress-services.test.ts` — `PROJ-BREAK-LEARNER-99` |
+| `listMyLearnerProjectAttention` | Excludes archived and mentor-only projects, reads only latest submission version for DRAFT or CHANGES_REQUESTED | `tests/unit/PROJ-BREAK-chat7-learner-attention-service.test.ts` — `PROJ-BREAK-LEARNER-100` |
+| `bulkSuperAdminCourseVisibility`, `superAdminCourseBulkSchema` | Current selected-college active Course IDs only; explicit confirmation, bounded 100 IDs/500 lessons; typed not-found/too-large instead of generic 500; partial count, failed-course retry IDs | `tests/unit/chat7-superadmin-course-bulk-typed-boundaries.test.ts` — `SA-academics-people-53` |
+| `bulkSuperAdminLessonVisibility` | Only PUBLISHED lesson contents under ACTIVE Lesson/Course/Offering and PUBLISHED learning path; draft/archived ancestry preserved; per-record errors sanitized, limit error typed | `tests/unit/chat7-superadmin-bulk-published-only.test.ts` — `SA-academics-people-53` |
+| `apiErrorResponse` course visibility response | `COURSE_NOT_FOUND` maps 404; `COURSE_VISIBILITY_BULK_TOO_LARGE` maps 400; body follows friendly error/request ID contract | `tests/unit/chat7-superadmin-course-bulk-typed-boundaries.test.ts`;  HTTP integration pending |
+| `SuperAdminCourseBulkVisibility` | Shows current-content-only caveat; provides actionable “Select fewer courses” / “Refresh and select current courses” recovery on typed errors | `tests/unit/chat7-superadmin-course-bulk-typed-boundaries.test.ts` — UI source review; browser pending |
+
+This still does **not** implement a persisted future whole-course visibility override (SA-53 remains PARTIAL). The owner deferred running all CI; therefore new tests are authored evidence and not a green-verification claim.

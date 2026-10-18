@@ -5,7 +5,7 @@ import { CollegeSlotManager } from "@/components/electives/college-slot-manager"
 import {CollegeElectiveOfferingManager} from "@/components/electives/college-elective-offering-manager";
 import { CollegeElectiveLifecycleAction } from "@/components/electives/college-elective-lifecycle-action";
 import { PageHeader } from "@/components/ui/page-header";
-import { ScrollCue } from "@/components/ui/scroll-cue";
+import { DataTable } from "@/components/ui/data-table";
 import {
   classCapacityLabel,
   collegeStructureHref,
@@ -370,89 +370,72 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
            <Link href={path} className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear filters and view all {title.toLowerCase()}</Link>
           </div>
         ) : (
-          <ScrollCue axis="x" label={title + " table columns"}><table className="w-full min-w-[53rem] text-left text-sm">
-            {data.kind === "CLASSES" ? (
-              <>
-                <thead className="bg-muted text-muted-foreground"><tr>
-                  <th scope="col" className="px-4 py-3">Class</th>
-                  <th scope="col" className="px-4 py-3">Program / batch</th>
-                  <th scope="col" className="px-4 py-3">Academic period</th>
-                  <th scope="col" className="px-4 py-3">Capacity</th>
-                  <th scope="col" className="px-4 py-3">Active enrollments</th>
-                  <th scope="col" className="px-4 py-3">Status</th>
-                  <th scope="col" className="px-4 py-3">Manage</th>
-                </tr></thead>
-                <tbody>{data.items.map(item => (
-                  <tr key={item.id} className="border-t border-border align-top">
-                    <td className="px-4 py-4">
-                      <Link href={"/college/academics/sections/" + encodeURIComponent(item.id)}
-                        className="font-semibold text-primary-text hover:underline">{item.name}</Link>
-                      <p className="mt-1 text-xs text-muted-foreground">{item.code}</p>
-                    </td>
-                    <td className="px-4 py-4 text-body">{item.programName} · {item.cohortName}</td>
-                    <td className="px-4 py-4 text-body">{item.periodName}</td>
-                    <td className="px-4 py-4 text-body">{classCapacityLabel(item.capacity)}</td>
-                    <td className="px-4 py-4 text-body">{item.activeLearners}</td>
-                    <td className="px-4 py-4 text-body">{item.status}</td>
-                    <td className="px-4 py-4"><div className="flex flex-wrap items-start gap-2">
-                      <Link href={"/college/classes/recurring-preview?classId=" + encodeURIComponent(item.id)}
-                        className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text"
-                        aria-label={"Schedule recurring sessions for " + item.name}>Schedule</Link>
-                      <CollegeClassRowActions row={item} />
-                      <CollegeSectionLifecycleAction row={{
-                        id:item.id,name:item.name,status:item.status,
-                        updatedAt:item.updatedAt.toISOString(),
-                      }}/>
-                    </div></td>
-                  </tr>
-                ))}</tbody>
-              </>
-            ) : (
-              <>
-                <thead className="bg-muted text-muted-foreground"><tr>
-                  <th scope="col" className="px-4 py-3">Elective slot</th>
-                  <th scope="col" className="px-4 py-3">Program / semester</th>
-                  <th scope="col" className="px-4 py-3">Year / academic period</th>
-                  <th scope="col" className="px-4 py-3">Credits / choices</th>
-                  <th scope="col" className="px-4 py-3">Students</th>
-                  <th scope="col" className="px-4 py-3">Active offerings</th>
-                  <th scope="col" className="px-4 py-3">Status</th>
-                  <th scope="col" className="px-4 py-3">Manage</th>
-                </tr></thead>
-                <tbody>{data.items.map(item => (
-                  <tr key={item.id} className="border-t border-border align-top">
-                    <td className="px-4 py-4 font-semibold text-foreground">{item.name}</td>
-                    <td className="px-4 py-4 text-body">{item.programName} · Semester {item.semesterNumber}</td>
-                    <td className="px-4 py-4 text-body">
-                      {item.academicYear ?? "Year not recorded"}
-                      <p className="mt-1 text-xs text-muted-foreground">{item.periodName ?? "No academic period linked"}</p>
-                    </td>
-                    <td className="px-4 py-4 text-body">
-                      {item.credits} credits · Pick: {electiveSelectionLabel(item.minPick, item.maxPick)}
-                    </td>
-                    <td className="px-4 py-4 text-body" title="Distinct actively assigned learners across the slot’s active course groups. Not pending picks.">{item.confirmedStudents}</td>
-                    <td className="px-4 py-4 text-body">{item.activeOfferings}</td>
-                    <td className="px-4 py-4 text-body">{item.status}</td>
-                    <td className="px-4 py-4">
-                      <div className="flex flex-wrap items-start gap-2">
-                        {electiveOptions && item.status === "ACTIVE" ? <>
-                          <Link href={"/college/electives/"+encodeURIComponent(item.id)} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">Open</Link>
-                           <CollegeSlotManager options={electiveOptions} row={item} />
-                          <CollegeElectiveOfferingManager slotId={item.id}/>
-                          <Link href={"/college/electives/" + encodeURIComponent(item.id) + "/allocate"}
-                            className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">
-                            Eligible students
-                          </Link>
-                        </> : null}
-                        <CollegeElectiveLifecycleAction slotId={item.id} name={item.name}
-                          version={item.version} status={item.status} />
-                      </div>
-                    </td>
-                  </tr>
-                ))}</tbody>
-              </>
-            )}
-          </table></ScrollCue>
+          <>{data.kind === "CLASSES" ? (
+            <DataTable caption="Class directory" rows={data.items}
+              getRowKey={item=>item.id}
+              empty={<p>No classes match these filters.</p>}
+              columns={[
+                {key:"class",header:"Class",mobilePriority:"primary",cell:item=><>
+                  <Link href={"/college/academics/sections/"+encodeURIComponent(item.id)}
+                    className="font-semibold text-primary-text hover:underline">{item.name}</Link>
+                  <p className="mt-1 text-xs text-muted-foreground">{item.code}</p>
+                </>},
+                {key:"program",header:"Program / batch",mobilePriority:"secondary",cell:item=>
+                  <span>{item.programName} · {item.cohortName}</span>},
+                {key:"period",header:"Academic period",mobilePriority:"secondary",cell:item=>item.periodName},
+                {key:"capacity",header:"Capacity",mobilePriority:"secondary",cell:item=>classCapacityLabel(item.capacity)},
+                {key:"enrollment",header:"Active enrollments",mobilePriority:"secondary",cell:item=>item.activeLearners},
+                {key:"status",header:"Status",mobilePriority:"secondary",cell:item=>item.status},
+                {key:"manage",header:"Manage",mobilePriority:"action",cell:item=>
+                  <div className="flex flex-wrap items-start gap-2">
+                    <Link href={"/college/classes/recurring-preview?classId="+encodeURIComponent(item.id)}
+                      className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text"
+                      aria-label={"Schedule recurring sessions for "+item.name}>Schedule</Link>
+                    <CollegeClassRowActions row={item}/>
+                    <CollegeSectionLifecycleAction row={{
+                      id:item.id,name:item.name,status:item.status,
+                      updatedAt:item.updatedAt.toISOString(),
+                    }}/>
+                  </div>},
+              ]}
+            />
+          ) : (
+            <DataTable caption="Elective slot directory" rows={data.items}
+              getRowKey={item=>item.id}
+              empty={<p>No elective slots match these filters.</p>}
+              columns={[
+                {key:"slot",header:"Elective slot",mobilePriority:"primary",cell:item=>
+                  <span className="font-semibold text-foreground">{item.name}</span>},
+                {key:"program",header:"Program / semester",mobilePriority:"secondary",cell:item=>
+                  <span>{item.programName} · Semester {item.semesterNumber}</span>},
+                {key:"period",header:"Year / academic period",mobilePriority:"secondary",cell:item=><>
+                  {item.academicYear ?? "Year not recorded"}
+                  <p className="mt-1 text-xs text-muted-foreground">{item.periodName ?? "No academic period linked"}</p>
+                </>},
+                {key:"credits",header:"Credits / choices",mobilePriority:"secondary",cell:item=>
+                  <span>{item.credits} credits · Pick: {electiveSelectionLabel(item.minPick,item.maxPick)}</span>},
+                {key:"students",header:"Students",mobilePriority:"secondary",cell:item=>
+                  <span title="Distinct actively assigned learners across the slot’s active course groups. Not pending picks.">{item.confirmedStudents}</span>},
+                {key:"offerings",header:"Active offerings",mobilePriority:"secondary",cell:item=>item.activeOfferings},
+                {key:"status",header:"Status",mobilePriority:"secondary",cell:item=>item.status},
+                {key:"manage",header:"Manage",mobilePriority:"action",cell:item=>
+                  <div className="flex flex-wrap items-start gap-2">
+                    {electiveOptions && item.status === "ACTIVE" ? <>
+                      <Link href={"/college/electives/"+encodeURIComponent(item.id)}
+                        className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">Open</Link>
+                      <CollegeSlotManager options={electiveOptions} row={item}/>
+                      <CollegeElectiveOfferingManager slotId={item.id}/>
+                      <Link href={"/college/electives/"+encodeURIComponent(item.id)+"/allocate"}
+                        className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">
+                        Eligible students
+                      </Link>
+                    </> : null}
+                    <CollegeElectiveLifecycleAction slotId={item.id} name={item.name}
+                      version={item.version} status={item.status}/>
+                  </div>},
+              ]}
+            />
+          )}</>
         )}
       </section>
       <nav aria-label={title + " pagination"} className="flex flex-wrap items-center justify-between gap-3 text-sm">
