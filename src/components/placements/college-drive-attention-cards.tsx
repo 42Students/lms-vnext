@@ -22,11 +22,11 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
        className="flex flex-wrap items-center justify-between gap-3 rounded border border-border p-3">
        <div><p className="font-semibold">{row.title}</p>
         <p className="text-sm text-body">{row.count} candidate(s) need review</p></div>
-       <Link href={row.href} className="min-h-10 rounded border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+       <Link href={row.href} className="min-h-11 rounded border border-border px-3 py-2 text-sm font-semibold text-primary-text">
         Review applications</Link>
       </li>)}</ul>
       {rows.length>3?<details className="text-sm">
-       <summary className="min-h-10 cursor-pointer font-semibold text-primary-text">
+       <summary className="min-h-11 cursor-pointer font-semibold text-primary-text">
         +{rows.length-3} more · Show more</summary>
        <ul className="mt-2 space-y-2">{rows.slice(3).map(row=><li key={row.jobId}
         className="rounded border border-border p-3">
@@ -56,7 +56,7 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
       new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(job.deadline):"Not specified"}</p>
      <div className="flex flex-wrap gap-2">
       <Link href={"/college/placements/jobs/"+job.id+"/applications"}
-       className="min-h-10 rounded border border-border px-3 py-2 text-sm font-semibold text-primary-text">Applications</Link>
+       className="min-h-11 rounded border border-border px-3 py-2 text-sm font-semibold text-primary-text">Applications</Link>
       <CollegeDriveDeadlineAction jobId={job.id} title={job.title}
        currentDeadline={job.deadline?.toISOString()??null}/>
      </div>
