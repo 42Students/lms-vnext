@@ -144,6 +144,12 @@ The selected-college Super Admin Faculty assignment directory joined course offe
 
 **Fix:** Match offering and Section's cohort and term in the inner joins; maintain college/organization scope; count and clamp the requested page before rows. The class selector requires a selected-college academic period. `tests/unit/chat3-sa-faculty-assignments-tenant-pages.test.ts` checks compiled joins and role denial. PostgreSQL fixtures and CI remain outstanding.
 
+### SA3-PEOPLE-ORG-025 — Super Admin selected-college facets did not verify organization ownership (S1)
+
+The Faculty teaching-assignment class picker and four People filter-option SQL readers enforced the selected `college_id`, but did not join the `colleges` table to establish that the selected college belongs to the selected `organization_id`. Since `requireSuperAdminSelectedCollege` compares the request to the already selected scope without querying the owning tenant row, a stale or inconsistent selected organization+college pair could expose class, cohort, program and department facet names from the wrong organization.
+
+**Fix:** Require the persisted college row and matching `colleges.organization_id` in the Faculty classes picker and all four People facet queries. Keep the existing department, academic term, count limits and active Super Admin selected-scope checks. Tests: `tests/unit/chat3-sa-faculty-assignments-tenant-pages.test.ts` (SA3-FAC-ORG-01) and `tests/unit/chat3-sa-people-facets-organization-scope.test.ts` (SA3-PEOPLE-ORG-01). Requires CI and PostgreSQL mismatch fixtures before claiming runtime acceptance.
+
 ### SA3-FAC-EXPORT-024 — duplicate Faculty export filters silently overwritten (S2)
 
 `Object.fromEntries(searchParams)` dropped duplicate `status`, `page`, or `q` selectors before validation, allowing a request with ambiguous selection to download a different CSV than its visible filters suggested. The export now rejects duplicate keys with a 400 response and preserves the existing 300-row cap and safe cache headers. `tests/unit/chat3-sa-faculty-assignments-csv-http.test.ts` exercises actual HTTP behavior. CI pending.
