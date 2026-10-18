@@ -62,6 +62,20 @@ describe("LEARNER-ASSESSMENTS-CLASS-01 truthful class and scoped assessments",()
   expect(result.quizzes.map(x=>x.title)).toEqual(["Due","No deadline"]);
   expect(state.rows).toHaveBeenCalledWith([item],memberId,expect.any(Number));
  });
+ it("LEARNER-ASSESSMENTS-FILTER-01 refuses forged or malformed course filters instead of broadening to all courses",async()=>{
+  for(const invalid of [
+   "55555555-5555-4555-8555-555555555555",
+   "not-a-uuid",
+   [courseId,courseId],
+  ]){
+   state.rows.mockClear();
+   await expect(getLearnerAssessmentOverview(context,{courseId:invalid})).rejects.toThrow();
+   expect(state.rows).not.toHaveBeenCalled();
+  }
+  const all=await getLearnerAssessmentOverview(context,{courseId:""});
+  expect(all.selectedCourseId).toBeNull();
+  expect(state.rows).toHaveBeenCalledWith([item],memberId,expect.any(Number));
+ });
  it("enforces ACTIVE Section status with exact cohort and academic period for the class-present probe",()=>{
   const src=readFileSync("src/modules/courses/learner-assessment-service.ts","utf8");
   for(const clause of [
