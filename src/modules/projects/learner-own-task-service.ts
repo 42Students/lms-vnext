@@ -7,6 +7,7 @@ import {projectInstances,projectSprints,projectReleases,projectTasks,projectTask
 import type {RequestContext} from "@/modules/identity/context";
 import {requireProjectReadAccess} from "./access";
 import {ProjectsServiceError} from "./errors";
+import {assertPersistedLearnerProjectMutation} from "./learner-mutation-guard";
 import {learnerOwnTaskCreateInputSchema} from "./learner-own-task-input-model";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
@@ -23,6 +24,7 @@ export async function createLearnerOwnTask(context:RequestContext,rawParams:unkn
    .where(and(eq(projectInstances.id,projectId),eq(projectInstances.collegeId,scope.collegeId)))
    .for("update").limit(1);
   if(project?.status!=="ACTIVE")throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+  await assertPersistedLearnerProjectMutation(tx,context,projectId,scope.collegeId);
   const [sprint]=input.sprintId?await tx.select().from(projectSprints)
    .where(and(eq(projectSprints.id,input.sprintId),eq(projectSprints.projectId,projectId)))
    .for("update").limit(1):[null];
@@ -74,6 +76,7 @@ export async function deleteLearnerOwnTask(context:RequestContext,rawParams:unkn
     .where(and(eq(projectInstances.id,projectId),eq(projectInstances.collegeId,scope.collegeId)))
     .for("update").limit(1);
   if(project?.status!=="ACTIVE")throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+  await assertPersistedLearnerProjectMutation(tx,context,projectId,scope.collegeId);
   const [task]=await tx.select().from(projectTasks).where(and(eq(projectTasks.id,taskId),
     eq(projectTasks.projectId,projectId))).for("update").limit(1);
   if(!task||!task.templateKey.startsWith("learner-"+membership.id.replaceAll("-","")+"-")||

@@ -37,7 +37,7 @@ export function createOutboundProvider(
       if (!template || !isCampaignTemplateKey(request.templateKey)) return false;
       try {
         if (request.channel === "EMAIL") {
-          if (!config.email.token || !template.zeptoTemplateKey ||
+          if (!config.email.token.trim() || !template.zeptoTemplateKey ||
               !isCampaignTemplateKey(template.zeptoTemplateKey) ||
               template.zeptoTemplateKey === config.email.otpTemplateKey) return false;
           const response = await outboundFetch(config.email.apiUrl, {
