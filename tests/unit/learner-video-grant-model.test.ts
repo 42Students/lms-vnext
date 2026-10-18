@@ -16,5 +16,11 @@ describe("learner signed video playback renewal", () => {
     expect(playbackGrantRefreshDelay("2026-10-16T10:10:00Z", now)).toBe(570_000);
     expect(playbackGrantRefreshDelay("2026-10-16T10:00:00Z", now)).toBe(0);
     expect(playbackGrantRefreshDelay("invalid", now)).toBe(0);
+    // LEARNER-VIDEO-GRANT-02: a grant inside the renewal safety window
+    // must not wait an artificial second and expire before the next request.
+    expect(playbackGrantRefreshDelay("2026-10-16T10:00:00.100Z", now)).toBe(0);
+    expect(playbackGrantRefreshDelay("2026-10-16T10:00:10Z", now)).toBe(0);
+    expect(playbackGrantRefreshDelay("2026-10-16T10:00:29Z", now)).toBe(0);
+    expect(playbackGrantRefreshDelay("2026-10-16T10:00:31Z", now)).toBe(1_000);
   });
 });

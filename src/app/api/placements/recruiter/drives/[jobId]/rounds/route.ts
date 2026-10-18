@@ -23,6 +23,8 @@ export async function POST(request:Request,{params}:{params:Promise<{jobId:strin
  if(!input.success)return NextResponse.json({error:"INVALID_ROUND",details:z.treeifyError(input.error)},{status:400});
  try{
   const result=await editHrJobRound(await getCurrentRequestContext(),jobId,input.data);
+  if(request.headers.get("accept")?.includes("application/json"))
+   return NextResponse.json({saved:true,id:result.id,action:result.action});
   const location=new URL("/recruiter/drives/"+jobId+"/rounds/editor?changed="+result.action,request.url);
   return NextResponse.redirect(location,303);
  }catch(error){
