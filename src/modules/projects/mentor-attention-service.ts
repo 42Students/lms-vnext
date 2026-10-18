@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray, like, max, or } from "drizzle-orm";
+import { and, desc, eq, inArray, max, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   activityEvents,
@@ -35,6 +35,10 @@ export async function listMyMentorProjectAttention(
     .filter(row=>row.memberRole==="MENTOR"&&row.project.collegeId===membership.collegeId);
   if (!rows.length) return [];
   const ids=rows.map(row=>row.project.id);
+  const idSet=new Set(ids);
+  // Fetch at most one activity timestamp per authorized project. Do not
+  // hydrate years of activity events just to determine the latest update.
+  const activityProjectId=sql<string>`split_part(${activityEvents.groupKey}, ':', 2)`;
   const [
     submissions,
     meetings,
@@ -59,13 +63,14 @@ export async function listMyMentorProjectAttention(
       inArray(projectMeetings.status,["REQUESTED","SCHEDULED","RESCHEDULED"]),
     )),
     getDb().select({
-      groupKey:activityEvents.groupKey,occurredAt:activityEvents.occurredAt,
+      projectId:activityProjectId,occurredAt:max(activityEvents.occurredAt),
     }).from(activityEvents).where(and(
       eq(activityEvents.module,"PROJECTS"),
       eq(activityEvents.collegeId,membership.collegeId),
       eq(activityEvents.organizationId,membership.organizationId),
-      or(...ids.map(id=>like(activityEvents.groupKey,"project:"+id+"%"))),
-    )).orderBy(desc(activityEvents.occurredAt)),
+      sql`split_part(${activityEvents.groupKey}, ':', 1) = 'project'`,
+      inArray(activityProjectId,ids),
+    )).groupBy(activityProjectId),
     getDb().select({
       projectId:projectSubmissions.projectId,
       occurredAt:max(projectSubmissions.updatedAt),
@@ -101,10 +106,10 @@ export async function listMyMentorProjectAttention(
     }
   };
   for (const activity of activities) {
-    if (!activity.groupKey?.startsWith("project:")) continue;
-    const suffix=activity.groupKey.slice("project:".length);
-    const id=suffix.split(":",1)[0];
-    if (id) recordActivity(id,activity.occurredAt);
+    // Defense in depth: even a malformed activity group must not introduce
+    // a project outside the authorized Mentor roster.
+    if (idSet.has(activity.projectId))
+      recordActivity(activity.projectId,activity.occurredAt);
   }
   for (const row of submissionActivity) {
     recordActivity(row.projectId,row.occurredAt);

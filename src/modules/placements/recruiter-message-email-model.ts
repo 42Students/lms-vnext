@@ -24,7 +24,9 @@ export function safeRecruiterEmailMergeText(value:string,limit=4000){
    .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
  if(escaped.length<=max)return escaped;
  // Never leave a cut-off HTML character entity at the excerpt boundary.
- return escaped.slice(0,max).replace(/&(?:#[0-9]*|#x[0-9a-f]*|[a-z]*)?$/i,"");
+ const clipped=escaped.slice(0,max);
+ const intact=/[\uD800-\uDBFF]$/.test(clipped)?clipped.slice(0,-1):clipped;
+ return intact.replace(/&(?:#[0-9]*|#x[0-9a-f]*|[a-z]*)?$/i,"");
 }
 /** Plain-text provider address name, not an HTML merge variable.
  * Prevent CR/LF headers, bidirectional overrides and oversized recipient names.
