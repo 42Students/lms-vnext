@@ -113,6 +113,15 @@ describe("isTenantAccessAllowed", () => {
       expect(isTenantAccessAllowed(stale,{kind:"platform"})).toBe(true);
     });
 
+  it("WEAK-auth-tenant-access-08 a cached recruiter grant for another user cannot authorize a college",()=>{
+    const original=recruiterAt(COLLEGE_A);
+    const stale={...original,recruiter:{...original.recruiter!,userId:"other-user"}};
+    const host={kind:"college",collegeId:COLLEGE_A} as const;
+    expect(isTenantAccessAllowed(original,host)).toBe(true);
+    expect(isTenantAccessAllowed(stale,host)).toBe(false);
+    expect(isTenantAccessAllowed(stale,{kind:"platform"})).toBe(true);
+  });
+
   it("fails closed on unknown hosts", () => {
     expect(
       isTenantAccessAllowed(memberOf(COLLEGE_A), { kind: "unknown" }),
