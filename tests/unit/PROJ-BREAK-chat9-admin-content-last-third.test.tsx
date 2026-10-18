@@ -2,6 +2,7 @@ import {beforeEach,describe,expect,it,vi} from "vitest";
 import {isValidElement} from "react";
 import {SuperAdminContentDirectoryPage} from "@/components/courses/super-admin-content-directory-page";
 import {adminContentQuerySchema} from "@/modules/courses/super-admin-content-directory-model";
+import {readFileSync} from "node:fs";
 
 const state=vi.hoisted(()=>({
   role:"ADMIN" as "ADMIN"|"COLLEGE"|"DISABLED",
@@ -92,6 +93,15 @@ describe("Super Admin last third: Videos and Resources protected directory",()=>
     expect(state.directoryReads).toBe(0);
     expect(state.lessonReads).toBe(0);
     expect(state.sectionReads).toBe(0);
+  });
+  it("SA-content-admin-05 section choices and content reject cross-offering delivery references",()=>{
+    const source=readFileSync("src/modules/courses/super-admin-content-directory-service.ts","utf8");
+    expect(source).toContain("eq(courseSectionDeliveries.id,lessonContents.deliveryId)");
+    expect(source).toContain("eq(courseSectionDeliveries.offeringId,courseOfferings.id)");
+    expect(source).toContain("lessonContents.deliveryId} is null or");
+    expect(source).toContain("eq(sections.cohortId,courseOfferings.cohortId)");
+    expect(source).toContain("eq(sections.academicPeriodId,courseOfferings.academicPeriodId)");
+    expect(source).toContain("eq(departments.collegeId,collegeId)");
   });
   it("SA-content-admin-04 selected college is mandatory for both directories",async()=>{
     state.selected=false;
