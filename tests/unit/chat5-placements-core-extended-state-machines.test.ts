@@ -1,7 +1,7 @@
 import {describe,expect,it} from "vitest";
 import {recordSelectionsSchema,releaseSelectionsSchema,summarizeSelectionRelease,isExactTpoSelectionReplay} from "@/modules/placements/tpo-drive-selection-model";
 import {tpoWaitlistPromotionSchema,waitlistPreviewToken,decideWaitlistReleaseSettlement} from "@/modules/placements/tpo-waitlist-promotion-model";
-import {canRecordTpoOfferAction,tpoOfferLifecycleInputSchema,TPO_OFFER_ACTIONS} from "@/modules/placements/tpo-offer-lifecycle-model";
+import {canRecordTpoActualJoiningDate,canRecordTpoOfferAction,tpoOfferLifecycleInputSchema,TPO_OFFER_ACTIONS} from "@/modules/placements/tpo-offer-lifecycle-model";
 import {evaluateTpoDriveCancellation,isIssuedOfferCancelable,tpoDriveCancelSchema} from "@/modules/placements/tpo-drive-cancel-model";
 import {projectTpoJoiningTracker} from "@/modules/placements/tpo-joining-tracker-model";
 
@@ -66,6 +66,18 @@ describe("chat-5 placements core — offer state transition matrix",()=>{
     }
    }
   }
+ });
+ it("PLACEMENTS-JOIN-SM-04 prevents future or malformed actual-joining records at IST midnight",()=>{
+  const beforeMidnight=new Date("2099-10-18T18:29:59.999Z"); // 23:59:59.999 IST
+  const afterMidnight=new Date("2099-10-18T18:30:00.000Z"); // 00:00 next day IST
+  expect(canRecordTpoActualJoiningDate("2099-10-18",beforeMidnight)).toBe(true);
+  expect(canRecordTpoActualJoiningDate("2099-10-19",beforeMidnight)).toBe(false);
+  expect(canRecordTpoActualJoiningDate("2099-10-19",afterMidnight)).toBe(true);
+  expect(canRecordTpoActualJoiningDate("2099-10-18",afterMidnight)).toBe(true);
+  for(const invalid of ["2099-02-29","2099-02-30","2099-00-01","2099-13-01","", "2099-10-18T00:00:00Z"]){
+   expect(canRecordTpoActualJoiningDate(invalid,afterMidnight),invalid).toBe(false);
+  }
+  expect(canRecordTpoActualJoiningDate("2099-10-18",new Date(Number.NaN))).toBe(false);
  });
  it("PLACEMENTS-OFFER-SM-02 rejects confirmation bypass, duplicated IDs, invalid date and action/payload mismatch",()=>{
   expect(tpoOfferLifecycleInputSchema.safeParse(offer).success).toBe(true);
