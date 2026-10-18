@@ -255,3 +255,9 @@ No runtime CI execution. Numeric internally validated number callers remain supp
 | `src/modules/people/college-import-history-request-model.ts` `isCurrentCollegeImportHistoryRequest` and `src/components/college/college-student-import-history.tsx` | `tests/unit/chat4-college-import-history-response-race.test.ts` (`COL-people-import-history-RACE-02`) | Rapid page changes, close/reopen, old aborted network responses never replace newer table data; explicit AbortController, page bounds, safe generic errors, existing rows remain until new page succeeds |
 
 All cases are authored, not executed. Remaining project acceptance gates: concurrent PostgreSQL role revoke/commit visibility, full mutation state-machine races and actual mobile browser interactions.
+
+## College Admin UX: responsive academic directory (2026-10-18)
+
+| Component | Behavioral test | Coverage |
+| --- | --- | --- |
+| `src/components/academics/college-academic-directory.tsx` `CollegeAcademicDirectory` | `tests/unit/chat4-college-academic-responsive-data-table.test.tsx` (`COL-UX-ACADEMIC-TABLE-01`) | Native semester/batch tables replaced by the shared `DataTable`: keyboard-labelled horizontal scroll cue, sticky first column, mobile primary/secondary/actions priorities, collapsible remaining metadata and legacy wording. Semester Edit actions, batch Students/Manage actions, IST-independent academic-year labels and honest empty-filter recovery retained. SSR mock cases authored; browser accessibility and phone visual verification still pending. |
