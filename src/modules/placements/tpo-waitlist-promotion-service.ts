@@ -2,21 +2,24 @@ import "server-only";
 import {and,asc,desc,eq,inArray,ne,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,placementApplications,placementApplicationScreenings,placementJobRoleOptions,
- placementJobRounds,placementJobs,placementOffers,placementRoundResults,users} from "@/db/schema";
+ placementJobRounds,placementJobs,placementOffers,placementRoundResults,placementSeasons,users} from "@/db/schema";
 import {placementWaitlistPromotions} from "@/db/schema/placement-waitlist-promotions";
 import type {RequestContext} from "@/modules/identity/context";
 import {PlacementsServiceError} from "./errors";
 import {issuePlacementOffer} from "./offer-service";
 import {requireTpoJobCollege,requireTpoJobActor,auditTpoJobChange} from "./tpo-job-write-base";
 import {placementJobIdSchema} from "./validation";
-import {tpoWaitlistPromotionSchema,waitlistPreviewToken,decideWaitlistReleaseSettlement} from "./tpo-waitlist-promotion-model";
+import {tpoWaitlistPromotionSchema,waitlistPreviewToken,decideWaitlistReleaseSettlement,canonicalWaitlistPreviewCollections} from "./tpo-waitlist-promotion-model";
 
 export async function getTpoWaitlistPreview(context:RequestContext,rawJobId:unknown){
  const collegeId=await requireTpoJobCollege(context),jobId=placementJobIdSchema.parse(rawJobId);
  const [job]=await getDb().select({
   id:placementJobs.id,title:placementJobs.title,status:placementJobs.status,
   openings:placementJobs.openings,updatedAt:placementJobs.updatedAt,
- }).from(placementJobs).where(and(eq(placementJobs.id,jobId),eq(placementJobs.collegeId,collegeId))).limit(1);
+  seasonStatus:placementSeasons.status,
+ }).from(placementJobs).innerJoin(placementSeasons,and(
+  eq(placementSeasons.id,placementJobs.seasonId),eq(placementSeasons.collegeId,collegeId),
+ )).where(and(eq(placementJobs.id,jobId),eq(placementJobs.collegeId,collegeId))).limit(1);
  if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
  const storageReady=true; // registered in 0113
  const rounds=await getDb().select({
@@ -79,14 +82,16 @@ export async function getTpoWaitlistPreview(context:RequestContext,rawJobId:unkn
   if(!existing&&freeSeats!==null&&freeSeats<1)reasons.push("No open offer seat");
   if(!existing&&promotions.some(p=>p.applicationId===w.applicationId))reasons.push("Already promoted");
   if(job.status!=="PUBLISHED")reasons.push("Drive is not live");
+  if(job.seasonStatus!=="ACTIVE")reasons.push("Placement season is not active");
    return {applicationId:w.applicationId,name:w.name??"Learner",roleTitle:w.roleTitle,
    annualCtcInr:w.annualCtcInr,rank:w.rank??0,reason:existing?.reason??null,
    promotionStatus:existing?.status??null,reasons,canPromote:reasons.length===0};
  });
  const next=rows.find(row=>row.canPromote)??null;
  const token=waitlistPreviewToken(jobId,{
-  updatedAt:job.updatedAt.toISOString(),rounds,promotions:promotions.map(p=>[p.id,p.status,p.applicationId,p.seatNumber]),
-  activeOffers,rows,freeSeats,
+  updatedAt:job.updatedAt.toISOString(),rounds,
+  ...canonicalWaitlistPreviewCollections(promotions,activeOffers),
+  rows,freeSeats,
  });
  return {job:{...job,updatedAt:job.updatedAt.toISOString()},lastRoundId:last?.id??null,
   storageReady,freeSeats,activeOffers:occupiedOfferSeats,rows,next,previewToken:token};
@@ -104,6 +109,16 @@ export async function offerToNextWaitlisted(context:RequestContext,rawJobId:unkn
   const [locked]=await tx.select({status:placementJobs.status,openings:placementJobs.openings})
    .from(placementJobs).where(eq(placementJobs.id,preview.job.id)).for("update").limit(1);
   if(locked?.status!=="PUBLISHED")throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
+  // Use the same job-before-season locking order as the canonical issuer.
+  // Never reserve a seat when the owning season has closed after preview.
+  const [liveSeason]=await tx.select({status:placementSeasons.status})
+   .from(placementSeasons).innerJoin(placementJobs,
+    eq(placementJobs.seasonId,placementSeasons.id))
+   .where(and(eq(placementJobs.id,preview.job.id),
+    eq(placementJobs.collegeId,context.membership!.collegeId),
+    eq(placementSeasons.collegeId,context.membership!.collegeId)))
+   .for("share").limit(1);
+  if(liveSeason?.status!=="ACTIVE")throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
   const [prior]=await tx.select().from(placementWaitlistPromotions).where(and(
    eq(placementWaitlistPromotions.jobId,preview.job.id),
    eq(placementWaitlistPromotions.applicationId,next.applicationId))).limit(1);

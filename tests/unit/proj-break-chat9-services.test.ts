@@ -43,7 +43,7 @@ describe("IIT Dharwad Projects adversarial service and route contracts",()=>{
   const page=moduleSource("template-service");
   expect(page).toContain('for("update")');
   expect(page).toContain("getDb()");
-  expect(page).toContain("tx\n      .update(\n        projectTemplateCollegeAssignments");
+  expect(page).toMatch(/await\s+tx\s*\.update\(\s*projectTemplateCollegeAssignments/);
   expect(page).toContain("eq(projectTemplates.currentVersion, input.expectedVersion)");
   expect(page).toContain("PROJECT_TEMPLATE_STALE_VERSION");
  });
@@ -170,7 +170,7 @@ describe("IIT Dharwad Projects adversarial service and route contracts",()=>{
   expect(collegePage).toContain('role="alert"');
   expect(collegePage).toContain('href="/dashboard"');
   expect(projectPage).toContain("<PageHeader");
-  expect(collegePage).toContain('title="Project workspaces"');
+  expect(collegePage).toContain('title="Workspaces"');
  });
  it("PROJ-BREAK-resilience-01 object-store cleanup failure cannot reverse committed soft deletion or quarantine",()=>{
   const page=moduleSource("project-resource-file-service");

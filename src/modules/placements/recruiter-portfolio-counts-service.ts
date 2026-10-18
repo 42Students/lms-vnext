@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,inArray,isNull,sql} from "drizzle-orm";
+import {and,eq,gt,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,placementApplications,placementApplicationScreenings,placementOffers,placementJobs,placementCompanyRelationships,placementCompanies,placementRecruiterCollegeGrants,placementRecruiterProfiles,colleges,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
@@ -59,7 +59,10 @@ export async function recruiterVisiblePortfolioCounts(context:RequestContext,
    .innerJoin(placementRecruiterCollegeGrants,and(
     eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
     eq(placementRecruiterCollegeGrants.companyRelationshipId,placementJobs.companyRelationshipId),
-    eq(placementRecruiterCollegeGrants.status,"ACTIVE")))
+    eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
+    eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
+    gt(placementRecruiterCollegeGrants.validUntil,sql`now()`),
+    sql<boolean>`'DRIVES' = ANY(${placementRecruiterCollegeGrants.capabilities})`))
    .innerJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
    .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
    .innerJoin(users,eq(users.id,collegeMemberships.userId))
@@ -84,7 +87,10 @@ export async function recruiterVisiblePortfolioCounts(context:RequestContext,
    .innerJoin(placementRecruiterCollegeGrants,and(
     eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
     eq(placementRecruiterCollegeGrants.companyRelationshipId,placementJobs.companyRelationshipId),
-    eq(placementRecruiterCollegeGrants.status,"ACTIVE")))
+    eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
+    eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
+    gt(placementRecruiterCollegeGrants.validUntil,sql`now()`),
+    sql<boolean>`'DRIVES' = ANY(${placementRecruiterCollegeGrants.capabilities})`))
    .innerJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
    .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
    .innerJoin(users,eq(users.id,collegeMemberships.userId))

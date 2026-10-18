@@ -12,6 +12,8 @@ import {
   mentorDeliveryReviewMobileForm,mentorReviewQuerySchema,
 } from "@/modules/projects/mentor-portfolio-model";
 import {mentorTaskReviewMobileLayout,mentorTaskReviewMobileFilters} from "@/modules/projects/mentor-task-review-model";
+import {mentorProjectActivityMobileLayout,mentorProjectActivityMobileFilters} from "@/modules/projects/mentor-project-activity-model";
+import {mentorResourceDirectoryFilterLayout} from "@/modules/projects/mentor-resource-directory-layout-model";
 import {mentorSprintCreateParamsSchema,mentorSprintTransitionParamsSchema} from "@/modules/projects/mentor-sprint-write-model";
 import {mentorSprintDetailsParamsSchema} from "@/modules/projects/mentor-sprint-details-model";
 import {mentorTaskCreateParamsSchema} from "@/modules/projects/mentor-task-create-model";
@@ -99,10 +101,17 @@ describe("PROJ-BREAK-MENTOR-148..163 uncovered mentor model behaviours",()=>{
  });
  it("PROJ-BREAK-MENTOR-153 mentor filter layouts keep 375px screen controls shrinkable",()=>{
   for(const classes of [mentorActivityFormLayout,mentorDeliveryReviewMobileForm,
-   mentorTaskReviewMobileLayout,mentorTaskReviewMobileFilters]){
+   mentorTaskReviewMobileLayout,mentorTaskReviewMobileFilters,
+   mentorProjectActivityMobileLayout,mentorProjectActivityMobileFilters,
+   mentorResourceDirectoryFilterLayout]){
    expect(classes).toContain("min-w-0");
    expect(classes).toContain("max-w-full");
   }
+ });
+ it("PROJ-BREAK-MENTOR-200 mobile resource and activity selectors remain shrinkable",()=>{
+  expect(mentorProjectActivityMobileLayout).toContain("overflow-x-clip");
+  expect(mentorProjectActivityMobileFilters).toContain("[&_select]:min-w-0");
+  expect(mentorResourceDirectoryFilterLayout).toContain("[&_input]:max-w-full");
  });
  it("PROJ-BREAK-MENTOR-154 mentor sprint param schemas fail closed on forged IDs and duplicate scope",()=>{
   expect(mentorSprintCreateParamsSchema.safeParse({projectId}).success).toBe(true);

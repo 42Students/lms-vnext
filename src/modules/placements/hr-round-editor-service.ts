@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,inArray,isNull,sql} from "drizzle-orm";
+import {and,eq,gt,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementJobs,placementCompanyRelationships,placementRecruiterProfiles,
  placementRecruiterCollegeGrants,placementJobRounds,placementJobRoundEvents,
@@ -37,6 +37,9 @@ export async function editHrJobRound(context:RequestContext,rawJobId:unknown,raw
     eq(placementRecruiterCollegeGrants.companyRelationshipId,placementCompanyRelationships.id),
     eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
     eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
+    eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
+    gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`),
+    sql<boolean>`'DRIVES' = ANY(${placementRecruiterCollegeGrants.capabilities})`,
    ))
    .where(and(eq(placementJobs.id,jobId),inArray(placementJobs.status,["DRAFT","PUBLISHED"]),
     isNull(placementJobs.archivedAt),recruiterOwnJobPredicate(context.user.id)))
@@ -124,7 +127,10 @@ export async function listHrRoundEditorRows(context:RequestContext,jobIdInput:un
   .innerJoin(placementRecruiterCollegeGrants,and(
    eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
    eq(placementRecruiterCollegeGrants.companyRelationshipId,placementCompanyRelationships.id),
-   eq(placementRecruiterCollegeGrants.status,"ACTIVE")))
+   eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
+    eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
+    gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`),
+    sql<boolean>`'DRIVES' = ANY(${placementRecruiterCollegeGrants.capabilities})`))
   .where(and(eq(placementJobs.id,jobId),
    inArray(placementJobs.status,["DRAFT","PUBLISHED"]),
    isNull(placementJobs.archivedAt),recruiterOwnJobPredicate(context.user.id))).limit(1);
