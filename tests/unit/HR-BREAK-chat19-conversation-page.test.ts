@@ -111,6 +111,20 @@ describe("HR-BREAK-chat19-conversation-page: actual async role, IDOR and recover
   expect(content).not.toContain("Private drive");
   expect(m.changes).not.toHaveBeenCalled();
  });
+ it("keeps messages and draft access during an optional change-request outage",async()=>{
+  m.read.mockResolvedValue({...data,thread:{...data.thread,jobId:id}});
+  m.jobs.mockResolvedValue([{
+   collegeId:college,companyId:"company-a",job:{id,title:"Authorized drive"},
+  }]);
+  m.changes.mockRejectedValue(new Error("private internal storage error"));
+  const rendered=await page();
+  const content=textOf(rendered);
+  expect(content).toContain("Welcome to your authorized conversation");
+  expect(content).toContain("Change request updates are temporarily unavailable.");
+  expect(content).toContain("Messages remain available");
+  expect(content).not.toContain("private internal storage error");
+  expect(m.changes).toHaveBeenCalledWith(context,id);
+ });
  it("links only the current employer's current college drive",async()=>{
   m.read.mockResolvedValue({...data,thread:{...data.thread,jobId:id}});
   m.jobs.mockResolvedValue([{
