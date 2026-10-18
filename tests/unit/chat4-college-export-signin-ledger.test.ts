@@ -77,6 +77,11 @@ describe("College/tenant exhaustive coverage slice: exports and sign-in policy",
       seen.push(page);
       return { items: [page], total: 5000, totalPages: 5000 };
     };
+    for (const bad of [0, -1, 1.2, Number.POSITIVE_INFINITY, NaN, 1001]) {
+      await expect(collectCollegeExportRows(readPage, bad, 3)).rejects.toThrow("INVALID_EXPORT_PAGE_SIZE");
+      await expect(collectCollegeExportRows(readPage, 1, bad)).rejects.toThrow("INVALID_EXPORT_CAP");
+    }
+    expect(seen).toEqual([]);
     const result = await collectCollegeExportRows(readPage, 1, 3);
     expect(result).toEqual({ rows: [1, 2, 3], truncated: true, cap: 3 });
     expect(seen).toEqual([1, 2, 3]);
