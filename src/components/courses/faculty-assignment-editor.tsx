@@ -1,6 +1,11 @@
 "use client";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
+import {Textarea} from "@/components/ui/textarea";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {FacultyAssignmentMethodPicker} from "./faculty-assignment-method-picker";
@@ -23,6 +28,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
  const [error,setError]=useState<string|null>(null);
  const [success,setSuccess]=useState<string|null>(null);
  const [pending,setPending]=useState(false);
+ const [confirmation,setConfirmation]=useState<{kind:"SWITCH";id:string}|{kind:"ARCHIVE"}|null>(null);
  const [publishNow,setPublishNow]=useState(true);
  const [selected,setSelected]=useState("");
  const [lessonId,setLessonId]=useState(lessons[0]?.id??"");
@@ -35,10 +41,11 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
  const [methodsDirty,setMethodsDirty]=useState(false);
  const [methodsLoaded,setMethodsLoaded]=useState(true);
  const existing=assignments.find(x=>x.id===selected);
- function choose(id:string){
+ function choose(id:string,confirmed=false){
   if(pending||mutationLock.current)return;
-  if(facultyAssignmentSwitchNeedsConfirmation(selected,id,existing??null,{title,description,dueAt,maxPoints}) &&
-     !window.confirm("Discard unsaved assignment changes and switch drafts?"))return;
+  if(facultyAssignmentSwitchNeedsConfirmation(selected,id,existing??null,{title,description,dueAt,maxPoints}) && !confirmed){
+   setConfirmation({kind:"SWITCH",id});return;
+  }
   setSelected(id);const row=assignments.find(x=>x.id===id);
   setTitle(row?.title??"");setDescription(row?.description??"");
   setDueAt(authoringLocalDateTime(row?.dueAt??null));
@@ -59,7 +66,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
     });
   }
  }
- async function submit(action:"CREATE"|"EDIT"|"PUBLISH"|"ARCHIVE"){
+ async function submit(action:"CREATE"|"EDIT"|"PUBLISH"|"ARCHIVE",confirmed=false){
   if(!facultyAssignmentMaySubmit(pending,mutationLock.current))return;
   // The API receives confirmed:true, and Archive still has a direct confirmation.
   if(!assignmentActionAvailable(existing?.status??null,action)){
@@ -82,8 +89,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
     setError("Save the draft changes first. Publish uses only the last saved revision.");
     return;
   }
-  if(action==="ARCHIVE" && existing &&
-    !window.confirm(facultyAssignmentArchiveWarning(existing.title)))return;
+  if(action==="ARCHIVE" && existing && !confirmed){setConfirmation({kind:"ARCHIVE"});return;}
   mutationLock.current=true;
   setPending(true);setError(null);setSuccess(null);
   try{
@@ -132,31 +138,31 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
  return <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
   <h2 className="text-lg font-semibold">Assignment authoring</h2>
   <label className="grid gap-1 text-sm">Choose draft or create new
-   <select value={selected} disabled={pending} onChange={e=>choose(e.target.value)}
-    className="min-h-10 rounded border border-border p-2">
+   <Select value={selected} disabled={pending} onChange={e=>choose(e.target.value)}
+    className="text-base sm:text-sm">
     <option value="">New assignment</option>
     {assignments.map(x=><option key={x.id} value={x.id}>{x.title} ({x.status})</option>)}
-   </select>
+   </Select>
   </label>
   {existing?<p className="text-xs text-body">Current state: {existing.status}. Published assignments can be edited until the first learner submission; archived assignments are read-only. An assignment with submissions cannot be archived.</p>:null}
   {!existing?<label className="grid gap-1 text-sm">Lesson
-   <select value={lessonId} onChange={e=>{const next=e.target.value;setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,lessonId,next));setLessonId(next);}}
-    className="min-h-10 rounded border border-border p-2">
+   <Select value={lessonId} onChange={e=>{const next=e.target.value;setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,lessonId,next));setLessonId(next);}}
+    className="text-base sm:text-sm">
     {lessons.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}
-   </select></label>:null}
+   </Select></label>:null}
   <label className="grid gap-1 text-sm">Title
-   <input value={title} onChange={e=>{const next=e.target.value;setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,title,next));setTitle(next);}} maxLength={255}
-    className="min-h-10 rounded border border-border p-2" /></label>
+   <Input value={title} onChange={e=>{const next=e.target.value;setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,title,next));setTitle(next);}} maxLength={255}
+    className="text-base sm:text-sm" /></label>
   <label className="grid gap-1 text-sm">Text instructions
-   <textarea value={description} onChange={e=>{const next=e.target.value;setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,description,next));setDescription(next);}}
-    maxLength={10000} rows={4} className="rounded border border-border p-2" /></label>
+   <Textarea value={description} onChange={e=>{const next=e.target.value;setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,description,next));setDescription(next);}}
+    maxLength={10000} rows={4} className="text-base sm:text-sm" /></label>
   <label className="grid gap-1 text-sm">Due date (IST, required before publishing)
-   <input type="datetime-local" value={dueAt} onChange={e=>{const next=e.target.value;setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,dueAt,next));setDueAt(next);}}
-    className="min-h-10 rounded border border-border p-2" /></label>
+   <Input type="datetime-local" value={dueAt} onChange={e=>{const next=e.target.value;setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,dueAt,next));setDueAt(next);}}
+    className="text-base sm:text-sm" /></label>
   <label className="grid gap-1 text-sm">Maximum points
-   <input type="number" min={0} max={1000} value={maxPoints}
+   <Input type="number" min={0} max={1000} value={maxPoints}
     onChange={e=>{const next=Number(e.target.value);setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,maxPoints,next));setMaxPoints(next);}}
-    className="min-h-10 rounded border border-border p-2" /></label>
+    className="text-base sm:text-sm" /></label>
   {methodsEnabled?<FacultyAssignmentMethodPicker methods={allowedMethods}
    disabled={pending||!methodsLoaded||existing?.status==="ARCHIVED"}
    onChange={next=>{setAllowedMethods(next);setMethodsDirty(true);setConfirmed(false);}}/>:null}
@@ -165,24 +171,33 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
   {success?<p role="status" className="text-sm text-body">{success}</p>:null}
   <div className="flex flex-wrap gap-2">
    {!existing?<div className="flex flex-wrap items-center gap-3">
-    <label className="flex min-h-10 items-center gap-2 text-sm">
-      <input type="checkbox" checked={publishNow} disabled={pending}
+    <label className="flex min-h-11 items-center gap-2 text-sm">
+      <Input type="checkbox" checked={publishNow} disabled={pending}
         onChange={event=>setPublishNow(event.target.checked)}/>
       Publish now
     </label>
-    <button type="button" disabled={pending||!lessonId}
-    onClick={()=>void submit("CREATE")} className="rounded bg-primary px-4 py-2 text-on-primary">{publishNow?"Create and publish":"Create draft"}</button>
+    <Button type="button" disabled={pending||!lessonId}
+    onClick={()=>void submit("CREATE")} variant="primary">{publishNow?"Create and publish":"Create draft"}</Button>
    </div>
    : <>
-    <button type="button" disabled={!assignmentActionAvailable(existing.status,"EDIT")||pending||(!methodsDirty&&!facultyAssignmentCanSaveDraft(existing,{title,description,dueAt,maxPoints},pending,true))}
-     onClick={()=>void submit("EDIT")} className="rounded border border-border px-4 py-2">Save draft</button>
-    <button type="button" disabled={pending||existing.status!=="DRAFT"}
-     onClick={()=>void submit("PUBLISH")} className="rounded bg-primary px-4 py-2 text-on-primary">Publish</button>
-    <button type="button" disabled={pending||!assignmentActionAvailable(existing.status,"ARCHIVE")}
-     onClick={()=>void submit("ARCHIVE")} className="rounded border border-border px-4 py-2">Archive</button>
+    <Button type="button" disabled={!assignmentActionAvailable(existing.status,"EDIT")||pending||(!methodsDirty&&!facultyAssignmentCanSaveDraft(existing,{title,description,dueAt,maxPoints},pending,true))}
+     onClick={()=>void submit("EDIT")} variant="secondary">Save draft</Button>
+    <Button type="button" disabled={pending||existing.status!=="DRAFT"}
+     onClick={()=>void submit("PUBLISH")} variant="primary">Publish</Button>
+    <Button type="button" disabled={pending||!assignmentActionAvailable(existing.status,"ARCHIVE")}
+     onClick={()=>void submit("ARCHIVE")} variant="danger">Archive</Button>
    </>}
   </div>
   {existing?<FacultyAssignmentMaterialLinks key={existing.id} deliveryId={deliveryId} assignmentId={existing.id} disabled={pending||existing.status==="ARCHIVED"}/>:null}
   <p className="text-xs text-muted-foreground">Draft edits require an unchanged version; reload after another author updates the assignment.</p>
+  <ConfirmDialog open={confirmation!==null} onOpenChange={open=>{if(!open&&!pending)setConfirmation(null);}}
+    title={confirmation?.kind==="SWITCH"?"Discard unsaved assignment changes and switch drafts?":
+      existing?facultyAssignmentArchiveWarning(existing.title):"Archive assignment?"}
+    pending={pending} confirmVariant={confirmation?.kind==="ARCHIVE"?"danger":"primary"}
+    onConfirm={()=>{
+      const request=confirmation;setConfirmation(null);
+      if(request?.kind==="SWITCH")choose(request.id,true);
+      else if(request?.kind==="ARCHIVE")void submit("ARCHIVE",true);
+    }} />
  </section>;
 }
