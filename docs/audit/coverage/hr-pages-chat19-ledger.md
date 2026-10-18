@@ -47,6 +47,7 @@ Scope: independently reviewed HR/recruiter page entry points and chat-15/chat-16
 | HR-BREAK-profile-01/02 | profile edits and tenant-level visibility | `tests/unit/HR-BREAK-profile-01.test.ts` | Model invalid inputs and copy recovery; DB CAS remains integration scope |
 | HR-BREAK-drive-payload-01 | off-campus recruiter external application link policy | `tests/unit/HR-BREAK-drive-payload-01.test.ts` | Reject local address, malformed HTTPS, invalid compensation and round presets |
 | HR-BREAK-double-submit-01 | draft request retries | `tests/unit/HR-BREAK-double-submit-01.test.ts` | Model key persistence and source synchronous guard; browser rapid click and DB persistence are not simulated |
+| PROJ-BREAK-HR-COLLEGE-01 | College Admin vs recruiter vs Super Admin explicit acting college scope | `tests/unit/PROJ-BREAK-chat19-admin-college-scope.test.ts` | Direct permission-model exercise: selected college only, no grant-as-membership shortcut, denied permission fails closed |
 | COL-XA-03/08/09 | college Project listing scope, malformed filters, template outage, mobile tables | `tests/unit/chat19-college-cross-audit.test.ts`, `tests/unit/chat19-college-source-coverage.test.ts` | Source plus real filter-model validation; central `getProjectAdminCollegeId` verified in code |
 
 ## Cross-audit boundaries and handoff
