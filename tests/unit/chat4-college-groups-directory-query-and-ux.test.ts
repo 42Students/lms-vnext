@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
+  canonicalCollegeGroupsOffset,
   collegeGroupsDirectoryHref,
   collegeGroupsDirectoryQuerySchema,
   parseCollegeGroupsDirectoryParams,
@@ -40,6 +41,21 @@ describe("College Admin Student groups directory query and role journey", () => 
     expect(() => collegeGroupsDirectoryHref({
       kind:"MALFORMED VALUE",offset:0,
     })).toThrow();
+  });
+
+  it("COL-GROUPS-PAGING-01 moves stale bookmarks to the last valid page without fabricating a result range", () => {
+    expect(canonicalCollegeGroupsOffset(0,0,50)).toBe(0);
+    expect(canonicalCollegeGroupsOffset(100,0,50)).toBe(0);
+    expect(canonicalCollegeGroupsOffset(100,85,50)).toBe(50);
+    expect(canonicalCollegeGroupsOffset(50,85,50)).toBe(50);
+    expect(canonicalCollegeGroupsOffset(0,85,50)).toBe(0);
+    expect(canonicalCollegeGroupsOffset(150,150,50)).toBe(100);
+    for(const invalid of [
+      [-1,100,50], [NaN,100,50], [1.5,100,50],
+      [0,-1,50], [0,NaN,50], [0,100,0], [0,100,Infinity],
+    ]) expect(() => canonicalCollegeGroupsOffset(...(invalid as [number,number,number]))).toThrow("INVALID_GROUP_PAGINATION");
+    expect(page()).toContain("canonicalCollegeGroupsOffset(offset,total,limit)");
+    expect(page()).toContain("if (canonicalOffset !== offset) redirect(collegeGroupsDirectoryHref");
   });
 
   it("COL-GROUPS-DIRECTORY-03 checks college manage permission before even parsing malformed filters or listing groups", () => {
