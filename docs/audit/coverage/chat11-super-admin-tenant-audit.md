@@ -18,6 +18,9 @@ Source inspection: 2026-10-18. Branch: `chatgpt/chat-11-b`. **Partial, source-re
 | SA-tenants-modules-BRAND-02 | `describeAdminCollegeBranding` (source-neutral model) | No persisted row uses standard colours and no fabricated public URLs; valid HTTPS logo/background/terms/privacy, mobile background fallback and sanitized contacts; reject HTTP, credentials, signed URL query/fragment, object keys, CSS injection and contact header injection | `tests/unit/chat11-super-admin-branding-readiness-adversarial.test.ts`, `SA-tenants-modules-BRAND-02` | Browser rendering, upload authorization and object-storage E2E |
 | SA-tenants-modules-READY-02 | `parseSuperAdminReadinessParams`, `visibleReadinessChecks` | Strict status/area URL filters, deny duplicates and extra keys; selecting PASS alone cannot convert one UNKNOWN domain check into verified launch readiness | Same test `SA-tenants-modules-READY-02` | DB source absence and real DNS/OTP |
 
+
+| SA-tenants-modules-LOGIN-02 | `PUT /api/admin/colleges/[collegeId]/signin` | Origin verified first; live Super Admin context required before parsing; 2 KiB bounded UTF-8 JSON reader; rejects oversized 413/malformed 400 and URL/body college mismatch, preserves CAS 409/storage 503; returns only policy status and version | `tests/unit/chat11-super-admin-signin-route-adversarial.test.ts` — `SA-tenants-modules-LOGIN-02` | Provider/DB integration, real revoked-session concurrency |
+
 ## Audit disposition
 
 - **Source-level blockers found and patched:** unauthorized malformed-filter route bypass across three administrative pages.
