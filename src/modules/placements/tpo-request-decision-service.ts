@@ -6,6 +6,7 @@ import { hasMembershipRole, type RequestContext } from "@/modules/identity/conte
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { actOnPlacementRequest } from "./request-service";
 import { requirePlacementManageScope } from "./scope";
+import {requirePersistedTpoMembership} from "./tpo-persisted-actor-service";
 import { tpoRequestDecisionSchema } from "./tpo-request-decision-model";
 import { placementRequestIdSchema } from "./validation";
 import { PlacementsServiceError } from "./errors";
@@ -20,6 +21,9 @@ export async function decideTpoRequest(context: RequestContext, rawId: unknown, 
   requirePermission(context, "placements.manage", { collegeId });
   const requestId = placementRequestIdSchema.parse(rawId);
   const body = tpoRequestDecisionSchema.parse(raw);
+  // Reject revoked placement officers before disclosing whether a request ID exists.
+  // The downstream transactional writer revalidates again before mutation.
+  await requirePersistedTpoMembership(context,collegeId);
   await requirePlacementManageScope(context, collegeId);
   const [row] = await getDb().select({ id: placementLearnerRequests.id })
     .from(placementLearnerRequests)
