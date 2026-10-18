@@ -65,6 +65,22 @@ export async function getRecruiterCompanyTeam(
       placementCompanies,
       eq(placementCompanies.id, placementCompanyRelationships.companyId),
     )
+    // A session grant may remain cached after revocation. The acting
+    // recruiter's persisted profile and relationship must still be ACTIVE.
+    .innerJoin(placementRecruiterProfiles,and(
+      eq(placementRecruiterProfiles.userId,context.user.id),
+      eq(placementRecruiterProfiles.companyId,placementCompanies.id),
+      eq(placementRecruiterProfiles.status,"ACTIVE"),
+    ))
+    .innerJoin(placementRecruiterCollegeGrants,and(
+      eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
+      eq(placementRecruiterCollegeGrants.companyRelationshipId,placementCompanyRelationships.id),
+      eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
+    ))
+    .innerJoin(users,and(
+      eq(users.id,context.user.id),
+      eq(users.platformStatus,"ACTIVE"),
+    ))
     .where(and(
       eq(placementCompanyRelationships.id, scope.grant.companyRelationshipId),
       eq(placementCompanyRelationships.collegeId, scope.grant.collegeId),
