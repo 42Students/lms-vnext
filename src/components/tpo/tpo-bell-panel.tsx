@@ -98,8 +98,8 @@ export function TpoBellPanel({initialUnread,items,revision=0}:{initialUnread:num
      <span className="mt-1 inline-block text-xs font-semibold text-primary-text">{!item.readAt&&!readIds.includes(item.id)?"New  →":"→"}</span>
      </button>
     </li>)}</ul>}
-   <div className="flex flex-wrap gap-3"><button type="button" disabled={refreshing||pending} onClick={()=>void refresh()} className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">Refresh</button><Link className="min-h-10 inline-flex items-center text-sm underline" href="/tpo/notifications">See all notifications</Link>
-    {unread>0?<button type="button" className="min-h-10 rounded border border-border px-3 text-sm disabled:opacity-50" onClick={()=>void markAll()} disabled={pending}>{pending?"Saving…":"Mark all read"}</button>:null}</div>
+   <div className="flex flex-wrap gap-3"><button type="button" disabled={refreshing||pending} onClick={()=>void refresh()} className="min-h-11 rounded border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">Refresh</button><Link className="min-h-11 inline-flex items-center text-sm underline" href="/tpo/notifications">See all notifications</Link>
+    {unread>0?<button type="button" className="min-h-11 rounded border border-border px-3 text-sm disabled:opacity-50" onClick={()=>void markAll()} disabled={pending}>{pending?"Saving…":"Mark all read"}</button>:null}</div>
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   </Drawer>
  </div>;

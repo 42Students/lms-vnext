@@ -1,3 +1,4 @@
+import {ScrollCue} from "@/components/ui/scroll-cue";
 "use client";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
@@ -52,14 +53,14 @@ export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
     disabled={pending} onChange={e=>setSelected(e.target.checked?rows.slice(0,25).map(row=>row.id):[])} />
    Select first {Math.min(rows.length,25)} on this page
   </label>
-  <div className="max-h-48 space-y-1 overflow-y-auto">
+  <ScrollCue axis="y" label="Students available for message" viewportClassName="max-h-48 space-y-1">
    {rows.map(row=><label key={row.id} className="flex min-h-11 items-center gap-2 text-sm">
     <input type="checkbox" checked={validSelected.includes(row.id)}
      disabled={pending||(!validSelected.includes(row.id)&&validSelected.length>=25)}
      onChange={e=>setSelected(current=>e.target.checked?[...current,row.id]:current.filter(id=>id!==row.id))}/>
     {row.label}{row.registered===false?<span className="text-xs text-muted-foreground">(not in placements)</span>:null}
    </label>)}
-  </div>
+  </ScrollCue>
   <p role="status" className="text-xs text-muted-foreground">{validSelected.length} selected;
    {outside} not registered for placements (messages still deliver).</p>
   <label className="grid gap-1 text-sm">Message template
