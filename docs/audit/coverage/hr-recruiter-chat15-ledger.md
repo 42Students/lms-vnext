@@ -193,3 +193,16 @@ All evidence above is **authored but not executed** under the owner's no-CI dire
 
 
 | `getHrJobRead` Hired-stage offer join predicate and `buildHrOfferOverview` | `tests/unit/HR-BREAK-chat15-hired-offer-86.test.ts` | Hired requires an ACCEPTED offer and a JOINED outcome, not a stale JOINED outcome on a revoked, withdrawn or declined offer; test checks pure projection behavior and service SQL condition | Real PostgreSQL historical outcome fixture, recruiter stage count versus offers screen, final CI |
+
+
+## Active applicants versus historical offers — October 19 hardening
+
+| Service/export/handler | Behavioral test | Current safeguards | Required follow-up |
+|---|---|---|---|
+| `getHrJobRead` active milestone SQL and `projectSharedApplicants` | `tests/unit/HR-BREAK-chat15-withdrawn-stages-87.test.ts` | Withdrawn applications stay in ALL and WITHDRAWN history but are excluded from active ASSESSMENT, INTERVIEW, OFFERED, HIRED, REJECTED row projections and the corresponding stage counts, even if historical shortlist or offer records persist | PostgreSQL withdrawal after accepted/failed round, paginated list parity, end-user count review |
+| `GET /api/placements/recruiter/jobs/[jobId]/offers/export` | `tests/unit/HR-BREAK-chat15-offer-export-route-88.test.ts` | Pre-issue selection-only states SELECTED/PENDING_VERIFICATION/REVOKED are rejected with 400 before private offer reads, rather than producing a false empty issued-offer CSV; ISSUED exports remain private/no-store/masked; the job page hides the mismatched offers export action | Authenticated browser link visibility, real employer grant expiry, 200-offer cap, XLS/CSV interoperability |
+
+These are source changes with tests authored only. The source-level and PostgreSQL acceptance matrix is still OPEN; no CI or local code was run.
+
+
+| `GET /api/placements/recruiter/jobs/[jobId]/applicants/export` | `tests/unit/HR-BREAK-chat15-applicant-export-api-89.test.ts` | Actual handler: invalid stage rejects before private read, valid export masks phone/email and uses no-store, 201 authorized rows capped at 200 with omitted count, mid-export loss of grant/read returns an error rather than a partial CSV | PostgreSQL active/withdrawn mixed export, authenticated HTTP, live browser and final CI |
