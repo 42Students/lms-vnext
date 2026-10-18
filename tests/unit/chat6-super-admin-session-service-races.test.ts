@@ -27,16 +27,15 @@ const actor:RequestContext={
 const limit=vi.fn();
 const execute=vi.fn();
 const transaction=vi.fn();
-const db={
-  select:vi.fn(()=>({
+const select=vi.fn();
+const db={select,transaction};
+beforeEach(()=>{
+  vi.resetAllMocks();
+  select.mockImplementation(()=>({
     from:()=>({innerJoin:()=>({innerJoin:()=>({
       where:()=>({limit}),
     })})}),
-  })),
-  transaction,
-};
-beforeEach(()=>{
-  vi.resetAllMocks();
+  }));
   vi.mocked(getDb).mockReturnValue(db as never);
   vi.mocked(getSuperAdminTenantLifecycleDetail).mockResolvedValue({
     id:collegeId,organizationId,
