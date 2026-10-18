@@ -91,3 +91,7 @@ The in-app opt-out event now replaces control characters, collapses whitespace a
 `tests/unit/chat16-inbound-mail-admin-page-16.test.tsx` directly invokes `src/app/(authenticated)/admin/inbound-mail/page.tsx`. The cases `UX-chat16-inbound-mail-01`–`04` cover permission checks, malformed search/filter recovery before mailbox reads, storage-unavailable status versus empty results, canonical recipient filtering and bounded private list data.
 
 `tests/unit/chat16-inbound-mail-admin-versioning-16.test.ts` invokes `changeInboundMailStatusForAdmin` and validates Super Admin global-only access, schema rejection before writes, absent storage not presented as success, optimistic version/status stale outcomes and confirmed persisted values. These are injected-repository and mocked-query tests, **not** real PostgreSQL concurrent-transaction verification. No provider integrations were run.
+
+### Inbound status HTTP route checks
+
+`tests/unit/chat16-inbound-mail-status-route-16.test.ts` invokes the actual `PATCH /api/admin/inbound-mail/status` route. Cases `inbound-mail-route-16`–`20` check same-origin denial before session lookup, 409 on stale compare-and-swap, 503 when the backing table is absent, success with `private, no-store`, and the shared error handler preventing credential/error-detail exposure. The session, same-origin and persistence boundaries are individually mocked in this suite; full Postgres concurrency and browser testing remain outstanding. No test here makes a real outbound provider call.
