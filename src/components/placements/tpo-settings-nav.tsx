@@ -31,8 +31,8 @@ export function TpoSettingsNav({active}:{active:SettingsKey}){
    <div className="flex flex-wrap gap-2 md:flex-col md:items-stretch">{group.items.map(item=><Link key={item.id} href={item.href}
     aria-current={active===item.id?"page":undefined}
     className={active===item.id?
-     "inline-flex min-h-11 items-center rounded-lg bg-primary px-3 text-sm font-semibold text-on-primary md:w-full":
-     "inline-flex min-h-11 items-center rounded-lg border border-border bg-surface px-3 text-sm text-body hover:bg-primary-subtle md:w-full"}>
+     "inline-flex min-h-11 items-center rounded-[9px] border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-3 text-sm font-semibold text-[var(--lms-primary-text)] sm:min-h-9 md:w-full":
+     "inline-flex min-h-11 items-center rounded-[9px] border-l-[3px] border-transparent bg-transparent px-3 text-sm text-body hover:bg-[var(--lms-primary-subtle)] sm:min-h-9 md:w-full"}>
     {item.label}</Link>)}</div>
   </section>)}
  </nav>;
