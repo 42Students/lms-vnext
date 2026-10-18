@@ -8,20 +8,22 @@ type Run = {when:string;students:number;created:number;failed:number};
 /** SA-academics-people-95: audit-backed import history, scoped by the server. */
 export function SuperAdminStudentImportHistory({runs}:{runs:readonly Run[]}) {
   const dialogRef=useRef<HTMLDialogElement>(null);
+  const triggerRef=useRef<HTMLButtonElement>(null);
   return <>
-    <button type="button" onClick={()=>dialogRef.current?.showModal()}
+    <button ref={triggerRef} type="button" onClick={()=>dialogRef.current?.showModal()}
       className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
       Import History
     </button>
     <dialog ref={dialogRef} aria-label="Bulk import history"
-      className="w-[min(92vw,48rem)] max-h-[calc(100dvh-2rem)] overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_92%,transparent_100%)] rounded-xl border border-border bg-surface p-5 text-foreground shadow-xl backdrop:bg-black/50">
+      onClose={()=>triggerRef.current?.focus()}
+      className="w-[min(92vw,48rem)] max-h-[calc(100dvh-2rem)] overflow-hidden overscroll-contain rounded-xl border border-border bg-surface p-5 text-foreground shadow-xl backdrop:bg-black/50 [&[open]]:flex [&[open]]:flex-col">
       <div className="flex items-center justify-between gap-3">
         <h2 className="text-lg font-semibold">Bulk import history</h2>
         <button type="button" onClick={()=>dialogRef.current?.close()}
           className="min-h-11 rounded border border-border px-4 font-semibold">Close</button>
       </div>
       <div role="region" aria-label="Bulk import history records" tabIndex={0}
-        className="mt-4 max-h-[60dvh] overflow-x-auto overscroll-x-contain overflow-y-auto overscroll-contain">
+        className="mt-4 min-h-0 flex-1 overflow-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_92%,transparent_100%)]">
         <DataTable caption="Bulk import history records"
           rows={runs.map((run,index)=>({...run,index}))}
           getRowKey={run=>String(run.index)}
