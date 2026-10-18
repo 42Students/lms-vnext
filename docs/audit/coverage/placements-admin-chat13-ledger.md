@@ -46,6 +46,11 @@
 | 13 Super Admin Projects/Placements/company mutation routes + 4 CSV GET routes | Same-origin before JSON parsing, session guard, no GET writes | SA-ADMIN-ROUTE-01 in chat13-super-admin-mutation-routes-guard.test.ts | Source contract; expired-browser journey pending |
 | src/modules/projects/admin-unsubmitted-query-model.ts — bounded schema, literal search | Reject input abuse and retain tenant-scoped NOT EXISTS | PROJ-BREAK-SA-20..22 in PROJ-BREAK-SA-unsubmitted-search.test.ts | Runtime model tests authored; PostgreSQL tenant fixture pending |
 
+| src/modules/admin-ui/super-admin-hiring-report-model.ts — superAdminHiringReportQuery, hiringCompanyRollups | Date range, wrong-tenant UUID, company identity rollups without cross-company conflation | SA-HIRING-REPORT-01/02 in chat13-super-admin-analytics-csv-boundaries.test.ts | Pure behavioral checks authored; actual reporting join integration open |
+| src/modules/admin-ui/super-admin-scoped-csv-model.ts — parseSuperAdminScopedCsvParams, superAdminScopedCsvHref, scopedCsvStatusAllowed, buildSuperAdminScopedCsv | Query duplicate, unknown keys, scoped filters, CSV formula and direction-control injection, 250-row cap warning | SA-SCOPED-CSV-01..03 in same test | Runtime pure tests authored; endpoint authorization separately checked |
+| src/modules/admin-ui/super-admin-batch-roster-export-model.ts — superAdminBatchRosterCsv, superAdminBatchRosterExportId | Formula-bearing student/roll/email, quotes, missing class attribution | SA-ACADEMIC-ROSTER-CSV-01 in same test | Runtime pure model; real scoped-roster query pending |
+| src/modules/admin-ui/super-admin-placement-detail-model.ts — readSuperAdminPlacementId, placementDateIst, placementDateOnly | Path IDs, missing values and IST time labels | SA-PLACEMENT-DETAIL-01 in same test | Runtime pure validation/timezone tests authored |
+
 ## Defects
 
 - **SA-COMPANY-SCOPE-01:** `listSuperAdminCompanyDirectory` previously scoped directory rows to the selected organization/college but computed `companyCollegeCount` across the whole database. Scoped this aggregate with the same selected college/organization to prevent leaking relationship counts across tenants.
