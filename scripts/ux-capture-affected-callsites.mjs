@@ -42,11 +42,21 @@ try {
         if(!rect || rect.width<1 || rect.height<1) throw new Error("Missing visible component bounds");
         const pageOverflow=await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1);
         if(pageOverflow) throw new Error("Unexpected document horizontal scroll: "+item.file);
+        // Non-mutating keyboard interaction check. A source-only count is not proof.
+        const focusable=node.locator("a[href],button,input,select,textarea,[tabindex]").first();
+        const interactive=await focusable.count()>0;
+        if(interactive){
+          await focusable.focus();
+          const focused=await focusable.evaluate(element=>element===document.activeElement);
+          if(!focused) throw new Error("Keyboard focus failed: "+item.file+":"+item.line);
+        } else if(!item.nonInteractiveReason) {
+          throw new Error("Non-interactive component requires explicit scenario rationale");
+        }
         const target=join(output,index+"-"+width+".png");
         await node.screenshot({path:target,animations:"disabled"});
         captures.push({
           file:item.file,line:item.line,component:item.component,route:item.route,
-          width,sha256:createHash("sha256").update(await readFile(target)).digest("hex"),
+          width,keyboardFocusChecked:interactive,nonInteractiveReason:item.nonInteractiveReason??null,sha256:createHash("sha256").update(await readFile(target)).digest("hex"),
         });
       } finally {await context.close();}
     }
