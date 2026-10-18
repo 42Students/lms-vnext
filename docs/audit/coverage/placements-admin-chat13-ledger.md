@@ -185,3 +185,6 @@ The reader pages already use `safeParse` and a recoverable invalid-filter UI. Th
 
 
 | `src/modules/placements/super-admin-drive-archive-model.ts` — `canArchiveDriveWithImpact`, `sameArchiveImpact`, `superAdminArchiveCommandSchema` | **SA-DRIVE-ARCHIVE-04/05**: complete five persisted status matrix (four eligible + terminal ARCHIVED), reject unknown/corrupt status, count-gated accepted offers, preview drift in each field, and malformed command bodies. This is a pure-model guard, not proof of transactional archive-versus-acceptance race safety. | `tests/unit/chat13-super-admin-archive-transition-matrix.test.ts` / `SA-DRIVE-ARCHIVE-04/05`; authored but unrun |
+
+
+| `src/modules/placements/report-model.ts` — `placementReportCsvCell`, `placementReportCsv` and accreditation CSV consumers | **SA-REPORT-CSV-UNICODE-06/07**, DONE in source: Unicode format controls, combining/enclosing marks, ASCII control and whitespace preceding `=+`/`-@` are prefixed before quoted CSV serialization. Preserves safe cell content, escaping of quotes and CRLF rows. | `tests/unit/chat13-placement-analytics-unicode-csv.test.ts` / `SA-REPORT-CSV-UNICODE-06/07` ; authored not run; spreadsheet parser parity and downloadable endpoint integration pending |
