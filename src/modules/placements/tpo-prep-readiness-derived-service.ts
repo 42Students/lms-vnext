@@ -3,13 +3,15 @@ import {and,eq,inArray,isNotNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {
  courses,departments,courseOfferings,courseLearningPaths,courseLessons,
- lessonContents,learnerContentProgress,
+ lessonContents,learnerContentProgress,collegeMemberships,membershipRoles,users,
+ learnerProgramEnrollments,cohorts,programs,
 } from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {getTpoPrepReadiness} from "./tpo-configuration-read-service";
 import {getTpoCommunicationSettings} from "./tpo-communication-settings-service";
 import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 import {AuthorizationError} from "@/modules/permissions/policy";
+import {validateTpoPrepLearnerPairs,hasEveryScopedTpoPrepLearner} from "./tpo-prep-learner-scope-model";
 import {tpoPrepConfigSchema} from "./tpo-configuration-model";
 import {
  deriveTpoPrepCourseOutcome,type TpoPrepCourseOutcome,type TpoPrepCourseEvidence,
@@ -26,6 +28,37 @@ export async function readTpoLearnerPrepOutcomes(
  if(scopedCollegeId!==collegeId)throw new AuthorizationError("placements.manage");
  const outcomes=new Map<string,TpoPrepCourseOutcome>();
  if(!learners.length)return {available:true,outcomes};
+ const requested=validateTpoPrepLearnerPairs(learners);
+ if(!requested)throw new AuthorizationError("placements.read");
+ const db=getDb();
+ // A caller-supplied membership ID is never evidence of college ownership.
+ // Require the actual learner role, active platform identity, active college
+ // membership and recorded (active or completed) matching cohort enrollment.
+ const enrolled=await db.select({
+  membershipId:learnerProgramEnrollments.membershipId,
+  cohortId:learnerProgramEnrollments.cohortId,
+ }).from(learnerProgramEnrollments)
+  .innerJoin(collegeMemberships,eq(collegeMemberships.id,learnerProgramEnrollments.membershipId))
+  .innerJoin(users,eq(users.id,collegeMemberships.userId))
+  .innerJoin(membershipRoles,and(
+   eq(membershipRoles.membershipId,collegeMemberships.id),
+   eq(membershipRoles.role,"LEARNER"),
+  ))
+  .innerJoin(cohorts,eq(cohorts.id,learnerProgramEnrollments.cohortId))
+  .innerJoin(programs,and(eq(programs.id,learnerProgramEnrollments.programId),
+   eq(cohorts.programId,programs.id)))
+  .innerJoin(departments,eq(departments.id,programs.departmentId))
+  .where(and(
+   eq(collegeMemberships.collegeId,collegeId),
+   eq(departments.collegeId,collegeId),
+   eq(collegeMemberships.status,"ACTIVE"),
+   eq(users.platformStatus,"ACTIVE"),
+   inArray(learnerProgramEnrollments.status,["ACTIVE","COMPLETED"]),
+   inArray(learnerProgramEnrollments.membershipId,requested.membershipIds),
+   inArray(learnerProgramEnrollments.cohortId,requested.cohortIds),
+  )).limit(5001);
+ if(!hasEveryScopedTpoPrepLearner(learners,enrolled))
+  throw new AuthorizationError("placements.read");
  // Both settings reads revalidate persisted TPO scope. Unavailable storage or
  // malformed saved policy never turns missing data into an "unprepared" judgment.
  const [stored,communication]=await Promise.all([
@@ -38,9 +71,7 @@ export async function readTpoLearnerPrepOutcomes(
   for(const row of learners)outcomes.set(row.membershipId,"UNCONFIGURED");
   return {available:true,outcomes};
  }
- const cohorts=[...new Set(learners.map(row=>row.cohortId))];
- if(cohorts.length>2500)return {available:false,outcomes};
- const db=getDb();
+ const cohorts=requested.cohortIds;
  const contents=await db.select({
   courseId:courseOfferings.courseId,
   cohortId:courseOfferings.cohortId,
