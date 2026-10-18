@@ -160,3 +160,13 @@ All evidence below is **authored source, not an executed pass**. The main CI rep
 | `POST /api/placements/tpo/jobs/[jobId]/rounds/[roundId]/import-results` | `tests/unit/chat2-tpo-round-import-route-confirmation.test.ts`: foreign origin, preview, explicit staging consent, additional missing-candidate consent, invalid action and correct service command | UNIT AUTHORED, CI pending |
 
 The import endpoint previously constructed `confirmed:true` on the server even if the POST supplied no confirmation field. The route now rejects staging without an explicit `confirmed=true` form field, and mass marking Not cleared requires a separate acknowledgement. `src/components/placements/tpo-round-results-import.tsx` sends both flags after the confirmation UI. No test was removed or weakened.
+
+## Interview/round API and graceful mutation pass — 2026-10-18
+
+| Route/component | Behavioral test | Security and resilience notes |
+| --- | --- | --- |
+| `GET/POST /api/placements/tpo/jobs/[jobId]/rounds/[roundId]/interview-slots` | `tests/unit/chat2-tpo-interview-slot-route-journeys.test.ts` | GET no-store and scoped, POST origin checked before session, unchanged explicit optimistic version passed to validated mutation, errors mapped without internal hostnames |
+| `POST /api/placements/tpo/interviews/[roundId]/reschedule` | `tests/unit/chat2-tpo-interview-reschedule-route-ui.test.ts` | Origin check, unavailable migration actionable 503, service actor and request propagation, safe error mapping |
+| `TpoInterviewRescheduleForm` | `tests/unit/chat2-tpo-interview-reschedule-route-ui.test.ts` | Shared ConfirmDialog in place of `window.confirm`, submitted inputs retained in ref, guarded duplicate action, UI renders sanitized API `message` rather than raw `error` code |
+
+These unit/source checks are committed but unexecuted. HTTP session revocation and service PostgreSQL race tests remain open; no claims of end-to-end verification.
