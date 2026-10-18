@@ -271,3 +271,8 @@ No TypeScript, Vitest or PostgreSQL execution was performed in this lane. The co
 | PLACEMENTS-JOIN-SM-04 | TPO actual joining date must not be a future IST day | `placements-p8-offers.test.ts`: rejected future joined record leaves persisted PENDING and no history, positive actual joining creates one history event | Requires cloud DB and membership-role fixture to confirm |
 
 The branch was reconciled with the then-current `origin/main` using a two-parent merge commit without overwriting newer unrelated lane files. **CI is still needed** to establish executable coverage and to verify new PostgreSQL integration tests. Hundreds of other placement exports and routes remain outside the ledger; the core module is **not** exhaustively certified or releasable from these source checks alone.
+
+
+## TPO offer filter contract, source-only correction
+
+- **PLACEMENTS-OFFERS-FILTER-06** — `src/modules/placements/tpo-drive-offer-register-model.ts` distinguishes a submitted blank numeric filter (unbounded) from explicitly entered 0 LPA; CSV and page use the same `offerRegisterQuery` parser. `tests/unit/chat5-tpo-second-third-behavior.test.ts` covers blanks, zero, malformed numbers and retained ISSUED search matches. Cloud Vitest was not run.
