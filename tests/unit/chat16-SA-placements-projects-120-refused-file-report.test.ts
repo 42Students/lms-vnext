@@ -16,7 +16,11 @@ describe("SA-placements-projects-120 authenticated import refusal reporting",()=
  it("SA-placements-projects-120 displays refused files and reasons without claiming an unperformed successful sync",()=>{
   const page=src("src/app/(authenticated)/tracker/audit-findings/page.tsx");
   expect(page).toContain("Files the importer refused or flagged");
-  expect(page).toContain("sync.refusedFiles.map(");
+  // DataTable replaced the hand-rendered list so mobile rows remain accessible.
+  expect(page).toContain("const refusedColumns:DataTableColumn");
+  expect(page).toContain("rows={sync.refusedFiles}");
+  expect(page).toContain("getRowKey={item=>item.path+");
+  expect(page).toContain("caption=\"Files the importer refused or flagged\"");
   expect(page).toContain("Refusal reason");
   expect(page).toContain("Sync isn't set up on this server.");
   expect(page).toContain("The last sync failed.");

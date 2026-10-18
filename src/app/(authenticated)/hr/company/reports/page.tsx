@@ -1,3 +1,4 @@
+import { DataTable } from "@/components/ui/data-table";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -388,121 +389,39 @@ export default async function RecruiterCompanyReportsPage({
             description="Reports appear once you have a drive with applicants. If you expected a report, review the selected college and filters."
           />
         ) : (
-          <>
-          <div className="grid gap-3 md:hidden">
-            {jobs.map(job=><article key={job.id} className="min-w-0 rounded-lg border border-border bg-surface p-4">
-              <Link href={"/hr/placements/jobs/"+job.id} className="break-words font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{job.title}</Link>
-              <p className="mt-1 text-xs text-muted-foreground">{job.status}</p>
-              <dl className="mt-3 grid grid-cols-2 gap-3 text-sm">
-                {[
-                  ["Applied",job.applications],["Offered",job.outstandingOffers+job.acceptedOffers+job.declinedOffers],
-                  ["Accepted",job.acceptedOffers],["Declined",job.declinedOffers],
-                  ["Joined",job.joinedOffers],["Withdrawn",job.withdrawnApplications],
-                ].map(([label,value])=><div key={label}><dt className="text-xs text-muted-foreground">{label}</dt>
-                  <dd className="font-semibold tabular-nums text-foreground">{value}</dd></div>)}
-              </dl>
-            </article>)}
-          </div>
-          <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface md:block">
-            <div role="region" aria-label="Company Reports table" tabIndex={0} className="max-w-full overflow-x-auto overscroll-x-contain"><table className="w-full min-w-[72rem] text-left text-sm">
-              <thead className="bg-muted text-muted-foreground">
-                <tr>
-                  <th scope="col" className="px-4 py-3">
-                    Drive
-                  </th>
-                  <th scope="col" className="px-4 py-3">
-                    Status
-                  </th>
-                  <th scope="col" className="px-4 py-3">
-                    Published
-                  </th>
-                  <th scope="col" className="px-4 py-3 text-right">
-                    Applications
-                  </th>
-                  <th scope="col" className="px-4 py-3 text-right">
-                    Submitted
-                  </th>
-                  <th scope="col" className="px-4 py-3 text-right">
-                    Withdrawn
-                  </th>
-                  <th scope="col" className="px-4 py-3 text-right">
-                    Offered
-                  </th>
-                  <th scope="col" className="px-4 py-3 text-right">
-                    Accepted offers
-                  </th>
-                  <th scope="col" className="px-4 py-3 text-right">Declined</th>
-                  <th scope="col" className="px-4 py-3 text-right">Joined</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {jobs.map((job) => (
-                  <tr
-                    key={job.id}
-                    className="border-t border-border align-top"
-                  >
-                    <td className="px-4 py-4">
-                      <Link
-                        href={`/hr/placements/jobs/${encodeURIComponent(
-                          job.id,
-                        )}`}
-                        className="font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
-                      >
-                        {job.title}
-                      </Link>
-
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {job.employmentType.replaceAll(
-                          "_",
-                          " ",
-                        )}
-                      </p>
-                    </td>
-
-                    <td className="px-4 py-4">
-                      <StatusBadge
-                        tone={
-                          job.status === "PUBLISHED"
-                            ? "success"
-                            : "neutral"
-                        }
-                      >
-                        {job.status}
-                      </StatusBadge>
-                    </td>
-
-                    <td className="px-4 py-4 text-body">
-                      {formatDate(job.publishedAt)}
-                    </td>
-
-                    <td className="px-4 py-4 text-right tabular-nums text-body">
-                      {job.applications}
-                    </td>
-
-                    <td className="px-4 py-4 text-right tabular-nums text-body">
-                      {job.submittedApplications}
-                    </td>
-
-                    <td className="px-4 py-4 text-right tabular-nums text-body">
-                      {job.withdrawnApplications}
-                    </td>
-
-                    <td className="px-4 py-4 text-right tabular-nums text-body">
-                      {job.outstandingOffers+job.acceptedOffers+job.declinedOffers}
-                    </td>
-
-                    <td className="px-4 py-4 text-right tabular-nums text-body">
-                      {job.acceptedOffers}
-                    </td>
-                    <td className="px-4 py-4 text-right tabular-nums text-body">{job.declinedOffers}</td>
-                    <td className="px-4 py-4 text-right tabular-nums text-body">{job.joinedOffers}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table></div>
-          </div>
-          </>
+          <DataTable
+            caption="Company Reports table"
+            rows={jobs}
+            getRowKey={job=>job.id}
+            empty={<EmptyState title="No matching drives"
+              description="Reports appear once you have a drive with applicants. If you expected a report, review the selected college and filters."/>}
+            columns={[
+              {key:"drive",header:"Drive",mobilePriority:"primary",
+                cell:(job)=><div>
+                  <Link href={"/hr/placements/jobs/"+encodeURIComponent(job.id)}
+                    className="inline-flex min-h-11 items-center break-words font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{job.title}</Link>
+                  <p className="mt-1 text-xs text-muted-foreground">{job.employmentType.replaceAll("_"," ")}</p>
+                </div>},
+              {key:"status",header:"Status",mobilePriority:"secondary",
+                cell:(job)=><StatusBadge tone={job.status==="PUBLISHED"?"success":"neutral"}>{job.status}</StatusBadge>},
+              {key:"published",header:"Published",mobilePriority:"secondary",
+                cell:(job)=>formatDate(job.publishedAt)},
+              {key:"applied",header:"Applications",mobilePriority:"secondary",
+                cell:(job)=>job.applications},
+              {key:"submitted",header:"Submitted",mobilePriority:"secondary",
+                cell:(job)=>job.submittedApplications},
+              {key:"withdrawn",header:"Withdrawn",mobilePriority:"secondary",
+                cell:(job)=>job.withdrawnApplications},
+              {key:"offered",header:"Offered",mobilePriority:"secondary",
+                cell:(job)=>job.outstandingOffers+job.acceptedOffers+job.declinedOffers},
+              {key:"accepted",header:"Accepted offers",mobilePriority:"secondary",
+                cell:(job)=>job.acceptedOffers},
+              {key:"declined",header:"Declined",mobilePriority:"secondary",
+                cell:(job)=>job.declinedOffers},
+              {key:"joined",header:"Joined",mobilePriority:"secondary",
+                cell:(job)=>job.joinedOffers},
+            ]}
+          />
         )}
 
         <nav

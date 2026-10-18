@@ -7,6 +7,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { ScrollCue } from "@/components/ui/scroll-cue";
 import type { listFacultyCourseDeliveries } from "@/modules/courses/faculty-course-service";
 import type { FacultyCourseCardSummary } from "@/modules/courses/faculty-course-card-summary-service";
 
@@ -62,19 +63,19 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
       <div className="flex flex-wrap items-center gap-3 text-sm text-body" role="status">
         <details className="relative rounded-lg border border-border bg-surface px-3 py-2">
           <summary className="flex min-h-11 cursor-pointer items-center font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{scopeCount} Teaching assignment(s)</summary>
-          <ul className="mt-2 max-h-48 space-y-1 overflow-auto text-xs">
+          <ScrollCue axis="y" label="Teaching assignments" className="mt-2" viewportClassName="max-h-48"><ul className="space-y-1 text-xs">
             {assignmentChoices.map(item=><li key={item.deliveryId}>
               <Link className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" href={"/teacher/courses/"+encodeURIComponent(item.deliveryId)+"/home"}>
                 {item.courseName} · {item.sectionName} · {item.academicPeriodName}
               </Link>
             </li>)}
-          </ul>
+          </ul></ScrollCue>
         </details>
         <details className="rounded-lg border border-border bg-surface px-3 py-2">
           <summary className="flex min-h-11 cursor-pointer items-center font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{sections.length} Section(s)</summary>
-          <ul className="mt-2 max-h-48 space-y-1 overflow-auto text-xs">
+          <ScrollCue axis="y" label="Teaching Sections" className="mt-2" viewportClassName="max-h-48"><ul className="space-y-1 text-xs">
             {sections.map(section=><li key={section.id}>{section.name} · {section.count} teaching assignment(s)</li>)}
-          </ul>
+          </ul></ScrollCue>
         </details>
       </div>
       <form action="/teacher/courses" method="get" key={facultyCourseListHref(query)}
@@ -208,7 +209,7 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
               </p>
               <span
                 aria-hidden="true"
-                className="text-lg text-[var(--lms-teal-deep)] transition-transform group-hover:translate-x-0.5"
+                className="text-lg text-[var(--lms-teal-deep)] motion-safe:transition-transform motion-safe:duration-[var(--lms-motion-fast)] group-hover:translate-x-0.5 motion-reduce:transform-none"
               >
                 →
               </span>

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import {
   attendanceEvidenceLabel,
   departmentInsightsHref,
@@ -23,6 +24,20 @@ export function CollegeDepartmentInsights({
   const path = attendance
     ? "/college/attendance/departments"
     : "/college/placements/readiness-by-department";
+  const columns: DataTableColumn<Data["items"][number]>[] = [
+    {key:"name",header:"Department",mobilePriority:"primary",cell:item=><>
+      <p className="font-semibold text-foreground">{item.name}</p>
+      {item.archivedAt ? <p className="mt-1 text-xs text-muted-foreground">Archived department</p> : null}
+    </>},
+    {key:"population",header:attendance?"Marked sessions":"Active enrolled learners",
+      mobilePriority:"secondary",cell:item=>attendance?item.markedSessions:item.learners},
+    {key:"evidence",header:attendance?"Explicit status records":"Academic evidence",
+      mobilePriority:"secondary",cell:item=>attendance?attendanceEvidenceLabel(item):readinessEvidenceLabel(item)},
+    {key:"breakdown",header:attendance?"Status breakdown":"Preferences",
+      mobilePriority:"secondary",cell:item=>attendance
+        ? item.absent+" absent · "+item.late+" late · "+item.excused+" excused · "+item.medical+" medical"
+        : item.preferenceProfiles+" profiles recorded"},
+  ];
   return <div className="space-y-6">
     <PageHeader
       eyebrow="College Admin · Department Insights"
@@ -68,63 +83,25 @@ export function CollegeDepartmentInsights({
         <Link href={path} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Clear</Link>
       </form>
     </section>
-    <section aria-label="Department evidence results" className="overflow-x-auto rounded-xl border border-border bg-surface">
+    <section aria-label="Department evidence results" className="min-w-0 rounded-xl border border-border bg-surface">
       <p className="border-b border-border px-4 py-3 text-sm text-muted-foreground">
         {data.total} matching department{data.total === 1 ? "" : "s"}
       </p>
-      {data.items.length === 0 ? (
-        <p className="p-6 text-sm text-body">{data.total === 0
+      <DataTable columns={columns} rows={data.items} getRowKey={item=>item.id}
+        caption={title}
+        empty={<p className="text-sm text-body">{data.total === 0
           ? "No departments match these filters. No attendance or placement evidence is inferred."
-          : "No departments exist on this page. Choose an earlier page."}</p>
-      ) : (
-        <table className="w-full min-w-[44rem] text-left text-sm">
-          <thead className="bg-muted text-muted-foreground">
-            {attendance
-              ? <tr>
-                  <th scope="col" className="px-4 py-3">Department</th>
-                  <th scope="col" className="px-4 py-3">Marked sessions</th>
-                  <th scope="col" className="px-4 py-3">Explicit status records</th>
-                  <th scope="col" className="px-4 py-3">Status breakdown</th>
-                </tr>
-              : <tr>
-                  <th scope="col" className="px-4 py-3">Department</th>
-                  <th scope="col" className="px-4 py-3">Active enrolled learners</th>
-                  <th scope="col" className="px-4 py-3">Academic evidence</th>
-                  <th scope="col" className="px-4 py-3">Preferences</th>
-                </tr>}
-          </thead>
-          <tbody>
-            {data.items.map((item) => <tr key={item.id} className="border-t border-border align-top">
-              <td className="px-4 py-4">
-                <p className="font-semibold text-foreground">{item.name}</p>
-                {item.archivedAt ? <p className="mt-1 text-xs text-muted-foreground">Archived department</p> : null}
-              </td>
-              {attendance
-                ? <>
-                    <td className="px-4 py-4 text-body">{item.markedSessions}</td>
-                    <td className="px-4 py-4 text-body">{attendanceEvidenceLabel(item)}</td>
-                    <td className="px-4 py-4 text-body">
-                      {item.absent} absent · {item.late} late · {item.excused} excused · {item.medical} medical
-                    </td>
-                  </>
-                : <>
-                    <td className="px-4 py-4 text-body">{item.learners}</td>
-                    <td className="px-4 py-4 text-body">{readinessEvidenceLabel(item)}</td>
-                    <td className="px-4 py-4 text-body">{item.preferenceProfiles} profiles recorded</td>
-                  </>}
-            </tr>)}
-          </tbody>
-        </table>
-      )}
+          : "No departments exist on this page. Choose an earlier page."}</p>}
+      />
     </section>
     <nav aria-label="Department pagination" className="flex flex-wrap items-center justify-between gap-3 text-sm">
       <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages} · 25 per page</span>
       <div className="flex gap-2">
         {data.query.page > 1 ? <Link
-          className="rounded-md border border-border px-4 py-2 font-semibold text-primary-text"
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 font-semibold text-primary-text"
           href={departmentInsightsHref(data.kind, { ...data.query, page: data.query.page - 1 })}>Previous</Link> : null}
         {data.query.page < data.totalPages ? <Link
-          className="rounded-md border border-border px-4 py-2 font-semibold text-primary-text"
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 font-semibold text-primary-text"
           href={departmentInsightsHref(data.kind, { ...data.query, page: data.query.page + 1 })}>Next</Link> : null}
       </div>
     </nav>

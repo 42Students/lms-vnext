@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/data-table";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { ErrorState } from "@/components/ui/error-state";
+import { parseAdminDirectorySearchParams } from "@/modules/colleges/admin-directory-query-model";
 import { Pagination } from "@/components/ui/pagination";
 import { can } from "@/modules/permissions/policy";
 import {canManageCollegeDirectoryRow} from "@/modules/colleges/admin-directory-access-model";
@@ -92,16 +94,19 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
     organizationName:organizationNames.get(college.organizationId)??"—",
     canManage:canManageCollegeDirectoryRow(context,college),
   }));
-  const raw=await searchParams;
-  const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
-  const q=(first(raw.q)??"").trim().slice(0,100);
-  const size=Number(first(raw.pageSize)??25);
-  const pageSize=[10,25,50,100].includes(size)?size:25;
+  const filters=parseAdminDirectorySearchParams(await searchParams);
+  if (!filters) return <div className="min-w-0 space-y-6">
+    <PageHeader eyebrow="Super Admin" title="Colleges"/>
+    <ErrorState title="Invalid college directory filters"
+      description="Search text must be 100 characters or less; choose a valid page and page size. Remove repeated or unsupported filters."
+      action={<Link href="/admin/colleges" className="inline-flex min-h-11 items-center font-semibold underline">Clear filters</Link>}/>
+  </div>;
+  const {q,pageSize}=filters;
   const normalized=q.toLocaleLowerCase("en-IN");
   const matches=rows.filter(item=>[item.name,item.code,item.city,item.organizationName].some(
    value=>value?.toLocaleLowerCase("en-IN").includes(normalized)));
   const pages=Math.max(1,Math.ceil(matches.length/pageSize));
-  const requestedPage=Number(first(raw.page)??1);
+  const requestedPage=filters.page;
   const page=Number.isSafeInteger(requestedPage)?Math.max(1,Math.min(pages,requestedPage)):1;
   const visible=matches.slice((page-1)*pageSize,page*pageSize);
   const href=(n:number)=>"/admin/colleges?"+new URLSearchParams({

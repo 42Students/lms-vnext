@@ -7,10 +7,15 @@ export function mentorCalendarCsv(rows:readonly MentorMeetingCalendarItem[],omit
   hour:"2-digit",minute:"2-digit",hourCycle:"h23",
  });
  const lines=["Meeting ID,Project,Meeting,Status,Start (IST),End (IST)"];
- for(const row of rows)lines.push([row.id,row.projectTitle,row.title,row.status,
-  formatter.format(new Date(row.startsAt))+" IST",
-  formatter.format(new Date(row.endsAt))+" IST"].map(csvSafeCell).join(","));
- if(omitted>0)lines.push(["","Truncated",omitted+" additional matching meetings","","",""]
+ const limited=rows.slice(0,500);
+ const dateLabel=(value:string)=>{
+  const parsed=new Date(value);
+  return Number.isFinite(parsed.getTime())?formatter.format(parsed)+" IST":"Unknown";
+ };
+ for(const row of limited)lines.push([row.id,row.projectTitle,row.title,row.status,
+  dateLabel(row.startsAt),dateLabel(row.endsAt)].map(csvSafeCell).join(","));
+ const hidden=(Number.isSafeInteger(omitted)&&omitted>0?omitted:0)+Math.max(0,rows.length-limited.length);
+ if(hidden>0)lines.push(["","Truncated",hidden+" additional matching meetings","","",""]
    .map(csvSafeCell).join(","));
  return "\uFEFF"+lines.join("\r\n")+"\r\n";
 }

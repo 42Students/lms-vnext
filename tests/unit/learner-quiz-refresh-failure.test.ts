@@ -4,7 +4,9 @@ describe("quiz accepted submission with failed results refresh",()=>{
  it("does not report failed submission after a successful POST",()=>{
   expect(learnerQuizRefreshFailureMessage(true,new Error("History unavailable"))).toContain("was submitted");
  });
- it("keeps a true initial GET error distinct",()=>{
-  expect(learnerQuizRefreshFailureMessage(false,new Error("Forbidden"))).toBe("Forbidden");
+ it("keeps a true initial GET error distinct without leaking forbidden codes or stack traces",()=>{
+  const message=learnerQuizRefreshFailureMessage(false,new Error("Forbidden INTERNAL_ERROR db-password"));
+  expect(message).toBe("Unable to load this quiz. Please try again.");
+  expect(message).not.toMatch(/Forbidden|INTERNAL_ERROR|db-password/);
  });
 });
