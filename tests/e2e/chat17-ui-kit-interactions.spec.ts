@@ -206,6 +206,20 @@ test.describe("UX-kit-E2E-01 real browser shared UI states",()=>{
     await expect(note).toHaveCount(0,{timeout:3500});
   });
 
+  test("UX-kit-E2E-12 loading timeout belongs to the latest request label",async({page})=>{
+    await page.clock.install();
+    await page.goto(route);
+    const loading=page.locator('[data-slot="page-loading"]');
+    await expect(loading).toContainText("Loading projects A");
+    await page.clock.fastForward("11s");
+    await page.getByRole("button",{name:"Switch loading request"}).click();
+    await expect(loading).toContainText("Loading projects B");
+    await page.clock.fastForward("2s");
+    await expect(loading.getByText("This is taking longer than expected.")).toHaveCount(0);
+    await page.clock.fastForward("11s");
+    await expect(loading.getByText("This is taking longer than expected.")).toBeVisible();
+  });
+
   test("UX-kit-E2E-11 timed toasts remain readable when the tab is hidden",async({page})=>{
     await page.goto(route);
     await page.evaluate(()=>{
