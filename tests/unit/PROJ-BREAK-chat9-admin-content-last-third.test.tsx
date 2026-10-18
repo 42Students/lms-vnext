@@ -100,6 +100,9 @@ describe("Super Admin last third: Videos and Resources protected directory",()=>
     expect(source).toContain("eq(courseSectionDeliveries.offeringId,courseOfferings.id)");
     expect(source).toContain("lessonContents.deliveryId} is null or");
     expect(source).toContain("eq(sections.cohortId,courseOfferings.cohortId)");
+    expect(source).toContain("eq(sections.id,courseSectionDeliveries.sectionId)");
+    expect(source).toContain("lessonContents.deliveryId} is null or ${sections.id} is not null");
+    expect(source).toContain("eq(sections.academicPeriodId,courseOfferings.academicPeriodId)");
     expect(source).toContain("eq(sections.academicPeriodId,courseOfferings.academicPeriodId)");
     expect(source).toContain("eq(departments.collegeId,collegeId)");
   });
