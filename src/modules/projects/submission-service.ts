@@ -16,6 +16,7 @@ import { projectDeliveryActivity } from "./delivery-activity-model";
 import {learnerProjectDeliveryReviewNotice} from "./learner-project-review-notification-model";
 import {notifyActiveProjectMembers} from "./project-notification-service";
 import { projectSubmissionAllowsNewDraft } from "./submission-draft-policy";
+import {projectDraftRevisionMatches,nextProjectDraftUpdatedAt} from "./submission-revision-policy";
 import {
   collegeMemberships,
   inAppNotifications,
@@ -43,6 +44,7 @@ import {
 } from "./errors";
 import {
   projectSubmissionDraftInputSchema,
+  updateProjectSubmissionDraftInputSchema,
   projectSubmissionIdSchema,
   reviewProjectSubmissionInputSchema,
   type ProjectSubmissionDraftInput,
@@ -213,7 +215,7 @@ export async function updateProjectSubmissionDraft(
   context: RequestContext,
   projectIdInput: string,
   submissionIdInput: string,
-  rawInput: ProjectSubmissionDraftInput,
+  rawInput: unknown,
 ) {
   const scope =
     await requireLearnerSubmissionAccess(
@@ -221,7 +223,7 @@ export async function updateProjectSubmissionDraft(
       projectIdInput,
     );
   const input =
-    projectSubmissionDraftInputSchema.parse(rawInput);
+    updateProjectSubmissionDraftInputSchema.parse(rawInput);
   const submissionId =
     projectSubmissionIdSchema.parse(submissionIdInput);
   const db = getDb();
@@ -262,6 +264,13 @@ export async function updateProjectSubmissionDraft(
       );
     }
 
+    // The submission row is held FOR UPDATE, so a second device observes the
+    // first writer's revision before applying a stale edit. Millisecond
+    // precision matches the browser's ISO token and Drizzle Date values.
+    if (!projectDraftRevisionMatches(submission.updatedAt,input.expectedUpdatedAt)) {
+      throw new ProjectsServiceError("PROJECT_SUBMISSION_CONFLICT");
+    }
+
     // A FILE reference must belong to this project and be READY. Never let
       // a learner attach a foreign or mentor-only resource by guessing its UUID.
       for(const attachment of input.attachments??[]){
@@ -292,7 +301,8 @@ export async function updateProjectSubmissionDraft(
         demoUrl: input.demoUrl ?? null,
         notes: input.notes ?? null,
         ...(input.attachments!==undefined?{attachments:input.attachments}:{}),
-        updatedAt: new Date(),
+        // Ensure a unique revision even if two saves arrive in one millisecond.
+        updatedAt: nextProjectDraftUpdatedAt(submission.updatedAt),
       })
       .where(
         and(
