@@ -1,0 +1,65 @@
+import {beforeEach,describe,expect,it,vi} from "vitest";
+
+const state=vi.hoisted(()=>({context:{user:{id:"acting-super-admin"}},reader:vi.fn()}));
+vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:()=>state.context}));
+vi.mock("@/modules/courses/college-assessment-aggregate-service",()=>({
+ listCollegeAssessmentAggregate:(context:unknown,kind:unknown,query:unknown)=>state.reader(context,kind,query),
+}));
+import {exportSuperAdminLearningDirectory} from "@/modules/admin-ui/super-admin-learning-csv-service";
+
+const row=(i:number)=>({
+ id:"assessment-"+i,title:i===0?"=1+1":"Unit "+i,courseName:"Algorithms",
+ courseCode:"CS401",lessonName:"Graphs",status:"PUBLISHED",dueAt:null,points:10,
+ activityCount:2,eligibleLearners:3,submittedLearners:1,gradedLearners:0,
+ resultsPublished:false,
+});
+beforeEach(()=>state.reader.mockReset());
+describe("Super Admin assessment export service scoped pagination",()=>{
+ it("SA-academics-people-64 passes the acting session and selected assignment filters to the authorized reader",async()=>{
+  state.reader.mockResolvedValue({items:[row(0)],total:1,totalPages:1});
+  const request=new Request("https://app.invalid/api/admin/assignments/export?q=Graphs&status=PUBLISHED&courseCode=CS401&scope=SECTION");
+  const response=await exportSuperAdminLearningDirectory(request,"ASSIGNMENT");
+  expect(response.status).toBe(200);
+  expect(state.reader).toHaveBeenCalledTimes(1);
+  const [context,kind,query]=state.reader.mock.calls[0];
+  expect(context).toBe(state.context);
+  expect(kind).toBe("ASSIGNMENT");
+  expect(query).toMatchObject({q:"Graphs",status:"PUBLISHED",courseCode:"CS401",scope:"SECTION",page:1});
+  expect(response.headers.get("Cache-Control")).toBe("private, no-store");
+  const csv=await response.text();
+  expect(csv.startsWith("\uFEFF")).toBe(true);
+  expect(csv).toContain("'=1+1");
+ });
+ it("SA-academics-people-65 never drops quiz results filters as later pages are read",async()=>{
+  state.reader.mockImplementation(async (_context,_kind,query)=>{
+   const page=query.page as number;
+   return {items:[row(page)],total:2,totalPages:2};
+  });
+  const response=await exportSuperAdminLearningDirectory(new Request(
+   "https://app.invalid/api/admin/quizzes/export?results=HIDDEN&courseCode=CS401&scope=SHARED"
+  ),"QUIZ");
+  expect(response.status).toBe(200);
+  expect(state.reader).toHaveBeenCalledTimes(2);
+  for(const call of state.reader.mock.calls){
+   expect(call[0]).toBe(state.context);
+   expect(call[1]).toBe("QUIZ");
+   expect(call[2]).toMatchObject({results:"HIDDEN",courseCode:"CS401",scope:"SHARED"});
+  }
+  expect(state.reader.mock.calls.map(call=>call[2].page)).toEqual([1,2]);
+ });
+ it("SA-academics-people-64 hard caps CSV at 500 rows and explicitly marks omitted records",async()=>{
+  state.reader.mockImplementation(async (_context,_kind,query)=>({
+   items:Array.from({length:25},(_,i)=>row((query.page-1)*25+i)),
+   total:501,totalPages:21,
+  }));
+  const response=await exportSuperAdminLearningDirectory(new Request(
+   "https://app.invalid/api/admin/assignments/export?status=PUBLISHED"
+  ),"ASSIGNMENT");
+  expect(response.status).toBe(200);
+  expect(state.reader).toHaveBeenCalledTimes(20);
+  expect(response.headers.get("X-Export-Truncated")).toBe("true");
+  const csv=await response.text();
+  expect(csv).toContain("TRUNCATED: first 500 records");
+  expect(csv).not.toContain("Unit 500");
+ });
+});
