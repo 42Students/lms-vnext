@@ -395,6 +395,13 @@ describe("Placement P8 offers and joining", () => {
     const closedSeasonId=closedSeason.rows[0]!.id;
     try {
       await pool.query("update placement_jobs set season_id=$1 where id=$2",[closedSeasonId,job.id]);
+      // Closed season must permit cleanup, never a fresh candidate commitment.
+      await expect(issuePlacementOffer(tpo,application.id,{
+        kind:"OFFER",roleTitle:"Engineer",annualCtcInr:900_000,
+      })).rejects.toMatchObject({code:"PLACEMENT_OFFER_NOT_READY"});
+      const noIssue=await pool.query<{count:number}>(
+        "select count(*)::integer as count from placement_offers where application_id=$1",[application.id]);
+      expect(noIssue.rows[0]?.count).toBe(0);
       const preview=await getTpoDriveClosePreview(tpo,job.id);
       expect(preview).toMatchObject({status:"PUBLISHED",canClose:true,issuedOffers:0,pendingSelections:0});
       const result=await closeTpoDriveWithPreview(tpo,job.id,{
