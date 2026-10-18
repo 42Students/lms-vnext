@@ -200,7 +200,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
    <p className="text-xs text-muted-foreground" aria-label="Current page role breakdown">On this page: {roleCounts.facultyOnly} faculty-only · {roleCounts.learnerOnly} learner-only · {roleCounts.dual} dual-role contacts.</p>
    {results.items.length===0?<div role="status" className="space-y-2 rounded-lg border p-4 text-sm"><p>No matching contacts in this college.</p><Link href={clearedCollegeContactsHref(filter.tab)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Clear filters in this tab</Link></div>:
     <DataTable rows={results.items} getRowKey={contact=>contact.membershipId}
-      caption="Contacts" rowHref={contact=>"/college/contacts/"+encodeURIComponent(contact.membershipId)}
+      caption="Contacts" empty={<div role="status"><p>No matching contacts in this college.</p><Link href={clearedCollegeContactsHref(filter.tab)} className="inline-flex min-h-11 items-center underline">Clear filters in this tab</Link></div>} rowHref={contact=>"/college/contacts/"+encodeURIComponent(contact.membershipId)}
       columns={[
         {key:"name",header:"Name",mobileLabel:"Name",mobilePriority:"primary" as const,
           cell:contact=><Link href={"/college/contacts/"+encodeURIComponent(contact.membershipId)}
