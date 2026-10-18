@@ -1,6 +1,7 @@
 import "server-only";
 import {and,desc,eq,inArray,isNull,lte,gt,or} from "drizzle-orm";
 import {getDb} from "@/db/client";
+import {z} from "zod";
 import {db10Announcements,learnerProgramEnrollments,sectionEnrollments,sections,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {placementTableExists} from "@/modules/placements/staged-tables";
@@ -9,8 +10,9 @@ import {requireOwnCourseLearnerRead} from "./learner-access-guard";
  * Discussion posts are never reclassified as notices; no course-only
  * audience may be inferred from a class-wide announcement. */
 export async function listLearnerCourseClassAnnouncements(
- context:RequestContext,sectionId:string,now:Date=new Date(),
+ context:RequestContext,sectionIdInput:string,now:Date=new Date(),
 ){
+ const sectionId=z.string().uuid().parse(sectionIdInput);
  const member=await requireOwnCourseLearnerRead(context);
   const [section]=await getDb().select({id:sectionEnrollments.id})
    .from(sectionEnrollments)
