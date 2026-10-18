@@ -96,6 +96,10 @@ export async function reassignFacultyUpcomingSchedules(ctx:RequestContext,rawId:
    results.push({id:session.id,title:session.title,status:changed?"REASSIGNED":"SKIPPED",
     reason:changed?"Reassigned":"The session changed before the update"});
   }
+  // Replayed forms and collision-only attempts should return the same status
+  // without emitting a second "reassigned" audit entry for zero writes.
+  if(!results.some(row=>row.status==="REASSIGNED"))
+   return {total:results.length,reassigned:0,skipped:results.length,results};
   await tx.insert(activityEvents).values({
    organizationId:m.organizationId,collegeId:m.collegeId,
    actorUserId:ctx.user.id,actorMembershipId:m.id,
