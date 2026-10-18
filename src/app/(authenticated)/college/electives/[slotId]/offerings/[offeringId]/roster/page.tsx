@@ -135,13 +135,13 @@ export default async function ElectiveRoster({
       {!archived && <form action={changeFaculty} className="flex flex-wrap items-end gap-3">
         <input type="hidden" name="action" value="ASSIGN" />
         <label className="grid gap-1 text-sm">Faculty
-          <select name="membershipId" required defaultValue="" className="min-h-11 rounded border border-border bg-surface p-2">
+          <select name="membershipId" required defaultValue="" className="min-h-11 rounded border border-border bg-surface p-2 text-base sm:text-sm">
             <option value="" disabled>Choose faculty</option>
             {faculty.map(item => <option key={item.id} value={item.id}>{item.name ?? item.id}</option>)}
           </select>
         </label>
         <label className="grid gap-1 text-sm">Role
-          <select name="role" className="min-h-11 rounded border border-border bg-surface p-2">
+          <select name="role" className="min-h-11 rounded border border-border bg-surface p-2 text-base sm:text-sm">
             <option value="PRIMARY">Primary</option>
             <option value="CO_TEACHER">Co-teacher</option>
           </select>
@@ -170,7 +170,7 @@ export default async function ElectiveRoster({
                 <input type="hidden" name="membershipId" value={member.membershipId} />
                 <select name="targetOfferingId" required defaultValue=""
                   aria-label="Move to another offering"
-                  className="min-h-11 rounded border border-border bg-surface px-2">
+                  className="min-h-11 rounded border border-border bg-surface px-2 text-base sm:text-sm">
                   <option value="" disabled>Move to another offering</option>
                   {targets.map(t=><option key={t.offeringId} value={t.offeringId}>
                     {t.courseName} ({t.courseCode})</option>)}
