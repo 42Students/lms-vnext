@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseTpoRoundImport, roundImportActionSchema, ROUND_IMPORT_TEMPLATE } from "@/modules/placements/tpo-round-import-model";
+import { parseTpoRoundImport, roundImportActionSchema, ROUND_IMPORT_TEMPLATE, uniqueTpoRoundImportRoster } from "@/modules/placements/tpo-round-import-model";
 import { parseIstRoundLocalTime, tpoRoundCalendarMutationSchema } from "@/modules/placements/tpo-round-calendar-model";
 import { tpoInterviewRescheduleSchema, validInterviewWindow, overlappingInterviewVenue } from "@/modules/placements/tpo-interview-reschedule-model";
 
@@ -36,6 +36,23 @@ describe("TPO-drive-workspace-40/44 round import and scheduling ledger",()=>{
   }
   const valid=parseTpoRoundImport(csv("Application ID,Result,Rank\n"+uuid+",HOLD,100\n"),"results.csv");
   expect(valid[0]).toMatchObject({invalidRank:false,rank:100});
+ });
+ it("never stages a guessed identity when import roster JOIN evidence is duplicated or contradictory",()=>{
+  const source=[
+   {applicationId:uuid,name:"Ada",email:"ada@example.test",roll:"1",currentResultId:null,currentStatus:null},
+   {applicationId:uuid,name:"Ada",email:"ada@example.test",roll:"1",currentResultId:null,currentStatus:null},
+   {applicationId:other,name:"Bob",email:"bob@example.test",roll:"2",currentResultId:null,currentStatus:null},
+  ];
+  const original=JSON.stringify(source);
+  const deduped=uniqueTpoRoundImportRoster(source);
+  expect(deduped).toHaveLength(2);
+  expect(deduped.map(row=>row.applicationId)).toEqual([uuid,other]);
+  expect(JSON.stringify(source)).toBe(original);
+  const contradictory=[...source,{...source[0]!,currentResultId:other}];
+  expect(uniqueTpoRoundImportRoster(contradictory).map(row=>row.applicationId)).toEqual([other]);
+  const forged=[...source,{...source[2]!,roll:"other-learner"}];
+  expect(uniqueTpoRoundImportRoster(forged).map(row=>row.applicationId)).toEqual([uuid]);
+  expect(uniqueTpoRoundImportRoster([])).toEqual([]);
  });
  it("review command requires one explicit decision per source line and unique student identity",()=>{
   const action={action:"STAGE_IMPORT",confirmed:true,previewToken:token,missingPolicy:"LEAVE_PENDING",overrides:[{line:2,applicationId:uuid}],skippedLines:[3]};
