@@ -724,8 +724,8 @@ export async function getProjectAdminSubmissionSummary(context: RequestContext, 
   )`;
   const [row] = await getDb().select({
     activeWorkspaces: sql<number>`count(*) filter (where ${projectInstances.status} = 'ACTIVE')`.mapWith(Number),
-    pendingReview: sql<number>`count(*) filter (where ${latestStatus} = 'SUBMITTED')`.mapWith(Number),
-    needsStudentAction: sql<number>`count(*) filter (where ${latestStatus} = 'CHANGES_REQUESTED')`.mapWith(Number),
+    pendingReview: sql<number>`count(*) filter (where ${projectInstances.status} = 'ACTIVE' and ${latestStatus} = 'SUBMITTED')`.mapWith(Number),
+    needsStudentAction: sql<number>`count(*) filter (where ${projectInstances.status} = 'ACTIVE' and ${latestStatus} = 'CHANGES_REQUESTED')`.mapWith(Number),
     reviewed: sql<number>`count(*) filter (where ${latestStatus} = 'APPROVED')`.mapWith(Number),
   }).from(projectInstances).where(eq(projectInstances.collegeId, college.id));
   return {
