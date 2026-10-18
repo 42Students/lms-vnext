@@ -4,7 +4,7 @@
 
 | Production path | Export | Test file | Evidence and missing cases | Status |
 |---|---|---|---|---|
-| `src/modules/placements/tpo-students-model.ts` | `TPO_STUDENT_JOURNEY_STATES` | `tests/unit/chat12-tpo-roster-facets-behavioral.test.ts` | enumerated journey states; enum consumers | **PARTIAL** |
+| `src/modules/placements/tpo-students-model.ts` | `TPO_STUDENT_JOURNEY_STATES` | `tests/unit/chat12-tpo-roster-legacy-stage-matrix.test.ts` | all five exact published journey states and enum consumers | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-students-model.ts` | `deriveTpoStudent` | `tests/unit/chat12-round34-profile-readiness.test.ts` | source-level readiness provenance | **SOURCE** |
 | `src/modules/placements/tpo-students-model.ts` | `summarizeTpoStudents` | `tests/unit/chat12-tpo-roster-summaries-behavior.test.ts` | Active roster, registered placement pool vs unregistered, placed outside pool, null rate for no denominator, deterministic branch sorting | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-students-model.ts` | `summarizeTpoStudentBranches` | `tests/unit/chat12-tpo-roster-summaries-behavior.test.ts` | Active roster, registered placement pool vs unregistered, placed outside pool, null rate for no denominator, deterministic branch sorting | **BEHAVIOURAL** |
