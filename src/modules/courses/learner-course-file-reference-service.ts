@@ -28,6 +28,9 @@ export async function getLearnerCourseFileReference(
  .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
  .where(and(
   eq(lessonContents.id,contentId),
+  // A private VIDEO uses its own short-lived playback-grant policy.
+  // Never mint a general-purpose downloadable GET capability for it.
+  eq(lessonContents.contentType,"RESOURCE"),
   eq(courseLearningPaths.offeringId,delivery.offeringId),
   inArray(courseLearningPaths.status,delivery.endedAt?["PUBLISHED","ARCHIVED"]:["PUBLISHED"]),
   eq(courseLessons.status,"ACTIVE"),

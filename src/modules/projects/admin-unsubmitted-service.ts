@@ -14,6 +14,7 @@ export async function listProjectAdminUnsubmitted(context:RequestContext,college
  const searchPattern=adminUnsubmittedLiteralSearchPattern(q.q??"");
  const where=and(eq(projectInstances.collegeId,college.id),
   ne(projectInstances.status,"ARCHIVED"),
+  q.status?eq(projectInstances.status,q.status):undefined,
   notExists(db.select({id:projectSubmissions.id}).from(projectSubmissions)
    .where(eq(projectSubmissions.projectId,projectInstances.id))),
   q.q?or(ilike(projectInstances.title,searchPattern),

@@ -10,7 +10,7 @@ import {PlacementsServiceError} from "./errors";
 import {confirmTpoRoundResult} from "./tpo-confirmed-round-result-service";
 import {requireTpoJobCollege} from "./tpo-job-write-base";
 import {placementJobIdSchema,placementRoundIdSchema} from "./validation";
-import {parseTpoRoundImport,roundImportActionSchema,matchTpoRoundImportRoster,uniqueTpoRoundImportRoster,type ImportRow} from "./tpo-round-import-model";
+import {parseTpoRoundImport,roundImportActionSchema,matchTpoRoundImportRoster,uniqueTpoRoundImportRoster,tpoRoundImportStageFailureReason,type ImportRow} from "./tpo-round-import-model";
 
 type Roster=Awaited<ReturnType<typeof readRoster>>["roster"][number];
 async function readRoster(context:RequestContext,rawJobId:unknown,rawRoundId:unknown){
@@ -239,7 +239,7 @@ export async function stageTpoRoundImport(
   }catch(e){
    if(addedRank!==null)occupied.delete(addedRank);
    results.push({applicationId:entry.applicationId,line:entry.line,status:"skipped",
-    reason:e instanceof Error?e.message:"Could not stage this result"});}
+    reason:tpoRoundImportStageFailureReason(e)});}
  }
  return {staged:results.filter(r=>r.status==="staged").length,
   skipped:results.filter(r=>r.status==="skipped").length,
