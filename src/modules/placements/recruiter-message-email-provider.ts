@@ -33,6 +33,9 @@ export async function sendRecruiterMessageDigest(
   const excerpts=safeRecruiterDigestMessages(digest.messages);
   const response=await outboundFetch(config.apiUrl,{
    method:"POST",
+   // Reject redirects; the provider Authorization header and private digest
+   // must never be forwarded to a different destination.
+   redirect:"error",
    headers:{Authorization:config.token,"Content-Type":"application/json",Accept:"application/json"},
    body:JSON.stringify({
     template_key:key,from:{address:config.fromAddress,name:config.fromName},
