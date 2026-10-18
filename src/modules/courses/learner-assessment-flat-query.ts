@@ -1,4 +1,5 @@
 import "server-only";
+import {learnerQuizResultsReleased} from "./learner-quiz-result-release-policy";
 import {and,eq,inArray,isNull,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {assignmentSubmissions,courseAssignments,courseLearningPaths,courseLessons,courseQuizzes,courseSectionDeliveries,quizAttempts} from "@/db/schema";
@@ -79,7 +80,7 @@ export async function listOwnLearnerAssessmentRows(deliveries:readonly Delivery[
    status:row.status==="CLOSED"?"CLOSED" as const:"PUBLISHED" as const,
    // An authoring publication flag does not authorize early learner visibility.
    // Match getMyQuizAttempts: CLOSED and explicitly released are both required.
-   resultsPublished:row.status==="CLOSED"&&row.resultsPublished,attemptsUsed,
+   resultsPublished:learnerQuizResultsReleased(row,nowMs),attemptsUsed,
    attemptsRemaining:row.status==="PUBLISHED"?Math.max(0,row.maxAttempts-attemptsUsed):0,
    deliveryId:row.deliveryId,courseId:delivery.courseId,courseName:delivery.courseName,
    courseCode:delivery.courseCode,lessonId:row.lessonId,lessonName:row.lessonName,
