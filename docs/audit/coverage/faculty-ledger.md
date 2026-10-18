@@ -480,3 +480,10 @@ Next actions: enumerate runtime symbols, map behavioural tests per export, run T
 - Faculty attendance correction token, role/session URL, IST midnight and exact deadline: `tests/unit/COURSES-BREAK-FACULTY-07.test.ts`.
 - Four Faculty POST command routes' CSRF/session/body bounds: `tests/unit/COURSES-BREAK-FACULTY-08.test.ts`.
 - These are direct runtime/route assertions, but not proof of successful TypeScript, Vitest or PostgreSQL CI.
+
+## Additional executable witnesses (2026-10-18)
+
+- `tests/integration/projects-faculty-mentor-access-chat3.test.ts`: with the disposable rollback-only PostgreSQL harness, joins real project members and active membership roles, checks foreign college/user, revoked Faculty/Mentor role, suspended/ended membership, deactivated user, ended project membership, and readonly mutation bit. It is a **database predicate witness**, not a substitute for an HTTP-level Projects service acceptance suite.
+- `tests/unit/PROJ-BREAK-FACULTY-06.test.ts`: meeting postmortem notes and decision stale revision handling, terminal state, one audit record, and scoped notification count, using mocked transactions; actual concurrent PostgreSQL writes remain a release gate.
+- `tests/e2e/faculty-role-denial-chat3.spec.ts`: browser guest/Learner deep-link denial, changing the active Faculty college after opening a Course, keyboard skip-target, and mobile/desktop error resilience. Requires seeded E2E credentials, not yet run.
+- `tests/unit/SA-ACADEMICS-PEOPLE-BREAK-chat3-02.test.ts` and `docs/audit/coverage/admin-academics-people-chat3-ledger.md` enumerate selected organization/college roles and current Super Admin Academics/People page evidence; uncovered click journeys are retained as GAPs.
