@@ -83,7 +83,7 @@ describe("PROJ-BREAK-LEARNER-RELEASE-01 task deletion across lifecycle and autho
   expect(state.deleted).not.toHaveBeenCalled();
  });
  it("cannot delete tasks after comments or submissions exist",async()=>{
-  state.releaseStatus="ACTIVE";state.comment={id:"discussion"};
+  state.releaseStatus="IN_PROGRESS";state.comment={id:"discussion"};
   await expect(deleteLearnerOwnTask(actor,{projectId},taskId)).rejects.toThrow();
   expect(state.deleted).not.toHaveBeenCalled();
   state.reads=0;state.comment=null;state.submission={id:"receipt"};
