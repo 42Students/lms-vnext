@@ -7,7 +7,7 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
 import {projectTemplateBlueprintSchema,type ProjectTemplateBlueprint} from "@/modules/projects/validation";
-const field="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm";
+const field="mt-1 w-full";
 const lines=(list?:string[])=>list?.join("\n")??"";
 const array=(value:string)=>value.split("\n").map(v=>v.trim()).filter(Boolean);
 export function SuperAdminTemplateOverviewEditor({templateId,title,summary,version,blueprint}:{
