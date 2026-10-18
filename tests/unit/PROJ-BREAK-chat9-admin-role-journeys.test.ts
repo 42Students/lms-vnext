@@ -38,7 +38,7 @@ describe("IIT Dharwad Projects: College Admin access and lifecycle breaker", () 
     const current=actor();
     expect(mayRecordCollegeAdminDeliveryLock({ ...current, membership:null },collegeId,organizationId)).toBe(false);
     expect(mayRecordCollegeAdminDeliveryLock({
-      ...current,user:{ ...current.user,platformStatus:"SUSPENDED" },
+      ...current,user:{ ...current.user,platformStatus:"DISABLED" },
     },collegeId,organizationId)).toBe(false);
     expect(mayRecordCollegeAdminDeliveryLock({
       ...current,membership:{ ...current.membership!,status:"SUSPENDED" },
