@@ -25,9 +25,9 @@ export default async function LearnerCourseProgressPage({
   if (!progress) notFound();
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <Link href={"/learn/courses/" + encodeURIComponent(deliveryId) + "/home"}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
         ← Course overview
       </Link>
       <PageHeader title="Course progress by lesson" />
@@ -105,7 +105,7 @@ export default async function LearnerCourseProgressPage({
               <Link
                 href={"/learn/courses/" + encodeURIComponent(deliveryId) +
                   "/roadmap?lesson=" + encodeURIComponent(lesson.id)}
-                className="mt-4 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
+                className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
                 Open in learning path →
               </Link>
             </article>

@@ -42,9 +42,9 @@ export default async function LearnerNotificationHistoryPage({
   );
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <Link href="/learn/notifications"
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
         ← Notifications
       </Link>
       <PageHeader eyebrow="Learner · Notifications"
@@ -54,12 +54,12 @@ export default async function LearnerNotificationHistoryPage({
       <nav aria-label="Notification history filters" className="flex flex-wrap gap-2">
         <Link href="/learn/notifications/history"
           aria-current={!page.unreadOnly ? "page" : undefined}
-          className="inline-flex min-h-11 items-center rounded-full border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-full border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
           All personal
         </Link>
         <Link href="/learn/notifications/history?unread=1"
           aria-current={page.unreadOnly ? "page" : undefined}
-          className="inline-flex min-h-11 items-center rounded-full border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-full border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
           Unread only
         </Link>
       </nav>
@@ -78,7 +78,7 @@ export default async function LearnerNotificationHistoryPage({
         {page.nextCursor ? (
           <Link
             href={learnerNotificationHistoryHref(page.nextCursor, page.unreadOnly)}
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:bg-primary-subtle"
           >
             Older notifications →
           </Link>
@@ -88,7 +88,7 @@ export default async function LearnerNotificationHistoryPage({
         {page.isOlderPage ? (
           <Link
             href={learnerNotificationHistoryHref(null, page.unreadOnly)}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline"
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline"
           >
             Return to newest
           </Link>

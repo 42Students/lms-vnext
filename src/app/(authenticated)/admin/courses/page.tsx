@@ -16,19 +16,19 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
 
   if (!collegeId) {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-6">
         <PageHeader
           eyebrow="Super Admin"
           title="Courses"
           description="Course administration requires a college safety scope."
         />
-        <Link href="/admin/lessons" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">Lessons directory →</Link>
-      <Link href="/admin/videos" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Videos directory →</Link>
-      <Link href="/admin/resources" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Resources directory →</Link>
-      <Link href="/admin/live-classes" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Live Classes directory →</Link>
-        <Link href="/admin/course-progress" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">Course Progress directory →</Link>
-        <Link href="/admin/assignments" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">Assignments directory →</Link>
-        <Link href="/admin/quizzes" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">Quizzes directory →</Link>
+        <Link href="/admin/lessons" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">Lessons directory →</Link>
+      <Link href="/admin/videos" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Videos directory →</Link>
+      <Link href="/admin/resources" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Resources directory →</Link>
+      <Link href="/admin/live-classes" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Live Classes directory →</Link>
+        <Link href="/admin/course-progress" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">Course Progress directory →</Link>
+        <Link href="/admin/assignments" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">Assignments directory →</Link>
+        <Link href="/admin/quizzes" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">Quizzes directory →</Link>
         <EmptyState
           title="Select a college to continue"
           description="Choose a college in the header above to see its courses."
@@ -39,10 +39,10 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
 
   const query=await searchParams;
   const catalogueQuery=collegeCourseCatalogueQuerySchema.safeParse({q:query.q,sort:query.sort,page:query.page,pageSize:query.pageSize});
-  if(!catalogueQuery.success)return <div className="space-y-5">
+  if(!catalogueQuery.success)return <div className="min-w-0 space-y-5">
     <PageHeader eyebrow="Super Admin" title="Courses"/>
     <ErrorState title="Invalid course filters" description="Check the search, sort or page and retry."
-      action={<Link href="/admin/courses" className="font-semibold text-primary-text underline">Clear filters</Link>}/>
+      action={<Link href="/admin/courses" className="font-semibold text-[var(--lms-teal-deep)] underline">Clear filters</Link>}/>
   </div>;
   const duplicateCourseId=typeof query.duplicate==="string"&&/^[a-f0-9-]{36}$/i.test(query.duplicate)
     ?query.duplicate:undefined;
@@ -52,19 +52,19 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
   ]);
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         eyebrow="Super Admin"
         title="Courses"
         description="Course structure inside the selected college safety scope."
       />
-      <Link href="/admin/lessons" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Lessons directory →</Link>
-      <Link href="/admin/videos" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Videos directory →</Link>
-      <Link href="/admin/resources" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Resources directory →</Link>
-      <Link href="/admin/live-classes" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Live Classes directory →</Link>
-      <Link href="/admin/course-progress" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Course Progress →</Link>
-      <Link href="/admin/assignments" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Assignments →</Link>
-      <Link href="/admin/quizzes" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Quizzes →</Link>
+      <Link href="/admin/lessons" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Lessons directory →</Link>
+      <Link href="/admin/videos" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Videos directory →</Link>
+      <Link href="/admin/resources" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Resources directory →</Link>
+      <Link href="/admin/live-classes" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Live Classes directory →</Link>
+      <Link href="/admin/course-progress" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Course Progress →</Link>
+      <Link href="/admin/assignments" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Assignments →</Link>
+      <Link href="/admin/quizzes" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Quizzes →</Link>
       <AdminCourseOverview
         workspace={workspace}
         courseBasePath="/admin/courses"

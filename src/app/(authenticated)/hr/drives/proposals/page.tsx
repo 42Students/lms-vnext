@@ -20,7 +20,7 @@ export default async function RecruiterDriveProposalHistory({
  const input=hrDriveProposalHistoryQuerySchema.safeParse({collegeId:id,page:rawPage,q,sort});
  if(!input.success)notFound();
  const data=await listHrDriveProposals(context,input.data);
- return <main className="space-y-5">
+ return <div className="min-w-0 max-w-full space-y-5">
   <PageHeader eyebrow="Recruiter · Drives" title="Sent drive proposals"
    description="Private placement-cell discussion messages, not submitted drive approval requests."/>
   <nav className="flex flex-wrap gap-3">
@@ -84,5 +84,5 @@ export default async function RecruiterDriveProposalHistory({
       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Older proposals</Link>:null}
    </nav>
   </>}
- </main>;
+ </div>;
 }

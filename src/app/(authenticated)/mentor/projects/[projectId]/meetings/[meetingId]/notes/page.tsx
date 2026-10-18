@@ -11,11 +11,11 @@ export default async function MentorMeetingNotesPage({params}:{
   const data=await getMentorMeetingNotes(await getCurrentRequestContext(),path);
   const m=data.meeting;
   const editable=meetingNotesEditable(data.projectStatus,m.status);
-  return <div className="space-y-5">
+  return <div className="min-w-0 max-w-full space-y-5">
     <PageHeader eyebrow="Mentor · Project meeting" title={m.title}
       description={data.projectTitle+" · "+m.status}
       actions={<Link href={"/mentor/projects/"+encodeURIComponent(path.projectId)+"/team-meetings"}
-        className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
         Meeting history</Link>}/>
     <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
       <h2 className="font-semibold">Persisted meeting outcome</h2>

@@ -1,9 +1,7 @@
-# UI/UX review — /college/contacts
+# UX review: /college/contacts
 
-Weakness: layout width and/or action targets on small screens; scrollable dataset headings where applicable.
-
-Changes: 44px tap/keyboard targets; width-safe route container. File: `src/app/(authenticated)/college/contacts/page.tsx`.
-
-Existing empty, loading, error, access, filter and form behavior was not changed. Legacy strings preserved. Test: `tests/unit/chat4-college-ux-round4.test.ts` (`UX-college-contacts-01`).
-
-Browser, keyboard, screen reader and typecheck execution pending orchestrator; the page is not yet checked off.
+- Route: `src/app/(authenticated)/college/contacts/page.tsx`, first-half College Admin UX rollout.
+- Legacy wording and IA preserved, including action labels, filters, page title and notification/empty messages.
+- Improvements: WCAG-friendly links; page overflow containment.
+- States: tenant guards and pending/errors untouched; direct DataTable explicitly provides its existing no-results copy. Mobile controls and forms use shared UI behavior.
+- Regression test authored: `tests/unit/UX-college-college-contacts-01.test.ts`. CI/device/accessibility audit pending; checklist cannot be ticked until passing.

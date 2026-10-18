@@ -23,7 +23,7 @@ export default async function SuperAdminLessonsPage({
   if (!parsed.success) return <div className="space-y-5">
     <PageHeader eyebrow="Super Admin · Courses" title="Lessons" />
     <ErrorState title="Invalid lesson filters" description="Check the search, status and page values."
-      action={<Link href="/admin/lessons" className="font-semibold text-primary-text">Clear filters</Link>} />
+      action={<Link href="/admin/lessons" className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
   if (!context.adminScope?.collegeId) return <div className="space-y-5">
@@ -36,7 +36,7 @@ export default async function SuperAdminLessonsPage({
     <PageHeader eyebrow="Super Admin · Courses" title="Lessons"
       description="Read-only authored lesson catalogue in your selected college. Counts reflect registered content records, not learner completion." />
     <a href={"/api/admin/lessons/export?"+new URLSearchParams({q:data.query.q,status:data.query.status,...(data.query.courseCode?{courseCode:data.query.courseCode}:{}),...(data.query.cohortCode?{cohortCode:data.query.cohortCode}:{})}).toString()}
-     className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export lessons.csv</a>
+     className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Export lessons.csv</a>
     <form className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-5">
       <label className="grid gap-1 text-sm font-semibold text-body">Search
         <input name="q" type="search" maxLength={100} defaultValue={data.query.q} placeholder="Lesson or course"
@@ -48,9 +48,9 @@ export default async function SuperAdminLessonsPage({
         </select>
       </label>
       <SuperAdminLearningFilterFields courses={filters.courses} cohorts={filters.cohorts} selectedCourse={data.query.courseCode} selectedCohort={data.query.cohortCode}/>
-      <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
+      <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 font-semibold text-foreground">Filter</button>
     </form>
-    <Link className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text" href="/admin/lessons">Clear filters</Link>
+    <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]" href="/admin/lessons">Clear filters</Link>
     <p className="text-sm text-muted-foreground">{data.total} matching lessons · on this page: {summary.authored} content records, {summary.published} published</p>
     <SuperAdminLessonCreate paths={paths}/>
     {data.items.length?<SuperAdminLessonBulkVisibility lessons={data.items}/>:null}
@@ -72,7 +72,7 @@ export default async function SuperAdminLessonsPage({
             expectedSequence={lesson.sequence} canMoveUp={lesson.sequence>0} canMoveDown={true}/>
         </div>:null}
         <Link href={`/admin/courses/offerings/${encodeURIComponent(lesson.offeringId)}`}
-          className="mt-3 inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
+          className="mt-3 inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
           Open offering →
         </Link>
       </article>)}
@@ -81,11 +81,11 @@ export default async function SuperAdminLessonsPage({
       <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages} · 25 per page</span>
       <div className="flex gap-2">
         {data.query.page > 1 ? <Link href={adminLearningHref("LESSONS", { ...data.query, page: data.query.page - 1 })}
-          className="rounded-md border border-border px-4 py-2 font-semibold text-primary-text">Previous</Link> : null}
+          className="rounded-md border border-border px-4 py-2 font-semibold text-[var(--lms-teal-deep)]">Previous</Link> : null}
         {data.query.page < data.totalPages ? <Link href={adminLearningHref("LESSONS", { ...data.query, page: data.query.page + 1 })}
-          className="rounded-md border border-border px-4 py-2 font-semibold text-primary-text">Next</Link> : null}
+          className="rounded-md border border-border px-4 py-2 font-semibold text-[var(--lms-teal-deep)]">Next</Link> : null}
       </div>
     </nav>
-    <Link href="/admin/courses" className="inline-flex min-h-10 items-center font-semibold text-primary-text">← Courses</Link>
+    <Link href="/admin/courses" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">← Courses</Link>
   </div>;
 }

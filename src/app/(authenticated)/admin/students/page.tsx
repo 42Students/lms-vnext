@@ -28,17 +28,17 @@ export default async function SuperAdminStudentsPage({searchParams}:{
      students:count(meta.count),created:count(meta.created),failed:count(meta.failed),
    };
  });
- return <div className="space-y-4">
+ return <div className="min-w-0 space-y-4">
   {context.adminScope?.collegeId?<div className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-surface p-4">
-    <a href="#register-student" className="inline-flex min-h-10 items-center font-semibold text-primary-text">Register New Student ↓</a>
-    <Link className="inline-flex min-h-10 items-center font-semibold text-primary-text" href="/admin/people">
+    <a href="#register-student" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Register New Student ↓</a>
+    <Link className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]" href="/admin/people">
       Manage memberships, profiles and account status →
     </Link>
   </div>:null}
-  {choices?<section id="register-student" className="space-y-2"><h2 className="text-lg font-semibold">Register New Student</h2><CollegeStudentRegisterForm choices={choices}/></section>:null}
-  {choices?<section className="space-y-3 rounded-xl border border-border bg-surface p-4">
+  {choices?<section id="register-student" aria-labelledby="register-student-heading" className="min-w-0 scroll-mt-24 space-y-2"><h2 id="register-student-heading" className="text-lg font-semibold">Register New Student</h2><CollegeStudentRegisterForm choices={choices}/></section>:null}
+  {choices?<section aria-labelledby="bulk-register-students-heading" className="min-w-0 space-y-3 rounded-xl border border-border bg-surface p-4 sm:p-6">
     <div className="flex flex-wrap items-center justify-between gap-3">
-      <h2 className="text-lg font-semibold">Bulk Register Students</h2>
+      <h2 id="bulk-register-students-heading" className="text-lg font-semibold">Bulk Register Students</h2>
       <SuperAdminStudentImportHistory runs={importRuns}/>
     </div>
     <p className="text-sm text-body">Validate a selected Program, Batch and Class roster before creating students. Imports can&apos;t be undone in one step, to protect students&apos; work. Correct or suspend individual accounts instead.</p>

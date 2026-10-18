@@ -41,7 +41,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  const visible=selectTpoBatchStudentView(result.students,view.data,result.registrationAvailable);
  const pageSummary=summarizeBatchStudentEvidence(result.students);
  const href=(page:number)=>batchStudentPageHref(batchId,page,view.data);
- return <main className="min-w-0 space-y-4"><h1 className="text-xl font-semibold">{result.batch.name} — Students</h1>
+ return <div className="min-w-0 space-y-4"><h1 className="text-xl font-semibold">{result.batch.name} — Students</h1>
  <TpoBatchWorkspaceTabs batchId={batchId} active="students" />
  <TpoBatchStudentSavedViews batchId={batchId}/>
  <TpoBatchStudentKeyboardActions
@@ -72,14 +72,14 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
    <strong>Suggested: make them eligible</strong>
    <p className="mt-1 text-body">{journey.undecided} learners still need a placement eligibility decision. Review each learner before changing their status.</p>
    <Link href={batchStudentPageHref(batchId,1,{...view.data,decision:"NOT_DECIDED"})+"#batch-student-decisions"}
-     className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline">Show me</Link>
+     className="mt-2 inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Show me</Link>
  </aside>:null}
  <div className="flex flex-wrap items-center justify-between gap-2">
   <p className="text-xs text-muted-foreground">CSV includes only this page (up to 25 students), with decision source and review flags.</p>
   <a href={"/api/placements/tpo/batches/"+batchId+"/students/export?page="+result.page}
    className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm">Export current page CSV</a>
  </div>
- <a href={tpoEligibilityImportScaffoldHref(batchId,result.page)} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm text-primary-text">Download blank eligibility import CSV (this page)</a>
+ <a href={tpoEligibilityImportScaffoldHref(batchId,result.page)} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm text-[var(--lms-teal-deep)]">Download blank eligibility import CSV (this page)</a>
  {finished?<p role="status" className="rounded border border-border bg-muted p-3 text-sm">This batch is finished. Eligibility decisions and import actions are read-only.</p>:<TpoBatchEligibilityImport batchId={batchId}/>}
  {!finished?<TpoBulkActionPanel key={batchId+":"+result.page+":"+view.data.q+":"+view.data.decision}
    target="STUDENTS" rows={visible.map(student=>({
@@ -103,9 +103,9 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
   <label className="text-sm">Class (on this page)<select name="classId" defaultValue={view.data.classId??""} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
     <option value="">All classes</option>
     {[...new Map(result.students.filter(s=>s.classId).map(s=>[s.classId!,s.className??"Unnamed class"])).entries()].map(([id,name])=><option key={id} value={id}>{name}</option>)}
-  </select></label><label className="min-w-0 flex-1 text-sm">Search names or roll numbers across the batch<input type="search" name="q" defaultValue={view.data.q} maxLength={100} className="mt-1 min-h-11 w-full rounded border border-border bg-surface px-3"/></label><label className="text-sm">Eligibility decision<select name="decision" defaultValue={view.data.decision} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">All decisions</option><option value="ELIGIBLE">Eligible</option><option value="INELIGIBLE">Ineligible</option><option value="NOT_DECIDED">Not decided</option><option value="NEEDS_REVIEW">Ambiguous / needs review</option></select></label><label className="text-sm">Decision source<select name="source" defaultValue={view.data.source} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">Any source</option><option value="LEARNER">Learner override</option><option value="CLASS">Class</option><option value="BATCH">Batch</option><option value="NONE">No recorded decision</option></select></label><label className="text-sm">Registration choice<select name="registration" defaultValue={view.data.registration} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">Any evidence</option><option value="RECORDED">Choice recorded</option><option value="UNRECORDED">No choice recorded</option></select></label><label className="text-sm">Sort this page<select name="order" defaultValue={view.data.order} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="NAME_ASC">Name A–Z</option><option value="NAME_DESC">Name Z–A</option><option value="REVIEW_FIRST">Needs review first</option></select></label><button type="submit" className="min-h-11 rounded bg-primary px-4 text-on-primary">Filter</button></form>
+  </select></label><label className="min-w-0 flex-1 text-sm">Search names or roll numbers across the batch<input type="search" name="q" defaultValue={view.data.q} maxLength={100} className="mt-1 min-h-11 w-full rounded border border-border bg-surface px-3"/></label><label className="text-sm">Eligibility decision<select name="decision" defaultValue={view.data.decision} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">All decisions</option><option value="ELIGIBLE">Eligible</option><option value="INELIGIBLE">Ineligible</option><option value="NOT_DECIDED">Not decided</option><option value="NEEDS_REVIEW">Ambiguous / needs review</option></select></label><label className="text-sm">Decision source<select name="source" defaultValue={view.data.source} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">Any source</option><option value="LEARNER">Learner override</option><option value="CLASS">Class</option><option value="BATCH">Batch</option><option value="NONE">No recorded decision</option></select></label><label className="text-sm">Registration choice<select name="registration" defaultValue={view.data.registration} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">Any evidence</option><option value="RECORDED">Choice recorded</option><option value="UNRECORDED">No choice recorded</option></select></label><label className="text-sm">Sort this page<select name="order" defaultValue={view.data.order} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="NAME_ASC">Name A–Z</option><option value="NAME_DESC">Name Z–A</option><option value="REVIEW_FIRST">Needs review first</option></select></label><button type="submit" className="min-h-11 rounded bg-primary px-4 text-foreground">Filter</button></form>
  {!result.registrationAvailable&&view.data.registration!=="ALL"?<p role="status">Registration filtering unavailable; no learners are classified without records.</p>:null}
- <a href={batchStudentViewExportHref(batchId,result.page,view.data)} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm text-primary-text">Export filtered current page CSV</a>
+ <a href={batchStudentViewExportHref(batchId,result.page,view.data)} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm text-[var(--lms-teal-deep)]">Export filtered current page CSV</a>
  <p className="text-xs text-muted-foreground">Name/roll-number search runs against the full active batch roster before pagination. Other evidence filters apply to this loaded page. {visible.length} of {result.students.length} loaded learners match.</p>
  <dl aria-label="Loaded-page eligibility evidence" className="grid grid-cols-2 gap-2 sm:grid-cols-3">{[["Loaded",pageSummary.assessed],["Eligible",pageSummary.eligible],["Ineligible",pageSummary.ineligible],["Not decided",pageSummary.undecided],["Needs review",pageSummary.needsReview],["Direct overrides",pageSummary.directOverrides]].map(([name,count])=><div key={name} className="rounded border border-border bg-surface p-3"><dt className="text-xs text-muted-foreground">{name}</dt><dd className="font-semibold tabular-nums">{count}</dd></div>)}</dl>
  <p className="text-xs text-muted-foreground">These metrics cover the currently loaded 25-person slice before the filters above, not the full cohort.</p>
@@ -118,9 +118,9 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
   <p className="text-xs text-muted-foreground">Registration: {s.registration?batchRegistrationLabel(s.registration.choice):"Unavailable"}{s.registration?.source?" · via "+batchSourceLabel(s.registration.source):""}</p>
   <p className="text-xs text-muted-foreground">Source: {batchSourceLabel(s.source)}{s.reason?" · "+s.reason:""}</p>
   {!finished&&!s.ambiguous?<TpoBatchInlineDecision membershipId={s.membershipId} batchId={batchId} expected={s.direct}/>:null}
-  <Link className="mt-2 inline-flex min-h-10 items-center text-primary-text underline" href={"/tpo/students/"+s.membershipId+"/participation"}>Open learner participation</Link>
+  <Link className="mt-2 inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline" href={"/tpo/students/"+s.membershipId+"/participation"}>Open learner participation</Link>
  </li>)}</ul>}
  <nav className="flex flex-wrap gap-2" aria-label="Student pages">{result.page>1?<Link href={href(result.page-1)} className="rounded border px-3 py-2">Previous</Link>:null}
  {result.hasMore?<Link href={href(result.page+1)} className="rounded border px-3 py-2">Next</Link>:null}</nav>
- </main>;
+ </div>;
 }

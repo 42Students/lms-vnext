@@ -46,9 +46,9 @@ export default async function LearnerAssessmentResultsPage({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <Link href="/learn/my-placements/assessments"
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
         ← Assessment schedule
       </Link>
       <PageHeader
@@ -82,7 +82,7 @@ export default async function LearnerAssessmentResultsPage({
           Search
         </button>
         {q?<Link href={href(view,1,"")}
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Clear search</Link>:null}
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">Clear search</Link>:null}
       </form>
       <p role="status" className="text-sm text-body">
         Showing {paged.items.length} of {paged.total} matching published assessment outcomes.
@@ -99,7 +99,7 @@ export default async function LearnerAssessmentResultsPage({
           </p>
           {results.counts.all > 0 ? (
             <Link href="/learn/my-placements/assessments/results"
-              className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
+              className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
               View all official results →
             </Link>
           ) : null}
@@ -110,7 +110,7 @@ export default async function LearnerAssessmentResultsPage({
             <article key={item.resultId} className="rounded-xl border border-border bg-surface p-4 sm:p-6">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-primary-text">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-[var(--lms-teal-deep)]">
                     {item.companyName}
                   </p>
                   <h2 className="mt-1 text-base font-semibold text-foreground">{item.roundName}</h2>
@@ -146,7 +146,7 @@ export default async function LearnerAssessmentResultsPage({
               <div className="mt-4 flex flex-wrap gap-4">
                 <Link href={"/learn/my-placements/applications?applicationId=" +
                   encodeURIComponent(item.applicationId)}
-                  className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
+                  className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
                   View application →
                 </Link>
               </div>
@@ -157,12 +157,12 @@ export default async function LearnerAssessmentResultsPage({
       {paged.pages>1?<nav aria-label="Assessment results pagination"
         className="flex flex-wrap items-center justify-between gap-3">
         {paged.page>1?<Link href={href(view,paged.page-1)}
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
           Previous
         </Link>:<span/>}
         <span className="text-sm tabular-nums text-body">Page {paged.page} of {paged.pages}</span>
         {paged.page<paged.pages?<Link href={href(view,paged.page+1)}
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
           Next
         </Link>:<span/>}
       </nav>:null}

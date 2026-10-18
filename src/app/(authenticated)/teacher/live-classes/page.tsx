@@ -17,7 +17,7 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
   <h1>Invalid live-class filters</h1><Link href="/teacher/live-classes" className="underline">Clear filters</Link>
  </section>;
  const data=await getFacultyLiveClasses(await getCurrentRequestContext(),parsed.data);
- return <div className="space-y-6">
+ return <div className="min-w-0 max-w-full space-y-6">
   <PageHeader eyebrow="Faculty · Courses" title="Live classes"
    description="Registered published live sessions for your active teaching Sections." />
   <FacultyLiveClassEditor
@@ -47,8 +47,8 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
       {c.courseName} · {c.sectionName}
      </option>)}
     </select></label>
-   <button type="submit" className="min-h-11 rounded bg-primary px-4 py-2 text-on-primary focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">Filter</button>
-   <Link href="/teacher/live-classes" className="inline-flex min-h-11 items-center p-2 text-sm text-primary-text">Clear</Link>
+   <button type="submit" className="min-h-11 rounded bg-primary px-4 py-2 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Filter</button>
+   <Link href="/teacher/live-classes" className="inline-flex min-h-11 items-center p-2 text-sm text-[var(--lms-teal-deep)]">Clear</Link>
   </form>
   <p className="text-sm text-body" role="status" aria-live="polite">{data.total} matching registered live session{data.total===1?"":"s"}</p>
   {data.items.length===0?<EmptyState title="No matching live classes"
@@ -63,19 +63,19 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
      }).format(s.startsAt)} IST
     </p>
     {s.joinUrl?<a href={s.joinUrl} target="_blank" rel="noopener noreferrer"
-     className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
+     className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
      Open secure meeting link
     </a>:<p className="text-xs text-muted-foreground">
      Secure meeting link unavailable. Only HTTPS links are exposed.
     </p>}
     <Link href={"/teacher/courses/"+encodeURIComponent(s.deliveryId)}
-     className="inline-flex min-h-11 items-center text-sm text-primary-text hover:underline">Open course</Link>
+     className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] hover:underline">Open course</Link>
    </li>)}</ul>}
   <nav aria-label="Live-class pages" className="flex items-center justify-between gap-3">
    <p className="text-sm">Page {data.page} of {data.totalPages}</p>
    <div className="flex gap-3">
-    {data.page>1?<Link href={facultyLiveClassesHref({...data.query,page:data.page-1})} className="inline-flex min-h-11 items-center font-semibold text-primary-text">Previous</Link>:null}
-    {data.page<data.totalPages?<Link href={facultyLiveClassesHref({...data.query,page:data.page+1})} className="inline-flex min-h-11 items-center font-semibold text-primary-text">Next</Link>:null}
+    {data.page>1?<Link href={facultyLiveClassesHref({...data.query,page:data.page-1})} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Previous</Link>:null}
+    {data.page<data.totalPages?<Link href={facultyLiveClassesHref({...data.query,page:data.page+1})} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Next</Link>:null}
    </div>
   </nav>
   <p className="text-xs text-muted-foreground">
