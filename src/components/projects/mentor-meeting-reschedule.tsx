@@ -1,5 +1,5 @@
 "use client";
-import {useState} from "react";
+import {useId,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Dialog} from "@/components/ui/dialog";
@@ -16,6 +16,7 @@ export function MentorMeetingReschedule(props:{
   projectId:string;meetingId:string;startsAt:string;endsAt:string;updatedAt:string;
 }){
   const router=useRouter();
+  const validationId=useId();
   const {showToast}=useToast();
   const [start,setStart]=useState(toIstLocalInput(props.startsAt));
   const [end,setEnd]=useState(toIstLocalInput(props.endsAt));
@@ -59,15 +60,17 @@ export function MentorMeetingReschedule(props:{
       }} className="grid gap-4">
         <label className="grid gap-1 text-sm font-semibold text-body">Start (IST)
           <input type="datetime-local" required value={start}
+            aria-invalid={!parsed.success} aria-describedby={!parsed.success?validationId:undefined}
             onChange={event=>setStart(event.target.value)}
-            className="min-h-11 rounded-md border border-border bg-background px-3"/>
+            className="min-h-11 min-w-0 max-w-full rounded-md border border-border bg-background px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">End (IST)
           <input type="datetime-local" required value={end}
+            aria-invalid={!parsed.success} aria-describedby={!parsed.success?validationId:undefined}
             onChange={event=>setEnd(event.target.value)}
-            className="min-h-11 rounded-md border border-border bg-background px-3"/>
+            className="min-h-11 min-w-0 max-w-full rounded-md border border-border bg-background px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/>
         </label>
-        {!parsed.success?<p role="alert" className="text-sm text-error">
+        {!parsed.success?<p id={validationId} role="alert" className="text-sm text-foreground">
           Select valid start/end times, with a duration up to 12 hours.</p>:null}
         {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
         <div className="flex flex-wrap justify-end gap-2">

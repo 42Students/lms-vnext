@@ -51,7 +51,7 @@ export function MentorMeetingNotesEditor(props:{
         <label className="grid gap-1 text-sm font-semibold text-body">Notes
           <textarea value={notes} rows={7} maxLength={4000} required
             onChange={event=>setNotes(event.target.value)}
-            className="w-full min-h-32 rounded-md border border-border bg-background px-3 py-2 text-foreground"/>
+            className="w-full min-h-32 rounded-md border border-border bg-background px-3 py-2 text-base text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/>
         </label>
         <p className="text-xs text-muted-foreground">{notes.trim().length}/4000 characters</p>
         {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
