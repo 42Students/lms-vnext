@@ -12,14 +12,15 @@ export type DrawerProps = {
   children: ReactNode;
   footer?: ReactNode;
   dismissible?: boolean;
+  historyMode?: "marker" | "route";
 };
 
-export function Drawer({ open, onOpenChange, title, description, children, footer, dismissible = true }: DrawerProps) {
+export function Drawer({ open, onOpenChange, title, description, children, footer, dismissible = true, historyMode = "marker" }: DrawerProps) {
   const ref = useRef<HTMLDialogElement>(null);
   const opener = useRef<HTMLElement | null>(null);
   const titleId = useId();
   const descriptionId = useId();
-  const { availableHeight, viewportTop } = useOverlayWebview({ open, dismissible, onDismiss: () => onOpenChange(false) });
+  const { availableHeight, viewportTop } = useOverlayWebview({ open, dismissible, historyMode, onDismiss: () => onOpenChange(false) });
   useEffect(() => {
     const modal = ref.current;
     if (!modal) return;

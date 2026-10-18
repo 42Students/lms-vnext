@@ -33,7 +33,7 @@ describe("UX playbook shared behaviour", () => {
     const markup = renderToStaticMarkup(<DataTable columns={[
       { key: "name", header: "Name", mobilePriority: "primary", cell: (row: { name: string; status: string }) => row.name },
       { key: "status", header: "Status", mobilePriority: "secondary", cell: (row: { name: string; status: string }) => row.status },
-    ]} rows={[{ name: "Example", status: "Active" }]} getRowKey={row => row.name} caption="People" />);
+    ]} rows={[{ name: "Example", status: "Active" }]} getRowKey={row => row.name} caption="People" empty={<p>No people</p>} />);
     expect(markup).toContain('role="list"');
     expect(markup).toContain("<table");
     expect(markup).toContain('scope="col"');
@@ -60,7 +60,7 @@ describe("UX playbook shared behaviour", () => {
     const formatter=vi.fn((row:{label:string})=>row.label);
     renderToStaticMarkup(<DataTable rows={[{label:"A"},{label:"B"}]}
       columns={[{key:"label",header:"Label",cell:formatter}]}
-      getRowKey={row=>row.label}/>);
+      getRowKey={row=>row.label} empty={<p>No rows</p>}/>);
     expect(formatter).toHaveBeenCalledTimes(2);
   });
   it("UX-PLAYBOOK-07 pagination announces current page", () => {
