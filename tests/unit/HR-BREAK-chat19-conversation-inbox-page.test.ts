@@ -93,4 +93,11 @@ describe("HR-BREAK-CONVO-04: inbox account, stale message and ancillary failure 
   expect(m.thread).not.toHaveBeenCalled();
   expect(m.notices).not.toHaveBeenCalled();
  });
+ it("HR-BREAK-CONVO-PRINCIPAL-28 denies mismatched recruiter before inbox and preview",async()=>{
+  m.ctx.mockResolvedValue({...actor,recruiter:{...actor.recruiter!,userId:"other-user"}});
+  await expect(page()).rejects.toThrow("REDIRECT");
+  expect(m.inbox).not.toHaveBeenCalled();
+  expect(m.thread).not.toHaveBeenCalled();
+  expect(m.notices).not.toHaveBeenCalled();
+ });
 });

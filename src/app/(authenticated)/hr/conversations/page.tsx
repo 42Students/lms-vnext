@@ -27,7 +27,7 @@ function timeAgo(value:Date,now:Date){
 }
 export default async function RecruiterConversationsPage({searchParams}:{searchParams:Promise<Query>}){
  const context=await getCurrentRequestContext();
- if(!hasActiveRecruiter(context))redirect("/dashboard");
+ if(!hasActiveRecruiter(context) || context.recruiter?.userId !== context.user.id)redirect("/dashboard");
  const raw=await searchParams;
  const parsed=hrConversationQuerySchema.safeParse({collegeId:raw.collegeId,q:raw.q,page:raw.page,unreadOnly:raw.unreadOnly,sort:raw.sort,scope:raw.scope});
  if(!parsed.success)return <div role="alert" className="space-y-3 p-5">
