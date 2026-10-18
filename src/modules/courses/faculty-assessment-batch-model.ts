@@ -8,3 +8,16 @@ export function facultyAssessmentVisibleToDelivery(
 ): boolean {
   return item.deliveryId === null || item.deliveryId === authorizedDeliveryId;
 }
+
+/** Sequence positions may exceed V8's function-argument limit on large courses. */
+export function nextFacultyLessonContentSequence(sequences:readonly number[]):number {
+ let max=-1;
+ for(const sequence of sequences){
+  if(!Number.isSafeInteger(sequence)||sequence<0)
+   throw new RangeError("INVALID_FACULTY_LESSON_SEQUENCE");
+  if(sequence>max)max=sequence;
+ }
+ if(max===Number.MAX_SAFE_INTEGER)
+  throw new RangeError("INVALID_FACULTY_LESSON_SEQUENCE");
+ return max+1;
+}
