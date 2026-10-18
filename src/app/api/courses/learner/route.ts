@@ -16,7 +16,7 @@ export async function GET() {
         context,
       );
 
-    return NextResponse.json({ courses });
+    return NextResponse.json({ courses }, {headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     return apiErrorResponse(error);
   }
