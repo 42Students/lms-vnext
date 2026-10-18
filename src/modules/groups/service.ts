@@ -455,7 +455,17 @@ export async function attachProjectTeamGroup(context: RequestContext, projectIdI
     const [updated] = await tx.update(projectInstances)
       .set({ teamGroupId: group.id, updatedAt: new Date() })
       .where(eq(projectInstances.id, project.id)).returning();
-    return updated!;
+    if(!updated)throw new GroupServiceError("PROJECT_TEAM_PROJECT_NOT_ATTACHABLE");
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_GROUP_UPDATED,
+      collegeId:group.collegeId,
+      subjectType:"lms_group",subjectId:group.id,subjectLabel:group.name,
+      summary:"Project team group "+group.name+" linked to project",
+      metadata:{groupId:group.id,projectId:updated.id,action:"ATTACH_PROJECT_TEAM"},
+      groupKey:"academics:group:"+group.id,
+      dedupeKey:"academics:group:"+group.id+":attached:"+updated.id,
+    });
+    return updated;
   });
 }
 
