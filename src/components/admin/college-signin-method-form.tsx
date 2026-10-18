@@ -1,6 +1,7 @@
+"use client";
 import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
-"use client";
+
 import {useState} from "react";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";

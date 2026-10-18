@@ -1,6 +1,7 @@
+"use client";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-"use client";
+
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
