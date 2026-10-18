@@ -24,7 +24,7 @@ const tpo: RequestContext = {
     roles: ["TPO"],
   },
 };
-type Ids = { company?: string; relationship?: string; job?: string; role?: string; application?: string; round?: string; offer?: string };
+type Ids = { company?: string; relationship?: string; job?: string; role?: string; application?: string; round?: string; offer?: string; withdrawalRequest?: string };
 const ids: Ids = {};
 const roleIds: string[] = [];
 
@@ -67,6 +67,7 @@ async function cleanup() {
   if (ids.offer) await pool.query("DELETE FROM placement_offer_status_history WHERE offer_id=$1", [ids.offer]);
   if (ids.offer) await pool.query("DELETE FROM placement_offers WHERE id=$1", [ids.offer]);
   if (ids.round) await pool.query("DELETE FROM placement_job_rounds WHERE id=$1", [ids.round]);
+  if (ids.withdrawalRequest) await pool.query("DELETE FROM placement_learner_requests WHERE id=$1",[ids.withdrawalRequest]);
   if (ids.application) {
     await pool.query("DELETE FROM placement_application_screening_history WHERE application_id=$1",[ids.application]);
     await pool.query("DELETE FROM placement_application_screenings WHERE application_id=$1",[ids.application]);
@@ -174,6 +175,10 @@ describe.skipIf(!enabled)("TPO drive cancellation isolated PostgreSQL", () => {
   it("keeps accepted offers intact when cancelling", async () => {
     if (!pool) throw Error("PG required");
     const jobId = await fixture(true);
+    ids.withdrawalRequest=await one(
+      "INSERT INTO placement_learner_requests(application_id,request_type,scope_key,reason,requested_by_user_id) VALUES($1,'APPLICATION_WITHDRAWAL',$2,'Please withdraw while this offer remains accepted',$3) RETURNING id",
+      [ids.application,"accepted-drive-stop:"+randomUUID(),SEED_IDS.learnerUser],
+    );
     const snapshot = await getTpoDriveCancelPreview(tpo, jobId);
     expect(snapshot.blockedByAcceptedOffers).toBe(false);
     const result=await cancelTpoDriveWithPreview(tpo, jobId, {
@@ -188,6 +193,21 @@ describe.skipIf(!enabled)("TPO drive cancellation isolated PostgreSQL", () => {
     expect(offer.rows[0].status).toBe("ACCEPTED");
     const job = await pool.query<{ status: string }>("SELECT status FROM placement_jobs WHERE id=$1", [jobId]);
     expect(job.rows[0]?.status).toBe("CANCELLED");
+    const request=await pool.query<{status:string;decision_note:string;decided_by_user_id:string}>(
+      "SELECT status,decision_note,decided_by_user_id FROM placement_learner_requests WHERE id=$1",
+      [ids.withdrawalRequest],
+    );
+    expect(request.rows).toHaveLength(1);
+    expect(request.rows[0]?.status).toBe("REJECTED");
+    expect(request.rows[0]?.decision_note).toContain("accepted offer remains valid");
+    expect(request.rows[0]?.decided_by_user_id).toBe(SEED_IDS.facultyUser);
+    const application=await pool.query<{status:string}>(
+      "SELECT status FROM placement_applications WHERE id=$1",[ids.application]);
+    expect(application.rows).toEqual([{status:"SUBMITTED"}]);
+    const event=await pool.query<{metadata:{withdrawalsApproved:number;withdrawalsRejected:number}}>(
+      "SELECT metadata FROM activity_events WHERE subject_id=$1 AND event_type='DRIVE_REQUESTS_SETTLED'",[jobId]);
+    expect(event.rows).toHaveLength(1);
+    expect(event.rows[0]?.metadata).toMatchObject({withdrawalsApproved:0,withdrawalsRejected:1});
     await cleanup();
   });
 });
