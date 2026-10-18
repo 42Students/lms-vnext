@@ -159,3 +159,6 @@ All four are DONE in reviewed source. No local CI, PostgreSQL or browser run was
 
 
 | SA-DIRECTORY-QUERY-12 | DONE in source; CI deferred | Shared Super Admin placement directory parser now rejects hex/exponent/duplicate-array paging, oversized fields and invalid status/UUIDs; finite page-count helper and safe URL round-trip tested by `tests/unit/chat13-admin-directory-query-hardening.test.ts`. |
+
+
+| SA-HIRING-EXPORT-13 | DONE in source, CI deferred | Super Admin Hiring report CSV GET now rejects duplicate filters, invalid dates and unrecognized parameters before any authenticated data service invocation; valid private CSV remains available. `tests/unit/chat13-super-admin-hiring-export-route.test.ts`. |

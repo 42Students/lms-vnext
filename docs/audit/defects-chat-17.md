@@ -141,3 +141,19 @@ All newly authored tests remain pending cloud execution; migration retains the p
 | PROJ-HARNESS-RECRUITER-24 | S1 (fixture atomicity) | A failed grant INSERT could leave the newly created recruiter user/profile behind if an integration test catches the error and continues inside its outer transaction. | Profile + grant setup now uses one SAVEPOINT, with a forced-grant-failure real DB regression and successful retry. | Authored; final PG gate pending |
 
 | PROJ-HARNESS-RECRUITER-25/26 | S1 (recruiter grant lifecycle) | HR fixture previously lacked registered-database witnesses for uniqueness, revoke/reissue lifecycle, capability whitelist, verification states and grant validity ordering. | Added real PG negative and positive grant lifecycle/constraint tests with SAVEPOINT recovery. | Authored; deferred final PostgreSQL gate |
+
+| PROJ-HARNESS-PLACEMENTS-25 | S1 (fixture impossible CHECK) | Canonical fixture inserted an ACTIVE placement season from 2099-10-01 to 2099-06-30, violating the date order CHECK and preventing every placement integration test from reaching assertions. | Set start to 2098-10-01, keep 2099-06-30 end and deadline inside season; PG case 25 verifies valid ordering. | Authored; final PostgreSQL gate pending |
+
+| PROJ-HARNESS-PLACEMENTS-26 | S1 (fixture partial writes) | Application, screening and staged results were created before an offer insert without a nested rollback boundary, leaving a partial candidate if the caller swallowed a late failure. | `createPlacementCandidateFixture` wraps the complete write chain in `savepoint`; PostgreSQL witness forces failed offer insert, checks rollback and retries. | Authored; deferred PostgreSQL gate |
+
+| PROJ-HARNESS-PLACEMENTS-27 | S1 (late graph write integrity) | Company, relationship, season, job and primary role were inserted before the round without rollback ownership; a late round failure could leave partial fixture residue in a continued test. | Wrap all persisted drive graph writes in savepoint, exercise forced late failure and count-equivalent rollback, then successful retry. | Authored; deferred PostgreSQL gate |
+
+| PROJ-HARNESS-PROJECT-28 | S1 (partial workspace fixtures) | Creating a Project failed late on learner roster INSERT but left template, workspace, task and member partial graph in the outer transaction when a caller caught the error. | Wrap all graph INSERTs in a SAVEPOINT, inject late roster failure, verify counts unchanged, retry. | Authored; PostgreSQL gate deferred |
+
+| UX-kit-E2E-10 | S2 (scroll cue correctness) | Only the first child of a scroll viewport was observed, so secondary child CSS resize could change overflow without updating fades or accessible region semantics. | Observe all direct children on mount/mutations; real browser test grows/shrinks only the second direct child. | Authored; browser CI deferred |
+
+| UX-kit-E2E-11 | S2 (toast accessibility) | ToastProvider could silently auto-dismiss success/info notifications entirely while a user worked in another tab. | Visibility-aware timer scheduling pauses while hidden, resumes on return and cleans evicted duration metadata; real browser test added. | Authored; browser CI deferred |
+
+| PROJ-HARNESS-TENANT-29 | S1 (partial tenant fixture) | Organization INSERT succeeded before college INSERT; a caught college error left an orphan organization inside the outer fixture transaction. | Wrap tenant graph in SAVEPOINT, inject college failure, assert unchanged organization count and successful retry. | Authored; deferred PostgreSQL gate |
+
+| PROJ-HARNESS-PRINCIPAL-30 | S1 (partial role fixture) | Catching a second membership role INSERT error could leave a user with only the first role and an incomplete college membership in a continuing PostgreSQL test. | Nested SAVEPOINT around entire principal graph; forced second-role failure checks no residue and successful retry. | Authored; final PostgreSQL gate deferred |

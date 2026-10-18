@@ -10,17 +10,18 @@ import {
 } from "@/modules/courses/faculty-ist-month-model";
 import { getFacultyIstMonth } from "@/modules/courses/faculty-ist-month-service";
 
-type Params={month?:string|string[];deliveryId?:string|string[]};
-const first=(raw:string|string[]|undefined)=>Array.isArray(raw)?raw[0]:raw;
+type Params=Record<string,string|string[]|undefined>;
 
 export default async function FacultyCalendarPage({
   searchParams,
 }:{searchParams:Promise<Params>}) {
   const raw=await searchParams;
-  const input=facultyMonthQuerySchema.safeParse({
-    month:first(raw.month)??currentIstMonth(new Date()),
-    deliveryId:first(raw.deliveryId)||undefined,
-  });
+  const accepted=Object.keys(raw).every(key=>key==="month"||key==="deliveryId")&&
+    Object.values(raw).every(value=>!Array.isArray(value));
+  const input=facultyMonthQuerySchema.safeParse(accepted?{
+    month:raw.month??currentIstMonth(new Date()),
+    deliveryId:raw.deliveryId||undefined,
+  }:{invalid:true});
   if(!input.success)return <section role="alert" className="space-y-3">
     <h1 className="text-lg font-semibold">Invalid month or Section filter</h1>
     <Link href="/teacher/calendar" className="font-semibold text-[var(--lms-teal-deep)] underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">

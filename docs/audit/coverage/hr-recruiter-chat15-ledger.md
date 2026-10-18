@@ -153,3 +153,15 @@ Tests were authored only, not executed. No CI run was requested; HR release cert
 
 
 | `/api/placements/recruiter/drives/[jobId]/rounds` POST | `tests/unit/HR-BREAK-chat15-round-api-73.test.ts` (HR-ROUND-API-73) | Actual form handler denies cross-origin before actor/DB; strict round create/edit/remove payload and optimistic token parsing; own create 303 target; stale/used round 409; foreign ID non-enumerating 404 | Live HR form POST and PostgreSQL sequential/concurrent author checks |
+
+
+## HR-first continuation — October 19, 2026 (coverage authored, CI deferred)
+
+| Exact exported function | Behavioral tests | Account/state matrix proven by authored assertions | Outstanding validation |
+|---|---|---|---|
+| `buildHrOfferCsv` | `tests/unit/HR-BREAK-chat15-offer-export-74.test.ts` | Corrupt persisted issued/expiry Date cannot throw; NaN/Infinity/fractional export totals cannot print invalid omitted counts; formula escaping, masked contact and cap retained | Disposable PostgreSQL export-200/201 consistency and CSV import in common viewers |
+| `projectHrTodayResultsDue` | `tests/unit/HR-BREAK-chat15-calendar-state-75.test.ts` | Keeps SCHEDULED and COMPLETED result reminders for authorized jobs; no canceled, pending, draft, foreign college/job or malformed date; stable sort | Live calendar staleness on round reschedule and multi-college selection |
+| `hrRecruiterNameFieldsSchema`, `joinHrRecruiterName`, `splitHrRecruiterName`, `sameHrNameVersion` | `tests/unit/HR-BREAK-chat15-profile-name-76.test.ts` | Embedded CR/LF/control rejected, Unicode allowed, unknown fields fail, normalized names and offset-aware optimistic stale version | Browser edit/cancel/retry and PostgreSQL name CAS |
+| `requireProjectLifecycleMutationAccess` (HR-restricted Projects entry) | `tests/unit/PROJ-BREAK-HR-77.test.ts` | HR-only, TPO, learner, faculty, disabled/suspended/revoked mentor never query private project or module settings; authorized mentor still honors feature-disabled gate | IIT Dharwad real-tenant role journey, 2-session concurrency and separate lane reviewer |
+
+No suites were executed or disabled. The HR-first continuation remains open for full per-export, per-route, PostgreSQL and page-level certification.
