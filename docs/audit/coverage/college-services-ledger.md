@@ -196,3 +196,6 @@ No claim of green cloud CI is made. Test-file TypeScript verification, isolated 
 
 
 | `getAcademicsWorkspace`, `mapAcademicWorkspaceInBatches` | `tests/unit/chat4-college-academics-workspace-fanout.test.ts` | Real orchestration through mocked scoped academics services; retains program/cohort/section ordering and period labels, propagates caller context, unknown period explicitly shown; fanout helper tested on 25 items (maximum eight in flight), invalid concurrency and DB rejection. PostgreSQL 10k learner/20 college load test pending |
+
+
+| `parseTenantLifecycleSearchParams`, `tenantLifecycleHref`, `tenantLifecyclePaging` | `tests/unit/chat4-superadmin-tenant-directory-query.test.ts` | Real strict query parser rejects repeated/array/unknown filters and overlong search; preserves selected organization/status and bounded page sizes; `/admin/tenants` validates before data access with recovery UI |
