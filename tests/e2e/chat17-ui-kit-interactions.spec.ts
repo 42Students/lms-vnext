@@ -75,6 +75,16 @@ test.describe("UX-kit-E2E-01 real browser shared UI states",()=>{
     });
     await expect(page.getByTestId("file-status")).toContainText("Selected: valid.pdf");
 
+    await page.getByRole("button",{name:"Disable file selection"}).click();
+    await expect(upload).toBeDisabled();
+    await expect(page.getByTestId("file-status")).toContainText("No file selected");
+    await page.getByRole("button",{name:"Enable file selection"}).click();
+    await expect(upload).toBeEnabled();
+    await upload.setInputFiles({
+      name:"second.pdf",mimeType:"application/pdf",buffer:Buffer.from("%PDF-1.7 second"),
+    });
+    await expect(page.getByTestId("file-status")).toContainText("Selected: second.pdf");
+
     await page.evaluate(() => {
       Object.defineProperty(window.crypto,"randomUUID",{configurable:true,value:undefined});
     });
