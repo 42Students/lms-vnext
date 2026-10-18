@@ -9,6 +9,8 @@ import type {RequestContext} from "@/modules/identity/context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy";
 import {requirePlacementManageScope} from "./scope";
+import {requirePersistedTpoMembership} from "./tpo-persisted-actor-service";
+import {requireTpoJobActor} from "./tpo-job-write-base";
 import {placementTableExists} from "./staged-tables";
 const uuid=z.string().uuid();
 const inputSchema=z.strictObject({
@@ -24,6 +26,7 @@ async function requireTpo(ctx:RequestContext){
   throw new AuthorizationError("placements.manage");
  if(!can(ctx,"placements.manage",{collegeId:m.collegeId}))throw new AuthorizationError("placements.manage");
  requirePermission(ctx,"placements.manage",{collegeId:m.collegeId});
+ await requirePersistedTpoMembership(ctx,m.collegeId);
  return requirePlacementManageScope(ctx,m.collegeId);
 }
 async function hasPrepTable(){
@@ -45,6 +48,8 @@ export async function assignTpoPrepCourse(ctx:RequestContext,raw:unknown){
  const due=new Date(input.dueAt);
  if(due.getTime()<=Date.now())throw new TpoPrepError("DUE_DATE_INVALID");
  return getDb().transaction(async tx=>{
+  // Persisted team permission is locked throughout assignment, audit and notices.
+  await requireTpoJobActor(tx,ctx);
   const [lock]=await tx.select({id:colleges.id}).from(colleges)
    .where(eq(colleges.id,college.id)).for("update").limit(1);
   if(!lock)throw new TpoPrepError("INVALID_SELECTION");
