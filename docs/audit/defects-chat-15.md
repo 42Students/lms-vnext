@@ -209,3 +209,6 @@ Tests authored only, not executed, per owner directive.
 
 
 | HR-DRIVES-CSV-120 | S3 export resilience | Recruiter drive CSV attempted to format a corrupted persisted deadline without checking validity, causing an entire otherwise authorized export to fail. It now renders a truthful unavailable placeholder for corrupt dates while preserving an intentionally absent deadline as empty. | `HR-BREAK-chat15-drive-csv-120.test.ts` | Real database/browser spreadsheet viewer test pending |
+
+
+| HR-DRIVE-REQUEST-121 | S2 tenant query ambiguity | The employer request history GET accepted repeated `collegeId` values and unknown query fields by silently taking the first value, allowing ambiguous/stale tabs to resolve without explicit intent. It now rejects duplicate and unknown keys before invoking the caller or reading company requests. | `HR-BREAK-chat15-request-api-71.test.ts` (new HR-DRIVE-REQUEST-121 case) | Real HTTP plus two-college role/session matrix pending |
