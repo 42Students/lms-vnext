@@ -72,6 +72,8 @@ Test references: **BEHAVIOR** = direct function assertions; **SOURCE** = source 
 
 | `validation.ts` | `createProjectTemplateInputSchema`, `reviseProjectTemplateInputSchema`, `duplicateProjectTemplateInputSchema`, `publishableProjectTemplateBlueprintSchema` | BEHAVIOR | PROJ-BREAK-templates-40/41/42/43/44: connected blueprint keys, rejection of missing parents/duplicate orders, incomplete draft vs publishable graph, forged status/scope, unsafe URL and stale version shapes. `tests/unit/PROJ-BREAK-chat9-template-validation.test.ts`. Live DB publication transaction OPEN. |
 
+| `template-global-actions-model.ts` / `project-template-controls.tsx` | `projectTemplateGlobalActions` and terminal lifecycle actions | BEHAVIOR + SOURCE WIRING | PROJ-BREAK-state-28/29/30: archived templates no longer offer unsupported state changes, draft/published actions preserve normal lifecycle, unknown states fail closed. `tests/unit/PROJ-BREAK-chat9-template-action-states.test.ts`; live browser confirmation OPEN. |
+
 ## Route/page tests and independent audit
 
 The 37 routes in `docs/orchestrator/ui-ux/pages-admin.md` positions 75–111 have named **source-level** tests across `tests/unit/ux-admin-chat9-batch-01..04.test.ts`; `tests/unit/ux-admin-chat9-coverage-closure.test.ts` verifies mapping. These do not constitute keyboard, screen reader, phone, navigation or role journey tests. Significant audited UX surfaces: `/admin/projects`, `/admin/projects/[projectId]`, `/admin/projects/templates/[templateId]/*`, `/admin/projects/submissions`, `/admin/settings` and TPO recovery. Unit-failure repairs are captured in `docs/audit/defects-chat-9.md`.
