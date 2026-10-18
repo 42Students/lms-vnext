@@ -283,3 +283,10 @@ The branch was reconciled with the then-current `origin/main` using a two-parent
 - `PLACEMENTS-OFFERS-FILTER-06`: blank, whitespace-only, `null` and `undefined` package bounds now mean unbounded; explicit zero remains a valid bound; malformed/out-of-range values reject. Tested in `tests/unit/chat5-tpo-second-third-behavior.test.ts` against parsed filters and projected offer lists.
 - `PLACEMENTS-EXPIRY-SM-04`: `tests/integration/placements-p8-offers.test.ts` now verifies invalid reference clocks and unsafe batch limits reject before any expiration history can be written. The actual concurrent worker-vs-learner response race still requires dedicated DB tests.
 - No local tests, TypeScript compiler, PostgreSQL or browser were executed. Newly written integration assertions are pending the next cloud CI run.
+
+
+### PostgreSQL race coverage authored in this branch
+
+- `PLACEMENTS-EXPIRY-RACE-05`: `tests/integration/placements-p8-offers.test.ts` races the expiry sweep with a learner ACCEPT submitted immediately before the same deadline. It checks one persisted terminal outcome (ACCEPTED or EXPIRED), exactly one corresponding status-history transition, and the sweep's row-lock/skip-locked result. **Cloud execution pending**.
+- `PLACEMENTS-WAIT-RACE-06`: the same integration suite concurrently submits the identical rank-1 HOLD promotion. It checks a single reservation, a single active official offer, matching offer linkage, and one audit event per distinct reservation/reconciliation category. A stale-preview rejection by one racing call is permitted; two offers are not. **Cloud execution pending**.
+- These tests strengthen the previous source-only release evidence but do **not** close the crash-atomicity gap between reservation, issuance, and settlement, or the full role/tenant matrix across all Placements services.
