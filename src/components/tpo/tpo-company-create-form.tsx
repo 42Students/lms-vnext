@@ -63,7 +63,7 @@ export function TpoCompanyCreateForm() {
     <>
       <button
         type="button"
-        className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary"
+        className="inline-flex min-h-11 items-center rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary"
         onClick={() => { setOpen(true); setReviewing(false); setError(""); }}
       >
         Add company
@@ -84,7 +84,7 @@ export function TpoCompanyCreateForm() {
             <label className="block text-sm font-semibold text-foreground">
               Company name
               <input required minLength={2} maxLength={200}
-                className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3"
+                className="mt-1 min-h-11 w-full rounded-[9px] border border-border bg-surface px-3"
                 value={form.name} disabled={pending}
                 onChange={(event) => {setReviewing(false);setForm((v) => ({ ...v, name: event.target.value }));}}/>
             </label>
@@ -92,14 +92,14 @@ export function TpoCompanyCreateForm() {
               Website URL (optional)
               <input type="url" maxLength={500}
                 placeholder="https://company.example"
-                className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3"
+                className="mt-1 min-h-11 w-full rounded-[9px] border border-border bg-surface px-3"
                 value={form.websiteUrl} disabled={pending}
                 onChange={(event) => {setReviewing(false);setForm((v) => ({ ...v, websiteUrl: event.target.value }));}}/>
             </label>
             <label className="block text-sm font-semibold text-foreground">
               Primary domain (optional)
               <input maxLength={255} placeholder="company.example"
-                className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3"
+                className="mt-1 min-h-11 w-full rounded-[9px] border border-border bg-surface px-3"
                 value={form.primaryDomain} disabled={pending}
                 onChange={(event) => {setReviewing(false);setForm((v) => ({ ...v, primaryDomain: event.target.value }));}}/>
             </label>
@@ -110,7 +110,7 @@ export function TpoCompanyCreateForm() {
             </p>:null}
             {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
             <button type="submit" disabled={pending}
-              className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+              className="min-h-11 rounded-[9px] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
               {pending ? "Saving relationship…" : reviewing ? "Confirm company creation" : "Review and create company"}
             </button>
           </form>

@@ -57,7 +57,7 @@ export function TpoCompanyTeamComposer({companyId,actorUserId}:{
   {error?<p role="alert" className="text-sm text-danger">{error}</p>:null}
   <p className="text-xs text-muted-foreground">Only active placement-team members in this college can read and reply.</p>
   <button type="submit" disabled={busy||!body.trim()}
-   className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+   className="min-h-11 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">
    {busy?"Sending…":"Send"}
   </button>
  </form>;
