@@ -12,7 +12,7 @@ const file=ts.createSourceFile("use-overlay-webview.ts",source,ts.ScriptTarget.L
 const matcher=file.statements.find(node=>ts.isFunctionDeclaration(node) &&
   node.name?.text==="ownsOverlayHistoryEntry");
 if(!matcher)throw new Error("Production marker matcher unavailable");
-const matcherJs=ts.transpileModule(matcher.getText(file),{
+const matcherJs=ts.transpileModule(matcher.getText(file).replace(/^export\\s+/,""),{
   compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.None},
 }).outputText.replace(/^export\s+/,"");
 
