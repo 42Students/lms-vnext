@@ -2,6 +2,7 @@ import {describe,it,expect} from "vitest";
 import {readFileSync} from "node:fs";
 import {SUPER_ADMIN_SCOPED_CSV_CAP,buildSuperAdminScopedCsv,
  parseSuperAdminScopedCsvParams,scopedCsvStatusAllowed} from "@/modules/admin-ui/super-admin-scoped-csv-model";
+import {readAdminQuery,superAdminReadHref} from "@/modules/admin-ui/super-admin-read-directory-model";
 import {hiringCompanyRollups,superAdminHiringReportQuery}
  from "@/modules/admin-ui/super-admin-hiring-report-model";
 const src=(p:string)=>readFileSync(p,"utf8");
@@ -60,4 +61,17 @@ describe("Chat-6 /admin second-third adversarial scoped directories and exports"
   expect(retention).toContain("eq(collegeMemberships.collegeId,selected.collegeId)");
   expect(retention).toContain(".limit(201)");
  });
+ it("SA-admin-channel-01 validates and retains external channel filtering across page navigation",()=>{
+  const parsed=readAdminQuery({channel:"EXTERNAL",source:"INTERNAL",page:"2"});
+  expect(parsed.success).toBe(true);
+  if(!parsed.success)return;
+  expect(parsed.data.channel).toBe("EXTERNAL");
+  expect(parsed.data.source).toBe("INTERNAL");
+  const next=superAdminReadHref("/admin/placements/applications",parsed.data);
+  expect(next).toContain("channel=EXTERNAL");
+  expect(next).toContain("source=INTERNAL");
+  expect((next.match(/source=INTERNAL/g)??[])).toHaveLength(1);
+  expect(readAdminQuery({channel:"BOGUS"}).success).toBe(false);
+ });
+
 });
