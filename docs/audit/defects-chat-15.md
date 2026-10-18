@@ -140,3 +140,11 @@ Additional **coverage without an independently established defect**: `HR-BREAK-c
 
 
 | HR-OFFERS-86 | S2 funnel correctness | HR Hired applicant-stage query trusted a JOINED outcome alone, even when its offer had subsequently been DECLINED, REVOKED, or WITHDRAWN. It now requires both the persisted ACCEPTED offer and JOINED outcome, consistent with offer overview counts. | `HR-BREAK-chat15-hired-offer-86.test.ts` | PostgreSQL history and CI not executed |
+
+
+## Late HR applicant funnel and export follow-up
+
+| Gap | Severity | Impact and safeguard | Regression | Verification |
+|---|---|---|---|---|
+| HR-APPLICANTS-87 | S2 reporting/privacy | A withdrawn applicant with historical PASS, OFFERED, HIRED or FAIL markers could still appear in corresponding active recruiter funnel counts and filtered applicant pages. SQL filters, aggregate counts and the pure projection now require SUBMITTED for active milestones; ALL/WITHDRAWN history remains available. | `HR-BREAK-chat15-withdrawn-stages-87.test.ts` | Actual PostgreSQL withdrawn/offer history, cloud tests and authenticated page pending |
+| HR-OFFER-EXPORT-88 | S2 employer accuracy | Issued-offer CSV route accepted pre-issue selection ledger statuses and could return a misleading empty export with unrelated offer totals. It now refuses such state with 400 before any applicant read, and the offer page no longer advertises the incompatible export action for selection-only filters. | `HR-BREAK-chat15-offer-export-route-88.test.ts` | Cloud tests, browser visibility and selection/offer E2E pending |
