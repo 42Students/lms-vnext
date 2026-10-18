@@ -13,12 +13,12 @@ export default async function TpoWaitlistPage({params}:{params:Promise<{jobId:st
  const {jobId}=await params;let data:Awaited<ReturnType<typeof getTpoWaitlistPreview>>;
  try{data=await getTpoWaitlistPreview(context,jobId);}
  catch(e){if(e instanceof PlacementsServiceError&&e.code==="PLACEMENT_JOB_NOT_FOUND")notFound();throw e;}
- return <div className="space-y-5">
+ return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="TPO · Offers" title={data.job.title+" · Waitlist"} description="Review ranked applied waitlist results and release the next available offer seat exactly once."/>
   <div className="flex gap-4 text-sm"><Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/offers"}
-   className="font-semibold text-primary-text underline">Offer register</Link>
+   className="font-semibold text-[var(--lms-teal-deep)] underline">Offer register</Link>
    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds"}
-    className="font-semibold text-primary-text underline">Round results</Link></div>
+    className="font-semibold text-[var(--lms-teal-deep)] underline">Round results</Link></div>
   <TpoWaitlistPromotionControl jobId={jobId} preview={data}/>
  </div>;
 }

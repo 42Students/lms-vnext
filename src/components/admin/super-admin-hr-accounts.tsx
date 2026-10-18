@@ -808,7 +808,7 @@ export function SuperAdminHrAccounts({
                 ))}
               </div>
               <div className="hidden min-w-0 lg:block">
-                <DataTable rows={list.items} columns={columns} getRowKey={(account) => account.userId} />
+                <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>} rows={list.items} columns={columns} getRowKey={(account) => account.userId} />
               </div>
             </>
           )}

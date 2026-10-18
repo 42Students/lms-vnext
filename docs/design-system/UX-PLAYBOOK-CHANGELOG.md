@@ -215,3 +215,36 @@ UX_BASE_URL=http://localhost:3000 \
 ```
 
 Both commands **fail closed** if the fixture states or account evidence do not actually exist. Neither command has been executed in this GitHub-only authoring lane; screenshot hashes, screen-reader results and UX audit approval remain **OPEN-EVIDENCE**.
+
+## 2026-10-18 — UX Audit 2 re-verification source closure (chat-17)
+
+**Re-verification input:** [UX-AUDIT-2.md](audits/UX-AUDIT-2.md) §Re-verification. **Owner source sign-off policy:** only remaining BLOCKER or MAJOR *source defects* block source sign-off. Device, screenshot, AT and hosted runtime checks are orchestrator Audit 3 obligations and intentionally have not been manufactured.
+
+| Finding | Cross-reference | Committed repair |
+|---|---|---|
+| **RV-01** | C-02 / A2-12 | Visible phone roster actions; required caller-owned DataTable.empty; source assertions aligned |
+| **RV-02** | A2-14 | Persistent error stack survives >5 errors; timed notification evictions cancel stale timers |
+| **RV-03** | C-08 / A-03 | Disable/unavailable transitions clear input and parent FileList via onFiles(null) |
+| **RV-04** | C-05 / A2-02 | Owned history marker generation, no counter; real browser History API + ownership tests |
+| **RV-05** | B-02 | Per-column mobileDetail fieldKey/href/canView required for mobile-hidden recovery, else disclosure |
+| **RV-06** | F-02 | Whole git-tracked UI AST source guard; computed targets; expiring baseline SHA waivers |
+| **D-02** | Accessibility | FormField enforces aria field associations at rendered child |
+| **D-04** | Accessibility | Route/query announcements preserve form focus while reporting pagination |
+| **E-05** | Performance | Single responsive DataTable row tree with 100-row source fixture |
+
+**Implementation locations:** `src/components/tpo/tpo-students-spreadsheet.tsx`, `src/components/ui/{data-table,toast,file-upload,use-overlay-webview,form-field}.tsx`, `src/components/shell/route-announcer.tsx`, `scripts/check-ux-anti-drift.mjs`, `scripts/ux-guard-rules.mjs`, `docs/design-system/UX-GUARD-WAIVERS.json`, and their focused tests. `DataTable.empty` is required at every authored call site with the page's existing legacy copy, not a universal generated message.
+
+**Regression tests authored:** `tests/ux-audit2-source.test.mjs`, `tests/ux-guard-scanner.test.mjs`, `tests/unit/ux-audit2-toast-overflow.test.ts`, `tests/unit/ux-audit2-file-upload-transitions.test.ts`, `tests/unit/ux-audit2-overlay-history.test.ts`, `tests/e2e/ux-overlay-history-ownership.spec.ts`, `tests/ux-playbook-primitives.test.tsx`, and `tests/ux-playbook-compatibility.test.tsx`. The `ux:audit:unit` and `ux:audit:source` scripts include the new suites.
+
+**Run/evidence status:** These changes were authored through the GitHub connector, not through a local checkout. No passing typecheck, lint, Vitest or Playwright exit codes are claimed here. Actual browser/host/AT/screenshot evidence remains Audit 3 work. An independent auditor, not this ledger, grants source sign-off.
+
+## 2026-10-18 — Audit 2 Re-verification 2 remaining MAJOR source fixes (chat-17)
+
+**Source basis:** independent auditor `chatgpt/chat-19-b` §Re-verification 2 on `UX-AUDIT-2.md`. The main-branch report snapshot had not yet incorporated that section when this repair began. This pass addresses the two current MAJOR defects only; real device/AT/screenshot evidence remains Audit 3.
+
+| Finding | Severity | Exact committed correction | Regression evidence authored |
+|---|---|---|---|
+| **R2-01 / E-03** | MAJOR | `tests/ux-audit2-source.test.mjs` now asserts `ownsOverlayHistoryEntry`, `lms-overlay` marker generation, nested destination ownership, no removed global counter and stable hook dependencies. It retains checks against the actual overlay unit and browser History API tests. | Source test covers marker identity/ownership and explicitly forbids `consumeOverlayCleanupPop` / `queueOverlayCleanupPop`. |
+| **R2-02 / A2-14 / RV-02** | MAJOR | `ToastStack` uses a keyboard-focusable, scrollable, viewport-bounded notification region respecting `visualViewport.height`, `offsetTop` and top/bottom safe areas. Errors remain indefinitely until their own named dismiss button is activated, while informational toasts retain the prior timed cap. | `tests/unit/ux-audit2-toast-overflow.test.ts` renders 8 error alerts at 320×568 plus 10 with a compressed 320px visual viewport and verifies each distinct close control; the mandatory Audit 2 source suite checks viewport/scroll/focus contracts. |
+
+The source gate remains `npm run ux:audit:source` and the full gate remains `npm run ux:audit:verify`. No CI or npm exit code is claimed unless executed by a runner. This is source remediation for independent sign-off, **not** a claim that the tests or Audit 3 have passed.

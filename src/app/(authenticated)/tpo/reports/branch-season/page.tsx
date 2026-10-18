@@ -26,7 +26,7 @@ export default async function TpoBranchSeasonPage({
     <div data-tpo-presentation-report className="space-y-6">
       <TpoReportPresentation />
       <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/branch-season" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
-      <Link href="/tpo/reports/by-branch" className="text-sm font-semibold text-primary-text hover:underline">
+      <Link href="/tpo/reports/by-branch" className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
         ← By Branch report
       </Link>
       <PageHeader
@@ -37,7 +37,7 @@ export default async function TpoBranchSeasonPage({
           <a
             href={"/api/placements/tpo/reports/branch-season/export?seasonId=" +
               encodeURIComponent(dashboard.season.id)}
-            className="inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary"
+            className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary"
           >
             Export season CSV
           </a>
@@ -50,7 +50,7 @@ export default async function TpoBranchSeasonPage({
             <select
               name="seasonId"
               defaultValue={dashboard.season?.id ?? ""}
-              className="mt-2 block min-h-10 rounded-md border border-border bg-surface p-2 text-sm font-normal"
+              className="mt-2 block min-h-11 rounded-md border border-border bg-surface p-2 text-sm font-normal"
             >
               {dashboard.seasons.map((season) => (
                 <option key={season.id} value={season.id}>
@@ -61,7 +61,7 @@ export default async function TpoBranchSeasonPage({
           </label>
           <button
             type="submit"
-            className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold text-foreground"
+            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-foreground"
           >
             View season
           </button>

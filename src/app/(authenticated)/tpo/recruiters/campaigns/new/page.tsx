@@ -19,17 +19,17 @@ export default async function NewTpoCampaignPage({searchParams}:{searchParams:Pr
    validIds.length!==candidateIds.length||selectedLeadIds.length===0));
  const ctx=await getCurrentRequestContext();
  if(!ctx.membership||!hasMembershipRole(ctx,"TPO"))redirect("/dashboard");
- if(unsafeSelection)return <main className="space-y-4">
+ if(unsafeSelection)return <div className="min-w-0 space-y-4">
   <PageHeader eyebrow="Engage · Campaigns" title="Review recipients"/>
   <p role="alert">Some selected recruiters could not be identified. No campaign draft was created. Return to Engage and select up to 100 recruiters again.</p>
-  <Link href="/tpo/recruiters" className="text-primary-text underline">Return to Engage</Link>
- </main>;
+  <Link href="/tpo/recruiters" className="text-[var(--lms-teal-deep)] underline">Return to Engage</Link>
+ </div>;
  const ready=await tpoCampaignDraftStorageReady();
  const deliveryReady=ready&&await tpoCampaignDispatchReady();
  return <main className="space-y-5">
   <PageHeader eyebrow="Engage · Campaigns" title="New email campaign"
    description="Reach recruiter leads in your college with a saved and auditable audience snapshot."/>
-  <Link href="/tpo/recruiters/campaigns" className="text-sm text-primary-text underline">← Campaign history</Link>
+  <Link href="/tpo/recruiters/campaigns" className="text-sm text-[var(--lms-teal-deep)] underline">← Campaign history</Link>
   {ready?<TpoCampaignCompose deliveryReady={deliveryReady} selectedLeadIds={selectedLeadIds}/>:
    <p role="alert" className="rounded-lg border border-border bg-surface p-5 text-sm text-body">
     {CAMPAIGN_DRAFT_UNAVAILABLE}

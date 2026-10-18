@@ -160,7 +160,7 @@ export default async function CollegeGroupDetailPage({
         {members.length === 0 ? (
           <EmptyState title="No members yet" description="Nobody has joined this group." />
         ) : (
-          <DataTable
+          <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
             columns={[
               { key: "name", header: "Name", cell: (row) => row.displayName ?? "—" },
               { key: "type", header: "Role", cell: (row) => label(row.memberType) },
@@ -215,7 +215,7 @@ export default async function CollegeGroupDetailPage({
         {events.length === 0 ? (
           <EmptyState title="No activity yet" description="Membership changes appear here." />
         ) : (
-          <DataTable
+          <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
             columns={[
               { key: "when", header: "When", cell: (row) => when(row.createdAt) },
               { key: "who", header: "Member", cell: (row) => row.displayName ?? "—" },

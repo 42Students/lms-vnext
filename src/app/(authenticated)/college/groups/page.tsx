@@ -134,7 +134,7 @@ export default async function CollegeGroupsPage({
         />
       ) : (
         <>
-          <DataTable
+          <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
             columns={[
               {
                 key: "name",

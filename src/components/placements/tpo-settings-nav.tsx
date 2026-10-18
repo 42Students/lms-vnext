@@ -11,7 +11,7 @@ export const TPO_SETTINGS_NAV_GROUPS=[
  ]},
  {title:"People",items:[
   {id:"trusted",label:"Trusted domains",href:"/tpo/settings/trusted"},
-  {id:"recruiters",label:"Recruiter access",href:"/tpo/settings/recruiters"},
+  {id:"recruiters",label:"Recruiters",href:"/tpo/settings/recruiters"},
   {id:"team",label:"Placement Team",href:"/tpo/settings/team"},
   {id:"public-link",label:"Public recruiter link",href:"/tpo/settings/public-link"},
  ]},

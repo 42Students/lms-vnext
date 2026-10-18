@@ -1,5 +1,7 @@
 # LMS UX Playbook — v1.0 (lane chat-17)
 
+**STATUS: SIGNED OFF (2026-10-18, orchestrator) — source level.** Audit 1 (chat-18, 33 findings), Audit 2 (chat-19, 3 re-verification rounds, final: zero BLOCKER/MAJOR source defects) and typecheck+lint green on main. Device, screenshot and screen-reader evidence is gathered during the per-page rollout and by the cloud browser capture (Audit 3); findings from it amend this playbook through UX-PLAYBOOK-CHANGELOG.md. Per-page rollout is released: follow docs/orchestrator/briefs/ui-ux-excellence-lane.md.
+
 > **Single source of truth for authenticated and public LMS UI, including native-app WebViews.** Adopt after three audits. This does not change legacy wording, route structure, roles, permissions, or the palette. Source: `src/app/globals.css`, `docs/design-system/lms-color-parity.md`, `docs/parity/*`, and `docs/orchestrator/ui-ux/pages-*.md`. A component's legacy label always wins over example copy here.
 
 ## 1. Principles (do / do not)
@@ -109,7 +111,7 @@ This table is normative. Native inputs and Next.js links remain valid; prefer th
 | ConfirmDialog → `confirm-dialog.tsx`; `confirm-action-dialog.tsx` | title, consequence, confirm/cancel, pending | default focus cancel, pending no dismissal, destructive consequence, avoid browser `confirm()` |
 | Toast → `toast.tsx` | `ToastProvider/useToast().showToast({title,description?,tone})` | role=status polite success/info, alert error, 44px dismiss, 4500ms or user-dismiss, safe-area, never only success feedback for a lost draft |
 | Tabs → `tabs.tsx` | `items:{value,label,content?,disabled?,href?}[]`, `value`, `onValueChange?`, `ariaLabel`, `renderPanel?` | controlled `renderPanel=true` exposes selected underline + aria-selected, arrows/Home/End, focus 2px and disabled options; `renderPanel=false` uses same-tab `href` links + aria-current, not tabs or a no-op callback; overflow scroll on phone |
-| DataTable → `data-table.tsx` | `columns:{key,header,cell,className?,mobileLabel?,mobilePriority?}`, `rows/getRowKey/empty?` | table desktop, card rows phone with primary=first priority + first 3 secondaries + `More details` for remaining fields; caption, th scope, no field silently lost |
+| DataTable → `data-table.tsx` | `columns:{key,header,cell,className?,mobileLabel?,mobilePriority?}`, `rows/getRowKey/empty` (**empty required**, caller legacy copy) | one responsive row DOM: desktop table and phone cards, primary + 3 secondary + More details; hidden only with explicit per-column authorized mapping; caption, th scope |
 | Card → `card.tsx` | semantic `as=div/section/article`, `title?`, `description?`, `footer?`, children | static surface no hover-only controls; state feedback through contents; 16/24px padding phone/desktop |
 | Badge/StatusBadge → `status-badge.tsx` | tone neutral/info/success/warning/error; children/className | explicit text + tone; no color-only, foreground high contrast; no focus if static, embed real link for action |
 | EmptyState → `empty-state.tsx` | title/description/action; optional decoration | meaningful reason and authorized action, never fabricated copy, single column |
@@ -484,7 +486,7 @@ Every entry supplies a concrete caller obligation **in addition to** §5 and §5
 | `confirm-action-dialog.tsx` | `<ConfirmActionDialog open={open} onCancel={close} onConfirm={confirm} title={title} consequence={detail}/>` | inherited legacy prop names work |
 | `toast.tsx` | `useToast().showToast({title:"Saved",tone:"success"})` in Provider | don't use toast as only validation; 44px dismiss |
 | `tabs.tsx` | panel: `<Tabs items={items} value={value} onValueChange={setValue} ariaLabel="Sections"/>`; route: `<Tabs renderPanel={false} items={links} value={value} ariaLabel="Sections"/>` | disabled links render `aria-disabled` text; panels without callback noninteractive |
-| `data-table.tsx` | `<DataTable rows={rows} columns={columns} getRowKey={r=>r.id} rowHref={r=>"/detail/"+r.id}/>` | specify primary, secondary, action priority; `hidden` needs explicit reason plus detail route; don't bury actions |
+| `data-table.tsx` | `<DataTable rows={rows} columns={columns} getRowKey={r=>r.id} rowHref={r=>"/detail/"+r.id} empty={<EmptyState title={legacyEmptyTitle} action={authorizedNextStep}/>} />` | specify primary, secondary, action priority; `hidden` needs explicit reason plus detail route; don't bury actions |
 | `card.tsx` | `<Card as="section" title={legacyTitle} footer={actions}>...</Card>` | no hover-only controls; semantic h2 follows h1 |
 | `status-badge.tsx` | `<StatusBadge tone="warning">Awaiting</StatusBadge>` | keep literal status text; don't rely on colour |
 | `empty-state.tsx` | `<EmptyState title={legacyEmpty} description={legacyHint} action={authorizedLink}/>` | never show if fetch failed; no invented copy |
@@ -727,3 +729,36 @@ Each `FilterBar` generates its own stable `useId()` so `aria-controls` targets t
 ### 19.10. Evidence gate
 
 The required same-commit gate is `npm run ux:audit:verify`, including Audit 2 source tests and the nested overlay unit test. Independently inspect the 33 original findings and 14 new items with actual developer/browser evidence. Record all eight states × four reference routes × 320/360/390/768/1280; 30 affected hydrated component call sites, 100-row DataTable rendering, keyboard/native host Back A+B and pending A+B, WKWebView/Android safe area/file-picker handling, 200% zoom, screen-reader announcements, theme/contrast snapshots, and owner-approved SHA256 image baselines. If any is unavailable, mark `OPEN-EVIDENCE`; never replace a missing observation with a passing source regex.
+
+## 20. Audit 2 re-verification source closure — chat-17
+
+**Owner sign-off policy (2026-10-18):** source-level sign-off requires **zero remaining BLOCKER or MAJOR source defects**. Physical-device, screenshots, VoiceOver/TalkBack and approved baseline outputs belong to orchestrator Audit 3. Do not mistake these independent evidence tasks for source defects or claim they were executed. This implementation index is a **candidate for independent source re-verification**, not the auditor's signed verdict.
+
+### 20.1. Per-ID re-verification repair ledger
+
+| Finding | Severity | Source-level fix |
+|---|---|---|
+| RV-01 / C-02 | BLOCKER | TPO roster now omits mobileActionsCollapsible and displays row actions directly; source tests require it. |
+| RV-01 / A2-12 | BLOCKER | DataTable.empty is required; no invented universal fallback; actual College/Contacts callers and unit fixtures pass role-copy prop. |
+| RV-02 / A2-14 | MAJOR | Sticky errors never enter timed-queue cap; timed evictions clear timers; five-error unit tests. |
+| RV-03 / C-08 / A-03 | MAJOR | FileUpload clears parent FileList and input value on unavailable/disabled transitions; re-enabled picker stays empty. |
+| RV-04 / C-05 / A2-02 | MAJOR | Generation-specific history marker; no pendingCleanupPops, StrictMode-safe effect, nested A/B ownership tests with browser history. |
+| RV-05 / B-02 | MAJOR | Only column.mobileDetail.fieldKey + href + canView grant mobile-detail recovery; otherwise More details exposes field. |
+| RV-06 / F-02 | MAJOR | All git-tracked src/app and src/components JS/TS files scanned; dynamic target/classes checked; exact baseline SHA waivers expire 2026-10-25. |
+| D-02 | SOURCE | FormField injects aria id/description/invalid onto direct input even without caller spread; first-error focus remains form action. |
+| D-04 | SOURCE | Route query updates announce pagination and leave active filter focus intact; route changes focus main only when no modal. |
+| E-05 | SOURCE | One responsive row tree rather than duplicate mobile and desktop full trees; 100-row serialization/unit count. |
+
+### 20.2. Normative shared-component behavior
+
+- **TPO roster:** `TpoStudentsSpreadsheet` no longer sets `mobileActionsCollapsible`; `TpoSpreadsheetGrid` renders primary row actions visibly. Deliberately collapsed *secondary data* remains accessible via More details.
+- **DataTable:** `empty` is **required** at compile-time and its caller owns exact legacy text and authorized recovery. The component never invents a fallback. A generic `rowHref` proves only navigation, **not field-level availability**. A column marked `mobilePriority="hidden"` stays in More details unless it includes `mobileHiddenReason` and explicit `mobileDetail={{fieldKey,href,canView}}`, valid internal route per row and affirmative authorization for every row. Never hide a field based on prefix-shaped URL alone. The responsive table uses **one row tree**, not two full server-rendered subtrees; extra collapsed fields may be repeated only inside the necessary mobile details disclosure.
+- **Toast:** persistent `tone="error"` entries do not auto-expire and are never dropped by incoming toasts. Only three timed nonerrors are kept, evicted timers are cleared, dismiss cancels its timer, provider cleanup cancels remaining timers.
+- **FileUpload:** selected FileList invalidates on pickerUnavailable or disabled transitions. The parent receives `onFiles(null)` and the file input value is reset before users can resubmit the old file. Re-enabling never resurrects it. Upload services must still validate server-side.
+- **Overlay Back:** each instance owns a unique `useId` + open generation `lmsOverlay` history marker; no module-wide pending-cleanup counter exists. Popstate for an already-owned destination marker never closes its parent; a real Back to a different marker/base affects only the topmost overlay. Explicit close, not an effect cleanup, issues a browser Back. Pending nondismissible state cannot teardown/recreate listeners. URL-owned recruiter drawer uses route mode.
+- **Full-tree guard:** `npm run ux:guard` enumerates every Git-tracked JS/TS file in `src/app` and `src/components`, parses JSX/native popup classes/targets including computed target values and basic dynamic class alternatives, and reports new unwaived violations. `docs/design-system/UX-GUARD-WAIVERS.json` pins immutable baseline commit, explicit rule IDs and **expiration date**; each historical allowance requires the same path, rule, exact normalized AST node snippet and occurrence count from that pinned source. No main-to-main diff shortcut and no wildcard/silent exclusions. A missing baseline is fetched by exact SHA in shallow CI or fails closed.
+- **Accessibility:** FormField associates label/helper/error IDs even when a direct child forgets to spread the render prop. RouteAnnouncer announces query/pagination transitions without stealing focus from an active filter.
+
+### 20.3. Verification and handoff
+
+Run `npm run ux:guard`, `npm run ux:audit:source`, `npm run ux:audit:unit`, `npm run typecheck` and `npm run lint` on the **same source SHA**. Run Playwright `tests/e2e/ux-overlay-history-ownership.spec.ts` for browser History API destination assertions. The device/AT/screenshot data is explicitly reserved for independent Audit 3. Do not imply these commands passed unless CI or a local runner reports their exit codes.

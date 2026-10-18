@@ -41,7 +41,7 @@ describe("UX-PLAYBOOK compatibility and accessibility",()=>{
   it("UX-PLAYBOOK-15 original DataTable props still work",()=>{
     const html=renderToStaticMarkup(<DataTable columns={[{key:"label",header:"Label",cell:(row:{id:string})=>row.id}]} rows={[{id:"A"}]} getRowKey={row=>row.id} empty={<p>No entries</p>}/>);
     expect(html).toContain("<table");
-    expect(html).toContain('role="list"');
+    expect(html).toContain('sm:table-row');
   });
   it("UX-PLAYBOOK-16 FormField pairs label, helper and error with ARIA",()=>{
     const html=renderToStaticMarkup(<FormField id="id" label="Name" helper="Example" error="Required">
@@ -51,6 +51,14 @@ describe("UX-PLAYBOOK compatibility and accessibility",()=>{
     expect(html).toContain('aria-invalid="true"');
     expect(html).toContain('id="id-error"');
     expect(html).toContain('for="id"');
+  });
+  it("D-02 FormField applies error and helper associations without caller spread",()=>{
+    const html=renderToStaticMarkup(<FormField id="mobile" label="Contact" helper="Public value" error="Check entry">
+      {()=><Input name="contact"/>}
+    </FormField>);
+    expect(html).toContain('id="mobile"');
+    expect(html).toContain('aria-invalid="true"');
+    expect(html).toContain('aria-describedby="mobile-hint mobile-error"');
   });
   it("UX-PLAYBOOK-17 disabled route-link tabs never render a prohibited destination",()=>{
     const html=renderToStaticMarkup(<Tabs ariaLabel="Project" value="overview" renderPanel={false}

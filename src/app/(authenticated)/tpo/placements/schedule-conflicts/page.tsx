@@ -30,12 +30,12 @@ export default async function TpoScheduleConflictsPage({
 
   if (!validated.success) {
     return (
-      <div className="space-y-4">
+      <div className="min-w-0 space-y-4">
         <PageHeader eyebrow="TPO · Drive scheduling"
           title="Invalid scheduling window"
           description="Only a window of 1–90 days is supported." />
         <Link href="/tpo/placements/schedule-conflicts"
-          className="text-sm font-semibold text-primary-text hover:underline">Reset window</Link>
+          className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">Reset window</Link>
       </div>
     );
   }
@@ -44,7 +44,7 @@ export default async function TpoScheduleConflictsPage({
   return (
     <div className="space-y-6">
       <Link href="/tpo/placements"
-        className="text-sm font-semibold text-primary-text hover:underline">
+        className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
         ← Placement operations
       </Link>
       <PageHeader
@@ -56,14 +56,14 @@ export default async function TpoScheduleConflictsPage({
         <label className="text-sm font-semibold text-foreground">
           Upcoming window
           <select name="days" defaultValue={String(data.days)}
-            className="mt-1 block min-h-10 rounded-md border border-border bg-surface px-3 text-sm font-normal">
+            className="mt-1 block min-h-11 rounded-md border border-border bg-surface px-3 text-sm font-normal">
             {[7, 14, 30, 60, 90].map((days) => (
               <option key={days} value={days}>{days} days</option>
             ))}
           </select>
         </label>
         <button type="submit"
-          className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+          className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
           Apply
         </button>
       </form>
@@ -110,7 +110,7 @@ export default async function TpoScheduleConflictsPage({
                 {[left, right].map((round) => (
                   <p key={round.id} className="text-sm text-body">
                     <Link href={"/tpo/drive-day/" + encodeURIComponent(round.id)}
-                      className="font-semibold text-primary-text hover:underline">
+                      className="font-semibold text-[var(--lms-teal-deep)] hover:underline">
                       {round.companyName} · {round.jobTitle} · {round.name}
                     </Link>
                     {" — "}{dateTime.format(round.scheduledAt)} IST
@@ -134,7 +134,7 @@ export default async function TpoScheduleConflictsPage({
             {data.unassessable.map((round) => (
               <li key={round.id} className="flex flex-wrap items-start justify-between gap-3 p-4 text-sm">
                 <Link href={"/tpo/drive-day/" + encodeURIComponent(round.id)}
-                  className="font-semibold text-primary-text hover:underline">
+                  className="font-semibold text-[var(--lms-teal-deep)] hover:underline">
                   {round.jobTitle} · {round.name}
                 </Link>
                 <span className="text-body">{round.reason}</span>

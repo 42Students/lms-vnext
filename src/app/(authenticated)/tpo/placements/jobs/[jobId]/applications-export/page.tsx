@@ -17,12 +17,12 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
  catch(error){if(error instanceof PlacementsServiceError&&error.code==="PLACEMENT_JOB_NOT_FOUND")notFound();throw error;}
  const query=new URLSearchParams({stage:result.stage,search:result.search,channel:result.channel,eligibility:result.eligibility,flag:result.flag,sort:result.sort,submittedWithin:result.submittedWithin}).toString();
  const stages=["ALL","SUBMITTED","PENDING","HOLD","SHORTLISTED","REJECTED","WITHDRAWN"] as const;
- return <div className="space-y-6">
-  <Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline?"+query} className="text-sm font-semibold text-primary-text hover:underline">← Applicants</Link>
+ return <div className="min-w-0 space-y-6">
+  <Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline?"+query} className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">← Applicants</Link>
   <PageHeader eyebrow="TPO · Export applicants" title={result.job.title+" · Applications"}
    description="Read-only college-scoped export preview without internal screening notes."
    actions={<a href={"/api/placements/tpo/jobs/"+jobId+"/applications/export?"+query} download
-    className="inline-flex min-h-10 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">
+    className="inline-flex min-h-11 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">
      Download all matching CSV</a>}/>
   <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
    <label className="min-w-40 flex-1 text-sm text-body">Stage
