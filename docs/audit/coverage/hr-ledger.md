@@ -619,3 +619,13 @@ The previously recorded 154-file inventory is not exhaustive behavioural certifi
 | HR/recruiter hiring grant without project membership | `PROJ-BREAK-HR-01` tests no college member, wrong tenant, suspended membership, revoked/inactive recruiter context, and lifecycle denial. | TEST AUTHORED; real database ownership and expired-session checks OPEN |
 
 No HR/Recruiter account obtains Projects access merely through employer/drive grants. Actual PostgreSQL member rows, role revocation and parallel session tests are still required for the IIT Dharwad acceptance gate.
+
+
+## HR interview-slot service adverse matrix (2026-10-18)
+
+| Gap or service behavior | Authored test | Verified in CI? | Remaining work |
+|---|---|---|---|
+| HR-SLOT-SCOPE-01/02 revoked recruiter, missing job, denied write role | `tests/unit/HR-BREAK-chat15-interview-slots-03.test.ts` mocked transaction rejects before slot access/side effects | No | Live cross-company and wrong college SQL fixtures |
+| HR-SLOT-VERSION-01/ACTOR-02 stale tab and wrong creator | Same test requires no update/no TPO notification | No | Parallel locked row races in PostgreSQL |
+| HR-SLOT-STATE-03/04 valid OFFER and capacity/terminal/past enforcement | Same test verifies exactly one TPO action, no writes on invalid stage | No | Real capacity with two simultaneous bookers, rollback behavior |
+| HR-SLOT-INPUT-01 strict tenant/action/version input | Same test requires rejection before transaction | No | HTTP 400/403/409 state and same-origin behavior on real requests |
