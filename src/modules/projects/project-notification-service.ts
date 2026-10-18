@@ -15,7 +15,7 @@ type ProjectNotice = {
 };
 
 export function projectNoticeHref(role: "LEARNER" | "MENTOR", projectId: string): string {
-  return (role === "MENTOR" ? "/mentor/projects/" : "/learn/projects/") + projectId;
+  return (role === "MENTOR" ? "/mentor/projects/" : "/learn/projects/") + encodeURIComponent(projectId);
 }
 
 /** Only the current project's active, same-college members are eligible.
@@ -24,6 +24,10 @@ export function projectNoticeHref(role: "LEARNER" | "MENTOR", projectId: string)
 export async function notifyActiveProjectMembers(
   tx: Writer, eventId: string, notice: ProjectNotice & { roles?: ("LEARNER" | "MENTOR")[] },
 ) {
+  // An explicitly empty role set means nobody, never an unfiltered broadcast.
+  if (notice.roles && notice.roles.length === 0) {
+    return { delivered: 0, skippedInactive: 0, skippedDuplicate: 0 };
+  }
   const rows = await tx.select({ userId: collegeMemberships.userId })
     .from(projectMembers)
     .innerJoin(collegeMemberships, eq(collegeMemberships.id, projectMembers.membershipId))

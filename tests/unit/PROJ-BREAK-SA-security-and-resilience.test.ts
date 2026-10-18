@@ -76,6 +76,30 @@ describe("Super Admin Projects adversarial controls", () => {
     expect(service).toContain('isNull(projectSubmissions.lockedAt)');
   });
 
+  it("PROJ-BREAK-SA-18 denies role revocation, identity suspension, mismatched scope and forged actor during delivery lock", () => {
+    const ctx=collegeAdmin();
+    ctx.membership={...ctx.membership!,collegeId:collegeB,organizationId:orgB};
+    expect(mayRecordCollegeAdminDeliveryLock(ctx,collegeB,orgB)).toBe(true);
+    const revoked={...ctx,membership:{...ctx.membership!,roles:["LEARNER"] as const}};
+    const suspended={...ctx,membership:{...ctx.membership!,status:"SUSPENDED" as const}};
+    const disabled={...ctx,user:{...ctx.user,platformStatus:"DISABLED" as const}};
+    for(const invalid of [revoked,suspended,disabled]){
+      expect(mayRecordCollegeAdminDeliveryLock(invalid,collegeB,orgB)).toBe(false);
+    }
+    const service=read("src/modules/projects/admin-submission-review-service.ts");
+    const txStart=service.indexOf("return getDb().transaction(async tx=>{");
+    const rowLock=service.indexOf('.for("update").limit(1)',txStart);
+    const persisted=service.indexOf('assertPersistedPlatformPermission(tx,ctx,"projects.manage"',txStart);
+    const validation=service.indexOf("mayRecordCollegeAdminDeliveryLock(persisted,scope.collegeId,scope.organizationId)",txStart);
+    const event=service.indexOf("tx.insert(projectDeliveryEvents)",txStart);
+    expect(txStart).toBeGreaterThanOrEqual(0);
+    expect(rowLock).toBeGreaterThan(txStart);
+    expect(persisted).toBeGreaterThan(rowLock);
+    expect(validation).toBeGreaterThan(persisted);
+    expect(event).toBeGreaterThan(validation);
+    expect(service).toContain("persisted.membership?.id!==actorMembershipId");
+  });
+
   it("PROJ-BREAK-SA-04 keeps same-origin enforcement on Super Admin delivery mutations", () => {
     const route = read("src/app/api/projects/[projectId]/submissions/[submissionId]/lock/route.ts");
     expect(route).toContain("isSameOriginRequest(request)");
