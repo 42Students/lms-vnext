@@ -27,7 +27,7 @@ export function TpoSequentialRequestReview({requests}:{requests:readonly Row[]})
    setPosition(n=>n+1);
   }
  }
- return <section aria-label="Review one by one" className="space-y-3 rounded-xl border border-border bg-surface p-4">
+ return <section aria-label="Review one by one" className="space-y-3 border-b border-border pb-6">
   <h2 className="font-semibold">Review one by one</h2>
   {!sequence.length?<button type="button" disabled={!requests.length} onClick={()=>{
    setSequence(requests.map(item=>item.id));setPosition(0);setDecided(0);setMessage("");

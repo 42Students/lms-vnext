@@ -108,7 +108,7 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
    setError("The request review did not finish. Check the decisions before retrying.");
   }
  }
- return <section aria-label="Bulk request decisions" className="space-y-3 rounded-xl border border-border bg-surface p-4">
+ return <section aria-label="Bulk request decisions" className="space-y-3 border-b border-border pb-6">
   <h2 className="font-semibold">Act on selected requests</h2>
   <p className="text-xs text-muted-foreground">Choose up to {MAX_BULK_REQUESTS} waiting requests of one kind on this page. Each decision is rechecked and saved separately; a failure never approves the next request.</p>
   <div tabIndex={0} role="group" aria-label="Waiting requests, scroll for more" className="max-h-64 min-h-0 space-y-1 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
