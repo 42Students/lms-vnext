@@ -7,13 +7,13 @@ export type StatusBadgeProps = {
   className?: string;
 };
 const toneClasses = {
-  neutral: "bg-muted text-foreground",
-  info: "bg-primary-subtle text-foreground",
-  success: "bg-[var(--lms-success-subtle)] text-foreground",
-  warning: "bg-[var(--lms-warning-subtle)] text-foreground",
-  error: "bg-[var(--lms-error-subtle)] text-foreground",
+  neutral: "bg-muted text-body",
+  info: "bg-primary-subtle text-primary-text",
+  success: "bg-[var(--lms-success-subtle)] text-success",
+  warning: "bg-[var(--lms-warning-subtle)] text-warning",
+  error: "bg-[var(--lms-error-subtle)] text-error",
 } as const;
 
 export function StatusBadge({ children, tone = "neutral", className }: StatusBadgeProps) {
-  return <span data-slot="status-badge" className={cx("inline-flex min-h-6 items-center rounded-full px-2.5 py-1 text-xs font-semibold leading-5", toneClasses[tone], className)}>{children}</span>;
+  return <span data-slot="status-badge" className={cx("inline-flex min-h-[22px] items-center rounded-full px-2 py-0.5 text-xs font-semibold leading-[18px]", toneClasses[tone], className)}>{children}</span>;
 }
