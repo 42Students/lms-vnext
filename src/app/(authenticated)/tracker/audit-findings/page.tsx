@@ -33,7 +33,7 @@ export default async function IndependentFindingsPage({searchParams}:{
  </div>;
  if(!independentAuditFindingsReady())return <div className="space-y-5">{header}
   <p role="status" className="rounded-xl border border-border bg-surface p-5">
-   Audit findings are unavailable until registered migration 0133 is verified and DB10_AUDIT_FINDINGS_READY=DB10_VERIFIED.
+   Audit findings are temporarily unavailable. Please contact your platform administrator to complete setup.
    Bug reports are not substituted for independent audit findings.
   </p></div>;
  const [data,sync]=await Promise.all([listIndependentAuditFindings(ctx,parsed),readIndependentFindingSyncState(ctx)]);
