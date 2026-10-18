@@ -651,3 +651,34 @@ The stale CI snapshot in `docs/orchestrator/unit-failures-latest.md` lists `chat
 |---|---|---|
 | HR-REQUEST-CANCEL-INTEGRITY-07 | `recruiterRequestUpdateSchema` rejects CANCEL with any draft (prevents historical terms overwrite) and requires validated draft on EDIT and RESUBMIT. `HR-BREAK-chat15-request-cancel-integrity-07.test.ts` checks all three paths, stale/foreign IDs and parse-before-transaction order | End-to-end HTTP 409/400, concurrent cancellation and request audit history in PostgreSQL |
 | HR-CALENDAR-SCOPE-08 | `HR-BREAK-chat15-calendar-08.test.ts` validates one-day 00:00 through 23:59 IST, foreign job and slot exclusion, calendar query 366-day bound, no SQL when no authorized jobs | Real PostgreSQL slot/round calendar role matrix, event/CSV equality, 320px and keyboard UX |
+
+
+## HR account service coverage continued — 2026-10-18 (CI pending)
+
+| Requirement | Authored test and real assertions | Remaining |
+|---|---|---|
+| HR-NOTIFY-SCOPE-09 | `HR-BREAK-chat15-notifications-09.test.ts`: inactive/revoked recruiter denied before DB; no grants yields NO_ACCESS; multi-college requires explicit choice; unauthorized subject and non-job notifications removed; invalid/foreign query blocked | PostgreSQL event/audience, notifications from concurrent employer changes and browser fetch |
+| HR-CONVERSATIONS-SCOPE-10 | `HR-BREAK-chat15-conversations-10.test.ts`: inactive account, foreign tenant, malformed query denied before messaging; multi-grant choice; foreign recruiter/college/unowned drive thread invisible; unread, general/drive, search and stable order | Real database unread update, concurrent replies and last-message race |
+| HR-APPLICANTS-EXPORT-11 | `HR-BREAK-chat15-applicant-export-11.test.ts`: formula injection and CRLF controls escaped; IST midnight; contacts, resume/skills/roll/branch excluded; 200 row cap with notice, withdrew vs submitted separation, bounded query and pagination | Direct HTTP download vs screen equality, revoked grant export denial, real CSV spreadsheet validation |
+
+
+## HR jobs and offer boundary — source-level test expansion (CI pending)
+
+| Requirement | New evidence | Remaining acceptance |
+|---|---|---|
+| HR-DRIVES-FILTER-12 | `tests/unit/HR-BREAK-chat15-drives-12.test.ts` validates authorized-scope portfolio filters, published vs closed vs waiting, excludes archived and unpublished jobs, IST deadline at 23:59:59.999 and following midnight, bounded 20-row pagination and deterministic title sort | Real DB authorized relationship changes and cursor/page consistency, page UX |
+| HR-ROLE-MATRIX-13 | `tests/unit/HR-BREAK-chat15-role-matrix-13.test.ts` directly exercises `can()` for recruiter own company relationship, wrong college/relationship, TPO placement management vs recruiter-only writes, college-admin, HR membership, deactivated actor, revoked membership, scoped Super Admin and forbidden recruiter impersonation | Live PostgreSQL grants and role changes mid-request, API 401/403/404 uniformity |
+
+All new checks are **authored but not executed** by this lane. Previously reported failures from `unit-failures-latest.md` and test-only TypeScript error snapshot are older than their source/test corrections; they still require fresh CI evidence before marking green. Continue outstanding HR jobs, offers, applicant export and messaging DB scenarios, plus 47-page interactive browser matrix.
+
+| HR-OFFERS-STATE-14 | `tests/unit/HR-BREAK-chat15-offer-states-14.test.ts` checks persisted ISSUED/ACCEPTED/WITHDRAWN states and precise expiration, completed/APPLIED/PASS intersection across evaluative rounds, forged selection payloads, encoded round-result views | PostgreSQL offer issuance/revocation races, TPO verification release, mobile/keyboard and audit recipient counts remain unverified |
+
+
+## Additional account page and selection coverage (tests not executed)
+
+| Requirement | New ID-named evidence | Remaining acceptance |
+|---|---|---|
+| UX-HR-TRACKER-15 | `tests/unit/UX-chat15-hr-tracker-pages-15.test.ts`: additional HR activity/round-results/company-reports page role gates, invalid-filter and selector recovery, tracker Super Admin issue detail, logs/global-scope, findings, reporter details and distinct operational retry failures | Browser render/navigation, small-screen focus and live authorization on each route |
+| HR-ROUND-RESULTS-15 | `tests/unit/HR-BREAK-chat15-round-results-15.test.ts`: selected-round-only participant projection, anonymized unnamed learners, one-per-outcome counts, invalid job/round/query denied, encoded deep links | PostgreSQL staging vs APPLIED release authorizations, cross-college/expired grant HTTP |
+
+**State:** Coverage inventory is broader, but many exported functions and routes still need independent service-level behaviour, real PostgreSQL tenancy/concurrency, and interactive page checks. This ledger remains OPEN, not release-certified.
