@@ -39,6 +39,9 @@ Scope: IIT Dharwad College Admin Projects role journeys, TPO Settings final-spri
 
 | CHAT11-TPO-11 | MAJOR | Communication PATCH route used unbounded `request.json()`: an attacker could omit Content-Length and force arbitrarily large in-memory JSON parsing before schema rejection. | `58ab9f5`, `921f42e`, `99ecdcf`: 8 KiB streaming cap and stable 400/413; preserve same-origin validation. | `TPO-settings-audit-BODY-01` | Load/slow-stream route E2E pending |
 
+| CHAT11-PROJ-10 | BLOCKER | `createProjectInstance` loaded template/college and authorized request snapshot before transaction, but never revalidated the creator's persisted active role after potential revocation. A delayed request could persist a project despite suspended membership. | `efb11ac`, `4b3bacf`: use persisted platform-actor locks inside materialization transaction before project insertion. | `PROJ-COL-REVOKE-01` | Actual revocation race PostgreSQL proof pending |
+| CHAT11-AUDIT-02 | COVERAGE | College Admin Projects GET/POST and TPO settings PATCH lacked direct mocked-Next-handler behavioural cases for forged identity, origin rejection and safe error mapping. | `469681a`, `35c9c8c`: actual handler test suites, not only text occurrence assertions. | `PROJ-BREAK-COL-HTTP-01`, `TPO-settings-audit-ROUTE-01` | Cloud Vitest/route-backed database matrix pending |
+
 ## Latest r9 unit-failure disposition
 
 `tests/unit/company-share-mobile-cards.test.ts` is the only chat-11 entry in `docs/orchestrator/unit-failures-r9.md`. On the synchronized main baseline, the tested `src/app/company-share/[token]/page.tsx`, shared DataTable mobile/desktop branches, and `projectCompanyShareRows` match the listed selected-field assertions. This appears fixed by subsequent main changes. **Do not delete or loosen this privacy test**; require the orchestrator to rerun it on the updated branch.
