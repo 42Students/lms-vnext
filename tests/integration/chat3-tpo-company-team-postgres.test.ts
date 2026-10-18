@@ -49,6 +49,7 @@ describe.skipIf(!enabled)("TPO-companies-05 registered 0137 company Team Postgre
       (college_id,company_id,author_membership_id,idempotency_key,body)
      VALUES($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING RETURNING id`,
      [SEED_IDS.collegeA,companyId,SEED_IDS.facultyCollegeAMembership,key,"One decision"]);
+   };
    const first=await insert();
    const retry=await insert();
    expect(first.rows).toHaveLength(1);
