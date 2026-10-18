@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import {TPO_LEGACY_REPORT_COPY} from "@/modules/placements/tpo-legacy-report-copy";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
@@ -69,7 +70,7 @@ export default async function TpoCtcReportPage({
         actions={<ReportCsvLink workspace={workspace} kind="ctc" />}
       />
 
-      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/ctc" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
+      <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/ctc" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <TpoReportPresentation />
       <ReportNavigation workspace={workspace} />
       <ReportFilters workspace={workspace} userId={context.user.id} path="/tpo/reports/ctc" />

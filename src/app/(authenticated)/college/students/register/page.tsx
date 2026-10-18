@@ -9,11 +9,11 @@ export default async function CollegeStudentRegisterPage() {
   const context=await getCurrentRequestContext();
   if(!context.membership)redirect("/dashboard");
   const choices=await listCollegeStudentImportOptions(context);
-  return <div className="space-y-6">
+  return <main className="min-w-0 space-y-6">
     <PageHeader eyebrow="College Admin · Students" title="Register students"
       description="Register a learner with a program and class, personal details and roll number."
       actions={<Link href="/college/students"
-        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">Back to students</Link>}/>
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Back to students</Link>}/>
     <CollegeStudentRegisterForm choices={choices}/>
-  </div>;
+  </main>;
 }

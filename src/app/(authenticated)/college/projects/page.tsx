@@ -94,17 +94,16 @@ export default async function CollegeProjectsPage({
         </Link>}
       />
 
-      <div className="flex flex-wrap gap-2">
-      <Link className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text hover:bg-surface" href="/college/projects/create">Create workspace</Link>
+      <nav aria-label="Project workspace tools" className="flex min-w-0 flex-wrap gap-2">
       <Link className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold hover:bg-surface" href="/college/projects/workspaces/new">Split class into teams / Add whole class</Link>
-      <Link className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text hover:bg-surface" href="/college/projects/reassign-mentor">Bulk reassign mentor</Link></div>
+      <Link className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text hover:bg-surface" href="/college/projects/reassign-mentor">Bulk reassign mentor</Link></nav>
 
-      <div className="flex flex-wrap items-center gap-3">
+      <nav aria-label="Workspace display and archive" className="flex min-w-0 flex-wrap items-center gap-3">
        <ProjectAdminWorkspacePageExport items={items}/>
-       <Link href={viewHref("cards")} aria-current={query.view==="cards"?"page":undefined} className="min-h-10 rounded border border-border px-3 py-2 text-sm text-primary-text">Cards</Link>
-       <Link href={viewHref("table")} aria-current={query.view==="table"?"page":undefined} className="min-h-10 rounded border border-border px-3 py-2 text-sm text-primary-text">List</Link>
-       <Link href="/college/projects?status=ARCHIVED" className="min-h-10 rounded border border-border px-3 py-2 text-sm text-primary-text">Archived workspaces</Link>
-      </div>
+       <Link href={viewHref("cards")} aria-current={query.view==="cards"?"page":undefined} className="min-h-11 rounded border border-border px-3 py-2 text-sm text-primary-text">Cards</Link>
+       <Link href={viewHref("table")} aria-current={query.view==="table"?"page":undefined} className="min-h-11 rounded border border-border px-3 py-2 text-sm text-primary-text">List</Link>
+       <Link href="/college/projects?status=ARCHIVED" className="min-h-11 rounded border border-border px-3 py-2 text-sm text-primary-text">Archived workspaces</Link>
+      </nav>
       <ProjectAdminFilters query={query} />
 
       <ProjectAdminWorkspaceList
