@@ -45,6 +45,23 @@ describe("TPO-settings-audit-NOTIFY-01 filtered personal notifications",()=>{
   expect(page).not.toContain("item.body");
   expect(page).toContain('caption="My notifications"');
  });
+ it("TPO-settings-audit-NOTIFY-02 scopes count/list/preference queries to user, college and organization without GET writes",()=>{
+  const reader=src("src/modules/placements/tpo-my-notifications-service.ts");
+  expect(reader).toContain("hasMembershipRole(context");
+  expect(reader).toContain("requirePlacementManageScope(context, collegeId)");
+  expect(reader).toContain("eq(inAppNotifications.userId, userId)");
+  expect(reader).toContain("eq(activityEvents.collegeId, collegeId)");
+  expect(reader).toContain("eq(activityEvents.organizationId, organizationId)");
+  expect(reader).toContain("eq(placementTpoUserPreferences.collegeId, collegeId)");
+  expect(reader).toContain("eq(placementTpoUserPreferences.userId, userId)");
+  expect(reader).toContain(".where(and(...ownCollegeConditions))");
+  expect(reader).toContain(".where(and(...filteredConditions))");
+  expect(reader).toContain("safeTpoNotificationLabel(record.module)");
+  expect(reader).not.toContain(".insert(");
+  expect(reader).not.toContain(".update(");
+  expect(reader).not.toContain("record.body");
+  expect(reader).not.toContain("record.actionHref");
+ });
  it("distinguishes unavailable storage from saved preferences and preserves defaults",()=>{
   expect(resolveTpoNotificationPreferences(false,null)).toEqual({source:"UNAVAILABLE",values:null});
   const empty=resolveTpoNotificationPreferences(true,null);

@@ -9,6 +9,7 @@ import {activityEvents,colleges,placementTpoCollegeSettings} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 import {placementTableExists} from "./staged-tables";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 
 export class TpoCommunicationSettingsError extends Error {
  constructor(public readonly code:"TPO_SETTINGS_PENDING"|"TPO_SETTINGS_STALE"|"TPO_SETTINGS_NOT_FOUND"){super(code);}
@@ -42,6 +43,11 @@ export async function updateTpoCommunicationSettings(context:RequestContext,raw:
   const [college]=await tx.select({organizationId:colleges.organizationId})
    .from(colleges).where(eq(colleges.id,collegeId)).for("update").limit(1);
   if(!college)throw new TpoCommunicationSettingsError("TPO_SETTINGS_NOT_FOUND");
+  // The request may have been authenticated before a concurrent role or
+  // session revocation. Rebuild and lock the persisted actor in this write.
+  await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+   collegeId,organizationId:college.organizationId,
+  });
   const [current]=await tx.select().from(placementTpoCollegeSettings)
    .where(eq(placementTpoCollegeSettings.collegeId,collegeId)).limit(1);
   const changes=tpoCommunicationChanges(input);

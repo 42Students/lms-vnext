@@ -33,6 +33,7 @@ export function isTenantAccessAllowed(
 
   return Boolean(
     hasActiveRecruiter(context) &&
+    context.recruiter?.userId === context.user.id &&
     context.recruiter?.grants.some(
       (grant) => grant.collegeId === tenant.collegeId,
     ),
