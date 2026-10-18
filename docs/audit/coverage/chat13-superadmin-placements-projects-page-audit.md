@@ -90,3 +90,5 @@ All fixes are source-authored and committed. No local CI/real DB/browser run is 
 - **SA-REPORT-PACKAGE-08/09:** LOIs no longer inflate accepted full-time OFFER CTC summary, company/branch packages or detailed CTC band; raw LOI record history remains counted in offers. Tested by pure-model scenarios only; cross-report PostgreSQL reconciliation still required.
 
 **Review limitation:** source-authored tests, no local execution, A/B Postgres, browser review or independent release signoff. Existing 28 placements + 20 projects route inventory unchanged. All source changes were confined to `chatgpt/chat-13-b`, with commit prefix `[chat-13]`; latest `main` was merged into that branch while preserving other lanes' changes. The design/card directive remains on hold.
+
+- **PROJ-BREAK-SA-41:** `readiness-overrides-export-model.ts` now neutralizes spreadsheet formulas after Unicode combining/enclosing marks and C0 controls; full operator and benign-value matrix in `tests/unit/PROJ-BREAK-SA-41-readiness-export-formula-matrix.test.ts`. Authored without executing tests; Excel/LibreOffice import remains an acceptance check.

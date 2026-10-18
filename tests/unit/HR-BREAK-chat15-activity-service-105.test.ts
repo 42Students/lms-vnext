@@ -44,6 +44,18 @@ describe("HR-ACTIVITY-SERVICE-105 recruiter job history authorization",()=>{
   expect(m.jobs).toHaveBeenCalledTimes(1);
   expect(m.getDb).not.toHaveBeenCalled();
  });
+
+ it("TPO-only and acting-college Super Admin principals cannot borrow recruiter inbox access",async()=>{
+  const tpo={user:{id:"tpo",platformStatus:"ACTIVE",systemRoles:[]},
+   membership:{id:"member",status:"ACTIVE",collegeId:own,organizationId:"org",roles:["TPO"]}};
+  const admin={user:{id:"admin",platformStatus:"ACTIVE",systemRoles:["SUPER_ADMIN"]},
+   adminScope:{collegeId:own,organizationId:"org"}};
+  for(const context of [tpo,admin]){
+   await expect(listRecruiterJobActivity(context as never,{collegeId:own})).rejects.toThrow();
+  }
+  expect(m.jobs).not.toHaveBeenCalled();
+  expect(m.getDb).not.toHaveBeenCalled();
+ });
  it("invalid filters fail before even checking job grants",async()=>{
   await expect(listRecruiterJobActivity(actor as never,{page:"0"})).rejects.toThrow();
   expect(m.jobs).not.toHaveBeenCalled();
