@@ -2,6 +2,7 @@
 import {useRouter} from "next/navigation";
 import {useRef,useState} from "react";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {Drawer} from "@/components/ui/drawer";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {TpoBatchUndoControl} from "./tpo-batch-undo-control";
@@ -13,7 +14,8 @@ type Preview={rows:ImportRow[];ready:number;skipped:number;preview:{
  studentName?:string|null;rollNumber?:string|null;currentStatus?:string|null;proposedStatus?:string|null;
 }[]};
 export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
- const fileInput=useRef<HTMLInputElement>(null),dialog=useRef<HTMLDialogElement>(null);
+ const fileInput=useRef<HTMLInputElement>(null);
+ const [importOpen,setImportOpen]=useState(false);
  const router=useRouter(),[csv,setCsv]=useState("studentCode,decision,reason\n");
  const [preview,setPreview]=useState<Preview|null>(null);
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
@@ -79,16 +81,15 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
  }
  return <section className="min-w-0 space-y-3 rounded-lg border border-border bg-surface p-4">
   <h2 className="font-semibold">Import eligibility</h2>
-  <button type="button" disabled={busy} onClick={()=>dialog.current?.showModal()}
+  <button type="button" disabled={busy} onClick={()=>setImportOpen(true)}
    className="min-h-11 rounded border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
    Import eligibility decisions
   </button>
-  <dialog ref={dialog} aria-label="Import eligibility decisions"
-   onCancel={event=>{if(busy)event.preventDefault();}}
-   className="m-auto max-h-[90dvh] w-[calc(100%_-_2rem)] max-w-3xl space-y-3 overflow-y-auto rounded-xl border border-border bg-surface p-5 text-foreground backdrop:bg-black/40">
+  <Drawer open={importOpen} onOpenChange={setImportOpen} title="Import eligibility decisions"
+    dismissible={!busy}><div className="space-y-3">
    <div className="flex items-center justify-between gap-3">
     <h3 className="font-semibold">Import eligibility</h3>
-    <button type="button" disabled={busy} onClick={()=>dialog.current?.close()}
+    <button type="button" disabled={busy} onClick={()=>setImportOpen(false)}
      className="min-h-11 rounded border border-border px-3">Close</button>
    </div>
   <p className="text-sm text-muted-foreground">CSV columns: studentCode,decision,reason. studentCode may be an exact roll number or learner membership UUID; ambiguous rolls are skipped. Names and emails are never used for matching. Up to 5000 records. Supports quoted commas, legacy column names, Yes/No and clear/reset decisions.</p>
@@ -153,7 +154,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
   {lastActionId?<TpoBatchUndoControl batchId={batchId} actionId={lastActionId}/>:null}
-  </dialog>
+  </div></Drawer>
   <ConfirmDialog open={discardPending} onOpenChange={setDiscardPending}
    title="Discard import review?" description="The preview, your included or skipped row choices and review acknowledgement will be cleared. No eligibility decisions have been saved."
    confirmLabel="Discard review" onConfirm={()=>{
