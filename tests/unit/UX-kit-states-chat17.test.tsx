@@ -72,6 +72,19 @@ describe("UX-kit-STATES: semantic SSR states and accessible fallbacks", () => {
     expect(render(<Input required aria-label="Roll number" />)).toContain('required=""');
   });
 
+  it("UX-kit-HARDEN-54 FileUpload preserves externally supplied field help and invalid state",()=>{
+    const enabled=render(<FileUpload id="course-upload" label="Evidence"
+      helper="PDF, 5MB max" aria-describedby="existing-hint" aria-invalid
+      onFiles={()=>{}}/>);
+    expect(enabled).toContain('aria-invalid="true"');
+    expect(enabled).toContain('aria-describedby="existing-hint course-upload-help"');
+    const disabled=render(<FileUpload id="disabled-upload" label="Evidence" disabled
+      aria-describedby="existing-hint" aria-invalid onFiles={()=>{}}/>);
+    expect(disabled).toContain('aria-describedby="existing-hint disabled-upload-unavailable"');
+    expect(disabled).not.toContain('aria-invalid="true"');
+    expect(disabled).toContain('disabled=""');
+  });
+
   it("UX-kit-HARDEN-48 disabled Switch exposes a 44px target but not an interactive cursor",()=>{
     const disabled=render(<Switch label="Placement eligibility" disabled/>);
     expect(disabled).toContain('role="switch"');

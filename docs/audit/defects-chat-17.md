@@ -109,3 +109,5 @@ All newly authored tests remain pending cloud execution; migration retains the p
 
 
 | UX-kit-HARDEN-53 | S2 (keyboard discoverability) | The disabled action description was on a nonfocusable span, while the disabled native button is skipped by Tab: keyboard users could not discover why the action is unavailable. | Focusable disabled-only wrapper with `role=group` and associated description, preserving child IDs; `tests/unit/UX-kit-projects-hardening-chat17.test.tsx` HARDEN-53. | Source/test authored; browser verification at final CI |
+
+| UX-kit-HARDEN-54 | S2 (form a11y) | FileUpload silently replaced a caller's external aria-describedby and aria-invalid, losing an associated validation or field hint when wrapped in larger forms. | Shared FileUpload merges external help IDs and preserves enabled invalid semantics, clears invalid for disabled states; UX-kit-HARDEN-54 test. | Source/test authored; final CI pending |
