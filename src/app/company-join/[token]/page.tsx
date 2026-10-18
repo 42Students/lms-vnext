@@ -9,6 +9,10 @@ export default async function CompanyJoinPage({
   const { token } = await params;
   const preview = await getPublicJoinPreview(token, "COMPANY").catch(()=>null);
   if(!preview)return <PublicJoinPreviewRetry token={token} scope="COMPANY"/>;
-  const blocked=publicJoinUnavailableCopy(await publicJoinUnavailable());
+  // Readiness can fail independently of preview availability. A transient
+  // provider/storage error must render a blocked invitation, never a live
+  // verification form or an uncaught page exception.
+  const readiness=await publicJoinUnavailable().catch(()=>"RATE_TABLE_MISSING" as const);
+  const blocked=publicJoinUnavailableCopy(readiness);
   return <PublicRecruiterJoinForm token={token} scope="COMPANY" preview={preview} blockedReason={blocked} />;
 }
