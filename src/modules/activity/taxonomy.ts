@@ -23,6 +23,7 @@ export type ActivityImportance =
 export const ACTIVITY_EVENT_TYPES = {
   PLATFORM_USER_BLOCKED:"platform.user.blocked",
   PLATFORM_USER_REACTIVATED:"platform.user.reactivated",
+  PLATFORM_SYSTEM_ROLE_ASSIGNED:"platform.system_role.assigned",
   PLATFORM_COLLEGE_CREATED:
     "platform.college.created",
   PLATFORM_COLLEGE_UPDATED:"platform.college.updated",

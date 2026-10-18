@@ -631,6 +631,9 @@ export const placementEligibilityOverrideInputSchema = z
   .object({
     decision: z.enum(["INCLUDE", "EXCLUDE"]),
     reason: z.string().trim().min(1).max(1000),
+    // Omitted for existing single-record callers; TPO bulk sends the
+    // previewed active override ID (or null) to prevent stale overwrites.
+    expectedOverrideId: z.string().uuid().nullable().optional(),
   })
   .strict();
 
