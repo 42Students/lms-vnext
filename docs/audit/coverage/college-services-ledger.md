@@ -193,3 +193,6 @@ The orchestrator's currently published `unit-failures-latest.md` still reference
 | `COL-classes-tenant-01/04` | `tests/unit/chat4-college-section-workspace-tenant.test.ts` | Dynamic section workspace with mocked dependencies: composite data and ownership, disabled role denial, missing section, central independent period FK same-college fence |
 
 No claim of green cloud CI is made. Test-file TypeScript verification, isolated PostgreSQL transaction races, and browser-focused authorization/error recovery remain open.
+
+
+| `getAcademicsWorkspace`, `mapAcademicWorkspaceInBatches` | `tests/unit/chat4-college-academics-workspace-fanout.test.ts` | Real orchestration through mocked scoped academics services; retains program/cohort/section ordering and period labels, propagates caller context, unknown period explicitly shown; fanout helper tested on 25 items (maximum eight in flight), invalid concurrency and DB rejection. PostgreSQL 10k learner/20 college load test pending |
