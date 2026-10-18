@@ -117,7 +117,14 @@ export default async function SuperAdminHrPage({
       "The recruiter directory could not be loaded. Retry the request or check the selected administrative scope.";
   }
 
-  const statusSummary=await getSuperAdminHrStatusSummary(context);
+  // Recruiter list remains usable if its independent summary query fails.
+  // Do not invent zero accounts for unknown totals.
+  let statusSummary:Awaited<ReturnType<typeof getSuperAdminHrStatusSummary>>|null=null;
+  try{
+    statusSummary=await getSuperAdminHrStatusSummary(context);
+  }catch{
+    // The status panel shows Unavailable with a reload affordance.
+  }
   const scopeDescription=context.adminScope?.collegeId?"Viewing selected college.":context.adminScope?.organizationId?"Viewing selected organization.":"Viewing platform-wide accounts.";
   const filters: HrListFilters = {
     q: query.q ?? "",
