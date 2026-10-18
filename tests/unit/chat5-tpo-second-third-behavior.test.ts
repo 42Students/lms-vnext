@@ -40,6 +40,19 @@ describe("chat-5 TPO second-third: direct route authorization, negative and empt
    expect(code).not.toContain("window.prompt(");
   });
  }
+ it("PLACEMENTS-WAIT-UI-10 prevents synchronous double-submit and contains broken JSON error responses",()=>{
+  const control=src("src/components/placements/tpo-waitlist-promotion-control.tsx");
+  expect(control).toContain("const inFlight=useRef(false)");
+  expect(control).toContain("if(!preview.next||inFlight.current||reason.trim().length<3)return");
+  expect(control).toContain("inFlight.current=true");
+  expect(control).toContain("inFlight.current=false");
+  expect(control).toContain("res.json().catch(()=>null)");
+  expect(control).toContain('if(!res.ok||typeof data?.seatNumber!=="number")');
+  expect(control).not.toContain("new Error(data.error)");
+  expect(control).toContain("Refresh the preview before retrying.");
+  expect(control).toContain("setConfirmOpen(false)");
+  expect(control).toContain("setError(");
+ });
  it("TPO-2ND-PAGE-lifecycle-02 keeps the active scoped permission in the drive list and exposes zero/error states",()=>{
   const code=src("src/app/(authenticated)/tpo/placements/lifecycle/page.tsx");
   expect(code).toContain('can(context,"placements.manage",{collegeId:context.membership.collegeId})');
