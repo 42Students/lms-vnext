@@ -141,7 +141,7 @@ describe("IIT Dharwad Projects adversarial service and route contracts",()=>{
   for(const route of routes){
    const page=api(route);
    expect(page).toContain("isSameOriginRequest(request)");
-   expect(page).toMatch(/status:\\s*403/);
+   expect(page).toMatch(/status:\s*403/);
    // Some routes also export GET, which can read context before POST.
    // Check the mutation handler itself, never compare unrelated GET code.
    const mutation=page.slice(page.indexOf("export async function POST"));
