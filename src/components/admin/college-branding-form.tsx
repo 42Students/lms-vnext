@@ -219,16 +219,16 @@ export function CollegeBrandingForm({
             {collegeName}
           </p>
           <div className="mt-4 grid grid-cols-2 gap-1 rounded-lg bg-muted p-1 text-xs">
-            <span className="rounded-md bg-surface py-2 text-center font-semibold text-primary-text shadow-sm">
+            <span className="rounded-md bg-surface py-2 text-center font-semibold text-[var(--lms-teal-deep)] shadow-sm">
               Phone
             </span>
             <span className="py-2 text-center text-body">Email</span>
           </div>
-          <div className="mt-3 h-9 rounded-md border border-border bg-surface" />
-          <div className="mt-3 flex min-h-9 items-center justify-center rounded-md bg-primary text-sm font-semibold text-on-primary">
+          <div className="mt-3 h-11 rounded-md border border-border bg-surface" />
+          <div className="mt-3 flex min-h-11 items-center justify-center rounded-md bg-primary text-sm font-semibold text-on-primary">
             Send code
           </div>
-          <p className="mb-0 mt-3 text-xs text-primary-text">Resend code</p>
+          <p className="mb-0 mt-3 text-xs text-[var(--lms-teal-deep)]">Resend code</p>
         </div>
       </aside>
     </div>
