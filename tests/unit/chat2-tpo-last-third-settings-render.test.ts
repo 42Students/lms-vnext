@@ -44,12 +44,10 @@ describe("UX-tpo-LAST-THIRD-01 TPO settings server-page states",()=>{
   expect(state.link).toHaveBeenCalledWith(expect.objectContaining({
    membership:expect.objectContaining({collegeId:"college-1"}),
   }),"COLLEGE");
-  expect(state.header).toHaveBeenCalledWith(expect.objectContaining({
-   title:"Public recruiter link",
-  }),undefined);
-  expect(state.card).toHaveBeenCalledWith(expect.objectContaining({
+  expect(state.header.mock.calls[0]?.[0]).toMatchObject({title:"Public recruiter link"});
+  expect(state.card.mock.calls[0]?.[0]).toMatchObject({
    scope:"COLLEGE",initial:{ready:false,domain:null,link:null},
-  }),undefined);
+  });
  });
  it("UX-tpo-LAST-THIRD-01 personal public-link settings deny non-TPO before retrieving a bearer-link status",async()=>{
   for(const role of ["COLLEGE_ADMIN","LEARNER"] as const){
@@ -65,7 +63,7 @@ describe("UX-tpo-LAST-THIRD-01 TPO settings server-page states",()=>{
   expect(html).toContain("Blocked-date storage is pending migration registration.");
   expect(html).toContain('role="status"');
   expect(state.editor).not.toHaveBeenCalled();
-  expect(state.header).toHaveBeenCalledWith(expect.objectContaining({title:"Blocked dates"}),undefined);
+  expect(state.header.mock.calls[0]?.[0]).toMatchObject({title:"Blocked dates"});
  });
  it("UX-tpo-LAST-THIRD-01 preserves persisted UTC update tokens while showing a ready blocked-date editor",async()=>{
   const at=new Date("2099-07-03T10:30:00.123Z");
@@ -74,10 +72,8 @@ describe("UX-tpo-LAST-THIRD-01 TPO settings server-page states",()=>{
   }]});
   const html=renderToStaticMarkup(await BlockedDatesPage());
   expect(html).not.toContain("storage is pending");
-  expect(state.editor).toHaveBeenCalledWith(expect.objectContaining({
-   items:[expect.objectContaining({
-    id:"blocked-date",updatedAt:"2099-07-03T10:30:00.123Z",
-   })],
-  }),undefined);
+  expect(state.editor.mock.calls[0]?.[0]).toMatchObject({
+   items:[{id:"blocked-date",updatedAt:"2099-07-03T10:30:00.123Z"}],
+  });
  });
 });
