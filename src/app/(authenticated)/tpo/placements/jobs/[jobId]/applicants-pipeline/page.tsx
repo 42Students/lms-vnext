@@ -60,7 +60,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
     </div>)}
   </section>
   <form action={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"} method="get"
-   className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+   className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
    {columns&&<input type="hidden" name="columns" value={columns}/>}
    <label className="min-w-40 flex-1 text-sm font-semibold text-body">Stage
     <Select name="stage" defaultValue={data.stage} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
@@ -96,7 +96,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
      <option value="ALL">Any submission date</option><option value="LAST_7_DAYS">Last 7 × 24 hours</option>
      <option value="LAST_30_DAYS">Last 30 × 24 hours</option>
     </Select></label>
-   <Button type="submit" className="min-h-11 rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-foreground">Apply</Button>
+   <Button type="submit" className="min-h-11 rounded-[9px] border border-primary bg-primary px-4 text-sm font-semibold text-primary-foreground">Apply</Button>
   </form>
   <p role="status" className="text-sm text-body">{data.totalMatching} matching applications · Page {data.page} of {data.totalPages}.
    Stage counts cover all matching student/role records across every page.</p>
