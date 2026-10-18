@@ -9,7 +9,7 @@ export async function getCompanyDriveCounts(collegeId:string,ids:readonly string
  const counts=new Map<string,{applied:number;offers:number}>();
  if(!ids.length)return counts;
  const db=getDb();
-
+ for(const id of ids)counts.set(id,{applied:0,offers:0});
  for(const jobBatch of companyJobIdBatches(ids)){
  const [applied,offers]=await Promise.all([
   db.select({jobId:placementApplications.jobId,
@@ -30,7 +30,6 @@ export async function getCompanyDriveCounts(collegeId:string,ids:readonly string
     eq(placementOffers.kind,"OFFER")))
   .groupBy(placementApplications.jobId),
  ]);
- for(const id of ids)counts.set(id,{applied:0,offers:0});
  for(const row of applied)counts.set(row.jobId,{...(counts.get(row.jobId)??{applied:0,offers:0}),
   applied:Number(row.total)});
  for(const row of offers)counts.set(row.jobId,{...(counts.get(row.jobId)??{applied:0,offers:0}),
