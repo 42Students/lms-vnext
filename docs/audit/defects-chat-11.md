@@ -35,6 +35,8 @@ Scope: IIT Dharwad College Admin Projects role journeys, TPO Settings final-spri
 
 | CHAT11-TPO-10 | BLOCKER | `updateTpoCommunicationSettings` resolved an active TPO/College Admin actor before starting the transaction but did not recheck persisted actor status/roles under locks before mutating. Revoking access mid-request could still allow a stale write. | `7e931c3`, `2cb617f`: authorize persisted user, membership and role inside locked transaction before no-op or CAS. | `TPO-settings-audit-REVOKE-01` | Parallel revocation transaction test pending |
 
+| CHAT11-PROJ-09 | MAJOR | Create-workspace Status option disables ACTIVE when no Mentor is selected, but an already chosen ACTIVE state can survive clearing the Mentor; Enter/form submit would then send a known-invalid request. | `f3a88f7`, `7c17829`: imperative submit guard and direct Zod regression. | `PROJ-COL-STALE-06` | Browser form state test pending |
+
 ## Latest r9 unit-failure disposition
 
 `tests/unit/company-share-mobile-cards.test.ts` is the only chat-11 entry in `docs/orchestrator/unit-failures-r9.md`. On the synchronized main baseline, the tested `src/app/company-share/[token]/page.tsx`, shared DataTable mobile/desktop branches, and `projectCompanyShareRows` match the listed selected-field assertions. This appears fixed by subsequent main changes. **Do not delete or loosen this privacy test**; require the orchestrator to rerun it on the updated branch.
