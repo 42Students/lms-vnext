@@ -203,3 +203,6 @@ Tests authored only, not executed, per owner directive.
 
 
 | HR-DRIVES-EXPORT-118 | S2 employer privacy | Recruiter drives CSV silently chose the first query value when duplicated college/filter fields were supplied, and its route only checked an active recruiter profile without asserting the cached recruiter principal matches the authenticated user. It now rejects ambiguous/unknown query keys before data reads and identity mismatch before job search, retaining no-store CSV and exact company grant scoping. | `HR-BREAK-chat15-drive-export-api-118.test.ts` | Real cross-college/organization grants, browser and PostgreSQL pending |
+
+
+| HR-JOBS-API-119 | S2 employer-private caching | `GET /api/placements/recruiter/jobs` returned recruiter-owned job rows without an explicit `Cache-Control: private, no-store` header. The response now prohibits intermediary/browser caching of an authenticated recruiter portfolio, while preserving the central exact-grant job lookup and sanitized error mapping. | `HR-BREAK-chat15-jobs-api-119.test.ts` | Actual response headers and cross-session cache behavior in browser/production proxy pending |
