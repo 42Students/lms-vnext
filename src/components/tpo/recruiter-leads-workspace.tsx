@@ -1098,7 +1098,7 @@ export function RecruiterLeadsWorkspace({
             className="min-w-0 space-y-4">
             <div className="flex items-center justify-between gap-4">
               <h2 className="text-xl font-semibold">Add recruiter lead</h2>
-              <button type="button" className={buttonStyle} onClick={closeAddDialog} disabled={saving}>Close</button>
+              <button type="button" className={buttonStyle} onClick={()=>closeAddDialog()} disabled={saving}>Close</button>
             </div>
             <label className="block text-sm">Name *<input ref={createNameRef} className={inputStyle + " mt-1"} required maxLength={150}
               value={form.name} onChange={e => field("name", e.target.value)} /></label>
