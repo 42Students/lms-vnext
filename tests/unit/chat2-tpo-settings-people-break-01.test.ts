@@ -1,4 +1,5 @@
 import {describe,expect,it} from "vitest";
+import {readFileSync} from "node:fs";
 import {
  buildTpoTeamRoster,summarizeTpoTeam,buildTpoTrustedCompanies,
  buildTpoTrustedDomains,TPO_TEAM_ROLE_LABELS,tpoSettingsCollegeIdSchema,
@@ -75,6 +76,15 @@ describe("TPO-BREAK-settings-people-01 tenant and evidence-based team permission
    {domain:"another.test",createdAt:later},
    {domain:"example.test",createdAt:earliest},
   ]);
+ });
+ it("TPO-settings-audit-55 never mutates an unversioned legacy link or recycles a stale copied secret",()=>{
+  const ui=readFileSync("src/components/tpo/tpo-public-join-link-card.tsx","utf8");
+  expect(ui).toContain('action==="REPLACE"&&!status.link?.id');
+  expect(ui).toContain('if(!status.link.id)');
+  expect(ui).toContain('setFreshUrl("");');
+  expect(ui).toContain("actionInFlight.current=true");
+  expect(ui).toContain("actionInFlight.current=false");
+  expect(ui).toContain("Refresh the join link status and try again.");
  });
  it("strictly validates college UUIDs, confirmed link rotation and company scope",()=>{
   expect(tpoSettingsCollegeIdSchema.safeParse(college).success).toBe(true);
