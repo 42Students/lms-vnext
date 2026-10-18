@@ -17,8 +17,11 @@ export function mac(
 }
 
 export function safeEqualHex(a: string, b: string) {
-  if (a.length !== b.length) return false;
-  return timingSafeEqual(Buffer.from(a, "utf8"), Buffer.from(b, "utf8"));
+  // HMAC digests must be canonical hex. Without format validation identical
+  // malformed strings (e.g. "zz") could compare equal despite not being digests.
+  if (a.length === 0 || a.length !== b.length || a.length % 2 !== 0 ||
+      !/^[0-9a-f]+$/.test(a) || !/^[0-9a-f]+$/.test(b)) return false;
+  return timingSafeEqual(Buffer.from(a, "hex"), Buffer.from(b, "hex"));
 }
 
 /** Six decimal digits, uniformly distributed. */
