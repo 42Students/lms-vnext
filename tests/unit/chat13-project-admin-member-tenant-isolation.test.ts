@@ -61,7 +61,7 @@ describe("IIT Dharwad Super Admin Projects: tenant-safe mentor projections", () 
 
   it("PROJ-BREAK-SA-37 includes ended mentor transitions in staleness without showing their names",()=>{
     const code=source();
-    const history=code.slice(code.indexOf("memberMutations,"),
+    const history=code.slice(code.indexOf("// UI labels include only active mentors"),
       code.indexOf("// Index each result set once:"));
     expect(history).toContain("projectId: projectMembers.projectId");
     expect(history).toContain("max(${projectMembers.updatedAt})");
