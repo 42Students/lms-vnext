@@ -52,7 +52,8 @@ describe("PROJ-BREAK-submissions-10/11 authenticating shared draft writes at HTT
     const body={summary:"IIT final report",attachments:[],expectedUpdatedAt:revised};
     const response=await PATCH(request("PATCH",body),params);
     expect(response.status).toBe(200);
-    expect(updateProjectSubmissionDraft).toHaveBeenCalledExactlyOnceWith(context,projectId,submissionId,body);
+    expect(updateProjectSubmissionDraft).toHaveBeenCalledOnce();
+    expect(updateProjectSubmissionDraft).toHaveBeenCalledWith(context,projectId,submissionId,body);
     const json=await response.json();
     expect(json.submission.updatedAt).toBe(revised);
   });
@@ -60,7 +61,8 @@ describe("PROJ-BREAK-submissions-10/11 authenticating shared draft writes at HTT
     const body={expectedUpdatedAt:revised};
     const response=await POST(request("POST",body),params);
     expect(response.status).toBe(200);
-    expect(submitProjectSubmission).toHaveBeenCalledExactlyOnceWith(context,projectId,submissionId,body);
+    expect(submitProjectSubmission).toHaveBeenCalledOnce();
+    expect(submitProjectSubmission).toHaveBeenCalledWith(context,projectId,submissionId,body);
   });
   it("malformed JSON fails safely and cannot invoke project transitions",async()=>{
     const response=await POST(request("POST"),params);
