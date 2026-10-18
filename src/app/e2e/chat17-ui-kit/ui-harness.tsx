@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/selection-controls";
 import { Dialog } from "@/components/ui/dialog";
+import { DataTable } from "@/components/ui/data-table";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Disclosure } from "@/components/ui/disclosure";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -111,6 +112,21 @@ function UIKitTestSurface() {
         helper="PDF file, maximum 1 KB" maxBytes={1024}
         onFiles={files => setFileStatus(files?.length ? "Selected: " + files[0]!.name : "No file selected")}/>
       <p role="status" data-testid="file-status">{fileStatus}</p>
+    </section>
+
+    <section aria-label="Responsive private column fixture">
+      <DataTable caption="Project table privacy" empty={<p>No projects</p>}
+        rows={[{id:"p1",title:"Mobile pilot",secret:"DESKTOP_ONLY_PRIVATE_REVIEW"}]}
+        getRowKey={row => row.id}
+        columns={[
+          {key:"title",header:"Project",mobilePriority:"primary",cell:row=>row.title},
+          {key:"a",header:"First",mobilePriority:"secondary",cell:()=>"Public field 1"},
+          {key:"b",header:"Second",mobilePriority:"secondary",cell:()=>"Public field 2"},
+          {key:"c",header:"Third",mobilePriority:"secondary",cell:()=>"Public field 3"},
+          {key:"d",header:"Fourth",mobilePriority:"secondary",cell:()=>"Public field 4"},
+          {key:"secret",header:"Private desktop-only feedback",mobilePriority:"hidden",
+            cell:row=>row.secret},
+        ]}/>
     </section>
 
     <section aria-label="Loading and disclosure fixture" className="space-y-3">
