@@ -130,6 +130,8 @@ describe("TPO-companies-10 client component and duplicate-submit regression", ()
     const file = source("src/components/tpo/tpo-company-memory-workspace.tsx");
     expect(file).toContain('"loading" | "ready" | "error" | "migration-pending" | "not-found"');
     expect(file).toContain("signal?.aborted");
+    expect(file).toContain("activeLoad.current?.abort()");
+    expect(file).toContain("activeLoad.current===controller");
     expect(file).toContain('onClick={retry}');
   });
 });
