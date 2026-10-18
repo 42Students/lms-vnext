@@ -36,7 +36,7 @@ beforeEach(()=>{
  state.remove.mockResolvedValue({deleted:true});
  state.pull.mockResolvedValue({id:taskId,sprintId:"sprint"});
  state.error.mockImplementation(()=>NextResponse.json({error:"SAFE_FAILURE",
-  message:"Please refresh and retry."},{status:409}));
+  message:"Refresh the page and retry."},{status:409}));
 });
 describe("PROJ-BREAK-LEARNER-ROUTES-01 actual Next.js Learner task route actions",()=>{
  const handlers=[
