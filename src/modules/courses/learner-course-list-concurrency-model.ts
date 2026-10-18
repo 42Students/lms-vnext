@@ -6,7 +6,10 @@ export async function mapLearnerCourseCardsLimited<T,R>(
 ):Promise<R[]>{
  const out=new Array<R>(entries.length);
  let cursor=0;
- const slots=Math.min(entries.length,Math.max(1,Math.floor(concurrency)));
+ // Non-finite caller values must never silently return an empty card list or
+ // trigger unbounded parallel reads.
+ const parallel=Number.isFinite(concurrency)?Math.max(1,Math.floor(concurrency)):4;
+ const slots=Math.min(entries.length,parallel);
  await Promise.all(Array.from({length:slots},async()=>{
   while(cursor<entries.length){
    const index=cursor++;
