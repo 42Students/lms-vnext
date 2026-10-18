@@ -6,7 +6,7 @@ import {tpoDriveRequestDifferences,type TpoDriveRequestDifference} from "./tpo-d
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
-import { defaultTpoDriveView, tpoDriveLifecyclePage, tpoDriveLifecycleQuerySchema, TPO_CLOSED_JOB_STATUSES } from "./tpo-drive-lifecycle-list-model";
+import { defaultTpoDriveView, tpoDriveLifecyclePage, tpoDriveLifecycleQuerySchema, TPO_CLOSED_JOB_STATUSES, tpoRecruiterRequestAccessEnded } from "./tpo-drive-lifecycle-list-model";
 import {tpoApplicantExportSearchPattern} from "./tpo-drive-applications-export-model";
 import { PlacementsServiceError } from "./errors";
 import { requireTpoJobActor } from "./tpo-job-write-base";
@@ -122,6 +122,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
       recruiterUserId:placementRecruiterDriveRequests.recruiterUserId,
       relationshipId:placementRecruiterDriveRequests.companyRelationshipId,
       recruiterEmail:users.email,recruiterPhone:users.phoneE164,
+      recruiterPlatformStatus:users.platformStatus,
     }).from(placementRecruiterDriveRequests)
       .innerJoin(users,eq(users.id,placementRecruiterDriveRequests.recruiterUserId))
       .innerJoin(placementCompanyRelationships,and(
@@ -150,6 +151,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
       relationshipId:placementRecruiterCollegeGrants.companyRelationshipId,
       verificationStatus:placementRecruiterCollegeGrants.verificationStatus,
       validUntil:placementRecruiterCollegeGrants.validUntil,
+      capabilities:placementRecruiterCollegeGrants.capabilities,
       status:placementRecruiterCollegeGrants.status,
     }).from(placementRecruiterCollegeGrants).where(and(
       inArray(placementRecruiterCollegeGrants.companyRelationshipId,db.select({id:placementCompanyRelationships.id}).from(placementCompanyRelationships).where(eq(placementCompanyRelationships.collegeId,collegeId))),
@@ -167,7 +169,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
       recruiterEmail:row.recruiterEmail,recruiterPhone:row.recruiterPhone,
       recruiterUserId:row.recruiterUserId,
       verificationStatus:grant?.verificationStatus??"PENDING",
-      accessEnded:Boolean(grant?.validUntil&&grant.validUntil<now),
+      accessEnded:tpoRecruiterRequestAccessEnded(grant??null,row.recruiterPlatformStatus,now),
       changes:revisionByRequest.has(row.id)?tpoDriveRequestDifferences(
        revisionByRequest.get(row.id)!.previousDraft,revisionByRequest.get(row.id)!.currentDraft):null,
       };
