@@ -20,6 +20,7 @@ import { FriendlyFetchError } from "@/lib/api-fetch";
 import { friendlyApiError } from "@/lib/friendly-error";
 import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import {ProjectDeliveryFileUploader} from "./project-delivery-file-uploader";
+import {savedDeliverySubmissionReadiness} from "@/modules/projects/saved-delivery-submission-readiness";
 
 type Submission = {
   id: string;
@@ -85,6 +86,7 @@ export function LearnerFinalDeliveryControl({
   const [linkUrl,setLinkUrl]=useState("");
   const [pending, setPending] =
     useState(false);
+  const [submitConfirmation,setSubmitConfirmation]=useState(false);
   // One shared lock for manual save, debounced autosave and final submission.
   const pendingRef = useRef(false);
   const [error, setError] =
@@ -111,20 +113,20 @@ export function LearnerFinalDeliveryControl({
   }
 
   function resetFromDraft() {
-    setSummary(draft?.summary ?? "");
-    setSourceUrl(draft?.sourceUrl ?? "");
-    setDemoUrl(draft?.demoUrl ?? "");
-    setNotes(draft?.notes ?? "");
-    setAttachments(safeDraftAttachments(draft?.attachments));
+    // Use the last acknowledged server write, which may be newer than props
+    // until router.refresh() finishes. Reopening must not discard autosaved work.
+    const persisted=JSON.parse(lastSavedSnapshot.current) as {
+      summary:string;sourceUrl?:string;demoUrl?:string;notes?:string;
+      attachments?:DeliveryAttachment[];
+    };
+    setSummary(persisted.summary??"");
+    setSourceUrl(persisted.sourceUrl??"");
+    setDemoUrl(persisted.demoUrl??"");
+    setNotes(persisted.notes??"");
+    setAttachments(safeDraftAttachments(persisted.attachments));
     setLinkName("");setLinkUrl("");setAutosaveStatus("idle");
     failedSnapshot.current=null;
-    markSaved(JSON.stringify({
-      summary:(draft?.summary??"").trim(),
-      sourceUrl:draft?.sourceUrl?.trim()||undefined,
-      demoUrl:draft?.demoUrl?.trim()||undefined,
-      notes:draft?.notes?.trim()||undefined,
-      attachments:safeDraftAttachments(draft?.attachments),
-    }));
+    markSaved(lastSavedSnapshot.current);
   }
 
   async function save(
@@ -204,25 +206,19 @@ export function LearnerFinalDeliveryControl({
 
   const unsaved=JSON.stringify(currentPayload())!==savedSnapshot;
 
-  async function submitDraft() {
+  async function submitDraft(confirmed=false) {
     if (!draft || pendingRef.current) return;
-    // The server props may be stale after a successful autosave but before a
-    // router refresh. The saved snapshot represents the last acknowledged
-    // persisted version; never submit an unsaved edit or trust local-only data.
-    if(JSON.stringify(currentPayload())!==lastSavedSnapshot.current){
+    // Server-acknowledged values can be newer than RSC props after autosave.
+    const readiness=savedDeliverySubmissionReadiness(currentPayload(),lastSavedSnapshot.current);
+    if(readiness==="UNSAVED"){
       showToast({tone:"error",title:"Save your latest changes before submitting."});
       return;
     }
-    const saved=JSON.parse(lastSavedSnapshot.current) as {
-      summary:string;sourceUrl?:string;demoUrl?:string;attachments?:DeliveryAttachment[];
-    };
-    const hasEvidence=Boolean(saved.sourceUrl||saved.demoUrl||
-      saved.attachments?.some(item=>item.kind==="FILE"));
-    if(!saved.summary.trim()||!hasEvidence){
+    if(readiness==="MISSING_EVIDENCE"){
       showToast({tone:"error",title:"Add at least one attachment and a summary before submitting."});
       return;
     }
-    if(!window.confirm("Submit on behalf of your team?"))return;
+    if(!confirmed){setSubmitConfirmation(true);return;}
     pendingRef.current=true;
     setPending(true);
     try {
@@ -230,6 +226,7 @@ export function LearnerFinalDeliveryControl({
         `/api/projects/${projectId}/submissions/${draft.id}/submit`,
         "POST",
       );
+      setSubmitConfirmation(false);
       showToast({
         tone: "success",
         title: "Submission sent for review.",
@@ -276,7 +273,7 @@ export function LearnerFinalDeliveryControl({
           disabled={
             pending || !canSubmitDraft
           }
-          onClick={submitDraft}
+          onClick={()=>{void submitDraft();}}
           aria-describedby={!canSubmitDraft ? "delivery-ready-reason-" + projectId : undefined}
         >
           {pending
@@ -439,6 +436,12 @@ export function LearnerFinalDeliveryControl({
           </div>
         </form>
       </Dialog>
+      <ConfirmDialog open={submitConfirmation}
+        onOpenChange={next=>{if(!next&&!pending)setSubmitConfirmation(false);}}
+        title="Submit final delivery for mentor review?"
+        description="The final delivery is shared with your project team and cannot be edited while it awaits review."
+        confirmLabel="Submit final work" pending={pending}
+        onConfirm={()=>{void submitDraft(true);}} />
     </div>
   );
 }
