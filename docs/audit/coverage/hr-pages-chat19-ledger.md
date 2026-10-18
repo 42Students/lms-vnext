@@ -241,3 +241,9 @@ This is an independent TPO/HR workflow review; real clipboard permission denial,
 | ID | Export / entry | Behavioral coverage | Boundary |
 |---|---|---|---|
 | HR-BREAK-HOME-IDENTITY-20 | `HrHomePage` session check | `tests/unit/HR-BREAK-chat19-home-portfolio-proposals.test.ts` | Exact user/recruiter identity equality required before employer job, grant or discussion retrieval. |
+
+## HR persisted drive proposal route security
+
+| ID | Entry point | Direct tests | Scope |
+|---|---|---|---|
+| HR-BREAK-PROPOSALS-QUERY-21 | `/hr/drives/proposals` | `tests/unit/HR-BREAK-chat19-home-portfolio-proposals.test.ts` | Repeated college/page/search/sort values fail strict URL validation, mismatched recruiter identity redirects, unauthorized proposal-history service never called. |
