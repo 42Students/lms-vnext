@@ -22,7 +22,7 @@ export default async function SuperAdminPlacementStudentLookup({searchParams}:{
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Placements" title="Student placement lookup"
    actions={<Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Analytics</Link>}/>
-  <form action="/admin/placements/student-lookup" role="search" className="min-w-0 rounded-xl border border-border bg-surface p-4 sm:p-6">
+  <form action="/admin/placements/student-lookup" role="search" className="min-w-0 border-b border-border pb-4">
    <label className="grid max-w-xl gap-2 text-sm font-semibold">Name, roll number or email
     <Input type="search" name="q" minLength={3} maxLength={150} required disabled={!ctx.adminScope?.collegeId} aria-describedby={!ctx.adminScope?.collegeId?"placement-student-scope-hint":undefined} defaultValue={q}
       placeholder="Find one student in this college"
@@ -35,7 +35,7 @@ export default async function SuperAdminPlacementStudentLookup({searchParams}:{
    action={<Link href="/admin/placements/student-lookup" className="font-semibold text-[var(--lms-teal-deep)]">Clear search</Link>}/>:null}
   {!ctx.adminScope?.collegeId?<p id="placement-student-scope-hint" role="status" className="rounded-xl border border-border bg-surface p-4 sm:p-6">Select a college to continue. Choose a college in the header above to look up student placements.</p>:null}
   {data&&!data.students.length?<EmptyState title="No matching college students." description="Name, roll number or email" />:null}
-  {data?.students.map(person=><section key={person.membershipId} className="min-w-0 space-y-3 rounded-xl border border-border bg-surface p-4 sm:p-6">
+  {data?.students.map(person=><section key={person.membershipId} className="min-w-0 space-y-3 border-b border-border py-5">
    <div className="flex flex-wrap items-center justify-between gap-2">
     <div><h2 className="font-semibold">{person.name??person.roll??"Student"}</h2>
      <p className="text-xs text-muted-foreground">{person.roll??"No roll number"} · {person.email??"No email"}</p></div>
