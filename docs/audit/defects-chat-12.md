@@ -49,6 +49,8 @@ Scope: TPO Projects read journey, TPO Students and Companies bulk operations, fi
 
 | D12-27 | HIGH | Real `GET /api/placements/tpo/companies/export` used a separate formula-prefix expression that protected tab/newline but not plain leading spaces, BOM or zero-width chars. A malicious recruiter/company name beginning with these prefixes could be evaluated by spreadsheet viewers despite the safe directory model being fixed. | Reused `tpoStudentCsvCell` for all response cells, preserving CSV quotations and Unicode/control-char handling. | `d324d179`, `chat12-tpo-export-and-clipboard-security.test.ts`; live CSV import acceptance pending. |
 
+| D12-28 | HIGH | TPO Students and Companies server pages and both CSV exports trusted request-context role snapshots. A role-revoked TPO could retrieve an authorized college's PII or company directory until that session refreshed, despite a persisted actor helper already existing for TPO Batches. | Enforce `requireTpoBatchActor` before parsing private query parameters or loading rows; helper checks current user status, college membership, persisted TPO/College Admin role and organization/permission. | `d41f3ae1`, `162fddc1`, `2e62b1c7`, `9c813735`, `chat12-tpo-persisted-private-read-boundaries.test.ts`. |
+
 ## Verification status
 
 The rolling `docs/orchestrator/unit-failures-latest.md` explicitly reports two `chat-12` failures (TPO-students-51); their stale selectors were repaired but remain **unverified in CI**. The branch was fast-forwarded to main `a172b146ede1992a428dbe3e74a6d87dd3a12985` before these changes. No direct commits to main.
