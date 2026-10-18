@@ -140,7 +140,12 @@ export async function createProjectEvaluation(
           "PROJECT_EVALUATION_INVALID_STATE",
         );
       }
-      await assertCurrentEvaluationActor(tx,context,{...scope,access:evaluatorAccess});
+      await assertCurrentEvaluationActor(tx,context,{
+        project:{id:scope.project.id},
+        collegeId:scope.collegeId,
+        organizationId:scope.organizationId,
+        access:evaluatorAccess,
+      });
 
       const [submission] = await tx
         .select({
