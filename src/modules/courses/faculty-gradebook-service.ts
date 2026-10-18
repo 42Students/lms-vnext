@@ -5,6 +5,7 @@ import {getFacultyDeliveryRoster} from "@/modules/attendance/faculty-service";
 import {getFacultyAssessmentOverview} from "./faculty-assessment-service";
 import {getFacultyAssignmentReport,getFacultyQuizReport} from "./faculty-assessment-report-service";
 import {CoursesServiceError} from "./errors";
+import {mapFacultyGradebookReportBatch} from "./faculty-gradebook-report-batch";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {facultyGradebookParamsSchema,facultyPublishedGradeRows,
   facultyPublishedLearnerBreakdown,
@@ -35,8 +36,9 @@ async function loadFacultyPublishedGradebook(context:RequestContext,raw:unknown)
   const scores:GradebookScore[]=[];
   const assessments:FacultyGradebookAssessment[]=[];
   let publishedAssessments=0;
-  for(const item of assignments){
-    const report=await getFacultyAssignmentReport(context,item.id,query.deliveryId);
+  const assignmentReports=await mapFacultyGradebookReportBatch(assignments,
+    async item=>({item,report:await getFacultyAssignmentReport(context,item.id,query.deliveryId)}));
+  for(const {item,report} of assignmentReports){
     // A partially published assignment contributes a score only for learners
     // whose own grade is actually published; others remain unknown.
     publishedAssessments++;
@@ -50,8 +52,9 @@ async function loadFacultyPublishedGradebook(context:RequestContext,raw:unknown)
           kind:"ASSIGNMENT",assessmentId:item.id});
     }
   }
-  for(const item of quizzes){
-    const report=await getFacultyQuizReport(context,item.id,query.deliveryId);
+  const quizReports=await mapFacultyGradebookReportBatch(quizzes,
+    async item=>({item,report:await getFacultyQuizReport(context,item.id,query.deliveryId)}));
+  for(const {item,report} of quizReports){
     // No quiz score is exported while the results publication flag is off.
     if(!report.quiz.resultsPublished)continue;
     publishedAssessments++;
