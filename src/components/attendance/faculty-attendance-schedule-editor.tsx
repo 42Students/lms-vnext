@@ -3,6 +3,11 @@ import { facultyScheduleFieldsChanged, facultyScheduleErrorMessage } from "@/mod
 
 import {useRouter} from "next/navigation";
 import {useState} from "react";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
+import {Textarea} from "@/components/ui/textarea";
 import {localDateTimeInput,validateFacultyScheduleWindow,facultyScheduleInstants} from
   "@/modules/attendance/faculty-schedule-editor-model";
 
@@ -22,6 +27,7 @@ export function FacultyAttendanceScheduleEditor({
   const [startsAt,setStartsAt]=useState("");
   const [endsAt,setEndsAt]=useState("");
   const [busy,setBusy]=useState(false);
+  const [confirmOpen,setConfirmOpen]=useState(false);
   const [error,setError]=useState<string|null>(null);
   const [success,setSuccess]=useState<string|null>(null);
   const eligible=sessions.filter(s=>!s.marked);
@@ -49,7 +55,7 @@ export function FacultyAttendanceScheduleEditor({
       setTitle("");setDescription("");setLocation("");setStartsAt("");setEndsAt("");
     }
   }
-  async function save(){
+  async function save(confirmed=false){
     if(busy)return;
     if(action==="RESCHEDULE"&&!selected){
       setError("Choose an unmarked attendance session you own.");return;
@@ -60,7 +66,7 @@ export function FacultyAttendanceScheduleEditor({
     const timingError=validateFacultyScheduleWindow(startsAt,endsAt,action==="RESCHEDULE"?selected:undefined);
     if(timingError){setError(timingError);return;}
     if(unchanged){setError("No schedule details changed; nothing was saved.");return;}
-    if(!window.confirm("Confirm "+(action==="CREATE"?"schedule":"reschedule")+" this Faculty attendance session?"))return;
+    if(!confirmed){setConfirmOpen(true);return;}
     setBusy(true);setError(null);setSuccess(null);
     try{
       const payload={
@@ -78,7 +84,7 @@ export function FacultyAttendanceScheduleEditor({
       setSuccess(action==="CREATE"?"Session scheduled.":"Session rescheduled.");
       router.refresh();
     }catch(e){setError(e instanceof Error?e.message:"Session update failed.");}
-    finally{setBusy(false);}
+    finally{setBusy(false);setConfirmOpen(false);}
   }
   return <section aria-label="Faculty attendance session scheduling"
     className="space-y-3 rounded-xl border border-border bg-surface p-4">
@@ -89,45 +95,48 @@ export function FacultyAttendanceScheduleEditor({
     </p>
     <div className="grid gap-3 sm:grid-cols-2">
       <label className="grid gap-1 text-sm">Action
-        <select value={action} onChange={e=>changeAction(e.target.value as typeof action)}
-          className="min-h-10 rounded border border-border bg-background p-2">
+        <Select value={action} onChange={e=>changeAction(e.target.value as typeof action)}
+          className="text-base sm:text-sm">
           <option value="CREATE">Schedule</option>
           <option value="RESCHEDULE" disabled={eligible.length===0}>Reschedule</option>
-        </select>
+        </Select>
       </label>
       {action==="RESCHEDULE"?<label className="grid gap-1 text-sm">Unmarked session
-        <select value={id} onChange={e=>{const next=eligible.find(s=>s.id===e.target.value);if(next)applyExistingSession(next);}}
-          className="min-h-10 rounded border border-border bg-background p-2">
+        <Select value={id} onChange={e=>{const next=eligible.find(s=>s.id===e.target.value);if(next)applyExistingSession(next);}}
+          className="text-base sm:text-sm">
           {eligible.map(s=>
             <option key={s.id} value={s.id}>{s.title}</option>)}
-        </select>
+        </Select>
       </label>:null}
       <label className="grid gap-1 text-sm">Session title
-        <input value={title} onChange={e=>setTitle(e.target.value)}
-          maxLength={160} className="min-h-10 rounded border border-border bg-background p-2" />
+        <Input value={title} onChange={e=>setTitle(e.target.value)}
+          maxLength={160} className="text-base sm:text-sm" />
       </label>
       <label className="grid gap-1 text-sm">Location
-        <input value={location} onChange={e=>setLocation(e.target.value)}
-          maxLength={240} className="min-h-10 rounded border border-border bg-background p-2" />
+        <Input value={location} onChange={e=>setLocation(e.target.value)}
+          maxLength={240} className="text-base sm:text-sm" />
       </label>
       <label className="grid gap-1 text-sm">Start (IST)
-        <input type="datetime-local" value={startsAt} onChange={e=>setStartsAt(e.target.value)}
-          className="min-h-10 rounded border border-border bg-background p-2" />
+        <Input type="datetime-local" value={startsAt} onChange={e=>setStartsAt(e.target.value)}
+          className="text-base sm:text-sm" />
       </label>
       <label className="grid gap-1 text-sm">End (IST)
-        <input type="datetime-local" value={endsAt} onChange={e=>setEndsAt(e.target.value)}
-          className="min-h-10 rounded border border-border bg-background p-2" />
+        <Input type="datetime-local" value={endsAt} onChange={e=>setEndsAt(e.target.value)}
+          className="text-base sm:text-sm" />
       </label>
     </div>
     <label className="grid gap-1 text-sm">Description
-      <textarea value={description} onChange={e=>setDescription(e.target.value)}
-        maxLength={1000} className="min-h-20 rounded border border-border bg-background p-2" />
+      <Textarea value={description} onChange={e=>setDescription(e.target.value)}
+        maxLength={1000} className="text-base sm:text-sm" />
     </label>
-    <button type="button" onClick={save}
-      disabled={busy||unchanged||action==="RESCHEDULE"&&!selected}
-      className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+    <Button type="button" variant="primary" onClick={()=>void save()}
+      disabled={busy||unchanged||action==="RESCHEDULE"&&!selected}>
       {busy?"Saving…":"Confirm "+(action==="CREATE"?"schedule":"reschedule")}
-    </button>
+    </Button>
+    <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
+      title={"Confirm "+(action==="CREATE"?"schedule":"reschedule")+" this Faculty attendance session?"}
+      confirmLabel={"Confirm "+(action==="CREATE"?"schedule":"reschedule")}
+      confirmVariant="primary" pending={busy} onConfirm={()=>void save(true)}/>
     {unchanged?<p role="status" className="text-xs text-muted-foreground">No schedule details have changed.</p>:null}
     {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
     {success?<p role="status" className="text-sm text-body">{success}</p>:null}
