@@ -129,3 +129,15 @@ A separate high-volume seeded disposable database and `EXPLAIN ANALYZE` are requ
 ## Round-to-drive ancestry — PROJ-HARNESS-PLACEMENTS-12
 
 `createPlacementCandidateFixture` validates the supplied round ID against `placement_job_rounds.job_id` for the **same persisted drive** before writing an application, screening, round result or offer. Previously an otherwise well-typed fixture object could mix a valid job with another drive's round and attempt a cross-parent insert. `tests/integration/projects-placements-pg-harness-placements.test.ts` creates two drives in the same college, forges the wrong round into the first drive fixture, and checks rejection leaves the first drive's application count unchanged. This guards **fixture composition**, not a claim that production route/service ancestry checks are complete.
+
+## Additional tenant, lineage and team-collaboration witnesses — PROJ-HARNESS-38..42
+
+`tests/integration/projects-placements-pg-harness-boundaries.test.ts` now exercises rollback-only, real PostgreSQL constraints against the live registered migration graph:
+
+- **38:** after an organization or college is archived, task submissions, final drafts, meetings and drive creation reject stale fixture principals before any new row; restoring status re-enables the valid path.
+- **39:** an active project roster record does not restore the learner's revoked `membership_roles.LEARNER` grant; task, final and meeting mutations remain denied.
+- **40:** a valid task UUID from a *different* workspace in the same college cannot be paired with the submitted project UUID. The two separate SQL foreign keys do not enforce this composite lineage on their own, so `createTaskSubmission` validates persisted `project_tasks.project_id` first.
+- **41:** a mentor must have an active, writable project mentor roster, not merely an active `MENTOR` college role, to schedule a meeting. College Admin continues to coordinate legitimate meetings.
+- **42:** final delivery is a **collaborative project artifact**, consistent with production `submitProjectSubmission`. A second active rostered learner may submit a teammate's draft; an outsider may not, and only one DRAFT→SUBMITTED transition succeeds. It is incorrect to enforce `created_by_membership_id=submitter` on the group final-delivery transition.
+
+The fixture guards join currently active college, organization, user, membership and learner role records before writes. These are **fixture-example guards, not a substitute** for the production service's independently audited permission and state-machine checks. Run `npm run test:db:projects-harness` against a completely disposable, migrated PostgreSQL database. The local connector cannot execute it or certify a pass.

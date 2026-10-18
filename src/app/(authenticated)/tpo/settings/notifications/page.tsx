@@ -14,7 +14,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import {
   TPO_NOTIFICATION_VIEWS,
   tpoMyNotificationsHref,
-  tpoMyNotificationsQuerySchema,
+  parseTpoMyNotificationsParams,
 } from "@/modules/placements/tpo-my-notifications-model";
 import {
   getTpoMyNotifications,
@@ -25,12 +25,6 @@ type SearchParams = {
   page?: string | string[];
   pageSize?: string | string[];
 };
-
-function first(
-  value: string | string[] | undefined,
-) {
-  return Array.isArray(value) ? value[0] : value;
-}
 
 function formatWhen(value: Date) {
   return new Intl.DateTimeFormat("en-IN", {
@@ -56,13 +50,9 @@ export default async function TpoMyNotificationsPage({
 
   const raw = await searchParams;
 
-  const parsed = tpoMyNotificationsQuerySchema.safeParse({
-    view: first(raw.view) || undefined,
-    page: first(raw.page) || undefined,
-    pageSize: first(raw.pageSize) || undefined,
-  });
+  const parsed=parseTpoMyNotificationsParams(raw);
 
-  if (!parsed.success) {
+  if (!parsed) {
     return (
       <div className="space-y-6">
         <TpoSettingsNav active="notifications" />
@@ -91,7 +81,7 @@ export default async function TpoMyNotificationsPage({
 
   const data = await getTpoMyNotifications(
     context,
-    parsed.data,
+    parsed,
   );
 
   const {
