@@ -338,7 +338,7 @@ export function LearnerPlacementOffers({
 
             <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-body">
               {item.letterHref ? (
-                <a href={item.letterHref} target="_blank" rel="noopener noreferrer"
+                <a href={item.letterHref} rel="noopener noreferrer"
                   className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
                   View offer letter
                 </a>
@@ -395,7 +395,7 @@ export function LearnerPlacementOffers({
                   Number.isFinite(Date.parse(item.acceptedDisputableUntil)) &&
                   Number.isFinite(Date.parse(snapshotNowIso)) &&
                   Date.parse(item.acceptedDisputableUntil)>Date.parse(snapshotNowIso) ? (
-                    <Link className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline"
+                    <Link className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline"
                       href={"/learn/my-placements/placement?"+new URLSearchParams({
                         request:"acceptance-dispute",offerId:item.offerId,
                       }).toString()+"#requests"}>
