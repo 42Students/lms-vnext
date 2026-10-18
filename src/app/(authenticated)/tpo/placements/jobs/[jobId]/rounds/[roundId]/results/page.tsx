@@ -18,13 +18,13 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
  const {jobId,roundId}=await params;
  const raw=await searchParams;
  const selected=tpoRoundResultViewSchema.safeParse({q:first(raw.q),status:first(raw.status)});
- if(!selected.success)return <div role="alert" className="space-y-3 p-4"><p>Invalid round result filters. No learner data loaded.</p><Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(roundId)+"/results"} className="text-primary-text underline">Clear filters</Link></div>;
+ if(!selected.success)return <div role="alert" className="space-y-3 p-4"><p>Invalid round result filters. No learner data loaded.</p><Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(roundId)+"/results"} className="text-[var(--lms-teal-deep)] underline">Clear filters</Link></div>;
  let data:Awaited<ReturnType<typeof getTpoRoundResultTable>>;
  try{data=await getTpoRoundResultTable(context,{jobId,roundId});}
  catch(error){if(error instanceof PlacementsServiceError&&error.code==="PLACEMENT_ROUND_NOT_FOUND")notFound();throw error;}
  const visibleRows=filterTpoRoundResultRows(data.rows,selected.data);
- return <div className="space-y-6">
-  <Link href={"/tpo/placements/jobs/"+jobId} className="text-sm font-semibold text-primary-text hover:underline">← Drive workspace</Link>
+ return <div className="min-w-0 space-y-6">
+  <Link href={"/tpo/placements/jobs/"+jobId} className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">← Drive workspace</Link>
   <PageHeader eyebrow="TPO · Round results" title={data.round.name}
    description={data.round.jobTitle+" · Stage outcomes for eligible shortlisted submitted applications."}/>
   <section className="grid grid-cols-2 gap-3 sm:grid-cols-4" aria-label="Result counts">
