@@ -87,3 +87,15 @@
 | `learner-course-drilldown-service.ts` | `getOwnLearnerCourseProgressBreakdown` | Not individually linked in this inventory |
 | `learner-course-drilldown-service.ts` | `getOwnLearnerCourseAttendanceHistory` | Not individually linked in this inventory |
 | `learner-course-file-reference-service.ts` | `getLearnerCourseFileReference` | Not individually linked in this inventory |
+| `learner-course-filtered-empty-model.ts` | `learnerCourseFilteredEmptyTitle` | Not individually linked in this inventory |
+| `learner-course-home-action-label-model.ts` | `learnerCourseHomeActionLabel` | Not individually linked in this inventory |
+| `learner-course-home-completion-model.ts` | `learnerCourseHomeCompletion` | Authored direct model regression, unrun |
+| `learner-course-image-reset-key-model.ts` | `learnerCourseImageResetKey` | Not individually linked in this inventory |
+| `learner-course-instructor-labels-model.ts` | `learnerCourseInstructorLabels` | Not individually linked in this inventory |
+| `learner-course-list-concurrency-model.ts` | `mapLearnerCourseCardsLimited` | Not individually linked in this inventory |
+| `learner-course-next-action-model.ts` | `learnerCourseNextItemHref` | Authored direct model regression, unrun |
+| `learner-course-overdue-link-model.ts` | `selectLearnerOverdueAssignment` | Not individually linked in this inventory |
+| `learner-course-overview-mobile-model.ts` | `LearnerCourseOverviewJump` | Not individually linked in this inventory |
+| `learner-course-overview-mobile-model.ts` | `learnerCourseOverviewJumps` | Not individually linked in this inventory |
+| `learner-course-overview-model.ts` | `CourseOverviewLesson` | Not individually linked in this inventory |
+| `learner-course-overview-model.ts` | `learnerCourseListSignals` | Not individually linked in this inventory |
