@@ -1,8 +1,8 @@
 import "server-only";
 import {AuthorizationError} from "@/modules/permissions/policy";
-import {and,asc,countDistinct,eq,inArray} from "drizzle-orm";
+import {and,asc,countDistinct,eq,inArray,isNotNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {cohorts,departments,programs,sections,sectionEnrollments,learnerProgramEnrollments,collegeMemberships,users,learnerProfiles} from "@/db/schema";
+import {cohorts,departments,programs,sections,sectionEnrollments,learnerProgramEnrollments,collegeMemberships,membershipRoles,users,learnerProfiles} from "@/db/schema";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {z} from "zod";
@@ -25,27 +25,39 @@ export async function getSuperAdminBatchRosterOverview(context:RequestContext,ra
   // Match the active roster: a disabled platform account is not an attendee.
   learnerCount:countDistinct(users.id),
  }).from(sections)
-  .leftJoin(sectionEnrollments,and(eq(sectionEnrollments.sectionId,sections.id),eq(sectionEnrollments.status,"ACTIVE")))
+  .leftJoin(sectionEnrollments,and(eq(sectionEnrollments.sectionId,sections.id),
+    eq(sectionEnrollments.academicPeriodId,sections.academicPeriodId),
+    eq(sectionEnrollments.status,"ACTIVE")))
   .leftJoin(learnerProgramEnrollments,and(eq(learnerProgramEnrollments.id,sectionEnrollments.learnerEnrollmentId),
     eq(learnerProgramEnrollments.cohortId,batchId),eq(learnerProgramEnrollments.status,"ACTIVE")))
   .leftJoin(collegeMemberships,and(eq(collegeMemberships.id,learnerProgramEnrollments.membershipId),
     eq(collegeMemberships.collegeId,scope.collegeId),eq(collegeMemberships.status,"ACTIVE")))
-  .leftJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
+  .leftJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+    eq(membershipRoles.role,"LEARNER")))
+  .leftJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE"),
+    isNotNull(membershipRoles.membershipId)))
   .where(eq(sections.cohortId,batchId))
   .groupBy(sections.id,sections.name,sections.code,sections.capacity,sections.status)
   .orderBy(asc(sections.name),asc(sections.id));
+ // No authorized Sections means no learner roster to enumerate.
+ if(classes.length===0)return {batch,classes,roster:[]};
  const active=await db.select({
   learnerEnrollmentId:learnerProgramEnrollments.id,memberId:collegeMemberships.id,
   name:users.displayName,email:users.email,roll:learnerProfiles.rollNumber,
-  classId:sectionEnrollments.sectionId,
+  classId:sections.id,
  }).from(learnerProgramEnrollments)
   .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,learnerProgramEnrollments.membershipId),
     eq(collegeMemberships.collegeId,scope.collegeId),eq(collegeMemberships.status,"ACTIVE")))
+  .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+    eq(membershipRoles.role,"LEARNER")))
   .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
   .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
   .leftJoin(sectionEnrollments,and(eq(sectionEnrollments.learnerEnrollmentId,learnerProgramEnrollments.id),
     eq(sectionEnrollments.status,"ACTIVE"),
-    inArray(sectionEnrollments.sectionId,classes.map(item=>item.id).length?classes.map(item=>item.id):[batchId])))
+    inArray(sectionEnrollments.sectionId,classes.map(item=>item.id))))
+  .leftJoin(sections,and(eq(sections.id,sectionEnrollments.sectionId),
+    eq(sections.cohortId,batchId),
+    eq(sections.academicPeriodId,sectionEnrollments.academicPeriodId)))
   .where(and(eq(learnerProgramEnrollments.cohortId,batchId),eq(learnerProgramEnrollments.status,"ACTIVE")))
   .orderBy(asc(users.displayName),asc(collegeMemberships.id));
  return {batch,classes,roster:active};
