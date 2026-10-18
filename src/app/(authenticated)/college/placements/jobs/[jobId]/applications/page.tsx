@@ -39,25 +39,25 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
       actions={<Link href={`/college/placements/jobs/${jobId}/overview`} className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] min-h-11 inline-flex items-center">Drive overview</Link>} />
     <form method="get" role="search" aria-label="Application filters" className="grid gap-3 rounded-xl border border-border p-4 sm:grid-cols-2 xl:grid-cols-4">
       <label className="grid gap-1 text-sm">Name, email, roll or role
-        <input name="q" defaultValue={query.q} maxLength={100} className="min-h-11 rounded-md border border-border px-2" />
+        <input name="q" defaultValue={query.q} maxLength={100} className="min-h-11 rounded-md border border-border px-2 text-base sm:text-sm" />
       </label>
       <label className="grid gap-1 text-sm">Application
-        <select name="status" defaultValue={query.status} className="min-h-11 rounded-md border border-border px-2">
+        <select name="status" defaultValue={query.status} className="min-h-11 rounded-md border border-border px-2 text-base sm:text-sm">
           {["ALL","SUBMITTED","WITHDRAWN"].map(s=><option key={s} value={s}>{s}</option>)}
         </select>
       </label>
       <label className="grid gap-1 text-sm">Screening
-        <select name="screening" defaultValue={query.screening} className="min-h-11 rounded-md border border-border px-2">
+        <select name="screening" defaultValue={query.screening} className="min-h-11 rounded-md border border-border px-2 text-base sm:text-sm">
           {["ALL","PENDING","HOLD","SHORTLISTED","REJECTED","UNRECORDED"].map(s=><option key={s} value={s}>{s}</option>)}
         </select>
       </label>
       <label className="grid gap-1 text-sm">Source
-        <select name="source" defaultValue={query.source} className="min-h-11 rounded-md border border-border px-2">
+        <select name="source" defaultValue={query.source} className="min-h-11 rounded-md border border-border px-2 text-base sm:text-sm">
           {["ALL","INTERNAL","EXTERNAL"].map(item=><option key={item} value={item}>{item==="ALL"?"All sources":item}</option>)}
         </select>
       </label>
       <label className="grid gap-1 text-sm">Department
-        <select name="departmentId" defaultValue={query.departmentId??""} className="min-h-11 rounded-md border border-border px-2">
+        <select name="departmentId" defaultValue={query.departmentId??""} className="min-h-11 rounded-md border border-border px-2 text-base sm:text-sm">
           <option value="">All departments</option>
           {query.departmentId&&!filters.departments.some(item=>item.id===query.departmentId)&&
             <option value={query.departmentId}>Selected department</option>}
@@ -65,7 +65,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
         </select>
       </label>
       <label className="grid gap-1 text-sm">Program
-        <select name="programId" defaultValue={query.programId??""} className="min-h-11 rounded-md border border-border px-2">
+        <select name="programId" defaultValue={query.programId??""} className="min-h-11 rounded-md border border-border px-2 text-base sm:text-sm">
           <option value="">All programs</option>
           {query.programId&&!filters.programs.some(item=>item.id===query.programId)&&
             <option value={query.programId}>Selected program</option>}
@@ -73,7 +73,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
         </select>
       </label>
       <label className="grid gap-1 text-sm">Batch
-        <select name="cohortId" defaultValue={query.cohortId??""} className="min-h-11 rounded-md border border-border px-2">
+        <select name="cohortId" defaultValue={query.cohortId??""} className="min-h-11 rounded-md border border-border px-2 text-base sm:text-sm">
           <option value="">All batches</option>
           {query.cohortId&&!filters.cohorts.some(item=>item.id===query.cohortId)&&
             <option value={query.cohortId}>Selected batch</option>}
