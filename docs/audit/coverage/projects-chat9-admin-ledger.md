@@ -1,6 +1,6 @@
 # Chat-9 Projects admin/college breaker ledger (IIT Dharwad)
 
-Date: 2026-10-18. **Targeted inventory: 59 exported functions/route handlers/pages** across admin/college services; **not** the full Projects module. Chat-14 is explicitly the lead for `docs/audit/coverage/projects-ledger.md` and must merge this inventory into the full per-export ledger. Nothing in this file claims 90%+ branch coverage or passing integration tests.
+Date: 2026-10-18. **Targeted inventory: 60 exported functions/route handlers/pages** across admin/college services; **not** the full Projects module. Chat-14 is explicitly the lead for `docs/audit/coverage/projects-ledger.md` and must merge this inventory into the full per-export ledger. Nothing in this file claims 90%+ branch coverage or passing integration tests.
 
 **Evidence category**: PURE BEHAVIOR means a unit test directly calls the exported function with hostile values. SOURCE means an adversarial source/route invariant asserts scoped filters, locks, CSRF, archiving, notification dedupe etc.; database-backed role matrix, idempotency, stale-version and failure replay are **outstanding** for that entry, not implicitly waived. A row points to its related tests and has an honest unresolved item instead of a fake passed status.
 
@@ -23,6 +23,7 @@ Date: 2026-10-18. **Targeted inventory: 59 exported functions/route handlers/pag
 | `src/modules/projects/instance-service.ts` | `listProjectInstances` | `PROJ-BREAK-idor-12` | SOURCE: active roster/college scope; DB matrix pending |
 | `src/modules/projects/instance-service.ts` | `archiveProjectInstance` | `PROJ-BREAK-idor-12` | SOURCE: active roster/college scope; DB matrix pending |
 | `src/modules/projects/instance-service.ts` | `getProjectInstanceWorkspace` | `PROJ-BREAK-idor-12` | SOURCE: active roster/college scope; DB matrix pending |
+| `src/modules/projects/college-project-roster-service.ts` | `replaceCollegeProjectLearners` | `PROJ-BREAK-idor-15/16/17` | SOURCE: persisted actor and academic program/section membership filters; PURE BEHAVIOR: roster input schema; DB matrix pending |
 | `src/modules/projects/college-project-summary-service.ts` | `updateCollegeProjectSummary` | `PROJ-BREAK-races-04` | SOURCE: row-lock + CAS; DB race pending |
 | `src/modules/projects/admin-readiness-overrides-service.ts` | `listCollegeActiveReadinessOverrides` | `PROJ-BREAK-archive-01` | SOURCE: archived filter; DB fixtures pending |
 | `src/modules/projects/college-readiness-releases-service.ts` | `listCollegeReadinessWorkspaceChoices` | `PROJ-BREAK-archive-02` | SOURCE: archive and college filter; DB fixtures pending |
