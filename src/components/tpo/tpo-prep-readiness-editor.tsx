@@ -3,6 +3,7 @@ import {useRouter} from "next/navigation";
 import {useEffect,useRef,useState} from "react";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import {getTpoPrepSelectionState} from "@/modules/placements/tpo-prep-selection-model";
 
 type PrepSaveResult={changed:boolean;updatedAt:string};
 export function TpoPrepReadinessEditor({choices,initial,expectedVersion}:{choices:readonly {id:string;name:string;code:string}[];
@@ -18,11 +19,9 @@ export function TpoPrepReadinessEditor({choices,initial,expectedVersion}:{choice
  const [message,setMessage]=useState("");
  const [search,setSearch]=useState("");
  const available=new Set(choices.map(row=>row.id));
- const missing=selected.filter(id=>!available.has(id));
- const same=(a:readonly string[],b:readonly string[])=>JSON.stringify([...a].sort())===JSON.stringify([...b].sort());
- const dirty=!same(selected,saved.courseIds)||minimum!==saved.minimumCompleted;
- const valid=Number.isInteger(minimum)&&minimum>=0&&minimum<=selected.length&&
-  selected.length<=40&&new Set(selected).size===selected.length&&missing.length===0;
+ const {missing,dirty,valid}=getTpoPrepSelectionState(
+  selected,saved,minimum,choices.map(row=>row.id),
+ );
  useEffect(()=>{
   if(!dirty)return;
   const before=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
