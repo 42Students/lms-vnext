@@ -4,7 +4,8 @@ export const adminUnassignedUsersQuerySchema = z.strictObject({
   q: z.string().trim().max(100).default(""),
   platformStatus: z.enum(["ALL", "ACTIVE", "DISABLED"]).default("ALL"),
   role: z.enum(["ALL", "SUPER_ADMIN", "NONE"]).default("ALL"),
-  page: z.coerce.number().int().min(1).max(1000).default(1),
+  page: z.union([z.number().int(), z.string().regex(/^[0-9]+$/).transform(Number).pipe(z.number().int())])
+    .pipe(z.number().int().min(1).max(1000)).default(1),
 });
 export function unassignedIdentityScopeAllowed(scope: { organizationId?: string | null; collegeId?: string | null } | null | undefined) {
   return !scope?.organizationId && !scope?.collegeId;
