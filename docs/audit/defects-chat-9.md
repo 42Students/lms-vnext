@@ -35,6 +35,8 @@ Branch: `chatgpt/chat-9-b`. Owner: chat-9. These are observed source-level findi
 
 | PROJ9-023 · PROJ-BREAK-idor-27/28 | High | College template assignment/revocation trusted a Super Admin permission snapshot obtained before starting the transaction. If the actor was disabled or its Super Admin role revoked between request authentication and row mutation, stale tabs could still change published-template assignments and write audit history. After template row lock, both mutations now reconstruct persisted actor roles under transactional SHARE locks; unauthorized sessions exit without writes or events. | `56ae8fa` | `tests/unit/PROJ-BREAK-chat9-template-assignments.test.ts` (`8146947`, `f8541ed`); tests use a revocation stub, PostgreSQL concurrent role-update interleavings OPEN |
 
+| PROJ9-024 · PROJ-BREAK-races-10/11 | Medium | Repeating a successful college-template assignment revocation after a lost response threw `PROJECT_TEMPLATE_ASSIGNMENT_NOT_FOUND`, despite the already-revoked row being retained for audit. Under the template row lock, a no-active-assignment update now resolves the latest previously revoked matching row without another write/activity; truly never-assigned colleges still fail. | `6803f26` | `tests/unit/PROJ-BREAK-chat9-template-assignments.test.ts` (`1fdac7a`), mocked persisted state; live PostgreSQL concurrent double submit OPEN |
+
 ## Outstanding release gates (not yet closed)
 
 - Live PostgreSQL integration tests for wrong-tenant IDs, serializable races, rollback and event/notification dedupe; chat-17 owns shared fixtures. Static service assertions alone cannot establish real DB behavior.
