@@ -9,6 +9,7 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import type { RequestContext } from "@/modules/identity/context";
 import { requireProjectReadAccess } from "./access";
 import { ProjectsServiceError } from "./errors";
+import {assertPersistedLearnerProjectMutation} from "./learner-mutation-guard";
 import {
   learnerTaskProgressInputSchema, learnerTaskProgressParamsSchema, learnerTaskTransitionAllowed,
 } from "./learner-task-progress-model";
@@ -29,6 +30,7 @@ export async function updateLearnerProjectTaskProgress(
       .for("update").limit(1);
     if (!project || project.status !== "ACTIVE")
       throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+    await assertPersistedLearnerProjectMutation(tx,context,scope.project.id,scope.collegeId);
 
     const [candidate] = await tx.select({ sprintId: projectTasks.sprintId }).from(projectTasks)
       .where(and(eq(projectTasks.projectId, scope.project.id), eq(projectTasks.id, params.taskId))).limit(1);
@@ -45,7 +47,7 @@ export async function updateLearnerProjectTaskProgress(
 
     const [release] = await tx.select({ status: projectReleases.status }).from(projectReleases)
       .where(and(eq(projectReleases.id, sprint.releaseId), eq(projectReleases.projectId, scope.project.id)))
-      .limit(1);
+      .for("share").limit(1);
     if (!release || release.status === "SHIPPED")
       throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
 
