@@ -16,19 +16,19 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
   page:first("page"),pageSize:first("pageSize"),search:first("search"),
   batchId:first("batchId")||undefined,branchId:first("branchId")||undefined,
  });
- if(!parsed.success)return <main className="space-y-3 p-5">
+ if(!parsed.success)return <div className="space-y-3 p-5">
   <h1 className="text-lg font-semibold">Invalid verification filters</h1>
   <p role="alert">No verification records were loaded. Choose a supported status or reset the filters.</p>
-  <Link href="/tpo/verification" className="text-primary-text underline">Clear filters</Link>
- </main>;
+  <Link href="/tpo/verification" className="text-[var(--lms-teal-deep)] underline">Clear filters</Link>
+ </div>;
  const query=parsed.data;
  const context=await getCurrentRequestContext();
  const queue=await getTpoVerificationQueue(context,query);
  const directory=queue.available&&queue.enabled&&queue.permitted?await listTpoBatches(context):null;
  const branches=[...new Map(directory?.batches.map(item=>[item.departmentId,item.department] as const)??[])];
- return <main className="min-w-0 space-y-4">
+ return <div className="min-w-0 space-y-4">
   <nav className="flex flex-wrap items-center gap-3">
-    <Link href="/tpo/students" className="text-sm text-primary-text underline">Back to students</Link>
+    <Link href="/tpo/students" className="text-sm text-[var(--lms-teal-deep)] underline">Back to students</Link>
     {queue.available&&queue.enabled&&queue.permitted?
      <div className="flex flex-wrap gap-2">
        {([["WAITING","Waiting"],["SENT_BACK","Sent back"],["VERIFIED","Verified"]] as const).map(([tab,label])=>
@@ -86,7 +86,7 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
     </select>
    </label>
    <button type="submit" className="min-h-11 rounded bg-primary px-4 text-on-primary">Apply filters</button>
-   <Link href="/tpo/verification" className="self-center text-primary-text underline">Reset filters</Link>
+   <Link href="/tpo/verification" className="self-center text-[var(--lms-teal-deep)] underline">Reset filters</Link>
   </form>
   {queue.available&&queue.enabled&&queue.permitted&&queue.counts?
    <p role="status" className="text-sm text-body">
@@ -100,7 +100,7 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
   {!queue.available?<section role="status" className="rounded border border-border p-4">
    <h1 className="font-semibold">Verification</h1>
    <p>Verification records are not available right now. Please try again or contact your college admin.</p>
-   <Link href="/tpo/verification" className="font-semibold text-primary-text underline">Retry</Link>
+   <Link href="/tpo/verification" className="font-semibold text-[var(--lms-teal-deep)] underline">Retry</Link>
   </section>:!queue.enabled||!queue.permitted?<section role="status" className="rounded border border-border p-4">
    <h1 className="font-semibold">You cannot verify profiles here</h1>
    <p className="text-sm">{!queue.enabled
@@ -108,9 +108,9 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
     :"Your verification access has been removed. Ask your college admin."}</p>
   </section>:<><TpoVerificationPanel rows={queue.rows} counts={queue.counts} serverTab={query.tab} serverKind={query.kind}/>
   <nav aria-label="Verification pages" className="flex items-center gap-3 text-sm">
-   {query.page>1?<Link href={tpoVerificationHref({...query,page:query.page-1})} className="text-primary-text underline">Previous page</Link>:null}
+   {query.page>1?<Link href={tpoVerificationHref({...query,page:query.page-1})} className="text-[var(--lms-teal-deep)] underline">Previous page</Link>:null}
    <span>Page {query.page}; up to {query.pageSize} records per page.</span>
-   {queue.hasMore?<Link href={tpoVerificationHref({...query,page:query.page+1})} className="text-primary-text underline">Next page</Link>:null}
+   {queue.hasMore?<Link href={tpoVerificationHref({...query,page:query.page+1})} className="text-[var(--lms-teal-deep)] underline">Next page</Link>:null}
   </nav></>}
- </main>;
+ </div>;
 }

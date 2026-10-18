@@ -128,7 +128,7 @@ export default async function TpoStudentRequestsPage({
           </p>
           <Link
             href="/tpo/students/requests"
-            className="mt-4 inline-flex min-h-11 items-center font-semibold text-primary-text hover:underline"
+            className="mt-4 inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] hover:underline"
           >
             Clear filters
           </Link>
@@ -173,7 +173,7 @@ export default async function TpoStudentRequestsPage({
         actions={
           <Link
             href="/tpo/students"
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
           >
             Students intelligence
           </Link>
@@ -193,7 +193,7 @@ export default async function TpoStudentRequestsPage({
         <Link
           href="/tpo/students/requests"
           aria-current="page"
-          className="rounded-md bg-primary-subtle px-4 py-2 text-sm font-semibold text-primary-text"
+          className="rounded-md bg-primary-subtle px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)]"
         >
           Requests
         </Link>
@@ -310,7 +310,7 @@ export default async function TpoStudentRequestsPage({
           </div>
           <Link
             href="/tpo/students/requests"
-            className="text-sm font-semibold text-primary-text hover:underline"
+            className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline"
           >
             Clear filters
           </Link>
@@ -328,7 +328,7 @@ export default async function TpoStudentRequestsPage({
                 ...baseFilters,
                 page: 1,
               })}
-              className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline"
+              className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline"
             >
               First page
             </Link>
@@ -355,7 +355,7 @@ export default async function TpoStudentRequestsPage({
                   {formatRequestedAt(request.requestedAt)} IST
                 </time>
                 <Link href={`/tpo/placements/jobs/${encodeURIComponent(request.jobId)}`}
-                  className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+                  className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">
                   Open placement job
                 </Link>
                 {request.status==="PENDING" ? <TpoRequestDecisionControl
@@ -430,7 +430,7 @@ export default async function TpoStudentRequestsPage({
                     <td className="px-4 py-4">
                       <Link
                         href={`/tpo/placements/jobs/${encodeURIComponent(request.jobId)}`}
-                        className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:underline"
+                        className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] hover:underline"
                       >
                         Open placement job →
                       </Link>
@@ -467,7 +467,7 @@ export default async function TpoStudentRequestsPage({
                   ...baseFilters,
                   page: data.page - 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
               >
                 Previous
               </Link>
@@ -479,7 +479,7 @@ export default async function TpoStudentRequestsPage({
                   ...baseFilters,
                   page: data.page + 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
               >
                 Next
               </Link>

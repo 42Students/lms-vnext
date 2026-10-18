@@ -26,11 +26,11 @@ export default async function MentorCalendarPage({searchParams}:{
   }));
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <h1>Invalid meeting filters</h1>
-    <Link href="/mentor/calendar" className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
+    <Link href="/mentor/calendar" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
   </section>;
   const context=await getCurrentRequestContext();
   const access=await resolveOptionalModuleAccess(context).catch(()=>null);
-  if(access?.projects.enabled!==true)return <MentorProjectsUnavailable/>;
+  if(access?.projects.enabled!==true)return <MentorProjectsUnavailable loadFailed={access===null}/>;
   const meetings=await listMyMentorCalendarMeetings(context).catch(()=>null);
   if(meetings===null)return <div className="min-w-0 max-w-full space-y-5">
     <PageHeader title="Meetings" description="Every scheduled meeting across your assigned projects, in one place."/>

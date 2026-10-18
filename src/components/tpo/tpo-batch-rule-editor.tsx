@@ -4,6 +4,7 @@ import {useRouter} from "next/navigation";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import type {TpoBatchRuleFields,TpoBatchRuleOverrides} from "@/modules/placements/tpo-batch-rules-model";
 
 export function TpoBatchRuleEditor({batchId,batchName,college,initialOverride,expectedVersion,readOnly}:{
@@ -15,12 +16,12 @@ export function TpoBatchRuleEditor({batchId,batchName,college,initialOverride,ex
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  const [expected,setExpected]=useState(expectedVersion);
  const [baseline,setBaseline]=useState<TpoBatchRuleOverrides>(initialOverride);
+ const [pendingHref,setPendingHref]=useState<string|null>(null);
  const changed=JSON.stringify(draft)!==JSON.stringify(baseline);
  useEffect(()=>{
   if(!changed||busy)return;
   const currentUrl=window.location.href;
   const warn=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
-  const confirmDiscard=()=>window.confirm("Discard your unsaved batch-rule changes?");
   const onClick=(event:MouseEvent)=>{
    if(event.defaultPrevented||event.button!==0||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;
    const element=event.target;
@@ -29,10 +30,13 @@ export function TpoBatchRuleEditor({batchId,batchName,college,initialOverride,ex
    const destination=new URL(anchor.href,window.location.href);
    if(destination.origin!==window.location.origin)return;
    if(destination.pathname===window.location.pathname&&destination.search===window.location.search)return;
-   if(!confirmDiscard()){event.preventDefault();event.stopPropagation();}
+   event.preventDefault();event.stopPropagation();
+   setPendingHref(destination.pathname+destination.search+destination.hash);
   };
   const onPopState=()=>{
-   if(!confirmDiscard())window.history.pushState(null,"",currentUrl);
+   const destination=window.location.pathname+window.location.search+window.location.hash;
+   window.history.pushState(null,"",currentUrl);
+   setPendingHref(destination);
   };
   window.addEventListener("beforeunload",warn);
   document.addEventListener("click",onClick,true);
@@ -84,7 +88,7 @@ export function TpoBatchRuleEditor({batchId,batchName,college,initialOverride,ex
      className="min-h-11 w-24 rounded border border-border bg-surface p-2"/>
     {draft[key]!==undefined?<button type="button" disabled={busy||readOnly}
      onClick={()=>setRule(key,college[key])}
-     className="min-h-10 text-sm text-primary-text underline">Use the college&apos;s</button>:null}
+     className="min-h-11 text-sm text-[var(--lms-teal-deep)] underline">Use the college&apos;s</button>:null}
    </div>
   </div>;
  return <section aria-label="Batch placement rules" className="space-y-3 rounded-xl border border-border bg-surface p-4">
@@ -105,7 +109,7 @@ export function TpoBatchRuleEditor({batchId,batchName,college,initialOverride,ex
     </select>
     {draft.countsAsPlacedAt!==undefined?<button type="button" disabled={busy||readOnly}
      onClick={()=>setRule("countsAsPlacedAt",college.countsAsPlacedAt)}
-     className="min-h-10 text-sm text-primary-text underline">Use the college&apos;s</button>:null}
+     className="min-h-11 text-sm text-[var(--lms-teal-deep)] underline">Use the college&apos;s</button>:null}
    </div>
   </div>
   {number("maxHeldOffers","Offers a student can hold",1,5,"offers")}
@@ -114,14 +118,24 @@ export function TpoBatchRuleEditor({batchId,batchName,college,initialOverride,ex
   {readOnly?<p role="status" className="text-sm">Finished batches cannot change placement rules.</p>:null}
   <div className="flex flex-wrap gap-3">
    <button type="button" disabled={readOnly||busy||!changed}
-    onClick={()=>void save(draft)} className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+    onClick={()=>void save(draft)} className="min-h-11 rounded bg-primary px-4 font-semibold text-foreground disabled:opacity-50">
     {busy?"Saving…":"Save"}</button>
    {Object.keys(draft).length>0?<button type="button" disabled={busy||readOnly}
-    onClick={()=>void save({})} className="min-h-11 rounded border border-border px-3 text-sm text-primary-text">
+    onClick={()=>void save({})} className="min-h-11 rounded border border-border px-3 text-sm text-[var(--lms-teal-deep)]">
     Follow the college rules</button>:null}
   </div>
   {changed?<p role="status" className="text-xs text-warning">Unsaved batch-rule changes. Review before leaving.</p>:null}
   {error?<p role="alert" className="text-sm text-error">Batch rules were not saved. {error}</p>:null}
   {notice?<p role="status" className="text-sm text-success">{notice}</p>:null}
+  <ConfirmDialog open={pendingHref!==null} onOpenChange={open=>{if(!open)setPendingHref(null);}}
+    title="Discard your unsaved batch-rule changes?"
+    description="Unsaved batch-rule changes. Review before leaving."
+    confirmLabel="Discard changes" confirmVariant="danger"
+    onConfirm={()=>{
+     if(!pendingHref)return;
+     const destination=pendingHref;
+     setPendingHref(null);
+     router.push(destination);
+    }}/>
  </section>;
 }

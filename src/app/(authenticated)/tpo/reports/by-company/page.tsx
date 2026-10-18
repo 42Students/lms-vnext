@@ -68,7 +68,7 @@ export default async function TpoByCompanyReportPage({
           <ReportCsvLink workspace={workspace} kind="by-company" />
           <a href={tpoCompanyPageCsvHref({seasonId:workspace.selectedSeasonId??undefined,
             jobId:workspace.selectedJobId??undefined,q:view.query.q,outcome:view.query.outcome,sort:view.query.sort,page:view.page})}
-            className="inline-flex min-h-11 items-center rounded border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 items-center rounded border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
             Export visible companies CSV
           </a>
         </div>}
@@ -103,7 +103,7 @@ export default async function TpoByCompanyReportPage({
         className="rounded-xl border border-border bg-surface p-4">
         <p className="text-sm text-body">No company records match these filters within the selected reporting scope.</p>
         <Link href={companyReportViewHref({seasonId:workspace.selectedSeasonId??undefined,jobId:workspace.selectedJobId??undefined})}
-          className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+          className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">
           Clear company filters
         </Link>
       </section>:null}
@@ -134,13 +134,13 @@ export default async function TpoByCompanyReportPage({
         ])}
         emptyDescription="No company records are available for the selected reporting scope and filters."
       />
-      <nav aria-label="Company report pages" className="flex flex-wrap items-center justify-between gap-3 text-sm"><span className="text-body">Page {view.page} of {view.totalPages}</span><div className="flex gap-4">{view.page>1?<Link href={href(view.page-1)} className="font-semibold text-primary-text">← Previous</Link>:null}{view.page<view.totalPages?<Link href={href(view.page+1)} className="font-semibold text-primary-text">Next →</Link>:null}</div></nav>
+      <nav aria-label="Company report pages" className="flex flex-wrap items-center justify-between gap-3 text-sm"><span className="text-body">Page {view.page} of {view.totalPages}</span><div className="flex gap-4">{view.page>1?<Link href={href(view.page-1)} className="font-semibold text-[var(--lms-teal-deep)]">← Previous</Link>:null}{view.page<view.totalPages?<Link href={href(view.page+1)} className="font-semibold text-[var(--lms-teal-deep)]">Next →</Link>:null}</div></nav>
       <section className="rounded-xl border border-border bg-surface p-4 sm:p-5" aria-label="Company report drill-down">
         <h2 className="font-semibold text-foreground">Open company records</h2>
         <p className="mt-1 text-sm text-body">These company pages show your college relationship and full persisted history, not just this report season.</p>
         {companyLinks.rows.length===0?<p className="mt-3 text-sm text-body">No company records in this report scope.</p>:
         <ul className="mt-3 grid gap-2 sm:grid-cols-2">{companyLinks.rows.map(row=><li key={row.id}>
-          <Link href={row.href} className="inline-flex min-h-11 max-w-full items-center break-words text-sm font-semibold text-primary-text hover:underline">{row.name} →</Link>
+          <Link href={row.href} className="inline-flex min-h-11 max-w-full items-center break-words text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">{row.name} →</Link>
         </li>)}</ul>}
         {companyLinks.truncated?<p role="status" className="mt-3 text-xs text-muted-foreground">Only the first {companyLinks.rows.length} of {companyLinks.total} company links on this report page are shown; refine your search to narrow the result.</p>:null}
       </section>

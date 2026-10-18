@@ -22,7 +22,7 @@ export function MentorTaskDeleteControl({projectId,taskId,title,updatedAt}:{
  }
  return <span>
   <button type="button" disabled={pending} onClick={()=>setConfirmOpen(true)}
-    className="min-h-10 rounded-md border border-error px-3 text-xs font-semibold text-error disabled:opacity-50">
+    className="min-h-11 rounded-md border border-error px-3 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] disabled:opacity-50">
     {pending?"Deleting…":"Delete task"}
   </button>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
