@@ -27,9 +27,10 @@ export async function listMyLearnerProjectDueStates(context: RequestContext, raw
   // Linear in the number of tasks and requested projects. Filtering/sorting the
   // entire task set separately for each project was O(projects * tasks log tasks)
   // and became expensive on 1,000+ learner-project dashboards.
+  const scopedSet=new Set(scoped);
   const nearestByProject=new Map<string,string>();
   for(const task of tasks){
-    if(task.status==="DONE" || !task.dueDate || !scoped.includes(task.projectId))continue;
+    if(task.status==="DONE" || !task.dueDate || !scopedSet.has(task.projectId))continue;
     const due=String(task.dueDate);
     const earlier=nearestByProject.get(task.projectId);
     if(earlier===undefined || due<earlier)nearestByProject.set(task.projectId,due);
