@@ -22,6 +22,27 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
  const [acknowledged,setAcknowledged]=useState(false);
  const [error,setError]=useState("");
  const [outcomes,setOutcomes]=useState<Outcome[]>([]);
+ // Keep the original signed audit identity if the response is lost. A retry
+ // must NEVER repeat the separately committed per-learner decisions.
+ const [auditRetry,setAuditRetry]=useState<{
+  runId:string;action:"APPROVE"|"REJECT";requestIds:string[];
+ }|null>(null);
+ async function retryAudit(){
+  if(!auditRetry||pending)return;
+  setError("");
+  try{
+   await runGuarded(async()=>{
+    await apiFetch("/api/placements/tpo/requests/bulk-audit",{
+     method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
+     body:JSON.stringify(auditRetry),
+    });
+    setAuditRetry(null);
+    router.refresh();
+   });
+  }catch{
+   setError("The batch audit could not be confirmed. You can retry the audit without deciding requests again.");
+  }
+ }
  async function copyFailed(){
   const text=tpoRequestFailedRowsTsv(outcomes);
   if(!text)return;
@@ -35,12 +56,13 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
   chosen.every(row=>row.requestType===chosenKind)&&
   (action==="APPROVE"||reason.trim().length>=3);
  function toggle(row:Row,checked:boolean){
+  if(auditRetry)return;
   if(checked&&(selected.length>=MAX_BULK_REQUESTS||chosenKind!==null&&chosenKind!==row.requestType))return;
   setSelected(ids=>checked?[...ids,row.id]:ids.filter(id=>id!==row.id));
   setConfirmOpen(false);setAcknowledged(false);setOutcomes([]);setError("");
  }
  async function submit(){
-  if(!valid||!acknowledged||pending)return;
+  if(!valid||!acknowledged||pending||auditRetry)return;
   setError("");
   try{
    await runGuarded(async()=>{
@@ -65,12 +87,16 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
     // Decisions were persisted separately. Audit the batch from authoritative
     // database statuses, never a client-supplied success count; failure to
     // record summary does not pretend those decisions were rolled back.
+    const batchAudit={runId,action,requestIds:chosen.map(row=>row.id)};
+    let auditRecorded=true;
     try{
      await apiFetch("/api/placements/tpo/requests/bulk-audit",{
       method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
-      body:JSON.stringify({runId,action,requestIds:chosen.map(row=>row.id)}),
+      body:JSON.stringify(batchAudit),
      });
     }catch{
+     auditRecorded=false;
+     setAuditRetry(batchAudit);
      setError("Decisions were processed, but the batch audit could not be confirmed. Check the request history.");
     }
     setSelected(ids=>ids.filter(id=>!results.some(result=>result.id===id&&result.status==="updated")));
@@ -87,7 +113,7 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
   <div tabIndex={0} role="group" aria-label="Waiting requests, scroll for more" className="max-h-64 min-h-0 space-y-1 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
    {rows.map(row=><label key={row.id} className="flex min-h-11 items-center gap-2 rounded border border-border p-2 text-sm">
     <input type="checkbox" checked={selected.includes(row.id)}
-     disabled={pending||(!selected.includes(row.id)&&(selected.length>=MAX_BULK_REQUESTS||
+     disabled={pending||auditRetry!==null||(!selected.includes(row.id)&&(selected.length>=MAX_BULK_REQUESTS||
       chosenKind!==null&&chosenKind!==row.requestType))}
      onChange={event=>toggle(row,event.target.checked)}/>
     <span className="min-w-0 break-words">{row.studentName} · {row.requestType.replaceAll("_"," ")}</span>
@@ -95,17 +121,17 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
   </div>
   <p role="status" className="text-sm">{chosen.length} selected of {rows.length} waiting requests on this page.</p>
   <label className="grid gap-1 text-sm">Decision
-   <select value={action} disabled={pending} onChange={event=>{setAction(event.target.value as "APPROVE"|"REJECT");setAcknowledged(false);}}
+   <select value={action} disabled={pending||auditRetry!==null} onChange={event=>{setAction(event.target.value as "APPROVE"|"REJECT");setAcknowledged(false);}}
     className="min-h-11 rounded border border-border bg-surface px-3">
     <option value="APPROVE">Approve</option><option value="REJECT">Reject</option>
    </select>
   </label>
   {action==="REJECT"?<label className="grid gap-1 text-sm">Rejection reason (required)
-   <textarea value={reason} disabled={pending} minLength={3} maxLength={2000}
+   <textarea value={reason} disabled={pending||auditRetry!==null} minLength={3} maxLength={2000}
     onChange={event=>{setReason(event.target.value);setAcknowledged(false);}}
     className="min-h-20 rounded border border-border p-2"/>
   </label>:null}
-  <button type="button" disabled={!valid||pending} onClick={()=>{setAcknowledged(false);setConfirmOpen(true);}}
+  <button type="button" disabled={!valid||pending||auditRetry!==null} onClick={()=>{setAcknowledged(false);setConfirmOpen(true);}}
    className="min-h-11 rounded border border-border px-4 text-sm font-semibold disabled:opacity-50">
    Review {chosen.length} selected decision(s)
   </button>
@@ -137,6 +163,13 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
     <p role="alert">Some requests were not decided. Recheck them before retrying.</p>
     <button type="button" onClick={()=>void copyFailed()} className="min-h-11 rounded border border-border px-3 font-semibold text-primary-text">Copy failed</button>
    </div>:null}
+  </div>:null}
+  {auditRetry?<div role="alert" className="space-y-2 rounded border border-border p-3 text-sm">
+   <p>Request decisions are saved, but their batch audit has not been confirmed. Retrying will only check the audit, not decide the requests again.</p>
+   <button type="button" disabled={pending} onClick={()=>void retryAudit()}
+    className="min-h-11 rounded border border-border px-3 font-semibold disabled:opacity-50">
+    {pending?"Checking batch audit…":"Retry batch audit only"}
+   </button>
   </div>:null}
   {error?<p role="alert" className="text-error">{error}</p>:null}
  </section>;
