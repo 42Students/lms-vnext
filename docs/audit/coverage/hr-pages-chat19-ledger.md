@@ -103,3 +103,20 @@ This is a second-pair-of-eyes test for the chat-16-owned messaging code and fill
 | HR-BREAK-MESSAGING-CSV-02 | `src/modules/messaging/receipt-history-export-model.ts` → `messagingHistoryCsv` | `tests/unit/HR-BREAK-chat19-messaging-csv-unicode.test.ts`: Unicode format/zero-width/paragraph separators before spreadsheet formulas, CRLF, embedded quoted CSV, aggregate-only privacy, accurate accepted counts | Imported Excel/LibreOffice validation and actual download HTTP headers |
 
 The receipt-history service had no previous direct test reference in the generated weak-areas snapshot. These are independent tests for the chat-16-owned messaging implementation, not a claim that every messaging service has full database coverage.
+
+## Unowned TPO request clipboard evidence
+
+| ID | Public export | Direct test | Cases |
+|---|---|---|---|
+| UX-SPILL-TPO-CLIP-01 | `requestRowsTsv` in `src/components/placements/tpo-request-page-clipboard.tsx` | `tests/unit/UX-SPILL-chat19-tpo-request-clipboard.test.ts` | Selected visible-column projection, default all-column compatibility, empty selection blocked, Unicode/formula injection, TSV delimiter/row forgery, omitted hidden employer/roll values |
+
+This is an independent TPO/HR workflow review; real clipboard permission denial, selection state changes and mobile browser behavior still need interactive acceptance.
+
+## TPO request mobile component cross-audit
+
+| ID | Component | Direct behavioural evidence | Cases |
+|---|---|---|---|
+
+| UX-SPILL-TPO-CLIP-02 | `TpoRequestPageClipboard` component | `tests/unit/UX-SPILL-chat19-tpo-request-responsive.test.tsx` | SSR verifies responsive DataTable cards, request status, employer/name, record selector, empty state and disabled copy; original copy/export model unaffected |
+
+| UX-SPILL-TPO-CLIP-03 | `sortRequestClipboardRows` and `selectedRequestClipboardRows` in request clipboard model | `tests/unit/UX-SPILL-chat19-tpo-request-clipboard.test.ts` | Immutable newest/oldest sorting, decided-null ordering, exact visible-page subset, no stale prior-page selection leakage |

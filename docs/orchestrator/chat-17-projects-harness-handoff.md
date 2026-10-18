@@ -110,3 +110,5 @@ npm run test:db:projects-harness
 **Runner caveat:** this GitHub-only environment cannot execute local compilation, Vitest, Playwright or PostgreSQL, so the new browser fixture/tests are pushed for the next runner pass rather than claimed green. Independently test nested modal Back ownership, physical screen-reader announcements and any named unowned page/role failures before designating the whole queue complete.
 
 - **Nested overlay browser acceptance (UX-kit-E2E-04):** development harness additionally mounts Drawer → BottomSheet to exercise real history markers, nested explicit close, parent survival and Back/focus restoration. Execute using `npm run test:e2e:chat17:kit` and do not mark nested overlays complete without the browser result.
+
+- **PROJ-HARNESS-PLACEMENTS-12:** SQL-backed candidate fixtures now require the supplied round to belong to the selected drive. `tests/integration/projects-placements-pg-harness-placements.test.ts` checks two same-college drives and forbids forged cross-drive round references before any application rows are written. Requires the disposable PostgreSQL integration runner, not just unit/source tests.
