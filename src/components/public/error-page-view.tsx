@@ -1,30 +1,36 @@
+import Link from "next/link";
 import { ErrorRecoveryActions } from "./error-recovery-actions";
+import styles from "./public-screen.module.css";
 
-export function ErrorPageView({
-  code,
-  title,
-  message,
-  retry,
-}: {
+export function ErrorPageView({ code, title, message, retry }: {
   code: "404" | "500";
   title: string;
   message: string;
   retry?: () => void;
 }) {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-[var(--lms-neutral-50)] px-6 py-12 text-center">
-      <div className="w-full max-w-lg">
-        <p className="m-0 text-7xl font-extrabold leading-none text-primary-text" aria-hidden="true">
-          {code}
-        </p>
-        <h1 className="mt-4 text-2xl font-bold text-foreground">
-          {title}
-        </h1>
-        <p className="mx-auto mb-8 mt-3 max-w-md text-sm leading-6 text-muted-foreground">
-          {message}
-        </p>
-        <ErrorRecoveryActions retry={retry} />
+    <main className={styles.page}>
+      <header className={styles.header}>
+        <Link href="/" className={styles.brand} aria-label="42LMS home">
+          <span aria-hidden="true" className={styles.mark} />
+          <span className={styles.wordmark}>42<span className={styles.wordmarkAccent}>LMS</span></span>
+        </Link>
+      </header>
+      <div className={styles.center}>
+        <section className={styles.card} aria-labelledby="error-page-title">
+          <div className={styles.icon} aria-hidden="true">{code}</div>
+          <h1 id="error-page-title" className={styles.heading}>{title}</h1>
+          <p className={styles.message}>{message}</p>
+          <ErrorRecoveryActions retry={retry} />
+        </section>
       </div>
+      <footer className={styles.footer}>
+        <span>© {new Date().getFullYear()} 42LMS · JRSPF Technologies Pvt. Ltd.</span>
+        <nav className={styles.footerLinks} aria-label="Footer">
+          <Link href="/privacy-policy">Privacy</Link>
+          <a href="/assets/static/terms-and-conditions-view.html">Terms</a>
+        </nav>
+      </footer>
     </main>
   );
 }
