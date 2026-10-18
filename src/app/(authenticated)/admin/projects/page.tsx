@@ -75,6 +75,15 @@ export default async function SuperAdminProjectsPage({
   }
   const query: ProjectAdminCollectionQuery = parsed.data;
   const view = parsed.data.view;
+  const viewHref = (targetView:"table"|"cards") => {
+    const params=new URLSearchParams();
+    params.set("view",targetView);
+    if(query.q)params.set("search",query.q);
+    if(query.status)params.set("status",query.status);
+    if(query.page && query.page>1)params.set("page",String(query.page));
+    if(query.pageSize && query.pageSize!==20)params.set("pageSize",String(query.pageSize));
+    return "/admin/projects?"+params.toString();
+  };
 
   // Both independent reads are settled. A template outage must not hide the
   // authorized workspace rows; a workspace outage must not masquerade as an
@@ -144,11 +153,9 @@ export default async function SuperAdminProjectsPage({
       <ProjectAdminFilters query={query} legacyWorkspaces />
 
       <nav className="flex gap-2 text-sm font-semibold" aria-label="Workspace display mode">
-        <Link href={"/admin/projects?view=table"+(query.q?"&q="+encodeURIComponent(query.q):"")+
-          (query.status?"&status="+query.status:"")} aria-current={view==="table"?"page":undefined}
+        <Link href={viewHref("table")} aria-current={view==="table"?"page":undefined}
           className="min-h-11 rounded border border-border px-3 py-2 text-[var(--lms-teal-deep)]">Table</Link>
-        <Link href={"/admin/projects?view=cards"+(query.q?"&q="+encodeURIComponent(query.q):"")+
-          (query.status?"&status="+query.status:"")} aria-current={view==="cards"?"page":undefined}
+        <Link href={viewHref("cards")} aria-current={view==="cards"?"page":undefined}
           className="min-h-11 rounded border border-border px-3 py-2 text-[var(--lms-teal-deep)]">Cards</Link>
       </nav>
       <ProjectWorkspacePageExport items={result.items.map(item=>({
