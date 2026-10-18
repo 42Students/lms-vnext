@@ -83,3 +83,16 @@ These source and API-wiring contracts record earlier implementation claims; **te
 |---|---|---|
 | SA-academics-people-R03 | DONE | Protected legacy-bookmark routing to canonical pages. `tests/unit/chat13-superadmin-gap-register-reconcile-a.test.ts` (`SA-academics-people-R03`). |
 | SA-academics-people-R05 | DONE | Attendance correction uses drawer/guarded action. `tests/unit/chat13-superadmin-gap-register-reconcile-a.test.ts` (`SA-academics-people-R05`). |
+
+## Chat-3 Pass B academic operations hardening (source/tests authored; CI deferred)
+
+| ID | Status | Verification evidence |
+| --- | --- | --- |
+| SA-ACADEMICS-BATCH-COUNT-01 | DONE in source, runtime unverified | `getSuperAdminBatchRosterOverview` now counts active platform users in persisted Section occupancy; `tests/unit/chat3-sa-academics-batch-roster-privacy.test.ts` checks tenant/active predicates and no-leak paths. |
+| SA-ACADEMICS-BATCH-CSV-02 | DONE in source, runtime unverified | `superAdminBatchRosterCsv` neutralizes invisible-prefix formulas; `tests/unit/chat3-sa-batch-roster-csv-formula-protection.test.ts` tests BOM, CSV escaping and exact Section name. |
+| SA-ACADEMICS-ROLE-01 | DONE in source, runtime unverified | Super Admin batch overview and registration facets now require active system role before resolving college scope; `tests/unit/chat3-sa-academics-batch-roster-privacy.test.ts`, `tests/unit/chat3-sa-student-register-options-role-scope.test.ts`. |
+| SA-ACADEMICS-SPACE-01 | COVERED in authored tests | `tests/unit/chat3-sa-academics-workspace-bounded-concurrency.test.ts`: batch concurrency, order, failure and 1–32 worker bounds. |
+| SA-ACADEMICS-PROGRAM-READ-01 | DONE in source, runtime unverified | Deletion-dependent program counts now require `academics.manage`; `tests/unit/chat3-sa-program-dependency-count-roles.test.ts` checks role/tenant and Drizzle SQL counts. |
+| SA-ACADEMICS-SECTION-OPS-01 | DONE in source, runtime unverified | Section operations now block nonadmin actors before even looking up a Section ID; `tests/unit/chat3-sa-section-workspace-permission-matrix.test.ts` checks persisted selected-college/period and child-read authority. |
+
+No PostgreSQL fixture, browser walkthrough, or cloud CI was executed by this builder; the planned final integrated verification remains necessary.
