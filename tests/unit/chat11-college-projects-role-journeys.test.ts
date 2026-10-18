@@ -178,6 +178,24 @@ describe("IIT Dharwad College Admin Projects role journeys", () => {
     expect(control).toContain("if (submitLock.current) return");
   });
 
+  it("PROJ-COL-STALE-05 refuses Enter-key submit with a pending/wrong class roster and ignores aborted candidates", () => {
+    const control=readFileSync("src/components/projects/project-create-control.tsx","utf8");
+    expect(control).toContain("if (!controller.signal.aborted) setMentors(body.mentors ?? [])");
+    expect(control).toContain("controller.signal.aborted ||");
+    expect(control).toContain("classesError ||");
+    expect(control).toContain("!classes.some(item => item.id === sectionId)");
+    expect(control).toContain("rosterError ||");
+    expect(control).toContain("loadedRosterSectionId !== sectionId");
+    expect(control).toContain("learnerMembershipIds.some(id => !roster.some(row => row.membershipId === id))");
+    const guard=control.indexOf("if (sectionId && (");
+    const locked=control.indexOf("submitLock.current = true");
+    const mutation=control.indexOf("await projectMutation(");
+    expect(guard).toBeGreaterThan(0);
+    expect(guard).toBeLessThan(locked);
+    expect(locked).toBeLessThan(mutation);
+    expect(control).toContain("Retry loading it before creating the Project");
+  });
+
   it("PROJ-COL-STALE-02 rejects stale timestamps and repeated roster members", () => {
     const valid = { learnerMembershipIds: [STUDENT],
       expectedUpdatedAt: "2099-04-01T12:00:00.000+05:30" };
