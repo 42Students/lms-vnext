@@ -210,3 +210,15 @@ No claim of green cloud CI is made. Test-file TypeScript verification, isolated 
 
 
 | `getSuperAdminTenantLifecycleDirectory`, `getSuperAdminTenantLifecycleDetail`, `exportSuperAdminTenantDirectory` | `tests/unit/chat4-superadmin-tenant-lifecycle-actor.test.ts` | Real service called with deterministic transaction/DB adapter: source list, detail and export deny role-revoked actors before private SELECT; explicit admin college/organization scope, page counts, options, bad UUID, no-SQL denial and capped CSV. On PostgreSQL, revocation-after-first-SELECT interleaving still pending. |
+
+
+| `GET /api/admin/colleges/[collegeId]/sessions` query parsing | `chat4-superadmin-tenant-route-guards.test.ts` | Actual GET handler rejects duplicated `userId`, foreign/unknown query keys, missing ID and invalid UUID before calling the sensitive session listing service; valid single ID remains supported |
+
+
+| `collegeContactAcademicScope` activeClass, inSection, inCombinedPlacement, inProgram and inCohort | `tests/unit/chat4-college-contacts-period-sql.test.ts` | Builds REAL Drizzle SQL without connecting to PostgreSQL, asserts period FK ownership by persisted current college for class presence/placement and tenant department constraints on program/cohort filters. Cross-tenant fixture execution remains pending |
+
+
+| `listCollegeStudentImportOptions` cohort start-period tenant guard | `chat4-college-student-import-options-hardening.test.ts` | Confirms cohort start period same-college FK and preserves historical CLOSED start periods; class period still requires current non-CLOSED and same-college status |
+
+
+| `placeImportedLearnerInSection` cohort start-period direct API guard | `tests/unit/chat4-college-import-placement-authorization.test.ts` | In addition to membership, role, section/current-period ownership, the locked target query now joins the batch's independent `startPeriodId` as a separate alias and verifies it belongs to the same college. Direct calls cannot bypass chooser's validation. PG corrupt-FK fixture still pending |

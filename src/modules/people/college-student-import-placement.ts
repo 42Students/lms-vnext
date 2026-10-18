@@ -1,5 +1,6 @@
 import "server-only";
 import { and, count, eq } from "drizzle-orm";
+import {alias} from "drizzle-orm/pg-core";
 import { getDb } from "@/db/client";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import { academicPeriods, cohorts, departments, learnerProgramEnrollments, programs, sectionEnrollments, sections,
@@ -13,6 +14,7 @@ import {resolveActingCollege} from "@/modules/permissions/acting-college";
 export async function placeImportedLearnerInSection(context: RequestContext, enrollmentId: string, sectionId: string) {
   const member = await resolveActingCollege(context,"academics.manage");
   requirePermission(context, "academics.manage", {collegeId: member.collegeId, organizationId: member.organizationId});
+  const cohortStartPeriod=alias(academicPeriods,"college_import_start_period");
   return getDb().transaction(async tx => {
     const [target] = await tx.select({
       id: sections.id, cohortId: sections.cohortId, periodId: sections.academicPeriodId,
@@ -22,8 +24,10 @@ export async function placeImportedLearnerInSection(context: RequestContext, enr
       .innerJoin(programs, eq(programs.id, cohorts.programId))
       .innerJoin(departments, eq(departments.id, programs.departmentId))
       .innerJoin(academicPeriods, eq(academicPeriods.id, sections.academicPeriodId))
+      .innerJoin(cohortStartPeriod,eq(cohortStartPeriod.id,cohorts.startPeriodId))
       .where(and(eq(sections.id, sectionId), eq(departments.collegeId, member.collegeId),
-        eq(academicPeriods.collegeId, member.collegeId)))
+        eq(academicPeriods.collegeId, member.collegeId),
+        eq(cohortStartPeriod.collegeId,member.collegeId)))
       .for("update", {of: sections}).limit(1);
     if (!target || target.status !== "ACTIVE" || target.periodStatus === "CLOSED")
       throw Error("CLASS_UNAVAILABLE");

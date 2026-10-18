@@ -5,6 +5,7 @@ import { projectTasks } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { hasActiveMembership,hasMembershipRole } from "@/modules/identity/context";
 import {can} from "@/modules/permissions/policy";
+import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import { ProjectsServiceError } from "./errors";
 import { listMyProjectInstances } from "./member-service";
 
@@ -18,6 +19,8 @@ export async function getMentorProjectWorkCounts(context: RequestContext,
       })) {
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   }
+  if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   // Re-read persisted memberships and active role grants, never trust caller-supplied project IDs.
   const projects=(verifiedRows??await listMyProjectInstances(context)).filter(row=>
     row.memberRole==="MENTOR"&&row.project.collegeId===membership.collegeId);

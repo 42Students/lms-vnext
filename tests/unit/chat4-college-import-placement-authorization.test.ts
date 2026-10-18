@@ -21,6 +21,9 @@ describe("College Admin imported-learner class placement adversarial isolation",
   expect(s).toContain("eq(academicPeriods.collegeId, member.collegeId)");
   expect(s).toContain("eq(collegeMemberships.id,learnerProgramEnrollments.membershipId)");
   expect(s).toContain("eq(collegeMemberships.collegeId,member.collegeId)");
+  expect(s).toContain('alias(academicPeriods,"college_import_start_period")');
+  expect(s).toContain("eq(cohortStartPeriod.id,cohorts.startPeriodId)");
+  expect(s).toContain("eq(cohortStartPeriod.collegeId,member.collegeId)");
   expect(s).toContain("eq(collegeMemberships.status,\"ACTIVE\")");
   expect(s).toContain("eq(membershipRoles.role,\"LEARNER\")");
   expect(s).toContain("eq(users.platformStatus,\"ACTIVE\")");
