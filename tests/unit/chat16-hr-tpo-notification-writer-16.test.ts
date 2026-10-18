@@ -17,7 +17,7 @@ function fixture(collegeExists=true,recipients=["tpo-1","tpo-2"]){
  const collegeLimit=vi.fn(async()=>collegeExists?[{organizationId:"org-a"}]:[]);
  const select=vi.fn(()=>({from:vi.fn(()=>({where:vi.fn(()=>({limit:collegeLimit}))}))}));
  const auditValues=vi.fn(()=>({returning:vi.fn(async()=>[{id:"event-1"}])}));
- const noticeValues=vi.fn(()=>({onConflictDoNothing:vi.fn(async()=>undefined)}));
+ const noticeValues=vi.fn((_input:unknown)=>({onConflictDoNothing:vi.fn(async()=>undefined)}));
  const insert=vi.fn().mockImplementationOnce(()=>({values:auditValues}))
   .mockImplementationOnce(()=>({values:noticeValues}));
  const recipientWhere=vi.fn(async()=>recipients.map(userId=>({userId})));
