@@ -23,7 +23,7 @@ export default async function CollegeStudentDetailPage({ params, searchParams }:
     <PageHeader eyebrow="College Admin · Students" title={data.person.name}
       description="Read-only college-owned learner academic record; private identity and documents are excluded."
       actions={<Link href="/college/students" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Back to students</Link>} />
-    <section className="rounded-xl border border-border bg-surface p-5">
+    <section className="- border-t border-border pt-5">
       <h2 className="font-semibold text-foreground">Student record</h2>
       <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
         <div><dt className="text-muted-foreground">Roll number</dt><dd>{data.person.rollNumber ?? "Not recorded"}</dd></div>
@@ -31,7 +31,7 @@ export default async function CollegeStudentDetailPage({ params, searchParams }:
         <div><dt className="text-muted-foreground">Membership</dt><dd>{data.person.status}</dd></div>
       </dl>
     </section>
-    <section className="rounded-xl border border-border bg-surface p-5">
+    <section className="- border-t border-border pt-5">
       <h2 className="font-semibold text-foreground">Program and batch enrollments</h2>
       <form method="get" role="search" aria-label="Enrollment lifecycle filter" className="mt-3 flex min-w-0 flex-wrap items-end gap-3"
         action={`/college/students/${encodeURIComponent(membershipId)}`}>
@@ -60,7 +60,7 @@ export default async function CollegeStudentDetailPage({ params, searchParams }:
             {row.sectionName} ({row.sectionCode})
           </li>)}</ul>}
     </section>
-    <section className="rounded-xl border border-border bg-surface p-5">
+    <section className="- border-t border-border pt-5">
       <h2 className="font-semibold text-foreground">Recorded attendance</h2>
       <p className="mt-2 text-sm text-body">
         {data.attendance.recordedMarkedEvents} marked-session record(s);
