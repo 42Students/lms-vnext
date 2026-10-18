@@ -15,7 +15,8 @@ import {ProjectAdminSubmissionReview} from "@/components/projects/project-admin-
 import {ProjectSubmissionsPageExport} from "@/components/projects/project-submissions-page-export";
 import {listProjectAdminUnsubmitted} from "@/modules/projects/admin-unsubmitted-service";
 import { StatusBadge } from "@/components/ui/status-badge";
-import {formatProjectAdminActivityDateIst as formatDate} from "@/modules/projects/project-admin-date-model";
+import {formatProjectAdminActivityDateIst as formatDate,safeProjectAdminUtcIso} from "@/modules/projects/project-admin-date-model";
+import {projectAdminElapsedDays} from "@/modules/projects/admin-submission-age-model";
 import { DataTable } from "@/components/ui/data-table";
 import {
   listProjectAdminSubmissionQueue,
@@ -156,7 +157,7 @@ export async function ProjectAdminSubmissionsPage({
             {key:"status",header:"Status",mobilePriority:"secondary",cell:row=>row.status},
             {key:"progress",header:"Progress",mobilePriority:"secondary",cell:row=>row.progressPercent+"%"},
             {key:"inactive",header:"Inactive",mobilePriority:"secondary",cell:row=>
-              Math.max(0,Math.floor((renderedAt.getTime()-row.updatedAt.getTime())/86400000))+" days"},
+              (projectAdminElapsedDays(row.updatedAt,renderedAt)===null?"—":projectAdminElapsedDays(row.updatedAt,renderedAt)+" days")},
             {key:"action",header:"Action",mobilePriority:"action",cell:row=>
               <Link href={basePath+"/"+row.id+"/delivery"}
                 className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Open</Link>},
@@ -199,8 +200,8 @@ export async function ProjectAdminSubmissionsPage({
         submissionType:submission.attachments.some(entry=>entry && typeof entry==="object" && "kind" in entry && entry.kind==="FILE")?"File upload":
           submission.sourceUrl||submission.demoUrl?"Link":"Text",
         pendingDays:submission.status==="SUBMITTED"&&submission.submittedAt?
-          Math.max(0,Math.floor((renderedAt.getTime()-submission.submittedAt.getTime())/86400000)):null,
-        submittedAt:submission.submittedAt?.toISOString()??null,
+          projectAdminElapsedDays(submission.submittedAt,renderedAt):null,
+        submittedAt:submission.submittedAt?safeProjectAdminUtcIso(submission.submittedAt):null,
         revisions:Math.max(0,submission.version-1),
         reviewedBy:submission.reviewedBy,
         sourceUrl:safeProjectExternalHref(submission.sourceUrl),
@@ -249,7 +250,7 @@ export async function ProjectAdminSubmissionsPage({
               <dl className="mt-3 grid gap-2 text-xs text-body sm:grid-cols-3">
                 <div><dt className="font-semibold">Pending</dt><dd>{
                   submission.status === "SUBMITTED" && submission.submittedAt
-                    ? Math.max(0, Math.floor((renderedAt.getTime() - submission.submittedAt.getTime()) / 86400000)) + " days"
+                    ? (projectAdminElapsedDays(submission.submittedAt,renderedAt)===null?"—":projectAdminElapsedDays(submission.submittedAt,renderedAt)+" days")
                     : "—"
                 }</dd></div>
                 <div><dt className="font-semibold">Revisions</dt>
