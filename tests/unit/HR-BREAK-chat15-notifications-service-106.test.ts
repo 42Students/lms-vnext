@@ -45,6 +45,18 @@ describe("HR-NOTIFICATIONS-SERVICE-106 prevent employer notification IDOR",()=>{
   expect(m.jobs).toHaveBeenCalledTimes(1);
   expect(m.getDb).toHaveBeenCalledTimes(1);
  });
+
+ it("TPO-only and acting-college Super Admin principals cannot borrow recruiter inbox access",async()=>{
+  const tpo={user:{id:"tpo",platformStatus:"ACTIVE",systemRoles:[]},
+   membership:{id:"member",status:"ACTIVE",collegeId:own,organizationId:"org",roles:["TPO"]}};
+  const admin={user:{id:"admin",platformStatus:"ACTIVE",systemRoles:["SUPER_ADMIN"]},
+   adminScope:{collegeId:own,organizationId:"org"}};
+  for(const context of [tpo,admin]){
+   await expect(listHrNotifications(context as never,{collegeId:own})).rejects.toThrow();
+  }
+  expect(m.jobs).not.toHaveBeenCalled();
+  expect(m.getDb).not.toHaveBeenCalled();
+ });
  it("strict query parsing rejects unexpected private flags before reading actor's grants",async()=>{
   await expect(listHrNotifications(actor as never,{readAll:true})).rejects.toThrow();
   expect(m.jobs).not.toHaveBeenCalled();

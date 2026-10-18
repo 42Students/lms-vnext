@@ -259,3 +259,14 @@ Behavioral test source has been authored, **not executed**. Existing HR per-expo
 | `POST /api/placements/recruiter/drives/proposal` | `tests/unit/HR-BREAK-chat15-proposal-post-api-110.test.ts` | Same-origin before body read, valid draft and idempotent receipt statuses, cached principal swap 403, invalid draft denial, private DB/session outages map to sanitized response | PostgreSQL concurrent submission ID, notification exactly once, authenticated browser |
 
 Every test is **authored but unexecuted**; no CI was run. The larger HR, Recruiter and Tracker exhaustive queue remains OPEN.
+
+
+## HR export HTTP happy/error and pagination passes — 2026-10-19
+
+| Exact handler | Behavioral test | Coverage from authored test | Remaining |
+|---|---|---|---|
+| `GET /api/placements/recruiter/calendar/export` | `tests/unit/HR-BREAK-chat15-calendar-export-api-111.test.ts` | Invalid date/view/category rejected before actor read, authorized private/no-store CSV, central scoped read, revoked grant or provider error returns sanitized non-CSV response, duplicate date denial | PostgreSQL authorized job/slot union, real IST view, browser download |
+| `GET /api/placements/recruiter/activity/export` | `tests/unit/HR-BREAK-chat15-activity-export-api-112.test.ts` | Actual read-only scoped GET, no-grant denial, revocation between first and second page denies partial export, 200-row cap and banner, private SQL failure safe JSON | Real 201-event DB fixture, under-load 2-college/2-employer grants, browser |
+| `GET /api/placements/recruiter/notifications/export` | `tests/unit/HR-BREAK-chat15-notification-export-api-113.test.ts` | UnreadOnly/college filters, 2-page grant revocation abort, 200-row cap/omitted header, no selection/college access, unexpected service failure sanitized | Real DB unread receipt concurrent with 8-page export, role matrix and CI |
+
+All test cases are authored, not executed; user-mandated final CI is deferred. These tests supplement duplicate/unknown filter coverage under HR-EXPORT-104.
