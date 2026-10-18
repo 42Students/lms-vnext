@@ -108,6 +108,7 @@ export function LectureHallManager({
     }
 
     startTransition(async () => {
+      try {
       const body = {
         name: draft.name,
         capacity,
@@ -136,11 +137,15 @@ export function LectureHallManager({
         title: isNew ? LECTURE_HALL_COPY.createdMessage : LECTURE_HALL_COPY.updatedMessage,
       });
       router.refresh();
+      } catch {
+        setFormError("Could not save the hall. Check your connection and retry.");
+      }
     });
   }
 
   function setStatus(hall: HallRow, status: "ARCHIVED" | "ACTIVE") {
     startTransition(async () => {
+      try {
       const response = await fetch(`/api/lecture-halls/${hall.id}`, {
         method: "PATCH",
         headers: { "content-type": "application/json" },
@@ -163,6 +168,10 @@ export function LectureHallManager({
         title: status === "ARCHIVED" ? "Hall archived" : "Hall restored",
       });
       router.refresh();
+      } catch {
+        setArchiving(null);
+        showToast({tone:"error",title:"Could not update hall status",description:"Check your connection and retry."});
+      }
     });
   }
 
@@ -182,7 +191,7 @@ export function LectureHallManager({
       ) : (
         <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
           columns={[
-            { key: "name", header: LECTURE_HALL_COPY.columns.name, cell: (hall: HallRow) => <span className="font-semibold text-foreground">{hall.name}</span> },
+            { key: "name", header: LECTURE_HALL_COPY.columns.name, mobilePriority: "primary", cell: (hall: HallRow) => <span className="font-semibold text-foreground">{hall.name}</span> },
             { key: "type", header: LECTURE_HALL_COPY.columns.type, cell: (hall) => ROOM_TYPE_LABELS[hall.roomType] ?? hall.roomType },
             { key: "capacity", header: "Capacity", cell: (hall) => hall.capacity },
             { key: "dept", header: LECTURE_HALL_COPY.columns.department, cell: (hall) => hall.departmentName ?? "—" },
@@ -204,11 +213,12 @@ export function LectureHallManager({
             {
               key: "actions",
               header: "",
+              mobilePriority: "action",
               className: "text-right",
               cell: (hall) => (
                 <div className="flex flex-wrap justify-end gap-2">
                   <Link href={`${availabilityBase}/${hall.id}`}
-                    className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-xs font-semibold text-primary-text">
+                    className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
                     Availability
                   </Link>
                   <Button variant="secondary" size="sm" onClick={() => open(hall)}>
@@ -239,7 +249,7 @@ export function LectureHallManager({
 
       <Dialog
         open={editing !== null}
-        onOpenChange={(value) => !value && setEditing(null)}
+        onOpenChange={(value) => !value && !pending && setEditing(null)}
         title={editing === "new" ? LECTURE_HALL_COPY.createTitle : "Edit lecture hall"}
         description="Hall names stay unique among the college's active halls."
         footer={
@@ -255,7 +265,7 @@ export function LectureHallManager({
       >
         <div className="space-y-3">
           {formError ? (
-            <p role="alert" className="m-0 rounded-md bg-[var(--lms-error-subtle)] p-2 text-sm text-error">
+            <p role="alert" className="m-0 rounded-md bg-[var(--lms-error-subtle)] p-2 text-sm text-foreground">
               {formError}
             </p>
           ) : null}
@@ -264,7 +274,7 @@ export function LectureHallManager({
             <Input id="hall-name" value={draft.name} maxLength={255} placeholder={LECTURE_HALL_COPY.namePlaceholder}
               onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
               <label className={field} htmlFor="hall-capacity">{LECTURE_HALL_COPY.capacityLabel}</label>
               <Input id="hall-capacity" type="number" min={1} max={5000} value={draft.capacity}
