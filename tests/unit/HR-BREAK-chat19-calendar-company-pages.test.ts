@@ -52,6 +52,20 @@ describe("HR-BREAK-chat19-calendar-company: account-deny and stable navigation",
    to:expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
   }));
  });
+ it.each([
+  {date:["2026-10-18","2026-10-19"]},
+  {view:["week","month"]},
+  {category:["ALL","PRIVATE"]},
+ ])("refuses repeated calendar filters %j without reading authorized events",async raw=>{
+  const rendered=await calendar(raw);
+  expect(readText(rendered)).toContain("Invalid calendar filters.");
+  expect(m.calendar).not.toHaveBeenCalled();
+ });
+ it("calendar blocks a stale recruiter identity before even reading event aggregates",async()=>{
+  m.ctx.mockResolvedValue({...actor,recruiter:{...actor.recruiter!,userId:"another-person"}});
+  await expect(calendar()).rejects.toThrow("REDIRECT");
+  expect(m.calendar).not.toHaveBeenCalled();
+ });
  it("no active grant displays explicit calendar recovery even if event feed is empty",async()=>{
   m.ctx.mockResolvedValue({...actor,recruiter:{...actor.recruiter!,grants:[]}});
   const result=await calendar({view:"agenda"});
