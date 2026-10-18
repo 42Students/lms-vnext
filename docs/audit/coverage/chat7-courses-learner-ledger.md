@@ -110,3 +110,12 @@ See `docs/audit/ux/scroll-motion-courses.md` for the changed containers. Backend
 | `SuperAdminCourseBulkVisibility` | Shows current-content-only caveat; provides actionable “Select fewer courses” / “Refresh and select current courses” recovery on typed errors | `tests/unit/chat7-superadmin-course-bulk-typed-boundaries.test.ts` — UI source review; browser pending |
 
 This still does **not** implement a persisted future whole-course visibility override (SA-53 remains PARTIAL). The owner deferred running all CI; therefore new tests are authored evidence and not a green-verification claim.
+
+## Private course file / signed-download security — next learner entry
+
+| Export / route | Authorization and failure behavior | Regression |
+|---|---|---|
+| `getLearnerCourseFileReference` | Strict delivery/content UUID; current learner entitlement including historical enrollment policy; published path/content, visible Lesson and content, exact offering/Section audience; `startsAt <= now()` or unscheduled enforced in PostgreSQL before private storage key leaves the service | `tests/unit/chat7-learner-course-file-embargo.test.ts` — `LEARNER-COURSE-FILE-EMBARGO-01`; authored, PostgreSQL scheduled-content negative witness pending |
+| `GET /api/courses/deliveries/[deliveryId]/contents/[contentId]/file` | Strict `download=0/1`, no duplicate/unknown query keys; authorization before storage `HEAD`, before presigned 900-second GET; signed 302 no-store/no-referrer; absent file 404, storage outage 503 with no raw credentials, attachment filename sanitized | `tests/unit/chat7-learner-course-file-route-boundaries.test.ts` — `LEARNER-COURSE-FILE-ROUTE-02` |
+
+These are unit-authored rather than CI-green. No live R2/storage object was touched. A browser's hidden `storageKey` while SCHEDULED is now backed by a server read constraint, not just UI masking.
