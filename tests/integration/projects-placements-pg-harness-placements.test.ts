@@ -144,8 +144,8 @@ describe("PROJ-HARNESS-PLACEMENTS canonical real PostgreSQL fixtures", () => {
   });
 
   it("PROJ-HARNESS-PLACEMENTS-26 failed offer insert rolls back application, screening and round",async()=>{
-    await withPlacementCase(async({db,drive,actor})=>{
-      const fresh=await createPrincipal(db,{organizationId:"",collegeId:actor.collegeId!},["LEARNER"]);
+    await withPlacementCase(async({db,drive,actor,tenant})=>{
+      const fresh=await createPrincipal(db,tenant,["LEARNER"]);
       const broken:PgHarness={...db,
         async query<T extends QueryResultRow=QueryResultRow>(sql:string,values?:unknown[]):Promise<T[]> {
           if(sql.includes("insert into placement_offers")) throw new Error("simulated offer failure");
@@ -154,15 +154,17 @@ describe("PROJ-HARNESS-PLACEMENTS canonical real PostgreSQL fixtures", () => {
       };
       await expect(createPlacementCandidateFixture(broken,drive,fresh,actor))
         .rejects.toThrow("simulated offer failure");
-      for(const table of ["placement_applications","placement_application_screenings","placement_round_results","placement_offers"]) {
-        const rows=await db.query<{n:number}>(`
-          select count(*)::int n from ${table} where
-          ${table==="placement_applications" ? "membership_id=$1" :
-            table==="placement_application_screenings" ? "application_id in (select id from placement_applications where membership_id=$1)" :
-            table==="placement_round_results" ? "application_id in (select id from placement_applications where membership_id=$1)" :
-            "application_id in (select id from placement_applications where membership_id=$1)"}`,[fresh.membershipId]);
-        expect(rows[0]?.n,table).toBe(0);
-      }
+      const graph=await db.query<{applications:number;screenings:number;results:number;offers:number}>(`
+        select
+          (select count(*)::int from placement_applications where membership_id=$1) as applications,
+          (select count(*)::int from placement_application_screenings where application_id in
+            (select id from placement_applications where membership_id=$1)) as screenings,
+          (select count(*)::int from placement_round_results where application_id in
+            (select id from placement_applications where membership_id=$1)) as results,
+          (select count(*)::int from placement_offers where application_id in
+            (select id from placement_applications where membership_id=$1)) as offers`,
+        [fresh.membershipId]);
+      expect(graph).toEqual([{applications:0,screenings:0,results:0,offers:0}]);
       await expect(createPlacementCandidateFixture(db,drive,fresh,actor))
         .resolves.toHaveProperty("offerId");
     });
