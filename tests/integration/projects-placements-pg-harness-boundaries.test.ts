@@ -36,6 +36,31 @@ async function count(db: PgHarness, table: "project_task_submissions" | "project
 }
 
 describe("PROJ-HARNESS role/tenancy and concurrent PostgreSQL fixture boundaries", () => {
+  it("PROJ-HARNESS-PRINCIPAL-30 failed second role grant restores user, membership and first role",async()=>{
+    await withProjectPg(pool,async db=>{
+      const tenant=await createTenant(db);
+      const counts=async()=>db.query<{users:number;memberships:number;roles:number}>(`
+        select (select count(*)::int from users where identity_uid like 'proj-harness-%') as users,
+          (select count(*)::int from college_memberships where college_id=$1) as memberships,
+          (select count(*)::int from membership_roles) as roles`,[tenant.collegeId]);
+      const before=await counts();
+      const failed:PgHarness={...db,
+        async query<T extends QueryResultRow=QueryResultRow>(sql:string,values?:unknown[]):Promise<T[]> {
+          if(sql.includes("insert into membership_roles") && values?.[1]==="TPO")
+            throw new Error("simulated second role grant failure");
+          return db.query<T>(sql,values);
+        },
+      };
+      await expect(createPrincipal(failed,tenant,["COLLEGE_ADMIN","TPO"]))
+        .rejects.toThrow("simulated second role grant failure");
+      expect(await counts()).toEqual(before);
+      const valid=await createPrincipal(db,tenant,["COLLEGE_ADMIN","TPO"]);
+      expect(valid.membershipId).toBeTruthy();
+      expect((await db.query("select role from membership_roles where membership_id=$1",
+        [valid.membershipId]))).toHaveLength(2);
+    });
+  });
+
   it("PROJ-HARNESS-TENANT-29 failure to create college cannot leave an orphaned organization",async()=>{
     await withProjectPg(pool,async db=>{
       const before=await db.query<{n:number}>(`

@@ -240,25 +240,29 @@ export async function createPrincipal(db: PgHarness, tenant: TenantFixture | nul
   roles: readonly ("COLLEGE_ADMIN"|"MENTOR"|"LEARNER"|"FACULTY"|"TPO")[] = [],
   systemRole = false): Promise<PrincipalFixture> {
   if (roles.length && !tenant) throw new Error("PROJ-HARNESS: roles require a tenant");
-  const uid = randomUUID();
-  const users = await db.query<{id: string}>(
-    "insert into users (identity_uid,display_name) values ($1,$2) returning id",
-    ["proj-harness-" + uid, "Harness " + uid.slice(0,8)],
-  );
-  const userId = users[0]!.id;
-  if (systemRole) await db.query(
-    "insert into system_roles (user_id,role) values ($1,'SUPER_ADMIN')", [userId]);
-  let membershipId: string | null = null;
-  if (tenant) {
-    const member = await db.query<{id: string}>(
-      "insert into college_memberships (user_id,college_id) values ($1,$2) returning id",
-      [userId, tenant.collegeId],
+  // A denied/failed role grant must never leave an account or membership
+  // with only a subset of the test principal's intended permissions.
+  return db.savepoint(async()=>{
+    const uid = randomUUID();
+    const users = await db.query<{id: string}>(
+      "insert into users (identity_uid,display_name) values ($1,$2) returning id",
+      ["proj-harness-" + uid, "Harness " + uid.slice(0,8)],
     );
-    membershipId = member[0]!.id;
-    for (const role of new Set(roles)) await db.query(
-      "insert into membership_roles (membership_id,role) values ($1,$2)", [membershipId, role]);
-  }
-  return {userId,membershipId,collegeId:tenant?.collegeId ?? null,roles};
+    const userId = users[0]!.id;
+    if (systemRole) await db.query(
+      "insert into system_roles (user_id,role) values ($1,'SUPER_ADMIN')", [userId]);
+    let membershipId: string | null = null;
+    if (tenant) {
+      const member = await db.query<{id: string}>(
+        "insert into college_memberships (user_id,college_id) values ($1,$2) returning id",
+        [userId, tenant.collegeId],
+      );
+      membershipId = member[0]!.id;
+      for (const role of new Set(roles)) await db.query(
+        "insert into membership_roles (membership_id,role) values ($1,$2)", [membershipId, role]);
+    }
+    return {userId,membershipId,collegeId:tenant?.collegeId ?? null,roles};
+  });
 }
 
 /** Fixtures must not silently promote an inactive or wrong-role user into

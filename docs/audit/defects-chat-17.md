@@ -155,3 +155,5 @@ All newly authored tests remain pending cloud execution; migration retains the p
 | UX-kit-E2E-11 | S2 (toast accessibility) | ToastProvider could silently auto-dismiss success/info notifications entirely while a user worked in another tab. | Visibility-aware timer scheduling pauses while hidden, resumes on return and cleans evicted duration metadata; real browser test added. | Authored; browser CI deferred |
 
 | PROJ-HARNESS-TENANT-29 | S1 (partial tenant fixture) | Organization INSERT succeeded before college INSERT; a caught college error left an orphan organization inside the outer fixture transaction. | Wrap tenant graph in SAVEPOINT, inject college failure, assert unchanged organization count and successful retry. | Authored; deferred PostgreSQL gate |
+
+| PROJ-HARNESS-PRINCIPAL-30 | S1 (partial role fixture) | Catching a second membership role INSERT error could leave a user with only the first role and an incomplete college membership in a continuing PostgreSQL test. | Nested SAVEPOINT around entire principal graph; forced second-role failure checks no residue and successful retry. | Authored; final PostgreSQL gate deferred |

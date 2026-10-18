@@ -227,3 +227,6 @@ The project fixture now wraps template/version publication, college assignment, 
 
 ### PROJ-HARNESS-TENANT-29: all-or-nothing tenant fixture
 The shared tenant builder now wraps organization and college inserts in a savepoint. A failed college creation cannot leave a disposable orphan organization visible to later assertions inside the same test transaction. A real PostgreSQL witness injects a late insert failure, checks rollback and creates a subsequent valid tenant.
+
+### PROJ-HARNESS-PRINCIPAL-30: all-or-nothing role identity
+`createPrincipal` now encloses global user, optional Super Admin system role, college membership and all membership-role assignments in one SAVEPOINT. A failure on the second permission grant rolls back the first grant, membership and user; real PostgreSQL case 30 asserts identical counts before/after and verifies a valid multi-role retry. No production identity service is modified.
