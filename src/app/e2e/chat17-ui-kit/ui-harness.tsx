@@ -167,6 +167,20 @@ function UIKitTestSurface() {
         ]}/>
     </section>
 
+    <section aria-label="Fail closed table fixture">
+      <DataTable caption="Restricted workspace security" empty="No projects"
+        rows={[{id:"secure",name:"Secure workspace",review:"NEVER_SERIALIZE_PRIVATE_REVIEW"}]}
+        getRowKey={row=>row.id} rowHref={()=>{throw new Error("detail route unavailable");}}
+        columns={[
+          {key:"name",header:"Workspace",mobilePriority:"primary",cell:row=>row.name},
+          {key:"review",header:"Private review",mobilePriority:"hidden",
+            mobileHiddenReason:"Review access denied",
+            mobileDetail:{fieldKey:"review",canView:()=>{throw new Error("permission service unavailable");},
+              href:()=>"/mentor/projects/secure/review"},
+            cell:row=>row.review},
+        ]}/>
+    </section>
+
     <section aria-label="Interview grid fixture">
       <SuperAdminInterviewOperations today="2026-10-18" events={[
         {id:"interview-a",roundId:null,jobId:null,jobTitle:"Engineer",title:"Technical interview",
