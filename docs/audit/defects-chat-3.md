@@ -188,6 +188,12 @@ The selected `/admin/faculty-assignment`, `/admin/people/directory`, and global 
 
 **Fix:** Each entrypoint now redirects non-Super-Admin actors before the list data load. Existing central permission service checks remain in force. `tests/unit/chat3-sa-academics-people-root-platform-roles.test.ts` explicitly verifies `SA-PEOPLE-ROOT-02`. Tests authored, not run; browser and CI checks pending.
 
+### PROJ-BREAK-chat3-FACULTY-040 — read-only project observer reached Mentor task mutation dispatch (S1)
+
+The task-create API routed **every non-Learner** project access type into `createMentorProjectTask`, including `OBSERVER`. That downstream service contained another role/transaction check, but a read-only Observer (including a Faculty/Mentor dual-role account that had been demoted) should never reach a privileged command handler at all. The route also used unbounded `request.json()`, exposing a resource-exhaustion path before service Zod validation.
+
+**Fix:** Explicitly allow only `LEARNER`, `MENTOR` and `ADMIN` access at route dispatch; read-only observers now fail with `PROJECT_ACCESS_DENIED` before a write function is called. Use the existing strict UTF-8, 128 KiB `readMentorProjectCommandBody` parser for all task-create calls, returning friendly bounded 400/413/415 errors. `tests/unit/PROJ-BREAK-chat3-faculty-project-task-route.test.ts` exercises the actual route for CSRF, role routing, denied grants and malformed/oversized bodies. Transaction and network retry tests remain with the Projects hardening squad; no cloud CI was run.
+
 ### SA-ACADEMICS-SECTION-OPS-039 — Faculty could probe private Section identifiers before administrative role denial (S1)
 
 `getSectionOperationsWorkspace` fetched `loadSectionScope(sectionId)` before its `academics.manage` check. Ordinary Faculty, Mentor and Learner principals lacked permission to manage a Section but could still cause a Section lookup and distinguish internal scope failures from privileged-access denial when supplying arbitrary IDs.

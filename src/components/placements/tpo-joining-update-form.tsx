@@ -19,7 +19,7 @@ export function TpoJoiningUpdateForm({
   initialJoiningDate: string | null;
 }) {
   const router = useRouter();
-  const {run}=useGuardedAction({timeoutMs:35000});
+  const {run}=useGuardedAction({timeoutMs:40000});
   const [status, setStatus] = useState<JoiningChoice>("JOINED");
   const [joiningDate, setJoiningDate] = useState(initialJoiningDate ?? "");
   const [reason, setReason] = useState("");
@@ -46,7 +46,8 @@ export function TpoJoiningUpdateForm({
       setConfirmOpen(true);
       return;
     }
-    await run(async()=>{
+    try {
+      await run(async()=>{
       setBusy(true);
       setError(null);
       try {
@@ -74,7 +75,12 @@ export function TpoJoiningUpdateForm({
         setBusy(false);
         setConfirmOpen(false);
       }
-    });
+      });
+    } catch(caught) {
+      setBusy(false);
+      setConfirmOpen(false);
+      setError(caught instanceof Error ? caught.message : friendlyApiError({}));
+    }
   }
 
   return (

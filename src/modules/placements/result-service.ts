@@ -31,7 +31,9 @@ import {
   can,
 } from "@/modules/permissions/policy";
 import { PlacementsServiceError } from "./errors";
+import {assertTpoRoundApplyJobState,assertTpoRoundApplyRoundState} from "./tpo-round-apply-model";
 import { requirePlacementManageScope } from "./scope";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import {recruiterOwnJobExists} from "./recruiter-job-ownership";
 import {notifyTpoOfRecruiterAction} from "./hr-tpo-notification-service";
@@ -334,6 +336,12 @@ export async function stagePlacementRoundResult(
       );
     }
 
+    // Company-result staging has its own recruiter grant guard. For campus
+    // officers, do not trust a role cached at request start: role revocation
+    // can race the earlier preview or round participant lookup.
+    if(managerCanStage)await assertPersistedPlatformPermission(tx,context,
+      "placements.manage",{collegeId:job.collegeId});
+
     const [lockedApplication] = await tx
       .select({
         status: placementApplications.status,
@@ -623,6 +631,25 @@ export async function applyPlacementRoundResult(
 
   const db = getDb();
   return db.transaction(async (tx) => {
+    // Lock the drive and round before a staged result is applied. A drive can
+    // close or a round can be cancelled after the initial read but before
+    // the result and progression updates. Follow staging's lock order.
+    const [lockedJob] = await tx.select({status:placementJobs.status})
+      .from(placementJobs).where(eq(placementJobs.id,current.job.id))
+      .for("update").limit(1);
+    assertTpoRoundApplyJobState(lockedJob?.status??null);
+    const [lockedRound] = await tx.select({
+      status:placementJobRounds.status,kind:placementJobRounds.kind,
+    }).from(placementJobRounds).where(and(
+      eq(placementJobRounds.id,current.round.id),
+      eq(placementJobRounds.jobId,current.job.id),
+    )).for("update").limit(1);
+    assertTpoRoundApplyRoundState(lockedRound?.status??null,lockedRound?.kind??null);
+    // The HTTP request may outlive the officer's membership or system-role
+    // grant. Keep actor SHARE locks through the result, audit and delivery.
+    await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+      collegeId:current.job.collegeId,
+    });
     const [lockedApplication] = await tx
       .select({
         status: placementApplications.status,
@@ -645,6 +672,17 @@ export async function applyPlacementRoundResult(
         "PLACEMENT_RESULT_APPLICATION_INACTIVE",
       );
     }
+
+    // Screening can be changed by a second operator while the first one is
+    // reviewing a preview. A result for a no-longer-shortlisted learner must
+    // not be applied or notified.
+    const [lockedScreening] = await tx.select({
+      status:placementApplicationScreenings.status,
+    }).from(placementApplicationScreenings)
+      .where(eq(placementApplicationScreenings.applicationId,current.application.id))
+      .for("share").limit(1);
+    if(!lockedScreening || lockedScreening.status!=="SHORTLISTED")
+      throw new PlacementsServiceError("PLACEMENT_RESULT_SCREENING_NOT_SHORTLISTED");
 
     const [lockedResult] = await tx
       .select()

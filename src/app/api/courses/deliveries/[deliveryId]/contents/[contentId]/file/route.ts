@@ -14,6 +14,13 @@ function fileName(key:string){
  * No file bytes are proxied through Next.js. Every request authenticates and
  * authorizes one material before issuing a fifteen-minute GET capability. */
 export async function GET(request:Request,{params}:RouteContext){
+ const url=new URL(request.url);
+ const values=url.searchParams.getAll("download");
+ if([...url.searchParams.keys()].some(key=>key!=="download") ||
+   values.length>1 || (values.length===1&&!["0","1"].includes(values[0]!)))
+  return Response.json({error:"INVALID_REQUEST"},{status:400,headers:{
+   "Cache-Control":"private, no-store",
+  }});
  const {deliveryId,contentId}=await params;
  let key:string|null;
  try{
@@ -30,7 +37,7 @@ export async function GET(request:Request,{params}:RouteContext){
   return Response.json({error:"COURSE_FILE_UNAVAILABLE",
    message:"The course file is not available from storage."},{status:503});
  }
- const download=new URL(request.url).searchParams.get("download")==="1";
+ const download=values[0]==="1";
  const query=download?{"response-content-disposition":'attachment; filename="'+fileName(key)+'"'}:undefined;
  const signed=presignUrl(config,{method:"GET",key,expiresSeconds:900,query});
  return new Response(null,{status:302,headers:{
