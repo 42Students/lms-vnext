@@ -48,3 +48,17 @@ Pure policy and source-level Vitest tests were committed; one existing PostgreSQ
 Wrong-college and revoked-role TPO service IDOR; simultaneous release of same selection; two TPOs competing for last waitlist seat; expiry sweep versus acceptance; repeated Import Commit after lost response; session expiration between preview/commit; duplicate roll numbers and remapped membership; and retention/CTC/Joining evidence provenance. **This run did not execute those PostgreSQL/browser scenarios.** Do not treat written source contracts or these fixes as release certification.
 
 Coverage trace: docs/audit/coverage/placements-ledger-chat-5.md, tests/unit/chat5-placements-core-extended-state-machines.test.ts, tests/unit/chat5-tpo-account-breakit.test.ts, tests/unit/chat5-tpo-second-third-behavior.test.ts.
+
+
+## Continuation findings — October 18
+
+| ID | Severity | Reproduction / evidence | Source fix and executable regression (run pending) |
+|---|---|---|---|
+| TPO-campaigns-public-25 | S2 test drift | A previous source test asserted a public join toggle succeeds without the now-required `expectedLinkId`, contradicting stale-tab protection. | Updated `chat5-delegated-policy-decisions.test.ts` to require current UUID and deny missing/malformed link ID; commit a5379fd. |
+| PROJ-BREAK-TPO-01..04 | S1 cross-module coverage gap | Placements TPO privileges must never grant project management or cross-college project reads. | New actual permission-policy matrix `PROJ-BREAK-TPO-01.test.ts`, including suspended/disabled and scoped Super Admin contexts; commit 201f1b2. DB/browser not run. |
+| PROJ-BREAK-TPO-06 | S2 input safety | `projectNoticeHref` concatenated an unchecked identifier into a learner/mentor route, allowing reserved path bytes to alter the destination. | `encodeURIComponent(projectId)` and hostile-ID regression; commits 040d1af and e936887. |
+| PLACEMENTS-SELECTION-ERROR-02 | S1 data exposure | `verifyAndReleaseTpoSelections` returned `error.message` to each failed candidate result, potentially displaying SQL error text or internal authorization details on the TPO screen. | Safe fixed-copy model function, use for **both** release/reconciliation catches, typed stale conflict instead of raw throw; commits cbf6ae6 / e1630e3. Test ab7fd28. |
+| PLACEMENTS-SELECTION-IDEMP-01 | S1 duplicate audit/version drift | Replaying the same `recordTpoDriveSelections` payload after a lost response updated `recordedAt` again and appended another audit event, invalidating concurrent selection preview tokens. | Exact already-recorded payload bypass under application/selection locks, preserving row IDs/timestamps; commits 51cff0f/be373d5. Behavioral matrix 8cf65af, PostgreSQL regression 0fc1bf7. |
+| PLACEMENTS-SELECTION-ATOMIC-02 | S1 open | Selection release verifies one transaction, issues an offer in a second, and records RELEASED in a third. A crash or conflicting actor can separate those stages. | **OPEN**. Safe error copy and identical-record idempotency do not solve cross-transaction atomicity; require competing-release/worker test and durable outbox/recovery design. |
+
+All unit and PostgreSQL tests above are **authored but unexecuted** here; the cloud orchestrator must confirm their exact passing status. Do not declare these findings release-closed on source changes alone.
