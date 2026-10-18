@@ -173,3 +173,7 @@ Source-scan inventory of the assigned module directories; **PENDING is not verif
 | `src/modules/groups/college-rule-preview-model.ts` | `collegeRulePreviewInputSchema`, `GROUP_RULE_PREVIEW_MAX_CANDIDATES`, `RulePreviewCandidate`, `projectCollegeGroupRulePreview` | PENDING |
 | `src/modules/groups/college-rule-preview-service.ts` | `CollegeRulePreviewError`, `previewCollegeGroupRule` | PENDING |
 | `src/modules/groups/elective-eligibility.ts` | `hasElectiveAcademicEligibility` | PENDING |
+| `src/modules/groups/roster-access.ts` | `listActiveElectiveDeliveryIds`, `hasActiveElectiveDeliveryAccess`, `isElectiveBackedDelivery`, `listBoundElectiveDeliveryIds` | PENDING |
+| `src/modules/groups/rule-evaluator.ts` | `groupRuleCriteriaSchema`, `GroupRuleCriteria`, `GroupRuleCandidate`, `matchesGroupRuleCandidate` | PENDING |
+| `src/modules/groups/rules-service.ts` | `GroupRuleServiceError`, `upsertGroupRule`, `refreshGroupRule` | PENDING |
+| `src/modules/groups/service.ts` | `GroupServiceError`, `createGroup`, `joinGroup`, `leaveGroup`, `transitionGroup`, `attachProjectTeamGroup`, `moveElectiveMember`, `removeAndLockCollegeStudyMember`, `setCollegeStudyMemberLock` | PENDING |
