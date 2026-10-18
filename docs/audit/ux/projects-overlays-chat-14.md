@@ -40,3 +40,7 @@ The shared `Dialog` and `ConfirmDialog` own focus trapping, `aria-labelledby`, E
 | `src/components/projects/mentor-board-task-detail-dialog.tsx` | `UX-mentor-scroll-motion-01` |
 
 The remaining native or server-only components that do not construct an overlay are not counted as overlays. Legacy copy must remain unchanged. These are source tests, not a substitute for keyboard/browser regression in the orchestrator.
+
+## Other project surfaces tracked by the coverage generator
+
+`src/components/projects/class-team-workspace-creator.tsx`, `src/components/projects/mentor-task-allocation.tsx`, `src/components/projects/project-admin-submissions-page.tsx`, `src/components/projects/project-admin-workspace-list.tsx`, and `src/components/projects/super-admin-template-subview-page.tsx` use shared responsive `DataTable`, explicit empty copy, and scroll cues. Tests `UX-projects-tables-chat14` and `UX-mentor-scroll-motion-01` exercise these surface contracts. `src/components/projects/project-admin-readiness-page.tsx` is an administrative page-level component; administrative state coverage belongs to chat-9's project-admin audit. This note records ownership rather than claiming full behavior tests for that surface.
