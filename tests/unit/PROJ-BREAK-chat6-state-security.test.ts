@@ -120,4 +120,20 @@ describe("IIT Dharwad Projects breaker — state, access, integrity, deadlines a
   expect(service).toContain("db.transaction(async (tx)");
   expect(service).toContain('.for("update")');
  });
+ it("PROJ-BREAK-state-03 completed projects cannot edit, submit or review a final delivery",()=>{
+  const code=src("src/modules/projects/submission-service.ts");
+  const denied=(code.match(/project.status === "ARCHIVED" \|\| project.status === "COMPLETED"/g)??[]).length;
+  expect(denied).toBe(4);
+  for(const name of ["createProjectSubmissionDraft","updateProjectSubmissionDraft",
+    "submitProjectSubmission","reviewProjectSubmission"]){
+    const start=code.indexOf("export async function "+name+"(");
+    expect(start,name).toBeGreaterThan(-1);
+    const next=code.indexOf("export async function ",start+1);
+    const body=code.slice(start,next===-1?undefined:next);
+    expect(body,name).toContain('project.status === "COMPLETED"');
+    expect(body,name).toContain('project.status === "ARCHIVED"');
+    expect(body,name).toContain('.for("update")');
+  }
+ });
+
 });
