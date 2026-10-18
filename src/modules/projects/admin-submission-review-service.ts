@@ -37,6 +37,15 @@ export async function lockAdminProjectSubmission(ctx:RequestContext,projectIdRaw
    .where(and(eq(projectSubmissions.id,submissionId),eq(projectSubmissions.projectId,scope.project.id)))
    .for("update").limit(1);
   if(!project||!submission)throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
+  // Holding the parent FOR UPDATE serializes draft creation with this read.
+  // A stale tab may retain an earlier submission ID; never lock or retry a
+  // superseded revision, even if that older row was already locked.
+  const [latest]=await tx.select({id:projectSubmissions.id})
+   .from(projectSubmissions)
+   .where(eq(projectSubmissions.projectId,scope.project.id))
+   .orderBy(desc(projectSubmissions.version)).limit(1);
+  if(latest?.id!==submissionId)
+   throw new ProjectsServiceError("PROJECT_SUBMISSION_CONFLICT");
   // Two tabs may retry a lock after the first response was lost. Both the
   // parent and the submission are locked, so returning the already-locked row
   // is safe, does not rewrite its reason, and cannot duplicate audit history.
