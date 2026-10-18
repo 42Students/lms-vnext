@@ -52,3 +52,22 @@ Source-scan inventory of the assigned module directories; **PENDING is not verif
 | `src/modules/colleges/super-admin-directory-service.ts` | `getAdminTenantDirectory`, `getAdminTenantDetail` | PENDING |
 | `src/modules/colleges/super-admin-tenant-model.ts` | `tenantReadQuerySchema`, `tenantPage` | PENDING |
 | `src/modules/colleges/validation.ts` | `collegeIdSchema`, `collegeOrganizationIdSchema`, `collegeNameSchema`, `collegeCodeSchema`, `createCollegeInputSchema`, `updateCollegeInputSchema`, `CreateCollegeInput`, `UpdateCollegeInput` | PENDING |
+
+## Academic modules — source inventory
+
+| Source file | Statically matched public symbols | Per-export test/PG status |
+| --- | --- | --- |
+| `src/modules/academics/a2-scope.ts` | `loadAcademicsMembership`, `requireActiveAcademicMembership`, `requireAcademicRole`, `loadLearnerEnrollmentScope`, `loadSectionEnrollmentScope`, `loadFacultyAssignmentScope`, `loadScheduleEventScope` | PENDING |
+| `src/modules/academics/academic-setup-error-copy.ts` | `ACADEMIC_SETUP_GENERIC_ERROR`, `isMachineErrorCode`, `academicSetupErrorMessage` | PENDING |
+| `src/modules/academics/admin-batch-promotion-read-model.ts` | `adminPromotionQuerySchema`, `AdminPromotionQuery`, `readAdminPromotionParams`, `summarizeAdminPromotion` | PENDING |
+| `src/modules/academics/cohort-service.ts` | `listCohorts`, `createCohort`, `updateCohort`, `transitionCohort` | PENDING |
+| `src/modules/academics/college-academic-directory-model.ts` | `COLLEGE_ACADEMIC_PAGE_SIZE`, `collegeSemesterDirectoryBaseSchema`, `withCollegeSemesterCreditCheck`, `collegeSemesterDirectorySchema`, `collegeBatchDirectoryBaseSchema`, `withCollegeBatchFilterCheck`, `collegeBatchDirectorySchema`, `CollegeSemesterDirectoryQuery`, `CollegeBatchDirectoryQuery`, `CollegeDirectoryKind`, `academicDirectoryHref`, `academicDirectoryPageCount`, `academicDirectorySearchParams`, `batchProgressLabel` | PENDING |
+| `src/modules/academics/college-academic-directory-service.ts` | `listCollegeSemesters`, `listCollegeBatches` | PENDING |
+| `src/modules/academics/college-academic-export-model.ts` | `ACADEMIC_EXPORT_CAP`, `semesterCsvSchema`, `batchCsvSchema`, `AcademicCsvKind`, `academicExportHref`, `exportParams`, `renderBatchCsv`, `renderSemesterCsv` | PENDING |
+| `src/modules/academics/college-academic-export-service.ts` | `exportCollegeAcademicDirectory` | PENDING |
+| `src/modules/academics/college-batch-graduation-service.ts` | `CollegeBatchGraduationError`, `markCollegeBatchGraduated` | PENDING |
+| `src/modules/academics/college-batch-promotion-copy.ts` | `BATCH_PROMOTION_COPY`, `promotionImpactMessage` | PENDING |
+| `src/modules/academics/college-batch-promotion-execute.ts` | `CollegePromotionExecuteError`, `executeCollegeBatchPromotion` | PENDING |
+| `src/modules/academics/college-batch-promotion-model.ts` | `formatPromotionAcademicYear`, `collegePromotionQuerySchema`, `CollegePromotionQuery`, `PromotionBlocker`, `batchPromotionPlan`, `promotionLearnerBlockers`, `collegePromotionExecuteSchema`, `promotionReady`, `promotionPreviewMatches` | PENDING |
+| `src/modules/academics/college-batch-promotion-service.ts` | `CollegePromotionPreviewError`, `listCollegePromotionOptions`, `previewCollegeBatchPromotion`, `previewCollegeBatchPromotionInTransaction` | PENDING |
+| `src/modules/academics/college-batch-retire-model.ts` | `collegeBatchRetireSchema`, `collegeBatchRetireIdSchema`, `batchRetirementPrompt` | PENDING |
