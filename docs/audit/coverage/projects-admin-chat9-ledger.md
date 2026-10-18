@@ -59,6 +59,8 @@ Test references: **BEHAVIOR** = direct function assertions; **SOURCE** = source 
 | `readiness-override-service.ts` | `overrideProjectReadiness` | SOURCE | PROJ-BREAK-routing-01, transaction+audit OPEN. Evidence: tests/unit/proj-break-chat9-services.test.ts (source contract, NOT live database behavioral evidence) |
 | `super-admin-template-directory-service.ts` | `listSuperAdminTemplateDirectory` | OPEN | Search/page/scoping PG cases OPEN. Evidence: **OPEN — missing adequate test** |
 
+| `admin-audit-query-model.ts` | `parseProjectAdminAuditQuery` | BEHAVIOR | PROJ-BREAK-ux-22/23/24: valid date/cursor parsing and invalid action, scope, cursor and reverse date rejection. `tests/unit/PROJ-BREAK-chat9-admin-audit-query.test.ts`. Shared Super/College Admin audit component consumes it; live browser verification OPEN. |
+
 ## Route/page tests and independent audit
 
 The 37 routes in `docs/orchestrator/ui-ux/pages-admin.md` positions 75–111 have named **source-level** tests across `tests/unit/ux-admin-chat9-batch-01..04.test.ts`; `tests/unit/ux-admin-chat9-coverage-closure.test.ts` verifies mapping. These do not constitute keyboard, screen reader, phone, navigation or role journey tests. Significant audited UX surfaces: `/admin/projects`, `/admin/projects/[projectId]`, `/admin/projects/templates/[templateId]/*`, `/admin/projects/submissions`, `/admin/settings` and TPO recovery. Unit-failure repairs are captured in `docs/audit/defects-chat-9.md`.
