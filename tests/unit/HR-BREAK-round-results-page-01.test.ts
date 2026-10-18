@@ -52,7 +52,7 @@ describe("HR-BREAK-round-results-page-01 recruiter job and shared candidate priv
  });
  it("invalid job/round/outcome filter renders reset instead of issuing a query",async()=>{
   for(const q of [{jobId:"../../college-b"},{roundId:"invalid"},{outcome:"ADMIN"},
-   {jobId:[job,"second-job"]}].slice(0,3)){
+   {jobId:[job,"second-job"]}]){
    const result=await page(q);
    expect(visible(result)).toContain("Invalid round filters");
    expect(links(result)).toContain("/hr/round-results");
