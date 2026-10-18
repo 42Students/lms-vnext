@@ -1,7 +1,8 @@
+import { randomUUID } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { Pool } from "pg";
 import { createTenant, createPrincipal, createProjectFixture,
-  newHarnessPool, withProjectPg, type PgHarness } from "./support/projects-placements-pg-harness";
+  newHarnessPool, withProjectPg, withTwoPgSessions, type PgHarness } from "./support/projects-placements-pg-harness";
 
 let pool:Pool;
 beforeAll(()=>{pool=newHarnessPool();});
@@ -50,5 +51,36 @@ describe("PROJ-HARNESS-ROLLBACK real PostgreSQL: nested rollback and FK integrit
      expect((await db.query("select id from project_instances where id=$1",
        [f.graph.projectId]))).toHaveLength(1);
    });
+ });
+ it("PROJ-HARNESS-ROLLBACK-04 wrong SQLSTATE does not poison the PostgreSQL transaction",async()=>{
+   await withProjectPg(pool,async db=>{
+     const f=await prepared(db);
+     await expect(db.expectSqlState(()=>db.query(
+       "update project_tasks set sequence=-1 where id=$1",[f.graph.taskId]),"23505"))
+       .rejects.toThrow("expected SQLSTATE 23505 but received 23514");
+     const rows=await db.query<{sequence:number}>(
+       "select sequence from project_tasks where id=$1",[f.graph.taskId]);
+     expect(rows).toHaveLength(1);
+     expect(rows[0]!.sequence).toBeGreaterThanOrEqual(0);
+     await db.expectSqlState(()=>db.query(
+       "update project_tasks set sequence=-1 where id=$1",[f.graph.taskId]),"23514");
+     expect((await db.query("select id from project_tasks where id=$1",[f.graph.taskId]))).toHaveLength(1);
+   });
+ });
+ it("PROJ-HARNESS-ROLLBACK-05 both concurrent sessions roll back independently after callback failure",async()=>{
+   const tag=randomUUID();
+   const first="Harness concurrent rollback a "+tag;
+   const second="Harness concurrent rollback b "+tag;
+   await expect(withTwoPgSessions(pool,async(a,b)=>{
+     await a.query("insert into organizations (name) values ($1)",[first]);
+     await b.query("insert into organizations (name) values ($1)",[second]);
+     expect((await a.query("select id from organizations where name=$1",[first])).rowCount).toBe(1);
+     expect((await a.query("select id from organizations where name=$1",[second])).rowCount).toBe(0);
+     expect((await b.query("select id from organizations where name=$1",[first])).rowCount).toBe(0);
+     expect((await b.query("select id from organizations where name=$1",[second])).rowCount).toBe(1);
+     throw new Error("intentional dual-session failure");
+   })).rejects.toThrow("intentional dual-session failure");
+   const persisted=await pool.query("select id from organizations where name = any($1::text[])",[[first,second]]);
+   expect(persisted.rowCount).toBe(0);
  });
 });
