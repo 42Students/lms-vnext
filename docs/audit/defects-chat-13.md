@@ -181,3 +181,5 @@ Full Super Admin parity for membershipless submission locks requires the schema/
 
 
 | PROJ-BREAK-SA-40 | S2 / unactionable review queue | A PLANNED project could retain a previously SUBMITTED delivery version (e.g. after restore) and `deriveProjectRiskReasons` marked it `Pending review` although `canAdminSettleDelivery` categorically rejects review outside ACTIVE status. | Restrict pending-review reason to ACTIVE while retaining independent inactivity risk for PLANNED. State-machine behavioral tests added, not executed. | `tests/unit/PROJ-BREAK-SA-40-planned-submission-risk.test.ts` |
+
+| SA-ADMIN-DRIVE-04 | S3 / deadline equality status | `adminDriveStatus` classified a PUBLISHED drive with `applicationDeadline === now` as `Open` due to strict `<` rather than cutoff-aware `<=`. | Corrected inclusive expiry predicate; retained exact legacy `Open · Expired` label and all nonpublished labels. Behavioral time-boundary test authored, not executed. | `tests/unit/chat13-admin-drive-deadline-boundary.test.ts` |
