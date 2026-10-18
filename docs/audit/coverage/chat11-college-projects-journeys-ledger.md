@@ -34,3 +34,5 @@ Scope is the IIT Dharwad College Admin Projects entry, creation, team preview, a
 This remains the **College Admin role-journey supplement**; it does not replace the Project lead's full per-export ledger, independent review, and 90% branch-coverage gate.
 
 | `CreateProjectControl` active status | Clear the Mentor after selecting ACTIVE: a native form submission is refused before the network call rather than relying only on the disabled option/server Zod guard | `tests/unit/chat11-college-projects-role-journeys.test.ts` — `PROJ-COL-STALE-06` | Browser switch/retry race |
+
+| `/college/projects` (index, create, template list/detail, audit, reassignment and class creation) | Seven entrypoints checked for scoped context *before* any loader; invalid filters recover without data access; optional template-label failure does not hide projects; missing template and role denial recovery remain reachable | `tests/unit/chat11-college-projects-pages-adversarial.test.ts`, `PROJ-BREAK-COL-PAGES-01` | Component/render E2E at 320/360/390 px and database fault injection |
