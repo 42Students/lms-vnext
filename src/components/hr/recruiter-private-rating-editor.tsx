@@ -44,7 +44,7 @@ function RecruiterPrivateRatingEditorState({jobId,applicationId}:PrivateRatingEd
   if(pending||!ready)return;
   setMessage("");
   try{
-   const requested={rating:clear?null:rating,note:clear?"":note};
+   const requested={rating:clear?null:rating,note:clear?"":note.trim()};
    const response=await run(()=>fetch(endpoint,{
     method:"PATCH",headers:{"Content-Type":"application/json"},
     credentials:"same-origin",redirect:"error",
