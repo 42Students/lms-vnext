@@ -79,7 +79,7 @@ export async function ProjectAdminSubmissionsPage({
     basePath + "/submissions";
   const renderedAt = new Date();
   const unsubmitted=view==="NOT_SUBMITTED"?await listProjectAdminUnsubmitted(context,collegeId,{
-    q:query.q,page:query.page,pageSize:query.pageSize,
+    q:query.q,status:query.status,page:query.page,pageSize:query.pageSize,
   }):null;
 
   return (
@@ -118,6 +118,7 @@ export async function ProjectAdminSubmissionsPage({
         </Link>
       </nav>
       {unsubmitted?<section className="space-y-3 rounded-xl border border-border bg-surface p-4">
+        <ProjectAdminFilters query={query} filterView="NOT_SUBMITTED"/>
         <h2 className="font-semibold">Not submitted · {unsubmitted.total} workspaces</h2>
         <DataTable
           caption="Unsubmitted project workspaces"
