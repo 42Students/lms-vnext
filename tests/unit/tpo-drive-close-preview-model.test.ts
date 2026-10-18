@@ -5,7 +5,12 @@ describe("TPO drive close preview",()=>{
  it("permits confirmed published active-season closure only against the same counts",()=>{
   expect(evaluateTpoDriveClosure("PUBLISHED","ACTIVE",before,before)).toBe("ALLOW");
   expect(evaluateTpoDriveClosure("DRAFT","ACTIVE",before,before)).toBe("READ_ONLY");
-  expect(evaluateTpoDriveClosure("PUBLISHED","CLOSED",before,before)).toBe("READ_ONLY");
+  // Closing a still-published drive remains valid after its season ends.
+  // Closure is cleanup, not new recruiting/issuance; issued offers and
+  // unreleased selections are still rejected by the service.
+  expect(evaluateTpoDriveClosure("PUBLISHED","CLOSED",before,before)).toBe("ALLOW");
+  expect(evaluateTpoDriveClosure("PUBLISHED",null,before,before)).toBe("READ_ONLY");
+  expect(evaluateTpoDriveClosure("PUBLISHED","CLOSED",before,{...before,offers:0})).toBe("PREVIEW_STALE");
   expect(evaluateTpoDriveClosure("PUBLISHED","ACTIVE",before,{...before,offers:0})).toBe("PREVIEW_STALE");
  });
  it("TPO-drive-workspace-17 refuses closure while any employer selection is not released",()=>{
