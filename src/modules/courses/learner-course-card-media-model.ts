@@ -4,7 +4,14 @@ export function learnerCourseCardMedia(value: string | null | undefined) {
   if (value) {
     try {
       const parsed = new URL(value);
-      if (parsed.protocol === "https:" && parsed.hostname && !parsed.username && !parsed.password) {
+      const host=parsed.hostname.toLowerCase();
+      const privateHost=host==="localhost"||host.endsWith(".localhost")||
+        host==="0.0.0.0"||host==="[::1]"||host==="[::]"||
+        /^127\./.test(host)||/^10\./.test(host)||
+        /^192\.168\./.test(host)||/^169\.254\./.test(host)||
+        /^172\.(?:1[6-9]|2\d|3[01])\./.test(host);
+      if (parsed.protocol === "https:" && host && !privateHost &&
+          !parsed.username && !parsed.password && !parsed.hash) {
         return { src: parsed.href, source: "AUTHORED" as const };
       }
     } catch {

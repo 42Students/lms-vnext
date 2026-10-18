@@ -5,8 +5,12 @@ import {dispatchRecruiterUnreadMessageDigests} from "@/modules/placements/recrui
 export const runtime="nodejs";
 function allowed(request:Request){
  const secret=process.env.RECRUITER_MESSAGE_WORKER_SECRET??"";
- if(secret.length<32)return false;
- const bearer=(request.headers.get("authorization")??"").replace(/^Bearer /,"");
+ const authorization=request.headers.get("authorization")??"";
+ // Whitespace-only/misquoted secrets must not enable a privileged mail worker.
+ if(Buffer.byteLength(secret.trim(),"utf8")<32||secret!==secret.trim()||
+   !authorization.startsWith("Bearer "))return false;
+ const bearer=authorization.slice("Bearer ".length);
+ if(!bearer||bearer!==bearer.trim())return false;
  const actual=createHash("sha256").update(bearer).digest();
  const expected=createHash("sha256").update(secret).digest();
  return timingSafeEqual(actual,expected);

@@ -30,8 +30,11 @@ export function safeRecruiterEmailMergeText(value:string,limit=4000){
  * Prevent CR/LF headers, bidirectional overrides and oversized recipient names.
  */
 export function safeRecruiterEmailAddressName(value:string):string{
- return value.replace(/[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]+/gu," ")
-  .replace(/\s+/gu," ").trim().slice(0,160);
+ const cleaned=value.replace(/[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]+/gu," ")
+  .replace(/\s+/gu," ").trim();
+ const excerpt=cleaned.slice(0,160);
+ // Avoid splitting a UTF-16 surrogate pair at the outbound provider boundary.
+ return /[\uD800-\uDBFF]$/.test(excerpt)?excerpt.slice(0,-1):excerpt;
 }
 export function safeRecruiterDigestMessages(messages:readonly {body:string}[]){
  return messages.slice(-3).map(row=>safeRecruiterEmailMergeText(row.body));
