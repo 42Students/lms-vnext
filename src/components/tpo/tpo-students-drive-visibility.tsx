@@ -67,16 +67,19 @@ export function TpoStudentsDriveVisibility({learners,drives}:{learners:readonly 
   const restorable=results.filter(row=>row.status==="saved"&&row.action!=="CLEAR"&&row.overrideId);
   try{
    await run(async()=>{
-    const next:Outcome[]=[];
-    for(const row of restorable){
+    const next=await mapTpoBulkBounded(restorable,async(row):Promise<Outcome>=>{
      try{
-      await apiFetch("/api/placements/jobs/"+encodeURIComponent(lastActionJobId)+"/eligibility/"+encodeURIComponent(row.id),{
+      await apiFetch("/api/placements/jobs/"+encodeURIComponent(lastActionJobId)+
+       "/eligibility/"+encodeURIComponent(row.id),{
        method:"DELETE",credentials:"same-origin",headers:{"content-type":"application/json"},
-       body:JSON.stringify({expectedOverrideId:row.overrideId,reason:"Undo previous TPO bulk change"}),
+       body:JSON.stringify({expectedOverrideId:row.overrideId,
+        reason:"Undo previous TPO bulk change"}),
       });
-      next.push({...row,status:"saved",action:"CLEAR"});
-     }catch{next.push({...row,status:"failed"});}
-    }
+      return {...row,status:"saved",action:"CLEAR"};
+     }catch{
+      return {...row,status:"failed"};
+     }
+    },5);
     setResults(next);if(next.some(row=>row.status==="saved"))router.refresh();
    });
   }catch{setError("Undo could not finish. Review the current override before trying again.");}
