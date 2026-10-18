@@ -1,0 +1,83 @@
+# MASTER QUEUE (owner: use every lane at full throttle, never idle)
+
+Rule for every lane: finish your current item, `git pull origin main`, then work YOUR section below from top to bottom without reporting between items. Push to your own `chatgpt/chat-N-b` branch every ~10 commits, tag commits `[chat-N]`, TypeScript strict-clean, legacy wording exact, never weaken or delete tests, dev only. Reply only when your WHOLE section is done or you are blocked. When done, take items from "Unowned and spillover" at the bottom, then tell the orchestrator.
+
+Definition of "exhaustive coverage" for a module or page group (used in every test task):
+1. Ledger file `docs/audit/coverage/<name>-ledger.md`: one row per exported service/model function and per route handler, with the test file and the cases covered. No row without a test.
+2. Per function: happy path, each validation failure, each role in the permission matrix (own tenant, other tenant, wrong role, super admin scope), idempotency, version/concurrency conflict, each allowed and each forbidden state transition, audit/activity event written, notification sent or not, friendly error mapping (no raw codes).
+3. Per route handler: same-origin guard, unauthenticated, forbidden, input size/shape limits, GET never writes.
+4. Per page: loading, empty, error, partial, denied states render; phone layout assertions; legacy wording assertions.
+5. Database-backed behaviour gets integration tests that run on PostgreSQL (see `docs/orchestrator/` local DB recipe): constraints, cascades, indexes, rollback.
+6. Tests must assert behaviour, never only existence. Name tests with the module and case.
+
+## Pass A, in progress for everyone (do first, from the earlier messages)
+UX cross-audit, UX coverage closure (docs/orchestrator/briefs/ux-coverage-closure.md), scroll and motion pass (docs/orchestrator/briefs/ux-scroll-motion-pass.md). Master surface list: docs/audit/ui-surfaces/UI-SURFACES.md.
+
+## Pass B: exhaustive coverage, by lane
+
+### chat-2
+1. Placements interviews, rounds and slots services (src/modules/placements/*interview*, *round*, *slot*): full ledger + tests.
+2. TPO last-third pages: every route in your slice gets the page-level tests from the definition above.
+3. TPO campaigns, public links, settings people services: ledger + tests.
+
+### chat-3
+1. Faculty/teacher module (src/modules/courses faculty paths, assessments, attendance, grades, quizzes): ledger + tests; permission matrix faculty versus mentor versus learner.
+2. Super Admin audit: academics and people pages (/admin/academics*, /admin/people*, /admin/recruiters): find and fix defects, then tests.
+
+### chat-4
+1. College module (src/modules/college*, academics, groups, people, contacts): ledger + tests.
+2. Super Admin audit: colleges and tenants (/admin/colleges*, /admin/organizations*): defects, fixes, tests.
+
+### chat-5
+1. Placements module core: drives, jobs, selection, offers, waitlist, joining, retention (src/modules/placements/*): ledger + tests, state machines first.
+2. TPO second-third pages: page-level tests.
+
+### chat-6
+1. Super Admin audit: /admin second third (docs/orchestrator/ui-ux/pages-admin.md): read every page, every action; defects, fixes, tests.
+2. Auth and sessions (login, OTP, handoff, revoke sessions, rate limits): ledger + tests.
+
+### chat-7
+1. Courses and learner module (src/modules/courses learner paths, quizzes, assignments, discussions, certificates): ledger + tests.
+2. Super Admin audit: courses and content pages (/admin/courses*, content builders): defects, fixes, tests.
+
+### chat-9
+1. Projects module admin and college side (src/modules/projects: templates, versions, assignment, readiness, lifecycle, submissions): ledger + tests.
+2. Super Admin audit: /admin last third: defects, fixes, tests.
+
+### chat-11
+1. TPO settings and college setup (course progress, setup steps, notice settings, preferences): ledger + tests.
+2. Super Admin audit: tenants modules, branding, sign-in methods, readiness: defects, fixes, tests.
+
+### chat-12
+1. TPO students and companies (roster, facets, bulk actions, participation, history, company directory/share, team): ledger + tests, concurrency on bulk actions.
+2. TPO first-third pages: page-level tests.
+
+### chat-13
+1. Super Admin audit: /admin first third, placements and projects admin pages (SA placements-projects): defects, fixes, tests.
+2. Placements admin services (src/modules/placements admin paths, analytics, exports): ledger + tests.
+
+### chat-14
+1. Projects module mentor side (meetings, sprints, tasks, releases, tracker, attention, approvals, resources): ledger + tests.
+2. Mentor pages page-level tests and permission matrix.
+
+### chat-15
+1. HR module (src/modules/placements hr/recruiter paths: HR jobs, applicants, drives, offers, rounds, messaging, calendar): ledger + tests; HR is super important.
+2. Recruiter and tracker pages page-level tests.
+
+### chat-16
+1. HR and recruiter messaging, campaigns, notifications, email bridge, inbound mail: ledger + tests.
+2. Public and auth pages page-level tests.
+
+### chat-17
+1. Shared UI kit (src/components/ui): every component, every state, a11y, motion, scroll cue tests.
+2. Integration test harness on PostgreSQL for Projects and Placements (shared fixtures for tenants, roles, drives, projects) so the other lanes can use it; document in docs/orchestrator/.
+
+### chat-19
+1. HR pages UX slice (already assigned) then HR page-level tests.
+2. Cross-audit of the HR slice written by chat-15 and chat-16 (second pair of eyes).
+
+## Pass C: Old LMS parity (needs the owner to sign in on the old LMS dev site)
+Source-level now: compare `docs/audit/legacy-inventory-A.md`, `legacy-inventory-B.md`, `legacy-copy-A.md`, `legacy-copy-B.md` to vNext for TPO and HR first; list anything absent in `docs/audit/legacy-vs-vnext-tpo-hr-gaps.md` (id, legacy page/action, vNext status, severity). Chat-15 and chat-12 own TPO/HR lists; chat-3 and chat-7 the other roles. Live walk of the old LMS dev (all roles) follows when the owner signs in.
+
+## Unowned and spillover
+Anything in docs/audit/ux/COVERAGE-MATRIX.md still red; unit failures in docs/orchestrator/unit-failures-*.md newest file; any lane's overflow.
