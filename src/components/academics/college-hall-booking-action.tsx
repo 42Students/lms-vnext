@@ -57,7 +57,7 @@ export function CollegeHallBookingAction({hallId,classes,faculty}:{
           <input className={field} required type="time" value={to} onChange={e=>setTo(e.target.value)}/></label>
         <div className="sm:col-span-2 lg:col-span-3">
           <button type="submit" disabled={pending||!sectionId||!title.trim()}
-            className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
             {pending?"Booking…":"Confirm booking"}</button>
         </div>
       </form>}

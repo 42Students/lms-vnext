@@ -46,7 +46,7 @@ export async function AcademicsSectionPage({
         actions={
           <Link
             href={backHref}
-            className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-[var(--lms-teal-deep)]"
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-[var(--lms-teal-deep)]"
           >
             Back to Academics
           </Link>
