@@ -90,7 +90,7 @@ export default async function TrackerIssueDetailPage({
         title={issue.publicId}
         description={`${issue.issueType} · ${issue.page}`}
         actions={
-          <Link href="/tracker/issues" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-foreground">
+          <Link href="/tracker/issues" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-foreground">
             Back to issues
           </Link>
         }
@@ -149,7 +149,7 @@ export default async function TrackerIssueDetailPage({
             ...(cursor.activityBeforeCreatedAt && cursor.activityBeforeId ? {
               activityBeforeCreatedAt:cursor.activityBeforeCreatedAt,activityBeforeId:cursor.activityBeforeId,
             }:{}),
-          }).toString()} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+          }).toString()} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
             Older screenshot metadata
           </Link>
         ) : null}
@@ -182,7 +182,7 @@ export default async function TrackerIssueDetailPage({
               attachmentBeforeCreatedAt:cursor.attachmentBeforeCreatedAt,attachmentBeforeId:cursor.attachmentBeforeId,
             }:{}),
           }).toString()}
-            className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
             Older audit events
           </Link>
         ) : null}

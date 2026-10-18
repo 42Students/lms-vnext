@@ -6,6 +6,7 @@ import { TrackerLiveLogsExplorer } from "@/components/tracker/tracker-live-logs-
 import { TrackerTelegramManualPanel } from "@/components/tracker/tracker-telegram-manual-panel";
 import { TrackerAdminNav } from "@/components/tracker/tracker-admin-nav";
 import { PageHeader } from "@/components/ui/page-header";
+import { ErrorState } from "@/components/ui/error-state";
 import { isSuperAdmin } from "@/modules/identity/context";
 import {
   listKnownErrorsForAdmin,
@@ -80,12 +81,10 @@ export default async function TrackerLogsPage({
     return (
       <div className="space-y-6">
         {header}
-        <p role="alert" className="rounded-xl border border-border bg-surface p-6 text-sm text-body">
-          Invalid log environment.{" "}
-          <Link href="/tracker/logs" className="font-semibold text-primary-text underline">
+        <ErrorState title="Invalid log environment." description="Invalid log environment."
+          action={<Link href="/tracker/logs" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">
             Reset filter
-          </Link>
-        </p>
+          </Link>}/>
       </div>
     );
   }
