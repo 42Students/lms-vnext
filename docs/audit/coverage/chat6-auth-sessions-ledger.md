@@ -74,3 +74,10 @@
 - **AUTH-sessions-04:** relogin could revoke a previous token without matching the same canonical user; fixed user-ID equality.
 
 **Not yet certified:** exhaustive server-side device CRUD mocks, all tenant-domain races, 2FA multi-replica concurrency, session revocation under in-flight writes, PostgreSQL constraint/integration tests, real Exotel/ZeptoMail sandbox faults, CI/typecheck and mobile/browser route journeys. A source filename appearing in the test column is not proof of a fully exercised behavioural/permission matrix. Fix those gaps before any release sign-off.
+
+
+## AUTH-sessions-06 behavioural session service follow-through
+
+`tests/unit/chat6-auth-session-service-behaviour.test.ts` exercises actual exported service functions with a mocked PostgreSQL adapter (not just source text): active login resolution, unknown tokens, revoked sessions, expired sessions, disabled platform users, session creation and DB failure, logout failure propagation, all-device revocation, owner-scoped per-device revoke, other-device count, and own-session device list. No mock claims to provide PostgreSQL transaction isolation, query-plan verification, or an authenticated browser. The existing `AUTH-sessions-04` login handoff and `AUTH-sessions-05` truthful logout regressions remain separately covered.
+
+Outstanding DB acceptance: inject a real concurrent revoke between authentication and a mutation to confirm the latter rejects the stale session; replay the same opaque token across two devices; verify `identity_device_sessions` indexes, foreign keys and expiry purge under realistic retention. Existing source-level permission guards do not substitute for those tests.

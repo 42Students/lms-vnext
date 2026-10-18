@@ -103,6 +103,10 @@ export function LearnerFinalDeliveryControl({
   }));
   const lastSavedSnapshot=useRef(savedSnapshot);
   const lastSavedUpdatedAt=useRef(draft?.updatedAt ? new Date(draft.updatedAt).toISOString() : null);
+  // Only a server response to THIS client's own save advances the token.
+  // A router refresh may introduce another teammate's new draft; adopting its
+  // timestamp would incorrectly let stale local inputs overwrite their work.
+  // In that case the missing token requires an explicit page reload instead.
   function markSaved(snapshot:string){lastSavedSnapshot.current=snapshot;setSavedSnapshot(snapshot);}
   function acknowledgedDraftRevision(result:unknown):string {
     const submission=result&&typeof result==="object"&&"submission" in result
@@ -150,6 +154,9 @@ export function LearnerFinalDeliveryControl({
     setError(null);
     setPending(true);
     try {
+      if(draft&&!lastSavedUpdatedAt.current){
+        throw new Error("Refresh this final draft to get its latest revision before saving.");
+      }
       const result = await projectMutation(
         draft
           ? `/api/projects/${projectId}/submissions/${draft.id}`
@@ -201,6 +208,11 @@ export function LearnerFinalDeliveryControl({
       pendingRef.current=true;
       setAutosaveStatus("saving");setPending(true);
       try{
+        if(!lastSavedUpdatedAt.current){
+          failedSnapshot.current=snapshot;
+          setAutosaveStatus("failed");
+          return;
+        }
         const result=await projectMutation(
           `/api/projects/${projectId}/submissions/${draft.id}`,
           "PATCH",{...payload,expectedUpdatedAt:lastSavedUpdatedAt.current},
@@ -224,6 +236,10 @@ export function LearnerFinalDeliveryControl({
 
   async function submitDraft(confirmed=false) {
     if (!draft || pendingRef.current) return;
+    if(!lastSavedUpdatedAt.current){
+      showToast({tone:"error",title:"Refresh this final draft before submitting."});
+      return;
+    }
     // Server-acknowledged values can be newer than RSC props after autosave.
     const readiness=savedDeliverySubmissionReadiness(currentPayload(),lastSavedSnapshot.current);
     if(readiness==="UNSAVED"){
@@ -241,6 +257,7 @@ export function LearnerFinalDeliveryControl({
       await projectMutation(
         `/api/projects/${projectId}/submissions/${draft.id}/submit`,
         "POST",
+        {expectedUpdatedAt:lastSavedUpdatedAt.current},
       );
       setSubmitConfirmation(false);
       showToast({

@@ -17,7 +17,7 @@ describe("PLACEMENTS-OFFERS-IDOR-07: academic enrichment cannot leak a foreign c
   const marker=randomUUID().slice(0,8);
   const identity=randomUUID(),member=randomUUID();
   const foreignProgram=randomUUID(),foreignPeriod=randomUUID(),foreignCohort=randomUUID();
-  const localProgram=randomUUID(),localPeriod=randomUUID(),localCohort=randomUUID();
+  const localProgram=randomUUID(),localPeriod=randomUUID(),localCohort=randomUUID(),wrongPeriodCohort=randomUUID();
   const fake=[{candidate:{membershipId:member,displayName:"Test member"}}] as unknown as
     Awaited<ReturnType<typeof listPlacementJobOffers>>;
   try{
@@ -50,6 +50,28 @@ describe("PLACEMENTS-OFFERS-IDOR-07: academic enrichment cannot leak a foreign c
    await pool.query(
     "insert into academic_periods(id,college_id,name,code,start_date,end_date) values($1,$2,$3,$4,'2026-01-01','2026-12-31')",
     [localPeriod,SEED_IDS.collegeA,"Local academic year","AP-"+marker]);
+   // A cohort must actually belong to the enrollment's program; an FK
+   // to an unrelated foreign cohort must not expose its name or department.
+   await pool.query(
+    "update learner_program_enrollments set program_id=$1,cohort_id=$2 where membership_id=$3",
+    [localProgram,foreignCohort,member]);
+   const mismatched=await enrichTpoOfferFacts(fake,SEED_IDS.collegeA);
+   expect(mismatched[0]?.candidate.batch).toBeNull();
+   expect(mismatched[0]?.candidate.branch).toBeNull();
+   expect(JSON.stringify(mismatched)).not.toContain("DO NOT LEAK FOREIGN COHORT");
+
+   // Even a same-college program can point at a cohort whose academic-period
+   // belongs to a different college. The label still cannot be exported.
+   await pool.query("insert into cohorts(id,program_id,name,code,start_period_id) values($1,$2,$3,$4,$5)",
+    [wrongPeriodCohort,localProgram,"WRONG COLLEGE START PERIOD","WC-"+marker,foreignPeriod]);
+   await pool.query(
+    "update learner_program_enrollments set program_id=$1,cohort_id=$2 where membership_id=$3",
+    [localProgram,wrongPeriodCohort,member]);
+   const foreignPeriodResult=await enrichTpoOfferFacts(fake,SEED_IDS.collegeA);
+   expect(foreignPeriodResult[0]?.candidate.batch).toBeNull();
+   expect(foreignPeriodResult[0]?.candidate.branch).toBeNull();
+   expect(JSON.stringify(foreignPeriodResult)).not.toContain("WRONG COLLEGE START PERIOD");
+
    await pool.query("insert into cohorts(id,program_id,name,code,start_period_id) values($1,$2,$3,$4,$5)",
     [localCohort,localProgram,"College A Cohort","AC-"+marker,localPeriod]);
    await pool.query(
@@ -60,7 +82,7 @@ describe("PLACEMENTS-OFFERS-IDOR-07: academic enrichment cannot leak a foreign c
    expect(local[0]?.candidate.branch).toBeTruthy();
   }finally{
    await pool.query("delete from learner_program_enrollments where membership_id=$1",[member]);
-   await pool.query("delete from cohorts where id=any($1::uuid[])",[[foreignCohort,localCohort]]);
+   await pool.query("delete from cohorts where id=any($1::uuid[])",[[foreignCohort,localCohort,wrongPeriodCohort]]);
    await pool.query("delete from academic_periods where id=any($1::uuid[])",[[foreignPeriod,localPeriod]]);
    await pool.query("delete from programs where id=any($1::uuid[])",[[foreignProgram,localProgram]]);
    await pool.query("delete from college_memberships where id=$1",[member]);

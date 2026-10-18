@@ -53,6 +53,8 @@ Scope: TPO Projects read journey, TPO Students and Companies bulk operations, fi
 
 | D12-29 | HIGH | Six nested TPO Companies pages (detail, contact log, feedback, management, people, archived relationships) only checked the active request-context role, allowing a revoked persisted TPO actor to continue seeing employer relationship history or contact data until their session refreshed. | Added `requireTpoBatchActor` after UI role gate and before each scoped private read, without changing legacy page labels or navigation. | `364a6990` through `ab8f99b3`, `chat12-tpo-company-persisted-detail-pages.test.ts`; live revoke acceptance pending. |
 
+| D12-30 | HIGH | Company Team `readTpoCompanyTeam` and its shared `companyScope` relied on a session role before reading private company messages, followers and assignees. Revoking a TPO/College Admin membership could leave stale-session access to confidential employer discussions until session expiry. | Shared company scope now calls `requireTpoBatchActor` to re-read persisted active user, membership and team role before any company/CRM lookup, covering reads and mutations; mutation retains its transaction-level persisted authorization. | `37eb2c2b`, `PROJ-BREAK-TPO-company-team-role-revocation-07.test.ts`; real database revoked-cookie acceptance pending. |
+
 ## Verification status
 
 The rolling `docs/orchestrator/unit-failures-latest.md` explicitly reports two `chat-12` failures (TPO-students-51); their stale selectors were repaired but remain **unverified in CI**. The branch was fast-forwarded to main `a172b146ede1992a428dbe3e74a6d87dd3a12985` before these changes. No direct commits to main.
