@@ -65,9 +65,9 @@ describe("TPO-STUDENTS-BULK-AMBIG-01 avoid guessing learners by duplicate roll n
   expect(tpoStudentClipboardCell("normal\u0000 cell")).toBe("normal  cell");
   expect(tpoStudentClipboardCell(null)).toBe("");
   const fake={...learner(A,"CS1","REG1"),displayName:"-1",programName:"BTech",cohortName:"2026",
-   branchName:"CSE",journeyState:"NOT_DECIDED",applicationCount:0,offerCount:0,offersAwaitingAnswer:0,bestSoFar:"none"} as TpoStudentRow;
+   branchName:"CSE",journeyState:"NOT_REGISTERED",applicationCount:0,offerCount:0,offersAwaitingAnswer:0,bestSoFar:"none"} as unknown as TpoStudentRow;
   const tsv=tpoStudentClipboardTsv([fake]);
   expect(tsv).toContain("'-1");
-  expect(tsv).toContain("NOT DECIDED");
+  expect(tsv).toContain("NOT REGISTERED");
  });
 });
