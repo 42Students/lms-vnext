@@ -1,5 +1,6 @@
 import { and, eq, isNull, asc, inArray, ne } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import {
   collegeMemberships, cohorts, departments, learnerProfiles, learnerProgramEnrollments,
   lmsGroups, lmsGroupMembers, membershipRoles, programs, projectInstances, projectMembers,
@@ -38,6 +39,15 @@ export async function createClassTeamWorkspaces(context: RequestContext, raw: un
         .where(and(eq(sections.id,input.classId),eq(sections.status,"ACTIVE"),eq(departments.collegeId,scope.id)))
         .for("share").limit(1);
       if (!section) throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+      // Rebuild the actor's permissions from persisted rows in the *same*
+      // SERIALIZABLE transaction as team/project creation. The preflight
+      // RequestContext may have expired or lost its COLLEGE_ADMIN role while
+      // the user reviewed a preview in another tab.
+      const persistedActor = await assertPersistedPlatformPermission(
+        tx, context, "projects.manage", {
+          collegeId: scope.id, organizationId: scope.organizationId,
+        },
+      );
       const rows = await tx.select({
         membershipId: collegeMemberships.id, rollNumber: learnerProfiles.rollNumber,
         registrationNumber: learnerProfiles.registrationNumber,
@@ -102,7 +112,7 @@ export async function createClassTeamWorkspaces(context: RequestContext, raw: un
           name:(input.baseTitle.slice(0,20)+" · "+group.name),status:"ACTIVE",
           capacity:plan.membershipIds.length,activeCount:plan.membershipIds.length,
           configJson:{classId:section.id,managedBy:"PROJECT_WORKSPACE"},
-          createdByUserId:context.user.id,createdByType:isSuperAdmin(context)?"SUPER_ADMIN":"COLLEGE_ADMIN",
+          createdByUserId:context.user.id,createdByType:isSuperAdmin(persistedActor)?"SUPER_ADMIN":"COLLEGE_ADMIN",
         }).returning({id:lmsGroups.id});
         if (!team) throw new Error("Team insert failed");
         await tx.insert(lmsGroupMembers).values(plan.membershipIds.map(membershipId=>({
