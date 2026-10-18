@@ -296,7 +296,7 @@ export async function ProjectAdminAuditPage({
       }))}/>
       <ActivityCenter
         groups={groups}
-        nextRemaining={0}
+        nextRemaining={result.remainingCount}
         nextHref={
           result.nextCursor
             ? basePath +
