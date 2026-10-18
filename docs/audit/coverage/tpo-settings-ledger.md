@@ -182,3 +182,9 @@ These are named and scope-specific tests, but full per-export coverage of all se
 | `getTpoJobTypes`, `getTpoBlockedDates`, `getTpoPrepReadiness`, `listTpoPrepCourses` | Every configured/absent-table read re-authorizes the persisted actor and ACTIVE college before returning saved choices or readiness course catalog; college scoping and archived department exclusion retained. | `tests/unit/chat11-tpo-settings-config-read-revocation.test.ts` — `TPO-settings-audit-CONFIG-READ-11` | Real role-revocation interleaving and database race E2E |
 
 Cloud typecheck, unit, PostgreSQL and browser checks are pending; these are source/contract regressions only.
+
+## Long-running learner course-progress read authorization
+
+| Service | Threat / corrected contract | Test | Pending |
+|---|---|---|---|
+| `readTpoLearnerPrepOutcomes` | A persisted TPO/College Admin membership may be revoked after enrolment/content/progress joins start. Before returning READY, NEEDS_PREP, UNCONFIGURED or UNAVAILABLE, the service validates the active college and persisted `placements.manage` actor inside a transaction holding SHARE locks. Empty-roster path still validates the officer through its initial persisted actor lookup. Same-college learner/enrollment pair, active identities and 5000-row cap are preserved. | `tests/unit/chat11-tpo-prep-long-read-role-revocation.test.ts` — `TPO-settings-audit-PREP-ROLE-12` | Cloud CI + genuine role-revocation/read race and 5000 learner scale |

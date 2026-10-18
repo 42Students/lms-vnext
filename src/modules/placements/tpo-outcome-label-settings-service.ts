@@ -39,19 +39,30 @@ export async function readTpoOutcomeLabels(context:RequestContext){
  const collegeId=await requireTpoBatchActor(context);
  if(!await placementTableExists("placement_tpo_college_settings"))
   return {ready:false as const,labels:[] as TpoOutcomeLabel[],version:null};
- const [row]=await getDb().select({labels:placementTpoCollegeSettings.outcomeLabels,
-  updatedAt:placementTpoCollegeSettings.updatedAt})
-  .from(placementTpoCollegeSettings).where(eq(placementTpoCollegeSettings.collegeId,collegeId)).limit(1);
- return {ready:true as const,labels:decodeLabels(row?.labels),version:row?.updatedAt.toISOString()??null};
+ // A revoked TPO/College Admin must not receive saved after-college labels
+ // using an obsolete request context, even if settings storage exists.
+ return getDb().transaction(async tx=>{
+  const [college]=await tx.select({organizationId:colleges.organizationId,status:colleges.status})
+   .from(colleges).where(eq(colleges.id,collegeId)).for("share").limit(1);
+  if(!college||college.status!=="ACTIVE")
+   throw new TpoOutcomeLabelError("TPO_SETTINGS_NOT_FOUND");
+  await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+   collegeId,organizationId:college.organizationId,
+  });
+  const [row]=await tx.select({labels:placementTpoCollegeSettings.outcomeLabels,
+   updatedAt:placementTpoCollegeSettings.updatedAt})
+   .from(placementTpoCollegeSettings).where(eq(placementTpoCollegeSettings.collegeId,collegeId)).limit(1);
+  return {ready:true as const,labels:decodeLabels(row?.labels),version:row?.updatedAt.toISOString()??null};
+ });
 }
 export async function saveTpoOutcomeLabels(context:RequestContext,raw:unknown){
  const input=saveSchema.parse(raw),collegeId=await requireTpoBatchActor(context);
  if(!await placementTableExists("placement_tpo_college_settings"))
   throw new TpoOutcomeLabelError("TPO_SETTINGS_PENDING");
  return getDb().transaction(async tx=>{
-  const [college]=await tx.select({organizationId:colleges.organizationId})
+  const [college]=await tx.select({organizationId:colleges.organizationId,status:colleges.status})
    .from(colleges).where(eq(colleges.id,collegeId)).for("update").limit(1);
-  if(!college)throw new TpoOutcomeLabelError("TPO_SETTINGS_NOT_FOUND");
+  if(!college||college.status!=="ACTIVE")throw new TpoOutcomeLabelError("TPO_SETTINGS_NOT_FOUND");
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{
    collegeId,organizationId:college.organizationId,
   });
