@@ -21,7 +21,7 @@ export const bootstrapSuperAdminInputSchema = z.object({
   phoneE164: phoneE164Schema,
   email: personEmailSchema.optional(),
   displayName: personDisplayNameSchema,
-});
+}).strict();
 
 export const assignSystemRoleInputSchema = z.object({
   userId: z.string().uuid(),
