@@ -49,6 +49,7 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
   // Clearing after a picker is disabled is necessary even if the DOM input
   // unmounts: the form's parent must never retain a previously approved file.
   useEffect(() => {
+    if (pickerUnavailable || disabled) setError(null);
     if (!mustClearFileSelection(selectedRef.current, pickerUnavailable, Boolean(disabled))) return;
     selectedRef.current = false;
     if (inputRef.current) inputRef.current.value = "";

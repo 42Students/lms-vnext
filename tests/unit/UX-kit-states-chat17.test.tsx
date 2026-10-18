@@ -98,6 +98,20 @@ describe("UX-kit-STATES: semantic SSR states and accessible fallbacks", () => {
     expect(good).toContain('for="department"');
   });
 
+  it("UX-kit-HARDEN-49 a required field also marks the actual input required",()=>{
+    const yes=render(<FormField id="student-roll" label="Roll number" required>
+      {()=> <Input placeholder="Roll number"/>}</FormField>);
+    expect(yes).toContain('for="student-roll"');
+    expect(yes).toContain('id="student-roll"');
+    expect(yes).toContain('required=""');
+    const optional=render(<FormField id="middle-name" label="Middle name">
+      {()=> <Input placeholder="Middle name"/>}</FormField>);
+    expect(optional).not.toContain('required=""');
+    const independentlyRequired=render(<FormField id="registration" label="Registration">
+      {()=> <Input required />}</FormField>);
+    expect(independentlyRequired).toContain('required=""');
+  });
+
   it("UX-kit-STATES-04 destructive confirm cannot be pressed twice while pending", () => {
     const busy = render(<ConfirmDialog open pending onOpenChange={()=>{}} onConfirm={()=>{}}
       title="Delete all drafts" />);
@@ -334,6 +348,16 @@ describe("UX-kit-STATES: semantic SSR states and accessible fallbacks", () => {
     expect(allowed).toContain('aria-describedby="project-proof-help"');
     const source=moduleSource("file-upload");
     expect(source).toContain('error ? `${id}-error` : null');
+  });
+
+  it("UX-kit-HARDEN-50 availability transition clears obsolete file validation state",()=>{
+    const source=moduleSource("file-upload");
+    expect(source).toContain("if (pickerUnavailable || disabled) setError(null)");
+    expect(source).toContain("selectedRef.current = false");
+    expect(source).toContain("onFilesRef.current(null)");
+    expect(source).toContain('aria-invalid={error ? true : undefined}');
+    // Unit SSR alone cannot model FileList + effect transitions; the same
+    // journey is covered in chat17-ui-kit-interactions.spec.ts.
   });
 
   it("UX-kit-HARDEN-47 disabled file picker must not be called invalid by assistive tech",()=>{
