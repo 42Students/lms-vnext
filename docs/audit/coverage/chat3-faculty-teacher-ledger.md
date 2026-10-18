@@ -104,6 +104,8 @@ This is the **tested-function ledger for the focused model suite**, not a claim 
 
 | `src/app/(authenticated)/teacher/calendar/page.tsx` | default `FacultyCalendarPage` | `tests/unit/UX-teacher-calendar-strict-scope-query.test.tsx` | FAC-CALENDAR-QUERY-01 | actual SSR strict duplicate/unknown month and Section URL shape, selected calendar, empty schedule, foreign-grant errors without fallback |
 
+| `src/modules/courses/faculty-assessment-batch-model.ts`, `faculty-assessment-service.ts` | `nextFacultyLessonContentSequence`, `facultyAssessmentVisibleToDelivery`, `getFacultyAssessmentOverview` | `tests/unit/chat3-faculty-assessment-sequence-scale.test.ts` plus existing `tests/unit/chat3-faculty-results-service-matrix.test.ts` | FAC-ASSESSMENT-SCALE-03 | >130k lesson entries no V8 spread-overflow, reject corrupt indexes and preserve shared/own-sibling delivery visibility |
+
 ## Role/security matrix
 
 - FAC-SCOPE-01/02: Faculty allowed only after central `courses.read` and active teaching role; Learner, Mentor, College Admin, Super Admin, missing membership and foreign tenant denied in unit-model mock contract.
