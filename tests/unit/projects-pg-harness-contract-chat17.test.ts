@@ -129,6 +129,11 @@ describe("PROJ-HARNESS source and environment guard",()=>{
    expect(helper).toContain("organizationId:parent.organizationId, collegeId:row!.id");
  });
 
+ it("PROJ-HARNESS-GUARD-16 closed seasons cannot inject applications into an otherwise published drive",()=>{
+   expect(helper).toContain("join placement_seasons season on season.id=j.season_id and season.college_id=j.college_id");
+   expect(helper).toContain("season.status='ACTIVE'");
+ });
+
  it("PROJ-HARNESS-GUARD-05 always rolls back transaction and savepoint errors",()=>{
    expect(helper).toContain('if (begun) await client.query("ROLLBACK")');
    expect(helper).toContain("client.release()");
