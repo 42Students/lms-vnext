@@ -9,3 +9,9 @@
 **States:** No success, empty, denied or partial branch was suppressed. Existing guard and persisted-result semantics are unchanged. Phone browser, keyboard and screen reader evidence are pending.
 
 **Test:** `tests/unit/UX-tpo-companies-companyid-people-01.test.ts`. No fixture data is invented. **Acceptance:** source contract prepared; TypeScript/Vitest/browser orchestrator run pending. Keep unchecked until verified.
+
+## Shared-component completion
+
+Reused the shared PageHeader to keep the legacy h1 copy as a single semantic page title within the existing authenticated shell.
+
+**Source tests:** `tests/unit/UX-tpo-companies-companyid-people-03.test.ts` (where applicable). No permission, notification, write path or API response was altered. Device/AT/typecheck acceptance remains with the orchestrator.
