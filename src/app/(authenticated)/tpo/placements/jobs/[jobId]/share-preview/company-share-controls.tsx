@@ -99,7 +99,7 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
   finally{setPending(false);setRevokeTarget(null);}
  }
  return <section aria-label="Company applicant sharing"
-   className="space-y-3 rounded-xl border border-border bg-surface p-5">
+   className="space-y-3 border-b border-border pb-6">
   <h2 className="text-lg font-semibold text-foreground">Share shortlisted applicants with a company</h2>
   <p className="text-sm text-body">At most 10 live links may exist per drive. Links disclose only the same three fields shown above,
    have a maximum 90-day lifetime, use a separate six-digit code, and may be revoked immediately. Private notes stay excluded.</p>
@@ -129,7 +129,7 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
       </label>)}</div>
     </fieldset>
     <button type="button" disabled={pending||selectedColumns.length===0} onClick={createLink}
-     className="min-h-11 rounded bg-primary px-4 font-semibold text-foreground">
+     className="min-h-11 rounded bg-primary px-4 font-semibold text-primary-foreground">
      Create expiring link
     </button>
    </div>
