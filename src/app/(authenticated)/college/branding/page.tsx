@@ -37,6 +37,7 @@ export default async function CollegeBrandingPage() {
         collegeName={branding.collegeName}
         canEdit={canEdit}
         uploadedLogoUrl={branding.uploadedLogoUrl}
+        initialVersion={branding.version}
         initial={{
           logoUrl: branding.logoUrl,
           faviconUrl: branding.faviconUrl,
