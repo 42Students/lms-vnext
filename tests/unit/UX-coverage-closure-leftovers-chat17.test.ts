@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { parseTpoVerificationParams } from "@/modules/verification/tpo-queue-server-model";
 
 // UX-coverage-closure: missing tests for other role-owned legacy/denial/lookup
 // routes. No page code or owner feature behavior was modified by this suite.
@@ -156,6 +157,28 @@ describe("UX-coverage-closure-leftovers-chat17 — legacy boundaries and private
     expect(cases.length).toBe(18);
     expect(new Set(cases.map(row=>row.file)).size).toBe(18);
   });
+  it("UX-/tpo/verification-coverage-03 rejects invalid or duplicate URL filters before queue reads",()=>{
+    const accepted=parseTpoVerificationParams({
+      tab:"WAITING",kind:"EDUCATION",waitingSince:"OVER_WEEK",
+      search:"  IIT Dharwad  ",page:"2",pageSize:"25",
+    });
+    expect(accepted).not.toBeNull();
+    expect(accepted).toMatchObject({
+      tab:"WAITING",kind:"EDUCATION",waitingSince:"OVER_WEEK",
+      search:"IIT Dharwad",page:2,pageSize:25,
+    });
+    for(const query of [
+      {tab:["WAITING","VERIFIED"]},
+      {tab:"NOT_A_TAB"},
+      {branchId:"not-a-uuid"},
+      {page:"-1"},
+      {pageSize:"20"},
+      {unknown:"private"},
+    ]){
+      expect(parseTpoVerificationParams(query)).toBeNull();
+    }
+  });
+
   it.each(cases)("UX-$route-coverage-02 preserves its permission, routing and recovery contract",({file,expected})=>{
     const page=readFileSync(join(process.cwd(),file),"utf8");
     for(const contract of expected)expect(page).toContain(contract);
