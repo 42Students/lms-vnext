@@ -391,7 +391,7 @@ async function requireMutableFixtureProject(
 ): Promise<void> {
   const rows = await db.query<{id:string}>(`
     select id from project_instances
-     where id=$1 and status='ACTIVE'
+     where id=$1 and status not in ('ARCHIVED','COMPLETED')
      limit 1`,[projectId]);
   if (rows.length !== 1) throw new Error("PROJ-HARNESS: project " + activity + " is closed");
 }

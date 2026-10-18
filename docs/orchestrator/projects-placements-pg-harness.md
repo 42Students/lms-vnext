@@ -175,3 +175,7 @@ The harness checks canonical migration tables in `public` before beginning each 
 ### PROJ-HARNESS-51: coherent published workspace lineage
 
 The fixture now publishes version 1 of its template before assigning it to the college, and creates an `IN_PROGRESS` release for the `ACTIVE` project and its `ACTIVE` sprint. `PROJ-HARNESS-51` checks the template/version/project/release/sprint state chain on real PostgreSQL. Source-only `PROJ-HARNESS-GUARD-12` catches a reversion to mismatched defaults. Does not replace the product's separate template-publishing permission and concurrency checks; cloud CI remains pending.
+
+### PROJ-HARNESS-48 service-contract correction
+
+The initially authored stricter PLANNED-state denial was **not** faithful to live product services. `task-submission-service.ts`, `submission-service.ts`, and `meeting-service.ts` currently allow PLANNED projects and refuse only COMPLETED/ARCHIVED, with additional task/sprint/access constraints. Rather than invent a harness-only prohibition, `requireMutableFixtureProject` now uses the same terminal-state predicate; `PROJ-HARNESS-48` verifies positive PLANNED paths and `43/46` retain negative terminal-state checks. The default fixture still uses explicit ACTIVE state to model an in-progress IIT Dharwad workspace. Any proposal to prohibit PLANNED in production belongs to the owning Projects lane with cross-role review, not to this fixture helper.
