@@ -23,7 +23,7 @@ describe("HR-MESSAGING-DEPTH-72: unread counters and large inbox boundaries",()=
    {id:"foreign",jobId:"job-b"}];
   expect(scopeRecruiterConversations(rows,"GENERAL").map(row=>row.id)).toEqual(["general"]);
   expect(scopeRecruiterConversations(rows,"DRIVE").map(row=>row.id)).toEqual(["own","foreign"]);
-  expect(onlyUnreadRecruiterThreads(rows,new Set(["foreign"]),"true"==="true")
+  expect(onlyUnreadRecruiterThreads(rows,new Set(["foreign"]),true)
    .map(row=>row.id)).toEqual(["foreign"]);
   expect(recruiterMessageSearchLimit(["general","own","own"])).toBe(2);
  });
