@@ -223,3 +223,7 @@ The verified-selection recovery path formerly read an offer and recorded-at time
 `tests/unit/chat5-placement-selection-safe-results.test.ts` protects these pre-write and post-write invariants and the immutable replay branch. A real two-TPO stale-selection/issue/release/expire race and exactly-once notification integration remain unexecuted and open.
 
 **PLACEMENTS-SELECTION-RECONCILE-DB-03** adds a PostgreSQL fixture for the previously unproven LOI distinction: a properly VERIFIED selection and active, exactly matching `kind='LOI'` must yield `released=0`, `skipped=1`, remain VERIFIED with `released_offer_id IS NULL`, and create **zero** RELEASED activity events. This protects official offer evidence from LOI confusion; test execution and real concurrent reviewer/version races remain pending.
+
+### PLACEMENTS-SELECTION-CAS-04 — runtime behavioural revision matrix
+
+To move beyond source-string-only checks, `matchesTpoSelectionReleaseRevision` now provides one deterministic pure policy used by both lost-response reconciliation and post-issuance settlement. It requires a valid persisted `recordedAt` instant and exact optimistic timestamp, candidate application, role title and annual CTC. Neither invalid dates nor null-versus-number salary drift are tolerated. `tests/unit/chat5-placement-selection-safe-results.test.ts` exercises matching and changed timestamp/application/role/CTC/invalid-clock cases. The service still separately checks row state and canonical `kind='OFFER'` evidence under the lock. Execution pending cloud CI.
