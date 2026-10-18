@@ -5,6 +5,7 @@ import { disposableDatabaseUrl, newHarnessPool } from "../integration/support/pr
 
 const helper=readFileSync(join(process.cwd(),"tests/integration/support/projects-placements-pg-harness.ts"),"utf8");
 const examples=readFileSync(join(process.cwd(),"tests/integration/projects-placements-pg-harness-groups.test.ts"),"utf8");
+const placementExamples=readFileSync(join(process.cwd(),"tests/integration/projects-placements-pg-harness-placements.test.ts"),"utf8");
 const withUrl=async<T>(url:string|undefined,run:()=>Promise<T>|T)=>{
  const previous=process.env.TEST_DATABASE_URL;
  try{
@@ -105,6 +106,13 @@ describe("PROJ-HARNESS source and environment guard",()=>{
    expect(helper).toContain("set status='PUBLISHED',published_version=1");
    expect(helper).toContain("values ($1,'release-1','Harness release',0,'IN_PROGRESS')");
    expect(helper).toContain("values ($1,$2,'sprint-1','Harness sprint',0,'ACTIVE')");
+ });
+
+ it("PROJ-HARNESS-GUARD-13 fixture constraint dates do not expire with the current sprint",()=>{
+   expect(examples).toContain("2099-10-22");
+   expect(placementExamples).toContain("2099-06-30");
+   expect(examples).not.toContain("2026-10-22");
+   expect(placementExamples).not.toContain("2027-06-30");
  });
 
  it("PROJ-HARNESS-GUARD-05 always rolls back transaction and savepoint errors",()=>{
