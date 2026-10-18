@@ -203,6 +203,7 @@ export async function createOrganization(
 
   try {
     return await db.transaction(async tx=>{
+      await assertPersistedPlatformPermission(tx,context,"organization.manage");
       const [created]=await tx.insert(organizations).values({name:input.name})
        .returning({id:organizations.id,name:organizations.name,createdAt:organizations.createdAt,
         updatedAt:organizations.updatedAt});
