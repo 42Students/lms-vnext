@@ -176,6 +176,12 @@ The Faculty Section health model filtered assessment rows to `status === "PUBLIS
 
 **Fix:** Include `status === "CLOSED"` **only for quizzes** in the Section-scoped health selector. Draft and archived quizzes and non-published assignments remain excluded. `tests/unit/chat3-faculty-course-health-closed-quiz-model.test.ts` checks the state matrix, exact delivery, five-row page cap and invalid selector, and `tests/unit/chat3-faculty-course-health-service-permissions.test.ts` now exercises a CLOSED quiz through the actual service. Tests authored only; cloud CI and browser historical-quiz checks pending.
 
+### SA-ACADEMICS-SECTION-030 — generic academic read permission on Super Admin Section page (S1)
+
+The `resolveSuperAdminSectionDetail` service checked `academics.read` and a selected `adminScope`, but that permission is also granted to active nonadministrative Faculty, Mentor and Learner memberships for their own college. With an inconsistent or accidentally propagated admin scope, such a principal could pass the initial service permission check into the Super Admin Section detail path. The page layer's separate authorization should not be relied upon as the only boundary.
+
+**Fix:** Require `isSuperAdmin(context)` up front and raise the canonical `AuthorizationError("academics.read")` before scoped database reads. Preserve the Super Admin no-college prompt (null) and private foreign/not-found behavior. `tests/unit/chat3-sa-academics-section-platform-role.test.ts` covers active and disabled principals, forged role/adminScope combinations, correct and foreign Section records and database failures. CI and authenticated page tests pending.
+
 ### FAC-HTTP-BODY-021 — unbounded live-class and attendance scheduling commands (S1)
 
 Both Faculty live-class and attendance scheduling POST routes previously called `request.json()` directly. The Zod/authorization service subsequently rejected bad fields, but the HTTP input body had already been fully buffered, permitting oversized metadata requests to waste memory in a stale or malicious session.
