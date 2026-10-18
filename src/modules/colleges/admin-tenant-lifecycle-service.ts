@@ -50,16 +50,18 @@ function persistedTenantScope(context:RequestContext,organizationId?:string){
 }
 export async function getSuperAdminTenantLifecycleDirectory(context: RequestContext, raw: unknown) {
   const query = tenantLifecycleQuerySchema.parse(raw), source = scopedTenantSource(context, query);
+  // Resolve the options before acquiring the transaction connection: nesting
+  // listOrganizations(getDb()) inside an active transaction can deadlock a
+  // single-connection test/dev pool. A revoked actor will still be denied
+  // before tenant rows or the options can be returned to the caller.
+  const organizationOptions = await listOrganizations(context);
   return getDb().transaction(async tx=>{
     await assertPersistedPlatformPermission(tx,context,"college.read",
       persistedTenantScope(context,query.organizationId));
     const [totals] = await tx.select({ total: count() }).from(source);
     const paging = tenantLifecyclePaging(totals?.total ?? 0, query.page);
-    const [items, organizationOptions] = await Promise.all([
-      tx.select().from(source).orderBy(asc(source.name), asc(source.id))
-        .limit(TENANT_LIFECYCLE_PAGE_SIZE).offset(paging.offset),
-      listOrganizations(context),
-    ]);
+    const items = await tx.select().from(source).orderBy(asc(source.name), asc(source.id))
+      .limit(TENANT_LIFECYCLE_PAGE_SIZE).offset(paging.offset);
     return { query: { ...query, page: paging.page }, ...paging, items, organizations: organizationOptions };
   });
 }
