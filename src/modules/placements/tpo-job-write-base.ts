@@ -26,7 +26,7 @@ export async function requireTpoJobActor(tx:TpoJobTx,context:RequestContext){
    inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"])))
  .where(and(eq(collegeMemberships.id,member.id),eq(collegeMemberships.collegeId,member.collegeId),
    eq(collegeMemberships.userId,context.user.id),eq(collegeMemberships.status,"ACTIVE"),
-   eq(users.platformStatus,"ACTIVE"))).limit(1);
+   eq(users.platformStatus,"ACTIVE"))).for("share").limit(1);
  if(!principal)throw new AuthorizationError("placements.manage");
 }
 export async function auditTpoJobChange(tx:TpoJobTx,context:RequestContext,

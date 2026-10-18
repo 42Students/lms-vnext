@@ -177,6 +177,25 @@ export async function verifyAndReleaseTpoSelections(context:RequestContext,rawJo
         const offerId=candidate.offer.id;
         await getDb().transaction(async tx=>{
           await requireTpoJobActor(tx,context);
+          const [locked]=await tx.select().from(placementDriveSelections)
+            .where(and(eq(placementDriveSelections.id,id),eq(placementDriveSelections.jobId,job.id)))
+            .for("update").limit(1);
+          if(!locked||locked.recordedAt.toISOString()!==input.expectedRecordedAt[id]||
+            locked.applicationId!==selection.applicationId||locked.roleTitle!==selection.roleTitle||
+            locked.annualCtcInr!==selection.annualCtcInr)
+            throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
+          if(locked.status==="RELEASED"&&locked.releasedOfferId===offerId)return;
+          if(locked.status!=="VERIFIED")throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
+          const [persistedOffer]=await tx.select({
+            id:placementOffers.id,status:placementOffers.status,applicationId:placementOffers.applicationId,
+            roleTitle:placementOffers.roleTitle,annualCtcInr:placementOffers.annualCtcInr,
+          }).from(placementOffers).where(eq(placementOffers.id,offerId))
+            .for("share").limit(1);
+          if(!persistedOffer||!["ISSUED","ACCEPTED"].includes(persistedOffer.status)||
+            persistedOffer.applicationId!==locked.applicationId||
+            persistedOffer.roleTitle!==locked.roleTitle||
+            persistedOffer.annualCtcInr!==locked.annualCtcInr)
+            throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
           const [updated]=await tx.update(placementDriveSelections).set({
             status:"RELEASED",releasedOfferId:offerId,releasedAt:new Date(),updatedAt:new Date(),
           }).where(and(eq(placementDriveSelections.id,id),
@@ -223,6 +242,15 @@ export async function verifyAndReleaseTpoSelections(context:RequestContext,rawJo
       });
       await getDb().transaction(async tx=>{
         await requireTpoJobActor(tx,context);
+        const [locked]=await tx.select().from(placementDriveSelections)
+          .where(and(eq(placementDriveSelections.id,id),eq(placementDriveSelections.jobId,job.id)))
+          .for("update").limit(1);
+        if(!locked||locked.recordedAt.toISOString()!==input.expectedRecordedAt[id]||
+          locked.applicationId!==selection.applicationId||locked.roleTitle!==selection.roleTitle||
+          locked.annualCtcInr!==selection.annualCtcInr)
+          throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
+        if(locked.status==="RELEASED"&&locked.releasedOfferId===offer.id)return;
+        if(locked.status!=="VERIFIED")throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
         const [updated]=await tx.update(placementDriveSelections).set({
           status:"RELEASED",releasedOfferId:offer.id,releasedAt:new Date(),updatedAt:new Date(),
         }).where(and(eq(placementDriveSelections.id,id),

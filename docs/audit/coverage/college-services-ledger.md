@@ -170,3 +170,43 @@ These rows establish tests for listed exports only. **Not exhaustive**: 319 acad
 | `visibleReadinessChecks`, `parseSuperAdminReadinessParams` | same | Areas, failed/unknown/attention filters, duplicate keys, unknown statuses, cross-tenant query injection rejection |
 | `buildSuperAdminReadinessCsv` | same | Recorded checks only, CSV formula neutralization, correctly escaped quotes and full remediation text; production approval is NOT asserted |
 
+
+
+## College Admin roster selectors and section-period tenant fence
+
+| Export | Test | Verified cases / open gaps |
+|---|---|---|
+| `listCollegeStudentImportOptions` (`people/college-student-import-options.ts`) | `tests/unit/chat4-college-student-import-options-hardening.test.ts` | Actual service composed against a deterministic DB adapter, 500/2,000/3,000 bounds, suspended/wrong-role/disabled actors, transaction-local persisted guard before roster data, ACTIVE program / PLANNED or ACTIVE cohort / ACTIVE section / non-CLOSED college period; PostgreSQL foreign-period and race check pending |
+| `getSectionOperationsWorkspace` (`academics/section-workspace.ts`) | `tests/unit/chat4-college-section-workspace-tenant.test.ts` | Actual service with dependency doubles tests authorized college, failed cross-college and disabled session, missing section, seven component views and scoped roster choices, exact program/cohort delegation, independent academic period college restriction; real PostgreSQL integration pending |
+| `loadSectionScope` (`academics/scope.ts`) | same | Central section authorization joins the independent period FK to the SAME persisted college as cohort/program/department; corrupt cross-college academic periods return SECTION_NOT_FOUND to every caller; real malformed fixture pending |
+
+
+## CI dd44f0f2 chat-4 regression reconciliation
+
+The orchestrator's currently published `unit-failures-latest.md` still references two chat-4 test names from an older CI run, not a freshly executed result. The following source-backed repairs are pushed, with no tests disabled or deleted:
+
+| Gap | Test | Source contract / result |
+|---|---|---|
+| `COL-academic-setup-R03` | `tests/unit/chat4-college-academic-people-gap-closure.test.ts` | Replaced stale demand for a seventh College Admin legacy tab with stronger assertions: six exact legacy steps retained, `/college/academics` reachable by Departments, setup guide, batches and classes empty states |
+| `SA-placements-projects-58` | `tests/unit/chat4-super-admin-projects-gap-closure.test.ts` | Direct checks for mentor reassignment link, encoded mentor ID (including unassigned state), correct risk reason, queue data source and actual greater-than-150%-of-average overload model |
+| `COL-student-import-options-01` | `tests/unit/chat4-college-student-import-options-hardening.test.ts` | Dynamic service orchestration with mock DB: permission denied without reads, all three caps, exact active selection and persisted role checks; actual PostgreSQL query predicates still require integration |
+| `COL-classes-tenant-01/04` | `tests/unit/chat4-college-section-workspace-tenant.test.ts` | Dynamic section workspace with mocked dependencies: composite data and ownership, disabled role denial, missing section, central independent period FK same-college fence |
+
+No claim of green cloud CI is made. Test-file TypeScript verification, isolated PostgreSQL transaction races, and browser-focused authorization/error recovery remain open.
+
+
+| `getAcademicsWorkspace`, `mapAcademicWorkspaceInBatches` | `tests/unit/chat4-college-academics-workspace-fanout.test.ts` | Real orchestration through mocked scoped academics services; retains program/cohort/section ordering and period labels, propagates caller context, unknown period explicitly shown; fanout helper tested on 25 items (maximum eight in flight), invalid concurrency and DB rejection. PostgreSQL 10k learner/20 college load test pending |
+
+
+| `parseTenantLifecycleSearchParams`, `tenantLifecycleHref`, `tenantLifecyclePaging` | `tests/unit/chat4-superadmin-tenant-directory-query.test.ts` | Real strict query parser rejects repeated/array/unknown filters and overlong search; preserves selected organization/status and bounded page sizes; `/admin/tenants` validates before data access with recovery UI |
+
+
+| `PUT /api/admin/colleges/[collegeId]/signin` | `tests/unit/chat4-superadmin-tenant-route-guards.test.ts` | Real handler with service mock: mismatched path/body college, cross-site mutation blocked, validated success and private no-store policy |
+| `GET/POST /api/admin/colleges/[collegeId]/sessions` | same | Real handlers: GET validates userId and does not call revocation, POST enforces same-origin, exact user ID, literal confirmation, unknown-key rejection and private response |
+| `GET /api/admin/tenants/export` | same | Real handler: duplicate/unrecognized filters and forged organization rejected before read, private no-store and nosniff CSV headers, row-cap/truncation metadata and no mutation |
+
+
+| `getSectionOperationsWorkspace` role restriction | `chat4-college-section-workspace-tenant.test.ts` | College Admin `academics.manage` required before full learner/faculty pickers; learners, faculty and mentors denied even when they have generic `academics.read`; no private roster queries on denial |
+
+
+| `getSuperAdminTenantLifecycleDirectory`, `getSuperAdminTenantLifecycleDetail`, `exportSuperAdminTenantDirectory` | `tests/unit/chat4-superadmin-tenant-lifecycle-actor.test.ts` | Real service called with deterministic transaction/DB adapter: source list, detail and export deny role-revoked actors before private SELECT; explicit admin college/organization scope, page counts, options, bad UUID, no-SQL denial and capped CSV. On PostgreSQL, revocation-after-first-SELECT interleaving still pending. |

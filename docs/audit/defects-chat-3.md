@@ -93,3 +93,28 @@ A Faculty `GET /api/courses/faculty/assignments/[deliveryId]/methods` used `new 
 **Fix:** `assertPersistedFacultyTeachingMutation` (`src/modules/courses/faculty-persisted-teaching-guard.ts`) rechecks the persisted actor, active membership and Faculty role, college/organization and live teaching assignment under SHARE locks in the quiz publication transaction. The check runs after the quiz is locked and before a write/audit. Existing CAS and legacy wording remain unchanged.
 
 **Tests:** `tests/unit/COURSES-BREAK-FACULTY-03.test.ts` checks mid-transaction revocation causes zero writes/activity; `tests/unit/COURSES-BREAK-FACULTY-12.test.ts` checks revoked actor, changed membership, other tenant, suspended/ended member, removed Faculty role and ended teaching grant. **Open:** fresh CI and real two-session PostgreSQL race / independent reviewer.
+
+
+### FAC-QUIZ-016 — nonfinite score inflates Faculty distribution (S2)
+
+`getFacultyQuizReport` used only range comparisons for the histogram input, allowing `score=5,maxScore=Infinity` to contribute 0% even though `scoreSummary` rejects nonfinite scores. This made grade distribution disagree with valid graded count and average. The scoring projection now validates both score and maximum with `Number.isFinite` before computing percent.
+
+Behavioural evidence: `tests/unit/COURSES-BREAK-FACULTY-06.test.ts` adds NaN and Infinity variants and checks that invalid score evidence contributes no histogram count while retaining the submitted learner count. Await fresh CI and database-corruption integration tests.
+
+
+### FAC-METHODS-017 — stale Assignment A methods overwrite Assignment B editor (S1)
+
+Rapidly switching a Faculty editor between different assignments triggered overlapping GET requests for saved permitted submission methods. The old response could resolve after a new selection and overwrite that assignment's visible policy; the old code also used `normalizeAssignmentMethods` on malformed 200 responses, silently broadening an uncertain policy to every allowed type. A Faculty could then edit B based on A's method choices, unintentionally changing which learner submissions are accepted.
+
+**Fix:** A per-editor `facultyAssignmentMethodsLoadVersion` invalidates pending requests whenever selection changes. Late resolve/reject handlers return without mutating B. `verifiedFacultyAssignmentMethodsResponse` requires a valid nonempty unique method list for a successful fetch; invalid responses leave loading false and display a retry instruction. Editing an assignment cannot proceed until methods are confirmed when this feature is enabled.
+
+**Evidence:** `src/components/courses/faculty-assignment-editor.tsx`, `src/modules/courses/faculty-assignment-method-load-model.ts`, `tests/unit/COURSES-BREAK-FACULTY-13.test.ts` (stale async requests, retry invalidation, malformed methods). React/browser network-race acceptance and CI remain outstanding.
+
+
+### FAC-SCHEDULE-018 — revoked Faculty could create/reschedule attendance classes (S1)
+
+`commandFacultyAttendanceSchedule` checked the Faculty role and Section ownership before the transaction but, after advisory-locking the actor and Section, proceeded to insert/update session rows without rebuilding the persisted user/membership/teaching grant. Removing the Faculty role or ending the teaching assignment between those steps could leave a new schedule and activity from a revoked account.
+
+**Fix:** Call shared `assertPersistedFacultyTeachingMutation` in the schedule write transaction immediately after the two advisory locks and before any scheduled-event reads or writes. This also requires current college and organization authority, currently active membership and currently assigned Faculty teaching rights.
+
+**Test:** `tests/unit/COURSES-BREAK-FACULTY-14.test.ts` checks a revoke after preflight but before write, valid author, disabled and non-Faculty sessions, invalid confirmation, malformed windows and extra spoofed college fields. Release still requires live PostgreSQL concurrent revoke/schedule tests and current CI.

@@ -72,6 +72,17 @@ describe("UX-kit-STATES: semantic SSR states and accessible fallbacks", () => {
     expect(render(<Input required aria-label="Roll number" />)).toContain('required=""');
   });
 
+  it("UX-kit-HARDEN-48 disabled Switch exposes a 44px target but not an interactive cursor",()=>{
+    const disabled=render(<Switch label="Placement eligibility" disabled/>);
+    expect(disabled).toContain('role="switch"');
+    expect(disabled).toContain('disabled=""');
+    expect(disabled).toContain("min-h-11");
+    expect(disabled).toContain("has-[:disabled]:cursor-not-allowed");
+    const enabled=render(<Switch label="Placement eligibility" defaultChecked/>);
+    expect(enabled).toContain('checked=""');
+    expect(enabled).not.toContain('disabled=""');
+  });
+
   it("UX-kit-STATES-03 FormField merges descriptive IDs and does not silently lose errors", () => {
     const html = render(<FormField id="project" label="Project name" required helper="Student-visible"
       error="Required field">{()=><Input id="wrong" aria-describedby="external"/>}</FormField>);
@@ -323,6 +334,18 @@ describe("UX-kit-STATES: semantic SSR states and accessible fallbacks", () => {
     expect(allowed).toContain('aria-describedby="project-proof-help"');
     const source=moduleSource("file-upload");
     expect(source).toContain('error ? `${id}-error` : null');
+  });
+
+  it("UX-kit-HARDEN-47 disabled file picker must not be called invalid by assistive tech",()=>{
+    const disabled=render(<FileUpload id="proof-doc" label="Project proof"
+      disabled helper="PDF only" onFiles={()=>{}}/>);
+    expect(disabled).toContain('disabled=""');
+    expect(disabled).not.toContain('aria-invalid="true"');
+    expect(disabled).toContain('aria-describedby="proof-doc-help proof-doc-unavailable"');
+    expect(disabled).toContain("This upload cannot continue");
+    const available=render(<FileUpload id="ready-doc" label="Project proof" onFiles={()=>{}}/>);
+    expect(available).not.toContain('aria-invalid="true"');
+    expect(available).not.toContain('disabled=""');
   });
 
   it("UX-kit-STATES-14 HTTPS links display fallback; script, HTTP and credential-bearing URLs never link", () => {
