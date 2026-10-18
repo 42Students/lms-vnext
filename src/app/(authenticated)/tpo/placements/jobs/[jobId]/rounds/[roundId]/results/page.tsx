@@ -24,7 +24,7 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
  catch(error){if(error instanceof PlacementsServiceError&&error.code==="PLACEMENT_ROUND_NOT_FOUND")notFound();throw error;}
  const visibleRows=filterTpoRoundResultRows(data.rows,selected.data);
  return <div className="min-w-0 space-y-6">
-  <Link href={"/tpo/placements/jobs/"+jobId} className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)] hover:underline">← Drive workspace</Link>
+  <Link href={"/tpo/placements/jobs/"+jobId} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline md:min-h-9">← Drive workspace</Link>
   <PageHeader eyebrow="TPO · Round results" title={data.round.name}
    description={data.round.jobTitle+" · Stage outcomes for eligible shortlisted submitted applications."}/>
   <section className="grid grid-cols-2 gap-3 sm:grid-cols-4" aria-label="Result counts">
@@ -44,14 +44,14 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
   {data.truncated?<p role="status" className="text-sm text-body">Source capped at 500 application records; counts may be incomplete.</p>:null}
   <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
    <label className="min-w-0 flex-1 text-sm">Student or role
-    <input name="q" type="search" maxLength={100} defaultValue={selected.data.q} className="mt-1 block min-h-11 sm:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3"/>
+    <input name="q" type="search" maxLength={100} defaultValue={selected.data.q} className="mt-1 block min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 md:min-h-9"/>
    </label>
    <label className="text-sm">Result state
-    <select name="status" defaultValue={selected.data.status} className="mt-1 block min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-3">
+    <select name="status" defaultValue={selected.data.status} className="mt-1 block min-h-11 rounded-[9px] border border-border bg-surface px-3 md:min-h-9">
      <option value="ALL">All</option><option value="NOT_RECORDED">Not recorded</option><option value="STAGED">Staged</option><option value="APPLIED">Applied</option>
     </select>
    </label>
-   <button type="submit" className="min-h-11 rounded bg-primary px-4 text-primary-foreground">Filter</button>
+   <button type="submit" className="min-h-11 rounded-[9px] bg-primary px-4 text-primary-foreground md:min-h-9">Filter</button>
   </form>
   <p role="status" className="text-sm text-body">{visibleRows.length} of {data.rows.length} eligible applications match these filters. Totals above describe the full round.</p>
   {visibleRows.length===0?<p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">No eligible shortlisted submitted applicants match this round result filter.</p>:

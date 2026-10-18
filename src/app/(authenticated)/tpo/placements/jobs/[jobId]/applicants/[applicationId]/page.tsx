@@ -40,7 +40,7 @@ export default async function TpoApplicantDetailPage({params}:Params){
       </div>)}
    </dl>
    <Link href={"/tpo/students/"+data.application.membershipId+"/history"}
-    className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
+    className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline md:min-h-9">
     View student placement history →</Link>
   </section>
   {data.application.screeningUpdatedAt && canReviewApplicant(data.applicantStatus, data.screening) ?
