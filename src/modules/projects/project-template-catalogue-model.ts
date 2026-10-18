@@ -1,3 +1,4 @@
+import {projectAdminCsv} from "./project-admin-csv-model";
 /** COL-projects-16: safe projections for the college template catalogue. */
 export type TemplateSectionCounts = {
   overview: number;
@@ -26,13 +27,6 @@ export function projectTemplateSectionCounts(value: unknown): TemplateSectionCou
     resources: sections("resources"),
   };
 }
-function csvCell(value: string | number) {
-  // Spreadsheet engines may ignore leading invisible or bidi controls before a formula.
-  // Match the same defensive prefix handling used by class-team exports.
-  const raw = String(value).replace(/^[\s\u200B-\u200F\u2060\u2066-\u2069\uFEFF\u202A-\u202E]*/u, "");
-  const safe = /^[=+@-]/.test(raw) ? "'" + String(value) : String(value);
-  return '"' + safe.replace(/"/g, '""') + '"';
-}
 export function projectTemplateCatalogueCsv(rows: readonly TemplateCatalogueRow[]) {
   const lines = [
     ["Template", "Version", "Sections", "Overview", "Releases", "Sprints", "Tasks", "Resources"],
@@ -44,5 +38,5 @@ export function projectTemplateCatalogueCsv(rows: readonly TemplateCatalogueRow[
       String(row.sections.sprints), String(row.sections.tasks), String(row.sections.resources),
     ]),
   ];
-  return "\uFEFF" + lines.map(row => row.map(csvCell).join(",")).join("\r\n") + "\r\n";
+  return projectAdminCsv(lines);
 }
