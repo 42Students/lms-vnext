@@ -30,7 +30,26 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
    action={<Link href="/admin/projects/templates" className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>}/>
  </div>;
  const context=await getCurrentRequestContext();
- const data=await listSuperAdminTemplateDirectory(context,query.data);
+ if(!can(context,"project-template.read"))
+  return <div className="min-w-0 space-y-5">
+   <ProjectAdminNav basePath="/admin/projects" active="templates"/>
+   <PageHeader eyebrow="Super Admin · Projects" title="Project templates"/>
+   <ErrorState title="Project templates access denied"
+    description="This account cannot read the global project template catalogue. Check the active Super Admin session."
+    action={<Link href="/dashboard" className="font-semibold text-[var(--lms-teal-deep)]">Return to dashboard</Link>}/>
+  </div>;
+ let data:Awaited<ReturnType<typeof listSuperAdminTemplateDirectory>>;
+ try {
+  data=await listSuperAdminTemplateDirectory(context,query.data);
+ } catch {
+  return <div className="min-w-0 space-y-5">
+   <ProjectAdminNav basePath="/admin/projects" active="templates"/>
+   <PageHeader eyebrow="Super Admin · Projects" title="Project templates"/>
+   <ErrorState title="Project templates unavailable"
+    description="The template catalogue could not be loaded. Your search and status filters are unchanged; try again."
+    action={<Link href={templateDirectoryHref(query.data)} className="font-semibold text-[var(--lms-teal-deep)]">Retry loading templates</Link>}/>
+  </div>;
+ }
  return <div className="min-w-0 space-y-5">
   <ProjectAdminNav basePath="/admin/projects" active="templates"/>
   <PageHeader eyebrow="Super Admin · Projects" title="Project templates"
