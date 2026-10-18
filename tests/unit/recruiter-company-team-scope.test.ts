@@ -92,6 +92,7 @@ describe("W05 recruiter company college scope", () => {
       'eq(users.platformStatus,"ACTIVE")',
       'eq(placementCompanyRelationships.status, "ACTIVE")',
       'eq(placementCompanies.status, "ACTIVE")',
+      'eq(colleges.status,"ACTIVE")',
     ])expect(scopeQuery).toContain(check);
     expect(source.indexOf('if (!company) throw new AuthorizationError'))
       .toBeLessThan(source.indexOf("const team = await db"));
