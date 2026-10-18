@@ -47,29 +47,59 @@ describe("Super Admin UX first-third rollout",()=>{
  it("UX-admin-academics-01 keeps scope-safe accessible route surface",()=>{
    const page=read("src/app/(authenticated)/admin/academics/page.tsx");
    expect(page).not.toContain("<main");
-   expect(page).not.toMatch(/min-h-10\\b/);
+   expect(page).not.toMatch(/min-h-10\b/);
    expect(page).not.toContain("text-primary-text");
    expect(page).toContain("min-w-0");
  });
  it("UX-admin-academics-section-01 keeps scope-safe accessible route surface",()=>{
    const page=read("src/app/(authenticated)/admin/academics/sections/[sectionId]/page.tsx");
    expect(page).not.toContain("<main");
-   expect(page).not.toMatch(/min-h-10\\b/);
+   expect(page).not.toMatch(/min-h-10\b/);
    expect(page).not.toContain("text-primary-text");
    expect(page).toContain("min-w-0");
  });
  it("UX-admin-announcements-01 keeps scope-safe accessible route surface",()=>{
    const page=read("src/app/(authenticated)/admin/announcements/page.tsx");
    expect(page).not.toContain("<main");
-   expect(page).not.toMatch(/min-h-10\\b/);
+   expect(page).not.toMatch(/min-h-10\b/);
    expect(page).not.toContain("text-primary-text");
    expect(page).toContain("min-w-0");
  });
  it("UX-admin-assignments-01 keeps scope-safe accessible route surface",()=>{
    const page=read("src/app/(authenticated)/admin/assignments/page.tsx");
    expect(page).not.toContain("<main");
-   expect(page).not.toMatch(/min-h-10\\b/);
+   expect(page).not.toMatch(/min-h-10\b/);
    expect(page).not.toContain("text-primary-text");
    expect(page).toContain("min-w-0");
+ });
+ it("UX-admin-attendance-01 supports mobile-safe navigation without changing legacy wording",()=>{
+  const page=read("src/app/(authenticated)/admin/attendance/page.tsx");
+  expect(page).not.toContain("<main");
+  expect(page).not.toContain("text-primary-text");
+  expect(page).toContain("min-w-0");
+  expect(page).not.toContain("min-h-10");
+ });
+ it("UX-admin-audit-01 supports mobile-safe navigation without changing legacy wording",()=>{
+  const page=read("src/app/(authenticated)/admin/audit/page.tsx");
+  expect(page).not.toContain("<main");
+  expect(page).not.toContain("text-primary-text");
+  expect(page).toContain("min-w-0");
+  expect(page).not.toContain("min-h-10");
+ });
+ it("UX-admin-batch-promotion-01 supports mobile-safe navigation without changing legacy wording",()=>{
+  const page=read("src/app/(authenticated)/admin/batch-promotion/page.tsx");
+  expect(page).not.toContain("<main");
+  expect(page).not.toContain("text-primary-text");
+  expect(page).toContain("min-w-0");
+  expect(page).not.toContain("min-h-10");
+ });
+ it("UX-admin-batch-roster-01 supports mobile-safe navigation without changing legacy wording",()=>{
+  const page=read("src/app/(authenticated)/admin/batches/[batchId]/students/page.tsx");
+  expect(page).not.toContain("<main");
+  expect(page).not.toContain("text-primary-text");
+  expect(page).toContain("min-w-0");
+  expect(page).toContain("<DataTable");
+  expect(page).toContain("No classes exist for this batch.");
+  expect(page).toContain("<Breadcrumbs");
  });
 });

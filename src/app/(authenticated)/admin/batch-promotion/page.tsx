@@ -16,13 +16,13 @@ export default async function SuperAdminBatchPromotionPage({
   const raw = await searchParams;
   const input = readAdminPromotionParams(raw);
   const showCompleted = raw.showCompleted==="1";
-  if (!input.success) return <div className="space-y-5">
+  if (!input.success) return <div className="min-w-0 space-y-5">
     <PageHeader  title="Batch Promotion" />
     <ErrorState title="Invalid batch promotion filters" description="Use valid program, cohort and optional academic year values."
-      action={<Link href="/admin/batch-promotion" className="font-semibold text-primary-text">Clear filters</Link>} />
+      action={<Link href="/admin/batch-promotion" className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
-  if (!context.adminScope?.collegeId) return <div className="space-y-5">
+  if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-5">
     <PageHeader  title="Batch Promotion" />
     <EmptyState title="Select a college to continue" description="Choose a college in the header above to see its batch promotion." />
   </div>;
@@ -42,7 +42,7 @@ export default async function SuperAdminBatchPromotionPage({
     }
   }
   const summary = preview ? summarizeAdminPromotion(preview) : null;
-  return <div className="space-y-5">
+  return <div className="min-w-0 space-y-5">
     <PageHeader  title="Batch Promotion"
       description="Review scoped promotion eligibility, then explicitly confirm with a locked version and a transactional blocker recheck. Class moves are managed separately in the batch roster." />
     <form method="get" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -67,9 +67,9 @@ export default async function SuperAdminBatchPromotionPage({
       <label className="flex min-h-11 items-center gap-2 text-sm font-semibold text-body">
         <input name="showCompleted" type="checkbox" value="1" defaultChecked={showCompleted}/> Show completed / inactive batches
       </label>
-      <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 font-semibold text-on-primary">Preview</button>
+      <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 font-semibold text-foreground">Preview</button>
     </form>
-    <section aria-label="Batch promotion queue" className="space-y-3 rounded-xl border border-border bg-surface p-4">
+    <section aria-label="Batch promotion queue" className="min-w-0 space-y-3 rounded-xl border border-border bg-surface p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-lg font-semibold">Batches</h2>
         <p role="status" className="text-sm text-muted-foreground">{visibleCohorts.length} shown of {options.cohorts.length} batches</p>
@@ -86,15 +86,15 @@ export default async function SuperAdminBatchPromotionPage({
           <td className="p-2"><Link href={"/admin/batch-promotion?"+new URLSearchParams({
              ...(input.data.programId?{programId:input.data.programId}:{}),cohortId:batch.id,
              ...(showCompleted?{showCompleted:"1"}:{}),
-           })} className="font-semibold text-primary-text underline">Preview →</Link></td>
+           })} className="font-semibold text-[var(--lms-teal-deep)] underline">Preview →</Link></td>
         </tr>)}</tbody>
       </table></div>:<p role="status" className="text-sm text-muted-foreground">No batches match the selected program and status.</p>}
     </section>
     {invalidCohort ? <ErrorState title="Batch unavailable" description="The selected batch is not available within this college and program."
-      action={<Link href="/admin/batch-promotion" className="font-semibold text-primary-text">Reset selection</Link>} /> :
+      action={<Link href="/admin/batch-promotion" className="font-semibold text-[var(--lms-teal-deep)]">Reset selection</Link>} /> :
     !preview || !summary ? <EmptyState title="Choose a batch" description="No learner data is fetched until you select a college-owned batch." /> :
     <>
-      <section className="space-y-3 rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <section className="min-w-0 space-y-3 rounded-xl border border-border bg-surface p-4 sm:p-5">
         <div className="flex flex-wrap items-start justify-between gap-2">
           <h2 className="m-0 break-words font-semibold text-foreground">{preview.batch.name}</h2>
           <StatusBadge tone={preview.simulatedReadiness ? "success" : "warning"}>{preview.simulatedReadiness ? "No detected blockers" : "Blocked or incomplete"}</StatusBadge>
@@ -133,7 +133,7 @@ export default async function SuperAdminBatchPromotionPage({
           {preview.blockers.map(b => <li key={b}>{b.replaceAll("_", " ")}</li>)}
         </ul> : <p className="text-sm text-muted-foreground">No batch-level blocker was detected. Learner and runtime checks still apply.</p>}
       </section>
-      <section className="space-y-3">
+      <section className="min-w-0 space-y-3">
         <h2 className="font-semibold text-foreground">Learner-level preview</h2>
         <p className="text-xs text-muted-foreground">Showing at most 100 of {preview.learners.length} examined enrollments; a shortened display is not a complete readiness decision.</p>
         {preview.learners.length ? <div className="grid gap-3 md:grid-cols-2">
@@ -145,6 +145,6 @@ export default async function SuperAdminBatchPromotionPage({
         </div> : <EmptyState title="No enrolled learners" description="No registered learner enrollments were present for this batch." />}
       </section>
     </>}
-    <Link href="/admin/academics" className="inline-flex min-h-10 items-center font-semibold text-primary-text">← Academics</Link>
+    <Link href="/admin/academics" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">← Academics</Link>
   </div>;
 }
