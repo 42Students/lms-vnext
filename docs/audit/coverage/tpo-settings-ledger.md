@@ -100,3 +100,13 @@ These are named and scope-specific tests, but full per-export coverage of all se
 | `setTpoJobTypeCountsAsPlaced` | Persisted authority precedes count-as-placed edits and activity event | Same named test and commit | Downstream existing-offer/reports recalculation |
 
 **Disposition:** This fixes one TPO-settings-audit-23 write-authorization race across five exports but **does not close** the gap's drive form/filter/report side effects or establish full behavioural, PostgreSQL or runtime coverage. Regression suite is written but not run.
+
+## Blocked-date settings transaction boundary
+
+| Function | Verified safety boundary | New test | Still pending |
+|---|---|---|---|
+| `createBlockedDate` | Revoked user / membership / placement role is checked from persisted rows under the selected-college update lock before checking existing days, inserting up to 90 and auditing | `tests/unit/chat11-tpo-blocked-date-transaction-auth.test.ts` — `TPO-settings-audit-43`; commit `1ef26ab` | Two-session PostgreSQL race, scheduling side effects (`TPO-settings-audit-44`) |
+| `deleteBlockedDate` | Revalidation before version-token check, scoped delete and audit in one transaction | Same named test and commit | Repeated delete and missing row against live PG |
+| `removeBlockedRange` | Revalidation before composite day/version match, scoped range delete and audit | Same named test and commit | Concurrent range delete and 90-day batch performance |
+
+**Runtime status:** Source/test authored without executing code. The audited blocked-date UX and scheduling consumers still require separate live acceptance; this is not a full TPO settings closeout.
