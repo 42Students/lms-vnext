@@ -85,7 +85,7 @@ export default async function CollegeActivityPage({
       <Link href={collegeActivityHref({...data.query})}
         className="rounded-md border border-border px-3 py-2 font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] min-h-11 inline-flex items-center">Refresh</Link>
     </div>
-    <section className="rounded-xl border border-border bg-surface p-4 sm:p-5" aria-label="Activity log filters">
+    <section className="- sm: border-t border-border pt-4" aria-label="Activity log filters">
       <form action="/college/activity" method="get" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <label className="grid gap-1 text-sm font-semibold text-body">
           Module
