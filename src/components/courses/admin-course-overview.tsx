@@ -521,7 +521,7 @@ export function AdminCourseOverview({
         </p>:null}
         {courseBasePath.startsWith("/admin/") ? <SuperAdminCourseBulkVisibility
           courses={(catalogue?catalogue.items:workspace.courses).map(course=>({id:course.id,name:course.name}))}/> : null}
-        <DataTable
+        <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
           columns={courseColumns}
           rows={catalogue?catalogue.items:workspace.courses}
           getRowKey={(course) => course.id}
@@ -548,7 +548,7 @@ export function AdminCourseOverview({
             instances.
           </p>
         </div>
-        <DataTable
+        <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
           columns={offeringColumns}
           rows={workspace.offerings}
           getRowKey={(offering) =>
@@ -567,7 +567,7 @@ export function AdminCourseOverview({
             boundaries.
           </p>
         </div>
-        <DataTable
+        <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
           columns={deliveryColumns}
           rows={workspace.deliveries}
           getRowKey={(delivery) =>
@@ -586,7 +586,7 @@ export function AdminCourseOverview({
             Section Delivery.
           </p>
         </div>
-        <DataTable
+        <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
           columns={assignmentColumns}
           rows={
             workspace.teachingAssignments

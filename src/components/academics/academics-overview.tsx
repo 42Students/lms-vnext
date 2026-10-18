@@ -327,7 +327,7 @@ export function AcademicsOverview({
             College calendar windows with explicit lifecycle.
           </p>
         </div>
-        <DataTable
+        <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
           columns={periodColumns}
           rows={workspace.periods}
           getRowKey={(period) => period.id}
@@ -343,7 +343,7 @@ export function AcademicsOverview({
             Department-owned academic programs.
           </p>
         </div>
-        <DataTable
+        <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
           columns={programColumns}
           rows={workspace.programs}
           getRowKey={(program) => program.id}
@@ -359,7 +359,7 @@ export function AcademicsOverview({
             Program intakes with progression stored as learner history.
           </p>
         </div>
-        <DataTable
+        <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
           columns={cohortColumns}
           rows={workspace.cohorts}
           getRowKey={(cohort) => cohort.id}
@@ -375,7 +375,7 @@ export function AcademicsOverview({
             Period-specific roster boundaries. Open a Section for learners, Faculty responsibilities and schedule.
           </p>
         </div>
-        <DataTable
+        <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
           columns={sectionColumns}
           rows={workspace.sections}
           getRowKey={(section) => section.id}

@@ -123,7 +123,7 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
         ))}
       </div>
       <div className="hidden min-w-0 lg:block">
-        <DataTable columns={columns} rows={visible} getRowKey={(organization)=>organization.id}/>
+        <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>} columns={columns} rows={visible} getRowKey={(organization)=>organization.id}/>
       </div>
       <nav aria-label="Organization pages" className="flex flex-wrap gap-3 text-sm">
        {page>1?<Link href={href(page-1)} className="min-h-10 rounded border border-border px-3 py-2">Previous</Link>:null}
