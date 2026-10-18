@@ -10,16 +10,10 @@ import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { ProjectAdminWorkspaceList } from "@/components/projects/project-admin-workspace-list";
 import {ProjectAdminWorkspacePageExport} from "@/components/projects/project-admin-workspace-page-export";
 import { PageHeader } from "@/components/ui/page-header";
+import { ErrorState } from "@/components/ui/error-state";
+import { parseCollegeProjectsQuery } from "@/modules/projects/college-projects-query-model";
 import { listProjectAdminSnapshots } from "@/modules/projects/admin-insights-service";
 import { listAssignedProjectTemplates } from "@/modules/projects/template-service";
-
-function one(
-  value: string | string[] | undefined,
-) {
-  return Array.isArray(value)
-    ? value[0]
-    : value;
-}
 
 export default async function CollegeProjectsPage({
   searchParams,
@@ -43,35 +37,31 @@ export default async function CollegeProjectsPage({
     </div>;
   }
 
-  const params = await searchParams;
-  const query: ProjectAdminCollectionQuery = {
-    q: one(params.q),
-    view:one(params.view)==="table"?"table":"cards",
-    status: one(
-      params.status,
-    ) as ProjectAdminCollectionQuery["status"],
-    page: Number(one(params.page) ?? 1),
-    pageSize: Number(
-      one(params.pageSize) ?? 25,
-    ),
-  };
-
-  const [result, templates] = await Promise.all([
-    listProjectAdminSnapshots(
-      context,
-      membership.collegeId,
-      query,
-    ),
-    listAssignedProjectTemplates(
-      context,
-      membership.collegeId,
-    ),
+  const parsed = parseCollegeProjectsQuery(await searchParams);
+  if (!parsed.success) {
+    return <div className="space-y-4">
+      <PageHeader title="Project workspaces" description="Live projects, each run by a mentor with a team of students." />
+      <ErrorState title="Invalid project filters"
+        description="Check the search, status, page and rows filters, or clear them to continue."
+        action={<Link href="/college/projects" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Clear filters</Link>}
+      />
+    </div>;
+  }
+  const query: ProjectAdminCollectionQuery = parsed.data;
+  // Failure to read optional template labels must not hide the actual projects.
+  const [result, templatesResult] = await Promise.all([
+    listProjectAdminSnapshots(context, membership.collegeId, query),
+    listAssignedProjectTemplates(context, membership.collegeId)
+      .then(value => ({ ok: true as const, value }))
+      .catch(() => ({ ok: false as const })),
   ]);
-
+  const templateTitles = new Map(
+    (templatesResult.ok ? templatesResult.value : []).map(template => [template.templateId, template.title]),
+  );
   const items=result.items.map(project=>({
    id:project.id,title:project.title,summary:project.summary,status:project.status,
    updatedAt:project.updatedAt,mentorName:project.mentorName,memberCount:project.memberCount,
-   templateTitle:templates.find(template=>template.templateId===project.templateId)?.title??null,
+   templateTitle:templateTitles.get(project.templateId)??null,
    progressPercent:project.progressPercent,
    riskReasons:project.riskReasons,
   }));
@@ -104,6 +94,7 @@ export default async function CollegeProjectsPage({
        <Link href={viewHref("table")} aria-current={query.view==="table"?"page":undefined} className="min-h-11 rounded border border-border px-3 py-2 text-sm text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] inline-flex items-center">List</Link>
        <Link href="/college/projects?status=ARCHIVED" className="min-h-11 rounded border border-border px-3 py-2 text-sm text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] inline-flex items-center">Archived workspaces</Link>
       </nav>
+      {!templatesResult.ok && <p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">Template names are unavailable right now. Workspaces are still listed; try refreshing this page.</p>}
       <ProjectAdminFilters query={query} />
 
       <ProjectAdminWorkspaceList
