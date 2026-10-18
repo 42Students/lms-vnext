@@ -147,5 +147,16 @@ export async function listOwnTpoPrepAssignments(ctx:RequestContext){
   .where(and(eq(placementTpoPrepAssignments.collegeId,member.collegeId),
    eq(placementTpoPrepAssignments.membershipId,member.id)))
   .orderBy(placementTpoPrepAssignments.dueAt).limit(100);
+ // Do not return another learner's assignments if the in-flight session
+ // lost its role or its college was archived during the directory join.
+ await getDb().transaction(async tx=>{
+  const [college]=await tx.select({status:colleges.status,organizationId:colleges.organizationId})
+   .from(colleges).where(eq(colleges.id,member.collegeId)).for("share").limit(1);
+  if(!college||college.status!=="ACTIVE")throw new AuthorizationError("placements.read");
+  const persisted=await assertPersistedPlatformPermission(tx,ctx,"placements.read",{
+   collegeId:member.collegeId,organizationId:college.organizationId,
+  });
+  if(!hasMembershipRole(persisted,"LEARNER"))throw new AuthorizationError("placements.read");
+ });
  return rows;
 }
