@@ -54,6 +54,9 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     .catch(()=>({ok:false as const}))
   :null;
  const decisionNotices=decisionNoticeResult?.ok?decisionNoticeResult.value:[];
+ const visibleRows=generalHistoryResult && !generalHistoryResult.ok && generalThread
+  ?result.items.map(row=>row.id===generalThread.id?{...row,preview:null}:row)
+  :result.items;
  return <div className="min-w-0 max-w-full space-y-5">
   <RecruiterConversationLiveRefresh/>
   <PageHeader eyebrow="Recruiter · Messages" title="Messages"
@@ -111,7 +114,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
           <p className="whitespace-pre-wrap break-words text-body">{message.body}</p>
         </li>)}
       </ol></ScrollCue>:null}
-      <div className="mt-3"><RecruiterConversationReplyForm threadId={generalThread.id}/></div>
+      {generalHistoryResult?.ok?<div className="mt-3"><RecruiterConversationReplyForm threadId={generalThread.id}/></div>:null}
       <Link href={"/hr/conversations/"+generalThread.id}
         className="mt-3 inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Open full conversation</Link>
     </details>:null}
@@ -173,7 +176,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     </form>:null}
    <p className="text-sm text-body">Showing {result.first}–{result.last} of {result.total} conversations</p>
    {result.items.length?<ol className="space-y-3">
-    {result.items.map(row=><li key={row.id} className="rounded-xl border border-border bg-surface p-4">
+    {visibleRows.map(row=><li key={row.id} className="rounded-xl border border-border bg-surface p-4">
      <Link href={"/hr/conversations/"+row.id}
       className="block break-words font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] min-h-11">{row.jobId ? (context.recruiter?.companyName??"Company")+" · "+row.jobTitle : "General"}</Link>
      {row.unread>0?<span aria-label={row.unread+" unread messages"}
