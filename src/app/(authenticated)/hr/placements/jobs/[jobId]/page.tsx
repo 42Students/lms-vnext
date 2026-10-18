@@ -549,7 +549,7 @@ export default async function HrPlacementJobPage({
                   <progress aria-label="Focused review progress" value={focusedNavigation.index+1} max={focusedNavigation.total}
                     className="h-2 min-w-20 flex-1 accent-primary"/>
                 </label>
-                {focusedNavigation.previous ? <Link className="rounded-md border border-border px-3 py-2 text-[var(--lms-link-text)]" href={focusedHref(focusedNavigation.previous)}>Previous applicant</Link> : null}
+                {focusedNavigation.previous ? <Link className="inline-flex min-h-11 items-center rounded-md border border-border px-3 py-2 text-[var(--lms-link-text)]" href={focusedHref(focusedNavigation.previous)}>Previous applicant</Link> : null}
                 {focusedNavigation.next ? <Link className="rounded-md border border-border px-3 py-2 text-[var(--lms-link-text)]" href={focusedHref(focusedNavigation.next)}>Next applicant</Link> : null}
               </nav> : null}
               <dl className="mt-5 grid gap-4 text-sm">
