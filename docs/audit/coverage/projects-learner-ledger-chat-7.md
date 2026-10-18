@@ -95,3 +95,28 @@ Generated against chatgpt/chat-7-b October 18, 2026. Every named exported symbol
 | `src/modules/projects/learner-project-work-model.ts` | `LearnerProjectProgressCounts` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
 | `src/modules/projects/learner-project-work-model.ts` | `learnerProjectHasBlockedTasks` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
 | `src/modules/projects/learner-project-work-model.ts` | `learnerProjectHasNoTrackedTasks` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-sprint-progress-model.ts` | `learnerSprintRollup` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-sprint-progress-model.ts` | `learnerSprintProgress` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-task-criteria-model.ts` | `learnerTaskCriteriaPreview` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-task-progress-model.ts` | `learnerTaskProgressParamsSchema` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-task-progress-model.ts` | `learnerTaskProgressInputSchema` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-task-progress-model.ts` | `learnerTaskTransitionAllowed` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-task-progress-model.ts` | `learnerTaskProgressSuccess` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-task-progress-service.ts` | `updateLearnerProjectTaskProgress` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-task-status-policy.ts` | `learnerTaskStatusInputSchema` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-task-status-policy.ts` | `canLearnerMoveOwnTask` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-task-status-service.ts` | `moveOwnLearnerProjectTask` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+
+## Known direct regression evidence
+- `learner-mutation-guard.ts` / `assertPersistedLearnerProjectMutation`: `tests/unit/PROJ-BREAK-LEARNER-ACTOR-02.test.ts` (active and revoked actor, tenant/role, locked DB guard).
+- `learner-own-task-service.ts` / `deleteLearnerOwnTask`: `tests/unit/PROJ-BREAK-LEARNER-RELEASE-01.test.ts` (shipped release, wrong role, existing comments/attempts).
+- `learner-backlog-pull-service.ts` / `pullOwnBacklogTask`: `tests/unit/PROJ-BREAK-LEARNER-BACKLOG-01.test.ts`, `tests/unit/PROJ-BREAK-LEARNER-BACKLOG-03.test.ts` (malformed payload, wrong tenant/assignee, race/retry, status).
+- `learner-task-progress-service.ts` / `updateLearnerProjectTaskProgress`: existing `tests/unit/PROJ-BREAK-LEARNER-01.test.ts` (policy; DB still unverified).
+- `learner-task-status-service.ts` / `moveOwnLearnerProjectTask`: existing learner Projects policy and route tests (role, stale token).
+
+## Mandatory outstanding tests
+- Every remaining `OPEN` row above requires a direct behavioural import/execution test with failure/retry/permission matrix. Their present unlinked state is not a claim of zero test coverage, only unverified evidence.
+- Learner Project REST routes and `/learn/projects` page/error/loading surfaces must be enumerated in the parent Projects ledger maintained by chat-14.
+- PostgreSQL integration of actor revocation/role swap, archived/project completion, release shipment, concurrent status writes, idempotency, and notification dedupe.
+- At least 90% Projects module branch coverage and independent breaker review before release. (Not yet demonstrated.)
+
