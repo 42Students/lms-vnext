@@ -282,6 +282,74 @@ afterAll(async () => {
 });
 
 describe("Placement P8 offers and joining", () => {
+  it("PLACEMENTS-EXPIRY-NOTIFY-31 DB records expiry without alerting learner who disabled application notices",async()=>{
+    const prior=await pool.query<{notify_application_updates:boolean}>(`
+      select notify_application_updates from placement_candidate_preferences
+      where membership_id=$1`,[SEED_IDS.learnerCollegeAMembership]);
+    await pool.query(`
+      insert into placement_candidate_preferences(membership_id,notify_application_updates)
+      values($1,false)
+      on conflict(membership_id) do update set notify_application_updates=false`,
+      [SEED_IDS.learnerCollegeAMembership]);
+    try{
+      const {application}=await preparePassedApplication();
+      const expiry=new Date("2099-10-24T18:29:59.000Z");
+      const offer=await issuePlacementOffer(tpo,application.id,{
+        roleTitle:"Respect notifications",annualCtcInr:900_000,expiresAt:expiry,
+      });
+      expect(await sweepExpiredPlacementOffers(SEED_IDS.facultyUser,expiry,10)).toBe(1);
+      const audits=await pool.query<{id:string}>(`
+        select id from activity_events where dedupe_key=$1`,
+        ["placement-offer-expired:"+offer.id]);
+      expect(audits.rows).toHaveLength(1);
+      const notifications=await pool.query<{count:number}>(`
+        select count(*)::int as count from in_app_notifications where event_id=$1`,
+        [audits.rows[0]!.id]);
+      expect(notifications.rows[0]?.count).toBe(0);
+      const offerState=await pool.query<{status:string}>(`
+        select status from placement_offers where id=$1`,[offer.id]);
+      expect(offerState.rows).toEqual([{status:"EXPIRED"}]);
+    }finally{
+      if(prior.rows.length)await pool.query(`
+        update placement_candidate_preferences set notify_application_updates=$2 where membership_id=$1`,
+        [SEED_IDS.learnerCollegeAMembership,prior.rows[0]!.notify_application_updates]);
+      else await pool.query("delete from placement_candidate_preferences where membership_id=$1",
+        [SEED_IDS.learnerCollegeAMembership]);
+    }
+  });
+
+  it("PLACEMENTS-EXPIRY-NOTIFY-30 DB records and notifies exactly once after offer deadline, never from a GET",async()=>{
+    const {application}=await preparePassedApplication();
+    const expiresAt=new Date("2099-10-24T18:29:59.000Z");
+    const issued=await issuePlacementOffer(tpo,application.id,{
+      roleTitle:"Expiry notice engineer",annualCtcInr:900_000,expiresAt,
+    });
+    const before=await pool.query<{count:number}>(`
+      select count(*)::int as count from activity_events where
+      dedupe_key=$1`,["placement-offer-expired:"+issued.id]);
+    expect(before.rows[0]?.count).toBe(0);
+    expect(await sweepExpiredPlacementOffers(SEED_IDS.facultyUser,expiresAt,100)).toBe(1);
+    expect(await sweepExpiredPlacementOffers(SEED_IDS.facultyUser,
+      new Date(expiresAt.getTime()+3600_000),100)).toBe(0);
+    const persisted=await pool.query<{status:string}>(`
+      select status from placement_offers where id=$1`,[issued.id]);
+    expect(persisted.rows).toEqual([{status:"EXPIRED"}]);
+    const history=await pool.query<{count:number}>(`
+      select count(*)::int as count from placement_offer_status_history
+      where offer_id=$1 and to_status='EXPIRED'`,[issued.id]);
+    expect(history.rows[0]?.count).toBe(1);
+    const events=await pool.query<{id:string;subject_id:string}>(`
+      select id,subject_id from activity_events where
+      event_type='PLACEMENTS_OFFER_EXPIRED' and dedupe_key=$1`,
+      ["placement-offer-expired:"+issued.id]);
+    expect(events.rows).toHaveLength(1);
+    expect(events.rows[0]?.subject_id).toBe(issued.id);
+    const notices=await pool.query<{user_id:string}>(`
+      select user_id from in_app_notifications where event_id=$1`,
+      [events.rows[0]!.id]);
+    expect(notices.rows).toEqual([{user_id:SEED_IDS.learnerUser}]);
+  });
+
   it("PLACEMENTS-EXPIRY-RACE-05 DB serializes sweep versus same-offer learner acceptance into one terminal outcome",async()=>{
     const {application}=await preparePassedApplication();
     const expiry=new Date("2099-10-19T18:29:59.000Z");

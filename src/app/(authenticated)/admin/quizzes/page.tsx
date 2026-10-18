@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {isSuperAdmin} from "@/modules/identity/context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -21,6 +22,12 @@ export default async function SuperAdminQuizzesPage({
       action={<Link href="/admin/quizzes" className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
+  if(!isSuperAdmin(context)) return <div className="space-y-4">
+    <PageHeader eyebrow="Super Admin · Courses" title="Quizzes" />
+    <ErrorState title="Quiz access denied"
+      description="Your account cannot access Super Admin quizzes."
+      action={<Link href="/dashboard" className="font-semibold text-[var(--lms-teal-deep)]">Back to dashboard</Link>}/>
+  </div>;
   if (!context.adminScope?.collegeId) return <div className="space-y-4">
     <PageHeader eyebrow="Super Admin · Courses" title="Quizzes" />
     <EmptyState title="Select a college to continue" description="Choose a college in the header above to see its quizzes." />

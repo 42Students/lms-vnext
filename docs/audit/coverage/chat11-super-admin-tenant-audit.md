@@ -98,3 +98,5 @@ Source inspection: 2026-10-18. Branch: `chatgpt/chat-11-b`. **Partial, source-re
 | `getSuperAdminCollegeReadiness` | Persisted late role check already present; readiness unknown missing tables must not appear ready | DB rollback/missing relation and concurrent unarchive consistency |
 
 Scope: `src/modules/organizations/service.ts`, `src/modules/colleges/service.ts`, `src/modules/colleges/admin-branding-logo-service.ts`. Cloud CI has intentionally not been run under owner direction. Never claim PostgreSQL evidence from source inspection.
+
+| `getSuperAdminCollegeReadiness` — current lifecycle recheck | The final readiness evaluation now uses persisted, transaction-locked college status from after aggregate reads instead of initial status snapshot, and rechecks identity/organization/role before disclosing the results | Historical readiness-model unit tests, add slow-aggregate / concurrent college archival PostgreSQL E2E |
