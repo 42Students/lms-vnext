@@ -153,7 +153,7 @@ All ten `FIXED-ON-MAIN` recruiter/home-drives IDs above have existing individual
 
 Chat-9 source closure: all 11 gap IDs have dedicated `tests/unit/chat9-final-<GAP-ID>.test.ts` evidence (already committed on main). Campaign acceptance: `docs/audit/acceptance/tpo-campaigns-public-verification.md`; learner: `docs/audit/acceptance/learner-course-detail-verification.md`; tracker: `docs/audit/acceptance/superadmin-placements-projects-c-tracker-verification.md`. LEARNER-course-detail-18 is NOT-A-GAP for nonexistent authored prerequisite locks; the real stale/invalid deep-link handling is DONE. LEARNER-course-detail-07 safely retains authorized multi-link materials and explicitly blocks private file downloads until signed scanned storage is ready. No test execution claimed in this lane.
 
-## chat-11 (11) — source verification: DONE 7, NOT-A-GAP 1, BLOCKED 1, OPEN 2
+## chat-11 (11) — source verification: DONE 8, NOT-A-GAP 1, BLOCKED 1, OPEN 1
 
 - TPO-settings-audit-07 [DONE] tpo/settings-audit
 - TPO-settings-audit-11 [DONE] tpo/settings-audit
@@ -162,12 +162,12 @@ Chat-9 source closure: all 11 gap IDs have dedicated `tests/unit/chat9-final-<GA
 - TPO-settings-audit-60 [DONE] tpo/settings-audit
 - TPO-settings-audit-80 [NOT-A-GAP] tpo/settings-audit
 - TPO-settings-audit-95 [DONE] tpo/settings-audit
-- TPO-settings-audit-R04 [OPEN] tpo/settings-audit
+- TPO-settings-audit-R04 [DONE] tpo/settings-audit
 - LEARNER-profile-misc-02 [BLOCKED] learner/profile-misc
 - LEARNER-profile-misc-18 [DONE] learner/profile-misc
 - SA-tenants-modules-R01 [DONE] superadmin/tenants-modules
 
-> chat-11 source evidence (2026-10-18): `TPO-settings-audit-07/11/41/60/95`, `LEARNER-profile-misc-18`, and `SA-tenants-modules-R01` have named tests and page acceptance entries; `TPO-settings-audit-80` is NOT-A-GAP because legacy dev UI has no toggles. `LEARNER-profile-misc-02` is BLOCKED on private scanned object storage and is not replaced by unsafe public uploads. `TPO-settings-audit-23` stays OPEN until job type settings feed drive forms/filters/reports and history. `TPO-settings-audit-R04` stays OPEN for server-persisted cross-device saved views; browser-local behavior alone is not legacy parity. These are source-level dispositions, not Vitest/TypeScript/DB/browser execution.
+> chat-11 source evidence (2026-10-18): `TPO-settings-audit-07/11/41/60/95`, `LEARNER-profile-misc-18`, and `SA-tenants-modules-R01` have named tests and page acceptance entries; `TPO-settings-audit-80` is NOT-A-GAP because legacy dev UI has no toggles. `LEARNER-profile-misc-02` is BLOCKED on private scanned object storage and is not replaced by unsafe public uploads. `TPO-settings-audit-23` stays OPEN until job type settings feed drive forms/filters/reports and history. `TPO-settings-audit-R04` now persists AUDIT views in the existing owner/college table with cross-device GET/POST, current-role/tenant checks, CAS revisions and 12/5 limits; named tests are in `chat11-final-TPO-settings-audit-R04.test.ts` and `chat11-tpo-audit-saved-view-route.test.ts`. These are source-level dispositions, not Vitest/TypeScript/DB/browser execution.
 
 ## chat-12 (11)
 
