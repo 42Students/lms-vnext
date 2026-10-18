@@ -82,3 +82,6 @@ Validation: source review and committed behavioural/source-guard tests; cloud te
 
 
 | SA-tenants-directory-QUERY-01 | S2 input / ambiguous tenancy | Tenant page manually cherry-picked known query keys before invoking a strict schema; repeated `?page=1&page=2` and unknown params could be silently coerced/ignored, bypassing the same validation as tenant CSV export. Added strict full-key query parser with explicit rejection of arrays and unknowns before DB access and kept the recoverable error page. | `tests/unit/chat4-superadmin-tenant-directory-query.test.ts` | Browser malformed-URL acceptance pending |
+
+
+| COL-classes-tenant-05 | S1 least privilege | Section Operations previously accepted broad `academics.read`, granted to Faculty/Learner roles, while composing full college learner/faculty pickers and administrative schedule/assignment data. Restricts this combined operations workspace to `academics.manage` (College Admin), leaving role-specific learner/faculty views to dedicated scoped services. | `chat4-college-section-workspace-tenant.test.ts` | Full route journey CI pending |
