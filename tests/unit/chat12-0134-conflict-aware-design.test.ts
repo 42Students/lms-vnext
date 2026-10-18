@@ -24,8 +24,10 @@ describe("0134 conflict-aware schema",()=>{
   expect(t.nextStatus.getSQLType()).toBe("varchar(20)");
   expect(t.requestId.notNull).toBe(true);
  });
- it("TPO-students-10 includes required due_at and composite member scope for 0134 prep",()=>{
-  expect(getTableColumns(placementTpoPrepAssignments).dueAt.notNull).toBe(true);
+ it("TPO-students-10 preserves original 0134 due-at history, then permits optional 0136 deadline",()=>{
+  expect(getTableColumns(placementTpoPrepAssignments).dueAt.notNull).toBe(false);
+  expect(src("drizzle/0134_lanes_round_2.sql")).toContain("due_at timestamptz not null");
+  expect(src("drizzle/0136_tpo_prep_optional_due_date.sql")).toContain("ALTER COLUMN due_at DROP NOT NULL");
   const s=src("src/db/schema/placement-tpo-prep-assignments.ts");
   for(const name of ["tpo_prep_member_college_fk","tpo_prep_member_offering_uq","tpo_prep_due_after_assigned_ck"])expect(s).toContain(name);
  });
