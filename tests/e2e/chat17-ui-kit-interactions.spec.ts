@@ -102,6 +102,18 @@ test.describe("UX-kit-E2E-01 real browser shared UI states",()=>{
     await expect(open).toBeFocused();
   });
 
+  test("UX-kit-HARDEN-45 mobile More details never discloses desktop-only private columns",async({page})=>{
+    await page.setViewportSize({width:390,height:780});
+    await page.goto(route);
+    const table=page.getByRole("table",{name:"Project table privacy"});
+    await expect(table.getByText("DESKTOP_ONLY_PRIVATE_REVIEW")).toBeHidden();
+    await table.locator("summary").filter({hasText:"More details"}).click();
+    await expect(table.locator("details").getByText("Public field 4")).toBeVisible();
+    await expect(table.getByText("DESKTOP_ONLY_PRIVATE_REVIEW")).toBeHidden();
+    await page.setViewportSize({width:1200,height:780});
+    await expect(table.getByText("DESKTOP_ONLY_PRIVATE_REVIEW")).toBeVisible();
+  });
+
   test("reduced-motion skeleton and native disclosure remain keyboard accessible",async({page})=>{
     await page.emulateMedia({reducedMotion:"reduce"});
     await page.goto(route);
