@@ -467,7 +467,7 @@ describe("Placement P8 offers and joining", () => {
       status: "JOINED",
       joiningDate: "2027-02-03",
     });
-    expect(repeatedJoining.id).toBe(joined.id);
+    expect(repeatedJoining.offerId).toBe(joined.offerId);
     const historyAfterRetry = await pool.query<{ total: number }>(
       "select count(*)::integer as total from placement_joining_history where offer_id = $1",
       [issued.id],

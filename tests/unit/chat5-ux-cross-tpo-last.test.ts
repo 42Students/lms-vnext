@@ -4,7 +4,8 @@ const source=(path:string)=>readFileSync(new URL("../../"+path,import.meta.url),
 const routes=["/tpo/reports/by-branch","/tpo/reports/by-company","/tpo/reports/ctc","/tpo/reports/failure-reasons","/tpo/reports/intelligence","/tpo/reports/joining-followups","/tpo/reports/joining-status","/tpo/reports/leads","/tpo/reports/offers-acceptance","/tpo/reports/offers-expiry","/tpo/reports/placed-branch","/tpo/reports/placement-summary","/tpo/reports/season-pipeline","/tpo/reports/unplaced","/tpo/requests","/tpo/settings","/tpo/settings/after-college","/tpo/settings/blocked-dates","/tpo/settings/branding","/tpo/settings/job-types","/tpo/settings/notices","/tpo/settings/notifications","/tpo/settings/prep-readiness","/tpo/settings/public-link","/tpo/settings/public-page","/tpo/settings/recruiters","/tpo/settings/rules","/tpo/settings/season","/tpo/settings/see","/tpo/settings/team","/tpo/settings/templates","/tpo/settings/trusted","/tpo/students","/tpo/students/[membershipId]/history","/tpo/students/[membershipId]/participation","/tpo/students/preparation-plan","/tpo/students/preparation-prep","/tpo/students/requests","/tpo/team","/tpo/team/[threadId]","/tpo/team/everyone","/tpo/verification"] as const;
 const slug=(route:string)=>route.slice(5).replace(/[\[\]\/]+/g,"-").replace(/-+/g,"-").replace(/-$/,"").toLowerCase();
 const pagePath=(route:string)=>"src/app/(authenticated)"+route+"/page.tsx";
-const notePath=(route:string)=>"docs/audit/ux/tpo-"+slug(route)+".md";
+// Existing dynamic-route note filenames preserve the parameter spelling (membershipId/threadId).
+const notePath=(route:string)=>"docs/audit/ux/tpo-"+route.slice(5).replace(/[\[\]\/]+/g,"-").replace(/-+/g,"-").replace(/-$/,"")+".md";
 
 describe("Chat-5 UX CROSS AUDIT: /tpo LAST THIRD (routes 85–126)",()=>{
  for(const route of routes){
