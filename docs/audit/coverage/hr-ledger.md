@@ -631,3 +631,15 @@ No HR/Recruiter account obtains Projects access merely through employer/drive gr
 | HR-SLOT-INPUT-01 strict tenant/action/version input | Same test requires rejection before transaction | No | HTTP 400/403/409 state and same-origin behavior on real requests |
 
 | HR-SLOT-READ-01/02 / `listHrInterviewSlots` | `tests/unit/HR-BREAK-chat15-interview-slots-03.test.ts`: returns own editable slot, marks another creator's slot read-only; revocation denies before private row read, no side effects | No | Real revocation mid-session, database wrong-college row and alternate account browser flow |
+
+
+## Continuation, HR roles, read journeys and page states (2026-10-18)
+
+| ID | Executable evidence added | Still open |
+|---|---|---|
+| HR-TENANT-ID-04 | `HR-BREAK-chat15-tenant-identity-04.test.ts`: empty/whitespace employer IDs, college IDs, relationship IDs denied for candidate projection, employer-job match, grant selection, and live permission gating | Real database invalid-grant defense, revoked session, runtime response privacy |
+| HR-ROUND-LIST-05 | `HR-BREAK-chat15-round-list-05.test.ts`: invalid job id, disabled recruiter, empty authorized job, denied manage permission, canceled rounds filtered, another author's round read-only, attached result/slot locks edits | Concurrent live PostgreSQL grants/round mutation, rollback |
+| UX-HR-PAGES-07 | `UX-chat15-hr-tracker-pages-07.test.ts`: 8 recruiter page role guards, invalid-filter recovery, HR/recruiter alias parity, tracker outage/error/empty/active-role behavior | Browser 320px, inaccessible focus flow, SSR runtime and expired cookie |
+| UX-TRACKER-ERROR-06 | Source update of `src/app/(authenticated)/tracker/page.tsx` removes operator-only migration and environment names; same UX test checks friendly unavailable copy and suppressed admin-only known-error ID | Manual outage browser run |
+
+The stale CI snapshot in `docs/orchestrator/unit-failures-latest.md` lists `chat15-missed-quiz-release.test.ts` and `learner-assessment-state-filter-model.test.ts`. Their current content has already been corrected to exercise deadline-gated release semantics, and `HR-BREAK-chat15-round-service-03.test.ts` no longer uses a self-referential tx argument. Do not mark those green without a new CI run; keep current assertions intact.
