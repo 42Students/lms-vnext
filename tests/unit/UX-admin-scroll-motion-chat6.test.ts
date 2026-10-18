@@ -180,4 +180,36 @@ describe("UX admin scroll and motion after invisible scrollbar owner decision",(
   expect(cue).toContain("overscroll-contain");
  });
 
+ it("UX-admin-scroll-motion-20 application notes Drawer scroll is labelled, masked and keyboard reachable",()=>{
+  const code=source("src/components/placements/college-application-detail-drawer.tsx");
+  expect(code).toContain('title="Application Details"');
+  expect(code).toContain("More internal notes below");
+  expect(code).toContain('aria-label="Internal notes history"');
+  expect(code).toContain("tabIndex={0}");
+  expect(code).toContain("overflow-y-auto overscroll-contain");
+  expect(code).toContain("[mask-image:linear-gradient");
+  expect(code).not.toContain("max-h-48 space-y-2 overflow-auto");
+ });
+ it("UX-admin-scroll-motion-21 duplicate-drive confirmation preserves consequence, 44px action and pending guard",()=>{
+  const code=source("src/components/placements/super-admin-drive-duplicate.tsx");
+  expect(code).toContain("<ConfirmDialog open={confirmOpen}");
+  expect(code).toContain("Dates, applications, interview rounds, offers, and candidate decisions will not be copied.");
+  expect(code).toContain("min-h-11");
+  expect(code).toContain("inFlightRef.current=true");
+  expect(code).toContain("inFlightRef.current=false");
+  expect(code).not.toContain("window.confirm");
+  expect(code).not.toContain("result?.error");
+ });
+ it("UX-admin-scroll-motion-22 deadline confirmation keeps form values and blocks duplicate writes",()=>{
+  const code=source("src/components/placements/super-admin-drive-deadline.tsx");
+  expect(code).toContain("<form onSubmit={review}");
+  expect(code).toContain("<ConfirmDialog open={pendingIso!==null}");
+  expect(code).toContain("Extend the published application deadline? This affects when students can apply.");
+  expect(code).toContain("inFlightRef.current=true");
+  expect(code).toContain("inFlightRef.current=false");
+  expect(code).toContain("text-base sm:text-sm");
+  expect(code).not.toContain("window.confirm");
+  expect(code).not.toContain("data?.error");
+ });
+
 });
