@@ -24,6 +24,8 @@
 | UX-kit-HARDEN-35 | S1 (navigation integrity) | Breadcrumbs previously trusted arbitrary href values, and table/breadcrumb validation could diverge. Future model-provided URLs could become unsafe external destinations or fail to render harmless navigation as intended. | Centralized `isSafeInternalHref`, reused across both widgets, retained `isSafeDataTableHref` API; test `UX-kit-HARDEN-35`. Commits `1239d168`, `df9ec450`, `2f26054a`. | Fix pushed; cloud pending |
 | UX-project-workspaces-41 | S2 (mobile tap target) | College Admin workspace card primary navigation was 36px minimum height, below the accepted 44px mobile target. | Updated card link to min-h-11, commit `496beed0`; browser click target still needs E2E. | Fix pushed; browser pending |
 
+| UX-project-workspaces-42 | S2 (grading/report fidelity) | Invalid project progress percentages, including NaN/Infinity or beyond 100, were passed directly into `aria-valuenow`, CSS width and screen text. | `safeProjectProgressPercent` keeps valid percentages and displays `Progress unavailable` rather than a false number; test `UX-project-workspaces-42`, commits `e77e0160` / `18fb353d`. | Fix pushed; cloud pending |
+
 ## Integration fixture hardening
 
 - `PROJ-HARNESS-22..28`: explicit current college, project roster, active user and `can_mutate` checks protect example SQL fixtures against accidental incorrect cross-tenant writes. This is fixture integrity, not proof of product route authorization.
