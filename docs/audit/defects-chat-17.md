@@ -169,3 +169,5 @@ All newly authored tests remain pending cloud execution; migration retains the p
 | PROJ-HARNESS-RECRUITER-33 | S1 (revoked HR identity fixture) | An ACTIVE grant alone can mislead role-journey tests into treating disabled, expired, unverified, archived, or revoked recruiter credentials as authorized. | Test-only persisted capability witness with full relational gates, real PG lifecycle test -33 and source GUARD-22. | Authored; final PostgreSQL gate deferred |
 
 | UX-kit-HARDEN-59 | S2 (idempotent notifications) | A repeated event ID supplied to the exported toast reducer could render two indistinguishable notices with duplicate React keys and independent dismiss controls. | Incoming item replaces matching current ID; invalid timed limit defaults to 3; behavioral test HARDEN-59. | Authored; final CI pending |
+
+| UX-kit-E2E-13 | S1 (private cell rendering) | A failed permission lookup must not crash or accidentally serialize a private column into browser HTML on real client hydration. | Added development-only broken-permission table fixture and Chromium test asserting private text absent and public row still usable. | Authored; final browser gate pending |
