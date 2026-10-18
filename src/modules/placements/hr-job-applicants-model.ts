@@ -55,7 +55,8 @@ export function hrApplicantPageBounds(page: number, total: number) {
     pages: Math.ceil(total / HR_APPLICANT_PAGE_SIZE),
     first: total === 0 || (page - 1) * HR_APPLICANT_PAGE_SIZE >= total
       ? 0 : (page - 1) * HR_APPLICANT_PAGE_SIZE + 1,
-    last: Math.min(total, page * HR_APPLICANT_PAGE_SIZE),
+    last: total === 0 || (page - 1) * HR_APPLICANT_PAGE_SIZE >= total
+      ? 0 : Math.min(total, page * HR_APPLICANT_PAGE_SIZE),
   };
 }
 
@@ -67,6 +68,7 @@ export function hrOfferPageBounds(page: number, total: number) {
     pages: Math.ceil(total / HR_OFFER_PAGE_SIZE),
     first: total === 0 || (page - 1) * HR_OFFER_PAGE_SIZE >= total ? 0
       : (page - 1) * HR_OFFER_PAGE_SIZE + 1,
-    last: Math.min(total, page * HR_OFFER_PAGE_SIZE),
+    last: total === 0 || (page - 1) * HR_OFFER_PAGE_SIZE >= total
+      ? 0 : Math.min(total, page * HR_OFFER_PAGE_SIZE),
   };
 }
