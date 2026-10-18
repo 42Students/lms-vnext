@@ -67,3 +67,10 @@ The following routes are examples of unresolved **browser/role and responsive ac
 4. Validate public join link optimistic `expectedLinkId` compatibility with all known UI/route callers and error recovery in a browser.
 
 This ledger is deliberately explicit about gaps; source assertions and compilation alone are not behavioral certification.
+
+## Pass B follow-up (2026-10-18)
+
+- `src/modules/placements/public-unsubscribe-preview-service.ts` now uses `resolveTpoCampaignRecipientSecret(process.env)` so the read-only link preview recognizes the same signed tokens as the dispatch/unsubscribe POST path, even when the canonical key supersedes a legacy alias.
+- Updated `chat2-public-join-disabled.test.ts` to exercise required optimistic `expectedLinkId` and reject forged company inputs. Updated `chat2-unsubscribe-graceful.test.ts` to protect idempotent **signed** retries while refusing unknown/unverified tokens rather than showing a false unsubscribed confirmation.
+- Added `tests/unit/chat2-tpo-last-third-route-matrix.test.ts` covering all 42 final-slice page **source** contracts, authorization inherited from `/tpo/layout.tsx`, loading/retry errors, and reports/settings routes. Individual interactive browser state journeys remain pending.
+- Every test and route is still subject to cloud typecheck/unit/DB verification before a green ledger claim.

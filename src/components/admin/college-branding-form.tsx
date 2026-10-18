@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
@@ -62,6 +62,8 @@ export function CollegeBrandingForm({
   const [values, setValues] = useState<BrandingFormValues>(initial);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [saving, startSave] = useTransition();
+  // A transition is not a synchronous double-click guard.
+  const savingRef = useRef(false);
 
   const validColor = (value: string | null) =>
     value && /^#[0-9a-fA-F]{6}$/.test(value) ? value : null;
@@ -78,7 +80,10 @@ export function CollegeBrandingForm({
 
   function save(event: React.FormEvent) {
     event.preventDefault();
+    if (!canEdit || savingRef.current) return;
+    savingRef.current = true;
     startSave(async () => {
+      try {
       const response = await fetch(`/api/colleges/${collegeId}/branding`, {
         method: "PUT",
         headers: { "content-type": "application/json" },
@@ -110,6 +115,11 @@ export function CollegeBrandingForm({
             : "Check the highlighted fields",
         tone: "error",
       });
+      } catch {
+        showToast({title:"Could not save branding. Check your connection and try again.",tone:"error"});
+      } finally {
+        savingRef.current = false;
+      }
     });
   }
 
