@@ -1,9 +1,10 @@
 import "server-only";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { platformSettingOverrides } from "@/db/schema/platform-setting-overrides";
 import { isSuperAdmin, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
+import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import { PLACEMENT_POLICY_FIELDS, platformPlacementPolicyInput, placementPolicyValidate } from "./platform-placement-policy-model";
 
 function requirePlatformAdministrator(context:RequestContext) {
@@ -40,6 +41,13 @@ export async function setPlatformPlacementPolicy(context:RequestContext,raw:unkn
   throw new Error("POLICY_VALUE_OUT_OF_RANGE");
  const db=getDb();
  return db.transaction(async tx=>{
+  // Every policy key shares this transaction-scoped lock. Locking only the
+  // edited row permits concurrent min/max updates to violate their invariant.
+  await tx.execute(sql`select pg_advisory_xact_lock(42, 130038)`);
+  // The RequestContext can be stale after user deactivation or role revocation.
+  // Admin scope may legitimately be college-selected while this policy remains
+  // global; admin-scope.select proves the current persisted SUPER_ADMIN role.
+  await assertPersistedPlatformPermission(tx,context,"admin-scope.select");
   const [existing]=await tx.select().from(platformSettingOverrides).where(identity(input.key)).for("update").limit(1);
   if((existing?.version??0)!==input.expectedVersion)throw new PlatformPlacementPolicyConflict();
   if(input.key==="interview.durationMinMinutes"||input.key==="interview.durationMaxMinutes") {

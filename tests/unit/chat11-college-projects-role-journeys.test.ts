@@ -95,7 +95,7 @@ describe("IIT Dharwad College Admin Projects role journeys", () => {
       user: { ...active.user, platformStatus: "DISABLED" },
     })).toBeNull();
     expect(getProjectAdminCollegeId({ ...active,
-      membership: { ...active.membership!, status: "DISABLED" },
+      membership: { ...active.membership!, status: "SUSPENDED" },
     })).toBeNull();
     expect(getProjectAdminCollegeId({ ...active,
       membership: { ...active.membership!, roles: ["LEARNER"] },

@@ -1,5 +1,5 @@
-import {ScrollCue} from "@/components/ui/scroll-cue";
 "use client";
+import {ScrollCue} from "@/components/ui/scroll-cue";
 import {useCallback,useEffect,useState,type FormEvent} from "react";
 import Link from "next/link";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
