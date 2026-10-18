@@ -55,7 +55,8 @@ export function planTpoCampaignRecipients<T extends CampaignRecipientFact & {id:
 export function campaignRecipientStillMatchesSnapshot(
  snapshot:CampaignRecipientFact,live:CampaignRecipientFact|null|undefined,
 ):boolean{
- if(!live||campaignRecipientDisposition(live)!=="ELIGIBLE")return false;
+ if(campaignRecipientDisposition(snapshot)!=="ELIGIBLE"||
+    !live||campaignRecipientDisposition(live)!=="ELIGIBLE")return false;
  const before=snapshot.emailNorm?.trim().toLowerCase();
  const now=live.emailNorm?.trim().toLowerCase();
  return Boolean(before&&now&&before===now);
