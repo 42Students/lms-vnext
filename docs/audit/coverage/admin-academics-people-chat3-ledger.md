@@ -89,6 +89,10 @@ Snapshot: 2026-10-18, source branch `chatgpt/chat-3-b`. Role-journal and code-ba
 - `getSectionOperationsWorkspace` now denies Faculty, Mentor, Learner and inactive/nonadministrative principals **before** resolving a potentially private Section ID, while still requiring the persisted selected college's `academics.manage` permission afterward.
 - `tests/unit/chat3-sa-section-workspace-permission-matrix.test.ts` invokes the real workspace service, checks period-college SQL, all dependent roster/assignment/schedule reads, malformed IDs, disabled actors, wrong tenant and foreign academic-period denial. Cloud CI and PostgreSQL foreign-period fixture pending.
 
+## SA-PEOPLE-DIRECTORY-QUERY-02 — exact directory URL state
+
+- `/admin/people/directory` now refuses duplicate search/page/status keys and extra untrusted tenant selectors before reading any membership rows. Strict query fields remain role, membership state, platform state, search, tab and page; invalid links show the existing clear-filters UI. `tests/unit/chat3-sa-people-directory-strict-url-ssr.test.tsx` renders actual SSR invalid, empty and wrong-actor states. No CI/browser tests executed.
+
 ## Targeted repairs and further release gates
 
 - `COL-people-24`: exact legacy mentor-reassignment confirmation description restored at `src/components/projects/project-admin-reassign-mentor-page.tsx`; must rerun its failing test, and real keyboard/retry browser checks remain.
