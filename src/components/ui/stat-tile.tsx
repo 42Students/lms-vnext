@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { cx } from "@/lib/class-names";
+import { isSafeInternalHref } from "@/lib/safe-internal-href";
 
 export type StatTileProps = {
   label: string;
@@ -12,6 +13,7 @@ export type StatTileProps = {
 const numberFormat = new Intl.NumberFormat("en-IN");
 
 export function StatTile({ label, value, detail, href, className }: StatTileProps) {
+  const safeHref = href && isSafeInternalHref(href) ? href : null;
   const displayValue = typeof value === "number"
     ? Number.isFinite(value) ? numberFormat.format(value) : "—"
     : value;
@@ -22,7 +24,7 @@ export function StatTile({ label, value, detail, href, className }: StatTileProp
       {detail ? <p className="mt-2 text-sm leading-6 text-body">{detail}</p> : null}
     </>
   );
-  const classes = cx("block min-w-0 rounded-xl border border-border bg-surface p-4 sm:p-6", href ? "min-h-11 hover:border-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" : "", className);
-  return href ? <Link href={href} className={classes} data-slot="stat-tile">{content}</Link> :
+  const classes = cx("block min-w-0 rounded-xl border border-border bg-surface p-4 sm:p-6", safeHref ? "min-h-11 hover:border-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" : "", className);
+  return safeHref ? <Link href={safeHref} className={classes} data-slot="stat-tile">{content}</Link> :
     <section className={classes} data-slot="stat-tile">{content}</section>;
 }

@@ -48,3 +48,14 @@ Validation: source review and committed behavioural/source-guard tests; cloud te
 
 
 | COL-faculty-reassign-RACE-01 | S1 concurrency | Two different source faculty could move overlapping upcoming sessions to the same replacement in parallel, each seeing no existing replacement collision and both committing. The service now acquires a transaction-scoped PostgreSQL advisory lock keyed on the replacement membership *before* reading slots or checking overlap. | `f2f572e` | `tests/unit/chat4-college-faculty-schedule-hardening.test.ts`, `tests/integration/chat4-college-faculty-schedule-reassignment.test.ts` | Fix and concurrent PostgreSQL test committed; CI pending |
+
+
+
+## Super Admin tenant/session follow-through
+
+| ID | Severity | Finding/fix | Test | Remaining |
+|---|---|---|---|---|
+| SA-colleges-bulk-input-01 | S2 data integrity | Bulk CSV parser accepted trailing junk after closing quotes, potentially reinterpreting a college name/code. Explicitly reject all non-delimiter characters after a closed quoted cell; preserve valid escaped quotes and CRLF. | `chat4-super-admin-colleges-bulk-csv-hardening.test.ts` | UI and PostgreSQL acceptance |
+| SA-colleges-sessions-READ-01 | S1 privacy | Super Admin device session detail, target roster and admin history were read after preflight using an in-memory platform role. Role removal/account disable before the sensitive SELECT could expose session/IP and audit rows. Sensitive reads now run in transactions with `assertPersistedPlatformPermission` and held actor locks. | `chat4-super-admin-session-hardening.test.ts` | PG concurrent role revocation |
+| SA-colleges-sessions-DISABLED-01 | S1 security operations | A disabled College Admin user was visible in the target roster but could not be selected for signing out everywhere, potentially leaving unexpired device sessions. The target lookup now permits disabled users while still requiring college-scoped membership/role and a persisted, ACTIVE acting Super Admin. | same | Live endpoint acceptance |
+| SA-colleges-sessions-RETRY-01 | S2 audit integrity | Repeating sign-out-everywhere with zero live sessions previously generated a second misleading event. Zero-update return now skips audit emission. | same | DB audit dedupe/race |

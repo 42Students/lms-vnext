@@ -5,7 +5,11 @@ describe("College placement verified operational parity",()=>{
  it("COL-placements-11 retention report and college student placement lookup are accessible",()=>{
   {const body=source("src/app/(authenticated)/college/placements/retention/page.tsx");expect(body).toContain("Data retention report");expect(body).toContain("getCollegeApplicationRetentionReport");}
   {const body=source("src/app/(authenticated)/college/placements/student-lookup/page.tsx");expect(body).toContain("Student placement lookup");expect(body).toContain("lookupCollegeStudentPlacement");}
-  {const body=source("src/modules/placements/college-retention-report-service.ts");expect(body).toContain("180*86400000");expect(body).toContain(".limit(200)");}
+  {const body=source("src/modules/placements/college-retention-report-service.ts");expect(body).toContain("collegeApplicationRetentionCutoff(new Date())");expect(body).toContain(".limit(200)");
+    const policy=source("src/modules/placements/college-retention-report-policy.ts");
+    expect(policy).toContain("COLLEGE_APPLICATION_RETENTION_DAYS = 180");
+    expect(policy).toContain("COLLEGE_APPLICATION_RETENTION_DAYS * 86400000");
+    expect(policy).toContain("Number.isFinite(now.getTime())");}
 
  });
  it("COL-placements-13 drive settings support draft edit reopen and impact-preview archive",()=>{
