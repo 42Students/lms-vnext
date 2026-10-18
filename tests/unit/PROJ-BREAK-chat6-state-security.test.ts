@@ -39,8 +39,9 @@ describe("IIT Dharwad Projects breaker — state, access, integrity, deadlines a
   expect(mentorTaskReviewTokenMatches(current,current.toISOString())).toBe(true);
   expect(mentorTaskReviewTokenMatches(current,"2026-10-18T18:29:59.320Z")).toBe(false);
   expect(mentorTaskReviewTokenMatches(current,"not-a-date")).toBe(false);
-  const service=src("src/modules/projects/mentor-task-review-service.ts");
-  expect(service).toMatch(/expectedUpdatedAt|STALE_VERSION/);
+  const service=src("src/modules/projects/mentor-task-transition-service.ts");
+  expect(service).toContain("date_trunc");
+  expect(service).toContain("input.expectedUpdatedAt");
  });
  it("PROJ-BREAK-file-01 uploading cannot succeed from transfer progress alone",()=>{
   let state=initialResourceUploadUi;
