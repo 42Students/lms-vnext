@@ -64,3 +64,9 @@ Source inspection: 2026-10-18. Branch: `chatgpt/chat-11-b`. **Partial, source-re
 |---|---|---|---|---|
 | SA-tenants-modules-MOD-FILTER-04 | `/admin/features/[collegeId]`, `adminModuleDetailQuerySchema` | Authenticate SA before parsing tenant path/query; reject repeated values, unknown identity/scope keys, hex/exponent/whitespace pages, invalid nested scopes, academic pagination beyond 10000; show recoverable clear-filters state before loading rules | `tests/unit/chat11-super-admin-module-detail-filters.test.ts`; `56b97bc`, `ad2c55e`, `76775c0`, `89eb8cd` | Browser route role matrix and malformed URLs |
 | SA-tenants-modules-MOD-READ-05 | `listSuperAdminFeatureControls`, `getSuperAdminCollegeModuleAccess` | After reading college/rules, persisted active SA-role and selected-college scope rechecked under transaction-held SHARE locks before emitting organization, college and descendant membership-rule data | `tests/unit/chat11-super-admin-module-reads-revocation.test.ts`; `c86ea38`, `b1be86c` | Postgres role revocation and role-scoped multi-college perf |
+
+## Ancestor / academic module mutation authorization
+
+| ID | Surface | Guard | Test | CI missing |
+|---|---|---|---|---|
+| SA-tenants-modules-MOD-WRITE-06 | `writeSuperAdminCollegeRule`, `writeDescendantRule` | Existing college `for update` serialization now followed by persisted active Super Admin `college.manage` SHARE lock, before expected-version, no-op, ancestor-lock evaluation, write and audit. Both levels reject tenant and session revocation between initial form read and commit. | `tests/unit/chat11-super-admin-module-writes-revocation.test.ts` (two ID-named handler cases plus role matrix), commits `7c47f0b`, `4a923db`, `c7abfe4` | PostgreSQL two-session revocation, ancestor-lock introduction race with global admin and E2E |
