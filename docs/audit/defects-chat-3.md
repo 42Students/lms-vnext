@@ -126,6 +126,14 @@ The Quiz POST route already bounded streams, but silently ignored non-decimal Co
 
 **Tests:** `tests/unit/chat3-faculty-quiz-transport-errors.test.ts` FAC-QUIZ-TRANSPORT-01/02; static authoring only, pending cloud CI.
 
+### FAC-HTTP-BODY-021 — unbounded live-class and attendance scheduling commands (S1)
+
+Both Faculty live-class and attendance scheduling POST routes previously called `request.json()` directly. The Zod/authorization service subsequently rejected bad fields, but the HTTP input body had already been fully buffered, permitting oversized metadata requests to waste memory in a stale or malicious session.
+
+**Fix:** Shared `readFacultyAuthoringBody` enforces 128 KiB on both declared and streamed bytes, strict supported JSON media type, valid Content-Length and UTF-8. Both routes preserve same-origin and delegated identity behavior but return customer-safe 400/413/415 messages with request IDs for transport failures. The domain services still validate payloads and persisted Faculty assignment independently.
+
+**Tests:** `tests/unit/chat3-faculty-authoring-body-routes.test.ts` covers the pure parser and both actual POST entrypoints, including cross-origin before auth, malformed/oversized before write, valid actor context and safe canonical error handling. CI, integration and browser tests pending.
+
 ### FAC-SCHEDULE-018 — revoked Faculty could create/reschedule attendance classes (S1)
 
 `commandFacultyAttendanceSchedule` checked the Faculty role and Section ownership before the transaction but, after advisory-locking the actor and Section, proceeded to insert/update session rows without rebuilding the persisted user/membership/teaching grant. Removing the Faculty role or ending the teaching assignment between those steps could leave a new schedule and activity from a revoked account.
