@@ -218,6 +218,10 @@ Both the batch census and Student Register options services delegated directly t
 
 **Fix:** Both services now explicitly deny principals lacking active `SUPER_ADMIN` system role before even resolving a college scope. No College Admin service was changed. Direct service tests: `tests/unit/chat3-sa-academics-batch-roster-privacy.test.ts` and `tests/unit/chat3-sa-student-register-options-role-scope.test.ts`, case SA-ACADEMICS-ROLE-01. Cloud CI, signed-in Super Admin and College Admin browser journeys pending.
 
+### SA-ACADEMICS-BATCH-EMPTY-050 — empty batch still queried personal learner roster (S2)
+
+Even when a selected academic cohort contained zero authorized classes, the batch overview constructed the active learner roster query with an impossible fallback Section UUID. It did not return data under a normal schema but wasted a sensitive contact-data read and left the edge case dependent on a coincidental identifier mismatch. The service now returns `{batch,classes:[],roster:[]}` immediately for empty class selections, without touching membership PII. Test: `tests/unit/chat3-sa-academics-batch-roster-privacy.test.ts`, SA-ACADEMICS-BATCH-EMPTY-03. CI/DB verification pending.
+
 ### SA-ACADEMICS-BATCH-COUNT-049 — duplicate enrollment joins inflate seat counts (S2)
 
 Super Admin batch-detail class occupancy originally used `count(users.id)` after joining active Section enrollments, program enrollments and membership roles. If inconsistent historic/duplicate join rows survived migration, a single active learner would be counted more than once, causing erroneous class capacity warnings even though the authorized roster is keyed by learner identity. The aggregate now uses `countDistinct(users.id)` while retaining tenant, status and period restrictions. `tests/unit/chat3-sa-academics-batch-roster-privacy.test.ts` asserts the actual SQL form; PostgreSQL dirty-history fixture and CI remain pending.
