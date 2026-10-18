@@ -30,6 +30,6 @@ export function parseProjectAdminSubmissionsQuery(params: Record<string,string|s
     page:first(params.page),pageSize:first(params.pageSize),
   };
   return schema.safeParse(Object.fromEntries(
-    Object.entries(entries).filter(([,value])=>value!==undefined&&value!==""),
+    Object.entries(entries).filter(([key,value])=>value!==undefined&&(value!=="" || key==="page" || key==="pageSize")),
   ));
 }
