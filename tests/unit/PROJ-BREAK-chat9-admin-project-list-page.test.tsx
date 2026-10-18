@@ -3,12 +3,12 @@ import {isValidElement} from "react";
 import SuperAdminProjectsPage from "@/app/(authenticated)/admin/projects/page";
 
 const state=vi.hoisted(()=>({
-  selected:true,failList:false,failTemplates:false,listReads:0,templateReads:0,
+  selected:true,disabled:false,nonAdmin:false,failList:false,failTemplates:false,listReads:0,templateReads:0,
 }));
 
 vi.mock("@/auth/request-context",()=>({
   getCurrentRequestContext:async()=>({
-    user:{id:"admin",identityUid:"platform",platformStatus:"ACTIVE",systemRoles:["SUPER_ADMIN"]},
+    user:{id:"admin",identityUid:"platform",platformStatus:state.disabled?"DISABLED":"ACTIVE",systemRoles:state.nonAdmin?[]:["SUPER_ADMIN"]},
     membership:null,
     adminScope:state.selected?{organizationId:"org",collegeId:"11111111-1111-4111-8111-111111111111"}:null,
   }),
@@ -39,7 +39,7 @@ function render(searchParams:Record<string,string|string[]|undefined>={}){
   return SuperAdminProjectsPage({searchParams:Promise.resolve(searchParams)});
 }
 beforeEach(()=>{
-  state.selected=true;state.failList=false;state.failTemplates=false;
+  state.selected=true;state.disabled=false;state.nonAdmin=false;state.failList=false;state.failTemplates=false;
   state.listReads=0;state.templateReads=0;
 });
 
@@ -74,6 +74,18 @@ describe("IIT Dharwad Super Admin Projects workspace page privacy and failure re
     const content=visibleProps(await render()).join(" ");
     expect(content).toContain("No college selected");
     expect(content).toContain("Pick a college in the header");
+    expect(state.listReads).toBe(0);
+    expect(state.templateReads).toBe(0);
+  });
+  it("PROJ-BREAK-admin-idor-28 disabled and non-platform actors never reach any project read",async()=>{
+    for(const role of ["DISABLED","NOT_SUPER_ADMIN"]){
+      state.disabled=role==="DISABLED";
+      state.nonAdmin=role==="NOT_SUPER_ADMIN";
+      const content=visibleProps(await render()).join(" ");
+      expect(content).toContain("Project access denied");
+      expect(content).toContain("Back to dashboard");
+      expect(content).not.toContain("No Projects match these filters");
+    }
     expect(state.listReads).toBe(0);
     expect(state.templateReads).toBe(0);
   });
