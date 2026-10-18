@@ -41,7 +41,22 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
     ${learnerProfiles.profileDocument}->'personalDetails'->>'gender'
   )`.as("admin_person_gender"),
   rollNumber:learnerProfiles.rollNumber,
-  className:sql<string|null>`(select s.name from section_enrollments se join learner_program_enrollments e on e.id=se.learner_enrollment_id join sections s on s.id=se.section_id where e.membership_id=${collegeMemberships.id} and se.status='ACTIVE' and e.status='ACTIVE' order by se.created_at desc limit 1)`.as("admin_learner_class"),
+  className:sql<string|null>`(
+    select s.name
+    from section_enrollments se
+    join learner_program_enrollments e on e.id=se.learner_enrollment_id
+    join sections s on s.id=se.section_id
+      and s.cohort_id=e.cohort_id
+      and s.academic_period_id=se.academic_period_id
+    join cohorts class_cohort on class_cohort.id=s.cohort_id
+    join programs class_program on class_program.id=class_cohort.program_id
+      and class_program.id=e.program_id
+    join departments class_department on class_department.id=class_program.department_id
+      and class_department.college_id=${selected.collegeId}
+    where e.membership_id=${collegeMemberships.id}
+      and se.status='ACTIVE' and e.status='ACTIVE'
+    order by se.created_at desc limit 1
+  )`.as("admin_learner_class"),
  }).from(collegeMemberships)
  .innerJoin(colleges,and(eq(colleges.id,collegeMemberships.collegeId),
   eq(colleges.id,selected.collegeId),

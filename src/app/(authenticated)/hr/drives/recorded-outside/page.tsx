@@ -10,7 +10,7 @@ export default async function HrRecordedOutsidePage({searchParams}:{
  searchParams:Promise<{collegeId?:string|string[];saved?:string|string[]}>;
 }){
  const context=await getCurrentRequestContext();
- if(!hasActiveRecruiter(context)||!context.recruiter)redirect("/dashboard");
+ if(!hasActiveRecruiter(context)||!context.recruiter||context.recruiter.userId!==context.user.id)redirect("/dashboard");
  const q=await searchParams;
  // HR-RECORDED-QUERY-51: duplicate keys must not silently choose the first
  // college or saved request supplied by a crafted link.

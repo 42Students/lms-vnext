@@ -148,4 +148,15 @@ describe("HR-BREAK-chat19-drive-pages: job-specific actions never bypass scoped 
   expect(m.rounds).not.toHaveBeenCalled();
   expect(m.conversation).not.toHaveBeenCalled();
  });
+ it("HR-BREAK-DRIVE-PRINCIPAL-27 blocks mismatched recruiter on every drive action page",async()=>{
+  m.ctx.mockResolvedValue({...actor,recruiter:{...actor.recruiter!,userId:"other-account"}});
+  await expect(remove()).rejects.toThrow("REDIRECT");
+  await expect(messages()).rejects.toThrow("REDIRECT");
+  await expect(slots()).rejects.toThrow("REDIRECT");
+  await expect(editor()).rejects.toThrow("REDIRECT");
+  expect(m.rounds).not.toHaveBeenCalled();
+  expect(m.conversation).not.toHaveBeenCalled();
+  expect(m.slots).not.toHaveBeenCalled();
+  expect(m.workspace).not.toHaveBeenCalled();
+ });
 });
