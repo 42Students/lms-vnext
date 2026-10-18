@@ -21,8 +21,8 @@ export function FormField({ id, label, required = false, helper, error, children
         id,
         "aria-invalid": error ? true : rendered.props["aria-invalid"],
         "aria-describedby": [...new Set([
-          ...(rendered.props["aria-describedby"]?.split(/\\s+/) ?? []),
-          ...(describedBy?.split(/\\s+/) ?? []),
+          ...(rendered.props["aria-describedby"]?.split(/\s+/) ?? []),
+          ...(describedBy?.split(/\s+/) ?? []),
         ].filter(Boolean))].join(" ") || undefined,
       })
     : rendered;
