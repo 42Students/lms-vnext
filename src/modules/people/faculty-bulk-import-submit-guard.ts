@@ -8,10 +8,12 @@ export function canSubmitFacultyBulkImport(input:{
   filename:string;
   snapshotVersion:number;
   currentVersion:number;
+  csvMatchesLoaded:boolean;
 }):boolean{
   return !input.busy&&
     Number.isSafeInteger(input.count)&&input.count>0&&input.count<=500&&
     !input.issue&&!input.error&&
     input.filename.toLowerCase().endsWith(".csv")&&
-    input.snapshotVersion===input.currentVersion;
+    input.snapshotVersion===input.currentVersion&&
+    input.csvMatchesLoaded;
 }
