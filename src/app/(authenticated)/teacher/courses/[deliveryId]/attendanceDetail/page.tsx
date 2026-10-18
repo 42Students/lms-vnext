@@ -72,16 +72,16 @@ export default async function FacultyCourseAttendancePage({
   );
 
   return (
-    <div className="space-y-5">
+    <div className="min-w-0 max-w-full space-y-5">
       <Link
         href={`/teacher/courses/${deliveryId}/home`}
-        className="inline-flex min-h-11 items-center rounded-md text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+        className="inline-flex min-h-11 items-center rounded-md text-sm font-semibold text-[var(--lms-teal-deep)] hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
       >
         ← Course workspace
       </Link>
 
       <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/session-coverage"}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Review session coverage →
       </Link>
       <FacultyAttendanceScheduleEditor

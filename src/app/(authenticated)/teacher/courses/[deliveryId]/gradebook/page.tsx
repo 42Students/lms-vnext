@@ -27,7 +27,7 @@ export default async function FacultyGradebookPage({
     <h1 className="text-xl font-semibold text-foreground">Invalid gradebook link or filters</h1>
     <Link href={parsed.success?
       facultyGradebookViewHref(parsed.data.deliveryId,{search:"",page:1}):
-      "/teacher/courses"} className="text-primary-text underline">
+      "/teacher/courses"} className="text-[var(--lms-teal-deep)] underline">
       Return to the gradebook
     </Link>
   </section>;
@@ -36,10 +36,10 @@ export default async function FacultyGradebookPage({
   const filtered=paginateFacultyGradebookRows(data.rows,view.data);
   const base={...view.data};
   const csv="/api/courses/faculty/gradebook/"+encodeURIComponent(parsed.data.deliveryId)+"/csv";
-  return <div className="space-y-6">
+  return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="Published gradebook"
       actions={<Link href={csv}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Download full Section CSV
       </Link>} />
     <p className="text-sm text-body">
@@ -53,11 +53,11 @@ export default async function FacultyGradebookPage({
           maxLength={120} placeholder="Name, roll number or email"
           className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground" />
       </label>
-      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">
         Search
       </button>
       <Link href={facultyGradebookViewHref(parsed.data.deliveryId,{search:"",page:1})}
-        className="inline-flex min-h-11 items-center px-2 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center px-2 text-sm font-semibold text-[var(--lms-teal-deep)]">
         Clear
       </Link>
     </form>
@@ -81,7 +81,7 @@ export default async function FacultyGradebookPage({
         </p>
         <Link href={"/teacher/courses/"+encodeURIComponent(parsed.data.deliveryId)+
           "/gradebook/"+encodeURIComponent(row.membershipId)}
-          className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+          className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">
           View published score breakdown →
         </Link>
         <div className="mt-3 grid gap-2 sm:grid-cols-3">
@@ -106,11 +106,11 @@ export default async function FacultyGradebookPage({
       </span>
       <div className="flex gap-3">
         {filtered.page>1&&<Link href={facultyGradebookViewHref(parsed.data.deliveryId,{
-          ...base,page:filtered.page-1})} className="text-sm font-semibold text-primary-text">
+          ...base,page:filtered.page-1})} className="text-sm font-semibold text-[var(--lms-teal-deep)]">
           Previous
         </Link>}
         {filtered.page<filtered.totalPages&&<Link href={facultyGradebookViewHref(parsed.data.deliveryId,{
-          ...base,page:filtered.page+1})} className="text-sm font-semibold text-primary-text">
+          ...base,page:filtered.page+1})} className="text-sm font-semibold text-[var(--lms-teal-deep)]">
           Next
         </Link>}
       </div>
