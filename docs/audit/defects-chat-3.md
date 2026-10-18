@@ -188,6 +188,12 @@ The selected `/admin/faculty-assignment`, `/admin/people/directory`, and global 
 
 **Fix:** Each entrypoint now redirects non-Super-Admin actors before the list data load. Existing central permission service checks remain in force. `tests/unit/chat3-sa-academics-people-root-platform-roles.test.ts` explicitly verifies `SA-PEOPLE-ROOT-02`. Tests authored, not run; browser and CI checks pending.
 
+### SA-LEARNING-FILTER-ROLE-037 — Faculty teaching read permission leaked full-college Super Admin filter options (S1)
+
+The Super Admin learning filter service called `resolveActingCollege(context, "courses.read")` directly. Since this permission also allows regular Faculty/Learner accounts to read courses inside their college, a future direct request or shared call path could expose all course and cohort names as selectable administrative filters despite no active Super Admin system role.
+
+**Fix:** Reject non-`SUPER_ADMIN` or disabled contexts before scoped college resolution and SQL. Persisted selected-college predicates and 2,000-row caps remain. Behavioural test `tests/unit/chat3-sa-learning-facets-platform-role.test.ts`, SA-LEARNING-FILTER-ROLE-01. Browser/CI verification pending.
+
 ### SA-ACADEMICS-ROLE-035 — Super Admin batch and Student Register service allowed College Admin role fallback (S1)
 
 Both the batch census and Student Register options services delegated directly to `resolveActingCollege`. This helper intentionally permits active College Admins to act inside their own college, but it is not an appropriate sole actor guard for **Super Admin-only** service entry points. Calling these exported functions from a future API or action would inherit that broader authorization despite the page naming.
