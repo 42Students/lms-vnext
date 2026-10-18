@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import {ScrollCue} from "@/components/ui/scroll-cue";
 import {useCallback,useEffect,useState} from "react";
 import {recruiterBellAriaLabel,recruiterBellPreview,type RecruiterBellItem}
  from "@/modules/placements/recruiter-bell-model";
@@ -54,14 +55,14 @@ export function RecruiterNotificationBell(){
    {data?.status==="READY"&&data.rows?.length===0?
      <p role="status" className="mt-4 text-sm text-muted-foreground">No notifications yet</p>:null}
    {data?.status==="READY"&&data.rows?.length?
-    <ul className="mt-3 max-h-[50vh] space-y-2 overflow-y-auto">
+    <ScrollCue axis="y" label="Recruiter notifications" className="mt-3" viewportClassName="max-h-[50vh]"><ul className="space-y-2">
      {recruiterBellPreview(data.rows).map(item=><li key={item.id}>
       <Link href={"/hr/placements/jobs/"+encodeURIComponent(item.jobId)}
        onClick={()=>setIsOpen(false)}
        className="block rounded-lg border border-border p-3 text-sm text-primary-text">
        {item.label} · {item.title}{item.unread?" · New":""}
       </Link></li>)}
-    </ul>:null}
+    </ul></ScrollCue>:null}
    <Link href={href} onClick={()=>setIsOpen(false)}
     className="mt-4 inline-flex min-h-11 items-center font-semibold text-primary-text underline">See all notifications</Link>
   </section>:null}

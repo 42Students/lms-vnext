@@ -92,22 +92,22 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
   finally{setSaving(false);}
  }
  return <div className="fixed inset-0 z-50 flex justify-end bg-black/50">
-  <aside ref={drawer} role="dialog" aria-modal="true" aria-label={`Review ${row.learnerName}`} className="h-full w-full max-w-xl overflow-y-auto bg-background p-4 shadow-xl sm:p-6">
+  <aside ref={drawer} role="dialog" aria-modal="true" aria-label={`Review ${row.learnerName}`} className="h-full w-full max-w-xl overflow-y-auto overscroll-contain bg-background p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-xl [mask-image:linear-gradient(to_bottom,transparent,black_0.75rem,black_calc(100%-0.75rem),transparent)] sm:p-6">
    <header className="flex items-start justify-between gap-3 border-b pb-3">
     <div className="min-w-0"><h2 className="break-words text-lg font-semibold">{row.learnerName}</h2>
      {row.rollNumber?<p className="text-xs text-muted-foreground">Roll no.: {row.rollNumber}</p>:null}
      <p className="text-sm">{row.section==="EDUCATION"?"Education":"Identity"} · {row.status.replaceAll("_"," ")}</p></div>
-    <button type="button" ref={closeButton} disabled={saving} onClick={onClose} className="rounded-md border px-3 py-2 disabled:opacity-50">Close</button>
+    <button type="button" ref={closeButton} disabled={saving} onClick={onClose} className="min-h-11 rounded-md border px-3 py-2 disabled:opacity-50">Close</button>
    </header>
    {sequenceProgress&&<nav aria-label="Sequential verification progress" className="flex flex-wrap items-center gap-3 border-b py-3 text-sm">
      <span role="status">{sequenceProgress}</span>
-     <button type="button" disabled={saving} onClick={onNext} className="rounded border px-3 py-2">Next</button>
-     <button type="button" disabled={saving} onClick={onFinish} className="rounded border px-3 py-2">Finish</button>
+     <button type="button" disabled={saving} onClick={onNext} className="min-h-11 rounded border px-3 py-2">Next</button>
+     <button type="button" disabled={saving} onClick={onFinish} className="min-h-11 rounded border px-3 py-2">Finish</button>
    </nav>}
    {loading?<p role="status" className="py-4">Loading submitted details…</p>:null}
    {error?<div role="alert" className="my-3 space-y-2 rounded-md border p-3"><p>{error}</p>
     {canRetryVerificationReview(error,loading)&&<button type="button" onClick={retryReview}
-     className="rounded-md border px-3 py-2 text-sm">Retry loading review</button>}</div>:null}
+     className="min-h-11 rounded-md border px-3 py-2 text-sm">Retry loading review</button>}</div>:null}
    {detail?<div className="space-y-5 py-4">
     <section className="rounded-md border p-3" aria-label="Previous verification decision">
      <h3 className="font-semibold">Recorded decision history</h3>
@@ -196,8 +196,8 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
       <h3 className="font-semibold">{(isTpo||apiBase==="/api/admin/verification")&&pendingAction==="SEND_BACK"?"Send "+(row.section==="EDUCATION"?"Education":"Identity")+" back":verificationDecisionConfirmation(pendingAction,row.section,[reason,additional].filter(Boolean).join(": ")).heading}</h3>
       <p className="break-words text-sm">{pendingAction==="SEND_BACK"?"The student sees your reason and fixes it on their profile.":verificationDecisionConfirmation(pendingAction,row.section,[reason,additional].filter(Boolean).join(": ")).message}</p>
       <div className="flex flex-wrap gap-2">
-       <button type="button" disabled={saving||guardedPending} onClick={()=>void runGuarded(()=>decide(pendingAction))} className="rounded-md border px-3 py-2 font-semibold disabled:opacity-50">{verificationDecisionConfirmation(pendingAction,row.section,reason).button}</button>
-       <button type="button" disabled={saving} onClick={()=>setPendingAction(null)} className="rounded-md border px-3 py-2 disabled:opacity-50">Cancel</button>
+       <button type="button" disabled={saving||guardedPending} onClick={()=>void runGuarded(()=>decide(pendingAction))} className="min-h-11 rounded-md border px-3 py-2 font-semibold disabled:opacity-50">{verificationDecisionConfirmation(pendingAction,row.section,reason).button}</button>
+       <button type="button" disabled={saving} onClick={()=>setPendingAction(null)} className="min-h-11 rounded-md border px-3 py-2 disabled:opacity-50">Cancel</button>
       </div>
      </section>}
      {saving&&<p role="status">Saving decision…</p>}
