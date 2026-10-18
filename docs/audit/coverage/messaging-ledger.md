@@ -229,3 +229,6 @@ Remaining page E2E coverage: interactive keyboard focus, phone viewport and real
 | `deliverPublicRecruiterJoinCode` | Insecure mail host, whitespace token or blank registered OTP template never dispatches a join code | `tests/unit/chat16-provider-channel-boundaries-07.test.ts` | Authored, unrun |
 
 **Remaining production gates:** real provider configuration/acknowledgements, DB handoff race for opt-outs and queued campaigns, and UI double-submit/human testing. No fake green claims for these newly authored tests.
+
+| `src/modules/placements/public-join/send-code-service.ts:lookupDeliveredJoinCompanyName` | Optional company lookup is active-company-only and registrable-domain scoped, handles invalid/free email and directory outages without throwing | `tests/unit/chat16-public-join-delivery-recovery-29.test.ts` | Authored, unrun |
+| `src/modules/placements/public-join/send-code-service.ts:requestPublicJoinCode` | Fully mocked signed link, verified-IP/MX, rate checks, challenge persistence, actual `deliver` callback, then failed company-name lookup returns `{ sent:true, companyName:null }` without duplicate send or false failure | Same | Authored, unrun |
