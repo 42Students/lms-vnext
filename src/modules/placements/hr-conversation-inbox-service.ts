@@ -19,12 +19,15 @@ export async function listHrConversations(context:RequestContext,raw:unknown={})
  if(!collegeId)return {status:unique.length?"CHOOSE_COLLEGE" as const:"NO_ACCESS" as const,
   choices:grants,items:[],collegeId:null};
  const threads=await listMessageThreads(context,collegeId);
- const relevantJobIds=[...new Set(threads.flatMap(thread=>thread.jobId?[thread.jobId]:[]))];
+ // Defense in depth: never use a nested service response as proof of
+ // tenant/recruiter ownership when deriving previews or search query IDs.
+ const recruiterOwned=threads.filter(thread=>thread.collegeId===collegeId&&
+  thread.recruiterUserId===context.user.id);
+ const relevantJobIds=[...new Set(recruiterOwned.flatMap(thread=>thread.jobId?[thread.jobId]:[]))];
  const jobs=await listOwnRecruiterPlacementJobs(context,collegeId,{jobIds:relevantJobIds});
  const allowed=jobs.filter(j=>j.collegeId===collegeId&&j.companyId===context.recruiter!.companyId);
  const knownJobIds=new Set(allowed.map(j=>j.job.id));
  const titles=new Map(allowed.map(j=>[j.job.id,j.job.title]));
- const recruiterOwned=threads.filter(thread=>thread.recruiterUserId===context.user.id);
  // Search only threads this recruiter may open. Never read or return
  // message bodies from another company, recruiter or college.
  const accessibleIds=recruiterOwned.filter(thread=>!thread.jobId||knownJobIds.has(thread.jobId)).map(thread=>thread.id);
