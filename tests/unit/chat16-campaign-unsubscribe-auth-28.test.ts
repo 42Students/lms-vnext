@@ -26,7 +26,7 @@ describe("chat-16 purpose-bound unsubscribe gate before storage access", () => {
     const signed = issueTpoCampaignRecipientToken(claim, secret);
     for (const token of [
       "", "not-a-token", "not-a-token.segment",
-      signed + ".replayed", signed.slice(0, -1) + "x",
+      signed + ".replayed", signed.slice(0, -1) + (signed.endsWith("x") ? "y" : "x"),
       "x".repeat(2049),
       issueTpoCampaignRecipientToken(claim, "wrong-secret".repeat(5)),
     ]) {
