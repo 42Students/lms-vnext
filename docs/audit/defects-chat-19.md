@@ -457,3 +457,11 @@ No CI/unit/browser run was performed here, per owner priority.
 | UX-HR-ROUND-UNSAVED-32 | UX/MAJOR | The recruiter inline Add/Change round dialog discarded nonempty name/type/location fields immediately on Escape, backdrop click or Cancel. Preserve partially edited values until explicit confirmation; untouched forms close freely. The destructive Remove confirmation remains independent. | `tests/unit/UX-HR-chat19-round-unsaved.test.ts` runs the real dirty-state model with empty/changed/same drafts and checks dialog/Cancel wiring. |
 
 No live keyboard/browser simulation has been claimed.
+
+## HR drive request persisted receipt handoff
+
+| Gap ID | Severity | Finding / fix | Test |
+|---|---|---|---|
+| HR-BREAK-DRIVE-RECEIPT-33 | UX | The new-drive form saved the verified success flash `Sent to the placement cell for review`, but the Drives receipt display accepted only `Sent for review.`; the success confirmation disappeared on navigation. Centralized an exact allowlist that includes the real producer wording, consumes the message once, and continues to reject untrusted session/URL strings as proof of submission. | `tests/unit/HR-BREAK-chat19-drive-receipt.test.ts` checks valid/invalid receipts and source producer/consumer handoff. |
+
+The exact legacy-facing copy was preserved; no code run or CI status is asserted.
