@@ -5,6 +5,7 @@ import {redirect} from "next/navigation";
 import {hasMembershipRole} from "@/modules/identity/context";
 import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { getPlacementTpoOperations } from "@/modules/placements/tpo-operations-service";
 import {findTpoPeopleAndCompanies} from "@/modules/placements/tpo-find-people-service";
 import { listTpoBatches } from "@/modules/placements/tpo-batch-workspace-read-service";
@@ -12,14 +13,19 @@ import { PageHeader } from "@/components/ui/page-header";
 export const dynamic="force-dynamic";
 const querySchema=z.string().trim().min(2).max(100);
 export default async function TpoRecordFinder({searchParams}:{searchParams:Promise<{q?:string|string[]}>}){
- const raw=await searchParams;
- const rawText=Array.isArray(raw.q)?raw.q[0]:raw.q;
- const parsed=rawText===undefined?null:querySchema.safeParse(rawText);
- const invalid=parsed!==null&&!parsed.success;
- const text=parsed?.success?parsed.data.toLocaleLowerCase():"";
  const ctx=await getCurrentRequestContext();
  if(!ctx.membership || !hasMembershipRole(ctx,"TPO")) redirect("/dashboard");
- const batches=await listTpoBatches(ctx);
+ await requireTpoBatchActor(ctx);
+ const raw=await searchParams;
+ // Do not arbitrarily accept the first of several independent search inputs.
+ const repeated=Array.isArray(raw.q);
+ const rawText=typeof raw.q==="string"?raw.q:undefined;
+ const parsed=rawText===undefined?null:querySchema.safeParse(rawText);
+ const invalid=repeated||(parsed!==null&&!parsed.success);
+ const text=!invalid&&parsed?.success?parsed.data.toLocaleLowerCase():"";
+ // The finder does no roster, recruiter, drive or company queries before
+ // the user enters a valid explicit search term.
+ const batches=text?await listTpoBatches(ctx):{batches:[]};
  const operations=text?await getPlacementTpoOperations(ctx,ctx.membership!.collegeId):null;
  const foundBatches=text?batches.batches.filter(b=>[b.name,b.code,b.program,b.department].some(v=>v.toLocaleLowerCase().includes(text))).slice(0,5):[];
  const named=text?await findTpoPeopleAndCompanies(ctx,ctx.membership!.collegeId,text):
