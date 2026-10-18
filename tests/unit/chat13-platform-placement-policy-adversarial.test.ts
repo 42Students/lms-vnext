@@ -12,7 +12,7 @@ describe("Super Admin placement policy adversarial boundaries", () => {
     const start = service.indexOf("export async function setPlatformPlacementPolicy(");
     const body = service.slice(start);
     const tx = body.indexOf("return db.transaction(async tx=>{");
-    const persisted = body.indexOf("await assertPersistedPlatformPermission(tx,context,\"placements.manage\")");
+    const persisted = body.indexOf("await assertPersistedPlatformPermission(tx,context,\"admin-scope.select\")");
     const rowAccess = body.indexOf("const [existing]=await tx.select()");
     expect(start).toBeGreaterThanOrEqual(0);
     expect(tx).toBeGreaterThanOrEqual(0);
