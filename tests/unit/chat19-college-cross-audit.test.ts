@@ -67,7 +67,7 @@ describe("chat-19 college UX cross-audit", () => {
     }
     expect(page).toContain('mobilePriority: "action"');
     expect(page).toContain("<StudentClassMoveAction");
-    expect(page).not.toMatch(/<table[\\s>]/);
+    expect(page).not.toContain("<table");
     const table = read("src/components/ui/data-table.tsx");
     expect(table).toContain('sm:hidden');
     expect(table).toContain('const visibleOnPhone');
@@ -90,7 +90,7 @@ describe("chat-19 college UX cross-audit", () => {
     expect(page).toContain('mobilePriority: "secondary"');
     expect(page).toContain('name="membershipId"');
     expect(page).toContain('empty={<p');
-    expect(page).not.toMatch(/<table[\\s>]/);
+    expect(page).not.toContain("<table");
     expect(page).toContain('<ScrollCue axis="y"');
     expect(page).toContain('viewportClassName="max-h-80"');
     expect(page).toContain('aria-label={"Select "');
@@ -103,7 +103,8 @@ describe("chat-19 college UX cross-audit", () => {
     expect(page).toContain("uuid.safeParse(groupId)");
     expect(page).toContain("if (!checkedGroup.success) redirect(");
     expect(page).toContain("eq(electiveOfferings.groupId, checkedGroup.data)");
-    expect(page).not.toMatch(/uuid\\.parse\\((slotId|groupId)\\)/);
+    expect(page).not.toContain("uuid.parse(slotId)");
+    expect(page).not.toContain("uuid.parse(groupId)");
   });
 
 });
