@@ -184,7 +184,8 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {undo?<button type="button" disabled={busy} className="text-sm font-semibold text-primary-text underline"
     onClick={()=>{const prior=undo;void move(prior.id,prior.status,true);}}>Undo last move</button>:null}
-  <div className="overflow-x-auto pb-3"><div className="flex min-w-max gap-3">
+  <div role="region" aria-label="Project task board; scroll sideways to see more status columns" tabIndex={0}
+    className="overflow-x-auto overscroll-x-contain pb-3 [mask-image:linear-gradient(to_right,black_0%,black_94%,transparent_100%)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"><div className="flex min-w-max gap-3">
    {lanes.map(lane=><section key={lane.id} aria-label={lane.label}
     className="w-72 shrink-0 rounded-xl border border-border bg-surface-subtle p-3"
     onDragOver={e=>{if(editable.includes(lane.id as typeof editable[number]))e.preventDefault();}}
