@@ -46,4 +46,10 @@ FAC-attendance-grades-01/03/04/20 remain to be reconciled; no tests executed by 
 | FAC-attendance-grades-18 | NOT-A-GAP (intentional safe capacity 1000 instead of legacy 500) | `src/modules/attendance/faculty-service.ts`: 1000 maximum per list, unique and disjoint learner lists, scoped scheduled-roster verification. `tests/unit/chat12-final-faculty-attendance.test.ts`: `FAC-attendance-grades-18 keeps bounded present and absent lists with duplicate checks`, `FAC-attendance-grades-18 checks roster membership within the scheduled class`. |
 | FAC-attendance-grades-19 | DONE | Persisted college attendance threshold is read from `attendancePolicies.eligibilityThresholdPercent`; no "legacy risk rules" user-visible explanation in `src/components/courses/faculty-course-home-signals.tsx`. `tests/unit/chat12-final-faculty-attendance.test.ts`: `FAC-attendance-grades-19 honors persisted college policy rather than hardcoded UI risk rules`. |
 
+### chat-3 FAC-attendance-grades-18 additional current-roster privacy acceptance
+
+| ID | Status | Evidence |
+|---|---|---|
+| FAC-attendance-grades-18 / FAC-WORKSPACE-TENANT-01 | DONE (source/test authored; runtime unverified) | `src/modules/attendance/faculty-service.ts` now constrains Faculty workspace attendance records by active same-college membership, active user and exact current delivery learner roster, not event ID alone. `tests/unit/chat3-faculty-attendance-workspace-tenant-boundary.test.ts` checks compiled SQL predicates, no historical records for an empty roster, revoked teaching and invalid delivery. Requires cloud CI, real PostgreSQL moved/disabled-learner fixtures and browser acceptance. |
+
 Tests authored, not run in this environment; orchestrator must execute TypeScript, Vitest, and the database/browser acceptance.
