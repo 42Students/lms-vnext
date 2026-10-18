@@ -542,6 +542,13 @@ export async function updateCollege(
   });
 
   return getDb().transaction(async tx=>{
+    await assertPersistedPlatformPermission(tx,context,"college.manage",{
+      collegeId,organizationId:college.organizationId,
+    });
+    const [parent]=await tx.select({id:organizations.id}).from(organizations)
+      .where(and(eq(organizations.id,college.organizationId),eq(organizations.status,"ACTIVE")))
+      .for("share").limit(1);
+    if(!parent)throw new CollegeServiceError("ORGANIZATION_NOT_FOUND");
     const [updated]=await tx.update(colleges).set({
       ...input,updatedAt:new Date(),
     }).where(and(eq(colleges.id,collegeId),eq(colleges.status,"ACTIVE"))).returning();
