@@ -63,3 +63,11 @@ Source entrypoints exist at `src/app/(authenticated)/admin/<route>/page.tsx`, ex
 5. Nothing in this document claims all 37 routes are proven defect-free; a complete user-journey pass requires the application, database and browser.
 
 **Mode:** branch `chatgpt/chat-6-b` only, `[chat-6]` commit prefix, no CI gating and no executed code.
+
+## Added rendered-page coverage — 2026-10-19
+
+- `tests/unit/chat6-admin-second-third-lecture-hall-pages.test.ts`: actual async list/detail page calls rendered to static HTML. Covers selected-college gate, wrong role, malformed selectors, scoped pagination, 320px-safe classes, invalid IST window and booked-room overcapacity/overlap messages.
+- `tests/unit/chat6-admin-second-third-drives-page.test.ts`: actual drive page async render; denies absent/foreign admin roles, malformed decimal selectors, renders selected-college results and mobile structure; failure maps to safe retry or denied state.
+- `tests/unit/chat6-admin-second-third-unassigned-page.test.ts`: actual unassigned global identity page async render; redirects wrong roles, denies tenant-scoped user enumeration, rejects forged params, renders empty and populated PII-safe rows, recovers after outage and permission loss.
+
+These SSR tests provide **page-specific behavior** beyond the 37-route source-guard preservation contract, but are still not executed and do not replace browser accessibility, real PostgreSQL or mobile captures.
