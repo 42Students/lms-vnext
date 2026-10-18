@@ -37,11 +37,12 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
   const [error, setError] = useState<string | null>(null);
   // Preserve every applicable assistive description when a picker is disabled
   // or rejects a file; an error must not make the size/type guidance vanish.
-  const describedBy = [
+  const describedBy = [...new Set([
+    ...(props["aria-describedby"]?.split(/\s+/).filter(Boolean) ?? []),
     helper ? `${id}-help` : null,
-    error ? `${id}-error` : null,
+    error && !pickerUnavailable && !disabled ? `${id}-error` : null,
     (pickerUnavailable || disabled) ? `${id}-unavailable` : null,
-  ].filter(Boolean).join(" ") || undefined;
+  ].filter((value): value is string => Boolean(value)))].join(" ") || undefined;
   const inputRef = useRef<HTMLInputElement | null>(null);
   const selectedRef = useRef(false);
   const onFilesRef = useRef(onFiles);
@@ -81,7 +82,7 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
     <label htmlFor={id} className="block text-sm font-semibold text-foreground">{label}</label>
     {pickerUnavailable ? <p role="status" className="text-sm text-body">File selection is unavailable in this app view. {fallback ? "Use the alternative below." : "Open this form in a browser that supports file selection."}</p> :
       <input {...props} ref={bindInput} id={id} type="file" accept={accept} disabled={disabled} onChange={handleChange}
-        aria-invalid={error ? true : undefined}
+        aria-invalid={pickerUnavailable || disabled ? undefined : error ? true : props["aria-invalid"]}
         aria-describedby={describedBy}
         className="block min-h-11 w-full min-w-0 rounded-md border border-border bg-surface px-3 py-2 text-base text-foreground file:mr-3 file:rounded file:border-0 file:bg-primary-subtle file:px-3 file:py-2 file:text-sm file:font-semibold file:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] disabled:opacity-50" />}
     {helper ? <p id={`${id}-help`} className="text-sm leading-6 text-body">{helper}</p> : null}

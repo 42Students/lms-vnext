@@ -1,4 +1,5 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import { PlacementCalendarWorkspace } from "@/components/placements/placement-calendar-workspace";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -35,6 +36,8 @@ export default async function SuperAdminPlacementInterviewCalendarPage({
     );
   }
 
+  // Validate the platform actor and selected tenant before reading private rounds.
+  requireSuperAdminSelectedCollege(context,"placements.read");
   return (
     <PlacementCalendarWorkspace
       context={context}

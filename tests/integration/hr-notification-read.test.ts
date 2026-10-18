@@ -43,7 +43,14 @@ describe.skipIf(!enabled)("HR notification acknowledgement PG",()=>{
    .rejects.toMatchObject({code:"PLACEMENT_JOB_NOT_FOUND"});
   const result=await markHrNotificationRead(ctx,one.id,{expectedCreatedAt:one.createdAt.toISOString()});
   expect(result.readAt).toBeTruthy();
-  await expect(markHrNotificationRead(ctx,one.id,{expectedCreatedAt:one.createdAt.toISOString()}))
+  // A lost network response must be retry-safe without writing a second mark.
+  const retry=await markHrNotificationRead(ctx,one.id,{expectedCreatedAt:one.createdAt.toISOString()});
+  expect(retry).toEqual(result);
+  const [persisted]=await getDb().select({readAt:inAppNotifications.readAt})
+   .from(inAppNotifications).where(eq(inAppNotifications.id,one.id)).limit(1);
+  expect(persisted?.readAt?.toISOString()).toBe(result.readAt);
+  await expect(markHrNotificationRead(ctx,one.id,{expectedCreatedAt:
+   new Date(one.createdAt.getTime()+1).toISOString()}))
    .rejects.toMatchObject({code:"PLACEMENT_RECRUITER_NOTIFICATION_STALE"});
   await expect(markHrNotificationRead(tpo,one.id,{expectedCreatedAt:one.createdAt.toISOString()}))
    .rejects.toBeDefined();

@@ -28,6 +28,7 @@ export type RequestTenant =
 type CacheEntry = { value: RequestTenant; expiresAt: number };
 const cache = new Map<string, CacheEntry>();
 const CACHE_TTL_MS = 15_000;
+const CACHE_LIMIT = 500;
 
 function hostWithoutPort(raw: string) {
   return raw.trim().toLowerCase().replace(/:\d+$/, "");
@@ -67,8 +68,21 @@ export async function resolveRequestTenant(
     return {kind:"unavailable",host};
   }
 
-  if (cache.size > 500) cache.clear();
-  cache.set(host, { value, expiresAt: Date.now() + CACHE_TTL_MS });
+  // Unknown-host floods must not flush every cached, verified college host;
+  // evict expired entries first, then the oldest entry if still at capacity.
+  const now = Date.now();
+  if(cache.size >= CACHE_LIMIT&&!cache.has(host)){
+    for(const [key,entry] of cache){
+      if(entry.expiresAt<=now)cache.delete(key);
+    }
+    if(cache.size >= CACHE_LIMIT){
+      const oldest=cache.keys().next().value;
+      if(oldest!==undefined)cache.delete(oldest);
+    }
+  }
+  // Refreshing an existing hostname also refreshes its insertion order.
+  cache.delete(host);
+  cache.set(host, { value, expiresAt: now + CACHE_TTL_MS });
   return value;
 }
 

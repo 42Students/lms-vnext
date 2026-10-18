@@ -28,6 +28,33 @@ describe("P-S1-01/P-S1-05 college-held-offer policy", () => {
   });
 });
 
+describe("PLACEMENTS-HELD-POLICY-29 corrupt persisted policy denial",()=>{
+ it("refuses malformed cap/uplift/CTC even for a dream-drive exception",()=>{
+  const baseline={
+   maxHeldOffers:1,upliftPct:40,isDreamDrive:false,
+   heldOffers:[{annualCtcInr:500_000}],annualCtcInr:900_000,
+  };
+  expect(canReleaseAnotherHeldOffer(baseline)).toBe(true);
+  const limits=[0,-1,Infinity,NaN,0.1,Number.MAX_SAFE_INTEGER+1];
+  for(const maxHeldOffers of limits){
+   expect(canReleaseAnotherHeldOffer({...baseline,maxHeldOffers})).toBe(false);
+   expect(canReleaseAnotherHeldOffer({...baseline,maxHeldOffers,isDreamDrive:true})).toBe(false);
+  }
+  for(const upliftPct of [-1,1001,Infinity,NaN,0.01]){
+   expect(canReleaseAnotherHeldOffer({...baseline,upliftPct})).toBe(false);
+  }
+  for(const annualCtcInr of [-1,0.5,Infinity,NaN,Number.MAX_SAFE_INTEGER+1]){
+   expect(canReleaseAnotherHeldOffer({...baseline,annualCtcInr})).toBe(false);
+   expect(canReleaseAnotherHeldOffer({...baseline,
+      heldOffers:[{annualCtcInr}],annualCtcInr:900_000})).toBe(false);
+  }
+  expect(canReleaseAnotherHeldOffer({...baseline,annualCtcInr:null,
+    heldOffers:[],maxHeldOffers:2})).toBe(true);
+  expect(canReleaseAnotherHeldOffer({...baseline,annualCtcInr:null,
+    isDreamDrive:true})).toBe(true);
+ });
+});
+
 describe("P-S2-06 offer response minimum", () => {
   it("uses the configured minimum hours and skips Sunday in IST", () => {
     expect(minimumOfferResponseDeadline(

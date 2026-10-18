@@ -1,8 +1,8 @@
 import "server-only";
-import {and,count,desc,eq,lt,or,sql} from "drizzle-orm";
+import {and,count,desc,eq,inArray,lt,notExists,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,placementApplications,placementApplicationScreenings,
- placementJobs,users} from "@/db/schema";
+ placementJobs,placementOffers,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
 import {collegeApplicationRetentionCutoff,COLLEGE_APPLICATION_RETENTION_DAYS} from "./college-retention-report-policy";
@@ -13,6 +13,12 @@ export async function getCollegeApplicationRetentionReport(ctx:RequestContext){
   eq(collegeMemberships.collegeId,collegeId),
   or(eq(placementApplications.status,"WITHDRAWN"),
      eq(placementApplicationScreenings.status,"REJECTED")),
+  // Never advertise an application with a live official offer as a safe
+  // candidate for retention disposal; an accepted commitment wins over an
+  // old withdrawal/screening timestamp.
+  notExists(db.select({id:placementOffers.id}).from(placementOffers)
+    .where(and(eq(placementOffers.applicationId,placementApplications.id),
+      inArray(placementOffers.status,["ISSUED","ACCEPTED"])))),
   lt(placementApplications.updatedAt,cutoff),
   lt(sql<Date>`coalesce(${placementApplicationScreenings.updatedAt},${placementApplications.updatedAt})`,cutoff));
  const from=db.select({id:placementApplications.id,jobTitle:placementJobs.title,
