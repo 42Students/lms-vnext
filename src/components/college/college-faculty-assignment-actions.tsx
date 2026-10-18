@@ -88,7 +88,7 @@ export function CollegeFacultyAssignmentCreate({
   }
   const fieldClass = "min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-base sm:text-sm text-foreground";
   return <>{confirmation}<section aria-label="Assign Faculty to multiple courses"
-    className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+    className="- sm: border-t border-border pt-4">
     <h2 className="text-lg font-semibold text-foreground">{FACULTY_ASSIGNMENT_COPY.createTitle}</h2>
     <form onSubmit={event => void submit(event)} className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       <label className="grid gap-1 text-sm font-semibold">Program
