@@ -11,6 +11,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { resolveActingCollege } from "@/modules/permissions/acting-college";
 import { AuthorizationError } from "@/modules/permissions/policy";
+import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 
@@ -43,6 +44,11 @@ export async function mergeSuperAdminCompanies(context: RequestContext, raw: unk
   const input = companyMergeInputSchema.parse(raw);
   const db = getDb();
   return db.transaction(async tx => {
+    // The cookie/session may outlive the persisted platform role. Revalidate
+    // the actor *inside* the write transaction before locking companies.
+    await assertPersistedPlatformPermission(tx, context, "placements.manage", {
+      collegeId: acting.collegeId, organizationId: acting.organizationId,
+    });
     const rows = await tx.select().from(placementCompanies)
       .where(inArray(placementCompanies.id, [input.keepCompanyId, input.mergeCompanyId]))
       .orderBy(placementCompanies.id).for("update");
