@@ -56,6 +56,11 @@ Snapshot: 2026-10-18, source branch `chatgpt/chat-3-b`. Role-journal and code-ba
 - `/admin/faculty-assignment`, `/admin/people/directory`, and `/admin/people/unassigned` now explicitly reject active non-Super-Admin users before loading Faculty assignments, membership contact lists, or global unassigned identities. This supplements their service-layer checks and prevents a stale `adminScope` from turning generic academic reads into platform-admin pages.
 - `tests/unit/chat3-sa-academics-people-root-platform-roles.test.ts` includes `SA-PEOPLE-ROOT-02`, covering the preflight guard ordering relative to each service call. Cloud CI and browser role-switch tests remain necessary.
 
+## SA3-PEOPLE-CLASS-01 — learner class labels scoped to cohort, period and college
+
+- `src/modules/admin-ui/super-admin-scoped-people-service.ts` previously selected a learner's latest Section name through raw `section_enrollments` and `sections` joins with no college or cohort/academic-period consistency check. The correlated class display now validates that Section cohort/term match the current program enrollment, and the cohort's program department belongs to the selected college.
+- `tests/unit/chat3-superadmin-scoped-people-pagination.test.ts` compiles the actual class label SQL via `PgDialect`, checks the scoped program/cohort/term and selected college predicates, and retains the original page and role matrix. PostgreSQL mismatched-FK fixtures and browser acceptance remain pending.
+
 ## Targeted repairs and further release gates
 
 - `COL-people-24`: exact legacy mentor-reassignment confirmation description restored at `src/components/projects/project-admin-reassign-mentor-page.tsx`; must rerun its failing test, and real keyboard/retry browser checks remain.
