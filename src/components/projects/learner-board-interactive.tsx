@@ -3,6 +3,7 @@ import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
 import Link from "next/link";
 import {LearnerDeleteOwnTask} from "./learner-own-task-controls";
+import {canLearnerMoveOwnTask} from "@/modules/projects/learner-task-status-policy";
 import {groupLearnerBoardLanes} from "@/modules/projects/learner-board-lanes-model";
 import {learnerBoardTaskHref,type LearnerTaskBoardUrlFilters} from "@/modules/projects/learner-board-task-detail-model";
 type Task={id:string;title:string;status:string;priority:string;sprintId:string|null;templateKey:string;
@@ -31,7 +32,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
   const task=tasks.find(row=>row.id===taskId);
   if(!task||busy||readOnly||!membershipId||task.assigneeMembershipId!==membershipId||
     !task.sprintId||sprintState.get(task.sprintId)!=="ACTIVE"||
-    !statuses.includes(task.status as EditableStatus)||task.status===next)return;
+    !canLearnerMoveOwnTask(task.status,next))return;
   let note=restoreNote??null;
   if(next==="BLOCKED"&&!note){
    note=window.prompt("What is blocking this task?",task.blockerReason??"");
@@ -85,7 +86,8 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
   {busy?<p role="status" aria-live="polite" className="text-sm text-body">Saving your change…</p>:null}
   {notice?<p role="status" aria-live="polite" className="text-sm text-success-text">{notice}</p>:null}
   {error?<p role="alert" className="rounded border border-error p-3 text-sm text-error">{error}</p>:null}
-  {undo?<button type="button" disabled={busy} className="min-h-11 text-sm font-semibold text-primary-text underline"
+  {undo&&tasks.some(task=>task.id===undo.taskId&&canLearnerMoveOwnTask(task.status,undo.status))?
+   <button type="button" disabled={busy||readOnly} className="min-h-11 text-sm font-semibold text-primary-text underline"
     onClick={()=>{const last=undo;void move(last.taskId,last.status,last.blockerReason,true)}}>
     Undo last task move
   </button>:null}
@@ -129,8 +131,9 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
           <select aria-label={"Move "+task.title} value={task.status} disabled={busy}
            onChange={event=>void move(task.id,event.target.value as EditableStatus)}
            className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-2 text-sm">
-            {statuses.map(status=><option key={status} value={status}>
-             {status==="TODO"?"To Do":status==="IN_PROGRESS"?"In Progress":"Blocked"}</option>)}
+            {statuses.filter(status=>status===task.status||canLearnerMoveOwnTask(task.status,status))
+              .map(status=><option key={status} value={status} disabled={status===task.status}>
+               {status==="TODO"?"To Do":status==="IN_PROGRESS"?"In Progress":"Blocked"}</option>)}
           </select>
         </label>:null}
        </li>;
