@@ -303,4 +303,24 @@ describe("Super Admin UX first-third rollout",()=>{
   expect(page).toContain('overridesModule:query.overridesModule');
   expect(page).toContain('sticky left-0 z-10 bg-surface');
  });
+ it("UX-admin-features-02 mounts module editors once and retains accessible matrix controls",()=>{
+  const page=read("src/app/(authenticated)/admin/features/page.tsx");
+  expect(page).toContain('<DataTable<(typeof result.items)[number]>');
+  expect(page).toContain('mobilePriority:"action"');
+  expect(page).toContain('CollegeFeatureRuleEditor collegeId={college.id}');
+  expect(page).toContain('No colleges on this page');
+  expect(page).not.toContain('lg:hidden');
+  expect(page).not.toContain('lg:block');
+  expect(page).not.toContain('min-w-[50rem]');
+ });
+ it("UX-admin-features-collegeId-02 mounts one module matrix and one override directory across breakpoints",()=>{
+  const page=read("src/app/(authenticated)/admin/features/[collegeId]/page.tsx");
+  expect(page).toContain('<DataTable<(typeof OPTIONAL_MODULE_KEYS)[number]>');
+  expect(page).toContain('<DataTable<(typeof result.descendants)[number]>');
+  expect(page).toContain("No lower-level overrides");
+  expect(page).toContain("The requested page is outside the available override range.");
+  expect(page).not.toContain("lg:hidden");
+  expect(page).not.toContain("min-w-[42rem]");
+  expect(page).not.toContain("min-w-[38rem]");
+ });
 });
