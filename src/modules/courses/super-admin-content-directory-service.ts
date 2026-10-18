@@ -65,8 +65,15 @@ export async function listSuperAdminContentDirectory(context:RequestContext,rawK
     eq(courseSectionDeliveries.id,lessonContents.deliveryId),
     eq(courseSectionDeliveries.offeringId,courseOfferings.id),
   ))
+  .leftJoin(sections,and(
+    eq(sections.id,courseSectionDeliveries.sectionId),
+    eq(sections.cohortId,courseOfferings.cohortId),
+    eq(sections.academicPeriodId,courseOfferings.academicPeriodId),
+  ))
   .where(and(
-   sql`${lessonContents.deliveryId} is null or ${courseSectionDeliveries.id} is not null`,
+   // For section-targeted content, verify both the delivery's offering and
+   // its section. A dangling/foreign section never appears in the UI.
+   sql`${lessonContents.deliveryId} is null or ${sections.id} is not null`,
    inArray(lessonContents.contentType,[...contentTypesForKind(kind)]),
    query.status==="ALL"?undefined:eq(lessonContents.status,query.status),
    query.offeringId?eq(courseOfferings.id,query.offeringId):undefined,
