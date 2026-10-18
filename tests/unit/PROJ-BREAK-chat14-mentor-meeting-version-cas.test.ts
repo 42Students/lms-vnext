@@ -16,6 +16,9 @@ vi.mock("drizzle-orm",()=>({
  eq:(field:unknown,value:unknown)=>["EQ",field,value],
  and:(...conditions:unknown[])=>["AND",...conditions],
  inArray:(field:unknown,values:unknown[])=>["IN",field,values],
+ asc:(v:unknown)=>v,desc:(v:unknown)=>v,ne:(...v:unknown[])=>v,
+ or:(...v:unknown[])=>v,gt:(...v:unknown[])=>v,lt:(...v:unknown[])=>v,
+ isNotNull:(v:unknown)=>v,
  sql:(parts:TemplateStringsArray,...exprs:unknown[])=>parts.reduce(
   (text:string,part:string,i:number)=>text+part+
    (i<exprs.length?String(exprs[i]):""),""),
