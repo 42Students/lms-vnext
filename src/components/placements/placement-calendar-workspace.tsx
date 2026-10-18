@@ -956,8 +956,8 @@ export async function PlacementCalendarWorkspace({
         href:eventHref(item,audience),
        }))}/>:state.view !== "agenda" ? (
         <section
-          aria-label={`${state.view} placement calendar`}
-          className="hidden overflow-x-auto rounded-xl border border-border bg-surface p-3 md:block"
+          aria-label={`${state.view} placement calendar`} tabIndex={0}
+          className="hidden overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-surface p-3 md:block md:[mask-image:linear-gradient(to_right,#000_0%,#000_calc(100%-1.25rem),transparent_100%)]"
         >
           <div className="grid min-w-[56rem] grid-cols-7 gap-1">
             {[
