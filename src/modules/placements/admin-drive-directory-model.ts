@@ -38,7 +38,7 @@ export function adminDriveDirectoryHref(query:z.infer<typeof adminDriveDirectory
  return "/admin/placements/drives"+(encoded?"?"+encoded:"");
 }
 export function adminDriveStatus(job:{status:string;applicationDeadline:Date|null},now=new Date()){
- if(job.status==="PUBLISHED")return job.applicationDeadline&&job.applicationDeadline.getTime()<now.getTime()?"Open · Expired":"Open";
+ if(job.status==="PUBLISHED")return job.applicationDeadline&&job.applicationDeadline.getTime()<=now.getTime()?"Open · Expired":"Open";
  return job.status==="DRAFT"?"Draft":job.status==="CLOSED"?"Closed":job.status;
 }
 
