@@ -47,6 +47,8 @@ export function CreateProjectControl({
   const [sectionId,setSectionId]=useState("");
   const [roster,setRoster]=useState<{membershipId:string;displayName:string;rollNumber:string}[]>([]);
   const [loadedRosterSectionId,setLoadedRosterSectionId]=useState<string|null>(null);
+  const [rosterError,setRosterError]=useState(false);
+  const [rosterRetry,setRosterRetry]=useState(0);
   const [learnerMembershipIds,setLearnerMembershipIds]=useState<string[]>([]);
   const [initialStatus,setInitialStatus]=useState<"PLANNED"|"ACTIVE">("PLANNED");
   const submitLock = useRef(false);
@@ -60,7 +62,7 @@ export function CreateProjectControl({
     setSummary("");
     setMentorMembershipId("");
     setSectionId("");setRoster([]);setLearnerMembershipIds([]);setInitialStatus("PLANNED");
-    setLoadedRosterSectionId(null);
+    setLoadedRosterSectionId(null);setRosterError(false);
     setMentorsError(null);
     setMentorsLoading(true);
     setMentors([]);
@@ -137,10 +139,10 @@ export function CreateProjectControl({
     void fetch("/api/projects/class-team-roster?collegeId="+encodeURIComponent(collegeId)+
       "&classId="+encodeURIComponent(sectionId),{signal:ctl.signal})
       .then(r=>r.ok?r.json():Promise.reject(Error("Roster unavailable")))
-      .then((v:{roster:{members:typeof roster}})=>{if(!ctl.signal.aborted){setRoster(v.roster.members);setLoadedRosterSectionId(sectionId);}})
-      .catch(()=>{if(!ctl.signal.aborted){setRoster([]);setLoadedRosterSectionId(null);}});
+      .then((v:{roster:{members:typeof roster}})=>{if(!ctl.signal.aborted){setRoster(v.roster.members);setLoadedRosterSectionId(sectionId);setRosterError(false);}})
+      .catch(()=>{if(!ctl.signal.aborted){setRoster([]);setLoadedRosterSectionId(null);setRosterError(true);}});
     return ()=>ctl.abort();
-  },[open,collegeId,sectionId]);
+  },[open,collegeId,sectionId,rosterRetry]);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -292,7 +294,7 @@ export function CreateProjectControl({
             </span>
           </label>
           <label className="grid gap-1 text-sm font-semibold">Class
-            <select value={sectionId} onChange={e=>{setSectionId(e.target.value);setRoster([]);setLearnerMembershipIds([]);setLoadedRosterSectionId(null);}}
+            <select value={sectionId} onChange={e=>{setSectionId(e.target.value);setRoster([]);setLearnerMembershipIds([]);setLoadedRosterSectionId(null);setRosterError(false);}}
               className="min-h-11 rounded-md border border-border bg-background px-3">
               <option value="">No class</option>
               {classes.map(item=><option key={item.id} value={item.id}>{item.name} · {item.code}</option>)}
@@ -308,7 +310,8 @@ export function CreateProjectControl({
           {!mentorMembershipId?<p className="text-xs text-warning">This workspace has no mentor.</p>:null}
           {sectionId?<section className="rounded-lg border border-border p-3">
             <p className="mb-2 text-sm font-semibold">Students · {learnerMembershipIds.length} selected</p>
-            {loadedRosterSectionId!==sectionId?<p role="status" className="text-sm text-body">Loading class roster, or temporarily unavailable. Do not submit until it loads.</p>:null}
+            {rosterError?<p role="alert" className="text-sm text-error">Class roster could not load. <button type="button" className="min-h-11 underline" onClick={()=>{setRosterError(false);setRosterRetry(value=>value+1);}}>Try again</button></p>:null}
+            {!rosterError&&loadedRosterSectionId!==sectionId?<p role="status" className="text-sm text-body">Loading class roster…</p>:null}
             <div className="flex gap-3 text-xs">
               <button type="button" disabled={loadedRosterSectionId!==sectionId} className="min-h-11 text-primary-text underline disabled:opacity-50"
                 onClick={()=>setLearnerMembershipIds(roster.map(x=>x.membershipId))}>Whole class</button>
