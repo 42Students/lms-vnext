@@ -38,7 +38,7 @@ const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"portfolio",label:"Portfolio (profile entry)",read:row=>row.profileFacts?.portfolio??"Not recorded"},
  {key:"experiences",label:"Experience entries",read:row=>row.profileFacts?.experiences??0},
  {key:"skills",label:"Skills",read:row=>row.profileFacts?.skills??0},
- {key:"projects",label:"Profile projects (self-reported)",read:row=>row.profileFacts?.projects??0},
+ {key:"projects",label:"Projects",tooltip:()=> "Self-reported learner profile entries; not verified Projects workspace outcomes",read:row=>row.profileFacts?.projects??0},
  {key:"resume",label:"Resume",read:row=>row.profileFacts?.resume?"Provided":"Not provided"},
  {key:"codingProfiles",label:"Coding profiles",read:row=>row.profileFacts?.codingProfiles?"Provided":"Not provided"},
  {key:"certifications",label:"Certifications",read:row=>row.profileFacts?.certifications??0},
