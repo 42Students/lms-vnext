@@ -63,5 +63,5 @@ export async function readModuleDisableImpact(ctx:RequestContext,collegeRaw:stri
   return {module:moduleName,counts,summary:moduleDisableImpactSummary(moduleName,counts)};
  }
  await assertCurrentImpactScope(ctx,collegeId,college.organizationId);
-  return {module:moduleName,students,counts:[],summary:moduleDisableImpactSummary(moduleName,[])};
+ return {module:moduleName,students,counts:[],summary:moduleDisableImpactSummary(moduleName,[])};
 }
