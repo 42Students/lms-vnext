@@ -227,3 +227,7 @@ The verified-selection recovery path formerly read an offer and recorded-at time
 ### PLACEMENTS-SELECTION-CAS-04 — runtime behavioural revision matrix
 
 To move beyond source-string-only checks, `matchesTpoSelectionReleaseRevision` now provides one deterministic pure policy used by both lost-response reconciliation and post-issuance settlement. It requires a valid persisted `recordedAt` instant and exact optimistic timestamp, candidate application, role title and annual CTC. Neither invalid dates nor null-versus-number salary drift are tolerated. `tests/unit/chat5-placement-selection-safe-results.test.ts` exercises matching and changed timestamp/application/role/CTC/invalid-clock cases. The service still separately checks row state and canonical `kind='OFFER'` evidence under the lock. Execution pending cloud CI.
+
+### PLACEMENTS-OFFER-SEASON-05 / PLACEMENTS-SELECTION-SEASON-06
+
+An inconsistent PUBLISHED job can outlive its parent season. Closing it for reconciliation remains allowed, but fresh official offers and recorded or verified company selections now require the same-college season to be ACTIVE. `issuePlacementOffer` checks the season under a transaction read lock; the TPO selection service uses one active-season guard inside each of its four write branches. The existing closed-season PostgreSQL fixture now checks no offer and no selection are created before the administrator closes the drive. Pure/source guard tests cover the early failure. CI/PostgreSQL execution is still pending.
