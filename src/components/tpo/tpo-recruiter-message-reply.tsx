@@ -66,7 +66,7 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
   <h2 className="font-semibold text-foreground">Reply</h2>
   <div role="group" aria-label="Quick replies" className="flex flex-wrap gap-2">
     {TPO_QUICK_REPLIES.map(reply=><button key={reply} type="button" disabled={busy}
-      className="min-h-10 rounded-md border border-border px-3 text-sm text-body"
+      className="min-h-11 rounded-md border border-border px-3 text-sm text-body"
       onClick={()=>persistDraft(body?body+" "+reply:reply)}>{reply}</button>)}
    </div>
   <form onSubmit={event=>{event.preventDefault();void post("messages");}} className="space-y-3">
@@ -82,7 +82,7 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
     <button type="button" disabled={busy||!body.trim()} onClick={discardDraft}
      className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold">Discard draft</button>
     <button type="submit" disabled={busy||!body.trim()}
-     className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+     className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50">
       Send message
     </button>
     {discardReview?<p role="status" className="w-full text-sm">Discard your unsent message? Select Discard draft again to confirm, or keep typing to cancel.</p>:null}

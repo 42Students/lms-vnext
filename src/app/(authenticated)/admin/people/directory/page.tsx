@@ -5,6 +5,10 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Pagination } from "@/components/ui/pagination";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { MEMBERSHIP_ROLES, MEMBERSHIP_STATUSES, USER_PLATFORM_STATUSES } from "@/modules/identity/constants";
 import { adminUsersQuerySchema, adminUsersHref, adminPeopleSearchState } from "@/modules/people/admin-user-directory-model";
@@ -26,7 +30,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
  const membershipOptions = ["ALL", ...MEMBERSHIP_STATUSES] as const;
  const platformOptions = ["ALL", ...USER_PLATFORM_STATUSES] as const;
  const tabForm=adminPeopleSearchState(data.query);
- return <div className="space-y-5">
+ return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · People" title="People Directory"
    description="Read-only membership directory within the active organization/college scope. Global mode lists membership records, not unrelated personal data."
    actions={<SuperAdminPeopleCsvControl href={superAdminPeopleExportHref(data.query)} />}/>
@@ -39,9 +43,9 @@ export default async function SuperAdminUserDirectory({searchParams}:{
      (data.query.tab===tab.id?"border-primary bg-primary-subtle text-[var(--lms-teal-deep)]":"border-border text-body")}>{tab.label}</Link>)}
   </nav>
   <nav aria-label="Related people views" className="flex flex-wrap items-center gap-3 text-sm">
-   <Link href="/admin/students" className="font-semibold text-[var(--lms-teal-deep)] underline">Student accounts</Link>
-   <Link href="/admin/faculty" className="font-semibold text-[var(--lms-teal-deep)] underline">Faculty accounts</Link>
-   <Link href="/admin/faculty-assignment" className="font-semibold text-[var(--lms-teal-deep)] underline">Teaching assignments</Link>
+   <Link href="/admin/students" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Student accounts</Link>
+   <Link href="/admin/faculty" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Faculty accounts</Link>
+   <Link href="/admin/faculty-assignment" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Teaching assignments</Link>
   </nav>
   <p className="text-xs text-muted-foreground">
    {data.query.tab==="STUDENT"?"Learner memberships":data.query.tab==="FACULTY"?"Faculty memberships":"All permitted memberships"} ·
@@ -51,27 +55,27 @@ export default async function SuperAdminUserDirectory({searchParams}:{
   <form method="get" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-5">
    <input type="hidden" name="tab" value={tabForm.hiddenTab} />
    <label className="grid gap-1 text-sm font-semibold text-body">Name or college
-    <input type="search" name="q" maxLength={100} defaultValue={query.data.q}
+    <Input type="search" name="q" maxLength={100} defaultValue={query.data.q}
      className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Role
-    <select name="role" disabled={!tabForm.showExplicitRoleFilter} defaultValue={query.data.role} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+    <Select name="role" disabled={!tabForm.showExplicitRoleFilter} defaultValue={query.data.role} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
      {roleOptions.map(x=><option key={x} value={x}>{x}</option>)}
-    </select>
+    </Select>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Membership
-    <select name="membershipStatus" defaultValue={query.data.membershipStatus}
+    <Select name="membershipStatus" defaultValue={query.data.membershipStatus}
      className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
      {membershipOptions.map(x=><option key={x} value={x}>{x}</option>)}
-    </select>
+    </Select>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Platform
-    <select name="platformStatus" defaultValue={query.data.platformStatus}
+    <Select name="platformStatus" defaultValue={query.data.platformStatus}
      className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
      {platformOptions.map(x=><option key={x} value={x}>{x}</option>)}
-    </select>
+    </Select>
    </label>
-   <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Filter</button>
+   <Button type="submit" className="self-end">Filter</Button>
   </form>
   <p className="text-xs text-muted-foreground">{data.total} matching memberships · page {data.query.page} of {data.totalPages} · 30 per page</p>
   {data.items.length?<div className="grid gap-3 md:grid-cols-2">
@@ -94,10 +98,8 @@ export default async function SuperAdminUserDirectory({searchParams}:{
     <p className="mt-2 text-xs text-muted-foreground">Membership updated {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(row.updatedAt)} IST</p>
    </article>)}
   </div>:<EmptyState title="No matching users" description="No memberships match these filters within the current safety scope."/>}
-  <nav aria-label="Users pages" className="flex flex-wrap gap-3 text-sm">
-   {data.query.page>1?<Link href={adminUsersHref({...data.query,page:data.query.page-1})} className="font-semibold text-[var(--lms-teal-deep)]">Previous</Link>:null}
-   {data.query.page<data.totalPages?<Link href={adminUsersHref({...data.query,page:data.query.page+1})} className="font-semibold text-[var(--lms-teal-deep)]">Next</Link>:null}
-  </nav>
+  <Pagination label="Users pages" page={data.query.page} pageCount={data.totalPages}
+    hrefForPage={page=>adminUsersHref({...data.query,page})}/>
   <Link href="/admin/people" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">← Membership management</Link>
  </div>;
 }

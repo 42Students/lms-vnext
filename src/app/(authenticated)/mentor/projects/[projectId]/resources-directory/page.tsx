@@ -16,7 +16,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
  if(!parsed)return <section role="alert" className="space-y-3">
   <h1>Invalid resource filters</h1>
   <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/resources-directory"}
-   className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear invalid filters</Link>
+   className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear invalid filters</Link>
  </section>;
  const data=await getMentorResourceDirectory(await getCurrentRequestContext(),parsed);
  const base="/mentor/projects/"+encodeURIComponent(projectId);
@@ -72,7 +72,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
     <Button type="submit" variant="primary">
      Filter
     </Button>
-    <Link href={base+"/resources-directory" } className="text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+    <Link href={base+"/resources-directory" } className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
      Clear
     </Link>
    </form>
@@ -114,9 +114,9 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
     <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
     <div className="flex gap-3">
      {data.page>1?<Link href={mentorResourceDirectoryHref({...data.query,page:data.page-1})}
-      className="text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>:null}
+      className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>:null}
      {data.page<data.totalPages?<Link href={mentorResourceDirectoryHref({...data.query,page:data.page+1})}
-      className="text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>:null}
+      className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>:null}
     </div>
    </nav>
   </>}

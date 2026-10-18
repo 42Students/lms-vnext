@@ -7,6 +7,7 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { getPlacementJob } from "@/modules/placements/job-service";
 import { PageHeader } from "@/components/ui/page-header";
+import { ThirdPartyLink } from "@/components/ui/third-party-link";
 export default async function DriveSettingsPage({params}:{params:Promise<{jobId:string}>}){
  const {jobId}=await params;
  const context=await getCurrentRequestContext();
@@ -38,9 +39,8 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
       <p className="whitespace-pre-wrap text-sm text-body">{job.legacyPostingDetails.responsibilities}</p>
     </div>:null}
     {job.legacyPostingDetails.assessmentUrl?
-      <p className="text-sm">Assessment URL: <a href={job.legacyPostingDetails.assessmentUrl}
-        target="_blank" rel="noopener noreferrer" className="break-all text-[var(--lms-teal-deep)] underline">
-        {job.legacyPostingDetails.assessmentUrl}</a></p>:null}
+      <p className="text-sm">Assessment URL: <ThirdPartyLink href={job.legacyPostingDetails.assessmentUrl}
+        label={job.legacyPostingDetails.assessmentUrl} /></p>:null}
     {job.legacyPostingDetails.assessmentDeadline?<p className="text-sm">
       Assessment deadline (IST): {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
         timeZone:"Asia/Kolkata"}).format(new Date(job.legacyPostingDetails.assessmentDeadline))}

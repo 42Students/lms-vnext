@@ -1,6 +1,7 @@
 "use client";
-import {useState} from "react";
+import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 type Decision="ELIGIBLE"|"INELIGIBLE"|"NOT_DECIDED";
 export function TpoBatchClassDecision({batchId,classId,initial,expectedVersion,finished}:{
  batchId:string;classId:string;initial:string;expectedVersion:string;finished:boolean;
@@ -8,11 +9,17 @@ export function TpoBatchClassDecision({batchId,classId,initial,expectedVersion,f
  const router=useRouter(),[choice,setChoice]=useState<Decision>(
   initial==="ELIGIBLE"?"ELIGIBLE":initial==="INELIGIBLE"?"INELIGIBLE":"NOT_DECIDED");
  const [reason,setReason]=useState(""),[busy,setBusy]=useState(false),[error,setError]=useState("");
+ const [confirmOpen,setConfirmOpen]=useState(false);
+ const inFlightRef=useRef(false);
  const changed=choice!==initial;
- async function submit(){
+ function review(){
   if(busy||!changed||finished)return;
   if(choice==="INELIGIBLE"&&reason.trim().length<3){setError("Provide a reason for ineligible decisions.");return;}
-  if(!window.confirm("Set this class to "+choice.replaceAll("_"," ").toLowerCase()+"? Student overrides are not changed."))return;
+  setConfirmOpen(true);
+ }
+ async function submit(){
+  if(inFlightRef.current||busy||!changed||finished)return;
+  inFlightRef.current=true;
   setBusy(true);setError("");
   try{
    const response=await fetch("/api/placements/tpo/batches/"+encodeURIComponent(batchId)+"/classes/"+encodeURIComponent(classId)+"/decision",{
@@ -20,24 +27,23 @@ export function TpoBatchClassDecision({batchId,classId,initial,expectedVersion,f
      decision:choice,expectedVersion,...(choice==="INELIGIBLE"?{reason:reason.trim()}:{}),
     }),
    });
-   const data=await response.json().catch(()=>null);
-   if(!response.ok)throw new Error(response.status===409?"Class decision changed; refresh and retry.":data?.error??"Could not save class decision.");
-   router.refresh();
+   if(!response.ok)throw new Error(response.status===409?"Class decision changed; refresh and retry.":"Could not save class decision.");
+   setConfirmOpen(false);router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Class decision failed.");}
-  finally{setBusy(false);}
+  finally{inFlightRef.current=false;setBusy(false);}
  }
  return <div className="space-y-2">
   <div className="flex flex-wrap items-end gap-2">
    <label className="grid gap-1 text-sm font-semibold">Who is in
     <select value={choice} onChange={e=>{setChoice(e.target.value as Decision);setError("");}} disabled={busy||finished}
-     className="min-h-10 rounded-md border border-border bg-surface px-3">
+     className="min-h-11 rounded-md border border-border bg-surface px-3">
      <option value="NOT_DECIDED">Follows the batch</option>
      <option value="ELIGIBLE">Eligible</option>
      <option value="INELIGIBLE">Ineligible</option>
     </select>
    </label>
-   <button type="button" onClick={()=>void submit()} disabled={busy||finished||!changed}
-    className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+   <button type="button" onClick={review} disabled={busy||finished||!changed}
+    className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50">
     {busy?"Saving…":"Save"}
    </button>
   </div>
@@ -46,5 +52,9 @@ export function TpoBatchClassDecision({batchId,classId,initial,expectedVersion,f
     disabled={busy||finished} className="w-full rounded-md border border-border bg-surface p-2" placeholder="Reason for ineligible decision"/>
   </label>:null}
   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
+  <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
+   title={"Set this class to "+choice.replaceAll("_"," ").toLowerCase()+"? Student overrides are not changed."}
+   confirmLabel="Save" confirmVariant="primary" pending={busy}
+   onConfirm={()=>void submit()}/>
  </div>;
 }

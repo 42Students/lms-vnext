@@ -35,7 +35,7 @@ export function CollegeDriveArchiveAction({jobId}:{jobId:string}){
   <h2 className="font-semibold">Delete drive</h2>
   <p className="text-sm text-muted-foreground">Safely archive instead of permanently erasing placement evidence.</p>
   {!preview?<button type="button" disabled={busy} onClick={()=>void load()}
-    className="min-h-10 rounded border border-border px-4 text-sm font-semibold">
+    className="min-h-11 rounded border border-border px-4 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
     {busy?"Loading…":"View delete impact"}</button>:
    <div className="space-y-2" role="group" aria-label="Delete drive impact">
     <p className="text-sm font-semibold">{preview.job.title} · {preview.job.status}</p>
@@ -47,12 +47,12 @@ export function CollegeDriveArchiveAction({jobId}:{jobId:string}){
     </p>:null}
     <div className="flex flex-wrap gap-3">
      {awaitingConfirmation?<button type="button" disabled={busy||!preview.canArchive} onClick={()=>void archive()}
-       className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+       className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
        {busy?"Archiving…":"Yes, archive drive"}</button>:
       <button type="button" disabled={busy||!preview.canArchive} onClick={()=>setAwaitingConfirmation(true)}
-       className="min-h-10 rounded border border-border px-4 text-sm font-semibold disabled:opacity-50">Archive drive</button>}
+       className="min-h-11 rounded border border-border px-4 text-sm font-semibold disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Archive drive</button>}
      <button type="button" disabled={busy} onClick={()=>{setAwaitingConfirmation(false);setPreview(null);}}
-      className="min-h-10 rounded border border-border px-4 text-sm">Cancel</button>
+      className="min-h-11 rounded border border-border px-4 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Cancel</button>
     </div>
    </div>}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
