@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { ScrollCue } from "@/components/ui/scroll-cue";
+import { Disclosure } from "@/components/ui/disclosure";
 import { cx } from "@/lib/class-names";
 
 export type DataTableColumn<Row> = {
@@ -87,13 +88,12 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
               </td>;
             })}
             {extra.length ? <td className="block min-w-0 py-1 sm:hidden">
-              <details className="mt-2 border-t border-border pt-2">
-                <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-[var(--lms-teal-deep)]">More details</summary>
+              <Disclosure title="More details" className="mt-2 pt-2">
                 <dl className="grid gap-2 text-sm">{extra.map(col=><div key={col.key} className="min-w-0">
                   <dt className="font-medium text-body">{col.mobileLabel??col.header}</dt>
                   <dd className="break-words text-foreground">{cell(item,col)}</dd>
                 </div>)}</dl>
-              </details>
+              </Disclosure>
             </td>:null}
             {recoverable.length ? <td className="block min-w-0 py-1 sm:hidden">
               <ul className="space-y-2" aria-label="Fields on detail page">
