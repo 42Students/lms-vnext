@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import {
   canActOnEntireTpoView,
   isTpoBulkPageSelected,
@@ -119,5 +121,32 @@ describe("TPO-students-14 bounded request payload", () => {
     await expect(readTpoBulkRequestBody(request("[]"))).rejects.toMatchObject({ status: 400 });
     await expect(readTpoBulkRequestBody(request("x".repeat(TPO_BULK_BODY_MAX_BYTES + 1)))).rejects.toMatchObject({ status: 413 });
     await expect(readTpoBulkRequestBody(request('{"target":"STUDENTS"}'))).resolves.toMatchObject({ target: "STUDENTS" });
+  });
+});
+
+describe("TPO-students-14 client boundary and streaming resource guard", () => {
+  it("keeps the interactive bulk panel marked as a client component before any import", () => {
+    const file = readFileSync(resolve(process.cwd(), "src/components/tpo/tpo-bulk-action-panel.tsx"), "utf8");
+    expect(file.trimStart().startsWith('"use client";')).toBe(true);
+    expect(file).toContain("useGuardedAction");
+    expect(file).toContain("isTpoBulkPreviewCurrent");
+  });
+
+  it("rejects oversize chunked requests without a Content-Length header", async () => {
+    const stream = new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(new Uint8Array(60 * 1024));
+        controller.enqueue(new Uint8Array(8 * 1024));
+        controller.close();
+      },
+    });
+    const request = new Request("http://localhost/api/placements/tpo/bulk-actions/confirm", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: stream,
+      duplex: "half",
+    } as RequestInit & { duplex: "half" });
+    expect(request.headers.get("content-length")).toBeNull();
+    await expect(readTpoBulkRequestBody(request)).rejects.toMatchObject({ status: 413 });
   });
 });
