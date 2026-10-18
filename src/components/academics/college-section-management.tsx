@@ -126,7 +126,7 @@ export function CollegeClassCreate({ cohorts, periods }: {
         <p className="text-xs text-muted-foreground sm:col-span-2 lg:col-span-5">Moving a student into a full section is refused.</p>
         <div className="sm:col-span-2 lg:col-span-5">
           <button disabled={pending} type="submit"
-            className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-50">
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-50">
             {pending ? "Creating…" : "Create class"}
           </button>
         </div>
@@ -210,11 +210,11 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
         {notice ? <p role="alert" className="text-sm text-body">{notice}</p> : null}
         <div className="flex justify-end gap-2">
           <button disabled={pending} type="button" onClick={cancel}
-            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
             Cancel
           </button>
           <button disabled={pending || !changed} type="submit"
-            className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
             {pending ? "Saving…" : "Save changes"}
           </button>
         </div>
