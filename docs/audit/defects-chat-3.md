@@ -188,6 +188,16 @@ The selected `/admin/faculty-assignment`, `/admin/people/directory`, and global 
 
 **Fix:** Each entrypoint now redirects non-Super-Admin actors before the list data load. Existing central permission service checks remain in force. `tests/unit/chat3-sa-academics-people-root-platform-roles.test.ts` explicitly verifies `SA-PEOPLE-ROOT-02`. Tests authored, not run; browser and CI checks pending.
 
+### SA-ACADEMICS-BATCH-COUNT-033 — disabled account included in class occupancy but absent from roster (S1)
+
+In the selected-college Super Admin batch detail, class occupancy counted `college_memberships.id` for an active program and Section enrollment. The detailed roster instead joins `users.platform_status = ACTIVE`. A suspended platform user with a still-active membership could inflate a classroom's occupancy and capacity warning while never appearing in the roster or CSV.
+
+**Fix:** Left-join active users into the occupancy query and count `users.id`, retaining cohort, class and college restrictions. `tests/unit/chat3-sa-academics-batch-roster-privacy.test.ts` asserts the compiled Drizzle predicates, legitimate query and authorization guard. PostgreSQL mismatched-account fixtures and browser counts remain unverified.
+
+### SA-ACADEMICS-BATCH-CSV-034 — invisible-prefix CSV formula injection in batch roster export (S2)
+
+Batch roster CSV encoding neutralized formulas after ordinary whitespace and ASCII controls, but not U+200B, U+2066, U+FEFF and bidirectional controls. Spreadsheet imports may interpret a concealed `=+` expression after stripping these characters. The batch CSV model now neutralizes those prefixes, preserving standard quoting/BOM and all four fields; `tests/unit/chat3-sa-batch-roster-csv-formula-protection.test.ts` exercises direct behavioral serialization. CI and spreadsheet-app import verification pending.
+
 ### SA-ACADEMICS-ROOT-031 — administrative Academics and People pages delegated role separation only to layout (S1)
 
 The root `/admin/academics` page read the selected college workspace without a local platform-role gate, relying on the shared route layout to stop an ordinary user reaching it. `/admin/people` similarly relied on layout and deeper membership permission checks. Generic `academics.read` is valid for Faculty and Learner memberships within their own college; it must not accidentally authorize a platform-admin page when a stale session carries an `adminScope`.
