@@ -278,7 +278,7 @@ describe("Super Admin UX first-third rollout",()=>{
    expect(page).toContain('<Pagination page={page} pageCount={pages} hrefForPage={href}');
    expect(page).not.toContain('lg:hidden');
    expect(page).not.toContain('lg:block');
-   expect(page).toContain('empty={<EmptyState title="No active colleges in this scope"');
+   expect(page).toContain('empty={<EmptyState title={q ? "No colleges match your search" : "No active colleges in this scope"}');
  });
  it("UX-admin-batch-promotion-02 keeps Preview accessible on phone without a wide table",()=>{
    const page=read("src/app/(authenticated)/admin/batch-promotion/page.tsx");
