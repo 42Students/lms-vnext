@@ -2,6 +2,8 @@ import Link from "next/link";
 import {DataTable} from "@/components/ui/data-table";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import {ErrorState} from "@/components/ui/error-state";
+import {parseAdminSessionHistoryPage} from "@/modules/colleges/admin-session-query-model";
 import {listCollegeAdminHistory} from "@/modules/colleges/admin-session-service";
 export const dynamic="force-dynamic";
 export default async function AdministratorHistoryPage({params,searchParams}:{
@@ -10,8 +12,13 @@ export default async function AdministratorHistoryPage({params,searchParams}:{
 }){
  const {collegeId,userId}=await params;
  const raw=await searchParams;
- const page=Array.isArray(raw.page)?raw.page[0]:raw.page;
- const data=await listCollegeAdminHistory(await getCurrentRequestContext(),collegeId,userId,page??1);
+ const page=parseAdminSessionHistoryPage(raw);
+ if(page===null)return <div className="min-w-0 space-y-5">
+  <PageHeader eyebrow="Super Admin · Tenant" title="Administrator activity history"/>
+  <ErrorState title="Invalid history page" description="Choose a valid page without repeated or unrelated filters."
+   action={<Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history"} className="inline-flex min-h-11 items-center font-semibold underline">Clear history filters</Link>}/>
+ </div>;
+ const data=await listCollegeAdminHistory(await getCurrentRequestContext(),collegeId,userId,page);
  const base="/admin/colleges/"+encodeURIComponent(collegeId)+"/admins";
  const format=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
   dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
