@@ -14,12 +14,12 @@ Tests are in:
 |---|---|---|---|
 | `avatar.tsx` | `avatarInitials, Avatar` | STATES-09; HARDEN-11 | blank/long name, image referrer policy, initials |
 | `bottom-sheet.tsx` | `BottomSheet` | STATES-05; HARDEN-16 | nondismissible, accessible title, safe area and scroll |
-| `breadcrumbs.tsx` | `Breadcrumbs` | STATES-09; HARDEN-09 | last item not linked; current-page a11y |
+| `breadcrumbs.tsx` | `Breadcrumbs` | STATES-09; HARDEN-09; HARDEN-35 | last item not linked; unsafe external/encoded hrefs become text; current-page a11y |
 | `button.tsx` | `Button` | STATES-01; HARDEN-01 | variants, loading, disabled, submit and 44px |
 | `card.tsx` | `Card` | STATES-12; HARDEN-10 | heading, semantic article, footer action |
 | `confirm-action-dialog.tsx` | `ConfirmActionDialog` | STATES-04; HARDEN-16 | pending disables action; consequences and cancel |
 | `confirm-dialog.tsx` | `ConfirmDialog` | STATES-04; HARDEN-16 | pending/disabled destructive action, no dismiss |
-| `data-table.tsx` | `DataTable, isSafeDataTableHref` | HARDEN-17; HARDEN-27; HARDEN-30 | empty, formatted cell once, mobile, unsafe row links |
+| `data-table.tsx` | `DataTable, isSafeDataTableHref` | HARDEN-17; HARDEN-27; HARDEN-30; HARDEN-35 | empty, formatted cell once, mobile, shared guarded row links |
 | `dialog.tsx` | `Dialog` | STATES-05; HARDEN-16 | nondismissible title, safe viewport, scroll |
 | `disabled-reason.tsx` | `DisabledReason` | HARDEN-07 | reason associated with disabled control |
 | `disclosure.tsx` | `Disclosure` | STATES-12; HARDEN-12 | semantic details/summary and defaultOpen |
@@ -65,3 +65,5 @@ Tests are in:
 **CI commands:** `npm run test:ux:kit:hardening` and `npm run typecheck`. Re-run with source `main` rebased into `chatgpt/chat-17-b` and update this ledger based on cloud results.
 
 - **UX-kit-HARDEN-33..34:** Tabs now select the first enabled panel when an old bookmark points to a missing/disabled tab, with consistent selected ARIA and keyboard tabstop. FileUpload connects helper, error and unavailable text with combined IDs rather than replacing one with another. Corresponding `tests/unit/UX-kit-states-chat17.test.tsx` cases guard both.
+
+- **UX-kit-HARDEN-35:** `src/lib/safe-internal-href.ts` centralizes percent-encoding-aware absolute path validation. `DataTable` retains its prior public export, and `Breadcrumbs` now denies external/obfuscated hrefs without disabling valid internal links. Negative and valid link assertions are in `UX-kit-role-and-overlay-chat17.test.tsx`.
