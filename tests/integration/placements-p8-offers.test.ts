@@ -411,6 +411,23 @@ describe("Placement P8 offers and joining", () => {
       joiningDate: "2027-02-03",
     });
 
+    // PLACEMENTS-JOINING-01: same payload is a safe retry after a lost HTTP
+    // response, not an implicit correction, second history row or notification.
+    const historyBeforeRetry = await pool.query<{ total: number }>(
+      "select count(*)::integer as total from placement_joining_history where offer_id = $1",
+      [issued.id],
+    );
+    const repeatedJoining = await recordPlacementJoiningOutcome(tpo, issued.id, {
+      status: "JOINED",
+      joiningDate: "2027-02-03",
+    });
+    expect(repeatedJoining.id).toBe(joined.id);
+    const historyAfterRetry = await pool.query<{ total: number }>(
+      "select count(*)::integer as total from placement_joining_history where offer_id = $1",
+      [issued.id],
+    );
+    expect(historyAfterRetry.rows[0]?.total).toBe(historyBeforeRetry.rows[0]?.total);
+
     const lifecycleEvents =
       await pool.query<{
         event_type: string;
