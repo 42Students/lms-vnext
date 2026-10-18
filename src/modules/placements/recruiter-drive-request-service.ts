@@ -13,7 +13,7 @@ import {recruiterOwnJobPredicate} from "./recruiter-job-ownership";
 import {tpoComparableDriveSnapshot} from "./tpo-drive-request-diff-model";
 import {recruiterDriveRequestInputSchema,recruiterRequestUpdateSchema,canRecruiterResubmit} from "./recruiter-drive-request-model";
 import {z} from "zod";
-import {recruiterDriveApprovalPolicy} from "./recruiter-drive-autoapproval-policy";
+import {recruiterDriveApprovalPolicy,recruiterAutoApprovalExplanation} from "./recruiter-drive-autoapproval-policy";
 import {createRecruiterApprovedDraftJob,RecruiterDraftApprovalError} from "./recruiter-approved-draft-job-service";
 
 export class RecruiterDriveRequestError extends Error{
@@ -78,7 +78,8 @@ async function informPlacementCell(tx:Tx,context:RequestContext,scope:{collegeId
   .where(and(eq(collegeMemberships.collegeId,scope.collegeId),eq(collegeMemberships.status,"ACTIVE")));
  if(recipients.length) await tx.insert(inAppNotifications).values(recipients.map(recipient=>({
   userId:recipient.userId,eventId:event.id,title:headline,
-  body:action==="AUTO_APPROVED"?"A verified recruiter request met this college\u0027s approval policy. A draft was created; the placement cell still controls publication.":
+  body:action==="AUTO_APPROVED"?"A verified recruiter request met this college\u0027s approval policy: "+
+   recruiterAutoApprovalExplanation(autoApproval?.reason)+". A draft was created; the placement cell still controls publication.":
     action==="NEW"?"A recruiter sent a formal drive request. Open Drive lifecycle to inspect the recorded request.":
     action==="UPDATED"?"A recruiter saved changes to a drive request. Open Drive lifecycle to review the new version.":
     "A recruiter cancelled a drive request. Open Drive lifecycle to review its history.",actionHref:"/tpo/placements/lifecycle?view=REQUESTS",

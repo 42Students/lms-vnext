@@ -5,7 +5,7 @@ import {
  type RoundResultEntry,
 } from "@/modules/placements/tpo-round-result-table-model";
 import {
- offerRegisterQuery,projectOfferRegister,tpoDriveOfferRegisterCsv,offerExpiryIndicator,
+ offerRegisterQuery,projectOfferRegister,tpoDriveOfferRegisterCsv,offerExpiryIndicator,offerResponseHoursRemaining,optionalOfferInstantIso,
  type OfferRegisterFact,
 } from "@/modules/placements/tpo-drive-offer-register-model";
 import {tpoOfferEvidenceQuery,projectOfferEvidence} from "@/modules/placements/tpo-offer-evidence-model";
@@ -40,6 +40,23 @@ describe("chat-5 TPO second-third: direct route authorization, negative and empt
    expect(code).not.toContain("window.prompt(");
   });
  }
+ it("PLACEMENTS-WAIT-UI-10 prevents synchronous double-submit and contains broken JSON error responses",()=>{
+  const control=src("src/components/placements/tpo-waitlist-promotion-control.tsx");
+  expect(control).toContain("const inFlight=useRef(false)");
+  expect(control).toContain("if(!preview.next||inFlight.current||reason.trim().length<3)return");
+  expect(control).toContain("inFlight.current=true");
+  expect(control).toContain("inFlight.current=false");
+  expect(control).toContain("apiFetch<{seatNumber?:number}>");
+  expect(control).toContain("timeoutMs:35000");
+  expect(control).toContain('typeof data?.seatNumber!=="number"');
+  expect(control).toContain("Number.isSafeInteger(data.seatNumber)");
+  expect(control).toContain("data.seatNumber<1");
+  expect(control).not.toContain("await fetch(");
+  expect(control).not.toContain("new Error(data.error)");
+  expect(control).toContain("Refresh the preview before retrying.");
+  expect(control).toContain("setConfirmOpen(false)");
+  expect(control).toContain("setError(");
+ });
  it("TPO-2ND-PAGE-lifecycle-02 keeps the active scoped permission in the drive list and exposes zero/error states",()=>{
   const code=src("src/app/(authenticated)/tpo/placements/lifecycle/page.tsx");
   expect(code).toContain('can(context,"placements.manage",{collegeId:context.membership.collegeId})');
@@ -115,6 +132,30 @@ describe("chat-5 TPO second-third: behavioural round and offer reporting",()=>{
   const pageSource=src("src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/page.tsx");
   expect(pageSource).toContain('["EXPIRED","Expired",data.counts.expired]');
   expect(offerRegisterQuery.safeParse({jobId:uuid,status:"CANCELLED"}).success).toBe(false);
+ });
+ it("PLACEMENTS-OFFERS-EXPIRY-07 never crashes or invents response hours for malformed optional timestamps",()=>{
+  const asOf=new Date("2099-10-18T10:00:00.000Z");
+  const invalid=new Date(Number.NaN);
+  const broken:OfferRegisterFact={offer:{
+    id:"invalid-optional",status:"ISSUED",kind:"OFFER",roleTitle:"Engineer",
+    annualCtcInr:900000,issuedAt:asOf,respondedAt:invalid,expiresAt:invalid,
+    acceptedDisputableUntil:invalid,
+  },joining:null,candidate};
+  expect(optionalOfferInstantIso(invalid)).toBeNull();
+  expect(optionalOfferInstantIso(asOf)).toBe(asOf.toISOString());
+  expect(offerResponseHoursRemaining("ISSUED",invalid,asOf)).toBeNull();
+  expect(offerResponseHoursRemaining("ISSUED",asOf,invalid)).toBeNull();
+  expect(offerResponseHoursRemaining("ACCEPTED",asOf,asOf)).toBeNull();
+  const projected=projectOfferRegister([broken],"ALL",1,"","ALL",asOf);
+  expect(projected.rows[0]).toMatchObject({
+    expires:null,responded:null,acceptedDisputableUntil:null,
+    respondByHours:null,expiryIndicator:"UNKNOWN",
+  });
+  const csv=tpoDriveOfferRegisterCsv([broken],offerRegisterQuery.parse({jobId:uuid}));
+  expect(csv.totalMatching).toBe(1);
+  expect(csv.csv).toContain("Not recorded");
+  expect(csv.csv).toContain("UNKNOWN");
+  expect(csv.csv).not.toContain("NaN");
  });
  it("PLACEMENTS-OFFERS-EXPIRY-04 distinguishes exact deadline, seven-day edge and invalid evidence",()=>{
   const expiry=new Date("2099-10-25T10:00:00.000Z");

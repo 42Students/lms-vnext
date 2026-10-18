@@ -45,6 +45,17 @@ export const tpoOfferLifecycleInputSchema = z.object({
 /** A TPO records an actual joining, not a scheduled future event.
  * Date-only decisions use the college's IST day, not the server locale.
  */
+/** A datetime-local control carries no timezone. Interpret it in IST,
+ * independent of faculty/TPO browser timezone, and reject date rollover. */
+export function parseTpoOfferExpiryIstInput(value:string):string|null{
+ if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value))return null;
+ const utc=Date.parse(value+":00.000Z");
+ if(!Number.isFinite(utc))return null;
+ const local=new Date(utc);
+ if(local.toISOString().slice(0,16)!==value)return null;
+ return new Date(utc-330*60_000).toISOString();
+}
+
 export function canRecordTpoActualJoiningDate(date: string, now: Date): boolean {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !Number.isFinite(now.getTime())) return false;
   const parsed = new Date(date + "T00:00:00Z");
@@ -65,12 +76,15 @@ export function canRecordTpoOfferAction(
     case "EXTEND":
     case "RECORD_ACCEPTED":
     case "RECORD_DECLINED":
-      return status === "ISSUED";
+      // A valid ISSUED offer cannot already have joining history. Corrupted
+      // cross-state evidence is not permission to rewrite the official status.
+      return status === "ISSUED" && joiningStatus === null;
     case "RECORD_JOINED":
       return status === "ACCEPTED" &&
         (joiningStatus === null || joiningStatus === "PENDING");
     case "WITHDRAW":
-      return (status === "ISSUED" || status === "ACCEPTED") &&
-        (status !== "ACCEPTED" || joiningStatus === null || joiningStatus === "PENDING");
+      return (status === "ISSUED" && joiningStatus === null) ||
+        (status === "ACCEPTED" &&
+          (joiningStatus === null || joiningStatus === "PENDING"));
   }
 }

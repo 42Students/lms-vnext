@@ -17,3 +17,14 @@ export function sameTpoBulkRequestRun(
  const submitted=new Set(input.requestIds);
  return ids.every(id=>submitted.has(id));
 }
+
+/** A replay reports exactly the originally audited number of decided rows.
+ * Missing, malformed or impossible counts cannot be replaced with fresh
+ * statuses, because the underlying decisions may have changed since the run. */
+export function persistedTpoBulkRequestCount(metadata:unknown,selectedSize:number):number|null{
+ if(!metadata||typeof metadata!=="object"||Array.isArray(metadata)||
+    !Number.isSafeInteger(selectedSize)||selectedSize<1||selectedSize>10)return null;
+ const value=(metadata as Record<string,unknown>).verifiedCount;
+ return typeof value==="number"&&Number.isSafeInteger(value)&&
+  value>=0&&value<=selectedSize?value:null;
+}
