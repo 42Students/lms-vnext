@@ -1,5 +1,5 @@
 import {describe,expect,it} from "vitest";
-import {planInterviewDay,tpoInterviewSlotActionSchema} from "@/modules/placements/tpo-interview-slot-model";
+import {planInterviewDay,sameInterviewRoom,tpoInterviewSlotActionSchema} from "@/modules/placements/tpo-interview-slot-model";
 import {overlappingInterviewVenue,validInterviewWindow} from "@/modules/placements/tpo-interview-reschedule-model";
 
 // TPO-drive-workspace-44: direct callers must be as safe as schema-validated API callers.
@@ -33,6 +33,10 @@ describe("TPO-BREAK-interview-01 day planner and venue safety",()=>{
    .toThrow("Room names must be different");
   expect(planInterviewDay({...input,rooms:[" Hall A "],slotsPerRoom:1})[0].room)
    .toBe("Hall A");
+  expect(sameInterviewRoom("Room A"," room a ")).toBe(true);
+  expect(sameInterviewRoom("Ｒｏｏｍ　Ａ","Room A")).toBe(true);
+  expect(sameInterviewRoom("Room B","Room A")).toBe(false);
+  expect(()=>planInterviewDay({...input,rooms:null} as unknown as typeof input)).toThrow("Invalid interview day configuration");
  });
  it("rejects slots that run past 23:59 IST instead of silently crossing college days",()=>{
   expect(()=>planInterviewDay({...input,startsAt:"2026-10-20T23:40:00+05:30",durationMinutes:30,slotsPerRoom:1}))

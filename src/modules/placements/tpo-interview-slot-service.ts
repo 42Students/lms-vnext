@@ -10,7 +10,7 @@ import {PlacementsServiceError} from "./errors";
 import {placementTableExists} from "./staged-tables";
 import {requireTpoJobCollege,requireTpoJobActor,type TpoJobTx} from "./tpo-job-write-base";
 import {placementJobIdSchema,placementRoundIdSchema} from "./validation";
-import {planInterviewDay,tpoInterviewSlotActionSchema} from "./tpo-interview-slot-model";
+import {planInterviewDay,sameInterviewRoom,tpoInterviewSlotActionSchema} from "./tpo-interview-slot-model";
 import {actOnPlacementRequest} from "./request-service";
 
 async function scope(context:RequestContext,rawJobId:unknown,rawRoundId:unknown){
@@ -130,7 +130,7 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
    if(proposed.some(p=>p.startsAt.getTime()<=Date.now()))throw Error("New interview slots must be in the future.");
    const existing=await tx.select().from(placementRoundCandidateSlots).where(and(
     eq(placementRoundCandidateSlots.roundId,info.round.id),ne(placementRoundCandidateSlots.status,"CANCELLED")));
-   if(proposed.some(p=>existing.some(e=>e.room.toLowerCase()===p.room.toLowerCase()&&
+   if(proposed.some(p=>existing.some(e=>sameInterviewRoom(e.room,p.room)&&
     e.startsAt<p.endsAt&&e.endsAt>p.startsAt)))throw Error("These times overlap an existing room booking.");
    const saved=await tx.insert(placementRoundCandidateSlots).values(proposed.map(p=>({
     jobId:job.id,roundId:info.round.id,room:p.room,startsAt:p.startsAt,endsAt:p.endsAt,
@@ -200,9 +200,9 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
    let changed=0;const skipped:Array<{applicationId:string;reason:string}>=[];
    for(const item of eligible){
     const slot=item.slot;
-    if(slot.room.toLowerCase()===input.room.toLowerCase())continue;
+    if(sameInterviewRoom(slot.room,input.room))continue;
     const conflict=all.some(other=>other.id!==slot.id&&other.status!=="CANCELLED"&&
-     other.room.toLowerCase()===input.room.toLowerCase()&&
+     sameInterviewRoom(other.room,input.room)&&
      other.startsAt<slot.endsAt&&other.endsAt>slot.startsAt);
     if(conflict){
      skipped.push({applicationId:slot.applicationId!,reason:"Room already has an overlapping slot"});continue;
@@ -290,14 +290,14 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
    throw new PlacementsServiceError("PLACEMENT_ROUND_STALE");
   if(input.action==="ASSIGN_ROOM"){
    // An unchanged room is not a new edit: no version bump and no duplicate notice.
-   if(slot.room.trim().toLocaleLowerCase("en-IN")===input.room.trim().toLocaleLowerCase("en-IN"))
+   if(sameInterviewRoom(slot.room,input.room))
     return {changed:0};
    const collisions=await tx.select({id:placementRoundCandidateSlots.id})
     .from(placementRoundCandidateSlots).where(and(
      eq(placementRoundCandidateSlots.roundId,info.round.id),
      ne(placementRoundCandidateSlots.id,slot.id),
      ne(placementRoundCandidateSlots.status,"CANCELLED"),
-     sql`lower(${placementRoundCandidateSlots.room}) = lower(${input.room})`,
+     sql`lower(trim(${placementRoundCandidateSlots.room})) = lower(trim(${input.room}))`,
      sql`${placementRoundCandidateSlots.startsAt} < ${slot.endsAt}`,
      sql`${placementRoundCandidateSlots.endsAt} > ${slot.startsAt}`)).limit(1);
    if(collisions.length)throw Error("That room is already in use at this time.");
