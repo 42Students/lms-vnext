@@ -519,7 +519,9 @@ export function placementReportCsvCell(
   value: string | number | null | undefined,
 ): string {
   const raw = String(value ?? "");
-  const neutralized = /^\s*[=+\-@\t\r]/.test(raw)
+  // A spreadsheet may ignore leading format, combining and control marks
+  // before evaluating a formula. Neutralize those prefixes as well as ASCII.
+  const neutralized = /^[\s\p{Cc}\p{Cf}\p{Mn}\p{Me}]*[=+\-@]/u.test(raw)
     ? `'${raw}`
     : raw;
 

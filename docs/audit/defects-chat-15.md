@@ -148,3 +148,16 @@ Additional **coverage without an independently established defect**: `HR-BREAK-c
 |---|---|---|---|---|
 | HR-APPLICANTS-87 | S2 reporting/privacy | A withdrawn applicant with historical PASS, OFFERED, HIRED or FAIL markers could still appear in corresponding active recruiter funnel counts and filtered applicant pages. SQL filters, aggregate counts and the pure projection now require SUBMITTED for active milestones; ALL/WITHDRAWN history remains available. | `HR-BREAK-chat15-withdrawn-stages-87.test.ts` | Actual PostgreSQL withdrawn/offer history, cloud tests and authenticated page pending |
 | HR-OFFER-EXPORT-88 | S2 employer accuracy | Issued-offer CSV route accepted pre-issue selection ledger statuses and could return a misleading empty export with unrelated offer totals. It now refuses such state with 400 before any applicant read, and the offer page no longer advertises the incompatible export action for selection-only filters. | `HR-BREAK-chat15-offer-export-route-88.test.ts` | Cloud tests, browser visibility and selection/offer E2E pending |
+
+
+## HR-first wave 90–98 findings (19 October 2026, code reviewed only)
+
+| Gap | Severity | Defect / corrective contract | Behavioral evidence | Release gate |
+|---|---|---|---|---|
+| HR-PAGINATION-90 | S3 | Applicant and offer pagination helpers passed NaN/Infinity and negative/fractional persisted totals straight through to page labels. They now sanitize unsupported counts and page values while preserving real 25/15-row ranges. | `HR-BREAK-chat15-bounds-90.test.ts` | Cloud unit and live count parity not executed |
+| HR-DRIVES-91 | S2 | Recruiter role/location draft fields allowed embedded CR/LF/control characters that could forge proposal header metadata in TPO conversation messages. Now rejects control characters in structured fields, but intentionally preserves multi-line description. | `HR-BREAK-chat15-proposal-header-91.test.ts` | Employer submission and TPO preview E2E not executed |
+| HR-ACTIVITY-92 / HR-NOTIFICATIONS-93 | S3 | Invalid persisted date objects could surface in recruiter activity or notification pages and crash IST formatting. Now rejects rows with invalid timestamps before view-model projection. | `HR-BREAK-chat15-activity-dates-92.test.ts`; `HR-BREAK-chat15-notification-dates-93.test.ts` | Real PostgreSQL/browser not executed |
+| HR-PROPOSALS-94 | S3 | An unsafe page argument to the proposal history window could produce NaN SQL offsets. Invalid pages now recover to the first page without weakening total-count integrity checks. | `HR-BREAK-chat15-proposal-pagination-94.test.ts` | Real TPO thread history paging not executed |
+| HR-OFFER-FOLLOWUPS-95 | S2 | Recruiter Today follow-ups could display unknown offer statuses or corrupt/fractional aggregate counts from stale cached projections. Only supported statuses and positive safe integer counts now survive. | `HR-BREAK-chat15-offer-followups-95.test.ts` | Real offer state transitions and notifications not executed |
+
+Page-level **coverage-only** additions: `HR-BREAK-chat15-activity-page-96.test.tsx`, `HR-BREAK-chat15-notifications-page-97.test.tsx`, `HR-BREAK-chat15-tracker-mine-page-98.test.tsx`. These do not assert a production defect or verified UI execution.

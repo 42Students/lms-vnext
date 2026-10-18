@@ -8,6 +8,10 @@ export const runtime="nodejs";
 export async function GET(request:Request){
  try{
   const params=new URL(request.url).searchParams;
+  const allowed=["collegeId","kind","q"];
+  if([...params.keys()].some(key=>!allowed.includes(key))||
+     allowed.some(key=>params.getAll(key).length>1))
+   return NextResponse.json({error:"INVALID_QUERY"},{status:400});
   const query=hrActivityQuerySchema.parse({
    collegeId:params.get("collegeId")??undefined,kind:params.get("kind")??undefined,q:params.get("q")??undefined,
    limit:100,page:1,
