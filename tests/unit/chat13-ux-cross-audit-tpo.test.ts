@@ -91,4 +91,19 @@ describe("chat-13 TPO second-third cross-audit repairs",()=>{
   expect(s).toContain("recipients.hasMore");
   expect(s).toContain("TpoCampaignSendControl");
  });
+ it("UX-cross-tpo-second-C13-014 send campaign confirmation is accessible and cannot auto-send",()=>{
+   const s=read("src/components/tpo/tpo-campaign-send-control.tsx");
+   expect(s).toContain("<ConfirmDialog");
+   expect(s).toContain("This cannot be undone.");
+   expect(s).toContain("async function sendCampaign()");
+   expect(s).not.toContain("window.confirm");
+ });
+ it("UX-cross-tpo-second-C13-015 waitlist ranking is readable on phone and release requires dialog",()=>{
+   const s=read("src/components/placements/tpo-waitlist-promotion-control.tsx");
+   expect(s).toContain("<DataTable");
+   expect(s).toContain("<ConfirmDialog");
+   expect(s).toContain("expectedPreviewToken:preview.previewToken");
+   expect(s).not.toContain("window.confirm");
+   expect(s).not.toContain("<table");
+ });
 });
