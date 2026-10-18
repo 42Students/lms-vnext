@@ -3,7 +3,11 @@ import {readFileSync} from "node:fs";
 
 const queue=readFileSync("docs/orchestrator/queues/gap-closure-chat-16.md","utf8");
 const register=readFileSync("docs/audit/gap-register.md","utf8");
-const rows=queue.split("\n").flatMap(line=>{
+// Only the original rebalance is fixed at 32 entries. Later work-package
+// sections may append new assignments and must not retroactively rewrite this
+// historical acceptance inventory.
+const initialQueue=queue.split("## Chat-16 reassigned round checkpoints",1)[0]!;
+const rows=initialQueue.split("\n").flatMap(line=>{
  const match=line.match(/^- ((?:MEN-projects-meetings|SA-placements-projects)-\d+) \(S[1-4]\) — (DONE|NOT-A-GAP|BLOCKED)$/);
  return match?[{id:match[1]!,status:match[2]!}]:[];
 });
