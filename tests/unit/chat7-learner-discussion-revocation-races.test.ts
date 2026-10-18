@@ -1,5 +1,6 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import type {RequestContext} from "@/modules/identity/context";
+import {readFileSync} from "node:fs";
 const state=vi.hoisted(()=>({
  access:vi.fn(),delivery:vi.fn(),actor:vi.fn(),event:vi.fn(),
  current:vi.fn(),txSelect:vi.fn(),txInsert:vi.fn(),txDelete:vi.fn(),
@@ -78,6 +79,19 @@ describe("LEARNER-DISCUSSIONS-RACE-01 recheck learner role at write commit",()=>
   expect(state.txSelect).toHaveBeenCalledTimes(1);
   expect(state.txDelete).toHaveBeenCalledTimes(1);
   expect(state.event).toHaveBeenCalledTimes(1);
+ });
+ it("binds the transactional role grant to current learner, college, user and platform state",()=>{
+  const code=readFileSync("src/modules/courses/discussion-service.ts","utf8");
+  for(const guard of [
+   'eq(collegeMemberships.id,member.id)',
+   'eq(collegeMemberships.userId,context.user.id)',
+   'eq(collegeMemberships.collegeId,member.collegeId)',
+   'eq(collegeMemberships.status,"ACTIVE")',
+   'eq(membershipRoles.role,"LEARNER")',
+   'eq(users.platformStatus,"ACTIVE")',
+   '.for("share").limit(1)',
+   'if(mode==="LEARNER")await assertLiveLearnerDiscussionWriter(tx,context)',
+  ])expect(code).toContain(guard);
  });
  it("rejects malformed posting payload before opening a write transaction",async()=>{
   await expect(createCourseDiscussionMessage(context,deliveryId,{messageText:"",admin:true})).rejects.toThrow();
