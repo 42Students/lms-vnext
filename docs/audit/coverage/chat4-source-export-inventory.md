@@ -127,3 +127,17 @@ Source-scan inventory of the assigned module directories; **PENDING is not verif
 | `src/modules/academics/learner-schedule-filter-reset-model.ts` | `learnerScheduleResetFilters` | PENDING |
 | `src/modules/academics/learner-schedule-kind-filter-model.ts` | `LearnerScheduleKind`, `filterLearnerScheduleByKind` | PENDING |
 | `src/modules/academics/learner-schedule-search-model.ts` | `filterLearnerScheduleBySearch` | PENDING |
+| `src/modules/academics/learner-schedule-section-filter-model.ts` | `filterLearnerScheduleSections` | PENDING |
+| `src/modules/academics/learner-schedule-selected-deliveries-model.ts` | `learnerScheduleSelectedDeliveries` | PENDING |
+| `src/modules/academics/learner-schedule-service.ts` | `getLearnerClassSchedule` | PENDING |
+| `src/modules/academics/learner-schedule-shift-day-model.ts` | `learnerScheduleDayAfterShift` | PENDING |
+| `src/modules/academics/learner-schedule-today-day-model.ts` | `learnerScheduleTodayDay` | PENDING |
+| `src/modules/academics/learner-schedule-upcoming-model.ts` | `filterLearnerScheduleUpcoming` | PENDING |
+| `src/modules/academics/learner-schedule-view-anchor-model.ts` | `learnerScheduleAnchorForView` | PENDING |
+| `src/modules/academics/learner-schedule-weekday-export-model.ts` | `learnerScheduleWeekdayExportAvailable` | PENDING |
+| `src/modules/academics/learner-session-detail-model.ts` | `learnerClassSessionNotes` | PENDING |
+| `src/modules/academics/lecture-hall-conflict-model.ts` | `lectureHallScheduledConflict` | PENDING |
+| `src/modules/academics/lecture-hall-copy.ts` | `ROOM_TYPE_LABELS`, `LECTURE_HALL_COPY` | PENDING |
+| `src/modules/academics/lecture-hall-service.ts` | `ROOM_TYPES`, `RoomType`, `LectureHallErrorCode`, `LectureHallError`, `createLectureHallSchema`, `updateLectureHallSchema`, `listLectureHallsSchema`, `listLectureHalls`, `createLectureHall`, `updateLectureHall` | PENDING |
+| `src/modules/academics/legacy-academic-status.ts` | `legacyAcademicStatus` | PENDING |
+| `src/modules/academics/optimistic-timestamp-model.ts` | `timestampTokenIso` | PENDING |
