@@ -25,7 +25,9 @@ export async function getSuperAdminBatchRosterOverview(context:RequestContext,ra
   // Match the active roster: a disabled platform account is not an attendee.
   learnerCount:countDistinct(users.id),
  }).from(sections)
-  .leftJoin(sectionEnrollments,and(eq(sectionEnrollments.sectionId,sections.id),eq(sectionEnrollments.status,"ACTIVE")))
+  .leftJoin(sectionEnrollments,and(eq(sectionEnrollments.sectionId,sections.id),
+    eq(sectionEnrollments.academicPeriodId,sections.academicPeriodId),
+    eq(sectionEnrollments.status,"ACTIVE")))
   .leftJoin(learnerProgramEnrollments,and(eq(learnerProgramEnrollments.id,sectionEnrollments.learnerEnrollmentId),
     eq(learnerProgramEnrollments.cohortId,batchId),eq(learnerProgramEnrollments.status,"ACTIVE")))
   .leftJoin(collegeMemberships,and(eq(collegeMemberships.id,learnerProgramEnrollments.membershipId),
@@ -42,7 +44,7 @@ export async function getSuperAdminBatchRosterOverview(context:RequestContext,ra
  const active=await db.select({
   learnerEnrollmentId:learnerProgramEnrollments.id,memberId:collegeMemberships.id,
   name:users.displayName,email:users.email,roll:learnerProfiles.rollNumber,
-  classId:sectionEnrollments.sectionId,
+  classId:sections.id,
  }).from(learnerProgramEnrollments)
   .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,learnerProgramEnrollments.membershipId),
     eq(collegeMemberships.collegeId,scope.collegeId),eq(collegeMemberships.status,"ACTIVE")))
@@ -52,7 +54,10 @@ export async function getSuperAdminBatchRosterOverview(context:RequestContext,ra
   .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
   .leftJoin(sectionEnrollments,and(eq(sectionEnrollments.learnerEnrollmentId,learnerProgramEnrollments.id),
     eq(sectionEnrollments.status,"ACTIVE"),
-    inArray(sectionEnrollments.sectionId,classes.map(item=>item.id).length?classes.map(item=>item.id):[batchId])))
+    inArray(sectionEnrollments.sectionId,classes.map(item=>item.id))))
+  .leftJoin(sections,and(eq(sections.id,sectionEnrollments.sectionId),
+    eq(sections.cohortId,batchId),
+    eq(sections.academicPeriodId,sectionEnrollments.academicPeriodId)))
   .where(and(eq(learnerProgramEnrollments.cohortId,batchId),eq(learnerProgramEnrollments.status,"ACTIVE")))
   .orderBy(asc(users.displayName),asc(collegeMemberships.id));
  return {batch,classes,roster:active};
