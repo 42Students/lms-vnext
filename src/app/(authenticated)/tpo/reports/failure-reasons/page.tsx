@@ -126,7 +126,7 @@ export default async function TpoFailureReasonsPage({
       <a href={"/api/placements/tpo/reports/round-failures?"+new URLSearchParams({
         ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
         ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{})
-       }).toString()} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+       }).toString()} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
        Download round-and-branch failures CSV
       </a>
       <ReportTable
