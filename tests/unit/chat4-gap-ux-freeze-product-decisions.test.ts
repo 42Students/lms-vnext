@@ -21,7 +21,7 @@ describe("chat-4 owner-delegated gap decisions: safe college policy",()=>{
   // is GLOBAL-only. College overrides would violate that accepted policy.
   expect(model).not.toContain('platformSettingOverrides.scopeType,"COLLEGE"');
   const specs=source("src/modules/platform-settings/legacy-setting-specs.ts");
-  expect(specs).toMatch(/"key": "course\\.watchedThresholdPercent",\\s*"scope": "GLOBAL"/);
+  expect(specs).toMatch(/"key": "course\.watchedThresholdPercent",\s*"scope": "GLOBAL"/);
   expect(college).not.toContain('name="course.watchedThresholdPercent"');
   expect(college).not.toContain("updatePlatformSettingOverrides");
  });
