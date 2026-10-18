@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { cloneElement, Fragment, isValidElement, type ReactNode } from "react";
 
 export type FormFieldProps = {
   id: string;
@@ -12,12 +12,26 @@ export type FormFieldProps = {
 /** Owns visible labels and error descriptions for native Input/Select/Textarea. */
 export function FormField({ id, label, required = false, helper, error, children }: FormFieldProps) {
   const describedBy = [helper ? `${id}-hint` : null, error ? `${id}-error` : null].filter(Boolean).join(" ") || undefined;
+  const rendered = children({ id, "aria-invalid": error ? true : undefined, "aria-describedby": describedBy });
+  // Apply the accessible relation at the container boundary even if a caller
+  // forgets to spread the render-function props. Fragments cannot receive IDs.
+  const associated = isValidElement<{id?:string; "aria-invalid"?: boolean; "aria-describedby"?: string}>(rendered) &&
+    rendered.type !== Fragment
+    ? cloneElement(rendered, {
+        id,
+        "aria-invalid": error ? true : rendered.props["aria-invalid"],
+        "aria-describedby": [...new Set([
+          ...(rendered.props["aria-describedby"]?.split(/\\s+/) ?? []),
+          ...(describedBy?.split(/\\s+/) ?? []),
+        ].filter(Boolean))].join(" ") || undefined,
+      })
+    : rendered;
   return <div data-slot="form-field" className="min-w-0 space-y-1.5">
     <label htmlFor={id} className="block text-sm font-semibold leading-6 text-foreground">
       {label}{required ? <span aria-hidden="true"> *</span> : null}
       {required ? <span className="sr-only">required</span> : null}
     </label>
-    {children({ id, "aria-invalid": error ? true : undefined, "aria-describedby": describedBy })}
+    {associated}
     {helper ? <p id={`${id}-hint`} className="text-sm leading-6 text-body">{helper}</p> : null}
     {error ? <p id={`${id}-error`} role="alert" className="text-sm leading-6 text-foreground">{error}</p> : null}
   </div>;
