@@ -121,7 +121,13 @@ export async function getSectionOperationsWorkspace(
         sections.academicPeriodId,
       ),
     )
-    .where(eq(sections.id, sectionId))
+    // The section's program supplies the trusted college scope; a section
+    // pointing at another tenant's academic period must fail closed instead
+    // of disclosing the foreign period name, dates or timetable state.
+    .where(and(
+      eq(sections.id, sectionId),
+      eq(academicPeriods.collegeId, scope.collegeId),
+    ))
     .limit(1);
 
   if (!section) {
