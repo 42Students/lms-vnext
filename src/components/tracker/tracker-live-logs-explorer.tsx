@@ -5,6 +5,7 @@ import Link from "next/link";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {Dialog} from "@/components/ui/dialog";
 
 type Entry={id:string;time:string;event:string;message:string;path:string;requestId:string|null;component:string|null;
   knownErrorId?:string|null;muted?:boolean|null};
@@ -151,32 +152,32 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
     <div className="flex flex-wrap items-end gap-3">
       <label className="grid gap-1 text-sm font-semibold">Time window
         <select value={windowMinutes} onChange={event=>setWindowMinutes(event.target.value)}
-          className="min-h-10 rounded-md border border-border bg-background px-3">
+          className="min-h-11 rounded-md border border-border bg-background px-3">
           <option value="15">Last 15 minutes</option><option value="60">Last hour</option>
           <option value="360">Last 6 hours</option><option value="1440">Last 24 hours</option>
         </select>
       </label>
       <label className="grid gap-1 text-sm font-semibold">Minimum severity
         <select value={minimumSeverity} onChange={event=>setMinimumSeverity(event.target.value as "ERROR"|"WARNING")}
-          className="min-h-10 rounded-md border border-border bg-background px-3">
+          className="min-h-11 rounded-md border border-border bg-background px-3">
           <option value="ERROR">Error and above</option>
           <option value="WARNING">Warning and above</option>
         </select>
       </label>
       <label className="grid min-w-44 flex-1 gap-1 text-sm font-semibold">Search this page
         <input type="search" maxLength={150} value={query} onChange={event=>setQuery(event.target.value)}
-          placeholder="Message, route, reference" className="min-h-10 rounded-md border border-border bg-background px-3"/>
+          placeholder="Message, route, reference" className="min-h-11 rounded-md border border-border bg-background px-3"/>
       </label>
       <button type="button" onClick={()=>void load()} disabled={pending||exporting}
-        className="min-h-10 rounded-md bg-primary px-3 text-sm font-semibold text-primary-foreground disabled:opacity-50">
+        className="min-h-11 rounded-md bg-primary px-3 text-sm font-semibold text-primary-foreground disabled:opacity-50">
         {pending?"Loading…":"Refresh newer"}
       </button>
       <button type="button" onClick={()=>void downloadRange("csv")} disabled={pending||exporting||configured!==true}
-        className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold disabled:opacity-50">
+        className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold disabled:opacity-50">
         {exporting?"Exporting…":"Download logs"}
       </button>
       <button type="button" onClick={()=>setReportOpen(true)} disabled={!items.length}
-        className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold">
+        className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold">
         Report for Claude
       </button>
     </div>
@@ -213,7 +214,7 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
       </li>)}
     </ol>:<p className="text-sm text-body">No live errors loaded.</p>}
     {nextPage?<button type="button" onClick={()=>void load(true)} disabled={pending||exporting}
-      className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold disabled:opacity-50">
+      className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold disabled:opacity-50">
       Load older
     </button>:null}
     <ConfirmDialog open={muteTarget!==null} onOpenChange={next=>{if(!next&&!mutating)setMuteTarget(null);}}
@@ -224,12 +225,10 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
       {!muteTarget?.muted?<label className="grid gap-1 text-sm font-semibold">
         Reason (optional)
         <input value={muteReason} maxLength={255} onChange={event=>setMuteReason(event.target.value)}
-          className="min-h-10 rounded border border-border bg-background px-3"/>
+          className="min-h-11 rounded border border-border bg-background px-3"/>
       </label>:null}
     </ConfirmDialog>
-    {reportOpen?<div role="dialog" aria-modal="true" aria-label="Report for Claude"
-      className="rounded-lg border border-border bg-background p-4">
-      <h3 className="font-semibold">Report for Claude</h3>
+    <Dialog open={reportOpen} onOpenChange={setReportOpen} title="Report for Claude">
       <p className="mt-1 text-sm text-body">Copy a redacted report or download the selected time range.</p>
       <textarea readOnly value={trackerLogMarkdown(items)} rows={8}
         className="mt-3 w-full rounded border border-border bg-surface p-3 text-xs"/>
@@ -241,6 +240,6 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
         <button type="button" onClick={()=>setReportOpen(false)}
           className="font-semibold text-primary-text underline">Close</button>
       </div>
-    </div>:null}
+    </Dialog>
   </section>;
 }
