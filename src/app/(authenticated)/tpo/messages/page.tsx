@@ -1,3 +1,4 @@
+import {DataTable} from "@/components/ui/data-table";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
@@ -397,128 +398,45 @@ export default async function TpoMessagesPage({
             }
           />
         ) : (
-          <>
-          <ul aria-label="Recruiter conversations on phone" className="grid gap-3 md:hidden">
-           {items.map(item=><li key={item.id} className="rounded-xl border border-border bg-surface p-4">
-            <Link href={"/tpo/messages/"+encodeURIComponent(item.id)}
-              className="block min-h-11 font-semibold text-[var(--lms-teal-deep)]">
-             {item.participantName}{item.companyName?" · "+item.companyName:""} →
-            </Link>
-            <p className="text-sm text-body">{item.subject}</p>
-            {item.lastPreview?<p className="mt-2 line-clamp-2 text-xs text-muted-foreground">{item.lastPreview}</p>:null}
-            <div className="mt-2 flex flex-wrap gap-2 text-xs">
-             {item.waitingForYou?<span>Waiting for you</span>:null}
-             {item.accessEnded?<span>Access ended</span>:null}
-             <span>{item.unreadCount??0} unread</span>
-             <time dateTime={item.occurredAt.toISOString()}>{formatTpoInboxTime(item.occurredAt,now)}</time>
-            </div>
-           </li>)}
-          </ul>
-          <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface md:block">
-            <table className="w-full min-w-[50rem] text-left text-sm">
-              <thead className="bg-muted text-muted-foreground">
-                <tr>
-                  <th scope="col" className="px-4 py-3">
-                    {isRecruiterInbox
-                      ? "Recruiter"
-                      : "TPO recipient"}
-                  </th>
-                  <th scope="col" className="px-4 py-3">
-                    Subject
-                  </th>
-                  <th scope="col" className="px-4 py-3">
-                    Status
-                  </th>
-                  <th scope="col" className="px-4 py-3">
-                    {isRecruiterInbox
-                      ? "Message records"
-                      : "Record type"}
-                  </th>
-                  <th scope="col" className="px-4 py-3">
-                    Last activity
-                  </th>
-                  <th scope="col" className="px-4 py-3">
-                    Context
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {items.map((item) => (
-                  <tr
-                    key={item.id}
-                    className="border-t border-border align-top"
-                  >
-                    <td className="px-4 py-4 font-semibold text-foreground">
-                      {item.participantName}
-                      {item.companyName ? <p className="mt-1 text-xs font-normal text-muted-foreground">{item.companyName}</p> : null}
-                       {item.waitingForYou?<span className="ml-2 rounded border border-border px-2 py-0.5 text-xs">Waiting for you</span>:null}
-                       {item.accessEnded?<span className="ml-2 rounded border border-border px-2 py-0.5 text-xs">Access ended</span>:null}
-                    </td>
-
-                    <td className="px-4 py-4 text-body">
-                      {isRecruiterInbox ? <Link className="font-semibold text-[var(--lms-teal-deep)] hover:underline"
-                        href={"/tpo/messages/" + encodeURIComponent(item.id)}>{item.subject} →</Link> : item.subject}
-                       {(query.q.trim()?item.searchSnippet??item.lastPreview:item.lastPreview)?<p className="mt-1 max-w-sm truncate text-xs text-muted-foreground">{query.q.trim()?item.searchSnippet??item.lastPreview:item.lastPreview}</p>:null}
-                    </td>
-
-                    <td className="px-4 py-4">
-                      <StatusBadge
-                        tone={
-                          item.status === "UNREAD"
-                            ? "info"
-                            : "neutral"
-                        }
-                      >
-                        {labelStatus(item.status)}
-                      </StatusBadge>
-                    </td>
-
-                    <td className="px-4 py-4 text-body">
-                      {isRecruiterInbox ? (
-                        <>
-                          <span className="font-semibold tabular-nums">
-                            {item.messageCount ?? 0}
-                          </span>
-                          <p className="mt-1 text-xs text-muted-foreground">
-                            {item.unreadCount ?? 0} unread recruiter
-                            {" "}message records
-                          </p>
-                        </>
-                      ) : (
-                        "In-app notification"
-                      )}
-                    </td>
-
-                    <td className="px-4 py-4 text-body">
-                      <time dateTime={item.occurredAt.toISOString()}>
-                        {formatTpoInboxTime(item.occurredAt, now)}
-                      </time>
-                    </td>
-
-                    <td className="px-4 py-4">
-                      {item.jobId ? (
-                        <Link
-                          href={`/tpo/placements/jobs/${encodeURIComponent(
-                            item.jobId,
-                          )}`}
-                          className="font-semibold text-[var(--lms-teal-deep)] hover:underline"
-                        >
-                          Open related job →
-                        </Link>
-                      ) : (
-                        <span className="text-muted-foreground">
-                          {isRecruiterInbox
-                            ? "General conversation"
-                            : "Recipient notification"}
-                        </span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          </>
+          <DataTable
+            caption="Recruiter conversation and notification records"
+            rows={items}
+            getRowKey={item=>item.id}
+            empty={<EmptyState title="No matching communication records" description={
+              isRecruiterInbox
+                ?"No recruiter threads match these filters. Start a new conversation from Messages."
+                :"No persisted TPO placement notifications match these filters. Recruiter conversations are currently unavailable, not confirmed empty."
+            }/>}
+            columns={[
+              {key:"participant",header:isRecruiterInbox?"Recruiter":"TPO recipient",
+               mobileLabel:isRecruiterInbox?"Recruiter":"TPO recipient",mobilePriority:"primary",
+               cell:item=><div className="min-w-0">
+                <strong className="break-words text-foreground">{item.participantName}</strong>
+                {item.companyName?<p className="mt-1 text-xs text-muted-foreground">{item.companyName}</p>:null}
+                {item.waitingForYou?<span className="mr-2 rounded border border-border px-2 py-1 text-xs">Waiting for you</span>:null}
+                {item.accessEnded?<span className="rounded border border-border px-2 py-1 text-xs">Access ended</span>:null}
+               </div>},
+              {key:"subject",header:"Subject",mobileLabel:"Subject",mobilePriority:"action",
+               cell:item=><div className="min-w-0">
+                {isRecruiterInbox?<Link className="inline-flex min-h-11 items-center break-words font-semibold text-[var(--lms-teal-deep)] underline"
+                  href={"/tpo/messages/"+encodeURIComponent(item.id)}>{item.subject} →</Link>:
+                 <span className="break-words text-body">{item.subject}</span>}
+                {(query.q.trim()?item.searchSnippet??item.lastPreview:item.lastPreview)?
+                  <p className="mt-1 line-clamp-2 break-words text-xs text-muted-foreground">{query.q.trim()?item.searchSnippet??item.lastPreview:item.lastPreview}</p>:null}
+               </div>},
+              {key:"status",header:"Status",mobileLabel:"Status",mobilePriority:"secondary",
+               cell:item=><StatusBadge tone={item.status==="UNREAD"?"info":"neutral"}>{labelStatus(item.status)}</StatusBadge>},
+              {key:"count",header:isRecruiterInbox?"Message records":"Record type",
+               mobileLabel:isRecruiterInbox?"Message records":"Record type",mobilePriority:"secondary",
+               cell:item=>isRecruiterInbox?<span>{item.messageCount??0} · {item.unreadCount??0} unread recruiter message records</span>:"In-app notification"},
+              {key:"when",header:"Last activity",mobileLabel:"Last activity",mobilePriority:"secondary",
+               cell:item=><time dateTime={item.occurredAt.toISOString()}>{formatTpoInboxTime(item.occurredAt,now)}</time>},
+              {key:"context",header:"Context",mobileLabel:"Context",mobilePriority:"action",
+               cell:item=>item.jobId?<Link href={"/tpo/placements/jobs/"+encodeURIComponent(item.jobId)}
+                className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Open related job →</Link>:
+                <span className="text-muted-foreground">{isRecruiterInbox?"General conversation":"Recipient notification"}</span>},
+            ]}
+          />
         )}
 
         <nav
