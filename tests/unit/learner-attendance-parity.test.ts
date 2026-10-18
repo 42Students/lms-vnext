@@ -52,7 +52,8 @@ describe("learner attendance parity surface", () => {
 
     expect(workspace).toContain("resolveLearnerAttendanceFilters");
     expect(workspace).toContain('type="month"');
-    expect(workspace).toContain('className="space-y-3 md:hidden"');
+    expect(workspace).toContain('<DataTable');
+    expect(workspace).toContain('caption="Attendance history"');
 
     for (const file of ["loading.tsx", "error.tsx"]) {
       expect(
