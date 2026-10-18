@@ -243,6 +243,8 @@ export async function getFacultyQuizReport(
     );
   const scored = latestAttempts.flatMap(
     (attempt) =>
+      Number.isFinite(attempt.maxScore) &&
+      Number.isFinite(attempt.score) &&
       attempt.maxScore > 0 &&
       attempt.score >= 0 &&
       attempt.score <= attempt.maxScore
