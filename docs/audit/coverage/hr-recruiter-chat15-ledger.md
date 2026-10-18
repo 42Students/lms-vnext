@@ -237,3 +237,13 @@ Owner's **NO CI** directive remains in force; all behavioral tests were written 
 | `GET /api/placements/recruiter/activity/export`; `GET /api/placements/recruiter/notifications/export`; `GET /api/placements/recruiter/calendar/export`; `GET /api/placements/recruiter/jobs/[jobId]/applicants/export`; `GET /api/placements/recruiter/jobs/[jobId]/offers/export` | `tests/unit/HR-BREAK-chat15-export-query-104.test.ts` | Each real route refuses duplicated sensitive parameters and unknown parameter keys before access to any private employer reader; this closes silent first-of-many filter ambiguity | Authenticated GET valid/invalid origin rules (read only), CSV download UI, PostgreSQL role matrix |
 
 These are written source/tests only; **no tests, CI, typecheck, or database commands were run**. Full HR/recruiter/tracker exhaustive certification remains OPEN.
+
+
+## Chat-15 HR service permission matrix, October 19 (new)
+
+| Public service entrypoint | Behavioral test | Exact account/scope transitions checked | Remaining |
+|---|---|---|---|
+| `listRecruiterJobActivity` | `tests/unit/HR-BREAK-chat15-activity-service-105.test.ts` | Wrong college rejected before any job read; disabled/swapped recruiter principal denied; zero grants yield NO_ACCESS; multi-college actor requires choice; owned college without jobs reads no global activity SQL; unsupported query fails before auth lookup | PostgreSQL account/grant expiration in transaction, event pagination and browser |
+| `listHrNotifications` | `tests/unit/HR-BREAK-chat15-notifications-service-106.test.ts` | Wrong-college IDOR denied; inactive/swapped actor; no grants; multi-college chooser; empty authorized job list does not query notification tables; unexpected body flags rejected | Real employer notification rows, revocation mid-page and exactly-once read receipts |
+
+Behavioral test source has been authored, **not executed**. Existing HR per-export, HTTP, PostgreSQL and UI release gate remains OPEN.
