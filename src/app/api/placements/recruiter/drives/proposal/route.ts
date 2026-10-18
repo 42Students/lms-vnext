@@ -4,13 +4,17 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {hrDriveProposalSchema} from "@/modules/placements/hr-drive-proposal-model";
+import {readRecruiterJsonBody,RecruiterJsonBodyError} from "@/modules/placements/recruiter-json-request";
 import {sendRecruiterDriveProposal,TpoMessagingError} from "@/modules/placements/tpo-messaging-service";
 
 export const runtime="nodejs";
 export async function POST(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- const body=await request.json().catch(()=>null);
+ let body:unknown;
+ try{body=await readRecruiterJsonBody(request);}
+ catch(error){return NextResponse.json({error:"INVALID_PROPOSAL"},
+  {status:error instanceof RecruiterJsonBodyError&&error.kind==="TOO_LARGE"?413:400});}
  const parsed=hrDriveProposalSchema.safeParse(body);
  if(!parsed.success)
   return NextResponse.json({error:"INVALID_PROPOSAL"},{status:400});

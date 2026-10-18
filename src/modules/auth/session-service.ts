@@ -82,6 +82,8 @@ export async function resolveSession(
   if (!row) return { ok: false, reason: "SESSION_INVALID" };
   if (row.revoked) return { ok: false, reason: "SESSION_REVOKED" };
   if (row.expired) return { ok: false, reason: "SESSION_EXPIRED" };
+  // Account disablement is an immediate session revocation, not merely a UI role gate.
+  if (row.platform_status !== "ACTIVE") return { ok: false, reason: "SESSION_REVOKED" };
 
   // Throttled: at most one write per minute per session.
   await getDb().execute(sql`

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { COLLEGE_COURSE_TAB_COPY, collegeAudienceLabel, collegeResultsLabel, collegeStatusLabel } from "@/modules/courses/college-course-tabs-copy";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { DataTable } from "@/components/ui/data-table";
 import { FacultyItemActions } from "./faculty-item-actions";
 import { AdminQuizResultsActions } from "./admin-learning-structure-actions";
 import { CollegeAssignmentReview } from "./college-assignment-review";
@@ -228,62 +229,53 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
                  filesEnabled={assignmentFilesEnabled}/>:null}
               </article>)}
             </div>
-            <div className="hidden overflow-x-auto sm:block">
-              <table className="w-full min-w-[48rem] text-left text-sm">
-            <thead className="bg-muted text-muted-foreground">
-              <tr>
-                <th scope="col" className="px-4 py-3">{isAssignment ? "Assignment" : "Quiz"}</th>
-                <th scope="col" className="px-4 py-3">{COLLEGE_COURSE_TAB_COPY.assessmentColumns.course}</th>
-                <th scope="col" className="px-4 py-3">{COLLEGE_COURSE_TAB_COPY.assessmentColumns.audience}</th>
-                <th scope="col" className="px-4 py-3">Status</th>
-                {!isAssignment ? <th scope="col" className="px-4 py-3">{COLLEGE_COURSE_TAB_COPY.assessmentColumns.results}</th> : null}
-                <th scope="col" className="px-4 py-3">Due (IST)</th>
-                <th scope="col" className="px-4 py-3">Submitted / eligible</th>
-                {isAssignment?<th scope="col" className="px-4 py-3">Graded</th>:null}
-                <th scope="col" className="px-4 py-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.items.map((item) => (
-                <tr key={item.id} className="border-t border-border align-top">
-                  <td className="px-4 py-4">
-                    <p className="font-semibold text-foreground">{item.title}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">Maximum {item.points} points</p>
-                  </td>
-                  <td className="px-4 py-4">
-                    <Link href={"/college/courses/offerings/" + encodeURIComponent(item.offeringId)}
-                      className="font-semibold text-primary-text hover:underline">
-                      {item.courseName} ({item.courseCode})
-                    </Link>
-                    <p className="mt-1 text-xs text-body">{item.lessonName}</p>
-                  </td>
-                  <td className="px-4 py-4 text-body">
-                    {collegeAudienceLabel(item.deliverySpecific)}
-                  </td>
-                  <td className="px-4 py-4">
-                    <StatusBadge tone={item.status === "PUBLISHED" ? "success" : "neutral"}>
+            <div className="hidden min-w-0 sm:block">
+              <DataTable
+                caption={name+" records"}
+                rows={data.items}
+                getRowKey={item=>item.id}
+                empty={<p className="p-4 text-sm text-body">No recorded assessments match these filters. This does not imply courses or lessons are absent.</p>}
+                columns={[
+                  {key:"assessment",header:isAssignment?"Assignment":"Quiz",mobilePriority:"primary" as const,
+                    cell:(item)=><span className="block min-w-0">
+                      <strong className="block break-words text-foreground">{item.title}</strong>
+                      <span className="text-xs text-muted-foreground">Maximum {item.points} points</span>
+                    </span>},
+                  {key:"course",header:COLLEGE_COURSE_TAB_COPY.assessmentColumns.course,mobilePriority:"secondary" as const,
+                    cell:(item)=><div className="min-w-0">
+                      <Link href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}
+                        className="inline-flex min-h-11 items-center break-words font-semibold text-primary-text hover:underline">
+                        {item.courseName} ({item.courseCode})
+                      </Link>
+                      <p className="text-xs text-muted-foreground">{item.lessonName}</p>
+                    </div>},
+                  {key:"audience",header:COLLEGE_COURSE_TAB_COPY.assessmentColumns.audience,
+                    mobilePriority:"secondary" as const,cell:(item)=>collegeAudienceLabel(item.deliverySpecific)},
+                  {key:"status",header:"Status",mobilePriority:"secondary" as const,
+                    cell:(item)=><StatusBadge tone={item.status==="PUBLISHED"?"success":"neutral"}>
                       {collegeStatusLabel(item.status)}
-                    </StatusBadge>
-                  </td>
-                  {!isAssignment ? <td className="px-4 py-4 text-body">{collegeResultsLabel(Boolean(item.resultsPublished))}</td> : null}
-                  <td className="px-4 py-4 text-body">{formatDue(item.dueAt)}</td>
-                  <td className="px-4 py-4 tabular-nums text-body">
-                    {item.submittedLearners}/{item.eligibleLearners} submitted
-                  </td>
-                  {isAssignment?<td className="px-4 py-4 tabular-nums text-body">{item.gradedLearners} graded</td>:null}
-                  <td className="px-4 py-4">
-                    {isAssignment?<CollegeAssignmentActions assignment={item}/>:null}
-                    {isAssignment?<CollegeAssignmentReview
-                     assignmentId={item.id} offeringId={item.offeringId}
-                     specificDeliveryId={item.deliveryId} maxPoints={item.points}
-                     status={item.status} deliveries={data.reviewDeliveries}
-                     filesEnabled={assignmentFilesEnabled}/>:
-                     <><QuizListActions item={item}/><CollegeQuizActions quiz={item}/><CollegeQuizAttempts quizId={item.id} offeringId={item.offeringId} specificDeliveryId={item.deliveryId} deliveries={data.reviewDeliveries} status={item.status}/></>}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-              </table>
+                    </StatusBadge>},
+                  ...(!isAssignment?[{key:"results",header:COLLEGE_COURSE_TAB_COPY.assessmentColumns.results,
+                    mobilePriority:"secondary" as const,cell:(item:CollegeAssessmentAggregateItem)=>collegeResultsLabel(Boolean(item.resultsPublished))}]:[]),
+                  {key:"due",header:"Due (IST)",mobilePriority:"secondary" as const,cell:(item)=>formatDue(item.dueAt)},
+                  {key:"submitted",header:"Submitted / eligible",mobilePriority:"secondary" as const,
+                    cell:(item)=>item.submittedLearners+"/"+item.eligibleLearners+" submitted"},
+                  ...(isAssignment?[{key:"graded",header:"Graded",mobilePriority:"secondary" as const,
+                    cell:(item:CollegeAssessmentAggregateItem)=>item.gradedLearners+" graded"}]:[]),
+                  {key:"actions",header:"Actions",mobilePriority:"action" as const,
+                    cell:(item)=><div className="min-w-0 space-y-2">
+                      {isAssignment?<><CollegeAssignmentActions assignment={item}/>
+                        <CollegeAssignmentReview assignmentId={item.id} offeringId={item.offeringId}
+                          specificDeliveryId={item.deliveryId} maxPoints={item.points}
+                          status={item.status} deliveries={data.reviewDeliveries}
+                          filesEnabled={assignmentFilesEnabled}/></>:
+                       <><QuizListActions item={item}/><CollegeQuizActions quiz={item}/>
+                         <CollegeQuizAttempts quizId={item.id} offeringId={item.offeringId}
+                           specificDeliveryId={item.deliveryId} deliveries={data.reviewDeliveries}
+                           status={item.status}/></>}
+                    </div>},
+                ]}
+              />
             </div>
           </>
         )}

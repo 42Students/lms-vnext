@@ -2,7 +2,7 @@
 const MAX_ROWS=100,MAX_CELL=240;
 function csvCell(value:string):string {
  const shortened=value.slice(0,MAX_CELL);
- const guarded=/^[\s]*[=+@\-]/.test(shortened)?"'"+shortened:shortened;
+ const guarded=/^[\s\u200B-\u200F\u2060\u2066-\u2069\uFEFF\u202A-\u202E]*[=+@\-]/u.test(shortened)?"'"+shortened:shortened;
  return '"'+guarded.replaceAll('"','""')+'"';
 }
 export function learnerProjectActivityCsv(rows:readonly {
@@ -10,7 +10,8 @@ export function learnerProjectActivityCsv(rows:readonly {
 }[]):{content:string;truncated:boolean} {
  const selection=rows.slice(0,MAX_ROWS);
  const data=selection.map(row=>[
-  row.occurredAt.toISOString(),row.actorDisplayName??"System",row.subjectLabel??"",row.summary,
+  Number.isFinite(row.occurredAt?.getTime())?row.occurredAt.toISOString():"Unknown",
+  row.actorDisplayName??"System",row.subjectLabel??"",row.summary,
  ].map(csvCell).join(","));
  return {content:["UTC time,Actor,Subject,Summary",...data].join("\r\n")+"\r\n",
    truncated:rows.length>MAX_ROWS};

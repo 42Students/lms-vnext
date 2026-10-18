@@ -1,3 +1,4 @@
+import {BottomSheet} from "@/components/ui/bottom-sheet";
 "use client";
 import Link from "next/link";
 import {useState} from "react";
@@ -34,10 +35,12 @@ export function TpoMobileFooter(){
    </Link>;
   })}
  </nav>
- {moreOpen?<div role="dialog" aria-label="More TPO workspaces" className="fixed inset-x-0 bottom-16 z-40 max-h-[65dvh] overflow-y-auto rounded-t-xl border border-border bg-surface p-4 shadow-xl md:hidden">
-   <div className="mb-2 flex justify-between gap-2"><strong>More</strong><button className="text-sm text-primary-text underline" onClick={()=>setMoreOpen(false)}>Close</button></div>
-   <div className="grid grid-cols-2 gap-2">{moreLinks.map(([label,href])=><Link key={href} href={href}
-    onClick={()=>setMoreOpen(false)} className="min-h-11 rounded-md border border-border px-3 py-3 text-sm font-semibold text-primary-text">{label}</Link>)}</div>
-  </div>:null}
+ <BottomSheet open={moreOpen} onOpenChange={setMoreOpen} title="More TPO workspaces">
+   <nav aria-label="More TPO destinations" className="grid grid-cols-2 gap-2">
+    {moreLinks.map(([label,href])=><Link key={href} href={href}
+     onClick={()=>setMoreOpen(false)}
+     className="inline-flex min-h-11 items-center rounded-md border border-border px-3 py-3 text-sm font-semibold text-primary-text">{label}</Link>)}
+   </nav>
+  </BottomSheet>
  </>;
 }

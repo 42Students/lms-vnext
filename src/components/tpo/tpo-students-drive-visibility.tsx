@@ -109,7 +109,7 @@ export function TpoStudentsDriveVisibility({learners,drives}:{learners:readonly 
    description={"This "+decision.toLowerCase()+" action is applied separately to "+picked.length+" selected learners. The server rechecks each college and learner."}
    footer={<><Button variant="secondary" disabled={pending} onClick={()=>setConfirm(false)}>Cancel</Button>
     <Button disabled={pending||!valid} onClick={()=>void submit()}>{pending?"Saving…":"Confirm changes"}</Button></>}>
-   <ul className="max-h-40 list-disc overflow-auto pl-5 text-sm">{picked.map(row=><li key={row.id}>{row.name}</li>)}</ul>
+   <ul className="list-disc pl-5 text-sm">{picked.map(row=><li key={row.id}>{row.name}</li>)}</ul>
    <p className="mt-2 text-sm">Reason: {reason.trim()}</p>
   </Dialog>
   {results.length>0?<div role="status" aria-live="polite" className="space-y-2 text-sm">

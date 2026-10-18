@@ -332,7 +332,7 @@ export async function updateProjectFileDetails(
         ...(input.description !== undefined ? { description: input.description } : {}),
         updatedAt: new Date(),
       })
-      .where(and(eq(projectResourceFiles.id, row.id), ne(projectResourceFiles.status, "DELETED")))
+      .where(and(eq(projectResourceFiles.id, row.id), eq(projectResourceFiles.projectId,scope.project.id), ne(projectResourceFiles.status, "DELETED")))
       .returning();
     if (!next) throw new StorageFileError("STORAGE_NOT_FOUND");
     await recordStorageFileEvent(tx, context, {
@@ -364,7 +364,7 @@ export async function removeProjectFile(
     const [next] = await tx
       .update(projectResourceFiles)
       .set({ status: "DELETED", deletedAt: new Date(), deletedByUserId: context.user.id, updatedAt: new Date() })
-      .where(and(eq(projectResourceFiles.id, row.id), ne(projectResourceFiles.status, "DELETED")))
+      .where(and(eq(projectResourceFiles.id, row.id), eq(projectResourceFiles.projectId,scope.project.id), ne(projectResourceFiles.status, "DELETED")))
       .returning();
     if (!next) throw new StorageFileError("STORAGE_INVALID_STATE");
     await recordStorageFileEvent(tx, context, {
