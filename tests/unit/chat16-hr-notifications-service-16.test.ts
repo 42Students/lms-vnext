@@ -32,7 +32,7 @@ describe("chat-16 recruiter notification inbox tenant and ownership",()=>{
  it("HR-notifications-16 denies unauthorized, suspended and user-mismatched recruiter contexts",async()=>{
   for(const context of [
    {...recruiter,recruiter:null},
-   {...recruiter,recruiter:{...recruiter.recruiter!,status:"SUSPENDED" as const}},
+   {...recruiter,recruiter:{...recruiter.recruiter!,status:"SUSPENDED"}} as unknown as RequestContext,
    {...recruiter,recruiter:{...recruiter.recruiter!,userId:"another-user"}},
    {...recruiter,user:{...recruiter.user,platformStatus:"DISABLED" as const}},
   ]){
