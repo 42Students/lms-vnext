@@ -37,7 +37,7 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
      body:JSON.stringify(auditRetry),
     });
     setAuditRetry(null);
-    if(auditRecorded)router.refresh();
+    router.refresh();
    });
   }catch{
    setError("The batch audit could not be confirmed. You can retry the audit without deciding requests again.");
