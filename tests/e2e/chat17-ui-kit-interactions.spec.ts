@@ -112,6 +112,17 @@ test.describe("UX-kit-E2E-01 real browser shared UI states",()=>{
     await expect(open).toBeFocused();
   });
 
+  test("UX-kit-E2E-10 scroll cue detects overflow when a second direct child resizes",async({page})=>{
+    await page.goto(route);
+    const cue=page.locator('[data-slot="scroll-cue"]').filter({has:page.getByText("First child remains small")});
+    await expect(cue).toHaveAttribute("data-scroll-end","false");
+    await page.getByRole("button",{name:"Grow second child"}).click();
+    await expect(cue).toHaveAttribute("data-scroll-end","true");
+    await expect(cue.getByRole("region",{name:"Second child resize overflow"})).toBeVisible();
+    await page.getByRole("button",{name:"Shrink second child"}).click();
+    await expect(cue).toHaveAttribute("data-scroll-end","false");
+  });
+
   test("UX-kit-HARDEN-45 mobile More details never discloses desktop-only private columns",async({page})=>{
     await page.setViewportSize({width:390,height:780});
     await page.goto(route);
