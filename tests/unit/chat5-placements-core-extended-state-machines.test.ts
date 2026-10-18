@@ -39,6 +39,18 @@ describe("chat-5 placements core — selection state and release preconditions",
   expect(isExactTpoSelectionReplay(selected,[{...one,annualCtcInr:1_000_001},two])).toBe(false);
   expect(isExactTpoSelectionReplay(selected,[{...one,roleTitle:"Senior engineer"},two])).toBe(false);
  });
+ it("PLACEMENTS-SEL-SM-07 accepts only selected row versions and rejects extra identifiers",()=>{
+  expect(releaseSelectionsSchema.safeParse(release).success).toBe(true);
+  for(const bad of [
+    {...release,expectedRecordedAt:{[a]:timestamp,[b]:timestamp}},
+    {...release,expectedRecordedAt:{[b]:timestamp}},
+    {...release,expectedRecordedAt:{}},
+    {...release,expectedRecordedAt:{[a]:timestamp,"not-a-uuid":timestamp}},
+  ])expect(releaseSelectionsSchema.safeParse(bad).success).toBe(false);
+  expect(releaseSelectionsSchema.safeParse({
+    ...release,selectionIds:[a,b],expectedRecordedAt:{[a]:timestamp,[b]:timestamp},
+  }).success).toBe(true);
+ });
  it("PLACEMENTS-SEL-SM-02 forbids stale/missing review version, duplicate releases, and bypassed confirmation",()=>{
   expect(releaseSelectionsSchema.safeParse(release).success).toBe(true);
   for(const bad of [
