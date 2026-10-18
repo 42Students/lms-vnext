@@ -37,11 +37,11 @@ export function TrackerTelegramManualPanel({items,configured,deploy}:{
     <h2 className="font-semibold">Telegram alerts</h2>
     <div className="flex flex-wrap gap-3">
       <button type="button" disabled={pending} onClick={()=>setOpen(true)}
-        className="min-h-10 rounded border border-border px-3 text-sm font-semibold disabled:opacity-50">
+        className="min-h-11 rounded border border-border px-3 text-sm font-semibold disabled:opacity-50">
         Daily digest
       </button>
       <button type="button" disabled={!configured||pending} onClick={()=>setConfirm("TEST")}
-        className="min-h-10 rounded border border-border px-3 text-sm font-semibold disabled:opacity-50">
+        className="min-h-11 rounded border border-border px-3 text-sm font-semibold disabled:opacity-50">
         Send test alert
       </button>
     </div>
@@ -60,11 +60,11 @@ export function TrackerTelegramManualPanel({items,configured,deploy}:{
       </dl>
       <div className="mt-3 flex flex-wrap gap-3">
         <button type="button" disabled={!configured||pending} onClick={()=>setConfirm("DIGEST")}
-          className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold">
+          className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold">
           Send to Telegram now
         </button>
         <button type="button" onClick={()=>setOpen(false)}
-          className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold">Close</button>
+          className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold">Close</button>
       </div>
     </Dialog>
     <ConfirmDialog open={confirm!==null} onOpenChange={value=>{if(!value)setConfirm(null);}}
