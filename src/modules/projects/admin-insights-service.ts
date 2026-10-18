@@ -44,7 +44,30 @@ import { loadProjectCollegeScope } from "./scope";
 import {adminUnsubmittedLiteralSearchPattern} from "./admin-unsubmitted-query-model";
 import {projectAdminServiceQuerySchema} from "./admin-service-query-model";
 
-const projectAdminQuerySchema = projectAdminServiceQuerySchema;
+// Service inputs also arrive from internal callers, not only from the URL
+// parser. Never admit JS numeric coercions (hex, exponent, blanks, NaN)
+// or extra, caller-injected filters into the selected-college query.
+const strictPageNumber=(min:number,max:number,fallback:number)=>z.union([
+  z.number().int().min(min).max(max),
+  z.string().regex(/^[0-9]+$/).transform(Number)
+    .pipe(z.number().int().min(min).max(max)),
+]).default(fallback);
+
+const projectAdminQuerySchema = z.strictObject({
+  riskBucket: z.enum(["STALLED", "BLOCKER", "REVIEW"]).optional(),
+  riskSort: z.enum(["INACTIVE","WORKSPACE","SEVERITY"]).optional(),
+  q: z.string().trim().max(120).optional(),
+  status: z
+    .enum([
+      "PLANNED",
+      "ACTIVE",
+      "COMPLETED",
+      "ARCHIVED",
+    ])
+    .optional(),
+  page: strictPageNumber(1,100000,1),
+  pageSize: strictPageNumber(10,100,25),
+});
 
 export type ProjectAdminQuery = z.input<
   typeof projectAdminQuerySchema
