@@ -105,7 +105,8 @@ test.describe("UX-kit-E2E-01 real browser shared UI states",()=>{
   test("UX-kit-HARDEN-45 mobile More details never discloses desktop-only private columns",async({page})=>{
     await page.setViewportSize({width:390,height:780});
     await page.goto(route);
-    const table=page.getByRole("table",{name:"Project table privacy"});
+    const table=page.locator('[data-slot="data-table"]');
+    await expect(table.locator("caption")).toHaveText("Project table privacy");
     await expect(table.getByText("DESKTOP_ONLY_PRIVATE_REVIEW")).toBeHidden();
     await table.locator("summary").filter({hasText:"More details"}).click();
     await expect(table.locator("details").getByText("Public field 4")).toBeVisible();
