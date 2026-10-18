@@ -158,4 +158,60 @@ describe("Super Admin UX first-third rollout",()=>{
    expect(page).not.toContain("<main");
    expect(page).toContain("min-w-0");
  });
+ it("UX-admin-companies-companyId-drives-01 retains guarded phone-safe UI",()=>{
+   const page=read("src/app/(authenticated)/admin/companies/[companyId]/drives/page.tsx");
+   expect(page).not.toContain("<main");
+   expect(page).not.toContain("min-h-10");
+   expect(page).not.toContain("text-primary-text");
+   expect(page).toContain("min-w-0");
+ });
+ it("UX-admin-course-progress-01 retains guarded phone-safe UI",()=>{
+   const page=read("src/app/(authenticated)/admin/course-progress/page.tsx");
+   expect(page).not.toContain("<main");
+   expect(page).not.toContain("min-h-10");
+   expect(page).not.toContain("text-primary-text");
+   expect(page).toContain("min-w-0");
+ });
+ it("UX-admin-courses-01 retains guarded phone-safe UI",()=>{
+   const page=read("src/app/(authenticated)/admin/courses/page.tsx");
+   expect(page).not.toContain("<main");
+   expect(page).not.toContain("min-h-10");
+   expect(page).not.toContain("text-primary-text");
+   expect(page).toContain("min-w-0");
+ });
+ it("UX-admin-courses-offerings-offeringId-01 retains guarded phone-safe UI",()=>{
+   const page=read("src/app/(authenticated)/admin/courses/offerings/[offeringId]/page.tsx");
+   expect(page).not.toContain("<main");
+   expect(page).not.toContain("min-h-10");
+   expect(page).not.toContain("text-primary-text");
+   expect(page).toContain("min-w-0");
+ });
+ it("UX-admin-departments-01 retains guarded phone-safe UI",()=>{
+   const page=read("src/app/(authenticated)/admin/departments/page.tsx");
+   expect(page).not.toContain("<main");
+   expect(page).not.toContain("min-h-10");
+   expect(page).not.toContain("text-primary-text");
+   expect(page).toContain("min-w-0");
+ });
+ it("UX-admin-domains-01 retains guarded phone-safe UI",()=>{
+   const page=read("src/app/(authenticated)/admin/domains/page.tsx");
+   expect(page).not.toContain("<main");
+   expect(page).not.toContain("min-h-10");
+   expect(page).not.toContain("text-primary-text");
+   expect(page).toContain("min-w-0");
+ });
+ it("UX-admin-electives-01 retains guarded phone-safe UI",()=>{
+   const page=read("src/app/(authenticated)/admin/electives/page.tsx");
+   expect(page).not.toContain("<main");
+   expect(page).not.toContain("min-h-10");
+   expect(page).not.toContain("text-primary-text");
+   expect(page).toContain("min-w-0");
+ });
+ it("UX-admin-faculty-01 retains guarded phone-safe UI",()=>{
+   const page=read("src/app/(authenticated)/admin/faculty/page.tsx");
+   expect(page).not.toContain("<main");
+   expect(page).not.toContain("min-h-10");
+   expect(page).not.toContain("text-primary-text");
+   expect(page).toContain("min-w-0");
+ });
 });
