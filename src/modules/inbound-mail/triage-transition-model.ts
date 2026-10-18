@@ -10,10 +10,11 @@ export function inboundMailStatusTransitionAllowed(from: InboundMailStatus,to: I
  return to==="NEW";
 }
 
-export function inboundMailStatusActions(status:InboundMailStatus):readonly {status:InboundMailStatus;label:string}[]{
+export function inboundMailStatusActions(status:string):readonly {status:InboundMailStatus;label:string}[]{
  switch(status){
  case "NEW":return [{status:"TRIAGED",label:"Mark being handled"},{status:"RESOLVED",label:"Mark done"}];
  case "TRIAGED":return [{status:"NEW",label:"Move back to To read"},{status:"RESOLVED",label:"Mark done"}];
  case "RESOLVED":return [{status:"NEW",label:"Move back to To read"}];
+ default:return []; // A corrupt or future status must never crash the private inbox.
  }
 }

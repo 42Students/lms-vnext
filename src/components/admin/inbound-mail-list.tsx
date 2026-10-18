@@ -59,7 +59,7 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
      <div><dt className="font-semibold">Received</dt><dd className="m-0">{new Date(selected.receivedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</dd></div>
     </dl>
     <div className="mt-4 flex flex-wrap gap-2">
-     {inboundMailStatusActions((overrides[selected.id]?.status??selected.status) as InboundMailStatus).map(action=>
+     {inboundMailStatusActions(overrides[selected.id]?.status??selected.status).map(action=>
       <button key={action.status} type="button" disabled={busy} onClick={()=>void change(selected,action.status)}
        className={action.status==="RESOLVED"?"min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50":"min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50"}>
        {busy?"Saving…":action.label}

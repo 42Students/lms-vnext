@@ -14,6 +14,10 @@ describe("chat-16 private inbound triage workflow",()=>{
     expect(inboundMailStatusTransitionAllowed(from,to)).toBe(permitted[from].includes(to));
   }
  });
+ it("INBOUND-TRIAGE-18 keeps the inbox usable when a malformed or future status arrives",()=>{
+  expect(inboundMailStatusActions("UNKNOWN")).toEqual([]);
+  expect(inboundMailStatusActions("")).toEqual([]);
+ });
  it("INBOUND-TRIAGE-17 preserves existing labels and surfaces active handling",()=>{
   expect(inboundMailStatusActions("NEW")).toEqual([
    {status:"TRIAGED",label:"Mark being handled"},
