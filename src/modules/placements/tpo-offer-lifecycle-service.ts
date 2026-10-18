@@ -21,6 +21,7 @@ import {
   tpoOfferLifecycleInputSchema,
 } from "./tpo-offer-lifecycle-model";
 import { placementJobIdSchema } from "./validation";
+import {requireTpoJobActor} from "./tpo-job-write-base";
 
 /**
  * All-or-nothing and locked in offer UUID order to avoid duplicate updates
@@ -56,6 +57,9 @@ export async function recordTpoOfferLifecycle(
 
   const db = getDb();
   return db.transaction(async (tx) => {
+    // A stale TPO session must not be able to mutate offers after its
+    // membership/role was revoked between form preview and commit.
+    await requireTpoJobActor(tx,context);
     const scoped = await tx.select({ offerId: placementOffers.id })
       .from(placementOffers)
       .innerJoin(placementApplications, eq(
