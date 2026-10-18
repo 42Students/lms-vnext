@@ -1,8 +1,8 @@
-# HR source UX review — `/hr/drives/[jobId]/interview-slots`
+# UX rollout — /hr/drives/[jobId]/interview-slots
 
-- Page source: `src/app/(authenticated)/hr/drives/[jobId]/interview-slots/page.tsx`; signed-off playbook, original headings and authorization preserved.
-- Weakness: small touch targets, horizontal page overflow, duplicate main landmarks or unscrollable tables where observed.
-- Changes: Removed nested main landmark; shell owns main; Fluid responsive page surface.
-- States: existing error, empty, pending, access-denied and data freshness logic retained without inventing records.
-- Source test: `UX-hr-hr-drives-jobId-interview-slots-01` in `tests/unit/ux-chat14-hr-01.test.ts`.
-- Not run: TypeScript/Vitest/320–390px/keyboard/manual QA; do not tick until orchestrator verification.
+- **Route:** src/app/(authenticated)/hr/drives/[jobId]/interview-slots/page.tsx
+- **Test:** UX-hr-drives-jobId-interview-slots-01 (`tests/ux-hr-rollout-01.test.mjs`).
+- **Earlier weakness:** 3 low-contrast `text-primary-text` utility occurrences; static actions lacked consistent keyboard focus and selected controls were smaller than 44px.
+- **Change:** Preserved all original page labels, headings, filter values, notices and APIs. Upgraded readable link color to the shared deep-teal token, added 2px focus outlines to 3 links and 0 buttons and normalized 0 input/select/textarea targets where applicable. Existing shared PageHeader, EmptyState and ErrorState are retained without bespoke replacements.
+- **States:** Existing access, invalid query, partial, empty, pagination and error paths are preserved; no invented records, retries or UI strings. Mobile/AT acceptance is orchestrator-owned.
+- **Test/acceptance:** Named static source regression test authored; execution of typecheck/lint/unit/browser remains with orchestrator and is not represented as having run.
