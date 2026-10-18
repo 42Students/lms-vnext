@@ -2,8 +2,9 @@
 
 import { formatDateTimeIst } from "@/lib/format-date";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 
@@ -23,20 +24,34 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
   const router = useRouter();
   const { showToast } = useToast();
   const [busy, setBusy] = useState<string | null>(null);
+  const busyRef = useRef<string | null>(null);
+  const [confirmation, setConfirmation] = useState<{key:string;url:string;success:string;label:string}|null>(null);
   const [pending, startTransition] = useTransition();
 
   function run(key: string, url: string, success: string) {
+    if (busyRef.current || pending) return;
+    busyRef.current = key;
     setBusy(key);
     startTransition(async () => {
-      const response = await fetch(url, { method: "DELETE" });
-      setBusy(null);
-      if (response.ok) {
-        showToast({ title: success, tone: "success" });
-        router.refresh();
-      } else {
+      try {
+        const response = await fetch(url, { method: "DELETE" });
+        if (response.ok) {
+          showToast({ title: success, tone: "success" });
+          setConfirmation(null);
+          router.refresh();
+        } else {
+          showToast({ title: "That didn't work. Try again.", tone: "error" });
+        }
+      } catch {
         showToast({ title: "That didn't work. Try again.", tone: "error" });
+      } finally {
+        busyRef.current = null;
+        setBusy(null);
       }
     });
+  }
+  function ask(key: string, url: string, success: string, label: string) {
+    if (!busyRef.current && !pending) setConfirmation({key,url,success,label});
   }
 
   const others = devices.filter((device) => !device.current).length;
@@ -47,16 +62,16 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
         {devices.map((device) => (
           <li
             key={device.id}
-            className="flex flex-wrap items-center justify-between gap-3 p-4"
+            className="flex min-w-0 flex-wrap items-center justify-between gap-3 p-4 sm:p-5"
           >
-            <div>
-              <p className="m-0 flex items-center gap-2 text-sm font-semibold text-foreground">
+            <div className="min-w-0 flex-1">
+              <p className="m-0 flex flex-wrap items-center gap-2 break-words text-sm font-semibold text-foreground">
                 {device.label}
                 {device.current ? (
                   <StatusBadge tone="success">This device</StatusBadge>
                 ) : null}
               </p>
-              <p className="mt-1 text-xs text-muted-foreground">
+              <p className="mt-1 break-words text-xs leading-5 text-muted-foreground">
                 Signed in {when(device.createdAt)} · last active{" "}
                 {when(device.lastSeenAt)}
               </p>
@@ -65,12 +80,13 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
               <Button
                 variant="secondary"
                 size="sm"
-                disabled={pending}
+                disabled={pending || busy!==null}
                 onClick={() =>
-                  run(
+                  ask(
                     device.id,
                     `/api/auth/devices/${device.id}`,
                     "Device signed out",
+                    "Sign out",
                   )
                 }
               >
@@ -86,12 +102,13 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
           <Button
             variant="danger"
             size="sm"
-            disabled={pending}
+            disabled={pending || busy!==null}
             onClick={() =>
-              run(
+              ask(
                 "all",
                 "/api/auth/devices",
                 "Signed out everywhere else",
+                "Sign out everywhere else",
               )
             }
           >
@@ -99,6 +116,17 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
           </Button>
         </div>
       ) : null}
+      <ConfirmDialog
+        open={confirmation!==null}
+        onOpenChange={open=>{if(!open&&!pending&&!busy)setConfirmation(null);}}
+        title={confirmation?.label??"Sign out"}
+        description={confirmation?.key==="all"
+          ? "Sign out everywhere else. This device stays signed in."
+          : "Sign out this device. You can sign in again later."}
+        confirmLabel={confirmation?.label??"Sign out"}
+        pending={pending||busy!==null}
+        onConfirm={()=>{if(confirmation)run(confirmation.key,confirmation.url,confirmation.success);}}
+      />
     </section>
   );
 }
