@@ -64,6 +64,8 @@ Branch: `chatgpt/chat-9-b`. Owner: chat-9. These are observed source-level findi
 
 | PROJ9-038 · PROJ-BREAK-idor-39 / state-24 / races-17 | High | Template duplication loaded an existing blueprint outside its transaction and relied on an earlier request-context role snapshot; a role revoked before insert could still create a new global template. It now checks persisted Super Admin authority under transactional locks before inserting. Tests also cover archival snapshot duplication into a separate unpublished v1 and PostgreSQL slug-conflict mapping without an activity event. | `8e1cecf` | `tests/unit/PROJ-BREAK-chat9-template-duplicate.test.ts` (`7b14b27`); real PostgreSQL and concurrent source updates OPEN |
 
+| PROJ9-039 · PROJ-BREAK-idor-50/53 | High | Global project-template creation, revision, and publication trusted the initial request-context platform role. If a Super Admin was disabled or lost role between opening a screen and mutation, their stale tab could still create or publish project templates and emit activity. Each transaction now performs persisted role reauthorization before its first write, after the parent row lock where applicable. The existing no-migration template lifecycle is retained. | `e0e56d7` | `tests/unit/PROJ-BREAK-chat9-template-authoring-auth.test.ts` (`3e01e55`): revoked roles before inserts/version changes, disabled and wrong role denied. Actual PostgreSQL role-update concurrency OPEN |
+
 ## Outstanding release gates (not yet closed)
 
 - Live PostgreSQL integration tests for wrong-tenant IDs, serializable races, rollback and event/notification dedupe; chat-17 owns shared fixtures. Static service assertions alone cannot establish real DB behavior.
