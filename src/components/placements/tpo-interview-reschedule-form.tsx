@@ -29,7 +29,7 @@ export function TpoInterviewRescheduleForm({round}:{
   }catch(e){setError(e instanceof Error?e.message:"Interview reschedule failed");}
   finally{setPending(false);}
  }
- const field="mt-1 min-h-11 sm:min-h-9 w-full rounded-[9px] border border-border bg-surface p-2 text-foreground";
+ const field="mt-1 min-h-11 md:min-h-9 w-full rounded-[9px] border border-border bg-surface p-2 text-foreground";
  function askToReschedule(event:FormEvent<HTMLFormElement>){
   event.preventDefault();if(!pending)setConfirmOpen(true);
  }
@@ -47,7 +47,7 @@ export function TpoInterviewRescheduleForm({round}:{
   <label className="text-sm text-body sm:col-span-2">Reason (audited)
    <textarea required name="reason" minLength={10} maxLength={1000} rows={2} className={field}/></label>
   {error?<p role="alert" className="text-sm text-error sm:col-span-2">{error}</p>:null}
-  <button type="submit" disabled={pending} className="min-h-11 rounded-[9px] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50 sm:col-span-2 text-primary-foreground">
+  <button type="submit" disabled={pending} className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50 sm:col-span-2 text-primary-foreground">
     {pending?"Rescheduling…":"Confirm interview reschedule"}</button>
  </form><ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={pending}
   title="Reschedule this interview?"
