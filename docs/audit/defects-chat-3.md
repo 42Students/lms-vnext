@@ -176,6 +176,12 @@ The Faculty Section health model filtered assessment rows to `status === "PUBLIS
 
 **Fix:** Include `status === "CLOSED"` **only for quizzes** in the Section-scoped health selector. Draft and archived quizzes and non-published assignments remain excluded. `tests/unit/chat3-faculty-course-health-closed-quiz-model.test.ts` checks the state matrix, exact delivery, five-row page cap and invalid selector, and `tests/unit/chat3-faculty-course-health-service-permissions.test.ts` now exercises a CLOSED quiz through the actual service. Tests authored only; cloud CI and browser historical-quiz checks pending.
 
+### SA-PEOPLE-ROOT-032 — selected People and Faculty assignment pages lacked page-level Super Admin role gate (S2)
+
+The selected `/admin/faculty-assignment`, `/admin/people/directory`, and global `/admin/people/unassigned` pages relied on shared layouts or service authorization alone. With a stale or inconsistent session, those pages could render partial privileged UI or load administrative workspace services before their own platform role preflight. Defense in depth requires a local active Super Admin check.
+
+**Fix:** Each entrypoint now redirects non-Super-Admin actors before the list data load. Existing central permission service checks remain in force. `tests/unit/chat3-sa-academics-people-root-platform-roles.test.ts` explicitly verifies `SA-PEOPLE-ROOT-02`. Tests authored, not run; browser and CI checks pending.
+
 ### SA-ACADEMICS-ROOT-031 — administrative Academics and People pages delegated role separation only to layout (S1)
 
 The root `/admin/academics` page read the selected college workspace without a local platform-role gate, relying on the shared route layout to stop an ordinary user reaching it. `/admin/people` similarly relied on layout and deeper membership permission checks. Generic `academics.read` is valid for Faculty and Learner memberships within their own college; it must not accidentally authorize a platform-admin page when a stale session carries an `adminScope`.
