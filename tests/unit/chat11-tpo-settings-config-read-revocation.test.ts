@@ -52,6 +52,7 @@ describe("TPO-settings-audit-CONFIG-READ-11 tenant settings role-revocation barr
   if(name!=="listTpoPrepCourses")expect(availability).toBeGreaterThan(preflight);
   expect(tx).toBeGreaterThan(preflight);
   expect(active).toBeGreaterThan(tx);
+  expect(fn.slice(tx,persisted)).toContain('.for("share").limit(1)');
   expect(persisted).toBeGreaterThan(active);
   expect(read).toBeGreaterThan(persisted);
   expect(output).toBeGreaterThanOrEqual(read);
