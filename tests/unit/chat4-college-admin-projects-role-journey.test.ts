@@ -57,10 +57,10 @@ describe("PROJ-BREAK-COLLEGE-04 College Admin project authorization journey", ()
     }
   });
 
-  it("PROJ-BREAK-COLLEGE-04-04 rejects suspended, ended and removed memberships before project writes", () => {
+  it("PROJ-BREAK-COLLEGE-04-04 rejects disabled users, ended and removed memberships before project writes", () => {
     const admin = collegeAdmin();
     const inactiveUser: RequestContext = {
-      ...admin, user: { ...admin.user, platformStatus: "SUSPENDED" },
+      ...admin, user: { ...admin.user, platformStatus: "DISABLED" },
     };
     const endedMembership: RequestContext = {
       ...admin, membership: { ...admin.membership!, status: "ENDED" },
