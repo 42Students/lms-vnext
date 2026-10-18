@@ -33,3 +33,19 @@ export function describeDevice(userAgent: string | null | undefined) {
   if (browser && system) return `${browser} on ${system}`;
   return browser ?? system ?? "Unknown device";
 }
+
+
+/**
+ * Device timestamps are loaded from persisted, nullable SQL rows. A corrupt or
+ * migrated value must not crash the whole account-security screen when the
+ * user urgently needs to revoke a session.
+ */
+export function deviceTimestampIso(value: unknown): string | null {
+  const date = value instanceof Date
+    ? value
+    : typeof value === "string" && value.trim()
+      ? new Date(value)
+      : null;
+  if (!date || !Number.isFinite(date.getTime())) return null;
+  return date.toISOString();
+}
