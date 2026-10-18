@@ -160,7 +160,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
 
           {section.smsTemplates ? (
             <>
-            <DataTable<(typeof section.smsTemplates)[number]>
+            <DataTable<NonNullable<typeof section.smsTemplates>[number]>
               caption="SMS source templates"
               rows={section.smsTemplates}
               getRowKey={template=>template.key}
