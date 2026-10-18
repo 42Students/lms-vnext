@@ -1,4 +1,5 @@
-import { redirect } from "next/navigation";
+import { ProjectAdminMissingCollege } from "@/components/projects/project-admin-missing-college";
+import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ProjectAdminReassignMentorPage } from "@/components/projects/project-admin-reassign-mentor-page";
 
@@ -13,13 +14,12 @@ export default async function CollegeProjectReassignMentorRoute({
   >;
 }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership) {
-    redirect("/dashboard");
-  }
+  const collegeId = getProjectAdminCollegeId(context);
+  if (!collegeId) return <ProjectAdminMissingCollege/>;
 
   return (
     <ProjectAdminReassignMentorPage
-      collegeId={context.membership.collegeId}
+      collegeId={collegeId}
       basePath="/college/projects"
       eyebrow="College Admin Projects"
       searchParams={await searchParams}

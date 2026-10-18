@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { ProjectAdminMissingCollege } from "@/components/projects/project-admin-missing-college";
+import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ClassTeamWorkspaceCreator } from "@/components/projects/class-team-workspace-creator";
 import { PageHeader } from "@/components/ui/page-header";
@@ -8,8 +9,8 @@ import { requireTeamCreationAuthority } from "@/modules/projects/class-team-rost
 
 export default async function CollegeClassProjectWorkspacePage() {
   const context = await getCurrentRequestContext();
-  if (!context.membership) redirect("/college/projects");
-  const collegeId = context.membership.collegeId;
+  const collegeId = getProjectAdminCollegeId(context);
+  if (!collegeId) return <ProjectAdminMissingCollege/>;
   await requireTeamCreationAuthority(context, collegeId);
   const templates = await listAssignedProjectTemplates(context, collegeId);
   return (
