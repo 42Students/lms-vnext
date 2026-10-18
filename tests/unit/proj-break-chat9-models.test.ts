@@ -30,7 +30,7 @@ describe("IIT Dharwad Projects adversarial admin/college models",()=>{
    const expected=from===to || (from==="PLANNED"&&to==="ACTIVE"&&mentor) ||
     (from==="ACTIVE"&&to==="COMPLETED"&&approved);
    // ARCHIVED is immutable even on a self-transition.
-   expect(collegeProjectStatusChangeAllowed(from,to,mentor,approved)).toBe(from==="ARCHIVED"?true:expected);
+   expect(collegeProjectStatusChangeAllowed(from,to,mentor,approved)).toBe(from==="ARCHIVED"||to==="ARCHIVED"?false:expected);
   }
  });
  it("PROJ-BREAK-state-02 forbids completion before delivery approval and activation without mentor",()=>{
