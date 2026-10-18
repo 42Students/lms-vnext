@@ -32,6 +32,7 @@ import {
 } from "@/modules/permissions/policy";
 import { PlacementsServiceError } from "./errors";
 import { requirePlacementManageScope } from "./scope";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import {recruiterOwnJobExists} from "./recruiter-job-ownership";
 import {notifyTpoOfRecruiterAction} from "./hr-tpo-notification-service";
@@ -623,6 +624,29 @@ export async function applyPlacementRoundResult(
 
   const db = getDb();
   return db.transaction(async (tx) => {
+    // Lock the drive and round before a staged result is applied. A drive can
+    // close or a round can be cancelled after the initial read but before
+    // the result and progression updates. Follow staging's lock order.
+    const [lockedJob] = await tx.select({status:placementJobs.status})
+      .from(placementJobs).where(eq(placementJobs.id,current.job.id))
+      .for("update").limit(1);
+    if(!lockedJob || lockedJob.status!=="PUBLISHED")
+      throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
+    const [lockedRound] = await tx.select({
+      status:placementJobRounds.status,kind:placementJobRounds.kind,
+    }).from(placementJobRounds).where(and(
+      eq(placementJobRounds.id,current.round.id),
+      eq(placementJobRounds.jobId,current.job.id),
+    )).for("update").limit(1);
+    if(!lockedRound || lockedRound.status!=="COMPLETED")
+      throw new PlacementsServiceError("PLACEMENT_RESULT_ROUND_NOT_READY");
+    if(lockedRound.kind==="TALK")
+      throw new PlacementsServiceError("PLACEMENT_RESULT_INVALID_ROUND_TYPE");
+    // The HTTP request may outlive the officer's membership or system-role
+    // grant. Keep actor SHARE locks through the result, audit and delivery.
+    await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+      collegeId:current.job.collegeId,
+    });
     const [lockedApplication] = await tx
       .select({
         status: placementApplications.status,
