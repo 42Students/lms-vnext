@@ -33,7 +33,11 @@ export function TpoAuditSavedViews({filters}:{filters:{
  useEffect(()=>{
   const controller=new AbortController();
   void load(controller.signal).catch(()=>{
-   if(!controller.signal.aborted)setError("Could not load saved audit views. Refresh to try again.");
+   if(!controller.signal.aborted){
+    setReady(false);
+    setViews([]);
+    setError("Could not load saved audit views. Refresh to try again.");
+   }
   }).finally(()=>{
    if(!controller.signal.aborted)setLoading(false);
   });
@@ -58,6 +62,9 @@ export function TpoAuditSavedViews({filters}:{filters:{
     try{await load();}catch{}
     setError("The result of this change is uncertain. Review saved views before trying again.");
    }else if(cause instanceof FriendlyFetchError){
+    if(cause.status===401||cause.status===403){
+     setReady(false);setViews([]);
+    }
     const code=cause.code;
     setError(code==="VIEW_LIMIT"?"Maximum 12 saved audit views.":
      code==="PIN_LIMIT"?"Maximum five pinned audit views.":
