@@ -52,15 +52,27 @@ describe("HR-GRANT-EXPIRE-39 persisted recruiter grant and relationship gates",(
    expect((await authorized()).map(row=>row.id)).toEqual([grant!.id]);
    for(const [field,value] of [
     ["valid_until",null],
-    ["valid_until",new Date("2000-01-01T00:00:00.000Z")],
+    ["valid_until","EXPIRED_BUT_AFTER_CREATION"],
     ["verification_status","PENDING"],
     ["capabilities",["MESSAGES"]],
     ["status","REVOKED"],
    ] as const){
     await db.savepoint(async()=>{
      // Parameterized values; only field names from the hardcoded allowlist.
-     await db.query(`update placement_recruiter_college_grants
-      set ${field}=$1 where id=$2`,[value,grant!.id]);
+     if(field==="status"){
+      await db.query(`update placement_recruiter_college_grants
+       set status='REVOKED',revoked_by_user_id=$1,revoked_at=now()
+       where id=$2`,[tpo.userId,grant!.id]);
+     }else if(field==="valid_until"&&value==="EXPIRED_BUT_AFTER_CREATION"){
+      // The grant validity check requires expires > created_at.
+      // Backdate BOTH within the savepoint to model a genuinely expired grant.
+      await db.query(`update placement_recruiter_college_grants
+       set created_at=now()-interval '2 days',
+           valid_until=now()-interval '1 day' where id=$1`,[grant!.id]);
+     }else{
+      await db.query(`update placement_recruiter_college_grants
+       set ${field}=$1 where id=$2`,[value,grant!.id]);
+     }
      expect(await authorized()).toEqual([]);
     },true);
    }
