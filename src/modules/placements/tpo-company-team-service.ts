@@ -243,6 +243,8 @@ export async function mutateTpoCompanyTeam(context:RequestContext,rawCompanyId:u
     if(targetMembershipId&&targetMembershipId!==membership.id){
       const [recipient]=await tx.select({id:collegeMemberships.id,userId:collegeMemberships.userId})
        .from(collegeMemberships)
+       .innerJoin(users,and(eq(users.id,collegeMemberships.userId),
+        eq(users.platformStatus,"ACTIVE")))
        .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
         inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"])))
        .where(and(eq(collegeMemberships.id,targetMembershipId),eq(collegeMemberships.collegeId,college.id),
