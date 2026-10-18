@@ -393,6 +393,19 @@ export async function createMeeting(db: PgHarness, project: ProjectFixture,
   await requireProjectLearner(db, project.projectId, learner);
   await requireProjectCollegeActor(db, project.projectId, author);
   await requireFixtureCollegePrincipal(db, author.collegeId!, author, ["COLLEGE_ADMIN","MENTOR"]);
+  const coordinator = await db.query<{id:string}>(`
+    select cm.id from college_memberships cm
+      left join membership_roles admin
+        on admin.membership_id=cm.id and admin.role='COLLEGE_ADMIN'
+      left join project_members mentor
+        on mentor.membership_id=cm.id and mentor.project_id=$2
+       and mentor.role='MENTOR' and mentor.ended_at is null
+       and mentor.can_mutate=true
+     where cm.id=$1 and (admin.membership_id is not null or mentor.id is not null)
+     limit 1`, [author.membershipId,project.projectId]);
+  if (coordinator.length !== 1) {
+    throw new Error("PROJ-HARNESS: meeting mentor is not active on this project");
+  }
   const [row] = await db.query<{id:string}>(`
     insert into project_meetings
       (project_id,title,starts_at,ends_at,time_zone,requested_by_membership_id,created_by_user_id)

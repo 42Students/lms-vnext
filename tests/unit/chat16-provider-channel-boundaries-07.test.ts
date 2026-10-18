@@ -166,4 +166,15 @@ describe("chat-16 generic campaign and recruiter email channel fail-closed behav
     expect(outboundFetch).not.toHaveBeenCalled();
   });
 
+  it("REC-JOIN-CODE-ZEPTO-05 rejects blank OTP template in public recruiter join flow", async () => {
+    vi.stubEnv("APP_ENV", "production");
+    vi.stubEnv("ZEPTOMAIL_TOKEN", "valid-token");
+    vi.stubEnv("ZEPTOMAIL_OTP_TEMPLATE_KEY", "  ");
+    const transport = vi.fn(async () => new Response(null, { status: 202 }));
+    expect(await deliverPublicRecruiterJoinCode(
+      "recruiter@example.org", "123456", transport as unknown as typeof fetch,
+    )).toBe(false);
+    expect(transport).not.toHaveBeenCalled();
+  });
+
 });
