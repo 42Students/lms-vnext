@@ -31,6 +31,30 @@ describe("TPO release — no internal errors leak in partial results",()=>{
   expect(service).toContain("summarizeSelectionRelease(results)");
   expect(service).toContain("results.push(");
  });
+ it("PLACEMENTS-SELECTION-RECONCILE-02/03 requires a locked matching version, official offer and canonical active state on every reconciliation",()=>{
+  const code=src("src/modules/placements/tpo-drive-selection-service.ts");
+  const reconcile=code.slice(code.indexOf('if(selection.status==="VERIFIED"'),code.indexOf('if(candidate?.offer&&',code.indexOf('if(selection.status==="VERIFIED"')));
+  expect(reconcile).toContain('candidate.offer.kind==="OFFER"');
+  expect(reconcile).toContain('locked.recordedAt.toISOString()!==input.expectedRecordedAt[id]');
+  expect(reconcile).toContain('locked.roleTitle!==selection.roleTitle');
+  expect(reconcile).toContain('locked.annualCtcInr!==selection.annualCtcInr');
+  expect(reconcile).toContain('locked.applicationId!==selection.applicationId');
+  expect(reconcile).toContain('.for("update").limit(1)');
+  expect(reconcile).toContain('persistedOffer.kind!=="OFFER"');
+  expect(reconcile).toContain('persistedOffer.applicationId!==locked.applicationId');
+  expect(reconcile).toContain('persistedOffer.roleTitle!==locked.roleTitle');
+  expect(reconcile).toContain('persistedOffer.annualCtcInr!==locked.annualCtcInr');
+  expect(reconcile).toContain('if(locked.status==="RELEASED"&&locked.releasedOfferId===offerId)return');
+  expect(reconcile.indexOf('if(locked.status!=="VERIFIED")'))
+    .toBeLessThan(reconcile.indexOf('status:"RELEASED",releasedOfferId:offerId'));
+  // The post-issue write path also checks the client's original exact terms,
+  // not merely VERIFIED, before accounting an offer release.
+  const after=code.slice(code.indexOf('const offer=await issuePlacementOffer('));
+  expect(after).toContain('locked.recordedAt.toISOString()!==input.expectedRecordedAt[id]');
+  expect(after).toContain('locked.roleTitle!==selection.roleTitle');
+  expect(after).toContain('locked.annualCtcInr!==selection.annualCtcInr');
+  expect(after).toContain('if(locked.status==="RELEASED"&&locked.releasedOfferId===offer.id)return');
+ });
  it("PLACEMENTS-SELECTION-ERROR-05 never trusts surplus college ID or invalid release version",()=>{
   expect(recordSelectionsSchema.safeParse({action:"RECORD",entries:[],collegeId:id}).success).toBe(false);
   expect(releaseSelectionsSchema.safeParse({action:"VERIFY_AND_RELEASE",confirmed:true,
