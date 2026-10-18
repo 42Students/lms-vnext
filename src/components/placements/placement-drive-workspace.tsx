@@ -266,8 +266,9 @@ export async function PlacementDriveWorkspace({
         actions={
           <details className="group relative w-full md:w-auto" aria-label="Drive actions">
             <summary className="flex min-h-11 cursor-pointer items-center rounded border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] md:hidden">Actions</summary>
-            <div role="group" aria-label="Drive action choices"
-              className="hidden max-h-[65dvh] min-w-0 flex-col gap-2 overflow-y-auto rounded border border-border bg-surface p-3 group-open:flex md:flex md:max-h-none md:flex-row md:flex-wrap md:overflow-visible md:border-0 md:p-0">
+            <p className="hidden text-xs text-muted-foreground group-open:block md:!hidden">Scroll for more drive actions ↓</p>
+            <div role="group" aria-label="Drive action choices" tabIndex={0}
+              className="hidden max-h-[65dvh] min-w-0 flex-col gap-2 overflow-y-auto overscroll-contain rounded border border-border bg-surface p-3 pb-7 group-open:flex md:flex md:max-h-none md:flex-row md:flex-wrap md:overflow-visible md:border-0 md:p-0 [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1.25rem),transparent_100%)] md:[mask-image:none]">
             {nextStep ? (
               <Link href={nextStep.primary.href}
                 className="inline-flex min-h-11 items-center justify-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">

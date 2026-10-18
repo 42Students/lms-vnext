@@ -44,7 +44,7 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
     aria-label="Super Admin bulk drive actions">
     <div className="flex flex-wrap items-center gap-3">
       <h2 className="font-semibold">Bulk Open / Close</h2>
-      <label className="flex min-h-10 items-center gap-2 text-sm">
+      <label className="flex min-h-11 items-center gap-2 text-sm">
         <input type="checkbox" disabled={busy || !eligible.length}
           checked={eligible.length>0 && eligible.every(d=>selected.includes(d.id))}
           onChange={e=>{setSelected(e.target.checked?eligible.slice(0,25).map(d=>d.id):[]);
@@ -55,18 +55,20 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
         <select value={action} aria-label="Bulk action" onChange={e=>{
           setAction(e.target.value as "OPEN" | "CLOSE");setSelected([]);
           setPreview(null);setResult(null);}}
-          className="min-h-10 rounded border border-border bg-surface p-2">
+          className="min-h-11 rounded border border-border bg-surface p-2">
           <option value="CLOSE">Close selected</option>
           <option value="OPEN">Open closed drives</option>
         </select>
       </label>
       <button type="button" disabled={busy || !selected.length || selected.length>25}
         onClick={()=>void send(false)}
-        className="min-h-10 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+        className="min-h-11 rounded bg-primary px-4 font-semibold text-foreground disabled:opacity-50">
         Preview {selected.length} drive(s)
       </button>
     </div>
-    <div className="grid max-h-48 gap-2 overflow-auto sm:grid-cols-2 xl:grid-cols-4">
+    <p id="bulk-drive-scroll-cue" className="text-xs text-muted-foreground">More drives below ↓ · Scroll to review the eligible drives.</p>
+    <div tabIndex={0} role="region" aria-label="Eligible drive list" aria-describedby="bulk-drive-scroll-cue"
+      className="grid max-h-48 min-w-0 gap-2 overflow-y-auto overscroll-contain sm:grid-cols-2 xl:grid-cols-4 [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1.25rem),transparent_100%)]">
       {eligible.map(d=><label key={d.id} className="flex gap-2 rounded border border-border p-2 text-xs">
         <input type="checkbox" disabled={busy} checked={selected.includes(d.id)}
           onChange={()=>toggle(d.id)}/>
@@ -87,18 +89,18 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
       <button type="button" disabled={busy || !preview.eligible} onClick={()=>{
         if(window.confirm("Confirm "+action.toLowerCase()+" for "+preview.eligible+" drives?"))
           void send(true);
-      }} className="min-h-10 rounded bg-primary px-3 font-semibold text-on-primary disabled:opacity-50">
+      }} className="min-h-11 rounded bg-primary px-3 font-semibold text-foreground disabled:opacity-50">
         Confirm {action.toLowerCase()}
       </button>
       <button type="button" disabled={busy} onClick={()=>setPreview(null)}
-        className="ml-2 min-h-10 rounded border border-border px-3">Cancel</button>
+        className="ml-2 min-h-11 rounded border border-border px-3">Cancel</button>
     </div>:null}
     {result?<div role="status" className="space-y-2 text-sm">
       <p>{result.updated} updated, {result.skipped} failed. Retry will target only failed drives.</p>
       {result.results.filter(x=>x.status==="SKIPPED").map(x=>
         <p key={x.jobId}>{drives.find(d=>d.id===x.jobId)?.title??"Drive"}: {x.reason}</p>)}
       {result.skipped>0?<button type="button" onClick={()=>void send(false)}
-        className="min-h-10 font-semibold text-primary-text underline">Preview failed drives for retry</button>:null}
+        className="min-h-11 font-semibold text-[var(--lms-teal-deep)] underline">Preview failed drives for retry</button>:null}
     </div>:null}
     {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   </section>;
