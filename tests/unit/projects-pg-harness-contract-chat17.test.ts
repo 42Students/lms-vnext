@@ -85,6 +85,14 @@ describe("PROJ-HARNESS source and environment guard",()=>{
    expect(helper).not.toContain('"2026-10-20T04:30:00Z"');
  });
 
+ it("PROJ-HARNESS-GUARD-10 published drive fixtures enforce offer-ready deadline and pay",()=>{
+   expect(helper).toContain("'2099-06-01T12:00:00Z','PUBLISHED',now()");
+   expect(helper).toContain("minimum_annual_ctc_inr");
+   expect(helper).toContain("j.status='PUBLISHED' and j.published_at is not null");
+   expect(helper).toContain("j.application_deadline>now()");
+   expect(helper).toContain("drive is not open for applications");
+ });
+
  it("PROJ-HARNESS-GUARD-05 always rolls back transaction and savepoint errors",()=>{
    expect(helper).toContain('if (begun) await client.query("ROLLBACK")');
    expect(helper).toContain("client.release()");

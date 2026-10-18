@@ -18,14 +18,15 @@ import {notifyActiveProjectMembers} from "./project-notification-service";
 export async function decideMentorProjectMeeting(context:RequestContext,rawProjectId:string,
  rawMeetingId:string,raw:unknown){
  const input=mentorMeetingDecisionSchema.parse(raw);
+ // Never resolve a project ID on a tenant where Projects is disabled.
+ if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
+  throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
  const scope=await requireProjectReadAccess(context,rawProjectId);
  const member=context.membership;
  if(scope.access!=="MENTOR"||!member||!hasActiveMembership(context)||
   !hasMembershipRole(context,"MENTOR")||!can(context,"projects.read",{
    collegeId:scope.collegeId,organizationId:scope.organizationId,
   }))throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
- if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
-  throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
  const meetingId=projectMeetingIdSchema.parse(rawMeetingId);
  return getDb().transaction(async tx=>{
   const [project]=await tx.select({status:projectInstances.status}).from(projectInstances)
