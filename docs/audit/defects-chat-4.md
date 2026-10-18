@@ -201,3 +201,19 @@ College Admin Projects insights were built from `RequestContext` `requirePermiss
 ## COL-people-import-history-RACE-02 — S2 closed dialog and stale page overwrite
 
 Bulk import history previously left concurrent GET responses unversioned. After fast next/previous clicks, close/reopen or a slow network, an old page could overwrite a newly selected page, including error text from the outdated request. The College import-history dialog now aborts the prior request, advances a request token on next load and close, applies data/errors only for the latest non-aborted token, checks array response shape and hides raw upstream error strings. `isCurrentCollegeImportHistoryRequest` is tested for out-of-order completions and cancellation; browser integration pending.
+
+## COL-UX-ACADEMIC-TABLE-01 — phone keyboard accessibility of academic directory
+
+The College Admin semesters/batches directory rendered a wide native `<table>` inside a horizontal scroller, requiring phone users to pan across 6–8 columns and find edit actions at the trailing edge. It now uses the shared `DataTable` with a labelled `ScrollCue`, semantic column captions, primary fields and actions visible on phones, and extra metadata in the accessible More details disclosure. Existing Actions and legacy labels remain. SSR tests cover both directory modes; not run, phone/browser audit pending.
+
+## COL-UX-STRUCTURE-TABLE-02 — S2 horizontal-only Class/Elective directory access
+
+Class and elective-slot directories were wide native tables where the Schedule/Manage actions and confirmed-student fields required horizontal scanning on phones. Replaced with the shared responsive `DataTable`, marking the record as primary, actions as permanently phone-visible, and remaining fields as secondary accessible through More details. All original legacy action routes and row permission gates remain. Added SSR rendered class/elective regression cases; cloud/mobile verification pending.
+
+## COL-UX-PEOPLE-TABLE-03 — S2 People directory desktop table maintenance and phone scroll affordance
+
+The College Admin Faculty/Student directory had two independently maintained row presentations: a hand-written desktop-only native table and mobile cards. The desktop table was not using shared `DataTable` semantics or its sticky heading, keyboard-labelled scroll cue and per-field formatter handling. It is now rendered by the shared responsive `DataTable`, wrapped `hidden md:block` to retain the existing richer mobile cards and avoid duplicating cards on phones. All actions, field visibility and tenant filter service calls remain unchanged. SSR tests written, not run.
+
+## COL-people-faculty-csv-RACE-03 — S1 preview of a replaced CSV could enable registration
+
+The faculty bulk-registration form did not bind an async preview response to its source CSV. Editing the textarea or choosing a new file while a slow validation was in flight could allow the old `report.preview` to reappear next to new contents, then register a different set of people than the preview showed. The form now increments a CSV draft revision on every file/text edit, accepts only same-revision previews and file reads, resets preview/confirmation immediately, disables editing during pending operations, and uses safe generic network errors. `facultyCsvResponseBelongsToDraft` carries the cross-request decision and is behavior-tested; browser/API race execution pending.

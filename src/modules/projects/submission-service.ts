@@ -7,6 +7,7 @@ import {
   isNull,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {assertCurrentEvaluationActor} from "./evaluation-service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {readProjectReadinessOverride} from "./readiness-override-service";
 import {effectiveProjectSubmissionReady} from "./readiness-override-model";
@@ -522,6 +523,18 @@ export async function reviewProjectSubmission(
           "PROJECT_SUBMISSION_INVALID_STATE",
         );
       }
+
+      // Re-read the reviewer grant while holding SHARE locks in this same
+      // transaction. A mentor removed mid-review or an administrator disabled
+      // after the initial request context must not finalize a private result.
+      const reviewerAccess=scope.access;
+      if(reviewerAccess!=="ADMIN"&&reviewerAccess!=="MENTOR")
+        throw new ProjectsServiceError("PROJECT_LIFECYCLE_ACCESS_DENIED");
+      await assertCurrentEvaluationActor(tx,context,{
+        project:{id:scope.project.id},
+        collegeId:scope.collegeId,organizationId:scope.organizationId,
+        access:reviewerAccess,
+      });
 
       const [review] = await tx
         .insert(projectSubmissionReviews)
