@@ -157,7 +157,7 @@ export default async function CollegeBatchPromotionPage({
               No persisted learner enrollments exist for this batch. No eligible count is inferred.
             </p>
           ) : (
-            <table className="w-full min-w-[35rem] text-left text-sm">
+            <table className="w-full min-w-[35rem] text-left text-sm [&_th:first-child]:sticky [&_th:first-child]:left-0 [&_th:first-child]:z-10 [&_th:first-child]:bg-surface [&_td:first-child]:sticky [&_td:first-child]:left-0 [&_td:first-child]:z-10 [&_td:first-child]:bg-surface">
               <thead className="bg-muted text-muted-foreground"><tr>
                 <th scope="col" className="px-4 py-3">Learner</th>
                 <th scope="col" className="px-4 py-3">Enrollment</th>
