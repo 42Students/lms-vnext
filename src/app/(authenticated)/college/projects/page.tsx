@@ -54,13 +54,34 @@ export default async function CollegeProjectsPage({
   const serviceQuery = {
     q: query.q, status: query.status, page: query.page, pageSize: query.pageSize,
   };
-  // Failure to read optional template labels must not hide the actual projects.
-  const [result, templatesResult] = await Promise.all([
-    listProjectAdminSnapshots(context, collegeId, serviceQuery),
+  // Optional labels may fail independently, but an essential workspace read
+  // must show a true retry state rather than throw or display a false empty list.
+  const [snapshotsResult, templatesResult] = await Promise.all([
+    listProjectAdminSnapshots(context, collegeId, serviceQuery)
+      .then(value => ({ ok: true as const, value }))
+      .catch(() => ({ ok: false as const })),
     listAssignedProjectTemplates(context, collegeId)
       .then(value => ({ ok: true as const, value }))
       .catch(() => ({ ok: false as const })),
   ]);
+  if(!snapshotsResult.ok){
+    const retry=new URLSearchParams();
+    if(query.q)retry.set("q",query.q);
+    if(query.status)retry.set("status",query.status);
+    if(query.page)retry.set("page",String(query.page));
+    if(query.pageSize)retry.set("pageSize",String(query.pageSize));
+    if(query.view)retry.set("view",query.view);
+    const suffix=retry.toString();
+    return <div className="min-w-0 space-y-6">
+      <PageHeader title="Workspaces"
+        description="Live projects, each run by a mentor with a team of students."/>
+      <ErrorState title="Project workspaces unavailable"
+        description="The workspace list could not be loaded. Your search and filters were not changed."
+        action={<Link href={"/college/projects"+(suffix?"?"+suffix:"")}
+          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Retry loading workspaces</Link>}/>
+    </div>;
+  }
+  const result=snapshotsResult.value;
   const templateTitles = new Map(
     (templatesResult.ok ? templatesResult.value : []).map(template => [template.templateId, template.title]),
   );
