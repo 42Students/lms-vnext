@@ -21,7 +21,7 @@ const pageSchema=z.coerce.number().int().min(1).max(10000);
 const dateTime=(value:Date)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true}).format(value);
 export default async function RecruiterConversationDetail({params,searchParams}:Props){
  const context=await getCurrentRequestContext();
- if(!hasActiveRecruiter(context))redirect("/dashboard");
+ if(!hasActiveRecruiter(context) || context.recruiter?.userId !== context.user.id)redirect("/dashboard");
  const {threadId}=await params;
  const query=await searchParams;
  const raw=Array.isArray(query.page)?query.page[0]:query.page;

@@ -8,7 +8,7 @@ import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-se
 export default async function HrPlacementsPage() {
   const context =
     await getCurrentRequestContext();
-  if (!hasActiveRecruiter(context)) {
+  if (!hasActiveRecruiter(context) || context.recruiter?.userId !== context.user.id) {
     redirect("/dashboard");
   }
 
