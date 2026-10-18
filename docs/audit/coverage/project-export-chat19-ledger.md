@@ -27,3 +27,12 @@ Explicitly outstanding: PostgreSQL persisted-role revocation races; all-college 
 
 PostgreSQL concurrent team creation, persisted membership revocation and live browser planner drag-and-drop remain separate integration gates.
 
+## Additional unowned IIT Dharwad Projects pure-model breaker coverage
+
+| Gap | Export / source | Direct test | Cases |
+|---|---|---|---|
+| PROJ-BREAK-MENTOR-MEETING-01 | `maySaveMentorMeetingStatus`, `mentorScheduleStatusFromMeeting` in `mentor-meeting-status-model.ts`; `mentorMeetingDisplayStatus` in `mentor-meeting-display-status.ts` | `tests/unit/PROJ-BREAK-chat19-mentor-meeting-state.test.ts` | Allowed/forbidden state-transition matrix, exact end instant, persisted versus derived MISSED, terminal completed/cancelled states |
+| PROJ-BREAK-BRIEF-01 | `workspaceBriefSchema`, `updateWorkspaceBriefSchema`, `parseWorkspaceBrief` in `workspace-brief-model.ts` | `tests/unit/PROJ-BREAK-chat19-workspace-brief-and-comment-kinds.test.ts` | Strict property limits, malformed CAS tokens, timezone-aware token, independent empty fallback per request/tenant |
+| PROJ-BREAK-BRIEF-01 | `PROJECT_TASK_COMMENT_KINDS`, `PROJECT_TASK_COMMENT_KIND_LABELS`, `projectTaskCommentKindLabel` in `task-comment-kind-staged.ts` | Same test | Persisted taxonomy, exact label mapping, unknown comment kinds excluded |
+
+These plug direct behavioral test gaps in the previous generated weak-areas snapshot. They are not substitutes for real database mutations, authorization, concurrency, browser or user acceptance.
