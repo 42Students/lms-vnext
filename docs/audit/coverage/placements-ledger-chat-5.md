@@ -290,3 +290,11 @@ The branch was reconciled with the then-current `origin/main` using a two-parent
 - `PLACEMENTS-EXPIRY-RACE-05`: `tests/integration/placements-p8-offers.test.ts` races the expiry sweep with a learner ACCEPT submitted immediately before the same deadline. It checks one persisted terminal outcome (ACCEPTED or EXPIRED), exactly one corresponding status-history transition, and the sweep's row-lock/skip-locked result. **Cloud execution pending**.
 - `PLACEMENTS-WAIT-RACE-06`: the same integration suite concurrently submits the identical rank-1 HOLD promotion. It checks a single reservation, a single active official offer, matching offer linkage, and one audit event per distinct reservation/reconciliation category. A stale-preview rejection by one racing call is permitted; two offers are not. **Cloud execution pending**.
 - These tests strengthen the previous source-only release evidence but do **not** close the crash-atomicity gap between reservation, issuance, and settlement, or the full role/tenant matrix across all Placements services.
+
+
+## Additional live-data error handling (CI pending)
+- **PLACEMENTS-SEL-SM-07:** strict selection release payload requires a bijection between chosen `selectionIds` and `expectedRecordedAt` entries. No unsolicited, omitted or duplicated revision keys can pass review. Model: `tpo-drive-selection-model.ts`; test: `chat5-placements-core-extended-state-machines.test.ts`.
+- **PLACEMENTS-OFFERS-EXPIRY-07:** unknown/invalid optional offer timestamps no longer throw in TPO offer register projection or CSV. The same pure helper yields null response-hours instead of NaN. Model `tpo-drive-offer-register-model.ts`; test: `chat5-tpo-second-third-behavior.test.ts`.
+- **PLACEMENTS-OFFER-SM-08:** an ISSUED offer with any already persisted joining state is internally contradictory and is rejected by all TPO administrative status actions. Acceptance and offer extension require no joining record. Model: `tpo-offer-lifecycle-model.ts`; test: `chat5-placements-core-extended-state-machines.test.ts` (entire matrix plus contradictory-state cases).
+
+These are source-level changes with new Vitest assertions, not evidence of a successful CI or PostgreSQL run. The canonical acceptance-cascade parity between learner and TPO-recorded decisions remains a separate high-risk integration task.
