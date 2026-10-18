@@ -112,3 +112,12 @@ The dedicated `docs/audit/coverage/hr-pages-chat19-ledger.md` enumerates all 22 
 | UX-SPILL-HR-03 | MAJOR (mobile overflow) | Report column/filter `<details>` absolute dropdowns min-width 16rem/12rem at far-right anchors | Made phone disclosures bottom-anchored responsive sheets, bounded height with safe-area padding, added visible dismiss control that returns focus to summary. Desktop popover mode retained. | `70a97cff` | `tests/unit/chat19-report-interactive-table-render.test.tsx` (`6657055e`) |
 
 The matrix `docs/audit/ux/COVERAGE-MATRIX.md` is a generated snapshot and is not hand-edited. Regenerate it after the cloud merge; the former `src/components/placements/report-interactive-table.tsx` raw table entry should disappear. Server page and real browser/clipboard tests are still required by release CI; the new model and SSR tests are authored but not executed in this GitHub-only lane.
+
+## Projects unowned hardening — IIT Dharwad visible exports
+
+| ID | Severity | Evidence | Defect | Fix | Commits | Regression |
+|---|---|---|---|---|---|---|
+| PROJ-BREAK-EXPORT-01 | MAJOR | `src/components/projects/project-admin-workspace-page-export.tsx`, previous `/^\\s*[=+\\-@\\t\\r]/` cell guard | User-authored workspace titles and mentor names with Unicode format characters/line separators preceding `=+@-` could evade superficial CSV formula escaping; numeric negatives were erroneously converted to text. | Export through `src/modules/projects/admin-workspace-page-export-model.ts`; quote every cell, prefix malicious text, preserve numerical values and IST timestamps. Accept *only* already scoped page items; no additional database read. | `59bc0619`, `dd1001f1` | `tests/unit/PROJ-BREAK-chat19-project-workspace-csv.test.ts` (`d41722f7`) |
+| PROJ-BREAK-EXPORT-02 | COVERAGE | Same `ProjectAdminWorkspacePageExport` button | Added direct SSR assertions that export is disabled for zero visible authorized workspaces and enabled for a nonempty page, including keyboard-sized button contract. | Behavioural component tests. | `21328196` | `tests/unit/PROJ-BREAK-chat19-project-workspace-export-ui.test.tsx` |
+
+**Remaining risk:** Browser download behavior, real Excel formula handling, and independently verified college-scoped DB list must pass orchestrator/integration tests. This lane has authored source and test regressions, not claimed production readiness.
