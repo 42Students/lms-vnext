@@ -38,14 +38,14 @@ export function TpoOutsideParticipantsEditor({recordId,available,choices,partici
   <div className="flex flex-wrap items-end gap-3">
    <label className="grid gap-1 text-sm font-semibold">Learner from this college
     <select value={membershipId} onChange={e=>setMembershipId(e.target.value)}
-      className="min-h-11 rounded-md border border-border bg-surface px-3">
+      className="min-h-11 rounded-[9px] border border-border bg-surface px-3">
      <option value="">Select learner</option>
      {choices.map(choice=><option value={choice.id} key={choice.id}>{choice.name??"Unnamed learner"}</option>)}
     </select>
    </label>
    <label className="grid gap-1 text-sm font-semibold">Outside result
     <select value={result} onChange={e=>setResult(e.target.value as Result)}
-      className="min-h-11 rounded-md border border-border bg-surface px-3">
+      className="min-h-11 rounded-[9px] border border-border bg-surface px-3">
      {outcomes.map(code=><option key={code} value={code}>{outsideDriveResultLabel(code)}</option>)}
     </select>
    </label>
@@ -61,7 +61,7 @@ export function TpoOutsideParticipantsEditor({recordId,available,choices,partici
     <label className="text-xs">Change recorded result
      <select defaultValue={person.result} disabled={pending}
       onChange={e=>void save(person.membershipId,e.target.value as Result)}
-      className="ml-2 min-h-10 rounded-md border border-border bg-surface px-2 text-sm">
+      className="ml-2 min-h-10 rounded-[9px] border border-border bg-surface px-2 text-sm">
       {outcomes.map(code=><option key={code} value={code}>{outsideDriveResultLabel(code)}</option>)}
      </select>
     </label>
