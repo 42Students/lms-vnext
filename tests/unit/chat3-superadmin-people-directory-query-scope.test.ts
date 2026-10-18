@@ -19,6 +19,7 @@ vi.mock("@/db/client", () => ({
       state.selects++;
       const dialect = new PgDialect();
       if (projection && "displayName" in projection && "membershipId" in projection) {
+        const fields = projection;
         const email = projection.email as { sql: SQL };
         const phone = projection.phoneE164 as { sql: SQL };
         state.emailMask = dialect.sqlToQuery(email.sql);
@@ -31,8 +32,8 @@ vi.mock("@/db/client", () => ({
           }
           as() {
             return {
-              displayName: projection.displayName,
-              membershipId: projection.membershipId,
+              displayName: fields.displayName,
+              membershipId: fields.membershipId,
             };
           }
         }
