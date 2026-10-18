@@ -118,3 +118,16 @@ These rows establish tests for listed exports only. **Not exhaustive**: 319 acad
 | Export | Test and outcomes |
 |---|---|
 | `assertPersistedGroupActor` (`src/modules/groups/actor-access.ts`) | `tests/unit/chat4-college-group-persisted-authority.test.ts`: real function executed against deterministic transactional query adapter; active College Admin lock sequence, revoked/disabled actor, wrong college, forged user, missing member, missing role, SELF learner role and membership matching, Super Admin persisted role removal. **Not yet** tested against PostgreSQL lock races. |
+
+
+## College Admin sensitive mutations + profile privacy, additional Pass B slice
+
+| Export | Test and verified cases | PostgreSQL gap |
+|---|---|---|
+| `placeImportedLearnerInSection` — `src/modules/people/college-student-import-placement.ts` | `chat4-college-import-placement-authorization.test.ts`: serialized same-college class, learner's persisted ACTIVE membership and role, active user, origin context revoked within write tx, capacity and already-placed checks | Foreign enrollment and concurrent user-disable integration required |
+| `scheduleReassignInput` — `college-faculty-schedule-reassignment-service.ts` | `chat4-college-faculty-schedule-hardening.test.ts`: confirmation literal true, UUID, strict unknown-key rejection | None for pure schema |
+| `getFacultyScheduleReassignOptions` | same: rejects foreign source membership and counts only same-college section events; excludes disabled replacement users | PostgreSQL wrong tenant injected schedule row |
+| `reassignFacultyUpcomingSchedules` | same: actor persisted while row locks held, source and replacement FACULTY, future sessions belonging to current college only, collision skipped, max 200, duplicate/no-write retries produce no duplicate audit, disabled replacement denied | Parallel reassignment, session collision and revocation race |
+| `getCollegePersonProfileOverview` | `chat4-college-profile-projection-revocation.test.ts`: exact FACULTY/LEARNER kind, tenant-filtered private profile document read, persisted actor SHARE locks held, projection lists only sanctioned fields, no raw identity or file tokens | Revocation between preflight and read in PostgreSQL |
+
+**Suite additions:** `tests/integration/chat4-college-project-actor-revocation.test.ts` uses disposable DB03 fixtures to disable an authorized College Admin before a Project summary PATCH and remove their persisted role before learner roster mutations. Both assert no committed write. Green CI result is pending; the source contracts in the unit tests do not substitute for this DB acceptance.
