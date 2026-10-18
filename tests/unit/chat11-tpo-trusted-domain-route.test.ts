@@ -55,7 +55,7 @@ describe("TPO-settings-audit-TRUST-03 signed-in employer domain mutation endpoin
   expect(stubs.change).not.toHaveBeenCalled();
  });
  it("maps duplicate and absent-domain conflicts to known response statuses",async()=>{
-  for(const code of ["DOMAIN_ALREADY_TRUSTED","DOMAIN_NOT_FOUND"]){
+  for(const code of ["DOMAIN_ALREADY_TRUSTED","DOMAIN_NOT_FOUND"] as const){
    stubs.change.mockRejectedValueOnce(new TpoTrustedDomainError(code));
    const response=await POST(request('{"action":"TRUST","domain":"careers.example"}'));
    expect(response.status).toBe(409);

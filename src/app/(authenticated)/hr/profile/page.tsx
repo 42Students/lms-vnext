@@ -10,7 +10,7 @@ import { getRecruiterSelfGrantOverview } from "@/modules/placements/recruiter-se
 
 export default async function HrProfilePage() {
   const context = await getCurrentRequestContext();
-  if (!hasActiveRecruiter(context)) redirect("/dashboard");
+  if (!hasActiveRecruiter(context) || context.recruiter?.userId !== context.user.id) redirect("/dashboard");
   const profile = await getRecruiterSelfProfile(context);
   const overview = await getRecruiterSelfGrantOverview(context);
 
