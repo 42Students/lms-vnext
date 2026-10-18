@@ -121,3 +121,5 @@ All newly authored tests remain pending cloud execution; migration retains the p
 | PROJ-HARNESS-PLACEMENTS-18 | S1 (round state) | Fixture would create staged candidate results for a drive round that had already been cancelled. | Reads selected round status, refuses CANCELLED; PG case 18 and source GUARD-17. | Authored; final PostgreSQL CI pending |
 
 | UX-kit-HARDEN-55 | S2 (motion a11y) | Shared interactive Tabs used a color transition even when the user requested reduced motion. | Adds `motion-reduce:transition-none` and ARIA-preserving tab regression HARDEN-55. | Authored; final browser gate pending |
+
+| UX-kit-HARDEN-56 | S2 (pending state a11y) | `Button` rendered `aria-busy` before `...props`, allowing a stale caller-provided false value to override its actual loading state. | `aria-busy` is now derived after spreading native props; regression HARDEN-56 covers loading and idle. | Authored; final CI pending |
