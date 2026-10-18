@@ -54,3 +54,19 @@ describe("TPO-BREAK-team-02 persisted transitions, audit and private notificatio
   expect(recipient).toContain('inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"])');
  });
 });
+
+describe("TPO-BREAK-team-03 bounded same-origin message route",()=>{
+ it("rejects cross-origin and oversized or malformed streamed JSON before calling the writer",()=>{
+  const route=readFileSync(resolve(process.cwd(),"src/app/api/placements/tpo/companies/[companyId]/team/route.ts"),"utf8");
+  expect(route).toContain("if(!isSameOriginRequest(request))");
+  expect(route).toContain("body=await readTpoBulkRequestBody(request)");
+  expect(route).not.toContain("await request.json()");
+  expect(route).toContain('error.status===413?"REQUEST_TOO_LARGE"');
+  expect(route).toContain('error.status===415?"UNSUPPORTED_MEDIA_TYPE":"INVALID_BODY"');
+  expect(route).toContain("tpoCompanyTeamPostSchema.safeParse(body)");
+  expect(route.indexOf("if(!isSameOriginRequest(request))"))
+   .toBeLessThan(route.indexOf("body=await readTpoBulkRequestBody(request)"));
+  expect(route.indexOf("tpoCompanyTeamPostSchema.safeParse(body)"))
+   .toBeLessThan(route.indexOf("mutateTpoCompanyTeam("));
+ });
+});
