@@ -494,38 +494,42 @@ export async function createPlacementFixture(db: PgHarness, tenant: TenantFixtur
   author: PrincipalFixture): Promise<PlacementFixture> {
   if (author.collegeId !== tenant.collegeId) throw new Error("PROJ-HARNESS: drive actor wrong college");
   await requireFixtureCollegePrincipal(db, tenant.collegeId, author, ["COLLEGE_ADMIN","TPO"]);
-  const suffix = randomUUID().slice(0,12);
-  const [company] = await db.query<{id:string}>(`
-    insert into placement_companies (name,created_by_user_id)
-    values ($1,$2) returning id`,["Harness employer "+suffix,author.userId]);
-  const [relationship] = await db.query<{id:string}>(`
-    insert into placement_company_relationships (college_id,company_id,created_by_user_id)
-    values ($1,$2,$3) returning id`,[tenant.collegeId,company!.id,author.userId]);
-  const existing = await db.query<{id:string}>(`
-    select id from placement_seasons where college_id=$1 and status='ACTIVE'
-    order by created_at,id limit 1`,[tenant.collegeId]);
-  const season = existing[0] ?? (await db.query<{id:string}>(`
-    insert into placement_seasons (college_id,name,code,start_date,end_date,created_by_user_id)
-    values ($1,$2,$3,$4,$5,$6) returning id`,
-    [tenant.collegeId,"Harness "+suffix,"PH-"+suffix,"2098-10-01","2099-06-30",author.userId]))[0]!;
-  const [job] = await db.query<{id:string}>(`
-    insert into placement_jobs (college_id,company_relationship_id,season_id,title,description,
-      employment_type,work_mode,openings,minimum_annual_ctc_inr,application_deadline,
-      status,published_at,created_by_user_id)
-    values ($1,$2,$3,'Harness drive','Fixture job','FULL_TIME','REMOTE',2,800000,
-      '2099-06-01T12:00:00Z','PUBLISHED',now(),$4) returning id`,
-    [tenant.collegeId,relationship!.id,season.id,author.userId]);
-  const [roleOption] = await db.query<{id:string}>(`
-    insert into placement_job_role_options
-      (job_id,title,employment_type,work_mode,openings,is_primary)
-    values ($1,'Software Engineer','FULL_TIME','REMOTE',2,true)
-    returning id`,[job!.id]);
-  const [round] = await db.query<{id:string}>(`
-    insert into placement_job_rounds (job_id,sequence,kind,name,created_by_user_id)
-    values ($1,1,'INTERVIEW','Harness interview',$2) returning id`,
-    [job!.id,author.userId]);
-  return {companyId:company!.id,relationshipId:relationship!.id,seasonId:season.id,
-    driveId:job!.id,jobId:job!.id,roundId:round!.id,roleOptionId:roleOption!.id};
+  // A late round or role-option failure cannot leave a partial job/company
+  // graph behind when the caller catches the failure in its outer transaction.
+  return db.savepoint(async()=>{
+    const suffix = randomUUID().slice(0,12);
+    const [company] = await db.query<{id:string}>(`
+      insert into placement_companies (name,created_by_user_id)
+      values ($1,$2) returning id`,["Harness employer "+suffix,author.userId]);
+    const [relationship] = await db.query<{id:string}>(`
+      insert into placement_company_relationships (college_id,company_id,created_by_user_id)
+      values ($1,$2,$3) returning id`,[tenant.collegeId,company!.id,author.userId]);
+    const existing = await db.query<{id:string}>(`
+      select id from placement_seasons where college_id=$1 and status='ACTIVE'
+      order by created_at,id limit 1`,[tenant.collegeId]);
+    const season = existing[0] ?? (await db.query<{id:string}>(`
+      insert into placement_seasons (college_id,name,code,start_date,end_date,created_by_user_id)
+      values ($1,$2,$3,$4,$5,$6) returning id`,
+      [tenant.collegeId,"Harness "+suffix,"PH-"+suffix,"2098-10-01","2099-06-30",author.userId]))[0]!;
+    const [job] = await db.query<{id:string}>(`
+      insert into placement_jobs (college_id,company_relationship_id,season_id,title,description,
+        employment_type,work_mode,openings,minimum_annual_ctc_inr,application_deadline,
+        status,published_at,created_by_user_id)
+      values ($1,$2,$3,'Harness drive','Fixture job','FULL_TIME','REMOTE',2,800000,
+        '2099-06-01T12:00:00Z','PUBLISHED',now(),$4) returning id`,
+      [tenant.collegeId,relationship!.id,season.id,author.userId]);
+    const [roleOption] = await db.query<{id:string}>(`
+      insert into placement_job_role_options
+        (job_id,title,employment_type,work_mode,openings,is_primary)
+      values ($1,'Software Engineer','FULL_TIME','REMOTE',2,true)
+      returning id`,[job!.id]);
+    const [round] = await db.query<{id:string}>(`
+      insert into placement_job_rounds (job_id,sequence,kind,name,created_by_user_id)
+      values ($1,1,'INTERVIEW','Harness interview',$2) returning id`,
+      [job!.id,author.userId]);
+    return {companyId:company!.id,relationshipId:relationship!.id,seasonId:season.id,
+      driveId:job!.id,jobId:job!.id,roundId:round!.id,roleOptionId:roleOption!.id};
+  });
 }
 
 /** Optional placement applicant, screening, round and offer fixtures.

@@ -218,3 +218,6 @@ The canonical placement season was inadvertently authored as 2099-10-01 through 
 
 ### PROJ-HARNESS-PLACEMENTS-26: atomic candidate graph
 Candidate creation now wraps application, screening, staged round result, offer and joining outcome in one savepoint, so a late offer/round failure does not leave an orphaned application when the caller catches the error. The PostgreSQL witness injects a failure after writes, checks all child tables for residue and retries with a valid candidate.
+
+### PROJ-HARNESS-PLACEMENTS-27: rollback whole drive graph
+`createPlacementFixture` now encloses company, college relationship, active-season selection/insertion, published job, primary role option and round in a single savepoint after coordinator authorization. A forced round-insert failure on real PostgreSQL must leave all counts unchanged, including a preexisting active season, then permit a clean retry. This prevents test graph partial data from silently contaminating unrelated assertions.

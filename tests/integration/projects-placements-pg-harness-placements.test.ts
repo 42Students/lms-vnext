@@ -143,6 +143,32 @@ describe("PROJ-HARNESS-PLACEMENTS canonical real PostgreSQL fixtures", () => {
     });
   });
 
+  it("PROJ-HARNESS-PLACEMENTS-27 failed round creation rolls back company, job and role graph",async()=>{
+    await withPlacementCase(async({db,tenant,actor})=>{
+      const counts=async()=>db.query<{companies:number;relationships:number;seasons:number;jobs:number;roles:number;rounds:number}>(`
+        select
+          (select count(*)::int from placement_companies) as companies,
+          (select count(*)::int from placement_company_relationships where college_id=$1) as relationships,
+          (select count(*)::int from placement_seasons where college_id=$1) as seasons,
+          (select count(*)::int from placement_jobs where college_id=$1) as jobs,
+          (select count(*)::int from placement_job_role_options) as roles,
+          (select count(*)::int from placement_job_rounds) as rounds`,[tenant.collegeId]);
+      const before=await counts();
+      const broken:PgHarness={...db,
+        async query<T extends QueryResultRow=QueryResultRow>(sql:string,values?:unknown[]):Promise<T[]>{
+          if(sql.includes("insert into placement_job_rounds"))
+            throw new Error("simulated round failure");
+          return db.query<T>(sql,values);
+        },
+      };
+      await expect(createPlacementFixture(broken,tenant,actor))
+        .rejects.toThrow("simulated round failure");
+      expect(await counts()).toEqual(before);
+      await expect(createPlacementFixture(db,tenant,actor))
+        .resolves.toHaveProperty("roleOptionId");
+    });
+  });
+
   it("PROJ-HARNESS-PLACEMENTS-26 failed offer insert rolls back application, screening and round",async()=>{
     await withPlacementCase(async({db,drive,actor,tenant})=>{
       const fresh=await createPrincipal(db,tenant,["LEARNER"]);
