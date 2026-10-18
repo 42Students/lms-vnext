@@ -24,15 +24,22 @@ export async function listMyLearnerProjectDueStates(context: RequestContext, raw
     dueDate: projectTasks.dueDate,
     status: projectTasks.status,
   }).from(projectTasks).where(inArray(projectTasks.projectId, scoped));
-  const now = new Date();
-  return scoped.map(projectId => {
-    const pending = tasks.filter(task => task.projectId === projectId &&
-      task.status !== "DONE" && Boolean(task.dueDate))
-      .sort((a, b) => String(a.dueDate).localeCompare(String(b.dueDate)));
-    const nearest = pending[0]?.dueDate ?? null;
-    const dueAt = nearest ? new Date(nearest + "T23:59:59+05:30") : null;
-    const days = dueAt ? (dueAt.getTime() - now.getTime()) / 86400000 : null;
-    return {projectId, date:nearest, state: days === null ? "No due date" :
-      days < 0 ? "Overdue" : days <= 3 ? "Due soon" : "Due date"};
+  // Linear in the number of tasks and requested projects. Filtering/sorting the
+  // entire task set separately for each project was O(projects * tasks log tasks)
+  // and became expensive on 1,000+ learner-project dashboards.
+  const nearestByProject=new Map<string,string>();
+  for(const task of tasks){
+    if(task.status==="DONE" || !task.dueDate || !scoped.includes(task.projectId))continue;
+    const due=String(task.dueDate);
+    const earlier=nearestByProject.get(task.projectId);
+    if(earlier===undefined || due<earlier)nearestByProject.set(task.projectId,due);
+  }
+  const now=new Date();
+  return scoped.map(projectId=>{
+    const nearest=nearestByProject.get(projectId)??null;
+    const dueAt=nearest?new Date(nearest+"T23:59:59+05:30"):null;
+    const days=dueAt?(dueAt.getTime()-now.getTime())/86400000:null;
+    return {projectId,date:nearest,state:days===null?"No due date":
+      days<0?"Overdue":days<=3?"Due soon":"Due date"};
   });
 }
