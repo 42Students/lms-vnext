@@ -35,7 +35,7 @@ Generated against chatgpt/chat-7-b October 18, 2026. Every named exported symbol
 | `src/modules/projects/learner-board-task-status-label-model.ts` | `learnerBoardTaskStatusLabel` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
 | `src/modules/projects/learner-board-task-status-label-model.ts` | `learnerBoardTaskPriorityLabel` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
 | `src/modules/projects/learner-board-task-workflow-model.ts` | `learnerBoardTaskWorkspaceHref` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
-| `src/modules/projects/learner-mutation-guard.ts` | `assertPersistedLearnerProjectMutation` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-mutation-guard.ts` | `assertPersistedLearnerProjectMutation` | **TEST AUTHORED — CI UNVERIFIED:** `tests/unit/PROJ-BREAK-LEARNER-ACTOR-02.test.ts`; remaining PostgreSQL, mutation race, expired-session checks |
 | `src/modules/projects/learner-own-task-input-model.ts` | `learnerOwnTaskCreateInputSchema` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
 | `src/modules/projects/learner-own-task-service.ts` | `createLearnerOwnTask` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
 | `src/modules/projects/learner-own-task-service.ts` | `deleteLearnerOwnTask` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
@@ -67,7 +67,7 @@ Generated against chatgpt/chat-7-b October 18, 2026. Every named exported symbol
 | `src/modules/projects/learner-project-board-model.ts` | `learnerBoardEmptyState` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
 | `src/modules/projects/learner-project-board-model.ts` | `learnerBoardActiveFilterCount` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
 | `src/modules/projects/learner-project-detail-error-model.ts` | `learnerProjectReadFailureDisposition` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
-| `src/modules/projects/learner-project-due-service.ts` | `listMyLearnerProjectDueStates` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-project-due-service.ts` | `listMyLearnerProjectDueStates` | **TEST AUTHORED — CI UNVERIFIED:** `tests/unit/PROJ-BREAK-LEARNER-DUE-05.test.ts`; remaining PostgreSQL, mutation race, expired-session checks |
 | `src/modules/projects/learner-project-goals-model.ts` | `LearnerProjectGoalSummary` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
 | `src/modules/projects/learner-project-goals-model.ts` | `learnerProjectGoalSummary` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
 | `src/modules/projects/learner-project-goals-service.ts` | `getLearnerProjectGoals` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
@@ -78,7 +78,7 @@ Generated against chatgpt/chat-7-b October 18, 2026. Every named exported symbol
 | `src/modules/projects/learner-project-progress-model.ts` | `LearnerProjectTaskStatus` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
 | `src/modules/projects/learner-project-progress-model.ts` | `LearnerProjectProgress` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
 | `src/modules/projects/learner-project-progress-model.ts` | `summarizeLearnerProjectProgress` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
-| `src/modules/projects/learner-project-progress-service.ts` | `listMyLearnerProjectProgress` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-project-progress-service.ts` | `listMyLearnerProjectProgress` | **TEST AUTHORED — CI UNVERIFIED:** `tests/unit/PROJ-BREAK-LEARNER-PROGRESS-04.test.ts`; remaining PostgreSQL, mutation race, expired-session checks |
 | `src/modules/projects/learner-project-review-notification-model.ts` | `learnerProjectTaskReviewNotice` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
 | `src/modules/projects/learner-project-review-notification-model.ts` | `learnerProjectDeliveryReviewNotice` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
 | `src/modules/projects/learner-project-review-notification-model.ts` | `learnerProjectDeliveryReopenedNotice` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
