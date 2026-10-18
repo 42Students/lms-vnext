@@ -7,19 +7,12 @@ import {
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { ProjectMentorReassignment } from "@/components/projects/project-mentor-reassignment";
 import { PageHeader } from "@/components/ui/page-header";
-import { z } from "zod";
+import {ErrorState} from "@/components/ui/error-state";
+import {parseProjectAdminReassignMentorQuery} from "@/modules/projects/admin-reassign-mentor-query-model";
 import { listProjectMentorCandidates } from "@/modules/projects/member-service";
 import { listCollegeProjectMentorWorkload, listCollegeReassignmentWorkspaces } from "@/modules/projects/mentor-reassignment-workload-service";
 import Link from "next/link";
 import { isProjectMentorOverloaded } from "@/modules/projects/mentor-overload-model";
-
-function one(
-  value: string | string[] | undefined,
-) {
-  return Array.isArray(value)
-    ? value[0]
-    : value;
-}
 
 export async function ProjectAdminReassignMentorPage({
   collegeId,
@@ -35,19 +28,17 @@ export async function ProjectAdminReassignMentorPage({
     string | string[] | undefined
   >;
 }) {
-  const context = await getCurrentRequestContext();
-  const fromMentorId = z.union([z.string().uuid(), z.literal("UNASSIGNED")]).safeParse(one(searchParams.fromMentorId)).data;
-  const initialProjectId = z.string().uuid().safeParse(one(searchParams.projectId)).data;
-  const mentorSearch=z.string().trim().max(100).safeParse(one(searchParams.mentorSearch)??"").data??"";
-  const query: ProjectAdminCollectionQuery = {
-    fromMentorId,
-    q: one(searchParams.q),
-    status: one(searchParams.status) as ProjectAdminCollectionQuery["status"],
-    page: Number(one(searchParams.page) ?? 1),
-    pageSize: Number(
-      one(searchParams.pageSize) ?? 25,
-    ),
-  };
+  const parsed=parseProjectAdminReassignMentorQuery(searchParams);
+  if(!parsed.success)return <div className="space-y-6">
+    <PageHeader eyebrow={eyebrow} title="Bulk mentor reassignment"/>
+    <ErrorState title="Invalid mentor reassignment filters"
+      description="Check the mentor, workspace, search, status, page and rows filters, or clear them to continue."
+      action={<Link href={basePath+"/reassign-mentor"}
+        className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Clear filters</Link>}/>
+  </div>;
+  const {fromMentorId,projectId:initialProjectId,mentorSearch,...filters}=parsed.data;
+  const query:ProjectAdminCollectionQuery={...filters,fromMentorId};
+  const context=await getCurrentRequestContext();
 
   const [projects, mentors, workload] =
     await Promise.all([
@@ -134,6 +125,7 @@ export async function ProjectAdminReassignMentorPage({
         collegeId={collegeId}
         initialProjectId={initialProjectId}
         matchingWorkspaces={projects.matchingWorkspaces}
+        matchingCapped={projects.matchingCapped}
         workspaces={projects.items
           .filter(
             (project) =>

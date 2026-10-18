@@ -1,6 +1,6 @@
 # Chat-2 exhaustive placement interview/round/slot export inventory
 
-Scope: **all 71** `src/modules/placements/*interview*/*round*/*slot*` TypeScript files present on the branch at snapshot time. This file catalogs exports, **not passed coverage**. For each runtime export the test column must eventually cite a direct behavioral test. N/A applies only to TypeScript-only declarations. Cloud CI, PostgreSQL behaviors and role journeys remain distinct release gates.
+Scope: **72 files including `round-action-guards.ts`** matching `src/modules/placements/*interview*/*round*/*slot*` at the 2026-10-19 chat-2 snapshot. This file catalogs exports, **not passed coverage**. For each runtime export the test column must eventually cite a direct behavioral test. N/A applies only to TypeScript-only declarations. Cloud CI, PostgreSQL behaviors and role journeys remain distinct release gates.
 
 | Module | Named export | Direct behavioral test | State |
 | --- | --- | --- | --- |
@@ -92,6 +92,8 @@ Scope: **all 71** `src/modules/placements/*interview*/*round*/*slot*` TypeScript
 | `src/modules/placements/recruiter-round-results-read-model.ts` | `RecruiterResultRound` (type) | N/A (compile-time only) | TYPE ONLY |
 | `src/modules/placements/recruiter-round-results-read-model.ts` | `projectRecruiterRoundResults` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/recruiter-round-results-read-model.ts` | `recruiterResultTableHref` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/round-action-guards.ts` | `roundActionSnapshotMatches` (function) | `tests/unit/chat2-round-action-concurrency.test.ts` (written; not run) | TEST AUTHORED |
+| `src/modules/placements/round-action-guards.ts` | `roundActionJobMutable` (function) | `tests/unit/chat2-round-action-concurrency.test.ts` (written; not run) | TEST AUTHORED |
 | `src/modules/placements/round-service.ts` | `listPlacementRounds` (function) | `tests/unit/chat2-tpo-round-service-scope-break-12.test.ts` (malformed ID and scope-denial only; CI pending) | PARTIAL |
 | `src/modules/placements/round-service.ts` | `getPlacementRound` (function) | `tests/unit/chat2-tpo-round-service-scope-break-12.test.ts` (malformed ID and scope-denial only; CI pending) | PARTIAL |
 | `src/modules/placements/round-service.ts` | `createPlacementRound` (function) | `tests/unit/chat2-tpo-round-service-scope-break-12.test.ts` (malformed ID and scope-denial only; CI pending) | PARTIAL |
@@ -190,3 +192,7 @@ Scope: **all 71** `src/modules/placements/*interview*/*round*/*slot*` TypeScript
 | `tpoInterviewRescheduleSchema`, `validInterviewWindow`, `overlappingInterviewVenue` | `tests/unit/chat2-interview-reschedule-security.test.ts` | Credential-free HTTPS-only meetings, valid duration and venue overlap guards |
 
 These records supplement existing export rows; CI and integration results are still pending. The HR round schedule model was also hardened against fractional interview durations, which previously created invented fractional-minute end times. No other module/branch was modified.
+
+## October 19 follow-up
+
+The two new round action guard exports are directly exercised by `tests/unit/chat2-round-action-concurrency.test.ts`, with source checks on schedule/complete/cancel job locks. `tests/integration/chat2-round-action-locking-postgres.test.ts` adds actual service scheduling, stale COMPLETE/CANCEL, foreign-college access, closed-job barriers, and persisted event/audit checks. **Authored only, not run.** Other incomplete service rows in this inventory remain OPEN/PARTIAL.
