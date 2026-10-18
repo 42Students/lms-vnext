@@ -96,6 +96,8 @@ Branch: `chatgpt/chat-9-b`. Owner: chat-9. These are observed source-level findi
 
 | PROJ9-054 · SA-tenants-setup-12/16 | High | Super Admin tenant Setup independently loaded organization, college lifecycle directory, selected college and launch readiness without safe transactional presentation on read failure. A partial response could crash or imply an authorized empty roster/ready college. It now renders creation and launch controls only after all required scoped reads succeed and displays a retry otherwise, preserving the selected stage and rejecting disabled permission before database work. | `8bf8e31` | `tests/unit/PROJ-BREAK-chat9-sa-tenant-setup-page.test.tsx` (`2aa1020`, `57f4b64`): org/readiness failures, disabled role and no college; browser and real readiness integration OPEN |
 
+| PROJ9-055 · SA-students-ux-17/19 | High | Super Admin student registration loaded college people filters, program/batch/class choices and import history as separate awaited reads; a failure crashed the entire roster or could leave scope-sensitive actions with incomplete data. It now fetches them as one authorized presentation boundary and fails closed, without rendering register or bulk import controls, whenever any selected-college read fails. Global-scope page performs no college-private reads. | `ab10d14` | `tests/unit/PROJ-BREAK-chat9-sa-students-page.test.tsx` (`00d3207`): each read failure, no-college and complete scope. Live permissions and bulk-import execution OPEN |
+
 ## Outstanding release gates (not yet closed)
 
 - Live PostgreSQL integration tests for wrong-tenant IDs, serializable races, rollback and event/notification dedupe; chat-17 owns shared fixtures. Static service assertions alone cannot establish real DB behavior.
