@@ -29,8 +29,15 @@ export function pageFacultyLiveClasses(
   (query.view==="ALL"||
    (query.view==="UPCOMING"&&s.endsAt.getTime()>=now.getTime())||
    (query.view==="PAST"&&s.endsAt.getTime()<now.getTime()))
- ).sort((a,b)=>query.view==="PAST"?
-   b.startsAt.getTime()-a.startsAt.getTime():a.startsAt.getTime()-b.startsAt.getTime());
+ ).sort((a,b)=>{
+   const safeTime = (date: Date) => {
+     const value = date.getTime();
+     return Number.isFinite(value) ? value : 0;
+   };
+   const diff=query.view==="PAST"?
+     safeTime(b.startsAt)-safeTime(a.startsAt):safeTime(a.startsAt)-safeTime(b.startsAt);
+   return diff || a.id.localeCompare(b.id);
+ });
  const total=filtered.length,pageSize=20,totalPages=Math.max(1,Math.ceil(total/pageSize));
  const page=Math.min(query.page,totalPages);
  return {total,page,pageSize,totalPages,items:filtered.slice((page-1)*pageSize,page*pageSize)};
