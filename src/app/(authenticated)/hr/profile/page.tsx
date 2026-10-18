@@ -1,3 +1,4 @@
+import { DataTable } from "@/components/ui/data-table";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { RecruiterProfileAccess } from "@/components/hr/recruiter-profile-access";
@@ -112,81 +113,29 @@ export default async function HrProfilePage() {
           </p>
         </div>
 
-        {overview.grants.length === 0 ? (
-          <p className="p-5 text-sm text-muted-foreground">
-            No active college grants are available.
-          </p>
-        ) : (
-          <div className="overflow-x-auto">
-            <div role="region" aria-label="Profile table" tabIndex={0} className="max-w-full overflow-x-auto overscroll-x-contain"><table className="w-full min-w-[35rem] text-left text-sm">
-              <thead className="bg-muted">
-                <tr>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 font-semibold text-foreground"
-                  >
-                    College
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 font-semibold text-foreground"
-                  >
-                    Access status
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 font-semibold text-foreground"
-                  >
-                    Company relationship
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 font-semibold text-foreground"
-                  >
-                    Granted on (IST)
-                  </th>
-                  <th scope="col" className="px-4 py-3 font-semibold text-foreground">Access validity</th>
-                </tr>
-              </thead>
-              <tbody>
-                {overview.grants.map((grant) => (
-                  <tr
-                    key={grant.id}
-                    className="border-t border-border"
-                  >
-                    <th
-                      scope="row"
-                      className="px-4 py-4 font-semibold text-foreground"
-                    >
-                      {grant.collegeName}
-                    </th>
-                    <td className="px-4 py-4 text-body">
-                      {grant.grantStatus === "ACTIVE"
-                        ? "Active"
-                        : grant.grantStatus}
-                    </td>
-                    <td className="px-4 py-4 text-body">
-                      {grant.relationshipStatus === "ACTIVE"
-                        ? "Active"
-                        : grant.relationshipStatus}
-                    </td>
-                    <td className="px-4 py-4 text-body">
-                      <time dateTime={grant.grantedAtIso}>
-                        {grant.grantedAtLabel}
-                      </time>
-                    </td>
-                    <td className="px-4 py-4 text-body">
-                      {grant.accessUntilIso
-                        ? <><span>Access until </span><time dateTime={grant.accessUntilIso}>{grant.accessUntilLabel}</time>
-                          <p className="mt-1 text-xs text-muted-foreground">The placement cell can extend it.</p></>
-                        : "Access has no end date"}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table></div>
-          </div>
-        )}
+        <div className="p-4 sm:p-5">
+          <DataTable
+            caption="Current college access"
+            rows={overview.grants}
+            getRowKey={grant => grant.id}
+            empty={<p className="text-sm text-muted-foreground">No active college grants are available.</p>}
+            columns={[
+              { key:"college", header:"College", mobilePriority:"primary",
+                cell:(grant)=>grant.collegeName },
+              { key:"status", header:"Access status", mobilePriority:"secondary",
+                cell:(grant)=>grant.grantStatus==="ACTIVE"?"Active":grant.grantStatus },
+              { key:"relationship", header:"Company relationship", mobilePriority:"secondary",
+                cell:(grant)=>grant.relationshipStatus==="ACTIVE"?"Active":grant.relationshipStatus },
+              { key:"granted", header:"Granted on (IST)", mobilePriority:"secondary",
+                cell:(grant)=><time dateTime={grant.grantedAtIso}>{grant.grantedAtLabel}</time> },
+              { key:"validity", header:"Access validity", mobilePriority:"secondary",
+                cell:(grant)=>grant.accessUntilIso
+                  ? <><span>Access until </span><time dateTime={grant.accessUntilIso}>{grant.accessUntilLabel}</time>
+                    <p className="mt-1 text-xs text-muted-foreground">The placement cell can extend it.</p></>
+                  : "Access has no end date" },
+            ]}
+          />
+        </div>
 
         <p className="border-t border-border px-5 py-3 text-xs leading-5 text-muted-foreground">
           This table does not change or revoke access.
