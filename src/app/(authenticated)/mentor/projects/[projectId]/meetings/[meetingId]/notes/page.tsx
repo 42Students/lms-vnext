@@ -30,7 +30,7 @@ export default async function MentorMeetingNotesPage({params}:{
         <MentorMeetingNotesEditor projectId={path.projectId} meetingId={m.id}
           initialNotes={m.outcome} updatedAt={m.updatedAt.toISOString()}/>
       </div>:<p className="mt-4 text-xs text-muted-foreground">
-        Only completed, non-archived project meetings allow outcome-note edits.
+        Only completed meetings in active projects allow outcome-note edits.
       </p>}
     </section>
     <p className="text-xs text-muted-foreground">
