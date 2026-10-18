@@ -20,7 +20,9 @@ export function parseCollegeCompaniesQuery(raw:Record<string,string|string[]|und
 export function collegeCompaniesHref(query:CollegeCompaniesQuery) {
   const params=new URLSearchParams();
   if(query.q)params.set("q",query.q);
-  if(query.status!=="ACTIVE")params.set("status",query.status);
+  // A partially populated link state must never leak status=undefined into a URL.
+  // Validated queries already have ACTIVE as their default.
+  if(query.status && query.status!=="ACTIVE")params.set("status",query.status);
  if(query.pageSize!==10)params.set("pageSize",String(query.pageSize));
  if(query.sort!=="LAST_ACTIVE")params.set("sort",query.sort);
  if(query.showDeleted==="1")params.set("showDeleted","1");
