@@ -52,7 +52,7 @@ describe("College faculty schedule reassignment break-it workflows",()=>{
  it("COL-faculty-reassign-03 locks persisted actor and faculty before writes, retries without changes never double-audit",()=>{
   const s=code();
   const trans=s.indexOf("return db.transaction(async tx=>");
-  const principals=s.indexOf('for("share",{of:collegeMemberships})',trans);
+  const principals=s.indexOf('   .for("share");',trans);
   const guard=s.indexOf('assertPersistedPlatformPermission(tx,ctx,"academics.manage"');
   const serialization=s.indexOf("pg_advisory_xact_lock(hashtext(");
   const lock=s.indexOf('for("update",{of:sectionScheduleEvents})');
@@ -61,6 +61,7 @@ describe("College faculty schedule reassignment break-it workflows",()=>{
   const audit=s.indexOf("tx.insert(activityEvents)");
   expect(trans).toBeGreaterThan(-1);
   expect(principals).toBeGreaterThan(trans);
+  expect(s).toContain("Lock the joined USERS and MEMBERSHIP_ROLES rows too.");
   expect(guard).toBeGreaterThan(principals);
   expect(serialization).toBeGreaterThan(guard);
   expect(lock).toBeGreaterThan(serialization);
