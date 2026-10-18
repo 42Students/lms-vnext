@@ -10,6 +10,11 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 - `mentor-project-card-progress.test.ts`: previous test expected invalid `open=-3` to show 100% task completion; source correctly rejects corrupt aggregates with `null`. Updated the behavioral test for negative, excess, NaN and no-task inputs (`PROJ-BREAK-MENTOR-217`).
 - This is static reconciliation, not an executed Vitest/typecheck pass. Latest checked-in typecheck inventory has no chat-14-owned compiler error.
 
+## Mentor resource transaction authorization and audit — PROJ-BREAK-MENTOR-274..279
+- `resource-service.ts`: list and create now check Projects module entitlement before resolving submitted IDs; create preserves the restricted Learner-specific path and additionally rechecks persisted Mentor/Admin project grants under a college-scoped project lock. Update, archive and reorder now require lifecycle mutation authorization, a college-scoped parent lock, and persisted actor/grant recheck before child resources are fetched.
+- Reorder now records one `PROJECTS_RESOURCE_UPDATED` activity event for an actual order change, none for a no-op. No broad learner notification is issued for cosmetic sequencing. `tests/unit/PROJ-BREAK-chat14-mentor-resource-races.test.ts` tests stale Mentor grant across create/edit/archive/reorder, module-off, invalid order shape, audit exactly once on changed order and none on idempotent retry.
+- **Open blocker for release:** live PostgreSQL concurrent resource ordering, deleted/corrupted grant races, and learner resource creation mutation behavior belong to real fixture acceptance and Learner lane; source/mock tests authored only.
+
 ## Mentor remaining page-hardening acceptance evidence — source-only, unrun
 - `PROJ-BREAK-MENTOR-261..267`: four history pages now fail closed on repeated filters, and `tests/unit/PROJ-BREAK-chat14-mentor-history-pages.test.tsx` exercises duplicated or invalid selector, disabled module, wrong role, denied service and no private-data fallback.
 - `PROJ-BREAK-MENTOR-268..273`: delivery version and task feedback pages have server-render assertions for empty records, unsafe URL and attachment rejection, noopener safe links, review version labels, escaped markup, and denied service propagation in `tests/unit/PROJ-BREAK-chat14-mentor-evidence-pages.test.tsx`.
