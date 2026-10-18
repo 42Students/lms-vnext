@@ -1,4 +1,5 @@
 import {describe,expect,it} from "vitest";
+import {friendlyApiError} from "@/lib/friendly-error";
 import {facultyGradebookCsv,facultyPublishedGradeRows,
   facultyPublishedLearnerBreakdown,type GradebookScore}
   from "@/modules/courses/faculty-gradebook-model";
@@ -12,6 +13,13 @@ const assessments=[
 ];
 
 describe("chat-3 Faculty course journey: published-grade integrity",()=>{
+  it("FAC-attendance-grades-01 large Section error gives a next step without database identifiers",()=>{
+    const message=friendlyApiError({status:409,code:"FACULTY_GRADEBOOK_TOO_MANY_ASSESSMENTS"});
+    expect(message).toContain("college administrator");
+    expect(message).toContain("100 published assessments");
+    expect(message).not.toContain("FACULTY_GRADEBOOK_TOO_MANY_ASSESSMENTS");
+  });
+
   it("FAC-attendance-grades-01 ignores a corrupt first record identically in Section totals and individual breakdown",()=>{
     const records:GradebookScore[]=[
       {membershipId:own,kind:"QUIZ",assessmentId:"quiz-1",earned:Infinity,possible:10},
