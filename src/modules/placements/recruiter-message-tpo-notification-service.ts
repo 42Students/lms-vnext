@@ -2,7 +2,7 @@ import "server-only";
 import {and,eq} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,colleges,inAppNotifications,
- membershipRoles,placementTpoMessages,users} from "@/db/schema";
+ membershipRoles,placementTpoMessages,placementTpoMessageThreads,users} from "@/db/schema";
 import {recruiterMessageTpoRecipients,recruiterMessageTpoHref,recruiterMessageTpoPreview,
  RECRUITER_MESSAGE_TPO_TITLE} from "./recruiter-message-tpo-notification-model";
 
@@ -26,10 +26,19 @@ export async function notifyTpoOfRecruiterMessage(tx:Tx,input:{
     eq(collegeMemberships.status,"ACTIVE")));
  const recipients=recruiterMessageTpoRecipients(members,input.senderUserId);
  if(recipients.length===0)return {notified:0};
+ // The message ID is never authority: match its thread, originating
+ // recruiter and college before generating a recipient-visible preview.
  const [sourceMessage]=await tx.select({body:placementTpoMessages.body})
-  .from(placementTpoMessages).where(and(
+  .from(placementTpoMessages)
+  .innerJoin(placementTpoMessageThreads,
+   eq(placementTpoMessageThreads.id,placementTpoMessages.threadId))
+  .where(and(
     eq(placementTpoMessages.id,input.messageId),
     eq(placementTpoMessages.threadId,input.threadId),
+    eq(placementTpoMessages.senderType,"RECRUITER"),
+    eq(placementTpoMessages.senderUserId,input.senderUserId),
+    eq(placementTpoMessageThreads.collegeId,input.collegeId),
+    eq(placementTpoMessageThreads.recruiterUserId,input.senderUserId),
   )).limit(1);
  if(!sourceMessage)throw new Error("RECRUITER_MESSAGE_NOTIFICATION_SOURCE_MISSING");
  const preview=recruiterMessageTpoPreview(sourceMessage.body);
@@ -40,8 +49,11 @@ export async function notifyTpoOfRecruiterMessage(tx:Tx,input:{
   subjectType:"placement_tpo_message_thread",subjectId:input.threadId,
   summary:RECRUITER_MESSAGE_TPO_TITLE,occurredAt:input.at,
   metadata:{messageId:input.messageId,threadId:input.threadId},
- }).returning({id:activityEvents.id});
- if(!event)throw new Error("RECRUITER_MESSAGE_BELL_EVENT_FAILED");
+  // Activity events are unique on non-null dedupe_key; concurrent workers
+  // cannot produce a second event or bell for this persisted message.
+  dedupeKey:"placements.recruiter.message.received:"+input.messageId,
+ }).onConflictDoNothing().returning({id:activityEvents.id});
+ if(!event)return {notified:0};
  await tx.insert(inAppNotifications).values(recipients.map(userId=>({
   userId,eventId:event.id,title:RECRUITER_MESSAGE_TPO_TITLE,
   body:preview,

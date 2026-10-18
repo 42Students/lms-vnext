@@ -22,8 +22,8 @@ function visible(node:ReactNode):string{
 function links(node:ReactNode):string[]{
  if(Array.isArray(node))return node.flatMap(links);
  if(!isValidElement(node))return [];
- const props=node.props as {children?:ReactNode;href?:unknown};
- return [...(typeof props.href==="string"?[props.href]:[]),...links(props.children)];
+ const props=node.props as {children?:ReactNode;href?:unknown;action?:ReactNode;actions?:ReactNode};
+ return [...(typeof props.href==="string"?[props.href]:[]),...links(props.children),...links(props.action),...links(props.actions)];
 }
 const job="123e4567-e89b-42d3-a456-426614174001";
 const round="123e4567-e89b-42d3-a456-426614174002";
@@ -52,7 +52,7 @@ describe("HR-BREAK-round-results-page-01 recruiter job and shared candidate priv
  });
  it("invalid job/round/outcome filter renders reset instead of issuing a query",async()=>{
   for(const q of [{jobId:"../../college-b"},{roundId:"invalid"},{outcome:"ADMIN"},
-   {jobId:[job,"second-job"]}].slice(0,3)){
+   {jobId:[job,"second-job"]}]){
    const result=await page(q);
    expect(visible(result)).toContain("Invalid round filters");
    expect(links(result)).toContain("/hr/round-results");

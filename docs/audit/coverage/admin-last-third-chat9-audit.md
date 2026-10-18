@@ -19,7 +19,7 @@ Scope: 37 routes (positions 75–111) of `docs/orchestrator/ui-ux/pages-admin.md
 | `/admin/projects/readiness` | `UX-admin-projects-readiness-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/projects/reassign-mentor` | `UX-admin-projects-reassign-mentor-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/projects/submissions` | `UX-admin-projects-submissions-01` | **OPEN** — no live/browser or full service-role journey confirmation |
-| `/admin/projects/templates` | `UX-admin-projects-templates-01` | **OPEN** — no live/browser or full service-role journey confirmation |
+| `/admin/projects/templates` | `UX-admin-projects-templates-01`, `PROJ-BREAK-ux-30/33` | Permission-denied and DB-outage recovery, malformed filters, exact scoped empty state in server element-tree tests (`tests/unit/PROJ-BREAK-chat9-template-directory-page.test.tsx`); live browser and full role matrix OPEN |
 | `/admin/projects/templates/[templateId]` | `UX-admin-projects-templates-template-id-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/projects/templates/[templateId]/colleges` | `UX-admin-projects-templates-template-id-colleges-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/projects/templates/[templateId]/overview` | `UX-admin-projects-templates-template-id-overview-01` | **OPEN** — no live/browser or full service-role journey confirmation |

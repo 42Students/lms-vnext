@@ -7,6 +7,6 @@ export const mentorFinalDeliveryDecisionSchema=z.object({
 }).strict().refine(v=>v.decision!=="CHANGES_REQUESTED"||Boolean(v.feedback),{
  message:"Explain the required changes",path:["feedback"],
 });
-export function mentorFinalDeliveryCanReview(status:string,projectStatus:string){
- return status==="SUBMITTED"&&projectStatus==="ACTIVE";
+export function mentorFinalDeliveryCanReview(status:string,projectStatus:string,locked=false){
+ return status==="SUBMITTED"&&projectStatus==="ACTIVE"&&!locked;
 }
