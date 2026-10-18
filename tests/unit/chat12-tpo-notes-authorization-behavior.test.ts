@@ -46,7 +46,7 @@ describe("TPO-BREAK-notes-01 authenticated writer and foreign-ID isolation",()=>
    },
   });
   const tx={select:mocks.select,insert:mocks.insert};
-  mocks.transaction.mockImplementation(async(cb:(tx:typeof tx)=>Promise<unknown>)=>cb(tx));
+  mocks.transaction.mockImplementation(async(cb:(client:typeof tx)=>Promise<unknown>)=>cb(tx));
   mocks.getDb.mockReturnValue({transaction:mocks.transaction,select:mocks.select});
  });
  it("checks persisted authority before selecting eligible students or inserting any audit record",async()=>{
