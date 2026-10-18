@@ -37,13 +37,17 @@ export function ScrollCue({ children, axis, label, className, viewportClassName 
     node.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update);
     const observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(update);
-    observer?.observe(node);
-    if (node.firstElementChild) observer?.observe(node.firstElementChild);
+    // Multi-child overflow regions (e.g. filters + table) can grow in a
+    // sibling after the first child without changing the viewport box.
+    const observeContents = () => {
+      observer?.disconnect();
+      observer?.observe(node);
+      for (const child of node.children) observer?.observe(child);
+    };
+    observeContents();
     const mutations = typeof MutationObserver === "undefined" ? null :
       new MutationObserver(() => {
-        observer?.disconnect();
-        observer?.observe(node);
-        if (node.firstElementChild) observer?.observe(node.firstElementChild);
+        observeContents();
         update();
       });
     mutations?.observe(node, { childList: true, subtree: true });

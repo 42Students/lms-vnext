@@ -82,7 +82,7 @@ describe("PROJ-HARNESS source and environment guard",()=>{
    expect(helper).toContain("'ACTIVE',$6");
    expect(helper).toContain("status not in ('ARCHIVED','COMPLETED')");
    expect(helper).toContain('"2099-10-20T04:30:00Z"');
-   expect(helper).toContain('"2099-10-01"');
+   expect(helper).toContain('"2098-10-01"');
    expect(helper).not.toContain('"2026-10-20T04:30:00Z"');
  });
 
