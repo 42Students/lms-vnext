@@ -444,7 +444,7 @@ export async function createPlacementCandidateFixture(
       left join placement_job_rounds r
         on r.job_id=j.id and r.id=$2
      where j.id=$1`,[drive.jobId,drive.roundId]);
-  if (job?.college_id !== learner.collegeId) {
+  if (!job || job.college_id !== learner.collegeId) {
     throw new Error("PROJ-HARNESS: applicant and drive have different colleges");
   }
   if (job.round_id !== drive.roundId) {
