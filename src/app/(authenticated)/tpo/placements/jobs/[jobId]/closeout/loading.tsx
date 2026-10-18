@@ -1,1 +1,2 @@
-export default function Loading(){return <div aria-busy="true" aria-label="Loading drive closeout" className="space-y-3"><div className="h-24 animate-pulse rounded bg-muted"/><div className="h-48 animate-pulse rounded bg-muted"/></div>;}
+import {GracefulPageLoading} from "@/components/ui/graceful-page-loading";
+export default function Loading(){return <GracefulPageLoading label="Loading drive closeout"/>;}
