@@ -72,6 +72,10 @@
 
 `tests/unit/chat12-tpo-persisted-private-read-boundaries.test.ts` source-inspects the actual Students, Companies, Students CSV and Companies CSV entrypoints. All four must invoke `requireTpoBatchActor` before decoding filters, visiting a company memory deep-link or reading any roster rows. The helper itself validates the persisted ACTIVE user + membership and TPO/College Admin role. Service-level reads from other callers and authenticated browser revoke tests are separate remaining acceptance gates.
 
+### TPO company nested page entrypoints
+
+`tests/unit/chat12-tpo-company-persisted-detail-pages.test.ts` covers six additional page source contracts for detail, contacts, feedback, lifecycle management, people, and archived relationships. Each requires persisted ACTIVE TPO/CA actor validation before private data access. This is role-boundary source proof only: real browser revoked-cookie navigation and PostgreSQL backend permission tests remain open.
+
 ### Company export route
 
 | Production path | Handler | Evidence | Scope and remaining cases | Status |
