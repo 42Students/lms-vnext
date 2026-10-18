@@ -22,5 +22,5 @@ Tick a page only after its UX note exists at docs/audit/ux/<route-with-dashes>.m
 - [x] `/hr/notifications` (src/app/(authenticated)/hr/notifications/page.tsx)
 - [x] `/hr/placements` (src/app/(authenticated)/hr/placements/page.tsx)
 - [x] `/hr/placements/jobs/[jobId]` (src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx)
-- [ ] `/hr/profile` (src/app/(authenticated)/hr/profile/page.tsx)
-- [ ] `/hr/round-results` (src/app/(authenticated)/hr/round-results/page.tsx)
+- [x] `/hr/profile` (src/app/(authenticated)/hr/profile/page.tsx)
+- [x] `/hr/round-results` (src/app/(authenticated)/hr/round-results/page.tsx)
