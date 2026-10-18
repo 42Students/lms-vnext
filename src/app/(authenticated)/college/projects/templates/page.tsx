@@ -50,7 +50,7 @@ export default async function CollegeProjectTemplatesPage({
     }},
     {key:"action",header:"Action",mobilePriority:"action",cell:template=>
       <Link href={"/college/projects/templates/"+template.templateId}
-        className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">View template</Link>},
+        className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">View template</Link>},
   ];
   return (
     <div className="space-y-6">
@@ -71,10 +71,10 @@ export default async function CollegeProjectTemplatesPage({
             placeholder="Search by template or version"
             className="mt-1 block min-h-11 w-full rounded-md border border-border bg-surface px-3 py-2 text-base font-normal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" />
         </label>
-        <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold">
+        <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] inline-flex items-center">
           Search
         </button>
-        {q ? <Link href="/college/projects/templates" className="py-2 text-sm text-primary-text underline">
+        {q ? <Link href="/college/projects/templates" className="py-2 text-sm text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] min-h-11 inline-flex items-center">
           Clear search
         </Link> : null}
         <ProjectTemplateCatalogueExport rows={rows} />
@@ -85,7 +85,7 @@ export default async function CollegeProjectTemplatesPage({
         empty={<div role="status" className="space-y-3 text-sm text-body">
           <p>{templates.length===0?"No project templates are currently assigned to this college.":"No project templates match this search."}</p>
           {q?<Link href="/college/projects/templates"
-            className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Clear search</Link>:null}
+            className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear search</Link>:null}
         </div>} />
     </div>
   );
