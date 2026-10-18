@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
+import {requirePermission} from "@/modules/permissions/policy";
 import {PageHeader} from "@/components/ui/page-header";
 import {Pagination} from "@/components/ui/pagination";
 import {ErrorState} from "@/components/ui/error-state";
@@ -22,6 +23,7 @@ export default async function SuperAdminModuleAccessPage({
   searchParams,
 }:{searchParams:Promise<SearchParams>}){
   const context=await getCurrentRequestContext();
+  requirePermission(context,"admin-scope.select");
   const parsed=parseAdminFeaturePageParams(await searchParams);
   if(!parsed)return <div className="space-y-5">
     <PageHeader eyebrow="Super Admin" title="Module Access"/>

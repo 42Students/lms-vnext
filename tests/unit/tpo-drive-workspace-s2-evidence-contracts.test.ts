@@ -40,8 +40,15 @@ describe("Drive workspace S2 source-to-UI contracts",()=>{
  it("TPO-drive-workspace-27 provides an authorized modal and per-selection review queue",()=>{
   const drawer=file("src/components/placements/tpo-applicant-review-drawer.tsx");
   const queue=file("src/components/tpo/tpo-selected-review-queue.tsx");
-  expect(drawer).toContain("<dialog");
-  expect(drawer).toContain("aria-labelledby");
+  // A native shared Drawer owns the dialog, focus restoration and Escape
+  // behaviour. Do not regress to an unmanaged per-page modal.
+  const modal=file("src/components/ui/drawer.tsx");
+  expect(drawer).toContain("<Drawer open={open}");
+  expect(modal).toContain("<dialog");
+  expect(modal).toContain("aria-labelledby");
+  expect(modal).toContain("modal.showModal()");
+  expect(modal).toContain("opener.current?.focus()");
+  expect(modal).toContain("onCancel={event =>");
   expect(drawer).toContain("applicantDrawerReviewable");
   expect(queue).toContain("Review one by one");
   expect(queue).toContain("Next applicant");
