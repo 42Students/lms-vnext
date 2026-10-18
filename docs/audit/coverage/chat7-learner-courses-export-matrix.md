@@ -129,3 +129,16 @@
 | `learner-discussion-refresh-order-model.ts` | `learnerDiscussionRefreshIsCurrent` | Not individually linked in this inventory |
 | `learner-discussion-reply-model.ts` | `formatDiscussionReply` | Authored direct model regression, unrun |
 | `learner-discussion-response-model.ts` | `learnerDiscussionListResponse` | Authored direct model regression, unrun |
+| `learner-discussion-scope-key-model.ts` | `learnerDiscussionScopeKey` | Not individually linked in this inventory |
+| `learner-discussion-submit-guard-model.ts` | `learnerDiscussionMayPost` | Authored direct model regression, unrun |
+| `learner-discussion-time-model.ts` | `learnerDiscussionTimeLabel` | Not individually linked in this inventory |
+| `learner-discussion-time-model.ts` | `learnerDiscussionRelativeTimeLabel` | Not individually linked in this inventory |
+| `learner-external-content-link-model.ts` | `learnerSafeExternalContentHref` | Not individually linked in this inventory |
+| `learner-file-action-cancel-model.ts` | `learnerFileUploadMayCancel` | Not individually linked in this inventory |
+| `learner-latest-quiz-attempt-model.ts` | `selectLearnerLatestQuizAttempt` | Authored direct model regression, unrun |
+| `learner-live-link-availability-model.ts` | `learnerVisibleContentExternalUrl` | Not individually linked in this inventory |
+| `learner-manual-completion-model.ts` | `manualContentCompletionGate` | Not individually linked in this inventory |
+| `learner-offering-delivery-model.ts` | `LearnerOfferingDeliveryResolution` | Not individually linked in this inventory |
+| `learner-offering-delivery-model.ts` | `resolveLearnerOfferingDelivery` | Not individually linked in this inventory |
+| `learner-overview-priority.ts` | `LearnerOverviewActivity` | Not individually linked in this inventory |
+| `learner-overview-priority.ts` | `selectPriorityLearnerActivity` | Not individually linked in this inventory |
