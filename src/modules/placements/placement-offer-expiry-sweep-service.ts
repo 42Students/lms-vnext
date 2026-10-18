@@ -19,6 +19,11 @@ export async function sweepExpiredPlacementOffers(
   if (!Number.isInteger(limit) || limit < 1 || limit > 100) {
     throw new Error("Invalid offer sweep batch size");
   }
+  // Invalid caller/scheduler clocks must never be sent to PostgreSQL as
+  // timestamptz predicates, nor silently make an overdue sweep a no-op.
+  if (!Number.isFinite(now.getTime())) {
+    throw new Error("Invalid offer sweep reference date");
+  }
   // Separate sweep workers must skip rows locked by a competing sweep or
   // learner offer response, never block a 15-minute batch behind them.
   return getDb().transaction(async (tx) => {
