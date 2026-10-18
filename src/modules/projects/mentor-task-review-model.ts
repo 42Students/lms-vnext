@@ -48,11 +48,13 @@ export const mentorTaskReviewMobileFilters=
 export function mentorTaskReviewSummary(input: {
   total: number; page: number; pageSize: number;
 }) {
-  const totalPages=Math.max(1,Math.ceil(input.total/input.pageSize));
-  const page=Math.min(input.page,totalPages);
-  return {total:input.total,page,pageSize:input.pageSize,totalPages,
-    first:input.total===0?0:(page-1)*input.pageSize+1,
-    last:Math.min(input.total,page*input.pageSize),
+  const total=Number.isSafeInteger(input.total)&&input.total>0?input.total:0;
+  const pageSize=Number.isSafeInteger(input.pageSize)&&input.pageSize>=1&&input.pageSize<=50?input.pageSize:20;
+  const totalPages=Math.max(1,Math.ceil(total/pageSize));
+  const page=Number.isSafeInteger(input.page)?Math.max(1,Math.min(input.page,totalPages)):1;
+  return {total,page,pageSize,totalPages,
+    first:total===0?0:(page-1)*pageSize+1,
+    last:Math.min(total,page*pageSize),
   };
 }
 

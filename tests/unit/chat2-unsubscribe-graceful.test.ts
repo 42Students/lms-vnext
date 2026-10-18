@@ -19,9 +19,12 @@ describe("Public unsubscribe confirmations",()=>{
   expect(ui).toContain('router.push(url.pathname+url.search)');
   expect(ui).toContain("setError");
  });
- it("TPO-campaigns-public-16 uses the same success response for used or unknown tokens",()=>{
+ it("TPO-campaigns-public-16 permits idempotent used signed tokens, but rejects unverified ones",()=>{
   const route=src("src/app/api/public/campaign-unsubscribe/route.ts");
-  expect(route).toContain('if(!claim)return NextResponse.redirect(');
+  expect(route).toContain('if(!claim)return NextResponse.json({error:"INVALID_OR_EXPIRED_LINK"},{status:400})');
+  const service=src("src/modules/messaging/tpo-campaign-unsubscribe-service.ts");
+  expect(service).toContain('if(decision!=="APPLY")return decision');
+  expect(service).toContain('if(outcome==="DENY")throw new CampaignUnsubscribeInvalid()');
   expect(route).toContain('CampaignUnsubscribeInvalid');
   expect(route).toContain('scope=placement-cell');
   expect(route).toContain("isSameOriginRequest(request)");
