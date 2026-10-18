@@ -145,7 +145,7 @@ export async function ProjectAdminSubmissionsPage({
         description="The unsubmitted workspace list could not be loaded. Your filters have not changed."
         action={<Link href={projectAdminUnsubmittedHref(queuePath,query,query.page)}
           className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry loading workspaces</Link>}/>:null}
-      {unsubmitted?<section className="space-y-3 rounded-xl border border-border bg-surface p-4">
+      {unsubmitted?<section className="space-y-3 border-b border-border pb-5">
         <ProjectAdminFilters query={query} filterView="NOT_SUBMITTED"/>
         <h2 className="font-semibold">Not submitted · {unsubmitted.total} workspaces</h2>
         <DataTable
@@ -217,7 +217,7 @@ export async function ProjectAdminSubmissionsPage({
           {result.items.map((submission) => (
             <article
               key={submission.id}
-              className="rounded-xl border border-border bg-surface p-5"
+              className="border-b border-border py-5 last:border-b-0"
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
