@@ -4,6 +4,7 @@ import {updateMentorMeetingNotes} from "@/modules/projects/mentor-meeting-notes-
 
 const state=vi.hoisted(()=>({
  projectStatus:"ACTIVE",meetingStatus:"COMPLETED",access:"MENTOR",
+ activeRole:"MENTOR",scopeCollegeId:"college-a",scopeOrganizationId:"org-a",
  activeMembership:true,moduleEnabled:true,meetingPresent:true,
  currentOutcome:"Initial",updatedAt:"2026-10-18T10:00:00.123Z",
  events:0,updates:0,projectLocks:0,meetingLocks:0,
@@ -20,15 +21,18 @@ vi.mock("@/db/schema",()=>({
   updatedAt:"meeting.updated_at"},
 }));
 vi.mock("@/modules/identity/context",()=>({
- hasActiveMembership:()=>state.activeMembership,hasMembershipRole:()=>true,
+ hasActiveMembership:()=>state.activeMembership,hasMembershipRole:(_:unknown,role:string)=>state.activeRole===role,
 }));
-vi.mock("@/modules/permissions/policy",()=>({can:()=>true}));
+vi.mock("@/modules/permissions/policy",()=>({
+ can:(ctx:{membership?:{collegeId:string;organizationId:string}},_:unknown,resource:{collegeId:string;organizationId:string})=>
+  ctx.membership?.collegeId===resource.collegeId&&ctx.membership?.organizationId===resource.organizationId,
+}));
 vi.mock("@/modules/module-access/service",()=>({
  resolveOptionalModuleAccess:async()=>({projects:{enabled:state.moduleEnabled}}),
 }));
 vi.mock("@/modules/projects/access",()=>({
  requireProjectReadAccess:async(_:unknown,id:string)=>({
-  access:state.access,collegeId:"college-a",organizationId:"org-a",
+  access:state.access,collegeId:state.scopeCollegeId,organizationId:state.scopeOrganizationId,
   project:{id,title:"Atlas",status:state.projectStatus},
  }),
 }));
@@ -88,6 +92,7 @@ const input={outcome:"Updated record",expectedUpdatedAt:"2026-10-18T10:00:00.123
 
 beforeEach(()=>{
  state.projectStatus="ACTIVE";state.meetingStatus="COMPLETED";state.access="MENTOR";
+ state.activeRole="MENTOR";state.scopeCollegeId="college-a";state.scopeOrganizationId="org-a";
  state.activeMembership=true;state.moduleEnabled=true;state.meetingPresent=true;
  state.currentOutcome="Initial";state.updatedAt=input.expectedUpdatedAt;
  state.events=0;state.updates=0;state.projectLocks=0;state.meetingLocks=0;
@@ -128,10 +133,19 @@ describe("PROJ-BREAK-MENTOR meeting notes service transactional authorization",(
   state.activeMembership=false;
   await expect(updateMentorMeetingNotes(context,ids,input))
    .rejects.toThrow("PROJECT_MEETING_ACCESS_DENIED");
-  state.activeMembership=true;state.access="LEARNER";
+  state.activeMembership=true;state.activeRole="FACULTY";
+ await expect(updateMentorMeetingNotes(context,ids,input))
+  .rejects.toThrow("PROJECT_MEETING_ACCESS_DENIED");
+ state.activeRole="MENTOR";state.access="LEARNER";
   await expect(updateMentorMeetingNotes(context,ids,input))
    .rejects.toThrow("PROJECT_MEETING_ACCESS_DENIED");
-  state.access="MENTOR";state.moduleEnabled=false;
+  state.access="MENTOR";state.scopeCollegeId="college-b";
+ await expect(updateMentorMeetingNotes(context,ids,input))
+  .rejects.toThrow("PROJECT_MEETING_ACCESS_DENIED");
+ state.scopeCollegeId="college-a";state.scopeOrganizationId="org-b";
+ await expect(updateMentorMeetingNotes(context,ids,input))
+  .rejects.toThrow("PROJECT_MEETING_ACCESS_DENIED");
+ state.scopeOrganizationId="org-a";state.moduleEnabled=false;
   await expect(updateMentorMeetingNotes(context,ids,input))
    .rejects.toThrow("PROJECT_MEETING_ACCESS_DENIED");
   expect(state.meetingLocks).toBe(0);
