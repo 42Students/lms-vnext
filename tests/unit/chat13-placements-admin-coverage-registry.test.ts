@@ -21,7 +21,7 @@ describe("SA-ADMIN-LEDGER-01 every dedicated placement-admin/report module has a
   expect(content).toContain("all 48 current");
   expect(manifest).toContain("/admin/academics");
   expect(manifest).toContain("/admin/hr");
-  const routes=[...manifest.matchAll(/^- \[ \] `([^`]+)` \(([^)]+)\)$/gm)];
+  const routes=[...manifest.matchAll(/^- \[ \] `([^`]+)` \((.+)\)$/gm)];
   expect(routes.length).toBeGreaterThanOrEqual(111);
   expect(routes[0]?.[1]).toBe("/admin/academics");
   expect(routes[36]?.[1]).toBe("/admin/hr");
