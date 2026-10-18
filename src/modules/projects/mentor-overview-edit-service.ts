@@ -4,6 +4,7 @@ import {getDb} from "@/db/client";
 import {projectInstances} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireProjectLifecycleMutationAccess} from "./access";
+import {assertPersistedProjectMutationActor} from "./persisted-mentor-mutation";
 import {ProjectsServiceError} from "./errors";
 import {mentorOverviewEditSchema} from "./mentor-overview-edit-model";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
@@ -18,6 +19,7 @@ export async function updateMentorProjectOverview(context:RequestContext,project
    .for("update").limit(1);
   if(!current||current.status==="ARCHIVED"||current.status==="COMPLETED")
    throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
+  await assertPersistedProjectMutationActor(tx,context,scope);
   if(current.updatedAt.getTime()!==Date.parse(input.expectedUpdatedAt))
    throw new ProjectsServiceError("PROJECT_SUBMISSION_CONFLICT");
   if(current.summary===input.summary&&current.dueLabel===input.dueLabel&&

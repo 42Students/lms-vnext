@@ -177,3 +177,11 @@ The College Admin CSV student-placement service previously checked that `learner
 ## COL-people-e2e-identity-02 — deterministic UID collision without contact
 
 The E2E identity adapter used a literal `"missing-contact"` hash fallback when called directly without phone/email, which would generate the same UID for unrelated people and could cause test-fixture identity aliasing. It now fails with `PeopleServiceError("IDENTITY_CONTACT_REQUIRED")`, matching the production identity resolver's required-contact invariant. A behavioral negative case was appended to `chat4-college-e2e-identity-directory.test.ts`; **not run**.
+
+## COL-academics-directory-FILTER-01 — S2 malformed academic directory filters
+
+Semester/batch directory numeric schemas used `z.coerce.number()`, interpreting user URL values such as hexadecimal and exponent notation as real pages, terms, credits and academic years. `academicDirectorySearchParams` also silently discarded unsupported foreign query keys. The schemas now accept only decimal digit strings or already validated internal numbers, and the extractor rejects unknown/array keys rather than broadening the filter. `tests/unit/chat4-college-academic-directory-strict-filter.test.ts` verifies malformed cases, range/progression contradictions and canonical filters. Authored, not run.
+
+## COL-people-local-identity-02 — orphaned first-party account creation
+
+The first-party identity directory adapter generated a fresh `lms_*` identity even on direct `createUser` calls lacking both phone and email; such a person has no OTP sign-in or recovery contact. It now throws `PeopleServiceError("IDENTITY_CONTACT_REQUIRED")`, mirroring the higher-level resolver. A regression test was appended to the local directory suite; not executed.
