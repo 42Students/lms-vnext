@@ -9,7 +9,7 @@ const other="22222222-2222-4222-8222-222222222222";
 const org="33333333-3333-4333-8333-333333333333";
 const otherOrg="44444444-4444-4444-8444-444444444444";
 const actor=(roles:("TPO"|"COLLEGE_ADMIN"|"MENTOR"|"LEARNER")[],opts:{
- status?:"ACTIVE"|"DISABLED";platform?:"ACTIVE"|"SUSPENDED";collegeId?:string;orgId?:string;superAdmin?:boolean;
+ status?:"ACTIVE"|"SUSPENDED";platform?:"ACTIVE"|"DISABLED";collegeId?:string;orgId?:string;superAdmin?:boolean;
 }={}):RequestContext=>({
  user:{id:"55555555-5555-4555-8555-555555555555",identityUid:"actor",platformStatus:opts.platform??"ACTIVE",systemRoles:opts.superAdmin?["SUPER_ADMIN"]:[]},
  membership:{id:"66666666-6666-4666-8666-666666666666",collegeId:opts.collegeId??college,organizationId:opts.orgId??org,status:opts.status??"ACTIVE",roles},
@@ -38,7 +38,7 @@ describe("IIT Dharwad project isolation: TPO cross-product breaker",()=>{
  });
  it("PROJ-BREAK-TPO-03 suspended, disabled or missing memberships cannot view or manage Project data",()=>{
   const valid={collegeId:college,organizationId:org};
-  for(const tpo of [actor(["TPO"],{status:"DISABLED"}),actor(["TPO"],{platform:"SUSPENDED"}),
+  for(const tpo of [actor(["TPO"],{status:"SUSPENDED"}),actor(["TPO"],{platform:"DISABLED"}),
    {...actor(["TPO"]),membership:null}]){
    for(const permission of ["projects.read","projects.manage","placements.read","placements.manage"] as const)
     expect(can(tpo,permission,valid)).toBe(false);
