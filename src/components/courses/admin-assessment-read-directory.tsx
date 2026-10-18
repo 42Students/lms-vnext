@@ -92,7 +92,7 @@ export function AdminAssessmentDirectory({ data }: { data: Data }) {
               deadlineReached={item.resultsReleaseReady}/>:null}
         </div>
         <Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}#lesson-authoring`}
-          className="mt-3 inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
+          className="mt-3 inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
           Open offering →
         </Link>
       </article>)}
@@ -101,12 +101,12 @@ export function AdminAssessmentDirectory({ data }: { data: Data }) {
       <span className="text-muted-foreground">Page {data.page} of {data.totalPages} · 25 per page</span>
       <div className="flex gap-2">
         {data.page > 1 ? <Link href={adminAssessmentHref(data.kind, { ...data.query, page: data.page - 1 })}
-          className="rounded-md border border-border px-4 py-2 font-semibold text-primary-text">Previous</Link> : null}
+          className="rounded-md border border-border px-4 py-2 font-semibold text-[var(--lms-teal-deep)]">Previous</Link> : null}
         {data.page < data.totalPages ? <Link href={adminAssessmentHref(data.kind, { ...data.query, page: data.page + 1 })}
-          className="rounded-md border border-border px-4 py-2 font-semibold text-primary-text">Next</Link> : null}
+          className="rounded-md border border-border px-4 py-2 font-semibold text-[var(--lms-teal-deep)]">Next</Link> : null}
       </div>
     </nav>
     <p className="text-xs text-muted-foreground">No answers, submission body, learner contacts or stored attachments are fetched by this directory.</p>
-    <Link href="/admin/courses" className="inline-flex min-h-10 items-center font-semibold text-primary-text">← Courses</Link>
+    <Link href="/admin/courses" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">← Courses</Link>
   </div>;
 }
