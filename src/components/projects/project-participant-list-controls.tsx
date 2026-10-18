@@ -76,7 +76,7 @@ export function ProjectParticipantListControls({
           defaultValue={query.search ?? ""}
           aria-label="Search my projects"
           placeholder="Search project title, course or slug"
-          className="min-w-60 rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground"
+          className="min-h-11 w-full min-w-0 max-w-full rounded-lg border border-border bg-background px-3 py-2 text-base font-normal text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
         />
       </label>
 
@@ -85,7 +85,7 @@ export function ProjectParticipantListControls({
         <select
           name="status"
           defaultValue={query.status ?? ""}
-          className="rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground"
+          className="min-h-11 max-w-full rounded-lg border border-border bg-background px-3 py-2 text-base font-normal text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
         >
           <option value="">All statuses</option>
           {(mentor || learner ? mentorStatusOptions : statusOptions).map(
@@ -109,7 +109,7 @@ export function ProjectParticipantListControls({
             defaultValue={
               query.attention ?? ""
             }
-            className="rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground"
+            className="min-h-11 max-w-full rounded-lg border border-border bg-background px-3 py-2 text-base font-normal text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
           >
             <option value="">
               All attention states
@@ -135,12 +135,12 @@ export function ProjectParticipantListControls({
       ) : null}
 
       {mentor ? (<label className="grid gap-1 text-xs font-semibold text-muted-foreground">Sort
-        <select name="sort" defaultValue={query.sort ?? "RECENT"} className="min-h-11 rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground">
+        <select name="sort" defaultValue={query.sort ?? "RECENT"} className="min-h-11 max-w-full rounded-lg border border-border bg-background px-3 py-2 text-base font-normal text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="RECENT">Recently updated</option><option value="TITLE">Title A–Z</option><option value="PROGRESS">Least recorded progress first</option><option value="PROGRESS_DESC">Most recorded progress first</option><option value="OPEN_TASKS">Most open tasks first</option><option value="TEAM_SIZE_DESC">Largest active team first</option><option value="TEAM_SIZE_ASC">Smallest active team first</option>
         </select></label>) : null}
       {mentor ? (<label className="grid gap-1 text-xs font-semibold text-muted-foreground">Assignment
         <select name="assignment" defaultValue={query.assignment ?? ""}
-          className="min-h-11 rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground">
+          className="min-h-11 max-w-full rounded-lg border border-border bg-background px-3 py-2 text-base font-normal text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="">All Mentor assignments</option><option value="PRIMARY">Primary mentor</option><option value="SUPPORTING">Supporting mentor</option>
         </select>
       </label>) : null}
@@ -149,7 +149,7 @@ export function ProjectParticipantListControls({
         <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
           Recorded task coverage
           <select name="work" defaultValue={query.work ?? ""}
-            className="min-h-11 rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground">
+            className="min-h-11 max-w-full rounded-lg border border-border bg-background px-3 py-2 text-base font-normal text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
             <option value="">All task coverage</option>
             <option value="NO_TASKS">No tracked tasks</option>
             <option value="HAS_OPEN_TASKS">Open tasks recorded</option>
@@ -162,7 +162,7 @@ export function ProjectParticipantListControls({
         <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
           Work attention
           <select name="work" defaultValue={query.work ?? ""}
-            className="min-h-11 rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground">
+            className="min-h-11 max-w-full rounded-lg border border-border bg-background px-3 py-2 text-base font-normal text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
             <option value="">All work</option>
             <option value="BLOCKED">Has blocked tasks</option>
             <option value="NO_TASKS">No tracked tasks yet</option>
@@ -173,7 +173,7 @@ export function ProjectParticipantListControls({
         <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
           Sort projects
           <select name="sort" defaultValue={query.sort ?? "RECENT"}
-            className="min-h-11 rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground">
+            className="min-h-11 max-w-full rounded-lg border border-border bg-background px-3 py-2 text-base font-normal text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
             <option value="RECENT">Recently updated</option>
             <option value="TITLE">Title A–Z</option>
             <option value="PROGRESS">Least progress first</option>
@@ -187,7 +187,7 @@ export function ProjectParticipantListControls({
           defaultValue={String(
             query.pageSize ?? 25,
           )}
-          className="rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground"
+          className="min-h-11 max-w-full rounded-lg border border-border bg-background px-3 py-2 text-base font-normal text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
         >
           {(learner||mentor?[10,25,50]:[25,50,100]).map((size) => (
             <option
@@ -202,13 +202,13 @@ export function ProjectParticipantListControls({
 
       <button
         type="submit"
-        className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
+        className="min-h-11 rounded-lg bg-primary px-4 py-2 text-base font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
       >
         Apply
       </button>
       {!mentor || hasFilters ? <Link
         href={basePath}
-        className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-body hover:bg-muted"
+        className="inline-flex min-h-11 items-center rounded-lg border border-border px-4 py-2 text-base font-semibold text-body hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
       >
         Clear filters
       </Link> : null}
@@ -278,8 +278,9 @@ export function ProjectParticipantPagination({
             Math.max(1, page - 1),
           )}
           aria-disabled={page <= 1}
+          tabIndex={page <= 1 ? -1 : undefined}
           className={
-            "rounded-lg border border-border px-3 py-2 font-semibold " +
+            "inline-flex min-h-11 items-center rounded-lg border border-border px-3 py-2 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] " +
             (page <= 1
               ? "pointer-events-none opacity-50"
               : "hover:bg-muted")
@@ -297,8 +298,9 @@ export function ProjectParticipantPagination({
           aria-disabled={
             page >= totalPages
           }
+          tabIndex={page >= totalPages ? -1 : undefined}
           className={
-            "rounded-lg border border-border px-3 py-2 font-semibold " +
+            "inline-flex min-h-11 items-center rounded-lg border border-border px-3 py-2 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] " +
             (page >= totalPages
               ? "pointer-events-none opacity-50"
               : "hover:bg-muted")
