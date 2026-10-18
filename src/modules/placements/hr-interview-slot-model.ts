@@ -50,5 +50,6 @@ export function parseIstLocalSlot(value:unknown):string{
 
 /** Internal aggregate slot changes are restricted to the recruiter who created that block. */
 export function canRecruiterMutateOwnSlot(createdByUserId:string,recruiterUserId:string):boolean{
- return Boolean(createdByUserId&&recruiterUserId&&createdByUserId===recruiterUserId);
+ return Boolean(createdByUserId.trim() && recruiterUserId.trim() &&
+  createdByUserId === recruiterUserId);
 }

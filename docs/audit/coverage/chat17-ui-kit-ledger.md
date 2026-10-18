@@ -19,7 +19,7 @@ Tests are in:
 | `card.tsx` | `Card` | STATES-12; HARDEN-10 | heading, semantic article, footer action |
 | `confirm-action-dialog.tsx` | `ConfirmActionDialog` | STATES-04; HARDEN-16 | pending disables action; consequences and cancel |
 | `confirm-dialog.tsx` | `ConfirmDialog` | STATES-04; HARDEN-16 | pending/disabled destructive action, no dismiss |
-| `data-table.tsx` | `DataTable, isSafeDataTableHref` | HARDEN-17; HARDEN-27; HARDEN-30; HARDEN-35 | empty, formatted cell once, mobile, shared guarded row links |
+| `data-table.tsx` | `DataTable, isSafeDataTableHref` | HARDEN-17; HARDEN-27; HARDEN-30; HARDEN-35; HARDEN-36 | empty, formatted cell once, mobile, shared guarded row links |
 | `dialog.tsx` | `Dialog` | STATES-05; HARDEN-16 | nondismissible title, safe viewport, scroll |
 | `disabled-reason.tsx` | `DisabledReason` | HARDEN-07 | reason associated with disabled control |
 | `disclosure.tsx` | `Disclosure` | STATES-12; HARDEN-12 | semantic details/summary and defaultOpen |
@@ -36,15 +36,15 @@ Tests are in:
 | `long-text.tsx` | `LongText` | STATES-09; HARDEN-11 | untrusted string escaping and wrapping |
 | `page-header.tsx` | `PageHeader` | STATES-12; HARDEN-10 | single h1, action area |
 | `page-loading.tsx` | `PageLoading` | STATES-07; HARDEN-13 | skeleton count, slow loading recovery source |
-| `pagination.tsx` | `Pagination, paginationWindow, normalizedPageCount` | HARDEN-08; HARDEN-31 | clamp nonfinite, 10k pages, labels/disabled |
+| `pagination.tsx` | `Pagination, paginationWindow, normalizedPageCount` | HARDEN-08; HARDEN-31; HARDEN-36 | clamp nonfinite, 10k pages, unsafe links disabled, labels |
 | `permission-action.tsx` | `PermissionAction` | HARDEN-20; HARDEN-23; HARDEN-24; HARDEN-25 | own/foreign scope, scoped SA, disabled/ended actor, hidden child |
 | `scroll-cue.tsx` | `ScrollCue` | STATES-15; HARDEN-21 | SSR truthful overflow semantics, resize/measurement source |
 | `select.tsx` | `Select` | STATES-02; HARDEN-02 | disabled, invalid |
 | `selection-controls.tsx` | `Checkbox, Radio, Switch` | STATES-06; HARDEN-04 | native semantics, disabled/checked, switch |
 | `skeleton.tsx` | `Skeleton` | STATES-07; HARDEN-13 | zero/NaN/high count bounded, reduced-motion |
-| `stat-tile.tsx` | `StatTile` | STATES-12; HARDEN-11 | finite number, invalid fallback, link |
+| `stat-tile.tsx` | `StatTile` | STATES-12; HARDEN-11; HARDEN-36 | finite number, invalid fallback, safe internal-only link |
 | `status-badge.tsx` | `StatusBadge` | STATES-08; HARDEN-10 | five tones/readable labels |
-| `tabs.tsx` | `Tabs, tabNextEnabled` | STATES-10; HARDEN-18; HARDEN-33 | zero/all disabled, stale tab selection fallback, one reachable panel |
+| `tabs.tsx` | `Tabs, tabNextEnabled` | STATES-10; HARDEN-18; HARDEN-33; HARDEN-36 | zero/all disabled, stale tab selection fallback, one reachable panel |
 | `textarea.tsx` | `Textarea` | STATES-02; HARDEN-02 | disabled, invalid |
 | `third-party-link.tsx` | `ThirdPartyLink` | STATES-14; HARDEN-14; HARDEN-32 | reject HTTP/js/credentials/backslash/controls; same-tab/copy fallback |
 | `toast.tsx` | `enqueueToast, clearEvictedToastTimers, ToastStack, ToastProvider, useToast` | HARDEN-15; HARDEN-29 | persistent errors, bounded info, timer cleanup, viewport |
@@ -69,3 +69,8 @@ Tests are in:
 - **UX-kit-HARDEN-35:** `src/lib/safe-internal-href.ts` centralizes percent-encoding-aware absolute path validation. `DataTable` retains its prior public export, and `Breadcrumbs` now denies external/obfuscated hrefs without disabling valid internal links. Negative and valid link assertions are in `UX-kit-role-and-overlay-chat17.test.tsx`.
 
 - **Browser witness:** `tests/e2e/ux-safe-internal-href-chat17.spec.ts` transpiles the production `isSafeInternalHref` function and tests hostile encodings and legitimate URLs against Chromium's own URL origin resolver. Execute with `npx playwright test tests/e2e/ux-safe-internal-href-chat17.spec.ts`. This covers navigation parsing only; it is not proof of authenticated Projects end-to-end permission safety.
+
+- **UX-kit-HARDEN-36:** `StatTile`, navigation-style `Tabs`, and `Pagination` now use `isSafeInternalHref` just like `Breadcrumbs`/`DataTable`. Invalid targets become inert labeled states; all are tested in `tests/unit/UX-kit-states-chat17.test.tsx`.
+
+- **UX-kit-HARDEN-27:** the single listed chat-17 unit regression was re-read against `DataTable` and `ScrollCue`. It preserves **exactly one** formatter call per row, rejects unsafe row links and renders an accessible caption while SSR lacks physical overflow. Its brittle implementation-string assertion was replaced with semantic caption/scroll-label patterns, and ordered formatter calls are now explicitly asserted. Requires a refreshed cloud runner to confirm passing; the published report is from an older commit.
+- **UX-kit-HARDEN-36:** hidden field detail authorization is **per-row**, not global to the table. Rows without `mobileDetail.canView(row)` do not run or serialize the sensitive cell formatter, disclose a fallback value on mobile, or render an unauthorized detail link. Mixed-permission assertions cover the leak and authorized row continuity.

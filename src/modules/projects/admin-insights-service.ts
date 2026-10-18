@@ -38,6 +38,7 @@ import {
   latestProjectSubmission,
 } from "./risk-signals";
 import { loadProjectCollegeScope } from "./scope";
+import {adminUnsubmittedLiteralSearchPattern} from "./admin-unsubmitted-query-model";
 
 const projectAdminQuerySchema = z.object({
   riskBucket: z.enum(["STALLED", "BLOCKER", "REVIEW"]).optional(),
@@ -89,17 +90,18 @@ export async function listProjectAdminSnapshots(
     collegeId: college.id,
   });
 
+  const searchPattern=adminUnsubmittedLiteralSearchPattern(query.q??"");
   const search = query.q
     ? or(
         ilike(
           projectInstances.title,
-          `%${query.q}%`,
+          searchPattern,
         ),
         ilike(
           projectInstances.slug,
-          `%${query.q}%`,
+          searchPattern,
         ),
-        sql`${projectInstances.id}::text ilike ${"%"+query.q+"%"}`,
+        sql`${projectInstances.id}::text ilike ${searchPattern}`,
       )
     : undefined;
   const where = and(
@@ -453,17 +455,18 @@ export async function listProjectAdminRiskQueue(
     collegeId: college.id,
   });
 
+  const searchPattern=adminUnsubmittedLiteralSearchPattern(query.q??"");
   const search = query.q
     ? or(
         ilike(
           projectInstances.title,
-          `%${query.q}%`,
+          searchPattern,
         ),
         ilike(
           projectInstances.slug,
-          `%${query.q}%`,
+          searchPattern,
         ),
-        sql`${projectInstances.id}::text ilike ${"%"+query.q+"%"}`,
+        sql`${projectInstances.id}::text ilike ${searchPattern}`,
       )
     : undefined;
   // Correlated subqueries below need a qualified outer reference: Drizzle
@@ -745,15 +748,16 @@ export async function listProjectAdminSubmissionQueue(
   });
   // Keep the outer project ID qualified inside the mentor subquery.
   const instanceId = sql.raw('"project_instances"."id"');
+  const searchPattern=adminUnsubmittedLiteralSearchPattern(query.q??"");
   const search = query.q
     ? or(
         ilike(
           projectInstances.title,
-          `%${query.q}%`,
+          searchPattern,
         ),
         ilike(
           projectInstances.slug,
-          `%${query.q}%`,
+          searchPattern,
         ),
       )
     : undefined;
