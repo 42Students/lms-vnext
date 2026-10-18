@@ -5,21 +5,25 @@ import {hrReplyErrorMessage} from "@/modules/placements/hr-conversation-send-fee
 export function RecruiterConversationReadControl({threadId}:{threadId:string}){
  const router=useRouter();
  const [busy,setBusy]=useState(false);
+ const acknowledgePending=useRef(false);
  const [notice,setNotice]=useState("");
  const acknowledgedOnOpen=useRef(false);
  useEffect(()=>{
   if(acknowledgedOnOpen.current)return;
   acknowledgedOnOpen.current=true;
+  acknowledgePending.current=true;
   // The GET stays read-only. An explicit client POST acknowledges when opened.
   void fetch("/api/placements/recruiter/conversations/"+encodeURIComponent(threadId)+"/acknowledge",{
     method:"POST",credentials:"same-origin",
   }).then(response=>{
     if(response.ok)router.refresh();
     else setNotice("Read status could not be saved. Use the button below to retry.");
-  }).catch(()=>setNotice("Read status could not be saved. Use the button below to retry."));
+  }).catch(()=>setNotice("Read status could not be saved. Use the button below to retry."))
+   .finally(()=>{acknowledgePending.current=false;});
  },[threadId,router]);
  async function acknowledge(){
-  if(busy)return;
+  if(acknowledgePending.current)return;
+  acknowledgePending.current=true;
   setBusy(true);
   setNotice("");
   let success=false;
@@ -32,9 +36,10 @@ export function RecruiterConversationReadControl({threadId}:{threadId:string}){
     new URL(response.url).pathname==="/hr/conversations/"+threadId;
    if(!success)feedback=hrReplyErrorMessage(response.status);
   }catch{feedback="Connection unavailable. Read status has not been confirmed.";}
-  if(success){setNotice("Read status updated.");router.refresh();}
-  else setNotice(feedback);
-  setBusy(false);
+  try{
+   if(success){setNotice("Read status updated.");router.refresh();}
+   else setNotice(feedback);
+  }finally{acknowledgePending.current=false;setBusy(false);}
  }
  return <div className="space-y-2">
   <button type="button" disabled={busy} onClick={acknowledge}

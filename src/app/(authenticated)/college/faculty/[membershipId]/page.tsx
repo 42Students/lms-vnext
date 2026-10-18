@@ -72,7 +72,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
         ? <p className="mt-4 text-sm text-muted-foreground">No college-scoped teaching assignments recorded.</p>
         : <div className="mt-4">
           <DataTable
-            caption="Faculty teaching assignments"
+            caption="Persisted teaching assignments"
             rows={data.assignments}
             getRowKey={item => item.id}
             empty={<p className="text-sm text-muted-foreground">No college-scoped teaching assignments recorded.</p>}

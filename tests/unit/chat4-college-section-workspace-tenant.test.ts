@@ -13,7 +13,12 @@ const mock=vi.hoisted(()=>{
  const select=vi.fn();
  const rows:Array<Array<Record<string,unknown>>>=[];
  const query={from(){return this;},innerJoin(){return this;},where(){return this;},
-  orderBy(){return this;},limit(){return Promise.resolve(rows.shift()??[]);}};
+  orderBy(){return this;},limit(){return Promise.resolve(rows.shift()??[]);},
+  // Drizzle's orderBy() is a thenable query, not a raw query builder.
+  // Model the asynchronous execution when Promise.all resolves learner/faculty choices.
+  then(resolve:(rows:Record<string,unknown>[])=>unknown,reject:(reason:unknown)=>unknown){
+   return Promise.resolve(rows.shift()??[]).then(resolve,reject);
+  }};
  return {scope,enrollments,roster,faculty,schedule,courses,select,rows,query};
 });
 vi.mock("@/modules/academics/scope",()=>({loadSectionScope:mock.scope}));

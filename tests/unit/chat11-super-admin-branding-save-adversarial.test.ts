@@ -39,7 +39,7 @@ describe("SA-tenants-modules-BRAND-03 branding writes require current scoped Sup
    {...root,user:{...root.user,platformStatus:"DISABLED" as const}},
    {...root,user:{...root.user,systemRoles:[]}},
    {...root,adminScope:{organizationId:org,collegeId:foreign}},
-   {...root,adminScope:{organizationId:foreign}},
+   {...root,adminScope:{organizationId:foreign,collegeId:null}},
   ]){
    expect(isSuperAdmin(ctx)&&can(ctx,"college.manage",resource)).toBe(false);
   }
