@@ -20,7 +20,7 @@ export default async function DriveDayForOneDrive({
     <PageHeader eyebrow="TPO · Drive day" title={drive.job.title + " · Drive day"}
       description="The campus-day rounds, attendance and result readiness for this drive."
       actions={<Link href="/tpo/drive-day"
-        className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-primary px-4 text-sm font-semibold text-[var(--lms-link-text)]">
+        className="inline-flex min-h-11 items-center rounded-[9px] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
         Open drive day / attendance
       </Link>} />
     {drive.rounds.length ? (

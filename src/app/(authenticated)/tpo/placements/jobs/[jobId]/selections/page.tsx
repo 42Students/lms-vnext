@@ -21,8 +21,8 @@ export default async function TpoSelectionsPage({params}:{params:Promise<{jobId:
   <PageHeader eyebrow="TPO · Drive workspace" title={data.job.title+" · Selections"}
    description="Record the company's selections, verify placement rules, and release the offers."/>
   <div className="flex flex-wrap gap-4 text-sm font-semibold">
-   <Link className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline" href={root+"/rounds"}>Review completed rounds</Link>
-   <Link className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline" href={root+"/offers"}>Open offer register</Link>
+   <Link className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline md:min-h-9" href={root+"/rounds"}>Review completed rounds</Link>
+   <Link className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline md:min-h-9" href={root+"/offers"}>Open offer register</Link>
   </div>
   {!data.storageReady?<div role="status" className="rounded-lg border border-border bg-surface p-5 text-sm text-body">
     <strong>Selections are not available yet.</strong> {data.pendingMessage}

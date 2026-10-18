@@ -43,9 +43,9 @@ export default async function TpoPlacementDrivePage({
   return (
     <div className="min-w-0 space-y-4">
       <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/discussion"}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)]">Discuss →</Link>
+        className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)] md:min-h-9">Discuss →</Link>
       <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/interview-slots"}
-        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-link-text)]">
+        className="inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-link-text)] md:min-h-9">
         Employer interview slot proposals →
       </Link>
       <PlacementDriveWorkspace context={context} jobId={jobId} eyebrow="TPO" openPublish={openPublish}/>
