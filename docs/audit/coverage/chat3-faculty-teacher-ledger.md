@@ -77,6 +77,8 @@ This is the **tested-function ledger for the focused model suite**, not a claim 
 
 | `src/modules/courses/faculty-course-service.ts` | `listFacultyCourseDeliveries` | `tests/unit/chat3-faculty-course-roster-cross-tenant-joins.test.ts` | FAC-TENANT-COURSES-01 | compiled Drizzle SQL join contract requiring own-college course department, matching Section cohort/term and own-college cohort program department and academic period; no DB read for wrong roles/disabled Faculty |
 
+| `src/modules/courses/faculty-course-health-service.ts` | `getFacultyCourseAssessmentHealth` | `tests/unit/chat3-faculty-course-health-service-permissions.test.ts` | FAC-HEALTH-SERVICE-01 | actual service role gate, strict query, own-delivery published items only, reported metrics, bounded five-row expansion, stale pagination and fail-closed revoked grants |
+
 ## Role/security matrix
 
 - FAC-SCOPE-01/02: Faculty allowed only after central `courses.read` and active teaching role; Learner, Mentor, College Admin, Super Admin, missing membership and foreign tenant denied in unit-model mock contract.
