@@ -119,3 +119,13 @@ This still does **not** implement a persisted future whole-course visibility ove
 | `GET /api/courses/deliveries/[deliveryId]/contents/[contentId]/file` | Strict `download=0/1`, no duplicate/unknown query keys; authorization before storage `HEAD`, before presigned 900-second GET; signed 302 no-store/no-referrer; absent file 404, storage outage 503 with no raw credentials, attachment filename sanitized | `tests/unit/chat7-learner-course-file-route-boundaries.test.ts` — `LEARNER-COURSE-FILE-ROUTE-02` |
 
 These are unit-authored rather than CI-green. No live R2/storage object was touched. A browser's hidden `storageKey` while SCHEDULED is now backed by a server read constraint, not just UI masking.
+
+## Learner quiz review and assignment material read — source coverage extension
+
+| Function | Valid and invalid behavior | Named regression |
+|---|---|---|
+| `learnerQuizReviewRows` | Only selections belonging to current option IDs count, duplicates collapse, inherited browser draft answer properties never count; no answer-key correctness or points leave this projection | `tests/unit/chat7-learner-quiz-review-inherited-answers.test.ts` — `LEARNER-QUIZ-REVIEW-03` |
+| `facultyAssignmentMaterialLinkSchema`, `safeLearnerAssignmentMaterialLink` | Public credential-free HTTPS links only; no hash fragments, localhost loopback, javascript/file/data, extra tenant or private-storage keys; learner read gets null for malformed historic links | `tests/unit/chat7-learner-course-material-link-safety.test.ts` — `LEARNER-ASSIGNMENT-MATERIALS-04` |
+| `selectLearnerAssignmentFile` | Clearing the selected file leaves no error; malformed delivery ID drops file before upload-grant request | `tests/unit/chat7-learner-course-material-link-safety.test.ts` — `LEARNER-ASSIGNMENT-MATERIALS-04` |
+
+Release safety note: `getLearnerCourseFileReference` newly denies SCHEDULED content using DB `now()` even when the learner is enrolled; the client hidden-key presentation by itself never suffices as authorization. All test evidence here was authored without CI/PG execution per owner priority.
