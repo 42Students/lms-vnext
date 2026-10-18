@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, type ReactNode, type CSSProperties } from "react";
 import { Button } from "@/components/ui/button";
+import { ScrollCue } from "@/components/ui/scroll-cue";
 import { useOverlayWebview } from "@/components/ui/use-overlay-webview";
 
 export type DialogProps = {
@@ -33,7 +34,7 @@ export function Dialog({ open, onOpenChange, title, description, children, foote
     }
   }, [open]);
 
-  return <dialog ref={ref} aria-labelledby={titleId} aria-describedby={description ? descriptionId : undefined}
+  return <dialog data-slot="dialog" ref={ref} aria-labelledby={titleId} aria-describedby={description ? descriptionId : undefined}
     onCancel={event => { event.preventDefault(); if (dismissible) onOpenChange(false); }}
     onClose={() => { if (open) onOpenChange(false); opener.current?.focus(); }}
     onClick={event => { if (event.target === ref.current && dismissible) onOpenChange(false); }}
@@ -47,7 +48,7 @@ export function Dialog({ open, onOpenChange, title, description, children, foote
         </div>
         {dismissible ? <Button variant="ghost" aria-label="Close dialog" onClick={() => onOpenChange(false)}>×</Button> : null}
       </div>
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4 pb-8 sm:p-6 sm:pb-8 [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1.25rem),transparent_100%)]">{children}</div>
+      <ScrollCue axis="y" label={`${title} dialog content`} className="min-h-0 flex-1" viewportClassName="h-full min-h-0 p-4 sm:p-6">{children}</ScrollCue>
       {footer ? <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 border-t border-border p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6">{footer}</div> : null}
     </div>
   </dialog>;
