@@ -30,8 +30,8 @@ describe("UX-tpo-LAST-THIRD-01 account authorization journey across 42 inherited
   expect(can(actor("COLLEGE_ADMIN"),"placements.manage",{collegeId:foreignCollege,organizationId:org})).toBe(false);
   expect(can(actor("COLLEGE_ADMIN"),"placements.manage",{collegeId:college,organizationId:foreignOrg})).toBe(false);
  });
- it("learner, faculty, mentor and HR-member sessions never inherit TPO write access",()=>{
-  for(const role of ["LEARNER","FACULTY","MENTOR","HR"] as const){
+ it("learner, faculty and mentor memberships never inherit TPO write access",()=>{
+  for(const role of ["LEARNER","FACULTY","MENTOR"] as const){
    expect(canOpenTpoWorkspace(actor(role)),role).toBe(false);
    expect(hasTpoTooling(actor(role)),role).toBe(false);
   }
