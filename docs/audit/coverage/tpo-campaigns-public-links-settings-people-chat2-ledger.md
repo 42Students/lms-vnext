@@ -103,3 +103,18 @@ This ledger is deliberately explicit about gaps; source assertions and compilati
 - `UX-tpo-LAST-THIRD-01`: all **14** final-slice TPO reports under `/tpo/reports/{by-branch,by-company,ctc,failure-reasons,intelligence,joining-followups,joining-status,leads,offers-acceptance,offers-expiry,placed-branch,placement-summary,season-pipeline,unplaced}` now refuse duplicate query parameters **before** report-service retrieval. The shared `tpoReportHasAmbiguousFilters` model blocks contradictory `seasonId`, `jobId`, `page`, filters or forged repeated selectors instead of retaining only the first string.
 - `TpoReportInvalidFilters` renders an accessible `role="alert"` and a single-route Clear filters recovery link, never substituting a zero count or leaking a raw report error. All 14 named route checks plus duplicate-input model checks are in `tests/unit/chat2-tpo-reports-duplicate-params-break-15.test.ts`.
 - The assertion is bounded: it establishes **source path and pure-model evidence**, **not** a browser session/tenant integration test, nor proof that the downstream reports reject every possible malformed single-valued filter. These remain release gates, as do direct tests for TPO campaigns, public links, settings people and cross-writer PostgreSQL races. Tests are awaiting cloud CI.
+
+## Chat-2 post-merge corrections and people/settings behavioral coverage — 2026-10-18
+
+The main failure snapshot predated the shared ZeptoMail provider configuration and persisted recruiter-identity checks. The source-only dispatch assertion now verifies `readZeptoMailConfig()`, nonempty token, secure endpoint and distinct OTP template; it no longer assumes the implementation reads `ZEPTOMAIL_TOKEN` directly. It is **not** a real provider-dispatch test.
+
+| Model/surface | New directly exercised behavior | Test |
+| --- | --- | --- |
+| `tpo-settings-read-model.ts`: `tpoSettingsCollegeIdSchema`, `buildTpoTeamRoster`, `summarizeTpoTeam` | Reject forged colleges; deduplicate membership roles/duties; exclude inactive actors; truthful counts | `tests/unit/chat2-tpo-people-settings-ledger.test.ts` |
+| `tpo-team-people-sort-model.ts`: `sortTpoPeople` | Separate workload/overdue/name ordering without mutating the caller | `tests/unit/chat2-tpo-people-settings-ledger.test.ts` |
+| `tpo-settings-read-model.ts`: `buildTpoTrustedCompanies`, `buildTpoTrustedDomains` | Never trust global company-domain metadata as college authorization; canonicalize and dedupe persisted explicit domains | `tests/unit/chat2-tpo-people-settings-ledger.test.ts` |
+| `tpo-communication-change-model.ts`: `tpoCommunicationChangeSchema`, `tpoCommunicationChanges`, `tpoCommunicationUpdateAlreadyApplied` | Strict section/version controls, exact changed fields, idempotent retry/no-op comparison | `tests/unit/chat2-tpo-people-settings-ledger.test.ts` |
+| `tpo-workspace-access-model.ts`: `canOpenTpoWorkspace`, `hasTpoTooling` | Real role matrix, revoked/disabled membership, current college/organization and conflicting Super Admin selection | `tests/unit/chat2-tpo-last-third-auth-matrix.test.ts` |
+| `recruiter-job-visibility-model.ts`: `isRecruiterJobVisible` | Active grant AND central policy AND exact authenticated recruiter user ID; denies impersonation, wrong college/relationship | `tests/unit/HR-BREAK-authorization-01.test.ts` |
+
+**Not verified:** production provider calls, DB integration and competing writers, browser last-third pages’ loading/partial/error/phone states. All tests authored, not run. Do not interpret `UNIT WRITTEN` as CI passed.
