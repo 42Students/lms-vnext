@@ -1,6 +1,7 @@
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
+import {singleValueMentorExportFilters} from "@/modules/projects/mentor-filter-query";
 import {mentorReviewOverviewSchema,mentorDeliveryReviewCsv}
  from "@/modules/projects/mentor-review-overview-model";
 import {getMentorDeliveryReviewOverview}
@@ -11,11 +12,11 @@ type RouteContext={params:Promise<{projectId:string}>};
 export async function GET(request:Request,{params}:RouteContext){
  try{
   const {projectId}=await params,url=new URL(request.url);
-  const query=mentorReviewOverviewSchema.parse({
-   projectId,status:url.searchParams.get("status")??undefined,
-   feedback:url.searchParams.get("feedback")??undefined,
-   version:url.searchParams.get("version")??undefined,page:1,
-  });
+  const filters=singleValueMentorExportFilters(url.searchParams,
+   ["status","feedback","version"]);
+  if(!filters)return NextResponse.json({error:"INVALID_QUERY"},{status:400,
+   headers:{"Cache-Control":"private, no-store"}});
+  const query=mentorReviewOverviewSchema.parse({projectId,...filters,page:1});
   const context=await getCurrentRequestContext();
   const first=await getMentorDeliveryReviewOverview(context,query);
   const pages=Math.min(10,first.totalPages);

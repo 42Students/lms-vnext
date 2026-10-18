@@ -9,6 +9,11 @@ export function ThirdPartyLink({ href, label, ariaLabel }: { href: string; label
   const [copyStatus, setCopyStatus] = useState("");
   let safeHref: string | null = null;
   try {
+    // URL() silently strips raw tabs/newlines and interprets backslashes as
+    // slashes for HTTPS. Never turn an ambiguous supplied string into a link.
+    if (href !== href.trim() || /[\\\x00-\x1f\x7f]/.test(href)) {
+      throw new Error("Ambiguous external destination");
+    }
     const url = new URL(href);
     if (url.protocol === "https:" && !url.username && !url.password) safeHref = url.href;
   } catch { /* Invalid destinations are never made clickable. */ }
