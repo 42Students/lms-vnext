@@ -123,3 +123,21 @@ Its three ID-named cases assert that healthy rows remain visible while those for
 | `tests/unit/chat4-superadmin-tenant-lifecycle-actor.test.ts` | `SA-tenants-lifecycle-ACTOR-01/02/03/04` | Mock transaction callback type no longer refers recursively to its own parameter |
 
 All above tests **authored but not executed**; existing latest CI report still references `SA-colleges-directory-06`, which requires a fresh CI rerun to close. Other College Admin module/page coverage remains open.
+
+## College People additions: import and identity service behavior
+
+| Export | Test | Covered behavior and remaining evidence |
+| --- | --- | --- |
+| `src/modules/people/college-student-import-options.ts` `listCollegeStudentImportOptions` | `tests/unit/chat4-college-student-import-options-service.test.ts` (`COL-student-import-OPTIONS-01`) | Wrong role/inactive actor rejected before DB, persisted college-admin role checked inside transaction, exact same-college options and query caps 500/2000/3000, empty choices; real PostgreSQL corrupt foreign-cohort fixture and role-revocation race still pending |
+| `src/modules/people/local-identity-directory.ts` `localIdentityDirectory.findByPhone/findByEmail/createUser/updateUser` | `tests/unit/chat4-college-local-identity-directory.test.ts` (`COL-people-local-identity-01`) | Identity projection without internal user IDs, casefolded email SQL argument, missing lookup, unique opaque local IDs, no implicit DB creation, partial profile contact preservation; unique-index and concurrent create reconciliation still require PostgreSQL integration |
+
+No local execution. The module-wide College Admin and Super Admin coverage gate is not complete.
+
+## College People export safety and revocation (source + unit authored)
+
+| Export / model | Test | Evidence |
+| --- | --- | --- |
+| `src/modules/people/college-visible-directory-export.ts` `exportVisibleCollegePeople` | `tests/unit/chat4-college-people-visible-export-security.test.ts` (`COL-people-export-ACTOR-02`) | Faculty private phone requires same-college persisted actor verification during its enrichment transaction; student phone column remains blank despite stored mobile; no private read occurs when actor's role was revoked between list and enrichment or when no rows are visible; UTF-8 BOM retained |
+| `src/modules/people/college-role-directory-export.ts` `escapeRoleDirectoryCsvCell`, `renderCollegeRoleDirectoryCsv` | Same test (`COL-people-export-formula-01`) | Escapes `= + - @` spreadsheet formulas even after Unicode format/combining marks, ordinary whitespace/control prefixes; numeric and quoted cells preserve CSV shape, active roster labels remain unmodified |
+
+This corrects the earlier blind spot in the People directory CSV encoder (which had recognized ASCII whitespace/control prefixes but not Unicode format and combining marks). **Tests were not run**. Database-role races and browser/spreadsheet import checks are still required.
