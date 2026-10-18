@@ -61,6 +61,23 @@ Snapshot: 2026-10-18, source branch `chatgpt/chat-3-b`. Role-journal and code-ba
 - `src/modules/admin-ui/super-admin-scoped-people-service.ts` previously selected a learner's latest Section name through raw `section_enrollments` and `sections` joins with no college or cohort/academic-period consistency check. The correlated class display now validates that Section cohort/term match the current program enrollment, and the cohort's program department belongs to the selected college.
 - `tests/unit/chat3-superadmin-scoped-people-pagination.test.ts` compiles the actual class label SQL via `PgDialect`, checks the scoped program/cohort/term and selected college predicates, and retains the original page and role matrix. PostgreSQL mismatched-FK fixtures and browser acceptance remain pending.
 
+## SA-ACADEMICS-BATCH-COUNT-01 / SA-ACADEMICS-BATCH-CSV-02 — roster and export integrity
+
+- `getSuperAdminBatchRosterOverview` now counts **active platform users** rather than just active memberships in its Section occupancy aggregate. This aligns displayed Section counts with its active, same-college roster query, avoiding disabled accounts inflating capacity numbers. `tests/unit/chat3-sa-academics-batch-roster-privacy.test.ts` compiles the Drizzle count and active account/membership predicates while checking missing cohort and permission-denied no-read paths.
+- `superAdminBatchRosterCsv` now neutralizes spreadsheet formulas prefixed by zero-width or bidirectional formatting characters as well as whitespace and control characters. `tests/unit/chat3-sa-batch-roster-csv-formula-protection.test.ts` exercises quotes, commas, Unicode, every CSV field, class membership labels, and invalid cohort IDs.
+- Real PostgreSQL class-count reconciliation and large-roster export browser evidence remain pending.
+
+## SA-ACADEMICS-ROLE-01 — privileged batch overview and Student Register facet readers
+
+- `getSuperAdminBatchRosterOverview` and `getSuperAdminStudentRegisterOptions` now explicitly verify an **active system SUPER_ADMIN** role before delegating to `resolveActingCollege`. That shared helper also supports College Admin actions, so relying upon it alone gave these Super Admin-only services an unnecessarily wide actor surface.
+- `tests/unit/chat3-sa-academics-batch-roster-privacy.test.ts` covers wrong-role/disabled early denial plus active same-college cohort census. `tests/unit/chat3-sa-student-register-options-role-scope.test.ts` invokes the real registration-options service, compiles all three persisted-college Drizzle joins, and checks every wrong-role/disabled actor and an invalid selected college.
+- No change to College Admin's own Student Register endpoints. PostgreSQL fixture and page acceptance pending.
+
+## SA-LEARNING-FILTER-ROLE-01 — college-wide teaching filter authority
+
+- `getSuperAdminLearningFilterOptions` now explicitly requires an active platform `SUPER_ADMIN` role before calling `resolveActingCollege`. Ordinary Faculty receive college-scoped `courses.read` for their **own assigned courses**, which is not authority to enumerate every college course and cohort through Super Admin filter controls.
+- `tests/unit/chat3-sa-learning-facets-platform-role.test.ts` executes the actual service with Drizzle join compilation, verifies two bounded 2,000-row same-college queries, and denies Faculty/Mentor/Learner/College Admin/disabled platform actors before any database access. Cloud CI and authenticated page tests pending.
+
 ## Targeted repairs and further release gates
 
 - `COL-people-24`: exact legacy mentor-reassignment confirmation description restored at `src/components/projects/project-admin-reassign-mentor-page.tsx`; must rerun its failing test, and real keyboard/retry browser checks remain.

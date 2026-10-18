@@ -30,18 +30,24 @@ export type HrRoundRead = {
 export function hrSelectionReadyApplicationIds(rounds: readonly HrRoundRead[]) {
   const evaluative=rounds.filter(round=>round.kind!=="TALK");
   if(evaluative.length===0 || evaluative.some(round=>round.status!=="COMPLETED")) return [];
-  const firstRound=evaluative[0]!;
-  const qualified=new Set(
-    firstRound.participants.filter(person=>person.result?.status==="APPLIED" &&
-      person.result.outcome==="PASS").map(person=>person.applicationId),
-  );
-  for(const round of evaluative.slice(1)) {
-    const passed=new Set(round.participants.filter(person=>
-      person.result?.status==="APPLIED" && person.result.outcome==="PASS",
-    ).map(person=>person.applicationId));
-    for(const applicationId of qualified) {
-      if(!passed.has(applicationId)) qualified.delete(applicationId);
+  // A duplicate candidate/result projection is ambiguous. One PASS row
+  // must not override another unrecorded, failed or staged result.
+  const uniquelyPassed=(round:HrRoundRead)=>{
+    const seen=new Map<string,number>();
+    const passes=new Set<string>();
+    for(const person of round.participants){
+      if(!person.applicationId.trim())continue;
+      seen.set(person.applicationId,(seen.get(person.applicationId)??0)+1);
+      if(person.result?.status==="APPLIED"&&person.result.outcome==="PASS")
+        passes.add(person.applicationId);
     }
+    return new Set([...passes].filter(id=>seen.get(id)===1));
+  };
+  const qualified=uniquelyPassed(evaluative[0]!);
+  for(const round of evaluative.slice(1)){
+    const passed=uniquelyPassed(round);
+    for(const applicationId of qualified)
+      if(!passed.has(applicationId))qualified.delete(applicationId);
   }
   return [...qualified];
 }

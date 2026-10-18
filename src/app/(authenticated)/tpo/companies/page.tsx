@@ -62,6 +62,19 @@ function companyHref(company: TpoCompanyRow) {
     : `/tpo/companies?name=${encodeURIComponent(company.name)}`;
 }
 
+/** Reject ambiguous multi-valued deep-links without silently choosing one. */
+function invalidCompanyFilters(){
+ return <section role="alert" className="rounded-xl border border-border bg-surface p-6">
+  <h1 className="text-xl font-semibold text-foreground">Invalid companies filters</h1>
+  <p className="mt-2 text-sm text-body">
+   The requested search or pagination values are invalid. No company data was loaded.
+  </p>
+  <Link href="/tpo/companies" className="mt-4 inline-block font-semibold text-[var(--lms-teal-deep)] hover:underline">
+   Clear filters
+  </Link>
+ </section>;
+}
+
 export default async function TpoCompanyMemoryPage({
   searchParams,
 }: PageProps) {
@@ -76,6 +89,13 @@ export default async function TpoCompanyMemoryPage({
   await requireTpoBatchActor(context);
 
   const raw = await searchParams;
+  const acceptedKeys=new Set(["name","directory","search","page","pageSize","sort"]);
+  if(Object.keys(raw).some(key=>!acceptedKeys.has(key))||
+     Object.values(raw).some(Array.isArray)||
+     (typeof raw.name==="string"&&raw.name.trim().length>160)||
+     (raw.directory!==undefined&&raw.directory!=="1")){
+    return invalidCompanyFilters();
+  }
   const name = first(raw.name)?.trim() ?? "";
 
   // Preserve named Company Memory deep links, but keep the legacy Engage
@@ -104,25 +124,7 @@ export default async function TpoCompanyMemoryPage({
     sort: first(raw.sort) || undefined,
   });
 
-  if (!parsed.success) {
-    return (
-      <section role="alert" className="rounded-xl border border-border bg-surface p-6">
-        <h1 className="text-xl font-semibold text-foreground">
-          Invalid companies filters
-        </h1>
-        <p className="mt-2 text-sm text-body">
-          The requested search or pagination values are invalid.
-          No company data was loaded.
-        </p>
-        <Link
-          href="/tpo/companies"
-          className="mt-4 inline-block font-semibold text-[var(--lms-teal-deep)] hover:underline"
-        >
-          Clear filters
-        </Link>
-      </section>
-    );
-  }
+  if (!parsed.success) return invalidCompanyFilters();
 
   const query = parsed.data;
   const data = await getTpoCompaniesView(context, query);

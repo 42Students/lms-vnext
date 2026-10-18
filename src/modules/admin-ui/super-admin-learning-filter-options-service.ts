@@ -2,9 +2,11 @@ import "server-only";
 import {asc,and,eq} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {courses,departments,programs,cohorts} from "@/db/schema";
-import type {RequestContext} from "@/modules/identity/context";
+import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
+import {AuthorizationError} from "@/modules/permissions/policy";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 export async function getSuperAdminLearningFilterOptions(context:RequestContext){
+ if(!isSuperAdmin(context))throw new AuthorizationError("courses.read");
  const collegeId=(await resolveActingCollege(context,"courses.read")).collegeId;
  const db=getDb();
  const [courseRows,cohortRows]=await Promise.all([
