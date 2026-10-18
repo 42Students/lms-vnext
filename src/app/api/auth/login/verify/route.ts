@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import {privateAuthResponse} from "@/modules/auth/private-response";
 import { ADMIN_SCOPE_COOKIE_NAME } from "@/auth/admin-scope";
 import {
   MEMBERSHIP_COOKIE_NAME,
@@ -15,7 +16,7 @@ import { getAuthConfig } from "@/modules/auth/config";
 
 export const runtime = "nodejs";
 
-const schema = z.object({
+const schema = z.strictObject({
   attemptId: z.string().uuid(),
   code: z.string().regex(/^[0-9]{4,8}$/),
   secondCode: z
@@ -105,7 +106,7 @@ export async function POST(request: Request) {
         maxAge: autoMembershipId ? session.maxAgeSeconds : 0,
       },
     );
-    return response;
+    return privateAuthResponse(response);
   } catch (error) {
     return loginErrorResponse(error, { route: "login-verify", ip: guarded.ip });
   }

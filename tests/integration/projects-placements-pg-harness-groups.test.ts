@@ -126,7 +126,7 @@ describe("PROJ-HARNESS real PostgreSQL schema group examples", () => {
         values ($1,$2,'sprint-2','Double active',1,'ACTIVE')`,
         [f.project.projectId,f.project.releaseId]),"23505");
       await db.expectSqlState(()=>db.query(`
-        update project_sprints set start_date='2026-10-22',end_date='2026-10-21' where id=$1`,
+        update project_sprints set start_date='2099-10-22',end_date='2099-10-21' where id=$1`,
         [f.project.sprintId]),"23514");
     });
   });

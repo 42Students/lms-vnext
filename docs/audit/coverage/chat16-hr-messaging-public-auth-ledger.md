@@ -244,3 +244,21 @@ Syntax check of this and the preceding two new HTTP files confirmed balanced `()
 All **ten** chat-16 final-sprint IDs are represented by named tests under `tests/unit/chat16-final-*.test.ts` and acceptance entries: `LEARNER-learning-misc-01` (secure R2/scanner end-to-end **BLOCKED**), `-07` (**NOT-A-GAP** on unsafe legacy file types), `-12` (Google Drive OAuth import **BLOCKED**, safe local-download fallback), `-25` (**NOT-A-GAP** for executable arbitrary question HTML/unsupported grading), `COL-placements-02`, `-10`, `-12` (authored-source **DONE**), and `SA-tenants-modules-25`, `-29`, `-35` (authored-source **DONE**). Integration/browser/provider status remains independently gated.
 
 The original 32 reassigned mentor/SA tracker IDs have named queue and registry reconciliation tests; old published failures were later shown passing on commit `41f5729cb` in GitHub Actions run `39131096801`, but **this does not certify any newer commit**. The latest orchestrator error report still contains those older failures; it must be refreshed from a new completed CI run. No release-green assertion, deleted test, bypassed permission, or invented provider delivery is recorded.
+
+### Public college/company recruiter join API boundaries and exceptional failure recovery (chat-16)
+
+`tests/unit/chat16-public-company-college-join-http-16.test.ts` invokes **all four actual public POST endpoints** (COMPANY/COLLEGE code request and acceptance), with deterministic injected OTP/grant service mocks. Named cases `REC-JOIN-HTTP-16`–`24` verify cross-origin denial before service work, ignored client-IP header before trusted-proxy verification, verified network identity propagation, success only after service confirmation, missing network-gate 503, limited request 429, no-MX rejection, missing phone-storage 503, sanitized unexpected service errors, and malformed JSON treated as invalid input rather than an uncaught handler failure.
+
+Both COMPANY and COLLEGE route pairs now catch unexpected provider/database exceptions and return `503 SERVICE_UNAVAILABLE` with `Cache-Control: no-store`, rather than throwing raw internal errors to framework handling. The join handlers safely decode malformed JSON to `null` before handing it to the strict acceptance service (400 `COULD_NOT_JOIN` if invalid). Known structured `PublicJoinCodeError` and `PublicJoinAcceptError` mappings remain unchanged. A static scan of eight edited/new TypeScript files found balanced delimiters, no line-break-before-as casts and no test suppression directives.
+
+These are authored tests and source checks, **not run CI**. Public provider acceptance, rate-limiter PostgreSQL behavior and browser experience remain integration acceptance gates.
+
+### Refreshed orchestrator typecheck triage
+
+The published `docs/orchestrator/typecheck-errors-latest.md` is based on CI commit `007415ee`, preceding these fixes. Its **10** reported chat-16 test-file errors span seven files: persisted-actor mocks returning `undefined` instead of `RequestContext`; a mock loop widened outside `RequestContext`; nullable provider-call options; and public-placement SSR headers/content stubs with incorrect types. The branch now returns proper persisted actor contexts, explicitly types denied contexts, asserts `options` before reading request bodies, and uses a `Headers` object plus a correctly shaped public-content result. No `@ts-ignore`, no reduced assertions, and no broken-line `as` casts were introduced.
+
+The 32-gap reconciliation failures in the older `unit-failures-latest.md` were shown passing in a later completed CI run at `41f5729cb`, but the latest commit's full tests and TypeScript test-file checks are **not yet verified**. The shared reports are CI-owned and have not been manually declared green.
+
+### Source-level contract check for HTTP test fixtures
+
+The COMPANY/COLLEGE code request tests now submit exactly `{token,email}`, matching `publicJoinSendCodeSchema.strict()`. The corresponding join attempts submit `{token,email,code,name,designation,phone,companyName}`, matching `publicJoinAcceptSchema.strict()`. This avoids a falsely passing route test that used a code-bearing payload for send-code, which the real validation service would reject. The source's fail-closed handling and the tests continue to exercise the same public routes. Actual CI execution is still required.

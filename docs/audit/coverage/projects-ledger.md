@@ -4,6 +4,12 @@ Branch: `chatgpt/chat-14-b`; audit date 2026-10-18. **No release sign-off.** A m
 
 Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (mentor), `projects-chat9-admin-ledger.md` (admin/college), `projects-breaker-chat6-ledger.md` (breaker), `chat-17-projects-placements-pg-ledger.md` (database), `docs/audit/defects-chat-13.md` (Super Admin), `docs/audit/projects-defects.md` (chat-9 and chat-6). A reviewer other than the author must approve every fix.
 
+## CI failure triage (refreshed inventory ff6819dd, 2026-10-18)
+- `projects-mentor-service-guards-chat14.test.ts` final-delivery boundary assertion: the current service still contains every checked guard, version token, audited notification and scoped mutation gate. This appears to be a stale snapshot; do not change code or weaken the check without a new failing trace.
+- `recruiter-chat14-message-email-bridge-contract.test.ts`: the expectation referred to the raw email string, but the provider now normalizes the recipient *before* applying the allowlist; updated the test to assert both normalization and the runtime allowlist, preserving the stronger safety invariant.
+- `mentor-project-card-progress.test.ts`: previous test expected invalid `open=-3` to show 100% task completion; source correctly rejects corrupt aggregates with `null`. Updated the behavioral test for negative, excess, NaN and no-task inputs (`PROJ-BREAK-MENTOR-217`).
+- This is static reconciliation, not an executed Vitest/typecheck pass. Latest checked-in typecheck inventory has no chat-14-owned compiler error.
+
 ## Chat-14 new security regressions (2026-10-18 evening)
 - `PROJ-BREAK-MENTOR-205`: `getMentorMeetingNotes` and `updateMentorMeetingNotes` reject a disabled Projects tenant **before** calling `requireProjectReadAccess`; behavioural test counts project-scope resolutions, meeting reads, locks and audit writes in `tests/unit/PROJ-BREAK-chat14-mentor-notes-service.test.ts`. No DB/browser execution claim.
 - `PROJ-BREAK-MENTOR-206`: `decideMentorFinalDelivery` locks the scoped college/project row, then rechecks persisted user, membership and Mentor project grant before reading submission or changing state; regression in `tests/unit/PROJ-BREAK-chat14-mentor-final-review-revocation.test.ts`.
