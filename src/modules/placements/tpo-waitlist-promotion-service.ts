@@ -48,7 +48,7 @@ export async function getTpoWaitlistPreview(context:RequestContext,rawJobId:unkn
   inArray(placementRoundResults.applicationId,waitlist.map(w=>w.applicationId)),
   inArray(placementRoundResults.roundId,rounds.slice(0,-1).map(r=>r.id)),
   eq(placementRoundResults.status,"APPLIED"))):[];
- const activeOffers=await getDb().select({applicationId:placementOffers.applicationId})
+ const activeOffers=await getDb().select({applicationId:placementOffers.applicationId,kind:placementOffers.kind})
   .from(placementOffers).innerJoin(placementApplications,
    eq(placementApplications.id,placementOffers.applicationId))
   .where(and(eq(placementApplications.jobId,jobId),
@@ -58,7 +58,8 @@ export async function getTpoWaitlistPreview(context:RequestContext,rawJobId:unkn
  const held=new Set(activeOffers.map(x=>x.applicationId));
  const promoByApplication=new Map(promotions.map(x=>[x.applicationId,x]));
  const reservedCount=promotions.filter(p=>p.status==="PENDING").length;
- const freeSeats=job.openings==null?null:Math.max(0,job.openings-activeOffers.length-reservedCount);
+ const occupiedOfferSeats=activeOffers.filter(offer=>offer.kind==="OFFER").length;
+ const freeSeats=job.openings==null?null:Math.max(0,job.openings-occupiedOfferSeats-reservedCount);
  const rankCounts=new Map<number,number>();
  for(const candidate of waitlist){if(candidate.rank!==null)
   rankCounts.set(candidate.rank,(rankCounts.get(candidate.rank)??0)+1);}
@@ -116,6 +117,7 @@ export async function offerToNextWaitlisted(context:RequestContext,rawJobId:unkn
   const active=await tx.select({id:placementOffers.id}).from(placementOffers)
    .innerJoin(placementApplications,eq(placementApplications.id,placementOffers.applicationId))
    .where(and(eq(placementApplications.jobId,preview.job.id),
+    eq(placementOffers.kind,"OFFER"),
     inArray(placementOffers.status,["ISSUED","ACCEPTED"])));
   // Physical capacity is occupied by active offers and pending reservations,
   // not every historic promotion: a declined offer frees one opening.
