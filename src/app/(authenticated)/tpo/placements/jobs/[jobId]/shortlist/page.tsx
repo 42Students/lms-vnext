@@ -43,7 +43,7 @@ export default async function TpoDriveShortlistPage({
   return (
     <div className="min-w-0 space-y-6">
       <Link href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id)}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline hover:underline">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline hover:underline md:min-h-9">
         ← Drive workspace
       </Link>
       <PageHeader
@@ -52,14 +52,14 @@ export default async function TpoDriveShortlistPage({
         description="Current SHORTLISTED screening decisions for submitted applications belonging to active college learners."
         actions={
           <a href={"/api/placements/jobs/" + encodeURIComponent(data.job.id) + "/shortlist/export"}
-            className="inline-flex min-h-11 items-center rounded-[9px] bg-primary px-4 text-sm font-semibold text-primary-foreground">
+            className="inline-flex min-h-11 items-center rounded-[9px] bg-primary px-4 text-sm font-semibold text-primary-foreground md:min-h-9">
             Export shortlist CSV
           </a>
         }
       />
       <Link
         href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id) + "/share-preview"}
-        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline"
+        className="inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline md:min-h-9"
       >
         Recruiter-visible shortlist report →
       </Link>
@@ -84,7 +84,7 @@ export default async function TpoDriveShortlistPage({
         <div className="flex gap-4">
           {data.page > 1 ? (
             <Link href={pathname + "?page=" + (data.page - 1)}
-              className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline hover:underline">← Previous</Link>
+              className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline hover:underline md:min-h-9">← Previous</Link>
           ) : null}
           {data.page < data.totalPages ? (
             <Link href={pathname + "?page=" + (data.page + 1)}

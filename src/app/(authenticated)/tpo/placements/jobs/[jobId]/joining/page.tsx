@@ -40,7 +40,7 @@ export default async function TpoDriveJoiningPage({
   return (
     <div className="min-w-0 space-y-6">
       <Link href={"/tpo/placements/jobs/" + encodeURIComponent(tracker.job.id)}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline md:min-h-9">
         ← Back to drive workspace
       </Link>
       <PageHeader

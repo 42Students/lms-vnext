@@ -22,42 +22,42 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
   <PageHeader eyebrow="TPO · Export applicants" title={result.job.title+" · Applications"}
    description="Read-only college-scoped export preview without internal screening notes."
    actions={<a href={"/api/placements/tpo/jobs/"+jobId+"/applications/export?"+query} download
-    className="inline-flex min-h-11 items-center rounded-[9px] border border-primary bg-primary px-4 text-sm font-semibold text-primary-foreground">
+    className="inline-flex min-h-11 items-center rounded-[9px] border border-primary bg-primary px-4 text-sm font-semibold text-primary-foreground md:min-h-9">
      Download all matching CSV</a>}/>
   <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
    <label className="min-w-40 flex-1 text-sm text-body">Stage
-    <select name="stage" defaultValue={result.stage} className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface p-2">
+    <select name="stage" defaultValue={result.stage} className="mt-1 min-h-11 w-full rounded-[9px] border border-border bg-surface p-2 md:min-h-9">
      {stages.map(stage=><option key={stage} value={stage}>{stage}</option>)}
     </select></label>
    <label className="min-w-40 flex-1 text-sm text-body">Applicant flags
-    <select name="flag" defaultValue={result.flag} className="mt-1 min-h-11 w-full rounded border border-border bg-surface p-2">
+    <select name="flag" defaultValue={result.flag} className="mt-1 min-h-11 w-full rounded-[9px] border border-border bg-surface p-2 md:min-h-9">
      <option value="ALL">Any flag</option><option value="WITHDRAWAL_REQUESTED">Withdrawal requested</option>
      <option value="NO_SHOW">No-show</option><option value="PLACED_ELSEWHERE">Accepted another offer</option>
      <option value="ADDED_BY_COLLEGE">Added by college</option>
     </select></label>
    <label className="min-w-40 flex-1 text-sm text-body">Name, roll, branch, batch, email, phone or role
-    <input name="search" defaultValue={result.search} maxLength={100} className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface p-2"/>
+    <input name="search" defaultValue={result.search} maxLength={100} className="mt-1 min-h-11 w-full rounded-[9px] border border-border bg-surface p-2 md:min-h-9"/>
    </label>
    <label className="min-w-32 flex-1 text-sm text-body">Channel
-    <select name="channel" defaultValue={result.channel} className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface p-2">
+    <select name="channel" defaultValue={result.channel} className="mt-1 min-h-11 w-full rounded-[9px] border border-border bg-surface p-2 md:min-h-9">
      <option value="ALL">All</option><option value="INTERNAL">Internal</option><option value="EXTERNAL">External</option>
     </select></label>
    <label className="min-w-40 flex-1 text-sm text-body">Eligibility evidence
-    <select name="eligibility" defaultValue={result.eligibility} className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface p-2">
+    <select name="eligibility" defaultValue={result.eligibility} className="mt-1 min-h-11 w-full rounded-[9px] border border-border bg-surface p-2 md:min-h-9">
      <option value="ALL">All</option><option value="ELIGIBLE">Eligible</option>
      <option value="ELIGIBLE_WITH_MISSING_EVIDENCE">Eligible · missing evidence</option>
     </select></label>
    <label className="min-w-32 flex-1 text-sm text-body">Order by
-    <select name="sort" defaultValue={result.sort} className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface p-2">
+    <select name="sort" defaultValue={result.sort} className="mt-1 min-h-11 w-full rounded-[9px] border border-border bg-surface p-2 md:min-h-9">
      <option value="NEWEST">Recently submitted</option><option value="OLDEST">Earliest submitted</option>
      <option value="LEARNER_NAME">Learner name</option>
     </select></label>
    <label className="min-w-36 flex-1 text-sm text-body">Submitted window
-    <select name="submittedWithin" defaultValue={result.submittedWithin} className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface p-2">
+    <select name="submittedWithin" defaultValue={result.submittedWithin} className="mt-1 min-h-11 w-full rounded-[9px] border border-border bg-surface p-2 md:min-h-9">
      <option value="ALL">Any date</option><option value="LAST_7_DAYS">Last 7 × 24h</option>
      <option value="LAST_30_DAYS">Last 30 × 24h</option>
     </select></label>
-   <button type="submit" className="min-h-11 rounded-[9px] bg-primary px-4 text-sm font-semibold text-primary-foreground">Preview filters</button>
+   <button type="submit" className="min-h-11 rounded-[9px] bg-primary px-4 text-sm font-semibold text-primary-foreground md:min-h-9">Preview filters</button>
   </form>
   <p className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
    {result.rows.length} application records shown in this preview.

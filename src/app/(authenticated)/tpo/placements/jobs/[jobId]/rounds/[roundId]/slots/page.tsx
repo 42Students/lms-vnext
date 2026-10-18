@@ -18,7 +18,7 @@ export default async function SlotsPage({params}:{params:Promise<{jobId:string;r
   <PageHeader eyebrow="TPO · Interviews" title={data.round.name+" · Slots and rooms"}
    description="Generate interview slots, book candidates and resolve room assignments before the drive day."/>
   <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/candidate-schedule"}
-   className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">← Candidate schedule</Link>
+   className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9">← Candidate schedule</Link>
   {!data.storageReady?<p role="status" className="rounded border border-border bg-surface p-5 text-sm">
    Candidate-specific interview slot storage has not been registered. The orchestrator must register
    docs/proposed-migrations/chat-5-interview-candidate-slots.sql before booking or changing slots.</p>
