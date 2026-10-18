@@ -5,6 +5,7 @@ import {getDb} from "@/db/client";
 import {activityEvents,placementCompanies} from "@/db/schema";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {requirePermission,AuthorizationError} from "@/modules/permissions/policy";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 
 /** Global archive reversal deliberately does not reactivate individual
  * college relationships. Those require independent college authorization. */
@@ -15,6 +16,9 @@ export async function restoreGlobalCompany(context:RequestContext,raw:unknown){
  requirePermission(context,"placements.manage");
  const input=z.strictObject({companyId:z.uuid(),confirmed:z.literal(true)}).parse(raw);
  return getDb().transaction(async tx=>{
+  // A stale SA session cannot resurrect a global employer identity after
+  // the account's persisted SUPER_ADMIN role is revoked.
+  await assertPersistedPlatformPermission(tx,context,"placements.manage");
   const [company]=await tx.select({id:placementCompanies.id,name:placementCompanies.name,status:placementCompanies.status})
     .from(placementCompanies).where(eq(placementCompanies.id,input.companyId)).for("update").limit(1);
   if(!company)throw new Error("COMPANY_NOT_FOUND");

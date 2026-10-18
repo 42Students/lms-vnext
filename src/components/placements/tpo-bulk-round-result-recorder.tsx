@@ -154,7 +154,7 @@ export function TpoBulkRoundResultRecorder({
             </label>
             <div className="flex flex-wrap gap-3 text-sm">
               <button type="button" disabled={busy} onClick={()=>setSelected(visible.slice(0,25).map(row=>row.applicationId))}
-                className="font-semibold text-[var(--lms-teal-deep)]">Select first 25 unmarked</button>
+                className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Select first 25 unmarked</button>
               <button type="button" disabled={busy||selected.length===0} onClick={()=>setSelected([])}
                 className="font-semibold text-[var(--lms-teal-deep)]">Clear selection</button>
             </div>
@@ -170,7 +170,7 @@ export function TpoBulkRoundResultRecorder({
                   setError(null);setSelected(resolved.ids);
                 }}>Select matching learners</button>
             </details>
-            <div className="max-h-52 overflow-auto rounded-md border border-border p-2">
+            <div tabIndex={0} role="group" aria-label="Unmarked learners, scroll for more" className="max-h-52 min-h-0 overflow-auto overscroll-contain rounded-md border border-border p-2 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
               {visible.map((row) => (
                 <label key={row.applicationId} className="flex min-h-11 items-center gap-3 px-2 text-sm text-body">
                   <input

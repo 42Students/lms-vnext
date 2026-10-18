@@ -10,7 +10,7 @@ export function safeRecruiterExternalLink(raw:unknown,github=false):string|null{
  try{
   const url=new URL(raw.trim());
   if(url.protocol!=="https:"||url.username||url.password||!url.hostname)return null;
-  const host=url.hostname.toLowerCase().replace(/^\[|\]$/g,"");
+  const host=url.hostname.toLowerCase().replace(/^\[|\]$/g,"").replace(/\.+$/,"");
   // These are browser-facing links, but internal/private hosts should not be
   // presented as endorsed learner portfolio destinations in the LMS web view.
   if(host==="localhost"||host==="::1"||host==="0.0.0.0"||

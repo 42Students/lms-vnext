@@ -1,0 +1,74 @@
+# Chat-12 TPO Students + Companies + first-third test ledger
+
+Date 2026-10-18, branch `chatgpt/chat-12-b`. Evidence is split between executable *authored* tests and source-only checks. **No tests were run in this environment.** The generated `docs/audit/ux/COVERAGE-MATRIX.md` currently reports zero missing route UX test mentions, which does not prove keyboard, optimistic locking or tenant security.
+
+## Functional surface coverage
+
+| Surface | New evidence | Unresolved verification |
+|---|---|---|
+| TPO project visibility; unauthorized writes | `chat12-project-tpo-role-journey-hardening.test.ts` — PROJ-TPO-JOURNEY-01/02, role, session, tenant and Zod input cases | Actual project_instances joins, wrong-tenant IDOR, DB transaction roles and TPO no-write integration |
+| TPO Students selected rows | `chat12-tpo-bulk-concurrency-and-authorization.test.ts` — TPO-students-14/17: page identity, all-IDs requirement, CSV roll ambiguity, 200 rows, duplicate check | Real 200-record selection on multiple pages, CAS under concurrent threads and browser stale-response race |
+| TPO Students preview+confirm | Same test — HMAC scope/reason/version/order/TTL, schema acknowledgement, exact CAS undo | DB live decisions and transactional bulk-run summary recovery; D12-03 |
+| TPO Students upload abuse | Same test — 64 KiB request body, chunked oversize cancellation; stream fix `635ce4e9` | Runtime memory profile and stream cancellation with slow client |
+| TPO Students project profile facet | `chat12-project-tpo-role-journey-hardening.test.ts`: redacted project count, phone, unsafe URLs | Verified Projects workspace progress is NOT equal to the profile count; D12-04 |
+| Companies canonical-vs-name scope | `chat12-tpo-company-directory-hardening.test.ts` — TPO-companies-05/07: canonical relationship IDs, unlinked same-name leads, foreign drive ignored | DB with duplicate relationship and archived relationship, cross-tenant integration |
+| Companies joining/offer metrics | Same test: 2 accepted offers from 1 learner counts 1 joined; no estimated zero when CRM table unavailable | Actual multi-year joins, partial data and 2,000-row CSV in PostgreSQL |
+| Companies filters, paging, history | Same test — TPO-companies-10/11/24: strict query, deterministic pagination, persisted timeline | Browser search/page reset, history auth after expired session |
+| Companies creation/memory | Same test: `"use client"`, review-before-commit, synchronous in-flight latch, clean load/error/migration-pending states | Race between two distinct sessions, server unique-index conflict, reload after 409 |
+| First-third /tpo route role UX | `chat12-tpo-first-third-role-pages.test.ts`: 9 sampled routes and preview/confirm origin gates | All 42 routes require browser and negative authorization journey coverage |
+| /admin first-third cross-audit | `docs/design-system/audits/UX-ROLLOUT-AUDIT-admin-first-chat-12.md` — 37 inspected route entrypoints | Full child-component + mobile/keyboard audit remains open; no release sign-off |
+
+## First-third /tpo route inventory
+
+| # | Route | New named evidence | Remaining proof |
+|---:|---|---|---|
+| 1 | `/tpo` | Added first-third role/empty/invalid-filter source contract | Source-only, E2E pending |
+| 2 | `/tpo/announcements` | Added first-third role/empty/invalid-filter source contract | Source-only, E2E pending |
+| 3 | `/tpo/audit` | Added first-third role/empty/invalid-filter source contract | Source-only, E2E pending |
+| 4 | `/tpo/audit/actors` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+| 5 | `/tpo/batches` | Added first-third role/empty/invalid-filter source contract | Source-only, E2E pending |
+| 6 | `/tpo/batches/[batchId]` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+| 7 | `/tpo/batches/[batchId]/classes` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+| 8 | `/tpo/batches/[batchId]/history` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+| 9 | `/tpo/batches/[batchId]/invitation-prep` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+| 10 | `/tpo/batches/[batchId]/nudge-prep` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+| 11 | `/tpo/batches/[batchId]/registrations` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+| 12 | `/tpo/batches/[batchId]/registrations/[membershipId]/history` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+| 13 | `/tpo/batches/[batchId]/reminder-prep` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+| 14 | `/tpo/batches/[batchId]/rules` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+| 15 | `/tpo/batches/[batchId]/students` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+| 16 | `/tpo/calendar` | Added first-third role/empty/invalid-filter source contract | Source-only, E2E pending |
+| 17 | `/tpo/calendar/export` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+| 18 | `/tpo/calendar/interviews` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+| 19 | `/tpo/calendar/rounds` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+| 20 | `/tpo/companies` | Added first-third role/empty/invalid-filter source contract | Source-only, E2E pending |
+| 21 | `/tpo/companies/[companyId]` | Added first-third role/empty/invalid-filter source contract | Source-only, E2E pending |
+| 22 | `/tpo/companies/[companyId]/contact-log` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+| 23 | `/tpo/companies/[companyId]/feedback` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+| 24 | `/tpo/companies/[companyId]/manage` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+| 25 | `/tpo/companies/[companyId]/people` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+| 26 | `/tpo/companies/archived` | Added first-third role/empty/invalid-filter source contract | Source-only, E2E pending |
+| 27 | `/tpo/drive-day` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+| 28 | `/tpo/drive-day/[roundId]` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+| 29 | `/tpo/drive-day/[roundId]/no-shows` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+| 30 | `/tpo/find` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+| 31 | `/tpo/follow-ups` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+| 32 | `/tpo/home` | Added first-third role/empty/invalid-filter source contract | Source-only, E2E pending |
+| 33 | `/tpo/messages` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+| 34 | `/tpo/messages/[threadId]` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+| 35 | `/tpo/messages/notifications` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+| 36 | `/tpo/more` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+| 37 | `/tpo/notifications` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+| 38 | `/tpo/placements` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+| 39 | `/tpo/placements/jobs/[jobId]` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+| 40 | `/tpo/placements/jobs/[jobId]/about` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+| 41 | `/tpo/placements/jobs/[jobId]/applicants` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+| 42 | `/tpo/placements/jobs/[jobId]/applicants-pipeline` | Existing UX coverage matrix mentions test; no additional behavioral proof in this batch | Targeted E2E and interaction coverage pending |
+
+## Release gates
+
+- Run Vitest on the new unit files and typecheck: **not executed**.
+- Run PostgreSQL integration on TPO bulk row locks, rollback, replay and cross-tenant IDs: **not executed**.
+- Run real 320/360/390px keyboard/screen-reader passes for 42 TPO routes: **not executed**.
+- Finish outstanding OPEN items in `docs/orchestrator/queues/gap-closure-chat-12.md`, especially schema and request effects (TPO-requests-verification-01, -37, -38) and Students -06/-07/-10/-12/-14/-34: **not closed by these tests**.
+- Do not equate profile-derived project counts with the IIS Dharwad Projects module's canonical state.

@@ -6,6 +6,7 @@ import { collegeMemberships, placementApplications, placementApplicationScreenin
   learnerProfiles,placementCompanyRelationships,profileVerificationAcademicMarks,profileVerifications,placementDriveSelections,placementRoundCandidateSlots,learnerProgramEnrollments,programs,departments,placementCompanyVisibilitySettings } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import {projectRecruiterProfileLinks} from "./recruiter-applicant-shared-links-model";
+import { findRecruiterScopedGrant } from "./recruiter-grant-selection-model";
 import { getRecruiterPlacementWorkspace } from "./recruiter-workspace-service";
 import { hrApplicantFilterSchema, HR_APPLICANT_PAGE_SIZE, projectSharedApplicants, hrApplicantPageBounds, HR_OFFER_PAGE_SIZE, hrOfferPageBounds,type HrApplicantStage } from "./hr-job-applicants-model";
 
@@ -22,7 +23,8 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
     eq(placementApplicationScreenings.status, "SHORTLISTED"),
   );
   const db = getDb();
-  const grant=context.recruiter?.grants.find(item=>item.collegeId===workspace.college.id);
+  const grant=findRecruiterScopedGrant(context.recruiter?.grants,
+    workspace.college.id, workspace.job.companyRelationshipId);
   const [share]=grant?await db.select({columns:placementCompanyRelationships.shareColumnDefaults})
    .from(placementCompanyRelationships)
    .where(and(eq(placementCompanyRelationships.id,grant.companyRelationshipId),
@@ -260,22 +262,29 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
   const percentage=(points:number|undefined)=>
    points===undefined?null:(points/100).toFixed(2).replace(/\.00$/,"")+"%";
   const projected = projectSharedApplicants(applications.map(({membershipId,profileDocument,...row})=>{
-    const marks=byMember.get(membershipId);
-    const links=projectRecruiterProfileLinks(profileDocument,{
-      projects:shareProjects,skills:shareSkills,
-    });
+    const active = row.status === "SUBMITTED";
+    const marks = active ? byMember.get(membershipId) : undefined;
+    // A historically shortlisted applicant may later withdraw. The employer
+    // can retain a status row, not stale private project URLs, contacts,
+    // resumes or verified education details from a prior open tab.
+    const links = active
+      ? projectRecruiterProfileLinks(profileDocument, {
+          projects: shareProjects, skills: shareSkills,
+        })
+      : { githubUrl: null, portfolioUrl: null, skills: [] as string[],
+          projects: [] as Array<{ name: string; url: string }> };
     return {...row,
-      resumeShared:shareResume,
+      resumeShared:active && shareResume,
       githubUrl:links.githubUrl,portfolioUrl:links.portfolioUrl,
       sharedSkills:links.skills,sharedProjects:links.projects,
-      rollNumber:shareRoll?row.rollNumber:null,
-      email:shareEmail?row.email:null,
-      phone:sharePhone?row.phone:null,
-      branch:shareBranch && branchSet.get(membershipId)?.size===1
+      rollNumber:active && shareRoll?row.rollNumber:null,
+      email:active && shareEmail?row.email:null,
+      phone:active && sharePhone?row.phone:null,
+      branch:active && shareBranch && branchSet.get(membershipId)?.size===1
        ?[...branchSet.get(membershipId)!][0]??null:null,
-      ugPercentage:shareUg?percentage(marks?.UG):null,
-      tenthPercentage:shareTenth?percentage(marks?.["10TH"]):null,
-      twelfthOrDiplomaPercentage:shareTwelfth?
+      ugPercentage:active && shareUg?percentage(marks?.UG):null,
+      tenthPercentage:active && shareTenth?percentage(marks?.["10TH"]):null,
+      twelfthOrDiplomaPercentage:active && shareTwelfth?
         percentage(marks?.["12TH"]??marks?.DIPLOMA):null,
     };
   }), filters.stage);
