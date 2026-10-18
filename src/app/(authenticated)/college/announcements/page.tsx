@@ -42,7 +42,7 @@ export default async function AnnouncementsPage({
             <h2 className="text-lg font-semibold text-foreground">Your college notifications</h2>
             <p className="mt-1 text-sm text-muted-foreground">{collegeNoticeUnreadLabel(ownInbox.unreadCount)}</p>
           </div>
-          <Link href={unreadHref} className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)]">
+          <Link href={unreadHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)]">
             {params.unread === "1" ? "Show all notifications" : "Unread only"}
           </Link>
         </div>
@@ -129,7 +129,7 @@ export default async function AnnouncementsPage({
         actions={
           <Link
             href={includeDeleted ? "/college/announcements" : "/college/announcements?deleted=1"}
-            className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-foreground"
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-foreground"
           >
             {includeDeleted ? "Active only" : "Include deleted"}
           </Link>
@@ -138,7 +138,7 @@ export default async function AnnouncementsPage({
       <section aria-label="Personal college notifications" className="space-y-3 - border-t border-border pt-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-lg font-semibold text-foreground">Your college notifications</h2>
-          <Link href={unreadHref} className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)]">
+          <Link href={unreadHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)]">
             {params.unread === "1" ? "Show all notifications" : "Unread only"}
           </Link>
         </div>
@@ -155,7 +155,7 @@ export default async function AnnouncementsPage({
       <AnnouncementAdminWorkspace items={items} targets={targets} />
       {next ? (
         <div className="flex justify-center">
-          <Link href={next} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground">
+          <Link href={next} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-foreground">
             Older announcements
           </Link>
         </div>
