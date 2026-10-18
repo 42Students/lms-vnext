@@ -463,6 +463,10 @@ export async function listProjectAdminRiskQueue(
     collegeId: college.id,
   });
 
+  return getDb().transaction(async db=>{
+    await assertPersistedPlatformPermission(db,context,"projects.manage",{
+      collegeId:college.id,organizationId:college.organizationId,
+    });
   const searchPattern=adminUnsubmittedLiteralSearchPattern(query.q??"");
   const search = query.q
     ? or(
@@ -542,7 +546,6 @@ export async function listProjectAdminRiskQueue(
       query.riskBucket === "BLOCKER" ? blockedTask :
       query.riskBucket === "REVIEW" ? pendingReview : undefined,
   );
-  const db = getDb();
 
   const [bucketTotals] = await db.select({
     stalled: sql<number>`count(*) filter (where ${lastActivityAt} <= ${staleCutoff})`.mapWith(Number),
@@ -690,6 +693,7 @@ export async function listProjectAdminRiskQueue(
     blockerSignalSupported: true,
     buckets,
   };
+  });
 }
 
 const projectSubmissionQueueQuerySchema =
