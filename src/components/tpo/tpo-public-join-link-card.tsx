@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {
   PUBLIC_JOIN_LINK_COPY, type TpoPublicJoinLinkStatus,
@@ -17,6 +17,7 @@ export function TpoPublicJoinLinkCard({
   const [status, setStatus] = useState(initial);
   const [freshUrl, setFreshUrl] = useState("");
   const [busy, setBusy] = useState(false);
+  const actionInFlight=useRef(false);
   const [domainDraft,setDomainDraft]=useState("");
   const [feedback, setFeedback] = useState("");
   const [replaceOpen,setReplaceOpen] = useState(false);
@@ -25,7 +26,8 @@ export function TpoPublicJoinLinkCard({
 
   async function makeLink() {
     const action = status.link ? "REPLACE" : "CREATE";
-    if(busy)return;
+    if(actionInFlight.current)return;
+    actionInFlight.current=true;
     setFeedback("");
     setBusy(true);
     try {
@@ -55,11 +57,14 @@ export function TpoPublicJoinLinkCard({
     } catch(error) {
       setFeedback(error instanceof Error?error.message:"Couldn't make the link");
     } finally {
+      actionInFlight.current=false;
       setBusy(false);
     }
   }
 
   async function retryStatus(){
+    if(actionInFlight.current)return;
+    actionInFlight.current=true;
     setBusy(true);setFeedback("");
     try{
       const query=new URLSearchParams({scope,...(isCompany&&companyId?{companyId}:{})});
@@ -70,10 +75,11 @@ export function TpoPublicJoinLinkCard({
       const state=await response.json() as TpoPublicJoinLinkStatus;
       setStatus(state);
     }catch{setFeedback("Couldn't load the company link");}
-    finally{setBusy(false);}
+    finally{actionInFlight.current=false;setBusy(false);}
   }
   async function saveDomain(){
-    if(!companyId)return;
+    if(!companyId||actionInFlight.current)return;
+    actionInFlight.current=true;
     setBusy(true);setFeedback("");
     try{
       const response=await fetch("/api/placements/tpo/companies/"+encodeURIComponent(companyId)+"/domain",{
@@ -86,10 +92,11 @@ export function TpoPublicJoinLinkCard({
       setStatus(prev=>({...prev,domain:payload.domain??prev.domain}));
       setFeedback("Email domain added");
     }catch(error){setFeedback(error instanceof Error?error.message:"Couldn't add domain");}
-    finally{setBusy(false);}
+    finally{actionInFlight.current=false;setBusy(false);}
   }
   async function toggleLink() {
-    if(!status.link||busy)return;
+    if(!status.link||actionInFlight.current)return;
+    actionInFlight.current=true;
     setBusy(true);setFeedback("");
     try{
       const response=await fetch("/api/placements/tpo/public-join-links/enabled",{
@@ -102,7 +109,7 @@ export function TpoPublicJoinLinkCard({
       setStatus(prev=>({...prev,link:prev.link?{...prev.link,enabled:data.enabled===true}:null}));
       setFeedback("Link setting saved");
     }catch(error){setFeedback(error instanceof Error?error.message:"Couldn't save");}
-    finally{setBusy(false);}
+    finally{actionInFlight.current=false;setBusy(false);}
   }
   async function copyLink() {
     try {
