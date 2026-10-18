@@ -6,8 +6,14 @@ export const resourceMaterialLinkSchema=z.object({
  title:z.string().trim().min(1).max(255),
  notes:z.string().trim().max(2000).nullable().default(null),
  externalUrl:z.string().url().max(2048).refine(value=>{
-  const url=new URL(value);
-  return url.protocol==="https:"&&!url.username&&!url.password&&!url.hash;
+  // Zod 4 runs field refinements during safeParse even if an earlier URL
+  // check failed. Invalid user input must return a validation error, not throw.
+  try{
+   const url=new URL(value);
+   return url.protocol==="https:"&&!url.username&&!url.password&&!url.hash;
+  }catch{
+   return false;
+  }
  },"Use a credential-free HTTPS URL"),
 }).strict();
 export const resourceMaterialCommandSchema=z.discriminatedUnion("action",[

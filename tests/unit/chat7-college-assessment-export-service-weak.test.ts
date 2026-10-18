@@ -1,7 +1,10 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 const state=vi.hoisted(()=>({reader:vi.fn()}));
 vi.mock("@/modules/courses/college-assessment-aggregate-service",()=>({
- listCollegeAssessmentAggregate:state.reader,
+ // Keep the boundary shape explicit. The export passes context, kind, and the
+ // bounded page query; a bare page-number callback is not equivalent.
+ listCollegeAssessmentAggregate:(context:unknown,kind:unknown,query:unknown)=>
+  state.reader(context,kind,query),
 }));
 import {exportCollegeAssessments} from "@/modules/courses/college-assessment-export-service";
 const context={} as Parameters<typeof exportCollegeAssessments>[0];
