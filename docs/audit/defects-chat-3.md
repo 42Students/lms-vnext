@@ -40,3 +40,13 @@ This is the independent chat-3 log. The hardening brief treats data integrity, a
 - Remaining `docs/orchestrator/unit-failures-latest.md` chat-3 runtime failures were not reproducible without local dependencies or an accessible CI test runner; no pass claim is made.
 
 - `UX-teacher-01` browser acceptance: `tests/e2e/faculty-role-denial-chat3.spec.ts` tests Learner deep-link denial, Faculty switching college, phone/desktop routes, and keyboard skip focus, using only seeded E2E identities. Requires E2E-enabled CI to execute; skipped when harness is unavailable.
+
+## 2026-10-18 — CI failure-list source reconciliation (priority rerun)
+
+The published `docs/orchestrator/unit-failures-latest.md` identifies three chat-3 expectations from CI snapshot `ff6819dd`, but those failures predate the current `main` branch (`f1dcc4855d901c5ffb2a89c89103a4359f2487ea`). Every literal expectation in the failing test functions was checked against the current branch source **without weakening, disabling, deleting, or changing tests**:
+
+- `TPO-drives-51`: `src/app/(authenticated)/college/placements/new/page.tsx` already has the exact `hasMembershipRole(context, "COLLEGE_ADMIN")` sequence plus `PlacementJobCreateWorkspace` and `basePath="/college/placements"`. No missing source assertion remains.
+- `COL-people-20`: both add/remove membership service commands still have the exact Super Admin `admin-scope.select` permission guard; the central policy and membership UI contain both expected authorization and user-facing messages. The legacy wording is unchanged.
+- `COL-people-24`: the current mentor reassignment component has the exact confirmed title, saved-success title, empty/no-op text, `ConfirmDialog`, no `window.confirm` or raw `failure.code`; the page description has the exact `Move selected non-archived project workspaces to a new primary mentor.` copy, corrected by a prior merge.
+
+**Verification limitation:** this is an exact source-assertion reconciliation, **not** a claim of a fresh passing Vitest run. CI for recent `main` commits was queued when checked. The orchestrator must refresh the failure report from that run before declaring zero failures. Do not revert these current guards or change the tests just to match an older report.
