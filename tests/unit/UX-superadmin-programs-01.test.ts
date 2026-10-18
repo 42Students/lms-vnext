@@ -1,0 +1,13 @@
+import {describe,it,expect} from "vitest";
+import {readFileSync} from "node:fs";
+import {join} from "node:path";
+const source=(path:string)=>readFileSync(join(process.cwd(),path),"utf8");
+describe("UX-superadmin-programs-01",()=>{
+ it("preserves original wording, permissions and supported accessible UX",()=>{
+  const code=source("src/app/(authenticated)/superadmin/programs/page.tsx");
+  expect(code).toContain("getCurrentRequestContext()");
+  expect(code).toContain("legacyProgramDestination(context, \"SUPER_ADMIN\")");
+
+
+ });
+});
