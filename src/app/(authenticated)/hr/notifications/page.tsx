@@ -17,7 +17,7 @@ export default async function HrMessagesPage({searchParams}:{
  const query=hrNotificationsQuerySchema.safeParse({
   collegeId:first(raw.collegeId),unreadOnly:first(raw.unreadOnly),page:first(raw.page),q:first(raw.q),
  });
- if(!query.success)return <div className="space-y-4">
+ if(!query.success)return <div className="min-w-0 max-w-full space-y-4">
   <PageHeader eyebrow="Recruiter" title="Notifications"/>
   <Link href="/hr/conversations" className="text-primary-text">Recruiter conversations</Link>
   <p role="alert">Invalid inbox filter.</p><Link href="/hr/notifications" className="text-primary-text">Reset</Link>
@@ -26,7 +26,7 @@ export default async function HrMessagesPage({searchParams}:{
  const time=(d:Date)=>new Intl.DateTimeFormat("en-IN",{
   timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
  }).format(d);
- return <div className="space-y-6">
+ return <div className="min-w-0 max-w-full space-y-6">
   <PageHeader eyebrow="Recruiter" title="Notifications"
    description="In-app drive notifications for your authorized employer and college. Conversations and replies are available under Messages."/>
   <Link href="/hr/conversations" className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
