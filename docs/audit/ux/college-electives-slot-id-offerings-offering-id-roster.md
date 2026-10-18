@@ -1,4 +1,4 @@
-# UX review: /college/electives/slot/id/offerings/offering/id/roster
+# UX review: /college/electives/[slotId]/offerings/[offeringId]/roster
 
 - Route: `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx`; owner chat-4, first-half College UX rollout.
 - Legacy copy, persisted data, mutation endpoints and permission checks unchanged.
