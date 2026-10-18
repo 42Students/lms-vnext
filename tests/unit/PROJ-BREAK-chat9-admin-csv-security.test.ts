@@ -21,6 +21,18 @@ describe("IIT Dharwad Projects admin exports: spreadsheet injection resilience",
     expect(projectAdminCsvCell(0)).toBe('"0"');
   });
 
+  it("PROJ-BREAK-exports-16 strips control-code formula concealment without erasing legitimate multiline text", () => {
+    for (const payload of [
+      "\u0000=1+1", "\u0007\u200D@HYPERLINK(1)", "\u0001 \u0301+SUM(1)", "\u007F\u2066-HYPERLINK(1)",
+    ]) {
+      const csvCell = projectAdminCsvCell(payload);
+      expect(csvCell.startsWith('"\''), payload).toBe(true);
+      expect(csvCell).not.toMatch(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/);
+    }
+    expect(projectAdminCsvCell("Line one\nLine two")).toBe('"Line one\nLine two"');
+    expect(projectAdminCsvCell("ordinary value")).toBe('"ordinary value"');
+  });
+
   it("PROJ-BREAK-exports-11 escapes multiline, quotes and comma fields without adding columns", () => {
     const data = projectAdminCsv([
       ["Workspace", "Summary"],
