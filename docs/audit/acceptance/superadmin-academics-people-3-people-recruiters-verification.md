@@ -82,3 +82,14 @@ Unresolved: faculty register optional profile fields; platform-wide account bloc
 | ID | Status | Evidence |
 |---|---|---|
 | SA-academics-people-92 | DONE (source verified; browser/database acceptance pending) | `src/components/college/college-student-register-form.tsx` provides First Name, Last Name, 10-digit Indian mobile normalization, optional email, gender, DOB and address. `src/modules/people/college-onboard-mobile-model.ts` validates the mobile and formats the name. `tests/unit/chat9-final-named-gap-verification.test.ts` → `SA-academics-people-92 uses structured legacy identity and validates the Indian mobile without requiring demographic fields`. Existing verified source behavior was not removed. |
+
+### chat-3 additional security acceptance — selected-college Faculty and People directories
+
+| ID | Status | Verification evidence |
+|---|---|---|
+| SA-academics-people-102 / SA3-FAC-ASSIGNMENTS-01 | DONE (source/test authored; CI pending) | `src/modules/admin-ui/super-admin-faculty-assignments-service.ts` now enforces matching offering Section/cohort/academic period; `tests/unit/chat3-sa-faculty-assignments-tenant-pages.test.ts` exercises tenant SQL and stale-page recovery. |
+| SA-academics-people-102 / SA3-FAC-EXPORT-02 | DONE (source/test authored; CI pending) | `src/modules/admin-ui/super-admin-faculty-assignments-csv-service.ts` refuses duplicate user filters; `tests/unit/chat3-sa-faculty-assignments-csv-http.test.ts` checks 400, pagination, export cap, no-store headers and safe error routing. |
+| SA-academics-people-102 / SA3-FAC-ORG-01 | DONE (source/test authored; CI pending) | The selected Faculty class facet validates college ownership of the selected organization; `tests/unit/chat3-sa-faculty-assignments-tenant-pages.test.ts` checks the new compiled SQL predicate. |
+| SA-academics-people-89 / SA-academics-people-98 / SA3-PEOPLE-ORG-01 | DONE (source/test authored; CI pending) | `src/modules/admin-ui/super-admin-people-filter-options.ts` now checks organization/college owner in all four filters. `tests/unit/chat3-sa-people-facets-organization-scope.test.ts` compiles the query joins and asserts role denial. |
+
+These rows are source-verified closure evidence, not a statement that cross-college PostgreSQL isolation, cloud CI or browser acceptance was executed. Historical gap status entries above remain authoritative until orchestration validates the new tests.

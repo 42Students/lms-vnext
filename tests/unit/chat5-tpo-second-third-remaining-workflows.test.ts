@@ -54,6 +54,21 @@ describe("TPO second-third — close preview and cancellation model state",()=>{
   expect(pageCode).not.toContain("only for published drives in an active season");
   expect(pageCode).toContain("only for published drives with a recorded season");
  });
+ it("PLACEMENTS-CLOSE-WAIT-12 refuses closure before a durable pending waitlist reservation is settled",()=>{
+  const sourceCode=source("src/modules/placements/tpo-drive-close-preview-service.ts");
+  const preview=sourceCode.slice(sourceCode.indexOf("export async function getTpoDriveClosePreview"),
+    sourceCode.indexOf("export async function closeTpoDriveWithPreview"));
+  const closure=sourceCode.slice(sourceCode.indexOf("export async function closeTpoDriveWithPreview"));
+  expect(sourceCode).toContain('eq(placementWaitlistPromotions.status,"PENDING")');
+  expect(preview).toContain("pendingPromotions=await pendingWaitlistReservations(tx,job.id)");
+  expect(preview).toContain("pendingSelections===0&&pendingPromotions===0");
+  expect(closure).toContain("pendingSelections+pendingPromotions");
+  expect(closure).toContain('.for("update").limit(1)');
+  expect(closure).toContain('if(decision==="UNRELEASED_SELECTIONS")throw new PlacementsServiceError("PLACEMENT_JOB_NOT_CLOSABLE")');
+  const pageCode=page("close-preview");
+  expect(pageCode).toContain("preview.pendingPromotions>0");
+  expect(pageCode).toContain("A waitlisted learner's reserved offer is still pending.");
+ });
  it("TPO-2ND-PAGE-close-preview-03 maintains guarded explicit form vs actionable blocked reason",()=>{
   const code=page("close-preview");
   expect(code).toContain('hasMembershipRole(context,"TPO")');

@@ -7,7 +7,8 @@ export function normalizeLearnerQuizDraftForQuestions(
  const answers:Record<string,string[]>={};
  for(const question of questions){
   const permitted=new Set(question.options.map(option=>option.id));
-  const chosen=(draft.answers[question.id]??[]).filter(id=>permitted.has(id));
+  const selected=Object.hasOwn(draft.answers,question.id)?draft.answers[question.id]??[]:[];
+  const chosen=selected.filter(id=>permitted.has(id));
   const deduped=[...new Set(chosen)];
   if(deduped.length>0)answers[question.id]=question.type==="SINGLE_CHOICE"?deduped.slice(0,1):deduped;
  }
