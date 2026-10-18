@@ -72,12 +72,24 @@ describe("chat-5 placements core — offer state transition matrix",()=>{
    for(const status of statuses){
     for(const joining of [null,"PENDING","JOINED","DID_NOT_JOIN"]){
      const expected=
-      action==="EXTEND"||action==="RECORD_ACCEPTED"||action==="RECORD_DECLINED"?status==="ISSUED":
+      action==="EXTEND"||action==="RECORD_ACCEPTED"||action==="RECORD_DECLINED"
+       ?status==="ISSUED"&&joining===null:
       action==="RECORD_JOINED"?status==="ACCEPTED"&&(joining===null||joining==="PENDING"):
-      (status==="ISSUED"||status==="ACCEPTED")&&(status!=="ACCEPTED"||joining===null||joining==="PENDING");
+      (status==="ISSUED"&&joining===null)||
+       (status==="ACCEPTED"&&(joining===null||joining==="PENDING"));
      expect(canRecordTpoOfferAction(action,status,joining),`${action}/${status}/${joining}`).toBe(expected);
     }
    }
+  }
+ });
+ it("PLACEMENTS-OFFER-SM-08 refuses every issued-offer transition carrying contradictory joining evidence",()=>{
+  for(const status of ["PENDING","DEFERRED","JOINED","DID_NOT_JOIN"]){
+   for(const action of ["EXTEND","RECORD_ACCEPTED","RECORD_DECLINED","WITHDRAW"] as const){
+    expect(canRecordTpoOfferAction(action,"ISSUED",status),action+"/"+status).toBe(false);
+   }
+  }
+  for(const action of ["EXTEND","RECORD_ACCEPTED","RECORD_DECLINED","WITHDRAW"] as const){
+   expect(canRecordTpoOfferAction(action,"ISSUED",null)).toBe(true);
   }
  });
  it("PLACEMENTS-JOIN-SM-04 prevents future or malformed actual-joining records at IST midnight",()=>{
