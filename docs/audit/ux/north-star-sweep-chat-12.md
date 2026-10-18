@@ -176,8 +176,21 @@ Every route below: inspect title weight, section nesting, page-level borders/bac
 
 ## Completion checks
 
-- [ ] All scoped files visually swept; mark exceptions explicitly.
-- [ ] No wrong dark text on primary backgrounds; control styles use shared token roles.
-- [ ] No outer page card nested in global page canvas; no loss of meaningful separate panels.
-- [ ] No page content, wording, action, permission, data or table field changes.
-- [ ] JSX source syntax reviewed; CI/tests intentionally not run.
+- [x] All 135 inventoried source files reviewed for local className/token mismatches (74 routes/states, 56 TPO components and five Requests components). Only files with mismatches were changed. Runtime visual verification remains separate.
+- [x] Corrected identified dark-on-teal primary labels to `text-on-primary`, normalized local actionable control radii to measured 9px, and retained shared primary tokens.
+- [x] Removed redundant enclosing cards from main roster, CRM, Team and Requests sections and toolbar/forms; retained table groups, alerts, status panels and one-time invite links.
+- [x] Authored edits are confined to visual classes/section presentation; page copy, actions, permissions, data and table field definitions were not intentionally changed.
+- [x] Changes kept within JSX string classes / opening tags, with no logic edits. TypeScript, dev app and CI/tests intentionally **not executed**; no compile or screenshot assertion is made.
+
+## Execution report (2026-10-19)
+
+- GitHub branch `chatgpt/chat-12-b` was fast-forwarded from main first; after other lanes updated main, a two-parent merge reconciled newer shared canvas/UI changes while retaining this lane's edits. All writes were directed to chat-12's branch.
+- Current branch diff against main: **62 touched source files**; GitHub comparison 44 commits ahead / 0 behind at documentation update time (other lanes may keep advancing main).
+- Headings: the shared `PageHeader` inherited from chat-17 now supplies Inter-scale 30px desktop h1 and `#172033`; patched standalone Recruiter leads and Companies invalid-filter titles. Student spreadsheet header now follows the neutral legacy table strip.
+- Students: flattened first-party filter/tool sections, retained independent branch-intelligence table; availability warnings use a pale-yellow tokenized strip.
+- Engage: normalized roster controls and needs/filters/toolbars; reconciled recruiter campaign pages with newer main changes.
+- Companies: primary contrast fix, flatter detail and memory sections; preserved independent directory/status/list panels.
+- Team and Requests: member/request rows use hairline dividers instead of per-row cards; decision/compose/edit controls share legacy radii and colors.
+- **Intentional exceptions:** bordered alerts, unavailable-data banners, one-time invite link, modal/dialog internals and genuinely separate tables/panels keep their visual boundaries. Existing 44px minimum touch targets were retained where already present even though the measured desktop control height is 36px.
+- **Cross-lane follow-up:** `src/app/(authenticated)/tpo/layout.tsx` still renders a TPO quick-access strip; reconcile duplication with the global top bar through chat-13's shell ownership rather than editing this shared portal layout from the chat-12 slice.
+- **Not verified:** rendered screenshots against the running old LMS and full CI/typechecking were intentionally not performed (per owner instructions). Source sweep does not establish pixel-perfect parity by itself.
