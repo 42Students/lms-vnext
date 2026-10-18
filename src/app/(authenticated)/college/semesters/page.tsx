@@ -29,7 +29,7 @@ export default async function CollegeSemestersPage({
         action={<Link href="/college/semesters" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Clear filters</Link>} />
     </main>;
   }
-  return <div className="space-y-4">
+  return <main className="min-w-0 space-y-4">
     <div className="flex flex-wrap items-center gap-3">
     <Link prefetch={false} download href={academicExportHref("SEMESTERS",parsed.data)}
       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
