@@ -14,11 +14,12 @@ export async function getModuleAccessOverviewMetrics(
 ){
  requirePermission(context,"admin-scope.select");
  const ids=parseModuleMetricsCollegeIds(visibleCollegeIds);
- if(!ids.length)return {largestLearnerScope:0,studentOverrides:0};
  return getDb().transaction(async tx=>{
   // Admin roles may be revoked after the request context was loaded. Keep
-  // the persisted actor locks until all tenant metrics have been fetched.
+  // the persisted actor locks until all tenant metrics have been fetched,
+  // including for the harmless-looking empty-page shortcut.
   await assertPersistedPlatformPermission(tx,context,"admin-scope.select");
+  if(!ids.length)return {largestLearnerScope:0,studentOverrides:0};
   // Do not trust the caller-selected IDs. Load the college and its persisted
  // organization, then reject missing, archived or out-of-scope colleges.
  const visible=await tx.select({
