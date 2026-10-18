@@ -96,7 +96,8 @@ export async function listOrganizations(context: RequestContext) {
  return getDb().transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,context,"organization.read",{
    collegeId:context.adminScope?.collegeId??undefined,
-   organizationId:context.adminScope?.organizationId??undefined,
+   organizationId:context.adminScope?.organizationId??
+    context.membership?.organizationId??undefined,
   });
   if(isSuperAdmin(context)){
    const selected=context.adminScope;
