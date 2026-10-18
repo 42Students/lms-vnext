@@ -31,10 +31,33 @@ describe("COURSES-WEAK-DELIVERY-ROSTER-01 exact College, Section and Elective en
   expect(state.select).toHaveBeenCalledTimes(2);
  });
  it("uses elective group learners instead of leaking the normal Section roster for elective-backed delivery",async()=>{
-  state.elective=[{groupId:"group-1"}];
+  state.elective=[{groupId:"group-1",offeringStatus:"ACTIVE",offeringDeletedAt:null,slotStatus:"ACTIVE",slotDeletedAt:null,groupStatus:"ACTIVE",groupDeletedAt:null}];
   state.learners=[{...result,membershipId:"elective-member"}];
   expect(await listActiveDeliveryLearners(scope)).toEqual(state.learners);
   expect(state.select).toHaveBeenCalledTimes(2);
+ });
+ it("COURSES-WEAK-DELIVERY-ROSTER-01 does not expose the Section when its elective was disabled",async()=>{
+  state.elective=[{groupId:"group-1",offeringStatus:"INACTIVE",offeringDeletedAt:null,slotStatus:"ACTIVE",slotDeletedAt:null,groupStatus:"ACTIVE",groupDeletedAt:null}];
+  state.learners=[result];
+  expect(await listActiveDeliveryLearners(scope)).toEqual([]);
+  expect(state.select).toHaveBeenCalledTimes(1);
+ });
+ it("COURSES-WEAK-DELIVERY-ROSTER-01 never falls back for a deleted elective group",async()=>{
+  state.elective=[{groupId:"group-1",offeringStatus:"ACTIVE",offeringDeletedAt:null,slotStatus:"ACTIVE",slotDeletedAt:null,groupStatus:"ACTIVE",groupDeletedAt:new Date("2099-01-01T00:00:00Z")}];
+  state.learners=[result];
+  expect(await listActiveDeliveryLearners(scope)).toEqual([]);
+  expect(state.select).toHaveBeenCalledTimes(1);
+ });
+ it("COURSES-WEAK-DELIVERY-ROSTER-01 requires the same persisted delivery, cohort, Section and period",()=>{
+  const source=readFileSync("src/modules/courses/delivery-roster.ts","utf8");
+  for(const clause of [
+   'eq(courseSectionDeliveries.id, scope.deliveryId)',
+   'eq(courseSectionDeliveries.sectionId, scope.sectionId)',
+   'eq(courseOfferings.academicPeriodId, scope.academicPeriodId)',
+   'eq(learnerProgramEnrollments.cohortId, courseOfferings.cohortId)',
+   'eq(sections.cohortId, courseOfferings.cohortId)',
+   'isNull(courseSectionDeliveries.endedAt)',
+  ])expect(source).toContain(clause);
  });
  it("returns no rows when selected college has no authorized learners",async()=>{
   state.learners=[];
