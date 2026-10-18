@@ -30,7 +30,7 @@ export function SuperAdminTemplateRollbackControl({templateId,selectedVersion,
   <p className="text-xs text-body">Review the compared changes above. Rollback creates a new editable version;
    assigned colleges and existing workspaces keep their current pinned versions.</p>
   <Button variant="secondary" type="button" disabled={!enabled||busy} onClick={()=>void rollback()}
-   className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold disabled:opacity-50">
+   className="">
    {busy?"Rolling back…":"Roll back"}
   </Button>
   {status==="ARCHIVED"?<p className="text-xs text-warning-text">Archived templates cannot be rolled back.</p>:null}
