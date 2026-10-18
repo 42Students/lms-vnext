@@ -8,6 +8,8 @@ import {
   type DataTableColumn,
 } from "@/components/ui/data-table";
 import { PageHeader } from "@/components/ui/page-header";
+import { ErrorState } from "@/components/ui/error-state";
+import { parseAdminDirectorySearchParams } from "@/modules/colleges/admin-directory-query-model";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Pagination } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
@@ -23,14 +25,17 @@ type OrganizationRow = Awaited<
 export default async function OrganizationsPage({searchParams}:{searchParams:Promise<{q?:string|string[];page?:string|string[];pageSize?:string|string[]}>}) {
   const context = await getCurrentRequestContext();
   const organizations = await listOrganizations(context);
-  const raw=await searchParams;
-  const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
-  const q=(first(raw.q)??"").trim().slice(0,100);
-  const requestedSize=Number(first(raw.pageSize)??25);
-  const pageSize=[10,25,50,100].includes(requestedSize)?requestedSize:25;
+  const filters=parseAdminDirectorySearchParams(await searchParams);
+  if (!filters) return <div className="min-w-0 space-y-6">
+    <PageHeader eyebrow="Super Admin" title="Organizations"/>
+    <ErrorState title="Invalid organization directory filters"
+      description="Search text must be 100 characters or less; choose a valid page and page size. Remove repeated or unsupported filters."
+      action={<Link href="/admin/organizations" className="inline-flex min-h-11 items-center font-semibold underline">Clear filters</Link>}/>
+  </div>;
+  const {q,pageSize}=filters;
   const matching=organizations.filter(item=>item.name.toLocaleLowerCase("en-IN").includes(q.toLocaleLowerCase("en-IN")));
   const totalPages=Math.max(1,Math.ceil(matching.length/pageSize));
-  const requestedPage=Number(first(raw.page)??1);
+  const requestedPage=filters.page;
   const page=Number.isSafeInteger(requestedPage)?Math.min(Math.max(1,requestedPage),totalPages):1;
   const visible=matching.slice((page-1)*pageSize,page*pageSize);
   const href=(nextPage:number)=>"/admin/organizations?"+new URLSearchParams({

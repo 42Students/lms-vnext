@@ -3,6 +3,7 @@ import {CollegeArchivedLessonRestore} from "./college-archived-lesson-restore";
 import {CollegeLessonVisibilityControl,CollegeLessonBulkVisibility} from "./college-lesson-visibility-controls";
 import { COLLEGE_COURSE_TAB_COPY, collegeLessonVisibilityLabel } from "@/modules/courses/college-course-tabs-copy";
 import { PageHeader } from "@/components/ui/page-header";
+import { DataTable } from "@/components/ui/data-table";
 import { collegeLearningHref, collegeOfferingLessonsHref, collegeOfferingProgressHref, collegeProgressDescription } from "@/modules/courses/college-learning-directory-model";
 import type {
   listCollegeCourseProgress,
@@ -584,62 +585,62 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
             </>
            )}
           </div>
-          <div className="hidden overflow-x-auto md:block">
-          <table className="w-full min-w-[48rem] text-left text-sm">
-            <thead className="bg-muted text-muted-foreground">
-              {lessons ? <tr>
-                <th scope="col" className="px-4 py-3">{COLLEGE_COURSE_TAB_COPY.lessonColumns.name}</th>
-                <th scope="col" className="px-4 py-3">{COLLEGE_COURSE_TAB_COPY.lessonColumns.course}</th>
-                <th scope="col" className="px-4 py-3">{COLLEGE_COURSE_TAB_COPY.lessonColumns.order}</th>
-                <th scope="col" className="px-4 py-3">{COLLEGE_COURSE_TAB_COPY.lessonColumns.studentsSeeIt}</th>
-              </tr> : <tr>
-                <th scope="col" className="px-4 py-3">Course / offering</th>
-                <th scope="col" className="px-4 py-3">Offering state</th>
-                <th scope="col" className="px-4 py-3">Recorded learner activity</th>
-              </tr>}
-            </thead>
-            <tbody>
-              {data.kind === "LESSONS"
-                ? data.items.map((item) => (
-                  <tr key={item.id} className="border-t border-border align-top">
-                    <td className="px-4 py-4">
-                      <p className="font-semibold text-foreground">{item.name}</p>
-                    </td>
-                    <td className="px-4 py-4">
-                      <Link href={"/college/courses/offerings/" + encodeURIComponent(item.offeringId)}
-                        className="font-semibold text-primary-text hover:underline">{item.courseName} ({item.courseCode})</Link>
-                      <p className="mt-1 text-xs text-muted-foreground">{item.cohortName} · {item.periodName}</p>
-                    </td>
-                    <td className="px-4 py-4 tabular-nums text-body">{item.sequence + 1}</td>
-                    <td className="px-4 py-4 text-body">{collegeLessonVisibilityLabel(item)}
-                      {item.status==="ARCHIVED"?
-                        <CollegeArchivedLessonRestore id={item.id} name={item.name}/>:
-                        <CollegeLessonVisibilityControl lesson={{id:item.id,name:item.name,
-                         visibleToStudents:item.visibleToStudents,updatedAt:item.updatedAt.toISOString()}}/>}
-                      <Link href={collegeOfferingProgressHref(item.offeringId)}
-                        className="mt-2 inline-block font-semibold text-primary-text hover:underline">
-                        View recorded course activity
-                      </Link>
-                    </td>
-                  </tr>
-                ))
-                : data.items.map((item) => (
-                  <tr key={item.offeringId} className="border-t border-border align-top">
-                    <td className="px-4 py-4">
-                      <Link href={"/college/courses/offerings/" + encodeURIComponent(item.offeringId)}
-                        className="font-semibold text-primary-text hover:underline">{item.courseName} ({item.courseCode})</Link>
-                      <p className="mt-1 text-xs text-muted-foreground">{item.cohortName} · {item.periodName}</p>
-                      <Link href={collegeOfferingLessonsHref(item.offeringId)}
-                        className="mt-2 inline-block font-semibold text-primary-text hover:underline">
-                        View authored lessons
-                      </Link>
-                    </td>
-                    <td className="px-4 py-4 text-body">{item.offeringStatus}</td>
-                    <td className="px-4 py-4 text-body">{collegeProgressDescription(item)}</td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
+          <div className="hidden min-w-0 md:block">
+            {data.kind === "LESSONS" ? <DataTable
+              caption="Lesson directory"
+              rows={data.items}
+              getRowKey={item=>item.id}
+              empty={<p className="text-sm text-body">No lessons found for the selected filters.</p>}
+              columns={[
+                {key:"lesson",header:COLLEGE_COURSE_TAB_COPY.lessonColumns.name,
+                  mobilePriority:"primary" as const,cell:item=><strong className="break-words text-foreground">{item.name}</strong>},
+                {key:"course",header:COLLEGE_COURSE_TAB_COPY.lessonColumns.course,mobilePriority:"secondary" as const,
+                  cell:item=><div className="min-w-0">
+                    <Link href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}
+                      className="inline-flex min-h-11 items-center break-words font-semibold text-primary-text hover:underline">
+                      {item.courseName} ({item.courseCode})
+                    </Link>
+                    <p className="mt-1 text-xs text-muted-foreground">{item.cohortName} · {item.periodName}</p>
+                  </div>},
+                {key:"order",header:COLLEGE_COURSE_TAB_COPY.lessonColumns.order,mobilePriority:"secondary" as const,
+                  cell:item=>item.sequence+1},
+                {key:"students",header:COLLEGE_COURSE_TAB_COPY.lessonColumns.studentsSeeIt,mobilePriority:"action" as const,
+                  cell:item=><div className="min-w-0 space-y-2">
+                    <p className="text-body">{collegeLessonVisibilityLabel(item)}</p>
+                    {item.status==="ARCHIVED"?
+                      <CollegeArchivedLessonRestore id={item.id} name={item.name}/>:
+                      <CollegeLessonVisibilityControl lesson={{id:item.id,name:item.name,
+                        visibleToStudents:item.visibleToStudents,updatedAt:item.updatedAt.toISOString()}}/>}
+                    <Link href={collegeOfferingProgressHref(item.offeringId)}
+                      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+                      View recorded course activity
+                    </Link>
+                  </div>},
+              ]}
+            /> : <DataTable
+              caption="Recorded course progress"
+              rows={data.items}
+              getRowKey={item=>item.offeringId}
+              empty={<p className="text-sm text-body">No course progress found for the selected filters.</p>}
+              columns={[
+                {key:"course",header:"Course / offering",mobilePriority:"primary" as const,
+                  cell:item=><div className="min-w-0">
+                    <Link href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}
+                      className="inline-flex min-h-11 items-center break-words font-semibold text-primary-text hover:underline">
+                      {item.courseName} ({item.courseCode})
+                    </Link>
+                    <p className="text-xs text-muted-foreground">{item.cohortName} · {item.periodName}</p>
+                    <Link href={collegeOfferingLessonsHref(item.offeringId)}
+                      className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
+                      View authored lessons
+                    </Link>
+                  </div>},
+                {key:"state",header:"Offering state",mobilePriority:"secondary" as const,
+                  cell:item=>item.offeringStatus},
+                {key:"activity",header:"Recorded learner activity",mobilePriority:"secondary" as const,
+                  cell:item=>collegeProgressDescription(item)},
+              ]}
+            />}
           </div>
         </>)}
       </section>

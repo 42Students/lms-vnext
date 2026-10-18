@@ -12,6 +12,7 @@ import {ProjectAdminSubmissionReview} from "@/components/projects/project-admin-
 import {ProjectSubmissionsPageExport} from "@/components/projects/project-submissions-page-export";
 import {listProjectAdminUnsubmitted} from "@/modules/projects/admin-unsubmitted-service";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { DataTable } from "@/components/ui/data-table";
 import {
   listProjectAdminSubmissionQueue,
   getProjectAdminSubmissionSummary,
@@ -124,17 +125,22 @@ export async function ProjectAdminSubmissionsPage({
       </nav>
       {unsubmitted?<section className="space-y-3 rounded-xl border border-border bg-surface p-4">
         <h2 className="font-semibold">Not submitted · {unsubmitted.total} workspaces</h2>
-        {unsubmitted.items.length?<div role="region" aria-label="Unsubmitted project workspaces table" tabIndex={0} className="overflow-x-auto overscroll-x-contain [mask-image:linear-gradient(to_right,black_90%,transparent_100%)] focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]"><table className="min-w-full text-left text-sm">
-          <thead><tr><th className="p-2">Workspace</th><th className="p-2">Status</th>
-            <th className="p-2">Progress</th><th className="p-2">Inactive</th><th className="p-2">Action</th></tr></thead>
-          <tbody>{unsubmitted.items.map(row=><tr key={row.id} className="border-t border-border">
-            <td className="p-2 font-semibold">{row.title}</td><td className="p-2">{row.status}</td>
-            <td className="p-2">{row.progressPercent}%</td>
-            <td className="p-2">{Math.max(0,Math.floor((renderedAt.getTime()-row.updatedAt.getTime())/86400000))} days</td>
-            <td className="p-2"><Link href={basePath+"/"+row.id+"/delivery"}
-              className="text-primary-text underline">Open</Link></td>
-          </tr>)}</tbody>
-        </table></div>:<p className="text-sm text-muted-foreground">All matching workspaces have a submission.</p>}
+        <DataTable
+          caption="Unsubmitted project workspaces"
+          rows={unsubmitted.items}
+          getRowKey={row=>row.id}
+          columns={[
+            {key:"workspace",header:"Workspace",mobilePriority:"primary",cell:row=>row.title},
+            {key:"status",header:"Status",mobilePriority:"secondary",cell:row=>row.status},
+            {key:"progress",header:"Progress",mobilePriority:"secondary",cell:row=>row.progressPercent+"%"},
+            {key:"inactive",header:"Inactive",mobilePriority:"secondary",cell:row=>
+              Math.max(0,Math.floor((renderedAt.getTime()-row.updatedAt.getTime())/86400000))+" days"},
+            {key:"action",header:"Action",mobilePriority:"action",cell:row=>
+              <Link href={basePath+"/"+row.id+"/delivery"}
+                className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Open</Link>},
+          ]}
+          empty={<p className="text-sm text-muted-foreground">All matching workspaces have a submission.</p>}
+        />
         <div className="flex flex-wrap gap-3 text-sm">
           {unsubmitted.page>1?<Link href={queuePath+"?view=NOT_SUBMITTED&page="+(unsubmitted.page-1)}
            className="text-primary-text underline">Previous</Link>:null}

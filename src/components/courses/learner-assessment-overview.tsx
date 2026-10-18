@@ -19,6 +19,7 @@ import { learnerAssessmentQuickCounts } from "@/modules/courses/learner-assessme
 import { learnerAssessmentClock } from "@/modules/courses/learner-assessment-clock-model";
 import { Drawer } from "@/components/ui/drawer";
 import { EmptyState } from "@/components/ui/empty-state";
+import { DataTable } from "@/components/ui/data-table";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { AssignmentFileOpenControl } from "./assignment-file-open-control";
@@ -359,38 +360,49 @@ export function LearnerAssessmentOverview({
       ) : (
         <>
         {kind==="QUIZ" ? (
-          <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface lg:block">
-            <table className="w-full min-w-[790px] text-left text-sm">
-              <thead className="bg-surface-subtle text-foreground"><tr>
-                {["Overview","Course","Lesson","Due Date","Status","Grade","Actions"].map(heading=>
-                  <th key={heading} scope="col" className="border-b border-border px-4 py-3 font-semibold">{heading}</th>)}
-              </tr></thead>
-              <tbody>{paged.filter((item): item is LearnerQuizOverviewItem => item.kind==="QUIZ").map(item=>{
-                const state=quizOverviewActionState(item,currentNowMs);
-                const target=`/quiz?quizId=${encodeURIComponent(item.id)}&deliveryId=${encodeURIComponent(item.deliveryId)}${state.review?"&review=true":""}`;
-                return <tr key={item.deliveryId+":"+item.id} className="border-b border-border">
-                  <th scope="row" className="px-4 py-3 font-semibold">{item.title}</th>
-                  <td className="px-4 py-3">{item.courseName}</td>
-                  <td className="px-4 py-3">{item.lessonName}</td>
-                  <td className="px-4 py-3">{item.dueAt?formatDate(item.dueAt):"–"}</td>
-                  <td className="px-4 py-3">{state.label}</td>
-                  <td className="px-4 py-3">{item.attemptsUsed===0?"–":item.resultsPublished?"View result":"Not released"}</td>
-                  <td className="px-4 py-3">
-                    <Link href={target} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">{state.action}</Link>
-                  </td>
-                </tr>;
-              })}</tbody>
-            </table>
-          </div>
+          <DataTable
+            caption="Quiz list"
+            rows={paged.filter((item): item is LearnerQuizOverviewItem => item.kind==="QUIZ")}
+            getRowKey={item=>item.deliveryId+":"+item.id}
+            empty={<EmptyState title="No quizzes found" description="Try adjusting your filters." />}
+            columns={[
+              {key:"overview",header:"Overview",mobilePriority:"primary" as const,
+                cell:(item)=><div className="min-w-0">
+                  <strong className="block break-words text-foreground">{item.title}</strong>
+                  {item.description?<p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{item.description}</p>:null}
+                </div>},
+              {key:"course",header:"Course",mobilePriority:"secondary" as const,
+                cell:(item)=>item.courseName},
+              {key:"lesson",header:"Lesson",mobilePriority:"secondary" as const,
+                cell:(item)=>item.lessonName},
+              {key:"status",header:"Status",mobilePriority:"secondary" as const,
+                cell:(item)=><span className="block min-w-0">
+                  <StatusBadge tone={quizOverviewActionState(item,currentNowMs).tone}>
+                    {quizOverviewActionState(item,currentNowMs).label}
+                  </StatusBadge>
+                  <span className="block text-xs text-muted-foreground sm:hidden">
+                    {learnerQuizMobileState(item,currentNowMs).detail}
+                  </span>
+                </span>},
+              {key:"due",header:"Due Date",mobilePriority:"secondary" as const,
+                cell:(item)=>item.dueAt?formatDate(item.dueAt):"No deadline"},
+              {key:"grade",header:"Grade",mobilePriority:"secondary" as const,
+                cell:(item)=>item.attemptsUsed===0?"–":item.resultsPublished?"View result":"Not released"},
+              {key:"actions",header:"Actions",mobilePriority:"action" as const,
+                cell:(item)=>{
+                  const state=quizOverviewActionState(item,currentNowMs);
+                  return <div className="flex flex-wrap gap-2">
+                    <Link href={`/quiz?quizId=${encodeURIComponent(item.id)}&deliveryId=${encodeURIComponent(item.deliveryId)}${state.review?"&review=true":""}`}
+                      className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">{state.action}</Link>
+                    <Link href={"/learn/allQuizzes/"+encodeURIComponent(item.id)+"?deliveryId="+encodeURIComponent(item.deliveryId)}
+                      className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Attempt history</Link>
+                  </div>;
+                }},
+            ]}
+          />
         ) : null}
-        <div
-          className={kind==="QUIZ"?"space-y-3 lg:hidden":"space-y-3"}
-          aria-label={
-            kind === "ASSIGNMENT"
-              ? "Assignment list"
-              : "Quiz list"
-          }
-        >
+        {kind==="ASSIGNMENT" ? (
+        <div className="space-y-3" aria-label="Assignment list">
           {paged.map((item) => {
             const state =
               item.kind === "ASSIGNMENT"
@@ -504,6 +516,7 @@ export function LearnerAssessmentOverview({
             );
           })}
         </div>
+        ) : null}
         </>
       )}
 

@@ -36,10 +36,10 @@ export default async function MembershipDetail({params}:{params:Promise<{members
    </div>)}
   </dl>
   <Link href={"/admin/people/directory/"+encodeURIComponent(membershipId)+"/audit"}
-    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">
+    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
     View audit trail →
    </Link>
   <p className="text-xs text-muted-foreground">This page shows only this membership, not roles at other colleges.</p>
-  <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">← Users &amp; Roles directory</Link>
+  <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">← Users &amp; Roles directory</Link>
  </div>;
 }
