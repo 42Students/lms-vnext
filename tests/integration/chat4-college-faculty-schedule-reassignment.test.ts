@@ -13,8 +13,8 @@ const enabled=Boolean(process.env.TEST_DATABASE_URL)&&process.env.DB03_ISOLATED_
 if(enabled)assertDb018DisposableTarget(process.env,{serviceBound:true});
 const pool=enabled?new Pool({connectionString:process.env.TEST_DATABASE_URL,max:2}):null;
 const uid=()=>randomUUID();
-const ids={actor:uid(),actorMembership:uid(),oldUser:uid(),old:uid(),replacementUser:uid(),replacement:uid(),
- period:uid(),program:uid(),cohort:uid(),section:uid(),session:uid()};
+const ids={actor:uid(),actorMembership:uid(),oldUser:uid(),old:uid(),otherOldUser:uid(),otherOld:uid(),replacementUser:uid(),replacement:uid(),
+ period:uid(),program:uid(),cohort:uid(),section:uid(),session:uid(),otherSession:uid()};
 const tag="chat4-faculty-"+ids.session.slice(0,8);
 const actor:RequestContext={
  user:{id:ids.actor,identityUid:tag+"-actor",platformStatus:"ACTIVE",systemRoles:[]},
@@ -26,11 +26,12 @@ describe.skipIf(!enabled)("College faculty schedule reassignment (disposable Pos
  beforeAll(async()=>{
   if(!pool)throw new Error("DB03 test database required");
   for(const [id,identity] of [
-   [ids.actor,tag+"-actor"],[ids.oldUser,tag+"-old"],[ids.replacementUser,tag+"-replacement"],
+   [ids.actor,tag+"-actor"],[ids.oldUser,tag+"-old"],[ids.otherOldUser,tag+"-other"],[ids.replacementUser,tag+"-replacement"],
   ])await pool.query("insert into users(id,identity_uid,display_name) values($1,$2,$3)",[id,identity,identity]);
   for(const [member,user,role] of [
    [ids.actorMembership,ids.actor,"COLLEGE_ADMIN"],
    [ids.old,ids.oldUser,"FACULTY"],
+   [ids.otherOld,ids.otherOldUser,"FACULTY"],
    [ids.replacement,ids.replacementUser,"FACULTY"],
   ]) {
    await pool.query("insert into college_memberships(id,user_id,college_id) values($1,$2,$3)",
@@ -53,7 +54,7 @@ describe.skipIf(!enabled)("College faculty schedule reassignment (disposable Pos
  afterAll(async()=>{
   try {
    if(pool){
-    await pool.query("delete from section_schedule_events where id=$1",[ids.session]);
+    await pool.query("delete from section_schedule_events where id=any($1::uuid[])",[[ids.session,ids.otherSession]]);
     await pool.query("delete from sections where id=$1",[ids.section]);
     await pool.query("delete from cohorts where id=$1",[ids.cohort]);
     await pool.query("delete from programs where id=$1",[ids.program]);
@@ -89,6 +90,34 @@ describe.skipIf(!enabled)("College faculty schedule reassignment (disposable Pos
   expect(repeat).toMatchObject({total:0,reassigned:0});
   expect(await audit()).toBe(1);
  });
+ it("COL-faculty-reassign-RACE-01 concurrent old faculty cannot create overlapping replacements",async()=>{
+  // First test moved the original session to the replacement. Restore only
+  // this isolated fixture so BOTH sources begin with colliding intervals.
+  await pool!.query("update section_schedule_events set faculty_membership_id=$2 where id=$1",
+   [ids.session,ids.old]);
+  const row=await pool!.query<{section_id:string;starts_at:Date;ends_at:Date}>(
+   "select section_id,starts_at,ends_at from section_schedule_events where id=$1",[ids.session]);
+  const current=row.rows[0]!;
+  await pool!.query("insert into section_schedule_events(id,section_id,faculty_membership_id,title,starts_at,ends_at,status) values($1,$2,$3,$4,$5,$6,'SCHEDULED')",
+   [ids.otherSession,current.section_id,ids.otherOld,tag+"-parallel",current.starts_at,current.ends_at]);
+  const payload={replacementMembershipId:ids.replacement,confirmed:true};
+  const results=await Promise.all([
+   reassignFacultyUpcomingSchedules(actor,ids.old,payload),
+   reassignFacultyUpcomingSchedules(actor,ids.otherOld,payload),
+  ]);
+  expect(results.map(result=>result.reassigned).sort()).toEqual([0,1]);
+  const rows=await pool!.query<{faculty_membership_id:string}>(
+   "select faculty_membership_id from section_schedule_events where id=any($1::uuid[])",
+   [[ids.session,ids.otherSession]]);
+  expect(rows.rows.filter(row=>row.faculty_membership_id===ids.replacement)).toHaveLength(1);
+  // Retrying either source cannot create a second simultaneous lecture.
+  const repeats=await Promise.all([
+   reassignFacultyUpcomingSchedules(actor,ids.old,payload),
+   reassignFacultyUpcomingSchedules(actor,ids.otherOld,payload),
+  ]);
+  expect(repeats.every(result=>result.reassigned===0)).toBe(true);
+ });
+
  it("COL-faculty-reassign-PG-02 rejects foreign source IDs without inspecting schedules",async()=>{
   await expect(getFacultyScheduleReassignOptions(actor,SEED_IDS.facultyCollegeBMembership))
    .rejects.toThrow("Faculty not found in this college.");
