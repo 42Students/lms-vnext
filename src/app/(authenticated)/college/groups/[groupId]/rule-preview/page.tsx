@@ -37,7 +37,7 @@ export default async function CollegeGroupRulePreviewPage({
       title={"Rule preview · " + group.name}
       description="Read-only eligibility preview. No membership changes, refresh or rule edits are performed."
       actions={<Link href={"/college/groups/" + encodeURIComponent(group.id)}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
         Back to group
       </Link>}
     />
