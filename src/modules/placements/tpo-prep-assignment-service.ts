@@ -14,6 +14,20 @@ import {requirePersistedTpoMembership} from "./tpo-persisted-actor-service";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {placementTableExists} from "./staged-tables";
 const inputSchema=tpoPrepAssignmentInputSchema;
+/** A foreign, archived or disabled target cohort must never be offered for
+ * supplementary preparation, even if the course itself is college-owned. */
+function activeCollegeOfferingCohort(collegeId:string){
+ return sql<boolean>`exists(
+  select 1 from cohorts target_cohort
+  inner join programs target_program on target_program.id=target_cohort.program_id
+  inner join departments target_department on target_department.id=target_program.department_id
+  where target_cohort.id=${courseOfferings.cohortId}
+   and target_cohort.status<>'ARCHIVED'
+   and target_program.status='ACTIVE'
+   and target_department.college_id=${collegeId}::uuid
+   and target_department.archived_at is null
+ )`;
+}
 export class TpoPrepError extends Error{
  constructor(readonly code:"UNAVAILABLE"|"NO_ACTIVE_OFFERING"|"DUE_DATE_INVALID"|"INVALID_SELECTION"){super(code);}
 }
@@ -37,7 +51,8 @@ export async function listTpoPrepCourseOptions(ctx:RequestContext){
   .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
   .innerJoin(departments,and(eq(departments.id,courses.departmentId),
    eq(departments.collegeId,college.id),isNull(departments.archivedAt)))
-  .where(and(eq(courseOfferings.status,"ACTIVE"),eq(courses.status,"ACTIVE")))
+  .where(and(eq(courseOfferings.status,"ACTIVE"),eq(courses.status,"ACTIVE"),
+   activeCollegeOfferingCohort(college.id)))
   .orderBy(courses.name,courses.code).limit(300);
  await getDb().transaction(async tx=>{
   const [active]=await tx.select({status:colleges.status}).from(colleges)
@@ -84,7 +99,8 @@ export async function assignTpoPrepCourse(ctx:RequestContext,raw:unknown){
    .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
    .innerJoin(departments,and(eq(departments.id,courses.departmentId),
    eq(departments.collegeId,college.id),isNull(departments.archivedAt)))
-   .where(and(eq(courseOfferings.id,input.offeringId),eq(courseOfferings.status,"ACTIVE"),eq(courses.status,"ACTIVE")))
+   .where(and(eq(courseOfferings.id,input.offeringId),eq(courseOfferings.status,"ACTIVE"),eq(courses.status,"ACTIVE"),
+    activeCollegeOfferingCohort(college.id)))
    .limit(1);
   if(!offering)throw new TpoPrepError("NO_ACTIVE_OFFERING");
   const learners=await tx.select({id:collegeMemberships.id,userId:collegeMemberships.userId})
