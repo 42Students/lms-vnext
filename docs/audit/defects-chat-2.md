@@ -45,3 +45,5 @@ Files updated: `chat2-company-memory-gap-parity.test.ts`, `chat2-company-trust-a
 | CH2-020 | Security regression test | PROJ-BREAK-TPO-ROLE-01 | Confirmed central policy must never grant Projects management to TPO or recruiters; scoped Projects read may be available to TPO but not another tenant. No production authorization bypass identified. | Test-only `a1e6380` | `PROJ-BREAK-TPO-ROLE-01.test.ts` |
 
 **Caveat:** The suite is authored and pushed; cloud CI and PostgreSQL verification remain pending. The full all-export inventory contains explicit uncovered service functions that remain release work, not fabricated green coverage.
+
+| CH2-021 | High | TPO-drive-workspace-42 | Whole-round application caught arbitrary service/SQL errors and returned their raw `error.message` in the learner-by-learner report. A simulated database error could disclose internal constraints or secrets. | `a0ccf528`, `4f2fbf0` | `tests/unit/chat2-tpo-round-state-break-01.test.ts`: TPO-BREAK-round-42 (pure error mapping); service integration still required |
