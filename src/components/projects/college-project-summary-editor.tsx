@@ -33,13 +33,13 @@ export function CollegeProjectSummaryEditor({project}:{project:Project}){
    Edit workspace summary</Button>
   {open&&<div className="mt-3 grid gap-3">
    <label className="text-sm">Workspace title
-    <Input className="mt-1 w-full rounded border bg-background p-2" maxLength={200}
+    <Input className="mt-1 w-full" maxLength={200}
      value={title} onChange={e=>setTitle(e.target.value)}/></label>
    <label className="text-sm">Summary
-    <Textarea className="mt-1 w-full rounded border bg-background p-2" maxLength={4000}
+    <Textarea className="mt-1 w-full" maxLength={4000}
      value={summary} onChange={e=>setSummary(e.target.value)}/></label>
    <label className="text-sm">Status
-    <Select className="mt-1 w-full rounded border bg-background p-2" value={status}
+    <Select className="mt-1 w-full" value={status}
      onChange={e=>setStatus(e.target.value)}>
      <option value={project.status}>{project.status}</option>
      {project.status==="PLANNED"&&<option value="ACTIVE">Active</option>}
