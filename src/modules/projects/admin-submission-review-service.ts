@@ -3,7 +3,8 @@ import {and,eq,isNull} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {projectInstances,projectSubmissions,projectDeliveryEvents} from "@/db/schema";
-import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
+import type {RequestContext} from "@/modules/identity/context";
+import {mayRecordCollegeAdminDeliveryLock} from "./admin-submission-lock-policy";
 import {ProjectsServiceError} from "./errors";
 import {requireProjectManageAccess} from "./access";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
@@ -12,10 +13,10 @@ import {canAdminSettleDelivery} from "./admin-submission-review-model";
 const id=z.string().uuid();
 const body=z.strictObject({reason:z.string().trim().min(1).max(4000)});
 export async function lockAdminProjectSubmission(ctx:RequestContext,projectIdRaw:string,submissionIdRaw:string,raw:unknown){
- if(!hasMembershipRole(ctx,"COLLEGE_ADMIN")||!ctx.membership)
+ const scope=await requireProjectManageAccess(ctx,id.parse(projectIdRaw));
+ if(!mayRecordCollegeAdminDeliveryLock(ctx,scope.collegeId,scope.organizationId)||!ctx.membership)
   throw new ProjectsServiceError("PROJECT_LIFECYCLE_ACCESS_DENIED");
  const actorMembershipId=ctx.membership.id;
- const scope=await requireProjectManageAccess(ctx,id.parse(projectIdRaw));
  const submissionId=id.parse(submissionIdRaw),input=body.parse(raw);
  return getDb().transaction(async tx=>{
   const [project]=await tx.select({status:projectInstances.status}).from(projectInstances)
