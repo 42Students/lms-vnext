@@ -200,3 +200,6 @@ Registered migration 0029 adds separate application.job_id and role_option_id fo
 
 ### PROJ-HARNESS-TASK-20: atomic submitted task state
 Production `submitProjectTask` updates the task to `IN_REVIEW` after writing a submission. The shared fixture previously left a submitted task as TODO. The helper now creates the submission and conditionally transitions TODO/IN_PROGRESS/BLOCKED to IN_REVIEW within a single `PgHarness.savepoint`; a racing state conflict restores both writes. A second submission is rejected before insert. PostgreSQL case TASK-20 and source GUARD-18 protect the transition; production concurrency semantics still require independent service tests.
+
+### PROJ-HARNESS-TASK-21: forced optimistic conflict rollback
+A PostgreSQL integration witness wraps only the task-status CAS result to simulate another session winning the transition, while the submission INSERT and SAVEPOINT still run against the real connection. It asserts a rejected CAS leaves no inserted submission and the original task remains TODO, then verifies the legitimate operation can retry successfully. This is not a two-session proof of production locking; those remain owned by the Projects service lanes.
