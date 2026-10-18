@@ -271,20 +271,40 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/modules/projects/mentor-overload-model.ts` | `isProjectMentorOverloaded` | `tests/unit/projects-mentor-attention-risk-chat14.test.ts` | Runtime authored, unrun |
 | `src/modules/projects/mentor-overview-edit-model.ts` | `mentorOverviewEditSchema` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-overview-edit-service.ts` | `updateMentorProjectOverview` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-overview-presenter.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-paged-project-list-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-paged-project-list-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-pending-task-review-export.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-portfolio-activity-export-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-portfolio-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-portfolio-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-project-activity-export-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-project-activity-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-project-activity-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-project-assignment-filter-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-project-attention-filter-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-project-event-attribution.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-project-list-query.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
+| `src/modules/projects/mentor-overview-presenter.ts` | `mentorReviewSubmissionHref` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-overview-presenter.ts` | `mentorAuthoredBrief` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-paged-project-list-model.ts` | `canPageMentorProjectList` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-paged-project-list-service.ts` | `listPagedMentorProjects` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-pending-task-review-export.ts` | `mentorPendingTaskReviewCsv` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-portfolio-activity-export-model.ts` | `mentorPortfolioActivityExportHref` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-portfolio-activity-export-model.ts` | `mentorPortfolioActivityCsv` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-portfolio-model.ts` | `pageMentorPortfolio` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-portfolio-model.ts` | `selectMentorReviewQueue` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-portfolio-model.ts` | `safeMentorProjectEventLabel` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-portfolio-model.ts` | `mentorPortfolioHref` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-portfolio-model.ts` | `mentorPortfolioActivityCutoff` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-portfolio-model.ts` | `mentorActivityPagination` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-portfolio-model.ts` | `mentorActivityProjectTitleMatch` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-portfolio-model.ts` | `mentorActivityImportanceLabel` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-portfolio-model.ts` | `mentorReviewQuerySchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-portfolio-model.ts` | `mentorActivityQuerySchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-portfolio-model.ts` | `mentorActivityFormLayout` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-portfolio-model.ts` | `mentorDeliveryReviewMobileForm` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-portfolio-service.ts` | `getMentorReviewQueue` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-portfolio-service.ts` | `getMentorPortfolioActivity` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-project-activity-export-model.ts` | `mentorActivityCsv` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-project-activity-model.ts` | `mentorProjectActivityEventTypes` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-project-activity-model.ts` | `mentorProjectActivityPage` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-project-activity-model.ts` | `mentorProjectActivitySince` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-project-activity-model.ts` | `mentorProjectActivityHref` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-project-activity-model.ts` | `mentorProjectActivityQuerySchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-project-activity-model.ts` | `mentorProjectActivityMobileLayout` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-project-activity-model.ts` | `mentorProjectActivityMobileFilters` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-project-activity-service.ts` | `getMentorProjectActivityHistory` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-project-assignment-filter-model.ts` | `matchesMentorProjectAssignment` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-project-attention-filter-model.ts` | `matchesMentorProjectAttention` | `tests/unit/projects-mentor-attention-risk-chat14.test.ts` | Runtime authored, unrun |
+| `src/modules/projects/mentor-project-event-attribution.ts` | `resolveMentorActivityProjectId` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-project-list-query.ts` | `mentorProjectListQuerySchema` | `tests/unit/projects-mentor-policy-matrix-chat14.test.ts` | Runtime authored, unrun |
 | `src/modules/projects/mentor-project-order-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
 | `src/modules/projects/mentor-project-team-size-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
 | `src/modules/projects/mentor-project-timeline-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
