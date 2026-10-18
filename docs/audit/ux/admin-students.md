@@ -10,3 +10,9 @@
 ## Follow-up implementation
 
 College-scoped registration and bulk import have associated aria-labelledby headings, narrow viewport containment and a stable register anchor. Regression assertions in the named UX batch test now cover the shared contract. Execution remains pending orchestrator.
+
+## Bounded loading follow-through
+
+- Students registration, bulk-import and roster now show bounded loading with visible recovery instead of an endless pulse.
+- Regression: `tests/unit/ux-admin-chat9-loading-b.test.ts` case `UX-admin-students-02`.
+- Unverified: TypeScript, lint, Vitest, UX guard and visual/a11y device acceptance. Checklist remains open until a runner confirms them.
