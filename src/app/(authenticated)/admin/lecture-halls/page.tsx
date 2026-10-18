@@ -32,7 +32,7 @@ export default async function SuperAdminLectureHallsPage({
     <PageHeader  title="Lecture Halls" />
     <ErrorState title="Invalid lecture hall filters"
       description="Search, status, capacity or page selection is invalid. No records were loaded."
-      action={<Link href="/admin/lecture-halls" className="font-semibold text-primary-text">Clear filters</Link>} />
+      action={<Link href="/admin/lecture-halls" className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>} />
   </div>;
 
   const [halls, departments] = await Promise.all([
@@ -97,17 +97,17 @@ export default async function SuperAdminLectureHallsPage({
             {[10,25,50,100].map(size => <option key={size} value={size}>{size}</option>)}
           </select>
         </label>
-        <button type="submit" className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary">Search</button>
-        <Link href="/admin/lecture-halls" className="inline-flex min-h-11 items-center rounded border border-border px-4 font-semibold text-primary-text">Clear</Link>
+        <button type="submit" className="min-h-11 rounded bg-primary px-4 font-semibold text-foreground">Search</button>
+        <Link href="/admin/lecture-halls" className="inline-flex min-h-11 items-center rounded border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">Clear</Link>
       </form>
       <div className="flex flex-wrap gap-2">
-        <a href={csvHref} download className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm font-semibold text-primary-text">Export CSV</a>
+        <a href={csvHref} download className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Export CSV</a>
         <form action="/admin/lecture-halls" method="get">
           {Object.entries(query).map(([name,value]) =>
             value !== undefined && value !== ""
               ? <input key={name} type="hidden" name={name} value={String(value)} />
               : null)}
-          <button type="submit" className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm font-semibold text-primary-text">Refresh</button>
+          <button type="submit" className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Refresh</button>
         </form>
       </div>
     </section>
@@ -126,9 +126,9 @@ export default async function SuperAdminLectureHallsPage({
       <span className="text-muted-foreground">Page {query.page} of {pages} · {query.pageSize} per page</span>
       <div className="flex gap-2">
         {query.page > 1 ? <Link href={superAdminLectureHallHref({...query,page:query.page-1})}
-          className="inline-flex min-h-11 items-center rounded border border-border px-4 font-semibold text-primary-text">Previous</Link> : null}
+          className="inline-flex min-h-11 items-center rounded border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">Previous</Link> : null}
         {query.page < pages ? <Link href={superAdminLectureHallHref({...query,page:query.page+1})}
-          className="inline-flex min-h-11 items-center rounded border border-border px-4 font-semibold text-primary-text">Next</Link> : null}
+          className="inline-flex min-h-11 items-center rounded border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">Next</Link> : null}
       </div>
     </nav>
   </div>;
