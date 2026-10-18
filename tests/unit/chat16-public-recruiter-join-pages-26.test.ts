@@ -33,8 +33,8 @@ const token = "a".repeat(48);
 const params = { params: Promise.resolve({ token }) };
 beforeEach(() => {
   vi.resetAllMocks();
-  vi.mocked(publicJoinUnavailable).mockResolvedValue(false as never);
-  vi.mocked(publicJoinUnavailableCopy).mockReturnValue(null as never);
+  vi.mocked(publicJoinUnavailable).mockResolvedValue(null);
+  vi.mocked(publicJoinUnavailableCopy).mockReturnValue(null);
   vi.mocked(getPublicJoinPreview).mockResolvedValue({kind:"READY",collegeName:"Example College",companyDomain:"example.org",companyName:"Company"});
 });
 
@@ -105,7 +105,7 @@ describe("chat-16 real public recruiter join page SSR and invitation failure rec
   );
 
   it("UX-public-join-03 unavailable campaign is explicitly blocked instead of falsely accepting applications", async () => {
-    vi.mocked(publicJoinUnavailable).mockResolvedValue(true as never);
+    vi.mocked(publicJoinUnavailable).mockResolvedValue("RATE_TABLE_MISSING");
     vi.mocked(publicJoinUnavailableCopy).mockReturnValue(
       "Recruiter verification is temporarily unavailable. The placement cell must enable verified client networking, email-code delivery and public join storage before recruiters can join.",
     );
