@@ -224,3 +224,6 @@ Candidate creation now wraps application, screening, staged round result, offer 
 
 ### PROJ-HARNESS-PROJECT-28: whole-workspace atomicity
 The project fixture now wraps template/version publication, college assignment, project instance, release/sprint/task/resource and mentor/learner roster construction in a single SAVEPOINT. A PostgreSQL witness simulates failure of the final learner roster INSERT after all earlier writes, asserts original table counts restored and verifies a clean subsequent workspace can be constructed. This prevents caller-caught fixture setup exceptions contaminating tenant/run isolation.
+
+### PROJ-HARNESS-TENANT-29: all-or-nothing tenant fixture
+The shared tenant builder now wraps organization and college inserts in a savepoint. A failed college creation cannot leave a disposable orphan organization visible to later assertions inside the same test transaction. A real PostgreSQL witness injects a late insert failure, checks rollback and creates a subsequent valid tenant.
