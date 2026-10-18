@@ -57,10 +57,17 @@ describe("chat-12 reopened Students URL facets and UI contracts",()=>{
   expect(page()).toContain('{roster.total} students in this view');
   expect(page()).toContain('aria-live="polite"');
  });
- it("TPO-students-51 collapses mobile row actions without hiding filters",()=>{
-  expect(grid()).toContain("mobileActionsCollapsible mobilePrimaryKeys=");
-  expect(grid()).toContain('storageKey="tpo-students-columns-v1"');
-  expect(src("src/components/tpo/tpo-spreadsheet-grid.tsx")).toContain("<summary");
+ it("TPO-students-51 keeps mobile row actions visible without hiding filters",()=>{
+  const sheet=grid();
+  const shared=src("src/components/tpo/tpo-spreadsheet-grid.tsx");
+  expect(sheet).toContain("<TpoSpreadsheetGrid mobilePrimaryKeys=");
+  expect(sheet).not.toContain("<TpoSpreadsheetGrid mobileActionsCollapsible");
+  expect(sheet).toContain("rowActions={row=><div");
+  expect(sheet).toContain("<TpoGridFilterPanel fields={filters} mobileSheet/>");
+  expect(sheet).toContain('storageKey="tpo-students-columns-v1"');
+  expect(shared).toContain("<summary");
+  expect(shared).toContain("mobileActionsCollapsible=false");
+  expect(shared).toContain('<div aria-label="Row actions" className="border-t border-border pt-3">{rowActions(row)}</div>');
  });
  it("TPO-students-53 distinguishes issued offers from accepted offers and pending answers",()=>{
   const model=src("src/modules/placements/tpo-students-model.ts");
