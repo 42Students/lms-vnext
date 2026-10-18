@@ -2,6 +2,7 @@ import "server-only";
 import {and,eq,isNull,or} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {activityEvents,collegeMemberships,colleges,membershipRoles,moduleAccessRules,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {isSuperAdmin} from "@/modules/identity/context";
@@ -25,9 +26,16 @@ export async function writeSuperAdminStudentRule(context:RequestContext,collegeI
  if(input.action==="SET" && moduleTrace?.winnerLocked && moduleTrace.winnerLevel!=="MEMBERSHIP")
    throw new StudentRuleConflict("ANCESTOR_LOCKED");
  return getDb().transaction(async tx=>{
-  const [college]=await tx.select({id:colleges.id,organizationId:colleges.organizationId}).from(colleges).where(eq(colleges.id,collegeId)).limit(1);
-  if(!college)return null;
+  const [college]=await tx.select({id:colleges.id,organizationId:colleges.organizationId,
+   status:colleges.status}).from(colleges).where(eq(colleges.id,collegeId)).for("update").limit(1);
+  if(!college||college.status!=="ACTIVE")return null;
   requirePermission(context,"college.manage",{collegeId,organizationId:college.organizationId});
+  // Never trust an earlier traced permission snapshot after a Super Admin is
+  // disabled or removed from the system-role table. Persisted actor SHARE
+  // locks are retained through both the no-op check and the eventual write.
+  await assertPersistedPlatformPermission(tx,context,"college.manage",{
+   collegeId,organizationId:college.organizationId,
+  });
   // Serialize competing member-rule mutations through this single persisted row.
   await tx.select({id:collegeMemberships.id}).from(collegeMemberships)
     .where(and(eq(collegeMemberships.id,membershipId),eq(collegeMemberships.collegeId,collegeId))).for("update");
