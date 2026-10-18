@@ -85,3 +85,11 @@ The previous raw report `<table>` is now rendered via the shared, audited `DataT
 
 | UX-SPILL-DRIVE-DAY-01 | `src/components/placements/placement-drive-day-overview.tsx`: `PlacementDriveDayOverview` | `tests/unit/chat19-drive-day-candidates-mobile.test.tsx` | Direct SSR of candidate name, employer-visible role/contact, membership, schedule exception, applied outcome and empty rounds; no raw 42rem table | Device/keyboard integration and service-level scoping pending |
 | HR-BREAK-NOTIFICATIONS-02 | `src/components/hr/hr-notification-read-button.tsx` / `src/modules/placements/hr-notification-read-feedback-model.ts` / shared `createHrBellMutationGate` | `tests/unit/HR-BREAK-chat19-notification-ack-02.test.tsx` | Same-tick double submits rejected by synchronous gate; terminal successful state; 401/403/404/409/429 safe feedback; active keyboard/44px; POST expectedCreatedAt preserved | DB CAS race/actual browser event integration remains |
+
+## Additional independent messaging cross-audit
+
+| Gap ID | Exported function / boundary | Behavioral test | Cases |
+|---|---|---|---|
+| HR-BREAK-JOIN-CODE-01 | `src/modules/messaging/public-join-code-delivery.ts`: `deliverPublicRecruiterJoinCode` | `tests/unit/HR-BREAK-chat19-recruiter-join-code-delivery.test.ts` | Invalid OTP and Unicode suffix rejected before network; email recipient runtime policy; empty token; insecure endpoint; missing template; correct POST/recipient/template payload; provider 429 and network rejection fail closed |
+
+This is a second-pair-of-eyes test for the chat-16-owned messaging code and fills the `public-join-code-delivery.ts` unreferenced-file gap in the previously generated WEAK-AREAS snapshot. No source change was necessary based on the boundaries inspected. A real delivery provider and device end-to-end test remain outside mocked unit scope.

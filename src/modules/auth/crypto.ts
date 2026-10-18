@@ -19,8 +19,8 @@ export function mac(
 export function safeEqualHex(a: string, b: string) {
   // HMAC digests must be canonical hex. Without format validation identical
   // malformed strings (e.g. "zz") could compare equal despite not being digests.
-  if (a.length === 0 || a.length !== b.length || a.length % 2 !== 0 ||
-      !/^[0-9a-f]+$/.test(a) || !/^[0-9a-f]+$/.test(b)) return false;
+  if (a.length !== 64 || b.length !== 64 ||
+      !/^[0-9a-f]{64}$/.test(a) || !/^[0-9a-f]{64}$/.test(b)) return false;
   return timingSafeEqual(Buffer.from(a, "hex"), Buffer.from(b, "hex"));
 }
 

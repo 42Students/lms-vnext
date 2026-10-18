@@ -125,3 +125,17 @@ The lead inspected existing PostgreSQL integration sources `mentor-project-close
 | PROJ-BREAK-MENTOR-119..121 | S1 stale-version, double-review and audit consistency | On a stale deep link naming an older `SUBMITTED` version, latest version was not explicitly checked. After the same transactional project lock used by draft creation, the service now requires the target row to equal the highest persisted version; invalid/locked/unentitled requests cannot generate review, audit or notifications. | `b9996474`, above mocked-transaction regression | Mocked transaction only; PG rollback/parallel-browser actions pending |
 
 **Blockers remain:** GitHub queue showed CI runs still queued; no in-process Vitest/TypeScript/PostgreSQL/browser execution or independent peer review was performed. Other-lane failures do not belong to chat-14. This note does not claim all 83 global failures are fixed.
+
+
+## Refreshed cloud CI e2fbd697 lane failures: regression triage
+
+The earlier PR-S2-11 source-text failure is **absent** from the newer `docs/orchestrator/unit-failures-latest.md`; this is a change in reported failures, not a sign-off of the entire project. The refreshed report lists 8 chat-14 failures. Corrections to all 8 listed assertions were pushed as four narrowly scoped commits:
+
+| Failure group | Count | Diagnosis | Correction |
+|---|---:|---|---|
+| `PROJ-BREAK-chat14-mentor-review-pages.test.tsx` (83) | 1 | `singleValueMentorFilters` incorrectly discarded the authorized `projectId` selector instead of passing it to the strict UUID Zod schema; malicious/invalid IDs looked valid as absent selectors. | `45ebe30a` forwards `projectId` and `projectStatus` to schema while still ignoring unrelated identity fields; existing rendered invalid-URL test remains strict |
+| `projects-mentor-route-guards-chat14.test.ts` | 4 | Tests were stale after stronger 128KiB JSON decoding replaced bare `request.json()` for meeting decisions/reschedules and sprint/task transitions. | `79879566` requires *the actual decoder* to appear after `isSameOriginRequest(request)`, checks bounded reader error handling when used, retains authenticated service, method, 403, and no-raw-error assertions |
+| `learner-projects-gap-verification.test.ts` (LEARNER-projects-40) | 1 | Team final-submit confirmation had drifted from exact legacy copy; service behavior unchanged. | `f599f3b1` restores `Submit on behalf of your team?` while retaining the newer explanatory description and submission evidence/summary validation |
+| `w03-project-admin-audit.test.ts` | 2 | W03 static assertions demanded inline `searchParams.*` parsing and an unconditional college requirement, ignoring the refactored validated parser and narrowly authorized platform-wide template audit. | `c17ce3c3` inspects `parseProjectAdminAuditQuery` and exact legacy filters plus `mayReadGlobalProjectAudit` (active unscoped Super Admin + `activity.read`) instead of weakening the security contract |
+
+**Verification:** Source/test comparisons performed after these commits; no local Vitest, typecheck, authenticated browser or fresh cloud results were available for this four-commit batch. Do not mark tests passing until the next actual CI run.
