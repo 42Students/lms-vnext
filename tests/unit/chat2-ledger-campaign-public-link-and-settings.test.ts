@@ -77,7 +77,11 @@ describe("TPO-campaigns-public-12 / T-S2-04 campaign safety ledger",()=>{
  it("dispatch service requires verified provider and never reclaims an already-started draft",()=>{
   const s=readFileSync("src/modules/messaging/tpo-campaign-dispatch-service.ts","utf8");
   expect(s).toContain('TPO_CAMPAIGNS_READY!=="VERIFIED"');
-  expect(s).toContain("ZEPTOMAIL_TOKEN");
+  // Provider config now comes from the shared ZeptoMail reader, not direct env access.
+  expect(s).toContain("readZeptoMailConfig()");
+  expect(s).toContain("!mail.token.trim()");
+  expect(s).toContain("isSecureMailProviderEndpoint(mail.apiUrl)");
+  expect(s).toContain("provider===mail.otpTemplateKey");
   expect(s).toContain("assertPersistedPlatformPermission");
   expect(s).toContain('eq(placementTpoEmailCampaigns.status,"DRAFT")');
   expect(s).toContain('eq(placementTpoEmailCampaignRecipients.status,"PENDING")');
