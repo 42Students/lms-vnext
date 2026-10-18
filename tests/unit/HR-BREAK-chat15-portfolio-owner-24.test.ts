@@ -1,4 +1,5 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
+import {readFileSync} from "node:fs";
 const mock=vi.hoisted(()=>({getDb:vi.fn()}));
 vi.mock("server-only",()=>({}));
 vi.mock("@/db/client",()=>({getDb:mock.getDb}));
@@ -47,4 +48,21 @@ describe("HR-PORTFOLIO-OWNER-24 no unauthorized employer portfolio enumeration",
    .resolves.toEqual([]);
   expect(mock.getDb).not.toHaveBeenCalled();
  });
+ it("HR-PORTFOLIO-ARCHIVE-36 excludes archived and unpublished drives before returning an employer portfolio",()=>{
+  const service=readFileSync("src/modules/placements/recruiter-service.ts","utf8");
+  const portfolio=service.slice(service.indexOf("export async function listOwnRecruiterPlacementJobs"));
+  expect(portfolio).toContain('isNull(placementJobs.archivedAt)');
+  expect(portfolio).toContain('inArray(placementJobs.status, [');
+  expect(portfolio).toContain('eq(placementCompanyRelationships.status,');
+  expect(portfolio).toContain('eq(placementCompanies.status, "ACTIVE")');
+  expect(portfolio).toContain('eq(colleges.status, "ACTIVE")');
+  expect(portfolio).toContain('recruiterOwnJobPredicate(context.user.id)');
+  // The allowlist is shared by dashboard, activity, notifications and calendar.
+  for(const reader of [
+   "src/modules/placements/hr-job-activity-service.ts",
+   "src/modules/placements/hr-notifications-service.ts",
+   "src/modules/placements/recruiter-calendar-service.ts",
+  ])expect(readFileSync(reader,"utf8")).toContain("listOwnRecruiterPlacementJobs");
+ });
+
 });
