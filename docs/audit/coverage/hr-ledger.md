@@ -756,3 +756,15 @@ These are source changes and tests **written, not run**. No claim of production,
 | UX-HR-BROWSER-57 | `tests/e2e/chat15-hr-recruiter-responsive-57.spec.ts` exercises eight authenticated recruiter surfaces at 320px and 390px (16 scenarios), asserting first-level heading, document no-horizontal-overflow, no Next error overlay and no exposed raw errors. A seeded learner is denied on recruiter Today, drives, company, notifications and a forged direct job ID. | Requires enabled disposable Playwright login, seeded active college and live browser execution. Authored, not run. |
 
 | HR-TODAY-CHANGE-56-DB | `tests/integration/hr-today-change-56-postgresql.test.ts` uses rollback-only PostgreSQL tenant/principal/drive fixtures for two colleges, an exact caller-supplied mixed-job allowlist and real `placement_drive_change_requests` rows. It asserts foreign-college exclusion, visible PUBLISHED/CLOSED company requests, invisible ARCHIVED jobs and decided requests, plus savepoint rollback. | CI PostgreSQL harness run remains outstanding; not executed in chat-15. |
+
+
+## HR-COV-15 current branch: defensive counts and tracker role journey
+
+| Gap / contract | Source and test | Verified from source/tests authored | Remaining release gate |
+|---|---|---|---|
+| HR-TEAM-ATTR-50 | `recruiter-team-drive-count-service.ts`; `HR-BREAK-chat15-team-attribution-50.test.ts` | Unique authorized jobs, deterministic contradictory attribution fallback, relation/tenant denial before persistence, zero-row fast path | CI unit, two-tenant real PostgreSQL approval history |
+| HR-DRIVE-ATTENTION-51 | `hr-drive-attention-model.ts`; `HR-BREAK-chat15-drive-attention-51.test.ts` | Correct empty limit (no `slice(-0)` disclosure), malformed/date protection, nearest overdue and bounded upcoming jobs | CI unit, live HR Today rendering |
+| PROJ-BREAK-HR-01 / PROJ-BREAK-HR-ORG-03 | `projects/access.ts`; `PROJ-BREAK-HR-01.test.ts` | TPO-only and recruiter account cannot use project ID as an existence oracle; active mentor wrong college/org rejected before member query | CI and project membership PostgreSQL role matrix |
+| HR-TRACKER-PAGE-58 | `tracker/audit-findings/page.tsx`; `HR-BREAK-chat15-tracker-audit-page-58.test.ts` | Page called directly for admin permission, denied session/scope, filter invalidity, ready/unavailable states, zero rows | CI and browser mobile/keyboard check |
+
+Tests authored, **not executed**; no claim of exhaustive HR release readiness or verified cloud CI. The larger per-export, 28-route and PostgreSQL coverage matrix above remains OPEN.
