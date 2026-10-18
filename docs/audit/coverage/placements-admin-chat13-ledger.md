@@ -194,3 +194,5 @@ The reader pages already use `safeParse` and a recoverable invalid-filter UI. Th
 
 
 | `src/modules/placements/report-model.ts` — `summarizePlacementReports`, `summarizePlacementReportDetails` (best full-time CTC, per-branch/company CTC, distribution) | **SA-REPORT-PACKAGE-08/09**, source-fixed: a persisted accepted LOI is not an accepted full-time OFFER, and its CTC cannot inflate the package average, median, maximum or detailed CTC band. Raw offer-history counts remain inclusive and are labelled separately; the college's placed-learner predicate remains authoritative. | `tests/unit/chat13-placement-offer-vs-loi-compensation.test.ts` / `SA-REPORT-PACKAGE-08/09`; authored not run; whole-service DB and export reconciliation pending |
+
+| `src/modules/placements/admin-drive-directory-model.ts` — `adminDriveStatus` | **SA-ADMIN-DRIVE-04**: at `now === applicationDeadline`, the published drive must display the existing `Open · Expired` wording rather than a misleading `Open`. One-millisecond before/equal/after behavioral tests; no clock mocking needed. | `tests/unit/chat13-admin-drive-deadline-boundary.test.ts`; unrun |
