@@ -57,7 +57,7 @@ describe("chat-2 TPO round and interview transaction boundaries",()=>{
   expect(core).toContain('current.result.version !== expectedVersion');
   expect(core).toContain('lockedResult.version !== expectedVersion');
   expect(core).toContain('"PLACEMENT_JOB_PREVIEW_STALE"');
-  expect(core).toContain('eq(placementRoundResults.status,\n            "STAGED"');
+  expect(core).toMatch(/eq\(\s*placementRoundResults\.status,\s*"STAGED"/);
   expect(core).toContain("recordActivityEventInTransaction(");
   expect(core).toContain("deliverRecordedLearnerPlacementEvent(tx");
  });
