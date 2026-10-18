@@ -151,3 +151,6 @@ These rows establish tests for listed exports only. **Not exhaustive**: 319 acad
 
 
 | `getPromotionFacultyReadiness` and `summarizePromotionFacultyReadiness` (`src/modules/academics/college-promotion-faculty-readiness.ts`) | `tests/unit/chat4-college-promotion-faculty-readiness.test.ts`: zero mapped courses fail closed; absent staff and duplicate teaching assignments do not inflate readiness; source contract checks same-college ACTIVE FACULTY membership, ACTIVE user and current assignment. | Disposable PostgreSQL: revoked faculty + old-term offering fixtures |
+
+
+| `reassignFacultyUpcomingSchedules` target-role race | `chat4-college-faculty-schedule-hardening.test.ts`: target user/role/membership joined SELECT uses transaction-scoped FOR SHARE, guard precedes write, collision lock precedes schedule scan; disabled/expired replacement denied | Dual-session PostgreSQL role revoke interleaving |
