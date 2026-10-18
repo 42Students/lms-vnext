@@ -9,6 +9,7 @@ import {previewVersion,assertPreviewVersion} from "@/modules/projects/class-team
 import {isFutureProjectMeetingWindow} from "@/modules/projects/meeting-window-policy";
 import {projectTemplateCatalogueCsv,projectTemplateSectionCounts} from "@/modules/projects/project-template-catalogue-model";
 import {exportClassTeamsCsv} from "@/modules/projects/class-team-csv-export";
+import {projectReadinessOverrideCsvCell} from "@/modules/projects/readiness-overrides-export-model";
 import {compareTemplateVersionSnapshots,templateVersionComparisonParamsSchema} from "@/modules/projects/template-version-comparison-model";
 import {isProjectMentorOverloaded,projectMentorWorkloadAverage} from "@/modules/projects/mentor-overload-model";
 import {createClassTeamWorkspacesSchema} from "@/modules/projects/class-team-create-request";
@@ -163,4 +164,14 @@ describe("IIT Dharwad Projects adversarial admin/college models",()=>{
   expect(deriveProjectExecutionReadiness({projectStatus:"ARCHIVED",...all}).complete).toBe(false);
   expect(deriveProjectExecutionReadiness({projectStatus:"ACTIVE",...all,taskStatuses:[]}).complete).toBe(false);
  });
+ it("PROJ-BREAK-exports-04 readiness CSV neutralizes bidi-prefixed formulas, commas and quotes",()=>{
+  for(const payload of ["=2+3","\\u200B@HYPERLINK(1)","\\u202E-1+2"," \t+1+2"]){
+   const value=payload.replaceAll("\\u200B","\u200B").replaceAll("\\u202E","\u202E");
+   const escaped=projectReadinessOverrideCsvCell(value);
+   expect(escaped.startsWith(String.fromCharCode(34,39))).toBe(true);
+   expect(escaped.endsWith(String.fromCharCode(34))).toBe(true);
+  }
+  expect(projectReadinessOverrideCsvCell('Say "yes", no')).toBe('"Say ""yes"", no"');
+ });
+
 });
