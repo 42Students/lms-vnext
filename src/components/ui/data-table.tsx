@@ -61,7 +61,7 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
   }));
   const cell=(item:(typeof prepared)[number],col:DataTableColumn<Row>)=>item.cells.get(col.key);
   return <div data-slot="data-table" className="min-w-0">
-    <div role="region" aria-label={caption ? caption+" scrollable columns" : "Scrollable table columns"} tabIndex={0} className="min-w-0 sm:overflow-x-auto sm:overscroll-x-contain sm:[mask-image:linear-gradient(to_right,black_92%,transparent_100%)] sm:rounded-xl sm:border sm:border-border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+    <ScrollCue axis="x" label={caption ? caption+" scrollable columns" : "Scrollable table columns"} className="min-w-0 sm:rounded-xl sm:border sm:border-border">
       <table className="block w-full border-separate border-spacing-0 text-left text-sm leading-5 sm:table sm:border-collapse">
         <caption className="sr-only">{caption ?? "Records"}</caption>
         <thead className="hidden sm:table-header-group sm:bg-muted">
