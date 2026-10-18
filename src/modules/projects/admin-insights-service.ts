@@ -42,7 +42,6 @@ import {
 } from "./risk-signals";
 import { loadProjectCollegeScope } from "./scope";
 import {adminUnsubmittedLiteralSearchPattern} from "./admin-unsubmitted-query-model";
-import {projectAdminServiceQuerySchema} from "./admin-service-query-model";
 
 // Service inputs also arrive from internal callers, not only from the URL
 // parser. Never admit JS numeric coercions (hex, exponent, blanks, NaN)
