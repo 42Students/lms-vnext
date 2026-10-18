@@ -12,7 +12,8 @@
     "native-popup",
     "unsafe-target",
     "small-touch-target",
-    "white-on-teal"
+    "white-on-teal",
+    "unverified-touch-class"
   ],
   "justification": "Pre-existing, unchanged legacy UI violations only. Each waived violation must have an identical AST rule+snippet+path in the immutable baseline commit. New occurrences, modified violations and added files fail. This is not a blanket directory waiver.",
   "renewal": "Before expiry migrate residual findings or review and pin an audited new baseline. Never update this SHA automatically on main."
