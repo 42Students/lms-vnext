@@ -1,5 +1,5 @@
 "use client";
-import {useState,useTransition} from "react";
+import {useRef,useState,useTransition} from "react";
 import {useRouter} from "next/navigation";
 import {electiveLifecyclePrompt} from "@/modules/electives/college-elective-lifecycle-model";
 import {friendlyApiError} from "@/lib/friendly-error";
@@ -8,9 +8,12 @@ export function CollegeElectiveLifecycleAction({slotId,name,status,version}:{
 }){
   const router=useRouter();
   const [pending,start]=useTransition(),[error,setError]=useState("");
+  const inFlightRef=useRef(false);
   const action=status==="ACTIVE"?"ARCHIVE":"RESTORE";
   function change(){
+    if(inFlightRef.current||pending)return;
     if(!window.confirm(electiveLifecyclePrompt(name,action)))return;
+    inFlightRef.current=true;
     setError("");
     start(async()=>{
       try{
@@ -24,6 +27,7 @@ export function CollegeElectiveLifecycleAction({slotId,name,status,version}:{
         }
         router.refresh();
       }catch(err){setError(err instanceof Error?err.message:"Could not change slot");}
+      finally{inFlightRef.current=false;}
     });
   }
   return <div className="space-y-1">

@@ -538,4 +538,67 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   for(const header of ["Student","Roll no.","Batch","Branch","After college","Applications"])
    expect(page).toContain('header:"'+header+'"');
  });
+ it("UX-tpo-reports-branch-season-02 preserves eight report fields and exact no-evidence copy on responsive cards",()=>{
+  const report=source("src/app/(authenticated)/tpo/reports/branch-season/page.tsx");
+  expect(report).toContain('import { DataTable } from "@/components/ui/data-table"');
+  expect(report).toContain('<DataTable');
+  expect(report).toContain('caption="Branch by placement season"');
+  expect(report).toContain('mobilePriority:"primary"');
+  expect((report.match(/mobilePriority:"secondary"/g)??[])).toHaveLength(7);
+  for(const column of ["Current branch","Applicants","Accepted learners","Accepted offer versions",
+   "Accepted / applicants","Registered pool","Accepted registered learners","Placed / registered"])
+    expect(report).toContain('header:"'+column+'"');
+  expect(report).toContain('empty={<p role="status">This season has no persisted applicant, accepted-offer or registered-pool branch evidence.');
+  expect(report).toContain('row.acceptedPerApplicantPercent.toFixed(2)+"%"');
+  expect(report).toContain('row.placedPerRegisteredPercent.toFixed(2)+"%"');
+  expect(report).toContain('row.registered??"Unknown"');
+  expect(report).toContain('row.registeredPlaced??"Unknown"');
+  expect(report).not.toContain('min-w-[66rem]');
+ });
+
+ it("UX-tpo-reports-accreditation-02 renders both eleven-field and six-field tables as cards without losing the authoritative export",()=>{
+  const page=source("src/app/(authenticated)/tpo/reports/accreditation/page.tsx");
+  expect(page).toContain('import { DataTable } from "@/components/ui/data-table"');
+  expect((page.match(/<DataTable/g)??[])).toHaveLength(2);
+  expect(page).toContain('caption="Placed students in this batch"');
+  expect(page).toContain('caption="Accreditation evidence preview"');
+  expect((page.match(/mobilePriority:"primary"/g)??[])).toHaveLength(2);
+  expect((page.match(/mobilePriority:"secondary"/g)??[])).toHaveLength(15);
+  expect(page).toContain('empty={<p role="status">No placed students were recorded in this batch.</p>}');
+  expect(page).toContain('empty={<p role="status">No reportable placement season was found.');
+  expect(page).toContain("accreditationPackageLpa(student.packageInr)");
+  expect(page).toContain("accreditationOfferStatusLabel(student.offerStatus)");
+  expect(page).toContain("accreditationJoiningLabel(student.joining)");
+  expect(page).toContain("studentReport.rows.slice(0,50)");
+  expect(page).toContain("overview.slice(0,50)");
+  expect(page).not.toContain("min-w-[52rem]");
+  expect(page).not.toContain("min-w-[46rem]");
+ });
+
+ it("UX-tpo-recruiters-leadid-02 uses shared bounded loading without a nested main and maintains route-specific status",()=>{
+  const loading=source("src/app/(authenticated)/tpo/recruiters/[leadId]/loading.tsx");
+  const note=source("docs/audit/ux/tpo-recruiters-leadid.md");
+  expect(loading).toContain("GracefulPageLoading");
+  expect(loading).toContain("label=\"Loading recruiter lead details\"");
+  expect(loading).not.toContain("<main");
+  expect(note).toContain("UX-tpo-recruiters-leadid-02");
+ });
+
+ it("UX-tpo-recruiters-campaigns-batchid-02 uses shared bounded loading without a nested main and maintains route-specific status",()=>{
+  const loading=source("src/app/(authenticated)/tpo/recruiters/campaigns/[batchId]/loading.tsx");
+  const note=source("docs/audit/ux/tpo-recruiters-campaigns-batchid.md");
+  expect(loading).toContain("GracefulPageLoading");
+  expect(loading).toContain("label=\"Loading campaign delivery batch\"");
+  expect(loading).not.toContain("<main");
+  expect(note).toContain("UX-tpo-recruiters-campaigns-batchid-02");
+ });
+
+ it("UX-tpo-recruiters-campaigns-drafts-campaignid-02 uses shared bounded loading without a nested main and maintains route-specific status",()=>{
+  const loading=source("src/app/(authenticated)/tpo/recruiters/campaigns/drafts/[campaignId]/loading.tsx");
+  const note=source("docs/audit/ux/tpo-recruiters-campaigns-drafts-campaignid.md");
+  expect(loading).toContain("GracefulPageLoading");
+  expect(loading).toContain("label=\"Loading campaign draft\"");
+  expect(loading).not.toContain("<main");
+  expect(note).toContain("UX-tpo-recruiters-campaigns-drafts-campaignid-02");
+ });
 });

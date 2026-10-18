@@ -16,7 +16,15 @@ describe("College Admin drive UI and graceful failure",()=>{
   expect(applications).toContain("sm:hidden");
   expect(applications).toContain("sm:table");
   expect(applications).toContain("onChange={()=>toggle(row.id)}");
-  expect(drives).toContain('aria-label="Drives mobile cards"');
+  // The approved UX rollout replaced duplicate mobile/desktop markup
+  // with the shared DataTable, retaining row lifecycle and detail actions.
+  expect(drives).toContain('caption="College placement drives"');
+  expect(drives).toContain('mobilePriority:"primary"');
+  expect(drives).toContain('mobilePriority:"action"');
+  expect(drives).toContain("CollegeDriveRowLifecycleAction");
+  const shared=source("src/components/ui/data-table.tsx");
+  expect(shared).toContain('sm:table-row');
+  expect(shared).toContain('More details');
  });
  it("GR-04 College Admin pipeline response failures do not display raw error bodies",()=>{
   const code=source("src/components/placements/college-application-pipeline-controls.tsx");

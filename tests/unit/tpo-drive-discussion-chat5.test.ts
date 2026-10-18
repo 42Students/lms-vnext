@@ -30,7 +30,8 @@ describe("TPO drive discussion parity",()=>{
  it("GR-90 and GR-91 keep the Discussion list navigable without a fragile modal",()=>{
   const page=code("src/app/(authenticated)/tpo/placements/jobs/[jobId]/discussion/page.tsx");
   expect(page).toContain('aria-label="Recruiter conversations"');
-  expect(page).toContain("min-h-10");
+  expect(page).toContain("min-h-11");
+  expect(page).not.toContain("min-h-10");
   expect(page).toContain('role="status"');
  });
 });
