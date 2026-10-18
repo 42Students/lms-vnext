@@ -19,7 +19,7 @@ export async function POST(request:Request,{params}:RouteContext){
     const scope=await requireProjectReadAccess(context,path.projectId);
     // Observer is a read-only project grant even for a dual-role Faculty/Mentor.
     // Never dispatch a privileged mutation from an unrecognized access kind.
-    if(!["LEARNER","MENTOR","ADMIN"].includes(scope.access))
+    if(scope.access!=="LEARNER" && scope.access!=="MENTOR")
       throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
     const task=scope.access==="LEARNER"
       ? await createLearnerOwnTask(context,path,body)
