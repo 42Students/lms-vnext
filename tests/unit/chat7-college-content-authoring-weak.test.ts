@@ -31,6 +31,9 @@ beforeEach(()=>{
   where(){return this;},orderBy(){return this;},
   limit(){return Promise.resolve(state.results.shift()??[]);},
   groupBy(){return Promise.resolve(state.results.shift()??[]);},
+  then(resolve:(rows:unknown[])=>unknown,reject:(reason:unknown)=>unknown){
+   return Promise.resolve(state.results.shift()??[]).then(resolve,reject);
+  },
  }));
 });
 describe("COURSES-WEAK-CONTENT-AUTHORING-01 tenant, stage and private link boundaries",()=>{
