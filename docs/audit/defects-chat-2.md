@@ -62,3 +62,13 @@ Files updated: `chat2-company-memory-gap-parity.test.ts`, `chat2-company-trust-a
 No CI green or database-side multi-session verification is claimed for these authored tests.
 
 | CH2-024 | High | TPO-drive-workspace-40 | Result-import roster queries used last-write-wins `Map(applicationId,row)` on joined results: contradictory current results, emails or rolls could silently select a learner's arbitrary evidence before staging. Duplicate identical evidence is now deduplicated; conflicting evidence is excluded and not auto-staged. | `5089a4a`, `ed95eb8` | `chat2-ledger-round-import-and-scheduling.test.ts` (CI pending) |
+
+## Additional Pass B defects (2026-10-18; pending full CI / database review)
+
+| ID | Severity | Gap | Defect and evidence | Fix commit | Regression evidence |
+| --- | --- | --- | --- | --- | --- |
+| CH2-018 | High | TPO-drive-workspace-44 | Moving an assigned interview updated an individual override only if that override existed already; a first-time booking has no override, leaving the learner calendar at the old round time after a move. Slot mutations now upsert the per-learner schedule in the same transaction. | `4c8d78a` | `tests/unit/chat2-interview-transaction-contracts.test.ts`: source contract for learner override upsert |
+| CH2-019 | Medium | TPO-drive-workspace-44 | Bulk roll-range room reassignment updated booked slot rooms but failed to synchronize existing learner-specific override venues. | `4c8d78a` | Same transaction source contract; PostgreSQL rollback test still required |
+| CH2-020 | High | TPO-drive-workspace-42 | Whole-round approval compared the snapshot before iterating, but each subsequent result could be restaged by another actor before application; result service could apply a revised outcome that the TPO never reviewed. Optional per-row result version CAS now rechecks before and after locked read. | `d311bbc`, `db06e75` | `chat2-interview-transaction-contracts.test.ts`, existing snapshot identity tests |
+| CH2-021 | Medium | TPO-drive-workspace-40/42 | Result import/whole-round approval schemas accepted any 64-character string as a supposed SHA-256 preview fingerprint. Now require canonical lowercase hex digest. | `9a61653`, `e1c71be` | `chat2-round-import-calendar-roster-hardening.test.ts`, `chat2-round-interview-boundary-hardening.test.ts` |
+| CH2-022 | Medium | TPO-drive-workspace-44 | Venue-overlap helper failed to reject an existing or requested interview whose duration exceeded the supported 1440-minute limit. Such corrupt evidence must fail closed. | `5ffc911`, `5be2038` | `chat2-round-import-calendar-roster-hardening.test.ts` |
