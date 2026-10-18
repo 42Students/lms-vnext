@@ -84,6 +84,10 @@ describe("IIT Dharwad Projects Admin unsubmitted workspaces service permissions 
     expect(scoped!.params).toContain("ARCHIVED");
     expect(scoped!.sql.toLowerCase()).toContain("not exists");
     expect(scoped!.sql).toContain('"project_submissions"."project_id"');
+    // A malformed correlated anti-join returns either every project or no
+    // project when the inner submission ID shadows the outer project ID.
+    expect(scoped!.sql).toContain('"project_instances"."id"');
+    expect(scoped!.sql).not.toContain('"project_submissions"."project_id" = "id"');
     expect(state.limitValues).toContain(10);
     expect(state.offsetValues).toContain(10);
     expect(state.readOnly).toBe(true);
