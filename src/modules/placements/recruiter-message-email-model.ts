@@ -38,8 +38,14 @@ export function recruiterReplyTokenForThread(secret:string,threadId:string):stri
  return createHmac("sha256",secret).update("recruiter-reply:v1:"+threadId.toLowerCase()).digest("hex").slice(0,32);
 }
 export function makeRecruiterReplyAddress(token:string,domain:string):string|null{
- if(!/^[a-f0-9]{32}$/.test(token)||!/^([a-z0-9-]+\.)+[a-z]{2,}$/i.test(domain))return null;
- return "r-"+token+"@"+domain.toLowerCase();
+ const host=domain.toLowerCase();
+ const labels=host.split(".");
+ if(!/^[a-f0-9]{32}$/.test(token)||host.length>253||labels.length<2||
+    !/^[a-z]{2,63}$/.test(labels[labels.length-1]!)||
+    labels.some(label=>label.length===0||label.length>63||
+      label.startsWith("-")||label.endsWith("-")||
+      !/^[a-z0-9-]+$/.test(label)))return null;
+ return "r-"+token+"@"+host;
 }
 /** Verify Reply-To before it leaves the outbound mail provider boundary. */
 export function isRecruiterReplyAddress(value:string,domain:string):boolean{
@@ -68,7 +74,9 @@ export function extractRecruiterEmailReply(raw:string):string|null{
  for(const line of lines){
   const trimmed=line.trim();
   if(/^On .{8,240} wrote:$/i.test(trimmed)||trimmed==="-----Original Message-----"||
-     trimmed==="-- Forwarded message --"||/^From:\s+.{3,}$/i.test(trimmed)||
+     /^-{2,}\s*Forwarded message\s*-{2,}$/i.test(trimmed)||
+     /^Begin forwarded message:\s*$/i.test(trimmed)||
+     /^From:\s+.{3,}$/i.test(trimmed)||/^Sent:\s+.{3,}$/i.test(trimmed)||
      /^>/.test(trimmed)||/^_{8,}$/.test(trimmed)||trimmed==="--" )break;
   reply.push(line.replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g,""));
  }

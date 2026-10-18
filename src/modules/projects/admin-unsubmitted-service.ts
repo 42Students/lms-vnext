@@ -7,7 +7,7 @@ import {requirePermission} from "@/modules/permissions/policy";
 import {loadProjectCollegeScope} from "./scope";
 import {z} from "zod";
 const querySchema=z.strictObject({
- q:z.string().trim().max(120).optional(),page:z.coerce.number().int().min(1).default(1),
+ q:z.string().trim().max(120).optional(),page:z.coerce.number().int().min(1).max(100000).default(1),
  pageSize:z.coerce.number().int().min(10).max(100).default(25),
 });
 /** SA-placements-projects-69: scoped, paged workspaces with no submission versions. */

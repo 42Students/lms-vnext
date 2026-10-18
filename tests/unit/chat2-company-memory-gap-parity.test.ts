@@ -9,7 +9,8 @@ describe("TPO Company Memory legacy parity",()=>{
   expect(source).toContain("statusLabel(drive.status)");
  });
  it("TPO-companies-21 never exposes DB migration identifiers or raw not-found jargon",()=>{
-  expect(source).toContain('error: "Company not found"');
+  expect(source).toContain('phase: "not-found", message: "Company not found"');
+  expect(source).toContain('response.status === 404');
   expect(source).not.toContain("DB09 database verification");
   expect(source).toContain('Company details are unavailable right now. Try again.');
   expect(source).toContain(">Retry</button>");

@@ -96,6 +96,30 @@ export async function listOrganizations(context: RequestContext) {
     const selectedOrganizationId =
       selected?.organizationId ?? null;
 
+    if (selected?.collegeId) {
+      // A college-scoped Super Admin must never see all organizations when
+      // the selected organization is absent (or mismatched). Derive the
+      // organization from the persisted selected college, not an input UUID.
+      requirePermission(context, "organization.read", {
+        organizationId: selectedOrganizationId,
+        collegeId: selected.collegeId,
+      });
+      return db.select({
+        id: organizations.id,
+        name: organizations.name,
+        createdAt: organizations.createdAt,
+        updatedAt: organizations.updatedAt,
+      }).from(organizations)
+        .innerJoin(colleges, eq(colleges.organizationId, organizations.id))
+        .where(and(
+          eq(colleges.id, selected.collegeId),
+          eq(colleges.status, "ACTIVE"),
+          eq(organizations.status, "ACTIVE"),
+          selectedOrganizationId ? eq(organizations.id, selectedOrganizationId) : undefined,
+        ))
+        .limit(1);
+    }
+
     if (selectedOrganizationId) {
       requirePermission(context, "organization.read", {
         organizationId: selectedOrganizationId,

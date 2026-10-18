@@ -39,6 +39,7 @@ const domainMessages: Readonly<Record<string, string>> = {
   TPO_MESSAGE_JOB_NOT_FOUND: "We could not find that job. Refresh and try again.",
   TPO_RECRUITER_INVITE_NOT_FOUND: "This invitation is no longer available. Ask for a new invitation.",
   INVITE_INVALID: "This invitation is no longer available. Ask for a new invitation.",
+  FACULTY_GRADEBOOK_TOO_MANY_ASSESSMENTS: "This Section has more than 100 published assessments. Contact your college administrator to request a gradebook report.",
   FACULTY_HAS_ACTIVE_PROJECTS: "This faculty member mentors active project workspaces. Reassign those projects to another mentor before suspending or ending the membership.",
   PROJECT_CLASS_ROSTER_STALE: "The class roster changed while teams were being created. Refresh the roster, review the preview, and try again.",
   PROJECT_TEAM_PREVIEW_STALE: "The team preview changed. Review the current teams and try again.",
