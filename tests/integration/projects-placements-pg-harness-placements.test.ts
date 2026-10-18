@@ -134,6 +134,20 @@ describe("PROJ-HARNESS-PLACEMENTS canonical real PostgreSQL fixtures", () => {
       expect(after[0]?.n).toBe(before[0]?.n);
     });
   });
+  it("PROJ-HARNESS-PLACEMENTS-12 rejects a forged round from another drive before inserting applications",async()=>{
+    await withPlacementCase(async({db,tenant,actor,learner,drive})=>{
+      const secondDrive=await createPlacementFixture(db,tenant,actor);
+      const countBefore=await db.query<{count:number}>(`
+        select count(*)::int as count from placement_applications where job_id=$1`,[drive.jobId]);
+      await expect(createPlacementCandidateFixture(db,{
+        ...drive,roundId:secondDrive.roundId,
+      },learner,actor)).rejects.toThrow(/round does not belong to this drive/);
+      const countAfter=await db.query<{count:number}>(`
+        select count(*)::int as count from placement_applications where job_id=$1`,[drive.jobId]);
+      expect(countAfter[0]?.count).toBe(countBefore[0]?.count);
+    });
+  });
+
   it("PROJ-HARNESS-PLACEMENTS-09 suspended learner cannot be added from a stale fixture object",async()=>{
     await withPlacementCase(async({db,learner,actor,drive})=>{
       const before=await db.query<{count:number}>(`
