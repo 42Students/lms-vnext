@@ -14,11 +14,11 @@ export default async function MentorDeliveryVersionPage({params}:{
   const format=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
     dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
   }).format(date)+" IST";
-  return <div className="space-y-6">
+  return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Mentor · Final delivery" title={"Delivery version "+v.version}
       description={data.projectTitle+" · "+data.projectStatus}
       actions={<Link href={"/mentor/projects/"+encodeURIComponent(data.projectId)+"/review-overview"}
-        className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
         Review overview
       </Link>}/>
     <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
