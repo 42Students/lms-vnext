@@ -173,3 +173,15 @@
 | `learner-quiz-request-race-model.ts` | `learnerQuizRequestCurrent` | Not individually linked in this inventory |
 | `learner-quiz-response-id-model.ts` | `requireLearnerQuizResponseId` | Not individually linked in this inventory |
 | `learner-quiz-result-release-policy.ts` | `learnerQuizResultsReleased` | Not individually linked in this inventory |
+| `learner-quiz-return-model.ts` | `scheduleLearnerQuizReturn` | Not individually linked in this inventory |
+| `learner-quiz-review-model.ts` | `learnerQuizReviewRows` | Authored direct model regression, unrun |
+| `learner-quiz-review-question-availability-model.ts` | `learnerQuizReviewQuestionNotice` | Authored direct model regression, unrun |
+| `learner-quiz-route-scope-model.ts` | `learnerQuizRouteScopeCurrent` | Not individually linked in this inventory |
+| `learner-quiz-shuffle-model.ts` | `QuizDisplayQuestion` | Not individually linked in this inventory |
+| `learner-quiz-shuffle-model.ts` | `shuffleQuizForLearner` | Not individually linked in this inventory |
+| `learner-quiz-submission-receipt-model.ts` | `learnerQuizSubmissionReceiptVisible` | Not individually linked in this inventory |
+| `learner-quiz-submit-deadline-model.ts` | `learnerQuizSubmitDeadlineOpen` | Not individually linked in this inventory |
+| `learner-recent-course-activity-model.ts` | `RecentCourseActivityLesson` | Not individually linked in this inventory |
+| `learner-recent-course-activity-model.ts` | `learnerRecentCourseActivity` | Not individually linked in this inventory |
+| `learner-roadmap-dialog-key-model.ts` | `learnerRoadmapDialogKey` | Not individually linked in this inventory |
+| `learner-roadmap-empty-state-model.ts` | `learnerRoadmapEmptyState` | Not individually linked in this inventory |
