@@ -21,7 +21,9 @@ export default async function TpoDriveClosePreviewPage({params}:{params:Promise<
    description="Review persisted application, round and offer counts before an audited closure."/>
   {preview.canClose?<TpoDriveClosePreviewForm preview={preview}/>:
    <p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
-    {preview.pendingSelections>0?
+    {preview.pendingPromotions>0?
+      "A waitlisted learner's reserved offer is still pending. Finish the waitlist offer before closing this drive.":
+     preview.pendingSelections>0?
       "Verify and release, or withdraw, all pending company selections before closing this drive.":
      preview.issuedOffers>0?
       "Release or withdraw outstanding offers before closing this drive.":
