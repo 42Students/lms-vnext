@@ -64,18 +64,18 @@ export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
   <p role="status" className="text-xs text-muted-foreground">{validSelected.length} selected;
    {outside} not registered for placements (messages still deliver).</p>
   <label className="grid gap-1 text-sm">Message template
-   <select value={template} disabled={pending} className="min-h-11 rounded border border-border bg-surface px-3"
+   <select value={template} disabled={pending} className="min-h-11 rounded-[9px] border border-border bg-surface px-3"
     onChange={e=>setChoice(e.target.value as TpoStudentNudgeTemplate)}>
     {Object.entries(tpoStudentNudgeLabels).map(([key,label])=><option key={key} value={key}>{label}</option>)}
    </select>
   </label>
   <label className="grid gap-1 text-sm">Message
    <textarea rows={3} minLength={5} maxLength={1000} required
-    className="w-full rounded border border-border bg-surface p-3"
+    className="w-full rounded-[9px] border border-border bg-surface p-3"
     disabled={pending} value={message} onChange={e=>{setMessage(e.target.value);setNotice("");}}/>
   </label>
   <button type="button" disabled={pending||guardedPending||!validSelected.length}
-   className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50"
+   className="min-h-11 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50"
    onClick={()=>setConfirmOpen(true)}>{"Send to "+validSelected.length+" selected"}</button>
   <Dialog open={confirmOpen} onOpenChange={value=>{if(!pending&&!guardedPending)setConfirmOpen(value);}}
    title="Send a message" description={"Send an in-app message to "+validSelected.length+" learner(s)? The message will be audited."}

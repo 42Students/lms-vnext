@@ -191,7 +191,7 @@ export function TpoStudentsBulkAdd({
           <div className="grid gap-3 md:grid-cols-2">
             <label className="text-sm font-semibold text-foreground">
               Published drive
-              <select className="mt-1 min-h-10 w-full rounded-md border border-border bg-surface px-3"
+              <select className="mt-1 min-h-10 w-full rounded-[9px] border border-border bg-surface px-3"
                 value={driveId} disabled={busy}
                 onChange={(event) => void loadRoles(event.target.value)}>
                 <option value="">Choose a drive</option>
@@ -204,7 +204,7 @@ export function TpoStudentsBulkAdd({
             </label>
             <label className="text-sm font-semibold text-foreground">
               Active role
-              <select className="mt-1 min-h-10 w-full rounded-md border border-border bg-surface px-3"
+              <select className="mt-1 min-h-10 w-full rounded-[9px] border border-border bg-surface px-3"
                 value={roleOptionId} disabled={busy || roles.length === 0}
                 onChange={(event) => setRoleOptionId(event.target.value)}>
                 {roles.length === 0 ? <option value="">Select a drive first</option> : null}
@@ -245,7 +245,7 @@ export function TpoStudentsBulkAdd({
             <button type="button" disabled={busy || !roleOptionId || pageSelected.length === 0 || pageSelected.length>200 ||
                 includeIneligible&&overrideReason.trim().length<3}
               onClick={() => void preview()}
-              className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+              className="min-h-10 rounded-md bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">
               {busy ? "Checking learners…" : "Review and add selected"}
             </button>
           </div>

@@ -84,7 +84,7 @@ export function TpoStudentSavedViews(){
    <div className="flex flex-wrap gap-2">
     <button type="button" disabled={busy||!name.trim()} onClick={()=>void send({
      action:"CREATE",name:name.trim(),filters:filterQuery(new URLSearchParams(params.toString())),pinned,
-    })} className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">Save current filters</button>
+    })} className="min-h-10 rounded bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">Save current filters</button>
     {selected?<button type="button" disabled={busy||!name.trim()} onClick={()=>void send({
      action:"UPDATE",id:selected,name:name.trim(),filters:filterQuery(new URLSearchParams(params.toString())),pinned,
     })} className="min-h-10 rounded border border-border px-4 text-sm">Update selected view</button>:null}
