@@ -9,6 +9,8 @@ import {
 } from "@/components/projects/project-admin-collection-controls";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { PageHeader } from "@/components/ui/page-header";
+import { ErrorState } from "@/components/ui/error-state";
+import { parseProjectAdminSubmissionsQuery } from "@/modules/projects/admin-submissions-query-model";
 import {ProjectAdminSubmissionReview} from "@/components/projects/project-admin-submission-review";
 import {ProjectSubmissionsPageExport} from "@/components/projects/project-submissions-page-export";
 import {listProjectAdminUnsubmitted} from "@/modules/projects/admin-unsubmitted-service";
@@ -18,14 +20,6 @@ import {
   listProjectAdminSubmissionQueue,
   getProjectAdminSubmissionSummary,
 } from "@/modules/projects/admin-insights-service";
-
-function one(
-  value: string | string[] | undefined,
-) {
-  return Array.isArray(value)
-    ? value[0]
-    : value;
-}
 
 function tone(status: string) {
   if (status === "APPROVED") {
@@ -68,18 +62,19 @@ export async function ProjectAdminSubmissionsPage({
   const context = await getCurrentRequestContext();
   const allowLock = mayRecordCollegeAdminDeliveryLock(context,collegeId,
     context.adminScope?.organizationId ?? context.membership?.organizationId ?? "");
-  const view=one(searchParams.view)==="NOT_SUBMITTED"?"NOT_SUBMITTED":"ALL";
-  const query: ProjectAdminCollectionQuery = {
-    q: one(searchParams.q),
-    status: one(searchParams.status) as ProjectAdminCollectionQuery["status"],
-    submissionStatus: one(
-      searchParams.submissionStatus,
-    ) as ProjectAdminCollectionQuery["submissionStatus"],
-    page: Number(one(searchParams.page) ?? 1),
-    pageSize: Number(
-      one(searchParams.pageSize) ?? 25,
-    ),
-  };
+  const parsed = parseProjectAdminSubmissionsQuery(searchParams);
+  if (!parsed.success) {
+    return <div className="space-y-6">
+      <PageHeader eyebrow={eyebrow} title="Submissions dashboard"
+        description="Final project deliverables across all workspaces." />
+      <ErrorState title="Invalid submission filters"
+        description="Check the submission view, status, page and rows filters, or clear them to continue."
+        action={<Link href={basePath + "/submissions"}
+          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Clear filters</Link>} />
+    </div>;
+  }
+  const { view, ...safeQuery } = parsed.data;
+  const query: ProjectAdminCollectionQuery = safeQuery;
   const [result, summary] = await Promise.all([
     listProjectAdminSubmissionQueue(context, collegeId, query),
     getProjectAdminSubmissionSummary(context, collegeId),
