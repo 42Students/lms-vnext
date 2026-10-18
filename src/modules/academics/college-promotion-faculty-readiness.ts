@@ -4,6 +4,7 @@ import { getDb } from "@/db/client";
 import {
   cohorts, courseOfferings, courseSectionDeliveries, courseTeachingAssignments,
   departments, programTermCourses, programTerms, programs,
+  collegeMemberships, membershipRoles, users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { resolveActingCollege } from "@/modules/permissions/acting-college";
@@ -32,7 +33,19 @@ export async function getPromotionFacultyReadiness(
     .innerJoin(courseSectionDeliveries,
       eq(courseSectionDeliveries.id, courseTeachingAssignments.deliveryId))
     .innerJoin(courseOfferings, eq(courseOfferings.id, courseSectionDeliveries.offeringId))
+    // A terminated/suspended faculty membership, disabled account, or removed
+    // FACULTY role does not make a new term ready to teach. Only current
+    // eligible people may count as staffed; otherwise promotion readiness
+    // incorrectly reports green after offboarding.
+    .innerJoin(collegeMemberships, eq(collegeMemberships.id, courseTeachingAssignments.membershipId))
+    .innerJoin(users, eq(users.id, collegeMemberships.userId))
+    .innerJoin(membershipRoles, and(
+      eq(membershipRoles.membershipId, collegeMemberships.id),
+      eq(membershipRoles.role, "FACULTY")))
     .where(and(eq(courseOfferings.cohortId, cohortId),
+      eq(collegeMemberships.collegeId,member.collegeId),
+      eq(collegeMemberships.status,"ACTIVE"),
+      eq(users.platformStatus,"ACTIVE"),
       inArray(courseOfferings.courseId, courses.map(item => item.courseId)),
       eq(courseOfferings.status, "ACTIVE"),
       isNull(courseTeachingAssignments.endedAt),
