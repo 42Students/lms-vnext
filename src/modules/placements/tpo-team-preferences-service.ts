@@ -1,4 +1,5 @@
 import {hasPlacementTeamMembership} from "./placement-team-access-model";
+import {planTpoThreadPreferenceChange} from "./tpo-team-preference-state-model";
 import "server-only";
 import {and,eq,or} from "drizzle-orm";
 import {z} from "zod";
@@ -26,9 +27,10 @@ export async function getTpoTeamThreadPreferences(context:RequestContext,threadI
  const {member,college}=await scope(context,input);
  const ready=await placementTableExists("placement_tpo_internal_reads");
  return getDb().transaction(async tx=>{
-  await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+  const persisted=await assertPersistedPlatformPermission(tx,context,"placements.manage",{
    collegeId:college.id,organizationId:college.organizationId,
   });
+  if(!hasPlacementTeamMembership(persisted))throw new AuthorizationError("placements.manage");
   const [thread]=await tx.select({id:placementTpoInternalThreads.id})
    .from(placementTpoInternalThreads).where(and(
     eq(placementTpoInternalThreads.id,input),eq(placementTpoInternalThreads.collegeId,college.id),
@@ -51,9 +53,10 @@ export async function updateTpoTeamThreadPreferences(context:RequestContext,raw:
  if(!await placementTableExists("placement_tpo_internal_reads"))
   throw new Error("TEAM_PREFERENCES_PENDING");
  return getDb().transaction(async tx=>{
-  await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+  const persisted=await assertPersistedPlatformPermission(tx,context,"placements.manage",{
    collegeId:college.id,organizationId:college.organizationId,
   });
+  if(!hasPlacementTeamMembership(persisted))throw new AuthorizationError("placements.manage");
   const [thread]=await tx.select({id:placementTpoInternalThreads.id})
    .from(placementTpoInternalThreads).where(and(
     eq(placementTpoInternalThreads.id,input.threadId),
@@ -66,8 +69,8 @@ export async function updateTpoTeamThreadPreferences(context:RequestContext,raw:
    .where(and(eq(placementTpoInternalReads.threadId,thread.id),
     eq(placementTpoInternalReads.collegeId,college.id),
     eq(placementTpoInternalReads.membershipId,member.id))).for("update").limit(1);
-  const following=input.action==="FOLLOW"?true:input.action==="UNFOLLOW"?false:current?.following??true;
-  const mutedAt=input.action==="MUTE"?new Date():input.action==="UNMUTE"?null:current?.mutedAt??null;
+  const {following,mutedAt,changed}=planTpoThreadPreferenceChange(current,input.action,new Date());
+  if(!changed)return {following,muted:!!mutedAt};
   await tx.insert(placementTpoInternalReads).values({
    collegeId:college.id,threadId:thread.id,membershipId:member.id,
    readThrough:current?.readThrough??new Date(0),following,mutedAt,
