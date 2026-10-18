@@ -55,6 +55,16 @@ describe("PROJ-HARNESS source and environment guard",()=>{
    expect(helper).toContain('"ended_at"');
    expect(helper).toContain("u.platform_status = 'ACTIVE'");
  });
+ it("PROJ-HARNESS-GUARD-08 role and lineage guards fail closed without narrowing collaborative final delivery",()=>{
+   expect(helper).toContain("org.status = 'ACTIVE'");
+   expect(helper).toContain("c.status = 'ACTIVE'");
+   expect(helper).toContain("mr.role = 'LEARNER'");
+   expect(helper).toContain("task does not belong to this project");
+   expect(helper).toContain("meeting mentor is not active on this project");
+   expect(helper).toContain("where id=$1 and status='DRAFT'");
+   expect(helper).not.toContain("where id=$1 and created_by_membership_id=$2 and status='DRAFT'");
+ });
+
  it("PROJ-HARNESS-GUARD-05 always rolls back transaction and savepoint errors",()=>{
    expect(helper).toContain('if (begun) await client.query("ROLLBACK")');
    expect(helper).toContain("client.release()");
