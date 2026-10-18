@@ -143,9 +143,9 @@ describe("IIT Dharwad Projects breaker — state, access, integrity, deadlines a
   const complete=code.slice(from,until);
   expect(complete).toContain('if (row.status === "READY") return toProjectFileDto(row)');
   expect(complete).toContain("requireOpenProject(scope.project.status)");
-  expect(complete).toContain("requireOpenProject(project.status)");
+  expect(complete).toContain("requireOpenProject(liveProject.status)");
   expect(complete).toContain('.for("share")');
-  expect(complete.indexOf("requireOpenProject(project.status)")).toBeLessThan(
+  expect(complete.indexOf("requireOpenProject(liveProject.status)")).toBeLessThan(
     complete.indexOf(".update(projectResourceFiles)"));
   expect(complete).toContain('inArray(projectResourceFiles.status, ["UPLOADING", "VERIFYING"])');
  });
@@ -157,7 +157,7 @@ describe("IIT Dharwad Projects breaker — state, access, integrity, deadlines a
     const end=code.indexOf("export async function ",start+1);
     const body=code.slice(start,end<0?undefined:end);
     expect(body,name).toContain("requireOpenProject(scope.project.status)");
-    expect(body,name).toContain("requireOpenProject(project.status)");
+    expect(body,name).toContain("requireOpenProject(liveProject.status)");
     expect(body,name).toContain('.for("share")');
     expect(body,name).toContain('eq(projectResourceFiles.projectId,scope.project.id)');
   }
