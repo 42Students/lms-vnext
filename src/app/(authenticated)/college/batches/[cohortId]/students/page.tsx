@@ -9,6 +9,7 @@ import {
 } from "@/db/schema";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { DataTable } from "@/components/ui/data-table";
 import { StudentClassMoveAction } from "@/components/college/student-class-move-action";
 import { requirePermission } from "@/modules/permissions/policy";
 
@@ -82,25 +83,24 @@ export default async function CollegeBatchStudentsPage({
       </label>
       <button className="min-h-11 rounded bg-primary px-4 font-semibold text-foreground">Search</button>
     </form>
-    <div role="region" aria-label="Students in this batch" tabIndex={0} className="overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
-      <p className="p-3 text-xs text-muted-foreground">Showing up to 500 matching students in this batch.</p>
-      <table className="w-full min-w-[700px] text-left text-sm [&_th:first-child]:sticky [&_th:first-child]:left-0 [&_th:first-child]:z-10 [&_th:first-child]:bg-surface [&_td:first-child]:sticky [&_td:first-child]:left-0 [&_td:first-child]:z-10 [&_td:first-child]:bg-surface">
-        <thead className="sticky top-0 z-10 bg-surface"><tr className="border-y border-border">
-          {["Name", "Roll Number", "Email", "Current class", "Action"].map(label =>
-            <th key={label} scope="col" className={label==="Name"?"sticky left-0 z-20 bg-surface p-3 font-semibold":"p-3 font-semibold"}>{label}</th>)}
-        </tr></thead>
-        <tbody>{students.map(item => <tr key={item.membershipId} className="border-b border-border">
-          <th scope="row" className="sticky left-0 z-10 bg-surface p-3 text-left font-semibold">{item.name ?? item.membershipId}</th>
-          <td className="p-3">{item.roll ?? "—"}</td>
-          <td className="p-3">{item.email ?? "—"}</td>
-          <td className="p-3">{item.sectionName ?? "Not in a class"}</td>
-          <td className="p-3">{item.sectionId
+    <section aria-label="Students in this batch" className="min-w-0 space-y-3">
+      <p className="text-xs text-muted-foreground">Showing up to 500 matching students in this batch.</p>
+      <DataTable
+        caption="Students in this batch"
+        rows={students}
+        getRowKey={item => item.membershipId}
+        empty={<p className="text-sm text-muted-foreground">No matching students.</p>}
+        columns={[
+          { key: "name", header: "Name", mobilePriority: "primary", cell: item => item.name ?? item.membershipId },
+          { key: "roll", header: "Roll Number", mobilePriority: "secondary", cell: item => item.roll ?? "—" },
+          { key: "email", header: "Email", mobilePriority: "secondary", cell: item => item.email ?? "—" },
+          { key: "class", header: "Current class", mobilePriority: "secondary", cell: item => item.sectionName ?? "Not in a class" },
+          { key: "action", header: "Action", mobilePriority: "action", cell: item => item.sectionId
             ? <StudentClassMoveAction membershipId={item.membershipId}
                 name={item.name ?? item.roll ?? "student"} />
-            : <span className="text-muted-foreground">No active class to move from</span>}</td>
-        </tr>)}</tbody>
-      </table>
-      {!students.length && <p className="p-6 text-sm text-muted-foreground">No matching students.</p>}
-    </div>
+            : <span className="text-muted-foreground">No active class to move from</span> },
+        ]}
+      />
+    </section>
   </main>;
 }
