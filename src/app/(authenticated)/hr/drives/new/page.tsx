@@ -33,16 +33,15 @@ export default async function RecruiterRequestDrivePage({
   }>;
 }) {
   const context = await getCurrentRequestContext();
-  if (!hasActiveRecruiter(context) || !context.recruiter) redirect("/dashboard");
+  if (!hasActiveRecruiter(context) || !context.recruiter || context.recruiter.userId !== context.user.id) redirect("/dashboard");
   const raw = await searchParams;
-  const first = (value: string | string[] | undefined) =>
-    Array.isArray(value) ? value[0] : value;
+  // Never silently select one of multiple conflicting college/job links.
   const parsed = hrDriveDraftQuerySchema.safeParse({
-    collegeId: first(raw.collegeId) || undefined,
-    from: first(raw.from) || undefined,
-    fix: first(raw.fix) || undefined,
-    edit: first(raw.edit) || undefined,
-    copy: first(raw.copy) || undefined,
+    collegeId: raw.collegeId,
+    from: raw.from,
+    fix: raw.fix,
+    edit: raw.edit,
+    copy: raw.copy,
   });
   if (!parsed.success) notFound();
   const query = parsed.data;

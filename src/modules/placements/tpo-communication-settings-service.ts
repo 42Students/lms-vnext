@@ -25,7 +25,7 @@ export async function getTpoCommunicationSettings(context:RequestContext){
  return getDb().transaction(async tx=>{
   const [college]=await tx.select({
    organizationId:colleges.organizationId,status:colleges.status,
-  }).from(colleges).where(eq(colleges.id,collegeId)).limit(1);
+  }).from(colleges).where(eq(colleges.id,collegeId)).for("share").limit(1);
   if(!college||college.status!=="ACTIVE")
    throw new TpoCommunicationSettingsError("TPO_SETTINGS_NOT_FOUND");
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{

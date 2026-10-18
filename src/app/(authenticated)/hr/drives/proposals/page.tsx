@@ -11,13 +11,13 @@ export default async function RecruiterDriveProposalHistory({
  searchParams,
 }:{searchParams:Promise<{collegeId?:string|string[];page?:string|string[];q?:string|string[];sort?:string|string[]}>}){
  const context=await getCurrentRequestContext();
- if(!hasActiveRecruiter(context))redirect("/dashboard");
+ if(!hasActiveRecruiter(context)||context.recruiter?.userId!==context.user.id)redirect("/dashboard");
  const raw=await searchParams;
- const id=Array.isArray(raw.collegeId)?raw.collegeId[0]:raw.collegeId;
- const rawPage=Array.isArray(raw.page)?raw.page[0]:raw.page;
- const q=Array.isArray(raw.q)?raw.q[0]:raw.q;
- const sort=Array.isArray(raw.sort)?raw.sort[0]:raw.sort;
- const input=hrDriveProposalHistoryQuerySchema.safeParse({collegeId:id,page:rawPage,q,sort});
+ // Repeated college/page/filter keys must not silently choose the first
+ // value. Zod rejects arrays and triggers the existing safe recovery route.
+ const input=hrDriveProposalHistoryQuerySchema.safeParse({
+  collegeId:raw.collegeId,page:raw.page,q:raw.q,sort:raw.sort,
+ });
  if(!input.success)notFound();
  const data=await listHrDriveProposals(context,input.data);
  return <div className="min-w-0 max-w-full space-y-5">

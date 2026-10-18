@@ -229,3 +229,28 @@ This is an independent TPO/HR workflow review; real clipboard permission denial,
 | ID | Source | Direct test | Cases and remaining integration |
 |---|---|---|---|
 | HR-BREAK-TODAY-OFFERS-18 | `prioritizeRecruiterOfferFollowups` and `listRecruiterTodayOfferActions` | `tests/unit/HR-BREAK-chat19-today-offer-priority.test.ts` | ISSUED priority over 40 history groups, exact 30-row cap, stable ordering, zero/NaN exclusion, no mutation, shortlist/college/job scoped SQL; full PostgreSQL fanout still requires cloud CI |
+
+## Recruiter Today college-selection URL hardening
+
+| ID | Route and source | Direct regression | Boundary |
+|---|---|---|---|
+| HR-BREAK-HOME-QUERY-19 | `/hr/home` server-page `querySchema` | `tests/unit/HR-BREAK-chat19-home-portfolio-proposals.test.ts` | Repeated collegeId parameter arrays are invalid and produce an actionable recovery state; no employer-grant or job reader called. |
+
+## Today route cross-principal session denial
+
+| ID | Export / entry | Behavioral coverage | Boundary |
+|---|---|---|---|
+| HR-BREAK-HOME-IDENTITY-20 | `HrHomePage` session check | `tests/unit/HR-BREAK-chat19-home-portfolio-proposals.test.ts` | Exact user/recruiter identity equality required before employer job, grant or discussion retrieval. |
+
+## HR persisted drive proposal route security
+
+| ID | Entry point | Direct tests | Scope |
+|---|---|---|---|
+| HR-BREAK-PROPOSALS-QUERY-21 | `/hr/drives/proposals` | `tests/unit/HR-BREAK-chat19-home-portfolio-proposals.test.ts` | Repeated college/page/search/sort values fail strict URL validation, mismatched recruiter identity redirects, unauthorized proposal-history service never called. |
+
+## HR Drive list and new-request source URL entry
+
+| Gap | Page | Direct test | Security invariant |
+|---|---|---|---|
+| HR-BREAK-DRIVES-QUERY-22 | `/hr/drives` | `tests/unit/HR-BREAK-chat19-drive-list-page.test.ts` | Repeated college/status/legacy-tab/search/page keys and mismatched recruiter identity rejected before scoped list services |
+| HR-BREAK-DRIVE-DRAFT-QUERY-23 | `/hr/drives/new` | `tests/unit/HR-BREAK-chat19-drive-draft-duplicate-query.test.ts` | Source job/request URL cannot contain repeated IDs, conflicting source modes, or mismatched recruiter; denied before portfolio/request/branch services |
