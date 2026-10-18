@@ -185,3 +185,85 @@ The route sample covers all seven authenticated role families (at least 3 per ro
 **Three riskiest unverified items:** (1) Android/iOS nested Back + overlay history integrity with unsaved/pending drafts, (2) real WCAG 2.2 AA keyboard/AT/focus/zoom behaviour at 320–390px, (3) same-revision passing typecheck/lint/Vitest/browser results and 30 affected call-site / four reference visual baselines.
 
 **FINAL VERDICT: BLOCKED.** This audit is NOT authorization for page-level UI/UX restyling or for a third-audit sign-off.
+
+
+## Re-verification
+
+**Independent auditor:** chat-19. **Date:** 2026-10-18 (IST). **Rebased source:** current `main` at `307bd3fb2530c1fc4cdc8dc71f7500f6a4df842a`, including [chat-17] remediation and `UX-PLAYBOOK-CHANGELOG.md` A2-01..A2-14 crosswalk, read alongside the earlier 33-item Audit 1 matrix. **FINAL VERDICT: BLOCKED (including source level).** This is an adversarial code/doc/test *source* comparison; no claimed checkout, live CI pass, browser, mobile host or assistive-tech run. At inspection, `main` CI run `39087619230` was queued, not successful.
+
+**Status interpretation:** `FIXED` means the specific source defect is now addressed as written—not that real-device or runtime tests passed. `STILL-OPEN` means a source counterexample, regression, required acceptance artifact or unverified cross-page contract remains. This ledger covers **all 5 reopened + 9 partial + 4 evidence-open Audit 1 rows and all 14 A2 rows** (32 distinct IDs). Earlier Audit 1 source-fixed statuses not requested for targeted re-verification remain subject to the original browser gate and have not been silently promoted.
+
+### Per-finding verdict (32/32)
+
+| ID | Source-level re-verdict | Evidence (main file:line) | Result / acceptance gap |
+|---|---|---|---|
+| C-02 | **STILL-OPEN** | `src/components/tpo/tpo-students-spreadsheet.tsx:209; src/components/tpo/tpo-spreadsheet-grid.tsx:143-149` | Still passes `mobileActionsCollapsible`, keeping roster actions inside collapsed `details` on phone; direct contradiction of the source test. |
+| C-03 | **FIXED** | `src/app/(authenticated)/learn/allAssignments/[assignmentId]/page.tsx:69-73; src/components/placements/placement-drive-workspace.tsx:409-412` | Named `target=_blank` survivors removed, 44px link bounds set; same-tab behavior now coded. |
+| C-05 | **STILL-OPEN** | `src/components/ui/use-overlay-webview.ts:5-20,52-59,81-89; tests/unit/ux-audit2-overlay-history.test.ts:4-21` | Global cleanup counter ignores next popstate, not an event identified with a closing overlay; helper unit tests cannot establish event/route ownership or pending nested host behavior. |
+| E-02 | **FIXED** | `src/app/(authenticated)/tpo/home/page.tsx:50-72,179-189` | All independently fetched Home sources now have catch/fallback; unavailable notice and dash KPI source semantics present. Fault-injection remains an external acceptance task. |
+| F-02 | **STILL-OPEN** | `scripts/check-ux-anti-drift.mjs:47-56,67-85; tests/ux-audit2-source.test.mjs:22-28,78-85` | Guard expansion exists but mandatory source suite has two deterministic failing assertions (RV-01), and main-to-main diff scanning cannot cover unchanged unsafe legacy routes. |
+| A-03 | **STILL-OPEN** | `src/components/ui/file-upload.tsx:29-57; docs/design-system/UX-PLAYBOOK.md:474-503` | Contracts and examples expanded, but picker transition does not clear former parent selection (RV-03); caller-level invalid/error fallback still optional. |
+| A-04 | **FIXED** | `docs/design-system/UX-PLAYBOOK.md:408-468` | Canonical form now calls injected versioned `onSave` with conflict/network messages, in-flight guard and error focus; executable implementation, not blank save. |
+| B-02 | **STILL-OPEN** | `src/components/ui/data-table.tsx:29-40,67-71` | Any slash-prefixed `rowHref` is treated as proof all mobile-hidden fields appear on detail route, but no actual field/permission recoverability contract is checked (RV-05). |
+| C-06 | **FIXED** | `src/components/ui/use-overlay-webview.ts:62-70; src/components/ui/dialog.tsx:40-51; drawer.tsx:34-43; bottom-sheet.tsx:39-48` | 240px clamp removed; actual visual viewport height/top and scrollable modal body/footer now in source. Physical keyboard geometry not accepted. |
+| C-07 | **FIXED** | `src/app/(authenticated)/mentor/calendar/page.tsx:44-113; src/app/(authenticated)/tpo/messages/page.tsx:160-177; src/app/(authenticated)/admin/module-access/page.tsx:65-73` | Cited controls now have 44px min height; no measured touch-rectangle/adjacency evidence. |
+| C-08 | **STILL-OPEN** | `src/components/ui/file-upload.tsx:29-57` | Reject path clears parent, but toggling `pickerUnavailable` after selecting a valid file never clears parent `onFiles` state; source admits stale submission (RV-03). |
+| D-02 | **STILL-OPEN** | `src/components/ui/form-field.tsx:3-23; docs/design-system/UX-PLAYBOOK.md:442-463` | Shared labelled/error control and demo good, but associations remain caller-optional, submit-focus/AT not demonstrated across real forms. |
+| D-04 | **STILL-OPEN** | `src/components/shell/route-announcer.tsx:12-26; src/components/ui/pagination.tsx:19-38` | Route/query live announcer source retained; no independent hydrated route transition/focus or screen-reader acceptance record. |
+| E-05 | **STILL-OPEN** | `src/components/ui/data-table.tsx:43-49,53-85` | Formatter evaluated once, but two responsive row trees are still serialized and no midrange phone 100-row DOM/hydration benchmark exists. |
+| E-01 | **STILL-OPEN** | `scripts/ux-capture-references.mjs:20-76; docs/design-system/UX-PLAYBOOK-CHANGELOG.md:201-218` | Capture recipe requires external four-role/eight-state fixtures but none is checked/approved; four reference pages unaccepted. |
+| E-03 | **STILL-OPEN** | `package.json:46-52; tests/ux-audit2-source.test.mjs:22-28,78-85` | Source test has two demonstrable failed predicates; latest same-revision CI was queued, not passed, and browser/AT evidence absent. |
+| E-04 | **STILL-OPEN** | `scripts/ux-capture-affected-callsites.mjs:11-69; tests/ux-playbook-compatibility.test.tsx:17-65` | 30-callsite capture harness exists, but no populated manifest, executed captures, keyboard interactions or visual baselines were provided. |
+| F-03 | **STILL-OPEN** | `scripts/ux-capture-references.mjs:20-76; docs/design-system/UX-PLAYBOOK-CHANGELOG.md:201-218` | No produced screenshot hashes or owner-approved golden fixtures; fail-closed script is not the requested accepted baseline. |
+| A2-01 | **FIXED** | `src/components/hr/recruiter-applicant-review-drawer.tsx:5-15; src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx:536-547` | Custom applicant dialog replaced with native shared Drawer, URL-driven history and accessible close path. |
+| A2-02 | **STILL-OPEN** | `src/components/ui/use-overlay-webview.ts:7-20,52-60,83-89; tests/unit/ux-audit2-overlay-history.test.ts:4-21` | Pure tests check counter consumption but not component lifetimes or whether real popstate belongs to the queued `history.back`; global counter may swallow unrelated route Back (RV-04). |
+| A2-03 | **FIXED** | `src/app/(authenticated)/mentor/calendar/page.tsx:44-52,59-112` | Always-visible search, shared 16px Input/Select, 44px form targets and phone FilterBar are in source. |
+| A2-04 | **FIXED** | `src/app/(authenticated)/tpo/messages/page.tsx:160-177; admin/module-access/page.tsx:65-73; college/contacts/page.tsx:33-44` | Named 40px target sites raised to 44px; broader site sweep still depends on guard/browser geometry. |
+| A2-05 | **FIXED** | `src/components/ui/permission-action.tsx:9-29` | Denied action renders reason by default, with explicit hide-sensitive choice for reviewed privacy cases. |
+| A2-06 | **FIXED** | `src/components/shell/app-shell.tsx:79-82,112-114` | Nested shell min-h-dvh and safe-area top padding now present. |
+| A2-07 | **FIXED** | `src/components/ui/third-party-link.tsx:11-14,28-46` | HTTPS/no credential validation and selectable destination prior to navigation in shared link. |
+| A2-08 | **FIXED** | `docs/design-system/UX-PLAYBOOK.md:408-468` | No-op try replaced with typed, awaited `onSave`; failure/conflict and in-flight behavior documented in working JSX. |
+| A2-09 | **FIXED** | `src/components/tpo/tpo-spreadsheet-grid.tsx:124-132` | Column resize/pin controls now min 44x44 with gap-2 and keyboard focus outline. |
+| A2-10 | **FIXED** | `src/components/ui/use-overlay-webview.ts:62-70; dialog.tsx:40-51; drawer.tsx:34-43` | No 240px clamp; visualViewport offset accounted for and scroll container added. Device observation remains required. |
+| A2-11 | **FIXED** | `src/components/ui/filter-bar.tsx:22-25,61-70` | Per-instance React useId supplies matching aria-controls/panel ID. |
+| A2-12 | **STILL-OPEN** | `src/components/ui/data-table.tsx:19-27; tests/ux-audit2-source.test.mjs:78-82; UX-PLAYBOOK.md:681-683` | `empty` remains optional and generic 'No records to show' is invented despite playbook requirement; required-prop assertion is false. |
+| A2-13 | **FIXED** | `src/components/ui/tooltip.tsx:4-17` | Icon-only summary gets contextual `label` prop or fallback accessible name. |
+| A2-14 | **STILL-OPEN** | `src/components/ui/toast.tsx:23-32,39-54` | Error auto-timeout removed, but `slice(-3)` silently evicts old persistent error when fourth toast arrives (RV-02). |
+
+**Disposition:** **16 FIXED**, **16 STILL-OPEN** of 32. By group: Audit 1 follow-ups 5 fixed / 13 open; Audit 2 A2-01..A2-14 11 fixed / 3 open. The reopened source-level C-02 defect and the required Audit 2 source-test contradiction are independently reproducible from literal source; remediation crosswalk assertions do not override this result.
+
+### Newly identified remediation regressions and acceptance defects
+
+**RV-01 — BLOCKER.** Evidence: `tests/ux-audit2-source.test.mjs:22-28,78-82; src/components/tpo/tpo-students-spreadsheet.tsx:209; src/components/ui/data-table.tsx:19-27`. **Issue:** Two current-revision source assertions cannot pass: roster test requires no `<TpoSpreadsheetGrid mobileActionsCollapsible` but the JSX still contains it; table test requires `/empty: ReactNode/` but prop is `empty?: ReactNode`. The `ux:audit:verify` gate runs `ux:audit:source`. **Required fix:** Restore visible roster actions, reconcile required/optional empty without fictional default, update tests only to a truthful normative contract; execute node --test and full gate on the exact commit.
+
+**RV-02 — MAJOR.** Evidence: `src/components/ui/toast.tsx:23-32`. **Issue:** New sticky-error policy is contradicted by the four-item `current.slice(-3)` cap. On fourth toast, oldest undismissed error is removed even though no dismiss control was activated; any timer for an evicted informational toast is also not cleared. **Required fix:** Do not evict persistent errors; prioritize persistent error list/stack, cap only timed informational entries, clear timers when evicting, add overflow tests with >=5 errors.
+
+**RV-03 — MAJOR.** Evidence: `src/components/ui/file-upload.tsx:29-57`. **Issue:** A valid file calls onFiles(files); subsequently switching pickerUnavailable=true replaces the picker with a status message but never invokes onFiles(null), leaving parent selection usable despite blocked picker. UI state and submission source diverge. **Required fix:** On capability/disabled transitions clear selected parent state and internal value (effect or explicit controlled contract), show blocking error and test valid→unavailable→submit/re-enable paths.
+
+**RV-04 — MAJOR.** Evidence: `src/components/ui/use-overlay-webview.ts:7-20,52-59,83-89; tests/unit/ux-audit2-overlay-history.test.ts:4-21`. **Issue:** The module-global integer cleanup counter tags NO history entry or source overlay. A pending cleanup can therefore consume the next unrelated popstate if expected history.back is interrupted, and tests only call a pure helper with invented Events, not installed hooks/real history. **Required fix:** Use marker/generation-specific history ownership and integration test nested A/B, concurrent user route navigation, repeated rapid Back, React StrictMode effect cleanups and pending nondismissible dialogs.
+
+**RV-05 — MAJOR.** Evidence: `src/components/ui/data-table.tsx:29-40,67-71`. **Issue:** All mobile-hidden columns disappear as soon as every rowHref is any slash-prefixed relative string, regardless of whether detail route actually renders the hidden field or grants view authority. A valid-looking URL is not a recoverability proof. **Required fix:** Require explicit column-level detail-field mapping/verified route schema or keep hidden column in disclosure; add per-field phone tests for missing/detail-denied routes.
+
+**RV-06 — MAJOR.** Evidence: `scripts/check-ux-anti-drift.mjs:47-56,73-84`. **Issue:** AST guard only checks a named source allowlist plus git diff origin/main...HEAD. On a main-branch CI build that diff is empty; unchanged pages evade the check. Conditional/dynamic `target` props are also not matched by the string-literal-only attribute rule. **Required fix:** Gate entire tracked UI tree with incremental waivers, parse/evaluate JSX target expressions conservatively, and test dynamically constructed popup/40px classes; require baseline waivers rather than silent omission.
+
+**New re-verification findings:** 6 (1 BLOCKER, 5 MAJOR; NIT 0). These cross-reference the still-open original IDs rather than inflating the 32-item original count. Highest-risk shared API changes are `DataTable` optional empty/default and hidden-data recoverability, `useOverlayWebview` global history ownership, `ToastProvider` nonpersistent capped errors, and `FileUpload` stale parent selection. `Dialog`, `Drawer`, `BottomSheet` and `FilterBar` now have safer size/ARIA primitives but must still be tested as nested real overlays under keyboard/back pressure; no screen-reader verification can be inferred from markup.
+
+### Deterministic source check for the claimed passing guard
+
+Both predicates in the checked `main` source are **false** before any browser/device considerations:
+
+```text
+C-02 source check: !/<TpoSpreadsheetGrid mobileActionsCollapsible/.test(tpo-students-spreadsheet.tsx)  => false
+A2-12 source check: /empty: ReactNode/.test(data-table.tsx [contains 'empty?: ReactNode'])       => false
+```
+
+`package.json:46-50` wires those assertions into `npm run ux:audit:source` and `npm run ux:audit:verify`. These results were independently checked against fetched main source strings, not presented as a completed Node/Vitest run. Execute the real commands after making truthful repairs and capture exit codes. **Do not delete required tests or erase feature behavior to force PASS.**
+
+### Explicit sign-off blockers and handoff
+
+1. Restore truly exposed essential TPO roster actions, reconcile `DataTable.empty` API/legacy copy without default invented text, fix red source checks and run the full UX guard + typecheck/lint/source + unit suite on the same revision.
+2. Replace counter-only global history suppression with route/marker-specific ownership and mount-level nested overlay tests. Verify real Android/iOS Back, React StrictMode, Escape, native dialog focus-return and compact keyboard viewport.
+3. Keep persistent error messages visible under multiple toasts, clear stale file-parent state on picker capability changes, prove every hidden mobile column is reachable on authorized detail UI, and expand anti-drift beyond an unreliable main-branch diff.
+4. Supply actually executed eight-state × four-reference × five-width captures, 30 affected callsite keyboard/visual checks, real screen-reader and WebView sessions, validated legacy-copy/contrast report, and owner-approved screenshot hashes. The newly authored capture *scripts* are not these outputs.
+
+**Re-verification final verdict: BLOCKED — NOT SIGNED-OFF even at source level.** Do not initiate page-level UX rollout or represent the changelog's 14/14 source-remediation entries as independent acceptance.
