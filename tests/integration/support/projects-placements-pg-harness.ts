@@ -268,11 +268,13 @@ async function requireProjectLearner(db: PgHarness, projectId: string,
     select p.id
       from project_instances p
       join college_memberships cm
-        on cm.college_id = p.college_id and cm.id = $2
+        on cm.college_id = p.college_id and cm.id = $2 and cm.college_id = $3
       join project_members pm
         on pm.project_id = p.id and pm.membership_id = cm.id
-     where p.id = $1 and pm.role = 'LEARNER' and cm.status = 'ACTIVE'
-     limit 1`, [projectId, learner.membershipId]);
+     where p.id = $1
+       and pm.role = 'LEARNER' and pm.ended_at is null and pm.can_mutate = true
+       and cm.status = 'ACTIVE'
+     limit 1`, [projectId, learner.membershipId, learner.collegeId]);
   if (!rows.length || learner.collegeId === null) {
     throw new Error("PROJ-HARNESS: learner is not an active member of this project and college");
   }
