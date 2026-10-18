@@ -12,7 +12,7 @@ export type MentorTaskHistoryQuery = z.infer<typeof mentorTaskHistoryQuerySchema
 export function mentorTaskHistoryPage(total:number,requested:number) {
   const pageSize=20;
   const totalPages=Math.max(1,Math.ceil(total/pageSize));
-  return {total,pageSize,totalPages,page:Math.min(requested,totalPages)};
+  return {total,pageSize,totalPages,page:Number.isSafeInteger(requested)?Math.max(1,Math.min(requested,totalPages)):1};
 }
 
 export function mentorTaskHistoryHref(query:Pick<MentorTaskHistoryQuery,"decision"|"search"|"page"> & {priority?:MentorTaskHistoryQuery["priority"];order?:MentorTaskHistoryQuery["order"]}) {

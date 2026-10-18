@@ -41,7 +41,9 @@ describe("REC-home-drives-38 employer-shared private resume grants",()=>{
   const client=read("src/components/placements/recruiter-resume-download.tsx");
   expect(page).toContain("selectedApplicant.resumeShared?");
   expect(model).toContain('share?.columns?.includes("resume")');
-  expect(model).toContain("resumeShared:shareResume");
+  expect(model).toContain('resumeShared:active && shareResume');
+  expect(model).toContain('const active = row.status === "SUBMITTED"');
+  expect(model).toContain('share?.columns?.includes("resume")');
   expect(client).toContain("useGuardedAction");
   expect(client).toContain('method:"POST"');
   expect(client).toContain("resume-grant");
