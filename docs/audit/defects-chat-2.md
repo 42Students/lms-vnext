@@ -60,3 +60,5 @@ Files updated: `chat2-company-memory-gap-parity.test.ts`, `chat2-company-trust-a
 | CH2-023 | Medium | TPO-settings-audit-55 | Recruiter college-grant directory accepted duplicated status/page filters by silently choosing the first, so its filter UI could disagree with the requested URL. Repeated selectors now show a scoped, actionable invalid-filter state. | `492313a` | `chat2-tpo-public-link-settings.test.ts` |
 
 No CI green or database-side multi-session verification is claimed for these authored tests.
+
+| CH2-024 | High | TPO-drive-workspace-40 | Result-import roster queries used last-write-wins `Map(applicationId,row)` on joined results: contradictory current results, emails or rolls could silently select a learner's arbitrary evidence before staging. Duplicate identical evidence is now deduplicated; conflicting evidence is excluded and not auto-staged. | `5089a4a`, `ed95eb8` | `chat2-ledger-round-import-and-scheduling.test.ts` (CI pending) |
