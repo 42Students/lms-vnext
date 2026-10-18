@@ -214,4 +214,60 @@ describe("Super Admin UX first-third rollout",()=>{
    expect(page).not.toContain("text-primary-text");
    expect(page).toContain("min-w-0");
  });
+ it("UX-admin-faculty-assignment-01 keeps Super Admin access and responsive styling",()=>{
+   const page=read("src/app/(authenticated)/admin/faculty-assignment/page.tsx");
+   expect(page).not.toContain("<main");
+   expect(page).not.toContain("text-primary-text");
+   expect(page).not.toContain("min-h-10");
+   expect(page).toContain("min-w-0");
+ });
+ it("UX-admin-features-01 keeps Super Admin access and responsive styling",()=>{
+   const page=read("src/app/(authenticated)/admin/features/page.tsx");
+   expect(page).not.toContain("<main");
+   expect(page).not.toContain("text-primary-text");
+   expect(page).not.toContain("min-h-10");
+   expect(page).toContain("min-w-0");
+ });
+ it("UX-admin-features-collegeId-01 keeps Super Admin access and responsive styling",()=>{
+   const page=read("src/app/(authenticated)/admin/features/[collegeId]/page.tsx");
+   expect(page).not.toContain("<main");
+   expect(page).not.toContain("text-primary-text");
+   expect(page).not.toContain("min-h-10");
+   expect(page).toContain("min-w-0");
+ });
+ it("UX-admin-features-collegeId-history-01 keeps Super Admin access and responsive styling",()=>{
+   const page=read("src/app/(authenticated)/admin/features/[collegeId]/history/page.tsx");
+   expect(page).not.toContain("<main");
+   expect(page).not.toContain("text-primary-text");
+   expect(page).not.toContain("min-h-10");
+   expect(page).toContain("min-w-0");
+ });
+ it("UX-admin-features-collegeId-students-membershipId-01 keeps Super Admin access and responsive styling",()=>{
+   const page=read("src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/page.tsx");
+   expect(page).not.toContain("<main");
+   expect(page).not.toContain("text-primary-text");
+   expect(page).not.toContain("min-h-10");
+   expect(page).toContain("min-w-0");
+ });
+ it("UX-admin-features-collegeId-students-membershipId-history-01 keeps Super Admin access and responsive styling",()=>{
+   const page=read("src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/history/page.tsx");
+   expect(page).not.toContain("<main");
+   expect(page).not.toContain("text-primary-text");
+   expect(page).not.toContain("min-h-10");
+   expect(page).toContain("min-w-0");
+ });
+ it("UX-admin-features-collegeId-trace-01 keeps Super Admin access and responsive styling",()=>{
+   const page=read("src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx");
+   expect(page).not.toContain("<main");
+   expect(page).not.toContain("text-primary-text");
+   expect(page).not.toContain("min-h-10");
+   expect(page).toContain("min-w-0");
+ });
+ it("UX-admin-hr-01 keeps Super Admin access and responsive styling",()=>{
+   const page=read("src/app/(authenticated)/admin/hr/page.tsx");
+   expect(page).not.toContain("<main");
+   expect(page).not.toContain("text-primary-text");
+   expect(page).not.toContain("min-h-10");
+   expect(page).toContain("min-w-0");
+ });
 });

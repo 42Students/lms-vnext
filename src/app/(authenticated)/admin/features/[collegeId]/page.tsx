@@ -113,10 +113,10 @@ export default async function SuperAdminCollegeModuleAccessPage({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <Link
         href="/admin/features"
-        className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline"
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline"
       >
         ← Feature Controls
       </Link>
@@ -143,7 +143,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
           </div>
           <Link
             href={`/admin/features/${encodeURIComponent(college.id)}/trace`}
-            className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:bg-primary-subtle"
           >
             Open learner access trace →
           </Link>
@@ -151,7 +151,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
       </section>
 
       <Link href={"/admin/features/"+encodeURIComponent(college.id)+"/history"}
-        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
         View audited college module changes →
       </Link>
       <section className="grid gap-3 md:grid-cols-3">
@@ -225,11 +225,11 @@ export default async function SuperAdminCollegeModuleAccessPage({
         <label className="grid gap-1 text-sm font-semibold text-body">Exact scope ID (optional)
           <input name="scopeId" type="text" defaultValue={result.scopeIdFilter ?? ""} placeholder="UUID; select scope type" maxLength={36} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground"/>
         </label>
-        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter overrides</button>
-        <Link href={"/admin/features/" + encodeURIComponent(college.id)} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Reset</Link>
+        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Filter overrides</button>
+        <Link href={"/admin/features/" + encodeURIComponent(college.id)} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Reset</Link>
       </form>
 
-      <section className="space-y-3">
+      <section className="min-w-0 space-y-3">
         <div>
           <h2 className="m-0 text-lg font-semibold text-foreground">
             College inheritance
@@ -366,7 +366,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
         <AcademicModuleScopeInventory scopes={academicScopes} page={academicPage}
    baseHref={"/admin/features/"+encodeURIComponent(college.id)}/>
       </section>
-      <section className="space-y-3">
+      <section className="min-w-0 space-y-3">
         <div>
           <h2 className="m-0 text-lg font-semibold text-foreground">
             Persisted lower-level overrides
@@ -499,7 +499,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
             {result.page > 1 ? (
               <Link
                 href={pageHref(result.page - 1)}
-                className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]"
               >
                 ← Previous
               </Link>
@@ -507,7 +507,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
             {result.page < result.totalPages ? (
               <Link
                 href={pageHref(result.page + 1)}
-                className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]"
               >
                 Next →
               </Link>
