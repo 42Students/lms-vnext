@@ -88,3 +88,21 @@ Final-delivery clients must send the most recent `updatedAt` returned by the ser
 |---|---|---|---|---|---|
 
 | PROJ-BREAK-submissions-12 | S1 | A router refresh could introduce a draft created by a different team member while this tab held unsaved local inputs. Automatically adopting its `updatedAt` would turn an unauthorized stale edit into an apparently current PATCH. | Do **not** advance any draft revision from refreshed props after mount. Only the response to this tab's successful POST/PATCH may advance the token; otherwise the user receives an explicit refresh-first error instead of overwriting teammate work (`bdcf057`). | `tests/unit/PROJ-BREAK-chat6-draft-revision-race.test.ts` (`7605b1a`) | Cloud CI + two-client integration required |
+
+
+## 2026-10-19 independent auth/second-third review — new findings
+
+| ID | Priority | Reproduction/source flaw | Committed correction | Regression | Acceptance status |
+|---|---|---|---|---|---|
+| AUTH-audit-metadata-01 | S2 audit integrity | `auditLogin(event,context,fields)` originally spread `...fields` **after** `component:"auth-audit"`, canonical `route` and derived `ipTag`. A future handler supplying metadata named `route` or `ipTag` could overwrite protected audit provenance with attacker-influenced values. | `src/modules/auth/http.ts`: spread free-form metadata first; security-owned fields overwrite them. Commit `8e596191`. | `tests/unit/chat6-auth-http-guard.test.ts` checks field-spoof attempt | Mocked logger unit authored, not executed; live structured-log pipeline remains unverified |
+| AUTH-device-date-01 | S2 account recovery | `/account/security` mapped persisted `created_at` / `last_seen_at` through `new Date(value).toISOString()` without a validity guard. A malformed/null imported timestamp throws `RangeError` and blocks all device revocation controls for that session list. | `deviceTimestampIso` pure parse guard; page mapping and `DeviceList` fall back to `Time unavailable`. Commits `35695668`, `2cec6a99`, `fa251c82`. | `tests/unit/chat6-auth-device-date-resilience.test.ts` | Unit authored, not run. Browser device rows and real DB fixtures pending |
+
+### Second-third Super Admin audit follow-through
+
+All 37 routes defined by the second third of `docs/orchestrator/ui-ux/pages-admin.md` were source retrieved. The item-by-item review/coverage evidence and known missing live action tests are in `docs/audit/coverage/chat6-admin-second-third-ledger.md`. New behavior-oriented tests cover inbox, people directory, organization/college scope, lecture halls, placements and CSV query models; **no claim of 37 passing UI tests or defect-free page actions** is made.
+
+### IIT Dharwad Projects breaker continuation
+
+Adversarial `PROJ-BREAK-backlog-12/13` and `PROJ-BREAK-readiness-12/13` test cases were added to cover forged task/sprint IDs, strict optimistic revision, selected-college permission, locked writes, current memberships, readiness event precedence and selected-tenant audit. They are source-contract plus Zod tests, **not** a real PostgreSQL race demonstration. Source review did not justify a new Projects defect row; a real replay of stale-user revocation, cross-college selector changes and simultaneous sprint pulls is still required.
+
+**Release status:** not signed off. Strict TypeScript, Vitest, PostgreSQL integration, browser/mobile focus and screen-reader journeys remain unexecuted per current no-CI builder directive. Do not equate authored tests with PASS.
