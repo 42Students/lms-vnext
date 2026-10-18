@@ -13,7 +13,7 @@ export function learnerQuizMobileState(
     label:"Unavailable",detail:"Quiz deadline is not configured",urgent:false,
   };
   const date=quiz.dueAt===null?null:Date.parse(quiz.dueAt);
-  const deadlinePassed=date!==null&&Number.isFinite(date)&&date<nowMs;
+  const deadlinePassed=date!==null&&Number.isFinite(date)&&date<=nowMs;
   if(quiz.status==="CLOSED"||deadlinePassed){
     return {label:"Closed",detail:quiz.attemptsUsed>0
       ? "Previous attempts remain in history; results may be unpublished"

@@ -77,3 +77,10 @@ All regressions are *authored, not yet run* under the owner’s no-CI-until-fina
 | LEARNER-RESOURCE-POST-11 | S2 material mutation parsed arbitrarily large HTTP JSON bodies before schema validation | `b7e69ed5`, `f9ed4238`: 16 KiB true UTF-8 streaming cap, malformed/nonobject body 400, same-origin route guard unchanged | `tests/unit/chat7-resource-material-json-boundary.test.ts`, route test; authored, not run |
 | LEARNER-RESOURCE-SCOPE-12 | S1 mounted client material list retained the old Section's private rows and could be overwritten by stale completed fetches after an acting-college switch | `b9d5fbf9` clears prior material/draft/edit state on URI change and guards async fetch, reload, error and notice completion against the active URI | `tests/unit/UX-chat7-resource-scope-privacy.test.ts`; real browser two-scope navigation still pending |
 | UX-LEARN-RESOURCE-10 | S3 resource links, Save/Remove/Edit controls and input targets could be below the 44px mobile target | `53888b69` raises all direct material controls to 44px | `tests/unit/UX-chat7-resource-material-touch-10.test.ts`; device signoff pending |
+
+## Mobile assessment and catalogue touch audit
+
+- **LEARNER-DEADLINE-MOBILE-14 (S2):** Learner quiz and assignment mobile status treated the due instant as still available because comparison was strictly `due < now`, whereas server submission/attempt gates close at equality. `a8d38913`, `8da3281c` align to `due <= now`, with exact 1ms boundary, no-deadline, published-results tests in `tests/unit/chat7-learner-mobile-deadline-boundaries.test.ts`.
+- **SA-COURSES-TOUCH-13 (S3):** Super Admin Course catalogue's Filter, CSV, Refresh, pagination, and Open learning controls rendered with 36–40px minimum heights on touch devices. `0b218337` raises them to 44px; `tests/unit/chat7-superadmin-course-catalogue-touch-pagination.test.ts` verifies touch targets and safe catalogue sorting/page clamping.
+
+Authored-only under the owner’s no-CI policy; phone/browser acceptance remains pending.
