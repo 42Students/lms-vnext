@@ -1,7 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import { recruiterInvitePreviewDisposition,RECRUITER_INVITE_LOAD_ERROR_HEADING } from "@/modules/placements/recruiter-invite-preview-disposition-model";
 
@@ -15,17 +20,17 @@ type Invite = {
 };
 type State = "loading" | "ready" | "invalid" | "load_error" | "declined" | "joined";
 
-const button =
-  "inline-flex min-h-11 w-full items-center justify-center rounded-md border border-border px-4 py-2 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50";
-const primary = button + " bg-primary text-on-primary";
-const secondary = button + " bg-surface text-foreground hover:bg-surface-secondary";
+const actionLink="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-primary bg-primary px-4 py-2 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]";
 
 export function RecruiterInviteLanding({ token }: { token: string }) {
   const [state, setState] = useState<State>("loading");
   const [retrySequence,setRetrySequence] = useState(0);
   const [invite, setInvite] = useState<Invite | null>(null);
   const [busy, setBusy] = useState(false);
+  const busyRef=useRef(false);
+  const errorRef=useRef<HTMLDivElement>(null);
   const [actionError, setActionError] = useState("");
+  useEffect(()=>{if(actionError)errorRef.current?.focus();},[actionError]);
   const [codeSent,setCodeSent]=useState(false);
   const [code,setCode]=useState("");
   const [name,setName]=useState("");
@@ -55,6 +60,8 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
   }, [token,retrySequence]);
 
   async function answer(kind: "not-hiring" | "unsubscribe") {
+    if(busyRef.current)return;
+    busyRef.current=true;
     setBusy(true);
     setActionError("");
     try {
@@ -67,12 +74,13 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
       if(error instanceof FriendlyFetchError && error.status===404)setState("invalid");
       else setActionError(error instanceof Error?error.message:"That did not work. Please try again.");
     } finally {
+      busyRef.current=false;
       setBusy(false);
     }
   }
 
   async function acceptCode(){
-    if(busy)return;
+    if(busyRef.current)return;
     if(!name.trim()){setActionError("Enter your name");return;}
     if(!code.trim()){setActionError("Enter the 6-digit code");return;}
     if(!/^[0-9]{6}$/.test(code)){setActionError("The code has 6 digits");return;}
@@ -80,6 +88,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
     if(digits && digits.length!==10 && !(digits.length===12&&digits.startsWith("91"))){
       setActionError("Enter a valid 10-digit mobile number, or leave it blank.");return;
     }
+    busyRef.current=true;
     setBusy(true);setActionError("");
     try{
       await apiFetch<void>("/api/public/recruiter-invite/"+encodeURIComponent(token)+"/accept",{
@@ -93,10 +102,11 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
         ?"That code did not work. Check the latest email or send a new code."
         :error instanceof Error?error.message:"Couldn't join. Please try again.");
     }
-    finally{setBusy(false);}
+    finally{busyRef.current=false;setBusy(false);}
   }
   async function sendCode(){
-    if(busy)return;
+    if(busyRef.current)return;
+    busyRef.current=true;
     setBusy(true);setActionError("");
     try{
       await apiFetch<void>("/api/public/recruiter-invite/"+encodeURIComponent(token)+"/send-code",{
@@ -107,24 +117,20 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
     }catch(error){
       if(error instanceof FriendlyFetchError && error.status===404)setState("invalid");
       else setActionError(error instanceof Error?error.message:"We couldn't send the code. Please try again.");
-    }finally{setBusy(false);}
+    }finally{busyRef.current=false;setBusy(false);}
   }
 
   const shell = (children: React.ReactNode) => (
-    <main className="flex min-h-screen items-center justify-center bg-surface-secondary p-4">
-      <section className="w-full max-w-md rounded-xl border border-border bg-surface p-6 shadow-sm">
+    <main className="flex min-h-dvh min-w-0 items-center justify-center bg-surface-secondary px-4 py-8 sm:py-12">
+      <Card as="section" className="w-full max-w-md">
         {children}
-      </section>
+      </Card>
     </main>
   );
 
   if (state === "loading") {
     return shell(
-      <div role="status" className="space-y-3">
-        <div className="h-7 w-3/4 animate-pulse rounded bg-border" />
-        <div className="h-4 w-full animate-pulse rounded bg-border" />
-        <div className="h-4 w-5/6 animate-pulse rounded bg-border" />
-      </div>,
+      <Skeleton variant="form" count={3} label="Loading invitation…" />,
     );
   }
 
@@ -132,9 +138,9 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
     return shell(<div className="space-y-4 text-center">
       <h1 className="text-xl font-semibold text-foreground">{RECRUITER_INVITE_LOAD_ERROR_HEADING}</h1>
       <p className="text-sm text-muted-foreground">Check your connection and try again. Your invitation has not been consumed.</p>
-      <button type="button" className={primary} onClick={()=>{
+      <Button type="button" className="w-full" onClick={()=>{
         setState("loading");setRetrySequence(i=>i+1);
-      }}>Retry</button>
+      }}>Retry</Button>
     </div>);
   }
 
@@ -153,7 +159,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
     return shell(<div className="text-center space-y-3">
       <h1 className="text-xl font-semibold text-foreground">You now have access to {invite.collegeName}</h1>
       <p className="text-sm text-muted-foreground">Sign in with your work email, {invite.contactEmail}. We&apos;ll email you a code each time.</p>
-      <Link className={primary} href="/login">Sign in</Link>
+      <Link className={actionLink} href="/login">Sign in</Link>
     </div>);
   }
   if (state === "declined") {
@@ -186,42 +192,42 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
       <div className="mt-5 space-y-3">
         <label className="block text-sm font-semibold text-foreground">
           Work email
-          <input type="email" readOnly value={invite.contactEmail??""} autoComplete="email"
-            className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-body"/>
+          <Input type="email" readOnly value={invite.contactEmail??""} autoComplete="email"
+            className="mt-1 w-full"/>
           <span className="mt-1 block text-xs font-normal text-muted-foreground">
             {"From your invitation. You'll sign in with it."}
           </span>
         </label>
         <label className="block text-sm font-semibold text-foreground">Your name
-         <input required maxLength={150} autoComplete="name" value={name}
+         <Input required maxLength={150} autoComplete="name" value={name}
            onChange={event=>setName(event.target.value)}
-           className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3"/>
+           className="mt-1 w-full"/>
         </label>
         <label className="block text-sm font-semibold text-foreground">Designation (optional)
-         <input maxLength={100} value={designation} onChange={event=>setDesignation(event.target.value)}
-           className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3"/>
+         <Input maxLength={100} value={designation} onChange={event=>setDesignation(event.target.value)}
+           className="mt-1 w-full"/>
         </label>
         <label className="block text-sm font-semibold text-foreground">Mobile (optional)
-         <input type="tel" autoComplete="tel" maxLength={30} value={mobile}
+         <Input type="tel" autoComplete="tel" maxLength={30} value={mobile}
            onChange={event=>setMobile(event.target.value)}
-           className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3"/>
+           className="mt-1 w-full"/>
          <span className="mt-1 block text-xs font-normal text-muted-foreground">Only for the placement cell to call you. You never sign in with it.</span>
         </label>
         {!codeSent?(
-          <button type="button" className={primary} disabled={busy} onClick={()=>void sendCode()}>
+          <Button type="button" className="w-full" loading={busy} onClick={()=>void sendCode()}>
             {busy?"Sending…":"Send me a code"}
-          </button>
+          </Button>
         ):(
           <>
             <label className="block text-sm font-semibold text-foreground">
               Code sent to {invite.contactEmail}
-              <input type="text" inputMode="numeric" autoComplete="one-time-code"
+              <Input type="text" inputMode="numeric" autoComplete="one-time-code"
                 pattern="[0-9]{6}" maxLength={6} value={code} onChange={event=>setCode(event.target.value)}
-                className="mt-2 min-h-11 w-full rounded-md border border-border bg-surface px-3"/>
+                className="mt-2 w-full"/>
             </label>
-            <button className={primary} type="button" disabled={busy}
-              onClick={()=>void acceptCode()}>{busy?"Joining…":"Join "+invite.collegeName+" placements"}</button>
-            <button className={secondary} type="button" disabled={busy} onClick={()=>void sendCode()}>Send a new code</button>
+            <Button className="w-full" type="button" loading={busy}
+              onClick={()=>void acceptCode()}>{busy?"Joining…":"Join "+invite.collegeName+" placements"}</Button>
+            <Button className="w-full" variant="secondary" type="button" disabled={busy} onClick={()=>void sendCode()}>Send a new code</Button>
           </>
         )}
         <p className="text-xs text-muted-foreground">
@@ -229,19 +235,19 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
         </p>
       </div>
 
-      {actionError ? <p role="alert" className="mt-4 text-sm text-destructive">{actionError}</p> : null}
+      {actionError ? <div ref={errorRef} tabIndex={-1} className="mt-4 outline-none"><InlineNotice tone="error" message={actionError} /></div> : null}
 
       <div className="mt-5 space-y-2">
-        <button className={secondary} disabled={busy} onClick={() => void answer("not-hiring")}>
+        <Button type="button" className="w-full" variant="secondary" disabled={busy} onClick={() => void answer("not-hiring")}>
           Not hiring from this college this season
-        </button>
-        <button className={secondary} disabled={busy} onClick={() => void answer("unsubscribe")}>
+        </Button>
+        <Button type="button" className="w-full" variant="secondary" disabled={busy} onClick={() => void answer("unsubscribe")}>
           Stop contacting me
-        </button>
+        </Button>
       </div>
 
       <p className="mt-5 text-center text-xs text-muted-foreground">
-        Already have an account? <Link className="text-primary-text hover:underline" href="/login">Sign in</Link>
+        Already have an account? <Link className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" href="/login">Sign in</Link>
       </p>
     </>,
   );
