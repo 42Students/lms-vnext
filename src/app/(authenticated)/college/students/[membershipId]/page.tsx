@@ -22,7 +22,7 @@ export default async function CollegeStudentDetailPage({ params, searchParams }:
   return <div className="space-y-6">
     <PageHeader eyebrow="College Admin · Students" title={data.person.name}
       description="Read-only college-owned learner academic record; private identity and documents are excluded."
-      actions={<Link href="/college/students" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">Back to students</Link>} />
+      actions={<Link href="/college/students" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Back to students</Link>} />
     <section className="rounded-xl border border-border bg-surface p-5">
       <h2 className="font-semibold text-foreground">Student record</h2>
       <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
@@ -45,7 +45,7 @@ export default async function CollegeStudentDetailPage({ params, searchParams }:
             <option value="WITHDRAWN">Withdrawn</option>
           </select>
         </label>
-        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Filter</button>
+        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] inline-flex items-center">Filter</button>
       </form>
       <p className="mt-2 text-xs text-muted-foreground">{data.enrollmentTotal} total persisted enrollment(s), including other lifecycle statuses.</p>
       {data.enrollments.length === 0 ? <p className="mt-3 text-sm text-body">No program enrollment matches the selected lifecycle status.</p> :

@@ -20,7 +20,7 @@ export default async function CollegeActivityPage({
   searchParams,
 }: { searchParams: Promise<RawSearch> }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership) return <main className="space-y-3 p-6"><PageHeader eyebrow="College Admin" title="Activity Log"/><p role="alert" className="rounded border border-border p-4">Admin not assigned to a college. Ask a Super Admin to assign a college before you can view the audit trail.</p></main>;
+  if (!context.membership) return <div className="space-y-3 p-6"><PageHeader eyebrow="College Admin" title="Activity Log"/><p role="alert" className="rounded border border-border p-4">Admin not assigned to a college. Ask a Super Admin to assign a college before you can view the audit trail.</p></div;
   const parsed = collegeActivityQuerySchema.safeParse(
     activitySearchParams(await searchParams),
   );
@@ -28,7 +28,7 @@ export default async function CollegeActivityPage({
     <PageHeader eyebrow="College Admin" title="Activity Log" />
     <ErrorState title="Invalid activity filters"
       description="The actor, entity, date range or pagination cursor is invalid. No audit events were loaded."
-      action={<Link href="/college/activity" className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>} />
+      action={<Link href="/college/activity" className="font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] min-h-11 inline-flex items-center">Clear filters</Link>} />
   </div>;
   const data = await listCollegeActivity(context, parsed.data);
   const exportParams = new URLSearchParams();
@@ -39,9 +39,9 @@ export default async function CollegeActivityPage({
   return <div className="min-w-0 overflow-x-clip space-y-6">
     <PageHeader eyebrow="College Admin · Operations" title="Activity Log"
       description="What changed across your college. Important items first, with focused categories and the complete immutable audit trail."
-      actions={<div className="flex flex-wrap gap-3 items-center"><Link href="/college/projects/audit" className="rounded border border-border px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)]">View project activity</Link><a href={"/api/activity/college-export" +
+      actions={<div className="flex flex-wrap gap-3 items-center"><Link href="/college/projects/audit" className="rounded border border-border px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] min-h-11 inline-flex items-center">View project activity</Link><a href={"/api/activity/college-export" +
         (exportParams.size ? "?" + exportParams.toString() : "")}
-        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Export filtered CSV (max 1,000)
       </a></div>} />
     <nav aria-label="Activity feed categories" className="flex flex-wrap gap-2">
@@ -74,15 +74,15 @@ export default async function CollegeActivityPage({
     <div className="flex flex-wrap items-center gap-3 text-sm">
       <span className="text-muted-foreground">IST date shortcuts:</span>
       <Link href={collegeActivityTodayHref(data.query,new Date())}
-        className="rounded-md border border-border px-3 py-2 font-semibold text-[var(--lms-teal-deep)]">Today</Link>
+        className="rounded-md border border-border px-3 py-2 font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] min-h-11 inline-flex items-center">Today</Link>
       <Link href={collegeActivityRecentHref(data.query,7,new Date())}
-        className="rounded-md border border-border px-3 py-2 font-semibold text-[var(--lms-teal-deep)]">Last 7 days</Link>
+        className="rounded-md border border-border px-3 py-2 font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] min-h-11 inline-flex items-center">Last 7 days</Link>
       <Link href={collegeActivityRecentHref(data.query,30,new Date())}
-        className="rounded-md border border-border px-3 py-2 font-semibold text-[var(--lms-teal-deep)]">Last 30 days</Link>
+        className="rounded-md border border-border px-3 py-2 font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] min-h-11 inline-flex items-center">Last 30 days</Link>
       <Link href={collegeActivityAllTimeHref(data.query)}
-        className="rounded-md border border-border px-3 py-2 font-semibold text-[var(--lms-teal-deep)]">All time</Link>
+        className="rounded-md border border-border px-3 py-2 font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] min-h-11 inline-flex items-center">All time</Link>
       <Link href={collegeActivityHref({...data.query})}
-        className="rounded-md border border-border px-3 py-2 font-semibold text-[var(--lms-teal-deep)]">Refresh</Link>
+        className="rounded-md border border-border px-3 py-2 font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] min-h-11 inline-flex items-center">Refresh</Link>
     </div>
     <section className="rounded-xl border border-border bg-surface p-4 sm:p-5" aria-label="Activity log filters">
       <form action="/college/activity" method="get" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -160,10 +160,10 @@ export default async function CollegeActivityPage({
           </select>
         </label>
         <div className="flex flex-wrap items-end gap-2 sm:col-span-2 lg:col-span-4">
-          <button type="submit" className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-foreground">
+          <button type="submit" className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] inline-flex items-center">
             Apply filters
           </button>
-          <Link href="/college/activity" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+          <Link href="/college/activity" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
             Clear
           </Link>
         </div>
@@ -195,7 +195,7 @@ export default async function CollegeActivityPage({
             </td>
             <td className="px-4 py-4">
               <Link href={"/college/activity/" + encodeURIComponent(event.id)}
-                className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+                className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
                 View event
               </Link>
             </td>
@@ -206,7 +206,7 @@ export default async function CollegeActivityPage({
     <nav aria-label="Activity history pagination" className="flex items-center justify-between gap-3 text-sm">
       <p className="text-muted-foreground">Up to {data.query.pageSize ?? "25"} events per page</p>
       {data.nextCursor ? <Link href={collegeActivityHref(data.query, data.nextCursor)}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Older activity
       </Link> : <span className="text-muted-foreground">No older matching events</span>}
     </nav>
