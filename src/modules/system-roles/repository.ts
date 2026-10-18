@@ -4,6 +4,10 @@ import { asc, eq, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { systemRoles, users } from "@/db/schema";
 import type { SystemRole } from "@/modules/identity/constants";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
+import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import type {RequestContext} from "@/modules/identity/context";
 import {
   SystemRoleServiceError,
   type PersistBootstrapUserInput,
@@ -225,13 +229,36 @@ export const drizzleSystemRoleRepository: SystemRoleRepository = {
     return user ?? null;
   },
 
-  async assignRole(userId, role) {
-    const db = getDb();
-    await db
-      .insert(systemRoles)
-      .values({ userId, role })
-      .onConflictDoNothing();
-
-    return loadRoles(db, userId);
+  async assignRole(userId:string,role:SystemRole,context:RequestContext) {
+    const db=getDb();
+    return db.transaction(async tx=>{
+      // The request-snapshot permission alone is insufficient: role removal,
+      // platform disablement and membership revocation must win concurrent
+      // races against any attempted Super Admin privilege escalation.
+      await assertPersistedPlatformPermission(tx,context,"system-role.manage");
+      const [target]=await tx.select({id:users.id,platformStatus:users.platformStatus})
+        .from(users).where(eq(users.id,userId)).for("share").limit(1);
+      if(!target)throw new SystemRoleServiceError("USER_NOT_FOUND");
+      if(target.platformStatus!=="ACTIVE")
+        throw new SystemRoleServiceError("USER_DISABLED");
+      const inserted=await tx.insert(systemRoles)
+        .values({userId:target.id,role}).onConflictDoNothing()
+        .returning({role:systemRoles.role});
+      if(inserted.length){
+        // Only a genuinely new grant creates an audit event, not idempotent
+        // retries or repeated double-clicks.
+        await recordActivityEventInTransaction(tx,context,{
+          eventType:ACTIVITY_EVENT_TYPES.PLATFORM_SYSTEM_ROLE_ASSIGNED,
+          importance:"CRITICAL",
+          subjectType:"user",subjectId:target.id,subjectLabel:role,
+          summary:"System role assigned",
+          metadata:{after:{role}},
+        });
+      }
+      const roleRows=await tx.select({role:systemRoles.role})
+        .from(systemRoles).where(eq(systemRoles.userId,target.id))
+        .orderBy(asc(systemRoles.role));
+      return roleRows.map(row=>row.role);
+    });
   },
 };
