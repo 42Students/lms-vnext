@@ -98,11 +98,11 @@ export async function ProjectAdminAtRiskPage({
           No at-risk project workspaces match these filters.
         </section>
       ) : (
-        <div className="space-y-3">
+        <div className="divide-y divide-border">
           {result.items.map((project) => (
             <article
               key={project.id}
-              className="rounded-xl border border-border bg-surface p-5"
+              className="py-5"
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
