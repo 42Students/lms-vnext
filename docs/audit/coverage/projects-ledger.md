@@ -531,7 +531,7 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/app/api/mentor/calendar/export/route.ts` | **METHOD AUDIT PENDING** | **GAP** | Same-origin, unauthenticated, tenant, invalid body, GET-no-write, conflicts |
 | `src/app/api/mentor/notifications/[notificationId]/read/route.ts` | **METHOD AUDIT PENDING** | **GAP** | Same-origin, unauthenticated, tenant, invalid body, GET-no-write, conflicts |
 | `src/app/api/mentor/notifications/read-all/route.ts` | **METHOD AUDIT PENDING** | **GAP** | Same-origin, unauthenticated, tenant, invalid body, GET-no-write, conflicts |
-| `src/app/api/mentor/reports/export/route.ts` | **METHOD AUDIT PENDING** | **GAP** | Same-origin, unauthenticated, tenant, invalid body, GET-no-write, conflicts |
+| `src/app/api/mentor/reports/export/route.ts` | `GET` | `tests/unit/PROJ-BREAK-chat14-mentor-export-routes.test.ts` | Mocked service runtime HTTP contract for duplicate/unknown filters, forged project ID, valid scoped filter and no-store CSV; **unrun**. Real auth, DB, tenant replay and load **GAP** |
 | `src/app/api/mentor/reviews/export/route.ts` | **METHOD AUDIT PENDING** | **GAP** | Same-origin, unauthenticated, tenant, invalid body, GET-no-write, conflicts |
 | `src/app/api/mentor/sprint-progress/export/route.ts` | **METHOD AUDIT PENDING** | **GAP** | Same-origin, unauthenticated, tenant, invalid body, GET-no-write, conflicts |
 | `src/app/api/mentor/task-review-history/export/route.ts` | **METHOD AUDIT PENDING** | **GAP** | Same-origin, unauthenticated, tenant, invalid body, GET-no-write, conflicts |
@@ -553,11 +553,11 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/app/api/projects/[projectId]/members/[memberId]/route.ts` | **METHOD AUDIT PENDING** | **GAP** | Same-origin, unauthenticated, tenant, invalid body, GET-no-write, conflicts |
 | `src/app/api/projects/[projectId]/members/route.ts` | **METHOD AUDIT PENDING** | **GAP** | Same-origin, unauthenticated, tenant, invalid body, GET-no-write, conflicts |
 | `src/app/api/projects/[projectId]/mentor-activity-export/route.ts` | **METHOD AUDIT PENDING** | **GAP** | Same-origin, unauthenticated, tenant, invalid body, GET-no-write, conflicts |
-| `src/app/api/projects/[projectId]/mentor-board-export/route.ts` | **METHOD AUDIT PENDING** | **GAP** | Same-origin, unauthenticated, tenant, invalid body, GET-no-write, conflicts |
-| `src/app/api/projects/[projectId]/mentor-delivery-review-export/route.ts` | **METHOD AUDIT PENDING** | **GAP** | Same-origin, unauthenticated, tenant, invalid body, GET-no-write, conflicts |
+| `src/app/api/projects/[projectId]/mentor-board-export/route.ts` | `GET` | `tests/unit/PROJ-BREAK-chat14-mentor-export-routes.test.ts` | Mocked service runtime HTTP contract for duplicate/unknown filters, forged project ID, valid scoped filter and no-store CSV; **unrun**. Real auth, DB, tenant replay and load **GAP** |
+| `src/app/api/projects/[projectId]/mentor-delivery-review-export/route.ts` | `GET` | `tests/unit/PROJ-BREAK-chat14-mentor-export-routes.test.ts` | Mocked service runtime HTTP contract for duplicate/unknown filters, forged project ID, valid scoped filter and no-store CSV; **unrun**. Real auth, DB, tenant replay and load **GAP** |
 | `src/app/api/projects/[projectId]/mentor-overview/route.ts` | **METHOD AUDIT PENDING** | **GAP** | Same-origin, unauthenticated, tenant, invalid body, GET-no-write, conflicts |
 | `src/app/api/projects/[projectId]/mentor-resources-export/route.ts` | **METHOD AUDIT PENDING** | **GAP** | Same-origin, unauthenticated, tenant, invalid body, GET-no-write, conflicts |
-| `src/app/api/projects/[projectId]/mentor-sprint-summary-export/route.ts` | **METHOD AUDIT PENDING** | **GAP** | Same-origin, unauthenticated, tenant, invalid body, GET-no-write, conflicts |
+| `src/app/api/projects/[projectId]/mentor-sprint-summary-export/route.ts` | `GET` | `tests/unit/PROJ-BREAK-chat14-mentor-export-routes.test.ts` | Mocked service runtime HTTP contract for duplicate/unknown filters, forged project ID, valid scoped filter and no-store CSV; **unrun**. Real auth, DB, tenant replay and load **GAP** |
 | `src/app/api/projects/[projectId]/readiness/override/route.ts` | **METHOD AUDIT PENDING** | **GAP** | Same-origin, unauthenticated, tenant, invalid body, GET-no-write, conflicts |
 | `src/app/api/projects/[projectId]/readiness/route.ts` | **METHOD AUDIT PENDING** | **GAP** | Same-origin, unauthenticated, tenant, invalid body, GET-no-write, conflicts |
 | `src/app/api/projects/[projectId]/releases/[releaseId]/route.ts` | **METHOD AUDIT PENDING** | **GAP** | Same-origin, unauthenticated, tenant, invalid body, GET-no-write, conflicts |
