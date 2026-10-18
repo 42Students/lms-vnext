@@ -556,4 +556,23 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   expect(report).not.toContain('min-w-[66rem]');
  });
 
+ it("UX-tpo-reports-accreditation-02 renders both eleven-field and six-field tables as cards without losing the authoritative export",()=>{
+  const page=source("src/app/(authenticated)/tpo/reports/accreditation/page.tsx");
+  expect(page).toContain('import { DataTable } from "@/components/ui/data-table"');
+  expect((page.match(/<DataTable/g)??[])).toHaveLength(2);
+  expect(page).toContain('caption="Placed students in this batch"');
+  expect(page).toContain('caption="Accreditation evidence preview"');
+  expect((page.match(/mobilePriority:"primary"/g)??[])).toHaveLength(2);
+  expect((page.match(/mobilePriority:"secondary"/g)??[])).toHaveLength(15);
+  expect(page).toContain('empty={<p role="status">No placed students were recorded in this batch.</p>}');
+  expect(page).toContain('empty={<p role="status">No reportable placement season was found.');
+  expect(page).toContain("accreditationPackageLpa(student.packageInr)");
+  expect(page).toContain("accreditationOfferStatusLabel(student.offerStatus)");
+  expect(page).toContain("accreditationJoiningLabel(student.joining)");
+  expect(page).toContain("studentReport.rows.slice(0,50)");
+  expect(page).toContain("overview.slice(0,50)");
+  expect(page).not.toContain("min-w-[52rem]");
+  expect(page).not.toContain("min-w-[46rem]");
+ });
+
 });
