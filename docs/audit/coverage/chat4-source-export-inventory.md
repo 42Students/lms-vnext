@@ -113,3 +113,17 @@ Source-scan inventory of the assigned module directories; **PENDING is not verif
 | `src/modules/academics/college-structure-directory-service.ts` | `listCollegeClasses`, `listCollegeElectives` | PENDING |
 | `src/modules/academics/college-student-section-move-model.ts` | `studentSectionMemberIdSchema`, `studentSectionMoveSchema`, `requiresStudentSectionMove`, `studentSectionMoveMessage` | PENDING |
 | `src/modules/academics/college-student-section-move-service.ts` | `CollegeStudentSectionMoveError`, `collegeStudentSectionOptions`, `moveCollegeStudentSection` | PENDING |
+| `src/modules/academics/college-term-mapping-model.ts` | `collegeTermCourseAddSchema`, `collegeTermCourseUpdateSchema`, `reorderTermCourseIds`, `collegeTermCourseUnmapSchema`, `collegeTermCourseIdSchema`, `nextTermCourseOrder`, `collegeTermMappingErrorMessage`, `TERM_MAPPING_COPY` | PENDING |
+| `src/modules/academics/college-term-mapping-service.ts` | `CollegeTermMappingError`, `listCollegeTermMappings`, `addCollegeTermMapping`, `updateCollegeTermMapping`, `removeCollegeTermMapping`, `addCollegeTermMappings` | PENDING |
+| `src/modules/academics/constants.ts` | `PROGRAM_STATUSES`, `ProgramStatus`, `ACADEMIC_PERIOD_STATUSES`, `AcademicPeriodStatus`, `COHORT_STATUSES`, `CohortStatus`, `SECTION_STATUSES`, `SectionStatus`, `LEARNER_PROGRAM_ENROLLMENT_STATUSES`, `LearnerProgramEnrollmentStatus`, `SECTION_ENROLLMENT_STATUSES`, `SectionEnrollmentStatus`, `SECTION_FACULTY_ROLES`, `SectionFacultyRole`, `SCHEDULE_EVENT_STATUSES`, `ScheduleEventStatus` | PENDING |
+| `src/modules/academics/enrollment-service.ts` | `listLearnerProgramEnrollments`, `createLearnerProgramEnrollment`, `transitionLearnerProgramEnrollment` | PENDING |
+| `src/modules/academics/errors.ts` | `AcademicsServiceErrorCode`, `AcademicsServiceError`, `postgresConstraintName` | PENDING |
+| `src/modules/academics/faculty-assignment-service.ts` | `listSectionFacultyAssignments`, `createSectionFacultyAssignment`, `endSectionFacultyAssignment` | PENDING |
+| `src/modules/academics/learner-calendar-filter-model.ts` | `learnerCalendarQuerySchema`, `resolveOwnLearnerCalendarFilters` | PENDING |
+| `src/modules/academics/learner-calendar-window-model.ts` | `learnerCalendarVisibleWindow` | PENDING |
+| `src/modules/academics/learner-ist-schedule-model.ts` | `learnerScheduleIstDay`, `learnerScheduleDateFromDay`, `learnerIstScheduleToday`, `eventsForLearnerIstScheduleDay` | PENDING |
+| `src/modules/academics/learner-schedule-clock-model.ts` | `learnerScheduleClock` | PENDING |
+| `src/modules/academics/learner-schedule-day-ics-model.ts` | `learnerScheduleDayIcs` | PENDING |
+| `src/modules/academics/learner-schedule-filter-reset-model.ts` | `learnerScheduleResetFilters` | PENDING |
+| `src/modules/academics/learner-schedule-kind-filter-model.ts` | `LearnerScheduleKind`, `filterLearnerScheduleByKind` | PENDING |
+| `src/modules/academics/learner-schedule-search-model.ts` | `filterLearnerScheduleBySearch` | PENDING |
