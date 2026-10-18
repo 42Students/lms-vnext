@@ -31,6 +31,7 @@ import {
   stagePlacementRoundResult,
 } from "@/modules/placements/result-service";
 import { decidePlacementScreening } from "@/modules/placements/screening-service";
+import { recordTpoDriveSelections } from "@/modules/placements/tpo-drive-selection-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { enableSeedLearnerPlacementAccess } from "../support/w04-placement-access-fixture";
 
@@ -88,6 +89,7 @@ async function cleanup() {
   await pool.query(
     "delete from activity_events",
   );
+  await pool.query("delete from placement_drive_selections");
   await pool.query(
     "delete from placement_joining_history",
   );
@@ -303,6 +305,39 @@ describe("Placement P8 offers and joining", () => {
     );
     expect(rows.rows).toEqual([{status:"ISSUED"}]);
     expect(job.collegeId).toBe(SEED_IDS.collegeA);
+  });
+
+  it("PLACEMENTS-SELECTION-IDEMP-DB-01 retries an identical selection without a second audit or timestamp change",async()=>{
+    const {job,application}=await preparePassedApplication();
+    const request={action:"RECORD" as const,entries:[{
+      applicationId:application.id,roleTitle:"Offer engineer",annualCtcInr:900_000,
+    }]};
+    const first=await recordTpoDriveSelections(tpo,job.id,request);
+    expect(first.recorded).toBe(1);
+    expect(first.selectionIds).toHaveLength(1);
+    const before=await pool.query<{
+      recorded_at:string;
+    }>("select recorded_at::text from placement_drive_selections where id = $1",[first.selectionIds[0]]);
+    expect(before.rowCount).toBe(1);
+    const repeated=await recordTpoDriveSelections(tpo,job.id,request);
+    expect(repeated).toEqual(first);
+    const after=await pool.query<{
+      recorded_at:string;
+    }>("select recorded_at::text from placement_drive_selections where id = $1",[first.selectionIds[0]]);
+    expect(after.rows).toEqual(before.rows);
+    const audits=await pool.query<{count:number}>(
+      "select count(*)::integer as count from activity_events where event_type = $1 and subject_id = $2",
+      ["PLACEMENTS_TPO_SELECTION_RECORDED",job.id],
+    );
+    expect(audits.rows[0]?.count).toBe(1);
+
+    const foreignTpo:RequestContext={...tpo,membership:{...tpo.membership!,
+      id:SEED_IDS.facultyCollegeBMembership,collegeId:SEED_IDS.collegeB}};
+    await expect(recordTpoDriveSelections(foreignTpo,job.id,request)).rejects.toBeInstanceOf(AuthorizationError);
+    await expect(recordTpoDriveSelections(learner,job.id,request)).rejects.toBeInstanceOf(AuthorizationError);
+    const stillOne=await pool.query<{count:number}>(
+      "select count(*)::integer as count from placement_drive_selections where job_id = $1",[job.id]);
+    expect(stillOne.rows[0]?.count).toBe(1);
   });
 
   it("issues an idempotent offer, lets the learner accept, and preserves corrected joining history", async () => {
