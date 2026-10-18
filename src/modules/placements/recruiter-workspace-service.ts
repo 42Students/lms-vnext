@@ -78,6 +78,10 @@ export async function getRecruiterPlacementWorkspace(
         placementJobs.collegeId,
       ),
     )
+    .innerJoin(users,and(
+      eq(users.id,context.user.id),
+      eq(users.platformStatus,"ACTIVE"),
+    ))
     // HR-GRANT-EXPIRE-39: a cached session grant never bypasses persisted
     // verification, validity and DRIVES capability before candidate reads.
     .innerJoin(placementRecruiterProfiles,and(
