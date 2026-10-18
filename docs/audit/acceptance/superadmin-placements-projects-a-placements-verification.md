@@ -146,3 +146,6 @@ All four are DONE in reviewed source. No local CI, PostgreSQL or browser run was
 
 
 | SA-COMPANY-DIRECTORY-COUNT-07 | DONE in source; CI pending | Both global employer directory drive-count and last-active SQL subqueries now filter job.college_id = selected relationship college. `tests/unit/chat13-company-directory-counts-tenant.test.ts` and `tests/integration/chat13-super-admin-company-directory-counts-tenant.test.ts`, registered in `test:db:projects-harness`; A/B execution pending. |
+
+
+| SA-RETENTION-STALENESS-08 | DONE in source; CI pending | Super Admin stale/withdrawn/rejected retention queue now uses the same last-activity expression in its 180-day cutoff, display and 200-row oldest-first sort; tie-break application ID. `tests/unit/chat13-super-admin-retention-staleness.test.ts`. Large PostgreSQL dataset and browser pending. |
