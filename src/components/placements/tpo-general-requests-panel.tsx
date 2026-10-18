@@ -62,7 +62,7 @@ export function TpoGeneralRequestsPanel(){
     <p className="text-xs">{row.status.replaceAll("_"," ")}</p>
     <TpoGeneralRequestFacts kind={row.kind} payload={row.payload}/>
     {row.decisionNote?<p>Decision: {row.decisionNote}</p>:null}
-    {row.status==="PENDING"?<button type="button" disabled={pending} className="mt-2 min-h-11 rounded border border-border px-3 font-semibold text-primary-text"
+    {row.status==="PENDING"?<button type="button" disabled={pending} className="mt-2 min-h-11 rounded-[9px] border border-border px-3 font-semibold text-primary-text"
       onClick={()=>{setSelection(row);setNote("");setAction("REJECT");}}>Review request</button>:null}
    </li>)}</ul>}
   <Dialog open={selection!==null} onOpenChange={open=>{if(!open&&!pending)setSelection(null);}}
