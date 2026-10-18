@@ -1,6 +1,6 @@
 import {describe,expect,it} from "vitest";
 import {recordSelectionsSchema,releaseSelectionsSchema,summarizeSelectionRelease,isExactTpoSelectionReplay} from "@/modules/placements/tpo-drive-selection-model";
-import {tpoWaitlistPromotionSchema,waitlistPreviewToken,decideWaitlistReleaseSettlement} from "@/modules/placements/tpo-waitlist-promotion-model";
+import {tpoWaitlistPromotionSchema,waitlistPreviewToken,decideWaitlistReleaseSettlement,canonicalWaitlistPreviewCollections} from "@/modules/placements/tpo-waitlist-promotion-model";
 import {canRecordTpoActualJoiningDate,canRecordTpoOfferAction,tpoOfferLifecycleInputSchema,TPO_OFFER_ACTIONS} from "@/modules/placements/tpo-offer-lifecycle-model";
 import {evaluateTpoDriveCancellation,isIssuedOfferCancelable,tpoDriveCancelSchema} from "@/modules/placements/tpo-drive-cancel-model";
 import {projectTpoJoiningTracker} from "@/modules/placements/tpo-joining-tracker-model";
@@ -137,6 +137,28 @@ describe("chat-5 placements core — cancellation, waitlist and joining",()=>{
   expect(waitlistPreviewToken(a,{rank:1,seat:2})).toBe(first);
   expect(waitlistPreviewToken(a,{rank:2,seat:2})).not.toBe(first);
   expect(waitlistPreviewToken(b,{rank:1,seat:2})).not.toBe(first);
+ });
+ it("PLACEMENTS-WAIT-TOKEN-04 ignores nondeterministic PostgreSQL ordering but detects real offer and reservation changes",()=>{
+  const promotions=[
+    {id:"promo-b",status:"PENDING",applicationId:b,seatNumber:2},
+    {id:"promo-a",status:"RELEASED",applicationId:a,seatNumber:1},
+  ];
+  const offers=[
+    {applicationId:b,kind:"OFFER"},
+    {applicationId:a,kind:"LOI"},
+    {applicationId:a,kind:"OFFER"},
+  ];
+  const initial=canonicalWaitlistPreviewCollections(promotions,offers);
+  const reordered=canonicalWaitlistPreviewCollections([...promotions].reverse(),[...offers].reverse());
+  expect(reordered).toEqual(initial);
+  expect(waitlistPreviewToken(a,initial)).toBe(waitlistPreviewToken(a,reordered));
+  const changed=canonicalWaitlistPreviewCollections(
+    [{...promotions[0]!,status:"RELEASED"},promotions[1]!],offers);
+  expect(waitlistPreviewToken(a,changed)).not.toBe(waitlistPreviewToken(a,initial));
+  expect(waitlistPreviewToken(b,initial)).not.toBe(waitlistPreviewToken(a,initial));
+  const service=await import("node:fs").then(fs=>fs.readFileSync(
+    "src/modules/placements/tpo-waitlist-promotion-service.ts","utf8"));
+  expect(service).toContain("...canonicalWaitlistPreviewCollections(promotions,activeOffers)");
  });
  it("PLACEMENTS-WAIT-SM-03 settles exactly once under row lock and rejects conflicting terminal histories",()=>{
   const issuedOffer=a;
