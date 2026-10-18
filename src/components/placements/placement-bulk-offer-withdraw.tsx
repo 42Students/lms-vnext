@@ -109,9 +109,9 @@ export function PlacementBulkOfferWithdraw({
         </p>
       ) : (
         <>
-          <div className="max-h-64 space-y-1 overflow-auto rounded-md border border-border p-2">
+          <div tabIndex={0} role="group" aria-label="Offers eligible for withdrawal, scroll for more" className="max-h-64 min-h-0 space-y-1 overflow-auto overscroll-contain rounded-md border border-border p-2 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
             {available.map((item) => (
-              <label key={item.id} className="flex min-h-10 cursor-pointer items-center gap-3 px-2 py-1 text-sm">
+              <label key={item.id} className="flex min-h-11 cursor-pointer items-center gap-3 px-2 py-1 text-sm">
                 <input
                   type="checkbox"
                   checked={selected.includes(item.id)}

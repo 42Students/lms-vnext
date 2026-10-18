@@ -11,6 +11,8 @@ describe("chat-5 placements scroll and motion surface contracts",()=>{
   ["07","tpo-week-hour-calendar.tsx",1],
   ["08","tpo-round-results-import.tsx",3],
   ["09","tpo-selection-import.tsx",2],
+  ["10","placement-bulk-offer-withdraw.tsx",1],
+  ["11","placement-drive-day-overview.tsx",1],
  ] as const)("UX-placements-scroll-motion-%s cues every newly audited scroll container in %s",(_,file,count)=>{
   const source=load(file);
   expect(source.split("mask-image:").length-1).toBeGreaterThanOrEqual(count);
@@ -35,6 +37,13 @@ describe("chat-5 placements scroll and motion surface contracts",()=>{
   expect(calendar).toContain("Recruiter follow-up weekly calendar, scroll horizontally for more days");
   expect(calendar).toContain("sticky left-0 z-10");
   expect(calendar).toContain("overscroll-x-contain");
+ });
+ it("UX-placements-scroll-motion-11 retains candidate as a sticky, labeled row identifier",()=>{
+  const overview=load("placement-drive-day-overview.tsx");
+  expect(overview).toContain('aria-label="Round candidate progress, scroll horizontally for more columns"');
+  expect(overview).toContain('min-w-[42rem]');
+  expect(overview).toContain('scope="col" className="sticky left-0');
+  expect(overview).toContain('<td className="sticky left-0');
  });
  it("UX-placements-scroll-motion-09 keeps import preview separate from release confirmation",()=>{
   const selection=load("tpo-selection-import.tsx");
