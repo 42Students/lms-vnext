@@ -71,6 +71,11 @@ Canonical `users` login email/phone/name cannot be mutated by a College Admin me
 | --- | --- | --- |
 | COL-people-26 | DONE (source, browser test pending) | Accessible, explicit two-step `ConfirmDialog` and pending state for faculty lifecycle changes, with success notices and no browser `window.confirm`. `src/components/college/college-faculty-lifecycle-action.tsx` and `tests/unit/college-people-gap-closure.test.ts` case COL-people-26. |
 
+## Chat-3 COL-people-20 service behavior (authored tests; CI pending)
+
+| ID | Disposition | Evidence |
+| --- | --- | --- |
+| COL-people-20 | DONE (source + service mock contracts, not runtime certified) | `tests/unit/chat3-col-people-20-role-authorization.test.ts` invokes actual `addMembershipRole` and `removeMembershipRole`: cross-role grant/revoke refusals before reads, disabled Super Admin rejection, foreign admin-scope rejection before writes, same-college Super Admin grant and revoke with existing role, and ordinary same-college role assignment. Retains original legacy copy and `tests/unit/college-people-gap-closure.test.ts`. PostgreSQL/CI and browser permission journeys not run. |
 ## Chat-3 round 14 — COL-people-13 corrected metrics without leaking PII
 
 | ID | Disposition | Evidence |
