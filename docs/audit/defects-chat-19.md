@@ -357,3 +357,9 @@ These fixes are committed on chat-19; live provider, PostgreSQL revocation races
 | ID | Severity | Source | Finding / correction | Direct test |
 |---|---|---|---|---|
 | HR-BREAK-HOME-QUERY-19 | MAJOR | `src/app/(authenticated)/hr/home/page.tsx` | The Today route still used a `first()` helper on `collegeId:string|string[]`. A URL containing two contradictory college selections could silently select the first, unlike strict HR activity/notifications filters. Pass the original value to the existing strict Zod schema; repeated keys fail with the existing `Invalid college selection` UI without touching company, portfolio or placement-cell records. | `tests/unit/HR-BREAK-chat19-home-portfolio-proposals.test.ts`: conflicting, reversed and duplicated-same college values rejected before service access. |
+
+## Recruiter Today session identity consistency
+
+| ID | Severity | Source | Correction | Test |
+|---|---|---|---|---|
+| HR-BREAK-HOME-IDENTITY-20 | MAJOR | `src/app/(authenticated)/hr/home/page.tsx` | Page previously verified `hasActiveRecruiter` and a recruiter context, but not that `recruiter.userId` matched the signed-in user. Match both before querying employer portfolio, college grants or private action cues. Same ownership rule already applies to profile and notification mutation. | `tests/unit/HR-BREAK-chat19-home-portfolio-proposals.test.ts`: denies forged principal with redirect and no downstream calls. |
