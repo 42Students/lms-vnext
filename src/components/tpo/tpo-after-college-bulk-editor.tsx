@@ -119,7 +119,7 @@ export function TpoAfterCollegeBulkEditor({
       </label>
       <button type="button" disabled={!available || busy || !ids.length}
         onClick={() => setConfirmation("SAVE")}
-        className="min-h-10 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+        className="min-h-10 rounded bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
         Update {ids.length} student(s)
       </button>
       {undo?.length ? <button type="button" disabled={busy} onClick={() => setConfirmation("UNDO")}

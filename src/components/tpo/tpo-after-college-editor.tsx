@@ -74,10 +74,10 @@ export function TpoAfterCollegeEditor({
     {["ENTREPRENEURSHIP","COMPETITIVE_EXAMS"].includes(draft)?<p className="text-xs text-muted-foreground">Additional destination details are not yet stored; verify these with the learner before saving.</p>:null}
     <div className="flex flex-wrap gap-2">
       <button type="button" disabled={!available || pending || draft === saved}
-        className="min-h-9 rounded border border-border px-2 text-xs font-semibold disabled:opacity-50"
+        className="min-h-9 rounded-[9px] border border-border px-2 text-xs font-semibold disabled:opacity-50"
         onClick={() => write(draft)}>Save</button>
       {undo !== null && undo !== saved ? <button type="button" disabled={pending}
-        className="min-h-9 rounded border border-border px-2 text-xs disabled:opacity-50"
+        className="min-h-9 rounded-[9px] border border-border px-2 text-xs disabled:opacity-50"
         onClick={() => write(undo, true)}>Undo</button> : null}
     </div>
     {!available ? <p className="text-xs text-muted-foreground">Outcome storage unavailable.</p> : null}
