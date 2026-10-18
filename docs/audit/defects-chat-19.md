@@ -138,3 +138,11 @@ Generated `docs/audit/ux/COVERAGE-MATRIX.md` should be refreshed after orchestra
 | UX-SPILL-DRIVE-DAY-01 | MAJOR | `src/components/placements/placement-drive-day-overview.tsx` candidate table forced `min-w-[42rem]` and sticky desktop columns | Migrate to `DataTable` responsive cards preserving the four original fields: Candidate (role/contact), Membership, Schedule exception, Result. No change to authorized data or statuses. | `d7053e49` | `tests/unit/chat19-drive-day-candidates-mobile.test.tsx` (`a2f9df02`) |
 
 Requires actual 320/360/390px and keyboard browser acceptance; only source/SSR contracts were authored on this branch.
+
+### Independent HR messaging/notifications author cross-audit
+
+| Finding | Severity | Affected source | Behaviour and fix | Commits | Regression |
+|---|---|---|---|---|---|
+| HR-BREAK-NOTIFICATIONS-02 | MAJOR | `src/components/hr/hr-notification-read-button.tsx` | Button relied only on async React `saving` state and allowed two same-tick POST receipts; successful read could also be re-sent before refresh, and revoked session/permission/rate-limit errors fell through to generic copy. Reused `createHrBellMutationGate`, terminal success ref, 44px focusable action, and safe 401/403/404/409/429 recovery model, preserving expectedCreatedAt CAS token. | `fbfcbb23`, `5ad9bfd2` | `tests/unit/HR-BREAK-chat19-notification-ack-02.test.tsx` (`206549d8`) |
+
+Persistence-level double-click/read-receipt CAS races and interactive browser clicks remain integration gates. The test validates the gate's runtime behavior, response model, initial SSR, and handler wiring, not an executed production browser session.
