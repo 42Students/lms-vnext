@@ -111,3 +111,10 @@ The College, academics, groups and people exported-function inventory remains **
 | `describeCollegeDirectoryContext`, `selectedDirectoryValueNotListed` | same: deduped sorted section names, no fabricated course teaching counts, bookmarked missing option | Rendered directory UI |
 
 These rows establish tests for listed exports only. **Not exhaustive**: 319 academics + 323 people + 94 colleges + 48 groups exports need individually accounted for, with PostgreSQL and page journeys before closing the lane.
+
+
+## College groups / persisted-actor test (chat-4)
+
+| Export | Test and outcomes |
+|---|---|
+| `assertPersistedGroupActor` (`src/modules/groups/actor-access.ts`) | `tests/unit/chat4-college-group-persisted-authority.test.ts`: real function executed against deterministic transactional query adapter; active College Admin lock sequence, revoked/disabled actor, wrong college, forged user, missing member, missing role, SELF learner role and membership matching, Super Admin persisted role removal. **Not yet** tested against PostgreSQL lock races. |
