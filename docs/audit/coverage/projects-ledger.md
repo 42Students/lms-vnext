@@ -43,6 +43,16 @@ All four now reuse `readMentorProjectCommandBody` with recoverable 400/413/415 m
 
 **Unverified:** these tests are authored but **not executed**; actual responsive phone width, keyboard navigation, live role/session/tenant grants, PostgreSQL pagination and browser network failures remain GAP. No design-kit changes: owner's one-canvas directive remains ON HOLD.
 
+## Sprint progress numerical and service permission boundaries — PROJ-BREAK-MENTOR-373..382 (2026-10-19)
+| Export | Behavioral test | Cases and open acceptance |
+|---|---|---|
+| `mentor-sprint-progress-model.ts:mentorSprintProgressQuerySchema / mentorSprintProgressPage` | `tests/unit/PROJ-BREAK-chat14-mentor-sprint-pagination.test.ts` | `373` decimal-only page tokens, rejects exotic URL numbers; `374` NaN/infinite/negative/fractional persisted aggregates or page requests sanitize without invalid offsets |
+| `mentor-sprint-progress-model.ts:mentorSprintProgressHref / summarizeSprintTasks` | Same test | `375` authorized deep link only includes approved filters; `376` no-task total remains unknown, honest completed/review/block counters |
+| `mentor-sprint-progress-service.ts:getMentorSprintProgress` | `tests/unit/PROJ-BREAK-chat14-mentor-sprint-service-permissions.test.ts` | `377` disabled user, `378` inactive/wrong-role/permission, `379` disabled module, `380` injected other-college, learner or archived roster, `381` foreign project filter, `382` valid assigned Mentor advances to scoped DB query |
+
+Source fixes: `af9179c` and `99db146`. Tests are **authored, not run**; database joins, query plans, true scope invalidation and 1k+ sprint pagination need independent PostgreSQL/HTTP verification. This does not waive the S1 meeting version/ABA release gate.
+
+
 ## CI failure triage (refreshed inventory ff6819dd, 2026-10-18)
 - `projects-mentor-service-guards-chat14.test.ts` final-delivery boundary assertion: the current service still contains every checked guard, version token, audited notification and scoped mutation gate. This appears to be a stale snapshot; do not change code or weaken the check without a new failing trace.
 - `recruiter-chat14-message-email-bridge-contract.test.ts`: the expectation referred to the raw email string, but the provider now normalizes the recipient *before* applying the allowlist; updated the test to assert both normalization and the runtime allowlist, preserving the stronger safety invariant.
