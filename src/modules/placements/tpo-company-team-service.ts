@@ -107,11 +107,24 @@ export async function mutateTpoCompanyTeam(context:RequestContext,rawCompanyId:u
      eq(placementCompanyRelationships.status,"ACTIVE"))).for("share").limit(1);
   if(!link)throw new TpoCompanyTeamError("NOT_FOUND");
   if(input.action==="FOLLOW"){
-   if(input.following)await tx.insert(follows).values({collegeId:college.id,
-    companyId,membershipId:membership.id}).onConflictDoNothing();
-   else await tx.delete(follows).where(and(eq(follows.collegeId,college.id),
-    eq(follows.companyId,companyId),eq(follows.membershipId,membership.id)));
-   return {changed:true};
+   // A repeated request must be a no-op, not a second activity event.
+   // RETURNING reports the row actually created or removed under the unique key.
+   const changed=input.following
+    ?(await tx.insert(follows).values({collegeId:college.id,
+       companyId,membershipId:membership.id}).onConflictDoNothing()
+       .returning({membershipId:follows.membershipId})).length>0
+    :(await tx.delete(follows).where(and(eq(follows.collegeId,college.id),
+       eq(follows.companyId,companyId),eq(follows.membershipId,membership.id)))
+       .returning({membershipId:follows.membershipId})).length>0;
+   if(changed)await tx.insert(activityEvents).values({
+    organizationId:college.organizationId,collegeId:college.id,
+    actorUserId:context.user.id,actorMembershipId:membership.id,module:"PLACEMENTS",
+    eventType:"placements.tpo_company_team.follow_changed",
+    subjectType:"company",subjectId:companyId,
+    summary:input.following?"Started following company team updates":"Stopped following company team updates",
+    metadata:{following:input.following},
+   });
+   return {changed};
   }
   if(input.action==="SEND"){
    if(input.dueAt&&(!input.assigneeId||Date.parse(input.dueAt)<=Date.now()))
