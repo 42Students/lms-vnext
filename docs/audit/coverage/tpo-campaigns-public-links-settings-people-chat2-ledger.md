@@ -85,3 +85,9 @@ This ledger is deliberately explicit about gaps; source assertions and compilati
 - `tests/unit/chat2-tpo-last-third-route-matrix.test.ts` originally parsed `(src/app/(authenticated)/...)` using the first right parenthesis, accidentally storing `src/app/(authenticated` as every file path. This caused every 42-page source test to fail even though the page guards remained in place.
 - Commit `f169e8b` now derives the **actual full path** from the authoritative `docs/orchestrator/ui-ux/pages-tpo.md` entries, preserves the exact 42-route slice, rejects malformed inventory lines and still enforces per-report authorization and per-settings page contracts. No route assertion was skipped or removed.
 - The deployed browser and cross-account session checks remain necessary: successful source-level assertions alone do not certify interactive user journeys.
+
+## Duplicate-selector authorization and UI contracts
+
+- `TPO-settings-audit-55` status GET now refuses repeated `scope`/`companyId` and extra `collegeId` parameters before the authenticated read handler executes; coverage in `tests/unit/chat2-tpo-public-link-route-journeys-break-05.test.ts`.
+- Recruiter access settings also rejects duplicate grant status, page or query filters and retains the exact legacy heading **Recruiter access** plus an actionable reset, covered in `tests/unit/chat2-tpo-public-link-settings.test.ts`.
+- `tests/unit/chat2-tpo-round-contracts-break-11.test.ts` adds model-level strictness for confirmed/bulk result staging, reserved waitlist ranks, 25-entry cap, forged college fields, roster counting, attendance wording and CSV formula safety; cloud CI and DB/service integrity gates remain open.

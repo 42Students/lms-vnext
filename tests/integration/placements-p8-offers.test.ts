@@ -1,3 +1,4 @@
+import {randomUUID} from "node:crypto";
 import { publishableJobTerms } from "../support/publishable-job-terms";
 import {
   afterAll,
@@ -34,6 +35,7 @@ import {
 import { decidePlacementScreening } from "@/modules/placements/screening-service";
 import { recordTpoDriveSelections } from "@/modules/placements/tpo-drive-selection-service";
 import {getTpoDriveClosePreview,closeTpoDriveWithPreview} from "@/modules/placements/tpo-drive-close-preview-service";
+import {recordTpoOfferLifecycle} from "@/modules/placements/tpo-offer-lifecycle-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { enableSeedLearnerPlacementAccess } from "../support/w04-placement-access-fixture";
 
@@ -51,6 +53,7 @@ const pool = new Pool({
   connectionString: databaseUrl,
   max: 1,
 });
+const testTpoRoleId=randomUUID();
 
 const tpo: RequestContext = {
   user: {
@@ -92,6 +95,7 @@ async function cleanup() {
     "delete from activity_events",
   );
   await pool.query("delete from placement_drive_selections");
+  await pool.query("delete from placement_waitlist_promotions");
   await pool.query(
     "delete from placement_joining_history",
   );
@@ -255,10 +259,18 @@ async function preparePassedApplication() {
 beforeEach(async () => {
   await cleanup();
   await enableSeedLearnerPlacementAccess(pool);
+  // Base seed intentionally grants FACULTY, not TPO. The placement suite
+  // explicitly provisions the persisted TPO role so actor revalidation checks
+  // cannot be bypassed by trusting only the RequestContext roles array.
+  await pool.query(
+    "insert into membership_roles(id,membership_id,role) values($1,$2,'TPO') on conflict(membership_id,role) do nothing",
+    [testTpoRoleId,SEED_IDS.facultyCollegeAMembership],
+  );
 });
 
 afterAll(async () => {
   await cleanup();
+  await pool.query("delete from membership_roles where id=$1",[testTpoRoleId]);
   await pool.end();
   await closeDatabaseConnection();
 });
@@ -463,6 +475,153 @@ describe("Placement P8 offers and joining", () => {
       [job.id,"placements.job.closed"],
     );
     expect(closedEvents.rows[0]?.n).toBe(0);
+  });
+
+  it("PLACEMENTS-CAPACITY-PG-01 respects pending waitlist seats without double-counting its own reservation",async()=>{
+    const {job,round,application}=await preparePassedApplication();
+    await pool.query("update placement_jobs set openings=1 where id=$1",[job.id]);
+    const role=await pool.query<{role_option_id:string}>(
+      "select role_option_id from placement_applications where id=$1",[application.id]);
+    const alternate=await pool.query<{id:string}>(`
+      insert into placement_job_role_options(job_id,title,employment_type,work_mode)
+      select job_id,title||' second seat',employment_type,work_mode
+      from placement_job_role_options where id=$1 returning id`,[role.rows[0]!.role_option_id]);
+    const otherApplication=await pool.query<{id:string}>(`
+      insert into placement_applications(
+        job_id,role_option_id,membership_id,channel,status,
+        eligibility_status,eligibility_snapshot,submitted_by_user_id
+      ) select job_id,$2,membership_id,channel,status,
+          eligibility_status,eligibility_snapshot,submitted_by_user_id
+        from placement_applications where id=$1 returning id
+    `,[application.id,alternate.rows[0]!.id]);
+    const reservation=await pool.query<{id:string}>(`
+      insert into placement_waitlist_promotions(
+        job_id,round_id,application_id,seat_number,waitlist_rank,
+        reason,promoted_by_user_id
+      ) values($1,$2,$3,1,1,$4,$5) returning id`,[
+        job.id,round.id,otherApplication.rows[0]!.id,
+        "Reserved the final waitlisted placement opening",SEED_IDS.facultyUser,
+      ]);
+    const input={kind:"OFFER" as const,roleTitle:"Offer engineer",annualCtcInr:900_000};
+    await expect(issuePlacementOffer(tpo,application.id,input))
+      .rejects.toMatchObject({code:"PLACEMENT_OFFER_NOT_READY"});
+    const noOffers=await pool.query<{n:number}>(`
+      select count(*)::integer as n from placement_offers po
+      inner join placement_applications pa on pa.id=po.application_id
+      where pa.job_id=$1`,[job.id]);
+    expect(noOffers.rows[0]?.n).toBe(0);
+
+    // A valid promotion must consume its own reserved opening once, not twice.
+    await pool.query("delete from placement_waitlist_promotions where id=$1",[reservation.rows[0]!.id]);
+    await pool.query(`
+      insert into placement_waitlist_promotions(
+        job_id,round_id,application_id,seat_number,waitlist_rank,
+        reason,promoted_by_user_id
+      ) values($1,$2,$3,1,1,$4,$5)`,[
+        job.id,round.id,application.id,
+        "Reserved for the current qualified applicant",SEED_IDS.facultyUser,
+      ]);
+    const issued=await issuePlacementOffer(tpo,application.id,input);
+    expect(issued.status).toBe("ISSUED");
+    const retry=await issuePlacementOffer(tpo,application.id,input);
+    expect(retry.id).toBe(issued.id);
+    const confirmed=await pool.query<{n:number}>(`
+      select count(*)::integer as n from placement_offers po
+      inner join placement_applications pa on pa.id=po.application_id
+      where pa.job_id=$1 and po.status in ('ISSUED','ACCEPTED') and po.kind='OFFER'`,[job.id]);
+    expect(confirmed.rows[0]?.n).toBe(1);
+  });
+
+  it("PLACEMENTS-ISSUE-ACTOR-DB-02 denies a suspended learner while retaining a legitimately shortlisted application",async()=>{
+    const {application}=await preparePassedApplication();
+    const terms={kind:"OFFER" as const,roleTitle:"Engineer",annualCtcInr:900_000};
+    try {
+      await pool.query("update college_memberships set status='SUSPENDED',suspended_at=now() where id=$1",
+        [SEED_IDS.learnerCollegeAMembership]);
+      await expect(issuePlacementOffer(tpo,application.id,terms))
+        .rejects.toMatchObject({code:"PLACEMENT_OFFER_NOT_READY"});
+    } finally {
+      await pool.query("update college_memberships set status='ACTIVE',suspended_at=null,suspension_reason=null where id=$1",
+        [SEED_IDS.learnerCollegeAMembership]);
+    }
+    try{
+      await pool.query("update users set platform_status='DISABLED' where id=$1",[SEED_IDS.learnerUser]);
+      await expect(issuePlacementOffer(tpo,application.id,terms))
+        .rejects.toMatchObject({code:"PLACEMENT_OFFER_NOT_READY"});
+    } finally {
+      await pool.query("update users set platform_status='ACTIVE' where id=$1",[SEED_IDS.learnerUser]);
+    }
+    const before=await pool.query<{n:number}>(
+      "select count(*)::integer as n from placement_offers where application_id=$1",[application.id]);
+    expect(before.rows[0]?.n).toBe(0);
+    const issued=await issuePlacementOffer(tpo,application.id,terms);
+    expect(issued.status).toBe("ISSUED");
+  });
+
+  it("PLACEMENTS-TPO-REVOKED-DB-01 refuses stale-credential TPO offer mutation after persisted role removal",async()=>{
+    const {job,application}=await preparePassedApplication();
+    const offer=await issuePlacementOffer(tpo,application.id,{
+      kind:"OFFER",roleTitle:"Engineer",annualCtcInr:900_000,
+    });
+    const request={
+      confirmed:true,action:"EXTEND" as const,offerIds:[offer.id],
+      expectedStatus:"ISSUED" as const,reason:"Recruiter formally extended the response deadline",
+      expiresAt:new Date(Date.now()+1000*60*60*24*7).toISOString(),
+    };
+    try{
+      const storedRole=await pool.query<{id:string}>(
+        "select id from membership_roles where membership_id=$1 and role='TPO'",
+        [SEED_IDS.facultyCollegeAMembership]);
+      expect(storedRole.rows).toHaveLength(1);
+      await pool.query("delete from membership_roles where id=$1",[storedRole.rows[0]!.id]);
+      await expect(recordTpoOfferLifecycle(tpo,job.id,request))
+        .rejects.toBeInstanceOf(AuthorizationError);
+      const persisted=await pool.query<{expires_at:Date|null}>(
+        "select expires_at from placement_offers where id=$1",[offer.id]);
+      expect(persisted.rows[0]?.expires_at?.getTime()).toBe(offer.expiresAt?.getTime());
+    }finally{
+      await pool.query(
+        "insert into membership_roles(id,membership_id,role) values($1,$2,'TPO') on conflict(membership_id,role) do nothing",
+        [testTpoRoleId,SEED_IDS.facultyCollegeAMembership]);
+    }
+  });
+
+  it("PLACEMENTS-TPO-DUAL-ACCEPT-DB-01 rolls back a batch that accepts two official offers for one learner",async()=>{
+    const {job,application}=await preparePassedApplication();
+    const issued=await issuePlacementOffer(tpo,application.id,{
+      kind:"OFFER",roleTitle:"Engineer I",annualCtcInr:900_000,
+    });
+    const role=await pool.query<{role_option_id:string}>(
+      "select role_option_id from placement_applications where id=$1",[application.id]);
+    const secondRole=await pool.query<{id:string}>(`
+      insert into placement_job_role_options(job_id,title,employment_type,work_mode)
+      select job_id,title||' second',employment_type,work_mode
+      from placement_job_role_options where id=$1 returning id`,[role.rows[0]!.role_option_id]);
+    const secondApp=await pool.query<{id:string}>(`
+      insert into placement_applications(
+        job_id,role_option_id,membership_id,channel,status,
+        eligibility_status,eligibility_snapshot,submitted_by_user_id
+      ) select job_id,$2,membership_id,channel,status,
+          eligibility_status,eligibility_snapshot,submitted_by_user_id
+        from placement_applications where id=$1 returning id
+    `,[application.id,secondRole.rows[0]!.id]);
+    const secondOffer=await pool.query<{id:string}>(`
+      insert into placement_offers(application_id,version,kind,status,role_title,annual_ctc_inr,issued_by_user_id)
+      values($1,1,'OFFER','ISSUED','Engineer II',900000,$2) returning id
+    `,[secondApp.rows[0]!.id,SEED_IDS.facultyUser]);
+    const ids=[issued.id,secondOffer.rows[0]!.id];
+    await expect(recordTpoOfferLifecycle(tpo,job.id,{
+      confirmed:true,action:"RECORD_ACCEPTED",offerIds:ids,
+      expectedStatus:"ISSUED",reason:"Both candidate responses were reported on the company spreadsheet",
+    })).rejects.toMatchObject({code:"PLACEMENT_OFFER_ACTIVE_EXISTS"});
+    const state=await pool.query<{id:string;status:string}>(
+      "select id,status from placement_offers where id=any($1::uuid[]) order by id",[ids]);
+    expect(state.rows).toHaveLength(2);
+    expect(state.rows.every(row=>row.status==="ISSUED")).toBe(true);
+    const history=await pool.query<{count:number}>(
+      "select count(*)::integer as count from placement_offer_status_history where offer_id=any($1::uuid[]) and to_status='ACCEPTED'",
+      [ids]);
+    expect(history.rows[0]?.count).toBe(0);
   });
 
   it("issues an idempotent offer, lets the learner accept, and preserves corrected joining history", async () => {

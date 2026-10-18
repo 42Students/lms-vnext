@@ -1,7 +1,8 @@
 import "server-only";
-import { and, asc, eq, inArray } from "drizzle-orm";
+import { and, asc, eq, inArray, ne } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { cohorts, departments, programs, sections } from "@/db/schema";
+import { academicPeriods, cohorts, departments, programs, sections } from "@/db/schema";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 
@@ -12,7 +13,13 @@ export async function listCollegeStudentImportOptions(context: RequestContext) {
   requirePermission(context, "academics.manage", {
     collegeId: member.collegeId, organizationId: member.organizationId,
   });
-  const db = getDb();
+  // A stale session must not enumerate academic rosters after the acting
+  // College Admin loses a role, membership or ACTIVE account status.
+  return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,context,"academics.manage",{
+   collegeId:member.collegeId,organizationId:member.organizationId,
+  });
+  const db = tx;
   const programsList = await db.select({
     id: programs.id, name: programs.name,
   }).from(programs).innerJoin(departments, eq(departments.id, programs.departmentId))
@@ -23,6 +30,7 @@ export async function listCollegeStudentImportOptions(context: RequestContext) {
   }).from(cohorts).innerJoin(programs, eq(programs.id, cohorts.programId))
     .innerJoin(departments, eq(departments.id, programs.departmentId))
     .where(and(eq(departments.collegeId, member.collegeId),
+      eq(programs.status,"ACTIVE"),
       inArray(cohorts.status, ["PLANNED", "ACTIVE"])))
     .orderBy(asc(cohorts.name)).limit(2000);
   const classes = await db.select({
@@ -30,7 +38,14 @@ export async function listCollegeStudentImportOptions(context: RequestContext) {
   }).from(sections).innerJoin(cohorts, eq(cohorts.id, sections.cohortId))
     .innerJoin(programs, eq(programs.id, cohorts.programId))
     .innerJoin(departments, eq(departments.id, programs.departmentId))
-    .where(and(eq(departments.collegeId, member.collegeId), eq(sections.status, "ACTIVE")))
+    .innerJoin(academicPeriods, eq(academicPeriods.id, sections.academicPeriodId))
+    .where(and(eq(departments.collegeId, member.collegeId),
+      eq(programs.status,"ACTIVE"),
+      inArray(cohorts.status, ["PLANNED", "ACTIVE"]),
+      eq(academicPeriods.collegeId, member.collegeId),
+      ne(academicPeriods.status,"CLOSED"),
+      eq(sections.status, "ACTIVE")))
     .orderBy(asc(sections.name)).limit(3000);
   return { programs: programsList, batches, classes };
+  });
 }

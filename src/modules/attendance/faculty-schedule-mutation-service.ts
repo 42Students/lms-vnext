@@ -9,6 +9,7 @@ import {hasActiveMembership,hasMembershipRole,type RequestContext} from "@/modul
 import {can} from "@/modules/permissions/policy";
 import {CoursesServiceError} from "@/modules/courses/errors";
 import {listFacultyCourseDeliveries} from "@/modules/courses/faculty-course-service";
+import {assertPersistedFacultyTeachingMutation} from "@/modules/courses/faculty-persisted-teaching-guard";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {facultyAttendanceScheduleParamsSchema,facultyAttendanceScheduleSchema,facultyScheduleFieldsChanged}
@@ -39,6 +40,9 @@ export async function commandFacultyAttendanceSchedule(
     // when co-teachers schedule the same Section at the same instant.
     await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${"faculty-schedule:"+membership.id}))`);
     await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${"section-schedule:"+owned.sectionId}))`);
+    await assertPersistedFacultyTeachingMutation(tx,context,deliveryId,{
+      collegeId:membership.collegeId,organizationId:membership.organizationId,
+    });
     let current:typeof sectionScheduleEvents.$inferSelect|undefined;
     if(input.action==="RESCHEDULE"){
       [current]=await tx.select({event:sectionScheduleEvents}).from(sectionScheduleEvents)
