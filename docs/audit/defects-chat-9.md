@@ -43,6 +43,8 @@ Branch: `chatgpt/chat-9-b`. Owner: chat-9. These are observed source-level findi
 
 | PROJ9-027 · PROJ-BREAK-readiness-30/33 / idor-30 | Medium | Readiness history interpreted unrecognized or malformed persisted state metadata as null yet still returned its free-text `note` when string-valued; such unexpected audit events could display stale/confidential rationale as a current override. Unknown states now fail closed on note visibility. Added direct reader behavior for empty, block, unlock, clear and invalid states plus college/project SQL scoping checks. | `4fe171b` | `tests/unit/PROJ-BREAK-chat9-readiness-history.test.ts` (`b53e028`); live PostgreSQL storage verification OPEN |
 
+| PROJ9-025 · PROJ-BREAK-races-12/13, PROJ-BREAK-idor-29 | High | College Projects readiness override recorded a brand-new event for each identical double-click or replay (random activity dedupe key), corrupting change history and making failed-response retries non-idempotent. Cached role snapshots could also persist an override after the user's platform role was revoked. Parent-row serialization now checks persisted roles under SHARE locks, compares latest persisted readiness state/note, and writes a new event only when the intent actually changes. `CLEAR` when no override exists is a no-op. | `c01af7f`, `48a9e70` | `tests/unit/PROJ-BREAK-chat9-readiness-retries.test.ts` (`febc395`): duplicate writes, changed notes, archive denial and stale role rejection; real PostgreSQL race validation remains OPEN |
+
 ## Outstanding release gates (not yet closed)
 
 - Live PostgreSQL integration tests for wrong-tenant IDs, serializable races, rollback and event/notification dedupe; chat-17 owns shared fixtures. Static service assertions alone cannot establish real DB behavior.
