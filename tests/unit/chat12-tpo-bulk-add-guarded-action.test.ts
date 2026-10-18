@@ -8,6 +8,8 @@ describe("TPO-students-14 bulk add CSRF and double-submission guards",()=>{
   expect(ui.match(/await runGuarded\(async\(\)=>\{/g)).toHaveLength(2);
   expect(ui).toContain("if(busy||guardedPending||!driveId");
   expect(ui).toContain("if (busy || guardedPending || !driveId");
+  expect(ui).toContain("onClick={()=>void submit()}");
+  expect(ui).not.toContain("runGuarded(submit)");
   expect(ui).toContain('method:"POST",credentials:"same-origin"');
  });
  it("only commits a previewed, unchanged selected role and membership set",()=>{

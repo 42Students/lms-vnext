@@ -1,4 +1,6 @@
 import {getCurrentRequestContext} from "@/auth/request-context";
+import {redirect} from "next/navigation";
+import {isSuperAdmin} from "@/modules/identity/context";
 import Link from "next/link";
 import {AdminScopedReadPage} from "@/components/admin/admin-scoped-read-page";
 import {TeachingAssignmentActions} from "@/components/courses/admin-course-actions";
@@ -11,6 +13,7 @@ export default async function SuperAdminFacultyAssignmentPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }){
  const context=await getCurrentRequestContext();
+ if(!isSuperAdmin(context))redirect("/dashboard");
  const collegeId=context.adminScope?.collegeId??null;
  const [classes,workspace]=await Promise.all([
   collegeId?getSuperAdminFacultyAssignmentClasses(context):Promise.resolve([]),

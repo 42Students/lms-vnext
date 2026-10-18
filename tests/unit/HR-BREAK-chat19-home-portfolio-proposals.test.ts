@@ -111,4 +111,10 @@ describe("HR-BREAK-chat19-home-portfolio-proposals: no inferred tenant or false 
   expect(m.jobs).toHaveBeenCalledWith(actor);
   expect(textOf(result)).toContain("Only opportunities belonging to your employer");
  });
+ it("HR-BREAK-PORTFOLIO-PRINCIPAL-27 rejects wrong-user recruiter context before listing jobs",async()=>{
+  m.ctx.mockResolvedValue({...actor,recruiter:{...actor.recruiter!,userId:"other-account"}});
+  await expect(HrPlacementsPage()).rejects.toThrow("REDIRECT");
+  expect(m.redirect).toHaveBeenCalledWith("/dashboard");
+  expect(m.jobs).not.toHaveBeenCalled();
+ });
 });
