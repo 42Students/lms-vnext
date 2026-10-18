@@ -43,20 +43,20 @@ export default async function TpoCalendarPage({
     <p role="alert" className="rounded border border-border bg-surface p-4 text-sm text-body">
       Enter a valid day, calendar view, event kind and company filter. No events were queried.
     </p>
-    <Link href="/tpo/calendar" className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline">Reset calendar filters</Link>
+    <Link href="/tpo/calendar" className="inline-flex min-h-11 sm:min-h-9 items-center text-[var(--lms-link-text)] underline">Reset calendar filters</Link>
   </div>;
   return (
     <div className="space-y-4">
       <Link href="/tpo/calendar/export"
-        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)]">
+        className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)]">
         Export upcoming rounds CSV →
       </Link>
       <Link href="/tpo/calendar/interviews"
-        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)]">
+        className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)]">
         Interview schedule readiness →
       </Link>
       <Link href="/tpo/calendar/rounds"
-        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)]">
+        className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)]">
         Create, reschedule or cancel a drive round →
       </Link>
       <PlacementCalendarWorkspace
