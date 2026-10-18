@@ -9,3 +9,8 @@
 - Shared Skeleton reserves header, filter/form and three record rows without reporting missing data during loading.
 - Shared ErrorState and Button preserve the exact previous unavailable/retry messages; Retry is 44px with visible focus.
 - Test assertions: UX-college-videos-loading-01/02, UX-college-videos-error-01/02. Authored, pending execution.
+
+### Bounded-loading refinement
+
+- Delegates to shared `GracefulPageLoading shape="directory"` so route loading retains the original label, matched form/row placeholders, and the shared 12-second recovery action.
+- Updated UX-college-videos-loading-01/02 to assert the bounded shared loader rather than raw manual skeleton blocks. Authored, pending CI.

@@ -1,7 +1,7 @@
-import { LoadingState } from "@/components/ui/loading-state";
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 
 export default function CollegeModuleAccessLoading() {
   return (
-    <LoadingState label="Loading scoped module inheritance and overrides…" />
+    <GracefulPageLoading label="Loading scoped module inheritance and overrides…" />
   );
 }

@@ -1,4 +1,4 @@
-import { LoadingState } from "@/components/ui/loading-state";
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 import { PageHeader } from "@/components/ui/page-header";
 
 export default function SuperAdminModuleTraceLoading() {
@@ -9,7 +9,7 @@ export default function SuperAdminModuleTraceLoading() {
         title="Learner access trace"
         description="Reading college-scoped learner membership and module rules."
       />
-      <LoadingState label="Resolving learner module access…" />
+      <GracefulPageLoading label="Resolving learner module access…" />
     </div>
   );
 }
