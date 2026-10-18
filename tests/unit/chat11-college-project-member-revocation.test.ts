@@ -52,6 +52,29 @@ describe("PROJ-COL-REVOKE-03 member/mentor mutation safety",()=>{
   expect(src).toContain("recordActivityEventInTransaction(");
   expect(src).toContain("notifyProjectMemberships(tx");
  });
+ it("PROJ-COL-REVOKE-04 validates the target learner/mentor and locks their platform role inside the same insert transaction",()=>{
+  const helperStart=src.indexOf("async function loadEligibleMembership(");
+  const helperEnd=src.indexOf("async function loadActiveProjectMember(",helperStart);
+  const helper=src.slice(helperStart,helperEnd);
+  expect(helper).toContain("tx: PermissionTransaction");
+  expect(helper).toContain('eq(collegeMemberships.status, "ACTIVE")');
+  expect(helper).toContain('eq(membershipRoles.role, role)');
+  expect(helper).toContain('.for("share")');
+  expect(helper).toContain('membership.platformStatus !== "ACTIVE"');
+  const begin=src.indexOf("export async function addProjectMember(");
+  const end=src.indexOf("export async function updateProjectMember(",begin);
+  const action=src.slice(begin,end);
+  const tx=action.indexOf("getDb().transaction(async tx =>");
+  const actor=action.indexOf('assertPersistedPlatformPermission(tx,context,"projects.manage"');
+  const target=action.indexOf("await loadEligibleMembership(tx,input.membershipId,scope.collegeId,input.role)");
+  const insert=action.indexOf("tx.insert(projectMembers)");
+  expect(tx).toBeGreaterThan(0);
+  expect(actor).toBeGreaterThan(tx);
+  expect(target).toBeGreaterThan(actor);
+  expect(insert).toBeGreaterThan(target);
+  expect(action.slice(0,tx)).not.toContain("loadEligibleMembership(");
+ });
+
  it("does not implicitly grant a removed mentor permission through retained membership rows",()=>{
   const access=readFileSync("src/modules/projects/access.ts","utf8");
   expect(access).toContain("isNull(projectMembers.endedAt)");

@@ -487,3 +487,18 @@ Next actions: enumerate runtime symbols, map behavioural tests per export, run T
 - `tests/unit/PROJ-BREAK-FACULTY-06.test.ts`: meeting postmortem notes and decision stale revision handling, terminal state, one audit record, and scoped notification count, using mocked transactions; actual concurrent PostgreSQL writes remain a release gate.
 - `tests/e2e/faculty-role-denial-chat3.spec.ts`: browser guest/Learner deep-link denial, changing the active Faculty college after opening a Course, keyboard skip-target, and mobile/desktop error resilience. Requires seeded E2E credentials, not yet run.
 - `tests/unit/SA-ACADEMICS-PEOPLE-BREAK-chat3-02.test.ts` and `docs/audit/coverage/admin-academics-people-chat3-ledger.md` enumerate selected organization/college roles and current Super Admin Academics/People page evidence; uncovered click journeys are retained as GAPs.
+
+
+### PROJ-BREAK-FACULTY-07 — role revocation at write time
+
+`src/modules/projects/persisted-mentor-mutation.ts` and `mentor-task-transition-service.ts` now require a persisted actor and live project grant under SHARE locks **inside** the task mutation transaction. Candidate behavioural suites: `tests/unit/PROJ-BREAK-FACULTY-03.test.ts`, `tests/unit/PROJ-BREAK-FACULTY-07.test.ts`; no fresh CI pass yet. Negative cases include role removal after page load, membership switch, disabled user, ended/readonly assignment, Observer/QA/Reviewer, and Admin/SA scope. PostgreSQL two-session race and extending the gate to all other Mentor mutations remain **open release gates**.
+
+
+### PROJ-BREAK-FACULTY-08 — meeting actions checked inside the transaction
+
+The same persisted actor/project Mentor grant recheck now protects meeting decisions, completed-meeting notes, and meeting reschedules before the meeting row is read. `tests/unit/PROJ-BREAK-FACULTY-06.test.ts` covers three post-page-load revocations and unchanged audit/notification state. This is code and test evidence only; concurrent PostgreSQL revocation and actual frontend retry behaviour remain release gates.
+
+
+### PROJ-BREAK-FACULTY-09 — Sprint creation/transition persisted actor checks
+
+`mentor-sprint-write-service.ts` now takes the same persisted authorization grant locks before creating or transitioning Sprints. `tests/unit/PROJ-BREAK-FACULTY-09.test.ts` covers revoked Mentor roles, stale tabs and archived/completed Projects; no DB mutation/audit occurs on denial. This is not a complete Sprint state-machine audit; see chat-14 and the project ledger for remaining multi-session and closeout checks.
