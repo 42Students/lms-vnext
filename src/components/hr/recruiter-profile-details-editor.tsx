@@ -57,6 +57,12 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
    if(!response)throw new Error("PROFILE_REQUEST_UNCONFIRMED");
    if(!response.ok){setFeedback(response.status===409?
     "Your profile changed. Refresh before saving; your edits are still here.":
+    response.status===401?
+    "Your session has expired. Sign in again to save; your edits are still here.":
+    response.status===403?
+    "Your recruiter access has ended. Ask the placement cell to restore it; your edits are still here.":
+    response.status===429?
+    "Too many save attempts. Try again shortly; your edits are still here.":
     "Could not save your profile. Your changes are still here; try again.");return;}
    const body=await response.json() as {profile?:{
     displayName:string;title:string|null;phone:string;
