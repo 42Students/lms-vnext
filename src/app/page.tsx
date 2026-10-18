@@ -116,7 +116,7 @@ export default async function HomePage({
   return (
     <main
       style={themeStyle}
-      className="relative isolate mx-auto flex min-h-screen max-w-5xl items-center px-6 py-16"
+      className="relative isolate mx-auto flex min-h-dvh min-w-0 max-w-5xl items-center px-4 py-8 pb-[max(2rem,env(safe-area-inset-bottom))] pt-[max(2rem,env(safe-area-inset-top))] sm:px-6 sm:py-16"
     >
       {desktopBackground ? (
         <div
@@ -133,14 +133,14 @@ export default async function HomePage({
         />
       ) : null}
 
-      <section className="w-full rounded-2xl border border-border bg-surface p-8 shadow-sm">
+      <section className="min-w-0 w-full rounded-2xl border border-border bg-surface p-5 shadow-sm sm:p-8">
         {branding?.logoUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={branding.logoUrl}
             alt={branding.collegeName}
             referrerPolicy="no-referrer"
-            className="h-14 w-auto max-w-[240px] object-contain"
+            className="h-14 w-auto max-w-full object-contain sm:max-w-[240px]"
           />
         ) : collegeMonogram ? (
           <div className="flex items-center gap-3">
@@ -155,10 +155,10 @@ export default async function HomePage({
             42LMS
           </p>
         )}
-        <h1 className="mt-2 text-4xl font-semibold tracking-tight text-foreground">
+        <h1 className="mt-2 break-words text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
           {branding?.collegeName ?? "42LMS"}
         </h1>
-        <p className="mt-4 max-w-2xl text-base leading-7 text-body">
+        <p className="mt-4 max-w-2xl break-words text-base leading-7 text-body">
           Sign in with the phone number or email registered with your
           college. One account works across every college you belong to.
         </p>
@@ -192,7 +192,7 @@ export default async function HomePage({
             <div role="alert" className="rounded-xl border border-warning-border bg-warning-subtle p-4 text-sm text-body">
               <h2 className="font-semibold">We couldn&apos;t confirm this college right now</h2>
               <p className="mt-2">This address may be correct, but its settings didn&apos;t load. Try again in a moment, or use the main sign-in page.</p>
-              <a href="https://42lms.com/login" className="mt-3 inline-block font-semibold text-primary-text underline">
+              <a href="https://42lms.com/login" className="mt-3 inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
                 Use the main sign-in page (42lms.com)
               </a>
             </div>
@@ -211,12 +211,12 @@ export default async function HomePage({
           )}
         </div>
 
-        <footer className="mt-8 flex flex-wrap gap-x-5 gap-y-1 border-t border-border pt-4 text-xs text-muted-foreground">
+        <footer className="mt-8 flex min-w-0 flex-wrap items-center gap-x-5 gap-y-1 border-t border-border pt-4 text-xs text-muted-foreground">
           <span>{tenant.kind==="college"?"Powered by 42LMS":
             "© "+new Date().getFullYear()+" 42LMS · JRSPF Technologies Pvt. Ltd."}</span>
             {branding?.supportEmail ? (
               <a
-                className="hover:text-primary-text"
+                className="inline-flex min-h-11 items-center break-all hover:text-primary-text focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]"
                 href={`mailto:${branding.supportEmail}`}
               >
                 {branding.supportEmail}
