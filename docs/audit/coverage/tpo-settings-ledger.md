@@ -209,3 +209,18 @@ Cloud typecheck, unit, PostgreSQL and browser checks are pending; these are sour
 | `TpoAuditSavedViews` and `/tpo/audit` | Server-owned views sync between signed-in devices, replaces local-only persistence; asynchronous GET/mutation reconciliation, no blind create retry after lost response, clear errors, preserved keyboard-sized buttons, exact saved-view actions and truthful storage unavailable state | `tests/unit/chat11-final-TPO-settings-audit-R04.test.ts`, `71b56b3`, `017b5bb`, `70a3bac`, `db71584` | Browser double-click, offline/failed storage, cross-device conflicts |
 
 **Disposal:** Original `TPO-settings-audit-R04` missing server persisted saved views is now source-implemented on this branch, rather than browser-only. PostgreSQL, Vitest and browser acceptance are not claimed as run.
+
+## Owner no-CI queue pass — persisted college lifecycle and preparation assignment idempotence
+
+| Export | Scope, state and failure behaviour now present | Existing test evidence / remaining acceptance |
+|---|---|---|
+| `saveMyTpoNotificationPreferences` | Locks ACTIVE college and persisted exact TPO role before insert/no-op, CAS and event; rejects suspended/archived tenant with NOT_READY; no cross-user writes | `tests/unit/chat11-tpo-personal-preferences-editor-cas.test.ts`; add PostgreSQL simultaneous role-revoke/first-write test |
+| `updateTpoCommunicationSettings` | Transaction locks ACTIVE college before live role, CAS and optional delivery/email settings; archived college cannot accept stale-tab writes | `tests/unit/chat11-tpo-communication-read-revocation.test.ts` (read), add DB write/archive race |
+| `getTpoPlacementSeasonSettings`, `getTpoPlacementRulesSettings` | Delivery-boundary persisted TPO-only `placements.manage` plus ACTIVE college SHARE lock, after parallel rules/job/count queries | Previous season/settings page evidence in `docs/audit/acceptance/tpo-settings-audit-verification.md`; add revoked-user concurrent read test |
+| `getTpoPlacementTeam`, `getTpoTrustedCompanies` | Results checked against persisted TPO-or-College Admin placement-cell role and ACTIVE college at response boundary after multi-table async reads | Source exists in `tpo-settings-people-service.ts`; add database suspended-officer and wrong-college joins test |
+| `getTpoMyNotifications` | Personal notification total/unread/filtered rows and saved preferences also require the same ACTIVE selected college and organization at late persisted TPO check | Existing personal-notification route/actor tests; add concurrent tenant archive test |
+| `listTpoPrepCourseOptions` | Active department/course/offering catalog is reauthorized under persisted TPO and active college after results load | Source `tpo-prep-assignment-service.ts`, add PostgreSQL catalog/archive regression |
+| `assignTpoPrepCourse` | Active tenant UPDATE lock, current TPO identity, actual active learner cohort, due-date recheck within transaction, set-based ON CONFLICT DO NOTHING; activity and notifications only for newly inserted assignments, accurate assigned/duplicate/skipped counts, retry creates no phantom events | Existing TPO assignment tests remain, add PostgreSQL concurrent duplicate and 0-new-assignments audit tests |
+| `listOwnTpoPrepAssignments` | Learner-only college/courses facts, bounded to 100; persisted active LEARNER/college check after data reads | Add revocation-in-flight and historical archived-offering access test |
+
+Owner directive honored: no CI re-run or repairs of old failing test list; these are implemented source changes with explicit remaining behavioral/DB coverage, not test-pass certification.

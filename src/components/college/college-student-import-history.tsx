@@ -19,6 +19,11 @@ export function CollegeStudentImportHistory(){
   requestVersion.current++;
   activeRequest.current?.abort();
   activeRequest.current=null;
+  // Do not retain private student-import history when the modal closes.
+  setRows([]);
+  setPage(1);
+  setHasNext(false);
+  setError("");
   setBusy(false);
   setOpen(false);
  }

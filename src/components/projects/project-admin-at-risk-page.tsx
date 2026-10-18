@@ -14,14 +14,9 @@ import {
   listProjectAdminRiskQueue,
 } from "@/modules/projects/admin-insights-service";
 import {ProjectAtRiskPageExport} from "./project-at-risk-page-export";
+import {formatProjectAdminActivityDateIst as formatDate,safeProjectAdminUtcIso} from "@/modules/projects/project-admin-date-model";
 
-function formatDate(value: Date) {
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Kolkata",
-  }).format(value);
-}
+
 
 export async function ProjectAdminAtRiskPage({
   collegeId,
@@ -92,7 +87,7 @@ export async function ProjectAdminAtRiskPage({
             id:project.id,title:project.title,mentorName:project.mentorName,
             inactiveDays:project.inactiveDays,riskReasons:project.riskReasons,
             blockerReason:project.blockerReason,
-            lastActivityAt:project.lastActivityAt.toISOString(),
+            lastActivityAt:safeProjectAdminUtcIso(project.lastActivityAt),
           }))}/>
         <p className="text-xs text-muted-foreground">CSV includes only the workspaces on this page.</p>
       </div>

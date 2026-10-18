@@ -32,6 +32,7 @@ export function summarizeRecruiterDrives<T extends RecruiterDriveListItem>(rows:
 }
 
 export function isHrDriveDeadlineToday(date:Date,now:Date):boolean{
+ if(!Number.isFinite(date.getTime())||!Number.isFinite(now.getTime()))return false;
  const format=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",
   year:"numeric",month:"2-digit",day:"2-digit"});
  return format.format(date)===format.format(now);
@@ -40,6 +41,8 @@ export function isHrDriveDeadlineToday(date:Date,now:Date):boolean{
 export function filterRecruiterDrives<T extends RecruiterDriveListItem>(
   rows: readonly T[], query: RecruiterDriveListQuery, now: Date = new Date(),
 ): T[] {
+  const validDeadline=(value:Date|null|undefined):value is Date=>
+    value instanceof Date&&Number.isFinite(value.getTime());
   return rows.filter(row =>
     row.job.archivedAt === null &&
     (row.job.status === "PUBLISHED" || row.job.status === "CLOSED") &&
@@ -49,12 +52,12 @@ export function filterRecruiterDrives<T extends RecruiterDriveListItem>(
     row.job.title.toLocaleLowerCase("en").includes(query.q.trim().toLocaleLowerCase("en")) &&
     (query.employment === "ALL" || row.job.employmentType === query.employment) &&
     (query.mode === "ALL" || row.job.workMode === query.mode) &&
-    (query.deadline === "ALL" || (query.deadline === "UNKNOWN" && !row.job.applicationDeadline) ||
+    (query.deadline === "ALL" || (query.deadline === "UNKNOWN" && !validDeadline(row.job.applicationDeadline)) ||
       (query.deadline === "TODAY" && row.job.status === "PUBLISHED" &&
-        !!row.job.applicationDeadline && isHrDriveDeadlineToday(row.job.applicationDeadline,now)) ||
-      (query.deadline === "PAST" && !!row.job.applicationDeadline &&
+        validDeadline(row.job.applicationDeadline) && isHrDriveDeadlineToday(row.job.applicationDeadline,now)) ||
+      (query.deadline === "PAST" && validDeadline(row.job.applicationDeadline) &&
         row.job.applicationDeadline.getTime() < now.getTime()) ||
-      (query.deadline === "SOON" && row.job.status === "PUBLISHED" && !!row.job.applicationDeadline &&
+      (query.deadline === "SOON" && row.job.status === "PUBLISHED" && validDeadline(row.job.applicationDeadline) &&
         row.job.applicationDeadline.getTime() >= now.getTime() &&
         row.job.applicationDeadline.getTime() <= now.getTime() + 7*86400000)) &&
     (query.view as string) !== "WAITING"
@@ -85,12 +88,14 @@ export function paginateRecruiterDrives<T>(rows:readonly T[],page:number) {
 }
 
 export function sortRecruiterDrives<T extends RecruiterDriveListItem>(rows:readonly T[],sort:RecruiterDriveListQuery["sort"]):T[]{
- const value=(date:Date|null|undefined)=>date?.getTime()??0;
+ const value=(date:Date|null|undefined)=>date&&Number.isFinite(date.getTime())?date.getTime():0;
+ const deadline=(date:Date|null|undefined)=>date&&Number.isFinite(date.getTime())
+  ?date.getTime():Number.MAX_SAFE_INTEGER;
  return [...rows].sort((a,b)=>{
   if(sort==="TITLE")return a.job.title.localeCompare(b.job.title)||a.job.id.localeCompare(b.job.id);
   if(sort==="DEADLINE"){
-   const aDeadline=a.job.applicationDeadline?value(a.job.applicationDeadline):Number.MAX_SAFE_INTEGER;
-   const bDeadline=b.job.applicationDeadline?value(b.job.applicationDeadline):Number.MAX_SAFE_INTEGER;
+   const aDeadline=deadline(a.job.applicationDeadline);
+   const bDeadline=deadline(b.job.applicationDeadline);
    return aDeadline-bDeadline||a.job.id.localeCompare(b.job.id);
   }
   return value(b.job.createdAt??b.job.publishedAt)-value(a.job.createdAt??a.job.publishedAt)||a.job.id.localeCompare(b.job.id);
