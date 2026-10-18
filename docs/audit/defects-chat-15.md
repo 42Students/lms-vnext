@@ -161,3 +161,15 @@ Additional **coverage without an independently established defect**: `HR-BREAK-c
 | HR-OFFER-FOLLOWUPS-95 | S2 | Recruiter Today follow-ups could display unknown offer statuses or corrupt/fractional aggregate counts from stale cached projections. Only supported statuses and positive safe integer counts now survive. | `HR-BREAK-chat15-offer-followups-95.test.ts` | Real offer state transitions and notifications not executed |
 
 Page-level **coverage-only** additions: `HR-BREAK-chat15-activity-page-96.test.tsx`, `HR-BREAK-chat15-notifications-page-97.test.tsx`, `HR-BREAK-chat15-tracker-mine-page-98.test.tsx`. These do not assert a production defect or verified UI execution.
+
+
+## HR private export regression follow-up — 19 October 2026
+
+| Gap | Severity | Risk and source correction | Authored regression | Verification |
+|---|---|---|---|---|
+| HR-PROPOSAL-CSV-99 | S2 spreadsheet safety | Proposal summary CSV did not neutralize formulas prefixed by spaces; invalid historic Date could crash export. It now guards cells with leading whitespace and omits malformed UTC timestamps. | `HR-BREAK-chat15-proposal-csv-99.test.ts` | CI, Excel/LibreOffice viewer and PostgreSQL pending |
+| HR-CALENDAR-CSV-100 | S2 export recovery | Corrupt persisted calendar event or results-due timestamp could abort the entire recruiter CSV. Invalid rows are filtered before sorting/IST formatting. | `HR-BREAK-chat15-calendar-csv-100.test.ts` | CI, calendar index and live download pending |
+| HR-PROPOSAL-API-101 | S2 private data/failure mapping | Proposal CSV export lacked a catch/mapping for private DB errors and did not explicitly verify recruiter principal equality at route entry. It now rejects swapped identities and routes failures through the shared sanitized response. | `HR-BREAK-chat15-proposal-export-api-101.test.ts` | Authenticated browser and session-revocation pending |
+| HR-ACTIVITY-CSV-102 | S3 correctness | Activity CSV could throw on invalid date; if rows exceeded the hard cap with no explicit downstream-more flag, it silently truncated without the warning row. Now safe-dates and independently determines the cap marker. | `HR-BREAK-chat15-activity-csv-102.test.ts` | CI, real 200+ event history pending |
+| HR-NOTIFICATIONS-CSV-103 | S3 resilience | Notification export could crash formatting an invalid Date and print NaN omitted counts from a corrupt aggregate total. It now uses safe dates/aggregate totals. | `HR-BREAK-chat15-notification-csv-103.test.ts` | CI, real read/unread export pending |
+| HR-EXPORT-104 | S2 query authorization clarity | Five recruiter GET CSV endpoints silently accepted duplicate sensitive filters and unknown query keys; now return INVALID_QUERY before private service reads. | `HR-BREAK-chat15-export-query-104.test.ts` | Authenticated HTTP, paging and cache checks pending |
