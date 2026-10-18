@@ -44,7 +44,9 @@ export function evaluateTpoDriveLifecycle(
     action === "CLOSE" ? "PUBLISHED" : "CLOSED";
   const blockers: string[] = [];
   if (facts.jobStatus !== expectedStatus) blockers.push("STALE_JOB_STATUS");
-  if (!facts.seasonActive) blockers.push("SEASON_NOT_ACTIVE");
+  // Closeout must remain possible after a season ends; only publishing or
+  // reopening a drive requires an active season.
+  if (action !== "CLOSE" && !facts.seasonActive) blockers.push("SEASON_NOT_ACTIVE");
   if (action !== "CLOSE") {
     if (!facts.companyActive) blockers.push("COMPANY_NOT_ACTIVE");
     if (facts.roleCount < 1) blockers.push("NO_ACTIVE_ROLE");
