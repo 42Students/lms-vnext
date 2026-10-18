@@ -55,11 +55,11 @@ Updated 2026-10-18; source branch `chatgpt/chat-16-b`. This is an **in-progress 
 | Public homepage/login, retired handoff and invitation aliases | `tests/unit/chat16-public-auth-role-journeys-02.test.ts` | Browser render, focus, responsive states, real session expiry |
 | College Feature Controls SA policy editor | `tests/unit/chat16-final-sa-tenants-modules-25.test.ts` | Real back-end recheck, stale concurrent mutation and consent |
 
-## Remaining exhaustive-coverage work (explicitly OPEN)
+## Remaining validation and exhaustive-coverage work (explicitly OPEN)
 
-- Functions not listed above across `src/modules/messaging/*`, `src/modules/notifications/*`, `src/modules/inbound-mail/*` and `src/modules/placements/*email*/*message*/*notification*` still need individual ledger rows with executed direct behavioural tests. Missing items include provider adapters, campaign dispatch, recipient persistence, inbound-mail mutations, and all side-effect service branches.
-- Auth/public routes outside the four direct page imports and the existing login/invitation contract suite need executed page-level state coverage. New direct tests address four previously red matrix entries; the generated matrix still must be regenerated and checked.
-- No claim of >90% branch coverage, PostgreSQL integration passing, complete route coverage, or production readiness. These require the local/cloud test harness and a real provider-enabled integration environment.
+- Direct behavioural suites have since been authored for provider adapters, campaign dispatch and consent rechecks, recipient HMAC persistence, opt-out and notification writes, TPO/HR inbox access, signed inbound recruiter email replies, and inbox triage. The earlier inventory above predates these additions; details and test filenames appear in the later dated entries below. **No aggregate branch-coverage percentage is claimed.**
+- Public/auth page-level suites now cover login/session recovery, recruiter invitations and joins, public unsubscribe/confirmation, company share, public placement disclosures, platform/universities/enterprises, root error/loading/not-found, and health/readiness, but browser focus/responsiveness, provider backends and end-to-end workflows remain unverified.
+- Full PostgreSQL concurrency and transaction acceptance, signer/provider webhook integration, real SMTP/SMS delivery and the latest cloud CI run remain **OPEN**. The current private provider credentials, production SMS DLT confirmation and browser environment are outside what this GitHub-only lane can validate; never interpret a mocked service or authored SSR suite as a live acceptance pass.
 
 ## Additional direct test inventory — 2026-10-18
 
