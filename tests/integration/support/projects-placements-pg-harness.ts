@@ -254,9 +254,41 @@ export async function createProjectFixture(db: PgHarness, tenant: TenantFixture,
     projectId:project!.id,workspaceId:project!.id,releaseId:release!.id,sprintId:sprint!.id,
     taskId:task!.id,resourceId:resource!.id,mentorMemberId:mentorRow!.id,learnerMemberId:learnerRow!.id};
 }
+/**
+ * Guard the fixture API against accidentally creating impossible cross-tenant or
+ * non-rostered submissions. This is a fixture integrity check, NOT a substitute
+ * for a route/service authorization test. The same transaction sees the rows.
+ */
+async function requireProjectLearner(db: PgHarness, projectId: string,
+  learner: PrincipalFixture): Promise<void> {
+  if (!learner.membershipId || !learner.roles.includes("LEARNER")) {
+    throw new Error("PROJ-HARNESS: project submissions require a learner membership");
+  }
+  const rows = await db.query<{id: string}>(`
+    select p.id
+      from project_instances p
+      join college_memberships cm
+        on cm.college_id = p.college_id and cm.id = $2
+      join project_members pm
+        on pm.project_id = p.id and pm.membership_id = cm.id
+     where p.id = $1 and pm.role = 'LEARNER' and cm.status = 'ACTIVE'
+     limit 1`, [projectId, learner.membershipId]);
+  if (!rows.length || learner.collegeId === null) {
+    throw new Error("PROJ-HARNESS: learner is not an active member of this project and college");
+  }
+}
+async function requireProjectCollegeActor(db: PgHarness, projectId: string,
+  actor: PrincipalFixture): Promise<void> {
+  if (!actor.collegeId) throw new Error("PROJ-HARNESS: project actor needs college scope");
+  const rows = await db.query<{id: string}>(
+    "select id from project_instances where id=$1 and college_id=$2",
+    [projectId, actor.collegeId]);
+  if (!rows.length) throw new Error("PROJ-HARNESS: project actor wrong college");
+}
+
 export async function createTaskSubmission(db: PgHarness, project: ProjectFixture,
   learner: PrincipalFixture): Promise<string> {
-  if (!learner.membershipId) throw new Error("PROJ-HARNESS: submission needs membership");
+  await requireProjectLearner(db, project.projectId, learner);
   const [row] = await db.query<{id:string}>(`
     insert into project_task_submissions
       (project_id,task_id,version,submitted_by_membership_id,submission_url)
@@ -266,7 +298,7 @@ export async function createTaskSubmission(db: PgHarness, project: ProjectFixtur
 }
 export async function createFinalSubmission(db: PgHarness, project: ProjectFixture,
   learner: PrincipalFixture): Promise<string> {
-  if (!learner.membershipId) throw new Error("PROJ-HARNESS: final submission needs membership");
+  await requireProjectLearner(db, project.projectId, learner);
   const [row] = await db.query<{id:string}>(`
     insert into project_submissions (project_id,version,status,summary,created_by_membership_id)
     values ($1,1,'DRAFT','Harness final proof',$2) returning id`,
@@ -278,7 +310,10 @@ export async function createFinalSubmission(db: PgHarness, project: ProjectFixtu
  */
 export async function submitFinalSubmission(db: PgHarness, submissionId: string,
   learner: PrincipalFixture): Promise<void> {
-  if (!learner.membershipId) throw new Error("PROJ-HARNESS: submission needs learner membership");
+  const submissions = await db.query<{project_id: string}>(
+    "select project_id from project_submissions where id=$1", [submissionId]);
+  if (submissions.length !== 1) throw new Error("PROJ-HARNESS: submission not found");
+  await requireProjectLearner(db, submissions[0]!.project_id, learner);
   const rows = await db.query<{id:string}>(`
     update project_submissions
        set status='SUBMITTED',submitted_by_membership_id=$2,submitted_at=now(),updated_at=now()
@@ -288,7 +323,8 @@ export async function submitFinalSubmission(db: PgHarness, submissionId: string,
 }
 export async function createMeeting(db: PgHarness, project: ProjectFixture,
   learner: PrincipalFixture, author: PrincipalFixture): Promise<string> {
-  if (!learner.membershipId) throw new Error("PROJ-HARNESS: meeting requester needs membership");
+  await requireProjectLearner(db, project.projectId, learner);
+  await requireProjectCollegeActor(db, project.projectId, author);
   const [row] = await db.query<{id:string}>(`
     insert into project_meetings
       (project_id,title,starts_at,ends_at,time_zone,requested_by_membership_id,created_by_user_id)
