@@ -74,3 +74,5 @@ These branch-level tests are authored, not executed; fixture timestamps use 2099
 | HR unsent drive browser draft discard | UX-HR-DRAFT-CLEAR-47 | `tests/unit/UX-HR-chat19-draft-clear.test.ts` | Confirm dialog, both storage stores, failed deletion preservation, 44px targets |
 
 | Recruiter notifications Mark as read | HR-BREAK-READ-RECEIPT-48 | `tests/unit/HR-BREAK-chat19-read-receipt.test.ts` | Server origin protection, exact persisted receipt, HTML redirect/foreign notification refusal, single-flight gating |
+
+| HR profile details saved-response verification | HR-BREAK-PROFILE-RECEIPT-48 | `tests/unit/HR-BREAK-chat19-profile-receipt.test.ts` | Exact persisted profile/versions, forged sign-in JSON, invalid phone/name, draft preservation |

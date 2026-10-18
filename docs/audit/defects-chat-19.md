@@ -570,3 +570,11 @@ Browser-storage failures and mobile keyboard interactions require final interact
 | HR-BREAK-READ-RECEIPT-48 | MAJOR | /hr/notifications mark-read accepted any successful HTTP status, including an expired-session HTML fallback or unrelated response. Require an exact persisted notification ID and ISO readAt receipt from the already own-user/own-company authorized service, reject redirects and malformed results, leave retry possible when unconfirmed. | `tests/unit/HR-BREAK-chat19-read-receipt.test.ts` exercises the direct route, cross-origin, malformed payloads and client confirmation order. |
 
 No CI/runtime/browser execution was performed.
+
+## HR profile persisted save confirmation
+
+| ID | Severity | Finding/fix | Regression |
+|---|---|---|---|
+| HR-BREAK-PROFILE-RECEIPT-48 | MAJOR | Client accepted any 200 JSON with a `profile` object, then overwrote the unsent profile draft and optimistic versions without validating its shape; a redirected sign-in fallback or partially malformed response could incorrectly claim success or crash. Require a nonredirected response matching the complete server projection (validated name, contact digits, changed flag, ISO versions), then update saved state and tokens. Preserve draft and friendly failure copy on unconfirmed results. | `tests/unit/HR-BREAK-chat19-profile-receipt.test.ts` covers actual/no-op service receipts, malformed/sign-in data and state update ordering. |
+
+No tests or browser were executed in this lane.
