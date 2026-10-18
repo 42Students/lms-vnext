@@ -216,7 +216,7 @@ async function preparePassedApplication() {
     {
       action: "SCHEDULE",
       scheduledAt: new Date(
-        "2026-10-24T04:30:00.000Z",
+        "2099-10-24T04:30:00.000Z",
       ),
       timezone: "Asia/Kolkata",
       mode: "VIRTUAL",
@@ -684,7 +684,7 @@ describe("Placement P8 offers and joining", () => {
           annualCtcInr: 1_200_000,
           joiningDate: "2027-01-10",
           expiresAt: new Date(
-            "2026-11-01T18:29:59.000Z",
+            "2099-11-01T18:29:59.000Z",
           ),
         },
       );
@@ -707,7 +707,7 @@ describe("Placement P8 offers and joining", () => {
           annualCtcInr: 1_200_000,
           joiningDate: "2027-01-10",
           expiresAt: new Date(
-            "2026-11-01T18:29:59.000Z",
+            "2099-11-01T18:29:59.000Z",
           ),
         },
       );
@@ -1031,7 +1031,7 @@ describe("Placement P8 offers and joining", () => {
         {
           roleTitle: "Engineer",
           expiresAt: new Date(
-            "2026-11-01T00:00:00.000Z",
+            "2099-11-01T00:00:00.000Z",
           ),
         },
       );
@@ -1042,7 +1042,7 @@ describe("Placement P8 offers and joining", () => {
         expired.id,
         { action: "ACCEPT" },
         new Date(
-          "2026-11-02T00:00:00.000Z",
+          "2099-11-02T00:00:00.000Z",
         ),
       ),
     ).rejects.toMatchObject({
