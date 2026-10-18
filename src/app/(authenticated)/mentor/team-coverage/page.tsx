@@ -1,3 +1,4 @@
+import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -36,7 +37,7 @@ export default async function MentorTeamCoveragePage({
   });
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid team coverage filters</h1>
-    <Link href="/mentor/team-coverage" className="text-primary-text underline">Clear filters</Link>
+    <Link href="/mentor/team-coverage" className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
   </section>;
 
   const context = await getCurrentRequestContext();
@@ -46,7 +47,7 @@ export default async function MentorTeamCoveragePage({
     <PageHeader eyebrow="Mentor · Projects" title="Team coverage"
       description="Active team composition across your currently assigned, non-archived projects."
       actions={<Link href="/mentor/projects"
-        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Projects
       </Link>} />
     {!data.enabled
@@ -93,9 +94,8 @@ export default async function MentorTeamCoveragePage({
               <option value="TITLE">Project title A–Z</option><option value="FEWEST_LEARNERS">Fewest learners first</option><option value="MOST_LEARNERS">Most learners first</option><option value="MOST_MENTORS">Most Mentors first</option><option value="FEWEST_MENTORS">Fewest Mentors first</option>
             </select>
           </label>
-          <button type="submit"
-            className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
-          <Link href="/mentor/team-coverage" className="px-3 py-2 text-sm font-semibold text-primary-text">Clear</Link>
+          <Button type="submit" variant="primary">Filter</Button>
+          <Link href="/mentor/team-coverage" className="px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
         </form>
         <section aria-label="Registered team coverage summary"
           className="grid gap-3 sm:grid-cols-3">
@@ -142,15 +142,15 @@ export default async function MentorTeamCoveragePage({
               </dl>
               <div className="mt-4 flex flex-wrap gap-4">
                 <Link href={"/mentor/projects/" + encodeURIComponent(item.projectId) + "?tab=team"}
-                  className="text-sm font-semibold text-primary-text hover:underline">
+                  className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
                   Team workspace →
                 </Link>
                 <Link href={"/mentor/projects/" + encodeURIComponent(item.projectId) + "/team-history"}
-                  className="text-sm font-semibold text-primary-text hover:underline">
+                  className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
                   Membership history →
                 </Link>
                 <Link href={"/mentor/projects/" + encodeURIComponent(item.projectId) + "/team-meetings"}
-                  className="text-sm font-semibold text-primary-text hover:underline">
+                  className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
                   Team meeting log →
                 </Link>
               </div>
@@ -162,9 +162,9 @@ export default async function MentorTeamCoveragePage({
           </span>
           <div className="flex gap-3">
             {data.page > 1 && <Link href={mentorTeamCoverageHref({...data.query,page:data.page-1})}
-              className="text-sm font-semibold text-primary-text">Previous</Link>}
+              className="text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>}
             {data.page < data.totalPages && <Link href={mentorTeamCoverageHref({...data.query,page:data.page+1})}
-              className="text-sm font-semibold text-primary-text">Next</Link>}
+              className="text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>}
           </div>
         </nav>
       </>}

@@ -1,3 +1,4 @@
+import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -36,7 +37,7 @@ export default async function MentorTaskReviewsPage({
   }));
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid task review filters</h1>
-    <Link href="/mentor/task-reviews" className="text-primary-text underline">
+    <Link href="/mentor/task-reviews" className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       Clear filters
     </Link>
   </section>;
@@ -47,11 +48,11 @@ export default async function MentorTaskReviewsPage({
       description="Submitted project tasks waiting for review across your assigned projects."
       actions={<div className="flex flex-wrap items-center gap-3">
         <Link href="/mentor/task-review-history"
-          className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+          className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           Reviewed task history
         </Link>
         <Link href="/mentor/projects"
-          className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+          className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           Projects
         </Link>
       </div>}
@@ -112,17 +113,16 @@ export default async function MentorTaskReviewsPage({
             <option value="OLDEST">Oldest first</option><option value="PRIORITY">Critical priority first</option>
           </select>
         </label>
-        <button type="submit"
-          className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+        <Button type="submit" variant="primary">
           Filter
-        </button>
-        <Link href="/mentor/task-reviews" className="px-3 py-2 text-sm font-semibold text-primary-text">
+        </Button>
+        <Link href="/mentor/task-reviews" className="px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           Clear
         </Link>
       </form>
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <Link href={mentorTaskReviewExportHref(data.query)} download
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           Export pending task review metadata CSV (max 200)
         </Link>
         {data.total>200?<span role="status">CSV omits {data.total-200} matching task reviews.</span>:null}
@@ -150,21 +150,21 @@ export default async function MentorTaskReviewsPage({
               }).format(item.submittedAt)} IST
             </p>
             <Link href={mentorTaskReviewTargetHref(item.projectId,item.taskId)}
-              className="mt-3 inline-flex min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+              className="mt-3 inline-flex min-h-9 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
               Open exact task review →
             </Link>
           </article>)}</div>}
       {data.total>0&&data.items.length===0?
         <Link href={mentorTaskReviewHref({...data.query,page:1})}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
+          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           Return to first matching page
         </Link>:null}
       <nav aria-label="Task review pagination" className="flex items-center justify-between gap-3">
         <p className="text-sm text-body">Page {data.page} of {data.totalPages}</p>
         <div className="flex gap-3">
-          {data.page > 1 && <Link className="text-sm font-semibold text-primary-text"
+          {data.page > 1 && <Link className="text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
             href={mentorTaskReviewHref({...data.query, page: data.page - 1})}>Previous</Link>}
-          {data.page < data.totalPages && <Link className="text-sm font-semibold text-primary-text"
+          {data.page < data.totalPages && <Link className="text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
             href={mentorTaskReviewHref({...data.query, page: data.page + 1})}>Next</Link>}
         </div>
       </nav>

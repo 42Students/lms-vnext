@@ -1,3 +1,4 @@
+import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -31,7 +32,7 @@ export default async function MentorTeamHistoryPage({
   });
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid team history filters</h1>
-    <Link href="/mentor/projects" className="text-primary-text underline">Back to projects</Link>
+    <Link href="/mentor/projects" className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Back to projects</Link>
   </section>;
 
   const context = await getCurrentRequestContext();
@@ -41,7 +42,7 @@ export default async function MentorTeamHistoryPage({
     <PageHeader eyebrow="Mentor · Project Team" title="Team membership history"
       description={data.title + " · Registered team join/end records"}
       actions={<Link href={back}
-        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Team workspace
       </Link>} />
     {!data.enabled
@@ -72,9 +73,9 @@ export default async function MentorTeamHistoryPage({
               <option value="NEWEST">Most recent started first</option>
             </select>
           </label>
-          <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+          <Button type="submit" variant="primary">
             Filter role
-          </button>
+          </Button>
         </form>
         <nav aria-label="Team membership history views" className="flex flex-wrap gap-2">
           {([
@@ -115,9 +116,9 @@ export default async function MentorTeamHistoryPage({
           <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
           <div className="flex gap-3">
             {data.page > 1 ? <Link href={mentorTeamHistoryHref(projectId,{view:data.query.view,role:data.query.role,primary:data.query.primary,order:data.query.order,page:data.page-1})}
-              className="text-sm font-semibold text-primary-text">Previous</Link> : null}
+              className="text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link> : null}
             {data.page < data.totalPages ? <Link href={mentorTeamHistoryHref(projectId,{view:data.query.view,role:data.query.role,primary:data.query.primary,order:data.query.order,page:data.page+1})}
-              className="text-sm font-semibold text-primary-text">Next</Link> : null}
+              className="text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link> : null}
           </div>
         </nav>
       </>}
