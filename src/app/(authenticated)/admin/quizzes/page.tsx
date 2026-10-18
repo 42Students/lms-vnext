@@ -6,7 +6,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { AdminAssessmentDirectory } from "@/components/courses/admin-assessment-read-directory";
 import {CollegeQuizCreate} from "@/components/courses/college-quiz-create";
 import {getCollegeQuizAuthoringOptions} from "@/modules/courses/college-quiz-authoring-options";
-import { adminAssessmentQuerySchema } from "@/modules/courses/admin-assessment-directory-model";
+import { adminAssessmentExportHref, adminAssessmentQuerySchema } from "@/modules/courses/admin-assessment-directory-model";
 import { listCollegeAssessmentAggregate } from "@/modules/courses/college-assessment-aggregate-service";
 
 export default async function SuperAdminQuizzesPage({
@@ -28,7 +28,7 @@ export default async function SuperAdminQuizzesPage({
   const data = await listCollegeAssessmentAggregate(context, "QUIZ", query.data);
   const lessons=await getCollegeQuizAuthoringOptions(context);
   return <div className="space-y-4">
-    <a href={"/api/admin/quizzes/export?"+new URLSearchParams({q:query.data.q,status:query.data.status}).toString()}
+    <a href={adminAssessmentExportHref("QUIZ",query.data)}
      className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Export quizzes.csv</a>
     <CollegeQuizCreate lessons={lessons} deliveries={data.reviewDeliveries}/>
     <AdminAssessmentDirectory data={data} />

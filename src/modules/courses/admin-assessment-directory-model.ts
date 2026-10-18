@@ -20,6 +20,18 @@ export function adminAssessmentHref(kind: AdminAssessmentKind, query: z.infer<ty
   if (query.page > 1) params.set("page", String(query.page));
   return params.size ? base + "?" + params : base;
 }
+/** Admin CSV exports the entire authorized filtered set, not only the visible page.
+ * Keep the same filter URL semantics as the directory; never carry its page.
+ */
+export function adminAssessmentExportHref(
+ kind: AdminAssessmentKind,
+ query: z.infer<typeof adminAssessmentQuerySchema>,
+): string {
+ const listing=adminAssessmentHref(kind,{...query,page:1});
+ const filters=new URL(listing,"https://invalid.local").searchParams;
+ const path=kind==="ASSIGNMENT"?"/api/admin/assignments/export":"/api/admin/quizzes/export";
+ return path+(filters.size?"?"+filters.toString():"");
+}
 export function adminAssessmentStats(items: readonly Pick<CollegeAssessmentAggregateItem, "status" | "activityCount">[]) {
   return collegeAssessmentSummary(items);
 }
