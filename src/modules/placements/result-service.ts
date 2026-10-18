@@ -335,6 +335,12 @@ export async function stagePlacementRoundResult(
       );
     }
 
+    // Company-result staging has its own recruiter grant guard. For campus
+    // officers, do not trust a role cached at request start: role revocation
+    // can race the earlier preview or round participant lookup.
+    if(managerCanStage)await assertPersistedPlatformPermission(tx,context,
+      "placements.manage",{collegeId:job.collegeId});
+
     const [lockedApplication] = await tx
       .select({
         status: placementApplications.status,
