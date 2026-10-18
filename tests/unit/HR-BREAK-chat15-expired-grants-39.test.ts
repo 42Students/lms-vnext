@@ -37,10 +37,10 @@ describe("HR-GRANT-EXPIRE-39 cached recruiter grants cannot outlive persisted ac
    for(const clause of [
     'eq(placementRecruiterCollegeGrants.status,"ACTIVE")',
     'eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED")',
-    'gt(placementRecruiterCollegeGrants.validUntil,sql`now()`)',
+    'gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`)',
     "'DRIVES' = ANY(${placementRecruiterCollegeGrants.capabilities})",
    ])expect(source).toContain(clause);
-   expect(source.split('gt(placementRecruiterCollegeGrants.validUntil,sql`now()`)').length-1)
+   expect(source.split('gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`)').length-1)
     .toBe(n);
   }
  });
@@ -52,7 +52,7 @@ describe("HR-GRANT-EXPIRE-39 cached recruiter grants cannot outlive persisted ac
    'eq(placementRecruiterCollegeGrants.id,scope.grant.id)',
    'eq(placementRecruiterCollegeGrants.status,"ACTIVE")',
    'eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED")',
-   'gt(placementRecruiterCollegeGrants.validUntil,sql`now()`)',
+   'gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`)',
   ])expect(query).toContain(clause);
   expect(source.indexOf("if (!company) throw new AuthorizationError"))
    .toBeLessThan(source.indexOf("const team = await db"));
