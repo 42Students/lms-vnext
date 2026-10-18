@@ -41,8 +41,12 @@ describe("SA-tenants-modules-31 in-page learner explanation",()=>{
   const ui=read("src/components/admin/learner-module-access-drawer.tsx");
   expect(page).toContain("<LearnerModuleAccessDrawer collegeId={college.id}/>");
   for(const text of ["Why can&apos;t a student see a module?","Matching learners",
-   "aria-modal=\"true\"","Placement cell decision","Decided by","StudentRuleEditor","Recheck access after a change"])
+   "title=\"Student module access explanation\"","Placement cell decision","Decided by","StudentRuleEditor","Recheck access after a change"])
    expect(ui).toContain(text);
+  const drawer=read("src/components/ui/drawer.tsx");
+  expect(drawer).toContain("modal.showModal()");
+  expect(drawer).toContain("onCancel={event =>");
+  expect(drawer).toContain("opener.current?.focus()");
  });
  it("SA-tenants-modules-31 preserves authenticated read-only query and ID scope boundaries",()=>{
   const route=read("src/app/api/admin/features/[collegeId]/trace/route.ts");
