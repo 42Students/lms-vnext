@@ -223,3 +223,7 @@ These SSR mock journeys supplement, not replace, persisted actor authorization i
 | `src/modules/academics/college-academic-directory-model.ts` `collegeSemesterDirectorySchema`, `collegeBatchDirectorySchema`, `academicDirectorySearchParams`, `academicDirectoryHref`, `academicDirectoryPageCount` | `tests/unit/chat4-college-academic-directory-strict-filter.test.ts` (`COL-academics-directory-FILTER-01`) | True decimal-only page, pageSize, term, credits and year parsing for URL filters; rejects foreign college/org/unknown keys and arrays; preserves legacy 10/25/50/100 page-size options; enforces credit bounds and batch progression/date contradictions; round-trip authenticated filter URLs without query resets, 1-page empty directory |
 
 No runtime CI execution. Numeric internally validated number callers remain supported.
+
+## Local first-party identity contact boundary
+
+`src/modules/people/local-identity-directory.ts` `createUser` now raises `IDENTITY_CONTACT_REQUIRED` if a direct caller supplies neither email nor phone. This enforces the same login-recoverability rule as `resolveOrCreateIdentity` at the adapter boundary rather than creating unreachable anonymous accounts. `tests/unit/chat4-college-local-identity-directory.test.ts` includes the `COL-people-local-identity-02` negative case; existing ordinary phone/email creation and unique opaque ID cases remain. Cloud CI pending.
