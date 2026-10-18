@@ -89,7 +89,7 @@ describe("PROJ-BREAK-FACULTY-02 assigned faculty: access and stale-session break
       expect(store.reads).toBe(1);
     }
     const expired=faculty();
-    expired.user={...expired.user,platformStatus:"SUSPENDED"};
+    expired.user={...expired.user,platformStatus:"DISABLED"};
     store.reads=0;
     await expect(requireProjectReadAccess(expired,projectId))
       .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});

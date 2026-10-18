@@ -1,6 +1,7 @@
 import { outboundFetch } from "@/lib/outbound";
 import { writeStructuredLog } from "@/observability/logger";
 import type { SmsProvider } from "./types";
+import { isExotelAcceptedResponse } from "@/modules/messaging/provider-acceptance-model";
 
 /**
  * Exotel transactional SMS, matching the legacy LMS integration.
@@ -112,17 +113,16 @@ export function createExotelSmsProvider(
         const body = (await response.json()) as {
           SMSMessage?: { Sid?: string; Status?: string };
         };
-        const sid = body.SMSMessage?.Sid ?? "";
-        const status = (body.SMSMessage?.Status ?? "").toLowerCase();
-
-        if (!sid || !status || status.startsWith("failed")) {
+        const accepted = isExotelAcceptedResponse(body);
+        const status = (body.SMSMessage?.Status ?? "").trim().toLowerCase();
+        if (!accepted) {
           writeStructuredLog("WARNING", "sms.otp_not_accepted", {
-            providerStatus: status,
+            providerStatus: status.slice(0, 32),
           });
           return false;
         }
 
-        // "Accepted" is not handset delivery.
+        // Provider acceptance is not proof of handset delivery.
         writeStructuredLog("INFO", "sms.otp_accepted", {
           providerStatus: status,
           recipientSuffix: phoneE164.slice(-4),

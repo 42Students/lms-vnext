@@ -18,7 +18,12 @@ describe("Chat-7 schedule parity",()=>{
   expect(s).toContain("getLearnerPlacementRequestWorkspace(context)");
   expect(s).toContain("row.testUrl");
   expect(s).toContain("Open test");
-  expect(s).toContain('rel="noopener noreferrer"');
+  const link=read("src/components/ui/third-party-link.tsx");
+  // External links are not target=_blank: shared control validates HTTPS,
+  // denies embedded credentials, and offers copy fallback on WebViews.
+  expect(s).toContain("<ThirdPartyLink href={row.testUrl}");
+  expect(link).toContain('url.protocol === "https:" && !url.username && !url.password');
+  expect(link).not.toContain('target="_blank"');
   expect(s).toContain("not an attendance confirmation or final outcome");
  });
 });
