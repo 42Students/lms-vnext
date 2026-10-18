@@ -11,7 +11,7 @@ export const placementTpoPrepAssignments=pgTable("placement_tpo_prep_assignments
  collegeId:uuid("college_id").notNull().references(()=>colleges.id,{onDelete:"restrict"}),
  membershipId:uuid("membership_id").notNull(),
  offeringId:uuid("offering_id").notNull().references(()=>courseOfferings.id,{onDelete:"restrict"}),
- dueAt:timestamp("due_at",{withTimezone:true}).notNull(),
+ dueAt:timestamp("due_at",{withTimezone:true}),
  assignedByUserId:uuid("assigned_by_user_id").notNull().references(()=>users.id,{onDelete:"restrict"}),
  createdAt:timestamp("created_at",{withTimezone:true}).notNull().defaultNow(),
 },t=>[
@@ -19,5 +19,5 @@ export const placementTpoPrepAssignments=pgTable("placement_tpo_prep_assignments
   foreignColumns:[collegeMemberships.id,collegeMemberships.collegeId]}).onDelete("restrict"),
  uniqueIndex("tpo_prep_member_offering_uq").on(t.membershipId,t.offeringId),
  index("tpo_prep_college_due_idx").on(t.collegeId,t.dueAt),
- check("tpo_prep_due_after_assigned_ck",sql`${t.dueAt}>${t.createdAt}`),
+ check("tpo_prep_due_after_assigned_ck",sql`${t.dueAt} is null or ${t.dueAt}>${t.createdAt}`),
 ]);
