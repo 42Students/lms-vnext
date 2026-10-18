@@ -12,10 +12,10 @@ export default async function CollegeActivityDetailPage({
   const date = new Intl.DateTimeFormat("en-IN", {
     dateStyle: "full", timeStyle: "medium", timeZone: "Asia/Kolkata",
   }).format(event.occurredAt);
-  return <div className="min-w-0 space-y-6">
+  return <div className="min-w-0 overflow-x-clip space-y-6">
     <PageHeader eyebrow="College Admin · Activity Log" title="Activity detail"
       description={event.summary}
-      actions={<Link href="/college/activity" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+      actions={<Link href="/college/activity" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
         Back to Activity Log
       </Link>} />
     <dl className="grid gap-4 rounded-xl border border-border bg-surface p-5 text-sm sm:grid-cols-2">
@@ -34,7 +34,7 @@ export default async function CollegeActivityDetailPage({
     </dl>
     <section className="rounded-xl border border-border bg-surface p-5">
       <h2 className="m-0 text-base font-semibold text-foreground">Sanitized event metadata</h2>
-      <pre className="mt-3 overflow-x-auto whitespace-pre-wrap break-words rounded-lg bg-muted p-4 text-xs text-body">
+      <pre className="mt-3 overflow-x-auto overscroll-x-contain whitespace-pre-wrap break-words rounded-lg bg-muted p-4 text-xs text-body">
         {JSON.stringify(event.metadata, null, 2)}
       </pre>
     </section>
