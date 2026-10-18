@@ -31,6 +31,12 @@ describe("College faculty schedule reassignment break-it workflows",()=>{
  it("COL-faculty-reassign-02 source faculty and scheduled sessions must be scoped to persisted college",()=>{
   const s=code();
   expect(s).toContain('if(!sourceFaculty)throw Error("Faculty not found in this college.")');
+  const preview=s.slice(s.indexOf("export async function getFacultyScheduleReassignOptions("),
+   s.indexOf("export async function reassignFacultyUpcomingSchedules("));
+  expect(preview).toContain("db.transaction(async tx=>");
+  expect(preview).toContain('assertPersistedPlatformPermission(tx,ctx,"academics.manage"');
+  expect(preview.indexOf("assertPersistedPlatformPermission")).toBeLessThan(preview.indexOf("await tx.select"));
+  expect(preview).not.toContain("await db.select");
   expect(s).toContain("eq(collegeMemberships.id,id)");
   expect(s).toContain("eq(collegeMemberships.collegeId,m.collegeId)");
   expect(s).toContain('eq(users.platformStatus,"ACTIVE")');
