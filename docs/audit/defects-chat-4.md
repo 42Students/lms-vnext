@@ -205,3 +205,7 @@ Bulk import history previously left concurrent GET responses unversioned. After 
 ## COL-UX-ACADEMIC-TABLE-01 — phone keyboard accessibility of academic directory
 
 The College Admin semesters/batches directory rendered a wide native `<table>` inside a horizontal scroller, requiring phone users to pan across 6–8 columns and find edit actions at the trailing edge. It now uses the shared `DataTable` with a labelled `ScrollCue`, semantic column captions, primary fields and actions visible on phones, and extra metadata in the accessible More details disclosure. Existing Actions and legacy labels remain. SSR tests cover both directory modes; not run, phone/browser audit pending.
+
+## COL-UX-STRUCTURE-TABLE-02 — S2 horizontal-only Class/Elective directory access
+
+Class and elective-slot directories were wide native tables where the Schedule/Manage actions and confirmed-student fields required horizontal scanning on phones. Replaced with the shared responsive `DataTable`, marking the record as primary, actions as permanently phone-visible, and remaining fields as secondary accessible through More details. All original legacy action routes and row permission gates remain. Added SSR rendered class/elective regression cases; cloud/mobile verification pending.
