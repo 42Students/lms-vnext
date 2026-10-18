@@ -50,3 +50,22 @@ This environment has a connected GitHub source workflow, but no runnable local c
 - `tests/unit/UX-kit-role-and-overlay-chat17.test.tsx` tests `PermissionAction` own/foreign-tenant, disabled and ended actors, global versus selected-scope Super Admin, native WebView marker identity, table cell-call count, upload prechecks, and persistent toast cleanup.
 - `UX-learn-my-placements-announcements-01` new-window notice links now use the existing same-tab, HTTPS-validated `ThirdPartyLink` fallback, addressing the reported chat-17 unit regression.
 - Added both suites to `test:db:projects-harness` and `test:ux:kit:hardening`. **Not executed in this connector-only environment**; PostgreSQL, node_modules and running a full typecheck remain runner-side acceptance gates. No success claim without CI evidence.
+
+## Follow-on chat-17 hardening batch (2026-10-18, CI evidence pending)
+
+**PostgreSQL:** additional real SQL examples `PROJ-HARNESS-29..32` in `tests/integration/projects-placements-pg-harness-relations-chat17.test.ts`, wired into `test:db:projects-harness`: registered partial indexes, tenant-bounded EXPLAIN plans, restrictive FK policies and orphan-safe rollback.
+
+**Shared UI kit:** `tests/unit/UX-kit-states-chat17.test.tsx` adds `UX-kit-STATES-01..15` with native button, field error, disabled, focus shell, reduced-motion, alert, link, skeleton and tab state assertions across the 39 source components. `tests/unit/UX-kit-role-and-overlay-chat17.test.tsx` adds `UX-kit-HARDEN-30..32` for encoded table row URLs, nonfinite pagination and ambiguous external URLs. `docs/audit/coverage/chat17-ui-kit-ledger.md` traces all 39 UI files to specific tests and clearly separates SSR/source assertions from unverified browser interaction.
+
+**Auth/identity/tenant weak areas:** tests for disabled and ended memberships, foreign recruiter principal grants, role portal fallback matrix, secure QA config, retention failures, identity bootstrap collisions, verified DNS proof lifecycle and concurrent hostname uniqueness replay. Source and uncovered-runtime audit is in `docs/audit/coverage/chat17-auth-identity-domains-ledger.md`; discovered defects and fixing commits are in `docs/audit/defects-chat-17.md`.
+
+Commands:
+```bash
+npm run typecheck
+npm run test:ux:kit:hardening
+npm run test:chat17:weak
+# only against a migrated disposable TEST_DATABASE_URL:
+npm run test:db:projects-harness
+```
+
+**Verification status:** code and tests pushed, but this GitHub connector environment cannot execute Vitest, TypeScript, browser automation or PostgreSQL. The shared orchestrator's latest typecheck / unit-failures files may lag this branch until a merge/runner pass. No claims of passing tests or release readiness without that evidence.
