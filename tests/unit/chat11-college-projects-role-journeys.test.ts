@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import type { RequestContext } from "@/modules/identity/context";
-import { collegeProjectsQueryFromParams } from "@/modules/projects/college-projects-query-model";
+import { parseCollegeProjectsQuery } from "@/modules/projects/college-projects-query-model";
 import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
 import { createProjectInstanceInputSchema } from "@/modules/projects/validation";
 import { replaceCollegeProjectRosterSchema } from "@/modules/projects/college-project-roster-model";
@@ -27,28 +27,41 @@ function adminContext(): RequestContext {
 }
 
 describe("IIT Dharwad College Admin Projects role journeys", () => {
-  it("PROJ-COL-QUERY-01 rejects malicious or stale query strings without breaking the project list", () => {
+  it("PROJ-COL-QUERY-01 refuses hostile or stale filters through a recoverable page state", () => {
     const input = { page: "Infinity", pageSize: "-10", status: "DROP TABLE",
       q: "  abc  ", view: "evil" };
-    expect(collegeProjectsQueryFromParams(input)).toEqual({
-      q: "abc", view: "cards", status: undefined, page: 1, pageSize: 25,
-    });
-    for (const page of ["NaN", "-1", "0", "1.5", "10001", "99999999999999999"]) {
-      expect(collegeProjectsQueryFromParams({ page }).page).toBe(1);
+    expect(parseCollegeProjectsQuery(input).success).toBe(false);
+    for (const page of ["NaN", "-1", "0", "1.5", "100001", "99999999999999999"]) {
+      expect(parseCollegeProjectsQuery({ page }).success).toBe(false);
     }
-    expect(collegeProjectsQueryFromParams({ q: "x".repeat(1000) }).q).toHaveLength(120);
+    expect(parseCollegeProjectsQuery({ q: "x".repeat(1000) }).success).toBe(false);
+    const page = readFileSync("src/app/(authenticated)/college/projects/page.tsx", "utf8");
+    expect(page).toContain('title="Invalid project filters"');
+    expect(page).toContain('href="/college/projects"');
+    expect(page).toContain("if (!parsed.success)");
   });
 
-  it("PROJ-COL-QUERY-02 retains valid filters and pagination after back/forward navigation", () => {
-    expect(collegeProjectsQueryFromParams({
+  it("PROJ-COL-QUERY-02 retains valid filters and pagination across navigation", () => {
+    const valid = parseCollegeProjectsQuery({
       view: ["table", "cards"], status: "ARCHIVED", page: "2", pageSize: "50", q: "  Sprint ",
-    })).toMatchObject({ view: "table", status: "ARCHIVED", page: 2, pageSize: 50, q: "Sprint" });
+    });
+    expect(valid.success).toBe(true);
+    if(valid.success)expect(valid.data).toMatchObject({
+      view: "table", status: "ARCHIVED", page: 2, pageSize: 50, q: "Sprint",
+    });
+    const defaults = parseCollegeProjectsQuery({});
+    expect(defaults.success).toBe(true);
+    if(defaults.success)expect(defaults.data).toMatchObject({
+      view: "cards", page: 1, pageSize: 25,
+    });
   });
 
   it("PROJ-COL-SCOPE-01 never substitutes a foreign college from a forged URL", () => {
     const user = adminContext();
     expect(getProjectAdminCollegeId(user)).toBe(COLLEGE);
-    expect(collegeProjectsQueryFromParams({ collegeId: OTHER_COLLEGE })).not.toHaveProperty("collegeId");
+    const forged = parseCollegeProjectsQuery({ collegeId: OTHER_COLLEGE });
+    expect(forged.success).toBe(true);
+    if (forged.success) expect(forged.data).not.toHaveProperty("collegeId");
     const page = readFileSync("src/app/(authenticated)/college/projects/page.tsx", "utf8");
     expect(page).toContain("getProjectAdminCollegeId(context)");
     expect(page).toContain("listProjectAdminSnapshots(");
