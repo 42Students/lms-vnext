@@ -120,3 +120,13 @@ The generated `docs/audit/gap-register.md` still labels six requests gaps FIXED-
 | TPO-requests-verification-07 | `tests/unit/chat12-fixed-main-requests-audit-r3.test.ts` | Drive-close request settlement source-backed; integration behavior remains unrun. |
 | TPO-requests-verification-36 | `tests/unit/chat12-fixed-main-requests-audit-r3.test.ts` | Scoped drive-change-request lifecycle source-backed; remaining legacy actions not silently assumed. |
 | TPO-requests-verification-37 / TPO-requests-verification-38 | `tests/unit/chat12-recruiter-policy-autoapprove-37-38.test.ts` | Verified-grant and notification/policy paths source-backed; public-link/email-provider behavior remains separately incomplete. |
+
+## Chat-12 refreshed CI request-grid fixes and first-third page acceptance
+
+| Gap / role boundary | Source and authored evidence | Pending acceptance |
+|---|---|---|
+| TPO-requests-verification-13 | `src/components/placements/tpo-request-page-clipboard.tsx` now intersects selected IDs with the current authorized page before sorting and copying; `tests/unit/chat12-requests-grid-round6.test.ts` exact requirement preserved | Cloud CI rerun and page changes during selection |
+| TPO-requests-verification-16 | `tests/unit/chat12-round10-requests-state-contracts.test.ts`, `chat12-round27-request-grid.test.ts`: 500-row bounded paging, current shared table's sticky selection offset, accessible caption, column-limited neutralized TSV, and ignored off-page IDs | Browser clipboard permission, 500-row responsive/focus performance |
+| TPO-requests-verification-33 / UX-tpo-first-third-requests-01 | `src/app/(authenticated)/tpo/requests/page.tsx` validates persisted TPO membership before fetching inbox and job choices in parallel. `tests/unit/chat12-tpo-requests-page-role-and-empty.test.tsx` calls the real server page and asserts forbidden learner/faculty roles, revoked persisted actor, three invalid query recovery states and exact legacy empty/history copy | Actual revoked-cookie navigation, cross-college PostgreSQL checks and narrow phone E2E |
+
+All tests are authored, not executed by this lane. No green typecheck, Vitest, CI or PostgreSQL outcome is inferred.
