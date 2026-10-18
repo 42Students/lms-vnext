@@ -24,6 +24,8 @@ Every item below was reproduced by code-path review and has a source repair on `
 
 | PROJ-DEF-009-14 | S1 Security/CSV | College template catalogue retained a separate ASCII-focused prefix regex, leaving other combining marks and control prefixes capable of concealing formulas. | `project-template-catalogue-model.ts` now delegates to `projectAdminCsv`; Unicode-mark adversarial case included. | `PROJ-BREAK-exports-17` | Code/test authored; CSV import and CI pending |
 
+| PROJ-DEF-009-15 | S2 Input/reliability | `parseAdminProjectsQuery` accepted exotic numeric URL encodings through `z.coerce.number()` and ignored unknown URL fields, unlike the stricter College Projects equivalent; malformed links could silently change paging interpretation. | `admin-projects-query-model.ts`: decimal-only bounded integers, unknown-key rejection, preserve legacy search alias and non-fatal UI error path. | `PROJ-BREAK-admin-input-22/23` | Behavioural parser unit tests authored; CI pending |
+
 ## Explicit outstanding acceptance / limits
 
 - **Tests not executed** in this GitHub-connector-only lane: Vitest unit suite, TypeScript strict typecheck, lint, PostgreSQL transaction/deadline tests, migrations on realistic tenant fixtures, race stress, file storage and antivirus verification, signed URL expiry, load tests (1,000+ workspaces), actual export spreadsheet import, all seven-role UI journeys, keyboard/mobile AT tests.
