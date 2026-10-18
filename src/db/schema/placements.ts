@@ -679,6 +679,8 @@ export const placementJobRoleOptions = pgTable(
       .defaultNow(),
   },
   (table) => [
+    // Parent key for the role-option/job composite FK on applications.
+    uniqueIndex("placement_job_role_options_id_job_uq").on(table.id, table.jobId),
     uniqueIndex(
       "placement_job_role_options_job_title_uq",
     )
@@ -1017,6 +1019,13 @@ export const placementApplications = pgTable(
       .defaultNow(),
   },
   (table) => [
+    // Individual FKs alone allow an application to refer to a role option
+    // from another job; the pair must identify the SAME persisted drive.
+    foreignKey({
+      name: "placement_applications_role_option_job_fk",
+      columns: [table.roleOptionId, table.jobId],
+      foreignColumns: [placementJobRoleOptions.id, placementJobRoleOptions.jobId],
+    }).onDelete("restrict"),
     uniqueIndex("placement_applications_id_job_uq").on(table.id, table.jobId),
     uniqueIndex(
       "placement_applications_role_membership_uq",
