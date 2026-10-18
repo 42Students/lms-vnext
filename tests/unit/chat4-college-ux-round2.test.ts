@@ -19,7 +19,7 @@ describe("Chat-4 college UX round 2 source contracts",()=>{
  const page=source("attendance/corrections");
  expect(page).toContain("min-w-0 overflow-x-clip space-y");
  
- expect(page).toContain("sticky top-0 z-10 bg-surface");
+ expect(page).toContain('<DataTable rows={data.items}');
  });
  it("UX-college-attendance-departments-01 prevents width overflow and preserves accessible controls",()=>{
  const page=source("attendance/departments");

@@ -4,10 +4,7 @@ import { listCollegeActiveReadinessOverrides } from "@/modules/projects/admin-re
 
 export const runtime = "nodejs";
 
-function csvCell(value: string) {
-  const guarded = /^[=+@-]/.test(value) ? "'" + value : value;
-  return '"' + guarded.replaceAll('"', '""') + '"';
-}
+import { projectReadinessOverrideCsvCell } from "@/modules/projects/readiness-overrides-export-model";
 
 export async function GET(request: Request) {
   try {
@@ -15,9 +12,9 @@ export async function GET(request: Request) {
     if (!collegeId) return Response.json({ error: "INVALID_REQUEST" }, { status: 400 });
     const rows = await listCollegeActiveReadinessOverrides(await getCurrentRequestContext(), collegeId);
     const lines = [
-      ["Workspace", "Override", "Note", "By", "At"].map(csvCell).join(","),
+      ["Workspace", "Override", "Note", "By", "At"].map(projectReadinessOverrideCsvCell).join(","),
       ...rows.map(row => [row.workspace, row.direction, row.note, row.by,
-        row.at.toISOString()].map(csvCell).join(",")),
+        row.at.toISOString()].map(projectReadinessOverrideCsvCell).join(",")),
     ];
     return new Response("\uFEFF" + lines.join("\r\n") + "\r\n", {
       headers: {

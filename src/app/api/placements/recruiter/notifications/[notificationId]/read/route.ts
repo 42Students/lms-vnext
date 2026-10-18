@@ -3,6 +3,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {markHrNotificationRead} from "@/modules/placements/hr-notification-read-service";
+import {readRecruiterJsonBody,RecruiterJsonBodyError} from "@/modules/placements/recruiter-json-request";
 export const runtime="nodejs";
 export async function POST(request:Request,{params}:{params:Promise<{notificationId:string}>}) {
  if(!isSameOriginRequest(request))
@@ -10,8 +11,10 @@ export async function POST(request:Request,{params}:{params:Promise<{notificatio
  try{
   const context=await getCurrentRequestContext();
   const {notificationId}=await params;
-  const raw:unknown=await request.json();
+  const raw:unknown=await readRecruiterJsonBody(request);
   const result=await markHrNotificationRead(context,notificationId,raw);
   return NextResponse.json({notification:result});
- }catch(error){return apiErrorResponse(error);}
+ }catch(error){if(error instanceof RecruiterJsonBodyError)
+  return NextResponse.json({error:"INVALID_REQUEST"},{status:error.kind==="TOO_LARGE"?413:400});
+  return apiErrorResponse(error);}
 }

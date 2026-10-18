@@ -3,6 +3,7 @@ import {useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
+import {Dialog} from "@/components/ui/dialog";
 
 type Kind="TALK"|"TEST"|"VENDOR_TEST"|"GD"|"INTERVIEW";
 type Row={id:string;name:string;kind:string;mode:string|null;status:string;
@@ -73,14 +74,11 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
   {error&&!open?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {!readOnly?<div className="flex flex-wrap gap-2">{rows.filter(canEdit).map(row=>
    <button key={row.id} type="button" onClick={()=>edit(row)}
-    className="min-h-10 rounded-md border border-border px-3 text-xs font-semibold text-primary-text">
+    className="min-h-11 rounded-md border border-border px-3 text-xs font-semibold text-primary-text">
     Change / Remove: {row.name}
    </button>)}</div>:null}
-  {open?<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-3">
-   <section role="dialog" aria-modal="true" aria-labelledby="recruiter-round-modal-title"
-    className="w-full max-w-lg space-y-4 rounded-xl border border-border bg-surface p-5 shadow-xl">
-    <h3 id="recruiter-round-modal-title" className="font-semibold text-foreground">
-     {active?"Change round":"Add a round"}</h3>
+  <Dialog open={open} onOpenChange={next=>{if(!next&&!pending)reset();}}
+    dismissible={!pending} title={active?"Change round":"Add a round"}>
     <form onSubmit={(e:FormEvent<HTMLFormElement>)=>{e.preventDefault();void submit(active?"UPDATE":"CREATE");}}
      className="space-y-3">
      <label className="grid gap-1 text-sm text-body">Type
@@ -111,7 +109,6 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
      consequence="This removes the pending round from the drive. Results and confirmed slots cannot be removed."
      confirmLabel="Remove round" pending={pending}
      onCancel={()=>setConfirmRemove(false)} onConfirm={()=>void submit("REMOVE")}/>
-   </section>
-  </div>:null}
+  </Dialog>
  </div>;
 }

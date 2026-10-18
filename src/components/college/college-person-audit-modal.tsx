@@ -28,7 +28,7 @@ export function CollegePersonAuditModal({membershipId,name,kind}:{membershipId:s
     {busy?<p role="status">Loading audit trail…</p>:null}
     {error?<p role="alert" className="text-error">{error}</p>:null}
     {!events.length&&!busy&&!error?<p className="text-sm text-muted-foreground">No recorded activity for this person.</p>:null}
-    <ol className="max-h-96 space-y-3 overflow-auto">
+    <ol className="space-y-3">
      {events.map(event=><li key={event.id} className="rounded border border-border p-3 text-sm">
       <strong>{event.summary}</strong>
       <p className="mt-1 text-xs text-muted-foreground">{date.format(new Date(event.at))} IST · {event.importance} · By {event.authorName??"System/unknown staff"}</p>

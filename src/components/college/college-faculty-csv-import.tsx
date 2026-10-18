@@ -1,4 +1,5 @@
 "use client";
+import {DataTable} from "@/components/ui/data-table";
 import { useState } from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
@@ -73,13 +74,15 @@ export function CollegeFacultyCsvImport(){
         className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">
         Download row report
       </a>
-      <div className="max-h-[32rem] overflow-auto">
-        <table className="w-full text-left text-sm"><thead><tr>
-          {["Row","Status","Reason"].map(label=><th key={label} className="p-2">{label}</th>)}
-        </tr></thead><tbody>{report.results.map(item=><tr key={item.row} className="border-t border-border">
-          <td className="p-2">{item.row}</td><td className="p-2">{item.status}</td><td className="p-2">{item.detail}</td>
-        </tr>)}</tbody></table>
-      </div>
+      <DataTable<Row> caption="Faculty CSV import row results" rows={report.results}
+        getRowKey={item=>String(item.row)}
+        columns={[
+          {key:"row",header:"Row",cell:item=>item.row,mobilePriority:"primary"},
+          {key:"status",header:"Status",cell:item=>item.status,mobilePriority:"secondary"},
+          {key:"reason",header:"Reason",cell:item=>item.detail,mobilePriority:"secondary"},
+        ]}
+        empty={<p className="text-sm text-body">No row-level results are available.</p>}/>
+
       {report.preview&&report.valid>0&&report.structuralErrors.length===0&&
       <div className="space-y-3">
         <label className="flex gap-2 text-sm">
