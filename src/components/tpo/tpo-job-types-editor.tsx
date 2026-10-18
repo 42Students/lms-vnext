@@ -13,7 +13,7 @@ export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[message,setMessage]=useState("");
  const [search,setSearch]=useState(""),[status,setStatus]=useState<TpoJobTypeStatusFilter>("ALL");
  const visible=filterTpoJobTypes(types,search,status);
- const activeCount=types.filter(item=>item.active).length;
+
  const atLimit=types.length>=30;
  async function send(url:string,method:"POST"|"PATCH",payload:Record<string,unknown>){
   setBusy(true);setError("");setMessage("");
@@ -71,7 +71,7 @@ export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
      <TpoCustomJobTypeRename id={item.id} label={item.label} version={item.updatedAt}/>
      <TpoCustomJobTypePlaced id={item.id} label={item.label} version={item.updatedAt} value={item.countsAsPlaced}/>
     </div>
-    <button type="button" disabled={busy||(item.active&&activeCount<=1)} title={item.active&&activeCount<=1?"Keep at least one job type visible.":undefined} onClick={()=>void send("/api/placements/tpo/settings/job-types/"+item.id,"PATCH",{
+    <button type="button" disabled={busy} onClick={()=>void send("/api/placements/tpo/settings/job-types/"+item.id,"PATCH",{
       active:!item.active,expectedVersion:item.updatedAt,
     })} className="min-h-10 rounded border border-border px-3 text-sm disabled:opacity-50">
       {item.active?"Switch off":"Reactivate"}
