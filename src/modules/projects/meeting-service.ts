@@ -16,6 +16,7 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { notifyActiveProjectMembers } from "./project-notification-service";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {assertPersistedProjectMutationActor} from "./persisted-mentor-mutation";
+import {assertPersistedLearnerProjectMutation} from "./learner-mutation-guard";
 import {
   projectMeetings,
   projectInstances,
@@ -209,6 +210,12 @@ export async function requestProjectMeeting(
       )).for("update").limit(1);
     if (!project) throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
     ensureMeetingProjectMutable(project.status);
+    // The page-time learner grant can be revoked before this transaction obtains
+    // the project lock. Verify the live user, college role and Project assignment
+    // while holding the locks, before reading conflicts or creating notifications.
+    await assertPersistedLearnerProjectMutation(tx,context,scope.project.id,scope.collegeId);
+    if (!isFutureProjectMeetingWindow(startsAt,endsAt,Date.now()))
+      throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
     const [conflict] = await tx.select({id:projectMeetings.id}).from(projectMeetings)
       .where(and(eq(projectMeetings.projectId,scope.project.id),
         eq(projectMeetings.requestedByMembershipId,context.membership!.id),
@@ -273,6 +280,10 @@ export async function scheduleProjectMeeting(
     if (!project) throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
     ensureMeetingProjectMutable(project.status);
     await assertPersistedProjectMutationActor(tx,context,scope);
+    // A future window validated before a contended row lock may be in the past
+    // by the time the write starts; the server clock inside the lock is final.
+    if (!isFutureProjectMeetingWindow(startsAt,endsAt,Date.now()))
+      throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
     const [existing] = meetingIdInput ? await tx.select().from(projectMeetings)
       .where(and(eq(projectMeetings.id,projectMeetingIdSchema.parse(meetingIdInput)),
         eq(projectMeetings.projectId,scope.project.id))).for("update").limit(1) : [null];
@@ -553,6 +564,8 @@ export async function transitionProjectMeeting(
   ensureMeetingProjectMutable(project.status);
   if(scope.access==="MENTOR"||scope.access==="ADMIN")
     await assertPersistedProjectMutationActor(tx,context,scope);
+  else
+    await assertPersistedLearnerProjectMutation(tx,context,scope.project.id,scope.collegeId);
   const [cancelled] = await tx
     .update(projectMeetings)
     .set({

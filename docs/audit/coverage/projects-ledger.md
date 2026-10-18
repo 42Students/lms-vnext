@@ -4,6 +4,15 @@ Branch: `chatgpt/chat-14-b`; audit date 2026-10-18. **No release sign-off.** A m
 
 Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (mentor), `projects-chat9-admin-ledger.md` (admin/college), `projects-breaker-chat6-ledger.md` (breaker), `chat-17-projects-placements-pg-ledger.md` (database), `docs/audit/defects-chat-13.md` (Super Admin), `docs/audit/projects-defects.md` (chat-9 and chat-6). A reviewer other than the author must approve every fix.
 
+## Mentor meeting transaction-time learner and deadline gate — PROJ-BREAK-MENTOR-351..353 (2026-10-19)
+| Export / path | Behavioral regression | Cases authored | Open acceptance |
+|---|---|---|---|
+| `meeting-service.ts:requestProjectMeeting` | `tests/unit/PROJ-BREAK-chat14-mentor-meeting-races.test.ts` (`PROJ-BREAK-MENTOR-351`) | Learner revoked between page scope and college-scoped project lock is denied before conflict lookup, insert, activity and notices; live server clock rechecked after lock | PostgreSQL revocation race, concurrent same-member requests, expiry across awaited lock; tests authored, **not run** |
+| `meeting-service.ts:transitionProjectMeeting` (learner CANCEL) | Same file (`PROJ-BREAK-MENTOR-352`) | Learner revoked after request scope cannot cancel an earlier meeting or notify others | PostgreSQL role revocation during lock, learner/mentor/administrator role journeys; tests authored, **not run** |
+| `meeting-service.ts:scheduleProjectMeeting` | Same file (`PROJ-BREAK-MENTOR-353`) | Mentor schedule cannot persist a meeting whose start time expires while the transaction waits for the project lock | Real clock/row-lock test, same-organiser advisory lock, timezone boundary; tests authored, **not run** |
+
+The shared `assertPersistedLearnerProjectMutation` already provides ACTIVE user, ACTIVE college membership/LEARNER role and writable non-ended project-member checks under SHARE locks. Mentor/Admin keep the existing persisted project mutation gate. These new cases do not close the known legacy meeting status ABA/version-contract release gap.
+
 ## CI failure triage (refreshed inventory ff6819dd, 2026-10-18)
 - `projects-mentor-service-guards-chat14.test.ts` final-delivery boundary assertion: the current service still contains every checked guard, version token, audited notification and scoped mutation gate. This appears to be a stale snapshot; do not change code or weaken the check without a new failing trace.
 - `recruiter-chat14-message-email-bridge-contract.test.ts`: the expectation referred to the raw email string, but the provider now normalizes the recipient *before* applying the allowlist; updated the test to assert both normalization and the runtime allowlist, preserving the stronger safety invariant.
