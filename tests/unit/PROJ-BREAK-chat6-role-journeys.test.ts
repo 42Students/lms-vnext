@@ -13,9 +13,18 @@ describe("Projects IIT Dharwad — cross-account navigation and denial breaker",
  it("PROJ-BREAK-pages-02 College Admin without an active selected membership gets recovery instead of a crash",()=>{
   const p=src("src/app/(authenticated)/college/projects/page.tsx");
   expect(p).toContain("getCurrentRequestContext()");
-  expect(p).toContain("if (!membership)");
+  // The central policy helper covers both absent/inactive membership and
+  // Super Admin selected-college scope; no page-local role-name bypass.
+  expect(p).toContain("const collegeId = getProjectAdminCollegeId(context)");
+  expect(p).toContain("if (!collegeId)");
   expect(p).toContain("Choose an active college from the account switcher");
-  expect(p.indexOf("if (!membership)")).toBeLessThan(p.indexOf("listProjectAdminSnapshots("));
+  expect(p.indexOf("if (!collegeId)")).toBeLessThan(p.indexOf("listProjectAdminSnapshots("));
+  const access=src("src/modules/projects/admin-college-scope.ts");
+  expect(access).toContain("context.membership?.collegeId ?? null");
+  expect(access).toContain("context.adminScope?.collegeId ?? null");
+  expect(access).toContain('can(context, "projects.manage", {');
+  expect(access).toContain("if (!collegeId)");
+  expect(access).toContain("return null;");
   expect(p).toContain("ProjectAdminPagination");
  });
  it("PROJ-BREAK-pages-03 Mentor role and effective tenant module access checked before opening project tabs",()=>{
