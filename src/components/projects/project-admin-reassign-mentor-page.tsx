@@ -8,7 +8,7 @@ import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { ProjectMentorReassignment } from "@/components/projects/project-mentor-reassignment";
 import { PageHeader } from "@/components/ui/page-header";
 import {ErrorState} from "@/components/ui/error-state";
-import {parseProjectAdminReassignMentorQuery} from "@/modules/projects/admin-reassign-mentor-query-model";
+import {parseProjectAdminReassignMentorQuery,projectAdminReassignMentorHref} from "@/modules/projects/admin-reassign-mentor-query-model";
 import { listProjectMentorCandidates } from "@/modules/projects/member-service";
 import { listCollegeProjectMentorWorkload, listCollegeReassignmentWorkspaces } from "@/modules/projects/mentor-reassignment-workload-service";
 import Link from "next/link";
@@ -40,20 +40,26 @@ export async function ProjectAdminReassignMentorPage({
   const query:ProjectAdminCollectionQuery={...filters,fromMentorId};
   const context=await getCurrentRequestContext();
 
-  const [projects, mentors, workload] =
-    await Promise.all([
-      listCollegeReassignmentWorkspaces(
-        context,
-        collegeId,
-        query,
-      ),
-      listProjectMentorCandidates(
-        context,
-        collegeId,
-        { q: mentorSearch, limit: 100 },
-      ),
-      listCollegeProjectMentorWorkload(context, collegeId),
-    ]);
+  // The roster, eligible mentors and workload must all be verified before
+  // presenting mutation controls. A failed dependency is not an empty list.
+  const [projectsRead,mentorsRead,workloadRead]=await Promise.allSettled([
+    listCollegeReassignmentWorkspaces(context,collegeId,query),
+    listProjectMentorCandidates(context,collegeId,{q:mentorSearch,limit:100}),
+    listCollegeProjectMentorWorkload(context,collegeId),
+  ]);
+  if(projectsRead.status==="rejected"||
+     mentorsRead.status==="rejected"||workloadRead.status==="rejected")
+    return <div className="space-y-6">
+      <ProjectAdminNav basePath={basePath} active="workspaces"/>
+      <PageHeader eyebrow={eyebrow} title="Bulk mentor reassignment"/>
+      <ErrorState title="Mentor reassignment unavailable"
+        description="The workspace, mentor or workload details could not be verified. No reassignment action is available."
+        action={<Link href={projectAdminReassignMentorHref(basePath,parsed.data)}
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry loading mentor reassignment</Link>}/>
+    </div>;
+  const projects=projectsRead.value;
+  const mentors=mentorsRead.value;
+  const workload=workloadRead.value;
 
   const mentorCounts = workload.filter(row => row.mentorMembershipId !== null).map(row => row.activeWorkspaces);
   return (
