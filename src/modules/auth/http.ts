@@ -25,11 +25,13 @@ export function auditLogin(
   context: AuditContext,
   fields: Record<string, string | number | boolean | null> = {},
 ) {
+  // The caller's event fields may include untrusted labels. Never let them
+  // overwrite the security-owned route, component or one-way IP tag.
   writeStructuredLog("INFO", event, {
+    ...fields,
     component: "auth-audit",
     route: context.route,
     ipTag: ipTag(context.ip),
-    ...fields,
   });
 }
 
