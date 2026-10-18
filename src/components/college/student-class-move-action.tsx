@@ -37,9 +37,10 @@ export function StudentClassMoveAction({ membershipId, name }: {
   }
   const selected = loaded?.options.find(item => item.id === targetId);
   const canMove = loaded && selected && selected.id !== loaded.current.sectionId;
+  const moveConfirmation=selected?studentSectionMoveMessage(name,selected.name):"";
   function submit() {
     if (!loaded || !canMove || !selected ||
-      !window.confirm(studentSectionMoveMessage(name, selected.name))) return;
+      false) return;
     setError("");
     start(async () => {
       try {
@@ -78,6 +79,7 @@ export function StudentClassMoveAction({ membershipId, name }: {
           <option key={item.id} value={item.id}>{item.name} (capacity {item.capacity ?? "unlimited"})</option>)}
       </select> : <p className="text-xs text-muted-foreground">{busy ? "Loading classes..." : "No class data loaded"}</p>}
       {error ? <p role="alert" className="my-2 text-xs text-red-700">{error}</p> : null}
+      {canMove?<p className="mt-2 text-sm text-body">{moveConfirmation}</p>:null}
       <div className="mt-3 flex flex-wrap gap-2">
         <button type="button" disabled={!canMove || busy} onClick={submit}
           className="rounded-md bg-primary px-3 py-2 text-xs font-semibold text-on-primary">Confirm move</button>
