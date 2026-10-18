@@ -254,6 +254,10 @@ The Super Admin recruiter index correctly caught failures of its main account li
 
 The Super Admin directory extracted only six known URL fields, ignoring arbitrary selectors and passing potential array-valued query keys to Zod coercion. A bookmarked `?page=1&page=999` or injected `collegeId` could be ambiguously processed rather than returning the explicit invalid-filter recovery. The directory now requires exact recognized single-valued URL keys before parsing and before privileged roster reads. `tests/unit/chat3-sa-people-directory-strict-url-ssr.test.tsx` checks duplicate/forged/invalid state, genuine empty and wrong role. Source/test authored, runtime CI pending.
 
+### FAC-CALENDAR-QUERY-045 — ambiguous duplicate Faculty calendar filter accepted as first value (S2)
+
+The Faculty calendar applied `first(raw.month)` and `first(raw.deliveryId)`, silently accepting duplicated URL parameters and ignoring unrecognized tenant selectors. This could mislead users about which Section/month had actually been requested and undermine auditability of copied links. The SSR route now rejects array-valued or unknown query selectors outright with the existing **Invalid month or Section filter** clear-filters recovery. `tests/unit/UX-teacher-calendar-strict-scope-query.test.tsx` exercises invalid/valid/foreign deep links. Runtime and mobile-browser acceptance pending.
+
 ### FAC-LIVE-SCALE-042 — unbounded teaching workspace fanout (S2)
 
 `getFacultyLiveClasses` used `Promise.all` across every assigned Section, potentially exhausting PostgreSQL connections for accounts with many teaching deliveries. The service now loads the same verified deliveries in ordered batches with at most eight concurrent workspace calls. The helper rejects unsafe concurrency and propagates revoked-scope failure. `tests/unit/chat3-faculty-live-classes-scaled-service.test.ts` verifies actual authorization, filtering, throughput and ordering. CI and realistic large-college profiling pending.
