@@ -95,6 +95,11 @@ describe("chat-13 Super Admin Placements service boundary tests", () => {
     const source=read("src/modules/placements/super-admin-drive-archive-service.ts");
     expect(source).toContain("assertPersistedPlatformPermission(tx,context");
     expect(source).toContain(".for(\"update\")");
+    const archiveFunction = source.split("export async function archiveSuperAdminDrive")[1] ?? "";
+    const lockedOffers = archiveFunction.indexOf('.for("update",{of:placementOffers})');
+    const impactRead = archiveFunction.indexOf("const current=await getImpact(tx,jobId)");
+    expect(lockedOffers).toBeGreaterThanOrEqual(0);
+    expect(impactRead).toBeGreaterThan(lockedOffers);
     expect(source).toContain("sameArchiveImpact(current,input.expectedImpact)");
     expect(source).toContain("canArchiveDriveWithImpact(job.status,current)");
     expect(source).toContain("recordActivityEventInTransaction(tx,context");
