@@ -154,6 +154,12 @@ The Faculty teaching-assignment class picker and four People filter-option SQL r
 
 `Object.fromEntries(searchParams)` dropped duplicate `status`, `page`, or `q` selectors before validation, allowing a request with ambiguous selection to download a different CSV than its visible filters suggested. The export now rejects duplicate keys with a 400 response and preserves the existing 300-row cap and safe cache headers. `tests/unit/chat3-sa-faculty-assignments-csv-http.test.ts` exercises actual HTTP behavior. CI pending.
 
+### FAC-QUIZ-PII-026 — masked learner email leaked into Faculty quiz attempt display names (S2)
+
+`getFacultyQuizAttemptDrilldown` fell back from a missing `learnerDisplayName` to `learnerEmail`. A Faculty member opening a quiz attempt list would therefore see the student's email in the visible name field even when the rest of the report withheld contact details. Whitespace-only display names were also treated as valid labels.
+
+**Fix:** Use the trimmed display name or existing neutral `Learner` fallback; do not expose learner email as display copy. Preserve the exact current Section and persisted teaching checks and the existing question-result projection. Test `tests/unit/chat3-faculty-quiz-attempts-privacy-service.test.ts` (FAC-QUIZ-PII-01) covers absent names, email/answer-selection non-disclosure, wrong roles, invalid selectors and revoked assignment errors. CI and browser accessibility/PII checks pending.
+
 ### FAC-HTTP-BODY-021 — unbounded live-class and attendance scheduling commands (S1)
 
 Both Faculty live-class and attendance scheduling POST routes previously called `request.json()` directly. The Zod/authorization service subsequently rejected bad fields, but the HTTP input body had already been fully buffered, permitting oversized metadata requests to waste memory in a stale or malicious session.
