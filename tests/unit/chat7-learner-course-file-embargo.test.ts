@@ -60,7 +60,8 @@ describe("LEARNER-COURSE-FILE-EMBARGO-01 private course file read boundary",()=>
    'eq(courseLessons.visibleToStudents,true)',
    'eq(lessonContents.status,"PUBLISHED")',
    'eq(lessonContents.visibleToStudents,true)',
-   'or(isNull(lessonContents.startsAt),lte(lessonContents.startsAt,sql\u0060now()\u0060))',
+   'or(isNull(lessonContents.startsAt),lte(lessonContents.startsAt,',
+   'sql`now()`',
    "or(isNull(lessonContents.deliveryId),eq(lessonContents.deliveryId,deliveryId))",
   ])expect(service).toContain(gate);
   const route=readFileSync("src/app/api/courses/deliveries/[deliveryId]/contents/[contentId]/file/route.ts","utf8");
