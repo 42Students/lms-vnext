@@ -17,7 +17,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
  });
  if(!parsed.success)return <div className="space-y-4"><PageHeader eyebrow="Super Admin · Placements" title="Analytics"/>
   <p role="alert">Invalid analytics filters. Check the selected dates or filters.</p>
-  <Link href="/admin/placements/analytics" className="text-primary-text underline">Clear all</Link></div>;
+  <Link href="/admin/placements/analytics" className="text-[var(--lms-teal-deep)] underline">Clear all</Link></div>;
  const context=await getCurrentRequestContext();
  const [data,filters]=await Promise.all([
   getSuperAdminCompanyHiringReport(context,parsed.data),
@@ -70,13 +70,13 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
    <label className="grid gap-1 text-sm font-semibold">Applied through
     <input type="date" name="appliedTo" defaultValue={q.appliedTo??""} className="min-h-11 rounded-md border border-border bg-surface px-2"/></label>
    <div className="flex flex-wrap items-end gap-3"><button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-foreground">Refresh</button>
-    <Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Clear all</Link></div>
+    <Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Clear all</Link></div>
   </form>
   {params.size?<p className="text-sm text-body">Active filters: {[...params.entries()].map(([key,value])=>key+" = "+value).join(" · ")}</p>:null}
   <div className="flex flex-wrap items-center justify-between gap-3">
    <p role="status" className="text-sm text-body">{data.rows.length} matching drives across {groups.length} companies{data.truncated?" · Capped at 5,000 drives":""}</p>
    <a href={"/api/admin/placements/hiring-report/export?"+params.toString()}
-    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-primary-text">Export report (CSV) →</a>
+    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">Export report (CSV) →</a>
   </div>
   <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">{(["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const).map(key=>
    <div key={key} className="rounded-xl border border-border bg-surface p-4"><dt className="text-sm capitalize text-muted-foreground">{hiringMetricLabel(key)}</dt>
