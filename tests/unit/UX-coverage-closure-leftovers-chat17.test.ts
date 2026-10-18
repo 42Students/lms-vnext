@@ -129,7 +129,7 @@ const cases = [
     "expected": [
       "getTpoVerificationQueue",
       "TpoVerificationPanel",
-      "tpoVerificationQuerySchema"
+      "parseTpoVerificationParams"
     ]
   },
   {
