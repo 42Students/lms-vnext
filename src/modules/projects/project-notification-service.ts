@@ -15,7 +15,7 @@ type ProjectNotice = {
 };
 
 export function projectNoticeHref(role: "LEARNER" | "MENTOR", projectId: string): string {
-  return (role === "MENTOR" ? "/mentor/projects/" : "/learn/projects/") + projectId;
+  return (role === "MENTOR" ? "/mentor/projects/" : "/learn/projects/") + encodeURIComponent(projectId);
 }
 
 /** Only the current project's active, same-college members are eligible.
