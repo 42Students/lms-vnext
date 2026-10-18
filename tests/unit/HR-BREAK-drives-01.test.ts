@@ -62,7 +62,9 @@ describe("HR-BREAK-drives-01: recruiter requests, retries and stale tabs",()=>{
    {action:"PUBLISH"},{untrustedGrant:true},{expectedUpdatedAt:""}]){
    expect(recruiterRequestUpdateSchema.safeParse({...valid,...change}).success).toBe(false);
   }
-  expect(recruiterRequestUpdateSchema.safeParse({...valid,action:"RESUBMIT",draft:emptyHrDriveDraft()}).success).toBe(true);
+  const draft={...emptyHrDriveDraft(),title:"Software Engineer",ctcLpa:"8"};
+  expect(recruiterRequestUpdateSchema.safeParse({...valid,action:"RESUBMIT",draft}).success).toBe(true);
+  expect(recruiterRequestUpdateSchema.safeParse({...valid,action:"RESUBMIT",draft:emptyHrDriveDraft()}).success).toBe(false);
  });
  it("same payload reuses idempotency key; edited payload rotates it without mutating old attempt",()=>{
   let serial=0;

@@ -112,3 +112,29 @@ The dedicated `docs/audit/coverage/hr-pages-chat19-ledger.md` enumerates all 22 
 | UX-SPILL-HR-03 | MAJOR (mobile overflow) | Report column/filter `<details>` absolute dropdowns min-width 16rem/12rem at far-right anchors | Made phone disclosures bottom-anchored responsive sheets, bounded height with safe-area padding, added visible dismiss control that returns focus to summary. Desktop popover mode retained. | `70a97cff` | `tests/unit/chat19-report-interactive-table-render.test.tsx` (`6657055e`) |
 
 The matrix `docs/audit/ux/COVERAGE-MATRIX.md` is a generated snapshot and is not hand-edited. Regenerate it after the cloud merge; the former `src/components/placements/report-interactive-table.tsx` raw table entry should disappear. Server page and real browser/clipboard tests are still required by release CI; the new model and SSR tests are authored but not executed in this GitHub-only lane.
+
+## Projects unowned hardening — IIT Dharwad visible exports
+
+| ID | Severity | Evidence | Defect | Fix | Commits | Regression |
+|---|---|---|---|---|---|---|
+| PROJ-BREAK-EXPORT-01 | MAJOR | `src/components/projects/project-admin-workspace-page-export.tsx`, previous `/^\\s*[=+\\-@\\t\\r]/` cell guard | User-authored workspace titles and mentor names with Unicode format characters/line separators preceding `=+@-` could evade superficial CSV formula escaping; numeric negatives were erroneously converted to text. | Export through `src/modules/projects/admin-workspace-page-export-model.ts`; quote every cell, prefix malicious text, preserve numerical values and IST timestamps. Accept *only* already scoped page items; no additional database read. | `59bc0619`, `dd1001f1` | `tests/unit/PROJ-BREAK-chat19-project-workspace-csv.test.ts` (`d41722f7`) |
+| PROJ-BREAK-EXPORT-02 | COVERAGE | Same `ProjectAdminWorkspacePageExport` button | Added direct SSR assertions that export is disabled for zero visible authorized workspaces and enabled for a nonempty page, including keyboard-sized button contract. | Behavioural component tests. | `21328196` | `tests/unit/PROJ-BREAK-chat19-project-workspace-export-ui.test.tsx` |
+
+**Remaining risk:** Browser download behavior, real Excel formula handling, and independently verified college-scoped DB list must pass orchestrator/integration tests. This lane has authored source and test regressions, not claimed production readiness.
+
+## Unowned follow-on: recruiter report resilience and College Admin placement mobile
+
+| ID | Before-fix severity | Evidence | Defect/fix | Commits | Test |
+|---|---|---|---|---|---|
+| UX-SPILL-HR-04 | MAJOR | `src/components/placements/report-interactive-table.tsx` CSV export: single click + immediate URL revoke, no browser-restriction failure state | Download could be blocked or URL revoked before consumption, while UI still claimed export had completed. `trySaveReportCsv` now models browser failures, safely disposes temporary anchors and revokes URLs after click; message says download started rather than confirming a saved file. | `0fc28a5a`, `57438140`, `444c699d`, `6513ac68` | `tests/unit/chat19-report-download-lifecycle.test.ts` (`5aafda1c`) |
+| UX-SPILL-COL-FUNNEL-01 | MAJOR | `src/components/placements/college-hiring-funnel.tsx`, fixed `min-w-[72rem]` company performance table | 320px college users had no readable company-stage context without extensive sideways scrolling; converted to DataTable card rows with all nine stages reachable through accessible disclosure, kept counts and a separate totals panel and the same authorized CSV link. | `3a5713b7` | `tests/unit/chat19-college-hiring-funnel-mobile.test.tsx` (`8991b118`) |
+
+Generated `docs/audit/ux/COVERAGE-MATRIX.md` should be refreshed after orchestrator merge, not directly patched. These contributions eliminate two more owner-listed raw-table components at the source level but do not certify real-browser visual layout. No database permission logic was broadened.
+
+### Round candidate list UX spillover
+
+| Finding ID | Before-fix severity | Evidence | Fix | Commit | Regression |
+|---|---|---|---|---|---|
+| UX-SPILL-DRIVE-DAY-01 | MAJOR | `src/components/placements/placement-drive-day-overview.tsx` candidate table forced `min-w-[42rem]` and sticky desktop columns | Migrate to `DataTable` responsive cards preserving the four original fields: Candidate (role/contact), Membership, Schedule exception, Result. No change to authorized data or statuses. | `d7053e49` | `tests/unit/chat19-drive-day-candidates-mobile.test.tsx` (`a2f9df02`) |
+
+Requires actual 320/360/390px and keyboard browser acceptance; only source/SSR contracts were authored on this branch.

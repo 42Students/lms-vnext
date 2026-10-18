@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { RequestContext } from "@/modules/identity/context";
-import { assignProjectTemplateToCollege } from "@/modules/projects/template-service";
+import { assignProjectTemplateToCollege, revokeProjectTemplateFromCollege } from "@/modules/projects/template-service";
 
 const templateId = "11111111-1111-4111-8111-111111111111";
 const collegeId = "22222222-2222-4222-8222-222222222222";
@@ -15,6 +15,7 @@ type Assignment = {
   templateVersionId: string;
   assignedByUserId: string;
   assignedAt: Date;
+  revokedAt?: Date | null;
 };
 
 const state = vi.hoisted(() => ({
@@ -28,6 +29,9 @@ const state = vi.hoisted(() => ({
   updates: 0,
   events: 0,
   lockCalls: 0,
+  persistedChecks: 0,
+  persistedAllowed: true,
+  revocationMode: "active" as "active" | "already" | "never",
 }));
 
 vi.mock("@/modules/projects/scope", () => ({
@@ -35,6 +39,13 @@ vi.mock("@/modules/projects/scope", () => ({
     id,
     organizationId: id === otherCollegeId ? otherOrganizationId : organizationId,
   }),
+}));
+
+vi.mock("@/modules/permissions/persisted-actor", () => ({
+  assertPersistedPlatformPermission: async () => {
+    state.persistedChecks += 1;
+    if (!state.persistedAllowed) throw new Error("Missing permission: project-template.assign");
+  },
 }));
 
 vi.mock("@/modules/activity/service", () => ({
@@ -54,7 +65,7 @@ vi.mock("@/db/client", () => ({
           const rows = step === 0
             ? [{ id: templateId, title: "IIT Dharwad", status: state.templateStatus, publishedVersion: state.publishedVersion }]
             : step === 1
-              ? [{ id: state.versionId }]
+              ? state.revocationMode === "active" ? [{ id: state.versionId }] : state.assignment ? [state.assignment] : []
               : state.assignment ? [state.assignment] : [];
           return {
             from: () => ({
@@ -64,6 +75,7 @@ vi.mock("@/db/client", () => ({
                   return { limit: async () => rows };
                 },
                 limit: async () => rows,
+                orderBy: () => ({ limit: async () => rows }),
               }),
             }),
           };
@@ -86,6 +98,7 @@ vi.mock("@/db/client", () => ({
           set: (values: { templateVersionId: string; assignedByUserId: string; assignedAt: Date }) => ({
             where: () => ({
               returning: async () => {
+                if ("revokedAt" in values && state.revocationMode !== "active") return [];
                 state.updates += 1;
                 state.assignment = { ...state.assignment!, ...values };
                 return [state.assignment];
@@ -121,6 +134,9 @@ beforeEach(() => {
   state.updates = 0;
   state.events = 0;
   state.lockCalls = 0;
+  state.persistedChecks = 0;
+  state.persistedAllowed = true;
+  state.revocationMode = "active";
 });
 
 describe("IIT Dharwad: Project template assignment retries and scope", () => {
@@ -173,6 +189,53 @@ describe("IIT Dharwad: Project template assignment retries and scope", () => {
       },
     }, templateId, collegeId)).rejects.toThrow("Missing permission: project-template.assign");
     expect(state.transactions).toBe(0);
+    expect(state.events).toBe(0);
+  });
+
+  it("PROJ-BREAK-idor-27 revocation after request authentication aborts before assignment or activity", async () => {
+    state.persistedAllowed = false;
+    await expect(assignProjectTemplateToCollege(superAdmin(), templateId, collegeId))
+      .rejects.toThrow("Missing permission: project-template.assign");
+    expect(state.persistedChecks).toBe(1);
+    expect(state.inserts).toBe(0);
+    expect(state.updates).toBe(0);
+    expect(state.events).toBe(0);
+  });
+
+  it("PROJ-BREAK-idor-28 revoked system role stops college assignment removal after cached authentication", async () => {
+    state.persistedAllowed = false;
+    await expect(revokeProjectTemplateFromCollege(superAdmin(), templateId, collegeId))
+      .rejects.toThrow("Missing permission: project-template.assign");
+    expect(state.persistedChecks).toBe(1);
+    expect(state.updates).toBe(0);
+    expect(state.events).toBe(0);
+  });
+
+  it("PROJ-BREAK-races-10 repeated template revocation returns historical winner without duplicate activity", async () => {
+    state.assignment = {
+      id: "88888888-8888-4888-8888-888888888888",
+      templateVersionId: versionOneId,
+      assignedByUserId: superAdmin().user.id,
+      assignedAt: new Date("2026-10-18T09:00:00.000Z"),
+      revokedAt: null,
+    };
+    const first = await revokeProjectTemplateFromCollege(superAdmin(), templateId, collegeId);
+    expect(first.revokedAt).not.toBeNull();
+    expect(state.events).toBe(1);
+    expect(state.updates).toBe(1);
+    state.selectCalls = 0;
+    state.revocationMode = "already";
+    const retry = await revokeProjectTemplateFromCollege(superAdmin(), templateId, collegeId);
+    expect(retry).toEqual(first);
+    expect(state.events).toBe(1);
+    expect(state.updates).toBe(1);
+  });
+
+  it("PROJ-BREAK-races-11 never-assigned college is not mistaken for an idempotent retry", async () => {
+    state.revocationMode = "never";
+    await expect(revokeProjectTemplateFromCollege(superAdmin(), templateId, collegeId))
+      .rejects.toThrow("PROJECT_TEMPLATE_ASSIGNMENT_NOT_FOUND");
+    expect(state.updates).toBe(0);
     expect(state.events).toBe(0);
   });
 

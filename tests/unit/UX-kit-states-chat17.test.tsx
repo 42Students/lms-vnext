@@ -25,6 +25,7 @@ import { LoadingState } from "@/components/ui/loading-state";
 import { LongText } from "@/components/ui/long-text";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageLoading } from "@/components/ui/page-loading";
+import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
 import { Checkbox, Radio, Switch } from "@/components/ui/selection-controls";
 import { ScrollCue } from "@/components/ui/scroll-cue";
@@ -225,6 +226,33 @@ describe("UX-kit-STATES: semantic SSR states and accessible fallbacks", () => {
     expect(allDisabled).not.toContain("Private</span>");
     expect(allDisabled).not.toContain('aria-selected="true"');
     expect(allDisabled).not.toContain('aria-labelledby="');
+  });
+
+  it("UX-kit-HARDEN-36 stat links, tab navigation and pagination fail closed on bad hrefs",()=>{
+    const tile=render(<StatTile label="Projects" value={7} href="//evil.example.test"/>);
+    expect(tile).toContain("<section");
+    expect(tile).not.toContain("<a ");
+    expect(tile).toContain("Projects");
+
+    const tabs=render(<Tabs value="overview" ariaLabel="Project navigation" renderPanel={false}
+      items={[
+        {value:"overview",label:"Overview",href:"/mentor/projects"},
+        {value:"external",label:"External",href:"/%2fevil.example.test"},
+        {value:"no-access",label:"No access",disabled:true,href:"/admin/projects"},
+      ]}/>);
+    expect(tabs).toContain('href="/mentor/projects"');
+    expect(tabs).not.toContain('href="/%2fevil.example.test"');
+    expect(tabs).not.toContain('href="/admin/projects"');
+    expect(tabs).toContain('aria-disabled="true"');
+
+    const page=render(<Pagination page={2} pageCount={3} label="Projects pages"
+      hrefForPage={n=>n===2?"/college/projects?page=2":"//evil.example.test"}/>);
+    expect(page).toContain('href="/college/projects?page=2"');
+    expect(page).not.toContain('href="//evil.example.test"');
+    expect(page).toContain("Previous");
+    expect(page).toContain("Next");
+    expect(page).toContain('aria-label="Page 1 unavailable"');
+    expect(page).toContain('aria-disabled="true"');
   });
 
   it("UX-kit-STATES-11 hidden filter sheet retains always-visible search and count sanitization", () => {
