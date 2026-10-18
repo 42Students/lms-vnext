@@ -520,3 +520,8 @@ The same persisted actor/project Mentor grant recheck now protects meeting decis
 ### FAC-METHODS-017 — assignment method async-switch validation
 
 `facultyAssignmentMethodsLoadVersion` and `verifiedFacultyAssignmentMethodsResponse` in `src/modules/courses/faculty-assignment-method-load-model.ts` have `COURSES-BREAK-FACULTY-13.test.ts` covering version invalidation, stale response reorder and malformed saved policy. `src/components/courses/faculty-assignment-editor.tsx` uses these on each `choose` fetch and disables edits when methods have not been verified. Full rendered/browser-network acceptance is still an open gate.
+
+
+### FAC-SCHEDULE-018 — schedule writes revalidate persisted teacher rights
+
+`commandFacultyAttendanceSchedule` now calls `assertPersistedFacultyTeachingMutation` after serializing the instructor and Section in its transaction, so a preflight cookie cannot bypass a later suspended role or ended teaching assignment. Behavioural evidence: `tests/unit/COURSES-BREAK-FACULTY-14.test.ts` (unexecuted); real PostgreSQL two-session test and browser recovery remain open.
