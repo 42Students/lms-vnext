@@ -44,7 +44,7 @@ describe.skipIf(!enabled)("TPO-companies-05 registered 0137 company Team Postgre
   await isolated(async(client,companyId)=>{
    const key=randomUUID();
    const insert=()=>{
-    client.query<{id:string}>(`
+    return client.query<{id:string}>(`
      INSERT INTO placement_tpo_company_team_messages
       (college_id,company_id,author_membership_id,idempotency_key,body)
      VALUES($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING RETURNING id`,
