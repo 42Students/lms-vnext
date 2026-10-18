@@ -1,6 +1,6 @@
 import {describe,expect,it} from "vitest";
-import {recordSelectionsSchema,releaseSelectionsSchema,summarizeSelectionRelease} from "@/modules/placements/tpo-drive-selection-model";
-import {tpoWaitlistPromotionSchema,waitlistPreviewToken} from "@/modules/placements/tpo-waitlist-promotion-model";
+import {recordSelectionsSchema,releaseSelectionsSchema,summarizeSelectionRelease,isExactTpoSelectionReplay} from "@/modules/placements/tpo-drive-selection-model";
+import {tpoWaitlistPromotionSchema,waitlistPreviewToken,decideWaitlistReleaseSettlement} from "@/modules/placements/tpo-waitlist-promotion-model";
 import {canRecordTpoOfferAction,tpoOfferLifecycleInputSchema,TPO_OFFER_ACTIONS} from "@/modules/placements/tpo-offer-lifecycle-model";
 import {evaluateTpoDriveCancellation,isIssuedOfferCancelable,tpoDriveCancelSchema} from "@/modules/placements/tpo-drive-cancel-model";
 import {projectTpoJoiningTracker} from "@/modules/placements/tpo-joining-tracker-model";
@@ -25,6 +25,18 @@ describe("chat-5 placements core — selection state and release preconditions",
    {...record,entries:[]},
    {...record,collegeId:b},
   ])expect(recordSelectionsSchema.safeParse(bad).success).toBe(false);
+ });
+ it("PLACEMENTS-SEL-SM-03 accepts only byte-for-byte persisted selection replays without duplicate rows or audit",()=>{
+  const one={applicationId:a,roleTitle:"Graduate engineer",annualCtcInr:1_000_000};
+  const two={applicationId:b,roleTitle:"QA engineer",annualCtcInr:null};
+  const selected=[{...one,status:"SELECTED"},{...two,status:"SELECTED"}];
+  expect(isExactTpoSelectionReplay(selected,[two,one])).toBe(true);
+  expect(isExactTpoSelectionReplay(selected,[])).toBe(false);
+  expect(isExactTpoSelectionReplay(selected,[one])).toBe(false);
+  expect(isExactTpoSelectionReplay(selected,[one,one])).toBe(false);
+  expect(isExactTpoSelectionReplay([{...one,status:"VERIFIED"},{...two,status:"SELECTED"}],[one,two])).toBe(false);
+  expect(isExactTpoSelectionReplay(selected,[{...one,annualCtcInr:1_000_001},two])).toBe(false);
+  expect(isExactTpoSelectionReplay(selected,[{...one,roleTitle:"Senior engineer"},two])).toBe(false);
  });
  it("PLACEMENTS-SEL-SM-02 forbids stale/missing review version, duplicate releases, and bypassed confirmation",()=>{
   expect(releaseSelectionsSchema.safeParse(release).success).toBe(true);
@@ -113,6 +125,17 @@ describe("chat-5 placements core — cancellation, waitlist and joining",()=>{
   expect(waitlistPreviewToken(a,{rank:1,seat:2})).toBe(first);
   expect(waitlistPreviewToken(a,{rank:2,seat:2})).not.toBe(first);
   expect(waitlistPreviewToken(b,{rank:1,seat:2})).not.toBe(first);
+ });
+ it("PLACEMENTS-WAIT-SM-03 settles exactly once under row lock and rejects conflicting terminal histories",()=>{
+  const issuedOffer=a;
+  expect(decideWaitlistReleaseSettlement("PENDING",null,issuedOffer)).toBe("WRITE");
+  expect(decideWaitlistReleaseSettlement("RELEASED",issuedOffer,issuedOffer)).toBe("IDEMPOTENT");
+  for(const [status,stored] of [
+    ["PENDING",b],["RELEASED",null],["RELEASED",b],
+    ["CANCELLED",null],["CANCELLED",issuedOffer],["UNKNOWN",null],
+  ] as const){
+    expect(decideWaitlistReleaseSettlement(status,stored,issuedOffer),status+"/"+stored).toBe("STALE");
+  }
  });
  it("PLACEMENTS-JOIN-SM-01 counts accepted offer evidence only and never infers joining from an empty outcome",()=>{
   const issuedAt=new Date("2099-10-18T10:00:00.000Z");
