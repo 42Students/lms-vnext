@@ -1,5 +1,5 @@
-import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
 "use client";
+import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 type Faculty={id:string;name:string|null};
