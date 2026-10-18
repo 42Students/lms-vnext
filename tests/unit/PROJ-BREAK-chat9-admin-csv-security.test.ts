@@ -4,6 +4,7 @@ import {
   projectAdminCsv,
   projectAdminCsvCell,
 } from "@/modules/projects/project-admin-csv-model";
+import {projectWorkspacePageCsv} from "@/modules/projects/admin-workspace-page-export-model";
 
 describe("IIT Dharwad Projects admin exports: spreadsheet injection resilience", () => {
   it("PROJ-BREAK-exports-10 neutralizes formulas after Unicode isolates, bidi controls and invisible prefixes", () => {
@@ -36,7 +37,6 @@ describe("IIT Dharwad Projects admin exports: spreadsheet injection resilience",
     for (const file of [
       "project-audit-page-export.tsx",
       "project-submissions-page-export.tsx",
-      "project-admin-workspace-page-export.tsx",
       "project-at-risk-page-export.tsx",
       "super-admin-template-page-export.tsx",
       "project-workspace-page-export.tsx",
@@ -48,5 +48,20 @@ describe("IIT Dharwad Projects admin exports: spreadsheet injection resilience",
       expect(source, file).not.toContain("function csvField(");
       expect(source, file).not.toContain("function escape(");
     }
+    const client = readFileSync("src/components/projects/project-admin-workspace-page-export.tsx", "utf8");
+    const model = readFileSync("src/modules/projects/admin-workspace-page-export-model.ts", "utf8");
+    expect(client).toContain("projectWorkspacePageCsv(items)");
+    expect(model).toContain("projectAdminCsv([headings,...rows])");
+    expect(model).toContain("projectAdminCsvCell(value)");
+    const protectedCsv = projectWorkspacePageCsv([{
+      title: "\u2066=HYPERLINK(1)",
+      mentorName: null,
+      status: "ACTIVE",
+      progressPercent: 10,
+      memberCount: 1,
+      updatedAt: new Date("2026-10-01T00:00:00.000Z"),
+    }]);
+    expect(protectedCsv).toContain('"\'\u2066=HYPERLINK(1)"');
+    expect(protectedCsv).toContain('"In progress"');
   });
 });
