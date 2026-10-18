@@ -21,6 +21,30 @@ export function scanUxSource(path, source) {
       expression.kind===ts.SyntaxKind.UndefinedKeyword ||
       expression.getText(parsed)==="undefined";
   }
+  function staticAlternatives(node) {
+    if(!node) return [];
+    if(ts.isStringLiteral(node)||ts.isNoSubstitutionTemplateLiteral(node)||ts.isNumericLiteral(node))
+      return [node.text];
+    if(ts.isJsxExpression(node)||ts.isParenthesizedExpression(node))
+      return staticAlternatives(node.expression);
+    if(ts.isConditionalExpression(node))
+      return [...staticAlternatives(node.whenTrue),...staticAlternatives(node.whenFalse)];
+    if(ts.isBinaryExpression(node) && node.operatorToken.kind===ts.SyntaxKind.PlusToken) {
+      const left=staticAlternatives(node.left),right=staticAlternatives(node.right);
+      if(!left.length || !right.length) return [];
+      return left.flatMap(a=>right.map(b=>a+b)).slice(0,64);
+    }
+    if(ts.isTemplateExpression(node)) {
+      let alternatives=[node.head.text];
+      for(const span of node.templateSpans){
+        const variants=staticAlternatives(span.expression);
+        if(!variants.length)return [];
+        alternatives=alternatives.flatMap(start=>variants.map(value=>start+value+span.literal.text)).slice(0,64);
+      }
+      return alternatives;
+    }
+    return [];
+  }
   function visit(node) {
     if(ts.isCallExpression(node)&&ts.isPropertyAccessExpression(node.expression) &&
       node.expression.expression.getText(parsed)==="window" &&
@@ -34,8 +58,12 @@ export function scanUxSource(path, source) {
       }
       if(node.name.text==="className" && node.initializer) {
         const classes=node.initializer.getText(parsed);
-        if(/\bmin-h-10\b/.test(classes)) add(node,"small-touch-target");
-        if(/\bbg-primary\b/.test(classes)&&/\btext-white\b/.test(classes))
+        const variants=staticAlternatives(node.initializer);
+        if([classes,...variants].some(value=>/\bmin-h-10\b/.test(value)))
+          add(node,"small-touch-target");
+        else if(/min-h-/.test(classes) && !variants.length)
+          add(node,"unverified-touch-class"); // Dynamic value may resolve to 40px.
+        if([classes,...variants].some(value=>/\bbg-primary\b/.test(value)&&/\btext-white\b/.test(value)))
           add(node,"white-on-teal");
       }
     }
