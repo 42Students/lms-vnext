@@ -14,7 +14,7 @@ export async function POST(request:Request){
  }catch(e){
   if(e instanceof ZodError)return NextResponse.json({error:"INVALID_BODY"},{status:400});
   if(e instanceof TpoPublicJoinLinkError)return NextResponse.json({error:e.code},{
-   status:e.code==="NOT_REGISTERED"?503:404});
+   status:e.code==="NOT_REGISTERED"?503:e.code==="STALE"?409:404});
   return apiErrorResponse(e);
  }
 }
