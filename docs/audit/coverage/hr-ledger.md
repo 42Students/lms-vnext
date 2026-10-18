@@ -370,3 +370,39 @@ These paths require one test row **per exported function** after parsing each fi
 | `src/modules/placements/hr-drive-round-presets.ts` | `applyHrRoundPreset` | **OPEN** — test and role matrix not verified |
 | `src/modules/placements/hr-drives-csv-model.ts` | `buildHrDrivesCsv` | **OPEN** — test and role matrix not verified |
 | `src/modules/placements/hr-focused-review-model.ts` | `focusedReviewNavigation` | **OPEN** — test and role matrix not verified |
+
+## Exported functions inventory offset 44 (16 files; 31 functions)
+
+| Source | Exported function | Test closure |
+|---|---|---|
+| `src/modules/placements/hr-inbox-csv-model.ts` | `buildHrInboxCsv` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-inline-round-results-model.ts` | `hrInlineRoundResultFilters` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-inline-round-results-model.ts` | `hrInlineRoundResultsHref` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-interview-slot-model.ts` | `slotTransitionAllowed` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-interview-slot-model.ts` | `slotsOverlap` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-interview-slot-model.ts` | `parseIstLocalSlot` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-interview-slot-model.ts` | `canRecruiterMutateOwnSlot` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-interview-slot-model.ts` | `hrInterviewSlotCreateSchema` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-interview-slot-service.ts` | `listHrInterviewSlots` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-interview-slot-service.ts` | `writeHrInterviewSlot` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-job-activity-model.ts` | `projectHrJobActivity` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-job-activity-model.ts` | `hrActivityEventFilter` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-job-activity-model.ts` | `hrActivityHasNext` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-job-activity-model.ts` | `searchHrActivityJobs` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-job-activity-service.ts` | `listRecruiterJobActivity` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-job-applicants-model.ts` | `projectSharedApplicants` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-job-applicants-model.ts` | `hrApplicantPageBounds` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-job-applicants-model.ts` | `hrOfferPageBounds` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-job-applicants-model.ts` | `hrApplicantFilterSchema` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-job-read-service.ts` | `getHrJobRead` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-notification-groups-model.ts` | `groupHrNotificationPage` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-notification-read-model.ts` | `hrNotificationVersionMatches` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-notification-read-service.ts` | `markHrNotificationRead` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-notifications-model.ts` | `projectHrNotifications` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-notifications-model.ts` | `hrInboxPageBounds` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-notifications-model.ts` | `filterHrNotificationJobs` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-notifications-service.ts` | `listHrNotifications` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-offer-export-model.ts` | `buildHrOfferCsv` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-offer-selection-read-model.ts` | `buildHrOfferOverview` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-offer-selection-read-model.ts` | `hrSelectionReadyApplicationIds` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-proposal-message-marker-model.ts` | `recruiterProposalMessageMarker` | **OPEN** — test and role matrix not verified |
