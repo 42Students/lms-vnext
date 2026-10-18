@@ -233,3 +233,6 @@ The shared tenant builder now wraps organization and college inserts in a savepo
 
 ### PROJ-HARNESS-PLACEMENTS-25 follow-up: season currently active, not merely ordered
 A 2098-2099 season has valid start/end order but is not yet in its date window on today's server. The shared ACTIVE placement-season fixture now begins in **2020** and ends June 2099, so today's database date and the published job deadline are both inside the same season. PG case 25 explicitly evaluates `current_date BETWEEN start_date AND end_date`; this intentionally broad date span is test-only and not customer season policy.
+
+### PROJ-HARNESS-PLACEMENTS-32: archived employer relationship gating
+A published drive may outlive an archived global company or archived college-company relationship. The candidate fixture now joins both persisted records with the job's college and refuses a new applicant when either is inactive; PostgreSQL case -32 verifies zero new applications across both valid archive transitions, and GUARD-21 protects the same-college company relationship join. This guards fixture realism, not the production TPO/HR service behavior.

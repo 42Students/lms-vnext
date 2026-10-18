@@ -166,6 +166,11 @@ describe("PROJ-HARNESS source and environment guard",()=>{
    expect(helper).toContain("await createPrincipal(db,null)");
  });
 
+ it("PROJ-HARNESS-GUARD-21 archived company and relationship fail closed before applicant insert",()=>{
+   expect(helper).toContain("and rel.status='ACTIVE' and company.status='ACTIVE'");
+   expect(helper).toContain("on rel.id=j.company_relationship_id and rel.college_id=j.college_id");
+ });
+
  it("PROJ-HARNESS-GUARD-05 always rolls back transaction and savepoint errors",()=>{
    expect(helper).toContain('if (begun) await client.query("ROLLBACK")');
    expect(helper).toContain("client.release()");

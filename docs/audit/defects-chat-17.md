@@ -163,3 +163,5 @@ All newly authored tests remain pending cloud execution; migration retains the p
 | PROJ-HARNESS-PLACEMENTS-25 time window | S1 (current workflow fidelity) | An ordered future 2098 season still makes today's published jobs out-of-season even while status is ACTIVE, masking real date-based eligibility in service tests. | Start date moved to 2020 while 2099 end remains, and PostgreSQL case 25 checks server current date and job deadline within season. | Authored; final DB gate pending |
 
 | UX-kit-E2E-12 | S2 (stale request state) | Reusing a loading component for a different route/filter kept the original 12s timer and could display a retry warning immediately for a fresh request. | Reset delayed slow flag on changing label/shape/variant/count with cleanup; browser clock witness tests handoff. | Authored; end-of-sprint CI pending |
+
+| PROJ-HARNESS-PLACEMENTS-32 | S1 (stale employer grants) | A published drive could still fabricate new applicants after its employer or college-company relationship was archived. | Persisted active company + active same-college relationship required by fixture; PG case -32 and GUARD-21. | Authored; final database gate pending |
