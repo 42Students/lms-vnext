@@ -46,7 +46,12 @@ export async function GET(_request:Request,{params}:Params){
  }catch(error){return safeError(error);}
 }
 export async function POST(request:Request,{params}:Params){
- if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
+ if(!isSameOriginRequest(request)){
+  const requestId=createRequestId();
+  return NextResponse.json({error:"INVALID_ORIGIN",
+   message:"This Team update could not be verified. Reload and try again.",requestId},{
+   status:403,headers:{"Cache-Control":"no-store","x-request-id":requestId}});
+ }
  try{
   const {companyId}=await params;
   const result=await mutateTpoCompanyTeam(await getCurrentRequestContext(),companyId,await readTpoCompanyTeamBody(request));
