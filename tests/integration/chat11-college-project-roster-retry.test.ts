@@ -3,8 +3,8 @@ import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { SEED_IDS } from "../../scripts/db-seed-data";
-import { createProjectInstance } from "@/modules/projects/instance-service";
-import { listProjectMembers } from "@/modules/projects/member-service";
+import { createProjectInstance, archiveProjectInstance } from "@/modules/projects/instance-service";
+import { listProjectMembers, addProjectMember, updateProjectMember, endProjectMember, reassignProjectPrimaryMentor } from "@/modules/projects/member-service";
 import { replaceCollegeProjectLearners } from "@/modules/projects/college-project-roster-service";
 import {
   createProjectTemplate, publishProjectTemplate, assignProjectTemplateToCollege,
@@ -152,6 +152,39 @@ describe("IIT Dharwad College Admin roster retries and concurrent tabs (PostgreS
     // acting-college UI selection; navigation intentionally requires selection.
     const globalWrite=await replaceCollegeProjectLearners(superAdmin,project.id,payload);
     expect(globalWrite).toMatchObject({added:1,removed:0});
+  });
+
+  it("PROJ-COL-ARCHIVE-01 makes archived projects read-only for membership and mentor mutations",async()=>{
+    const project=await createProject();
+    const mentor=await addProjectMember(admin,project.id,{
+      membershipId:SEED_IDS.facultyCollegeAMembership,role:"MENTOR",
+      isPrimary:true,
+    });
+    const archived=await archiveProjectInstance(admin,project.id);
+    expect(archived.status).toBe("ARCHIVED");
+    const eventsBefore=Number((await pool.query<{n:string}>(
+      "select count(*)::text as n from activity_events where metadata->>'projectId'=$1",
+      [project.id],
+    )).rows[0]?.n??"0");
+    await expect(addProjectMember(admin,project.id,{
+      membershipId:SEED_IDS.learnerCollegeAMembership,role:"LEARNER",
+    })).rejects.toMatchObject({code:"PROJECT_INVALID_STATE"});
+    await expect(updateProjectMember(admin,project.id,mentor.id,{
+      roleLabel:"Should never be saved",
+    })).rejects.toMatchObject({code:"PROJECT_INVALID_STATE"});
+    await expect(endProjectMember(admin,project.id,mentor.id))
+      .rejects.toMatchObject({code:"PROJECT_INVALID_STATE"});
+    await expect(reassignProjectPrimaryMentor(admin,project.id,SEED_IDS.facultyCollegeAMembership))
+      .rejects.toMatchObject({code:"PROJECT_INVALID_STATE"});
+    const active=await listProjectMembers(admin,project.id);
+    expect(active.filter(row=>row.role==="LEARNER")).toHaveLength(0);
+    expect(active.filter(row=>row.role==="MENTOR")).toHaveLength(1);
+    expect(active.find(row=>row.id===mentor.id)?.roleLabel).not.toBe("Should never be saved");
+    const eventsAfter=Number((await pool.query<{n:string}>(
+      "select count(*)::text as n from activity_events where metadata->>'projectId'=$1",
+      [project.id],
+    )).rows[0]?.n??"0");
+    expect(eventsAfter).toBe(eventsBefore);
   });
 
   it("PROJ-COL-TENANT-01 refuses a wrong-tenant learner without modifying the roster", async () => {

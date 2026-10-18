@@ -30,9 +30,14 @@ export function FilterBar({ title = "Filters", activeCount = 0, search, filters,
 
   useEffect(() => {
     if (!open) return;
-    const media = window.matchMedia("(min-width: 640px)");
-    function resize() { if (media.matches) setOpen(false); }
-    media.addEventListener("change", resize);
+    // Some embedded mobile WebViews do not expose matchMedia. A resize-based
+    // width check keeps the filter drawer dismissible and the page usable.
+    const media = typeof window.matchMedia === "function"
+      ? window.matchMedia("(min-width: 640px)") : null;
+    const isDesktop = () => media?.matches ?? window.innerWidth >= 640;
+    function resize() { if (isDesktop()) setOpen(false); }
+    media?.addEventListener("change", resize);
+    window.addEventListener("resize", resize);
     const priorOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const first = panel.current?.querySelector<HTMLElement>(FOCUSABLE);
@@ -48,10 +53,11 @@ export function FilterBar({ title = "Filters", activeCount = 0, search, filters,
     }
     document.addEventListener("keydown", keys);
     return () => {
-      media.removeEventListener("change", resize);
+      media?.removeEventListener("change", resize);
+      window.removeEventListener("resize", resize);
       document.removeEventListener("keydown", keys);
       document.body.style.overflow = priorOverflow;
-      if(media.matches) panel.current?.querySelector<HTMLElement>(FOCUSABLE)?.focus();
+      if(isDesktop()) panel.current?.querySelector<HTMLElement>(FOCUSABLE)?.focus();
       else launcher.current?.focus();
     };
   }, [open]);

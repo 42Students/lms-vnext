@@ -78,6 +78,10 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const [viewport, setViewport] = useState<ToastViewport | null>(null);
   const itemsRef = useRef<ToastItem[]>([]);
   const timers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+  // Toast IDs are React keys, not credentials. Some embedded WebViews have no
+  // crypto.randomUUID; a provider-scoped monotonic counter is collision-free
+  // for the life of this mounted notification stack.
+  const nextToastOrdinal = useRef(0);
   const dismiss = useCallback((id: string) => {
     const timer = timers.current.get(id);
     if (timer) clearTimeout(timer);
@@ -86,7 +90,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     setToasts(itemsRef.current);
   }, []);
   const showToast = useCallback((input: ToastInput) => {
-    const id = crypto.randomUUID();
+    const id = "toast-" + ++nextToastOrdinal.current;
     const { items, evictedIds } = enqueueToast(itemsRef.current, { ...input, id });
     clearEvictedToastTimers(evictedIds, timers.current);
     itemsRef.current = items;
