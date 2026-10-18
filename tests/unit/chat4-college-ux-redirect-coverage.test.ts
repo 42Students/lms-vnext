@@ -43,7 +43,7 @@ describe("chat-4 College UX canonical redirects and shared-kit coverage", () => 
     expect(destination).toContain("<AdminProjectSectionPage");
     const guarded = read("src/components/projects/admin-project-section-page.tsx");
     expect(guarded).toContain("getCurrentRequestContext()");
-    expect(guarded).toContain("requireProjectReadAccess");
+    expect(guarded).toContain("requireProjectManageAccess");
   });
 
   it("COL-ux-scroll-01 wide people lists and imports have a labelled scroll cue through DataTable", () => {
