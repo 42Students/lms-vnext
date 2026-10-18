@@ -64,7 +64,8 @@ describe("AUTH-sessions-08 admin session route: origin, payload, tenancy and no-
     expect(result.status).toBe(200);
     expect(await result.json()).toEqual({revoked:2});
     expect(result.headers.get("Cache-Control")).toBe("private, no-store");
-    expect(revokeCollegeAdminSessions).toHaveBeenCalledExactlyOnceWith(ctx,collegeId,userId);
+    expect(revokeCollegeAdminSessions).toHaveBeenCalledOnce();
+    expect(revokeCollegeAdminSessions).toHaveBeenCalledWith(ctx,collegeId,userId);
   });
 
   it("AUTH-sessions-08 no-op retry is truthful and cannot create an artificial revoke count",async()=>{
@@ -96,7 +97,8 @@ describe("AUTH-sessions-08 admin session route: origin, payload, tenancy and no-
     const result=await GET(new Request(url+"?userId="+userId),route);
     expect(result.status).toBe(200);
     expect(result.headers.get("Cache-Control")).toBe("private, no-store");
-    expect(listCollegeAdminSessions).toHaveBeenCalledExactlyOnceWith(ctx,collegeId,userId);
+    expect(listCollegeAdminSessions).toHaveBeenCalledOnce();
+    expect(listCollegeAdminSessions).toHaveBeenCalledWith(ctx,collegeId,userId);
     expect(revokeCollegeAdminSessions).not.toHaveBeenCalled();
   });
 });
