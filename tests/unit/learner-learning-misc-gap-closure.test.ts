@@ -95,10 +95,9 @@ describe("Learner Learning Misc legacy gap evidence",()=>{
   expect(schedule()).toContain("istMonthGridKeys");
  });
  it("LEARNER-learning-misc-36 attendance report restores legacy four column labels",()=>{
-  expect(attendance()).toMatch(/<th[^>]*>\s*Date\s*<\/th>/);
-  expect(attendance()).toContain(">Day</th>");
-  expect(attendance()).toContain(">Class Start Time</th>");
-  expect(attendance()).toMatch(/<th[^>]*>\s*Status\s*<\/th>/);
+  for(const label of ["Date","Day","Class Start Time","Status"])
+   expect(attendance()).toContain('header:"'+label+'"');
+  expect(attendance()).toContain("<DataTable");
  });
  it("LEARNER-learning-misc-37 attendance Total Present Absent counts support date history",()=>{
   expect(attendance()).toContain('label="Total"');
