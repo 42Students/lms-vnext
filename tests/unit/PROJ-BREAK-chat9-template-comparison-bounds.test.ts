@@ -67,6 +67,15 @@ describe("Super Admin Projects: bounded history comparison and IDOR", () => {
     expect(state.readCount).toBe(0);
   });
   it("PROJ-BREAK-idor-19 does not disclose a non-selected, missing or wrong-template version", async () => {
+    // A malformed data adapter or foreign-version mock must not be trusted
+    // even if it returns a matching UUID from another template.
+    state.versionRows = [
+      { ...state.versionRows[0], templateId: "99999999-9999-4999-8999-999999999999" },
+      ...state.versionRows.slice(1),
+    ];
+    await expect(getSuperAdminTemplateVersionComparison(actor(), { templateId, versionId }))
+      .rejects.toThrow("PROJECT_TEMPLATE_VERSION_NOT_FOUND");
+    state.readCount = 0;
     state.versionRows = state.versionRows.slice(1);
     await expect(getSuperAdminTemplateVersionComparison(actor(), { templateId, versionId }))
       .rejects.toThrow("PROJECT_TEMPLATE_VERSION_NOT_FOUND");

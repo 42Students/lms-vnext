@@ -22,8 +22,8 @@ export async function getSuperAdminTemplateVersionComparison(context: RequestCon
     or(eq(projectTemplateVersions.id, versionId),
       eq(projectTemplateVersions.version, template.currentVersion)),
   )).limit(2);
-  const selected = versions.find(version => version.id === versionId);
-  const current = versions.find(version => version.version === template.currentVersion);
+  const selected = versions.find(version => version.id === versionId && version.templateId === templateId);
+  const current = versions.find(version => version.version === template.currentVersion && version.templateId === templateId);
   if (!selected || !current) {
     throw new ProjectsServiceError("PROJECT_TEMPLATE_VERSION_NOT_FOUND");
   }
