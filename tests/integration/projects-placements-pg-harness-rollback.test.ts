@@ -1,7 +1,8 @@
+import { randomUUID } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { Pool } from "pg";
 import { createTenant, createPrincipal, createProjectFixture,
-  newHarnessPool, withProjectPg, type PgHarness } from "./support/projects-placements-pg-harness";
+  newHarnessPool, withProjectPg, withTwoPgSessions, type PgHarness } from "./support/projects-placements-pg-harness";
 
 let pool:Pool;
 beforeAll(()=>{pool=newHarnessPool();});
@@ -65,5 +66,21 @@ describe("PROJ-HARNESS-ROLLBACK real PostgreSQL: nested rollback and FK integrit
        "update project_tasks set sequence=-1 where id=$1",[f.graph.taskId]),"23514");
      expect((await db.query("select id from project_tasks where id=$1",[f.graph.taskId]))).toHaveLength(1);
    });
+ });
+ it("PROJ-HARNESS-ROLLBACK-05 both concurrent sessions roll back independently after callback failure",async()=>{
+   const tag=randomUUID();
+   const first="Harness concurrent rollback a "+tag;
+   const second="Harness concurrent rollback b "+tag;
+   await expect(withTwoPgSessions(pool,async(a,b)=>{
+     await a.query("insert into organizations (name) values ($1)",[first]);
+     await b.query("insert into organizations (name) values ($1)",[second]);
+     expect((await a.query("select id from organizations where name=$1",[first])).rowCount).toBe(1);
+     expect((await a.query("select id from organizations where name=$1",[second])).rowCount).toBe(0);
+     expect((await b.query("select id from organizations where name=$1",[first])).rowCount).toBe(0);
+     expect((await b.query("select id from organizations where name=$1",[second])).rowCount).toBe(1);
+     throw new Error("intentional dual-session failure");
+   })).rejects.toThrow("intentional dual-session failure");
+   const persisted=await pool.query("select id from organizations where name = any($1::text[])",[[first,second]]);
+   expect(persisted.rowCount).toBe(0);
  });
 });

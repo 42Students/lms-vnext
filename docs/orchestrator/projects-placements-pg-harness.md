@@ -153,3 +153,6 @@ The registered `0082_project_task_assignee.sql` migration added `project_tasks.a
 
 ### PROJ-HARNESS-ROLLBACK-04: wrong SQLSTATE is recoverable
 A regression in `tests/integration/projects-placements-pg-harness-rollback.test.ts` intentionally expects the wrong SQLSTATE (`23505`) for a real `23514` CHECK failure, verifies that `expectSqlState` rejects the mistaken assertion, then reads and asserts against the same still-usable outer transaction. A second expected-`23514` call must succeed without poisoning the connection. Cloud PostgreSQL acceptance remains pending.
+
+### PROJ-HARNESS-ROLLBACK-05: two-connection failure isolation
+`tests/integration/projects-placements-pg-harness-rollback.test.ts` starts two separate real PostgreSQL transactions, inserts distinct organization rows, confirms each session cannot see the other's uncommitted rows, deliberately throws, and verifies that neither row survives. It validates rollback and pooled-connection reuse without committing or touching an existing account. Requires migrated disposable `TEST_DATABASE_URL`; PostgreSQL CI pending.
