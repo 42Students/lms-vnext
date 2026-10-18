@@ -85,13 +85,18 @@ export async function confirmTpoBulkAction(context:RequestContext,raw:unknown){
        outcomes.push({id:selected.id,status:"skipped",reason:safeBulkActionFailure()});
        continue;
      }
-     throw error;
+     // Each earlier row has already committed: return a truthful partial result
+     // rather than prompting a blind replay after an unrecognized DB failure.
+     outcomes.push({id:selected.id,status:"failed",reason:safeBulkActionFailure()});
    }
  }
  const updated=outcomes.filter(item=>item.status==="updated").length;
  const skipped=outcomes.filter(item=>item.status==="skipped").length;
  const failed=outcomes.filter(item=>item.status==="failed").length;
- const audit=await recordActivityEvent(context,{
+ let auditId:string|null=null;
+ let summaryRecorded=false;
+ try{
+  const audit=await recordActivityEvent(context,{
    eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_BULK_RUN,
    collegeId:context.membership!.collegeId,
    organizationId:context.membership!.organizationId,
@@ -101,7 +106,17 @@ export async function confirmTpoBulkAction(context:RequestContext,raw:unknown){
    metadata:{target:plan.target,action:plan.action,selected:plan.ids.length,
     updated,skipped,failed,jobId:plan.jobId??null,undoRows:plan.target==="STUDENTS"?undoRows:[]},
  });
- return {outcomes,runAuditId:plan.target==="STUDENTS"&&undoRows.length?audit.id:null,counts:{
+  auditId=audit.id;
+  summaryRecorded=true;
+ }catch{
+  // Each successful row writes its own activity in a transaction. Losing the
+  // aggregate cannot mean the bulk actions were undone. Aggregate undo is
+  // unavailable until a persisted batch summary exists.
+ }
+ return {outcomes,summaryRecorded,
+  summaryWarning:summaryRecorded?null:
+   "Some decisions may have been saved, but the batch summary could not be recorded. Refresh and review history before retrying.",
+  runAuditId:plan.target==="STUDENTS"&&undoRows.length?auditId:null,counts:{
    updated:outcomes.filter(item=>item.status==="updated").length,
    skipped:outcomes.filter(item=>item.status==="skipped").length,
    failed:outcomes.filter(item=>item.status==="failed").length,

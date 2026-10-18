@@ -89,3 +89,22 @@ describe("PROJ-BREAK-TPO-01 Projects are NOT accessible from roster visibility a
   await expect(requireProjectReadAccess(tpo(),PROJECT)).rejects.toMatchObject({code:"PROJECT_NOT_FOUND"});
  });
 });
+
+describe("PROJ-BREAK-TPO-02 truthful self-reported portfolio counts",()=>{
+ it("separates learner-owned profile entries from canonical Projects grading and workspace status",async()=>{
+  const {readFileSync}=await import("node:fs");
+  const {resolve}=await import("node:path");
+  const grid=readFileSync(resolve(process.cwd(),"src/components/tpo/tpo-students-spreadsheet.tsx"),"utf8");
+  const page=readFileSync(resolve(process.cwd(),"src/app/(authenticated)/tpo/students/page.tsx"),"utf8");
+  expect(grid).toContain('key:"projects",label:"Profile projects (self-reported)"');
+  expect(page).toContain('["minProjects","Profile project entries (self-reported)"]');
+  expect(grid).not.toContain('key:"projects",label:"Verified Projects"');
+  const {tpoStudentProfileFacts}=await import("@/modules/placements/tpo-student-profile-facts");
+  const facts=tpoStudentProfileFacts({projects:[{title:"Claim without approval"},
+    {title:"Unreviewed private assignment"}],contactDetails:{phone:"+91-9000099999"}});
+  expect(facts.projects).toBe(2);
+  expect(JSON.stringify(facts)).not.toContain("Claim without approval");
+  expect(JSON.stringify(facts)).not.toContain("Unreviewed private assignment");
+  expect(facts.phoneMasked).toBe("••••9999");
+ });
+});
