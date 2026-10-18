@@ -717,6 +717,10 @@ export async function getProjectAdminSubmissionSummary(context: RequestContext, 
   requirePermission(context, "projects.manage", {
     organizationId: college.organizationId, collegeId: college.id,
   });
+  return getDb().transaction(async db=>{
+    await assertPersistedPlatformPermission(db,context,"projects.manage",{
+      collegeId:college.id,organizationId:college.organizationId,
+    });
   // This reference is evaluated inside a correlated subquery. Drizzle
   // otherwise renders the bare column as "id", which binds to the inner
   // submission table instead of the outer project_instances row.
@@ -726,7 +730,7 @@ export async function getProjectAdminSubmissionSummary(context: RequestContext, 
     where sub.project_id = ${instanceId}
     order by sub.version desc limit 1
   )`;
-  const [row] = await getDb().select({
+  const [row] = await db.select({
     activeWorkspaces: sql<number>`count(*) filter (where ${projectInstances.status} = 'ACTIVE')`.mapWith(Number),
     pendingReview: sql<number>`count(*) filter (where ${projectInstances.status} = 'ACTIVE' and ${latestStatus} = 'SUBMITTED')`.mapWith(Number),
     needsStudentAction: sql<number>`count(*) filter (where ${projectInstances.status} = 'ACTIVE' and ${latestStatus} = 'CHANGES_REQUESTED')`.mapWith(Number),
@@ -738,6 +742,7 @@ export async function getProjectAdminSubmissionSummary(context: RequestContext, 
     needsStudentAction: row?.needsStudentAction ?? 0,
     reviewed: row?.reviewed ?? 0,
   };
+  });
 }
 
 export async function listProjectAdminSubmissionQueue(
