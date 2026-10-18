@@ -33,7 +33,12 @@ describe("Chat-4 college UX round five",()=>{
  it("UX-college-electives-slotId-offerings-offeringId-roster-01 makes the layout or actions more readable on narrow screens",()=>{
  const page=source("electives/[slotId]/offerings/[offeringId]/roster");
  
- expect(page).toContain("sticky top-0 z-10 bg-surface");
+ expect(page).toContain("<DataTable");
+ expect(page).toContain('caption="Elective offering roster"');
+ expect(page).toContain("rows={detail.members}");
+ const table=readFileSync(join(process.cwd(),"src/components/ui/data-table.tsx"),"utf8");
+ expect(table).toContain("sm:sticky sm:top-0");
+ expect(table).toContain('<ScrollCue axis="x"');
  expect(page).toContain("min-h-11");
  });
  it("UX-college-faculty-assignment-01 makes the layout or actions more readable on narrow screens",()=>{
