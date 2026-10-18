@@ -1,6 +1,7 @@
 "use client";
 import {useMemo,useState} from "react";
 import Link from "next/link";
+import { DataTable } from "@/components/ui/data-table";
 import {collegeInterviewIcs} from "@/modules/placements/college-interview-calendar-model";
 import {bookingConflicts,calendarMode,superAdminInterviewCsv,type SuperAdminCalendarRound}
  from "@/modules/admin-ui/super-admin-interview-operations-model";
@@ -57,20 +58,34 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
   {filtered.length>500?<p role="status" className="text-sm text-muted-foreground">Export includes the first 500 visible rounds. Narrow filters for the remaining records.</p>:null}
   {exportError?<p role="alert">{exportError}</p>:null}
   {!filtered.length?<p className="rounded border border-border p-4">No interviews match these filters. Clear filters to see all rounds.</p>:
-   <div className="overflow-x-auto"><table className="w-full min-w-[55rem] text-left text-sm">
-    <thead><tr className="border-b border-border"><th className="p-2">Candidate</th><th className="p-2">Department</th><th className="p-2">Round</th><th className="p-2">Company</th><th className="p-2">Date (IST)</th><th className="p-2">Type</th><th className="p-2">Mode</th><th className="p-2">Interviewer</th><th className="p-2">Status</th><th className="p-2">Venue</th><th className="p-2">Actions</th></tr></thead>
-    <tbody>{filtered.map(row=><tr key={row.id} className="border-b border-border">
-     <td className="p-2">{row.candidateName??"Not recorded"}</td><td className="p-2">{row.departmentName??"Not recorded"}</td><td className="p-2">{row.title}</td><td className="p-2">{row.companyName}</td>
-     <td className="p-2">{inIst(row.startsAt)}</td><td className="p-2">{row.kind}</td>
-     <td className="p-2">{calendarMode(row)}</td><td className="p-2">{row.interviewer??"Not recorded"}</td>
-     <td className="p-2">{row.status}{conflicts.has(row.id)?<strong className="block text-warning">{conflicts.get(row.id)?.join("; ")}</strong>:null}</td>
-     <td className="p-2">{row.venue??"Not recorded"}</td>
-     <td className="p-2"><div className="flex flex-wrap gap-2">
-      {row.jobId?<Link className="font-semibold text-primary-text underline" href={"/admin/placements/jobs/"+encodeURIComponent(row.jobId)+"/schedule"}>Open schedule</Link>:null}
-      <a className="font-semibold text-primary-text underline" download={"interview-"+row.id+".ics"}
-       href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(collegeInterviewIcs({id:row.id,title:row.title,date:row.startsAt,durationMinutes:row.endsAt?Math.max(1,Math.round((Date.parse(row.endsAt)-Date.parse(row.startsAt))/60000)):30,location:row.venue}))}>.ics</a>
-     </div></td>
-    </tr>)}</tbody>
-   </table></div>}
+   <DataTable<SuperAdminCalendarRound>
+    rows={filtered} getRowKey={row=>row.id}
+    caption="Candidate interview bookings" empty={<p>No interviews match these filters. Clear filters to see all rounds.</p>}
+    columns={[
+     {key:"candidate",header:"Candidate",mobilePriority:"primary",cell:row=>row.candidateName??"Not recorded"},
+     {key:"department",header:"Department",mobilePriority:"secondary",cell:row=>row.departmentName??"Not recorded"},
+     {key:"round",header:"Round",mobilePriority:"secondary",cell:row=>row.title},
+     {key:"company",header:"Company",mobilePriority:"secondary",cell:row=>row.companyName},
+     {key:"date",header:"Date (IST)",mobilePriority:"secondary",cell:row=>inIst(row.startsAt)},
+     {key:"type",header:"Type",mobilePriority:"secondary",cell:row=>row.kind},
+     {key:"mode",header:"Mode",mobilePriority:"secondary",cell:row=>calendarMode(row)},
+     {key:"interviewer",header:"Interviewer",mobilePriority:"secondary",cell:row=>row.interviewer??"Not recorded"},
+     {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><>
+      {row.status}{conflicts.has(row.id)?<strong className="block text-warning">{conflicts.get(row.id)?.join("; ")}</strong>:null}
+     </>},
+     {key:"venue",header:"Venue",mobilePriority:"secondary",cell:row=>row.venue??"Not recorded"},
+     {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><div className="flex flex-wrap gap-2">
+      {row.jobId?<Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline"
+       href={"/admin/placements/jobs/"+encodeURIComponent(row.jobId)+"/schedule"}>Open schedule</Link>:null}
+      <a className="inline-flex min-h-11 items-center font-semibold text-primary-text underline"
+       download={"interview-"+row.id+".ics"}
+       href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(collegeInterviewIcs({
+        id:row.id,title:row.title,date:row.startsAt,
+        durationMinutes:row.endsAt?Math.max(1,Math.round((Date.parse(row.endsAt)-Date.parse(row.startsAt))/60000)):30,
+        location:row.venue,
+       }))}>.ics</a>
+     </div>},
+    ]}
+   />}
  </section>;
 }
