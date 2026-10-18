@@ -1,6 +1,33 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import {isValidElement,type ReactNode} from "react";
 import { readFileSync } from "node:fs";
 import { parseCollegeProjectsQuery } from "../../src/modules/projects/college-projects-query-model";
+
+const models=vi.hoisted(()=>({
+  context:vi.fn(), college:vi.fn(), snapshots:vi.fn(), templates:vi.fn(),
+}));
+vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:models.context}));
+vi.mock("@/modules/projects/admin-college-scope",()=>({getProjectAdminCollegeId:models.college}));
+vi.mock("@/modules/projects/admin-insights-service",()=>({listProjectAdminSnapshots:models.snapshots}));
+vi.mock("@/modules/projects/template-service",()=>({listAssignedProjectTemplates:models.templates}));
+import CollegeProjectsPage from "@/app/(authenticated)/college/projects/page";
+
+function nestedText(node:ReactNode):string {
+  if(Array.isArray(node))return node.map(nestedText).join(" ");
+  if(typeof node==="string"||typeof node==="number")return String(node);
+  if(!isValidElement(node))return "";
+  return nestedText((node.props as {children?:ReactNode}).children);
+}
+function listedItems(node:ReactNode):unknown[]|null {
+  if(Array.isArray(node)){
+    for(const child of node){const result=listedItems(child);if(result)return result;}
+    return null;
+  }
+  if(!isValidElement(node))return null;
+  const props=node.props as {basePath?:string;items?:unknown[];children?:ReactNode};
+  if(props.basePath==="/college/projects" && Array.isArray(props.items))return props.items;
+  return listedItems(props.children);
+}
 
 const read = (path: string) => readFileSync(path, "utf8");
 
@@ -47,7 +74,7 @@ describe("chat-19 college UX cross-audit", () => {
     expect(page).not.toMatch(/page:\s*Number\(/);
   });
 
-  it("COL-XA-09 keeps workspaces visible when optional template labels fail", () => {
+  it("COL-XA-09 keeps workspaces visible when optional template labels fail", async () => {
     const page = read("src/app/(authenticated)/college/projects/page.tsx");
     expect(page).toContain("const collegeId = getProjectAdminCollegeId(context)");
     expect(page).toContain("if (!collegeId)");
@@ -57,6 +84,26 @@ describe("chat-19 college UX cross-audit", () => {
     expect(page).toContain("Workspaces are still listed");
     expect(page).toContain("const templateTitles = new Map(");
     expect(page).not.toContain("templates.find(");
+    // Execute the real async page: an unavailable optional template read
+    // must not hide a permitted project or reveal a service exception.
+    vi.clearAllMocks();
+    const context={user:{id:"actor",platformStatus:"ACTIVE"},membership:{collegeId:"college-a"}};
+    const project={id:"project-a",templateId:"template-a",title:"Authorized team project",
+      summary:null,status:"ACTIVE",updatedAt:new Date("2026-10-18T10:00:00Z"),
+      mentorName:"Mentor",memberCount:3,progressPercent:25,riskReasons:[]};
+    models.context.mockResolvedValue(context);
+    models.college.mockReturnValue("college-a");
+    models.snapshots.mockResolvedValue({items:[project],total:1,page:1,pageSize:25,totalPages:1});
+    models.templates.mockRejectedValue(new Error("optional template service is offline"));
+    const output=await CollegeProjectsPage({searchParams:Promise.resolve({})});
+    const visible=listedItems(output);
+    expect(visible).toHaveLength(1);
+    expect(visible?.[0]).toMatchObject({id:"project-a",title:"Authorized team project",templateTitle:null});
+    expect(nestedText(output)).toContain("Workspaces are still listed");
+    expect(nestedText(output)).not.toContain("optional template service is offline");
+    expect(models.snapshots).toHaveBeenCalledWith(context,"college-a",
+      expect.objectContaining({view:"cards",page:1,pageSize:25}));
+    expect(models.templates).toHaveBeenCalledWith(context,"college-a");
   });
 
   it("COL-XA-07 exposes roster fields and class-move controls in mobile cards", () => {

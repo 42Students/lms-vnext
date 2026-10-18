@@ -7,3 +7,14 @@ export type ReadinessOverrideState = "FORCE_UNLOCK" | "FORCE_BLOCK" | "CLEAR";
 export function effectiveProjectSubmissionReady(defaultReady:boolean,state:ReadinessOverrideState|null) {
   return state === "FORCE_UNLOCK" ? true : state === "FORCE_BLOCK" ? false : defaultReady;
 }
+
+/** Repeated delivery of one administrator intent must not create another
+ * activity event. The parent project row is locked before this is checked. */
+export function isDuplicateProjectReadinessOverride(
+  current: { state: ReadinessOverrideState | null; note: string | null },
+  next: { state: ReadinessOverrideState; note?: string },
+): boolean {
+  const priorState = current.state ?? "CLEAR";
+  if (priorState !== next.state) return false;
+  return next.state === "CLEAR" || current.note === next.note;
+}

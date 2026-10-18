@@ -16,5 +16,9 @@ export const emptyWorkspaceBrief:WorkspaceBrief={
 };
 export function parseWorkspaceBrief(value:unknown):WorkspaceBrief {
  const result=workspaceBriefSchema.safeParse(value);
- return result.success?result.data:emptyWorkspaceBrief;
+ // Never hand a caller the exported singleton: an invalid stored payload must
+ // not share mutable lists with another request or tenant.
+ return result.success?result.data:{
+  goal:"",description:"",deliverables:[],completionConditions:[],personas:[],
+ };
 }
