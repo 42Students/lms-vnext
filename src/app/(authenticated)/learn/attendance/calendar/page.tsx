@@ -24,7 +24,7 @@ const statusClass:Record<string,string> = {
   MEDICAL:"bg-warning-subtle text-warning",
   LATE:"bg-warning-subtle text-warning",
   NOT_MARKED:"bg-muted text-body",
-  SCHEDULED:"bg-primary-subtle text-primary-text",
+  SCHEDULED:"bg-primary-subtle text-[var(--lms-teal-deep)]",
 };
 
 export default async function LearnerAttendanceCalendarPage({
@@ -38,7 +38,7 @@ export default async function LearnerAttendanceCalendarPage({
   });
   if(!parsed.success) return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid attendance calendar filters</h1>
-    <Link href="/learn/attendance/calendar" className="text-primary-text underline">
+    <Link href="/learn/attendance/calendar" className="text-[var(--lms-teal-deep)] underline">
       Clear filters
     </Link>
   </section>;
@@ -65,20 +65,20 @@ export default async function LearnerAttendanceCalendarPage({
     ...(data.query.deliveryId!=="ALL"?{deliveryId:data.query.deliveryId}:{}),
   }).toString();
 
-  return <div className="space-y-6">
+  return <div className="min-w-0 space-y-6">
     <PageHeader title="Attendance calendar"
-      actions={<Link href={sourceLink} className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+      actions={<Link href={sourceLink} className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)]">
         Attendance detail
       </Link>} />
     <form action="/learn/attendance/calendar" method="get"
       className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-3">
       <label className="grid gap-1 text-sm font-semibold text-body">Month
         <input name="month" type="month" defaultValue={data.query.month}
-          className="min-h-10 w-full rounded-md border border-border bg-background px-3 text-foreground" />
+          className="min-h-11 w-full rounded-md border border-border bg-background px-3 text-foreground" />
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Course
         <select name="deliveryId" defaultValue={data.query.deliveryId}
-          className="min-h-10 w-full rounded-md border border-border bg-background px-3 text-foreground">
+          className="min-h-11 w-full rounded-md border border-border bg-background px-3 text-foreground">
           <option value="ALL">All accessible Courses</option>
           {data.courses.map(course=>
             <option key={course.deliveryId} value={course.deliveryId}>
@@ -88,18 +88,18 @@ export default async function LearnerAttendanceCalendarPage({
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Status
         <select name="status" defaultValue={data.query.status}
-          className="min-h-10 w-full rounded-md border border-border bg-background px-3 text-foreground">
+          className="min-h-11 w-full rounded-md border border-border bg-background px-3 text-foreground">
           <option value="ALL">All status types</option>
           {Object.entries(statusNames).map(([value,label])=>
             <option key={value} value={value}>{label}</option>)}
         </select>
       </label>
       <div className="flex flex-wrap items-center gap-3 sm:col-span-3">
-        <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
           Apply filters
         </button>
         <Link href="/learn/attendance/calendar"
-          className="text-sm font-semibold text-primary-text">Clear</Link>
+          className="text-sm font-semibold text-[var(--lms-teal-deep)]">Clear</Link>
       </div>
     </form>
     <div className="grid gap-3 sm:grid-cols-4" aria-label="Filtered attendance totals">
@@ -122,10 +122,10 @@ export default async function LearnerAttendanceCalendarPage({
     <section aria-label={monthLabel+" attendance calendar"} className="rounded-xl border border-border bg-surface p-3 sm:p-5">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <Link href={previous} aria-label="Previous month"
-          className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">← Previous</Link>
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)]">← Previous</Link>
         <h2 className="text-lg font-semibold text-foreground">{monthLabel}</h2>
         <Link href={next} aria-label="Next month"
-          className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Next →</Link>
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)]">Next →</Link>
       </div>
       <div className="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-muted-foreground sm:gap-2">
         {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(day=>
@@ -138,7 +138,7 @@ export default async function LearnerAttendanceCalendarPage({
             aria-label={day+": "+entries.length+" matching classes"}
             className="min-h-14 rounded-md border border-border p-1 sm:min-h-20 sm:p-2">
             <div className="text-right font-semibold text-foreground">{label}</div>
-            {entries.length>0?<div className="mt-1 rounded bg-primary-subtle px-1 py-0.5 text-center text-xs font-semibold text-primary-text">
+            {entries.length>0?<div className="mt-1 rounded bg-primary-subtle px-1 py-0.5 text-center text-xs font-semibold text-[var(--lms-teal-deep)]">
               {entries.length} class{entries.length===1?"":"es"}
             </div>:null}
             <div className="mt-1 hidden flex-wrap gap-1 sm:flex">
@@ -175,7 +175,7 @@ export default async function LearnerAttendanceCalendarPage({
             <Link href={"/learn/attendance?"+new URLSearchParams({
               month:data.query.month,deliveryId:row.deliveryId,
             }).toString()}
-              className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
+              className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
               View Course attendance →
             </Link>
           </li>)}

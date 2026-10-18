@@ -38,7 +38,7 @@ export default async function CollegeBatchPromotionPage({
     <PageHeader eyebrow="College Admin · Academic Setup" title="Batch Promotion" />
     <ErrorState title="Invalid promotion preview filters"
       description="Select a valid program, batch and optional academic-year start. No learner records were loaded."
-      action={<Link href="/college/batch-promotion" className="font-semibold text-primary-text">Clear filters</Link>} />
+      action={<Link href="/college/batch-promotion" className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>} />
   </div>;
   const options = await listCollegePromotionOptions(context, parsed.data);
   const preview = parsed.data.cohortId
@@ -48,11 +48,11 @@ export default async function CollegeBatchPromotionPage({
     ? await getPromotionFacultyReadiness(context, preview.batch.programId,
       parsed.data.cohortId, preview.plan.targetTermNumber)
     : null;
-  return <div className="min-w-0 space-y-6">
+  return <div className="min-w-0 overflow-x-clip space-y-6">
     <PageHeader eyebrow="College Admin · Academic Setup" title="Batch Promotion"
       description="Server-verified eligibility preview. Promotion rechecks blockers and closes prior-term-only teaching assignments."
       actions={<Link href="/college/batches"
-        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">Batches</Link>} />
+        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)]">Batches</Link>} />
     <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
       <form method="get" action="/college/batch-promotion" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <label className="grid gap-1 text-sm font-semibold text-body">
@@ -83,7 +83,7 @@ export default async function CollegeBatchPromotionPage({
             className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
         </label>
         <div className="flex items-end">
-          <button type="submit" className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">
+          <button type="submit" className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-foreground">
             Preview
           </button>
         </div>
@@ -122,7 +122,7 @@ export default async function CollegeBatchPromotionPage({
                   {blocker==="NEXT_TERM_NO_MAPPED_COURSES"?<>
                     Cannot promote: Semester {preview.plan.targetTermNumber} has no mapped courses.
                     Configure the semester curriculum first.{" "}
-                    <Link href="/college/semester-courses" className="font-semibold text-primary-text underline">
+                    <Link href="/college/semester-courses" className="font-semibold text-[var(--lms-teal-deep)] underline">
                       Map semester courses
                     </Link>
                   </>:blocker.replaceAll("_"," ")}
@@ -150,7 +150,7 @@ export default async function CollegeBatchPromotionPage({
                 academicYearStart={preview.plan.academicYearStart!} />
             ) : null}
         </section>
-        <section aria-label="Learner-level preview" className="overflow-x-auto rounded-xl border border-border bg-surface">
+        <section aria-label="Learner-level preview" className="overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-surface">
           <h2 className="border-b border-border p-4 text-lg font-semibold text-foreground">Learner blockers</h2>
           {preview.learners.length === 0 ? (
             <p className="p-6 text-sm text-body">

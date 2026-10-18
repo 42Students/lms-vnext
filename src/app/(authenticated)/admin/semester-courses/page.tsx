@@ -11,12 +11,12 @@ export default async function SuperAdminSemesterCourseMappingPage({searchParams}
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }){
  const context=await getCurrentRequestContext();
- if(!context.adminScope?.collegeId)return <div className="space-y-5">
+ if(!context.adminScope?.collegeId)return <div className="min-w-0 space-y-5">
   <PageHeader title="Semester–Course Mapping" />
   <EmptyState title="Select a college to continue" description="Choose a college in the header above to see its semester-course mapping." />
  </div>;
  const curriculum=await listCollegeTermMappings(context);
- return <div className="space-y-6">
+ return <div className="min-w-0 space-y-6">
       <AcademicSetupSteps step={4} />
  {curriculum?<CollegeTermMappingManager data={curriculum}/>:null}
  <AdminScopedReadPage title="Semester–Course Mapping" path="/admin/semester-courses" statuses={statuses}

@@ -1,9 +1,7 @@
-# UI/UX excellence: /college/faculty-assignment
+# UX review: /college/faculty-assignment
 
-Before: mobile overflow or undersized touch targets in this route's presentation.
-
-Changed: touch controls at least 44px tall; mobile width containment. Implementation `src/app/(authenticated)/college/faculty-assignment/page.tsx`.
-
-States: no business logic, validation, URL filter, legacy copy, permissions or persisted data behavior changed. Page remains subject to browser verification of empty/error/loading cases, 320px layout, keyboard and screen reader.
-
-Test: `tests/unit/chat4-college-ux-round5.test.ts` (`UX-college-faculty-assignment-01`); not run; do not tick route until green.
+- Route: `src/app/(authenticated)/college/faculty-assignment/page.tsx`; checked current authorized College source and signed-off playbook.
+- Legacy titles and labels retained verbatim; no permission, route or API contract changed.
+- Changes: high-contrast primary action; accessible links; narrow form fields; keyboard scroll bounds; horizontal overflow containment.
+- Accessibility/states: No direct DataTable; shared underlying workspace owns list and empty state. Existing error/empty/denied and form behaviors retained.
+- Test authored: `tests/unit/UX-college-college-faculty-assignment-01.test.ts`; CI/browser not run, no checklist sign-off claimed.

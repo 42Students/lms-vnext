@@ -40,12 +40,12 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
       <PageHeader  title="Semesters" />
       <ErrorState title="Invalid semester filters"
         description="Check the selected program, term, status or page."
-        action={<Link href="/admin/semesters" className="font-semibold text-primary-text">Clear filters</Link>} />
+        action={<Link href="/admin/semesters" className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>} />
     </div>;
   }
 
   const data = await listCollegeSemesters(context, parsed.data);
-  return <div className="space-y-6">
+  return <div className="min-w-0 space-y-6">
       <AcademicSetupSteps step={3} />
     <PageHeader  title="Semesters"
       description="Create and manage semesters. Credits sum the mapped courses; unmapped semesters show —." />
@@ -77,7 +77,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
           </select>
         </label>
         <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
-        <Link href="/admin/semesters" className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear</Link>
+        <Link href="/admin/semesters" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Clear</Link>
       </form>
     </section>
     <form method="get" action="/admin/semesters" aria-label="Refresh semester directory">
@@ -86,13 +86,13 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
       <input type="hidden" name="status" value={data.query.status} />
       <input type="hidden" name="page" value={String(data.query.page)} />
       <input type="hidden" name="pageSize" value={String(data.query.pageSize)} />
-      <button type="submit" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Refresh</button>
+      <button type="submit" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Refresh</button>
     </form>
     <a href={"/api/admin/semesters/export?"+new URLSearchParams({
       ...(data.query.q?{q:data.query.q}:{}),
       ...(data.query.programId?{programId:data.query.programId}:{}),
       ...(data.query.status!=="ALL"?{status:data.query.status}:{})
-    }).toString()} className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+    }).toString()} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
       Export semesters.csv
     </a>
     <section aria-label="Semesters" className="overflow-x-auto rounded-xl border border-border bg-surface">
@@ -123,11 +123,11 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
       <span>Page {data.query.page} of {data.totalPages}</span>
       <div className="flex gap-3">
         {data.query.page > 1 ? <Link href={pageHref({ ...data.query, page: data.query.page - 1 })}
-          className="font-semibold text-primary-text">Previous</Link> : null}
+          className="font-semibold text-[var(--lms-teal-deep)]">Previous</Link> : null}
         {data.query.page < data.totalPages ? <Link href={pageHref({ ...data.query, page: data.query.page + 1 })}
-          className="font-semibold text-primary-text">Next</Link> : null}
+          className="font-semibold text-[var(--lms-teal-deep)]">Next</Link> : null}
       </div>
     </nav>
-    <Link href="/admin/semester-courses" className="font-semibold text-primary-text">Semester–Course Mapping</Link>
+    <Link href="/admin/semester-courses" className="font-semibold text-[var(--lms-teal-deep)]">Semester–Course Mapping</Link>
   </div>;
 }

@@ -35,7 +35,7 @@ export default async function LearnerProfilePage({
   const missing=verification?learnerProfileMissingItems(verification):[];
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         title="Profile"
       />
@@ -64,7 +64,7 @@ export default async function LearnerProfilePage({
               You changed this after it was verified. The verified details stay in use until you send the changes for review.
             </p>:null}
         </div>:<p role="status" className="mt-2 text-sm text-body">Verification status is temporarily unavailable.</p>}
-        <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Review verification status</Link>
+        <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">Review verification status</Link>
       </section>
       {sectionNotice ? <p role="status" className="rounded-lg border border-warning p-3 text-sm text-body">{sectionNotice}</p> : null}
       <section aria-label="Academic identity" className="rounded-xl border border-border bg-surface p-4 sm:p-6">
@@ -99,11 +99,11 @@ export default async function LearnerProfilePage({
         )}
       </section>
       <Link href="/learn/profile/academic-record"
-        className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
         View my academic record →
       </Link>
       <Link href="/learn/profile/data-access"
-        className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
         Who has my data →
       </Link>
       <section aria-label="Verification status" className="rounded-xl border border-border bg-surface p-4 sm:p-6">
@@ -126,7 +126,7 @@ export default async function LearnerProfilePage({
         </div>:<p role="status" className="mt-3 text-sm text-body">
           Verification requirements are temporarily unavailable. Open the verification page to retry.
         </p>}
-        <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">View my verification status →</Link>
+        <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">View my verification status →</Link>
       </section>
       <section aria-label="Coding profiles" className="min-w-0 rounded-xl border border-border bg-surface p-4 sm:p-6">
         <h2 className="text-base font-semibold text-foreground">Coding platform profiles</h2>
@@ -138,7 +138,7 @@ export default async function LearnerProfilePage({
             {learnerSavedCodingProfiles(profile.profileDocument).map(entry => (
               <li key={entry.platform}>
                 <a href={entry.href} rel="noopener noreferrer" target="_blank"
-                  className="inline-flex min-h-11 items-center break-all rounded-md border border-border px-3 text-sm font-semibold text-primary-text underline">
+                  className="inline-flex min-h-11 items-center break-all rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] underline">
                   {entry.label} ↗
                 </a>
               </li>
@@ -147,8 +147,8 @@ export default async function LearnerProfilePage({
         )}
         <p className="mt-2 text-xs text-muted-foreground">Save GitHub under Social profiles; add other coding sites as URL-type entries under Additional information using the exact platform name.</p>
         <div className="flex flex-wrap gap-4">
-          <Link href="/learn/profile?section=social-profiles" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Edit GitHub →</Link>
-          <Link href="/learn/profile?section=metadata" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Edit coding links →</Link>
+          <Link href="/learn/profile?section=social-profiles" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">Edit GitHub →</Link>
+          <Link href="/learn/profile?section=metadata" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">Edit coding links →</Link>
         </div>
       </section>
       <LearnerProfileWorkspace

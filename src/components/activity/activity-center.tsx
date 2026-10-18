@@ -1,6 +1,8 @@
 import Link from "next/link";
 import {Fragment} from "react";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export type ActivityCenterGroup = {
   key: string;
@@ -99,16 +101,11 @@ export function ActivityCenter({
   yesterdayKey?: string;
 }) {
   if (groups.length === 0) {
-    return (
-      <div className="rounded-xl border border-border bg-surface p-8 text-center">
-        <p className="m-0 font-semibold text-foreground">
-          No meaningful activity matches these filters.
-        </p>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Technical request noise is intentionally excluded from this center.
-        </p>
-      </div>
-    );
+    return <EmptyState
+      title="No meaningful activity matches these filters."
+      description="Technical request noise is intentionally excluded from this center."
+      action={<Link href="/activity" className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Reset</Link>}
+    />;
   }
 
   return (
@@ -121,14 +118,7 @@ export function ActivityCenter({
           return (
             <Fragment key={group.key+":"+item.event.id}>
             {day!==previousDay?<h3 className="mt-5 text-sm font-semibold text-muted-foreground">{day===todayKey?"Today":day===yesterdayKey?"Yesterday":activityDayHeading(item.event.occurredAt)}</h3>:null}
-            <article
-              key={
-                group.key +
-                ":" +
-                item.event.id
-              }
-              className="rounded-xl border border-border bg-surface p-5"
-            >
+            <Card as="article" className="min-w-0">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
@@ -191,14 +181,14 @@ export function ActivityCenter({
                   </span>
                   <Link
                     href={`/activity/${item.event.id}`}
-                    className="inline-flex min-h-9 items-center rounded-md border border-border px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle"
+                    className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-foreground motion-safe:transition-colors hover:border-[var(--lms-teal-deep)] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
                   >
                     View details
                   </Link>
                 </div>
               </div>
               <details className="mt-3 border-t border-border pt-3 text-xs text-muted-foreground">
-                <summary className="cursor-pointer font-semibold">Details</summary>
+                <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Details</summary>
                 <dl className="mt-2 grid gap-1 sm:grid-cols-2">
                   <div><dt>Action</dt><dd>{humanize(item.event.eventType)}</dd></div>
                   <div><dt>Entity</dt><dd className="break-all">{item.event.subjectType}: {item.event.subjectId}</dd></div>
@@ -209,7 +199,7 @@ export function ActivityCenter({
                   </div>)}
                 </dl>
               </details>
-            </article>
+            </Card>
             </Fragment>
           );
         })}
@@ -219,7 +209,7 @@ export function ActivityCenter({
         <div className="flex justify-center">
           <Link
             href={nextHref}
-            className="inline-flex min-h-10 items-center justify-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+            className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground motion-safe:transition-colors hover:border-[var(--lms-teal-deep)] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
           >
             Load more ({nextRemaining} older)
           </Link>

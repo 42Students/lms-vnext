@@ -1,9 +1,7 @@
-# UI/UX review: /college/attendance/departments
+# UX review: /college/attendance/departments
 
-Before: responsive interactions and table reading needed stronger minimum sizing or overflow containment.
-
-Changed: page overflow containment at mobile widths. Existing legacy headings and actions remain unchanged. Source: `src/app/(authenticated)/college/attendance/departments/page.tsx`.
-
-States preserved: existing loading, empty, error, validation, authorization and submit flows, where present. Outstanding browser verification: 320px widths, keyboard traversal, contrast and focus order.
-
-Regression: `tests/unit/chat4-college-ux-round2.test.ts` test `UX-college-attendance-departments-01`. Tests not executed; checklist remains unticked.
+- Route: `src/app/(authenticated)/college/attendance/departments/page.tsx`. Owner: chat-4, first half of /college.
+- Legacy wording: retained verbatim, including heading, controls, errors and action labels.
+- Source changes: accessible deep-teal links; horizontal overflow containment.
+- States: existing scoped reads, empty/error/partial notices, controls and navigation preserved. No direct DataTable; delegated directory owns its empty-state copy.
+- Test authored: `tests/unit/UX-college-college-attendance-departments-01.test.ts`; device, WebView, CI and browser checks pending.

@@ -19,9 +19,9 @@ export default async function FacultyStudentDetailPage({
   const data = await getFacultyStudentDetail(context, await params);
   const name = data.student.displayName?.trim() || "Unnamed learner";
   const root = "/teacher/courses/" + encodeURIComponent(data.course.deliveryId);
-  return <div className="space-y-6">
+  return <div className="min-w-0 max-w-full space-y-6">
     <Link href={root + "/students"}
-      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">← Students</Link>
+      className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">← Students</Link>
     <PageHeader eyebrow="Faculty · Course Students" title={name}
       description={[data.course.courseName, data.course.sectionName,
         data.course.academicPeriodName].join(" · ")} />
@@ -102,7 +102,7 @@ export default async function FacultyStudentDetailPage({
           </ol>
         </div>}
       <Link href={root + "/attendanceDetail"}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         View monthly class attendance →
       </Link>
     </section>

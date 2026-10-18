@@ -86,7 +86,7 @@ export default async function TpoMessagesPage({
           action={
             <Link
               href="/tpo/messages"
-              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
             >
               Clear filters
             </Link>
@@ -128,7 +128,7 @@ export default async function TpoMessagesPage({
    <ErrorState title="Recruiter conversations are temporarily unavailable"
     description="Your placement notifications remain available separately. No recruiter messages were loaded."
     action={<Link href="/tpo/notifications"
-      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
+      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">
       Open notifications
      </Link>}/>
   </div>;
@@ -164,13 +164,13 @@ export default async function TpoMessagesPage({
             {isRecruiterInbox ? <TpoNewRecruiterConversation recruiters={availableRecruiters} actorUserId={context.user.id} /> : null}
             <Link
               href="/tpo/messages/notifications"
-              className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary"
+              className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-foreground"
             >
               My placement notifications
             </Link>
             <Link
               href="/tpo/more"
-              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
             >
               More TPO tools
             </Link>
@@ -266,7 +266,7 @@ export default async function TpoMessagesPage({
           href={tpoMessagesHref({...commonFilters,status,page:1})}
           aria-current={query.status===status?"page":undefined}
           className={"inline-flex min-h-11 items-center rounded-md border px-4 text-sm font-semibold "+
-            (query.status===status?"border-primary bg-primary-subtle text-primary-text":
+            (query.status===status?"border-primary bg-primary-subtle text-[var(--lms-teal-deep)]":
               "border-border bg-surface text-foreground")}>
             {label} ({count})
           </Link>)}
@@ -350,14 +350,14 @@ export default async function TpoMessagesPage({
           <div className="flex flex-wrap gap-3 sm:col-span-2 xl:col-span-5">
             <button
               type="submit"
-              className="inline-flex min-h-11 items-center rounded-md bg-primary px-5 text-sm font-semibold text-on-primary hover:bg-primary-hover"
+              className="inline-flex min-h-11 items-center rounded-md bg-primary px-5 text-sm font-semibold text-foreground hover:bg-primary-hover"
             >
               Apply filters
             </button>
 
             <Link
               href="/tpo/messages"
-              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
             >
               Clear filters
             </Link>
@@ -398,7 +398,7 @@ export default async function TpoMessagesPage({
           <ul aria-label="Recruiter conversations on phone" className="grid gap-3 md:hidden">
            {items.map(item=><li key={item.id} className="rounded-xl border border-border bg-surface p-4">
             <Link href={"/tpo/messages/"+encodeURIComponent(item.id)}
-              className="block min-h-11 font-semibold text-primary-text">
+              className="block min-h-11 font-semibold text-[var(--lms-teal-deep)]">
              {item.participantName}{item.companyName?" · "+item.companyName:""} →
             </Link>
             <p className="text-sm text-body">{item.subject}</p>
@@ -453,7 +453,7 @@ export default async function TpoMessagesPage({
                     </td>
 
                     <td className="px-4 py-4 text-body">
-                      {isRecruiterInbox ? <Link className="font-semibold text-primary-text hover:underline"
+                      {isRecruiterInbox ? <Link className="font-semibold text-[var(--lms-teal-deep)] hover:underline"
                         href={"/tpo/messages/" + encodeURIComponent(item.id)}>{item.subject} →</Link> : item.subject}
                        {(query.q.trim()?item.searchSnippet??item.lastPreview:item.lastPreview)?<p className="mt-1 max-w-sm truncate text-xs text-muted-foreground">{query.q.trim()?item.searchSnippet??item.lastPreview:item.lastPreview}</p>:null}
                     </td>
@@ -498,7 +498,7 @@ export default async function TpoMessagesPage({
                           href={`/tpo/placements/jobs/${encodeURIComponent(
                             item.jobId,
                           )}`}
-                          className="font-semibold text-primary-text hover:underline"
+                          className="font-semibold text-[var(--lms-teal-deep)] hover:underline"
                         >
                           Open related job →
                         </Link>
@@ -533,7 +533,7 @@ export default async function TpoMessagesPage({
                   ...commonFilters,
                   page: page - 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
               >
                 Previous
               </Link>
@@ -545,7 +545,7 @@ export default async function TpoMessagesPage({
                   ...commonFilters,
                   page: page + 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
               >
                 Next
               </Link>
