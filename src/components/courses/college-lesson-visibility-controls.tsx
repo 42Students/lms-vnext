@@ -1,6 +1,7 @@
 "use client";
 
 import {useRouter} from "next/navigation";
+import {ScrollCue} from "@/components/ui/scroll-cue";
 import {useState,useTransition} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
@@ -34,7 +35,7 @@ export function CollegeLessonVisibilityControl({lesson}: {lesson:Item}){
  }
  return <div className="space-y-1">
   <button type="button" disabled={pending} onClick={change}
-   aria-pressed={visible} className="min-h-10 rounded-md border border-border px-3 text-xs font-semibold text-primary-text disabled:opacity-50">
+   aria-pressed={visible} className="min-h-11 rounded-md border border-border px-3 text-xs font-semibold text-primary-text disabled:opacity-50">
    {pending?"Saving…":label}
   </button>
   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
@@ -106,7 +107,7 @@ export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
     onChange={event=>{setSelected(event.target.checked?items.map(item=>item.id):[]);setFailed([]);setMessage("");}}/>
    Select all on this page
   </label>
-  <div className="mt-2 grid max-h-48 gap-2 overflow-y-auto sm:grid-cols-2">
+  <ScrollCue axis="y" label="Lessons available for bulk visibility" className="mt-2" viewportClassName="max-h-48"><div className="grid gap-2 sm:grid-cols-2">
    {items.map(item=><label key={item.id} className="flex min-w-0 items-center gap-2">
     <input type="checkbox" checked={selected.includes(item.id)} disabled={pending}
      onChange={()=>toggle(item.id)}/>
@@ -115,19 +116,19 @@ export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
      {(latestVisible[item.id]??item.visibleToStudents)?"Visible":"Hidden"}
     </span>
    </label>)}
-  </div>
+  </div></ScrollCue>
   <div className="mt-3 flex flex-wrap gap-2">
    <button type="button" disabled={pending||!selected.length}
-    onClick={()=>apply(true)} className="min-h-10 rounded border border-border px-3 font-semibold text-primary-text disabled:opacity-50">
+    onClick={()=>apply(true)} className="min-h-11 rounded border border-border px-3 font-semibold text-primary-text disabled:opacity-50">
     Show to students
    </button>
    <button type="button" disabled={pending||!selected.length}
-    onClick={()=>apply(false)} className="min-h-10 rounded border border-border px-3 font-semibold text-primary-text disabled:opacity-50">
+    onClick={()=>apply(false)} className="min-h-11 rounded border border-border px-3 font-semibold text-primary-text disabled:opacity-50">
     Hide from students
    </button>
    {failed.length?<button type="button" disabled={pending} onClick={()=>{
     if(retryTarget!==null)apply(retryTarget,failed);
-   }} className="min-h-10 rounded border border-border px-3 font-semibold text-primary-text">
+   }} className="min-h-11 rounded border border-border px-3 font-semibold text-primary-text">
     Retry failed
    </button>:null}
   </div>
