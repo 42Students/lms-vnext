@@ -65,7 +65,10 @@ export async function reassignFacultyUpcomingSchedules(ctx:RequestContext,rawId:
      and(eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"FACULTY")))
    .where(and(eq(collegeMemberships.collegeId,m.collegeId),
      or(eq(collegeMemberships.id,old),eq(collegeMemberships.id,input.replacementMembershipId))))
-   .for("share",{of:collegeMemberships});
+   // Lock the joined USERS and MEMBERSHIP_ROLES rows too. Locking only the
+   // college_memberships record permits disabling a replacement account or
+   // removing its FACULTY role during this reassignment transaction.
+   .for("share");
   if(!principals.some(p=>p.id===old)||
      !principals.some(p=>p.id===input.replacementMembershipId&&p.status==="ACTIVE"&&p.userStatus==="ACTIVE"))
     throw Error("Source or replacement faculty not available in this college.");
