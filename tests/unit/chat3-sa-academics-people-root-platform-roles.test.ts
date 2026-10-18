@@ -29,6 +29,23 @@ describe("Super Admin root-page platform-role defense",()=>{
   expect(check).toBeGreaterThan(0);
   expect(people).toBeGreaterThan(check);
  });
+ it("SA-PEOPLE-ROOT-02 verifies all People views and Faculty assignment list assert Super Admin before reading records",()=>{
+  const checks=[
+   ["src/app/(authenticated)/admin/people/directory/page.tsx",
+    "const data=await listSuperAdminUsers("],
+   ["src/app/(authenticated)/admin/people/unassigned/page.tsx",
+    "const data = await listSuperAdminUnassignedUsers("],
+   ["src/app/(authenticated)/admin/faculty-assignment/page.tsx",
+    "const [classes,workspace]=await Promise.all(["],
+  ] as const;
+  for(const [path,lookup] of checks){
+   const page=read(path);
+   expect(page).toContain('redirect("/dashboard")');
+   const guard=page.indexOf("isSuperAdmin(context)");
+   expect(guard).toBeGreaterThan(0);
+   expect(page.indexOf(lookup)).toBeGreaterThan(guard);
+  }
+ });
  it("both pages deny Faculty, Mentor, Learner and College Admin with a stale forged adminScope",()=>{
   expect(isSuperAdmin(active)).toBe(true);
   for(const role of ["FACULTY","MENTOR","LEARNER","COLLEGE_ADMIN"] as const){
