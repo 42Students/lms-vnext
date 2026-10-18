@@ -250,7 +250,7 @@ export async function getTpoStudentsIntelligence(
       context,
       input.collegeId,
     );
-  await requireLiveTpoStudentActor(context,college.id);
+  await requireLiveTpoStudentActor(context,input.collegeId);
 
   const db = getDb();
 
@@ -1068,7 +1068,7 @@ export async function listTpoStudentRequests(
       context,
       input.collegeId,
     );
-  await requireLiveTpoStudentActor(context,college.id);
+  await requireLiveTpoStudentActor(context,input.collegeId);
 
   const asOf=new Date();
   const rows = await getDb()
