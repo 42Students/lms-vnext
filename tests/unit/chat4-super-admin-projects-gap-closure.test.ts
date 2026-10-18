@@ -1,6 +1,7 @@
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {join} from "node:path";
+import {parseAdminProjectsQuery} from "@/modules/projects/admin-projects-query-model";
 
 /** Source-contract checks for earlier merged functionality and exact legacy copy.
  * Integration-level permissions, database transitions and parity still require
@@ -193,8 +194,13 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
  it("SA-placements-projects-55 uses the legacy workspaces search URL key, size 20 and page sizes",()=>{
   const page=source("src/app/(authenticated)/admin/projects/page.tsx");
   const controls=source("src/components/projects/project-admin-collection-controls.tsx");
-  expect(page).toContain("one(params.search) ?? one(params.q)");
-  expect(page).toContain("one(params.pageSize) ?? 20");
+  const queryModel=source("src/modules/projects/admin-projects-query-model.ts");
+  expect(page).toContain("parseAdminProjectsQuery(await searchParams)");
+  expect(queryModel).toContain("first(params.search) ?? first(params.q)");
+  expect(queryModel).toContain('pageSize: z.coerce.number().int().min(10).max(100).default(20)');
+  expect(parseAdminProjectsQuery({search:"capstone"}).data).toMatchObject({q:"capstone",pageSize:20});
+  expect(parseAdminProjectsQuery({search:"from search",q:"from q"}).data?.q).toBe("from search");
+  expect(parseAdminProjectsQuery({pageSize:"0"}).success).toBe(false);
   expect(page).toContain("<ProjectAdminFilters query={query} legacyWorkspaces />");
   expect(controls).toContain('legacyWorkspaces ? "search" : "q"');
   expect(controls).toContain("!legacyWorkspaces || size !== 25");

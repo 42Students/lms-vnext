@@ -99,11 +99,13 @@ export function mentorReportsCsv(rows:readonly {
     hour:"2-digit",minute:"2-digit",hourCycle:"h23",
   });
   const lines=["Project ID,Project,Status,Primary Mentor,Recorded attention,Updated (IST)"];
-  for(const row of rows)lines.push([
+  const limited=rows.slice(0,100);
+  for(const row of limited)lines.push([
     row.id,row.title,row.status,row.isPrimaryMentor?"Yes":"No",
-    row.attention.join("; "),format.format(row.updatedAt)+" IST",
+    row.attention.join("; "),Number.isFinite(row.updatedAt.getTime())?format.format(row.updatedAt)+" IST":"Unknown",
   ].map(csvSafeCell).join(","));
-  if(omitted>0)lines.push(["","Truncated",omitted+" additional matching projects","","",""]
+  const hidden=(Number.isSafeInteger(omitted)&&omitted>0?omitted:0)+Math.max(0,rows.length-limited.length);
+  if(hidden>0)lines.push(["","Truncated",hidden+" additional matching projects","","",""]
     .map(csvSafeCell).join(","));
   return "\uFEFF"+lines.join("\r\n")+"\r\n";
 }
