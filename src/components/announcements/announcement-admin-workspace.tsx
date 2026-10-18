@@ -1,4 +1,6 @@
 "use client";
+import {Select} from "@/components/ui/select";
+
 
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -214,7 +216,7 @@ export function AnnouncementAdminWorkspace({
           <div className="grid gap-4 md:grid-cols-2">
             <label className="text-sm font-semibold text-body">
               Audience
-              <select
+              <Select
                 className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3"
                 value={target}
                 onChange={(event) => setTarget(event.target.value)}
@@ -224,7 +226,7 @@ export function AnnouncementAdminWorkspace({
                     {entry.type} · {entry.label}
                   </option>
                 ))}
-              </select>
+              </Select>
             </label>
             <label className="text-sm font-semibold text-body">
               Title
@@ -275,11 +277,11 @@ export function AnnouncementAdminWorkspace({
                     </div>
                     <h3 className="mt-2 text-base font-semibold text-foreground">{item.title}</h3>
                     <p className="mt-1 whitespace-pre-wrap text-sm text-body">{item.message}</p>
-                    {item.buttonLabel&&item.buttonUrl&&/^https:\/\/[^\s]+$/i.test(item.buttonUrl)?<a href={item.buttonUrl} target="_blank" rel="noopener noreferrer"
-                      className="mt-2 inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+                    {item.buttonLabel&&item.buttonUrl&&/^https:\/\/[^\s]+$/i.test(item.buttonUrl)?<a href={item.buttonUrl}
+                      className="mt-2 inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)]">
                       {item.buttonLabel} ↗
                     </a>:null}
-                    {safeLink ? <a href={safeLink} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-10 items-center break-all text-sm font-semibold text-primary-text underline">Open linked resource ↗</a> : null}
+                    {safeLink ? <a href={safeLink} className="mt-2 inline-flex min-h-11 items-center break-all text-sm font-semibold text-[var(--lms-teal-deep)] underline">Open linked resource ↗</a> : null}
                     {item.expiresAt ? <p className="mt-2 text-xs text-muted-foreground">Show until {new Date(item.expiresAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p> : null}
                     <p className="mt-2 text-xs text-muted-foreground">
                       Sender: {item.senderType} · Version {item.version}
@@ -338,7 +340,7 @@ export function AnnouncementAdminWorkspace({
             </label>:null}
             <label className="text-sm font-semibold text-body">
               Audience
-              <select
+              <Select
                 name="target"
                 defaultValue={`${editing.receiverType}:${editing.receiverId}`}
                 className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3"
@@ -357,7 +359,7 @@ export function AnnouncementAdminWorkspace({
                     {entry.type} · {entry.label}
                   </option>
                 ))}
-              </select>
+              </Select>
             </label>
             <label className="text-sm font-semibold text-body">
               Title
