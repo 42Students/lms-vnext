@@ -147,3 +147,9 @@ These are named and scope-specific tests, but full per-export coverage of all se
 | Export | Added integrity contract | Regression | Still pending |
 |---|---|---|---|
 | `getTpoMyNotifications` | Own-user, same-college, same-organization filters apply independently to count and paginated rows; after preferences read the service rechecks active persisted TPO (not merely College Admin placements.manage) in transaction-held SHARE locks before responding, including to a revoked/disabled user | `tests/unit/chat11-tpo-private-notifications-revocation.test.ts` — TPO-settings-audit-NOTIFY-READ-05, commits `cb7b636`, `ee28856` | Two-session PG role revocation; mixed-college recipient integration |
+
+## Personal preference editor — last-saved CAS token (chat-11)
+
+| Export/route | Behavioural requirement | Regression | Remaining |
+|---|---|---|---|
+| `TpoMyNotificationPreferencesEditor`, `saveMyTpoNotificationPreferences` | Five exact own-account switches and no caller-selected user/college; no-op retry avoids duplicate audit, successful response updates local saved baseline and optimistic token so two sequential saves work, synchronous click lock and safe errors remain | `tests/unit/chat11-tpo-personal-preferences-editor-cas.test.ts` — TPO-settings-audit-PREF-UI-06, commits `2230087`, `41f1463` | Browser sequential-save slow revalidation and cross-session PostgreSQL CAS |

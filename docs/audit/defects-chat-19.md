@@ -314,3 +314,9 @@ These fixes are committed on chat-19; live provider, PostgreSQL revocation races
 | ID | Before-fix severity | Source defect and correction | Test |
 |---|---|---|---|
 | HR-BREAK-OFFER-FOLLOWUP-15 | MAJOR | `src/modules/placements/hr-today-offer-actions-service.ts` counted shortlisted offers from **withdrawn applications**. The otherwise-scoped query checked job college/published/not archived and active membership, but did not check the application lifecycle. Because historic screening/offer records can remain persisted after withdrawal, recruiters could see misleading follow-ups derived from a now-private candidate. Require `placementApplications.status==="SUBMITTED"` before aggregates, matching `isRecruiterSharedCandidateAllowed` and recruiter workspace disclosure. | `tests/unit/HR-BREAK-chat19-today-offer-withdrawn.test.ts` checks withdrawal, suspended/foreign applicants, and all SQL filtering predicates without weakening existing tests. |
+
+## Additional HR Today scheduling cross-audit
+
+| ID | Severity | Source | Failure and correction | Regression |
+|---|---|---|---|---|
+| HR-BREAK-TODAY-SLOTS-12 | MAJOR | `src/modules/placements/hr-today-open-slots-service.ts` | Query selected the earliest 100 upcoming scheduled interview rounds **before** excluding rounds already covered by OFFERED/BOOKED slots. If all first 100 were covered, an authorized round 101 needing slots was never shown. Add a college- and round-scoped SQL `NOT EXISTS` guard before the limit. Recheck latest slot status in the returned rows to avoid falsely prompting an offer if another employer operation offered a slot after the initial query. Do not expand authorized job IDs. | `tests/unit/HR-BREAK-chat19-today-slots-query-limit.test.ts` uses 110 rounds, mixed cancelled/proposed/offered/booked and a concurrent status change. |

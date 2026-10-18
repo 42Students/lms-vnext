@@ -1,6 +1,8 @@
 import {describe,expect,it} from "vitest";
 import {renderToStaticMarkup} from "react-dom/server";
 import PlatformMarketingPage,{metadata as platformMetadata} from "@/app/platform/page";
+import EnterprisesPage,{metadata as enterpriseMetadata} from "@/app/enterprises/page";
+import UniversitiesPage,{metadata as universityMetadata} from "@/app/universities/page";
 import RootError from "@/app/error";
 import GlobalError from "@/app/global-error";
 import RootNotFound from "@/app/not-found";
@@ -21,6 +23,19 @@ describe("chat-16 real public platform and root recovery page rendering",()=>{
   expect(html).not.toContain("autonomous AI");
   expect(html).not.toContain("AI agent");
   expect(html).toContain('href="/request-demo"');
+ });
+ it("UX-chat16-public-marketing-21 describes current university and employer workflows without invented AI delivery",()=>{
+  const university=renderToStaticMarkup(<UniversitiesPage/>);
+  const enterprise=renderToStaticMarkup(<EnterprisesPage/>);
+  expect(universityMetadata.description).toBe("Develop employable graduates through learning and placements.");
+  expect(enterpriseMetadata.description).toBe("Build stronger workforces through learning and hiring.");
+  expect(university).toContain("Develop employable graduates through learning and placements");
+  expect(enterprise).toContain("Build stronger workforces through learning and hiring");
+  for(const html of [university,enterprise]){
+   expect(html).not.toContain("with AI");
+   expect(html).toContain('href="/request-demo"');
+   expect(html).toContain('aria-label="Public navigation"');
+  }
  });
  it("UX-chat16-errors-17 never renders provider exceptions, stack traces, or private digest values",()=>{
   const error=Object.assign(new Error("internal SMTP password, SQL stack and private recruiter address"),{

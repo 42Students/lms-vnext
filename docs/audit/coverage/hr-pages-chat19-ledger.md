@@ -192,3 +192,9 @@ This is an independent TPO/HR workflow review; real clipboard permission denial,
 | ID | Boundary | Direct behavioral test | Remaining |
 |---|---|---|---|
 | HR-BREAK-OFFER-FOLLOWUP-15 | `listRecruiterTodayOfferActions`, shared `isRecruiterSharedCandidateAllowed` | `tests/unit/HR-BREAK-chat19-today-offer-withdrawn.test.ts`: withdrawn/rejected/suspended/foreign candidates not shared; SQL offer aggregate requires SUBMITTED application and same college, active person, shortlist, published/unarchived job. | Persisted withdrawal/offer race and staged PostgreSQL tests remain cloud integration gates. |
+
+## HR Today slot proposals with populated portfolios
+
+| ID | Export and source | Behavioral test | Verified boundary, remaining integration |
+|---|---|---|---|
+| HR-BREAK-TODAY-SLOTS-12 | `listRecruiterTodayRoundsNeedingSlots` with `NOT EXISTS` filtering; `recruiterTodayRoundsNeedingSlots` pure model | `tests/unit/HR-BREAK-chat19-today-slots-query-limit.test.ts` | Pre-limit SQL excludes already booked/offered rounds, per-tenant employer jobs/college remain scoped, 110-round action opportunity retained, proposed vs cancelled distinction, race-time recheck. PostgreSQL planner and concurrent writes require CI/integration verification. |

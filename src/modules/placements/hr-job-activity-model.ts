@@ -30,3 +30,13 @@ export function searchHrActivityJobs<T extends {title:string}>(jobs:readonly T[]
  const needle=q.trim().toLocaleLowerCase();
  return needle?jobs.filter(job=>job.title.toLocaleLowerCase().includes(needle)):[...jobs];
 }
+
+/** Avoid false empty activity history after a report filter or grant changes.
+ * Counts are taken only after employer-owned job filtering.
+ */
+export function clampHrActivityPage(page:number,total:number,limit:number):number{
+ const pages=Number.isSafeInteger(total)&&total>0 && Number.isSafeInteger(limit)&&limit>0
+  ?Math.ceil(total/limit):1;
+ if(!Number.isSafeInteger(page)||page<1)return 1;
+ return Math.min(page,pages);
+}

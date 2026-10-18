@@ -34,7 +34,7 @@ function dbFixture(row:typeof batch|null){
 beforeEach(()=>{
  vi.clearAllMocks();
  vi.mocked(requirePlacementManageScope).mockResolvedValue({id:collegeId,organizationId} as Awaited<ReturnType<typeof requirePlacementManageScope>>);
- vi.mocked(assertPersistedPlatformPermission).mockResolvedValue(undefined);
+ vi.mocked(assertPersistedPlatformPermission).mockResolvedValue(ctx);
 });
 
 describe("chat-16 TPO messaging receipt-detail service",()=>{
