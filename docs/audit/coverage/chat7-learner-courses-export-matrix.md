@@ -116,3 +116,16 @@
 | `learner-course-sort-model.ts` | `LearnerCourseSortMode` | Not individually linked in this inventory |
 | `learner-course-sort-model.ts` | `sortLearnerCourseCards` | Not individually linked in this inventory |
 | `learner-course-tab-context-model.ts` | `learnerCourseTabPersistentQuery` | Not individually linked in this inventory |
+| `learner-course-tab-route-model.ts` | `learnerCourseTabPath` | Not individually linked in this inventory |
+| `learner-course-term-state-model.ts` | `LearnerCourseTermState` | Not individually linked in this inventory |
+| `learner-course-term-state-model.ts` | `learnerCourseMatchesTermState` | Not individually linked in this inventory |
+| `learner-course-type-availability-model.ts` | `LearnerCourseTypeFilter` | Not individually linked in this inventory |
+| `learner-course-type-availability-model.ts` | `resolveLearnerCourseTypeFilter` | Not individually linked in this inventory |
+| `learner-course-upcoming-quiz-model.ts` | `learnerUpcomingQuizEligible` | Not individually linked in this inventory |
+| `learner-discussion-capability-model.ts` | `learnerDiscussionCanPost` | Not individually linked in this inventory |
+| `learner-discussion-history-flight-model.ts` | `createLearnerDiscussionHistoryFlight` | Not individually linked in this inventory |
+| `learner-discussion-message-limit-model.ts` | `LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH` | Not individually linked in this inventory |
+| `learner-discussion-message-limit-model.ts` | `learnerDiscussionDraftValid` | Authored direct model regression, unrun |
+| `learner-discussion-refresh-order-model.ts` | `learnerDiscussionRefreshIsCurrent` | Not individually linked in this inventory |
+| `learner-discussion-reply-model.ts` | `formatDiscussionReply` | Authored direct model regression, unrun |
+| `learner-discussion-response-model.ts` | `learnerDiscussionListResponse` | Authored direct model regression, unrun |
