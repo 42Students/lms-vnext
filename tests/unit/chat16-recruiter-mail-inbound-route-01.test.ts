@@ -42,7 +42,8 @@ describe("chat-16 inbound recruiter mail POST guard",()=>{
   expect(res.status).toBe(200);
   expect(await res.json()).toEqual({accepted:true,replayed:false});
   expect(acceptAuthenticatedRecruiterEmailReply)
-   .toHaveBeenCalledExactlyOnceWith(body,"sha256signature");
+   .toHaveBeenCalledWith(body,"sha256signature");
+  expect(acceptAuthenticatedRecruiterEmailReply).toHaveBeenCalledTimes(1);
   expect(res.headers.get("cache-control")).toBe("no-store");
  });
  it("HR-MAIL-ROUTE-05 denies invalid signatures and hides service failures",async()=>{
