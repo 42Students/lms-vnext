@@ -1,4 +1,5 @@
 import {describe,expect,it} from "vitest";
+import {readFileSync} from "node:fs";
 import {recordSelectionsSchema,releaseSelectionsSchema,summarizeSelectionRelease,isExactTpoSelectionReplay} from "@/modules/placements/tpo-drive-selection-model";
 import {tpoWaitlistPromotionSchema,waitlistPreviewToken,decideWaitlistReleaseSettlement,canonicalWaitlistPreviewCollections} from "@/modules/placements/tpo-waitlist-promotion-model";
 import {canRecordTpoActualJoiningDate,canRecordTpoOfferAction,tpoOfferLifecycleInputSchema,TPO_OFFER_ACTIONS} from "@/modules/placements/tpo-offer-lifecycle-model";
@@ -156,8 +157,7 @@ describe("chat-5 placements core — cancellation, waitlist and joining",()=>{
     [{...promotions[0]!,status:"RELEASED"},promotions[1]!],offers);
   expect(waitlistPreviewToken(a,changed)).not.toBe(waitlistPreviewToken(a,initial));
   expect(waitlistPreviewToken(b,initial)).not.toBe(waitlistPreviewToken(a,initial));
-  const service=await import("node:fs").then(fs=>fs.readFileSync(
-    "src/modules/placements/tpo-waitlist-promotion-service.ts","utf8"));
+  const service=readFileSync("src/modules/placements/tpo-waitlist-promotion-service.ts","utf8");
   expect(service).toContain("...canonicalWaitlistPreviewCollections(promotions,activeOffers)");
  });
  it("PLACEMENTS-WAIT-SM-03 settles exactly once under row lock and rejects conflicting terminal histories",()=>{
