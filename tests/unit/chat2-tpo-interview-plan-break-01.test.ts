@@ -45,6 +45,10 @@ describe("TPO-BREAK-interview-01 day planner and venue safety",()=>{
 
   const service=readFileSync("src/modules/placements/tpo-interview-slot-service.ts","utf8");
   const section=service.slice(service.indexOf('if(input.action==="ASSIGN_ROOM")'));
+  // A large historical slot inventory must not block an unrelated time window.
+  // The DB predicate narrows the bounded normalized-room scan first.
+  expect(section).toContain("lt(placementRoundCandidateSlots.startsAt,slot.endsAt)");
+  expect(section).toContain("gt(placementRoundCandidateSlots.endsAt,slot.startsAt)");
   expect(section).toContain("sameInterviewRoom(other.room,input.room)");
   expect(section).toContain("other.startsAt<slot.endsAt&&other.endsAt>slot.startsAt");
   expect(section).toContain("collisions.length>1000");
