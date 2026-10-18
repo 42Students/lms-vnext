@@ -31,10 +31,14 @@ describe("TPO-BREAK-student-requests-09 safe scope and server filters",()=>{
    if(collegeId!==A)throw new Error("FOREIGN_COLLEGE");
    return {id:A,organizationId:ORG};
   });
-  mocks.select.mockImplementation(()=>({
-   from(){return this;},innerJoin(){return this;},leftJoin(){return this;},
-   where(){return this;},orderBy(){return Promise.resolve(mocks.rows);},
-  }));
+  mocks.select.mockImplementation(()=>{
+   const enrollmentLookup=mocks.select.mock.calls.length>1;
+   return {
+    from(){return this;},innerJoin(){return this;},leftJoin(){return this;},
+    where(){return enrollmentLookup?Promise.resolve([]):this;},
+    orderBy(){return Promise.resolve(mocks.rows);},
+   };
+  });
   mocks.getDb.mockReturnValue({select:mocks.select});
  });
  it("denies foreign college and malformed input before accessing any request or student record",async()=>{
