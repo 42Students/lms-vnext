@@ -29,8 +29,10 @@ describe("HR-BREAK-messaging-01: drive conversations, IDOR and expired-session j
   mocks.workspace.mockResolvedValue(workspace);
   mocks.threads.mockResolvedValue(threads);
   const result=await getRecruiterDriveConversations(actor as never,job);
-  expect(mocks.workspace).toHaveBeenCalledExactlyOnceWith(actor,job);
-  expect(mocks.threads).toHaveBeenCalledExactlyOnceWith(actor,"college-a");
+  expect(mocks.workspace).toHaveBeenCalledTimes(1);
+  expect(mocks.workspace).toHaveBeenCalledWith(actor,job);
+  expect(mocks.threads).toHaveBeenCalledTimes(1);
+  expect(mocks.threads).toHaveBeenCalledWith(actor,"college-a");
   expect(result.threads).toEqual([threads[0]]);
   expect(result.workspace).toBe(workspace);
  });
