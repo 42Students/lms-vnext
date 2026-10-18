@@ -224,3 +224,5 @@ Cloud typecheck, unit, PostgreSQL and browser checks are pending; these are sour
 | `listOwnTpoPrepAssignments` | Learner-only college/courses facts, bounded to 100; persisted active LEARNER/college check after data reads | Add revocation-in-flight and historical archived-offering access test |
 
 Owner directive honored: no CI re-run or repairs of old failing test list; these are implemented source changes with explicit remaining behavioral/DB coverage, not test-pass certification.
+
+| `summarizeTpoPrepAssignment` — `tpo-prep-assignment-result-model.ts` | Pure authoritative `INSERT RETURNING` classifier preserves client-selected ordering and distinguishes new, already assigned and ineligible records without inventing work on retries | `tests/unit/chat11-tpo-prep-assignment-retry-receipts.test.ts`: PREP-ASSIGN-RETRY-01/02/03 happy/partial, duplicate retry, zero eligible/empty | API and PostgreSQL atomic insert/notices remain unexecuted |
