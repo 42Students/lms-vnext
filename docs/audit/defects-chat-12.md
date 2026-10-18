@@ -47,6 +47,8 @@ Scope: TPO Projects read journey, TPO Students and Companies bulk operations, fi
 
 | D12-26 | CRITICAL | `getTpoLearnerParticipation` and `decideTpoLearnerParticipation` relied on a possibly stale session TPO role; the mutable eligibility transaction checked the learner's current membership but did not re-check and SHARE-lock the TPO actor's persisted role. A role-revoked TPO could keep viewing or changing eligibility. | Revalidate actor with `requireTpoBatchActor` before reads; within the decision transaction, require `assertPersistedPlatformPermission` and current TPO role under SHARE locks before learner changes. | `1697fab9`, `chat12-tpo-participation-persisted-role.test.ts`; PostgreSQL race acceptance outstanding. |
 
+| D12-27 | HIGH | Real `GET /api/placements/tpo/companies/export` used a separate formula-prefix expression that protected tab/newline but not plain leading spaces, BOM or zero-width chars. A malicious recruiter/company name beginning with these prefixes could be evaluated by spreadsheet viewers despite the safe directory model being fixed. | Reused `tpoStudentCsvCell` for all response cells, preserving CSV quotations and Unicode/control-char handling. | `d324d179`, `chat12-tpo-export-and-clipboard-security.test.ts`; live CSV import acceptance pending. |
+
 ## Verification status
 
 The rolling `docs/orchestrator/unit-failures-latest.md` explicitly reports two `chat-12` failures (TPO-students-51); their stale selectors were repaired but remain **unverified in CI**. The branch was fast-forwarded to main `a172b146ede1992a428dbe3e74a6d87dd3a12985` before these changes. No direct commits to main.
