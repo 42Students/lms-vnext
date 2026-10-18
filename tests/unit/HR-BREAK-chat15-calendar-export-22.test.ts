@@ -21,8 +21,8 @@ describe("HR-CALENDAR-EXPORT-22 authorized employer CSV and client safety",()=>{
   expect(all.exported).toBe(4);
   expect(all.omitted).toBe(0);
   expect(all.csv).toContain('"Date/time (IST)"');
-  expect(all.csv).toMatch(/\\b0?2 Jan 2099/);
-  expect(all.csv).toMatch(/\\b0?3 Jan 2099/);
+  expect(all.csv).toMatch(/0?2 Jan 2099/);
+  expect(all.csv).toMatch(/0?3 Jan 2099/);
   for(const [kind,count] of [["ROUNDS",1],["SLOTS",1],
    ["DEADLINES",1],["RESULTS_DUE",1]] as const){
    const subset=buildHrCalendarCsv(events,due,kind);
