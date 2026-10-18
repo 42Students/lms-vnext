@@ -351,19 +351,58 @@ Status: INCOMPLETE. Tests have not been executed; do not use this ledger for rel
 | `src/modules/courses/faculty-roster-display-model.ts` | `sortFacultyRosterByRollThenName`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-roster-display-model.ts` | `facultyRosterMetrics`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-roster-display-model.ts` | `facultyRosterPhotoPreview`: GAP — behavioural test needed |
-| `src/modules/courses/faculty-roster-export.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-route-access-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-schedule-service.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-session-coverage-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-session-coverage-service.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-student-detail-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-student-detail-service.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-submission-content-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-submission-review-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-submission-review-service.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-teaching-selector.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-video-management-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-video-storage-model.ts` | GAP: exported-function test inventory required |
+| `src/modules/courses/faculty-roster-export.ts` | `facultyRosterCsv`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-roster-export.ts` | `facultyRosterFileName`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-route-access-model.ts` | `canAccessFacultyRoute`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-schedule-service.ts` | `getFacultyClassSchedule`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-session-coverage-model.ts` | `facultySessionCoverageSchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-session-coverage-model.ts` | `facultySessionCoverage`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-session-coverage-service.ts` | `getFacultySessionCoverage`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-student-detail-model.ts` | `facultyStudentDetailParamsSchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-student-detail-model.ts` | `findAuthorizedFacultyStudent`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-student-detail-model.ts` | `summarizeFacultyStudentAttendance`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-student-detail-service.ts` | `getFacultyStudentDetail`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-submission-content-model.ts` | `facultySubmissionContentSchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-submission-content-model.ts` | `facultySubmissionContentView`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-submission-review-model.ts` | `facultySubmissionReviewRowSchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-submission-review-model.ts` | `facultySubmissionReviewResponseSchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-submission-review-model.ts` | `facultySubmissionReviewResponse`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-submission-review-model.ts` | `facultySubmissionReviewMatchesScope`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-submission-review-model.ts` | `facultySubmissionReviewEmptyLabel`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-submission-review-model.ts` | `facultyReviewRequestCurrent`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-submission-review-model.ts` | `facultySubmissionReviewFailure`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-submission-review-service.ts` | `getFacultySubmissionReviewPage`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-teaching-selector.ts` | `facultyTeachingSelectionAllowed`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-video-management-model.ts` | `facultyLessonVideoSchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-video-management-model.ts` | `facultyVideosForLesson`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-video-management-model.ts` | `facultyVideoStatusBadge`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-video-management-model.ts` | `facultyVideoListFilterSchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-video-management-model.ts` | `facultyFilterLessonVideos`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-video-management-model.ts` | `facultyOrderLessonVideos`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-video-management-model.ts` | `facultyVideoListEmptyState`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-video-management-model.ts` | `facultyVideoCanReplace`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-video-management-model.ts` | `facultyVideoReplacePrompt`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-video-management-model.ts` | `facultyVideoReplaceIntentSchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-video-management-model.ts` | `facultyVideoArchivePrompt`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-video-management-model.ts` | `facultyVideoArchiveIntentSchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-video-management-model.ts` | `facultyVideoLearnerVisible`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-video-management-model.ts` | `facultyVideoVisibilityLabel`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-video-management-model.ts` | `facultyVideoVisibilityIntentSchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-video-management-model.ts` | `facultyVideoCanEnableVisibility`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-video-management-model.ts` | `facultyVideoCardActions`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-video-management-model.ts` | `facultyVideoMetadataCsv`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-video-management-model.ts` | `facultyVideoStatusUpdate`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-video-storage-model.ts` | `managedVideoSchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-video-storage-model.ts` | `parseManagedVideos`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-video-storage-model.ts` | `facultyVideoMayPublish`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-video-storage-model.ts` | `facultyVideoMayReplace`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-video-storage-model.ts` | `facultyVideoMayPreview`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-video-storage-model.ts` | `facultyVideoPublishAction`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-video-storage-model.ts` | `facultyVideoReorderPlan`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-video-storage-model.ts` | `videoUploadGrantSchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-video-storage-model.ts` | `parseFacultyVideoUploadGrant`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-video-storage-model.ts` | `managedVideoAfterAction`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-video-storage-model.ts` | `facultyVideoStatus`: GAP — behavioural test needed |
 
 ## Teacher pages
 
