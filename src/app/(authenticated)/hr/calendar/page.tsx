@@ -228,7 +228,7 @@ export default async function HrCalendarPage({
   const context =
     await getCurrentRequestContext();
 
-  if (!hasActiveRecruiter(context)) {
+  if (!hasActiveRecruiter(context) || context.recruiter?.userId !== context.user.id) {
     redirect("/dashboard");
   }
 
@@ -237,6 +237,17 @@ export default async function HrCalendarPage({
   const today = placementCalendarDayKey(now);
 
   const query = await searchParams;
+  if (Object.values(query).some(Array.isArray)) {
+    return <div className="min-w-0 max-w-full space-y-4">
+      <PageHeader eyebrow="Recruiter" title="Calendar" />
+      <p role="alert" className="rounded-md border border-border bg-surface p-4 text-sm text-body">
+        Invalid calendar filters.
+      </p>
+      <Link href="/hr/calendar" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">
+        Clear filters
+      </Link>
+    </div>;
+  }
 
   const anchor = validDay(
     first(query.date),
