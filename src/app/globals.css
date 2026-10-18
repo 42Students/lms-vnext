@@ -232,8 +232,12 @@ details > summary + * {
 dialog[data-slot="drawer"][open] {
   animation: lms-drawer-in var(--lms-motion-base) var(--lms-motion-ease) both;
 }
-dialog[data-slot="bottom-sheet"][open] {
-  animation: lms-sheet-in var(--lms-motion-base) var(--lms-motion-ease) both;
+/* Keep the desktop sheet's Tailwind -50% centering translation intact.
+ * Only animate the inner panel; animating the dialog's translate property
+ * would override its anchor and shift it away from the visual viewport center. */
+dialog[data-slot="bottom-sheet"][open] { animation: none; }
+dialog[data-slot="bottom-sheet"][open] > div {
+  animation: lms-sheet-content-in var(--lms-motion-base) var(--lms-motion-ease);
 }
 [data-slot="filter-bar"] [role="dialog"] {
   animation: lms-sheet-in var(--lms-motion-base) var(--lms-motion-ease) both;
@@ -248,6 +252,10 @@ dialog[data-slot="bottom-sheet"][open] {
 @keyframes lms-sheet-in {
   from { opacity: 0; translate: 0 16px; }
   to { opacity: 1; translate: 0 0; }
+}
+@keyframes lms-sheet-content-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
 }
 @keyframes lms-toast-in {
   from { opacity: 0; transform: translateY(8px); }

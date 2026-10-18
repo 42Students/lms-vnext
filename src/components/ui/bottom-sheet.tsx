@@ -45,7 +45,7 @@ export function BottomSheet({ open, onOpenChange, title, description, children, 
             {description ? <p id={descriptionId} className="mt-1 text-sm text-body">{description}</p> : null}</div>
           {dismissible ? <Button variant="ghost" aria-label="Close sheet" onClick={() => onOpenChange(false)}>×</Button> : null}
         </header>
-        <ScrollCue axis="y" label={`${title} sheet content`} className="min-h-0 flex-1" viewportClassName="min-h-0 max-h-[calc(var(--lms-visual-height)-8rem)] p-4">{children}</ScrollCue>
+        <ScrollCue axis="y" label={`${title} sheet content`} className="min-h-0 flex-1" viewportClassName="min-h-0 max-h-[calc(var(--lms-visual-height)-8rem)] p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">{children}</ScrollCue>
         {footer ? <footer className="flex shrink-0 flex-wrap justify-end gap-2 border-t border-border p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">{footer}</footer> : null}
       </div>
     </dialog>
