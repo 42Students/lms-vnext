@@ -10,6 +10,7 @@ import {
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
+import { ScrollCue } from "@/components/ui/scroll-cue";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Drawer } from "@/components/ui/drawer";
@@ -703,7 +704,8 @@ export function FacultyAttendanceWorkspace({
               description="Choose another month or schedule a class for this Course."
             />
           ) : (
-            <section className="rounded-xl border border-border bg-surface p-4"><ScrollCue axis="x" label="Monthly learner attendance by class date">
+            <section className="rounded-xl border border-border bg-surface p-4">
+              <ScrollCue axis="x" label="Faculty attendance monthly grid" className="min-w-0">
               <table className="w-full min-w-[48rem] border-collapse text-left text-sm">
                 <thead className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
                   <tr>
@@ -808,7 +810,8 @@ export function FacultyAttendanceWorkspace({
                     </tr>
                   ))}
                 </tbody>
-              </table></ScrollCue>
+              </table>
+              </ScrollCue>
               <p className="mt-4 text-xs leading-5 text-muted-foreground">
                 P = Present · A = Absent · — = Not marked yet · ✖ = No class · S = future class · x/y = present sessions / all sessions that day.
               </p>
