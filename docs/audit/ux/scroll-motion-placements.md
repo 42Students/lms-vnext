@@ -17,7 +17,9 @@
 | TPO week/hour calendar > Week grid | Seven days overflow phone screen without horizontal cue | Named horizontal scroll region + right-edge mask; retain existing sticky IST time gutter | `UX-placements-scroll-motion-07` |
 | TPO round result import > Preview, missing-file roster, outcomes | Three vertically capped regions no visible cue | Named/focusable regions with masks and contained vertical scrolling | `UX-placements-scroll-motion-08` |
 | TPO selection import > Matched + unmatched preview | Scroll capped and scrollbar hidden | Two named/focusable regions, contained scrolling and edge masks | `UX-placements-scroll-motion-09` |
+| Placement bulk offer withdrawal > Eligible list | Narrow capped list concealed eligible rows | Named/focusable scroll with gradient cue and 44px checkbox labels | `UX-placements-scroll-motion-10` |
+| Placement drive-day overview > Candidate results table | Horizontal columns hidden on phones | Named keyboard horizontal scroller, right-edge mask, sticky Candidate header/cells and min width | `UX-placements-scroll-motion-11` |
 
 The selection dialog is rendered using the shared `Dialog` and nested `ConfirmDialog`; no custom animation or one-off duration was introduced. The shared dialogs own focus containment, backdrop/body lock, and reduced-motion behaviour. Do not call this a browser accessibility pass without testing 320/360/390px, native keyboard focus, wheel/touch, reduced-motion and saved draft behaviour under network failure.
 
-**Open follow-up:** Inventory non-TPO scrolling/overlay elements in `src/components/placements` against `docs/audit/ui-surfaces/UI-SURFACES.md` and verify each at mobile breakpoints. Every listed container above was modified and source-checked, not browser-tested.
+**Open follow-up:** Reconcile all remaining `src/components/placements` surfaces with `docs/audit/ui-surfaces/UI-SURFACES.md` at mobile breakpoints. The calendar and drive workspace already had source-level masks/overscroll containment before this round; validate those and every listed surface in a browser before claiming production UX acceptance.
