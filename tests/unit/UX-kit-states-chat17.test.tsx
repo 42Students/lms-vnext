@@ -98,6 +98,20 @@ describe("UX-kit-STATES: semantic SSR states and accessible fallbacks", () => {
     expect(good).toContain('for="department"');
   });
 
+  it("UX-kit-HARDEN-49 a required field also marks the actual input required",()=>{
+    const yes=render(<FormField id="student-roll" label="Roll number" required>
+      {()=> <Input placeholder="Roll number"/>}</FormField>);
+    expect(yes).toContain('for="student-roll"');
+    expect(yes).toContain('id="student-roll"');
+    expect(yes).toContain('required=""');
+    const optional=render(<FormField id="middle-name" label="Middle name">
+      {()=> <Input placeholder="Middle name"/>}</FormField>);
+    expect(optional).not.toContain('required=""');
+    const independentlyRequired=render(<FormField id="registration" label="Registration">
+      {()=> <Input required />}</FormField>);
+    expect(independentlyRequired).toContain('required=""');
+  });
+
   it("UX-kit-STATES-04 destructive confirm cannot be pressed twice while pending", () => {
     const busy = render(<ConfirmDialog open pending onOpenChange={()=>{}} onConfirm={()=>{}}
       title="Delete all drafts" />);
