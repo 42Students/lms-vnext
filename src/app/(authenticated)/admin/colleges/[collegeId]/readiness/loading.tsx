@@ -1,4 +1,4 @@
-import { LoadingState } from "@/components/ui/loading-state";
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 import { PageHeader } from "@/components/ui/page-header";
 
 export default function CollegeReadinessLoading() {
@@ -9,7 +9,7 @@ export default function CollegeReadinessLoading() {
         title="College Readiness Gate"
         description="Checking persisted college setup evidence."
       />
-      <LoadingState label="Evaluating college readiness…" />
+      <GracefulPageLoading label="Evaluating college readiness…" />
     </div>
   );
 }

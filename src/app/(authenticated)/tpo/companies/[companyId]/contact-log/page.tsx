@@ -1,3 +1,6 @@
+import {DataTable} from "@/components/ui/data-table";
+import {Button} from "@/components/ui/button";
+import {Select} from "@/components/ui/select";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -86,7 +89,7 @@ export default async function TpoCompanyContactLogPage({
           <form method="get" action={path} className="flex flex-wrap items-end gap-3">
             <label className="text-sm font-semibold text-foreground">
               Interaction type
-              <select
+              <Select
                 name="type"
                 defaultValue={log.type}
                 className="mt-2 block min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground"
@@ -94,52 +97,34 @@ export default async function TpoCompanyContactLogPage({
                 {["ALL", "CALL", "WHATSAPP", "EMAIL", "MEETING", "NOTE", "SYSTEM"].map((type) => (
                   <option key={type} value={type}>{type === "ALL" ? "All types" : type}</option>
                 ))}
-              </select>
+              </Select>
             </label>
-            <button
+            <Button
               type="submit"
               className="min-h-11 rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]"
             >
               Filter
-            </button>
+            </Button>
           </form>
           <p className="text-sm text-body">
             {log.total} recorded interaction(s). Most recent first; 25 per page.
           </p>
-          {log.rows.length === 0 ? (
-            <p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+          <DataTable
+            caption="Recorded company contact interactions"
+            rows={log.rows}
+            getRowKey={(row)=>row.id}
+            empty={<p role="status" className="text-sm text-body">
               No recorded contact interactions match this filter. Calls,
               emails and messages are not inferred from invitations or drives.
-            </p>
-          ) : (
-            <div className="overflow-x-auto rounded-xl border border-border bg-surface">
-              <table className="w-full min-w-[40rem] text-left text-sm">
-                <thead className="bg-surface-subtle">
-                  <tr>
-                    {["Contact", "Type", "Outcome", "Recorded (IST)"].map((heading) => (
-                      <th key={heading} scope="col" className="border-b border-border px-4 py-3 font-semibold text-foreground">
-                        {heading}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {log.rows.map((row) => (
-                    <tr key={row.id} className="border-b border-border last:border-0">
-                      <td className="px-4 py-3 text-foreground">{row.contactName}</td>
-                      <td className="px-4 py-3 text-body">{row.type}</td>
-                      <td className="px-4 py-3 text-body">{row.outcome}</td>
-                      <td className="px-4 py-3 text-body">
-                        <time dateTime={row.occurredAtIso}>
-                          {dateFormat.format(new Date(row.occurredAtIso))}
-                        </time>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+            </p>}
+            columns={[
+              {key:"contact",header:"Contact",mobileLabel:"Contact",mobilePriority:"primary",cell:(row)=>row.contactName},
+              {key:"type",header:"Type",mobileLabel:"Type",mobilePriority:"secondary",cell:(row)=>row.type},
+              {key:"outcome",header:"Outcome",mobileLabel:"Outcome",mobilePriority:"secondary",cell:(row)=>row.outcome},
+              {key:"recorded",header:"Recorded (IST)",mobileLabel:"Recorded (IST)",mobilePriority:"secondary",
+               cell:(row)=><time dateTime={row.occurredAtIso}>{dateFormat.format(new Date(row.occurredAtIso))}</time>},
+            ]}
+          />
           <nav aria-label="Contact log pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
             <span className="text-body">Page {log.page} of {log.pages}</span>
             <div className="flex gap-3">
