@@ -1,0 +1,49 @@
+@import "./variables";
+
+.h1 {
+  font-size: rem(36px) !important;
+  line-height: rem(44px) !important;
+
+  @media (max-width: 767px) {
+    font-size: rem(24px) !important;
+    line-height: rem(32px) !important;
+  }
+}
+
+.h2 {
+  font-size: rem(20px);
+  line-height: rem(30px);
+
+  @media (min-width: $sm) {
+    font-size: rem(22px);
+    line-height: rem(32px);
+  }
+
+  @media (min-width: $md) {
+    font-size: rem(30px);
+    line-height: rem(40px);
+  }
+}
+
+.h3 {
+  font-size: rem(16px);
+  line-height: rem(26px);
+
+  @media (min-width: $sm) {
+    font-size: rem(18px);
+    line-height: rem(28px);
+  }
+
+  @media (min-width: $md) {
+    font-size: rem(20px);
+    line-height: rem(30px);
+  }
+}
+
+.ln-lto-reg {
+  font-family: $font-latoReg, sans-serif !important;
+}
+
+.ln-lto-bold {
+  font-family: "Lato-Bold", sans-serif !important;
+}

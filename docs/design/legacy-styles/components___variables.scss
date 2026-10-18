@@ -1,0 +1,339 @@
+// =============================================================================
+// _variables.scss — Single source of truth for design tokens
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// 1. BRAND COLORS — Teal-on-white palette
+// -----------------------------------------------------------------------------
+
+// Primary teal system
+$clrThird        : #26bac7;   // Primary interactive (buttons, active states, icons, links)
+$teal-dark       : #1e9aa8;   // Hover state; gradient-end for CTA buttons
+$teal-text       : #1a95a1;   // Teal as text on white — WCAG AA (~4.6:1)
+$teal-subtle     : #eff8fa;   // Teal-tinted hover fills, active sidebar bg
+$light-cyan      : #9ee4e8;   // Logo light shape; chip backgrounds, progress bg
+
+// Legacy alias (keep for backward compat — points to teal)
+$clrSecond       : #1e363f;   // Keep: used as very dark teal in a few places
+
+// -----------------------------------------------------------------------------
+// 2. NEUTRAL PALETTE — White-centric, 7 canonical grays
+// -----------------------------------------------------------------------------
+
+$clrPrimary      : #050505 !default;   // Alias for very dark text (keep for compat)
+$neutral-900     : #1a1d21;            // Headings, primary text
+$neutral-700     : #54505d;            // Body text, secondary text
+$neutral-600     : $neutral-700;       // Mid-gray token (kept for compatibility)
+$neutral-500     : #6b7280;            // Captions, muted, timestamp text
+$neutral-400     : #a9a7ae;            // Placeholders, disabled labels
+$neutral-300     : #d6dbe3;            // Subtle borders / separators (compat token)
+$neutral-200     : #e5e9f0;            // Card borders, dividers, input borders
+$neutral-100     : #f1f4f9;            // Page background, subtle section fills
+$neutral-50      : #fafbfc;            // Card surface (slightly off-white for depth)
+
+// Legacy aliases (keep for backward compat)
+$clrFour         : #54505d;            // = $neutral-700
+$black           : #000000;
+$white           : #ffffff;
+$clrwhite        : #ffffff;
+$whiteDF         : #dfdfdf;
+$whitef8         : #f8f9fc;
+$gray7AE         : #a9a7ae;            // = $neutral-400
+$grayA7          : #a7b5cc;
+$black517        : #0a0517;
+$graybold        : #84828b;
+$graylgc4        : #c4c4c4;
+$grayCFD         : #fbfcfd;
+$clrgray5CC      : #a7b5cc;
+$scrollbar-thumb : #c4c4c4;            // Scrollbar thumb (light gray)
+$shadow-subtle   : #f2f0f2;            // Subtle box shadow color
+
+// Global page background
+$clrglobal       : #f1f4f9;            // = $neutral-100
+
+// -----------------------------------------------------------------------------
+// 3. SEMANTIC ICON COLORS — Type-differentiating, not brand
+// -----------------------------------------------------------------------------
+
+$icon-teal       : #26bac7;   // Sessions / Videos  (= brand teal)
+$icon-amber      : #ed9c2c;   // Deadlines / Tasks
+$icon-purple     : #9c6bcc;   // Quizzes / Announcements
+$icon-green      : #059669;   // Completion / Pass  (aligned with $status-success)
+
+// -----------------------------------------------------------------------------
+// 4. STATUS COLORS
+// -----------------------------------------------------------------------------
+
+$status-success  : #059669;
+$status-success-bg: rgba(5, 150, 105, 0.10);
+$status-warning  : #d97706;
+$status-warning-bg: rgba(217, 119, 6, 0.10);
+$status-error    : #ef4444;
+$status-error-bg : rgba(239, 68, 68, 0.10);
+$status-info     : #26bac7;   // Info = brand teal (not blue)
+$status-info-bg  : #eff8fa;
+
+// Legacy
+$clrwarning      : #ff7576;
+$clrLightRed     : #ff7576;
+
+// -----------------------------------------------------------------------------
+// 5. BACKGROUNDS
+// -----------------------------------------------------------------------------
+
+$bg-primary      : #effbfb;   // Teal-tinted bg (keep for backward compat)
+$bg-secondary    : #1e363f;   // Dark navy bg — used in landing page secondary badge variant
+
+// -----------------------------------------------------------------------------
+// 6. BUTTONS
+// -----------------------------------------------------------------------------
+
+$btn-default     : #bfc9da;
+$btn-clr54       : #54505d;
+
+// -----------------------------------------------------------------------------
+// 7. BORDERS + RADIUS
+// -----------------------------------------------------------------------------
+
+$border-primary  : $clrglobal;
+$border-radius6  : 6px;
+$border-radius10 : 10px;
+
+// Canonical radius scale (new — prefer these going forward)
+$radius-sm       : 6px;
+$radius-md       : 10px;
+$radius-lg       : 14px;
+$radius-xl       : 20px;
+$radius-full     : 999px;
+
+// -----------------------------------------------------------------------------
+// 7b. SPACING SCALE — single source of truth (4/8px rhythm)
+// -----------------------------------------------------------------------------
+// Previously each stylesheet declared its own: $s1..$s6 in _learn-courses.scss and
+// $learn-s1..$learn-s6 in _learn-layout.scss, with none here. They agreed by luck, not by
+// contract. Those local scales are now aliased to these.
+
+$space-1 :  4px;
+$space-2 :  8px;
+$space-3 : 12px;
+$space-4 : 16px;
+$space-5 : 24px;
+$space-6 : 32px;
+$space-7 : 40px;
+$space-8 : 48px;
+
+// -----------------------------------------------------------------------------
+// 7c. RADIUS SCALE — three sizes, by role
+// -----------------------------------------------------------------------------
+// $radius-control  buttons, inputs, chips, small controls
+// $radius-card     cards, panels, tables, modals — the default surface radius
+// $radius-feature  hero/feature surfaces that should read as distinctly rounder
+// $radius-pill     fully rounded (filter chips, badges)
+
+$radius-control : 6px;
+$radius-card    : 12px;
+$radius-feature : 18px;
+$radius-pill    : 999px;
+
+// Minimum interactive target (WCAG 2.5.5 / Apple HIG).
+$touch-target   : 44px;
+
+// Miscellaneous
+$clrGray8FA      : #f7f8fa;
+
+// -----------------------------------------------------------------------------
+// 8. MEDIA BREAKPOINTS
+// -----------------------------------------------------------------------------
+
+$ssm : 767px;
+$smd : 991px;
+$ssmd: 1024px;
+$smD : 1199px;
+$slg : 1365px;
+
+$esm: 425px;
+$sm : 768px;
+$md : 992px;
+$mmd: 1024px;
+$emd: 1200px;
+$lg : 1366px;
+$xlg: 1400px;
+
+// -----------------------------------------------------------------------------
+// 9. TYPOGRAPHY
+// -----------------------------------------------------------------------------
+
+// One family, real weights. These carry a genuine fallback stack — previously each was a single
+// custom family name with nothing after it, so a font that failed or was slow to load dropped the
+// entire product to the browser's default serif (Times New Roman).
+$font-stack   : "Lato", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+$font-display : "Domine", Georgia, "Times New Roman", serif;
+
+$font-latoReg : $font-stack;
+$font-latoBold: $font-stack;   // pair with font-weight: 700 — the family now has a real bold
+$font-Domnio  : $font-display;
+
+$fnt-reg   : 400;
+$fnt-medium: 500;
+$fnt-semi  : 600;
+$fnt-bold  : 700;
+
+// Canonical type scale (new — replaces per-file hardcoded px)
+$text-xs  : 12px;
+$text-sm  : 13px;
+$text-base: 14px;
+$text-md  : 16px;
+$text-lg  : 18px;
+$text-xl  : 20px;
+$text-2xl : 24px;
+$text-3xl : 30px;
+$text-4xl : 36px;
+
+// Line heights
+$leading-tight : 1.25;
+$leading-snug  : 1.4;
+$leading-normal: 1.6;
+
+// Premium display serif, loaded per-module rather than app-wide — the placements
+// layout pulls it from Google Fonts, so it is only guaranteed inside that module.
+// Deliberately NOT named `$font-display`: that name is already taken above for the
+// app's Domine stack, and reusing it here would silently redefine every later use.
+// Always pair with a fallback stack at the call site.
+$font-premium-display: "Playfair Display";
+
+// -----------------------------------------------------------------------------
+// 9b. SPACING SCALE — canonical 4px-based rhythm
+// -----------------------------------------------------------------------------
+
+$space-1: 4px;
+$space-2: 8px;
+$space-3: 12px;
+$space-4: 16px;
+$space-5: 24px;
+$space-6: 32px;
+$space-7: 48px;
+$space-8: 64px;
+
+// -----------------------------------------------------------------------------
+// 10. SHADOWS
+// -----------------------------------------------------------------------------
+// The 4-step $elev-* ramp is defined just below. Use it for anything new:
+//   $elev-1 resting · $elev-2 cards · $elev-3 hover/popover · $elev-4 drawers/modals
+
+
+// Layered elevation scale — cool ink tint (16, 24, 40), never pure black.
+// Two stacked layers per level: a tight contact shadow + a soft ambient one.
+$elev-1: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.06);
+$elev-2: 0 2px 4px rgba(16, 24, 40, 0.04), 0 4px 12px rgba(16, 24, 40, 0.06);
+$elev-3: 0 4px 8px rgba(16, 24, 40, 0.04), 0 12px 24px rgba(16, 24, 40, 0.08);
+$elev-4: 0 8px 16px rgba(16, 24, 40, 0.06), 0 24px 48px rgba(16, 24, 40, 0.10);
+
+// Legacy single token, retained so existing references compile. It was
+// `1px 2px 9px rgba(0,0,0,.15)` — a sideways offset and ~3x too much opacity for a resting
+// surface. Now points at the real ramp; prefer $elev-* directly in new code.
+$box-shadow: $elev-2;
+
+// -----------------------------------------------------------------------------
+// 10b. PREMIUM ACCENTS — deep ink + restrained gold for elevated surfaces
+// -----------------------------------------------------------------------------
+
+$ink-900    : #0b1220;   // deepest — premium hero surfaces
+$ink-800    : #131c2e;
+$ink-700    : #1e293b;
+$teal-deep  : #0e7c87;   // richer teal for premium accents on light surfaces
+$gold-accent: #a16207;   // restrained gold for "premium" moments (offer/hired)
+$gold-subtle: #fef6e7;
+
+// -----------------------------------------------------------------------------
+// 11. TRANSITIONS — 3-tier timing standard
+// -----------------------------------------------------------------------------
+
+// Fast: micro-interactions (button press, hover state, icon toggle)
+$duration-fast   : 150ms;
+// Normal: component transitions (card expand, tab switch, drawer)
+$duration-normal : 250ms;
+// Slow: page-level transitions (modal enter, page transition)
+$duration-slow   : 350ms;
+
+$ease-std   : cubic-bezier(0.2, 0, 0, 1);        // Material ease-out (snappy feel)
+$ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1); // Spring feel for interactive elements
+
+// Legacy transition shorthands (kept for backward compat)
+$trans      : all 0.6s ease-in-out;
+$transition : all 0.5s ease;
+$transition6: all 0.6s ease;
+
+// -----------------------------------------------------------------------------
+// 12. CALENDAR COLORS
+// -----------------------------------------------------------------------------
+
+$selectedColor              : #000;
+$legendLightBlue            : #a8e3e9;
+$activeCalendarDayColor     : #26bac7;
+$sunCalendarColor           : #ff7576;
+$lightGreyTitleColor        : #a9a7ae;
+$tableBordersLightGreyColor : #dddddd52;
+
+// -----------------------------------------------------------------------------
+// 13. Z-INDEX SCALE — Prevents stacking context conflicts
+// -----------------------------------------------------------------------------
+
+$z-below    :   -1;   // Hidden layers
+$z-base     :    0;   // Default stacking
+$z-raised   :   10;   // Cards on hover, tooltips
+$z-dropdown :  100;   // Dropdowns, select menus
+$z-sticky   :  200;   // Sticky headers / sidebar
+$z-drawer   :  500;   // Drawers / side panels
+$z-modal    :  800;   // Modals / dialogs
+$z-toast    : 1000;   // Toast notifications (always on top)
+
+// -----------------------------------------------------------------------------
+// 14. ATTENDANCE COLORS
+// -----------------------------------------------------------------------------
+
+$attendanceTableCellFontColor: #54505d;
+$presentBgColor              : #e4f8f1;
+$presentMainColor            : #8cc1b4;
+$absentBgColor               : #fff1f1;
+$absentMainColor             : #ff7576;
+$presentBtnColor             : #93e3c1;
+$attendanceLegendColor       : #fae5a2;
+
+// -----------------------------------------------------------------------------
+// 15. SHARED SEMANTIC TEXT / SURFACE TOKENS
+// -----------------------------------------------------------------------------
+//
+// X-4: $text, $text-muted, $border and $bg were defined in _learn-assignments.scss and used
+// throughout _learn-projects.scss — a completely separate module. Sass has no module scoping for
+// `@import`ed variables, so they leaked across file boundaries and the Projects module only
+// rendered correctly because components.scss happens to import assignments (line 44) BEFORE
+// projects (line 46). Reordering those two imports, or deleting the assignments module, would
+// have silently restyled every surface in Projects — and _learn-projects.scss could not be
+// compiled on its own at all.
+//
+// Declared here, in the file both modules already import, with `!default` so the existing
+// definitions in _learn-assignments.scss remain authoritative for that module and nothing about
+// its current rendering changes.
+$text            : $neutral-900 !default;   // Primary text
+$text-muted      : $neutral-500 !default;   // Secondary / caption text
+$text-subtle     : $neutral-400 !default;   // Placeholders, disabled labels
+$bg              : $white !default;         // Card / surface background
+$bg-page         : $neutral-100 !default;   // Page background
+$border          : $neutral-200 !default;   // Card borders, dividers
+
+// X-4 (continued): $shadow-sm / $shadow-md are defined IDENTICALLY and INDEPENDENTLY in both
+// _learn-attendance.scss and _learn-notifications.scss, and consumed by _learn-projects.scss —
+// which defines neither. Whichever of those two modules imports last silently owns the value for
+// every other module, and removing either one breaks Projects. Same `!default` treatment: the
+// shared definition lives here, the module-local ones keep working unchanged.
+$shadow-sm       : 0 1px 2px rgba(0, 0, 0, 0.04) !default;
+$shadow-md       : 0 2px 6px rgba(0, 0, 0, 0.06) !default;
+
+// X-4 (continued): $success is declared independently in THREE modules (attendance, interviews,
+// my-applications) and $warning in two — all aliasing the same $status-* tokens defined above —
+// while _learn-projects.scss consumes them without declaring either. Consolidated here for the
+// same reason as the tokens above: so a module can be compiled, reordered, or removed without
+// silently changing the rendering of an unrelated one.
+$success         : $status-success !default;
+$warning         : $status-warning !default;
+$danger          : $status-error !default;

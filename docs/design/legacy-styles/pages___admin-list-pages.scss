@@ -1,0 +1,373 @@
+@import "../components/variables.scss";
+
+// Admin list pages: Departments, Courses, Lessons
+// Desktop + mobile UI/UX for .admin-list-page
+
+$admin-list-title-gap: 24px;
+$admin-list-card-gap: 24px;
+$admin-list-touch-min: 44px;
+$admin-list-filter-width: 220px;
+
+.admin-list-page {
+  padding-bottom: 24px;
+
+  .admin-list-page__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: $admin-list-title-gap;
+
+    // Overrides .admin-list-page__title's own margin-bottom below — inside the header row the
+    // title sits directly above its subtitle and shouldn't carry the same 24px gap the title
+    // uses everywhere else (e.g. above a table with no subtitle).
+    &.admin-list-page__header .admin-list-page__title {
+      margin-bottom: 4px;
+    }
+  }
+
+  .admin-list-page__subtitle {
+    color: $neutral-500;
+    font-size: 0.875rem;
+  }
+
+  // Shared width for the filter Selects that sit above admin Projects list tables — previously
+  // each page hand-picked its own (180/220/260px), producing visibly different filter-bar
+  // proportions between sibling pages.
+  .admin-list-page__filter {
+    width: $admin-list-filter-width;
+  }
+
+  // Shared vertical rhythm between stacked cards on admin Projects detail pages — several pages
+  // used a hardcoded 16px inline style instead of this scale.
+  .admin-list-page__card-gap {
+    margin-bottom: $admin-list-card-gap;
+  }
+
+  // AntD's default light "gold"/"green" Tag text fails WCAG AA at 12px (~2.75:1 / ~3.37:1
+  // against the 4.5:1 required) — these color the DRAFT/PUBLISHED lifecycle badges across the
+  // admin Projects dashboard and templates list. Darken just these two tones.
+  .ant-tag-gold {
+    color: #ad6800;
+  }
+  .ant-tag-green {
+    color: #237804;
+  }
+
+  .admin-list-page__title {
+    margin: 0 0 $admin-list-title-gap 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $neutral-900;
+  }
+
+  .ant-card {
+    border-radius: 8px;
+  }
+
+  .ant-card-head {
+    min-height: 48px;
+    padding: 0 16px;
+  }
+
+  .ant-card-head-title {
+    padding: 12px 0;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  .ant-card-extra {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .ant-card-body {
+    padding: 20px;
+  }
+
+  // Form and table cards spacing
+  .ant-row.ant-form-item {
+    margin-bottom: 16px;
+  }
+
+  .ant-table-wrapper {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+    &::-webkit-scrollbar { height: 4px; }
+    &::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 2px;
+    }
+    &::-webkit-scrollbar-track { background: transparent; }
+  }
+
+  .ant-table {
+    font-size: 14px;
+    min-width: 600px;
+  }
+
+  // Compact 2-column preview table embedded in the narrower "Project templates"
+  // dashboard card — the global 600px min-width above forced it wider than its
+  // xl={11} column, pushing description text off the right edge of the page.
+  .admin-projects-home__template-table .ant-table {
+    min-width: 0;
+  }
+
+  .ant-table-cell {
+    padding: 12px 16px;
+  }
+
+  // Action buttons: ensure adequate hit area
+  .ant-space-item .ant-btn.ant-btn-text {
+    min-width: 32px;
+    min-height: 32px;
+    padding: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  // Day-divider row on the Project audit page — separates a multi-day range (7d/30d/all) into
+  // scannable "today / yesterday / ..." groups instead of one flat list repeating its own date.
+  .admin-audit-day-divider > td {
+    background: $neutral-50;
+    font-size: 0.75rem;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    color: $neutral-500;
+  }
+
+  // A "create/edit X" form's content Card previously had no width cap at all — on a normal
+  // desktop monitor a one-word Title field rendered 1300px+ wide. Capping it keeps every field
+  // (and every repeating-item row) at a reasonable reading/scanning width without centering the
+  // whole page (would look like it's floating, since the surrounding chrome stays full-width).
+  .admin-form-card {
+    max-width: 920px;
+  }
+
+  // Same "unconstrained width on a normal monitor looks broken" issue as .admin-form-card, but
+  // for pages built from single-purpose Cards (Migrations, Readiness, Submissions) rather than a
+  // Form — a Card holding a short Descriptions block or a couple of checkboxes stretched to the
+  // full page width, leaving a single narrow row of content adrift in a mostly-empty ~2000px card.
+  .admin-list-page__narrow-content {
+    max-width: 900px;
+  }
+
+  // Section headings inside a long form (e.g. "Basic info" / "Lifecycle settings" / "Content")
+  // — gives the admin scannable landmarks instead of one unbroken flat list of fields.
+  .admin-form-section-title {
+    display: block;
+    margin: 28px 0 12px;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: $neutral-500;
+
+    &:first-child {
+      margin-top: 4px;
+    }
+  }
+
+  // Footer action bar for "Create"/"Save" — visually separated from the form fields above it
+  // with a top border. Deliberately NOT `position: sticky`: that caused the bar to render mid-
+  // form on shorter viewports and cover the remaining fields (Lifecycle settings selects,
+  // Content section) instead of just floating at the bottom — a real, confirmed regression, not
+  // just a cosmetic nuisance. A normal in-flow bar is less flashy but never hides content.
+  .admin-form-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin: 24px -20px -20px;
+    padding: 16px 20px;
+    background: #fff;
+    border-top: 1px solid $neutral-200;
+  }
+
+  // ---------- Mobile ----------
+  @media (max-width: 767px) {
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+
+    .admin-list-page__title {
+      font-size: 1.25rem;
+      margin-bottom: 16px;
+    }
+
+    .ant-card-body {
+      padding: 16px;
+    }
+
+    .ant-card-extra {
+      margin-top: 4px;
+    }
+
+    // Touch-friendly action buttons
+    .ant-space-item .ant-btn.ant-btn-text {
+      min-width: $admin-list-touch-min;
+      min-height: $admin-list-touch-min;
+      padding: 8px;
+    }
+
+    .admin-form-actions {
+      margin: 16px -16px -16px;
+      padding: 12px 16px;
+    }
+  }
+}
+
+// Horizontal lateral-navigation tabs shown at the top of every admin Projects page (dashboard,
+// templates, workspaces, at-risk, workload, submissions, readiness, reassign-mentor, audit,
+// migrations, settings). Lets an admin jump sideways between sections without needing the
+// browser's own back button. Scoped outside .admin-list-page since it also sits above pages that
+// aren't built on that wrapper class (e.g. the create/edit forms).
+.projects-sub-nav {
+  margin-bottom: 20px;
+
+  .ant-tabs-nav {
+    margin-bottom: 0;
+  }
+
+  .ant-tabs-nav::before {
+    border-bottom: 1px solid $neutral-200;
+  }
+
+  .ant-tabs-tab {
+    padding: 8px 4px;
+    font-size: 0.875rem;
+  }
+
+  .ant-tabs-nav-wrap {
+    // Let the tab list scroll horizontally as its own contained region on narrow viewports
+    // instead of pushing the page body wider.
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+    &::-webkit-scrollbar { height: 3px; }
+    &::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 2px;
+    }
+  }
+}
+
+// Rows inside RepeatingItemEditor (sprints/tasks/resources) — a lighter, flatter treatment
+// than a full antd Card per row, so 3-5 rows don't read as a stack of boxes nested inside the
+// page's own Card. Scoped outside .admin-list-page since KeyValueEditor/RepeatingItemEditor are
+// also usable outside that wrapper class.
+.repeating-item-editor__row {
+  border: 1px solid $neutral-200;
+  border-radius: 6px;
+  padding: 10px 12px 12px;
+  background: $neutral-50;
+}
+
+.repeating-item-editor__row-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.repeating-item-editor__row-title {
+  font-size: 0.875rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.repeating-item-editor__field-label {
+  display: block;
+  font-size: 0.75rem;
+  margin-bottom: 2px;
+}
+
+.repeating-item-editor__hint {
+  display: block;
+  font-size: 0.75rem;
+  margin-top: 2px;
+}
+
+.key-value-editor__row {
+  align-items: flex-start;
+}
+
+.key-value-editor__hint {
+  display: block;
+  font-size: 0.75rem;
+  margin-top: -4px;
+  margin-bottom: 4px;
+}
+
+// Modal from admin list pages (renders in body; use className on Modal)
+.admin-list-page-modal .ant-modal,
+.ant-modal.admin-list-page-modal {
+  max-width: calc(100vw - 32px);
+}
+
+.admin-list-page-modal .ant-modal-body {
+  padding: 20px 24px;
+}
+
+@media (max-width: 767px) {
+  .admin-list-page-modal .ant-modal,
+  .ant-modal.admin-list-page-modal {
+    top: 16px;
+    max-width: calc(100vw - 24px);
+    padding-bottom: 0;
+  }
+
+  .admin-list-page-modal .ant-modal-content {
+    border-radius: 12px;
+  }
+
+  .admin-list-page-modal .ant-modal-body {
+    padding: 16px;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+    &::-webkit-scrollbar { width: 4px; }
+    &::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 2px;
+    }
+    &::-webkit-scrollbar-track { background: transparent; }
+  }
+
+  .admin-list-page-modal .ant-modal-footer {
+    padding: 12px 16px;
+    border-top: 1px solid $neutral-200;
+  }
+
+  .admin-list-page-modal .ant-modal-footer .ant-btn {
+    min-height: $admin-list-touch-min;
+    min-width: 88px;
+  }
+}
+
+// Re-open .admin-list-page for form column rule
+.admin-list-page {
+  @media (max-width: 767px) {
+    // Form: force single column for half-width fields on small screens
+    .ant-form .ant-row .ant-col.ant-form-item-control {
+      max-width: 100%;
+    }
+  }
+}
+
+// Placements module (Drives/Companies/Interviews/Analytics + drive detail pages) — the shared
+// admin layout's gray page chrome (AdminLayout.js's "section.bg-gray") read as the page
+// constantly breaking into disconnected gray/white sections against these particularly
+// card-and-table-heavy screens. Scoped to just the placements pages via :has() so every other
+// admin section (Departments, Courses, Projects, etc.) keeps its current background untouched.
+// Cards already carry antd's default 1px border, so removing the gray gutter alone gives the
+// intended "white page + hairline borders" separation without needing extra border rules here.
+section.bg-gray:has(.placements-page) {
+  background: #fff;
+}

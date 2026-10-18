@@ -1,0 +1,1362 @@
+// .ant-drawer-content-wrapper {
+//   transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1),
+//     box-shadow 0.6s cubic-bezier(0.23, 1, 0.32, 1) !important;
+// }
+
+// Tab panel content: subtle fade-in when switching tabs
+.ant-tabs-tabpane-active {
+  animation: pageSlideIn 180ms ease-out;
+}
+
+// Admin page transition: match learn pages
+.admin-layout-main > .ln-module {
+  animation: pageSlideIn 250ms ease-out;
+}
+
+.ln-ant-Drawer {
+  padding: 40px 30px 30px 30px;
+  width: 100%;
+  height: 100%;
+
+  @media (max-width: 767px) {
+    padding: 20px 16px 16px 16px;
+  }
+}
+
+.ln-w600-drawer {
+  .ant-drawer-content-wrapper {
+    width: 600px !important;
+
+    @media (max-width: 767px) {
+      width: 100% !important;
+      max-width: 100vw !important;
+    }
+  }
+}
+
+.ant-tabs-ink-bar {
+  background: transparent !important;
+}
+
+.ant-select-focused {
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+// ANT TOOLTIP
+
+.ant-tooltip-inner {
+  background-color: #1a1d21 !important;
+  border-radius: 8px;
+  color: $white !important;
+  font-size: 12px !important;
+  line-height: 16px !important;
+  padding: 6px 16px;
+  min-height: 27px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.ant-tooltip-arrow-content {
+  background-color: #1a1d21 !important;
+  width: 10px !important;
+  height: 10px !important;
+  right: -2px !important;
+}
+
+// Tooltip with table inside (CustomToolTipTable) — prevent overflow on mobile
+@media (max-width: 767px) {
+  .ant-tooltip {
+    max-width: calc(100vw - 32px) !important;
+  }
+
+  .ant-tooltip-inner {
+    max-width: calc(100vw - 32px) !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+
+    .ant-table-wrapper {
+      overflow-x: auto;
+      max-width: 100%;
+    }
+  }
+}
+
+.ln-com-drw {
+  .ant-form-item-required {
+    align-items: baseline !important;
+  }
+
+  .ant-form-item-label {
+    padding: 0 !important;
+  }
+
+  .ant-picker-focused {
+    outline: 0;
+    border: none;
+    box-shadow: none !important;
+  }
+}
+
+.ln-com-drw {
+  .ant-form-item-label {
+    padding: 0 !important;
+    label {
+      width: 100%;
+    }
+  }
+
+  .ant-select-selector {
+    input {
+      margin-top: 10px !important;
+    }
+  }
+
+  .ln-head-dropdown {
+    max-width: 100% !important;
+  }
+}
+
+.ant-drawer-footer {
+  padding: 8px 20px !important;
+}
+
+.ant-checkbox-checked {
+  .ant-checkbox-inner {
+    border-color: $clrThird !important;
+    background-color: $clrThird !important;
+  }
+
+  &::after {
+    background-color: $clrThird !important;
+  }
+}
+
+.ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+  background-color: $clrThird !important;
+  color: $white !important;
+}
+
+.ant-select-item-option-content {
+  text-wrap: wrap !important;
+}
+
+.ant-drawer-mask {
+  background: rgba(30, 54, 63, 0.1) !important;
+  box-shadow: 0px 4px 4px 0px #00000040 !important;
+}
+
+// The whole primary-button theme used to be a single `background: $clrThird !important`, which
+// beat AntD's own :hover/:active background rules — so the most important control on every page
+// was completely inert on pointer-down and hover. AntD's stock control shadow (a BLUE-tinted
+// `0 2px 0 rgba(5,145,255,.1)`) also survived underneath a teal button. Raise specificity instead
+// of using !important so the state rules below can actually apply.
+.ant-btn.ant-btn-primary {
+  background: $clrThird;
+  border-color: $clrThird;
+  box-shadow: none;
+  transition: background $duration-fast $ease-std, border-color $duration-fast $ease-std,
+    box-shadow $duration-fast $ease-std;
+
+  &:hover:not(:disabled):not(.ant-btn-loading) {
+    background: $teal-dark;
+    border-color: $teal-dark;
+  }
+
+  &:active:not(:disabled) {
+    background: $teal-dark;
+    border-color: $teal-dark;
+    transform: translateY(1px);
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba($clrThird, 0.35);
+    outline-offset: 2px;
+  }
+
+  &:disabled,
+  &.ant-btn-disabled {
+    background: $neutral-200;
+    border-color: $neutral-200;
+    color: $neutral-500;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ant-btn.ant-btn-primary {
+    transition: none;
+    &:active:not(:disabled) { transform: none; }
+  }
+}
+
+.ant-picker-cell-inner::before {
+  border-color: $clrThird !important;
+}
+
+.ant-picker-cell-selected {
+  .ant-picker-cell-inner {
+    background: $clrThird !important;
+  }
+}
+
+.ant-picker-today-btn {
+  color: $clrThird !important;
+}
+
+.ant-checkbox {
+  &:focus {
+    border: 0;
+    outline: 0;
+    box-shadow: none;
+  }
+}
+
+.ant-checkbox-checked {
+  & ~ span {
+    color: #0a0517 !important;
+  }
+}
+
+.ant-picker-time-panel-cell-selected .ant-picker-time-panel-cell-inner {
+  background: $clrThird !important;
+  color: $white !important;
+}
+
+.ant-picker-time-panel-column {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.ant-pagination-item-active {
+  color: $clrThird !important;
+  border-color: $clrThird !important;
+
+  &:hover {
+    border-color: $clrThird !important;
+  }
+}
+
+/* Mobile-friendly Ant pagination — larger touch targets */
+@media (max-width: 767px) {
+  .ant-pagination {
+    flex-wrap: wrap;
+    gap: 4px;
+    justify-content: center;
+  }
+
+  .ant-pagination-item,
+  .ant-pagination-prev,
+  .ant-pagination-next {
+    min-width: 44px !important;
+    height: 44px !important;
+    line-height: 42px !important;
+    border-radius: 8px !important;
+  }
+
+  .ant-pagination-prev .ant-pagination-item-link,
+  .ant-pagination-next .ant-pagination-item-link {
+    border-radius: 8px !important;
+    min-height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .ant-pagination-options {
+    display: none !important;
+  }
+
+  /* Hide page numbers, keep only prev/next + active */
+  .ant-pagination-item:not(.ant-pagination-item-active) {
+    display: none !important;
+  }
+
+  .ant-pagination-jump-prev,
+  .ant-pagination-jump-next {
+    display: none !important;
+  }
+}
+
+@media (min-width: 767px) {
+  .ln-menu-drawer {
+    display: none !important;
+  }
+}
+
+.ant-drawer {
+  .ant-tabs-nav {
+    box-shadow: 0px 4px 15px 0px #f2f0f2;
+    border: 0 !important;
+  }
+  .ln-menu-drawer {
+    .ln-menu-drawer__logo-link {
+      display: flex;
+      align-items: center;
+    }
+    .ln-menu-drawer__logo {
+      height: 40px;
+      width: auto;
+      display: block;
+      object-fit: contain;
+    }
+    @media (max-width: 767px) {
+      /* Panel width: partial overlay so context stays visible behind */
+      width: 82% !important;
+      max-width: 300px !important;
+
+      .fl-d-panel-l {
+        display: flex !important;
+      }
+
+      /* Header: safe-area top, logo left, close button right */
+      .ant-drawer-header {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        padding-top: calc(10px + env(safe-area-inset-top, 0px)) !important;
+        padding-left: 16px !important;
+        padding-right: 4px !important;
+        padding-bottom: 10px !important;
+        border-bottom: 1px solid #f0f0f0 !important;
+        min-height: calc(52px + env(safe-area-inset-top, 0px));
+        gap: 8px;
+      }
+
+      .ant-drawer-header-title {
+        flex: 1 !important;
+        min-width: 0 !important;
+        margin-right: 0 !important;
+      }
+
+      /* Close button — 44px tap target */
+      .ant-drawer-close {
+        flex: 0 0 44px !important;
+        width: 44px !important;
+        min-height: 44px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        order: 2;
+        font-size: 16px;
+      }
+
+      /* Body: sensible padding, safe-area bottom, smooth scroll */
+      .ant-drawer-body {
+        padding-top: 8px !important;
+        padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        &::-webkit-scrollbar { display: none; }
+      }
+
+      /* Hide the duplicate logo inside the sidebar body — header already shows it */
+      .fl-d-panel-l .fl-d-panel-l__head {
+        display: none !important;
+      }
+
+      /* Menu items: comfortable touch targets */
+      .fl-panel-module-list__item {
+        min-height: 44px;
+        margin-bottom: 2px !important;
+      }
+
+      .fl-module-link {
+        min-height: 44px !important;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+        border-radius: 8px !important;
+        justify-content: flex-start !important;
+      }
+
+      /* Menu text: readable size, no overflow */
+      .fl-module-link span.menu-txt {
+        font-size: 15px !important;
+        word-break: break-word;
+        overflow-wrap: break-word;
+        margin-left: 10px !important;
+        display: block !important;
+      }
+
+      /* Icon: consistent opacity and size */
+      .fl-module-link__icon {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        flex-shrink: 0;
+      }
+
+      /* Dividers: clean visual separation */
+      .fl-panel-module-list__divider {
+        margin: 6px 8px !important;
+      }
+
+      /* Admin sidebar body padding reset — handled by drawer-body above */
+      .admin-sidebar-panel .fl-d-panel-l__body {
+        padding-left: 0;
+        padding-right: 0;
+      }
+    }
+  }
+
+  .ant-drawer-content-wrapper {
+    box-shadow: 4px 0 16px rgba(0, 0, 0, 0.12) !important;
+    @media (max-width: 767px) {
+      width: 82% !important;
+      max-width: 300px !important;
+      .fl-d-panel-l {
+        border-right: none;
+        width: 100% !important;
+        height: 100% !important;
+      }
+    }
+  }
+}
+
+.ant-drawer-header {
+  border: 0 !important;
+
+  .ant-drawer-header-title {
+    flex-wrap: wrap;
+
+    .ant-drawer-title {
+      font-size: 1.5rem;
+    }
+  }
+
+  .ant-drawer-close {
+    flex: 100%;
+    text-align: right;
+    margin: -8px -8px 0 0;
+
+    svg {
+      color: #000000;
+    }
+  }
+
+  box-shadow: 0px 4px 15px 0px #f2f0f2;
+}
+
+.ant-drawer-body {
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+.ln-drawer-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 100px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+.ant-drawer-footer {
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+  border-top: none !important;
+}
+
+.ln-drawer-body {
+  padding: 25px 20px 60px 20px;
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar { display: none; }
+
+  &--small {
+    height: calc(100vh - 140px);
+  }
+
+  @media (max-width: 767px) {
+    padding: 20px 16px;
+  }
+
+  &--student {
+    height: 480px;
+  }
+
+  .ant-space {
+    width: 100%;
+  }
+
+  .ant-upload-wrapper {
+    width: 100%;
+  }
+
+  .ant-upload {
+    width: 100%;
+  }
+
+  .ant-btn span {
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .ant-select-selector {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+
+    background-color: $neutral-50 !important;
+    border-radius: 10px !important;
+    outline: 0 !important;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0.2px;
+    height: 50px !important;
+
+    input {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .ant-picker {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background-color: $neutral-50;
+    border-radius: 10px;
+    outline: 0 !important;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0.2px;
+    min-height: 50px;
+  }
+}
+
+.ant-tabs-ink-bar {
+  background: transparent !important;
+}
+
+.ant-tabs-dashboard {
+  .ant-tabs-content-holder {
+    width: 100%;
+    // padding         : 25px !important;
+    height: 100%;
+    background-color: $neutral-100;
+  }
+
+  .ant-tabs-nav {
+    margin-bottom: 0;
+    background: #fff;
+    border-bottom: 1px solid $neutral-200;
+    &-list {
+      &::-webkit-scrollbar {
+        height: 8px;
+      }
+      &::-webkit-scrollbar-thumb {
+        background-color: #c4c4c4;
+        border-radius: 1px;
+      }
+    }
+    .ant-tabs-nav-list:first-child {
+      margin-left: 24px;
+    }
+    .ant-tabs-nav-list > :nth-last-child(2) {
+      margin-right: 24px !important;
+    }
+    @media (max-width: 767px) {
+      .ant-tabs-nav-list:first-child {
+        margin-left: 16px;
+      }
+      .ant-tabs-nav-list > :nth-last-child(2) {
+        margin-right: 16px !important;
+      }
+    }
+  }
+}
+
+.ant-select-focused {
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.ln-ant-form {
+  .ant-picker-status-error {
+    background-color: $neutral-50 !important;
+  }
+
+  .ant-form-item-explain-connected {
+    * {
+      font-size: 12px !important;
+    }
+  }
+
+  .ant-form-item {
+    width: 100%;
+    margin-bottom: 0 !important;
+  }
+
+  .ant-form-item-required {
+    &::before,
+    &::after {
+      display: none !important;
+      content: none !important;
+    }
+  }
+
+  label {
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 16px;
+    color: $neutral-400 !important;
+  }
+
+  .ant-form-item-label {
+    text-align: left;
+    // margin-bottom: 8px !important;
+  }
+
+  .ant-input {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background-color: $neutral-50;
+    border-radius: 10px;
+    outline: 0 !important;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0.2px;
+    min-height: 50px;
+    border: 0 !important;
+    outline: 0;
+  }
+
+  &--login {
+    .ant-input {
+      border: 1px solid $neutral-400 !important;
+      border-radius: 0 !important;
+    }
+
+    .ant-form-item {
+      width: 100%;
+    }
+  }
+}
+
+.ln-table-filter {
+  padding: 24px;
+  background-color: $white;
+  border-radius: 6px !important;
+
+  th {
+    border-bottom: 1px solid $neutral-100 !important;
+    background: none !important;
+  }
+
+  td {
+    background: none !important;
+    border: none !important;
+  }
+
+  tr {
+    background: none !important;
+    border: none !important;
+  }
+
+  .ant-table-cell {
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+  }
+
+  &--submission {
+    padding: 0;
+  }
+}
+
+.ln-drawer-pdf {
+  height: calc(100vh - 150px) !important;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+.ln-upload {
+  span.ant-upload {
+    border: 1px solid $clrThird;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    min-width: 140px !important;
+    color: $clrThird !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.ant-form-item-control-input {
+  min-height: auto !important;
+}
+
+.ln-drawer-btn-pos {
+  padding-top: 25px;
+  background-color: $white;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  z-index: 99;
+
+  // &--more {
+  //   bottom: -40px;
+  //   z-index: 999;
+  // }
+}
+
+.spin {
+  margin: 20px 0;
+  margin-bottom: 20px;
+  padding: 30px 50px;
+  text-align: center;
+
+  border-radius: 4px;
+}
+
+.ant-upload-wrapper.w-100 .ant-upload-select {
+  display: block;
+}
+
+.ant-radio-checked .ant-radio-inner {
+  border-color: $clrThird !important;
+  background-color: $clrThird !important;
+}
+
+.preview-container {
+  position: relative;
+}
+
+.ln-upload {
+  .ant-custom-upload {
+    height: auto;
+  }
+}
+
+.ant-custom-upload {
+  height: 50px;
+  border: 0 !important;
+  background: $neutral-50 !important;
+  color: $clrThird;
+
+  .anticon {
+    color: $clrThird;
+    font-size: 20px;
+  }
+
+  // The base rule above flattens every upload button to the same neutral look regardless of antd
+  // `type`, which is exactly what made the direct-upload and "from Drive" buttons in the
+  // assignment resource form read as interchangeable instead of primary/secondary. This restores
+  // the filled look specifically for the one meant to stand out.
+  &.ant-btn-primary {
+    background: $clrThird !important;
+    color: $white !important;
+
+    .anticon {
+      color: $white;
+    }
+  }
+}
+
+// "Upload X" / "Upload X from Drive" are alternative paths to the same result, not sequential
+// steps -- this divider makes the either/or explicit instead of two identical-looking stacked
+// buttons that read as "do both."
+.ln-upload-or {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0;
+  color: $neutral-400;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+
+  &::before,
+  &::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: $neutral-200;
+  }
+}
+
+// Replaces the plain "Attached: filename.pdf" text that stayed visible alongside both upload
+// buttons even after a file was attached -- a file is either attached (this) or not (the upload
+// buttons); showing both at once, with no way to swap a file short of deleting the whole resource
+// card, was the actual "confusing" part of this screen.
+.ln-upload-attached {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid $neutral-200;
+  border-radius: 8px;
+  background: $neutral-50;
+  color: $clrThird;
+
+  .anticon {
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  &__name {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: $neutral-900;
+    font-size: 13px;
+  }
+
+  .ant-btn {
+    flex-shrink: 0;
+    color: $neutral-400;
+
+    &:hover {
+      color: #dc2626;
+    }
+  }
+}
+
+.ant-tag-close-icon {
+  margin-inline-start: 3px;
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 14px !important;
+  cursor: pointer;
+  transition: color 0.2s ease, opacity 0.2s ease;
+  margin-top: 2px !important;
+  margin-right: -2px !important;
+  padding-left: 5px !important;
+}
+
+.ln-metrics-card-row {
+  @media (max-width: 767px) {
+    display: none !important;
+  }
+  .ant-card {
+    cursor: unset !important;
+    min-height: 6rem !important;
+    .ant-card-head {
+      padding: 0 20px !important;
+      .ant-card-head-title {
+        white-space: break-spaces !important;
+        overflow: unset !important;
+      }
+    }
+
+    .ant-card-body {
+      padding: 12px !important;
+    }
+  }
+}
+
+.ln-coursal-row {
+  .ln-cors-card {
+    .slick-dots {
+      bottom: -12px !important;
+      li button {
+        background-color: $clrThird;
+      }
+      .slick-active button {
+        background-color: $clrThird !important;
+      }
+    }
+  }
+
+  .slick-slide {
+    padding: 0 10px;
+  }
+
+  @media (min-width: 767px) {
+    .ln-cors-card {
+      display: none !important;
+    }
+  }
+}
+
+.ln-cnfrm-mod {
+  .ant-modal-content {
+    padding: 15px 15px 5px 15px !important;
+    .ant-modal-confirm-btns {
+      margin-top: 21px !important;
+    }
+  }
+}
+
+.ant-form-item-required {
+  margin-bottom: 0.5rem;
+}
+
+.ln-footer {
+  position: fixed;
+  bottom: 0;
+  // Height grows to absorb the phone's home indicator / gesture bar
+  height: calc(64px + env(safe-area-inset-bottom, 0px));
+  width: 100%;
+  background-color: #fff;
+  border-top: 1px solid $neutral-100;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.04);
+  // Pad the content area above the home bar
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  box-sizing: border-box;
+  // Allow nav > ul to fill only the non-safe-area portion
+  display: flex;
+  flex-direction: column;
+
+  nav {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ln-footer-nav {
+    flex: 1;
+    height: auto !important;
+  }
+}
+
+// Ant Image Crop Modal - Style for injected labels
+.ant-image-crop-modal {
+  .crop-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.85);
+    margin-bottom: 8px;
+    display: block;
+  }
+  
+  // Ensure proper spacing for sliders with labels
+  .ant-slider {
+    margin: 0;
+    
+    // Add margin-top for rotate slider if it has a label before it
+    &:has(+ .crop-label) {
+      margin-top: 16px;
+    }
+  }
+}
+
+// Email Verification Modal
+.email-verify-modal {
+  .ant-modal-content {
+    border-radius: 16px;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .ant-modal-body {
+    padding: 0;
+  }
+
+  @media (max-width: 767px) {
+    // Ant Design sets top:100px by default; override to let centered work
+    top: 0 !important;
+    margin: 0 auto !important;
+    max-width: calc(100vw - 32px) !important;
+    padding-bottom: 0 !important;
+
+    .ant-modal-content {
+      border-radius: 12px;
+      max-height: calc(100dvh - 48px);
+      overflow-y: auto;
+    }
+  }
+}
+
+// Force the modal wrapper to truly center on mobile
+@media (max-width: 767px) {
+  .ant-modal-wrap:has(.email-verify-modal) {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 24px 16px !important;
+  }
+}
+
+// Notification detail modals — fix Ant Design top:100px default on mobile
+// Both the bell dropdown (ln-notification-detail-modal) and the
+// notifications page (learn-notification-detail-modal) use the same fix.
+.ln-notification-detail-modal,
+.learn-notification-detail-modal {
+  .ant-modal-content {
+    border-radius: 16px;
+  }
+
+  @media (max-width: 767px) {
+    top: 0 !important;
+    margin: 0 auto !important;
+    max-width: calc(100vw - 32px) !important;
+    padding-bottom: 0 !important;
+
+    .ant-modal-content {
+      border-radius: 12px;
+      max-height: calc(100dvh - 48px);
+      overflow-y: auto;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .ant-modal-wrap:has(.ln-notification-detail-modal),
+  .ant-modal-wrap:has(.learn-notification-detail-modal) {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 24px 16px !important;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Global modal width fix — prevents any hardcoded width (700px, 520px, etc.)
+// from overflowing on mobile. Ant Design renders width as inline style so
+// max-width on the .ant-modal is the reliable override.
+// ---------------------------------------------------------------------------
+@media (max-width: 767px) {
+  .ant-modal {
+    max-width: calc(100vw - 32px) !important;
+    margin: 0 auto !important;
+  }
+
+  // Center all modals — override Ant Design's default top:100px
+  .ant-modal-wrap {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 24px 16px !important;
+  }
+
+  // Reset top so flex centering takes over
+  .ant-modal {
+    top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .ant-modal-content {
+    max-height: calc(100dvh - 48px);
+    overflow-y: auto;
+    border-radius: 12px;
+  }
+
+  // Footer buttons: stack vertically and go full-width on very narrow screens
+  .ant-modal-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
+
+    .ant-btn {
+      min-height: 44px !important;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Global mobile touch target enforcement (WCAG 2.5.5 — min 44×44px)
+// Applies to icon-only action buttons used in table rows / card action bars
+// across quizzes, assignments, assessments, interviews, etc.
+// ---------------------------------------------------------------------------
+@media (max-width: 767px) {
+  // Icon-only action buttons (edit / delete / view)
+  .ant-btn.ant-btn-icon-only,
+  .ant-btn-sm.ant-btn-icon-only {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  // Status / type badges that are non-interactive — still need visual space
+  // Clickable badges used as actions need full touch target
+  .ant-tag[role="button"],
+  .ant-tag[tabindex] {
+    min-height: 44px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    padding: 0 12px !important;
+  }
+
+  // Listing page create button — always 44px on mobile
+  .listing-page-header .ant-btn,
+  .listing-page-header button {
+    min-height: 44px !important;
+  }
+
+  // Metric popover list items
+  .ln-metric-pill-popover .ant-popover-inner-content li,
+  .ln-metric-pill-popover li {
+    min-height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+}
+
+.evm-content {
+  position: relative;
+  padding: 32px 28px 24px;
+
+  @media (max-width: 767px) {
+    padding: 24px 20px 20px;
+  }
+}
+
+.evm-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: $neutral-100;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: $neutral-700;
+  transition: background-color 0.2s ease, color 0.2s ease;
+
+  &:hover {
+    background: #e5e9f0;
+    color: #1a1d21;
+  }
+}
+
+.evm-header {
+  text-align: center;
+  margin-bottom: 24px;
+
+  @media (max-width: 767px) {
+    margin-bottom: 16px;
+  }
+}
+
+.evm-icon-ring {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $clrThird 0%, $teal-dark 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  font-size: 24px;
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(38, 186, 199, 0.3);
+
+  @media (max-width: 767px) {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+}
+
+.evm-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin: 0 0 8px;
+
+  @media (max-width: 767px) {
+    font-size: 18px;
+  }
+}
+
+.evm-subtitle {
+  font-size: 14px;
+  color: $neutral-700;
+  margin: 0;
+  line-height: 1.5;
+  max-width: 360px;
+  margin-inline: auto;
+
+  @media (max-width: 767px) {
+    font-size: 13px;
+  }
+}
+
+.evm-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+
+  @media (max-width: 767px) {
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+}
+
+.evm-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid $neutral-100;
+  background: #fafbfc;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+
+  &--done {
+    border-color: #d9f7be;
+    background: #f6ffed;
+  }
+
+  &--pending {
+    border-color: #ffe7ba;
+    background: #fffbe6;
+  }
+
+  &__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: #e6f7ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: $clrThird;
+    flex-shrink: 0;
+
+    &--google {
+      background: #fff1f0;
+      color: #cf1322;
+    }
+  }
+
+  &__info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__label {
+    font-size: 12px;
+    color: $neutral-500;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  &__value {
+    font-size: 14px;
+    color: #1a1d21;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__status {
+    flex-shrink: 0;
+  }
+}
+
+.evm-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+
+  &--pending {
+    background: #fff7e6;
+    color: #d48806;
+    border: 1px solid #ffe58f;
+  }
+
+  &--warning {
+    background: #fff2e8;
+    color: #d4380d;
+    border: 1px solid #ffbb96;
+  }
+}
+
+.evm-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+
+  @media (max-width: 767px) {
+    margin-bottom: 12px;
+  }
+
+  .ant-btn-primary {
+    height: 44px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 15px;
+    background: linear-gradient(135deg, $clrThird 0%, $teal-dark 100%);
+    border: none;
+
+    &:hover {
+      background: linear-gradient(135deg, #2ec8d5 0%, #1fb0bd 100%);
+    }
+  }
+
+  .evm-google-btn.ant-btn-primary {
+    background: linear-gradient(135deg, #4285f4 0%, #3367d6 100%);
+
+    &:hover {
+      background: linear-gradient(135deg, #5a95f5 0%, #4478e0 100%);
+    }
+  }
+}
+
+.evm-link-btn {
+  color: $clrThird !important;
+  font-size: 13px;
+  padding: 0;
+  height: auto;
+
+  &:hover {
+    color: $teal-dark !important;
+  }
+}
+
+.evm-dismiss {
+  display: block;
+  width: 100%;
+  text-align: center;
+  background: none;
+  border: none;
+  color: $neutral-500;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 8px 0 0;
+  border-top: 1px solid $neutral-100;
+
+  &:hover {
+    color: $neutral-700;
+  }
+}
