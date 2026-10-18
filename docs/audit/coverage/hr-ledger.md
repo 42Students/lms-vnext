@@ -610,3 +610,24 @@ These paths require one test row **per exported function** after parsing each fi
 | HR-BREAK-profile-01 / `isExactRecruiterEmployerRow` | `tests/unit/HR-BREAK-profile-01.test.ts` / identical college ID relationship mismatch case | Fixture now statically typed to the complete `RecruiterContext.grants` shape; preserves multi-college denial checks | CI test-typecheck and revoked grant / relationship database query |
 
 The previously recorded 154-file inventory is not exhaustive behavioural certification; **OPEN** rows stay open until full role-state/tenancy/transactional assertions and CI execution are reviewed. Branch updates are not evidence of a production deploy.
+
+## IIT Dharwad Projects HR-view role boundary (2026-10-18)
+
+| Risk | Evidence | State |
+|---|---|---|
+| PROJ-BREAK-HR-ORG-02: identical college ID with foreign organization | `requireProjectReadAccess` checks membership college **and** membership organization against authoritative project-college scope before project-member lookup. `tests/unit/PROJ-BREAK-HR-01.test.ts` rejects a forged organization context and checks no project membership SELECT or module access. | SOURCE FIX + TEST AUTHORED, not executed |
+| HR/recruiter hiring grant without project membership | `PROJ-BREAK-HR-01` tests no college member, wrong tenant, suspended membership, revoked/inactive recruiter context, and lifecycle denial. | TEST AUTHORED; real database ownership and expired-session checks OPEN |
+
+No HR/Recruiter account obtains Projects access merely through employer/drive grants. Actual PostgreSQL member rows, role revocation and parallel session tests are still required for the IIT Dharwad acceptance gate.
+
+
+## HR interview-slot service adverse matrix (2026-10-18)
+
+| Gap or service behavior | Authored test | Verified in CI? | Remaining work |
+|---|---|---|---|
+| HR-SLOT-SCOPE-01/02 revoked recruiter, missing job, denied write role | `tests/unit/HR-BREAK-chat15-interview-slots-03.test.ts` mocked transaction rejects before slot access/side effects | No | Live cross-company and wrong college SQL fixtures |
+| HR-SLOT-VERSION-01/ACTOR-02 stale tab and wrong creator | Same test requires no update/no TPO notification | No | Parallel locked row races in PostgreSQL |
+| HR-SLOT-STATE-03/04 valid OFFER and capacity/terminal/past enforcement | Same test verifies exactly one TPO action, no writes on invalid stage | No | Real capacity with two simultaneous bookers, rollback behavior |
+| HR-SLOT-INPUT-01 strict tenant/action/version input | Same test requires rejection before transaction | No | HTTP 400/403/409 state and same-origin behavior on real requests |
+
+| HR-SLOT-READ-01/02 / `listHrInterviewSlots` | `tests/unit/HR-BREAK-chat15-interview-slots-03.test.ts`: returns own editable slot, marks another creator's slot read-only; revocation denies before private row read, no side effects | No | Real revocation mid-session, database wrong-college row and alternate account browser flow |

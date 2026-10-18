@@ -9,6 +9,7 @@ import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import type { RequestContext } from "@/modules/identity/context";
 import { requireProjectLifecycleMutationAccess } from "./access";
+import {assertPersistedProjectMutationActor} from "./persisted-mentor-mutation";
 import { ProjectsServiceError, postgresConstraintName } from "./errors";
 import {
   mentorSprintCreateParamsSchema, mentorSprintCreateSchema,
@@ -37,6 +38,7 @@ export async function createMentorProjectSprint(
       if(!project || !["PLANNED","ACTIVE"].includes(project.status)) {
         throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
       }
+      await assertPersistedProjectMutationActor(tx,context,scope);
       const [release]=await tx.select({id:projectReleases.id,status:projectReleases.status})
         .from(projectReleases)
         .where(and(eq(projectReleases.id,input.releaseId),
@@ -99,6 +101,7 @@ export async function transitionMentorProjectSprint(
     if(!project || project.status==="ARCHIVED" || project.status==="COMPLETED") {
       throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
     }
+    await assertPersistedProjectMutationActor(tx,context,scope);
     if (input.action !== "COMPLETE") {
       const [primary] = await tx.select({id:projectMembers.id}).from(projectMembers)
         .where(and(eq(projectMembers.projectId,scope.project.id),

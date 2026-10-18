@@ -68,3 +68,11 @@ These are named and scope-specific tests, but full per-export coverage of all se
 
 
 | `PUT /api/placements/tpo/my-notification-preferences`, `PUT /api/placements/tpo/settings/outcome-labels`, `PUT /api/placements/tpo/settings/prep-readiness` | Same-origin before actor lookup; 8 KiB binary stream cap; malformed UTF-8/JSON 400, oversized 413; service gets authenticated context, no caller identity; 401/403 mapped by shared API boundary; no successful response echoes injected IDs | `tests/unit/chat11-tpo-settings-route-boundary.test.ts`, `TPO-settings-audit-BODY-02` | Live HTTP chunks, per-tenant DB scopes and browser retries |
+
+| `tpoConfigVersionSchema`, `hasCurrentTpoConfigVersion`, `tpoJobTypeNameSchema`, `tpoBlockedDaySchema` | RFC3339 offset token, exact persisted ISO version, valid date-only including leap-day, max 40 Unicode job-title characters with combining marks, at least one alphanumeric and punctuation injection denial | `tests/unit/chat11-tpo-config-validation.test.ts`, `TPO-settings-audit-CONFIG-01` | PostgreSQL legacy persisted labels and timezone rendering |
+
+
+| `tpoSettingsCollegeIdSchema`, `buildTpoTeamRoster`, `summarizeTpoTeam` | UUID validation, dedupe active TPO/College Admin and dedicated faculty/learner assignments, exclude disabled/suspended, ordered dated drive duties, honest summary counts | `tests/unit/chat11-tpo-people-read-adversarial.test.ts`, `TPO-settings-audit-PEOPLE-01` | Real PostgreSQL rows with dual roles and large roster |
+| `getTpoPlacementTeam` | Checked server reader college membership/organization scope, optional tables unavailable rather than fabricated coordinator counts | Same test `PEOPLE-01` (model behavior + source access witness) | Actual HTTP role matrix and missing-table injection |
+| `buildTpoTrustedCompanies`, `buildTpoTrustedDomains` | Company trust is per-college relationship flag; global primary domain is never implicitly approved; explicit domains sorted/canonicalized and deduped by earliest record | Same file `TPO-settings-audit-TRUST-01` | PostgreSQL out-of-tenant relationship check |
+| `getTpoTrustedCompanies` | Explicit trusted domains queried only under the TPO's selected college, total null when table unavailable, no inferred allowlist from company primary domain | Same test `TRUST-01` (source and model) | Real database 403 + historical invalid domain migration |

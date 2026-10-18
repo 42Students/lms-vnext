@@ -58,3 +58,24 @@ The published `docs/orchestrator/unit-failures-latest.md` identifies three chat-
 - **Reproduction from source:** Before this patch, `PersonMembershipActions.mutateRole` called `setCurrentRoles(payload.roles)` even after an HTTP 200 with HTML/invalid JSON, resulting in a thrown exception. Lifecycle treated a 200 without a valid `person.membership.status` as a successful change, closed dialogs, cleared the typed suspension reason and announced the old state. Neither action caught network errors, and simultaneous role/lifecycle actions had no shared immediate lock.
 - **Fix:** Validate that role responses contain unique known roles consistent with the requested grant/revoke, and that lifecycle receipts confirm exactly SUSPENDED/ACTIVE/ENDED for the requested action. Do not announce success or destroy unsent suspension reasons for malformed receipts. Catch failed network requests and offer reload-before-retry. Use ref locks to block double submissions and conflicting role/lifecycle writes. No legacy copy assertions were weakened.
 - **Evidence:** `src/modules/people/membership-action-receipt.ts`, `src/components/admin/person-membership-actions.tsx`, `tests/unit/SA-PEOPLE-BREAK-chat3-01.test.ts`. Tests have not been run in this connector-only environment; awaiting cloud TypeScript and Vitest verification.
+
+
+### PROJ-FAC-ROLE-011 — stale actor and project Mentor grant across transaction boundary (S1)
+
+- **Evidence:** `transitionMentorProjectTask` loaded `requireProjectLifecycleMutationAccess` before opening its write transaction and then locked the project/task rows without reloading the actor or Project Member grant. A suspended/disabled user, revoked Mentor membership role, or ended/read-only project membership after the page check could reuse a stale session for a write.
+- **Fix:** New `assertPersistedProjectMutationActor` reconstructs and SHARE-locks the persisted platform user, selected college membership and role assignments inside the write transaction and then SHARE-locks the exact active project Mentor row; rejects missing/stale membership, non-Mentor, Observer/Reviewer/QA, and `can_mutate=false`. Super Admin / College Admin use a persisted `projects.manage` check. `transitionMentorProjectTask` invokes it **after the project row lock but before reading or updating the task**.
+- **Tests:** `tests/unit/PROJ-BREAK-FACULTY-07.test.ts` exercises revocation, terminated assignment, wrong role, readonly kind and admin path; `tests/unit/PROJ-BREAK-FACULTY-03.test.ts` checks revocation before any task read/write/activity. Full PostgreSQL concurrent-UPDATE races and reviewer signoff remain required.
+- **State:** Code/tests committed to `chatgpt/chat-3-b`; waiting for cloud CI and independent Projects reviewer. Remaining Mentor write surfaces must receive the same persisted-actor gate before calling the module complete.
+
+
+### PROJ-FAC-ROLE-012 — stale Mentor session meeting mutation (S1)
+
+- **Affected actions:** complete/cancel meeting, edit outcome notes, reschedule a meeting.
+- **Defect:** each action authorized using a request-context snapshot **outside** its DB transaction and did not recheck the persisted user's platform status, membership status, Mentor role, and active writable project membership after locking the project. An expired or removed Mentor grant could therefore race against a meeting write.
+- **Fix:** invoke `assertPersistedProjectMutationActor(tx,context,scope)` inside the write transaction, after locking the exact project and before reading/changing its meeting. Reject deleted/read-only/foreign grants under SHARE locks; leave notification and audit routines untouched on rejection.
+- **Evidence:** `src/modules/projects/mentor-meeting-decision-service.ts`, `mentor-meeting-notes-service.ts`, `mentor-meeting-reschedule-service.ts`, plus `tests/unit/PROJ-BREAK-FACULTY-06.test.ts` for all three revoked-state writes. Existing `tests/integration/mentor-meeting-notes.test.ts` and `mentor-meeting-reschedule.test.ts` cover canonical seeded PostgreSQL activity. Fresh CI and independent review remain mandatory.
+
+
+### PROJ-FAC-ROLE-013 — stale Mentor grant across sprint create or transition (S1)
+
+`createMentorProjectSprint` and `transitionMentorProjectSprint` both performed Project Mentor access checks before beginning the write transaction, allowing an already-deactivated Mentor or ended project grant to race the write after project locking. Both now call `assertPersistedProjectMutationActor` under the same transaction/locked project row before releasing any new Sprint, changing status or emitting activity. Unit regression `tests/unit/PROJ-BREAK-FACULTY-09.test.ts` verifies role revocation and terminal Project states produce no inserts, updates or activity. Cloud CI and independent review are pending; real multi-session PostgreSQL concurrency is not yet proven.

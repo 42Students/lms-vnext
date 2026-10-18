@@ -169,3 +169,21 @@ The latest orchestrator unit report named seven additional failed assertions, al
 | HR-BREAK-JOB-02 | 5 | All malformed recruiter filters use a safe `ErrorState` with `action={<Link>Clear filters</Link>}`. The test text walker omitted `action`, incorrectly reporting five separate missing recovery actions. | Read `action` React content; leave all five invalid-filter and no-redirect assertions in place. | `00488860` |
 
 These are evidence-based test corrections against current source. The next cloud CI round determines confirmed pass/fail; no test was skipped or removed.
+
+## Independent messaging receipt history hardening
+
+| Finding ID | Pre-fix severity | Source evidence | Defect and fix | Commit | Direct regression |
+|---|---|---|---|---|---|
+| HR-BREAK-MESSAGING-CSV-02 | MAJOR | `src/modules/messaging/receipt-history-export-model.ts`, prior CSV guard only recognized `\\s`, selected ASCII controls and one zero-width code point | A purpose prefixed with Unicode word-joiner, joiner, or paragraph separator before `=`, `+`, `-`, `@` could bypass CSV formula neutralization. Expanded prefix set to Unicode control, format and separator classes, preserving numeric aggregate exports and quoted CSV. | `ff4cc631` | `tests/unit/HR-BREAK-chat19-messaging-csv-unicode.test.ts` (`56ad0e20`) |
+| HR-BREAK-MESSAGING-HISTORY-01 | COVERAGE | `src/modules/messaging/receipt-history-service.ts`, previously not referenced by unit tests | Exercised both exported service functions using transaction/authorization mocks for TPO vs recruiter vs wrong role, disabled session, persisted grant recheck, malformed filters, bounded pagination and 2001-row cap. No code defect found in reviewed path. | `133cd61c`, `0dc7ace6` | `tests/unit/HR-BREAK-chat19-messaging-receipt-history-service.test.ts` |
+
+Cloud verification of the newly authored service mocks is pending a post-merge CI cycle; this ledger distinguishes authored test coverage from a confirmed passing run.
+
+## Projects independent breaker additions
+
+| ID | Pre-fix severity | Source | Defect / correction | Commit(s) | Regression |
+|---|---|---|---|---|---|
+| PROJ-BREAK-TEAM-MOVE-01 | MAJOR | `src/modules/projects/class-team-split-model.ts` (`movePreviewMember`) | Moving the sole learner out of a team produced an empty group; `classTeamPreviewSchema` disallows empty membership arrays, so the planner could show an impossible-to-submit preview. Deny the move before mutating, preserve immutable prior plan and allow harmless same-team selection. | `eb6e9698` | `tests/unit/PROJ-BREAK-chat19-team-preview-integrity.test.ts` (`4b7229c4`) |
+| PROJ-BREAK-COLLEGE-LOCK-01 | COVERAGE | `src/modules/projects/admin-submission-lock-policy.ts` | Exercised membership FK actor policy for active College Admin, disabled/suspended, wrong org/college, TPO, learner, recruiter grants and Super Admin acting-college denial. No source defect identified. | `f14fbeb2` | `tests/unit/PROJ-BREAK-chat19-admin-delivery-lock-role.test.ts` |
+
+The new planner guard is a source change; browser and PostgreSQL verification remain orchestrator gates.
