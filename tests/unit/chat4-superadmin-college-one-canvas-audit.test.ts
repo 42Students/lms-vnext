@@ -59,7 +59,7 @@ describe("Super Admin colleges/organizations canvas and page states", () => {
     expect(readiness).not.toContain('className="rounded-xl border border-border bg-surface p-5"');
     expect(readiness).toContain("Unknown source");
     expect(readiness).toContain("UNKNOWN means the underlying");
-    expect(readiness).toContain("A missing source never counts as ready.");
+    expect(readiness).toContain("An unknown check");
     expect(readiness).toContain("No readiness checks match the selected status and area.");
     expect(readiness).toContain('className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"');
   });
