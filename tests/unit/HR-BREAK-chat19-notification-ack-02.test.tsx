@@ -20,7 +20,7 @@ describe("HR-BREAK-NOTIFICATIONS-02: recruiter receipt double submit and revocat
   [401,"session has ended"],[403,"no longer have access"],
   [404,"no longer available"],[409,"changed"],
   [429,"Too many requests"],[500,"Unable to mark as read"],
- ])("maps response %i to safe guidance rather than leaking network errors", (status,phrase)=>{
+ ] as const)("maps response %i to safe guidance rather than leaking network errors", (status,phrase)=>{
   expect(hrNotificationReadError(status)).toContain(phrase);
   expect(hrNotificationReadError(status)).not.toMatch(/SQL|UnauthorizedError|PLACEMENT_/);
  });
