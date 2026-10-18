@@ -1,6 +1,7 @@
 import {describe,expect,it} from "vitest";
 import {
- requestRowsTsv,type TpoRequestClipboardRow,
+ requestRowsTsv,sortRequestClipboardRows,selectedRequestClipboardRows,
+ type TpoRequestClipboardRow,
 } from "@/components/placements/tpo-request-page-clipboard";
 
 const rows:TpoRequestClipboardRow[]=[{
@@ -24,6 +25,22 @@ const rows:TpoRequestClipboardRow[]=[{
 }];
 
 describe("UX-SPILL-TPO-CLIP-01: secure college request clipboard export",()=>{
+ it("sorts and copies selected rows in the order actually displayed, never adding stale prior-page IDs",()=>{
+  expect(sortRequestClipboardRows(rows,"ASKED_NEW").map(row=>row.id)).toEqual(["first","second"]);
+  expect(sortRequestClipboardRows(rows,"ASKED_OLD").map(row=>row.id)).toEqual(["second","first"]);
+  expect(sortRequestClipboardRows(rows,"DECIDED_NEW").map(row=>row.id)).toEqual(["first","second"]);
+  expect(selectedRequestClipboardRows(rows,["second","old-page"],"ASKED_NEW").map(row=>row.id))
+    .toEqual(["second"]);
+  expect(selectedRequestClipboardRows(rows,["old-page"],"ASKED_NEW")).toEqual([]);
+ });
+ it("sort helpers never mutate the original visible rows during rapid sort toggle",()=>{
+  const before=JSON.stringify(rows);
+  for(const sort of ["ASKED_NEW","ASKED_OLD","DECIDED_NEW","DECIDED_OLD"] as const){
+    sortRequestClipboardRows(rows,sort);
+    selectedRequestClipboardRows(rows,["first"],sort);
+  }
+  expect(JSON.stringify(rows)).toBe(before);
+ });
  it("copies the same allowed columns selected in the on-screen table, not hidden companies/identifiers",()=>{
   const copied=requestRowsTsv(rows,["student","status"]);
   expect(copied).toBe("Student\tStatus\nAnanya\tOPEN\nBharat\tCLOSED");
