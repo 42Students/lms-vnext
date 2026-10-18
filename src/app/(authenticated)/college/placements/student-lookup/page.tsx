@@ -22,7 +22,7 @@ export default async function CollegePlacementStudentLookup({searchParams}:{
    <label className="grid max-w-xl gap-2 text-sm font-semibold">Name, roll number or email
     <input type="search" name="q" minLength={3} maxLength={150} required defaultValue={q}
       placeholder="Find one student in this college"
-      className="min-h-11 rounded border border-border bg-surface px-3"/>
+      className="min-h-11 rounded border border-border bg-surface px-3 text-base sm:text-sm"/>
    </label>
    <button className="mt-3 min-h-11 rounded bg-primary px-4 font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] inline-flex items-center">Search students</button>
   </form>
