@@ -41,7 +41,7 @@ export async function getTpoDriveClosePreview(context:RequestContext,rawJobId:un
   const issuedOffers=unreleased?.n??0;
   const pendingSelections=await unreleasedSelections(tx,job.id);
   return {id:job.id,title:job.title,status:job.status,expectedUpdatedAt:job.updatedAt.toISOString(),
-   canClose:job.status==="PUBLISHED"&&season?.status==="ACTIVE"&&issuedOffers===0&&pendingSelections===0,
+   canClose:job.status==="PUBLISHED"&&issuedOffers===0&&pendingSelections===0,
    issuedOffers,pendingSelections,counts:await impact(tx,job.id)};
  });
 }
