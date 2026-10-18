@@ -321,3 +321,26 @@ These paths require one test row **per exported function** after parsing each fi
 | `src/modules/placements/hr-conversation-inbox-model.ts` | `scopeRecruiterConversations` | **OPEN** — exact behavioural test and role matrix pending |
 | `src/modules/placements/hr-conversation-inbox-model.ts` | `countScopedConversations` | **OPEN** — exact behavioural test and role matrix pending |
 | `src/modules/placements/hr-conversation-inbox-service.ts` | `listHrConversations` | **OPEN** — exact behavioural test and role matrix pending |
+
+## Exported functions inventory offset 12 (16 files; 16 functions)
+
+| Source | Exported function | Test closure |
+|---|---|---|
+| `src/modules/placements/hr-conversation-open-model.ts` | (no direct exported function detected) | Inspect schemas/types and re-exports |
+| `src/modules/placements/hr-conversation-reply-model.ts` | (no direct exported function detected) | Inspect schemas/types and re-exports |
+| `src/modules/placements/hr-conversation-return-url-model.ts` | `recruiterInboxReturnUrl` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-conversation-send-feedback-model.ts` | `hrReplySuccess` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-conversation-send-feedback-model.ts` | `hrReplyErrorMessage` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-conversation-snippet-model.ts` | `conversationSnippet` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-conversation-unread-model.ts` | `summarizeRecruiterUnread` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-conversation-urls-model.ts` | `hrConversationsHref` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-display-name-model.ts` | `normalizeHrDisplayName` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-display-name-model.ts` | `sameHrNameVersion` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-display-name-service.ts` | `updateOwnHrDisplayName` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-draft-compensation-review-model.ts` | `hrDraftCompensationWarnings` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-draft-preview-model.ts` | `hrDraftPreviewRounds` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-draft-reset-model.ts` | `hrDraftContainsWork` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-draft-round-duplicate-model.ts` | `duplicateHrDraftRound` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-draft-round-order-model.ts` | `reorderHrDraftRound` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-drive-attention-model.ts` | `hrDriveAttention` | **OPEN** — exact behavioural test and role matrix pending |
+| `src/modules/placements/hr-drive-conversation-model.ts` | `recruiterDriveThreads` | **OPEN** — exact behavioural test and role matrix pending |
