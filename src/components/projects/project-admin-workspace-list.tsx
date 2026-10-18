@@ -18,6 +18,11 @@ export type ProjectAdminWorkspaceListItem = {
   riskReasons?: readonly string[];
 };
 
+/** Do not announce impossible backend progress as a valid ARIA percentage. */
+export function safeProjectProgressPercent(value: number): number | null {
+  return Number.isFinite(value) && value >= 0 && value <= 100 ? value : null;
+}
+
 function tone(status: string) {
   if (
     status === "ACTIVE" ||
@@ -77,14 +82,17 @@ export function ProjectAdminWorkspaceList({
       {key:"mentor",header:"Mentor",mobilePriority:"secondary",cell:item=>item.mentorName??"Unassigned"},
       {key:"status",header:"Status",mobilePriority:"secondary",cell:item=>
         <StatusBadge tone={tone(item.status)}>{collegeWorkspaceStatusLabel(item.status,item.riskReasons)}</StatusBadge>},
-      {key:"progress",header:"Progress",mobilePriority:"secondary",cell:item=>
+      {key:"progress",header:"Progress",mobilePriority:"secondary",cell:item=>{
+        const progress=safeProjectProgressPercent(item.progressPercent);
+        return progress===null ? <span className="text-sm text-muted-foreground">Progress unavailable</span> :
         <div className="flex items-center gap-2">
           <div role="progressbar" aria-label={item.title+" progress"} aria-valuemin={0}
-            aria-valuemax={100} aria-valuenow={item.progressPercent}
+            aria-valuemax={100} aria-valuenow={progress}
             className="h-2 w-24 overflow-hidden rounded bg-muted">
-            <div className="h-full bg-primary" style={{width:item.progressPercent+"%"}}/></div>
-          <span className="tabular-nums">{item.progressPercent}%</span>
-        </div>},
+            <div className="h-full bg-primary" style={{width:progress+"%"}}/></div>
+          <span className="tabular-nums">{progress}%</span>
+        </div>;
+      }},
       {key:"members",header:"Members",mobilePriority:"secondary",cell:item=>item.memberCount},
       {key:"action",header:"Action",mobilePriority:"action",cell:item=>
         <div className="flex flex-wrap items-center gap-2">
@@ -140,8 +148,9 @@ export function ProjectAdminWorkspaceList({
             <Metric
               label="Progress"
               value={
-                item.progressPercent +
-                "%"
+                safeProjectProgressPercent(item.progressPercent)===null
+                  ? "Unavailable"
+                  : safeProjectProgressPercent(item.progressPercent) + "%"
               }
             />
           </div>
