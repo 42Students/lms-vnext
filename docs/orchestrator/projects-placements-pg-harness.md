@@ -209,3 +209,6 @@ A PostgreSQL integration witness wraps only the task-status CAS result to simula
 
 ### PROJ-HARNESS-RECRUITER-24: no orphaned company profiles on grant failures
 The recruiter fixture wraps global user creation, company profile and verified relationship grant in a single SAVEPOINT. A simulated grant-insert failure in a real PostgreSQL transaction proves no orphaned profile persists and a subsequent legitimate recruiter fixture can succeed. Preflight now checks grant expiry and verification columns. Roles/grants still require independent product service tests; browser/DB CI deferred by owner.
+
+### PROJ-HARNESS-RECRUITER-25/26: grant lifecycle and validation witnesses
+Real PostgreSQL cases now assert the active-grant unique index rejects a duplicate recruiter/relationship pair; a properly revoked grant can be reissued without leaving two ACTIVE records. They also assert database CHECK refusal for non-whitelisted grant capability, nonexistent verification status, and an expiry older than grant creation. These state/constraint witnesses help HR lanes test safe revocation and reissue, but do not replace runtime recruiter authorization checks.
