@@ -73,6 +73,31 @@ export async function dispatchRecruiterUnreadMessageDigests(
     .where(eq(placementRecruiterMessageMailState.threadId,candidate.thread_id))
     .for("update").limit(1);
    if(!state||state.recruiterUserId!==candidate.recruiter_user_id)return false;
+   // The due-list query is only a snapshot. Recheck current recruiter, company,
+   // college, job and DRIVES grant inside this locked send transaction: a
+   // revoked grant or changed recipient email must not receive a digest.
+   const grant=await tx.execute<{allowed:boolean}>(sql`
+    select exists(
+     select 1 from placement_tpo_message_threads t
+     join users u on u.id=t.recruiter_user_id and u.platform_status='ACTIVE'
+     join placement_recruiter_profiles p on p.user_id=u.id and p.status='ACTIVE'
+     join placement_recruiter_college_grants g on g.recruiter_user_id=u.id
+       and g.status='ACTIVE' and g.verification_status='VERIFIED'
+       and g.valid_until > ${now} and 'DRIVES'=any(g.capabilities)
+     join placement_company_relationships r on r.id=g.company_relationship_id
+       and r.company_id=p.company_id and r.college_id=t.college_id and r.status='ACTIVE'
+     join placement_companies co on co.id=p.company_id and co.status='ACTIVE'
+     join colleges c on c.id=t.college_id and c.status='ACTIVE'
+     where t.id=${candidate.thread_id}::uuid
+       and t.recruiter_user_id=${candidate.recruiter_user_id}::uuid
+       and lower(u.email)=lower(${candidate.recipient_email}::text)
+       and (t.job_id is null or exists(
+         select 1 from placement_jobs j where j.id=t.job_id
+           and j.college_id=t.college_id and j.company_relationship_id=r.id
+       ))
+    ) as allowed
+   `);
+   if(grant.rows[0]?.allowed!==true)return false;
    const messages=await tx.select({id:placementTpoMessages.id,body:placementTpoMessages.body,
       createdAt:placementTpoMessages.createdAt})
     .from(placementTpoMessages).where(and(
