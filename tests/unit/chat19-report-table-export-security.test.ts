@@ -12,6 +12,8 @@ describe("UX-SPILL-HR-01: employer and college report exports are safe for sprea
   "\uFEFF=1+2",
   "\u200B-1+2",
   "\u00A0=cmd",
+  "\u2028=HYPERLINK(1)",
+  "\u2029+SUM(1,2)",
   "\r\n@sum",
  ])("escapes attacker-controlled text %j in CSV", input=>{
   const csv=safeReportCsvCell(input);
@@ -35,6 +37,7 @@ describe("UX-SPILL-HR-01: employer and college report exports are safe for sprea
  });
  it("clipboard output cannot insert a forged row/column or executable formula",()=>{
   expect(safeReportTsvCell("\n=SUM(1,2)\tsecond")).toBe("' =SUM(1,2) second");
+  expect(safeReportTsvCell("\u2028=1")).toBe("' =1");
   const tsv=reportTableTsv(["Role","Count"],[
     ['=HYPERLINK("example")\tSECRET',5],
     ["Needs\nverification",0],
