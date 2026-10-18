@@ -81,6 +81,19 @@ describe("PROJ-BREAK-COLLEGE-04-READ-02/03/04 role revocation while reading Proj
   expect(mocks.transaction).not.toHaveBeenCalled();
   expect(mocks.select).not.toHaveBeenCalled();
  });
+ it("hides foreign College IDs from wrong-role users before even the college-existence lookup",async()=>{
+  const other="55555555-5555-4555-8555-555555555555";
+  for(const call of [
+   ()=>listProjectAdminRiskQueue(actor,other,{}),
+   ()=>listProjectAdminSubmissionQueue(actor,other,{}),
+   ()=>getProjectAdminSubmissionSummary(actor,other),
+  ]){
+   await expect(call()).rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
+  }
+  expect(mocks.scope).not.toHaveBeenCalled();
+  expect(mocks.transaction).not.toHaveBeenCalled();
+ });
+
  it("rejects malformed queue filters before evaluating any tenant scope",async()=>{
   await expect(listProjectAdminRiskQueue(actor,collegeId,{page:"1e2"}))
    .rejects.toBeDefined();
