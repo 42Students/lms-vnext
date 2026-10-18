@@ -119,3 +119,5 @@ All newly authored tests remain pending cloud execution; migration retains the p
 | PROJ-HARNESS-PLACEMENTS-17 | S1 (placement lifecycle) | Published job + stale season can become CLOSED while the old fixture still constructs new applicants and offers. | Persisted same-college ACTIVE season required in candidate fixture; SQL test 17 closes the season and verifies no new application; source GUARD-16. | Authored; final PostgreSQL gate pending |
 
 | PROJ-HARNESS-PLACEMENTS-18 | S1 (round state) | Fixture would create staged candidate results for a drive round that had already been cancelled. | Reads selected round status, refuses CANCELLED; PG case 18 and source GUARD-17. | Authored; final PostgreSQL CI pending |
+
+| UX-kit-HARDEN-55 | S2 (motion a11y) | Shared interactive Tabs used a color transition even when the user requested reduced motion. | Adds `motion-reduce:transition-none` and ARIA-preserving tab regression HARDEN-55. | Authored; final browser gate pending |
