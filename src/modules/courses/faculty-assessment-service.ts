@@ -4,7 +4,7 @@ import {
   assignmentSubmissions, courseAssignments, courseLearningPaths, courseLessons, courseQuizzes, lessonContents,
 } from "@/db/schema";
 import { listFacultyCourseDeliveries } from "./faculty-course-service";
-import { facultyAssessmentVisibleToDelivery } from "./faculty-assessment-batch-model";
+import { facultyAssessmentVisibleToDelivery,nextFacultyLessonContentSequence } from "./faculty-assessment-batch-model";
 import type { RequestContext } from "@/modules/identity/context";
 
 /**
@@ -128,7 +128,7 @@ export async function getFacultyAssessmentOverview(context: RequestContext) {
         deliveryId: course.deliveryId, courseCode: course.courseCode,
         courseName: course.courseName, sectionName: course.sectionName,
         lessonId: lesson.id, lessonName: lesson.name,
-        nextSequence: sequences.length ? Math.max(...sequences) + 1 : 0,
+        nextSequence: nextFacultyLessonContentSequence(sequences),
       });
       for (const item of assignments) empty.assignments.push({
         ...item, kind:"ASSIGNMENT", deliveryId:course.deliveryId,

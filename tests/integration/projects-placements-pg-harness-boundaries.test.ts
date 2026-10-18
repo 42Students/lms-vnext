@@ -36,6 +36,72 @@ async function count(db: PgHarness, table: "project_task_submissions" | "project
 }
 
 describe("PROJ-HARNESS role/tenancy and concurrent PostgreSQL fixture boundaries", () => {
+  it("PROJ-HARNESS-PRINCIPAL-30 failed second role grant restores user, membership and first role",async()=>{
+    await withProjectPg(pool,async db=>{
+      const tenant=await createTenant(db);
+      const counts=async()=>db.query<{users:number;memberships:number;roles:number}>(`
+        select (select count(*)::int from users where identity_uid like 'proj-harness-%') as users,
+          (select count(*)::int from college_memberships where college_id=$1) as memberships,
+          (select count(*)::int from membership_roles) as roles`,[tenant.collegeId]);
+      const before=await counts();
+      const failed:PgHarness={...db,
+        async query<T extends QueryResultRow=QueryResultRow>(sql:string,values?:unknown[]):Promise<T[]> {
+          if(sql.includes("insert into membership_roles") && values?.[1]==="TPO")
+            throw new Error("simulated second role grant failure");
+          return db.query<T>(sql,values);
+        },
+      };
+      await expect(createPrincipal(failed,tenant,["COLLEGE_ADMIN","TPO"]))
+        .rejects.toThrow("simulated second role grant failure");
+      expect(await counts()).toEqual(before);
+      const valid=await createPrincipal(db,tenant,["COLLEGE_ADMIN","TPO"]);
+      expect(valid.membershipId).toBeTruthy();
+      expect((await db.query("select role from membership_roles where membership_id=$1",
+        [valid.membershipId]))).toHaveLength(2);
+    });
+  });
+
+  it("PROJ-HARNESS-TENANT-29 failure to create college cannot leave an orphaned organization",async()=>{
+    await withProjectPg(pool,async db=>{
+      const before=await db.query<{n:number}>(`
+        select count(*)::int n from organizations where name like 'Projects harness %'`);
+      const failed:PgHarness={...db,
+        async query<T extends QueryResultRow=QueryResultRow>(sql:string,values?:unknown[]):Promise<T[]>{
+          if(sql.includes("insert into colleges")) throw new Error("simulated college creation failure");
+          return db.query<T>(sql,values);
+        },
+      };
+      await expect(createTenant(failed)).rejects.toThrow("simulated college creation failure");
+      expect(await db.query<{n:number}>(`
+        select count(*)::int n from organizations where name like 'Projects harness %'`)).toEqual(before);
+      await expect(createTenant(db)).resolves.toHaveProperty("collegeId");
+    });
+  });
+
+  it("PROJ-HARNESS-PROJECT-28 late learner-roster failure rolls back template, workspace and task",async()=>{
+    await withProjectPg(pool,async db=>{
+      const f=await actors(db);
+      const counts=async()=>db.query<{templates:number;projects:number;tasks:number;members:number}>(`
+        select (select count(*)::int from project_templates) as templates,
+          (select count(*)::int from project_instances) as projects,
+          (select count(*)::int from project_tasks) as tasks,
+          (select count(*)::int from project_members) as members`);
+      const baseline=await counts();
+      const broken:PgHarness={...db,
+        async query<T extends QueryResultRow=QueryResultRow>(sql:string,values?:unknown[]):Promise<T[]> {
+          if(sql.includes("insert into project_members") && sql.includes("'LEARNER'"))
+            throw new Error("simulated project roster failure");
+          return db.query<T>(sql,values);
+        },
+      };
+      await expect(createProjectFixture(broken,f.own,f.author,f.mentor,f.learner))
+        .rejects.toThrow("simulated project roster failure");
+      expect(await counts()).toEqual(baseline);
+      const second=await createProjectFixture(db,f.own,f.author,f.mentor,f.learner);
+      expect(second.projectId).not.toBe(f.project.projectId);
+    });
+  });
+
   it("PROJ-HARNESS-22 foreign college and unrostered learner cannot create task submissions", async () => {
     await withProjectPg(pool, async db => {
       const f = await actors(db);

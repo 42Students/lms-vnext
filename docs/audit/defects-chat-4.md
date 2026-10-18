@@ -229,3 +229,7 @@ The College Admin archive button received `expectedUpdatedAt` but discarded it b
 ## COL-UX-TERM-MAPPINGS-04 — S2 raw semester table and raw API error leaks
 
 College semester-course mappings used a scroll-only native table that required finding end-of-row Edit/Remove on a phone, although keyboard reordering buttons existed. The mapping list is now a shared `DataTable` with phone-visible action cells and accessible headers while retaining drag and keyboard controls. Duplicate submissions are stopped by a synchronous request guard; unknown API errors no longer show raw provider strings. Source and pure order behavior tests authored; not executed.
+
+## SA-ORGANIZATIONS-ACTOR-09 / SA-COLLEGES-ACTOR-10 — S1 stale privileged session tenant enumeration
+
+`listOrganizations` and `listColleges` relied on cached Super Admin/College Admin request-context role checks, then queried organization and college names without checking persisted user status or role membership at read time. A revoked actor could continue enumerating tenant records until session refresh. Both list exports now hold `assertPersistedPlatformPermission` SHARE locks for the entire read transaction, with exact selected college/organization scope. Each has a denial-before-first-SELECT regression test; PostgreSQL concurrent revocation and service integration still require final validation.

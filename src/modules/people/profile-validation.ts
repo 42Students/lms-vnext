@@ -357,7 +357,17 @@ const certificationSchema = z
     credentialUrl: urlValue,
     description: textValue(3000),
   })
-  .strict();
+  .strict()
+  .superRefine((entry, ctx) => {
+    // Legacy learner certification editor rejects same-day and backwards expiry.
+    // ISO calendar dates sort lexically once calendarDateValue has validated them.
+    if (entry.issueDate && entry.expiryDate && entry.expiryDate <= entry.issueDate) {
+      ctx.addIssue({
+        code: "custom", path: ["expiryDate"],
+        message: "Expiry date must be after issue date",
+      });
+    }
+  });
 
 const achievementSchema = z
   .object({

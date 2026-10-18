@@ -6,7 +6,15 @@ export function tpoStudentUrlError(raw:Record<string,string|string[]|undefined>)
   const supported = new Set(["journeyState","branchId","programId","classId","afterCollege","profileStatus","minApplications","maxApplications","minOffers","maxOffers","offerWaiting","minCgpa","maxCgpa","maxActiveBacklogs","maxPastBacklogs","cgpaRecorded","batchId","search","q","page","pageSize","columns","student",
     "legacyStage","minRoundReached","needsAttention","interviewedWith","debarred","gender","birthYear","minSkills","minProjects","minCertifications","minExperiences","hasProfileLinks",
     "minTenthPct","minTwelfthPct","minDiplomaPct","minUgPct","passingYear","maxGapYears","marksVerified","isLateralEntry","hasResume","hasCodingProfiles","skillName"]);
-  if(Object.entries(TPO_STUDENT_LEGACY_FILTER_ALIASES).some(([alias,key])=>raw[alias]!==undefined&&raw[key]!==undefined))return "Choose each student filter once. No student data was loaded.";
+  const aliasesForTargets=new Set<string>();
+  for(const [alias,key] of Object.entries(TPO_STUDENT_LEGACY_FILTER_ALIASES)){
+    if(raw[alias]===undefined)continue;
+    // Two historical aliases of the same filter are just as ambiguous as
+    // an alias combined with its canonical key. Reject before normalization.
+    if(raw[key]!==undefined||aliasesForTargets.has(key))
+      return "Choose each student filter once. No student data was loaded.";
+    aliasesForTargets.add(key);
+  }
   if(typeof raw.q==="string"&&raw.search!==undefined) return "Use one Students search field at a time.";
   if(Object.keys(raw).some(key=>!supported.has(key)&&!Object.hasOwn(TPO_STUDENT_LEGACY_FILTER_ALIASES,key))) return "Unsupported Students filter. No student data was loaded.";
   if(typeof raw.student==="string"&&!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(raw.student))

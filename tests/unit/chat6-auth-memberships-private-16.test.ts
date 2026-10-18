@@ -71,6 +71,18 @@ describe("AUTH-handoff-16 scoped membership cookies and no-store",()=>{
   expect((await response.text())).not.toContain(ownMembership);
   expect(listMembershipChoices).not.toHaveBeenCalled();
  });
+ it("AUTH-handoff-19 rejects oversized membership JSON before switching the active college",async()=>{
+  const response=await POST(request("POST",{
+   membershipId:ownMembership,oversized:"x".repeat(2500),
+  }));
+  expect(response.status).toBe(413);
+  expect(response.headers.get("Cache-Control")).toBe("private, no-store");
+  expect(await response.json()).toEqual({error:"REQUEST_TOO_LARGE"});
+  expect(response.cookies.get("lms_membership")).toBeUndefined();
+  expect(resolveRequestContext).not.toHaveBeenCalledWith({
+   identityUid:"identity-1",activeMembershipId:ownMembership,
+  });
+ });
  it("rejects forged college and role properties rather than silently ignoring them",async()=>{
   const response=await POST(request("POST",{
    membershipId:ownMembership,collegeId:other,systemRole:"SUPER_ADMIN",

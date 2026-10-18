@@ -202,6 +202,14 @@ export async function requireProjectLifecycleAccess(
 
 /** Shared mutation gate for the legacy Admin and Mentor project workspaces. */
 export async function requireProjectLifecycleMutationAccess(context: RequestContext, projectIdInput: string) {
+  // Recruiter grants, TPO roles and learner membership never authorize
+  // project lifecycle writes. Reject them before looking up module settings
+  // or a project ID, avoiding an unnecessary tenant/configuration read.
+  if (!isSuperAdmin(context) &&
+      !hasMembershipRole(context,"COLLEGE_ADMIN") &&
+      !hasMembershipRole(context,"MENTOR")) {
+    throw new ProjectsServiceError("PROJECT_LIFECYCLE_ACCESS_DENIED");
+  }
   // Deny disabled modules before any project ID existence/tenant lookup.
   // Callers retain their role and tenant checks through the lifecycle guard.
   if (!(await resolveOptionalModuleAccess(context)).projects.enabled) {
