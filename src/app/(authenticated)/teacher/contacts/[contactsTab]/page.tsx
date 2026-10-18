@@ -1,3 +1,4 @@
+import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import {parseFacultyContactsQuery} from "@/modules/courses/faculty-contacts-filter-model";
@@ -139,12 +140,9 @@ export default async function FacultyContactsPage({
                 <option value="50">50</option>
               </select>
             </label>
-            <button
-              type="submit"
-              className="inline-flex min-h-11 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-foreground hover:bg-primary-hover"
-            >
+            <Button type="submit" variant="primary">
               Search
-            </button>
+            </Button>
           </form>
         </div>
         {result.search ? (
