@@ -45,7 +45,7 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
       <p className="mt-1 text-xs text-muted-foreground">Sender identity and conversation-routing status are not verified by this inbox.</p>
       <p className="mt-1 text-xs text-muted-foreground">{new Date(row.receivedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>
       <button type="button" onClick={()=>{setMessage("");setSelected(row);}}
-       className="mt-3 min-h-10 rounded-md border border-border px-4 text-sm font-semibold">Read message</button>
+       className="mt-3 min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Read message</button>
     </article>)}
    </div>}
   {selected?<Drawer open onOpenChange={open=>{if(!open)setSelected(null)}} title={selected.subject||"(No subject)"}
@@ -58,11 +58,11 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
     <div className="mt-4 flex flex-wrap gap-2">
      {(overrides[selected.id]?.status??selected.status)!=="RESOLVED"?
       <button type="button" disabled={busy} onClick={()=>void change(selected,"RESOLVED")}
-       className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+       className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50">
        {busy?"Saving…":"Mark done"}
       </button>:
       <button type="button" disabled={busy} onClick={()=>void change(selected,"NEW")}
-       className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+       className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
        {busy?"Saving…":"Move back to To read"}
       </button>}
     </div>
