@@ -57,6 +57,18 @@ describe("TPO-students-06/07 debarment role revocation and tenant isolation",()=
   })).rejects.toBeInstanceOf(AuthorizationError);
   expect(mock.db).not.toHaveBeenCalled();
  });
+ it("TPO-students-06 refuses an accidental indefinite or conflicting date-and-drives ban before any private DB read",async()=>{
+  const base={collegeId:COLLEGE,membershipId:LEARNER,reason:"Policy restriction"};
+  await expect(createPlacementDebarment(ctx,base)).rejects.toBeDefined();
+  await expect(createPlacementDebarment(ctx,{...base,untilDate:"2099-12-01",untilDrives:2}))
+   .rejects.toBeDefined();
+  await expect(createPlacementDebarment(ctx,{...base,untilDrives:0}))
+   .rejects.toBeDefined();
+  await expect(createPlacementDebarment(ctx,{...base,untilDate:"2099-02-30"}))
+   .rejects.toBeDefined();
+  expect(mock.actor).not.toHaveBeenCalled();
+  expect(mock.db).not.toHaveBeenCalled();
+ });
  it("checks persisted role inside every write transaction after the initial actor check",()=>{
   const src=readFileSync(new URL("../../src/modules/placements/debarment-service.ts",import.meta.url),"utf8");
   expect(src.match(/await requireTpoJobActor\(tx,context\)/g)).toHaveLength(3);
