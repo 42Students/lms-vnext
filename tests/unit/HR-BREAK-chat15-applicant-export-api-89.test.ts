@@ -62,7 +62,7 @@ describe("HR-APPLICANTS-API-89 recruiter CSV reads only authorized, bounded shor
    .mockRejectedValueOnce(new Error("grant revoked mid export"));
   const output=await view();
   expect(output.status).toBe(400);
-  expect(output.headers.get("Content-Type")).not.toContain("text/csv");
+  expect(output.headers.get("Content-Type")??"").not.toContain("text/csv");
   expect(m.error).toHaveBeenCalledTimes(1);
  });
 });
