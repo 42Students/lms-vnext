@@ -109,6 +109,19 @@ describe("PROJ-BREAK-MENTOR-178..184 read-service access and disabled modules",(
   expect(state.dbCalls).toBe(0);
   expect(state.rosterCalls).toBe(0);
  });
+ it("PROJ-BREAK-MENTOR-185 disabled risk readiness hides all project evidence before scope lookup",async()=>{
+  state.enabled=false;
+  const result=await getMentorRiskReadiness(context(),{projectId});
+  expect(result).toMatchObject({
+   enabled:false,projectTitle:"",projectStatus:"",
+   riskCount:0,readinessGapCount:0,total:0,items:[],
+   counts:{blockedTasks:0,reviewTasks:0,pendingMeetings:0,
+    scheduledPastDay:0,incompleteTasks:0},
+  });
+  expect(state.scopedCalls).toBe(0);
+  expect(state.dbCalls).toBe(0);
+  expect(state.readinessCalls).toBe(0);
+ });
  it("PROJ-BREAK-MENTOR-181 direct project pages reject foreign project scope before database",async()=>{
   state.scopeCollege="foreign-college";
   await expect(getMentorRiskReadiness(context(),{projectId}))
