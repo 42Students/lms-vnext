@@ -27,8 +27,9 @@ beforeEach(()=>{
   vi.resetAllMocks();
   vi.mocked(isSameOriginRequest).mockReturnValue(true);
   vi.mocked(getCurrentRequestContext).mockResolvedValue(context as never);
+  // The real API error contract includes customer-safe copy and a request reference.
   vi.mocked(apiErrorResponse).mockImplementation(()=>NextResponse.json(
-    {error:"PROJECT_SUBMISSION_CONFLICT"},{status:409}));
+    {error:"PROJECT_SUBMISSION_CONFLICT",message:"This draft changed. Refresh and try again.",requestId:"test-ref"},{status:409}));
   vi.mocked(updateProjectSubmissionDraft).mockResolvedValue({id:submissionId,updatedAt:new Date(revised)} as never);
   vi.mocked(submitProjectSubmission).mockResolvedValue({id:submissionId,status:"SUBMITTED"} as never);
 });
@@ -74,7 +75,7 @@ describe("PROJ-BREAK-submissions-10/11 authenticating shared draft writes at HTT
     vi.mocked(updateProjectSubmissionDraft).mockRejectedValueOnce(new Error("sensitive PG sql"));
     const response=await PATCH(request("PATCH",{summary:"newer",expectedUpdatedAt:revised}),params);
     expect(response.status).toBe(409);
-    expect(await response.json()).toEqual({error:"PROJECT_SUBMISSION_CONFLICT"});
+    expect(await response.json()).toEqual({error:"PROJECT_SUBMISSION_CONFLICT",message:"This draft changed. Refresh and try again.",requestId:"test-ref"});
     expect(apiErrorResponse).toHaveBeenCalledOnce();
   });
 });
