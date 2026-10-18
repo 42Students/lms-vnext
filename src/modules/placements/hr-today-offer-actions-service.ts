@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,inArray,sql} from "drizzle-orm";
+import {and,eq,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,placementApplications,placementApplicationScreenings,
  placementJobs,placementOffers,users} from "@/db/schema";
@@ -20,6 +20,7 @@ export async function listRecruiterTodayOfferActions(collegeId:string,
   .innerJoin(users,eq(users.id,collegeMemberships.userId))
   .where(and(inArray(placementJobs.id,ids),eq(placementJobs.collegeId,collegeId),
    eq(placementJobs.status,"PUBLISHED"),
+   isNull(placementJobs.archivedAt),
    eq(collegeMemberships.collegeId,collegeId),eq(collegeMemberships.status,"ACTIVE"),
    eq(users.platformStatus,"ACTIVE"),
    eq(placementApplicationScreenings.status,"SHORTLISTED"),
