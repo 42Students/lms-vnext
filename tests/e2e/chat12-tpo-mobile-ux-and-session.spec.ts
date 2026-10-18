@@ -31,11 +31,12 @@ test.describe("PROJ-BREAK-TPO-E2E-01 TPO phone, focus and tenant session journey
    test.setTimeout(75_000);
    await authenticateGracefulRole(context,"tpo");
    await page.setViewportSize({width,height:720});
-   await page.goto("/tpo/companies");
+   await page.goto("/tpo/companies?directory=1");
    await expect(page.getByRole("heading",{level:1,name:"Companies"})).toBeVisible();
    expect(await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth))
     .toBeLessThanOrEqual(2);
-   await expect(page.getByRole("navigation",{name:"Company directory tabs"})).toBeVisible();
+   await expect(page.getByRole("link",{name:"Archived relationships"})).toBeVisible();
+   await expect(page.getByLabel("Search companies")).toBeVisible();
   });
  }
  test("learner membership cannot open TPO roster, including a pasted foreign student ID",async({page,context})=>{

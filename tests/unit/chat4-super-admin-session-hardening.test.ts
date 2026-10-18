@@ -43,6 +43,29 @@ describe("Super Admin tenant sessions adversarial management",()=>{
   expect(s).toContain("eq(collegeMemberships.userId,userId)");
   expect(s).toContain('inArray(membershipRoles.role,["COLLEGE_ADMIN","TPO"])');
   expect(s).toContain('if(!isSuperAdmin(ctx))throw new AuthorizationError("college.manage")');
+  // Disabling the target's account is NOT permission to leave live
+  // sessions lingering: an ACTIVE acting Super Admin may still revoke them.
+  expect(s).toContain(".innerJoin(users,eq(users.id,collegeMemberships.userId))");
+  expect(s).not.toContain('eq(users.platformStatus,"ACTIVE")');
+ });
+
+ it("SA-colleges-sessions-READ-01 all sensitive session/target/history readers check the persisted platform role",()=>{
+  const s=source();
+  const actions=[
+   "listCollegeAdminSessionTargets","listCollegeAdminSessions","listCollegeAdminHistory",
+  ];
+  for(const [index,name] of actions.entries()){
+   const start=s.indexOf("export async function "+name+"(");
+   const next=s.indexOf("export async function ",start+20);
+   const body=s.slice(start,next>=0?next:undefined);
+   expect(start).toBeGreaterThan(-1);
+   expect(body).toContain("getDb().transaction(async tx=>");
+   expect(body).toContain('assertPersistedPlatformPermission(tx,ctx,"college.manage"');
+   const auth=body.indexOf("assertPersistedPlatformPermission");
+   const table=body.includes("tx.execute")?body.indexOf("tx.execute"):body.indexOf("tx.select");
+   expect(table).toBeGreaterThan(auth);
+   expect(body).toContain("collegeId");
+  }
  });
 
  it("SA-colleges-sessions-PRIVACY-01 history only includes target membership/user actions of its college",()=>{

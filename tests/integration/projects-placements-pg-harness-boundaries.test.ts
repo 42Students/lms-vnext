@@ -3,6 +3,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { Pool } from "pg";
 import {
   createFinalSubmission, createMeeting, createPrincipal, createProjectFixture,
+  createPlacementFixture,
   createTaskSubmission, createTenant, newHarnessPool, submitFinalSubmission,
   withProjectPg, withTwoPgSessions, type PgHarness,
 } from "./support/projects-placements-pg-harness";
@@ -124,6 +125,63 @@ describe("PROJ-HARNESS role/tenancy and concurrent PostgreSQL fixture boundaries
       await db.query("update users set platform_status='DISABLED' where id=$1", [f.author.userId]);
       await expect(createMeeting(db, f.project, f.learner, f.author)).rejects.toThrow(/wrong college/);
       expect(await count(db, "project_meetings")).toBe(0);
+    });
+  });
+
+  it("PROJ-HARNESS-33 role spoofing in Project fixture constructor fails before templates are inserted",async()=>{
+    await withProjectPg(pool,async db=>{
+      const tenant=await createTenant(db,"Wrong-role college");
+      const wrongAuthor=await createPrincipal(db,tenant,["LEARNER"]);
+      const mentor=await createPrincipal(db,tenant,["MENTOR"]);
+      const learner=await createPrincipal(db,tenant,["LEARNER"]);
+      await expect(createProjectFixture(db,tenant,wrongAuthor,mentor,learner))
+        .rejects.toThrow(/actor role/);
+      const templates=await db.query<{n:number}>("select count(*)::int as n from project_templates");
+      expect(templates[0]!.n).toBe(0);
+    });
+  });
+
+  it("PROJ-HARNESS-34 suspended or disabled author cannot create a Projects graph",async()=>{
+    await withProjectPg(pool,async db=>{
+      const tenant=await createTenant(db,"Suspended author");
+      const admin=await createPrincipal(db,tenant,["COLLEGE_ADMIN"]);
+      const mentor=await createPrincipal(db,tenant,["MENTOR"]);
+      const learner=await createPrincipal(db,tenant,["LEARNER"]);
+      await db.query("update college_memberships set status='SUSPENDED' where id=$1",[admin.membershipId]);
+      await expect(createProjectFixture(db,tenant,admin,mentor,learner))
+        .rejects.toThrow(/not an active member/);
+      await db.query("update college_memberships set status='ACTIVE' where id=$1",[admin.membershipId]);
+      await db.query("update users set platform_status='DISABLED' where id=$1",[admin.userId]);
+      await expect(createProjectFixture(db,tenant,admin,mentor,learner))
+        .rejects.toThrow(/not an active member/);
+      expect(await db.query("select id from project_instances")).toHaveLength(0);
+    });
+  });
+
+  it("PROJ-HARNESS-35 placements fixture rejects learner-only and suspended TPO initiators",async()=>{
+    await withProjectPg(pool,async db=>{
+      const tenant=await createTenant(db,"Placement actor");
+      const learner=await createPrincipal(db,tenant,["LEARNER"]);
+      await expect(createPlacementFixture(db,tenant,learner))
+        .rejects.toThrow(/actor role/);
+      const tpo=await createPrincipal(db,tenant,["TPO"]);
+      await db.query("update college_memberships set status='SUSPENDED' where id=$1",[tpo.membershipId]);
+      await expect(createPlacementFixture(db,tenant,tpo))
+        .rejects.toThrow(/not an active member/);
+      expect(await db.query("select id from placement_companies")).toHaveLength(0);
+    });
+  });
+
+  it("PROJ-HARNESS-36 an active learner from same college cannot impersonate meeting coordinator",async()=>{
+    await withProjectPg(pool,async db=>{
+      const f=await actors(db);
+      const otherLearner=await createPrincipal(db,f.own,["LEARNER"]);
+      const before=await count(db,"project_meetings");
+      await expect(createMeeting(db,f.project,f.learner,otherLearner))
+        .rejects.toThrow(/actor role/);
+      expect(await count(db,"project_meetings")).toBe(before);
+      await expect(createMeeting(db,f.project,f.learner,f.author)).resolves.toBeTruthy();
+      expect(await count(db,"project_meetings")).toBe(before+1);
     });
   });
 
