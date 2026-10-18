@@ -243,6 +243,11 @@ export async function renameOrganization(
 
   try {
     return await db.transaction(async tx=>{
+      await assertPersistedPlatformPermission(tx,context,"organization.manage",{organizationId});
+      const [locked]=await tx.select({id:organizations.id}).from(organizations)
+        .where(and(eq(organizations.id,organizationId),eq(organizations.status,"ACTIVE")))
+        .for("update").limit(1);
+      if(!locked)throw new OrganizationServiceError("ORGANIZATION_NOT_FOUND");
       const [updated]=await tx.update(organizations).set({name:input.name,updatedAt:new Date()})
        .where(and(eq(organizations.id,organizationId),eq(organizations.status,"ACTIVE")))
        .returning({id:organizations.id,name:organizations.name,createdAt:organizations.createdAt,
