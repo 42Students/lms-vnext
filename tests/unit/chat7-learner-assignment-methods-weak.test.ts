@@ -14,7 +14,7 @@ vi.mock("@/modules/courses/learning-access",()=>({requireLearningReadAccess:stat
 vi.mock("@/db/client",()=>({getDb:()=>({select:state.select})}));
 import {getLearnerAssignmentMethods} from "@/modules/courses/learner-assignment-methods-service";
 import {ALL_ASSIGNMENT_METHODS} from "@/modules/courses/assignment-submission-methods";
-const context=(roles:string[]=["LEARNER"])=>({membership:{roles}} as Parameters<typeof getLearnerAssignmentMethods>[0]);
+const context=(roles:string[]=["LEARNER"])=>({membership:{roles}} as unknown as Parameters<typeof getLearnerAssignmentMethods>[0]);
 beforeEach(()=>{
  state.load.mockReset();state.access.mockReset();state.select.mockReset();
  state.load.mockResolvedValue({...base});
