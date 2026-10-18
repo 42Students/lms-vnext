@@ -43,7 +43,7 @@ describe("chat-5 TPO drive closure and correction journeys",()=>{
   expect(component).toContain('minLength={10}');
   expect(component).toContain("expectedUpdatedAt:preview.expectedUpdatedAt");
   expect(component).toContain("expectedCounts:preview.counts");
-  expect(component).toContain("useGuardedAction({timeoutMs:35000})");
+  expect(component).toContain("useGuardedAction({timeoutMs:40000})");
   expect(component).toContain("await run(async()=>");
   expect(component).toContain("await apiFetch(");
   expect(component).toContain("timeoutMs:35000");
@@ -58,7 +58,10 @@ describe("chat-5 TPO drive closure and correction journeys",()=>{
   expect(component).toContain("setConfirmOpen(true)");
   expect(component).toContain('correctionReason: corrected ? correctionReason.trim() : null');
   expect(component).toContain("await run(async()=>");
-  expect(component).toContain("useGuardedAction({timeoutMs:35000})");
+  expect(component).toContain("useGuardedAction({timeoutMs:40000})");
+  expect(component).toContain("} catch(caught) {");
+  expect(component).toContain("setBusy(false)");
+  expect(component).toContain("setConfirmOpen(false)");
   expect(component).toContain("await apiFetch(");
   expect(component).toContain("timeoutMs: 35000");
   expect(component).toContain("friendlyApiError({})");
