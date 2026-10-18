@@ -133,6 +133,11 @@ describe("chat-5 TPO second-third: behavioural round and offer reporting",()=>{
   });
   expect(empty.minCtcLpa).toBeUndefined();
   expect(empty.maxCtcLpa).toBeUndefined();
+  for(const bound of [" ", "  ", null, undefined]){
+    const parsed=offerRegisterQuery.parse({jobId:uuid,minCtcLpa:bound,maxCtcLpa:bound});
+    expect(parsed.minCtcLpa).toBeUndefined();
+    expect(parsed.maxCtcLpa).toBeUndefined();
+  }
   expect(projectOfferRegister(offerFacts,empty.status,empty.page,empty.q,empty.joining,
     at,empty.kind,empty.expiry,empty.minCtcLpa,empty.maxCtcLpa).rows.map(row=>row.id))
     .toEqual(["a"]);
