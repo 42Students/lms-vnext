@@ -42,6 +42,7 @@ type DialogState =
   | null;
 
 type Confirmation =
+  | { kind:"quick"; userId:string; name:string; status:"ACTIVE"|"ARCHIVED" }
   | {
       kind: "revoke";
       userId: string;
@@ -439,20 +440,11 @@ export function SuperAdminHrAccounts({
     }
   }
 
-  async function quickStatus(account:HrAccount){
+  function quickStatus(account:HrAccount){
     if(!account.accountManageable||pending||account.status==="DISABLED")return;
     const next=account.status==="ACTIVE"?"ARCHIVED":"ACTIVE";
-    const question=next==="ARCHIVED"
-      ? "Suspend "+hrDisplayName(account)+"? They are signed out everywhere and cannot sign in until reactivated. College access is kept."
-      : "Reactivate "+hrDisplayName(account)+"? Their existing college access is kept.";
-    if(!window.confirm(question))return;
-    setPending(true);setActionError(null);
-    try{
-      await requestJson("/api/admin/hr/"+encodeURIComponent(account.userId),"PATCH",{status:next});
-      showToast({tone:"success",title:next==="ARCHIVED"?"Recruiter suspended":"Recruiter reactivated"});
-      router.refresh();
-    }catch(error){showToast({tone:"error",title:"Recruiter status update failed",description:errorText(error)});}
-    finally{setPending(false);}
+    setActionError(null);
+    setConfirmation({kind:"quick",userId:account.userId,name:hrDisplayName(account),status:next});
   }
 
   async function grantAccess(
@@ -504,7 +496,11 @@ export function SuperAdminHrAccounts({
     setActionError(null);
 
     try {
-      if (target.kind === "revoke") {
+      if (target.kind === "quick") {
+        await requestJson("/api/admin/hr/"+encodeURIComponent(target.userId),"PATCH",{status:target.status});
+        showToast({tone:"success",title:target.status==="ARCHIVED"?"Recruiter suspended":"Recruiter reactivated"});
+        setConfirmation(null);router.refresh();
+      } else if (target.kind === "revoke") {
         await requestJson(
           `/api/admin/hr/${encodeURIComponent(
             target.userId,
@@ -629,7 +625,7 @@ export function SuperAdminHrAccounts({
             Edit
           </Button>
           {account.status!=="DISABLED"?<Button size="sm" variant="secondary" disabled={pending||!account.accountManageable}
-            onClick={()=>void quickStatus(account)}>{account.status==="ACTIVE"?"Suspend":"Reactivate"}</Button>:null}
+            onClick={()=>quickStatus(account)}>{account.status==="ACTIVE"?"Suspend":"Reactivate"}</Button>:null}
           <Button size="sm" variant="secondary" disabled={pending||!account.accountManageable}
             onClick={()=>setConfirmation({kind:"terminate",userId:account.userId,name:hrDisplayName(account)})}>Sign out</Button>
         </div>
@@ -664,7 +660,7 @@ export function SuperAdminHrAccounts({
 
       <p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">{scopeDescription} Account-wide actions are restricted by the current administrative scope.</p>
       <section aria-label="Recruiter account lifecycle" className="space-y-1">
-        <p className="text-xs font-semibold uppercase tracking-wide text-primary-text">Industry access</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-[var(--lms-teal-deep)]">Industry access</p>
         <h2 className="text-base font-semibold">Recruiter account lifecycle</h2>
         <p className="text-sm text-body">Manage recruiter access, suspension and signed-in devices.</p>
       </section>
@@ -767,7 +763,7 @@ export function SuperAdminHrAccounts({
                 filters.q || filters.status ? (
                   <Link
                     href="/admin/recruiters"
-                    className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body"
+                    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-body"
                   >
                     Clear filters
                   </Link>
@@ -800,7 +796,7 @@ export function SuperAdminHrAccounts({
            title={!account.accountManageable?"Active grants exist outside the selected administrative scope":undefined}
            onClick={() => openEdit(account)}>Edit</Button>
                       {account.status!=="DISABLED"?<Button variant="secondary" size="sm" disabled={pending||!account.accountManageable}
-                        onClick={()=>void quickStatus(account)}>{account.status==="ACTIVE"?"Suspend":"Reactivate"}</Button>:null}
+                        onClick={()=>quickStatus(account)}>{account.status==="ACTIVE"?"Suspend":"Reactivate"}</Button>:null}
                       <Button variant="secondary" size="sm" disabled={pending||!account.accountManageable}
                         onClick={()=>setConfirmation({kind:"terminate",userId:account.userId,name:hrDisplayName(account)})}>Sign out</Button>
                     </div>
@@ -831,12 +827,12 @@ export function SuperAdminHrAccounts({
                       filters,
                       list.page - 1,
                     )}
-                    className="inline-flex min-h-10 items-center rounded-md border border-border px-3 font-semibold hover:bg-muted"
+                    className="inline-flex min-h-11 items-center rounded-md border border-border px-3 font-semibold hover:bg-muted"
                   >
                     Previous
                   </Link>
                 ) : (
-                  <span className="inline-flex min-h-10 items-center rounded-md border border-border px-3 opacity-50">
+                  <span className="inline-flex min-h-11 items-center rounded-md border border-border px-3 opacity-50">
                     Previous
                   </span>
                 )}
@@ -847,12 +843,12 @@ export function SuperAdminHrAccounts({
                       filters,
                       list.page + 1,
                     )}
-                    className="inline-flex min-h-10 items-center rounded-md border border-border px-3 font-semibold hover:bg-muted"
+                    className="inline-flex min-h-11 items-center rounded-md border border-border px-3 font-semibold hover:bg-muted"
                   >
                     Next
                   </Link>
                 ) : (
-                  <span className="inline-flex min-h-10 items-center rounded-md border border-border px-3 opacity-50">
+                  <span className="inline-flex min-h-11 items-center rounded-md border border-border px-3 opacity-50">
                     Next
                   </span>
                 )}
@@ -942,23 +938,21 @@ export function SuperAdminHrAccounts({
             setActionError(null);
           }
         }}
-        title={
-          confirmation?.kind === "revoke"
-            ? `Revoke ${confirmation.grant.collegeName} access?`
-            : confirmation?.kind === "terminate"
-              ? `Terminate all sessions for ${confirmation.name}?`
-              : "Confirm recruiter account action"
-        }
-        description={
-          confirmation?.kind === "revoke"
-            ? "The recruiter will lose this college grant. Other college grants are not revoked."
-            : "Every live device session belonging to this canonical user will be revoked, including sessions used for other memberships."
-        }
-        confirmLabel={
-          confirmation?.kind === "revoke"
-            ? "Revoke access"
-            : "Terminate all sessions"
-        }
+        title={confirmation?.kind==="quick"
+          ? (confirmation.status==="ARCHIVED"?"Suspend ":"Reactivate ")+confirmation.name+"?"
+          :confirmation?.kind==="revoke" ? "Revoke "+confirmation.grant.collegeName+" access?"
+          :confirmation?.kind==="terminate" ? "Terminate all sessions for "+confirmation.name+"?"
+          :"Confirm recruiter account action"}
+        description={confirmation?.kind==="quick"
+          ? confirmation.status==="ARCHIVED"
+            ?"They are signed out everywhere and cannot sign in until reactivated. College access is kept."
+            :"Their existing college access is kept."
+          :confirmation?.kind==="revoke"
+            ?"The recruiter will lose this college grant. Other college grants are not revoked."
+            :"Every live device session belonging to this canonical user will be revoked, including sessions used for other memberships."}
+        confirmLabel={confirmation?.kind==="quick"
+          ?confirmation.status==="ARCHIVED"?"Suspend":"Reactivate"
+          :confirmation?.kind==="revoke"?"Revoke access":"Terminate all sessions"}
         pending={pending}
         onConfirm={() => {
           void confirmAction();
