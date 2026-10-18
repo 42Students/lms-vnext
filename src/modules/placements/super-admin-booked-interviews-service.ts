@@ -35,7 +35,7 @@ export async function listSuperAdminBookedInterviews(
  .leftJoin(users,eq(users.id,collegeMemberships.userId))
  .leftJoin(learnerProgramEnrollments,and(eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),eq(learnerProgramEnrollments.status,"ACTIVE")))
  .leftJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
- .leftJoin(departments,eq(departments.id,programs.departmentId))
+ .leftJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,scope.collegeId)))
  .where(and(eq(s.status,"BOOKED"),gt(s.endsAt,fromDate),lt(s.startsAt,toDate)))
  .orderBy(asc(s.startsAt),asc(s.id)).limit(2001);
  const events:SuperAdminCalendarRound[]=rows.slice(0,2000).map(row=>({

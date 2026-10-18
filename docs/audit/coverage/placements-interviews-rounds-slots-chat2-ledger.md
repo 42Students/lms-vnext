@@ -34,6 +34,8 @@
 | `src/modules/placements/tpo-round-import-model.ts` | `roundImportActionSchema` | `tests/unit/chat2-ledger-round-import-and-scheduling.test.ts` | PARTIAL |
 | `src/modules/placements/tpo-round-import-model.ts` | `parseTpoRoundImport` | `tests/unit/chat2-ledger-round-import-and-scheduling.test.ts` | PARTIAL |
 | `src/modules/placements/tpo-round-import-model.ts` | `ROUND_IMPORT_TEMPLATE` | `tests/unit/chat2-ledger-round-import-and-scheduling.test.ts` | PARTIAL |
+| `src/modules/placements/tpo-round-import-model.ts` | `matchTpoRoundImportRoster` | `tests/unit/chat2-ledger-round-import-and-scheduling.test.ts` | UNIT WRITTEN (CI pending; contradictory-identity behavioral cases) |
+| `src/modules/placements/tpo-round-import-preview-token.ts` | `tpoRoundImportPreviewToken` | `tests/unit/chat2-ledger-round-import-and-scheduling.test.ts` | UNIT WRITTEN (CI pending; stale file/roster/result behavioral cases) |
 | `src/modules/placements/tpo-round-import-service.ts` | `previewTpoRoundImport` | **No direct behavioural test** | GAP (actual tenant/CSV rejection/transaction) |
 | `src/modules/placements/tpo-round-import-service.ts` | `stageTpoRoundImport` | **No direct behavioural test** | GAP (actual tenant/CSV rejection/transaction) |
 | `src/modules/placements/tpo-round-reorder-model.ts` | `roundReorderLockMessage` | `tests/unit/chat2-tpo-round-state-break-01.test.ts` | UNIT WRITTEN |
@@ -128,3 +130,7 @@ Use this ledger to assign next writes. Do not convert a GAP to complete based on
 - `stageTpoRoundImport` re-reads the actor-scoped roster and round state **after** preview validation and refuses to write if the source/roster token or scheduling eligibility changed between the two reads. This closes one avoidable preview-to-stage time-of-check/time-of-use window. Per-result optimistic checks remain in `confirmTpoRoundResult`.
 - `parseTpoRoundImport` clears rank on PASS, FAIL and ABSENT rows, even when an unexpected numeric rank was supplied; the row continues to be flagged invalid for explicit officer review.
 - Regression evidence: `tests/unit/chat2-ledger-round-import-and-scheduling.test.ts`, including `TPO-drive-workspace-40 refuses a stale review when the file, roster, or persisted result changes`. Tests were authored, **not executed**. Real two-actor PostgreSQL races and cloud CI remain required; this is not a complete integration proof.
+
+## Identity mapping and server-only preview-token split
+
+The all-column applicant matching function is now exported from the browser-safe round-import model and reused in both preview and staging. It rejects IDs whose email/roll data contradict the selected internal applicant and never trusts company portal IDs for identity. The SHA-256 `tpoRoundImportPreviewToken` lives in the **server-only** `tpo-round-import-preview-token.ts`, not the import parsing model; this avoids pulling Node crypto into a possible client import graph. Both helpers have direct named tests. They have not been executed, and parallel database writers still need integration tests.

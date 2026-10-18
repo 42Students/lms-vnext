@@ -26,5 +26,12 @@ describe("HR-WORKSPACE-CONTACT-18 round workspace candidate contact disclosure",
   expect(file).toContain("email: recruiterSharedRoundParticipantEmail(candidate.email, scope.shareColumnDefaults)");
   expect(file).toContain("isRecruiterSharedCandidateAllowed");
   expect(file).not.toContain("email: candidate.email,");
+  // HR-WORKSPACE-RELATION-21: a stale but still cached recruiter grant cannot
+  // authorize records when the employer, relationship or college was disabled.
+  for(const relationState of [
+    'eq(placementCompanyRelationships.status, "ACTIVE")',
+    'eq(placementCompanies.status, "ACTIVE")',
+    'eq(colleges.status, "ACTIVE")',
+  ])expect(file).toContain(relationState);
  });
 });

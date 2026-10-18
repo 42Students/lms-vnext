@@ -7,7 +7,7 @@ import {hasActiveRecruiter,type RequestContext} from "@/modules/identity/context
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {listMessageThreads} from "./tpo-messaging-service";
 import {listOwnRecruiterPlacementJobs} from "./recruiter-service";
-import {hrConversationQuerySchema,filterRecruiterConversations,HR_CONVERSATION_PAGE_SIZE,hrConversationPageBounds,onlyUnreadRecruiterThreads,orderRecruiterConversations,scopeRecruiterConversations} from "./hr-conversation-inbox-model";
+import {hrConversationQuerySchema,filterRecruiterConversations,HR_CONVERSATION_PAGE_SIZE,hrConversationPageBounds,recruiterMessageSearchLimit,onlyUnreadRecruiterThreads,orderRecruiterConversations,scopeRecruiterConversations} from "./hr-conversation-inbox-model";
 export async function listHrConversations(context:RequestContext,raw:unknown={}){
  const query=hrConversationQuerySchema.parse(raw);
  if(!hasActiveRecruiter(context)||!context.recruiter||context.recruiter.userId!==context.user.id)throw new AuthorizationError("placements.recruiter.read");
@@ -36,7 +36,7 @@ export async function listHrConversations(context:RequestContext,raw:unknown={})
     .from(placementTpoMessages)
     .where(and(inArray(placementTpoMessages.threadId,accessibleIds),
       ilike(placementTpoMessages.body,"%"+query.q.trim().replaceAll("\\","\\\\").replaceAll("%","\\%").replaceAll("_","\\_")+"%")))
-    .limit(1000)
+    .limit(recruiterMessageSearchLimit(accessibleIds))
   :[];
  const accessible=filterRecruiterConversations(recruiterOwned,knownJobIds,query.q,titles,
    new Set(messageMatches.map(row=>row.threadId)));

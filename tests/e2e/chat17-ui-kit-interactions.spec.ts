@@ -125,6 +125,25 @@ test.describe("UX-kit-E2E-01 real browser shared UI states",()=>{
     await expect(table.getByText("DESKTOP_ONLY_PRIVATE_REVIEW")).toBeVisible();
   });
 
+  test("UX-UNOWNED-TABLE-04 Super Admin interview grid filters and ICS download on mobile",async({page})=>{
+    await page.setViewportSize({width:390,height:780});
+    await page.goto(route);
+    const section=page.getByRole("region",{name:"Interview operations"});
+    await expect(section.getByText("Student Alpha")).toBeVisible();
+    await expect(section.getByText("Student Beta")).toBeVisible();
+    await expect(section.getByText("Venue double-booked").first()).toBeVisible();
+    const department=section.getByLabel("Department");
+    await department.selectOption("Design");
+    await expect(section.getByText("Student Beta")).toBeVisible();
+    await expect(section.getByText("Student Alpha")).toHaveCount(0);
+    await section.getByRole("button",{name:"Clear filters"}).click();
+    await expect(section.getByText("Student Alpha")).toBeVisible();
+    const downloadPromise=page.waitForEvent("download");
+    await section.getByRole("link",{name:".ics"}).first().click();
+    const download=await downloadPromise;
+    expect(download.suggestedFilename()).toBe("interview-interview-a.ics");
+  });
+
   test("reduced-motion skeleton and native disclosure remain keyboard accessible",async({page})=>{
     await page.emulateMedia({reducedMotion:"reduce"});
     await page.goto(route);
