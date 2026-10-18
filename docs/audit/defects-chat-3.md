@@ -200,6 +200,12 @@ The `resolveSuperAdminSectionDetail` service checked `academics.read` and a sele
 
 **Fix:** Require `isSuperAdmin(context)` up front and raise the canonical `AuthorizationError("academics.read")` before scoped database reads. Preserve the Super Admin no-college prompt (null) and private foreign/not-found behavior. `tests/unit/chat3-sa-academics-section-platform-role.test.ts` covers active and disabled principals, forged role/adminScope combinations, correct and foreign Section records and database failures. CI and authenticated page tests pending.
 
+### FAC-GRADEBOOK-UX-032 — repeated page key bypassed strict Faculty query rules (S2)
+
+The Faculty gradebook only verified allowed query-key **names**, not that Next.js had received exactly one value per key. For example `?page=1&page=999` becomes `page: ["1","999"]`; the Zod `coerce.number` path can also accept an array of one value. This silently accepts an ambiguous deep link despite the code's intended strict filter validation.
+
+**Fix:** Explicitly reject all array-valued query keys before the gradebook view schema or any current-teaching report read. Preserve the existing invalid-link recovery and exact Section scope. Direct SSR tests in `tests/unit/UX-teacher-gradebook-strict-query-journey.test.tsx` cover forged, duplicated, malformed, empty and filtered states. Browser/CI acceptance pending.
+
 ### FAC-HTTP-BODY-021 — unbounded live-class and attendance scheduling commands (S1)
 
 Both Faculty live-class and attendance scheduling POST routes previously called `request.json()` directly. The Zod/authorization service subsequently rejected bad fields, but the HTTP input body had already been fully buffered, permitting oversized metadata requests to waste memory in a stale or malicious session.
