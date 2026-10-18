@@ -52,7 +52,8 @@ describe("SA-academics-people-101 multi-course faculty assignment",()=>{
   expect(form).toContain('apiFetch("/api/admin/faculty-assignment/batch"');
   expect(form).toContain("body:JSON.stringify({deliveryIds,membershipId,role})");
   expect(form).toContain("useGuardedAction");
-  expect(form).toContain("Created "+'" + "'+" ");
+  expect(form).toContain('setNotice(deliveryIds.length===1?"Teaching assignment created."');
+  expect(form).toContain("teaching assignments for this class.");
   expect(form).toContain('setOtherDeliveryIds([])');
   expect(form).toContain("Could not assign this faculty member.");
   expect(form.indexOf("setOtherDeliveryIds([]);setMembershipId")).toBeGreaterThan(form.indexOf("await apiFetch("));
