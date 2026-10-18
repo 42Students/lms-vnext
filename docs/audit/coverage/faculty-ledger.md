@@ -449,17 +449,17 @@ Status: INCOMPLETE. Tests have not been executed; do not use this ledger for rel
 
 | Route | Handler coverage |
 |---|---|
-| `src/app/api/courses/faculty/assignments/[deliveryId]/command/route.ts` | GAP: each handler requires role, scope, validation and race test |
-| `src/app/api/courses/faculty/assignments/[deliveryId]/methods/route.ts` | GAP: each handler requires role, scope, validation and race test |
-| `src/app/api/courses/faculty/assignments/[deliveryId]/submissions/route.ts` | GAP: each handler requires role, scope, validation and race test |
-| `src/app/api/courses/faculty/attendance/[deliveryId]/schedule/route.ts` | GAP: each handler requires role, scope, validation and race test |
-| `src/app/api/courses/faculty/gradebook/[deliveryId]/csv/route.ts` | GAP: each handler requires role, scope, validation and race test |
-| `src/app/api/courses/faculty/live-classes/[deliveryId]/command/route.ts` | GAP: each handler requires role, scope, validation and race test |
-| `src/app/api/courses/faculty/quizzes/[deliveryId]/command/route.ts` | GAP: each handler requires role, scope, validation and race test |
-| `src/app/api/courses/faculty/reports/[kind]/[assessmentId]/csv/route.ts` | GAP: each handler requires role, scope, validation and race test |
-| `src/app/api/courses/faculty/reports/quiz/[quizId]/question-csv/route.ts` | GAP: each handler requires role, scope, validation and race test |
-| `src/app/api/courses/faculty/response-followups/csv/route.ts` | GAP: each handler requires role, scope, validation and race test |
-| `src/app/api/courses/faculty/results/csv/route.ts` | GAP: each handler requires role, scope, validation and race test |
+| `src/app/api/courses/faculty/assignments/[deliveryId]/command/route.ts` (`POST`) | `tests/unit/COURSES-BREAK-FACULTY-08.test.ts` (route host, session, malformed body; pending CI) |
+| `src/app/api/courses/faculty/assignments/[deliveryId]/methods/route.ts` (`GET`) | **GAP — authenticated GET handler, export scoping and cache tests pending** |
+| `src/app/api/courses/faculty/assignments/[deliveryId]/submissions/route.ts` (`GET`) | **GAP — authenticated GET handler, export scoping and cache tests pending** |
+| `src/app/api/courses/faculty/attendance/[deliveryId]/schedule/route.ts` (`POST`) | `tests/unit/COURSES-BREAK-FACULTY-08.test.ts` (route host, session, malformed body; pending CI) |
+| `src/app/api/courses/faculty/gradebook/[deliveryId]/csv/route.ts` (`GET`) | **GAP — authenticated GET handler, export scoping and cache tests pending** |
+| `src/app/api/courses/faculty/live-classes/[deliveryId]/command/route.ts` (`POST`) | `tests/unit/COURSES-BREAK-FACULTY-08.test.ts` (route host, session, malformed body; pending CI) |
+| `src/app/api/courses/faculty/quizzes/[deliveryId]/command/route.ts` (`POST`) | `tests/unit/COURSES-BREAK-FACULTY-08.test.ts` (route host, session, malformed body; pending CI) |
+| `src/app/api/courses/faculty/reports/[kind]/[assessmentId]/csv/route.ts` (`GET`) | **GAP — authenticated GET handler, export scoping and cache tests pending** |
+| `src/app/api/courses/faculty/reports/quiz/[quizId]/question-csv/route.ts` (`GET`) | **GAP — authenticated GET handler, export scoping and cache tests pending** |
+| `src/app/api/courses/faculty/response-followups/csv/route.ts` (`GET`) | **GAP — authenticated GET handler, export scoping and cache tests pending** |
+| `src/app/api/courses/faculty/results/csv/route.ts` (`GET`) | **GAP — authenticated GET handler, export scoping and cache tests pending** |
 
 Known role and integrity evidence: `tests/unit/PROJ-BREAK-FACULTY-01.test.ts`, `PROJ-BREAK-FACULTY-02.test.ts`, `PROJ-BREAK-FACULTY-03.test.ts`, `COURSES-BREAK-FACULTY-01.test.ts`, `COURSES-BREAK-FACULTY-02.test.ts`, `COURSES-BREAK-FACULTY-03.test.ts`, `COURSES-BREAK-FACULTY-04.test.ts`, `COURSES-BREAK-FACULTY-05.test.ts`, `SA-ACADEMICS-PEOPLE-BREAK-chat3.test.ts`, and `chat3-faculty-gradebook-integrity.test.ts`. These do not establish PostgreSQL integration or full method coverage.
 
@@ -471,3 +471,12 @@ Next actions: enumerate runtime symbols, map behavioural tests per export, run T
 - `FAC-courses-01`: real central `can()` plus `canAccessFacultyRoute` role, disabled-session, stale-membership and selected-admin-scope tests (`COURSES-BREAK-FACULTY-05`); does not replace authenticated browser testing.
 - `SA-academics-people`: scoped section lookup, foreign college and disabled Super Admin account regressions (`SA-ACADEMICS-PEOPLE-BREAK-chat3`); remainder of admin people and recruiter pages **not audited exhaustively**.
 - Initial unit-failure report may contain stale source-assertion failures already remediated by main merges; only a fresh Vitest run can verify.
+
+
+## October 18 additional evidence
+
+- Faculty/mentor Projects routes: `tests/unit/PROJ-BREAK-FACULTY-04.test.ts` asserts origin, persisted actor, safe failure and strict body parser across six mutation endpoints; `PROJ-BREAK-FACULTY-05.test.ts` covers byte cap/UTF-8/content type.
+- Faculty current-Section Quiz and Assignment report data integrity: `tests/unit/COURSES-BREAK-FACULTY-06.test.ts` and `src/modules/courses/faculty-assessment-report-service.ts`; mocked dependencies only, real DB enrollment churn remains a release gate.
+- Faculty attendance correction token, role/session URL, IST midnight and exact deadline: `tests/unit/COURSES-BREAK-FACULTY-07.test.ts`.
+- Four Faculty POST command routes' CSRF/session/body bounds: `tests/unit/COURSES-BREAK-FACULTY-08.test.ts`.
+- These are direct runtime/route assertions, but not proof of successful TypeScript, Vitest or PostgreSQL CI.
