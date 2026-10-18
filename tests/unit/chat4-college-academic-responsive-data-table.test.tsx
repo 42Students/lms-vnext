@@ -56,7 +56,7 @@ describe("COL-UX-ACADEMIC-TABLE-01 responsive Semester and Batch directories",()
   const html=renderToStaticMarkup(<CollegeAcademicDirectory data={data}/>);
   expect(html).toContain("Batch directory");
   expect(html).toContain("Batch 2099");
-  expect(html).toContain("2100");
+  expect(html).toContain("2099-00");
   expect(html).toContain("3 classes / 120 learners");
   expect(html).toContain("Students");
   expect(html).toContain("Manage batch");
