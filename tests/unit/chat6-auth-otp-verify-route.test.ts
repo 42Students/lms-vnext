@@ -17,7 +17,10 @@ vi.mock("@/modules/auth/config", () => ({
   getAuthConfig: () => ({sessionMaxAgeSeconds:432000}),
 }));
 vi.mock("@/modules/auth/private-response", () => ({
-  privateAuthResponse: (response: NextResponse) => response,
+  privateAuthResponse: (response: NextResponse) => {
+    response.headers.set("Cache-Control", "private, no-store");
+    return response;
+  },
 }));
 vi.mock("@/auth/session", () => ({
   MEMBERSHIP_COOKIE_NAME: "active_membership",
@@ -82,7 +85,7 @@ describe("OTP verify boundary: MFA, old-session rotation and membership safety",
     expect(auth?.sameSite).toBe("lax");
     expect(response.cookies.get("admin_scope")?.maxAge).toBe(0);
     expect(response.cookies.get("active_membership")?.maxAge).toBe(0);
-    expect(response.headers.get("Cache-Control")).toBeNull();
+    expect(response.headers.get("Cache-Control")).toBe("private, no-store");
   });
 
   it("AUTH-VERIFY-ROUTE-03 selects one active college but never carries a prior person's scope",async()=>{
