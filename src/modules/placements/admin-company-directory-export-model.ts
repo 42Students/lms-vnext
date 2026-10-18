@@ -2,7 +2,7 @@ import type {AdminCompanyRow} from "./admin-company-directory-model";
 /** Export only explicit non-sensitive fields and neutralize leading spreadsheet formulas. */
 export function superAdminCompanyCsv(rows:readonly AdminCompanyRow[]):string {
  const field=(value:string)=>{
-  const startsWithFormula=/^[\s\p{Cf}\p{Mn}]*[=+@-]/u.test(value);
+  const startsWithFormula=/^[\s\p{Cc}\p{Cf}\p{Mn}\p{Me}]*[=+@-]/u.test(value);
   const safe=startsWithFormula?"'"+value:value;
   return '"'+safe.replace(/"/g,'""')+'"';
  };

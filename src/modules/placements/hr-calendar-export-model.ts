@@ -13,12 +13,14 @@ function escapeCell(value:string){
 export function buildHrCalendarCsv(events:readonly HrCalendarCsvEvent[],
  dues:readonly HrCalendarCsvDue[],category:HrCalendarCategory){
  const rows=[
-  ...events.filter(e=>category==="ALL"||(category==="ROUNDS"?e.kind==="ROUND":
+  ...events.filter(e=>Number.isFinite(e.startsAt.getTime())&&
+   (category==="ALL"||(category==="ROUNDS"?e.kind==="ROUND":
    category==="DEADLINES"?e.kind==="APPLICATION_DEADLINE":
-   category==="SLOTS"?e.kind==="INTERVIEW_SLOT":false))
+   category==="SLOTS"?e.kind==="INTERVIEW_SLOT":false)))
    .map(e=>({job:e.jobTitle??"",item:e.title,type:e.kind,
      timestamp:e.startsAt,status:e.status})),
-  ...(category==="ALL"||category==="RESULTS_DUE"?dues.map(e=>({
+  ...(category==="ALL"||category==="RESULTS_DUE"
+   ?dues.filter(e=>Number.isFinite(e.dueAt.getTime())).map(e=>({
    job:e.jobTitle,item:e.roundName,type:"RESULTS_DUE",timestamp:e.dueAt,status:"Recorded deadline",
   })):[]),
  ].sort((a,b)=>a.timestamp.getTime()-b.timestamp.getTime()||

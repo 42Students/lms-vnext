@@ -261,3 +261,13 @@ This is an independent TPO/HR workflow review; real clipboard permission denial,
 |---|---|---|---|
 | HR-BREAK-CALENDAR-QUERY-24 | `/hr/calendar` | `tests/unit/HR-BREAK-chat19-calendar-company-pages.test.ts` | Duplicate date/view/category and cross-user recruiter denied before calendar service, normal invalid single date still falls back safely |
 | HR-BREAK-COMPANY-QUERY-25 | `/hr/company` | Same test suite | Duplicate college/team tab/search/page and cross-user account denied before roster/jobs; user-visible invalid selection recovery intact |
+
+
+## 2026-10-19 HR second-eyes addendum
+
+| Account surface | New adversarial test | Direct behavior covered | Remaining |
+|---|---|---|---|
+| `/hr/placements/jobs/[jobId]` → private applicant rating | `tests/unit/HR-BREAK-chat19-private-rating-receipt.test.ts` (`HR-BREAK-PRIVATE-RECEIPT-52`) | Typed GET projection, disallow HTML/redirect-shaped payloads; PATCH success only with a persisted ISO version and exact normalized rating/note; retain edits if unverified | Network disconnect after commit and true concurrent database write require PostgreSQL/browser replay |
+| `/hr/conversations/[threadId]` → mark placement cell messages read | `tests/unit/HR-BREAK-chat19-conversation-ack-receipt.test.ts` (`HR-BREAK-CONVO-ACK-53`) | Actual POST route invocation: own active recruiter, origin, bad ID, JSON persisted count including 0; native form 303; wrong thread/HTML receipts rejected by client | Simultaneous revoke/retry and accessibility browser testing pending |
+
+These new independent checks complement rather than substitute chat-15/chat-16 messaging and placement integrations. Tests written, not executed by this lane. The on-hold single-canvas directive remains untouched.
