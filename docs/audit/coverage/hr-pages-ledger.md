@@ -82,3 +82,5 @@ These branch-level tests are authored, not executed; fixture timestamps use 2099
 | HR Company & Team stale pagination | UX-HR-TEAM-PAGINATION-49 | `tests/unit/UX-HR-chat19-team-pagination.test.ts` | Narrowed filters, out-of-range page, empty roster and malformed page input |
 
 | HR Company & Team unique authorized job counts | HR-BREAK-COMPANY-COUNTS-50 | `tests/unit/HR-BREAK-chat19-company-counts.test.ts` | Duplicate rows, wrong college/employer, archived, draft, stable top three and empty |
+
+| HR entire-portfolio hired funnel vs current-page offers | HR-BREAK-REPORT-JOINED-51 | `tests/unit/HR-BREAK-chat19-report-joined.test.ts` | Accepted+joined predicates, historical withdrawn counts and tenant-scoped shared applicants |
