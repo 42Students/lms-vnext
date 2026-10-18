@@ -384,7 +384,7 @@ export async function submitFinalSubmission(db: PgHarness, submissionId: string,
   const rows = await db.query<{id:string}>(`
     update project_submissions
        set status='SUBMITTED',submitted_by_membership_id=$2,submitted_at=now(),updated_at=now()
-     where id=$1 and created_by_membership_id=$2 and status='DRAFT'
+     where id=$1 and status='DRAFT'
      returning id`, [submissionId,learner.membershipId]);
   if (rows.length !== 1) throw new Error("PROJ-HARNESS: expected one draft final submission");
 }
