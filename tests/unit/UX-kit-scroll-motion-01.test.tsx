@@ -108,6 +108,22 @@ describe("UX-kit-scroll-motion owner invisible-scrollbar contracts", () => {
       "@media (prefers-reduced-motion: reduce)"]){expect(css).toContain(key);}
     expect(ui("selection-controls")).not.toContain("duration-[120ms]");
   });
+  it("UX-kit-scroll-motion-09 observes every direct scroll content child, not only the first",()=>{
+    const cue=ui("scroll-cue");
+    expect(cue).toContain("for (const child of node.children) observer?.observe(child)");
+    expect(cue).toContain("observeContents()");
+    expect(cue).not.toContain("if (node.firstElementChild) observer?.observe(node.firstElementChild)");
+    expect(cue).toContain("mutations?.observe(node, { childList: true, subtree: true })");
+  });
+  it("UX-kit-scroll-motion-10 all shared switch and tab transitions respect reduced motion",()=>{
+    const switchControl=ui("selection-controls");
+    const tabs=ui("tabs");
+    expect(switchControl).toContain("motion-reduce:after:transition-none");
+    expect(switchControl).toContain("motion-reduce:transition-none");
+    expect(tabs).toContain("motion-reduce:transition-none");
+    expect(read("src/app/globals.css")).toContain("@media (prefers-reduced-motion: reduce)");
+  });
+
   it("UX-kit-scroll-motion-08 direct missing-coverage primitive checks: bottom-sheet, loading-state, selection-controls and use-confirm-flow", () => {
     const loading=renderToStaticMarkup(<LoadingState label="Loading college records"/>);
     expect(loading).toContain('data-slot="loading-state"');
