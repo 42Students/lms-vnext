@@ -76,3 +76,13 @@ These branch-level tests are authored, not executed; fixture timestamps use 2099
 | Recruiter notifications Mark as read | HR-BREAK-READ-RECEIPT-48 | `tests/unit/HR-BREAK-chat19-read-receipt.test.ts` | Server origin protection, exact persisted receipt, HTML redirect/foreign notification refusal, single-flight gating |
 
 | HR profile details saved-response verification | HR-BREAK-PROFILE-RECEIPT-48 | `tests/unit/HR-BREAK-chat19-profile-receipt.test.ts` | Exact persisted profile/versions, forged sign-in JSON, invalid phone/name, draft preservation |
+
+| HR recruiter reply and confirmation | HR-BREAK-CONVO-RECEIPT-49 | `tests/unit/HR-BREAK-chat19-conversation-receipt.test.ts` | Actor authorization, origin guard, persisted ID, HTML fallback denial, native 303 |
+
+| HR Company & Team stale pagination | UX-HR-TEAM-PAGINATION-49 | `tests/unit/UX-HR-chat19-team-pagination.test.ts` | Narrowed filters, out-of-range page, empty roster and malformed page input |
+
+| HR Company & Team unique authorized job counts | HR-BREAK-COMPANY-COUNTS-50 | `tests/unit/HR-BREAK-chat19-company-counts.test.ts` | Duplicate rows, wrong college/employer, archived, draft, stable top three and empty |
+
+| HR entire-portfolio hired funnel vs current-page offers | HR-BREAK-REPORT-JOINED-51 | `tests/unit/HR-BREAK-chat19-report-joined.test.ts` | Accepted+joined predicates, historical withdrawn counts and tenant-scoped shared applicants |
+
+| HR applicant external project/profile links | HR-BREAK-APPLICANT-LINK-51 | `tests/unit/HR-BREAK-chat19-applicant-links.test.ts` | Unspecified/private IP, scheme/credentials, GitHub exact host, oversized and public HTTPS |

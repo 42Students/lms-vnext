@@ -320,7 +320,7 @@ export async function getRecruiterCompanyReports(
       (select count(distinct a.id)::int from applicants a
         join placement_offers o on o.application_id=a.id
         join placement_joining_outcomes j on j.offer_id=o.id
-        where j.status='JOINED') as hired
+        where j.status='JOINED' and o.status='ACCEPTED') as hired
   `);
   const totalFunnel=funnelRows.rows[0]??{applied:0,shortlisted:0,assessment:0,
     interview:0,offered:0,hired:0};

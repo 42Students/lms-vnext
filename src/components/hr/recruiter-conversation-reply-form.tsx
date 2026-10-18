@@ -3,7 +3,7 @@ import {useEffect,useRef,useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
-import {hrReplySuccess,hrReplyErrorMessage} from "@/modules/placements/hr-conversation-send-feedback-model";
+import {isVerifiedHrReplyReceipt,hrReplyErrorMessage} from "@/modules/placements/hr-conversation-send-feedback-model";
 /** Never carry a recruiter draft across two different employer-college threads. */
 export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
  return <RecruiterConversationReplyFormState key={threadId} threadId={threadId}/>;
@@ -61,12 +61,12 @@ function RecruiterConversationReplyFormState({threadId}:{threadId:string}){
    const form=new FormData();
    form.set("body",message);
    const response=await runGuarded(()=>fetch("/api/placements/recruiter/conversations/"+threadId+"/reply",{
-    method:"POST",body:form,credentials:"same-origin",
+    method:"POST",body:form,credentials:"same-origin",redirect:"error",
+    headers:{Accept:"application/json"},
    }));
    if(!response)throw new Error("REPLY_UNCONFIRMED");
-   const redirectPath=new URL(response.url).pathname;
-   confirmed=hrReplySuccess({status:response.status,redirected:response.redirected,
-    redirectPath,threadId});
+   const receipt:unknown=response.ok?await response.json().catch(()=>null):null;
+   confirmed=response.ok&&isVerifiedHrReplyReceipt(receipt,threadId);
    if(!confirmed)feedback=hrReplyErrorMessage(response.status);
   }catch{
    feedback="Could not reach the server. Check this conversation before retrying.";
