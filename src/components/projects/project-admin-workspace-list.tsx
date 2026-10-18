@@ -109,7 +109,7 @@ export function ProjectAdminWorkspaceList({
       {items.map((item) => (
         <article
           key={item.id}
-          className="flex min-h-60 flex-col rounded-xl border border-border bg-surface p-5"
+          className="flex min-h-60 flex-col rounded-[12px] border border-border bg-surface p-5"
         >
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
