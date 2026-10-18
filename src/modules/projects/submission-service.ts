@@ -16,6 +16,7 @@ import { projectDeliveryActivity } from "./delivery-activity-model";
 import {learnerProjectDeliveryReviewNotice} from "./learner-project-review-notification-model";
 import {notifyActiveProjectMembers} from "./project-notification-service";
 import { projectSubmissionAllowsNewDraft } from "./submission-draft-policy";
+import {projectDraftRevisionMatches,nextProjectDraftUpdatedAt} from "./submission-revision-policy";
 import {
   collegeMemberships,
   inAppNotifications,
@@ -266,7 +267,7 @@ export async function updateProjectSubmissionDraft(
     // The submission row is held FOR UPDATE, so a second device observes the
     // first writer's revision before applying a stale edit. Millisecond
     // precision matches the browser's ISO token and Drizzle Date values.
-    if (submission.updatedAt.getTime() !== Date.parse(input.expectedUpdatedAt)) {
+    if (!projectDraftRevisionMatches(submission.updatedAt,input.expectedUpdatedAt)) {
       throw new ProjectsServiceError("PROJECT_SUBMISSION_CONFLICT");
     }
 
@@ -301,7 +302,7 @@ export async function updateProjectSubmissionDraft(
         notes: input.notes ?? null,
         ...(input.attachments!==undefined?{attachments:input.attachments}:{}),
         // Ensure a unique revision even if two saves arrive in one millisecond.
-        updatedAt: new Date(Math.max(Date.now(), submission.updatedAt.getTime() + 1)),
+        updatedAt: nextProjectDraftUpdatedAt(submission.updatedAt),
       })
       .where(
         and(
