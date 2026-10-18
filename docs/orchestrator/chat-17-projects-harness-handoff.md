@@ -33,7 +33,7 @@ npm run test:db:projects-harness
 
 ## Hardening scope and caveats
 
-- Guard runs **before BEGIN** and checks **32** canonical table names with `to_regclass` and the server's real `current_database()`. There is no fallback to `DATABASE_URL`, no `COMMIT`, no `TRUNCATE` and no cross-test persistent fixture.
+- Guard runs **before BEGIN** and checks **33** canonical table names with `to_regclass` and the server's real `current_database()`. There is no fallback to `DATABASE_URL`, no `COMMIT`, no `TRUNCATE` and no cross-test persistent fixture.
 - Projects table ancestry generally uses `ON DELETE RESTRICT` instead of cascading deletes. Witness `PROJ-HARNESS-15` asserts this protective FK behavior. Do not invent cascades.
 - Tenant-specific database queries are tested with separate organizations; these SQL queries alone are **not** proof of service IDOR policy. Other lanes must inject contexts and exercise routes/actions. The harness intentionally rejects cross-college actor fixtures.
 - `getDb()` services use independent PostgreSQL connections; they cannot read the private uncommitted rows. For request/session tests use a separate disposable provisioned fixture/cleanup lifecycle or dependency-injected DB transaction. No weakening of the isolation guard.
@@ -185,3 +185,15 @@ Tests are registered in `test:ux:kit:hardening` and `test:db:projects-harness`. 
 ## Chat-17 renewed stale-unit audit
 
 The latest checked-in `unit-failures-latest.md` still lists `UX-/tpo/verification-coverage-02`, but every expected source fragment for all 18 route cases now exists at the current branch; its TPO case checks `parseTpoVerificationParams` rather than the obsolete direct schema import. Behavioral case `UX-/tpo/verification-coverage-03` additionally exercises strict parsing, duplicate filter rejection and stable integer pagination values without database access. No claim of a green Vitest run: the report refers to older CI SHAs.
+
+## Chat-17 owner-priority continuation (no CI rounds until full completion)
+
+The revised `master-queue.md` top priority calls for exhaustive shared UI kit coverage and real PostgreSQL Projects/Placements fixtures, not interim CI error triage. This branch was refreshed from main before the batch and again after ten item commits. All changes are on `chatgpt/chat-17-b`, and no tests were run.
+
+**Shared UI kit:** Hardened keyboard discoverability for disabled actions (HARDEN-53), externally supplied FileUpload descriptions/validation (54), reduced-motion Tabs (55), forced truthful busy semantics for Button (56), and background-tab success notice retention (57). Developer-only browser fixtures E2E-07/08/09 cover focus, visibility, help association and motion; production never exposes `/e2e/chat17-ui-kit`.
+
+**PostgreSQL fixtures:** Added required primary role-option ancestry (PLACEMENTS-15/16); denial for closed seasons (17) and cancelled rounds (18); a same-organization sibling-college isolation fixture (TENANCY-17); expanded preflight for 33 real registered tables and publication/role columns (PREFLIGHT-19); atomic task-submission→IN_REVIEW fixture transition (TASK-20) and forced task-CAS failure rollback (TASK-21).
+
+**Unregistered constraint requiring orchestrator action:** Registered migration 0029 added independent `placement_applications.job_id` and `role_option_id` FKs, but not the composite parent relationship. This branch proposes `placement_job_role_options(id,job_id)` unique and `placement_applications(role_option_id,job_id)` FK in Drizzle schema and `docs/proposed-migrations/chat17-placement-role-option-ancestry.sql`; `PROJ-HARNESS-PLACEMENTS-19` is deliberately an acceptance-failing direct-SQL witness until the orchestrator registers and replays that proposal. Do **not** mark database readiness green before journal promotion. No live data, production resources or numbered migrations were touched.
+
+**Outstanding:** Deferred final-suite execution on a disposable migrated `TEST_DATABASE_URL`, Chromium keyboard/screen-reader checks, registered composite FK promotion, and independent Projects/Placements service permissions (owned by other lanes). Do not infer completed customer acceptance from an authored fixture.
