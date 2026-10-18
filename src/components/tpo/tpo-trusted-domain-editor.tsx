@@ -50,6 +50,8 @@ export function TpoTrustedDomainEditor({domains}:{domains:readonly string[]}){
     description={review?.action==="TRUST"?"Only verified recruiters are eligible.":undefined}
     confirmLabel={review?.action==="REMOVE"?"Stop trusting":"Trust domain"}
     pending={busy}
-    onConfirm={()=>{if(review)void change(review.action,review.value);}}/>
+    onConfirm={()=>{if(review)void change(review.action,review.value);}}>
+    {status?<p role="alert" className="text-sm text-foreground">{status}</p>:null}
+  </ConfirmDialog>
  </section>;
 }
