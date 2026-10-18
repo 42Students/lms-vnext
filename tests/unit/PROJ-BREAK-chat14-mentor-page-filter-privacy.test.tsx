@@ -39,11 +39,16 @@ vi.mock("@/modules/projects/mentor-team-history-service",()=>({
  },
 }));
 const projectId="11111111-1111-4111-8111-111111111111";
-const renderBoard=async(query:Record<string,string|string[]|undefined>)=>renderToStaticMarkup(
+type QueryField=string|string[]|undefined;
+type BoardFilters={status?:QueryField;priority?:QueryField;sprintId?:QueryField;
+ search?:QueryField;page?:QueryField};
+type TimelineFilters={releaseStatus?:QueryField;sprintStatus?:QueryField;page?:QueryField};
+type TeamFilters={view?:QueryField;role?:QueryField;primary?:QueryField;order?:QueryField;page?:QueryField};
+const renderBoard=async(query:BoardFilters)=>renderToStaticMarkup(
  await MentorBoardReviewPage({params:Promise.resolve({projectId}),searchParams:Promise.resolve(query)}));
-const renderTimeline=async(query:Record<string,string|string[]|undefined>)=>renderToStaticMarkup(
+const renderTimeline=async(query:TimelineFilters)=>renderToStaticMarkup(
  await MentorProjectTimelinePage({params:Promise.resolve({projectId}),searchParams:Promise.resolve(query)}));
-const renderTeam=async(query:Record<string,string|string[]|undefined>)=>renderToStaticMarkup(
+const renderTeam=async(query:TeamFilters)=>renderToStaticMarkup(
  await MentorTeamHistoryPage({params:Promise.resolve({projectId}),searchParams:Promise.resolve(query)}));
 beforeEach(()=>{state.board=0;state.timeline=0;state.history=0;});
 

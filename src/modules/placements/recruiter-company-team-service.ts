@@ -86,7 +86,7 @@ export async function getRecruiterCompanyTeam(
       eq(placementRecruiterCollegeGrants.companyRelationshipId,placementCompanyRelationships.id),
       eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
       eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
-      gt(placementRecruiterCollegeGrants.validUntil,sql`now()`),
+      gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`),
     ))
     .innerJoin(users,and(
       eq(users.id,context.user.id),
@@ -119,6 +119,10 @@ export async function getRecruiterCompanyTeam(
     .where(and(
       eq(placementRecruiterCollegeGrants.companyRelationshipId, company.relationshipId),
       eq(placementRecruiterCollegeGrants.status, "ACTIVE"),
+      // HR-TEAM-RECIPIENT-45: expired/unverified colleagues are not active
+      // placement-cell contacts even if their profile is still ACTIVE.
+      eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
+      gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`),
       eq(placementRecruiterProfiles.companyId, company.id),
       eq(placementRecruiterProfiles.status, "ACTIVE"),
       eq(users.platformStatus, "ACTIVE"),
