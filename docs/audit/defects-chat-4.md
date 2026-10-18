@@ -79,3 +79,6 @@ Validation: source review and committed behavioural/source-guard tests; cloud te
 
 
 | COL-academics-workspace-PERF-01 | S2 performance | College Academics workspace dispatched an unbounded Promise.all of separate cohort and section queries for every program/batch. Large college tenants could exhaust pooled DB connections, causing timeouts and inaccessible setup pages. Introduced order-preserving eight-at-a-time parallel batches, no data truncation and explicit query error propagation. | `tests/unit/chat4-college-academics-workspace-fanout.test.ts` | 1,000+ cohorts DB performance verification pending |
+
+
+| SA-tenants-directory-QUERY-01 | S2 input / ambiguous tenancy | Tenant page manually cherry-picked known query keys before invoking a strict schema; repeated `?page=1&page=2` and unknown params could be silently coerced/ignored, bypassing the same validation as tenant CSV export. Added strict full-key query parser with explicit rejection of arrays and unknowns before DB access and kept the recoverable error page. | `tests/unit/chat4-superadmin-tenant-directory-query.test.ts` | Browser malformed-URL acceptance pending |
