@@ -232,4 +232,20 @@ describe("UX /admin middle third route and shared archetype contracts",()=>{
    expect(page).not.toContain("min-w-[55rem]");
   }
  });
+ it("UX-admin-module-access-02 shared pagination stays query-scoped with keyboard-safe controls",()=>{
+  const page=read("src/app/(authenticated)/admin/module-access/page.tsx");
+  expect(page).toContain('import {Pagination} from "@/components/ui/pagination"');
+  expect(page).toContain('label="Module Access pages"');
+  expect(page).toContain("hrefForPage={page=>pageHref(result.q,page)}");
+  expect(page).toContain("sm:grid-cols-[minmax(0,1fr)_auto_auto]");
+  expect(page).toContain('title="No matching colleges"');
+ });
+ it("UX-admin-people-unassigned-02 paginates without losing active filters or revealing contact fields",()=>{
+  const page=read("src/app/(authenticated)/admin/people/unassigned/page.tsx");
+  expect(page).toContain('label="Unassigned user pages"');
+  expect(page).toContain("adminUnassignedUsersHref({...data.query,page})");
+  expect(page).toContain("No users without college memberships match these filters.");
+  expect(page).toContain("Personal contact and session information are excluded.");
+ });
+
 });
