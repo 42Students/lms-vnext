@@ -94,3 +94,6 @@ Validation: source review and committed behavioural/source-guard tests; cloud te
 
 
 | COL-people-contacts-PERIOD-01 | S1 privacy / tenant integrity | College contacts academic filter inferred class scope from the cohort/program's department but did not verify the independent `sections.academic_period_id` belonged to the same college. A corrupt cross-college period could satisfy class-presence and combined-placement predicates. Three predicates now join `academic_periods` with `college_id` equality. | `chat4-college-contacts-period-sql.test.ts` | Disposable PostgreSQL injected FK fixture pending |
+
+
+| COL-student-import-options-05 | S1 tenant integrity | CSV batch chooser used the cohort's program/department college, but did not validate independent `cohorts.start_period_id` belonged to that college. A corrupt cross-college start period could still be selectable. Added same-college `academicPeriods` join while retaining valid ongoing cohorts whose historical start period is CLOSED. | `chat4-college-student-import-options-hardening.test.ts` | PostgreSQL malformed FK fixture pending |
