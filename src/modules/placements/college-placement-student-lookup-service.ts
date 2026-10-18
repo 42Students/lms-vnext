@@ -43,7 +43,7 @@ export async function lookupCollegeStudentPlacement(ctx:RequestContext,raw:unkno
    .leftJoin(placementOffers,eq(placementOffers.applicationId,placementApplications.id))
    .leftJoin(placementJoiningOutcomes,eq(placementJoiningOutcomes.offerId,placementOffers.id))
    .where(eq(placementApplications.membershipId,person.membershipId))
-   .orderBy(desc(placementApplications.submittedAt)).limit(STUDENT_LOOKUP_APPLICATION_CAP+1);
+   .orderBy(desc(placementApplications.submittedAt),desc(placementApplications.id),desc(placementOffers.id)).limit(STUDENT_LOOKUP_APPLICATION_CAP+1);
   const applications=capStudentLookupRows(rows,STUDENT_LOOKUP_APPLICATION_CAP);
   return{...person,applications:applications.items,
    placed:applications.items.some(row=>row.offerStatus==="ACCEPTED"&&row.joining==="JOINED"),
