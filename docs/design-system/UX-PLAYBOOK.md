@@ -1,5 +1,7 @@
 # LMS UX Playbook — v1.0 (lane chat-17)
 
+**STATUS: SIGNED OFF (2026-10-18, orchestrator) — source level.** Audit 1 (chat-18, 33 findings), Audit 2 (chat-19, 3 re-verification rounds, final: zero BLOCKER/MAJOR source defects) and typecheck+lint green on main. Device, screenshot and screen-reader evidence is gathered during the per-page rollout and by the cloud browser capture (Audit 3); findings from it amend this playbook through UX-PLAYBOOK-CHANGELOG.md. Per-page rollout is released: follow docs/orchestrator/briefs/ui-ux-excellence-lane.md.
+
 > **Single source of truth for authenticated and public LMS UI, including native-app WebViews.** Adopt after three audits. This does not change legacy wording, route structure, roles, permissions, or the palette. Source: `src/app/globals.css`, `docs/design-system/lms-color-parity.md`, `docs/parity/*`, and `docs/orchestrator/ui-ux/pages-*.md`. A component's legacy label always wins over example copy here.
 
 ## 1. Principles (do / do not)
