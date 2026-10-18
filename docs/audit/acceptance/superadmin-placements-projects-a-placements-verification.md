@@ -137,3 +137,6 @@ All four are DONE in reviewed source. No local CI, PostgreSQL or browser run was
 
 | SA-TARGET-REVOKE-07 | DONE in draft-scoped source; CI pending | `src/modules/placements/cohort-target-service.ts` checks persisted actor role in same transaction; `tests/unit/chat13-placement-target-stale-role.test.ts` covers scope, authorization ordering, draft-only mutation. Published audience editing remains PARTIAL under SA-placements-projects-13 until transactional applicant notification and registered migration. |
 | SA-STUDENT-LOOKUP-STABLE-06 | DONE in source; CI pending | `src/modules/placements/college-placement-student-lookup-service.ts` orders by display name + membership ID before its 16th-row probe; `tests/unit/chat13-student-placement-lookup-cap.test.ts` checks stable ordering and no result leak. |
+
+
+| SA-COMPANY-HISTORY-PLACED-07 | DONE in source; CI pending | Hired applicants in `admin-company-drive-history-service.ts` now require accepted offer + joined outcome and distinct application, in addition to college-scoped membership. `tests/unit/chat13-company-drive-history-visible-totals.test.ts`; execution pending. |
