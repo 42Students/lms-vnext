@@ -1,7 +1,8 @@
-export default function SemesterCoursesLoading() {
-  return <div aria-label="Loading course mappings" aria-busy="true" className="space-y-4">
-    <div className="h-16 animate-pulse rounded-xl bg-muted" />
-    <div className="h-24 animate-pulse rounded-xl bg-muted" />
-    <div className="h-72 animate-pulse rounded-xl bg-muted" />
-  </div>;
+import {Skeleton} from "@/components/ui/skeleton";
+export default function SemesterCoursesLoading(){
+ return <div className="min-w-0 space-y-4">
+  <Skeleton variant="line" label="Loading course mappings"/>
+  <Skeleton variant="form" label="Loading course mappings"/>
+  <Skeleton variant="row" count={3} label="Loading course mappings"/>
+ </div>;
 }

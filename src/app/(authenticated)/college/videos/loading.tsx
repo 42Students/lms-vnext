@@ -1,7 +1,8 @@
-export default function CollegeVideosLoading() {
-  return <div aria-busy="true" aria-label="Loading videos" className="space-y-4">
-    <div className="h-16 animate-pulse rounded-xl bg-muted" />
-    <div className="h-24 animate-pulse rounded-xl bg-muted" />
-    <div className="h-72 animate-pulse rounded-xl bg-muted" />
-  </div>;
+import {Skeleton} from "@/components/ui/skeleton";
+export default function CollegeVideosLoading(){
+ return <div className="min-w-0 space-y-4">
+  <Skeleton variant="line" label="Loading videos"/>
+  <Skeleton variant="form" label="Loading videos"/>
+  <Skeleton variant="row" count={3} label="Loading videos"/>
+ </div>;
 }

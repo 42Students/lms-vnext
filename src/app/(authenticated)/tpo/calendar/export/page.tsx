@@ -1,3 +1,5 @@
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -39,16 +41,16 @@ export default async function TpoCalendarExportPage({
       description="Download a formula-safe CSV from migrated scheduled round records. Date filters use IST calendar days; no ICS or external calendar sync." />
     <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-5">
       <label className="text-sm font-semibold text-foreground">From (IST)
-        <input type="date" name="from" required defaultValue={first(query.from) ?? today}
+        <Input type="date" name="from" required defaultValue={first(query.from) ?? today}
           className="mt-2 block min-h-11 rounded-md border border-border bg-surface px-3" />
       </label>
       <label className="text-sm font-semibold text-foreground">Through (IST)
-        <input type="date" name="to" required defaultValue={first(query.to) ?? nextWeek}
+        <Input type="date" name="to" required defaultValue={first(query.to) ?? nextWeek}
           className="mt-2 block min-h-11 rounded-md border border-border bg-surface px-3" />
       </label>
-      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">
+      <Button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">
         Preview range
-      </button>
+      </Button>
     </form>
     {!parsed.success ? <p role="alert" className="rounded-md border border-border bg-surface p-5 text-sm text-body">
       Invalid date range. Select real IST dates with a maximum inclusive span of 93 days.

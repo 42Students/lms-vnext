@@ -1,7 +1,8 @@
+import {Skeleton} from "@/components/ui/skeleton";
 export default function CollegeSemestersLoading() {
-  return <div aria-busy="true" aria-label="Loading semesters" className="space-y-4">
-    <div className="h-16 animate-pulse rounded-xl bg-muted" />
-    <div className="h-24 animate-pulse rounded-xl bg-muted" />
-    <div className="h-72 animate-pulse rounded-xl bg-muted" />
+  return <div className="min-w-0 space-y-4">
+    <Skeleton variant="line" label="Loading semesters" />
+    <Skeleton variant="form" label="Loading semesters" />
+    <Skeleton variant="row" count={3} label="Loading semesters" />
   </div>;
 }
