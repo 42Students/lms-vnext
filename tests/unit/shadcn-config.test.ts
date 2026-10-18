@@ -59,7 +59,7 @@ describe("shadcn configuration", () => {
 
   it("maps shadcn semantic tokens back to canonical LMS tokens", () => {
     for (const mapping of [
-      "--primary: var(--lms-primary);",
+      "--primary: var(--lms-button-primary);",
       "--primary-foreground: var(--lms-on-primary);",
       "--background: var(--lms-page-background);",
       "--card: var(--lms-surface);",

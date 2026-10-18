@@ -238,3 +238,16 @@ Owner directive honored: no CI re-run or repairs of old failing test list; these
 | `getTpoTeamThreadPreferences`, `updateTpoTeamThreadPreferences` — `src/modules/placements/tpo-team-preferences-service.ts` | Persisted active TPO/College Admin team role rechecked *inside transaction* in addition to `placements.manage` permission, college/thread/membership exact scope, no-op returns before upsert | Same named test (pure behaviour and structural authorization assertion) | Real role-revocation in-flight, wrong-college thread, and exact activity/notification policy |
 
 No Vitest, TypeScript, PostgreSQL or browser execution was performed. `TPO-settings-audit-23` remains OPEN: the `placement_jobs_employment_type_ck` database constraint admits only FULL_TIME/INTERNSHIP/CONTRACT, so the college-local custom catalogue is not yet an authoritative drive type, filter or reporting dimension. Do **not** label it DONE or pretend custom placed-counting policies affect offers until migration, historical-drive preservation, reporting and publish guards land together.
+
+## Notices and custom job-type last-active UI — 2026-10-19
+
+| ID | Export / UI | Source behaviour | Test | Unresolved |
+|---|---|---|---|---|
+| TPO-settings-audit-NOTICES-COUNT-02 | `tpoStudentNoticesOverview` | Source failure or invalid aggregate remains unavailable rather than displaying invented zero; exact count and lower-bound `hasMore` count keep `MAX_SAFE_INTEGER` safe. | `tests/unit/chat11-tpo-notice-count-integrity.test.ts` | Notice delivery/read receipt aggregation and provider status |
+| TPO-settings-audit-23 (partial) | `TpoJobTypesEditor`, `setTpoJobTypeActive` | Client no longer disables the **last custom type** when built-ins remain active. Server is authoritative for the combined built-in+custom at-least-one-visible rule, CAS and college/role scope. | `tests/unit/chat11-tpo-job-type-last-custom-visibility.test.ts` | **OPEN**: custom type is not yet used by drive forms, eligibility filters, offers or reports; needs migration and historical typing before closure |
+
+No test execution claimed. The job-type integration must not be marked DONE based on this narrower UI correction.
+
+## Personal preference model matrix — 2026-10-19
+
+`tests/unit/chat11-tpo-personal-preferences-matrix.test.ts` adds `TPO-settings-audit-PREF-02`: all five exact legacy preference fields; unavailable vs source-default vs persisted; no mutation of shared defaults; Zod strict rejection of caller-supplied user/college/member/org, unknown switch, non-boolean values, and invalid optimistic tokens; comparison of each changed switch to avoid false no-op receipts. Persisted multi-device CAS / provider delivery remain unexecuted and open.

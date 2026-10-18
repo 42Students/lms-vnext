@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { isSameOriginRequest } from "@/auth/origin";
+import {readBoundedJsonBody} from "@/lib/bounded-json-body";
 import { acceptPublicRecruiterJoin, PublicJoinAcceptError } from "@/modules/placements/public-join/join-service";
 
 export const runtime = "nodejs";
@@ -7,10 +8,13 @@ export async function POST(request: Request) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
+  const body=await readBoundedJsonBody(request);
+  if(body.kind!=="OK")return NextResponse.json({error:body.kind==="TOO_LARGE"?"REQUEST_TOO_LARGE":"COULD_NOT_JOIN"},
+    {status:body.kind==="TOO_LARGE"?413:400,headers:{"Cache-Control":"no-store"}});
   const trusted = process.env.PUBLIC_JOIN_TRUSTED_PROXY_READY === "VERIFIED";
   const ip = trusted ? request.headers.get("x-public-verified-client-ip") : null;
   try {
-    const result = await acceptPublicRecruiterJoin("COMPANY", await request.json().catch(() => null), ip);
+    const result = await acceptPublicRecruiterJoin("COMPANY", body.value, ip);
     return NextResponse.json(result, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     if (error instanceof PublicJoinAcceptError) {

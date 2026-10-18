@@ -199,3 +199,23 @@ These are source-authored, not CI-green. The owner deferred test and browser gat
 | Export | Behavior covered | Test |
 |---|---|---|
 | `learnerCourseCardMedia`, `learnerCourseCardMediaAfterError`, `learnerCourseFallbackMedia` | Only credential-free, fragment-free, public HTTPS authored thumbnails; no localhost/loopback/RFC1918/metadata hosts; missing or failed authored image uses trusted bundled fallback and never retries an unsafe URL | `tests/unit/learner-course-card-media-model.test.ts` — `LEARNER-THUMBNAIL-15` extended hostile-host matrix (authored, CI pending) |
+
+
+## 2026-10-19 learner quiz score, review and Super Admin courses/content deep audit
+
+| Export / page | Behavioral invariant and adversarial case | Test evidence |
+|---|---|---|
+| `learnerQuizHistoryQuerySchema`, `ownQuizHistorySelection` | Only a server-authorized quiz+delivery pair is selectable; forged tenant, injected fields and malformed IDs rejected | `tests/unit/chat7-learner-quiz-history-grade-hardening.test.ts` — `COURSES-LEARNER-QUIZ-HISTORY-01` |
+| `learnerAttemptResultLabel`, `learnerQuizQuestionAwardLabel` | Unreleased, missing, nonfinite or negative numeric grades are never represented as scored attempts | Same named test; source fix `4fae8ad` |
+| `learnerQuizSelectedAnswerMessage`, `learnerQuizReviewRows` | Historical multiple-selection review warns when **any** selected option disappeared, even when another remains; visible selection counts include only current option IDs | Same named test; source fix `4fae8ad` |
+| `selectLearnerLatestQuizAttempt`, `learnerQuizReviewQuestionNotice`, `learnerQuizAttemptDateLabel` | Persisted attempt number wins over array order, unavailable published questions do not erase prior attempt history, dates display in IST | Same named test |
+| `parseSuperAdminAssignmentQuery`, `/admin/assignments`, `/admin/quizzes` | Reject duplicate/array page params, forged request selectors and assignment-only unsupported states; quiz results publishing filters retained | `tests/unit/chat7-admin-courses-assessment-boundaries.test.ts` — `SA-COURSES-CONTENT-AUDIT-01` |
+| `/admin/assignments` | Explicit Super Admin role gate; authoring-options failures never hide the authorized assignment directory; directory failures show retry without raw server errors | Same named test; fixes `f6f7b6a`, `2fa14b2` |
+| `parseSuperAdminCourseQuery`, `/admin/courses`, `paginateCollegeCourses` | Strict UUID duplicate ID, known query keys only, numeric page strings only; rejects array coercion, unknown tenant and invalid page sizes | `tests/unit/chat7-admin-courses-content-hardening.test.ts` — `SA-COURSES-CONTENT-AUDIT-02` |
+| `SuperAdminContentDirectoryPage` | Authorized directory remains readable when either lesson-authoring choices or section-filter options fail; display explicit degraded-state notices | Same named test; fix `7bfb40a` |
+| `effectiveCourseContentVisibleToStudents`, `safePublicCourseContentUrl`, `adminContentQuerySchema`, `contentTypesForKind`, `adminContentHref` | All published ancestors required for learner visibility; HTTPS previews without credentials/fragments; strict URL paging and preserved filters | Same named test |
+
+This is *additional direct regression evidence*, not exhaustive coverage: remaining learner-course exports and
+Super Admin course builders, certificate integrations, real PostgreSQL role/tenant/concurrency
+tests, and device testing are still outstanding. All tests are written but **not run** under the
+owner's deferred-CI directive; no claim of successful execution is made.

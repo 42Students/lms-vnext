@@ -111,3 +111,22 @@ Scope: `src/modules/organizations/service.ts`, `src/modules/colleges/service.ts`
 | SA-tenants-modules-READY-04 | `evaluateCollegeReadiness`, `summarizeTenantSetupReadiness` | A malformed or overflowed persisted count (negative, fractional, infinite, NaN, unsafe integer, missing at runtime) is UNKNOWN and never a pass. A summary with fewer/more than the ten canonical checks or invalid count arithmetic is Unknown even when its purported `overall` says READY. Verified zeros remain FAIL, archived college remains NOT_READY, valid ten-check pass is still explicitly **not** launch approval. | `tests/unit/chat11-readiness-count-integrity.test.ts` — six behavioural cases, all count fields and corrupted rollups | PostgreSQL unexpected driver aggregate, real runtime/DNS/sign-in checks, CI not run |
 
 This audit documents source-level hardening only. Do not declare the IIT Dharwad launch ready based on the persisted setup checklist.
+
+## Tenant setup, module disable impact and course-progress authorization — 2026-10-19
+
+| ID | Source | Fixed / verified source-level boundary | Test | Still not proved |
+|---|---|---|---|---|
+| SA-tenants-modules-MOD-IMPACT-06 | `src/modules/module-access/admin-module-impact-model.ts` and `admin-module-impact-service.ts` | Projects / Placements disable previews refuse missing/negative/fractional/overflow counts instead of inventing safe values. Each Projects, Placements and Electives result rechecks the exact ACTIVE college, organization scope and **persisted active Super Admin role after async SQL reads**. Learner scope counts only active users. | `tests/unit/chat11-super-admin-module-impact-revocation.test.ts` | Two-session role/college-archive races and exact PostgreSQL counts |
+| SA-tenants-modules-SETUP-08 | `src/app/(authenticated)/admin/tenants/setup/page.tsx` | Super Admin role and `admin-scope.select` evaluated before parsing hostile or duplicated URL filters; scoped `college.read` import restored. The seven distinct tenant setup step destinations remain scoped to the selected college where appropriate. | `tests/unit/chat11-super-admin-tenant-setup-authority.test.ts` | Browser session expiry, real tenant setup and keyboard route transitions |
+| SA-tenants-modules-COURSE-PROGRESS-07 | `src/modules/courses/super-admin-course-progress-query.ts`, `src/app/(authenticated)/admin/course-progress/page.tsx` | Role check before filter-state recovery and SQL reads; deny repeated values, caller-selected tenant/organization IDs, unknown fields, scientific/hex/signed/whitespace page forms, out-of-range page. Selected college still comes exclusively from active admin scope. | `tests/unit/chat11-super-admin-course-progress-tenant-guard.test.ts` | HTTP 401/403, 320px page, real DB cross-college CSV export |
+
+These are code and authored tests only, not executed Vitest/TypeScript/PostgreSQL/browser evidence.
+
+## Private Super Admin course-progress student results — 2026-10-19
+
+| ID | Boundary | Source hardening | Named regression | Not yet executed |
+|---|---|---|---|---|
+| SA-tenants-modules-COURSE-STUDENTS-10 | `/admin/course-progress/students`, GET `/api/admin/course-progress/students/export`, `getSuperAdminStudentCourseProgress` | Verify Super Admin role before parsing any offering query or returning a CSV error; reject repeated/off-scope query fields; page and export take the offering from strict UUID-only model, never a caller-selected college. After private roster SQL, service locks the ACTIVE college and rechecks the persisted account/system role and selected `courses.read` scope before returning student names and content progress. | `tests/unit/chat11-super-admin-student-progress-revocation.test.ts` and added `chat11-super-admin-course-progress-tenant-guard.test.ts` detail cases | Two-transaction PostgreSQL in-flight revocation, live 403/401/no-cache/export CSV testing |
+| SA-tenants-modules-COURSE-EXPORT-09 | `exportSuperAdminLearningDirectory` for LESSONS, PROGRESS, ASSIGNMENT, QUIZ | Require authenticated Super Admin system privilege before inspecting query contents; a College Admin with legitimate college-level `courses.read` cannot call a Super Admin CSV endpoint. The existing selected-scope course readers and no-store CSV headers remain. | `tests/unit/chat11-super-admin-learning-export-scope.test.ts` | HTTP unauthorized cases and large export verification |
+
+**Execution statement:** tests authored, not run. No PostgreSQL, browser, TypeScript or CI certification.
