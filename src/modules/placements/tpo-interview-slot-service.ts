@@ -42,7 +42,8 @@ export async function getTpoInterviewSlotWorkspace(context:RequestContext,jobId:
  .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
  .where(and(eq(placementApplications.jobId,info.round.jobId),
   eq(placementApplications.status,"SUBMITTED"),
-  eq(placementApplicationScreenings.status,"SHORTLISTED")))
+  eq(placementApplicationScreenings.status,"SHORTLISTED"),
+  eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")))
  .orderBy(asc(learnerProfiles.rollNumber),asc(users.displayName));
  const slots=storageReady?await getDb().select().from(placementRoundCandidateSlots)
   .where(and(eq(placementRoundCandidateSlots.roundId,info.round.id),
@@ -67,6 +68,7 @@ export async function getTpoInterviewSlotWorkspace(context:RequestContext,jobId:
   .innerJoin(users,eq(users.id,collegeMemberships.userId))
   .where(and(eq(placementLearnerRequests.roundId,info.round.id),
    eq(placementApplications.jobId,info.round.jobId),
+   eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"),
    eq(placementLearnerRequests.requestType,"ROUND_RESCHEDULE"),
    eq(placementLearnerRequests.status,"PENDING")));
  const booked=new Set(slots.map(s=>s.applicationId).filter(Boolean));
