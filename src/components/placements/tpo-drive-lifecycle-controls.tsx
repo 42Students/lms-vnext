@@ -80,7 +80,7 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
       <div className="mt-4">
         {readiness.close.allowed ? (
           <Link href={"/tpo/placements/jobs/" + encodeURIComponent(readiness.jobId) + "/close-preview"}
-            className="inline-flex min-h-10 items-center justify-center rounded-md border border-primary px-4 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[9px] border border-primary px-4 text-sm font-semibold text-primary-text">
             Review close consequences before confirming
           </Link>
         ) : (
@@ -96,7 +96,7 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
             type="button"
             onClick={() => { setAction(item.action); setError(null); setAcknowledged(false); }}
             disabled={pending || !item.decision.allowed}
-            className="min-h-10 rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground disabled:opacity-50"
+            className="min-h-11 md:min-h-9 rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-foreground disabled:opacity-50"
           >
             {item.action} {item.decision.allowed ? "" : "(unavailable)"}
           </button>
@@ -145,7 +145,7 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
               type="button"
               disabled={pending || reason.trim().length < 10 || !acknowledged}
               onClick={() => void submit()}
-              className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50"
+              className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50"
             >
               {pending ? "Saving..." : "Confirm " + selected.action.toLowerCase()}
             </button>
@@ -153,7 +153,7 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
               type="button"
               onClick={() => setAction(null)}
               disabled={pending}
-              className="min-h-10 rounded-md border border-border px-4 text-sm"
+              className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-4 text-sm"
             >
               Cancel
             </button>
