@@ -92,7 +92,7 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
   finally{setSaving(false);}
  }
  return <div className="fixed inset-0 z-50 flex justify-end bg-black/50">
-  <aside ref={drawer} role="dialog" aria-modal="true" aria-label={`Review ${row.learnerName}`} className="h-full w-full max-w-xl overflow-y-auto overscroll-contain bg-background p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-xl [mask-image:linear-gradient(to_bottom,transparent,black_0.75rem,black_calc(100%-0.75rem),transparent)] sm:p-6">
+  <aside ref={drawer} role="dialog" aria-modal="true" aria-label={`Review ${row.learnerName}`} className="h-full w-full max-w-xl overflow-y-auto overscroll-contain bg-background p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-xl [mask-image:linear-gradient(to_bottom,transparent,black_12px,black_95%,transparent)] sm:p-6">
    <header className="flex items-start justify-between gap-3 border-b pb-3">
     <div className="min-w-0"><h2 className="break-words text-lg font-semibold">{row.learnerName}</h2>
      {row.rollNumber?<p className="text-xs text-muted-foreground">Roll no.: {row.rollNumber}</p>:null}

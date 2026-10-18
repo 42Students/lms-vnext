@@ -186,33 +186,33 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
       {items.map(item=><li key={item.id} id={"log-"+item.requestId}
         className="rounded-lg border border-border p-3 text-sm">
         <details>
-          <summary className="cursor-pointer font-semibold">
+          <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold">
             {new Date(item.time).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} · {item.event} · {item.path}
           </summary>
           <p className="mt-2 whitespace-pre-wrap break-words text-body">{item.message}</p>
           <p className="mt-2 text-xs text-muted-foreground">Reference: {item.requestId??"Not recorded"} · {item.component??"server"}</p>
           <div className="mt-3 flex flex-wrap gap-3">
             <button type="button" onClick={()=>void copy(trackerLogMarkdown([item]))}
-              className="font-semibold text-primary-text underline">Copy for Claude</button>
+              className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Copy for Claude</button>
             <button type="button" onClick={()=>void copy(window.location.origin+"/tracker/logs?query="+encodeURIComponent(item.requestId??item.event))}
-              className="font-semibold text-primary-text underline">Copy permalink</button>
+              className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Copy permalink</button>
             <Link href={"/tracker?context="+encodeURIComponent(
               [item.event,item.path,item.message,"Reference: "+(item.requestId??"none")].join("\n").slice(0,450))}
-              className="font-semibold text-primary-text underline">Report this</Link>
+              className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Report this</Link>
             {item.knownErrorId?<>
               <Link href={"/tracker/logs#known-error-"+item.knownErrorId}
-                className="font-semibold text-primary-text underline">Known error details</Link>
+                className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Known error details</Link>
               <button type="button" disabled={mutating}
                 onClick={()=>{setMuteReason("");setMuteTarget({id:item.knownErrorId!,muted:item.muted===true});}}
-                className="font-semibold text-primary-text underline disabled:opacity-50">
+                className="inline-flex min-h-11 items-center font-semibold text-primary-text underline disabled:opacity-50">
                 {item.muted?"Unmute this error":"Mute this error"}
               </button>
             </>:<Link href="/tracker/logs#known-errors"
-              className="font-semibold text-primary-text underline">Open Known Errors</Link>}
+              className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Open Known Errors</Link>}
           </div>
         </details>
       </li>)}
-    </ol>:<p className="text-sm text-body">No live errors loaded.</p>}
+    </ol>:<p role="status" className="text-sm text-body">No live errors loaded.</p>}
     {nextPage?<button type="button" onClick={()=>void load(true)} disabled={pending||exporting}
       className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold disabled:opacity-50">
       Load older
@@ -230,15 +230,15 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
     </ConfirmDialog>
     <Dialog open={reportOpen} onOpenChange={setReportOpen} title="Report for Claude">
       <p className="mt-1 text-sm text-body">Copy a redacted report or download the selected time range.</p>
-      <textarea readOnly value={trackerLogMarkdown(items)} rows={8}
+      <textarea readOnly aria-label="Redacted tracker log report" value={trackerLogMarkdown(items)} rows={8}
         className="mt-3 w-full rounded border border-border bg-surface p-3 text-xs"/>
       <div className="mt-3 flex flex-wrap gap-3">
         <button type="button" onClick={()=>void copy(trackerLogMarkdown(items))}
-          className="font-semibold text-primary-text underline">Copy report</button>
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Copy report</button>
         <button type="button" onClick={()=>void downloadRange("markdown")} disabled={exporting}
-          className="font-semibold text-primary-text underline">Download report</button>
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Download report</button>
         <button type="button" onClick={()=>setReportOpen(false)}
-          className="font-semibold text-primary-text underline">Close</button>
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Close</button>
       </div>
     </Dialog>
   </section>;
