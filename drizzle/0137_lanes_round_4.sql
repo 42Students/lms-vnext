@@ -29,34 +29,8 @@ ALTER TABLE placement_applications
   REFERENCES placement_job_role_options(id, job_id)
   ON DELETE RESTRICT NOT VALID;
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS placement_tpo_company_team_messages (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  college_id uuid NOT NULL REFERENCES colleges(id) ON DELETE RESTRICT,
-  company_id uuid NOT NULL REFERENCES placement_companies(id) ON DELETE RESTRICT,
-  author_membership_id uuid NOT NULL,
-  idempotency_key uuid,
-  body text NOT NULL,
-  decision boolean NOT NULL DEFAULT false,
-  ask_assignee_membership_id uuid,
-  ask_due_at timestamptz,
-  ask_status text,
-  edited_at timestamptz,
-  deleted_at timestamptz,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  CONSTRAINT tpo_company_team_author_college_fk
-    FOREIGN KEY (author_membership_id,college_id)
-    REFERENCES college_memberships(id,college_id) ON DELETE RESTRICT,
-  CONSTRAINT tpo_company_team_assignee_college_fk
-    FOREIGN KEY (ask_assignee_membership_id,college_id)
-    REFERENCES college_memberships(id,college_id) ON DELETE RESTRICT,
-  CONSTRAINT tpo_company_team_message_body_ck
-    CHECK (length(btrim(body)) BETWEEN 1 AND 4000),
-  CONSTRAINT tpo_company_team_ask_status_ck
-    CHECK (ask_status IS NULL OR ask_status IN ('OPEN','DONE','CANCELLED')),
-  CONSTRAINT tpo_company_team_ask_assignee_status_ck
-    CHECK ((ask_assignee_membership_id IS NULL AND ask_status IS NULL)
-        OR (ask_assignee_membership_id IS NOT NULL AND ask_status IS NOT NULL))
-);
+-- 0135 already created the table; the lane model also needs the send-dedupe key.
+ALTER TABLE placement_tpo_company_team_messages ADD COLUMN IF NOT EXISTS idempotency_key uuid;
 --> statement-breakpoint
 CREATE UNIQUE INDEX IF NOT EXISTS tpo_company_team_message_send_dedupe_uq
   ON placement_tpo_company_team_messages(college_id,company_id,author_membership_id,idempotency_key);
