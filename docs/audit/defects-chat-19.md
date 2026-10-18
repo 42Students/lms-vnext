@@ -221,3 +221,9 @@ This is an independent unowned responsive UX pickup for the critical TPO/HR plac
 | ID | Pre-fix severity | Source and defect | Fix | Commits | Regression |
 |---|---|---|---|---|---|
 | HR-BREAK-NOTIFICATIONS-02 | MAJOR | `listHrNotifications` accepted a syntactically valid old `page=9999` even after the selected college/unread filter shrank to one page. SQL offset returned zero rows and misleadingly said there were no matching notifications, although the database still contained authorized notifications. | After counting only authorized matching events, clamp the page to the final actual page before SQL offset and response metadata. Leave strict 1–10000 query validation and original bounds helper semantics unchanged. | `e0febf75`, `93d4d1ca` | `tests/unit/HR-BREAK-chat19-notification-stale-page.test.ts` (`0ec2ea1f`), `tests/integration/hr-notifications.test.ts` (`5d4b6fa6`) |
+
+## HR report stale-page correction
+
+| ID | Before-fix severity | Source | Problem and fix | Commits | Direct regression |
+|---|---|---|---|---|---|
+| HR-BREAK-REPORTS-02 | MAJOR | `src/modules/placements/recruiter-company-reports-service.ts` | A saved HR report link with a now-out-of-range page (after status filters or drive counts changed) returned zero drives and a misleading empty state. Count the exact authorized employer-college/status portfolio first, clamp the requested page, then apply that page to SQL offset and rendered page metadata. Preserve tenant/company permission checks and 1–10000/1–50 request schema. | `406c9f52`, `55095c1b` | `tests/unit/HR-BREAK-chat19-company-report-stale-page.test.ts` (`2f9fa839`) |
