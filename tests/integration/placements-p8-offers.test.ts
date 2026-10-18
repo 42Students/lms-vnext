@@ -925,7 +925,7 @@ describe("Placement P8 offers and joining", () => {
       "select status from placement_offers where id=$1",[issued.id]);
     expect(accepted.rows).toEqual([{status:"ACCEPTED"}]);
     const audit=await pool.query<{metadata:Record<string,unknown>}>(
-      `select metadata from activity_events where subject_id=$1 and event_type='PLACEMENTS_OFFER_RESPONDED'
+      `select metadata from activity_events where subject_id=$1 and event_type='placements.offer.responded'
        order by occurred_at desc limit 1`,[issued.id]);
     expect(audit.rows[0]?.metadata).toMatchObject({
       actorRole:"TPO",cascadeId,withdrawnApplicationCount:1,
