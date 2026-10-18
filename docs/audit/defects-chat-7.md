@@ -19,3 +19,26 @@ Owner lanes: chat-7 learner courses + Learner/Faculty Projects journeys; chat-14
 1. Require an independent breaker to reproduce/confirm the expected failure on prior branch and verify fixes in a real PostgreSQL database, not just source assertions.
 2. Run `npx vitest run` for the named files, strict TypeScript, source coverage scripts, 320/375/768px browser tours, actor-swap/expired-session/duplicate-submit probes.
 3. Do not mark the Projects role matrix or courses endpoint matrix 100% based on this subset; `docs/audit/coverage/chat7-learner-course-file-inventory.md` enumerates remaining work.
+
+
+## New high-risk findings in the 2026-10-18 learner hardening pass
+
+All rows below are **implemented on the lane branch but not yet green-CI or PostgreSQL verified**. The code fixes are real; independent breaker review and integration checks remain mandatory.
+
+| ID | Severity | Evidence / attempted break | Code commit | Behavioural regression |
+|---|---|---|---|---|
+| COURSES7-06 | BLOCKER — result fairness | Learner assessment overview propagated `resultsPublished=true` for `PUBLISHED` quizzes, while the authoritative attempt service only released for `CLOSED && resultsPublished`. The RESULTS facet could advertise unavailable results. | `74ef887`, `a9216c7` | `chat7-learner-assessment-result-release.test.ts`, `chat7-learner-quiz-discussion-guard-coverage.test.ts` |
+| COURSES7-07 | HIGH — delivery isolation | `getMyQuizAttempts` read quiz + own membership without filtering the selected delivery ID. Moving between sections could cross-display historical attempts from a different delivery. | `0ab6990` | `chat7-learner-results-service-scoping.test.ts` |
+| COURSES7-08 | HIGH — delivery isolation | `getMyAssignmentSubmission` similarly omitted the selected delivery from its persisted result lookup. Shared assignment view could incorrectly show work from a former section. | `ee4ca56` | `chat7-learner-results-service-scoping.test.ts` |
+| PROJ7-05 | BLOCKER — lifecycle integrity | A learner could delete an own TODO task in a still-ACTIVE sprint after parent release reached SHIPPED, because deletion checked sprint state but not the parent release. | `d80f730` | `PROJ-BREAK-LEARNER-RELEASE-01.test.ts` |
+| PROJ7-06 | HIGH — optimistic concurrency | Learner backlog pull used direct timestamp equality for a PostgreSQL `updated_at`, incompatible with millisecond-token semantics when database stores microseconds; valid tabs could fail CAS. | `2211d79`, `2e317b7` | `PROJ-BREAK-LEARNER-BACKLOG-01.test.ts` |
+
+### Typechecking maintenance
+
+`chat7-course-resource-materials-weak.test.ts` and `chat7-learner-assignment-methods-weak.test.ts` were given sound type annotations/casts without dropping any behavioural assertion (`48483d9`, `1ec962e`). Four project route recovery fixture failures from the current CI snapshot were corrected to agree with the expected safe recovery copy (`e99883f`). These changes **do not prove the CI job is green**.
+
+### Remaining release gates
+
+- Real PostgreSQL integration: cross-tenant actor swaps, expired sessions, same-millisecond concurrent retries, release shipment races, grade publication races, disk/storage failures.
+- Executable Vitest and TypeScript runs of these additions; the GitHub connector can mutate source but does not provide a checked-out npm environment. Re-run the branch CI and investigate new failures before merging.
+- Exhaustive courses ledger (336 source files, 871 exported symbols in the latest weak-area inventory) is not closed. The separate `docs/audit/coverage/courses-ledger.md` states known evidence and outstanding matrix explicitly; do not report 100% coverage.
