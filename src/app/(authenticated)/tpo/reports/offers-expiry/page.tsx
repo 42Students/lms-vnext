@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
@@ -19,11 +20,11 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
   return (
     <div data-tpo-presentation-report className="space-y-6">
       <TpoReportPresentation />
-      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/offers-expiry" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
+      <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/offers-expiry" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <PageHeader eyebrow="TPO · Offers" title="Offer expiry watchlist"
         description="Currently issued offers expiring in an IST calendar-day window. No speculative expiry dates."
         actions={process.env.DB09_TPO_API_READY === "DB09_VERIFIED" ? <a href={"/api/placements/tpo/offers/expiry?days=" + data.days}
-          className="inline-flex min-h-10 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">
+          className="inline-flex min-h-11 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">
           Export CSV
         </a> : null}
       />
@@ -76,7 +77,7 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
                   </p>
                 </div>
                 <Link href={"/tpo/placements/jobs/" + row.jobId}
-                  className="inline-flex min-h-10 items-center justify-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text hover:underline">
+                  className="inline-flex min-h-11 items-center justify-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text hover:underline">
                   Open drive
                 </Link>
               </div>

@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
@@ -76,7 +77,7 @@ export default async function TpoFailureReasonsPage({
         }
       />
 
-      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/failure-reasons" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
+      <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/failure-reasons" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <TpoReportPresentation />
       <ReportNavigation workspace={workspace} />
       <ReportFilters
