@@ -344,3 +344,29 @@ These paths require one test row **per exported function** after parsing each fi
 | `src/modules/placements/hr-draft-round-order-model.ts` | `reorderHrDraftRound` | **OPEN** — exact behavioural test and role matrix pending |
 | `src/modules/placements/hr-drive-attention-model.ts` | `hrDriveAttention` | **OPEN** — exact behavioural test and role matrix pending |
 | `src/modules/placements/hr-drive-conversation-model.ts` | `recruiterDriveThreads` | **OPEN** — exact behavioural test and role matrix pending |
+
+## Exported functions inventory offset 28 (16 files; 21 functions)
+
+| Source | Exported function | Test closure |
+|---|---|---|
+| `src/modules/placements/hr-drive-conversation-service.ts` | `getRecruiterDriveConversations` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-draft-links.ts` | `recruiterDriveDraftHref` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-draft-model.ts` | `emptyHrDriveDraft` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-draft-model.ts` | `hrDraftFromAuthorizedJob` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-draft-model.ts` | `hrDriveDraftQuerySchema` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-draft-model.ts` | `hrDriveDraftSchema` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-messages-link-model.ts` | `hrDriveMessagesHref` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-overview-model.ts` | `buildHrDriveOverview` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-proposal-attempt-model.ts` | `nextHrProposalAttempt` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-proposal-export-model.ts` | `hrDriveProposalHistoryCsv` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-proposal-history-links.ts` | `hrSentProposalHistoryHref` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-proposal-history-links.ts` | `hrSentProposalExportHref` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-proposal-history-model.ts` | `previewHrDriveProposalMessage` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-proposal-history-model.ts` | `hrProposalHistoryWindow` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-proposal-history-service.ts` | `listHrDriveProposals` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-proposal-links-model.ts` | `hrSentProposalsHref` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-proposal-model.ts` | `formatHrDriveProposal` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-proposal-response-model.ts` | `isHrDriveProposalResponse` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drive-round-presets.ts` | `applyHrRoundPreset` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-drives-csv-model.ts` | `buildHrDrivesCsv` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-focused-review-model.ts` | `focusedReviewNavigation` | **OPEN** — test and role matrix not verified |
