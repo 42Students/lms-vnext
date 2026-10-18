@@ -60,3 +60,7 @@ Source: `docs/orchestrator/ui-ux/pages-admin.md`, pages 38–74 of that file's `
 5. Follow up with the owning shell/UX lanes where a page delegates to shared components. An imported guard name alone is not proof of correct tenant isolation.
 
 **Verdict:** Entry-point source audit done; **full second-third interactive/security sign-off BLOCKED on running the app/CI**. No unverified page is marked complete.
+
+## Session-revoke action hardening — chat-6 (AUTH-sessions-07)
+
+Admin-college administrator session revocation uses a synchronous single-flight guard and `apiFetch` to prevent double submissions and to translate network/HTML failures into friendly copy. Failed submissions remain inside the confirmation dialog with a visible retry message; only successful revocation closes it and refreshes the listing. Covered by `tests/unit/chat6-auth-revoke-admin-flight-and-errors.test.ts`. Cloud CI, authenticated browser, and database races still require execution.

@@ -12,7 +12,7 @@ import {
   projectMembers,
   users,
 } from "@/db/schema";
-import type { RequestContext } from "@/modules/identity/context";
+import {hasMembershipRole,isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import { can } from "@/modules/permissions/policy";
 import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import type { ProjectMemberRole } from "./constants";
@@ -52,6 +52,10 @@ export async function requireProjectManageAccess(
   context: RequestContext,
   projectIdInput: string,
 ) {
+  // Projects IDs and their existence are private: an unprivileged TPO,
+  // recruiter or learner must not distinguish a real foreign ID from a guess.
+  if(!isSuperAdmin(context)&&!hasMembershipRole(context,"COLLEGE_ADMIN"))
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const scope =
     await loadProjectScope(projectIdInput);
 
@@ -73,6 +77,14 @@ export async function requireProjectReadAccess(
   context: RequestContext,
   projectIdInput: string,
 ) {
+  // Project membership roles are only LEARNER / MENTOR. A TPO-only session
+  // never needs to load the object first, which avoids a cross-tenant ID
+  // existence oracle (PROJECT_NOT_FOUND versus PROJECT_ACCESS_DENIED).
+  if(!isSuperAdmin(context)&&
+    !hasMembershipRole(context,"COLLEGE_ADMIN")&&
+    !hasMembershipRole(context,"MENTOR")&&
+    !hasMembershipRole(context,"LEARNER"))
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const scope =
     await loadProjectScope(projectIdInput);
 

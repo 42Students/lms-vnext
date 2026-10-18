@@ -100,3 +100,10 @@ The **generated** `docs/audit/ux/COVERAGE-MATRIX.md` currently lists five Projec
 - **UX-kit-HARDEN-47:** disabled `FileUpload` no longer announces an invalid input when the only problem is availability. It retains disabled native semantics and helper/unavailable `aria-describedby` IDs. Unit SSR cases in `UX-kit-states-chat17.test.tsx` check this; browser assistive technology should verify the spoken message.
 
 - **UX-kit-HARDEN-48:** Disabled `Switch` uses the same `has-[:disabled]:cursor-not-allowed` affordance as native Checkbox/Radio. Static JSX test verifies the label and input remain 44px and truly disabled; physical pointer/focus behavior requires browser testing.
+
+- **UX-kit-HARDEN-49:** `FormField` propagates `required` to the actual cloned native control as well as the screen-reader/visible indicator; the render-function contract includes `required` too. Unit checks required, optional and already-required inputs.
+- **Unowned table migration:** `CollegeRecurringPreview` and `AcademicModuleScopeInventory` are no longer raw mobile-unfriendly HTML tables. `tests/unit/UX-recurring-preview-table-chat17.test.ts` and `tests/unit/UX-academic-scope-table-chat17.test.ts` protect their legacy copy, contextual values, IST formatting and hierarchy paging. Regenerate `docs/audit/ux/COVERAGE-MATRIX.md` against merged code; the static snapshot can predate these migrations.
+
+- **Unowned TPO WebView migration (UX-UNOWNED-TPO-03):** Built-in employment-type toggle now uses the shared ConfirmDialog hook rather than native `window.confirm`; the original stale-version CAS and last-active-type safeguards remain. Source regression is in `tests/unit/UX-tpo-job-types-confirm-chat17.test.ts`; real mobile keyboard and API concurrency still require browser/service witnesses.
+
+- **UX-kit-HARDEN-50:** FileUpload clears stale type/size validation messages when disabled/unavailable, without retaining a submitted FileList. Chromium regression deliberately feeds an invalid file, disables the native picker, checks the error disappears and disabled is no longer incorrectly `aria-invalid`, then re-enables it. Runner result is pending.

@@ -5,6 +5,7 @@ import { collegeMemberships,membershipRoles,projectMembers,users } from "@/db/sc
 import type { RequestContext } from "@/modules/identity/context";
 import { hasActiveMembership,hasMembershipRole } from "@/modules/identity/context";
 import {can} from "@/modules/permissions/policy";
+import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import { ProjectsServiceError } from "./errors";
 import { listMyProjectInstances } from "./member-service";
 
@@ -16,6 +17,8 @@ export async function getMentorProjectTeamSizes(context:RequestContext,
    context.user.platformStatus!=="ACTIVE"||!can(context,"projects.read",{
      collegeId:membership.collegeId,organizationId:membership.organizationId,
    }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+ if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
+   throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const ids=(verifiedRows??await listMyProjectInstances(context))
    .filter(row=>row.memberRole==="MENTOR"&&row.project.collegeId===membership.collegeId)
    .map(row=>row.project.id);

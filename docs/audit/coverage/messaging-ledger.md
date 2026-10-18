@@ -234,3 +234,16 @@ Remaining page E2E coverage: interactive keyboard focus, phone viewport and real
 | `src/modules/placements/public-join/send-code-service.ts:requestPublicJoinCode` | Fully mocked signed link, verified-IP/MX, rate checks, challenge persistence, actual `deliver` callback, then failed company-name lookup returns `{ sent:true, companyName:null }` without duplicate send or false failure | Same | Authored, unrun |
 
 | `requestPublicJoinCode` anonymous preflight | Signed invitation token digest, scope, active organization/college, revocation and expiration, company work-domain match checked before performing MX resolution; the DB transaction repeats the checks under row lock, preserving revocation safety | `tests/unit/chat16-public-join-delivery-recovery-29.test.ts` | Authored, unrun |
+
+## Additional direct test inventory — 2026-10-18
+
+| Boundary | New direct test cases | Evidence |
+|---|---|---|
+| Campaign template boundary | `messaging-template-boundary-16`: authentication-template exclusion, bad keys and valid campaign keys | `tests/unit/chat16-messaging-uncovered-pure-models-16.test.ts` |
+| Campaign source and filters | `messaging-campaign-source-16`, `messaging-campaign-filter-16`: strict query inputs, cardinality limits, URL-safe destinations | same |
+| Engage audience preview | `messaging-engage-preview-16`: segment selection, suppression precedence, no contact PII in returned counts | same |
+| Campaign history copy and opt-out timeline | `messaging-history-copy-16`, `messaging-unsubscribe-event-16`: IST display, safe fallback and existing legacy notification text | same |
+| Signed messaging unsubscribe | `messaging-unsubscribe-token-16`: canonical signature, tamper, expiry and no GET-side mutation | same |
+| Public marketing and recovery pages | `UX-chat16-public-home-01`, `UX-chat16-public-universities-02`, `UX-chat16-public-enterprises-03`, `UX-chat16-public-demo-04`, `UX-chat16-forbidden-05`: server-rendered HTML, navigation, CTA and safe forbidden recovery | `tests/unit/chat16-public-marketing-forbidden-pages-16.test.tsx` |
+
+These are newly authored cases, **not an executed green run**. Provider, database concurrency, invitation acceptance and session-expiry browser coverage remain explicit external verification gates. The historical two chat-16 failures named by `unit-failures-latest.md` were independently reconciled against the main-branch gap register; their original 32-ID assertions and status ownership checks were retained unchanged. The typecheck report named no chat-16 errors.

@@ -11,13 +11,15 @@ export function mentorReviewedTasksCsv(rows:readonly MentorReviewedTaskExportRow
     hour:"2-digit",minute:"2-digit",hourCycle:"h23",
   });
   const lines=["Review ID,Project,Task,Version,Decision,Reviewed (IST)"];
-  for(const row of rows){
+  const limited=rows.slice(0,200);
+  for(const row of limited){
     const when=row.reviewedAt&&Number.isFinite(row.reviewedAt.getTime())
       ?format.format(row.reviewedAt)+" IST":"Not recorded";
     lines.push([row.id,row.projectTitle,row.taskTitle,row.version,
       taskReviewDecisionLabel(row.status),when].map(csvSafeCell).join(","));
   }
-  if(omitted>0)lines.push(["","Truncated","",omitted+" additional reviewed versions","",""]
+  const hidden=(Number.isSafeInteger(omitted)&&omitted>0?omitted:0)+Math.max(0,rows.length-limited.length);
+  if(hidden>0)lines.push(["","Truncated","",hidden+" additional reviewed versions","",""]
     .map(csvSafeCell).join(","));
   return "\uFEFF"+lines.join("\r\n")+"\r\n";
 }

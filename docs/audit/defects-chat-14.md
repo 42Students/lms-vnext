@@ -150,3 +150,30 @@ The earlier PR-S2-11 source-text failure is **absent** from the newer `docs/orch
 | PROJ-BREAK-MENTOR-134..153 | Coverage only | Added deterministic pure-model tests for 11 Mentor workspace-evidence exports (safe href, no inferred percent, criteria visibility, review state, exact task URL, team/primary counts, latest delivery and resource safety) and four Team coverage exports (filters, primary assignment separation, numeric sorting, hostile URL, page clamp). | `cac81353`, `fa33e268`, `cdfda8e2` ledger | Authored/unrun; no claim of source-to-database authorization or 90% branch coverage |
 
 No CI pass, production sign-off or independent review is implied.
+
+
+## Direct Mentor authorization and aggregate scope hardening — 18 October 2026
+
+| Defect | Severity | Fix evidence | Regression | Still required |
+|---|---|---|---|---|
+| PROJ-BREAK-MENTOR-130 | S1 | Direct paged project roster now validates query against its Zod schema, authenticates active member and permission, and enforces enabled Projects before DB. Commit 53778736. | PROJ-BREAK-chat14-mentor-direct-service-gates.test.ts | Cloud CI, PostgreSQL revocation and 1000+ record query plan |
+| PROJ-BREAK-MENTOR-131/132 | S1 | Direct Mentor calendar read now checks current feature entitlement and explicitly ACTIVE user before DB, retaining tenant/role joins. Commits 117394a9 and 67dff651. | Same direct-service test | Actual authenticated GET and session-expiry tests |
+| PROJ-BREAK-MENTOR-136..140 | S1 | Attention, work-count and team-size services now narrow optional supplied roster rows to authenticated college and demand active user, membership, Mentor role, and projects.read policy before DB. Fixes 11a0a7d5, 62f56443, 32d8eddc. | PROJ-BREAK-chat14-mentor-aggregate-tenancy.test.ts, commits 458b32e7 and ed68a21b. | Same-college verified-roster provenance, real PostgreSQL racing role removal, and auth E2E |
+
+Authored tests are not yet verified passing. The archived ff6819dd failure report is unchanged; there are no chat-14 production typecheck errors listed in the most recently provided compile report, but the report predates these fixes.
+
+
+### PROJ-BREAK-MENTOR-141 — direct aggregate module gate (S1)
+
+The assigned-Mentor attention, task-work-count and team-size helpers now independently check current Projects entitlement (module enabled) before reading data. Previously an internal caller bypassing the RSC page could obtain these aggregate results after the module was disabled. This closes the remaining feature-off read leak identified during the direct-service audit. Source commits: 87b3d847, 17d08754, 3c1b0b3a. The existing PROJ-BREAK-chat14-mentor-aggregate-tenancy.test.ts now includes module-off denial with zero DB/roster reads (5a0e94f2). Author-time reasoning only; the CI, browser and PostgreSQL gates have not yet been executed.
+
+
+## Export and display integrity follow-up
+
+| Defect | Severity | Source correction | Regression / proof still needed |
+|---|---|---|---|
+| PROJ-BREAK-MENTOR-142 | S2 | Audit activity in the future was misleadingly labeled Just now. Future or invalid timestamps now display Time unavailable (commit b9192ccf). | PROJ-BREAK-chat14-mentor-display-progress-csv.test.ts, authored/unrun; real server clock-skew test pending |
+| PROJ-BREAK-MENTOR-143/146/147 | S2 | Reviewed-task CSV formatter trusted an unbounded caller array and negative/nonfinite omitted count. Independently cap at 200, retain CSV formula escaping, report excess, and tolerate bad timestamps (commit 6c9e6c39). | Same test: 203 records plus omitted, malicious spreadsheet formula, no contact/feedback data; browser CSV/CI pending |
+| PROJ-BREAK-MENTOR-144/145 | S1 reporting integrity | Corrupted persisted task totals (negative open, open greater than total, NaN/Infinity) previously could claim 100 percent complete or match a misleading completed-work filter. Invalid registered counts now mean unknown/unmatched; unrecognized filters fail closed (commits f6379c49 and b1615ee2). | Same test covers absent records, bounded progress and corrupt counts; PostgreSQL count reconciliation pending |
+
+All six corresponding exported functions now have authored runtime test mappings in the canonical coverage ledger, not verified CI passes.
