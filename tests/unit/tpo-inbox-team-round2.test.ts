@@ -22,9 +22,15 @@ describe("Chat-2 TPO Inbox + Team legacy verification round 2",()=>{
   expect(messages()).toContain('href="/tpo/notifications"');
  });
  it("TPO-inbox-team-13 provides phone-friendly conversation cards and All conversations back control",()=>{
-  expect(messages()).toContain("md:hidden");
-  expect(messages()).toContain("md:block");
-  expect(messages()).toContain('aria-label="Recruiter conversations on phone"');
+  // Shared DataTable renders native phone cards and a desktop table without
+  // duplicating the row DOM or exposing private fields in an unscoped card.
+  const page=messages(),table=src("src/components/ui/data-table.tsx");
+  expect(page).toContain("<DataTable");
+  expect(page).toContain('mobilePriority:"primary"');
+  expect(page).toContain('mobilePriority:"action"');
+  expect(table).toContain('className="block w-full');
+  expect(table).toContain('className="hidden sm:table-header-group');
+  expect(table).toContain('className="block space-y-3 sm:table-row-group');
   expect(src("src/app/(authenticated)/tpo/messages/[threadId]/page.tsx")).toContain("All conversations");
  });
  it("TPO-inbox-team-14 redirects the duplicate read-state screen to the canonical notifications history",()=>{

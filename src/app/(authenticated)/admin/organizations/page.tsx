@@ -15,7 +15,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { can } from "@/modules/permissions/policy";
+import { can, requirePermission } from "@/modules/permissions/policy";
 import { listOrganizations,listArchivedOrganizations } from "@/modules/organizations/service";
 
 type OrganizationRow = Awaited<
@@ -24,6 +24,7 @@ type OrganizationRow = Awaited<
 
 export default async function OrganizationsPage({searchParams}:{searchParams:Promise<{q?:string|string[];page?:string|string[];pageSize?:string|string[]}>}) {
   const context = await getCurrentRequestContext();
+  requirePermission(context,"admin-scope.select");
   const filters=parseAdminDirectorySearchParams(await searchParams);
   if (!filters) return <div className="min-w-0 space-y-6">
     <PageHeader eyebrow="Super Admin" title="Organizations"/>

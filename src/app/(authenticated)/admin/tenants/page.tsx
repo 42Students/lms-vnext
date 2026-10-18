@@ -2,6 +2,7 @@ import Link from "next/link";
 import { TenantDirectoryCsvControl } from "@/components/admin/tenant-directory-csv-control";
 import { tenantDirectoryExportHref } from "@/modules/colleges/admin-tenant-export-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { requirePermission } from "@/modules/permissions/policy";
 import { PageHeader } from "@/components/ui/page-header";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -15,6 +16,8 @@ import { getSuperAdminTenantLifecycleDirectory } from "@/modules/colleges/admin-
 export default async function TenantDirectory({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }) {
+ const context=await getCurrentRequestContext();
+ requirePermission(context,"admin-scope.select");
  const raw=await searchParams;
  const parsed=tenantLifecycleQuerySchema.safeParse({q:raw.q,organizationId:raw.organizationId,status:raw.status,page:raw.page});
  if(!parsed.success) return <div className="space-y-4">
@@ -22,7 +25,7 @@ export default async function TenantDirectory({searchParams}:{
   <ErrorState title="Invalid tenant filters" description="Search, organization or page is invalid."
    action={<Link href="/admin/tenants" className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>}/>
  </div>;
- const data=await getSuperAdminTenantLifecycleDirectory(await getCurrentRequestContext(),parsed.data);
+ const data=await getSuperAdminTenantLifecycleDirectory(context,parsed.data);
  const url=(page:number)=>tenantLifecycleHref({...data.query,page});
  const statuses = ["ACTIVE", "ARCHIVED", "ALL"] as const;
  return <div className="min-w-0 space-y-5">

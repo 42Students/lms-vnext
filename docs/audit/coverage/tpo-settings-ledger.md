@@ -19,3 +19,16 @@ Master queue: `docs/orchestrator/queues/master-queue.md`, Pass B/chat-11 item 1.
 | `getModuleAccessOverviewMetrics` — `src/modules/module-access/admin-overview-metrics-service.ts` | Super Admin permission gate, bounded authorized-college learner and override counts | `tests/unit/chat11-final-SA-tenants-modules-R01.test.ts` (SA-tenants-modules-R01) | Real database cross-org denial, 1000+ tenant perf |
 
 **Remaining Master Queue item 1:** Exhaustively enumerate every TPO settings, course progress, setup steps, notice settings and preference export, cover route-level 401/403/CSRF, stale versions, transaction events and notification side effects. Existing unit names above alone do not meet exhaustive coverage. Master Queue item 2 (Super Admin tenant modules, branding, sign-in, readiness) is also still incomplete. Chat-11 can author tests through GitHub, but cannot execute Vitest/TypeScript/PostgreSQL or visual browser checks here.
+
+
+## Follow-up hardening on synchronized main (2026-10-18)
+
+| Function / route | Checked invariants | Named test | Status |
+|---|---|---|---|
+| `TPO_SETTINGS_NAV_GROUPS` | Reinstated exact legacy `Recruiter access` label without changing route | `tests/unit/tpo-settings-primary-nav.test.ts`, TPO-settings-audit-01 | Source fixed `da8a94a`; Vitest unexecuted |
+| `TpoCompanyMemoryWorkspace.retry` | Clear stale data, abort previous request, pass active AbortSignal and ignore obsolete responses | `tests/unit/tpo-company-memory-effect-retry.test.ts`, TPO-companies-21 | Test strengthened `57708c7`; Vitest unexecuted |
+| `TpoStudentQuickPanel` | Client component directive first; membership-keyed private detail data; cancel in-flight request on student switch, suppressed stale resolution | `tests/unit/tpo-student-quick-panel.test.ts`, TPO-students-02 | Source and regression `3c20a80`, `995b90c`; browser E2E pending |
+| `TpoMessagesPage` and shared `DataTable` | Single DOM path for phone cards and desktop table; recruiter deep link remains accessible | `tests/unit/tpo-inbox-team-round2.test.ts`, TPO-inbox-team-13 | Corrected obsolete hand-coded-card expectation `7907ef6`; browser E2E pending |
+| `TpoApplicantReviewDrawer`, `TpoNoticeComposerDialog` | Shared native modal's Escape, focus return, aria name and native focus containment | `tests/unit/tpo-drive-workspace-s2-evidence-contracts.test.ts` TPO-drive-workspace-27; `tests/unit/tpo-notice-round4-verification.test.ts` TPO-inbox-team-50 | Corrected obsolete inline-dialog test witnesses `1df4e96`, `c8c7854`; keyboard E2E pending |
+
+**Coverage limitation:** No assertion above is a full export ledger. Master-queue TPO settings/setup service coverage, cross-tenant PostgreSQL proof, notification dedupe and runtime phone accessibility remain open, and no local Vitest/TypeScript runner or PostgreSQL is accessible from this connected GitHub editing surface.
