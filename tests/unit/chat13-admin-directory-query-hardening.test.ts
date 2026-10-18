@@ -28,6 +28,8 @@ describe("SA-DIRECTORY-QUERY-12 all Super Admin placement directory pagination a
       {jobId:"foreign-college"},{departmentId:"../../"} ,{cohortId:"not-a-uuid"},
       {status:"PRIVATE"}, {q:"q".repeat(101)}, {source:"OTHER_COLLEGE"},
       {pipelineStage:"NOT_KNOWN"}, {channel:"INVALID"},
+      {collegeId:"foreign-college"}, {q:"learner",status:["ALL","ARCHIVED"]},
+      {view:"secret"}, {debug:"true"}, {page:"1",pageSize:"25",tenant:"other"},
     ]) expect(readAdminQuery(input).success,JSON.stringify(input)).toBe(false);
     expect(readAdminQuery({q:"  engineering ",page:"2",pageSize:"50"}))
       .toMatchObject({success:true});
