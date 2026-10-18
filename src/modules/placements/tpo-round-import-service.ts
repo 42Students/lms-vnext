@@ -9,7 +9,7 @@ import {PlacementsServiceError} from "./errors";
 import {confirmTpoRoundResult} from "./tpo-confirmed-round-result-service";
 import {requireTpoJobCollege} from "./tpo-job-write-base";
 import {placementJobIdSchema,placementRoundIdSchema} from "./validation";
-import {parseTpoRoundImport,roundImportActionSchema,type ImportRow} from "./tpo-round-import-model";
+import {parseTpoRoundImport,roundImportActionSchema,uniqueTpoRoundImportRoster,type ImportRow} from "./tpo-round-import-model";
 
 type Roster=Awaited<ReturnType<typeof readRoster>>["roster"][number];
 async function readRoster(context:RequestContext,rawJobId:unknown,rawRoundId:unknown){
@@ -37,7 +37,7 @@ async function readRoster(context:RequestContext,rawJobId:unknown,rawRoundId:unk
   eq(placementRoundResults.roundId,round.id),ne(placementRoundResults.status,"SUPERSEDED")))
  .where(and(eq(placementApplications.jobId,jobId),
   eq(placementApplications.status,"SUBMITTED"),eq(placementApplicationScreenings.status,"SHORTLISTED")));
- const roster=[...new Map(rows.map(row=>[row.applicationId,row])).values()];
+ const roster=uniqueTpoRoundImportRoster(rows);
  return {round,roster,jobId,roundId};
 }
 function matchSource(row:ImportRow,roster:readonly Roster[]){
