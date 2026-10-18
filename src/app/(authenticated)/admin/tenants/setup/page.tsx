@@ -5,7 +5,9 @@ import {PageHeader} from "@/components/ui/page-header";
 import {ErrorState} from "@/components/ui/error-state";
 import {getSuperAdminTenantLifecycleDetail,getSuperAdminTenantLifecycleDirectory} from "@/modules/colleges/admin-tenant-lifecycle-service";
 import {CollegeServiceError} from "@/modules/colleges/service";
-import {requirePermission,can} from "@/modules/permissions/policy";
+import {can} from "@/modules/permissions/policy";
+import {isSuperAdmin} from "@/modules/identity/context";
+import {parseSuperAdminTenantSetupQuery,selectedSuperAdminTenantSetupTab} from "@/modules/admin-ui/tenant-setup-query-model";
 import {superAdminTenantSetupSteps} from "@/modules/colleges/admin-tenant-setup-journey";
 import {getSuperAdminCollegeReadiness} from "@/modules/colleges/readiness-service";
 import {summarizeTenantSetupReadiness} from "@/modules/colleges/admin-tenant-setup-status";
@@ -15,20 +17,30 @@ import {CollegeCreateForm} from "@/components/admin/college-create-form";
 
 export const dynamic="force-dynamic";
 type Tab="STRUCTURE"|"LAUNCH";
-function tenantSetupTab(raw:unknown,scoped:boolean):Tab{
- if(raw==="STRUCTURE"||raw==="LAUNCH")return raw;
- return scoped?"LAUNCH":"STRUCTURE";
-}
 
 /** SA-tenants-modules-06: one scope-aware URL-persisted Tenant Setup workspace. */
 export default async function SuperAdminTenantSetup({
  searchParams,
 }:{searchParams:Promise<Record<string,string|string[]|undefined>>}){
- const context=await getCurrentRequestContext();
- requirePermission(context,"admin-scope.select");
- const id=context.adminScope?.collegeId??null;
  const query=await searchParams;
- const tab=tenantSetupTab(query.tab,id!==null);
+ const parsed=parseSuperAdminTenantSetupQuery(query);
+ if(!parsed.success)return <div className="min-w-0 space-y-5">
+  <PageHeader eyebrow="Super Admin · Tenant Setup" title="Tenant Setup"/>
+  <ErrorState title="Invalid tenant setup step"
+   description="Select a valid Tenant structure or Launch setup step."
+   action={<Link href="/admin/tenants/setup"
+    className="font-semibold text-primary-text underline">Clear filters</Link>}/>
+ </div>;
+ const context=await getCurrentRequestContext();
+ if(!isSuperAdmin(context)||!can(context,"admin-scope.select"))
+  return <div className="min-w-0 space-y-5">
+   <PageHeader eyebrow="Super Admin · Tenant Setup" title="Tenant Setup"/>
+   <ErrorState title="Tenant setup access denied"
+    description="Your account cannot configure Super Admin tenants."
+    action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
+  </div>;
+ const id=context.adminScope?.collegeId??null;
+ const tab=selectedSuperAdminTenantSetupTab(parsed.data,id!==null);
  const active="border-primary bg-primary-subtle text-[var(--lms-teal-deep)]";
  const inactive="border-border text-body hover:bg-surface-subtle";
  const tabLink=(next:Tab)=>"/admin/tenants/setup?tab="+next;
