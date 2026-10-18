@@ -57,7 +57,7 @@ export function TpoRequestPageClipboard({rows}:{rows:readonly TpoRequestClipboar
   {key:"status",label:"Status"},{key:"decided",label:"Decided on"}] as const;
  const columns=options.filter(x=>visible.includes(x.key));
  const sorted=sortRequestClipboardRows(rows,sort);
- const selectedRows=selectedRequestClipboardRows(rows,selected,sort);
+ const selectedRows=sortRequestClipboardRows(rows.filter(row=>selected.includes(row.id)),sort);
  async function copy(){
   try{
    await navigator.clipboard.writeText(requestRowsTsv(selectedRows,visible as readonly TpoRequestClipboardColumn[]));
