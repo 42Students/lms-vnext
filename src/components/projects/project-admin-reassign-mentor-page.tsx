@@ -74,7 +74,7 @@ export async function ProjectAdminReassignMentorPage({
         description="Move selected non-archived project workspaces to a new primary mentor."
       />
       <Link className="inline-flex min-h-11 items-center rounded-md border border-border px-3 py-2 text-sm font-semibold" href={basePath}>Back to workspaces</Link>
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="border-b border-border pb-5">
         <h2 className="text-base font-semibold">Mentor workload</h2>
         <div className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {workload.map(row => {
@@ -92,7 +92,7 @@ export async function ProjectAdminReassignMentorPage({
           })}
         </div>
       </section>
-      <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4"
+      <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4"
         aria-label="Search all eligible mentors">
         {query.q?<input type="hidden" name="q" value={query.q}/>:null}
         {query.status?<input type="hidden" name="status" value={query.status}/>:null}
@@ -108,7 +108,7 @@ export async function ProjectAdminReassignMentorPage({
         <p className="w-full text-xs text-muted-foreground">Showing up to 100 matching eligible mentors. Narrow the search to reach any mentor beyond the first page.</p>
       </form>
       <ProjectAdminFilters query={query} />
-      <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+      <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
         {query.q ? <input type="hidden" name="q" value={query.q} /> : null}
         {query.status ? <input type="hidden" name="status" value={query.status} /> : null}
         {query.pageSize ? <input type="hidden" name="pageSize" value={query.pageSize} /> : null}
