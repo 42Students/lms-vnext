@@ -37,6 +37,16 @@ describe("TPO-BREAK-exports-01 formula-safe company and learner exports",()=>{
   expect(data.split("\r\n")).toHaveLength(2);
  });
 });
+describe("TPO-BREAK-company-route-03 CSV response hardening",()=>{
+ it("the actual company CSV route uses the common Unicode-safe cell encoder",async()=>{
+  const {readFileSync}=await import("node:fs");
+  const {resolve}=await import("node:path");
+  const code=readFileSync(resolve(process.cwd(),
+   "src/app/api/placements/tpo/companies/export/route.ts"),"utf8");
+  expect(code).toContain("tpoStudentCsvCell(String(value??\"\")");
+ });
+});
+
 describe("TPO-BREAK-roll-selection-02 ambiguous identifiers never select arbitrary learners",()=>{
  it("rejects colliding rolls and registration numbers across distinct members",()=>{
   const matches=matchTpoStudentRolls([
