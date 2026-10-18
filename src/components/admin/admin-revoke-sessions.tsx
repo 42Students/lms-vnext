@@ -10,10 +10,11 @@ export function AdminRevokeSessions({collegeId,userId,count}:{collegeId:string;u
  const router=useRouter();
  const {run,pending:busy}=useGuardedAction();
  const [message,setMessage]=useState("");
+ const [errorMessage,setErrorMessage]=useState("");
  const [confirmOpen,setConfirmOpen]=useState(false);
  async function revoke(){
   if(busy||count<1)return;
-  setMessage("");
+  setMessage("");setErrorMessage("");
   try{
    await run(async()=>{
     // A synchronous flight lock prevents rapid double-confirm or Enter repeats
@@ -30,7 +31,7 @@ export function AdminRevokeSessions({collegeId,userId,count}:{collegeId:string;u
   }catch(error){
    // apiFetch maps network, timeout, HTML proxy responses and API error codes
    // to customer-safe messages without exposing infrastructure internals.
-   setMessage(error instanceof Error?error.message:"Unable to revoke sessions. Please retry.");
+   setErrorMessage(error instanceof Error?error.message:"Unable to revoke sessions. Please retry.");
   }
  }
 
@@ -39,7 +40,7 @@ export function AdminRevokeSessions({collegeId,userId,count}:{collegeId:string;u
    className="disabled:opacity-50">
    {busy?"Signing out…":"Sign out everywhere"}
   </Button>
-  <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} title="Sign out everywhere?" description="All active sessions for this administrator, including other colleges, will be revoked immediately." confirmLabel="Sign out everywhere" pending={busy} onConfirm={()=>void revoke()}/>
+  <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} title="Sign out everywhere?" description={"All active sessions for this administrator, including other colleges, will be revoked immediately."+(errorMessage?" "+errorMessage:"")} confirmLabel="Sign out everywhere" pending={busy} onConfirm={()=>void revoke()}/>
   <p className="text-xs text-muted-foreground">Revokes all active sessions for this person, across every college. This action is audited.</p>
   {message?<p role="status" className="text-sm text-body">{message}</p>:null}
  </div>;
