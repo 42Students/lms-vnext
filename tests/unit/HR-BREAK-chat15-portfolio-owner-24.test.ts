@@ -1,5 +1,6 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 const mock=vi.hoisted(()=>({getDb:vi.fn()}));
+vi.mock("server-only",()=>({}));
 vi.mock("@/db/client",()=>({getDb:mock.getDb}));
 import {listOwnRecruiterPlacementJobs}
  from "@/modules/placements/recruiter-service";
