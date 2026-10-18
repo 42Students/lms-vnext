@@ -154,3 +154,22 @@ Source-scan inventory of the assigned module directories; **PENDING is not verif
 | `src/modules/academics/super-admin-lecture-hall-directory-model.ts` | `superAdminLectureHallFiltersSchema`, `SuperAdminLectureHallFilters`, `parseSuperAdminLectureHallFilters`, `superAdminLectureHallHref`, `superAdminLectureHallPages` | PENDING |
 | `src/modules/academics/validation.ts` | `collegeIdSchema`, `departmentIdSchema`, `programIdSchema`, `academicPeriodIdSchema`, `cohortIdSchema`, `sectionIdSchema`, `academicNameSchema`, `academicCodeSchema`, `academicDateSchema`, `createProgramInputSchema`, `updateProgramInputSchema`, `createAcademicPeriodInputSchema`, `updateAcademicPeriodInputSchema`, `academicPeriodTransitionSchema`, `createCohortInputSchema`, `updateCohortInputSchema`, `cohortTransitionSchema`, `createSectionInputSchema`, `updateSectionInputSchema`, `membershipIdSchema`, `learnerEnrollmentIdSchema`, `sectionEnrollmentIdSchema`, `facultyAssignmentIdSchema`, `scheduleEventIdSchema`, `createLearnerProgramEnrollmentInputSchema`, `learnerProgramEnrollmentTransitionSchema`, `assignLearnerSectionInputSchema`, `sectionEnrollmentTransitionSchema`, `createSectionFacultyAssignmentInputSchema`, `scheduleDateTimeSchema`, `createSectionScheduleEventInputSchema`, `updateSectionScheduleEventInputSchema`, `scheduleEventTransitionSchema`, `CreateProgramInput`, `UpdateProgramInput`, `CreateAcademicPeriodInput`, `UpdateAcademicPeriodInput`, `CreateCohortInput`, `UpdateCohortInput`, `CreateSectionInput`, `UpdateSectionInput`, `CreateLearnerProgramEnrollmentInput`, `AssignLearnerSectionInput`, `CreateSectionFacultyAssignmentInput`, `CreateSectionScheduleEventInput`, `UpdateSectionScheduleEventInput` | PENDING |
 | `src/modules/academics/workspace.ts` | `mapAcademicWorkspaceInBatches`, `getAcademicsWorkspace` | PENDING |
+
+## Group modules — source inventory
+
+| Source file | Statically matched public symbols | Per-export test/PG status |
+| --- | --- | --- |
+| `src/modules/groups/actor-access.ts` | `GroupActorAccessError`, `assertPersistedGroupActor` | PENDING |
+| `src/modules/groups/admin-read-service.ts` | `GroupReadError`, `GROUP_STATUSES`, `groupListQuerySchema`, `GroupListRow`, `listCollegeGroups`, `getCollegeGroupDetail` | PENDING |
+| `src/modules/groups/college-group-csv-preview-model.ts` | `GROUP_IMPORT_MAX_ROWS`, `GROUP_IMPORT_MAX_CHARACTERS`, `collegeGroupCsvPreviewSchema`, `GroupImportRow`, `parseMemberEmailCsv`, `neutralCsvCell`, `groupPreviewErrorCsv` | PENDING |
+| `src/modules/groups/college-group-csv-preview-service.ts` | `GroupCsvPreviewNotFoundError`, `previewCollegeGroupCsv` | PENDING |
+| `src/modules/groups/college-group-detail-write-model.ts` | `collegeGroupDetailWriteSchema`, `collegeGroupDetailIdSchema`, `collegeWaitlistPromotionBlocker`, `collegeGroupDetailActionLabel` | PENDING |
+| `src/modules/groups/college-group-detail-write-service.ts` | `CollegeGroupDetailWriteError`, `writeCollegeGroupDetail` | PENDING |
+| `src/modules/groups/college-group-directory-query-model.ts` | `collegeGroupsDirectoryQuerySchema`, `CollegeGroupsDirectoryQuery`, `parseCollegeGroupsDirectoryParams`, `collegeGroupsDirectoryHref`, `canonicalCollegeGroupsOffset` | PENDING |
+| `src/modules/groups/college-group-management-model.ts` | `collegeStudyGroupCreateSchema`, `collegeStudyGroupChangeSchema`, `collegeGroupIdSchema`, `CollegeStudyGroupCreate`, `CollegeStudyGroupChange`, `studyGroupNextStatus`, `studyGroupConflictMessage` | PENDING |
+| `src/modules/groups/college-group-management-service.ts` | `CollegeGroupManagementError`, `createCollegeStudyGroup`, `changeCollegeStudyGroup` | PENDING |
+| `src/modules/groups/college-member-management-model.ts` | `collegeStudyMemberSchema`, `CollegeStudyMemberAction`, `collegeStudyMemberLabel` | PENDING |
+| `src/modules/groups/college-member-management-service.ts` | `manageCollegeStudyMember` | PENDING |
+| `src/modules/groups/college-rule-preview-model.ts` | `collegeRulePreviewInputSchema`, `GROUP_RULE_PREVIEW_MAX_CANDIDATES`, `RulePreviewCandidate`, `projectCollegeGroupRulePreview` | PENDING |
+| `src/modules/groups/college-rule-preview-service.ts` | `CollegeRulePreviewError`, `previewCollegeGroupRule` | PENDING |
+| `src/modules/groups/elective-eligibility.ts` | `hasElectiveAcademicEligibility` | PENDING |
