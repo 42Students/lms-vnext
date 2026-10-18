@@ -3,15 +3,25 @@ import {readFileSync} from "node:fs";
 
 const queue=readFileSync("docs/orchestrator/queues/gap-closure-chat-16.md","utf8");
 const register=readFileSync("docs/audit/gap-register.md","utf8");
-const rows=queue.split("\n").flatMap(line=>{
+// Only the original rebalance is fixed at 32 entries. Later work-package
+// sections may append new assignments and must not retroactively rewrite this
+// historical acceptance inventory.
+const initialQueue=queue.split("## Chat-16 reassigned round checkpoints",1)[0]!;
+const rows=initialQueue.split("\n").flatMap(line=>{
  const match=line.match(/^- ((?:MEN-projects-meetings|SA-placements-projects)-\d+) \(S[1-4]\) — (DONE|NOT-A-GAP|BLOCKED)$/);
  return match?[{id:match[1]!,status:match[2]!}]:[];
 });
 
 describe("chat-16 centralized gap tracking reconciliation",()=>{
  it("chat-16 register includes exactly the 32 reassigned mentor and tracker gaps",()=>{
+  expect(initialQueue).toContain("- MEN-projects-meetings-53 (S3) — DONE");
+  expect(initialQueue).toContain("- SA-placements-projects-122 (S3) — DONE");
   expect(rows).toHaveLength(32);
   expect(new Set(rows.map(row=>row.id)).size).toBe(32);
+ });
+ it("chat-16 historical gap inventory is unchanged by later queue sections",()=>{
+  const future=queue+"\n## Future reassignments\n- MEN-projects-meetings-999 (S4) — DONE\n";
+  expect(future.split("## Chat-16 reassigned round checkpoints",1)[0]).toBe(initialQueue);
  });
  it.each(rows)("$id remains in the canonical register after cross-lane verification",({id,status})=>{
   const match=register.split("\n").find(line=>line.startsWith("| "+id+" |"));
