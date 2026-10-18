@@ -21,7 +21,7 @@ describe("TPO-settings-audit-CONFIG-01 canonical config and date inputs",()=>{
   for(const accepted of ["Internship","Full-Time (PPO)","Software / R&D","ఇంటర్న్"]){
    expect(tpoJobTypeNameSchema.safeParse(accepted).success,accepted).toBe(true);
   }
-  for(const invalid of [" ","x","a".repeat(41),"<script>","Sales\nAdmin","<img src=x>"]){
+  for(const invalid of [" ","x","--","a".repeat(41),"<script>","Sales\nAdmin","<img src=x>"]){
    expect(tpoJobTypeNameSchema.safeParse(invalid).success,invalid).toBe(false);
   }
  });
