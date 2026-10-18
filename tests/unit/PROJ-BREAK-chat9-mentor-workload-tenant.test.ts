@@ -4,6 +4,7 @@ import type {SQL} from "drizzle-orm";
 import type {RequestContext} from "@/modules/identity/context";
 import {
   listCollegeProjectMentorWorkload,listCollegeReassignmentWorkspaces,
+  type MentorReassignmentQuery,
 } from "@/modules/projects/mentor-reassignment-workload-service";
 
 const collegeId="11111111-1111-4111-8111-111111111111";
@@ -69,7 +70,7 @@ describe("IIT Dharwad Projects: mentor reassignment workload tenant and input sa
       {pageSize:"0x20"},{pageSize:101},{status:"CROSS_TENANT"},
       {page:["1","2"]},{q:"x".repeat(121)},{collegeId:otherCollegeId},
     ]){
-      await expect(listCollegeReassignmentWorkspaces(admin(),collegeId,raw))
+      await expect(listCollegeReassignmentWorkspaces(admin(),collegeId,raw as unknown as MentorReassignmentQuery))
         .rejects.toThrow();
     }
     expect(state.scope).toBe(0);
