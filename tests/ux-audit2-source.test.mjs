@@ -110,7 +110,7 @@ test("RV-01 and RV-05 enforce real roster actions and column-specific mobile det
   assert.match(table,/empty: ReactNode/);
   assert.doesNotMatch(table,/No records to show/);
   assert.match(table,/col\.mobileDetail/);
-  assert.match(table,/col\.mobileDetail\.canView/);
+  assert.match(table,/col\.mobileDetail\?\.canView/);
 });
 test("RV-02 protects multiple persistent errors from timed queue eviction",()=>{
   const toast=read("src/components/ui/toast.tsx");
