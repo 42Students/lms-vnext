@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { enqueueToast, type ToastItem } from "@/components/ui/toast";
+import { enqueueToast, clearEvictedToastTimers, type ToastItem } from "@/components/ui/toast";
 
 const entry = (index: number, tone: "error" | "info" | "success"): ToastItem => ({
   id: "notice-"+index, tone, title: "Notice "+index,
@@ -21,5 +21,15 @@ describe("RV-02 A2-14 persistent toast retention", () => {
     const next=enqueueToast(before,entry(5,"info"));
     expect(next.evictedIds).toEqual(["notice-2"]);
     expect(next.items.map(item=>item.id)).toEqual(["notice-1","notice-3","notice-4","notice-5"]);
+  });
+  it("cancels and removes timers of evicted timed notices while preserving errors", () => {
+    const timers = new Map<string, ReturnType<typeof setTimeout>>();
+    timers.set("notice-2", 21 as unknown as ReturnType<typeof setTimeout>);
+    timers.set("notice-3", 22 as unknown as ReturnType<typeof setTimeout>);
+    const cancelled: number[] = [];
+    clearEvictedToastTimers(["notice-2"], timers, timer => cancelled.push(timer as unknown as number));
+    expect(cancelled).toEqual([21]);
+    expect(timers.has("notice-2")).toBe(false);
+    expect(timers.has("notice-3")).toBe(true);
   });
 });
