@@ -15,14 +15,14 @@ export default async function TpoDriveEditPage({params}:{params:Promise<{jobId:s
   if(error instanceof PlacementsServiceError&&error.code==="PLACEMENT_JOB_NOT_FOUND")notFound();
   throw error;
  }
- return <div className="space-y-5">
-  <Link href={"/tpo/placements/jobs/"+job.id} className="text-sm font-semibold text-primary-text hover:underline">← Drive workspace</Link>
+ return <div className="min-w-0 space-y-5">
+  <Link href={"/tpo/placements/jobs/"+job.id} className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">← Drive workspace</Link>
   <PageHeader eyebrow="TPO · Drives" title="Edit drive" description={"Update "+job.title+" carefully. Save changes before returning to the drive."}/>
   {job.editable?<TpoDriveEditForm job={job}/>:<section role="status" aria-label="Drive edit unavailable" className="space-y-3 rounded-xl border border-border bg-surface p-5 text-sm text-body">
    <p>{job.status==="CLOSED"||job.status==="CANCELLED"
     ?"This drive is closed: nothing here can be changed. To run it again, open Create drive and pick it under Clone a past drive."
     :"This drive is not editable. The saved details are preserved. Open the drive workspace to review them."}</p>
-   <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Create drive</Link>
+   <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">Create drive</Link>
   </section>}
  </div>;
 }
