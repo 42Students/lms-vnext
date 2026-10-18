@@ -59,6 +59,23 @@ describe("IIT Dharwad Super Admin Projects: tenant-safe mentor projections", () 
     expect(code).not.toContain('eq(users.id, collegeMemberships.userId),\n      )');
   });
 
+  it("PROJ-BREAK-SA-37 includes ended mentor transitions in staleness without showing their names",()=>{
+    const code=source();
+    const history=code.slice(code.indexOf("memberMutations,"),
+      code.indexOf("// Index each result set once:"));
+    expect(history).toContain("projectId: projectMembers.projectId");
+    expect(history).toContain("max(${projectMembers.updatedAt})");
+    expect(history).toContain(".where(inArray(projectMembers.projectId, ids))");
+    expect(history).toContain(".groupBy(projectMembers.projectId)");
+    expect(history).not.toContain("isNull(projectMembers.endedAt)");
+    expect(history).not.toContain("users.displayName");
+    expect(code).toContain("const memberMutationByProject = new Map(memberMutations.map");
+    expect(code).toContain("memberMutationByProject.get(project.id)");
+    // Display labels still exclusively come from active-user/active-membership
+    // tenant-safe joins. Removing the mentor cannot expose the old name.
+    expect(code.match(/eq\(users\.platformStatus, "ACTIVE"\)/g)).toHaveLength(2);
+  });
+
   it("PROJ-BREAK-SA-32 does not turn adversarial mentor labels into formulas in Projects CSV", () => {
     const csv = projectAdminCsv([
       ["Project", "Mentor"],
