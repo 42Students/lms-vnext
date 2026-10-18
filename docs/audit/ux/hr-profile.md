@@ -1,7 +1,7 @@
-# HR UX source review — `/hr/profile`
+# UX rollout — /hr/profile
 
-- Source `src/app/(authenticated)/hr/profile/page.tsx` follows the signed-off playbook. Original labels, role and tenant scope and result semantics unchanged.
-- Changes: Fluid page surface; Scrollable table (1).
-- Retained: error, empty, authorized reads and form values across failures.
-- Source regression: `UX-hr-hr-profile-01` in `tests/unit/ux-chat14-hr-03.test.ts`.
-- Pending: strict TypeScript, unit, device and screen-reader verification; inventory unticked.
+- **Route:** `src/app/(authenticated)/hr/profile/page.tsx`
+- **Test:** `UX-hr-profile-01` in `tests/ux-hr-rollout-03.test.mjs`.
+- **Review:** The page already delegates name/title/phone editing to shared RecruiterProfileDetailsEditor and grant access to RecruiterProfileAccess; its PageHeader, role access and existing messages remain the canonical legacy UI. Avoid duplicating those form controls or changing existing mutations/permissions. No source rewrite necessary.
+- **States:** Source preserves editable/uneditable profile, membership and employer access details; shared child components own pending/validation. Runtime and AT checks delegated to orchestrator.
+- **Validation:** Static source test authored, not executed in this GitHub-only lane.
