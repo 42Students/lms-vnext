@@ -81,6 +81,7 @@ Date 2026-10-18, branch `chatgpt/chat-12-b`. Evidence is split between executabl
 | `/tpo/find`, `/tpo/audit/actors`, `/tpo/calendar/rounds` | `chat12-tpo-first-third-second-pass.test.ts` | Explicit TPO gate, invalid input handling, clear/recovery links, IST wording | Real narrow viewport, focus, loading and unavailable DB |
 | `/tpo/companies/[companyId]/people`, `/tpo/messages/[threadId]`, `/tpo/notifications` | Same | Role gates, missing storage and missing record, empty/messages states, cursor recovery | Browser focus and tenant-crossed ID checks |
 | `/tpo/placements/jobs/[jobId]/applicants-pipeline`, `/tpo/more`, `/tpo/drive-day` | Same | Invalid deep links refuse private reads, accessible nav, coordinator role split | Data-backed wrong-college, page transitions, phone |
+| `/admin/attendance` and five other /admin first-third route boundaries | `chat12-admin-first-third-cross-audit.test.ts` | Invalid month before DB, scope and history/CSV recovery, admin companies/colleges invalid filters | Browser + 37-route deep-child audit remains open; see dedicated independent report |
 | Student mobile filter sheet | `chat12-filter-chips-mobile-round5.test.ts`, `chat12-round19-roster-responsive-counts.test.ts` | Follow actual shared modal contract: native dialog, Escape, opener focus restoration and bottom inset | Real phone and keyboard acceptance |
 
 New tests are **authored, not executed**. The row for a route/model does not imply all exported siblings are covered; this ledger is incomplete against the full exhaustive-coverage definition.
