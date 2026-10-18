@@ -15,6 +15,7 @@ import { createPlacementCompany } from "@/modules/placements/company-service";
 import {
   createPlacementJob,
   publishPlacementJob,
+  closePlacementJob,
 } from "@/modules/placements/job-service";
 import {
   actOnPlacementOffer,
@@ -439,6 +440,29 @@ describe("Placement P8 offers and joining", () => {
       await blocker.query("rollback").catch(()=>{});
       blocker.release();
     }
+  });
+
+  it("PLACEMENTS-CLOSE-PENDING-DB-06 direct close cannot strand a recorded but unreleased company selection",async()=>{
+    const {job,application}=await preparePassedApplication();
+    const record=await recordTpoDriveSelections(tpo,job.id,{
+      action:"RECORD",entries:[{applicationId:application.id,
+        roleTitle:"Offer Engineer",annualCtcInr:900_000}],
+    });
+    expect(record.recorded).toBe(1);
+    await expect(closePlacementJob(tpo,job.id)).rejects.toMatchObject({
+      code:"PLACEMENT_JOB_NOT_CLOSABLE",
+    });
+    const jobState=await pool.query<{status:string}>(
+      "select status from placement_jobs where id=$1",[job.id]);
+    expect(jobState.rows[0]?.status).toBe("PUBLISHED");
+    const selection=await pool.query<{status:string}>(
+      "select status from placement_drive_selections where id=$1",[record.selectionIds[0]]);
+    expect(selection.rows[0]?.status).toBe("SELECTED");
+    const closedEvents=await pool.query<{n:number}>(
+      "select count(*)::integer as n from activity_events where subject_id=$1 and event_type=$2",
+      [job.id,"placements.job.closed"],
+    );
+    expect(closedEvents.rows[0]?.n).toBe(0);
   });
 
   it("issues an idempotent offer, lets the learner accept, and preserves corrected joining history", async () => {
