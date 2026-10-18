@@ -49,7 +49,9 @@ export async function transitionMentorProjectTask(
     const now = new Date(Math.max(Date.now(),task.updatedAt.getTime()+1));
     const [updated] = await tx.update(projectTasks).set({
       status:input.status,updatedAt:now,
-      ...(input.status==="BLOCKED"&&input.blockerReason?{blockerReason:input.blockerReason}:{}),
+      // Clearing a blocker is a state transition, not a cosmetic label:
+      // non-blocked tasks must never retain stale blocker text.
+      blockerReason:input.status==="BLOCKED"?input.blockerReason!:null,
     }).where(and(
       eq(projectTasks.id,task.id),eq(projectTasks.projectId,scope.project.id),
       eq(projectTasks.status,task.status),
