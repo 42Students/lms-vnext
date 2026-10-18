@@ -317,3 +317,18 @@ Previously, `dispatchTpoCampaign` loaded all pending contact facts once, then cl
 ### Queued-to-provider outcome persistence CAS
 
 After `outbound.send` returned, the dispatch service previously issued a guarded `QUEUED` → `SENT`/`FAILED` update but ignored whether any recipient row was actually updated. A concurrent unsubscribe or changed row could therefore still generate a false `SENT` activity and success count. The outcome transition is now additionally campaign-ID-scoped, returns the persisted recipient ID and requires a non-empty CAS result before emitting success activities or finalizing receipts. An ambiguous post-provider failure is not automatically retried, to avoid duplicate mail. `tests/unit/chat16-tpo-campaign-live-consent-recheck-16.test.ts` also asserts the order: provider response → persisted CAS → success logging. Tests and real PostgreSQL conflict behavior remain pending cloud CI.
+
+### Role-oriented direct coverage round — 2026-10-18
+
+The following direct behavioural cases are authored but not yet executed by cloud CI:
+
+| Source boundary | Direct test | Behaviours and limitations |
+|---|---|---|
+| `src/modules/messaging/public-join-code-delivery.ts` | `tests/unit/chat16-public-join-code-canonical-recipient-16.test.ts` | Canonical normalized address is checked against runtime allowlist and used consistently in ZeptoMail recipient + template merge fields; rejected contacts are denied before loading provider config; injected fake network transport |
+| `src/modules/notifications/zeptomail-email.ts`, `exotel-sms.ts` | `tests/unit/chat16-otp-provider-ports-16.test.ts` | Transactional OTP format, DLT settings, E.164, accepted SID/status, bounded single-attempt sends, provider refusal and no OTP in structured logs; outbound transport mocked |
+| `src/modules/messaging/engage-audience-service.ts` | `tests/unit/chat16-engage-audience-service-16.test.ts` | Both count-only Engage previews, role and selected-ID validation, persisted authorization before read, duplicate and suppressed counts, no source contact addresses in result; scoped DB transaction mocked |
+| `src/modules/messaging/receipt-detail-service.ts` | `tests/unit/chat16-messaging-batch-detail-service-16.test.ts` | UUID/role validation, revoked persisted grant, 404-like null for missing tenant batch, aggregate counts and no contact key leakage; DB transaction mocked |
+| `src/app/platform/page.tsx`, `src/app/{error,global-error,not-found,loading}.tsx` | `tests/unit/chat16-public-platform-error-loading-pages-16.test.tsx` | Actual server-rendered public platform and fallback pages, safe recovery links, no exception/digest disclosure, loading indicators, and removal of unsupported AI-agent capability claims |
+| `src/app/placements/page.tsx` | `tests/unit/chat16-public-placements-route-16.test.tsx` | Unknown host 404, unpublished college 404, transient public stats outage with no private exception text and recruiting controls disabled; public services mocked |
+
+The marketing route was corrected to describe learner/faculty/mentor/placement/HR workspaces instead of AI agents. These new cases do not establish browser, provider, Postgres, or whole-app green status.
