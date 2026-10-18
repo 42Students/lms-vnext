@@ -33,4 +33,6 @@ All 28 TPO component overlay surfaces in the 2026-10-18 coverage matrix. Shared 
 | `src/components/tpo/tpo-students-drive-visibility.tsx` | Dialog | `Confirm drive eligibility overrides?` |
 | `src/components/tpo/tpo-timed-debar-control.tsx` | Dialog | `Confirm debarment` |
 
+Additional reviewed surface: `src/components/tpo/recruiter-lead-csv-import.tsx` uses the shared native `Dialog`, safely guarded close while import is in progress, and two labelled vertical `ScrollCue` wrappers around responsive `DataTable` previews. Individual regression in `tests/unit/chat2-UX-tpo-recruiter-lead-import-scroll-01.test.ts`.
+
 Caveat: static/source tests verify delegated shared primitive contracts, not complete browser tab-cycling. Browser automation should additionally verify focus return, Escape and mobile viewport for every affected workflow.
