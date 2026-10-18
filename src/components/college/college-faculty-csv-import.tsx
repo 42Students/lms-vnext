@@ -6,6 +6,7 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { useRouter } from "next/navigation";
 import { FACULTY_CSV_COLUMNS } from "@/modules/people/college-faculty-csv-columns";
 import { neutralStudentCsvCell } from "@/modules/people/college-student-csv-model";
+import {facultyCsvResponseBelongsToDraft} from "@/modules/people/college-faculty-csv-draft-model";
 
 type Row={row:number;status:string;detail:string;membershipId?:string};
 type Report={preview:boolean;valid:number;invalid:number;structuralErrors:string[];results:Row[]};
@@ -28,7 +29,7 @@ export function CollegeFacultyCsvImport(){
     });
     if(!payload?.report)throw Error("CSV import could not be completed. Please try again.");
     // A validation response for a replaced draft must never re-enable import.
-    if(action==="PREVIEW" && revision!==csvRevision.current)return;
+    if(action==="PREVIEW" && !facultyCsvResponseBelongsToDraft(revision,csvRevision.current))return;
     setReport(payload.report as Report);
     if(action==="IMPORT"){setConfirmed(false);router.refresh();}
   }
@@ -60,9 +61,9 @@ export function CollegeFacultyCsvImport(){
           if(file.size>1000000){setError("File exceeds 1 MB");return;}
           try{
             const contents=await file.text();
-            if(csvRevision.current===version)setCsv(contents);
+            if(facultyCsvResponseBelongsToDraft(version,csvRevision.current))setCsv(contents);
           }catch{
-            if(csvRevision.current===version)setError("Unable to read CSV. Choose the file again.");
+            if(facultyCsvResponseBelongsToDraft(version,csvRevision.current))setError("Unable to read CSV. Choose the file again.");
           }
         }}/>
       </label>
