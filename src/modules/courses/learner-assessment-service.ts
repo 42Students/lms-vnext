@@ -1,7 +1,7 @@
 import type { RequestContext } from "@/modules/identity/context";
 import {and,eq} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {learnerProgramEnrollments,sectionEnrollments} from "@/db/schema";
+import {learnerProgramEnrollments,sectionEnrollments,sections} from "@/db/schema";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import { requireOwnCourseLearnerRead } from "./learner-access-guard";
 import {listLearnerCourseDeliveries} from "./learner-course-service";
@@ -44,6 +44,12 @@ export async function getLearnerAssessmentOverview(
       .from(sectionEnrollments)
       .innerJoin(learnerProgramEnrollments,
         eq(learnerProgramEnrollments.id,sectionEnrollments.learnerEnrollmentId))
+      .innerJoin(sections,and(
+        eq(sections.id,sectionEnrollments.sectionId),
+        eq(sections.status,"ACTIVE"),
+        eq(sections.cohortId,learnerProgramEnrollments.cohortId),
+        eq(sections.academicPeriodId,sectionEnrollments.academicPeriodId),
+      ))
       .where(and(eq(learnerProgramEnrollments.membershipId,context.membership.id),
         eq(learnerProgramEnrollments.status,"ACTIVE"),
         eq(sectionEnrollments.status,"ACTIVE")))

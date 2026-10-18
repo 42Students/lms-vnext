@@ -5,7 +5,7 @@ import {getMentorMeetingNotes,updateMentorMeetingNotes} from "@/modules/projects
 const state=vi.hoisted(()=>({
  projectStatus:"ACTIVE",meetingStatus:"COMPLETED",access:"MENTOR",
  activeRole:"MENTOR",scopeCollegeId:"college-a",scopeOrganizationId:"org-a",
- activeMembership:true,moduleEnabled:true,meetingPresent:true,
+ activeMembership:true,moduleEnabled:true,meetingPresent:true,scopeReads:0,
  currentOutcome:"Initial",updatedAt:"2026-10-18T10:00:00.123Z",
  events:0,updates:0,projectLocks:0,meetingLocks:0,reads:0,lastReadConditions:"",
  persistedAllowed:true,persistedActorChecks:0,
@@ -32,10 +32,10 @@ vi.mock("@/modules/module-access/service",()=>({
  resolveOptionalModuleAccess:async()=>({projects:{enabled:state.moduleEnabled}}),
 }));
 vi.mock("@/modules/projects/access",()=>({
- requireProjectReadAccess:async(_:unknown,id:string)=>({
+ requireProjectReadAccess:async(_:unknown,id:string)=>{state.scopeReads++;return ({
   access:state.access,collegeId:state.scopeCollegeId,organizationId:state.scopeOrganizationId,
   project:{id,title:"Atlas",status:state.projectStatus},
- }),
+ });},
 }));
 vi.mock("@/modules/projects/persisted-mentor-mutation",()=>({
  assertPersistedProjectMutationActor:async()=>{
@@ -114,7 +114,7 @@ const input={outcome:"Updated record",expectedUpdatedAt:"2026-10-18T10:00:00.123
 beforeEach(()=>{
  state.projectStatus="ACTIVE";state.meetingStatus="COMPLETED";state.access="MENTOR";
  state.activeRole="MENTOR";state.scopeCollegeId="college-a";state.scopeOrganizationId="org-a";
- state.activeMembership=true;state.moduleEnabled=true;state.meetingPresent=true;
+ state.activeMembership=true;state.moduleEnabled=true;state.meetingPresent=true;state.scopeReads=0;
  state.currentOutcome="Initial";state.updatedAt=input.expectedUpdatedAt;
  state.events=0;state.updates=0;state.projectLocks=0;state.meetingLocks=0;state.reads=0;state.lastReadConditions="";
  state.persistedAllowed=true;state.persistedActorChecks=0;
@@ -150,6 +150,18 @@ describe("PROJ-BREAK-MENTOR-164..167 read-only meeting notes scope",()=>{
   state.activeRole="MENTOR";state.access="LEARNER";await reject();
   state.access="MENTOR";state.scopeOrganizationId="foreign-org";await reject();
   state.scopeOrganizationId="org-a";state.moduleEnabled=false;await reject();
+ });
+ it("PROJ-BREAK-MENTOR-205 disabled tenant cannot enumerate a project through meeting notes",async()=>{
+  state.moduleEnabled=false;
+  await expect(getMentorMeetingNotes(context,ids))
+   .rejects.toMatchObject({code:"PROJECT_MEETING_ACCESS_DENIED"});
+  await expect(updateMentorMeetingNotes(context,ids,input))
+   .rejects.toMatchObject({code:"PROJECT_MEETING_ACCESS_DENIED"});
+  expect(state.scopeReads).toBe(0);
+  expect(state.reads).toBe(0);
+  expect(state.projectLocks).toBe(0);
+  expect(state.updates).toBe(0);
+  expect(state.events).toBe(0);
  });
  it("PROJ-BREAK-MENTOR-167 rejects malformed meeting identifiers before any data read",async()=>{
   for(const path of [{...ids,meetingId:"../../../other"},{...ids,organizationId:"foreign"},

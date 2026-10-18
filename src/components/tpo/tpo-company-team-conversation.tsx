@@ -1,6 +1,6 @@
 "use client";
 import {ScrollCue} from "@/components/ui/scroll-cue";
-import {useCallback,useEffect,useState,type FormEvent} from "react";
+import {useCallback,useEffect,useRef,useState,type FormEvent} from "react";
 import Link from "next/link";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
@@ -47,6 +47,8 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
  const [error,setError]=useState("");
  const [body,setBody]=useState("");
  const [busy,setBusy]=useState(false);
+ const pending=useRef(false);
+ const sendKey=useRef<{fingerprint:string;key:string}|null>(null);
  const [decision,setDecision]=useState(false);
  const [assignee,setAssignee]=useState("");
  const [dueAt,setDueAt]=useState("");
@@ -70,8 +72,8 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
   return ()=>{window.clearInterval(refresh);window.removeEventListener("focus",focus);};
  },[load]);
  async function mutate(payload:Record<string,unknown>):Promise<boolean>{
-  if(busy)return false;
-  setBusy(true);setError("");
+  if(pending.current||busy)return false;
+  pending.current=true;setBusy(true);setError("");
   try{
    const response=await fetch(url,{method:"POST",credentials:"same-origin",
     headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
@@ -81,7 +83,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
    }
    await load();return true;
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not save Team changes.");return false;}
-  finally{setBusy(false);}
+  finally{pending.current=false;setBusy(false);}
  }
  async function send(event:FormEvent<HTMLFormElement>){
   event.preventDefault();
@@ -89,9 +91,14 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
   let due:string|null=null;
   try{due=dueAt?driveDeadlineIstToIso(dueAt):null;}
   catch{setError("Enter a valid IST due date.");return;}
+  const fingerprint=JSON.stringify([body.trim(),decision,assignee||null,due]);
+  // Keep the same key after a lost response. Edits to the unsent content
+  // create a different key so the server never replays an unrelated message.
+  if(sendKey.current?.fingerprint!==fingerprint)
+    sendKey.current={fingerprint,key:crypto.randomUUID()};
   const ok=await mutate({action:"SEND",body:body.trim(),decision,
-   assigneeId:assignee||null,dueAt:due});
-  if(ok){setBody("");setDecision(false);setAssignee("");setDueAt("");}
+   assigneeId:assignee||null,dueAt:due,idempotencyKey:sendKey.current.key});
+  if(ok){sendKey.current=null;setBody("");setDecision(false);setAssignee("");setDueAt("");}
  }
  return <section aria-label={"Company Team conversation for "+companyName}
    className="space-y-4 rounded-xl border border-border bg-surface p-4">
