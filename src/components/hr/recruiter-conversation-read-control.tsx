@@ -2,6 +2,7 @@
 import {useRouter} from "next/navigation";
 import {useEffect,useRef,useState} from "react";
 import {hrReplyErrorMessage} from "@/modules/placements/hr-conversation-send-feedback-model";
+import {isVerifiedRecruiterThreadAcknowledgement} from "@/modules/placements/recruiter-thread-ack-receipt-model";
 /** Acknowledgement's on-open guard belongs to ONE thread, not its router slot. */
 export function RecruiterConversationReadControl({threadId}:{threadId:string}){
  return <RecruiterConversationReadControlState key={threadId} threadId={threadId}/>;
@@ -16,14 +17,21 @@ function RecruiterConversationReadControlState({threadId}:{threadId:string}){
   if(acknowledgedOnOpen.current)return;
   acknowledgedOnOpen.current=true;
   acknowledgePending.current=true;
-  // The GET stays read-only. An explicit client POST acknowledges when opened.
+  // GET remains read-only. POST must confirm the persisted thread receipt.
+  let active=true;
+  const controller=new AbortController();
   void fetch("/api/placements/recruiter/conversations/"+encodeURIComponent(threadId)+"/acknowledge",{
-    method:"POST",credentials:"same-origin",
-  }).then(response=>{
-    if(response.ok)router.refresh();
+    method:"POST",credentials:"same-origin",redirect:"error",
+    headers:{Accept:"application/json"},signal:controller.signal,
+  }).then(async response=>{
+    const payload:unknown=response.ok?await response.json().catch(()=>null):null;
+    if(!active)return;
+    if(response.ok&&!response.redirected&&
+     isVerifiedRecruiterThreadAcknowledgement(payload,threadId))router.refresh();
     else setNotice("Read status could not be saved. Use the button below to retry.");
-  }).catch(()=>setNotice("Read status could not be saved. Use the button below to retry."))
+  }).catch(()=>{if(active)setNotice("Read status could not be saved. Use the button below to retry.");})
    .finally(()=>{acknowledgePending.current=false;});
+  return ()=>{active=false;controller.abort();};
  },[threadId,router]);
  async function acknowledge(){
   if(acknowledgePending.current)return;
@@ -33,11 +41,13 @@ function RecruiterConversationReadControlState({threadId}:{threadId:string}){
   let success=false;
   let feedback="Could not confirm that these messages were marked read.";
   try{
-   const response=await fetch("/api/placements/recruiter/conversations/"+threadId+"/acknowledge",{
-    method:"POST",credentials:"same-origin",
+   const response=await fetch("/api/placements/recruiter/conversations/"+encodeURIComponent(threadId)+"/acknowledge",{
+    method:"POST",credentials:"same-origin",redirect:"error",
+    headers:{Accept:"application/json"},
    });
-   success=response.redirected&&response.status===200&&
-    new URL(response.url).pathname==="/hr/conversations/"+threadId;
+   const payload:unknown=response.ok?await response.json().catch(()=>null):null;
+   success=response.ok&&!response.redirected&&
+    isVerifiedRecruiterThreadAcknowledgement(payload,threadId);
    if(!success)feedback=hrReplyErrorMessage(response.status);
   }catch{feedback="Connection unavailable. Read status has not been confirmed.";}
   try{
