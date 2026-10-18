@@ -4,6 +4,7 @@ import {useRouter} from "next/navigation";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
 import {Dialog} from "@/components/ui/dialog";
+import {isVerifiedHrRoundMutation,hrRoundEditorHasUnsavedChanges} from "@/modules/placements/hr-round-editor-model";
 
 type Kind="TALK"|"TEST"|"VENDOR_TEST"|"GD"|"INTERVIEW";
 type Row={id:string;name:string;kind:string;mode:string|null;status:string;
@@ -26,10 +27,17 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
  const [kind,setKind]=useState<Kind>("INTERVIEW");
  const [mode,setMode]=useState("");
  const [confirmRemove,setConfirmRemove]=useState(false);
+ const [confirmDiscard,setConfirmDiscard]=useState(false);
  const [notice,setNotice]=useState("");
  const [error,setError]=useState("");
  const {pending,run}=useGuardedAction({timeoutMs:30000});
- const reset=()=>{setOpen(false);setConfirmRemove(false);setActive(null);setName("");setError("");};
+ const reset=()=>{setOpen(false);setConfirmRemove(false);setConfirmDiscard(false);setActive(null);setName("");setError("");};
+ const dirty=hrRoundEditorHasUnsavedChanges({name,kind,mode},active);
+ function requestClose(){
+  if(pending)return;
+  if(dirty){setConfirmDiscard(true);return;}
+  reset();
+ }
  function edit(row:Row|null){
   if(pending||readOnly)return;
   setActive(row);setName(row?.name??"");
@@ -52,12 +60,18 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
   try{
    await run(async()=>{
     const response=await fetch("/api/placements/recruiter/drives/"+
-     encodeURIComponent(jobId)+"/rounds",{method:"POST",body:form,redirect:"manual"});
-    if(!(response.type==="opaqueredirect"||response.status===303||response.ok)){
+     encodeURIComponent(jobId)+"/rounds",{
+      method:"POST",body:form,credentials:"same-origin",redirect:"error",
+      headers:{Accept:"application/json"},
+     });
+    if(!response.ok){
      throw new Error(response.status===409?
       "This round changed or has results or slots. Refresh and try again.":
       "Could not save this round. Try again.");
     }
+    const receipt:unknown=await response.json().catch(()=>null);
+    if(!isVerifiedHrRoundMutation(receipt,action,active?.id??null))
+     throw new Error("Could not verify this round was saved. Check the drive before retrying.");
     reset();setNotice(action==="CREATE"?
      "Round added. The placement cell will set its date.":
      action==="UPDATE"?"Round updated":"Round removed");
@@ -77,7 +91,7 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
     className="min-h-11 rounded-md border border-border px-3 text-xs font-semibold text-primary-text">
     Change / Remove: {row.name}
    </button>)}</div>:null}
-  <Dialog open={open} onOpenChange={next=>{if(!next&&!pending)reset();}}
+  <Dialog open={open} onOpenChange={next=>{if(!next)requestClose();}}
     dismissible={!pending} title={active?"Change round":"Add a round"}>
     <form onSubmit={(e:FormEvent<HTMLFormElement>)=>{e.preventDefault();void submit(active?"UPDATE":"CREATE");}}
      className="space-y-3">
@@ -98,13 +112,17 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
      <div className="flex flex-wrap justify-end gap-2">
       {active?<button type="button" disabled={pending} onClick={()=>setConfirmRemove(true)}
        className="min-h-11 rounded-md border border-error px-3 text-sm text-error">Remove</button>:null}
-      <button type="button" disabled={pending} onClick={reset}
+      <button type="button" disabled={pending} onClick={requestClose}
        className="min-h-11 rounded-md border border-border px-3 text-sm">Cancel</button>
       <button type="submit" disabled={pending}
        className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">
        {pending?"Saving…":active?"Save changes":"Add round"}</button>
      </div>
     </form>
+    <ConfirmActionDialog open={confirmDiscard} title="Discard unsaved round changes?"
+     consequence="Your changes to this round will not be saved."
+     confirmLabel="Discard" pending={pending}
+     onCancel={()=>setConfirmDiscard(false)} onConfirm={reset}/>
     <ConfirmActionDialog open={confirmRemove} title="Remove this round?"
      consequence="This removes the pending round from the drive. Results and confirmed slots cannot be removed."
      confirmLabel="Remove round" pending={pending}

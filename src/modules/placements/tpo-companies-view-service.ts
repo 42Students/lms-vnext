@@ -61,9 +61,11 @@ async function loadCompanySources(
 ) {
   // The placement company service also performs this authorization.
   // Require it here before any optional CRM/table discovery reads.
-  await requirePlacementManageScope(context, collegeId);
+  // Authenticate the live placement-team membership before even probing
+  // college company/CRM source availability for a stale cached session.
   const liveCollegeId=await requireTpoBatchActor(context);
   if(liveCollegeId!==collegeId)throw new AuthorizationError("placements.manage");
+  await requirePlacementManageScope(context, collegeId);
 
   const relationships = await listPlacementCompanies(
     context,
