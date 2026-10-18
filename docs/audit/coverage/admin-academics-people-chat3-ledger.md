@@ -67,6 +67,12 @@ Snapshot: 2026-10-18, source branch `chatgpt/chat-3-b`. Role-journal and code-ba
 - `superAdminBatchRosterCsv` now neutralizes spreadsheet formulas prefixed by zero-width or bidirectional formatting characters as well as whitespace and control characters. `tests/unit/chat3-sa-batch-roster-csv-formula-protection.test.ts` exercises quotes, commas, Unicode, every CSV field, class membership labels, and invalid cohort IDs.
 - Real PostgreSQL class-count reconciliation and large-roster export browser evidence remain pending.
 
+## SA-ACADEMICS-ROLE-01 — privileged batch overview and Student Register facet readers
+
+- `getSuperAdminBatchRosterOverview` and `getSuperAdminStudentRegisterOptions` now explicitly verify an **active system SUPER_ADMIN** role before delegating to `resolveActingCollege`. That shared helper also supports College Admin actions, so relying upon it alone gave these Super Admin-only services an unnecessarily wide actor surface.
+- `tests/unit/chat3-sa-academics-batch-roster-privacy.test.ts` covers wrong-role/disabled early denial plus active same-college cohort census. `tests/unit/chat3-sa-student-register-options-role-scope.test.ts` invokes the real registration-options service, compiles all three persisted-college Drizzle joins, and checks every wrong-role/disabled actor and an invalid selected college.
+- No change to College Admin's own Student Register endpoints. PostgreSQL fixture and page acceptance pending.
+
 ## Targeted repairs and further release gates
 
 - `COL-people-24`: exact legacy mentor-reassignment confirmation description restored at `src/components/projects/project-admin-reassign-mentor-page.tsx`; must rerun its failing test, and real keyboard/retry browser checks remain.
