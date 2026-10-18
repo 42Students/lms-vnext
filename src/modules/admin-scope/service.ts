@@ -13,15 +13,15 @@ import type {
 } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 
-const scopeSelectionSchema = z.discriminatedUnion("kind", [
+export const scopeSelectionSchema = z.discriminatedUnion("kind", [
   z.object({
     kind: z.literal("organization"),
     organizationId: z.string().uuid(),
-  }),
+  }).strict(),
   z.object({
     kind: z.literal("college"),
     collegeId: z.string().uuid(),
-  }),
+  }).strict(),
 ]);
 
 export type AdminScopeChoices = {
