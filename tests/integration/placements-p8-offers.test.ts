@@ -542,6 +542,9 @@ describe("Placement P8 offers and joining", () => {
       learner,issued.id,{action:"ACCEPT"},new Date("2099-10-18T18:30:00Z"),
     );
     expect(replay.status).toBe("ACCEPTED");
+    if (!("cascadeId" in replay) || !("cascadeId" in accepted)) {
+      throw new Error("A replayed acceptance must preserve its durable cascade ID");
+    }
     expect(replay.cascadeId).toBe(accepted.cascadeId);
     const historyAfterExpiredRetry=await pool.query<{n:number}>(
       "select count(*)::integer as n from placement_offer_status_history where offer_id=$1",
