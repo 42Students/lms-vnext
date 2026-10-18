@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,inArray,sql} from "drizzle-orm";
+import {and,eq,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementJobs,placementCompanyRelationships,placementRecruiterProfiles,
  placementRecruiterCollegeGrants,placementJobRounds,placementJobRoundEvents,
@@ -39,7 +39,7 @@ export async function editHrJobRound(context:RequestContext,rawJobId:unknown,raw
     eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
    ))
    .where(and(eq(placementJobs.id,jobId),inArray(placementJobs.status,["DRAFT","PUBLISHED"]),
-    recruiterOwnJobPredicate(context.user.id)))
+    isNull(placementJobs.archivedAt),recruiterOwnJobPredicate(context.user.id)))
    .for("update").limit(1);
   if(!job||!can(context,"placements.recruiter.round.manage",{
    collegeId:job.collegeId,placementCompanyRelationshipId:job.companyRelationshipId,
@@ -127,7 +127,7 @@ export async function listHrRoundEditorRows(context:RequestContext,jobIdInput:un
    eq(placementRecruiterCollegeGrants.status,"ACTIVE")))
   .where(and(eq(placementJobs.id,jobId),
    inArray(placementJobs.status,["DRAFT","PUBLISHED"]),
-   recruiterOwnJobPredicate(context.user.id))).limit(1);
+   isNull(placementJobs.archivedAt),recruiterOwnJobPredicate(context.user.id))).limit(1);
  if(!job||!can(context,"placements.recruiter.round.manage",{
   collegeId:job.collegeId,placementCompanyRelationshipId:job.companyRelationshipId,
  }))throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");

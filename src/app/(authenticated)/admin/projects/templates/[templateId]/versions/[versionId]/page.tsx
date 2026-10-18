@@ -37,7 +37,6 @@ export default async function TemplateVersionComparisonPage({ params }: {
           className="font-semibold text-[var(--lms-teal-deep)]">Back to version history</Link>}/>
     </div>;
   }
-  }
   return <div className="min-w-0 space-y-6">
     <Link href={`/admin/projects/templates/${detail.template.id}/versions`}
       className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">← Version history</Link>

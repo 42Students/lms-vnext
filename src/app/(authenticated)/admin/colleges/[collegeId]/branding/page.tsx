@@ -48,8 +48,8 @@ export default async function SuperAdminCollegeBrandingPage({
      <h2 className="text-lg font-semibold">Look and feel</h2>
      <p className="text-sm text-body">Update the stored college logo URL, colours and sign-in appearance. Upload and crop your square logo above, then edit colours and sign-in appearance.</p>
      <CollegeLogoUploader collegeId={collegeId} currentUrl={persisted.uploadedLogoUrl} canEdit={canEdit}/>
-     <CollegeBrandingForm collegeId={collegeId} collegeName={persisted.collegeName}
-      canEdit={canEdit} uploadedLogoUrl={persisted.uploadedLogoUrl} initial={{
+     <CollegeBrandingForm key={collegeId} collegeId={collegeId} collegeName={persisted.collegeName}
+      canEdit={canEdit} uploadedLogoUrl={persisted.uploadedLogoUrl} initialVersion={persisted.version} initial={{
        logoUrl:persisted.logoUrl,faviconUrl:persisted.faviconUrl,
        loginBackgroundUrl:persisted.loginBackgroundUrl,
        loginBackgroundUrlMobile:persisted.loginBackgroundUrlMobile,

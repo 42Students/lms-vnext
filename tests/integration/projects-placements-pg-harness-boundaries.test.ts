@@ -319,6 +319,32 @@ describe("PROJ-HARNESS role/tenancy and concurrent PostgreSQL fixture boundaries
     });
   });
 
+  it("PROJ-HARNESS-47 task submissions need the assigned learner and an active sprint", async () => {
+    await withProjectPg(pool, async db => {
+      const f=await actors(db);
+      const teammate=await createPrincipal(db,f.own,["LEARNER"]);
+      await db.query(`
+        insert into project_members(project_id,membership_id,role,created_by_user_id)
+        values ($1,$2,'LEARNER',$3)`,[f.project.projectId,teammate.membershipId,f.author.userId]);
+      await expect(createTaskSubmission(db,f.project,teammate))
+        .rejects.toThrow(/task assignee is not the submitting learner/);
+      await db.query("update project_sprints set status='COMPLETED' where id=$1",
+        [f.project.sprintId]);
+      await expect(createTaskSubmission(db,f.project,f.learner))
+        .rejects.toThrow(/task sprint or task state/);
+      await db.query("update project_sprints set status='ACTIVE' where id=$1",
+        [f.project.sprintId]);
+      await db.query("update project_tasks set status='IN_REVIEW' where id=$1",
+        [f.project.taskId]);
+      await expect(createTaskSubmission(db,f.project,f.learner))
+        .rejects.toThrow(/task sprint or task state/);
+      await db.query("update project_tasks set status='TODO' where id=$1",
+        [f.project.taskId]);
+      await expect(createTaskSubmission(db,f.project,f.learner)).resolves.toBeTruthy();
+      expect(await count(db,"project_task_submissions")).toBe(1);
+    });
+  });
+
   it("PROJ-HARNESS-26 independent sessions contend for the same transaction advisory lock", async () => {
     const key = BigInt("0x" + randomUUID().replaceAll("-", "").slice(0, 15)).toString();
     await withTwoPgSessions(pool, async (first, second) => {
