@@ -7,6 +7,8 @@ import { PermissionAction } from "@/components/ui/permission-action";
 import { ownsOverlayHistoryEntry } from "@/components/ui/use-overlay-webview";
 import { DataTable, isSafeDataTableHref } from "@/components/ui/data-table";
 import { Pagination, normalizedPageCount, paginationWindow } from "@/components/ui/pagination";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { isSafeInternalHref } from "@/lib/safe-internal-href";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { fileMatchesAccept, fileSizeIsValid } from "@/components/ui/file-upload";
 import { clearEvictedToastTimers, enqueueToast, ToastStack, type ToastItem } from "@/components/ui/toast";
@@ -161,6 +163,25 @@ describe("UX-kit-HARDEN-23 authorization boundaries and WebView history", () => 
     const valid=render(<ThirdPartyLink href="https://example.test/proof%20one" label="Evidence" />);
     expect(valid).toContain('href="https://example.test/proof%20one"');
     expect(valid).not.toContain('target="_blank"');
+  });
+
+  it("UX-kit-HARDEN-35 breadcrumbs and table share the same hardened internal path rule",()=>{
+    for(const value of ["//evil.test","/%2Fevil.test","/%252Fevil.test",
+      "/%5cevil.test","/%255cevil.test","/foo\\bar",
+      "javascript:alert(1)","https://evil.test", " /college/projects"]){
+      expect(isSafeInternalHref(value)).toBe(false);
+      expect(isSafeDataTableHref(value)).toBe(false);
+      const html=render(<Breadcrumbs items={[
+        {label:"Project",href:value},{label:"Members"}]}/>);
+      expect(html).toContain("Project");
+      expect(html).not.toContain('href=');
+    }
+    for(const href of ["/college/projects","/mentor/projects?q=abc%25","/learn/projects#history"]){
+      expect(isSafeInternalHref(href)).toBe(true);
+      const html=render(<Breadcrumbs items={[{label:"Projects",href},{label:"Current"}]}/>);
+      expect(html).toContain("href=");
+      expect(html).toContain('aria-current="page"');
+    }
   });
 
   it("UX-kit-HARDEN-28 upload prechecks fail closed for invalid sizes and untrusted types", () => {
