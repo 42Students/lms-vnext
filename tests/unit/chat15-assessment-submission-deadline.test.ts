@@ -23,7 +23,10 @@ describe("learner vendor assessment deadline source of truth",()=>{
   const page=source("src/app/(authenticated)/learn/my-placements/schedule/page.tsx");
   expect(page).toContain(String.raw`row.testUrl&&/^https:\/\//i.test(row.testUrl)`);
   expect(page).toContain("Take online assessment");
-  expect(page).toContain('rel="noopener noreferrer"');
+  expect(page).toContain("<ThirdPartyLink href={row.testUrl}");
+  const external=source("src/components/ui/third-party-link.tsx");
+  expect(external).toContain('url.protocol === "https:"');
+  expect(external).toContain("Copy link");
   expect(page).toContain("not an attendance confirmation or final outcome");
  });
 });
