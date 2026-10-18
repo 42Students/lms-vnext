@@ -266,6 +266,19 @@ export async function createFinalSubmission(db: PgHarness, project: ProjectFixtu
     [project.projectId,learner.membershipId]);
   return row!.id;
 }
+/** Move a draft final submission into the persisted SUBMITTED shape.
+ * Deliberately uses the same actor membership as submission, not client time.
+ */
+export async function submitFinalSubmission(db: PgHarness, submissionId: string,
+  learner: PrincipalFixture): Promise<void> {
+  if (!learner.membershipId) throw new Error("PROJ-HARNESS: submission needs learner membership");
+  const rows = await db.query<{id:string}>(`
+    update project_submissions
+       set status='SUBMITTED',submitted_by_membership_id=$2,submitted_at=now(),updated_at=now()
+     where id=$1 and status='DRAFT'
+     returning id`, [submissionId,learner.membershipId]);
+  if (rows.length !== 1) throw new Error("PROJ-HARNESS: expected one draft final submission");
+}
 export async function createMeeting(db: PgHarness, project: ProjectFixture,
   learner: PrincipalFixture, author: PrincipalFixture): Promise<string> {
   if (!learner.membershipId) throw new Error("PROJ-HARNESS: meeting requester needs membership");
