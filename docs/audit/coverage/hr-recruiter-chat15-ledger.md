@@ -190,3 +190,6 @@ All evidence above is **authored but not executed** under the owner's no-CI dire
 
 
 | `/hr/calendar` and `/recruiter/calendar` authorized server page | `tests/unit/HR-BREAK-chat15-calendar-page-85.test.tsx` | Direct render validates expired/swap recruiter denial before calendar query, repeated date filter denial, no-grant recovery state, and authorized empty-event week without fabricated slots/results | Browser timezone and 320px/390px grid, real college grant expiry/revocation and PostgreSQL data |
+
+
+| `getHrJobRead` Hired-stage offer join predicate and `buildHrOfferOverview` | `tests/unit/HR-BREAK-chat15-hired-offer-86.test.ts` | Hired requires an ACCEPTED offer and a JOINED outcome, not a stale JOINED outcome on a revoked, withdrawn or declined offer; test checks pure projection behavior and service SQL condition | Real PostgreSQL historical outcome fixture, recruiter stage count versus offers screen, final CI |
