@@ -252,3 +252,9 @@ The original 32 reassigned mentor/SA tracker IDs have named queue and registry r
 Both COMPANY and COLLEGE route pairs now catch unexpected provider/database exceptions and return `503 SERVICE_UNAVAILABLE` with `Cache-Control: no-store`, rather than throwing raw internal errors to framework handling. The join handlers safely decode malformed JSON to `null` before handing it to the strict acceptance service (400 `COULD_NOT_JOIN` if invalid). Known structured `PublicJoinCodeError` and `PublicJoinAcceptError` mappings remain unchanged. A static scan of eight edited/new TypeScript files found balanced delimiters, no line-break-before-as casts and no test suppression directives.
 
 These are authored tests and source checks, **not run CI**. Public provider acceptance, rate-limiter PostgreSQL behavior and browser experience remain integration acceptance gates.
+
+### Refreshed orchestrator typecheck triage
+
+The published `docs/orchestrator/typecheck-errors-latest.md` is based on CI commit `007415ee`, preceding these fixes. Its **10** reported chat-16 test-file errors span seven files: persisted-actor mocks returning `undefined` instead of `RequestContext`; a mock loop widened outside `RequestContext`; nullable provider-call options; and public-placement SSR headers/content stubs with incorrect types. The branch now returns proper persisted actor contexts, explicitly types denied contexts, asserts `options` before reading request bodies, and uses a `Headers` object plus a correctly shaped public-content result. No `@ts-ignore`, no reduced assertions, and no broken-line `as` casts were introduced.
+
+The 32-gap reconciliation failures in the older `unit-failures-latest.md` were shown passing in a later completed CI run at `41f5729cb`, but the latest commit's full tests and TypeScript test-file checks are **not yet verified**. The shared reports are CI-owned and have not been manually declared green.
