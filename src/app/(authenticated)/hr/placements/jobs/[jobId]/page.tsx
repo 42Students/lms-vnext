@@ -8,6 +8,7 @@ import { RecruiterApplicantReviewDrawer } from "@/components/hr/recruiter-applic
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { RecruiterResultControls } from "@/components/placements/recruiter-result-controls";
 import { PageHeader } from "@/components/ui/page-header";
+import { ErrorState } from "@/components/ui/error-state";
 import { DataTable } from "@/components/ui/data-table";
 import { RecruiterDriveFocusRefresh } from "@/components/hr/recruiter-drive-focus-refresh";
 import {RecruiterRoundInlineEditor} from "@/components/hr/recruiter-round-inline-editor";
@@ -102,9 +103,22 @@ export default async function HrPlacementJobPage({
       tab:safeTab, stage, applicant, page, offerPage, offerState, roundId, outcome,
     });
   } catch (error) {
-    if ((error instanceof PlacementsServiceError && error.code === "PLACEMENT_JOB_NOT_FOUND") ||
-        (error instanceof z.ZodError && !z.string().uuid().safeParse(jobId).success)) {
+    if (error instanceof PlacementsServiceError && error.code === "PLACEMENT_JOB_NOT_FOUND") {
       notFound();
+    }
+    if (error instanceof z.ZodError) {
+      if (!z.string().uuid().safeParse(jobId).success) notFound();
+      // Malformed tab, page, stage or applicant selectors are recoverable URL
+      // mistakes. Never let an invalid deep link crash the recruiter job page.
+      return <div className="min-w-0 max-w-full space-y-5">
+        <PageHeader eyebrow="Recruiter" title="Hiring drive" />
+        <ErrorState title="Invalid hiring filters"
+          description="Check the selected tab, applicant and page filters, or clear them to continue."
+          action={<Link href={"/hr/placements/jobs/"+encodeURIComponent(jobId)}
+            className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+            Clear filters
+          </Link>} />
+      </div>;
     }
     throw error;
   }
