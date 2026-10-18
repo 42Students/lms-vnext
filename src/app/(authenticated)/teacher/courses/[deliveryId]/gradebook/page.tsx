@@ -1,3 +1,4 @@
+import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -53,9 +54,9 @@ export default async function FacultyGradebookPage({
           maxLength={120} placeholder="Name, roll number or email"
           className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" />
       </label>
-      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">
+      <Button type="submit" variant="primary">
         Search
-      </button>
+      </Button>
       <Link href={facultyGradebookViewHref(parsed.data.deliveryId,{search:"",page:1})}
         className="inline-flex min-h-11 items-center px-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Clear

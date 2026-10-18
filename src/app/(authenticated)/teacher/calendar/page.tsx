@@ -1,3 +1,4 @@
+import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -75,9 +76,9 @@ export default async function FacultyCalendarPage({
             </option>)}
           </select>
         </label>
-        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">
+        <Button type="submit" variant="primary">
           Apply
-        </button>
+        </Button>
       </form>
       {schedule.courses.length===0?<p className="mt-5 text-sm text-body">
         No current teaching assignments. Your college has not assigned a course Section.

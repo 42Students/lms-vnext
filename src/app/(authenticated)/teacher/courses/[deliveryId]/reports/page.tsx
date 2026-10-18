@@ -1,3 +1,4 @@
+import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -44,7 +45,7 @@ params:Promise<{deliveryId:string}>;searchParams:Promise<Search>}){
  <select name="kind" defaultValue={data.query.kind} className="min-h-11 rounded-md border border-border bg-background px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
  <option value="ALL">All</option><option value="ASSIGNMENT">Assignments</option><option value="QUIZ">Quizzes</option>
  </select></label>
- <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Filter</button>
+ <Button type="submit" variant="primary">Filter</Button>
  <Link href={facultyReportHubHref({...data.query,kind:"ALL",page:1})} className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
  </form>
  {data.health.items.length===0?<EmptyState title="No published assessment reports"
