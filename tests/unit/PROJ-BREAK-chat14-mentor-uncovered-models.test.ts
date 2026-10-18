@@ -88,6 +88,12 @@ describe("PROJ-BREAK-MENTOR-148..163 uncovered mentor model behaviours",()=>{
    .toBeLessThan(mentorPortfolioActivityCutoff("PAST_30_DAYS",now)!.getTime());
   expect(mentorActivityPagination(0,99,20)).toMatchObject({total:0,page:1,totalPages:1});
   expect(mentorActivityPagination(51,999,20)).toMatchObject({total:51,page:3,totalPages:3});
+  expect(mentorActivityPagination(Number.NaN,Number.POSITIVE_INFINITY,0))
+   .toEqual({total:0,page:1,pageSize:20,totalPages:1});
+  expect(mentorActivityPagination(-8,-4,250))
+   .toEqual({total:0,page:1,pageSize:20,totalPages:1});
+  expect(mentorActivityPagination(50,1.5,10))
+   .toEqual({total:50,page:1,pageSize:10,totalPages:5});
   expect(mentorActivityProjectTitleMatch("IIT Dharwad Capstone","dHaRwAd")).toBe(true);
   expect(mentorActivityProjectTitleMatch("Atlas","Elsewhere")).toBe(false);
  });
