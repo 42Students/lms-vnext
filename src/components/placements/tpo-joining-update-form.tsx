@@ -36,6 +36,12 @@ export function TpoJoiningUpdateForm({
       return;
     }
 
+    // A recorded joining or corrected outcome must never bypass its explicit
+    // confirmation dialog; a rejected/cancelled confirmation keeps form values.
+    if (!confirmed) {
+      setConfirmOpen(true);
+      return;
+    }
     setBusy(true);
     setError(null);
     try {
