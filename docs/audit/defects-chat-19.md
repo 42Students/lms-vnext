@@ -267,3 +267,20 @@ Cloud CI, real database tenant-isolation and scale benchmarks remain pending, an
 | Gap | Severity | Affected source | Wrong behaviour, correction and tests |
 |---|---|---|---|
 | HR-BREAK-TODAY-UNREAD-08 | MAJOR | `src/modules/placements/hr-today-unread-model.ts`, `src/app/(authenticated)/hr/messages/page.tsx` | The unread **notifications** action incorrectly opened `/hr/messages?unreadOnly=true`. The legacy Messages route now correctly aliases recruiter **conversations**, so this sent the recruiter to a different inbox and failed to show the expected system-notification list. Route the action to `/hr/notifications?collegeId=…&unreadOnly=true`, preserving college grant and unread filtering. Update the stale, incorrect URL expectation and add explicit regression in `tests/unit/hr-today-unread-model.test.ts`. |
+
+## CI 834983cc — direct chat-19 failure remediation
+
+The refreshed unit failure register contains exactly two chat-19 entries. The production typecheck and lint report **PASS** and has no chat-19 test-file TS diagnostics. Both reported failures are addressed without suppressing tests.
+
+| ID | Reported failing assertion | Root cause | Correction |
+|---|---|---|---|
+| PROJ-BREAK-EXPORT-02 | Project export button did not appear enabled for authorized visible rows | SSR `<Button>` always carries Tailwind's `disabled:opacity-50` and `disabled:cursor-not-allowed` **CSS class names** even when enabled, so the previous blanket `html.not.toContain("disabled")` falsely treated CSS selectors as a disabled DOM attribute. | Inspect the actual rendered `<button ...>` and assert the presence/absence of the **disabled HTML attribute** using a whitespace-anchored matcher. Retain the nonempty authorized row, empty disabled state, 44px target and no global export-link assertions. |
+| COL-XA-14 | Faculty assignment history did not carry expected accessible caption | The live `DataTable` caption had changed from `Persisted teaching assignments` to `Faculty teaching assignments`. The original test's accessibility contract is appropriate and was retained. | Restore `caption="Persisted teaching assignments"` in the college-scoped faculty detail server page, keeping the visible heading `Faculty teaching assignments` and the persisted-row projection unchanged. |
+
+The two corrections are authored on chat-19's branch. The next CI run is required to establish a passing result.
+
+## Independent HR drive messaging service security review
+
+| ID | Before-fix severity | Source | Finding / fix | Direct regression |
+|---|---|---|---|---|
+| HR-BREAK-DRIVE-THREAD-09 | MAJOR | `src/modules/placements/hr-drive-conversation-service.ts` | The service correctly authorized the workspace and filtered by job/recruiter, but did not independently confirm each returned thread belonged to the **same college**. Harden the composition boundary against a malformed nested list result by filtering `thread.collegeId===workspace.college.id` before passing through recruiter/job filtering. | `tests/unit/HR-BREAK-chat19-drive-conversation-service.test.ts` directly invokes the service with other-college, other-recruiter and other-job rows, invalid job UUID, authorization denial and primary read failure. |
