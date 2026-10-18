@@ -31,7 +31,7 @@
 
 - `tests/ux-hr-rollout-01.test.mjs`, `tests/ux-hr-rollout-02.test.mjs`: existing 22-page legacy wording, contrast, focus source regressions (vary by page).
 - `tests/unit/chat19-hr-page-contracts.test.ts`: 20 real pages have active recruiter/context and denied-role redirect source assertions; alias and retired route each have their own test; shared error/loading, improved deep-link authorization and mobile offer cards have concrete checks.
-- `tests/unit/chat19-projects-recruiter-role-journey.test.ts`: five HR Projects data privacy boundary tests that exercise actual pure model functions and hostile data, plus assertions of service scope.
+- `tests/unit/chat19-projects-recruiter-role-journey.test.ts`: seven HR Projects data privacy boundary tests, covering actual pure models, shared link host validation, stale withdrawn applicant access, and assertions of service scope.
 - Every route's named `page.tsx` path is included. Direct unit assertions only exercise selected pure policy/query functions. They are not substitutes for real HTTP, PostgreSQL or Playwright integration.
 - **Unsupported claim to avoid:** none of the authored tests have been executed in this GitHub-only workspace; no route is certified to pass and no statement of 100% branch coverage is made.
 
