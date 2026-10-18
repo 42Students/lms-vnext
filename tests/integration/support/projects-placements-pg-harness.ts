@@ -75,6 +75,26 @@ export async function assertHarnessSchema(client: PoolClient): Promise<void> {
   if (!clearlyDisposableDatabaseName(name.rows[0]?.name ?? "")) {
     throw new Error("PROJ-HARNESS: refusing non-test PostgreSQL database");
   }
+  const requiredColumns = [
+    ["project_members", "ended_at"],
+    ["project_members", "can_mutate"],
+    ["project_submissions", "submitted_by_membership_id"],
+    ["project_delivery_events", "actor_membership_id"],
+    ["project_sprints", "start_date"],
+  ] as const;
+  const missingColumns = await client.query<{tbl: string; col: string}>(`
+    select req.tbl, req.col
+      from unnest($1::text[], $2::text[]) as req(tbl, col)
+      left join information_schema.columns c
+        on c.table_schema = 'public'
+       and c.table_name = req.tbl and c.column_name = req.col
+     where c.column_name is null`,
+    [requiredColumns.map(pair => pair[0]), requiredColumns.map(pair => pair[1])],
+  );
+  if (missingColumns.rows.length) throw new Error(
+    "PROJ-HARNESS: registered migration columns missing: " +
+    missingColumns.rows.map(row => row.tbl + "." + row.col).join(", "),
+  );
   const tables = await client.query<{name: string; reg: string|null}>(
     "select t.name, to_regclass('public.' || t.name)::text as reg from unnest($1::text[]) t(name)",
     [REQUIRED_TABLES],
@@ -269,12 +289,13 @@ async function requireProjectLearner(db: PgHarness, projectId: string,
       from project_instances p
       join college_memberships cm
         on cm.college_id = p.college_id and cm.id = $2 and cm.college_id = $3
+      join users u on u.id = cm.user_id and u.id = $4 and u.platform_status = 'ACTIVE'
       join project_members pm
         on pm.project_id = p.id and pm.membership_id = cm.id
      where p.id = $1
        and pm.role = 'LEARNER' and pm.ended_at is null and pm.can_mutate = true
        and cm.status = 'ACTIVE'
-     limit 1`, [projectId, learner.membershipId, learner.collegeId]);
+     limit 1`, [projectId, learner.membershipId, learner.collegeId, learner.userId]);
   if (!rows.length || learner.collegeId === null) {
     throw new Error("PROJ-HARNESS: learner is not an active member of this project and college");
   }
@@ -282,9 +303,13 @@ async function requireProjectLearner(db: PgHarness, projectId: string,
 async function requireProjectCollegeActor(db: PgHarness, projectId: string,
   actor: PrincipalFixture): Promise<void> {
   if (!actor.collegeId) throw new Error("PROJ-HARNESS: project actor needs college scope");
-  const rows = await db.query<{id: string}>(
-    "select id from project_instances where id=$1 and college_id=$2",
-    [projectId, actor.collegeId]);
+  const rows = await db.query<{id: string}>(`
+    select p.id from project_instances p
+      join college_memberships cm
+        on cm.college_id = p.college_id and cm.id = $3 and cm.status = 'ACTIVE'
+      join users u on u.id = cm.user_id and u.id = $4 and u.platform_status = 'ACTIVE'
+     where p.id = $1 and p.college_id = $2`,
+    [projectId, actor.collegeId, actor.membershipId, actor.userId]);
   if (!rows.length) throw new Error("PROJ-HARNESS: project actor wrong college");
 }
 
